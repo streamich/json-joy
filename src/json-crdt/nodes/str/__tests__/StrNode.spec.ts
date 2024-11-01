@@ -154,21 +154,21 @@ describe('binary tree', () => {
     const tree = createTree();
     expect(tree.toString()).toMatchInlineSnapshot(`
       "str .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1" … }
-      └─ chunk .8!2 len:36 { "a8" }
-         ← chunk .4!2 len:14 { "a4" }
-           ← chunk .2!2 len:6 { "a2" }
-             ← chunk .1!2 len:2 { "a1" }
-             → chunk .3!2 len:2 { "a3" }
-           → chunk .6!2 len:6 { "a6" }
-             ← chunk .5!2 len:2 { "a5" }
-             → chunk .7!2 len:2 { "a7" }
-         → chunk .12!3 len:20 { "a12" }
-           ← chunk .10!3 len:8 { "a10" }
-             ← chunk .9!2 len:2 { "a9" }
-             → chunk .11!3 len:3 { "a11" }
-           → chunk .14!3 len:9 { "a14" }
-             ← chunk .13!3 len:3 { "a13" }
-             → chunk .15!3 len:3 { "a15" }"
+      └─ chunk .8:2 .36. { "a8" }
+         ← chunk .4:2 .14. { "a4" }
+           ← chunk .2:2 .6. { "a2" }
+             ← chunk .1:2 .2. { "a1" }
+             → chunk .3:2 .2. { "a3" }
+           → chunk .6:2 .6. { "a6" }
+             ← chunk .5:2 .2. { "a5" }
+             → chunk .7:2 .2. { "a7" }
+         → chunk .12:3 .20. { "a12" }
+           ← chunk .10:3 .8. { "a10" }
+             ← chunk .9:2 .2. { "a9" }
+             → chunk .11:3 .3. { "a11" }
+           → chunk .14:3 .9. { "a14" }
+             ← chunk .13:3 .3. { "a13" }
+             → chunk .15:3 .3. { "a15" }"
     `);
   });
 
