@@ -374,7 +374,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
           return;
         }
       }
-      return this.refAbsEnd();
+      this.refAbsEnd();
+      return;
     }
     if (!chunk.del && this.anchor === Anchor.Before) return;
     this.anchor = Anchor.Before;
@@ -402,7 +403,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
           }
         }
       }
-      return this.refAbsStart();
+      this.refAbsStart();
+      return;
     }
     if (!chunk.del && this.anchor === Anchor.After) return;
     this.anchor = Anchor.After;

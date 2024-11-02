@@ -88,7 +88,7 @@ const next = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
   const r = curr.r;
   if (r) {
     curr = r;
-    let tmp;
+    let tmp: Chunk<T> | undefined;
     while ((tmp = curr.l)) curr = tmp;
     return curr;
   }
@@ -104,7 +104,7 @@ const prev = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
   const l = curr.l;
   if (l) {
     curr = l;
-    let tmp;
+    let tmp: Chunk<T> | undefined;
     while ((tmp = curr.r)) curr = tmp;
     return curr;
   }

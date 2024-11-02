@@ -141,6 +141,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
 
   public toString(tab?: string) {
     const patches: Patch[] = [];
+    // biome-ignore lint: patches are not iterable
     this.patches.forEach(({v}) => patches.push(v));
     return (
       'log' +

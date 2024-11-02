@@ -1,4 +1,4 @@
-import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
+import {hasOwnProperty as hasOwnProp} from '@jsonjoy.com/util/lib/hasOwnProperty';
 import {Point} from '../rga/Point';
 import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
@@ -118,7 +118,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.type = params.type;
       changes.push([SliceTupleIndex.Type, s.con(this.type)]);
     }
-    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
+    if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
       const header =
         (this.behavior << SliceHeaderShift.Behavior) +

@@ -79,8 +79,8 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected encodeOperation(op: JsonCrdtPatchOperation): void {
     const writer = this.writer;
-    const constructor = op.constructor;
-    switch (constructor) {
+    const constr = op.constructor;
+    switch (constr) {
       case operations.NewConOp: {
         const operation = <operations.NewConOp>op;
         const val = operation.val;

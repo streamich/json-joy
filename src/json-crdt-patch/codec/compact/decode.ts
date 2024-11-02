@@ -1,6 +1,13 @@
 import {JsonCrdtPatchOpcode} from '../../constants';
 import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
-import {type ITimespanStruct, type ITimestampStruct, ClockVector, ServerClockVector, Timespan, Timestamp} from '../../clock';
+import {
+  type ITimespanStruct,
+  type ITimestampStruct,
+  ClockVector,
+  ServerClockVector,
+  Timespan,
+  Timestamp,
+} from '../../clock';
 import type {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';

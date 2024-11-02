@@ -50,7 +50,11 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   /** Emitted after transaction completes. */
   public readonly onTransaction = new FanOut<void>();
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
-  public readonly onChange = new MergeFanOut<number | Patch | undefined>([this.onReset, this.onPatch, this.onLocalChange]);
+  public readonly onChange = new MergeFanOut<number | Patch | undefined>([
+    this.onReset,
+    this.onPatch,
+    this.onLocalChange,
+  ]);
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
   public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | undefined>(this.onChange);
   /** Emitted when the `model.api` builder change buffer is flushed. */

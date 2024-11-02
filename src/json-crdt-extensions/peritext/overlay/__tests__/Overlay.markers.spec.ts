@@ -40,7 +40,7 @@ const runMarkersTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       const list = [...peritext.overlay.markers()];
       expect(list.length).toBe(3);
-      list.forEach((m) => expect(m instanceof MarkerOverlayPoint).toBe(true));
+      for (const m of list) expect(m instanceof MarkerOverlayPoint).toBe(true);
       expect(list[0].marker).toBe(m1);
       expect(list[1].marker).toBe(m2);
       expect(list[2].marker).toBe(m3);

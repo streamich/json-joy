@@ -70,7 +70,8 @@ export type SliceSchema = nodes.vec<
      * In reality this `vec` term can be of any type, it can even be missing
      * entirely. It is typed here as a placeholder for the actual data type.
      */
-    data: nodes.obj<{}>,
+    data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
+    {}>,
   ]
 >;
 

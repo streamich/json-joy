@@ -23,7 +23,7 @@ import type {
   JsonPatchTypes,
 } from './types';
 import {validateJsonPointer} from '@jsonjoy.com/json-pointer/lib/validate';
-import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
+import {hasOwnProperty as hasOwnProp} from '@jsonjoy.com/util/lib/hasOwnProperty';
 
 export const validateOperations = (ops: Operation[], allowMatchesOp: boolean = false) => {
   if (!Array.isArray(ops)) throw new Error('Not a array.');
@@ -141,11 +141,11 @@ const validateOperationAdd = (op: OperationAdd) => {
 };
 
 const validateOperationRemove = (op: OperationRemove) => {
-  if (hasOwnProperty(op, 'oldValue') && op.oldValue === undefined) throw new Error('Invalid oldValue.');
+  if (hasOwnProp(op, 'oldValue') && op.oldValue === undefined) throw new Error('Invalid oldValue.');
 };
 
 const validateOperationReplace = (op: OperationReplace) => {
-  if (hasOwnProperty(op, 'oldValue') && op.oldValue === undefined) throw new Error('Invalid oldValue.');
+  if (hasOwnProp(op, 'oldValue') && op.oldValue === undefined) throw new Error('Invalid oldValue.');
 };
 
 const validateOperationCopy = (op: OperationCopy) => {

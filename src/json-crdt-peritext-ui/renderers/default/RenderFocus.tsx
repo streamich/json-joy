@@ -1,3 +1,4 @@
+// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule, drule, keyframes} from 'nano-theme';
 

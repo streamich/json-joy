@@ -17,7 +17,7 @@ export class MergeFanOut<D> extends FanOut<D> {
     return () => {
       unsub();
       if (!this.listeners.size) {
-        this.unsubs.forEach((unsub) => unsub());
+        for (const unsub of this.unsubs) unsub();
         this.unsubs = [];
       }
     };

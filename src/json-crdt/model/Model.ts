@@ -519,6 +519,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       api.flush();
       api.builder.clock = this.clock;
     }
+    // biome-ignore lint: index is not iterable
     index.forEach(({v: node}) => {
       const api = node.api as NodeApi | undefined;
       if (!api) return;
@@ -607,6 +608,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
         nl,
         (tab) => {
           const nodes: JsonNode[] = [];
+          // biome-ignore lint: index is not iterable
           this.index.forEach((item) => nodes.push(item.v));
           return (
             `index (${nodes.length} nodes)` +

@@ -348,6 +348,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const sliceSet = this.slices;
     state = updateNum(state, slices.hash);
     if (changed) {
+      // biome-ignore lint: slices is not iterable
       slices.forEach((slice) => {
         let tuple: [start: OverlayPoint<T>, end: OverlayPoint<T>] | undefined = sliceSet.get(slice);
         if (tuple) {

@@ -1,14 +1,14 @@
-import {escape} from '@jsonjoy.com/util/lib/strings/escape';
+import {escape as esc} from '@jsonjoy.com/util/lib/strings/escape';
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 
 const getKeys = Object.keys;
 
 export const stringify = <T>(val: T): json_string<T> => {
-  let i, max, str, keys, key, propVal;
+  let i: number, max: number, str: string, keys: string[], key: string, propVal: unknown;
   switch (typeof val) {
     case 'string':
-      return ('"' + escape(val) + '"') as json_string<T>;
+      return ('"' + esc(val) + '"') as json_string<T>;
     case 'object':
       if (val instanceof Array) {
         str = '[';
@@ -26,7 +26,7 @@ export const stringify = <T>(val: T): json_string<T> => {
         key = keys[i];
         propVal = stringify((val as Record<string, unknown>)[key]);
         if (i && str !== '') str += ',';
-        str += '"' + escape(key) + '":' + propVal;
+        str += '"' + esc(key) + '":' + propVal;
         i++;
       }
       return (str + '}') as json_string<T>;

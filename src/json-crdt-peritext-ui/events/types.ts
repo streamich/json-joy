@@ -126,7 +126,8 @@ export interface InlineDetail {
   pos?: [start: number, end: number][];
 }
 
-export type MarkerDetail = {}
+// biome-ignore lint: empty interface is expected
+export type MarkerDetail = {};
 
 export type PeritextEventMap = {
   change: ChangeDetail;

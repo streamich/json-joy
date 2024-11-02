@@ -1,4 +1,5 @@
-import type * as React from 'react';
+// biome-ignore lint: React is used for JSX
+import * as React from 'react';
 import {useDebugCtx} from './context';
 import type {InlineViewProps} from '../../react/InlineView';
 

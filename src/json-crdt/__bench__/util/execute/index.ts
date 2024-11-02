@@ -17,7 +17,7 @@ export const runTraceWithEditor = (
 ) => {
   const trace = traces.get(traceName);
   const editorFactory = editors[editorName];
-  let instance, view;
+  let instance: any, view: any;
   console.log('----------------------------------------------------------------------------');
   console.log(editorFactory.name);
   console.log('----------------------------------------------------------------------------');

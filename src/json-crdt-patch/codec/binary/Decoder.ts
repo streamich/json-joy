@@ -1,5 +1,12 @@
 import {CrdtReader} from '../../util/binary/CrdtReader';
-import {interval, type ITimespanStruct, type ITimestampStruct, ClockVector, ServerClockVector, Timestamp} from '../../clock';
+import {
+  interval,
+  type ITimespanStruct,
+  type ITimestampStruct,
+  ClockVector,
+  ServerClockVector,
+  Timestamp,
+} from '../../clock';
 import type {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';

@@ -117,7 +117,7 @@ describe('markers', () => {
       peritext.refresh();
       expect(markerCount(peritext)).toBe(2);
       const points = [];
-      let point;
+      let point: any;
       for (const iterator = peritext.overlay.markers0(void 0); (point = iterator()); ) points.push(point);
       expect(points.length).toBe(2);
       expect(points[0].pos()).toBe(2);

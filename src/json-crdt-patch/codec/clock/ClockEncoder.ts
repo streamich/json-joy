@@ -40,6 +40,7 @@ export class ClockEncoder {
 
   public toJson(): number[] {
     const out: number[] = [];
+    // biome-ignore lint: using .forEach() on Map is the fastest way to iterate
     this.table.forEach((entry) => {
       const clock = entry.clock;
       out.push(clock.sid, clock.time);

@@ -30,6 +30,7 @@ export class Encoder {
       this.ts(rootValueId);
       result.r = writer.flush();
     }
+    // biome-ignore lint: index is not iterable
     doc.index.forEach(({v: node}) => this.onNode(result, node));
     return result;
   }

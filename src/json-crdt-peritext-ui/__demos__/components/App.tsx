@@ -5,7 +5,7 @@ import {PeritextView} from '../../react';
 import {renderers} from '../../renderers/default';
 import {renderers as debugRenderers} from '../../renderers/debug';
 
-export const App: React.FC = ({}) => {
+export const App: React.FC = () => {
   const [[model, peritext]] = React.useState(() => {
     const model = ModelWithExt.create(ext.peritext.new('Hello world!'));
     const peritext = model.s.toExt().txt;

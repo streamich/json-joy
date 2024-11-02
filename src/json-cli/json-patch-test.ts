@@ -15,18 +15,18 @@ if (!bin) {
 let cntCorrect = 0;
 let cntFailed = 0;
 
-testSuites.forEach((suite) => {
+for (const suite of testSuites) {
   console.log('');
   console.log(suite.name);
   console.log('');
 
-  suite.tests.forEach((test: any) => {
-    if (test.disabled) return;
+  for (const test of suite.tests) {
+    if (test.disabled) break;
     const testName = test.comment || test.error || JSON.stringify(test.patch);
     if (test.expected !== undefined) {
-      test.patch.forEach(validateOperation);
+      test.patch.forEach(validateOperation as any);
       let isCorrect = false;
-      let result;
+      let result: unknown;
       try {
         const input = JSON.stringify(test.doc);
         const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
@@ -69,8 +69,8 @@ testSuites.forEach((suite) => {
     }
 
     if (cntFailed) process.exit(1);
-  });
-});
+  }
+}
 
 console.log('');
 console.log(`Successful = ${cntCorrect}, Failed = ${cntFailed}, Total = ${cntCorrect + cntFailed}`);

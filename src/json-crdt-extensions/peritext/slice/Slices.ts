@@ -172,6 +172,7 @@ export class Slices<T = string> implements Stateful, Printable {
   }
 
   public forEach(callback: (item: Slice<T>) => void): void {
+    // biome-ignore lint: list is not iterable
     this.list.forEach((node) => callback(node.v));
   }
 
@@ -195,6 +196,7 @@ export class Slices<T = string> implements Stateful, Printable {
       }
     }
     let hash: number = topologyHash;
+    // biome-ignore lint: slices is not iterable
     this.list.forEach(({v: item}) => {
       item.refresh();
       hash = updateNum(hash, item.hash);
