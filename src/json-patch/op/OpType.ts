@@ -1,9 +1,9 @@
 import type {CompactTypeOp, OPCODE_TYPE} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationType, JsonPatchTypes} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationType, JsonPatchTypes} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 const {isArray} = Array;
@@ -20,7 +20,7 @@ export class OpType extends AbstractPredicateOp<'type'> {
   }
 
   public op() {
-    return 'type' as 'type';
+    return 'type' as const;
   }
 
   public code() {
@@ -31,6 +31,7 @@ export class OpType extends AbstractPredicateOp<'type'> {
     const {val} = find(doc, this.path);
     if (val === null) return this.value === 'null';
     if (isArray(val)) return this.value === 'array';
+    // biome-ignore lint: comparison to value is on purpose
     if (typeof val === this.value) return true;
     if (typeof val === 'number' && val === Math.round(val) && this.value === 'integer') return true;
     return false;

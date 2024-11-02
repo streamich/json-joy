@@ -1,13 +1,13 @@
-import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
+import {hasOwnProperty as hasOwnProp} from '@jsonjoy.com/util/lib/hasOwnProperty';
 import {Point} from '../rga/Point';
 import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
-import {Anchor} from '../rga/constants';
+import type {Anchor} from '../rga/constants';
 import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex, SliceBehaviorName} from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
-import {VecNode} from '../../../json-crdt/nodes';
+import type {VecNode} from '../../../json-crdt/nodes';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
@@ -118,7 +118,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.type = params.type;
       changes.push([SliceTupleIndex.Type, s.con(this.type)]);
     }
-    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
+    if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
       const header =
         (this.behavior << SliceHeaderShift.Behavior) +

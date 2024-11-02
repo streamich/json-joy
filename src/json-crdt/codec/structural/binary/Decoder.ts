@@ -1,7 +1,7 @@
 import * as nodes from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
-import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
+import {type ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {CborDecoderBase} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoderBase';
 import {SESSION} from '../../../../json-crdt-patch/constants';
@@ -9,7 +9,7 @@ import {CRDT_MAJOR} from './constants';
 
 export class Decoder extends CborDecoderBase<CrdtReader> {
   protected doc!: Model;
-  protected clockDecoder?: ClockDecoder;
+  protected clockDecoder?: ClockDecoder = undefined;
   protected time: number = -1;
 
   constructor() {
@@ -17,7 +17,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
   }
 
   public decode(data: Uint8Array, model?: Model): Model {
-    delete this.clockDecoder;
+    this.clockDecoder = undefined;
     this.time = -1;
     const reader = this.reader;
     reader.reset(data);
@@ -35,7 +35,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     }
     this.doc = model;
     model.root = new nodes.RootNode(this.doc, this.cRoot().id);
-    delete this.clockDecoder;
+    this.clockDecoder = undefined;
     return model;
   }
 

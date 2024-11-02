@@ -2,7 +2,7 @@ import {Cursor} from './Cursor';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
-import {ChunkSlice} from '../util/ChunkSlice';
+import type {ChunkSlice} from '../util/ChunkSlice';
 import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
@@ -362,7 +362,7 @@ export class Editor<T = string> {
    * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
+  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
     this.cursors((cursor) => {
       switch (endpoint) {
         case 0: {

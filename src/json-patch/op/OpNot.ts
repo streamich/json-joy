@@ -1,10 +1,10 @@
 import type {CompactNotOp, OPCODE_NOT} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
-import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationNot, PredicateOperation} from '../types';
+import type {AbstractPredicateOp} from './AbstractPredicateOp';
+import type {OperationNot, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
-import {Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
-import {AbstractOp} from './AbstractOp';
+import {type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -19,7 +19,7 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
   }
 
   public op() {
-    return 'not' as 'not';
+    return 'not' as const;
   }
 
   public code() {

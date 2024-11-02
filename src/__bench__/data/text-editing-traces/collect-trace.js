@@ -1,7 +1,7 @@
 const fs = require('fs');
 const zlib = require('zlib');
 
-const filename = `/Users/mini/vscodelogs/actions_14_05_2023_olcXlNJx.json`;
+const filename = '/Users/mini/vscodelogs/actions_14_05_2023_olcXlNJx.json';
 const targetDocFileName = '/Users/mini/dev/json-joy-blog/blog-post-1.md';
 const data = fs.readFileSync(filename, 'utf8');
 const lines = data.split('\n');

@@ -1,4 +1,4 @@
-import {QuillTrace} from '../../types';
+import type {QuillTrace} from '../../types';
 
 /**
  * Various block operations, changing block types.

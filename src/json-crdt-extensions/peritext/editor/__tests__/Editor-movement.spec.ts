@@ -1,11 +1,16 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Kit, runAlphabetKitTestSuite, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
+import {
+  type Kit,
+  runAlphabetKitTestSuite,
+  setupHelloWorldKit,
+  setupHelloWorldWithFewEditsKit,
+} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
 import {CursorAnchor} from '../../slice/constants';
-import {Editor} from '../Editor';
-import {TextRangeUnit} from '../types';
+import type {Editor} from '../Editor';
+import type {TextRangeUnit} from '../types';
 
 const runTestsWithAlphabetKit = (setup: () => Kit) => {
   describe('one character movements', () => {
@@ -71,6 +76,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const {peritext, editor} = setup();
       const iterator = editor.fwd(peritext.pointAbsStart());
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -84,6 +90,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const start = peritext.pointStart()!;
       const iterator = editor.fwd(start);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -97,6 +104,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const start = peritext.pointAbsStart()!;
       const iterator = editor.fwd(start);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -110,6 +118,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const start = peritext.pointStart()!;
       const iterator = editor.fwd(start);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -123,6 +132,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const start = peritext.pointAt(2);
       const iterator = editor.fwd(start);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -136,6 +146,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const start = peritext.pointAt(6);
       const iterator = editor.fwd(start);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -153,6 +164,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const iterator = editor.fwd(start);
       let str = '';
       const bools: boolean[] = [];
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -173,6 +185,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const {peritext, editor} = setup();
       const iterator = editor.bwd(peritext.pointAbsEnd());
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -186,6 +199,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const end = peritext.pointEnd()!;
       const iterator = editor.bwd(end);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -199,6 +213,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const end = peritext.pointAbsEnd()!;
       const iterator = editor.bwd(end);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -212,6 +227,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const end = peritext.pointEnd()!;
       const iterator = editor.bwd(end);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -225,6 +241,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const point = peritext.pointAt(2);
       const iterator = editor.bwd(point);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -238,6 +255,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const point = peritext.pointAt(2);
       const iterator = editor.bwd(point);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -251,6 +269,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const point = peritext.pointAt(6);
       const iterator = editor.bwd(point);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -264,6 +283,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const point = peritext.pointAt(6);
       const iterator = editor.bwd(point);
       let str = '';
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -281,6 +301,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       const iterator = editor.bwd(start);
       let str = '';
       const bools: boolean[] = [];
+      // biome-ignore lint: constant condition is expected
       while (1) {
         const res = iterator();
         if (!res) break;
@@ -676,6 +697,7 @@ const runParagraphTests = (setup: () => Kit) => {
       for (const u of Object.keys(units)) {
         const unit = u as TextRangeUnit;
         let point = peritext.pointAbsStart();
+        // biome-ignore lint: constant condition is expected
         while (1) {
           point = editor.skip(point, 1, unit);
           if (!point || point.isRelEnd() || point.isAbsEnd()) break;
@@ -702,6 +724,7 @@ const runParagraphTests = (setup: () => Kit) => {
       for (const u of Object.keys(units)) {
         const unit = u as TextRangeUnit;
         let point = peritext.pointAbsEnd();
+        // biome-ignore lint: constant condition is expected
         while (1) {
           point = editor.skip(point, -1, unit);
           if (!point || point.isRelStart() || point.isAbsStart()) break;

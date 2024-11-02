@@ -1,4 +1,4 @@
-import {Model, ObjApi} from '../../../../json-crdt/model';
+import {Model, type ObjApi} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';

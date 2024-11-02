@@ -2,7 +2,7 @@
 
 import * as Benchmark from 'benchmark';
 import {operationToOp} from '../codec/json';
-import {Operation} from '../types';
+import type {Operation} from '../types';
 import {applyOps} from '../applyPatch';
 import {apply, $apply} from '../codegen/apply';
 
@@ -26,16 +26,16 @@ const suite = new Benchmark.Suite();
 const applyCompiled = $apply(patch, {mutate: false});
 
 suite
-  .add(`json-patch/apply(patch, {}, message)`, () => {
+  .add('json-patch/apply(patch, {}, message)', () => {
     apply(patch, {mutate: false}, message);
   })
-  .add(`json-patch/$apply(patch, {})(message)`, () => {
+  .add('json-patch/$apply(patch, {})(message)', () => {
     $apply(patch, {mutate: false})(message);
   })
-  .add(`json-patch/applyOps`, () => {
+  .add('json-patch/applyOps', () => {
     applyOps(message, ops, false);
   })
-  .add(`json-patch/applyCompiled`, () => {
+  .add('json-patch/applyCompiled', () => {
     applyCompiled(message);
   })
   .on('cycle', (event: any) => {

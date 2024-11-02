@@ -6,7 +6,7 @@
  *     npx nodemon -q -x ts-node src/json-crdt/__demos__/type-safety.ts
  */
 
-import {Model, n} from '..';
+import {Model, type n} from '..';
 
 console.clear();
 

@@ -1,4 +1,4 @@
-import {CharPredicate} from './types';
+import type {CharPredicate} from './types';
 
 const LETTER_REGEX = /(\p{Letter}|\d)/u;
 const WHITESPACE_REGEX = /\s/;

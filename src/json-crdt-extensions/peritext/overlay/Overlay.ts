@@ -4,15 +4,15 @@ import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-fo
 import {first2, insert2, next2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
-import {Point} from '../rga/Point';
+import type {Point} from '../rga/Point';
 import {OverlayPoint} from './OverlayPoint';
 import {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
-import {compare, ITimestampStruct} from '../../../json-crdt-patch/clock';
+import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
-import {Range} from '../rga/Range';
-import {UndefEndIter, UndefIterator} from '../../../util/iterator';
+import type {Range} from '../rga/Range';
+import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
@@ -348,6 +348,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const sliceSet = this.slices;
     state = updateNum(state, slices.hash);
     if (changed) {
+      // biome-ignore lint: slices is not iterable
       slices.forEach((slice) => {
         let tuple: [start: OverlayPoint<T>, end: OverlayPoint<T>] | undefined = sliceSet.get(slice);
         if (tuple) {

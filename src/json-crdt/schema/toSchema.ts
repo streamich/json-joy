@@ -1,5 +1,5 @@
-import {JsonNode, ConNode, ValNode, ObjNode, VecNode, StrNode, BinNode, ArrNode} from '../nodes';
-import {NodeBuilder, s} from '../../json-crdt-patch';
+import {type JsonNode, ConNode, ValNode, ObjNode, VecNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {type NodeBuilder, s} from '../../json-crdt-patch';
 import type {JsonNodeToSchema} from './types';
 
 /**

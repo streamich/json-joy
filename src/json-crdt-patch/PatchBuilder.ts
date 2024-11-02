@@ -15,7 +15,7 @@ import {
   DelOp,
   NopOp,
 } from './operations';
-import {IClock, ITimestampStruct, ITimespanStruct, ts, Timestamp} from './clock';
+import {type IClock, type ITimestampStruct, type ITimespanStruct, ts, Timestamp} from './clock';
 import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';

@@ -142,8 +142,6 @@ export class OpTree {
   public drop: DropNode = new DropRoot();
   public register = new Map<number, Register>();
 
-  constructor() {}
-
   findPick(path: Path, pathLength: number): PickNode | undefined {
     let parent: PickNode | undefined = this.pick;
     for (let i = 0; i < pathLength; i++) {
@@ -250,6 +248,7 @@ export class OpTree {
     // Compose deletes.
     const d1: DropNode = this.drop;
     const d2: DropNode = other.drop;
+    // biome-ignore lint: using .forEach() is the fastest way to iterate over a Map
     other.register.forEach((register2) => {
       // Update pick path.
       if (register2.pick) {
@@ -392,6 +391,7 @@ export class OpTree {
 
   protected pushDropNode(drop: JsonOpDropComponent[], node: DropNode): void {
     if (node.regId >= 0) drop.push([node.regId, node.path.slice(0, node.pathLength)]);
+    // biome-ignore lint: using .forEach() is the fastest way to iterate over a Map
     node.children.forEach((child) => {
       this.pushDropNode(drop, child);
     });

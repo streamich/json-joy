@@ -1,6 +1,6 @@
 import {ExtensionId, ExtensionName} from '../constants';
 
-export const enum QuillConst {
+export enum QuillConst {
   EmbedChar = '\n',
   EmbedSliceType = 0,
 }

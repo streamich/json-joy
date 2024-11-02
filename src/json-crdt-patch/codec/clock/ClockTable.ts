@@ -1,6 +1,6 @@
-import {ITimestampStruct, IClockVector, Timestamp} from '../../clock';
-import {CrdtReader} from '../../util/binary/CrdtReader';
-import {CrdtWriter} from '../../util/binary/CrdtWriter';
+import {type ITimestampStruct, type IClockVector, Timestamp} from '../../clock';
+import type {CrdtReader} from '../../util/binary/CrdtReader';
+import type {CrdtWriter} from '../../util/binary/CrdtWriter';
 
 export class ClockTableEntry {
   constructor(
@@ -13,6 +13,7 @@ export class ClockTable {
   public static from(clock: IClockVector): ClockTable {
     const table = new ClockTable();
     table.push(new Timestamp(clock.sid, clock.time - 1));
+    // biome-ignore lint: using .forEach() on Map is the fastest way to iterate
     clock.peers.forEach((id) => table.push(id));
     return table;
   }
@@ -30,8 +31,8 @@ export class ClockTable {
 
   public parseField(field: `${string}_${string}`): ITimestampStruct {
     const underscoreIndex = field.indexOf('_');
-    const relativeSid = parseInt(field.slice(0, underscoreIndex), 36);
-    const time = parseInt(field.slice(underscoreIndex + 1), 36);
+    const relativeSid = Number.parseInt(field.slice(0, underscoreIndex), 36);
+    const time = Number.parseInt(field.slice(underscoreIndex + 1), 36);
     const clock = this.byIdx[relativeSid];
     return new Timestamp(clock.sid, time);
   }

@@ -1,9 +1,9 @@
 import {equal} from 'assert';
-import {ITimespanStruct, ITimestampStruct, ClockVector, printTs, ts} from '../../../../json-crdt-patch/clock';
+import {type ITimespanStruct, type ITimestampStruct, ClockVector, printTs, ts} from '../../../../json-crdt-patch/clock';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {randomSessionId} from '../../../model/util';
 import {StrNode} from '../StrNode';
-import {printTree, Printable} from 'tree-dump';
+import {printTree, type Printable} from 'tree-dump';
 
 const printOp = (op: Op) => {
   if ('content' in op) {

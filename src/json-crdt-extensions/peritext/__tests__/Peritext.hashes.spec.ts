@@ -1,6 +1,6 @@
 import {Model} from '../../../json-crdt/model';
 import {Peritext} from '../Peritext';
-import {Editor} from '../editor/Editor';
+import type {Editor} from '../editor/Editor';
 import {render} from './render';
 
 const setup = (insertNumbers = (editor: Editor) => editor.insert('Hello world!'), sid?: number) => {

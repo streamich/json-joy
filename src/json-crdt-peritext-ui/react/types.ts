@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import type {FocusViewProps} from './selection/FocusView';
 import type {CaretViewProps} from './selection/CaretView';
 import type {AnchorViewProps} from './selection/AnchorView';

@@ -1,8 +1,8 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next} from 'sonic-forest/lib/util';
-import {FanOutUnsubscribe} from 'thingies/lib/fanout';
+import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import {printTree} from 'tree-dump/lib/printTree';
-import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
+import {type ITimestampStruct, type Patch, compare} from '../../json-crdt-patch';
 import {Model} from '../model';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
@@ -141,11 +141,12 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
 
   public toString(tab?: string) {
     const patches: Patch[] = [];
+    // biome-ignore lint: patches are not iterable
     this.patches.forEach(({v}) => patches.push(v));
     return (
-      `log` +
+      'log' +
       printTree(tab, [
-        (tab) => `start` + printTree(tab, [(tab) => this.start().toString(tab)]),
+        (tab) => 'start' + printTree(tab, [(tab) => this.start().toString(tab)]),
         () => '',
         (tab) =>
           'history' +
@@ -154,7 +155,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
             patches.map((patch, i) => (tab) => `${i}: ${patch.toString(tab)}`),
           ),
         () => '',
-        (tab) => `end` + printTree(tab, [(tab) => this.end.toString(tab)]),
+        (tab) => 'end' + printTree(tab, [(tab) => this.end.toString(tab)]),
       ])
     );
   }

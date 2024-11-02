@@ -1,6 +1,6 @@
 import {QuillDeltaFuzzer} from './QuillDeltaFuzzer';
 import {Doc as YDoc} from 'yjs';
-import {QuillDeltaOp, QuillDeltaOpDelete} from '../types';
+import type {QuillDeltaOp, QuillDeltaOpDelete} from '../types';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {clone} from '@jsonjoy.com/util/lib/json-clone';
 

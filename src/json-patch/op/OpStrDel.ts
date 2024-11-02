@@ -1,7 +1,7 @@
 import type {CompactStrDelOp, OPCODE_STR_DEL} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationStrDel} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationStrDel} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -19,7 +19,7 @@ export class OpStrDel extends AbstractOp<'str_del'> {
   }
 
   public op() {
-    return 'str_del' as 'str_del';
+    return 'str_del' as const;
   }
 
   public code() {

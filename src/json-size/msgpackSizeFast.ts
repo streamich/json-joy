@@ -9,6 +9,7 @@ const arraySize = (arr: unknown[]): number => {
 
 const objectSize = (obj: Record<string, unknown>): number => {
   let size = 2;
+  // biome-ignore lint: object hasOwnProperty check is intentional, Object.hasOwn is too recent
   for (const key in obj) if (obj.hasOwnProperty(key)) size += 2 + key.length + msgpackSizeFast(obj[key]);
   return size;
 };

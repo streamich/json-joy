@@ -1,8 +1,8 @@
 /* tslint:disable no-console */
 
 import * as Benchmark from 'benchmark';
-import {apply, validate, StringOp} from '../types/ot-string';
-import {validate as validate2, apply as apply2, StringOp as StringOp2} from '../types/ot-string-irreversible';
+import {apply, validate, type StringOp} from '../types/ot-string';
+import {validate as validate2, apply as apply2, type StringOp as StringOp2} from '../types/ot-string-irreversible';
 const {type} = require('ot-text');
 const {type: type2} = require('ot-text-unicode');
 const {delta: d} = require('./util');
@@ -28,25 +28,25 @@ console.log();
 const suite = new Benchmark.Suite();
 
 suite
-  .add(`json-joy/json-ot ot-string`, () => {
+  .add('json-joy/json-ot ot-string', () => {
     validate(op1);
     apply(str, op1);
   })
-  .add(`json-joy/json-ot ot-string (reversible)`, () => {
+  .add('json-joy/json-ot ot-string (reversible)', () => {
     validate(op2);
     apply(str, op2);
   })
-  .add(`json-joy/json-ot ot-string-irreversible`, () => {
+  .add('json-joy/json-ot ot-string-irreversible', () => {
     validate2(op2 as any);
     apply2(str, op2 as any);
   })
-  .add(`ottypes/ot-text`, () => {
+  .add('ottypes/ot-text', () => {
     type.apply(str, op3);
   })
-  .add(`ottypes/ot-text-unicode`, () => {
+  .add('ottypes/ot-text-unicode', () => {
     type2.apply(str, op3);
   })
-  .add(`quilljs/delta`, () => {
+  .add('quilljs/delta', () => {
     const delta = d.create(str);
     d.apply(delta, d.deserialize(deltaOp));
   })

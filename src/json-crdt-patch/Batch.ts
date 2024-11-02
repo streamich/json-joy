@@ -1,5 +1,5 @@
-import {ITimestampStruct, printTs} from './clock';
-import {Patch} from './Patch';
+import {type ITimestampStruct, printTs} from './clock';
+import type {Patch} from './Patch';
 
 export class Batch {
   constructor(public patches: Patch[]) {}

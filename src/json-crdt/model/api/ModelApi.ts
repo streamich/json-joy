@@ -1,9 +1,9 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
-import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
-import {Patch} from '../../../json-crdt-patch/Patch';
+import {type ApiPath, ArrApi, BinApi, ConApi, type NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
+import type {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {SyncStore} from '../../../util/events/sync-store';
+import type {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Model} from '../Model';
@@ -50,9 +50,13 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   /** Emitted after transaction completes. */
   public readonly onTransaction = new FanOut<void>();
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
-  public readonly onChange = new MergeFanOut<number | Patch | void>([this.onReset, this.onPatch, this.onLocalChange]);
+  public readonly onChange = new MergeFanOut<number | Patch | undefined>([
+    this.onReset,
+    this.onPatch,
+    this.onLocalChange,
+  ]);
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
-  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | void>(this.onChange);
+  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | undefined>(this.onChange);
   /** Emitted when the `model.api` builder change buffer is flushed. */
   public readonly onFlush = new FanOut<Patch>();
 

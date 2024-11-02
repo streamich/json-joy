@@ -1,7 +1,7 @@
 import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
-import {ts, ClockVector, ServerClockVector, tss, ITimestampStruct} from '../../clock';
+import {ts, ClockVector, ServerClockVector, tss, type ITimestampStruct} from '../../clock';
 import {SESSION} from '../../constants';
-import {Patch} from '../../Patch';
+import type {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import type * as types from './types';
 

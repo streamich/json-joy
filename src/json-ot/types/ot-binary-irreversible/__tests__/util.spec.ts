@@ -1,5 +1,5 @@
 import {normalize, append} from '../util';
-import {BinaryOp} from '../types';
+import type {BinaryOp} from '../types';
 
 const b = (...octets: number[]) => new Uint8Array(octets);
 

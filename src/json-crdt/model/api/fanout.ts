@@ -1,4 +1,4 @@
-import {FanOut, FanOutUnsubscribe, FanOutListener} from 'thingies/lib/fanout';
+import {FanOut, type FanOutUnsubscribe, type FanOutListener} from 'thingies/lib/fanout';
 
 /**
  * Merges multiple fanouts into a single fanout. The merged fanout emits the
@@ -17,7 +17,7 @@ export class MergeFanOut<D> extends FanOut<D> {
     return () => {
       unsub();
       if (!this.listeners.size) {
-        this.unsubs.forEach((unsub) => unsub());
+        for (const unsub of this.unsubs) unsub();
         this.unsubs = [];
       }
     };

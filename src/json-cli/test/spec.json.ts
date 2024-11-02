@@ -1,4 +1,4 @@
-import {TestCase} from './types';
+import type {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -168,7 +168,7 @@ const testCases: TestCase[] = [
     },
     patch: [
       // @ts-ignore
-      {op: 'add', path: '/baz', value: 'qux', op: 'remove'},
+      {path: '/baz', value: 'qux', op: 'remove'},
     ],
     error: "operation has two 'op' members",
     disabled: true,

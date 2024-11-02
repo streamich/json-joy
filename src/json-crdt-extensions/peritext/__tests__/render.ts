@@ -1,5 +1,5 @@
-import {Block} from '../block/Block';
-import {Inline} from '../block/Inline';
+import type {Block} from '../block/Block';
+import type {Inline} from '../block/Inline';
 import {LeafBlock} from '../block/LeafBlock';
 import {stringify} from '../../../json-text/stringify';
 

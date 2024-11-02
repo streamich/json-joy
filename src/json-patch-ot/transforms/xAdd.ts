@@ -1,6 +1,6 @@
-import {OpAdd, Op} from '../../json-patch/op';
+import type {OpAdd, Op} from '../../json-patch/op';
 import {isRoot, isValidIndex, isChild, formatJsonPointer} from '@jsonjoy.com/json-pointer';
-import {Operation} from '../../json-patch/types';
+import type {Operation} from '../../json-patch/types';
 import {bumpArrayPath} from './util';
 import {operationToOp} from '../../json-patch/codec/json';
 

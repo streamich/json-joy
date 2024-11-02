@@ -1,5 +1,5 @@
-import {Patch} from '../../json-crdt-patch';
-import {Model} from '../model';
+import type {Patch} from '../../json-crdt-patch';
+import type {Model} from '../model';
 
 /**
  * Terminology:

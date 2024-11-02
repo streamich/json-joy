@@ -1,9 +1,9 @@
 import type {CompactTestStringLenOp, OPCODE_TEST_STRING_LEN} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationTestStringLen} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationTestStringLen} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -19,7 +19,7 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
   }
 
   public op() {
-    return 'test_string_len' as 'test_string_len';
+    return 'test_string_len' as const;
   }
 
   public code() {

@@ -76,11 +76,10 @@
     "lib/"
   ],
   "scripts": {
-    "prettier": "npx prettier@3.2.5 --write .",
-    "prettier:check": "npx prettier@3.2.5 --check .",
-    "lint": "yarn tslint",
-    "lint:fix": "yarn tslint --fix",
-    "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",
+    "format": "biome format ./src",
+    "format:fix": "biome format --write ./src",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --apply ./src",
     "clean": "npx rimraf@5.0.5 lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log src/**/__bench__/node_modules src/**/__bench__/yarn-error.log",
     "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\"",
@@ -137,6 +136,7 @@
     "tree-dump": "^1.0.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/benchmark": "^2.1.5",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.11",
@@ -178,16 +178,6 @@
       ".*/node_modules/.*"
     ],
     "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.ts$"
-  },
-  "prettier": {
-    "arrowParens": "always",
-    "printWidth": 120,
-    "tabWidth": 2,
-    "useTabs": false,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": false
   },
   "config": {
     "commitizen": {

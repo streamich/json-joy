@@ -1,7 +1,7 @@
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {append, normalize} from '../util';
-import {BinaryOp} from '../types';
+import type {BinaryOp} from '../types';
 
 export class BinaryOtFuzzer extends Fuzzer {
   genBinary(): Uint8Array {

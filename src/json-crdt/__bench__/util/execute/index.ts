@@ -17,11 +17,11 @@ export const runTraceWithEditor = (
 ) => {
   const trace = traces.get(traceName);
   const editorFactory = editors[editorName];
-  let instance, view;
+  let instance: any, view: any;
   console.log('----------------------------------------------------------------------------');
   console.log(editorFactory.name);
   console.log('----------------------------------------------------------------------------');
-  let best = Infinity;
+  let best = Number.POSITIVE_INFINITY;
   let worst = 0;
   const measurements = [];
   for (let i = 0; i < iterations; i++) {

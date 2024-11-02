@@ -1,6 +1,10 @@
 import type {FileModelEncoding} from './constants';
 
-export type LogMetadata = [map: {}, modelFormat: FileModelEncoding];
+export type LogMetadata = [
+  // biome-ignore lint: allow brackets
+  map: {},
+  modelFormat: FileModelEncoding,
+];
 
 export type LogComponents = [
   view: unknown | null,

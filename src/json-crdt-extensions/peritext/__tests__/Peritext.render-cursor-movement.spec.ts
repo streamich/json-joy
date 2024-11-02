@@ -1,7 +1,7 @@
 import {Anchor} from '../rga/constants';
 import {render} from './render';
 import {
-  Kit,
+  type Kit,
   setupAlphabetChunkSplitKit,
   setupAlphabetKit,
   setupAlphabetWithDeletesKit,

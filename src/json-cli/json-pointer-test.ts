@@ -12,7 +12,7 @@ if (!bin) {
 }
 
 console.log('');
-console.log(`Running JSON Pointer tests.`);
+console.log('Running JSON Pointer tests.');
 console.log('');
 
 let cntCorrect = 0;

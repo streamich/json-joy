@@ -38,7 +38,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build:all
       - run: yarn lint
-      - run: yarn prettier:check
+      - run: yarn format
       - run: yarn test:cli:pointer
       - run: yarn test:cli:patch
       - run: yarn test:cli:pack

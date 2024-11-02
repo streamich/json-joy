@@ -1,7 +1,7 @@
 import {ConNode} from '../const/ConNode';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from 'tree-dump/lib/printTree';
-import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
+import {compare, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';

@@ -1,4 +1,4 @@
-import {QuillTrace} from '../../types';
+import type {QuillTrace} from '../../types';
 
 export const fuzz3QuillTrace: QuillTrace = {
   contents: {

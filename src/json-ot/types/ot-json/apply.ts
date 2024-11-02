@@ -1,5 +1,5 @@
 import {find, isArrayReference, isObjectReference} from '@jsonjoy.com/json-pointer';
-import {JsonOp} from './types';
+import type {JsonOp} from './types';
 import {evaluate as evalExpression} from '@jsonjoy.com/json-expression/lib/evaluate';
 import {comparePath} from './util';
 import {EDIT_TYPE} from './constants';
@@ -62,7 +62,7 @@ export const apply = (doc: unknown, op: JsonOp): unknown => {
   }
   for (const [type, path, operation] of edit) {
     const {val, obj, key} = find(doc, path);
-    let newVal;
+    let newVal: unknown;
     switch (type) {
       case EDIT_TYPE.OT_STRING: {
         if (typeof val !== 'string') throw new Error('NOT_STR');

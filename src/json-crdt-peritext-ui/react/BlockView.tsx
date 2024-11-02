@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
-import {Block} from '../../json-crdt-extensions/peritext/block/Block';
+import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
 import {usePeritext} from './context';

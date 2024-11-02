@@ -1,4 +1,4 @@
-import {Path, toPath} from '@jsonjoy.com/json-pointer';
+import {type Path, toPath} from '@jsonjoy.com/json-pointer';
 import {VecNode, ObjNode, ArrNode} from '../../nodes';
 import type {JsonNode} from '../../nodes';
 

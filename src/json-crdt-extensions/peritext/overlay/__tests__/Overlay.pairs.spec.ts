@@ -1,6 +1,6 @@
 import {next} from 'sonic-forest/lib/util';
 import {
-  Kit,
+  type Kit,
   setupNumbersKit,
   setupNumbersWithMultipleChunksAndDeletesKit,
   setupNumbersWithRgaSplitKit,

@@ -1,8 +1,8 @@
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
-import {interval, ITimestampStruct, Timespan, ClockVector, ServerClockVector, ts} from '../../clock';
+import {interval, type ITimestampStruct, Timespan, ClockVector, ServerClockVector, ts} from '../../clock';
 import {SESSION} from '../../constants';
-import {Patch} from '../../Patch';
+import type {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 
 export class PatchFuzzer extends Fuzzer {

@@ -1,6 +1,6 @@
 import {QuillConst} from './constants';
-import {PathStep} from '@jsonjoy.com/json-pointer';
-import {QuillDeltaNode} from './QuillDeltaNode';
+import type {PathStep} from '@jsonjoy.com/json-pointer';
+import type {QuillDeltaNode} from './QuillDeltaNode';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {konst} from '../../json-crdt-patch/builder/Konst';
 import {SliceBehavior} from '../peritext/slice/constants';
@@ -43,6 +43,7 @@ const rewriteAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | und
   const relevantOverlappingButNotContained = new Set<PathStep>();
   if (length) {
     const savedSlices = txt.savedSlices;
+    // biome-ignore lint: slices is not iterable
     slices.forEach((slice) => {
       if (slice instanceof PersistedSlice) {
         const isContained = range.contains(slice);

@@ -1,7 +1,7 @@
 import type {CompactFlipOp, OPCODE_FLIP} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationFlip} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationFlip} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -9,12 +9,8 @@ import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
  * @category JSON Patch Extended
  */
 export class OpFlip extends AbstractOp<'flip'> {
-  constructor(path: Path) {
-    super(path);
-  }
-
   public op() {
-    return 'flip' as 'flip';
+    return 'flip' as const;
   }
 
   public code() {

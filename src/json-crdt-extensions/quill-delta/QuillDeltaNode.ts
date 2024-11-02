@@ -1,7 +1,7 @@
 import {isEmpty} from '@jsonjoy.com/util/lib/isEmpty';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {StrNode} from '../../json-crdt/nodes/str/StrNode';
-import {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
+import type {StrNode} from '../../json-crdt/nodes/str/StrNode';
+import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 import {Peritext} from '../peritext';
 import {ExtensionId} from '../constants';
 import {MNEMONIC, QuillConst} from './constants';

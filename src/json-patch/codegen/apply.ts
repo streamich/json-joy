@@ -1,11 +1,11 @@
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import {Operation} from '../types';
+import type {Operation} from '../types';
 import {operationToOp} from '../codec/json';
 import {AbstractPredicateOp} from '../op';
-import {ApplyPatchOptions} from '../applyPatch/types';
+import type {ApplyPatchOptions} from '../applyPatch/types';
 import type {JsonPatchOptions} from '..';
 import type {ApplyFn} from './types';
-import {compile, JavaScriptLinked, JavaScript} from '@jsonjoy.com/util/lib/codegen';
+import {compile, type JavaScriptLinked, type JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {codegenOp} from './codegenOp';
 
 export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptions, doc: unknown): unknown => {
@@ -62,7 +62,7 @@ export const $$apply = (
   const js = /* js */ `
 (function(${depNames.join(',')}) {
   return function(doc){
-    ${needsToClone ? /* js */ `doc = clone(doc);` : ''}
+    ${needsToClone ? /* js */ 'doc = clone(doc);' : ''}
     return ${resultExpression};
   };
 })`;

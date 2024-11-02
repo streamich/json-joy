@@ -1,5 +1,5 @@
 import {Block} from './Block';
-import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
+import type {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {commonLength} from '../util/commonLength';
 import {printTree} from 'tree-dump/lib/printTree';
 import {LeafBlock} from './LeafBlock';

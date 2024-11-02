@@ -1,4 +1,4 @@
-import {Model} from '../../../../model';
+import type {Model} from '../../../../model';
 import {runCodecAllTypesSmokeTests} from './runCodecAllTypesSmokeTests';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';

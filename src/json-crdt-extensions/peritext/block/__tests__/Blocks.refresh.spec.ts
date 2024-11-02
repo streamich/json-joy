@@ -1,5 +1,5 @@
 import {
-  Kit,
+  type Kit,
   setupAlphabetChunkSplitKit,
   setupAlphabetKit,
   setupAlphabetWithDeletesKit,

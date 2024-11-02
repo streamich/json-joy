@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {find} from './find';
-import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
-import {Path} from '@jsonjoy.com/json-pointer';
+import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
@@ -14,7 +14,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
 
-export type ApiPath = string | number | Path | void;
+export type ApiPath = string | number | Path | undefined;
 
 /**
  * A generic local changes API for a JSON CRDT node.

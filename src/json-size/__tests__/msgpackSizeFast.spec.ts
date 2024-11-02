@@ -22,7 +22,7 @@ test('computes size complex object', () => {
   const embedded = new JsonPackValue(Buffer.from([1, 2]));
   const extension = new JsonPackExtension(445, new Uint8Array([1, 2, 3]));
 
-  // prettier-ignore
+  // biome-ignore format: keep indentation
   const json = {                            // 2
     a: 1,                                   // 2 + 1 + 9
     b: true,                                // 2 + 1 + 1
@@ -53,7 +53,7 @@ test('computes size complex object', () => {
   };
   const size = msgpackSizeFast(json);
 
-  // prettier-ignore
+  // biome-ignore format: keep groups of additions
   expect(size).toBe(
     2 +
     2 + 1 + 9 +

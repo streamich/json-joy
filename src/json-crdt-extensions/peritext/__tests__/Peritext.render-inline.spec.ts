@@ -1,6 +1,6 @@
 import {render} from './render';
 import {
-  Kit,
+  type Kit,
   setupNumbersKit,
   setupNumbersWithMultipleChunksAndDeletesKit,
   setupNumbersWithRgaSplitKit,

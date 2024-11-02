@@ -1,21 +1,17 @@
 import type {CompactDefinedOp, OPCODE_DEFINED} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationDefined} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationDefined} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Predicate
  */
 export class OpDefined extends AbstractPredicateOp<'defined'> {
-  constructor(path: Path) {
-    super(path);
-  }
-
   public op() {
-    return 'defined' as 'defined';
+    return 'defined' as const;
   }
 
   public code() {

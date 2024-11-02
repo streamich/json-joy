@@ -1,9 +1,10 @@
 import * as nodes from '../../../nodes';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {ITimestampStruct, IClockVector, Timestamp} from '../../../../json-crdt-patch/clock';
-import {Model} from '../../../model';
+import {type ITimestampStruct, type IClockVector, Timestamp} from '../../../../json-crdt-patch/clock';
+import type {Model} from '../../../model';
 import type * as types from './types';
+import type {Chunk} from '../../../nodes/rga';
 
 export class Encoder {
   protected model!: Model;
@@ -74,7 +75,7 @@ export class Encoder {
   public cArr(obj: nodes.ArrNode): types.JsonCrdtVerboseArr {
     const chunks: (types.JsonCrdtVerboseArrChunk | types.JsonCrdtVerboseTombstone)[] = [];
     const iterator = obj.iterator();
-    let chunk;
+    let chunk: Chunk<ITimestampStruct[]> | undefined;
     while ((chunk = iterator())) chunks.push(this.cArrChunk(chunk));
     return {
       type: 'arr',
@@ -102,7 +103,7 @@ export class Encoder {
   public cStr(obj: nodes.StrNode): types.JsonCrdtVerboseStr {
     const chunks: (types.JsonCrdtVerboseStrChunk | types.JsonCrdtVerboseTombstone)[] = [];
     const iterator = obj.iterator();
-    let chunk;
+    let chunk: ReturnType<typeof iterator>;
     while ((chunk = iterator())) chunks.push(this.cStrChunk(chunk as nodes.StrChunk));
     return {
       type: 'str',
@@ -129,7 +130,7 @@ export class Encoder {
   public cBin(obj: nodes.BinNode): types.JsonCrdtVerboseBin {
     const chunks: (types.JsonCrdtVerboseBinChunk | types.JsonCrdtVerboseTombstone)[] = [];
     const iterator = obj.iterator();
-    let chunk;
+    let chunk: ReturnType<typeof iterator>;
     while ((chunk = iterator())) chunks.push(this.cBinChunk(chunk as nodes.BinChunk));
     return {
       type: 'bin',

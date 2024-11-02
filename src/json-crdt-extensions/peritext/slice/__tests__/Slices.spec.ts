@@ -1,8 +1,8 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Range} from '../../rga/Range';
+import type {Range} from '../../rga/Range';
 import {Anchor} from '../../rga/constants';
-import {PersistedSlice} from '../PersistedSlice';
+import type {PersistedSlice} from '../PersistedSlice';
 import {SliceBehavior} from '../constants';
 import {setup} from './setup';
 

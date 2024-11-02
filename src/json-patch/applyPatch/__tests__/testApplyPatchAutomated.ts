@@ -2,7 +2,7 @@ import tests_json from '../../__tests__/tests.json';
 import spec_json from '../../__tests__/spec.json';
 import {validateOperation} from '../../validate';
 import {clone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import {ApplyPatch} from '../types';
+import type {ApplyPatch} from '../types';
 
 const testSuites = [
   {
@@ -16,11 +16,11 @@ const testSuites = [
 ];
 
 export const testApplyPatchAutomated = (applyPatch: ApplyPatch) => {
-  describe(`applyPatch [automated]`, () => {
-    testSuites.forEach((s) => {
+  describe('applyPatch [automated]', () => {
+    for (const s of testSuites) {
       const suite = clone(s) as any;
       describe(suite.name, () => {
-        suite.tests.forEach((test: any) => {
+        for (const test of suite.tests) {
           if (test.disabled) return;
           const testName = test.comment || test.error || JSON.stringify(test.patch);
           if (test.expected) {
@@ -37,8 +37,8 @@ export const testApplyPatchAutomated = (applyPatch: ApplyPatch) => {
               }).toThrow();
             });
           } else throw new Error('invalid test case');
-        });
+        }
       });
-    });
+    }
   });
 };

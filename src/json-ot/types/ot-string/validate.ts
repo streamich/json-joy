@@ -1,11 +1,11 @@
 import type {StringOp, StringOpComponent} from './types';
 
-export const enum VALIDATE_RESULT {
+export enum VALIDATE_RESULT {
   SUCCESS = 0,
-  INVALID_OP,
-  INVALID_COMPONENT,
-  ADJACENT_SAME_TYPE,
-  NO_TRAILING_RETAIN,
+  INVALID_OP = 1,
+  INVALID_COMPONENT = 2,
+  ADJACENT_SAME_TYPE = 3,
+  NO_TRAILING_RETAIN = 4,
 }
 
 export const validate = (op: StringOp): VALIDATE_RESULT => {

@@ -210,11 +210,13 @@ export class InputController implements UiLifeCycles {
         break;
       }
       case 'Home':
-      case 'End':
+      case 'End': {
         event.preventDefault();
         const direction = key === 'End' ? 1 : -1;
         const edge = event.shiftKey ? 'focus' : 'both';
-        return this.et.move(direction, 'line', edge);
+        this.et.move(direction, 'line', edge);
+        return;
+      }
       case 'a':
         if (event.metaKey || event.ctrlKey) {
           event.preventDefault();

@@ -1,8 +1,8 @@
-export const enum Char {
+export enum Char {
   ZeroLengthSpace = '\uFEFF',
 }
 
-export const enum ElementAttr {
+export enum ElementAttr {
   InlineOffset = '__jsonjoy.com',
 }
 

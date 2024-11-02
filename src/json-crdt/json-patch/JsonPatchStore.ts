@@ -1,5 +1,5 @@
-import {SyncStore} from '../../util/events/sync-store';
-import {JsonNodeApi} from '../model/api/types';
+import type {SyncStore} from '../../util/events/sync-store';
+import type {JsonNodeApi} from '../model/api/types';
 import {JsonPatch} from './JsonPatch';
 import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import type {Path} from '@jsonjoy.com/json-pointer/lib/types';

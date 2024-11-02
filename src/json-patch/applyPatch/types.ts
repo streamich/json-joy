@@ -1,4 +1,4 @@
-import {JsonPatchOptions, Operation} from '../types';
+import type {JsonPatchOptions, Operation} from '../types';
 
 export interface ApplyPatchOptions extends JsonPatchOptions {
   /**

@@ -9,7 +9,7 @@ describe('automated', () => {
     const suite = testSuites[i];
     if (!suite.isJsonPatchSpec) continue;
     describe(suite.name, () => {
-      suite.tests.forEach((test: any) => {
+      for (const test of suite.tests) {
         if (test.skipInJsonOt) return;
         if (test.disabled) return;
         const testName = test.comment || test.error || JSON.stringify(test.patch);
@@ -24,13 +24,13 @@ describe('automated', () => {
         } else if (typeof test.error === 'string') {
           (test.only ? it.only : it)(testName, () => {
             expect(() => {
-              test.patch.forEach(validateOperation);
+              test.patch.forEach(validateOperation as any);
               const op = toJsonOp(test.patch);
               apply(test.doc, op);
             }).toThrowError();
           });
         } else throw new Error('invalid test case');
-      });
+      }
     });
   }
 });

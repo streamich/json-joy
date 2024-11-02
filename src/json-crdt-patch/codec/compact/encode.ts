@@ -1,6 +1,6 @@
 import * as operations from '../../operations';
-import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
-import {Patch} from '../../Patch';
+import {type ITimespanStruct, type ITimestampStruct, Timestamp} from '../../clock';
+import type {Patch} from '../../Patch';
 import {JsonCrdtPatchOpcode, SESSION} from '../../constants';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type * as types from './types';

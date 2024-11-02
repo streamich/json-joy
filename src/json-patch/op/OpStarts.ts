@@ -1,9 +1,9 @@
 import type {CompactStartsOp, OPCODE_STARTS} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationStarts} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationStarts} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -20,7 +20,7 @@ export class OpStarts extends AbstractPredicateOp<'starts'> {
   }
 
   public op() {
-    return 'starts' as 'starts';
+    return 'starts' as const;
   }
 
   public code() {

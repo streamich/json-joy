@@ -1,4 +1,4 @@
-import {QuillTrace} from '../../types';
+import type {QuillTrace} from '../../types';
 
 export const fuzz6QuillTrace: QuillTrace = {
   contents: {ops: [{attributes: {italic: true}, insert: 'AA'}, {insert: 'ABBBB'}, {insert: {link: 'C'}}]},

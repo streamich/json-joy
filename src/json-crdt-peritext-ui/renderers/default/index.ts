@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {RendererMap} from '../../react/types';
+import type {RendererMap} from '../../react/types';
 import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';

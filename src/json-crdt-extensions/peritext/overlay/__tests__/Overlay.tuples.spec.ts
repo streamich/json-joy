@@ -1,5 +1,5 @@
 import {next} from 'sonic-forest/lib/util';
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
+import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 import {OverlayPoint} from '../OverlayPoint';

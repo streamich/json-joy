@@ -75,7 +75,7 @@ export const diffAttributes = (
   for (let i = 0; i < oldLength; i++) {
     const key = oldKeys[i];
     // tslint:disable-next-line:triple-equals
-    if (newAttributes[key] != undefined) continue;
+    if (newAttributes[key] !== undefined) continue;
     diff[key] = null;
   }
   if (isEmpty(diff)) return undefined;

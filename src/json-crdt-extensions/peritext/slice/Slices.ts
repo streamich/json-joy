@@ -2,7 +2,7 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {printTree} from 'tree-dump/lib/printTree';
 import {PersistedSlice} from './PersistedSlice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
-import {Range} from '../rga/Range';
+import type {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
@@ -35,7 +35,9 @@ export class Slices<T = string> implements Stateful, Printable {
 
   public ins<
     S extends PersistedSlice<T>,
-    K extends new (...args: ConstructorParameters<typeof PersistedSlice<T>>) => S,
+    K extends new (
+      ...args: ConstructorParameters<typeof PersistedSlice<T>>
+    ) => S,
   >(
     range: Range<T>,
     behavior: SliceBehavior,
@@ -170,6 +172,7 @@ export class Slices<T = string> implements Stateful, Printable {
   }
 
   public forEach(callback: (item: Slice<T>) => void): void {
+    // biome-ignore lint: list is not iterable
     this.list.forEach((node) => callback(node.v));
   }
 
@@ -193,6 +196,7 @@ export class Slices<T = string> implements Stateful, Printable {
       }
     }
     let hash: number = topologyHash;
+    // biome-ignore lint: slices is not iterable
     this.list.forEach(({v: item}) => {
       item.refresh();
       hash = updateNum(hash, item.hash);

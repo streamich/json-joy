@@ -2,15 +2,15 @@ import * as operations from '../../json-crdt-patch/operations';
 import * as clock from '../../json-crdt-patch/clock';
 import {ConNode} from '../nodes/const/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
-import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
-import {SchemaToJsonNode} from '../schema/types';
+import type {SchemaToJsonNode} from '../schema/types';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
+import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {NodeBuilder} from '../../json-crdt-patch';
@@ -519,6 +519,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       api.flush();
       api.builder.clock = this.clock;
     }
+    // biome-ignore lint: index is not iterable
     index.forEach(({v: node}) => {
       const api = node.api as NodeApi | undefined;
       if (!api) return;
@@ -607,6 +608,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
         nl,
         (tab) => {
           const nodes: JsonNode[] = [];
+          // biome-ignore lint: index is not iterable
           this.index.forEach((item) => nodes.push(item.v));
           return (
             `index (${nodes.length} nodes)` +

@@ -1,5 +1,5 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import {OverlayPoint} from '../overlay/OverlayPoint';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
 import {SliceBehavior, SliceTypes} from '../slice/constants';
 import {Range} from '../rga/Range';

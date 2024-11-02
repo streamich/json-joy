@@ -1,6 +1,6 @@
 import {validate, normalize, apply, compose, transform} from '..';
 import {append} from '../util';
-import {StringOp} from '../types';
+import type {StringOp} from '../types';
 
 describe('validate()', () => {
   test('returns 0 on valid op', () => {

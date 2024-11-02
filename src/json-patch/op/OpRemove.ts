@@ -1,7 +1,7 @@
 import type {CompactRemoveOp, OPCODE_REMOVE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationRemove} from '../types';
-import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationRemove} from '../types';
+import {find, isObjectReference, isArrayReference, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -17,7 +17,7 @@ export class OpRemove extends AbstractOp<'remove'> {
   }
 
   public op() {
-    return 'remove' as 'remove';
+    return 'remove' as const;
   }
 
   public code() {

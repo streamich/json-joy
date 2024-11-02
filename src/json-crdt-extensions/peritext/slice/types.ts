@@ -48,24 +48,20 @@ export type SliceSchema = nodes.vec<
      * as anchor {@link Anchor} points of the x1 and x2 points.
      */
     header: nodes.con<number>,
-
     /**
      * ID of the start {@link Point} of the slice.
      */
     x1: nodes.con<ITimestampStruct>,
-
     /**
      * ID of the end {@link Point} of the slice, if 0 then it is equal to x1.
      */
     x2: nodes.con<ITimestampStruct | 0>,
-
     /**
      * App specific type of the slice. For slices with "split" behavior, this
      * is a path of block nesting. For other slices, it specifies inline formatting, such
      * as bold, italic, etc.; the value has to be a primitive number or a string.
      */
     type: nodes.con<SliceType>,
-
     /**
      * Reference to additional metadata about the slice, usually an object. If
      * data is not set, it will default to `1`. For "erase" slice behavior, data
@@ -74,7 +70,8 @@ export type SliceSchema = nodes.vec<
      * In reality this `vec` term can be of any type, it can even be missing
      * entirely. It is typed here as a placeholder for the actual data type.
      */
-    data: nodes.obj<{}>,
+    data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
+    {}>,
   ]
 >;
 

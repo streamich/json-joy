@@ -1,7 +1,7 @@
 import type {CompactCopyOp, OPCODE_COPY} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationCopy} from '../types';
-import {Path, find, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationCopy} from '../types';
+import {type Path, find, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OpAdd} from './OpAdd';
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import {OPCODE} from '../constants';
@@ -19,7 +19,7 @@ export class OpCopy extends AbstractOp<'copy'> {
   }
 
   public op() {
-    return 'copy' as 'copy';
+    return 'copy' as const;
   }
 
   public code() {

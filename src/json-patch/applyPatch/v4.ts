@@ -1,6 +1,6 @@
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import {Operation} from '../types';
-import {Op} from '../op';
+import type {Operation} from '../types';
+import type {Op} from '../op';
 import {operationToOp} from '../codec/json';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
 

@@ -1,4 +1,4 @@
-import {Op} from '../json-patch/op';
+import type {Op} from '../json-patch/op';
 import {xforms} from './transforms';
 
 /**

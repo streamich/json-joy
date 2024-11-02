@@ -1,4 +1,4 @@
-import {StringOp} from './types';
+import type {StringOp} from './types';
 import {append, chunk, componentLength, trim} from './util';
 
 /**
@@ -46,7 +46,7 @@ export const transform = (op1: StringOp, op2: StringOp, leftInsertFirst: boolean
       case 'string': {
         if (leftInsertFirst) {
           if (typeof op1[i1] === 'string') {
-            const comp = chunk(op1[i1++], off1, Infinity);
+            const comp = chunk(op1[i1++], off1, Number.POSITIVE_INFINITY);
             off1 = 0;
             append(op3, comp);
           }
@@ -79,7 +79,7 @@ export const transform = (op1: StringOp, op2: StringOp, leftInsertFirst: boolean
       }
     }
   }
-  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Infinity));
+  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Number.POSITIVE_INFINITY));
   for (; i1 < len1; i1++) append(op3, op1[i1]);
   trim(op3);
   return op3;

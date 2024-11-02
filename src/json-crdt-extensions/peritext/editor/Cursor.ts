@@ -1,5 +1,5 @@
 import {printTs, tick} from '../../../json-crdt-patch';
-import {Point} from '../rga/Point';
+import type {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
 

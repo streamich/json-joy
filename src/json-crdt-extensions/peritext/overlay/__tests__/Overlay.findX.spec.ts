@@ -1,4 +1,4 @@
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
+import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Cursor} from '../../editor/Cursor';
 import {OverlayRefSliceEnd} from '../refs';
 

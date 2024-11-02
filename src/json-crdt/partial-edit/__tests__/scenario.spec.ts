@@ -2,7 +2,7 @@ import {PartialEditFactory} from '../PartialEditFactory';
 import {Encoder} from '../../codec/indexed/binary/Encoder';
 import {Decoder} from '../../codec/indexed/binary/Decoder';
 import {Model} from '../../model';
-import {FieldName, IndexedNodeFields} from '../../codec/indexed/binary/types';
+import type {FieldName, IndexedNodeFields} from '../../codec/indexed/binary/types';
 
 const encoder = new Encoder();
 const decoder = new Decoder();

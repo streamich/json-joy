@@ -1,7 +1,7 @@
 import {ClockTable} from '../../json-crdt-patch/codec/clock/ClockTable';
-import {Decoder} from '../codec/indexed/binary/Decoder';
-import {Encoder} from '../codec/indexed/binary/Encoder';
-import {IndexedFields} from '../codec/indexed/binary/types';
+import type {Decoder} from '../codec/indexed/binary/Decoder';
+import type {Encoder} from '../codec/indexed/binary/Encoder';
+import type {IndexedFields} from '../codec/indexed/binary/types';
 import {PartialEdit} from './PartialEdit';
 
 export class PartialEditFactory {

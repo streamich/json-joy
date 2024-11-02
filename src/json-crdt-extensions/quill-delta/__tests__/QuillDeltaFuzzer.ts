@@ -2,7 +2,7 @@ import Delta from 'quill-delta';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {isEmpty} from '@jsonjoy.com/util/lib/isEmpty';
-import {QuillDeltaAttributes, QuillDeltaOp, QuillDeltaOpInsert, QuillDeltaOpRetain, QuillTrace} from '../types';
+import type {QuillDeltaAttributes, QuillDeltaOp, QuillDeltaOpInsert, QuillDeltaOpRetain, QuillTrace} from '../types';
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {removeErasures} from '../util';
 

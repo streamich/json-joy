@@ -1,6 +1,6 @@
 import * as nodes from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
+import {type ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {JsonCrdtDataType, SESSION} from '../../../../json-crdt-patch/constants';
 import type * as t from './types';

@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import {OverlayPoint} from '../overlay/OverlayPoint';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
 import type {Path} from '@jsonjoy.com/json-pointer';

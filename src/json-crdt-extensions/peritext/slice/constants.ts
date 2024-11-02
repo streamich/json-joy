@@ -4,7 +4,7 @@
  * end is free to move, the moving end of the cursor is "focus". By default
  * "anchor" is usually the start of the cursor.
  */
-export const enum CursorAnchor {
+export enum CursorAnchor {
   Start = 0,
   End = 1,
 }
@@ -12,24 +12,24 @@ export const enum CursorAnchor {
 /**
  * Built-in slice types.
  */
-export const enum SliceTypes {
+export enum SliceTypes {
   Cursor = -1,
   Paragraph = 0,
 }
 
-export const enum SliceHeaderMask {
+export enum SliceHeaderMask {
   X1Anchor = 0b1,
   X2Anchor = 0b10,
   Behavior = 0b11100,
 }
 
-export const enum SliceHeaderShift {
+export enum SliceHeaderShift {
   X1Anchor = 0,
   X2Anchor = 1,
   Behavior = 2,
 }
 
-export const enum SliceBehavior {
+export enum SliceBehavior {
   /**
    * A Split slice, which is used to mark a block split position in the document.
    * For example, paragraph, heading, blockquote, etc.
@@ -74,7 +74,7 @@ export enum SliceBehaviorName {
 /**
  * Specifies `vec` offsets in the {@link SliceView}.
  */
-export const enum SliceTupleIndex {
+export enum SliceTupleIndex {
   Header = 0,
   X1 = 1,
   X2 = 2,

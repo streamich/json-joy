@@ -1,5 +1,5 @@
 import {
-  Kit,
+  type Kit,
   setupHelloWorldKit,
   setupHelloWorldWithFewEditsKit,
   setupNumbersKit,

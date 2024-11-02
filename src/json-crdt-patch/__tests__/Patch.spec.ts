@@ -2,7 +2,7 @@ import {Model} from '../../json-crdt/model';
 import {s} from '../builder/schema';
 import {LogicalClock, ts} from '../clock';
 import {SESSION} from '../constants';
-import {InsArrOp} from '../operations';
+import type {InsArrOp} from '../operations';
 import {PatchBuilder} from '../PatchBuilder';
 
 describe('.rebase()', () => {

@@ -1,6 +1,6 @@
-import {OpStarts} from '../../op';
+import type {OpStarts} from '../../op';
 import {$$find} from '@jsonjoy.com/json-pointer/lib/codegen/find';
-import {JavaScriptLinked, compileClosure, JavaScript} from '@jsonjoy.com/util/lib/codegen';
+import {type JavaScriptLinked, compileClosure, type JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';
 
@@ -12,7 +12,7 @@ export const $$starts = (op: OpStarts): JavaScriptLinked<ApplyFn> => {
   return wrapper(function(doc){
     var val = find(doc);
     if (typeof val !== 'string') return false;
-    var outer = ${op.ignore_case ? /* js */ `val.toLowerCase()` : `val`};
+    var outer = ${op.ignore_case ? /* js */ 'val.toLowerCase()' : 'val'};
     return outer.indexOf(${JSON.stringify(compareValue)}) === 0;
   });
 })`;

@@ -1,9 +1,9 @@
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import {Operation} from '../types';
+import {hasOwnProperty as hasOwnProp} from '@jsonjoy.com/util/lib/hasOwnProperty';
 import {findByPointer, unescapeComponent} from '@jsonjoy.com/json-pointer';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import type {Operation} from '../types';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
-import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 
 const {isArray} = Array;
 
@@ -126,7 +126,7 @@ export function applyOperation(doc: unknown, operation: Operation): OpResult {
         }
         break;
       }
-      obj = hasOwnProperty(obj, key) ? (obj as any)[key] : undefined;
+      obj = hasOwnProp(obj, key) ? (obj as any)[key] : undefined;
     } else throw new Error('NOT_FOUND');
   }
   return {doc};

@@ -1,5 +1,5 @@
 import {operationToOp} from '../../json-patch/codec/json';
-import {OpMove, Op} from '../../json-patch/op';
+import type {OpMove, Op} from '../../json-patch/op';
 import {isRoot, isChild} from '@jsonjoy.com/json-pointer';
 
 export const xMove = (move: OpMove, op: Op): null | Op | Op[] => {

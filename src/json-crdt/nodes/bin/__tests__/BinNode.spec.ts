@@ -1,7 +1,7 @@
 import {tick} from '../../../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../../../model';
-import {BinNode} from '../BinNode';
+import type {BinNode} from '../BinNode';
 
 test('merges sequential chunks', () => {
   const doc = Model.withLogicalClock();

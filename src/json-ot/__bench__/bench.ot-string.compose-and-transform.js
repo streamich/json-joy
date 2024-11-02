@@ -39,28 +39,28 @@ console.log();
 const suite = new Benchmark.Suite();
 
 suite
-  .add(`json-joy/json-ot ot-string`, function () {
+  .add('json-joy/json-ot ot-string', () => {
     validate(op1a);
     validate(op1b);
     apply(apply(str, compose(op1a, op1b)), transform(op1a, op1b, true));
   })
-  .add(`json-joy/json-ot ot-string (reversible)`, function () {
+  .add('json-joy/json-ot ot-string (reversible)', () => {
     validate(op2a);
     validate(op2b);
     apply(apply(str, compose(op2a, op2b)), transform(op2a, op2b, true));
   })
-  .add(`json-joy/json-ot ot-string-irreversible`, function () {
+  .add('json-joy/json-ot ot-string-irreversible', () => {
     validate2(op1a);
     validate2(op1b);
     apply2(apply2(str, compose2(op1a, op1b)), transform2(op1a, op1b, true));
   })
-  .add(`ottypes/ot-text`, function () {
+  .add('ottypes/ot-text', () => {
     type.apply(type.apply(str, type.compose(op3a, op3b)), type.transform(op3a, op3b, 'left'));
   })
-  .add(`ottypes/ot-text-unicode`, function () {
+  .add('ottypes/ot-text-unicode', () => {
     type2.apply(type2.apply(str, type2.compose(op3a, op3b)), type2.transform(op3a, op3b, 'left'));
   })
-  .add(`quilljs/delta`, function () {
+  .add('quilljs/delta', () => {
     d.serialize(
       d.apply(
         d.apply(d.create(str), d.compose(d.deserialize(op4a), d.deserialize(op4b))),
@@ -68,7 +68,7 @@ suite
       ),
     );
   })
-  .on('cycle', function (event) {
+  .on('cycle', (event) => {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
   })
   .on('complete', function () {

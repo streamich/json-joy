@@ -6,7 +6,7 @@
  *     npx ts-node src/json-patch/__demos__/json-patch.ts
  */
 
-import {applyPatch, Operation} from '../../json-patch';
+import {applyPatch, type Operation} from '../../json-patch';
 
 const doc = {
   foo: {
