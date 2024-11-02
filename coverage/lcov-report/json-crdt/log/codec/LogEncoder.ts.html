@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.51% </span>
+                <span class="strong">80.76% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>62/77</span>
+                <span class='fraction'>63/78</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.42% </span>
+                <span class="strong">92.53% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>61/66</span>
+                <span class='fraction'>62/67</span>
             </div>
         
             
@@ -236,8 +236,11 @@
 <a name='L171'></a><a href='#L171'>171</a>
 <a name='L172'></a><a href='#L172'>172</a>
 <a name='L173'></a><a href='#L173'>173</a>
-<a name='L174'></a><a href='#L174'>174</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -302,10 +305,11 @@
 <span class="cline-any cline-yes">47x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
+<span class="cline-any cline-yes">17x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">16x</span>
@@ -314,6 +318,7 @@
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -326,6 +331,7 @@
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -409,7 +415,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Log} from '../Log';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {Log} from '../Log';
 import {FileModelEncoding} from './constants';
 import type * as types from './types';
 import type {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
@@ -475,6 +481,7 @@ export class LogEncoder {
     switch (patchFormat) {
       case 'binary': {
         history[0] = log.start().toBinary();
+        // biome-ignore lint: allow .forEach(), for now
         log.patches.forEach(({v}) =&gt; {
           history[1].push(v.toBinary());
         });
@@ -487,6 +494,7 @@ export class LogEncoder {
         const encodeCompact = this.options.patchCompactEncoder;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!encodeCompact) <span class="cstat-no" title="statement not covered" >throw new Error('NO_COMPACT_PATCH_ENCODER');</span>
         const list = history[1];
+        // biome-ignore lint: allow .forEach(), for now
         log.patches.forEach(({v}) =&gt; {
           list.push(encodeCompact(v));
         });
@@ -499,6 +507,7 @@ export class LogEncoder {
         const encodeVerbose = this.options.patchVerboseEncoder;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!encodeVerbose) <span class="cstat-no" title="statement not covered" >throw new Error('NO_VERBOSE_PATCH_ENCODER');</span>
         const list = history[1];
+        // biome-ignore lint: allow .forEach(), for now
         log.patches.forEach(({v}) =&gt; {
           list.push(encodeVerbose(v));
         });
@@ -589,7 +598,7 @@ export interface EncodingParams extends SerializeParams {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-01T08:21:33.388Z
+                at 2024-11-02T12:25:11.441Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

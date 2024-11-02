@@ -160,50 +160,50 @@
 <span class="cline-any cline-yes">210x</span>
 <span class="cline-any cline-yes">210x</span>
 <span class="cline-any cline-yes">210x</span>
-<span class="cline-any cline-yes">687x</span>
-<span class="cline-any cline-yes">687x</span>
-<span class="cline-any cline-yes">454x</span>
-<span class="cline-any cline-yes">183x</span>
-<span class="cline-any cline-yes">183x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-yes">197x</span>
-<span class="cline-any cline-yes">197x</span>
+<span class="cline-any cline-yes">712x</span>
+<span class="cline-any cline-yes">712x</span>
+<span class="cline-any cline-yes">466x</span>
+<span class="cline-any cline-yes">202x</span>
+<span class="cline-any cline-yes">202x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">501x</span>
+<span class="cline-any cline-yes">223x</span>
+<span class="cline-any cline-yes">223x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">438x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">271x</span>
-<span class="cline-any cline-yes">271x</span>
-<span class="cline-any cline-yes">271x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">418x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">660x</span>
-<span class="cline-any cline-yes">424x</span>
-<span class="cline-any cline-yes">424x</span>
+<span class="cline-any cline-yes">501x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">264x</span>
+<span class="cline-any cline-yes">264x</span>
+<span class="cline-any cline-yes">264x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">413x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">676x</span>
+<span class="cline-any cline-yes">415x</span>
+<span class="cline-any cline-yes">415x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">233x</span>
-<span class="cline-any cline-yes">233x</span>
-<span class="cline-any cline-yes">126x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">233x</span>
+<span class="cline-any cline-yes">246x</span>
+<span class="cline-any cline-yes">246x</span>
+<span class="cline-any cline-yes">110x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">246x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">210x</span>
@@ -211,7 +211,7 @@
 <span class="cline-any cline-yes">210x</span>
 <span class="cline-any cline-yes">210x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {BinaryOp} from './types';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {BinaryOp} from './types';
 import {append, chunk, componentLength, trim} from './util';
 &nbsp;
 /**
@@ -272,7 +272,7 @@ export const transform = (op1: BinaryOp, op2: BinaryOp, leftInsertFirst: boolean
     } else if (comp2 instanceof Uint8Array) {
       if (leftInsertFirst) {
         if (op1[i1] instanceof Uint8Array) {
-          const comp = chunk(op1[i1++], off1, Infinity);
+          const comp = chunk(op1[i1++], off1, Number.POSITIVE_INFINITY);
           off1 = 0;
           append(op3, comp);
         }
@@ -280,7 +280,7 @@ export const transform = (op1: BinaryOp, op2: BinaryOp, leftInsertFirst: boolean
       append(op3, comp2.length);
     }
   }
-  if (i1 &lt; len1 &amp;&amp; off1) append(op3, chunk(op1[i1++], off1, Infinity));
+  if (i1 &lt; len1 &amp;&amp; off1) append(op3, chunk(op1[i1++], off1, Number.POSITIVE_INFINITY));
   for (; i1 &lt; len1; i1++) append(op3, op1[i1]);
   trim(op3);
   return op3;
@@ -292,7 +292,7 @@ export const transform = (op1: BinaryOp, op2: BinaryOp, leftInsertFirst: boolean
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-01T08:21:33.388Z
+                at 2024-11-02T12:25:11.441Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
