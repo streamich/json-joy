@@ -1,4 +1,4 @@
-export const enum OPCODE {
+export enum OPCODE {
   // JSON Patch.
   add = 0,
   remove = 1,

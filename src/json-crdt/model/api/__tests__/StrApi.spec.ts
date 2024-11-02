@@ -1,5 +1,5 @@
 import {s} from '../../../../json-crdt-patch';
-import {ITimestampStruct} from '../../../../json-crdt-patch/clock';
+import type {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {

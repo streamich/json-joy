@@ -1,7 +1,7 @@
-import {OpRemove, Op} from '../../json-patch/op';
+import {OpRemove, type Op} from '../../json-patch/op';
 import {isRoot, isValidIndex, formatJsonPointer, isPathEqual} from '@jsonjoy.com/json-pointer';
 import {lowerArrayPath} from './util';
-import {Operation} from '../../json-patch/types';
+import type {Operation} from '../../json-patch/types';
 import {operationToOp} from '../../json-patch/codec/json';
 
 export const xRemove = (add: OpRemove, op: Op): null | Op => {

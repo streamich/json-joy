@@ -1,6 +1,6 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
-import {SlateElementNode, SlateNode, SlateTextNode} from '../../..';
+import type {SlateElementNode, SlateNode, SlateTextNode} from '../../..';
 
 export const testMergeOp = (applyPatch: ApplyPatch) => {
   describe('merge', () => {

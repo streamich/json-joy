@@ -1,4 +1,4 @@
-import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {type Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {Cursor} from '../../editor/Cursor';
 import {CursorAnchor} from '../../slice/constants';
 import {Inline} from '../Inline';

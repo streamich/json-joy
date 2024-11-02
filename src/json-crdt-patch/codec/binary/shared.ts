@@ -1,6 +1,6 @@
 import {Encoder} from './Encoder';
 import {Decoder} from './Decoder';
-import {Patch} from '../../Patch';
+import type {Patch} from '../../Patch';
 import {CrdtWriter} from '../../util/binary/CrdtWriter';
 
 /** A shared instance of the {@link CrdtWriter} class. */

@@ -1,4 +1,4 @@
-export const enum ExtensionId {
+export enum ExtensionId {
   mval = 0,
   cnt = 1,
   peritext = 2,

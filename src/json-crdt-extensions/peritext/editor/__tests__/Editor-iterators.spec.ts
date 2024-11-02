@@ -1,6 +1,6 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Editor} from '../Editor';
+import type {Editor} from '../Editor';
 
 const setup = (
   insertText = (editor: Editor) => {

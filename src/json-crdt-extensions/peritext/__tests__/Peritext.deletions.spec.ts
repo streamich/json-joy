@@ -1,7 +1,7 @@
 import {
   setupAlphabetChunkSplitKit,
   setupAlphabetKit,
-  Kit,
+  type Kit,
   setupAlphabetWithDeletesKit,
   setupAlphabetWithTwoChunksKit,
 } from './setup';

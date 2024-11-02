@@ -1,5 +1,5 @@
 import * as operations from './operations';
-import {ITimestampStruct, ts, printTs, Timestamp} from './clock';
+import {type ITimestampStruct, ts, printTs, Timestamp} from './clock';
 import {printTree} from 'tree-dump/lib/printTree';
 import {encode, decode} from './codec/binary';
 import type {Printable} from 'tree-dump/lib/types';

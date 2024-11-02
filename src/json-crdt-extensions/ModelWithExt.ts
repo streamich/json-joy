@@ -1,9 +1,9 @@
-import * as clock from '../json-crdt-patch/clock';
+import type * as clock from '../json-crdt-patch/clock';
 import * as ext from './ext';
-import {NodeBuilder} from '../json-crdt-patch';
+import type {NodeBuilder} from '../json-crdt-patch';
 import {Extensions} from '../json-crdt/extensions/Extensions';
 import {Model} from '../json-crdt/model';
-import {SchemaToJsonNode} from '../json-crdt/schema/types';
+import type {SchemaToJsonNode} from '../json-crdt/schema/types';
 
 const extensions = new Extensions();
 

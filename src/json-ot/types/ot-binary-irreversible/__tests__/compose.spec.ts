@@ -1,6 +1,6 @@
 import {compose} from '../compose';
 import {apply} from '../apply';
-import {BinaryOp} from '../types';
+import type {BinaryOp} from '../types';
 
 const b = (...octets: number[]) => new Uint8Array(octets);
 

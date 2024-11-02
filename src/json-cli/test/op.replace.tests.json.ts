@@ -1,5 +1,5 @@
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import {TestCase} from './types';
+import type {TestCase} from './types';
 
 const values: [string, unknown][] = [
   ['"null"', null],

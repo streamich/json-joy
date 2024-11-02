@@ -1,9 +1,9 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.encoding.libs.ts
 
 import {payloads} from '../../__bench__/payloads';
-import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
-import {StructuralEditors, structuralEditors} from './util/structural-editors';
-import {StructuralEditor} from './util/types';
+import {type IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
+import {type StructuralEditors, structuralEditors} from './util/structural-editors';
+import type {StructuralEditor} from './util/types';
 
 const editors: StructuralEditors[] = ['nativeJs', 'jsonJoy'];
 

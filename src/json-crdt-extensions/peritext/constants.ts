@@ -1,12 +1,12 @@
-import {nodes, s} from '../../json-crdt-patch';
+import {type nodes, s} from '../../json-crdt-patch';
 import {ExtensionId, ExtensionName} from '../constants';
 import type {SliceSchema} from './slice/types';
 
-export const enum Chars {
+export enum Chars {
   BlockSplitSentinel = '\n',
 }
 
-export const enum Position {
+export enum Position {
   /**
    * Specifies the absolute start of the text, i.e. the position before the
    * first character. In model space it is defined as string ID and "after"

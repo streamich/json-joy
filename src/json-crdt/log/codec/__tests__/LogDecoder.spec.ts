@@ -1,7 +1,7 @@
 import {Log} from '../../Log';
 import {Model} from '../../../model';
 import {logEncoderOpts} from '../logEncoderOpts';
-import {EncodingParams, LogEncoder} from '../LogEncoder';
+import {type EncodingParams, LogEncoder} from '../LogEncoder';
 import {LogDecoder} from '../LogDecoder';
 import {logDecoderOpts} from '../logDecoderOpts';
 

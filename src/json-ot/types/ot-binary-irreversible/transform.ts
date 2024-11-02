@@ -1,4 +1,4 @@
-import {BinaryOp} from './types';
+import type {BinaryOp} from './types';
 import {append, chunk, componentLength, trim} from './util';
 
 /**
@@ -59,7 +59,7 @@ export const transform = (op1: BinaryOp, op2: BinaryOp, leftInsertFirst: boolean
     } else if (comp2 instanceof Uint8Array) {
       if (leftInsertFirst) {
         if (op1[i1] instanceof Uint8Array) {
-          const comp = chunk(op1[i1++], off1, Infinity);
+          const comp = chunk(op1[i1++], off1, Number.POSITIVE_INFINITY);
           off1 = 0;
           append(op3, comp);
         }
@@ -67,7 +67,7 @@ export const transform = (op1: BinaryOp, op2: BinaryOp, leftInsertFirst: boolean
       append(op3, comp2.length);
     }
   }
-  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Infinity));
+  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Number.POSITIVE_INFINITY));
   for (; i1 < len1; i1++) append(op3, op1[i1]);
   trim(op3);
   return op3;

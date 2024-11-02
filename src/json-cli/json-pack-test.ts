@@ -3,12 +3,12 @@
 import {spawnSync} from 'child_process';
 import {
   testSuites,
-  TestCaseNil,
-  TestCaseBool,
-  TestCaseString,
-  TestCaseNumber,
-  TestCaseArray,
-  TestCaseMap,
+  type TestCaseNil,
+  type TestCaseBool,
+  type TestCaseString,
+  type TestCaseNumber,
+  type TestCaseArray,
+  type TestCaseMap,
 } from './test/msgpack-test-suite';
 
 const bin = String(process.argv[2]);
@@ -54,11 +54,11 @@ for (const name in testSuites) {
     const result = new Uint8Array(stdout.length);
     for (let i = 0; i < result.length; i++) result[i] = stdout[i];
     EXPECTED: for (const exp of testCase.msgpack) {
-      const expected = new Uint8Array(exp.split('-').map((a) => parseInt(a, 16)));
+      const expected = new Uint8Array(exp.split('-').map((a) => Number.parseInt(a, 16)));
       if (expected.length !== result.length) continue;
       for (let i = 0; i < expected.length; i++) if (expected[i] !== result[i]) continue EXPECTED;
       isCorrect = true;
-      break EXPECTED;
+      break;
     }
     if (isCorrect) {
       cntCorrect++;

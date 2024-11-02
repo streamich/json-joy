@@ -1,9 +1,9 @@
 import type {CompactInOp, OPCODE_IN} from '../codec/compact/types';
-import {OperationIn} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationIn} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -19,7 +19,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
   }
 
   public op() {
-    return 'in' as 'in';
+    return 'in' as const;
   }
 
   public code() {

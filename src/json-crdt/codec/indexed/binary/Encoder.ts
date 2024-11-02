@@ -1,11 +1,11 @@
-import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
+import {type ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
-import {Model} from '../../../model';
+import type {Model} from '../../../model';
 import * as nodes from '../../../nodes';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
-import {IndexedFields, FieldName} from './types';
+import type {IndexedFields, FieldName} from './types';
 
 export class Encoder {
   public readonly enc: CborEncoder<CrdtWriter>;

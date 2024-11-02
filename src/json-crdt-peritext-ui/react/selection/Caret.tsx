@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {Char} from '../../constants';
 import {usePeritext} from '../context';
 import {useCaret} from './hooks';

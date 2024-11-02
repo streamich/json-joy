@@ -1,10 +1,10 @@
 import type {CompactOrOp, OPCODE_OR} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
-import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationOr, PredicateOperation} from '../types';
+import type {AbstractPredicateOp} from './AbstractPredicateOp';
+import type {OperationOr, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
-import {Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
-import {AbstractOp} from './AbstractOp';
+import {type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -19,7 +19,7 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
   }
 
   public op() {
-    return 'or' as 'or';
+    return 'or' as const;
   }
 
   public code() {

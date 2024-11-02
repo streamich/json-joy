@@ -1,6 +1,6 @@
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {ValNode} from '../val/ValNode';
-import {Model} from '../../model/Model';
+import type {Model} from '../../model/Model';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 

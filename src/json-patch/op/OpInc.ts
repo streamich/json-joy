@@ -1,7 +1,7 @@
 import type {CompactIncOp, OPCODE_INC} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationInc} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationInc} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -17,7 +17,7 @@ export class OpInc extends AbstractOp<'inc'> {
   }
 
   public op() {
-    return 'inc' as 'inc';
+    return 'inc' as const;
   }
 
   public code() {

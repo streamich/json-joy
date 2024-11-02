@@ -2,7 +2,7 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {printTree} from 'tree-dump/lib/printTree';
 import {PersistedSlice} from './PersistedSlice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
-import {Range} from '../rga/Range';
+import type {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';

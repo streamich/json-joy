@@ -1,7 +1,7 @@
 import {clone} from '@jsonjoy.com/util/lib/json-clone';
 import {apply} from '../apply';
 import {OpTree} from '../tree';
-import {JsonOp} from '../types';
+import type {JsonOp} from '../types';
 
 test('can compose two operations', () => {
   const op1: JsonOp = [

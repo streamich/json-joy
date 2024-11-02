@@ -1,5 +1,5 @@
 import {
-  Kit,
+  type Kit,
   setupNumbersKit,
   setupNumbersWithMultipleChunksAndDeletesKit,
   setupNumbersWithRgaSplitKit,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import type {BlockViewProps} from '../../react/BlockView';
 import {useDebugCtx} from './context';
 

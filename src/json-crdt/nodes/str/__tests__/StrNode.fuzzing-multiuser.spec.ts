@@ -1,4 +1,4 @@
-import {StrNodeFuzzer, StrNodeFuzzerOptions} from './StrNodeFuzzer';
+import {StrNodeFuzzer, type StrNodeFuzzerOptions} from './StrNodeFuzzer';
 
 const execute = (times: number, options?: Partial<StrNodeFuzzerOptions>) => {
   for (let i = 0; i < times; i++) {

@@ -1,6 +1,6 @@
 import {s} from '../../../json-crdt-patch';
-import {Model} from '../../../json-crdt/model';
-import {SchemaToJsonNode} from '../../../json-crdt/schema/types';
+import type {Model} from '../../../json-crdt/model';
+import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import {ModelWithExt, ext} from '../../ModelWithExt';
 
 export type Schema = ReturnType<typeof schema>;

@@ -1,6 +1,6 @@
 import {CrdtReader} from '../../util/binary/CrdtReader';
-import {interval, ITimespanStruct, ITimestampStruct, ClockVector, ServerClockVector, Timestamp} from '../../clock';
-import {Patch} from '../../Patch';
+import {interval, type ITimespanStruct, type ITimestampStruct, ClockVector, ServerClockVector, Timestamp} from '../../clock';
+import type {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';

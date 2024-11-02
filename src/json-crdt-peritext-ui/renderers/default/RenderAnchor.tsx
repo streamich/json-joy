@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {rule} from 'nano-theme';
 import {Char} from '../../constants';
-import {AnchorViewProps} from '../../react/selection/AnchorView';
+import type {AnchorViewProps} from '../../react/selection/AnchorView';
 
 const color = '#07f';
 

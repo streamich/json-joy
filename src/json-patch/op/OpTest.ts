@@ -1,9 +1,9 @@
 import type {CompactTestOp, OPCODE_TEST} from '../codec/compact/types';
-import {OperationTest} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationTest} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -21,7 +21,7 @@ export class OpTest extends AbstractPredicateOp<'test'> {
   }
 
   public op() {
-    return 'test' as 'test';
+    return 'test' as const;
   }
 
   public code() {

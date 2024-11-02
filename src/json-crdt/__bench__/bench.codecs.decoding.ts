@@ -1,7 +1,7 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.decoding.ts
 
 import {payloads} from '../../__bench__/payloads';
-import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
+import {type IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
 import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
 import {Decoder as CompactDecoder} from '../codec/structural/compact/Decoder';
 import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';

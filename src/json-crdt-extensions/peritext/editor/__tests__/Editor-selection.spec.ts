@@ -2,7 +2,7 @@ import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../rga/constants';
 import {CursorAnchor} from '../../slice/constants';
-import {Editor} from '../Editor';
+import type {Editor} from '../Editor';
 
 const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?: number) => {
   const model = Model.create(void 0, sid);

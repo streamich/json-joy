@@ -1,7 +1,7 @@
 import * as operations from '../../operations';
 import {JsonCrdtPatchOpcodeOverlay} from '../../constants';
 import {CrdtWriter} from '../../util/binary/CrdtWriter';
-import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
+import {type ITimespanStruct, type ITimestampStruct, Timestamp} from '../../clock';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import type {JsonCrdtPatchOperation, Patch} from '../../Patch';
 

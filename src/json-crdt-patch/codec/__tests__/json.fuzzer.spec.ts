@@ -6,7 +6,7 @@ import {decode as decodeCompact} from '../compact/decode';
 import {encode as encodeCompactBinary} from '../compact-binary/encode';
 import {decode as decodeCompactBinary} from '../compact-binary/decode';
 import {encode as encodeBinary, decode as decodeBinary} from '../binary';
-import {Patch} from '../../Patch';
+import type {Patch} from '../../Patch';
 
 const fuzzer = new PatchFuzzer();
 const environments: [string, () => Patch][] = [

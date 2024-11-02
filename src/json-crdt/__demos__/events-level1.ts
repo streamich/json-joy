@@ -11,7 +11,7 @@ console.clear();
 
 // Import all necessary dependencies.
 import {Model} from '..';
-import {Patch, PatchBuilder} from '../../json-crdt-patch';
+import {type Patch, PatchBuilder} from '../../json-crdt-patch';
 
 const subscribe = (model: Model) => {
   /**

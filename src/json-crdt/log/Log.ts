@@ -1,8 +1,8 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next} from 'sonic-forest/lib/util';
-import {FanOutUnsubscribe} from 'thingies/lib/fanout';
+import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import {printTree} from 'tree-dump/lib/printTree';
-import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
+import {type ITimestampStruct, type Patch, compare} from '../../json-crdt-patch';
 import {Model} from '../model';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';

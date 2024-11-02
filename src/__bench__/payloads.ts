@@ -44,7 +44,10 @@ export const payloads = [
 export const payloadsWithCombined = [
   ...(payloads.length > 1
     ? (() => {
-        const combined = payloads.reduce((acc, payload) => [...acc, payload.data], [] as unknown[]);
+        const combined = payloads.reduce((acc, payload) => {
+          acc.push(payload.data);
+          return acc;
+        }, [] as unknown[]);
         return [
           {
             data: combined,

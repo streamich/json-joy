@@ -2,7 +2,7 @@ import type {CompactOpBase} from '../codec/compact/types';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {OpType} from '../opcodes';
 import type {Operation} from '../types';
-import {OPCODE} from '../constants';
+import type {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 export abstract class AbstractOp<O extends OpType = OpType> {

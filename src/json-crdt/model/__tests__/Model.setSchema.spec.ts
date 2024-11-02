@@ -1,4 +1,4 @@
-import {nodes, s} from '../../../json-crdt-patch';
+import {type nodes, s} from '../../../json-crdt-patch';
 import {SESSION} from '../../../json-crdt-patch/constants';
 import {Model} from '../Model';
 

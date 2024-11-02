@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 import {CssClass, ElementAttr} from '../constants';
 import {TextView} from './TextView';
 import {usePeritext} from './context';

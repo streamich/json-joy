@@ -2,7 +2,7 @@
 // npx ts-node src/json-crdt/__bench__/bench.codecs.sizes.ts
 
 import {payloads} from '../../__bench__/payloads';
-import {StructuralEditors, structuralEditors} from './util/structural-editors';
+import {type StructuralEditors, structuralEditors} from './util/structural-editors';
 
 console.clear();
 

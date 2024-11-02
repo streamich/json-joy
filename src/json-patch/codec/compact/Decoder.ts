@@ -1,6 +1,6 @@
 import type {JsonPatchOptions} from '../../types';
 import type {CompactOp} from './types';
-import {Op} from '../../op';
+import type {Op} from '../../op';
 import {decode} from './decode';
 
 export class Decoder {

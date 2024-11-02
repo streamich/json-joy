@@ -1,9 +1,9 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
-import {JsonNode, ObjNode, ArrNode, BinNode, StrNode} from '../../nodes';
-import {Model} from '../../model/Model';
+import type {JsonNode, ObjNode, ArrNode, BinNode, StrNode} from '../../nodes';
+import type {Model} from '../../model/Model';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
-import {FuzzerOptions} from './types';
+import type {FuzzerOptions} from './types';
 
 type StringOp = typeof InsStrOp | typeof DelOp;
 type BinaryOp = typeof InsBinOp | typeof DelOp;

@@ -1,8 +1,8 @@
 /* tslint:disable no-console */
 
 import * as Benchmark from 'benchmark';
-import {apply, validate, StringOp} from '../types/ot-string';
-import {validate as validate2, apply as apply2, StringOp as StringOp2} from '../types/ot-string-irreversible';
+import {apply, validate, type StringOp} from '../types/ot-string';
+import {validate as validate2, apply as apply2, type StringOp as StringOp2} from '../types/ot-string-irreversible';
 const {type} = require('ot-text');
 const {type: type2} = require('ot-text-unicode');
 const {delta: d} = require('./util');

@@ -1,5 +1,5 @@
-import {Op, PredicateOp} from '../../op';
-import {Operation} from './types';
+import type {Op, PredicateOp} from '../../op';
+import type {Operation} from './types';
 import {OpAdd} from '../../op/OpAdd';
 import {OpRemove} from '../../op/OpRemove';
 import {OpReplace} from '../../op/OpReplace';

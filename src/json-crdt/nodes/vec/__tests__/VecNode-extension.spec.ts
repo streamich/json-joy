@@ -1,8 +1,8 @@
 import {s} from '../../../../json-crdt-patch';
 import {printTree} from 'tree-dump';
-import {ExtApi} from '../../../extensions/types';
+import type {ExtApi} from '../../../extensions/types';
 import {Model, NodeApi} from '../../../model';
-import {StrNode} from '../../nodes';
+import type {StrNode} from '../../nodes';
 import {Extension} from '../../../extensions/Extension';
 import {ExtNode} from '../../../extensions/ExtNode';
 

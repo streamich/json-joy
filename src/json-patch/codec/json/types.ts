@@ -1,5 +1,5 @@
 import type {Path} from '@jsonjoy.com/json-pointer';
-import {OpType} from '../../opcodes';
+import type {OpType} from '../../opcodes';
 
 export type Operation = JsonPatchOperation | PredicateOperation | JsonPatchExtendedOperation;
 

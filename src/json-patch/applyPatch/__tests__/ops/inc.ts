@@ -1,6 +1,6 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
-import {OperationInc} from '../../..';
+import type {OperationInc} from '../../..';
 
 export const testIncOp = (applyPatch: ApplyPatch) => {
   const applyOperations = (doc: unknown, ops: Operation[]) => applyPatch(doc, ops, {mutate: true});

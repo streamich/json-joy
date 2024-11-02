@@ -2,7 +2,7 @@ import {ExtensionId, ExtensionName} from '../constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {ExtNode} from '../../json-crdt/extensions/ExtNode';
 import {Extension} from '../../json-crdt/extensions/Extension';
-import {NodeBuilder, nodes, s, type ObjNode} from '../../json-crdt';
+import {NodeBuilder, type nodes, s, type ObjNode} from '../../json-crdt';
 import type {ExtApi} from '../../json-crdt';
 
 const MNEMONIC = ExtensionName[ExtensionId.cnt];

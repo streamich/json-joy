@@ -1,7 +1,7 @@
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {append, normalize} from '../util';
-import {StringOp} from '../types';
+import type {StringOp} from '../types';
 
 export class StringOtFuzzer extends Fuzzer {
   genString(): string {

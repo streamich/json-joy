@@ -1,8 +1,8 @@
 import {
   compare,
   tick,
-  ITimestampStruct,
-  ITimespanStruct,
+  type ITimestampStruct,
+  type ITimespanStruct,
   tss,
   printTs,
   containsId,

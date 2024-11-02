@@ -1,6 +1,6 @@
 import {CONST, updateNum} from '../../../json-hash';
 import {updateId} from '../../../json-crdt/hash';
-import {ITimestampStruct, Timestamp, printTs} from '../../../json-crdt-patch/clock';
+import {type ITimestampStruct, Timestamp, printTs} from '../../../json-crdt-patch/clock';
 import type {IChunkSlice} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';

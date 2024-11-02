@@ -1,4 +1,4 @@
-import {QuillTrace} from '../../types';
+import type {QuillTrace} from '../../types';
 
 /**
  * Inserts and deletes image void.

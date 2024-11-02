@@ -1,4 +1,4 @@
-import {ITimestampStruct} from '../../json-crdt-patch/clock';
+import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import {Model} from '../model/Model';
 
 export class PartialEditModel extends Model {

@@ -1,5 +1,5 @@
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import {Operation} from '../types';
+import type {Operation} from '../types';
 import {findByPointer, unescapeComponent} from '@jsonjoy.com/json-pointer';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';

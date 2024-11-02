@@ -1,5 +1,5 @@
-import {Op} from '../../op';
-import {CompactOp, EncoderOptions} from './types';
+import type {Op} from '../../op';
+import type {CompactOp, EncoderOptions} from './types';
 
 export function encode(ops: Op[], {stringOpcode = false}: EncoderOptions = {}): CompactOp[] {
   const operations: CompactOp[] = [];

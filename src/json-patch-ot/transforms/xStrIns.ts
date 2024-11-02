@@ -1,5 +1,5 @@
 import {operationToOp} from '../../json-patch/codec/json';
-import {Op, OpStrDel, OpStrIns} from '../../json-patch/op';
+import {type Op, OpStrDel, OpStrIns} from '../../json-patch/op';
 
 export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
   if (op instanceof OpStrIns) {

@@ -1,6 +1,6 @@
-import {AbstractRga, Chunk} from '../rga/AbstractRga';
-import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
-import {Model} from '../../model';
+import {AbstractRga, type Chunk} from '../rga/AbstractRga';
+import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import type {Model} from '../../model';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {JsonNode, JsonNodeView} from '..';

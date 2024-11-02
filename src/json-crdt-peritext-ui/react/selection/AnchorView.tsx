@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {usePeritext} from '../context';
 
-export interface AnchorViewProps {}
+export type AnchorViewProps = {}
 
 export const AnchorView: React.FC<AnchorViewProps> = (props) => {
   const {renderers} = usePeritext();

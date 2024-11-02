@@ -1,5 +1,5 @@
 import {find, isArrayReference, isObjectReference} from '@jsonjoy.com/json-pointer';
-import {JsonOp} from './types';
+import type {JsonOp} from './types';
 import {evaluate as evalExpression} from '@jsonjoy.com/json-expression/lib/evaluate';
 import {comparePath} from './util';
 import {EDIT_TYPE} from './constants';

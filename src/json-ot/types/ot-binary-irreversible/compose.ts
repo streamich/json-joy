@@ -63,7 +63,7 @@ export const compose = (op1: BinaryOp, op2: BinaryOp): BinaryOp => {
       append(op3, comp2);
     }
   }
-  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Infinity));
+  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Number.POSITIVE_INFINITY));
   for (; i1 < len1; i1++) append(op3, op1[i1]);
   trim(op3);
   return op3;

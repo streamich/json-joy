@@ -1,6 +1,6 @@
 import {JsonCrdtDataType} from '../../../../json-crdt-patch/constants';
 
-export const enum CRDT_MAJOR {
+export enum CRDT_MAJOR {
   CON = JsonCrdtDataType.con,
   VAL = JsonCrdtDataType.val,
   OBJ = JsonCrdtDataType.obj,
@@ -10,7 +10,7 @@ export const enum CRDT_MAJOR {
   ARR = JsonCrdtDataType.arr,
 }
 
-export const enum CRDT_MAJOR_OVERLAY {
+export enum CRDT_MAJOR_OVERLAY {
   CON = JsonCrdtDataType.con << 5,
   VAL = CRDT_MAJOR.VAL << 5,
   VEC = CRDT_MAJOR.VEC << 5,

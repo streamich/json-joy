@@ -21,7 +21,7 @@ export const runTraceWithEditor = (
   console.log('----------------------------------------------------------------------------');
   console.log(editorFactory.name);
   console.log('----------------------------------------------------------------------------');
-  let best = Infinity;
+  let best = Number.POSITIVE_INFINITY;
   let worst = 0;
   const measurements = [];
   for (let i = 0; i < iterations; i++) {

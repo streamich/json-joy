@@ -1,7 +1,7 @@
 import {tick} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Point} from '../../rga/Point';
+import type {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
 import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import type {Chunk} from '../../../../json-crdt/nodes/rga';

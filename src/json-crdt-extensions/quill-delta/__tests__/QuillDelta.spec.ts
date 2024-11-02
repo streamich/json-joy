@@ -2,7 +2,7 @@ import {mval} from '../../mval';
 import {quill} from '..';
 import {Model} from '../../../json-crdt/model';
 import Delta from 'quill-delta';
-import {QuillDeltaPatch} from '../types';
+import type {QuillDeltaPatch} from '../types';
 
 test('can construct delta with new line character', () => {
   const model = Model.create();

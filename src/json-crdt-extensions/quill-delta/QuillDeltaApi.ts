@@ -1,6 +1,6 @@
 import {QuillConst} from './constants';
-import {PathStep} from '@jsonjoy.com/json-pointer';
-import {QuillDeltaNode} from './QuillDeltaNode';
+import type {PathStep} from '@jsonjoy.com/json-pointer';
+import type {QuillDeltaNode} from './QuillDeltaNode';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {konst} from '../../json-crdt-patch/builder/Konst';
 import {SliceBehavior} from '../peritext/slice/constants';

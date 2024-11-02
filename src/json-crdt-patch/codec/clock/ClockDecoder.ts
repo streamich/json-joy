@@ -1,4 +1,4 @@
-import {ITimestampStruct, ClockVector, ts} from '../../clock';
+import {type ITimestampStruct, ClockVector, ts} from '../../clock';
 
 export class ClockDecoder {
   /** Clock session index to logical clock. */

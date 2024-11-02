@@ -1,10 +1,10 @@
 import type {CompactAndOp, OPCODE_AND} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
-import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationAnd, PredicateOperation} from '../types';
+import type {AbstractPredicateOp} from './AbstractPredicateOp';
+import type {OperationAnd, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
-import {Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
-import {AbstractOp} from './AbstractOp';
+import {type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -19,7 +19,7 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
   }
 
   public op() {
-    return 'and' as 'and';
+    return 'and' as const;
   }
 
   public code() {

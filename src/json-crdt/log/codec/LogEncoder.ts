@@ -1,4 +1,4 @@
-import {Log} from '../Log';
+import type {Log} from '../Log';
 import {FileModelEncoding} from './constants';
 import type * as types from './types';
 import type {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';

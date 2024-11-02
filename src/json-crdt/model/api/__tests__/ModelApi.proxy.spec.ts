@@ -1,8 +1,8 @@
 import {Model} from '../../Model';
 import {ConApi, ObjApi, StrApi, VecApi, ValApi, ArrApi, BinApi} from '../nodes';
-import {ConNode, RootNode, ObjNode, StrNode, ValNode} from '../../../nodes';
+import {ConNode, RootNode, ObjNode, StrNode, type ValNode} from '../../../nodes';
 import {s} from '../../../../json-crdt-patch';
-import {ProxyNodeVal} from '../proxy';
+import type {ProxyNodeVal} from '../proxy';
 
 test('proxy API supports object types', () => {
   const model = Model.withLogicalClock() as any as Model<

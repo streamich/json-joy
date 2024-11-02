@@ -1,4 +1,4 @@
-import {ITimestampStruct, IClockVector, tick, Timestamp} from '../../clock';
+import {type ITimestampStruct, type IClockVector, tick, Timestamp} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 class ClockTableEntry {

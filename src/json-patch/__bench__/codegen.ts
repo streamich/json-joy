@@ -2,7 +2,7 @@
 
 import * as Benchmark from 'benchmark';
 import {operationToOp} from '../codec/json';
-import {Operation} from '../types';
+import type {Operation} from '../types';
 import {applyOps} from '../applyPatch';
 import {apply, $apply} from '../codegen/apply';
 

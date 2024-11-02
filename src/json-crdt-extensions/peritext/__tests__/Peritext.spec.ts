@@ -1,7 +1,7 @@
 import {Model} from '../../../json-crdt/model';
 import {Peritext} from '../Peritext';
 import {Anchor} from '../rga/constants';
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
+import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
 
 const run = (setup: () => Kit) => {
   test('can run .refresh() on empty state', () => {

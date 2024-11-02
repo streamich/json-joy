@@ -126,7 +126,7 @@ export interface InlineDetail {
   pos?: [start: number, end: number][];
 }
 
-export interface MarkerDetail {}
+export type MarkerDetail = {}
 
 export type PeritextEventMap = {
   change: ChangeDetail;

@@ -1,5 +1,5 @@
 import {MsgPackEncoderFast as EncoderMessagePack} from '@jsonjoy.com/json-pack/lib/msgpack/MsgPackEncoderFast';
-import {Op} from '../../op';
+import type {Op} from '../../op';
 
 export class Encoder extends EncoderMessagePack {
   public encode(patch: Op[]): Uint8Array {

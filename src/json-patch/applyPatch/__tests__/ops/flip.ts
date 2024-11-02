@@ -1,6 +1,6 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
-import {OperationFlip} from '../../..';
+import type {OperationFlip} from '../../..';
 
 export const testFlipOp = (applyPatch: ApplyPatch) => {
   const applyOperations = (doc: unknown, ops: Operation[]) => applyPatch(doc, ops, {mutate: true});

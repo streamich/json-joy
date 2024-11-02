@@ -1,4 +1,4 @@
-import {Op, OpStrDel, OpStrIns} from '../../json-patch/op';
+import {type Op, OpStrDel, OpStrIns} from '../../json-patch/op';
 
 export const xStrDel = (del: OpStrDel, op: Op): null | Op | Op[] => {
   if (op instanceof OpStrIns) {

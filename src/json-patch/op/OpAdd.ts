@@ -1,7 +1,7 @@
 import type {CompactAddOp, OPCODE_ADD} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationAdd} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationAdd} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
@@ -18,7 +18,7 @@ export class OpAdd extends AbstractOp<'add'> {
   }
 
   public op() {
-    return 'add' as 'add';
+    return 'add' as const;
   }
 
   public code() {

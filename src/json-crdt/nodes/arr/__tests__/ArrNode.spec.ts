@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../../../model';
-import {ArrNode} from '../ArrNode';
+import type {ArrNode} from '../ArrNode';
 
 test('can insert two booleans into an array', () => {
   const doc = Model.withLogicalClock();

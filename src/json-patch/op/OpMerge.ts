@@ -1,7 +1,7 @@
 import type {CompactMergeOp, OPCODE_MERGE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationMerge} from '../types';
-import {find, isArrayReference, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationMerge} from '../types';
+import {find, isArrayReference, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
@@ -19,7 +19,7 @@ export class OpMerge extends AbstractOp<'merge'> {
   }
 
   public op() {
-    return 'merge' as 'merge';
+    return 'merge' as const;
   }
 
   public code() {

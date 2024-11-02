@@ -1,4 +1,4 @@
-import {QuillTrace} from '../../types';
+import type {QuillTrace} from '../../types';
 
 /**
  * This stack trace prepends "a" to bold "b", hence "ba" is bold.

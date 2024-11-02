@@ -1,10 +1,10 @@
 // npx ts-node src/json-crdt-patch/__bench__/bench.encoding.ts
 
-import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
+import {runBenchmark, type IBenchmark} from '../../__bench__/runBenchmark';
 import json1 from '../../__tests__/fixtures/json/small-object';
 import json2 from '../../__tests__/fixtures/json/simple-json-patch';
 import {LogicalClock} from '../clock';
-import {Patch} from '../Patch';
+import type {Patch} from '../Patch';
 import {PatchBuilder} from '../PatchBuilder';
 import {encode as encodeBinary} from '../codec/binary';
 import {encode as encodeCompact} from '../codec/compact-binary';

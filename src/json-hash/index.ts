@@ -1,7 +1,7 @@
 import type {JsonValue} from '@jsonjoy.com/json-pack/lib/types';
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 
-export const enum CONST {
+export enum CONST {
   START_STATE = 5381,
 
   NULL = 982452847,

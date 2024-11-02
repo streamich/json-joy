@@ -1,7 +1,7 @@
 import {s} from '../../../json-crdt-patch';
 import * as ext from '../../../json-crdt-extensions/ext';
 import {Model} from '../../model';
-import {JsonNodeToSchema, SchemaToJsonNode} from '../types';
+import type {JsonNodeToSchema, SchemaToJsonNode} from '../types';
 
 describe('can infer schema of JSON CRDT nodes', () => {
   test('con', () => {

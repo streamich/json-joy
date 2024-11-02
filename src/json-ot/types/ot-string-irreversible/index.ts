@@ -1,5 +1,5 @@
 import type {OtType} from '../types';
-import {StringOp} from './types';
+import type {StringOp} from './types';
 import {validate} from './validate';
 import {normalize} from './util';
 import {apply} from './apply';

@@ -1,6 +1,6 @@
 import {
-  AbstractPredicateOp,
-  Op,
+  type AbstractPredicateOp,
+  type Op,
   OpAdd,
   OpAnd,
   OpContains,
@@ -33,8 +33,8 @@ import {
 } from '../../op';
 import {MsgPackDecoderFast} from '@jsonjoy.com/json-pack/lib/msgpack/MsgPackDecoderFast';
 import {OPCODE} from '../../constants';
-import {Path} from '@jsonjoy.com/json-pointer';
-import {JsonPatchTypes} from '../json/types';
+import type {Path} from '@jsonjoy.com/json-pointer';
+import type {JsonPatchTypes} from '../json/types';
 import {createMatcherDefault} from '../../util';
 import type {JsonPatchOptions} from '../../types';
 import type {Reader} from '@jsonjoy.com/util/lib/buffers/Reader';

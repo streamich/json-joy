@@ -1,8 +1,8 @@
 import * as nodes from '../../../nodes';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
-import {IndexedFields, FieldName, IndexedNodeFields} from './types';
-import {ITimestampStruct, IClockVector, Timestamp, ClockVector} from '../../../../json-crdt-patch/clock';
+import type {IndexedFields, FieldName, IndexedNodeFields} from './types';
+import {type ITimestampStruct, type IClockVector, Timestamp, ClockVector} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {CborDecoderBase} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoderBase';
 import {CRDT_MAJOR} from '../../structural/binary/constants';

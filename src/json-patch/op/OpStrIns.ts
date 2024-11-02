@@ -1,7 +1,7 @@
 import type {CompactStrInsOp, OPCODE_STR_INS} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationStrIns} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationStrIns} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -18,7 +18,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
   }
 
   public op() {
-    return 'str_ins' as 'str_ins';
+    return 'str_ins' as const;
   }
 
   public code() {

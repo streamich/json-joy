@@ -2,7 +2,7 @@
 
 import * as Benchmark from 'benchmark';
 import {operationToOp} from '../codec/json';
-import {Operation} from '../types';
+import type {Operation} from '../types';
 import {applyPatch, applyOps} from '../applyPatch';
 import {applyPatch as v2} from '../applyPatch/v2';
 import {applyPatch as v3} from '../applyPatch/v3';

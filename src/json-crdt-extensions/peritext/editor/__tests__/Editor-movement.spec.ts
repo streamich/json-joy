@@ -1,11 +1,11 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Kit, runAlphabetKitTestSuite, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
+import {type Kit, runAlphabetKitTestSuite, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
 import {CursorAnchor} from '../../slice/constants';
-import {Editor} from '../Editor';
-import {TextRangeUnit} from '../types';
+import type {Editor} from '../Editor';
+import type {TextRangeUnit} from '../types';
 
 const runTestsWithAlphabetKit = (setup: () => Kit) => {
   describe('one character movements', () => {

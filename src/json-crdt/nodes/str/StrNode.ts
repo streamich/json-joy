@@ -1,5 +1,5 @@
-import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
-import {AbstractRga, Chunk} from '../rga/AbstractRga';
+import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {AbstractRga, type Chunk} from '../rga/AbstractRga';
 import {next} from 'sonic-forest/lib/util';
 import type {JsonNode} from '..';
 

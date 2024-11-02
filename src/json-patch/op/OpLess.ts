@@ -1,9 +1,9 @@
 import type {CompactLessOp, OPCODE_LESS} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationLess} from '../types';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import type {OperationLess} from '../types';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -18,7 +18,7 @@ export class OpLess extends AbstractPredicateOp<'less'> {
   }
 
   public op() {
-    return 'less' as 'less';
+    return 'less' as const;
   }
 
   public code() {

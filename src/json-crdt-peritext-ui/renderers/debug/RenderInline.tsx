@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {useDebugCtx} from './context';
 import type {InlineViewProps} from '../../react/InlineView';
 

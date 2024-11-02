@@ -1,4 +1,4 @@
-import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
+import {compare, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import {SESSION} from '../../../json-crdt-patch/constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {UNDEFINED} from '../../model/Model';

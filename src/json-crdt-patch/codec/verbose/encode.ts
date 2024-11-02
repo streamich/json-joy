@@ -1,8 +1,8 @@
 import * as operations from '../../operations';
-import {Patch} from '../../Patch';
+import type {Patch} from '../../Patch';
 import {SESSION} from '../../constants';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
-import {ITimestampStruct, Timestamp} from '../../clock';
+import {type ITimestampStruct, Timestamp} from '../../clock';
 import type * as types from './types';
 
 const encodeTimestamp = (ts: ITimestampStruct): types.JsonCodecTimestamp =>

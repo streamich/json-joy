@@ -2,7 +2,7 @@
 // npx ts-node src/json-crdt/__bench__/bench.concurrent-traces.ts
 
 import {loadConcurrentTrace} from './util/concurrent-trace';
-import {Patch} from '../../json-crdt-patch';
+import type {Patch} from '../../json-crdt-patch';
 import {Model} from '../model';
 
 const traceName = 'friendsforever';

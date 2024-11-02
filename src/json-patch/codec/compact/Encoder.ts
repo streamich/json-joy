@@ -1,6 +1,6 @@
-import {Op} from '../../op';
+import type {Op} from '../../op';
 import {encode} from './encode';
-import {CompactOp, EncoderOptions} from './types';
+import type {CompactOp, EncoderOptions} from './types';
 
 export class Encoder {
   constructor(public readonly options?: EncoderOptions) {}

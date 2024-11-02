@@ -1,7 +1,7 @@
 import {InlineAttrContained, InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../block/Inline';
-import {LeafBlock} from '../block/LeafBlock';
+import type {LeafBlock} from '../block/LeafBlock';
 import {SliceTypes} from '../slice/constants';
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
+import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
 
 const run = (setup: () => Kit) => {
   describe('inline', () => {

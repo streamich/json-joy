@@ -1,8 +1,8 @@
 import * as nodes from '../../../nodes';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {ITimestampStruct, IClockVector, Timestamp} from '../../../../json-crdt-patch/clock';
-import {Model} from '../../../model';
+import {type ITimestampStruct, type IClockVector, Timestamp} from '../../../../json-crdt-patch/clock';
+import type {Model} from '../../../model';
 import type * as types from './types';
 
 export class Encoder {

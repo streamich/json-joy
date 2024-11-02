@@ -2,7 +2,7 @@ import {Cursor} from './Cursor';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
-import {ChunkSlice} from '../util/ChunkSlice';
+import type {ChunkSlice} from '../util/ChunkSlice';
 import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';

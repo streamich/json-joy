@@ -1,8 +1,8 @@
-import {Patch} from '../../json-crdt-patch';
+import type {Patch} from '../../json-crdt-patch';
 import {ClockTable} from '../../json-crdt-patch/codec/clock/ClockTable';
-import {Decoder} from '../codec/indexed/binary/Decoder';
-import {Encoder} from '../codec/indexed/binary/Encoder';
-import {IndexedFields, FieldName, IndexedNodeFields} from '../codec/indexed/binary/types';
+import type {Decoder} from '../codec/indexed/binary/Decoder';
+import type {Encoder} from '../codec/indexed/binary/Encoder';
+import type {IndexedFields, FieldName, IndexedNodeFields} from '../codec/indexed/binary/types';
 import {PartialEditModel} from './PartialEditModel';
 import type {IJsonCrdtPatchEditOperation} from '../../json-crdt-patch/types';
 import type {FieldEdits} from './types';

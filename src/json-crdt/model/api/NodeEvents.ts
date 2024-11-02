@@ -1,4 +1,4 @@
-import {FanOut} from 'thingies/lib/fanout';
+import type {FanOut} from 'thingies/lib/fanout';
 import {MapFanOut, OnNewFanOut} from './fanout';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type {SyncStore, SyncStoreUnsubscribe} from '../../../util/events/sync-store';

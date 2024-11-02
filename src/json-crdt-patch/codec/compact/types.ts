@@ -1,5 +1,5 @@
 import type {JsonCrdtPatchOpcode} from '../../constants';
-import {JsonCodecTimestamp} from '../verbose/types';
+import type {JsonCodecTimestamp} from '../verbose/types';
 
 /**
  * Represents a JSON CRDT Patch object in *Compact encoding*. Compact encoding

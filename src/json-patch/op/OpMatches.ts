@@ -1,9 +1,9 @@
 import type {CompactMatchesOp, OPCODE_MATCHES} from '../codec/compact/types';
 import type {OperationMatches, CreateRegexMatcher, RegexMatcher} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import {AbstractOp} from './AbstractOp';
+import type {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -24,7 +24,7 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
   }
 
   public op() {
-    return 'matches' as 'matches';
+    return 'matches' as const;
   }
 
   public code() {

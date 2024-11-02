@@ -1,7 +1,7 @@
 /* tslint:disable no-console */
 // Run: npx ts-node src/json-crdt/__tests__/fuzzer/generate-trace.ts
 
-import {Patch} from '../../../json-crdt-patch';
+import type {Patch} from '../../../json-crdt-patch';
 import {Model} from '../../model';
 import {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';

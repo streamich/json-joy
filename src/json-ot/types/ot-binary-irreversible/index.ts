@@ -1,5 +1,5 @@
 import type {OtType} from '../types';
-import {BinaryOp} from './types';
+import type {BinaryOp} from './types';
 import {validate} from './validate';
 import {normalize} from './util';
 import {apply} from './apply';

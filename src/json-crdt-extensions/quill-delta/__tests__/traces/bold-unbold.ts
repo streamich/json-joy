@@ -1,4 +1,4 @@
-import {QuillTrace} from '../../types';
+import type {QuillTrace} from '../../types';
 
 /**
  * This stack bolds a word, then unbolds it.

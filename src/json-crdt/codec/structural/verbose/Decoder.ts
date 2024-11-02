@@ -1,9 +1,9 @@
 import * as nodes from '../../../nodes';
 import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
-import {ITimestampStruct, ts, ClockVector} from '../../../../json-crdt-patch/clock';
+import {type ITimestampStruct, ts, ClockVector} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import * as types from './types';
+import type * as types from './types';
 
 export class Decoder {
   public decode({time, root}: types.JsonCrdtVerboseDocument): Model {
@@ -90,11 +90,10 @@ export class Decoder {
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
-      const self = this;
       let i = 0;
       rga.ingest(length, () => {
         const c = chunks[i++];
-        const id = self.cTs(c.id);
+        const id = this.cTs(c.id);
         if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
           return new nodes.ArrChunk(id, (c as types.JsonCrdtVerboseTombstone).span, undefined);
         else {
@@ -113,11 +112,10 @@ export class Decoder {
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
-      const self = this;
       let i = 0;
       rga.ingest(length, () => {
         const c = chunks[i++];
-        const id = self.cTs(c.id);
+        const id = this.cTs(c.id);
         if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
           return new nodes.StrChunk(id, (c as types.JsonCrdtVerboseTombstone).span, '');
         else {
@@ -135,12 +133,11 @@ export class Decoder {
     const rga = new nodes.BinNode(id);
     const chunks = node.chunks;
     const length = chunks.length;
-    const self = this;
     if (length) {
       let i = 0;
       rga.ingest(length, () => {
         const c = chunks[i++];
-        const id = self.cTs(c.id);
+        const id = this.cTs(c.id);
         if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
           return new nodes.BinChunk(id, (c as types.JsonCrdtVerboseTombstone).span, undefined);
         else {

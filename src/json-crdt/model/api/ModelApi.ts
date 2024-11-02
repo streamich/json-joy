@@ -1,9 +1,9 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
-import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
-import {Patch} from '../../../json-crdt-patch/Patch';
+import {type ApiPath, ArrApi, BinApi, ConApi, type NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
+import type {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {SyncStore} from '../../../util/events/sync-store';
+import type {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Model} from '../Model';

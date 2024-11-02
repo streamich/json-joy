@@ -1,9 +1,9 @@
 import type {CompactMoveOp, OPCODE_MOVE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
-import {OperationMove} from '../types';
+import type {OperationMove} from '../types';
 import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
-import {Path, toPath, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import {type Path, toPath, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
@@ -19,7 +19,7 @@ export class OpMove extends AbstractOp<'move'> {
   }
 
   public op() {
-    return 'move' as 'move';
+    return 'move' as const;
   }
 
   public code() {

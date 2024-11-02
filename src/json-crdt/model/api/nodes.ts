@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {find} from './find';
-import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
-import {Path} from '@jsonjoy.com/json-pointer';
+import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';

@@ -22,7 +22,7 @@ import op_starts_tests_json from './op.starts.tests.json';
 import op_type_tests_json from './op.type.tests.json';
 import op_undefined_tests_json from './op.undefined.tests.json';
 import spec_json from './spec.json';
-import {TestSuite} from './types';
+import type {TestSuite} from './types';
 
 export const testSuites: TestSuite[] = [
   // JSON Patch
