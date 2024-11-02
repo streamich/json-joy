@@ -35,7 +35,9 @@ export class Slices<T = string> implements Stateful, Printable {
 
   public ins<
     S extends PersistedSlice<T>,
-    K extends new (...args: ConstructorParameters<typeof PersistedSlice<T>>) => S,
+    K extends new (
+      ...args: ConstructorParameters<typeof PersistedSlice<T>>
+    ) => S,
   >(
     range: Range<T>,
     behavior: SliceBehavior,

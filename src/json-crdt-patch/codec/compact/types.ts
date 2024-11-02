@@ -14,11 +14,9 @@ export type CompactCodecPatch = [
      * derived from this ID.
      */
     id: CompactCodecTimestamp,
-
     /** Custom metadata. */
     meta?: unknown,
   ],
-
   /**
    * List of operations comprising this patch. Patches are atomic, so all
    * operations are applied at once. "time" part of the IDs of all operations
@@ -57,7 +55,6 @@ export type CompactCodecTimestamp =
   | [
       /** A random site ID. */
       sessionId: number,
-
       /** A logical clock sequence number. */
       time: number,
     ]
@@ -72,10 +69,8 @@ export type CompactCodecTimespan =
   | [
       /** A random site ID. */
       sessionId: number,
-
       /** A logical clock sequence number. */
       time: number,
-
       /**
        * Length of the timespan, including the first timestamp identified by the
        * `sessionId` and `time` properties.
@@ -85,7 +80,6 @@ export type CompactCodecTimespan =
   | [
       /** Time difference relative to the Patch ID time. */
       time: number,
-
       /**
        * Length of the timespan, including the first timestamp identified by the
        * `sessionId` and `time` properties.
@@ -100,13 +94,11 @@ export type CompactCodecTimespan =
 export type CompactCodecNewConOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.new_con,
-
   /**
    * Literal JSON value, which can also contain binary data; or, a logical clock
    * timestamp.
    */
   value?: unknown | undefined | CompactCodecTimestamp,
-
   /** If true, the `value` is a timestamp. */
   timestamp?: boolean,
 ];
@@ -118,7 +110,6 @@ export type CompactCodecNewConOperation = [
 export type CompactCodecNewValOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.new_val,
-
   /** ID of the "val" LWW-Register object latest value. */
   value: CompactCodecTimestamp,
 ];
@@ -178,14 +169,12 @@ export type CompactCodecNewArrOperation = [
 export type CompactCodecInsValOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.ins_val,
-
   /**
    * Object on which to perform the operation. If omitted, or set to falsy
    * value, or equal to origin `[0, 0]`, the "set" operation is applied to the
    * root object, which is LWW Register of a pointer to another CRDT data type.
    */
   obj: CompactCodecTimestamp,
-
   /**
    * The new value of the "val" LWW-Register object. The ID of the CRDT object
    * to which the "val" LWW-Register will point to, if operation is successful.
@@ -200,10 +189,8 @@ export type CompactCodecInsValOperation = [
 export type CompactCodecInsObjOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.ins_obj,
-
   /** Object on which to perform the operation. */
   obj: CompactCodecTimestamp,
-
   /** A map of values to apply to the "obj" LWW-Map object. */
   value: Array<[key: string, value: CompactCodecTimestamp]>,
 ];
@@ -215,10 +202,8 @@ export type CompactCodecInsObjOperation = [
 export type CompactCodecInsVecOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.ins_vec,
-
   /** Object on which to perform the operation. */
   obj: CompactCodecTimestamp,
-
   /** A map of values to apply to the "vec" LWW-Vector object. */
   value: Array<[index: number, value: CompactCodecTimestamp]>,
 ];
@@ -227,16 +212,13 @@ export type CompactCodecInsVecOperation = [
 export type CompactCodecInsStrOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.ins_str,
-
   /** Object on which to perform the operation. */
   obj: CompactCodecTimestamp,
-
   /**
    * Specifies the ID of element after which to attempt to insert the substring
    * using the RGA algorithm.
    */
   after: CompactCodecTimestamp,
-
   /** The substring to insert in the string. */
   value: string,
 ];
@@ -245,16 +227,13 @@ export type CompactCodecInsStrOperation = [
 export type CompactCodecInsBinOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.ins_bin,
-
   /** Object on which to perform the operation. */
   obj: CompactCodecTimestamp,
-
   /**
    * Specifies the ID of element after which to attempt to insert the substring
    * using the RGA algorithm.
    */
   after: CompactCodecTimestamp,
-
   /** The binary data to insert, encoded using Base64. */
   value: string,
 ];
@@ -263,16 +242,13 @@ export type CompactCodecInsBinOperation = [
 export type CompactCodecInsArrOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.ins_arr,
-
   /** Object on which to perform the operation. */
   obj: CompactCodecTimestamp,
-
   /**
    * Specifies the ID of element after which to attempt to insert the substring
    * using the RGA algorithm.
    */
   after: CompactCodecTimestamp,
-
   /** Values to insert in the array. */
   values: JsonCodecTimestamp[],
 ];
@@ -285,10 +261,8 @@ export type CompactCodecInsArrOperation = [
 export type CompactCodecDelOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.del,
-
   /** Object on which to perform the operation. */
   obj: CompactCodecTimestamp,
-
   /** Range of content to delete. */
   what: CompactCodecTimespan[],
 ];
@@ -301,7 +275,6 @@ export type CompactCodecDelOperation = [
 export type CompactCodecNopOperation = [
   /** Operation type. */
   op: JsonCrdtPatchOpcode.nop,
-
   /** Defaults to 1, if omitted. */
   len?: number,
 ];

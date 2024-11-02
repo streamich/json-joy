@@ -50,7 +50,7 @@ export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
       : N extends nodes.ValNode<infer T>
         ? builder.val<JsonNodeToSchema<T>>
         : N extends nodes.VecNode<infer T>
-          ? (T extends ExtensionVecData<infer EDataNode>
+          ? T extends ExtensionVecData<infer EDataNode>
             ? EDataNode extends PeritextNode
               ? builder.ext<ExtensionId.peritext, any>
               : EDataNode extends QuillDeltaNode
@@ -58,7 +58,7 @@ export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
                 : EDataNode extends MvalNode
                   ? builder.ext<ExtensionId.mval, any>
                   : builder.ext<number, any>
-            : builder.vec<{[K in keyof T]: JsonNodeToSchema<T[K]>}>)
+            : builder.vec<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
           : N extends nodes.ObjNode<infer T>
             ? builder.obj<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
             : N extends nodes.ArrNode<infer T>

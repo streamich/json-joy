@@ -76,8 +76,8 @@
     "lib/"
   ],
   "scripts": {
-    "prettier": "npx prettier@3.2.5 --write .",
-    "prettier:check": "npx prettier@3.2.5 --check .",
+    "format": "biome format ./src",
+    "format:fix": "biome format --write ./src",
     "lint": "yarn tslint",
     "lint:fix": "yarn tslint --fix",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",
@@ -137,6 +137,7 @@
     "tree-dump": "^1.0.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/benchmark": "^2.1.5",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.11",
@@ -178,16 +179,6 @@
       ".*/node_modules/.*"
     ],
     "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.ts$"
-  },
-  "prettier": {
-    "arrowParens": "always",
-    "printWidth": 120,
-    "tabWidth": 2,
-    "useTabs": false,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": false
   },
   "config": {
     "commitizen": {

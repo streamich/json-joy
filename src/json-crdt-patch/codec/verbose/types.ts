@@ -48,7 +48,6 @@ export type JsonCodecTimestamp =
   | [
       /** A random site ID. */
       sessionId: number,
-
       /** A logical clock sequence number. */
       time: number,
     ]
@@ -62,10 +61,8 @@ export type JsonCodecTimestamp =
 export type JsonCodecTimespan = [
   /** A random site ID. */
   sessionId: number,
-
   /** A logical clock sequence number. */
   time: number,
-
   /**
    * Length of the timespan, including the first timestamp identified by the
    * `sessionId` and `time` properties.

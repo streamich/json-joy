@@ -18,7 +18,9 @@ export class Decoder {
 
   public decode<M extends Model>(
     fields: IndexedFields,
-    ModelConstructor: new (clock: IClockVector) => M = Model as unknown as new (clock: IClockVector) => M,
+    ModelConstructor: new (clock: IClockVector) => M = Model as unknown as new (
+      clock: IClockVector,
+    ) => M,
   ): M {
     const reader = this.dec.reader;
     reader.reset(fields.c);
@@ -29,7 +31,9 @@ export class Decoder {
   public decodeFields<M extends Model>(
     clockTable: ClockTable,
     fields: IndexedNodeFields,
-    ModelConstructor: new (clock: IClockVector) => M = Model as unknown as new (clock: IClockVector) => M,
+    ModelConstructor: new (clock: IClockVector) => M = Model as unknown as new (
+      clock: IClockVector,
+    ) => M,
   ): M {
     const reader = this.dec.reader;
     const firstClock = clockTable.byIdx[0];
