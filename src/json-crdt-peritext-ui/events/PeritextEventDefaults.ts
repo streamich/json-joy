@@ -14,14 +14,12 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
-    if (event.defaultPrevented) return;
     const text = event.detail.text;
     this.txt.editor.insert(text);
     this.et.change(event);
   };
 
   public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
-    if (event.defaultPrevented) return;
     const {direction = -1, unit = 'char'} = event.detail;
     this.txt.editor.delete(direction, unit);
     this.et.change(event);

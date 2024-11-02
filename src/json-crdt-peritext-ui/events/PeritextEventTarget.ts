@@ -15,7 +15,7 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
   public dispatch<K extends keyof PeritextEventMap>(type: K, detail: PeritextEventMap[K]): void {
     const event = new CustomEvent<PeritextEventMap[K]>(type, {detail});
     this.dispatchEvent(event);
-    this.defaults[type]?.(event);
+    if (!event.defaultPrevented) this.defaults[type]?.(event);
   }
 
   public change(ev?: CustomEvent<any>): void {
