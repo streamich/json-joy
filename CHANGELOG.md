@@ -1,3 +1,11 @@
+## [17.9.1](https://github.com/streamich/json-joy/compare/v17.9.0...v17.9.1) (2024-11-02)
+
+
+### Bug Fixes
+
+* 🐛 correct simple linter errors ([4f85e09](https://github.com/streamich/json-joy/commit/4f85e09eb4dd1e142fa22d49ba3c3c962646c3e6))
+* 🐛 fix more risky linter warnings ([c1b04f1](https://github.com/streamich/json-joy/commit/c1b04f1576e6a47f0c91acfddcae975798a330f7))
+
 # [17.9.0](https://github.com/streamich/json-joy/compare/v17.8.1...v17.9.0) (2024-11-01)
 
 
