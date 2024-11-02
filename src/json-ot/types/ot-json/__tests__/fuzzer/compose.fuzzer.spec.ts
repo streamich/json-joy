@@ -10,7 +10,6 @@ test('...', () => {
     let doc;
     let tree1;
     let tree2;
-    try {
       doc = fuzzer.genDoc();
       let doc2 = clone(doc);
       const op1 = fuzzer.genOp(doc);
@@ -23,8 +22,5 @@ test('...', () => {
       const op3 = tree1.toJson();
       const doc3 = apply(doc2, op3);
       expect(doc3).toStrictEqual(doc2);
-    } catch (error) {
-      throw error;
-    }
   }
 });

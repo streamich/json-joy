@@ -12,7 +12,7 @@ export const $$starts = (op: OpStarts): JavaScriptLinked<ApplyFn> => {
   return wrapper(function(doc){
     var val = find(doc);
     if (typeof val !== 'string') return false;
-    var outer = ${op.ignore_case ? /* js */ `val.toLowerCase()` : `val`};
+    var outer = ${op.ignore_case ? /* js */ 'val.toLowerCase()' : 'val'};
     return outer.indexOf(${JSON.stringify(compareValue)}) === 0;
   });
 })`;

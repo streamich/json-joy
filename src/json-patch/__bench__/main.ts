@@ -27,25 +27,25 @@ const ops = patch.map((op) => operationToOp(op, {}));
 const suite = new Benchmark.Suite();
 
 suite
-  .add(`json-joy (applyPatch)`, () => {
+  .add('json-joy (applyPatch)', () => {
     applyPatch(doc, patch, {mutate: false});
   })
-  .add(`json-joy (applyPatch v2)`, () => {
+  .add('json-joy (applyPatch v2)', () => {
     v2(doc, patch, {mutate: false});
   })
-  .add(`json-joy (applyPatch v3)`, () => {
+  .add('json-joy (applyPatch v3)', () => {
     v3(doc, patch, {mutate: false});
   })
-  .add(`json-joy (applyPatch v4)`, () => {
+  .add('json-joy (applyPatch v4)', () => {
     v4(doc, patch, {mutate: false});
   })
-  .add(`json-joy (applyOps)`, () => {
+  .add('json-joy (applyOps)', () => {
     applyOps(doc, ops, false);
   })
-  .add(`fast-json-patch`, () => {
+  .add('fast-json-patch', () => {
     applyPatchFastJsonPatch(doc, patch as any, false, false);
   })
-  .add(`fast-json-patch (fast clone)`, () => {
+  .add('fast-json-patch (fast clone)', () => {
     const doc2 = clone(doc);
     applyPatchFastJsonPatch(doc2, patch as any, false, true);
   })

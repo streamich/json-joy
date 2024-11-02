@@ -142,8 +142,6 @@ export class OpTree {
   public drop: DropNode = new DropRoot();
   public register = new Map<number, Register>();
 
-  constructor() {}
-
   findPick(path: Path, pathLength: number): PickNode | undefined {
     let parent: PickNode | undefined = this.pick;
     for (let i = 0; i < pathLength; i++) {

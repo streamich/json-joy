@@ -14,7 +14,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
 
-export type ApiPath = string | number | Path | void;
+export type ApiPath = string | number | Path | undefined;
 
 /**
  * A generic local changes API for a JSON CRDT node.

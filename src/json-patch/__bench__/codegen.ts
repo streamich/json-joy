@@ -26,16 +26,16 @@ const suite = new Benchmark.Suite();
 const applyCompiled = $apply(patch, {mutate: false});
 
 suite
-  .add(`json-patch/apply(patch, {}, message)`, () => {
+  .add('json-patch/apply(patch, {}, message)', () => {
     apply(patch, {mutate: false}, message);
   })
-  .add(`json-patch/$apply(patch, {})(message)`, () => {
+  .add('json-patch/$apply(patch, {})(message)', () => {
     $apply(patch, {mutate: false})(message);
   })
-  .add(`json-patch/applyOps`, () => {
+  .add('json-patch/applyOps', () => {
     applyOps(message, ops, false);
   })
-  .add(`json-patch/applyCompiled`, () => {
+  .add('json-patch/applyCompiled', () => {
     applyCompiled(message);
   })
   .on('cycle', (event: any) => {

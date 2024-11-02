@@ -16,7 +16,7 @@ const testSuites = [
 ];
 
 export const testApplyPatchAutomated = (applyPatch: ApplyPatch) => {
-  describe(`applyPatch [automated]`, () => {
+  describe('applyPatch [automated]', () => {
     testSuites.forEach((s) => {
       const suite = clone(s) as any;
       describe(suite.name, () => {

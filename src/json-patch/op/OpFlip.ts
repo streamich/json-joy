@@ -9,9 +9,6 @@ import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
  * @category JSON Patch Extended
  */
 export class OpFlip extends AbstractOp<'flip'> {
-  constructor(path: Path) {
-    super(path);
-  }
 
   public op() {
     return 'flip' as const;

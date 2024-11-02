@@ -10,19 +10,19 @@ import {SESSION} from '../../../../json-crdt-patch/constants';
 
 export class Decoder {
   protected doc!: Model;
-  protected clockDecoder?: ClockDecoder;
+  protected clockDecoder?: ClockDecoder = undefined;
   protected time: number = -1;
   protected readonly decoder: CborDecoderBase<CrdtReader> = new CborDecoderBase<CrdtReader>(new CrdtReader());
 
   public decode(view: unknown, meta: Uint8Array): Model {
-    delete this.clockDecoder;
+    this.clockDecoder = undefined;
     this.time = -1;
     this.decoder.reader.reset(meta);
     this.decodeClockTable();
     const clock = this.clockDecoder!.clock;
     this.doc = Model.withLogicalClock(clock);
     this.doc.root = new nodes.RootNode(this.doc, this.cRoot(view).id);
-    delete this.clockDecoder;
+    this.clockDecoder = undefined;
     return this.doc;
   }
 

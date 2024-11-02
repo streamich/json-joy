@@ -362,7 +362,7 @@ export class Editor<T = string> {
    * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
+  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
     this.cursors((cursor) => {
       switch (endpoint) {
         case 0: {

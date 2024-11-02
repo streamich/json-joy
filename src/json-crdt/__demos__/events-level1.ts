@@ -46,10 +46,10 @@ const subscribe = (model: Model) => {
   });
 
   // The "change" events combine all "local" changes with the "patch" changes.
-  model.api.onChange.listen((change: number | void | Patch) => {
+  model.api.onChange.listen((change: number | undefined | Patch) => {
     console.log(`Called: "onChange", ${change}`);
   });
-  model.api.onChanges.listen((changes: (number | void | Patch)[]) => {
+  model.api.onChanges.listen((changes: (number | undefined | Patch)[]) => {
     console.log(`Called: "onChanges", ${changes}`);
   });
 

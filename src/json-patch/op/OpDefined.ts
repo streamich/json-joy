@@ -10,9 +10,6 @@ import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
  * @category JSON Predicate
  */
 export class OpDefined extends AbstractPredicateOp<'defined'> {
-  constructor(path: Path) {
-    super(path);
-  }
 
   public op() {
     return 'defined' as const;

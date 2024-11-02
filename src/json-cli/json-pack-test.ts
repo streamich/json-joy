@@ -19,7 +19,7 @@ if (!bin) {
 }
 
 console.log('');
-console.log(`Running json-pack tests.`);
+console.log('Running json-pack tests.');
 console.log('');
 
 let cntCorrect = 0;

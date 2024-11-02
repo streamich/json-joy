@@ -1,4 +1,4 @@
-import type * as React from 'react';
+import * as React from 'react';
 import {usePeritext} from '../context';
 import {Caret} from './Caret';
 

@@ -6,7 +6,7 @@ interface Options {
 }
 
 export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHistory = false}: Options = {}) => {
-  describe(`applyPatch [smoke tests]`, () => {
+  describe('applyPatch [smoke tests]', () => {
     describe('root replacement', () => {
       describe('add', () => {
         it('should `add` an object (on a json document of type object) - in place', () => {
@@ -1987,7 +1987,7 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
       }
     });
 
-    it(`should not allow __proto__ modifications`, () => {
+    it('should not allow __proto__ modifications', () => {
       function SomeClass(this: any) {
         this.foo = 'bar';
       }
@@ -1995,7 +1995,7 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
       const doc = new (SomeClass as any)();
       const otherDoc = new (SomeClass as any)();
 
-      const patch: any = [{op: 'replace', path: `/__proto__/x`, value: 'polluted'}];
+      const patch: any = [{op: 'replace', path: '/__proto__/x', value: 'polluted'}];
 
       expect(() => applyPatch(doc, patch, {mutate: true})).toThrow();
 

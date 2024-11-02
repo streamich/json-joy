@@ -4,12 +4,12 @@ import {Model} from '../Model';
 describe('Document', () => {
   describe('root', () => {
     test('default root value is undefined', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       expect(doc.view()).toBe(undefined);
     });
 
     test('can set root value to "true"', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const t = builder.json(true);
       builder.root(t);
@@ -18,7 +18,7 @@ describe('Document', () => {
     });
 
     test('can set root value to "false"', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const t = builder.json(true);
       const f = builder.json(false);
@@ -29,7 +29,7 @@ describe('Document', () => {
     });
 
     test('can set root value to "null"', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const t = builder.json(true);
       const f = builder.json(false);

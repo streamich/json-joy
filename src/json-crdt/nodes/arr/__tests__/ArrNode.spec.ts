@@ -3,7 +3,7 @@ import {Model} from '../../../model';
 import type {ArrNode} from '../ArrNode';
 
 test('can insert two booleans into an array', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const builder1 = new PatchBuilder(doc.clock);
 
   const arr = builder1.arr();
@@ -17,11 +17,11 @@ test('can insert two booleans into an array', () => {
 
   const builder3 = new PatchBuilder(doc.clock);
   const f = builder3.const(false);
-  const ins2 = builder3.insArr(arr, ins1, [f]);
+  builder3.insArr(arr, ins1, [f]);
   doc.applyPatch(builder3.patch);
 
   const node = doc.index.get(arr) as ArrNode;
-  const firstChunk = node.first();
+  node.first();
 
   expect(node.length()).toBe(2);
   expect(doc.view()).toEqual([true, false]);

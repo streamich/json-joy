@@ -1,4 +1,4 @@
-import {SESSION} from '../constants';
+import {SESSION} from '../enums';
 import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct} from './types';
 
 export class Timestamp implements ITimestampStruct {

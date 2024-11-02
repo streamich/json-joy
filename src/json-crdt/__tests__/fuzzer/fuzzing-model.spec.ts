@@ -3,7 +3,7 @@ import {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 const runs = 10;
 const sessionNum = 25;
 
-test(`model fuzz testing`, () => {
+test('model fuzz testing', () => {
   for (let r = 0; r < runs; r++) {
     const fuzzer = new JsonCrdtFuzzer();
     fuzzer.setupModel();

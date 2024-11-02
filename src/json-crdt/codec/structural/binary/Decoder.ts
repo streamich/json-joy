@@ -9,7 +9,7 @@ import {CRDT_MAJOR} from './constants';
 
 export class Decoder extends CborDecoderBase<CrdtReader> {
   protected doc!: Model;
-  protected clockDecoder?: ClockDecoder;
+  protected clockDecoder?: ClockDecoder = undefined;
   protected time: number = -1;
 
   constructor() {
@@ -17,7 +17,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
   }
 
   public decode(data: Uint8Array, model?: Model): Model {
-    delete this.clockDecoder;
+    this.clockDecoder = undefined;
     this.time = -1;
     const reader = this.reader;
     reader.reset(data);
@@ -35,7 +35,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     }
     this.doc = model;
     model.root = new nodes.RootNode(this.doc, this.cRoot().id);
-    delete this.clockDecoder;
+    this.clockDecoder = undefined;
     return model;
   }
 

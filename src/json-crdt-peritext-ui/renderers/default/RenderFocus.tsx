@@ -1,4 +1,4 @@
-import type * as React from 'react';
+import * as React from 'react';
 import {rule, drule, keyframes} from 'nano-theme';
 
 const width = 0.125;

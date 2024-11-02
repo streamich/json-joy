@@ -1,6 +1,6 @@
-import type * as React from 'react';
-import type {BlockViewProps} from '../../react/BlockView';
+import * as React from 'react';
 import {useDebugCtx} from './context';
+import type {BlockViewProps} from '../../react/BlockView';
 
 export interface RenderBlockProps extends BlockViewProps {
   children?: React.ReactNode;

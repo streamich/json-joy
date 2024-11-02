@@ -143,9 +143,9 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
     const patches: Patch[] = [];
     this.patches.forEach(({v}) => patches.push(v));
     return (
-      `log` +
+      'log' +
       printTree(tab, [
-        (tab) => `start` + printTree(tab, [(tab) => this.start().toString(tab)]),
+        (tab) => 'start' + printTree(tab, [(tab) => this.start().toString(tab)]),
         () => '',
         (tab) =>
           'history' +
@@ -154,7 +154,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
             patches.map((patch, i) => (tab) => `${i}: ${patch.toString(tab)}`),
           ),
         () => '',
-        (tab) => `end` + printTree(tab, [(tab) => this.end.toString(tab)]),
+        (tab) => 'end' + printTree(tab, [(tab) => this.end.toString(tab)]),
       ])
     );
   }

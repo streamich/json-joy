@@ -62,7 +62,7 @@ export const $$apply = (
   const js = /* js */ `
 (function(${depNames.join(',')}) {
   return function(doc){
-    ${needsToClone ? /* js */ `doc = clone(doc);` : ''}
+    ${needsToClone ? /* js */ 'doc = clone(doc);' : ''}
     return ${resultExpression};
   };
 })`;

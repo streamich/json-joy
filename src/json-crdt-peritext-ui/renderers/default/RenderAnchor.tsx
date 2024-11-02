@@ -1,4 +1,4 @@
-import type * as React from 'react';
+import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Char} from '../../constants';
 import type {AnchorViewProps} from '../../react/selection/AnchorView';

@@ -28,25 +28,25 @@ console.log();
 const suite = new Benchmark.Suite();
 
 suite
-  .add(`json-joy/json-ot ot-string`, () => {
+  .add('json-joy/json-ot ot-string', () => {
     validate(op1);
     apply(str, op1);
   })
-  .add(`json-joy/json-ot ot-string (reversible)`, () => {
+  .add('json-joy/json-ot ot-string (reversible)', () => {
     validate(op2);
     apply(str, op2);
   })
-  .add(`json-joy/json-ot ot-string-irreversible`, () => {
+  .add('json-joy/json-ot ot-string-irreversible', () => {
     validate2(op2 as any);
     apply2(str, op2 as any);
   })
-  .add(`ottypes/ot-text`, () => {
+  .add('ottypes/ot-text', () => {
     type.apply(str, op3);
   })
-  .add(`ottypes/ot-text-unicode`, () => {
+  .add('ottypes/ot-text-unicode', () => {
     type2.apply(str, op3);
   })
-  .add(`quilljs/delta`, () => {
+  .add('quilljs/delta', () => {
     const delta = d.create(str);
     d.apply(delta, d.deserialize(deltaOp));
   })
