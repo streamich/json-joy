@@ -78,9 +78,8 @@
   "scripts": {
     "format": "biome format ./src",
     "format:fix": "biome format --write ./src",
-    "lint": "yarn tslint",
-    "lint:fix": "yarn tslint --fix",
-    "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --apply ./src",
     "clean": "npx rimraf@5.0.5 lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log src/**/__bench__/node_modules src/**/__bench__/yarn-error.log",
     "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\"",
