@@ -36,12 +36,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, edge, len = 0, unit} = event.detail;
+    const {at, edge, len, unit} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
-
-    // If `at` is specified.
-    if (typeof at === 'number' && at >= 0) {
+    
+    // If `at` is specified, it represents the absolute position. We move the
+    // cursor to that position, and leave only one active cursor. All other
+    // are automatically removed when `editor.cursor` getter is accessed.
+    if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
       const point = editor.point(at);
       switch (edge) {
         case 'focus':
@@ -53,8 +55,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           editor.addCursor(txt.range(point, point.clone()));
           break;
         }
+        // both
         default: {
-          // both
           if (!!len && typeof len === 'number') {
             const point2 = point.clone();
             point2.step(len);
@@ -71,7 +73,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     // If `edge` is specified.
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
     if (isSpecificEdgeSelected) {
-      editor.move(len, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
+      editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
       return;
     }
 
