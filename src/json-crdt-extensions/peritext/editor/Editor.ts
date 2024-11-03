@@ -23,6 +23,10 @@ export class Editor<T = string> {
     this.local = new EditorSlices(txt, txt.localSlices);
   }
 
+  public text(): string {
+    return this.txt.strApi().view();
+  }
+
   // ------------------------------------------------------------------ cursors
 
   public addCursor(range: Range<T>, anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {

@@ -5,29 +5,35 @@ export type PeritextEventHandlerMap = {
   [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
 };
 
-let id = 0;
+let __id = 0;
 
 export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
-  public readonly id: number = id++;
+  public readonly id: number = __id++;
 
   public defaults: Partial<PeritextEventHandlerMap> = {};
 
-  public dispatch<K extends keyof PeritextEventMap>(type: K, detail: PeritextEventMap[K]): void {
+  public dispatch<K extends keyof Omit<PeritextEventMap, 'change'>>(
+    type: K,
+    detail: Omit<PeritextEventMap, 'change'>[K],
+  ): void {
     const event = new CustomEvent<PeritextEventMap[K]>(type, {detail});
     this.dispatchEvent(event);
-    this.defaults[type]?.(event);
+    if (!event.defaultPrevented) this.defaults[type]?.(event);
+    this.change(event);
   }
 
   public change(ev?: CustomEvent<any>): void {
-    this.dispatch('change', {ev});
+    const event = new CustomEvent<PeritextEventMap['change']>('change', {detail: {ev}});
+    this.dispatchEvent(event);
+    if (!event.defaultPrevented) this.defaults.change?.(event);
   }
 
   public insert(text: string): void {
     this.dispatch('insert', {text});
   }
 
-  public delete(direction?: -1 | 0 | 1, unit?: DeleteDetail['unit']): void {
-    this.dispatch('delete', {direction, unit});
+  public delete(len: DeleteDetail['len'], unit?: DeleteDetail['unit'], at?: DeleteDetail['at']): void {
+    this.dispatch('delete', {len, unit, at});
   }
 
   public cursor(detail: CursorDetail): void {

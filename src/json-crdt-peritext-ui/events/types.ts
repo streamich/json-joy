@@ -1,4 +1,5 @@
 import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
+import type {Position as EditorPosition} from '../../json-crdt-extensions/peritext/editor/types';
 import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
 
 /**
@@ -8,20 +9,66 @@ export interface ChangeDetail {
   ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail>;
 }
 
+/**
+ * Event dispatched to insert text into the document.
+ */
 export interface InsertDetail {
   text: string;
 }
 
+/**
+ * Event dispatched to delete text from the document.
+ */
 export interface DeleteDetail {
   /**
-   * Specifies the direction of the deletion. If `-1`, the deletion will be
-   * backwards. If `1`, the deletion will be forwards. If `0`, the deletion
-   * will execute in both directions (i.e. the whole word, or line, or block).
+   * Specifies the amount of text to delete. If the value is negative, the
+   * deletion will be backwards. If positive, the deletion will be forwards.
+   * If `0`, the deletion will execute in both directions.
    *
-   * Defaults to `-1`.
+   * For example, if the cursor is in the middle of a word and the length is
+   * set to `0`, the whole word will be deleted by expanding the selection
+   * in both directions.
+   *
+   * ```js
+   * {
+   *   len: 0,
+   *   unit: 'word',
+   * }
+   * ```
+   *
+   * Or, delete a single character forwards:
+   *
+   * ```js
+   * {
+   *   len: 1,
+   * }
+   * ```
+   *
+   * @default -1
    */
-  direction?: -1 | 0 | 1;
+  len?: number;
+
+  /**
+   * Specifies the unit of the deletion. If `'char'`, the deletion will be
+   * executed by `len` characters. If `'word'`, the deletion will be executed
+   * by one word in the direction specified by `len`. If `'line'`, the deletion
+   * will be executed to the beginning or end of line, in direction specified
+   * by `len`.
+   *
+   * @default 'char'
+   */
   unit?: 'char' | 'word' | 'line';
+
+  /**
+   * Position in the document to start the deletion from. If not specified, the
+   * deletion is executed for all cursors in the document at their current
+   * positions. If specified, only one cursor will be placed at the specified
+   * position and the deletion will be executed from that position (while all
+   * other cursors will be removed).
+   *
+   * @default undefined
+   */
+  at?: Position;
 }
 
 /**
@@ -82,7 +129,7 @@ export interface CursorDetail {
    * second `0 | 1` member specifies the anchor point of the character: `0`
    * for the beginning of the character and `1` for the end of the character.
    */
-  at?: number | [at: number, anchor: 0 | 1] | Point;
+  at?: Position;
 
   /**
    * Specify the length of the movement or selection in units specified by the
@@ -128,6 +175,21 @@ export interface InlineDetail {
 
 // biome-ignore lint: empty interface is expected
 export type MarkerDetail = {};
+
+/**
+ * Position represents a caret position in the document. The position can either
+ * be an instance of {@link Point} or a numeric position in the document, which
+ * will be immediately converted to a {@link Point} instance.
+ *
+ * If a number is provided, the number represents the character index in the
+ * document, where `0` is the beginning of the document and `1` is the position
+ * right after the first character, etc.
+ *
+ * If 2-tuple is provided, the first element is the character index and the
+ * second `0 | 1` member specifies the anchor point of the character: `0`
+ * for the beginning of the character and `1` for the end of the character.
+ */
+export type Position = EditorPosition<string>;
 
 export type PeritextEventMap = {
   change: ChangeDetail;
