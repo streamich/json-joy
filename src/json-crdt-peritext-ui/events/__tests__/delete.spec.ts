@@ -159,6 +159,28 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.delete(DIRECTION, 'word');
       expect(kit.editor.text()).toBe('abcde  klmnopqrstuvwxyz');
     });
+
+    test('can delete a word at specific position', async () => {
+      const kit = setup();
+      kit.editor.cursor.setAt(10);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert(' ');
+      kit.editor.delCursors();
+      expect(kit.editor.text()).toBe('abcde fghij klmnopqrstuvwxyz');
+      kit.et.delete(0, 'word', 8);
+      expect(kit.editor.text()).toBe('abcde  klmnopqrstuvwxyz');
+      expect(kit.editor.cursor.start.viewPos()).toBe(6);
+      expect(kit.editor.cursor.isCollapsed()).toBe(true);
+      kit.et.delete(0, 'word', 3);
+      expect(kit.editor.text()).toBe('  klmnopqrstuvwxyz');
+      expect(kit.editor.cursor.start.viewPos()).toBe(0);
+      expect(kit.editor.cursor.isCollapsed()).toBe(true);
+      kit.et.delete(0, 'word', 10);
+      expect(kit.editor.text()).toBe('  ');
+      expect(kit.editor.cursor.start.viewPos()).toBe(2);
+      expect(kit.editor.cursor.isCollapsed()).toBe(true);
+    });
   });
 
   describe('lines', () => {

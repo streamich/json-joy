@@ -1,4 +1,5 @@
 import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
+import type {Position as EditorPosition} from '../../json-crdt-extensions/peritext/editor/types';
 import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
 
 /**
@@ -57,6 +58,17 @@ export interface DeleteDetail {
    * @default 'char'
    */
   unit?: 'char' | 'word' | 'line';
+
+  /**
+   * Position in the document to start the deletion from. If not specified, the
+   * deletion is executed for all cursors in the document at their current
+   * positions. If specified, only one cursor will be placed at the specified
+   * position and the deletion will be executed from that position (while all
+   * other cursors will be removed).
+   * 
+   * @default undefined
+   */
+  at?: Position;
 }
 
 /**
@@ -117,7 +129,7 @@ export interface CursorDetail {
    * second `0 | 1` member specifies the anchor point of the character: `0`
    * for the beginning of the character and `1` for the end of the character.
    */
-  at?: number | [at: number, anchor: 0 | 1] | Point;
+  at?: Position;
 
   /**
    * Specify the length of the movement or selection in units specified by the
@@ -163,6 +175,21 @@ export interface InlineDetail {
 
 // biome-ignore lint: empty interface is expected
 export type MarkerDetail = {};
+
+/**
+ * Position represents a caret position in the document. The position can either
+ * be an instance of {@link Point} or a numeric position in the document, which
+ * will be immediately converted to a {@link Point} instance.
+ * 
+ * If a number is provided, the number represents the character index in the
+ * document, where `0` is the beginning of the document and `1` is the position
+ * right after the first character, etc.
+ *
+ * If 2-tuple is provided, the first element is the character index and the
+ * second `0 | 1` member specifies the anchor point of the character: `0`
+ * for the beginning of the character and `1` for the end of the character.
+ */
+export type Position = EditorPosition<string>;
 
 export type PeritextEventMap = {
   change: ChangeDetail;
