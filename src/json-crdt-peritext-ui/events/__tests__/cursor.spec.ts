@@ -275,6 +275,102 @@ const testSuite = (getKit: () => Kit) => {
         expect(kit.editor.cursor.text()).toBe('a');
       });
     });
+
+    describe('can move caret', () => {
+      test('by one char forwards', () => {
+        const kit = setup();
+        const view = kit.editor.text();
+        kit.et.cursor({at: 0});
+        for (let i = 0; i < view.length; i++) {
+          expect(kit.editor.cursor.start.leftChar()?.view()).toBe(view[i - 1]);
+          kit.et.cursor({len: 1});
+          expect(kit.editor.cursor.start.leftChar()?.view()).toBe(view[i]);
+        }
+      });
+
+      test('by one char backwards', () => {
+        const kit = setup();
+        const view = kit.editor.text();
+        kit.et.cursor({at: 123});
+        for (let i = view.length; i >= 0; i--) {
+          expect(kit.editor.cursor.start.leftChar()?.view()).toBe(view[i - 1]);
+          kit.et.cursor({len: -1});
+          expect(kit.editor.cursor.start.leftChar()?.view()).toBe(view[i - 2]);
+        }
+      });
+
+      test('number of char steps', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: 3});
+        expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: 2});
+        expect(kit.editor.cursor.start.leftChar()?.view()).toBe('g');
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: -4});
+        expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: -4});
+        kit.et.cursor({len: -4});
+        kit.et.cursor({len: -4});
+        expect(kit.editor.cursor.start.rightChar()?.view()).toBe('a');
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+      });
+
+      test('by skipping words', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 5});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 1});
+        expect(kit.editor.cursor.start.viewPos()).toBe(1);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: 1, unit: 'word'});
+        expect(kit.editor.cursor.start.viewPos()).toBe(2);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: 1, unit: 'word'});
+        expect(kit.editor.cursor.start.viewPos()).toBe(5);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: -1, unit: 'word'});
+        expect(kit.editor.cursor.start.viewPos()).toBe(3);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({len: -1, unit: 'word'});
+        expect(kit.editor.cursor.start.viewPos()).toBe(0);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+      });
+    });
+
+    describe('collapses selection into the direction of movement', () => {
+      test('when focus is at end of selection', () => {
+        const kit = setup();
+        const view = kit.editor.text();
+        kit.et.cursor({at: 10, len: 10});
+        kit.et.cursor({len: 1});
+        expect(kit.editor.cursor.start.viewPos()).toBe(20);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({at: 10, len: 10});
+        kit.et.cursor({len: -1});
+        expect(kit.editor.cursor.start.viewPos()).toBe(10);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+      });
+
+      test('when focus is at the start of the selection', () => {
+        const kit = setup();
+        const view = kit.editor.text();
+        kit.et.cursor({at: 20, len: -10});
+        kit.et.cursor({len: 1});
+        expect(kit.editor.cursor.start.viewPos()).toBe(20);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+        kit.et.cursor({at: 10, len: 10});
+        kit.et.cursor({len: -1});
+        expect(kit.editor.cursor.start.viewPos()).toBe(10);
+        expect(kit.editor.cursor.isCollapsed()).toBe(true);
+      });
+    });
   });
 };
 
