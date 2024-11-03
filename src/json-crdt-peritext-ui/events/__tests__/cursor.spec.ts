@@ -186,10 +186,96 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.insert('_');
         expect(kit.editor.text()).toBe('abcde_fghijkl_mnopqrstu_vwxyz');
       });
+
+      test('leaves only one cursor when caret is set', () => {
+        const kit = setup();
+        kit.editor.delCursors();
+        expect(kit.editor.cursorCount()).toBe(0);
+        kit.et.cursor({at: 5, edge: 'new'});
+        expect(kit.editor.cursorCount()).toBe(1);
+        kit.et.cursor({at: 12, edge: 'new'});
+        expect(kit.editor.cursorCount()).toBe(2);
+        kit.et.cursor({at: 10});
+        expect(kit.editor.cursorCount()).toBe(1);
+        expect(kit.editor.cursor.start.viewPos()).toBe(10);
+      });
     });
   });
 
-  test.todo('leaves only one cursor when caret is set');
+  describe('with relative position ("at" property not set)', () => {
+    describe('can move a specific edge', () => {
+      test('can move focus relative amount of chars', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2, len: 2});
+        expect(kit.editor.cursor.text()).toBe('cd');
+        kit.et.cursor({len: 3, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('cdefg');
+        kit.et.cursor({len: -6, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b');
+        kit.et.cursor({len: -1, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('ab');
+        kit.et.cursor({len: -1, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('ab');
+        kit.et.cursor({len: -1, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('ab');
+      });
+
+      test('can move anchor relative amount of chars', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2, len: 2});
+        expect(kit.editor.cursor.text()).toBe('cd');
+        kit.et.cursor({len: -5, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('abcd');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('bcd');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('cd');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('d');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('e');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('ef');
+        kit.et.cursor({len: 1, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('efg');
+        kit.et.cursor({len: 123, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('efghijklmnopqrstuvwxyz');
+      });
+
+      test('can move "focus" edge in word units', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 5});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 9});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 1});
+        expect(kit.editor.cursor.text()).toBe('');
+        kit.et.cursor({len: 1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b');
+        expect(kit.editor.cursor.isEndFocused()).toBe(true);
+        kit.et.cursor({len: 1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b cd');
+        kit.et.cursor({len: 1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b cd efg');
+        kit.et.cursor({len: 123, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b cd efg hijklmnopqrstuvwxyz');
+        kit.et.cursor({len: -1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b cd efg ');
+        kit.et.cursor({len: -1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b cd ');
+        kit.et.cursor({len: -1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('b ');
+        kit.et.cursor({len: -1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('a');
+        kit.et.cursor({len: -1, unit: 'word', edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('a');
+      });
+    });
+  });
 };
 
 describe('"cursor" event', () => {

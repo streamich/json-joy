@@ -17,9 +17,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     protected readonly et: PeritextEventTarget,
   ) {}
 
-  public readonly change = (event: CustomEvent<events.ChangeDetail>) => {
-    // console.log('change', event?.detail.ev?.type, event?.detail.ev?.detail);
-  };
+  public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
     const text = event.detail.text;
