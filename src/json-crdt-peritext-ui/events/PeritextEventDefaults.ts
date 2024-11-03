@@ -1,5 +1,6 @@
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
+import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
@@ -52,19 +53,19 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           break;
         }
         case 'new': {
-          editor.addCursor(txt.range(point, point.clone()));
+          editor.addCursor(txt.range(point));
           break;
         }
         // both
         default: {
+          // Select a range from the "at" position to the specified length.
           if (!!len && typeof len === 'number') {
-            const point2 = point.clone();
-            point2.step(len);
-            const range = txt.rangeFromPoints(point, point2);
-            editor.cursor.set(range.start, range.end);
-          } else {
-            editor.cursor.set(point);
+            const point2 = editor.skip(point, len, unit ?? 'char');
+            const range = txt.rangeFromPoints(point, point2); // Sorted range.
+            editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
           }
+          // Set caret (a collapsed cursor) at the specified position.
+          else editor.cursor.set(point);
         }
       }
       return;
