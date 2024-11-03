@@ -24,99 +24,179 @@ const testSuite = (getKit: () => Kit) => {
     expect(kit.peritext.str.view()).toBe('abcdfghklmnopqrstuvwxyz');
   });
 
-  describe('can delete all characters backwards', () => {
-    test('one character at a time', async () => {
-      const kit = setup();
-      const view = kit.peritext.str.view() as string;
-      const length = view.length;
-      kit.editor.cursor.setAt(view.length);
-      expect(kit.peritext.str.view()).toBe(view);
-      for (let i = length - 1; i >= 0; i--) {
-        kit.et.delete(-1);
-        expect(kit.peritext.str.view()).toBe(view.slice(0, i));
-      }
-      expect(kit.peritext.str.view()).toBe('');
-      kit.peritext.refresh();
-      expect(kit.peritext.str.view()).toBe('');
+  describe('characters', () => {
+    describe('can delete all characters backwards', () => {
+      test('one character at a time', async () => {
+        const kit = setup();
+        const view = kit.peritext.str.view() as string;
+        const length = view.length;
+        kit.editor.cursor.setAt(view.length);
+        expect(kit.peritext.str.view()).toBe(view);
+        for (let i = length - 1; i >= 0; i--) {
+          kit.et.delete(-1);
+          expect(kit.peritext.str.view()).toBe(view.slice(0, i));
+        }
+        expect(kit.peritext.str.view()).toBe('');
+        kit.peritext.refresh();
+        expect(kit.peritext.str.view()).toBe('');
+      });
+
+      test('two characters at a time', async () => {
+        const kit = setup();
+        const view = kit.peritext.str.view() as string;
+        const step = 2;
+        kit.editor.cursor.setAt(view.length);
+        let i = 1;
+        expect(kit.peritext.str.view()).toBe(view);
+        while (kit.editor.text()) {
+          kit.et.delete(-step);
+          expect(kit.peritext.str.view()).toBe(view.slice(0, view.length - i * step));
+          i++;
+        }
+        expect(kit.peritext.str.view()).toBe('');
+      });
+
+      test('five characters at a time', async () => {
+        const kit = setup();
+        const view = kit.peritext.str.view() as string;
+        const step = 5;
+        kit.editor.cursor.setAt(view.length);
+        let i = 1;
+        expect(kit.peritext.str.view()).toBe(view);
+        while (kit.editor.text()) {
+          kit.et.delete(-step);
+          if (!kit.editor.text()) break;
+          expect(kit.peritext.str.view()).toBe(view.slice(0, view.length - i * step));
+          i++;
+        }
+        expect(kit.editor.text()).toBe('');
+      });
     });
 
-    test('two characters at a time', async () => {
-      const kit = setup();
-      const view = kit.peritext.str.view() as string;
-      const step = 2;
-      kit.editor.cursor.setAt(view.length);
-      let i = 1;
-      expect(kit.peritext.str.view()).toBe(view);
-      while (kit.editor.text()) {
-        kit.et.delete(-step);
-        expect(kit.peritext.str.view()).toBe(view.slice(0, view.length - i * step));
-        i++;
-      }
-      expect(kit.peritext.str.view()).toBe('');
-    });
+    describe('can delete all characters forwards', () => {
+      test('one character at a time', async () => {
+        const kit = setup();
+        const view = kit.peritext.str.view() as string;
+        const length = view.length;
+        kit.editor.cursor.setAt(0);
+        expect(kit.peritext.str.view()).toBe(view);
+        for (let i = 1; i <= length; i++) {
+          kit.et.delete(1);
+          expect(kit.editor.text()).toBe(view.slice(i));
+        }
+        expect(kit.peritext.str.view()).toBe('');
+        kit.peritext.refresh();
+        expect(kit.peritext.str.view()).toBe('');
+      });
 
-    test('five characters at a time', async () => {
-      const kit = setup();
-      const view = kit.peritext.str.view() as string;
-      const step = 5;
-      kit.editor.cursor.setAt(view.length);
-      let i = 1;
-      expect(kit.peritext.str.view()).toBe(view);
-      while (kit.editor.text()) {
-        kit.et.delete(-step);
-        if (!kit.editor.text()) break;
-        expect(kit.peritext.str.view()).toBe(view.slice(0, view.length - i * step));
-        i++;
-      }
-      expect(kit.editor.text()).toBe('');
+      test('two characters at a time', async () => {
+        const kit = setup();
+        const view = kit.peritext.str.view() as string;
+        const step = 2;
+        kit.editor.cursor.setAt(0);
+        let i = 1;
+        expect(kit.peritext.str.view()).toBe(view);
+        while (kit.editor.text()) {
+          kit.et.delete(step);
+          expect(kit.peritext.str.view()).toBe(view.slice(i * step));
+          i++;
+        }
+        expect(kit.peritext.str.view()).toBe('');
+      });
+
+      test('five characters at a time', async () => {
+        const kit = setup();
+        const view = kit.peritext.str.view() as string;
+        const step = 5;
+        kit.editor.cursor.setAt(0);
+        let i = 1;
+        expect(kit.peritext.str.view()).toBe(view);
+        while (kit.editor.text()) {
+          kit.et.delete(step);
+          if (!kit.editor.text()) break;
+          expect(kit.peritext.str.view()).toBe(view.slice(i * step));
+          i++;
+        }
+        expect(kit.editor.text()).toBe('');
+      });
     });
   });
 
-  describe('can delete all characters forwards', () => {
-    test('one character at a time', async () => {
+  describe('words', () => {
+    test('can delete a word backwards', async () => {
       const kit = setup();
-      const view = kit.peritext.str.view() as string;
-      const length = view.length;
-      kit.editor.cursor.setAt(0);
-      expect(kit.peritext.str.view()).toBe(view);
-      for (let i = 1; i <= length; i++) {
-        kit.et.delete(1);
-        expect(kit.editor.text()).toBe(view.slice(i));
-      }
-      expect(kit.peritext.str.view()).toBe('');
-      kit.peritext.refresh();
-      expect(kit.peritext.str.view()).toBe('');
+      kit.editor.cursor.setAt(10);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(8);
+      expect(kit.editor.text()).toBe('abcde fghij klmnopqrstuvwxyz');
+      kit.et.delete(-1, 'word');
+      expect(kit.editor.text()).toBe('abcde hij klmnopqrstuvwxyz');
     });
 
-    test('two characters at a time', async () => {
+    test('can delete a word forwards', async () => {
       const kit = setup();
-      const view = kit.peritext.str.view() as string;
-      const step = 2;
-      kit.editor.cursor.setAt(0);
-      let i = 1;
-      expect(kit.peritext.str.view()).toBe(view);
-      while (kit.editor.text()) {
-        kit.et.delete(step);
-        expect(kit.peritext.str.view()).toBe(view.slice(i * step));
-        i++;
-      }
-      expect(kit.peritext.str.view()).toBe('');
+      kit.editor.cursor.setAt(10);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(8);
+      expect(kit.editor.text()).toBe('abcde fghij klmnopqrstuvwxyz');
+      kit.et.delete(1, 'word');
+      expect(kit.editor.text()).toBe('abcde fg klmnopqrstuvwxyz');
     });
 
-    test('five characters at a time', async () => {
+    test('can delete a word in both directions', async () => {
       const kit = setup();
-      const view = kit.peritext.str.view() as string;
-      const step = 5;
-      kit.editor.cursor.setAt(0);
-      let i = 1;
-      expect(kit.peritext.str.view()).toBe(view);
-      while (kit.editor.text()) {
-        kit.et.delete(step);
-        if (!kit.editor.text()) break;
-        expect(kit.peritext.str.view()).toBe(view.slice(i * step));
-        i++;
-      }
-      expect(kit.editor.text()).toBe('');
+      kit.editor.cursor.setAt(10);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert(' ');
+      kit.editor.cursor.setAt(8);
+      expect(kit.editor.text()).toBe('abcde fghij klmnopqrstuvwxyz');
+      const DIRECTION = 0;
+      kit.et.delete(DIRECTION, 'word');
+      expect(kit.editor.text()).toBe('abcde  klmnopqrstuvwxyz');
+    });
+  });
+
+  describe('lines', () => {
+    test('can delete a line backwards', async () => {
+      const kit = setup();
+      kit.editor.cursor.setAt(10);
+      kit.et.insert('\n');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert('\n');
+      kit.editor.cursor.setAt(8);
+      expect(kit.editor.text()).toBe('abcde\nfghij\nklmnopqrstuvwxyz');
+      kit.et.delete(-1, 'line');
+      expect(kit.editor.text()).toBe('abcde\nhij\nklmnopqrstuvwxyz');
+    });
+
+    test('can delete a line forwards', async () => {
+      const kit = setup();
+      kit.editor.cursor.setAt(10);
+      kit.et.insert('\n');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert('\n');
+      kit.editor.cursor.setAt(8);
+      expect(kit.editor.text()).toBe('abcde\nfghij\nklmnopqrstuvwxyz');
+      kit.et.delete(1, 'line');
+      expect(kit.editor.text()).toBe('abcde\nfg\nklmnopqrstuvwxyz');
+    });
+
+    test('can delete a word in both directions', async () => {
+      const kit = setup();
+      kit.editor.cursor.setAt(10);
+      kit.et.insert('\n');
+      kit.editor.cursor.setAt(5);
+      kit.et.insert('\n');
+      kit.editor.cursor.setAt(8);
+      expect(kit.editor.text()).toBe('abcde\nfghij\nklmnopqrstuvwxyz');
+      const DIRECTION = 0;
+      kit.et.delete(DIRECTION, 'line');
+      expect(kit.editor.text()).toBe('abcde\n\nklmnopqrstuvwxyz');
     });
   });
 };

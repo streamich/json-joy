@@ -8,6 +8,9 @@ export interface ChangeDetail {
   ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail>;
 }
 
+/**
+ * Event dispatched to insert text into the document.
+ */
 export interface InsertDetail {
   text: string;
 }
