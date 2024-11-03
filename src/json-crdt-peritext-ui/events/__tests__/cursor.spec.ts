@@ -137,6 +137,17 @@ const testSuite = (getKit: () => Kit) => {
         expect(kit.editor.cursor.text()).toBe('mno');
         expect(kit.editor.cursor.isStartFocused()).toBe(true);
       });
+
+      test('range selection can use "unit" prop to specify step size', () => {
+        const kit = setup();
+        kit.et.cursor({at: 4});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 9});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 2});
+        kit.et.cursor({at: 2, len: 2, unit: 'word'});
+        expect(kit.editor.cursor.text()).toBe('cd efgh');
+      });
     });
   });
 
