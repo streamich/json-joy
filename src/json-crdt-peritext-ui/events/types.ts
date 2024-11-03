@@ -65,7 +65,7 @@ export interface DeleteDetail {
    * positions. If specified, only one cursor will be placed at the specified
    * position and the deletion will be executed from that position (while all
    * other cursors will be removed).
-   * 
+   *
    * @default undefined
    */
   at?: Position;
@@ -180,7 +180,7 @@ export type MarkerDetail = {};
  * Position represents a caret position in the document. The position can either
  * be an instance of {@link Point} or a numeric position in the document, which
  * will be immediately converted to a {@link Point} instance.
- * 
+ *
  * If a number is provided, the number represents the character index in the
  * document, where `0` is the beginning of the document and `1` is the position
  * right after the first character, etc.

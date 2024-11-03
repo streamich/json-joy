@@ -12,7 +12,10 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
 
   public defaults: Partial<PeritextEventHandlerMap> = {};
 
-  public dispatch<K extends keyof Omit<PeritextEventMap, 'change'>>(type: K, detail: Omit<PeritextEventMap, 'change'>[K]): void {
+  public dispatch<K extends keyof Omit<PeritextEventMap, 'change'>>(
+    type: K,
+    detail: Omit<PeritextEventMap, 'change'>[K],
+  ): void {
     const event = new CustomEvent<PeritextEventMap[K]>(type, {detail});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults[type]?.(event);
