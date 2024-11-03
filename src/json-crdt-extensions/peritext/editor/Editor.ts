@@ -63,7 +63,7 @@ export class Editor<T = string> {
       return slice instanceof Cursor ? slice : void 0;
     };
   }
-  
+
   public cursors() {
     return new UndefEndIter(this.cursors0());
   }

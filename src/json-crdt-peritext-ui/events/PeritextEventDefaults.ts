@@ -40,7 +40,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const {at, edge, len, unit} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
-    
+
     // If `at` is specified, it represents the absolute position. We move the
     // cursor to that position, and leave only one active cursor. All other
     // are automatically removed when `editor.cursor` getter is accessed.

@@ -151,7 +151,6 @@ const testSuite = (getKit: () => Kit) => {
     });
   });
 
-
   test.todo('leaves only one cursor when caret is set');
 };
 
