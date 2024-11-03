@@ -162,6 +162,30 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.cursor({at: 0, edge: 'focus'});
         expect(kit.editor.cursor.text()).toBe('abcdefghijklmnop');
       });
+
+      test('when specific cursor edge is moved caret is expanded to a range', () => {
+        const kit = setup();
+        kit.et.cursor({at: 5});
+        expect(kit.editor.cursor.text()).toBe('');
+        kit.et.cursor({at: 7, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('fg');
+      });
+    });
+
+    describe('"new" edge', () => {
+      test('can insert new carets into the document', () => {
+        const kit = setup();
+        kit.editor.delCursors();
+        expect(kit.editor.cursorCount()).toBe(0);
+        kit.et.cursor({at: 5, edge: 'new'});
+        expect(kit.editor.cursorCount()).toBe(1);
+        kit.et.cursor({at: 12, edge: 'new'});
+        expect(kit.editor.cursorCount()).toBe(2);
+        kit.et.cursor({at: 21, edge: 'new'});
+        expect(kit.editor.cursorCount()).toBe(3);
+        kit.et.insert('_');
+        expect(kit.editor.text()).toBe('abcde_fghijkl_mnopqrstu_vwxyz');
+      });
     });
   });
 
