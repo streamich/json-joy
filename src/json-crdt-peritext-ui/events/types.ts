@@ -118,6 +118,15 @@ export interface DeleteDetail {
  * ```ts
  * {unit: 'all'}
  * ```
+ *
+ * The editor supports multiple cursors. To create a new cursor, set the `edge`
+ * field to `'new'`. The `at` field specifies the position of the new cursor.
+ * The `len` field is ignored when the `edge` field is set to `'new'`. For
+ * example:
+ *
+ * ```ts
+ * {at: 10, edge: 'new'}
+ * ```
  */
 export interface CursorDetail {
   /**

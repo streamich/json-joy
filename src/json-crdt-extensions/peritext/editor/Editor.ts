@@ -2,15 +2,15 @@ import {Cursor} from './Cursor';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
-import type {ChunkSlice} from '../util/ChunkSlice';
 import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
+import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
-import type {UndefIterator} from '../../../util/iterator';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -64,8 +64,18 @@ export class Editor<T = string> {
     };
   }
 
-  public cursors(callback: (cursor: Cursor<T>) => void): void {
-    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); (cursor = iterator()); ) callback(cursor);
+  public cursors() {
+    return new UndefEndIter(this.cursors0());
+  }
+
+  public forCursor(callback: (cursor: Cursor<T>) => void): void {
+    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) callback(cursor);
+  }
+
+  public cursorCount(): number {
+    let cnt = 0;
+    for (const i = this.cursors0(); i(); ) cnt++;
+    return cnt;
   }
 
   public delCursor(cursor: Cursor<T>): void {
@@ -73,7 +83,7 @@ export class Editor<T = string> {
   }
 
   public delCursors(): void {
-    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); (cursor = iterator()); ) this.delCursor(cursor);
+    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) this.delCursor(cursor);
   }
 
   // ------------------------------------------------------------- text editing
@@ -84,7 +94,7 @@ export class Editor<T = string> {
    */
   public insert(text: string): void {
     let cnt = 0;
-    this.cursors((cursor) => {
+    this.forCursor((cursor) => {
       cnt++;
       cursor.insert(text);
     });
@@ -96,7 +106,7 @@ export class Editor<T = string> {
    * select a range, deletes the whole range.
    */
   public del(step: number = -1): void {
-    this.cursors((cursor) => cursor.del(step));
+    this.forCursor((cursor) => cursor.del(step));
   }
 
   /**
@@ -107,7 +117,7 @@ export class Editor<T = string> {
    * @param unit A unit of deletion: "char", "word", "line".
    */
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
-    this.cursors((cursor) => {
+    this.forCursor((cursor) => {
       if (!cursor.isCollapsed()) {
         cursor.collapse();
         return;
@@ -367,7 +377,7 @@ export class Editor<T = string> {
    * @param collapse Whether to collapse the range to a single point.
    */
   public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
-    this.cursors((cursor) => {
+    this.forCursor((cursor) => {
       switch (endpoint) {
         case 0: {
           let point = cursor.focus();
@@ -439,7 +449,7 @@ export class Editor<T = string> {
   }
 
   public select(unit: TextRangeUnit): void {
-    this.cursors((cursor) => {
+    this.forCursor((cursor) => {
       const range = this.range(cursor.start, unit);
       if (range) cursor.setRange(range);
       else this.delCursors;

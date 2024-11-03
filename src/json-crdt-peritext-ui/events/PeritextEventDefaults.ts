@@ -1,5 +1,6 @@
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
+import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
@@ -16,9 +17,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     protected readonly et: PeritextEventTarget,
   ) {}
 
-  public readonly change = (event: CustomEvent<events.ChangeDetail>) => {
-    // console.log('change', event?.detail.ev?.type, event?.detail.ev?.detail);
-  };
+  public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
     const text = event.detail.text;
@@ -36,12 +35,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, edge, len = 0, unit} = event.detail;
+    const {at, edge, len, unit} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
 
-    // If `at` is specified.
-    if (typeof at === 'number' && at >= 0) {
+    // If `at` is specified, it represents the absolute position. We move the
+    // cursor to that position, and leave only one active cursor. All other
+    // are automatically removed when `editor.cursor` getter is accessed.
+    if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
       const point = editor.point(at);
       switch (edge) {
         case 'focus':
@@ -50,18 +51,21 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           break;
         }
         case 'new': {
-          editor.addCursor(txt.range(point, point.clone()));
+          editor.addCursor(txt.range(point));
           break;
         }
+        // both
         default: {
-          // both
+          // Select a range from the "at" position to the specified length.
           if (!!len && typeof len === 'number') {
-            const point2 = point.clone();
-            point2.step(len);
-            const range = txt.rangeFromPoints(point, point2);
-            editor.cursor.set(range.start, range.end);
-          } else {
+            const point2 = editor.skip(point, len, unit ?? 'char');
+            const range = txt.rangeFromPoints(point, point2); // Sorted range.
+            editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
+          }
+          // Set caret (a collapsed cursor) at the specified position.
+          else {
             editor.cursor.set(point);
+            if (unit) editor.select(unit);
           }
         }
       }
@@ -71,7 +75,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     // If `edge` is specified.
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
     if (isSpecificEdgeSelected) {
-      editor.move(len, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
+      editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
       return;
     }
 

@@ -191,8 +191,8 @@ export class Peritext<T = string> implements Printable {
    * @param end End point of the range, must be after or equal to start.
    * @returns A range with the given start and end points.
    */
-  public range(start: Point<T>, end: Point<T>): Range<T> {
-    return new Range(this.str, start, end);
+  public range(start: Point<T>, end: Point<T> = start): Range<T> {
+    return new Range(this.str, start, start === end ? end.clone() : end);
   }
 
   /**
