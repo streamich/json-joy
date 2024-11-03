@@ -148,6 +148,20 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.cursor({at: 2, len: 2, unit: 'word'});
         expect(kit.editor.cursor.text()).toBe('cd efgh');
       });
+
+      test('can move specific edge of selection', () => {
+        const kit = setup();
+        kit.et.cursor({at: 12, len: 5});
+        expect(kit.editor.cursor.text()).toBe('mnopq');
+        kit.et.cursor({at: 14, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('mn');
+        kit.et.cursor({at: 10, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('klmn');
+        kit.et.cursor({at: 16, edge: 'anchor'});
+        expect(kit.editor.cursor.text()).toBe('op');
+        kit.et.cursor({at: 0, edge: 'focus'});
+        expect(kit.editor.cursor.text()).toBe('abcdefghijklmnop');
+      });
     });
   });
 
