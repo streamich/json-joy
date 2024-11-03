@@ -262,19 +262,19 @@ export const runAlphabetKitTestSuite = (runTestSuite: (getKit: () => Kit) => voi
   describe('basic alphabet', () => {
     runTestSuite(setupAlphabetKit);
   });
-  // describe('alphabet with two chunks', () => {
-  //   runTestSuite(setupAlphabetWithTwoChunksKit);
-  // });
-  // describe('alphabet with chunk split', () => {
-  //   runTestSuite(setupAlphabetChunkSplitKit);
-  // });
-  // describe('alphabet with deletes', () => {
-  //   runTestSuite(setupAlphabetWithDeletesKit);
-  // });
-  // describe('alphabet written in reverse', () => {
-  //   runTestSuite(setupAlphabetWrittenInReverse);
-  // });
-  // describe('alphabet written in reverse with deletes', () => {
-  //   runTestSuite(setupAlphabetWrittenInReverseWithDeletes);
-  // });
+  describe('alphabet with two chunks', () => {
+    runTestSuite(setupAlphabetWithTwoChunksKit);
+  });
+  describe('alphabet with chunk split', () => {
+    runTestSuite(setupAlphabetChunkSplitKit);
+  });
+  describe('alphabet with deletes', () => {
+    runTestSuite(setupAlphabetWithDeletesKit);
+  });
+  describe('alphabet written in reverse', () => {
+    runTestSuite(setupAlphabetWrittenInReverse);
+  });
+  describe('alphabet written in reverse with deletes', () => {
+    runTestSuite(setupAlphabetWrittenInReverseWithDeletes);
+  });
 };
