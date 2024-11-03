@@ -1,3 +1,13 @@
+# [17.10.0](https://github.com/streamich/json-joy/compare/v17.9.1...v17.10.0) (2024-11-03)
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add ability to delete at arbitrary position ([98fff74](https://github.com/streamich/json-joy/commit/98fff74798310596a31eb1cb4980e99d996eb6db))
+* **json-crdt-peritext-ui:** 🎸 improve generic "change" event dispatch ([3a28733](https://github.com/streamich/json-joy/commit/3a2873390a84645ef9251abda215420da2458f4c))
+* **json-crdt-peritext-ui:** 🎸 improve the deletion event ([633b6f4](https://github.com/streamich/json-joy/commit/633b6f414d834a85a03a9025f50313ba968d4ad1))
+* **json-crdt-peritext-ui:** 🎸 make events cancellable, add "insert" tests ([9a9fa51](https://github.com/streamich/json-joy/commit/9a9fa51e1393f2c78832dac96e9de7bac66ed09f))
+
 ## [17.9.1](https://github.com/streamich/json-joy/compare/v17.9.0...v17.9.1) (2024-11-02)
 
 
