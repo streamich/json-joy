@@ -12,15 +12,47 @@ export interface InsertDetail {
   text: string;
 }
 
+/**
+ * Event dispatched to delete text from the document.
+ */
 export interface DeleteDetail {
   /**
-   * Specifies the direction of the deletion. If `-1`, the deletion will be
-   * backwards. If `1`, the deletion will be forwards. If `0`, the deletion
-   * will execute in both directions (i.e. the whole word, or line, or block).
+   * Specifies the amount of text to delete. If the value is negative, the
+   * deletion will be backwards. If positive, the deletion will be forwards.
+   * If `0`, the deletion will execute in both directions.
+   * 
+   * For example, if the cursor is in the middle of a word and the length is
+   * set to `0`, the whole word will be deleted by expanding the selection
+   * in both directions.
+   * 
+   * ```js
+   * {
+   *   len: 0,
+   *   unit: 'word',
+   * }
+   * ```
+   * 
+   * Or, delete a single character forwards:
+   * 
+   * ```js
+   * {
+   *   len: 1,
+   * }
+   * ```
    *
-   * Defaults to `-1`.
+   * @default -1
    */
-  direction?: -1 | 0 | 1;
+  len?: number;
+
+  /**
+   * Specifies the unit of the deletion. If `'char'`, the deletion will be
+   * executed by `len` characters. If `'word'`, the deletion will be executed
+   * by one word in the direction specified by `len`. If `'line'`, the deletion
+   * will be executed to the beginning or end of line, in direction specified
+   * by `len`.
+   * 
+   * @default 'char'
+   */
   unit?: 'char' | 'word' | 'line';
 }
 

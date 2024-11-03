@@ -3,6 +3,13 @@ import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/Edit
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
+/**
+ * Implementation of default handlers for Peritext events, such as "insert",
+ * "delete", "cursor", etc. These implementations are used by the
+ * {@link PeritextEventTarget} to provide default behavior for each event type.
+ * If `event.preventDefault()` is called on a Peritext event, the default handler
+ * will not be executed.
+ */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public constructor(
     protected readonly txt: Peritext,
@@ -20,8 +27,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
-    const {direction = -1, unit = 'char'} = event.detail;
-    this.txt.editor.delete(direction, unit);
+    const {len = -1, unit = 'char'} = event.detail;
+    this.txt.editor.delete(len, unit);
     this.et.change(event);
   };
 

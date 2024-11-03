@@ -68,11 +68,7 @@ export class InputController implements UiLifeCycles {
           et.insert(event.data);
         } else {
           const item = event.dataTransfer ? event.dataTransfer.items[0] : null;
-          if (item) {
-            item.getAsString((text) => {
-              et.insert(text);
-            });
-          }
+          if (item) item.getAsString((text) => et.insert(text));
         }
         break;
       }
