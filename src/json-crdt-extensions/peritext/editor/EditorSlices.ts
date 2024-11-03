@@ -14,7 +14,7 @@ export class EditorSlices<T = string> {
 
   protected insAtCursors<S extends PersistedSlice<T>>(callback: (cursor: Cursor<T>) => S): S[] {
     const slices: S[] = [];
-    this.txt.editor.cursors((cursor) => {
+    this.txt.editor.forCursor((cursor) => {
       const slice = callback(cursor);
       slices.push(slice);
     });

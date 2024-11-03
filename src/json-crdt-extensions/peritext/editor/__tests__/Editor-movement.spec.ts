@@ -746,7 +746,7 @@ const runParagraphTests = (setup: () => Kit) => {
       editor.addCursor(peritext.rangeAt(8, 3));
       const getTexts = (): string[] => {
         const texts: string[] = [];
-        editor.cursors((cursor) => {
+        editor.forCursor((cursor) => {
           texts.push(cursor.text());
         });
         return texts;
