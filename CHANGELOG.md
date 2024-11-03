@@ -1,3 +1,12 @@
+# [17.11.0](https://github.com/streamich/json-joy/compare/v17.10.0...v17.11.0) (2024-11-03)
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add concenience overloads for the "delete" event ([1a59929](https://github.com/streamich/json-joy/commit/1a599298d34cec01223713bc67c61f86d4b30e5c))
+* **json-crdt-peritext-ui:** 🎸 improve "cursor" evnet range selections ([a7b17be](https://github.com/streamich/json-joy/commit/a7b17be38f921b17001fa8f6b3617f1bb81be597))
+* **json-crdt-peritext-ui:** 🎸 improve the cursor event absolute caret positioning ([ccb8ded](https://github.com/streamich/json-joy/commit/ccb8ded4837b1277ff1f4acd32761695834d8e3b))
+
 # [17.10.0](https://github.com/streamich/json-joy/compare/v17.9.1...v17.10.0) (2024-11-03)
 
 
