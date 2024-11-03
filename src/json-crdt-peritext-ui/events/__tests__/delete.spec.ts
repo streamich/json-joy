@@ -1,4 +1,4 @@
-import {Kit, runAlphabetKitTestSuite} from '../../../json-crdt-extensions/peritext/__tests__/setup';
+import {type Kit, runAlphabetKitTestSuite} from '../../../json-crdt-extensions/peritext/__tests__/setup';
 import {PeritextEventDefaults} from '../PeritextEventDefaults';
 import {PeritextEventTarget} from '../PeritextEventTarget';
 
@@ -23,7 +23,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.et.delete(-1);
     expect(kit.peritext.str.view()).toBe('abcdfghklmnopqrstuvwxyz');
   });
-  
+
   describe('can delete all characters backwards', () => {
     test('one character at a time', async () => {
       const kit = setup();
@@ -71,7 +71,7 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.editor.text()).toBe('');
     });
   });
-  
+
   describe('can delete all characters forwards', () => {
     test('one character at a time', async () => {
       const kit = setup();

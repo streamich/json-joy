@@ -20,20 +20,20 @@ export interface DeleteDetail {
    * Specifies the amount of text to delete. If the value is negative, the
    * deletion will be backwards. If positive, the deletion will be forwards.
    * If `0`, the deletion will execute in both directions.
-   * 
+   *
    * For example, if the cursor is in the middle of a word and the length is
    * set to `0`, the whole word will be deleted by expanding the selection
    * in both directions.
-   * 
+   *
    * ```js
    * {
    *   len: 0,
    *   unit: 'word',
    * }
    * ```
-   * 
+   *
    * Or, delete a single character forwards:
-   * 
+   *
    * ```js
    * {
    *   len: 1,
@@ -50,7 +50,7 @@ export interface DeleteDetail {
    * by one word in the direction specified by `len`. If `'line'`, the deletion
    * will be executed to the beginning or end of line, in direction specified
    * by `len`.
-   * 
+   *
    * @default 'char'
    */
   unit?: 'char' | 'word' | 'line';
