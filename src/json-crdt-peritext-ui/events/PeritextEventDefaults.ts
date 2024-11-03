@@ -23,13 +23,16 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
     const text = event.detail.text;
     this.txt.editor.insert(text);
-    this.et.change(event);
   };
 
   public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
-    const {len = -1, unit = 'char'} = event.detail;
-    this.txt.editor.delete(len, unit);
-    this.et.change(event);
+    const {len = -1, unit = 'char', at} = event.detail;
+    const editor = this.txt.editor;
+    if (at !== undefined) {
+      const point = editor.point(at);
+      editor.cursor.set(point);
+    }
+    editor.delete(len, unit);
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
@@ -62,7 +65,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           }
         }
       }
-      this.et.change(event);
       return;
     }
 
@@ -70,7 +72,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
     if (isSpecificEdgeSelected) {
       editor.move(len, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
-      this.et.change(event);
       return;
     }
 
@@ -82,14 +83,12 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (len > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();
       }
-      this.et.change(event);
       return;
     }
 
     // If `unit` is specified.
     if (unit) {
       editor.select(unit);
-      this.et.change(event);
       return;
     }
   };
@@ -108,7 +107,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       default:
         slices.insOverwrite(type, data);
     }
-    this.et.change(event);
   };
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
