@@ -371,6 +371,50 @@ const testSuite = (getKit: () => Kit) => {
         expect(kit.editor.cursor.isCollapsed()).toBe(true);
       });
     });
+
+    describe('can select unit of text at the current caret', () => {
+      test('word', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 5});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 4});
+        kit.et.cursor({unit: 'word'});
+        expect(kit.editor.cursor.text()).toBe('cd');
+      });
+
+      test('word - 2', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 5});
+        kit.et.insert(' ');
+        kit.et.cursor({at: 4, unit: 'word'});
+        expect(kit.editor.cursor.text()).toBe('cd');
+      });
+
+      test('line', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        kit.et.insert('\n');
+        kit.et.cursor({at: 5});
+        kit.et.insert('\n');
+        kit.et.cursor({at: 4});
+        kit.et.cursor({unit: 'line'});
+        expect(kit.editor.cursor.text()).toBe('cd');
+      });
+
+      test('word - 2', () => {
+        const kit = setup();
+        kit.et.cursor({at: 2});
+        kit.et.insert('\n');
+        kit.et.cursor({at: 5});
+        kit.et.insert('\n');
+        kit.et.cursor({at: 4, unit: 'line'});
+        expect(kit.editor.cursor.text()).toBe('cd');
+      });
+    });
   });
 };
 

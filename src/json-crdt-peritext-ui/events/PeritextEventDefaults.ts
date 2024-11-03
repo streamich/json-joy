@@ -63,7 +63,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
           }
           // Set caret (a collapsed cursor) at the specified position.
-          else editor.cursor.set(point);
+          else {
+            editor.cursor.set(point);
+            if (unit) editor.select(unit);
+          }
         }
       }
       return;
