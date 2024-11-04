@@ -1,6 +1,7 @@
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
+import type {Printable} from 'tree-dump';
 
 export interface CompositionControllerOpts {
   source: HTMLElement;
@@ -8,7 +9,7 @@ export interface CompositionControllerOpts {
   et: PeritextEventTarget;
 }
 
-export class CompositionController implements UiLifeCycles {
+export class CompositionController implements UiLifeCycles, Printable {
   public composing = false;
   public data: string = '';
 
@@ -46,4 +47,10 @@ export class CompositionController implements UiLifeCycles {
     const text = event.data;
     if (text) this.opts.et.insert(text);
   };
+
+  /** ----------------------------------------------------- {@link Printable} */
+
+  public toString(tab?: string): string {
+    return `composition { composing: ${this.composing}, data: ${JSON.stringify(this.data)} }`;
+  }
 }

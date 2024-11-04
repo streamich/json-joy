@@ -2,6 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {context} from './context';
 import type {PeritextViewProps} from '../../react';
+import {usePeritext} from '../../react/context';
 
 const blockClass = rule({
   pos: 'relative',
@@ -34,7 +35,10 @@ export interface RenderPeritextProps extends PeritextViewProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, peritext, children}) => {
+  const {dom} = usePeritext();
   const [enabled, setEnabled] = React.useState(enabledProp);
+
+  console.log('dom', dom);
 
   return (
     <context.Provider value={{enabled}}>
@@ -46,6 +50,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
         {enabled && (
           <div className={dumpClass}>
             <pre>{peritext + ''}</pre>
+            {!!dom && <pre>{dom + ''}</pre>}
           </div>
         )}
       </div>

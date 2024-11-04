@@ -1,3 +1,4 @@
+import {printTree, type Printable} from 'tree-dump';
 import {InputController} from '../dom/InputController';
 import {SelectionController} from '../dom/SelectionController';
 import {RichTextController} from '../dom/RichTextController';
@@ -13,7 +14,7 @@ export interface PeritextDomControllerOpts {
   txt: Peritext;
 }
 
-export class PeritextDomController implements UiLifeCycles {
+export class PeritextDomController implements UiLifeCycles, Printable {
   public readonly et: PeritextEventTarget;
   public readonly keys: KeyController;
   public readonly comp: CompositionController;
@@ -49,5 +50,13 @@ export class PeritextDomController implements UiLifeCycles {
     this.input.stop();
     this.selection.stop();
     this.richText.stop();
+  }
+
+  /** ----------------------------------------------------- {@link Printable} */
+
+  public toString(tab?: string): string {
+    return 'DOM' + printTree(tab, [
+      (tab) => this.comp.toString(tab),
+    ]);
   }
 }
