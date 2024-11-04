@@ -43,11 +43,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     setTick((tick) => tick + 1);
     if (onRender) onRender();
   }, [peritext]);
-
-  const block = peritext.blocks.root;
-  if (!block) return null;
-
-  const ref = (el: null | HTMLDivElement) => {
+  const ref = React.useCallback((el: null | HTMLDivElement) => {
     if (!el) {
       if (dom) {
         dom.stop();
@@ -61,7 +57,10 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     ctrl.start();
     setDom(ctrl);
     ctrl.et.addEventListener('change', rerender);
-  };
+  }, [peritext]);
+
+  const block = peritext.blocks.root;
+  if (!block) return null;
 
   const ctx: undefined | PeritextSurfaceContextValue = dom ? {peritext, dom, renderers, rerender} : undefined;
 
