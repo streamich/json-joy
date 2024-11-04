@@ -11,15 +11,16 @@ export interface RendererMap {
   focus?: (props: FocusViewProps, children: React.ReactNode) => React.ReactNode;
   caret?: (props: CaretViewProps, children: React.ReactNode) => React.ReactNode;
   anchor?: (props: AnchorViewProps, children: React.ReactNode) => React.ReactNode;
-  inline?: (
-    props: InlineViewProps,
-    children: React.ReactNode,
-    attributes: React.HTMLAttributes<HTMLSpanElement>,
-  ) => React.ReactNode;
+  inline?: (props: InlineRendererProps) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
   peritext?: (
     props: PeritextViewProps,
     children: React.ReactNode,
     ctx?: PeritextSurfaceContextValue,
   ) => React.ReactNode;
+}
+
+export interface InlineRendererProps extends InlineViewProps {
+  children: React.ReactNode;
+  span: HTMLSpanElement | null;
 }

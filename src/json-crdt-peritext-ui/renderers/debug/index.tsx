@@ -5,11 +5,7 @@ import {RenderBlock} from './RenderBlock';
 import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
 
 export const renderers = (options?: Pick<RenderPeritextProps, 'enabled'>): RendererMap => ({
-  inline: (props, children, attributes) => (
-    <RenderInline {...props} attributes={attributes}>
-      {children}
-    </RenderInline>
-  ),
+  inline: (props) => <RenderInline {...props} />,
   block: (props, children) => <RenderBlock {...props}>{children}</RenderBlock>,
   peritext: (props, children, ctx) => (
     <RenderPeritext {...options} {...props} ctx={ctx}>

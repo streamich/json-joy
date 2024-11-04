@@ -1,12 +1,12 @@
 import * as React from 'react';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import {put} from 'nano-theme';
 import {CssClass, ElementAttr} from '../constants';
 import {TextView} from './TextView';
 import {usePeritext} from './context';
 import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
 import {AnchorView} from './selection/AnchorView';
-import {put} from 'nano-theme';
+import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
 const {createElement: h, Fragment} = React;
 
@@ -72,7 +72,7 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
       text={text}
     />
   );
-  for (const map of renderers) children = map.inline?.(props, children, attributes) ?? children;
+  for (const map of renderers) children = map.inline?.({...props, children, span}) ?? children;
 
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];

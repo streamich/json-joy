@@ -1,20 +1,17 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {useDebugCtx} from './context';
-import type {InlineViewProps} from '../../react/InlineView';
+import type {InlineRendererProps} from '../../react/types';
 
-export interface RenderInlineProps extends InlineViewProps {
-  children?: React.ReactNode;
-  attributes: React.HTMLAttributes<HTMLSpanElement>;
-}
-
-export const RenderInline: React.FC<RenderInlineProps> = ({attributes, children}) => {
+export const RenderInline: React.FC<InlineRendererProps> = ({span, children}) => {
   const {enabled} = useDebugCtx();
 
   if (!enabled) return children;
 
-  const style = attributes.style || (attributes.style = {});
-  style.outline = '1px dotted red';
+  if (span) {
+    const style = span.style;
+    style.outline = '1px dotted red';
+  }
 
   return children;
 };
