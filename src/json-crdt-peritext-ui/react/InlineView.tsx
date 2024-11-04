@@ -6,6 +6,7 @@ import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
 import {AnchorView} from './selection/AnchorView';
 import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {SpanProps} from './types';
 
 const {createElement: h, Fragment} = React;
 
@@ -50,22 +51,24 @@ export interface InlineViewProps {
 /** @todo Add ability to compute `.hash` for {@link Inline} nodes and use for memoization. */
 export const InlineView: React.FC<InlineViewProps> = (props) => {
   const {inline} = props;
-  const {renderers} = usePeritext();
+  const ctx = usePeritext();
+  const {renderers} = ctx;
   const ref = React.useRef<HTMLSpanElement | null>(null);
   const text = inline.text();
 
   const span = ref.current;
   if (span) (span as any)[ElementAttr.InlineOffset] = inline;
 
-  let children: React.ReactNode = (
-    <span className={CssClass.Inline} ref={(span: HTMLSpanElement | null) => {
+  let attr: SpanProps = {
+    className: CssClass.Inline,
+    ref: (span: HTMLSpanElement | null) => {
       ref.current = span as HTMLSpanElement;
       if (span) (span as any)[ElementAttr.InlineOffset] = inline;
-    }}>
-      {text}
-    </span>
-  );
-  for (const map of renderers) children = map.inline?.({...props, children, span: () => ref.current}) ?? children;
+    },
+  };
+  for (const map of renderers) attr = map.text?.(attr, inline, ctx) ?? attr;
+  let children: React.ReactNode = <span {...attr}>{text}</span>;
+  for (const map of renderers) children = map.inline?.(props, children) ?? children;
 
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];

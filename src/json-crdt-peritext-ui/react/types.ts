@@ -6,12 +6,14 @@ import type {InlineViewProps} from './InlineView';
 import type {BlockViewProps} from './BlockView';
 import type {PeritextViewProps} from './PeritextView';
 import type {PeritextSurfaceContextValue} from './context';
+import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
 export interface RendererMap {
   focus?: (props: FocusViewProps, children: React.ReactNode) => React.ReactNode;
   caret?: (props: CaretViewProps, children: React.ReactNode) => React.ReactNode;
   anchor?: (props: AnchorViewProps, children: React.ReactNode) => React.ReactNode;
-  inline?: (props: InlineRendererProps) => React.ReactNode;
+  text?: (props: SpanProps, inline: Inline, ctx: PeritextSurfaceContextValue) => SpanProps | undefined;
+  inline?: (props: InlineViewProps, children: React.ReactNode) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
   peritext?: (
     props: PeritextViewProps,
@@ -20,7 +22,4 @@ export interface RendererMap {
   ) => React.ReactNode;
 }
 
-export interface InlineRendererProps extends InlineViewProps {
-  children: React.ReactNode;
-  span: () => HTMLSpanElement | null;
-}
+export type SpanProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>;
