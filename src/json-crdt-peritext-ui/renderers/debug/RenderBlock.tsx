@@ -1,7 +1,12 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
+import {drule} from 'nano-theme';
 import {useDebugCtx} from './context';
 import type {BlockViewProps} from '../../react/BlockView';
+
+const blockClass = drule({
+  pos: 'relative',
+});
 
 export interface RenderBlockProps extends BlockViewProps {
   children?: React.ReactNode;
@@ -16,7 +21,12 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
   if (isRoot) return children;
 
   return (
-    <div style={{position: 'relative'}}>
+    <div className={blockClass({
+      'caret-color': enabled ? 'blue !important' : 'transparent',
+      '::selection': {
+        bgc: enabled ? 'red !important' : 'transparent',
+      },
+    })}>
       <div contentEditable={false} style={{position: 'absolute', top: '-24px', left: 0}}>
         <span
           style={{

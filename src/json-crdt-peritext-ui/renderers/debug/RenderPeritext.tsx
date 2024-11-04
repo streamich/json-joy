@@ -19,10 +19,6 @@ const btnClass = rule({
 
 const childrenDebugClass = rule({
   out: '1px dotted black !important',
-  'caret-color': 'black !important',
-  '::selection': {
-    bgc: 'red !important',
-  },
 });
 
 const dumpClass = rule({
