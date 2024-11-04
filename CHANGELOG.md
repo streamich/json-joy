@@ -1,3 +1,35 @@
+# [17.12.0](https://github.com/streamich/json-joy/compare/v17.11.0...v17.12.0) (2024-11-04)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 imprve how cursor is displayed in debug mode ([b6c61a8](https://github.com/streamich/json-joy/commit/b6c61a8eff7aa904d65762ac74a0e43895f002ba))
+* **json-crdt-peritext-ui:** 🐛 make event prevention more granular ([86713f8](https://github.com/streamich/json-joy/commit/86713f8713d31816fadb770d8ba879b9b6cc8d79))
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add ability to render controller state ([b117417](https://github.com/streamich/json-joy/commit/b1174171ae59ec1021b84356a9ffe8b019b8dbec))
+* **json-crdt-peritext-ui:** 🎸 add ability to slant focus in italic text ([46bdb02](https://github.com/streamich/json-joy/commit/46bdb02253985135c4cb15443f9198f0c1d35c75))
+* **json-crdt-peritext-ui:** 🎸 add CompositionController ([585f5d4](https://github.com/streamich/json-joy/commit/585f5d407f026566e2e503f33bbd12d97f2bf3a4))
+* **json-crdt-peritext-ui:** 🎸 add text augmentation API ([186801e](https://github.com/streamich/json-joy/commit/186801e5aeb5cb5a7b405b591422c9ab0dbcd871))
+* **json-crdt-peritext-ui:** 🎸 add useSyncStore React hook ([254efb7](https://github.com/streamich/json-joy/commit/254efb7ca04c5ac14b617198522db2c165cc003b))
+* **json-crdt-peritext-ui:** 🎸 blur editor on Esc press ([eeef3ea](https://github.com/streamich/json-joy/commit/eeef3ea243a889642a51915fa806660e2bf07fe1))
+* **json-crdt-peritext-ui:** 🎸 change inline view rendering API ([fdb6e23](https://github.com/streamich/json-joy/commit/fdb6e232e3d51809fc5703961e388c59f1d481a6))
+* **json-crdt-peritext-ui:** 🎸 early exit keyboard events when in composition ([2131fab](https://github.com/streamich/json-joy/commit/2131faba21882b39cbecac4056f743a57d3e06d4))
+* **json-crdt-peritext-ui:** 🎸 improve caret and selection edge rendering styling ([df4d070](https://github.com/streamich/json-joy/commit/df4d070d3e40f75fc3342626c694ae5e0d158eef))
+* **json-crdt-peritext-ui:** 🎸 improve key trackign reset behavior ([57663ab](https://github.com/streamich/json-joy/commit/57663ab28cf56df230a738d38c139fc66c0c18fc))
+* **json-crdt-peritext-ui:** 🎸 improve Peritext root component rendering ([ed5e8ee](https://github.com/streamich/json-joy/commit/ed5e8ee58cee98376f7f924db29c73c7859726d3))
+* **json-crdt-peritext-ui:** 🎸 make CursorController state reactive ([e711151](https://github.com/streamich/json-joy/commit/e71115167c3da24afbab8eff660484614cb6a96f))
+* **json-crdt-peritext-ui:** 🎸 memoize main component ref ([86ad303](https://github.com/streamich/json-joy/commit/86ad30357c9be336e6a24bcb45ac6f60eee693ff))
+* **json-crdt-peritext-ui:** 🎸 print pressed key state ([ebc3d0e](https://github.com/streamich/json-joy/commit/ebc3d0e4ff0158be2b19eb1fd87187734567d338))
+* **json-crdt-peritext-ui:** 🎸 remove text component ([d2ecad4](https://github.com/streamich/json-joy/commit/d2ecad448808fab67783fe7fb13a0a9010432a8e))
+* **json-crdt-peritext-ui:** 🎸 render caret grey when blurred ([ab8dda9](https://github.com/streamich/json-joy/commit/ab8dda9d2062759699a40a6946c61eaa3f6121bc))
+* **json-crdt-peritext-ui:** 🎸 render selection grey when blurred ([d3d28a0](https://github.com/streamich/json-joy/commit/d3d28a05de0179b4c459410410a23e989d2bca6f))
+* **json-crdt-peritext-ui:** 🎸 track focus state in input controller and print its state ([d98070f](https://github.com/streamich/json-joy/commit/d98070f6dbeb7a7612f1ddb2a6f24270d51ef6ae))
+* **json-crdt-peritext-ui:** 🎸 use Position as "inline" event position parameters ([be2e551](https://github.com/streamich/json-joy/commit/be2e551cb75f87eb02c703195085908c47db95e1))
+* **util:** 🎸 implement SyncStore helpers ([4806c82](https://github.com/streamich/json-joy/commit/4806c82818b921253fd95701a4de8a4d0fb98644))
+
 # [17.11.0](https://github.com/streamich/json-joy/compare/v17.10.0...v17.11.0) (2024-11-03)
 
 
