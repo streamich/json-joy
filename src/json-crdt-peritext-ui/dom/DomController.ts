@@ -1,28 +1,28 @@
 import {printTree, type Printable} from 'tree-dump';
 import {InputController} from '../dom/InputController';
-import {SelectionController} from '../dom/SelectionController';
+import {CursorController} from '../dom/CursorController';
 import {RichTextController} from '../dom/RichTextController';
-import {PeritextEventDefaults} from './PeritextEventDefaults';
-import {PeritextEventTarget} from './PeritextEventTarget';
+import {PeritextEventDefaults} from '../events/PeritextEventDefaults';
+import {PeritextEventTarget} from '../events/PeritextEventTarget';
 import {KeyController} from '../dom/KeyController';
 import {CompositionController} from '../dom/CompositionController';
 import type {UiLifeCycles} from '../dom/types';
 import type {Peritext} from '../../json-crdt-extensions';
 
-export interface PeritextDomControllerOpts {
+export interface DomControllerOpts {
   source: HTMLElement;
   txt: Peritext;
 }
 
-export class PeritextDomController implements UiLifeCycles, Printable {
+export class DomController implements UiLifeCycles, Printable {
   public readonly et: PeritextEventTarget;
   public readonly keys: KeyController;
   public readonly comp: CompositionController;
   public readonly input: InputController;
-  public readonly selection: SelectionController;
+  public readonly cursor: CursorController;
   public readonly richText: RichTextController;
 
-  constructor(public readonly opts: PeritextDomControllerOpts) {
+  constructor(public readonly opts: DomControllerOpts) {
     const {source, txt} = opts;
     const et = (this.et = new PeritextEventTarget());
     const defaults = new PeritextEventDefaults(txt, et);
@@ -30,7 +30,7 @@ export class PeritextDomController implements UiLifeCycles, Printable {
     const keys = (this.keys = new KeyController());
     const comp = this.comp = new CompositionController({et, source, txt});
     this.input = new InputController({et, source, txt, comp});
-    this.selection = new SelectionController({et, source, txt, keys});
+    this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
   }
 
@@ -40,7 +40,7 @@ export class PeritextDomController implements UiLifeCycles, Printable {
     this.keys.start();
     this.comp.start();
     this.input.start();
-    this.selection.start();
+    this.cursor.start();
     this.richText.start();
   }
 
@@ -48,7 +48,7 @@ export class PeritextDomController implements UiLifeCycles, Printable {
     this.keys.stop();
     this.comp.stop();
     this.input.stop();
-    this.selection.stop();
+    this.cursor.stop();
     this.richText.stop();
   }
 

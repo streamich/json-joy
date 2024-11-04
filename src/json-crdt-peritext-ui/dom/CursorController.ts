@@ -7,7 +7,7 @@ import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
-export interface SelectionControllerOpts {
+export interface CursorControllerOpts {
   /**
    * Element to attach the controller to, this element will be used to listen to
    * "beforeinput" events and will be put into "contenteditable" mode.
@@ -22,11 +22,11 @@ export interface SelectionControllerOpts {
  * Controller for handling text selection and cursor movements. Listens to
  * naive browser events and translates them into Peritext events.
  */
-export class SelectionController implements UiLifeCycles {
+export class CursorController implements UiLifeCycles {
   protected isMouseDown: boolean = false;
   public readonly caretId: string;
 
-  public constructor(public readonly opts: SelectionControllerOpts) {
+  public constructor(public readonly opts: CursorControllerOpts) {
     this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
   }
 

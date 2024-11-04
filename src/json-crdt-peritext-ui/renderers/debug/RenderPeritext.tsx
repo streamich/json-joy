@@ -38,8 +38,6 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
   const {dom} = usePeritext();
   const [enabled, setEnabled] = React.useState(enabledProp);
 
-  console.log('dom', dom);
-
   return (
     <context.Provider value={{enabled}}>
       <div className={blockClass}>

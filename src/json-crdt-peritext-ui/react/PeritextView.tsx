@@ -4,7 +4,7 @@ import {context, type PeritextSurfaceContextValue} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
-import {PeritextDomController} from '../events/PeritextDomController';
+import {DomController} from '../dom/DomController';
 import {renderers as defaultRenderers} from '../renderers/default';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {RendererMap} from './types';
@@ -39,7 +39,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const {peritext, renderers = [defaultRenderers], onRender} = props;
   const [, setTick] = React.useState(0);
   const ref = React.useRef<HTMLElement | null>(null);
-  const controller = React.useRef<PeritextDomController | undefined>(undefined);
+  const dom = React.useRef<DomController | undefined>(undefined);
 
   const rerender = () => {
     peritext.refresh();
@@ -50,8 +50,8 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   useIsomorphicLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ctrl = new PeritextDomController({source: el, txt: peritext});
-    controller.current = ctrl;
+    const ctrl = new DomController({source: el, txt: peritext});
+    dom.current = ctrl;
     ctrl.start();
     ctrl.et.addEventListener('change', rerender);
     return () => {
@@ -65,7 +65,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
 
   const value: PeritextSurfaceContextValue = {
     peritext,
-    dom: controller.current,
+    dom: dom.current,
     renderers,
     rerender,
   };
