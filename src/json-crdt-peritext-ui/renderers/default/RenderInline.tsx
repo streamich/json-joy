@@ -5,9 +5,11 @@ import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
 import type {InlineRendererProps} from '../../react/types';
 
-export const RenderInline: React.FC<InlineRendererProps> = ({inline, span, children}) => {
+export const RenderInline: React.FC<InlineRendererProps> = (props) => {
+  const {inline, children} = props;
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
+  const span = props.span();
 
   if (span) {
     const attr = inline.attr();

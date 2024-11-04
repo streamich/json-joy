@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
 import {CssClass, ElementAttr} from '../constants';
-import {TextView} from './TextView';
 import {usePeritext} from './context';
 import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
@@ -58,21 +57,15 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   const span = ref.current;
   if (span) (span as any)[ElementAttr.InlineOffset] = inline;
 
-  const attributes: React.HTMLAttributes<HTMLSpanElement> = {
-    className: CssClass.Inline,
-  };
-
   let children: React.ReactNode = (
-    <TextView
-      ref={(span: HTMLSpanElement | null) => {
-        ref.current = span as HTMLSpanElement;
-        if (span) (span as any)[ElementAttr.InlineOffset] = inline;
-      }}
-      attr={attributes}
-      text={text}
-    />
+    <span className={CssClass.Inline} ref={(span: HTMLSpanElement | null) => {
+      ref.current = span as HTMLSpanElement;
+      if (span) (span as any)[ElementAttr.InlineOffset] = inline;
+    }}>
+      {text}
+    </span>
   );
-  for (const map of renderers) children = map.inline?.({...props, children, span}) ?? children;
+  for (const map of renderers) children = map.inline?.({...props, children, span: () => ref.current}) ?? children;
 
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];

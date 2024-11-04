@@ -22,5 +22,5 @@ export interface RendererMap {
 
 export interface InlineRendererProps extends InlineViewProps {
   children: React.ReactNode;
-  span: HTMLSpanElement | null;
+  span: () => HTMLSpanElement | null;
 }
