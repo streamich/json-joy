@@ -183,8 +183,10 @@ export class InputController implements UiLifeCycles {
 
   private onKeyDown = (event: KeyboardEvent): void => {
     const key = event.key;
+    if (event.isComposing || key === 'Dead') return;
     const et = this.et;
     switch (key) {
+      // TODO: move arrow movement to {@link SelectionController} and rename it to {@link CursorController}.
       case 'ArrowLeft':
       case 'ArrowRight': {
         const direction = key === 'ArrowLeft' ? -1 : 1;

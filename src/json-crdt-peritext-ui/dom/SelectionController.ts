@@ -180,6 +180,7 @@ export class SelectionController implements UiLifeCycles {
 
   private onKeyDown = (event: KeyboardEvent): void => {
     const key = event.key;
+    if (event.isComposing || key === 'Dead') return;
     const et = this.opts.et;
     switch (key) {
       case 'ArrowUp':

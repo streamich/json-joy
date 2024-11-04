@@ -22,10 +22,12 @@ export class KeyController implements UiLifeCycles {
   }
 
   private onKeyDown = (event: KeyboardEvent): void => {
+    if (event.isComposing || event.key === 'Dead') return;
     this.pressed.add(event.key);
   };
 
   private onKeyUp = (event: KeyboardEvent): void => {
+    if (event.isComposing || event.key === 'Dead') return;
     this.pressed.delete(event.key);
   };
 
