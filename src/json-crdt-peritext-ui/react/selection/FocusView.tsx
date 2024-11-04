@@ -5,6 +5,7 @@ import {Caret} from './Caret';
 
 export interface FocusViewProps {
   left?: boolean;
+  italic?: boolean;
 }
 
 export const FocusView: React.FC<FocusViewProps> = (props) => {

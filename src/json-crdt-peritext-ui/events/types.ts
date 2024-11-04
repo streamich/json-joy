@@ -179,7 +179,7 @@ export interface InlineDetail {
   data?: unknown;
   behavior?: 'stack' | 'overwrite' | 'erase';
   store?: 'saved' | 'extra' | 'local';
-  pos?: [start: number, end: number][];
+  pos?: [start: Position, end: Position][];
 }
 
 // biome-ignore lint: empty interface is expected

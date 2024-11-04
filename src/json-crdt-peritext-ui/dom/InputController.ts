@@ -1,6 +1,8 @@
+import {unit} from './util';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {TypedEventTarget} from '../events/TypedEventTarget';
+import type {CompositionController} from './CompositionController';
 import type {UiLifeCycles} from './types';
 
 export interface InputControllerEventSourceMap {
@@ -10,13 +12,11 @@ export interface InputControllerEventSourceMap {
 
 export type InputControllerEventSource = TypedEventTarget<InputControllerEventSourceMap>;
 
-const unit = (event: KeyboardEvent): '' | 'word' | 'line' =>
-  event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : '';
-
 export interface InputControllerOpts {
   source: InputControllerEventSource;
   txt: Peritext;
   et: PeritextEventTarget;
+  comp: CompositionController;
 }
 
 /**
@@ -28,42 +28,45 @@ export class InputController implements UiLifeCycles {
   protected readonly txt: Peritext;
   public readonly et: PeritextEventTarget;
 
-  public constructor(options: InputControllerOpts) {
-    this.source = options.source;
-    this.txt = options.txt;
-    this.et = options.et;
+  public constructor(protected readonly opts: InputControllerOpts) {
+    this.source = opts.source;
+    this.txt = opts.txt;
+    this.et = opts.et;
   }
 
   public start(): void {
-    this.source.addEventListener('beforeinput', this.onBeforeInput);
-    this.source.addEventListener('keydown', this.onKeyDown);
+    const el = this.opts.source;
+    (el as any).contentEditable = 'true';
+    el.addEventListener('beforeinput', this.onBeforeInput);
+    el.addEventListener('keydown', this.onKeyDown);
   }
 
   public stop(): void {
-    this.source.removeEventListener('beforeinput', this.onBeforeInput);
-    this.source.removeEventListener('keydown', this.onKeyDown);
+    const el = this.opts.source;
+    (el as any).contentEditable = 'false';
+    el.removeEventListener('beforeinput', this.onBeforeInput);
+    el.removeEventListener('keydown', this.onKeyDown);
   }
 
   private onBeforeInput = (event: InputEvent): void => {
     // TODO: prevent default more selectively?
-    event.preventDefault();
-    const editor = this.txt.editor;
     const et = this.et;
     const inputType = event.inputType;
     switch (inputType) {
       case 'insertParagraph': {
+        event.preventDefault();
         // editor.saved.insMarker('p');
         // editor.cursor.move(1);
         // this.et.change(event);
         break;
       }
-      case 'insertFromComposition':
+      // case 'insertFromComposition':
       case 'insertFromDrop':
       case 'insertFromPaste':
       case 'insertFromYank':
       case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
       case 'insertText': {
-        // insert typed plain
+        event.preventDefault();
         if (typeof event.data === 'string') {
           et.insert(event.data);
         } else {
@@ -75,21 +78,25 @@ export class InputController implements UiLifeCycles {
       case 'deleteContentBackward': // delete the content directly before the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its start after the deletion
       case 'deleteContent': {
         // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
+        event.preventDefault();
         et.delete(-1, 'char');
         break;
       }
       case 'deleteContentForward': {
         // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
+        event.preventDefault();
         et.delete(1, 'char');
         break;
       }
       case 'deleteWordBackward': {
         // delete a word directly before the caret position
+        event.preventDefault();
         et.delete(-1, 'word');
         break;
       }
       case 'deleteWordForward': {
         // delete a word directly after the caret position
+        event.preventDefault();
         et.delete(1, 'word');
         break;
       }
@@ -183,18 +190,9 @@ export class InputController implements UiLifeCycles {
 
   private onKeyDown = (event: KeyboardEvent): void => {
     const key = event.key;
+    if (event.isComposing || key === 'Dead') return;
     const et = this.et;
     switch (key) {
-      case 'ArrowLeft':
-      case 'ArrowRight': {
-        const direction = key === 'ArrowLeft' ? -1 : 1;
-        event.preventDefault();
-        if (event.shiftKey) et.move(direction, unit(event) || 'char', 'focus');
-        else if (event.metaKey) et.move(direction, 'line');
-        else if (event.altKey || event.ctrlKey) et.move(direction, 'word');
-        else et.move(direction);
-        break;
-      }
       case 'Backspace':
       case 'Delete': {
         const direction = key === 'Delete' ? 1 : -1;
@@ -205,20 +203,14 @@ export class InputController implements UiLifeCycles {
         }
         break;
       }
-      case 'Home':
-      case 'End': {
-        event.preventDefault();
-        const direction = key === 'End' ? 1 : -1;
-        const edge = event.shiftKey ? 'focus' : 'both';
-        this.et.move(direction, 'line', edge);
-        return;
-      }
-      case 'a':
-        if (event.metaKey || event.ctrlKey) {
+      case 'Escape': {
+        const div = this.opts.source;
+        if (div instanceof HTMLElement) {
           event.preventDefault();
-          this.et.cursor({unit: 'all'});
-          return;
+          div.blur();
         }
+        break;
+      }
     }
   };
 }
