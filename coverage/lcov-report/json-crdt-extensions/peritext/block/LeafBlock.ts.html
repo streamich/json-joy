@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">17.64% </span>
+                <span class="strong">94.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/17</span>
+                <span class='fraction'>16/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">44.44% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>4/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>6/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">18.75% </span>
+                <span class="strong">93.75% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/16</span>
+                <span class='fraction'>15/16</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -107,8 +107,8 @@
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">48x</span>
-<span class="cline-any cline-yes">48x</span>
+<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">49x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -117,35 +117,35 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-yes">49x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -163,33 +163,33 @@ export interface IBlock&lt;Attr = unknown&gt; {
 &nbsp;
 export class LeafBlock&lt;Attr = unknown&gt; extends Block&lt;Attr&gt; {
   // ---------------------------------------------------------------- Printable
-  protected <span class="fstat-no" title="function not covered" >toStringName(</span>): string {
-<span class="cstat-no" title="statement not covered" >    return 'LeafBlock';</span>
+  protected toStringName(): string {
+    return 'LeafBlock';
   }
 &nbsp;
-  protected <span class="fstat-no" title="function not covered" >toStringHeader(</span>): string {
-    const str = <span class="cstat-no" title="statement not covered" >this.text();</span>
-    const truncate = <span class="cstat-no" title="statement not covered" >str.length &gt; 32;</span>
-    const text = <span class="cstat-no" title="statement not covered" >JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');</span>
-    const header = <span class="cstat-no" title="statement not covered" >`${super.toStringHeader()} ${text}`;</span>
-<span class="cstat-no" title="statement not covered" >    return header;</span>
+  protected toStringHeader(): string {
+    const str = this.text();
+    const truncate = str.length &gt; 32;
+    const text = JSON.stringify(truncate ? <span class="branch-0 cbranch-no" title="branch not covered" >str.slice(0, 32) </span>: str) + (truncate ? <span class="branch-0 cbranch-no" title="branch not covered" >' …' </span>: '');
+    const header = `${super.toStringHeader()} ${text}`;
+    return header;
   }
 &nbsp;
-  public <span class="fstat-no" title="function not covered" >toString(</span>tab: string = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span>: string {
-    const header = <span class="cstat-no" title="statement not covered" >this.toStringHeader();</span>
-    const texts = <span class="cstat-no" title="statement not covered" >[...this.texts()];</span>
-    const hasSlices = <span class="cstat-no" title="statement not covered" >!!texts.length;</span>
-<span class="cstat-no" title="statement not covered" >    return (</span>
+  public toString(tab: string = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span>: string {
+    const header = this.toStringHeader();
+    const texts = [...this.texts()];
+    const hasSlices = !!texts.length;
+    return (
       header +
       printTree(tab, [
-        this.marker ? <span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >this.marker!.toString(tab) </span>: null,
+        this.marker ? <span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >this.marker!.toString(tab) </span></span>: null,
         !hasSlices
-          ? null
-          : <span class="fstat-no" title="function not covered" >(t</span>ab) =&gt;
-<span class="cstat-no" title="statement not covered" >              'nodes' +</span>
+          ? <span class="branch-0 cbranch-no" title="branch not covered" >null</span>
+          : (tab) =&gt;
+              'nodes' +
               printTree(
                 tab,
-                texts.map(<span class="fstat-no" title="function not covered" >(i</span>nline) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >inline.toString(tab))</span></span>,
+                texts.map((inline) =&gt; (tab) =&gt; inline.toString(tab)),
               ),
       ])
     );
@@ -202,7 +202,7 @@ export class LeafBlock&lt;Attr = unknown&gt; extends Block&lt;Attr&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-04T03:31:28.616Z
+                at 2024-11-04T23:05:03.031Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
