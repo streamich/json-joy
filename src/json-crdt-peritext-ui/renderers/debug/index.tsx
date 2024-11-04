@@ -11,8 +11,8 @@ export const renderers = (options?: Pick<RenderPeritextProps, 'enabled'>): Rende
     </RenderInline>
   ),
   block: (props, children) => <RenderBlock {...props}>{children}</RenderBlock>,
-  peritext: (props, children) => (
-    <RenderPeritext {...options} {...props}>
+  peritext: (props, children, ctx) => (
+    <RenderPeritext {...options} {...props} ctx={ctx}>
       {children}
     </RenderPeritext>
   ),

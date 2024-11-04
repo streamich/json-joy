@@ -6,7 +6,7 @@ import type {DomController} from '../dom/DomController';
 export interface PeritextSurfaceContextValue {
   peritext: Peritext;
   renderers: RendererMap[];
-  dom?: DomController;
+  dom: DomController;
   rerender: () => void;
 }
 

@@ -5,6 +5,7 @@ import type {AnchorViewProps} from './selection/AnchorView';
 import type {InlineViewProps} from './InlineView';
 import type {BlockViewProps} from './BlockView';
 import type {PeritextViewProps} from './PeritextView';
+import type {PeritextSurfaceContextValue} from './context';
 
 export interface RendererMap {
   focus?: (props: FocusViewProps, children: React.ReactNode) => React.ReactNode;
@@ -16,5 +17,5 @@ export interface RendererMap {
     attributes: React.HTMLAttributes<HTMLSpanElement>,
   ) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
-  peritext?: (props: PeritextViewProps, children: React.ReactNode) => React.ReactNode;
+  peritext?: (props: PeritextViewProps, children: React.ReactNode, ctx?: PeritextSurfaceContextValue) => React.ReactNode;
 }

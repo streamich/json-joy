@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {context} from './context';
-import type {PeritextViewProps} from '../../react';
-import {usePeritext} from '../../react/context';
+import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
 
 const blockClass = rule({
   pos: 'relative',
@@ -32,10 +31,10 @@ const dumpClass = rule({
 export interface RenderPeritextProps extends PeritextViewProps {
   enabled?: boolean;
   children?: React.ReactNode;
+  ctx?: PeritextSurfaceContextValue;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, peritext, children}) => {
-  const {dom} = usePeritext();
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, peritext, ctx, children}) => {
   const [enabled, setEnabled] = React.useState(enabledProp);
 
   return (
@@ -48,7 +47,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
         {enabled && (
           <div className={dumpClass}>
             <pre>{peritext + ''}</pre>
-            {!!dom && <pre>{dom + ''}</pre>}
+            {!!ctx && <pre>{ctx.dom + ''}</pre>}
           </div>
         )}
       </div>
