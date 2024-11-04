@@ -9,3 +9,6 @@ export const getCursorPosition: GetCursorPosition = (<any>document).caretPositio
       const range = document.caretRangeFromPoint(x, y);
       return range ? [range.startContainer, range.startOffset] : null;
     };
+
+export const unit = (event: KeyboardEvent): '' | 'word' | 'line' =>
+  event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : '';

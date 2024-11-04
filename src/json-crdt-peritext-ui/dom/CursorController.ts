@@ -1,4 +1,4 @@
-import {getCursorPosition} from './util';
+import {getCursorPosition, unit} from './util';
 import {ElementAttr} from '../constants';
 import {throttle} from '../../util/throttle';
 import type {KeyController} from './KeyController';
@@ -197,6 +197,30 @@ export class CursorController implements UiLifeCycles {
         }
         break;
       }
+      case 'ArrowLeft':
+      case 'ArrowRight': {
+        const direction = key === 'ArrowLeft' ? -1 : 1;
+        event.preventDefault();
+        if (event.shiftKey) et.move(direction, unit(event) || 'char', 'focus');
+        else if (event.metaKey) et.move(direction, 'line');
+        else if (event.altKey || event.ctrlKey) et.move(direction, 'word');
+        else et.move(direction);
+        break;
+      }
+      case 'Home':
+      case 'End': {
+        event.preventDefault();
+        const direction = key === 'End' ? 1 : -1;
+        const edge = event.shiftKey ? 'focus' : 'both';
+        et.move(direction, 'line', edge);
+        return;
+      }
+      case 'a':
+        if (event.metaKey || event.ctrlKey) {
+          event.preventDefault();
+          et.cursor({unit: 'all'});
+          return;
+        }
     }
   };
 }

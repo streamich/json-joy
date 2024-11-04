@@ -1,3 +1,4 @@
+import {unit} from './util';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {TypedEventTarget} from '../events/TypedEventTarget';
@@ -10,9 +11,6 @@ export interface InputControllerEventSourceMap {
 }
 
 export type InputControllerEventSource = TypedEventTarget<InputControllerEventSourceMap>;
-
-const unit = (event: KeyboardEvent): '' | 'word' | 'line' =>
-  event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : '';
 
 export interface InputControllerOpts {
   source: InputControllerEventSource;
@@ -191,17 +189,6 @@ export class InputController implements UiLifeCycles {
     if (event.isComposing || key === 'Dead') return;
     const et = this.et;
     switch (key) {
-      // TODO: move arrow movement to {@link SelectionController} and rename it to {@link CursorController}.
-      case 'ArrowLeft':
-      case 'ArrowRight': {
-        const direction = key === 'ArrowLeft' ? -1 : 1;
-        event.preventDefault();
-        if (event.shiftKey) et.move(direction, unit(event) || 'char', 'focus');
-        else if (event.metaKey) et.move(direction, 'line');
-        else if (event.altKey || event.ctrlKey) et.move(direction, 'word');
-        else et.move(direction);
-        break;
-      }
       case 'Backspace':
       case 'Delete': {
         const direction = key === 'Delete' ? 1 : -1;
@@ -212,20 +199,6 @@ export class InputController implements UiLifeCycles {
         }
         break;
       }
-      case 'Home':
-      case 'End': {
-        event.preventDefault();
-        const direction = key === 'End' ? 1 : -1;
-        const edge = event.shiftKey ? 'focus' : 'both';
-        this.et.move(direction, 'line', edge);
-        return;
-      }
-      case 'a':
-        if (event.metaKey || event.ctrlKey) {
-          event.preventDefault();
-          this.et.cursor({unit: 'all'});
-          return;
-        }
     }
   };
 }
