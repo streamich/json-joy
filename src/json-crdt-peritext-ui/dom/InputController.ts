@@ -35,13 +35,17 @@ export class InputController implements UiLifeCycles {
   }
 
   public start(): void {
-    this.source.addEventListener('beforeinput', this.onBeforeInput);
-    this.source.addEventListener('keydown', this.onKeyDown);
+    const el = this.opts.source;
+    (el as any).contentEditable = 'true';
+    el.addEventListener('beforeinput', this.onBeforeInput);
+    el.addEventListener('keydown', this.onKeyDown);
   }
 
   public stop(): void {
-    this.source.removeEventListener('beforeinput', this.onBeforeInput);
-    this.source.removeEventListener('keydown', this.onKeyDown);
+    const el = this.opts.source;
+    (el as any).contentEditable = 'false';
+    el.removeEventListener('beforeinput', this.onBeforeInput);
+    el.removeEventListener('keydown', this.onKeyDown);
   }
 
   private onBeforeInput = (event: InputEvent): void => {

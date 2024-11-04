@@ -96,7 +96,6 @@ export class CursorController implements UiLifeCycles {
 
   public start(): void {
     const el = this.opts.source;
-    el.contentEditable = 'true';
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('mousemove', this.onMouseMove);
@@ -105,7 +104,6 @@ export class CursorController implements UiLifeCycles {
 
   public stop(): void {
     const el = this.opts.source;
-    if (el) el.contentEditable = 'false';
     el.removeEventListener('mousedown', this.onMouseDown);
     el.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('mousemove', this.onMouseMove);
