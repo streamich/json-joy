@@ -38,7 +38,9 @@ export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
 
   return (
     <span className={blockClass}>
-      <span className={innerClass} style={style}>{Char.ZeroLengthSpace}</span>
+      <span className={innerClass} style={style}>
+        {Char.ZeroLengthSpace}
+      </span>
     </span>
   );
 };

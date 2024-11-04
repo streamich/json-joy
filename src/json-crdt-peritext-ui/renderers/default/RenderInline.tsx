@@ -20,11 +20,7 @@ const RenderInlineSelection: React.FC<RenderInlineSelectionProps> = (props) => {
     borderRadius: left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px',
   };
 
-  return (
-    <span style={style}>
-      {children}
-    </span>
-  );
+  return <span style={style}>{children}</span>;
 };
 
 export interface RenderInlineProps extends InlineViewProps {

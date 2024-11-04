@@ -9,12 +9,8 @@ export interface RenderInlineProps extends InlineViewProps {
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {children} = props;
   const {enabled} = useDebugCtx();
-  
+
   if (!enabled) return children;
 
-  return (
-    <span style={{outline: '1px dotted red'}}>
-      {children}
-    </span>
-  );
+  return <span style={{outline: '1px dotted red'}}>{children}</span>;
 };

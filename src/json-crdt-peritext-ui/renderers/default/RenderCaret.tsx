@@ -41,7 +41,11 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const focus = useSyncStore(dom.cursor.focus);
 
   const style: React.CSSProperties = {
-    background: !focus ? DefaultRendererColors.InactiveCursor : show ? DefaultRendererColors.ActiveCursor : 'transparent',
+    background: !focus
+      ? DefaultRendererColors.InactiveCursor
+      : show
+        ? DefaultRendererColors.ActiveCursor
+        : 'transparent',
   };
 
   if (italic) {

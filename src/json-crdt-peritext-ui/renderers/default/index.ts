@@ -11,7 +11,7 @@ export const renderers: RendererMap = {
   text: (props, inline) => {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
     const attr = inline.attr();
-    
+
     if (attr.b) {
       style.fontWeight = 'bold';
     }
