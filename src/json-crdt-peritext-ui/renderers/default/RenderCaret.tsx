@@ -4,8 +4,8 @@ import {rule} from 'nano-theme';
 import {usePeritext} from '../../react/context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/selection/CaretView';
+import {DefaultRendererColors} from './constants';
 
-const color = '#07f';
 const ms = 350;
 
 const blockClass = rule({
@@ -25,7 +25,7 @@ const innerClass = rule({
   left: '-0.0625em',
   w: '.2em',
   h: '1.5em',
-  bg: color,
+  bg: DefaultRendererColors.ActiveCursor,
   bdrad: '0.0625em',
   'mix-blend-mode': 'multiply',
 });
@@ -41,7 +41,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const focus = useSyncStore(dom.cursor.focus);
 
   const style: React.CSSProperties = {
-    background: !focus ? 'rgba(127,127,127,.7)' : show ? color : 'transparent',
+    background: !focus ? DefaultRendererColors.InactiveCursor : show ? DefaultRendererColors.ActiveCursor : 'transparent',
   };
 
   if (italic) {

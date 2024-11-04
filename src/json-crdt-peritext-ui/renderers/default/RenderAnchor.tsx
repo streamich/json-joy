@@ -2,9 +2,10 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Char} from '../../constants';
+import {DefaultRendererColors} from './constants';
+import {usePeritext} from '../../react';
+import {useSyncStore} from '../../react/hooks';
 import type {AnchorViewProps} from '../../react/selection/AnchorView';
-
-const color = '#07f';
 
 const blockClass = rule({
   pos: 'relative',
@@ -24,15 +25,20 @@ const innerClass = rule({
   w: 'calc(min(16px,0.5em))',
   h: 'calc(min(16px,0.5em))',
   bdrad: '50%/30%',
-  bg: color,
+  bg: DefaultRendererColors.ActiveCursor,
 });
 
 export interface RenderAnchorProps extends AnchorViewProps {}
 
 export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
+  const {dom} = usePeritext();
+  const focus = useSyncStore(dom.cursor.focus);
+
+  const style = focus ? undefined : {background: DefaultRendererColors.InactiveCursor};
+
   return (
     <span className={blockClass}>
-      <span className={innerClass}>{Char.ZeroLengthSpace}</span>
+      <span className={innerClass} style={style}>{Char.ZeroLengthSpace}</span>
     </span>
   );
 };
