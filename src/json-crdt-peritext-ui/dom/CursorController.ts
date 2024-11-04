@@ -1,6 +1,7 @@
 import {getCursorPosition, unit} from './util';
 import {ElementAttr} from '../constants';
 import {throttle} from '../../util/throttle';
+import type {Printable} from 'tree-dump';
 import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
@@ -22,8 +23,7 @@ export interface CursorControllerOpts {
  * Controller for handling text selection and cursor movements. Listens to
  * naive browser events and translates them into Peritext events.
  */
-export class CursorController implements UiLifeCycles {
-  protected isMouseDown: boolean = false;
+export class CursorController implements UiLifeCycles, Printable {
   public readonly caretId: string;
 
   public constructor(public readonly opts: CursorControllerOpts) {
@@ -98,6 +98,8 @@ export class CursorController implements UiLifeCycles {
     const el = this.opts.source;
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
+    el.addEventListener('focus', this.onFocus);
+    el.addEventListener('blur', this.onBlur);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
   }
@@ -106,21 +108,34 @@ export class CursorController implements UiLifeCycles {
     const el = this.opts.source;
     el.removeEventListener('mousedown', this.onMouseDown);
     el.removeEventListener('keydown', this.onKeyDown);
+    el.removeEventListener('focus', this.onFocus);
+    el.removeEventListener('blur', this.onBlur);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
     this._cursor[1](); // Stop throttling loop.
   }
 
-  private clientX = 0;
-  private clientY = 0;
+  private focus: boolean = false;
+
+  private readonly onFocus = (ev: FocusEvent): void => {
+    this.focus = true;
+  };
+
+  private readonly onBlur = (ev: FocusEvent): void => {
+    this.focus = false;
+  };
+
+  private x = 0;
+  private y = 0;
+  private mouseDown: boolean = false;
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
     const {clientX, clientY} = ev;
-    this.clientX = clientX;
-    this.clientY = clientY;
+    this.x = clientX;
+    this.y = clientY;
     switch (ev.detail) {
       case 1: {
-        this.isMouseDown = false;
+        this.mouseDown = false;
         const at = this.posAtPoint(clientX, clientY);
         if (at === -1) return;
         this.selAnchor = at;
@@ -133,24 +148,24 @@ export class CursorController implements UiLifeCycles {
           ev.preventDefault();
           et.cursor({at, edge: 'new'});
         } else {
-          this.isMouseDown = true;
+          this.mouseDown = true;
           ev.preventDefault();
           et.cursor({at});
         }
         break;
       }
       case 2:
-        this.isMouseDown = false;
+        this.mouseDown = false;
         ev.preventDefault();
         this.opts.et.cursor({unit: 'word'});
         break;
       case 3:
-        this.isMouseDown = false;
+        this.mouseDown = false;
         ev.preventDefault();
         this.opts.et.cursor({unit: 'block'});
         break;
       case 4:
-        this.isMouseDown = false;
+        this.mouseDown = false;
         ev.preventDefault();
         this.opts.et.cursor({unit: 'all'});
         break;
@@ -158,22 +173,22 @@ export class CursorController implements UiLifeCycles {
   };
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
-    if (!this.isMouseDown) return;
+    if (!this.mouseDown) return;
     const at = this.selAnchor;
     if (at < 0) return;
     const {clientX, clientY} = ev;
     const to = this.posAtPoint(clientX, clientY);
     if (to < 0) return;
     ev.preventDefault();
-    const mouseHasNotMoved = clientX === this.clientX && clientY === this.clientY;
+    const mouseHasNotMoved = clientX === this.x && clientY === this.y;
     if (mouseHasNotMoved) return;
-    this.clientX = clientX;
-    this.clientY = clientY;
+    this.x = clientX;
+    this.y = clientY;
     this._cursor[0]({at: to, edge: 'focus'});
   };
 
   private readonly onMouseUp = (ev: MouseEvent): void => {
-    this.isMouseDown = false;
+    this.mouseDown = false;
   };
 
   private onKeyDown = (event: KeyboardEvent): void => {
@@ -183,10 +198,10 @@ export class CursorController implements UiLifeCycles {
     switch (key) {
       case 'ArrowUp':
       case 'ArrowDown': {
-        event.preventDefault();
         const direction = key === 'ArrowUp' ? -1 : 1;
         const at = this.getNextLinePos(direction);
         if (at !== undefined) {
+          event.preventDefault();
           if (event.shiftKey) {
             et.cursor({at, edge: 'focus'});
           } else {
@@ -221,4 +236,10 @@ export class CursorController implements UiLifeCycles {
         }
     }
   };
+
+  /** ----------------------------------------------------- {@link Printable} */
+
+  public toString(tab?: string): string {
+    return `cursor { focus: ${this.focus}, x: ${this.x}, y: ${this.y}, mouseDown: ${this.mouseDown} }`;
+  }
 }

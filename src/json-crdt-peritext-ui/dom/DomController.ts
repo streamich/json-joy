@@ -56,6 +56,7 @@ export class DomController implements UiLifeCycles, Printable {
 
   public toString(tab?: string): string {
     return 'DOM' + printTree(tab, [
+      (tab) => this.cursor.toString(tab),
       (tab) => this.keys.toString(tab),
       (tab) => this.comp.toString(tab),
     ]);
