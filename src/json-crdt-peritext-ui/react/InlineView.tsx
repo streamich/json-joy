@@ -5,7 +5,7 @@ import {usePeritext} from './context';
 import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
 import {AnchorView} from './selection/AnchorView';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import {InlineAttrEnd, InlineAttrStart, type Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 import type {SpanProps} from './types';
 
 const {createElement: h, Fragment} = React;
@@ -73,16 +73,18 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];
     const attr = inline.attr();
+    const italic = attr.i && attr.i[0];
     const key = inline.key();
     const cursorStart = inline.cursorStart();
+    console.log('italic', italic);
     if (cursorStart) {
       const k = key + 'a';
       elements.push(
         cursorStart.isStartFocused() ? (
           cursorStart.isCollapsed() ? (
-            <CaretView key={k} italic={!!attr.i} />
+            <CaretView key={k} italic={!!italic} />
           ) : (
-            <FocusView key={k} />
+            <FocusView key={k} italic={italic instanceof InlineAttrEnd} />
           )
         ) : (
           <AnchorView key={k} />
@@ -96,9 +98,9 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
       elements.push(
         cursorEnd.isEndFocused() ? (
           cursorEnd.isCollapsed() ? (
-            <CaretView key={k} italic={!!attr.i} />
+            <CaretView key={k} italic={!!italic} />
           ) : (
-            <FocusView key={k} left />
+            <FocusView key={k} left italic={italic instanceof InlineAttrStart} />
           )
         ) : (
           <AnchorView key={k} />

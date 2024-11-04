@@ -4,6 +4,7 @@ import {rule, drule, keyframes} from 'nano-theme';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
+import type {FocusViewProps} from '../../react/selection/FocusView';
 
 const width = 0.125;
 const animationTime = '1s';
@@ -39,16 +40,19 @@ const innerClass = drule({
   'mix-blend-mode': 'multiply',
 });
 
-export interface RenderFocusProps {
-  left?: boolean;
+export interface RenderFocusProps extends FocusViewProps {
   children: React.ReactNode;
 }
 
-export const RenderFocus: React.FC<RenderFocusProps> = ({left, children}) => {
+export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}) => {
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
 
-  const style = focus ? undefined : {background: DefaultRendererColors.InactiveCursor, animation: 'none'};
+  const style: React.CSSProperties = focus ? {} : {background: DefaultRendererColors.InactiveCursor, animation: 'none'};
+
+  if (italic) {
+    style.transform = 'rotate(11deg)';
+  }
 
   return (
     <span className={blockClass}>
