@@ -203,6 +203,14 @@ export class InputController implements UiLifeCycles {
         }
         break;
       }
+      case 'Escape': {
+        const div = this.opts.source;
+        if (div instanceof HTMLElement) {
+          event.preventDefault();
+          div.blur();
+        }
+        break;
+      }
     }
   };
 }
