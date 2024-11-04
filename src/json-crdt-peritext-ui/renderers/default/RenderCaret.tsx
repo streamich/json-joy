@@ -1,6 +1,8 @@
 import * as React from 'react';
 import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
 import {rule} from 'nano-theme';
+import {usePeritext} from '../../react/context';
+import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/selection/CaretView';
 
 const color = '#07f';
@@ -35,9 +37,11 @@ export interface RenderCaretProps extends CaretViewProps {
 export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
+  const {dom} = usePeritext();
+  const focus = useSyncStore(dom.cursor.focus);
 
   const style: React.CSSProperties = {
-    background: show ? color : 'transparent',
+    background: !focus ? 'rgba(127,127,127,.7)' : show ? color : 'transparent',
   };
 
   if (italic) {
