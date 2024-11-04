@@ -1,6 +1,7 @@
 import {getCursorPosition, unit} from './util';
 import {ElementAttr} from '../constants';
 import {throttle} from '../../util/throttle';
+import {ValueSyncStore} from '../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
 import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
@@ -115,14 +116,14 @@ export class CursorController implements UiLifeCycles, Printable {
     this._cursor[1](); // Stop throttling loop.
   }
 
-  private focus: boolean = false;
+  public readonly focus = new ValueSyncStore<boolean>(false);
 
-  private readonly onFocus = (ev: FocusEvent): void => {
-    this.focus = true;
+  private readonly onFocus = (): void => {
+    this.focus.next(true);
   };
 
-  private readonly onBlur = (ev: FocusEvent): void => {
-    this.focus = false;
+  private readonly onBlur = (): void => {
+    this.focus.next(false);
   };
 
   private x = 0;
@@ -240,6 +241,6 @@ export class CursorController implements UiLifeCycles, Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return `cursor { focus: ${this.focus}, x: ${this.x}, y: ${this.y}, mouseDown: ${this.mouseDown} }`;
+    return `cursor { focus: ${this.focus.value}, x: ${this.x}, y: ${this.y}, mouseDown: ${this.mouseDown} }`;
   }
 }
