@@ -3,7 +3,6 @@ import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
-import {DefaultRendererColors} from './constants';
 import type {RendererMap} from '../../react/types';
 
 const h = React.createElement;
@@ -18,15 +17,6 @@ export const renderers: RendererMap = {
     }
     if (attr.i) {
       style.fontStyle = 'italic';
-    }
-    
-    const selection = inline.selection();
-    if (selection) {
-      const [left, right] = selection;
-      // style.backgroundColor = focus ? DefaultRendererColors.ActiveSelection : DefaultRendererColors.InactiveSelection;
-      style.backgroundColor = DefaultRendererColors.ActiveSelection;
-      style.borderRadius =
-        left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px';
     }
 
     return props;
