@@ -12,9 +12,7 @@ export class FanoutSyncStore<T> implements SyncStore<T> {
   private readonly fanout: FanOut<void> = new FanOut<void>();
   public readonly subscribe: SyncStoreSubscribe = (cb) => this.fanout.listen(cb);
 
-  constructor(
-    public readonly getSnapshot: () => T
-  ) {}
+  constructor(public readonly getSnapshot: () => T) {}
 }
 
 export class ValueSyncStore<V> implements SyncStore<V> {
@@ -23,7 +21,7 @@ export class ValueSyncStore<V> implements SyncStore<V> {
 
   constructor(public value: V) {}
 
-  public readonly getSnapshot: (() => V) = () => this.value;
+  public readonly getSnapshot: () => V = () => this.value;
 
   public next(value: V): void {
     this.value = value;

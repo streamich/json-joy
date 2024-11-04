@@ -28,7 +28,7 @@ export class DomController implements UiLifeCycles, Printable {
     const defaults = new PeritextEventDefaults(txt, et);
     et.defaults = defaults;
     const keys = (this.keys = new KeyController());
-    const comp = this.comp = new CompositionController({et, source, txt});
+    const comp = (this.comp = new CompositionController({et, source, txt}));
     this.input = new InputController({et, source, txt, comp});
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
@@ -55,10 +55,13 @@ export class DomController implements UiLifeCycles, Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return 'DOM' + printTree(tab, [
-      (tab) => this.cursor.toString(tab),
-      (tab) => this.keys.toString(tab),
-      (tab) => this.comp.toString(tab),
-    ]);
+    return (
+      'DOM' +
+      printTree(tab, [
+        (tab) => this.cursor.toString(tab),
+        (tab) => this.keys.toString(tab),
+        (tab) => this.comp.toString(tab),
+      ])
+    );
   }
 }

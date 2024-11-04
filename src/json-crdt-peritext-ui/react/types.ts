@@ -17,5 +17,9 @@ export interface RendererMap {
     attributes: React.HTMLAttributes<HTMLSpanElement>,
   ) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
-  peritext?: (props: PeritextViewProps, children: React.ReactNode, ctx?: PeritextSurfaceContextValue) => React.ReactNode;
+  peritext?: (
+    props: PeritextViewProps,
+    children: React.ReactNode,
+    ctx?: PeritextSurfaceContextValue,
+  ) => React.ReactNode;
 }

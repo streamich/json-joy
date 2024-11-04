@@ -21,12 +21,14 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
   if (isRoot) return children;
 
   return (
-    <div className={blockClass({
-      'caret-color': enabled ? 'blue !important' : 'transparent',
-      '::selection': {
-        bgc: enabled ? 'red !important' : 'transparent',
-      },
-    })}>
+    <div
+      className={blockClass({
+        'caret-color': enabled ? 'blue !important' : 'transparent',
+        '::selection': {
+          bgc: enabled ? 'red !important' : 'transparent',
+        },
+      })}
+    >
       <div contentEditable={false} style={{position: 'absolute', top: '-24px', left: 0}}>
         <span
           style={{

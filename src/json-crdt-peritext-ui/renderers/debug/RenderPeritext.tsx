@@ -34,7 +34,12 @@ export interface RenderPeritextProps extends PeritextViewProps {
   ctx?: PeritextSurfaceContextValue;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, peritext, ctx, children}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({
+  enabled: enabledProp = true,
+  peritext,
+  ctx,
+  children,
+}) => {
   const [enabled, setEnabled] = React.useState(enabledProp);
 
   return (

@@ -38,26 +38,33 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const {peritext, renderers = [defaultRenderers], onRender} = props;
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
+
+  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const rerender = React.useCallback(() => {
     peritext.refresh();
     setTick((tick) => tick + 1);
     if (onRender) onRender();
   }, [peritext]);
-  const ref = React.useCallback((el: null | HTMLDivElement) => {
-    if (!el) {
-      if (dom) {
-        dom.stop();
-        dom.et.removeEventListener('change', rerender);
-        setDom(undefined);
+
+  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
+  const ref = React.useCallback(
+    (el: null | HTMLDivElement) => {
+      if (!el) {
+        if (dom) {
+          dom.stop();
+          dom.et.removeEventListener('change', rerender);
+          setDom(undefined);
+        }
+        return;
       }
-      return;
-    }
-    if (dom && dom.opts.source === el) return;
-    const ctrl = new DomController({source: el, txt: peritext});
-    ctrl.start();
-    setDom(ctrl);
-    ctrl.et.addEventListener('change', rerender);
-  }, [peritext]);
+      if (dom && dom.opts.source === el) return;
+      const ctrl = new DomController({source: el, txt: peritext});
+      ctrl.start();
+      setDom(ctrl);
+      ctrl.et.addEventListener('change', rerender);
+    },
+    [peritext],
+  );
 
   const block = peritext.blocks.root;
   if (!block) return null;
