@@ -1,9 +1,10 @@
+import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from './types';
 
 /**
  * Keeps track of all pressed down keys.
  */
-export class KeyController implements UiLifeCycles {
+export class KeyController implements UiLifeCycles, Printable {
   /**
    * All currently pressed keys.
    */
@@ -34,4 +35,10 @@ export class KeyController implements UiLifeCycles {
   private onFocus = (): void => {
     this.pressed.clear();
   };
+
+  /** ----------------------------------------------------- {@link Printable} */
+
+  public toString(tab?: string): string {
+    return `keys { pressed: [ ${[...this.pressed].map((key) => JSON.stringify(key)).join(', ')} ] }`;
+  }
 }
