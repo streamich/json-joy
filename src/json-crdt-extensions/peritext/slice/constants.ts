@@ -12,9 +12,42 @@ export enum CursorAnchor {
 /**
  * Built-in slice types.
  */
-export enum SliceTypes {
+export enum CommonSliceType {
   Cursor = -1,
+
+  // Block slices
   Paragraph = 0,
+  Title = 1,
+  H1 = 1,
+  H2 = 2,
+  H3 = 3,
+  H4 = 4,
+  H5 = 5,
+  H6 = 6,
+  BlockQuote = 7,
+  CodeBlock = 8,
+  Preformatted = 9,
+  OrderedList = 10,
+  UnorderedList = 11,
+  TaskList = 12,
+  ListItem = 13,
+  LineBreak = 14,
+  NewLine = 15,
+  PageBreak = 16,
+  Aside = 17,
+
+  // Inline slices
+  Bold = -2,
+  Italic = -3,
+  Underline = -4,
+  Strikethrough = -5,
+  Code = -6,
+  Highlight = -7,
+  Link = -8,
+  Comment = -9,
+  Superscript = -10,
+  Subscript = -11,
+  Math = -12,
 }
 
 export enum SliceHeaderMask {
@@ -51,7 +84,7 @@ export enum SliceBehavior {
 
   /**
    * Removes all attributes for a specific slice type. For example, could be
-   * used to re-verse inline formatting, like bold, italic, etc.
+   * used to reverse inline formatting, like bold, italic, etc.
    */
   Erase = 0b011,
 

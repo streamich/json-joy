@@ -1,5 +1,5 @@
 import {InlineAttrStartPoint, InlineAttrContained} from '../block/Inline';
-import {SliceTypes} from '../slice/constants';
+import {CommonSliceType} from '../slice/constants';
 import {setupKit} from './setup';
 
 const setup = () => {
@@ -24,7 +24,7 @@ test('cursor at the start of string and slice annotation at the start of string'
   expect(inline1.text()).toBe('');
   expect(inline2.text()).toBe('a');
   expect(inline3.text()).toBe('b');
-  expect(inline1.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
+  expect(inline1.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
   expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
   expect(inline3.attr()).toEqual({});
 });
@@ -48,7 +48,7 @@ test('cursor walking over character marked as bold', () => {
   expect(inline2.text()).toBe('a');
   expect(inline3.text()).toBe('b');
   expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
-  expect(inline3.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
+  expect(inline3.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
   // expect(inline2.attr()).toEqual({bold: [[void 0], InlineAttrPos.Contained]});
   // expect(inline3.attr()).toEqual({
   //   [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
@@ -78,7 +78,7 @@ test('cursor walking over character marked as bold and one more', () => {
   expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
   // expect(inline2.attr()).toEqual({bold: [1, InlineAttrPos.Contained]});
   expect(inline3.attr()).toEqual({});
-  expect(inline4.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
+  expect(inline4.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
   // expect(inline4.attr()).toEqual({
   //   [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   // });
@@ -94,7 +94,7 @@ test('cursor can move across block boundary forwards', () => {
   expect(peritext.blocks.root.children.length).toBe(2);
   expect([...peritext.blocks.root.children[0].texts()].length).toBe(1);
   expect([...peritext.blocks.root.children[0].texts()][0].text()).toBe('a');
-  expect([...peritext.blocks.root.children[0].texts()][0].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(
+  expect([...peritext.blocks.root.children[0].texts()][0].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(
     InlineAttrStartPoint,
   );
 
@@ -105,7 +105,7 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[0].texts()][0].text()).toBe('a');
   expect([...peritext.blocks.root.children[0].texts()][0].attr()).toEqual({});
   expect([...peritext.blocks.root.children[0].texts()][1].text()).toBe('');
-  expect([...peritext.blocks.root.children[0].texts()][1].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(
+  expect([...peritext.blocks.root.children[0].texts()][1].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(
     InlineAttrStartPoint,
   );
   expect([...peritext.blocks.root.children[1].texts()].length).toBe(1);
@@ -121,7 +121,7 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[1].texts()][0].text()).toBe('');
   expect([...peritext.blocks.root.children[1].texts()][0].attr()).toEqual({});
   expect([...peritext.blocks.root.children[1].texts()][1].text()).toBe('b');
-  expect([...peritext.blocks.root.children[1].texts()][1].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(
+  expect([...peritext.blocks.root.children[1].texts()][1].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(
     InlineAttrStartPoint,
   );
   editor.cursor.move(1);
@@ -134,7 +134,7 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[1].texts()][0].text()).toBe('b');
   expect([...peritext.blocks.root.children[1].texts()][0].attr()).toEqual({});
   expect([...peritext.blocks.root.children[1].texts()][1].text()).toBe('');
-  expect([...peritext.blocks.root.children[1].texts()][1].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(
+  expect([...peritext.blocks.root.children[1].texts()][1].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(
     InlineAttrStartPoint,
   );
 });
