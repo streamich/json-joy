@@ -1,6 +1,7 @@
 import {rule} from 'nano-theme';
 import * as React from 'react';
 import {Button} from '../Button';
+import {useDefaultCtx} from '../context';
 
 const blockClass = rule({
   d: 'flex',
@@ -15,9 +16,13 @@ const blockClass = rule({
 export interface TopToolbarProps {}
 
 export const TopToolbar: React.FC<TopToolbarProps> = () => {
+  const {ctx} = useDefaultCtx();
+
+  if (!ctx) return null;
+
   return (
     <div className={blockClass}>
-      <Button>Bold</Button>
+      <Button onClick={() => ctx.dom.et.inline({type: 'b'})}>Bold</Button>
       <Button>Italic</Button>
     </div>
   );
