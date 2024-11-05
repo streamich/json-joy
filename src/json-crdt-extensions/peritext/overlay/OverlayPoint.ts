@@ -24,7 +24,7 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
   /**
    * Sorted list of layers, contains the interval from this point to the next
    * one. A *layer* is a part of a slice from the current point to the next one.
-   * This interval can contain many layers, as the slices can be overlap.
+   * This interval can contain many layers, as the slices can be overlapped.
    */
   public readonly layers: Slice<T>[] = [];
 
