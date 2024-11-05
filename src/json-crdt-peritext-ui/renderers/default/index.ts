@@ -3,6 +3,7 @@ import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
+import {RenderPeritext} from './RenderPeritext';
 import type {RendererMap} from '../../react/types';
 
 const h = React.createElement;
@@ -30,4 +31,5 @@ export const renderers: RendererMap = {
     if (isRoot) return children;
     return h('div', {style: {padding: '16px 0'}}, children);
   },
+  peritext: (props, children, ctx) => h(RenderPeritext, {...props, children, ctx}),
 };
