@@ -165,8 +165,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     }) as Chunk<T>;
   }
 
-  public points0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPoint<T>> {
-    let curr = after ? next(after) : this.first();
+  public points0(after: undefined | OverlayPoint<T>, inclusive?: boolean): UndefIterator<OverlayPoint<T>> {
+    let curr = after ? (inclusive ? after : next(after)) : this.first();
     return () => {
       const ret = curr;
       if (curr) curr = next(curr);
@@ -174,8 +174,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public points(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.points0(after));
+  public points(after?: undefined | OverlayPoint<T>, inclusive?: boolean): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.points0(after, inclusive));
   }
 
   public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
@@ -325,7 +325,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   public stat(range: Range<T>, endOnMarker = 10): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
     const {start, end} = range;
     const after = this.getOrNextLower(start); // TODO: this should consider only non-marker points.
-    const iterator = this.points0(after ? prev(after) : void 0);
+    const iterator = this.points0(after, true);
     const partial = new Set<SliceType>();
     let complete: Set<SliceType> = new Set();
     let isFirst = true;

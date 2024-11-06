@@ -40,6 +40,14 @@ const statTestSuite = (setup: () => Kit) => {
     const stats = peritext.overlay.stat(editor.cursor);
     expect(stats).toEqual([new Set(['bold']), new Set(), 0]);
   });
+
+  test.todo('multiple interleaved styles');
+  test.todo('erasures work');
+  test.todo('handle stack slices');
+  test.todo('Edge case: text REL end');
+  test.todo('Edge case: text ABS end');
+  test.todo('Edge case: marker overlay point is the first point');
+  test.todo('handle markers in between: can terminate early once first marker encountered');
 };
 
 describe('.stat()', () => {
