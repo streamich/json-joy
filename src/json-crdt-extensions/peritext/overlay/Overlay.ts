@@ -326,7 +326,13 @@ export class Overlay<T = string> implements Printable, Stateful {
     range: Range<T>,
     endOnMarker = 10,
   ): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
-    const {start, end} = range;
+    const {start, end: end_} = range;
+    let end = end_;
+    const isSamePoint = start.cmp(end_) === 0;
+    if (isSamePoint) {
+      end = end.clone();
+      end.halfstep(1);
+    }
     const after = this.getOrNextLower(start);
     const hasLeadingPoint = !!after;
     const iterator = this.points0(after, true);
