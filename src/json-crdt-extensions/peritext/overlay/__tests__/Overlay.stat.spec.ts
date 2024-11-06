@@ -160,12 +160,139 @@ const statTestSuite = (setup: () => Kit) => {
     expect(peritext.overlay.stat(peritext.rangeAt(3, 5), 0)).toEqual([new Set(), new Set(['bold']), 0]);
   });
 
-  test.todo('multiple interleaved styles');
-  test.todo('erasures work');
-  test.todo('handle stack slices');
-  test.todo('Edge case: text REL end');
-  test.todo('Edge case: text ABS end');
-  test.todo('Edge case: marker overlay point is the first point');
+  test('single slice in the middle of text', () => {
+    const {peritext, editor} = setup();
+    editor.cursor.setAt(10, 10);
+    editor.saved.insOverwrite('italic');
+    peritext.refresh();
+    const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
+      const expected = [new Set(complete), new Set(partial), 0];
+      const range = peritext.rangeAt(at, len);
+      expect(peritext.overlay.stat(range)).toEqual(expected);
+      editor.cursor.setAt(at, len);
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      editor.delCursors();
+    };
+    assert(0, 2, [], []);
+    assert(0, 5, [], []);
+    assert(3, 1, [], []);
+    assert(3, 10, [], ['italic']);
+    assert(10, 1, ['italic'], []);
+    assert(10, 5, ['italic'], []);
+    assert(11, 2, ['italic'], []);
+    assert(15, 2, ['italic'], []);
+    assert(15, 6, [], ['italic']);
+    assert(20, 1, [], []);
+    assert(21, 1, [], []);
+  });
+
+  test('single slice in the middle of text (with leading marker)', () => {
+    const {peritext, editor} = setup();
+    editor.cursor.setAt(5);
+    editor.saved.insMarker('blockquote');
+    editor.cursor.setAt(10, 10);
+    editor.saved.insOverwrite('italic');
+    peritext.refresh();
+    const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
+      const expected = [new Set(complete), new Set(partial), expect.any(Number)];
+      const range = peritext.rangeAt(at, len);
+      expect(peritext.overlay.stat(range)).toEqual(expected);
+      editor.cursor.setAt(at, len);
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      editor.delCursors();
+    };
+    assert(0, 2, [], []);
+    assert(0, 5, [], []);
+    assert(3, 1, [], []);
+    assert(3, 10, [], ['italic']);
+    assert(10, 1, ['italic'], []);
+    assert(10, 5, ['italic'], []);
+    assert(11, 2, ['italic'], []);
+    assert(15, 2, ['italic'], []);
+    assert(15, 6, [], ['italic']);
+    assert(20, 1, [], []);
+    assert(21, 1, [], []);
+  });
+
+  test('single slice at the beginning of text', () => {
+    const {peritext, editor} = setup();
+    editor.cursor.setAt(0, 10);
+    editor.saved.insOverwrite('italic');
+    peritext.refresh();
+    const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
+      const expected = [new Set(complete), new Set(partial), 0];
+      const range = peritext.rangeAt(at, len);
+      expect(peritext.overlay.stat(range)).toEqual(expected);
+      editor.cursor.setAt(at, len);
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      editor.delCursors();
+    };
+    assert(0, 2, ['italic'], []);
+    assert(0, 5, ['italic'], []);
+    assert(3, 1, ['italic'], []);
+    assert(8, 3, [], ['italic']);
+    assert(3, 10, [], ['italic']);
+    assert(10, 1, [], []);
+    assert(10, 5, [], []);
+    assert(11, 3, [], []);
+  });
+
+  test('single slice at the end of text', () => {
+    const {peritext, editor} = setup();
+    editor.cursor.setAt(20, 20);
+    editor.saved.insOverwrite('italic');
+    peritext.refresh();
+    const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
+      const expected = [new Set(complete), new Set(partial), 0];
+      const range = peritext.rangeAt(at, len);
+      expect(peritext.overlay.stat(range)).toEqual(expected);
+      editor.cursor.setAt(at, len);
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      editor.delCursors();
+    };
+    assert(0, 2, [], []);
+    assert(0, 5, [], []);
+    assert(3, 1, [], []);
+    assert(13, 10, [], ['italic']);
+    assert(20, 1, ['italic'], []);
+    assert(20, 5, ['italic'], []);
+    assert(21, 2, ['italic'], []);
+    assert(25, 2, ['italic'], []);
+    assert(25, 22, ['italic'], []);
+  });
+
+  test('handles erasure in the middle', () => {
+    const {peritext, editor} = setup();
+    editor.cursor.setAt(5, 15);
+    editor.saved.insOverwrite('bold');
+    editor.cursor.setAt(10, 5);
+    editor.saved.insErase('bold');
+    peritext.refresh();
+    const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
+      const expected = [new Set(complete), new Set(partial), 0];
+      const range = peritext.rangeAt(at, len);
+      expect(peritext.overlay.stat(range)).toEqual(expected);
+      editor.cursor.setAt(at, len);
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      peritext.refresh();
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      editor.delCursors();
+    };
+    assert(0, 2, [], []);
+    assert(0, 5, [], []);
+    assert(3, 1, [], []);
+    assert(3, 5, [], ['bold']);
+    assert(6, 2, ['bold'], []);
+    assert(6, 5, [], ['bold']);
+    assert(8, 10, [], ['bold']);
+    assert(8, 15, [], ['bold']);
+    assert(11, 2, [], []);
+    assert(11, 5, [], ['bold']);
+    assert(11, 10, [], ['bold']);
+    assert(16, 2, ['bold'], []);
+    assert(12, 7, [], ['bold']);
+    assert(21, 2, [], []);
+  });
 };
 
 describe('.stat()', () => {
