@@ -32,7 +32,8 @@
 			"suspicious": {
 				"noExplicitAny": "off",
 				"useIsArray": "off",
-				"noAssignInExpressions": "off"
+				"noAssignInExpressions": "off",
+				"noConfusingLabels": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",

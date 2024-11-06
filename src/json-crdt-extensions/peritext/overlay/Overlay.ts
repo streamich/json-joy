@@ -359,7 +359,8 @@ export class Overlay<T = string> implements Printable, Stateful {
       }
       if (isFirst) {
         isFirst = false;
-        if (hasLeadingPoint) complete = current; else partial = current;
+        if (hasLeadingPoint) complete = current;
+        else partial = current;
         continue OVERLAY;
       }
       for (const type of complete)
