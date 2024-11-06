@@ -19,6 +19,9 @@ export const renderers: RendererMap = {
     if (attr.i) {
       style.fontStyle = 'italic';
     }
+    if (attr.u) {
+      style.textDecoration = 'underline';
+    }
 
     return props;
   },
