@@ -353,17 +353,15 @@
 <a name='L288'></a><a href='#L288'>288</a>
 <a name='L289'></a><a href='#L289'>289</a>
 <a name='L290'></a><a href='#L290'>290</a>
-<a name='L291'></a><a href='#L291'>291</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">49x</span>
+<a name='L291'></a><a href='#L291'>291</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-yes">49x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -374,32 +372,34 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">84x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">211x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -421,7 +421,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">49x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2360x</span>
 <span class="cline-any cline-yes">2360x</span>
@@ -646,7 +646,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {printTree} from 'tree-dump/lib/printTree';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior, SliceTypes} from '../slice/constants';
+import {SliceBehavior, CommonSliceType} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
@@ -797,7 +797,7 @@ export class Inline extends Range implements Printable {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            const stack: InlineAttrStack = attr[SliceTypes.Cursor] ?? (attr[SliceTypes.Cursor] = []);
+            const stack: InlineAttrStack = attr[CommonSliceType.Cursor] ?? (attr[CommonSliceType.Cursor] = []);
             stack.push(this.createAttr(slice));
             break;
           }
@@ -821,13 +821,13 @@ export class Inline extends Range implements Printable {
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >hasCursor(</span>): boolean {
-<span class="cstat-no" title="statement not covered" >    return !!this.attr()[SliceTypes.Cursor];</span>
+<span class="cstat-no" title="statement not covered" >    return !!this.attr()[CommonSliceType.Cursor];</span>
   }
 &nbsp;
   /** @todo Make this return a list of cursors. */
   public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[SliceTypes.Cursor];
+    const stack = attributes[CommonSliceType.Cursor];
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!stack) <span class="cstat-no" title="statement not covered" >return;</span>
     const attribute = stack[0];
     if (
@@ -843,7 +843,7 @@ export class Inline extends Range implements Printable {
 &nbsp;
   public cursorEnd(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[SliceTypes.Cursor];
+    const stack = attributes[CommonSliceType.Cursor];
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!stack) <span class="cstat-no" title="statement not covered" >return;</span>
     const attribute = stack[0];
     if (
@@ -867,7 +867,7 @@ export class Inline extends Range implements Printable {
    */
   public selection(): undefined | [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''] {
     const attributes = this.attr();
-    const stack = attributes[SliceTypes.Cursor];
+    const stack = attributes[CommonSliceType.Cursor];
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!stack) <span class="cstat-no" title="statement not covered" >return;</span>
     const attribute = stack[0];
     const cursor = attribute.slice;
@@ -940,7 +940,7 @@ export class Inline extends Range implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-04T23:05:03.031Z
+                at 2024-11-06T13:02:25.667Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
