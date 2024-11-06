@@ -1,3 +1,20 @@
+# [17.13.0](https://github.com/streamich/json-joy/compare/v17.12.0...v17.13.0) (2024-11-06)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 improve .stat() implementation ([7876cd1](https://github.com/streamich/json-joy/commit/7876cd13a8138ac1e2c051cf55746284d36cdf75))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add ability to start iteration including the first point ([33d8539](https://github.com/streamich/json-joy/commit/33d85391aee359868bd7b2629b899cb7b318ef8d))
+* **json-crdt-extensions:** 🎸 implement .shrink() method for Range ([a0f5a80](https://github.com/streamich/json-joy/commit/a0f5a80c693515d5637f1a804a031271f1d39047))
+* **json-crdt-extensions:** 🎸 implement Overlay .stat() method ([1045d77](https://github.com/streamich/json-joy/commit/1045d7762e27e91ba7afa0f4e3e0c8791ef07b6c))
+* **json-crdt-extensions:** 🎸 populate common slice types ([5f04117](https://github.com/streamich/json-joy/commit/5f0411775665e126dfe2449d27026fdec2563f0d))
+* **json-crdt-peritext-ui:** 🎸 add context for the default theme ([46317cb](https://github.com/streamich/json-joy/commit/46317cb15d8dd3edb45662cc2476535f121cce02))
+* **json-crdt-peritext-ui:** 🎸 setup default chrome and top toolbar ([34856b5](https://github.com/streamich/json-joy/commit/34856b57e9345a581845810af0d7f7896c5c5150))
+
 # [17.12.0](https://github.com/streamich/json-joy/compare/v17.11.0...v17.12.0) (2024-11-04)
 
 
