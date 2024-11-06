@@ -64,6 +64,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           }
           // Set caret (a collapsed cursor) at the specified position.
           else {
+            point.refAfter();
             editor.cursor.set(point);
             if (unit) editor.select(unit);
           }
