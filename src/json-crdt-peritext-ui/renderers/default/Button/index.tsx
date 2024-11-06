@@ -1,5 +1,6 @@
-import {drule} from 'nano-theme';
+// biome-ignore lint: React is used for JSX
 import * as React from 'react';
+import {drule} from 'nano-theme';
 
 const blockClass = drule({
   bdrad: '.5rem',
@@ -23,9 +24,11 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 export const Button: React.FC<ButtonProps> = ({active, children, ...rest}) => {
-  const className = (rest.className || '') + blockClass({
-    background: active ? 'rgba(61, 37, 20, .12)' : 'rgba(61, 37, 20, .08)',
-  });
+  const className =
+    (rest.className || '') +
+    blockClass({
+      background: active ? 'rgba(61, 37, 20, .12)' : 'rgba(61, 37, 20, .08)',
+    });
 
   return (
     <button type={'button'} {...rest} className={className}>

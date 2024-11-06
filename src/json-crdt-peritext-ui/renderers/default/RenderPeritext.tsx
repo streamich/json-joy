@@ -1,3 +1,4 @@
+// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {Chrome} from './Chrome';
 import {context} from './context';
@@ -11,9 +12,7 @@ export interface RenderPeritextProps extends PeritextViewProps {
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) => {
   return (
     <context.Provider value={{ctx}}>
-      <Chrome>
-        {children}
-      </Chrome>
+      <Chrome>{children}</Chrome>
     </context.Provider>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {PeritextSurfaceContextValue} from '../../react';
+import type {PeritextSurfaceContextValue} from '../../react';
 
 export interface DebugRenderersContextValue {
   ctx?: PeritextSurfaceContextValue;

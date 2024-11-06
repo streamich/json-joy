@@ -1,5 +1,6 @@
-import {rule} from 'nano-theme';
+// biome-ignore lint: React is used for JSX
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import {Button} from '../Button';
 import {useDefaultCtx} from '../context';
 
@@ -13,7 +14,8 @@ const blockClass = rule({
   mr: 0,
 });
 
-export interface TopToolbarProps {}
+// biome-ignore lint: empty interface
+export type TopToolbarProps = {};
 
 export const TopToolbar: React.FC<TopToolbarProps> = () => {
   const {ctx} = useDefaultCtx();

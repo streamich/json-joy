@@ -322,7 +322,10 @@ export class Overlay<T = string> implements Printable, Stateful {
    *     slice types, which mark a part of the range, and have not been removed
    *     by "Erase" slice type.
    */
-  public stat(range: Range<T>, endOnMarker = 10): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
+  public stat(
+    range: Range<T>,
+    endOnMarker = 10,
+  ): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
     const {start, end} = range;
     const after = this.getOrNextLower(start); // TODO: this should consider only non-marker points.
     const iterator = this.points0(after, true);
@@ -330,7 +333,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     let complete: Set<SliceType> = new Set();
     let isFirst = true;
     let markerCount = 0;
-    OVERLAY: for (let point = iterator(); point && (point.cmpSpatial(end) < 0); point = iterator()) {
+    OVERLAY: for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
       if (point instanceof MarkerOverlayPoint) {
         markerCount++;
         if (markerCount >= endOnMarker) break;
@@ -358,10 +361,11 @@ export class Overlay<T = string> implements Printable, Stateful {
         complete = current;
         continue OVERLAY;
       }
-      for (const type of complete) if (!current.has(type)) {
-        complete.delete(type);
-        partial.add(type);
-      }
+      for (const type of complete)
+        if (!current.has(type)) {
+          complete.delete(type);
+          partial.add(type);
+        }
       for (const type of current) if (!complete.has(type)) partial.add(type);
     }
     return [complete, partial, markerCount];
