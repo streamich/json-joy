@@ -35,9 +35,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
 
   return (
     <div className={blockClass}>
-      {button(CommonSliceType.Bold, 'Bold')}
-      {button(CommonSliceType.Italic, 'Italic')}
-      {button(CommonSliceType.Underline, 'Underline')}
+      {button(CommonSliceType.b, 'Bold')}
+      {button(CommonSliceType.i, 'Italic')}
+      {button(CommonSliceType.u, 'Underline')}
     </div>
   );
 };

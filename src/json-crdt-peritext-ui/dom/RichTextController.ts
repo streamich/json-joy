@@ -31,15 +31,15 @@ export class RichTextController implements UiLifeCycles {
       switch (key) {
         case 'b':
           event.preventDefault();
-          et.inline(CommonSliceType.Bold);
+          et.inline(CommonSliceType.b);
           return;
         case 'i':
           event.preventDefault();
-          et.inline(CommonSliceType.Italic);
+          et.inline(CommonSliceType.i);
           return;
         case 'u':
           event.preventDefault();
-          et.inline(CommonSliceType.Underline);
+          et.inline(CommonSliceType.u);
           return;
       }
     }

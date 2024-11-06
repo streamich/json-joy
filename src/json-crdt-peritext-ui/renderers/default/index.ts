@@ -4,8 +4,8 @@ import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
-import type {RendererMap} from '../../react/types';
 import {CommonSliceType} from '../../../json-crdt-extensions';
+import type {RendererMap} from '../../react/types';
 
 const h = React.createElement;
 
@@ -14,9 +14,9 @@ export const renderers: RendererMap = {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
     const attr = inline.attr();
 
-    if (attr[CommonSliceType.Bold]) style.fontWeight = 'bold';
-    if (attr[CommonSliceType.Italic]) style.fontStyle = 'italic';
-    if (attr[CommonSliceType.Underline]) style.textDecoration = 'underline';
+    if (attr[CommonSliceType.b]) style.fontWeight = 'bold';
+    if (attr[CommonSliceType.i]) style.fontStyle = 'italic';
+    if (attr[CommonSliceType.u]) style.textDecoration = 'underline';
 
     return props;
   },
