@@ -3,6 +3,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Button} from '../Button';
 import {useDefaultCtx} from '../context';
+import {CommonSliceType} from '../../../../json-crdt-extensions';
 
 const blockClass = rule({
   d: 'flex',
@@ -34,9 +35,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
 
   return (
     <div className={blockClass}>
-      {button('b', 'Bold')}
-      {button('i', 'Italic')}
-      {button('u', 'Underline')}
+      {button(CommonSliceType.Bold, 'Bold')}
+      {button(CommonSliceType.Italic, 'Italic')}
+      {button(CommonSliceType.Underline, 'Underline')}
     </div>
   );
 };

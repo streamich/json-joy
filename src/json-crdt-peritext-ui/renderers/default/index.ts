@@ -14,15 +14,9 @@ export const renderers: RendererMap = {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
     const attr = inline.attr();
 
-    if (attr[CommonSliceType.Bold]) {
-      style.fontWeight = 'bold';
-    }
-    if (attr.i) {
-      style.fontStyle = 'italic';
-    }
-    if (attr.u) {
-      style.textDecoration = 'underline';
-    }
+    if (attr[CommonSliceType.Bold]) style.fontWeight = 'bold';
+    if (attr[CommonSliceType.Italic]) style.fontStyle = 'italic';
+    if (attr[CommonSliceType.Underline]) style.textDecoration = 'underline';
 
     return props;
   },

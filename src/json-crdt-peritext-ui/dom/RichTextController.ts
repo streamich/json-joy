@@ -27,15 +27,21 @@ export class RichTextController implements UiLifeCycles {
     const key = event.key;
     if (event.isComposing || key === 'Dead') return;
     const et = this.opts.et;
-    if (key === 'b' && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
-      et.inline({type: CommonSliceType.Bold});
-      return;
-    }
-    if (key === 'i' && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
-      et.inline({type: 'i'});
-      return;
+    if (event.ctrlKey || event.metaKey) {
+      switch (key) {
+        case 'b':
+          event.preventDefault();
+          et.inline(CommonSliceType.Bold);
+          return;
+        case 'i':
+          event.preventDefault();
+          et.inline(CommonSliceType.Italic);
+          return;
+        case 'u':
+          event.preventDefault();
+          et.inline(CommonSliceType.Underline);
+          return;
+      }
     }
   };
 }

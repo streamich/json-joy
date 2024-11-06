@@ -51,7 +51,10 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.cursor({len, unit, edge});
   }
 
-  public inline(detail: InlineDetail): void {
+  public inline(type: InlineDetail['type'], behavior?: InlineDetail['behavior'], data?: InlineDetail['data']): void;
+  public inline(detail: InlineDetail): void;
+  public inline(a: InlineDetail | InlineDetail['type'], behavior?: InlineDetail['behavior'], data?: InlineDetail['data']): void {
+    const detail: InlineDetail = typeof a === 'object' && !Array.isArray(a) ? a as InlineDetail : {type: a, behavior, data} as InlineDetail;
     this.dispatch('inline', detail);
   }
 }
