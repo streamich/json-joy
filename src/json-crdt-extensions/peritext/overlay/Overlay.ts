@@ -327,10 +327,11 @@ export class Overlay<T = string> implements Printable, Stateful {
     endOnMarker = 10,
   ): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
     const {start, end} = range;
-    const after = this.getOrNextLower(start); // TODO: this should consider only non-marker points.
+    const after = this.getOrNextLower(start);
+    const hasLeadingPoint = !!after;
     const iterator = this.points0(after, true);
-    const partial = new Set<SliceType>();
-    let complete: Set<SliceType> = new Set();
+    let complete: Set<SliceType> = new Set<SliceType>();
+    let partial: Set<SliceType> = new Set<SliceType>();
     let isFirst = true;
     let markerCount = 0;
     OVERLAY: for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
@@ -347,18 +348,18 @@ export class Overlay<T = string> implements Printable, Stateful {
         const type = slice.type;
         if (typeof type === 'object') continue LAYERS;
         const behavior = slice.behavior;
-        switch (behavior) {
+        BEHAVIOR: switch (behavior) {
           case SliceBehavior.Overwrite:
             current.add(type);
-            break;
+            break BEHAVIOR;
           case SliceBehavior.Erase:
             current.delete(type);
-            break;
+            break BEHAVIOR;
         }
       }
       if (isFirst) {
         isFirst = false;
-        complete = current;
+        if (hasLeadingPoint) complete = current; else partial = current;
         continue OVERLAY;
       }
       for (const type of complete)
