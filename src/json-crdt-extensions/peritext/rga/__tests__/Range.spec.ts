@@ -458,3 +458,90 @@ describe('.expand()', () => {
     );
   });
 });
+
+describe('.shrink()', () => {
+  const runShrinkTests = (setup2: typeof setup) => {
+    test('can shrink endpoints to include adjacent elements', () => {
+      const {peritext} = setup2();
+      const editor = peritext.editor;
+      editor.cursor.setAt(1, 1);
+      expect(editor.cursor.start.pos()).toBe(1);
+      expect(editor.cursor.start.anchor).toBe(Anchor.Before);
+      expect(editor.cursor.end.pos()).toBe(1);
+      expect(editor.cursor.end.anchor).toBe(Anchor.After);
+      editor.cursor.shrink();
+      expect(editor.cursor.start.pos()).toBe(1);
+      expect(editor.cursor.start.anchor).toBe(Anchor.Before);
+      expect(editor.cursor.end.pos()).toBe(1);
+      expect(editor.cursor.end.anchor).toBe(Anchor.After);
+      editor.cursor.expand();
+      editor.cursor.shrink();
+      expect(editor.cursor.start.pos()).toBe(1);
+      expect(editor.cursor.start.anchor).toBe(Anchor.Before);
+      expect(editor.cursor.end.pos()).toBe(1);
+      expect(editor.cursor.end.anchor).toBe(Anchor.After);
+    });
+
+    test('can shrink endpoints past adjacent tombstones', () => {
+      const {peritext} = setup2();
+      const tombstone1 = peritext.rangeAt(1, 1);
+      tombstone1.expand();
+      const tombstone2 = peritext.rangeAt(3, 1);
+      tombstone2.expand();
+      peritext.editor.cursor.setRange(tombstone1);
+      peritext.editor.del();
+      peritext.editor.cursor.setRange(tombstone2);
+      peritext.editor.del();
+      const range = peritext.rangeAt(1, 1);
+      expect(range.start.pos()).toBe(1);
+      expect(range.start.anchor).toBe(Anchor.Before);
+      expect(range.end.pos()).toBe(1);
+      expect(range.end.anchor).toBe(Anchor.After);
+      range.expand();
+      expect(range.start.pos()).toBe(tombstone1.start.pos());
+      expect(range.start.anchor).toBe(tombstone1.start.anchor);
+      expect(range.end.pos()).toBe(tombstone2.end.pos());
+      expect(range.end.anchor).toBe(tombstone2.end.anchor);
+      range.shrink();
+      expect(range.start.pos()).toBe(1);
+      expect(range.start.anchor).toBe(Anchor.Before);
+      expect(range.end.pos()).toBe(1);
+      expect(range.end.anchor).toBe(Anchor.After);
+    });
+  };
+
+  describe('single text chunk', () => {
+    runShrinkTests(setup);
+  });
+
+  describe('each car is own chunk', () => {
+    runShrinkTests(() =>
+      setup((peritext) => {
+        const editor = peritext.editor;
+        editor.insert('!');
+        editor.cursor.setAt(0);
+        editor.insert('d');
+        editor.cursor.setAt(0);
+        editor.insert('l');
+        editor.cursor.setAt(0);
+        editor.insert('r');
+        editor.cursor.setAt(0);
+        editor.insert('o');
+        editor.cursor.setAt(0);
+        editor.insert('w');
+        editor.cursor.setAt(0);
+        editor.insert(' ');
+        editor.cursor.setAt(0);
+        editor.insert('o');
+        editor.cursor.setAt(0);
+        editor.insert('l');
+        editor.cursor.setAt(0);
+        editor.insert('l');
+        editor.cursor.setAt(0);
+        editor.insert('e');
+        editor.cursor.setAt(0);
+        editor.insert('H');
+      }),
+    );
+  });
+});

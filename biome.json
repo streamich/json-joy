@@ -32,11 +32,13 @@
 			"suspicious": {
 				"noExplicitAny": "off",
 				"useIsArray": "off",
-				"noAssignInExpressions": "off"
+				"noAssignInExpressions": "off",
+				"noConfusingLabels": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",
-				"useOptionalChain": "off"
+				"useOptionalChain": "off",
+				"noUselessLabel": "off"
 			}
 		}
 	}

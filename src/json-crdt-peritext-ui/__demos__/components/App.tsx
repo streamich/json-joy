@@ -17,7 +17,7 @@ export const App: React.FC = () => {
     <Provider theme={'light'}>
       <GlobalCss />
       <div style={{maxWidth: '640px', fontSize: '21px', margin: '32px auto'}}>
-        <PeritextView peritext={peritext} renderers={[debugRenderers({enabled: true}), renderers]} />
+        <PeritextView peritext={peritext} renderers={[debugRenderers({enabled: false}), renderers]} />
       </div>
     </Provider>
   );

@@ -4,20 +4,21 @@ import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-fo
 import {first2, insert2, next2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
-import type {Point} from '../rga/Point';
 import {OverlayPoint} from './OverlayPoint';
 import {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
-import type {Range} from '../rga/Range';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {SliceBehavior} from '../slice/constants';
+import type {Point} from '../rga/Point';
+import type {Range} from '../rga/Range';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
-import type {MutableSlice, Slice} from '../slice/types';
+import type {MutableSlice, Slice, SliceType} from '../slice/types';
 import type {Slices} from '../slice/Slices';
 import type {OverlayPair, OverlayTuple} from './types';
 import type {Comparator} from 'sonic-forest/lib/types';
@@ -164,8 +165,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     }) as Chunk<T>;
   }
 
-  public points0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPoint<T>> {
-    let curr = after ? next(after) : this.first();
+  public points0(after: undefined | OverlayPoint<T>, inclusive?: boolean): UndefIterator<OverlayPoint<T>> {
+    let curr = after ? (inclusive ? after : next(after)) : this.first();
     return () => {
       const ret = curr;
       if (curr) curr = next(curr);
@@ -173,8 +174,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public points(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.points0(after));
+  public points(after?: undefined | OverlayPoint<T>, inclusive?: boolean): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.points0(after, inclusive));
   }
 
   public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
@@ -307,6 +308,69 @@ export class Overlay<T = string> implements Printable, Stateful {
       }
     } while (point && (point = next(point)) && range.containsPoint(point));
     return result;
+  }
+
+  /**
+   * Returns a summary of how different slice types overlap with the given range.
+   *
+   * @param range Range over which to search for slices.
+   * @param endOnMarker If set to a positive number, the search will stop after
+   *     the given number of marker points have been observed.
+   * @returns Summary of the slices in this range. `complete` contains all
+   *     "Overwrite" slice types, which overlay the full range, which have not
+   *     been removed by "Erase" slice type. `partial` contains all "Overwrite"
+   *     slice types, which mark a part of the range, and have not been removed
+   *     by "Erase" slice type.
+   */
+  public stat(
+    range: Range<T>,
+    endOnMarker = 10,
+  ): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
+    const {start, end} = range;
+    const after = this.getOrNextLower(start);
+    const hasLeadingPoint = !!after;
+    const iterator = this.points0(after, true);
+    let complete: Set<SliceType> = new Set<SliceType>();
+    let partial: Set<SliceType> = new Set<SliceType>();
+    let isFirst = true;
+    let markerCount = 0;
+    OVERLAY: for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
+      if (point instanceof MarkerOverlayPoint) {
+        markerCount++;
+        if (markerCount >= endOnMarker) break;
+        continue OVERLAY;
+      }
+      const current = new Set<SliceType>();
+      const layers = point.layers;
+      const length = layers.length;
+      LAYERS: for (let i = 0; i < length; i++) {
+        const slice = layers[i];
+        const type = slice.type;
+        if (typeof type === 'object') continue LAYERS;
+        const behavior = slice.behavior;
+        BEHAVIOR: switch (behavior) {
+          case SliceBehavior.Overwrite:
+            current.add(type);
+            break BEHAVIOR;
+          case SliceBehavior.Erase:
+            current.delete(type);
+            break BEHAVIOR;
+        }
+      }
+      if (isFirst) {
+        isFirst = false;
+        if (hasLeadingPoint) complete = current;
+        else partial = current;
+        continue OVERLAY;
+      }
+      for (const type of complete)
+        if (!current.has(type)) {
+          complete.delete(type);
+          partial.add(type);
+        }
+      for (const type of current) if (!complete.has(type)) partial.add(type);
+    }
+    return [complete, partial, markerCount];
   }
 
   /**

@@ -179,6 +179,16 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     this.end.refBefore();
   }
 
+  /**
+   * The reverse of {@link expand}. Shrink the range's start and end points to
+   * still contain the same visible text, but narrow the range in the CRDT-space
+   * as much as possible.
+   */
+  public shrink(): void {
+    this.start.refBefore();
+    this.end.refAfter();
+  }
+
   // -------------------------------------------------- View coordinate methods
 
   /**
