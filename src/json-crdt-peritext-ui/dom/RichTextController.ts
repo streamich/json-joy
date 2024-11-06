@@ -1,6 +1,6 @@
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {UiLifeCycles} from './types';
-import type {Peritext} from '../../json-crdt-extensions/peritext';
+import {CommonSliceType, type Peritext} from '../../json-crdt-extensions/peritext';
 
 export interface RichTextControllerOpts {
   source: HTMLElement;
@@ -29,7 +29,7 @@ export class RichTextController implements UiLifeCycles {
     const et = this.opts.et;
     if (key === 'b' && (event.ctrlKey || event.metaKey)) {
       event.preventDefault();
-      et.inline({type: 'b'});
+      et.inline({type: CommonSliceType.Bold});
       return;
     }
     if (key === 'i' && (event.ctrlKey || event.metaKey)) {

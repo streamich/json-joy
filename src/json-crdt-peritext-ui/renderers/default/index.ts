@@ -5,6 +5,7 @@ import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
 import type {RendererMap} from '../../react/types';
+import {CommonSliceType} from '../../../json-crdt-extensions';
 
 const h = React.createElement;
 
@@ -13,7 +14,7 @@ export const renderers: RendererMap = {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
     const attr = inline.attr();
 
-    if (attr.b) {
+    if (attr[CommonSliceType.Bold]) {
       style.fontWeight = 'bold';
     }
     if (attr.i) {
