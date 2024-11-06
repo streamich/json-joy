@@ -76,7 +76,6 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
     const italic = attr.i && attr.i[0];
     const key = inline.key();
     const cursorStart = inline.cursorStart();
-    console.log('italic', italic);
     if (cursorStart) {
       const k = key + 'a';
       elements.push(

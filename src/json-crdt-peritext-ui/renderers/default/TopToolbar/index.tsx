@@ -22,10 +22,21 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
 
   if (!ctx) return null;
 
+  const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
+
+  const button = (type: string | number, name: React.ReactNode) => (
+    <Button
+      onClick={() => ctx.dom.et.inline({type})}
+      onMouseDown={(e) => e.preventDefault()}
+      active={complete.has(type)}
+    >{name}</Button>
+  );
+
   return (
     <div className={blockClass}>
-      <Button onClick={() => ctx.dom.et.inline({type: 'b'})}>Bold</Button>
-      <Button>Italic</Button>
+      {button('b', 'Bold')}
+      {button('i', 'Italic')}
+      {button('u', 'Underline')}
     </div>
   );
 };

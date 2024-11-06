@@ -27,7 +27,8 @@ export const Button: React.FC<ButtonProps> = ({active, children, ...rest}) => {
   const className =
     (rest.className || '') +
     blockClass({
-      background: active ? 'rgba(61, 37, 20, .12)' : 'rgba(61, 37, 20, .08)',
+      bg: active ? '#07f' : 'rgba(61, 37, 20, .08)',
+      col: active ? 'white' : 'black',
     });
 
   return (
