@@ -4,6 +4,7 @@ import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
 import {DefaultRendererColors} from './constants';
 import type {InlineViewProps} from '../../react/InlineView';
+import {CommonSliceType} from '../../../json-crdt-extensions';
 
 interface RenderInlineSelectionProps extends RenderInlineProps {
   selection: [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''];
@@ -30,11 +31,23 @@ export interface RenderInlineProps extends InlineViewProps {
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {inline, children} = props;
 
+  const attr = inline.attr();
   const selection = inline.selection();
 
+  let element = children;
+  
+  if (attr[CommonSliceType.code]) element = <code>{element}</code>;
+  if (attr[CommonSliceType.mark]) element = <mark>{element}</mark>;
+  if (attr[CommonSliceType.del]) element = <del>{element}</del>;
+  if (attr[CommonSliceType.ins]) element = <ins>{element}</ins>;
+  if (attr[CommonSliceType.sup]) element = <sup>{element}</sup>;
+  if (attr[CommonSliceType.sub]) element = <sub>{element}</sub>;
+  if (attr[CommonSliceType.math]) element = <code>{element}</code>;
+  if (attr[CommonSliceType.hidden]) element = <span style={{color: 'transparent', background: 'black'}}>{element}</span>;
+
   if (selection) {
-    return <RenderInlineSelection {...props} selection={selection} />;
+    element = <RenderInlineSelection {...props} selection={selection}>{element}</RenderInlineSelection>;
   }
 
-  return children;
+  return element;
 };

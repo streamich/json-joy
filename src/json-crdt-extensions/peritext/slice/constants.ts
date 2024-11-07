@@ -55,7 +55,7 @@ export enum CommonSliceType {
   font = -16, // <span style="font-family: ...">
   col = -17, // <span style="color: ...">
   bg = -18, // <span style="background: ...">
-  spoiler = -19, // <span style="color: transparent; text-shadow: 0 0 0 #000">
+  hidden = -19, // <span style="color: transparent; background: black">
   footnote = -20, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
   ref = -21, // <a> with href="#ref-..." and title="Reference ..."
   iaside = -22, // Inline <aside>
