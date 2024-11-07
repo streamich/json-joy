@@ -27,7 +27,7 @@ export class RichTextController implements UiLifeCycles {
     const key = event.key;
     if (event.isComposing || key === 'Dead') return;
     const et = this.opts.et;
-    if (event.ctrlKey || event.metaKey) {
+    if (event.metaKey || event.ctrlKey) {
       switch (key) {
         case 'b':
           event.preventDefault();
@@ -40,6 +40,14 @@ export class RichTextController implements UiLifeCycles {
         case 'u':
           event.preventDefault();
           et.inline(CommonSliceType.u);
+          return;
+      }
+    }
+    if (event.metaKey && event.shiftKey) {
+      switch (key) {
+        case 'x':
+          event.preventDefault();
+          et.inline(CommonSliceType.s);
           return;
       }
     }

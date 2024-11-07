@@ -38,6 +38,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
       {button(CommonSliceType.b, 'Bold')}
       {button(CommonSliceType.i, 'Italic')}
       {button(CommonSliceType.u, 'Underline')}
+      {button(CommonSliceType.s, 'Strikethrough')}
     </div>
   );
 };

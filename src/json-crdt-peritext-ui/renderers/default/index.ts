@@ -14,9 +14,14 @@ export const renderers: RendererMap = {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
     const attr = inline.attr();
 
+    let textDecoration = '';
+
     if (attr[CommonSliceType.b]) style.fontWeight = 'bold';
     if (attr[CommonSliceType.i]) style.fontStyle = 'italic';
-    if (attr[CommonSliceType.u]) style.textDecoration = 'underline';
+    if (attr[CommonSliceType.u]) textDecoration = 'underline';
+    if (attr[CommonSliceType.s]) textDecoration = textDecoration ? textDecoration + ' line-through' : 'line-through';
+
+    style.textDecoration = textDecoration;
 
     return props;
   },
