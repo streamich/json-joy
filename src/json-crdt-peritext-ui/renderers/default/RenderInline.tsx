@@ -35,7 +35,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const selection = inline.selection();
 
   let element = children;
-  
+
   if (attr[CommonSliceType.code]) element = <code>{element}</code>;
   if (attr[CommonSliceType.mark]) element = <mark>{element}</mark>;
   if (attr[CommonSliceType.del]) element = <del>{element}</del>;
@@ -43,10 +43,15 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   if (attr[CommonSliceType.sup]) element = <sup>{element}</sup>;
   if (attr[CommonSliceType.sub]) element = <sub>{element}</sub>;
   if (attr[CommonSliceType.math]) element = <code>{element}</code>;
-  if (attr[CommonSliceType.hidden]) element = <span style={{color: 'transparent', background: 'black'}}>{element}</span>;
+  if (attr[CommonSliceType.hidden])
+    element = <span style={{color: 'transparent', background: 'black'}}>{element}</span>;
 
   if (selection) {
-    element = <RenderInlineSelection {...props} selection={selection}>{element}</RenderInlineSelection>;
+    element = (
+      <RenderInlineSelection {...props} selection={selection}>
+        {element}
+      </RenderInlineSelection>
+    );
   }
 
   return element;

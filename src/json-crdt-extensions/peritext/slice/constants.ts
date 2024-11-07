@@ -14,13 +14,13 @@ export enum CursorAnchor {
  */
 export enum CommonSliceType {
   // Block slices
-  p = 0,  // <p>
-  blockquote = 1,  // <blockquote>
-  codeblock = 2,  // <pre><code>
-  pre = 3,  // <pre>
-  ul = 4,  // <ul>
-  ol = 5,  // <ol>
-  TaskList = 6,  // - [ ] Task list
+  p = 0, // <p>
+  blockquote = 1, // <blockquote>
+  codeblock = 2, // <pre><code>
+  pre = 3, // <pre>
+  ul = 4, // <ul>
+  ol = 5, // <ol>
+  TaskList = 6, // - [ ] Task list
   h1 = 7, // <h1>
   h2 = 8, // <h2>
   h3 = 9, // <h3>
@@ -33,8 +33,8 @@ export enum CommonSliceType {
   nl = 16, // \n
   hr = 17, // <hr>
   page = 18, // Page break
-  aside = 19,  // <aside>
-  embed = 20,  // <embed>, <iframe>, <object>, <video>, <audio>, etc.
+  aside = 19, // <aside>
+  embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
 
   // Inline slices
   Cursor = -1,

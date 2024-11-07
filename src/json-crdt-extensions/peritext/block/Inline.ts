@@ -132,7 +132,7 @@ export class Inline extends Range implements Printable {
   /**
    * @returns Returns the attributes of the inline, which are the slice
    *     annotations and formatting applied to the inline.
-   * 
+   *
    * @todo Rename to `.stat()`.
    * @todo Create a more efficient way to compute inline stats, separate: (1)
    *     boolean flags, (2) cursor, (3) other attributes.

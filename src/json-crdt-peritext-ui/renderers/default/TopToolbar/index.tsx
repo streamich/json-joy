@@ -33,7 +33,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
       onClick={() => ctx.dom.et.inline({type})}
       onMouseDown={(e) => e.preventDefault()}
       active={complete.has(type)}
-    >{name}</Button>
+    >
+      {name}
+    </Button>
   );
 
   return (
