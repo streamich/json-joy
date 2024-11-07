@@ -6,6 +6,7 @@ import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
 import {AnchorView} from './selection/AnchorView';
 import {InlineAttrEnd, InlineAttrStart, type Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import {CommonSliceType} from '../../json-crdt-extensions';
 import type {SpanProps} from './types';
 
 const {createElement: h, Fragment} = React;
@@ -73,10 +74,9 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];
     const attr = inline.attr();
-    const italic = attr.i && attr.i[0];
+    const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
     const key = inline.key();
     const cursorStart = inline.cursorStart();
-    console.log('italic', italic);
     if (cursorStart) {
       const k = key + 'a';
       elements.push(

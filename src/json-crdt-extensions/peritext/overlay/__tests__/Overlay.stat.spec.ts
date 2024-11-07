@@ -293,6 +293,38 @@ const statTestSuite = (setup: () => Kit) => {
     assert(12, 7, [], ['bold']);
     assert(21, 2, [], []);
   });
+
+  test('caret with overlapping slices and erasure', () => {
+    const {peritext, editor} = setup();
+    editor.cursor.setAt(5, 10);
+    editor.saved.insOverwrite('bold');
+    editor.cursor.setAt(10, 10);
+    editor.saved.insOverwrite('italic');
+    editor.cursor.setAt(7, 2);
+    editor.saved.insErase('bold');
+    peritext.refresh();
+    const assert = (at: number, complete: unknown[], partial: unknown[]) => {
+      const expected = [new Set(complete), new Set(partial), 0];
+      const range = peritext.rangeAt(at);
+      expect(peritext.overlay.stat(range)).toEqual(expected);
+      editor.cursor.setAt(at);
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      peritext.refresh();
+      expect(peritext.overlay.stat(editor.cursor)).toEqual(expected);
+      editor.delCursors();
+    };
+    assert(0, [], []);
+    assert(2, [], []);
+    assert(6, ['bold'], []);
+    assert(8, [], []);
+    assert(9, ['bold'], []);
+    assert(10, ['bold'], []);
+    assert(11, ['bold', 'italic'], []);
+    assert(13, ['bold', 'italic'], []);
+    assert(16, ['italic'], []);
+    assert(20, [], []);
+    assert(21, [], []);
+  });
 };
 
 describe('.stat()', () => {

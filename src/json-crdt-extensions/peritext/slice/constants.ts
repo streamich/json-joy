@@ -13,41 +13,54 @@ export enum CursorAnchor {
  * Built-in slice types.
  */
 export enum CommonSliceType {
-  Cursor = -1,
-
   // Block slices
-  Paragraph = 0,
-  Title = 1,
-  H1 = 1,
-  H2 = 2,
-  H3 = 3,
-  H4 = 4,
-  H5 = 5,
-  H6 = 6,
-  BlockQuote = 7,
-  CodeBlock = 8,
-  Preformatted = 9,
-  OrderedList = 10,
-  UnorderedList = 11,
-  TaskList = 12,
-  ListItem = 13,
-  LineBreak = 14,
-  NewLine = 15,
-  PageBreak = 16,
-  Aside = 17,
+  p = 0, // <p>
+  blockquote = 1, // <blockquote>
+  codeblock = 2, // <pre><code>
+  pre = 3, // <pre>
+  ul = 4, // <ul>
+  ol = 5, // <ol>
+  TaskList = 6, // - [ ] Task list
+  h1 = 7, // <h1>
+  h2 = 8, // <h2>
+  h3 = 9, // <h3>
+  h4 = 10, // <h4>
+  h5 = 11, // <h5>
+  h6 = 12, // <h6>
+  title = 13, // <title>
+  subtitle = 14, // <subtitle>
+  br = 15, // <br>
+  nl = 16, // \n
+  hr = 17, // <hr>
+  page = 18, // Page break
+  aside = 19, // <aside>
+  embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
 
   // Inline slices
-  Bold = -2,
-  Italic = -3,
-  Underline = -4,
-  Strikethrough = -5,
-  Code = -6,
-  Highlight = -7,
-  Link = -8,
-  Comment = -9,
-  Superscript = -10,
-  Subscript = -11,
-  Math = -12,
+  Cursor = -1,
+  RemoteCursor = -2,
+  b = -3, // <b>
+  i = -4, // <i>
+  u = -5, // <u>
+  s = -6, // <s>
+  code = -7, // <code>
+  mark = -8, // <mark>
+  a = -9, // <a>
+  comment = -10, // User comment attached to a slice
+  del = -11, // <del>
+  ins = -12, // <ins>
+  sup = -13, // <sup>
+  sub = -14, // <sub>
+  math = -15, // <math>
+  font = -16, // <span style="font-family: ...">
+  col = -17, // <span style="color: ...">
+  bg = -18, // <span style="background: ...">
+  hidden = -19, // <span style="color: transparent; background: black">
+  footnote = -20, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
+  ref = -21, // <a> with href="#ref-..." and title="Reference ..."
+  iaside = -22, // Inline <aside>
+  iembed = -23, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
+  bookmark = -24, // UI for creating a link to this slice
 }
 
 export enum SliceHeaderMask {

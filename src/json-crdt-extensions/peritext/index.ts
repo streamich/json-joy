@@ -7,6 +7,8 @@ import {Extension} from '../../json-crdt/extensions/Extension';
 import type {PeritextDataNode} from './types';
 
 export {PeritextNode, PeritextApi, Peritext};
+export * from './slice';
+export * from './block';
 
 export const peritext = new Extension<
   ExtensionId.peritext,

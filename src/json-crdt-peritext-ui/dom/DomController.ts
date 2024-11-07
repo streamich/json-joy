@@ -27,7 +27,7 @@ export class DomController implements UiLifeCycles, Printable {
     const et = (this.et = new PeritextEventTarget());
     const defaults = new PeritextEventDefaults(txt, et);
     et.defaults = defaults;
-    const keys = (this.keys = new KeyController());
+    const keys = (this.keys = new KeyController({source}));
     const comp = (this.comp = new CompositionController({et, source, txt}));
     this.input = new InputController({et, source, txt, comp});
     this.cursor = new CursorController({et, source, txt, keys});
