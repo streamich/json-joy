@@ -1,3 +1,25 @@
+# [17.14.0](https://github.com/streamich/json-joy/compare/v17.13.0...v17.14.0) (2024-11-07)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 update inline slice detection ([c13a1cf](https://github.com/streamich/json-joy/commit/c13a1cf02049ded5876b2a6aa3ef184eae6fdc75))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 export inline types ([77b3349](https://github.com/streamich/json-joy/commit/77b3349bc99d04f117b66e3910f8c7ea4e29a112))
+* **json-crdt-extensions:** 🎸 populate common slice type list ([d4c68db](https://github.com/streamich/json-joy/commit/d4c68db3b8a634db818ab58e52b32e470612303e))
+* **json-crdt-extensions:** 🎸 support caret in .stat() method ([212f623](https://github.com/streamich/json-joy/commit/212f623af0873b9dd3cacfd165d8eb9bf2b7ac0e))
+* **json-crdt-peritext-ui:** 🎸 add basic highlighting for all boolean inline elements ([21844f9](https://github.com/streamich/json-joy/commit/21844f99300fd0cf97c236c23747cfe1a57500fb))
+* **json-crdt-peritext-ui:** 🎸 add strikethrough inline slice support ([c529d73](https://github.com/streamich/json-joy/commit/c529d734291e2dc819159e1c91a9518bcf050c1e))
+* **json-crdt-peritext-ui:** 🎸 anchor boolean slice end point "before" next char ([77afdc1](https://github.com/streamich/json-joy/commit/77afdc113ab9a60f045707dc37250d8071dbfbad))
+* **json-crdt-peritext-ui:** 🎸 improve chrome styling ([9d4a0f8](https://github.com/streamich/json-joy/commit/9d4a0f85ced9866b450064e95a0a9f952b2fccc1))
+* **json-crdt-peritext-ui:** 🎸 improve editor boolean buttons ([0f5aa91](https://github.com/streamich/json-joy/commit/0f5aa91f2c44edda4b8a1d14cc10c8a454522b49))
+* **json-crdt-peritext-ui:** 🎸 ref "after" on caret set ([257648c](https://github.com/streamich/json-joy/commit/257648c0149f0e16d0c99be5dcab796f7dc08b6c))
+* **json-crdt-peritext-ui:** 🎸 reset pressed keys on editor blur ([8f144f4](https://github.com/streamich/json-joy/commit/8f144f43ced394554dc176893a3aa338eb386d82))
+* **json-crdt-peritext-ui:** 🎸 use common inline slice types ([241f841](https://github.com/streamich/json-joy/commit/241f8411e1a9e3cac3b8321b3352b11538a93589))
+
 # [17.13.0](https://github.com/streamich/json-joy/compare/v17.12.0...v17.13.0) (2024-11-06)
 
 
