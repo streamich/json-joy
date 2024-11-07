@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>61/61</span>
+                <span class='fraction'>75/75</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>61/61</span>
+                <span class='fraction'>75/75</span>
             </div>
         
             
@@ -179,7 +179,20 @@
 <a name='L114'></a><a href='#L114'>114</a>
 <a name='L115'></a><a href='#L115'>115</a>
 <a name='L116'></a><a href='#L116'>116</a>
-<a name='L117'></a><a href='#L117'>117</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,8 +207,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">51x</span>
-<span class="cline-any cline-yes">51x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-yes">51x</span>
@@ -216,8 +227,23 @@
 <span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-yes">51x</span>
@@ -310,41 +336,54 @@ export enum CursorAnchor {
  * Built-in slice types.
  */
 export enum CommonSliceType {
-  Cursor = -1,
-&nbsp;
   // Block slices
-  Paragraph = 0,
-  Title = 1,
-  H1 = 1,
-  H2 = 2,
-  H3 = 3,
-  H4 = 4,
-  H5 = 5,
-  H6 = 6,
-  BlockQuote = 7,
-  CodeBlock = 8,
-  Preformatted = 9,
-  OrderedList = 10,
-  UnorderedList = 11,
-  TaskList = 12,
-  ListItem = 13,
-  LineBreak = 14,
-  NewLine = 15,
-  PageBreak = 16,
-  Aside = 17,
+  p = 0, // &lt;p&gt;
+  blockquote = 1, // &lt;blockquote&gt;
+  codeblock = 2, // &lt;pre&gt;&lt;code&gt;
+  pre = 3, // &lt;pre&gt;
+  ul = 4, // &lt;ul&gt;
+  ol = 5, // &lt;ol&gt;
+  TaskList = 6, // - [ ] Task list
+  h1 = 7, // &lt;h1&gt;
+  h2 = 8, // &lt;h2&gt;
+  h3 = 9, // &lt;h3&gt;
+  h4 = 10, // &lt;h4&gt;
+  h5 = 11, // &lt;h5&gt;
+  h6 = 12, // &lt;h6&gt;
+  title = 13, // &lt;title&gt;
+  subtitle = 14, // &lt;subtitle&gt;
+  br = 15, // &lt;br&gt;
+  nl = 16, // \n
+  hr = 17, // &lt;hr&gt;
+  page = 18, // Page break
+  aside = 19, // &lt;aside&gt;
+  embed = 20, // &lt;embed&gt;, &lt;iframe&gt;, &lt;object&gt;, &lt;video&gt;, &lt;audio&gt;, etc.
 &nbsp;
   // Inline slices
-  Bold = -2,
-  Italic = -3,
-  Underline = -4,
-  Strikethrough = -5,
-  Code = -6,
-  Highlight = -7,
-  Link = -8,
-  Comment = -9,
-  Superscript = -10,
-  Subscript = -11,
-  Math = -12,
+  Cursor = -1,
+  RemoteCursor = -2,
+  b = -3, // &lt;b&gt;
+  i = -4, // &lt;i&gt;
+  u = -5, // &lt;u&gt;
+  s = -6, // &lt;s&gt;
+  code = -7, // &lt;code&gt;
+  mark = -8, // &lt;mark&gt;
+  a = -9, // &lt;a&gt;
+  comment = -10, // User comment attached to a slice
+  del = -11, // &lt;del&gt;
+  ins = -12, // &lt;ins&gt;
+  sup = -13, // &lt;sup&gt;
+  sub = -14, // &lt;sub&gt;
+  math = -15, // &lt;math&gt;
+  font = -16, // &lt;span style="font-family: ..."&gt;
+  col = -17, // &lt;span style="color: ..."&gt;
+  bg = -18, // &lt;span style="background: ..."&gt;
+  hidden = -19, // &lt;span style="color: transparent; background: black"&gt;
+  footnote = -20, // &lt;sup&gt; or &lt;a&gt; with href="#footnote-..." and title="Footnote ..."
+  ref = -21, // &lt;a&gt; with href="#ref-..." and title="Reference ..."
+  iaside = -22, // Inline &lt;aside&gt;
+  iembed = -23, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
+  bookmark = -24, // UI for creating a link to this slice
 }
 &nbsp;
 export enum SliceHeaderMask {
@@ -418,7 +457,7 @@ export enum SliceTupleIndex {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-06T13:02:25.667Z
+                at 2024-11-07T09:57:27.615Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
