@@ -4,9 +4,9 @@ import {context, type PeritextSurfaceContextValue} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import {DomController} from '../dom/DomController';
-import {renderers as defaultRenderers} from '../renderers/default';
+import {renderers as defaultRenderers} from '../plugins/minimal';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
-import type {RendererMap} from './types';
+import type {PeritextPlugin} from './types';
 
 put('.' + CssClass.Editor, {
   out: 0,
@@ -29,7 +29,7 @@ put('.' + CssClass.Editor, {
  */
 export interface PeritextViewProps {
   peritext: Peritext;
-  renderers?: RendererMap[];
+  renderers?: PeritextPlugin[];
   onRender?: () => void;
 }
 

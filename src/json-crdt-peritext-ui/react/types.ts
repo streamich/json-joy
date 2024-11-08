@@ -8,7 +8,7 @@ import type {PeritextViewProps} from './PeritextView';
 import type {PeritextSurfaceContextValue} from './context';
 import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
-export interface RendererMap {
+export interface PeritextPlugin {
   focus?: (props: FocusViewProps, children: React.ReactNode) => React.ReactNode;
   caret?: (props: CaretViewProps, children: React.ReactNode) => React.ReactNode;
   anchor?: (props: AnchorViewProps, children: React.ReactNode) => React.ReactNode;
