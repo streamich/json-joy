@@ -6,11 +6,30 @@ import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import type {SliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
+
+/**
+   * For inline boolean ("Overwrite") slices, both range endpoints should be
+   * attached to {@link Anchor.Before} as per the Peritext paper. This way, say
+   * bold text, automatically extends to include the next character typed as
+   * user types.
+   *
+   * @param range The range to be adjusted.
+   */
+const makeRangeExtendable = <T>(range: Range<T>): void => {
+  if (range.end.anchor !== Anchor.Before || range.start.anchor !== Anchor.Before) {
+    const start = range.start.clone();
+    const end = range.end.clone();
+    start.refBefore();
+    end.refBefore();
+    range.set(start, end);
+  }
+};
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -459,6 +478,22 @@ export class Editor<T = string> {
   public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
     this.cursor.set(this.point(at));
     if (unit) this.select(unit);
+  }
+
+  // --------------------------------------------------------------- formatting
+  
+  public formatExclusive(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    // TODO: handle mutually exclusive slices (<sub>, <sub>)
+    const overlay = this.txt.overlay;
+    overlay.refresh(); // TODO: Refresh for `overlay.stat()` calls. Is it actually needed?
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const [complete] = overlay.stat(cursor, 1e6);
+      const alreadyFormatted = complete.has(type);
+      if (alreadyFormatted) continue;
+      makeRangeExtendable(cursor);
+      if (cursor.start.isAbs() || cursor.end.isAbs()) continue;
+      slices.insOverwrite(type, data);
+    }
   }
 
   // ------------------------------------------------------------------ various

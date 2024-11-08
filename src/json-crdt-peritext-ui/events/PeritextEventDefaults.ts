@@ -104,26 +104,18 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (behavior) {
-      case 'stack':
+      case 'stack': {
         slices.insStack(type, data);
         break;
-      case 'erase':
+      }
+      case 'overwrite': {
+        editor.formatExclusive(type, data, slices);
+        break;
+      }
+      case 'erase': {
         slices.insErase(type, data);
         break;
-      default:
-        for (let i = editor.cursors0(), cursor = i(); cursor; cursor = i()) {
-          // For inline boolean slices, ref endpoint "before" the next character
-          // as per the Peritext paper, so that, say, bold text automatically
-          // includes the next character typed.
-          if (cursor.end.anchor !== Anchor.Before || cursor.start.anchor !== Anchor.Before) {
-            const start = cursor.start.clone();
-            const end = cursor.end.clone();
-            start.refBefore();
-            end.refBefore();
-            cursor.set(start, end);
-          }
-        }
-        slices.insOverwrite(type, data);
+      }
     }
   };
 
