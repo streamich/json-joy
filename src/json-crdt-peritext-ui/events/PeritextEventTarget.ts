@@ -1,4 +1,4 @@
-import {TypedEventTarget} from './TypedEventTarget';
+import {TypedEventTarget} from '../../util/events/TypedEventTarget';
 import type {PeritextEventMap, CursorDetail, InlineDetail, DeleteDetail} from './types';
 
 export type PeritextEventHandlerMap = {
