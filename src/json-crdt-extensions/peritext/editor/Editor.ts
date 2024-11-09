@@ -492,8 +492,7 @@ export class Editor<T = string> {
       if (needToRemoveFormatting) {
         const contained = overlay.findContained(cursor);
         for (const slice of contained)
-          if (slice.behavior === SliceBehavior.One && slice.type === type)
-            slices.del(slice.id);
+          if (slice.type === type) slices.del(slice.id);
         overlay.refresh();
         const [complete2, partial2] = overlay.stat(cursor, 1e6);
         const needsErase = complete2.has(type) || partial2.has(type);
