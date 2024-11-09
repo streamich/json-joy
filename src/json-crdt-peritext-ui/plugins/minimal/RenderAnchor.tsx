@@ -1,11 +1,23 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {rule, keyframes} from 'nano-theme';
 import {Char} from '../../constants';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
 import type {AnchorViewProps} from '../../react/selection/AnchorView';
+
+export const fadeInAnimation = keyframes({
+  from: {
+    tr: 'scale(0)',
+  },
+  '75%': {
+    tr: 'scale(0)',
+  },
+  to: {
+    tr: 'scale(1)',
+  },
+});
 
 const blockClass = rule({
   pos: 'relative',
@@ -26,6 +38,8 @@ const innerClass = rule({
   h: 'calc(min(16px,0.5em))',
   bdrad: '50%/30%',
   bg: DefaultRendererColors.ActiveCursor,
+  an: fadeInAnimation + ' .75s ease-out',
+  animationFillMode: 'forwards',
 });
 
 export interface RenderAnchorProps extends AnchorViewProps {}
