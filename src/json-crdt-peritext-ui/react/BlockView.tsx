@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
-import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
 import {usePeritext} from './context';
 import {CommonSliceType} from '../../json-crdt-extensions';
 import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
-import {InlineAttrEnd, InlineAttrStart} from '../../json-crdt-extensions/peritext/block/Inline';
+import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../json-crdt-extensions/peritext/block/Inline';
 import {AnchorView} from './selection/AnchorView';
+import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
 
 export interface BlockViewProps {
   hash: number;
@@ -33,11 +33,8 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             const k = cursorStart.start.key() + '-a';
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
-              element = cursorStart.isCollapsed() ? (
-                <CaretView key={k + 'caret'} italic={!!italic} />
-              ) : (
-                <FocusView key={k} italic={italic instanceof InlineAttrEnd} />
-              );
+              if (cursorStart.isCollapsed()) element = <CaretView key={k} italic={!!italic} />;
+              else element = <FocusView key={k} italic={italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing} />;
             } else element = <AnchorView key={k} />;
             elements.push(element);
           }
@@ -49,17 +46,12 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
           const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
           if (cursorEnd) {
             const k = cursorEnd.end.key() + '-b';
-            elements.push(
-              cursorEnd.isEndFocused() ? (
-                cursorEnd.isCollapsed() ? (
-                  <CaretView key={k} italic={!!italic} />
-                ) : (
-                  <FocusView key={k} left italic={italic instanceof InlineAttrStart} />
-                )
-              ) : (
-                <AnchorView key={k} />
-              ),
-            );
+            let element: React.ReactNode;
+            if (cursorEnd.isEndFocused()) {
+              if (cursorEnd.isCollapsed()) element = <CaretView key={k} italic={!!italic} />;
+              else element = <FocusView key={k} left italic={italic instanceof InlineAttrStart || italic instanceof InlineAttrPassing} />;
+            } else element = <AnchorView key={k} />;
+            elements.push(element);
           }
         }
       }
