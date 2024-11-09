@@ -108,7 +108,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
       case 'one': {
-        editor.formatExclusive(type, data, slices);
+        editor.toggleFormatting(type, data, slices);
         break;
       }
       case 'erase': {
