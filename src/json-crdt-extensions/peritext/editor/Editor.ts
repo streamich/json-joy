@@ -489,17 +489,16 @@ export class Editor<T = string> {
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       const [complete] = overlay.stat(cursor, 1e6);
       const needToRemoveFormatting = complete.has(type);
+      makeRangeExtendable(cursor);
+      const contained = overlay.findContained(cursor);
+      for (const slice of contained) if (slice.type === type) slices.del(slice.id);
       if (needToRemoveFormatting) {
-        const contained = overlay.findContained(cursor);
-        for (const slice of contained)
-          if (slice.type === type) slices.del(slice.id);
         overlay.refresh();
         const [complete2, partial2] = overlay.stat(cursor, 1e6);
         const needsErase = complete2.has(type) || partial2.has(type);
         if (needsErase) slices.insErase(type);
         continue;
       } else {
-        makeRangeExtendable(cursor);
         if (cursor.start.isAbs() || cursor.end.isAbs()) continue;
         slices.insOverwrite(type, data);
       }
