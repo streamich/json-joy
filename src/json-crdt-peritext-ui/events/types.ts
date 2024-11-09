@@ -211,9 +211,16 @@ export interface FormatDetail {
    * character. The `'erase'` behavior is used to remove the `'many`' or
    * `'one'` annotation from the the given range.
    * 
+   * The special `'clear'` behavior is used to remove all annotations
+   * that intersect with any part of any of the cursors in the document. Usage:
+   * 
+   * ```js
+   * {type: 'clear'}
+   * ```
+   * 
    * @default 'one'
    */
-  behavior?: 'one' | 'many' | 'erase';
+  behavior?: 'one' | 'many' | 'erase' | 'clear';
 
   /**
    * The slice set where the annotation will be stored. `'saved'` is the main

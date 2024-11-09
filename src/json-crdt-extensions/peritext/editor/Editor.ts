@@ -548,11 +548,13 @@ export class Editor<T = string> {
     }
   }
 
-  public clearFormatting(range: Range<T>, store: EditorSlices<T> = this.saved): void {
+  public clearFormatting(store: EditorSlices<T> = this.saved): void {
     const overlay = this.txt.overlay;
     overlay.refresh();
-    const overlapping = overlay.findOverlapping(range);
-    for (const slice of overlapping) store.del(slice.id);
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const overlapping = overlay.findOverlapping(cursor);
+      for (const slice of overlapping) store.del(slice.id);
+    }
   }
 
   // ------------------------------------------------------------------ various

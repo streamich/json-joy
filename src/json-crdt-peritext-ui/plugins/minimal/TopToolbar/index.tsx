@@ -65,6 +65,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
       {button2('Erase', () => {
         ctx.dom.et.format({behavior: 'erase'});
       })}
+      {button2('Clear', () => {
+        ctx.dom.et.format({behavior: 'clear'});
+      })}
     </div>
   );
 };

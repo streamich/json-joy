@@ -118,6 +118,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         else slices.insErase(type, data);
         break;
       }
+      case 'clear': {
+        editor.clearFormatting(slices);
+        break;
+      }
     }
   };
 
