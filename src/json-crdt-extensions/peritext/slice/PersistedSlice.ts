@@ -165,7 +165,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
-    return 'Range';
+    return `slice [${SliceBehaviorName[this.behavior]}] ${JSON.stringify(this.type)}`;
   }
 
   protected toStringHeaderName(): string {

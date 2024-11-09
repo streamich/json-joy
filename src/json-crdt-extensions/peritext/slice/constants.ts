@@ -127,8 +127,8 @@ export enum SliceBehavior {
 
 export enum SliceBehaviorName {
   Marker = SliceBehavior.Marker,
-  Stack = SliceBehavior.Many,
-  Overwrite = SliceBehavior.One,
+  Many = SliceBehavior.Many,
+  One = SliceBehavior.One,
   Erase = SliceBehavior.Erase,
   Cursor = SliceBehavior.Cursor,
 }
