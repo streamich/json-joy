@@ -30,7 +30,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
 
   const button = (type: string | number, name: React.ReactNode) => (
     <Button
-      onClick={() => ctx.dom.et.inline({type})}
+      onClick={() => ctx.dom.et.format({type})}
       onMouseDown={(e) => e.preventDefault()}
       active={complete.has(type)}
     >

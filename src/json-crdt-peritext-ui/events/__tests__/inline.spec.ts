@@ -14,7 +14,7 @@ const testSuite = (getKit: () => Kit) => {
   test('can add annotation to the current selection', async () => {
     const kit = setup();
     kit.et.cursor({at: 3, len: 3});
-    kit.et.inline({type: 'bold'});
+    kit.et.format({type: 'bold'});
     kit.peritext.refresh();
     const slices = kit.peritext.overlay.findOverlapping(kit.peritext.rangeAt(5));
     console.log([...slices]);
