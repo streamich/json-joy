@@ -518,29 +518,42 @@ export class Editor<T = string> {
     }
   }
 
-  // public eraseFormatting(range: Range<T>, store: EditorSlices<T> = this.saved): void {
-  //   // TODO: Determine `store` from the found slice.
-  //   const overlay = this.txt.overlay;
-  //   overlay.refresh();
-  //   const contained = overlay.findContained(range);
-  //   for (const slice of contained) store.del(slice.id);
-  //   const overlapping = overlay.findOverlapping(range);
-  //   for (const slice of overlapping) {
-  //     switch (slice.behavior) {
-  //       case SliceBehavior.One:
-  //       case SliceBehavior.Many: {
-  //         store.insErase(slice.type);
-  //       }
-  //     }
-  //   }
-  // }
+  public eraseFormatting(store: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      overlay.refresh();
+      const contained = overlay.findContained(cursor);
+      for (const slice of contained) {
+        if (slice instanceof PersistedSlice) {
+          switch (slice.behavior) {
+            case SliceBehavior.One:
+            case SliceBehavior.Many:
+            case SliceBehavior.Erase: {
+              const deletionStore = this.getSliceStore(slice);
+              if (deletionStore) deletionStore.del(slice.id);
+            }
+          }
+        }
+      }
+      overlay.refresh();
+      const overlapping = overlay.findOverlapping(cursor);
+      for (const slice of overlapping) {
+        switch (slice.behavior) {
+          case SliceBehavior.One:
+          case SliceBehavior.Many: {
+            store.insErase(slice.type);
+          }
+        }
+      }
+    }
+  }
 
-  // public clearFormatting(range: Range<T>, store: EditorSlices<T> = this.saved): void {
-  //   const overlay = this.txt.overlay;
-  //   overlay.refresh();
-  //   const overlapping = overlay.findOverlapping(range);
-  //   for (const slice of overlapping) store.del(slice.id);
-  // }
+  public clearFormatting(range: Range<T>, store: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    overlay.refresh();
+    const overlapping = overlay.findOverlapping(range);
+    for (const slice of overlapping) store.del(slice.id);
+  }
 
   // ------------------------------------------------------------------ various
 

@@ -38,6 +38,15 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
     </Button>
   );
 
+  const button2 = (name: React.ReactNode, onClick: React.MouseEventHandler) => (
+    <Button
+      onClick={onClick}
+      onMouseDown={(e) => e.preventDefault()}
+    >
+      {name}
+    </Button>
+  );
+
   return (
     <div className={blockClass}>
       {button(CommonSliceType.b, 'Bold')}
@@ -53,6 +62,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
       {button(CommonSliceType.math, 'Math')}
       {button(CommonSliceType.hidden, 'Spoiler')}
       {button(CommonSliceType.bookmark, 'Bookmark')}
+      {button2('Erase', () => {
+        ctx.dom.et.format({behavior: 'erase'});
+      })}
     </div>
   );
 };

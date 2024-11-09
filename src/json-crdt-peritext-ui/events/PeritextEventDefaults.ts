@@ -1,6 +1,6 @@
+import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
-import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
@@ -104,15 +104,18 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (behavior) {
       case 'many': {
+        if (type === undefined) throw new Error('TYPE_REQUIRED');
         slices.insStack(type, data);
         break;
       }
       case 'one': {
+        if (type === undefined) throw new Error('TYPE_REQUIRED');
         editor.toggleExclusiveFormatting(type, data, slices);
         break;
       }
       case 'erase': {
-        slices.insErase(type, data);
+        if (type === undefined) editor.eraseFormatting(slices);
+        else slices.insErase(type, data);
         break;
       }
     }

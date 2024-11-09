@@ -192,7 +192,7 @@ export interface FormatDetail {
    * formatting, in which case a nested structure like
    * `<p><blockquote><h1>text</h1></blockquote></p>` is created.
    */
-  type: number | string;
+  type?: number | string;
 
   /**
    * Arbitrary data associated with the formatting. Usually, stored with
@@ -225,12 +225,6 @@ export interface FormatDetail {
    * @default 'saved'
    */
   store?: 'saved' | 'extra' | 'local';
-
-  /**
-   * Specifies the range of the annotation. If not specified, the annotation
-   * is applied to all cursors in the document at their current positions.
-   */
-  pos?: [start: Position, end: Position][];
 }
 
 // biome-ignore lint: empty interface is expected
@@ -257,5 +251,6 @@ export type PeritextEventMap = {
   delete: DeleteDetail;
   cursor: CursorDetail;
   format: FormatDetail;
+  // remove: FormatDetail;
   marker: MarkerDetail;
 };
