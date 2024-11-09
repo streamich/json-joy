@@ -4,7 +4,7 @@ import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Anchor} from '../rga/constants';
-import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex, SliceBehaviorName} from './constants';
+import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex, SliceBehaviorName, CommonSliceType} from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import type {VecNode} from '../../../json-crdt/nodes';
@@ -165,6 +165,9 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
+    if (typeof this.type === 'number' && Math.abs(this.type) <= 64 && CommonSliceType[this.type]) {
+      return `slice [${SliceBehaviorName[this.behavior]}] <${CommonSliceType[this.type]}>`;
+    }
     return `slice [${SliceBehaviorName[this.behavior]}] ${JSON.stringify(this.type)}`;
   }
 
