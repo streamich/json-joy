@@ -198,6 +198,8 @@ export interface FormatDetail {
    * Arbitrary data associated with the formatting. Usually, stored with
    * annotations of "stack" behavior, for example, an "<a>" tag annotation may
    * store the href attribute in this field.
+   * 
+   * @default undefined
    */
   data?: unknown;
 
@@ -208,8 +210,10 @@ export interface FormatDetail {
    * the annotation is not stacked, only one such annotation can be applied per
    * character. The `'erase'` behavior is used to remove the `'many`' or
    * `'one'` annotation from the the given range.
+   * 
+   * @default 'one'
    */
-  behavior?: 'many' | 'one' | 'erase';
+  behavior?: 'one' | 'many' | 'erase';
 
   /**
    * The slice set where the annotation will be stored. `'saved'` is the main
@@ -217,6 +221,8 @@ export interface FormatDetail {
    * is an ephemeral document, which is not persisted but can be replicated
    * across clients. `'local'` is a local document, which is accessible only to
    * the local client, for example, for storing cursor or selection information.
+   * 
+   * @default 'saved'
    */
   store?: 'saved' | 'extra' | 'local';
 

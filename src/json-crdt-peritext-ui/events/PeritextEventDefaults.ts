@@ -99,7 +99,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly format = (event: CustomEvent<events.FormatDetail>) => {
-    const {type, store = 'saved', behavior = 'overwrite', data} = event.detail;
+    const {type, store = 'saved', behavior = 'one', data} = event.detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (behavior) {
