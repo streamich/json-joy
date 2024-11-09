@@ -60,7 +60,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   };
 
   if (italic) {
-    style.transform = 'rotate(11deg)';
+    style.rotate = '11deg';
   }
 
   return (
