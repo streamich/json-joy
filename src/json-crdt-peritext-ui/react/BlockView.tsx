@@ -26,26 +26,20 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
       for (const inline of block.texts()) {
         const hasCursor = inline.hasCursor();
         if (hasCursor) {
-          console.log('hasCursor');
-          const elements: React.ReactNode[] = [];
           const attr = inline.attr();
           const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
-          const key = inline.key();
           const cursorStart = inline.cursorStart();
           if (cursorStart) {
-            console.log('cursorStart.isCollapsed()', cursorStart.isStartFocused(), cursorStart.isCollapsed());
-            const k = 'selection-start';
-            elements.push(
-              cursorStart.isStartFocused() ? (
-                cursorStart.isCollapsed() ? (
-                  <CaretView key={k} italic={!!italic} />
-                ) : (
-                  <FocusView key={k} italic={italic instanceof InlineAttrEnd} />
-                )
+            const k = cursorStart.start.key() + '-a';
+            let element: React.ReactNode;
+            if (cursorStart.isStartFocused()) {
+              element = cursorStart.isCollapsed() ? (
+                <CaretView key={k + 'caret'} italic={!!italic} />
               ) : (
-                <AnchorView key={k} />
-              ),
-            );
+                <FocusView key={k} italic={italic instanceof InlineAttrEnd} />
+              );
+            } else element = <AnchorView key={k} />;
+            elements.push(element);
           }
         }
         elements.push(<InlineView key={inline.key()} inline={inline} />);
@@ -54,7 +48,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
           const attr = inline.attr();
           const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
           if (cursorEnd) {
-            const k = 'selection-end';
+            const k = cursorEnd.end.key() + '-b';
             elements.push(
               cursorEnd.isEndFocused() ? (
                 cursorEnd.isCollapsed() ? (

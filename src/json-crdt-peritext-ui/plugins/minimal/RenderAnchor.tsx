@@ -11,9 +11,6 @@ export const fadeInAnimation = keyframes({
   from: {
     tr: 'scale(0)',
   },
-  '75%': {
-    tr: 'scale(0)',
-  },
   to: {
     tr: 'scale(1)',
   },
@@ -38,7 +35,7 @@ const innerClass = rule({
   h: 'calc(min(16px,0.5em))',
   bdrad: '50%/30%',
   bg: DefaultRendererColors.ActiveCursor,
-  an: fadeInAnimation + ' .75s ease-out',
+  an: fadeInAnimation + ' .25s ease-out',
   animationFillMode: 'forwards',
 });
 
