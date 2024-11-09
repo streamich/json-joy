@@ -139,6 +139,7 @@ export class Slices<T = string> implements Stateful, Printable {
     this.list.del(id);
     const set = this.set;
     const api = set.doc.api;
+    if (!set.findById(id)) return;
     // TODO: Is it worth checking if the slice is already deleted?
     api.builder.del(set.id, [tss(id.sid, id.time, 1)]);
     api.apply();
