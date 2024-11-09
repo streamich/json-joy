@@ -17,11 +17,11 @@ describe('.ins()', () => {
   test('can insert a slice', () => {
     const {peritext, slices} = setup();
     const range = peritext.rangeAt(12, 7);
-    const slice = slices.ins(range, SliceBehavior.Stack, 'b', {bold: true});
+    const slice = slices.ins(range, SliceBehavior.Many, 'b', {bold: true});
     expect(peritext.savedSlices.size()).toBe(1);
     expect(slice.start).toStrictEqual(range.start);
     expect(slice.end).toStrictEqual(range.end);
-    expect(slice.behavior).toBe(SliceBehavior.Stack);
+    expect(slice.behavior).toBe(SliceBehavior.Many);
     expect(slice.type).toBe('b');
     expect(slice.data()).toStrictEqual({bold: true});
   });
@@ -80,7 +80,7 @@ describe('.ins()', () => {
     const ranges = [r1, r2, r3, r4];
     const types = ['b', ['li', 'ul'], 0, 123, [1, 2, 3]];
     const datas = [{bold: true}, {list: 'ul'}, 0, 123, [1, 2, 3], null, undefined];
-    const behaviors = [SliceBehavior.Stack, SliceBehavior.Erase, SliceBehavior.Overwrite, SliceBehavior.Marker];
+    const behaviors = [SliceBehavior.Many, SliceBehavior.Erase, SliceBehavior.One, SliceBehavior.Marker];
     for (const range of ranges) {
       for (const type of types) {
         for (const data of datas) {
@@ -176,8 +176,8 @@ describe('.refresh()', () => {
   };
 
   testSliceUpdate('slice behavior change', ({slice}) => {
-    slice.update({behavior: SliceBehavior.Stack});
-    expect(slice.behavior).toBe(SliceBehavior.Stack);
+    slice.update({behavior: SliceBehavior.Many});
+    expect(slice.behavior).toBe(SliceBehavior.Many);
   });
 
   testSliceUpdate('slice type change', ({slice}) => {

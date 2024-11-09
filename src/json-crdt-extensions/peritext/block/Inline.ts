@@ -160,12 +160,12 @@ export class Inline extends Range implements Printable {
             stack.push(this.createAttr(slice));
             break;
           }
-          case SliceBehavior.Stack: {
+          case SliceBehavior.Many: {
             const stack: InlineAttrStack = attr[type] ?? (attr[type] = []);
             stack.push(this.createAttr(slice));
             break;
           }
-          case SliceBehavior.Overwrite: {
+          case SliceBehavior.One: {
             attr[type] = [this.createAttr(slice)];
             break;
           }

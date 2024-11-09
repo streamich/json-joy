@@ -13,7 +13,7 @@ export enum CursorAnchor {
  * Built-in slice types.
  */
 export enum CommonSliceType {
-  // Block slices
+  // ---------------------------------------------------- block slices (0 to 64)
   p = 0, // <p>
   blockquote = 1, // <blockquote>
   codeblock = 2, // <pre><code>
@@ -36,7 +36,7 @@ export enum CommonSliceType {
   aside = 19, // <aside>
   embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
 
-  // Inline slices
+  // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
   RemoteCursor = -2,
   b = -3, // <b>
@@ -77,27 +77,43 @@ export enum SliceHeaderShift {
 
 export enum SliceBehavior {
   /**
-   * A Split slice, which is used to mark a block split position in the document.
-   * For example, paragraph, heading, blockquote, etc.
+   * The `Marker` slices are used to mark a block split position in the
+   * document. For example, paragraph, heading, blockquote, etc. It separates
+   * adjacent blocks and is used to determine the block type of the contents
+   * following the marker, until the next marker is encountered.
    */
   Marker = 0b000,
 
   /**
-   * Appends attributes to a stack of attributes for a specific slice type. This
-   * is useful when the same slice type can have multiple attributes, like
-   * inline comments, highlights, etc.
+   * The `Many` slices are inline formatting annotations, which allow one
+   * or more annotations of the same type to apply to the same text. Slices with
+   * behavior `Many` are appended to the stack of attributes for a specific
+   * slice type. With the most recent annotation on top.
+   * 
+   * Slices with behavior `Many` are used for inline formatting, like for links,
+   * comments, etc. Where multiple annotations of the same type can be applied
+   * to the same text.
    */
-  Stack = 0b001,
+  Many = 0b001,
 
   /**
-   * Overwrites the stack of attributes for a specific slice type. Could be used
-   * for simple inline formatting, like bold, italic, etc.
+   * The slices with behavior `One` are used for inline formatting annotations,
+   * they overwrite the stack of attributes for a specific slice type. This type
+   * of slice is used when only one annotation of a specific type can be applied
+   * to the same text. For example, those could be used for simple inline
+   * formatting, like bold, italic, etc.
    */
-  Overwrite = 0b010,
+  One = 0b010,
 
   /**
-   * Removes all attributes for a specific slice type. For example, could be
-   * used to reverse inline formatting, like bold, italic, etc.
+   * The `Erase` slices are used to soft remove all annotations
+   * (`Many` or `One`) of the same type which are applied to the same text
+   * range. The erase slices soft remove only the annotations which were applied
+   * before the erase slice, as determined by the logical clock (there could
+   * be many layers of annotations applied and erased).
+   * 
+   * Usually slices with behavior `Erase` are used to reverse inline exclusive
+   * (`One`) inline formatting, like bold, italic, etc.
    */
   Erase = 0b011,
 
@@ -111,8 +127,8 @@ export enum SliceBehavior {
 
 export enum SliceBehaviorName {
   Marker = SliceBehavior.Marker,
-  Stack = SliceBehavior.Stack,
-  Overwrite = SliceBehavior.Overwrite,
+  Stack = SliceBehavior.Many,
+  Overwrite = SliceBehavior.One,
   Erase = SliceBehavior.Erase,
   Cursor = SliceBehavior.Cursor,
 }
