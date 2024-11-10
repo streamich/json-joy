@@ -6,7 +6,6 @@ const blockClass = drule({
   bd: 0,
   col: 'black',
   ff: 'inherit',
-  fz: '14px',
   fw: 500,
   lh: '1.15em',
   mr: 'none',
@@ -16,18 +15,23 @@ const blockClass = drule({
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean;
+  small?: boolean;
   children: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({active, children, ...rest}) => {
+export const Button: React.FC<ButtonProps> = ({active, small, children, ...rest}) => {
   const className =
     (rest.className || '') +
     blockClass({
-      bdrad: active ? '.6em' : '.4em',
+      bdrad: active ? '12px' : '6px',
       bg: active ? '#07f' : 'rgba(61, 37, 20, .08)',
       col: active ? 'white' : 'black',
+      fz: small ? '11px' : '14px',
       '&:hover': {
         bg: active ? '#06e' : 'rgba(61, 37, 20, .12)',
+      },
+      '&:active': {
+        bg: active ? '#05d' : 'rgba(61, 37, 20, .18)',
       },
     });
 

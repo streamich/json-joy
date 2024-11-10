@@ -1,31 +1,29 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {drule, rule, useTheme} from 'nano-theme';
 import {context} from './context';
+import {Button} from '../../components/Button';
+import {Console} from './Console';
 import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
+import {ValueSyncStore} from '../../../util/events/sync-store';
 
 const blockClass = rule({
   pos: 'relative',
 });
 
-const btnClass = rule({
+const btnClass = drule({
+  d: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   pos: 'absolute',
-  t: 0,
+  t: '-16px',
   r: 0,
-  bg: 'black',
-  col: 'white',
-  fz: '9px',
-  bdrad: '4px',
+  pd: '2px',
+  bdrad: '8px',
+  bxsh: '0 1px 8px #00000008,0 1px 4px #0000000a,0 4px 10px #0000000f',
 });
 
 const childrenDebugClass = rule({
   out: '1px dotted black !important',
-});
-
-const dumpClass = rule({
-  bg: '#fafafa',
-  fz: '8px',
-  pad: '8px 16px',
-  bxz: 'border-box',
 });
 
 export interface RenderPeritextProps extends PeritextViewProps {
@@ -34,27 +32,37 @@ export interface RenderPeritextProps extends PeritextViewProps {
   ctx?: PeritextSurfaceContextValue;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({
-  enabled: enabledProp = true,
-  peritext,
-  ctx,
-  children,
-}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, ctx, children}) => {
+  const theme = useTheme();
   const [enabled, setEnabled] = React.useState(enabledProp);
+  const value = React.useMemo(
+    () => ({
+      enabled,
+      ctx,
+      flags: {
+        dom: new ValueSyncStore<boolean>(true),
+        editor: new ValueSyncStore<boolean>(true),
+        peritext: new ValueSyncStore<boolean>(true),
+        model: new ValueSyncStore<boolean>(false),
+      },
+    }),
+    [enabled, ctx],
+  );
 
   return (
-    <context.Provider value={{enabled}}>
+    <context.Provider value={value}>
       <div className={blockClass}>
-        <button type={'button'} className={btnClass} onClick={() => setEnabled((x) => !x)}>
-          Toggle debug mode
-        </button>
+        <div
+          className={btnClass({
+            bg: theme.bg,
+          })}
+        >
+          <Button small active={enabled} onClick={() => setEnabled((x) => !x)}>
+            Debug
+          </Button>
+        </div>
         <div className={enabled ? childrenDebugClass : undefined}>{children}</div>
-        {enabled && (
-          <div className={dumpClass}>
-            <pre>{peritext + ''}</pre>
-            {!!ctx && <pre>{ctx.dom + ''}</pre>}
-          </div>
-        )}
+        {enabled && <Console />}
       </div>
     </context.Provider>
   );

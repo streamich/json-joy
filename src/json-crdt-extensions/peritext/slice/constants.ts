@@ -35,6 +35,7 @@ export enum CommonSliceType {
   page = 18, // Page break
   aside = 19, // <aside>
   embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
+  column = 21, // <div style="column-count: ..."> (represents 2 and 3 column layouts)
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,

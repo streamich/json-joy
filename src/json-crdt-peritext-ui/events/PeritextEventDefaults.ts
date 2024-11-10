@@ -110,7 +110,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       }
       case 'one': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.toggleExclusiveFormatting(type, data, slices);
+        editor.toggleExclFmt(type, data, slices);
         break;
       }
       case 'erase': {

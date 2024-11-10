@@ -1,3 +1,4 @@
+import {CommonSliceType} from './constants';
 import type {SliceType} from '../slice/types';
 
 export const validateType = (type: SliceType) => {
@@ -24,4 +25,12 @@ export const validateType = (type: SliceType) => {
     default:
       throw new Error('INVALID_TYPE');
   }
+};
+
+export const formatType = (type: SliceType): string => {
+  let formatted: string = JSON.stringify(type);
+  const num = Number(type);
+  if ((typeof type === 'number' || num + '' === type) && Math.abs(num) <= 64 && CommonSliceType[num])
+    formatted = '<' + CommonSliceType[num] + '>';
+  return formatted;
 };

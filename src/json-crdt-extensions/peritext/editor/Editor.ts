@@ -1,4 +1,6 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import {Cursor} from './Cursor';
+import {stringify} from '../../../json-text/stringify';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
@@ -7,12 +9,15 @@ import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {PersistedSlice} from '../slice/PersistedSlice';
-import type {SliceType} from '../slice';
+import {ValueSyncStore} from '../../../util/events/sync-store';
+import {formatType} from '../slice/util';
+import type {CommonSliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
+import type {Printable} from 'tree-dump';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -32,10 +37,17 @@ const makeRangeExtendable = <T>(range: Range<T>): void => {
   }
 };
 
-export class Editor<T = string> {
+export class Editor<T = string> implements Printable {
   public readonly saved: EditorSlices<T>;
   public readonly extra: EditorSlices<T>;
   public readonly local: EditorSlices<T>;
+
+  /**
+   * Formatting which will be applied to the next inserted text. This is a
+   * temporary store for formatting which is not yet applied to the text, but
+   * will be if the cursor is not moved.
+   */
+  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown>>(new Map());
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
@@ -49,7 +61,7 @@ export class Editor<T = string> {
 
   // ------------------------------------------------------------------ cursors
 
-  public addCursor(range: Range<T>, anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
+  public addCursor(range: Range<T> = this.txt.rangeAt(0), anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
     const cursor = this.txt.localSlices.ins<Cursor<T>, typeof Cursor>(
       range,
       SliceBehavior.Cursor,
@@ -73,7 +85,7 @@ export class Editor<T = string> {
     for (let i: Cursor<T> | undefined, iterator = this.cursors0(); (i = iterator()); )
       if (!cursor) cursor = i;
       else this.local.del(i);
-    return cursor ?? this.addCursor(this.txt.rangeAt(0));
+    return cursor ?? this.addCursor();
   }
 
   public cursors0(): UndefIterator<Cursor<T>> {
@@ -98,6 +110,11 @@ export class Editor<T = string> {
     return cnt;
   }
 
+  /** Returns true if there is at least one cursor in the document. */
+  public hasCursor(): boolean {
+    return !!this.cursors0()();
+  }
+
   public delCursor(cursor: Cursor<T>): void {
     this.local.del(cursor);
   }
@@ -113,12 +130,18 @@ export class Editor<T = string> {
    * the range is removed and the text is inserted at the start of the range.
    */
   public insert(text: string): void {
-    let cnt = 0;
-    this.forCursor((cursor) => {
-      cnt++;
+    if (!this.hasCursor()) this.addCursor();
+    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
       cursor.insert(text);
-    });
-    if (!cnt) this.cursor.insert(text);
+      const pending = this.pending.value;
+      if (pending.size) {
+        this.pending.next(new Map());
+        const start = cursor.start.clone();
+        start.step(-text.length);
+        const range = this.txt.range(start, cursor.end.clone());
+        for (const [type, data] of pending) this.toggleRangeExclFmt(range, type, data);
+      }
+    }
   }
 
   /**
@@ -491,30 +514,63 @@ export class Editor<T = string> {
     return;
   }
 
-  public toggleExclusiveFormatting(type: SliceType, data?: unknown, store: EditorSlices<T> = this.saved): void {
+  protected toggleRangeExclFmt(
+    range: Range<T>,
+    type: CommonSliceType | string | number,
+    data?: unknown,
+    store: EditorSlices<T> = this.saved,
+  ): void {
+    if (range.isCollapsed()) throw new Error('Range is collapsed');
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    const [complete] = overlay.stat(range, 1e6);
+    const needToRemoveFormatting = complete.has(type);
+    makeRangeExtendable(range);
+    const contained = overlay.findContained(range);
+    for (const slice of contained) {
+      if (slice instanceof PersistedSlice && slice.type === type) {
+        const deletionStore = this.getSliceStore(slice);
+        if (deletionStore) deletionStore.del(slice.id);
+      }
+    }
+    if (needToRemoveFormatting) {
+      overlay.refresh();
+      const [complete2, partial2] = overlay.stat(range, 1e6);
+      const needsErase = complete2.has(type) || partial2.has(type);
+      if (needsErase) store.slices.insErase(range, type);
+    } else {
+      if (range.start.isAbs()) {
+        const start = txt.pointStart();
+        if (!start) return;
+        if (start.cmpSpatial(range.end) >= 0) return;
+        range.start = start;
+      }
+      if (range.end.isAbs()) {
+        const end = txt.pointEnd();
+        if (!end) return;
+        if (end.cmpSpatial(range.start) <= 0) return;
+        range.end = end;
+      }
+      store.slices.insOverwrite(range, type, data);
+    }
+  }
+
+  public toggleExclFmt(
+    type: CommonSliceType | string | number,
+    data?: unknown,
+    store: EditorSlices<T> = this.saved,
+  ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
-    const overlay = this.txt.overlay;
-    overlay.refresh(); // TODO: Refresh for `overlay.stat()` calls. Is it actually needed?
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const [complete] = overlay.stat(cursor, 1e6);
-      const needToRemoveFormatting = complete.has(type);
-      makeRangeExtendable(cursor);
-      const contained = overlay.findContained(cursor);
-      for (const slice of contained) {
-        if (slice instanceof PersistedSlice && slice.type === type) {
-          const deletionStore = this.getSliceStore(slice);
-          if (deletionStore) deletionStore.del(slice.id);
-        }
+    this.txt.overlay.refresh();
+    CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      if (cursor.isCollapsed()) {
+        const pending = this.pending.value;
+        if (pending.has(type)) pending.delete(type);
+        else pending.set(type, data);
+        this.pending.next(pending);
+        continue CURSORS;
       }
-      if (needToRemoveFormatting) {
-        overlay.refresh();
-        const [complete2, partial2] = overlay.stat(cursor, 1e6);
-        const needsErase = complete2.has(type) || partial2.has(type);
-        if (needsErase) store.insErase(type);
-      } else {
-        if (cursor.start.isAbs() || cursor.end.isAbs()) continue;
-        store.insOverwrite(type, data);
-      }
+      this.toggleRangeExclFmt(cursor, type, data, store);
     }
   }
 
@@ -571,5 +627,14 @@ export class Editor<T = string> {
   public start(): Point<T> {
     const txt = this.txt;
     return txt.pointStart() ?? txt.pointAbsStart();
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  public toString(tab: string = ''): string {
+    const pending = this.pending.value;
+    const pendingFormatted = {} as any;
+    for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
+    return 'Editor' + printTree(tab, [() => `pending ${stringify(pendingFormatted)}`]);
   }
 }

@@ -30,15 +30,15 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
           const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
           const cursorStart = inline.cursorStart();
           if (cursorStart) {
-            const k = cursorStart.start.key() + '-a';
+            const key = cursorStart.start.key() + '-a';
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
-              if (cursorStart.isCollapsed()) element = <CaretView key={k} italic={!!italic} />;
-              else
-                element = (
-                  <FocusView key={k} italic={italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing} />
-                );
-            } else element = <AnchorView key={k} />;
+              if (cursorStart.isCollapsed()) element = <CaretView key={key} italic={!!italic} />;
+              else {
+                const isItalic = italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing;
+                element = <FocusView key={key} italic={isItalic} />;
+              }
+            } else element = <AnchorView key={key} />;
             elements.push(element);
           }
         }
@@ -48,19 +48,19 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
           const attr = inline.attr();
           const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
           if (cursorEnd) {
-            const k = cursorEnd.end.key() + '-b';
+            const key = cursorEnd.end.key() + '-b';
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
-              if (cursorEnd.isCollapsed()) element = <CaretView key={k} italic={!!italic} />;
+              if (cursorEnd.isCollapsed()) element = <CaretView key={key} italic={!!italic} />;
               else
                 element = (
                   <FocusView
-                    key={k}
+                    key={key}
                     left
                     italic={italic instanceof InlineAttrStart || italic instanceof InlineAttrPassing}
                   />
                 );
-            } else element = <AnchorView key={k} />;
+            } else element = <AnchorView key={key} />;
             elements.push(element);
           }
         }

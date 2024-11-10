@@ -1,35 +1,26 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {rule} from 'nano-theme';
-import {Button} from '../Button';
-import {useDefaultCtx} from '../context';
+import {Button} from '../../../components/Button';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
+import {ButtonGroup} from '../../../components/ButtonGroup';
+import {useSyncStore} from '../../../react/hooks';
+import type {PeritextSurfaceContextValue} from '../../../react';
 
-const blockClass = rule({
-  d: 'flex',
-  flw: 'wrap',
-  columnGap: '4px',
-  rowGap: '4px',
-  w: '100%',
-  maxW: '100%',
-  bxz: 'border-box',
-  ff: 'Inter, ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  lh: '24px',
-  mr: 0,
-});
+export interface TopToolbarProps {
+  ctx: PeritextSurfaceContextValue;
+}
 
-// biome-ignore lint: empty interface
-export type TopToolbarProps = {};
-
-export const TopToolbar: React.FC<TopToolbarProps> = () => {
-  const {ctx} = useDefaultCtx();
-
-  if (!ctx) return null;
+export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
+  const pending = useSyncStore(ctx.peritext.editor.pending);
 
   const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
 
   const button = (type: string | number, name: React.ReactNode) => (
-    <Button onClick={() => ctx.dom.et.format(type)} onMouseDown={(e) => e.preventDefault()} active={complete.has(type)}>
+    <Button
+      onClick={() => ctx.dom.et.format(type)}
+      onMouseDown={(e) => e.preventDefault()}
+      active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
+    >
       {name}
     </Button>
   );
@@ -41,7 +32,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
   );
 
   return (
-    <div className={blockClass}>
+    <ButtonGroup>
       {button(CommonSliceType.b, 'Bold')}
       {button(CommonSliceType.i, 'Italic')}
       {button(CommonSliceType.u, 'Underline')}
@@ -55,12 +46,15 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
       {button(CommonSliceType.math, 'Math')}
       {button(CommonSliceType.hidden, 'Spoiler')}
       {button(CommonSliceType.bookmark, 'Bookmark')}
+      {button2('Blue', () => {
+        ctx.dom.et.format(CommonSliceType.col, 'one', '#07f');
+      })}
       {button2('Erase', () => {
         ctx.dom.et.format({behavior: 'erase'});
       })}
       {button2('Clear', () => {
         ctx.dom.et.format({behavior: 'clear'});
       })}
-    </div>
+    </ButtonGroup>
   );
 };

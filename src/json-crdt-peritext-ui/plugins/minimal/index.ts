@@ -6,20 +6,23 @@ import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import type {PeritextPlugin} from '../../react/types';
+import type {InlineAttrStack} from '../../../json-crdt-extensions/peritext/block/Inline';
 
 const h = React.createElement;
 
 export const renderers: PeritextPlugin = {
   text: (props, inline) => {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
-    const attr = inline.attr();
+    const attrs = inline.attr();
 
     let textDecoration = '';
+    let attr: InlineAttrStack | undefined;
 
-    if (attr[CommonSliceType.b]) style.fontWeight = 'bold';
-    if (attr[CommonSliceType.i]) style.fontStyle = 'italic';
-    if (attr[CommonSliceType.u]) textDecoration = 'underline';
-    if (attr[CommonSliceType.s]) textDecoration = textDecoration ? textDecoration + ' line-through' : 'line-through';
+    if (attrs[CommonSliceType.b]) style.fontWeight = 'bold';
+    if (attrs[CommonSliceType.i]) style.fontStyle = 'italic';
+    if (attrs[CommonSliceType.u]) textDecoration = 'underline';
+    if (attrs[CommonSliceType.s]) textDecoration = textDecoration ? textDecoration + ' line-through' : 'line-through';
+    if ((attr = attrs[CommonSliceType.col])) style.color = attr[0].slice.data() + '';
 
     style.textDecoration = textDecoration;
 
