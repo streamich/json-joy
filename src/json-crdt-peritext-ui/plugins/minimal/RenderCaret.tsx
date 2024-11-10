@@ -26,16 +26,18 @@ const blockClass = rule({
   w: '0px',
   h: '100%',
   bg: 'black',
-  va: 'top',
+  va: 'center',
 });
 
 const innerClass = rule({
   pos: 'absolute',
-  top: '-0.25em',
-  left: '-0.0625em',
+  d: 'inline-block',
+  b: '-0.4em',
+  l: '-0.065em',
   w: '.2em',
   h: '1.5em',
   bg: DefaultRendererColors.ActiveCursor,
+  bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
   bdrad: '0.0625em',
   'mix-blend-mode': 'multiply',
   an: moveAnimation + ' .25s ease-out',
