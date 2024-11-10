@@ -51,8 +51,9 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
         <div className={enabled ? childrenDebugClass : undefined}>{children}</div>
         {enabled && (
           <div className={dumpClass}>
-            <pre>{peritext + ''}</pre>
             {!!ctx && <pre>{ctx.dom + ''}</pre>}
+            <pre>{peritext.editor + ''}</pre>
+            <pre>{peritext + ''}</pre>
           </div>
         )}
       </div>

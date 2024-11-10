@@ -1,4 +1,6 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import {Cursor} from './Cursor';
+import {stringify} from '../../../json-text/stringify';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
@@ -7,12 +9,15 @@ import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {PersistedSlice} from '../slice/PersistedSlice';
-import type {SliceType} from '../slice';
+import {ValueSyncStore} from '../../../util/events/sync-store';
+import {formatType} from '../slice/util';
+import type {CommonSliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
+import type {Printable} from 'tree-dump';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -32,10 +37,17 @@ const makeRangeExtendable = <T>(range: Range<T>): void => {
   }
 };
 
-export class Editor<T = string> {
+export class Editor<T = string> implements Printable {
   public readonly saved: EditorSlices<T>;
   public readonly extra: EditorSlices<T>;
   public readonly local: EditorSlices<T>;
+
+  /**
+   * Formatting which will be applied to the next inserted text. This is a
+   * temporary store for formatting which is not yet applied to the text, but
+   * will be if the cursor is not moved.
+   */
+  public readonly pendingFormats = new ValueSyncStore<Record<CommonSliceType | string | number, unknown>>({});
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
@@ -491,11 +503,18 @@ export class Editor<T = string> {
     return;
   }
 
-  public toggleExclusiveFormatting(type: SliceType, data?: unknown, store: EditorSlices<T> = this.saved): void {
+  public toggleExclusiveFormatting(type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     const overlay = this.txt.overlay;
-    overlay.refresh(); // TODO: Refresh for `overlay.stat()` calls. Is it actually needed?
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+    overlay.refresh();
+    CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      if (cursor.isCollapsed()) {
+        const pending = this.pendingFormats.value;
+        if (pending.hasOwnProperty(type)) delete pending[type];
+        else pending[type] = data;
+        this.pendingFormats.next(pending);
+        continue CURSORS;
+      }
       const [complete] = overlay.stat(cursor, 1e6);
       const needToRemoveFormatting = complete.has(type);
       makeRangeExtendable(cursor);
@@ -571,5 +590,19 @@ export class Editor<T = string> {
   public start(): Point<T> {
     const txt = this.txt;
     return txt.pointStart() ?? txt.pointAbsStart();
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  public toString(tab: string = ''): string {
+    const pending = this.pendingFormats.value;
+    const pendingFormatted = {} as any;
+    for (const type in pending) pendingFormatted[formatType(type)] = pendingFormatted[type];
+    return (
+      `Editor` +
+      printTree(tab, [
+        () => `pending ${stringify(pendingFormatted)}`
+      ])
+    );
   }
 }
