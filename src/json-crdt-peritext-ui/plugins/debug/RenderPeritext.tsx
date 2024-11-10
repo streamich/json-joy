@@ -1,20 +1,23 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {drule, rule, useTheme} from 'nano-theme';
 import {context} from './context';
+import {Button} from '../minimal/Button';
 import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
 
 const blockClass = rule({
   pos: 'relative',
 });
 
-const btnClass = rule({
+const btnClass = drule({
+  d: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   pos: 'absolute',
-  t: 0,
+  t: '-16px',
   r: 0,
-  bg: 'black',
-  col: 'white',
-  fz: '9px',
-  bdrad: '4px',
+  pd: '2px',
+  bdrad: '8px',
+  bxsh: '0 1px 8px #00000008,0 1px 4px #0000000a,0 4px 10px #0000000f',
 });
 
 const childrenDebugClass = rule({
@@ -40,14 +43,19 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
   ctx,
   children,
 }) => {
+  const theme = useTheme();
   const [enabled, setEnabled] = React.useState(enabledProp);
 
   return (
     <context.Provider value={{enabled}}>
       <div className={blockClass}>
-        <button type={'button'} className={btnClass} onClick={() => setEnabled((x) => !x)}>
-          Toggle debug mode
-        </button>
+        <div className={btnClass({
+          bg: theme.bg,
+        })}>
+          <Button active={enabled} onClick={() => setEnabled((x) => !x)}>
+            Debug
+          </Button>
+        </div>
         <div className={enabled ? childrenDebugClass : undefined}>{children}</div>
         {enabled && (
           <div className={dumpClass}>
