@@ -7,6 +7,7 @@ import {ChunkSlice} from '../util/ChunkSlice';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
+import {formatType} from '../slice/util';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
@@ -270,11 +271,7 @@ export class Inline extends Range implements Printable {
               printTree(
                 tab,
                 attrKeys.map((key) => () => {
-                  let keyFormatted: string = key;
-                  const numKey = Number(key);
-                  if (numKey + '' === key && Math.abs(numKey) <= 64 && CommonSliceType[numKey])
-                    keyFormatted = '<' + CommonSliceType[numKey] + '>';
-                  return keyFormatted +
+                  return formatType(key) +
                     ' = ' +
                     stringify(
                       attr[key].map((attr) =>
