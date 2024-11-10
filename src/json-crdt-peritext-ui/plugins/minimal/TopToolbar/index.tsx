@@ -5,6 +5,7 @@ import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import type {PeritextSurfaceContextValue} from '../../../react';
 import {useSyncStore} from '../../../react/hooks';
+import {SliceBehavior} from '../../../../json-crdt-extensions/peritext/slice/constants';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceContextValue;
@@ -46,6 +47,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {button(CommonSliceType.math, 'Math')}
       {button(CommonSliceType.hidden, 'Spoiler')}
       {button(CommonSliceType.bookmark, 'Bookmark')}
+      {button2('Blue', () => {
+        ctx.dom.et.format(CommonSliceType.col, 'one', '#07f');
+      })}
       {button2('Erase', () => {
         ctx.dom.et.format({behavior: 'erase'});
       })}
