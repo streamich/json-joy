@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-crdt/nodes/nodes.ts</title>
+    <title>Code coverage report for util/events/sync-store.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">json-crdt/nodes</a> nodes.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">util/events</a> sync-store.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">46.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>19/19</span>
+                <span class='fraction'>7/15</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>1/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">58.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>7/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -92,7 +92,8 @@
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -102,54 +103,56 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">2774x</span>
+<span class="cline-any cline-yes">2774x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2774x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2774x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1442466x</span>
-<span class="cline-any cline-yes">534402x</span>
-<span class="cline-any cline-yes">33422x</span>
-<span class="cline-any cline-yes">306169x</span>
-<span class="cline-any cline-yes">829800x</span>
-<span class="cline-any cline-yes">352068x</span>
-<span class="cline-any cline-yes">321246x</span>
-<span class="cline-any cline-yes">689538x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {ITimestampStruct} from '../../json-crdt-patch/clock';
-import type {ConNode} from './const/ConNode';
-import type {ValNode} from './val/ValNode';
-import type {VecNode} from './vec/VecNode';
-import type {JsonNode} from './types';
-import type {ObjNode} from './obj/ObjNode';
-import type {StrNode} from './str/StrNode';
-import type {BinNode} from './bin/BinNode';
-import type {ArrNode} from './arr/ArrNode';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {FanOut} from 'thingies/lib/fanout';
 &nbsp;
-// tslint:disable-next-line:no-namespace
-export namespace n {
-  export type con&lt;View = unknown | ITimestampStruct&gt; = ConNode&lt;View&gt;;
-  export type val&lt;Value extends JsonNode = JsonNode&gt; = ValNode&lt;Value&gt;;
-  export type vec&lt;Value extends JsonNode[] = JsonNode[]&gt; = VecNode&lt;Value&gt;;
-  export type obj&lt;Value extends Record&lt;string, JsonNode&gt; = Record&lt;string, JsonNode&gt;&gt; = ObjNode&lt;Value&gt;;
-  export type str&lt;T extends string = string&gt; = StrNode&lt;T&gt;;
-  export type bin = BinNode;
-  export type arr&lt;Element extends JsonNode = JsonNode&gt; = ArrNode&lt;Element&gt;;
+export interface SyncStore&lt;T&gt; {
+  subscribe: SyncStoreSubscribe;
+  getSnapshot: () =&gt; T;
 }
 &nbsp;
-export {ConNode} from './const/ConNode';
-export {ValNode} from './val/ValNode';
-export {RootNode} from './root/RootNode';
-export {VecNode} from './vec/VecNode';
-export {ObjNode} from './obj/ObjNode';
-export {ArrNode, ArrChunk} from './arr/ArrNode';
-export {BinNode, BinChunk} from './bin/BinNode';
-export {StrNode, StrChunk} from './str/StrNode';
+export type SyncStoreSubscribe = (callback: () =&gt; void) =&gt; SyncStoreUnsubscribe;
+export type SyncStoreUnsubscribe = () =&gt; void;
+&nbsp;
+export class FanoutSyncStore&lt;T&gt; implements SyncStore&lt;T&gt; {
+  private readonly <span class="cstat-no" title="statement not covered" >fanout: FanOut&lt;void&gt; = new FanOut&lt;void&gt;();</span>
+  public readonly <span class="cstat-no" title="statement not covered" >subscribe: SyncStoreSubscribe = <span class="fstat-no" title="function not covered" >(c</span>b) =&gt; <span class="cstat-no" title="statement not covered" >this.fanout.listen(cb);</span></span>
+&nbsp;
+<span class="fstat-no" title="function not covered" >  constructor(public readonly <span class="cstat-no" title="statement not covered" >g</span>etSnapshot: () =&gt; T)</span> {}
+}
+&nbsp;
+export class ValueSyncStore&lt;V&gt; implements SyncStore&lt;V&gt; {
+  private readonly fanout: FanOut&lt;void&gt; = new FanOut&lt;void&gt;();
+  public readonly subscribe: SyncStoreSubscribe = <span class="fstat-no" title="function not covered" >(c</span>b) =&gt; <span class="cstat-no" title="statement not covered" >this.fanout.listen(cb);</span>
+&nbsp;
+  constructor(public value: V) {}
+&nbsp;
+  public readonly getSnapshot: () =&gt; V = <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >this.value;</span>
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >next(</span>value: V): void {
+<span class="cstat-no" title="statement not covered" >    this.value = value;</span>
+<span class="cstat-no" title="statement not covered" >    this.fanout.emit();</span>
+  }
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
