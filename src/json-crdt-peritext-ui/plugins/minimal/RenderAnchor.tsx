@@ -28,11 +28,11 @@ const blockClass = rule({
 
 const innerClass = rule({
   pos: 'absolute',
-  l: 'calc(max(-8px,-0.25em))',
+  l: 'calc(max(-6px,-0.2em))',
   t: '-0.05em',
-  w: 'calc(min(16px,0.5em))',
+  w: 'calc(min(12px,0.4em))',
   h: 'calc(min(16px,0.5em))',
-  bdrad: '50%/30%',
+  bdrad: '50%/20%',
   bg: DefaultRendererColors.ActiveCursor,
   an: fadeInAnimation + ' .25s ease-out',
   animationFillMode: 'forwards',
