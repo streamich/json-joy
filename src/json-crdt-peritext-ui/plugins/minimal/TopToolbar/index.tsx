@@ -32,7 +32,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
   );
 
   return (
-    <ButtonGroup>
+    <ButtonGroup style={{marginBottom: 8}}>
       {button(CommonSliceType.b, 'Bold')}
       {button(CommonSliceType.i, 'Italic')}
       {button(CommonSliceType.u, 'Underline')}

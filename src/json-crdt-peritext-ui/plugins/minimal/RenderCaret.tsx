@@ -34,7 +34,7 @@ const innerClass = rule({
   d: 'inline-block',
   b: '-0.4em',
   l: '-0.065em',
-  w: '.2em',
+  w: `calc(max(.2em, 3px))`,
   h: '1.5em',
   bg: DefaultRendererColors.ActiveCursor,
   bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,

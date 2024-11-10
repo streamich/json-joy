@@ -23,14 +23,13 @@ const blockClass = rule({
   us: 'none',
   w: '0px',
   h: '100%',
-  bg: 'black',
-  va: 'top',
+  va: 'center',
 });
 
 const innerClass = rule({
   pos: 'absolute',
-  left: 'calc(max(-8px,-0.25em))',
-  top: '.85em',
+  l: 'calc(max(-8px,-0.25em))',
+  t: '-0.05em',
   w: 'calc(min(16px,0.5em))',
   h: 'calc(min(16px,0.5em))',
   bdrad: '50%/30%',
