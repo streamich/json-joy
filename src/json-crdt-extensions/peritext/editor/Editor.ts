@@ -15,13 +15,13 @@ import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
 
 /**
-   * For inline boolean ("Overwrite") slices, both range endpoints should be
-   * attached to {@link Anchor.Before} as per the Peritext paper. This way, say
-   * bold text, automatically extends to include the next character typed as
-   * user types.
-   *
-   * @param range The range to be adjusted.
-   */
+ * For inline boolean ("Overwrite") slices, both range endpoints should be
+ * attached to {@link Anchor.Before} as per the Peritext paper. This way, say
+ * bold text, automatically extends to include the next character typed as
+ * user types.
+ *
+ * @param range The range to be adjusted.
+ */
 const makeRangeExtendable = <T>(range: Range<T>): void => {
   if (range.end.anchor !== Anchor.Before || range.start.anchor !== Anchor.Before) {
     const start = range.start.clone();
@@ -483,13 +483,14 @@ export class Editor<T = string> {
 
   // --------------------------------------------------------------- formatting
 
-  protected getSliceStore(slice: PersistedSlice<T>): EditorSlices<T> | void {
+  protected getSliceStore(slice: PersistedSlice<T>): EditorSlices<T> | undefined {
     const sid = slice.id.sid;
     if (sid === this.saved.slices.set.doc.clock.sid) return this.saved;
     if (sid === this.extra.slices.set.doc.clock.sid) return this.extra;
     if (sid === this.local.slices.set.doc.clock.sid) return this.local;
+    return;
   }
-  
+
   public toggleExclusiveFormatting(type: SliceType, data?: unknown, store: EditorSlices<T> = this.saved): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     const overlay = this.txt.overlay;
@@ -510,7 +511,6 @@ export class Editor<T = string> {
         const [complete2, partial2] = overlay.stat(cursor, 1e6);
         const needsErase = complete2.has(type) || partial2.has(type);
         if (needsErase) store.insErase(type);
-        continue;
       } else {
         if (cursor.start.isAbs() || cursor.end.isAbs()) continue;
         store.insOverwrite(type, data);

@@ -29,20 +29,13 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
   const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
 
   const button = (type: string | number, name: React.ReactNode) => (
-    <Button
-      onClick={() => ctx.dom.et.format(type)}
-      onMouseDown={(e) => e.preventDefault()}
-      active={complete.has(type)}
-    >
+    <Button onClick={() => ctx.dom.et.format(type)} onMouseDown={(e) => e.preventDefault()} active={complete.has(type)}>
       {name}
     </Button>
   );
 
   const button2 = (name: React.ReactNode, onClick: React.MouseEventHandler) => (
-    <Button
-      onClick={onClick}
-      onMouseDown={(e) => e.preventDefault()}
-    >
+    <Button onClick={onClick} onMouseDown={(e) => e.preventDefault()}>
       {name}
     </Button>
   );

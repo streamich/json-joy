@@ -178,15 +178,15 @@ export interface FormatDetail {
   /**
    * Type of the annotation. The type is used to determine the visual style of
    * the annotation, for example, the type `'bold'` may render the text in bold.
-   * 
+   *
    * For common formatting use the {@link CommonSliceType} enum. It contains
    * a unique numeric value for each common formatting types. Numeric values
    * are best for performance and memory usage. Values in the rage -64 to 64 are
    * reserved for common formatting types.
-   * 
+   *
    * For custom formatting, you can use a string value, for example,
    * `'highlight'`. Or use an integer with absolute value greater than 64.
-   * 
+   *
    * Inline formatting types are restricted to a single string or integer value.
    * Nester formatting, say `['p', 'blockquote', 'h1']` is reserved for block
    * formatting, in which case a nested structure like
@@ -198,7 +198,7 @@ export interface FormatDetail {
    * Arbitrary data associated with the formatting. Usually, stored with
    * annotations of "stack" behavior, for example, an "<a>" tag annotation may
    * store the href attribute in this field.
-   * 
+   *
    * @default undefined
    */
   data?: unknown;
@@ -210,14 +210,14 @@ export interface FormatDetail {
    * the annotation is not stacked, only one such annotation can be applied per
    * character. The `'erase'` behavior is used to remove the `'many`' or
    * `'one'` annotation from the the given range.
-   * 
+   *
    * The special `'clear'` behavior is used to remove all annotations
    * that intersect with any part of any of the cursors in the document. Usage:
-   * 
+   *
    * ```js
    * {type: 'clear'}
    * ```
-   * 
+   *
    * @default 'one'
    */
   behavior?: 'one' | 'many' | 'erase' | 'clear';
@@ -228,7 +228,7 @@ export interface FormatDetail {
    * is an ephemeral document, which is not persisted but can be replicated
    * across clients. `'local'` is a local document, which is accessible only to
    * the local client, for example, for storing cursor or selection information.
-   * 
+   *
    * @default 'saved'
    */
   store?: 'saved' | 'extra' | 'local';

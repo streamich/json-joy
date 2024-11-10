@@ -89,7 +89,7 @@ export enum SliceBehavior {
    * or more annotations of the same type to apply to the same text. Slices with
    * behavior `Many` are appended to the stack of attributes for a specific
    * slice type. With the most recent annotation on top.
-   * 
+   *
    * Slices with behavior `Many` are used for inline formatting, like for links,
    * comments, etc. Where multiple annotations of the same type can be applied
    * to the same text.
@@ -111,7 +111,7 @@ export enum SliceBehavior {
    * range. The erase slices soft remove only the annotations which were applied
    * before the erase slice, as determined by the logical clock (there could
    * be many layers of annotations applied and erased).
-   * 
+   *
    * Usually slices with behavior `Erase` are used to reverse inline exclusive
    * (`One`) inline formatting, like bold, italic, etc.
    */
