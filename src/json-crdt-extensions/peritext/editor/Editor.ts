@@ -61,7 +61,7 @@ export class Editor<T = string> implements Printable {
 
   // ------------------------------------------------------------------ cursors
 
-  public addCursor(range: Range<T>, anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
+  public addCursor(range: Range<T> = this.txt.rangeAt(0), anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
     const cursor = this.txt.localSlices.ins<Cursor<T>, typeof Cursor>(
       range,
       SliceBehavior.Cursor,
@@ -85,7 +85,7 @@ export class Editor<T = string> implements Printable {
     for (let i: Cursor<T> | undefined, iterator = this.cursors0(); (i = iterator()); )
       if (!cursor) cursor = i;
       else this.local.del(i);
-    return cursor ?? this.addCursor(this.txt.rangeAt(0));
+    return cursor ?? this.addCursor();
   }
 
   public cursors0(): UndefIterator<Cursor<T>> {
@@ -110,6 +110,11 @@ export class Editor<T = string> implements Printable {
     return cnt;
   }
 
+  /** Returns true if there is at least one cursor in the document. */
+  public hasCursor(): boolean {
+    return !!this.cursors0()();
+  }
+
   public delCursor(cursor: Cursor<T>): void {
     this.local.del(cursor);
   }
@@ -125,12 +130,22 @@ export class Editor<T = string> implements Printable {
    * the range is removed and the text is inserted at the start of the range.
    */
   public insert(text: string): void {
-    let cnt = 0;
+    if (!this.hasCursor()) this.addCursor();
     this.forCursor((cursor) => {
-      cnt++;
       cursor.insert(text);
+      const pending = this.pendingFormats.value;
+      if (pending) {
+        this.pendingFormats.next({});
+        const start = cursor.start.clone();
+        start.step(-text.length);
+        const range = this.txt.range(start, cursor.end.clone());
+        makeRangeExtendable(range);
+        for (const type in pending) {
+          const data = pending[type];
+          this.saved.slices.insOverwrite(range, type, data)
+        }
+      }
     });
-    if (!cnt) this.cursor.insert(text);
   }
 
   /**
