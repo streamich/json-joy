@@ -23,7 +23,7 @@ export const Button: React.FC<ButtonProps> = ({active, children, ...rest}) => {
   const className =
     (rest.className || '') +
     blockClass({
-      bdrad: active ? '.6em' : '.4em',
+      bdrad: active ? '12px' : '6px',
       bg: active ? '#07f' : 'rgba(61, 37, 20, .08)',
       col: active ? 'white' : 'black',
       '&:hover': {
