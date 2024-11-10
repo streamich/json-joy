@@ -517,7 +517,8 @@ export class Editor<T = string> implements Printable {
 
   protected toggleRangeExclFmt(range: Range<T>, type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
     if (range.isCollapsed()) throw new Error('Range is collapsed');
-    const overlay = this.txt.overlay;
+    const txt = this.txt;
+    const overlay = txt.overlay;
     const [complete] = overlay.stat(range, 1e6);
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
@@ -534,7 +535,18 @@ export class Editor<T = string> implements Printable {
       const needsErase = complete2.has(type) || partial2.has(type);
       if (needsErase) store.slices.insErase(range, type);
     } else {
-      if (range.start.isAbs() || range.end.isAbs()) return;
+      if (range.start.isAbs()) {
+        const start = txt.pointStart();
+        if (!start) return;
+        if (start.cmpSpatial(range.end) >= 0) return;
+        range.start = start;
+      }
+      if (range.end.isAbs()) {
+        const end = txt.pointEnd();
+        if (!end) return;
+        if (end.cmpSpatial(range.start) <= 0) return;
+        range.end = end;
+      }
       store.slices.insOverwrite(range, type, data);
     }
   }
