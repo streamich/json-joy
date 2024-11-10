@@ -14,6 +14,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
   const value: MinimalPluginContextValue = React.useMemo(() => ({
     ctx,
     score: new ValueSyncStore(0),
+    scoreDelta: new ValueSyncStore(0),
   }), [ctx]);
   React.useEffect(() => {
     const dom = ctx?.dom;
@@ -21,7 +22,10 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
     let lastNow: number = 0;
     const listener = () => {
       const now = Date.now();
-      value.score.next(now - lastNow > 1000 ? 1 : value.score.value + 1);
+      const timeDiff = now - lastNow;
+      const delta = timeDiff < 30 ? 10 : timeDiff < 100 ? 5 : timeDiff < 300 ? 2 : timeDiff <= 1000 ? 1 : 0;
+      value.score.next(delta ? value.score.value + delta : 0);
+      value.scoreDelta.next(delta);
       lastNow = now;
     };
     dom.et.addEventListener('change', listener);

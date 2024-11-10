@@ -30,6 +30,30 @@ export const scoreAnimation = keyframes({
   },
 });
 
+export const scoreMessageAnimation = keyframes({
+  from: {
+    op: 1,
+  },
+  to: {
+    op: 0,
+  },
+});
+
+export const scoreDeltaAnimation = keyframes({
+  from: {
+    op: 1,
+    tr: 'scale(1.2)',
+  },
+  '99%': {
+    op: .8,
+    tr: 'scale(.1)',
+  },
+  to: {
+    op: 0,
+    tr: 'scale(.1)',
+  },
+});
+
 const blockClass = rule({
   pos: 'relative',
   d: 'inline-block',
@@ -65,6 +89,23 @@ const scoreClass = rule({
   op: .5,
   an: scoreAnimation + ' .5s ease-out',
   animationFillMode: 'forwards',
+  ws: 'nowrap',
+  pe: 'none',
+  us: 'none',
+});
+
+const scoreDeltaClass = rule({
+  pos: 'absolute',
+  d: 'inline-block',
+  b: '0.9em',
+  l: '1.2em',
+  fz: '.5em',
+  op: .5,
+  col: 'blue',
+  an: scoreAnimation + ' .3s ease-out',
+  animationFillMode: 'forwards',
+  pe: 'none',
+  us: 'none',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -74,7 +115,7 @@ export interface RenderCaretProps extends CaretViewProps {
 export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const ctx = usePeritext();
   const pending = useSyncStore(ctx.peritext.editor.pending);
-  const {score} = usePlugin();
+  const {score, scoreDelta} = usePlugin();
   const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
@@ -92,9 +133,34 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
     style.rotate = '11deg';
   }
 
+  const s = score.value;
+  const d = scoreDelta.value;
+  const scoreMsg = s > 100 && s <= 110
+    ? 'Killing Spree!'
+      : s > 300 && s <= 320
+        ? 'Rampage!'
+        : s > 600 && s <= 620
+          ? 'Unstoppable!'
+          : s > 1000 && s <= 1030
+            ? 'Godlike!'
+            : s > 2000 && s <= 2030
+              ? 'Legendary!'
+              : s > 4000 && s <= 4040
+                ? 'Beyond Godlike!'
+                : s > 8000 && s <= 8040
+                  ? 'Wicked Sick!'
+                  : s > 16000 && s <= 16050
+                    ? 'Monster Kill!'
+                    : s > 32000 && s <= 32050
+                      ? 'Ultra Kill!'
+                      : s > 64000 && s <= 64050
+                        ? 'M-M-M-Monster Kill!'
+                        : s;
+
   return (
     <span className={blockClass}>
-      {score.value > 9 && <span className={scoreClass}>{score.value}</span>}
+      {s > 9 && <span className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? scoreMessageAnimation + ' .7s ease-out' : undefined}}>{scoreMsg}</span>}
+      {(typeof scoreMsg === 'string' || (s > 42 && d > 1)) && <span className={scoreDeltaClass}>+{d}</span>}
       <span className={innerClass} style={style}>
         {children}
       </span>
