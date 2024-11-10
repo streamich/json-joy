@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {drule, rule, useTheme} from 'nano-theme';
 import {context} from './context';
-import {Button} from '../minimal/Button';
+import {Button} from '../../components/Button';
 import {Console} from './Console';
 import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
+import {ValueSyncStore} from '../../../util/events/sync-store';
 
 const blockClass = rule({
   pos: 'relative',
@@ -25,13 +26,6 @@ const childrenDebugClass = rule({
   out: '1px dotted black !important',
 });
 
-const dumpClass = rule({
-  bg: '#fafafa',
-  fz: '8px',
-  pad: '8px 16px',
-  bxz: 'border-box',
-});
-
 export interface RenderPeritextProps extends PeritextViewProps {
   enabled?: boolean;
   children?: React.ReactNode;
@@ -40,15 +34,24 @@ export interface RenderPeritextProps extends PeritextViewProps {
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({
   enabled: enabledProp = true,
-  peritext,
   ctx,
   children,
 }) => {
   const theme = useTheme();
   const [enabled, setEnabled] = React.useState(enabledProp);
+  const value = React.useMemo(() => ({
+    enabled,
+    ctx,
+    flags: {
+      dom: new ValueSyncStore<boolean>(true),
+      editor: new ValueSyncStore<boolean>(true),
+      peritext: new ValueSyncStore<boolean>(true),
+      model: new ValueSyncStore<boolean>(false),
+    },
+  }), [enabled, ctx]);
 
   return (
-    <context.Provider value={{enabled, ctx}}>
+    <context.Provider value={value}>
       <div className={blockClass}>
         <div className={btnClass({
           bg: theme.bg,

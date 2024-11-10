@@ -1,22 +1,9 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {rule} from 'nano-theme';
-import {Button} from '../Button';
+import {Button} from '../../../components/Button';
 import {useDefaultCtx} from '../context';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
-
-const blockClass = rule({
-  d: 'flex',
-  flw: 'wrap',
-  columnGap: '4px',
-  rowGap: '4px',
-  w: '100%',
-  maxW: '100%',
-  bxz: 'border-box',
-  ff: 'Inter, ui-sans-serif, system-ui, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-  lh: '24px',
-  mr: 0,
-});
+import {ButtonGroup} from '../../../components/ButtonGroup';
 
 // biome-ignore lint: empty interface
 export type TopToolbarProps = {};
@@ -41,7 +28,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
   );
 
   return (
-    <div className={blockClass}>
+    <ButtonGroup>
       {button(CommonSliceType.b, 'Bold')}
       {button(CommonSliceType.i, 'Italic')}
       {button(CommonSliceType.u, 'Underline')}
@@ -61,6 +48,6 @@ export const TopToolbar: React.FC<TopToolbarProps> = () => {
       {button2('Clear', () => {
         ctx.dom.et.format({behavior: 'clear'});
       })}
-    </div>
+    </ButtonGroup>
   );
 };
