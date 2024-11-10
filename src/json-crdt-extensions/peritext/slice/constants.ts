@@ -56,12 +56,13 @@ export enum CommonSliceType {
   font = -16, // <span style="font-family: ...">
   col = -17, // <span style="color: ...">
   bg = -18, // <span style="background: ...">
-  hidden = -19, // <span style="color: transparent; background: black">
-  footnote = -20, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
-  ref = -21, // <a> with href="#ref-..." and title="Reference ..."
-  iaside = -22, // Inline <aside>
-  iembed = -23, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
-  bookmark = -24, // UI for creating a link to this slice
+  kbd = -19, // <kbd>
+  hidden = -20, // <span style="color: transparent; background: black">
+  footnote = -21, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
+  ref = -22, // <a> with href="#ref-..." and title="Reference ..."
+  iaside = -23, // Inline <aside>
+  iembed = -24, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
+  bookmark = -25, // UI for creating a link to this slice
 }
 
 export enum SliceHeaderMask {

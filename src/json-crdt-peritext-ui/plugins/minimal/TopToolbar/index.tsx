@@ -44,6 +44,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {button(CommonSliceType.sup, 'Superscript')}
       {button(CommonSliceType.sub, 'Subscript')}
       {button(CommonSliceType.math, 'Math')}
+      {button(CommonSliceType.kbd, 'Key')}
       {button(CommonSliceType.hidden, 'Spoiler')}
       {button(CommonSliceType.bookmark, 'Bookmark')}
       {button2('Blue', () => {
