@@ -32,30 +32,31 @@ export interface RenderPeritextProps extends PeritextViewProps {
   ctx?: PeritextSurfaceContextValue;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({
-  enabled: enabledProp = true,
-  ctx,
-  children,
-}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, ctx, children}) => {
   const theme = useTheme();
   const [enabled, setEnabled] = React.useState(enabledProp);
-  const value = React.useMemo(() => ({
-    enabled,
-    ctx,
-    flags: {
-      dom: new ValueSyncStore<boolean>(true),
-      editor: new ValueSyncStore<boolean>(true),
-      peritext: new ValueSyncStore<boolean>(true),
-      model: new ValueSyncStore<boolean>(false),
-    },
-  }), [enabled, ctx]);
+  const value = React.useMemo(
+    () => ({
+      enabled,
+      ctx,
+      flags: {
+        dom: new ValueSyncStore<boolean>(true),
+        editor: new ValueSyncStore<boolean>(true),
+        peritext: new ValueSyncStore<boolean>(true),
+        model: new ValueSyncStore<boolean>(false),
+      },
+    }),
+    [enabled, ctx],
+  );
 
   return (
     <context.Provider value={value}>
       <div className={blockClass}>
-        <div className={btnClass({
-          bg: theme.bg,
-        })}>
+        <div
+          className={btnClass({
+            bg: theme.bg,
+          })}
+        >
           <Button small active={enabled} onClick={() => setEnabled((x) => !x)}>
             Debug
           </Button>

@@ -8,7 +8,7 @@ import type {PeritextSurfaceContextValue} from '../../../react';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceContextValue;
-};
+}
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
   const pending = useSyncStore(ctx.peritext.editor.pending);

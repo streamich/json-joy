@@ -66,11 +66,13 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     [peritext],
   );
 
-  const ctx: undefined | PeritextSurfaceContextValue = React.useMemo(() => dom ? {peritext, dom, renderers, rerender} : undefined, [peritext, dom, renderers, rerender]);
+  const ctx: undefined | PeritextSurfaceContextValue = React.useMemo(
+    () => (dom ? {peritext, dom, renderers, rerender} : undefined),
+    [peritext, dom, renderers, rerender],
+  );
 
   const block = peritext.blocks.root;
   if (!block) return null;
-
 
   let children: React.ReactNode = (
     <div ref={ref} className={CssClass.Editor}>

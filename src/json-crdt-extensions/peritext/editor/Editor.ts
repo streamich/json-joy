@@ -139,8 +139,7 @@ export class Editor<T = string> implements Printable {
         const start = cursor.start.clone();
         start.step(-text.length);
         const range = this.txt.range(start, cursor.end.clone());
-        for (const [type, data] of pending)
-          this.toggleRangeExclFmt(range, type, data);
+        for (const [type, data] of pending) this.toggleRangeExclFmt(range, type, data);
       }
     }
   }
@@ -515,7 +514,12 @@ export class Editor<T = string> implements Printable {
     return;
   }
 
-  protected toggleRangeExclFmt(range: Range<T>, type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
+  protected toggleRangeExclFmt(
+    range: Range<T>,
+    type: CommonSliceType | string | number,
+    data?: unknown,
+    store: EditorSlices<T> = this.saved,
+  ): void {
     if (range.isCollapsed()) throw new Error('Range is collapsed');
     const txt = this.txt;
     const overlay = txt.overlay;
@@ -551,7 +555,11 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public toggleExclFmt(type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
+  public toggleExclFmt(
+    type: CommonSliceType | string | number,
+    data?: unknown,
+    store: EditorSlices<T> = this.saved,
+  ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
     CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
@@ -627,11 +635,6 @@ export class Editor<T = string> implements Printable {
     const pending = this.pending.value;
     const pendingFormatted = {} as any;
     for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
-    return (
-      `Editor` +
-      printTree(tab, [
-        () => `pending ${stringify(pendingFormatted)}`
-      ])
-    );
+    return 'Editor' + printTree(tab, [() => `pending ${stringify(pendingFormatted)}`]);
   }
 }

@@ -271,13 +271,15 @@ export class Inline extends Range implements Printable {
               printTree(
                 tab,
                 attrKeys.map((key) => () => {
-                  return formatType(key) +
+                  return (
+                    formatType(key) +
                     ' = ' +
                     stringify(
                       attr[key].map((attr) =>
                         attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data(),
                       ),
-                    );
+                    )
+                  );
                 }),
               ),
         !this.texts.length

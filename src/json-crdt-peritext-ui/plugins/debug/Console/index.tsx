@@ -1,3 +1,4 @@
+// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useDebugCtx} from '../context';
@@ -14,7 +15,8 @@ const consoleClass = rule({
   bdrad: '8px',
 });
 
-export interface ConsoleProps {}
+// biome-ignore lint: empty interface
+export type ConsoleProps = {};
 
 export const Console: React.FC<ConsoleProps> = () => {
   const {ctx, flags} = useDebugCtx();
@@ -28,10 +30,18 @@ export const Console: React.FC<ConsoleProps> = () => {
   return (
     <div className={consoleClass}>
       <ButtonGroup>
-        <Button small active={dom} onClick={() => flags.dom.next(!dom)}>DOM</Button>
-        <Button small active={editor} onClick={() => flags.editor.next(!editor)}>Editor</Button>
-        <Button small active={peritext} onClick={() => flags.peritext.next(!peritext)}>Peritext</Button>
-        <Button small active={model} onClick={() => flags.model.next(!model)}>Model</Button>
+        <Button small active={dom} onClick={() => flags.dom.next(!dom)}>
+          DOM
+        </Button>
+        <Button small active={editor} onClick={() => flags.editor.next(!editor)}>
+          Editor
+        </Button>
+        <Button small active={peritext} onClick={() => flags.peritext.next(!peritext)}>
+          Peritext
+        </Button>
+        <Button small active={model} onClick={() => flags.model.next(!model)}>
+          Model
+        </Button>
       </ButtonGroup>
       {!!dom && <pre>{ctx.dom + ''}</pre>}
       {!!editor && <pre>{ctx.peritext.editor + ''}</pre>}

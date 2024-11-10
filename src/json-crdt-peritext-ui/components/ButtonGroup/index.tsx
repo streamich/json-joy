@@ -20,9 +20,5 @@ export interface ButtonGroup {
 }
 
 export const ButtonGroup: React.FC<ButtonGroup> = ({children}) => {
-  return (
-    <div className={blockClass}>
-      {children}
-    </div>
-  );
+  return <div className={blockClass}>{children}</div>;
 };

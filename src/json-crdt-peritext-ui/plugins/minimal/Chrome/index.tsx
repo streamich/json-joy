@@ -21,7 +21,7 @@ export interface ChromeProps {
 
 export const Chrome: React.FC<ChromeProps> = ({children}) => {
   const {ctx} = useDefaultCtx();
-  
+
   return (
     <div className={blockClass}>
       {!!ctx && <TopToolbar ctx={ctx} />}

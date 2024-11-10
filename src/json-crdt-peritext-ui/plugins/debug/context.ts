@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ValueSyncStore} from '../../../util/events/sync-store';
+import type {ValueSyncStore} from '../../../util/events/sync-store';
 import type {PeritextSurfaceContextValue} from '../../react';
 
 export interface DebugRenderersContextValue {
