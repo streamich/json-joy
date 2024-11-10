@@ -2,6 +2,7 @@ import * as React from 'react';
 import {drule, rule, useTheme} from 'nano-theme';
 import {context} from './context';
 import {Button} from '../minimal/Button';
+import {Console} from './Console';
 import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
 
 const blockClass = rule({
@@ -47,7 +48,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
   const [enabled, setEnabled] = React.useState(enabledProp);
 
   return (
-    <context.Provider value={{enabled}}>
+    <context.Provider value={{enabled, ctx}}>
       <div className={blockClass}>
         <div className={btnClass({
           bg: theme.bg,
@@ -57,13 +58,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
           </Button>
         </div>
         <div className={enabled ? childrenDebugClass : undefined}>{children}</div>
-        {enabled && (
-          <div className={dumpClass}>
-            {!!ctx && <pre>{ctx.dom + ''}</pre>}
-            <pre>{peritext.editor + ''}</pre>
-            <pre>{peritext + ''}</pre>
-          </div>
-        )}
+        {enabled && <Console />}
       </div>
     </context.Provider>
   );
