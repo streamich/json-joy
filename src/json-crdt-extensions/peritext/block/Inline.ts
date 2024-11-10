@@ -269,16 +269,19 @@ export class Inline extends Range implements Printable {
               'attributes' +
               printTree(
                 tab,
-                attrKeys.map(
-                  (key) => () =>
-                    key +
+                attrKeys.map((key) => () => {
+                  let keyFormatted: string = key;
+                  const numKey = Number(key);
+                  if (numKey + '' === key && Math.abs(numKey) <= 64 && CommonSliceType[numKey])
+                    keyFormatted = '<' + CommonSliceType[numKey] + '>';
+                  return keyFormatted +
                     ' = ' +
                     stringify(
                       attr[key].map((attr) =>
                         attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data(),
                       ),
-                    ),
-                ),
+                    );
+                }),
               ),
         !this.texts.length
           ? null
