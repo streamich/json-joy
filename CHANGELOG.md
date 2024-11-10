@@ -1,3 +1,30 @@
+# [17.15.0](https://github.com/streamich/json-joy/compare/v17.14.0...v17.15.0) (2024-11-10)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 correct anchor edge rendering ([469946f](https://github.com/streamich/json-joy/commit/469946fd1617d513611025d6cb4c41459b285889))
+* **json-crdt-peritext-ui:** 🐛 make caret rotation more precise ([93a869d](https://github.com/streamich/json-joy/commit/93a869d97e2a4642a8eaecaf3fb940529ebf34a2))
+* **json-crdt-peritext-ui:** 🐛 remove all slices of given type ([8d246b2](https://github.com/streamich/json-joy/commit/8d246b261c6cb1e6d932d878f428d5c02fdc473e))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add ability to toggle inline boolean formatting ([2ef6320](https://github.com/streamich/json-joy/commit/2ef63201f833aadd2a27066858ccbc28d4bf95fa))
+* **json-crdt-extensions:** 🎸 debug print slice metadata ([08e867e](https://github.com/streamich/json-joy/commit/08e867e4004c9bc06949ad13f745ab9c79a24773))
+* **json-crdt-extensions:** 🎸 improve boolean annotation handling ([3101fbc](https://github.com/streamich/json-joy/commit/3101fbc586f1dacd89ef2495442bf181a119081e))
+* **json-crdt-extensions:** 🎸 improve storage detection when deleting slices ([e1a8deb](https://github.com/streamich/json-joy/commit/e1a8deb494da0873d9b2b9c3b8c34a44f3885d28))
+* **json-crdt-extensions:** 🎸 print well known slice type ([9e5215c](https://github.com/streamich/json-joy/commit/9e5215c8961f06213f594bbba316cd4e937e3c79))
+* **json-crdt-extensions:** 🎸 rename SliceBehavior members and add JSDOcs ([5da6d1c](https://github.com/streamich/json-joy/commit/5da6d1cd76d6fa4be20e34c2a83cc7aa991e3f3f))
+* **json-crdt-peritext-ui:** 🎸 add "clear" inline formatting behavior ([e063802](https://github.com/streamich/json-joy/commit/e063802149a09e9e835579fed242526c2819ce79))
+* **json-crdt-peritext-ui:** 🎸 add ability to erase formatting ([b94ec9d](https://github.com/streamich/json-joy/commit/b94ec9d385ce04d3548a929ecf55f83650191feb))
+* **json-crdt-peritext-ui:** 🎸 animate achor appearance ([9b51f72](https://github.com/streamich/json-joy/commit/9b51f72f174787769ccdbf1db31a506af22f2487))
+* **json-crdt-peritext-ui:** 🎸 animate carret while typing ([e180e28](https://github.com/streamich/json-joy/commit/e180e28ffccbd9082cc8aab4f9bf6bf9438022d3))
+* **json-crdt-peritext-ui:** 🎸 fixup default format event usage ([575fb52](https://github.com/streamich/json-joy/commit/575fb526686e68ef12cfd87f76ec60a3680873d6))
+* **json-crdt-peritext-ui:** 🎸 improve boolean slice insertion method ([08823fc](https://github.com/streamich/json-joy/commit/08823fc3459073d55b0a65f4f94da64a033a8926))
+* **json-crdt-peritext-ui:** 🎸 improve inline "format" event ([453e0e8](https://github.com/streamich/json-joy/commit/453e0e8d7554ad364795f2df82fe77898753b7fb))
+* **json-crdt-peritext-ui:** 🎸 improve slice italic focus edge rendering ([1fb893c](https://github.com/streamich/json-joy/commit/1fb893ceae6c03eb7fc419999b0e0b3d6fedcc82))
+
 # [17.14.0](https://github.com/streamich/json-joy/compare/v17.13.0...v17.14.0) (2024-11-07)
 
 
