@@ -6,6 +6,7 @@ import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/selection/CaretView';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
+import {usePlugin} from './context';
 
 const ms = 350;
 
@@ -15,6 +16,17 @@ export const moveAnimation = keyframes({
   },
   to: {
     tr: 'scale(1)',
+  },
+});
+
+export const scoreAnimation = keyframes({
+  from: {
+    op: .7,
+    tr: 'scale(1.2)',
+  },
+  to: {
+    op: 0,
+    tr: 'scale(.7)',
   },
 });
 
@@ -44,6 +56,17 @@ const innerClass = rule({
   animationFillMode: 'forwards',
 });
 
+const scoreClass = rule({
+  pos: 'absolute',
+  d: 'inline-block',
+  b: '0.3em',
+  l: '.75em',
+  fz: '.4em',
+  op: .5,
+  an: scoreAnimation + ' .5s ease-out',
+  animationFillMode: 'forwards',
+});
+
 export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
@@ -51,6 +74,7 @@ export interface RenderCaretProps extends CaretViewProps {
 export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const ctx = usePeritext();
   const pending = useSyncStore(ctx.peritext.editor.pending);
+  const {score} = usePlugin();
   const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
@@ -70,6 +94,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
   return (
     <span className={blockClass}>
+      {score.value > 9 && <span className={scoreClass}>{score.value}</span>}
       <span className={innerClass} style={style}>
         {children}
       </span>

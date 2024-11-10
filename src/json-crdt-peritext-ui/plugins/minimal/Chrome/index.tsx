@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {TopToolbar} from '../TopToolbar';
-import {useDefaultCtx} from '../context';
+import {usePlugin} from '../context';
 
 const blockClass = rule({
   bg: 'white',
@@ -21,7 +21,7 @@ export interface ChromeProps {
 }
 
 export const Chrome: React.FC<ChromeProps> = ({children}) => {
-  const {ctx} = useDefaultCtx();
+  const {ctx} = usePlugin();
 
   return (
     <div className={blockClass}>

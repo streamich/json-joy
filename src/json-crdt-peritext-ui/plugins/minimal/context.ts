@@ -1,10 +1,12 @@
 import * as React from 'react';
 import type {PeritextSurfaceContextValue} from '../../react';
+import type {ValueSyncStore} from '../../../util/events/sync-store';
 
-export interface DebugRenderersContextValue {
+export interface MinimalPluginContextValue {
   ctx?: PeritextSurfaceContextValue;
+  score: ValueSyncStore<number>;
 }
 
-export const context = React.createContext<DebugRenderersContextValue>({});
+export const context = React.createContext<MinimalPluginContextValue>(null!);
 
-export const useDefaultCtx = () => React.useContext(context);
+export const usePlugin = () => React.useContext(context);
