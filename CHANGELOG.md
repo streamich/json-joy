@@ -1,3 +1,26 @@
+# [17.16.0](https://github.com/streamich/json-joy/compare/v17.15.0...v17.16.0) (2024-11-10)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 always render anchor ([a66f2fb](https://github.com/streamich/json-joy/commit/a66f2fb46b5bc7fe7637ea1dd7d5d4b50640fa51))
+
+
+### Features
+
+* 🎸 improve how pending formats are stored and presented ([45804eb](https://github.com/streamich/json-joy/commit/45804eb2270b134e73738f4bf7e12d6f5407645e))
+* **json-crdt-extensions:** 🎸 add annotation type for column layout ([3f91fd5](https://github.com/streamich/json-joy/commit/3f91fd568018005f2e6ccf76270363562329d408))
+* **json-crdt-extensions:** 🎸 allow annotations to reach ends of text ([e79ec1b](https://github.com/streamich/json-joy/commit/e79ec1bf1efe8d2ab3c4e3e8c5783f589a2d6b22))
+* **json-crdt-extensions:** 🎸 apply pending formats on insertion ([c5e132e](https://github.com/streamich/json-joy/commit/c5e132eb7113c12e98a02600250404935fe4b9a2))
+* **json-crdt-extensions:** 🎸 enable reverse pending format application ([9ae12e6](https://github.com/streamich/json-joy/commit/9ae12e6005ddd5f6914e417e09c769b998028649))
+* **json-crdt-extensions:** 🎸 improve display of well known annotation pring in Inline ([dfa8219](https://github.com/streamich/json-joy/commit/dfa821909cf3f8933890993d1a743f6a6723db90))
+* **json-crdt-extensions:** 🎸 keep track of pending formatting upon insert ([5109dae](https://github.com/streamich/json-joy/commit/5109dae1a288b495a87c287c22ea6db4718a2890))
+* **json-crdt-peritext-ui:** 🎸 add example color annotation ([36ad885](https://github.com/streamich/json-joy/commit/36ad8858f5d14a861d00284fde0701260fede49d))
+* **json-crdt-peritext-ui:** 🎸 improve button border radius ([4e77faf](https://github.com/streamich/json-joy/commit/4e77faf8e6bc59a82c612076aab7cff6007f4f37))
+* **json-crdt-peritext-ui:** 🎸 improve debug button presentation ([3912d4a](https://github.com/streamich/json-joy/commit/3912d4a8f23c50e7fb12d2bc3adeba7770713443))
+* **json-crdt-peritext-ui:** 🎸 improve debug console, add tabbing and model state ([3aaefbb](https://github.com/streamich/json-joy/commit/3aaefbb9dbd5b10b6d16b6c46500a2203e687d12))
+* **json-crdt-peritext-ui:** 🎸 improve debug output ([644e7a6](https://github.com/streamich/json-joy/commit/644e7a669497185db424c6f1a2321ae8464a8d75))
+
 # [17.15.0](https://github.com/streamich/json-joy/compare/v17.14.0...v17.15.0) (2024-11-10)
 
 
