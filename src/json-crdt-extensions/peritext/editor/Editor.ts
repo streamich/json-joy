@@ -494,7 +494,7 @@ export class Editor<T = string> implements Printable {
   public select(unit: TextRangeUnit): void {
     this.forCursor((cursor) => {
       const range = this.range(cursor.start, unit);
-      if (range) cursor.setRange(range);
+      if (range) cursor.set(range.start, range.end, CursorAnchor.Start);
       else this.delCursors;
     });
   }
