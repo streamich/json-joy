@@ -3,9 +3,8 @@ import * as React from 'react';
 import {Button} from '../../../components/Button';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
-import type {PeritextSurfaceContextValue} from '../../../react';
 import {useSyncStore} from '../../../react/hooks';
-import {SliceBehavior} from '../../../../json-crdt-extensions/peritext/slice/constants';
+import type {PeritextSurfaceContextValue} from '../../../react';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceContextValue;
@@ -20,7 +19,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
     <Button
       onClick={() => ctx.dom.et.format(type)}
       onMouseDown={(e) => e.preventDefault()}
-      active={complete.has(type) || pending.has(type)}
+      active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
     >
       {name}
     </Button>

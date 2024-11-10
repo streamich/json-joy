@@ -131,19 +131,18 @@ export class Editor<T = string> implements Printable {
    */
   public insert(text: string): void {
     if (!this.hasCursor()) this.addCursor();
-    this.forCursor((cursor) => {
+    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
       cursor.insert(text);
       const pending = this.pending.value;
-      if (pending) {
+      if (pending.size) {
         this.pending.next(new Map());
         const start = cursor.start.clone();
         start.step(-text.length);
         const range = this.txt.range(start, cursor.end.clone());
-        makeRangeExtendable(range);
         for (const [type, data] of pending)
-          this.saved.slices.insOverwrite(range, type, data)
+          this.toggleRangeExclFmt(range, type, data);
       }
-    });
+    }
   }
 
   /**
@@ -516,10 +515,33 @@ export class Editor<T = string> implements Printable {
     return;
   }
 
-  public toggleExclusiveFormatting(type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
-    // TODO: handle mutually exclusive slices (<sub>, <sub>)
+  protected toggleRangeExclFmt(range: Range<T>, type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
+    if (range.isCollapsed()) throw new Error('Range is collapsed');
     const overlay = this.txt.overlay;
-    overlay.refresh();
+    const [complete] = overlay.stat(range, 1e6);
+    const needToRemoveFormatting = complete.has(type);
+    makeRangeExtendable(range);
+    const contained = overlay.findContained(range);
+    for (const slice of contained) {
+      if (slice instanceof PersistedSlice && slice.type === type) {
+        const deletionStore = this.getSliceStore(slice);
+        if (deletionStore) deletionStore.del(slice.id);
+      }
+    }
+    if (needToRemoveFormatting) {
+      overlay.refresh();
+      const [complete2, partial2] = overlay.stat(range, 1e6);
+      const needsErase = complete2.has(type) || partial2.has(type);
+      if (needsErase) store.slices.insErase(range, type);
+    } else {
+      if (range.start.isAbs() || range.end.isAbs()) return;
+      store.slices.insOverwrite(range, type, data);
+    }
+  }
+
+  public toggleExclFmt(type: CommonSliceType | string | number, data?: unknown, store: EditorSlices<T> = this.saved): void {
+    // TODO: handle mutually exclusive slices (<sub>, <sub>)
+    this.txt.overlay.refresh();
     CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       if (cursor.isCollapsed()) {
         const pending = this.pending.value;
@@ -528,25 +550,7 @@ export class Editor<T = string> implements Printable {
         this.pending.next(pending);
         continue CURSORS;
       }
-      const [complete] = overlay.stat(cursor, 1e6);
-      const needToRemoveFormatting = complete.has(type);
-      makeRangeExtendable(cursor);
-      const contained = overlay.findContained(cursor);
-      for (const slice of contained) {
-        if (slice instanceof PersistedSlice && slice.type === type) {
-          const deletionStore = this.getSliceStore(slice);
-          if (deletionStore) deletionStore.del(slice.id);
-        }
-      }
-      if (needToRemoveFormatting) {
-        overlay.refresh();
-        const [complete2, partial2] = overlay.stat(cursor, 1e6);
-        const needsErase = complete2.has(type) || partial2.has(type);
-        if (needsErase) store.insErase(type);
-      } else {
-        if (cursor.start.isAbs() || cursor.end.isAbs()) continue;
-        store.insOverwrite(type, data);
-      }
+      this.toggleRangeExclFmt(cursor, type, data, store);
     }
   }
 
