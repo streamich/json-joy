@@ -1,12 +1,21 @@
 import * as React from 'react';
 import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
-import {rule} from 'nano-theme';
+import {keyframes, rule} from 'nano-theme';
 import {usePeritext} from '../../react/context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/selection/CaretView';
 import {DefaultRendererColors} from './constants';
 
 const ms = 350;
+
+export const moveAnimation = keyframes({
+  from: {
+    tr: 'scale(1.2)',
+  },
+  to: {
+    tr: 'scale(1)',
+  },
+});
 
 const blockClass = rule({
   pos: 'relative',
@@ -28,6 +37,8 @@ const innerClass = rule({
   bg: DefaultRendererColors.ActiveCursor,
   bdrad: '0.0625em',
   'mix-blend-mode': 'multiply',
+  an: moveAnimation + ' .25s ease-out',
+  animationFillMode: 'forwards',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -49,7 +60,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   };
 
   if (italic) {
-    style.transform = 'rotate(11deg)';
+    style.rotate = '11deg';
   }
 
   return (

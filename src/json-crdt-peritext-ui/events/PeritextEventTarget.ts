@@ -1,5 +1,5 @@
-import {TypedEventTarget} from './TypedEventTarget';
-import type {PeritextEventMap, CursorDetail, InlineDetail, DeleteDetail} from './types';
+import {TypedEventTarget} from '../../util/events/TypedEventTarget';
+import type {PeritextEventMap, CursorDetail, FormatDetail, DeleteDetail} from './types';
 
 export type PeritextEventHandlerMap = {
   [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
@@ -51,15 +51,15 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.cursor({len, unit, edge});
   }
 
-  public inline(type: InlineDetail['type'], behavior?: InlineDetail['behavior'], data?: InlineDetail['data']): void;
-  public inline(detail: InlineDetail): void;
-  public inline(
-    a: InlineDetail | InlineDetail['type'],
-    behavior?: InlineDetail['behavior'],
-    data?: InlineDetail['data'],
+  public format(type: FormatDetail['type'], behavior?: FormatDetail['behavior'], data?: FormatDetail['data']): void;
+  public format(detail: FormatDetail): void;
+  public format(
+    a: FormatDetail | FormatDetail['type'],
+    behavior?: FormatDetail['behavior'],
+    data?: FormatDetail['data'],
   ): void {
-    const detail: InlineDetail =
-      typeof a === 'object' && !Array.isArray(a) ? (a as InlineDetail) : ({type: a, behavior, data} as InlineDetail);
-    this.dispatch('inline', detail);
+    const detail: FormatDetail =
+      typeof a === 'object' && !Array.isArray(a) ? (a as FormatDetail) : ({type: a, behavior, data} as FormatDetail);
+    this.dispatch('format', detail);
   }
 }

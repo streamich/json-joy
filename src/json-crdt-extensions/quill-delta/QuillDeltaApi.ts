@@ -29,7 +29,7 @@ const updateAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | unde
     if (value === null) {
       savedSlices.ins(range, SliceBehavior.Erase, key);
     } else {
-      savedSlices.ins(range, SliceBehavior.Overwrite, key, konst(value));
+      savedSlices.ins(range, SliceBehavior.One, key, konst(value));
     }
   }
 };

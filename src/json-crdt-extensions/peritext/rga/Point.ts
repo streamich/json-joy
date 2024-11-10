@@ -1,7 +1,7 @@
 import {compare, type ITimestampStruct, printTs, equal, tick, containsId} from '../../../json-crdt-patch/clock';
 import {Anchor} from './constants';
 import {ChunkSlice} from '../util/ChunkSlice';
-import {updateId} from '../../../json-crdt/hash';
+import {hashId, updateId} from '../../../json-crdt/hash';
 import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
@@ -479,6 +479,10 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       }
     }
     return this.step(length / 2);
+  }
+
+  public key(): number {
+    return hashId(this.id) + (this.anchor ? 0 : 1);
   }
 
   // ----------------------------------------------------------------- Stateful

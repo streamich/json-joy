@@ -1,11 +1,11 @@
 import * as React from 'react';
-import type {RendererMap} from './types';
+import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {DomController} from '../dom/DomController';
 
 export interface PeritextSurfaceContextValue {
   peritext: Peritext;
-  renderers: RendererMap[];
+  renderers: PeritextPlugin[];
   dom: DomController;
   rerender: () => void;
 }

@@ -1,9 +1,14 @@
 import * as React from 'react';
 import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
-import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
 import {usePeritext} from './context';
+import {CommonSliceType} from '../../json-crdt-extensions';
+import {CaretView} from './selection/CaretView';
+import {FocusView} from './selection/FocusView';
+import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../json-crdt-extensions/peritext/block/Inline';
+import {AnchorView} from './selection/AnchorView';
+import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
 
 export interface BlockViewProps {
   hash: number;
@@ -18,7 +23,48 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
 
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
-      for (const inline of block.texts()) elements.push(<InlineView key={inline.key()} inline={inline} />);
+      for (const inline of block.texts()) {
+        const hasCursor = inline.hasCursor();
+        if (hasCursor) {
+          const attr = inline.attr();
+          const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
+          const cursorStart = inline.cursorStart();
+          if (cursorStart) {
+            const k = cursorStart.start.key() + '-a';
+            let element: React.ReactNode;
+            if (cursorStart.isStartFocused()) {
+              if (cursorStart.isCollapsed()) element = <CaretView key={k} italic={!!italic} />;
+              else
+                element = (
+                  <FocusView key={k} italic={italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing} />
+                );
+            } else element = <AnchorView key={k} />;
+            elements.push(element);
+          }
+        }
+        elements.push(<InlineView key={inline.key()} inline={inline} />);
+        if (hasCursor) {
+          const cursorEnd = inline.cursorEnd();
+          const attr = inline.attr();
+          const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
+          if (cursorEnd) {
+            const k = cursorEnd.end.key() + '-b';
+            let element: React.ReactNode;
+            if (cursorEnd.isEndFocused()) {
+              if (cursorEnd.isCollapsed()) element = <CaretView key={k} italic={!!italic} />;
+              else
+                element = (
+                  <FocusView
+                    key={k}
+                    left
+                    italic={italic instanceof InlineAttrStart || italic instanceof InlineAttrPassing}
+                  />
+                );
+            } else element = <AnchorView key={k} />;
+            elements.push(element);
+          }
+        }
+      }
     } else {
       const children = block.children;
       const length = children.length;

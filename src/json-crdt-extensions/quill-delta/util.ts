@@ -14,7 +14,7 @@ export const getAttributes = (overlayPoint: OverlayPoint): QuillDeltaAttributes 
     const slice = layers[i];
     if (!(slice instanceof PersistedSlice)) continue;
     switch (slice.behavior) {
-      case SliceBehavior.Overwrite: {
+      case SliceBehavior.One: {
         const tag = slice.type as PathStep;
         if (tag) attributes[tag] = slice.data();
         break;

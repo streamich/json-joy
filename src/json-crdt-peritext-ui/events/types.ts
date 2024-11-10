@@ -6,7 +6,7 @@ import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
  * Dispatched every time any other event is dispatched.
  */
 export interface ChangeDetail {
-  ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail>;
+  ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | FormatDetail | MarkerDetail>;
 }
 
 /**
@@ -174,12 +174,64 @@ export interface CursorDetail {
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface InlineDetail {
-  type: SliceType;
+export interface FormatDetail {
+  /**
+   * Type of the annotation. The type is used to determine the visual style of
+   * the annotation, for example, the type `'bold'` may render the text in bold.
+   *
+   * For common formatting use the {@link CommonSliceType} enum. It contains
+   * a unique numeric value for each common formatting types. Numeric values
+   * are best for performance and memory usage. Values in the rage -64 to 64 are
+   * reserved for common formatting types.
+   *
+   * For custom formatting, you can use a string value, for example,
+   * `'highlight'`. Or use an integer with absolute value greater than 64.
+   *
+   * Inline formatting types are restricted to a single string or integer value.
+   * Nester formatting, say `['p', 'blockquote', 'h1']` is reserved for block
+   * formatting, in which case a nested structure like
+   * `<p><blockquote><h1>text</h1></blockquote></p>` is created.
+   */
+  type?: number | string;
+
+  /**
+   * Arbitrary data associated with the formatting. Usually, stored with
+   * annotations of "stack" behavior, for example, an "<a>" tag annotation may
+   * store the href attribute in this field.
+   *
+   * @default undefined
+   */
   data?: unknown;
-  behavior?: 'stack' | 'overwrite' | 'erase';
+
+  /**
+   * Specifies the behavior of the annotation. If `'many'`, the annotation of
+   * this type will be stacked on top of each other, and all of them will be
+   * applied to the text, with the last annotation on top. If `'one'`,
+   * the annotation is not stacked, only one such annotation can be applied per
+   * character. The `'erase'` behavior is used to remove the `'many`' or
+   * `'one'` annotation from the the given range.
+   *
+   * The special `'clear'` behavior is used to remove all annotations
+   * that intersect with any part of any of the cursors in the document. Usage:
+   *
+   * ```js
+   * {type: 'clear'}
+   * ```
+   *
+   * @default 'one'
+   */
+  behavior?: 'one' | 'many' | 'erase' | 'clear';
+
+  /**
+   * The slice set where the annotation will be stored. `'saved'` is the main
+   * document, which is persisted and replicated across all clients. `'extra'`
+   * is an ephemeral document, which is not persisted but can be replicated
+   * across clients. `'local'` is a local document, which is accessible only to
+   * the local client, for example, for storing cursor or selection information.
+   *
+   * @default 'saved'
+   */
   store?: 'saved' | 'extra' | 'local';
-  pos?: [start: Position, end: Position][];
 }
 
 // biome-ignore lint: empty interface is expected
@@ -205,6 +257,7 @@ export type PeritextEventMap = {
   insert: InsertDetail;
   delete: DeleteDetail;
   cursor: CursorDetail;
-  inline: InlineDetail;
+  format: FormatDetail;
+  // remove: FormatDetail;
   marker: MarkerDetail;
 };

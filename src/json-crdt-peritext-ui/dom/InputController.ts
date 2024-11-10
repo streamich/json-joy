@@ -1,7 +1,7 @@
 import {unit} from './util';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {TypedEventTarget} from '../events/TypedEventTarget';
+import type {TypedEventTarget} from '../../util/events/TypedEventTarget';
 import type {CompositionController} from './CompositionController';
 import type {UiLifeCycles} from './types';
 

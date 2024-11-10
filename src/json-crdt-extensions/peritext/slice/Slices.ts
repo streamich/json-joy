@@ -107,11 +107,11 @@ export class Slices<T = string> implements Stateful, Printable {
   }
 
   public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    return this.ins(range, SliceBehavior.Stack, type, data);
+    return this.ins(range, SliceBehavior.Many, type, data);
   }
 
   public insOverwrite(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    return this.ins(range, SliceBehavior.Overwrite, type, data);
+    return this.ins(range, SliceBehavior.One, type, data);
   }
 
   public insErase(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
@@ -139,6 +139,7 @@ export class Slices<T = string> implements Stateful, Printable {
     this.list.del(id);
     const set = this.set;
     const api = set.doc.api;
+    if (!set.findById(id)) return;
     // TODO: Is it worth checking if the slice is already deleted?
     api.builder.del(set.id, [tss(id.sid, id.time, 1)]);
     api.apply();

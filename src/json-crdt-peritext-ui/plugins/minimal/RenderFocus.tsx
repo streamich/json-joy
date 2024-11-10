@@ -51,7 +51,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}
   const style: React.CSSProperties = focus ? {} : {background: DefaultRendererColors.InactiveCursor, animation: 'none'};
 
   if (italic) {
-    style.transform = 'rotate(11deg)';
+    style.rotate = '11deg';
   }
 
   return (

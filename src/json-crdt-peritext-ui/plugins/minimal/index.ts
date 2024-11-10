@@ -5,11 +5,11 @@ import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
 import {CommonSliceType} from '../../../json-crdt-extensions';
-import type {RendererMap} from '../../react/types';
+import type {PeritextPlugin} from '../../react/types';
 
 const h = React.createElement;
 
-export const renderers: RendererMap = {
+export const renderers: PeritextPlugin = {
   text: (props, inline) => {
     const style = (props.style || (props.style = {})) as React.CSSProperties;
     const attr = inline.attr();

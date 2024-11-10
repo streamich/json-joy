@@ -355,7 +355,7 @@ export class Overlay<T = string> implements Printable, Stateful {
         if (typeof type === 'object') continue LAYERS;
         const behavior = slice.behavior;
         BEHAVIOR: switch (behavior) {
-          case SliceBehavior.Overwrite:
+          case SliceBehavior.One:
             current.add(type);
             break BEHAVIOR;
           case SliceBehavior.Erase:

@@ -2,14 +2,8 @@ import * as React from 'react';
 import {put} from 'nano-theme';
 import {CssClass, ElementAttr} from '../constants';
 import {usePeritext} from './context';
-import {CaretView} from './selection/CaretView';
-import {FocusView} from './selection/FocusView';
-import {AnchorView} from './selection/AnchorView';
-import {InlineAttrEnd, InlineAttrStart, type Inline} from '../../json-crdt-extensions/peritext/block/Inline';
-import {CommonSliceType} from '../../json-crdt-extensions';
+import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 import type {SpanProps} from './types';
-
-const {createElement: h, Fragment} = React;
 
 put('.' + CssClass.Inline, {
   /**
@@ -70,45 +64,5 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   for (const map of renderers) attr = map.text?.(attr, inline, ctx) ?? attr;
   let children: React.ReactNode = <span {...attr}>{text}</span>;
   for (const map of renderers) children = map.inline?.(props, children) ?? children;
-
-  if (inline.hasCursor()) {
-    const elements: React.ReactNode[] = [];
-    const attr = inline.attr();
-    const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
-    const key = inline.key();
-    const cursorStart = inline.cursorStart();
-    if (cursorStart) {
-      const k = key + 'a';
-      elements.push(
-        cursorStart.isStartFocused() ? (
-          cursorStart.isCollapsed() ? (
-            <CaretView key={k} italic={!!italic} />
-          ) : (
-            <FocusView key={k} italic={italic instanceof InlineAttrEnd} />
-          )
-        ) : (
-          <AnchorView key={k} />
-        ),
-      );
-    }
-    elements.push(h(Fragment, {key}, children));
-    const cursorEnd = inline.cursorEnd();
-    if (cursorEnd) {
-      const k = key + 'b';
-      elements.push(
-        cursorEnd.isEndFocused() ? (
-          cursorEnd.isCollapsed() ? (
-            <CaretView key={k} italic={!!italic} />
-          ) : (
-            <FocusView key={k} left italic={italic instanceof InlineAttrStart} />
-          )
-        ) : (
-          <AnchorView key={k} />
-        ),
-      );
-    }
-    children = h(Fragment, null, elements);
-  }
-
   return children;
 };

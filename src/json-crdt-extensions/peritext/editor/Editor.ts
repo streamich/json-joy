@@ -6,11 +6,31 @@ import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {PersistedSlice} from '../slice/PersistedSlice';
+import type {SliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
+
+/**
+ * For inline boolean ("Overwrite") slices, both range endpoints should be
+ * attached to {@link Anchor.Before} as per the Peritext paper. This way, say
+ * bold text, automatically extends to include the next character typed as
+ * user types.
+ *
+ * @param range The range to be adjusted.
+ */
+const makeRangeExtendable = <T>(range: Range<T>): void => {
+  if (range.end.anchor !== Anchor.Before || range.start.anchor !== Anchor.Before) {
+    const start = range.start.clone();
+    const end = range.end.clone();
+    start.refBefore();
+    end.refBefore();
+    range.set(start, end);
+  }
+};
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -459,6 +479,82 @@ export class Editor<T = string> {
   public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
     this.cursor.set(this.point(at));
     if (unit) this.select(unit);
+  }
+
+  // --------------------------------------------------------------- formatting
+
+  protected getSliceStore(slice: PersistedSlice<T>): EditorSlices<T> | undefined {
+    const sid = slice.id.sid;
+    if (sid === this.saved.slices.set.doc.clock.sid) return this.saved;
+    if (sid === this.extra.slices.set.doc.clock.sid) return this.extra;
+    if (sid === this.local.slices.set.doc.clock.sid) return this.local;
+    return;
+  }
+
+  public toggleExclusiveFormatting(type: SliceType, data?: unknown, store: EditorSlices<T> = this.saved): void {
+    // TODO: handle mutually exclusive slices (<sub>, <sub>)
+    const overlay = this.txt.overlay;
+    overlay.refresh(); // TODO: Refresh for `overlay.stat()` calls. Is it actually needed?
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const [complete] = overlay.stat(cursor, 1e6);
+      const needToRemoveFormatting = complete.has(type);
+      makeRangeExtendable(cursor);
+      const contained = overlay.findContained(cursor);
+      for (const slice of contained) {
+        if (slice instanceof PersistedSlice && slice.type === type) {
+          const deletionStore = this.getSliceStore(slice);
+          if (deletionStore) deletionStore.del(slice.id);
+        }
+      }
+      if (needToRemoveFormatting) {
+        overlay.refresh();
+        const [complete2, partial2] = overlay.stat(cursor, 1e6);
+        const needsErase = complete2.has(type) || partial2.has(type);
+        if (needsErase) store.insErase(type);
+      } else {
+        if (cursor.start.isAbs() || cursor.end.isAbs()) continue;
+        store.insOverwrite(type, data);
+      }
+    }
+  }
+
+  public eraseFormatting(store: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      overlay.refresh();
+      const contained = overlay.findContained(cursor);
+      for (const slice of contained) {
+        if (slice instanceof PersistedSlice) {
+          switch (slice.behavior) {
+            case SliceBehavior.One:
+            case SliceBehavior.Many:
+            case SliceBehavior.Erase: {
+              const deletionStore = this.getSliceStore(slice);
+              if (deletionStore) deletionStore.del(slice.id);
+            }
+          }
+        }
+      }
+      overlay.refresh();
+      const overlapping = overlay.findOverlapping(cursor);
+      for (const slice of overlapping) {
+        switch (slice.behavior) {
+          case SliceBehavior.One:
+          case SliceBehavior.Many: {
+            store.insErase(slice.type);
+          }
+        }
+      }
+    }
+  }
+
+  public clearFormatting(store: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    overlay.refresh();
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const overlapping = overlay.findOverlapping(cursor);
+      for (const slice of overlapping) store.del(slice.id);
+    }
   }
 
   // ------------------------------------------------------------------ various

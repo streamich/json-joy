@@ -1,7 +1,6 @@
+import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
-import {Anchor} from '../../json-crdt-extensions/peritext/rga/constants';
-import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
@@ -99,31 +98,30 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     }
   };
 
-  public readonly inline = (event: CustomEvent<events.InlineDetail>) => {
-    const {type, store = 'saved', behavior = 'overwrite', data} = event.detail;
+  public readonly format = (event: CustomEvent<events.FormatDetail>) => {
+    const {type, store = 'saved', behavior = 'one', data} = event.detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (behavior) {
-      case 'stack':
+      case 'many': {
+        if (type === undefined) throw new Error('TYPE_REQUIRED');
         slices.insStack(type, data);
         break;
-      case 'erase':
-        slices.insErase(type, data);
+      }
+      case 'one': {
+        if (type === undefined) throw new Error('TYPE_REQUIRED');
+        editor.toggleExclusiveFormatting(type, data, slices);
         break;
-      default:
-        for (let i = editor.cursors0(), cursor = i(); cursor; cursor = i()) {
-          // For inline boolean slices, ref endpoint "before" the next character
-          // as per the Peritext paper, so that, say, bold text automatically
-          // includes the next character typed.
-          if (cursor.end.anchor !== Anchor.Before || cursor.start.anchor !== Anchor.Before) {
-            const start = cursor.start.clone();
-            const end = cursor.end.clone();
-            start.refBefore();
-            end.refBefore();
-            cursor.set(start, end);
-          }
-        }
-        slices.insOverwrite(type, data);
+      }
+      case 'erase': {
+        if (type === undefined) editor.eraseFormatting(slices);
+        else slices.insErase(type, data);
+        break;
+      }
+      case 'clear': {
+        editor.clearFormatting(slices);
+        break;
+      }
     }
   };
 
