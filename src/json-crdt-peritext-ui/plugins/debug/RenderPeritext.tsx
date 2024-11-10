@@ -56,7 +56,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
         <div className={btnClass({
           bg: theme.bg,
         })}>
-          <Button active={enabled} onClick={() => setEnabled((x) => !x)}>
+          <Button small active={enabled} onClick={() => setEnabled((x) => !x)}>
             Debug
           </Button>
         </div>

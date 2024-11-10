@@ -1,22 +1,26 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {Button} from '../../../components/Button';
-import {useDefaultCtx} from '../context';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
+import type {PeritextSurfaceContextValue} from '../../../react';
+import {useSyncStore} from '../../../react/hooks';
 
-// biome-ignore lint: empty interface
-export type TopToolbarProps = {};
+export interface TopToolbarProps {
+  ctx: PeritextSurfaceContextValue;
+};
 
-export const TopToolbar: React.FC<TopToolbarProps> = () => {
-  const {ctx} = useDefaultCtx();
-
-  if (!ctx) return null;
+export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
+  const pending = useSyncStore(ctx.peritext.editor.pending);
 
   const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
 
   const button = (type: string | number, name: React.ReactNode) => (
-    <Button onClick={() => ctx.dom.et.format(type)} onMouseDown={(e) => e.preventDefault()} active={complete.has(type)}>
+    <Button
+      onClick={() => ctx.dom.et.format(type)}
+      onMouseDown={(e) => e.preventDefault()}
+      active={complete.has(type) || pending.has(type)}
+    >
       {name}
     </Button>
   );

@@ -30,7 +30,7 @@ export const validateType = (type: SliceType) => {
 export const formatType = (type: SliceType): string => {
   let formatted: string = JSON.stringify(type);
   const num = Number(type);
-  if (num + '' === type && Math.abs(num) <= 64 && CommonSliceType[num])
+  if ((typeof type === 'number' || num + '' === type) && Math.abs(num) <= 64 && CommonSliceType[num])
     formatted = '<' + CommonSliceType[num] + '>';
   return formatted;
 };

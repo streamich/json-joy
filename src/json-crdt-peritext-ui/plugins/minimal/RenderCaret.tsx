@@ -5,6 +5,7 @@ import {usePeritext} from '../../react/context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/selection/CaretView';
 import {DefaultRendererColors} from './constants';
+import {CommonSliceType} from '../../../json-crdt-extensions';
 
 const ms = 350;
 
@@ -46,6 +47,8 @@ export interface RenderCaretProps extends CaretViewProps {
 }
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
+  const ctx = usePeritext();
+  const pending = useSyncStore(ctx.peritext.editor.pending);
   const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
@@ -59,7 +62,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
         : 'transparent',
   };
 
-  if (italic) {
+  if (italic || pending.has(CommonSliceType.i)) {
     style.rotate = '11deg';
   }
 

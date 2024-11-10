@@ -47,7 +47,7 @@ export class Editor<T = string> implements Printable {
    * temporary store for formatting which is not yet applied to the text, but
    * will be if the cursor is not moved.
    */
-  public readonly pendingFormats = new ValueSyncStore<Record<CommonSliceType | string | number, unknown>>({});
+  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown>>(new Map());
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
@@ -133,17 +133,15 @@ export class Editor<T = string> implements Printable {
     if (!this.hasCursor()) this.addCursor();
     this.forCursor((cursor) => {
       cursor.insert(text);
-      const pending = this.pendingFormats.value;
+      const pending = this.pending.value;
       if (pending) {
-        this.pendingFormats.next({});
+        this.pending.next(new Map());
         const start = cursor.start.clone();
         start.step(-text.length);
         const range = this.txt.range(start, cursor.end.clone());
         makeRangeExtendable(range);
-        for (const type in pending) {
-          const data = pending[type];
+        for (const [type, data] of pending)
           this.saved.slices.insOverwrite(range, type, data)
-        }
       }
     });
   }
@@ -524,10 +522,10 @@ export class Editor<T = string> implements Printable {
     overlay.refresh();
     CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       if (cursor.isCollapsed()) {
-        const pending = this.pendingFormats.value;
-        if (pending.hasOwnProperty(type)) delete pending[type];
-        else pending[type] = data;
-        this.pendingFormats.next(pending);
+        const pending = this.pending.value;
+        if (pending.has(type)) pending.delete(type);
+        else pending.set(type, data);
+        this.pending.next(pending);
         continue CURSORS;
       }
       const [complete] = overlay.stat(cursor, 1e6);
@@ -610,9 +608,9 @@ export class Editor<T = string> implements Printable {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const pending = this.pendingFormats.value;
+    const pending = this.pending.value;
     const pendingFormatted = {} as any;
-    for (const type in pending) pendingFormatted[formatType(type)] = pendingFormatted[type];
+    for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
     return (
       `Editor` +
       printTree(tab, [
