@@ -23,7 +23,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
     const listener = () => {
       const now = Date.now();
       const timeDiff = now - lastNow;
-      const delta = timeDiff < 30 ? 10 : timeDiff < 100 ? 5 : timeDiff < 220 ? 2 : timeDiff <= 1000 ? 1 : 0;
+      const delta = timeDiff < 30 ? 10 : timeDiff < 70 ? 5 : timeDiff < 150 ? 2 : timeDiff <= 1000 ? 1 : 0;
       value.score.next(delta ? value.score.value + delta : 0);
       value.scoreDelta.next(delta);
       lastNow = now;

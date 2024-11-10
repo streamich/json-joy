@@ -135,7 +135,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
   const s = score.value;
   const d = scoreDelta.value;
-  const scoreMsg = s > 100 && s <= 110
+  const scoreMsg = s > 100 && s <= 120
     ? 'Killing Spree!'
       : s > 300 && s <= 320
         ? 'Rampage!'
@@ -159,7 +159,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
   return (
     <span className={blockClass}>
-      {s > 9 && <span className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? scoreMessageAnimation + ' .7s ease-out' : undefined}}>{scoreMsg}</span>}
+      {s >=24 && <span className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? scoreMessageAnimation + ' .7s ease-out' : undefined}}>{scoreMsg}</span>}
       {(typeof scoreMsg === 'string' || (s > 42 && d > 1)) && <span className={scoreDeltaClass}>+{d}</span>}
       <span className={innerClass} style={style}>
         {children}
