@@ -47,7 +47,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       switch (edge) {
         case 'focus':
         case 'anchor': {
-          editor.cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
+          const cursor = editor.cursor;
+          cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
+          if (cursor.isCollapsed()) {
+            const start = cursor.start;
+            start.refAfter();
+            cursor.set(start);
+          }
           break;
         }
         case 'new': {
