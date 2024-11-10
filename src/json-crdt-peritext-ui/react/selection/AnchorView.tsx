@@ -9,6 +9,6 @@ export const AnchorView: React.FC<AnchorViewProps> = (props) => {
   const {renderers} = usePeritext();
 
   let children: React.ReactNode = null;
-  for (const map of renderers) children = map.anchor?.(props, children);
+  for (const map of renderers) children = map.anchor?.(props, children) ?? children;
   return children;
 };
