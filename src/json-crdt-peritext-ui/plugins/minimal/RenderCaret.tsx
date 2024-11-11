@@ -136,26 +136,34 @@ const CaretScore: React.FC<CaretScoreProps> = React.memo(({score, delta}) => {
   const scoreMsg = score > 100 && score <= 120
     ? 'Typing Spree!'
       : score > 200 && score <= 208
-      ? 'Go! Go! Go!'
+      ? 'Go, go, go!'
         : score > 300 && score <= 320
           ? 'Rampage!'
-          : score > 500 && score <= 520
-            ? 'Unstoppable!'
-            : score > 1000 && score <= 1030
-              ? 'Godlike!'
-              : score > 2000 && score <= 2030
-                ? 'Legendary!'
-                : score > 3000 && score <= 3040
-                  ? 'Beyond Godlike!'
-                  : score > 5000 && score <= 5040
-                    ? 'Wicked Sick!'
-                    : score > 10000 && score <= 10050
-                      ? 'Monster Type!'
-                      : score > 20000 && score <= 20050
-                        ? 'Ultra Type!'
-                        : score > 50000 && score <= 50100
-                          ? 'M-M-M-Monster Type!'
-                          : score;
+          : score > 400 && score <= 408
+            ? 'Let\'s go!'
+            : score > 500 && score <= 520
+              ? 'Unstoppable!'
+              : score > 600 && score <= 608
+                ? 'Good stuff!'
+                : score > 700 && score <= 708
+                  ? 'Alright, alright!'
+                  : score > 1000 && score <= 1030
+                    ? 'Godlike!'
+                    : score > 1500 && score <= 1530
+                      ? 'Bingo, bango, bongo!'
+                      : score > 2000 && score <= 2030
+                        ? 'Legendary!'
+                        : score > 3000 && score <= 3040
+                          ? 'Beyond Godlike!'
+                          : score > 5000 && score <= 5040
+                            ? 'Wicked Sick!'
+                            : score > 10000 && score <= 10050
+                              ? 'Monster Type!'
+                              : score > 20000 && score <= 20050
+                                ? 'Ultra Type!'
+                                : score > 50000 && score <= 50100
+                                  ? 'M-M-M-Monster Type!'
+                                  : score;
 
   return (
     <>
