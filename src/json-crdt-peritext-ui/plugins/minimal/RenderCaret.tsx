@@ -27,6 +27,7 @@ export const scoreAnimation = keyframes({
   to: {
     op: 0,
     tr: 'scale(.7)',
+    vis: 'hidden',
   },
 });
 
@@ -36,6 +37,7 @@ export const scoreMessageAnimation = keyframes({
   },
   to: {
     op: 0,
+    vis: 'hidden',
   },
 });
 
@@ -51,6 +53,7 @@ export const scoreDeltaAnimation = keyframes({
   to: {
     op: 0,
     tr: 'scale(.1)',
+    vis: 'hidden',
   },
 });
 
@@ -139,27 +142,27 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
     ? 'Killing Spree!'
       : s > 300 && s <= 320
         ? 'Rampage!'
-        : s > 600 && s <= 620
+        : s > 500 && s <= 520
           ? 'Unstoppable!'
           : s > 1000 && s <= 1030
             ? 'Godlike!'
             : s > 2000 && s <= 2030
               ? 'Legendary!'
-              : s > 4000 && s <= 4040
+              : s > 3000 && s <= 3040
                 ? 'Beyond Godlike!'
-                : s > 8000 && s <= 8040
+                : s > 5000 && s <= 5040
                   ? 'Wicked Sick!'
-                  : s > 16000 && s <= 16050
+                  : s > 10000 && s <= 10050
                     ? 'Monster Kill!'
-                    : s > 32000 && s <= 32050
+                    : s > 20000 && s <= 20050
                       ? 'Ultra Kill!'
-                      : s > 64000 && s <= 64050
+                      : s > 50000 && s <= 50100
                         ? 'M-M-M-Monster Kill!'
                         : s;
 
   return (
     <span className={blockClass}>
-      {s >=24 && <span className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? scoreMessageAnimation + ' .7s ease-out' : undefined}}>{scoreMsg}</span>}
+      {s >=24 && <span className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? scoreMessageAnimation + ' .8s ease-out forwards' : undefined}}>{scoreMsg}</span>}
       {(typeof scoreMsg === 'string' || (s > 42 && d > 1)) && <span className={scoreDeltaClass}>+{d}</span>}
       <span className={innerClass} style={style}>
         {children}
