@@ -23,24 +23,25 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
     if (!dom || !value) return;
     let lastNow: number = 0;
     const listener = (event: CustomEvent<ChangeDetail>) => {
+      const now = Date.now();
+      const timeDiff = now - lastNow;
+      let delta = 0;
       switch (event.detail.ev?.type) {
         case 'delete':
         case 'insert':
         case 'format':
         case 'marker': {
-          const now = Date.now();
-          const timeDiff = now - lastNow;
-          const delta = timeDiff < 30 ? 10 : timeDiff < 70 ? 5 : timeDiff < 150 ? 2 : timeDiff <= 1000 ? 1 : 0;
-          value.score.next(delta ? value.score.value + delta : 0);
-          value.scoreDelta.next(delta);
-          lastNow = now;
+          delta = timeDiff < 30 ? 10 : timeDiff < 70 ? 5 : timeDiff < 150 ? 2 : timeDiff <= 1000 ? 1 : -1;
           break;
         }
-        case 'cursor': {
-          lastNow = Date.now();
+        default: {
+          delta = timeDiff <= 1000 ? 0 : -1;
           break;
         }
       }
+      if (delta) value.score.next(delta >= 0 ? value.score.value + delta : 0);
+      value.scoreDelta.next(delta);
+      lastNow = now;
     };
     dom.et.addEventListener('change', listener);
     return () => {
