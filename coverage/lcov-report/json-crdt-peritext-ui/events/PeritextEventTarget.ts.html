@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.23% </span>
+                <span class="strong">90.9% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/21</span>
+                <span class='fraction'>20/22</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>7/8</span>
+                <span class='fraction'>7/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.73% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/19</span>
+                <span class='fraction'>18/20</span>
             </div>
         
             
@@ -128,7 +128,19 @@
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -193,11 +205,19 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {TypedEventTarget} from '../../util/events/TypedEventTarget';
-import type {PeritextEventMap, CursorDetail, FormatDetail, DeleteDetail} from './types';
+import type {PeritextEventDetailMap, CursorDetail, FormatDetail, DeleteDetail, MarkerDetail} from './types';
+&nbsp;
+export type PeritextEventMap = {
+  [K in keyof PeritextEventDetailMap]: CustomEvent&lt;PeritextEventDetailMap[K]&gt;;
+};
 &nbsp;
 export type PeritextEventHandlerMap = {
-  [K in keyof PeritextEventMap]: (event: CustomEvent&lt;PeritextEventMap[K]&gt;) =&gt; void;
+  [K in keyof PeritextEventDetailMap]: (event: CustomEvent&lt;PeritextEventDetailMap[K]&gt;) =&gt; void;
 };
 &nbsp;
 let __id = 0;
@@ -207,18 +227,18 @@ export class PeritextEventTarget extends TypedEventTarget&lt;PeritextEventMap&gt
 &nbsp;
   public defaults: Partial&lt;PeritextEventHandlerMap&gt; = {};
 &nbsp;
-  public dispatch&lt;K extends keyof Omit&lt;PeritextEventMap, 'change'&gt;&gt;(
+  public dispatch&lt;K extends keyof Omit&lt;PeritextEventDetailMap, 'change'&gt;&gt;(
     type: K,
-    detail: Omit&lt;PeritextEventMap, 'change'&gt;[K],
+    detail: Omit&lt;PeritextEventDetailMap, 'change'&gt;[K],
   ): void {
-    const event = new CustomEvent&lt;PeritextEventMap[K]&gt;(type, {detail});
+    const event = new CustomEvent&lt;PeritextEventDetailMap[K]&gt;(type, {detail});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults[type]?.(event);
     this.change(event);
   }
 &nbsp;
   public change(ev?: CustomEvent&lt;any&gt;): void {
-    const event = new CustomEvent&lt;PeritextEventMap['change']&gt;('change', {detail: {ev}});
+    const event = new CustomEvent&lt;PeritextEventDetailMap['change']&gt;('change', {detail: {ev}});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults.change?.(event);
   }
@@ -257,6 +277,10 @@ export class PeritextEventTarget extends TypedEventTarget&lt;PeritextEventMap&gt
       typeof a === 'object' &amp;&amp; !Array.isArray(a) ? (a as FormatDetail) : (<span class="branch-1 cbranch-no" title="branch not covered" >{type: a, behavior, data} as FormatDetail);</span>
     this.dispatch('format', detail);
   }
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >marker(</span>detail: MarkerDetail): void {
+<span class="cstat-no" title="statement not covered" >    this.dispatch('marker', detail);</span>
+  }
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -265,7 +289,7 @@ export class PeritextEventTarget extends TypedEventTarget&lt;PeritextEventMap&gt
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-11T05:00:26.041Z
+                at 2024-11-11T14:10:54.952Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
