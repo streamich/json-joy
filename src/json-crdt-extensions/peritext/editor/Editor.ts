@@ -149,9 +149,11 @@ export class Editor<T = string> implements Printable {
     if (!cursor.isCollapsed()) this.delRange(cursor);
     const after = cursor.start.clone();
     after.refAfter();
-    this.txt.ins(after.id, text);
-    after.step(text.length);
-    cursor.set(after, after, CursorAnchor.Start);
+    const txt = this.txt;
+    const textId = txt.ins(after.id, text);
+    const shift = text.length - 1;
+    const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
+    cursor.set(point, point, CursorAnchor.Start);
   }
 
   /**
