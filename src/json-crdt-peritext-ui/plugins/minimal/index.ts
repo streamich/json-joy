@@ -5,6 +5,7 @@ import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
 import {CommonSliceType} from '../../../json-crdt-extensions';
+import {RenderBlock} from './RenderBlock';
 import type {PeritextPlugin} from '../../react/types';
 import type {InlineAttrStack} from '../../../json-crdt-extensions/peritext/block/Inline';
 
@@ -32,10 +33,6 @@ export const renderers: PeritextPlugin = {
   focus: (props, children) => h(RenderFocus, <any>props, children),
   anchor: (props) => h(RenderAnchor, <any>props),
   inline: (props, children) => h(RenderInline, props as any, children),
-  block: ({hash, block}, children) => {
-    const isRoot = block.tag() === '';
-    if (isRoot) return children;
-    return h('div', {style: {padding: '16px 0'}}, children);
-  },
+  block: (props, children) => h(RenderBlock, props as any, children),
   peritext: (props, children, ctx) => h(RenderPeritext, {...props, children, ctx}),
 };
