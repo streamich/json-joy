@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-forest/lib/util';
-import {first2, insert2, next2, remove2} from 'sonic-forest/lib/util2';
+import {first2, insert2, last2, next2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {OverlayPoint} from './OverlayPoint';
@@ -64,6 +64,14 @@ export class Overlay<T = string> implements Printable, Stateful {
     return this.root ? last(this.root) : undefined;
   }
 
+  public firstMarker(): MarkerOverlayPoint<T> | undefined {
+    return this.root2 ? first2(this.root2) : undefined;
+  }
+
+  public lastMarker(): MarkerOverlayPoint<T> | undefined {
+    return this.root2 ? last2(this.root2) : undefined;
+  }
+
   /**
    * Retrieve overlay point or the previous one, measured in spacial dimension.
    */
@@ -108,6 +116,33 @@ export class Overlay<T = string> implements Printable, Stateful {
       if (cmp < 0) curr = curr.r;
       else {
         const next = curr.l;
+        result = curr;
+        if (!next) return result;
+        curr = next;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Retrieve a {@link MarkerOverlayPoint} at the specified point or the
+   * previous one, measured in spacial dimension.
+   */
+  public getOrNextLowerMarker(point: Point<T>): MarkerOverlayPoint<T> | undefined {
+    if (point.isAbsStart()) {
+      const first = this.firstMarker();
+      if (!first) return;
+      if (first.isAbsStart()) return first;
+      point = first;
+    } else if (point.isAbsEnd()) return this.lastMarker();
+    let curr: MarkerOverlayPoint<T> | undefined = this.root2;
+    let result: MarkerOverlayPoint<T> | undefined = undefined;
+    while (curr) {
+      const cmp = curr.cmpSpatial(point);
+      if (cmp === 0) return curr;
+      if (cmp > 0) curr = curr.l2;
+      else {
+        const next = curr.r2;
         result = curr;
         if (!next) return result;
         curr = next;

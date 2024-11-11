@@ -6,7 +6,7 @@ import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
 import type {FocusViewProps} from '../../react/selection/FocusView';
 
-const width = 0.125;
+const width = 0.14;
 const animationTime = '1s';
 
 const animation = keyframes({
@@ -25,16 +25,14 @@ const blockClass = rule({
   us: 'none',
   w: '0px',
   h: '100%',
-  bg: 'black',
-  va: 'top',
+  va: 'center',
 });
 
 const innerClass = drule({
   an: `${animationTime} ${animation} step-end infinite`,
   pos: 'absolute',
-  top: '-0.15em',
-  left: `-${width / 2}em`,
-  w: width + 'em',
+  w: `calc(max(${width}em, 3px))`,
+  t: '-1.1em',
   h: '1.45em',
   bg: DefaultRendererColors.ActiveCursor,
   'mix-blend-mode': 'multiply',

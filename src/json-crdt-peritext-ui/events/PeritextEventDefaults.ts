@@ -47,7 +47,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       switch (edge) {
         case 'focus':
         case 'anchor': {
-          editor.cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
+          const cursor = editor.cursor;
+          cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
+          if (cursor.isCollapsed()) {
+            const start = cursor.start;
+            start.refAfter();
+            cursor.set(start);
+          }
           break;
         }
         case 'new': {
@@ -126,6 +132,20 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
-    throw new Error('Not implemented');
+    const {action, type, data} = event.detail;
+    switch (action) {
+      case 'ins': {
+        this.txt.editor.split(type, data);
+        break;
+      }
+      case 'tog': {
+        const marker = this.txt.overlay.getOrNextLowerMarker(this.txt.editor.cursor.start);
+        if (marker) {
+          marker.marker.update({type});
+        }
+        console.log('togggling..', marker);
+        break;
+      }
+    }
   };
 }

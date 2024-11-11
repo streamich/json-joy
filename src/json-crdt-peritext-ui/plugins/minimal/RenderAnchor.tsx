@@ -23,17 +23,16 @@ const blockClass = rule({
   us: 'none',
   w: '0px',
   h: '100%',
-  bg: 'black',
-  va: 'top',
+  va: 'center',
 });
 
 const innerClass = rule({
   pos: 'absolute',
-  left: 'calc(max(-8px,-0.25em))',
-  top: '.85em',
-  w: 'calc(min(16px,0.5em))',
+  l: 'calc(max(-6px,-0.2em))',
+  t: '-0.05em',
+  w: 'calc(min(12px,0.4em))',
   h: 'calc(min(16px,0.5em))',
-  bdrad: '50%/30%',
+  bdrad: '50%/20%',
   bg: DefaultRendererColors.ActiveCursor,
   an: fadeInAnimation + ' .25s ease-out',
   animationFillMode: 'forwards',
@@ -48,7 +47,7 @@ export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
   const style = focus ? undefined : {background: DefaultRendererColors.InactiveCursor};
 
   return (
-    <span className={blockClass}>
+    <span className={blockClass} contentEditable={false}>
       <span className={innerClass} style={style}>
         {Char.ZeroLengthSpace}
       </span>

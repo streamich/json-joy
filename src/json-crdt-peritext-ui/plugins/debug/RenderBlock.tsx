@@ -36,6 +36,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
             padding: '2px 4px',
             borderRadius: 3,
             background: 'rgba(0,0,0)',
+            lineHeight: '1.2em',
             color: 'white',
             display: 'inline-block',
           }}

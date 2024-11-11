@@ -10,7 +10,7 @@ import type {PeritextPlugin} from './types';
 
 put('.' + CssClass.Editor, {
   out: 0,
-  whiteSpace: 'pre-wrap',
+  whiteSpace: 'nowrap',
   wordWrap: 'break-word',
   'caret-color': 'transparent',
   '::selection': {
@@ -20,6 +20,10 @@ put('.' + CssClass.Editor, {
   /** @todo Move these to the default theme. */
   fontVariantNumeric: 'slashed-zero oldstyle-nums',
   fontOpticalSizing: 'auto',
+});
+
+put('.' + CssClass.Inline, {
+  whiteSpace: 'pre-wrap',
 });
 
 /**

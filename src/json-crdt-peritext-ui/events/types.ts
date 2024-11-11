@@ -234,8 +234,37 @@ export interface FormatDetail {
   store?: 'saved' | 'extra' | 'local';
 }
 
-// biome-ignore lint: empty interface is expected
-export type MarkerDetail = {};
+/**
+ * The "marker" event manages block marker insertion, removal, and update
+ * actions. For example, inserting a marker in the middle of a paragraph
+ * is a "split" action, it creates two new paragraph blocks from the original
+ * block. Removing a marker results into a "join" action, which merges two
+ * adjacent blocks into one.
+ */
+export interface MarkerDetail {
+  /**
+   * The action to perform.
+   *
+   * @default 'tog'
+   */
+  action?: 'tog' | 'ins' | 'del' | 'upd';
+
+  /**
+   * The type tag applied to the new block, if the action is `'ins'`. If the
+   * action is `'upd'`, the type tag is used to update the block type.
+   *
+   * @default SliceType.Paragraph
+   */
+  type?: SliceType;
+
+  /**
+   * Block-specific custom data. For example, a paragraph block may store
+   * the alignment and indentation information in this field.
+   *
+   * @default undefined
+   */
+  data?: unknown;
+}
 
 /**
  * Position represents a caret position in the document. The position can either
@@ -252,12 +281,11 @@ export type MarkerDetail = {};
  */
 export type Position = EditorPosition<string>;
 
-export type PeritextEventMap = {
+export type PeritextEventDetailMap = {
   change: ChangeDetail;
   insert: InsertDetail;
   delete: DeleteDetail;
   cursor: CursorDetail;
   format: FormatDetail;
-  // remove: FormatDetail;
   marker: MarkerDetail;
 };

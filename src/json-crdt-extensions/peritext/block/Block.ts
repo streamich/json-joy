@@ -4,6 +4,7 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
+import {formatType} from '../slice/util';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
@@ -144,7 +145,7 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
   }
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
-    const tag = `<${this.path.join('.')}>`;
+    const tag = this.path.map((step) => formatType(step)).join('.');
     const header = `${this.toStringName()} ${hash} ${tag}`;
     return header;
   }

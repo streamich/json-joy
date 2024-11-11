@@ -1,10 +1,20 @@
 import * as React from 'react';
 import type {PeritextSurfaceContextValue} from '../../react';
+import type {ValueSyncStore} from '../../../util/events/sync-store';
 
-export interface DebugRenderersContextValue {
+export interface MinimalPluginContextValue {
   ctx?: PeritextSurfaceContextValue;
+
+  /** Current score. */
+  score: ValueSyncStore<number>;
+
+  /** By how much the score changed. */
+  scoreDelta: ValueSyncStore<number>;
+
+  /** The last score that was shown to the user. */
+  lastVisScore: ValueSyncStore<number>;
 }
 
-export const context = React.createContext<DebugRenderersContextValue>({});
+export const context = React.createContext<MinimalPluginContextValue>(null!);
 
-export const useDefaultCtx = () => React.useContext(context);
+export const usePlugin = () => React.useContext(context);

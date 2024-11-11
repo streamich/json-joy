@@ -14,10 +14,10 @@ import {
 } from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
-import type {VecNode} from '../../../json-crdt/nodes';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
+import type {VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
 import type {MutableSlice, SliceView, SliceType, SliceUpdateParams} from './types';
@@ -26,6 +26,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Model} from '../../../json-crdt/model';
 import type {Peritext} from '../Peritext';
+import type {Slices} from './Slices';
 
 /**
  * A persisted slice is a slice that is stored in a {@link Model}. It is used for
@@ -143,6 +144,24 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public dataNode() {
     const node = this.tuple.get(SliceTupleIndex.Data);
     return node && this.model.api.wrap(node);
+  }
+
+  public getStore(): Slices<T> | undefined {
+    const txt = this.txt;
+    const sid = this.id.sid;
+    let store = txt.savedSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    store = txt.localSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    store = txt.extraSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    return;
+  }
+
+  public del(): void {
+    const store = this.getStore();
+    if (!store) return;
+    store.del(this.id);
   }
 
   public isDel(): boolean {

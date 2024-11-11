@@ -15,10 +15,14 @@ const blockClass = rule({
   mr: 0,
 });
 
-export interface ButtonGroup {
+export interface ButtonGroup extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
-export const ButtonGroup: React.FC<ButtonGroup> = ({children}) => {
-  return <div className={blockClass}>{children}</div>;
+export const ButtonGroup: React.FC<ButtonGroup> = ({children, ...rest}) => {
+  return (
+    <div {...rest} className={(rest.className || '') + blockClass}>
+      {children}
+    </div>
+  );
 };

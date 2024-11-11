@@ -33,7 +33,7 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> implements H
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
-    return 'OverlayPoint';
+    return 'MarkerOverlayPoint';
   }
 
   public toStringHeader(tab: string, lite?: boolean): string {

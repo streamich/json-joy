@@ -1,8 +1,12 @@
 import {TypedEventTarget} from '../../util/events/TypedEventTarget';
-import type {PeritextEventMap, CursorDetail, FormatDetail, DeleteDetail} from './types';
+import type {PeritextEventDetailMap, CursorDetail, FormatDetail, DeleteDetail, MarkerDetail} from './types';
+
+export type PeritextEventMap = {
+  [K in keyof PeritextEventDetailMap]: CustomEvent<PeritextEventDetailMap[K]>;
+};
 
 export type PeritextEventHandlerMap = {
-  [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
+  [K in keyof PeritextEventDetailMap]: (event: CustomEvent<PeritextEventDetailMap[K]>) => void;
 };
 
 let __id = 0;
@@ -12,18 +16,18 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
 
   public defaults: Partial<PeritextEventHandlerMap> = {};
 
-  public dispatch<K extends keyof Omit<PeritextEventMap, 'change'>>(
+  public dispatch<K extends keyof Omit<PeritextEventDetailMap, 'change'>>(
     type: K,
-    detail: Omit<PeritextEventMap, 'change'>[K],
+    detail: Omit<PeritextEventDetailMap, 'change'>[K],
   ): void {
-    const event = new CustomEvent<PeritextEventMap[K]>(type, {detail});
+    const event = new CustomEvent<PeritextEventDetailMap[K]>(type, {detail});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults[type]?.(event);
     this.change(event);
   }
 
   public change(ev?: CustomEvent<any>): void {
-    const event = new CustomEvent<PeritextEventMap['change']>('change', {detail: {ev}});
+    const event = new CustomEvent<PeritextEventDetailMap['change']>('change', {detail: {ev}});
     this.dispatchEvent(event);
     if (!event.defaultPrevented) this.defaults.change?.(event);
   }
@@ -61,5 +65,9 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     const detail: FormatDetail =
       typeof a === 'object' && !Array.isArray(a) ? (a as FormatDetail) : ({type: a, behavior, data} as FormatDetail);
     this.dispatch('format', detail);
+  }
+
+  public marker(detail: MarkerDetail): void {
+    this.dispatch('marker', detail);
   }
 }

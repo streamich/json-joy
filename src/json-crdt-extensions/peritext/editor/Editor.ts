@@ -11,13 +11,14 @@ import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
-import type {CommonSliceType} from '../slice';
+import {CommonSliceType, type SliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
 import type {Printable} from 'tree-dump';
+import {tick} from '../../../json-crdt-patch';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -123,16 +124,46 @@ export class Editor<T = string> implements Printable {
     for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) this.delCursor(cursor);
   }
 
+  /**
+   * Ensures there is no range selection. If user has selected a range,
+   * the contents is removed and the cursor is set at the start of the range
+   * as caret.
+   */
+  public collapseCursor(cursor: Cursor<T>): void {
+    this.delRange(cursor);
+    cursor.collapseToStart();
+  }
+
+  public collapseCursors(): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) this.collapseCursor(cursor);
+  }
+
   // ------------------------------------------------------------- text editing
 
   /**
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
    */
+  public insert0(cursor: Cursor<T>, text: string): void {
+    if (!text) return;
+    if (!cursor.isCollapsed()) this.delRange(cursor);
+    const after = cursor.start.clone();
+    after.refAfter();
+    const txt = this.txt;
+    const textId = txt.ins(after.id, text);
+    const shift = text.length - 1;
+    const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
+    cursor.set(point, point, CursorAnchor.Start);
+  }
+
+  /**
+   * Inserts text at the cursor positions and collapses cursors, if necessary.
+   * The applies any pending inline formatting to the inserted text.
+   */
   public insert(text: string): void {
     if (!this.hasCursor()) this.addCursor();
     for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
-      cursor.insert(text);
+      this.insert0(cursor, text);
       const pending = this.pending.value;
       if (pending.size) {
         this.pending.next(new Map());
@@ -149,7 +180,16 @@ export class Editor<T = string> implements Printable {
    * select a range, deletes the whole range.
    */
   public del(step: number = -1): void {
-    this.forCursor((cursor) => cursor.del(step));
+    this.delete(step, 'char');
+  }
+
+  public delRange(range: Range<T>): void {
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    const contained = overlay.findContained(range);
+    for (const slice of contained)
+      if (slice instanceof PersistedSlice && slice.behavior !== SliceBehavior.Cursor) slice.del();
+    txt.delStr(range);
   }
 
   /**
@@ -160,9 +200,10 @@ export class Editor<T = string> implements Printable {
    * @param unit A unit of deletion: "char", "word", "line".
    */
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
-    this.forCursor((cursor) => {
+    const txt = this.txt;
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       if (!cursor.isCollapsed()) {
-        cursor.collapse();
+        this.collapseCursor(cursor);
         return;
       }
       let point1 = cursor.start.clone();
@@ -173,12 +214,11 @@ export class Editor<T = string> implements Printable {
         point1 = this.skip(point1, -1, unit);
         point2 = this.skip(point2, 1, unit);
       }
-      const txt = this.txt;
       const range = txt.range(point1, point2);
-      txt.delStr(range);
+      this.delRange(range);
       point1.refAfter();
       cursor.set(point1);
-    });
+    }
   }
 
   // ----------------------------------------------------------------- movement
@@ -494,7 +534,7 @@ export class Editor<T = string> implements Printable {
   public select(unit: TextRangeUnit): void {
     this.forCursor((cursor) => {
       const range = this.range(cursor.start, unit);
-      if (range) cursor.setRange(range);
+      if (range) cursor.set(range.start, range.end, CursorAnchor.Start);
       else this.delCursors;
     });
   }
@@ -505,14 +545,6 @@ export class Editor<T = string> implements Printable {
   }
 
   // --------------------------------------------------------------- formatting
-
-  protected getSliceStore(slice: PersistedSlice<T>): EditorSlices<T> | undefined {
-    const sid = slice.id.sid;
-    if (sid === this.saved.slices.set.doc.clock.sid) return this.saved;
-    if (sid === this.extra.slices.set.doc.clock.sid) return this.extra;
-    if (sid === this.local.slices.set.doc.clock.sid) return this.local;
-    return;
-  }
 
   protected toggleRangeExclFmt(
     range: Range<T>,
@@ -527,12 +559,7 @@ export class Editor<T = string> implements Printable {
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
     const contained = overlay.findContained(range);
-    for (const slice of contained) {
-      if (slice instanceof PersistedSlice && slice.type === type) {
-        const deletionStore = this.getSliceStore(slice);
-        if (deletionStore) deletionStore.del(slice.id);
-      }
-    }
+    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type === type) slice.del();
     if (needToRemoveFormatting) {
       overlay.refresh();
       const [complete2, partial2] = overlay.stat(range, 1e6);
@@ -584,10 +611,8 @@ export class Editor<T = string> implements Printable {
           switch (slice.behavior) {
             case SliceBehavior.One:
             case SliceBehavior.Many:
-            case SliceBehavior.Erase: {
-              const deletionStore = this.getSliceStore(slice);
-              if (deletionStore) deletionStore.del(slice.id);
-            }
+            case SliceBehavior.Erase:
+              slice.del();
           }
         }
       }
@@ -610,6 +635,18 @@ export class Editor<T = string> implements Printable {
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       const overlapping = overlay.findOverlapping(cursor);
       for (const slice of overlapping) store.del(slice.id);
+    }
+  }
+
+  public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      this.collapseCursor(cursor);
+      if (type === void 0) {
+        // TODO: detect current block type
+        type = CommonSliceType.p;
+      }
+      slices.insMarker(type, data);
+      cursor.move(1);
     }
   }
 
