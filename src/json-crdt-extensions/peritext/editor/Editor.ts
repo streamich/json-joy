@@ -188,7 +188,8 @@ export class Editor<T = string> implements Printable {
     const txt = this.txt;
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       if (!cursor.isCollapsed()) {
-        cursor.collapse();
+        this.delRange(cursor);
+        cursor.collapseToStart();
         return;
       }
       let point1 = cursor.start.clone();

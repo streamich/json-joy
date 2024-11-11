@@ -85,6 +85,13 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     if (deleted) this.collapseToStart();
   }
 
+  public collapseToStart(anchorSide: CursorAnchor = CursorAnchor.Start): void {
+    const start = this.start.clone();
+    start.refAfter();
+    const end = start.clone();
+    this.set(start, end, anchorSide);
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
