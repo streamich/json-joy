@@ -5,6 +5,7 @@ import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import {useSyncStore} from '../../../react/hooks';
 import type {PeritextSurfaceContextValue} from '../../../react';
+import {ButtonSeparator} from '../../../components/ButtonSeparator';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceContextValue;
@@ -15,7 +16,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
 
-  const button = (type: string | number, name: React.ReactNode) => (
+  const inlineGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button
       onClick={() => ctx.dom.et.format(type)}
       onMouseDown={(e) => e.preventDefault()}
@@ -25,37 +26,53 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
     </Button>
   );
 
-  const button2 = (name: React.ReactNode, onClick: React.MouseEventHandler) => (
+  const button = (name: React.ReactNode, onClick: React.MouseEventHandler) => (
     <Button onClick={onClick} onMouseDown={(e) => e.preventDefault()}>
+      {name}
+    </Button>
+  );
+
+  const blockGroupButtom = (type: string | number, name: React.ReactNode) => (
+    <Button
+      onClick={() => ctx.dom.et.marker({action: 'tog', type})}
+      onMouseDown={(e) => e.preventDefault()}
+      active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
+    >
       {name}
     </Button>
   );
 
   return (
     <ButtonGroup style={{marginBottom: 8}}>
-      {button(CommonSliceType.b, 'Bold')}
-      {button(CommonSliceType.i, 'Italic')}
-      {button(CommonSliceType.u, 'Underline')}
-      {button(CommonSliceType.s, 'Strikethrough')}
-      {button(CommonSliceType.code, 'Code')}
-      {button(CommonSliceType.mark, 'Mark')}
-      {button(CommonSliceType.del, 'Deleted')}
-      {button(CommonSliceType.ins, 'Inserted')}
-      {button(CommonSliceType.sup, 'Superscript')}
-      {button(CommonSliceType.sub, 'Subscript')}
-      {button(CommonSliceType.math, 'Math')}
-      {button(CommonSliceType.kbd, 'Key')}
-      {button(CommonSliceType.hidden, 'Spoiler')}
-      {button(CommonSliceType.bookmark, 'Bookmark')}
-      {button2('Blue', () => {
+      {inlineGroupButton(CommonSliceType.b, 'Bold')}
+      {inlineGroupButton(CommonSliceType.i, 'Italic')}
+      {inlineGroupButton(CommonSliceType.u, 'Underline')}
+      {inlineGroupButton(CommonSliceType.s, 'Strikethrough')}
+      {inlineGroupButton(CommonSliceType.code, 'Code')}
+      {inlineGroupButton(CommonSliceType.mark, 'Mark')}
+      {inlineGroupButton(CommonSliceType.del, 'Deleted')}
+      {inlineGroupButton(CommonSliceType.ins, 'Inserted')}
+      {inlineGroupButton(CommonSliceType.sup, 'Superscript')}
+      {inlineGroupButton(CommonSliceType.sub, 'Subscript')}
+      {inlineGroupButton(CommonSliceType.math, 'Math')}
+      {inlineGroupButton(CommonSliceType.kbd, 'Key')}
+      {inlineGroupButton(CommonSliceType.hidden, 'Spoiler')}
+      {inlineGroupButton(CommonSliceType.bookmark, 'Bookmark')}
+      <ButtonSeparator />
+      {button('Blue', () => {
         ctx.dom.et.format(CommonSliceType.col, 'one', '#07f');
       })}
-      {button2('Erase', () => {
+      <ButtonSeparator />
+      {button('Erase', () => {
         ctx.dom.et.format({behavior: 'erase'});
       })}
-      {button2('Clear', () => {
+      {button('Clear', () => {
         ctx.dom.et.format({behavior: 'clear'});
       })}
+      <ButtonSeparator />
+      {blockGroupButtom(CommonSliceType.p, 'Paragraph')}
+      {blockGroupButtom(CommonSliceType.blockquote, 'Blockquote')}
+      {blockGroupButtom(CommonSliceType.codeblock, 'Code Block')}
     </ButtonGroup>
   );
 };

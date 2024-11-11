@@ -67,8 +67,7 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.dispatch('format', detail);
   }
 
-  public marker(action: MarkerDetail['action'], type?: MarkerDetail['type'], data?: MarkerDetail['data']): void {
-    const detail: MarkerDetail = {action, type, data};
+  public marker(detail: MarkerDetail): void {
     this.dispatch('marker', detail);
   }
 }

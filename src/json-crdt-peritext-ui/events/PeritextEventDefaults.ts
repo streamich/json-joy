@@ -138,6 +138,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         this.txt.editor.split(type, data);
         break;
       }
+      case 'tog': {
+        const marker = this.txt.overlay.getOrNextLowerMarker(this.txt.editor.cursor.start);
+        if (marker) {
+          marker.marker.update({type});
+        }
+        console.log('togggling..', marker)
+        break;
+      }
     }
   };
 }
