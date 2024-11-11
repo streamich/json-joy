@@ -275,7 +275,7 @@ export interface MarkerDetail {
  */
 export type Position = EditorPosition<string>;
 
-export type PeritextEventMap = {
+export type PeritextEventDetailMap = {
   change: ChangeDetail;
   insert: InsertDetail;
   delete: DeleteDetail;
