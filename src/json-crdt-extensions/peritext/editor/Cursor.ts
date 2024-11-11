@@ -85,22 +85,6 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     if (deleted) this.collapseToStart();
   }
 
-  /**
-   * @deprecated Use `Editor.insert()` instead.
-   *
-   * Insert inline text at current cursor position. If cursor selects a range,
-   * the range is removed and the text is inserted at the start of the range.
-   */
-  public insert(text: string): void {
-    if (!text) return;
-    this.collapse();
-    const after = this.start.clone();
-    after.refAfter();
-    const textId = this.txt.ins(after.id, text);
-    const shift = text.length - 1;
-    this.setAfter(shift ? tick(textId, shift) : textId);
-  }
-
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {

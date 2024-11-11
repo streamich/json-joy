@@ -18,6 +18,7 @@ import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
 import type {Printable} from 'tree-dump';
+import {tick} from '../../../json-crdt-patch';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -129,10 +130,26 @@ export class Editor<T = string> implements Printable {
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
    */
+  public insert0(cursor: Cursor<T>, text: string): void {
+    if (!text) return;
+    if (!cursor.isCollapsed()) this.delRange(cursor);
+    const after = cursor.start.clone();
+    after.refAfter();
+    const txt = this.txt;
+    const textId = txt.ins(after.id, text);
+    const shift = text.length - 1;
+    const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
+    cursor.set(point, point, CursorAnchor.Start);
+  }
+
+  /**
+   * Inserts text at the cursor positions and collapses cursors, if necessary.
+   * The applies any pending inline formatting to the inserted text.
+   */
   public insert(text: string): void {
     if (!this.hasCursor()) this.addCursor();
     for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
-      cursor.insert(text);
+      this.insert0(cursor, text);
       const pending = this.pending.value;
       if (pending.size) {
         this.pending.next(new Map());
@@ -156,7 +173,7 @@ export class Editor<T = string> implements Printable {
     const txt = this.txt;
     const overlay = txt.overlay;
     const contained = overlay.findContained(range);
-    for (const slice of contained) if (slice instanceof PersistedSlice) slice.del();
+    for (const slice of contained) if (slice instanceof PersistedSlice && slice.behavior !== SliceBehavior.Cursor) slice.del();
     txt.delStr(range);
   }
 
