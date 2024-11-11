@@ -1,9 +1,8 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {Chrome} from './Chrome';
 import {context, type MinimalPluginContextValue} from './context';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import {ChangeDetail} from '../../events/types';
+import type {ChangeDetail} from '../../events/types';
 import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
 
 export interface RenderPeritextProps extends PeritextViewProps {
@@ -12,12 +11,16 @@ export interface RenderPeritextProps extends PeritextViewProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) => {
-  const value: MinimalPluginContextValue = React.useMemo(() => ({
-    ctx,
-    score: new ValueSyncStore(0),
-    scoreDelta: new ValueSyncStore(0),
-    lastVisScore: new ValueSyncStore(0),
-  }), [ctx]);
+  const value: MinimalPluginContextValue = React.useMemo(
+    () => ({
+      ctx,
+      score: new ValueSyncStore(0),
+      scoreDelta: new ValueSyncStore(0),
+      lastVisScore: new ValueSyncStore(0),
+    }),
+    [ctx],
+  );
+
   React.useEffect(() => {
     const dom = ctx?.dom;
     if (!dom || !value) return;

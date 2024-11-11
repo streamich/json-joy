@@ -13,7 +13,5 @@ const blockClass = rule({
 });
 
 export const ButtonSeparator: React.FC = () => {
-  return (
-    <div className={blockClass} />
-  );
+  return <div className={blockClass} />;
 };

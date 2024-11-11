@@ -1,6 +1,6 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {BlockViewProps} from '../../react/BlockView';
+import type {BlockViewProps} from '../../react/BlockView';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 
 export interface RenderBlockProps extends BlockViewProps {
@@ -10,12 +10,13 @@ export interface RenderBlockProps extends BlockViewProps {
 export const RenderBlock: React.FC<RenderBlockProps> = ({block, children}) => {
   const tag = block.tag();
   switch (tag) {
-    case '': return children;
+    case '':
+      return children;
     case CommonSliceType.blockquote: {
       return <blockquote>{children}</blockquote>;
     }
     default: {
-      return <div style={{padding: '16px 0'}}>{children}</div>
+      return <div style={{padding: '16px 0'}}>{children}</div>;
     }
   }
 };

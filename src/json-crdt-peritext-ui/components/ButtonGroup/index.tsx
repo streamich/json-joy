@@ -20,5 +20,9 @@ export interface ButtonGroup extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const ButtonGroup: React.FC<ButtonGroup> = ({children, ...rest}) => {
-  return <div {...rest} className={(rest.className || '') + blockClass}>{children}</div>;
+  return (
+    <div {...rest} className={(rest.className || '') + blockClass}>
+      {children}
+    </div>
+  );
 };

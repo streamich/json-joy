@@ -244,7 +244,7 @@ export interface FormatDetail {
 export interface MarkerDetail {
   /**
    * The action to perform.
-   * 
+   *
    * @default 'tog'
    */
   action?: 'tog' | 'ins' | 'del' | 'upd';
@@ -252,7 +252,7 @@ export interface MarkerDetail {
   /**
    * The type tag applied to the new block, if the action is `'ins'`. If the
    * action is `'upd'`, the type tag is used to update the block type.
-   * 
+   *
    * @default SliceType.Paragraph
    */
   type?: SliceType;
@@ -260,7 +260,7 @@ export interface MarkerDetail {
   /**
    * Block-specific custom data. For example, a paragraph block may store
    * the alignment and indentation information in this field.
-   * 
+   *
    * @default undefined
    */
   data?: unknown;

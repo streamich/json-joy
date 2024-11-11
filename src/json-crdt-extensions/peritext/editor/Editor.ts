@@ -11,7 +11,7 @@ import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
-import {CommonSliceType, SliceType} from '../slice';
+import {CommonSliceType, type SliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
@@ -187,7 +187,8 @@ export class Editor<T = string> implements Printable {
     const txt = this.txt;
     const overlay = txt.overlay;
     const contained = overlay.findContained(range);
-    for (const slice of contained) if (slice instanceof PersistedSlice && slice.behavior !== SliceBehavior.Cursor) slice.del();
+    for (const slice of contained)
+      if (slice instanceof PersistedSlice && slice.behavior !== SliceBehavior.Cursor) slice.del();
     txt.delStr(range);
   }
 
@@ -201,7 +202,10 @@ export class Editor<T = string> implements Printable {
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
     const txt = this.txt;
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      if (!cursor.isCollapsed()) return this.collapseCursor(cursor);
+      if (!cursor.isCollapsed()) {
+        this.collapseCursor(cursor);
+        return;
+      }
       let point1 = cursor.start.clone();
       let point2 = point1.clone();
       if (step > 0) point2 = this.skip(point2, step, unit);
@@ -555,8 +559,7 @@ export class Editor<T = string> implements Printable {
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
     const contained = overlay.findContained(range);
-    for (const slice of contained)
-      if (slice instanceof PersistedSlice && slice.type === type) slice.del();
+    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type === type) slice.del();
     if (needToRemoveFormatting) {
       overlay.refresh();
       const [complete2, partial2] = overlay.stat(range, 1e6);
@@ -608,7 +611,8 @@ export class Editor<T = string> implements Printable {
           switch (slice.behavior) {
             case SliceBehavior.One:
             case SliceBehavior.Many:
-            case SliceBehavior.Erase: slice.del();
+            case SliceBehavior.Erase:
+              slice.del();
           }
         }
       }

@@ -59,15 +59,15 @@ export class Overlay<T = string> implements Printable, Stateful {
   public first(): OverlayPoint<T> | undefined {
     return this.root ? first(this.root) : undefined;
   }
-  
+
   public last(): OverlayPoint<T> | undefined {
     return this.root ? last(this.root) : undefined;
   }
-  
+
   public firstMarker(): MarkerOverlayPoint<T> | undefined {
     return this.root2 ? first2(this.root2) : undefined;
   }
-  
+
   public lastMarker(): MarkerOverlayPoint<T> | undefined {
     return this.root2 ? last2(this.root2) : undefined;
   }

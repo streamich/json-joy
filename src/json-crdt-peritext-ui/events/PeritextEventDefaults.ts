@@ -143,7 +143,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (marker) {
           marker.marker.update({type});
         }
-        console.log('togggling..', marker)
+        console.log('togggling..', marker);
         break;
       }
     }

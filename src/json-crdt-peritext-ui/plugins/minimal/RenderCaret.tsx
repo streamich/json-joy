@@ -35,7 +35,7 @@ const innerClass = rule({
   d: 'inline-block',
   b: '-0.4em',
   l: '-0.065em',
-  w: `calc(max(.2em, 3px))`,
+  w: 'calc(max(.2em, 3px))',
   h: '1.5em',
   bg: DefaultRendererColors.ActiveCursor,
   bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
@@ -84,7 +84,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
 const scoreAnimation = keyframes({
   from: {
-    op: .7,
+    op: 0.7,
     tr: 'scale(1.2)',
   },
   to: {
@@ -95,13 +95,13 @@ const scoreAnimation = keyframes({
 });
 
 const shakingAnimation = keyframes({
-  '0%': { tr: 'translateX(0), scale(1.2)', op: 1 },
-  '10%': { tr: 'translateX(-2px)' },
-  '20%': { tr: 'translateX(2px)' },
-  '30%': { tr: 'translateX(-1px)' },
-  '40%': { tr: 'translateX(1px)' },
-  '50%': { tr: 'translateX(0), scale(1)' },
-  '100%': { op: 0, vis: 'hidden' },
+  '0%': {tr: 'translateX(0), scale(1.2)', op: 1},
+  '10%': {tr: 'translateX(-2px)'},
+  '20%': {tr: 'translateX(2px)'},
+  '30%': {tr: 'translateX(-1px)'},
+  '40%': {tr: 'translateX(1px)'},
+  '50%': {tr: 'translateX(0), scale(1)'},
+  '100%': {op: 0, vis: 'hidden'},
 });
 
 const scoreClass = rule({
@@ -110,7 +110,7 @@ const scoreClass = rule({
   b: '0.3em',
   l: '.75em',
   fz: '.4em',
-  op: .5,
+  op: 0.5,
   an: scoreAnimation + ' .5s ease-out forwards',
   ws: 'nowrap',
   pe: 'none',
@@ -123,7 +123,7 @@ const scoreDeltaClass = rule({
   b: '0.9em',
   l: '1.2em',
   fz: '.5em',
-  op: .5,
+  op: 0.5,
   col: 'blue',
   an: scoreAnimation + ' .3s ease-out forwards',
   pe: 'none',
@@ -138,18 +138,20 @@ interface CaretScoreProps {
 const CaretScore: React.FC<CaretScoreProps> = React.memo(({score, delta}) => {
   const plugin = usePlugin();
 
+  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   React.useEffect(() => {
     plugin.lastVisScore.value = score;
   }, []);
 
-  const scoreMsg = score > 100 && score <= 120
-    ? 'Typing Spree!'
+  const scoreMsg =
+    score > 100 && score <= 120
+      ? 'Typing Spree!'
       : score > 200 && score <= 208
-      ? 'Go, go, go!'
+        ? 'Go, go, go!'
         : score > 300 && score <= 320
           ? 'Rampage!'
           : score > 400 && score <= 408
-            ? 'Let\'s go!'
+            ? "Let's go!"
             : score > 500 && score <= 520
               ? 'Unstoppable!'
               : score > 600 && score <= 608
@@ -176,8 +178,20 @@ const CaretScore: React.FC<CaretScoreProps> = React.memo(({score, delta}) => {
 
   return (
     <>
-      {score >=24 && <span contentEditable={false} className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? shakingAnimation + ' .7s ease-out forwards' : undefined}}>{scoreMsg}</span>}
-      {(typeof scoreMsg === 'string' || (score > 42 && delta > 1)) && <span contentEditable={false} className={scoreDeltaClass}>+{delta}</span>}
+      {score >= 24 && (
+        <span
+          contentEditable={false}
+          className={scoreClass}
+          style={{animation: typeof scoreMsg === 'string' ? shakingAnimation + ' .7s ease-out forwards' : undefined}}
+        >
+          {scoreMsg}
+        </span>
+      )}
+      {(typeof scoreMsg === 'string' || (score > 42 && delta > 1)) && (
+        <span contentEditable={false} className={scoreDeltaClass}>
+          +{delta}
+        </span>
+      )}
     </>
   );
 });

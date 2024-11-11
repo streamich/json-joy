@@ -145,7 +145,7 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
   }
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
-    const tag = this.path.map(step => formatType(step)).join('.');
+    const tag = this.path.map((step) => formatType(step)).join('.');
     const header = `${this.toStringName()} ${hash} ${tag}`;
     return header;
   }
