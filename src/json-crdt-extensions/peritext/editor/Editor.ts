@@ -178,6 +178,20 @@ export class Editor<T = string> implements Printable {
   }
 
   /**
+   * Ensures there is no range selection. If user has selected a range,
+   * the contents is removed and the cursor is set at the start of the range
+   * as caret.
+   */
+  public collapseCursor(cursor: Cursor<T>): void {
+    this.delRange(cursor);
+    cursor.collapseToStart();
+  }
+
+  public collapseCursors(): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) this.collapseCursor(cursor);
+  }
+
+  /**
    * Deletes one or more units of text in all cursors. If cursor is a range,
    * deletes the whole range.
    *
@@ -187,11 +201,7 @@ export class Editor<T = string> implements Printable {
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
     const txt = this.txt;
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      if (!cursor.isCollapsed()) {
-        this.delRange(cursor);
-        cursor.collapseToStart();
-        return;
-      }
+      if (!cursor.isCollapsed()) return this.collapseCursor(cursor);
       let point1 = cursor.start.clone();
       let point2 = point1.clone();
       if (step > 0) point2 = this.skip(point2, step, unit);

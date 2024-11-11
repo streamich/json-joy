@@ -71,20 +71,6 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     }
   }
 
-  /**
-   * Ensures there is no range selection. If user has selected a range,
-   * the contents is removed and the cursor is set at the start of the range as cursor.
-   *
-   * @todo If block boundaries are withing the range, remove the blocks.
-   * @todo Stress test this method.
-   *
-   * @returns Returns the cursor position after the operation.
-   */
-  public collapse(): void {
-    const deleted = this.txt.delStr(this);
-    if (deleted) this.collapseToStart();
-  }
-
   public collapseToStart(anchorSide: CursorAnchor = CursorAnchor.Start): void {
     const start = this.start.clone();
     start.refAfter();

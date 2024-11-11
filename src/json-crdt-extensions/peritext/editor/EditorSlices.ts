@@ -35,7 +35,7 @@ export class EditorSlices<T = string> {
 
   public insMarker(type: SliceType, data?: unknown, separator?: string): MarkerSlice<T>[] {
     return this.insAtCursors((cursor) => {
-      cursor.collapse();
+      this.txt.editor.collapseCursor(cursor);
       const after = cursor.start.clone();
       after.refAfter();
       const marker = this.slices.insMarkerAfter(after.id, type, data, separator);

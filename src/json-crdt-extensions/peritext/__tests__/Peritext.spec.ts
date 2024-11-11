@@ -109,7 +109,7 @@ const run = (setup: () => Kit) => {
       const {peritext, model} = setup();
       const {editor} = peritext;
       expect(editor.cursor.isCollapsed()).toBe(true);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('hello world');
     });
@@ -119,7 +119,7 @@ const run = (setup: () => Kit) => {
       const {editor} = peritext;
       editor.cursor.setAt(2, 3);
       expect(editor.cursor.isCollapsed()).toBe(false);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('he world');
     });
@@ -129,12 +129,12 @@ const run = (setup: () => Kit) => {
       const {editor} = peritext;
       peritext.editor.cursor.setAt(0, 1);
       expect(editor.cursor.isCollapsed()).toBe(false);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('ello world');
       editor.cursor.setAt(0, 1);
       expect(editor.cursor.isCollapsed()).toBe(false);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('llo world');
     });
@@ -144,12 +144,12 @@ const run = (setup: () => Kit) => {
       const {editor} = peritext;
       editor.cursor.setAt(peritext.str.length() - 1, 1);
       expect(editor.cursor.isCollapsed()).toBe(false);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('hello worl');
       peritext.editor.cursor.setAt(peritext.str.length() - 1, 1);
       expect(editor.cursor.isCollapsed()).toBe(false);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('hello wor');
     });
@@ -159,7 +159,7 @@ const run = (setup: () => Kit) => {
       const {editor} = peritext;
       editor.cursor.setAt(0, peritext.str.length());
       expect(editor.cursor.isCollapsed()).toBe(false);
-      editor.cursor.collapse();
+      editor.collapseCursors();
       expect(editor.cursor.isCollapsed()).toBe(true);
       expect((model.view() as any).text).toBe('');
       editor.insert('abc');
