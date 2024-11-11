@@ -55,9 +55,7 @@ export class InputController implements UiLifeCycles {
     switch (inputType) {
       case 'insertParagraph': {
         event.preventDefault();
-        // editor.saved.insMarker('p');
-        // editor.cursor.move(1);
-        // this.et.change(event);
+        et.marker('ins');
         break;
       }
       // case 'insertFromComposition':

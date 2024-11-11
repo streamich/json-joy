@@ -1,5 +1,5 @@
 import {TypedEventTarget} from '../../util/events/TypedEventTarget';
-import type {PeritextEventMap, CursorDetail, FormatDetail, DeleteDetail} from './types';
+import type {PeritextEventMap, CursorDetail, FormatDetail, DeleteDetail, MarkerDetail} from './types';
 
 export type PeritextEventHandlerMap = {
   [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
@@ -61,5 +61,10 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     const detail: FormatDetail =
       typeof a === 'object' && !Array.isArray(a) ? (a as FormatDetail) : ({type: a, behavior, data} as FormatDetail);
     this.dispatch('format', detail);
+  }
+
+  public marker(action: MarkerDetail['action'], type?: MarkerDetail['type'], data?: MarkerDetail['data']): void {
+    const detail: MarkerDetail = {action, type, data};
+    this.dispatch('marker', detail);
   }
 }
