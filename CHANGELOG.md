@@ -1,3 +1,47 @@
+# [17.17.0](https://github.com/streamich/json-joy/compare/v17.16.0...v17.17.0) (2024-11-11)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly delete when in range selection ([02103b6](https://github.com/streamich/json-joy/commit/02103b635ceab350bcf69459dac4fff1ed72d4ee))
+* **json-crdt-extensions:** 🐛 on unite selection at current position, always focus end ([0133eb8](https://github.com/streamich/json-joy/commit/0133eb86f70928f261b92d4c4f662c7c7bc32f27))
+* **json-crdt-peritext-ui:** 🐛 correct types for event map ([397b57d](https://github.com/streamich/json-joy/commit/397b57df76c274177eb456a61c70ea28873d32fa))
+* **json-crdt-peritext-ui:** 🐛 fixup caret rendering for spacious lines ([464c9a6](https://github.com/streamich/json-joy/commit/464c9a68080bc1b436fe45f7dd74099d6c2a046e))
+* **json-crdt-peritext-ui:** 🐛 make sure collapsed cursors are proper "after" carets ([2c1714b](https://github.com/streamich/json-joy/commit/2c1714b198a854f593c94a30f506fa4b88be24ee))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add <kbd> inline annotation ([0abc25e](https://github.com/streamich/json-joy/commit/0abc25e4c8b7aadd43d9a726d8ad46721f4eb76c))
+* **json-crdt-extensions:** 🎸 add ability to find current block marker ([3700013](https://github.com/streamich/json-joy/commit/3700013039cd907808e28d9469af83438a60e1dc))
+* **json-crdt-extensions:** 🎸 improve block split insertion logic ([ce233cc](https://github.com/streamich/json-joy/commit/ce233cce20b7225e1ed855c98576818c3919e8e4))
+* **json-crdt-extensions:** 🎸 improve cursor collapsing logic ([d9b3d4f](https://github.com/streamich/json-joy/commit/d9b3d4f382893f312719ec1f0e385759e160de36))
+* **json-crdt-extensions:** 🎸 improve deletion ([59ec4eb](https://github.com/streamich/json-joy/commit/59ec4eb07cbd7a96de7b28637fe9b7aa9f1263e5))
+* **json-crdt-extensions:** 🎸 improve text insertion logic, especially into range ([cdea38e](https://github.com/streamich/json-joy/commit/cdea38e24801a77e7c0bc5b6f26104365eb4437c))
+* **json-crdt-extensions:** 🎸 print human-readable block type ([c125938](https://github.com/streamich/json-joy/commit/c125938ff29f54101a4ab5237fa3cc196b2205d6))
+* **json-crdt-peritext-ui:** 🎸 add ability to render different block types ([573a2ec](https://github.com/streamich/json-joy/commit/573a2ecb60c66e35a0d848bc56e1b7984b662e09))
+* **json-crdt-peritext-ui:** 🎸 add initial block type switching functionality ([cd8f771](https://github.com/streamich/json-joy/commit/cd8f771f70e59b852fb23d033a02ea8a2553b0d5))
+* **json-crdt-peritext-ui:** 🎸 do not show score on cursor movement ([3d7f58e](https://github.com/streamich/json-joy/commit/3d7f58ea810cfdcbe738d3d2b8f0fa67d9f22f0c))
+* **json-crdt-peritext-ui:** 🎸 implement initial "marker" event ([f779251](https://github.com/streamich/json-joy/commit/f7792519d6a7ba74b8a857ba2bc82f08de73cd16))
+* **json-crdt-peritext-ui:** 🎸 improve selection and caret display ([d348077](https://github.com/streamich/json-joy/commit/d348077f8c0476f71b66303c40b287667aba8d7d))
+* **json-crdt-peritext-ui:** 🎸 improve typing score display ([edfd647](https://github.com/streamich/json-joy/commit/edfd647346cacf9e45c9e6eda9b77b52db3e118a))
+* **json-crdt-peritext-ui:** 🎸 insert more type scoring phrases ([52001a9](https://github.com/streamich/json-joy/commit/52001a9ea0f2fc9dfc5a7f96499088f5a0d8ff95))
+* **json-crdt-peritext-ui:** 🎸 keep score while actively moving cursor ([071ec09](https://github.com/streamich/json-joy/commit/071ec093458a2721226930da69c2c7ad241f0729))
+* **json-crdt-peritext-ui:** 🎸 keeps score while user performs actions ([9fc675f](https://github.com/streamich/json-joy/commit/9fc675fa6996dfc8bc97f716cb634a9289791276))
+* **json-crdt-peritext-ui:** 🎸 make +2 harder ([1f85886](https://github.com/streamich/json-joy/commit/1f85886e488f2fe92eab4eb4a69e174dd0a600b6))
+* **json-crdt-peritext-ui:** 🎸 make anchors look flatter ([947b73d](https://github.com/streamich/json-joy/commit/947b73d668a5f28c0242d45036b7750d1b513326))
+* **json-crdt-peritext-ui:** 🎸 make score messages shake ([10bdf3d](https://github.com/streamich/json-joy/commit/10bdf3d3fbbf898519a79ea1de3e28ea02d2c882))
+* **json-crdt-peritext-ui:** 🎸 minor tweaks ([23fc35d](https://github.com/streamich/json-joy/commit/23fc35dcd3d4f4a9168b0e9d0abfbd1515a0b13a))
+* **json-crdt-peritext-ui:** 🎸 render score when typing ([40cb826](https://github.com/streamich/json-joy/commit/40cb826ccdacfc26a2f9b6f9f07c06bdd0d9005e))
+* **json-crdt-peritext-ui:** 🎸 show score deltas and UT easter egg messages ([4add638](https://github.com/streamich/json-joy/commit/4add638cef122e5148a7ebd9a58c83050f798e0e))
+* **json-crdt-peritext-ui:** 🎸 specify the "marker" event ([a4d77bd](https://github.com/streamich/json-joy/commit/a4d77bdb7b5d9d1a98700bf15857cd7c27855886))
+* **json-crdt-peritext-ui:** 🎸 tweak typing scoring parameters ([c37bf84](https://github.com/streamich/json-joy/commit/c37bf84e4e25584a6e86f904356229777d385862))
+
+
+### Performance Improvements
+
+* **json-crdt-extensions:** ⚡️ just cursor directly to insertion end ([1e86004](https://github.com/streamich/json-joy/commit/1e860043e874b8f858c63c2f7e89a98f31829f0e))
+
 # [17.16.0](https://github.com/streamich/json-joy/compare/v17.15.0...v17.16.0) (2024-11-10)
 
 
