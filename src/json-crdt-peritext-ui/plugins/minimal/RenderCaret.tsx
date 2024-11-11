@@ -55,7 +55,10 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
-  const {score, scoreDelta} = usePlugin();
+  const plugin = usePlugin();
+
+  const score = plugin.score.value;
+  const delta = plugin.scoreDelta.value;
 
   const style: React.CSSProperties = {
     background: !focus
@@ -71,7 +74,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
   return (
     <span className={blockClass}>
-      <CaretScore score={score.value} delta={scoreDelta.value} />
+      {score !== plugin.lastVisScore.value && <CaretScore score={score} delta={delta} />}
       <span className={innerClass} style={style}>
         {children}
       </span>
@@ -133,6 +136,12 @@ interface CaretScoreProps {
 }
 
 const CaretScore: React.FC<CaretScoreProps> = React.memo(({score, delta}) => {
+  const plugin = usePlugin();
+
+  React.useEffect(() => {
+    plugin.lastVisScore.value = score;
+  }, []);
+
   const scoreMsg = score > 100 && score <= 120
     ? 'Typing Spree!'
       : score > 200 && score <= 208

@@ -10,6 +10,9 @@ export interface MinimalPluginContextValue {
 
   /** By how much the score changed. */
   scoreDelta: ValueSyncStore<number>;
+
+  /** The last score that was shown to the user. */
+  lastVisScore: ValueSyncStore<number>;
 }
 
 export const context = React.createContext<MinimalPluginContextValue>(null!);
