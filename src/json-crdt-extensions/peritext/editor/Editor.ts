@@ -11,7 +11,7 @@ import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
-import type {CommonSliceType} from '../slice';
+import {CommonSliceType, SliceType} from '../slice';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
@@ -124,6 +124,20 @@ export class Editor<T = string> implements Printable {
     for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) this.delCursor(cursor);
   }
 
+  /**
+   * Ensures there is no range selection. If user has selected a range,
+   * the contents is removed and the cursor is set at the start of the range
+   * as caret.
+   */
+  public collapseCursor(cursor: Cursor<T>): void {
+    this.delRange(cursor);
+    cursor.collapseToStart();
+  }
+
+  public collapseCursors(): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) this.collapseCursor(cursor);
+  }
+
   // ------------------------------------------------------------- text editing
 
   /**
@@ -135,11 +149,9 @@ export class Editor<T = string> implements Printable {
     if (!cursor.isCollapsed()) this.delRange(cursor);
     const after = cursor.start.clone();
     after.refAfter();
-    const txt = this.txt;
-    const textId = txt.ins(after.id, text);
-    const shift = text.length - 1;
-    const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
-    cursor.set(point, point, CursorAnchor.Start);
+    this.txt.ins(after.id, text);
+    after.step(text.length);
+    cursor.set(after, after, CursorAnchor.Start);
   }
 
   /**
@@ -175,20 +187,6 @@ export class Editor<T = string> implements Printable {
     const contained = overlay.findContained(range);
     for (const slice of contained) if (slice instanceof PersistedSlice && slice.behavior !== SliceBehavior.Cursor) slice.del();
     txt.delStr(range);
-  }
-
-  /**
-   * Ensures there is no range selection. If user has selected a range,
-   * the contents is removed and the cursor is set at the start of the range
-   * as caret.
-   */
-  public collapseCursor(cursor: Cursor<T>): void {
-    this.delRange(cursor);
-    cursor.collapseToStart();
-  }
-
-  public collapseCursors(): void {
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) this.collapseCursor(cursor);
   }
 
   /**
@@ -631,6 +629,18 @@ export class Editor<T = string> implements Printable {
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       const overlapping = overlay.findOverlapping(cursor);
       for (const slice of overlapping) store.del(slice.id);
+    }
+  }
+
+  public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      this.collapseCursor(cursor);
+      if (type === void 0) {
+        // TODO: detect current block type
+        type = CommonSliceType.p;
+      }
+      slices.insMarker(type, data);
+      cursor.move(1);
     }
   }
 

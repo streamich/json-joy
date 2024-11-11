@@ -1,4 +1,4 @@
-import {CommonSliceType, CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
+import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
@@ -133,6 +133,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
     const {action, type, data} = event.detail;
-    this.txt.editor.saved.insMarker(type ?? CommonSliceType.p, data);
+    switch (action) {
+      case 'ins': {
+        this.txt.editor.split(type, data);
+        break;
+      }
+    }
   };
 }
