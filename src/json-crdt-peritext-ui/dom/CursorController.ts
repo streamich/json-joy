@@ -81,9 +81,9 @@ export class CursorController implements UiLifeCycles, Printable {
     const currentPos = this.opts.txt.editor.cursor.focus().viewPos();
     const caretPos = this.posAtPoint(x + halfWidth, y + halfHeight);
     if (currentPos !== caretPos) return;
-    for (let i = 1; i < 8; i++) {
+    for (let i = 1; i < 16; i++) {
       const dy = i * direction * halfHeight;
-      const pos = this.posAtPoint(x + halfWidth, y + halfHeight + dy);
+      const pos = this.posAtPoint(x + halfWidth, y + dy);
       if (pos !== -1 && pos !== caretPos) {
         if (direction < 0) {
           if (pos < caretPos) return pos;
