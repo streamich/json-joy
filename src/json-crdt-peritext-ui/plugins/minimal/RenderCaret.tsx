@@ -10,7 +10,7 @@ import {usePlugin} from './context';
 
 const ms = 350;
 
-export const moveAnimation = keyframes({
+const moveAnimation = keyframes({
   from: {
     tr: 'scale(1.2)',
   },
@@ -19,7 +19,7 @@ export const moveAnimation = keyframes({
   },
 });
 
-export const scoreAnimation = keyframes({
+const scoreAnimation = keyframes({
   from: {
     op: .7,
     tr: 'scale(1.2)',
@@ -31,30 +31,14 @@ export const scoreAnimation = keyframes({
   },
 });
 
-export const scoreMessageAnimation = keyframes({
-  from: {
-    op: 1,
-  },
-  to: {
-    op: 0,
-    vis: 'hidden',
-  },
-});
-
-export const scoreDeltaAnimation = keyframes({
-  from: {
-    op: 1,
-    tr: 'scale(1.2)',
-  },
-  '99%': {
-    op: .8,
-    tr: 'scale(.1)',
-  },
-  to: {
-    op: 0,
-    tr: 'scale(.1)',
-    vis: 'hidden',
-  },
+const shakingAnimation = keyframes({
+  '0%': { tr: 'translateX(0), scale(1.2)', op: 1 },
+  '10%': { tr: 'translateX(-2px)' },
+  '20%': { tr: 'translateX(2px)' },
+  '30%': { tr: 'translateX(-1px)' },
+  '40%': { tr: 'translateX(1px)' },
+  '50%': { tr: 'translateX(0), scale(1)' },
+  '100%': { op: 0, vis: 'hidden' },
 });
 
 const blockClass = rule({
@@ -79,8 +63,7 @@ const innerClass = rule({
   bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
   bdrad: '0.0625em',
   'mix-blend-mode': 'multiply',
-  an: moveAnimation + ' .25s ease-out',
-  animationFillMode: 'forwards',
+  an: moveAnimation + ' .25s ease-out forwards',
 });
 
 const scoreClass = rule({
@@ -90,8 +73,7 @@ const scoreClass = rule({
   l: '.75em',
   fz: '.4em',
   op: .5,
-  an: scoreAnimation + ' .5s ease-out',
-  animationFillMode: 'forwards',
+  an: scoreAnimation + ' .5s ease-out forwards',
   ws: 'nowrap',
   pe: 'none',
   us: 'none',
@@ -105,8 +87,7 @@ const scoreDeltaClass = rule({
   fz: '.5em',
   op: .5,
   col: 'blue',
-  an: scoreAnimation + ' .3s ease-out',
-  animationFillMode: 'forwards',
+  an: scoreAnimation + ' .3s ease-out forwards',
   pe: 'none',
   us: 'none',
 });
@@ -162,8 +143,8 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
   return (
     <span className={blockClass}>
-      {s >=24 && <span className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? scoreMessageAnimation + ' .8s ease-out forwards' : undefined}}>{scoreMsg}</span>}
-      {(typeof scoreMsg === 'string' || (s > 42 && d > 1)) && <span className={scoreDeltaClass}>+{d}</span>}
+      {s >=24 && <span contentEditable={false} className={scoreClass} style={{animation: typeof scoreMsg === 'string' ? shakingAnimation + ' .7s ease-out forwards' : undefined}}>{scoreMsg}</span>}
+      {(typeof scoreMsg === 'string' || (s > 42 && d > 1)) && <span contentEditable={false} className={scoreDeltaClass}>+{d}</span>}
       <span className={innerClass} style={style}>
         {children}
       </span>

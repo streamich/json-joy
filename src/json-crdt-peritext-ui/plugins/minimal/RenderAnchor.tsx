@@ -47,7 +47,7 @@ export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
   const style = focus ? undefined : {background: DefaultRendererColors.InactiveCursor};
 
   return (
-    <span className={blockClass}>
+    <span className={blockClass} contentEditable={false}>
       <span className={innerClass} style={style}>
         {Char.ZeroLengthSpace}
       </span>
