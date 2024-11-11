@@ -27,13 +27,19 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
         case 'delete':
         case 'insert':
         case 'format':
-        case 'marker':
+        case 'marker': {
           const now = Date.now();
           const timeDiff = now - lastNow;
           const delta = timeDiff < 30 ? 10 : timeDiff < 70 ? 5 : timeDiff < 150 ? 2 : timeDiff <= 1000 ? 1 : 0;
           value.score.next(delta ? value.score.value + delta : 0);
           value.scoreDelta.next(delta);
           lastNow = now;
+          break;
+        }
+        case 'cursor': {
+          lastNow = Date.now();
+          break;
+        }
       }
     };
     dom.et.addEventListener('change', listener);
