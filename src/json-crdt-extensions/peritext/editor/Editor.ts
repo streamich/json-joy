@@ -149,7 +149,15 @@ export class Editor<T = string> implements Printable {
    * select a range, deletes the whole range.
    */
   public del(step: number = -1): void {
-    this.forCursor((cursor) => cursor.del(step));
+    this.delete(step, 'char');
+  }
+
+  public delRange(range: Range<T>): void {
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    const contained = overlay.findContained(range);
+    for (const slice of contained) if (slice instanceof PersistedSlice) slice.del();
+    txt.delStr(range);
   }
 
   /**
@@ -160,7 +168,8 @@ export class Editor<T = string> implements Printable {
    * @param unit A unit of deletion: "char", "word", "line".
    */
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
-    this.forCursor((cursor) => {
+    const txt = this.txt;
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       if (!cursor.isCollapsed()) {
         cursor.collapse();
         return;
@@ -173,12 +182,11 @@ export class Editor<T = string> implements Printable {
         point1 = this.skip(point1, -1, unit);
         point2 = this.skip(point2, 1, unit);
       }
-      const txt = this.txt;
       const range = txt.range(point1, point2);
-      txt.delStr(range);
+      this.delRange(range);
       point1.refAfter();
       cursor.set(point1);
-    });
+    }
   }
 
   // ----------------------------------------------------------------- movement
@@ -506,14 +514,6 @@ export class Editor<T = string> implements Printable {
 
   // --------------------------------------------------------------- formatting
 
-  protected getSliceStore(slice: PersistedSlice<T>): EditorSlices<T> | undefined {
-    const sid = slice.id.sid;
-    if (sid === this.saved.slices.set.doc.clock.sid) return this.saved;
-    if (sid === this.extra.slices.set.doc.clock.sid) return this.extra;
-    if (sid === this.local.slices.set.doc.clock.sid) return this.local;
-    return;
-  }
-
   protected toggleRangeExclFmt(
     range: Range<T>,
     type: CommonSliceType | string | number,
@@ -527,12 +527,8 @@ export class Editor<T = string> implements Printable {
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
     const contained = overlay.findContained(range);
-    for (const slice of contained) {
-      if (slice instanceof PersistedSlice && slice.type === type) {
-        const deletionStore = this.getSliceStore(slice);
-        if (deletionStore) deletionStore.del(slice.id);
-      }
-    }
+    for (const slice of contained)
+      if (slice instanceof PersistedSlice && slice.type === type) slice.del();
     if (needToRemoveFormatting) {
       overlay.refresh();
       const [complete2, partial2] = overlay.stat(range, 1e6);
@@ -584,10 +580,7 @@ export class Editor<T = string> implements Printable {
           switch (slice.behavior) {
             case SliceBehavior.One:
             case SliceBehavior.Many:
-            case SliceBehavior.Erase: {
-              const deletionStore = this.getSliceStore(slice);
-              if (deletionStore) deletionStore.del(slice.id);
-            }
+            case SliceBehavior.Erase: slice.del();
           }
         }
       }

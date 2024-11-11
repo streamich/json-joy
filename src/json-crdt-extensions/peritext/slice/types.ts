@@ -124,6 +124,11 @@ export interface MutableSlice<T = string> extends Slice<T> {
   update(params: SliceUpdateParams<T>): void;
 
   /**
+   * Delete this slice from its backing store.
+   */
+  del(): void;
+
+  /**
    * Whether the slice is deleted.
    */
   isDel(): boolean;
