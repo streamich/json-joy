@@ -1,3 +1,22 @@
+# [17.18.0](https://github.com/streamich/json-joy/compare/v17.17.0...v17.18.0) (2024-11-12)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 do not break line at caret position ([d4598ce](https://github.com/streamich/json-joy/commit/d4598ce4867f6229b38842858263cc0c0129c24d))
+* **json-crdt-peritext-ui:** 🐛 do not break line on anchor inter-word insertion ([4c4d1ca](https://github.com/streamich/json-joy/commit/4c4d1cab783b735f4d4e62f2922233ebd1705727))
+* **json-crdt-peritext-ui:** 🐛 do not break words due to focus edge ([182fcbb](https://github.com/streamich/json-joy/commit/182fcbb7d6c80862c8bae8cf02b1ba2104b9659d))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 print cursors in editor dump ([449c3e5](https://github.com/streamich/json-joy/commit/449c3e53ed568385a95511a2c5997b75d40777f4))
+* **json-crdt-peritext-ui:** 🎸 create `cursor` plugin ([43e86c6](https://github.com/streamich/json-joy/commit/43e86c68adf359fe3ef30826c28b70293b7c7639))
+* **json-crdt-peritext-ui:** 🎸 improve anchor rendering ([7343d52](https://github.com/streamich/json-joy/commit/7343d52dd5acbe0e158ba0bb2b59b44f2b5d67c3))
+* **json-crdt-peritext-ui:** 🎸 improve cursor JSDocs ([4d9df82](https://github.com/streamich/json-joy/commit/4d9df821dd34cbbfe34575072737ebeeeb8643d0))
+* **json-crdt-peritext-ui:** 🎸 separate caret score into its own component ([f69e93e](https://github.com/streamich/json-joy/commit/f69e93e2896460c0f4abc1ef2f94fd1420bc7859))
+* **json-crdt-peritext-ui:** 🎸 setup default theme ([a3ddfa9](https://github.com/streamich/json-joy/commit/a3ddfa9161668596fc73a79d4043088ec17d402d))
+
 # [17.17.0](https://github.com/streamich/json-joy/compare/v17.16.0...v17.17.0) (2024-11-11)
 
 
