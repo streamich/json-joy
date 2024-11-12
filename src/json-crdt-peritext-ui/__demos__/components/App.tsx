@@ -3,7 +3,7 @@ import {Provider, GlobalCss} from 'nano-theme';
 import {ModelWithExt, ext} from '../../../json-crdt-extensions';
 import {PeritextView} from '../../react';
 import {CursorPlugin} from '../../plugins/cursor';
-import {ToolbarPlugin} from '../../plugins/default';
+import {ToolbarPlugin} from '../../plugins/toolbar';
 import {DebugPlugin} from '../../plugins/debug';
 
 export const App: React.FC = () => {
@@ -17,6 +17,7 @@ export const App: React.FC = () => {
     peritext.refresh();
     return [model, peritext] as const;
   });
+  
   const plugins = React.useMemo(() => {
     const cursorPlugin = new CursorPlugin();
     const toolbarPlugin = new ToolbarPlugin();
