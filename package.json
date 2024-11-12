@@ -73,7 +73,9 @@
   },
   "files": [
     "LICENSE",
-    "lib/"
+    "bin/",
+    "lib/",
+    "esm/"
   ],
   "scripts": {
     "format": "biome format ./src",
@@ -82,7 +84,8 @@
     "lint:fix": "biome lint --apply ./src",
     "clean": "npx rimraf@5.0.5 lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log src/**/__bench__/node_modules src/**/__bench__/yarn-error.log",
     "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
-    "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\"",
+    "build:esm": "tsc --project tsconfig.build.json --module ESNext --target ESNEXT --outDir esm",
+    "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\" \"yarn build:esm\"",
     "build": "yarn build:es2020",
     "jest": "jest",
     "test": "jest --maxWorkers 7",

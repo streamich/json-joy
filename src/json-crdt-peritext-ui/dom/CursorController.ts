@@ -27,14 +27,16 @@ export interface CursorControllerOpts {
 export class CursorController implements UiLifeCycles, Printable {
   public readonly caretId: string;
 
+  private readonly _cursor: [fn: PeritextEventTarget['cursor'], stop: () => void];
+
   public constructor(public readonly opts: CursorControllerOpts) {
     this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
+    this._cursor = throttle(opts.et.cursor.bind(opts.et), 25)
   }
 
   /** The position where user started to scrub the text. */
   protected selAnchor: number = -1;
 
-  private readonly _cursor = throttle(this.opts.et.cursor.bind(this.opts.et), 25);
 
   /**
    * String position at coordinate, or -1, if unknown.
