@@ -4,7 +4,8 @@ import {context, type PeritextSurfaceContextValue} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import {DomController} from '../dom/DomController';
-import {renderers as defaultRenderers} from '../plugins/minimal';
+import {cursorPlugin} from '../plugins/cursor';
+import {defaultPlugin} from '../plugins/minimal';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
 
@@ -33,13 +34,13 @@ put('.' + CssClass.Inline, {
  */
 export interface PeritextViewProps {
   peritext: Peritext;
-  renderers?: PeritextPlugin[];
+  plugins?: PeritextPlugin[];
   onRender?: () => void;
 }
 
 /** @todo Is `React.memo` needed here? */
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
-  const {peritext, renderers = [defaultRenderers], onRender} = props;
+  const {peritext, plugins = [cursorPlugin, defaultPlugin], onRender} = props;
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
 
@@ -71,8 +72,8 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   );
 
   const ctx: undefined | PeritextSurfaceContextValue = React.useMemo(
-    () => (dom ? {peritext, dom, renderers, rerender} : undefined),
-    [peritext, dom, renderers, rerender],
+    () => (dom ? {peritext, dom, renderers: plugins, rerender} : undefined),
+    [peritext, dom, plugins, rerender],
   );
 
   const block = peritext.blocks.root;
@@ -88,7 +89,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     </div>
   );
 
-  for (const map of renderers) children = map.peritext?.(props, children, ctx) ?? children;
+  for (const map of plugins) children = map.peritext?.(props, children, ctx) ?? children;
 
   return children;
 });

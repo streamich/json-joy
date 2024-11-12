@@ -10,7 +10,7 @@ import type {PeritextPlugin} from '../../react/types';
 
 const h = React.createElement;
 
-export const renderers: PeritextPlugin = {
+export const defaultPlugin: PeritextPlugin = {
   text,
   caret: (props, children) => h(RenderCaret, <any>props, children),
   focus: (props, children) => h(RenderFocus, <any>props, children),
