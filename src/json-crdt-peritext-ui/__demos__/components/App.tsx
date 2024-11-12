@@ -20,7 +20,7 @@ export const App: React.FC = () => {
   return (
     <Provider theme={'light'}>
       <GlobalCss />
-      <div style={{maxWidth: '640px', fontSize: '21px', margin: '32px auto'}}>
+      <div style={{maxWidth: '690px', fontSize: '32px', lineHeight: '1em', margin: '32px auto'}}>
         <PeritextView peritext={peritext} renderers={[renderers, debugRenderers({enabled: true})]} />
       </div>
     </Provider>

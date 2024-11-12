@@ -20,19 +20,18 @@ const animation = keyframes({
 
 const blockClass = rule({
   pos: 'relative',
-  d: 'inline-block',
   pe: 'none',
   us: 'none',
   w: '0px',
   h: '100%',
-  va: 'center',
+  va: 'bottom',
 });
 
 const innerClass = drule({
   an: `${animationTime} ${animation} step-end infinite`,
   pos: 'absolute',
-  w: `calc(max(${width}em, 3px))`,
-  t: '-1.1em',
+  w: `calc(max(${width}em, 2px))`,
+  t: '-.175em',
   h: '1.45em',
   bg: DefaultRendererColors.ActiveCursor,
   'mix-blend-mode': 'multiply',
@@ -54,6 +53,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}
 
   return (
     <span className={blockClass}>
+      {children}
       <span
         className={innerClass({
           bdrad: left ? `0 ${width * 0.5}em ${width * 0.5}em 0` : `${width * 0.5}em 0 0 ${width * 0.5}em`,
