@@ -31,12 +31,11 @@ export class CursorController implements UiLifeCycles, Printable {
 
   public constructor(public readonly opts: CursorControllerOpts) {
     this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
-    this._cursor = throttle(opts.et.cursor.bind(opts.et), 25)
+    this._cursor = throttle(opts.et.cursor.bind(opts.et), 25);
   }
 
   /** The position where user started to scrub the text. */
   protected selAnchor: number = -1;
-
 
   /**
    * String position at coordinate, or -1, if unknown.
