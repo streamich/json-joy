@@ -1657,10 +1657,6 @@ config-galore@^1.0.0:
   resolved "https://registry.yarnpkg.com/config-galore/-/config-galore-1.0.0.tgz#641b5919192513021ee7f272ba3ea063b186e046"
   integrity sha512-f6P+7NyL57wz6hxeuvoDC9OpLESqTsYhAw5xqIWhSm7KSH2au+O45q7TelQyOVCP6CG3Oc/qfAnMlApug9GbPw==
 
-"config-housekeeping@https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801":
-  version "0.0.0"
-  resolved "https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801"
-
 connect-history-api-fallback@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/connect-history-api-fallback/-/connect-history-api-fallback-2.0.0.tgz#647264845251a0daf25b97ce87834cace0f5f1c8"
