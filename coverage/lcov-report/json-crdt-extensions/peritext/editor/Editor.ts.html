@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.77% </span>
+                <span class="strong">76.12% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>271/353</span>
+                <span class='fraction'>271/356</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.23% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>45/51</span>
+                <span class='fraction'>45/54</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">78.59% </span>
+                <span class="strong">77.73% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>213/271</span>
+                <span class='fraction'>213/274</span>
             </div>
         
             
@@ -740,7 +740,18 @@
 <a name='L675'></a><a href='#L675'>675</a>
 <a name='L676'></a><a href='#L676'>676</a>
 <a name='L677'></a><a href='#L677'>677</a>
-<a name='L678'></a><a href='#L678'>678</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">50x</span>
+<a name='L678'></a><a href='#L678'>678</a>
+<a name='L679'></a><a href='#L679'>679</a>
+<a name='L680'></a><a href='#L680'>680</a>
+<a name='L681'></a><a href='#L681'>681</a>
+<a name='L682'></a><a href='#L682'>682</a>
+<a name='L683'></a><a href='#L683'>683</a>
+<a name='L684'></a><a href='#L684'>684</a>
+<a name='L685'></a><a href='#L685'>685</a>
+<a name='L686'></a><a href='#L686'>686</a>
+<a name='L687'></a><a href='#L687'>687</a>
+<a name='L688'></a><a href='#L688'>688</a>
+<a name='L689'></a><a href='#L689'>689</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">50x</span>
@@ -1417,6 +1428,17 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {printTree} from 'tree-dump/lib/printTree';
 import {Cursor} from './Cursor';
 import {stringify} from '../../../json-text/stringify';
@@ -2091,7 +2113,18 @@ export class Editor&lt;T = string&gt; implements Printable {
     const pending = <span class="cstat-no" title="statement not covered" >this.pending.value;</span>
     const pendingFormatted = <span class="cstat-no" title="statement not covered" >{} as any;</span>
 <span class="cstat-no" title="statement not covered" >    for (const [type, data] of pending) <span class="cstat-no" title="statement not covered" >pendingFormatted[formatType(type)] = data;</span></span>
-<span class="cstat-no" title="statement not covered" >    return 'Editor' + printTree(tab, [<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >`pending ${stringify(pendingFormatted)}`]</span>);</span>
+<span class="cstat-no" title="statement not covered" >    return (</span>
+      'Editor' +
+      printTree(tab, [
+<span class="fstat-no" title="function not covered" >        (t</span>ab) =&gt;
+<span class="cstat-no" title="statement not covered" >          'cursors' +</span>
+          printTree(
+            tab,
+            [...this.cursors()].map(<span class="fstat-no" title="function not covered" >(c</span>ursor) =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >cursor.toString(tab))</span></span>,
+          ),
+<span class="fstat-no" title="function not covered" >        () =</span>&gt; <span class="cstat-no" title="statement not covered" >`pending ${stringify(pendingFormatted)}`,</span>
+      ])
+    );
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -2101,7 +2134,7 @@ export class Editor&lt;T = string&gt; implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-11T14:10:54.952Z
+                at 2024-11-12T11:17:55.363Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
