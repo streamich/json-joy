@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Provider, GlobalCss} from 'nano-theme';
 import {ModelWithExt, ext} from '../../../json-crdt-extensions';
 import {PeritextView} from '../../react';
-import {renderers} from '../../plugins/minimal';
+import {renderers} from '../../plugins/default';
 import {renderers as debugRenderers} from '../../plugins/debug';
 
 export const App: React.FC = () => {
