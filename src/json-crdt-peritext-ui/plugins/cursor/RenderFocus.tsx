@@ -4,7 +4,7 @@ import {rule, drule, keyframes} from 'nano-theme';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
-import type {FocusViewProps} from '../../react/selection/FocusView';
+import type {FocusViewProps} from '../../react/cursor/FocusView';
 
 const width = 0.14;
 const animationTime = '1s';

@@ -105,22 +105,27 @@ export class Editor<T = string> implements Printable {
     for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) callback(cursor);
   }
 
+  /**
+   * @returns Returns `true` if there is at least one cursor in the document.
+   */
+  public hasCursor(): boolean {
+    return !!this.cursors0()();
+  }
+
+  /**
+   * @returns Returns the exact number of cursors in the document.
+   */
   public cursorCount(): number {
     let cnt = 0;
     for (const i = this.cursors0(); i(); ) cnt++;
     return cnt;
   }
 
-  /** Returns true if there is at least one cursor in the document. */
-  public hasCursor(): boolean {
-    return !!this.cursors0()();
-  }
-
   /**
-   * Returns relative size cursor cardinality.
+   * Returns relative count of cursors (cardinality).
    * 
-   * @returns 0 if there are no cursors, 1 if there is one cursor, 2 if there
-   *     are more than one cursor.
+   * @returns 0 if there are no cursors, 1 if there is exactly one cursor, 2 if
+   *     there are more than one cursor.
    */
   public cursorCard(): 0 | 1 | 2 {
     const i = this.cursors0();

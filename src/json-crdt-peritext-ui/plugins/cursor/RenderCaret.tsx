@@ -7,7 +7,7 @@ import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
-import type {CaretViewProps} from '../../react/selection/CaretView';
+import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const ms = 350;
 

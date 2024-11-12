@@ -3,7 +3,7 @@ import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
 import {keyframes, rule} from 'nano-theme';
 import {usePeritext} from '../../react/context';
 import {useSyncStore} from '../../react/hooks';
-import type {CaretViewProps} from '../../react/selection/CaretView';
+import type {CaretViewProps} from '../../react/cursor/CaretView';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {usePlugin} from './context';

@@ -1,7 +1,7 @@
 import type * as React from 'react';
-import type {FocusViewProps} from './selection/FocusView';
-import type {CaretViewProps} from './selection/CaretView';
-import type {AnchorViewProps} from './selection/AnchorView';
+import type {FocusViewProps} from './cursor/FocusView';
+import type {CaretViewProps} from './cursor/CaretView';
+import type {AnchorViewProps} from './cursor/AnchorView';
 import type {InlineViewProps} from './InlineView';
 import type {BlockViewProps} from './BlockView';
 import type {PeritextViewProps} from './PeritextView';
