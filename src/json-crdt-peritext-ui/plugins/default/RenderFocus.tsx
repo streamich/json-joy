@@ -59,9 +59,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}
           bdrad: left ? `0 ${width * 0.5}em ${width * 0.5}em 0` : `${width * 0.5}em 0 0 ${width * 0.5}em`,
         })}
         style={style}
-      >
-        {children}
-      </span>
+      />
     </span>
   );
 };

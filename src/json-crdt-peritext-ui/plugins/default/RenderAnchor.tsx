@@ -18,7 +18,6 @@ export const fadeInAnimation = keyframes({
 
 const blockClass = rule({
   pos: 'relative',
-  d: 'inline-block',
   pe: 'none',
   us: 'none',
   w: '0px',
@@ -29,7 +28,7 @@ const blockClass = rule({
 const innerClass = rule({
   pos: 'absolute',
   l: 'calc(max(-6px,-0.2em))',
-  t: '-0.05em',
+  b: '-.15em',
   w: 'calc(min(12px,0.4em))',
   h: 'calc(min(16px,0.5em))',
   bdrad: '50%/20%',
@@ -48,9 +47,11 @@ export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
 
   return (
     <span className={blockClass} contentEditable={false}>
-      <span className={innerClass} style={style}>
-        {Char.ZeroLengthSpace}
-      </span>
+
+      {/* This zero-width non-breaking space prevents word wrapping at position where anchor is inserted. */}
+      <span>{Char.ZeroLengthSpace}</span>
+
+      <span className={innerClass} style={style} />
     </span>
   );
 };
