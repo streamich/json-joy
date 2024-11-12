@@ -9,7 +9,6 @@ import type {PeritextSurfaceContextValue} from './context';
 import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
 export interface PeritextPlugin {
-
   // --------------------------------------------------- Block-level formatting
 
   peritext?: (
@@ -28,7 +27,7 @@ export interface PeritextPlugin {
 
   /**
    * Renders a custom view for the *caret* (collapsed cursor) in the editor.
-   * 
+   *
    * Make sure that this component is treated as `{ display: inline }` by the
    * browser. Otherwise, it will break words, which will result in word
    * wrapping, and the layout will shift when the caret is moved.
@@ -46,7 +45,7 @@ export interface PeritextPlugin {
    * Renders a custom view for the *focus* edge of a selection
    * (range expanded cursor) in the editor. The focus edge of the selection is
    * the one that moves when the user presses the arrow keys.
-   * 
+   *
    * Make sure that this component is treated as `{ display: inline }` by the
    * browser. Otherwise, it will break words, which will result in word
    * wrapping, and the layout will shift when the selection is moved.
@@ -64,7 +63,7 @@ export interface PeritextPlugin {
    * Renders a custom view for the *anchor* edge of a selection
    * (range expanded cursor) in the editor. The anchor edge of the selection is
    * the one that stays in place when the user presses the arrow keys.
-   * 
+   *
    * Make sure that this component is treated as `{ display: inline }` by the
    * browser. Otherwise, it will break words, which will result in word
    * wrapping, and the layout will shift when the selection is moved.

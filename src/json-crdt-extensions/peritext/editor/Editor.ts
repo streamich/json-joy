@@ -672,11 +672,17 @@ export class Editor<T = string> implements Printable {
     const pending = this.pending.value;
     const pendingFormatted = {} as any;
     for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
-    return 'Editor' + printTree(tab, [
-      (tab) => 'cursors' + printTree(tab,
-        [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
-      ),
-      () => `pending ${stringify(pendingFormatted)}`
-    ]);
+    return (
+      'Editor' +
+      printTree(tab, [
+        (tab) =>
+          'cursors' +
+          printTree(
+            tab,
+            [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
+          ),
+        () => `pending ${stringify(pendingFormatted)}`,
+      ])
+    );
   }
 }

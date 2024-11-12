@@ -51,9 +51,5 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) =
     };
   }, [ctx?.dom, value]);
 
-  return (
-    <context.Provider value={value}>
-      {children}
-    </context.Provider>
-  );
+  return <context.Provider value={value}>{children}</context.Provider>;
 };

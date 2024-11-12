@@ -74,7 +74,15 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   return (
     <span className={blockClass}>
       {children}
-      {score !== plugin.lastVisScore.value && <CaretScore score={score} delta={delta} onRender={() => {plugin.lastVisScore.value = score;}} />}
+      {score !== plugin.lastVisScore.value && (
+        <CaretScore
+          score={score}
+          delta={delta}
+          onRender={() => {
+            plugin.lastVisScore.value = score;
+          }}
+        />
+      )}
       <span className={innerClass} style={style} />
     </span>
   );
