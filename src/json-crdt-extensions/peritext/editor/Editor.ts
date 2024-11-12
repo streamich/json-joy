@@ -12,13 +12,13 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
 import {CommonSliceType, type SliceType} from '../slice';
+import {tick} from '../../../json-crdt-patch';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
 import type {Printable} from 'tree-dump';
-import {tick} from '../../../json-crdt-patch';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -114,6 +114,17 @@ export class Editor<T = string> implements Printable {
   /** Returns true if there is at least one cursor in the document. */
   public hasCursor(): boolean {
     return !!this.cursors0()();
+  }
+
+  /**
+   * Returns relative size cursor cardinality.
+   * 
+   * @returns 0 if there are no cursors, 1 if there is one cursor, 2 if there
+   *     are more than one cursor.
+   */
+  public cursorCard(): 0 | 1 | 2 {
+    const i = this.cursors0();
+    return !i() ? 0 : !i() ? 1 : 2;
   }
 
   public delCursor(cursor: Cursor<T>): void {
