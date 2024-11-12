@@ -63,6 +63,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
   const plugin = useCursorPlugin();
+  const renderOverCaret = plugin.plugin.renderOverCaret;
 
   const score = plugin.score.value;
   const delta = plugin.scoreDelta.value;
@@ -96,9 +97,9 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
         />
       )}
       <span className={innerClass} style={style} />
-      {!!over && (
+      {!!renderOverCaret && (
         <span className={overClass}>
-          {over}
+          {renderOverCaret(plugin.plugin)}
         </span>
       )}
     </span>

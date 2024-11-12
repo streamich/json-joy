@@ -20,6 +20,7 @@ export const App: React.FC = () => {
   
   const plugins = React.useMemo(() => {
     const cursorPlugin = new CursorPlugin();
+    cursorPlugin.renderOverCaret = () => <span>hello</span>;
     const toolbarPlugin = new ToolbarPlugin();
     const debugPlugin = new DebugPlugin({enabled: false});
     return [cursorPlugin, toolbarPlugin, debugPlugin];

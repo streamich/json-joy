@@ -13,9 +13,11 @@ const h = React.createElement;
  * cursors.
  */
 export class CursorPlugin implements PeritextPlugin {
+  public renderOverCaret: ((plugin: CursorPlugin) => React.ReactNode) | null = null;
+
   public readonly caret: PeritextPlugin['caret'] = (props, children) => h(RenderCaret, <any>props, children);
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, <any>props, children);
   public readonly anchor: PeritextPlugin['anchor'] = (props, children) => h(RenderAnchor, <any>props, children);
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
-  public readonly peritext: PeritextPlugin['peritext'] = (props, children, ctx) => h(RenderPeritext, {...props, children, ctx});
+  public readonly peritext: PeritextPlugin['peritext'] = (props, children, ctx) => h(RenderPeritext, {...props, children, ctx, plugin: this});
 };
