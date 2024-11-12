@@ -1,8 +1,26 @@
 import {printTs, tick} from '../../../json-crdt-patch';
-import type {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
+import type {Point} from '../rga/Point';
 
+/**
+ * Cursor is a slice that represents an explicitly highlighted place in the
+ * text to the user. The {@link Cursor} is a {@link Range}, it has a `start`
+ * {@link Point} and an `end` {@link Point}.
+ *
+ * The {@link Cursor} can be a caret (collapsed cursor) or a selection (range
+ * expanded cursor). The caret is said to be "collapsed", its `start` and `end`
+ * {@link Point}s are the same. When the selection is said to be "expanded", its
+ * `start` and `end` {@link Point}s are different.
+ *
+ * The `start` {@link Point} is always the one that comes first in the text, it
+ * is less then or equal to the `end` {@link Point} in the spatial (text) order.
+ *
+ * An expanded selection cursor has a *focus* and an *anchor* side. The *focus*
+ * side is the one that moves when the user presses the arrow keys. The *anchor*
+ * side is the one that stays in place when the user presses the arrow keys. The
+ * side of the anchor is determined by the {@link Cursor#anchorSide} property.
+ */
 export class Cursor<T = string> extends PersistedSlice<T> {
   public get anchorSide(): CursorAnchor {
     return this.type as CursorAnchor;

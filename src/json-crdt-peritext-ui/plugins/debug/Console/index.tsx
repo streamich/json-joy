@@ -13,6 +13,7 @@ const consoleClass = rule({
   mr: '8px 0',
   pd: '8px 16px',
   bdrad: '8px',
+  lh: '1.3em',
 });
 
 // biome-ignore lint: empty interface
