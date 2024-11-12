@@ -9,6 +9,7 @@ import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
+const height = 1.5;
 const ms = 350;
 
 const moveAnimation = keyframes({
@@ -35,12 +36,19 @@ const innerClass = rule({
   b: '-.18em',
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
-  h: '1.5em',
+  h: `${height}em`,
   bg: DefaultRendererColors.ActiveCursor,
   bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
   bdrad: '0.0625em',
   'mix-blend-mode': 'multiply',
   an: moveAnimation + ' .25s ease-out forwards',
+});
+
+const overClass = rule({
+  pos: 'absolute',
+  b: `${height}em`,
+  l: 0,
+  bd: '1px solid green',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -71,6 +79,10 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
     style.rotate = '11deg';
   }
 
+  const over: React.ReactNode = (
+    <div style={{border: '1px solid red', marginLeft: '-50%'}}>a</div>
+  );
+
   return (
     <span className={blockClass}>
       {children}
@@ -84,6 +96,11 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
         />
       )}
       <span className={innerClass} style={style} />
+      {!!over && (
+        <span className={overClass}>
+          {over}
+        </span>
+      )}
     </span>
   );
 };
