@@ -1,3 +1,10 @@
+# [17.19.0](https://github.com/streamich/json-joy/compare/v17.18.0...v17.19.0) (2024-11-12)
+
+
+### Features
+
+* 🎸 bring back ESM builds ([a0dc6a2](https://github.com/streamich/json-joy/commit/a0dc6a237c8b4eb2e05c245928f1bda2a424a778))
+
 # [17.18.0](https://github.com/streamich/json-joy/compare/v17.17.0...v17.18.0) (2024-11-12)
 
 
