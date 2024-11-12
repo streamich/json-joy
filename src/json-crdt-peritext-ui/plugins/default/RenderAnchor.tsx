@@ -48,7 +48,7 @@ export const RenderAnchor: React.FC<RenderAnchorProps> = ({children}) => {
 
   return (
     <span className={blockClass} contentEditable={false}>
-      <span>{children}</span>
+      {children}
       <span className={innerClass} style={style} />
     </span>
   );

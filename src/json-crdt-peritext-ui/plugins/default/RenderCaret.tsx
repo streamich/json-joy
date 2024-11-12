@@ -21,21 +21,19 @@ const moveAnimation = keyframes({
 
 const blockClass = rule({
   pos: 'relative',
-  d: 'inline-block',
   pe: 'none',
   us: 'none',
   w: '0px',
   h: '100%',
   bg: 'black',
-  va: 'center',
+  va: 'bottom',
 });
 
 const innerClass = rule({
   pos: 'absolute',
-  d: 'inline-block',
-  b: '-0.4em',
-  l: '-0.065em',
-  w: 'calc(max(.2em, 3px))',
+  b: '-.18em',
+  l: '-.065em',
+  w: 'calc(max(.2em, 2px))',
   h: '1.5em',
   bg: DefaultRendererColors.ActiveCursor,
   bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
@@ -74,10 +72,9 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
 
   return (
     <span className={blockClass}>
+      {children}
       {score !== plugin.lastVisScore.value && <CaretScore score={score} delta={delta} />}
-      <span className={innerClass} style={style}>
-        {children}
-      </span>
+      <span className={innerClass} style={style} />
     </span>
   );
 };

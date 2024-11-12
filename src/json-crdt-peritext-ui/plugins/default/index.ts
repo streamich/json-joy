@@ -14,7 +14,7 @@ export const renderers: PeritextPlugin = {
   text,
   caret: (props, children) => h(RenderCaret, <any>props, children),
   focus: (props, children) => h(RenderFocus, <any>props, children),
-  anchor: (props) => h(RenderAnchor, <any>props),
+  anchor: (props, children) => h(RenderAnchor, <any>props, children),
   inline: (props, children) => h(RenderInline, props as any, children),
   block: (props, children) => h(RenderBlock, props as any, children),
   peritext: (props, children, ctx) => h(RenderPeritext, {...props, children, ctx}),
