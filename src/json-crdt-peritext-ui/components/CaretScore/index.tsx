@@ -3,7 +3,7 @@ import {keyframes, rule} from 'nano-theme';
 
 const scoreAnimation = keyframes({
   from: {
-    op: 0.7,
+    op: 0.8,
     tr: 'scale(1.2)',
   },
   to: {
@@ -38,12 +38,12 @@ const scoreClass = rule({
 
 const scoreDeltaClass = rule({
   pos: 'absolute',
-  b: '1.27em',
+  b: '1.3em',
   l: '1.2em',
   fz: '.5em',
   fw: 'bold',
   op: 0.5,
-  col: 'blue',
+  col: '#07f',
   an: scoreAnimation + ' .3s ease-out forwards',
   pe: 'none',
   us: 'none',

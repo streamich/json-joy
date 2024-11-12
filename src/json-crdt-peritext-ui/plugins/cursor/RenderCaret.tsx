@@ -5,7 +5,7 @@ import {usePeritext} from '../../react/context';
 import {useSyncStore} from '../../react/hooks';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
-import {useDefaultPlugin} from './context';
+import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
 import type {CaretViewProps} from '../../react/selection/CaretView';
 
@@ -54,7 +54,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
-  const plugin = useDefaultPlugin();
+  const plugin = useCursorPlugin();
 
   const score = plugin.score.value;
   const delta = plugin.scoreDelta.value;
