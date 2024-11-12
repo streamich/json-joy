@@ -1,7 +1,6 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule, keyframes} from 'nano-theme';
-import {Char} from '../../constants';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
@@ -37,9 +36,11 @@ const innerClass = rule({
   animationFillMode: 'forwards',
 });
 
-export interface RenderAnchorProps extends AnchorViewProps {}
+export interface RenderAnchorProps extends AnchorViewProps {
+  children: React.ReactNode;
+}
 
-export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
+export const RenderAnchor: React.FC<RenderAnchorProps> = ({children}) => {
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
 
@@ -47,10 +48,7 @@ export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
 
   return (
     <span className={blockClass} contentEditable={false}>
-
-      {/* This zero-width non-breaking space prevents word wrapping at position where anchor is inserted. */}
-      <span>{Char.ZeroLengthSpace}</span>
-
+      <span>{children}</span>
       <span className={innerClass} style={style} />
     </span>
   );
