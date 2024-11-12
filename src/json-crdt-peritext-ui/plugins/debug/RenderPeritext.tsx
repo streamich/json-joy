@@ -42,7 +42,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
       flags: {
         dom: new ValueSyncStore<boolean>(true),
         editor: new ValueSyncStore<boolean>(true),
-        peritext: new ValueSyncStore<boolean>(true),
+        peritext: new ValueSyncStore<boolean>(false),
         model: new ValueSyncStore<boolean>(false),
       },
     }),
