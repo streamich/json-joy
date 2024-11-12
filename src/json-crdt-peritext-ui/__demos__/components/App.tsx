@@ -2,9 +2,9 @@ import * as React from 'react';
 import {Provider, GlobalCss} from 'nano-theme';
 import {ModelWithExt, ext} from '../../../json-crdt-extensions';
 import {PeritextView} from '../../react';
-import {cursorPlugin} from '../../plugins/cursor';
-import {renderers} from '../../plugins/default';
-import {renderers as debugRenderers} from '../../plugins/debug';
+import {CursorPlugin} from '../../plugins/cursor';
+import {ToolbarPlugin} from '../../plugins/default';
+import {DebugPlugin} from '../../plugins/debug';
 
 export const App: React.FC = () => {
   const [[model, peritext]] = React.useState(() => {
@@ -17,12 +17,18 @@ export const App: React.FC = () => {
     peritext.refresh();
     return [model, peritext] as const;
   });
+  const plugins = React.useMemo(() => {
+    const cursorPlugin = new CursorPlugin();
+    const toolbarPlugin = new ToolbarPlugin();
+    const debugPlugin = new DebugPlugin({enabled: false});
+    return [cursorPlugin, toolbarPlugin, debugPlugin];
+  }, []);
 
   return (
     <Provider theme={'light'}>
       <GlobalCss />
       <div style={{maxWidth: '690px', fontSize: '21px', lineHeight: '1.7em', margin: '32px auto'}}>
-        <PeritextView peritext={peritext} plugins={[cursorPlugin, renderers, debugRenderers({enabled: false})]} />
+        <PeritextView peritext={peritext} plugins={plugins} />
       </div>
     </Provider>
   );
