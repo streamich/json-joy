@@ -44,13 +44,6 @@ const innerClass = rule({
   an: moveAnimation + ' .25s ease-out forwards',
 });
 
-const overClass = rule({
-  pos: 'absolute',
-  b: `${height}em`,
-  l: 0,
-  isolation: 'isolate',
-});
-
 export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
@@ -63,7 +56,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const {dom} = usePeritext();
   const focus = useSyncStore(dom.cursor.focus);
   const plugin = useCursorPlugin();
-  const renderOverCaret = plugin.plugin.renderOverCaret;
 
   const score = plugin.score.value;
   const delta = plugin.scoreDelta.value;
@@ -93,11 +85,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
         />
       )}
       <span className={innerClass} style={style} />
-      {!!renderOverCaret && (
-        <span className={overClass}>
-          {renderOverCaret(plugin.plugin)}
-        </span>
-      )}
     </span>
   );
 };
