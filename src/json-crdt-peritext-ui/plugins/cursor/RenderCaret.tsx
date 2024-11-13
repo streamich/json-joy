@@ -48,7 +48,7 @@ const overClass = rule({
   pos: 'absolute',
   b: `${height}em`,
   l: 0,
-  bd: '1px solid green',
+  isolation: 'isolate',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -79,10 +79,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   if (italic || pending.has(CommonSliceType.i)) {
     style.rotate = '11deg';
   }
-
-  const over: React.ReactNode = (
-    <div style={{border: '1px solid red', marginLeft: '-50%'}}>a</div>
-  );
 
   return (
     <span className={blockClass}>

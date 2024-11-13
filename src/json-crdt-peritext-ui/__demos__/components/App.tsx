@@ -5,6 +5,7 @@ import {PeritextView} from '../../react';
 import {CursorPlugin} from '../../plugins/cursor';
 import {ToolbarPlugin} from '../../plugins/toolbar';
 import {DebugPlugin} from '../../plugins/debug';
+import {Paper} from 'nice-ui/lib/4-card/Paper';
 
 export const App: React.FC = () => {
   const [[model, peritext]] = React.useState(() => {
@@ -20,7 +21,7 @@ export const App: React.FC = () => {
   
   const plugins = React.useMemo(() => {
     const cursorPlugin = new CursorPlugin();
-    cursorPlugin.renderOverCaret = () => <span>hello</span>;
+    cursorPlugin.renderOverCaret = () => <Paper>hello</Paper>;
     const toolbarPlugin = new ToolbarPlugin();
     const debugPlugin = new DebugPlugin({enabled: false});
     return [cursorPlugin, toolbarPlugin, debugPlugin];
