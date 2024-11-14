@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.12% </span>
+                <span class="strong">75.69% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>271/356</span>
+                <span class='fraction'>271/358</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.44% </span>
+                <span class="strong">67.56% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>100/144</span>
+                <span class='fraction'>100/148</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>45/54</span>
+                <span class='fraction'>45/55</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.73% </span>
+                <span class="strong">77.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>213/274</span>
+                <span class='fraction'>213/276</span>
             </div>
         
             
@@ -751,7 +751,24 @@
 <a name='L686'></a><a href='#L686'>686</a>
 <a name='L687'></a><a href='#L687'>687</a>
 <a name='L688'></a><a href='#L688'>688</a>
-<a name='L689'></a><a href='#L689'>689</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">50x</span>
+<a name='L689'></a><a href='#L689'>689</a>
+<a name='L690'></a><a href='#L690'>690</a>
+<a name='L691'></a><a href='#L691'>691</a>
+<a name='L692'></a><a href='#L692'>692</a>
+<a name='L693'></a><a href='#L693'>693</a>
+<a name='L694'></a><a href='#L694'>694</a>
+<a name='L695'></a><a href='#L695'>695</a>
+<a name='L696'></a><a href='#L696'>696</a>
+<a name='L697'></a><a href='#L697'>697</a>
+<a name='L698'></a><a href='#L698'>698</a>
+<a name='L699'></a><a href='#L699'>699</a>
+<a name='L700'></a><a href='#L700'>700</a>
+<a name='L701'></a><a href='#L701'>701</a>
+<a name='L702'></a><a href='#L702'>702</a>
+<a name='L703'></a><a href='#L703'>703</a>
+<a name='L704'></a><a href='#L704'>704</a>
+<a name='L705'></a><a href='#L705'>705</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">50x</span>
+<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-yes">50x</span>
@@ -771,7 +788,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">50x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -859,6 +875,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">552x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-yes">48x</span>
@@ -866,7 +892,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">552x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1453,13 +1485,13 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
 import {CommonSliceType, type SliceType} from '../slice';
+import {tick} from '../../../json-crdt-patch';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
 import type {Printable} from 'tree-dump';
-import {tick} from '../../../json-crdt-patch';
 &nbsp;
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -1546,15 +1578,31 @@ export class Editor&lt;T = string&gt; implements Printable {
     for (let cursor: Cursor&lt;T&gt; | undefined, i = this.cursors0(); (cursor = i()); ) callback(cursor);
   }
 &nbsp;
+  /**
+   * @returns Returns `true` if there is at least one cursor in the document.
+   */
+  public hasCursor(): boolean {
+    return !!this.cursors0()();
+  }
+&nbsp;
+  /**
+   * @returns Returns the exact number of cursors in the document.
+   */
   public cursorCount(): number {
     let cnt = 0;
     for (const i = this.cursors0(); i(); ) cnt++;
     return cnt;
   }
 &nbsp;
-  /** Returns true if there is at least one cursor in the document. */
-  public hasCursor(): boolean {
-    return !!this.cursors0()();
+  /**
+   * Returns relative count of cursors (cardinality).
+   *
+   * @returns 0 if there are no cursors, 1 if there is exactly one cursor, 2 if
+   *     there are more than one cursor.
+   */
+  public <span class="fstat-no" title="function not covered" >cursorCard(</span>): 0 | 1 | 2 {
+    const i = <span class="cstat-no" title="statement not covered" >this.cursors0();</span>
+<span class="cstat-no" title="statement not covered" >    return !i() ? 0 : !i() ? 1 : 2;</span>
   }
 &nbsp;
   public delCursor(cursor: Cursor&lt;T&gt;): void {
@@ -2134,7 +2182,7 @@ export class Editor&lt;T = string&gt; implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-11-12T14:45:00.787Z
+                at 2024-11-14T12:22:13.609Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
