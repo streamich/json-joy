@@ -1,3 +1,4 @@
+// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule, lightTheme as theme, useRule, useTheme} from 'nano-theme';
 import {Link} from 'nice-ui/lib/1-inline/Link';
@@ -75,8 +76,8 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   const dynamicBlockClass = useRule(({g}) => ({
     // col: g(0.2),
     // svg: {
-      // fill: g(0.5),
-      // col: g(0.5),
+    // fill: g(0.5),
+    // col: g(0.5),
     // },
     '&:hover': {
       // col: g(0.2),

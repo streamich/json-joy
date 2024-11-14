@@ -123,7 +123,7 @@ export class Editor<T = string> implements Printable {
 
   /**
    * Returns relative count of cursors (cardinality).
-   * 
+   *
    * @returns 0 if there are no cursors, 1 if there is exactly one cursor, 2 if
    *     there are more than one cursor.
    */

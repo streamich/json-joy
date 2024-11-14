@@ -12,6 +12,7 @@ export interface RenderPeritextProps extends PeritextViewProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, plugin, children}) => {
+  // biome-ignore lint: explicit dependency handling
   const value: CursorPluginContextValue = React.useMemo(
     () => ({
       ctx,

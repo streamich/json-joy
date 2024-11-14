@@ -17,7 +17,7 @@ export const App: React.FC = () => {
     peritext.refresh();
     return [model, peritext] as const;
   });
-  
+
   const plugins = React.useMemo(() => {
     const cursorPlugin = new CursorPlugin();
     const toolbarPlugin = new ToolbarPlugin();
