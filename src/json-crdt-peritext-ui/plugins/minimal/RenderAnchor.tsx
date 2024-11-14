@@ -5,7 +5,7 @@ import {Char} from '../../constants';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
 import {useSyncStore} from '../../react/hooks';
-import type {AnchorViewProps} from '../../react/selection/AnchorView';
+import type {AnchorViewProps} from '../../react/cursor/AnchorView';
 
 export const fadeInAnimation = keyframes({
   from: {

@@ -4,7 +4,7 @@ import {context, type PeritextSurfaceContextValue} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import {DomController} from '../dom/DomController';
-import {cursorPlugin} from '../plugins/cursor';
+import {CursorPlugin} from '../plugins/cursor';
 import {defaultPlugin} from '../plugins/minimal';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
@@ -40,7 +40,8 @@ export interface PeritextViewProps {
 
 /** @todo Is `React.memo` needed here? */
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
-  const {peritext, plugins = [cursorPlugin, defaultPlugin], onRender} = props;
+  // TODO: create hook which instantiates default plugins?
+  const {peritext, plugins = [new CursorPlugin(), defaultPlugin], onRender} = props;
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
 

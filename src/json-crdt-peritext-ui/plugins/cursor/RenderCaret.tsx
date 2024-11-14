@@ -7,8 +7,9 @@ import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
-import type {CaretViewProps} from '../../react/selection/CaretView';
+import type {CaretViewProps} from '../../react/cursor/CaretView';
 
+const height = 1.5;
 const ms = 350;
 
 const moveAnimation = keyframes({
@@ -35,7 +36,7 @@ const innerClass = rule({
   b: '-.18em',
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
-  h: '1.5em',
+  h: `${height}em`,
   bg: DefaultRendererColors.ActiveCursor,
   bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
   bdrad: '0.0625em',

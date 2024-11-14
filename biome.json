@@ -39,6 +39,9 @@
 				"noStaticOnlyClass": "off",
 				"useOptionalChain": "off",
 				"noUselessLabel": "off"
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "off"
 			}
 		}
 	}
