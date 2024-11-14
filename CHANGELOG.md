@@ -1,3 +1,16 @@
+# [17.20.0](https://github.com/streamich/json-joy/compare/v17.19.0...v17.20.0) (2024-11-14)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add cursor cardinality method ([ed808ce](https://github.com/streamich/json-joy/commit/ed808ce6060222d04c32ecb254f7c2cae0c2699d))
+* **json-crdt-peritext-ui:** 🎸 add ability to render something over caret ([894a21e](https://github.com/streamich/json-joy/commit/894a21e5326b18c03f18a7ccdd1581be570e1e57))
+* **json-crdt-peritext-ui:** 🎸 add extension point which allows to render over caret ([fa9c5bc](https://github.com/streamich/json-joy/commit/fa9c5bc53c26463143f077d8417250fce7c1cc8b))
+* **json-crdt-peritext-ui:** 🎸 add some basic buttons ([b1fe9c1](https://github.com/streamich/json-joy/commit/b1fe9c1dc0557ac512808f9af84c7c20abe8e046))
+* **json-crdt-peritext-ui:** 🎸 make plugins composable class instances ([e5f233c](https://github.com/streamich/json-joy/commit/e5f233c8ac50e054a9adccbb7397deabed050e21))
+* **json-crdt-peritext-ui:** 🎸 render something over caret ([d6dfbfd](https://github.com/streamich/json-joy/commit/d6dfbfdfd103fd71ec4ea214f435c9ce5b85e6da))
+* **json-crdt-peritext-ui:** 🎸 tweak caret hover toolbar ([95d0502](https://github.com/streamich/json-joy/commit/95d050250abc02fec1d7992b050768134f3acc70))
+
 # [17.19.0](https://github.com/streamich/json-joy/compare/v17.18.0...v17.19.0) (2024-11-12)
 
 
