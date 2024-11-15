@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-forest/lib/util';
-import {first2, insert2, last2, next2, remove2} from 'sonic-forest/lib/util2';
+import {first2, insert2, last2, next2, prev2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {OverlayPoint} from './OverlayPoint';
@@ -212,6 +212,17 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.points0(after, inclusive));
   }
 
+  /**
+   * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
+   * from the given marker point, not including the marker point itself.
+   *
+   * If the `after` parameter is not provided, the iteration starts from the
+   * first marker point in the overlay.
+   *
+   * @param after The marker point after which to start the iteration.
+   * @returns All marker points in the overlay, starting from the given marker
+   *     point.
+   */
   public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
     let curr = after ? next2(after) : first2(this.root2);
     return () => {
@@ -219,6 +230,21 @@ export class Overlay<T = string> implements Printable, Stateful {
       if (curr) curr = next2(curr);
       return ret;
     };
+  }
+
+  /**
+   * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
+   * from a give {@link Point}, including any marker overlay points that are
+   * at the same position as the given point.
+   *
+   * @param point Point (inclusive) from which to return all markers.
+   * @returns All marker points in the overlay, starting from the given marker
+   *     point.
+   */
+  public markers1(point: Point<T>): UndefIterator<MarkerOverlayPoint<T>> {
+    let after = this.getOrNextLowerMarker(point);
+    if (after && after.cmp(point) === 0) after = prev2(after);
+    return this.markers0(after);
   }
 
   public markers(): UndefEndIter<MarkerOverlayPoint<T>> {

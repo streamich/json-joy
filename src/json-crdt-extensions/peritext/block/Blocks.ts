@@ -7,8 +7,9 @@ import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';
+import type {Point} from '../rga/Point';
 
-export class Blocks implements Printable, Stateful {
+export class Fragment implements Printable, Stateful {
   public readonly root: Block;
 
   constructor(public readonly txt: Peritext) {
@@ -18,7 +19,7 @@ export class Blocks implements Printable, Stateful {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    return 'Blocks' + printTree(tab, [(tab) => this.root.toString(tab)]);
+    return 'Fragment' + printTree(tab, [(tab) => this.root.toString(tab)]);
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -26,7 +27,7 @@ export class Blocks implements Printable, Stateful {
   public hash: number = 0;
 
   public refresh(): number {
-    this.refreshBlocks();
+    this.build(this.txt.pointStart(), void 0);
     return (this.hash = this.root.refresh());
   }
 
@@ -46,15 +47,20 @@ export class Blocks implements Printable, Stateful {
     return block;
   }
 
-  protected refreshBlocks(): void {
+  protected build(start: Point | undefined, end: Point | undefined): void {
     this.root.children = [];
     let parent = this.root;
     let markerPoint: undefined | MarkerOverlayPoint;
     const txt = this.txt;
     const overlay = txt.overlay;
+    /**
+     * @todo This line always inserts a markerless block at the beginning of
+     * the fragment. But what happens if one actually exists?
+     */
     this.insertBlock(parent, [0], undefined);
-    const iterator = overlay.markers0(undefined);
+    const iterator = start ? overlay.markers1(start) : overlay.markers0(undefined);
     while ((markerPoint = iterator())) {
+      if (end && markerPoint.cmpSpatial(end) > 0) break;
       const type = markerPoint.type();
       const path = type instanceof Array ? type : [type];
       const block = this.insertBlock(parent, path, markerPoint);
