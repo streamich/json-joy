@@ -152,12 +152,11 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   /** @todo Rename to `chunks()`. */
-  /** @todo Rewrite this as `UndefIterator`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
     p2: Point<T>,
-    callback: (chunk: Chunk<T>, off: number, len: number) => void,
+    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | void,
   ): Chunk<T> | undefined {
     const rga = this.txt.str;
     const strId = rga.id;
@@ -179,7 +178,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const time1 = id1.time;
     const sid2 = id2.sid;
     const time2 = id2.time;
-    return rga.range0(undefined, id1, id2, (chunk: Chunk<T>, off: number, len: number) => {
+    return rga.range0(undefined, id1, id2, (chunk: Chunk<T>, off: number, len: number): boolean | void => {
       if (checkFirstAnchor) {
         checkFirstAnchor = false;
         const chunkId = chunk.id;
@@ -196,7 +195,7 @@ export class Overlay<T = string> implements Printable, Stateful {
           len -= 1;
         }
       }
-      callback(chunk, off, len);
+      if (callback(chunk, off, len)) return true;
     }) as Chunk<T>;
   }
 

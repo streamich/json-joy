@@ -20,7 +20,7 @@ const runStrTests = (setup: () => Kit) => {
           peritext.editor.cursor.setAt(i, j);
           overlay.refresh();
           const [start, end] = [...overlay.points()];
-          const inline = Inline.create(peritext, start, end);
+          const inline = new Inline(peritext, start, end);
           const str = inline.text();
           expect(str).toBe(
             peritext
@@ -43,7 +43,7 @@ const runStrTests = (setup: () => Kit) => {
           peritext.editor.cursor.setAt(i, j);
           overlay.refresh();
           const [start, end] = [...overlay.points()];
-          const inline = Inline.create(peritext, start, end);
+          const inline = new Inline(peritext, start, end);
           const pos = inline.pos();
           expect(pos).toBe(i);
         }
@@ -61,7 +61,7 @@ const runStrTests = (setup: () => Kit) => {
       peritext.editor.saved.insStack('em', 1);
       overlay.refresh();
       const [start, end] = [...overlay.points()];
-      const inline = Inline.create(peritext, start, end);
+      const inline = new Inline(peritext, start, end);
       const attr = inline.attr();
       expect(attr.bold[0].slice.data()).toEqual(1);
       expect(attr.bold[1].slice.data()).toEqual(2);
@@ -77,7 +77,7 @@ const runStrTests = (setup: () => Kit) => {
       peritext.editor.saved.insOverwrite('em', 1);
       overlay.refresh();
       const [start, end] = [...overlay.points()];
-      const inline = Inline.create(peritext, start, end);
+      const inline = new Inline(peritext, start, end);
       const attr = inline.attr();
       expect(attr.bold[0].slice.data()).toEqual(2);
       expect(attr.em[0].slice.data()).toEqual(1);
@@ -92,7 +92,7 @@ const runStrTests = (setup: () => Kit) => {
       peritext.editor.saved.insOverwrite('em');
       overlay.refresh();
       const [start, end] = [...overlay.points()];
-      const inline = Inline.create(peritext, start, end);
+      const inline = new Inline(peritext, start, end);
       const attr = inline.attr();
       expect(attr.bold).toBe(undefined);
       expect(attr.em[0]).toBeInstanceOf(InlineAttrContained);
@@ -107,7 +107,7 @@ const runStrTests = (setup: () => Kit) => {
       peritext.editor.saved.insStack(['bold', 'normal'], 2);
       overlay.refresh();
       const [start, end] = [...overlay.points()];
-      const inline = Inline.create(peritext, start, end);
+      const inline = new Inline(peritext, start, end);
       const attr = inline.attr();
       expect(attr['bold,very'][0].slice.data()).toEqual(1);
       expect(attr['bold,normal'][0].slice.data()).toEqual(2);

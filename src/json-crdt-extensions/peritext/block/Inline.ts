@@ -1,5 +1,4 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
 import {SliceBehavior, CommonSliceType} from '../slice/constants';
 import {Range} from '../rga/Range';
@@ -8,16 +7,11 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
 import {formatType} from '../slice/util';
-import type {AbstractRga} from '../../../json-crdt/nodes/rga';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
-
-/**
- * @todo Make sure these inline attributes can handle the cursor which ends
- *     with attaching to the start of the next character.
- */
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
@@ -68,29 +62,12 @@ export type InlineAttrs = Record<string | number, InlineAttrStack>;
  * full text content of the inline.
  */
 export class Inline extends Range implements Printable {
-  public static create(txt: Peritext, start: OverlayPoint, end: OverlayPoint) {
-    const texts: ChunkSlice[] = [];
-    txt.overlay.chunkSlices0(undefined, start, end, (chunk, off, len) => {
-      if (txt.overlay.isMarker(chunk.id)) return;
-      texts.push(new ChunkSlice(chunk, off, len));
-    });
-    return new Inline(txt.str, start, end, texts);
-  }
-
   constructor(
-    rga: AbstractRga<string>,
+    public readonly txt: Peritext,
     public start: OverlayPoint,
     public end: OverlayPoint,
-
-    /**
-     * @todo PERF: for performance reasons, we should consider not passing in
-     * this array. Maybe pass in just the initial chunk and the offset. However,
-     * maybe even that is not necessary, as the `.start` point should have
-     * its chunk cached, or will have it cached after the first access.
-     */
-    public readonly texts: ChunkSlice[],
   ) {
-    super(rga, start, end);
+    super(txt.str, start, end);
   }
 
   /**
@@ -107,7 +84,7 @@ export class Inline extends Range implements Printable {
    * @returns The position of the inline within the text.
    */
   public pos(): number {
-    const chunkSlice = this.texts[0];
+    const chunkSlice = this.texts(1)[0];
     if (!chunkSlice) return -1;
     const chunk = chunkSlice.chunk;
     const pos = this.rga.pos(chunk);
@@ -240,6 +217,20 @@ export class Inline extends Range implements Printable {
     return;
   }
 
+  public texts(limit: number = 1e6): ChunkSlice[] {
+    const texts: ChunkSlice[] = [];
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    let cnt = 0;
+    overlay.chunkSlices0(this.start.chunk(), this.start, this.end, (chunk, off, len): boolean | void => {
+      if (overlay.isMarker(chunk.id)) return;
+      cnt++;
+      texts.push(new ChunkSlice(chunk, off, len));
+      if (cnt === limit) return true;
+    });
+    return texts;
+  }
+
   public text(): string {
     const str = super.text();
     return this.start instanceof MarkerOverlayPoint ? str.slice(1) : str;
@@ -261,6 +252,7 @@ export class Inline extends Range implements Printable {
     const header = `Inline ${range} ${text}`;
     const attr = this.attr();
     const attrKeys = Object.keys(attr);
+    const texts = this.texts();
     return (
       header +
       printTree(tab, [
@@ -282,13 +274,13 @@ export class Inline extends Range implements Printable {
                   );
                 }),
               ),
-        !this.texts.length
+        !texts.length
           ? null
           : (tab) =>
               'texts' +
               printTree(
                 tab,
-                this.texts.map((text) => (tab) => text.toString(tab)),
+                this.texts().map((text) => (tab) => text.toString(tab)),
               ),
       ])
     );

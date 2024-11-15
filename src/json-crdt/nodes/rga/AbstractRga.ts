@@ -401,14 +401,15 @@ export abstract class AbstractRga<T> {
    *                   to avoid a lookup.
    * @param from ID of the first element in the range.
    * @param to ID of the last element in the range.
-   * @param callback Function to call for each chunk slice in the range.
+   * @param callback Function to call for each chunk slice in the range. If it
+   *     returns truthy value, the iteration will stop.
    * @returns Reference to the last chunk in the range.
    */
   public range0(
     startChunk: Chunk<T> | undefined,
     from: ITimestampStruct,
     to: ITimestampStruct,
-    callback: (chunk: Chunk<T>, off: number, len: number) => void,
+    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | void,
   ): Chunk<T> | undefined {
     let chunk: Chunk<T> | undefined = startChunk ? startChunk : this.findById(from);
     if (startChunk) while (chunk && !containsId(chunk.id, chunk.span, from)) chunk = next(chunk);
@@ -422,7 +423,7 @@ export abstract class AbstractRga<T> {
         return chunk;
       }
       const len = chunk.span - off;
-      callback(chunk, off, len);
+      if (callback(chunk, off, len)) return chunk;
     } else {
       if (containsId(chunk.id, chunk.span, to)) return;
     }
@@ -431,10 +432,10 @@ export abstract class AbstractRga<T> {
       const toContainedInChunk = containsId(chunk.id, chunk.span, to);
       // TODO: fast path for chunk.del
       if (toContainedInChunk) {
-        if (!chunk.del) callback(chunk, 0, to.time - chunk.id.time + 1);
+        if (!chunk.del) if (callback(chunk, 0, to.time - chunk.id.time + 1)) return chunk;
         return chunk;
       }
-      if (!chunk.del) callback(chunk, 0, chunk.span);
+      if (!chunk.del) if (callback(chunk, 0, chunk.span)) return chunk;
       chunk = next(chunk);
     }
     return chunk;

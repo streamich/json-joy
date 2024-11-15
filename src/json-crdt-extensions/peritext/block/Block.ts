@@ -1,10 +1,10 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatType} from '../slice/util';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
@@ -100,7 +100,7 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     const iterator = this.tuples0();
     return () => {
       const pair = iterator();
-      return pair && Inline.create(txt, pair[0], pair[1]);
+      return pair && new Inline(txt, pair[0], pair[1]);
     };
   }
 
