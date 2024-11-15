@@ -130,22 +130,20 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   }
 
   return (
-    <Ripple ms={1_500} color={positive ? theme.color.sem.positive[0] : theme.g(0, 0.08)}>
-      <Link
-        {...rest}
-        a={!!to}
-        className={
-          className + blockClass + dynamicBlockClass + (border ? borderClass : '') + (fill ? fillBlockClass : '')
-        }
-        style={style}
-        title={title}
-        onClick={to ? undefined : onClick}
-        onDragStart={handleDragStart}
-        to={to}
-        data-testid="BasicButton"
-      >
-        {children}
-      </Link>
-    </Ripple>
+    <Link
+      {...rest}
+      a={!!to}
+      className={
+        className + blockClass + dynamicBlockClass + (border ? borderClass : '') + (fill ? fillBlockClass : '')
+      }
+      style={style}
+      title={title}
+      onClick={to ? undefined : onClick}
+      onDragStart={handleDragStart}
+      to={to}
+      data-testid="BasicButton"
+    >
+      {children}
+    </Link>
   );
 };
