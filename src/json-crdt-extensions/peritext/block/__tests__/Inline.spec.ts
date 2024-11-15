@@ -117,7 +117,7 @@ const runStrTests = (setup: () => Kit) => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(3);
       const [paragraph] = peritext.editor.saved.insMarker('p');
-      peritext.editor.cursor.set(paragraph.start);
+      peritext.editor.cursor.set(paragraph.p1);
       peritext.refresh();
       const block = peritext.blocks.root.children[1]!;
       const inline = [...block.texts()][0];
@@ -129,7 +129,7 @@ const runStrTests = (setup: () => Kit) => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(2, 2);
       const [slice] = peritext.editor.saved.insStack('bold', 123);
-      peritext.editor.cursor.set(slice.start);
+      peritext.editor.cursor.set(slice.p1);
       peritext.refresh();
       const block = peritext.blocks.root.children[0]!;
       const inline = [...block.texts()][1];
@@ -207,7 +207,7 @@ const runStrTests = (setup: () => Kit) => {
         const {peritext} = setup();
         peritext.editor.cursor.setAt(2, 6);
         const [slice] = peritext.editor.saved.insStack(['a', 1, 'b', 2]);
-        peritext.editor.cursor.set(slice.start);
+        peritext.editor.cursor.set(slice.p1);
         peritext.refresh();
         const str = peritext.strApi().view();
         const [inline1, inline2, inline3] = peritext.blocks.root.children[0]!.texts();
@@ -233,7 +233,7 @@ const runStrTests = (setup: () => Kit) => {
         const {peritext} = setup();
         peritext.editor.cursor.setAt(5);
         const [paragraph] = peritext.editor.extra.insMarker('p');
-        peritext.editor.cursor.set(paragraph.start);
+        peritext.editor.cursor.set(paragraph.p1);
         peritext.refresh();
         const str = peritext.strApi().view();
         const [block1, block2] = peritext.blocks.root.children;

@@ -14,14 +14,6 @@ export class LeafBlock<Attr = unknown> extends Block<Attr> {
     return 'LeafBlock';
   }
 
-  protected toStringHeader(): string {
-    const str = this.text();
-    const truncate = str.length > 32;
-    const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
-    const header = `${super.toStringHeader()} ${text}`;
-    return header;
-  }
-
   public toString(tab: string = ''): string {
     const header = this.toStringHeader();
     const texts = [...this.texts()];

@@ -12,6 +12,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
+import {Point} from '../rga/Point';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
@@ -64,8 +65,10 @@ export type InlineAttrs = Record<string | number, InlineAttrStack>;
 export class Inline extends Range implements Printable {
   constructor(
     public readonly txt: Peritext,
-    public start: OverlayPoint,
-    public end: OverlayPoint,
+    public readonly p1: OverlayPoint,
+    public readonly p2: OverlayPoint,
+    start: Point,
+    end: Point,
   ) {
     super(txt.str, start, end);
   }
@@ -92,15 +95,17 @@ export class Inline extends Range implements Printable {
   }
 
   protected createAttr(slice: Slice): InlineAttr {
+    const p1 = this.p1;
+    const p2 = this.p2;
     return !slice.start.cmp(slice.end)
-      ? !slice.start.cmp(this.start)
+      ? !slice.start.cmp(p1)
         ? new InlineAttrStartPoint(slice)
         : new InlineAttrEndPoint(slice)
-      : !this.start.cmp(slice.start)
-        ? !this.end.cmp(slice.end)
+      : !p1.cmp(slice.start)
+        ? !p2.cmp(slice.end)
           ? new InlineAttrContained(slice)
           : new InlineAttrStart(slice)
-        : !this.end.cmp(slice.end)
+        : !p2.cmp(slice.end)
           ? new InlineAttrEnd(slice)
           : new InlineAttrPassing(slice);
   }
@@ -118,11 +123,11 @@ export class Inline extends Range implements Printable {
   public attr(): InlineAttrs {
     if (this._attr) return this._attr;
     const attr: InlineAttrs = (this._attr = {});
-    const point1 = this.start as OverlayPoint;
-    const point2 = this.end as OverlayPoint;
-    const slices1 = point1.layers;
-    const slices2 = point1.markers;
-    const slices3 = point2.isAbsEnd() ? point2.markers : [];
+    const p1 = this.p1 as OverlayPoint;
+    const p2 = this.p2 as OverlayPoint;
+    const slices1 = p1.layers;
+    const slices2 = p1.markers;
+    const slices3 = p2.isAbsEnd() ? p2.markers : [];
     const length1 = slices1.length;
     const length2 = slices2.length;
     const length3 = slices3.length;
@@ -233,7 +238,7 @@ export class Inline extends Range implements Printable {
 
   public text(): string {
     const str = super.text();
-    return this.start instanceof MarkerOverlayPoint ? str.slice(1) : str;
+    return this.p1 instanceof MarkerOverlayPoint ? str.slice(1) : str;
   }
 
   // ---------------------------------------------------------------- Printable
@@ -246,9 +251,9 @@ export class Inline extends Range implements Printable {
     const str = this.text();
     const truncate = str.length > 32;
     const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
-    const startFormatted = this.start.toString(tab, true);
+    const startFormatted = this.p1.toString(tab, true);
     const range =
-      this.start.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
+      this.p1.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
     const header = `Inline ${range} ${text}`;
     const attr = this.attr();
     const attrKeys = Object.keys(attr);

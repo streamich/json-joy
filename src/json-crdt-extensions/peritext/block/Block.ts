@@ -104,9 +104,24 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   public texts0(): UndefIterator<Inline> {
     const txt = this.txt;
     const iterator = this.tuples0();
+    const blockStart = this.start;
+    const blockEnd = this.end;
+    let isFirst = true;
+    let next = iterator();
     return () => {
-      const pair = iterator();
-      return pair && new Inline(txt, pair[0], pair[1]);
+      const pair = next;
+      next = iterator();
+      if (!pair) return;
+      const [p1, p2] = pair;
+      let start: Point = p1;
+      let end: Point = p2;
+      if (isFirst) {
+        isFirst = false;
+        if (blockStart.cmpSpatial(p1) > 0) start = blockStart;
+      }
+      const isLast = !next;
+      if (isLast) if (blockEnd.cmpSpatial(p2) < 0) end = blockEnd;
+      return new Inline(txt, p1, p2, start, end);
     };
   }
 
@@ -117,10 +132,10 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   public text(): string {
     let str = '';
     const iterator = this.texts0();
-    let text = iterator();
-    while (text) {
-      str += text.text();
-      text = iterator();
+    let inline = iterator();
+    while (inline) {
+      str += inline.text();
+      inline = iterator();
     }
     return str;
   }
@@ -152,7 +167,7 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
     const tag = this.path.map((step) => formatType(step)).join('.');
-    const header = `${this.toStringName()} ${hash} ${tag}`;
+    const header = `${super.toString('', true)} ${hash} ${tag} `;
     return header;
   }
 
