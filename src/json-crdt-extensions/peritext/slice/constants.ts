@@ -37,8 +37,12 @@ export enum CommonSliceType {
   embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
   column = 21, // <div style="column-count: ..."> (represents 2 and 3 column layouts)
   contents = 22, // Table of contents
-  row = 23, // Table row
-  cell = 24, // Table cell
+  table = 23, // <table>
+  row = 24, // Table row
+  cell = 25, // Table cell
+  CollapseList = 26, // Collapsible list - > List item
+  Collapse = 27, // Collapsible block
+  Note = 28, // Note block
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
