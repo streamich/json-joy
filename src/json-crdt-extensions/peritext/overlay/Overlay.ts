@@ -20,7 +20,7 @@ import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice, SliceType} from '../slice/types';
 import type {Slices} from '../slice/Slices';
-import type {OverlayPair, OverlayTuple} from './types';
+import type {MarkerOverlayPair, OverlayPair, OverlayTuple} from './types';
 import type {Comparator} from 'sonic-forest/lib/types';
 
 const spatialComparator: Comparator<OverlayPoint> = (a: OverlayPoint, b: OverlayPoint) => a.cmpSpatial(b);
@@ -232,6 +232,10 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
+  public markers(): UndefEndIter<MarkerOverlayPoint<T>> {
+    return new UndefEndIter(this.markers0(undefined));
+  }
+
   /**
    * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
    * from a give {@link Point}, including any marker overlay points that are
@@ -242,13 +246,24 @@ export class Overlay<T = string> implements Printable, Stateful {
    *     point.
    */
   public markers1(point: Point<T>): UndefIterator<MarkerOverlayPoint<T>> {
+    if (point.isAbsStart()) return this.markers0(undefined);
     let after = this.getOrNextLowerMarker(point);
     if (after && after.cmp(point) === 0) after = prev2(after);
     return this.markers0(after);
   }
 
-  public markers(): UndefEndIter<MarkerOverlayPoint<T>> {
-    return new UndefEndIter(this.markers0(undefined));
+  public markerPairs0(start: Point<T>, end?: Point<T>): UndefIterator<MarkerOverlayPair<T>> {
+    const i = this.markers1(start);
+    let one: MarkerOverlayPoint<T> | undefined = i();
+    let two: MarkerOverlayPoint<T> | undefined = i();
+    return () => {
+      if (!one) return;
+      if (end && end.cmpSpatial(one) <= 0) return one = void 0;
+      const ret: MarkerOverlayPair<T> = [one, two];
+      one = two;
+      two = i();
+      return ret;
+    };
   }
 
   public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {

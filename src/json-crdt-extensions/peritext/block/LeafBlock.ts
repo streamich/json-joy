@@ -10,7 +10,7 @@ export interface IBlock<Attr = unknown> {
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
   // ---------------------------------------------------------------- Printable
-  protected toStringName(): string {
+  public toStringName(): string {
     return 'LeafBlock';
   }
 

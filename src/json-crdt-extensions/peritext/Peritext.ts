@@ -86,7 +86,7 @@ export class Peritext<T = string> implements Printable {
     });
     this.localSlices = new LocalSlices(this, localSlicesModel.root.node().get(0)!);
     this.editor = new Editor<T>(this);
-    this.blocks = new Fragment(this as Peritext);
+    this.blocks = new Fragment(this as Peritext, this.pointAbsStart() as Point, this.pointAbsEnd() as Point);
   }
 
   public strApi(): StrApi {
@@ -217,6 +217,10 @@ export class Peritext<T = string> implements Printable {
     const end = this.pointEnd();
     if (!start || !end) return;
     return this.range(start, end);
+  }
+
+  public fragment(range: Range): Fragment {
+    return new Fragment(this as Peritext, range.start, range.end);
   }
 
   // ---------------------------------------------------------- text (& slices)

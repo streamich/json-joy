@@ -1,3 +1,4 @@
+import type {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import type {OverlayPoint} from './OverlayPoint';
 
 /**
@@ -15,3 +16,5 @@ export type OverlayPair<T> = [p1: OverlayPoint<T> | undefined, p2: OverlayPoint<
  * by virtual points.
  */
 export type OverlayTuple<T> = [p1: OverlayPoint<T>, p2: OverlayPoint<T>];
+
+export type MarkerOverlayPair<T> = [p1: MarkerOverlayPoint<T> | undefined, p2: MarkerOverlayPoint<T> | undefined];

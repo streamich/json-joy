@@ -4,6 +4,8 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatType} from '../slice/util';
+import {Range} from '../rga/Range';
+import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Printable} from 'tree-dump';
@@ -18,7 +20,7 @@ export interface IBlock {
 
 type T = string;
 
-export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
+export class Block<Attr = unknown> extends Range implements IBlock, Printable, Stateful {
   public parent: Block | null = null;
 
   public children: Block[] = [];
@@ -27,7 +29,11 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     public readonly txt: Peritext,
     public readonly path: Path,
     public readonly marker: MarkerOverlayPoint | undefined,
-  ) {}
+    public start: Point,
+    public end: Point,
+  ) {
+    super(txt.str, start, end);
+  }
 
   /**
    * @returns Stable unique identifier within a list of blocks. Used for React
@@ -140,7 +146,7 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
 
   // ---------------------------------------------------------------- Printable
 
-  protected toStringName(): string {
+  public toStringName(): string {
     return 'Block';
   }
   protected toStringHeader(): string {
