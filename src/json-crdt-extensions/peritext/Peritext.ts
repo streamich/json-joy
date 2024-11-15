@@ -14,7 +14,7 @@ import {CONST, updateNum} from '../../json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
 import {ExtraSlices} from './slice/ExtraSlices';
-import {Fragment} from './block/Blocks';
+import {Fragment} from './block/Fragment';
 import {updateRga} from '../../json-crdt/hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';

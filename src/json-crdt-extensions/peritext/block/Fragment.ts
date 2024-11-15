@@ -9,6 +9,12 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 
+/**
+ * A *fragment* represents a structural slice of a rich-text document. A
+ * fragment can be bound to a specific range of text contents, however it
+ * always constructs a tree of {@link Block}s, which represent the nested
+ * structure of the text contents.
+ */
 export class Fragment implements Printable, Stateful {
   public readonly root: Block;
 
