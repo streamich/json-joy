@@ -15,10 +15,11 @@ const testSuite = (getKit: () => Kit) => {
     const kit = setup();
     kit.et.cursor({at: 3, len: 3});
     kit.et.format({type: 'bold'});
+    kit.editor.delCursors();
     kit.peritext.refresh();
     const slices = kit.peritext.overlay.findOverlapping(kit.peritext.rangeAt(5));
-    console.log([...slices]);
-    console.log(kit.peritext + '');
+    const [slice] = slices;
+    expect(slice.type).toBe('bold');
   });
 };
 

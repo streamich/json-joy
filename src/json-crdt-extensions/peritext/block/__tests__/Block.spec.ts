@@ -12,7 +12,7 @@ const setup = () => {
   const marker = kit.peritext.overlay.markers().next().value!;
   const type = marker.type();
   const path = type instanceof Array ? type : [type];
-  const block = new Block(kit.peritext, path, marker);
+  const block = new Block(kit.peritext, path, marker, kit.peritext.pointAbsStart(), kit.peritext.pointAbsEnd());
   return {
     ...kit,
     block,
