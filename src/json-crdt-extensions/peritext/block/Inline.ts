@@ -7,12 +7,12 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
 import {formatType} from '../slice/util';
+import {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
-import {Point} from '../rga/Point';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
