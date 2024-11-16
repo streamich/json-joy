@@ -1,6 +1,6 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior, CommonSliceType} from '../slice/constants';
+import {SliceBehavior, SliceTypeName} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
@@ -139,7 +139,7 @@ export class Inline extends Range implements Printable {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            const stack: InlineAttrStack = attr[CommonSliceType.Cursor] ?? (attr[CommonSliceType.Cursor] = []);
+            const stack: InlineAttrStack = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
             stack.push(this.createAttr(slice));
             break;
           }
@@ -163,13 +163,13 @@ export class Inline extends Range implements Printable {
   }
 
   public hasCursor(): boolean {
-    return !!this.attr()[CommonSliceType.Cursor];
+    return !!this.attr()[SliceTypeName.Cursor];
   }
 
   /** @todo Make this return a list of cursors. */
   public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     if (
@@ -185,7 +185,7 @@ export class Inline extends Range implements Printable {
 
   public cursorEnd(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     if (
@@ -209,7 +209,7 @@ export class Inline extends Range implements Printable {
    */
   public selection(): undefined | [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''] {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     const cursor = attribute.slice;

@@ -1,2 +1,2 @@
 export type * from './types';
-export {CursorAnchor, CommonSliceType} from './constants';
+export {CursorAnchor, SliceTypeName as CommonSliceType} from './constants';
