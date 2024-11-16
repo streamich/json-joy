@@ -7,8 +7,7 @@ export const walk0 = (node: JsonMlNode): UndefIterator<JsonMlNode> => {
     const node = stack.pop();
     if (!node) return;
     if (typeof node === 'string') return node;
-    const length = node.length;
-    for (let i = length - 1; i >= 2; i--) stack.push(node[i] as JsonMlNode);
+    for (let i = node.length - 1; i >= 2; i--) stack.push(node[i] as JsonMlNode);
     return node;
   };
 };
