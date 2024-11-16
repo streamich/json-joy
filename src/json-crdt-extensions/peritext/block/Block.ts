@@ -12,6 +12,7 @@ import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {OverlayTuple} from '../overlay/types';
+import type {JsonMlNode} from '../../../json-ml';
 
 export interface IBlock {
   readonly path: Path;
@@ -138,6 +139,12 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
       inline = iterator();
     }
     return str;
+  }
+
+  // ------------------------------------------------------------------- export
+
+  toJsonMl(): JsonMlNode {
+    throw new Error('not implemented');
   }
 
   // ----------------------------------------------------------------- Stateful

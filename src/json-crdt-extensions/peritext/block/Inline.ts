@@ -13,6 +13,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
+import type {JsonMlNode} from '../../../json-ml';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
@@ -52,6 +53,8 @@ export type InlineAttr =
   | InlineAttrStartPoint
   | InlineAttrEndPoint;
 export type InlineAttrStack = InlineAttr[];
+
+/** @todo Make this a Map. */
 export type InlineAttrs = Record<string | number, InlineAttrStack>;
 
 /**
@@ -239,6 +242,12 @@ export class Inline extends Range implements Printable {
   public text(): string {
     const str = super.text();
     return this.p1 instanceof MarkerOverlayPoint ? str.slice(1) : str;
+  }
+
+  // ------------------------------------------------------------------- export
+
+  toJsonMl(): JsonMlNode {
+    throw new Error('not implemented');
   }
 
   // ---------------------------------------------------------------- Printable
