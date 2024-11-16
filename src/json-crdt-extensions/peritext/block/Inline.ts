@@ -54,8 +54,7 @@ export type InlineAttr =
   | InlineAttrEndPoint;
 export type InlineAttrStack = InlineAttr[];
 
-/** @todo Make this a Map. */
-export type InlineAttrs = Record<string | number, InlineAttrStack>;
+export type InlineAttrs = Map<string | number, InlineAttrStack>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which

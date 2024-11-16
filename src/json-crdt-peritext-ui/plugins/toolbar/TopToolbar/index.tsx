@@ -4,8 +4,8 @@ import {Button} from '../../../components/Button';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import {useSyncStore} from '../../../react/hooks';
-import type {PeritextSurfaceContextValue} from '../../../react';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
+import type {PeritextSurfaceContextValue} from '../../../react';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceContextValue;
@@ -32,7 +32,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
     </Button>
   );
 
-  const blockGroupButtom = (type: string | number, name: React.ReactNode) => (
+  const blockGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button
       onClick={() => ctx.dom.et.marker({action: 'tog', type})}
       onMouseDown={(e) => e.preventDefault()}
@@ -70,9 +70,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
         ctx.dom.et.format({behavior: 'clear'});
       })}
       <ButtonSeparator />
-      {blockGroupButtom(CommonSliceType.p, 'Paragraph')}
-      {blockGroupButtom(CommonSliceType.blockquote, 'Blockquote')}
-      {blockGroupButtom(CommonSliceType.codeblock, 'Code Block')}
+      {blockGroupButton(CommonSliceType.p, 'Paragraph')}
+      {blockGroupButton(CommonSliceType.blockquote, 'Blockquote')}
+      {blockGroupButton(CommonSliceType.codeblock, 'Code Block')}
     </ButtonGroup>
   );
 };
