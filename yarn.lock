@@ -748,9 +748,9 @@
     react-is "^16.8.0 || ^17.0.0"
 
 "@radix-ui/react-icons@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-icons/-/react-icons-1.3.1.tgz#462c85fd726a77854cd5956e29eb19a575aa7ce5"
-  integrity sha512-QvYompk0X+8Yjlo/Fv4McrzxohDdM5GgLHyQcPpcsPvlOSXCGFjdbuyGL5dzRbg0GpknAjQJJZzdiRK7iWVuFQ==
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-icons/-/react-icons-1.3.2.tgz#09be63d178262181aeca5fb7f7bc944b10a7f441"
+  integrity sha512-fyQIhGDhzfc9pK2kH6Pl9c4BDJGfMkPqkyIgYDthyNYoNg3wVhoJMMh19WS4Up/1KMPFVpNsT2q3WmXn2N1m6g==
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
@@ -2175,6 +2175,7 @@ dot-case@^3.0.4:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
+  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -2190,9 +2191,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.41:
-  version "1.5.55"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.55.tgz#73684752aa2e1aa49cafb355a41386c6637e76a9"
-  integrity sha512-6maZ2ASDOTBtjt9FhqYPRnbvKU5tjG0IN9SztUOWYw2AzNDNpKJYLJmlK0/En4Hs/aiWnB+JZ+gW19PIGszgKg==
+  version "1.5.62"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.62.tgz#8289468414b0b0b3e9180ef619a763555debe612"
+  integrity sha512-t8c+zLmJHa9dJy96yBZRXGQYoiCEnHYgFwn1asvSPZSUdVxnB62A4RASd7k41ytG3ErFBA0TpHlKg9D9SQBmLg==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -2852,9 +2853,9 @@ hyphenate-style-name@^1.0.2, hyphenate-style-name@^1.0.3:
   integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
 
 iconista@^2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/iconista/-/iconista-2.16.1.tgz#576ad1ad27cb2c2b04dc99e2f3ff17b7ec7fcb92"
-  integrity sha512-MW4mYwGyWaC9E6EsKwZLODzE9YSg06rYEqWuOjMyqqSS5f1B7UiM1qxSvQVLYK+iFTgubL/moZQ1jM8uXz62gA==
+  version "2.21.0"
+  resolved "https://registry.yarnpkg.com/iconista/-/iconista-2.21.0.tgz#e2c5c99e3b5b798696783bb55b6e1382d8daf932"
+  integrity sha512-NR2Q22xc0GttdfLAkhqoE9XTmzHkt8rh2P/nx35FpRZOoKlDpHMlCj5pdFbZDRfMqqu+NIjKMiy/7r2XXgdFfA==
   dependencies:
     react-use "^5.7.1"
 
@@ -3523,6 +3524,7 @@ jsesc@^3.0.2:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d":
   version "0.0.1"
+  uid ec825401dc05cbb74b9e0b3c4d6527399f54d54d
   resolved "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
 
 json-logic-js@^2.0.2:
@@ -3983,9 +3985,9 @@ neo-async@^2.6.2:
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
 nice-ui@^1.18.0:
-  version "1.18.0"
-  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.18.0.tgz#a6883e6c4dee86b65dd8b234b13fb96b9af3f397"
-  integrity sha512-D5wc+Qez7lNPOIvKkJUJLbvQJXdzUmpUqnTSx5q5XdrKotE57eSmyYj6cuiaZBLc7VcmrRnvPzSSZMjwggzOnA==
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.19.0.tgz#63b6b14a571b7cf68001c233466a01694065e890"
+  integrity sha512-VvDSzDdZbuj7LmNSta6l7trJrKoUUGAo0FAe7XwdnNNYInb4YmmaHgRZnPNOwwxMkFhHvrsIg7pYLV69Dx980Q==
   dependencies:
     "@material-ui/core" "^4.12.4"
     clipboard-copy "^4.0.1"
@@ -4151,9 +4153,9 @@ p-locate@^4.1.0:
     p-limit "^2.2.0"
 
 p-retry@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/p-retry/-/p-retry-6.2.0.tgz#8d6df01af298750009691ce2f9b3ad2d5968f3bd"
-  integrity sha512-JA6nkq6hKyWLLasXQXUrO4z8BUZGUt/LjlJxx8Gb2+2ntodU/SS63YZ8b0LUTbQ8ZB9iwOfhEPhg4ykKnn2KsA==
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/p-retry/-/p-retry-6.2.1.tgz#81828f8dc61c6ef5a800585491572cc9892703af"
+  integrity sha512-hEt02O4hUct5wtwg4H4KcWgDdm+l1bOaEy/hWzd8xtXB9BqxTWBBhb+2ImAtH4Cv4rPjV76xN3Zumqk3k3AhhQ==
   dependencies:
     "@types/retry" "0.12.2"
     is-network-error "^1.0.0"
