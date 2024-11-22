@@ -488,7 +488,6 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     if (copy.clock.sid !== sessionId && copy.clock instanceof clock.ClockVector)
       copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
-    // console.log('FORK', this.clock.sid, this.api.builder.clock.sid);
     return copy;
   }
 
