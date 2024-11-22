@@ -66,7 +66,7 @@ export enum CommonSliceType {
   kbd = -19, // <kbd>
   hidden = -20, // <span style="color: transparent; background: black">
   footnote = -21, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
-  ref = -22, // <a> with href="#ref-..." and title="Reference ..."
+  ref = -22, // <a> with href="#ref-..." and title="Reference ..." (Reference to some element in the document)
   iaside = -23, // Inline <aside>
   iembed = -24, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
   bookmark = -25, // UI for creating a link to this slice
