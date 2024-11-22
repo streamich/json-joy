@@ -68,7 +68,7 @@ const runKeyTests = (setup: () => Kit) => {
         peritext.editor.cursor.setAt(i, j);
         overlay.refresh();
         const [start, end] = [...overlay.points()];
-        const inline = new Inline(peritext, start, end);
+        const inline = new Inline(peritext, start, end, start, end);
         if (keys.has(inline.key())) {
           const inline2 = keys.get(inline.key())!;
           // tslint:disable-next-line:no-console

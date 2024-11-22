@@ -1,18 +1,19 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior, CommonSliceType} from '../slice/constants';
+import {SliceBehavior, SliceTypeName} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
 import {formatType} from '../slice/util';
+import {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
-import {Point} from '../rga/Point';
+import type {JsonMlNode} from '../../../json-ml';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
@@ -52,7 +53,8 @@ export type InlineAttr =
   | InlineAttrStartPoint
   | InlineAttrEndPoint;
 export type InlineAttrStack = InlineAttr[];
-export type InlineAttrs = Record<string | number, InlineAttrStack>;
+
+export type InlineAttrs = Map<string | number, InlineAttrStack>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -139,7 +141,7 @@ export class Inline extends Range implements Printable {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            const stack: InlineAttrStack = attr[CommonSliceType.Cursor] ?? (attr[CommonSliceType.Cursor] = []);
+            const stack: InlineAttrStack = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
             stack.push(this.createAttr(slice));
             break;
           }
@@ -163,13 +165,13 @@ export class Inline extends Range implements Printable {
   }
 
   public hasCursor(): boolean {
-    return !!this.attr()[CommonSliceType.Cursor];
+    return !!this.attr()[SliceTypeName.Cursor];
   }
 
   /** @todo Make this return a list of cursors. */
   public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     if (
@@ -185,7 +187,7 @@ export class Inline extends Range implements Printable {
 
   public cursorEnd(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     if (
@@ -209,7 +211,7 @@ export class Inline extends Range implements Printable {
    */
   public selection(): undefined | [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''] {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     const cursor = attribute.slice;
@@ -239,6 +241,12 @@ export class Inline extends Range implements Printable {
   public text(): string {
     const str = super.text();
     return this.p1 instanceof MarkerOverlayPoint ? str.slice(1) : str;
+  }
+
+  // ------------------------------------------------------------------- export
+
+  toJsonMl(): JsonMlNode {
+    throw new Error('not implemented');
   }
 
   // ---------------------------------------------------------------- Printable

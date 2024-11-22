@@ -10,7 +10,7 @@ import {
   SliceBehavior,
   SliceTupleIndex,
   SliceBehaviorName,
-  CommonSliceType,
+  SliceTypeName,
 } from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
@@ -191,8 +191,8 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
-    if (typeof this.type === 'number' && Math.abs(this.type) <= 64 && CommonSliceType[this.type]) {
-      return `slice [${SliceBehaviorName[this.behavior]}] <${CommonSliceType[this.type]}>`;
+    if (typeof this.type === 'number' && Math.abs(this.type) <= 64 && SliceTypeName[this.type]) {
+      return `slice [${SliceBehaviorName[this.behavior]}] <${SliceTypeName[this.type]}>`;
     }
     return `slice [${SliceBehaviorName[this.behavior]}] ${JSON.stringify(this.type)}`;
   }

@@ -112,8 +112,8 @@ describe('tuples', () => {
     const tuples1 = [...block1.tuples()];
     const tuples2 = [...block2.tuples()];
     expect(tuples1.length).toBe(3);
-    const text1 = tuples1.map(([p1, p2]) => new Inline(peritext, p1, p2).text()).join('');
-    const text2 = tuples2.map(([p1, p2]) => new Inline(peritext, p1, p2).text()).join('');
+    const text1 = tuples1.map(([p1, p2]) => new Inline(peritext, p1, p2, p1, p2).text()).join('');
+    const text2 = tuples2.map(([p1, p2]) => new Inline(peritext, p1, p2, p1, p2).text()).join('');
     expect(text1).toBe('hello ');
     expect(text2).toBe('world');
   });

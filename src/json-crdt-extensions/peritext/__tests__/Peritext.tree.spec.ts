@@ -1,6 +1,6 @@
 import {InlineAttrContained, InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../block/Inline';
 import type {LeafBlock} from '../block/LeafBlock';
-import {CommonSliceType} from '../slice/constants';
+import {SliceTypeName} from '../slice/constants';
 import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
 
 const run = (setup: () => Kit) => {
@@ -79,10 +79,10 @@ const run = (setup: () => Kit) => {
         expect(inline3.attr().bold[0].slice.data()).toBe(undefined);
         expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrStart);
         expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline3.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline3.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrStart);
         expect(inline4.attr().italic[0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline4.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline4.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline4.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline5.attr()).toEqual({});
       });
 
@@ -102,7 +102,7 @@ const run = (setup: () => Kit) => {
         expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
         expect(inline2.attr().italic[0]).toBeInstanceOf(InlineAttrContained);
         expect(inline2.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline2.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline2.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline3.attr()).toEqual({});
       });
 
@@ -124,10 +124,10 @@ const run = (setup: () => Kit) => {
         expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
         expect(inline2.attr().italic[0]).toBeInstanceOf(InlineAttrStart);
         expect(inline2.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline2.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline2.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrStart);
         expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline3.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline3.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline4.attr()).toEqual({});
       });
 
@@ -151,7 +151,7 @@ const run = (setup: () => Kit) => {
         expect(inline3.attr().bold[0].slice.data()).toBe(undefined);
         expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrContained);
         expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline3.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline3.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline4.attr()).toEqual({});
       });
 
@@ -173,7 +173,7 @@ const run = (setup: () => Kit) => {
         expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
         expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrContained);
         expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
-        expect(inline3.attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline3.attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline4.attr()).toEqual({});
       });
     });
@@ -268,13 +268,13 @@ const run = (setup: () => Kit) => {
       expect([...block1.texts()].length).toBe(2);
       expect([...block1.texts()][0].attr()).toEqual({});
       expect([...block1.texts()][1].attr().bold[0]).toBeInstanceOf(InlineAttrStart);
-      expect([...block1.texts()][1].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrStart);
+      expect([...block1.texts()][1].attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrStart);
       expect([...block2.texts()].length).toBe(1);
       expect([...block2.texts()][0].attr().bold[0]).toBeInstanceOf(InlineAttrPassing);
-      expect([...block2.texts()][0].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
+      expect([...block2.texts()][0].attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
       expect([...block3.texts()].length).toBe(2);
       expect([...block3.texts()][0].attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
-      expect([...block3.texts()][0].attr()[CommonSliceType.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
+      expect([...block3.texts()][0].attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
       expect([...block3.texts()][1].attr()).toEqual({});
     });
   });
