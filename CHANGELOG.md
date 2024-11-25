@@ -1,3 +1,28 @@
+# [17.21.0](https://github.com/streamich/json-joy/compare/v17.20.0...v17.21.0) (2024-11-25)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 correct React warnings ([5d90876](https://github.com/streamich/json-joy/commit/5d908765d9d049e8eeda908b197e720ed878b848))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add first implementation of Fragment ([340919a](https://github.com/streamich/json-joy/commit/340919a9c6f5d63c2d62af8a6f08b246468cc935))
+* **json-crdt-extensions:** 🎸 add JSON markup language utilities ([bdf4deb](https://github.com/streamich/json-joy/commit/bdf4debd2d63614494111e3e4d7d6bfc560ca30c))
+* **json-crdt-extensions:** 🎸 add JSON ML walk method ([cec7865](https://github.com/streamich/json-joy/commit/cec78657633f86af08ff049495f058f4536b3963))
+* **json-crdt-extensions:** 🎸 add more block elements ([b155ae3](https://github.com/streamich/json-joy/commit/b155ae362ad38cb75c954f2df6f10605566de112))
+* **json-crdt-extensions:** 🎸 cap all blocks to their range ([efd088a](https://github.com/streamich/json-joy/commit/efd088ad33d4b9ce246b4c9cb3e68ec2575ebf6a))
+* **json-crdt-extensions:** 🎸 clamp Inline elements inside a Fragment ([e8ee319](https://github.com/streamich/json-joy/commit/e8ee319f70bc86fa1195338596ebc6eda73229dc))
+* **json-crdt-extensions:** 🎸 create constant enum for slice types ([02b9581](https://github.com/streamich/json-joy/commit/02b958130471ff4e6334f3140378e1f77114b002))
+* **json-crdt-extensions:** 🎸 improve Fragment code setup ([3d2ef77](https://github.com/streamich/json-joy/commit/3d2ef7734598395a7550cf8f1d23c4064d3cb8f1))
+* **json-crdt-extensions:** 🎸 setup export methods ([f75284d](https://github.com/streamich/json-joy/commit/f75284d88ec66f56fc5c13f0560760a192d564c8))
+
+
+### Performance Improvements
+
+* **json-crdt-extensions:** ⚡️ do not pre-compute chunk slices ([7bf4f93](https://github.com/streamich/json-joy/commit/7bf4f9384d76554604d725fed936b2e060b265fb))
+
 # [17.20.0](https://github.com/streamich/json-joy/compare/v17.19.0...v17.20.0) (2024-11-14)
 
 
