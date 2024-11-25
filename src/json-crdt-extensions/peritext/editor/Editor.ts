@@ -17,7 +17,7 @@ import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
+import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
 
 /**
@@ -664,6 +664,42 @@ export class Editor<T = string> implements Printable {
       slices.insMarker(type, data);
       cursor.move(1);
     }
+  }
+
+  // ---------------------------------------------------------- export / import
+
+  public export(range: Range<T>): ViewRange {
+    const r = range.range();
+    r.start.refBefore();
+    r.end.refAfter();
+    const text = r.text();
+    const viewSlices: ViewRange[1] = [];
+    const view: ViewRange = [text, viewSlices];
+    const overlay = this.txt.overlay;
+    const slices = overlay.findOverlapping(r);
+    const offset = r.start.viewPos();
+    for (const slice of slices) {
+      const behavior = slice.behavior;
+      switch (behavior) {
+        case SliceBehavior.One:
+        case SliceBehavior.Many:
+        case SliceBehavior.Erase:
+        case SliceBehavior.Marker: {
+          const viewSlice: ViewSlice = [
+            slice.start.viewPos() - offset,
+            slice.start.anchor,
+            slice.end.viewPos() - offset,
+            slice.end.anchor,
+            slice.behavior,
+            slice.type,
+          ];
+          const data = slice.data();
+          if (data !== void 0) viewSlice.push(data);
+          viewSlices.push(viewSlice);
+        }
+      }
+    }
+    return view;
   }
 
   // ------------------------------------------------------------------ various
