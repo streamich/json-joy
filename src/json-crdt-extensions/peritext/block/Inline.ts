@@ -54,7 +54,7 @@ export type InlineAttr =
   | InlineAttrEndPoint;
 export type InlineAttrStack = InlineAttr[];
 
-export type InlineAttrs = Map<string | number, InlineAttrStack>;
+export type InlineAttrs = Record<string | number, InlineAttrStack>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -229,7 +229,7 @@ export class Inline extends Range implements Printable {
     const txt = this.txt;
     const overlay = txt.overlay;
     let cnt = 0;
-    overlay.chunkSlices0(this.start.chunk(), this.start, this.end, (chunk, off, len): boolean | undefined => {
+    overlay.chunkSlices0(this.start.chunk(), this.start, this.end, (chunk, off, len): boolean | void => {
       if (overlay.isMarker(chunk.id)) return;
       cnt++;
       texts.push(new ChunkSlice(chunk, off, len));
