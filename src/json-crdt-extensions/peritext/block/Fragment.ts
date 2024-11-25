@@ -33,7 +33,7 @@ export class Fragment extends Range implements Printable, Stateful {
   // ------------------------------------------------------------------- export
 
   toJsonMl(): JsonMlNode {
-    throw new Error('not implemented');
+    return this.root.toJsonMl();
   }
 
   // ---------------------------------------------------------------- Printable

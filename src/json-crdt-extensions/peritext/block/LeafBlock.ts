@@ -1,6 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {Block} from './Block';
 import type {Path} from '@jsonjoy.com/json-pointer';
+import type {JsonMlNode} from '../../../json-ml';
 
 export interface IBlock<Attr = unknown> {
   readonly path: Path;
@@ -9,6 +10,18 @@ export interface IBlock<Attr = unknown> {
 }
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
+
+  // ------------------------------------------------------------------- export
+
+  toJsonMl(): JsonMlNode {
+    let node: JsonMlNode = ['div', {}];
+    for (const inline of this.texts()) {
+      const span = inline.toJsonMl();
+      if (span) node.push(span);
+    }
+    return node;
+  }
+
   // ---------------------------------------------------------------- Printable
   public toStringName(): string {
     return 'LeafBlock';

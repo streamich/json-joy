@@ -144,7 +144,11 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   // ------------------------------------------------------------------- export
 
   toJsonMl(): JsonMlNode {
-    throw new Error('not implemented');
+    let node: JsonMlNode = ['div', {}];
+    const children = this.children;
+    const length = children.length;
+    for (let i = 0; i < length; i++) node.push(children[i].toJsonMl());
+    return node;
   }
 
   // ----------------------------------------------------------------- Stateful

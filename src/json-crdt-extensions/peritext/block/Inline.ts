@@ -246,7 +246,8 @@ export class Inline extends Range implements Printable {
   // ------------------------------------------------------------------- export
 
   toJsonMl(): JsonMlNode {
-    throw new Error('not implemented');
+    let node: JsonMlNode = this.text();
+    return node;
   }
 
   // ---------------------------------------------------------------- Printable
