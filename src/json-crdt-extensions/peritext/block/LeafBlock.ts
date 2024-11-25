@@ -10,16 +10,8 @@ export interface IBlock<Attr = unknown> {
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
   // ---------------------------------------------------------------- Printable
-  protected toStringName(): string {
+  public toStringName(): string {
     return 'LeafBlock';
-  }
-
-  protected toStringHeader(): string {
-    const str = this.text();
-    const truncate = str.length > 32;
-    const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
-    const header = `${super.toStringHeader()} ${text}`;
-    return header;
   }
 
   public toString(tab: string = ''): string {

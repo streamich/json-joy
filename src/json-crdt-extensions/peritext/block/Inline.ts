@@ -1,23 +1,19 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior, CommonSliceType} from '../slice/constants';
+import {SliceBehavior, SliceTypeName} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
 import {formatType} from '../slice/util';
-import type {AbstractRga} from '../../../json-crdt/nodes/rga';
+import type {Point} from '../rga/Point';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
-
-/**
- * @todo Make sure these inline attributes can handle the cursor which ends
- *     with attaching to the start of the next character.
- */
+import type {JsonMlNode} from '../../../json-ml';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
@@ -57,6 +53,7 @@ export type InlineAttr =
   | InlineAttrStartPoint
   | InlineAttrEndPoint;
 export type InlineAttrStack = InlineAttr[];
+
 export type InlineAttrs = Record<string | number, InlineAttrStack>;
 
 /**
@@ -68,29 +65,14 @@ export type InlineAttrs = Record<string | number, InlineAttrStack>;
  * full text content of the inline.
  */
 export class Inline extends Range implements Printable {
-  public static create(txt: Peritext, start: OverlayPoint, end: OverlayPoint) {
-    const texts: ChunkSlice[] = [];
-    txt.overlay.chunkSlices0(undefined, start, end, (chunk, off, len) => {
-      if (txt.overlay.isMarker(chunk.id)) return;
-      texts.push(new ChunkSlice(chunk, off, len));
-    });
-    return new Inline(txt.str, start, end, texts);
-  }
-
   constructor(
-    rga: AbstractRga<string>,
-    public start: OverlayPoint,
-    public end: OverlayPoint,
-
-    /**
-     * @todo PERF: for performance reasons, we should consider not passing in
-     * this array. Maybe pass in just the initial chunk and the offset. However,
-     * maybe even that is not necessary, as the `.start` point should have
-     * its chunk cached, or will have it cached after the first access.
-     */
-    public readonly texts: ChunkSlice[],
+    public readonly txt: Peritext,
+    public readonly p1: OverlayPoint,
+    public readonly p2: OverlayPoint,
+    start: Point,
+    end: Point,
   ) {
-    super(rga, start, end);
+    super(txt.str, start, end);
   }
 
   /**
@@ -107,7 +89,7 @@ export class Inline extends Range implements Printable {
    * @returns The position of the inline within the text.
    */
   public pos(): number {
-    const chunkSlice = this.texts[0];
+    const chunkSlice = this.texts(1)[0];
     if (!chunkSlice) return -1;
     const chunk = chunkSlice.chunk;
     const pos = this.rga.pos(chunk);
@@ -115,15 +97,17 @@ export class Inline extends Range implements Printable {
   }
 
   protected createAttr(slice: Slice): InlineAttr {
+    const p1 = this.p1;
+    const p2 = this.p2;
     return !slice.start.cmp(slice.end)
-      ? !slice.start.cmp(this.start)
+      ? !slice.start.cmp(p1)
         ? new InlineAttrStartPoint(slice)
         : new InlineAttrEndPoint(slice)
-      : !this.start.cmp(slice.start)
-        ? !this.end.cmp(slice.end)
+      : !p1.cmp(slice.start)
+        ? !p2.cmp(slice.end)
           ? new InlineAttrContained(slice)
           : new InlineAttrStart(slice)
-        : !this.end.cmp(slice.end)
+        : !p2.cmp(slice.end)
           ? new InlineAttrEnd(slice)
           : new InlineAttrPassing(slice);
   }
@@ -141,11 +125,11 @@ export class Inline extends Range implements Printable {
   public attr(): InlineAttrs {
     if (this._attr) return this._attr;
     const attr: InlineAttrs = (this._attr = {});
-    const point1 = this.start as OverlayPoint;
-    const point2 = this.end as OverlayPoint;
-    const slices1 = point1.layers;
-    const slices2 = point1.markers;
-    const slices3 = point2.isAbsEnd() ? point2.markers : [];
+    const p1 = this.p1 as OverlayPoint;
+    const p2 = this.p2 as OverlayPoint;
+    const slices1 = p1.layers;
+    const slices2 = p1.markers;
+    const slices3 = p2.isAbsEnd() ? p2.markers : [];
     const length1 = slices1.length;
     const length2 = slices2.length;
     const length3 = slices3.length;
@@ -157,7 +141,7 @@ export class Inline extends Range implements Printable {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            const stack: InlineAttrStack = attr[CommonSliceType.Cursor] ?? (attr[CommonSliceType.Cursor] = []);
+            const stack: InlineAttrStack = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
             stack.push(this.createAttr(slice));
             break;
           }
@@ -181,13 +165,13 @@ export class Inline extends Range implements Printable {
   }
 
   public hasCursor(): boolean {
-    return !!this.attr()[CommonSliceType.Cursor];
+    return !!this.attr()[SliceTypeName.Cursor];
   }
 
   /** @todo Make this return a list of cursors. */
   public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     if (
@@ -203,7 +187,7 @@ export class Inline extends Range implements Printable {
 
   public cursorEnd(): Cursor | undefined {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     if (
@@ -227,7 +211,7 @@ export class Inline extends Range implements Printable {
    */
   public selection(): undefined | [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''] {
     const attributes = this.attr();
-    const stack = attributes[CommonSliceType.Cursor];
+    const stack = attributes[SliceTypeName.Cursor];
     if (!stack) return;
     const attribute = stack[0];
     const cursor = attribute.slice;
@@ -240,9 +224,29 @@ export class Inline extends Range implements Printable {
     return;
   }
 
+  public texts(limit: number = 1e6): ChunkSlice[] {
+    const texts: ChunkSlice[] = [];
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    let cnt = 0;
+    overlay.chunkSlices0(this.start.chunk(), this.start, this.end, (chunk, off, len): boolean | void => {
+      if (overlay.isMarker(chunk.id)) return;
+      cnt++;
+      texts.push(new ChunkSlice(chunk, off, len));
+      if (cnt === limit) return true;
+    });
+    return texts;
+  }
+
   public text(): string {
     const str = super.text();
-    return this.start instanceof MarkerOverlayPoint ? str.slice(1) : str;
+    return this.p1 instanceof MarkerOverlayPoint ? str.slice(1) : str;
+  }
+
+  // ------------------------------------------------------------------- export
+
+  toJsonMl(): JsonMlNode {
+    throw new Error('not implemented');
   }
 
   // ---------------------------------------------------------------- Printable
@@ -255,12 +259,12 @@ export class Inline extends Range implements Printable {
     const str = this.text();
     const truncate = str.length > 32;
     const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
-    const startFormatted = this.start.toString(tab, true);
-    const range =
-      this.start.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
+    const startFormatted = this.p1.toString(tab, true);
+    const range = this.p1.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
     const header = `Inline ${range} ${text}`;
     const attr = this.attr();
     const attrKeys = Object.keys(attr);
+    const texts = this.texts();
     return (
       header +
       printTree(tab, [
@@ -282,13 +286,13 @@ export class Inline extends Range implements Printable {
                   );
                 }),
               ),
-        !this.texts.length
+        !texts.length
           ? null
           : (tab) =>
               'texts' +
               printTree(
                 tab,
-                this.texts.map((text) => (tab) => text.toString(tab)),
+                this.texts().map((text) => (tab) => text.toString(tab)),
               ),
       ])
     );

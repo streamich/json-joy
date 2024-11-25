@@ -1,15 +1,18 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import type {OverlayPoint} from '../overlay/OverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatType} from '../slice/util';
+import {Range} from '../rga/Range';
+import type {Point} from '../rga/Point';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {OverlayTuple} from '../overlay/types';
+import type {JsonMlNode} from '../../../json-ml';
 
 export interface IBlock {
   readonly path: Path;
@@ -18,7 +21,7 @@ export interface IBlock {
 
 type T = string;
 
-export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
+export class Block<Attr = unknown> extends Range implements IBlock, Printable, Stateful {
   public parent: Block | null = null;
 
   public children: Block[] = [];
@@ -27,7 +30,11 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     public readonly txt: Peritext,
     public readonly path: Path,
     public readonly marker: MarkerOverlayPoint | undefined,
-  ) {}
+    public start: Point,
+    public end: Point,
+  ) {
+    super(txt.str, start, end);
+  }
 
   /**
    * @returns Stable unique identifier within a list of blocks. Used for React
@@ -98,9 +105,24 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
   public texts0(): UndefIterator<Inline> {
     const txt = this.txt;
     const iterator = this.tuples0();
+    const blockStart = this.start;
+    const blockEnd = this.end;
+    let isFirst = true;
+    let next = iterator();
     return () => {
-      const pair = iterator();
-      return pair && Inline.create(txt, pair[0], pair[1]);
+      const pair = next;
+      next = iterator();
+      if (!pair) return;
+      const [p1, p2] = pair;
+      let start: Point = p1;
+      let end: Point = p2;
+      if (isFirst) {
+        isFirst = false;
+        if (blockStart.cmpSpatial(p1) > 0) start = blockStart;
+      }
+      const isLast = !next;
+      if (isLast) if (blockEnd.cmpSpatial(p2) < 0) end = blockEnd;
+      return new Inline(txt, p1, p2, start, end);
     };
   }
 
@@ -111,12 +133,18 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
   public text(): string {
     let str = '';
     const iterator = this.texts0();
-    let text = iterator();
-    while (text) {
-      str += text.text();
-      text = iterator();
+    let inline = iterator();
+    while (inline) {
+      str += inline.text();
+      inline = iterator();
     }
     return str;
+  }
+
+  // ------------------------------------------------------------------- export
+
+  toJsonMl(): JsonMlNode {
+    throw new Error('not implemented');
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -140,13 +168,13 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
 
   // ---------------------------------------------------------------- Printable
 
-  protected toStringName(): string {
+  public toStringName(): string {
     return 'Block';
   }
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
     const tag = this.path.map((step) => formatType(step)).join('.');
-    const header = `${this.toStringName()} ${hash} ${tag}`;
+    const header = `${super.toString('', true)} ${hash} ${tag} `;
     return header;
   }
 

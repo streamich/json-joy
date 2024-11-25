@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-forest/lib/util';
-import {first2, insert2, last2, next2, remove2} from 'sonic-forest/lib/util2';
+import {first2, insert2, last2, next2, prev2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {OverlayPoint} from './OverlayPoint';
@@ -20,7 +20,7 @@ import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice, SliceType} from '../slice/types';
 import type {Slices} from '../slice/Slices';
-import type {OverlayPair, OverlayTuple} from './types';
+import type {MarkerOverlayPair, OverlayPair, OverlayTuple} from './types';
 import type {Comparator} from 'sonic-forest/lib/types';
 
 const spatialComparator: Comparator<OverlayPoint> = (a: OverlayPoint, b: OverlayPoint) => a.cmpSpatial(b);
@@ -152,12 +152,11 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   /** @todo Rename to `chunks()`. */
-  /** @todo Rewrite this as `UndefIterator`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
     p2: Point<T>,
-    callback: (chunk: Chunk<T>, off: number, len: number) => void,
+    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | void,
   ): Chunk<T> | undefined {
     const rga = this.txt.str;
     const strId = rga.id;
@@ -179,7 +178,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const time1 = id1.time;
     const sid2 = id2.sid;
     const time2 = id2.time;
-    return rga.range0(undefined, id1, id2, (chunk: Chunk<T>, off: number, len: number) => {
+    return rga.range0(undefined, id1, id2, (chunk: Chunk<T>, off: number, len: number): boolean | void => {
       if (checkFirstAnchor) {
         checkFirstAnchor = false;
         const chunkId = chunk.id;
@@ -196,7 +195,7 @@ export class Overlay<T = string> implements Printable, Stateful {
           len -= 1;
         }
       }
-      callback(chunk, off, len);
+      if (callback(chunk, off, len)) return true;
     }) as Chunk<T>;
   }
 
@@ -213,6 +212,17 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.points0(after, inclusive));
   }
 
+  /**
+   * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
+   * from the given marker point, not including the marker point itself.
+   *
+   * If the `after` parameter is not provided, the iteration starts from the
+   * first marker point in the overlay.
+   *
+   * @param after The marker point after which to start the iteration.
+   * @returns All marker points in the overlay, starting from the given marker
+   *     point.
+   */
   public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
     let curr = after ? next2(after) : first2(this.root2);
     return () => {
@@ -224,6 +234,36 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public markers(): UndefEndIter<MarkerOverlayPoint<T>> {
     return new UndefEndIter(this.markers0(undefined));
+  }
+
+  /**
+   * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
+   * from a give {@link Point}, including any marker overlay points that are
+   * at the same position as the given point.
+   *
+   * @param point Point (inclusive) from which to return all markers.
+   * @returns All marker points in the overlay, starting from the given marker
+   *     point.
+   */
+  public markers1(point: Point<T>): UndefIterator<MarkerOverlayPoint<T>> {
+    if (point.isAbsStart()) return this.markers0(undefined);
+    let after = this.getOrNextLowerMarker(point);
+    if (after && after.cmp(point) === 0) after = prev2(after);
+    return this.markers0(after);
+  }
+
+  public markerPairs0(start: Point<T>, end?: Point<T>): UndefIterator<MarkerOverlayPair<T>> {
+    const i = this.markers1(start);
+    let one: MarkerOverlayPoint<T> | undefined = i();
+    let two: MarkerOverlayPoint<T> | undefined = i();
+    return () => {
+      if (!one) return;
+      if (end && end.cmpSpatial(one) <= 0) return (one = void 0);
+      const ret: MarkerOverlayPair<T> = [one, two];
+      one = two;
+      two = i();
+      return ret;
+    };
   }
 
   public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {

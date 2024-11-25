@@ -68,15 +68,15 @@ const runKeyTests = (setup: () => Kit) => {
         peritext.editor.cursor.setAt(i, j);
         overlay.refresh();
         const [start, end] = [...overlay.points()];
-        const inline = Inline.create(peritext, start, end);
+        const inline = new Inline(peritext, start, end, start, end);
         if (keys.has(inline.key())) {
           const inline2 = keys.get(inline.key())!;
           // tslint:disable-next-line:no-console
           console.error('DUPLICATE KEY:', inline.key());
           // tslint:disable-next-line:no-console
-          console.log('INLINE 1:', inline.start.id, inline.start.anchor, inline.end.id, inline.end.anchor);
+          console.log('INLINE 1:', inline.p1.id, inline.p1.anchor, inline.end.id, inline.end.anchor);
           // tslint:disable-next-line:no-console
-          console.log('INLINE 2:', inline2.start.id, inline2.start.anchor, inline2.end.id, inline2.end.anchor);
+          console.log('INLINE 2:', inline2.p1.id, inline2.p1.anchor, inline2.end.id, inline2.end.anchor);
           throw new Error('Duplicate key');
         }
         keys.set(inline.key(), inline);

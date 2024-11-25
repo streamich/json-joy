@@ -14,7 +14,7 @@ import {CONST, updateNum} from '../../json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
 import {ExtraSlices} from './slice/ExtraSlices';
-import {Blocks} from './block/Blocks';
+import {Fragment} from './block/Fragment';
 import {updateRga} from '../../json-crdt/hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
@@ -54,7 +54,7 @@ export class Peritext<T = string> implements Printable {
 
   public readonly editor: Editor<T>;
   public readonly overlay = new Overlay<T>(this);
-  public readonly blocks: Blocks;
+  public readonly blocks: Fragment;
 
   /**
    * Creates a new Peritext context.
@@ -86,7 +86,7 @@ export class Peritext<T = string> implements Printable {
     });
     this.localSlices = new LocalSlices(this, localSlicesModel.root.node().get(0)!);
     this.editor = new Editor<T>(this);
-    this.blocks = new Blocks(this as Peritext);
+    this.blocks = new Fragment(this as Peritext, this.pointAbsStart() as Point, this.pointAbsEnd() as Point);
   }
 
   public strApi(): StrApi {
@@ -217,6 +217,10 @@ export class Peritext<T = string> implements Printable {
     const end = this.pointEnd();
     if (!start || !end) return;
     return this.range(start, end);
+  }
+
+  public fragment(range: Range): Fragment {
+    return new Fragment(this as Peritext, range.start, range.end);
   }
 
   // ---------------------------------------------------------- text (& slices)

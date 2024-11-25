@@ -9,10 +9,7 @@ export enum CursorAnchor {
   End = 1,
 }
 
-/**
- * Built-in slice types.
- */
-export enum CommonSliceType {
+export enum SliceTypeCon {
   // ---------------------------------------------------- block slices (0 to 64)
   p = 0, // <p>
   blockquote = 1, // <blockquote>
@@ -37,8 +34,12 @@ export enum CommonSliceType {
   embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
   column = 21, // <div style="column-count: ..."> (represents 2 and 3 column layouts)
   contents = 22, // Table of contents
-  row = 23, // Table row
-  cell = 24, // Table cell
+  table = 23, // <table>
+  row = 24, // Table row
+  cell = 25, // Table cell
+  CollapseList = 26, // Collapsible list - > List item
+  Collapse = 27, // Collapsible block
+  Note = 28, // Note block
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
@@ -62,10 +63,68 @@ export enum CommonSliceType {
   kbd = -19, // <kbd>
   hidden = -20, // <span style="color: transparent; background: black">
   footnote = -21, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
-  ref = -22, // <a> with href="#ref-..." and title="Reference ..."
+  ref = -22, // <a> with href="#ref-..." and title="Reference ..." (Reference to some element in the document)
   iaside = -23, // Inline <aside>
   iembed = -24, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
   bookmark = -25, // UI for creating a link to this slice
+}
+
+export enum SliceTypeName {
+  p = SliceTypeCon.p,
+  blockquote = SliceTypeCon.blockquote,
+  codeblock = SliceTypeCon.codeblock,
+  pre = SliceTypeCon.pre,
+  ul = SliceTypeCon.ul,
+  ol = SliceTypeCon.ol,
+  TaskList = SliceTypeCon.TaskList,
+  h1 = SliceTypeCon.h1,
+  h2 = SliceTypeCon.h2,
+  h3 = SliceTypeCon.h3,
+  h4 = SliceTypeCon.h4,
+  h5 = SliceTypeCon.h5,
+  h6 = SliceTypeCon.h6,
+  title = SliceTypeCon.title,
+  subtitle = SliceTypeCon.subtitle,
+  br = SliceTypeCon.br,
+  nl = SliceTypeCon.nl,
+  hr = SliceTypeCon.hr,
+  page = SliceTypeCon.page,
+  aside = SliceTypeCon.aside,
+  embed = SliceTypeCon.embed,
+  column = SliceTypeCon.column,
+  contents = SliceTypeCon.contents,
+  table = SliceTypeCon.table,
+  row = SliceTypeCon.row,
+  cell = SliceTypeCon.cell,
+  CollapseList = SliceTypeCon.CollapseList,
+  Collapse = SliceTypeCon.Collapse,
+  Note = SliceTypeCon.Note,
+
+  Cursor = SliceTypeCon.Cursor,
+  RemoteCursor = SliceTypeCon.RemoteCursor,
+  b = SliceTypeCon.b,
+  i = SliceTypeCon.i,
+  u = SliceTypeCon.u,
+  s = SliceTypeCon.s,
+  code = SliceTypeCon.code,
+  mark = SliceTypeCon.mark,
+  a = SliceTypeCon.a,
+  comment = SliceTypeCon.comment,
+  del = SliceTypeCon.del,
+  ins = SliceTypeCon.ins,
+  sup = SliceTypeCon.sup,
+  sub = SliceTypeCon.sub,
+  math = SliceTypeCon.math,
+  font = SliceTypeCon.font,
+  col = SliceTypeCon.col,
+  bg = SliceTypeCon.bg,
+  kbd = SliceTypeCon.kbd,
+  hidden = SliceTypeCon.hidden,
+  footnote = SliceTypeCon.footnote,
+  ref = SliceTypeCon.ref,
+  iaside = SliceTypeCon.iaside,
+  iembed = SliceTypeCon.iembed,
+  bookmark = SliceTypeCon.bookmark,
 }
 
 export enum SliceHeaderMask {
