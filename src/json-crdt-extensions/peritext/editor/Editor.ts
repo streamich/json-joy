@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {Cursor} from './Cursor';
 import {stringify} from '../../../json-text/stringify';
-import {CursorAnchor, SliceBehavior} from '../slice/constants';
+import {CursorAnchor, SliceBehavior, SliceHeaderShift} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {isLetter, isPunctuation, isWhitespace} from './util';
@@ -673,11 +673,11 @@ export class Editor<T = string> implements Printable {
     r.start.refBefore();
     r.end.refAfter();
     const text = r.text();
-    const viewSlices: ViewRange[1] = [];
-    const view: ViewRange = [text, viewSlices];
+    const offset = r.start.viewPos();
+    const viewSlices: ViewSlice[] = [];
+    const view: ViewRange = [text, offset, viewSlices];
     const overlay = this.txt.overlay;
     const slices = overlay.findOverlapping(r);
-    const offset = r.start.viewPos();
     for (const slice of slices) {
       const behavior = slice.behavior;
       switch (behavior) {
@@ -685,13 +685,16 @@ export class Editor<T = string> implements Printable {
         case SliceBehavior.Many:
         case SliceBehavior.Erase:
         case SliceBehavior.Marker: {
+          const {behavior, type, start, end} = slice;
+          const header: number =
+            (behavior << SliceHeaderShift.Behavior) +
+            (start.anchor << SliceHeaderShift.X1Anchor) +
+            (end.anchor << SliceHeaderShift.X2Anchor);
           const viewSlice: ViewSlice = [
-            slice.start.viewPos() - offset,
-            slice.start.anchor,
-            slice.end.viewPos() - offset,
-            slice.end.anchor,
-            slice.behavior,
-            slice.type,
+            header,
+            start.viewPos(),
+            end.viewPos(),
+            type,
           ];
           const data = slice.data();
           if (data !== void 0) viewSlice.push(data);
