@@ -21,7 +21,11 @@ import type {JsonMlNode} from '../../../json-ml/types';
 export class Fragment extends Range implements Printable, Stateful {
   public readonly root: Block;
 
-  constructor(public readonly txt: Peritext, start: Point, end: Point) {
+  constructor(
+    public readonly txt: Peritext,
+    start: Point,
+    end: Point,
+  ) {
     super(txt.str, start, end);
     this.root = new Block(txt, [], void 0, start, end);
   }

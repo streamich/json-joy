@@ -16,32 +16,25 @@ test('fragment', () => {
 });
 
 test('nested nodes', () => {
-  const ml: JsonMlNode = ['', null,
+  const ml: JsonMlNode = [
+    '',
+    null,
     ['div', null, ['b', null, 'bold'], ' text'],
     ['p', null, 'Hello world'],
-    ['blockquote', null,
-      ['p', null,
-        'Hello',
-        ' ',
-        ['b', null, ['u', null, 'world']],
-        ['i', null, '!!!'],
-      ]
-    ],
+    ['blockquote', null, ['p', null, 'Hello', ' ', ['b', null, ['u', null, 'world']], ['i', null, '!!!']]],
   ];
-  expect(toHtml(ml)).toBe('<div><b>bold</b> text</div><p>Hello world</p><blockquote><p>Hello <b><u>world</u></b><i>!!!</i></p></blockquote>');
+  expect(toHtml(ml)).toBe(
+    '<div><b>bold</b> text</div><p>Hello world</p><blockquote><p>Hello <b><u>world</u></b><i>!!!</i></p></blockquote>',
+  );
 });
 
 test('can escape text', () => {
-  const ml: JsonMlNode = ['', null,
-    ['div', null, ['b', null, 'bold'], ' text >>'],
-  ];
+  const ml: JsonMlNode = ['', null, ['div', null, ['b', null, 'bold'], ' text >>']];
   expect(toHtml(ml)).toBe('<div><b>bold</b> text &#62;&#62;</div>');
 });
 
 test('can render attributes', () => {
-  const ml: JsonMlNode = ['', null,
-    ['div', {'data-type': 'very-bold'}, ['b', null, 'bold'], ' text >>'],
-  ];
+  const ml: JsonMlNode = ['', null, ['div', {'data-type': 'very-bold'}, ['b', null, 'bold'], ' text >>']];
   expect(toHtml(ml)).toBe('<div data-type="very-bold"><b>bold</b> text &#62;&#62;</div>');
 });
 

@@ -3,7 +3,7 @@ import {CommonSliceType} from '../../slice';
 import {Inline} from '../Inline';
 import {LeafBlock} from '../LeafBlock';
 
-const testSuite = (setup: (() => Kit)): void => {
+const testSuite = (setup: () => Kit): void => {
   describe('when no markers', () => {
     test('can create a fragment', () => {
       const kit = setup();

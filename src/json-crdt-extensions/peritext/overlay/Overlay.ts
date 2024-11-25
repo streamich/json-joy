@@ -258,7 +258,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     let two: MarkerOverlayPoint<T> | undefined = i();
     return () => {
       if (!one) return;
-      if (end && end.cmpSpatial(one) <= 0) return one = void 0;
+      if (end && end.cmpSpatial(one) <= 0) return (one = void 0);
       const ret: MarkerOverlayPair<T> = [one, two];
       one = two;
       two = i();

@@ -14,24 +14,14 @@ test('a single node', () => {
 });
 
 test('nested nodes', () => {
-  const node: JsonMlNode = ['div', {class: 'test'},
-    ['span', null, 'hello'],
-    ['p', null, 'world'],
-    '!!!',
-  ];
+  const node: JsonMlNode = ['div', {class: 'test'}, ['span', null, 'hello'], ['p', null, 'world'], '!!!'];
   const res = [...walk(node)];
   expect(res).toEqual([
-    [
-      'div',
-      { class: 'test' },
-      [ 'span', null, 'hello' ],
-      [ 'p', null, 'world' ],
-      '!!!'
-    ],
-    [ 'span', null, 'hello' ],
+    ['div', {class: 'test'}, ['span', null, 'hello'], ['p', null, 'world'], '!!!'],
+    ['span', null, 'hello'],
     'hello',
-    [ 'p', null, 'world' ],
+    ['p', null, 'world'],
     'world',
-    '!!!'
+    '!!!',
   ]);
 });

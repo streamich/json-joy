@@ -99,7 +99,7 @@ export enum SliceTypeName {
   CollapseList = SliceTypeCon.CollapseList,
   Collapse = SliceTypeCon.Collapse,
   Note = SliceTypeCon.Note,
-  
+
   Cursor = SliceTypeCon.Cursor,
   RemoteCursor = SliceTypeCon.RemoteCursor,
   b = SliceTypeCon.b,
