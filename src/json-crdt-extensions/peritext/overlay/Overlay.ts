@@ -156,7 +156,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
     p2: Point<T>,
-    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | void,
+    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | undefined,
   ): Chunk<T> | undefined {
     const rga = this.txt.str;
     const strId = rga.id;
@@ -178,7 +178,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const time1 = id1.time;
     const sid2 = id2.sid;
     const time2 = id2.time;
-    return rga.range0(undefined, id1, id2, (chunk: Chunk<T>, off: number, len: number): boolean | void => {
+    return rga.range0(undefined, id1, id2, (chunk: Chunk<T>, off: number, len: number): boolean | undefined => {
       if (checkFirstAnchor) {
         checkFirstAnchor = false;
         const chunkId = chunk.id;

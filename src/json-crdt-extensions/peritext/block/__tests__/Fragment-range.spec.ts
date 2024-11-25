@@ -1,4 +1,4 @@
-import {Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import {CommonSliceType} from '../../slice';
 import {Inline} from '../Inline';
 import {LeafBlock} from '../LeafBlock';

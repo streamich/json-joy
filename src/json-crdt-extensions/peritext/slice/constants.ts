@@ -9,7 +9,7 @@ export enum CursorAnchor {
   End = 1,
 }
 
-export const enum SliceTypeCon {
+export enum SliceTypeCon {
   // ---------------------------------------------------- block slices (0 to 64)
   p = 0, // <p>
   blockquote = 1, // <blockquote>

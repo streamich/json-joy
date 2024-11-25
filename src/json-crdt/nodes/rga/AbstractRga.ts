@@ -409,7 +409,7 @@ export abstract class AbstractRga<T> {
     startChunk: Chunk<T> | undefined,
     from: ITimestampStruct,
     to: ITimestampStruct,
-    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | void,
+    callback: (chunk: Chunk<T>, off: number, len: number) => boolean | undefined,
   ): Chunk<T> | undefined {
     let chunk: Chunk<T> | undefined = startChunk ? startChunk : this.findById(from);
     if (startChunk) while (chunk && !containsId(chunk.id, chunk.span, from)) chunk = next(chunk);

@@ -7,7 +7,7 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
 import {formatType} from '../slice/util';
-import {Point} from '../rga/Point';
+import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
@@ -229,7 +229,7 @@ export class Inline extends Range implements Printable {
     const txt = this.txt;
     const overlay = txt.overlay;
     let cnt = 0;
-    overlay.chunkSlices0(this.start.chunk(), this.start, this.end, (chunk, off, len): boolean | void => {
+    overlay.chunkSlices0(this.start.chunk(), this.start, this.end, (chunk, off, len): boolean | undefined => {
       if (overlay.isMarker(chunk.id)) return;
       cnt++;
       texts.push(new ChunkSlice(chunk, off, len));

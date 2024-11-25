@@ -1,4 +1,4 @@
-import {JsonMlNode} from '../types';
+import type {JsonMlNode} from '../types';
 import {walk} from '../walk';
 
 test('simple text', () => {
