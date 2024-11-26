@@ -9,7 +9,7 @@ export enum CursorAnchor {
   End = 1,
 }
 
-export enum SliceTypeCon {
+export const enum SliceTypeCon {
   // ---------------------------------------------------- block slices (0 to 64)
   p = 0, // <p>
   blockquote = 1, // <blockquote>
@@ -17,7 +17,7 @@ export enum SliceTypeCon {
   pre = 3, // <pre>
   ul = 4, // <ul>
   ol = 5, // <ol>
-  TaskList = 6, // - [ ] Task list
+  tasklist = 6, // - [ ] Task list
   h1 = 7, // <h1>
   h2 = 8, // <h2>
   h3 = 9, // <h3>
@@ -37,9 +37,9 @@ export enum SliceTypeCon {
   table = 23, // <table>
   row = 24, // Table row
   cell = 25, // Table cell
-  CollapseList = 26, // Collapsible list - > List item
-  Collapse = 27, // Collapsible block
-  Note = 28, // Note block
+  collapselist = 26, // Collapsible list - > List item
+  collapse = 27, // Collapsible block
+  note = 28, // Note block
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
@@ -69,6 +69,10 @@ export enum SliceTypeCon {
   bookmark = -25, // UI for creating a link to this slice
 }
 
+/**
+ * All type name must be fully lowercase, as HTML custom element tag names must
+ * be lowercase.
+ */
 export enum SliceTypeName {
   p = SliceTypeCon.p,
   blockquote = SliceTypeCon.blockquote,
@@ -76,7 +80,7 @@ export enum SliceTypeName {
   pre = SliceTypeCon.pre,
   ul = SliceTypeCon.ul,
   ol = SliceTypeCon.ol,
-  TaskList = SliceTypeCon.TaskList,
+  tasklist = SliceTypeCon.tasklist,
   h1 = SliceTypeCon.h1,
   h2 = SliceTypeCon.h2,
   h3 = SliceTypeCon.h3,
@@ -96,9 +100,9 @@ export enum SliceTypeName {
   table = SliceTypeCon.table,
   row = SliceTypeCon.row,
   cell = SliceTypeCon.cell,
-  CollapseList = SliceTypeCon.CollapseList,
-  Collapse = SliceTypeCon.Collapse,
-  Note = SliceTypeCon.Note,
+  collapselist = SliceTypeCon.collapselist,
+  collapse = SliceTypeCon.collapse,
+  note = SliceTypeCon.note,
 
   Cursor = SliceTypeCon.Cursor,
   RemoteCursor = SliceTypeCon.RemoteCursor,

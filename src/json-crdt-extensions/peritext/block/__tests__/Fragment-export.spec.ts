@@ -2,12 +2,13 @@ import {
   type Kit,
   setupAlphabetKit,
 } from '../../__tests__/setup';
+import {CommonSliceType} from '../../slice';
 
 const runTests = (setup: () => Kit) => {
   test('...', () => {
     const {editor, peritext} = setup();
     editor.cursor.setAt(10);
-    editor.saved.insMarker(['p'], 'p1');
+    editor.saved.insMarker(CommonSliceType.p);
     peritext.refresh();
     const fragment = peritext.fragment(peritext.rangeAt(4, 10));
     fragment.refresh();

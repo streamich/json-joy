@@ -14,7 +14,7 @@ export class LeafBlock<Attr = unknown> extends Block<Attr> {
   // ------------------------------------------------------------------- export
 
   toJsonMl(): JsonMlNode {
-    let node: JsonMlNode = ['div', {}];
+    const node = this.jsonMlNode();
     for (const inline of this.texts()) {
       const span = inline.toJsonMl();
       if (span) node.push(span);

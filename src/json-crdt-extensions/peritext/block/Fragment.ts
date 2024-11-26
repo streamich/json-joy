@@ -11,6 +11,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {JsonMlNode} from '../../../json-ml/types';
+import {toHtml} from '../../../json-ml';
 
 /**
  * A *fragment* represents a structural slice of a rich-text document. A
@@ -34,6 +35,11 @@ export class Fragment extends Range implements Printable, Stateful {
 
   toJsonMl(): JsonMlNode {
     return this.root.toJsonMl();
+  }
+
+  toHtml(): string {
+    const json = this.root.toJsonMl();
+    return toHtml(json);
   }
 
   // ---------------------------------------------------------------- Printable
