@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {Cursor} from './Cursor';
 import {stringify} from '../../../json-text/stringify';
-import {CursorAnchor, SliceBehavior, SliceHeaderShift} from '../slice/constants';
+import {CursorAnchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift} from '../slice/constants';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {isLetter, isPunctuation, isWhitespace} from './util';
@@ -155,6 +155,18 @@ export class Editor<T = string> implements Printable {
   }
 
   // ------------------------------------------------------------- text editing
+
+  /**
+   * Ensures there is exactly one cursor. If the cursor is a range, contents
+   * inside the range is deleted and cursor is collapsed to a single point.
+   *
+   * @returns A single cursor collapsed to a single point.
+   */
+  public caret(): Cursor<T> {
+    const cursor = this.cursor;
+    if (!cursor.isCollapsed()) this.delRange(cursor);
+    return cursor;
+  }
 
   /**
    * Insert inline text at current cursor position. If cursor selects a range,
@@ -703,6 +715,24 @@ export class Editor<T = string> implements Printable {
       }
     }
     return view;
+  }
+
+  public import(pos: number, view: ViewRange): void {
+    const [text, offset, slices] = view;
+    const txt = this.txt;
+    txt.insAt(pos, text);
+    const length = slices.length;
+    for (let i = 0; i < length; i++) {
+      const slice = slices[i];
+      const [header, x1, x2, type, data] = slice;
+      const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
+      const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
+      const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
+      const range = txt.rangeAt(Math.max(0, x1 - offset + pos), x2 - x1);
+      if (anchor1 === Anchor.Before) range.start.refBefore(); else range.start.refAfter();
+      if (anchor2 === Anchor.Before) range.end.refBefore(); else range.end.refAfter();
+      txt.savedSlices.ins(range, behavior, type, data);
+    }
   }
 
   // ------------------------------------------------------------------ various
