@@ -254,8 +254,7 @@ export class Inline extends Range implements Printable {
       const attr = attrs[key];
       if (!attr.length) node = [key, null, node];
       else {
-        const props = {};
-        node = [key === keyNum + '' ? keyNum : key, props, node];
+        node = [key === keyNum + '' ? keyNum : key, null, node];
       }
     }
     return node;

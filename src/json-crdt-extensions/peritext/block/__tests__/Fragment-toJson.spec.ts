@@ -29,14 +29,18 @@ const runTests = (setup: () => Kit) => {
     peritext.refresh();
     const fragment = peritext.fragment(peritext.rangeAt(4, 10));
     fragment.refresh();
-    console.log(fragment.toString());
     const json = fragment.toJson();
-    console.log(JSON.stringify(json, null, 2));
     expect(json).toEqual([
       '',
       null,
       [0, null,
-        'efghij'
+        'ef',
+        [CommonSliceType.b, null, 'g'],
+        [CommonSliceType.i, null,
+          [CommonSliceType.b, null, 'h'],
+        ],
+        [CommonSliceType.i, null, 'i'],
+        'j',
       ],
       [0, null, 'klm'],
     ]);
