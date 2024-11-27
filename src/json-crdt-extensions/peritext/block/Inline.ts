@@ -245,8 +245,19 @@ export class Inline extends Range implements Printable {
 
   // ------------------------------------------------------------------- export
 
-  toJsonMl(): JsonMlNode {
+  public toJson(): JsonMlNode {
     let node: JsonMlNode = this.text();
+    const attrs = this.attr();
+    for (const key in attrs) {
+      const keyNum = Number(key);
+      if (keyNum === SliceTypeName.Cursor || keyNum === SliceTypeName.RemoteCursor) continue;
+      const attr = attrs[key];
+      if (!attr.length) node = [key, null, node];
+      else {
+        const props = {};
+        node = [key === keyNum + '' ? keyNum : key, props, node];
+      }
+    }
     return node;
   }
 

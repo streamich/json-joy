@@ -53,32 +53,32 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
     return length ? path[length - 1] : '';
   }
 
-  public htmlTag(): string {
-    const tag = this.tag();
-    switch (typeof tag) {
-      case 'string': return tag.toLowerCase();
-      case 'number': return SliceTypeName[tag] || 'div';
-      default: return 'div';
-    }
-  }
+  // public htmlTag(): string {
+  //   const tag = this.tag();
+  //   switch (typeof tag) {
+  //     case 'string': return tag.toLowerCase();
+  //     case 'number': return SliceTypeName[tag] || 'div';
+  //     default: return 'div';
+  //   }
+  // }
 
-  public jsonMlNode(): JsonMlElement {
-    const props: Record<string, string> = {};
-    const node: JsonMlElement = ['div', props];
-    const tag = this.tag();
-    switch (typeof tag) {
-      case 'string':
-        node[0] = tag;
-        break;
-      case 'number':
-        const tag0 = SliceTypeName[tag];
-        if (tag0) node[0] = tag0; else props['data-tag'] = tag + '';
-        break;
-    }
-    const attr = this.attr();
-    if (attr !== undefined) props['data-attr'] = JSON.stringify(attr);
-    return node;
-  }
+  // protected jsonMlNode(): JsonMlElement {
+  //   const props: Record<string, string> = {};
+  //   const node: JsonMlElement = ['div', props];
+  //   const tag = this.tag();
+  //   switch (typeof tag) {
+  //     case 'string':
+  //       node[0] = tag;
+  //       break;
+  //     case 'number':
+  //       const tag0 = SliceTypeName[tag];
+  //       if (tag0) node[0] = tag0; else props['data-tag'] = tag + '';
+  //       break;
+  //   }
+  //   const attr = this.attr();
+  //   if (attr !== undefined) props['data-attr'] = JSON.stringify(attr);
+  //   return node;
+  // }
 
   public attr(): Attr | undefined {
     return this.marker?.data() as Attr | undefined;
@@ -171,11 +171,11 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
 
   // ------------------------------------------------------------------- export
 
-  toJsonMl(): JsonMlNode {
-    let node: JsonMlNode = ['div', {}];
+  public toJson(): JsonMlElement {
+    const node: JsonMlElement = [this.tag(), this.attr() ?? null];
     const children = this.children;
     const length = children.length;
-    for (let i = 0; i < length; i++) node.push(children[i].toJsonMl());
+    for (let i = 0; i < length; i++) node.push(children[i].toJson());
     return node;
   }
 
