@@ -5,16 +5,20 @@ import {
 import {CommonSliceType} from '../../slice';
 
 const runTests = (setup: () => Kit) => {
-  test('...', () => {
+  test('can export two paragraphs', () => {
     const {editor, peritext} = setup();
     editor.cursor.setAt(10);
     editor.saved.insMarker(CommonSliceType.p);
     peritext.refresh();
     const fragment = peritext.fragment(peritext.rangeAt(4, 10));
     fragment.refresh();
-
-    console.log(fragment + '')
-    console.log(fragment.toJsonMl());
+    expect(fragment.toJsonMl()).toEqual([
+      'div',
+      {},
+      ['p', {}, 'efghij'],
+      ['p', {}, 'klm'],
+    ]);
+    expect(fragment.toHtml()).toBe('<div><p>efghij</p><p>klm</p></div>');
   });
 };
 
