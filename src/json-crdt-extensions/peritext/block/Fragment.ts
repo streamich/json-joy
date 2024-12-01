@@ -33,7 +33,9 @@ export class Fragment extends Range implements Printable, Stateful {
   // ------------------------------------------------------------------- export
 
   public toJson(): PeritextMlElement {
-    return this.root.toJson();
+    const node = this.root.toJson();
+    node[0] = '';
+    return node;
   }
 
   // ---------------------------------------------------------------- Printable

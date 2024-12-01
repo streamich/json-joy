@@ -1,7 +1,5 @@
-import {
-  type Kit,
-  setupAlphabetKit,
-} from '../../__tests__/setup';
+import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {toJsonMl} from '../../export/toJsonMl';
 import {CommonSliceType} from '../../slice';
 
 const runTests = (setup: () => Kit) => {
@@ -12,30 +10,44 @@ const runTests = (setup: () => Kit) => {
     peritext.refresh();
     const fragment = peritext.fragment(peritext.rangeAt(4, 10));
     fragment.refresh();
-    expect(fragment.toJsonMl()).toEqual([
-      'div',
-      {},
-      ['p', {}, 'efghij'],
-      ['p', {}, 'klm'],
+    const html = toJsonMl(fragment.toJson());
+    expect(html).toEqual([
+      '',
+      null,
+      ['p', null, 'efghij'],
+      ['p', null, 'klm'],
     ]);
-    expect(fragment.toHtml()).toBe('<div><p>efghij</p><p>klm</p></div>');
+  });
+
+  test('can export two paragraphs with inline formatting', () => {
+    const {editor, peritext} = setup();
+    editor.cursor.setAt(10);
+    editor.saved.insMarker(CommonSliceType.p);
+    editor.cursor.setAt(6, 2);
+    editor.saved.insOverwrite(CommonSliceType.b);
+    editor.cursor.setAt(7, 2);
+    editor.saved.insOverwrite(CommonSliceType.i);
+    peritext.refresh();
+    const fragment = peritext.fragment(peritext.rangeAt(4, 10));
+    fragment.refresh();
+    const html = toJsonMl(fragment.toJson());
+    expect(html).toEqual([
+      '',
+      null,
+      ['p', null,
+        'ef',
+        ['b', null, 'g'],
+        ['i', null,
+          ['b', null, 'h'],
+        ],
+        ['i', null, 'i'],
+        'j',
+      ],
+      ['p', null, 'klm'],
+    ]);
   });
 };
 
-describe('Fragment.toJsonMl()', () => {
-  describe('basic alphabet', () => {
-    runTests(setupAlphabetKit);
-  });
-
-  // describe('alphabet with two chunks', () => {
-  //   runTests(setupAlphabetWithTwoChunksKit);
-  // });
-
-  // describe('alphabet with chunk split', () => {
-  //   runTests(setupAlphabetChunkSplitKit);
-  // });
-
-  // describe('alphabet with deletes', () => {
-  //   runTests(setupAlphabetWithDeletesKit);
-  // });
+describe('Fragment.toJson()', () => {
+  runAlphabetKitTestSuite(runTests);
 });
