@@ -12,6 +12,6 @@ export const toHtml = (node: JsonMlNode): string => {
   let childrenStr = '';
   for (let i = 0; i < childrenLength; i++) childrenStr += toHtml(children[i]);
   if (!tag) return childrenStr;
-  if (attrs) for (const key in attrs) attrStr += ' ' + key + '="' + escapeAttr(attrs[key]) + '"';
+  if (attrs) for (const key in attrs) attrStr += ' ' + key + '="' + escapeAttr(attrs[key] + '') + '"';
   return '<' + tag + attrStr + '>' + childrenStr + '</' + tag + '>';
 };
