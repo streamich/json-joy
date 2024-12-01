@@ -1,4 +1,5 @@
 import {SliceTypeName} from "../slice";
+import {toHtml as _toHtml} from "../../../json-ml/toHtml";
 import type {JsonMlNode} from "../../../json-ml";
 import type {PeritextMlNode} from "../block/types";
 
@@ -12,4 +13,9 @@ export const toJsonMl = (json: PeritextMlNode): JsonMlNode => {
   const length = children.length;
   for (let i = 0; i < length; i++) htmlNode.push(toJsonMl(children[i]));
   return htmlNode;
+};
+
+export const toHtml = (json: PeritextMlNode, tab?: string): string => {
+  const jsonml = toJsonMl(json);
+  return _toHtml(jsonml, tab);
 };
