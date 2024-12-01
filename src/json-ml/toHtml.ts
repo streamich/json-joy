@@ -13,18 +13,23 @@ export const toHtml = (node: JsonMlNode, tab: string = '', ident: string = ''): 
   const doIdent = !!tab;
   let childrenStr = '';
   let textOnlyChildren = true;
-  for (let i = 0; i < childrenLength; i++) if (typeof children[i] !== 'string') {
-    textOnlyChildren = false;
-    break;
-  }
-  if (textOnlyChildren) for (let i = 0; i < childrenLength; i++)
-      childrenStr += escapeText(children[i] as string);
-  else for (let i = 0; i < childrenLength; i++)
-      childrenStr += (doIdent ? ((!isFragment || i) ? '\n' : '') : '') + toHtml(children[i], tab, childrenIdent);
+  for (let i = 0; i < childrenLength; i++)
+    if (typeof children[i] !== 'string') {
+      textOnlyChildren = false;
+      break;
+    }
+  if (textOnlyChildren) for (let i = 0; i < childrenLength; i++) childrenStr += escapeText(children[i] as string);
+  else
+    for (let i = 0; i < childrenLength; i++)
+      childrenStr += (doIdent ? (!isFragment || i ? '\n' : '') : '') + toHtml(children[i], tab, childrenIdent);
   if (isFragment) return childrenStr;
   let attrStr = '';
   if (attrs) for (const key in attrs) attrStr += ' ' + key + '="' + escapeAttr(attrs[key] + '') + '"';
   const htmlHead = '<' + tag + attrStr;
-  return ident +
-    (childrenStr ? (htmlHead + '>' + childrenStr + ((doIdent && !textOnlyChildren) ? '\n' + ident : '') + '</' + tag + '>') : htmlHead + ' />');
+  return (
+    ident +
+    (childrenStr
+      ? htmlHead + '>' + childrenStr + (doIdent && !textOnlyChildren ? '\n' + ident : '') + '</' + tag + '>'
+      : htmlHead + ' />')
+  );
 };

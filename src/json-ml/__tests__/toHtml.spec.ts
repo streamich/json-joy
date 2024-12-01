@@ -54,32 +54,21 @@ test('can escape attribute values', () => {
 });
 
 test('can format HTML with tabbing', () => {
-  const ml: JsonMlNode = ['div', null,
-    ['hr', {foo: 'bar'}],
-    ['span', null, 'text'],
-  ];
+  const ml: JsonMlNode = ['div', null, ['hr', {foo: 'bar'}], ['span', null, 'text']];
   const html = toHtml(ml, '  ');
   // console.log(html);
   expect(html).toBe('<div>\n  <hr foo="bar" />\n  <span>text</span>\n</div>');
 });
 
 test('can format HTML fragment with tabbing', () => {
-  const ml: JsonMlNode = ['', null,
-    ['hr', {foo: 'bar'}],
-    ['span', null, 'text'],
-  ];
+  const ml: JsonMlNode = ['', null, ['hr', {foo: 'bar'}], ['span', null, 'text']];
   const html = toHtml(ml, '  ');
   // console.log(html);
   expect(html).toBe('<hr foo="bar" />\n<span>text</span>');
 });
 
 test('can format HTML fragment with tabbing - 2', () => {
-  const ml: JsonMlNode = ['div', null,
-    ['', null,
-      ['hr', {foo: 'bar'}],
-      ['span', null, 'text'],
-    ],
-  ];
+  const ml: JsonMlNode = ['div', null, ['', null, ['hr', {foo: 'bar'}], ['span', null, 'text']]];
   const html = toHtml(ml, '    ');
   // console.log(html);
   expect(html).toBe('<div>\n    <hr foo="bar" />\n    <span>text</span>\n</div>');

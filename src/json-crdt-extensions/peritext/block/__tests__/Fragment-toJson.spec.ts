@@ -10,12 +10,7 @@ const runTests = (setup: () => Kit) => {
     const fragment = peritext.fragment(peritext.rangeAt(4, 10));
     fragment.refresh();
     const json = fragment.toJson();
-    expect(json).toEqual([
-      '',
-      null,
-      [0, null, 'efghij'],
-      [0, null, 'klm'],
-    ]);
+    expect(json).toEqual(['', null, [0, null, 'efghij'], [0, null, 'klm']]);
   });
 
   test('can export two paragraphs with inline formatting', () => {
@@ -33,12 +28,12 @@ const runTests = (setup: () => Kit) => {
     expect(json).toEqual([
       '',
       null,
-      [0, null,
+      [
+        0,
+        null,
         'ef',
         [CommonSliceType.b, {inline: true}, 'g'],
-        [CommonSliceType.i, {inline: true},
-          [CommonSliceType.b, {inline: true}, 'h'],
-        ],
+        [CommonSliceType.i, {inline: true}, [CommonSliceType.b, {inline: true}, 'h']],
         [CommonSliceType.i, {inline: true}, 'i'],
         'j',
       ],

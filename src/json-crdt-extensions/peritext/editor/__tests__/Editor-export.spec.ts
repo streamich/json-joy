@@ -17,14 +17,7 @@ const testSuite = (setup: () => Kit) => {
       const range = peritext.rangeAt(2, 5);
       peritext.refresh();
       const json = editor.export(range);
-      expect(json).toEqual(['cdefg', 2, [
-        [
-          expect.any(Number),
-          3,
-          6,
-          'bold',
-        ],
-      ]]);
+      expect(json).toEqual(['cdefg', 2, [[expect.any(Number), 3, 6, 'bold']]]);
     });
 
     test('range which start in bold text', () => {
@@ -34,14 +27,7 @@ const testSuite = (setup: () => Kit) => {
       editor.cursor.setAt(5, 15);
       peritext.refresh();
       const json = editor.export(editor.cursor);
-      expect(json).toEqual(['fghijklmnopqrst', 5, [
-        [
-          expect.any(Number),
-          3,
-          13,
-          CommonSliceType.b,
-        ],
-      ]]);
+      expect(json).toEqual(['fghijklmnopqrst', 5, [[expect.any(Number), 3, 13, CommonSliceType.b]]]);
     });
 
     test('range which ends in bold text', () => {
@@ -51,14 +37,7 @@ const testSuite = (setup: () => Kit) => {
       const range = peritext.rangeAt(0, 5);
       peritext.refresh();
       const json = editor.export(range);
-      expect(json).toEqual(['abcde', 0, [
-        [
-          expect.any(Number),
-          3,
-          13,
-          CommonSliceType.b,
-        ],
-      ]]);
+      expect(json).toEqual(['abcde', 0, [[expect.any(Number), 3, 13, CommonSliceType.b]]]);
     });
   });
 

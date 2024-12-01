@@ -34,7 +34,8 @@
 				"useIsArray": "off",
 				"noAssignInExpressions": "off",
 				"noConfusingLabels": "off",
-				"noConfusingVoidType": "off"
+				"noConfusingVoidType": "off",
+				"noConstEnum": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",

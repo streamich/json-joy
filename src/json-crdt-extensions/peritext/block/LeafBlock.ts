@@ -10,7 +10,6 @@ export interface IBlock<Attr = unknown> {
 }
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
-
   // ------------------------------------------------------------------- export
 
   public toJson(): PeritextMlElement {

@@ -702,12 +702,7 @@ export class Editor<T = string> implements Printable {
             (behavior << SliceHeaderShift.Behavior) +
             (start.anchor << SliceHeaderShift.X1Anchor) +
             (end.anchor << SliceHeaderShift.X2Anchor);
-          const viewSlice: ViewSlice = [
-            header,
-            start.viewPos(),
-            end.viewPos(),
-            type,
-          ];
+          const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), type];
           const data = slice.data();
           if (data !== void 0) viewSlice.push(data);
           viewSlices.push(viewSlice);
@@ -729,8 +724,10 @@ export class Editor<T = string> implements Printable {
       const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
       const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
       const range = txt.rangeAt(Math.max(0, x1 - offset + pos), x2 - x1);
-      if (anchor1 === Anchor.Before) range.start.refBefore(); else range.start.refAfter();
-      if (anchor2 === Anchor.Before) range.end.refBefore(); else range.end.refAfter();
+      if (anchor1 === Anchor.Before) range.start.refBefore();
+      else range.start.refAfter();
+      if (anchor2 === Anchor.Before) range.end.refBefore();
+      else range.end.refAfter();
       txt.savedSlices.ins(range, behavior, type, data);
     }
   }

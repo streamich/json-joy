@@ -9,16 +9,6 @@ export type CharPredicate<T> = (char: T) => boolean;
 export type Position<T = string> = number | [at: number, anchor: 0 | 1] | Point<T>;
 export type TextRangeUnit = 'point' | 'char' | 'word' | 'line' | 'block' | 'all';
 
-export type ViewRange = [
-  text: string,
-  textPosition: number,
-  slices: ViewSlice[],
-];
+export type ViewRange = [text: string, textPosition: number, slices: ViewSlice[]];
 
-export type ViewSlice = [
-  header: number,
-  x1: number,
-  x2: number,
-  type: SliceType,
-  data?: unknown,
-];
+export type ViewSlice = [header: number, x1: number, x2: number, type: SliceType, data?: unknown];

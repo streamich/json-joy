@@ -12,14 +12,9 @@ const runTests = (setup: () => Kit) => {
       const fragment = peritext.fragment(peritext.rangeAt(4, 10));
       fragment.refresh();
       const html = toJsonMl(fragment.toJson());
-      expect(html).toEqual([
-        '',
-        null,
-        ['p', null, 'efghij'],
-        ['p', null, 'klm'],
-      ]);
+      expect(html).toEqual(['', null, ['p', null, 'efghij'], ['p', null, 'klm']]);
     });
-  
+
     test('can export two paragraphs with inline formatting', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(10);
@@ -35,15 +30,7 @@ const runTests = (setup: () => Kit) => {
       expect(html).toEqual([
         '',
         null,
-        ['p', null,
-          'ef',
-          ['b', null, 'g'],
-          ['i', null,
-            ['b', null, 'h'],
-          ],
-          ['i', null, 'i'],
-          'j',
-        ],
+        ['p', null, 'ef', ['b', null, 'g'], ['i', null, ['b', null, 'h']], ['i', null, 'i'], 'j'],
         ['p', null, 'klm'],
       ]);
     });
@@ -84,7 +71,7 @@ const runTests = (setup: () => Kit) => {
       const html = toHtml(json, '    ');
       expect(html).toBe('<div>\n    <p>efghij</p>\n    <p>klm</p>\n</div>');
     });
-  
+
     test('can export two paragraphs with inline formatting', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(10);
@@ -100,7 +87,7 @@ const runTests = (setup: () => Kit) => {
       const html = toHtml(json, '');
       expect(html).toEqual('<p>ef<b>g</b><i><b>h</b></i><i>i</i>j</p><p>klm</p>');
     });
-  
+
     test('can export two paragraphs with inline formatting (formatted)', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(10);
@@ -114,9 +101,11 @@ const runTests = (setup: () => Kit) => {
       fragment.refresh();
       const json = fragment.toJson();
       const html = toHtml(json, '    ');
-      expect(html).toEqual('<p>\n    ef\n    <b>g</b>\n    <i>\n        <b>h</b>\n    </i>\n    <i>i</i>\n    j\n</p>\n<p>klm</p>');
+      expect(html).toEqual(
+        '<p>\n    ef\n    <b>g</b>\n    <i>\n        <b>h</b>\n    </i>\n    <i>i</i>\n    j\n</p>\n<p>klm</p>',
+      );
     });
-  
+
     test('can export two paragraphs with inline formatting (formatted, wrapped in <div>)', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(10);
