@@ -10,6 +10,16 @@ test('bold text', () => {
   expect(toHtml(ml)).toBe('<b>bold</b>');
 });
 
+test('when no children, renders self closing tag', () => {
+  const ml: JsonMlNode = ['hr', null];
+  expect(toHtml(ml)).toBe('<hr />');
+});
+
+test('can render self closing tag with attributes', () => {
+  const ml: JsonMlNode = ['hr', {foo: 'bar'}];
+  expect(toHtml(ml)).toBe('<hr foo="bar" />');
+});
+
 test('fragment', () => {
   const ml: JsonMlNode = ['', null, ['b', null, 'bold'], ' text'];
   expect(toHtml(ml)).toBe('<b>bold</b> text');
@@ -41,4 +51,25 @@ test('can render attributes', () => {
 test('can escape attribute values', () => {
   const ml: JsonMlNode = ['span', {class: 'test<a:not("asdf")&test'}, 'text'];
   expect(toHtml(ml)).toBe('<span class="test&lt;a:not(&quot;asdf&quot;)&amp;test">text</span>');
+});
+
+test('can format HTML with tabbing', () => {
+  const ml: JsonMlNode = ['div', null, ['hr', {foo: 'bar'}], ['span', null, 'text']];
+  const html = toHtml(ml, '  ');
+  // console.log(html);
+  expect(html).toBe('<div>\n  <hr foo="bar" />\n  <span>text</span>\n</div>');
+});
+
+test('can format HTML fragment with tabbing', () => {
+  const ml: JsonMlNode = ['', null, ['hr', {foo: 'bar'}], ['span', null, 'text']];
+  const html = toHtml(ml, '  ');
+  // console.log(html);
+  expect(html).toBe('<hr foo="bar" />\n<span>text</span>');
+});
+
+test('can format HTML fragment with tabbing - 2', () => {
+  const ml: JsonMlNode = ['div', null, ['', null, ['hr', {foo: 'bar'}], ['span', null, 'text']]];
+  const html = toHtml(ml, '    ');
+  // console.log(html);
+  expect(html).toBe('<div>\n    <hr foo="bar" />\n    <span>text</span>\n</div>');
 });

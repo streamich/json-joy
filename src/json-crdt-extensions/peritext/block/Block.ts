@@ -12,7 +12,7 @@ import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {OverlayTuple} from '../overlay/types';
-import type {JsonMlNode} from '../../../json-ml';
+import type {PeritextMlAttributes, PeritextMlElement} from './types';
 
 export interface IBlock {
   readonly path: Path;
@@ -51,6 +51,33 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
     const length = path.length;
     return length ? path[length - 1] : '';
   }
+
+  // public htmlTag(): string {
+  //   const tag = this.tag();
+  //   switch (typeof tag) {
+  //     case 'string': return tag.toLowerCase();
+  //     case 'number': return SliceTypeName[tag] || 'div';
+  //     default: return 'div';
+  //   }
+  // }
+
+  // protected jsonMlNode(): JsonMlElement {
+  //   const props: Record<string, string> = {};
+  //   const node: JsonMlElement = ['div', props];
+  //   const tag = this.tag();
+  //   switch (typeof tag) {
+  //     case 'string':
+  //       node[0] = tag;
+  //       break;
+  //     case 'number':
+  //       const tag0 = SliceTypeName[tag];
+  //       if (tag0) node[0] = tag0; else props['data-tag'] = tag + '';
+  //       break;
+  //   }
+  //   const attr = this.attr();
+  //   if (attr !== undefined) props['data-attr'] = JSON.stringify(attr);
+  //   return node;
+  // }
 
   public attr(): Attr | undefined {
     return this.marker?.data() as Attr | undefined;
@@ -143,8 +170,14 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
 
   // ------------------------------------------------------------------- export
 
-  toJsonMl(): JsonMlNode {
-    throw new Error('not implemented');
+  public toJson(): PeritextMlElement {
+    const data = this.attr();
+    const attr: PeritextMlAttributes | null = data !== void 0 ? {data} : null;
+    const node: PeritextMlElement = [this.tag(), attr];
+    const children = this.children;
+    const length = children.length;
+    for (let i = 0; i < length; i++) node.push(children[i].toJson());
+    return node;
   }
 
   // ----------------------------------------------------------------- Stateful
