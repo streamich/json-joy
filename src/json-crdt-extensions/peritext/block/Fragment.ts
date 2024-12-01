@@ -4,14 +4,13 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {LeafBlock} from './LeafBlock';
 import {Range} from '../rga/Range';
 import {CommonSliceType} from '../slice';
-import {toHtml} from '../../../json-ml';
 import type {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
-import type {JsonMlElement, JsonMlNode} from '../../../json-ml/types';
+import type {PeritextMlElement} from './types';
 
 /**
  * A *fragment* represents a structural slice of a rich-text document. A
@@ -33,7 +32,7 @@ export class Fragment extends Range implements Printable, Stateful {
 
   // ------------------------------------------------------------------- export
 
-  public toJson(): JsonMlElement {
+  public toJson(): PeritextMlElement {
     return this.root.toJson();
   }
 

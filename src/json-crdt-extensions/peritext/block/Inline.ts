@@ -13,7 +13,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
-import type {JsonMlNode} from '../../../json-ml';
+import type {PeritextMlAttributes, PeritextMlNode} from './types';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
@@ -245,16 +245,22 @@ export class Inline extends Range implements Printable {
 
   // ------------------------------------------------------------------- export
 
-  public toJson(): JsonMlNode {
-    let node: JsonMlNode = this.text();
+  public toJson(): PeritextMlNode {
+    let node: PeritextMlNode = this.text();
     const attrs = this.attr();
     for (const key in attrs) {
       const keyNum = Number(key);
       if (keyNum === SliceTypeName.Cursor || keyNum === SliceTypeName.RemoteCursor) continue;
       const attr = attrs[key];
-      if (!attr.length) node = [key, null, node];
+      if (!attr.length) node = [key, {inline: true}, node];
       else {
-        node = [key === keyNum + '' ? keyNum : key, null, node];
+        const length = attr.length;
+        for (let i = 0; i < length; i++) {
+          const slice = attr[i].slice;
+          const data = slice.data();
+          const attributes: PeritextMlAttributes = data === void 0 ? {inline: true} : {inline: true, data};
+          node = [key === keyNum + '' ? keyNum : key, attributes, node];
+        }
       }
     }
     return node;

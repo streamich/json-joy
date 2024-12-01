@@ -5,7 +5,6 @@ import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatType} from '../slice/util';
 import {Range} from '../rga/Range';
-import {SliceTypeName} from '../slice/constants';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Path} from '@jsonjoy.com/json-pointer';
@@ -13,7 +12,7 @@ import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {OverlayTuple} from '../overlay/types';
-import type {JsonMlElement, JsonMlNode} from '../../../json-ml';
+import type {PeritextMlAttributes, PeritextMlElement} from './types';
 
 export interface IBlock {
   readonly path: Path;
@@ -171,8 +170,10 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
 
   // ------------------------------------------------------------------- export
 
-  public toJson(): JsonMlElement {
-    const node: JsonMlElement = [this.tag(), this.attr() ?? null];
+  public toJson(): PeritextMlElement {
+    const data = this.attr();
+    const attr: PeritextMlAttributes | null = data !== void 0 ? {data} : null;
+    const node: PeritextMlElement = [this.tag(), attr];
     const children = this.children;
     const length = children.length;
     for (let i = 0; i < length; i++) node.push(children[i].toJson());
