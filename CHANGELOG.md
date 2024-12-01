@@ -1,3 +1,21 @@
+# [17.22.0](https://github.com/streamich/json-joy/compare/v17.21.0...v17.22.0) (2024-12-01)
+
+
+### Features
+
+* 🎸 add identation formatting ability ([8b47358](https://github.com/streamich/json-joy/commit/8b473580501b8da73e3e356db687b59f5484e6ef))
+* 🎸 improve json-ml types ([a071f3c](https://github.com/streamich/json-joy/commit/a071f3c417db304c3a3f09fffdaa76057305dfe8))
+* **json-crdt-extensions:** 🎸 add ability to export to HTML ([f51f6cc](https://github.com/streamich/json-joy/commit/f51f6cc7eb38c6e04b05c13c74c4034e4fd54f2c))
+* **json-crdt-extensions:** 🎸 add ability to import serialized view range ([43ad61d](https://github.com/streamich/json-joy/commit/43ad61de7a30f09c265f716d11573898ef139472))
+* **json-crdt-extensions:** 🎸 do not create props objects, when not necessary ([7071ada](https://github.com/streamich/json-joy/commit/7071ada137b7ab2349a0f49875073b8447f2808d))
+* **json-crdt-extensions:** 🎸 improve JSOM-ML generation for block nodes ([fb45ba7](https://github.com/streamich/json-joy/commit/fb45ba71f150766900572fd5fa05a5a6282843c3))
+* **json-crdt-extensions:** 🎸 improve to JSON-ML export ([b3e7e5c](https://github.com/streamich/json-joy/commit/b3e7e5c87f5dd90e4389563a4ec84847f9077489))
+* **json-crdt-extensions:** 🎸 improve toJson exports ([ef5327e](https://github.com/streamich/json-joy/commit/ef5327e5bad2b6bcad431a4ffe6b7237978204f4))
+* **json-crdt-extensions:** 🎸 simplify export view range interface ([0b8c7b7](https://github.com/streamich/json-joy/commit/0b8c7b764d48860c57c748dd23f2edd194f88c49))
+* **json-crdt-extensions:** 🎸 start .toJson() implementation ([a8ec0b1](https://github.com/streamich/json-joy/commit/a8ec0b1df8e7937b59a393e74f4b6344637be44a))
+* **json-crdt-extensions:** 🎸 start fragment serialization implementation ([519115a](https://github.com/streamich/json-joy/commit/519115a2263777b69dbc88e603fdf2d3a6975e5e))
+* **json-crdt-extensions:** 🎸 start serialization implementation ([f9bc89e](https://github.com/streamich/json-joy/commit/f9bc89ebccf5803358c2b74e1d5a476a94cabea9))
+
 # [17.21.0](https://github.com/streamich/json-joy/compare/v17.20.0...v17.21.0) (2024-11-25)
 
 
