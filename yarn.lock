@@ -2203,7 +2203,6 @@ dunder-proto@^1.0.0:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -3547,7 +3546,6 @@ jsesc@^3.0.2:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d":
   version "0.0.1"
-  uid ec825401dc05cbb74b9e0b3c4d6527399f54d54d
   resolved "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
 
 json-logic-js@^2.0.2:
@@ -4007,7 +4005,7 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nice-ui@^1.18.0:
+nice-ui@^1.25.0:
   version "1.25.0"
   resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.25.0.tgz#7b0bf1187ff04c76acb764dc88d3e6af4b393db9"
   integrity sha512-gFC7zWYe8By9TMjIS34WHVSc/9dTW4FVljSqh7zvWyqnzUf33DzGoJGZs5f+5GpdkQEbAwIJBCrs8Z2gno3S2Q==
