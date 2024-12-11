@@ -8,9 +8,9 @@ export interface CaretViewProps {
 }
 
 export const CaretView: React.FC<CaretViewProps> = (props) => {
-  const {renderers} = usePeritext();
+  const {plugins} = usePeritext();
 
   let children: React.ReactNode = <Caret />;
-  for (const map of renderers) children = map.caret?.(props, children) ?? children;
+  for (const map of plugins) children = map.caret?.(props, children) ?? children;
   return children;
 };

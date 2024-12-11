@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
-import {context, type PeritextSurfaceContextValue} from './context';
+import {context} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import {DomController} from '../dom/DomController';
 import {CursorPlugin} from '../plugins/cursor';
 import {defaultPlugin} from '../plugins/minimal';
+import {PeritextSurfaceState} from './state';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
 
@@ -72,8 +73,8 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     [peritext],
   );
 
-  const ctx: undefined | PeritextSurfaceContextValue = React.useMemo(
-    () => (dom ? {peritext, dom, renderers: plugins, rerender} : undefined),
+  const state: undefined | PeritextSurfaceState = React.useMemo(
+    () => dom ? new PeritextSurfaceState(peritext, plugins, dom, rerender) : void 0,
     [peritext, dom, plugins, rerender],
   );
 
@@ -83,14 +84,14 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   let children: React.ReactNode = (
     <div ref={ref} className={CssClass.Editor}>
       {!!dom && (
-        <context.Provider value={ctx!}>
+        <context.Provider value={state!}>
           <BlockView hash={block.hash} block={block} />
         </context.Provider>
       )}
     </div>
   );
 
-  for (const map of plugins) children = map.peritext?.(props, children, ctx) ?? children;
+  for (const map of plugins) children = map.peritext?.(props, children, state) ?? children;
 
   return children;
 });

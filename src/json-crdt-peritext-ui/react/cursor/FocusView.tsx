@@ -9,9 +9,9 @@ export interface FocusViewProps {
 }
 
 export const FocusView: React.FC<FocusViewProps> = (props) => {
-  const {renderers} = usePeritext();
+  const {plugins} = usePeritext();
 
   let children: React.ReactNode = <Caret />;
-  for (const map of renderers) children = map.focus?.(props, children) ?? children;
+  for (const map of plugins) children = map.focus?.(props, children) ?? children;
   return children;
 };

@@ -47,7 +47,7 @@ export interface InlineViewProps {
 export const InlineView: React.FC<InlineViewProps> = (props) => {
   const {inline} = props;
   const ctx = usePeritext();
-  const {renderers} = ctx;
+  const {plugins} = ctx;
   const ref = React.useRef<HTMLSpanElement | null>(null);
   const text = inline.text();
 
@@ -61,8 +61,8 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
       if (span) (span as any)[ElementAttr.InlineOffset] = inline;
     },
   };
-  for (const map of renderers) attr = map.text?.(attr, inline, ctx) ?? attr;
+  for (const map of plugins) attr = map.text?.(attr, inline, ctx) ?? attr;
   let children: React.ReactNode = <span {...attr}>{text}</span>;
-  for (const map of renderers) children = map.inline?.(props, children) ?? children;
+  for (const map of plugins) children = map.inline?.(props, children) ?? children;
   return children;
 };
