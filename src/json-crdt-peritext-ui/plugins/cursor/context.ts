@@ -1,10 +1,10 @@
 import * as React from 'react';
-import type {PeritextSurfaceContextValue} from '../../react';
+import type {PeritextSurfaceState} from '../../react';
 import type {ValueSyncStore} from '../../../util/events/sync-store';
 import type {CursorPlugin} from './CursorPlugin';
 
 export interface CursorPluginContextValue {
-  ctx?: PeritextSurfaceContextValue;
+  ctx?: PeritextSurfaceState;
 
   plugin: CursorPlugin;
 

@@ -5,10 +5,10 @@ import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import {useSyncStore} from '../../../react/hooks';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
-import type {PeritextSurfaceContextValue} from '../../../react';
+import type {PeritextSurfaceState} from '../../../react';
 
 export interface TopToolbarProps {
-  ctx: PeritextSurfaceContextValue;
+  ctx: PeritextSurfaceState;
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {

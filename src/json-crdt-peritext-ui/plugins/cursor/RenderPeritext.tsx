@@ -2,11 +2,11 @@ import * as React from 'react';
 import {context, type CursorPluginContextValue} from './context';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {ChangeDetail} from '../../events/types';
-import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
+import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
 import type {CursorPlugin} from './CursorPlugin';
 
 export interface RenderPeritextProps extends PeritextViewProps {
-  ctx?: PeritextSurfaceContextValue;
+  ctx?: PeritextSurfaceState;
   plugin: CursorPlugin;
   children?: React.ReactNode;
 }

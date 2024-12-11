@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type {ValueSyncStore} from '../../../util/events/sync-store';
-import type {PeritextSurfaceContextValue} from '../../react';
+import type {PeritextSurfaceState} from '../../react/state';
 
 export interface DebugRenderersContextValue {
   enabled: boolean;
@@ -10,7 +10,7 @@ export interface DebugRenderersContextValue {
     peritext: ValueSyncStore<boolean>;
     model: ValueSyncStore<boolean>;
   };
-  ctx?: PeritextSurfaceContextValue;
+  ctx?: PeritextSurfaceState;
 }
 
 export const context = React.createContext<DebugRenderersContextValue>(null!);

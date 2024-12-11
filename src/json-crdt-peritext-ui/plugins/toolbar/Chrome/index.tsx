@@ -20,11 +20,11 @@ export interface ChromeProps {
 }
 
 export const Chrome: React.FC<ChromeProps> = ({children}) => {
-  const {ctx} = useDefaultPlugin();
+  const ctx = useDefaultPlugin();
 
   return (
     <div className={blockClass}>
-      {!!ctx && <TopToolbar ctx={ctx} />}
+      {!!ctx && <TopToolbar ctx={ctx.surface} />}
       {children}
     </div>
   );

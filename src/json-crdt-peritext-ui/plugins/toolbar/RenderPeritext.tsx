@@ -1,15 +1,16 @@
 import * as React from 'react';
 import {Chrome} from './Chrome';
-import {context, type DefaultPluginContextValue} from './context';
-import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
+import {context, type ToolbarPluginContextValue} from './context';
+import {ToolbarState} from './state';
+import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
 
 export interface RenderPeritextProps extends PeritextViewProps {
-  ctx?: PeritextSurfaceContextValue;
+  surface?: PeritextSurfaceState;
   children?: React.ReactNode;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) => {
-  const value: DefaultPluginContextValue = React.useMemo(() => ({ctx}), [ctx]);
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, children}) => {
+  const value: null | ToolbarPluginContextValue = React.useMemo(() => !surface ? null : ({surface, toolbar: new ToolbarState()}), [surface]);
 
   return (
     <context.Provider value={value}>
