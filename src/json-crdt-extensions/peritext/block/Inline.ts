@@ -238,11 +238,6 @@ export class Inline extends Range implements Printable {
     return texts;
   }
 
-  public text(): string {
-    const str = super.text();
-    return this.p1 instanceof MarkerOverlayPoint ? str.slice(1) : str;
-  }
-
   // ------------------------------------------------------------------- export
 
   public toJson(): PeritextMlNode {
@@ -273,12 +268,7 @@ export class Inline extends Range implements Printable {
   }
 
   public toString(tab: string = ''): string {
-    const str = this.text();
-    const truncate = str.length > 32;
-    const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
-    const startFormatted = this.p1.toString(tab, true);
-    const range = this.p1.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
-    const header = `Inline ${range} ${text}`;
+    const header = `${super.toString(tab)}`;
     const attr = this.attr();
     const attrKeys = Object.keys(attr);
     const texts = this.texts();

@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {Block} from './Block';
 import type {Path} from '@jsonjoy.com/json-pointer';
-import type {PeritextMlAttributes, PeritextMlElement, PeritextMlNode} from './types';
+import type {PeritextMlAttributes, PeritextMlElement} from './types';
 
 export interface IBlock<Attr = unknown> {
   readonly path: Path;
@@ -10,6 +10,12 @@ export interface IBlock<Attr = unknown> {
 }
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
+  public text(): string {
+    let str = '';
+    for (let iterator = this.texts0(), inline = iterator(); inline; inline = iterator()) str += inline.text();
+    return str;
+  }
+
   // ------------------------------------------------------------------- export
 
   public toJson(): PeritextMlElement {

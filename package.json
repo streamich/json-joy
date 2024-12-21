@@ -136,7 +136,8 @@
     "hyperdyperid": "^1.2.0",
     "sonic-forest": "^1.0.3",
     "thingies": "^2.1.1",
-    "tree-dump": "^1.0.2"
+    "tree-dump": "^1.0.2",
+    "very-small-parser": "^1.8.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
