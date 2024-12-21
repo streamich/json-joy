@@ -24,4 +24,5 @@ export const toHast = (json: PeritextMlNode): THtmlToken => {
   return hast;
 };
 
-export const toHtml = (json: PeritextMlNode, tab?: string, indent?: string): string => _toHtml(toHast(json), tab, indent);
+export const toHtml = (json: PeritextMlNode, tab?: string, indent?: string): string =>
+  _toHtml(toHast(json), tab, indent);

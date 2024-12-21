@@ -258,7 +258,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    * marker). The very first point in the first pair might be `undefined`, if
    * the given point is not a marker. Similarly, the very last point in the last
    * pair might be `undefined`, if the iteration end point is not a marker.
-   * 
+   *
    * @param start Start point of the iteration, inclusive.
    * @param end End point of the iteration. If not provided, the iteration
    *     continues until the end of the overlay.
@@ -276,8 +276,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       }
       if (end && p2) {
         const cmp = end.cmpSpatial(p2);
-        if (cmp <= 0)
-          return () => closed ? void 0 : ((closed = true), [p1, cmp ? void 0 : p2]);
+        if (cmp <= 0) return () => (closed ? void 0 : ((closed = true), [p1, cmp ? void 0 : p2]));
       }
     }
     return () => {

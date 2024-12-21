@@ -150,19 +150,19 @@ export const runNumbersKitTestSuite = (runTestSuite: (getKit: () => Kit) => void
   describe('numbers "0123456789", no edits', () => {
     runTestSuite(setupNumbersKit);
   });
-  
+
   describe('numbers "0123456789", with default schema and tombstones', () => {
     runTestSuite(setupNumbersWithTombstonesKit);
   });
-  
+
   describe('numbers "0123456789", two RGA chunks', () => {
     runTestSuite(setupNumbersWithTwoChunksKit);
   });
-  
+
   describe('numbers "0123456789", with RGA split', () => {
     runTestSuite(setupNumbersWithRgaSplitKit);
   });
-  
+
   describe('numbers "0123456789", with multiple deletes', () => {
     runTestSuite(setupNumbersWithMultipleChunksAndDeletesKit);
   });

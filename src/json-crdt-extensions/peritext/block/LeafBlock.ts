@@ -12,8 +12,7 @@ export interface IBlock<Attr = unknown> {
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
   public text(): string {
     let str = '';
-    for (let iterator = this.texts0(), inline = iterator(); inline; inline = iterator())
-      str += inline.text();
+    for (let iterator = this.texts0(), inline = iterator(); inline; inline = iterator()) str += inline.text();
     return str;
   }
 

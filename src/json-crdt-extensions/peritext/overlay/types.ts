@@ -21,7 +21,7 @@ export type OverlayTuple<T> = [p1: OverlayPoint<T>, p2: OverlayPoint<T>];
  * Represents a two adjacent marker overlay points. The first point is the point
  * that is closer to the start of the document, and the second point is the
  * point that is closer to the end of the document.
- * 
+ *
  * When point is `undefined`, it means the point represents the end of range.
  * In the complete document it is ABS start or ABS end of the document.
  */

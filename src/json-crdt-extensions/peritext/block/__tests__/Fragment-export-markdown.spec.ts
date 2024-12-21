@@ -72,12 +72,8 @@ const runTests = (setup: () => Kit) => {
             children: [
               {type: 'text', value: 'ef'},
               {type: 'strong', children: [{type: 'text', value: 'g'}]},
-              {type: 'emphasis', children: [
-                {type: 'strong', children: [{type: 'text', value: 'h'}]},
-              ]},
-              {type: 'emphasis', children: [
-                {type: 'text', value: 'i'},
-              ]},
+              {type: 'emphasis', children: [{type: 'strong', children: [{type: 'text', value: 'h'}]}]},
+              {type: 'emphasis', children: [{type: 'text', value: 'i'}]},
               {type: 'text', value: 'j'},
             ],
           },
@@ -175,9 +171,7 @@ const runTests = (setup: () => Kit) => {
       fragment.refresh();
       const json = fragment.toJson();
       const html = toMarkdown(json);
-      expect(html).toEqual(
-        'efghij\n\n> kl__m__',
-      );
+      expect(html).toEqual('efghij\n\n> kl__m__');
     });
   });
 };

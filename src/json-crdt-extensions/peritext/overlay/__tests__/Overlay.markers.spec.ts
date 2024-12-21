@@ -1,6 +1,6 @@
 import {UndefEndIter} from '../../../../util/iterator';
 import {type Kit, runNumbersKitTestSuite} from '../../__tests__/setup';
-import {Point} from '../../rga/Point';
+import type {Point} from '../../rga/Point';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 
 const runMarkersTests = (setup: () => Kit) => {
@@ -512,7 +512,7 @@ const runMarkersTests = (setup: () => Kit) => {
         kit.peritext.overlay.refresh();
         const iterator = kit.peritext.overlay.markerPairs0(start(kit), end?.(kit));
         const list = [...new UndefEndIter(iterator)];
-        const markers = [...kit.peritext.overlay.markers()]
+        const markers = [...kit.peritext.overlay.markers()];
         return {...kit, m1, m2, m3, list, markers};
       };
 
@@ -530,22 +530,22 @@ const runMarkersTests = (setup: () => Kit) => {
       };
 
       test('start before all markers', () => {
-        const kit = create(kit => kit.peritext.pointAt(1));
+        const kit = create((kit) => kit.peritext.pointAt(1));
         assertAllPoints(kit);
       });
 
       test('start at ABS start', () => {
-        const kit = create(kit => kit.peritext.pointAbsStart());
+        const kit = create((kit) => kit.peritext.pointAbsStart());
         assertAllPoints(kit);
       });
 
       test('start at REL start', () => {
-        const kit = create(kit => kit.peritext.pointStart()!);
+        const kit = create((kit) => kit.peritext.pointStart()!);
         assertAllPoints(kit);
       });
 
       test('start half-point before first marker', () => {
-        const kit = create(kit => {
+        const kit = create((kit) => {
           const point = kit.peritext.pointAt(3);
           point.halfstep(-1);
           return point;
@@ -554,41 +554,59 @@ const runMarkersTests = (setup: () => Kit) => {
       });
 
       test('end after all markers', () => {
-        const kit = create(kit => kit.peritext.pointAt(1), kit => kit.peritext.pointAt(10));
+        const kit = create(
+          (kit) => kit.peritext.pointAt(1),
+          (kit) => kit.peritext.pointAt(10),
+        );
         assertAllPoints(kit);
       });
 
       test('end at ABS end', () => {
-        const kit = create(kit => kit.peritext.pointAt(1), kit => kit.peritext.pointAbsEnd());
+        const kit = create(
+          (kit) => kit.peritext.pointAt(1),
+          (kit) => kit.peritext.pointAbsEnd(),
+        );
         assertAllPoints(kit);
       });
 
       test('end at REL end', () => {
-        const kit = create(kit => kit.peritext.pointAt(1), kit => kit.peritext.pointEnd()!);
+        const kit = create(
+          (kit) => kit.peritext.pointAt(1),
+          (kit) => kit.peritext.pointEnd()!,
+        );
         assertAllPoints(kit);
       });
 
       test('end half-point after last marker', () => {
-        const kit = create(kit => kit.peritext.pointAbsStart(), kit => {
-          const point = kit.peritext.pointAt(8);
-          point.halfstep(1);
-          return point;
-        });
+        const kit = create(
+          (kit) => kit.peritext.pointAbsStart(),
+          (kit) => {
+            const point = kit.peritext.pointAt(8);
+            point.halfstep(1);
+            return point;
+          },
+        );
         assertAllPoints(kit);
       });
 
       test('start and end at ABS endpoints', () => {
-        const kit = create(kit => kit.peritext.pointAbsStart(), kit => kit.peritext.pointAbsEnd());
+        const kit = create(
+          (kit) => kit.peritext.pointAbsStart(),
+          (kit) => kit.peritext.pointAbsEnd(),
+        );
         assertAllPoints(kit);
       });
 
       test('start and end at REL endpoints', () => {
-        const kit = create(kit => kit.peritext.pointStart()!, kit => kit.peritext.pointEnd()!);
+        const kit = create(
+          (kit) => kit.peritext.pointStart()!,
+          (kit) => kit.peritext.pointEnd()!,
+        );
         assertAllPoints(kit);
       });
 
       test('start point past the first marker', () => {
-        const {list, markers} = create(kit => kit.peritext.pointAt(4));
+        const {list, markers} = create((kit) => kit.peritext.pointAt(4));
         expect(list.length).toBe(3);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(markers[1]);
@@ -600,8 +618,8 @@ const runMarkersTests = (setup: () => Kit) => {
 
       test('start point past the first marker, end point ahead of last marker', () => {
         const {list, markers} = create(
-          kit => kit.peritext.pointAt(4),
-          kit => {
+          (kit) => kit.peritext.pointAt(4),
+          (kit) => {
             const point = kit.peritext.pointAt(7);
             return point;
           },
@@ -615,8 +633,8 @@ const runMarkersTests = (setup: () => Kit) => {
 
       test('start point past the first marker, end point right on second marker', () => {
         const {list, markers} = create(
-          kit => kit.peritext.pointAt(4),
-          kit => {
+          (kit) => kit.peritext.pointAt(4),
+          (kit) => {
             const end = kit.peritext.pointAt(6);
             return end;
           },
@@ -628,8 +646,8 @@ const runMarkersTests = (setup: () => Kit) => {
 
       test('start point right on first maker, end point past the first marker', () => {
         const {list, markers} = create(
-          kit => kit.peritext.pointAt(3),
-          kit => kit.peritext.pointAt(4),
+          (kit) => kit.peritext.pointAt(3),
+          (kit) => kit.peritext.pointAt(4),
         );
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(markers[0]);
@@ -638,8 +656,8 @@ const runMarkersTests = (setup: () => Kit) => {
 
       test('start point right on first maker, end point past the second marker', () => {
         const {list, markers} = create(
-          kit => kit.peritext.pointAt(3),
-          kit => kit.peritext.pointAt(7),
+          (kit) => kit.peritext.pointAt(3),
+          (kit) => kit.peritext.pointAt(7),
         );
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(markers[0]);
@@ -650,8 +668,8 @@ const runMarkersTests = (setup: () => Kit) => {
 
       test('start point right on first maker, at REL end', () => {
         const {list, markers} = create(
-          kit => kit.peritext.pointAt(3),
-          kit => kit.peritext.pointEnd()!,
+          (kit) => kit.peritext.pointAt(3),
+          (kit) => kit.peritext.pointEnd()!,
         );
         expect(list.length).toBe(3);
         expect(list[0][0]).toBe(markers[0]);

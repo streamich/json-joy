@@ -28,7 +28,15 @@ const runTests = (setup: () => Kit) => {
     expect(node).toEqual([
       '',
       null,
-      [0, null, 'ef', [-3, {inline: true}, 'g'], [-4, {inline: true}, [-3, {inline: true}, 'h']], [-4, {inline: true}, 'i'], 'j'],
+      [
+        0,
+        null,
+        'ef',
+        [-3, {inline: true}, 'g'],
+        [-4, {inline: true}, [-3, {inline: true}, 'h']],
+        [-4, {inline: true}, 'i'],
+        'j',
+      ],
       [0, null, 'klm'],
     ]);
   });

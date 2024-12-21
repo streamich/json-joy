@@ -78,7 +78,7 @@ export class Fragment extends Range implements Printable, Stateful {
     const overlay = txt.overlay;
     const iterator = overlay.markerPairs0(this.start, this.end);
     let pair: ReturnType<typeof iterator>;
-    while (pair = iterator()) {
+    while ((pair = iterator())) {
       const [p1, p2] = pair;
       const type = p1 ? p1.type() : CommonSliceType.p;
       const path = type instanceof Array ? type : [type];
