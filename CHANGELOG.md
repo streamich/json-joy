@@ -1,3 +1,16 @@
+# [17.23.0](https://github.com/streamich/json-joy/compare/v17.22.0...v17.23.0) (2024-12-21)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 improve framment block and inline element trancation ([716589c](https://github.com/streamich/json-joy/commit/716589c46a9c13bde0f2df9762a41ecdd8daa775))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 implement export to HTML ([ae57070](https://github.com/streamich/json-joy/commit/ae57070b2dbfc9cdcedaf52404ad805524499522))
+* **json-crdt-extensions:** 🎸 improve iteration over markers in the Overlay class ([2eaa85d](https://github.com/streamich/json-joy/commit/2eaa85d515ebe6543bcb33dd6273a45c45fa7271))
+
 # [17.22.0](https://github.com/streamich/json-joy/compare/v17.21.0...v17.22.0) (2024-12-01)
 
 
