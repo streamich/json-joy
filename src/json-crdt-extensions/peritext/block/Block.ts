@@ -100,10 +100,6 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
     };
   }
 
-  protected tuples(): IterableIterator<OverlayTuple<T>> {
-    return new UndefEndIter(this.tuples0());
-  }
-
   /**
    * @todo Consider moving inline-related methods to {@link LeafBlock}.
    */

@@ -93,32 +93,6 @@ describe('points', () => {
   });
 });
 
-describe('tuples', () => {
-  test('in markup-less document, returns a single pair', () => {
-    const {peritext} = setupHelloWorldKit();
-    peritext.refresh();
-    const blocks = peritext.blocks;
-    const block = blocks.root.children[0]!;
-    const pairs = [...block.tuples()];
-    expect(pairs.length).toBe(1);
-    expect(pairs[0]).toEqual([peritext.overlay.START, peritext.overlay.END]);
-  });
-
-  test('can iterate through all text chunks in two-block documents', () => {
-    const {peritext} = setupTwoBlockDocument();
-    expect(peritext.blocks.root.children.length).toBe(2);
-    const block1 = peritext.blocks.root.children[0]!;
-    const block2 = peritext.blocks.root.children[1]!;
-    const tuples1 = [...block1.tuples()];
-    const tuples2 = [...block2.tuples()];
-    expect(tuples1.length).toBe(3);
-    const text1 = tuples1.map(([p1, p2]) => new Inline(peritext, p1, p2, p1, p2).text()).join('');
-    const text2 = tuples2.map(([p1, p2]) => new Inline(peritext, p1, p2, p1, p2).text()).join('');
-    expect(text1).toBe('hello ');
-    expect(text2).toBe('world');
-  });
-});
-
 describe('texts', () => {
   test('in markup-less document', () => {
     const {peritext} = setupHelloWorldKit();

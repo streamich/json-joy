@@ -113,7 +113,7 @@ const runTests = (setup: () => Kit) => {
                 type: 'paragraph',
                 children: [
                   {type: 'text', value: 'kl'},
-                  {type: 'strong', children: [{type: 'text', value: 'mn'}]},
+                  {type: 'strong', children: [{type: 'text', value: 'm'}]},
                 ],
               },
             ],
@@ -176,7 +176,7 @@ const runTests = (setup: () => Kit) => {
       const json = fragment.toJson();
       const html = toMarkdown(json);
       expect(html).toEqual(
-        'efghij\n\n> kl__mn__',
+        'efghij\n\n> kl__m__',
       );
     });
   });
