@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-crdt-extensions/peritext/export/export.ts</title>
+    <title>Code coverage report for json-crdt-extensions/peritext/lazy/export-markdown.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,20 +19,20 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">json-crdt-extensions/peritext/export</a> export.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">json-crdt-extensions/peritext/lazy</a> export-markdown.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>11/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.81% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/11</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/15</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -78,54 +78,36 @@
 <a name='L13'></a><a href='#L13'>13</a>
 <a name='L14'></a><a href='#L14'>14</a>
 <a name='L15'></a><a href='#L15'>15</a>
-<a name='L16'></a><a href='#L16'>16</a>
-<a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L16'></a><a href='#L16'>16</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">72x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">64x</span>
-<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {SliceTypeName} from '../slice';
-import {toHtml as _toHtml} from '../../../json-ml/toHtml';
-import type {JsonMlNode} from '../../../json-ml';
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {toHast} from './export-html';
+import {toMdast as _toMdast} from 'very-small-parser/lib/html/toMdast';
+import {toText as _toMarkdown} from 'very-small-parser/lib/markdown/block/toText';
+import type {IRoot} from 'very-small-parser/lib/markdown/block/types';
 import type {PeritextMlNode} from '../block/types';
 &nbsp;
-export const toJsonMl = (json: PeritextMlNode): JsonMlNode =&gt; {
-  if (typeof json === 'string') return json;
-  const [tag, attr, ...children] = json;
-  const namedTag = tag === '' ? tag : SliceTypeName[tag as any];
-  const htmlTag = namedTag ?? (attr?.inline ? <span class="branch-0 cbranch-no" title="branch not covered" >'span' </span>: 'div');
-  const htmlAttr = attr &amp;&amp; attr.data !== void 0 ? <span class="branch-0 cbranch-no" title="branch not covered" >{'data-attr': JSON.stringify(attr.data)} </span>: null;
-  const htmlNode: JsonMlNode = [htmlTag, htmlAttr];
-  const length = children.length;
-  for (let i = 0; i &lt; length; i++) htmlNode.push(toJsonMl(children[i]));
-  return htmlNode;
+export const toMdast = (json: PeritextMlNode): IRoot =&gt; {
+  const hast = toHast(json);
+  // console.log(hast);
+  const mdast = _toMdast(hast) as IRoot;
+  // console.log(mdast);
+  return mdast;
 };
 &nbsp;
-export const toHtml = (json: PeritextMlNode, tab?: string): string =&gt; {
-  const jsonml = toJsonMl(json);
-  return _toHtml(jsonml, tab);
-};
+export const toMarkdown = (json: PeritextMlNode): string =&gt; _toMarkdown(toMdast(json));
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -133,7 +115,7 @@ export const toHtml = (json: PeritextMlNode, tab?: string): string =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-12-21T03:58:10.308Z
+                at 2024-12-21T19:20:05.288Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
