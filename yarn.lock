@@ -2181,7 +2181,6 @@ dunder-proto@^1.0.0:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -3522,7 +3521,6 @@ jsesc@^3.0.2:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d":
   version "0.0.1"
-  uid ec825401dc05cbb74b9e0b3c4d6527399f54d54d
   resolved "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
 
 json-logic-js@^2.0.2:
@@ -5511,6 +5509,11 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
+
+very-small-parser@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/very-small-parser/-/very-small-parser-1.8.0.tgz#322ec046d396fc67376fd61c30fa8635e562636f"
+  integrity sha512-UIN0iEqOiTheG+VpfKNZq+E3tCp7sBir/JROC9w6vS5rAW8ha+hX4OlIkwLymhcfkN44sHktXfkUqNCCljQYEw==
 
 walker@^1.0.8:
   version "1.0.8"
