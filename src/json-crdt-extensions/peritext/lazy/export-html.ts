@@ -1,6 +1,8 @@
 import {SliceTypeName} from '../slice';
-import {toHtml as _toHtml} from '../../../json-ml/toHtml';
-import type {JsonMlNode} from '../../../json-ml';
+import {toText as _toHtml} from 'very-small-parser/lib/html/toText';
+import {toHast as _toHast} from 'very-small-parser/lib/html/json-ml/toHast';
+import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
+import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
 
 export const toJsonMl = (json: PeritextMlNode): JsonMlNode => {
@@ -15,7 +17,11 @@ export const toJsonMl = (json: PeritextMlNode): JsonMlNode => {
   return htmlNode;
 };
 
-export const toHtml = (json: PeritextMlNode, tab?: string): string => {
+export const toHast = (json: PeritextMlNode): THtmlToken => {
   const jsonml = toJsonMl(json);
-  return _toHtml(jsonml, tab);
+  // console.log(jsonml);
+  const hast = _toHast(jsonml);
+  return hast;
 };
+
+export const toHtml = (json: PeritextMlNode, tab?: string, indent?: string): string => _toHtml(toHast(json), tab, indent);
