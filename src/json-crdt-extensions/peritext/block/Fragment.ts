@@ -71,24 +71,16 @@ export class Fragment extends Range implements Printable, Stateful {
   }
 
   protected build(): void {
-    const {end, root} = this;
+    const {root} = this;
     root.children = [];
     let parent = this.root;
     const txt = this.txt;
     const overlay = txt.overlay;
-    /**
-     * @todo This line always inserts a markerless block at the beginning of
-     * the fragment. But what happens if one actually exists?
-     */
-    this.insertBlock(parent, [CommonSliceType.p], void 0, void 0);
     const iterator = overlay.markerPairs0(this.start, this.end);
-    const checkEnd = !end.isAbsEnd();
     let pair: ReturnType<typeof iterator>;
-    while ((pair = iterator())) {
+    while (pair = iterator()) {
       const [p1, p2] = pair;
-      if (!p1) break;
-      if (checkEnd && p1.cmpSpatial(end) > 0) break;
-      const type = p1.type();
+      const type = p1 ? p1.type() : CommonSliceType.p;
       const path = type instanceof Array ? type : [type];
       const block = this.insertBlock(parent, path, p1, p2);
       if (block.parent) parent = block.parent;
