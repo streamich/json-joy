@@ -110,7 +110,7 @@ const runTests = (setup: () => Kit) => {
       expect(!!inline2.attr()[CommonSliceType.b]).toBe(true);
     });
 
-    test('explicit paragraph + blockquote with inline formatting (middle of second paragraph)', () => {
+    test('explicit paragraph + blockquote with inline formatting (start middle of second paragraph)', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.blockquote);
@@ -138,6 +138,52 @@ const runTests = (setup: () => Kit) => {
       expect(inline2.text()).toBe('m');
       expect(!!inline1.attr()[CommonSliceType.b]).toBe(false);
       expect(!!inline2.attr()[CommonSliceType.b]).toBe(true);
+    });
+
+    test('explicit paragraph + blockquote with inline formatting (start and end in the middle of second paragraph)', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(10);
+      editor.saved.insMarker(CommonSliceType.blockquote);
+      editor.cursor.setAt(13, 2);
+      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.cursor.setAt(5);
+      editor.saved.insMarker(CommonSliceType.p);
+      peritext.refresh();
+      const range = peritext.rangeAt(7, 2);
+      const fragment = peritext.fragment(range);
+      fragment.refresh();
+      expect(fragment.root instanceof Block).toBe(true);
+      expect(fragment.root.children.length).toBe(1);
+      const [paragraph1] = fragment.root.children;
+      expect(paragraph1 instanceof LeafBlock).toBe(true);
+      expect(paragraph1.path).toEqual([CommonSliceType.p]);
+      expect(paragraph1.text()).toBe('gh');
+      expect([...paragraph1.texts()].length).toBe(1);
+      const [inline1] = [...paragraph1.texts()];
+      expect(inline1.text()).toBe('gh');
+    });
+
+    test('explicit paragraph + blockquote with inline formatting (end before blockquote)', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(10);
+      editor.saved.insMarker(CommonSliceType.blockquote);
+      editor.cursor.setAt(13, 2);
+      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.cursor.setAt(5);
+      editor.saved.insMarker(CommonSliceType.p);
+      peritext.refresh();
+      const range = peritext.rangeAt(2, 6);
+      const fragment = peritext.fragment(range);
+      fragment.refresh();
+      expect(fragment.root instanceof Block).toBe(true);
+      expect(fragment.root.children.length).toBe(2);
+      const [paragraph1, paragraph2] = fragment.root.children;
+      expect(paragraph1 instanceof LeafBlock).toBe(true);
+      expect(paragraph2 instanceof LeafBlock).toBe(true);
+      expect(paragraph1.path).toEqual([CommonSliceType.p]);
+      expect(paragraph1.text()).toBe('cde');
+      expect(paragraph2.path).toEqual([CommonSliceType.p]);
+      expect(paragraph2.text()).toBe('fg');
     });
   });
 };
