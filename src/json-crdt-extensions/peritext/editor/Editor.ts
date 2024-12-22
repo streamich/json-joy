@@ -761,7 +761,13 @@ export class Editor<T = string> implements Printable {
       const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
       const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
       const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
-      const range = txt.rangeAt(Math.max(0, x1 - offset + pos), x2 - x1);
+      const x1Src = x1 - offset;
+      const x2Src = x2 - offset;
+      const x1Capped = Math.max(0, x1Src);
+      const x2Capped = Math.min(text.length, x2Src);
+      const x1Dest = x1Capped + pos;
+      const annotationLength = x2Capped - x1Capped;
+      const range = txt.rangeAt(x1Dest, annotationLength);
       if (anchor1 === Anchor.Before) range.start.refBefore();
       else range.start.refAfter();
       if (anchor2 === Anchor.Before) range.end.refBefore();

@@ -130,6 +130,33 @@ const testSuite = (setup: () => Kit) => {
       expect(!!i2.attr().bold).toBe(true);
     });
 
+    test('can import a contained <b> annotation', () => {
+      const kit1 = setup();
+      kit1.editor.cursor.setAt(0, 3);
+      kit1.editor.saved.insOverwrite(CommonSliceType.b);
+      kit1.peritext.refresh();
+      const range = kit1.peritext.rangeAt(1, 1);
+      const view = kit1.editor.export(range);
+      kit1.editor.import(5, view);
+      kit1.peritext.refresh();
+      const jsonml = kit1.peritext.blocks.toJson();
+      expect(jsonml).toEqual([
+        '',
+        null,
+        [CommonSliceType.p, expect.any(Object),
+          [CommonSliceType.b, expect.any(Object), 'abc'],
+          'de',
+          [CommonSliceType.b, expect.any(Object), 'b'],
+          'fghijklmnopqrstuvwxyz',
+        ]
+      ]);
+      const block = kit1.peritext.blocks.root.children[0];
+      const inlines = [...block.texts()];
+      const inline = inlines.find((i) => i.text() === 'b')!;
+      expect(inline.start.anchor).toBe(Anchor.Before);
+      expect(inline.end.anchor).toBe(Anchor.After);
+    });
+
     test('can copy a paragraph split', () => {
       const kit1 = setup();
       const kit2 = setup();
