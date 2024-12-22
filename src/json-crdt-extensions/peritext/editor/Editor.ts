@@ -732,8 +732,7 @@ export class Editor<T = string> implements Printable {
         texts.push(text.slice(start, end));
         start = end + 1;
         splits.push(slice);
-      }
-      else annotations.push(slice);
+      } else annotations.push(slice);
     }
     const lastText = text.slice(start);
     const splitLength = splits.length;
@@ -746,7 +745,7 @@ export class Editor<T = string> implements Printable {
         start += str.length;
       }
       if (split) {
-        const [,,, type, data] = split;
+        const [, , , type, data] = split;
         const after = txt.pointAt(start);
         after.refAfter();
         txt.savedSlices.insMarkerAfter(after.id, type, data);

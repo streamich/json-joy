@@ -68,12 +68,11 @@ const testSuite = (setup: () => Kit) => {
       const range = peritext.rangeAt(8, 5);
       peritext.refresh();
       const json = editor.export(range);
-      const header = (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+      const header =
+        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
-      expect(json).toEqual(['ij\nkl', 8, [
-        [header, 10, 10, CommonSliceType.p]
-      ]]);
+      expect(json).toEqual(['ij\nkl', 8, [[header, 10, 10, CommonSliceType.p]]]);
     });
 
     test('can export <p> marker, <blockquote> marker, and italic text', () => {
@@ -87,20 +86,27 @@ const testSuite = (setup: () => Kit) => {
       const range = peritext.rangeAt(8, 12);
       peritext.refresh();
       const json = editor.export(range);
-      const pHeader = (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+      const pHeader =
+        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
-      const iHeader = (SliceBehavior.One << SliceHeaderShift.Behavior) +
+      const iHeader =
+        (SliceBehavior.One << SliceHeaderShift.Behavior) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.After << SliceHeaderShift.X2Anchor);
-      const blockquoteHeader = (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+      const blockquoteHeader =
+        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
-      expect(json).toEqual(['ij\nklmno\npqr', 8, [
-        [pHeader, 10, 10, CommonSliceType.p],
-        [iHeader, 12, 14, CommonSliceType.i],
-        [blockquoteHeader, 16, 16, CommonSliceType.blockquote],
-      ]]);
+      expect(json).toEqual([
+        'ij\nklmno\npqr',
+        8,
+        [
+          [pHeader, 10, 10, CommonSliceType.p],
+          [iHeader, 12, 14, CommonSliceType.i],
+          [blockquoteHeader, 16, 16, CommonSliceType.blockquote],
+        ],
+      ]);
     });
   });
 
@@ -143,12 +149,14 @@ const testSuite = (setup: () => Kit) => {
       expect(jsonml).toEqual([
         '',
         null,
-        [CommonSliceType.p, expect.any(Object),
+        [
+          CommonSliceType.p,
+          expect.any(Object),
           [CommonSliceType.b, expect.any(Object), 'abc'],
           'de',
           [CommonSliceType.b, expect.any(Object), 'b'],
           'fghijklmnopqrstuvwxyz',
-        ]
+        ],
       ]);
       const block = kit1.peritext.blocks.root.children[0];
       const inlines = [...block.texts()];
@@ -175,12 +183,14 @@ const testSuite = (setup: () => Kit) => {
       expect(jsonml).toEqual([
         '',
         null,
-        [CommonSliceType.p, expect.any(Object),
+        [
+          CommonSliceType.p,
+          expect.any(Object),
           [CommonSliceType.b, expect.any(Object), 'abc'],
           'de',
           [CommonSliceType.b, expect.any(Object), 'b'],
           'fghijklmnopqrstuvwxyz',
-        ]
+        ],
       ]);
       const block = kit1.peritext.blocks.root.children[0];
       const inlines = [...block.texts()];
@@ -208,12 +218,14 @@ const testSuite = (setup: () => Kit) => {
       expect(jsonml).toEqual([
         '',
         null,
-        [CommonSliceType.p, expect.any(Object),
+        [
+          CommonSliceType.p,
+          expect.any(Object),
           [CommonSliceType.b, expect.any(Object), 'b'],
           'a',
           [CommonSliceType.b, expect.any(Object), 'bc'],
           'defghijklmnopqrstuvwxyz',
-        ]
+        ],
       ]);
       const block = kit1.peritext.blocks.root.children[0];
       const inlines = [...block.texts()];
@@ -242,12 +254,14 @@ const testSuite = (setup: () => Kit) => {
       expect(jsonml).toEqual([
         '',
         null,
-        [CommonSliceType.p, expect.any(Object),
+        [
+          CommonSliceType.p,
+          expect.any(Object),
           'a',
           [CommonSliceType.b, expect.any(Object), 'bc'],
           'defghijklmnopqrstuvwxyz',
           [CommonSliceType.b, expect.any(Object), 'b'],
-        ]
+        ],
       ]);
       const block = kit1.peritext.blocks.root.children[0];
       const inlines = [...block.texts()];
