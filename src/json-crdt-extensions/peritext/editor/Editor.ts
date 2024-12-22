@@ -772,6 +772,7 @@ export class Editor<T = string> implements Printable {
       // else range.start.refBefore();
       if (anchor2 === Anchor.Before) range.end.refBefore();
       // else range.end.refAfter();
+      if (range.end.isAbs()) range.end.refAfter();
       txt.savedSlices.ins(range, behavior, type, data);
     }
   }
