@@ -90,6 +90,8 @@ const testSuite = (setup: () => Kit) => {
         [blockquoteHeader, 16, 16, CommonSliceType.blockquote],
       ]]);
     });
+
+    test.todo('copy only "saved" slices');
   });
 
   describe('.import()', () => {
@@ -116,6 +118,25 @@ const testSuite = (setup: () => Kit) => {
       const [, i2] = kit2.peritext.blocks.root.children[0].texts();
       expect(i2.text()).toBe('fghij');
       expect(!!i2.attr().bold).toBe(true);
+    });
+
+    test('can copy a paragraph split', () => {
+      const kit1 = setup();
+      const kit2 = setup();
+      kit1.editor.cursor.setAt(5);
+      kit1.editor.saved.insMarker(CommonSliceType.p);
+      kit1.editor.cursor.setAt(3, 5);
+      kit1.peritext.refresh();
+      const json = kit1.editor.export(kit1.editor.cursor);
+      kit2.editor.import(0, json);
+      kit2.peritext.refresh();
+      const json2 = kit2.peritext.blocks.toJson();
+      expect(json2).toEqual([
+        '',
+        null,
+        [CommonSliceType.p, null, 'de'],
+        [CommonSliceType.p, null, 'fgabcdefghijklmnopqrstuvwxyz'],
+      ]);
     });
   });
 };
