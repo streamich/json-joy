@@ -1,5 +1,7 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
+import {SliceBehavior, SliceHeaderShift} from '../../slice/constants';
 
 const testSuite = (setup: () => Kit) => {
   describe('.export()', () => {
@@ -8,6 +10,13 @@ const testSuite = (setup: () => Kit) => {
       editor.selectAll();
       const json = editor.export(editor.cursor);
       expect(json).toEqual(['abcdefghijklmnopqrstuvwxyz', 0, []]);
+    });
+
+    test('can export part of un-annotated document', () => {
+      const {editor} = setup();
+      editor.cursor.setAt(5, 5);
+      const json = editor.export(editor.cursor);
+      expect(json).toEqual(['fghij', 5, []]);
     });
 
     test('range which contains bold text', () => {
@@ -38,6 +47,48 @@ const testSuite = (setup: () => Kit) => {
       peritext.refresh();
       const json = editor.export(range);
       expect(json).toEqual(['abcde', 0, [[expect.any(Number), 3, 13, CommonSliceType.b]]]);
+    });
+
+    test('can export <p> marker', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(10);
+      editor.saved.insMarker(CommonSliceType.p);
+      const range = peritext.rangeAt(8, 5);
+      peritext.refresh();
+      const json = editor.export(range);
+      const header = (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (Anchor.Before << SliceHeaderShift.X1Anchor) +
+        (Anchor.Before << SliceHeaderShift.X2Anchor);
+      expect(json).toEqual(['ij\nkl', 8, [
+        [header, 10, 10, CommonSliceType.p]
+      ]]);
+    });
+
+    test('can export <p> marker, <blockquote> marker, and italic text', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(15);
+      editor.saved.insMarker(CommonSliceType.blockquote);
+      editor.cursor.setAt(10);
+      editor.saved.insMarker(CommonSliceType.p);
+      editor.cursor.setAt(12, 2);
+      editor.saved.insOverwrite(CommonSliceType.i);
+      const range = peritext.rangeAt(8, 12);
+      peritext.refresh();
+      const json = editor.export(range);
+      const pHeader = (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (Anchor.Before << SliceHeaderShift.X1Anchor) +
+        (Anchor.Before << SliceHeaderShift.X2Anchor);
+      const iHeader = (SliceBehavior.One << SliceHeaderShift.Behavior) +
+        (Anchor.Before << SliceHeaderShift.X1Anchor) +
+        (Anchor.After << SliceHeaderShift.X2Anchor);
+      const blockquoteHeader = (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (Anchor.Before << SliceHeaderShift.X1Anchor) +
+        (Anchor.Before << SliceHeaderShift.X2Anchor);
+      expect(json).toEqual(['ij\nklmno\npqr', 8, [
+        [pHeader, 10, 10, CommonSliceType.p],
+        [iHeader, 12, 14, CommonSliceType.i],
+        [blockquoteHeader, 16, 16, CommonSliceType.blockquote],
+      ]]);
     });
   });
 
