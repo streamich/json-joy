@@ -688,9 +688,12 @@ export class Editor<T = string> implements Printable {
     const offset = r.start.viewPos();
     const viewSlices: ViewSlice[] = [];
     const view: ViewRange = [text, offset, viewSlices];
-    const overlay = this.txt.overlay;
+    const txt = this.txt;
+    const overlay = txt.overlay;
     const slices = overlay.findOverlapping(r);
     for (const slice of slices) {
+      const isSavedSlice = slice.id.sid === txt.model.clock.sid;
+      if (!isSavedSlice) continue;
       const behavior = slice.behavior;
       switch (behavior) {
         case SliceBehavior.One:

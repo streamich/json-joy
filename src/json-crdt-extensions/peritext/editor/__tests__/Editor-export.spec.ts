@@ -29,6 +29,18 @@ const testSuite = (setup: () => Kit) => {
       expect(json).toEqual(['cdefg', 2, [[expect.any(Number), 3, 6, 'bold']]]);
     });
 
+    test('exports only "saved" slices', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(3, 3);
+      editor.local.insOverwrite('italic');
+      editor.saved.insOverwrite('bold');
+      editor.extra.insOverwrite('underline');
+      const range = peritext.rangeAt(2, 5);
+      peritext.refresh();
+      const json = editor.export(range);
+      expect(json).toEqual(['cdefg', 2, [[expect.any(Number), 3, 6, 'bold']]]);
+    });
+
     test('range which start in bold text', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(3, 10);
@@ -90,8 +102,6 @@ const testSuite = (setup: () => Kit) => {
         [blockquoteHeader, 16, 16, CommonSliceType.blockquote],
       ]]);
     });
-
-    test.todo('copy only "saved" slices');
   });
 
   describe('.import()', () => {
