@@ -1,3 +1,18 @@
+# [17.24.0](https://github.com/streamich/json-joy/compare/v17.23.0...v17.24.0) (2024-12-22)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly compute annotations endpoints in import() ([35f6df2](https://github.com/streamich/json-joy/commit/35f6df25a400735d276e268970daf93189906cac))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 at import do not include ABS start in annotation range ([b344e14](https://github.com/streamich/json-joy/commit/b344e1458fe22cbc056554282c10bb1518b41edb))
+* **json-crdt-extensions:** 🎸 export only saved slices ([86d051e](https://github.com/streamich/json-joy/commit/86d051e89bb8e9faeb315d66d2a4ecdd1edcd646))
+* **json-crdt-extensions:** 🎸 implement block split import ([3d21330](https://github.com/streamich/json-joy/commit/3d21330452f31cecd14d02e138c4bb229a0ee79a))
+* **json-crdt-extensions:** 🎸 make sure annotation end point is never ABS end ([6bd882e](https://github.com/streamich/json-joy/commit/6bd882ebd9363854cd549ebcbe98c995b0331963))
+
 # [17.23.0](https://github.com/streamich/json-joy/compare/v17.22.0...v17.23.0) (2024-12-21)
 
 
