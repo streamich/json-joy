@@ -768,10 +768,10 @@ export class Editor<T = string> implements Printable {
       const x1Dest = x1Capped + pos;
       const annotationLength = x2Capped - x1Capped;
       const range = txt.rangeAt(x1Dest, annotationLength);
-      if (anchor1 === Anchor.Before) range.start.refBefore();
-      else range.start.refAfter();
+      if (!!x1Dest && anchor1 === Anchor.After) range.start.refAfter();
+      // else range.start.refBefore();
       if (anchor2 === Anchor.Before) range.end.refBefore();
-      else range.end.refAfter();
+      // else range.end.refAfter();
       txt.savedSlices.ins(range, behavior, type, data);
     }
   }
