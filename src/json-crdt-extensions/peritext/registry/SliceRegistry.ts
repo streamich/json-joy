@@ -1,3 +1,5 @@
+import {PeritextMlElement} from '../block/types';
+import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './types';
 
 export class SliceRegistry {
@@ -5,7 +7,7 @@ export class SliceRegistry {
   private toHtmlMap: Map<string | number, ToHtmlConverter> = new Map();
   private fromHtmlMap: Map<string, FromHtmlConverter[]> = new Map();
 
-  public add(def: SliceTypeDefinition): this {
+  public add(def: SliceTypeDefinition<PeritextMlElement<any, any, any>>): this {
     const {type, toHtml, fromHtml} = def;
     this.map.set(type, def);
     if (toHtml) this.toHtmlMap.set(type, toHtml);
@@ -19,5 +21,18 @@ export class SliceRegistry {
     return this;
   }
 
-  public toHtml(type: string | number, json: unknown): unknown {}
+  public toHtml(el: PeritextMlElement): JsonMlNode | undefined {
+    const converter = this.toHtmlMap.get(el[0]);
+    return converter ? converter(el) : undefined;
+  }
+
+  public fromHtml(el: JsonMlNode): PeritextMlElement | undefined {
+    const tag = el[0] + '';
+    const converters = this.fromHtmlMap.get(tag);
+    for (const converter of converters ?? []) {
+      const result = converter(el);
+      if (result) return result;
+    }
+    return;
+  }
 }
