@@ -29,3 +29,12 @@ registry.add({
     }
   },
 });
+
+registry.add({
+  type: CommonSliceType.i,
+  schema: s.con(undefined),
+  fromHtml: {
+    em: () => [CommonSliceType.i, null],
+    i: () => [CommonSliceType.i, null],
+  },
+});

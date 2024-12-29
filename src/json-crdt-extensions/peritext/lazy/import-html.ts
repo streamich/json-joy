@@ -20,10 +20,16 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
   } else {
     node[0] = SliceTypeName[tag as any] ?? tag;
     const attr = jsonml[1] || {};
-    const data = attr['data-attr'] !== void 0 ? JSON.parse(attr['data-attr']) : null;
+    let data = null;
+    if (attr['data-attr'] !== void 0) {
+      try {
+        data = JSON.parse(attr['data-attr']);
+      } catch {}
+    }
     const inline = attr['data-inline'] === 'true';
     if (data || inline) node[1] = {data, inline};
   }
+  if (typeof node[0] === 'number' && node[0] < 0 && node[1]) node[1].inline = true;
   return node;
 };
 
