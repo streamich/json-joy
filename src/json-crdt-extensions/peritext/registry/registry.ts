@@ -1,6 +1,6 @@
 import {s} from "../../../json-crdt-patch";
 import {JsonNodeView} from "../../../json-crdt/nodes";
-import {PeritextMlElement} from "../block/types";
+import {SchemaToJsonNode} from "../../../json-crdt/schema/types";
 import {CommonSliceType} from "../slice";
 import {SliceRegistry} from "./SliceRegistry";
 
@@ -9,13 +9,23 @@ import {SliceRegistry} from "./SliceRegistry";
  */
 export const registry = new SliceRegistry();
 
+const aSchema = s.obj({
+  href: s.str<string>(''),
+  title: s.str<string>(''),
+});
+
 registry.add({
   type: CommonSliceType.a,
-  schema: s.obj({
-    href: s.str(''),
-    title: s.str(''),
-  }),
-  toHtml: (el) => {
-    throw new Error('Not implemented');
+  schema: aSchema,
+  // toHtml: (el) => ['a', {...el[1]?.data}],
+  fromHtml: {
+    a: (jsonml) => {
+      const attr = jsonml[1] || {};
+      const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
+        href: attr.href ?? '',
+        title: attr.title ?? '',
+      };
+      return [CommonSliceType.a, data];
+    }
   },
 });

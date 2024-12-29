@@ -152,7 +152,7 @@ export namespace nodes {
    * s.obj({
    *   href: s.str('https://example.com'),
    * })
-   *  .optional<nodes.obj({
+   *   .optional<nodes.obj({
    *     title: nodes.str,
    *   })>()
    * ```
