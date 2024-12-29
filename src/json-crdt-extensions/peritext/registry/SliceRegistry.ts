@@ -26,7 +26,7 @@ export class SliceRegistry {
     return converter ? converter(el) : undefined;
   }
 
-  public fromHtml(el: JsonMlElement): ReturnType<FromHtmlConverter<any, any>> | undefined {
+  public fromHtml(el: JsonMlElement): PeritextMlElement | undefined {
     const tag = el[0] + '';
     const converters = this.fromHtmlMap.get(tag);
     if (converters) {

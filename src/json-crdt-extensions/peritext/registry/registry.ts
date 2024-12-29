@@ -25,7 +25,7 @@ registry.add({
         href: attr.href ?? '',
         title: attr.title ?? '',
       };
-      return [CommonSliceType.a, data];
+      return [CommonSliceType.a, {data, inline: true}];
     }
   },
 });

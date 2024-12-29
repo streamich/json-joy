@@ -9,12 +9,12 @@ export interface SliceTypeDefinition<Type extends number | string = number | str
   schema: Schema;
   toHtml?: ToHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Inline>>;
   fromHtml?: {
-    [htmlTag: string]: FromHtmlConverter<Type, JsonNodeView<SchemaToJsonNode<Schema>>>;
+    [htmlTag: string]: FromHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Inline>>;
   };
 }
 
 export type ToHtmlConverter<El extends PeritextMlElement<any, any, any> = PeritextMlElement<string | number, unknown, boolean>> =
   (element: El) => [tag: string, attr: Record<string, string> | null];
 
-export type FromHtmlConverter<Type extends number | string = string | number, Data = unknown> =
-  (jsonml: JsonMlElement) => [type: Type, data: Data];
+export type FromHtmlConverter<El extends PeritextMlElement<any, any, any> = PeritextMlElement<string | number, unknown, boolean>> =
+  (jsonml: JsonMlElement) => El;
