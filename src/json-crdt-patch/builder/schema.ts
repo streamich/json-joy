@@ -132,6 +132,30 @@ export namespace nodes {
    *   age: s.con(0),
    * });
    * ```
+   * 
+   * Specify optional keys as the second argument:
+   * 
+   * ```ts
+   * s.obj(
+   *   {
+   *     href: s.str('https://example.com'),
+   *   },
+   *   {
+   *     title: s.str(''),
+   *   },
+   * )
+   * ```
+   * 
+   * Or, specify only the type, using the `optional` method:
+   * 
+   * ```ts
+   * s.obj({
+   *   href: s.str('https://example.com'),
+   * })
+   *  .optional<nodes.obj({
+   *     title: nodes.str,
+   *   })>()
+   * ```
    */
   export class obj<
     T extends Record<string, NodeBuilder>,

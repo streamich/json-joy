@@ -1,4 +1,5 @@
 import {PeritextMlElement} from '../block/types';
+import {NodeBuilder} from '../../../json-crdt-patch';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './types';
 
@@ -7,7 +8,7 @@ export class SliceRegistry {
   private toHtmlMap: Map<string | number, ToHtmlConverter> = new Map();
   private fromHtmlMap: Map<string, FromHtmlConverter[]> = new Map();
 
-  public add(def: SliceTypeDefinition<PeritextMlElement<any, any, any>>): this {
+  public add<Type extends number | string, Schema extends NodeBuilder>(def: SliceTypeDefinition<Type, Schema>): void {
     const {type, toHtml, fromHtml} = def;
     this.map.set(type, def);
     if (toHtml) this.toHtmlMap.set(type, toHtml);
@@ -18,7 +19,6 @@ export class SliceRegistry {
         converters.push(converter);
         this.fromHtmlMap.set(htmlTag, converters);
       }
-    return this;
   }
 
   public toHtml(el: PeritextMlElement): JsonMlNode | undefined {
