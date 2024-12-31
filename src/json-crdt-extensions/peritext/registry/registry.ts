@@ -2,6 +2,7 @@ import {s} from "../../../json-crdt-patch";
 import {JsonNodeView} from "../../../json-crdt/nodes";
 import {SchemaToJsonNode} from "../../../json-crdt/schema/types";
 import {CommonSliceType} from "../slice";
+import {SliceBehavior} from '../slice/constants';
 import {SliceRegistry} from "./SliceRegistry";
 
 /**
@@ -32,6 +33,7 @@ registry.add({
 
 registry.add({
   type: CommonSliceType.i,
+  behavior: SliceBehavior.One,
   schema: s.con(undefined),
   fromHtml: {
     em: () => [CommonSliceType.i, null],

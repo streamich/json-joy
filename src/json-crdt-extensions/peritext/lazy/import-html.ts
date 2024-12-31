@@ -2,10 +2,66 @@ import {html as _html} from 'very-small-parser/lib/html';
 import {fromHast as _fromHast} from 'very-small-parser/lib/html/json-ml/fromHast';
 import {SliceTypeName} from '../slice';
 import {registry as defaultRegistry} from '../registry/registry';
+import {SliceBehavior, SliceHeaderShift} from '../slice/constants';
+import {Anchor} from '../rga/constants';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
 import type {SliceRegistry} from '../registry/SliceRegistry';
+import type {ViewRange, ViewSlice} from '../editor/types';
+
+/**
+ * Flattens a {@link PeritextMlNode} tree structure into a {@link ViewRange}
+ * flat string with annotation ranges.
+ */
+class ViewRangeBuilder {
+  private text = '';
+  private slices: ViewSlice[] = [];
+
+  constructor (private registry: SliceRegistry) {}
+
+  private build0(node: PeritextMlNode): void {
+    if (typeof node === 'string') {
+      this.text += node;
+      return;
+    }
+    const [type, attr] = node;
+    const start = this.text.length;
+    const length = node.length;
+    const inline = !!attr?.inline;
+    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode);
+    if (!!type || type === 0) {
+      let end: number = 0, header: number = 0;
+      if (!inline) {
+        end = start;
+        header =
+          (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+          (Anchor.Before << SliceHeaderShift.X1Anchor) +
+          (Anchor.Before << SliceHeaderShift.X2Anchor);
+      } else {
+        end = this.text.length;
+        const behavior: SliceBehavior = attr?.behavior ?? SliceBehavior.Many;
+        header =
+          (behavior << SliceHeaderShift.Behavior) +
+          (Anchor.Before << SliceHeaderShift.X1Anchor) +
+          (Anchor.After << SliceHeaderShift.X2Anchor);
+      }
+      const slice: ViewSlice = [header, start, end, type];
+      const data = attr?.data;
+      if (data) slice.push(data);
+      this.slices.push(slice);
+    }
+  }
+
+  public build(node: PeritextMlNode): ViewRange {
+    this.build0(node);
+    const view: ViewRange = [this.text, 0, this.slices];
+    return view;
+  }
+}
+
+export const toViewRange = (node: PeritextMlNode, registry: SliceRegistry = defaultRegistry): ViewRange =>
+  new ViewRangeBuilder(registry).build(node);
 
 export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;
@@ -29,9 +85,13 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     const inline = attr['data-inline'] === 'true';
     if (data || inline) node[1] = {data, inline};
   }
-  if (typeof node[0] === 'number' && node[0] < 0 && node[1]) node[1].inline = true;
+  if (typeof node[0] === 'number' && node[0] < 0) {
+    const attr = node[1] || {};
+    attr.inline = true;
+    node[1] = attr;
+  }
   return node;
-};
+}
 
 export const fromHast = (hast: THtmlToken, registry?: SliceRegistry): PeritextMlNode => {
   const jsonml = _fromHast(hast);

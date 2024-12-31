@@ -3,10 +3,13 @@ import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {PeritextMlElement} from '../block/types';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
+import type {SliceBehavior} from '../slice/constants';
 
 export interface SliceTypeDefinition<Type extends number | string = number | string, Schema extends NodeBuilder = NodeBuilder, Inline extends boolean = true> {
   type: Type;
   schema: Schema;
+  behavior?: SliceBehavior;
+  inline?: boolean;
   toHtml?: ToHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Inline>>;
   fromHtml?: {
     [htmlTag: string]: FromHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Inline>>;

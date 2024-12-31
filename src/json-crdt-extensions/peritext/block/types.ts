@@ -1,3 +1,5 @@
+import {SliceBehavior} from '../slice/constants';
+
 export type PeritextMlNode = string | PeritextMlElement;
 
 export type PeritextMlElement<Tag extends string | number = string | number, Data = unknown, Inline = boolean> = [
@@ -9,4 +11,5 @@ export type PeritextMlElement<Tag extends string | number = string | number, Dat
 export interface PeritextMlAttributes<Data = unknown, Inline = boolean> {
   data?: Data;
   inline?: Inline;
+  behavior?: SliceBehavior;
 }
