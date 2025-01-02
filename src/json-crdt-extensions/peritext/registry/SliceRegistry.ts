@@ -1,8 +1,8 @@
 import {PeritextMlElement} from '../block/types';
 import {NodeBuilder} from '../../../json-crdt-patch';
+import {SliceBehavior} from '../slice/constants';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
 import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './types';
-import {SliceBehavior} from '../slice/constants';
 
 export class SliceRegistry {
   private map: Map<string | number, SliceTypeDefinition<any, any, any>> = new Map();
@@ -22,6 +22,16 @@ export class SliceRegistry {
         fromHtmlMap.set(htmlTag, converters);
       }
     }
+  }
+
+  public def<Type extends number | string, Schema extends NodeBuilder, Inline extends boolean = true>(
+    type: Type,
+    schema: Schema,
+    behavior: SliceBehavior,
+    inline: boolean,
+    rest: Omit<SliceTypeDefinition<Type, Schema, Inline>, 'type' | 'schema' | 'behavior' | 'inline'> = {},
+  ): void {
+    this.add({type, schema, behavior, inline, ...rest});
   }
 
   public toHtml(el: PeritextMlElement): ReturnType<ToHtmlConverter<any>> | undefined {
