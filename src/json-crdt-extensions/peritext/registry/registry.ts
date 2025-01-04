@@ -26,8 +26,14 @@ registry.def(CommonSliceType.b, undefSchema, SliceBehavior.One, true, {
   },
 });
 
+registry.def(CommonSliceType.s, undefSchema, SliceBehavior.One, true, {
+  fromHtml: {
+    s: () => [CommonSliceType.s, null],
+    strike: () => [CommonSliceType.s, null],
+  },
+});
+
 registry.def(CommonSliceType.u, undefSchema, SliceBehavior.One, true);
-registry.def(CommonSliceType.s, undefSchema, SliceBehavior.One, true);
 registry.def(CommonSliceType.code, undefSchema, SliceBehavior.One, true);
 registry.def(CommonSliceType.mark, undefSchema, SliceBehavior.One, true);
 registry.def(CommonSliceType.kbd, undefSchema, SliceBehavior.One, true);

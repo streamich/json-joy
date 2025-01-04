@@ -6,9 +6,7 @@ import type {PeritextMlNode} from '../block/types';
 
 export const toMdast = (json: PeritextMlNode): IRoot => {
   const hast = toHast(json);
-  // console.log(hast);
   const mdast = _toMdast(hast) as IRoot;
-  // console.log(mdast);
   return mdast;
 };
 
