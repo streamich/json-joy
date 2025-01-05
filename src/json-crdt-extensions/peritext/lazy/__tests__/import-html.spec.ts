@@ -54,7 +54,27 @@ describe('.toViewRange()', () => {
     const html = '<p>Hello world</p>';
     const peritextMl = fromHtml(html);
     const view = toViewRange(peritextMl);
-    expect(view).toEqual(['Hello world', 0, [[0, 0, 0, 0]]]);
+    expect(view).toEqual(['\nHello world', 0, [[0, 0, 0, 0]]]);
+  });
+
+  test('two consecutive paragraphs', () => {
+    const html = '<p>Hello world</p><p>Goodbye world</p>';
+    const peritextMl = fromHtml(html);
+    const view = toViewRange(peritextMl);
+    expect(view).toEqual(['\nHello world\nGoodbye world', 0, [
+      [0, 0, 0, 0],
+      [0, 12, 12, 0],
+    ]]);
+  });
+
+  test('two paragraphs with whitespace gap', () => {
+    const html = '  <p>Hello world</p>\n  <p>Goodbye world</p>';
+    const peritextMl = fromHtml(html);
+    const view = toViewRange(peritextMl);
+    expect(view).toEqual(['\nHello world\nGoodbye world', 0, [
+      [0, 0, 0, 0],
+      [0, 12, 12, 0],
+    ]]);
   });
 
   test('single inline annotation', () => {

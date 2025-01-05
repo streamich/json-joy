@@ -20,8 +20,10 @@ class ViewRangeBuilder {
 
   constructor (private registry: SliceRegistry) {}
 
-  private build0(node: PeritextMlNode): void {
+  private build0(node: PeritextMlNode, depth = 0): void {
+    const skipWhitespace = depth < 2;
     if (typeof node === 'string') {
+      if (skipWhitespace && !node.trim()) return;
       this.text += node;
       return;
     }
@@ -29,27 +31,36 @@ class ViewRangeBuilder {
     const start = this.text.length;
     const length = node.length;
     const inline = !!attr?.inline;
-    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode);
     if (!!type || type === 0) {
       let end: number = 0, header: number = 0;
       if (!inline) {
+        this.text += '\n';
         end = start;
         header =
           (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
           (Anchor.Before << SliceHeaderShift.X1Anchor) +
           (Anchor.Before << SliceHeaderShift.X2Anchor);
-      } else {
+        const slice: ViewSlice = [header, start, end, type];
+        const data = attr?.data;
+        if (data) slice.push(data);
+        this.slices.push(slice);
+      }
+    }
+    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, depth + 1);
+    if (!!type || type === 0) {
+      let end: number = 0, header: number = 0;
+      if (inline) {
         end = this.text.length;
         const behavior: SliceBehavior = attr?.behavior ?? SliceBehavior.Many;
         header =
           (behavior << SliceHeaderShift.Behavior) +
           (Anchor.Before << SliceHeaderShift.X1Anchor) +
           (Anchor.After << SliceHeaderShift.X2Anchor);
+          const slice: ViewSlice = [header, start, end, type];
+          const data = attr?.data;
+          if (data) slice.push(data);
+          this.slices.push(slice);
       }
-      const slice: ViewSlice = [header, start, end, type];
-      const data = attr?.data;
-      if (data) slice.push(data);
-      this.slices.push(slice);
     }
   }
 
