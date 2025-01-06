@@ -232,8 +232,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public markers(): UndefEndIter<MarkerOverlayPoint<T>> {
-    return new UndefEndIter(this.markers0(undefined));
+  public markers(after?: undefined | MarkerOverlayPoint<T>): UndefEndIter<MarkerOverlayPoint<T>> {
+    return new UndefEndIter(this.markers0(after));
   }
 
   /**
@@ -245,24 +245,54 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns All marker points in the overlay, starting from the given marker
    *     point.
    */
-  public markers1(point: Point<T>): UndefIterator<MarkerOverlayPoint<T>> {
+  public markersFrom0(point: Point<T>): UndefIterator<MarkerOverlayPoint<T>> {
     if (point.isAbsStart()) return this.markers0(undefined);
     let after = this.getOrNextLowerMarker(point);
     if (after && after.cmp(point) === 0) after = prev2(after);
     return this.markers0(after);
   }
 
+  /**
+   * Returns a pair of overlay marker points for each pair of adjacent marker
+   * points in the overlay, starting from a given point (which may not be a
+   * marker). The very first point in the first pair might be `undefined`, if
+   * the given point is not a marker. Similarly, the very last point in the last
+   * pair might be `undefined`, if the iteration end point is not a marker.
+   *
+   * @param start Start point of the iteration, inclusive.
+   * @param end End point of the iteration. If not provided, the iteration
+   *     continues until the end of the overlay.
+   * @returns Iterator that returns pairs of overlay points.
+   */
   public markerPairs0(start: Point<T>, end?: Point<T>): UndefIterator<MarkerOverlayPair<T>> {
-    const i = this.markers1(start);
-    let one: MarkerOverlayPoint<T> | undefined = i();
-    let two: MarkerOverlayPoint<T> | undefined = i();
+    const i = this.markersFrom0(start);
+    let closed = false;
+    let p1: MarkerOverlayPoint<T> | undefined;
+    let p2: MarkerOverlayPoint<T> | undefined = i();
+    if (p2) {
+      if (p2.isAbsStart() || !p2.cmp(start)) {
+        p1 = p2;
+        p2 = i();
+      }
+      if (end && p2) {
+        const cmp = end.cmpSpatial(p2);
+        if (cmp <= 0) return () => (closed ? void 0 : ((closed = true), [p1, cmp ? void 0 : p2]));
+      }
+    }
     return () => {
-      if (!one) return;
-      if (end && end.cmpSpatial(one) <= 0) return (one = void 0);
-      const ret: MarkerOverlayPair<T> = [one, two];
-      one = two;
-      two = i();
-      return ret;
+      if (closed) return;
+      if (!p2 || p2.isAbsEnd()) return (closed = true), [p1, p2];
+      else if (p2 && end) {
+        const cmp = end.cmpSpatial(p2);
+        if (cmp <= 0) {
+          closed = true;
+          return [p1, cmp ? void 0 : p2];
+        }
+      }
+      const result: MarkerOverlayPair<T> = [p1, p2];
+      p1 = p2;
+      p2 = i();
+      return result;
     };
   }
 

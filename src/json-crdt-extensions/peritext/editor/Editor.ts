@@ -688,9 +688,12 @@ export class Editor<T = string> implements Printable {
     const offset = r.start.viewPos();
     const viewSlices: ViewSlice[] = [];
     const view: ViewRange = [text, offset, viewSlices];
-    const overlay = this.txt.overlay;
+    const txt = this.txt;
+    const overlay = txt.overlay;
     const slices = overlay.findOverlapping(r);
     for (const slice of slices) {
+      const isSavedSlice = slice.id.sid === txt.model.clock.sid;
+      if (!isSavedSlice) continue;
       const behavior = slice.behavior;
       switch (behavior) {
         case SliceBehavior.One:
@@ -715,19 +718,60 @@ export class Editor<T = string> implements Printable {
   public import(pos: number, view: ViewRange): void {
     const [text, offset, slices] = view;
     const txt = this.txt;
-    txt.insAt(pos, text);
     const length = slices.length;
+    const splits: ViewSlice[] = [];
+    const annotations: ViewSlice[] = [];
+    const texts: string[] = [];
+    let start = 0;
     for (let i = 0; i < length; i++) {
       const slice = slices[i];
+      const [header, x1] = slice;
+      const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
+      if (behavior === SliceBehavior.Marker) {
+        const end = x1 - offset;
+        texts.push(text.slice(start, end));
+        start = end + 1;
+        splits.push(slice);
+      } else annotations.push(slice);
+    }
+    const lastText = text.slice(start);
+    const splitLength = splits.length;
+    start = pos;
+    for (let i = 0; i < splitLength; i++) {
+      const str = texts[i];
+      const split = splits[i];
+      if (str) {
+        txt.insAt(start, str);
+        start += str.length;
+      }
+      if (split) {
+        const [, , , type, data] = split;
+        const after = txt.pointAt(start);
+        after.refAfter();
+        txt.savedSlices.insMarkerAfter(after.id, type, data);
+        start += 1;
+      }
+    }
+    if (lastText) txt.insAt(start, lastText);
+    const annotationsLength = annotations.length;
+    for (let i = 0; i < annotationsLength; i++) {
+      const slice = annotations[i];
       const [header, x1, x2, type, data] = slice;
       const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
       const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
       const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
-      const range = txt.rangeAt(Math.max(0, x1 - offset + pos), x2 - x1);
-      if (anchor1 === Anchor.Before) range.start.refBefore();
-      else range.start.refAfter();
+      const x1Src = x1 - offset;
+      const x2Src = x2 - offset;
+      const x1Capped = Math.max(0, x1Src);
+      const x2Capped = Math.min(text.length, x2Src);
+      const x1Dest = x1Capped + pos;
+      const annotationLength = x2Capped - x1Capped;
+      const range = txt.rangeAt(x1Dest, annotationLength);
+      if (!!x1Dest && anchor1 === Anchor.After) range.start.refAfter();
+      // else range.start.refBefore();
       if (anchor2 === Anchor.Before) range.end.refBefore();
-      else range.end.refAfter();
+      // else range.end.refAfter();
+      if (range.end.isAbs()) range.end.refAfter();
       txt.savedSlices.ins(range, behavior, type, data);
     }
   }

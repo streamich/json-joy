@@ -47,8 +47,6 @@ const runInlineSlicesTests = (
       editor.saved.insMarker(['p'], {foo: 'bar'});
       expect(view()).toMatchInlineSnapshot(`
 "<>
-  <0>
-    "" {  }
   <p> { foo = "bar" }
     "abcdefghijklmnopqrstuvwxyz" {  }
 "

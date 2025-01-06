@@ -1,6 +1,6 @@
 {
   "name": "json-joy",
-  "version": "17.22.0",
+  "version": "17.25.0",
   "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
@@ -137,7 +137,8 @@
     "nano-css": "^5.6.2",
     "sonic-forest": "^1.0.3",
     "thingies": "^2.1.1",
-    "tree-dump": "^1.0.2"
+    "tree-dump": "^1.0.2",
+    "very-small-parser": "^1.8.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

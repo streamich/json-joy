@@ -1,10 +1,15 @@
+import type {SliceBehavior} from '../slice/constants';
+
 export type PeritextMlNode = string | PeritextMlElement;
-export type PeritextMlElement = [
-  tag: string | number,
-  attrs: null | PeritextMlAttributes,
+
+export type PeritextMlElement<Tag extends string | number = string | number, Data = unknown, Inline = boolean> = [
+  tag: Tag,
+  attrs: null | PeritextMlAttributes<Data, Inline>,
   ...children: PeritextMlNode[],
 ];
-export interface PeritextMlAttributes {
-  inline?: boolean;
-  data?: unknown;
+
+export interface PeritextMlAttributes<Data = unknown, Inline = boolean> {
+  data?: Data;
+  inline?: Inline;
+  behavior?: SliceBehavior;
 }

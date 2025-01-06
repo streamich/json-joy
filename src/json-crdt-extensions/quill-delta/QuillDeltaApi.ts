@@ -1,11 +1,11 @@
 import {QuillConst} from './constants';
-import type {PathStep} from '@jsonjoy.com/json-pointer';
-import type {QuillDeltaNode} from './QuillDeltaNode';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {konst} from '../../json-crdt-patch/builder/Konst';
 import {SliceBehavior} from '../peritext/slice/constants';
 import {PersistedSlice} from '../peritext/slice/PersistedSlice';
 import {diffAttributes, getAttributes, removeErasures} from './util';
+import type {PathStep} from '@jsonjoy.com/json-pointer';
+import type {QuillDeltaNode} from './QuillDeltaNode';
 import type {ArrApi, ArrNode, ExtApi, StrApi} from '../../json-crdt';
 import type {
   QuillDeltaAttributes,

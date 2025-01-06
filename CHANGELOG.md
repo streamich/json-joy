@@ -1,3 +1,52 @@
+# [17.25.0](https://github.com/streamich/json-joy/compare/v17.24.0...v17.25.0) (2025-01-06)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 improve how block elements are imported ([9954c69](https://github.com/streamich/json-joy/commit/9954c69f72a7b14588d476078f94cad54116be39))
+* **json-crdt-extensions:** 🐛 skip first empty virtual block ([b257f2e](https://github.com/streamich/json-joy/commit/b257f2e7ef02b365703cd2042d4e2afc4069f87e))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 harden HTML import ([594ed9a](https://github.com/streamich/json-joy/commit/594ed9ada6c56c198f2e7326f8f7ec991d50de45))
+* **json-crdt-extensions:** 🎸 import Markdown import ([f117025](https://github.com/streamich/json-joy/commit/f117025756c80ae18095fab412e150843b5f14f0))
+* **json-crdt-extensions:** 🎸 improve HTML import ([b142e28](https://github.com/streamich/json-joy/commit/b142e28c2e8e061114c6b8f9e8b0965366d12e62))
+* **json-crdt-extensions:** 🎸 improve HTML import ([a05b09b](https://github.com/streamich/json-joy/commit/a05b09bb11892bad9ac5e2ee9c070f310a976c13))
+* **json-crdt-extensions:** 🎸 improve slice registry typing ([acfe769](https://github.com/streamich/json-joy/commit/acfe769bba6da4b677ecc70bff65012ccf8d3e4a))
+* **json-crdt-extensions:** 🎸 improve slice type def types ([7248c8c](https://github.com/streamich/json-joy/commit/7248c8c1301894bd62b901f5a19c1ba10fccd7e7))
+* **json-crdt-extensions:** 🎸 populate registry with inline slice types ([5196bd6](https://github.com/streamich/json-joy/commit/5196bd636c648a87239ac705241644ee3a81f7df))
+* **json-crdt-extensions:** 🎸 progress on type registry implementation ([d239803](https://github.com/streamich/json-joy/commit/d239803aee500a2f801b9a5cf830f74829b52b77))
+* **json-crdt-extensions:** 🎸 use registry in HTML import ([4888ee5](https://github.com/streamich/json-joy/commit/4888ee567ba5b1449df03faeaa2b07324f498639))
+
+# [17.24.0](https://github.com/streamich/json-joy/compare/v17.23.0...v17.24.0) (2024-12-22)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly compute annotations endpoints in import() ([35f6df2](https://github.com/streamich/json-joy/commit/35f6df25a400735d276e268970daf93189906cac))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 at import do not include ABS start in annotation range ([b344e14](https://github.com/streamich/json-joy/commit/b344e1458fe22cbc056554282c10bb1518b41edb))
+* **json-crdt-extensions:** 🎸 export only saved slices ([86d051e](https://github.com/streamich/json-joy/commit/86d051e89bb8e9faeb315d66d2a4ecdd1edcd646))
+* **json-crdt-extensions:** 🎸 implement block split import ([3d21330](https://github.com/streamich/json-joy/commit/3d21330452f31cecd14d02e138c4bb229a0ee79a))
+* **json-crdt-extensions:** 🎸 make sure annotation end point is never ABS end ([6bd882e](https://github.com/streamich/json-joy/commit/6bd882ebd9363854cd549ebcbe98c995b0331963))
+
+# [17.23.0](https://github.com/streamich/json-joy/compare/v17.22.0...v17.23.0) (2024-12-21)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 improve framment block and inline element trancation ([716589c](https://github.com/streamich/json-joy/commit/716589c46a9c13bde0f2df9762a41ecdd8daa775))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 implement export to HTML ([ae57070](https://github.com/streamich/json-joy/commit/ae57070b2dbfc9cdcedaf52404ad805524499522))
+* **json-crdt-extensions:** 🎸 improve iteration over markers in the Overlay class ([2eaa85d](https://github.com/streamich/json-joy/commit/2eaa85d515ebe6543bcb33dd6273a45c45fa7271))
+
 # [17.22.0](https://github.com/streamich/json-joy/compare/v17.21.0...v17.22.0) (2024-12-01)
 
 

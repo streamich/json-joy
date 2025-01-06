@@ -52,33 +52,6 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
     return length ? path[length - 1] : '';
   }
 
-  // public htmlTag(): string {
-  //   const tag = this.tag();
-  //   switch (typeof tag) {
-  //     case 'string': return tag.toLowerCase();
-  //     case 'number': return SliceTypeName[tag] || 'div';
-  //     default: return 'div';
-  //   }
-  // }
-
-  // protected jsonMlNode(): JsonMlElement {
-  //   const props: Record<string, string> = {};
-  //   const node: JsonMlElement = ['div', props];
-  //   const tag = this.tag();
-  //   switch (typeof tag) {
-  //     case 'string':
-  //       node[0] = tag;
-  //       break;
-  //     case 'number':
-  //       const tag0 = SliceTypeName[tag];
-  //       if (tag0) node[0] = tag0; else props['data-tag'] = tag + '';
-  //       break;
-  //   }
-  //   const attr = this.attr();
-  //   if (attr !== undefined) props['data-attr'] = JSON.stringify(attr);
-  //   return node;
-  // }
-
   public attr(): Attr | undefined {
     return this.marker?.data() as Attr | undefined;
   }
@@ -112,59 +85,70 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
     return new UndefEndIter(this.points0(withMarker));
   }
 
-  public tuples0(): UndefIterator<OverlayTuple<T>> {
+  protected tuples0(): UndefIterator<OverlayTuple<T>> {
     const overlay = this.txt.overlay;
-    const iterator = overlay.tuples0(this.marker);
+    const marker = this.marker;
+    const iterator = overlay.tuples0(marker);
     let closed = false;
     return () => {
       if (closed) return;
-      const pair = iterator();
-      if (!pair) return;
+      let pair = iterator();
+      while (!marker && pair && pair[1] && pair[1].cmpSpatial(this.start) < 0) pair = iterator();
+      if (!pair) return (closed = true), void 0;
       if (!pair[1] || pair[1] instanceof MarkerOverlayPoint) closed = true;
       return pair;
     };
   }
 
-  public tuples(): IterableIterator<OverlayTuple<T>> {
-    return new UndefEndIter(this.tuples0());
-  }
-
+  /**
+   * @todo Consider moving inline-related methods to {@link LeafBlock}.
+   */
   public texts0(): UndefIterator<Inline> {
     const txt = this.txt;
     const iterator = this.tuples0();
-    const blockStart = this.start;
-    const blockEnd = this.end;
+    const start = this.start;
+    const end = this.end;
+    const startIsMarker = txt.overlay.isMarker(start.id);
+    const endIsMarker = txt.overlay.isMarker(end.id);
     let isFirst = true;
     let next = iterator();
+    let closed = false;
     return () => {
+      if (closed) return;
       const pair = next;
       next = iterator();
       if (!pair) return;
-      const [p1, p2] = pair;
-      let start: Point = p1;
-      let end: Point = p2;
+      const [overlayPoint1, overlayPoint2] = pair;
+      let point1: Point = overlayPoint1;
+      let point2: Point = overlayPoint2;
       if (isFirst) {
         isFirst = false;
-        if (blockStart.cmpSpatial(p1) > 0) start = blockStart;
+        if (start.cmpSpatial(overlayPoint1) > 0) point1 = start;
+        if (startIsMarker) {
+          point1 = point1.clone();
+          point1.step(1);
+        }
       }
-      const isLast = !next;
-      if (isLast) if (blockEnd.cmpSpatial(p2) < 0) end = blockEnd;
-      return new Inline(txt, p1, p2, start, end);
+      if (!endIsMarker && end.cmpSpatial(overlayPoint2) < 0) {
+        closed = true;
+        point2 = end;
+      }
+      return new Inline(txt, overlayPoint1, overlayPoint2, point1, point2);
     };
   }
 
+  /**
+   * @todo Consider moving inline-related methods to {@link LeafBlock}.
+   */
   public texts(): IterableIterator<Inline> {
     return new UndefEndIter(this.texts0());
   }
 
   public text(): string {
     let str = '';
-    const iterator = this.texts0();
-    let inline = iterator();
-    while (inline) {
-      str += inline.text();
-      inline = iterator();
-    }
+    const children = this.children;
+    const length = children.length;
+    for (let i = 0; i < length; i++) str += children[i].text();
     return str;
   }
 
@@ -204,6 +188,7 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   public toStringName(): string {
     return 'Block';
   }
+
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
     const tag = this.path.map((step) => formatType(step)).join('.');
