@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Provider, GlobalCss} from 'nano-theme';
+import {NiceUiProvider} from 'nice-ui/lib/context';
 import {ModelWithExt, ext} from '../../../json-crdt-extensions';
 import {PeritextView} from '../../react';
 import {CursorPlugin} from '../../plugins/cursor';
@@ -26,11 +27,11 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <Provider theme={'light'}>
+    <NiceUiProvider>
       <GlobalCss />
       <div style={{maxWidth: '690px', fontSize: '21px', lineHeight: '1.7em', margin: '32px auto'}}>
         <PeritextView peritext={peritext} plugins={plugins} />
       </div>
-    </Provider>
+    </NiceUiProvider>
   );
 };
