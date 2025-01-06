@@ -5,7 +5,11 @@ import type {PeritextMlElement} from '../block/types';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
 import type {SliceBehavior} from '../slice/constants';
 
-export interface SliceTypeDefinition<Type extends number | string = number | string, Schema extends NodeBuilder = NodeBuilder, Inline extends boolean = true> {
+export interface SliceTypeDefinition<
+  Type extends number | string = number | string,
+  Schema extends NodeBuilder = NodeBuilder,
+  Inline extends boolean = true,
+> {
   type: Type;
   schema: Schema;
   behavior?: SliceBehavior;
@@ -16,8 +20,10 @@ export interface SliceTypeDefinition<Type extends number | string = number | str
   };
 }
 
-export type ToHtmlConverter<El extends PeritextMlElement<any, any, any> = PeritextMlElement<string | number, unknown, boolean>> =
-  (element: El) => [tag: string, attr: Record<string, string> | null];
+export type ToHtmlConverter<
+  El extends PeritextMlElement<any, any, any> = PeritextMlElement<string | number, unknown, boolean>,
+> = (element: El) => [tag: string, attr: Record<string, string> | null];
 
-export type FromHtmlConverter<El extends PeritextMlElement<any, any, any> = PeritextMlElement<string | number, unknown, boolean>> =
-  (jsonml: JsonMlElement) => El;
+export type FromHtmlConverter<
+  El extends PeritextMlElement<any, any, any> = PeritextMlElement<string | number, unknown, boolean>,
+> = (jsonml: JsonMlElement) => El;

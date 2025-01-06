@@ -18,7 +18,7 @@ class ViewRangeBuilder {
   private text = '';
   private slices: ViewSlice[] = [];
 
-  constructor (private registry: SliceRegistry) {}
+  constructor(private registry: SliceRegistry) {}
 
   private build0(node: PeritextMlNode, depth = 0): void {
     const skipWhitespace = depth < 2;
@@ -32,7 +32,8 @@ class ViewRangeBuilder {
     const length = node.length;
     const inline = !!attr?.inline;
     if (!!type || type === 0) {
-      let end: number = 0, header: number = 0;
+      let end: number = 0,
+        header: number = 0;
       if (!inline) {
         this.text += '\n';
         end = start;
@@ -48,7 +49,8 @@ class ViewRangeBuilder {
     }
     for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, depth + 1);
     if (!!type || type === 0) {
-      let end: number = 0, header: number = 0;
+      let end: number = 0,
+        header: number = 0;
       if (inline) {
         end = this.text.length;
         const behavior: SliceBehavior = attr?.behavior ?? SliceBehavior.Many;
@@ -56,10 +58,10 @@ class ViewRangeBuilder {
           (behavior << SliceHeaderShift.Behavior) +
           (Anchor.Before << SliceHeaderShift.X1Anchor) +
           (Anchor.After << SliceHeaderShift.X2Anchor);
-          const slice: ViewSlice = [header, start, end, type];
-          const data = attr?.data;
-          if (data) slice.push(data);
-          this.slices.push(slice);
+        const slice: ViewSlice = [header, start, end, type];
+        const data = attr?.data;
+        if (data) slice.push(data);
+        this.slices.push(slice);
       }
     }
   }
@@ -102,7 +104,7 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     node[1] = attr;
   }
   return node;
-}
+};
 
 export const fromHast = (hast: THtmlToken, registry?: SliceRegistry): PeritextMlNode => {
   const jsonml = _fromHast(hast);

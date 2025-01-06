@@ -132,9 +132,9 @@ export namespace nodes {
    *   age: s.con(0),
    * });
    * ```
-   * 
+   *
    * Specify optional keys as the second argument:
-   * 
+   *
    * ```ts
    * s.obj(
    *   {
@@ -145,9 +145,9 @@ export namespace nodes {
    *   },
    * )
    * ```
-   * 
+   *
    * Or, specify only the type, using the `optional` method:
-   * 
+   *
    * ```ts
    * s.obj({
    *   href: s.str('https://example.com'),

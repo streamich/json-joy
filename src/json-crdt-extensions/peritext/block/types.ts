@@ -1,4 +1,4 @@
-import {SliceBehavior} from '../slice/constants';
+import type {SliceBehavior} from '../slice/constants';
 
 export type PeritextMlNode = string | PeritextMlElement;
 

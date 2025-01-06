@@ -1,9 +1,9 @@
-import {s} from "../../../json-crdt-patch";
-import {JsonNodeView} from "../../../json-crdt/nodes";
-import {SchemaToJsonNode} from "../../../json-crdt/schema/types";
-import {CommonSliceType} from "../slice";
+import {s} from '../../../json-crdt-patch';
+import type {JsonNodeView} from '../../../json-crdt/nodes';
+import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
+import {CommonSliceType} from '../slice';
 import {SliceBehavior} from '../slice/constants';
-import {SliceRegistry} from "./SliceRegistry";
+import {SliceRegistry} from './SliceRegistry';
 
 const undefSchema = s.con(undefined);
 
@@ -56,12 +56,12 @@ registry.def(CommonSliceType.a, aSchema, SliceBehavior.Many, true, {
         title: attr.title ?? '',
       };
       return [CommonSliceType.a, {data, inline: true}];
-    }
+    },
   },
 });
 
 // TODO: add more default annotations
-// comment = SliceTypeCon.comment,  
+// comment = SliceTypeCon.comment,
 // font = SliceTypeCon.font,
 // col = SliceTypeCon.col,
 // bg = SliceTypeCon.bg,

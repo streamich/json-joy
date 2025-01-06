@@ -15,5 +15,5 @@ export const fromMdast = (mdast: IRoot, registry: SliceRegistry = defaultRegistr
 
 export const fromMarkdown = (markdown: string, registry?: SliceRegistry): PeritextMlNode => {
   const mdast = block.parsef(markdown);
-  return fromMdast(mdast, registry);  
+  return fromMdast(mdast, registry);
 };

@@ -10,7 +10,5 @@ test('a single paragraph', () => {
   peritext.editor.import(0, rangeView);
   peritext.refresh();
   const json = peritext.blocks.toJson();
-  expect(json).toEqual(['', null,
-    [CommonSliceType.p, null, 'Hello world'],
-  ]);
+  expect(json).toEqual(['', null, [CommonSliceType.p, null, 'Hello world']]);
 });
