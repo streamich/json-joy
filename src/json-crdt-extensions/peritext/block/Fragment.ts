@@ -80,6 +80,8 @@ export class Fragment extends Range implements Printable, Stateful {
     let pair: ReturnType<typeof iterator>;
     while ((pair = iterator())) {
       const [p1, p2] = pair;
+      const skipFirstVirtualBlock = !p1 && this.start.isAbsStart() && p2 && p2.viewPos() === 0;
+      if (skipFirstVirtualBlock) continue;
       const type = p1 ? p1.type() : CommonSliceType.p;
       const path = type instanceof Array ? type : [type];
       const block = this.insertBlock(parent, path, p1, p2);
