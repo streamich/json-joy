@@ -10,7 +10,7 @@ export interface RenderPeritextProps extends PeritextViewProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, children}) => {
-  const value: null | ToolbarPluginContextValue = React.useMemo(() => !surface ? null : ({surface, toolbar: new ToolbarState()}), [surface]);
+  const value: null | ToolbarPluginContextValue = React.useMemo(() => !surface ? null : ({surface, toolbar: new ToolbarState(surface)}), [surface]);
 
   return (
     <context.Provider value={value}>
