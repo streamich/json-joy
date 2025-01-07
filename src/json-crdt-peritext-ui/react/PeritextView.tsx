@@ -7,6 +7,7 @@ import {DomController} from '../dom/DomController';
 import {CursorPlugin} from '../plugins/cursor';
 import {defaultPlugin} from '../plugins/minimal';
 import {PeritextSurfaceState} from './state';
+import {create} from '../events';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
 
@@ -65,7 +66,8 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         return;
       }
       if (dom && dom.opts.source === el) return;
-      const ctrl = new DomController({source: el, txt: peritext});
+      const events = create(peritext);
+      const ctrl = new DomController({source: el, events});
       ctrl.start();
       setDom(ctrl);
       ctrl.et.addEventListener('change', rerender);

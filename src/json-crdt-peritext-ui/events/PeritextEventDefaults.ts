@@ -1,7 +1,7 @@
 import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
+import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
-import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
 /**
@@ -13,8 +13,8 @@ import type * as events from './types';
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public constructor(
-    protected readonly txt: Peritext,
-    protected readonly et: PeritextEventTarget,
+    public readonly txt: Peritext,
+    public readonly et: PeritextEventTarget,
   ) {}
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
