@@ -9,4 +9,4 @@ export interface ToolbarPluginContextValue {
 
 export const context = React.createContext<ToolbarPluginContextValue | null>(null);
 
-export const useDefaultPlugin = () => React.useContext(context);
+export const useToolbarPlugin = () => React.useContext(context);
