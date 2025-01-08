@@ -14,11 +14,12 @@ export interface TopToolbarProps {
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
   const pending = useSyncStore(ctx.peritext.editor.pending);
 
+  if (!ctx.dom) return null;
   const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
 
   const inlineGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button
-      onClick={() => ctx.dom.et.format(type)}
+      onClick={() => ctx.dom?.et.format(type)}
       onMouseDown={(e) => e.preventDefault()}
       active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
     >
@@ -34,7 +35,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   const blockGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button
-      onClick={() => ctx.dom.et.marker({action: 'tog', type})}
+      onClick={() => ctx.dom?.et.marker({action: 'tog', type})}
       onMouseDown={(e) => e.preventDefault()}
       active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
     >
@@ -60,14 +61,14 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {inlineGroupButton(CommonSliceType.bookmark, 'Bookmark')}
       <ButtonSeparator />
       {button('Blue', () => {
-        ctx.dom.et.format(CommonSliceType.col, 'one', '#07f');
+        ctx.dom?.et.format(CommonSliceType.col, 'one', '#07f');
       })}
       <ButtonSeparator />
       {button('Erase', () => {
-        ctx.dom.et.format({behavior: 'erase'});
+        ctx.dom?.et.format({behavior: 'erase'});
       })}
       {button('Clear', () => {
-        ctx.dom.et.format({behavior: 'clear'});
+        ctx.dom?.et.format({behavior: 'clear'});
       })}
       <ButtonSeparator />
       {blockGroupButton(CommonSliceType.p, 'Paragraph')}

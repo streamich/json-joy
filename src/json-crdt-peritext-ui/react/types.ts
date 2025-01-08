@@ -14,7 +14,7 @@ export interface PeritextPlugin {
   peritext?: (
     props: PeritextViewProps,
     children: React.ReactNode,
-    surface?: PeritextSurfaceState,
+    surface: PeritextSurfaceState,
   ) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
 

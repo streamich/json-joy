@@ -9,3 +9,11 @@ export const useBrowserLayoutEffect =
 
 export const useSyncStore = <T>(store: SyncStore<T>): T =>
   React.useSyncExternalStore(store.subscribe, store.getSnapshot);
+
+const emptySyncStore: SyncStore<undefined> = {
+  getSnapshot: () => undefined,
+  subscribe: () => () => {},
+};
+
+export const useSyncStoreOpt = <T>(store: SyncStore<T | undefined> = emptySyncStore): T | undefined =>
+  React.useSyncExternalStore(store.subscribe, store.getSnapshot);

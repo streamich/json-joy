@@ -46,13 +46,18 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const {peritext, plugins = [new CursorPlugin(), defaultPlugin], onRender} = props;
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
-
+  
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const rerender = React.useCallback(() => {
     peritext.refresh();
     setTick((tick) => tick + 1);
     if (onRender) onRender();
   }, [peritext]);
+
+  const state: PeritextSurfaceState = React.useMemo(
+    () => new PeritextSurfaceState(peritext, plugins, rerender),
+    [peritext, plugins, rerender],
+  );
 
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const ref = React.useCallback(
@@ -61,6 +66,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         if (dom) {
           dom.stop();
           dom.et.removeEventListener('change', rerender);
+          state.dom = void 0;
           setDom(undefined);
         }
         return;
@@ -69,15 +75,11 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
       const events = create(peritext);
       const ctrl = new DomController({source: el, events});
       ctrl.start();
+      state.dom = ctrl;
       setDom(ctrl);
       ctrl.et.addEventListener('change', rerender);
     },
-    [peritext],
-  );
-
-  const state: undefined | PeritextSurfaceState = React.useMemo(
-    () => dom ? new PeritextSurfaceState(peritext, plugins, dom, rerender) : void 0,
-    [peritext, dom, plugins, rerender],
+    [peritext, state],
   );
 
   const block = peritext.blocks.root;
@@ -86,7 +88,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   let children: React.ReactNode = (
     <div ref={ref} className={CssClass.Editor}>
       {!!dom && (
-        <context.Provider value={state!}>
+        <context.Provider value={state}>
           <BlockView hash={block.hash} block={block} />
         </context.Provider>
       )}

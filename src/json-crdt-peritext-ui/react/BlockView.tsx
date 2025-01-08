@@ -20,7 +20,6 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
   (props) => {
     const {block, el} = props;
     const {plugins} = usePeritext();
-
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
       for (const inline of block.texts()) {

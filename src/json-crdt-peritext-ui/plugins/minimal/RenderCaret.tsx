@@ -2,7 +2,7 @@ import * as React from 'react';
 import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
 import {keyframes, rule} from 'nano-theme';
 import {usePeritext} from '../../react/context';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
@@ -54,7 +54,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const [show, setShow] = React.useState(true);
   useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
   const {dom} = usePeritext();
-  const focus = useSyncStore(dom.cursor.focus);
+  const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
   const plugin = usePlugin();
 
   const score = plugin.score.value;
