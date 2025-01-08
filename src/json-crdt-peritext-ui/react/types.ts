@@ -20,8 +20,8 @@ export interface PeritextPlugin {
 
   // -------------------------------------------------------- Inline formatting
 
-  text?: (props: SpanProps, inline: Inline, surface: PeritextSurfaceState) => SpanProps | undefined;
   inline?: (props: InlineViewProps, children: React.ReactNode) => React.ReactNode;
+  text?: (props: SpanProps, inline: Inline, surface: PeritextSurfaceState) => SpanProps | undefined;
 
   // ------------------------------------------------------------------ Cursors
 

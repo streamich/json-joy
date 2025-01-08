@@ -793,8 +793,6 @@ export type CaretToolbarProps = {};
 
 export const CaretToolbar: React.FC<CaretToolbarProps> = () => {
 
-  console.log(document);
-
   return (
     // <div style={{transform: 'translate(-50%,0)'}}>
       <ToolbarMenu

@@ -55,7 +55,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   }, [peritext]);
 
   const state: PeritextSurfaceState = React.useMemo(
-    () => new PeritextSurfaceState(peritext, plugins, rerender),
+    () => new PeritextSurfaceState(peritext, create(peritext), rerender, plugins),
     [peritext, plugins, rerender],
   );
 
@@ -72,8 +72,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         return;
       }
       if (dom && dom.opts.source === el) return;
-      const events = create(peritext);
-      const ctrl = new DomController({source: el, events});
+      const ctrl = new DomController({source: el, events: state.events});
       ctrl.start();
       state.dom = ctrl;
       setDom(ctrl);
