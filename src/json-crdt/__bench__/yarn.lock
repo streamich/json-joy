@@ -122,7 +122,7 @@ isomorphic.js@^0.2.4:
   resolved "https://registry.yarnpkg.com/isomorphic.js/-/isomorphic.js-0.2.5.tgz#13eecf36f2dba53e85d355e11bf9d4208c6f7f88"
   integrity sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==
 
-lib0@^0.2.98:
+lib0@^0.2.99:
   version "0.2.99"
   resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.99.tgz#80d715dbd75496dabe0a1f5061fbb4ea162d2532"
   integrity sha512-vwztYuUf1uf/1zQxfzRfO5yzfNKhTtgOByCruuiQQxWQXnPb8Itaube5ylofcV0oM0aKal9Mv+S1s1Ky0UYP1w==
@@ -180,12 +180,12 @@ uuid@^9.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
   integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
-yjs@13.6.21:
-  version "13.6.21"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.21.tgz#888b7077a7236120ae6b74e58ddbef3c9863825a"
-  integrity sha512-/fzzyeCAfr3Qwx1D71zvumm64x+Q5MEFel6EhWlA1IBFxWPb7tei4J2a8CJyjpYHfVrRij5q3RJTK9W2Iqjouw==
+yjs@13.6.22:
+  version "13.6.22"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.22.tgz#f42218d8a9cd598fc10bd99763d07c3ef5c1053e"
+  integrity sha512-+mJxdbmitioqqsql1Zro4dqT3t9HgmW4dxlPtkcsKFJhXSAMyk3lwawhQFxZjj2upJXzhrTUDsaDkZgJWnv3NA==
   dependencies:
-    lib0 "^0.2.98"
+    lib0 "^0.2.99"
 
 ywasm@0.16.10:
   version "0.16.10"
