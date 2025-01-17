@@ -22,6 +22,10 @@ const overClass = rule({
   l: 0,
   isolation: 'isolate',
   us: 'none',
+  transform: 'translateX(calc(-50% + 0px))',
+  // w: '1px',
+  // h: '1px',
+  // bd: '1px solid red',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
