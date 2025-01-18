@@ -1795,7 +1795,7 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==
 
-code-colors-react@^3.2.1:
+code-colors-react@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/code-colors-react/-/code-colors-react-3.3.0.tgz#830d54e0a9925e81354aa4f6a354f9303de1a7df"
   integrity sha512-RmQf0bNzVG9x+VtkRf+mmLiCzEC3uJLsUfcpOOcHlrwB+BGG++WfSG+YNU+oLewXiPnhwuqiFQYiM0XX9PU8OQ==
@@ -3993,14 +3993,14 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nice-ui@^1.25.0:
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.25.0.tgz#7b0bf1187ff04c76acb764dc88d3e6af4b393db9"
-  integrity sha512-gFC7zWYe8By9TMjIS34WHVSc/9dTW4FVljSqh7zvWyqnzUf33DzGoJGZs5f+5GpdkQEbAwIJBCrs8Z2gno3S2Q==
+nice-ui@^1.26.0:
+  version "1.26.0"
+  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.26.0.tgz#671e9d4db74761c7c7a5ed14e359158ad22e21de"
+  integrity sha512-GDzNl5ivBi/diMs5hEQw2dy05WLL44l9wHII8htqksY7502rlBvzaH3xtgQCMF12eEybc3udTLN2V8x77iZGLQ==
   dependencies:
     "@material-ui/core" "^4.12.4"
     clipboard-copy "^4.0.1"
-    code-colors-react "^3.2.1"
+    code-colors-react "^3.3.0"
     codemirror "5"
     emoji-js "^3.8.0"
     iconista "^2.21.0"
