@@ -5,6 +5,7 @@ import {CaretToolbar} from './CaretToolbar';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 import {useToolbarPlugin} from './context';
 import type {PeritextEventDetailMap} from '../../events/types';
+import {useSyncStore} from '../../react/hooks';
 
 const height = 1.9;
 
@@ -34,16 +35,17 @@ export interface RenderCaretProps extends CaretViewProps {
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
+  const showCaretToolbar = useSyncStore(toolbar.showCaretToolbar);
 
-  const lastEventIsCaretPositionChange =
-    toolbar.lastEvent?.type === 'cursor' &&
-    typeof (toolbar.lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
+  // const lastEventIsCaretPositionChange =
+  //   toolbar.lastEvent?.type === 'cursor' &&
+  //   typeof (toolbar.lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
 
   return (
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {lastEventIsCaretPositionChange && <CaretToolbar />}
+        {showCaretToolbar && <CaretToolbar />}
       </span>
     </span>
   );
