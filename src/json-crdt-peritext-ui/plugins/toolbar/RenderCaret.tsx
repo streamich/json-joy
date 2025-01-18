@@ -1,11 +1,12 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {CaretToolbar} from './CaretToolbar';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import type {PeritextEventDetailMap} from '../../events/types';
 import {useSyncStore} from '../../react/hooks';
+import type {CaretViewProps} from '../../react/cursor/CaretView';
+import type {PeritextEventDetailMap} from '../../events/types';
+import {inlineText} from './menus/menus';
 
 const height = 1.9;
 
@@ -35,17 +36,23 @@ export interface RenderCaretProps extends CaretViewProps {
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
-  const showCaretToolbar = useSyncStore(toolbar.showCaretToolbar);
+  const showCaretToolbar = toolbar.showCaretToolbar;
+  const showCaretToolbarValue = useSyncStore(showCaretToolbar);
 
-  // const lastEventIsCaretPositionChange =
-  //   toolbar.lastEvent?.type === 'cursor' &&
-  //   typeof (toolbar.lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
+  const handleClose = React.useCallback(() => {
+    setTimeout(() => {
+      if (showCaretToolbar.value) showCaretToolbar.next(false);
+    }, 5);
+  }, []);
 
   return (
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {showCaretToolbar && <CaretToolbar />}
+        {/* {showCaretToolbar && <CaretToolbar />} */}
+        {showCaretToolbarValue && (
+          <CaretToolbar menu={inlineText} onPopupClose={handleClose} />
+        )}
       </span>
     </span>
   );
