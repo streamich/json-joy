@@ -15,8 +15,8 @@ export class ToolbarPlugin implements PeritextPlugin {
 
   public readonly block: PeritextPlugin['block'] = (props, children) => h(RenderBlock, props as any, children);
 
-  public readonly peritext: PeritextPlugin['peritext'] = (props, children, ctx) =>
-    h(RenderPeritext, {...props, children, ctx});
+  public readonly peritext: PeritextPlugin['peritext'] = (props, children, surface) =>
+    h(RenderPeritext, {...props, children, surface});
 
   public readonly caret: PeritextPlugin['caret'] = (props, children) => h(RenderCaret, <any>props, children);
 }

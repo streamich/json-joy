@@ -1,10 +1,12 @@
 import * as React from 'react';
-import type {PeritextSurfaceContextValue} from '../../react';
+import type {ToolbarState} from './state';
+import type {PeritextSurfaceState} from '../../react';
 
-export interface DefaultPluginContextValue {
-  ctx?: PeritextSurfaceContextValue;
+export interface ToolbarPluginContextValue {
+  surface: PeritextSurfaceState;
+  toolbar: ToolbarState;
 }
 
-export const context = React.createContext<DefaultPluginContextValue>(null!);
+export const context = React.createContext<ToolbarPluginContextValue | null>(null);
 
-export const useDefaultPlugin = () => React.useContext(context);
+export const useToolbarPlugin = () => React.useContext(context);

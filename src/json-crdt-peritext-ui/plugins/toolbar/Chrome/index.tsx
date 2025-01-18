@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {TopToolbar} from '../TopToolbar';
-import {useDefaultPlugin} from '../context';
+import {useToolbarPlugin} from '../context';
 
 const blockClass = rule({
   bg: 'white',
@@ -20,11 +20,11 @@ export interface ChromeProps {
 }
 
 export const Chrome: React.FC<ChromeProps> = ({children}) => {
-  const {ctx} = useDefaultPlugin();
+  const ctx = useToolbarPlugin();
 
   return (
     <div className={blockClass}>
-      {!!ctx && <TopToolbar ctx={ctx} />}
+      {!!ctx && <TopToolbar ctx={ctx.surface} />}
       {children}
     </div>
   );

@@ -7,11 +7,11 @@ import {Char} from '../../constants';
 export type AnchorViewProps = {};
 
 export const AnchorView: React.FC<AnchorViewProps> = (props) => {
-  const {renderers} = usePeritext();
+  const {plugins} = usePeritext();
 
   // This zero-width non-breaking space prevents word wrapping at position where
   // anchor is inserted.
   let children: React.ReactNode = Char.ZeroLengthSpace;
-  for (const map of renderers) children = map.anchor?.(props, children) ?? children;
+  for (const map of plugins) children = map.anchor?.(props, children) ?? children;
   return children;
 };

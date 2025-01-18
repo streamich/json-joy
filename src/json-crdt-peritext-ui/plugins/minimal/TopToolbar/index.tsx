@@ -4,21 +4,23 @@ import {Button} from '../../../components/Button';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import {useSyncStore} from '../../../react/hooks';
-import type {PeritextSurfaceContextValue} from '../../../react';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
+import type {PeritextSurfaceState} from '../../../react';
 
 export interface TopToolbarProps {
-  ctx: PeritextSurfaceContextValue;
+  ctx: PeritextSurfaceState;
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
   const pending = useSyncStore(ctx.peritext.editor.pending);
 
+  if (!ctx.dom) return null;
+
   const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
 
   const inlineGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button
-      onClick={() => ctx.dom.et.format(type)}
+      onClick={() => ctx.dom?.et.format(type)}
       onMouseDown={(e) => e.preventDefault()}
       active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
     >
@@ -34,7 +36,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   const blockGroupButtom = (type: string | number, name: React.ReactNode) => (
     <Button
-      onClick={() => ctx.dom.et.marker({action: 'tog', type})}
+      onClick={() => ctx.dom?.et.marker({action: 'tog', type})}
       onMouseDown={(e) => e.preventDefault()}
       active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
     >
@@ -60,14 +62,14 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {inlineGroupButton(CommonSliceType.bookmark, 'Bookmark')}
       <ButtonSeparator />
       {button('Blue', () => {
-        ctx.dom.et.format(CommonSliceType.col, 'one', '#07f');
+        ctx.dom?.et.format(CommonSliceType.col, 'one', '#07f');
       })}
       <ButtonSeparator />
       {button('Erase', () => {
-        ctx.dom.et.format({behavior: 'erase'});
+        ctx.dom?.et.format({behavior: 'erase'});
       })}
       {button('Clear', () => {
-        ctx.dom.et.format({behavior: 'clear'});
+        ctx.dom?.et.format({behavior: 'clear'});
       })}
       <ButtonSeparator />
       {blockGroupButtom(CommonSliceType.p, 'Paragraph')}

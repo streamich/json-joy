@@ -57,3 +57,10 @@ export interface TypedEventTarget<EventMap> {
     options?: EventListenerOptions | boolean,
   ): void;
 }
+
+export class SubscriptionEventTarget<EventMap> extends TypedEventTarget<EventMap> {
+  public subscribe<K extends keyof EventMap>(type: K, listener: (ev: EventMap[K]) => void): () => void {
+    this.addEventListener(type, listener);
+    return () => this.removeEventListener(type, listener);
+  }
+}

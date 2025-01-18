@@ -3,7 +3,7 @@ import * as React from 'react';
 import {rule, drule, keyframes} from 'nano-theme';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStoreOpt} from '../../react/hooks';
 import type {FocusViewProps} from '../../react/cursor/FocusView';
 
 const width = 0.14;
@@ -43,7 +43,7 @@ export interface RenderFocusProps extends FocusViewProps {
 
 export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}) => {
   const {dom} = usePeritext();
-  const focus = useSyncStore(dom.cursor.focus);
+  const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
 
   const style: React.CSSProperties = focus ? {} : {background: DefaultRendererColors.InactiveCursor, animation: 'none'};
 

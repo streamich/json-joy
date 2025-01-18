@@ -1,9 +1,9 @@
 import * as React from 'react';
-import type {PeritextSurfaceContextValue} from '../../react';
+import type {PeritextSurfaceState} from '../../react';
 import type {ValueSyncStore} from '../../../util/events/sync-store';
 
 export interface MinimalPluginContextValue {
-  ctx?: PeritextSurfaceContextValue;
+  ctx?: PeritextSurfaceState;
 
   /** Current score. */
   score: ValueSyncStore<number>;

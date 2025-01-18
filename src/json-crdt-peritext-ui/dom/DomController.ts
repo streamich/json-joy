@@ -2,16 +2,15 @@ import {printTree, type Printable} from 'tree-dump';
 import {InputController} from '../dom/InputController';
 import {CursorController} from '../dom/CursorController';
 import {RichTextController} from '../dom/RichTextController';
-import {PeritextEventDefaults} from '../events/PeritextEventDefaults';
-import {PeritextEventTarget} from '../events/PeritextEventTarget';
 import {KeyController} from '../dom/KeyController';
 import {CompositionController} from '../dom/CompositionController';
+import type {PeritextEventDefaults} from '../events/PeritextEventDefaults';
+import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {UiLifeCycles} from '../dom/types';
-import type {Peritext} from '../../json-crdt-extensions';
 
 export interface DomControllerOpts {
   source: HTMLElement;
-  txt: Peritext;
+  events: PeritextEventDefaults;
 }
 
 export class DomController implements UiLifeCycles, Printable {
@@ -23,10 +22,9 @@ export class DomController implements UiLifeCycles, Printable {
   public readonly richText: RichTextController;
 
   constructor(public readonly opts: DomControllerOpts) {
-    const {source, txt} = opts;
-    const et = (this.et = new PeritextEventTarget());
-    const defaults = new PeritextEventDefaults(txt, et);
-    et.defaults = defaults;
+    const {source, events} = opts;
+    const {txt} = events;
+    const et = (this.et = opts.events.et);
     const keys = (this.keys = new KeyController({source}));
     const comp = (this.comp = new CompositionController({et, source, txt}));
     this.input = new InputController({et, source, txt, comp});

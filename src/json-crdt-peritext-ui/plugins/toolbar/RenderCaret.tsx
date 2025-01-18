@@ -3,6 +3,8 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from './CaretToolbar';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {useToolbarPlugin} from './context';
+import type {PeritextEventDetailMap} from '../../events/types';
 
 const height = 1.9;
 
@@ -20,6 +22,10 @@ const overClass = rule({
   l: 0,
   isolation: 'isolate',
   us: 'none',
+  transform: 'translateX(calc(-50% + 0px))',
+  // w: '1px',
+  // h: '1px',
+  // bd: '1px solid red',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -27,11 +33,17 @@ export interface RenderCaretProps extends CaretViewProps {
 }
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
+  const {toolbar} = useToolbarPlugin()!;
+
+  const lastEventIsCaretPositionChange =
+    toolbar.lastEvent?.type === 'cursor' &&
+    typeof (toolbar.lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
+
   return (
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        <CaretToolbar />
+        {lastEventIsCaretPositionChange && <CaretToolbar />}
       </span>
     </span>
   );

@@ -5,23 +5,19 @@ import type {AnchorViewProps} from './cursor/AnchorView';
 import type {InlineViewProps} from './InlineView';
 import type {BlockViewProps} from './BlockView';
 import type {PeritextViewProps} from './PeritextView';
-import type {PeritextSurfaceContextValue} from './context';
+import type {PeritextSurfaceState} from './state';
 import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
 export interface PeritextPlugin {
   // --------------------------------------------------- Block-level formatting
 
-  peritext?: (
-    props: PeritextViewProps,
-    children: React.ReactNode,
-    ctx?: PeritextSurfaceContextValue,
-  ) => React.ReactNode;
+  peritext?: (props: PeritextViewProps, children: React.ReactNode, surface: PeritextSurfaceState) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
 
   // -------------------------------------------------------- Inline formatting
 
-  text?: (props: SpanProps, inline: Inline, ctx: PeritextSurfaceContextValue) => SpanProps | undefined;
   inline?: (props: InlineViewProps, children: React.ReactNode) => React.ReactNode;
+  text?: (props: SpanProps, inline: Inline, surface: PeritextSurfaceState) => SpanProps | undefined;
 
   // ------------------------------------------------------------------ Cursors
 

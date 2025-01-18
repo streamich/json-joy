@@ -3,7 +3,7 @@ import * as React from 'react';
 import {rule, keyframes} from 'nano-theme';
 import {DefaultRendererColors} from './constants';
 import {usePeritext} from '../../react';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStoreOpt} from '../../react/hooks';
 import type {AnchorViewProps} from '../../react/cursor/AnchorView';
 
 export const fadeInAnimation = keyframes({
@@ -42,7 +42,7 @@ export interface RenderAnchorProps extends AnchorViewProps {
 
 export const RenderAnchor: React.FC<RenderAnchorProps> = ({children}) => {
   const {dom} = usePeritext();
-  const focus = useSyncStore(dom.cursor.focus);
+  const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
 
   const style = focus ? undefined : {background: DefaultRendererColors.InactiveCursor};
 

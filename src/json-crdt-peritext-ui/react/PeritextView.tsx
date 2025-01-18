@@ -1,11 +1,13 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
-import {context, type PeritextSurfaceContextValue} from './context';
+import {context} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import {DomController} from '../dom/DomController';
 import {CursorPlugin} from '../plugins/cursor';
 import {defaultPlugin} from '../plugins/minimal';
+import {PeritextSurfaceState} from './state';
+import {create} from '../events';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
 
@@ -52,6 +54,11 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     if (onRender) onRender();
   }, [peritext]);
 
+  const state: PeritextSurfaceState = React.useMemo(
+    () => new PeritextSurfaceState(peritext, create(peritext), rerender, plugins),
+    [peritext, plugins, rerender],
+  );
+
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const ref = React.useCallback(
     (el: null | HTMLDivElement) => {
@@ -59,22 +66,19 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         if (dom) {
           dom.stop();
           dom.et.removeEventListener('change', rerender);
+          state.dom = void 0;
           setDom(undefined);
         }
         return;
       }
       if (dom && dom.opts.source === el) return;
-      const ctrl = new DomController({source: el, txt: peritext});
+      const ctrl = new DomController({source: el, events: state.events});
       ctrl.start();
+      state.dom = ctrl;
       setDom(ctrl);
       ctrl.et.addEventListener('change', rerender);
     },
-    [peritext],
-  );
-
-  const ctx: undefined | PeritextSurfaceContextValue = React.useMemo(
-    () => (dom ? {peritext, dom, renderers: plugins, rerender} : undefined),
-    [peritext, dom, plugins, rerender],
+    [peritext, state],
   );
 
   const block = peritext.blocks.root;
@@ -83,14 +87,14 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   let children: React.ReactNode = (
     <div ref={ref} className={CssClass.Editor}>
       {!!dom && (
-        <context.Provider value={ctx!}>
+        <context.Provider value={state}>
           <BlockView hash={block.hash} block={block} />
         </context.Provider>
       )}
     </div>
   );
 
-  for (const map of plugins) children = map.peritext?.(props, children, ctx) ?? children;
+  for (const map of plugins) children = map.peritext?.(props, children, state) ?? children;
 
   return children;
 });

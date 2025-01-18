@@ -1,7 +1,7 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {usePeritext} from '../../react';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStoreOpt} from '../../react/hooks';
 import {DefaultRendererColors} from './constants';
 import type {InlineViewProps} from '../../react/InlineView';
 
@@ -12,7 +12,7 @@ interface RenderInlineSelectionProps extends RenderInlineProps {
 const RenderInlineSelection: React.FC<RenderInlineSelectionProps> = (props) => {
   const {children, selection} = props;
   const {dom} = usePeritext();
-  const focus = useSyncStore(dom.cursor.focus);
+  const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
 
   const [left, right] = selection;
   const style: React.CSSProperties = {

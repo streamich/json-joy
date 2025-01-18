@@ -3,8 +3,8 @@ import {drule, rule, useTheme} from 'nano-theme';
 import {context} from './context';
 import {Button} from '../../components/Button';
 import {Console} from './Console';
-import type {PeritextSurfaceContextValue, PeritextViewProps} from '../../react';
 import {ValueSyncStore} from '../../../util/events/sync-store';
+import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
 
 const blockClass = rule({
   pos: 'relative',
@@ -29,7 +29,7 @@ const childrenDebugClass = rule({
 export interface RenderPeritextProps extends PeritextViewProps {
   enabled?: boolean;
   children?: React.ReactNode;
-  ctx?: PeritextSurfaceContextValue;
+  ctx?: PeritextSurfaceState;
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, ctx, children}) => {

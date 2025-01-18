@@ -1,4 +1,4 @@
-import {TypedEventTarget} from '../../util/events/TypedEventTarget';
+import {SubscriptionEventTarget} from '../../util/events/TypedEventTarget';
 import type {PeritextEventDetailMap, CursorDetail, FormatDetail, DeleteDetail, MarkerDetail} from './types';
 
 export type PeritextEventMap = {
@@ -11,7 +11,7 @@ export type PeritextEventHandlerMap = {
 
 let __id = 0;
 
-export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
+export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMap> {
   public readonly id: number = __id++;
 
   public defaults: Partial<PeritextEventHandlerMap> = {};
