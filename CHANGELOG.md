@@ -1,3 +1,19 @@
+# [17.26.0](https://github.com/streamich/json-joy/compare/v17.25.0...v17.26.0) (2025-01-18)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add more slice types ([ee4081b](https://github.com/streamich/json-joy/commit/ee4081b13884b1f1d2c75ea2a99e37979fdeb78d))
+* **json-crdt-peritext-ui:** 🎸 create a class for storing peritext surface data ([f8255f5](https://github.com/streamich/json-joy/commit/f8255f5aaf713200a83a445e8b50660c6a36ea19))
+* **json-crdt-peritext-ui:** 🎸 improve event handling ([84ddd8a](https://github.com/streamich/json-joy/commit/84ddd8ac65db2321c5edc2ccea137b799dd4e5a4))
+* **json-crdt-peritext-ui:** 🎸 improve inline menu presentation logic ([ddb032b](https://github.com/streamich/json-joy/commit/ddb032b020fd8ea02b0869f760e45fcbf843cc0b))
+* **json-crdt-peritext-ui:** 🎸 make DOM controller optional ([b9d73b0](https://github.com/streamich/json-joy/commit/b9d73b07b151ede90a216c7adf85e0d2621908f5))
+* **json-crdt-peritext-ui:** 🎸 position caret floating menu ([874bced](https://github.com/streamich/json-joy/commit/874bcedc80a50c66938d35e5680a3ac1c541eb09))
+* **json-crdt-peritext-ui:** 🎸 restructure dependencies to explicitly construct events ([54f0d22](https://github.com/streamich/json-joy/commit/54f0d22268012214d76f52fd94af07af30ed20c4))
+* **json-crdt-peritext-ui:** 🎸 start inline menu incorporation ([8a19a6f](https://github.com/streamich/json-joy/commit/8a19a6f742780cd96548bd39960fd6130c9148bd))
+* **json-crdt-peritext-ui:** 🎸 use the new surface context state value ([a14f2aa](https://github.com/streamich/json-joy/commit/a14f2aae6394e81f049fb2596a74e3b9c53627cc))
+* **json-crdt:** 🎸 issue demo ([d022015](https://github.com/streamich/json-joy/commit/d022015e38fd009602b37a5e007edb92198affc5))
+
 # [17.25.0](https://github.com/streamich/json-joy/compare/v17.24.0...v17.25.0) (2025-01-06)
 
 
