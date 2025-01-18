@@ -2,10 +2,10 @@ import {printTree, type Printable} from 'tree-dump';
 import {InputController} from '../dom/InputController';
 import {CursorController} from '../dom/CursorController';
 import {RichTextController} from '../dom/RichTextController';
-import {PeritextEventDefaults} from '../events/PeritextEventDefaults';
-import {PeritextEventTarget} from '../events/PeritextEventTarget';
 import {KeyController} from '../dom/KeyController';
 import {CompositionController} from '../dom/CompositionController';
+import type {PeritextEventDefaults} from '../events/PeritextEventDefaults';
+import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {UiLifeCycles} from '../dom/types';
 
 export interface DomControllerOpts {

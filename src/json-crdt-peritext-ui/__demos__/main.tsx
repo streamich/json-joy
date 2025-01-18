@@ -8,6 +8,6 @@ document.body.appendChild(div);
 const root = createRoot(div);
 root.render(
   // <React.StrictMode>
-    <App />
+  <App />,
   // </React.StrictMode>,
 );

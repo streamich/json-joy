@@ -59,7 +59,7 @@ export interface TypedEventTarget<EventMap> {
 }
 
 export class SubscriptionEventTarget<EventMap> extends TypedEventTarget<EventMap> {
-  public subscribe<K extends keyof EventMap>(type: K, listener: (ev: EventMap[K]) => void): (() => void) {
+  public subscribe<K extends keyof EventMap>(type: K, listener: (ev: EventMap[K]) => void): () => void {
     this.addEventListener(type, listener);
     return () => this.removeEventListener(type, listener);
   }

@@ -10,7 +10,10 @@ export interface RenderPeritextProps extends PeritextViewProps {
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, children}) => {
-  const value: ToolbarPluginContextValue = React.useMemo(() => ({surface, toolbar: new ToolbarState(surface)}), [surface]);
+  const value: ToolbarPluginContextValue = React.useMemo(
+    () => ({surface, toolbar: new ToolbarState(surface)}),
+    [surface],
+  );
   const toolbar = value.toolbar;
 
   React.useLayoutEffect(() => toolbar.start(), [toolbar]);

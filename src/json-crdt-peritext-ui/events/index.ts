@@ -1,6 +1,6 @@
-import {PeritextEventDefaults} from "./PeritextEventDefaults";
-import {PeritextEventTarget} from "./PeritextEventTarget";
-import type {Peritext} from "../../json-crdt-extensions";
+import {PeritextEventDefaults} from './PeritextEventDefaults';
+import {PeritextEventTarget} from './PeritextEventTarget';
+import type {Peritext} from '../../json-crdt-extensions';
 
 export const create = (txt: Peritext) => {
   const et = new PeritextEventTarget();

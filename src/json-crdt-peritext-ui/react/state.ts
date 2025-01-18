@@ -6,7 +6,7 @@ import type {PeritextEventDefaults} from '../events/PeritextEventDefaults';
 export class PeritextSurfaceState {
   public dom?: DomController = void 0;
 
-  constructor (
+  constructor(
     public readonly peritext: Peritext,
     public readonly events: PeritextEventDefaults,
     public readonly rerender: () => void,

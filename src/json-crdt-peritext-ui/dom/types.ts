@@ -10,7 +10,7 @@ export interface UiLifeCyclesRender {
    * Called when UI component is mounted. Returns a function to be called when
    * the component is removed from the screen.
    */
-  start(): (() => void);
+  start(): () => void;
 }
 
 export type Rect = Pick<DOMRect, 'x' | 'y' | 'width' | 'height'>;

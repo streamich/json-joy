@@ -46,7 +46,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const {peritext, plugins = [new CursorPlugin(), defaultPlugin], onRender} = props;
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
-  
+
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const rerender = React.useCallback(() => {
     peritext.refresh();

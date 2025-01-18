@@ -4,7 +4,7 @@
  * Run this demo with:
  *
  *     npx nodemon -q -x ts-node src/json-crdt/__demos__/issue-801.ts
- * 
+ *
  * @see issue: https://github.com/streamich/json-joy/issues/801
  */
 
@@ -27,10 +27,9 @@
 // function foo(_node: ObjApi<SimpleObjectNodeType>) {}
 // foo(model.api.node)
 
-
-import {JsonNodeView, Model} from '..';
+import {type JsonNodeView, Model} from '..';
 import {s} from '../../json-crdt-patch';
-import {SchemaToJsonNode} from '../schema/types';
+import type {SchemaToJsonNode} from '../schema/types';
 
 const SimpleObjectSchema = s.obj({
   text: s.con<string>('foo'),

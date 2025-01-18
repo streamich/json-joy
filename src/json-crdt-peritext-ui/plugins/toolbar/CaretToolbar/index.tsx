@@ -792,12 +792,9 @@ const blockClass = rule({
 export type CaretToolbarProps = {};
 
 export const CaretToolbar: React.FC<CaretToolbarProps> = () => {
-
   return (
     // <div style={{transform: 'translate(-50%,0)'}}>
-      <ToolbarMenu
-        menu={inlineText}
-      />
+    <ToolbarMenu menu={inlineText} />
     // </div>
   );
   // return (

@@ -11,11 +11,7 @@ import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 export interface PeritextPlugin {
   // --------------------------------------------------- Block-level formatting
 
-  peritext?: (
-    props: PeritextViewProps,
-    children: React.ReactNode,
-    surface: PeritextSurfaceState,
-  ) => React.ReactNode;
+  peritext?: (props: PeritextViewProps, children: React.ReactNode, surface: PeritextSurfaceState) => React.ReactNode;
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
 
   // -------------------------------------------------------- Inline formatting
