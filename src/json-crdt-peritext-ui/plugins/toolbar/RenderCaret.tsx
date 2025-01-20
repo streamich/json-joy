@@ -5,8 +5,6 @@ import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar'
 import {useToolbarPlugin} from './context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
-import type {PeritextEventDetailMap} from '../../events/types';
-import {inlineText} from './menus/menus';
 
 const height = 1.9;
 
@@ -51,7 +49,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
       <span className={overClass} contentEditable={false}>
         {/* {showCaretToolbar && <CaretToolbar />} */}
         {showCaretToolbarValue && (
-          <CaretToolbar menu={inlineText} onPopupClose={handleClose} />
+          <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
         )}
       </span>
     </span>

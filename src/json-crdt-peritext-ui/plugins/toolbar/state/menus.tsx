@@ -1,15 +1,10 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {Paper} from 'nice-ui/lib/4-card/Paper';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {BasicButton} from '../../../components/BasicButton';
 import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {ToolbarMenu} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {keyframes, rule} from 'nano-theme';
-import type {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
+import type {MenuItem} from '../types';
 
 export const annotations = (): MenuItem => {
   return {
@@ -262,133 +257,6 @@ export const inlineText: MenuItem = {
   name: 'Inline text',
   maxToolbarItems: 4,
   children: [
-    {
-      name: 'Formatting',
-      expandChild: 0,
-      children: [
-        {
-          name: 'Common',
-          expand: 8,
-          children: [
-            {
-              name: 'Bold',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-bold" />,
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
-              right: () => <Sidetip small>⌘ B</Sidetip>,
-              keys: ['⌘', 'b'],
-              onClick: () => {},
-            },
-            {
-              name: 'Italic',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-italic" />,
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="italic" />,
-              icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
-              right: () => <Sidetip small>⌘ I</Sidetip>,
-              keys: ['⌘', 'i'],
-              onClick: () => {},
-            },
-            {
-              name: 'Underline',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
-              right: () => <Sidetip small>⌘ U</Sidetip>,
-              keys: ['⌘', 'u'],
-              onClick: () => {},
-            },
-            {
-              name: 'Strikethrough',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Overline',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Highlight',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Classified',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
-              onClick: () => {},
-            },
-          ],
-        },
-        {
-          name: 'Technical separator',
-          sep: true,
-        },
-        {
-          name: 'Technical',
-          expand: 8,
-          children: [
-            {
-              name: 'Code',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Math',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Superscript',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Subscript',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Keyboard key',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Insertion',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Deletion',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
-              onClick: () => {},
-            },
-          ],
-        },
-        {
-          name: 'Artistic separator',
-          sep: true,
-        },
-        {
-          name: 'Artistic',
-          expand: 8,
-          children: [
-            {
-              name: 'Color',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="paintbrush" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Background',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="paint-bucket" />,
-              onClick: () => {},
-            },
-            {
-              name: 'Border',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="border-left" />,
-              onClick: () => {},
-            },
-          ],
-        },
-      ],
-    },
     secondBrain(),
     {
       name: 'Annotations separator',
