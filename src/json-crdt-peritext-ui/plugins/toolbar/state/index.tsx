@@ -561,4 +561,397 @@ export class ToolbarState implements UiLifeCyclesRender {
       ],
     };
   };
+
+  public readonly getSelectionMenu = (): MenuItem => {
+    return {
+      name: 'Inline text',
+      maxToolbarItems: 4,
+      children: [
+        this.getFormattingMenu(),
+        secondBrain(),
+        {
+          name: 'Annotations separator',
+          sep: true,
+        },
+        annotations(),
+        {
+          name: 'Style separator',
+          sep: true,
+        },
+        {
+          name: 'Typesetting',
+          expand: 4,
+          openOnTitleHov: true,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
+          onClick: () => {},
+          children: [
+            {
+              name: 'Sans-serif',
+              iconBig: () => <FontStyleButton kind={'sans'} />,
+              onClick: () => {},
+            },
+            {
+              name: 'Serif',
+              iconBig: () => <FontStyleButton kind={'serif'} />,
+              onClick: () => {},
+            },
+            {
+              name: 'Slab',
+              icon: () => <FontStyleButton kind={'slab'} size={16} />,
+              iconBig: () => <FontStyleButton kind={'slab'} />,
+              onClick: () => {},
+            },
+            {
+              name: 'Monospace',
+              iconBig: () => <FontStyleButton kind={'mono'} />,
+              onClick: () => {},
+            },
+            // {
+            //   name: 'Custom typeface separator',
+            //   sep: true,
+            // },
+            {
+              name: 'Custom typeface',
+              expand: 10,
+              icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
+              children: [
+                {
+                  name: 'Typeface',
+                  // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Text size',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Letter spacing',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Word spacing',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Caps separator',
+                  sep: true,
+                },
+                {
+                  name: 'Large caps',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Small caps',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
+                  onClick: () => {},
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'Modify separator',
+          sep: true,
+        },
+        {
+          name: 'Modify',
+          expand: 3,
+          onClick: () => {},
+          children: [
+            {
+              name: 'Pick layer',
+              right: () => (
+                <Code size={-1} gray>
+                  9+
+                </Code>
+              ),
+              more: true,
+              icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Erase formatting',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Delete all in range',
+              danger: true,
+              more: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
+              onClick: () => {},
+            },
+          ],
+        },
+        {
+          name: 'Clipboard separator',
+          sep: true,
+        },
+        {
+          name: 'Copy, cut, and paste',
+          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
+          icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+          expand: 0,
+          children: [
+            {
+              id: 'copy-menu',
+              name: 'Copy',
+              // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              expand: 5,
+              children: [
+                {
+                  name: 'Copy',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Copy text only',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Copy as Markdown',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Copy as HTML',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+                  onClick: () => {},
+                },
+              ],
+            },
+            {
+              name: 'Cut separator',
+              sep: true,
+            },
+            {
+              id: 'cut-menu',
+              name: 'Cut',
+              // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              expand: 5,
+              children: [
+                {
+                  name: 'Cut',
+                  danger: true,
+                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Cut text only',
+                  danger: true,
+                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Cut as Markdown',
+                  danger: true,
+                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Cut as HTML',
+                  danger: true,
+                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+                  onClick: () => {},
+                },
+              ],
+            },
+            {
+              name: 'Paste separator',
+              sep: true,
+            },
+            {
+              id: 'paste-menu',
+              name: 'Paste',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              expand: 5,
+              children: [
+                {
+                  name: 'Paste',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Paste text only',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Paste formatting',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+                  onClick: () => {},
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'Insert',
+          icon: () => <Iconista width={16} height={16} set="lucide" icon="between-vertical-end" />,
+          children: [
+            {
+              name: 'Smart chip',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="button" />,
+              children: [
+                {
+                  name: 'Date',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'AI chip',
+                  icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Solana wallet',
+                  icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
+                  onClick: () => {},
+                },
+                {
+                  name: 'Dropdown',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                  children: [
+                    {
+                      name: 'Create new',
+                      icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
+                      onClick: () => {},
+                    },
+                    {
+                      name: 'Document dropdowns separator',
+                      sep: true,
+                    },
+                    {
+                      name: 'Document dropdowns',
+                      expand: 8,
+                      onClick: () => {},
+                      children: [
+                        {
+                          name: 'Configuration 1',
+                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          onClick: () => {},
+                        },
+                        {
+                          name: 'Configuration 2',
+                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          onClick: () => {},
+                        },
+                      ],
+                    },
+                    {
+                      name: 'Presets dropdowns separator',
+                      sep: true,
+                    },
+                    {
+                      name: 'Presets dropdowns',
+                      expand: 8,
+                      onClick: () => {},
+                      children: [
+                        {
+                          name: 'Project status',
+                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          onClick: () => {},
+                        },
+                        {
+                          name: 'Review status',
+                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          onClick: () => {},
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Link',
+              // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
+              icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Reference',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
+              onClick: () => {},
+            },
+            {
+              name: 'File',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Template',
+              text: 'building blocks',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="template" />,
+              children: [
+                {
+                  name: 'Meeting notes',
+                  onClick: () => {},
+                },
+                {
+                  name: 'Email draft (created by AI)',
+                  onClick: () => {},
+                },
+                {
+                  name: 'Product roadmap',
+                  onClick: () => {},
+                },
+                {
+                  name: 'Review tracker',
+                  onClick: () => {},
+                },
+                {
+                  name: 'Project assets',
+                  onClick: () => {},
+                },
+                {
+                  name: 'Content launch tracker',
+                  onClick: () => {},
+                },
+              ],
+            },
+            {
+              name: 'On-screen keyboard',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Emoji',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Special characters',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
+              onClick: () => {},
+            },
+            {
+              name: 'Variable',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
+              onClick: () => {},
+            },
+          ],
+        },
+        {
+          name: 'Developer tools',
+          danger: true,
+          icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
+          onClick: () => {},
+        },
+      ],
+    };
+  };
 }
