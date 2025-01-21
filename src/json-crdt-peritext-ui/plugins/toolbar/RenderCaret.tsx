@@ -43,7 +43,6 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {/* {showCaretToolbar && <CaretToolbar />} */}
         {showCaretToolbarValue && (
           <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
         )}

@@ -1,6 +1,7 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
@@ -29,20 +30,20 @@ export interface RenderFocusProps extends CaretViewProps {
 
 export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
-  // const showCaretToolbar = toolbar.showCaretToolbar;
-  // const showCaretToolbarValue = useSyncStore(showCaretToolbar);
+  const showFocusToolbar = toolbar.showFocusToolbar;
+  const showFocusToolbarValue = useSyncStore(showFocusToolbar);
 
-  // const handleClose = React.useCallback(() => {
-  //   setTimeout(() => {
-  //     if (showCaretToolbar.value) showCaretToolbar.next(false);
-  //   }, 5);
-  // }, []);
+  const handleClose = React.useCallback(() => {
+    if (showFocusToolbar.value) showFocusToolbar.next(false);
+  }, []);
 
   return (
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        <span>focus bar</span>
+        {showFocusToolbarValue && (
+          <CaretToolbar menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
+        )}
       </span>
     </span>
   );

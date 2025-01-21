@@ -13,25 +13,44 @@ import type {MenuItem} from '../types';
 
 export class ToolbarState implements UiLifeCyclesRender {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
+  public lastEventTs: number = 0;
   public readonly showCaretToolbar = new ValueSyncStore<boolean>(false);
+  public readonly showFocusToolbar = new ValueSyncStore<boolean>(false);
 
   constructor(public readonly surface: PeritextSurfaceState) {}
 
-  /** -------------------------------------------------- {@link UiLifeCyclesRender} */
+  /** ------------------------------------------- {@link UiLifeCyclesRender} */
 
   public start() {
-    const et = this.surface.events.et;
+    const {surface, showFocusToolbar} = this;
+    const {dom, events} = surface;
+    const {et} = events;
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
       this.lastEvent = lastEvent;
+      this.lastEventTs = Date.now();
       const lastEventIsCaretPositionChange =
         lastEvent?.type === 'cursor' &&
         typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
       if (lastEventIsCaretPositionChange)
         this.showCaretToolbar.next(true);
     });
+
+    const mouseDown = dom?.cursor.mouseDown;
+    const unsubscribeMouseDown = mouseDown?.subscribe(() => {
+      if (mouseDown.value) {
+        if (showFocusToolbar.value) showFocusToolbar.next(false);
+      } else {
+        if (!showFocusToolbar.value) {
+          showFocusToolbar.next(true);
+          
+        }
+      }
+    });
+    
     return () => {
       changeUnsubscribe();
+      unsubscribeMouseDown?.();
     };
   }
 
@@ -568,6 +587,7 @@ export class ToolbarState implements UiLifeCyclesRender {
       maxToolbarItems: 4,
       children: [
         this.getFormattingMenu(),
+        /*
         secondBrain(),
         {
           name: 'Annotations separator',
@@ -951,6 +971,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
           onClick: () => {},
         },
+        */
       ],
     };
   };
