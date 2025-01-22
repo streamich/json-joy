@@ -14,15 +14,14 @@ import type {MenuItem} from '../types';
 export class ToolbarState implements UiLifeCyclesRender {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly showCaretToolbar = new ValueSyncStore<boolean>(false);
-  public readonly showFocusToolbar = new ValueSyncStore<boolean>(false);
+  public readonly showInlineToolbar = new ValueSyncStore<boolean>(false);
 
   constructor(public readonly surface: PeritextSurfaceState) {}
 
   /** ------------------------------------------- {@link UiLifeCyclesRender} */
 
   public start() {
-    const {surface, showFocusToolbar} = this;
+    const {surface, showInlineToolbar: showFocusToolbar} = this;
     const {dom, events} = surface;
     const {et} = events;
     const changeUnsubscribe = et.subscribe('change', (ev) => {
@@ -33,24 +32,31 @@ export class ToolbarState implements UiLifeCyclesRender {
         lastEvent?.type === 'cursor' &&
         typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
       if (lastEventIsCaretPositionChange)
-        this.showCaretToolbar.next(true);
+        this.showInlineToolbar.next(true);
     });
 
-    const mouseDown = dom?.cursor.mouseDown;
-    const unsubscribeMouseDown = mouseDown?.subscribe(() => {
-      if (mouseDown.value) {
-        if (showFocusToolbar.value) showFocusToolbar.next(false);
-      } else {
-        if (!showFocusToolbar.value) {
-          showFocusToolbar.next(true);
-          
-        }
-      }
-    });
+    // const mouseDown = dom?.cursor.mouseDown;
+    // const unsubscribeMouseDown = mouseDown?.subscribe(() => {
+      // if (mouseDown.value) {
+      //   if (showFocusToolbar.value) showFocusToolbar.next(false);
+      // }
+    // });
+
+    const source = dom?.opts.source;
+    const mouseDownListener = (event: MouseEvent) => {
+      if (showFocusToolbar.value) showFocusToolbar.next(false); 
+    };
+    const mouseUpListener = (event: MouseEvent) => {
+      if (!showFocusToolbar.value) showFocusToolbar.next(true); 
+    };
+    source?.addEventListener('mousedown', mouseDownListener);
+    source?.addEventListener('mouseup', mouseUpListener);
     
     return () => {
       changeUnsubscribe();
-      unsubscribeMouseDown?.();
+      // unsubscribeMouseDown?.();
+      source?.removeEventListener('mousedown', mouseDownListener);
+      source?.removeEventListener('mouseup', mouseUpListener);
     };
   }
 

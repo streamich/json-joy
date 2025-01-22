@@ -6,7 +6,7 @@ import {useToolbarPlugin} from './context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
-const height = 1.9;
+const height = 1.8;
 
 const blockClass = rule({
   pos: 'relative',
@@ -30,11 +30,13 @@ export interface RenderFocusProps extends CaretViewProps {
 
 export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
-  const showFocusToolbar = toolbar.showFocusToolbar;
-  const showFocusToolbarValue = useSyncStore(showFocusToolbar);
+  const showInlineToolbar = toolbar.showInlineToolbar;
+  const showFocusToolbarValue = useSyncStore(showInlineToolbar);
+
+  console.log('showFocusToolbarValue', showFocusToolbarValue);
 
   const handleClose = React.useCallback(() => {
-    if (showFocusToolbar.value) showFocusToolbar.next(false);
+    if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 
   return (

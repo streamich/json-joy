@@ -6,7 +6,7 @@ import {useToolbarPlugin} from './context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
-const height = 1.9;
+const height = 1.8;
 
 const blockClass = rule({
   pos: 'relative',
@@ -30,19 +30,31 @@ export interface RenderCaretProps extends CaretViewProps {
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
-  const showCaretToolbar = toolbar.showCaretToolbar;
-  const showCaretToolbarValue = useSyncStore(showCaretToolbar);
+  const showInlineToolbar = toolbar.showInlineToolbar;
+  const showCaretToolbarValue = useSyncStore(showInlineToolbar);
 
   const handleClose = React.useCallback(() => {
     setTimeout(() => {
-      if (showCaretToolbar.value) showCaretToolbar.next(false);
+      if (showInlineToolbar.value) showInlineToolbar.next(false);
     }, 5);
   }, []);
 
   return (
     <span className={blockClass}>
       {children}
-      <span className={overClass} contentEditable={false}>
+      <span
+        className={overClass}
+        contentEditable={false}
+        // onMouseDown={(e) => {
+        //   e.stopPropagation();
+        // }}
+        // onMouseUp={(e) => {
+        //   e.stopPropagation();
+        // }}
+        // onClick={(e) => {
+        //   e.stopPropagation();
+        // }}
+      >
         {showCaretToolbarValue && (
           <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
         )}
