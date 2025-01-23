@@ -23,7 +23,8 @@ export class ValueSyncStore<V> implements SyncStore<V> {
 
   public readonly getSnapshot: () => V = () => this.value;
 
-  public next(value: V): void {
+  public next(value: V, force = false): void {
+    if (!force && this.value === value) return;
     this.value = value;
     this.fanout.emit();
   }

@@ -35,12 +35,13 @@ export class ToolbarState implements UiLifeCyclesRender {
         this.showInlineToolbar.next(true);
     });
 
-    // const mouseDown = dom?.cursor.mouseDown;
-    // const unsubscribeMouseDown = mouseDown?.subscribe(() => {
+    const mouseDown = dom?.cursor.mouseDown;
+    const unsubscribeMouseDown = mouseDown?.subscribe(() => {
+      console.log('mouse down', mouseDown.value);
       // if (mouseDown.value) {
       //   if (showFocusToolbar.value) showFocusToolbar.next(false);
       // }
-    // });
+    });
 
     const source = dom?.opts.source;
     const mouseDownListener = (event: MouseEvent) => {

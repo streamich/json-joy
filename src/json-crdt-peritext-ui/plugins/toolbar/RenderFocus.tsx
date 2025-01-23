@@ -33,8 +33,6 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const showInlineToolbar = toolbar.showInlineToolbar;
   const showFocusToolbarValue = useSyncStore(showInlineToolbar);
 
-  console.log('showFocusToolbarValue', showFocusToolbarValue);
-
   const handleClose = React.useCallback(() => {
     if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
