@@ -3,7 +3,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const height = 1.8;
@@ -32,6 +32,11 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const showFocusToolbarValue = useSyncStore(showInlineToolbar);
+  const mouseDown = !!useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown);
+
+
+  // const showInlineToolbar = toolbar.showInlineToolbar;
+  // const showCaretToolbarValue = useSyncStore(showInlineToolbar);
 
   const handleClose = React.useCallback(() => {
     if (showInlineToolbar.value) showInlineToolbar.next(false);
@@ -41,7 +46,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {showFocusToolbarValue && (
+        {!mouseDown && showFocusToolbarValue && (
           <CaretToolbar menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
         )}
       </span>
