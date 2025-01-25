@@ -30,9 +30,9 @@ export class ToolbarState implements UiLifeCyclesRender {
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
       this.setLastEv(lastEvent);
-      const lastEventIsCaretPositionChange =
-        lastEvent?.type === 'cursor' &&
-        typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
+      // const lastEventIsCaretPositionChange =
+      //   lastEvent?.type === 'cursor' &&
+      //   typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
       this.showInlineToolbar.next(this.doShowInlineToolbar());
     });
 
@@ -41,10 +41,10 @@ export class ToolbarState implements UiLifeCyclesRender {
     });
     
     const mouseDownListener = (event: MouseEvent) => {
-      if (showInlineToolbar.value) showInlineToolbar.next(false); 
+      showInlineToolbar.next(false); 
     };
     const mouseUpListener = (event: MouseEvent) => {
-      if (!showInlineToolbar.value) showInlineToolbar.next(true); 
+      showInlineToolbar.next(true); 
     };
 
     source?.addEventListener('mousedown', mouseDownListener);

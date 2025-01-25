@@ -33,6 +33,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const showInlineToolbarValue = useSyncStore(showInlineToolbar);
+  const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
   // const mouseDown = !!useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown);
 
 
@@ -47,7 +48,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {showInlineToolbarValue && (
+        {(showInlineToolbarValue && focus) && (
           <AfterTimeout ms={500}>
             <CaretToolbar menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
           </AfterTimeout>

@@ -3,9 +3,9 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import {useSyncStore} from '../../react/hooks';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
 import {AfterTimeout} from '../../react/util/AfterTimeout';
+import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const height = 1.8;
 
@@ -33,6 +33,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const showCaretToolbarValue = useSyncStore(showInlineToolbar);
+  const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
 
   const handleClose = React.useCallback(() => {
     setTimeout(() => {
@@ -56,7 +57,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
         //   e.stopPropagation();
         // }}
       >
-        {showCaretToolbarValue && (
+        {(showCaretToolbarValue && focus) && (
           <AfterTimeout ms={500}>
             <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
           </AfterTimeout>
