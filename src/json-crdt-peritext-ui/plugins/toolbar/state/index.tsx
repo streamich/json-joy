@@ -21,44 +21,56 @@ export class ToolbarState implements UiLifeCyclesRender {
   /** ------------------------------------------- {@link UiLifeCyclesRender} */
 
   public start() {
-    const {surface, showInlineToolbar: showFocusToolbar} = this;
+    const {surface, showInlineToolbar} = this;
     const {dom, events} = surface;
     const {et} = events;
+    const mouseDown = dom!.cursor.mouseDown;
+    const source = dom!.opts.source;
+
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
-      this.lastEvent = lastEvent;
-      this.lastEventTs = Date.now();
+      this.setLastEv(lastEvent);
       const lastEventIsCaretPositionChange =
         lastEvent?.type === 'cursor' &&
         typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
-      if (lastEventIsCaretPositionChange)
-        this.showInlineToolbar.next(true);
+      this.showInlineToolbar.next(this.doShowInlineToolbar());
     });
 
-    const mouseDown = dom?.cursor.mouseDown;
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
-      console.log('mouse down', mouseDown.value);
-      // if (mouseDown.value) {
-      //   if (showFocusToolbar.value) showFocusToolbar.next(false);
-      // }
+      if (mouseDown.value) showInlineToolbar.next(false);
     });
-
-    const source = dom?.opts.source;
+    
     const mouseDownListener = (event: MouseEvent) => {
-      if (showFocusToolbar.value) showFocusToolbar.next(false); 
+      if (showInlineToolbar.value) showInlineToolbar.next(false); 
     };
     const mouseUpListener = (event: MouseEvent) => {
-      if (!showFocusToolbar.value) showFocusToolbar.next(true); 
+      if (!showInlineToolbar.value) showInlineToolbar.next(true); 
     };
+
     source?.addEventListener('mousedown', mouseDownListener);
     source?.addEventListener('mouseup', mouseUpListener);
     
     return () => {
       changeUnsubscribe();
-      // unsubscribeMouseDown?.();
+      unsubscribeMouseDown?.();
       source?.removeEventListener('mousedown', mouseDownListener);
       source?.removeEventListener('mouseup', mouseUpListener);
     };
+  }
+
+  private setLastEv(lastEvent: PeritextEventDetailMap['change']['ev']) {
+    this.lastEvent = lastEvent;
+    this.lastEventTs = Date.now();
+  }
+
+  private doShowInlineToolbar(): boolean {
+    const {surface, lastEvent} = this;
+    if (surface.dom!.cursor.mouseDown.value) return false;
+    if (!lastEvent) return false;
+    const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
+    if (!lastEventIsCursorEvent) return false;
+    if (!surface.peritext.editor.cursorCount()) return false;
+    return true;
   }
 
   // -------------------------------------------------------------------- Menus
