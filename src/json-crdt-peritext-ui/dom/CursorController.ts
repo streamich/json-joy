@@ -119,7 +119,7 @@ export class CursorController implements UiLifeCycles, Printable {
 
   public readonly focus = new ValueSyncStore<boolean>(false);
 
-  private readonly onFocus = (): void => {
+  private readonly onFocus = (event: Event): void => {
     this.focus.next(true);
   };
 
@@ -132,6 +132,7 @@ export class CursorController implements UiLifeCycles, Printable {
   public readonly mouseDown = new ValueSyncStore<boolean>(false);
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
+    if (!this.focus.value && this.opts.txt.editor.hasCursor()) return;
     const {clientX, clientY} = ev;
     this.x = clientX;
     this.y = clientY;
