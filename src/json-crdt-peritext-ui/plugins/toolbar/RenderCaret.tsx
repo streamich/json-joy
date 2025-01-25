@@ -3,7 +3,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../react/hooks';
 import {AfterTimeout} from '../../react/util/AfterTimeout';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
@@ -34,6 +34,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const showInlineToolbar = toolbar.showInlineToolbar;
   const showCaretToolbarValue = useSyncStore(showInlineToolbar);
   const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const enableAfterCoolDown = useTimeout(500);
 
   const handleClose = React.useCallback(() => {
     setTimeout(() => {
@@ -47,19 +48,10 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
       <span
         className={overClass}
         contentEditable={false}
-        // onMouseDown={(e) => {
-        //   e.stopPropagation();
-        // }}
-        // onMouseUp={(e) => {
-        //   e.stopPropagation();
-        // }}
-        // onClick={(e) => {
-        //   e.stopPropagation();
-        // }}
       >
         {(showCaretToolbarValue && focus) && (
           <AfterTimeout ms={500}>
-            <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
+            <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
           </AfterTimeout>
         )}
       </span>
