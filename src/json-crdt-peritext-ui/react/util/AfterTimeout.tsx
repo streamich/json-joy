@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useTimeout} from '../hooks';
 
 export interface IAfterTimeoutProps {
   ms?: number;
@@ -6,17 +7,7 @@ export interface IAfterTimeoutProps {
 }
 
 export const AfterTimeout: React.FC<IAfterTimeoutProps> = ({ms = 200, children}) => {
-  const [ready, setReady] = React.useState(false);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setReady(true);
-    }, ms);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [ms]);
+  const ready = useTimeout(ms);
 
   return ready ? children : null;
 };

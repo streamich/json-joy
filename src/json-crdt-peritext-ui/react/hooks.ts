@@ -17,3 +17,19 @@ const emptySyncStore: SyncStore<undefined> = {
 
 export const useSyncStoreOpt = <T>(store: SyncStore<T | undefined> = emptySyncStore): T | undefined =>
   React.useSyncExternalStore(store.subscribe, store.getSnapshot);
+
+export const useTimeout = (ms: number) => {
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setReady(true);
+    }, ms);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [ms]);
+
+  return ready;
+};
