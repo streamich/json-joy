@@ -5,6 +5,7 @@ import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar'
 import {useToolbarPlugin} from './context';
 import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {AfterTimeout} from '../../react/util/AfterTimeout';
 
 const height = 1.8;
 
@@ -56,7 +57,9 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
         // }}
       >
         {showCaretToolbarValue && (
-          <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
+          <AfterTimeout ms={500}>
+            <CaretToolbar menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
+          </AfterTimeout>
         )}
       </span>
     </span>

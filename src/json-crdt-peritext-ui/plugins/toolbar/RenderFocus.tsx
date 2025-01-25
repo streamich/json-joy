@@ -5,6 +5,7 @@ import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar'
 import {useToolbarPlugin} from './context';
 import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {AfterTimeout} from '../../react/util/AfterTimeout';
 
 const height = 1.8;
 
@@ -31,8 +32,8 @@ export interface RenderFocusProps extends CaretViewProps {
 export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
-  const showFocusToolbarValue = useSyncStore(showInlineToolbar);
-  const mouseDown = !!useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown);
+  const showInlineToolbarValue = useSyncStore(showInlineToolbar);
+  // const mouseDown = !!useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown);
 
 
   // const showInlineToolbar = toolbar.showInlineToolbar;
@@ -46,8 +47,10 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {!mouseDown && showFocusToolbarValue && (
-          <CaretToolbar menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
+        {showInlineToolbarValue && (
+          <AfterTimeout ms={500}>
+            <CaretToolbar menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
+          </AfterTimeout>
         )}
       </span>
     </span>
