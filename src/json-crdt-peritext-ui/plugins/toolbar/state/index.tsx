@@ -10,6 +10,7 @@ import type {UiLifeCyclesRender} from '../../../dom/types';
 import type {PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../react';
 import type {MenuItem} from '../types';
+import {CommonSliceType} from '../../../../json-crdt-extensions';
 
 export class ToolbarState implements UiLifeCyclesRender {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
@@ -91,7 +92,9 @@ export class ToolbarState implements UiLifeCyclesRender {
                     // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
                     right: () => <Sidetip small>⌘ B</Sidetip>,
                     keys: ['⌘', 'b'],
-                    onClick: () => {},
+                    onClick: () => {
+                      this.surface.events.et.format(CommonSliceType.b);
+                    },
                   },
                   {
                     name: 'Italic',
