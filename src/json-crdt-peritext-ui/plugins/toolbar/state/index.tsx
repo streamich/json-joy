@@ -37,11 +37,11 @@ export class ToolbarState implements UiLifeCyclesRender {
     });
 
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
-      if (mouseDown.value) showInlineToolbar.next(false);
+      // if (mouseDown.value) showInlineToolbar.next(false);
     });
     
     const mouseDownListener = (event: MouseEvent) => {
-      showInlineToolbar.next(false); 
+      // showInlineToolbar.next(false); 
     };
     const mouseUpListener = (event: MouseEvent) => {
       showInlineToolbar.next(true); 

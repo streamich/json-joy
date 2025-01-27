@@ -33,11 +33,12 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const showInlineToolbarValue = useSyncStore(showInlineToolbar);
-  const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const focus = true; //useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
   const enableAfterCoolDown = useTimeout(500);
 
   const handleClose = React.useCallback(() => {
-    if (showInlineToolbar.value) showInlineToolbar.next(false);
+    toolbar.surface.dom?.focus();
+    // if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 
   return (
