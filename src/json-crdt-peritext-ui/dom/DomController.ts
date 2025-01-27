@@ -6,14 +6,14 @@ import {KeyController} from '../dom/KeyController';
 import {CompositionController} from '../dom/CompositionController';
 import type {PeritextEventDefaults} from '../events/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {UiLifeCycles} from '../dom/types';
+import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
 
 export interface DomControllerOpts {
   source: HTMLElement;
   events: PeritextEventDefaults;
 }
 
-export class DomController implements UiLifeCycles, Printable {
+export class DomController implements UiLifeCycles, Printable, PeritextRenderingSurfaceApi {
   public readonly et: PeritextEventTarget;
   public readonly keys: KeyController;
   public readonly comp: CompositionController;
@@ -48,6 +48,12 @@ export class DomController implements UiLifeCycles, Printable {
     this.input.stop();
     this.cursor.stop();
     this.richText.stop();
+  }
+
+  /** ----------------------------------- {@link PeritextRenderingSurfaceApi} */
+
+  public focus(): void {
+    this.opts.source.focus();
   }
 
   /** ----------------------------------------------------- {@link Printable} */
