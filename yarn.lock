@@ -3993,10 +3993,10 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nice-ui@^1.27.0:
-  version "1.27.0"
-  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.27.0.tgz#ff93546f12ca58fecd1f64affd225f6db1bbf747"
-  integrity sha512-uI7ScKR1pm5ymNphfyVvPBLXFV6bSrB5Vu1CodxuhqXl/VtypPu/BMAShJkNkdLUjZGliisK4DaU31bAJMPlrg==
+nice-ui@^1.28.0:
+  version "1.28.0"
+  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.28.0.tgz#906fb08a9556aba06089741c29936e1a8cca83bd"
+  integrity sha512-P5ooBHzfTjY1hvwJrF3UJAmxcf+WdFfr7trGWeGg7fGCSrhfC747W6jedXWzZ6HOrO0t832AFKe1vM54U8Osdw==
   dependencies:
     "@material-ui/core" "^4.12.4"
     clipboard-copy "^4.0.1"
