@@ -32,15 +32,26 @@ export interface RenderCaretProps extends CaretViewProps {
 export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
-  const showCaretToolbarValue = useSyncStore(showInlineToolbar);
+  const [showCaretToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
-  const enableAfterCoolDown = useTimeout(500);
+  const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
+  const enableAfterCoolDown = useTimeout(500, [doHideForCoolDown]);
 
   const handleClose = React.useCallback(() => {
     setTimeout(() => {
-      if (showInlineToolbar.value) showInlineToolbar.next(false);
+      if (showInlineToolbar.value) showInlineToolbar.next([false, Date.now()]);
     }, 5);
   }, []);
+
+  let toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />;
+
+  if (doHideForCoolDown) {
+    toolbarElement = (
+      <AfterTimeout ms={500}>
+        {toolbarElement}
+      </AfterTimeout>
+    );
+  }
 
   return (
     <span className={blockClass}>
@@ -49,11 +60,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
         className={overClass}
         contentEditable={false}
       >
-        {(showCaretToolbarValue && focus) && (
-          <AfterTimeout ms={500}>
-            <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
-          </AfterTimeout>
-        )}
+        {(showCaretToolbarValue && focus) && (toolbarElement)}
       </span>
     </span>
   );

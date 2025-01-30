@@ -15,27 +15,27 @@ export const annotations = (): MenuItem => {
         name: 'Link',
         // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
         icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-        onClick: () => {},
+        onSelect: () => {},
       },
       {
         name: 'Comment',
         icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,
-        onClick: () => {},
+        onSelect: () => {},
       },
       {
         name: 'Bookmark',
         icon: () => <Iconista width={16} height={16} set="lineicons" icon="flag-2" />,
-        onClick: () => {},
+        onSelect: () => {},
       },
       {
         name: 'Footnote',
         icon: () => <Iconista width={16} height={16} set="lucide" icon="footprints" />,
-        onClick: () => {},
+        onSelect: () => {},
       },
       {
         name: 'Aside',
         icon: () => <Iconista width={16} height={16} set="tabler" icon="box-align-right" />,
-        onClick: () => {},
+        onSelect: () => {},
       },
     ],
   };
@@ -64,12 +64,12 @@ export const secondBrain = (): MenuItem => {
           {
             name: 'Make shorter',
             icon: () => <Iconista width={16} height={16} set="tabler" icon="viewport-short" />,
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Make longer',
             icon: () => <Iconista width={16} height={16} set="tabler" icon="viewport-tall" />,
-            onClick: () => {},
+            onSelect: () => {},
           },
           {name: 'Add humor'},
           {name: 'Make more professional'},
@@ -81,171 +81,171 @@ export const secondBrain = (): MenuItem => {
         children: [
           {
             name: 'Afrikaans',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Arabic',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Bengali',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Bulgarian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Catalan',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Cantonese',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Croatian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Czech',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Danish',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Dutch',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Lithuanian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Malay',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Malayalam',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Panjabi',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Tamil',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'English',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Finnish',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'French',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'German',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Greek',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Hebrew',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Hindi',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Hungarian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Indonesian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Italian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Japanese',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Javanese',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Korean',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Norwegian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Polish',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Portuguese',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Romanian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Russian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Serbian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Slovak',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Slovene',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Spanish',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Swedish',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Thai',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Turkish',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Ukrainian',
-            onClick: () => {},
+            onSelect: () => {},
           },
           {
             name: 'Vietnamese',
-            onClick: () => {},
+            onSelect: () => {},
           },
         ],
       },
@@ -272,28 +272,28 @@ export const inlineText: MenuItem = {
       expand: 4,
       openOnTitleHov: true,
       icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
-      onClick: () => {},
+      onSelect: () => {},
       children: [
         {
           name: 'Sans-serif',
           iconBig: () => <FontStyleButton kind={'sans'} />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Serif',
           iconBig: () => <FontStyleButton kind={'serif'} />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Slab',
           icon: () => <FontStyleButton kind={'slab'} size={16} />,
           iconBig: () => <FontStyleButton kind={'slab'} />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Monospace',
           iconBig: () => <FontStyleButton kind={'mono'} />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         // {
         //   name: 'Custom typeface separator',
@@ -308,22 +308,22 @@ export const inlineText: MenuItem = {
               name: 'Typeface',
               // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
               icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Text size',
               icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Letter spacing',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Word spacing',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Caps separator',
@@ -332,12 +332,12 @@ export const inlineText: MenuItem = {
             {
               name: 'Large caps',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Small caps',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -350,7 +350,7 @@ export const inlineText: MenuItem = {
     {
       name: 'Modify',
       expand: 3,
-      onClick: () => {},
+      onSelect: () => {},
       children: [
         {
           name: 'Pick layer',
@@ -361,20 +361,20 @@ export const inlineText: MenuItem = {
           ),
           more: true,
           icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Erase formatting',
           danger: true,
           icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Delete all in range',
           danger: true,
           more: true,
           icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
       ],
     },
@@ -398,24 +398,24 @@ export const inlineText: MenuItem = {
             {
               name: 'Copy',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Copy text only',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Copy as Markdown',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Copy as HTML',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -434,27 +434,27 @@ export const inlineText: MenuItem = {
               name: 'Cut',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Cut text only',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Cut as Markdown',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
               right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Cut as HTML',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
               right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -471,17 +471,17 @@ export const inlineText: MenuItem = {
             {
               name: 'Paste',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Paste text only',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Paste formatting',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -498,17 +498,17 @@ export const inlineText: MenuItem = {
             {
               name: 'Date',
               icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'AI chip',
               icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Solana wallet',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Dropdown',
@@ -517,7 +517,7 @@ export const inlineText: MenuItem = {
                 {
                   name: 'Create new',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Document dropdowns separator',
@@ -526,17 +526,17 @@ export const inlineText: MenuItem = {
                 {
                   name: 'Document dropdowns',
                   expand: 8,
-                  onClick: () => {},
+                  onSelect: () => {},
                   children: [
                     {
                       name: 'Configuration 1',
                       icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                      onClick: () => {},
+                      onSelect: () => {},
                     },
                     {
                       name: 'Configuration 2',
                       icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                      onClick: () => {},
+                      onSelect: () => {},
                     },
                   ],
                 },
@@ -547,17 +547,17 @@ export const inlineText: MenuItem = {
                 {
                   name: 'Presets dropdowns',
                   expand: 8,
-                  onClick: () => {},
+                  onSelect: () => {},
                   children: [
                     {
                       name: 'Project status',
                       icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                      onClick: () => {},
+                      onSelect: () => {},
                     },
                     {
                       name: 'Review status',
                       icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                      onClick: () => {},
+                      onSelect: () => {},
                     },
                   ],
                 },
@@ -569,17 +569,17 @@ export const inlineText: MenuItem = {
           name: 'Link',
           // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
           icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Reference',
           icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'File',
           icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Template',
@@ -588,49 +588,49 @@ export const inlineText: MenuItem = {
           children: [
             {
               name: 'Meeting notes',
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Email draft (created by AI)',
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Product roadmap',
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Review tracker',
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Project assets',
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Content launch tracker',
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
         {
           name: 'On-screen keyboard',
           icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Emoji',
           icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Special characters',
           icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         {
           name: 'Variable',
           icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
       ],
     },
@@ -638,7 +638,7 @@ export const inlineText: MenuItem = {
       name: 'Developer tools',
       danger: true,
       icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
-      onClick: () => {},
+      onSelect: () => {},
     },
   ],
 };

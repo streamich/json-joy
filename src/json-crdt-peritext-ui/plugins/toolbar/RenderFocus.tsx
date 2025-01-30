@@ -3,7 +3,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../react/hooks';
+import {useSyncStore, useTimeout} from '../../react/hooks';
 import {AfterTimeout} from '../../react/util/AfterTimeout';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
@@ -32,24 +32,33 @@ export interface RenderFocusProps extends CaretViewProps {
 export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
-  const showInlineToolbarValue = useSyncStore(showInlineToolbar);
+  const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const focus = true; //useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
-  const enableAfterCoolDown = useTimeout(500);
+  const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
+  const enableAfterCoolDown = useTimeout(500, [toolbarVisibilityChangeTime]);
+
+  console.log('showInlineToolbarValue:', showInlineToolbarValue, 'focus:', focus, 'enableAfterCoolDown:', enableAfterCoolDown, 'toolbarVisibilityChangeTime:', toolbarVisibilityChangeTime);
 
   const handleClose = React.useCallback(() => {
     toolbar.surface.dom?.focus();
     // if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 
+  let toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />;
+  
+  if (doHideForCoolDown) {
+    toolbarElement = (
+      <AfterTimeout ms={500}>
+        {toolbarElement}
+      </AfterTimeout>
+    );
+  }
+
   return (
     <span className={blockClass}>
       {children}
       <span className={overClass} contentEditable={false}>
-        {(showInlineToolbarValue && focus) && (
-          <AfterTimeout ms={500}>
-            <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
-          </AfterTimeout>
-        )}
+        {toolbarElement}
       </span>
     </span>
   );

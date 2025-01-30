@@ -15,7 +15,7 @@ import {CommonSliceType} from '../../../../json-crdt-extensions';
 export class ToolbarState implements UiLifeCyclesRender {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
-  public readonly showInlineToolbar = new ValueSyncStore<boolean>(false);
+  public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
 
   constructor(public readonly surface: PeritextSurfaceState) {}
 
@@ -34,7 +34,7 @@ export class ToolbarState implements UiLifeCyclesRender {
       // const lastEventIsCaretPositionChange =
       //   lastEvent?.type === 'cursor' &&
       //   typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
-      this.showInlineToolbar.next(this.doShowInlineToolbar());
+      // this.showInlineToolbar.next(this.doShowInlineToolbar());
     });
 
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
@@ -43,9 +43,12 @@ export class ToolbarState implements UiLifeCyclesRender {
     
     const mouseDownListener = (event: MouseEvent) => {
       // showInlineToolbar.next(false); 
+      if (showInlineToolbar.value[0])
+        showInlineToolbar.next([false, Date.now()]); 
     };
     const mouseUpListener = (event: MouseEvent) => {
-      showInlineToolbar.next(true); 
+      if (!showInlineToolbar.value[0])
+        showInlineToolbar.next([true, Date.now()]); 
     };
 
     source?.addEventListener('mousedown', mouseDownListener);
@@ -92,7 +95,7 @@ export class ToolbarState implements UiLifeCyclesRender {
                     // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
                     right: () => <Sidetip small>⌘ B</Sidetip>,
                     keys: ['⌘', 'b'],
-                    onClick: () => {
+                    onSelect: () => {
                       this.surface.events.et.format(CommonSliceType.b);
                     },
                   },
@@ -103,35 +106,35 @@ export class ToolbarState implements UiLifeCyclesRender {
                     icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
                     right: () => <Sidetip small>⌘ I</Sidetip>,
                     keys: ['⌘', 'i'],
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Underline',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
                     right: () => <Sidetip small>⌘ U</Sidetip>,
                     keys: ['⌘', 'u'],
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Strikethrough',
                     // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Overline',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Highlight',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Classified',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                 ],
               },
@@ -146,37 +149,37 @@ export class ToolbarState implements UiLifeCyclesRender {
                   {
                     name: 'Code',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Math',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Superscript',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Subscript',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Keyboard key',
                     icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Insertion',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Deletion',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                 ],
               },
@@ -191,17 +194,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                   {
                     name: 'Color',
                     icon: () => <Iconista width={16} height={16} set="lucide" icon="paintbrush" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Background',
                     icon: () => <Iconista width={16} height={16} set="lucide" icon="paint-bucket" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                   {
                     name: 'Border',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="border-left" />,
-                    onClick: () => {},
+                    onSelect: () => {},
                   },
                 ],
               },
@@ -231,28 +234,28 @@ export class ToolbarState implements UiLifeCyclesRender {
           expand: 4,
           openOnTitleHov: true,
           icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
-          onClick: () => {},
+          onSelect: () => {},
           children: [
             {
               name: 'Sans-serif',
               iconBig: () => <FontStyleButton kind={'sans'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Serif',
               iconBig: () => <FontStyleButton kind={'serif'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Slab',
               icon: () => <FontStyleButton kind={'slab'} size={16} />,
               iconBig: () => <FontStyleButton kind={'slab'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Monospace',
               iconBig: () => <FontStyleButton kind={'mono'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             // {
             //   name: 'Custom typeface separator',
@@ -267,22 +270,22 @@ export class ToolbarState implements UiLifeCyclesRender {
                   name: 'Typeface',
                   // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
                   icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Text size',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Letter spacing',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Word spacing',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Caps separator',
@@ -291,12 +294,12 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Large caps',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Small caps',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -309,7 +312,7 @@ export class ToolbarState implements UiLifeCyclesRender {
         {
           name: 'Modify',
           expand: 3,
-          onClick: () => {},
+          onSelect: () => {},
           children: [
             {
               name: 'Pick layer',
@@ -320,20 +323,20 @@ export class ToolbarState implements UiLifeCyclesRender {
               ),
               more: true,
               icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Erase formatting',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Delete all in range',
               danger: true,
               more: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -357,24 +360,24 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Copy',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Copy text only',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Copy as Markdown',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
                   right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Copy as HTML',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
                   right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -393,27 +396,27 @@ export class ToolbarState implements UiLifeCyclesRender {
                   name: 'Cut',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Cut text only',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Cut as Markdown',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
                   right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Cut as HTML',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
                   right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -430,17 +433,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Paste',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Paste text only',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Paste formatting',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -457,17 +460,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Date',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'AI chip',
                   icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Solana wallet',
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Dropdown',
@@ -476,7 +479,7 @@ export class ToolbarState implements UiLifeCyclesRender {
                     {
                       name: 'Create new',
                       icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
-                      onClick: () => {},
+                      onSelect: () => {},
                     },
                     {
                       name: 'Document dropdowns separator',
@@ -485,17 +488,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                     {
                       name: 'Document dropdowns',
                       expand: 8,
-                      onClick: () => {},
+                      onSelect: () => {},
                       children: [
                         {
                           name: 'Configuration 1',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                         {
                           name: 'Configuration 2',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                       ],
                     },
@@ -506,17 +509,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                     {
                       name: 'Presets dropdowns',
                       expand: 8,
-                      onClick: () => {},
+                      onSelect: () => {},
                       children: [
                         {
                           name: 'Project status',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                         {
                           name: 'Review status',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                       ],
                     },
@@ -528,17 +531,17 @@ export class ToolbarState implements UiLifeCyclesRender {
               name: 'Link',
               // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
               icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Reference',
               icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'File',
               icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Template',
@@ -547,49 +550,49 @@ export class ToolbarState implements UiLifeCyclesRender {
               children: [
                 {
                   name: 'Meeting notes',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Email draft (created by AI)',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Product roadmap',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Review tracker',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Project assets',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Content launch tracker',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
             {
               name: 'On-screen keyboard',
               icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Emoji',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Special characters',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Variable',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -597,7 +600,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'Developer tools',
           danger: true,
           icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
       ],
     };
@@ -625,28 +628,28 @@ export class ToolbarState implements UiLifeCyclesRender {
           expand: 4,
           openOnTitleHov: true,
           icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
-          onClick: () => {},
+          onSelect: () => {},
           children: [
             {
               name: 'Sans-serif',
               iconBig: () => <FontStyleButton kind={'sans'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Serif',
               iconBig: () => <FontStyleButton kind={'serif'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Slab',
               icon: () => <FontStyleButton kind={'slab'} size={16} />,
               iconBig: () => <FontStyleButton kind={'slab'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Monospace',
               iconBig: () => <FontStyleButton kind={'mono'} />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             // {
             //   name: 'Custom typeface separator',
@@ -661,22 +664,22 @@ export class ToolbarState implements UiLifeCyclesRender {
                   name: 'Typeface',
                   // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
                   icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Text size',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Letter spacing',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Word spacing',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Caps separator',
@@ -685,12 +688,12 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Large caps',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Small caps',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -703,7 +706,7 @@ export class ToolbarState implements UiLifeCyclesRender {
         {
           name: 'Modify',
           expand: 3,
-          onClick: () => {},
+          onSelect: () => {},
           children: [
             {
               name: 'Pick layer',
@@ -714,20 +717,20 @@ export class ToolbarState implements UiLifeCyclesRender {
               ),
               more: true,
               icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Erase formatting',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Delete all in range',
               danger: true,
               more: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -751,24 +754,24 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Copy',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Copy text only',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Copy as Markdown',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
                   right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Copy as HTML',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
                   right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -787,27 +790,27 @@ export class ToolbarState implements UiLifeCyclesRender {
                   name: 'Cut',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Cut text only',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Cut as Markdown',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
                   right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Cut as HTML',
                   danger: true,
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
                   right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -824,17 +827,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Paste',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Paste text only',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Paste formatting',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
@@ -851,17 +854,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                 {
                   name: 'Date',
                   icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'AI chip',
                   icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Solana wallet',
                   icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Dropdown',
@@ -870,7 +873,7 @@ export class ToolbarState implements UiLifeCyclesRender {
                     {
                       name: 'Create new',
                       icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
-                      onClick: () => {},
+                      onSelect: () => {},
                     },
                     {
                       name: 'Document dropdowns separator',
@@ -879,17 +882,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                     {
                       name: 'Document dropdowns',
                       expand: 8,
-                      onClick: () => {},
+                      onSelect: () => {},
                       children: [
                         {
                           name: 'Configuration 1',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                         {
                           name: 'Configuration 2',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                       ],
                     },
@@ -900,17 +903,17 @@ export class ToolbarState implements UiLifeCyclesRender {
                     {
                       name: 'Presets dropdowns',
                       expand: 8,
-                      onClick: () => {},
+                      onSelect: () => {},
                       children: [
                         {
                           name: 'Project status',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                         {
                           name: 'Review status',
                           icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
-                          onClick: () => {},
+                          onSelect: () => {},
                         },
                       ],
                     },
@@ -922,17 +925,17 @@ export class ToolbarState implements UiLifeCyclesRender {
               name: 'Link',
               // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
               icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Reference',
               icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'File',
               icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Template',
@@ -941,49 +944,49 @@ export class ToolbarState implements UiLifeCyclesRender {
               children: [
                 {
                   name: 'Meeting notes',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Email draft (created by AI)',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Product roadmap',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Review tracker',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Project assets',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
                 {
                   name: 'Content launch tracker',
-                  onClick: () => {},
+                  onSelect: () => {},
                 },
               ],
             },
             {
               name: 'On-screen keyboard',
               icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Emoji',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Special characters',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
             {
               name: 'Variable',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
-              onClick: () => {},
+              onSelect: () => {},
             },
           ],
         },
@@ -991,7 +994,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'Developer tools',
           danger: true,
           icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
-          onClick: () => {},
+          onSelect: () => {},
         },
         */
       ],
