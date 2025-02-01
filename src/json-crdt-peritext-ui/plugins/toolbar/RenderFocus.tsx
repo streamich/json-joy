@@ -3,8 +3,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import {useSyncStore, useTimeout} from '../../react/hooks';
-import {AfterTimeout} from '../../react/util/AfterTimeout';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const height = 1.8;
@@ -33,26 +32,18 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
-  const focus = true; //useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
-  const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
   const enableAfterCoolDown = useTimeout(500, [toolbarVisibilityChangeTime]);
-
-  console.log('showInlineToolbarValue:', showInlineToolbarValue, 'focus:', focus, 'enableAfterCoolDown:', enableAfterCoolDown, 'toolbarVisibilityChangeTime:', toolbarVisibilityChangeTime);
+  // const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
 
   const handleClose = React.useCallback(() => {
-    toolbar.surface.dom?.focus();
-    // if (showInlineToolbar.value) showInlineToolbar.next(false);
+  //   toolbar.surface.dom?.focus();
+  //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 
-  let toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />;
+  let toolbarElement: React.ReactNode = null;
   
-  if (doHideForCoolDown) {
-    toolbarElement = (
-      <AfterTimeout ms={500}>
-        {toolbarElement}
-      </AfterTimeout>
-    );
-  }
+  if (showInlineToolbarValue)
+    toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />;
 
   return (
     <span className={blockClass}>

@@ -69,6 +69,7 @@ export const enum SliceTypeCon {
   iaside = -25, // Inline <aside>
   iembed = -26, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
   bookmark = -27, // UI for creating a link to this slice
+  overline = -28, // <span style="text-decoration: overline">
 }
 
 /**
@@ -131,6 +132,7 @@ export enum SliceTypeName {
   iaside = SliceTypeCon.iaside,
   iembed = SliceTypeCon.iembed,
   bookmark = SliceTypeCon.bookmark,
+  overline = SliceTypeCon.overline,
 }
 
 export enum SliceHeaderMask {

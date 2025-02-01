@@ -80,6 +80,7 @@ export class ToolbarState implements UiLifeCyclesRender {
   // -------------------------------------------------------------------- Menus
 
   public readonly getFormattingMenu = (): MenuItem => {
+    const et = this.surface.events.et;
     return (
           {
             name: 'Formatting',
@@ -96,7 +97,7 @@ export class ToolbarState implements UiLifeCyclesRender {
                     right: () => <Sidetip small>⌘ B</Sidetip>,
                     keys: ['⌘', 'b'],
                     onSelect: () => {
-                      this.surface.events.et.format(CommonSliceType.b);
+                      et.format(CommonSliceType.b);
                     },
                   },
                   {
@@ -106,35 +107,47 @@ export class ToolbarState implements UiLifeCyclesRender {
                     icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
                     right: () => <Sidetip small>⌘ I</Sidetip>,
                     keys: ['⌘', 'i'],
-                    onSelect: () => {},
+                    onSelect: () => {
+                      et.format(CommonSliceType.i);
+                    },
                   },
                   {
                     name: 'Underline',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
                     right: () => <Sidetip small>⌘ U</Sidetip>,
                     keys: ['⌘', 'u'],
-                    onSelect: () => {},
+                    onSelect: () => {
+                      et.format(CommonSliceType.u);
+                    },
                   },
                   {
                     name: 'Strikethrough',
                     // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
-                    onSelect: () => {},
+                    onSelect: () => {
+                      et.format(CommonSliceType.s);
+                    },
                   },
                   {
                     name: 'Overline',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
-                    onSelect: () => {},
+                    onSelect: () => {
+                      et.format(CommonSliceType.overline);
+                    },
                   },
                   {
                     name: 'Highlight',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
-                    onSelect: () => {},
+                    onSelect: () => {
+                      et.format(CommonSliceType.mark);
+                    },
                   },
                   {
                     name: 'Classified',
                     icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
-                    onSelect: () => {},
+                    onSelect: () => {
+                      et.format(CommonSliceType.hidden);
+                    },
                   },
                 ],
               },
