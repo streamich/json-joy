@@ -33,7 +33,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const enableAfterCoolDown = useTimeout(500, [toolbarVisibilityChangeTime]);
-  // const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const isScrubbing = useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown) || false;
 
   const handleClose = React.useCallback(() => {
   //   toolbar.surface.dom?.focus();
@@ -42,7 +42,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
 
   let toolbarElement: React.ReactNode = null;
   
-  if (showInlineToolbarValue)
+  if (showInlineToolbarValue && !isScrubbing)
     toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />;
 
   return (
