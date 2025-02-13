@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {ValueSyncStore} from '../../../../util/events/sync-store';
-import {annotations, secondBrain} from './menus';
+import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import type {UiLifeCyclesRender} from '../../../dom/types';
@@ -226,6 +226,42 @@ export class ToolbarState implements UiLifeCyclesRender {
     );
   };
 
+  public readonly annotationsMenu = (): MenuItem => {
+    return {
+      name: 'Annotations',
+      expand: 2,
+      sepBefore: true,
+      children: [
+        {
+          name: 'Link',
+          // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
+          icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+          onSelect: () => {},
+        },
+        // {
+        //   name: 'Comment',
+        //   icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,
+        //   onSelect: () => {},
+        // },
+        // {
+        //   name: 'Bookmark',
+        //   icon: () => <Iconista width={16} height={16} set="lineicons" icon="flag-2" />,
+        //   onSelect: () => {},
+        // },
+        // {
+        //   name: 'Footnote',
+        //   icon: () => <Iconista width={16} height={16} set="lucide" icon="footprints" />,
+        //   onSelect: () => {},
+        // },
+        {
+          name: 'Aside',
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="box-align-right" />,
+          onSelect: () => {},
+        },
+      ],
+    };
+  };
+
   public readonly getCaretMenu = (): MenuItem => {
     return {
       name: 'Inline text',
@@ -237,7 +273,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'Annotations separator',
           sep: true,
         },
-        annotations(),
+        this.annotationsMenu(),
         {
           name: 'Style separator',
           sep: true,
@@ -625,13 +661,13 @@ export class ToolbarState implements UiLifeCyclesRender {
       maxToolbarItems: 4,
       children: [
         this.getFormattingMenu(),
+        this.annotationsMenu(),
         /*
         secondBrain(),
         {
           name: 'Annotations separator',
           sep: true,
         },
-        annotations(),
         {
           name: 'Style separator',
           sep: true,

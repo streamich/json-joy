@@ -56,12 +56,12 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   return (
     <span className={blockClass}>
       {children}
-      <span
+      {/* <span
         className={overClass}
         contentEditable={false}
       >
         {(showCaretToolbarValue && focus) && (toolbarElement)}
-      </span>
+      </span> */}
     </span>
   );
 };

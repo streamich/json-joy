@@ -6,41 +6,6 @@ import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import type {MenuItem} from '../types';
 
-export const annotations = (): MenuItem => {
-  return {
-    name: 'Annotations',
-    expand: 2,
-    children: [
-      {
-        name: 'Link',
-        // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-        icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-        onSelect: () => {},
-      },
-      {
-        name: 'Comment',
-        icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,
-        onSelect: () => {},
-      },
-      {
-        name: 'Bookmark',
-        icon: () => <Iconista width={16} height={16} set="lineicons" icon="flag-2" />,
-        onSelect: () => {},
-      },
-      {
-        name: 'Footnote',
-        icon: () => <Iconista width={16} height={16} set="lucide" icon="footprints" />,
-        onSelect: () => {},
-      },
-      {
-        name: 'Aside',
-        icon: () => <Iconista width={16} height={16} set="tabler" icon="box-align-right" />,
-        onSelect: () => {},
-      },
-    ],
-  };
-};
-
 export const secondBrain = (): MenuItem => {
   return {
     sepBefore: true,
@@ -262,7 +227,7 @@ export const inlineText: MenuItem = {
       name: 'Annotations separator',
       sep: true,
     },
-    annotations(),
+    // annotations(),
     {
       name: 'Style separator',
       sep: true,
