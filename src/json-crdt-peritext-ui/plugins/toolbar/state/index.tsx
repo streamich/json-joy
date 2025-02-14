@@ -40,20 +40,19 @@ export class ToolbarState implements UiLifeCyclesRender {
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
       // if (mouseDown.value) showInlineToolbar.next(false);
     });
-    
+
     const mouseDownListener = (event: MouseEvent) => {
-      // showInlineToolbar.next(false); 
+      // showInlineToolbar.next(false);
       // if (showInlineToolbar.value[0])
-      //   showInlineToolbar.next([false, Date.now()]); 
+      //   showInlineToolbar.next([false, Date.now()]);
     };
     const mouseUpListener = (event: MouseEvent) => {
-      if (!showInlineToolbar.value[0])
-        showInlineToolbar.next([true, Date.now()]); 
+      if (!showInlineToolbar.value[0]) showInlineToolbar.next([true, Date.now()]);
     };
 
     source?.addEventListener('mousedown', mouseDownListener);
     source?.addEventListener('mouseup', mouseUpListener);
-    
+
     return () => {
       changeUnsubscribe();
       unsubscribeMouseDown?.();
@@ -81,149 +80,147 @@ export class ToolbarState implements UiLifeCyclesRender {
 
   public readonly getFormattingMenu = (): MenuItem => {
     const et = this.surface.events.et;
-    return (
-          {
-            name: 'Formatting',
-            expandChild: 0,
-            children: [
-              {
-                name: 'Common',
-                expand: 8,
-                children: [
-                  {
-                    name: 'Bold',
-                    icon: () => <Iconista width={15} height={15} set="radix" icon="font-bold" />,
-                    // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
-                    right: () => <Sidetip small>⌘ B</Sidetip>,
-                    keys: ['⌘', 'b'],
-                    onSelect: () => {
-                      et.format(CommonSliceType.b);
-                    },
-                  },
-                  {
-                    name: 'Italic',
-                    // icon: () => <Iconista width={15} height={15} set="radix" icon="font-italic" />,
-                    // icon: () => <Iconista width={16} height={16} set="lucide" icon="italic" />,
-                    icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
-                    right: () => <Sidetip small>⌘ I</Sidetip>,
-                    keys: ['⌘', 'i'],
-                    onSelect: () => {
-                      et.format(CommonSliceType.i);
-                    },
-                  },
-                  {
-                    name: 'Underline',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
-                    right: () => <Sidetip small>⌘ U</Sidetip>,
-                    keys: ['⌘', 'u'],
-                    onSelect: () => {
-                      et.format(CommonSliceType.u);
-                    },
-                  },
-                  {
-                    name: 'Strikethrough',
-                    // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
-                    onSelect: () => {
-                      et.format(CommonSliceType.s);
-                    },
-                  },
-                  {
-                    name: 'Overline',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
-                    onSelect: () => {
-                      et.format(CommonSliceType.overline);
-                    },
-                  },
-                  {
-                    name: 'Highlight',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
-                    onSelect: () => {
-                      et.format(CommonSliceType.mark);
-                    },
-                  },
-                  {
-                    name: 'Classified',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
-                    onSelect: () => {
-                      et.format(CommonSliceType.hidden);
-                    },
-                  },
-                ],
+    return {
+      name: 'Formatting',
+      expandChild: 0,
+      children: [
+        {
+          name: 'Common',
+          expand: 8,
+          children: [
+            {
+              name: 'Bold',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="font-bold" />,
+              // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
+              right: () => <Sidetip small>⌘ B</Sidetip>,
+              keys: ['⌘', 'b'],
+              onSelect: () => {
+                et.format(CommonSliceType.b);
               },
-              {
-                name: 'Technical separator',
-                sep: true,
+            },
+            {
+              name: 'Italic',
+              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-italic" />,
+              // icon: () => <Iconista width={16} height={16} set="lucide" icon="italic" />,
+              icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
+              right: () => <Sidetip small>⌘ I</Sidetip>,
+              keys: ['⌘', 'i'],
+              onSelect: () => {
+                et.format(CommonSliceType.i);
               },
-              {
-                name: 'Technical',
-                expand: 8,
-                children: [
-                  {
-                    name: 'Code',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Math',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Superscript',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Subscript',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Keyboard key',
-                    icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Insertion',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Deletion',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
-                    onSelect: () => {},
-                  },
-                ],
+            },
+            {
+              name: 'Underline',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
+              right: () => <Sidetip small>⌘ U</Sidetip>,
+              keys: ['⌘', 'u'],
+              onSelect: () => {
+                et.format(CommonSliceType.u);
               },
-              {
-                name: 'Artistic separator',
-                sep: true,
+            },
+            {
+              name: 'Strikethrough',
+              // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
+              onSelect: () => {
+                et.format(CommonSliceType.s);
               },
-              {
-                name: 'Artistic',
-                expand: 8,
-                children: [
-                  {
-                    name: 'Color',
-                    icon: () => <Iconista width={16} height={16} set="lucide" icon="paintbrush" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Background',
-                    icon: () => <Iconista width={16} height={16} set="lucide" icon="paint-bucket" />,
-                    onSelect: () => {},
-                  },
-                  {
-                    name: 'Border',
-                    icon: () => <Iconista width={16} height={16} set="tabler" icon="border-left" />,
-                    onSelect: () => {},
-                  },
-                ],
+            },
+            {
+              name: 'Overline',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
+              onSelect: () => {
+                et.format(CommonSliceType.overline);
               },
-            ],
-          }
-    );
+            },
+            {
+              name: 'Highlight',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
+              onSelect: () => {
+                et.format(CommonSliceType.mark);
+              },
+            },
+            {
+              name: 'Classified',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
+              onSelect: () => {
+                et.format(CommonSliceType.hidden);
+              },
+            },
+          ],
+        },
+        {
+          name: 'Technical separator',
+          sep: true,
+        },
+        {
+          name: 'Technical',
+          expand: 8,
+          children: [
+            {
+              name: 'Code',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Math',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Superscript',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Subscript',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Keyboard key',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Insertion',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Deletion',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          name: 'Artistic separator',
+          sep: true,
+        },
+        {
+          name: 'Artistic',
+          expand: 8,
+          children: [
+            {
+              name: 'Color',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="paintbrush" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Background',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="paint-bucket" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Border',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="border-left" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+      ],
+    };
   };
 
   public readonly annotationsMenu = (): MenuItem => {

@@ -43,14 +43,12 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
     }, 5);
   }, []);
 
-  let toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />;
+  let toolbarElement = (
+    <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
+  );
 
   if (doHideForCoolDown) {
-    toolbarElement = (
-      <AfterTimeout ms={500}>
-        {toolbarElement}
-      </AfterTimeout>
-    );
+    toolbarElement = <AfterTimeout ms={500}>{toolbarElement}</AfterTimeout>;
   }
 
   return (

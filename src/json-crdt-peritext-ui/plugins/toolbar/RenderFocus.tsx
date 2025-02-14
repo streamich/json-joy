@@ -36,14 +36,16 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
   const isScrubbing = useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown) || false;
 
   const handleClose = React.useCallback(() => {
-  //   toolbar.surface.dom?.focus();
-  //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
+    //   toolbar.surface.dom?.focus();
+    //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 
   let toolbarElement: React.ReactNode = null;
-  
+
   if (showInlineToolbarValue && !isScrubbing)
-    toolbarElement = <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />;
+    toolbarElement = (
+      <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
+    );
 
   return (
     <span className={blockClass}>
