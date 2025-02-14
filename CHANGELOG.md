@@ -1,3 +1,30 @@
+# [17.28.0](https://github.com/streamich/json-joy/compare/v17.27.0...v17.28.0) (2025-02-14)
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add bolding action ([fca722a](https://github.com/streamich/json-joy/commit/fca722a5f8086cabb039baf3f7b0b3415458b673))
+* **json-crdt-peritext-ui:** 🎸 add cooldown for disable status when floating menu appears ([9998a33](https://github.com/streamich/json-joy/commit/9998a33eb1d78681917283552fe80152d310f78d))
+* **json-crdt-peritext-ui:** 🎸 add dependency list to timeout hook ([da73151](https://github.com/streamich/json-joy/commit/da731512211a570779041149cb89107d4c9ea7bc))
+* **json-crdt-peritext-ui:** 🎸 advance on facus selection floating toobar ([6c70a7e](https://github.com/streamich/json-joy/commit/6c70a7e23958ab55b16134d11692abdd12e94f34))
+* **json-crdt-peritext-ui:** 🎸 delay showing floating menus ([2fc72c5](https://github.com/streamich/json-joy/commit/2fc72c54d38525852792dbbcaa4497c294a9d7a7))
+* **json-crdt-peritext-ui:** 🎸 do not change cursor position when editor blurred ([736d8e8](https://github.com/streamich/json-joy/commit/736d8e8addad0fd8c5f34c0b4fc8ba2b85418bfa))
+* **json-crdt-peritext-ui:** 🎸 do not emite change event if old value strictly same ([c221a77](https://github.com/streamich/json-joy/commit/c221a77e16cfc1943ddf5e8d4cf72657f09dbe71))
+* **json-crdt-peritext-ui:** 🎸 do not show focus floating menu when scrubbing ([50a5cfb](https://github.com/streamich/json-joy/commit/50a5cfbc767e1c4103ed11c389c4dad87e8a1df7))
+* **json-crdt-peritext-ui:** 🎸 do not show focus floating menu while mouse down ([8b1c7b1](https://github.com/streamich/json-joy/commit/8b1c7b1486b5590c15b955a819e3bd22f4eb5fcc))
+* **json-crdt-peritext-ui:** 🎸 hide floating menu when focus blurred ([621e4d2](https://github.com/streamich/json-joy/commit/621e4d2381d9a0c2d111e3c3dd120d53c5f14371))
+* **json-crdt-peritext-ui:** 🎸 improve caret toolbar event tracking ([26ccfab](https://github.com/streamich/json-joy/commit/26ccfab5fc9ebc4ecbd044c3c04b0da1aed30a72))
+* **json-crdt-peritext-ui:** 🎸 improve on floating menus ([8b4afde](https://github.com/streamich/json-joy/commit/8b4afdecc56c7ae2746e7cd03fce21bb9fad9496))
+* **json-crdt-peritext-ui:** 🎸 improve toolbar state management ([549253e](https://github.com/streamich/json-joy/commit/549253eb7012519a9fc16f0665be32902f9b5aa0))
+* **json-crdt-peritext-ui:** 🎸 introduce Peritext rendering surface API abstraction ([ae4926d](https://github.com/streamich/json-joy/commit/ae4926d947d161d53dc9c360ea10e3c7a11f1465))
+* **json-crdt-peritext-ui:** 🎸 make mouse down state reactive ([cf05b3a](https://github.com/streamich/json-joy/commit/cf05b3aba07fedcd5241efcc118894d59f27f2f3))
+* **json-crdt-peritext-ui:** 🎸 modularize the timeout component ([dfbfa9c](https://github.com/streamich/json-joy/commit/dfbfa9c1801857355a7f080ddda7cde6cab4fc66))
+* **json-crdt-peritext-ui:** 🎸 re-focus on item click ([d7b4fae](https://github.com/streamich/json-joy/commit/d7b4fae0793739ba082ebd12f08bce3535e533dd))
+* **json-crdt-peritext-ui:** 🎸 setup selection above-focus rendering ([478ed93](https://github.com/streamich/json-joy/commit/478ed93a03eebe5e6a20cb283500b86b7d5a9017))
+* **json-crdt-peritext-ui:** 🎸 start focus floating menu implementation ([89b4956](https://github.com/streamich/json-joy/commit/89b49563c926e34f2cce23760d6361d914d2cf27))
+* **json-crdt-peritext-ui:** 🎸 track state of caret visibility ([5f98238](https://github.com/streamich/json-joy/commit/5f98238c7c728a05ee2ff8d29d43567063bfaa27))
+* **json-crdt-peritext-ui:** 🎸 update nice-ui dependency ([8649c71](https://github.com/streamich/json-joy/commit/8649c71481aab3648f29fe3ecf26b17bd4b7c0ec))
+
 # [17.27.0](https://github.com/streamich/json-joy/compare/v17.26.1...v17.27.0) (2025-02-14)
 
 
