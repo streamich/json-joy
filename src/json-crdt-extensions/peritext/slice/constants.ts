@@ -61,7 +61,7 @@ export const enum SliceTypeCon {
   col = -17, // <span style="color: ...">
   bg = -18, // <span style="background: ...">
   kbd = -19, // <kbd>
-  hidden = -20, // <span style="color: transparent; background: black">
+  spoiler = -20, // <span style="color: transparent; background: black">
   q = -21, // <q> (inline quote)
   cite = -22, // <cite> (inline citation)
   footnote = -23, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
@@ -126,7 +126,7 @@ export enum SliceTypeName {
   col = SliceTypeCon.col,
   bg = SliceTypeCon.bg,
   kbd = SliceTypeCon.kbd,
-  hidden = SliceTypeCon.hidden,
+  spoiler = SliceTypeCon.spoiler,
   footnote = SliceTypeCon.footnote,
   ref = SliceTypeCon.ref,
   iaside = SliceTypeCon.iaside,

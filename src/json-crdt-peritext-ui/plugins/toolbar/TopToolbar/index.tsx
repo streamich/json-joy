@@ -61,7 +61,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {inlineGroupButton(CommonSliceType.sub, 'Subscript')}
       {inlineGroupButton(CommonSliceType.math, 'Math')}
       {inlineGroupButton(CommonSliceType.kbd, 'Key')}
-      {inlineGroupButton(CommonSliceType.hidden, 'Spoiler')}
+      {inlineGroupButton(CommonSliceType.spoiler, 'Spoiler')}
       {inlineGroupButton(CommonSliceType.bookmark, 'Bookmark')}
       <ButtonSeparator />
       {button('Blue', () => {

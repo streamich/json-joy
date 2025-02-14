@@ -1,7 +1,8 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {CommonSliceType} from '../../../json-crdt-extensions';
-import type {InlineViewProps} from '../../react/InlineView';
+import {CommonSliceType} from '../../../../json-crdt-extensions';
+import {Spoiler} from './Spoiler';
+import type {InlineViewProps} from '../../../react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
   children: React.ReactNode;
@@ -19,7 +20,6 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   if (attr[CommonSliceType.sub]) element = <sub>{element}</sub>;
   if (attr[CommonSliceType.math]) element = <code>{element}</code>;
   if (attr[CommonSliceType.kbd]) element = <kbd>{element}</kbd>;
-  if (attr[CommonSliceType.hidden])
-    element = <span style={{color: 'transparent', background: 'black'}}>{element}</span>;
+  if (attr[CommonSliceType.spoiler]) element = <Spoiler>{element}</Spoiler>;
   return element;
 };

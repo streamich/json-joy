@@ -143,7 +143,7 @@ export class ToolbarState implements UiLifeCyclesRender {
               name: 'Classified',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
               onSelect: () => {
-                et.format(CommonSliceType.hidden);
+                et.format(CommonSliceType.spoiler);
               },
             },
           ],
