@@ -1,3 +1,18 @@
+# [17.27.0](https://github.com/streamich/json-joy/compare/v17.26.1...v17.27.0) (2025-02-14)
+
+
+### Features
+
+* 🎸 bump sonic-forest dependency ([525a050](https://github.com/streamich/json-joy/commit/525a0506aaf51f77caea3bc8040897fd4ca668df))
+
+## [17.26.1](https://github.com/streamich/json-joy/compare/v17.26.0...v17.26.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* **json-patch-ot:** bug when transforming str_del with len ([9d4102b](https://github.com/streamich/json-joy/commit/9d4102b6b7fc016b147671939b1e01907e7ef9dd))
+* **json-patch:** create deep copy of "replace" operation value ([e84449b](https://github.com/streamich/json-joy/commit/e84449bf78a193b4aeedf234f9004ed542a22d5d))
+
 # [17.26.0](https://github.com/streamich/json-joy/compare/v17.25.0...v17.26.0) (2025-01-18)
 
 

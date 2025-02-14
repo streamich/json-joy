@@ -3,6 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import type {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
+import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
@@ -28,9 +29,10 @@ export class OpReplace extends AbstractOp<'replace'> {
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (ref.val === undefined) throw new Error('NOT_FOUND');
-    if (isObjectReference(ref)) ref.obj[ref.key] = this.value;
-    else if (isArrayReference(ref)) ref.obj[ref.key] = this.value;
-    else doc = this.value;
+    const value = deepClone(this.value);
+    if (isObjectReference(ref)) ref.obj[ref.key] = value;
+    else if (isArrayReference(ref)) ref.obj[ref.key] = value;
+    else doc = value;
     return {doc, old: ref.val};
   }
 

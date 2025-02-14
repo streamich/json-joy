@@ -20,7 +20,7 @@ export const xStrDel = (del: OpStrDel, op: Op): null | Op | Op[] => {
       if (newLen <= 0) return null;
       if (typeof op.str === 'string')
         return new OpStrDel(op.path, op.pos - (delLen - overlapLen1), op.str.substr(overlapLen1), undefined);
-      else return new OpStrDel(op.path, op.pos, undefined, newLen);
+      else return new OpStrDel(op.path, op.pos - (delLen - overlapLen1), undefined, newLen);
     } else if (del.pos >= op.pos && overlapLen2 > 0) {
       const newLen = del.pos - op.pos + Math.max(0, overlapLen2 - delLen);
       if (newLen <= 0) return null;
