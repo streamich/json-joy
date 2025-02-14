@@ -12,11 +12,13 @@ export interface TopToolbarProps {
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
-  const pending = useSyncStore(ctx.peritext.editor.pending);
+  const peritext = ctx.peritext;
+  const editor = peritext.editor;
+  const pending = useSyncStore(editor.pending);
 
   if (!ctx.dom) return null;
 
-  const [complete] = ctx.peritext.overlay.stat(ctx.peritext.editor.cursor);
+  const [complete] = editor.hasCursor() ? peritext.overlay.stat(editor.cursor) : [new Set()];
 
   const inlineGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button

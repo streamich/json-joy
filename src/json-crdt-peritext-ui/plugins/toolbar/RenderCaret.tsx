@@ -1,18 +1,17 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {CaretToolbar} from './CaretToolbar';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import type {PeritextEventDetailMap} from '../../events/types';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../react/hooks';
+import {AfterTimeout} from '../../react/util/AfterTimeout';
+import type {CaretViewProps} from '../../react/cursor/CaretView';
 
-const height = 1.9;
+const height = 1.8;
 
 const blockClass = rule({
   pos: 'relative',
   w: '0px',
   h: '100%',
-  bg: 'black',
   va: 'bottom',
 });
 
@@ -23,9 +22,6 @@ const overClass = rule({
   isolation: 'isolate',
   us: 'none',
   transform: 'translateX(calc(-50% + 0px))',
-  // w: '1px',
-  // h: '1px',
-  // bd: '1px solid red',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
@@ -34,17 +30,36 @@ export interface RenderCaretProps extends CaretViewProps {
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const {toolbar} = useToolbarPlugin()!;
+  const showInlineToolbar = toolbar.showInlineToolbar;
+  const [showCaretToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
+  const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
+  const enableAfterCoolDown = useTimeout(500, [doHideForCoolDown]);
 
-  const lastEventIsCaretPositionChange =
-    toolbar.lastEvent?.type === 'cursor' &&
-    typeof (toolbar.lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
+  // biome-ignore lint/correctness/useExhaustiveDependencies: showInlineToolbar.next do not need to memoize
+  const handleClose = React.useCallback(() => {
+    setTimeout(() => {
+      if (showInlineToolbar.value) showInlineToolbar.next([false, Date.now()]);
+    }, 5);
+  }, []);
+
+  let toolbarElement = (
+    <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
+  );
+
+  if (doHideForCoolDown) {
+    toolbarElement = <AfterTimeout ms={500}>{toolbarElement}</AfterTimeout>;
+  }
 
   return (
     <span className={blockClass}>
       {children}
-      <span className={overClass} contentEditable={false}>
-        {lastEventIsCaretPositionChange && <CaretToolbar />}
-      </span>
+      {/* <span
+        className={overClass}
+        contentEditable={false}
+      >
+        {(showCaretToolbarValue && focus) && (toolbarElement)}
+      </span> */}
     </span>
   );
 };

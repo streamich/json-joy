@@ -119,7 +119,7 @@ export class CursorController implements UiLifeCycles, Printable {
 
   public readonly focus = new ValueSyncStore<boolean>(false);
 
-  private readonly onFocus = (): void => {
+  private readonly onFocus = (event: Event): void => {
     this.focus.next(true);
   };
 
@@ -129,15 +129,16 @@ export class CursorController implements UiLifeCycles, Printable {
 
   private x = 0;
   private y = 0;
-  private mouseDown: boolean = false;
+  public readonly mouseDown = new ValueSyncStore<boolean>(false);
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
+    if (!this.focus.value && this.opts.txt.editor.hasCursor()) return;
     const {clientX, clientY} = ev;
     this.x = clientX;
     this.y = clientY;
     switch (ev.detail) {
       case 1: {
-        this.mouseDown = false;
+        this.mouseDown.next(false);
         const at = this.posAtPoint(clientX, clientY);
         if (at === -1) return;
         this.selAnchor = at;
@@ -150,24 +151,24 @@ export class CursorController implements UiLifeCycles, Printable {
           ev.preventDefault();
           et.cursor({at, edge: 'new'});
         } else {
-          this.mouseDown = true;
+          this.mouseDown.next(true);
           ev.preventDefault();
           et.cursor({at});
         }
         break;
       }
       case 2:
-        this.mouseDown = false;
+        this.mouseDown.next(false);
         ev.preventDefault();
         this.opts.et.cursor({unit: 'word'});
         break;
       case 3:
-        this.mouseDown = false;
+        this.mouseDown.next(false);
         ev.preventDefault();
         this.opts.et.cursor({unit: 'block'});
         break;
       case 4:
-        this.mouseDown = false;
+        this.mouseDown.next(false);
         ev.preventDefault();
         this.opts.et.cursor({unit: 'all'});
         break;
@@ -175,7 +176,7 @@ export class CursorController implements UiLifeCycles, Printable {
   };
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
-    if (!this.mouseDown) return;
+    if (!this.mouseDown.value) return;
     const at = this.selAnchor;
     if (at < 0) return;
     const {clientX, clientY} = ev;
@@ -190,7 +191,7 @@ export class CursorController implements UiLifeCycles, Printable {
   };
 
   private readonly onMouseUp = (ev: MouseEvent): void => {
-    this.mouseDown = false;
+    this.mouseDown.next(false);
   };
 
   private onKeyDown = (event: KeyboardEvent): void => {
@@ -242,6 +243,6 @@ export class CursorController implements UiLifeCycles, Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return `cursor { focus: ${this.focus.value}, x: ${this.x}, y: ${this.y}, mouseDown: ${this.mouseDown} }`;
+    return `cursor { focus: ${this.focus.value}, x: ${this.x}, y: ${this.y}, mouseDown: ${this.mouseDown.value} }`;
   }
 }
