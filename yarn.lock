@@ -2181,7 +2181,6 @@ dunder-proto@^1.0.1:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -3530,7 +3529,6 @@ jsesc@^3.0.2:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d":
   version "0.0.1"
-  uid ec825401dc05cbb74b9e0b3c4d6527399f54d54d
   resolved "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
 
 json-logic-js@^2.0.2:
@@ -4989,6 +4987,13 @@ sonic-forest@^1.0.0, sonic-forest@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sonic-forest/-/sonic-forest-1.0.3.tgz#81363af60017daba39b794fce24627dc412563cb"
   integrity sha512-dtwajos6IWMEWXdEbW1IkEkyL2gztCAgDplRIX+OT5aRKnEd5e7r7YCxRgXZdhRP1FBdOBf8axeTPhzDv8T4wQ==
+  dependencies:
+    tree-dump "^1.0.0"
+
+sonic-forest@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/sonic-forest/-/sonic-forest-1.2.0.tgz#d99c459c64a95c1d7eead587f903bbcf8db343ac"
+  integrity sha512-s1gSrnCDeJDfkIQzKBqOMRbno/cFtiGHaF/8jmxtg+Held0T+HUknz4fyl2fTn31GxJckYs431MHIPS7bmq8Sg==
   dependencies:
     tree-dump "^1.0.0"
 
