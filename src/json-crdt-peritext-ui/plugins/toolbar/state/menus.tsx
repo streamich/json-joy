@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
 import {Code} from 'nice-ui/lib/1-inline/Code';

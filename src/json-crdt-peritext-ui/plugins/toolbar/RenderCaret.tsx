@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
@@ -37,6 +36,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
   const enableAfterCoolDown = useTimeout(500, [doHideForCoolDown]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: showInlineToolbar.next do not need to memoize
   const handleClose = React.useCallback(() => {
     setTimeout(() => {
       if (showInlineToolbar.value) showInlineToolbar.next([false, Date.now()]);
