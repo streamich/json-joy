@@ -1,3 +1,10 @@
+# [17.27.0](https://github.com/streamich/json-joy/compare/v17.26.1...v17.27.0) (2025-02-14)
+
+
+### Features
+
+* 🎸 bump sonic-forest dependency ([525a050](https://github.com/streamich/json-joy/commit/525a0506aaf51f77caea3bc8040897fd4ca668df))
+
 ## [17.26.1](https://github.com/streamich/json-joy/compare/v17.26.0...v17.26.1) (2025-02-05)
 
 
