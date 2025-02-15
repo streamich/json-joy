@@ -3,7 +3,6 @@ import {stringify} from '../../../json-text/stringify';
 import {SliceBehavior, SliceTypeName} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
-import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
 import {formatType} from '../slice/util';
@@ -15,34 +14,70 @@ import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
 import type {PeritextMlAttributes, PeritextMlNode} from './types';
 
-/** The attribute started before this inline and ends after this inline. */
-export class InlineAttrPassing {
+export abstract class AbstractInlineAttr {
   constructor(public slice: Slice) {}
+
+  /** @returns Whether the attribute starts at the start of the inline. */
+  isStart(): boolean {
+    return false;
+  }
+
+  /** @returns Whether the attribute ends at the end of the inline. */
+  isEnd(): boolean {
+    return false;
+  }
+
+  /** @returns Whether the attribute is collapsed to a point. */
+  isCollapsed(): boolean {
+    return false;
+  }
 }
 
+/** The attribute started before this inline and ends after this inline. */
+export class InlineAttrPassing extends AbstractInlineAttr {}
+
 /** The attribute starts at the beginning of this inline. */
-export class InlineAttrStart {
-  constructor(public slice: Slice) {}
+export class InlineAttrStart extends AbstractInlineAttr {
+  isStart(): boolean {
+    return true;
+  }
 }
 
 /** The attribute ends at the end of this inline. */
-export class InlineAttrEnd {
-  constructor(public slice: Slice) {}
+export class InlineAttrEnd extends AbstractInlineAttr {
+  isEnd(): boolean {
+    return true;
+  }
 }
 
 /** The attribute starts and ends in this inline, exactly contains it. */
-export class InlineAttrContained {
-  constructor(public slice: Slice) {}
+export class InlineAttrContained extends AbstractInlineAttr {
+  isStart(): boolean {
+    return true;
+  }
+  isEnd(): boolean {
+    return true;
+  }
 }
 
 /** The attribute is collapsed at start of this inline. */
-export class InlineAttrStartPoint {
-  constructor(public slice: Slice) {}
+export class InlineAttrStartPoint extends AbstractInlineAttr {
+  isStart(): boolean {
+    return true;
+  }
+  isCollapsed(): boolean {
+    return true;
+  }
 }
 
 /** The attribute is collapsed at end of this inline. */
-export class InlineAttrEndPoint {
-  constructor(public slice: Slice) {}
+export class InlineAttrEndPoint extends AbstractInlineAttr {
+  isEnd(): boolean {
+    return true;
+  }
+  isCollapsed(): boolean {
+    return true;
+  }
 }
 
 export type InlineAttr =
