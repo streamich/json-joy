@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {Spoiler} from './Spoiler';
+import {Code} from './Code';
 import type {InlineViewProps} from '../../../react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
@@ -10,16 +11,19 @@ export interface RenderInlineProps extends InlineViewProps {
 
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {inline, children} = props;
-  const attr = inline.attr();
+  const attrs = inline.attr();
   let element = children;
-  if (attr[CommonSliceType.code]) element = <code>{element}</code>;
-  if (attr[CommonSliceType.mark]) element = <mark>{element}</mark>;
-  if (attr[CommonSliceType.del]) element = <del>{element}</del>;
-  if (attr[CommonSliceType.ins]) element = <ins>{element}</ins>;
-  if (attr[CommonSliceType.sup]) element = <sup>{element}</sup>;
-  if (attr[CommonSliceType.sub]) element = <sub>{element}</sub>;
-  if (attr[CommonSliceType.math]) element = <code>{element}</code>;
-  if (attr[CommonSliceType.kbd]) element = <kbd>{element}</kbd>;
-  if (attr[CommonSliceType.spoiler]) element = <Spoiler>{element}</Spoiler>;
+  if (attrs[CommonSliceType.code]) {
+    const attr = attrs[CommonSliceType.code][0];
+    if (attr) element = <Code attr={attr}>{element}</Code>;
+  }
+  if (attrs[CommonSliceType.mark]) element = <mark>{element}</mark>;
+  if (attrs[CommonSliceType.del]) element = <del>{element}</del>;
+  if (attrs[CommonSliceType.ins]) element = <ins>{element}</ins>;
+  if (attrs[CommonSliceType.sup]) element = <sup>{element}</sup>;
+  if (attrs[CommonSliceType.sub]) element = <sub>{element}</sub>;
+  if (attrs[CommonSliceType.math]) element = <code>{element}</code>;
+  if (attrs[CommonSliceType.kbd]) element = <kbd>{element}</kbd>;
+  if (attrs[CommonSliceType.spoiler]) element = <Spoiler>{element}</Spoiler>;
   return element;
 };
