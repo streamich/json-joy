@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {rule} from 'nano-theme';
 
 const blockClass = rule({
@@ -18,7 +18,5 @@ export interface SpoilerProps {
 export const Spoiler: React.FC<SpoilerProps> = (props) => {
   const {children} = props;
 
-  return (
-    <span className={blockClass}>{children}</span>
-  );
+  return <span className={blockClass}>{children}</span>;
 };

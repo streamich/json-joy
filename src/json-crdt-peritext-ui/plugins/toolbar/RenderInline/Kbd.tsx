@@ -1,6 +1,6 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {rule, theme} from 'nano-theme';
-import {InlineAttr} from '../../../../json-crdt-extensions';
+import type {InlineAttr} from '../../../../json-crdt-extensions';
 
 const blockClass = rule({
   ...theme.font.mono.mid,
@@ -37,14 +37,7 @@ export interface KbdProps {
 
 export const Kbd: React.FC<KbdProps> = (props) => {
   const {attr, children} = props;
-  const className =
-    blockClass +
-    (attr.isStart() ? startClass : '') +
-    (attr.isEnd() ? endClass : '');
+  const className = blockClass + (attr.isStart() ? startClass : '') + (attr.isEnd() ? endClass : '');
 
-  return (
-    <kbd className={className}>
-      {children}
-    </kbd>
-  );
+  return <kbd className={className}>{children}</kbd>;
 };

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {usePeritext} from '../../../react';
 import {useSyncStoreOpt} from '../../../react/hooks';
 import {DefaultRendererColors} from '../constants';

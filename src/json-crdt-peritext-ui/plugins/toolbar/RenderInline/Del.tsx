@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {rule} from 'nano-theme';
 
 const delClass = rule({
@@ -14,9 +14,5 @@ export interface DelProps {
 export const Del: React.FC<DelProps> = (props) => {
   const {children} = props;
 
-  return (
-    <del className={delClass}>
-      {children}
-    </del>
-  );
+  return <del className={delClass}>{children}</del>;
 };

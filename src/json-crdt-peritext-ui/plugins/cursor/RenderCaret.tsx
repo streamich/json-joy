@@ -88,7 +88,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
           }}
         />
       )}
-      
+
       {/* Two carets overlay, so that they look good, both, on white and black backgrounds. */}
       <span className={innerClass + innerClass2} style={style} />
       <span className={innerClass} style={style} />

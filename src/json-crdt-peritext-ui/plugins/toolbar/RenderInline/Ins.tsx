@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import {rule} from 'nano-theme';
 
 const blockClass = rule({
@@ -14,9 +14,5 @@ export interface InsProps {
 export const Ins: React.FC<InsProps> = (props) => {
   const {children} = props;
 
-  return (
-    <ins className={blockClass}>
-      {children}
-    </ins>
-  );
+  return <ins className={blockClass}>{children}</ins>;
 };
