@@ -1,11 +1,10 @@
 import * as React from 'react';
-import {rule, theme} from 'nano-theme';
+import {rule, drule, theme, useTheme} from 'nano-theme';
 import {InlineAttr} from '../../../../json-crdt-extensions';
 
-const blockClass = rule({
+const blockClass = drule({
   ...theme.font.mono.mid,
-  fz: '.88em',
-  bg: '#eee',
+  fz: '.9em',
   pdt: '.05em',
   pdb: '.05em',
 });
@@ -29,7 +28,13 @@ export interface CodeProps {
 
 export const Code: React.FC<CodeProps> = (props) => {
   const {children, attr} = props;
-  const className = blockClass + (attr.isStart() ? startClass : '') + (attr.isEnd() ? endClass : '');
+  const theme = useTheme();
+  const className =
+    blockClass({
+      bg: theme.g(.2, .1),
+    }) +
+    (attr.isStart() ? startClass : '') +
+    (attr.isEnd() ? endClass : '');
 
   return (
     <span className={className}>{children}</span>
