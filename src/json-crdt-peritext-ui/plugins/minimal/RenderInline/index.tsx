@@ -1,10 +1,11 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {usePeritext} from '../../react';
-import {useSyncStoreOpt} from '../../react/hooks';
-import {DefaultRendererColors} from './constants';
-import type {InlineViewProps} from '../../react/InlineView';
-import {CommonSliceType} from '../../../json-crdt-extensions';
+import {usePeritext} from '../../../react';
+import {useSyncStoreOpt} from '../../../react/hooks';
+import {DefaultRendererColors} from '../constants';
+import {CommonSliceType} from '../../../../json-crdt-extensions';
+import {Spoiler} from './Spoiler';
+import type {InlineViewProps} from '../../../react/InlineView';
 
 interface RenderInlineSelectionProps extends RenderInlineProps {
   selection: [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''];
@@ -44,8 +45,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   if (attr[CommonSliceType.sub]) element = <sub>{element}</sub>;
   if (attr[CommonSliceType.math]) element = <code>{element}</code>;
   if (attr[CommonSliceType.kbd]) element = <kbd>{element}</kbd>;
-  if (attr[CommonSliceType.hidden])
-    element = <span style={{color: 'transparent', background: 'black'}}>{element}</span>;
+  if (attr[CommonSliceType.spoiler]) element = <Spoiler>{element}</Spoiler>;
 
   if (selection) {
     element = (

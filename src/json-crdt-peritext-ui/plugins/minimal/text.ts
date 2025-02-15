@@ -13,6 +13,7 @@ export const text: PeritextPlugin['text'] = (props, inline) => {
   if (attrs[CommonSliceType.b]) style.fontWeight = 'bold';
   if (attrs[CommonSliceType.i]) style.fontStyle = 'italic';
   if (attrs[CommonSliceType.u]) textDecoration = 'underline';
+  if (attrs[CommonSliceType.overline]) textDecoration = textDecoration ? textDecoration + ' overline' : 'overline';
   if (attrs[CommonSliceType.s]) textDecoration = textDecoration ? textDecoration + ' line-through' : 'line-through';
   if ((attr = attrs[CommonSliceType.col])) style.color = attr[0].slice.data() + '';
 

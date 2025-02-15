@@ -44,6 +44,10 @@ const innerClass = rule({
   an: moveAnimation + ' .25s ease-out forwards',
 });
 
+const innerClass2 = rule({
+  'mix-blend-mode': 'hard-light',
+});
+
 export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
@@ -84,6 +88,9 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
           }}
         />
       )}
+
+      {/* Two carets overlay, so that they look good, both, on white and black backgrounds. */}
+      <span className={innerClass + innerClass2} style={style} />
       <span className={innerClass} style={style} />
     </span>
   );

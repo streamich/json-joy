@@ -40,6 +40,7 @@ export const enum SliceTypeCon {
   collapselist = 26, // Collapsible list - > List item
   collapse = 27, // Collapsible block
   note = 28, // Note block
+  mathblock = 29, // <math> block
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
@@ -56,12 +57,12 @@ export const enum SliceTypeCon {
   ins = -12, // <ins>
   sup = -13, // <sup>
   sub = -14, // <sub>
-  math = -15, // <math>
+  math = -15, // <math> inline
   font = -16, // <span style="font-family: ...">
   col = -17, // <span style="color: ...">
   bg = -18, // <span style="background: ...">
   kbd = -19, // <kbd>
-  hidden = -20, // <span style="color: transparent; background: black">
+  spoiler = -20, // <span style="color: transparent; background: black">
   q = -21, // <q> (inline quote)
   cite = -22, // <cite> (inline citation)
   footnote = -23, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
@@ -106,6 +107,7 @@ export enum SliceTypeName {
   collapselist = SliceTypeCon.collapselist,
   collapse = SliceTypeCon.collapse,
   note = SliceTypeCon.note,
+  mathblock = SliceTypeCon.mathblock,
 
   Cursor = SliceTypeCon.Cursor,
   RemoteCursor = SliceTypeCon.RemoteCursor,
@@ -126,7 +128,7 @@ export enum SliceTypeName {
   col = SliceTypeCon.col,
   bg = SliceTypeCon.bg,
   kbd = SliceTypeCon.kbd,
-  hidden = SliceTypeCon.hidden,
+  spoiler = SliceTypeCon.spoiler,
   footnote = SliceTypeCon.footnote,
   ref = SliceTypeCon.ref,
   iaside = SliceTypeCon.iaside,
