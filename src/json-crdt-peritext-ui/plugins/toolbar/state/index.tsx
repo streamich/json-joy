@@ -159,37 +159,51 @@ export class ToolbarState implements UiLifeCyclesRender {
             {
               name: 'Code',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.code);
+              },
             },
             {
               name: 'Math',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.math);
+              },
             },
             {
               name: 'Superscript',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.sup);
+              },
             },
             {
               name: 'Subscript',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.sub);
+              },
             },
             {
               name: 'Keyboard key',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.kbd);
+              },
             },
             {
               name: 'Insertion',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.ins);
+              },
             },
             {
               name: 'Deletion',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.format(CommonSliceType.del);
+              },
             },
           ],
         },
