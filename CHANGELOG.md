@@ -1,3 +1,21 @@
+# [17.29.0](https://github.com/streamich/json-joy/compare/v17.28.0...v17.29.0) (2025-02-15)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add math block annotation ([437b16a](https://github.com/streamich/json-joy/commit/437b16a9bd27cec35aaddce5ef5e94b0f040d84c))
+* **json-crdt-extensions:** 🎸 add methods for inline attributes ([f1edc12](https://github.com/streamich/json-joy/commit/f1edc1231823a411cb16d7f60bc8f9d86378124e))
+* **json-crdt-peritext-ui:** 🎸 add overline inline formatting support ([f3070a5](https://github.com/streamich/json-joy/commit/f3070a530b2f1492231654a392a61ca26d8c7d5f))
+* **json-crdt-peritext-ui:** 🎸 enable actions in floating menu ([e8a5298](https://github.com/streamich/json-joy/commit/e8a5298e4bc900c83bc55e9106a66919d470f92c))
+* **json-crdt-peritext-ui:** 🎸 improve <del> inline formatting styling ([973ec8e](https://github.com/streamich/json-joy/commit/973ec8ee538d9e6be993498738049c655662218d))
+* **json-crdt-peritext-ui:** 🎸 improve <spoiler> inline tag rendering ([3dccf69](https://github.com/streamich/json-joy/commit/3dccf693d3fd33af6b91de90f46b37ca5549395c))
+* **json-crdt-peritext-ui:** 🎸 improve caret visibility on dark background ([b9a2154](https://github.com/streamich/json-joy/commit/b9a2154959dd3c92790bee70de69c93135e600dd))
+* **json-crdt-peritext-ui:** 🎸 improve styling of <ins> formatting ([bf0388b](https://github.com/streamich/json-joy/commit/bf0388beb9067fc869d4e3161c8ad42a8a54659f))
+* **json-crdt-peritext-ui:** 🎸 make highlight selection visible ([26d5b47](https://github.com/streamich/json-joy/commit/26d5b47f6a1327e99a0bafbaab5b29ec0a8b6fa8))
+* **json-crdt-peritext-ui:** 🎸 make inline <code> background color dynamic ([1098198](https://github.com/streamich/json-joy/commit/109819875eaebd2e481c18c013e8d04fed8eca98))
+* **json-crdt-peritext-ui:** 🎸 render <kbd> inline annotation ([97f9f3a](https://github.com/streamich/json-joy/commit/97f9f3a5f1a755b75a2d9d51d734c2ead201042c))
+* **json-crdt-peritext-ui:** 🎸 use inline element positions to correctly render <code> ([1f86092](https://github.com/streamich/json-joy/commit/1f8609271ca867cd0adf5bad82a4de12f911ff8b))
+
 # [17.28.0](https://github.com/streamich/json-joy/compare/v17.27.0...v17.28.0) (2025-02-14)
 
 
