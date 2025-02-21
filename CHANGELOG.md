@@ -1,3 +1,10 @@
+## [17.29.1](https://github.com/streamich/json-joy/compare/v17.29.0...v17.29.1) (2025-02-21)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 return specific type from getSnapshot() ([17aaefe](https://github.com/streamich/json-joy/commit/17aaefe5691af208b4d0b30b72d12532b4f744f7))
+
 # [17.29.0](https://github.com/streamich/json-joy/compare/v17.28.0...v17.29.0) (2025-02-15)
 
 
