@@ -272,6 +272,31 @@ export class ToolbarState implements UiLifeCyclesRender {
     };
   };
 
+  public readonly cleanupMenu = (): MenuItem => {
+    const et = this.surface.events.et;
+    return {
+      name: 'Cleanup',
+      expand: 2,
+      sepBefore: true,
+      children: [
+        {
+          name: 'Erase (inverse selected)',
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
+          onSelect: () => {
+            et.format({behavior: 'erase'});
+          },
+        },
+        {
+          name: 'Clear',
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="wash-dryclean-off" />,
+          onSelect: () => {
+            et.format({behavior: 'clear'});
+          },
+        },
+      ],
+    };
+  };
+
   public readonly getCaretMenu = (): MenuItem => {
     return {
       name: 'Inline text',
@@ -667,11 +692,13 @@ export class ToolbarState implements UiLifeCyclesRender {
 
   public readonly getSelectionMenu = (): MenuItem => {
     return {
-      name: 'Inline text',
-      maxToolbarItems: 4,
+      name: 'Selection menu',
+      // maxToolbarItems: 8,
+      more: true,
       children: [
         this.getFormattingMenu(),
         this.annotationsMenu(),
+        this.cleanupMenu(),
         /*
         secondBrain(),
         {
