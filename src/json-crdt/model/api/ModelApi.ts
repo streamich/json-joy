@@ -319,5 +319,5 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe = (callback: () => void) => this.onChanges.listen(() => callback());
-  public readonly getSnapshot = () => this.view() as any;
+  public readonly getSnapshot = () => this.view() as JsonNodeView<N>;
 }
