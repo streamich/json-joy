@@ -39,6 +39,7 @@ export class InputController implements UiLifeCycles {
     (el as any).contentEditable = 'true';
     el.addEventListener('beforeinput', this.onBeforeInput);
     el.addEventListener('keydown', this.onKeyDown);
+    el.addEventListener('copy', this.onCopy);
   }
 
   public stop(): void {
@@ -46,6 +47,7 @@ export class InputController implements UiLifeCycles {
     (el as any).contentEditable = 'false';
     el.removeEventListener('beforeinput', this.onBeforeInput);
     el.removeEventListener('keydown', this.onKeyDown);
+    el.removeEventListener('copy', this.onCopy);
   }
 
   private onBeforeInput = (event: InputEvent): void => {
@@ -210,5 +212,9 @@ export class InputController implements UiLifeCycles {
         break;
       }
     }
+  };
+
+  private onCopy = (): void => {
+    console.log('copy');
   };
 }

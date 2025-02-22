@@ -330,7 +330,16 @@ export class ToolbarState implements UiLifeCyclesRender {
             {
               name: 'Copy',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              onSelect: () => {},
+              onSelect: async () => {
+                const editor = this.surface.peritext.editor;
+                const range = editor.cursor;
+                const json = this.surface.peritext.editor.export(range);
+                const text = json[0];
+                const clipboardItem = new ClipboardItem({'text/plain': text});
+                await navigator.clipboard.write([clipboardItem]);
+                // this.surface.
+                // onMouseDown={(e) => e.preventDefault()}
+              },
             },
             {
               name: 'Copy text only',
