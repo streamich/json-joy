@@ -4,7 +4,7 @@ import {CursorController} from '../dom/CursorController';
 import {RichTextController} from '../dom/RichTextController';
 import {KeyController} from '../dom/KeyController';
 import {CompositionController} from '../dom/CompositionController';
-import type {PeritextEventDefaults} from '../events/PeritextEventDefaults';
+import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
 

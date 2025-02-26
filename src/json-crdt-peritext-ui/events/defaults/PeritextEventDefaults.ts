@@ -1,8 +1,13 @@
-import {CursorAnchor} from '../../json-crdt-extensions/peritext/slice/constants';
-import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
-import type {Peritext} from '../../json-crdt-extensions/peritext';
-import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
-import type * as events from './types';
+import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
+import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
+import type {Peritext} from '../../../json-crdt-extensions/peritext';
+import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
+import type * as events from '../types';
+import type {PeritextClipboardApi} from './types';
+
+export interface PeritextEventDefaultsOpts {
+  clipboard?: PeritextClipboardApi;
+}
 
 /**
  * Implementation of default handlers for Peritext events, such as "insert",
@@ -12,10 +17,15 @@ import type * as events from './types';
  * will not be executed.
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
+  public clipboard?: PeritextClipboardApi;
+
   public constructor(
     public readonly txt: Peritext,
     public readonly et: PeritextEventTarget,
-  ) {}
+    opts: PeritextEventDefaultsOpts,
+  ) {
+    this.clipboard = opts.clipboard;
+  }
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
@@ -149,6 +159,28 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     }
   };
 
-  public readonly buffer = (event: CustomEvent<events.BufferDetail>) => {
+  public readonly buffer = async (event: CustomEvent<events.BufferDetail>) => {
+    const clipboard = this.clipboard;
+    if (!clipboard) return;
+    const {action, format} = event.detail;
+    switch (action) {
+      case 'copy': {
+        switch (format) {
+          case 'text': {
+            try {
+              const editor = this.txt.editor;
+              if (!editor.hasCursor()) return;
+              const range = editor.cursor;
+              const text = range.text();
+              await clipboard.writeText(text);
+            } catch (error) {
+              console.error(error);
+            }
+            break;
+          }
+        }
+        break;
+      }
+    }
   };
 }

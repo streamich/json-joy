@@ -333,21 +333,7 @@ export class ToolbarState implements UiLifeCyclesRender {
               onSelect: async (e) => {
                 try {
                   e.preventDefault();
-                  const editor = this.surface.peritext.editor;
-                  const range = editor.cursor;
-                  const json = this.surface.peritext.editor.export(range);
-                  const text = range.text();
-                  // console.log(text);
-                  console.log('text', text);
-                  // const data = {'text/plain': text + ''};
-                  // console.log(1, data);
-                  // const clipboardItem = new ClipboardItem(data);
-                  // console.log(2, data);
-                  // await navigator.clipboard.write([clipboardItem]);
-                  await navigator.clipboard.writeText(text);
-                  // console.log(3, data);
-                  // this.surface.
-                  // onMouseDown={(e) => e.preventDefault()}
+                  await this.surface.events.et.buffer('copy');
                 } catch (error) {
                   console.error(error);
                 }
@@ -359,10 +345,7 @@ export class ToolbarState implements UiLifeCyclesRender {
               onSelect: async (e) => {
                 try {
                   e.preventDefault();
-                  const editor = this.surface.peritext.editor;
-                  const range = editor.cursor;
-                  const text = range.text();
-                  await navigator.clipboard.writeText(text);
+                  await this.surface.events.et.buffer('copy', 'text');
                 } catch (error) {
                   console.error(error);
                 }

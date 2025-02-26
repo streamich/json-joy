@@ -288,7 +288,7 @@ export interface BufferDetail {
    * 
    * @default 'auto'
    */
-  format: 'auto' | 'text' | 'html' | 'markdown';
+  format?: 'auto' | 'text' | 'html' | 'markdown';
 }
 
 /**
