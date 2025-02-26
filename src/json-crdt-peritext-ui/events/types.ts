@@ -267,6 +267,31 @@ export interface MarkerDetail {
 }
 
 /**
+ * The "buffer" event manages clipboard buffer actions: cut, copy, and paste.
+ */
+export interface BufferDetail {
+  /**
+   * The action to perform.
+   */
+  action: 'cut' | 'copy' | 'paste';
+
+  /**
+   * The format in which the data is stored or retrieved from the clipboard.
+   * 
+   * - `auto`: Automatically determine the format based on the data in the
+   *   clipboard.
+   * - `text`: Plain text format. Copy and paste text only.
+   * - `html`: HTML format. Will copy a range of text with formatting
+   *   information in HTML format.
+   * - `markdown`: Markdown format. Will copy a range of text with formatting
+   *   information in Markdown format.
+   * 
+   * @default 'auto'
+   */
+  format: 'auto' | 'text' | 'html' | 'markdown';
+}
+
+/**
  * Position represents a caret position in the document. The position can either
  * be an instance of {@link Point} or a numeric position in the document, which
  * will be immediately converted to a {@link Point} instance.
@@ -288,4 +313,5 @@ export type PeritextEventDetailMap = {
   cursor: CursorDetail;
   format: FormatDetail;
   marker: MarkerDetail;
+  buffer: BufferDetail;
 };

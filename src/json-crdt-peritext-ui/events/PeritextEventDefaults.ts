@@ -148,4 +148,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       }
     }
   };
+
+  public readonly buffer = (event: CustomEvent<events.BufferDetail>) => {
+  };
 }
