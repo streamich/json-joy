@@ -47,6 +47,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
 
+  // Callback which can be called to force a re-render of the editor.
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const rerender = React.useCallback(() => {
     peritext.refresh();

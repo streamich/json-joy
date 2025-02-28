@@ -285,10 +285,12 @@ export interface BufferDetail {
    *   information in HTML format.
    * - `markdown`: Markdown format. Will copy a range of text with formatting
    *   information in Markdown format.
+   * - `format`: Formatting only. Used to copy and paste formatting information
+   *   only, without the text content.
    * 
    * @default 'auto'
    */
-  format?: 'auto' | 'text' | 'html' | 'markdown';
+  format?: 'auto' | 'text' | 'html' | 'markdown' | 'format';
 }
 
 /**

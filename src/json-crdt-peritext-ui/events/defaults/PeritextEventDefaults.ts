@@ -1,5 +1,6 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
+import {toHtml} from '../../../json-crdt-extensions/peritext/lazy/export-html';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
@@ -167,15 +168,37 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     if (!clipboard) return;
     const {action, format} = event.detail;
     switch (action) {
+      case 'cut':
       case 'copy': {
-        const editor = this.txt.editor;
+        const peritext = this.txt;
+        const editor = peritext.editor;
         if (!editor.hasCursor()) return;
         const range = editor.cursor;
         switch (format) {
           case 'text': {
             try {
               const text = range.text();
+              // Collapse cursor before the async clipboard operation, so when
+              // "change" event is dispatched, re-render happens and the cursor
+              // is already collapsed.
+              if (action === 'cut') editor.collapseCursors();
               await clipboard.writeText(text);
+            } catch (error) {
+              console.error(error);
+            }
+            break;
+          }
+          case 'html': {
+            try {
+              const fragment = peritext.fragment(range);
+              fragment.refresh();
+              const json = fragment.toJson();
+              const html = toHtml(json);
+              // Collapse cursor before any async operations, so when
+              // "change" event is dispatched, re-render happens and the cursor
+              // is already collapsed.
+              if (action === 'cut') editor.collapseCursors();
+              await clipboard.writeText(html);
             } catch (error) {
               console.error(error);
             }
@@ -193,6 +216,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
                 'text/html': new Blob([html], {type: 'text/html'}),
                 'web application/json': new Blob([json], {type: 'application/json'}),
               };
+              // Collapse cursor before the async clipboard operation, so when
+              // "change" event is dispatched, re-render happens and the cursor
+              // is already collapsed.
+              if (action === 'cut') editor.collapseCursors();
               await clipboard.write(data);
             } catch (error) {
               console.error(error);
