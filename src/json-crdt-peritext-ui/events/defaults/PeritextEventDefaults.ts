@@ -212,9 +212,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               const text = pojo[0] as string;
               const html = `<div data-application-json="${jsonBase64}">${text}</div>`;
               const data = {
-                'text/plain': new Blob([text], {type: 'text/plain'}),
-                'text/html': new Blob([html], {type: 'text/html'}),
-                'web application/json': new Blob([json], {type: 'application/json'}),
+                'text/plain': text,
+                'text/html': html,
+                'application/json': json,
               };
               // Collapse cursor before the async clipboard operation, so when
               // "change" event is dispatched, re-render happens and the cursor

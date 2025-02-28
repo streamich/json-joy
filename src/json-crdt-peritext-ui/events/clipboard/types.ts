@@ -15,9 +15,9 @@ export interface PeritextClipboard {
    *     was written using an async API returns a promise which resolves when
    *     the data has been written.
    */
-  write(data: PeritextClipboardData): undefined | Promise<void>;
+  write(text: PeritextClipboardData<string>, binary?: PeritextClipboardData<Uint8Array>): undefined | Promise<void>;
 }
 
-export interface PeritextClipboardData {
-  [mime: string]: string | Blob | Promise<string | Blob>;
+export interface PeritextClipboardData<Value> {
+  [mime: string]: Value;
 };
