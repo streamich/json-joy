@@ -331,37 +331,31 @@ export class ToolbarState implements UiLifeCyclesRender {
               name: 'Copy',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               onSelect: async (e) => {
-                try {
-                  e.preventDefault();
-                  await this.surface.events.et.buffer('copy');
-                } catch (error) {
-                  console.error(error);
-                }
+                await this.surface.events.et.buffer('copy');
               },
             },
             {
               name: 'Copy text only',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               onSelect: async (e) => {
-                try {
-                  e.preventDefault();
-                  await this.surface.events.et.buffer('copy', 'text');
-                } catch (error) {
-                  console.error(error);
-                }
+                await this.surface.events.et.buffer('copy', 'text');
               },
             },
             {
               name: 'Copy as Markdown',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('copy', 'markdown');
+              },
             },
             {
               name: 'Copy as HTML',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('copy', 'html');
+              },
             },
           ],
         },
@@ -380,27 +374,35 @@ export class ToolbarState implements UiLifeCyclesRender {
               name: 'Cut',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('cut');
+              },
             },
             {
               name: 'Cut text only',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('cut', 'text');
+              },
             },
             {
               name: 'Cut as Markdown',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
               right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('cut', 'markdown');
+              },
             },
             {
               name: 'Cut as HTML',
               danger: true,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
               right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('cut', 'html');
+              },
             },
           ],
         },
@@ -417,17 +419,23 @@ export class ToolbarState implements UiLifeCyclesRender {
             {
               name: 'Paste',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('paste');
+              },
             },
             {
               name: 'Paste text only',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('paste', 'text');
+              },
             },
             {
               name: 'Paste formatting',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onSelect: () => {},
+              onSelect: async (e) => {
+                await this.surface.events.et.buffer('paste', 'format');
+              },
             },
           ],
         },
