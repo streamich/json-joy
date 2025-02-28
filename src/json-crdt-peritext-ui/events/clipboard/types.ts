@@ -6,13 +6,12 @@ export interface PeritextClipboard {
 
   /**
    * Writes data to the clipboard. Can contain multiple mime-types.
-   * @param items The data to write to the clipboard. Can contain multiple
+   * @param data The data to write to the clipboard. Can contain multiple
    *     mime-types.
    */
-  write(list: PeritextClipboardItem[]): Promise<void>;
+  write(data: PeritextClipboardData): Promise<void>;
 }
 
-export type PeritextClipboardItem = [
-  mime: string,
-  value: string | Blob | Promise<string | Blob>,
-];
+export interface PeritextClipboardData {
+  [mime: string]: string | Blob | Promise<string | Blob>;
+};

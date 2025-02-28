@@ -1,12 +1,15 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
+import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
-import type {PeritextClipboardApi} from './types';
+import type {PeritextClipboard} from '../clipboard/types';
+
+const base64Str = (str: string) => toBase64(new TextEncoder().encode(str));
 
 export interface PeritextEventDefaultsOpts {
-  clipboard?: PeritextClipboardApi;
+  clipboard?: PeritextClipboard;
 }
 
 /**
@@ -17,7 +20,7 @@ export interface PeritextEventDefaultsOpts {
  * will not be executed.
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
-  public clipboard?: PeritextClipboardApi;
+  public clipboard?: PeritextClipboard;
 
   public constructor(
     public readonly txt: Peritext,
@@ -165,18 +168,35 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const {action, format} = event.detail;
     switch (action) {
       case 'copy': {
+        const editor = this.txt.editor;
+        if (!editor.hasCursor()) return;
+        const range = editor.cursor;
         switch (format) {
           case 'text': {
             try {
-              const editor = this.txt.editor;
-              if (!editor.hasCursor()) return;
-              const range = editor.cursor;
               const text = range.text();
               await clipboard.writeText(text);
             } catch (error) {
               console.error(error);
             }
             break;
+          }
+          default: { // `'auto`'
+            try {
+              const pojo = editor.export(range);
+              const json = JSON.stringify(pojo);
+              const jsonBase64 = base64Str(json);
+              const text = pojo[0] as string;
+              const html = `<div data-application-json="${jsonBase64}">${text}</div>`;
+              const data = {
+                'text/plain': new Blob([text], {type: 'text/plain'}),
+                'text/html': new Blob([html], {type: 'text/html'}),
+                'web application/json': new Blob([json], {type: 'application/json'}),
+              };
+              await clipboard.write(data);
+            } catch (error) {
+              console.error(error);
+            }
           }
         }
         break;

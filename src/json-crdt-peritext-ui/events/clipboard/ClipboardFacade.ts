@@ -1,4 +1,4 @@
-import type {PeritextClipboard, PeritextClipboardItem} from './types';
+import type {PeritextClipboard, PeritextClipboardData} from './types';
 
 export class ClipboardFacade implements PeritextClipboard {
   constructor (protected readonly clipboard: Clipboard) {}
@@ -7,12 +7,11 @@ export class ClipboardFacade implements PeritextClipboard {
     return await this.clipboard.writeText(text);
   }
 
-  public async write(list: PeritextClipboardItem[]): Promise<void> {
-    const items: ClipboardItem[] = [];
-    for (const [mime, value] of list) {
-      const item = new ClipboardItem({[mime]: value}, {presentationStyle: 'inline'});
-      items.push(item);
-    }
+  public async write(data: PeritextClipboardData): Promise<void> {
+    // const item = new ClipboardItem(data, {presentationStyle: 'inline'});
+    const item = new ClipboardItem(data);
+    const items: ClipboardItem[] = [item];
+    console.log(items);
     return await this.clipboard.write(items);
   }
 }

@@ -66,6 +66,16 @@ export class InputController implements UiLifeCycles {
       case 'insertFromYank':
       case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
       case 'insertText': {
+        if (inputType === 'insertFromPaste') {
+          const items = event.dataTransfer?.items;
+          if (items) {
+            for (const item of Array.from(items)) {
+              item.getAsString((str) => {
+                console.log('PASTE', item.kind, item.type, str);
+              });
+            }
+          }
+        }
         event.preventDefault();
         if (typeof event.data === 'string') {
           et.insert(event.data);
