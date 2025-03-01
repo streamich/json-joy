@@ -25,7 +25,17 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
     if (!clipboardData) return;
     for (const type in data) {
       const value = data[type];
-      clipboardData.setData(type, value);
+      switch (type) {
+        case 'text/plain':
+        case 'text/html':
+        case 'image/png': {
+          clipboardData.setData(type, value);
+          break;
+        }
+        default: {
+          clipboardData.setData('web ' + type, value);
+        }
+      }
     }
   };
   span.addEventListener('copy', listener);
@@ -47,10 +57,10 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
     return false;
   } finally {
     try {
-      span.removeEventListener('copy', listener);
-      span.removeEventListener('cut', listener);
-      selection.removeAllRanges();
+      // span.removeEventListener('copy', listener);
+      // span.removeEventListener('cut', listener);
       document.body.removeChild(span);
+      selection.removeAllRanges();
       for (const range of ranges) selection.addRange(range);
     } catch {}
   }
