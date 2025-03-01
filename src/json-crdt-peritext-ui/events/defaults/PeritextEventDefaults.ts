@@ -26,7 +26,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public constructor(
     public readonly txt: Peritext,
     public readonly et: PeritextEventTarget,
-    opts: PeritextEventDefaultsOpts,
+    opts: PeritextEventDefaultsOpts = {},
   ) {
     this.clipboard = opts.clipboard;
   }
@@ -204,7 +204,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             break;
           }
-          default: { // `'auto`'
+          default: { // `auto'
             try {
               const pojo = editor.export(range);
               const json = JSON.stringify(pojo);

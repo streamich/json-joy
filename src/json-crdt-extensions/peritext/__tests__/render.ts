@@ -23,18 +23,14 @@ const renderLeafBlock = <T>(block: LeafBlock<T>, tab: string = '', hash?: boolea
   let str = '';
   str += renderBlockHeader(block, tab, hash);
   const texts = block.texts();
-  for (const inline of texts) {
-    str += renderInline(inline, tab + '  ');
-  }
+  for (const inline of texts) str += renderInline(inline, tab + '  ');
   return str;
 };
 
 const renderBlock = <T>(block: Block<T>, tab: string, hash?: boolean): string => {
   let str = '';
   str += renderBlockHeader(block, tab, hash);
-  for (const b of block.children) {
-    str += render(b, tab + '  ', hash);
-  }
+  for (const b of block.children) str += render(b, tab + '  ', hash);
   return str;
 };
 

@@ -113,6 +113,16 @@ export class Editor<T = string> implements Printable {
   }
 
   /**
+   * Returns the first cursor in the document, if any.
+   *
+   * @returns Returns the first cursor in the document, or `undefined` if there
+   *     are no cursors.
+   */
+  public getCursor(): undefined | Cursor<T> {
+    return this.hasCursor() ? this.cursor : void 0;
+  }
+
+  /**
    * @returns Returns the exact number of cursors in the document.
    */
   public cursorCount(): number {
