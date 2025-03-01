@@ -66,7 +66,7 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
   }
 };
 
-export class ClipboardFacade implements PeritextClipboard {
+export class DomClipboard implements PeritextClipboard {
   constructor (protected readonly clipboard: Clipboard) {}
 
   public writeText(text: string): undefined | Promise<void> {
