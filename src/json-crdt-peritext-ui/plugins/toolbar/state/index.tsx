@@ -342,20 +342,95 @@ export class ToolbarState implements UiLifeCyclesRender {
               },
             },
             {
-              name: 'Copy as Markdown',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-              onSelect: async (e) => {
-                await this.surface.events.et.buffer('copy', 'md');
-              },
+              name: 'HTML sep',
+              sep: true,
             },
             {
-              name: 'Copy as HTML',
+              name: 'Copy as',
+              more: true,
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-              onSelect: async (e) => {
-                await this.surface.events.et.buffer('copy', 'html');
-              },
+              children: [
+                {
+                  name: 'Markdown',
+                  text: 'copy markdown md',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'md');
+                  },
+                },
+                {
+                  name: 'MDAST',
+                  text: 'copy markdown md mdast',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'mdast');
+                  },
+                },
+                {
+                  name: 'MD sep',
+                  sep: true,
+                },
+                {
+                  name: 'HTML',
+                  text: 'copy html',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'html');
+                  },
+                },
+                {
+                  name: 'HAST',
+                  text: 'copy html hast',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'hast');
+                  },
+                },
+                {
+                  name: 'HTML sep',
+                  sep: true,
+                },
+                {
+                  name: 'Range view',
+                  text: 'copy range view peritext',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'json');
+                  },
+                },
+                {
+                  name: 'Fragment ML',
+                  text: 'copy peritext fragment ml node',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'jsonml');
+                  },
+                },
+                {
+                  name: 'Fragment text',
+                  text: 'copy peritext fragment debug',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    await this.surface.events.et.buffer('copy', 'fragment');
+                  },
+                },
+                {
+                  name: 'Quill Delta',
+                  text: 'copy quill delta',
+                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
+                  onSelect: async (e) => {
+                    // await this.surface.events.et.buffer('copy', 'jsonml');
+                  },
+                },
+              ],
             },
           ],
         },

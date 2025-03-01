@@ -194,7 +194,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'json':
           case 'jsonml':
           case 'mdast':
-          case 'md': {
+          case 'mdast':
+          case 'md':
+          case 'fragment': {
             const transfer = opts.transfer;
             if (!transfer) return;
             let text = '';
@@ -221,6 +223,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               }
               case 'md': {
                 text = transfer.toMarkdown(range);
+                break;
+              }
+              case 'fragment': {
+                text = transfer.toFragment(range) + '';
                 break;
               }
             }

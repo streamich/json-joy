@@ -7,6 +7,7 @@ import type {PeritextMlElement, PeritextMlNode} from './block/types';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {IRoot} from 'very-small-parser/lib/markdown/block/types';
+import type {Fragment} from './block/Fragment';
 
 export type PeritextDataTransferHtmlExportTools = typeof import('./lazy/export-html');
 export type PeritextDataTransferHtmlImportTools = typeof import('./lazy/import-html');
@@ -33,9 +34,14 @@ export class PeritextDataTransfer<T = string> {
     return this.txt.editor.export(range);
   }
 
-  public toJson(range: Range<T>): PeritextMlElement {
+  public toFragment(range: Range<T>): Fragment<T> {
     const fragment = this.txt.fragment(range);
     fragment.refresh();
+    return fragment;
+  }
+
+  public toJson(range: Range<T>): PeritextMlElement {
+    const fragment = this.toFragment(range);
     return fragment.toJson();
   }
 
