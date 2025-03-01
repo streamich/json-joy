@@ -346,7 +346,7 @@ export class ToolbarState implements UiLifeCyclesRender {
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
               onSelect: async (e) => {
-                await this.surface.events.et.buffer('copy', 'markdown');
+                await this.surface.events.et.buffer('copy', 'md');
               },
             },
             {
@@ -392,7 +392,7 @@ export class ToolbarState implements UiLifeCyclesRender {
               icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
               right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
               onSelect: async (e) => {
-                await this.surface.events.et.buffer('cut', 'markdown');
+                await this.surface.events.et.buffer('cut', 'md');
               },
             },
             {

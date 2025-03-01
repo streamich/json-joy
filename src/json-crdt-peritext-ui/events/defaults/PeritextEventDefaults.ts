@@ -189,10 +189,41 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             if (action === 'cut') editor.collapseCursors();
             break;
           }
-          case 'html': {
+          case 'html':
+          case 'hast':
+          case 'json':
+          case 'jsonml':
+          case 'mdast':
+          case 'md': {
             const transfer = opts.transfer;
             if (!transfer) return;
-            const text = transfer.toHtml(range);
+            let text = '';
+            switch (format) {
+              case 'html': {
+                text = transfer.toHtml(range);
+                break;
+              }
+              case 'hast': {
+                text = JSON.stringify(transfer.toHast(range), null, 2);
+                break;
+              }
+              case 'jsonml': {
+                text = JSON.stringify(transfer.toJson(range), null, 2);
+                break;
+              }
+              case 'json': {
+                text = JSON.stringify(transfer.toView(range), null, 2);
+                break;
+              }
+              case 'mdast': {
+                text = JSON.stringify(transfer.toMdast(range), null, 2);
+                break;
+              }
+              case 'md': {
+                text = transfer.toMarkdown(range);
+                break;
+              }
+            }
             clipboard.writeText(text)?.catch((err) => console.error(err));
             if (action === 'cut') editor.collapseCursors();
             break;

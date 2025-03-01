@@ -297,7 +297,7 @@ export interface BufferDetail {
    * 
    * @default 'auto'
    */
-  format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'markdown' | 'format';
+  format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'md' | 'format';
 
   /**
    * The range of text to cut or copy. If not specified, the first selection of
