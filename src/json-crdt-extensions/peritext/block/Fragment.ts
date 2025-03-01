@@ -18,16 +18,16 @@ import type {PeritextMlElement} from './types';
  * always constructs a tree of {@link Block}s, which represent the nested
  * structure of the text contents.
  */
-export class Fragment extends Range implements Printable, Stateful {
-  public readonly root: Block;
+export class Fragment<T = string> extends Range<T> implements Printable, Stateful {
+  public readonly root: Block<T>;
 
   constructor(
-    public readonly txt: Peritext,
-    start: Point,
-    end: Point,
+    public readonly txt: Peritext<T>,
+    start: Point<T>,
+    end: Point<T>,
   ) {
     super(txt.str, start, end);
-    this.root = new Block(txt, [], void 0, start, end);
+    this.root = new Block<T>(txt as Peritext<T>, [], void 0, start as Point<T>, end as Point<T>);
   }
 
   // ------------------------------------------------------------------- export
@@ -53,18 +53,18 @@ export class Fragment extends Range implements Printable, Stateful {
     return (this.hash = this.root.refresh());
   }
 
-  private insertBlock(parent: Block, path: Path, marker: undefined | MarkerOverlayPoint, end: Point = this.end): Block {
+  private insertBlock(parent: Block<T>, path: Path, marker: undefined | MarkerOverlayPoint<T>, end: Point<T> = this.end): Block<T> {
     const txt = this.txt;
     const common = commonLength(path, parent.path);
-    const start: Point = marker ? marker : this.start;
-    while (parent.path.length > common && parent.parent) parent = parent.parent as Block;
+    const start: Point<T> = marker ? marker : this.start;
+    while (parent.path.length > common && parent.parent) parent = parent.parent as Block<T>;
     while (parent.path.length + 1 < path.length) {
-      const block = new Block(txt, path.slice(0, parent.path.length + 1), void 0, start, end);
+      const block = new Block<T>(txt, path.slice(0, parent.path.length + 1), void 0, start, end);
       block.parent = parent;
       parent.children.push(block);
       parent = block;
     }
-    const block = new LeafBlock(txt, path, marker, start, end);
+    const block = new LeafBlock<T>(txt, path, marker, start, end);
     block.parent = parent;
     parent.children.push(block);
     return block;

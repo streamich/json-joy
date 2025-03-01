@@ -19,19 +19,17 @@ export interface IBlock {
   readonly parent: IBlock | null;
 }
 
-type T = string;
+export class Block<T = string, Attr = unknown> extends Range<T> implements IBlock, Printable, Stateful {
+  public parent: Block<T> | null = null;
 
-export class Block<Attr = unknown> extends Range implements IBlock, Printable, Stateful {
-  public parent: Block | null = null;
-
-  public children: Block[] = [];
+  public children: Block<T>[] = [];
 
   constructor(
-    public readonly txt: Peritext,
+    public readonly txt: Peritext<T>,
     public readonly path: Path,
-    public readonly marker: MarkerOverlayPoint | undefined,
-    public start: Point,
-    public end: Point,
+    public readonly marker: MarkerOverlayPoint<T> | undefined,
+    public start: Point<T>,
+    public end: Point<T>,
   ) {
     super(txt.str, start, end);
   }
@@ -103,7 +101,7 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   /**
    * @todo Consider moving inline-related methods to {@link LeafBlock}.
    */
-  public texts0(): UndefIterator<Inline> {
+  public texts0(): UndefIterator<Inline<T>> {
     const txt = this.txt;
     const iterator = this.tuples0();
     const start = this.start;
@@ -119,8 +117,8 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
       next = iterator();
       if (!pair) return;
       const [overlayPoint1, overlayPoint2] = pair;
-      let point1: Point = overlayPoint1;
-      let point2: Point = overlayPoint2;
+      let point1: Point<T> = overlayPoint1;
+      let point2: Point<T> = overlayPoint2;
       if (isFirst) {
         isFirst = false;
         if (start.cmpSpatial(overlayPoint1) > 0) point1 = start;
@@ -140,7 +138,7 @@ export class Block<Attr = unknown> extends Range implements IBlock, Printable, S
   /**
    * @todo Consider moving inline-related methods to {@link LeafBlock}.
    */
-  public texts(): IterableIterator<Inline> {
+  public texts(): IterableIterator<Inline<T>> {
     return new UndefEndIter(this.texts0());
   }
 
