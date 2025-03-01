@@ -271,7 +271,9 @@ export interface MarkerDetail {
  */
 export interface BufferDetail {
   /**
-   * The action to perform.
+   * The action to perform. The `'cut'` and `'copy'` actions generally work
+   * the same way, the only difference is that the `'cut'` action removes the
+   * text from the current selection and collapses the cursor.
    */
   action: 'cut' | 'copy' | 'paste';
 
@@ -280,9 +282,14 @@ export interface BufferDetail {
    * 
    * - `auto`: Automatically determine the format based on the data in the
    *   clipboard.
+   * - `json`: Specifies the default Peritext {@link Editor} export/import format
+   *   in JSON POJO format.
+   * - `jsonml`: HTML markup in JSONML format.
+   * - `hast`: HTML markup in HAST format.
    * - `text`: Plain text format. Copy and paste text only.
    * - `html`: HTML format. Will copy a range of text with formatting
    *   information in HTML format.
+   * - `mdast`: Specifies MDAST (Markdown Abstract Syntax Tree) format.
    * - `markdown`: Markdown format. Will copy a range of text with formatting
    *   information in Markdown format.
    * - `format`: Formatting only. Used to copy and paste formatting information
@@ -290,8 +297,17 @@ export interface BufferDetail {
    * 
    * @default 'auto'
    */
-  format?: 'auto' | 'text' | 'html' | 'markdown' | 'format';
+  format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'markdown' | 'format';
+
+  /**
+   * The range of text to cut or copy. If not specified, the first selection of
+   * the current cursor is used. If not specified and there is no cursor, the
+   * whole document is used.
+   */
+  range?: [start: Position, end: Position];
 }
+
+
 
 /**
  * Position represents a caret position in the document. The position can either

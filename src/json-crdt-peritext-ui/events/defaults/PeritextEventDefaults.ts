@@ -1,6 +1,7 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
-import {toHtml} from '../../../json-crdt-extensions/peritext/lazy/export-html';
+import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
+import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
@@ -11,6 +12,7 @@ const base64Str = (str: string) => toBase64(new TextEncoder().encode(str));
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
+  transfer?: PeritextDataTransfer;
 }
 
 /**
@@ -21,15 +23,11 @@ export interface PeritextEventDefaultsOpts {
  * will not be executed.
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
-  public clipboard?: PeritextClipboard;
-
   public constructor(
     public readonly txt: Peritext,
     public readonly et: PeritextEventTarget,
-    opts: PeritextEventDefaultsOpts = {},
-  ) {
-    this.clipboard = opts.clipboard;
-  }
+    public readonly opts: PeritextEventDefaultsOpts = {},
+  ) {}
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
@@ -164,44 +162,39 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly buffer = async (event: CustomEvent<events.BufferDetail>) => {
-    const clipboard = this.clipboard;
+    const opts = this.opts;
+    const clipboard = opts.clipboard;
     if (!clipboard) return;
-    const {action, format} = event.detail;
+    const detail = event.detail;
+    const {action, format} = detail;
+    let range: undefined | Range<any>;
+    const txt = this.txt;
+    const editor = txt.editor;
+    if (detail.range) {
+      const p1 = editor.point(detail.range[0]);
+      const p2 = editor.point(detail.range[1]);
+      range = txt.rangeFromPoints(p1, p2);
+    } else {
+      range = editor.getCursor();
+      if (!range) range = txt.rangeAll();
+    }
+    if (!range) return;
     switch (action) {
       case 'cut':
       case 'copy': {
-        const peritext = this.txt;
-        const editor = peritext.editor;
-        if (!editor.hasCursor()) return;
-        const range = editor.cursor;
         switch (format) {
           case 'text': {
-            try {
-              const text = range.text();
-              // Collapse cursor before the async clipboard operation, so when
-              // "change" event is dispatched, re-render happens and the cursor
-              // is already collapsed.
-              if (action === 'cut') editor.collapseCursors();
-              await clipboard.writeText(text);
-            } catch (error) {
-              console.error(error);
-            }
+            const text = range.text();
+            clipboard.writeText(text)?.catch((err) => console.error(err));
+            if (action === 'cut') editor.collapseCursors();
             break;
           }
           case 'html': {
-            try {
-              const fragment = peritext.fragment(range);
-              fragment.refresh();
-              const json = fragment.toJson();
-              const html = toHtml(json);
-              // Collapse cursor before any async operations, so when
-              // "change" event is dispatched, re-render happens and the cursor
-              // is already collapsed.
-              if (action === 'cut') editor.collapseCursors();
-              await clipboard.writeText(html);
-            } catch (error) {
-              console.error(error);
-            }
+            const transfer = opts.transfer;
+            if (!transfer) return;
+            const text = transfer.toHtml(range);
+            clipboard.writeText(text)?.catch((err) => console.error(err));
+            if (action === 'cut') editor.collapseCursors();
             break;
           }
           default: { // `auto'
