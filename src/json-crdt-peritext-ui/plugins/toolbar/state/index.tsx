@@ -311,6 +311,90 @@ export class ToolbarState implements UiLifeCyclesRender {
     };
   };
 
+  public readonly copyAsMenu = (type: 'copy' | 'cut'): MenuItem => {
+    const icon = type === 'copy'
+      ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
+      : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
+    return {
+      name: type === 'copy' ? 'Copy as' : 'Cut as',
+      more: true,
+      icon,
+      children: [
+        {
+          name: 'Markdown',
+          text: type + ' markdown md',
+          icon,
+          right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'md');
+          },
+        },
+        {
+          name: 'MDAST',
+          text: type + 'markdown md mdast',
+          icon,
+          right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'mdast');
+          },
+        },
+        {
+          name: 'MD sep',
+          sep: true,
+        },
+        {
+          name: 'HTML',
+          text: type + 'html',
+          icon,
+          right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'html');
+          },
+        },
+        {
+          name: 'HAST',
+          text: type + 'html hast',
+          icon,
+          right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'hast');
+          },
+        },
+        {
+          name: 'HTML sep',
+          sep: true,
+        },
+        {
+          name: 'Range view',
+          text: type + 'range view peritext',
+          icon,
+          right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'json');
+          },
+        },
+        {
+          name: 'Fragment ML',
+          text: type + 'peritext fragment ml node',
+          icon,
+          right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'jsonml');
+          },
+        },
+        {
+          name: 'Fragment text',
+          text: type + 'peritext fragment debug',
+          icon,
+          right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
+          onSelect: async (e) => {
+            await this.surface.events.et.buffer(type, 'fragment');
+          },
+        },
+      ],
+    };
+  };
+
   public readonly clipboardMenu = (): MenuItem => {
     const et = this.surface.events.et;
     return         {
@@ -341,97 +425,7 @@ export class ToolbarState implements UiLifeCyclesRender {
                 await this.surface.events.et.buffer('copy', 'text');
               },
             },
-            {
-              name: 'HTML sep',
-              sep: true,
-            },
-            {
-              name: 'Copy as',
-              more: true,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              children: [
-                {
-                  name: 'Markdown',
-                  text: 'copy markdown md',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'md');
-                  },
-                },
-                {
-                  name: 'MDAST',
-                  text: 'copy markdown md mdast',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'mdast');
-                  },
-                },
-                {
-                  name: 'MD sep',
-                  sep: true,
-                },
-                {
-                  name: 'HTML',
-                  text: 'copy html',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'html');
-                  },
-                },
-                {
-                  name: 'HAST',
-                  text: 'copy html hast',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'hast');
-                  },
-                },
-                {
-                  name: 'HTML sep',
-                  sep: true,
-                },
-                {
-                  name: 'Range view',
-                  text: 'copy range view peritext',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'json');
-                  },
-                },
-                {
-                  name: 'Fragment ML',
-                  text: 'copy peritext fragment ml node',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'jsonml');
-                  },
-                },
-                {
-                  name: 'Fragment text',
-                  text: 'copy peritext fragment debug',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    await this.surface.events.et.buffer('copy', 'fragment');
-                  },
-                },
-                {
-                  name: 'Quill Delta',
-                  text: 'copy quill delta',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
-                  onSelect: async (e) => {
-                    // await this.surface.events.et.buffer('copy', 'jsonml');
-                  },
-                },
-              ],
-            },
+            this.copyAsMenu('copy'),
           ],
         },
         {
@@ -461,24 +455,7 @@ export class ToolbarState implements UiLifeCyclesRender {
                 await this.surface.events.et.buffer('cut', 'text');
               },
             },
-            {
-              name: 'Cut as Markdown',
-              danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-              onSelect: async (e) => {
-                await this.surface.events.et.buffer('cut', 'md');
-              },
-            },
-            {
-              name: 'Cut as HTML',
-              danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-              onSelect: async (e) => {
-                await this.surface.events.et.buffer('cut', 'html');
-              },
-            },
+            this.copyAsMenu('cut'),
           ],
         },
         {
@@ -505,13 +482,13 @@ export class ToolbarState implements UiLifeCyclesRender {
                 await this.surface.events.et.buffer('paste', 'text');
               },
             },
-            {
-              name: 'Paste formatting',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onSelect: async (e) => {
-                await this.surface.events.et.buffer('paste', 'format');
-              },
-            },
+            // {
+            //   name: 'Paste formatting',
+            //   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+            //   onSelect: async (e) => {
+            //     await this.surface.events.et.buffer('paste', 'format');
+            //   },
+            // },
           ],
         },
       ],
