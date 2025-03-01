@@ -18,8 +18,6 @@ class ViewRangeBuilder {
   private text = '';
   private slices: ViewSlice[] = [];
 
-  constructor(private registry: SliceRegistry) {}
-
   private build0(node: PeritextMlNode, depth = 0): void {
     const skipWhitespace = depth < 2;
     if (typeof node === 'string') {
@@ -73,8 +71,8 @@ class ViewRangeBuilder {
   }
 }
 
-export const toViewRange = (node: PeritextMlNode, registry: SliceRegistry = defaultRegistry): ViewRange =>
-  new ViewRangeBuilder(registry).build(node);
+export const toViewRange = (node: PeritextMlNode): ViewRange =>
+  new ViewRangeBuilder().build(node);
 
 export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;
