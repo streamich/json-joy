@@ -256,8 +256,67 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             break;
           }
-          default: { // 'auto'
+          case 'html':
+          case 'hast':
+          case 'json':
+          case 'jsonml':
+          case 'mdast':
+          case 'md': {
+            const transfer = opts.transfer;
+            if (!transfer) return;
+            const data = await clipboard.read(['text/plain']);
+            const buffer = data['text/plain'];
+            const text = new TextDecoder().decode(buffer);
+            if (!range.isCollapsed()) editor.delRange(range);
+            range.collapseToStart();
+            const start = range.start;
+            const pos = start.viewPos();
+            switch (format) {
+              case 'html': {
+                
+                break;
+              }
+              case 'hast': {
+                
+                break;
+              }
+              case 'jsonml': {
+                
+                break;
+              }
+              case 'json': {
+                
+                break;
+              }
+              case 'mdast': {
+                
+                break;
+              }
+              case 'md': {
+                
+                break;
+              }
+            }
+            clipboard.writeText(text)?.catch((err) => console.error(err));
             break;
+          }
+          default: { // 'auto'
+            const data = await clipboard.read(['text/plain', 'text/html']);
+            let buffer: Uint8Array | undefined;
+            const transfer = opts.transfer;
+            if (transfer && (buffer = data['text/html'])) {
+              const html = new TextDecoder().decode(buffer);
+              if (!range.isCollapsed()) editor.delRange(range);
+              range.collapseToStart();
+              const start = range.start;
+              const pos = start.viewPos();
+              console.log(pos, html);
+              transfer.fromHtml(pos, html);
+              this.et.change();
+            } else if (buffer = data['text/plain']) {
+              const text = new TextDecoder().decode(buffer);
+              this.et.insert(text);
+            }
           }
         }
         break;

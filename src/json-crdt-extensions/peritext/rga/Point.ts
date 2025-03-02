@@ -134,7 +134,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
 
   /**
    * @returns Returns the view position of the point, as if it is a caret in
-   *          the text pointing between characters.
+   *          the text pointing between characters (0 is before the first
+   *          character, 1 is after the first character, etc.).
    */
   public viewPos(): number {
     const pos = this.pos();

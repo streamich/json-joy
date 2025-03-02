@@ -30,6 +30,12 @@ export interface PeritextDataTransferOpts {
   mdImport?: PeritextDataTransferMarkdownImportTools;
 }
 
+/**
+ * This class provides methods for transferring data between Peritext and other
+ * formats, such as JSON, HTML, Markdown, etc. A Peritext {@link Fragment} can
+ * be converted to a JSON object, which can be converted to HTML, Markdown, etc.
+ * The reverse is also possible.
+ */
 export class PeritextDataTransfer<T = string> {
   constructor(
     public readonly txt: Peritext<T>,

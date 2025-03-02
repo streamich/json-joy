@@ -316,6 +316,7 @@ export class ToolbarState implements UiLifeCyclesRender {
       type === 'copy'
         ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
         : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
+    const et = this.surface.events.et;
     return {
       name: type === 'copy' ? 'Copy as' : 'Cut as',
       more: true,
@@ -327,7 +328,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'md');
+            await et.buffer(type, 'md');
           },
         },
         {
@@ -336,7 +337,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'mdast');
+            await et.buffer(type, 'mdast');
           },
         },
         {
@@ -349,7 +350,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'html');
+            await et.buffer(type, 'html');
           },
         },
         {
@@ -358,7 +359,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'hast');
+            await et.buffer(type, 'hast');
           },
         },
         {
@@ -371,7 +372,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'json');
+            await et.buffer(type, 'json');
           },
         },
         {
@@ -380,7 +381,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'jsonml');
+            await et.buffer(type, 'jsonml');
           },
         },
         {
@@ -389,7 +390,7 @@ export class ToolbarState implements UiLifeCyclesRender {
           icon,
           right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
           onSelect: async (e) => {
-            await this.surface.events.et.buffer(type, 'fragment');
+            await et.buffer(type, 'fragment');
           },
         },
       ],
