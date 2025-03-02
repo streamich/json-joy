@@ -235,25 +235,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             break;
           }
           default: { // `auto'
-            try {
-              const pojo = editor.export(range);
-              const json = JSON.stringify(pojo);
-              const jsonBase64 = base64Str(json);
-              const text = pojo[0] as string;
-              const html = `<div data-application-json="${jsonBase64}">${text}</div>`;
-              const data = {
-                'text/plain': text,
-                'text/html': html,
-                'application/json': json,
-              };
-              // Collapse cursor before the async clipboard operation, so when
-              // "change" event is dispatched, re-render happens and the cursor
-              // is already collapsed.
-              if (action === 'cut') editor.collapseCursors();
-              await clipboard.write(data);
-            } catch (error) {
-              console.error(error);
-            }
+            const transfer = opts.transfer;
+            if (!transfer) return;
+            const data = transfer.toClipboard(range);
+            clipboard.write(data)?.catch((err) => console.error(err));
+            if (action === 'cut') editor.collapseCursors();
           }
         }
         break;

@@ -1,6 +1,7 @@
 import {ViewRange} from './editor/types';
 import {Range} from './rga/Range';
 import {registry as defaultRegistry} from './registry/registry';
+import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {SliceRegistry} from './registry/SliceRegistry';
 import type {Peritext} from './Peritext';
 import type {PeritextMlElement, PeritextMlNode} from './block/types';
@@ -8,6 +9,13 @@ import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {IRoot} from 'very-small-parser/lib/markdown/block/types';
 import type {Fragment} from './block/Fragment';
+
+const base64Str = (str: string) => toBase64(new TextEncoder().encode(str));
+
+/** JSON data embedded as Base64 data attribute into HTML clipboard buffer. */
+export interface ClipboardData {
+  view: ViewRange;
+}
 
 export type PeritextDataTransferHtmlExportTools = typeof import('./lazy/export-html');
 export type PeritextDataTransferHtmlImportTools = typeof import('./lazy/import-html');
@@ -85,6 +93,18 @@ export class PeritextDataTransfer<T = string> {
     const tools = this.mdE();
     const json = this.toJson(range);
     return tools.toMarkdown(json);
+  }
+
+  public toClipboard(range: Range<T>): ({'text/plain': string, 'text/html': string}) {
+    const view = this.txt.editor.export(range);
+    const data: ClipboardData = {view};
+    const json = JSON.stringify(data);
+    const jsonBase64 = base64Str(json);
+    const html = this.toHtml(range) + '<div data-peritext="' + jsonBase64 + '"></div>';
+    return {
+      'text/plain': range.text(),
+      'text/html': html,
+    };
   }
 
   // ------------------------------------------------------------------ imports
