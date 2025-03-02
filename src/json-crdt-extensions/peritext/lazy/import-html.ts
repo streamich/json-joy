@@ -74,12 +74,27 @@ class ViewRangeBuilder {
 
 export const toViewRange = (node: PeritextMlNode): ViewRange => new ViewRangeBuilder().build(node);
 
+const IGNORE_TAGS = new Set<string>(['meta', 'style', 'script', 'link', 'head']);
+const MAP_TAGS = new Map<string, string>([
+  ['html', ''],
+  ['body', ''],
+]);
+
 export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;
-  const tag = jsonml[0];
+  let tag = jsonml[0];
+  if (typeof tag === 'string') {
+    if (IGNORE_TAGS.has(tag)) return '';
+    const mapped = MAP_TAGS.get(tag);
+    if (mapped !== undefined) tag = mapped;
+  }
   const length = jsonml.length;
   const node: PeritextMlNode = [tag, null];
-  for (let i = 2; i < length; i++) node.push(fromJsonMl(jsonml[i] as JsonMlNode, registry));
+  for (let i = 2; i < length; i++) {
+    const peritextNode = fromJsonMl(jsonml[i] as JsonMlNode, registry);
+    if (!peritextNode) continue;
+    node.push(peritextNode);
+  }
   const res = registry.fromHtml(jsonml);
   if (res) {
     node[0] = res[0];
@@ -100,6 +115,10 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     const attr = node[1] || {};
     attr.inline = true;
     node[1] = attr;
+  }
+  if (node.length < 3) {
+    const attr = node[1] || {};
+    if (attr.inline) return '';
   }
   return node;
 };
