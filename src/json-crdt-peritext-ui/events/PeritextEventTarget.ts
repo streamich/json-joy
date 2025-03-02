@@ -1,5 +1,12 @@
 import {SubscriptionEventTarget} from '../../util/events/TypedEventTarget';
-import type {PeritextEventDetailMap, CursorDetail, FormatDetail, DeleteDetail, MarkerDetail, BufferDetail} from './types';
+import type {
+  PeritextEventDetailMap,
+  CursorDetail,
+  FormatDetail,
+  DeleteDetail,
+  MarkerDetail,
+  BufferDetail,
+} from './types';
 
 export type PeritextEventMap = {
   [K in keyof PeritextEventDetailMap]: CustomEvent<PeritextEventDetailMap[K]>;

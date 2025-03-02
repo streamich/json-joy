@@ -20,4 +20,4 @@ export interface PeritextClipboard {
 
 export interface PeritextClipboardData<Value> {
   [mime: string]: Value;
-};
+}

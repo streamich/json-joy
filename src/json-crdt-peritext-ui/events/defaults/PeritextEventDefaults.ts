@@ -234,7 +234,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             if (action === 'cut') editor.collapseCursors();
             break;
           }
-          default: { // `auto'
+          default: {
+            // `auto'
             const transfer = opts.transfer;
             if (!transfer) return;
             const data = transfer.toClipboard(range);

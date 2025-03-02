@@ -10,8 +10,10 @@ import type {Peritext} from '../../json-crdt-extensions';
 
 export const create = (txt: Peritext) => {
   const et = new PeritextEventTarget();
-  const clipboard: PeritextEventDefaultsOpts['clipboard'] = typeof navigator === 'object' && navigator && navigator.clipboard
-    ? new DomClipboard(navigator.clipboard) : undefined;
+  const clipboard: PeritextEventDefaultsOpts['clipboard'] =
+    typeof navigator === 'object' && navigator && navigator.clipboard
+      ? new DomClipboard(navigator.clipboard)
+      : undefined;
   const transfer = new PeritextDataTransfer(txt, {
     htmlExport,
     htmlImport,

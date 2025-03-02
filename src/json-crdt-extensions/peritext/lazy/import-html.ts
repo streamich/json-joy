@@ -71,8 +71,7 @@ class ViewRangeBuilder {
   }
 }
 
-export const toViewRange = (node: PeritextMlNode): ViewRange =>
-  new ViewRangeBuilder().build(node);
+export const toViewRange = (node: PeritextMlNode): ViewRange => new ViewRangeBuilder().build(node);
 
 export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;

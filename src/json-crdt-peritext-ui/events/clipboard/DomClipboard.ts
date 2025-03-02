@@ -8,8 +8,7 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
   const cutSupported = document.queryCommandSupported?.('cut') ?? true;
   if (!copySupported && !cutSupported) return false;
   let ranges = [];
-  for (let i = 0; i < selection.rangeCount; i++)
-    ranges.push(selection.getRangeAt(i));
+  for (let i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i));
   const value = data['text/plain'] ?? '';
   const text = typeof value === 'string' ? value : '';
   const span = document.createElement('span');
@@ -67,7 +66,7 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
 };
 
 export class DomClipboard implements PeritextClipboard {
-  constructor (protected readonly clipboard: Clipboard) {}
+  constructor(protected readonly clipboard: Clipboard) {}
 
   public writeText(text: string): undefined | Promise<void> {
     const success = writeSync({'text/plain': text});
@@ -75,7 +74,10 @@ export class DomClipboard implements PeritextClipboard {
     return this.clipboard.writeText(text);
   }
 
-  public write(text: PeritextClipboardData<string>, binary?: PeritextClipboardData<Uint8Array>): undefined | Promise<void> {
+  public write(
+    text: PeritextClipboardData<string>,
+    binary?: PeritextClipboardData<Uint8Array>,
+  ): undefined | Promise<void> {
     const success = writeSync(text);
     const binaryKeysLength = binary ? Object.keys(binary).length : 0;
     if (success && binaryKeysLength === 0) return;

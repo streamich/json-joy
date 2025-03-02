@@ -31,7 +31,7 @@ export interface PeritextDataTransferOpts {
 }
 
 export class PeritextDataTransfer<T = string> {
-  constructor (
+  constructor(
     public readonly txt: Peritext<T>,
     public readonly opts: PeritextDataTransferOpts = {},
   ) {}
@@ -64,13 +64,13 @@ export class PeritextDataTransfer<T = string> {
     const json = this.toJson(range);
     return tools.toJsonMl(json);
   }
-  
+
   public toHast(range: Range<T>): THtmlToken {
     const tools = this.htmlE();
     const json = this.toJson(range);
     return tools.toHast(json);
-  };
-  
+  }
+
   public toHtml(range: Range<T>, tab?: string, indent?: string): string {
     const tools = this.htmlE();
     const json = this.toJson(range);
@@ -82,20 +82,20 @@ export class PeritextDataTransfer<T = string> {
     if (!tools) throw new Error('NO_MD_EXPORT_TOOLS');
     return tools;
   }
-  
+
   public toMdast(range: Range<T>): IRoot {
     const tools = this.mdE();
     const json = this.toJson(range);
     return tools.toMdast(json);
-  };
-  
+  }
+
   public toMarkdown(range: Range<T>): string {
     const tools = this.mdE();
     const json = this.toJson(range);
     return tools.toMarkdown(json);
   }
 
-  public toClipboard(range: Range<T>): ({'text/plain': string, 'text/html': string}) {
+  public toClipboard(range: Range<T>): {'text/plain': string; 'text/html': string} {
     const view = this.txt.editor.export(range);
     const data: ClipboardData = {view};
     const json = JSON.stringify(data);
@@ -134,11 +134,11 @@ export class PeritextDataTransfer<T = string> {
   public fromJsonMl(pos: number, jsonml: JsonMlNode): void {
     this._imp(pos, jsonml, this.htmlI().fromJsonMl);
   }
-  
+
   public fromHast(pos: number, hast: THtmlToken): void {
     this._imp(pos, hast, this.htmlI().fromHast);
   }
-  
+
   public fromHtml(pos: number, html: string): void {
     this._imp(pos, html, this.htmlI().fromHtml);
   }

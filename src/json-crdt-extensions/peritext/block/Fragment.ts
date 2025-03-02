@@ -53,7 +53,12 @@ export class Fragment<T = string> extends Range<T> implements Printable, Statefu
     return (this.hash = this.root.refresh());
   }
 
-  private insertBlock(parent: Block<T>, path: Path, marker: undefined | MarkerOverlayPoint<T>, end: Point<T> = this.end): Block<T> {
+  private insertBlock(
+    parent: Block<T>,
+    path: Path,
+    marker: undefined | MarkerOverlayPoint<T>,
+    end: Point<T> = this.end,
+  ): Block<T> {
     const txt = this.txt;
     const common = commonLength(path, parent.path);
     const start: Point<T> = marker ? marker : this.start;

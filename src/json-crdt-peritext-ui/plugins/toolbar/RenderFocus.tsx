@@ -45,7 +45,11 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
 
   if (showInlineToolbarValue && !isScrubbing)
     toolbarElement = (
-      <CaretToolbar disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */} menu={toolbar.getSelectionMenu()} onPopupClose={handleClose} />
+      <CaretToolbar
+        disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
+        menu={toolbar.getSelectionMenu()}
+        onPopupClose={handleClose}
+      />
     );
 
   return (

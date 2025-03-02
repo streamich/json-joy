@@ -274,7 +274,7 @@ export class ToolbarState implements UiLifeCyclesRender {
 
   public readonly modifyMenu = (): MenuItem => {
     const et = this.surface.events.et;
-    return         {
+    return {
       name: 'Modify',
       expand: 3,
       sepBefore: true,
@@ -312,9 +312,10 @@ export class ToolbarState implements UiLifeCyclesRender {
   };
 
   public readonly copyAsMenu = (type: 'copy' | 'cut'): MenuItem => {
-    const icon = type === 'copy'
-      ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
-      : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
+    const icon =
+      type === 'copy'
+        ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
+        : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
     return {
       name: type === 'copy' ? 'Copy as' : 'Cut as',
       more: true,
@@ -397,7 +398,7 @@ export class ToolbarState implements UiLifeCyclesRender {
 
   public readonly clipboardMenu = (): MenuItem => {
     const et = this.surface.events.et;
-    return         {
+    return {
       name: 'Copy, cut, and paste',
       // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
       icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,

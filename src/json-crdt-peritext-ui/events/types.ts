@@ -279,7 +279,7 @@ export interface BufferDetail {
 
   /**
    * The format in which the data is stored or retrieved from the clipboard.
-   * 
+   *
    * - `auto`: Automatically determine the format based on the data in the
    *   clipboard.
    * - `json`: Specifies the default Peritext {@link Editor} export/import format
@@ -294,7 +294,7 @@ export interface BufferDetail {
    *   information in Markdown format.
    * - `format`: Formatting only. Used to copy and paste formatting information
    *   only, without the text content.
-   * 
+   *
    * @default 'auto'
    */
   format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'md' | 'fragment' | 'format';
@@ -306,8 +306,6 @@ export interface BufferDetail {
    */
   range?: [start: Position, end: Position];
 }
-
-
 
 /**
  * Position represents a caret position in the document. The position can either
