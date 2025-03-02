@@ -1,4 +1,4 @@
-import {PeritextEventDefaults, PeritextEventDefaultsOpts} from './defaults/PeritextEventDefaults';
+import {PeritextEventDefaults, type PeritextEventDefaultsOpts} from './defaults/PeritextEventDefaults';
 import {PeritextEventTarget} from './PeritextEventTarget';
 import {DomClipboard} from './clipboard/DomClipboard';
 import {PeritextDataTransfer} from '../../json-crdt-extensions/peritext/PeritextDataTransfer';

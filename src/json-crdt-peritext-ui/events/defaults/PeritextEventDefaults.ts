@@ -194,7 +194,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'json':
           case 'jsonml':
           case 'mdast':
-          case 'mdast':
           case 'md':
           case 'fragment': {
             const transfer = opts.transfer;

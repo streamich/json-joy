@@ -1,7 +1,7 @@
-import {ViewRange} from './editor/types';
-import {Range} from './rga/Range';
 import {registry as defaultRegistry} from './registry/registry';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
+import type {Range} from './rga/Range';
+import type {ViewRange} from './editor/types';
 import type {SliceRegistry} from './registry/SliceRegistry';
 import type {Peritext} from './Peritext';
 import type {PeritextMlElement, PeritextMlNode} from './block/types';

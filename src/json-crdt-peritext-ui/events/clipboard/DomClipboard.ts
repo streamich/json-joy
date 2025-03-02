@@ -7,7 +7,7 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
   const copySupported = document.queryCommandSupported?.('copy') ?? true;
   const cutSupported = document.queryCommandSupported?.('cut') ?? true;
   if (!copySupported && !cutSupported) return false;
-  let ranges = [];
+  const ranges = [];
   for (let i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i));
   const value = data['text/plain'] ?? '';
   const text = typeof value === 'string' ? value : '';
