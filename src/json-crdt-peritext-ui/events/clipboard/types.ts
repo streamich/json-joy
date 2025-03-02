@@ -9,6 +9,7 @@ export interface PeritextClipboard {
 
   /**
    * Writes data to the clipboard. Can contain multiple mime-types.
+   *
    * @param data The data to write to the clipboard. Can contain multiple
    *     mime-types.
    * @returns Returns `undefined` if data was written synchronously. If data
@@ -16,6 +17,12 @@ export interface PeritextClipboard {
    *     the data has been written.
    */
   write(text: PeritextClipboardData<string>, binary?: PeritextClipboardData<Uint8Array>): undefined | Promise<void>;
+
+  /**
+   * @param types An array of mime-types to read from the clipboard.
+   * @returns A promise that resolves with the data for the requested mime-types.
+   */
+  read<T extends string>(types: T[]): Promise<{[mime in T]: Uint8Array}>;
 }
 
 export interface PeritextClipboardData<Value> {

@@ -1,5 +1,4 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
-import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -7,8 +6,6 @@ import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard} from '../clipboard/types';
-
-const base64Str = (str: string) => toBase64(new TextEncoder().encode(str));
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -240,6 +237,27 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             const data = transfer.toClipboard(range);
             clipboard.write(data)?.catch((err) => console.error(err));
             if (action === 'cut') editor.collapseCursors();
+          }
+        }
+        break;
+      }
+      case 'paste': {
+        switch (format) {
+          case 'text': {
+            const data = await clipboard.read(['text/plain', 'text/html']);
+            let buffer: Uint8Array | undefined;
+            if (buffer = data['text/plain']) {
+              const text = new TextDecoder().decode(buffer);
+              this.et.insert(text);
+            } else if (buffer = data['text/html']) {
+              const html = new TextDecoder().decode(buffer);
+              const text = opts.transfer?.textFromHtml?.(html) ?? html;
+              this.et.insert(text);
+            }
+            break;
+          }
+          default: { // 'auto'
+            break;
           }
         }
         break;

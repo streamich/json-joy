@@ -1,67 +1,72 @@
 import type {PeritextClipboard, PeritextClipboardData} from './types';
 
 const writeSync = (data: PeritextClipboardData<string>): boolean => {
-  if (typeof document !== 'object') return false;
-  const selection = window.getSelection();
-  if (!selection) return false;
-  const copySupported = document.queryCommandSupported?.('copy') ?? true;
-  const cutSupported = document.queryCommandSupported?.('cut') ?? true;
-  if (!copySupported && !cutSupported) return false;
-  const ranges = [];
-  for (let i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i));
-  const value = data['text/plain'] ?? '';
-  const text = typeof value === 'string' ? value : '';
-  const span = document.createElement('span');
-  const style = span.style;
-  style.whiteSpace = 'pre';
-  style.userSelect = 'all';
-  style.position = 'fixed';
-  style.top = '-9999px';
-  style.left = '-9999px';
-  const listener = (event: ClipboardEvent) => {
-    event.preventDefault();
-    const clipboardData = event.clipboardData;
-    if (!clipboardData) return;
-    for (const type in data) {
-      const value = data[type];
-      switch (type) {
-        case 'text/plain':
-        case 'text/html':
-        case 'image/png': {
-          clipboardData.setData(type, value);
-          break;
-        }
-        default: {
-          clipboardData.setData('web ' + type, value);
+  try {
+    if (typeof document !== 'object') return false;
+    const selection = window.getSelection();
+    if (!selection) return false;
+    const queryCommandSupported = document.queryCommandSupported;
+    const copySupported = queryCommandSupported?.('copy') ?? true;
+    const cutSupported = queryCommandSupported?.('cut') ?? true;
+    if (!copySupported && !cutSupported) return false;
+    const ranges = [];
+    for (let i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i));
+    const value = data['text/plain'] ?? '';
+    const text = typeof value === 'string' ? value : '';
+    const span = document.createElement('span');
+    const style = span.style;
+    style.whiteSpace = 'pre';
+    style.userSelect = 'all';
+    style.position = 'fixed';
+    style.top = '-9999px';
+    style.left = '-9999px';
+    const listener = (event: ClipboardEvent) => {
+      event.preventDefault();
+      const clipboardData = event.clipboardData;
+      if (!clipboardData) return;
+      for (const type in data) {
+        const value = data[type];
+        switch (type) {
+          case 'text/plain':
+          case 'text/html':
+          case 'image/png': {
+            clipboardData.setData(type, value);
+            break;
+          }
+          default: {
+            clipboardData.setData('web ' + type, value);
+          }
         }
       }
-    }
-  };
-  span.addEventListener('copy', listener);
-  span.addEventListener('cut', listener);
-  try {
-    document.body.appendChild(span);
-    const select = () => {
-      span.textContent = text;
-      selection.removeAllRanges();
-      const range = document.createRange();
-      range.selectNode(span);
-      selection.addRange(range);
     };
-    select();
-    document.execCommand('cut');
-    select();
-    return document.execCommand('copy');
+    span.addEventListener('copy', listener);
+    span.addEventListener('cut', listener);
+    try {
+      document.body.appendChild(span);
+      const select = () => {
+        span.textContent = text;
+        selection.removeAllRanges();
+        const range = document.createRange();
+        range.selectNode(span);
+        selection.addRange(range);
+      };
+      select();
+      document.execCommand('cut');
+      select();
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      try {
+        // span.removeEventListener('copy', listener);
+        // span.removeEventListener('cut', listener);
+        document.body.removeChild(span);
+        selection.removeAllRanges();
+        for (const range of ranges) selection.addRange(range);
+      } catch {}
+    }
   } catch {
     return false;
-  } finally {
-    try {
-      // span.removeEventListener('copy', listener);
-      // span.removeEventListener('cut', listener);
-      document.body.removeChild(span);
-      selection.removeAllRanges();
-      for (const range of ranges) selection.addRange(range);
-    } catch {}
   }
 };
 
@@ -102,5 +107,22 @@ export class DomClipboard implements PeritextClipboard {
     const item = new ClipboardItem(clipboardData);
     const items: ClipboardItem[] = [item];
     return this.clipboard.write(items);
+  }
+
+  public async read<T extends string>(types: T[]): Promise<{[mime in T]: Uint8Array}> {
+    const clipboard = this.clipboard;
+    const items = await clipboard.read();
+    const data = {} as {[mime in T]: Uint8Array};
+    const promises: Promise<[type: T, value: Uint8Array]>[] = [];
+    const item = items[0];
+    for (const type of types) {
+      if (item.types.includes(type))
+        promises.push(item.getType(type)
+          .then((blob) => blob.arrayBuffer())
+          .then((value) => [type as T, new Uint8Array(value)]));
+    }
+    const results = await Promise.all(promises);
+    for (const [type, value] of results) data[type] = value;
+    return data;
   }
 }

@@ -4,6 +4,7 @@ import {SliceTypeName} from '../slice';
 import {registry as defaultRegistry} from '../registry/registry';
 import {SliceBehavior, SliceHeaderShift} from '../slice/constants';
 import {Anchor} from '../rga/constants';
+import {toPlainText} from 'very-small-parser/lib/toPlainText';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
@@ -111,4 +112,9 @@ export const fromHast = (hast: THtmlToken, registry?: SliceRegistry): PeritextMl
 export const fromHtml = (html: string, registry?: SliceRegistry): PeritextMlNode => {
   const hast = _html.parsef(html);
   return fromHast(hast, registry);
+};
+
+export const textFromHtml = (html: string): string => {
+  const hast = _html.parsef(html);
+  return toPlainText(hast);
 };

@@ -100,7 +100,7 @@ export class PeritextDataTransfer<T = string> {
     const data: ClipboardData = {view};
     const json = JSON.stringify(data);
     const jsonBase64 = base64Str(json);
-    const html = this.toHtml(range) + '<div data-peritext="' + jsonBase64 + '"></div>';
+    const html = this.toHtml(range) + '<b data-json-joy-peritext="' + jsonBase64 + '"/>';
     return {
       'text/plain': range.text(),
       'text/html': html,
@@ -155,5 +155,9 @@ export class PeritextDataTransfer<T = string> {
 
   public fromMarkdown(pos: number, markdown: string): void {
     this._imp(pos, markdown, this.mdI().fromMarkdown);
+  }
+
+  public textFromHtml(html: string): string {
+    return this.htmlI().textFromHtml(html);
   }
 }
