@@ -74,19 +74,37 @@ class ViewRangeBuilder {
 
 export const toViewRange = (node: PeritextMlNode): ViewRange => new ViewRangeBuilder().build(node);
 
+// HTML elements to completely ignore.
 const IGNORE_TAGS = new Set<string>(['meta', 'style', 'script', 'link', 'head']);
-const MAP_TAGS = new Map<string, string>([
+
+// HTML elements to rewrite as different block elements.
+const BLOCK_TAGS_REWRITE = new Map<string, string>([
   ['html', ''],
   ['body', ''],
+  ['div', ''],
+]);
+
+// HTML elements to rewrite as different inline elements.
+const INLINE_TAGS_REWRITE = new Map<string, string>([
+  ['span', ''],
 ]);
 
 export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;
   let tag = jsonml[0];
+  let inlineHtmlTag = false;
   if (typeof tag === 'string') {
+    tag = tag.toLowerCase();
     if (IGNORE_TAGS.has(tag)) return '';
-    const mapped = MAP_TAGS.get(tag);
+    const mapped = BLOCK_TAGS_REWRITE.get(tag);
     if (mapped !== undefined) tag = mapped;
+    else {
+      const mapped = INLINE_TAGS_REWRITE.get(tag);
+      if (mapped !== undefined) {
+        tag = mapped;
+        inlineHtmlTag = true;
+      }
+    }
   }
   const length = jsonml.length;
   const node: PeritextMlNode = [tag, null];
@@ -108,7 +126,7 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
         data = JSON.parse(attr['data-attr']);
       } catch {}
     }
-    const inline = attr['data-inline'] === 'true';
+    const inline = inlineHtmlTag || attr['data-inline'] === 'true';
     if (data || inline) node[1] = {data, inline};
   }
   if (typeof node[0] === 'number' && node[0] < 0) {
