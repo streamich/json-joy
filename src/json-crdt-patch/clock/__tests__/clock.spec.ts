@@ -54,3 +54,7 @@ test('forking clones all clocks in vector', () => {
   expect(cloned.peers.get(4)!.time).toBe(2);
   expect(cloned.peers.get(5)!.time).toBe(4);
 });
+
+test('', () => {
+  
+});
