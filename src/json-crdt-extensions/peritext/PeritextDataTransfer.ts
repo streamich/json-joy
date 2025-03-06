@@ -168,11 +168,9 @@ export class PeritextDataTransfer<T = string> {
   }
 
   public fromClipboard(pos: number, data: ClipboardImport): boolean {
-    console.log('FROM CLIPBOARD', data);
     const html = data.html;
     if (html) {
       const view = this.htmlI().importHtml(html);
-      console.log(view);
       this.fromView(pos, view);
       return true;
     }

@@ -8,6 +8,8 @@ import type {UiLifeCycles} from './types';
 export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
   keydown: HTMLElementEventMap['keydown'];
+  copy: HTMLElementEventMap['copy'];
+  paste: HTMLElementEventMap['paste'];
 }
 
 export type InputControllerEventSource = TypedEventTarget<InputControllerEventSourceMap>;
@@ -40,6 +42,7 @@ export class InputController implements UiLifeCycles {
     el.addEventListener('beforeinput', this.onBeforeInput);
     el.addEventListener('keydown', this.onKeyDown);
     el.addEventListener('copy', this.onCopy);
+    el.addEventListener('paste', this.onPaste);
   }
 
   public stop(): void {
@@ -48,6 +51,7 @@ export class InputController implements UiLifeCycles {
     el.removeEventListener('beforeinput', this.onBeforeInput);
     el.removeEventListener('keydown', this.onKeyDown);
     el.removeEventListener('copy', this.onCopy);
+    el.removeEventListener('paste', this.onPaste);
   }
 
   private onBeforeInput = (event: InputEvent): void => {
@@ -66,22 +70,16 @@ export class InputController implements UiLifeCycles {
       case 'insertFromYank':
       case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
       case 'insertText': {
-        if (inputType === 'insertFromPaste') {
-          const items = event.dataTransfer?.items;
-          if (items) {
-            for (const item of Array.from(items)) {
-              item.getAsString((str) => {
-                console.log('PASTE', item.kind, item.type, str);
-              });
-            }
-          }
-        }
         event.preventDefault();
         if (typeof event.data === 'string') {
           et.insert(event.data);
         } else {
-          const item = event.dataTransfer ? event.dataTransfer.items[0] : null;
-          if (item) item.getAsString((text) => et.insert(text));
+          const dataTransfer = event.dataTransfer;
+          if (dataTransfer) {
+            const text = dataTransfer.getData('text/plain');
+            if (text) et.insert(text);
+            else dataTransfer.items[0]?.getAsString((text) => et.insert(text));
+          }
         }
         break;
       }
@@ -221,6 +219,16 @@ export class InputController implements UiLifeCycles {
         }
         break;
       }
+    }
+  };
+
+  private onPaste = (event: ClipboardEvent): void => {
+    event.preventDefault();
+    const text = event.clipboardData?.getData('text/plain');
+    const html = event.clipboardData?.getData('text/html');
+    if (text || html) {
+      const data = {text, html};
+      this.et.buffer({action: 'paste', data});
     }
   };
 

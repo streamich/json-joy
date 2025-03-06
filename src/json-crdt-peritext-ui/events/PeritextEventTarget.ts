@@ -78,7 +78,10 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('marker', detail);
   }
 
-  public buffer(action: BufferDetail['action'], format?: BufferDetail['format']): void {
-    this.dispatch('buffer', {action, format});
+  public buffer(action: BufferDetail['action'], format?: BufferDetail['format']): void;
+  public buffer(detail: BufferDetail): void;
+  public buffer(a: BufferDetail | BufferDetail['action'], b?: BufferDetail['format']): void {
+    const detail: BufferDetail = typeof a === 'object' ? a : {action: a, format: b};
+    this.dispatch('buffer', detail);
   }
 }

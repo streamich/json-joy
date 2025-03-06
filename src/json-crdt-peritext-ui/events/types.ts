@@ -305,6 +305,15 @@ export interface BufferDetail {
    * whole document is used.
    */
   range?: [start: Position, end: Position];
+
+  /**
+   * The data to paste into the document, when `action` is `"paste"`. If not
+   * specified, an attempt is made to retrieve the data from the clipboard.
+   */
+  data?: {
+    text?: string;
+    html?: string;
+  };
 }
 
 /**
