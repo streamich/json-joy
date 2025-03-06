@@ -5,11 +5,14 @@ import {registry as defaultRegistry} from '../registry/registry';
 import {SliceBehavior, SliceHeaderShift} from '../slice/constants';
 import {Anchor} from '../rga/constants';
 import {toPlainText} from 'very-small-parser/lib/toPlainText';
+import {walk} from 'very-small-parser/lib/html/json-ml/walk';
+import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
-import type {THtmlToken} from 'very-small-parser/lib/html/types';
+import type {IRoot, THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
 import type {SliceRegistry} from '../registry/SliceRegistry';
 import type {ViewRange, ViewSlice} from '../editor/types';
+import type {ClipboardData} from './export-html';
 
 /**
  * Flattens a {@link PeritextMlNode} tree structure into a {@link ViewRange}
@@ -151,7 +154,39 @@ export const fromHtml = (html: string, registry?: SliceRegistry): PeritextMlNode
   return fromHast(hast, registry);
 };
 
+export const htmlToHast = (html: string): THtmlToken => _html.parsef(html);
+
 export const textFromHtml = (html: string): string => {
   const hast = _html.parsef(html);
   return toPlainText(hast);
+};
+
+const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportData?: ClipboardData] => {
+  const maybeHasPeritextExport = html.includes('data-json-joy-peritext=');
+  const hast = _html.parsef(html);
+  const jsonml = _fromHast(hast);
+  if (maybeHasPeritextExport) {
+    const iterator = walk(jsonml);
+    let node: JsonMlNode | undefined;
+    while (node = iterator()) {
+      if (node && typeof node === 'object') {
+        const [tag, attr] = node;
+        if (attr?.['data-json-joy-peritext']) {
+          const jsonBase64 = attr['data-json-joy-peritext'];
+          const buffer = fromBase64(jsonBase64);
+          const json = new TextDecoder().decode(buffer);
+          const data: ClipboardData = JSON.parse(json);
+          return [void 0, data];
+        }
+      }
+    }
+  }
+  return [jsonml];
+};
+
+export const importHtml = (html: string): ViewRange => {
+  const [jsonml, exportData] = getExportData(html);
+  if (exportData) return exportData.view;
+  const node = fromJsonMl(jsonml!);
+  return toViewRange(node);
 };

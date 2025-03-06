@@ -1,11 +1,11 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
+import type {ClipboardImport, PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
-import type {PeritextClipboard} from '../clipboard/types';
+import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -235,7 +235,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             const transfer = opts.transfer;
             if (!transfer) return;
             const data = transfer.toClipboard(range);
-            clipboard.write(data)?.catch((err) => console.error(err));
+            clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
             if (action === 'cut') editor.collapseCursors();
           }
         }
@@ -301,19 +301,19 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             break;
           }
           default: { // 'auto'
-            const data = await clipboard.read(['text/plain', 'text/html']);
+            const clipboardData = await clipboard.read(['text/plain', 'text/html']);
+            const data: ClipboardImport = {};
             let buffer: Uint8Array | undefined;
             const transfer = opts.transfer;
-            if (transfer && (buffer = data['text/html'])) {
+            if (transfer && (buffer = clipboardData['text/html'])) {
               const html = new TextDecoder().decode(buffer);
               if (!range.isCollapsed()) editor.delRange(range);
               range.collapseToStart();
               const start = range.start;
               const pos = start.viewPos();
-              console.log(pos, html);
-              transfer.fromHtml(pos, html);
-              this.et.change();
-            } else if (buffer = data['text/plain']) {
+              const inserted = transfer.fromClipboard(pos, {html});
+              if (inserted) this.et.change();
+            } else if (buffer = clipboardData['text/plain']) {
               const text = new TextDecoder().decode(buffer);
               this.et.insert(text);
             }

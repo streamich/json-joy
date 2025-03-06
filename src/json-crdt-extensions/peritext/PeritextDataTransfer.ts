@@ -1,5 +1,4 @@
 import {registry as defaultRegistry} from './registry/registry';
-import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {Range} from './rga/Range';
 import type {ViewRange} from './editor/types';
 import type {SliceRegistry} from './registry/SliceRegistry';
@@ -9,13 +8,6 @@ import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {IRoot} from 'very-small-parser/lib/markdown/block/types';
 import type {Fragment} from './block/Fragment';
-
-const base64Str = (str: string) => toBase64(new TextEncoder().encode(str));
-
-/** JSON data embedded as Base64 data attribute into HTML clipboard buffer. */
-export interface ClipboardData {
-  view: ViewRange;
-}
 
 export type PeritextDataTransferHtmlExportTools = typeof import('./lazy/export-html');
 export type PeritextDataTransferHtmlImportTools = typeof import('./lazy/import-html');
@@ -28,6 +20,16 @@ export interface PeritextDataTransferOpts {
   htmlImport?: PeritextDataTransferHtmlImportTools;
   mdExport?: PeritextDataTransferMarkdownExportTools;
   mdImport?: PeritextDataTransferMarkdownImportTools;
+}
+
+export interface ClipboardExport {
+  'text/plain': string;
+  'text/html': string;
+}
+
+export interface ClipboardImport {
+  text?: string;
+  html?: string;
 }
 
 /**
@@ -101,12 +103,10 @@ export class PeritextDataTransfer<T = string> {
     return tools.toMarkdown(json);
   }
 
-  public toClipboard(range: Range<T>): {'text/plain': string; 'text/html': string} {
+  public toClipboard(range: Range<T>): ClipboardExport {
     const view = this.txt.editor.export(range);
-    const data: ClipboardData = {view};
-    const json = JSON.stringify(data);
-    const jsonBase64 = base64Str(json);
-    const html = this.toHtml(range) + '<b data-json-joy-peritext="' + jsonBase64 + '"/>';
+    const node = this.toJson(range);
+    const html = this.htmlE().exportHtml(view, node);
     return {
       'text/plain': range.text(),
       'text/html': html,
@@ -165,5 +165,20 @@ export class PeritextDataTransfer<T = string> {
 
   public textFromHtml(html: string): string {
     return this.htmlI().textFromHtml(html);
+  }
+
+  public fromClipboard(pos: number, data: ClipboardImport): boolean {
+    console.log('FROM CLIPBOARD', data);
+    const html = data.html;
+    if (html) {
+      const view = this.htmlI().importHtml(html);
+      console.log(view);
+      this.fromView(pos, view);
+      return true;
+    }
+    const text = data.text;
+    if (!text) return false;
+    this.txt.insAt(pos, text);
+    return true;
   }
 }
