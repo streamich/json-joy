@@ -732,16 +732,32 @@ export class Editor<T = string> implements Printable {
     const splits: ViewSlice[] = [];
     const annotations: ViewSlice[] = [];
     const texts: string[] = [];
+    let isFirstMarker = true;
     let start = 0;
     for (let i = 0; i < length; i++) {
       const slice = slices[i];
       const [header, x1] = slice;
       const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
       if (behavior === SliceBehavior.Marker) {
-        const end = x1 - offset;
-        texts.push(text.slice(start, end));
-        start = end + 1;
-        splits.push(slice);
+        let skipMarkerInsert = false;
+        if (isFirstMarker) {
+          isFirstMarker = false;
+          const point = txt.pointAt(start);
+          const prevMarker = txt.overlay.getOrNextLowerMarker(point);
+          const type = slice[3];
+          if (!prevMarker && type === CommonSliceType.p) {
+            skipMarkerInsert = true;
+          } else if (prevMarker && prevMarker.type() === type) {
+            skipMarkerInsert = true;
+          }
+        }
+        if (skipMarkerInsert) start = x1 - offset + 1;
+        else {
+          const end = x1 - offset;
+          texts.push(text.slice(start, end));
+          start = end + 1;
+          splits.push(slice);
+        }
       } else annotations.push(slice);
     }
     const lastText = text.slice(start);
