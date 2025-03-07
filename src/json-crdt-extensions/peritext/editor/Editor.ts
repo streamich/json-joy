@@ -725,7 +725,8 @@ export class Editor<T = string> implements Printable {
     return view;
   }
 
-  public import(pos: number, view: ViewRange): void {
+
+  public import(pos: number, view: ViewRange): number {
     const [text, offset, slices] = view;
     const txt = this.txt;
     const length = slices.length;
@@ -778,7 +779,10 @@ export class Editor<T = string> implements Printable {
         start += 1;
       }
     }
-    if (lastText) txt.insAt(start, lastText);
+    if (lastText) {
+      txt.insAt(start, lastText);
+      start += lastText.length;
+    }
     const annotationsLength = annotations.length;
     for (let i = 0; i < annotationsLength; i++) {
       const slice = annotations[i];
@@ -800,6 +804,7 @@ export class Editor<T = string> implements Printable {
       if (range.end.isAbs()) range.end.refAfter();
       txt.savedSlices.ins(range, behavior, type, data);
     }
+    return start - pos;
   }
 
   // ------------------------------------------------------------------ various

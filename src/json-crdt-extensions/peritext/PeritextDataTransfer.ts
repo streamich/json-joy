@@ -115,14 +115,14 @@ export class PeritextDataTransfer<T = string> {
 
   // ------------------------------------------------------------------ imports
 
-  public fromView(pos: number, view: ViewRange): void {
-    this.txt.editor.import(pos, view);
+  public fromView(pos: number, view: ViewRange): number {
+    return this.txt.editor.import(pos, view);
   }
 
-  public fromJson(pos: number, json: PeritextMlElement | PeritextMlNode): void {
+  public fromJson(pos: number, json: PeritextMlElement | PeritextMlNode): number {
     const tools = this.htmlI();
     const view = tools.toViewRange(json);
-    this.fromView(pos, view);
+    return this.fromView(pos, view);
   }
 
   private _imp<D>(pos: number, data: D, transform: (data: D, registry: SliceRegistry) => PeritextMlNode): void {
@@ -167,16 +167,24 @@ export class PeritextDataTransfer<T = string> {
     return this.htmlI().textFromHtml(html);
   }
 
-  public fromClipboard(pos: number, data: ClipboardImport): boolean {
+  /**
+   * Inserts data from the clipboard at a given position. Returns the number
+   * of characters inserted, this can be used by the caller to move the cursor
+   * to the end of the inserted data.
+   * 
+   * @param pos View position to insert the data at.
+   * @param data Clipboard data to attempt to insert.
+   * @returns The number of characters inserted.
+   */
+  public fromClipboard(pos: number, data: ClipboardImport): number {
     const html = data.html;
     if (html) {
       const view = this.htmlI().importHtml(html);
-      this.fromView(pos, view);
-      return true;
+      return this.fromView(pos, view);
     }
     const text = data.text;
-    if (!text) return false;
+    if (!text) return 0;
     this.txt.insAt(pos, text);
-    return true;
+    return text.length;
   }
 }
