@@ -125,10 +125,10 @@ export class PeritextDataTransfer<T = string> {
     return this.fromView(pos, view);
   }
 
-  private _imp<D>(pos: number, data: D, transform: (data: D, registry: SliceRegistry) => PeritextMlNode): void {
+  private _imp<D>(pos: number, data: D, transform: (data: D, registry: SliceRegistry) => PeritextMlNode): number {
     const registry = this.opts.registry ?? defaultRegistry;
     const json = transform(data, registry);
-    this.fromJson(pos, json);
+    return this.fromJson(pos, json);
   }
 
   protected htmlI(): PeritextDataTransferHtmlImportTools {
@@ -137,16 +137,16 @@ export class PeritextDataTransfer<T = string> {
     return tools;
   }
 
-  public fromJsonMl(pos: number, jsonml: JsonMlNode): void {
-    this._imp(pos, jsonml, this.htmlI().fromJsonMl);
+  public fromJsonMl(pos: number, jsonml: JsonMlNode): number {
+    return this._imp(pos, jsonml, this.htmlI().fromJsonMl);
   }
 
-  public fromHast(pos: number, hast: THtmlToken): void {
-    this._imp(pos, hast, this.htmlI().fromHast);
+  public fromHast(pos: number, hast: THtmlToken): number {
+    return this._imp(pos, hast, this.htmlI().fromHast);
   }
 
-  public fromHtml(pos: number, html: string): void {
-    this._imp(pos, html, this.htmlI().fromHtml);
+  public fromHtml(pos: number, html: string): number {
+    return this._imp(pos, html, this.htmlI().fromHtml);
   }
 
   protected mdI(): PeritextDataTransferMarkdownImportTools {
@@ -155,12 +155,12 @@ export class PeritextDataTransfer<T = string> {
     return tools;
   }
 
-  public fromMdast(pos: number, mdast: IRoot): void {
-    this._imp(pos, mdast, this.mdI().fromMdast);
+  public fromMdast(pos: number, mdast: IRoot): number {
+    return this._imp(pos, mdast, this.mdI().fromMdast);
   }
 
-  public fromMarkdown(pos: number, markdown: string): void {
-    this._imp(pos, markdown, this.mdI().fromMarkdown);
+  public fromMarkdown(pos: number, markdown: string): number {
+    return this._imp(pos, markdown, this.mdI().fromMarkdown);
   }
 
   public textFromHtml(html: string): string {

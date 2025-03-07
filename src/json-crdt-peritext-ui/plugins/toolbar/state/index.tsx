@@ -6,7 +6,7 @@ import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import type {UiLifeCyclesRender} from '../../../dom/types';
-import type {PeritextEventDetailMap} from '../../../events/types';
+import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../react';
 import type {MenuItem} from '../types';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
@@ -317,6 +317,12 @@ export class ToolbarState implements UiLifeCyclesRender {
         ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
         : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
     const et = this.surface.events.et;
+    const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
+    const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
+    const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
+    const onSelect = (format: BufferDetail['format']) => () => {
+      et.buffer(type, format);
+    };
     return {
       name: type === 'copy' ? 'Copy as' : 'Cut as',
       more: true,
@@ -326,19 +332,15 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'Markdown',
           text: type + ' markdown md',
           icon,
-          right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'md');
-          },
+          right: iconMarkdown,
+          onSelect: onSelect('md'),
         },
         {
           name: 'MDAST',
           text: type + 'markdown md mdast',
           icon,
-          right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'mdast');
-          },
+          right: iconMarkdown,
+          onSelect: onSelect('mdast'),
         },
         {
           name: 'MD sep',
@@ -348,19 +350,15 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'HTML',
           text: type + 'html',
           icon,
-          right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'html');
-          },
+          right: iconHtml,
+          onSelect: onSelect('html'),
         },
         {
           name: 'HAST',
           text: type + 'html hast',
           icon,
-          right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'hast');
-          },
+          right: iconHtml,
+          onSelect: onSelect('hast'),
         },
         {
           name: 'HTML sep',
@@ -370,28 +368,91 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'Range view',
           text: type + 'range view peritext',
           icon,
-          right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'json');
-          },
+          right: iconJson,
+          onSelect: onSelect('json'),
         },
         {
           name: 'Fragment ML',
           text: type + 'peritext fragment ml node',
           icon,
-          right: () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'jsonml');
-          },
+          right: iconJson,
+          onSelect: onSelect('jsonml'),
         },
         {
           name: 'Fragment text',
           text: type + 'peritext fragment debug',
           icon,
           right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
-          onSelect: async (e) => {
-            await et.buffer(type, 'fragment');
-          },
+          onSelect: onSelect('fragment'),
+        },
+      ],
+    };
+  };
+
+  public readonly pasteAsMenu = (): MenuItem => {
+    const icon = () => <Iconista width={15} height={15} set="radix" icon="clipboard" />;
+    const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
+    const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
+    const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
+    const et = this.surface.events.et;
+    const onSelect = (format: BufferDetail['format']) => () => {
+      console.log('paste as', format);
+      et.buffer('paste', format);
+    };
+    return {
+      name: 'Paste as',
+      more: true,
+      icon,
+      children: [
+        {
+          name: 'Markdown',
+          text: 'paste markdown md',
+          icon,
+          right: iconMarkdown,
+          onSelect: onSelect('md'),
+        },
+        {
+          name: 'MDAST',
+          text: 'paste markdown md mdast',
+          icon,
+          right: iconMarkdown,
+          onSelect: onSelect('mdast'),
+        },
+        {
+          name: 'MD sep',
+          sep: true,
+        },
+        {
+          name: 'HTML',
+          text: 'paste html',
+          icon,
+          right: iconHtml,
+          onSelect: onSelect('html'),
+        },
+        {
+          name: 'HAST',
+          text: 'paste html hast',
+          icon,
+          right: iconHtml,
+          onSelect: onSelect('hast'),
+        },
+        {
+          name: 'HTML sep',
+          sep: true,
+        },
+        {
+          name: 'Range view',
+          text: 'paste range view peritext',
+          icon,
+          right: iconJson,
+          onSelect: onSelect('json'),
+        },
+        {
+          name: 'Fragment ML',
+          text: 'paste peritext fragment ml node',
+          icon,
+          right: iconJson,
+          onSelect: onSelect('jsonml'),
         },
       ],
     };
@@ -491,6 +552,7 @@ export class ToolbarState implements UiLifeCyclesRender {
             //     await this.surface.events.et.buffer('paste', 'format');
             //   },
             // },
+            this.pasteAsMenu(),
           ],
         },
       ],

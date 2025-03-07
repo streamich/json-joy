@@ -262,42 +262,51 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'jsonml':
           case 'mdast':
           case 'md': {
+            let data = detail.data;
             const transfer = opts.transfer;
             if (!transfer) return;
-            const data = await clipboard.read(['text/plain']);
-            const buffer = data['text/plain'];
-            const text = new TextDecoder().decode(buffer);
+            let text: string = data?.text || '';
+            if (!text) {
+              const clipboardData = await clipboard.read(['text/plain']);
+              const buffer = clipboardData['text/plain'];
+              if (buffer) text = new TextDecoder().decode(buffer);
+            }
             if (!range.isCollapsed()) editor.delRange(range);
             range.collapseToStart();
             const start = range.start;
             const pos = start.viewPos();
+            let inserted: number = 0;
             switch (format) {
               case 'html': {
-                
+                inserted = transfer.fromHtml(pos, text);
                 break;
               }
               case 'hast': {
-                
+                const json = JSON.parse(text);
+                inserted = transfer.fromHast(pos, json);
                 break;
               }
               case 'jsonml': {
-                
+                const json = JSON.parse(text);
+                inserted = transfer.fromJson(pos, json);
                 break;
               }
               case 'json': {
-                
+                const json = JSON.parse(text);
+                inserted = transfer.fromView(pos, json);
                 break;
               }
               case 'mdast': {
-                
+                const json = JSON.parse(text);
+                inserted = transfer.fromMdast(pos, json);
                 break;
               }
               case 'md': {
-                
+                inserted = transfer.fromMarkdown(pos, text);
                 break;
               }
             }
-            clipboard.writeText(text)?.catch((err) => console.error(err));
+            if (inserted) this.et.move(inserted, 'char');
             break;
           }
           default: { // 'auto'
