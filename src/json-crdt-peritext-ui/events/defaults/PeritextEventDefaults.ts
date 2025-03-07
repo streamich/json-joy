@@ -1,6 +1,6 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type {ClipboardImport, PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
+import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
@@ -301,22 +301,22 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             break;
           }
           default: { // 'auto'
-            const transfer = opts.transfer;
             let data = detail.data;
+            const transfer = opts.transfer;
             if (!transfer) {
               let text: string = data?.text || '';
               if (!text) {
                 const clipboardData = await clipboard.read(['text/plain']);
-                if (clipboardData['text/plain']) {
-                  const text = new TextDecoder().decode(clipboardData['text/plain']);
-                  this.et.insert(text);
-                }
+                const buffer = clipboardData['text/plain'];
+                if (buffer) text = new TextDecoder().decode(buffer);
               }
+              if (text) this.et.insert(text);
               return;
             }
             if (!data) {
               data = {};
               const {"text/plain": text, "text/html": html} = await clipboard.read(['text/plain', 'text/html']);
+              if (!text && !html) return;
               if (text) data.text = new TextDecoder().decode(text);
               if (html) data.html = new TextDecoder().decode(html);
             }
@@ -325,7 +325,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             const start = range.start;
             const pos = start.viewPos();
             const inserted = transfer.fromClipboard(pos, data);
-            if (inserted) this.et.change();
+            if (inserted) this.et.move(inserted, 'char');
           }
         }
         break;
