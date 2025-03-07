@@ -1,6 +1,6 @@
 import type {CharPredicate} from './types';
 
-const LETTER_REGEX = /(\p{Letter}|\d)/u;
+const LETTER_REGEX = /(\p{Letter}|\d|_)/u;
 const WHITESPACE_REGEX = /\s/;
 
 export const isLetter: CharPredicate<string> = (char: string) => LETTER_REGEX.test(char[0]);
