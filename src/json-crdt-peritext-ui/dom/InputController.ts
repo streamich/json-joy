@@ -9,6 +9,7 @@ export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
   keydown: HTMLElementEventMap['keydown'];
   copy: HTMLElementEventMap['copy'];
+  cut: HTMLElementEventMap['cut'];
   paste: HTMLElementEventMap['paste'];
 }
 
@@ -42,6 +43,7 @@ export class InputController implements UiLifeCycles {
     el.addEventListener('beforeinput', this.onBeforeInput);
     el.addEventListener('keydown', this.onKeyDown);
     el.addEventListener('copy', this.onCopy);
+    el.addEventListener('cut', this.onCut);
     el.addEventListener('paste', this.onPaste);
   }
 
@@ -51,6 +53,7 @@ export class InputController implements UiLifeCycles {
     el.removeEventListener('beforeinput', this.onBeforeInput);
     el.removeEventListener('keydown', this.onKeyDown);
     el.removeEventListener('copy', this.onCopy);
+    el.removeEventListener('cut', this.onCut);
     el.removeEventListener('paste', this.onPaste);
   }
 
@@ -222,6 +225,14 @@ export class InputController implements UiLifeCycles {
     }
   };
 
+  private onCopy = (): void => {
+    console.log('copy');
+  };
+
+  private onCut = (): void => {
+    console.log('cut');
+  };
+
   private onPaste = (event: ClipboardEvent): void => {
     event.preventDefault();
     const text = event.clipboardData?.getData('text/plain');
@@ -230,9 +241,5 @@ export class InputController implements UiLifeCycles {
       const data = {text, html};
       this.et.buffer({action: 'paste', data});
     }
-  };
-
-  private onCopy = (): void => {
-    console.log('copy');
   };
 }
