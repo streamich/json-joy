@@ -7,6 +7,8 @@ import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/E
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
 
+const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
+
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
   transfer?: PeritextDataTransfer;
@@ -247,10 +249,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             const data = await clipboard.read(['text/plain', 'text/html']);
             let buffer: Uint8Array | undefined;
             if (buffer = data['text/plain']) {
-              const text = new TextDecoder().decode(buffer);
+              const text = toText(buffer);
               this.et.insert(text);
             } else if (buffer = data['text/html']) {
-              const html = new TextDecoder().decode(buffer);
+              const html = toText(buffer);
               const text = opts.transfer?.textFromHtml?.(html) ?? html;
               this.et.insert(text);
             }
@@ -269,7 +271,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             if (!text) {
               const clipboardData = await clipboard.read(['text/plain']);
               const buffer = clipboardData['text/plain'];
-              if (buffer) text = new TextDecoder().decode(buffer);
+              if (buffer) text = toText(buffer);
             }
             if (!range.isCollapsed()) editor.delRange(range);
             range.collapseToStart();
@@ -317,7 +319,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               if (!text) {
                 const clipboardData = await clipboard.read(['text/plain']);
                 const buffer = clipboardData['text/plain'];
-                if (buffer) text = new TextDecoder().decode(buffer);
+                if (buffer) text = toText(buffer);
               }
               if (text) this.et.insert(text);
               return;
@@ -326,8 +328,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               data = {};
               const {"text/plain": text, "text/html": html} = await clipboard.read(['text/plain', 'text/html']);
               if (!text && !html) return;
-              if (text) data.text = new TextDecoder().decode(text);
-              if (html) data.html = new TextDecoder().decode(html);
+              if (text) data.text = toText(text);
+              if (html) data.html = toText(html);
             }
             if (!range.isCollapsed()) editor.delRange(range);
             range.collapseToStart();
