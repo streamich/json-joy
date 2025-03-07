@@ -62,7 +62,7 @@ export class InputController implements UiLifeCycles {
     const et = this.et;
     const inputType = event.inputType;
     switch (inputType) {
-      case 'insertParagraph': {
+      case 'insertParagraph': { // insert a paragraph break
         event.preventDefault();
         et.marker({action: 'ins'});
         break;
@@ -129,8 +129,6 @@ export class InputController implements UiLifeCycles {
         break;
       }
       // case 'insertLineBreak': { // insert a line break
-      // }
-      // case 'insertParagraph': { // insert a paragraph break
       // }
       // case 'insertOrderedList': { // insert a numbered list
       // }
@@ -225,12 +223,14 @@ export class InputController implements UiLifeCycles {
     }
   };
 
-  private onCopy = (): void => {
-    console.log('copy');
+  private onCopy = (event: ClipboardEvent): void => {
+    event.preventDefault();
+    this.et.buffer({action: 'copy'});
   };
 
-  private onCut = (): void => {
-    console.log('cut');
+  private onCut = (event: ClipboardEvent): void => {
+    event.preventDefault();
+    this.et.buffer({action: 'cut'});
   };
 
   private onPaste = (event: ClipboardEvent): void => {
