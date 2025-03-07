@@ -37,13 +37,14 @@ put('.' + CssClass.Inline, {
 export interface PeritextViewProps {
   peritext: Peritext;
   plugins?: PeritextPlugin[];
+  onState?: (state: PeritextSurfaceState) => void;
   onRender?: () => void;
 }
 
 /** @todo Is `React.memo` needed here? */
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   // TODO: create hook which instantiates default plugins?
-  const {peritext, plugins = [new CursorPlugin(), defaultPlugin], onRender} = props;
+  const {peritext, plugins = [new CursorPlugin(), defaultPlugin], onState, onRender} = props;
   const [, setTick] = React.useState(0);
   const [dom, setDom] = React.useState<DomController | undefined>(undefined);
 
@@ -56,8 +57,12 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   }, [peritext]);
 
   const state: PeritextSurfaceState = React.useMemo(
-    () => new PeritextSurfaceState(peritext, create(peritext), rerender, plugins),
-    [peritext, plugins, rerender],
+    () => {
+      const state = new PeritextSurfaceState(peritext, create(peritext), rerender, plugins);
+      onState?.(state);
+      return state;
+    },
+    [peritext, plugins, rerender, onState],
   );
 
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies

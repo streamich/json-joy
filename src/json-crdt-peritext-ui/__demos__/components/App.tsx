@@ -6,6 +6,15 @@ import {PeritextView} from '../../react';
 import {CursorPlugin} from '../../plugins/cursor';
 import {ToolbarPlugin} from '../../plugins/toolbar';
 import {DebugPlugin} from '../../plugins/debug';
+import {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
+
+const markdown = `The German __automotive sector__ is in the process of *cutting thousands of jobs* as it
+grapples with a global shift toward electric vehicles — a transformation Musk himself has been at the forefront of.
+
+A \`ClipboardEvent\` is dispatched for copy, cut, and paste events, and it contains
+a \`clipboardData\` property of type \`DataTransfer\`. The \`DataTransfer\` object is used
+by the Clipboard Events API to hold multiple representations of data.
+`;
 
 export const App: React.FC = () => {
   const [[model, peritext]] = React.useState(() => {
@@ -14,8 +23,9 @@ export const App: React.FC = () => {
         'The German automotive sector is in the process of cutting thousands of jobs as it grapples with a global shift toward electric vehicles — a transformation Musk himself has been at the forefront of.',
       ),
     );
-    const peritext = model.s.toExt().txt;
+    const peritext = model.s.toExt().txt;;
     peritext.refresh();
+    // const transfer = new PeritextDataTransfer(peritext);
     return [model, peritext] as const;
   });
 
@@ -30,7 +40,16 @@ export const App: React.FC = () => {
     <NiceUiProvider>
       <GlobalCss />
       <div style={{maxWidth: '690px', fontSize: '21px', lineHeight: '1.7em', margin: '32px auto'}}>
-        <PeritextView peritext={peritext} plugins={plugins} />
+        <PeritextView peritext={peritext} plugins={plugins} onState={(state) => {
+          // state.events.et.buffer({
+          //   action: 'paste',
+          //   format: 'md',
+          //   range: [0, 0],
+          //   data: {
+          //     text: markdown,
+          //   },
+          // });
+        }} />
       </div>
     </NiceUiProvider>
   );
