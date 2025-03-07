@@ -8,7 +8,7 @@ import {toPlainText} from 'very-small-parser/lib/toPlainText';
 import {walk} from 'very-small-parser/lib/html/json-ml/walk';
 import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
-import type {IRoot, THtmlToken} from 'very-small-parser/lib/html/types';
+import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
 import type {SliceRegistry} from '../registry/SliceRegistry';
 import type {ViewRange, ViewSlice} from '../editor/types';

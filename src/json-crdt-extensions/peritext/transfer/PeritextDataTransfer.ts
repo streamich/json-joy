@@ -1,18 +1,18 @@
-import {registry as defaultRegistry} from './registry/registry';
-import type {Range} from './rga/Range';
-import type {ViewRange} from './editor/types';
-import type {SliceRegistry} from './registry/SliceRegistry';
-import type {Peritext} from './Peritext';
-import type {PeritextMlElement, PeritextMlNode} from './block/types';
+import {registry as defaultRegistry} from '../registry/registry';
+import type {Range} from '../rga/Range';
+import type {ViewRange} from '../editor/types';
+import type {SliceRegistry} from '../registry/SliceRegistry';
+import type {Peritext} from '../Peritext';
+import type {PeritextMlElement, PeritextMlNode} from '../block/types';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {IRoot} from 'very-small-parser/lib/markdown/block/types';
-import type {Fragment} from './block/Fragment';
+import type {Fragment} from '../block/Fragment';
 
-export type PeritextDataTransferHtmlExportTools = typeof import('./lazy/export-html');
-export type PeritextDataTransferHtmlImportTools = typeof import('./lazy/import-html');
-export type PeritextDataTransferMarkdownExportTools = typeof import('./lazy/export-markdown');
-export type PeritextDataTransferMarkdownImportTools = typeof import('./lazy/import-markdown');
+export type PeritextDataTransferHtmlExportTools = typeof import('./export-html');
+export type PeritextDataTransferHtmlImportTools = typeof import('./import-html');
+export type PeritextDataTransferMarkdownExportTools = typeof import('./export-markdown');
+export type PeritextDataTransferMarkdownImportTools = typeof import('./import-markdown');
 
 export interface PeritextDataTransferOpts {
   registry?: SliceRegistry;
