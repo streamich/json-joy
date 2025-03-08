@@ -56,14 +56,11 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     if (onRender) onRender();
   }, [peritext]);
 
-  const state: PeritextSurfaceState = React.useMemo(
-    () => {
-      const state = new PeritextSurfaceState(peritext, create(peritext), rerender, plugins);
-      onState?.(state);
-      return state;
-    },
-    [peritext, plugins, rerender, onState],
-  );
+  const state: PeritextSurfaceState = React.useMemo(() => {
+    const state = new PeritextSurfaceState(peritext, create(peritext), rerender, plugins);
+    onState?.(state);
+    return state;
+  }, [peritext, plugins, rerender, onState]);
 
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const ref = React.useCallback(

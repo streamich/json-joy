@@ -248,10 +248,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'text': {
             const data = await clipboard.read(['text/plain', 'text/html']);
             let buffer: Uint8Array | undefined;
-            if (buffer = data['text/plain']) {
+            if ((buffer = data['text/plain'])) {
               const text = toText(buffer);
               this.et.insert(text);
-            } else if (buffer = data['text/html']) {
+            } else if ((buffer = data['text/html'])) {
               const html = toText(buffer);
               const text = opts.transfer?.textFromHtml?.(html) ?? html;
               this.et.insert(text);
@@ -264,7 +264,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'jsonml':
           case 'mdast':
           case 'md': {
-            let data = detail.data;
+            const data = detail.data;
             const transfer = opts.transfer;
             if (!transfer) return;
             let text: string = data?.text || '';
@@ -312,7 +312,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             this.et.change();
             break;
           }
-          default: { // 'auto'
+          default: {
+            // 'auto'
             let data = detail.data;
             const transfer = opts.transfer;
             if (!transfer) {
@@ -327,7 +328,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             if (!data) {
               data = {};
-              const {"text/plain": text, "text/html": html} = await clipboard.read(['text/plain', 'text/html']);
+              const {'text/plain': text, 'text/html': html} = await clipboard.read(['text/plain', 'text/html']);
               if (!text && !html) return;
               if (text) data.text = toText(text);
               if (html) data.html = toText(html);

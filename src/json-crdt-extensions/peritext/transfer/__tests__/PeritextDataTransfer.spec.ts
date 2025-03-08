@@ -19,7 +19,8 @@ const setup = () => {
 
 test('ignores empty inline tags', () => {
   const {peritext, transfer} = setup();
-  const html = '1<span><a/></span><b></b>2<span /><b data-json-joy-peritext="eyJ2aWV3IjpbImdyYXBwbGVzIiw4MixbXV19"></b>';
+  const html =
+    '1<span><a/></span><b></b>2<span /><b data-json-joy-peritext="eyJ2aWV3IjpbImdyYXBwbGVzIiw4MixbXV19"></b>';
   peritext.strApi().ins(0, 'ab');
   transfer.fromHtml(1, html);
   peritext.refresh();

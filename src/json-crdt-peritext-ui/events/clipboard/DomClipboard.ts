@@ -117,9 +117,12 @@ export class DomClipboard implements PeritextClipboard {
     const item = items[0];
     for (const type of types) {
       if (item.types.includes(type))
-        promises.push(item.getType(type)
-          .then((blob) => blob.arrayBuffer())
-          .then((value) => [type as T, new Uint8Array(value)]));
+        promises.push(
+          item
+            .getType(type)
+            .then((blob) => blob.arrayBuffer())
+            .then((value) => [type as T, new Uint8Array(value)]),
+        );
     }
     const results = await Promise.all(promises);
     for (const [type, value] of results) data[type] = value;

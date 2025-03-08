@@ -84,9 +84,7 @@ const BLOCK_TAGS_REWRITE = new Map<string, string>([
 ]);
 
 // HTML elements to rewrite as different inline elements.
-const INLINE_TAGS_REWRITE = new Map<string, string>([
-  ['span', ''],
-]);
+const INLINE_TAGS_REWRITE = new Map<string, string>([['span', '']]);
 
 export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;
@@ -164,7 +162,7 @@ const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportDat
   if (maybeHasPeritextExport) {
     const iterator = walk(jsonml);
     let node: JsonMlNode | undefined;
-    while (node = iterator()) {
+    while ((node = iterator())) {
       if (node && typeof node === 'object') {
         const [tag, attr] = node;
         if (attr?.['data-json-joy-peritext']) {

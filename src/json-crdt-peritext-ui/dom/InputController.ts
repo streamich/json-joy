@@ -62,7 +62,8 @@ export class InputController implements UiLifeCycles {
     const et = this.et;
     const inputType = event.inputType;
     switch (inputType) {
-      case 'insertParagraph': { // insert a paragraph break
+      case 'insertParagraph': {
+        // insert a paragraph break
         event.preventDefault();
         et.marker({action: 'ins'});
         break;

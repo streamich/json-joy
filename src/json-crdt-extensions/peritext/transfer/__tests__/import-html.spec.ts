@@ -54,7 +54,14 @@ describe('.toViewRange()', () => {
     const html = '<p><b>123</b></p>';
     const peritextMl = fromHtml(html);
     const view = toViewRange(peritextMl);
-    expect(view).toEqual(['\n123', 0, [[0, 0, 0, 0], [10, 1, 4, -3]]]);
+    expect(view).toEqual([
+      '\n123',
+      0,
+      [
+        [0, 0, 0, 0],
+        [10, 1, 4, -3],
+      ],
+    ]);
   });
 
   test('two consecutive paragraphs', () => {

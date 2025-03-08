@@ -171,7 +171,7 @@ export class PeritextDataTransfer<T = string> {
    * Inserts data from the clipboard at a given position. Returns the number
    * of characters inserted, this can be used by the caller to move the cursor
    * to the end of the inserted data.
-   * 
+   *
    * @param pos View position to insert the data at.
    * @param data Clipboard data to attempt to insert.
    * @returns The number of characters inserted.
