@@ -193,4 +193,19 @@ describe('Markdown', () => {
     const md2 = transfer.toMarkdown(all);
     expect(md2).toBe('ab\n\nc__123__\n\n++456++d');
   });
+
+  test.skip('can insert Markdown with inline line breaks', () => {
+    const {peritext, transfer} = setup();
+    const md = '1\n2\n3';
+    peritext.strApi().ins(0, 'ab');
+    peritext.refresh();
+    transfer.fromMarkdown(1, md);
+    peritext.refresh();
+    const all = peritext.rangeAll()!;
+    const html = transfer.toHtml(all);
+    console.log(html);
+    expect(html).toBe('<p>a123b</p>');
+    const md2 = transfer.toMarkdown(all);
+    expect(md2).toBe('a123b');
+  });
 });
