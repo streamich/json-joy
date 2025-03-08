@@ -54,7 +54,7 @@ export class Peritext<T = string> implements Printable {
 
   public readonly editor: Editor<T>;
   public readonly overlay = new Overlay<T>(this);
-  public readonly blocks: Fragment;
+  public readonly blocks: Fragment<T>;
 
   /**
    * Creates a new Peritext context.
@@ -86,7 +86,7 @@ export class Peritext<T = string> implements Printable {
     });
     this.localSlices = new LocalSlices(this, localSlicesModel.root.node().get(0)!);
     this.editor = new Editor<T>(this);
-    this.blocks = new Fragment(this as Peritext, this.pointAbsStart() as Point, this.pointAbsEnd() as Point);
+    this.blocks = new Fragment<T>(this, this.pointAbsStart(), this.pointAbsEnd());
   }
 
   public strApi(): StrApi {
@@ -219,8 +219,8 @@ export class Peritext<T = string> implements Printable {
     return this.range(start, end);
   }
 
-  public fragment(range: Range): Fragment {
-    return new Fragment(this as Peritext, range.start, range.end);
+  public fragment(range: Range<T>) {
+    return new Fragment<T>(this as Peritext<T>, range.start, range.end);
   }
 
   // ---------------------------------------------------------- text (& slices)

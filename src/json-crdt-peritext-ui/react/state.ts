@@ -1,7 +1,7 @@
 import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {DomController} from '../dom/DomController';
-import type {PeritextEventDefaults} from '../events/PeritextEventDefaults';
+import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 
 export class PeritextSurfaceState {
   public dom?: DomController = void 0;

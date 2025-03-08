@@ -1,5 +1,12 @@
 import {SubscriptionEventTarget} from '../../util/events/TypedEventTarget';
-import type {PeritextEventDetailMap, CursorDetail, FormatDetail, DeleteDetail, MarkerDetail} from './types';
+import type {
+  PeritextEventDetailMap,
+  CursorDetail,
+  FormatDetail,
+  DeleteDetail,
+  MarkerDetail,
+  BufferDetail,
+} from './types';
 
 export type PeritextEventMap = {
   [K in keyof PeritextEventDetailMap]: CustomEvent<PeritextEventDetailMap[K]>;
@@ -69,5 +76,12 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
 
   public marker(detail: MarkerDetail): void {
     this.dispatch('marker', detail);
+  }
+
+  public buffer(action: BufferDetail['action'], format?: BufferDetail['format']): void;
+  public buffer(detail: BufferDetail): void;
+  public buffer(a: BufferDetail | BufferDetail['action'], b?: BufferDetail['format']): void {
+    const detail: BufferDetail = typeof a === 'object' ? a : {action: a, format: b};
+    this.dispatch('buffer', detail);
   }
 }

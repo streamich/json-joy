@@ -1,5 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
-import {toHtml, toJsonMl} from '../../lazy/export-html';
+import {toHtml, toJsonMl} from '../../transfer/export-html';
 import {CommonSliceType} from '../../slice';
 
 const runTests = (setup: () => Kit) => {

@@ -1,5 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
-import {toMdast, toMarkdown} from '../../lazy/export-markdown';
+import {toMdast, toMarkdown} from '../../transfer/export-markdown';
 import {CommonSliceType} from '../../slice';
 
 const runTests = (setup: () => Kit) => {

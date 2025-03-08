@@ -1,5 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../../json-crdt-extensions/peritext/__tests__/setup';
-import {PeritextEventDefaults} from '../PeritextEventDefaults';
+import {PeritextEventDefaults} from '../defaults/PeritextEventDefaults';
 import {PeritextEventTarget} from '../PeritextEventTarget';
 
 const testSuite = (getKit: () => Kit) => {

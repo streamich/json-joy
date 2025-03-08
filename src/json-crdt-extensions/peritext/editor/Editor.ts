@@ -113,6 +113,16 @@ export class Editor<T = string> implements Printable {
   }
 
   /**
+   * Returns the first cursor in the document, if any.
+   *
+   * @returns Returns the first cursor in the document, or `undefined` if there
+   *     are no cursors.
+   */
+  public getCursor(): undefined | Cursor<T> {
+    return this.hasCursor() ? this.cursor : void 0;
+  }
+
+  /**
    * @returns Returns the exact number of cursors in the document.
    */
   public cursorCount(): number {
@@ -715,44 +725,72 @@ export class Editor<T = string> implements Printable {
     return view;
   }
 
-  public import(pos: number, view: ViewRange): void {
-    const [text, offset, slices] = view;
+  public import(pos: number, view: ViewRange): number {
+    let [text, offset, slices] = view;
     const txt = this.txt;
+    let removeFirstMarker = false;
+    const firstSlice = slices[0];
+    if (firstSlice) {
+      const [header, x1, , type] = firstSlice;
+      const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
+      const isBlockSplitMarker = behavior === SliceBehavior.Marker;
+      if (isBlockSplitMarker) {
+        const markerStartsAtZero = x1 - offset === 0;
+        if (markerStartsAtZero) {
+          const point = txt.pointAt(pos);
+          const markerBefore = txt.overlay.getOrNextLowerMarker(point);
+          if (markerBefore) {
+            if (markerBefore.type() === type) removeFirstMarker = true;
+          } else {
+            if (type === CommonSliceType.p) removeFirstMarker = true;
+          }
+        }
+      }
+    }
+    if (removeFirstMarker) {
+      text = text.slice(1);
+      offset += 1;
+      slices = slices.slice(1);
+    }
     const length = slices.length;
     const splits: ViewSlice[] = [];
     const annotations: ViewSlice[] = [];
     const texts: string[] = [];
-    let start = 0;
+    let curr = 0;
     for (let i = 0; i < length; i++) {
       const slice = slices[i];
       const [header, x1] = slice;
       const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
-      if (behavior === SliceBehavior.Marker) {
+      const isBlockSplitMarker = behavior === SliceBehavior.Marker;
+      if (isBlockSplitMarker) {
         const end = x1 - offset;
-        texts.push(text.slice(start, end));
-        start = end + 1;
+        texts.push(text.slice(curr, end));
+        curr = end + 1;
         splits.push(slice);
       } else annotations.push(slice);
     }
-    const lastText = text.slice(start);
+    const lastText = text.slice(curr);
     const splitLength = splits.length;
-    start = pos;
+    curr = pos;
     for (let i = 0; i < splitLength; i++) {
       const str = texts[i];
       const split = splits[i];
       if (str) {
-        txt.insAt(start, str);
-        start += str.length;
+        txt.insAt(curr, str);
+        curr += str.length;
       }
       if (split) {
         const [, , , type, data] = split;
-        const after = txt.pointAt(start);
+        const after = txt.pointAt(curr);
         after.refAfter();
         txt.savedSlices.insMarkerAfter(after.id, type, data);
-        start += 1;
+        curr += 1;
       }
     }
-    if (lastText) txt.insAt(start, lastText);
+    if (lastText) {
+      txt.insAt(curr, lastText);
+      curr += lastText.length;
+    }
     const annotationsLength = annotations.length;
     for (let i = 0; i < annotationsLength; i++) {
       const slice = annotations[i];
@@ -774,6 +812,7 @@ export class Editor<T = string> implements Printable {
       if (range.end.isAbs()) range.end.refAfter();
       txt.savedSlices.ins(range, behavior, type, data);
     }
+    return curr - pos;
   }
 
   // ------------------------------------------------------------------ various

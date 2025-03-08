@@ -14,8 +14,8 @@ import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
 import type {PeritextMlAttributes, PeritextMlNode} from './types';
 
-export abstract class AbstractInlineAttr {
-  constructor(public slice: Slice) {}
+export abstract class AbstractInlineAttr<T = string> {
+  constructor(public slice: Slice<T>) {}
 
   /** @returns Whether the attribute starts at the start of the inline. */
   isStart(): boolean {
@@ -34,24 +34,24 @@ export abstract class AbstractInlineAttr {
 }
 
 /** The attribute started before this inline and ends after this inline. */
-export class InlineAttrPassing extends AbstractInlineAttr {}
+export class InlineAttrPassing<T = string> extends AbstractInlineAttr<T> {}
 
 /** The attribute starts at the beginning of this inline. */
-export class InlineAttrStart extends AbstractInlineAttr {
+export class InlineAttrStart<T = string> extends AbstractInlineAttr<T> {
   isStart(): boolean {
     return true;
   }
 }
 
 /** The attribute ends at the end of this inline. */
-export class InlineAttrEnd extends AbstractInlineAttr {
+export class InlineAttrEnd<T = string> extends AbstractInlineAttr<T> {
   isEnd(): boolean {
     return true;
   }
 }
 
 /** The attribute starts and ends in this inline, exactly contains it. */
-export class InlineAttrContained extends AbstractInlineAttr {
+export class InlineAttrContained<T = string> extends AbstractInlineAttr<T> {
   isStart(): boolean {
     return true;
   }
@@ -61,7 +61,7 @@ export class InlineAttrContained extends AbstractInlineAttr {
 }
 
 /** The attribute is collapsed at start of this inline. */
-export class InlineAttrStartPoint extends AbstractInlineAttr {
+export class InlineAttrStartPoint<T = string> extends AbstractInlineAttr<T> {
   isStart(): boolean {
     return true;
   }
@@ -71,7 +71,7 @@ export class InlineAttrStartPoint extends AbstractInlineAttr {
 }
 
 /** The attribute is collapsed at end of this inline. */
-export class InlineAttrEndPoint extends AbstractInlineAttr {
+export class InlineAttrEndPoint<T = string> extends AbstractInlineAttr<T> {
   isEnd(): boolean {
     return true;
   }
@@ -80,16 +80,16 @@ export class InlineAttrEndPoint extends AbstractInlineAttr {
   }
 }
 
-export type InlineAttr =
-  | InlineAttrPassing
-  | InlineAttrStart
-  | InlineAttrEnd
-  | InlineAttrContained
-  | InlineAttrStartPoint
-  | InlineAttrEndPoint;
-export type InlineAttrStack = InlineAttr[];
+export type InlineAttr<T = string> =
+  | InlineAttrPassing<T>
+  | InlineAttrStart<T>
+  | InlineAttrEnd<T>
+  | InlineAttrContained<T>
+  | InlineAttrStartPoint<T>
+  | InlineAttrEndPoint<T>;
+export type InlineAttrStack<T = string> = InlineAttr<T>[];
 
-export type InlineAttrs = Record<string | number, InlineAttrStack>;
+export type InlineAttrs<T = string> = Record<string | number, InlineAttrStack<T>>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -99,13 +99,13 @@ export type InlineAttrs = Record<string | number, InlineAttrStack>;
  * which are the smallest units of text and need to be concatenated to get the
  * full text content of the inline.
  */
-export class Inline extends Range implements Printable {
+export class Inline<T = string> extends Range<T> implements Printable {
   constructor(
-    public readonly txt: Peritext,
-    public readonly p1: OverlayPoint,
-    public readonly p2: OverlayPoint,
-    start: Point,
-    end: Point,
+    public readonly txt: Peritext<T>,
+    public readonly p1: OverlayPoint<T>,
+    public readonly p2: OverlayPoint<T>,
+    start: Point<T>,
+    end: Point<T>,
   ) {
     super(txt.str, start, end);
   }
@@ -131,7 +131,7 @@ export class Inline extends Range implements Printable {
     return pos + chunkSlice.off;
   }
 
-  protected createAttr(slice: Slice): InlineAttr {
+  protected createAttr(slice: Slice<T>): InlineAttr<T> {
     const p1 = this.p1;
     const p2 = this.p2;
     return !slice.start.cmp(slice.end)
@@ -147,7 +147,7 @@ export class Inline extends Range implements Printable {
           : new InlineAttrPassing(slice);
   }
 
-  private _attr: InlineAttrs | undefined;
+  private _attr: InlineAttrs<T> | undefined;
 
   /**
    * @returns Returns the attributes of the inline, which are the slice
@@ -157,11 +157,11 @@ export class Inline extends Range implements Printable {
    * @todo Create a more efficient way to compute inline stats, separate: (1)
    *     boolean flags, (2) cursor, (3) other attributes.
    */
-  public attr(): InlineAttrs {
+  public attr(): InlineAttrs<T> {
     if (this._attr) return this._attr;
-    const attr: InlineAttrs = (this._attr = {});
-    const p1 = this.p1 as OverlayPoint;
-    const p2 = this.p2 as OverlayPoint;
+    const attr: InlineAttrs<T> = (this._attr = {});
+    const p1 = this.p1 as OverlayPoint<T>;
+    const p2 = this.p2 as OverlayPoint<T>;
     const slices1 = p1.layers;
     const slices2 = p1.markers;
     const slices3 = p2.isAbsEnd() ? p2.markers : [];
@@ -176,12 +176,12 @@ export class Inline extends Range implements Printable {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            const stack: InlineAttrStack = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
+            const stack: InlineAttrStack<T> = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
             stack.push(this.createAttr(slice));
             break;
           }
           case SliceBehavior.Many: {
-            const stack: InlineAttrStack = attr[type] ?? (attr[type] = []);
+            const stack: InlineAttrStack<T> = attr[type] ?? (attr[type] = []);
             stack.push(this.createAttr(slice));
             break;
           }
@@ -259,8 +259,8 @@ export class Inline extends Range implements Printable {
     return;
   }
 
-  public texts(limit: number = 1e6): ChunkSlice[] {
-    const texts: ChunkSlice[] = [];
+  public texts(limit: number = 1e6): ChunkSlice<T>[] {
+    const texts: ChunkSlice<T>[] = [];
     const txt = this.txt;
     const overlay = txt.overlay;
     let cnt = 0;

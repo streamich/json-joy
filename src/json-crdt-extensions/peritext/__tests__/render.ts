@@ -1,9 +1,9 @@
-import type {Block} from '../block/Block';
-import type {Inline} from '../block/Inline';
 import {LeafBlock} from '../block/LeafBlock';
 import {stringify} from '../../../json-text/stringify';
+import type {Block} from '../block/Block';
+import type {Inline} from '../block/Inline';
 
-const renderInline = (inline: Inline, tab: string): string => {
+const renderInline = <T>(inline: Inline<T>, tab: string): string => {
   const text = stringify(inline.text());
   const attr: any = {};
   const attributes = inline.attr();
@@ -11,7 +11,7 @@ const renderInline = (inline: Inline, tab: string): string => {
   return `${tab}${text} ${stringify(attr)}\n`;
 };
 
-const renderBlockHeader = (block: Block, tab: string, hash?: boolean): string => {
+const renderBlockHeader = <T>(block: Block<T>, tab: string, hash?: boolean): string => {
   const attr = block.attr();
   const attrStr = attr ? ' ' + stringify(attr) : '';
   const tag = `<${block.tag()}>`;
@@ -19,26 +19,22 @@ const renderBlockHeader = (block: Block, tab: string, hash?: boolean): string =>
   return tab + tag + attrStr + hashStr + '\n';
 };
 
-const renderLeafBlock = (block: LeafBlock, tab: string = '', hash?: boolean): string => {
+const renderLeafBlock = <T>(block: LeafBlock<T>, tab: string = '', hash?: boolean): string => {
   let str = '';
   str += renderBlockHeader(block, tab, hash);
   const texts = block.texts();
-  for (const inline of texts) {
-    str += renderInline(inline, tab + '  ');
-  }
+  for (const inline of texts) str += renderInline(inline, tab + '  ');
   return str;
 };
 
-const renderBlock = (block: Block, tab: string, hash?: boolean): string => {
+const renderBlock = <T>(block: Block<T>, tab: string, hash?: boolean): string => {
   let str = '';
   str += renderBlockHeader(block, tab, hash);
-  for (const b of block.children) {
-    str += render(b, tab + '  ', hash);
-  }
+  for (const b of block.children) str += render(b, tab + '  ', hash);
   return str;
 };
 
-export const render = (block: Block, tab: string = '', hash?: boolean): string => {
+export const render = <T>(block: Block<T>, tab: string = '', hash?: boolean): string => {
   if (block instanceof LeafBlock) return renderLeafBlock(block, tab, hash);
   else return renderBlock(block, tab, hash);
 };

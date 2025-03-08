@@ -6,7 +6,7 @@ import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import type {UiLifeCyclesRender} from '../../../dom/types';
-import type {PeritextEventDetailMap} from '../../../events/types';
+import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../react';
 import type {MenuItem} from '../types';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
@@ -272,6 +272,279 @@ export class ToolbarState implements UiLifeCyclesRender {
     };
   };
 
+  public readonly modifyMenu = (): MenuItem => {
+    const et = this.surface.events.et;
+    return {
+      name: 'Modify',
+      expand: 3,
+      sepBefore: true,
+      children: [
+        {
+          name: 'Pick layer',
+          right: () => (
+            <Code size={-1} gray>
+              9+
+            </Code>
+          ),
+          more: true,
+          icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
+          onSelect: () => {},
+        },
+        {
+          name: 'Erase formatting',
+          danger: true,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
+          onSelect: () => {
+            et.format({behavior: 'erase'});
+          },
+        },
+        {
+          name: 'Delete all in range',
+          danger: true,
+          more: true,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
+          onSelect: () => {
+            et.format({behavior: 'clear'});
+          },
+        },
+      ],
+    };
+  };
+
+  public readonly copyAsMenu = (type: 'copy' | 'cut'): MenuItem => {
+    const icon =
+      type === 'copy'
+        ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
+        : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
+    const et = this.surface.events.et;
+    const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
+    const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
+    const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
+    const onSelect = (format: BufferDetail['format']) => () => {
+      et.buffer(type, format);
+    };
+    return {
+      name: type === 'copy' ? 'Copy as' : 'Cut as',
+      more: true,
+      icon,
+      children: [
+        {
+          name: 'Markdown',
+          text: type + ' markdown md',
+          icon,
+          right: iconMarkdown,
+          onSelect: onSelect('md'),
+        },
+        {
+          name: 'MDAST',
+          text: type + 'markdown md mdast',
+          icon,
+          right: iconMarkdown,
+          onSelect: onSelect('mdast'),
+        },
+        {
+          name: 'MD sep',
+          sep: true,
+        },
+        {
+          name: 'HTML',
+          text: type + 'html',
+          icon,
+          right: iconHtml,
+          onSelect: onSelect('html'),
+        },
+        {
+          name: 'HAST',
+          text: type + 'html hast',
+          icon,
+          right: iconHtml,
+          onSelect: onSelect('hast'),
+        },
+        {
+          name: 'HTML sep',
+          sep: true,
+        },
+        {
+          name: 'Range view',
+          text: type + 'range view peritext',
+          icon,
+          right: iconJson,
+          onSelect: onSelect('json'),
+        },
+        {
+          name: 'Fragment ML',
+          text: type + 'peritext fragment ml node',
+          icon,
+          right: iconJson,
+          onSelect: onSelect('jsonml'),
+        },
+        {
+          name: 'Fragment text',
+          text: type + 'peritext fragment debug',
+          icon,
+          right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
+          onSelect: onSelect('fragment'),
+        },
+      ],
+    };
+  };
+
+  public readonly pasteAsMenu = (): MenuItem => {
+    const icon = () => <Iconista width={15} height={15} set="radix" icon="clipboard" />;
+    const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
+    const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
+    const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
+    const et = this.surface.events.et;
+    const onSelect = (format: BufferDetail['format']) => () => {
+      console.log('paste as', format);
+      et.buffer('paste', format);
+    };
+    return {
+      name: 'Paste as',
+      more: true,
+      icon,
+      children: [
+        {
+          name: 'Markdown',
+          text: 'paste markdown md',
+          icon,
+          right: iconMarkdown,
+          onSelect: onSelect('md'),
+        },
+        {
+          name: 'MDAST',
+          text: 'paste markdown md mdast',
+          icon,
+          right: iconMarkdown,
+          onSelect: onSelect('mdast'),
+        },
+        {
+          name: 'MD sep',
+          sep: true,
+        },
+        {
+          name: 'HTML',
+          text: 'paste html',
+          icon,
+          right: iconHtml,
+          onSelect: onSelect('html'),
+        },
+        {
+          name: 'HAST',
+          text: 'paste html hast',
+          icon,
+          right: iconHtml,
+          onSelect: onSelect('hast'),
+        },
+        {
+          name: 'HTML sep',
+          sep: true,
+        },
+        {
+          name: 'Range view',
+          text: 'paste range view peritext',
+          icon,
+          right: iconJson,
+          onSelect: onSelect('json'),
+        },
+        {
+          name: 'Fragment ML',
+          text: 'paste peritext fragment ml node',
+          icon,
+          right: iconJson,
+          onSelect: onSelect('jsonml'),
+        },
+      ],
+    };
+  };
+
+  public readonly clipboardMenu = (): MenuItem => {
+    const et = this.surface.events.et;
+    return {
+      name: 'Copy, cut, and paste',
+      // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
+      icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+      expand: 0,
+      sepBefore: true,
+      children: [
+        {
+          id: 'copy-menu',
+          name: 'Copy',
+          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
+          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Copy',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy'),
+            },
+            {
+              name: 'Copy text only',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy', 'text'),
+            },
+            this.copyAsMenu('copy'),
+          ],
+        },
+        {
+          name: 'Cut separator',
+          sep: true,
+        },
+        {
+          id: 'cut-menu',
+          name: 'Cut',
+          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Cut',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              onSelect: () => et.buffer('cut'),
+            },
+            {
+              name: 'Cut text only',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              onSelect: () => et.buffer('cut', 'text'),
+            },
+            this.copyAsMenu('cut'),
+          ],
+        },
+        {
+          name: 'Paste separator',
+          sep: true,
+        },
+        {
+          id: 'paste-menu',
+          name: 'Paste',
+          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Paste',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste'),
+            },
+            {
+              name: 'Paste text only',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste', 'text'),
+            },
+            // {
+            //   name: 'Paste formatting',
+            //   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+            //   onSelect: () => et.buffer('paste', 'format'),
+            // },
+            this.pasteAsMenu(),
+          ],
+        },
+      ],
+    };
+  };
+
   public readonly getCaretMenu = (): MenuItem => {
     return {
       name: 'Inline text',
@@ -368,146 +641,8 @@ export class ToolbarState implements UiLifeCyclesRender {
           name: 'Modify separator',
           sep: true,
         },
-        {
-          name: 'Modify',
-          expand: 3,
-          onSelect: () => {},
-          children: [
-            {
-              name: 'Pick layer',
-              right: () => (
-                <Code size={-1} gray>
-                  9+
-                </Code>
-              ),
-              more: true,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
-              onSelect: () => {},
-            },
-            {
-              name: 'Erase formatting',
-              danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
-              onSelect: () => {},
-            },
-            {
-              name: 'Delete all in range',
-              danger: true,
-              more: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
-              onSelect: () => {},
-            },
-          ],
-        },
-        {
-          name: 'Clipboard separator',
-          sep: true,
-        },
-        {
-          name: 'Copy, cut, and paste',
-          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
-          expand: 0,
-          children: [
-            {
-              id: 'copy-menu',
-              name: 'Copy',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              expand: 5,
-              children: [
-                {
-                  name: 'Copy',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Copy text only',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Copy as Markdown',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Copy as HTML',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-              ],
-            },
-            {
-              name: 'Cut separator',
-              sep: true,
-            },
-            {
-              id: 'cut-menu',
-              name: 'Cut',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              expand: 5,
-              children: [
-                {
-                  name: 'Cut',
-                  danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Cut text only',
-                  danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Cut as Markdown',
-                  danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Cut as HTML',
-                  danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-              ],
-            },
-            {
-              name: 'Paste separator',
-              sep: true,
-            },
-            {
-              id: 'paste-menu',
-              name: 'Paste',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              expand: 5,
-              children: [
-                {
-                  name: 'Paste',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Paste text only',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Paste formatting',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-                  onSelect: () => {},
-                },
-              ],
-            },
-          ],
-        },
+        this.modifyMenu(),
+        this.clipboardMenu(),
         {
           name: 'Insert',
           icon: () => <Iconista width={16} height={16} set="lucide" icon="between-vertical-end" />,
@@ -667,11 +802,14 @@ export class ToolbarState implements UiLifeCyclesRender {
 
   public readonly getSelectionMenu = (): MenuItem => {
     return {
-      name: 'Inline text',
-      maxToolbarItems: 4,
+      name: 'Selection menu',
+      // maxToolbarItems: 8,
+      more: true,
       children: [
         this.getFormattingMenu(),
         this.annotationsMenu(),
+        this.modifyMenu(),
+        this.clipboardMenu(),
         /*
         secondBrain(),
         {

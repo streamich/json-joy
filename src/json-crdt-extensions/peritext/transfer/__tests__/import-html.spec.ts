@@ -50,6 +50,20 @@ describe('.toViewRange()', () => {
     expect(view).toEqual(['\nHello world', 0, [[0, 0, 0, 0]]]);
   });
 
+  test('paragraph with bold text', () => {
+    const html = '<p><b>123</b></p>';
+    const peritextMl = fromHtml(html);
+    const view = toViewRange(peritextMl);
+    expect(view).toEqual([
+      '\n123',
+      0,
+      [
+        [0, 0, 0, 0],
+        [10, 1, 4, -3],
+      ],
+    ]);
+  });
+
   test('two consecutive paragraphs', () => {
     const html = '<p>Hello world</p><p>Goodbye world</p>';
     const peritextMl = fromHtml(html);

@@ -8,6 +8,9 @@ import type {UiLifeCycles} from './types';
 export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
   keydown: HTMLElementEventMap['keydown'];
+  copy: HTMLElementEventMap['copy'];
+  cut: HTMLElementEventMap['cut'];
+  paste: HTMLElementEventMap['paste'];
 }
 
 export type InputControllerEventSource = TypedEventTarget<InputControllerEventSourceMap>;
@@ -39,6 +42,9 @@ export class InputController implements UiLifeCycles {
     (el as any).contentEditable = 'true';
     el.addEventListener('beforeinput', this.onBeforeInput);
     el.addEventListener('keydown', this.onKeyDown);
+    el.addEventListener('copy', this.onCopy);
+    el.addEventListener('cut', this.onCut);
+    el.addEventListener('paste', this.onPaste);
   }
 
   public stop(): void {
@@ -46,6 +52,9 @@ export class InputController implements UiLifeCycles {
     (el as any).contentEditable = 'false';
     el.removeEventListener('beforeinput', this.onBeforeInput);
     el.removeEventListener('keydown', this.onKeyDown);
+    el.removeEventListener('copy', this.onCopy);
+    el.removeEventListener('cut', this.onCut);
+    el.removeEventListener('paste', this.onPaste);
   }
 
   private onBeforeInput = (event: InputEvent): void => {
@@ -54,6 +63,7 @@ export class InputController implements UiLifeCycles {
     const inputType = event.inputType;
     switch (inputType) {
       case 'insertParagraph': {
+        // insert a paragraph break
         event.preventDefault();
         et.marker({action: 'ins'});
         break;
@@ -68,8 +78,12 @@ export class InputController implements UiLifeCycles {
         if (typeof event.data === 'string') {
           et.insert(event.data);
         } else {
-          const item = event.dataTransfer ? event.dataTransfer.items[0] : null;
-          if (item) item.getAsString((text) => et.insert(text));
+          const dataTransfer = event.dataTransfer;
+          if (dataTransfer) {
+            const text = dataTransfer.getData('text/plain');
+            if (text) et.insert(text);
+            else dataTransfer.items[0]?.getAsString((text) => et.insert(text));
+          }
         }
         break;
       }
@@ -116,8 +130,6 @@ export class InputController implements UiLifeCycles {
         break;
       }
       // case 'insertLineBreak': { // insert a line break
-      // }
-      // case 'insertParagraph': { // insert a paragraph break
       // }
       // case 'insertOrderedList': { // insert a numbered list
       // }
@@ -209,6 +221,26 @@ export class InputController implements UiLifeCycles {
         }
         break;
       }
+    }
+  };
+
+  private onCopy = (event: ClipboardEvent): void => {
+    event.preventDefault();
+    this.et.buffer({action: 'copy'});
+  };
+
+  private onCut = (event: ClipboardEvent): void => {
+    event.preventDefault();
+    this.et.buffer({action: 'cut'});
+  };
+
+  private onPaste = (event: ClipboardEvent): void => {
+    event.preventDefault();
+    const text = event.clipboardData?.getData('text/plain');
+    const html = event.clipboardData?.getData('text/html');
+    if (text || html) {
+      const data = {text, html};
+      this.et.buffer({action: 'paste', data});
     }
   };
 }
