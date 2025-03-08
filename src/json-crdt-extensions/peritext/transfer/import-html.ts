@@ -33,24 +33,20 @@ class ViewRangeBuilder {
     const start = this.text.length;
     const length = node.length;
     const inline = !!attr?.inline;
-    if (!!type || type === 0) {
-      let end: number = 0,
-        header: number = 0;
-      if (!inline) {
-        this.text += '\n';
-        end = start;
-        header =
-          (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
-          (Anchor.Before << SliceHeaderShift.X1Anchor) +
-          (Anchor.Before << SliceHeaderShift.X2Anchor);
-        const slice: ViewSlice = [header, start, end, type];
-        const data = attr?.data;
-        if (data) slice.push(data);
-        this.slices.push(slice);
-      }
+    const hasType = !!type || type === 0;
+    if (hasType && !inline) {
+      this.text += '\n';
+      const header =
+        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (Anchor.Before << SliceHeaderShift.X1Anchor) +
+        (Anchor.Before << SliceHeaderShift.X2Anchor);
+      const slice: ViewSlice = [header, start, start, type];
+      const data = attr?.data;
+      if (data) slice.push(data);
+      this.slices.push(slice);
     }
     for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, depth + 1);
-    if (!!type || type === 0) {
+    if (hasType) {
       let end: number = 0,
         header: number = 0;
       if (inline) {

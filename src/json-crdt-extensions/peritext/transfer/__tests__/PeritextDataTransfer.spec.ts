@@ -117,3 +117,19 @@ test('does not create a new paragraph if, inserted inside a paragraph', () => {
   const html2 = transfer.toHtml(peritext.rangeAll()!);
   expect(html2).toBe('<p>a123b</p>');
 });
+
+describe('Markdown', () => {
+  test('can insert bold into text', () => {
+    const {peritext, transfer} = setup();
+    const md = '__123__';
+    peritext.strApi().ins(0, 'ab');
+    peritext.refresh();
+    transfer.fromMarkdown(1, md);
+    peritext.refresh();
+    const all = peritext.rangeAll()!;
+    const html = transfer.toHtml(all);
+    expect(html).toBe('<p>a<b>123</b>b</p>');
+    const md2 = transfer.toMarkdown(all);
+    expect(md2).toBe('a__123__b');
+  });
+});

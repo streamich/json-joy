@@ -2,6 +2,7 @@ import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
 import {SliceBehavior, SliceHeaderShift} from '../../slice/constants';
+import {ViewRange} from '../types';
 
 const testSuite = (setup: () => Kit) => {
   describe('.export()', () => {
@@ -286,6 +287,24 @@ const testSuite = (setup: () => Kit) => {
         null,
         [CommonSliceType.p, null, 'de'],
         [CommonSliceType.p, null, 'fgabcdefghijklmnopqrstuvwxyz'],
+      ]);
+    });
+
+    test('can insert paragraph covered in inline annotation', () => {
+      const kit1 = setup();
+      const json: ViewRange = ['\n123', 0, [[0, 0, 0, 0], [10, 1, 4, -3]]];
+      kit1.peritext.refresh();
+      kit1.editor.import(2, json);
+      kit1.peritext.refresh();
+      const json2 = kit1.peritext.blocks.toJson();
+      expect(json2).toEqual([
+        '',
+        null,
+        [CommonSliceType.p, null, 'ab'],
+        [CommonSliceType.p, null,
+          [CommonSliceType.b, {inline: true}, '123'],
+          'cdefghijklmnopqrstuvwxyz'
+        ],
       ]);
     });
   });
