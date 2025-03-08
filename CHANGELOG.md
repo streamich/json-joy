@@ -1,3 +1,53 @@
+# [17.30.0](https://github.com/streamich/json-joy/compare/v17.29.1...v17.30.0) (2025-03-08)
+
+
+### Bug Fixes
+
+* 🐛 correctsion for generics in Block and Fragment ([76e28d8](https://github.com/streamich/json-joy/commit/76e28d8416e8dd261777910f88c5b3916dfaba60))
+* **json-crdt-extensions:** 🐛 correctly strip first split marker ([2259621](https://github.com/streamich/json-joy/commit/22596219ac1ac6f1de3d02c80e615c905ed8e213))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add generics to Fragment and Block classes ([95ae714](https://github.com/streamich/json-joy/commit/95ae714d123cb189dd0b9fcefef0061ea30756f6))
+* **json-crdt-extensions:** 🎸 add initial PeritextDataTransfer implementation ([88a2460](https://github.com/streamich/json-joy/commit/88a2460842a65f82e32696fd917640f776cb6801))
+* **json-crdt-extensions:** 🎸 cleanly merge blocks on paste ([44afc93](https://github.com/streamich/json-joy/commit/44afc9320a9e29175e181ca0570e90c103adfacd))
+* **json-crdt-extensions:** 🎸 ignore empty inline tags ([7a14aff](https://github.com/streamich/json-joy/commit/7a14affd1b143183244c2c0d28c199db9e3d6831))
+* **json-crdt-extensions:** 🎸 implement data transfer HTML import functionality ([a9d6bd0](https://github.com/streamich/json-joy/commit/a9d6bd064d583b85752eae9124490393c070ca71))
+* **json-crdt-extensions:** 🎸 improve html parsing to Peritext format ([1246cd6](https://github.com/streamich/json-joy/commit/1246cd6b6d3092941798f4a0e89f945fb4ce3155))
+* **json-crdt-extensions:** 🎸 report import string length ([bb6eb54](https://github.com/streamich/json-joy/commit/bb6eb543ed7448f1ddb0e31b9ea418b0f0ba7d31))
+* **json-crdt-extensions:** 🎸 treat "_" character as letter in word selection ([0d47b44](https://github.com/streamich/json-joy/commit/0d47b447a9c94c6e4afbc983da0b41cfcbc19556))
+* **json-crdt-peritext-ui:** 🎸 add cleanup section to selection floating menu ([0c04d08](https://github.com/streamich/json-joy/commit/0c04d08ecf5eca5e04c249ea43dc5ad376849f63))
+* **json-crdt-peritext-ui:** 🎸 add clipboard buffer events interfaces ([f13c506](https://github.com/streamich/json-joy/commit/f13c5061a418e6dd4f937f5355fd32adf5749b92))
+* **json-crdt-peritext-ui:** 🎸 add event emitters for all clipboard events ([13b6828](https://github.com/streamich/json-joy/commit/13b6828dab16e8e4d611186062fee23ef80c430e))
+* **json-crdt-peritext-ui:** 🎸 cleanup rich text clipboard implementation ([38dd466](https://github.com/streamich/json-joy/commit/38dd466128dbb4a4e223a079c9e6941f3320c989))
+* **json-crdt-peritext-ui:** 🎸 correct rich-text copy implementation ([0d08117](https://github.com/streamich/json-joy/commit/0d08117ebf00e148f74e4cc70e27e2e72cee74e4))
+* **json-crdt-peritext-ui:** 🎸 create modify menu and add clipboard menu ([609e37d](https://github.com/streamich/json-joy/commit/609e37de893a8a0c869054ace44e57be825760ef))
+* **json-crdt-peritext-ui:** 🎸 disable inline toolbar on blur ([7771770](https://github.com/streamich/json-joy/commit/7771770f7a5ab76bbf03d09d76f6f57b7c93d025))
+* **json-crdt-peritext-ui:** 🎸 expose many export formats ([7d4f70f](https://github.com/streamich/json-joy/commit/7d4f70f38fc466f05f8b02bf5173103fd67a2581))
+* **json-crdt-peritext-ui:** 🎸 expose state through prop ([fd03c88](https://github.com/streamich/json-joy/commit/fd03c88c763b794853ea162c440adeeada156c66))
+* **json-crdt-peritext-ui:** 🎸 generalize "Copy as ..." and "Cut as ..." menu ([d4926d2](https://github.com/streamich/json-joy/commit/d4926d26f5a2f08ce4b13f07a2349dd2b3b157e7))
+* **json-crdt-peritext-ui:** 🎸 harden plain text clipboard write implementation ([465d7f7](https://github.com/streamich/json-joy/commit/465d7f7b203fbf481ef31b62b388191f802a02b1))
+* **json-crdt-peritext-ui:** 🎸 implement basic copy-to-clipboard button ([147cf18](https://github.com/streamich/json-joy/commit/147cf18158e50017dcac7c280dd7bc2fda48cf56))
+* **json-crdt-peritext-ui:** 🎸 implement clipboard facade ([6085fa3](https://github.com/streamich/json-joy/commit/6085fa3887597185d2b8a9dc4d55386e9dcadcd0))
+* **json-crdt-peritext-ui:** 🎸 implement copy as HTML functionality ([c29823e](https://github.com/streamich/json-joy/commit/c29823e4bedb5519233b8aa1c8c790e154816404))
+* **json-crdt-peritext-ui:** 🎸 implement DOM "copy" and "cut" events ([e58b3d0](https://github.com/streamich/json-joy/commit/e58b3d0a3c2144b3eb8eed96952fb1df865976af))
+* **json-crdt-peritext-ui:** 🎸 implement HTML export using data transfer class ([1cfd8ba](https://github.com/streamich/json-joy/commit/1cfd8bab607a8db88109a60c984ca12c48947c47))
+* **json-crdt-peritext-ui:** 🎸 implement Markdown data transfer ([ee65e46](https://github.com/streamich/json-joy/commit/ee65e462732c48c8fa4a5b6703a5e7ff0b1a5013))
+* **json-crdt-peritext-ui:** 🎸 implement synchronous copyt-to-clipboard method ([dd34387](https://github.com/streamich/json-joy/commit/dd34387869289c4f47b883440690fafbf7591266))
+* **json-crdt-peritext-ui:** 🎸 implement text-only copy event ([5e5efc1](https://github.com/streamich/json-joy/commit/5e5efc12f901997200e2d22c6f863fc1f8b1ac03))
+* **json-crdt-peritext-ui:** 🎸 implement text-only paste ([dca97ea](https://github.com/streamich/json-joy/commit/dca97eac77e478ab115ad887155688cbbd94067e))
+* **json-crdt-peritext-ui:** 🎸 improve "Copy as ..." context menu ([54d4f36](https://github.com/streamich/json-joy/commit/54d4f367030b8bf141ae024390cc96482f77e267))
+* **json-crdt-peritext-ui:** 🎸 improve clipboard export types ([9810c0b](https://github.com/streamich/json-joy/commit/9810c0b6dc397477012adaae0770b5efce5fcc26))
+* **json-crdt-peritext-ui:** 🎸 improve clipboard interface ([372a1d7](https://github.com/streamich/json-joy/commit/372a1d7e4c750c9f16bd17eb8046067d44ec6d99))
+* **json-crdt-peritext-ui:** 🎸 improve HTML export and import ([a66038c](https://github.com/streamich/json-joy/commit/a66038ca8b572beee9061289a219677d7db53f18))
+* **json-crdt-peritext-ui:** 🎸 improve paste context menu ([6e717e8](https://github.com/streamich/json-joy/commit/6e717e802cfbba1e6cb2083a80e57c63b4d68937))
+* **json-crdt-peritext-ui:** 🎸 improve paste event handling ([19cd530](https://github.com/streamich/json-joy/commit/19cd530b6904dedc497e2b742cee98612317c138))
+* **json-crdt-peritext-ui:** 🎸 move cursor after "paste" event ([0c0f7ad](https://github.com/streamich/json-joy/commit/0c0f7ad3556e14cce0c2ac062f211e1f3506e728))
+* **json-crdt-peritext-ui:** 🎸 setup "cut" event ([82258bf](https://github.com/streamich/json-joy/commit/82258bf485d4cba7328a36cd1e1a55f6ffd83de4))
+* **json-crdt-peritext-ui:** 🎸 setup clipboard event implementation ([b2f895c](https://github.com/streamich/json-joy/commit/b2f895c8862f62eb4d6fc40c3438c98a727d45ad))
+* **json-crdt-peritext-ui:** 🎸 setup codebase for paste events ([570baa8](https://github.com/streamich/json-joy/commit/570baa80b05065ac82c695a4145ae7359be71df3))
+
 ## [17.29.1](https://github.com/streamich/json-joy/compare/v17.29.0...v17.29.1) (2025-02-21)
 
 
