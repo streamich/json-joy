@@ -307,8 +307,7 @@ const testSuite = (setup: () => Kit) => {
       expect(json2).toEqual([
         '',
         null,
-        [CommonSliceType.p, null, 'ab'],
-        [CommonSliceType.p, null, [CommonSliceType.b, {inline: true}, '123'], 'cdefghijklmnopqrstuvwxyz'],
+        [CommonSliceType.p, null, 'ab', [CommonSliceType.b, {inline: true}, '123'], 'cdefghijklmnopqrstuvwxyz'],
       ]);
     });
   });
