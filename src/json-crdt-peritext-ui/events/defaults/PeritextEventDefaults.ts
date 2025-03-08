@@ -1,6 +1,6 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/PeritextDataTransfer';
+import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
@@ -309,6 +309,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               }
             }
             if (inserted) this.et.move(inserted, 'char');
+            this.et.change();
             break;
           }
           default: { // 'auto'
