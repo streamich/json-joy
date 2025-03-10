@@ -111,6 +111,44 @@ const testSuite = (setup: () => Kit) => {
     });
   });
 
+  describe('.exportFormatting()', () => {
+    test('returns empty list if there are no annotations', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(5, 2);
+      peritext.refresh();
+      const json = editor.exportFormatting(editor.cursor);
+      expect(json).toEqual([]);
+    });
+
+    test('returns empty list if there are no annotations', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(2, 2);
+      editor.saved.insOverwrite('bold');
+      editor.cursor.setAt(9, 2);
+      editor.saved.insOverwrite('italic');
+      editor.cursor.setAt(5, 2);
+      peritext.refresh();
+      const json = editor.exportFormatting(editor.cursor);
+      expect(json).toEqual([]);
+    });
+
+    test('returns all range formatting annotations', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(2, 2);
+      editor.saved.insOverwrite('bold');
+      editor.cursor.setAt(3, 2);
+      editor.saved.insOverwrite('italic');
+      editor.cursor.setAt(3, 1);
+      peritext.refresh();
+      const json = editor.exportFormatting(editor.cursor);
+      expect(json.length).toBe(2);
+      expect(json).toEqual([
+        [SliceBehavior.One, 'bold'],
+        [SliceBehavior.One, 'italic'],
+      ]);
+    });
+  });
+
   describe('.import()', () => {
     test('can insert text into another document', () => {
       const kit1 = setup();

@@ -17,7 +17,7 @@ import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewRange, ViewSlice} from './types';
+import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewFormatting, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
 
 /**
@@ -723,6 +723,37 @@ export class Editor<T = string> implements Printable {
       }
     }
     return view;
+  }
+
+  /**
+   * "Copy formatting-only", copies inline formatting applied to the selected
+   * range.
+   *
+   * @param range Range copy formatting from, normally a single visible character.
+   * @returns A list of serializable inline formatting applied to the selected range.
+   */
+  public exportFormatting(range: Range<T>): ViewFormatting[] {
+    const formatting: ViewFormatting[] = [];
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    const slices = overlay.findOverlapping(range);
+    for (const slice of slices) {
+      const isSavedSlice = slice.id.sid === txt.model.clock.sid;
+      if (!isSavedSlice) continue;
+      if (!slice.contains(range)) continue;
+      const behavior = slice.behavior;
+      switch (behavior) {
+        case SliceBehavior.One:
+        case SliceBehavior.Many:
+        case SliceBehavior.Erase: {
+          const sliceFormatting: ViewFormatting = [behavior, slice.type];
+          const data = slice.data();
+          if (data !== void 0) sliceFormatting.push(data);
+          formatting.push(sliceFormatting);
+        }
+      }
+    }
+    return formatting;
   }
 
   public import(pos: number, view: ViewRange): number {
