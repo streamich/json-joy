@@ -846,6 +846,15 @@ export class Editor<T = string> implements Printable {
     return curr - pos;
   }
 
+  public importFormatting(range: Range<T>, formatting: ViewFormatting[]): void {
+    const txt = this.txt;
+    const length = formatting.length;
+    for (let i = 0; i < length; i++) {
+      const [behavior, type, data] = formatting[i];
+      txt.savedSlices.ins(range, behavior, type, data);
+    }
+  }
+
   // ------------------------------------------------------------------ various
 
   public point(at: Position<T>): Point<T> {

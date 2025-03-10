@@ -2,6 +2,7 @@ import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
 import {SliceBehavior, SliceHeaderShift} from '../../slice/constants';
+import {create} from '../../transfer/create';
 import type {ViewRange} from '../types';
 
 const testSuite = (setup: () => Kit) => {
@@ -347,6 +348,25 @@ const testSuite = (setup: () => Kit) => {
         null,
         [CommonSliceType.p, null, 'ab', [CommonSliceType.b, {inline: true}, '123'], 'cdefghijklmnopqrstuvwxyz'],
       ]);
+    });
+  });
+
+  describe('.importFormatting()', () => {
+    test('can copy formatting into another document part', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(2, 2);
+      editor.saved.insOne(CommonSliceType.b);
+      editor.cursor.setAt(3, 2);
+      editor.saved.insOne(CommonSliceType.i);
+      editor.cursor.setAt(3, 1);
+      peritext.refresh();
+      const json = editor.exportFormatting(editor.cursor);
+      editor.cursor.setAt(10, 3);
+      editor.importFormatting(editor.cursor, json);
+      peritext.refresh();
+      const transfer = create(peritext);
+      const html = transfer.toHtml(peritext.rangeAll()!);
+      expect(html).toBe('<p>ab<b>c</b><i><b>d</b></i><i>e</i>fghij<i><b>klm</b></i>nopqrstuvwxyz</p>');
     });
   });
 };
