@@ -4,7 +4,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('returns one partial match of BOLD text, when it is contained', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 2);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(6, 10);
     peritext.refresh();
     const stats = peritext.overlay.stat(editor.cursor);
@@ -14,7 +14,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('returns one partial match of BOLD text, when it is contained (range)', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 2);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     peritext.refresh();
     const range = peritext.rangeAt(6, 10);
     const stats = peritext.overlay.stat(range);
@@ -24,7 +24,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('returns one partial match of BOLD text, when it is overlapping from one side', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(6, 5);
     peritext.refresh();
     const stats = peritext.overlay.stat(editor.cursor);
@@ -34,7 +34,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('single slice using range, overlapping', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     peritext.refresh();
     const range = peritext.rangeAt(6, 5);
     const stats = peritext.overlay.stat(range);
@@ -47,7 +47,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('single slice using range, completely contained', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     peritext.refresh();
     const range = peritext.rangeAt(9, 1);
     const stats = peritext.overlay.stat(range);
@@ -57,7 +57,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('single slice using range, exactly overlapping', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     peritext.refresh();
     const range = peritext.rangeAt(8, 5);
     const stats = peritext.overlay.stat(range);
@@ -67,7 +67,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('returns one partial match of BOLD text, when it is overlapping from one side (reverse)', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(10, -5);
     peritext.refresh();
     const stats = peritext.overlay.stat(editor.cursor);
@@ -77,7 +77,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('when inside BOLD text', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(8, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(12, -2);
     peritext.refresh();
     const stats = peritext.overlay.stat(editor.cursor);
@@ -88,7 +88,7 @@ const statTestSuite = (setup: () => Kit) => {
     test('range inside the second part of the BOLD slice', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 10);
-      editor.saved.insOverwrite('bold');
+      editor.saved.insOne('bold');
       editor.cursor.setAt(5);
       editor.saved.insMarker('paragraph');
       editor.cursor.setAt(7, 1);
@@ -100,7 +100,7 @@ const statTestSuite = (setup: () => Kit) => {
     test('range overlaps the second part of the BOLD slice', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 10);
-      editor.saved.insOverwrite('bold');
+      editor.saved.insOne('bold');
       editor.cursor.setAt(5);
       editor.saved.insMarker('paragraph');
       editor.cursor.setAt(7, 10);
@@ -112,7 +112,7 @@ const statTestSuite = (setup: () => Kit) => {
     test('range inside the first part of the BOLD slice', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 10);
-      editor.saved.insOverwrite('bold');
+      editor.saved.insOne('bold');
       editor.cursor.setAt(5);
       editor.saved.insMarker('paragraph');
       editor.cursor.setAt(3, 1);
@@ -124,7 +124,7 @@ const statTestSuite = (setup: () => Kit) => {
     test('range overlaps the first part of the BOLD slice', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 10);
-      editor.saved.insOverwrite('bold');
+      editor.saved.insOne('bold');
       editor.cursor.setAt(5);
       editor.saved.insMarker('paragraph');
       editor.cursor.setAt(1, 4);
@@ -137,11 +137,11 @@ const statTestSuite = (setup: () => Kit) => {
   test('can terminate scan at the marker boundary', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(2, 5);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(5);
     editor.saved.insMarker('paragraph');
     editor.cursor.setAt(7, 4);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     const range = peritext.rangeAt(3, 7);
     peritext.refresh();
     const stats = peritext.overlay.stat(range, 0);
@@ -151,11 +151,11 @@ const statTestSuite = (setup: () => Kit) => {
   test('multiple interleaved slices', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(5, 10);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(7, 1);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(10, 10);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     peritext.refresh();
     expect(peritext.overlay.stat(peritext.rangeAt(3, 5), 0)).toEqual([new Set(), new Set(['bold']), 0]);
   });
@@ -163,7 +163,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('single slice in the middle of text', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(10, 10);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     peritext.refresh();
     const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
       const expected = [new Set(complete), new Set(partial), 0];
@@ -191,7 +191,7 @@ const statTestSuite = (setup: () => Kit) => {
     editor.cursor.setAt(5);
     editor.saved.insMarker('blockquote');
     editor.cursor.setAt(10, 10);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     peritext.refresh();
     const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
       const expected = [new Set(complete), new Set(partial), expect.any(Number)];
@@ -217,7 +217,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('single slice at the beginning of text', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(0, 10);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     peritext.refresh();
     const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
       const expected = [new Set(complete), new Set(partial), 0];
@@ -240,7 +240,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('single slice at the end of text', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(20, 20);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     peritext.refresh();
     const assert = (at: number, len: number, complete: unknown[], partial: unknown[]) => {
       const expected = [new Set(complete), new Set(partial), 0];
@@ -264,7 +264,7 @@ const statTestSuite = (setup: () => Kit) => {
   test('handles erasure in the middle', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(5, 15);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(10, 5);
     editor.saved.insErase('bold');
     peritext.refresh();
@@ -297,9 +297,9 @@ const statTestSuite = (setup: () => Kit) => {
   test('caret with overlapping slices and erasure', () => {
     const {peritext, editor} = setup();
     editor.cursor.setAt(5, 10);
-    editor.saved.insOverwrite('bold');
+    editor.saved.insOne('bold');
     editor.cursor.setAt(10, 10);
-    editor.saved.insOverwrite('italic');
+    editor.saved.insOne('italic');
     editor.cursor.setAt(7, 2);
     editor.saved.insErase('bold');
     peritext.refresh();

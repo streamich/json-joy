@@ -332,7 +332,7 @@ describe('.contains()', () => {
   test('returns true if slice is contained', () => {
     const {peritext} = setup();
     peritext.editor.cursor.setAt(3, 2);
-    const [slice] = peritext.editor.saved.insOverwrite('b');
+    const [slice] = peritext.editor.saved.insOne('b');
     peritext.editor.cursor.setAt(0);
     peritext.refresh();
     expect(peritext.rangeAt(2, 4).contains(slice)).toBe(true);
@@ -344,7 +344,7 @@ describe('.contains()', () => {
   test('returns false if slice is not contained', () => {
     const {peritext} = setup();
     peritext.editor.cursor.setAt(3, 2);
-    const [slice] = peritext.editor.saved.insOverwrite('b');
+    const [slice] = peritext.editor.saved.insOne('b');
     peritext.editor.cursor.setAt(0);
     peritext.refresh();
     expect(peritext.rangeAt(3, 1).contains(slice)).toBe(false);

@@ -54,7 +54,7 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.blockquote);
       editor.cursor.setAt(13, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       peritext.refresh();
       const range = peritext.rangeAt(4, 10);
       const fragment = peritext.fragment(range);
@@ -82,7 +82,7 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.blockquote);
       editor.cursor.setAt(13, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(5);
       editor.saved.insMarker(CommonSliceType.p);
       peritext.refresh();
@@ -115,7 +115,7 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.blockquote);
       editor.cursor.setAt(13, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(5);
       editor.saved.insMarker(CommonSliceType.p);
       peritext.refresh();
@@ -145,7 +145,7 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.blockquote);
       editor.cursor.setAt(13, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(5);
       editor.saved.insMarker(CommonSliceType.p);
       peritext.refresh();
@@ -168,7 +168,7 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.blockquote);
       editor.cursor.setAt(13, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(5);
       editor.saved.insMarker(CommonSliceType.p);
       peritext.refresh();

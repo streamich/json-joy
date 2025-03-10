@@ -616,7 +616,7 @@ export class Editor<T = string> implements Printable {
         if (end.cmpSpatial(range.start) <= 0) return;
         range.end = end;
       }
-      store.slices.insOverwrite(range, type, data);
+      store.slices.insOne(range, type, data);
     }
   }
 

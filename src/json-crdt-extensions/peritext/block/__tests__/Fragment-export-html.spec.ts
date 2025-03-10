@@ -20,9 +20,9 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.p);
       editor.cursor.setAt(6, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(7, 2);
-      editor.saved.insOverwrite(CommonSliceType.i);
+      editor.saved.insOne(CommonSliceType.i);
       peritext.refresh();
       const fragment = peritext.fragment(peritext.rangeAt(4, 10));
       fragment.refresh();
@@ -77,9 +77,9 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.p);
       editor.cursor.setAt(6, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(7, 2);
-      editor.saved.insOverwrite(CommonSliceType.i);
+      editor.saved.insOne(CommonSliceType.i);
       peritext.refresh();
       const fragment = peritext.fragment(peritext.rangeAt(4, 10));
       fragment.refresh();
@@ -93,9 +93,9 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.p);
       editor.cursor.setAt(6, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(7, 2);
-      editor.saved.insOverwrite(CommonSliceType.i);
+      editor.saved.insOne(CommonSliceType.i);
       peritext.refresh();
       const fragment = peritext.fragment(peritext.rangeAt(4, 10));
       fragment.refresh();
@@ -111,9 +111,9 @@ const runTests = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.p);
       editor.cursor.setAt(6, 2);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(7, 2);
-      editor.saved.insOverwrite(CommonSliceType.i);
+      editor.saved.insOne(CommonSliceType.i);
       peritext.refresh();
       const fragment = peritext.fragment(peritext.rangeAt(4, 10));
       fragment.refresh();

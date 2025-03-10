@@ -32,7 +32,7 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate beginning of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(0, 3);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -46,7 +46,7 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate middle of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(3, 3);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -60,7 +60,7 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate end of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(7, 3);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -74,9 +74,9 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate two regions', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(1, 2);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(5, 3);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -92,9 +92,9 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate two adjacent regions', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(0, 2);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(2, 3);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -110,9 +110,9 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate two adjacent regions at the end of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(5, 2);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(7, 3);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -128,9 +128,9 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate overlapping regions at the beginning of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(0, 2);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(1, 2);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -146,9 +146,9 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate overlapping regions in the middle of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(4, 2);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(5, 2);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -164,9 +164,9 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate a contained region at the beginning of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(0, 5);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(1, 2);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -182,11 +182,11 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate twice contained region in the middle of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(4, 5);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(5, 3);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     editor.cursor.setAt(6, 1);
-    editor.saved.insOverwrite('UNDERLINE');
+    editor.saved.insOne('UNDERLINE');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -204,11 +204,11 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate twice contained region at the end of text', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(5, 5);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(6, 3);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     editor.cursor.setAt(7, 1);
-    editor.saved.insOverwrite('UNDERLINE');
+    editor.saved.insOne('UNDERLINE');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -226,11 +226,11 @@ const runTests = (_setup: () => Kit) => {
   test('can annotate three intermingled regions', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(2, 6);
-    editor.saved.insOverwrite('BOLD');
+    editor.saved.insOne('BOLD');
     editor.cursor.setAt(1, 5);
-    editor.saved.insOverwrite('ITALIC');
+    editor.saved.insOne('ITALIC');
     editor.cursor.setAt(4, 5);
-    editor.saved.insOverwrite('UNDERLINE');
+    editor.saved.insOne('UNDERLINE');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -248,7 +248,7 @@ const runTests = (_setup: () => Kit) => {
   test('can insert zero length slice', () => {
     const {editor, view} = setup();
     editor.cursor.setAt(2, 0);
-    editor.saved.insOverwrite('CURSOR');
+    editor.saved.insOne('CURSOR');
     expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>

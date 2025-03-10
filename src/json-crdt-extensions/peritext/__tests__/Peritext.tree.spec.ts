@@ -8,7 +8,7 @@ const run = (setup: () => Kit) => {
     test('creates two inline elements by annotating a slice at the beginning of the text', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(0, 5);
-      peritext.editor.saved.insOverwrite(123);
+      peritext.editor.saved.insOne(123);
       peritext.editor.cursor.setAt(peritext.str.length());
       peritext.editor.delCursors();
       peritext.refresh();
@@ -26,7 +26,7 @@ const run = (setup: () => Kit) => {
     test('creates two inline elements by annotating a slice at the end of the text', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(6, 5);
-      peritext.editor.saved.insOverwrite(123);
+      peritext.editor.saved.insOne(123);
       peritext.editor.cursor.setAt(peritext.str.length());
       peritext.refresh();
       const leaf = peritext.blocks.root.children[0] as LeafBlock;
@@ -41,7 +41,7 @@ const run = (setup: () => Kit) => {
     test('creates three inline elements by annotating a slice in the middle of the text', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(3, 3);
-      peritext.editor.saved.insOverwrite('type', {foo: 'bar'});
+      peritext.editor.saved.insOne('type', {foo: 'bar'});
       peritext.editor.cursor.setAt(peritext.str.length());
       peritext.refresh();
       const leaf = peritext.blocks.root.children[0] as LeafBlock;

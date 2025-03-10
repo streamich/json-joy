@@ -173,7 +173,7 @@ describe('Overlay.refresh()', () => {
       testRefresh('when a slice is inserted', (kit, refresh) => {
         const range = kit.peritext.rangeAt(1, 4);
         refresh();
-        kit.peritext.extraSlices.insOverwrite(range, 'bold');
+        kit.peritext.extraSlices.insOne(range, 'bold');
       });
 
       testRefresh('when a collapsed slice is inserted', (kit, refresh) => {

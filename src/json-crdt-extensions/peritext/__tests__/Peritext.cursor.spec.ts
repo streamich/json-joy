@@ -11,7 +11,7 @@ const setup = () => {
 test('cursor at the start of string and slice annotation at the start of string', () => {
   const {peritext, editor} = setup();
   editor.cursor.setAt(0, 1);
-  editor.saved.insOverwrite('bold');
+  editor.saved.insOne('bold');
   editor.cursor.setAt(0);
   peritext.refresh();
   const blocks = peritext.blocks.root;
@@ -60,7 +60,7 @@ test('cursor walking over character marked as bold', () => {
 test('cursor walking over character marked as bold and one more', () => {
   const {peritext, editor} = setup();
   editor.cursor.setAt(0, 1);
-  editor.saved.insOverwrite('bold');
+  editor.saved.insOne('bold');
   editor.cursor.setAt(0);
   peritext.refresh();
   editor.cursor.move(1);
