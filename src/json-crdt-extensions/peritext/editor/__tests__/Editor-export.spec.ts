@@ -112,12 +112,12 @@ const testSuite = (setup: () => Kit) => {
     });
   });
 
-  describe('.exportFormatting()', () => {
+  describe('.exportStyle()', () => {
     test('returns empty list if there are no annotations', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(5, 2);
       peritext.refresh();
-      const json = editor.exportFormatting(editor.cursor);
+      const json = editor.exportStyle(editor.cursor);
       expect(json).toEqual([]);
     });
 
@@ -129,7 +129,7 @@ const testSuite = (setup: () => Kit) => {
       editor.saved.insOne('italic');
       editor.cursor.setAt(5, 2);
       peritext.refresh();
-      const json = editor.exportFormatting(editor.cursor);
+      const json = editor.exportStyle(editor.cursor);
       expect(json).toEqual([]);
     });
 
@@ -141,7 +141,7 @@ const testSuite = (setup: () => Kit) => {
       editor.saved.insOne('italic');
       editor.cursor.setAt(3, 1);
       peritext.refresh();
-      const json = editor.exportFormatting(editor.cursor);
+      const json = editor.exportStyle(editor.cursor);
       expect(json.length).toBe(2);
       expect(json).toEqual([
         [SliceBehavior.One, 'bold'],
@@ -351,7 +351,7 @@ const testSuite = (setup: () => Kit) => {
     });
   });
 
-  describe('.importFormatting()', () => {
+  describe('.importStyle()', () => {
     test('can copy formatting into another document part', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(2, 2);
@@ -360,9 +360,9 @@ const testSuite = (setup: () => Kit) => {
       editor.saved.insOne(CommonSliceType.i);
       editor.cursor.setAt(3, 1);
       peritext.refresh();
-      const json = editor.exportFormatting(editor.cursor);
+      const json = editor.exportStyle(editor.cursor);
       editor.cursor.setAt(10, 3);
-      editor.importFormatting(editor.cursor, json);
+      editor.importStyle(editor.cursor, json);
       peritext.refresh();
       const transfer = create(peritext);
       const html = transfer.toHtml(peritext.rangeAll()!);

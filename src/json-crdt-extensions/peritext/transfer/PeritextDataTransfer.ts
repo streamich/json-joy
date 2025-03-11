@@ -114,7 +114,7 @@ export class PeritextDataTransfer<T = string> {
   }
 
   public toFormat(range: Range<T>): Pick<ClipboardExport, 'text/html'> {
-    const json = this.txt.editor.exportFormatting(range);
+    const json = this.txt.editor.exportStyle(range);
     const html = this.htmlE().exportStyle(json);
     return {'text/html': html};
   }
@@ -197,6 +197,6 @@ export class PeritextDataTransfer<T = string> {
   public fromStyle(range: Range<T>, html: string): void {
     const style = this.htmlI().importStyle(html);
     if (!style) return;
-    this.txt.editor.importFormatting(range, style);
+    this.txt.editor.importStyle(range, style);
   }
 }

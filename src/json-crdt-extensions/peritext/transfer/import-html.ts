@@ -11,7 +11,7 @@ import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
 import type {SliceRegistry} from '../registry/SliceRegistry';
-import type {ViewFormatting, ViewRange, ViewSlice} from '../editor/types';
+import type {ViewStyle, ViewRange, ViewSlice} from '../editor/types';
 import type {ClipboardData} from './export-html';
 
 /**
@@ -186,7 +186,7 @@ export const importHtml = (html: string): ViewRange => {
   return toViewRange(node);
 };
 
-export const importStyle = (html: string): ViewFormatting[] | undefined => {
+export const importStyle = (html: string): ViewStyle[] | undefined => {
   const [, data] = getExportData(html);
   return data?.style;
 };

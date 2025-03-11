@@ -17,7 +17,7 @@ import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewFormatting, ViewRange, ViewSlice} from './types';
+import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
 
 /**
@@ -732,8 +732,8 @@ export class Editor<T = string> implements Printable {
    * @param range Range copy formatting from, normally a single visible character.
    * @returns A list of serializable inline formatting applied to the selected range.
    */
-  public exportFormatting(range: Range<T>): ViewFormatting[] {
-    const formatting: ViewFormatting[] = [];
+  public exportStyle(range: Range<T>): ViewStyle[] {
+    const formatting: ViewStyle[] = [];
     const txt = this.txt;
     const overlay = txt.overlay;
     const slices = overlay.findOverlapping(range);
@@ -746,7 +746,7 @@ export class Editor<T = string> implements Printable {
         case SliceBehavior.One:
         case SliceBehavior.Many:
         case SliceBehavior.Erase: {
-          const sliceFormatting: ViewFormatting = [behavior, slice.type];
+          const sliceFormatting: ViewStyle = [behavior, slice.type];
           const data = slice.data();
           if (data !== void 0) sliceFormatting.push(data);
           formatting.push(sliceFormatting);
@@ -846,7 +846,7 @@ export class Editor<T = string> implements Printable {
     return curr - pos;
   }
 
-  public importFormatting(range: Range<T>, formatting: ViewFormatting[]): void {
+  public importStyle(range: Range<T>, formatting: ViewStyle[]): void {
     const txt = this.txt;
     const length = formatting.length;
     for (let i = 0; i < length; i++) {

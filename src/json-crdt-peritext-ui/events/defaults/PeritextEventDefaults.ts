@@ -188,7 +188,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             if (action === 'cut') editor.collapseCursors();
             break;
           }
-          case 'format': {
+          case 'style': {
             if (!range) return;
             if (range.length() < 1) {
               range.end.step(1);
@@ -268,7 +268,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             break;
           }
-          case 'format': {
+          case 'style': {
             const transfer = opts.transfer;
             if (transfer) {
               const {html} = detail.data || await clipboard.readData();

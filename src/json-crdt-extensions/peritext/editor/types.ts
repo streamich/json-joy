@@ -14,4 +14,4 @@ export type ViewRange = [text: string, textPosition: number, slices: ViewSlice[]
 
 export type ViewSlice = [header: number, x1: number, x2: number, type: SliceType, data?: unknown];
 
-export type ViewFormatting = [behavior: SliceBehavior, type: SliceType, data?: unknown];
+export type ViewStyle = [behavior: SliceBehavior, type: SliceType, data?: unknown];

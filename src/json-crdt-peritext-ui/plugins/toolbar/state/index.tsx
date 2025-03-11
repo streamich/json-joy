@@ -485,9 +485,9 @@ export class ToolbarState implements UiLifeCyclesRender {
               onSelect: () => et.buffer('copy', 'text'),
             },
             {
-              name: 'Copy formatting only',
+              name: 'Copy style',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              onSelect: () => et.buffer('copy', 'format'),
+              onSelect: () => et.buffer('copy', 'style'),
             },
             this.copyAsMenu('copy'),
           ],
@@ -539,9 +539,9 @@ export class ToolbarState implements UiLifeCyclesRender {
               onSelect: () => et.buffer('paste', 'text'),
             },
             {
-              name: 'Paste formatting',
+              name: 'Paste style',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-              onSelect: () => et.buffer('paste', 'format'),
+              onSelect: () => et.buffer('paste', 'style'),
             },
             this.pasteAsMenu(),
           ],
