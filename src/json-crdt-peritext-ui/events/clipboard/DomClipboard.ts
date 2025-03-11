@@ -1,5 +1,7 @@
 import type {PeritextClipboard, PeritextClipboardData} from './types';
 
+const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
+
 const writeSync = (data: PeritextClipboardData<string>): boolean => {
   try {
     if (typeof document !== 'object') return false;
@@ -126,6 +128,15 @@ export class DomClipboard implements PeritextClipboard {
     }
     const results = await Promise.all(promises);
     for (const [type, value] of results) data[type] = value;
+    return data;
+  }
+
+  public async readData(): Promise<{text?: string; html?: string}> {
+    const data: {text?: string; html?: string} = {};
+    const {'text/plain': text, 'text/html': html} = await this.read(['text/plain', 'text/html']);
+    if (!text && !html) return data;
+    if (text) data.text = toText(text);
+    if (html) data.html = toText(html);
     return data;
   }
 }

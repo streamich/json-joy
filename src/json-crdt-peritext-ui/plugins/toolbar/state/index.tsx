@@ -484,6 +484,11 @@ export class ToolbarState implements UiLifeCyclesRender {
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
               onSelect: () => et.buffer('copy', 'text'),
             },
+            {
+              name: 'Copy style',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy', 'style'),
+            },
             this.copyAsMenu('copy'),
           ],
         },
@@ -529,15 +534,15 @@ export class ToolbarState implements UiLifeCyclesRender {
               onSelect: () => et.buffer('paste'),
             },
             {
-              name: 'Paste text only',
+              name: 'Paste text',
               icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
               onSelect: () => et.buffer('paste', 'text'),
             },
-            // {
-            //   name: 'Paste formatting',
-            //   icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
-            //   onSelect: () => et.buffer('paste', 'format'),
-            // },
+            {
+              name: 'Paste style',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste', 'style'),
+            },
             this.pasteAsMenu(),
           ],
         },

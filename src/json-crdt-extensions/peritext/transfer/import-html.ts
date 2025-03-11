@@ -11,7 +11,7 @@ import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
 import type {SliceRegistry} from '../registry/SliceRegistry';
-import type {ViewRange, ViewSlice} from '../editor/types';
+import type {ViewStyle, ViewRange, ViewSlice} from '../editor/types';
 import type {ClipboardData} from './export-html';
 
 /**
@@ -156,7 +156,8 @@ export const textFromHtml = (html: string): string => {
 };
 
 const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportData?: ClipboardData] => {
-  const maybeHasPeritextExport = html.includes('data-json-joy-peritext=');
+  const attrName = 'data-json-joy-peritext';
+  const maybeHasPeritextExport = html.includes(attrName);
   const hast = _html.parsef(html);
   const jsonml = _fromHast(hast);
   if (maybeHasPeritextExport) {
@@ -165,8 +166,8 @@ const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportDat
     while ((node = iterator())) {
       if (node && typeof node === 'object') {
         const [tag, attr] = node;
-        if (attr?.['data-json-joy-peritext']) {
-          const jsonBase64 = attr['data-json-joy-peritext'];
+        if (attr?.[attrName]) {
+          const jsonBase64 = attr[attrName];
           const buffer = fromBase64(jsonBase64);
           const json = new TextDecoder().decode(buffer);
           const data: ClipboardData = JSON.parse(json);
@@ -178,9 +179,15 @@ const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportDat
   return [jsonml];
 };
 
-export const importHtml = (html: string): ViewRange => {
-  const [jsonml, exportData] = getExportData(html);
-  if (exportData) return exportData.view;
+export const importHtml = (html: string): [view?: ViewRange, style?: ViewStyle[]] => {
+  const [jsonml, data] = getExportData(html);
+  if (data?.style) return [void 0, data.style];
+  if (data?.view) return [data.view];
   const node = fromJsonMl(jsonml!);
-  return toViewRange(node);
+  return [toViewRange(node)];
+};
+
+export const importStyle = (html: string): ViewStyle[] | undefined => {
+  const [, data] = getExportData(html);
+  return data?.style;
 };

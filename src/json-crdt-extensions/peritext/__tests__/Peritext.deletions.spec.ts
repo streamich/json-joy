@@ -21,7 +21,7 @@ const run = (setup: () => Kit) => {
     test('deletes slice if it is contained in deletion range', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 2);
-      editor.saved.insOverwrite('underline');
+      editor.saved.insOne('underline');
       editor.cursor.setAt(0);
       peritext.refresh();
       expect(editor.saved.slices.size()).toBe(1);
@@ -33,7 +33,7 @@ const run = (setup: () => Kit) => {
     test('does not delete slice if it is only partially contained', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 10);
-      editor.extra.insOverwrite('underline');
+      editor.extra.insOne('underline');
       editor.cursor.setAt(0);
       peritext.refresh();
       expect(peritext.extraSlices.size()).toBe(1);
@@ -50,9 +50,9 @@ const run = (setup: () => Kit) => {
     test('does not delete already deleted slice', () => {
       const {peritext, editor, model} = setup();
       editor.cursor.setAt(15, 2);
-      editor.saved.insOverwrite('bold');
+      editor.saved.insOne('bold');
       editor.cursor.setAt(2, 2);
-      editor.saved.insOverwrite('underline');
+      editor.saved.insOne('underline');
       editor.cursor.setAt(0);
       peritext.refresh();
       const tick1 = model.tick;

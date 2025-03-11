@@ -292,12 +292,12 @@ export interface BufferDetail {
    * - `mdast`: Specifies MDAST (Markdown Abstract Syntax Tree) format.
    * - `markdown`: Markdown format. Will copy a range of text with formatting
    *   information in Markdown format.
-   * - `format`: Formatting only. Used to copy and paste formatting information
+   * - `style`: Formatting only. Used to copy and paste formatting information
    *   only, without the text content.
    *
    * @default 'auto'
    */
-  format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'md' | 'fragment' | 'format';
+  format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'md' | 'fragment' | 'style';
 
   /**
    * The range of text to cut or copy. If not specified, the first selection of

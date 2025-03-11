@@ -17,7 +17,7 @@ import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewRange, ViewSlice} from './types';
+import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
 
 /**
@@ -616,7 +616,7 @@ export class Editor<T = string> implements Printable {
         if (end.cmpSpatial(range.start) <= 0) return;
         range.end = end;
       }
-      store.slices.insOverwrite(range, type, data);
+      store.slices.insOne(range, type, data);
     }
   }
 
@@ -725,6 +725,37 @@ export class Editor<T = string> implements Printable {
     return view;
   }
 
+  /**
+   * "Copy formatting-only", copies inline formatting applied to the selected
+   * range.
+   *
+   * @param range Range copy formatting from, normally a single visible character.
+   * @returns A list of serializable inline formatting applied to the selected range.
+   */
+  public exportStyle(range: Range<T>): ViewStyle[] {
+    const formatting: ViewStyle[] = [];
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    const slices = overlay.findOverlapping(range);
+    for (const slice of slices) {
+      const isSavedSlice = slice.id.sid === txt.model.clock.sid;
+      if (!isSavedSlice) continue;
+      if (!slice.contains(range)) continue;
+      const behavior = slice.behavior;
+      switch (behavior) {
+        case SliceBehavior.One:
+        case SliceBehavior.Many:
+        case SliceBehavior.Erase: {
+          const sliceFormatting: ViewStyle = [behavior, slice.type];
+          const data = slice.data();
+          if (data !== void 0) sliceFormatting.push(data);
+          formatting.push(sliceFormatting);
+        }
+      }
+    }
+    return formatting;
+  }
+
   public import(pos: number, view: ViewRange): number {
     let [text, offset, slices] = view;
     const txt = this.txt;
@@ -813,6 +844,15 @@ export class Editor<T = string> implements Printable {
       txt.savedSlices.ins(range, behavior, type, data);
     }
     return curr - pos;
+  }
+
+  public importStyle(range: Range<T>, formatting: ViewStyle[]): void {
+    const txt = this.txt;
+    const length = formatting.length;
+    for (let i = 0; i < length; i++) {
+      const [behavior, type, data] = formatting[i];
+      txt.savedSlices.ins(range, behavior, type, data);
+    }
   }
 
   // ------------------------------------------------------------------ various

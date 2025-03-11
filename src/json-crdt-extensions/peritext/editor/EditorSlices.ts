@@ -25,8 +25,8 @@ export class EditorSlices<T = string> {
     return this.insAtCursors((cursor) => this.slices.insStack(cursor.range(), type, data));
   }
 
-  public insOverwrite(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T>[] {
-    return this.insAtCursors((cursor) => this.slices.insOverwrite(cursor.range(), type, data));
+  public insOne(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T>[] {
+    return this.insAtCursors((cursor) => this.slices.insOne(cursor.range(), type, data));
   }
 
   public insErase(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T>[] {

@@ -32,9 +32,9 @@ test('clears slice set tombstones', () => {
   const {peritext} = setup();
   const slicesRga = peritext.localSlices.set.doc.root.node()!.get(0)!;
   const count = slicesRga.size();
-  const slice1 = peritext.localSlices.insOverwrite(peritext.rangeAt(1, 2), 1);
-  const slice2 = peritext.localSlices.insOverwrite(peritext.rangeAt(1, 2), 3);
-  const slice3 = peritext.localSlices.insOverwrite(peritext.rangeAt(1, 2), 2);
+  const slice1 = peritext.localSlices.insOne(peritext.rangeAt(1, 2), 1);
+  const slice2 = peritext.localSlices.insOne(peritext.rangeAt(1, 2), 3);
+  const slice3 = peritext.localSlices.insOne(peritext.rangeAt(1, 2), 2);
   expect(slicesRga.size()).toBe(count + 3);
   peritext.localSlices.del(slice2.id);
   expect(slicesRga.size()).toBe(count + 2);

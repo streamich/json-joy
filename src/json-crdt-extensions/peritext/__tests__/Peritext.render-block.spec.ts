@@ -70,7 +70,7 @@ const runInlineSlicesTests = (
     test('can split text after slice', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(5, 5);
-      editor.saved.insOverwrite('BOLD');
+      editor.saved.insOne('BOLD');
       editor.cursor.setAt(15);
       editor.saved.insMarker(['paragraph'], []);
       expect(view()).toMatchInlineSnapshot(`
@@ -88,7 +88,7 @@ const runInlineSlicesTests = (
     test('can split text right after slice', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(5, 5);
-      editor.saved.insOverwrite('BOLD');
+      editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
       editor.saved.insMarker(['paragraph'], []);
       expect(view()).toMatchInlineSnapshot(`
@@ -106,7 +106,7 @@ const runInlineSlicesTests = (
     test('can split text before slice', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(15, 5);
-      editor.saved.insOverwrite('BOLD');
+      editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
       editor.saved.insMarker(['paragraph'], []);
       expect(view()).toMatchInlineSnapshot(`
@@ -124,7 +124,7 @@ const runInlineSlicesTests = (
     test('can split text right before slice', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(15, 5);
-      editor.saved.insOverwrite('BOLD');
+      editor.saved.insOne('BOLD');
       editor.cursor.setAt(15);
       editor.saved.insMarker(['paragraph'], []);
       expect(view()).toMatchInlineSnapshot(`
@@ -142,7 +142,7 @@ const runInlineSlicesTests = (
     test('can split text in the middle of a slice', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(5, 10);
-      editor.saved.insOverwrite('BOLD');
+      editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
       editor.saved.insMarker(['paragraph'], []);
       expect(view()).toMatchInlineSnapshot(`
@@ -164,7 +164,7 @@ const runInlineSlicesTests = (
       editor.cursor.setAt(15);
       editor.saved.insMarker(['p'], []);
       editor.cursor.setAt(8, 15);
-      editor.saved.insOverwrite('BOLD');
+      editor.saved.insOne('BOLD');
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>

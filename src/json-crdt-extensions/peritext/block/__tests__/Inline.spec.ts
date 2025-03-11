@@ -72,9 +72,9 @@ const runStrTests = (setup: () => Kit) => {
       const {peritext} = setup();
       const overlay = peritext.overlay;
       peritext.editor.cursor.setAt(3, 3);
-      peritext.editor.saved.insOverwrite('bold', 1);
-      peritext.editor.saved.insOverwrite('bold', 2);
-      peritext.editor.saved.insOverwrite('em', 1);
+      peritext.editor.saved.insOne('bold', 1);
+      peritext.editor.saved.insOne('bold', 2);
+      peritext.editor.saved.insOne('em', 1);
       overlay.refresh();
       const [start, end] = [...overlay.points()];
       const inline = new Inline(peritext, start, end, start, end);
@@ -87,9 +87,9 @@ const runStrTests = (setup: () => Kit) => {
       const {peritext} = setup();
       const overlay = peritext.overlay;
       peritext.editor.cursor.setAt(3, 3);
-      peritext.editor.saved.insOverwrite('bold');
+      peritext.editor.saved.insOne('bold');
       peritext.editor.saved.insErase('bold');
-      peritext.editor.saved.insOverwrite('em');
+      peritext.editor.saved.insOne('em');
       overlay.refresh();
       const [start, end] = [...overlay.points()];
       const inline = new Inline(peritext, start, end, start, end);

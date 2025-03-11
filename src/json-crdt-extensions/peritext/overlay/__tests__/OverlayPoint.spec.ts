@@ -17,7 +17,7 @@ const setupOverlayPoint = () => {
 describe('layers', () => {
   test('can add a layer', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
+    const slice = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
     const point = getPoint(slice.start);
     expect(point.layers.length).toBe(0);
     point.addLayer(slice);
@@ -27,7 +27,7 @@ describe('layers', () => {
 
   test('inserting same slice twice is a no-op', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
+    const slice = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
     const point = getPoint(slice.start);
     expect(point.layers.length).toBe(0);
     point.addLayer(slice);
@@ -39,8 +39,8 @@ describe('layers', () => {
 
   test('can add two layers with the same start position', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice1 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
-    const slice2 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 3), '<i>');
+    const slice1 = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
+    const slice2 = peritext.savedSlices.insOne(peritext.rangeAt(5, 3), '<i>');
     const point = getPoint(slice1.start);
     expect(point.layers.length).toBe(0);
     point.addLayer(slice1);
@@ -54,8 +54,8 @@ describe('layers', () => {
 
   test('orders slices by their ID', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice1 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
-    const slice2 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 3), '<i>');
+    const slice1 = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
+    const slice2 = peritext.savedSlices.insOne(peritext.rangeAt(5, 3), '<i>');
     const point = getPoint(slice1.start);
     point.addLayer(slice2);
     point.addLayer(slice1);
@@ -65,9 +65,9 @@ describe('layers', () => {
 
   test('can add tree layers and sort them correctly', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice1 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
-    const slice2 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 3), '<i>');
-    const slice3 = peritext.savedSlices.insOverwrite(peritext.rangeAt(2, 10), '<u>');
+    const slice1 = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
+    const slice2 = peritext.savedSlices.insOne(peritext.rangeAt(5, 3), '<i>');
+    const slice3 = peritext.savedSlices.insOne(peritext.rangeAt(2, 10), '<u>');
     const point = getPoint(slice1.start);
     point.addLayer(slice3);
     point.addLayer(slice3);
@@ -84,9 +84,9 @@ describe('layers', () => {
 
   test('can add tree layers by appending them', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice1 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
-    const slice2 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 3), '<i>');
-    const slice3 = peritext.savedSlices.insOverwrite(peritext.rangeAt(2, 10), '<u>');
+    const slice1 = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
+    const slice2 = peritext.savedSlices.insOne(peritext.rangeAt(5, 3), '<i>');
+    const slice3 = peritext.savedSlices.insOne(peritext.rangeAt(2, 10), '<u>');
     const point = getPoint(slice1.start);
     point.addLayer(slice1);
     point.addLayer(slice2);
@@ -98,9 +98,9 @@ describe('layers', () => {
 
   test('can remove layers', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const slice1 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 5), '<b>');
-    const slice2 = peritext.savedSlices.insOverwrite(peritext.rangeAt(5, 3), '<i>');
-    const slice3 = peritext.savedSlices.insOverwrite(peritext.rangeAt(2, 10), '<u>');
+    const slice1 = peritext.savedSlices.insOne(peritext.rangeAt(5, 5), '<b>');
+    const slice2 = peritext.savedSlices.insOne(peritext.rangeAt(5, 3), '<i>');
+    const slice3 = peritext.savedSlices.insOne(peritext.rangeAt(2, 10), '<u>');
     const point = getPoint(slice1.start);
     point.addLayer(slice2);
     point.addLayer(slice1);

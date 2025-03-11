@@ -113,7 +113,7 @@ describe('.get()', () => {
   test('can retrieve slice by id', () => {
     const {peritext} = setup();
     const range = peritext.rangeAt(6, 5);
-    const slice = peritext.savedSlices.insOverwrite(range, 'italic');
+    const slice = peritext.savedSlices.insOne(range, 'italic');
     const slice2 = peritext.savedSlices.get(slice.id);
     expect(slice2).toBe(slice);
   });
@@ -158,7 +158,7 @@ describe('.refresh()', () => {
     test('changes hash on: ' + name, () => {
       const {peritext, encodeAndDecode} = setup();
       const range = peritext.rangeAt(6, 5);
-      const slice = peritext.savedSlices.insOverwrite(range, 'b', {howBold: 'very'});
+      const slice = peritext.savedSlices.insOne(range, 'b', {howBold: 'very'});
       const hash1 = peritext.savedSlices.refresh();
       const hash2 = peritext.savedSlices.refresh();
       expect(hash1).toBe(hash2);

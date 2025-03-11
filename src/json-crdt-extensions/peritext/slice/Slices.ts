@@ -110,7 +110,7 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.ins(range, SliceBehavior.Many, type, data);
   }
 
-  public insOverwrite(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
+  public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.One, type, data);
   }
 

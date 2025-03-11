@@ -2,6 +2,7 @@ import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
 import {SliceBehavior, SliceHeaderShift} from '../../slice/constants';
+import {create} from '../../transfer/create';
 import type {ViewRange} from '../types';
 
 const testSuite = (setup: () => Kit) => {
@@ -23,7 +24,7 @@ const testSuite = (setup: () => Kit) => {
     test('range which contains bold text', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(3, 3);
-      editor.saved.insOverwrite('bold');
+      editor.saved.insOne('bold');
       const range = peritext.rangeAt(2, 5);
       peritext.refresh();
       const json = editor.export(range);
@@ -33,9 +34,9 @@ const testSuite = (setup: () => Kit) => {
     test('exports only "saved" slices', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(3, 3);
-      editor.local.insOverwrite('italic');
-      editor.saved.insOverwrite('bold');
-      editor.extra.insOverwrite('underline');
+      editor.local.insOne('italic');
+      editor.saved.insOne('bold');
+      editor.extra.insOne('underline');
       const range = peritext.rangeAt(2, 5);
       peritext.refresh();
       const json = editor.export(range);
@@ -45,7 +46,7 @@ const testSuite = (setup: () => Kit) => {
     test('range which start in bold text', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(3, 10);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       editor.cursor.setAt(5, 15);
       peritext.refresh();
       const json = editor.export(editor.cursor);
@@ -55,7 +56,7 @@ const testSuite = (setup: () => Kit) => {
     test('range which ends in bold text', () => {
       const {editor, peritext} = setup();
       editor.cursor.setAt(3, 10);
-      editor.saved.insOverwrite(CommonSliceType.b);
+      editor.saved.insOne(CommonSliceType.b);
       const range = peritext.rangeAt(0, 5);
       peritext.refresh();
       const json = editor.export(range);
@@ -83,7 +84,7 @@ const testSuite = (setup: () => Kit) => {
       editor.cursor.setAt(10);
       editor.saved.insMarker(CommonSliceType.p);
       editor.cursor.setAt(12, 2);
-      editor.saved.insOverwrite(CommonSliceType.i);
+      editor.saved.insOne(CommonSliceType.i);
       const range = peritext.rangeAt(8, 12);
       peritext.refresh();
       const json = editor.export(range);
@@ -111,6 +112,44 @@ const testSuite = (setup: () => Kit) => {
     });
   });
 
+  describe('.exportStyle()', () => {
+    test('returns empty list if there are no annotations', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(5, 2);
+      peritext.refresh();
+      const json = editor.exportStyle(editor.cursor);
+      expect(json).toEqual([]);
+    });
+
+    test('returns empty list if there are no annotations', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(2, 2);
+      editor.saved.insOne('bold');
+      editor.cursor.setAt(9, 2);
+      editor.saved.insOne('italic');
+      editor.cursor.setAt(5, 2);
+      peritext.refresh();
+      const json = editor.exportStyle(editor.cursor);
+      expect(json).toEqual([]);
+    });
+
+    test('returns all range formatting annotations', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(2, 2);
+      editor.saved.insOne('bold');
+      editor.cursor.setAt(3, 2);
+      editor.saved.insOne('italic');
+      editor.cursor.setAt(3, 1);
+      peritext.refresh();
+      const json = editor.exportStyle(editor.cursor);
+      expect(json.length).toBe(2);
+      expect(json).toEqual([
+        [SliceBehavior.One, 'bold'],
+        [SliceBehavior.One, 'italic'],
+      ]);
+    });
+  });
+
   describe('.import()', () => {
     test('can insert text into another document', () => {
       const kit1 = setup();
@@ -125,7 +164,7 @@ const testSuite = (setup: () => Kit) => {
       const kit1 = setup();
       const kit2 = setup();
       kit1.editor.cursor.setAt(5, 5);
-      kit1.editor.saved.insOverwrite('bold');
+      kit1.editor.saved.insOne('bold');
       kit1.editor.cursor.setAt(3, 10);
       kit1.peritext.refresh();
       const json = kit1.editor.export(kit1.editor.cursor);
@@ -140,7 +179,7 @@ const testSuite = (setup: () => Kit) => {
     test('can import a contained <b> annotation', () => {
       const kit1 = setup();
       kit1.editor.cursor.setAt(0, 3);
-      kit1.editor.saved.insOverwrite(CommonSliceType.b);
+      kit1.editor.saved.insOne(CommonSliceType.b);
       kit1.peritext.refresh();
       const range = kit1.peritext.rangeAt(1, 1);
       const view = kit1.editor.export(range);
@@ -174,7 +213,7 @@ const testSuite = (setup: () => Kit) => {
       start.refAfter();
       end.refBefore();
       kit1.editor.cursor.set(start, end);
-      kit1.editor.saved.insOverwrite(CommonSliceType.b);
+      kit1.editor.saved.insOne(CommonSliceType.b);
       kit1.peritext.refresh();
       const range = kit1.peritext.rangeAt(1, 1);
       const view = kit1.editor.export(range);
@@ -208,7 +247,7 @@ const testSuite = (setup: () => Kit) => {
       start.refAfter();
       end.refBefore();
       kit1.editor.cursor.set(start, end);
-      kit1.editor.saved.insOverwrite(CommonSliceType.b);
+      kit1.editor.saved.insOne(CommonSliceType.b);
       kit1.editor.delCursors();
       kit1.peritext.refresh();
       const range = kit1.peritext.rangeAt(1, 1);
@@ -243,7 +282,7 @@ const testSuite = (setup: () => Kit) => {
       start.refAfter();
       end.refBefore();
       kit1.editor.cursor.set(start, end);
-      kit1.editor.saved.insOverwrite(CommonSliceType.b);
+      kit1.editor.saved.insOne(CommonSliceType.b);
       kit1.editor.delCursors();
       kit1.peritext.refresh();
       const range = kit1.peritext.rangeAt(1, 1);
@@ -309,6 +348,25 @@ const testSuite = (setup: () => Kit) => {
         null,
         [CommonSliceType.p, null, 'ab', [CommonSliceType.b, {inline: true}, '123'], 'cdefghijklmnopqrstuvwxyz'],
       ]);
+    });
+  });
+
+  describe('.importStyle()', () => {
+    test('can copy formatting into another document part', () => {
+      const {editor, peritext} = setup();
+      editor.cursor.setAt(2, 2);
+      editor.saved.insOne(CommonSliceType.b);
+      editor.cursor.setAt(3, 2);
+      editor.saved.insOne(CommonSliceType.i);
+      editor.cursor.setAt(3, 1);
+      peritext.refresh();
+      const json = editor.exportStyle(editor.cursor);
+      editor.cursor.setAt(10, 3);
+      editor.importStyle(editor.cursor, json);
+      peritext.refresh();
+      const transfer = create(peritext);
+      const html = transfer.toHtml(peritext.rangeAll()!);
+      expect(html).toBe('<p>ab<b>c</b><i><b>d</b></i><i>e</i>fghij<i><b>klm</b></i>nopqrstuvwxyz</p>');
     });
   });
 };

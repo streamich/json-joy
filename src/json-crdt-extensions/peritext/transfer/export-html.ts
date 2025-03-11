@@ -5,7 +5,7 @@ import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {JsonMlNode} from 'very-small-parser/lib/html/json-ml/types';
 import type {THtmlToken} from 'very-small-parser/lib/html/types';
 import type {PeritextMlNode} from '../block/types';
-import type {ViewRange} from '../editor/types';
+import type {ViewStyle, ViewRange} from '../editor/types';
 
 export const toJsonMl = (json: PeritextMlNode): JsonMlNode => {
   if (typeof json === 'string') return json;
@@ -31,7 +31,8 @@ export const toHtml = (json: PeritextMlNode, tab?: string, indent?: string): str
 
 /** JSON data embedded as Base64 data attribute into HTML clipboard buffer. */
 export interface ClipboardData {
-  view: ViewRange;
+  view?: ViewRange;
+  style?: ViewStyle[];
 }
 
 const base64Str = (str: string) => toBase64(new TextEncoder().encode(str));
@@ -41,5 +42,13 @@ export const exportHtml = (view: ViewRange, node: PeritextMlNode): string => {
   const json = JSON.stringify(data);
   const jsonBase64 = base64Str(json);
   const html = toHtml(node) + '<b data-json-joy-peritext="' + jsonBase64 + '"/>';
+  return html;
+};
+
+export const exportStyle = (style: ViewStyle[]): string => {
+  const data: ClipboardData = {style};
+  const json = JSON.stringify(data);
+  const jsonBase64 = base64Str(json);
+  const html = '<b data-json-joy-peritext="' + jsonBase64 + '"/>';
   return html;
 };

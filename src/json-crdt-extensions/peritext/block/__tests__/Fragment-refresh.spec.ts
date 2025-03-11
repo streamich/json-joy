@@ -56,7 +56,7 @@ const runTests = (setup: () => Kit) => {
     peritext.refresh();
     const rootHash1 = peritext.blocks.root.hash;
     const firstBlockHash1 = peritext.blocks.root.children[0].hash;
-    editor.saved.insOverwrite('b');
+    editor.saved.insOne('b');
     peritext.refresh();
     const rootHash2 = peritext.blocks.root.hash;
     const firstBlockHash2 = peritext.blocks.root.children[0].hash;
