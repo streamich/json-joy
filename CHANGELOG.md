@@ -1,3 +1,21 @@
+# [17.31.0](https://github.com/streamich/json-joy/compare/v17.30.0...v17.31.0) (2025-03-11)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 bump very-small-parser dependency ([eb79932](https://github.com/streamich/json-joy/commit/eb799323076c8e343cfb605602bb12d442d17648))
+* **json-crdt-peritext-ui:** 🐛 refresh slices after initial text insert ([ba69a9f](https://github.com/streamich/json-joy/commit/ba69a9f48c957571a85eecdd5ed084821015992e))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 implement .importFormatting() utility ([b3e9fc9](https://github.com/streamich/json-joy/commit/b3e9fc9ed75830f7366ac452a871bb9a6ceb9cef))
+* **json-crdt-peritext-ui:** 🎸 add support for formatting-only clipboard events ([a72dbd8](https://github.com/streamich/json-joy/commit/a72dbd8efcb9f39b7cbcaced1f5ac05f2ca0dad2))
+* **json-crdt-peritext-ui:** 🎸 automatically detect style paste on regular paste ([66a743f](https://github.com/streamich/json-joy/commit/66a743f630e89f314f427cea8ca6c3de65f7b8bb))
+* **json-crdt-peritext-ui:** 🎸 copy style information only on caret copy ([ba5344f](https://github.com/streamich/json-joy/commit/ba5344fc6e26edb75eed3df32f647d3b28b123ee))
+* **json-crdt-peritext-ui:** 🎸 create utility for data transfer construction ([cae51a2](https://github.com/streamich/json-joy/commit/cae51a27ee17af93eb97d711dc52b2ff03004df6))
+* **json-crdt-peritext-ui:** 🎸 implement formatting only export ([8c290c1](https://github.com/streamich/json-joy/commit/8c290c14a0c833e6377f8baef6c1c1cec6e3a20f))
+
 # [17.30.0](https://github.com/streamich/json-joy/compare/v17.29.1...v17.30.0) (2025-03-08)
 
 
