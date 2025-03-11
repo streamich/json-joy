@@ -182,14 +182,27 @@ export class PeritextDataTransfer<T = string> {
    * @param data Clipboard data to attempt to insert.
    * @returns The number of characters inserted.
    */
-  public fromClipboard(pos: number, data: ClipboardImport): number {
+  public fromClipboard(range: Range<T>, data: ClipboardImport): number {
+    const txt = this.txt;
     const html = data.html;
+    const collapseRange = (): number => {
+      if (!range.isCollapsed()) txt.editor.delRange(range);
+      range.collapseToStart();
+      return range.start.viewPos();
+    };
     if (html) {
-      const view = this.htmlI().importHtml(html);
-      return this.fromView(pos, view);
+      const [view, style] = this.htmlI().importHtml(html);
+      if (style) {
+        txt.editor.importStyle(range, style);
+        return 0;
+      } else if (view) {
+        const pos = collapseRange();
+        return this.fromView(pos, view);
+      }
     }
     const text = data.text;
     if (!text) return 0;
+    const pos = collapseRange();
     this.txt.insAt(pos, text);
     return text.length;
   }

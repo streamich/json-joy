@@ -347,19 +347,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               if (text) this.et.insert(text);
               return;
             }
-            if (!data) {
-              data = {};
-              const {'text/plain': text, 'text/html': html} = await clipboard.read(['text/plain', 'text/html']);
-              if (!text && !html) return;
-              if (text) data.text = toText(text);
-              if (html) data.html = toText(html);
-            }
-            if (!range.isCollapsed()) editor.delRange(range);
-            range.collapseToStart();
-            const start = range.start;
-            const pos = start.viewPos();
-            const inserted = transfer.fromClipboard(pos, data);
+            if (!data) data = await clipboard.readData();
+            const inserted = transfer.fromClipboard(range, data);
             if (inserted) this.et.move(inserted, 'char');
+            this.et.change();
           }
         }
         break;

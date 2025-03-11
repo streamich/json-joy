@@ -179,11 +179,12 @@ const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportDat
   return [jsonml];
 };
 
-export const importHtml = (html: string): ViewRange => {
+export const importHtml = (html: string): [view?: ViewRange, style?: ViewStyle[]] => {
   const [jsonml, data] = getExportData(html);
-  if (data?.view) return data.view;
+  if (data?.style) return [void 0, data.style];
+  if (data?.view) return [data.view];
   const node = fromJsonMl(jsonml!);
-  return toViewRange(node);
+  return [toViewRange(node)];
 };
 
 export const importStyle = (html: string): ViewStyle[] | undefined => {
