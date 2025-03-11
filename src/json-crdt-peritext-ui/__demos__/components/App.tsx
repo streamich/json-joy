@@ -53,6 +53,7 @@ export const App: React.FC = () => {
                 text: markdown,
               },
             });
+            state.peritext.refresh();
           }}
         />
       </div>
