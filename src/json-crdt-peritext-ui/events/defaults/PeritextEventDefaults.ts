@@ -181,6 +181,15 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     switch (action) {
       case 'cut':
       case 'copy': {
+        const copyStyle = () => {
+          if (!range) return;
+          if (range.length() < 1) {
+            range.end.step(1);
+            if (range.length() < 1) range.start.step(-1);
+          }
+          const data = opts.transfer?.toFormat?.(range);
+          clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
+        };
         switch (format) {
           case 'text': {
             const text = range.text();
@@ -189,13 +198,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             break;
           }
           case 'style': {
-            if (!range) return;
-            if (range.length() < 1) {
-              range.end.step(1);
-              if (range.length() < 1) range.start.step(-1);
-            }
-            const data = opts.transfer?.toFormat?.(range);
-            clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
+            copyStyle();
             break;
           }
           case 'html':
@@ -246,9 +249,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             // `auto'
             const transfer = opts.transfer;
             if (!transfer) return;
-            const data = transfer.toClipboard(range);
-            clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
-            if (action === 'cut') editor.collapseCursors();
+            if (range.length() < 1) {
+              copyStyle();
+            } else {
+              const data = transfer.toClipboard(range);
+              clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
+              if (action === 'cut') editor.collapseCursors();
+            }
           }
         }
         break;
