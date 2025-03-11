@@ -113,6 +113,12 @@ export class PeritextDataTransfer<T = string> {
     };
   }
 
+  public toFormat(range: Range<T>): Pick<ClipboardExport, 'text/html'> {
+    const json = this.txt.editor.exportFormatting(range);
+    const html = this.htmlE().exportStyle(json);
+    return {'text/html': html};
+  }
+
   // ------------------------------------------------------------------ imports
 
   public fromView(pos: number, view: ViewRange): number {
@@ -186,5 +192,11 @@ export class PeritextDataTransfer<T = string> {
     if (!text) return 0;
     this.txt.insAt(pos, text);
     return text.length;
+  }
+
+  public fromStyle(range: Range<T>, html: string): void {
+    const style = this.htmlI().importStyle(html);
+    if (!style) return;
+    this.txt.editor.importFormatting(range, style);
   }
 }

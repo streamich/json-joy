@@ -174,7 +174,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       const p2 = editor.point(detail.range[1]);
       range = txt.rangeFromPoints(p1, p2);
     } else {
-      range = editor.getCursor();
+      range = editor.getCursor()?.range();
       if (!range) range = txt.rangeAll();
     }
     if (!range) return;
@@ -186,6 +186,16 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             const text = range.text();
             clipboard.writeText(text)?.catch((err) => console.error(err));
             if (action === 'cut') editor.collapseCursors();
+            break;
+          }
+          case 'format': {
+            if (!range) return;
+            if (range.length() < 1) {
+              range.end.step(1);
+              if (range.length() < 1) range.start.step(-1);
+            }
+            const data = opts.transfer?.toFormat?.(range);
+            clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
             break;
           }
           case 'html':
@@ -255,6 +265,17 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
               const html = toText(buffer);
               const text = opts.transfer?.textFromHtml?.(html) ?? html;
               this.et.insert(text);
+            }
+            break;
+          }
+          case 'format': {
+            const transfer = opts.transfer;
+            if (transfer) {
+              const {html} = detail.data || await clipboard.readData();
+              if (html) {
+                transfer.fromStyle(range, html);
+                this.et.change();
+              }
             }
             break;
           }

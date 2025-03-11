@@ -23,6 +23,11 @@ export interface PeritextClipboard {
    * @returns A promise that resolves with the data for the requested mime-types.
    */
   read<T extends string>(types: T[]): Promise<{[mime in T]: Uint8Array}>;
+
+  /**
+   * @returns Returns text and HTML data from the clipboard, if any.
+   */
+  readData(): Promise<{text?: string; html?: string}>;
 }
 
 export interface PeritextClipboardData<Value> {
