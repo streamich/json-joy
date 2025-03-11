@@ -278,7 +278,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'style': {
             const transfer = opts.transfer;
             if (transfer) {
-              const {html} = detail.data || await clipboard.readData();
+              const {html} = detail.data || (await clipboard.readData());
               if (html) {
                 transfer.fromStyle(range, html);
                 this.et.change();

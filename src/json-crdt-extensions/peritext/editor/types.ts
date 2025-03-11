@@ -1,7 +1,7 @@
 import type {UndefIterator} from '../../../util/iterator';
 import type {Point} from '../rga/Point';
 import type {SliceType} from '../slice';
-import {SliceBehavior} from '../slice/constants';
+import type {SliceBehavior} from '../slice/constants';
 import type {ChunkSlice} from '../util/ChunkSlice';
 
 export type CharIterator<T> = UndefIterator<ChunkSlice<T>>;
