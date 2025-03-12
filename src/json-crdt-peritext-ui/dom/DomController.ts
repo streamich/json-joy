@@ -1,9 +1,10 @@
 import {printTree, type Printable} from 'tree-dump';
-import {InputController} from '../dom/InputController';
-import {CursorController} from '../dom/CursorController';
-import {RichTextController} from '../dom/RichTextController';
-import {KeyController} from '../dom/KeyController';
-import {CompositionController} from '../dom/CompositionController';
+import {InputController} from './InputController';
+import {CursorController} from './CursorController';
+import {RichTextController} from './RichTextController';
+import {KeyController} from './KeyController';
+import {CompositionController} from './CompositionController';
+import {UndoRedoController} from './UndoRedoController';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
@@ -20,6 +21,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
   public readonly input: InputController;
   public readonly cursor: CursorController;
   public readonly richText: RichTextController;
+  public readonly undo: UndoRedoController;
 
   constructor(public readonly opts: DomControllerOpts) {
     const {source, events} = opts;
@@ -30,6 +32,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input = new InputController({et, source, txt, comp});
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
+    this.undo = new UndoRedoController();
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
@@ -40,6 +43,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input.start();
     this.cursor.start();
     this.richText.start();
+    this.undo.start();
   }
 
   public stop(): void {
@@ -48,6 +52,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input.stop();
     this.cursor.stop();
     this.richText.stop();
+    this.undo.stop();
   }
 
   /** ----------------------------------- {@link PeritextRenderingSurfaceApi} */

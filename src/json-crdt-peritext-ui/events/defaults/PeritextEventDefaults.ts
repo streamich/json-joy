@@ -8,14 +8,16 @@ import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/E
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
 import type {ITimespanStruct} from '../../../json-crdt-patch';
-import type {UndoRedo} from '../undo/types';
+import type {Redo, Undo, UndoRedoCollector} from '../../types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
+
+type InsertUndoState = [text: string, after: Point<any>[], inserts: ITimespanStruct[]];
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
   transfer?: PeritextDataTransfer;
-  undo?: UndoRedo<unknown>;
+  undo?: UndoRedoCollector;
 }
 
 /**
@@ -34,35 +36,28 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
-  private insertUndo = (text: string, after: Point<any>[], insertions: ITimespanStruct[]) => {
-    const undo = () => {
-      // Delete `insertions`.
-      const redo = this.insertRedo(text, after);
-      return redo;
-    };
-    return undo;
+  private insertUndo: Undo<InsertUndoState> = ([text, after, inserts]) => {
+    // TODO: delete `insertions`.
+    console.log('delete', inserts);
+    return [[text, after, inserts], this.insertRedo];
   };
 
-  private insertRedo = (text: string, after: Point<any>[]) => {
-    const redo = () => {
-      // Insert text.
-      const insertions: ITimespanStruct[] = [];
-      const undo = this.insertUndo(text, after, insertions);
-      return undo;
-    };
-    return redo;
+  private insertRedo: Redo<InsertUndoState> = ([text, after]) => {
+    // TODO: insert `text` after `after` locations.
+    console.log('insert', text, 'after', after);
+    const inserts: ITimespanStruct[] = [];
+    return [[text, after, inserts], this.insertUndo];
   };
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
     const text = event.detail.text;
     const editor = this.txt.editor;
-    const insertions: ITimespanStruct[] = editor.insert(text);
+    const inserts: ITimespanStruct[] = editor.insert(text);
     const after: Point<any>[] = [];
     editor.forCursor(cursor => {
       after.push(cursor.start.clone());
     });
-    this.opts.undo?.do([123]);
-    console.log('insertions', insertions, 'after', after);
+    this.opts.undo?.do<InsertUndoState>([text, after, inserts], this.insertUndo);
   };
 
   public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
