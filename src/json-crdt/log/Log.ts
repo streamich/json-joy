@@ -1,9 +1,9 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next} from 'sonic-forest/lib/util';
-import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import {printTree} from 'tree-dump/lib/printTree';
-import {type ITimestampStruct, type Patch, compare} from '../../json-crdt-patch';
 import {Model} from '../model';
+import {type ITimestampStruct, type Patch, compare} from '../../json-crdt-patch';
+import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
 
@@ -107,12 +107,18 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    * with patches replayed up to the given timestamp.
    *
    * @param ts Timestamp ID of the patch to replay to.
+   * @param inclusive If `true`, the patch at the given timestamp `ts` is included,
+   *     otherwise replays up to the patch before the given timestamp. Default is `true`.
    * @returns A new model instance with patches replayed up to the given timestamp.
    */
-  public replayTo(ts: ITimestampStruct): Model<N> {
+  public replayTo(ts: ITimestampStruct, inclusive: boolean = true): Model<N> {
+    // TODO: PERF: Make `.clone()` implicit in `.start()`.
     const clone = this.start().clone();
-    for (let node = first(this.patches.root); node && compare(ts, node.k) >= 0; node = next(node))
+    let cmp: number = 0;
+    for (let node = first(this.patches.root); node && (cmp = compare(ts, node.k)) >= 0; node = next(node)){
+      if (cmp === 0 && !inclusive) break;
       clone.applyPatch(node.v);
+    }
     return clone;
   }
 
