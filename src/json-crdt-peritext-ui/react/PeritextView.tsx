@@ -56,16 +56,6 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     if (onRender) onRender();
   }, [peritext]);
 
-  const model = peritext.model;
-  React.useEffect(() => {
-    const unsubscribe = peritext.model.api.onFlush.listen((patch) => {
-      console.log('flush', patch);
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [model]);
-
   const state: PeritextSurfaceState = React.useMemo(() => {
     const state = new PeritextSurfaceState(peritext, create(peritext), rerender, plugins);
     onState?.(state);
@@ -86,6 +76,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
       }
       if (dom && dom.opts.source === el) return;
       const ctrl = new DomController({source: el, events: state.events});
+      state.events.undo = ctrl.undo;
       ctrl.start();
       state.dom = ctrl;
       setDom(ctrl);

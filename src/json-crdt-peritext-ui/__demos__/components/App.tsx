@@ -31,7 +31,7 @@ export const App: React.FC = () => {
   });
 
   React.useEffect(() => {
-    model.api.autoFlush();
+    model.api.autoFlush(true);
     return () => {
       model.api.stopAutoFlush?.();
     };

@@ -1,15 +1,41 @@
+import {Peritext} from '../../json-crdt-extensions';
 import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from './types';
+import type {Patch} from '../../json-crdt-patch';
+import type {UndoRedoCollector} from '../types';
 
-export class UndoRedoController implements UiLifeCycles, Printable {
+export interface UndoRedoControllerOpts {
+  txt: Peritext;
+}
+
+export class UndoRedoController implements UndoRedoCollector, UiLifeCycles, Printable {
   private _duringUpdate: boolean = false;
   private _stack: unknown[] = [];
   private el!: HTMLElement;
 
   constructor (
-    public onundo?: (state: unknown) => void,
-    public onredo?: (state: unknown) => void,
+    public readonly opts: UndoRedoControllerOpts,
+    // public onundo?: (state: unknown) => void,
+    // public onredo?: (state: unknown) => void,
   ) {}
+
+  protected captured = new WeakSet<Patch>();
+  // protected undoable(patch: Patch): void {}
+
+  // public live: boolean = false;
+
+  // public capture(callback: () => void): void {
+  public capture(): void {
+    const currentPatch = this.opts.txt.model.api.builder.patch;
+    this.captured.add(currentPatch);
+    // this.live = true;
+    // try {
+    //   callback();
+    // } finally {
+    //   this.undoable.add(this.opts.txt.model.api.builder.patch);
+    //   // this.live = false;
+    // }
+  }
 
   /** ------------------------------------------------------ {@link UndoRedo} */
 
@@ -44,11 +70,21 @@ export class UndoRedoController implements UiLifeCycles, Printable {
     style.top = '10px';
     style.left = '10px';
     style.pointerEvents = 'none';
-    style.fontSize = '2px';
+    // style.fontSize = '2px';
+    style.fontSize = '8px';
     // style.visibility = 'hidden';
     document.body.appendChild(el);
     el.addEventListener('focus', this.onFocus);
     el.addEventListener('input', this.onInput);
+    const {opts, captured} = this;
+    const {txt} = opts;
+    txt.model.api.onFlush.listen((patch) => {
+      const isCaptured = captured.has(patch);
+      if (isCaptured) {
+        captured.delete(patch);
+        console.log('flush 2', patch + '');
+      }
+    });
   }
 
   public stop(): void {

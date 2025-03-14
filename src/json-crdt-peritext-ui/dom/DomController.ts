@@ -32,7 +32,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input = new InputController({et, source, txt, comp});
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
-    this.undo = new UndoRedoController();
+    this.undo = new UndoRedoController({txt});
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
