@@ -2,10 +2,12 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Model} from '../model';
-import {type ITimestampStruct, type Patch, compare} from '../../json-crdt-patch';
+import {toSchema} from '../schema/toSchema';
+import {DelOp, type ITimestampStruct, InsArrOp, InsBinOp, InsObjOp, InsStrOp, InsValOp, InsVecOp, type Patch, Timespan, compare} from '../../json-crdt-patch';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
+import {StrNode} from '../nodes';
 
 /**
  * The `Log` represents a history of patches applied to a JSON CRDT model. It
@@ -141,6 +143,69 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
       for (const patch of newStartPatches) model.applyPatch(patch);
       return model;
     };
+  }
+
+  /**
+   * Creates a patch which reverts the given patch. The RGA insertion operations
+   * are reversed just by deleting the inserted values. All other operations
+   * require time travel to the state just before the patch was applied, so that
+   * a copy of a mutated object can be created and inserted back into the model.
+   * 
+   * @param patch The patch to undo
+   * @returns A new patch that undoes the given patch
+   */
+  public undo(patch: Patch): Patch {
+    const ops = patch.ops;
+    const length = ops.length;
+    if (!length) throw new Error('EMPTY_PATCH');
+    const id = patch.getId();
+    let __model: Model<N> | undefined;
+    const getModel = () => __model || (__model = this.replayTo(id!));
+    const builder = this.end.api.builder;
+    for (let i = length - 1; i >= 0; i--) {
+      const op = ops[i];
+      const opId = op.id;
+      if (op instanceof InsStrOp || op instanceof InsArrOp || op instanceof InsBinOp) {
+        builder.del(op.ref, [new Timespan(opId.sid, opId.time, op.span())]);
+        continue;
+      }
+      const model = getModel();
+      if (op instanceof InsValOp) {
+        const obj = model.index.find(op.obj);
+        if (obj) {
+          const schema = toSchema(obj.v);
+          const newId = schema.build(builder);
+          builder.setVal(op.obj, newId);
+        }
+      } else if (op instanceof InsObjOp || op instanceof InsVecOp) {
+        const data: (typeof op)['data'] = [];
+        for (const [key, value] of op.data) {
+          const obj = model.index.find(value);
+          if (obj) {
+            const schema = toSchema(obj.v);
+            const newId = schema.build(builder);
+            data.push([key, newId] as any);
+          } else {
+            data.push([key, builder.const(undefined)] as any);
+          }
+        }
+        if (data.length) {
+          if (op instanceof InsObjOp) builder.insObj(op.obj, data as InsObjOp['data']);
+          else if (op instanceof InsVecOp) builder.insVec(op.obj, data as InsVecOp['data']);
+        }
+      } else if (op instanceof DelOp) {
+        const node = model.index.find(op.obj);
+        if (node) {
+          const rga = node.v;
+          if (rga instanceof StrNode) {
+            for (const span of op.what) {
+              // TODO: SPAN to view: ...
+            }
+          }
+        }
+      }
+    }
+    return builder.flush();
   }
 
   // ---------------------------------------------------------------- Printable
