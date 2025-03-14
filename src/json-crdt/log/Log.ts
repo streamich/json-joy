@@ -4,10 +4,10 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {Model} from '../model';
 import {toSchema} from '../schema/toSchema';
 import {DelOp, type ITimestampStruct, InsArrOp, InsBinOp, InsObjOp, InsStrOp, InsValOp, InsVecOp, type Patch, Timespan, compare} from '../../json-crdt-patch';
+import {StrNode} from '../nodes';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
-import {StrNode} from '../nodes';
 
 /**
  * The `Log` represents a history of patches applied to a JSON CRDT model. It

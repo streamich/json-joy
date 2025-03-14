@@ -303,11 +303,12 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    *
    * @returns Callback to stop auto flushing.
    */
-  public autoFlush(): () => void {
+  public autoFlush(drainNow = false): () => void {
     const drain = () => this.builder.patch.ops.length && this.flush();
     const onLocalChangesUnsubscribe = this.onLocalChanges.listen(drain);
     const onBeforeTransactionUnsubscribe = this.onBeforeTransaction.listen(drain);
     const onTransactionUnsubscribe = this.onTransaction.listen(drain);
+    if (drainNow) drain();
     return (this.stopAutoFlush = () => {
       this.stopAutoFlush = undefined;
       onLocalChangesUnsubscribe();
