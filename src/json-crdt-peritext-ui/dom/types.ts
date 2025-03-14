@@ -1,3 +1,6 @@
+/**
+ * @todo Unify this with {@link UiLifeCycles}, join interfaces.
+ */
 export interface UiLifeCycles {
   /** Called when UI component is mounted. */
   start(): void;

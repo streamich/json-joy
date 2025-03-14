@@ -8,7 +8,7 @@ import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/E
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
 // import type {ITimespanStruct} from '../../../json-crdt-patch';
-import type {UndoRedoCollector} from '../../types';
+import type {UndoCollector} from '../../types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -27,7 +27,7 @@ export interface PeritextEventDefaultsOpts {
  * will not be executed.
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
-  public undo?: UndoRedoCollector;
+  public undo?: UndoCollector;
 
   public constructor(
     public readonly txt: Peritext,

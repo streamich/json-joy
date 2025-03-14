@@ -1,10 +1,4 @@
-export interface UndoRedoCollector {
-  /**
-   * Marks whether the collector is currently capturing events for undo/redo.
-   * Can be mutated to turn on/off capturing.
-   */
-  // live: boolean;
-
+export interface UndoCollector {
   /**
    * Captures events for undo/redo withing the callback. And sets `live` state
    * to `false` after the callback is executed.
@@ -12,10 +6,14 @@ export interface UndoRedoCollector {
    * @param callback The callback to execute while undo/redo events are being
    *     captured.
    */
-  // capture(callback: () => void): void;
   capture(): void;
-  // do<State>(state: State, undo: Undo<State>): void;
 }
 
-// export type Undo<State> = (state: State) => [state: State, redo: Redo<State>];
-// export type Redo<State> = (state: State) => [state: State, undo: Undo<State>];
+export interface UndoManager {
+  push<U, R>(undo: UndoItem<U, R>): void;
+}
+
+export type UndoItem<UndoState = unknown, RedoState = unknown> = [state: UndoState, undo: UndoCallback<UndoState, RedoState>];
+export type UndoCallback<UndoState = unknown, RedoState = unknown> = (state: UndoState) => RedoItem<RedoState, UndoState>;
+export type RedoItem<RedoState = unknown, UndoState = unknown> = [state: RedoState, redo: RedoCallback<RedoState, UndoState>];
+export type RedoCallback<RedoState = unknown, UndoState = unknown> = (state: RedoState) => UndoItem<UndoState, RedoState>;

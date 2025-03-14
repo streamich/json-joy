@@ -4,7 +4,7 @@ import {CursorController} from './CursorController';
 import {RichTextController} from './RichTextController';
 import {KeyController} from './KeyController';
 import {CompositionController} from './CompositionController';
-import {UndoRedoController} from './UndoRedoController';
+import {UndoRedoController} from './undo/UndoRedoController';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
