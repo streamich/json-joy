@@ -146,6 +146,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+    this.undo?.capture();
   };
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
@@ -164,6 +165,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+    this.undo?.capture();
   };
 
   public readonly buffer = async (event: CustomEvent<events.BufferDetail>) => {
@@ -369,6 +371,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+    this.undo?.capture();
   };
 
   public readonly annals = (event: CustomEvent<events.AnnalsDetail>) => {
