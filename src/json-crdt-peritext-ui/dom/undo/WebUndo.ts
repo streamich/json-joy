@@ -37,6 +37,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
       const style = el.style;
       this.undo.push(undo as UndoItem);
       this.redo = [];
+      el.setAttribute('aria-hidden', 'false');
       style.visibility = 'visible';
       el.focus();
       document.execCommand?.('insertText', false, '|');
@@ -44,6 +45,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
       el.blur();
       this._push = false;
       // style.visibility = 'hidden';
+      el.setAttribute('aria-hidden', 'true');
       (activeElement as HTMLElement)?.focus?.();
     }
   }

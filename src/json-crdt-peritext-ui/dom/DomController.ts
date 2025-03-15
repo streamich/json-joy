@@ -8,10 +8,12 @@ import {UndoRedoController} from './undo/UndoRedoController';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
+import type {Log} from '../../json-crdt/log/Log';
 
 export interface DomControllerOpts {
   source: HTMLElement;
   events: PeritextEventDefaults;
+  log: Log;
 }
 
 export class DomController implements UiLifeCycles, Printable, PeritextRenderingSurfaceApi {
@@ -24,7 +26,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
   public readonly undo: UndoRedoController;
 
   constructor(public readonly opts: DomControllerOpts) {
-    const {source, events} = opts;
+    const {source, events, log} = opts;
     const {txt} = events;
     const et = (this.et = opts.events.et);
     const keys = (this.keys = new KeyController({source}));
@@ -32,7 +34,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input = new InputController({et, source, txt, comp});
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
-    this.undo = new UndoRedoController({txt});
+    this.undo = new UndoRedoController({et, txt, log});
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
