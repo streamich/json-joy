@@ -1,5 +1,4 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
-// import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -7,12 +6,9 @@ import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
-// import type {ITimespanStruct} from '../../../json-crdt-patch';
 import type {UndoCollector} from '../../types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
-
-// type InsertUndoState = [text: string, after: Point<any>[], inserts: ITimespanStruct[]];
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -35,25 +31,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     public readonly opts: PeritextEventDefaultsOpts = {},
   ) {}
 
-  // protected record(callback: () => void): void {
-  //   const {undo} = this;
-  //   undo ? undo.capture(callback) : callback();
-  // }
-
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
-
-  // private insertUndo: Undo<InsertUndoState> = ([text, after, inserts]) => {
-  //   // TODO: delete `insertions`.
-  //   console.log('delete', inserts);
-  //   return [[text, after, inserts], this.insertRedo];
-  // };
-
-  // private insertRedo: Redo<InsertUndoState> = ([text, after]) => {
-  //   // TODO: insert `text` after `after` locations.
-  //   console.log('insert', text, 'after', after);
-  //   const inserts: ITimespanStruct[] = [];
-  //   return [[text, after, inserts], this.insertUndo];
-  // };
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
     const text = event.detail.text;
@@ -391,5 +369,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+  };
+
+  public readonly annals = (event: CustomEvent<events.AnnalsDetail>) => {
+    const {action, patch} = event.detail;
+    this.txt.model.applyPatch(patch);
+    console.log('annals', action, patch);
   };
 }
