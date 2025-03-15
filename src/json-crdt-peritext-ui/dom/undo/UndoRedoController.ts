@@ -49,22 +49,30 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
     this.undo.stop();
   }
 
-  public readonly _undo: UndoCallback<Patch, Patch> = (source: Patch) => {
-    const {log} = this.opts;
-    const patch = log.undo(source);
-    this.opts.et.dispatch('annals', {
+  public readonly _undo: UndoCallback<Patch, Patch> = (doPatch: Patch) => {
+    const {log, et} = this.opts;
+    const patch = log.undo(doPatch);
+    et.dispatch('annals', {
       action: 'undo',
-      source,
+      source: doPatch,
       patch,
     });
-    // log.end.applyPatch(undoPatch);
-    console.log('doPatch', source + '');
+    console.log('doPatch', doPatch + '');
     console.log('undoPatch', patch + '');
-    return [patch, this._redo] as RedoItem<Patch, Patch>;
+    return [doPatch, this._redo] as RedoItem<Patch, Patch>;
   };
 
-  public readonly _redo: RedoCallback<Patch, Patch> = (state: Patch) => {
-    return [state, this._undo] as RedoItem<Patch, Patch>;
+  public readonly _redo: RedoCallback<Patch, Patch> = (doPatch: Patch) => {
+    const {log, et} = this.opts;
+    const redoPatch = doPatch.rebase(log.end.clock.time);
+    et.dispatch('annals', {
+      action: 'redo',
+      source: doPatch,
+      patch: redoPatch,
+    });
+    console.log('doPatch', doPatch + '');
+    console.log('redoPatch', redoPatch + '');
+    return [redoPatch, this._undo] as RedoItem<Patch, Patch>;
   };
 
   /** ----------------------------------------------------- {@link Printable} */

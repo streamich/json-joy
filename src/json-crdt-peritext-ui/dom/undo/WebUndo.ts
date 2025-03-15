@@ -26,6 +26,14 @@ export class WebUndo implements UndoManager, UiLifeCycles {
     }
   }
 
+  protected _redo() {
+    const redo = this.redo.pop();
+    if (redo) {
+      const undo = redo[1](redo[0]);
+      this.undo.push(undo);
+    }
+  }
+
   // /** ------------------------------------------------------ {@link UndoRedo} */
 
   public push<U, R>(undo: UndoItem<U, R>): void {
@@ -90,8 +98,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
       console.log(this.tlen, this.undo.length);
     } else {
       while (this.undo.length && this.undo.length > text.length) this._undo();
-      // if (text.length < this.tlen) {
-      // }
+      while (this.redo.length && this.undo.length < text.length) this._redo();
     }
   };
 }
