@@ -78,6 +78,13 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {blockGroupButton(CommonSliceType.p, 'Paragraph')}
       {blockGroupButton(CommonSliceType.blockquote, 'Blockquote')}
       {blockGroupButton(CommonSliceType.codeblock, 'Code Block')}
+      <ButtonSeparator />
+      {button('Undo', () => {
+        ctx.dom?.undo.undo();
+      })}
+      {button('Redo', () => {
+        ctx.dom?.undo.redo();
+      })}
     </ButtonGroup>
   );
 };

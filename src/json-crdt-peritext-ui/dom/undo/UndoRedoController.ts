@@ -14,7 +14,7 @@ export interface UndoRedoControllerOpts {
 }
 
 export class UndoRedoController implements UndoCollector, UiLifeCycles, Printable {
-  protected undo = new WebUndo();
+  protected manager = new WebUndo();
 
   constructor (
     public readonly opts: UndoRedoControllerOpts,
@@ -29,10 +29,18 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
     this.captured.add(currentPatch);
   }
 
+  public undo(): void {
+    this.manager.undo();
+  }
+
+  redo(): void {
+    this.manager.redo();
+  }
+
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start(): void {
-    this.undo.start();
+    this.manager.start();
     const {opts, captured} = this;
     const {txt} = opts;
     txt.model.api.onFlush.listen((patch) => {
@@ -40,13 +48,13 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
       if (isCaptured) {
         captured.delete(patch);
         const item: UndoItem<Patch, Patch> = [patch, this._undo];
-        this.undo.push(item);
+        this.manager.push(item);
       }
     });
   }
 
   public stop(): void {
-    this.undo.stop();
+    this.manager.stop();
   }
 
   public readonly _undo: UndoCallback<Patch, Patch> = (doPatch: Patch) => {

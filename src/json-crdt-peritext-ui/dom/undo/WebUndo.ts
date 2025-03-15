@@ -12,23 +12,23 @@ export class WebUndo implements UndoManager, UiLifeCycles {
   /** The DOM element, which keeps text content for native undo/redo integration. */
   protected el!: HTMLElement;
   /** Undo stack. */
-  public undo: UndoItem[] = [];
+  public uStack: UndoItem[] = [];
   /** Redo stack. */
-  public redo: UndoItem[] = [];
+  public rStack: UndoItem[] = [];
 
   protected _undo() {
-    const undo = this.undo.pop();
+    const undo = this.uStack.pop();
     if (undo) {
       const redo = undo[1](undo[0]);
-      this.redo.push(redo);
+      this.rStack.push(redo);
     }
   }
 
   protected _redo() {
-    const redo = this.redo.pop();
+    const redo = this.rStack.pop();
     if (redo) {
       const undo = redo[1](redo[0]);
-      this.undo.push(undo);
+      this.uStack.push(undo);
     }
   }
 
@@ -40,18 +40,26 @@ export class WebUndo implements UndoManager, UiLifeCycles {
     const activeElement = document.activeElement;
     try {
       this._push = true;
-      this.redo = [];
+      this.rStack = [];
       el.setAttribute('aria-hidden', 'false');
       el.focus();
       document.execCommand?.('insertText', false, '.');
       const tlen = this.el.innerText.length;
-      if (tlen - 1 === this.undo.length) this.undo.push(undo as UndoItem);
+      if (tlen - 1 === this.uStack.length) this.uStack.push(undo as UndoItem);
     } finally {
       el.blur();
       this._push = false;
       el.setAttribute('aria-hidden', 'true');
       (activeElement as HTMLElement)?.focus?.();
     }
+  }
+
+  undo(): void {
+    document?.execCommand?.('undo');
+  }
+
+  redo(): void {
+    document?.execCommand?.('redo');
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
@@ -87,7 +95,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
   public readonly onInput = () => {
     const tlen = this.el.innerText.length;
     if (!this._push) {
-      const {undo, redo} = this;
+      const {uStack: undo, rStack: redo} = this;
       while (undo.length && undo.length > tlen) this._undo();
       while (redo.length && undo.length < tlen) this._redo();
     }

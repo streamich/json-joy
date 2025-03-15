@@ -8,6 +8,8 @@ export interface UndoCollector {
 
 export interface UndoManager {
   push<U, R>(undo: UndoItem<U, R>): void;
+  undo(): void;
+  redo(): void;
 }
 
 export type UndoItem<UndoState = unknown, RedoState = unknown> = [state: UndoState, undo: UndoCallback<UndoState, RedoState>];
