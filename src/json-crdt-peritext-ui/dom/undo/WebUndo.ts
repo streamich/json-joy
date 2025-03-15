@@ -40,17 +40,15 @@ export class WebUndo implements UndoManager, UiLifeCycles {
     const activeElement = document.activeElement;
     try {
       this._push = true;
-      const style = el.style;
-      this.undo.push(undo as UndoItem);
       this.redo = [];
       el.setAttribute('aria-hidden', 'false');
-      style.visibility = 'visible';
       el.focus();
-      document.execCommand?.('insertText', false, '|');
+      document.execCommand?.('insertText', false, '.');
+      const tlen = this.el.innerText.length;
+      if (tlen - 1 === this.undo.length) this.undo.push(undo as UndoItem);
     } finally {
       el.blur();
       this._push = false;
-      // style.visibility = 'hidden';
       el.setAttribute('aria-hidden', 'true');
       (activeElement as HTMLElement)?.focus?.();
     }
@@ -64,15 +62,11 @@ export class WebUndo implements UndoManager, UiLifeCycles {
     el.contentEditable = 'true';
     el.setAttribute('aria-hidden', 'true');
     const style = el.style;
-    // style.opacity = '0';
-    style.position = 'fixed';
-    // style.top = '-1000px';
-    style.top = '10px';
-    style.left = '10px';
     style.pointerEvents = 'none';
-    // style.fontSize = '2px';
-    style.fontSize = '8px';
-    // style.visibility = 'hidden';
+    style.position = 'fixed';
+    style.fontSize = '1px';
+    style.top = '-1000px';
+    style.opacity = '0';
     document.body.appendChild(el);
     el.addEventListener('focus', this.onFocus);
     el.addEventListener('input', this.onInput);
@@ -86,14 +80,16 @@ export class WebUndo implements UndoManager, UiLifeCycles {
   }
 
   public readonly onFocus = () => {
-    setTimeout(() => this.el.blur(), 0);
+    const el = this.el;
+    setTimeout(() => el.blur(), 0);
   };
 
   public readonly onInput = () => {
     const tlen = this.el.innerText.length;
     if (!this._push) {
-      while (this.undo.length && this.undo.length > tlen) this._undo();
-      while (this.redo.length && this.undo.length < tlen) this._redo();
+      const {undo, redo} = this;
+      while (undo.length && undo.length > tlen) this._undo();
+      while (redo.length && undo.length < tlen) this._redo();
     }
   };
 }

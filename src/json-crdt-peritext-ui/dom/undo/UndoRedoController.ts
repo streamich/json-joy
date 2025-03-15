@@ -57,8 +57,8 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
       source: doPatch,
       patch,
     });
-    console.log('doPatch', doPatch + '');
-    console.log('undoPatch', patch + '');
+    // console.log('doPatch', doPatch + '');
+    // console.log('undoPatch', patch + '');
     return [doPatch, this._redo] as RedoItem<Patch, Patch>;
   };
 
@@ -70,8 +70,8 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
       source: doPatch,
       patch: redoPatch,
     });
-    console.log('doPatch', doPatch + '');
-    console.log('redoPatch', redoPatch + '');
+    // console.log('doPatch', doPatch + '');
+    // console.log('redoPatch', redoPatch + '');
     return [redoPatch, this._undo] as RedoItem<Patch, Patch>;
   };
 

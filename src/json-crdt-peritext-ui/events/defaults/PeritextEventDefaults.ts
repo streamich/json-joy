@@ -372,8 +372,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly annals = (event: CustomEvent<events.AnnalsDetail>) => {
-    const {action, patch} = event.detail;
+    const {patch} = event.detail;
     this.txt.model.applyPatch(patch);
-    console.log('annals', action, patch);
   };
 }
