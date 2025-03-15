@@ -11,8 +11,6 @@ export class WebUndo implements UndoManager, UiLifeCycles {
   private _push: boolean = false;
   /** The DOM element, which keeps text content for native undo/redo integration. */
   protected el!: HTMLElement;
-  /** The last known text contents length of the `el`.  */
-  protected tlen: number = 0;
   /** Undo stack. */
   public undo: UndoItem[] = [];
   /** Redo stack. */
@@ -92,13 +90,10 @@ export class WebUndo implements UndoManager, UiLifeCycles {
   };
 
   public readonly onInput = () => {
-    const text = this.el.innerText;
-    if (this._push) {
-      this.tlen = text.length;
-      console.log(this.tlen, this.undo.length);
-    } else {
-      while (this.undo.length && this.undo.length > text.length) this._undo();
-      while (this.redo.length && this.undo.length < text.length) this._redo();
+    const tlen = this.el.innerText.length;
+    if (!this._push) {
+      while (this.undo.length && this.undo.length > tlen) this._undo();
+      while (this.redo.length && this.undo.length < tlen) this._redo();
     }
   };
 }
