@@ -18,6 +18,8 @@ import type {JsonNode} from '../nodes/types';
  * The log can be used to replay the history of patches to any point in time,
  * from the "start" to the "end" of the log, and return the resulting {@link Model}
  * state.
+ * 
+ * @todo Make this implement UILifecycle (start, stop) interface.
  */
 export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
@@ -31,29 +33,17 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    */
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
     const sid = model.clock.sid;
-    const log = new Log<N>(() => Model.create<any>(undefined, sid) as Model<N>);
+    const log = new Log<N>(() => Model.create<any>(undefined, sid) as Model<N>); /** @todo Maybe provide second arg to `new Log(...)` */
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;
   }
 
-  /**
-   * Model factory function that creates a new JSON CRDT model instance, which
-   * is used as the starting point of the log. It is called every time a new
-   * model is needed to replay the log.
-   *
-   * @readonly Internally this function may be updated, but externally it is
-   *           read-only.
-   */
-  public start: () => Model<N>;
-
-  /**
-   * The end of the log, the current state of the document. It is the model
-   * instance that is used to apply new patches to the log.
-   *
-   * @readonly
-   */
-  public readonly end: Model<N>;
+  public static from<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
+    const frozen = model.toBinary();
+    const beginning = () => Model.fromBinary<N>(frozen);
+    return new Log<N>(beginning, model);
+  }
 
   /**
    * The collection of patches which are applied to the `start()` model to reach
@@ -68,9 +58,28 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
   private __onPatch: FanOutUnsubscribe;
   private __onFlush: FanOutUnsubscribe;
 
-  constructor(start: () => Model<N>) {
-    this.start = start;
-    const end = (this.end = start());
+  constructor(
+    /**
+     * Model factory function that creates a new JSON CRDT model instance, which
+     * is used as the starting point of the log. It is called every time a new
+     * model is needed to replay the log.
+     *
+     * @readonly Internally this function may be updated, but externally it is
+     *           read-only.
+     * 
+     * @todo Rename to something else to give way to a `start()` in UILifecycle.
+     *     Call "snapshot". Maybe introduce `type Snapshot<N> = () => Model<N>;`.
+     */
+    public start: () => Model<N>,
+
+    /**
+     * The end of the log, the current state of the document. It is the model
+     * instance that is used to apply new patches to the log.
+     *
+     * @readonly
+     */
+    public readonly end: Model<N> = start(),
+  ) {
     const onPatch = (patch: Patch) => {
       const id = patch.getId();
       if (!id) return;
@@ -82,7 +91,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
-   * Call this method to destroy the `PatchLog` instance. It unsubscribes patch
+   * Call this method to destroy the {@link Log} instance. It unsubscribes patch
    * and flush listeners from the `end` model and clears the patch log.
    */
   public destroy() {
@@ -141,6 +150,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
     this.start = (): Model<N> => {
       const model = oldStart();
       for (const patch of newStartPatches) model.applyPatch(patch);
+      /** @todo Freeze the old model here, by `model.toBinary()`, it needs to be cloned on .start() anyways. */
       return model;
     };
   }
@@ -166,7 +176,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
       const op = ops[i];
       const opId = op.id;
       if (op instanceof InsStrOp || op instanceof InsArrOp || op instanceof InsBinOp) {
-        builder.del(op.ref, [new Timespan(opId.sid, opId.time, op.span())]);
+        builder.del(op.obj, [new Timespan(opId.sid, opId.time, op.span())]);
         continue;
       }
       const model = getModel();
