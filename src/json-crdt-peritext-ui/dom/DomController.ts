@@ -4,7 +4,7 @@ import {CursorController} from './CursorController';
 import {RichTextController} from './RichTextController';
 import {KeyController} from './KeyController';
 import {CompositionController} from './CompositionController';
-import {UndoRedoController} from './undo/UndoRedoController';
+import {AnnalsController} from './annals/AnnalsController';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
@@ -23,7 +23,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
   public readonly input: InputController;
   public readonly cursor: CursorController;
   public readonly richText: RichTextController;
-  public readonly undo: UndoRedoController;
+  public readonly annals: AnnalsController;
 
   constructor(public readonly opts: DomControllerOpts) {
     const {source, events, log} = opts;
@@ -34,7 +34,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input = new InputController({et, source, txt, comp});
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
-    this.undo = new UndoRedoController({et, txt, log});
+    this.annals = new AnnalsController({et, txt, log});
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
@@ -45,7 +45,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input.start();
     this.cursor.start();
     this.richText.start();
-    this.undo.start();
+    this.annals.start();
   }
 
   public stop(): void {
@@ -54,7 +54,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.input.stop();
     this.cursor.stop();
     this.richText.stop();
-    this.undo.stop();
+    this.annals.stop();
   }
 
   /** ----------------------------------- {@link PeritextRenderingSurfaceApi} */

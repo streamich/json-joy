@@ -80,10 +80,10 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {blockGroupButton(CommonSliceType.codeblock, 'Code Block')}
       <ButtonSeparator />
       {button('Undo', () => {
-        ctx.dom?.undo.undo();
+        ctx.dom?.annals.undo();
       })}
       {button('Redo', () => {
-        ctx.dom?.undo.redo();
+        ctx.dom?.annals.redo();
       })}
     </ButtonGroup>
   );

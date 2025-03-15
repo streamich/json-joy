@@ -13,7 +13,7 @@ export interface UndoRedoControllerOpts {
   et: PeritextEventTarget;
 }
 
-export class UndoRedoController implements UndoCollector, UiLifeCycles, Printable {
+export class AnnalsController implements UndoCollector, UiLifeCycles, Printable {
   protected manager = new WebUndo();
 
   constructor (
@@ -33,7 +33,7 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
     this.manager.undo();
   }
 
-  redo(): void {
+  public redo(): void {
     this.manager.redo();
   }
 

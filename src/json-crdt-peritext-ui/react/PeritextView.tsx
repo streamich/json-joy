@@ -78,7 +78,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
       }
       if (dom && dom.opts.source === el) return;
       const ctrl = new DomController({source: el, events: state.events, log: state.log});
-      state.events.undo = ctrl.undo;
+      state.events.undo = ctrl.annals;
       ctrl.start();
       state.dom = ctrl;
       setDom(ctrl);
