@@ -1,10 +1,7 @@
 export interface UndoCollector {
   /**
-   * Captures events for undo/redo withing the callback. And sets `live` state
-   * to `false` after the callback is executed.
-   *
-   * @param callback The callback to execute while undo/redo events are being
-   *     captured.
+   * Mark the currently minted change {@link Patch} in {@link Builder} for undo.
+   * It will be picked up during the next flush.
    */
   capture(): void;
 }

@@ -56,19 +56,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   // };
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
-    // this.record(() => {
-    //   console.log('here')
-      const text = event.detail.text;
-      const editor = this.txt.editor;
-      editor.insert(text);
-      this.undo?.capture();
-      // const inserts: ITimespanStruct[] = editor.insert(text);
-      // const after: Point<any>[] = [];
-      // editor.forCursor(cursor => {
-      //   after.push(cursor.start.clone());
-      // });
-    // });
-    // this.opts.undo?.do<InsertUndoState>([text, after, inserts], this.insertUndo);
+    const text = event.detail.text;
+    const editor = this.txt.editor;
+    editor.insert(text);
+    this.undo?.capture();
   };
 
   public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
@@ -79,6 +70,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       editor.cursor.set(point);
     }
     editor.delete(len, unit);
+    this.undo?.capture();
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {

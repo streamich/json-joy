@@ -1,5 +1,5 @@
 import {Peritext} from '../../../json-crdt-extensions';
-import {DomUndo} from './DomUndo';
+import {WebUndo} from './WebUndo';
 import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from '../types';
 import type {Patch} from '../../../json-crdt-patch';
@@ -10,7 +10,7 @@ export interface UndoRedoControllerOpts {
 }
 
 export class UndoRedoController implements UndoCollector, UiLifeCycles, Printable {
-  protected undo = new DomUndo();
+  protected undo = new WebUndo();
 
   constructor (
     public readonly opts: UndoRedoControllerOpts,
@@ -46,6 +46,7 @@ export class UndoRedoController implements UndoCollector, UiLifeCycles, Printabl
   }
 
   public readonly _undo: UndoCallback<Patch, Patch> = (state: Patch) => {
+    console.log('UNDO');
     return [state, this._redo] as RedoItem<Patch, Patch>;
   };
 

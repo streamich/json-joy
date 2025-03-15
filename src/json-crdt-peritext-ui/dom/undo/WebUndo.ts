@@ -6,7 +6,7 @@ import type {UiLifeCycles} from '../types';
  * the browser. Supports user Ctrl+Z and Ctrl+Shift+Z shortcuts and application
  * context menu undo/redo events.
  */
-export class DomUndo implements UndoManager, UiLifeCycles {
+export class WebUndo implements UndoManager, UiLifeCycles {
   /** Whether we are in a process of pushing a new undo item. */
   private _push: boolean = false;
   /** The DOM element, which keeps text content for native undo/redo integration. */
@@ -17,6 +17,14 @@ export class DomUndo implements UndoManager, UiLifeCycles {
   public undo: UndoItem[] = [];
   /** Redo stack. */
   public redo: UndoItem[] = [];
+
+  protected _undo() {
+    const undo = this.undo.pop();
+    if (undo) {
+      const redo = undo[1](undo[0]);
+      this.redo.push(redo);
+    }
+  }
 
   // /** ------------------------------------------------------ {@link UndoRedo} */
 
@@ -74,11 +82,14 @@ export class DomUndo implements UndoManager, UiLifeCycles {
   };
 
   public readonly onInput = () => {
+    const text = this.el.innerText;
     if (this._push) {
-      console.log('onInput PUSH');
-      // callback(this.data);
+      this.tlen = text.length;
+      console.log(this.tlen, this.undo.length);
     } else {
-      console.log('onInput HISTORY');
+      while (this.undo.length && this.undo.length > text.length) this._undo();
+      // if (text.length < this.tlen) {
+      // }
     }
   };
 }
