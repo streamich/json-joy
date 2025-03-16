@@ -1,6 +1,6 @@
-import type {Peritext} from '../../../json-crdt-extensions';
 import {WebUndo} from './WebUndo';
-import type {Printable} from 'tree-dump';
+import {printTree, type Printable} from 'tree-dump';
+import type {Peritext} from '../../../json-crdt-extensions';
 import type {UiLifeCycles} from '../types';
 import type {Patch} from '../../../json-crdt-patch';
 import type {RedoCallback, RedoItem, UndoCallback, UndoCollector, UndoItem} from '../../types';
@@ -84,6 +84,12 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    throw new Error('Method not implemented.');
+    return (
+      'annals' +
+      printTree(tab, [
+        (tab) => 'undo: ' + this.manager.uStack.length,
+        (tab) => 'redo: ' + this.manager.rStack.length,
+      ])
+    );
   }
 }

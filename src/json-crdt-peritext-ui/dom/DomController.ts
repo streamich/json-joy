@@ -72,6 +72,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
         (tab) => this.cursor.toString(tab),
         (tab) => this.keys.toString(tab),
         (tab) => this.comp.toString(tab),
+        (tab) => this.annals.toString(tab),
       ])
     );
   }
