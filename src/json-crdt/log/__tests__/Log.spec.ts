@@ -1,4 +1,4 @@
-import {s} from '../../../json-crdt-patch';
+import {DelOp, s} from '../../../json-crdt-patch';
 import {Model} from '../../model';
 import {Log} from '../Log';
 
@@ -116,5 +116,152 @@ describe('.advanceTo()', () => {
     log.advanceTo(patch2.getId()!);
     expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
     expect(log.start().view()).toEqual({foo: 'bar', x: 1, y: 2});
+  });
+});
+
+describe('.undo()', () => {
+  describe('RGA', () => {
+    test('can undo string insert', () => {
+      const {log} = setup({str: ''});
+      log.end.api.flush();
+      log.end.api.str(['str']).ins(0, 'a');
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(1);
+      expect(patch.ops[0].name()).toBe('ins_str');
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(1);
+      expect(undo.ops[0].name()).toBe('del');
+      const del = undo.ops[0] as DelOp;
+      expect(del.what.length).toBe(1);
+      expect(del.what[0].sid).toBe(patch.ops[0].id.sid);
+      expect(del.what[0].time).toBe(patch.ops[0].id.time);
+      expect(del.what[0].span).toBe(1);
+      expect(log.end.view()).toEqual({str: 'a'});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({str: ''});
+    });
+
+    test('can undo blob insert', () => {
+      const {log} = setup({bin: new Uint8Array()});
+      log.end.api.flush();
+      log.end.api.bin(['bin']).ins(0, new Uint8Array([1, 2, 3]));
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(1);
+      expect(patch.ops[0].name()).toBe('ins_bin');
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(1);
+      expect(undo.ops[0].name()).toBe('del');
+      const del = undo.ops[0] as DelOp;
+      expect(del.what.length).toBe(1);
+      expect(del.what[0].sid).toBe(patch.ops[0].id.sid);
+      expect(del.what[0].time).toBe(patch.ops[0].id.time);
+      expect(del.what[0].span).toBe(3);
+      expect(log.end.view()).toEqual({bin: new Uint8Array([1, 2, 3])});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({bin: new Uint8Array([])});
+    });
+
+    test('can undo array insert', () => {
+      const {log} = setup({arr: []});
+      log.end.api.flush();
+      log.end.api.arr(['arr']).ins(0, [s.con(1)]);
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(2);
+      const insOp = patch.ops.find(op => op.name() === 'ins_arr')!;
+      expect(log.end.view()).toEqual({arr: [1]});
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(1);
+      expect(undo.ops[0].name()).toBe('del');
+      const del = undo.ops[0] as DelOp;
+      expect(del.what.length).toBe(1);
+      expect(del.what[0].sid).toBe(insOp.id.sid);
+      expect(del.what[0].time).toBe(insOp.id.time);
+      expect(del.what[0].span).toBe(1);
+      expect(log.end.view()).toEqual({arr: [1]});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({arr: []});
+    });
+  });
+
+  describe('LWW', () => {
+    test('can undo object key write', () => {
+      const {log} = setup({obj: {foo: s.con('bar')}});
+      log.end.api.flush();
+      expect(log.end.view()).toEqual({obj: {foo: 'bar'}});
+      log.end.api.obj(['obj']).set({foo: s.con('baz')});
+      expect(log.end.view()).toEqual({obj: {foo: 'baz'}});
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(2);
+      const insOp = patch.ops.find(op => op.name() === 'ins_obj')!;
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(2);
+      expect(log.end.view()).toEqual({obj: {foo: 'baz'}});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({obj: {foo: 'bar'}});
+    });
+
+    test('can undo object key delete', () => {
+      const {log} = setup({obj: {foo: s.con('bar')}});
+      log.end.api.flush();
+      expect(log.end.view()).toEqual({obj: {foo: 'bar'}});
+      log.end.api.obj(['obj']).del(['foo']);
+      expect(log.end.view()).toEqual({obj: {}});
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(2);
+      const insOp = patch.ops.find(op => op.name() === 'ins_obj')!;
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(2);
+      expect(log.end.view()).toEqual({obj: {}});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({obj: {foo: 'bar'}});
+    });
+
+    test('can undo vector element write', () => {
+      const {log} = setup({vec: s.vec(s.con('bar'))});
+      log.end.api.flush();
+      expect(log.end.view()).toEqual({vec: ['bar']});
+      log.end.api.vec(['vec']).set([[0, s.con('baz')]]);
+      expect(log.end.view()).toEqual({vec: ['baz']});
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(2);
+      const insOp = patch.ops.find(op => op.name() === 'ins_vec')!;
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(2);
+      expect(log.end.view()).toEqual({vec: ['baz']});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({vec: ['bar']});
+    });
+
+    test('can undo vector element "delete"', () => {
+      const {log} = setup({vec: s.vec(s.con('bar'))});
+      log.end.api.flush();
+      expect(log.end.view()).toEqual({vec: ['bar']});
+      log.end.api.vec(['vec']).set([[0, s.con(undefined)]]);
+      expect(log.end.view()).toEqual({vec: [undefined]});
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(2);
+      const insOp = patch.ops.find(op => op.name() === 'ins_vec')!;
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(2);
+      expect(log.end.view()).toEqual({vec: [undefined]});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({vec: ['bar']});
+    });
+
+    test('can undo register write', () => {
+      const {log} = setup({arr: [1]});
+      log.end.api.flush();
+      expect(log.end.view()).toEqual({arr: [1]});
+      log.end.api.val(['arr', 0]).set(2);
+      expect(log.end.view()).toEqual({arr: [2]});
+      const patch = log.end.api.flush();
+      expect(patch.ops.length).toBe(2);
+      const insOp = patch.ops.find(op => op.name() === 'ins_val')!;
+      const undo = log.undo(patch);
+      expect(undo.ops.length).toBe(2);
+      expect(log.end.view()).toEqual({arr: [2]});
+      log.end.applyPatch(undo);
+      expect(log.end.view()).toEqual({arr: [1]});
+    });
   });
 });

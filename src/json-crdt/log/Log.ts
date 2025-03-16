@@ -16,7 +16,7 @@ import {
   Timespan,
   compare,
 } from '../../json-crdt-patch';
-import {StrNode} from '../nodes';
+import {ObjNode, StrNode, ValNode, VecNode} from '../nodes';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
@@ -184,7 +184,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
     if (!length) throw new Error('EMPTY_PATCH');
     const id = patch.getId();
     let __model: Model<N> | undefined;
-    const getModel = () => __model || (__model = this.replayTo(id!));
+    const getModel = () => __model || (__model = this.replayTo(id!, false));
     const builder = this.end.api.builder;
     for (let i = length - 1; i >= 0; i--) {
       const op = ops[i];
@@ -194,19 +194,23 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
         continue;
       }
       const model = getModel();
+      // TODO: Do not overwrite already deleted values? Or needed for concurrency?
       if (op instanceof InsValOp) {
-        const obj = model.index.find(op.obj);
-        if (obj) {
-          const schema = toSchema(obj.v);
+        const val = model.index.get(op.obj);
+        if (val instanceof ValNode) {
+          const schema = toSchema(val.node());
           const newId = schema.build(builder);
           builder.setVal(op.obj, newId);
         }
       } else if (op instanceof InsObjOp || op instanceof InsVecOp) {
         const data: (typeof op)['data'] = [];
-        for (const [key, value] of op.data) {
-          const obj = model.index.find(value);
-          if (obj) {
-            const schema = toSchema(obj.v);
+        const container = model.index.get(op.obj);
+        for (const [key] of op.data) {
+          let value: JsonNode | undefined;
+          if (container instanceof ObjNode) value = container.get(key + '');
+          else if (container instanceof VecNode) value = container.get(+key);
+          if (value) {
+            const schema = toSchema(value);
             const newId = schema.build(builder);
             data.push([key, newId] as any);
           } else {
