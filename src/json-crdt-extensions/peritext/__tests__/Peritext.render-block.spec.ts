@@ -5,7 +5,7 @@ import {render} from './render';
 
 const runInlineSlicesTests = (
   desc: string,
-  insertNumbers = (editor: Editor) => editor.insert('abcdefghijklmnopqrstuvwxyz'),
+  insertNumbers = (editor: Editor) => void editor.insert('abcdefghijklmnopqrstuvwxyz'),
 ) => {
   const setup = () => {
     const model = Model.withLogicalClock();
