@@ -4,7 +4,12 @@ import {Anchor} from '../../rga/constants';
 import {CursorAnchor} from '../../slice/constants';
 import type {Editor} from '../Editor';
 
-const setup = (insert = (editor: Editor<string>) => {editor.insert('Hello world!')}, sid?: number) => {
+const setup = (
+  insert = (editor: Editor<string>) => {
+    editor.insert('Hello world!');
+  },
+  sid?: number,
+) => {
   const model = Model.create(void 0, sid);
   model.api.root({
     text: '',

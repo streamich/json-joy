@@ -320,7 +320,12 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
 
 runAlphabetKitTestSuite(runTestsWithAlphabetKit);
 
-const setup = (insert = (editor: Editor) => {editor.insert('Hello world!')}, sid?: number) => {
+const setup = (
+  insert = (editor: Editor) => {
+    editor.insert('Hello world!');
+  },
+  sid?: number,
+) => {
   const model = Model.create(void 0, sid);
   model.api.root({
     text: '',

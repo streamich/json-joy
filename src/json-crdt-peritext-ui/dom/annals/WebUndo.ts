@@ -65,7 +65,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start(): void {
-    const el = this.el = document.createElement('div');
+    const el = (this.el = document.createElement('div'));
     el.tabIndex = -1;
     el.contentEditable = 'true';
     el.setAttribute('aria-hidden', 'true');

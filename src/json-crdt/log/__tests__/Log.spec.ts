@@ -102,7 +102,7 @@ describe('.advanceTo()', () => {
     expect(log.start().view()).toEqual({foo: 'baz', x: 1, y: 2});
     expect(log.patches.size()).toBe(0);
   });
-  
+
   test('can advance multiple patches at once', () => {
     const {log} = setup({foo: 'bar'});
     log.end.api.obj([]).set({x: 1});

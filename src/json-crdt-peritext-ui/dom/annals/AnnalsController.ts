@@ -1,4 +1,4 @@
-import {Peritext} from '../../../json-crdt-extensions';
+import type {Peritext} from '../../../json-crdt-extensions';
 import {WebUndo} from './WebUndo';
 import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from '../types';
@@ -16,9 +16,7 @@ export interface UndoRedoControllerOpts {
 export class AnnalsController implements UndoCollector, UiLifeCycles, Printable {
   protected manager = new WebUndo();
 
-  constructor (
-    public readonly opts: UndoRedoControllerOpts,
-  ) {}
+  constructor(public readonly opts: UndoRedoControllerOpts) {}
 
   protected captured = new WeakSet<Patch>();
 

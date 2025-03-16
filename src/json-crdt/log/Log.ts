@@ -3,7 +3,19 @@ import {first, next} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Model} from '../model';
 import {toSchema} from '../schema/toSchema';
-import {DelOp, type ITimestampStruct, InsArrOp, InsBinOp, InsObjOp, InsStrOp, InsValOp, InsVecOp, type Patch, Timespan, compare} from '../../json-crdt-patch';
+import {
+  DelOp,
+  type ITimestampStruct,
+  InsArrOp,
+  InsBinOp,
+  InsObjOp,
+  InsStrOp,
+  InsValOp,
+  InsVecOp,
+  type Patch,
+  Timespan,
+  compare,
+} from '../../json-crdt-patch';
 import {StrNode} from '../nodes';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
@@ -18,7 +30,7 @@ import type {JsonNode} from '../nodes/types';
  * The log can be used to replay the history of patches to any point in time,
  * from the "start" to the "end" of the log, and return the resulting {@link Model}
  * state.
- * 
+ *
  * @todo Make this implement UILifecycle (start, stop) interface.
  */
 export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
@@ -33,7 +45,9 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    */
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
     const sid = model.clock.sid;
-    const log = new Log<N>(() => Model.create<any>(undefined, sid) as Model<N>); /** @todo Maybe provide second arg to `new Log(...)` */
+    const log = new Log<N>(
+      () => Model.create<any>(undefined, sid) as Model<N>,
+    ); /** @todo Maybe provide second arg to `new Log(...)` */
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;
@@ -66,7 +80,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
      *
      * @readonly Internally this function may be updated, but externally it is
      *           read-only.
-     * 
+     *
      * @todo Rename to something else to give way to a `start()` in UILifecycle.
      *     Call "snapshot". Maybe introduce `type Snapshot<N> = () => Model<N>;`.
      */
@@ -126,7 +140,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
     // TODO: PERF: Make `.clone()` implicit in `.start()`.
     const clone = this.start().clone();
     let cmp: number = 0;
-    for (let node = first(this.patches.root); node && (cmp = compare(ts, node.k)) >= 0; node = next(node)){
+    for (let node = first(this.patches.root); node && (cmp = compare(ts, node.k)) >= 0; node = next(node)) {
       if (cmp === 0 && !inclusive) break;
       clone.applyPatch(node.v);
     }
@@ -160,7 +174,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    * are reversed just by deleting the inserted values. All other operations
    * require time travel to the state just before the patch was applied, so that
    * a copy of a mutated object can be created and inserted back into the model.
-   * 
+   *
    * @param patch The patch to undo
    * @returns A new patch that undoes the given patch
    */
