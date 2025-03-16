@@ -1,3 +1,4 @@
+import {saveSelection} from '../util';
 import type {UndoManager, UndoItem} from '../../types';
 import type {UiLifeCycles} from '../types';
 
@@ -36,8 +37,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
 
   public push<U, R>(undo: UndoItem<U, R>): void {
     const el = this.el;
-    // TODO: restore previous selection (multiple ranges), not just focus
-    const activeElement = document.activeElement;
+    const restoreSelection = saveSelection();
     try {
       this._push = true;
       this.rStack = [];
@@ -50,7 +50,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
       el.blur();
       this._push = false;
       el.setAttribute('aria-hidden', 'true');
-      (activeElement as HTMLElement)?.focus?.();
+      restoreSelection?.();
     }
   }
 
