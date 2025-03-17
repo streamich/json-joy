@@ -3,6 +3,7 @@ import * as React from 'react';
 import {drule} from 'nano-theme';
 import {useDebugCtx} from './context';
 import type {BlockViewProps} from '../../react/BlockView';
+import {CommonSliceType} from '../../../json-crdt-extensions';
 
 const blockClass = drule({
   pos: 'relative',
@@ -41,7 +42,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
             display: 'inline-block',
           }}
         >
-          {hash.toString(36)}
+          {hash.toString(36)} {block.path.map(type => typeof type === 'number' ? `<${CommonSliceType[type] ?? type}>` : `<${type}>`).join('.')}
         </span>
       </div>
       <div style={{outline: '1px dotted blue'}}>{children}</div>
