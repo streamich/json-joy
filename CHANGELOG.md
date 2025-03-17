@@ -1,3 +1,42 @@
+# [17.32.0](https://github.com/streamich/json-joy/compare/v17.31.0...v17.32.0) (2025-03-17)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 correct Log.undo() for LWW nodes ([c90a0a7](https://github.com/streamich/json-joy/commit/c90a0a7276be919b01ec742ad8b1d368cf406102))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 report insertion spans from Editor ([ce6cbac](https://github.com/streamich/json-joy/commit/ce6cbac42359078fabde30c1d89190ed1737fcea))
+* **json-crdt-peritext-ui:** 🎸 add history trackign to more events ([45759a1](https://github.com/streamich/json-joy/commit/45759a1ed0f08ae87bc6e82a7171355ab6b037d4))
+* **json-crdt-peritext-ui:** 🎸 add undo/redo top toolbar buttons ([91d117a](https://github.com/streamich/json-joy/commit/91d117a3be6966d76c28c7c8a553f1d6ebb4ed33))
+* **json-crdt-peritext-ui:** 🎸 adjust cursor on text insert/delte undo/redo ([a0c565e](https://github.com/streamich/json-joy/commit/a0c565e0ebd4349ba36e7b4f02c0c0f570338b3b))
+* **json-crdt-peritext-ui:** 🎸 cleanup undo history implementations ([893d6d3](https://github.com/streamich/json-joy/commit/893d6d3d753912208699b8c4a0f746dd71376118))
+* **json-crdt-peritext-ui:** 🎸 implement history redo method ([c777adf](https://github.com/streamich/json-joy/commit/c777adf1c9f160d6762002f569d5b1b7a21a52ea))
+* **json-crdt-peritext-ui:** 🎸 implement in-memory undo manager ([38978f9](https://github.com/streamich/json-joy/commit/38978f9db01f33be5bc2cd17f4c730d8b06da9b2))
+* **json-crdt-peritext-ui:** 🎸 improve undo manager integration ([d494e05](https://github.com/streamich/json-joy/commit/d494e0599a629b88cba00d6fa537193444412e19))
+* **json-crdt-peritext-ui:** 🎸 introduce history undo/redo annals event ([d95814a](https://github.com/streamich/json-joy/commit/d95814a8002c6fc40ea1f29f8be4317eddf7498a))
+* **json-crdt-peritext-ui:** 🎸 print debug text for annals controller ([bcaed96](https://github.com/streamich/json-joy/commit/bcaed9681c22a3a9c4f4073a223e1b625ccc0924))
+* **json-crdt-peritext-ui:** 🎸 progress on undo manager implementation ([0e9e083](https://github.com/streamich/json-joy/commit/0e9e083d4f42f516801473a6ab26e8a26596e1f9))
+* **json-crdt-peritext-ui:** 🎸 save selection and restore it ([3350468](https://github.com/streamich/json-joy/commit/33504680e422e6d4732acec1407d586e72e3b6fb))
+* **json-crdt-peritext-ui:** 🎸 setup new undo controller ([53b50fa](https://github.com/streamich/json-joy/commit/53b50fab237001c96a6fdd7d64eaba914a2710c8))
+* **json-crdt-peritext-ui:** 🎸 update undo setup ([b6f1119](https://github.com/streamich/json-joy/commit/b6f1119008ef583954666c86b795fb095f0c257f))
+* **json-crdt:** 🎸 add ability to replay log until patch non-inclusively ([6770ffc](https://github.com/streamich/json-joy/commit/6770ffc14d32277e933f9525433774df2497e571))
+* **json-crdt:** 🎸 add ability to retireve a partial view of as span in RGA ([80603ae](https://github.com/streamich/json-joy/commit/80603ae59e57ded3743802d88965da5e6da8267e))
+* **json-crdt:** 🎸 allow immediate drain on autoflush ([a7a2e76](https://github.com/streamich/json-joy/commit/a7a2e7694956fe07b41117cb0eb9d49e5a65ae43))
+* **json-crdt:** 🎸 implement .prevId() utility ([5905bfd](https://github.com/streamich/json-joy/commit/5905bfdbd776366bdfccdb417adbe09dc62729e5))
+* **json-crdt:** 🎸 implement "arr" node undo ([d6d564d](https://github.com/streamich/json-joy/commit/d6d564d67bd7e4e9662a0e50020b506524400220))
+* **json-crdt:** 🎸 implement "bin" node deletion undo ([c33a0a5](https://github.com/streamich/json-joy/commit/c33a0a5d868a483f1ac399f3fec596a855fce8cd))
+* **json-crdt:** 🎸 implement string deletion undo in Log ([348ab2c](https://github.com/streamich/json-joy/commit/348ab2c920e33cbf1b6ba8f350ff56ef89823e44))
+* **json-crdt:** 🎸 improve Log construction API ([29633d4](https://github.com/streamich/json-joy/commit/29633d41b339513cf670771993df0cf1444aeb50))
+* **json-crdt:** 🎸 start .undo() implementation ([d34dca8](https://github.com/streamich/json-joy/commit/d34dca8d85636e6dbb58749cddc6627567a728a9))
+
+
+### Performance Improvements
+
+* **json-crdt-peritext-ui:** ⚡️ do not track of undo element text length ([7844476](https://github.com/streamich/json-joy/commit/784447643f0b613e64e7c237c60c8a81810e8480))
+
 # [17.31.0](https://github.com/streamich/json-joy/compare/v17.30.0...v17.31.0) (2025-03-11)
 
 
