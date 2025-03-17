@@ -74,9 +74,9 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
     }
 
     let children: React.ReactNode = (
-      <div ref={(element) => el?.(element)} style={{position: 'relative'}}>
+      <span ref={(element) => el?.(element)} style={{position: 'relative', display: 'block'}}>
         {elements.length ? elements : Char.ZeroLengthSpace}
-      </div>
+      </span>
     );
     for (const map of plugins) children = map.block?.(props, children) ?? children;
     return children;

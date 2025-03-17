@@ -1,0 +1,1 @@
+export {BlocksPlugin} from './BlocksPlugin';

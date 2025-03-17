@@ -6,11 +6,14 @@ import {PeritextView} from '../../react';
 import {CursorPlugin} from '../../plugins/cursor';
 import {ToolbarPlugin} from '../../plugins/toolbar';
 import {DebugPlugin} from '../../plugins/debug';
+import {BlocksPlugin} from '../../plugins/blocks';
 
 const markdown =
   'The German __automotive sector__ is in the process of *cutting ' +
   'thousands of jobs* as it grapples with a global shift toward electric vehicles ' +
   '— a transformation Musk himself has been at the forefront of.' +
+  '\n\n' +
+  '> To be, or not to be: that is the question.' +
   '\n\n' +
   'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
   'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
@@ -19,10 +22,7 @@ const markdown =
 export const App: React.FC = () => {
   const [[model, peritext]] = React.useState(() => {
     const model = ModelWithExt.create(
-      ext.peritext.new(
-        '',
-        // 'The German automotive sector is in the process of cutting thousands of jobs as it grapples with a global shift toward electric vehicles — a transformation Musk himself has been at the forefront of.',
-      ),
+      ext.peritext.new(''),
     );
     const peritext = model.s.toExt().txt;
     peritext.refresh();
@@ -40,8 +40,14 @@ export const App: React.FC = () => {
   const plugins = React.useMemo(() => {
     const cursorPlugin = new CursorPlugin();
     const toolbarPlugin = new ToolbarPlugin();
+    const blocksPlugin = new BlocksPlugin();
     const debugPlugin = new DebugPlugin({enabled: false});
-    return [cursorPlugin, toolbarPlugin, debugPlugin];
+    return [
+      cursorPlugin,
+      toolbarPlugin,
+      blocksPlugin,
+      debugPlugin,
+    ];
   }, []);
 
   return (
