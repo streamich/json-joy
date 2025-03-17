@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.69% </span>
+                <span class="strong">80.92% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>397/492</span>
+                <span class='fraction'>403/498</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.16% </span>
+                <span class="strong">70.32% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>127/181</span>
+                <span class='fraction'>128/182</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.03% </span>
+                <span class="strong">83.25% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>328/395</span>
+                <span class='fraction'>333/400</span>
             </div>
         
             
@@ -956,7 +956,12 @@
 <a name='L891'></a><a href='#L891'>891</a>
 <a name='L892'></a><a href='#L892'>892</a>
 <a name='L893'></a><a href='#L893'>893</a>
-<a name='L894'></a><a href='#L894'>894</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">58x</span>
+<a name='L894'></a><a href='#L894'>894</a>
+<a name='L895'></a><a href='#L895'>895</a>
+<a name='L896'></a><a href='#L896'>896</a>
+<a name='L897'></a><a href='#L897'>897</a>
+<a name='L898'></a><a href='#L898'>898</a>
+<a name='L899'></a><a href='#L899'>899</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-yes">58x</span>
@@ -1150,6 +1155,8 @@
 <span class="cline-any cline-yes">564x</span>
 <span class="cline-any cline-yes">564x</span>
 <span class="cline-any cline-yes">564x</span>
+<span class="cline-any cline-yes">564x</span>
+<span class="cline-any cline-yes">564x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1159,6 +1166,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">552x</span>
 <span class="cline-any cline-yes">552x</span>
+<span class="cline-any cline-yes">552x</span>
+<span class="cline-any cline-yes">564x</span>
 <span class="cline-any cline-yes">564x</span>
 <span class="cline-any cline-yes">564x</span>
 <span class="cline-any cline-yes">564x</span>
@@ -1169,6 +1178,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">552x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1863,7 +1873,7 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
 import {CommonSliceType, type SliceType} from '../slice';
-import {tick} from '../../../json-crdt-patch';
+import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
@@ -2033,26 +2043,30 @@ export class Editor&lt;T = string&gt; implements Printable {
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
    */
-  public insert0(cursor: Cursor&lt;T&gt;, text: string): void {
+  public insert0(cursor: Cursor&lt;T&gt;, text: string): ITimespanStruct | undefined {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!text) <span class="cstat-no" title="statement not covered" >return;</span>
     if (!cursor.isCollapsed()) this.delRange(cursor);
     const after = cursor.start.clone();
     after.refAfter();
     const txt = this.txt;
     const textId = txt.ins(after.id, text);
+    const span = new Timespan(textId.sid, textId.time, text.length);
     const shift = text.length - 1;
     const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
     cursor.set(point, point, CursorAnchor.Start);
+    return span;
   }
 &nbsp;
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
    * The applies any pending inline formatting to the inserted text.
    */
-  public insert(text: string): void {
+  public insert(text: string): ITimespanStruct[] {
+    const spans: ITimespanStruct[] = [];
     if (!this.hasCursor()) this.addCursor();
     for (let cursor: Cursor&lt;T&gt; | undefined, i = this.cursors0(); (cursor = i()); ) {
-      this.insert0(cursor, text);
+      const span = this.insert0(cursor, text);
+      if (span) spans.push(span);
       const pending = this.pending.value;
       <span class="missing-if-branch" title="if path not taken" >I</span>if (pending.size) {
 <span class="cstat-no" title="statement not covered" >        this.pending.next(new Map());</span>
@@ -2062,6 +2076,7 @@ export class Editor&lt;T = string&gt; implements Printable {
 <span class="cstat-no" title="statement not covered" >        for (const [type, data] of pending) <span class="cstat-no" title="statement not covered" >this.toggleRangeExclFmt(range, type, data);</span></span>
       }
     }
+    return spans;
   }
 &nbsp;
   /**
@@ -2749,7 +2764,7 @@ export class Editor&lt;T = string&gt; implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-17T04:56:09.289Z
+                at 2025-03-17T18:20:19.348Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
