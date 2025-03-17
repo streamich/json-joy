@@ -1,8 +1,8 @@
 import {WebUndo} from './WebUndo';
 import {printTree, type Printable} from 'tree-dump';
+import type {Patch} from '../../../json-crdt-patch';
 import type {Peritext} from '../../../json-crdt-extensions';
 import type {UiLifeCycles} from '../types';
-import type {Patch} from '../../../json-crdt-patch';
 import type {RedoCallback, RedoItem, UndoCallback, UndoCollector, UndoItem} from '../../types';
 import type {Log} from '../../../json-crdt/log/Log';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';

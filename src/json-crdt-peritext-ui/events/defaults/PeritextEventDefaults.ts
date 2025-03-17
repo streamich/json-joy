@@ -1,4 +1,5 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
+import {placeCursor} from './annals';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -377,5 +378,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public readonly annals = (event: CustomEvent<events.AnnalsDetail>) => {
     const {batch} = event.detail;
     this.txt.model.applyBatch(batch);
+    const txt = this.txt;
+    const cursor = placeCursor(txt, batch);
+    if (cursor) txt.editor.cursor.setRange(cursor);
   };
 }
