@@ -12,7 +12,7 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {formatType} from '../slice/util';
 import {CommonSliceType, type SliceType} from '../slice';
-import {tick} from '../../../json-crdt-patch';
+import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
@@ -182,26 +182,30 @@ export class Editor<T = string> implements Printable {
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
    */
-  public insert0(cursor: Cursor<T>, text: string): void {
+  public insert0(cursor: Cursor<T>, text: string): ITimespanStruct | undefined {
     if (!text) return;
     if (!cursor.isCollapsed()) this.delRange(cursor);
     const after = cursor.start.clone();
     after.refAfter();
     const txt = this.txt;
     const textId = txt.ins(after.id, text);
+    const span = new Timespan(textId.sid, textId.time, text.length);
     const shift = text.length - 1;
     const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
     cursor.set(point, point, CursorAnchor.Start);
+    return span;
   }
 
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
    * The applies any pending inline formatting to the inserted text.
    */
-  public insert(text: string): void {
+  public insert(text: string): ITimespanStruct[] {
+    const spans: ITimespanStruct[] = [];
     if (!this.hasCursor()) this.addCursor();
     for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
-      this.insert0(cursor, text);
+      const span = this.insert0(cursor, text);
+      if (span) spans.push(span);
       const pending = this.pending.value;
       if (pending.size) {
         this.pending.next(new Map());
@@ -211,6 +215,7 @@ export class Editor<T = string> implements Printable {
         for (const [type, data] of pending) this.toggleRangeExclFmt(range, type, data);
       }
     }
+    return spans;
   }
 
   /**

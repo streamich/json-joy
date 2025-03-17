@@ -1,6 +1,7 @@
 import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
 import type {Position as EditorPosition} from '../../json-crdt-extensions/peritext/editor/types';
 import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
+import type {Patch} from '../../json-crdt-patch';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -282,8 +283,8 @@ export interface BufferDetail {
    *
    * - `auto`: Automatically determine the format based on the data in the
    *   clipboard.
-   * - `json`: Specifies the default Peritext {@link Editor} export/import format
-   *   in JSON POJO format.
+   * - `json`: Specifies the default Peritext {@link Editor} export/import
+   *   format in JSON POJO format.
    * - `jsonml`: HTML markup in JSONML format.
    * - `hast`: HTML markup in HAST format.
    * - `text`: Plain text format. Copy and paste text only.
@@ -317,6 +318,21 @@ export interface BufferDetail {
 }
 
 /**
+ * The "annals" event manages undo and redo actions, typically triggered by
+ * common keyboard shortcuts like `Ctrl+Z` and `Ctrl+Shift+Z`.
+ */
+export interface AnnalsDetail {
+  /** The action to perform. */
+  action: 'undo' | 'redo';
+
+  /**
+   * The list of {@link Patch} that will be applied to the document to undo or
+   * redo the action, unless the action is cancelled.
+   */
+  batch: [Patch];
+}
+
+/**
  * Position represents a caret position in the document. The position can either
  * be an instance of {@link Point} or a numeric position in the document, which
  * will be immediately converted to a {@link Point} instance.
@@ -339,4 +355,5 @@ export type PeritextEventDetailMap = {
   format: FormatDetail;
   marker: MarkerDetail;
   buffer: BufferDetail;
+  annals: AnnalsDetail;
 };

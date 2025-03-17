@@ -755,7 +755,7 @@ export abstract class AbstractRga<T> {
     this.count--;
   }
 
-  public findById(after: ITimestampStruct): undefined | Chunk<T> {
+  public findById(after: ITimestampStruct): Chunk<T> | undefined {
     const afterSid = after.sid;
     const afterTime = after.time;
     let curr: Chunk<T> | undefined = this.ids;
@@ -791,6 +791,58 @@ export abstract class AbstractRga<T> {
     const offset = afterTime - atIdTime;
     if (offset >= atSpan) return;
     return chunk;
+  }
+
+  /**
+   * @param id ID of character to start the search from.
+   * @returns Previous ID in the RGA sequence.
+   */
+  public prevId(id: ITimestampStruct): ITimestampStruct | undefined {
+    let chunk = this.findById(id);
+    if (!chunk) return;
+    const time = id.time;
+    if (chunk.id.time < time) return new Timestamp(id.sid, time - 1);
+    chunk = prev(chunk);
+    if (!chunk) return;
+    const prevId = chunk.id;
+    const span = chunk.span;
+    return span > 1 ? new Timestamp(prevId.sid, prevId.time + chunk.span - 1) : prevId;
+  }
+
+  public spanView(span: ITimespanStruct): T[] {
+    const view: T[] = [];
+    let remaining = span.span;
+    const time = span.time;
+    let chunk = this.findById(span);
+    if (!chunk) return view;
+    if (!chunk.del) {
+      if (chunk.span >= remaining + time - chunk.id.time) {
+        const offset = time - chunk.id.time;
+        const end = offset + remaining;
+        const viewChunk = chunk.view().slice(offset, end);
+        view.push(viewChunk);
+        return view;
+      } else {
+        const offset = time - chunk.id.time;
+        const viewChunk = chunk.view().slice(offset, span.span);
+        remaining -= chunk.span - offset;
+        view.push(viewChunk);
+      }
+    }
+    while ((chunk = chunk.s)) {
+      const chunkSpan = chunk.span;
+      if (!chunk.del) {
+        if (chunkSpan > remaining) {
+          const viewChunk = chunk.view().slice(0, remaining);
+          view.push(viewChunk);
+          break;
+        }
+        view.push(chunk.data!);
+      }
+      remaining -= chunkSpan;
+      if (remaining <= 0) break;
+    }
+    return view;
   }
 
   // ---------------------------------------------------------- Splay balancing

@@ -1,3 +1,4 @@
+import {saveSelection} from '../../dom/util';
 import type {PeritextClipboard, PeritextClipboardData} from './types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
@@ -11,8 +12,7 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
     const copySupported = queryCommandSupported?.('copy') ?? true;
     const cutSupported = queryCommandSupported?.('cut') ?? true;
     if (!copySupported && !cutSupported) return false;
-    const ranges = [];
-    for (let i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i));
+    const restoreSelection = saveSelection();
     const value = data['text/plain'] ?? '';
     const text = typeof value === 'string' ? value : '';
     const span = document.createElement('span');
@@ -63,8 +63,7 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
         // span.removeEventListener('copy', listener);
         // span.removeEventListener('cut', listener);
         document.body.removeChild(span);
-        selection.removeAllRanges();
-        for (const range of ranges) selection.addRange(range);
+        restoreSelection?.();
       } catch {}
     }
   } catch {

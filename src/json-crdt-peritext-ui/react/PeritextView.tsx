@@ -62,6 +62,8 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     return state;
   }, [peritext, plugins, rerender, onState]);
 
+  React.useEffect(() => state.start(), [state]);
+
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   const ref = React.useCallback(
     (el: null | HTMLDivElement) => {
@@ -75,7 +77,8 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         return;
       }
       if (dom && dom.opts.source === el) return;
-      const ctrl = new DomController({source: el, events: state.events});
+      const ctrl = new DomController({source: el, events: state.events, log: state.log});
+      state.events.undo = ctrl.annals;
       ctrl.start();
       state.dom = ctrl;
       setDom(ctrl);

@@ -179,8 +179,8 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    *        encoding.
    * @returns An instance of a model.
    */
-  public static readonly fromBinary = (data: Uint8Array): Model => {
-    return decoder.decode(data);
+  public static readonly fromBinary = <N extends JsonNode = JsonNode<any>>(data: Uint8Array): Model<N> => {
+    return decoder.decode(data) as unknown as Model<N>;
   };
 
   /**

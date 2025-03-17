@@ -30,6 +30,13 @@ export const App: React.FC = () => {
     return [model, peritext] as const;
   });
 
+  React.useEffect(() => {
+    model.api.autoFlush(true);
+    return () => {
+      model.api.stopAutoFlush?.();
+    };
+  }, [model]);
+
   const plugins = React.useMemo(() => {
     const cursorPlugin = new CursorPlugin();
     const toolbarPlugin = new ToolbarPlugin();

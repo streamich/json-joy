@@ -1,4 +1,5 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
+import {placeCursor} from './annals';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -6,6 +7,7 @@ import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
+import type {UndoCollector} from '../../types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -22,6 +24,8 @@ export interface PeritextEventDefaultsOpts {
  * will not be executed.
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
+  public undo?: UndoCollector;
+
   public constructor(
     public readonly txt: Peritext,
     public readonly et: PeritextEventTarget,
@@ -32,7 +36,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
     const text = event.detail.text;
-    this.txt.editor.insert(text);
+    const editor = this.txt.editor;
+    editor.insert(text);
+    this.undo?.capture();
   };
 
   public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
@@ -43,6 +49,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       editor.cursor.set(point);
     }
     editor.delete(len, unit);
+    this.undo?.capture();
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
@@ -140,6 +147,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+    this.undo?.capture();
   };
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
@@ -158,6 +166,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+    this.undo?.capture();
   };
 
   public readonly buffer = async (event: CustomEvent<events.BufferDetail>) => {
@@ -363,5 +372,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
     }
+    this.undo?.capture();
+  };
+
+  public readonly annals = (event: CustomEvent<events.AnnalsDetail>) => {
+    const {batch} = event.detail;
+    this.txt.model.applyBatch(batch);
+    const txt = this.txt;
+    const cursor = placeCursor(txt, batch);
+    if (cursor) txt.editor.cursor.setRange(cursor);
   };
 }
