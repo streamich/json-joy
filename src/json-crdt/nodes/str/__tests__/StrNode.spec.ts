@@ -1354,6 +1354,46 @@ describe('StrNode', () => {
     });
   });
 
+  describe('.prevId()', () => {
+    test('can iterate through IDs in reverse', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      let id = ts(1, 10);
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 9));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 8));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(3, 7));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(3, 6));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(3, 5));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 7));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 6));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 5));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(2, 7));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(2, 6));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(2, 5));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 4));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 3));
+      id = type.prevId(id)!;
+      expect(id).toStrictEqual(ts(1, 2));
+      id = type.prevId(id)!;
+      expect(id).toBe(undefined);
+    });
+  });
+
   describe('export / import', () => {
     type Entry = [ITimestampStruct, number, string];
     const exp = (type: StrNode) => {

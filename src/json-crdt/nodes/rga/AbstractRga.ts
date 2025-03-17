@@ -755,7 +755,7 @@ export abstract class AbstractRga<T> {
     this.count--;
   }
 
-  public findById(after: ITimestampStruct): undefined | Chunk<T> {
+  public findById(after: ITimestampStruct): Chunk<T> | undefined {
     const afterSid = after.sid;
     const afterTime = after.time;
     let curr: Chunk<T> | undefined = this.ids;
@@ -791,6 +791,18 @@ export abstract class AbstractRga<T> {
     const offset = afterTime - atIdTime;
     if (offset >= atSpan) return;
     return chunk;
+  }
+
+  public prevId(id: ITimestampStruct): ITimestampStruct | undefined {
+    let chunk = this.findById(id);
+    if (!chunk) return;
+    const time = id.time;
+    if (chunk.id.time < time) return new Timestamp(id.sid, time - 1);
+    chunk = prev(chunk);
+    if (!chunk) return;
+    const prevId = chunk.id;
+    const span = chunk.span;
+    return span > 1 ? new Timestamp(prevId.sid, prevId.time + chunk.span - 1) : prevId;
   }
 
   public spanView(span: ITimespanStruct): T[] {
