@@ -793,6 +793,10 @@ export abstract class AbstractRga<T> {
     return chunk;
   }
 
+  /**
+   * @param id ID of character to start the search from.
+   * @returns Previous ID in the RGA sequence.
+   */
   public prevId(id: ITimestampStruct): ITimestampStruct | undefined {
     let chunk = this.findById(id);
     if (!chunk) return;

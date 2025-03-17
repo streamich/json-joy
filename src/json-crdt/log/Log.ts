@@ -226,9 +226,15 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
         if (node) {
           const rga = node.v;
           if (rga instanceof StrNode) {
-            for (const span of op.what) {
-              // TODO: SPAN to view: ...
+            let str = '';
+            for (const span of op.what) str += rga.spanView(span).join('');
+            let after = op.obj;
+            const firstDelSpan = op.what[0];
+            if (firstDelSpan) {
+              const after2 = rga.prevId(firstDelSpan);
+              if (after2) after = after2;
             }
+            builder.insStr(op.obj, after, str);
           }
         }
       }
