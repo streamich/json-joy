@@ -1,6 +1,7 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
+import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
 import {Model} from '../model';
 import {toSchema} from '../schema/toSchema';
 import {
@@ -16,7 +17,7 @@ import {
   Timespan,
   compare,
 } from '../../json-crdt-patch';
-import {ObjNode, StrNode, ValNode, VecNode} from '../nodes';
+import {BinNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
@@ -235,6 +236,17 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
               if (after2) after = after2;
             }
             builder.insStr(op.obj, after, str);
+          } else if (rga instanceof BinNode) {
+            const buffers: Uint8Array[] = [];
+            for (const span of op.what) buffers.push(...rga.spanView(span));
+            let after = op.obj;
+            const firstDelSpan = op.what[0];
+            if (firstDelSpan) {
+              const after2 = rga.prevId(firstDelSpan);
+              if (after2) after = after2;
+            }
+            const blob = listToUint8(buffers);
+            builder.insBin(op.obj, after, blob);
           }
         }
       }
