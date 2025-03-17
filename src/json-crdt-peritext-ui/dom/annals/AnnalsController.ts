@@ -60,8 +60,7 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
     const patch = log.undo(doPatch);
     et.dispatch('annals', {
       action: 'undo',
-      source: doPatch,
-      patch,
+      batch: [patch],
     });
     // console.log('doPatch', doPatch + '');
     // console.log('undoPatch', patch + '');
@@ -73,8 +72,7 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
     const redoPatch = doPatch.rebase(log.end.clock.time);
     et.dispatch('annals', {
       action: 'redo',
-      source: doPatch,
-      patch: redoPatch,
+      batch: [redoPatch],
     });
     // console.log('doPatch', doPatch + '');
     // console.log('redoPatch', redoPatch + '');

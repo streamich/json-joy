@@ -326,16 +326,10 @@ export interface AnnalsDetail {
   action: 'undo' | 'redo';
 
   /**
-   * The original {@link Patch} from which the undo/redo action was originally
-   * created.
+   * The list of {@link Patch} that will be applied to the document to undo or
+   * redo the action, unless the action is cancelled.
    */
-  source: Patch;
-
-  /**
-   * The {@link Patch} that will be applied to the document to undo or redo the
-   * action, unless the action is cancelled.
-   */
-  patch: Patch;
+  batch: [Patch];
 }
 
 /**
