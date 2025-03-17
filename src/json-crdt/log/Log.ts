@@ -17,7 +17,7 @@ import {
   Timespan,
   compare,
 } from '../../json-crdt-patch';
-import {BinNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
+import {ArrNode, BinNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
@@ -195,7 +195,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
         continue;
       }
       const model = getModel();
-      // TODO: Do not overwrite already deleted values? Or needed for concurrency?
+      // TODO: Do not overwrite already deleted values? Or needed for concurrency? Orphaned nodes.
       if (op instanceof InsValOp) {
         const val = model.index.get(op.obj);
         if (val instanceof ValNode) {
@@ -247,6 +247,28 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
             }
             const blob = listToUint8(buffers);
             builder.insBin(op.obj, after, blob);
+          } else if (rga instanceof ArrNode) {
+            const copies: ITimestampStruct[] = [];
+            for (const span of op.what) {
+              const ids2 = rga.spanView(span);
+              for (const ids of ids2) {
+                for (const id of ids) {
+                  const node = model.index.get(id);
+                  if (node) {
+                    const schema = toSchema(node);
+                    const newId = schema.build(builder);
+                    copies.push(newId);
+                  }
+                }
+              }
+            }
+            let after = op.obj;
+            const firstDelSpan = op.what[0];
+            if (firstDelSpan) {
+              const after2 = rga.prevId(firstDelSpan);
+              if (after2) after = after2;
+            }
+            builder.insArr(op.obj, after, copies);
           }
         }
       }

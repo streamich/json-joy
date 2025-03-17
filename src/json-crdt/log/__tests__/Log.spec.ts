@@ -200,6 +200,17 @@ describe('.undo()', () => {
         log.end.applyPatch(undo);
         expect(log.end.view()).toEqual({bin: new Uint8Array([])});
       });
+
+      test('can undo blob delete', () => {
+        const {log} = setup({bin: new Uint8Array([1, 2, 3])});
+        log.end.api.flush();
+        log.end.api.bin(['bin']).del(1, 1);
+        const patch = log.end.api.flush();
+        const undo = log.undo(patch);
+        expect(log.end.view()).toEqual({bin: new Uint8Array([1, 3])});
+        log.end.applyPatch(undo);
+        expect(log.end.view()).toEqual({bin: new Uint8Array([1, 2, 3])});
+      });
     });
 
     describe('arr', () => {
@@ -224,15 +235,15 @@ describe('.undo()', () => {
         expect(log.end.view()).toEqual({arr: []});
       });
 
-      test('can undo blob delete', () => {
-        const {log} = setup({bin: new Uint8Array([1, 2, 3])});
+      test('can undo "arr" delete', () => {
+        const {log} = setup({arr: [{a: 1}, {a: 2}, {a: 3}]});
         log.end.api.flush();
-        log.end.api.bin(['bin']).del(1, 1);
+        log.end.api.arr(['arr']).del(1, 1);
         const patch = log.end.api.flush();
         const undo = log.undo(patch);
-        expect(log.end.view()).toEqual({bin: new Uint8Array([1, 3])});
+        expect(log.end.view()).toEqual({arr: [{a: 1}, {a: 3}]});
         log.end.applyPatch(undo);
-        expect(log.end.view()).toEqual({bin: new Uint8Array([1, 2, 3])});
+        expect(log.end.view()).toEqual({arr: [{a: 1}, {a: 2}, {a: 3}]});
       });
     });
   });
