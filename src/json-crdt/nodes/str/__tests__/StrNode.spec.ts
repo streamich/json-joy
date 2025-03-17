@@ -1271,6 +1271,89 @@ describe('StrNode', () => {
     });
   });
 
+  describe('.spanView()', () => {
+    test('can get view from beginning of chunk', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456');
+      const view = type.spanView(tss(1, 2, 3));
+      expect(view).toEqual(['123']);
+    });
+
+    test('can get empty view', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456');
+      const view = type.spanView(tss(1, 2, 0));
+      expect(view.join('')).toBe('');
+    });
+
+    test('can get view from beginning to end of single chunk', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456');
+      const view = type.spanView(tss(1, 2, 6));
+      expect(view).toEqual(['123456']);
+    });
+
+    test('can get view starting from middle', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456');
+      const view = type.spanView(tss(1, 4, 2));
+      expect(view).toEqual(['34']);
+    });
+
+    test('can get view starting from middle to end', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456');
+      const view = type.spanView(tss(1, 4, 4));
+      expect(view).toEqual(['3456']);
+    });
+
+    test('can get view across two chunks', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123');
+      type.ins(ts(1, 4), ts(1, 5), '456');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      const view = type.spanView(tss(1, 2, 4));
+      expect(view).toEqual(['123', '4']);
+    });
+
+    test('can get view across two chunks starting from middle', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123');
+      type.ins(ts(1, 4), ts(1, 5), '456');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      const view = type.spanView(tss(1, 3, 4));
+      expect(view).toEqual(['23', '45']);
+    });
+
+    test('can get view across two chunks starting from middle - 2', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123');
+      type.ins(ts(1, 4), ts(1, 5), '456');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      const view = type.spanView(tss(1, 4, 4));
+      expect(view).toEqual(['3', '456']);
+    });
+
+    test('can get view across three chunks', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      const view = type.spanView(tss(1, 3, 7));
+      expect(view).toEqual(['23', '456', '78']);
+    });
+
+    test('can get view across three chunks and ignore deleted chunks', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      type.delete([tss(1, 4, 4)]);
+      const view = type.spanView(tss(1, 3, 7));
+      expect(view).toEqual(['2', '78']);
+    });
+  });
+
   describe('export / import', () => {
     type Entry = [ITimestampStruct, number, string];
     const exp = (type: StrNode) => {

@@ -793,6 +793,42 @@ export abstract class AbstractRga<T> {
     return chunk;
   }
 
+  public spanView(span: ITimespanStruct): T[] {
+    const view: T[] = [];
+    let remaining = span.span;
+    let time = span.time;
+    let chunk = this.findById(span);
+    if (!chunk) return view;
+    if (!chunk.del) {
+      if (chunk.span >= remaining + time - chunk.id.time) {
+        const offset = time - chunk.id.time;
+        const end = offset + remaining;
+        const viewChunk = chunk.view().slice(offset, end);
+        view.push(viewChunk);
+        return view;
+      } else {
+        const offset = time - chunk.id.time;
+        const viewChunk = chunk.view().slice(offset, span.span);
+        remaining -= chunk.span - offset;
+        view.push(viewChunk);
+      }
+    }
+    while (chunk = chunk.s) {
+      const chunkSpan = chunk.span;
+      if (!chunk.del) {
+        if (chunkSpan > remaining) {
+          const viewChunk = chunk.view().slice(0, remaining);
+          view.push(viewChunk);
+          break;
+        }
+        view.push(chunk.data!);
+      }
+      remaining -= chunkSpan;
+      if (remaining <= 0) break;
+    }
+    return view;
+  }
+
   // ---------------------------------------------------------- Splay balancing
 
   public splay(chunk: Chunk<T>): void {
