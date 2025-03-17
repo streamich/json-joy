@@ -1,6 +1,6 @@
-import {Peritext} from '../../../json-crdt-extensions';
+import type {Peritext} from '../../../json-crdt-extensions';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
-import {DelOp, equal, InsArrOp, InsBinOp, InsStrOp, Patch, Timestamp} from '../../../json-crdt-patch';
+import {DelOp, equal, InsArrOp, InsBinOp, InsStrOp, type Patch, Timestamp} from '../../../json-crdt-patch';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 
 /**

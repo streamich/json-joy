@@ -812,7 +812,7 @@ export abstract class AbstractRga<T> {
   public spanView(span: ITimespanStruct): T[] {
     const view: T[] = [];
     let remaining = span.span;
-    let time = span.time;
+    const time = span.time;
     let chunk = this.findById(span);
     if (!chunk) return view;
     if (!chunk.del) {
@@ -829,7 +829,7 @@ export abstract class AbstractRga<T> {
         view.push(viewChunk);
       }
     }
-    while (chunk = chunk.s) {
+    while ((chunk = chunk.s)) {
       const chunkSpan = chunk.span;
       if (!chunk.del) {
         if (chunkSpan > remaining) {
