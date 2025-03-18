@@ -15,6 +15,15 @@ import type {ViewStyle, ViewRange, ViewSlice} from '../editor/types';
 import type {ClipboardData} from './export-html';
 
 /**
+ * @todo Implement HTML normalization function, ensure that:
+ * 
+ * - <blockquote> and <p> nodes are treated correctly, especially when sole node
+ *   is nested.
+ * - list nodes are treated correctly.
+ * - <svg> nodes are converted to Base64 and inlined as data URL images.
+ */
+
+/**
  * Flattens a {@link PeritextMlNode} tree structure into a {@link ViewRange}
  * flat string with annotation ranges.
  */
@@ -115,7 +124,7 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     node[0] = res[0];
     node[1] = res[1];
   } else {
-    node[0] = SliceTypeName[tag as any] ?? tag;
+    if (typeof tag === 'string') node[0] = SliceTypeName[tag as any] ?? tag;
     const attr = jsonml[1] || {};
     let data = null;
     if (attr['data-attr'] !== void 0) {
@@ -126,15 +135,8 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     const inline = inlineHtmlTag || attr['data-inline'] === 'true';
     if (data || inline) node[1] = {data, inline};
   }
-  if (typeof node[0] === 'number' && node[0] < 0) {
-    const attr = node[1] || {};
-    attr.inline = true;
-    node[1] = attr;
-  }
-  if (node.length < 3) {
-    const attr = node[1] || {};
-    if (attr.inline) return '';
-  }
+  if (typeof node[0] === 'number' && node[0] < 0) (node[1] ||= {}).inline = true;
+  if (node.length < 3 && (node[1] || {}).inline) return '';
   return node;
 };
 

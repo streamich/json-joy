@@ -1,9 +1,13 @@
+import {SliceBehavior} from '../slice/constants';
+import {CommonSliceType} from '../slice';
 import type {PeritextMlElement} from '../block/types';
 import type {NodeBuilder} from '../../../json-crdt-patch';
-import {SliceBehavior} from '../slice/constants';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
 import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './types';
 
+/**
+ * @todo Consider moving the registry under the `/transfer` directory.
+ */
 export class SliceRegistry {
   private map: Map<string | number, SliceTypeDefinition<any, any, any>> = new Map();
   private toHtmlMap: Map<string | number, ToHtmlConverter<any>> = new Map();
@@ -14,16 +18,21 @@ export class SliceRegistry {
     def: SliceTypeDefinition<Type, Schema, Inline>,
   ): void {
     const {type, toHtml, fromHtml} = def;
-    this.map.set(type, def);
+    const fromHtmlMap = this.fromHtmlMap;
     if (toHtml) this.toHtmlMap.set(type, toHtml);
     if (fromHtml) {
-      const fromHtmlMap = this.fromHtmlMap;
       for (const htmlTag in fromHtml) {
         const converter = fromHtml[htmlTag];
         const converters = fromHtmlMap.get(htmlTag) ?? [];
         converters.push([def, converter]);
         fromHtmlMap.set(htmlTag, converters);
       }
+    }
+    const tag = CommonSliceType[type as any];
+    if (tag && typeof tag === 'string') {
+      fromHtmlMap.set(tag, [
+        [def, () => [type, null]]
+      ])
     }
   }
 
