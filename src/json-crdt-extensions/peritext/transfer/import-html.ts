@@ -42,8 +42,10 @@ class ViewRangeBuilder {
     const start = this.text.length;
     const length = node.length;
     const inline = !!attr?.inline;
-    const hasType = !!type || type === 0;
-    if (hasType && !inline) {
+    const hasType = type === 0 || !!type;
+    const firstChild = node[2] as PeritextMlNode;
+    const isFirstChildInline = firstChild && (typeof firstChild === 'string' || firstChild[1]?.inline);
+    if (hasType && !inline && isFirstChildInline) {
       this.text += '\n';
       const header =
         (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
@@ -54,7 +56,7 @@ class ViewRangeBuilder {
       if (data) slice.push(data);
       this.slices.push(slice);
     }
-    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, [...path, type]);
+    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, type === '' ? path : [...path, type]);
     if (hasType && inline) {
       let end: number = 0,
         header: number = 0;
