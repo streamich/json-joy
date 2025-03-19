@@ -195,7 +195,7 @@ describe('Markdown', () => {
     expect(md2).toBe('ab\n\nc__123__\n\n++456++d');
   });
 
-  test.skip('can insert Markdown with inline line breaks', () => {
+  test('can insert Markdown with inline line breaks', () => {
     const {peritext, transfer} = setup();
     const md = '1\n2\n3';
     peritext.strApi().ins(0, 'ab');
@@ -204,9 +204,67 @@ describe('Markdown', () => {
     peritext.refresh();
     const all = peritext.rangeAll()!;
     const html = transfer.toHtml(all);
-    console.log(html);
-    expect(html).toBe('<p>a123b</p>');
+    expect(html).toBe('<p>a1 2 3b</p>');
     const md2 = transfer.toMarkdown(all);
-    expect(md2).toBe('a123b');
+    expect(md2).toBe('a1 2 3b');
+  });
+
+  test.only('can insert a blockquote and a paragraph', () => {
+    const {peritext, transfer} = setup();
+    const md = '> blockquote';
+    // peritext.strApi().ins(0, 'ab');
+    // peritext.refresh();
+    transfer.fromMarkdown(0, md);
+    peritext.refresh();
+    console.log(peritext.blocks + '');
+    const all = peritext.rangeAll()!;
+    const html = transfer.toHtml(all);
+    console.log(html);
+    // expect(html).toBe('<p>a1 2 3b</p>');
+    const md2 = transfer.toMarkdown(all);
+    console.log(md2);
+    // expect(md2).toBe('a' + md + 'b');
+  });
+
+  test('can insert a blockquote and a paragraph', () => {
+    const {peritext, transfer} = setup();
+    const md = '> blockquote\n\nparagraph';
+    peritext.strApi().ins(0, 'ab');
+    peritext.refresh();
+    transfer.fromMarkdown(1, md);
+    peritext.refresh();
+    console.log(peritext.blocks + '');
+    const all = peritext.rangeAll()!;
+    const html = transfer.toHtml(all);
+    console.log(html);
+    // expect(html).toBe('<p>a1 2 3b</p>');
+    const md2 = transfer.toMarkdown(all);
+    console.log(md2);
+    // expect(md2).toBe('a' + md + 'b');
+  });
+
+  test('can insert realistic 3 paragraphs of Markdown', () => {
+    const {peritext, transfer} = setup();
+    const md = 'The German __automotive sector__ is in the process of _cutting ' +
+      'thousands of jobs_ as it grapples with a global shift toward electric vehicles ' +
+      '— a transformation Musk himself has been at the forefront of.' +
+      '\n\n' +
+      '> To be or not to be, that is the question.' +
+      '\n\n' +
+      'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
+      'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
+      'is used by the Clipboard Events API to hold multiple representations of data.';
+    peritext.strApi().ins(0, 'ab');
+    peritext.refresh();
+    transfer.fromMarkdown(1, md);
+    peritext.refresh();
+    console.log(peritext.blocks + '');
+    const all = peritext.rangeAll()!;
+    const html = transfer.toHtml(all);
+    console.log(html);
+    // expect(html).toBe('<p>a1 2 3b</p>');
+    const md2 = transfer.toMarkdown(all);
+    console.log(md2);
+    // expect(md2).toBe('a' + md + 'b');
   });
 });

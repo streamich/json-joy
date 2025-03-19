@@ -31,12 +31,12 @@ class ViewRangeBuilder {
   private text = '';
   private slices: ViewSlice[] = [];
 
-  private build0(node: PeritextMlNode, depth = 0): void {
-    const skipWhitespace = depth < 2;
+  private build0(node: PeritextMlNode, path: (string | number)[]): boolean {
+    const skipWhitespace = path.length < 2;
     if (typeof node === 'string') {
-      if (skipWhitespace && !node.trim()) return;
+      if (skipWhitespace && !node.trim()) return false;
       this.text += node;
-      return;
+      return false;
     }
     const [type, attr] = node;
     const start = this.text.length;
@@ -49,13 +49,13 @@ class ViewRangeBuilder {
         (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
-      const slice: ViewSlice = [header, start, start, type];
+      const slice: ViewSlice = [header, start, start, path.length ? [...path, type] : type];
       const data = attr?.data;
       if (data) slice.push(data);
       this.slices.push(slice);
     }
-    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, depth + 1);
-    if (hasType) {
+    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, [...path, type]);
+    if (hasType && inline) {
       let end: number = 0,
         header: number = 0;
       if (inline) {
@@ -71,10 +71,12 @@ class ViewRangeBuilder {
         this.slices.push(slice);
       }
     }
+    return false;
   }
 
   public build(node: PeritextMlNode): ViewRange {
-    this.build0(node);
+    console.log(node);
+    this.build0(node, []);
     const view: ViewRange = [this.text, 0, this.slices];
     return view;
   }
