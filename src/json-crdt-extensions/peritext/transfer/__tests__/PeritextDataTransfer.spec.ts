@@ -209,21 +209,31 @@ describe('Markdown', () => {
     expect(md2).toBe('a1 2 3b');
   });
 
-  test.only('can insert a blockquote and a paragraph', () => {
+  test('can insert a blockquote and a paragraph into empty string', () => {
     const {peritext, transfer} = setup();
     const md = '> blockquote';
-    // peritext.strApi().ins(0, 'ab');
-    // peritext.refresh();
     transfer.fromMarkdown(0, md);
     peritext.refresh();
-    console.log(peritext.blocks + '');
     const all = peritext.rangeAll()!;
     const html = transfer.toHtml(all);
-    console.log(html);
-    // expect(html).toBe('<p>a1 2 3b</p>');
+    expect(html).toBe('<blockquote><p>blockquote</p></blockquote>');
     const md2 = transfer.toMarkdown(all);
     console.log(md2);
-    // expect(md2).toBe('a' + md + 'b');
+    expect(md2).toBe('> blockquote');
+  });
+
+  test('can insert a blockquote', () => {
+    const {peritext, transfer} = setup();
+    const md = '> blockquote';
+    peritext.strApi().ins(0, 'ab');
+    peritext.refresh();
+    transfer.fromMarkdown(1, md);
+    peritext.refresh();
+    const all = peritext.rangeAll()!;
+    const html = transfer.toHtml(all);
+    expect(html).toBe('<p>a</p><blockquote><p>blockquoteb</p></blockquote>');
+    const md2 = transfer.toMarkdown(all);
+    expect(md2).toBe('a\n\n> blockquoteb');
   });
 
   test('can insert a blockquote and a paragraph', () => {
@@ -233,14 +243,11 @@ describe('Markdown', () => {
     peritext.refresh();
     transfer.fromMarkdown(1, md);
     peritext.refresh();
-    console.log(peritext.blocks + '');
     const all = peritext.rangeAll()!;
     const html = transfer.toHtml(all);
-    console.log(html);
-    // expect(html).toBe('<p>a1 2 3b</p>');
+    expect(html).toBe('<p>a</p><blockquote><p>blockquote</p></blockquote><p>paragraphb</p>');
     const md2 = transfer.toMarkdown(all);
-    console.log(md2);
-    // expect(md2).toBe('a' + md + 'b');
+    expect(md2).toBe('a\n\n> blockquote\n\nparagraphb');
   });
 
   test('can insert realistic 3 paragraphs of Markdown', () => {
@@ -258,13 +265,10 @@ describe('Markdown', () => {
     peritext.refresh();
     transfer.fromMarkdown(1, md);
     peritext.refresh();
-    console.log(peritext.blocks + '');
+    // console.log(peritext.blocks + '');
     const all = peritext.rangeAll()!;
-    const html = transfer.toHtml(all);
-    console.log(html);
-    // expect(html).toBe('<p>a1 2 3b</p>');
     const md2 = transfer.toMarkdown(all);
-    console.log(md2);
-    // expect(md2).toBe('a' + md + 'b');
+    // console.log(md2);
+    expect(md2).toBe('a' + md + 'b');
   });
 });

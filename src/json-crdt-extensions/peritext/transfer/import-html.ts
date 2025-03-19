@@ -77,7 +77,6 @@ class ViewRangeBuilder {
   }
 
   public build(node: PeritextMlNode): ViewRange {
-    console.log(node);
     this.build0(node, []);
     const view: ViewRange = [this.text, 0, this.slices];
     return view;
