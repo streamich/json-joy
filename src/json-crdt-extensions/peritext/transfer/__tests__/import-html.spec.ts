@@ -43,17 +43,15 @@ describe('.fromHtml()', () => {
   test('can import a single <blockquote> block with nested single <p>', () => {
     const html = '<blockquote><p>2b||!2b</p></blockquote>';
     const peritextMl = fromHtml(html);
-    expect(peritextMl).toEqual(['', null,
-      [CommonSliceType.blockquote, null,
-        [CommonSliceType.p, null, '2b||!2b']
-      ],
-    ]);
+    expect(peritextMl).toEqual(['', null, [CommonSliceType.blockquote, null, [CommonSliceType.p, null, '2b||!2b']]]);
   });
 
   test('can import a single <blockquote> block after a <p> block', () => {
     const html = '<p>123</p><blockquote>2b||!2b</blockquote>';
     const peritextMl = fromHtml(html);
-    expect(peritextMl).toEqual(['', null,
+    expect(peritextMl).toEqual([
+      '',
+      null,
       [CommonSliceType.p, null, '123'],
       [CommonSliceType.blockquote, null, '2b||!2b'],
     ]);
@@ -62,26 +60,28 @@ describe('.fromHtml()', () => {
   test('can import a single <blockquote> block with nested single <p>, after a <p> block', () => {
     const html = '<p>123</p><blockquote><p>2b||!2b</p></blockquote>';
     const peritextMl = fromHtml(html);
-    expect(peritextMl).toEqual(['', null,
+    expect(peritextMl).toEqual([
+      '',
+      null,
       [CommonSliceType.p, null, '123'],
-      [CommonSliceType.blockquote, null,
-        [CommonSliceType.p, null, '2b||!2b']
-      ],
+      [CommonSliceType.blockquote, null, [CommonSliceType.p, null, '2b||!2b']],
     ]);
   });
 
   test('can import a single <blockquote> block with nested single <p>, after a <p> block with inline formatting', () => {
     const html = '<p><b>1</b><code>2</code>3</p><blockquote><p>2b||!2b</p></blockquote>';
     const peritextMl = fromHtml(html);
-    expect(peritextMl).toEqual(['', null,
-      [CommonSliceType.p, null,
+    expect(peritextMl).toEqual([
+      '',
+      null,
+      [
+        CommonSliceType.p,
+        null,
         [CommonSliceType.b, {behavior: SliceBehavior.One, inline: true}, '1'],
         [CommonSliceType.code, {behavior: SliceBehavior.One, inline: true}, '2'],
-        '3'
+        '3',
       ],
-      [CommonSliceType.blockquote, null,
-        [CommonSliceType.p, null, '2b||!2b']
-      ],
+      [CommonSliceType.blockquote, null, [CommonSliceType.p, null, '2b||!2b']],
     ]);
   });
 });

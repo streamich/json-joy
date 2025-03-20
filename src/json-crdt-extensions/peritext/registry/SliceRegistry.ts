@@ -30,9 +30,7 @@ export class SliceRegistry {
     }
     const tag = CommonSliceType[type as any];
     if (tag && typeof tag === 'string') {
-      fromHtmlMap.set(tag, [
-        [def, () => [type, null]]
-      ])
+      fromHtmlMap.set(tag, [[def, () => [type, null]]]);
     }
   }
 

@@ -252,7 +252,8 @@ describe('Markdown', () => {
 
   test('can insert realistic 3 paragraphs of Markdown', () => {
     const {peritext, transfer} = setup();
-    const md = 'The German __automotive sector__ is in the process of _cutting ' +
+    const md =
+      'The German __automotive sector__ is in the process of _cutting ' +
       'thousands of jobs_ as it grapples with a global shift toward electric vehicles ' +
       '— a transformation Musk himself has been at the forefront of.' +
       '\n\n' +

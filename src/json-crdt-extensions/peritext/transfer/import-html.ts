@@ -16,7 +16,7 @@ import type {ClipboardData} from './export-html';
 
 /**
  * @todo Implement HTML normalization function, ensure that:
- * 
+ *
  * - <blockquote> and <p> nodes are treated correctly, especially when sole node
  *   is nested.
  * - list nodes are treated correctly.
