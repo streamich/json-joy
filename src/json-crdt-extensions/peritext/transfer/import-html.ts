@@ -15,6 +15,15 @@ import type {ViewStyle, ViewRange, ViewSlice} from '../editor/types';
 import type {ClipboardData} from './export-html';
 
 /**
+ * @todo Implement HTML normalization function, ensure that:
+ *
+ * - <blockquote> and <p> nodes are treated correctly, especially when sole node
+ *   is nested.
+ * - list nodes are treated correctly.
+ * - <svg> nodes are converted to Base64 and inlined as data URL images.
+ */
+
+/**
  * Flattens a {@link PeritextMlNode} tree structure into a {@link ViewRange}
  * flat string with annotation ranges.
  */
@@ -22,31 +31,33 @@ class ViewRangeBuilder {
   private text = '';
   private slices: ViewSlice[] = [];
 
-  private build0(node: PeritextMlNode, depth = 0): void {
-    const skipWhitespace = depth < 2;
+  private build0(node: PeritextMlNode, path: (string | number)[]): boolean {
+    const skipWhitespace = path.length < 2;
     if (typeof node === 'string') {
-      if (skipWhitespace && !node.trim()) return;
+      if (skipWhitespace && !node.trim()) return false;
       this.text += node;
-      return;
+      return false;
     }
     const [type, attr] = node;
     const start = this.text.length;
     const length = node.length;
     const inline = !!attr?.inline;
-    const hasType = !!type || type === 0;
-    if (hasType && !inline) {
+    const hasType = type === 0 || !!type;
+    const firstChild = node[2] as PeritextMlNode;
+    const isFirstChildInline = firstChild && (typeof firstChild === 'string' || firstChild[1]?.inline);
+    if (hasType && !inline && isFirstChildInline) {
       this.text += '\n';
       const header =
         (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
-      const slice: ViewSlice = [header, start, start, type];
+      const slice: ViewSlice = [header, start, start, path.length ? [...path, type] : type];
       const data = attr?.data;
       if (data) slice.push(data);
       this.slices.push(slice);
     }
-    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, depth + 1);
-    if (hasType) {
+    for (let i = 2; i < length; i++) this.build0(node[i] as PeritextMlNode, type === '' ? path : [...path, type]);
+    if (hasType && inline) {
       let end: number = 0,
         header: number = 0;
       if (inline) {
@@ -62,10 +73,11 @@ class ViewRangeBuilder {
         this.slices.push(slice);
       }
     }
+    return false;
   }
 
   public build(node: PeritextMlNode): ViewRange {
-    this.build0(node);
+    this.build0(node, []);
     const view: ViewRange = [this.text, 0, this.slices];
     return view;
   }
@@ -115,7 +127,7 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     node[0] = res[0];
     node[1] = res[1];
   } else {
-    node[0] = SliceTypeName[tag as any] ?? tag;
+    if (typeof tag === 'string') node[0] = SliceTypeName[tag as any] ?? tag;
     const attr = jsonml[1] || {};
     let data = null;
     if (attr['data-attr'] !== void 0) {
@@ -126,15 +138,8 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
     const inline = inlineHtmlTag || attr['data-inline'] === 'true';
     if (data || inline) node[1] = {data, inline};
   }
-  if (typeof node[0] === 'number' && node[0] < 0) {
-    const attr = node[1] || {};
-    attr.inline = true;
-    node[1] = attr;
-  }
-  if (node.length < 3) {
-    const attr = node[1] || {};
-    if (attr.inline) return '';
-  }
+  if (typeof node[0] === 'number' && node[0] < 0) (node[1] ||= {}).inline = true;
+  if (node.length < 3 && (node[1] || {}).inline) return '';
   return node;
 };
 
