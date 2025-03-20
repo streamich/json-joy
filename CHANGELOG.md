@@ -1,3 +1,11 @@
+## [17.32.1](https://github.com/streamich/json-joy/compare/v17.32.0...v17.32.1) (2025-03-20)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly insert nested nodes ([89a4c94](https://github.com/streamich/json-joy/commit/89a4c9462fb82bf867e9e8f824f39072321ebffb))
+* **json-crdt:** 🐛 add behavior to attrs of imported node ([5fb49fe](https://github.com/streamich/json-joy/commit/5fb49fe5399b6d95cd0192da15c8c97f816943f3))
+
 # [17.32.0](https://github.com/streamich/json-joy/compare/v17.31.0...v17.32.0) (2025-03-17)
 
 
