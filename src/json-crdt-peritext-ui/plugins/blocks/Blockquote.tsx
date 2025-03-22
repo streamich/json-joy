@@ -6,8 +6,8 @@ import type {BlockViewProps} from '../../react/BlockView';
 const blockClass = rule({
   bg: 'rgba(0,0,0,.02)',
   bdl: '8px solid rgba(0,0,0,.1)',
-  mr: '0',
-  pd: '.8em .5em .8em 2em',
+  mr: 0,
+  pd: '.05em .5em .05em 1.5em',
   bdrad: '4px',
 });
 
