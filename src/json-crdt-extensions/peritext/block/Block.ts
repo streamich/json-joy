@@ -47,7 +47,9 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   public tag(): number | string {
     const path = this.path;
     const length = path.length;
-    return length ? path[length - 1] : '';
+    if (!length) return '';
+    const step = path[length - 1];
+    return Array.isArray(step) ? step[0] : step;
   }
 
   public attr(): Attr | undefined {

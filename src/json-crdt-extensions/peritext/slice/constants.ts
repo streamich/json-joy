@@ -137,16 +137,20 @@ export enum SliceTypeName {
   overline = SliceTypeCon.overline,
 }
 
+/** Slice header octet (8 bits) masking specification. */
 export enum SliceHeaderMask {
-  X1Anchor = 0b1,
-  X2Anchor = 0b10,
-  Behavior = 0b11100,
+  /** The {@link Anchor} of the slice start {@link Point}.  */
+  X1Anchor = 0b00000001,
+  /** The {@link Anchor} of the slice end {@link Point}.  */
+  X2Anchor = 0b00000010,
+  /** Slice behavior, one of {@link SliceBehavior}. */
+  Behavior = 0b00011100,
 }
 
 export enum SliceHeaderShift {
   X1Anchor = 0,
-  X2Anchor = 1,
-  Behavior = 2,
+  X2Anchor = 0 + 1,
+  Behavior = 0 + 1 + 1,
 }
 
 export enum SliceBehavior {

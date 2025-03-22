@@ -2,7 +2,6 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {printTree} from 'tree-dump/lib/printTree';
 import {PersistedSlice} from './PersistedSlice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
-import type {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
@@ -10,6 +9,7 @@ import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
 import {Chars} from '../constants';
 import {Anchor} from '../rga/constants';
+import type {Range} from '../rga/Range';
 import type {Slice, SliceType} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Stateful} from '../types';
@@ -52,10 +52,11 @@ export class Slices<T = string> implements Stateful, Printable {
     const tupleId = builder.vec();
     const start = range.start.clone();
     const end = range.end.clone();
+    behavior = behavior & 0b111;
     const header =
       (behavior << SliceHeaderShift.Behavior) +
-      (start.anchor << SliceHeaderShift.X1Anchor) +
-      (end.anchor << SliceHeaderShift.X2Anchor);
+      ((start.anchor & 0b1) << SliceHeaderShift.X1Anchor) +
+      ((end.anchor & 0b1) << SliceHeaderShift.X2Anchor);
     const headerId = builder.const(header);
     const x1Id = builder.const(start.id);
     const x2Id = builder.const(compare(start.id, end.id) === 0 ? 0 : end.id);
