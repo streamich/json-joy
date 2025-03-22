@@ -16,6 +16,9 @@ export const validateType = (type: SliceType) => {
           case 'string':
           case 'number':
             continue LOOP;
+          case 'object':
+            if (!Array.isArray(step) || step.length !== 2) throw new Error('INVALID_TYPE');
+            continue LOOP;
           default:
             throw new Error('INVALID_TYPE');
         }
@@ -28,8 +31,14 @@ export const validateType = (type: SliceType) => {
 };
 
 export const formatType = (step: SliceTypeStep): string => {
+  let tag: string | number = '';
   let discriminant: number = -1;
-  let tag: string | number = Array.isArray(step) ? step[0] : step;
+  if (Array.isArray(step)) {
+    tag = step[0];
+    discriminant = step[1];
+  } else {
+    tag = step;
+  }
   if (typeof tag === 'number' && Math.abs(tag) <= 64 && SliceTypeName[tag]) tag = SliceTypeName[tag] ?? tag;
-  return '<' + tag + ':' + (discriminant >= 0 ? ':' + discriminant : '') + '>';
+  return '<' + tag + (discriminant >= 0 ? (':' + discriminant) : '') + '>';
 };

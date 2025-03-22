@@ -40,3 +40,38 @@ describe('refresh()', () => {
     expect(hash2).toBe(block.hash);
   });
 });
+
+describe('discriminants', () => {
+  test('can construct a blockquote with two paragraphs', () => {
+    const {peritext, editor} = setupHelloWorldKit();
+    editor.cursor.setAt(8);
+    editor.saved.insMarker(['blockquote', 'p']);
+    editor.cursor.setAt(4);
+    editor.saved.insMarker(['blockquote', 'p']);
+    peritext.refresh();
+    const block2 = peritext.blocks.root.children[1];
+    expect(block2.children.length).toBe(2);
+    expect(block2.children[0].path).toEqual(['blockquote', 'p']);
+    expect(block2.children[0].text()).toBe('o wo');
+    expect(block2.children[1].path).toEqual(['blockquote', 'p']);
+    expect(block2.children[1].text()).toBe('rld');
+  });
+
+  test('can construct a two blockquotes with a paragraphs in each', () => {
+    const {peritext, editor} = setupHelloWorldKit();
+    editor.cursor.setAt(8);
+    editor.saved.insMarker(['blockquote', 'p']);
+    editor.cursor.setAt(4);
+    editor.saved.insMarker([['blockquote', 1], 'p']);
+    peritext.refresh();
+    expect(peritext.blocks.root.children.length).toBe(3);
+    const block2 = peritext.blocks.root.children[1];
+    const block3 = peritext.blocks.root.children[2];
+    expect(block2.children.length).toBe(1);
+    expect(block2.children[0].path).toEqual([['blockquote', 1], 'p']);
+    expect(block2.children[0].text()).toBe('o wo');
+    expect(block3.children.length).toBe(1);
+    expect(block3.children[0].path).toEqual(['blockquote', 'p']);
+    expect(block3.children[0].text()).toBe('rld');
+  });
+});

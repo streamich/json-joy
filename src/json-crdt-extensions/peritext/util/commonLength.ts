@@ -11,7 +11,7 @@ export const commonLength = (a: SliceTypeSteps, b: SliceTypeSteps): number => {
     const bTag = Array.isArray(bStep) ? bStep[0] : bStep;
     if (aTag !== bTag) break;
     let aDiscriminant = Array.isArray(aStep) ? aStep[1] : 0;
-    let bDiscriminant = Array.isArray(aStep) ? aStep[0] : 0;
+    let bDiscriminant = Array.isArray(bStep) ? bStep[0] : 0;
     if (aDiscriminant !== bDiscriminant) break;
     i++;
   }
