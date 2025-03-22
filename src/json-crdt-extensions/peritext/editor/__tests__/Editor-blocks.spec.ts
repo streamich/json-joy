@@ -14,8 +14,7 @@ const runTests = (setup: () => Kit) => {
     const html1 = transfer.toHtml(peritext.rangeAll()!);
     expect(html1).toBe('<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>');
     editor.cursor.setAt(10);
-    const marker = peritext.overlay.getOrNextLowerMarker(editor.cursor.start)!;
-    marker.marker.update({type: [SliceTypeCon.blockquote, SliceTypeCon.p]});
+    editor.setBlockType(editor.cursor.start, [SliceTypeCon.blockquote, SliceTypeCon.p]);
     peritext.refresh();
     const html2 = transfer.toHtml(peritext.rangeAll()!);
     expect(html2).toBe('<p>abc</p><blockquote><p>def</p><p>ghijklmnopqrstuvwxyz</p></blockquote>');
@@ -31,9 +30,8 @@ const runTests = (setup: () => Kit) => {
     const transfer = create(peritext);
     const html1 = transfer.toHtml(peritext.rangeAll()!);
     expect(html1).toBe('<p>abc</p><blockquote><p>def</p><p>ghijklmnopqrstuvwxyz</p></blockquote>');
-    editor.cursor.setAt(10);
-    const marker = peritext.overlay.getOrNextLowerMarker(editor.cursor.start)!;
-    marker.marker.update({type: [[SliceTypeCon.blockquote, 1], SliceTypeCon.p]});
+    const point = peritext.pointAt(10);
+    editor.setBlockType(point, [[SliceTypeCon.blockquote, 1], SliceTypeCon.p]);
     peritext.refresh();
     const html2 = transfer.toHtml(peritext.rangeAll()!);
     expect(html2).toBe('<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>');
