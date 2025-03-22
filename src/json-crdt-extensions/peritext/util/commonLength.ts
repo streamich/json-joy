@@ -1,7 +1,19 @@
-import type {Path} from '@jsonjoy.com/json-pointer';
+import type {SliceTypeSteps} from '../slice';
 
-export const commonLength = (a: Path, b: Path): number => {
+export const commonLength = (a: SliceTypeSteps, b: SliceTypeSteps): number => {
+  const aLength = a.length;
+  const bLength = b.length;
   let i = 0;
-  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  while (i < aLength && i < bLength) {
+    const aStep = a[i];
+    const bStep = b[i];
+    const aTag = Array.isArray(aStep) ? aStep[0] : aStep;
+    const bTag = Array.isArray(bStep) ? bStep[0] : bStep;
+    if (aTag !== bTag) break;
+    let aDiscriminant = Array.isArray(aStep) ? aStep[1] : 0;
+    let bDiscriminant = Array.isArray(aStep) ? aStep[0] : 0;
+    if (aDiscriminant !== bDiscriminant) break;
+    i++;
+  }
   return i;
 };

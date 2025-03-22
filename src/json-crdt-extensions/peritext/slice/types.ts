@@ -41,7 +41,8 @@ import type {Anchor} from '../rga/constants';
  * [['<blockquote>', 1], '<p>']
  * ```
  */
-export type SliceType = SliceTypeStep | SliceTypeStep[];
+export type SliceType = SliceTypeStep | SliceTypeSteps;
+export type SliceTypeSteps = SliceTypeStep[];
 export type SliceTypeStep = string | number | [tag: string | number, discriminant: number];
 
 /**
