@@ -1,5 +1,5 @@
 import {SliceTypeName} from './constants';
-import type {SliceType} from '../slice/types';
+import type {SliceType, SliceTypeStep} from '../slice/types';
 
 export const validateType = (type: SliceType) => {
   switch (typeof type) {
@@ -16,6 +16,9 @@ export const validateType = (type: SliceType) => {
           case 'string':
           case 'number':
             continue LOOP;
+          case 'object':
+            if (!Array.isArray(step) || step.length !== 2) throw new Error('INVALID_TYPE');
+            continue LOOP;
           default:
             throw new Error('INVALID_TYPE');
         }
@@ -27,10 +30,15 @@ export const validateType = (type: SliceType) => {
   }
 };
 
-export const formatType = (type: SliceType): string => {
-  let formatted: string = JSON.stringify(type);
-  const num = Number(type);
-  if ((typeof type === 'number' || num + '' === type) && Math.abs(num) <= 64 && SliceTypeName[num])
-    formatted = '<' + SliceTypeName[num] + '>';
-  return formatted;
+export const formatType = (step: SliceTypeStep): string => {
+  let tag: string | number = '';
+  let discriminant: number = -1;
+  if (Array.isArray(step)) {
+    tag = step[0];
+    discriminant = step[1];
+  } else {
+    tag = step;
+  }
+  if (typeof tag === 'number' && Math.abs(tag) <= 64 && SliceTypeName[tag]) tag = SliceTypeName[tag] ?? tag;
+  return '<' + tag + (discriminant >= 0 ? ':' + discriminant : '') + '>';
 };

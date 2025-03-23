@@ -19,6 +19,7 @@ import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
+import type {MarkerSlice} from '../slice/MarkerSlice';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -691,6 +692,51 @@ export class Editor<T = string> implements Printable {
       slices.insMarker(type, data);
       cursor.move(1);
     }
+  }
+
+  /**
+   * Returns block split marker of the block inside which the point is located.
+   *
+   * @param point The point to get the marker at.
+   * @returns The split marker at the point, if any.
+   */
+  public getMarker(point: Point<T>): MarkerSlice<T> | undefined {
+    return this.txt.overlay.getOrNextLowerMarker(point)?.marker;
+  }
+
+  /**
+   * Insert a block split at the start of the document. The start of the
+   * document is defined as immediately after all deleted characters starting
+   * from the beginning of the document, or as the ABS start of the document if
+   * there are no deleted characters.
+   *
+   * @param type The type of the marker.
+   * @returns The inserted marker slice.
+   */
+  public insStartMarker(type: SliceType): MarkerSlice<T> {
+    const txt = this.txt;
+    const start = txt.pointStart() ?? txt.pointAbsStart();
+    start.refAfter();
+    return this.txt.savedSlices.insMarkerAfter(start.id, type);
+  }
+
+  /**
+   * Find the block split marker which contains the point and sets the block
+   * type of the marker. If there is no block split marker at the point, a new
+   * block split marker is inserted at the beginning of the document with the
+   * specified block type.
+   *
+   * @param point The point at which to set the block type.
+   * @param type The new block type.
+   * @returns The marker slice at the point, or a new marker slice if there is none.
+   */
+  public setBlockType(point: Point<T>, type: SliceType): MarkerSlice<T> {
+    const marker = this.getMarker(point);
+    if (marker) {
+      marker.update({type});
+      return marker;
+    }
+    return this.insStartMarker(type);
   }
 
   // ---------------------------------------------------------- export / import

@@ -7,15 +7,15 @@ import {formatType} from '../slice/util';
 import {Range} from '../rga/Range';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
-import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {OverlayTuple} from '../overlay/types';
 import type {PeritextMlAttributes, PeritextMlElement} from './types';
+import type {SliceTypeSteps} from '../slice';
 
 export interface IBlock {
-  readonly path: Path;
+  readonly path: SliceTypeSteps;
   readonly parent: IBlock | null;
 }
 
@@ -26,7 +26,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
 
   constructor(
     public readonly txt: Peritext<T>,
-    public readonly path: Path,
+    public readonly path: SliceTypeSteps,
     public readonly marker: MarkerOverlayPoint<T> | undefined,
     public start: Point<T>,
     public end: Point<T>,
@@ -47,7 +47,9 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   public tag(): number | string {
     const path = this.path;
     const length = path.length;
-    return length ? path[length - 1] : '';
+    if (!length) return '';
+    const step = path[length - 1];
+    return Array.isArray(step) ? step[0] : step;
   }
 
   public attr(): Attr | undefined {

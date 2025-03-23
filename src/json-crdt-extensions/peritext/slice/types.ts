@@ -1,4 +1,3 @@
-import type {Path, PathStep} from '@jsonjoy.com/json-pack/lib/json-pointer';
 import type {Range} from '../rga/Range';
 import type {Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -23,7 +22,7 @@ import type {Anchor} from '../rga/constants';
  * Slice types can specify block nesting:
  *
  * ```ts
- * ['paragraph', 'blockquote']
+ * ['blockquote', 'paragraph']
  * ['ul', 'li', 'code']
  * ```
  *
@@ -34,8 +33,17 @@ import type {Anchor} from '../rga/constants';
  * [2]
  * [3, 4]
  * ```
+ *
+ * Block split with discriminant, to differentiate between two adjacent blocks:
+ *
+ * ```ts
+ * [['<blockquote>', 0], '<p>']
+ * [['<blockquote>', 1], '<p>']
+ * ```
  */
-export type SliceType = PathStep | Path;
+export type SliceType = SliceTypeStep | SliceTypeSteps;
+export type SliceTypeSteps = SliceTypeStep[];
+export type SliceTypeStep = string | number | [tag: string | number, discriminant: number];
 
 /**
  * The JSON CRDT schema of the stored slices in the document. The slices are
