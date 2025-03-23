@@ -17,30 +17,34 @@ export const enum SliceTypeCon {
   pre = 3, // <pre>
   ul = 4, // <ul>
   ol = 5, // <ol>
-  tasklist = 6, // - [ ] Task list
-  h1 = 7, // <h1>
-  h2 = 8, // <h2>
-  h3 = 9, // <h3>
-  h4 = 10, // <h4>
-  h5 = 11, // <h5>
-  h6 = 12, // <h6>
-  title = 13, // <title>
-  subtitle = 14, // <subtitle>
-  br = 15, // <br>
-  nl = 16, // \n
-  hr = 17, // <hr>
-  page = 18, // Page break
-  aside = 19, // <aside>
-  embed = 20, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
-  column = 21, // <div style="column-count: ..."> (represents 2 and 3 column layouts)
-  contents = 22, // Table of contents
-  table = 23, // <table>
-  row = 24, // Table row
-  cell = 25, // Table cell
-  collapselist = 26, // Collapsible list - > List item
-  collapse = 27, // Collapsible block
-  note = 28, // Note block
-  mathblock = 29, // <math> block
+  tl = 6, // - [ ] Task list
+  li = 7, // <li>
+  h1 = 8, // <h1>
+  h2 = 9, // <h2>
+  h3 = 10, // <h3>
+  h4 = 11, // <h4>
+  h5 = 12, // <h5>
+  h6 = 13, // <h6>
+  title = 14, // <title>
+  subtitle = 15, // <subtitle>
+  br = 16, // <br>
+  nl = 17, // \n
+  hr = 18, // <hr>
+  page = 19, // Page break
+  aside = 20, // <aside>
+  embed = 21, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
+  column = 22, // <div style="column-count: ..."> (represents 2 and 3 column layouts)
+  contents = 23, // Table of contents
+  table = 24, // <table>
+  row = 25, // Table row
+  cell = 26, // Table cell
+
+  // TODO: rename to `cl` (collapsible list)?
+  collapselist = 27, // Collapsible list - > List item
+
+  collapse = 28, // Collapsible block
+  note = 29, // Note block
+  mathblock = 30, // <math> block
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
