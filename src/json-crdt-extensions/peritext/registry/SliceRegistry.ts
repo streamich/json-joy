@@ -101,7 +101,7 @@ export class SliceRegistry {
     }
     const tagStr = CommonSliceType[tag as SliceTypeCon];
     if (tagStr && typeof tagStr === 'string')
-      _fromHtml.set(tagStr, [[entry, () => [type, null]]]);
+      _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
   }
 
   public toHtml(el: PeritextMlElement): ReturnType<ToHtmlConverter<any>> | undefined {
@@ -116,9 +116,11 @@ export class SliceRegistry {
       for (const [entry, converter] of converters) {
         const result = converter(el);
         if (result) {
-          const attr = result[1] ?? (result[1] = {});
-          attr.inline = entry.isInline();
-          attr.behavior = !attr.inline ? SliceBehavior.Marker : (entry.behavior ?? SliceBehavior.Many);
+          if (entry.isInline()) {
+            const attr = result[1] ?? (result[1] = {});
+            attr.inline = entry.isInline();
+            attr.behavior = !attr.inline ? SliceBehavior.Marker : (entry.behavior ?? SliceBehavior.Many);
+          }
           return result;
         }
       }

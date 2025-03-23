@@ -88,7 +88,7 @@ export enum SliceTypeName {
   pre = SliceTypeCon.pre,
   ul = SliceTypeCon.ul,
   ol = SliceTypeCon.ol,
-  tasklist = SliceTypeCon.tasklist,
+  tl = SliceTypeCon.tl,
   h1 = SliceTypeCon.h1,
   h2 = SliceTypeCon.h2,
   h3 = SliceTypeCon.h3,
