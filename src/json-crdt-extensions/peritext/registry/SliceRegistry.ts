@@ -3,7 +3,7 @@ import {CommonSliceType} from '../slice';
 import type {PeritextMlElement} from '../block/types';
 import type {NodeBuilder} from '../../../json-crdt-patch';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
-import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './types';
+import type {FromHtmlConverter, ToHtmlConverter} from './types';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 
@@ -88,7 +88,7 @@ export class SliceRegistry {
   private _fromHtml: Map<string, [entry: SliceRegistryEntry, converter: FromHtmlConverter][]> =
     new Map();
 
-  public add(entry: SliceRegistryEntry): void {
+  public add(entry: SliceRegistryEntry<any, any, any>): void {
     const {tag, fromHtml} = entry;
     const _fromHtml = this._fromHtml;
     if (fromHtml) {
@@ -113,12 +113,12 @@ export class SliceRegistry {
     const tag = el[0] + '';
     const converters = this._fromHtml.get(tag);
     if (converters) {
-      for (const [def, converter] of converters) {
+      for (const [entry, converter] of converters) {
         const result = converter(el);
         if (result) {
           const attr = result[1] ?? (result[1] = {});
-          attr.inline = def.inline ?? def.type < 0;
-          attr.behavior = !attr.inline ? SliceBehavior.Marker : (def.behavior ?? SliceBehavior.Many);
+          attr.inline = entry.isInline();
+          attr.behavior = !attr.inline ? SliceBehavior.Marker : (entry.behavior ?? SliceBehavior.Many);
           return result;
         }
       }
