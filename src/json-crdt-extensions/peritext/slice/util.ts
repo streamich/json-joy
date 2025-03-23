@@ -40,5 +40,5 @@ export const formatType = (step: SliceTypeStep): string => {
     tag = step;
   }
   if (typeof tag === 'number' && Math.abs(tag) <= 64 && SliceTypeName[tag]) tag = SliceTypeName[tag] ?? tag;
-  return '<' + tag + (discriminant >= 0 ? (':' + discriminant) : '') + '>';
+  return '<' + tag + (discriminant >= 0 ? ':' + discriminant : '') + '>';
 };

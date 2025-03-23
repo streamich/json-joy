@@ -19,7 +19,7 @@ import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
-import {MarkerSlice} from '../slice/MarkerSlice';
+import type {MarkerSlice} from '../slice/MarkerSlice';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be

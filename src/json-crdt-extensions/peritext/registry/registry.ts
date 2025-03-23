@@ -1,13 +1,13 @@
 import {s} from '../../../json-crdt-patch';
 import {SliceBehavior, SliceTypeCon as TAG} from '../slice/constants';
-import {SliceRegistry, SliceRegistryEntry, TagType} from './SliceRegistry';
+import {SliceRegistry, SliceRegistryEntry, type TagType} from './SliceRegistry';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {PeritextMlElement} from '../block/types';
 
 /**
  * Default annotation type registry.
-*/
+ */
 export const registry = new SliceRegistry();
 
 const undefSchema = s.con(undefined);
@@ -18,16 +18,7 @@ const i0 = <Tag extends TagType = TagType>(
   tag: Tag,
   fromHtml?: SliceRegistryEntry<SliceBehavior.One, Tag, typeof undefSchema>['fromHtml'],
 ): void => {
-  registry.add(
-    new SliceRegistryEntry(
-      SliceBehavior.One,
-      tag,
-      undefSchema,
-      false,
-      void 0,
-      fromHtml,
-    )
-  );
+  registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, undefSchema, false, void 0, fromHtml));
 };
 
 const i1 = <Tag extends TagType = TagType>(tag: Tag, htmlTags: string[]): void => {
@@ -56,23 +47,16 @@ const aSchema = s.obj({
   title: s.str<string>(''),
 });
 registry.add(
-  new SliceRegistryEntry(
-    SliceBehavior.Many,
-    TAG.a,
-    aSchema,
-    false,
-    void 0,
-    {
-      a: (jsonml) => {
-        const attr = jsonml[1] || {};
-        const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
-          href: attr.href ?? '',
-          title: attr.title ?? '',
-        };
-        return [TAG.a, {data, inline: true}] as PeritextMlElement<TAG.a, any, true>;
-      },
+  new SliceRegistryEntry(SliceBehavior.Many, TAG.a, aSchema, false, void 0, {
+    a: (jsonml) => {
+      const attr = jsonml[1] || {};
+      const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
+        href: attr.href ?? '',
+        title: attr.title ?? '',
+      };
+      return [TAG.a, {data, inline: true}] as PeritextMlElement<TAG.a, any, true>;
     },
-  )
+  }),
 );
 
 // TODO: add more default annotations with "Many" behavior
@@ -89,23 +73,16 @@ registry.add(
 
 // --------------------------------------- Block elements with "Marker" behavior
 
-const commonBlockSchema = s.obj({}, {
-  indent: s.con(0),
-  align: s.str<'left' | 'center' | 'right' | 'justify'>('left'),
-});
+const commonBlockSchema = s.obj(
+  {},
+  {
+    indent: s.con(0),
+    align: s.str<'left' | 'center' | 'right' | 'justify'>('left'),
+  },
+);
 
-const b0 = <Tag extends TagType = TagType>(
-  tag: Tag,
-  container: boolean,
-) => {
-  registry.add(
-    new SliceRegistryEntry(
-      SliceBehavior.Marker,
-      tag,
-      commonBlockSchema,
-      container,
-    )
-  );
+const b0 = <Tag extends TagType = TagType>(tag: Tag, container: boolean) => {
+  registry.add(new SliceRegistryEntry(SliceBehavior.Marker, tag, commonBlockSchema, container));
 };
 
 b0(TAG.p, false);

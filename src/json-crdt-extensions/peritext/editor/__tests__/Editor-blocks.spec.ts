@@ -1,4 +1,4 @@
-import {Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import {SliceTypeCon} from '../../slice/constants';
 import {create} from '../../transfer/create';
 
@@ -12,7 +12,9 @@ const runTests = (setup: () => Kit) => {
     peritext.refresh();
     const transfer = create(peritext);
     const html1 = transfer.toHtml(peritext.rangeAll()!);
-    expect(html1).toBe('<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>');
+    expect(html1).toBe(
+      '<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>',
+    );
     editor.cursor.setAt(10);
     editor.setBlockType(editor.cursor.start, [SliceTypeCon.blockquote, SliceTypeCon.p]);
     peritext.refresh();
@@ -34,7 +36,9 @@ const runTests = (setup: () => Kit) => {
     editor.setBlockType(point, [[SliceTypeCon.blockquote, 1], SliceTypeCon.p]);
     peritext.refresh();
     const html2 = transfer.toHtml(peritext.rangeAll()!);
-    expect(html2).toBe('<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>');
+    expect(html2).toBe(
+      '<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>',
+    );
   });
 };
 

@@ -33,9 +33,9 @@ import type {Anchor} from '../rga/constants';
  * [2]
  * [3, 4]
  * ```
- * 
+ *
  * Block split with discriminant, to differentiate between two adjacent blocks:
- * 
+ *
  * ```ts
  * [['<blockquote>', 0], '<p>']
  * [['<blockquote>', 1], '<p>']
