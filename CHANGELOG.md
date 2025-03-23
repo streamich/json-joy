@@ -1,3 +1,24 @@
+# [17.33.0](https://github.com/streamich/json-joy/compare/v17.32.1...v17.33.0) (2025-03-23)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correct block type discrimination ([15a1f4b](https://github.com/streamich/json-joy/commit/15a1f4bd13a0f745b548a1420c90d3567dd3759d))
+* **json-crdt-extensions:** 🐛 corrections after refactor ([f59dac6](https://github.com/streamich/json-joy/commit/f59dac6b79e32b66e5e1c30cb434ded1f204fa36))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add utilities for manipulating block type ([8199263](https://github.com/streamich/json-joy/commit/8199263bb0b41fdc09143c839e54277d16951e01))
+* **json-crdt-extensions:** 🎸 fixup <a> registration ([356387a](https://github.com/streamich/json-joy/commit/356387a6593efde286f45153e1d341048654033d))
+* **json-crdt-extensions:** 🎸 improve slice registry endtry definition ([8fcefc8](https://github.com/streamich/json-joy/commit/8fcefc85c1fe7edf1f2ab7e097c0a3fac2b6833b))
+* **json-crdt-extensions:** 🎸 introduce discriminants in slice types ([e965960](https://github.com/streamich/json-joy/commit/e965960ac1518b418e7c23d99ee2806d211de9a1))
+* **json-crdt-extensions:** 🎸 register block slice types ([2c491bb](https://github.com/streamich/json-joy/commit/2c491bb425a046ef2560a75b50969f0af16068ab))
+* **json-crdt-extensions:** 🎸 setup slice registry entry type ([ef8ec10](https://github.com/streamich/json-joy/commit/ef8ec10e51f9ae97f8dfed2502c64186b99c23ab))
+* **json-crdt-extensions:** 🎸 update how common path steps are calculated and update type ([22b709a](https://github.com/streamich/json-joy/commit/22b709a08f118283537af777131d9a2eedc798e3))
+* **json-crdt-extensions:** 🎸 update inline registry entries ([f39ddb6](https://github.com/streamich/json-joy/commit/f39ddb63657912ab85e5bc9828df09681ca1df1b))
+* **json-crdt-extensions:** 🎸 update slice registry ([607fa77](https://github.com/streamich/json-joy/commit/607fa7724f84bd3255d97c2a1607824276d1d655))
+
 ## [17.32.1](https://github.com/streamich/json-joy/compare/v17.32.0...v17.32.1) (2025-03-20)
 
 
