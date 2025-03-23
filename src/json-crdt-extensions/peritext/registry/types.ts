@@ -14,6 +14,15 @@ export interface SliceTypeDefinition<
   schema: Schema;
   behavior?: SliceBehavior;
   inline?: boolean;
+
+  /**
+   * For block element slices (block splits), the `container` property specifies
+   * whether the type is a container for other block elements. For example, a
+   * `blockquote` is a container for `paragraph` elements, however, a `paragraph`
+   * is not a container (it can only contain inline elements).
+   */
+  container?: boolean;
+
   toHtml?: ToHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Inline>>;
   fromHtml?: {
     [htmlTag: string]: FromHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Inline>>;

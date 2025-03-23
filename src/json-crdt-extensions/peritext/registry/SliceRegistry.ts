@@ -4,6 +4,33 @@ import type {PeritextMlElement} from '../block/types';
 import type {NodeBuilder} from '../../../json-crdt-patch';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
 import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './types';
+import type {JsonNodeView} from '../../../json-crdt/nodes';
+import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
+
+export class SliceRegistryEntry<
+  Behavior extends SliceBehavior = SliceBehavior,
+  Type extends number | string = number | string,
+  Schema extends NodeBuilder = NodeBuilder,
+> {
+  constructor(
+    behavior: Behavior,
+    type: Type,
+    schema: Schema,
+
+    /**
+     * For block element slices (block splits), the `container` property specifies
+     * whether the type is a container for other block elements. For example, a
+     * `blockquote` is a container for `paragraph` elements, however, a `paragraph`
+     * is not a container (it can only contain inline elements).
+     */
+    container?: boolean,
+    
+    toHtml?: ToHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Behavior extends SliceBehavior.Marker ? false : true>>,
+    fromHtml?: {
+      [htmlTag: string]: FromHtmlConverter<PeritextMlElement<Type, JsonNodeView<SchemaToJsonNode<Schema>>, Behavior extends SliceBehavior.Marker ? false : true>>;
+    },
+  ) {}
+}
 
 /**
  * @todo Consider moving the registry under the `/transfer` directory.

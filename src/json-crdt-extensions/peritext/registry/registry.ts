@@ -71,3 +71,5 @@ registry.def(CommonSliceType.a, aSchema, SliceBehavior.Many, true, {
 // iaside = SliceTypeCon.iaside,
 // iembed = SliceTypeCon.iembed,
 // bookmark = SliceTypeCon.bookmark,
+
+registry.def(CommonSliceType.blockquote, undefSchema, SliceBehavior.Marker, false);
