@@ -7,9 +7,11 @@ import type {FromHtmlConverter, SliceTypeDefinition, ToHtmlConverter} from './ty
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 
+export type TagType = SliceTypeCon | number | string;
+
 export class SliceRegistryEntry<
   Behavior extends SliceBehavior = SliceBehavior,
-  Tag extends SliceTypeCon | number | string = SliceTypeCon | number | string,
+  Tag extends TagType = TagType,
   Schema extends NodeBuilder = NodeBuilder,
 > {
 
@@ -82,49 +84,34 @@ export class SliceRegistryEntry<
  * `/slices` directory.
  */
 export class SliceRegistry {
-  private map: Map<string | number, SliceTypeDefinition<any, any, any>> = new Map();
-  private toHtmlMap: Map<string | number, ToHtmlConverter<any>> = new Map();
-  private fromHtmlMap: Map<string, [def: SliceTypeDefinition<any, any, any>, converter: FromHtmlConverter][]> =
+  private map: Map<TagType, SliceRegistryEntry> = new Map();
+  private _fromHtml: Map<string, [entry: SliceRegistryEntry, converter: FromHtmlConverter][]> =
     new Map();
 
-  public add<Type extends number | string, Schema extends NodeBuilder, Inline extends boolean = true>(
-    def: SliceTypeDefinition<Type, Schema, Inline>,
-  ): void {
-    const {type, toHtml, fromHtml} = def;
-    const fromHtmlMap = this.fromHtmlMap;
-    if (toHtml) this.toHtmlMap.set(type, toHtml);
+  public add(entry: SliceRegistryEntry): void {
+    const {tag, fromHtml} = entry;
+    const _fromHtml = this._fromHtml;
     if (fromHtml) {
       for (const htmlTag in fromHtml) {
         const converter = fromHtml[htmlTag];
-        const converters = fromHtmlMap.get(htmlTag) ?? [];
-        converters.push([def, converter]);
-        fromHtmlMap.set(htmlTag, converters);
+        const converters = _fromHtml.get(htmlTag) ?? [];
+        converters.push([entry, converter]);
+        _fromHtml.set(htmlTag, converters);
       }
     }
-    const tag = CommonSliceType[type as any];
-    if (tag && typeof tag === 'string') {
-      fromHtmlMap.set(tag, [[def, () => [type, null]]]);
-    }
-  }
-
-  public def<Type extends number | string, Schema extends NodeBuilder, Inline extends boolean = true>(
-    type: Type,
-    schema: Schema,
-    behavior: SliceBehavior,
-    inline: boolean,
-    rest: Omit<SliceTypeDefinition<Type, Schema, Inline>, 'type' | 'schema' | 'behavior' | 'inline'> = {},
-  ): void {
-    this.add({type, schema, behavior, inline, ...rest});
+    const tagStr = CommonSliceType[tag as SliceTypeCon];
+    if (tagStr && typeof tagStr === 'string')
+      _fromHtml.set(tagStr, [[entry, () => [type, null]]]);
   }
 
   public toHtml(el: PeritextMlElement): ReturnType<ToHtmlConverter<any>> | undefined {
-    const converter = this.toHtmlMap.get(el[0]);
-    return converter ? converter(el) : undefined;
+    const entry = this.map.get(el[0]);
+    return entry?.toHtml ? entry?.toHtml(el) : void 0;
   }
 
   public fromHtml(el: JsonMlElement): PeritextMlElement | undefined {
     const tag = el[0] + '';
-    const converters = this.fromHtmlMap.get(tag);
+    const converters = this._fromHtml.get(tag);
     if (converters) {
       for (const [def, converter] of converters) {
         const result = converter(el);
