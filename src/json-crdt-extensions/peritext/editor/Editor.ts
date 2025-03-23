@@ -1,25 +1,27 @@
-import {printTree} from 'tree-dump/lib/printTree';
 import {Cursor} from './Cursor';
-import {stringify} from '../../../json-text/stringify';
-import {CursorAnchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift} from '../slice/constants';
+import {Anchor} from '../rga/constants';
+import {formatType} from '../slice/util';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
+import {printTree} from 'tree-dump/lib/printTree';
+import {createRegistry} from '../registry/registry';
+import {PersistedSlice} from '../slice/PersistedSlice';
+import {stringify} from '../../../json-text/stringify';
+import {CommonSliceType, type SliceTypeSteps, type SliceType} from '../slice';
 import {isLetter, isPunctuation, isWhitespace} from './util';
-import {Anchor} from '../rga/constants';
+import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
-import {PersistedSlice} from '../slice/PersistedSlice';
-import {ValueSyncStore} from '../../../util/events/sync-store';
-import {formatType} from '../slice/util';
-import {CommonSliceType, type SliceType} from '../slice';
 import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
-import type {ChunkSlice} from '../util/ChunkSlice';
-import type {Peritext} from '../Peritext';
+import {CursorAnchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
 import type {Printable} from 'tree-dump';
+import type {Peritext} from '../Peritext';
+import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
+import type {SliceRegistry} from '../registry/SliceRegistry';
+import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -50,6 +52,8 @@ export class Editor<T = string> implements Printable {
    * will be if the cursor is not moved.
    */
   public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown>>(new Map());
+
+  public registry: SliceRegistry = createRegistry();
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
@@ -590,6 +594,45 @@ export class Editor<T = string> implements Printable {
 
   // --------------------------------------------------------------- formatting
 
+  public eraseFormatting(store: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      overlay.refresh();
+      const contained = overlay.findContained(cursor);
+      for (const slice of contained) {
+        if (slice instanceof PersistedSlice) {
+          switch (slice.behavior) {
+            case SliceBehavior.One:
+            case SliceBehavior.Many:
+            case SliceBehavior.Erase:
+              slice.del();
+          }
+        }
+      }
+      overlay.refresh();
+      const overlapping = overlay.findOverlapping(cursor);
+      for (const slice of overlapping) {
+        switch (slice.behavior) {
+          case SliceBehavior.One:
+          case SliceBehavior.Many: {
+            store.insErase(slice.type);
+          }
+        }
+      }
+    }
+  }
+
+  public clearFormatting(store: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    overlay.refresh();
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const overlapping = overlay.findOverlapping(cursor);
+      for (const slice of overlapping) store.del(slice.id);
+    }
+  }
+
+  // -------------------------------------------------------- inline formatting
+
   protected toggleRangeExclFmt(
     range: Range<T>,
     type: CommonSliceType | string | number,
@@ -645,54 +688,7 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public eraseFormatting(store: EditorSlices<T> = this.saved): void {
-    const overlay = this.txt.overlay;
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      overlay.refresh();
-      const contained = overlay.findContained(cursor);
-      for (const slice of contained) {
-        if (slice instanceof PersistedSlice) {
-          switch (slice.behavior) {
-            case SliceBehavior.One:
-            case SliceBehavior.Many:
-            case SliceBehavior.Erase:
-              slice.del();
-          }
-        }
-      }
-      overlay.refresh();
-      const overlapping = overlay.findOverlapping(cursor);
-      for (const slice of overlapping) {
-        switch (slice.behavior) {
-          case SliceBehavior.One:
-          case SliceBehavior.Many: {
-            store.insErase(slice.type);
-          }
-        }
-      }
-    }
-  }
-
-  public clearFormatting(store: EditorSlices<T> = this.saved): void {
-    const overlay = this.txt.overlay;
-    overlay.refresh();
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const overlapping = overlay.findOverlapping(cursor);
-      for (const slice of overlapping) store.del(slice.id);
-    }
-  }
-
-  public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      this.collapseCursor(cursor);
-      if (type === void 0) {
-        // TODO: detect current block type
-        type = CommonSliceType.p;
-      }
-      slices.insMarker(type, data);
-      cursor.move(1);
-    }
-  }
+  // --------------------------------------------------------- block formatting
 
   /**
    * Returns block split marker of the block inside which the point is located.
@@ -702,6 +698,20 @@ export class Editor<T = string> implements Printable {
    */
   public getMarker(point: Point<T>): MarkerSlice<T> | undefined {
     return this.txt.overlay.getOrNextLowerMarker(point)?.marker;
+  }
+
+  /**
+   * Returns the block type at the given point. Block type is a nested array of
+   * tags, e.g. `['p']`, `['blockquote', 'p']`, `['ul', 'li', 'p']`, etc.
+   *
+   * @param point The point to get the block type at.
+   * @returns Current block type at the point.
+   */
+  public getBlockType(point: Point<T>): SliceTypeSteps {
+    const marker = this.getMarker(point);
+    let steps = marker?.type ?? [SliceTypeCon.p];
+    if (!Array.isArray(steps)) steps = [steps];
+    return steps;
   }
 
   /**
@@ -737,6 +747,45 @@ export class Editor<T = string> implements Printable {
       return marker;
     }
     return this.insStartMarker(type);
+  }
+
+  public getContainerPath(steps: SliceTypeSteps): SliceTypeSteps {
+    const registry = this.registry;
+    const length = steps.length;
+    for (let i = length - 1; i >= 0; i--) {
+      const step = steps[i];
+      const tag = Array.isArray(step) ? step[0] : step;
+      const isContainer = registry.isContainer(tag);
+      if (isContainer) return steps.slice(0, i + 1);
+    }
+    return [];
+  }
+
+  public splitAt(at: Point<T>, slices: EditorSlices<T> = this.saved): void {
+    const type = this.getBlockType(at);
+    const containerPath = this.getContainerPath(type);
+    const newType = containerPath.concat([CommonSliceType.p]);
+    slices.insMarker(newType);
+  }
+
+  public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    if (type === void 0) {
+      for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+        this.collapseCursor(cursor);
+        this.splitAt(cursor.start);
+        cursor.move(1);
+      }
+    } else {
+      for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+        this.collapseCursor(cursor);
+        if (type === void 0) {
+          // TODO: detect current block type
+          type = CommonSliceType.p;
+        }
+        slices.insMarker(type, data);
+        cursor.move(1);
+      }
+    }
   }
 
   // ---------------------------------------------------------- export / import
