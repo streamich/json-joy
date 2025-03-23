@@ -3,6 +3,7 @@ import {SliceBehavior, SliceTypeCon} from '../slice/constants';
 import {SliceRegistry, SliceRegistryEntry, TagType} from './SliceRegistry';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
+import type {PeritextMlElement} from '../block/types';
 
 /**
  * Default annotation type registry.
@@ -68,7 +69,7 @@ registry.add(
           href: attr.href ?? '',
           title: attr.title ?? '',
         };
-        return [SliceTypeCon.a, {data, inline: true}];
+        return [SliceTypeCon.a, {data, inline: true}] as PeritextMlElement<SliceTypeCon.a, any, true>;
       },
     },
   )
