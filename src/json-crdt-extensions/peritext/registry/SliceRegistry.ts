@@ -19,6 +19,11 @@ export class SliceRegistryEntry<
   }
 
   constructor(
+    /**
+     * Specifies whether the slice is an inline or block element. And if it is
+     * an inline element, whether multiple instances of the same tag are allowed
+     * to be applied to a range of tex - "Many", or only one instance - "One".
+     */
     public readonly behavior: Behavior,
 
     /**
@@ -93,6 +98,10 @@ export class SliceRegistryEntry<
 }
 
 /**
+ * Slice registry contains a record of possible inline an block formatting
+ * annotations. Each entry in the registry is a {@link SliceRegistryEntry} that
+ * specifies the behavior, tag, and other properties of the slice.
+ *
  * @todo Consider moving the registry under the `/transfer` directory. Or maybe
  * `/slices` directory.
  */
@@ -102,6 +111,7 @@ export class SliceRegistry {
 
   public add(entry: SliceRegistryEntry<any, any, any>): void {
     const {tag, fromHtml} = entry;
+    this.map.set(tag, entry);
     const _fromHtml = this._fromHtml;
     if (fromHtml) {
       for (const htmlTag in fromHtml) {
@@ -113,6 +123,11 @@ export class SliceRegistry {
     }
     const tagStr = CommonSliceType[tag as SliceTypeCon];
     if (tagStr && typeof tagStr === 'string') _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
+  }
+
+  public isContainer(tag: TagType): boolean {
+    const entry = this.map.get(tag);
+    return entry?.container ?? false;
   }
 
   public toHtml(el: PeritextMlElement): ReturnType<ToHtmlConverter<any>> | undefined {
