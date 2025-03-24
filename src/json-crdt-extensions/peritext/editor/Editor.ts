@@ -786,7 +786,7 @@ export class Editor<T = string> implements Printable {
    */
   public splitAt(at: Point<T>, slices: EditorSlices<T> = this.saved): boolean {
     const [type, marker] = this.getBlockType(at);
-    const prevMarker = marker ? this.getMarker(marker.start.copy(p => p.halfstep(-1))) : void 0;
+    const prevMarker = marker ? this.getMarker(marker.start.copy((p) => p.halfstep(-1))) : void 0;
     if (marker && prevMarker) {
       const rangeFromMarker = this.txt.range(marker.start, at);
       const noLeadingText = rangeFromMarker.length() <= 1;

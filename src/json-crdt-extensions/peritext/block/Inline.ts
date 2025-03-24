@@ -317,15 +317,15 @@ export class Inline<T = string> extends Range<T> implements Printable {
               printTree(
                 tab,
                 attrKeys.map((key) => () => {
-                  return key === '-1' ? '▚ (cursor)' : (
-                    formatType(key) +
-                    ' = ' +
-                    stringify(
-                      attr[key].map((attr) =>
-                        attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data(),
-                      ),
-                    )
-                  );
+                  return key === '-1'
+                    ? '▚ (cursor)'
+                    : formatType(key) +
+                        ' = ' +
+                        stringify(
+                          attr[key].map((attr) =>
+                            attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data(),
+                          ),
+                        );
                 }),
               ),
         !texts.length

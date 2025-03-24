@@ -1,4 +1,4 @@
-import {SliceTypeSteps} from '../slice';
+import type {SliceTypeSteps} from '../slice';
 import type {CharPredicate} from './types';
 
 const LETTER_REGEX = /(\p{Letter}|\d|_)/u;

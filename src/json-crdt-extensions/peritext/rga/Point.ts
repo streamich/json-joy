@@ -51,7 +51,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   public copy(mutate: (copy: Point<T>) => void): Point<T> {
-    let copy = this.clone();
+    const copy = this.clone();
     mutate(copy);
     return copy;
   }
