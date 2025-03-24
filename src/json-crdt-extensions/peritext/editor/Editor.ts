@@ -820,7 +820,7 @@ export class Editor<T = string> implements Printable {
     if (type === void 0) {
       for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
         this.collapseCursor(cursor);
-        const didInsertMarker = this.splitAt(cursor.start);
+        const didInsertMarker = this.splitAt(cursor.start, slices);
         if (didInsertMarker) cursor.move(1);
       }
     } else {

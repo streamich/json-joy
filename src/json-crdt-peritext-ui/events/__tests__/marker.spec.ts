@@ -71,6 +71,30 @@ const testSuite = (getKit: () => Kit) => {
     const html4 = transfer.toHtml(kit.peritext.rangeAll()!);
     expect(html4).toBe('<p>abc</p><ul><li><p>defghijk</p></li></ul><ul><li><p>lmnopqrstuvwxyz</p></li></ul>');
   });
+
+  test('can consecutively split two nested lists with a blockquote', async () => {
+    const kit = setup();
+    kit.et.cursor({at: 7});
+    kit.et.marker({action: 'ins', type: [SliceTypeCon.ul, SliceTypeCon.li, SliceTypeCon.ul, SliceTypeCon.li, SliceTypeCon.blockquote, SliceTypeCon.p]});
+    kit.peritext.refresh();
+    const transfer = createTransfer(kit.peritext);
+    const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html1).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmnopqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    kit.et.cursor({at: 15});
+    const pressEnter = (): string => {
+      kit.et.marker({action: 'ins'});
+      kit.peritext.refresh();
+      const html = transfer.toHtml(kit.peritext.rangeAll()!);
+      return html;
+    };
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p></blockquote><blockquote><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p></blockquote></li><li><blockquote><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p></blockquote></li></ul><ul><li><blockquote><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p></blockquote></li></ul></li><li><ul><li><blockquote><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p></blockquote></li></ul></li></ul><ul><li><ul><li><blockquote><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+    expect(pressEnter()).toBe('<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmn</p></blockquote></li></ul></li></ul><ul><li><ul><li><blockquote><p /></blockquote></li></ul></li></ul><ul><li><ul><li><blockquote><p>opqrstuvwxyz</p></blockquote></li></ul></li></ul>');
+  });
 };
 
 describe('"marker" event', () => {
