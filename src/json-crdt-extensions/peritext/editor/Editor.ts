@@ -8,7 +8,7 @@ import {createRegistry} from '../registry/registry';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
 import {CommonSliceType, type SliceTypeSteps, type SliceType} from '../slice';
-import {isLetter, isPunctuation, isWhitespace} from './util';
+import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
@@ -707,11 +707,12 @@ export class Editor<T = string> implements Printable {
    * @param point The point to get the block type at.
    * @returns Current block type at the point.
    */
-  public getBlockType(point: Point<T>): SliceTypeSteps {
+  public getBlockType(point: Point<T>): [type: SliceTypeSteps, marker?: MarkerSlice<T> | undefined] {
     const marker = this.getMarker(point);
+    if (!marker) return [[SliceTypeCon.p]];
     let steps = marker?.type ?? [SliceTypeCon.p];
     if (!Array.isArray(steps)) steps = [steps];
-    return steps;
+    return [steps, marker];
   }
 
   /**
@@ -761,8 +762,47 @@ export class Editor<T = string> implements Printable {
     return [];
   }
 
+  public getDeepestCommonContainer(steps1: SliceTypeSteps, steps2: SliceTypeSteps): number {
+    const length1 = steps1.length;
+    const length2 = steps2.length;
+    const min = Math.min(length1, length2);
+    for (let i = 0; i < min; i++) {
+      const step1 = steps1[i];
+      const step2 = steps2[i];
+      const tag1 = Array.isArray(step1) ? step1[0] : step1;
+      const tag2 = Array.isArray(step2) ? step2[0] : step2;
+      const disc1 = Array.isArray(step1) ? step1[1] : 0;
+      const disc2 = Array.isArray(step2) ? step2[1] : 0;
+      if (tag1 !== tag2 || disc1 !== disc2) return i;
+      if (!this.registry.isContainer(tag1)) return i - 1;
+    }
+    return min;
+  }
+
   public splitAt(at: Point<T>, slices: EditorSlices<T> = this.saved): void {
-    const type = this.getBlockType(at);
+    const [type, marker] = this.getBlockType(at);
+    const prevMarker = marker ? this.getMarker(marker.start.copy(p => p.halfstep(-1))) : void 0;
+    if (marker && prevMarker) {
+      const rangeFromMarker = this.txt.range(marker.start, at);
+      const noLeadingText = rangeFromMarker.length() <= 1;
+      if (noLeadingText) {
+        const markerSteps = marker.typeSteps();
+        const prevMarkerSteps = prevMarker.typeSteps();
+        if (markerSteps.length > 1) {
+          const areMarkerTypesEqual = stepsEqual(markerSteps, prevMarkerSteps);
+          if (areMarkerTypesEqual) {
+            const i = this.getDeepestCommonContainer(markerSteps, prevMarkerSteps);
+            const newType = [...markerSteps];
+            const step = newType[i];
+            const tag = Array.isArray(step) ? step[0] : step;
+            const disc = Array.isArray(step) ? step[1] : 0;
+            newType[i] = [tag, (disc + 1) % 8];
+            marker.update({type: newType});
+            return;
+          }
+        }
+      }
+    }
     const containerPath = this.getContainerPath(type);
     const newType = containerPath.concat([CommonSliceType.p]);
     slices.insMarker(newType);

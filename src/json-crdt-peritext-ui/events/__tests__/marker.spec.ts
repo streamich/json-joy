@@ -29,6 +29,25 @@ const testSuite = (getKit: () => Kit) => {
     const html2 = transfer.toHtml(kit.peritext.rangeAll()!);
     expect(html2).toBe('<p>abcde</p><blockquote><p>fghi</p><p>jklmnopqrstuvwxyz</p></blockquote>');
   });
+
+  test('on [Enter] in empty <blockquote> splits the blockquote', async () => {
+    const kit = setup();
+    kit.et.cursor({at: 5});
+    kit.et.marker({action: 'ins', type: [SliceTypeCon.blockquote, SliceTypeCon.p]});
+    kit.peritext.refresh();
+    const transfer = createTransfer(kit.peritext);
+    const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html1).toBe('<p>abcde</p><blockquote><p>fghijklmnopqrstuvwxyz</p></blockquote>');
+    kit.et.cursor({at: 10});
+    kit.et.marker({action: 'ins'});
+    kit.peritext.refresh();
+    const html2 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html2).toBe('<p>abcde</p><blockquote><p>fghi</p><p>jklmnopqrstuvwxyz</p></blockquote>');
+    kit.et.marker({action: 'ins'});
+    kit.peritext.refresh();
+    const html3 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html3).toBe('<p>abcde</p><blockquote><p>fghi</p></blockquote><blockquote><p>jklmnopqrstuvwxyz</p></blockquote>');
+  });
 };
 
 describe('"marker" event', () => {
