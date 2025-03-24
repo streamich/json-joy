@@ -3,9 +3,8 @@ import {commonLength} from '../util/commonLength';
 import {printTree} from 'tree-dump/lib/printTree';
 import {LeafBlock} from './LeafBlock';
 import {Range} from '../rga/Range';
-import {CommonSliceType} from '../slice';
+import {CommonSliceType, type SliceTypeSteps} from '../slice';
 import type {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';
@@ -55,7 +54,7 @@ export class Fragment<T = string> extends Range<T> implements Printable, Statefu
 
   private insertBlock(
     parent: Block<T>,
-    path: Path,
+    path: SliceTypeSteps,
     marker: undefined | MarkerOverlayPoint<T>,
     end: Point<T> = this.end,
   ): Block<T> {

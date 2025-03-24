@@ -50,6 +50,12 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return new Point(this.rga, this.id, this.anchor);
   }
 
+  public copy(mutate: (copy: Point<T>) => void): Point<T> {
+    const copy = this.clone();
+    mutate(copy);
+    return copy;
+  }
+
   /**
    * Compares two points by their character IDs and anchors. First, the character
    * IDs are compared. If they are equal, the anchors are compared. The anchor

@@ -11,6 +11,7 @@ import {
   SliceTupleIndex,
   SliceBehaviorName,
   SliceTypeName,
+  SliceTypeCon,
 } from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
@@ -20,7 +21,7 @@ import {s} from '../../../json-crdt-patch';
 import type {VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
-import type {MutableSlice, SliceView, SliceType, SliceUpdateParams} from './types';
+import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
@@ -107,6 +108,11 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public readonly id: ITimestampStruct;
   public behavior: SliceBehavior;
   public type: SliceType;
+
+  public typeSteps(): SliceTypeSteps {
+    const type = this.type ?? SliceTypeCon.p;
+    return Array.isArray(type) ? type : [type];
+  }
 
   public update(params: SliceUpdateParams<T>): void {
     let updateHeader = false;
