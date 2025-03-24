@@ -1,3 +1,16 @@
+# [17.34.0](https://github.com/streamich/json-joy/compare/v17.33.0...v17.34.0) (2025-03-24)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly split nested container blocks ([bb87779](https://github.com/streamich/json-joy/commit/bb877795f3c031804818647b7e5c0d781fdd8af0))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 implement anonymouse split in nested container blocks ([9188732](https://github.com/streamich/json-joy/commit/9188732af9f8ea8c84a4788fcea758d517959271))
+* **json-crdt-extensions:** 🎸 split deepest container block on [Enter] ([ec7b36f](https://github.com/streamich/json-joy/commit/ec7b36fc8b1335a7dc8204be709e52a3e0d5c66a))
+
 # [17.33.0](https://github.com/streamich/json-joy/compare/v17.32.1...v17.33.0) (2025-03-23)
 
 
