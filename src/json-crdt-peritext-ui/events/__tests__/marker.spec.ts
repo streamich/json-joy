@@ -48,6 +48,29 @@ const testSuite = (getKit: () => Kit) => {
     const html3 = transfer.toHtml(kit.peritext.rangeAll()!);
     expect(html3).toBe('<p>abcde</p><blockquote><p>fghi</p></blockquote><blockquote><p>jklmnopqrstuvwxyz</p></blockquote>');
   });
+
+  test('can split <p> in list, list item <li> and create two adjacent lists', async () => {
+    const kit = setup();
+    kit.et.cursor({at: 3});
+    kit.et.marker({action: 'ins', type: [SliceTypeCon.ul, SliceTypeCon.li, SliceTypeCon.p]});
+    kit.peritext.refresh();
+    const transfer = createTransfer(kit.peritext);
+    const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html1).toBe('<p>abc</p><ul><li><p>defghijklmnopqrstuvwxyz</p></li></ul>');
+    kit.et.cursor({at: 12});
+    kit.et.marker({action: 'ins'});
+    kit.peritext.refresh();
+    const html2 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html2).toBe('<p>abc</p><ul><li><p>defghijk</p><p>lmnopqrstuvwxyz</p></li></ul>');
+    kit.et.marker({action: 'ins'});
+    kit.peritext.refresh();
+    const html3 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html3).toBe('<p>abc</p><ul><li><p>defghijk</p></li><li><p>lmnopqrstuvwxyz</p></li></ul>');
+    kit.et.marker({action: 'ins'});
+    kit.peritext.refresh();
+    const html4 = transfer.toHtml(kit.peritext.rangeAll()!);
+    expect(html4).toBe('<p>abc</p><ul><li><p>defghijk</p></li></ul><ul><li><p>lmnopqrstuvwxyz</p></li></ul>');
+  });
 };
 
 describe('"marker" event', () => {

@@ -773,13 +773,18 @@ export class Editor<T = string> implements Printable {
       const tag2 = Array.isArray(step2) ? step2[0] : step2;
       const disc1 = Array.isArray(step1) ? step1[1] : 0;
       const disc2 = Array.isArray(step2) ? step2[1] : 0;
-      if (tag1 !== tag2 || disc1 !== disc2) return i;
+      if (tag1 !== tag2 || disc1 !== disc2) return i - 1;
       if (!this.registry.isContainer(tag1)) return i - 1;
     }
     return min;
   }
 
-  public splitAt(at: Point<T>, slices: EditorSlices<T> = this.saved): void {
+  /**
+   * @param at Point at which split block split happens.
+   * @param slices The slices set to use.
+   * @returns True if a marker was inserted, false if it was updated.
+   */
+  public splitAt(at: Point<T>, slices: EditorSlices<T> = this.saved): boolean {
     const [type, marker] = this.getBlockType(at);
     const prevMarker = marker ? this.getMarker(marker.start.copy(p => p.halfstep(-1))) : void 0;
     if (marker && prevMarker) {
@@ -792,13 +797,15 @@ export class Editor<T = string> implements Printable {
           const areMarkerTypesEqual = stepsEqual(markerSteps, prevMarkerSteps);
           if (areMarkerTypesEqual) {
             const i = this.getDeepestCommonContainer(markerSteps, prevMarkerSteps);
-            const newType = [...markerSteps];
-            const step = newType[i];
-            const tag = Array.isArray(step) ? step[0] : step;
-            const disc = Array.isArray(step) ? step[1] : 0;
-            newType[i] = [tag, (disc + 1) % 8];
-            marker.update({type: newType});
-            return;
+            if (i >= 0) {
+              const newType = [...markerSteps];
+              const step = newType[i];
+              const tag = Array.isArray(step) ? step[0] : step;
+              const disc = Array.isArray(step) ? step[1] : 0;
+              newType[i] = [tag, (disc + 1) % 8];
+              marker.update({type: newType});
+              return false;
+            }
           }
         }
       }
@@ -806,14 +813,15 @@ export class Editor<T = string> implements Printable {
     const containerPath = this.getContainerPath(type);
     const newType = containerPath.concat([CommonSliceType.p]);
     slices.insMarker(newType);
+    return true;
   }
 
   public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
     if (type === void 0) {
       for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
         this.collapseCursor(cursor);
-        this.splitAt(cursor.start);
-        cursor.move(1);
+        const didInsertMarker = this.splitAt(cursor.start);
+        if (didInsertMarker) cursor.move(1);
       }
     } else {
       for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {

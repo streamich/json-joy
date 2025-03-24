@@ -317,7 +317,7 @@ export class Inline<T = string> extends Range<T> implements Printable {
               printTree(
                 tab,
                 attrKeys.map((key) => () => {
-                  return (
+                  return key === '-1' ? 'ⵊ (cursor)' : (
                     formatType(key) +
                     ' = ' +
                     stringify(
