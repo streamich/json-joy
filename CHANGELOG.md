@@ -1,3 +1,18 @@
+# [17.35.0](https://github.com/streamich/json-joy/compare/v17.34.0...v17.35.0) (2025-03-25)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 correct batch type ([4e1553b](https://github.com/streamich/json-joy/commit/4e1553bc51cf38fadc8a30cb71838cc90ee2bccd))
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 adjust padding ([8b59bb1](https://github.com/streamich/json-joy/commit/8b59bb15cbd77d59378df5bc9e75c78d002fdc2a))
+* **json-crdt-peritext-ui:** 🎸 create blocks plugin for Peritext block rendering ([4a23e5c](https://github.com/streamich/json-joy/commit/4a23e5c50a9a948d1a943585bc441c350f292282))
+* **json-crdt-peritext-ui:** 🎸 show block type in debug mode ([888e051](https://github.com/streamich/json-joy/commit/888e0514ad4b9fbf4282dea69a93f9b98e26fc8f))
+* **json-crdt-peritext-ui:** 🎸 support soft line break inserts ([c14a66c](https://github.com/streamich/json-joy/commit/c14a66ca17ba6033cd47c578da1c55a43983d578))
+
 # [17.34.0](https://github.com/streamich/json-joy/compare/v17.33.0...v17.34.0) (2025-03-24)
 
 
