@@ -21,9 +21,7 @@ const markdown =
 
 export const App: React.FC = () => {
   const [[model, peritext]] = React.useState(() => {
-    const model = ModelWithExt.create(
-      ext.peritext.new(''),
-    );
+    const model = ModelWithExt.create(ext.peritext.new(''));
     const peritext = model.s.toExt().txt;
     peritext.refresh();
     // const transfer = new PeritextDataTransfer(peritext);
@@ -42,12 +40,7 @@ export const App: React.FC = () => {
     const toolbarPlugin = new ToolbarPlugin();
     const blocksPlugin = new BlocksPlugin();
     const debugPlugin = new DebugPlugin({enabled: false});
-    return [
-      cursorPlugin,
-      toolbarPlugin,
-      blocksPlugin,
-      debugPlugin,
-    ];
+    return [cursorPlugin, toolbarPlugin, blocksPlugin, debugPlugin];
   }, []);
 
   return (

@@ -42,7 +42,10 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
             display: 'inline-block',
           }}
         >
-          {hash.toString(36)} {block.path.map(type => typeof type === 'number' ? `<${CommonSliceType[type] ?? type}>` : `<${type}>`).join('.')}
+          {hash.toString(36)}{' '}
+          {block.path
+            .map((type) => (typeof type === 'number' ? `<${CommonSliceType[type] ?? type}>` : `<${type}>`))
+            .join('.')}
         </span>
       </div>
       <div style={{outline: '1px dotted blue'}}>{children}</div>
