@@ -329,7 +329,7 @@ export interface AnnalsDetail {
    * The list of {@link Patch} that will be applied to the document to undo or
    * redo the action, unless the action is cancelled.
    */
-  batch: [Patch];
+  batch: Patch[];
 }
 
 /**

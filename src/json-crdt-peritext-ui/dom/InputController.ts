@@ -74,6 +74,8 @@ export class InputController implements UiLifeCycles {
       case 'insertFromYank':
       case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
       case 'insertText': {
+        // TODO: handle `dataTransfer` Image drops, URL drops
+        // TODO: handle `dataTransfer` HTML drops
         event.preventDefault();
         if (typeof event.data === 'string') {
           et.insert(event.data);
@@ -129,8 +131,11 @@ export class InputController implements UiLifeCycles {
         et.delete(-1, 'word');
         break;
       }
-      // case 'insertLineBreak': { // insert a line break
-      // }
+      case 'insertLineBreak': {
+        event.preventDefault();
+        et.insert('\n');
+        break;
+      }
       // case 'insertOrderedList': { // insert a numbered list
       // }
       // case 'insertUnorderedList': { // insert a bulleted list
