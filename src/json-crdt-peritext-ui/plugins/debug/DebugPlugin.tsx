@@ -3,6 +3,7 @@ import {RenderInline} from './RenderInline';
 import {RenderBlock} from './RenderBlock';
 import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
 import type {PeritextPlugin} from '../../react/types';
+import {RenderCaret} from './RenderCaret';
 
 export type DebugPluginOpts = Pick<RenderPeritextProps, 'enabled'>;
 
@@ -22,4 +23,6 @@ export class DebugPlugin implements PeritextPlugin {
       {children}
     </RenderPeritext>
   );
+
+  public readonly caret: PeritextPlugin['caret'] = (props, children) => <RenderCaret {...props}>{children}</RenderCaret>;
 }

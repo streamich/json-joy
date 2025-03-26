@@ -39,7 +39,7 @@ export const App: React.FC = () => {
     const cursorPlugin = new CursorPlugin();
     const toolbarPlugin = new ToolbarPlugin();
     const blocksPlugin = new BlocksPlugin();
-    const debugPlugin = new DebugPlugin({enabled: false});
+    const debugPlugin = new DebugPlugin({enabled: true});
     return [cursorPlugin, toolbarPlugin, blocksPlugin, debugPlugin];
   }, []);
 

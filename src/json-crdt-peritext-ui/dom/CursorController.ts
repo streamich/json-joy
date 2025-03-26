@@ -74,6 +74,7 @@ export class CursorController implements UiLifeCycles, Printable {
    *     object, see: https://www.bennadel.com/blog/4310-detecting-rendered-line-breaks-in-a-text-node-in-javascript.htm
    */
   public getNextLinePos(direction: 1 | -1 = 1): number | undefined {
+    // TODO: this works only for the main cursor, make it work for all cursors.
     const rect = this.caretRect();
     if (!rect) return;
     const {x, y, width, height} = rect;

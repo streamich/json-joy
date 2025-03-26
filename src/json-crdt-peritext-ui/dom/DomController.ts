@@ -5,10 +5,14 @@ import {RichTextController} from './RichTextController';
 import {KeyController} from './KeyController';
 import {CompositionController} from './CompositionController';
 import {AnnalsController} from './annals/AnnalsController';
+import {ElementAttr} from '../constants';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {PeritextRenderingSurfaceApi, UiLifeCycles} from '../dom/types';
+import type {PeritextRenderingSurfaceApi, Rect, UiLifeCycles} from '../dom/types';
 import type {Log} from '../../json-crdt/log/Log';
+import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
+import type {Inline} from '../../json-crdt-extensions';
+import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
 
 export interface DomControllerOpts {
   source: HTMLElement;
@@ -61,6 +65,43 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
 
   public focus(): void {
     this.opts.source.focus();
+  }
+
+  protected getSpans() {
+    return this.opts.source.querySelectorAll('.jsonjoy-peritext-inline');
+  }
+
+  protected findSpanContaining(range: Range): [span: HTMLSpanElement, inline: Inline] | undefined {
+    const spans = this.getSpans();
+    const length = spans.length;
+    for (let i = 0; i < length; i++) {
+      const span = spans[i] as HTMLSpanElement;
+      const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
+      if (inline) {
+        const contains = inline.contains(range);
+        if (contains) return [span, inline];
+      }
+    }
+    return;
+  }
+
+  public getCharRect(pos: number | Point<string>, right = true): Rect | undefined {
+    const txt = this.opts.events.txt;
+    const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
+    const char = right ? point.rightChar() : point.leftChar();
+    if (!char) return;
+    const charRange = txt.rangeFromChunkSlice(char);
+    const [span, inline] = this.findSpanContaining(charRange) || [];
+    if (!span || !inline) return;
+    const textNode = span.firstChild as Text;
+    if (!textNode) return;
+    const range = document.createRange();
+    range.selectNode(textNode);
+    const offset = right ? 0 : textNode.length - 1;
+    range.setStart(textNode, offset);
+    range.setEnd(textNode, offset + 1);
+    const rects = range.getClientRects();
+    return rects[0];
   }
 
   /** ----------------------------------------------------- {@link Printable} */
