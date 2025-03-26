@@ -44,12 +44,18 @@ const characterOverlayStyles: React.CSSProperties = {
   outline: '1px dashed blue',
 };
 
+const eolCharacterOverlayStyles: React.CSSProperties = {
+  ...characterOverlayStyles,
+  outline: '1px dotted blue',
+};
+
 const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   useWindowSize();
   useWindowScroll();
   const {ctx} = useDebugCtx();
   const leftCharRef = React.useRef<HTMLSpanElement | null>(null);
   const rightCharRef = React.useRef<HTMLSpanElement | null>(null);
+  const rightLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
 
   React.useEffect(() => {
     const leftCharSpan = leftCharRef.current;
@@ -78,6 +84,20 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
         rightCharSpan.style.visibility = 'hidden';
       }
     }
+    const rightLineEndCharSpan = rightLineEndCharRef.current;
+    if (rightLineEndCharSpan) {
+      const lineEnd = ctx!.dom!.getLineEnd(point);
+      if (lineEnd) {
+        const [, rect] = lineEnd;
+        rightLineEndCharSpan.style.top = rect.y + 'px';
+        rightLineEndCharSpan.style.left = rect.x + 'px';
+        rightLineEndCharSpan.style.width = rect.width + 'px';
+        rightLineEndCharSpan.style.height = rect.height + 'px';
+        rightLineEndCharSpan.style.visibility = 'visible';
+      } else {
+        rightLineEndCharSpan.style.visibility = 'hidden';
+      }
+    }
   });
 
   return (
@@ -87,6 +107,9 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
 
       {/* Render outline around the next character after the caret. */}
       <span ref={rightCharRef} style={characterOverlayStyles} />
+
+      {/* Render outline around the end of the line. */}
+      <span ref={rightLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid blue'}} />
     </>
   );
 };
