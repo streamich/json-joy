@@ -2,8 +2,8 @@
 import * as React from 'react';
 import {drule} from 'nano-theme';
 import {useDebugCtx} from './context';
+import {formatType} from '../../../json-crdt-extensions/peritext/slice/util';
 import type {BlockViewProps} from '../../react/BlockView';
-import {CommonSliceType} from '../../../json-crdt-extensions';
 
 const blockClass = drule({
   pos: 'relative',
@@ -44,7 +44,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
         >
           {hash.toString(36)}{' '}
           {block.path
-            .map((type) => (typeof type === 'number' ? `<${CommonSliceType[type] ?? type}>` : `<${type}>`))
+            .map((type) => formatType(type))
             .join('.')}
         </span>
       </div>
