@@ -39,10 +39,7 @@ const RenderDebugCaret: React.FC<RenderCaretProps> = (props) => {
 const characterOverlayStyles: React.CSSProperties = {
   position: 'fixed',
   display: 'inline-block',
-  top: -100,
-  left: -100,
-  width: 0,
-  height: 0,
+  visibility: 'hidden',
   backgroundColor: 'rgba(0, 0, 255, 0.1)',
   outline: '1px dashed blue',
 };
@@ -55,21 +52,31 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const rightCharRef = React.useRef<HTMLSpanElement | null>(null);
 
   React.useEffect(() => {
-    const leftCharRect = ctx!.dom!.getCharRect(point, false);
     const leftCharSpan = leftCharRef.current;
-    if (leftCharRect && leftCharSpan) {
-      leftCharSpan.style.top = leftCharRect.y + 'px';
-      leftCharSpan.style.left = leftCharRect.x + 'px';
-      leftCharSpan.style.width = leftCharRect.width + 'px';
-      leftCharSpan.style.height = leftCharRect.height + 'px';
+    if (leftCharSpan) {
+      const leftCharRect = ctx!.dom!.getCharRect(point, false);
+      if (leftCharRect) {
+        leftCharSpan.style.top = leftCharRect.y + 'px';
+        leftCharSpan.style.left = leftCharRect.x + 'px';
+        leftCharSpan.style.width = leftCharRect.width + 'px';
+        leftCharSpan.style.height = leftCharRect.height + 'px';
+        leftCharSpan.style.visibility = 'visible';
+      } else {
+        leftCharSpan.style.visibility = 'hidden';
+      }
     } 
-    const rightCharRect = ctx!.dom!.getCharRect(point, true);
     const rightCharSpan = rightCharRef.current;
-    if (rightCharRect && rightCharSpan) {
-      rightCharSpan.style.top = rightCharRect.y + 'px';
-      rightCharSpan.style.left = rightCharRect.x + 'px';
-      rightCharSpan.style.width = rightCharRect.width + 'px';
-      rightCharSpan.style.height = rightCharRect.height + 'px';
+    if (rightCharSpan) {
+      const rightCharRect = ctx!.dom!.getCharRect(point, true);
+      if (rightCharRect) {
+        rightCharSpan.style.top = rightCharRect.y + 'px';
+        rightCharSpan.style.left = rightCharRect.x + 'px';
+        rightCharSpan.style.width = rightCharRect.width + 'px';
+        rightCharSpan.style.height = rightCharRect.height + 'px';
+        rightCharSpan.style.visibility = 'visible';
+      } else {
+        rightCharSpan.style.visibility = 'hidden';
+      }
     }
   });
 
