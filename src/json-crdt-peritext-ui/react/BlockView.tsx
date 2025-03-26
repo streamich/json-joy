@@ -32,7 +32,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             const key = cursorStart.start.key() + '-a';
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
-              if (cursorStart.isCollapsed()) element = <CaretView key={key} italic={!!italic} />;
+              if (cursorStart.isCollapsed()) element = <CaretView key={key} italic={!!italic} point={cursorStart.start} />;
               else {
                 const isItalic = italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing;
                 element = <FocusView key={key} italic={isItalic} />;
@@ -50,7 +50,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             const key = cursorEnd.end.key() + '-b';
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
-              if (cursorEnd.isCollapsed()) element = <CaretView key={key} italic={!!italic} />;
+              if (cursorEnd.isCollapsed()) element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} />;
               else
                 element = (
                   <FocusView
