@@ -55,6 +55,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const {ctx} = useDebugCtx();
   const leftCharRef = React.useRef<HTMLSpanElement | null>(null);
   const rightCharRef = React.useRef<HTMLSpanElement | null>(null);
+  const leftLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
   const rightLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
 
   React.useEffect(() => {
@@ -86,7 +87,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     }
     const rightLineEndCharSpan = rightLineEndCharRef.current;
     if (rightLineEndCharSpan) {
-      const lineEnd = ctx!.dom!.getLineEnd(point);
+      const lineEnd = ctx!.dom!.getLineEnd(point, true);
       if (lineEnd) {
         const [, rect] = lineEnd;
         rightLineEndCharSpan.style.top = rect.y + 'px';
@@ -98,6 +99,20 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
         rightLineEndCharSpan.style.visibility = 'hidden';
       }
     }
+    const leftLineEndCharSpan = leftLineEndCharRef.current;
+    if (leftLineEndCharSpan) {
+      const lineEnd = ctx!.dom!.getLineEnd(point, false);
+      if (lineEnd) {
+        const [, rect] = lineEnd;
+        leftLineEndCharSpan.style.top = rect.y + 'px';
+        leftLineEndCharSpan.style.left = rect.x + 'px';
+        leftLineEndCharSpan.style.width = rect.width + 'px';
+        leftLineEndCharSpan.style.height = rect.height + 'px';
+        leftLineEndCharSpan.style.visibility = 'visible';
+      } else {
+        leftLineEndCharSpan.style.visibility = 'hidden';
+      }
+    }
   });
 
   return (
@@ -107,6 +122,9 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
 
       {/* Render outline around the next character after the caret. */}
       <span ref={rightCharRef} style={characterOverlayStyles} />
+
+      {/* Render outline around the beginning of the line. */}
+      <span ref={leftLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid blue'}} />
 
       {/* Render outline around the end of the line. */}
       <span ref={rightLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid blue'}} />

@@ -104,20 +104,19 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     return rects[0];
   }
 
-  public getLineEnd(pos: number | Point<string>): [point: Point, rect: Rect] | undefined {
+  public getLineEnd(pos: number | Point<string>, right = true): [point: Point, rect: Rect] | undefined {
     const txt = this.opts.events.txt;
-    const right = true;
     const startPoint = typeof pos === 'number' ? txt.pointAt(pos) : pos;
     const startRect = this.getCharRect(startPoint, right);
     if (!startRect) return;
     let curr = startPoint.clone();
     let currRect = startRect;
     while (true) {
-      const next = curr.copy(p => p.step(1));
+      const next = curr.copy(p => p.step(right ? 1 : -1));
       if (!next) return [curr, currRect];
       const nextRect = this.getCharRect(next, right);
       if (!nextRect) return [curr, currRect];
-      if (nextRect.x < currRect.x) return [curr, currRect];
+      if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return [curr, currRect];
       curr = next;
       currRect = nextRect;
     }
