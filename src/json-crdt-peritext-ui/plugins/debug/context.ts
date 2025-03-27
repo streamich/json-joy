@@ -3,7 +3,7 @@ import type {ValueSyncStore} from '../../../util/events/sync-store';
 import type {PeritextSurfaceState} from '../../react/state';
 
 export interface DebugRenderersContextValue {
-  enabled: boolean;
+  enabled: ValueSyncStore<boolean>;
   flags: {
     dom: ValueSyncStore<boolean>;
     editor: ValueSyncStore<boolean>;

@@ -4,6 +4,7 @@ import {useDebugCtx} from './context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useWindowScroll from 'react-use/lib/useWindowScroll';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
+import {useSyncStore} from '../../react/hooks';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const blockClass = rule({
@@ -21,9 +22,10 @@ export interface RenderCaretProps extends CaretViewProps {
 
 export const RenderCaret: React.FC<RenderCaretProps> = (props) => {
   const {children} = props;
-  const {enabled, ctx} = useDebugCtx();
+  const ctx = useDebugCtx();
+  const enabled = useSyncStore(ctx.enabled);
 
-  if (!enabled || !ctx?.dom) return children;
+  if (!enabled || !ctx.ctx?.dom) return children;
 
   return <RenderDebugCaret {...props} />;
 };

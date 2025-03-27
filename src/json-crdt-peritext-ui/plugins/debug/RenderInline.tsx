@@ -4,6 +4,7 @@ import {useDebugCtx} from './context';
 import {DebugLabel} from '../../components/DebugLabel';
 import {SliceTypeName} from '../../../json-crdt-extensions';
 import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
+import {useSyncStore} from '../../react/hooks';
 import type {InlineViewProps} from '../../react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
@@ -12,7 +13,8 @@ export interface RenderInlineProps extends InlineViewProps {
 
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {children, inline} = props;
-  const {enabled} = useDebugCtx();
+  const ctx = useDebugCtx();
+  const enabled = useSyncStore(ctx.enabled);
 
   const keys: (number | string)[] = Object.keys(inline.attr());
   const tags: string[] = [];

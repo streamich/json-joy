@@ -5,6 +5,7 @@ import {Button} from '../../components/Button';
 import {Console} from './Console';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
+import {useSyncStore} from '../../react/hooks';
 
 const blockClass = rule({
   pos: 'relative',
@@ -27,14 +28,27 @@ const childrenDebugClass = rule({
 });
 
 export interface RenderPeritextProps extends PeritextViewProps {
-  enabled?: boolean;
+  enabled?: boolean | ValueSyncStore<boolean>;
+  button?: boolean;
   children?: React.ReactNode;
   ctx?: PeritextSurfaceState;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = true, ctx, children}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = false, ctx, button, children}) => {
   const theme = useTheme();
-  const [enabled, setEnabled] = React.useState(enabledProp);
+  const enabled = React.useMemo(() => new ValueSyncStore<boolean>(true), []);
+  useSyncStore(enabled);
+  React.useEffect(() => {
+    if (typeof enabledProp === 'boolean') {
+      enabled.next(enabledProp);
+      return () => {};
+    }
+    enabled.next(enabledProp.value);
+    const unsubscribe = enabledProp.subscribe(() => {
+      enabled.next(enabledProp.value);
+    });
+    return () => unsubscribe();
+  }, [enabledProp]);
   const value = React.useMemo(
     () => ({
       enabled,
@@ -51,18 +65,30 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
 
   return (
     <context.Provider value={value}>
-      <div className={blockClass}>
-        <div
-          className={btnClass({
-            bg: theme.bg,
-          })}
-        >
-          <Button small active={enabled} onClick={() => setEnabled((x) => !x)}>
-            Debug
-          </Button>
-        </div>
-        <div className={enabled ? childrenDebugClass : undefined}>{children}</div>
-        {enabled && <Console />}
+      <div className={blockClass} onKeyDown={(event) => {
+        switch (event.key) {
+          case 'D': {
+            if (event.ctrlKey) {
+              event.preventDefault();
+              enabled.next(!enabled.getSnapshot());
+            }
+            break;
+          }
+        }
+      }}>
+        {!!button && (
+          <div
+            className={btnClass({
+              bg: theme.bg,
+            })}
+          >
+            <Button small active={enabled.getSnapshot()} onClick={() => enabled.next(!enabled.getSnapshot())}>
+              Debug
+            </Button>
+          </div>
+        )}
+        <div className={enabled.getSnapshot() ? childrenDebugClass : undefined}>{children}</div>
+        {enabled.getSnapshot() && <Console />}
       </div>
     </context.Provider>
   );

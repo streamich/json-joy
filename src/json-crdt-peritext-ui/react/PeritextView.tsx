@@ -77,13 +77,13 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         return;
       }
       if (dom && dom.opts.source === el) return;
-      const ctrl = new DomController({source: el, events: state.events, log: state.log});
-      state.events.surface = ctrl;
-      state.events.undo = ctrl.annals;
-      ctrl.start();
-      state.dom = ctrl;
-      setDom(ctrl);
-      ctrl.et.addEventListener('change', rerender);
+      const newDom = new DomController({source: el, events: state.events, log: state.log});
+      state.events.surface = newDom;
+      state.events.undo = newDom.annals;
+      newDom.start();
+      state.dom = newDom;
+      setDom(newDom);
+      newDom.et.addEventListener('change', rerender);
     },
     [peritext, state],
   );

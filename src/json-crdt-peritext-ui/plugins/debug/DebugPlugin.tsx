@@ -5,7 +5,7 @@ import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
 import type {PeritextPlugin} from '../../react/types';
 import {RenderCaret} from './RenderCaret';
 
-export type DebugPluginOpts = Pick<RenderPeritextProps, 'enabled'>;
+export interface DebugPluginOpts extends Pick<RenderPeritextProps, 'enabled'> {}
 
 export class DebugPlugin implements PeritextPlugin {
   constructor(protected readonly opts: DebugPluginOpts = {}) {}
