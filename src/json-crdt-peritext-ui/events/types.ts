@@ -159,7 +159,7 @@ export interface CursorDetail {
    *
    * Defaults to `'char'`.
    */
-  unit?: 'char' | 'word' | 'line' | 'block' | 'all';
+  unit?: 'point' | 'char' | 'word' | 'line' | 'block' | 'all';
 
   /**
    * Specifies which edge of the selection to move. If `'focus'`, the focus
