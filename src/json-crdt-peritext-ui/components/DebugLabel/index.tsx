@@ -5,7 +5,7 @@ import {rule, theme} from 'nano-theme';
 const labelClass = rule({
   ...theme.font.mono.bold,
   d: 'flex',
-  
+  ai: 'center',
   fz: '9px',
   pd: '0 4px',
   mr: '-1px',
@@ -19,7 +19,7 @@ const labelClass = rule({
 
 const labelSecondClass = rule({
   ...theme.font.mono.bold,
-  d: 'inline-block',
+  d: 'flex',
   fz: '8px',
   mr: '2px -2px 2px 4px',
   pd: '0 4px',
@@ -32,12 +32,15 @@ const labelSecondClass = rule({
 
 export interface DebugLabelProps {
   right?: React.ReactNode;
+  small?: boolean;
   children?: React.ReactNode;
 }
 
-export const DebugLabel: React.FC<DebugLabelProps> = ({right, children}) => {
+export const DebugLabel: React.FC<DebugLabelProps> = ({right, small, children}) => {
+  const style = small ? {fontSize: '7px', lineHeight: '10px', height: '10px', padding: '0 2px'} : void 0;
+
   return (
-    <span className={labelClass}>
+    <span className={labelClass} style={style}>
       {children}
       {!!right && <span className={labelSecondClass}>{right}</span>}
     </span>

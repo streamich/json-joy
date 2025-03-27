@@ -32,8 +32,8 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   return (
     <span style={{outline: '1px dotted red', position: 'relative'}}>
       {tags.length > 0 && (
-        <span contentEditable={false} style={{position: 'absolute', top: -8, left: -3, userSelect: 'none', pointerEvents: 'none'}}>
-          <DebugLabel>
+        <span contentEditable={false} style={{position: 'absolute', top: -6, left: -3, userSelect: 'none', pointerEvents: 'none'}}>
+          <DebugLabel small>
             {tags.join(', ')}
           </DebugLabel>
         </span>
