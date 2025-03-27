@@ -507,26 +507,26 @@ export class Editor<T = string> implements Printable {
    * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
+  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true, skipLine?: (point: Point<T>, steps: number) => (Point<T> | undefined)): void {
     this.forCursor((cursor) => {
       switch (endpoint) {
         case 0: {
           let point = cursor.focus();
-          point = this.skip(point, steps, unit);
+          point = (unit === 'line' ? skipLine?.(point, steps) : void 0) ?? this.skip(point, steps, unit);
           if (collapse) cursor.set(point);
           else cursor.setEndpoint(point, 0);
           break;
         }
         case 1: {
           let point = cursor.anchor();
-          point = this.skip(point, steps, unit);
+          point = (unit === 'line' ? skipLine?.(point, steps) : void 0) ?? this.skip(point, steps, unit);
           if (collapse) cursor.set(point);
           else cursor.setEndpoint(point, 1);
           break;
         }
         case 2: {
-          const start = this.skip(cursor.start, steps, unit);
-          const end = collapse ? start.clone() : this.skip(cursor.end, steps, unit);
+          const start = (unit === 'line' ? skipLine?.(cursor.start, steps) : void 0) ?? this.skip(cursor.start, steps, unit);
+          const end = collapse ? start.clone() : ((unit === 'line' ? skipLine?.(cursor.end, steps) : void 0) ?? this.skip(cursor.end, steps, unit));
           cursor.set(start, end);
           break;
         }

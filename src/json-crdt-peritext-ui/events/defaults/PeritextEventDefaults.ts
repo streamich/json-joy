@@ -8,6 +8,7 @@ import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/E
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
 import type {UndoCollector} from '../../types';
+import type {PeritextRenderingSurfaceApi} from '../../dom/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -22,9 +23,10 @@ export interface PeritextEventDefaultsOpts {
  * {@link PeritextEventTarget} to provide default behavior for each event type.
  * If `event.preventDefault()` is called on a Peritext event, the default handler
  * will not be executed.
- */
+*/
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public undo?: UndoCollector;
+  public surface?: PeritextRenderingSurfaceApi;
 
   public constructor(
     public readonly txt: Peritext,
@@ -107,7 +109,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     // If `len` is specified.
     if (len) {
       const cursor = editor.cursor;
-      if (cursor.isCollapsed()) editor.move(len, unit ?? 'char');
+      if (cursor.isCollapsed()) {
+        const surface = this.surface;
+        editor.move(len, unit ?? 'char', void 0, void 0, surface ? (point, steps) => {
+          const res = surface.getLineEnd(point, steps > 0);
+          return res ? res[0] : void 0;
+        } : void 0);
+      }
       else {
         if (len > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();

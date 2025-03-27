@@ -48,6 +48,8 @@ export interface PeritextRenderingSurfaceApi {
    * @returns The bounding rectangle of the character at the given index.
    */
   getCharRect(pos: number | Point<string>, right?: boolean): Rect | undefined;
-  // TIP: find soft line break by iterating over the characters and checking for the `x` value of the bounding rectangle. Take into account text direction.
+  
+  getLineEnd(pos: number | Point<string>, right?: boolean): [point: Point, rect: Rect] | undefined;
+    
   // TODO: Need to be able to detect text direction of the current character.
 }

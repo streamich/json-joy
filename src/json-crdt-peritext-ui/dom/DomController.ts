@@ -97,7 +97,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     if (!textNode) return;
     const range = document.createRange();
     range.selectNode(textNode);
-    const offset = charRange.start.viewPos() - inline.start.viewPos();
+    const offset = Math.max(0, Math.min(textNode.length - 1, charRange.start.viewPos() - inline.start.viewPos()));
     range.setStart(textNode, offset);
     range.setEnd(textNode, offset + 1);
     const rects = range.getClientRects();
@@ -111,12 +111,22 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     if (!startRect) return;
     let curr = startPoint.clone();
     let currRect = startRect;
+    const prepareReturn = (): [point: Point, rect: Rect] => {
+      if (right) {
+        curr.step(1);
+        curr.refAfter();
+      } else {
+        curr.step(-1);
+        curr.refBefore();
+      }
+      return [curr, currRect];
+    };
     while (true) {
       const next = curr.copy(p => p.step(right ? 1 : -1));
-      if (!next) return [curr, currRect];
+      if (!next) return prepareReturn();
       const nextRect = this.getCharRect(next, right);
-      if (!nextRect) return [curr, currRect];
-      if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return [curr, currRect];
+      if (!nextRect) return prepareReturn();
+      if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return prepareReturn();
       curr = next;
       currRect = nextRect;
     }
