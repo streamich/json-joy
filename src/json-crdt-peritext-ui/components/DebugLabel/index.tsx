@@ -4,25 +4,30 @@ import {rule, theme} from 'nano-theme';
 
 const labelClass = rule({
   ...theme.font.mono.bold,
+  d: 'flex',
+  
   fz: '9px',
-  pd: '2px 2px 2px 5px',
-  bdrad: '8px',
+  pd: '0 4px',
+  mr: '-1px',
+  bdrad: '10px',
   bg: 'rgba(0,0,0)',
-  lh: '8px',
+  lh: '14px',
+  h: '14px',
   col: 'white',
-  d: 'inline-block',
+  bd: '1px solid #fff',
 });
 
 const labelSecondClass = rule({
   ...theme.font.mono.bold,
-  fz: '9px',
-  mr: '0 0 0 4px',
-  pd: '2px 4px',
-  bdrad: '8px',
-  bg: 'rgba(255,255,255)',
-  lh: '8px',
-  col: '#000',
   d: 'inline-block',
+  fz: '8px',
+  mr: '2px -2px 2px 4px',
+  pd: '0 4px',
+  bdrad: '10px',
+  bg: 'rgba(255,255,255)',
+  lh: '10px',
+  h: '10px',
+  col: '#000',
 });
 
 export interface DebugLabelProps {

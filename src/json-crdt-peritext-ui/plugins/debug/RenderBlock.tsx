@@ -8,8 +8,8 @@ import type {BlockViewProps} from '../../react/BlockView';
 
 const labelContainerClass = rule({
   pos: 'absolute',
-  top: '-24px',
-  left: 0,
+  top: '-8px',
+  left: '-4px',
   us: 'none',
   pe: 'none',
 });
