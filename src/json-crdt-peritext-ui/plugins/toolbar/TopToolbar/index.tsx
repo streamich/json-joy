@@ -3,8 +3,9 @@ import * as React from 'react';
 import {Button} from '../../../components/Button';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
-import {useSyncStore} from '../../../react/hooks';
+import {useSyncStore, useSyncStoreOpt} from '../../../react/hooks';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
+import {useToolbarPlugin} from '../context';
 import type {PeritextSurfaceState} from '../../../react';
 
 export interface TopToolbarProps {
@@ -12,9 +13,11 @@ export interface TopToolbarProps {
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
+  const {toolbar} = useToolbarPlugin()!;
   const peritext = ctx.peritext;
   const editor = peritext.editor;
   const pending = useSyncStore(editor.pending);
+  const isDebugMode = useSyncStoreOpt(toolbar.opts.debug);
 
   if (!ctx.dom) return null;
 
@@ -30,8 +33,8 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
     </Button>
   );
 
-  const button = (name: React.ReactNode, onClick: React.MouseEventHandler) => (
-    <Button onClick={onClick} onMouseDown={(e) => e.preventDefault()}>
+  const button = (name: React.ReactNode, onClick: React.MouseEventHandler, active?: boolean) => (
+    <Button active={active} onClick={onClick} onMouseDown={(e) => e.preventDefault()}>
       {name}
     </Button>
   );
@@ -85,6 +88,15 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {button('Redo', () => {
         ctx.dom?.annals.redo();
       })}
+      {!!toolbar.opts.debug && (
+        <>
+          <ButtonSeparator />
+          {button('Debug', () => {
+            const debug = toolbar.opts.debug!;
+            debug!.next(!debug.value);
+          }, !!isDebugMode)}
+        </>
+      )}
     </ButtonGroup>
   );
 };

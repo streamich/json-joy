@@ -36,7 +36,7 @@ export interface RenderPeritextProps extends PeritextViewProps {
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = false, ctx, button, children}) => {
   const theme = useTheme();
-  const enabled = React.useMemo(() => new ValueSyncStore<boolean>(true), []);
+  const enabled = React.useMemo(() => typeof enabledProp === 'boolean' ? new ValueSyncStore<boolean>(enabledProp) : enabledProp, []);
   useSyncStore(enabled);
   React.useEffect(() => {
     if (typeof enabledProp === 'boolean') {
