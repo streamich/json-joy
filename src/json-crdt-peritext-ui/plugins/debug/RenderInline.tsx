@@ -21,7 +21,10 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   for (let i = 0; i < length; i++) {
     let tag: string | number = keys[i];
     if (typeof tag === 'string' && Number(tag) + '' === tag) tag = Number(tag);
-    if (tag === SliceTypeCon.Cursor) hasCursor = true;
+    if (tag === SliceTypeCon.Cursor) {
+      hasCursor = true;
+      continue;
+    }
     tag = SliceTypeName[tag as any] ?? (tag + '');
     tag = '<' + tag + '>';
     tags.push(tag);
