@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {useDebugCtx} from './context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useWindowScroll from 'react-use/lib/useWindowScroll';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const blockClass = rule({
@@ -58,31 +59,39 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const leftLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
   const rightLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
 
+  const anchorLeft = point.anchor === Anchor.After;
+
   React.useEffect(() => {
     const leftCharSpan = leftCharRef.current;
     if (leftCharSpan) {
       const leftCharRect = ctx!.dom!.getCharRect(point, false);
+      const style = leftCharSpan.style;
       if (leftCharRect) {
-        leftCharSpan.style.top = leftCharRect.y + 'px';
-        leftCharSpan.style.left = leftCharRect.x + 'px';
-        leftCharSpan.style.width = leftCharRect.width + 'px';
-        leftCharSpan.style.height = leftCharRect.height + 'px';
-        leftCharSpan.style.visibility = 'visible';
+        style.top = leftCharRect.y + 'px';
+        style.left = leftCharRect.x + 'px';
+        style.width = leftCharRect.width + 'px';
+        style.height = leftCharRect.height + 'px';
+        style.outlineStyle = anchorLeft ? 'solid' : 'dashed';
+        style.backgroundColor = anchorLeft ? 'rgba(0,0,255,.2)' : 'rgba(0,0,255,.1)';
+        style.visibility = 'visible';
       } else {
-        leftCharSpan.style.visibility = 'hidden';
+        style.visibility = 'hidden';
       }
     } 
     const rightCharSpan = rightCharRef.current;
     if (rightCharSpan) {
       const rightCharRect = ctx!.dom!.getCharRect(point, true);
+      const style = rightCharSpan.style;
       if (rightCharRect) {
-        rightCharSpan.style.top = rightCharRect.y + 'px';
-        rightCharSpan.style.left = rightCharRect.x + 'px';
-        rightCharSpan.style.width = rightCharRect.width + 'px';
-        rightCharSpan.style.height = rightCharRect.height + 'px';
-        rightCharSpan.style.visibility = 'visible';
+        style.top = rightCharRect.y + 'px';
+        style.left = rightCharRect.x + 'px';
+        style.width = rightCharRect.width + 'px';
+        style.height = rightCharRect.height + 'px';
+        style.outlineStyle = anchorLeft ? 'dashed' : 'solid';
+        style.backgroundColor = anchorLeft ? 'rgba(0,0,255,.1)' : 'rgba(0,0,255,.2)';
+        style.visibility = 'visible';
       } else {
-        rightCharSpan.style.visibility = 'hidden';
+        style.visibility = 'hidden';
       }
     }
     const rightLineEndCharSpan = rightLineEndCharRef.current;
