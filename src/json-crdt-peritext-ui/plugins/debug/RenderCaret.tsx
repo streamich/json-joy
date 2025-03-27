@@ -52,6 +52,12 @@ const eolCharacterOverlayStyles: React.CSSProperties = {
   outline: '1px dotted blue',
 };
 
+const eowCharacterOverlayStyles: React.CSSProperties = {
+  ...characterOverlayStyles,
+  backgroundColor: 'rgba(127,127,127,.1)',
+  outline: '0',
+};
+
 const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   useWindowSize();
   useWindowScroll();
@@ -60,6 +66,8 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const rightCharRef = React.useRef<HTMLSpanElement | null>(null);
   const leftLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
   const rightLineEndCharRef = React.useRef<HTMLSpanElement | null>(null);
+  const wordSkipLeftCharRef = React.useRef<HTMLSpanElement | null>(null);
+  const wordSkipRightCharRef = React.useRef<HTMLSpanElement | null>(null);
 
   const anchorLeft = point.anchor === Anchor.After;
 
@@ -124,6 +132,42 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
         leftLineEndCharSpan.style.visibility = 'hidden';
       }
     }
+    const wordSkipRightCharSpan = wordSkipRightCharRef.current;
+    if (wordSkipRightCharSpan) {
+      const wordJumpRightPoint = ctx!.peritext.editor.skip(point, 1, 'word');
+      if (wordJumpRightPoint) {
+        const rect = ctx!.dom!.getCharRect(wordJumpRightPoint, false);
+        const style = wordSkipRightCharSpan.style;
+        if (rect) {
+          style.top = rect.y + 'px';
+          style.left = rect.x + 'px';
+          style.width = rect.width + 'px';
+          style.height = rect.height + 'px';
+          style.outlineStyle = anchorLeft ? 'dashed' : 'solid';
+          style.visibility = 'visible';
+        } else {
+          style.visibility = 'hidden';
+        }
+      }
+    }
+    const wordSkipLeftCharSpan = wordSkipLeftCharRef.current;
+    if (wordSkipLeftCharSpan) {
+      const wordJumpLeftPoint = ctx!.peritext.editor.skip(point, -1, 'word');
+      if (wordJumpLeftPoint) {
+        const rect = ctx!.dom!.getCharRect(wordJumpLeftPoint, true);
+        const style = wordSkipLeftCharSpan.style;
+        if (rect) {
+          style.top = rect.y + 'px';
+          style.left = rect.x + 'px';
+          style.width = rect.width + 'px';
+          style.height = rect.height + 'px';
+          style.outlineStyle = anchorLeft ? 'dashed' : 'solid';
+          style.visibility = 'visible';
+        } else {
+          style.visibility = 'hidden';
+        }
+      }
+    }
   });
 
   return (
@@ -139,6 +183,9 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
 
       {/* Render outline around the end of the line. */}
       <span ref={rightLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid blue'}} />
+      
+      <span ref={wordSkipLeftCharRef} style={{...eowCharacterOverlayStyles, borderLeft: '2px dotted rgba(127,127,127,.7)'}} />
+      <span ref={wordSkipRightCharRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.7)'}} />
     </>
   );
 };
