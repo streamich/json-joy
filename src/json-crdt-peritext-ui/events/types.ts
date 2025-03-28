@@ -347,6 +347,10 @@ export interface AnnalsDetail {
  */
 export type Position = EditorPosition<string>;
 
+/**
+ * A map of all Peritext rendering surface event types and their corresponding
+ * detail types.
+ */
 export type PeritextEventDetailMap = {
   change: ChangeDetail;
   insert: InsertDetail;

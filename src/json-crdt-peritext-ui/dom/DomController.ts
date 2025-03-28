@@ -8,11 +8,12 @@ import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {PeritextRenderingSurfaceApi, Rect, UiLifeCycles} from '../dom/types';
+import type {Rect, UiLifeCycles} from '../dom/types';
 import type {Log} from '../../json-crdt/log/Log';
 import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
 import type {Inline} from '../../json-crdt-extensions';
 import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
+import type {PeritextUiApi} from '../events/defaults/ui/types';
 
 export interface DomControllerOpts {
   source: HTMLElement;
@@ -20,7 +21,7 @@ export interface DomControllerOpts {
   log: Log;
 }
 
-export class DomController implements UiLifeCycles, Printable, PeritextRenderingSurfaceApi {
+export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly et: PeritextEventTarget;
   public readonly keys: KeyController;
   public readonly comp: CompositionController;
@@ -61,7 +62,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     this.annals.stop();
   }
 
-  /** ----------------------------------- {@link PeritextRenderingSurfaceApi} */
+  /** ------------------------------------------------- {@link PeritextUiApi} */
 
   public focus(): void {
     this.opts.source.focus();
@@ -102,34 +103,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextRendering
     range.setEnd(textNode, offset + 1);
     const rects = range.getClientRects();
     return rects[0];
-  }
-
-  public getLineEnd(pos: number | Point<string>, right = true): [point: Point, rect: Rect] | undefined {
-    const txt = this.opts.events.txt;
-    const startPoint = typeof pos === 'number' ? txt.pointAt(pos) : pos;
-    const startRect = this.getCharRect(startPoint, right);
-    if (!startRect) return;
-    let curr = startPoint.clone();
-    let currRect = startRect;
-    const prepareReturn = (): [point: Point, rect: Rect] => {
-      if (right) {
-        curr.step(1);
-        curr.refAfter();
-      } else {
-        curr.step(-1);
-        curr.refBefore();
-      }
-      return [curr, currRect];
-    };
-    while (true) {
-      const next = curr.copy(p => p.step(right ? 1 : -1));
-      if (!next) return prepareReturn();
-      const nextRect = this.getCharRect(next, right);
-      if (!nextRect) return prepareReturn();
-      if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return prepareReturn();
-      curr = next;
-      currRect = nextRect;
-    }
   }
 
   /** ----------------------------------------------------- {@link Printable} */

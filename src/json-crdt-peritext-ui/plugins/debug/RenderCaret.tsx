@@ -106,7 +106,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     }
     const rightLineEndCharSpan = rightLineEndCharRef.current;
     if (rightLineEndCharSpan) {
-      const lineEnd = ctx!.dom!.getLineEnd(point, true);
+      const lineEnd = ctx!.events.ui?.getLineEnd(point, true);
       if (lineEnd) {
         const [, rect] = lineEnd;
         rightLineEndCharSpan.style.top = rect.y + 'px';
@@ -120,7 +120,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     }
     const leftLineEndCharSpan = leftLineEndCharRef.current;
     if (leftLineEndCharSpan) {
-      const lineEnd = ctx!.dom!.getLineEnd(point, false);
+      const lineEnd = ctx!.events.ui?.getLineEnd(point, false);
       if (lineEnd) {
         const [, rect] = lineEnd;
         leftLineEndCharSpan.style.top = rect.y + 'px';
@@ -136,7 +136,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     if (wordSkipRightCharSpan) {
       const wordJumpRightPoint = ctx!.peritext.editor.skip(point, 1, 'word');
       if (wordJumpRightPoint) {
-        const rect = ctx!.dom!.getCharRect(wordJumpRightPoint, false);
+        const rect = ctx!.events.ui?.api?.getCharRect?.(wordJumpRightPoint, false);
         const style = wordSkipRightCharSpan.style;
         if (rect) {
           style.top = rect.y + 'px';
@@ -154,7 +154,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     if (wordSkipLeftCharSpan) {
       const wordJumpLeftPoint = ctx!.peritext.editor.skip(point, -1, 'word');
       if (wordJumpLeftPoint) {
-        const rect = ctx!.dom!.getCharRect(wordJumpLeftPoint, true);
+        const rect = ctx!.events.ui?.api?.getCharRect?.(wordJumpLeftPoint, true);
         const style = wordSkipLeftCharSpan.style;
         if (rect) {
           style.top = rect.y + 'px';
