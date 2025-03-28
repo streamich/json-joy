@@ -105,31 +105,26 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       }
     }
     const rightLineEndCharSpan = rightLineEndCharRef.current;
-    if (rightLineEndCharSpan) {
-      const lineEnd = ctx!.events.ui?.getLineEnd(point, true);
-      if (lineEnd) {
-        const [, rect] = lineEnd;
-        rightLineEndCharSpan.style.top = rect.y + 'px';
-        rightLineEndCharSpan.style.left = rect.x + 'px';
-        rightLineEndCharSpan.style.width = rect.width + 'px';
-        rightLineEndCharSpan.style.height = rect.height + 'px';
+    const leftLineEndCharSpan = leftLineEndCharRef.current;
+    if (rightLineEndCharSpan && leftLineEndCharSpan) {
+      const lineInfo = ctx!.events.ui?.getLineInfo(point);
+      if (lineInfo) {
+        const [left, right] = lineInfo;
+        const [, rectLeft] = left;
+        leftLineEndCharSpan.style.top = rectLeft.y + 'px';
+        leftLineEndCharSpan.style.left = rectLeft.x + 'px';
+        leftLineEndCharSpan.style.width = rectLeft.width + 'px';
+        leftLineEndCharSpan.style.height = rectLeft.height + 'px';
+        leftLineEndCharSpan.style.visibility = 'visible';
+        const [, rectRight] = right;
+        rightLineEndCharSpan.style.top = rectRight.y + 'px';
+        rightLineEndCharSpan.style.left = rectRight.x + 'px';
+        rightLineEndCharSpan.style.width = rectRight.width + 'px';
+        rightLineEndCharSpan.style.height = rectRight.height + 'px';
         rightLineEndCharSpan.style.visibility = 'visible';
       } else {
-        rightLineEndCharSpan.style.visibility = 'hidden';
-      }
-    }
-    const leftLineEndCharSpan = leftLineEndCharRef.current;
-    if (leftLineEndCharSpan) {
-      const lineEnd = ctx!.events.ui?.getLineEnd(point, false);
-      if (lineEnd) {
-        const [, rect] = lineEnd;
-        leftLineEndCharSpan.style.top = rect.y + 'px';
-        leftLineEndCharSpan.style.left = rect.x + 'px';
-        leftLineEndCharSpan.style.width = rect.width + 'px';
-        leftLineEndCharSpan.style.height = rect.height + 'px';
-        leftLineEndCharSpan.style.visibility = 'visible';
-      } else {
         leftLineEndCharSpan.style.visibility = 'hidden';
+        rightLineEndCharSpan.style.visibility = 'hidden';
       }
     }
     const wordSkipRightCharSpan = wordSkipRightCharRef.current;

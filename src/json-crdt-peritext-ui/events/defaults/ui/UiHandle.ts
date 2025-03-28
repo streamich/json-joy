@@ -1,7 +1,6 @@
 import type {Peritext} from '../../../../json-crdt-extensions';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
-import type {Rect} from '../../../dom/types';
-import type {PeritextUiApi} from './types';
+import type {PeritextUiApi, UiLineEdge, UiLineInfo} from './types';
 
 export class UiHandle {
   constructor(
@@ -9,16 +8,19 @@ export class UiHandle {
     public readonly api: PeritextUiApi,
   ) {}
 
-  public getLineEnd(pos: number | Point<string>, right = true): [point: Point, rect: Rect] | undefined {
+  protected point(pos: number | Point<string>): Point<string> {
+    return typeof pos === 'number' ? this.txt.pointAt(pos) : pos;
+  }
+
+  public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
     const api = this.api;
     if (!api.getCharRect) return;
-    const txt = this.txt;
-    const startPoint = typeof pos === 'number' ? txt.pointAt(pos) : pos;
+    const startPoint = this.point(pos);
     const startRect = api.getCharRect(startPoint, right);
     if (!startRect) return;
     let curr = startPoint.clone();
     let currRect = startRect;
-    const prepareReturn = (): [point: Point, rect: Rect] => {
+    const prepareReturn = (): UiLineEdge => {
       if (right) {
         curr.step(1);
         curr.refAfter();
@@ -37,5 +39,16 @@ export class UiHandle {
       curr = next;
       currRect = nextRect;
     }
+  }
+
+  public getLineInfo(pos: number | Point<string>): UiLineInfo | undefined {
+    const txt = this.txt;
+    const point = this.point(pos);
+    const isEndOfText = point.viewPos() === txt.strApi().length();
+    if (isEndOfText) return;
+    const left = this.getLineEnd(point, false);
+    const right = this.getLineEnd(point, true);
+    if (!left || !right) return;
+    return [left, right];
   }
 }

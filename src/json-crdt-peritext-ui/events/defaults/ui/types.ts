@@ -32,3 +32,14 @@ export interface PeritextUiApi {
    */
   isRTL?(pos: number | Point<string>): boolean;
 }
+
+export type UiLineEdge = [
+  point: Point,
+  rect: Rect,
+];
+
+export type UiLineInfo = [
+  left: UiLineEdge,
+  right: UiLineEdge,
+];
+
