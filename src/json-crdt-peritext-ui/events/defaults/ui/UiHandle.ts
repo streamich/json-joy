@@ -1,5 +1,7 @@
+import {tick} from '../../../../json-crdt-patch';
 import type {Peritext} from '../../../../json-crdt-extensions';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
+import type {Rect} from '../../../dom/types';
 import type {PeritextUiApi, UiLineEdge, UiLineInfo} from './types';
 
 export class UiHandle {
@@ -12,11 +14,28 @@ export class UiHandle {
     return typeof pos === 'number' ? this.txt.pointAt(pos) : pos;
   }
 
+  /**
+   * Finds the position of the character at the given point (position between
+   * characters). The first position has index of 0. Have to specify the
+   * direction of the search, forward or backward.
+   *
+   * @param point The index of the character in the text, or a {@link Point}.
+   * @param fwd Whether to find the location of the next character after the
+   *     given {@link Point} or before, defaults to `true`.
+   * @returns The bounding rectangle of the character at the given index.
+   */
+  public getPointRect(pos: number | Point<string>, right = true): Rect | undefined {
+    const txt = this.txt;
+    const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
+    const char = right ? point.rightChar() : point.leftChar();
+    if (!char) return;
+    const id = tick(char.chunk.id, char.off);
+    return this.api.getCharRect?.(id);
+  }
+
   public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
-    const api = this.api;
-    if (!api.getCharRect) return;
     const startPoint = this.point(pos);
-    const startRect = api.getCharRect(startPoint, right);
+    const startRect = this.getPointRect(startPoint, right);
     if (!startRect) return;
     let curr = startPoint.clone();
     let currRect = startRect;
@@ -33,7 +52,7 @@ export class UiHandle {
     while (true) {
       const next = curr.copy(p => p.step(right ? 1 : -1));
       if (!next) return prepareReturn();
-      const nextRect = api.getCharRect(next, right);
+      const nextRect = this.getPointRect(next, right);
       if (!nextRect) return prepareReturn();
       if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return prepareReturn();
       curr = next;

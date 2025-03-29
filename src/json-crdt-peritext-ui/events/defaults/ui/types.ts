@@ -1,4 +1,5 @@
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
+import type {ITimestampStruct} from '../../../../json-crdt-patch';
 import type {Rect} from '../../../dom/types';
 
 /**
@@ -17,15 +18,13 @@ export interface PeritextUiApi {
   blur?(): void;
 
   /**
-   * Finds the position of the character at the given position (between
-   * characters). The first position has index of 0.
+   * Finds the position on the screen of a specific character.
    *
-   * @param pos The index of the character in the text.
-   * @param fwd Whether to find the location of the next character after the
-   *     given {@link Point} or before, defaults to `true`.
+   * @param char The index of the character in the text, or a the ID
+   *     {@link ITimestampStruct} of the character.
    * @returns The bounding rectangle of the character at the given index.
    */
-  getCharRect?(pos: number | Point<string>, fwd?: boolean): Rect | undefined;
+  getCharRect?(char: number | ITimestampStruct): Rect | undefined;
 
   /**
    * Returns `true` if text at the given position has right-to-left direction.

@@ -6,11 +6,12 @@ import {KeyController} from './KeyController';
 import {CompositionController} from './CompositionController';
 import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
+import {Anchor} from '../../json-crdt-extensions/peritext/rga/constants';
+import type {ITimestampStruct} from '../../json-crdt-patch';
 import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from '../dom/types';
 import type {Log} from '../../json-crdt/log/Log';
-import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
 import type {Inline} from '../../json-crdt-extensions';
 import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextUiApi} from '../events/defaults/ui/types';
@@ -86,12 +87,13 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return;
   }
 
-  public getCharRect(pos: number | Point<string>, right = true): Rect | undefined {
+  public getCharRect(char: number | ITimestampStruct): Rect | undefined {
     const txt = this.opts.events.txt;
-    const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
-    const char = right ? point.rightChar() : point.leftChar();
-    if (!char) return;
-    const charRange = txt.rangeFromChunkSlice(char);
+    const id = typeof char === 'number' ? txt.str.find(char) : char;
+    if (!id) return;
+    const start = txt.point(id, Anchor.Before);
+    const end = txt.point(id, Anchor.After);
+    const charRange = txt.range(start, end);
     const [span, inline] = this.findSpanContaining(charRange) || [];
     if (!span || !inline) return;
     const textNode = span.firstChild as Text;

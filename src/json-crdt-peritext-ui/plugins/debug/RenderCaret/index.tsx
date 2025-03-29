@@ -73,8 +73,8 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const anchorLeft = point.anchor === Anchor.After;
 
   React.useEffect(() => {
-    leftCharRef.current?.(ctx!.dom!.getCharRect(point, false));
-    rightCharRef.current?.(ctx!.dom!.getCharRect(point, true));
+    leftCharRef.current?.(ctx!.events.ui?.getPointRect(point, false));
+    rightCharRef.current?.(ctx!.events.ui?.getPointRect(point, true));
     const lineInfo = ctx!.events.ui?.getLineInfo(point);
     leftLineEndCharRef.current?.(lineInfo?.[0][1]);
     rightLineEndCharRef.current?.(lineInfo?.[1][1]);
@@ -88,10 +88,10 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     }
     const wordJumpLeftPoint = ctx!.peritext.editor.skip(point, -1, 'word');
     if (wordJumpLeftPoint)
-      wordSkipLeftCharRef.current?.(ctx!.events.ui?.api?.getCharRect?.(wordJumpLeftPoint, true));
+      wordSkipLeftCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpLeftPoint, true));
     const wordJumpRightPoint = ctx!.peritext.editor.skip(point, 1, 'word');
     if (wordJumpRightPoint)
-      wordSkipRightCharRef.current?.(ctx!.events.ui?.api?.getCharRect?.(wordJumpRightPoint, false));
+      wordSkipRightCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpRightPoint, false));
   });
 
   return (
