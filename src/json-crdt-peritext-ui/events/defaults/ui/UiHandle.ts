@@ -1,4 +1,5 @@
 import {tick} from '../../../../json-crdt-patch';
+import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import type {Peritext} from '../../../../json-crdt-extensions';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
 import type {Rect} from '../../../dom/types';
@@ -31,6 +32,15 @@ export class UiHandle {
     if (!char) return;
     const id = tick(char.chunk.id, char.off);
     return this.api.getCharRect?.(id);
+  }
+
+  public getPointX(pos: number | Point<string>, right = true): [x: number, rect: Rect] | undefined {
+    const txt = this.txt;
+    const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
+    const rect = this.getPointRect(point, right);
+    if (!rect) return;
+    const x = point.anchor === Anchor.Before ? rect.x : rect.x + rect.width;
+    return [x, rect];
   }
 
   public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
