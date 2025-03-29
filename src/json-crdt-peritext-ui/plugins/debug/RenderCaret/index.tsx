@@ -63,6 +63,10 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const rightCharRef = React.useRef<SetRect>(null);
   const leftLineEndCharRef = React.useRef<SetRect>(null);
   const rightLineEndCharRef = React.useRef<SetRect>(null);
+  const leftPrevLineEndCharRef = React.useRef<SetRect>(null);
+  const rightPrevLineEndCharRef = React.useRef<SetRect>(null);
+  const leftNextLineEndCharRef = React.useRef<SetRect>(null);
+  const rightNextLineEndCharRef = React.useRef<SetRect>(null);
   const wordSkipLeftCharRef = React.useRef<SetRect>(null);
   const wordSkipRightCharRef = React.useRef<SetRect>(null);
 
@@ -74,6 +78,14 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     const lineInfo = ctx!.events.ui?.getLineInfo(point);
     leftLineEndCharRef.current?.(lineInfo?.[0][1]);
     rightLineEndCharRef.current?.(lineInfo?.[1][1]);
+    if (lineInfo) {
+      const prevLineInfo = ctx!.events.ui?.getPrevLineInfo(lineInfo);
+      const nextLineInfo = ctx!.events.ui?.getNextLineInfo(lineInfo);
+      leftPrevLineEndCharRef.current?.(prevLineInfo?.[0][1]);
+      rightPrevLineEndCharRef.current?.(prevLineInfo?.[1][1]);
+      leftNextLineEndCharRef.current?.(nextLineInfo?.[0][1]);
+      rightNextLineEndCharRef.current?.(nextLineInfo?.[1][1]);
+    }
     const wordJumpLeftPoint = ctx!.peritext.editor.skip(point, -1, 'word');
     if (wordJumpLeftPoint)
       wordSkipLeftCharRef.current?.(ctx!.events.ui?.api?.getCharRect?.(wordJumpLeftPoint, true));
@@ -96,6 +108,10 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       }} />
       <CharOverlay rectRef={leftLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid blue'}} />
       <CharOverlay rectRef={rightLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid blue'}} />
+      <CharOverlay rectRef={leftPrevLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid rgba(127,127,127,.5)'}} />
+      <CharOverlay rectRef={rightPrevLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}} />
+      <CharOverlay rectRef={leftNextLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid rgba(127,127,127,.5)'}} />
+      <CharOverlay rectRef={rightNextLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}} />
       <CharOverlay rectRef={wordSkipLeftCharRef} style={{...eowCharacterOverlayStyles, borderLeft: '2px dotted rgba(127,127,127,.7)'}} />
       <CharOverlay rectRef={wordSkipRightCharRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.7)'}} />
     </>

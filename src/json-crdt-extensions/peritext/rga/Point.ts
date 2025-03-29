@@ -151,6 +151,18 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   /**
+   * @returns Returns `true` if the point is at the very start of the string, i.e.
+   *     there are no visible characters before it.
+   */
+  public isStart(): boolean {
+    const chunk = this.chunk();
+    if (!chunk) return true;
+    if (!chunk.del && chunk.id.time < this.id.time) return false;
+    const l = chunk.l;
+    return l ? !l.len : true;
+  }
+
+  /**
    * Goes to the next visible character in the string. The `move` parameter
    * specifies how many characters to move the cursor by. If the cursor reaches
    * the end of the string, it will return `undefined`.

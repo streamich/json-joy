@@ -51,4 +51,18 @@ export class UiHandle {
     if (!left || !right) return;
     return [left, right];
   }
+
+  public getPrevLineInfo(line: UiLineInfo): UiLineInfo | undefined {
+    const [[left]] = line;
+    if (left.isStart()) return;
+    const point = left.copy(p => p.step(-1));
+    return this.getLineInfo(point);
+  }
+
+  public getNextLineInfo(line: UiLineInfo): UiLineInfo | undefined {
+    const [, [right]] = line;
+    if (right.viewPos() >= this.txt.str.length()) return;
+    const point = right.copy(p => p.step(1));
+    return this.getLineInfo(point);
+  }
 }
