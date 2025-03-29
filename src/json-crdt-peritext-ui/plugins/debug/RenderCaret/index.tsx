@@ -92,6 +92,10 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     const wordJumpRightPoint = ctx!.peritext.editor.skip(point, 1, 'word');
     if (wordJumpRightPoint)
       wordSkipRightCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpRightPoint, false));
+    const pos = ctx!.events.ui?.getPointX(point);
+    if (pos) {
+      console.log(pos[0]);
+    }
   });
 
   return (
