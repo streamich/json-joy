@@ -69,6 +69,8 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
   const rightNextLineEndCharRef = React.useRef<SetRect>(null);
   const wordSkipLeftCharRef = React.useRef<SetRect>(null);
   const wordSkipRightCharRef = React.useRef<SetRect>(null);
+  const prevLineCaretRef = React.useRef<SetRect>(null);
+  const nextLineCaretRef = React.useRef<SetRect>(null);
 
   const anchorLeft = point.anchor === Anchor.After;
 
@@ -93,14 +95,30 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     if (wordJumpRightPoint)
       wordSkipRightCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpRightPoint, false));
     const pos = ctx!.events.ui?.pointX(point);
+
     const currLine = ctx!.events.ui?.getLineInfo(point);
     if (pos && currLine) {
       const lineEdgeX = currLine[0][1].x;
       const relX = pos[0] - lineEdgeX;
       const prevLine = ctx!.events.ui?.getPrevLineInfo(currLine);
+      const nextLine = ctx!.events.ui?.getNextLineInfo(currLine);
       if (prevLine) {
         const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, prevLine);
-        console.log(prevLinePoint + '');
+        if (point.anchor === Anchor.Before) prevLinePoint?.refBefore();
+        else prevLinePoint?.refAfter();
+        if (prevLinePoint) {
+          const rect = ctx!.events.ui?.api.getCharRect?.(prevLinePoint.id);
+          if (rect) prevLineCaretRef.current?.(rect);
+        }
+      }
+      if (nextLine) {
+        const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, nextLine);
+        if (point.anchor === Anchor.Before) prevLinePoint?.refBefore();
+        else prevLinePoint?.refAfter();
+        if (prevLinePoint) {
+          const rect = ctx!.events.ui?.api.getCharRect?.(prevLinePoint.id);
+          if (rect) nextLineCaretRef.current?.(rect);
+        }
       }
     }
   });
@@ -125,6 +143,8 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       <CharOverlay rectRef={rightNextLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}} />
       <CharOverlay rectRef={wordSkipLeftCharRef} style={{...eowCharacterOverlayStyles, borderLeft: '2px dotted rgba(127,127,127,.7)'}} />
       <CharOverlay rectRef={wordSkipRightCharRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.7)'}} />
+      <CharOverlay rectRef={prevLineCaretRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}} />
+      <CharOverlay rectRef={nextLineCaretRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}} />
     </>
   );
 };
