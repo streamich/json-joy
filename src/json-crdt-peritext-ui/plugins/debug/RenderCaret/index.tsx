@@ -92,9 +92,16 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     const wordJumpRightPoint = ctx!.peritext.editor.skip(point, 1, 'word');
     if (wordJumpRightPoint)
       wordSkipRightCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpRightPoint, false));
-    const pos = ctx!.events.ui?.getPointX(point);
-    if (pos) {
-      console.log(pos[0]);
+    const pos = ctx!.events.ui?.pointX(point);
+    const currLine = ctx!.events.ui?.getLineInfo(point);
+    if (pos && currLine) {
+      const lineEdgeX = currLine[0][1].x;
+      const relX = pos[0] - lineEdgeX;
+      const prevLine = ctx!.events.ui?.getPrevLineInfo(currLine);
+      if (prevLine) {
+        const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, prevLine);
+        console.log(prevLinePoint + '');
+      }
     }
   });
 

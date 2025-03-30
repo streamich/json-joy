@@ -34,13 +34,36 @@ export class UiHandle {
     return this.api.getCharRect?.(id);
   }
 
-  public getPointX(pos: number | Point<string>, right = true): [x: number, rect: Rect] | undefined {
+  public pointX(pos: number | Point<string>): [x: number, rect: Rect] | undefined {
     const txt = this.txt;
     const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
-    const rect = this.getPointRect(point, right);
+    const rect = this.getPointRect(point, point.anchor === Anchor.Before ? true : false);
     if (!rect) return;
     const x = point.anchor === Anchor.Before ? rect.x : rect.x + rect.width;
     return [x, rect];
+  }
+
+  public findPointAtRelX(relX: number, line: UiLineInfo): Point<string> {
+    const lineRect = line[0][1];
+    const lineX = lineRect.x;
+    let point = line[0][0].clone();
+    let curr = point;
+    let bestDiff = 1e9;
+    const max = line[1][0].viewPos() - line[0][0].viewPos();
+    if (!this.api.getCharRect) return point;
+    for (let i = 0; i < max; i++) {
+      const pointX = this.pointX(curr);
+      if (!pointX) break;
+      const [x] = pointX;
+      const currRelX = x - lineX;
+      const diff = Math.abs(currRelX - relX);
+      if (diff <= bestDiff) {
+        bestDiff = diff;
+        point = curr.clone();
+      } else break;
+      curr.step(1);
+    }
+    return point;
   }
 
   public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
