@@ -1,3 +1,41 @@
+# [17.36.0](https://github.com/streamich/json-joy/compare/v17.35.0...v17.36.0) (2025-03-31)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 correctly format slice type tags ([2903178](https://github.com/streamich/json-joy/commit/290317887b84cc3746af1a3723083440664c8e47))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 implement EditorApi injectable for Editor cursor methods ([779b891](https://github.com/streamich/json-joy/commit/779b8918da277cb44a89c26f1662d5ede3196afa))
+* **json-crdt-peritext-ui:** 🎸 add 'line-vert' cursor movement unit ([9d9d4f6](https://github.com/streamich/json-joy/commit/9d9d4f69012bbea6da819c919a11af4cc8aafb70))
+* **json-crdt-peritext-ui:** 🎸 add ability to compute point x coordinate on the screen ([9271737](https://github.com/streamich/json-joy/commit/92717370bdb7c5af3d5fb791296a3b9fe8bf90d3))
+* **json-crdt-peritext-ui:** 🎸 add ability to move caret to soft line wrap position ([b0660fa](https://github.com/streamich/json-joy/commit/b0660fa7b171b1f787c9c3832d8eb6435937ca02))
+* **json-crdt-peritext-ui:** 🎸 add ability to move point-by-point using keyboard ([b17c4ba](https://github.com/streamich/json-joy/commit/b17c4ba00a8d0e3d8b3a0e7e4dd0eb2d2ae8fd7c))
+* **json-crdt-peritext-ui:** 🎸 add right EOL indicator to debug mode and fix char pos off ([946900f](https://github.com/streamich/json-joy/commit/946900fae8a2d63c5cb6b816d84d5a42b9cd6681))
+* **json-crdt-peritext-ui:** 🎸 compute previous line caret position ([87edfe7](https://github.com/streamich/json-joy/commit/87edfe7740236bfed58e44ddaf8b9fcff4694e1b))
+* **json-crdt-peritext-ui:** 🎸 create <CharOverlay> helper for debugging overlays ([6eb56a8](https://github.com/streamich/json-joy/commit/6eb56a83676edbd599d31b6ce64b8efc14d1702c))
+* **json-crdt-peritext-ui:** 🎸 display debug button in top toolbar ([1c1ab58](https://github.com/streamich/json-joy/commit/1c1ab58360cdcb48849bc176db1d4c021a0c6d8b))
+* **json-crdt-peritext-ui:** 🎸 display word just locations in debug mode ([558f171](https://github.com/streamich/json-joy/commit/558f171f785c4ef6dcfe460a13eb58e7d734346c))
+* **json-crdt-peritext-ui:** 🎸 hide cursor inline debug label ([d574fb0](https://github.com/streamich/json-joy/commit/d574fb0cd5b6c109bc6c0b144c5b2c5b09033b34))
+* **json-crdt-peritext-ui:** 🎸 highlight characters immediately adjacent to caret ([e4107c1](https://github.com/streamich/json-joy/commit/e4107c175e72da7002f18fc083f574cb82076f79))
+* **json-crdt-peritext-ui:** 🎸 implement utility for retrieving line bounds ([93a31ba](https://github.com/streamich/json-joy/commit/93a31ba938b7fbec9b3a64fbd20840fedef8dedf))
+* **json-crdt-peritext-ui:** 🎸 improve debug label display ([2b3387e](https://github.com/streamich/json-joy/commit/2b3387ed6e183dad01d6a6c23421576a766355d6))
+* **json-crdt-peritext-ui:** 🎸 improve display of block debug labels ([06ae980](https://github.com/streamich/json-joy/commit/06ae980c79614f45100f18a0b730ea5a2af130f9))
+* **json-crdt-peritext-ui:** 🎸 improve display of caret adjacent characters ([b9c547b](https://github.com/streamich/json-joy/commit/b9c547b014f8394280dd2094bc03e15d896db6c7))
+* **json-crdt-peritext-ui:** 🎸 improve display of debug labels, add small label ability ([fe6d0b1](https://github.com/streamich/json-joy/commit/fe6d0b1ba2ee7e77f3126bfecf21c25efb060d06))
+* **json-crdt-peritext-ui:** 🎸 introduce concept of rendering surface API handle ([834f7dc](https://github.com/streamich/json-joy/commit/834f7dcc2ed219fdbef378e984f96b9c4348d643))
+* **json-crdt-peritext-ui:** 🎸 make debug plugin enabled state reactive ([5c19869](https://github.com/streamich/json-joy/commit/5c19869578fc053eb2d4ac8b862a7b6f6301c414))
+* **json-crdt-peritext-ui:** 🎸 pass through caret Point position ([f7def34](https://github.com/streamich/json-joy/commit/f7def3459fb95e0bc2eaf905ae4a212941715a68))
+* **json-crdt-peritext-ui:** 🎸 render caret anchor point ([346a41a](https://github.com/streamich/json-joy/commit/346a41a53ae16c6c0ee1a184e0dfc70d95cbd023))
+* **json-crdt-peritext-ui:** 🎸 render prev and next line caret destination in debug mode ([d0dad61](https://github.com/streamich/json-joy/commit/d0dad611f9d73512ef8a7851d470e31f090a4f9d))
+* **json-crdt-peritext-ui:** 🎸 render soft line beginning in debug mode ([a1b7f98](https://github.com/streamich/json-joy/commit/a1b7f984faf1062a0bdd32d103e2280cbcc7625d))
+* **json-crdt-peritext-ui:** 🎸 show debug labels over inline formatting ([f0b5e0e](https://github.com/streamich/json-joy/commit/f0b5e0e49ecb1dcd7f38751a0735ef21a33a7acd))
+* **json-crdt-peritext-ui:** 🎸 show previous and next line boundaries ([3f8a636](https://github.com/streamich/json-joy/commit/3f8a636c08340bf4e0508998a643cfc970761e38))
+* **json-crdt-peritext-ui:** 🎸 use the new <CharOverlay> in debug highlighting ([c73013e](https://github.com/streamich/json-joy/commit/c73013eb84e06d51a542f3d3435404eb332c5515))
+* **json-crdt-peritext-ui:** 🎸 wire in vertical cursor movement using keyboard ([966c017](https://github.com/streamich/json-joy/commit/966c0175e23191b706f929dd9c099a041772001a))
+
 # [17.35.0](https://github.com/streamich/json-joy/compare/v17.34.0...v17.35.0) (2025-03-25)
 
 
