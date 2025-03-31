@@ -67,7 +67,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
             case 'D': {
               if (event.ctrlKey) {
                 event.preventDefault();
-                state.enabled.next(!state.enabled.getSnapshot());
+                state.toggleDebugMode();
               }
               break;
             }

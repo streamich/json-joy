@@ -22,6 +22,7 @@ export interface RenderBlockProps extends BlockViewProps {
 export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children}) => {
   const ctx = useDebugCtx();
   const enabled = useSyncStore(ctx.state.enabled);
+  const showSliceOutlines = useSyncStore(ctx.state.showSliceOutlines);
 
   if (!enabled) return children;
 
@@ -33,7 +34,9 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
       <div contentEditable={false} className={labelContainerClass} onMouseDown={(e) => e.preventDefault()}>
         <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatType(type)).join('.')}</DebugLabel>
       </div>
-      <div style={{outline: '1px dotted blue'}}>{children}</div>
+      {showSliceOutlines
+        ? <div style={{outline: '1px dotted blue'}}>{children}</div>
+        : children}
     </div>
   );
 };
