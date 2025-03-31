@@ -81,7 +81,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     leftLineEndCharRef.current?.(lineInfo?.[0][1]);
     rightLineEndCharRef.current?.(lineInfo?.[1][1]);
     if (lineInfo) {
-      const prevLineInfo = ctx!.events.ui?.getPrevLineInfo(lineInfo);
+      const prevLineInfo = ctx!.events.ui?.getNextLineInfo(lineInfo, -1);
       const nextLineInfo = ctx!.events.ui?.getNextLineInfo(lineInfo);
       leftPrevLineEndCharRef.current?.(prevLineInfo?.[0][1]);
       rightPrevLineEndCharRef.current?.(prevLineInfo?.[1][1]);
@@ -96,12 +96,11 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
 
     const currLine = ctx!.events.ui?.getLineInfo(point);
     if (pos && currLine) {
-      const lineEdgeX = currLine[0][1].x;
-      const relX = pos[0] - lineEdgeX;
-      const prevLine = ctx!.events.ui?.getPrevLineInfo(currLine);
+      const targetX = pos[0];
+      const prevLine = ctx!.events.ui?.getNextLineInfo(currLine, -1);
       const nextLine = ctx!.events.ui?.getNextLineInfo(currLine);
       if (prevLine) {
-        const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, prevLine);
+        const prevLinePoint = ctx!.events.ui?.findPointAtX(targetX, prevLine);
         if (point.anchor === Anchor.Before) prevLinePoint?.refBefore();
         else prevLinePoint?.refAfter();
         if (prevLinePoint) {
@@ -110,7 +109,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
         }
       }
       if (nextLine) {
-        const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, nextLine);
+        const prevLinePoint = ctx!.events.ui?.findPointAtX(targetX, nextLine);
         if (point.anchor === Anchor.Before) prevLinePoint?.refBefore();
         else prevLinePoint?.refAfter();
         if (prevLinePoint) {

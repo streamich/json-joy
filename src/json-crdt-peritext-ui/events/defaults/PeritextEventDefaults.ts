@@ -45,14 +45,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       if (!pos) return;
       const currLine = ui.getLineInfo(point);
       if (!currLine) return;
-      const lineEdgeX = currLine[0][1].x;
-      const relX = pos[0] - lineEdgeX;
+      const x = pos[0];
       const iterations = Math.abs(steps);
       let nextPoint = point;
       for (let i = 0; i < iterations; i++) {
-        const nextLine = steps > 0 ? ui.getNextLineInfo(currLine) : ui.getPrevLineInfo(currLine);
+        const nextLine = steps > 0 ? ui.getNextLineInfo(currLine) : ui.getNextLineInfo(currLine, -1);
         if (!nextLine) break;
-        nextPoint = ui.findPointAtRelX(relX, nextLine);
+        nextPoint = ui.findPointAtX(x, nextLine);
         if (!nextPoint) break;
         if (point.anchor === Anchor.Before) nextPoint.refBefore();
         else nextPoint.refAfter();
