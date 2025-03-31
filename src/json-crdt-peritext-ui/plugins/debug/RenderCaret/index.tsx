@@ -3,8 +3,8 @@ import {rule} from 'nano-theme';
 import {useDebugCtx} from '../context';
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {useSyncStore} from '../../../react/hooks';
-import type {CaretViewProps} from '../../../react/cursor/CaretView';
 import {CharOverlay, type SetRect} from './CharOverlay';
+import type {CaretViewProps} from '../../../react/cursor/CaretView';
 
 const blockClass = rule({
   pos: 'relative',
@@ -22,7 +22,7 @@ export interface RenderCaretProps extends CaretViewProps {
 export const RenderCaret: React.FC<RenderCaretProps> = (props) => {
   const {children} = props;
   const ctx = useDebugCtx();
-  const enabled = useSyncStore(ctx.enabled);
+  const enabled = useSyncStore(ctx.state.enabled);
 
   if (!enabled || !ctx.ctx?.dom) return children;
 

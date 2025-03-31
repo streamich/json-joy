@@ -7,7 +7,7 @@ import {CursorPlugin} from '../../plugins/cursor';
 import {ToolbarPlugin} from '../../plugins/toolbar';
 import {DebugPlugin} from '../../plugins/debug';
 import {BlocksPlugin} from '../../plugins/blocks';
-import {ValueSyncStore} from '../../../util/events/sync-store';
+import {DebugState} from '../../plugins/debug/state';
 
 const markdown =
   'The German __automotive sector__ is in the process of *cutting ' +
@@ -37,11 +37,11 @@ export const App: React.FC = () => {
   }, [model]);
 
   const plugins = React.useMemo(() => {
-    const debugEnabled = new ValueSyncStore(false);
+    const debugState = new DebugState();
     const cursorPlugin = new CursorPlugin();
-    const toolbarPlugin = new ToolbarPlugin({debug: debugEnabled});
+    const toolbarPlugin = new ToolbarPlugin({debug: debugState});
     const blocksPlugin = new BlocksPlugin();
-    const debugPlugin = new DebugPlugin({enabled: debugEnabled});
+    const debugPlugin = new DebugPlugin({state: debugState});
     return [cursorPlugin, toolbarPlugin, blocksPlugin, debugPlugin];
   }, []);
 

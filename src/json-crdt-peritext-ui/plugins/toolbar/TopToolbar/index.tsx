@@ -17,7 +17,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
   const peritext = ctx.peritext;
   const editor = peritext.editor;
   const pending = useSyncStore(editor.pending);
-  const isDebugMode = useSyncStoreOpt(toolbar.opts.debug);
+  const isDebugMode = useSyncStoreOpt(toolbar.opts.debug?.enabled);
 
   if (!ctx.dom) return null;
 
@@ -95,7 +95,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
             'Debug',
             () => {
               const debug = toolbar.opts.debug!;
-              debug!.next(!debug.value);
+              debug!.enabled.next(!debug.enabled.value);
             },
             !!isDebugMode,
           )}

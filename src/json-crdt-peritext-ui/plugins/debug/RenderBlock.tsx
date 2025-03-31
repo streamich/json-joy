@@ -21,7 +21,7 @@ export interface RenderBlockProps extends BlockViewProps {
 
 export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children}) => {
   const ctx = useDebugCtx();
-  const enabled = useSyncStore(ctx.enabled);
+  const enabled = useSyncStore(ctx.state.enabled);
 
   if (!enabled) return children;
 

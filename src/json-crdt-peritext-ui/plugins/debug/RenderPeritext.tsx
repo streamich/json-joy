@@ -4,8 +4,9 @@ import {context} from './context';
 import {Button} from '../../components/Button';
 import {Console} from './Console';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
 import {useSyncStore} from '../../react/hooks';
+import {DebugState} from './state';
+import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
 
 const blockClass = rule({
   pos: 'relative',
@@ -28,39 +29,24 @@ const childrenDebugClass = rule({
 });
 
 export interface RenderPeritextProps extends PeritextViewProps {
-  enabled?: boolean | ValueSyncStore<boolean>;
+  state?: DebugState;
   button?: boolean;
   children?: React.ReactNode;
   ctx?: PeritextSurfaceState;
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({
-  enabled: enabledProp = false,
+  state: state_,
   ctx,
   button,
   children,
 }) => {
   const theme = useTheme();
-  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
-  const enabled = React.useMemo(
-    () => (typeof enabledProp === 'boolean' ? new ValueSyncStore<boolean>(enabledProp) : enabledProp),
-    [],
-  );
-  useSyncStore(enabled);
-  React.useEffect(() => {
-    if (typeof enabledProp === 'boolean') {
-      enabled.next(enabledProp);
-      return () => {};
-    }
-    enabled.next(enabledProp.value);
-    const unsubscribe = enabledProp.subscribe(() => {
-      enabled.next(enabledProp.value);
-    });
-    return () => unsubscribe();
-  }, [enabled, enabledProp]);
+  const state = React.useMemo(() => state_ ?? new DebugState(), [state_]);
+  useSyncStore(state.enabled);
   const value = React.useMemo(
     () => ({
-      enabled,
+      state,
       ctx,
       flags: {
         dom: new ValueSyncStore(true),
@@ -69,7 +55,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
         model: new ValueSyncStore(false),
       },
     }),
-    [enabled, ctx],
+    [state, ctx],
   );
 
   return (
@@ -81,7 +67,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
             case 'D': {
               if (event.ctrlKey) {
                 event.preventDefault();
-                enabled.next(!enabled.getSnapshot());
+                state.enabled.next(!state.enabled.getSnapshot());
               }
               break;
             }
@@ -94,13 +80,13 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
               bg: theme.bg,
             })}
           >
-            <Button small active={enabled.getSnapshot()} onClick={() => enabled.next(!enabled.getSnapshot())}>
+            <Button small active={state.enabled.getSnapshot()} onClick={() => state.enabled.next(!state.enabled.getSnapshot())}>
               Debug
             </Button>
           </div>
         )}
-        <div className={enabled.getSnapshot() ? childrenDebugClass : undefined}>{children}</div>
-        {enabled.getSnapshot() && <Console />}
+        <div className={state.enabled.getSnapshot() ? childrenDebugClass : undefined}>{children}</div>
+        {state.enabled.getSnapshot() && <Console />}
       </div>
     </context.Provider>
   );

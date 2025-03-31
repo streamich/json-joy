@@ -14,7 +14,7 @@ export interface RenderInlineProps extends InlineViewProps {
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {children, inline} = props;
   const ctx = useDebugCtx();
-  const enabled = useSyncStore(ctx.enabled);
+  const enabled = useSyncStore(ctx.state.enabled);
 
   const keys: (number | string)[] = Object.keys(inline.attr());
   const tags: string[] = [];
