@@ -5,7 +5,7 @@ import {ValueSyncStore} from '../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
 import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {Rect, UiLifeCycles} from './types';
+import type {UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
@@ -53,46 +53,6 @@ export class CursorController implements UiLifeCycles, Printable {
       }
     }
     return -1;
-  }
-
-  public caretRect(): Rect | undefined {
-    const el = document.getElementById(this.caretId);
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    return rect;
-  }
-
-  /**
-   * Find text position at similar x coordinate on the next line.
-   *
-   * @param direction 1 for next line, -1 for previous line.
-   * @returns The position at similar x coordinate on the next line, or
-   *          undefined if not found.
-   *
-   * @todo Implement similar functionality for finding soft line breaks (end
-   *     and start of lines). Or use `.getClientRects()` trick with `Range`
-   *     object, see: https://www.bennadel.com/blog/4310-detecting-rendered-line-breaks-in-a-text-node-in-javascript.htm
-   */
-  public getNextLinePos(direction: 1 | -1 = 1): number | undefined {
-    // TODO: this works only for the main cursor, make it work for all cursors.
-    const rect = this.caretRect();
-    if (!rect) return;
-    const {x, y, width, height} = rect;
-    const halfWidth = width / 2;
-    const halfHeight = height / 2;
-    const currentPos = this.opts.txt.editor.cursor.focus().viewPos();
-    const caretPos = this.posAtPoint(x + halfWidth, y + halfHeight);
-    if (currentPos !== caretPos) return;
-    for (let i = 1; i < 16; i++) {
-      const dy = i * direction * halfHeight;
-      const pos = this.posAtPoint(x + halfWidth, y + dy);
-      if (pos !== -1 && pos !== caretPos) {
-        if (direction < 0) {
-          if (pos < caretPos) return pos;
-        } else if (pos > caretPos) return pos;
-      }
-    }
-    return undefined;
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */

@@ -107,6 +107,10 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return rects[0];
   }
 
+  public caretRect(): Rect | undefined {
+    return document.getElementById(this.cursor.caretId)?.getBoundingClientRect?.();
+  }
+
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
