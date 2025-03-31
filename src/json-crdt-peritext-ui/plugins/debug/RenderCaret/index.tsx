@@ -170,11 +170,11 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       />
       <CharOverlay
         rectRef={prevLineCaretRef}
-        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}}
+        style={{...eowCharacterOverlayStyles, backgroundColor: 'rgba(127,127,127,.2)'}}
       />
       <CharOverlay
         rectRef={nextLineCaretRef}
-        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}}
+        style={{...eowCharacterOverlayStyles, backgroundColor: 'rgba(127,127,127,.2)'}}
       />
     </>
   );
