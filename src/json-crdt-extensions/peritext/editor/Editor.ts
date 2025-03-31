@@ -490,8 +490,7 @@ export class Editor<T = string> implements Printable {
         return point;
       }
       case 'vert': {
-        if (!ui?.vert) return point;
-        return ui.vert(point, steps) || point;
+        return ui?.vert?.(point, steps) || point;
       }
       case 'block': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eob(point);

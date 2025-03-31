@@ -202,16 +202,9 @@ export class CursorController implements UiLifeCycles, Printable {
     switch (key) {
       case 'ArrowUp':
       case 'ArrowDown': {
+        event.preventDefault();
         const direction = key === 'ArrowUp' ? -1 : 1;
-        const at = this.getNextLinePos(direction);
-        if (at !== undefined) {
-          event.preventDefault();
-          if (event.shiftKey) {
-            et.cursor({at, edge: 'focus'});
-          } else {
-            et.cursor({at});
-          }
-        }
+        et.move(direction, 'vert', event.shiftKey ? 'focus' : 'both');
         break;
       }
       case 'ArrowLeft':

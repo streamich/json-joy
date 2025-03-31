@@ -56,7 +56,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (!nextPoint) break;
         if (point.anchor === Anchor.Before) nextPoint.refBefore(); else nextPoint.refAfter();
       }
-      return point;
+      return nextPoint;
     },
   };
 

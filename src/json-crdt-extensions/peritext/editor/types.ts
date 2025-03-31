@@ -16,6 +16,11 @@ export type ViewSlice = [header: number, x1: number, x2: number, type: SliceType
 
 export type ViewStyle = [behavior: SliceBehavior, type: SliceType, data?: unknown];
 
+/**
+ * UI API which can be injected during various methods of the editor. Used to
+ * perform editor function while taking into account the visual representation
+ * of the document, such as word wrapping.
+ */
 export interface EditorUi<T = string> {
   /**
    * Visually skips to the end or beginning of the line. Visually as in, it will
