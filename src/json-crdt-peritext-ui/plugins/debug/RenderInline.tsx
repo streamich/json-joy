@@ -16,6 +16,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const ctx = useDebugCtx();
   const enabled = useSyncStore(ctx.state.enabled);
   const showSliceOutlines = useSyncStore(ctx.state.showSliceOutlines);
+  const showSliceInfo = useSyncStore(ctx.state.showSliceInfo);
 
   const keys: (number | string)[] = Object.keys(inline.attr());
   const tags: string[] = [];
@@ -37,7 +38,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
 
   return (
     <span style={{outline: showSliceOutlines ? '1px dotted red' : undefined, position: 'relative'}}>
-      {tags.length > 0 && (
+      {showSliceInfo && tags.length > 0 && (
         <span
           contentEditable={false}
           style={{position: 'absolute', top: -6, left: -3, userSelect: 'none', pointerEvents: 'none'}}

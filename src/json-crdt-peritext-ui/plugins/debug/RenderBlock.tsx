@@ -23,6 +23,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
   const ctx = useDebugCtx();
   const enabled = useSyncStore(ctx.state.enabled);
   const showSliceOutlines = useSyncStore(ctx.state.showSliceOutlines);
+  const showSliceInfo = useSyncStore(ctx.state.showSliceInfo);
 
   if (!enabled) return children;
 
@@ -31,9 +32,11 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
 
   return (
     <div style={{position: 'relative'}}>
-      <div contentEditable={false} className={labelContainerClass} onMouseDown={(e) => e.preventDefault()}>
-        <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatType(type)).join('.')}</DebugLabel>
-      </div>
+      {showSliceInfo && (
+        <div contentEditable={false} className={labelContainerClass} onMouseDown={(e) => e.preventDefault()}>
+          <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatType(type)).join('.')}</DebugLabel>
+        </div>
+      )}
       {showSliceOutlines
         ? <div style={{outline: '1px dotted blue'}}>{children}</div>
         : children}
