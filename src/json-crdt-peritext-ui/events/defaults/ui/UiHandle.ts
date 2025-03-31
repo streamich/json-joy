@@ -108,6 +108,8 @@ export class UiHandle {
     const [[left]] = line;
     if (left.isStart()) return;
     const point = left.copy((p) => p.step(-1));
+    const success = this.txt.overlay.skipMarkers(point, -1);
+    if (!success) return;
     return this.getLineInfo(point);
   }
 
@@ -115,6 +117,8 @@ export class UiHandle {
     const [, [right]] = line;
     if (right.viewPos() >= this.txt.str.length()) return;
     const point = right.copy((p) => p.step(1));
+    const success = this.txt.overlay.skipMarkers(point, 1);
+    if (!success) return;
     return this.getLineInfo(point);
   }
 }
