@@ -156,10 +156,25 @@ export interface CursorDetail {
    * one word in the direction specified by `len`. If `'line'`, the cursor
    * will be moved to the beginning or end of line, in direction specified
    * by `len`.
-   *
-   * Defaults to `'char'`.
+   * 
+   * - `'point'`: Moves by one Peritext anchor point. Each character has two
+   *     anchor points, one from each side of the character.
+   * - `'char'`: Moves by one character. Skips one visible character.
+   * - `'word'`: Moves by one word. Skips all visible characters until the end
+   *     of a word.
+   * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
+   *     the line end is determined by a visual line wrap.
+   * - `'line-vertical'`: Moves cursor up or down by one line, works if UI
+   *     API is provided. Determines the best position in the target by finding
+   *     the position which has the closest relative offset from the beginning
+   *     of the line.
+   * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
+   *     blockequote, etc.
+   * - `'all'`: Moves to the beginning or end of the document.
+   * 
+   * @default 'char'
    */
-  unit?: 'point' | 'char' | 'word' | 'line' | 'block' | 'all';
+  unit?: 'point' | 'char' | 'word' | 'line' | 'line-vert' | 'block' | 'all';
 
   /**
    * Specifies which edge of the selection to move. If `'focus'`, the focus
