@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.15% </span>
+                <span class="strong">83.01% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>479/576</span>
+                <span class='fraction'>479/577</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.04% </span>
+                <span class="strong">70.61% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>157/221</span>
+                <span class='fraction'>161/228</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.22% </span>
+                <span class="strong">85.04% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>398/467</span>
+                <span class='fraction'>398/468</span>
             </div>
         
             
@@ -1104,7 +1104,25 @@
 <a name='L1039'></a><a href='#L1039'>1039</a>
 <a name='L1040'></a><a href='#L1040'>1040</a>
 <a name='L1041'></a><a href='#L1041'>1041</a>
-<a name='L1042'></a><a href='#L1042'>1042</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">60x</span>
+<a name='L1042'></a><a href='#L1042'>1042</a>
+<a name='L1043'></a><a href='#L1043'>1043</a>
+<a name='L1044'></a><a href='#L1044'>1044</a>
+<a name='L1045'></a><a href='#L1045'>1045</a>
+<a name='L1046'></a><a href='#L1046'>1046</a>
+<a name='L1047'></a><a href='#L1047'>1047</a>
+<a name='L1048'></a><a href='#L1048'>1048</a>
+<a name='L1049'></a><a href='#L1049'>1049</a>
+<a name='L1050'></a><a href='#L1050'>1050</a>
+<a name='L1051'></a><a href='#L1051'>1051</a>
+<a name='L1052'></a><a href='#L1052'>1052</a>
+<a name='L1053'></a><a href='#L1053'>1053</a>
+<a name='L1054'></a><a href='#L1054'>1054</a>
+<a name='L1055'></a><a href='#L1055'>1055</a>
+<a name='L1056'></a><a href='#L1056'>1056</a>
+<a name='L1057'></a><a href='#L1057'>1057</a>
+<a name='L1058'></a><a href='#L1058'>1058</a>
+<a name='L1059'></a><a href='#L1059'>1059</a>
+<a name='L1060'></a><a href='#L1060'>1060</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-yes">60x</span>
@@ -1120,6 +1138,15 @@
 <span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-yes">60x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1596,12 +1623,21 @@
 <span class="cline-any cline-yes">62x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">40x</span>
 <span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-yes">40x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2168,7 +2204,16 @@ import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {SliceRegistry} from '../registry/SliceRegistry';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
+import type {
+  CharIterator,
+  CharPredicate,
+  Position,
+  TextRangeUnit,
+  ViewStyle,
+  ViewRange,
+  ViewSlice,
+  EditorUi,
+} from './types';
 &nbsp;
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -2615,7 +2660,7 @@ export class Editor&lt;T = string&gt; implements Printable {
    * @param unit The unit of move per step: "char", "word", "line", etc.
    * @returns The destination point after the move.
    */
-  public skip(point: Point&lt;T&gt;, steps: number, unit: TextRangeUnit): Point&lt;T&gt; {
+  public skip(point: Point&lt;T&gt;, steps: number, unit: TextRangeUnit, ui?: EditorUi&lt;T&gt;): Point&lt;T&gt; {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!steps) <span class="cstat-no" title="statement not covered" >return point;</span>
     switch (unit) {
       case 'point': {
@@ -2632,9 +2677,12 @@ export class Editor&lt;T = string&gt; implements Printable {
         return point;
       }
       case 'line': {
-        if (steps &gt; 0) for (let i = 0; i &lt; steps; i++) point = this.eol(point);
-        else for (let i = 0; i &lt; -steps; i++) point = this.bol(point);
+        if (steps &gt; 0) for (let i = 0; i &lt; steps; i++) point = ui?.eol?.(point, 1) ?? this.eol(point);
+        else for (let i = 0; i &lt; -steps; i++) point = ui?.eol?.(point, -1) ?? this.bol(point);
         return point;
+      }
+<span class="branch-4 cbranch-no" title="branch not covered" >      case 'vert': {</span>
+<span class="cstat-no" title="statement not covered" >        return ui?.vert?.(point, steps) || point;</span>
       }
       case 'block': {
         if (steps &gt; 0) for (let i = 0; i &lt; steps; i++) point = this.eob(point);
@@ -2654,26 +2702,32 @@ export class Editor&lt;T = string&gt; implements Printable {
    * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
+  public move(
+    steps: number,
+    unit: TextRangeUnit,
+    endpoint: 0 | 1 | 2 = 0,
+    collapse: boolean = true,
+    ui?: EditorUi&lt;T&gt;,
+  ): void {
     this.forCursor((cursor) =&gt; {
       switch (endpoint) {
         case 0: {
           let point = cursor.focus();
-          point = this.skip(point, steps, unit);
+          point = this.skip(point, steps, unit, ui);
           if (collapse) cursor.set(point);
           else cursor.setEndpoint(point, 0);
           break;
         }
         case 1: {
           let point = cursor.anchor();
-          point = this.skip(point, steps, unit);
+          point = this.skip(point, steps, unit, ui);
           <span class="missing-if-branch" title="if path not taken" >I</span>if (collapse) <span class="cstat-no" title="statement not covered" >cursor.set(point);</span>
           else cursor.setEndpoint(point, 1);
           break;
         }
         case 2: {
-          const start = this.skip(cursor.start, steps, unit);
-          const end = collapse ? <span class="branch-0 cbranch-no" title="branch not covered" >start.clone() </span>: this.skip(cursor.end, steps, unit);
+          const start = this.skip(cursor.start, steps, unit, ui);
+          const end = collapse ? <span class="branch-0 cbranch-no" title="branch not covered" >start.clone() </span>: this.skip(cursor.end, steps, unit, ui);
           cursor.set(start, end);
           break;
         }
@@ -2719,24 +2773,24 @@ export class Editor&lt;T = string&gt; implements Printable {
    * @param unit Unit of the range expansion.
    * @returns Range which contains the specified unit.
    */
-  public range(point: Point&lt;T&gt;, unit: TextRangeUnit): Range&lt;T&gt; | undefined {
+  public range(point: Point&lt;T&gt;, unit: TextRangeUnit, ui?: EditorUi&lt;T&gt;): Range&lt;T&gt; | undefined {
     if (unit === 'word') return this.rangeWord(point);
-    const point1 = this.skip(point, -1, unit);
-    const point2 = this.skip(point, 1, unit);
+    const point1 = this.skip(point, -1, unit, ui);
+    const point2 = this.skip(point, 1, unit, ui);
     return this.txt.range(point1, point2);
   }
 &nbsp;
-  public select(unit: TextRangeUnit): void {
+  public select(unit: TextRangeUnit, ui?: EditorUi&lt;T&gt;): void {
     this.forCursor((cursor) =&gt; {
-      const range = this.range(cursor.start, unit);
+      const range = this.range(cursor.start, unit, ui);
       if (range) cursor.set(range.start, range.end, CursorAnchor.Start);
       else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>this.delCursors;</span>
     });
   }
 &nbsp;
-  public selectAt(at: Position&lt;T&gt;, unit: TextRangeUnit | ''): void {
+  public selectAt(at: Position&lt;T&gt;, unit: TextRangeUnit | '', ui?: EditorUi&lt;T&gt;): void {
     this.cursor.set(this.point(at));
-    if (unit) this.select(unit);
+    if (unit) this.select(unit, ui);
   }
 &nbsp;
   // --------------------------------------------------------------- formatting
@@ -3193,7 +3247,7 @@ export class Editor&lt;T = string&gt; implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-31T04:43:34.645Z
+                at 2025-03-31T13:35:52.079Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
