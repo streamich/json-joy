@@ -25,7 +25,7 @@ export interface EditorUi<T = string> {
   /**
    * Visually skips to the end or beginning of the line. Visually as in, it will
    * respect the visual line breaks created by word wrapping.
-   * 
+   *
    * Skips just one line, regardless of the magnitude of the `steps` parameter.
    *
    * @param point The point from which to start skipping.
@@ -35,7 +35,7 @@ export interface EditorUi<T = string> {
    * @returns The point after skipping the specified number of lines, or
    *     undefined if no such point exists.
    */
-  eol?(point: Point<T>, steps: number): (Point<T> | undefined);
+  eol?(point: Point<T>, steps: number): Point<T> | undefined;
 
   /**
    * Used when user presses "ArrowUp" or "ArrowDown" keys. It will skip to the

@@ -15,7 +15,7 @@ export interface ToolbarPluginOpts {
 }
 
 export class ToolbarPlugin implements PeritextPlugin {
-  constructor (public readonly opts: ToolbarPluginOpts = {}) {}
+  constructor(public readonly opts: ToolbarPluginOpts = {}) {}
 
   public readonly text: PeritextPlugin['text'] = text;
 

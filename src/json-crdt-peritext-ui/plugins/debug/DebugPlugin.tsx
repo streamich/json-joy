@@ -24,5 +24,7 @@ export class DebugPlugin implements PeritextPlugin {
     </RenderPeritext>
   );
 
-  public readonly caret: PeritextPlugin['caret'] = (props, children) => <RenderCaret {...props}>{children}</RenderCaret>;
+  public readonly caret: PeritextPlugin['caret'] = (props, children) => (
+    <RenderCaret {...props}>{children}</RenderCaret>
+  );
 }

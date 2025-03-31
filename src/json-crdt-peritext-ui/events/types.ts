@@ -156,7 +156,7 @@ export interface CursorDetail {
    * one word in the direction specified by `len`. If `'line'`, the cursor
    * will be moved to the beginning or end of line, in direction specified
    * by `len`.
-   * 
+   *
    * - `'point'`: Moves by one Peritext anchor point. Each character has two
    *     anchor points, one from each side of the character.
    * - `'char'`: Moves by one character. Skips one visible character.
@@ -171,7 +171,7 @@ export interface CursorDetail {
    * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
    *     blockequote, etc.
    * - `'all'`: Moves to the beginning or end of the document.
-   * 
+   *
    * @default 'char'
    */
   unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all';

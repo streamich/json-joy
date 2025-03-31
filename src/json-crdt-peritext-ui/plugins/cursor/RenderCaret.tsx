@@ -74,7 +74,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
   const plugin = useCursorPlugin();
-  
+
   const anchorForward = point.anchor === Anchor.Before;
 
   const score = plugin.score.value;

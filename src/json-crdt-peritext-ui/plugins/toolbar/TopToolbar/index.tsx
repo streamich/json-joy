@@ -91,10 +91,14 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {!!toolbar.opts.debug && (
         <>
           <ButtonSeparator />
-          {button('Debug', () => {
-            const debug = toolbar.opts.debug!;
-            debug!.next(!debug.value);
-          }, !!isDebugMode)}
+          {button(
+            'Debug',
+            () => {
+              const debug = toolbar.opts.debug!;
+              debug!.next(!debug.value);
+            },
+            !!isDebugMode,
+          )}
         </>
       )}
     </ButtonGroup>

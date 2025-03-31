@@ -34,9 +34,18 @@ export interface RenderPeritextProps extends PeritextViewProps {
   ctx?: PeritextSurfaceState;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledProp = false, ctx, button, children}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({
+  enabled: enabledProp = false,
+  ctx,
+  button,
+  children,
+}) => {
   const theme = useTheme();
-  const enabled = React.useMemo(() => typeof enabledProp === 'boolean' ? new ValueSyncStore<boolean>(enabledProp) : enabledProp, []);
+  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
+  const enabled = React.useMemo(
+    () => (typeof enabledProp === 'boolean' ? new ValueSyncStore<boolean>(enabledProp) : enabledProp),
+    [],
+  );
   useSyncStore(enabled);
   React.useEffect(() => {
     if (typeof enabledProp === 'boolean') {
@@ -48,7 +57,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
       enabled.next(enabledProp.value);
     });
     return () => unsubscribe();
-  }, [enabledProp]);
+  }, [enabled, enabledProp]);
   const value = React.useMemo(
     () => ({
       enabled,
@@ -65,17 +74,20 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
 
   return (
     <context.Provider value={value}>
-      <div className={blockClass} onKeyDown={(event) => {
-        switch (event.key) {
-          case 'D': {
-            if (event.ctrlKey) {
-              event.preventDefault();
-              enabled.next(!enabled.getSnapshot());
+      <div
+        className={blockClass}
+        onKeyDown={(event) => {
+          switch (event.key) {
+            case 'D': {
+              if (event.ctrlKey) {
+                event.preventDefault();
+                enabled.next(!enabled.getSnapshot());
+              }
+              break;
             }
-            break;
           }
-        }
-      }}>
+        }}
+      >
         {!!button && (
           <div
             className={btnClass({

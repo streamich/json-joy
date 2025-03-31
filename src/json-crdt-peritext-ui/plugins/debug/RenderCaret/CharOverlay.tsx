@@ -13,6 +13,7 @@ export const CharOverlay: React.FC<CharOverlayProps> = ({rectRef, ...rest}) => {
   useWindowSize();
   useWindowScroll();
   const ref = React.useRef<HTMLSpanElement | null>(null);
+  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   React.useEffect(() => {
     (rectRef as any).current = (rect?: Rect) => {
       const span = ref.current;
@@ -30,7 +31,5 @@ export const CharOverlay: React.FC<CharOverlayProps> = ({rectRef, ...rest}) => {
     };
   }, []);
 
-  return (
-    <span {...rest} ref={ref} />
-  );
+  return <span {...rest} ref={ref} />;
 };

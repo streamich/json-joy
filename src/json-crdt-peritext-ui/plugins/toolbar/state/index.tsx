@@ -17,7 +17,10 @@ export class ToolbarState implements UiLifeCyclesRender {
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
 
-  constructor(public readonly surface: PeritextSurfaceState, public readonly opts: ToolbarPluginOpts) {}
+  constructor(
+    public readonly surface: PeritextSurfaceState,
+    public readonly opts: ToolbarPluginOpts,
+  ) {}
 
   /** ------------------------------------------- {@link UiLifeCyclesRender} */
 

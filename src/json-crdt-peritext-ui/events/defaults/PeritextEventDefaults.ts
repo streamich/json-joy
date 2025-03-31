@@ -11,7 +11,7 @@ import type {UndoCollector} from '../../types';
 import type {UiHandle} from './ui/UiHandle';
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
-import {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
+import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -26,13 +26,13 @@ export interface PeritextEventDefaultsOpts {
  * {@link PeritextEventTarget} to provide default behavior for each event type.
  * If `event.preventDefault()` is called on a Peritext event, the default handler
  * will not be executed.
-*/
+ */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public undo?: UndoCollector;
   public ui?: UiHandle;
 
   protected editorUi: EditorUi = {
-    eol: (point: Point, steps: number): (Point | undefined) => {
+    eol: (point: Point, steps: number): Point | undefined => {
       const ui = this.ui;
       if (!ui) return;
       const res = ui.getLineEnd(point, steps > 0);
@@ -47,14 +47,15 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       if (!currLine) return;
       const lineEdgeX = currLine[0][1].x;
       const relX = pos[0] - lineEdgeX;
-      let iterations = Math.abs(steps);
+      const iterations = Math.abs(steps);
       let nextPoint = point;
       for (let i = 0; i < iterations; i++) {
         const nextLine = steps > 0 ? ui.getNextLineInfo(currLine) : ui.getPrevLineInfo(currLine);
         if (!nextLine) break;
         nextPoint = ui.findPointAtRelX(relX, nextLine);
         if (!nextPoint) break;
-        if (point.anchor === Anchor.Before) nextPoint.refBefore(); else nextPoint.refAfter();
+        if (point.anchor === Anchor.Before) nextPoint.refBefore();
+        else nextPoint.refAfter();
       }
       return nextPoint;
     },

@@ -4,7 +4,7 @@ import {useDebugCtx} from '../context';
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {useSyncStore} from '../../../react/hooks';
 import type {CaretViewProps} from '../../../react/cursor/CaretView';
-import {CharOverlay, SetRect} from './CharOverlay';
+import {CharOverlay, type SetRect} from './CharOverlay';
 
 const blockClass = rule({
   pos: 'relative',
@@ -89,11 +89,9 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       rightNextLineEndCharRef.current?.(nextLineInfo?.[1][1]);
     }
     const wordJumpLeftPoint = ctx!.peritext.editor.skip(point, -1, 'word');
-    if (wordJumpLeftPoint)
-      wordSkipLeftCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpLeftPoint, true));
+    if (wordJumpLeftPoint) wordSkipLeftCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpLeftPoint, true));
     const wordJumpRightPoint = ctx!.peritext.editor.skip(point, 1, 'word');
-    if (wordJumpRightPoint)
-      wordSkipRightCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpRightPoint, false));
+    if (wordJumpRightPoint) wordSkipRightCharRef.current?.(ctx!.events.ui?.getPointRect?.(wordJumpRightPoint, false));
     const pos = ctx!.events.ui?.pointX(point);
 
     const currLine = ctx!.events.ui?.getLineInfo(point);
@@ -125,26 +123,59 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
 
   return (
     <>
-      <CharOverlay rectRef={leftCharRef} style={{
-        ...characterOverlayStyles,
-        backgroundColor: anchorLeft ? 'rgba(0,0,255,.2)' : 'rgba(0,0,255,.1)',
-        outlineStyle: anchorLeft ? 'solid' : 'dashed',
-      }} />
-      <CharOverlay rectRef={rightCharRef} style={{
-        ...characterOverlayStyles,
-        backgroundColor: !anchorLeft ? 'rgba(0,0,255,.2)' : 'rgba(0,0,255,.1)',
-        outlineStyle: !anchorLeft ? 'solid' : 'dashed',
-      }} />
+      <CharOverlay
+        rectRef={leftCharRef}
+        style={{
+          ...characterOverlayStyles,
+          backgroundColor: anchorLeft ? 'rgba(0,0,255,.2)' : 'rgba(0,0,255,.1)',
+          outlineStyle: anchorLeft ? 'solid' : 'dashed',
+        }}
+      />
+      <CharOverlay
+        rectRef={rightCharRef}
+        style={{
+          ...characterOverlayStyles,
+          backgroundColor: !anchorLeft ? 'rgba(0,0,255,.2)' : 'rgba(0,0,255,.1)',
+          outlineStyle: !anchorLeft ? 'solid' : 'dashed',
+        }}
+      />
       <CharOverlay rectRef={leftLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid blue'}} />
-      <CharOverlay rectRef={rightLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid blue'}} />
-      <CharOverlay rectRef={leftPrevLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid rgba(127,127,127,.5)'}} />
-      <CharOverlay rectRef={rightPrevLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}} />
-      <CharOverlay rectRef={leftNextLineEndCharRef} style={{...eolCharacterOverlayStyles, borderLeft: '2px solid rgba(127,127,127,.5)'}} />
-      <CharOverlay rectRef={rightNextLineEndCharRef} style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}} />
-      <CharOverlay rectRef={wordSkipLeftCharRef} style={{...eowCharacterOverlayStyles, borderLeft: '2px dotted rgba(127,127,127,.7)'}} />
-      <CharOverlay rectRef={wordSkipRightCharRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.7)'}} />
-      <CharOverlay rectRef={prevLineCaretRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}} />
-      <CharOverlay rectRef={nextLineCaretRef} style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}} />
+      <CharOverlay
+        rectRef={rightLineEndCharRef}
+        style={{...eolCharacterOverlayStyles, borderRight: '2px solid blue'}}
+      />
+      <CharOverlay
+        rectRef={leftPrevLineEndCharRef}
+        style={{...eolCharacterOverlayStyles, borderLeft: '2px solid rgba(127,127,127,.5)'}}
+      />
+      <CharOverlay
+        rectRef={rightPrevLineEndCharRef}
+        style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}}
+      />
+      <CharOverlay
+        rectRef={leftNextLineEndCharRef}
+        style={{...eolCharacterOverlayStyles, borderLeft: '2px solid rgba(127,127,127,.5)'}}
+      />
+      <CharOverlay
+        rectRef={rightNextLineEndCharRef}
+        style={{...eolCharacterOverlayStyles, borderRight: '2px solid rgba(127,127,127,.5)'}}
+      />
+      <CharOverlay
+        rectRef={wordSkipLeftCharRef}
+        style={{...eowCharacterOverlayStyles, borderLeft: '2px dotted rgba(127,127,127,.7)'}}
+      />
+      <CharOverlay
+        rectRef={wordSkipRightCharRef}
+        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.7)'}}
+      />
+      <CharOverlay
+        rectRef={prevLineCaretRef}
+        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}}
+      />
+      <CharOverlay
+        rectRef={nextLineCaretRef}
+        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}}
+      />
     </>
   );
 };

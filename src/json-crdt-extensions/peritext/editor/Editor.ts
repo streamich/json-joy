@@ -21,7 +21,16 @@ import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {SliceRegistry} from '../registry/SliceRegistry';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice, EditorUi} from './types';
+import type {
+  CharIterator,
+  CharPredicate,
+  Position,
+  TextRangeUnit,
+  ViewStyle,
+  ViewRange,
+  ViewSlice,
+  EditorUi,
+} from './types';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -510,7 +519,13 @@ export class Editor<T = string> implements Printable {
    * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true, ui?: EditorUi<T>): void {
+  public move(
+    steps: number,
+    unit: TextRangeUnit,
+    endpoint: 0 | 1 | 2 = 0,
+    collapse: boolean = true,
+    ui?: EditorUi<T>,
+  ): void {
     this.forCursor((cursor) => {
       switch (endpoint) {
         case 0: {

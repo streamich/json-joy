@@ -37,7 +37,7 @@ export class UiHandle {
   public pointX(pos: number | Point<string>): [x: number, rect: Rect] | undefined {
     const txt = this.txt;
     const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
-    const rect = this.getPointRect(point, point.anchor === Anchor.Before ? true : false);
+    const rect = this.getPointRect(point, point.anchor === Anchor.Before);
     if (!rect) return;
     const x = point.anchor === Anchor.Before ? rect.x : rect.x + rect.width;
     return [x, rect];
@@ -47,7 +47,7 @@ export class UiHandle {
     const lineRect = line[0][1];
     const lineX = lineRect.x;
     let point = line[0][0].clone();
-    let curr = point;
+    const curr = point;
     let bestDiff = 1e9;
     const max = line[1][0].viewPos() - line[0][0].viewPos();
     if (!this.api.getCharRect) return point;
@@ -83,7 +83,7 @@ export class UiHandle {
       return [curr, currRect];
     };
     while (true) {
-      const next = curr.copy(p => p.step(right ? 1 : -1));
+      const next = curr.copy((p) => p.step(right ? 1 : -1));
       if (!next) return prepareReturn();
       const nextRect = this.getPointRect(next, right);
       if (!nextRect) return prepareReturn();
@@ -107,14 +107,14 @@ export class UiHandle {
   public getPrevLineInfo(line: UiLineInfo): UiLineInfo | undefined {
     const [[left]] = line;
     if (left.isStart()) return;
-    const point = left.copy(p => p.step(-1));
+    const point = left.copy((p) => p.step(-1));
     return this.getLineInfo(point);
   }
 
   public getNextLineInfo(line: UiLineInfo): UiLineInfo | undefined {
     const [, [right]] = line;
     if (right.viewPos() >= this.txt.str.length()) return;
-    const point = right.copy(p => p.step(1));
+    const point = right.copy((p) => p.step(1));
     return this.getLineInfo(point);
   }
 }
