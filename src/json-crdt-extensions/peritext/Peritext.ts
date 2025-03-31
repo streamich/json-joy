@@ -8,7 +8,7 @@ import {Slices} from './slice/Slices';
 import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
-import {interval} from '../../json-crdt-patch/clock';
+import {interval, tick} from '../../json-crdt-patch/clock';
 import {Model, type StrApi} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
@@ -22,6 +22,7 @@ import type {MarkerSlice} from './slice/MarkerSlice';
 import type {SliceSchema, SliceType} from './slice/types';
 import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
 import type {AbstractRga} from '../../json-crdt/nodes/rga';
+import type {ChunkSlice} from './util/ChunkSlice';
 
 const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
 
@@ -181,6 +182,14 @@ export class Peritext<T = string> implements Printable {
    */
   public rangeFromPoints(p1: Point<T>, p2: Point<T>): Range<T> {
     return Range.from(this.str, p1, p2);
+  }
+
+  public rangeFromChunkSlice(slice: ChunkSlice<T>): Range<T> {
+    const startId = slice.off === 0 ? slice.chunk.id : tick(slice.chunk.id, slice.off);
+    const endId = tick(slice.chunk.id, slice.off + slice.len - 1);
+    const start = this.point(startId, Anchor.Before);
+    const end = this.point(endId, Anchor.After);
+    return this.range(start, end);
   }
 
   /**

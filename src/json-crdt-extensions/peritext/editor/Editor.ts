@@ -21,7 +21,16 @@ import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {SliceRegistry} from '../registry/SliceRegistry';
-import type {CharIterator, CharPredicate, Position, TextRangeUnit, ViewStyle, ViewRange, ViewSlice} from './types';
+import type {
+  CharIterator,
+  CharPredicate,
+  Position,
+  TextRangeUnit,
+  ViewStyle,
+  ViewRange,
+  ViewSlice,
+  EditorUi,
+} from './types';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -468,7 +477,7 @@ export class Editor<T = string> implements Printable {
    * @param unit The unit of move per step: "char", "word", "line", etc.
    * @returns The destination point after the move.
    */
-  public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
+  public skip(point: Point<T>, steps: number, unit: TextRangeUnit, ui?: EditorUi<T>): Point<T> {
     if (!steps) return point;
     switch (unit) {
       case 'point': {
@@ -485,9 +494,12 @@ export class Editor<T = string> implements Printable {
         return point;
       }
       case 'line': {
-        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
-        else for (let i = 0; i < -steps; i++) point = this.bol(point);
+        if (steps > 0) for (let i = 0; i < steps; i++) point = ui?.eol?.(point, 1) ?? this.eol(point);
+        else for (let i = 0; i < -steps; i++) point = ui?.eol?.(point, -1) ?? this.bol(point);
         return point;
+      }
+      case 'vert': {
+        return ui?.vert?.(point, steps) || point;
       }
       case 'block': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eob(point);
@@ -507,26 +519,32 @@ export class Editor<T = string> implements Printable {
    * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
+  public move(
+    steps: number,
+    unit: TextRangeUnit,
+    endpoint: 0 | 1 | 2 = 0,
+    collapse: boolean = true,
+    ui?: EditorUi<T>,
+  ): void {
     this.forCursor((cursor) => {
       switch (endpoint) {
         case 0: {
           let point = cursor.focus();
-          point = this.skip(point, steps, unit);
+          point = this.skip(point, steps, unit, ui);
           if (collapse) cursor.set(point);
           else cursor.setEndpoint(point, 0);
           break;
         }
         case 1: {
           let point = cursor.anchor();
-          point = this.skip(point, steps, unit);
+          point = this.skip(point, steps, unit, ui);
           if (collapse) cursor.set(point);
           else cursor.setEndpoint(point, 1);
           break;
         }
         case 2: {
-          const start = this.skip(cursor.start, steps, unit);
-          const end = collapse ? start.clone() : this.skip(cursor.end, steps, unit);
+          const start = this.skip(cursor.start, steps, unit, ui);
+          const end = collapse ? start.clone() : this.skip(cursor.end, steps, unit, ui);
           cursor.set(start, end);
           break;
         }
@@ -572,24 +590,24 @@ export class Editor<T = string> implements Printable {
    * @param unit Unit of the range expansion.
    * @returns Range which contains the specified unit.
    */
-  public range(point: Point<T>, unit: TextRangeUnit): Range<T> | undefined {
+  public range(point: Point<T>, unit: TextRangeUnit, ui?: EditorUi<T>): Range<T> | undefined {
     if (unit === 'word') return this.rangeWord(point);
-    const point1 = this.skip(point, -1, unit);
-    const point2 = this.skip(point, 1, unit);
+    const point1 = this.skip(point, -1, unit, ui);
+    const point2 = this.skip(point, 1, unit, ui);
     return this.txt.range(point1, point2);
   }
 
-  public select(unit: TextRangeUnit): void {
+  public select(unit: TextRangeUnit, ui?: EditorUi<T>): void {
     this.forCursor((cursor) => {
-      const range = this.range(cursor.start, unit);
+      const range = this.range(cursor.start, unit, ui);
       if (range) cursor.set(range.start, range.end, CursorAnchor.Start);
       else this.delCursors;
     });
   }
 
-  public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
+  public selectAt(at: Position<T>, unit: TextRangeUnit | '', ui?: EditorUi<T>): void {
     this.cursor.set(this.point(at));
-    if (unit) this.select(unit);
+    if (unit) this.select(unit, ui);
   }
 
   // --------------------------------------------------------------- formatting

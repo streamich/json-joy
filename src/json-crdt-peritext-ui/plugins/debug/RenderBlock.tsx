@@ -1,12 +1,18 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {drule} from 'nano-theme';
+import {rule} from 'nano-theme';
 import {useDebugCtx} from './context';
+import {formatType} from '../../../json-crdt-extensions/peritext/slice/util';
+import {DebugLabel} from '../../components/DebugLabel';
+import {useSyncStore} from '../../react/hooks';
 import type {BlockViewProps} from '../../react/BlockView';
-import {CommonSliceType} from '../../../json-crdt-extensions';
 
-const blockClass = drule({
-  pos: 'relative',
+const labelContainerClass = rule({
+  pos: 'absolute',
+  top: '-8px',
+  left: '-4px',
+  us: 'none',
+  pe: 'none',
 });
 
 export interface RenderBlockProps extends BlockViewProps {
@@ -14,7 +20,8 @@ export interface RenderBlockProps extends BlockViewProps {
 }
 
 export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children}) => {
-  const {enabled} = useDebugCtx();
+  const ctx = useDebugCtx();
+  const enabled = useSyncStore(ctx.enabled);
 
   if (!enabled) return children;
 
@@ -22,31 +29,9 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
   if (isRoot) return children;
 
   return (
-    <div
-      className={blockClass({
-        'caret-color': enabled ? 'blue !important' : 'transparent',
-        '::selection': {
-          bgc: enabled ? 'red !important' : 'transparent',
-        },
-      })}
-    >
-      <div contentEditable={false} style={{position: 'absolute', top: '-24px', left: 0}}>
-        <span
-          style={{
-            fontSize: '9px',
-            padding: '2px 4px',
-            borderRadius: 3,
-            background: 'rgba(0,0,0)',
-            lineHeight: '1.2em',
-            color: 'white',
-            display: 'inline-block',
-          }}
-        >
-          {hash.toString(36)}{' '}
-          {block.path
-            .map((type) => (typeof type === 'number' ? `<${CommonSliceType[type] ?? type}>` : `<${type}>`))
-            .join('.')}
-        </span>
+    <div style={{position: 'relative'}}>
+      <div contentEditable={false} className={labelContainerClass} onMouseDown={(e) => e.preventDefault()}>
+        <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatType(type)).join('.')}</DebugLabel>
       </div>
       <div style={{outline: '1px dotted blue'}}>{children}</div>
     </div>

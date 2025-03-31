@@ -3,16 +3,18 @@ import {Chrome} from './Chrome';
 import {context, type ToolbarPluginContextValue} from './context';
 import {ToolbarState} from './state';
 import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
+import type {ToolbarPluginOpts} from './ToolbarPlugin';
 
 export interface RenderPeritextProps extends PeritextViewProps {
   surface: PeritextSurfaceState;
+  opts: ToolbarPluginOpts;
   children?: React.ReactNode;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, children}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, opts, children}) => {
   const value: ToolbarPluginContextValue = React.useMemo(
-    () => ({surface, toolbar: new ToolbarState(surface)}),
-    [surface],
+    () => ({surface, toolbar: new ToolbarState(surface, opts)}),
+    [surface, opts],
   );
   const toolbar = value.toolbar;
 

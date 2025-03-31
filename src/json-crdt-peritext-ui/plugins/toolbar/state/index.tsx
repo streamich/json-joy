@@ -5,18 +5,22 @@ import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
+import {CommonSliceType} from '../../../../json-crdt-extensions';
 import type {UiLifeCyclesRender} from '../../../dom/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../react';
 import type {MenuItem} from '../types';
-import {CommonSliceType} from '../../../../json-crdt-extensions';
+import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
 export class ToolbarState implements UiLifeCyclesRender {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
 
-  constructor(public readonly surface: PeritextSurfaceState) {}
+  constructor(
+    public readonly surface: PeritextSurfaceState,
+    public readonly opts: ToolbarPluginOpts,
+  ) {}
 
   /** ------------------------------------------- {@link UiLifeCyclesRender} */
 

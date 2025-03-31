@@ -7,6 +7,7 @@ import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import type {CaretViewProps} from '../../react/cursor/CaretView';
 
 const height = 1.5;
@@ -48,11 +49,24 @@ const innerClass2 = rule({
   'mix-blend-mode': 'hard-light',
 });
 
+const dotClass = rule({
+  pos: 'absolute',
+  pe: 'none',
+  us: 'none',
+  w: '2px',
+  h: '2px',
+  bdrad: '50%',
+  z: 9999,
+  top: '-8px',
+  left: '4px',
+  bg: DefaultRendererColors.InactiveCursor,
+});
+
 export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
+export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children}) => {
   const ctx = usePeritext();
   const pending = useSyncStore(ctx.peritext.editor.pending);
   const [show, setShow] = React.useState(true);
@@ -60,6 +74,8 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
   const plugin = useCursorPlugin();
+
+  const anchorForward = point.anchor === Anchor.Before;
 
   const score = plugin.score.value;
   const delta = plugin.scoreDelta.value;
@@ -88,6 +104,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
           }}
         />
       )}
+      {anchorForward && <span className={dotClass} />}
 
       {/* Two carets overlay, so that they look good, both, on white and black backgrounds. */}
       <span className={innerClass + innerClass2} style={style} />

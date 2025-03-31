@@ -10,6 +10,7 @@ import {PeritextSurfaceState} from './state';
 import {create} from '../events';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
+import {UiHandle} from '../events/defaults/ui/UiHandle';
 
 put('.' + CssClass.Editor, {
   out: 0,
@@ -77,12 +78,15 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
         return;
       }
       if (dom && dom.opts.source === el) return;
-      const ctrl = new DomController({source: el, events: state.events, log: state.log});
-      state.events.undo = ctrl.annals;
-      ctrl.start();
-      state.dom = ctrl;
-      setDom(ctrl);
-      ctrl.et.addEventListener('change', rerender);
+      const newDom = new DomController({source: el, events: state.events, log: state.log});
+      const txt = state.peritext;
+      const uiHandle = new UiHandle(txt, newDom);
+      state.events.ui = uiHandle;
+      state.events.undo = newDom.annals;
+      newDom.start();
+      state.dom = newDom;
+      setDom(newDom);
+      newDom.et.addEventListener('change', rerender);
     },
     [peritext, state],
   );

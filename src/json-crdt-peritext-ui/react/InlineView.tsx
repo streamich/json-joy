@@ -58,7 +58,9 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
     className: CssClass.Inline,
     ref: (span: HTMLSpanElement | null) => {
       ref.current = span as HTMLSpanElement;
-      if (span) (span as any)[ElementAttr.InlineOffset] = inline;
+      if (span) {
+        (span as any)[ElementAttr.InlineOffset] = inline;
+      }
     },
   };
   for (const map of plugins) attr = map.text?.(attr, inline, ctx) ?? attr;

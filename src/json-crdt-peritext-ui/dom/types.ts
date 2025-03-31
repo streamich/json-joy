@@ -19,10 +19,3 @@ export interface UiLifeCyclesRender {
 }
 
 export type Rect = Pick<DOMRect, 'x' | 'y' | 'width' | 'height'>;
-
-export interface PeritextRenderingSurfaceApi {
-  /**
-   * Focuses the rendering surface, so that it can receive keyboard input.
-   */
-  focus(): void;
-}

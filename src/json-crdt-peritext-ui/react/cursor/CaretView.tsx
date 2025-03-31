@@ -2,9 +2,11 @@
 import * as React from 'react';
 import {usePeritext} from '../context';
 import {Caret} from './Caret';
+import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 
 export interface CaretViewProps {
   italic?: boolean;
+  point: Point<string>;
 }
 
 export const CaretView: React.FC<CaretViewProps> = (props) => {

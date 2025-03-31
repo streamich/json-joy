@@ -8,6 +8,10 @@ import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/E
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
 import type {UndoCollector} from '../../types';
+import type {UiHandle} from './ui/UiHandle';
+import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
+import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -25,6 +29,37 @@ export interface PeritextEventDefaultsOpts {
  */
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public undo?: UndoCollector;
+  public ui?: UiHandle;
+
+  protected editorUi: EditorUi = {
+    eol: (point: Point, steps: number): Point | undefined => {
+      const ui = this.ui;
+      if (!ui) return;
+      const res = ui.getLineEnd(point, steps > 0);
+      return res ? res[0] : void 0;
+    },
+    vert: (point: Point, steps: number): Point | undefined => {
+      const ui = this.ui;
+      if (!ui) return;
+      const pos = ui.pointX(point);
+      if (!pos) return;
+      const currLine = ui.getLineInfo(point);
+      if (!currLine) return;
+      const lineEdgeX = currLine[0][1].x;
+      const relX = pos[0] - lineEdgeX;
+      const iterations = Math.abs(steps);
+      let nextPoint = point;
+      for (let i = 0; i < iterations; i++) {
+        const nextLine = steps > 0 ? ui.getNextLineInfo(currLine) : ui.getPrevLineInfo(currLine);
+        if (!nextLine) break;
+        nextPoint = ui.findPointAtRelX(relX, nextLine);
+        if (!nextPoint) break;
+        if (point.anchor === Anchor.Before) nextPoint.refBefore();
+        else nextPoint.refAfter();
+      }
+      return nextPoint;
+    },
+  };
 
   public constructor(
     public readonly txt: Peritext,
@@ -82,7 +117,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         default: {
           // Select a range from the "at" position to the specified length.
           if (!!len && typeof len === 'number') {
-            const point2 = editor.skip(point, len, unit ?? 'char');
+            const point2 = editor.skip(point, len, unit ?? 'char', this.editorUi);
             const range = txt.rangeFromPoints(point, point2); // Sorted range.
             editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
           }
@@ -90,7 +125,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           else {
             point.refAfter();
             editor.cursor.set(point);
-            if (unit) editor.select(unit);
+            if (unit) editor.select(unit, this.editorUi);
           }
         }
       }
@@ -100,14 +135,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     // If `edge` is specified.
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
     if (isSpecificEdgeSelected) {
-      editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
+      editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false, this.editorUi);
       return;
     }
 
     // If `len` is specified.
     if (len) {
       const cursor = editor.cursor;
-      if (cursor.isCollapsed()) editor.move(len, unit ?? 'char');
+      if (cursor.isCollapsed()) editor.move(len, unit ?? 'char', void 0, void 0, this.editorUi);
       else {
         if (len > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();
@@ -117,7 +152,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
     // If `unit` is specified.
     if (unit) {
-      editor.select(unit);
+      editor.select(unit, this.editorUi);
       return;
     }
   };

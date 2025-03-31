@@ -6,10 +6,17 @@ import {RenderBlock} from './RenderBlock';
 import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import type {PeritextPlugin} from '../../react/types';
+import type {ValueSyncStore} from '../../../util/events/sync-store';
 
 const h = React.createElement;
 
+export interface ToolbarPluginOpts {
+  debug?: ValueSyncStore<boolean>;
+}
+
 export class ToolbarPlugin implements PeritextPlugin {
+  constructor(public readonly opts: ToolbarPluginOpts = {}) {}
+
   public readonly text: PeritextPlugin['text'] = text;
 
   public readonly inline: PeritextPlugin['inline'] = (props, children) => h(RenderInline, props as any, children);
@@ -17,7 +24,7 @@ export class ToolbarPlugin implements PeritextPlugin {
   public readonly block: PeritextPlugin['block'] = (props, children) => h(RenderBlock, props as any, children);
 
   public readonly peritext: PeritextPlugin['peritext'] = (props, children, surface) =>
-    h(RenderPeritext, {...props, children, surface});
+    h(RenderPeritext, {...props, children, surface, opts: this.opts});
 
   public readonly caret: PeritextPlugin['caret'] = (props, children) => h(RenderCaret, <any>props, children);
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, <any>props, children);
