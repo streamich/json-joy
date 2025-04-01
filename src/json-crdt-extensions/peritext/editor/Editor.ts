@@ -854,6 +854,24 @@ export class Editor<T = string> implements Printable {
     }
   }
 
+  public toggleAt(point: Point<T>, type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved, def: SliceTypeStep = SliceTypeCon.p): void {
+    const overlay = this.txt.overlay;
+    const markerPoint = overlay.getOrNextLowerMarker(point);
+    if (markerPoint) {
+      const marker = markerPoint.marker;
+      const tag = marker.tag();
+      if (!Array.isArray(type)) type = [type];
+      const typeTag = type[type.length - 1];
+      if (tag === typeTag) type = [...type.slice(0, -1), def];
+      if (Array.isArray(type) && type.length === 1) type = type[0];
+      marker.update({type});
+    } else {
+      const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
+      after.refAfter();
+      slices.slices.insMarkerAfter(after.id, type, data);
+    }
+  }
+
   /**
    * Toggle the type of a block split between the slice type and the default
    * (paragraph) block type.
@@ -862,24 +880,8 @@ export class Editor<T = string> implements Printable {
    * @param data Custom data of the slice.
    */
   public toggle(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved, def: SliceTypeStep = SliceTypeCon.p): void {
-    const txt = this.txt;
-    const overlay = txt.overlay;
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const markerPoint = overlay.getOrNextLowerMarker(cursor.start);
-      if (markerPoint) {
-        const marker = markerPoint.marker;
-        const tag = marker.tag();
-        if (!Array.isArray(type)) type = [type];
-        const typeTag = type[type.length - 1];
-        if (tag === typeTag) type = [...type.slice(0, -1), def];
-        if (Array.isArray(type) && type.length === 1) type = type[0];
-        marker.update({type});
-      } else {
-        const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
-        after.refAfter();
-        slices.slices.insMarkerAfter(after.id, type, data);
-      }
-    }
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
+      this.toggleAt(cursor.start, type, data, slices, def);
   }
 
   // ---------------------------------------------------------- export / import
