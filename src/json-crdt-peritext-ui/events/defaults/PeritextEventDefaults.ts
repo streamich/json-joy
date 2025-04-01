@@ -193,7 +193,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
       case 'tog': {
-        if (type !== void 0) editor.toggle(type, data);
+        if (type !== void 0) editor.tglMarker(type, data);
+        break;
+      }
+      case 'upd': {
+        if (type !== void 0) editor.updMarker(type, data);
         break;
       }
     }
