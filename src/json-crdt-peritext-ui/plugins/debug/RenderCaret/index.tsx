@@ -58,7 +58,8 @@ const eowCharacterOverlayStyles: React.CSSProperties = {
 };
 
 const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
-  const {ctx} = useDebugCtx();
+  const {ctx, state} = useDebugCtx();
+  const showCursorInfo = useSyncStore(state.showCursorInfo);
   const leftCharRef = React.useRef<SetRect>(null);
   const rightCharRef = React.useRef<SetRect>(null);
   const leftLineEndCharRef = React.useRef<SetRect>(null);
@@ -119,6 +120,8 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       }
     }
   });
+
+  if (!showCursorInfo) return null;
 
   return (
     <>
