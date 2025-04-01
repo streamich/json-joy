@@ -912,6 +912,18 @@ export class Editor<T = string> implements Printable {
       this.updMarkerAt(cursor.start, type, data, slices);
   }
 
+  public delMarker(): void {
+    const markerPoints = new Set<MarkerOverlayPoint<T>>();
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const markerPoint = this.txt.overlay.getOrNextLowerMarker(cursor.start);
+      if (markerPoint) markerPoints.add(markerPoint);
+    }
+    for (const markerPoint of markerPoints) {
+      const boundary = markerPoint.marker.boundary();
+      this.delRange(boundary);
+    }
+  }
+
   // ---------------------------------------------------------- export / import
 
   public export(range: Range<T>): ViewRange {

@@ -200,6 +200,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (type !== void 0) editor.updMarker(type, data);
         break;
       }
+      case 'del': {
+        editor.delMarker();
+        break;
+      }
     }
     this.undo?.capture();
   };

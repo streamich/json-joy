@@ -77,6 +77,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
       {button('Clear', () => {
         ctx.dom?.et.format({behavior: 'clear'});
       })}
+      {button('Delete block split', () => {
+        ctx.dom?.et.marker({action: 'del'});
+      })}
       <ButtonSeparator />
       {blockGroupButton(CommonSliceType.p, 'Paragraph')}
       {blockGroupButton(CommonSliceType.blockquote, 'Blockquote')}
