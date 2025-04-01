@@ -33,8 +33,6 @@ export class DebugState implements UiLifeCyclesRender {
   /** ------------------------------------------- {@link UiLifeCyclesRender} */
 
   public start() {
-    return () => {
-      
-    };
+    return () => {};
   }
 }

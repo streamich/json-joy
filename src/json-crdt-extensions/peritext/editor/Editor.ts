@@ -7,7 +7,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {createRegistry} from '../registry/registry';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
-import {CommonSliceType, type SliceTypeSteps, type SliceType, SliceTypeStep} from '../slice';
+import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
@@ -861,7 +861,13 @@ export class Editor<T = string> implements Printable {
     return slices.slices.insMarkerAfter(after.id, type, data);
   }
 
-  public tglMarkerAt(point: Point<T>, type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved, def: SliceTypeStep = SliceTypeCon.p): void {
+  public tglMarkerAt(
+    point: Point<T>,
+    type: SliceType,
+    data?: unknown,
+    slices: EditorSlices<T> = this.saved,
+    def: SliceTypeStep = SliceTypeCon.p,
+  ): void {
     const overlay = this.txt.overlay;
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {
@@ -872,8 +878,7 @@ export class Editor<T = string> implements Printable {
       if (tag === typeTag) type = [...type.slice(0, -1), def];
       if (Array.isArray(type) && type.length === 1) type = type[0];
       marker.update({type});
-    } else
-      this.setStartMarker(type, data, slices);
+    } else this.setStartMarker(type, data, slices);
   }
 
   public updMarkerAt(point: Point<T>, type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
@@ -883,8 +888,7 @@ export class Editor<T = string> implements Printable {
       const marker = markerPoint.marker;
       if (Array.isArray(type) && type.length === 1) type = type[0];
       marker.update({type});
-    } else
-      this.setStartMarker(type, data, slices);
+    } else this.setStartMarker(type, data, slices);
   }
 
   /**
@@ -894,7 +898,12 @@ export class Editor<T = string> implements Printable {
    * @param type Slice type to toggle.
    * @param data Custom data of the slice.
    */
-  public tglMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved, def: SliceTypeStep = SliceTypeCon.p): void {
+  public tglMarker(
+    type: SliceType,
+    data?: unknown,
+    slices: EditorSlices<T> = this.saved,
+    def: SliceTypeStep = SliceTypeCon.p,
+  ): void {
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
       this.tglMarkerAt(cursor.start, type, data, slices, def);
   }

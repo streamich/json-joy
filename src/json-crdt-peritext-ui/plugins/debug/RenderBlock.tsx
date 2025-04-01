@@ -37,9 +37,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
           <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatType(type)).join('.')}</DebugLabel>
         </div>
       )}
-      {showSliceOutlines
-        ? <div style={{outline: '1px dotted blue'}}>{children}</div>
-        : children}
+      {showSliceOutlines ? <div style={{outline: '1px dotted blue'}}>{children}</div> : children}
     </div>
   );
 };

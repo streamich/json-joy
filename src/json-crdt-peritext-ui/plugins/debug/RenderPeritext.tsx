@@ -35,12 +35,7 @@ export interface RenderPeritextProps extends PeritextViewProps {
   ctx?: PeritextSurfaceState;
 }
 
-export const RenderPeritext: React.FC<RenderPeritextProps> = ({
-  state: state_,
-  ctx,
-  button,
-  children,
-}) => {
+export const RenderPeritext: React.FC<RenderPeritextProps> = ({state: state_, ctx, button, children}) => {
   const theme = useTheme();
   const state = React.useMemo(() => state_ ?? new DebugState(), [state_]);
   useSyncStore(state.enabled);
@@ -80,7 +75,11 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({
               bg: theme.bg,
             })}
           >
-            <Button small active={state.enabled.getSnapshot()} onClick={() => state.enabled.next(!state.enabled.getSnapshot())}>
+            <Button
+              small
+              active={state.enabled.getSnapshot()}
+              onClick={() => state.enabled.next(!state.enabled.getSnapshot())}
+            >
               Debug
             </Button>
           </div>

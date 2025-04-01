@@ -497,7 +497,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   public skipMarkers(point: Point<T>, direction: -1 | 1): boolean {
-    while (1) {
+    while (true) {
       const isMarker = this.isMarker(point.id);
       if (!isMarker) return true;
       const end = point.step(direction);
