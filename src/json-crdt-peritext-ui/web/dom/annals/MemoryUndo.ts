@@ -1,5 +1,5 @@
-import type {UndoManager, UndoItem} from '../../types';
-import type {UiLifeCycles} from '../types';
+import type {UndoManager, UndoItem} from '../../../types';
+import type {UiLifeCycles} from '../../types';
 
 /**
  * A Memory-based undo manager.

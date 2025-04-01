@@ -6,9 +6,9 @@ import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
-import type {UiLifeCyclesRender} from '../../../dom/types';
+import type {UiLifeCyclesRender} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
-import type {PeritextSurfaceState} from '../../../react';
+import type {PeritextSurfaceState} from '../../../web/react';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 

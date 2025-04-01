@@ -4,8 +4,8 @@ import {useDebugCtx} from './context';
 import {DebugLabel} from '../../components/DebugLabel';
 import {SliceTypeName} from '../../../json-crdt-extensions';
 import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
-import {useSyncStore} from '../../react/hooks';
-import type {InlineViewProps} from '../../react/InlineView';
+import {useSyncStore} from '../../web/react/hooks';
+import type {InlineViewProps} from '../../web/react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
   children: React.ReactNode;

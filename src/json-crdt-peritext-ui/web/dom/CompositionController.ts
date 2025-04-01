@@ -1,7 +1,7 @@
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {UiLifeCycles} from './types';
-import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {Printable} from 'tree-dump';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {UiLifeCycles} from '../types';
+import type {Peritext} from '../../../json-crdt-extensions/peritext';
 
 export interface CompositionControllerOpts {
   source: HTMLElement;

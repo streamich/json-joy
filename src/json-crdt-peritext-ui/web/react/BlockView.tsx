@@ -1,14 +1,14 @@
 import * as React from 'react';
-import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
+import {LeafBlock} from '../../../json-crdt-extensions/peritext/block/LeafBlock';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
 import {usePeritext} from './context';
-import {CommonSliceType} from '../../json-crdt-extensions';
+import {CommonSliceType} from '../../../json-crdt-extensions';
 import {CaretView} from './cursor/CaretView';
 import {FocusView} from './cursor/FocusView';
-import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../json-crdt-extensions/peritext/block/Inline';
+import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../../json-crdt-extensions/peritext/block/Inline';
 import {AnchorView} from './cursor/AnchorView';
-import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
+import type {Block} from '../../../json-crdt-extensions/peritext/block/Block';
 
 export interface BlockViewProps {
   hash: number;

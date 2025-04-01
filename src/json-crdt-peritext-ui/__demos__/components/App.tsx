@@ -2,7 +2,7 @@ import * as React from 'react';
 import {GlobalCss} from 'nano-theme';
 import {NiceUiProvider} from 'nice-ui/lib/context';
 import {ModelWithExt, ext} from '../../../json-crdt-extensions';
-import {PeritextView} from '../../react';
+import {PeritextView} from '../../web/react';
 import {CursorPlugin} from '../../plugins/cursor';
 import {ToolbarPlugin} from '../../plugins/toolbar';
 import {DebugPlugin} from '../../plugins/debug';

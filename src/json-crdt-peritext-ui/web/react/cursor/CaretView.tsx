@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {usePeritext} from '../context';
 import {Caret} from './Caret';
-import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
+import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
 
 export interface CaretViewProps {
   italic?: boolean;

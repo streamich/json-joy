@@ -3,7 +3,7 @@ import {RenderInline} from './RenderInline';
 import {RenderBlock} from './RenderBlock';
 import {RenderCaret} from './RenderCaret';
 import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
-import type {PeritextPlugin} from '../../react/types';
+import type {PeritextPlugin} from '../../web/react/types';
 
 export interface DebugPluginOpts extends Pick<RenderPeritextProps, 'state'> {}
 

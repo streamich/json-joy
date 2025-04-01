@@ -1,7 +1,7 @@
 import * as React from 'react';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useWindowScroll from 'react-use/lib/useWindowScroll';
-import type {Rect} from '../../../dom/types';
+import type {Rect} from '../../../web/types';
 
 export type SetRect = (rect?: Rect) => void;
 

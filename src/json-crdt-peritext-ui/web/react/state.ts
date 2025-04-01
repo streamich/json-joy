@@ -1,10 +1,9 @@
-import {Log} from '../../json-crdt/log/Log';
-import {Model} from '../../json-crdt/model';
+import {Log} from '../../../json-crdt/log/Log';
 import type {PeritextPlugin} from './types';
-import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
+import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
 import type {DomController} from '../dom/DomController';
-import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
-import type {UiLifeCyclesRender} from '../dom/types';
+import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
+import type {UiLifeCyclesRender} from '../types';
 
 export class PeritextSurfaceState implements UiLifeCyclesRender {
   public dom?: DomController = void 0;

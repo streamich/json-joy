@@ -4,9 +4,9 @@ import {context} from './context';
 import {Button} from '../../components/Button';
 import {Console} from './Console';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStore} from '../../web/react/hooks';
 import {DebugState} from './state';
-import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
+import type {PeritextSurfaceState, PeritextViewProps} from '../../web/react';
 
 const blockClass = rule({
   pos: 'relative',

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type {ToolbarState} from './state';
-import type {PeritextSurfaceState} from '../../react';
+import type {PeritextSurfaceState} from '../../web/react';
 
 export interface ToolbarPluginContextValue {
   surface: PeritextSurfaceState;

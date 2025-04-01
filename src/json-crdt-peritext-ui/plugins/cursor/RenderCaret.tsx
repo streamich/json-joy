@@ -1,14 +1,14 @@
 import * as React from 'react';
 import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
 import {keyframes, rule} from 'nano-theme';
-import {usePeritext} from '../../react/context';
-import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
+import {usePeritext} from '../../web/react/context';
+import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
 const height = 1.5;
 const ms = 350;

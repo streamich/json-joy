@@ -1,4 +1,4 @@
-import {saveSelection} from '../../dom/util';
+import {saveSelection} from '../../web/util';
 import type {PeritextClipboard, PeritextClipboardData} from './types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);

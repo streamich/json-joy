@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {PeritextSurfaceState} from '../../react';
+import type {PeritextSurfaceState} from '../../web/react';
 import type {ValueSyncStore} from '../../../util/events/sync-store';
 import type {CursorPlugin} from './CursorPlugin';
 

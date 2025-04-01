@@ -4,7 +4,7 @@ import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
 import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
-import type {PeritextPlugin} from '../../react/types';
+import type {PeritextPlugin} from '../../web/react/types';
 
 const h = React.createElement;
 

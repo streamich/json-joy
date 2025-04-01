@@ -2,9 +2,9 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useDebugCtx} from '../context';
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
-import {useSyncStore} from '../../../react/hooks';
+import {useSyncStore} from '../../../web/react/hooks';
 import {CharOverlay, type SetRect} from './CharOverlay';
-import type {CaretViewProps} from '../../../react/cursor/CaretView';
+import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 
 const blockClass = rule({
   pos: 'relative',

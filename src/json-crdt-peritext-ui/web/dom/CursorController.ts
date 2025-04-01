@@ -1,13 +1,13 @@
-import {getCursorPosition, unit} from './util';
+import {getCursorPosition, unit} from '../util';
 import {ElementAttr} from '../constants';
-import {throttle} from '../../util/throttle';
-import {ValueSyncStore} from '../../util/events/sync-store';
+import {throttle} from '../../../util/throttle';
+import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
 import type {KeyController} from './KeyController';
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {UiLifeCycles} from './types';
-import type {Peritext} from '../../json-crdt-extensions/peritext';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {UiLifeCycles} from '../types';
+import type {Peritext} from '../../../json-crdt-extensions/peritext';
+import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 
 export interface CursorControllerOpts {
   /**

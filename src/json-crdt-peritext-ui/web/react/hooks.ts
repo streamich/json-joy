@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {SyncStore} from '../../util/events/sync-store';
+import type {SyncStore} from '../../../util/events/sync-store';
 
 export const useIsoLayoutEffect =
   typeof window === 'object' && !!window.document ? React.useLayoutEffect : React.useEffect;

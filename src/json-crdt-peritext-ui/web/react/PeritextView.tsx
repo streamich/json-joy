@@ -4,13 +4,13 @@ import {context} from './context';
 import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import {DomController} from '../dom/DomController';
-import {CursorPlugin} from '../plugins/cursor';
-import {defaultPlugin} from '../plugins/minimal';
+import {CursorPlugin} from '../../plugins/cursor';
+import {defaultPlugin} from '../../plugins/minimal';
 import {PeritextSurfaceState} from './state';
-import {create} from '../events';
-import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
+import {create} from '../../events';
+import {UiHandle} from '../../events/defaults/ui/UiHandle';
+import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextPlugin} from './types';
-import {UiHandle} from '../events/defaults/ui/UiHandle';
 
 put('.' + CssClass.Editor, {
   out: 0,

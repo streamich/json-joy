@@ -1,9 +1,9 @@
 import * as React from 'react';
 import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
 import {keyframes, rule} from 'nano-theme';
-import {usePeritext} from '../../react/context';
-import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {usePeritext} from '../../web/react/context';
+import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
+import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {usePlugin} from './context';

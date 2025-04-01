@@ -1,11 +1,11 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule, keyframes} from 'nano-theme';
-import {Char} from '../../constants';
+import {Char} from '../../web/constants';
 import {DefaultRendererColors} from './constants';
-import {usePeritext} from '../../react';
-import {useSyncStoreOpt} from '../../react/hooks';
-import type {AnchorViewProps} from '../../react/cursor/AnchorView';
+import {usePeritext} from '../../web/react';
+import {useSyncStoreOpt} from '../../web/react/hooks';
+import type {AnchorViewProps} from '../../web/react/cursor/AnchorView';
 
 export const fadeInAnimation = keyframes({
   from: {

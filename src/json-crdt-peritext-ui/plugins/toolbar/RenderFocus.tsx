@@ -2,8 +2,8 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from './context';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../react/hooks';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../web/react/hooks';
+import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
 const height = 1.8;
 

@@ -6,7 +6,7 @@ import type {InlineViewProps} from './InlineView';
 import type {BlockViewProps} from './BlockView';
 import type {PeritextViewProps} from './PeritextView';
 import type {PeritextSurfaceState} from './state';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 
 export interface PeritextPlugin {
   // --------------------------------------------------- Block-level formatting

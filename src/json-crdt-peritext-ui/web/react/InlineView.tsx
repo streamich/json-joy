@@ -2,7 +2,7 @@ import * as React from 'react';
 import {put} from 'nano-theme';
 import {CssClass, ElementAttr} from '../constants';
 import {usePeritext} from './context';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 import type {SpanProps} from './types';
 
 put('.' + CssClass.Inline, {

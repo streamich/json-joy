@@ -1,5 +1,5 @@
 import {ValueSyncStore} from '../../../../util/events/sync-store';
-import type {UiLifeCyclesRender} from '../../../dom/types';
+import type {UiLifeCyclesRender} from '../../../web/types';
 
 export class DebugState implements UiLifeCyclesRender {
   public readonly enabled = new ValueSyncStore<boolean>(false);

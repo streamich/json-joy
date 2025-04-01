@@ -6,7 +6,7 @@ import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
 import {RenderBlock} from './RenderBlock';
 import {text} from './text';
-import type {PeritextPlugin} from '../../react/types';
+import type {PeritextPlugin} from '../../web/react/types';
 
 const h = React.createElement;
 

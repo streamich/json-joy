@@ -4,8 +4,8 @@ import {rule} from 'nano-theme';
 import {useDebugCtx} from './context';
 import {formatType} from '../../../json-crdt-extensions/peritext/slice/util';
 import {DebugLabel} from '../../components/DebugLabel';
-import {useSyncStore} from '../../react/hooks';
-import type {BlockViewProps} from '../../react/BlockView';
+import {useSyncStore} from '../../web/react/hooks';
+import type {BlockViewProps} from '../../web/react/BlockView';
 
 const labelContainerClass = rule({
   pos: 'absolute',

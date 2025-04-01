@@ -6,15 +6,15 @@ import {KeyController} from './KeyController';
 import {CompositionController} from './CompositionController';
 import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
-import {Anchor} from '../../json-crdt-extensions/peritext/rga/constants';
-import type {ITimestampStruct} from '../../json-crdt-patch';
-import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {Rect, UiLifeCycles} from '../dom/types';
-import type {Log} from '../../json-crdt/log/Log';
-import type {Inline} from '../../json-crdt-extensions';
-import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
-import type {PeritextUiApi} from '../events/defaults/ui/types';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
+import type {ITimestampStruct} from '../../../json-crdt-patch';
+import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {Rect, UiLifeCycles} from '../types';
+import type {Log} from '../../../json-crdt/log/Log';
+import type {Inline} from '../../../json-crdt-extensions';
+import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
+import type {PeritextUiApi} from '../../events/defaults/ui/types';
 
 export interface DomControllerOpts {
   source: HTMLElement;

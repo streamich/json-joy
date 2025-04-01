@@ -1,6 +1,6 @@
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {UiLifeCycles} from './types';
-import {CommonSliceType, type Peritext} from '../../json-crdt-extensions/peritext';
+import {CommonSliceType, type Peritext} from '../../../json-crdt-extensions/peritext';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {UiLifeCycles} from '../types';
 
 export interface RichTextControllerOpts {
   source: HTMLElement;

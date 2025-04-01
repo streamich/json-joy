@@ -6,7 +6,7 @@ import {Code} from './Code';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
-import type {InlineViewProps} from '../../../react/InlineView';
+import type {InlineViewProps} from '../../../web/react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
   children: React.ReactNode;

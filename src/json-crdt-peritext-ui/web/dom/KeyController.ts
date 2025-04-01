@@ -1,5 +1,5 @@
 import type {Printable} from 'tree-dump';
-import type {UiLifeCycles} from './types';
+import type {UiLifeCycles} from '../types';
 
 export interface KeyControllerOpts {
   source: HTMLElement;

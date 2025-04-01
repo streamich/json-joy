@@ -1,9 +1,9 @@
-import {unit} from './util';
-import type {Peritext} from '../../json-crdt-extensions/peritext';
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {TypedEventTarget} from '../../util/events/TypedEventTarget';
+import {unit} from '../util';
+import type {Peritext} from '../../../json-crdt-extensions/peritext';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {TypedEventTarget} from '../../../util/events/TypedEventTarget';
 import type {CompositionController} from './CompositionController';
-import type {UiLifeCycles} from './types';
+import type {UiLifeCycles} from '../types';
 
 export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];

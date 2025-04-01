@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {RenderBlock} from './RenderBlock';
-import type {PeritextPlugin} from '../../react/types';
+import type {PeritextPlugin} from '../../web/react/types';
 
 const h = React.createElement;
 
