@@ -854,6 +854,29 @@ export class Editor<T = string> implements Printable {
     }
   }
 
+  /**
+   * Toggle the type of a block split between the slice type and the default
+   * (paragraph) block type.
+   *
+   * @param type Slice type to toggle.
+   * @param data Custom data of the slice.
+   */
+  public toggle(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const markerPoint = overlay.getOrNextLowerMarker(cursor.start);
+      if (markerPoint) {
+        // TODO: check if the type is already set. Then remove it.
+        markerPoint.marker.update({type});
+      } else {
+        const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
+        after.refAfter();
+        slices.slices.insMarkerAfter(after.id, type, data);
+      }
+    }
+  }
+
   // ---------------------------------------------------------- export / import
 
   public export(range: Range<T>): ViewRange {

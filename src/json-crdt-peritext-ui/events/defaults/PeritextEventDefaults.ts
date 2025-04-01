@@ -186,17 +186,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
     const {action, type, data} = event.detail;
+    const editor = this.txt.editor;
     switch (action) {
       case 'ins': {
-        this.txt.editor.split(type, data);
+        editor.split(type, data);
         break;
       }
       case 'tog': {
-        const marker = this.txt.overlay.getOrNextLowerMarker(this.txt.editor.cursor.start);
-        if (marker) {
-          marker.marker.update({type});
-        }
-        console.log('togggling..', marker);
+        if (type !== void 0) editor.toggle(type, data);
         break;
       }
     }
