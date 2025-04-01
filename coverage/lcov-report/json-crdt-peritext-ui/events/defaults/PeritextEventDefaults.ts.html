@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">28.67% </span>
+                <span class="strong">28.72% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>80/279</span>
+                <span class='fraction'>81/282</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30.34% </span>
+                <span class="strong">29.72% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>44/145</span>
+                <span class='fraction'>44/148</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">31.53% </span>
+                <span class="strong">31.81% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>76/241</span>
+                <span class='fraction'>77/242</span>
             </div>
         
             
@@ -483,7 +483,11 @@
 <a name='L418'></a><a href='#L418'>418</a>
 <a name='L419'></a><a href='#L419'>419</a>
 <a name='L420'></a><a href='#L420'>420</a>
-<a name='L421'></a><a href='#L421'>421</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<a name='L421'></a><a href='#L421'>421</a>
+<a name='L422'></a><a href='#L422'>422</a>
+<a name='L423'></a><a href='#L423'>423</a>
+<a name='L424'></a><a href='#L424'>424</a>
+<a name='L425'></a><a href='#L425'>425</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -524,7 +528,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -673,6 +676,7 @@
 <span class="cline-any cline-yes">324x</span>
 <span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">102x</span>
 <span class="cline-any cline-yes">102x</span>
@@ -680,7 +684,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -950,14 +958,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (!pos) <span class="cstat-no" title="statement not covered" >return;</span></span>
       const currLine = <span class="cstat-no" title="statement not covered" >ui.getLineInfo(point);</span>
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (!currLine) <span class="cstat-no" title="statement not covered" >return;</span></span>
-      const lineEdgeX = <span class="cstat-no" title="statement not covered" >currLine[0][1].x;</span>
-      const relX = <span class="cstat-no" title="statement not covered" >pos[0] - lineEdgeX;</span>
+      const x = <span class="cstat-no" title="statement not covered" >pos[0];</span>
       const iterations = <span class="cstat-no" title="statement not covered" >Math.abs(steps);</span>
       let nextPoint = <span class="cstat-no" title="statement not covered" >point;</span>
 <span class="cstat-no" title="statement not covered" >      for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; iterations; i++) {</span>
-        const nextLine = <span class="cstat-no" title="statement not covered" >steps &gt; 0 ? ui.getNextLineInfo(currLine) : ui.getPrevLineInfo(currLine);</span>
+        const nextLine = <span class="cstat-no" title="statement not covered" >steps &gt; 0 ? ui.getNextLineInfo(currLine) : ui.getNextLineInfo(currLine, -1);</span>
 <span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!nextLine) <span class="cstat-no" title="statement not covered" >break;</span></span>
-<span class="cstat-no" title="statement not covered" >        nextPoint = ui.findPointAtRelX(relX, nextLine);</span>
+<span class="cstat-no" title="statement not covered" >        nextPoint = ui.findPointAtX(x, nextLine);</span>
 <span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!nextPoint) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >        if (point.anchor === Anchor.Before) <span class="cstat-no" title="statement not covered" >nextPoint.refBefore();</span></span>
         else <span class="cstat-no" title="statement not covered" >nextPoint.refAfter();</span>
@@ -1092,17 +1099,22 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 &nbsp;
   public readonly marker = (event: CustomEvent&lt;events.MarkerDetail&gt;) =&gt; {
     const {action, type, data} = event.detail;
+    const editor = this.txt.editor;
     switch (action) {
       case 'ins': {
-        this.txt.editor.split(type, data);
+        editor.split(type, data);
         break;
       }
 <span class="branch-1 cbranch-no" title="branch not covered" >      case 'tog': {</span>
-        const marker = <span class="cstat-no" title="statement not covered" >this.txt.overlay.getOrNextLowerMarker(this.txt.editor.cursor.start);</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (marker) {</span>
-<span class="cstat-no" title="statement not covered" >          marker.marker.update({type});</span>
-        }
-<span class="cstat-no" title="statement not covered" >        console.log('togggling..', marker);</span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (type !== void 0) <span class="cstat-no" title="statement not covered" >editor.tglMarker(type, data);</span></span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+<span class="branch-2 cbranch-no" title="branch not covered" >      case 'upd': {</span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (type !== void 0) <span class="cstat-no" title="statement not covered" >editor.updMarker(type, data);</span></span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+<span class="branch-3 cbranch-no" title="branch not covered" >      case 'del': {</span>
+<span class="cstat-no" title="statement not covered" >        editor.delMarker();</span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
       }
     }
@@ -1330,7 +1342,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-31T13:35:52.079Z
+                at 2025-04-01T12:15:02.269Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
