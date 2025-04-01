@@ -3,8 +3,8 @@ import {rule} from 'nano-theme';
 import {useDebugCtx} from '../context';
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {useSyncStore} from '../../../react/hooks';
-import type {CaretViewProps} from '../../../react/cursor/CaretView';
 import {CharOverlay, type SetRect} from './CharOverlay';
+import type {CaretViewProps} from '../../../react/cursor/CaretView';
 
 const blockClass = rule({
   pos: 'relative',
@@ -22,7 +22,7 @@ export interface RenderCaretProps extends CaretViewProps {
 export const RenderCaret: React.FC<RenderCaretProps> = (props) => {
   const {children} = props;
   const ctx = useDebugCtx();
-  const enabled = useSyncStore(ctx.enabled);
+  const enabled = useSyncStore(ctx.state.enabled);
 
   if (!enabled || !ctx.ctx?.dom) return children;
 
@@ -58,7 +58,8 @@ const eowCharacterOverlayStyles: React.CSSProperties = {
 };
 
 const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
-  const {ctx} = useDebugCtx();
+  const {ctx, state} = useDebugCtx();
+  const showCursorInfo = useSyncStore(state.showCursorInfo);
   const leftCharRef = React.useRef<SetRect>(null);
   const rightCharRef = React.useRef<SetRect>(null);
   const leftLineEndCharRef = React.useRef<SetRect>(null);
@@ -81,7 +82,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
     leftLineEndCharRef.current?.(lineInfo?.[0][1]);
     rightLineEndCharRef.current?.(lineInfo?.[1][1]);
     if (lineInfo) {
-      const prevLineInfo = ctx!.events.ui?.getPrevLineInfo(lineInfo);
+      const prevLineInfo = ctx!.events.ui?.getNextLineInfo(lineInfo, -1);
       const nextLineInfo = ctx!.events.ui?.getNextLineInfo(lineInfo);
       leftPrevLineEndCharRef.current?.(prevLineInfo?.[0][1]);
       rightPrevLineEndCharRef.current?.(prevLineInfo?.[1][1]);
@@ -96,12 +97,11 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
 
     const currLine = ctx!.events.ui?.getLineInfo(point);
     if (pos && currLine) {
-      const lineEdgeX = currLine[0][1].x;
-      const relX = pos[0] - lineEdgeX;
-      const prevLine = ctx!.events.ui?.getPrevLineInfo(currLine);
+      const targetX = pos[0];
+      const prevLine = ctx!.events.ui?.getNextLineInfo(currLine, -1);
       const nextLine = ctx!.events.ui?.getNextLineInfo(currLine);
       if (prevLine) {
-        const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, prevLine);
+        const prevLinePoint = ctx!.events.ui?.findPointAtX(targetX, prevLine);
         if (point.anchor === Anchor.Before) prevLinePoint?.refBefore();
         else prevLinePoint?.refAfter();
         if (prevLinePoint) {
@@ -110,7 +110,7 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
         }
       }
       if (nextLine) {
-        const prevLinePoint = ctx!.events.ui?.findPointAtRelX(relX, nextLine);
+        const prevLinePoint = ctx!.events.ui?.findPointAtX(targetX, nextLine);
         if (point.anchor === Anchor.Before) prevLinePoint?.refBefore();
         else prevLinePoint?.refAfter();
         if (prevLinePoint) {
@@ -120,6 +120,8 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       }
     }
   });
+
+  if (!showCursorInfo) return null;
 
   return (
     <>
@@ -170,11 +172,11 @@ const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
       />
       <CharOverlay
         rectRef={prevLineCaretRef}
-        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}}
+        style={{...eowCharacterOverlayStyles, backgroundColor: 'rgba(127,127,127,.2)'}}
       />
       <CharOverlay
         rectRef={nextLineCaretRef}
-        style={{...eowCharacterOverlayStyles, borderRight: '2px dotted rgba(127,127,127,.9)'}}
+        style={{...eowCharacterOverlayStyles, backgroundColor: 'rgba(127,127,127,.2)'}}
       />
     </>
   );

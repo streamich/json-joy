@@ -496,6 +496,16 @@ export class Overlay<T = string> implements Printable, Stateful {
     return op instanceof MarkerOverlayPoint && op.id.time === id.time && op.id.sid === id.sid;
   }
 
+  public skipMarkers(point: Point<T>, direction: -1 | 1): boolean {
+    while (true) {
+      const isMarker = this.isMarker(point.id);
+      if (!isMarker) return true;
+      const end = point.step(direction);
+      if (end) break;
+    }
+    return false;
+  }
+
   // ----------------------------------------------------------------- Stateful
 
   public hash: number = 0;

@@ -7,7 +7,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {createRegistry} from '../registry/registry';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
-import {CommonSliceType, type SliceTypeSteps, type SliceType} from '../slice';
+import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
@@ -851,6 +851,85 @@ export class Editor<T = string> implements Printable {
         slices.insMarker(type, data);
         cursor.move(1);
       }
+    }
+  }
+
+  public setStartMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): MarkerSlice<T> {
+    const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
+    after.refAfter();
+    if (Array.isArray(type) && type.length === 1) type = type[0];
+    return slices.slices.insMarkerAfter(after.id, type, data);
+  }
+
+  public tglMarkerAt(
+    point: Point<T>,
+    type: SliceType,
+    data?: unknown,
+    slices: EditorSlices<T> = this.saved,
+    def: SliceTypeStep = SliceTypeCon.p,
+  ): void {
+    const overlay = this.txt.overlay;
+    const markerPoint = overlay.getOrNextLowerMarker(point);
+    if (markerPoint) {
+      const marker = markerPoint.marker;
+      const tag = marker.tag();
+      if (!Array.isArray(type)) type = [type];
+      const typeTag = type[type.length - 1];
+      if (tag === typeTag) type = [...type.slice(0, -1), def];
+      if (Array.isArray(type) && type.length === 1) type = type[0];
+      marker.update({type});
+    } else this.setStartMarker(type, data, slices);
+  }
+
+  public updMarkerAt(point: Point<T>, type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    const overlay = this.txt.overlay;
+    const markerPoint = overlay.getOrNextLowerMarker(point);
+    if (markerPoint) {
+      const marker = markerPoint.marker;
+      if (Array.isArray(type) && type.length === 1) type = type[0];
+      marker.update({type});
+    } else this.setStartMarker(type, data, slices);
+  }
+
+  /**
+   * Toggle the type of a block split between the slice type and the default
+   * (paragraph) block type.
+   *
+   * @param type Slice type to toggle.
+   * @param data Custom data of the slice.
+   */
+  public tglMarker(
+    type: SliceType,
+    data?: unknown,
+    slices: EditorSlices<T> = this.saved,
+    def: SliceTypeStep = SliceTypeCon.p,
+  ): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
+      this.tglMarkerAt(cursor.start, type, data, slices, def);
+  }
+
+  /**
+   * Update the type of a block split at all cursor positions.
+   *
+   * @param type Slice type to set.
+   * @param data Custom data of the slice.
+   * @param slices The slices set to use, if new marker is inserted at the start
+   *     of the document.
+   */
+  public updMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
+      this.updMarkerAt(cursor.start, type, data, slices);
+  }
+
+  public delMarker(): void {
+    const markerPoints = new Set<MarkerOverlayPoint<T>>();
+    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+      const markerPoint = this.txt.overlay.getOrNextLowerMarker(cursor.start);
+      if (markerPoint) markerPoints.add(markerPoint);
+    }
+    for (const markerPoint of markerPoints) {
+      const boundary = markerPoint.marker.boundary();
+      this.delRange(boundary);
     }
   }
 

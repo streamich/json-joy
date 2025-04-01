@@ -6,12 +6,12 @@ import {RenderBlock} from './RenderBlock';
 import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import type {PeritextPlugin} from '../../react/types';
-import type {ValueSyncStore} from '../../../util/events/sync-store';
+import type {DebugState} from '../debug/state';
 
 const h = React.createElement;
 
 export interface ToolbarPluginOpts {
-  debug?: ValueSyncStore<boolean>;
+  debug?: DebugState;
 }
 
 export class ToolbarPlugin implements PeritextPlugin {

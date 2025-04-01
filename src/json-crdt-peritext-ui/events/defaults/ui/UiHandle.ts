@@ -43,9 +43,7 @@ export class UiHandle {
     return [x, rect];
   }
 
-  public findPointAtRelX(relX: number, line: UiLineInfo): Point<string> {
-    const lineRect = line[0][1];
-    const lineX = lineRect.x;
+  public findPointAtX(targetX: number, line: UiLineInfo): Point<string> {
     let point = line[0][0].clone();
     const curr = point;
     let bestDiff = 1e9;
@@ -55,8 +53,7 @@ export class UiHandle {
       const pointX = this.pointX(curr);
       if (!pointX) break;
       const [x] = pointX;
-      const currRelX = x - lineX;
-      const diff = Math.abs(currRelX - relX);
+      const diff = Math.abs(x - targetX);
       if (diff <= bestDiff) {
         bestDiff = diff;
         point = curr.clone();
@@ -104,17 +101,12 @@ export class UiHandle {
     return [left, right];
   }
 
-  public getPrevLineInfo(line: UiLineInfo): UiLineInfo | undefined {
-    const [[left]] = line;
-    if (left.isStart()) return;
-    const point = left.copy((p) => p.step(-1));
-    return this.getLineInfo(point);
-  }
-
-  public getNextLineInfo(line: UiLineInfo): UiLineInfo | undefined {
-    const [, [right]] = line;
-    if (right.viewPos() >= this.txt.str.length()) return;
-    const point = right.copy((p) => p.step(1));
+  public getNextLineInfo(line: UiLineInfo, direction: 1 | -1 = 1): UiLineInfo | undefined {
+    const edge = line[direction > 0 ? 1 : 0][0];
+    if (edge.viewPos() >= this.txt.str.length()) return;
+    const point = edge.copy((p) => p.step(direction));
+    const success = this.txt.overlay.skipMarkers(point, direction);
+    if (!success) return;
     return this.getLineInfo(point);
   }
 }

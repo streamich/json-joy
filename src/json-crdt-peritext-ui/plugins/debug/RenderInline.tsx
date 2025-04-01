@@ -14,7 +14,9 @@ export interface RenderInlineProps extends InlineViewProps {
 export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {children, inline} = props;
   const ctx = useDebugCtx();
-  const enabled = useSyncStore(ctx.enabled);
+  const enabled = useSyncStore(ctx.state.enabled);
+  const showSliceOutlines = useSyncStore(ctx.state.showSliceOutlines);
+  const showSliceInfo = useSyncStore(ctx.state.showSliceInfo);
 
   const keys: (number | string)[] = Object.keys(inline.attr());
   const tags: string[] = [];
@@ -35,8 +37,8 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   if (!enabled) return children;
 
   return (
-    <span style={{outline: '1px dotted red', position: 'relative'}}>
-      {tags.length > 0 && (
+    <span style={{outline: showSliceOutlines ? '1px dotted red' : undefined, position: 'relative'}}>
+      {showSliceInfo && tags.length > 0 && (
         <span
           contentEditable={false}
           style={{position: 'absolute', top: -6, left: -3, userSelect: 'none', pointerEvents: 'none'}}
