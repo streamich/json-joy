@@ -1,3 +1,20 @@
+# [17.37.0](https://github.com/streamich/json-joy/compare/v17.36.0...v17.37.0) (2025-04-01)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 implement block type update method ([d88ad48](https://github.com/streamich/json-joy/commit/d88ad48fe385b073f98b4f1cd8473e4d5fd29479))
+* **json-crdt-extensions:** 🎸 implement toggling of block split types ([0f8f000](https://github.com/streamich/json-joy/commit/0f8f0004712bc75c7992b1fd4d9ce7897afe68ab))
+* **json-crdt-peritext-ui:** 🎸 add ability to hide cursor info in debug mode ([ff9e996](https://github.com/streamich/json-joy/commit/ff9e99672a236429c8086576ed563da0d5bb23f8))
+* **json-crdt-peritext-ui:** 🎸 add ability to hide debug info labes ([f07f347](https://github.com/streamich/json-joy/commit/f07f34784d26f6800542e0144ce295cdda9a8b1b))
+* **json-crdt-peritext-ui:** 🎸 add ability to hide outlines ([b018690](https://github.com/streamich/json-joy/commit/b018690ba42ae5764c547a81bd6435de14281245))
+* **json-crdt-peritext-ui:** 🎸 create explicit DebugState class ([a7d236a](https://github.com/streamich/json-joy/commit/a7d236afbba169dc081321d934b011a6abf95233))
+* **json-crdt-peritext-ui:** 🎸 implement multi-cursor block-merge ([d2ad754](https://github.com/streamich/json-joy/commit/d2ad75454ca8fbca9ccfab74e1cfefde221a284b))
+* **json-crdt-peritext-ui:** 🎸 improve block type toggle implementation ([86001db](https://github.com/streamich/json-joy/commit/86001db44fc87b90e66376d049e552d4b06c128f))
+* **json-crdt-peritext-ui:** 🎸 improve display of adjacent line caret destination ([e572e4e](https://github.com/streamich/json-joy/commit/e572e4e1b521a84f9c5470e2d076ddc7fdef6479))
+* **json-crdt-peritext-ui:** 🎸 skip markers when moving to adjacent line ([5c0325b](https://github.com/streamich/json-joy/commit/5c0325bc69df5d5e633fe3739479e4051c2df37a))
+* **json-crdt-peritext-ui:** 🎸 use absolute x coordinate to compute vertical line moves ([6dc482f](https://github.com/streamich/json-joy/commit/6dc482fb72e6979a387b72ba0b8de185b0dd98e5))
+
 # [17.36.0](https://github.com/streamich/json-joy/compare/v17.35.0...v17.36.0) (2025-03-31)
 
 
