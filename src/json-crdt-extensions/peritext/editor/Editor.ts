@@ -7,7 +7,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {createRegistry} from '../registry/registry';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
-import {CommonSliceType, type SliceTypeSteps, type SliceType} from '../slice';
+import {CommonSliceType, type SliceTypeSteps, type SliceType, SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
@@ -861,14 +861,19 @@ export class Editor<T = string> implements Printable {
    * @param type Slice type to toggle.
    * @param data Custom data of the slice.
    */
-  public toggle(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+  public toggle(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved, def: SliceTypeStep = SliceTypeCon.p): void {
     const txt = this.txt;
     const overlay = txt.overlay;
     for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
       const markerPoint = overlay.getOrNextLowerMarker(cursor.start);
       if (markerPoint) {
-        // TODO: check if the type is already set. Then remove it.
-        markerPoint.marker.update({type});
+        const marker = markerPoint.marker;
+        const tag = marker.tag();
+        if (!Array.isArray(type)) type = [type];
+        const typeTag = type[type.length - 1];
+        if (tag === typeTag) type = [...type.slice(0, -1), def];
+        if (Array.isArray(type) && type.length === 1) type = type[0];
+        marker.update({type});
       } else {
         const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
         after.refAfter();
