@@ -26,10 +26,14 @@ export class PeritextSurfaceState implements UiLifeCyclesRender {
   }
 
   public start() {
-    this.dom.start();
+    const {dom, rerender} = this;
+    const et = dom.et;
+    dom.start();
+    et.addEventListener('change', rerender);
     return () => {
       this.log.destroy();
-      this.dom.stop();
+      dom.stop();
+      et.removeEventListener('change', rerender);
     };
   }
 }

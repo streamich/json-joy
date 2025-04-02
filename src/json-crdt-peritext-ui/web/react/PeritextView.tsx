@@ -40,63 +40,62 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const {peritext, plugins: plugins_, onRender, onState} = props;
   const ref = React.useRef<HTMLDivElement>(null);
 
-  // The `rerender` callback can be called to force a re-render of the editor.
-  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
+  // The `setTick` is used to force re-renders.
   const [, setTick] = React.useState(0);
-  const rerender = React.useCallback(() => {
-    peritext.refresh();
-    setTick((tick) => tick + 1);
-    if (onRender) onRender();
-  }, [peritext]);
   
   // Plugins provided through props, or a default set of plugins.
   const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [peritext, plugins_]);
 
   // Create the DOM element for the editor. And instantiate the state management.
-  const [state, stop] = React.useMemo(() => {
+  const [el, state, stop] = React.useMemo(() => {
     const div = document.createElement('div');
     div.className = CssClass.Editor;
     const events = createEvents(peritext);
+    const rerender = () => {
+      peritext.refresh();
+      setTick((tick) => tick + 1);
+      if (onRender) onRender();
+    };
     const state = new PeritextSurfaceState(events, div, rerender, plugins);
     const stop = state.start();
     onState?.(state);
-    return [state, stop];
-  }, [peritext, rerender, plugins]);
+    return [div, state, stop] as const;
+  }, [peritext, plugins]);
 
   // Call life-cycle methods on the state.
   React.useLayoutEffect(() => stop, [stop]);
 
   // Attach imperatively constructed <div> element to our container.
   React.useLayoutEffect(() => {
-    const parent = ref.current;
-    if (!parent) return;
-    const el = state.el;
+    const div = ref.current;
+    if (!div) return;
+    const parent = div.parentElement!;
     parent.appendChild(el);
     return () => {
       if (el.parentNode === parent) parent.removeChild(el);
     };
-  }, [ref.current, state.el]);
+  }, [ref.current, el]);
   
   // Render the main body of the editor.
   const block = peritext.blocks.root;
-  let children: React.ReactNode = createPortal(
-    <context.Provider value={state}>
-      {block ? <BlockView hash={block.hash} block={block} /> : null}
-    </context.Provider>,
-    state.el,
-  );
+  let children: React.ReactNode = block ? createPortal(<BlockView hash={block.hash} block={block} />, el) : null;
 
   // Create container element, into which we will insert imperatively
   // constructed <div> element.
   children = (
-    <div ref={ref}>
+    <>
+      <div ref={ref} style={{visibility: 'hidden'}} />
       {children}
-    </div>
+    </>
   );
 
   // Run the plugins to decorate our content body.
   for (const map of plugins) children = map.peritext?.(children, state) ?? children;
 
   // Return the final result.
-  return children;
+  return (
+    <context.Provider value={state}>
+      {children}
+    </context.Provider>
+  );
 });
