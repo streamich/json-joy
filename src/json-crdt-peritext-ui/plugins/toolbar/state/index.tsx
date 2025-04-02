@@ -6,13 +6,13 @@ import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
-import type {UiLifeCyclesRender} from '../../../web/types';
+import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
-export class ToolbarState implements UiLifeCyclesRender {
+export class ToolbarState implements UiLifeCycles {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
@@ -22,7 +22,7 @@ export class ToolbarState implements UiLifeCyclesRender {
     public readonly opts: ToolbarPluginOpts,
   ) {}
 
-  /** ------------------------------------------- {@link UiLifeCyclesRender} */
+  /** ------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
     const {surface, showInlineToolbar} = this;

@@ -64,7 +64,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
+  public start() {
     const el = (this.el = document.createElement('div'));
     el.tabIndex = -1;
     el.contentEditable = 'true';
@@ -75,16 +75,15 @@ export class WebUndo implements UndoManager, UiLifeCycles {
     style.fontSize = '1px';
     style.top = '-1000px';
     style.opacity = '0';
-    document.body.appendChild(el);
+    const body = document.body;
+    body.appendChild(el);
     el.addEventListener('focus', this.onFocus);
     el.addEventListener('input', this.onInput);
-  }
-
-  public stop(): void {
-    const el = this.el;
-    document.body.removeChild(el);
-    el.removeEventListener('focus', this.onFocus);
-    el.removeEventListener('input', this.onInput);
+    return () => {
+      body.removeChild(el);
+      el.removeEventListener('focus', this.onFocus);
+      el.removeEventListener('input', this.onInput);
+    };
   }
 
   public readonly onFocus = () => {

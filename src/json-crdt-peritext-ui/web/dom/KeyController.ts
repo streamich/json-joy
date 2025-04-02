@@ -16,37 +16,33 @@ export class KeyController implements UiLifeCycles, Printable {
 
   public constructor(protected readonly opts: KeyControllerOpts) {}
 
-  public start(): void {
-    document.addEventListener('keydown', this.onKeyDown);
-    document.addEventListener('keyup', this.onKeyUp);
-    document.addEventListener('focus', this.onReset);
-    document.addEventListener('compositionstart', this.onReset);
-    document.addEventListener('compositionend', this.onReset);
-    this.opts.source.addEventListener('blur', this.onReset);
+  public start() {
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.isComposing || event.key === 'Dead') return;
+      this.pressed.add(event.key);
+    };
+    const onKeyUp = (event: KeyboardEvent): void => {
+      if (event.isComposing || event.key === 'Dead') return;
+      this.pressed.delete(event.key);
+    };
+    const onReset = (): void => {
+      this.pressed.clear();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('focus', onReset);
+    document.addEventListener('compositionstart', onReset);
+    document.addEventListener('compositionend', onReset);
+    this.opts.source.addEventListener('blur', onReset);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
+      document.removeEventListener('focus', onReset);
+      document.removeEventListener('compositionstart', onReset);
+      document.removeEventListener('compositionend', onReset);
+      this.opts.source.removeEventListener('blur', onReset);
+    };
   }
-
-  public stop(): void {
-    document.removeEventListener('keydown', this.onKeyDown);
-    document.removeEventListener('keyup', this.onKeyUp);
-    document.removeEventListener('focus', this.onReset);
-    document.removeEventListener('compositionstart', this.onReset);
-    document.removeEventListener('compositionend', this.onReset);
-    this.opts.source.removeEventListener('blur', this.onReset);
-  }
-
-  private onKeyDown = (event: KeyboardEvent): void => {
-    if (event.isComposing || event.key === 'Dead') return;
-    this.pressed.add(event.key);
-  };
-
-  private onKeyUp = (event: KeyboardEvent): void => {
-    if (event.isComposing || event.key === 'Dead') return;
-    this.pressed.delete(event.key);
-  };
-
-  private onReset = (): void => {
-    this.pressed.clear();
-  };
 
   /** ----------------------------------------------------- {@link Printable} */
 

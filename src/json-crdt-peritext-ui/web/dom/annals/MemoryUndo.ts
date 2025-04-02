@@ -35,6 +35,7 @@ export class MemoryUndo implements UndoManager, UiLifeCycles {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {}
-  public stop(): void {}
+  public start() {
+    return () => {};
+  }
 }

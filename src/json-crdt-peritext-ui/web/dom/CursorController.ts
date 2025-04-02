@@ -57,7 +57,7 @@ export class CursorController implements UiLifeCycles, Printable {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
+  public start() {
     const el = this.opts.source;
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
@@ -65,17 +65,15 @@ export class CursorController implements UiLifeCycles, Printable {
     el.addEventListener('blur', this.onBlur);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
-  }
-
-  public stop(): void {
-    const el = this.opts.source;
-    el.removeEventListener('mousedown', this.onMouseDown);
-    el.removeEventListener('keydown', this.onKeyDown);
-    el.removeEventListener('focus', this.onFocus);
-    el.removeEventListener('blur', this.onBlur);
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
-    this._cursor[1](); // Stop throttling loop.
+    return () => {
+      el.removeEventListener('mousedown', this.onMouseDown);
+      el.removeEventListener('keydown', this.onKeyDown);
+      el.removeEventListener('focus', this.onFocus);
+      el.removeEventListener('blur', this.onBlur);
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
+      this._cursor[1](); // Stop throttling loop.
+    };
   }
 
   public readonly focus = new ValueSyncStore<boolean>(false);

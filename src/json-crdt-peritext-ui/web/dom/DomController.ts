@@ -49,22 +49,21 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
-    this.keys.start();
-    this.comp.start();
-    this.input.start();
-    this.cursor.start();
-    this.richText.start();
-    this.annals.start();
-  }
-
-  public stop(): void {
-    this.keys.stop();
-    this.comp.stop();
-    this.input.stop();
-    this.cursor.stop();
-    this.richText.stop();
-    this.annals.stop();
+  public start() {
+    const stopKeys = this.keys.start();
+    const stopComp = this.comp.start();
+    const stopInput = this.input.start();
+    const stopCursor = this.cursor.start();
+    const stopRichText = this.richText.start();
+    const stopAnnals = this.annals.start();
+    return () => {
+      stopKeys();
+      stopComp();
+      stopInput();
+      stopCursor();
+      stopRichText();
+      stopAnnals();
+    };
   }
 
   /** ------------------------------------------------- {@link PeritextUiApi} */

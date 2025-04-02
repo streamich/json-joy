@@ -37,8 +37,8 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
-    this.manager.start();
+  public start() {
+    const stopManager = this.manager.start();
     const {opts, captured} = this;
     const {txt} = opts;
     txt.model.api.onFlush.listen((patch) => {
@@ -49,10 +49,9 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
         this.manager.push(item);
       }
     });
-  }
-
-  public stop(): void {
-    this.manager.stop();
+    return () => {
+      stopManager();
+    };
   }
 
   public readonly _undo: UndoCallback<Patch, Patch> = (doPatch: Patch) => {

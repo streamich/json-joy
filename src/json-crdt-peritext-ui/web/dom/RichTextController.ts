@@ -13,43 +13,41 @@ export class RichTextController implements UiLifeCycles {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
+  public start() {
     const el = this.opts.source;
-    el.addEventListener('keydown', this.onKeyDown);
-  }
-
-  public stop(): void {
-    const el = this.opts.source;
-    el.removeEventListener('keydown', this.onKeyDown);
-  }
-
-  private onKeyDown = (event: KeyboardEvent): void => {
-    const key = event.key;
-    if (event.isComposing || key === 'Dead') return;
-    const et = this.opts.et;
-    if (event.metaKey || event.ctrlKey) {
-      switch (key) {
-        case 'b':
-          event.preventDefault();
-          et.format(CommonSliceType.b);
-          return;
-        case 'i':
-          event.preventDefault();
-          et.format(CommonSliceType.i);
-          return;
-        case 'u':
-          event.preventDefault();
-          et.format(CommonSliceType.u);
-          return;
+    const onKeyDown = (event: KeyboardEvent): void => {
+      const key = event.key;
+      if (event.isComposing || key === 'Dead') return;
+      const et = this.opts.et;
+      if (event.metaKey || event.ctrlKey) {
+        switch (key) {
+          case 'b':
+            event.preventDefault();
+            et.format(CommonSliceType.b);
+            return;
+          case 'i':
+            event.preventDefault();
+            et.format(CommonSliceType.i);
+            return;
+          case 'u':
+            event.preventDefault();
+            et.format(CommonSliceType.u);
+            return;
+        }
       }
-    }
-    if (event.metaKey && event.shiftKey) {
-      switch (key) {
-        case 'x':
-          event.preventDefault();
-          et.format(CommonSliceType.s);
-          return;
+      if (event.metaKey && event.shiftKey) {
+        switch (key) {
+          case 'x':
+            event.preventDefault();
+            et.format(CommonSliceType.s);
+            return;
+        }
       }
-    }
-  };
+    };
+    el.addEventListener('keydown', onKeyDown);
+    return () => {
+      el.removeEventListener('keydown', onKeyDown);
+
+    };
+  }
 }
