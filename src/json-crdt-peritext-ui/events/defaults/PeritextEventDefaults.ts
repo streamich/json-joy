@@ -1,4 +1,5 @@
 import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
@@ -10,7 +11,6 @@ import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types'
 import type {UndoCollector} from '../../types';
 import type {UiHandle} from './ui/UiHandle';
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
-import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);

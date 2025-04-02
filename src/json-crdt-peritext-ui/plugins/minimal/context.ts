@@ -3,7 +3,7 @@ import type {PeritextSurfaceState} from '../../web/react';
 import type {ValueSyncStore} from '../../../util/events/sync-store';
 
 export interface MinimalPluginContextValue {
-  ctx?: PeritextSurfaceState;
+  ctx: PeritextSurfaceState;
 
   /** Current score. */
   score: ValueSyncStore<number>;

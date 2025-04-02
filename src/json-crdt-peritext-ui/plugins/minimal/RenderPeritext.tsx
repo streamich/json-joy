@@ -3,11 +3,11 @@ import {Chrome} from './Chrome';
 import {context, type MinimalPluginContextValue} from './context';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {ChangeDetail} from '../../events/types';
-import type {PeritextSurfaceState, PeritextViewProps} from '../../web/react';
+import type {PeritextSurfaceState} from '../../web/react';
 
-export interface RenderPeritextProps extends PeritextViewProps {
-  ctx?: PeritextSurfaceState;
-  children?: React.ReactNode;
+export interface RenderPeritextProps {
+  ctx: PeritextSurfaceState;
+  children: React.ReactNode;
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({ctx, children}) => {

@@ -11,7 +11,7 @@ export interface DebugRenderersContextValue {
     peritext: ValueSyncStore<boolean>;
     model: ValueSyncStore<boolean>;
   };
-  ctx?: PeritextSurfaceState;
+  ctx: PeritextSurfaceState;
 }
 
 export const context = React.createContext<DebugRenderersContextValue>(null!);

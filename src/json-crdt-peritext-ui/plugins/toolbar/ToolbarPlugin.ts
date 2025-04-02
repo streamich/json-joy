@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {RenderInline} from './RenderInline';
-import {RenderPeritext} from './RenderPeritext';
+import {RenderPeritext, RenderPeritextProps} from './RenderPeritext';
 import {text} from '../minimal/text';
 import {RenderBlock} from './RenderBlock';
 import {RenderCaret} from './RenderCaret';
@@ -23,8 +23,8 @@ export class ToolbarPlugin implements PeritextPlugin {
 
   public readonly block: PeritextPlugin['block'] = (props, children) => h(RenderBlock, props as any, children);
 
-  public readonly peritext: PeritextPlugin['peritext'] = (props, children, surface) =>
-    h(RenderPeritext, {...props, children, surface, opts: this.opts});
+  public readonly peritext: PeritextPlugin['peritext'] = (children, surface) =>
+    h(RenderPeritext, {children, surface, opts: this.opts} satisfies RenderPeritextProps);
 
   public readonly caret: PeritextPlugin['caret'] = (props, children) => h(RenderCaret, <any>props, children);
   public readonly focus: PeritextPlugin['focus'] = (props, children) => h(RenderFocus, <any>props, children);

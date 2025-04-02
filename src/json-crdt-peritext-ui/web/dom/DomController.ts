@@ -7,6 +7,7 @@ import {CompositionController} from './CompositionController';
 import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
+import {UiHandle} from '../../events/defaults/ui/UiHandle';
 import type {ITimestampStruct} from '../../../json-crdt-patch';
 import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
@@ -41,6 +42,9 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
     this.annals = new AnnalsController({et, txt, log});
+    const uiHandle = new UiHandle(txt, <PeritextUiApi>this);
+    events.ui = uiHandle;
+    events.undo = this.annals;
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */

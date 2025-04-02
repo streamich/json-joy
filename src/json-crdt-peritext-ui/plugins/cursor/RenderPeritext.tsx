@@ -5,8 +5,8 @@ import type {ChangeDetail} from '../../events/types';
 import type {PeritextSurfaceState, PeritextViewProps} from '../../web/react';
 import type {CursorPlugin} from './CursorPlugin';
 
-export interface RenderPeritextProps extends PeritextViewProps {
-  ctx?: PeritextSurfaceState;
+export interface RenderPeritextProps {
+  ctx: PeritextSurfaceState;
   plugin: CursorPlugin;
   children?: React.ReactNode;
 }

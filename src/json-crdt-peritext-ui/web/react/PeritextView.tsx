@@ -1,16 +1,15 @@
 import * as React from 'react';
+import {createPortal} from 'react-dom';
 import {put} from 'nano-theme';
-import {context} from './context';
 import {CssClass} from '../constants';
-import {BlockView} from './BlockView';
-import {DomController} from '../dom/DomController';
 import {CursorPlugin} from '../../plugins/cursor';
 import {defaultPlugin} from '../../plugins/minimal';
 import {PeritextSurfaceState} from './state';
-import {create} from '../../events';
-import {UiHandle} from '../../events/defaults/ui/UiHandle';
-import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
+import {createEvents} from '../../events';
+import {context} from './context';
+import {BlockView} from './BlockView';
 import type {PeritextPlugin} from './types';
+import type {Peritext} from '../../../json-crdt-extensions';
 
 put('.' + CssClass.Editor, {
   out: 0,
@@ -30,11 +29,6 @@ put('.' + CssClass.Inline, {
   whiteSpace: 'pre-wrap',
 });
 
-/**
- * @todo The PeritextView should return some imperative API, such as the methods
- *     for finding line wrappings (soft start and end of line) and positions
- *     of characters when moving the cursor up/down.
- */
 export interface PeritextViewProps {
   peritext: Peritext;
   plugins?: PeritextPlugin[];
@@ -42,69 +36,67 @@ export interface PeritextViewProps {
   onRender?: () => void;
 }
 
-/** @todo Is `React.memo` needed here? */
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
-  // TODO: create hook which instantiates default plugins?
-  const {peritext, plugins = [new CursorPlugin(), defaultPlugin], onState, onRender} = props;
-  const [, setTick] = React.useState(0);
-  const [dom, setDom] = React.useState<DomController | undefined>(undefined);
+  const {peritext, plugins: plugins_, onRender, onState} = props;
+  const ref = React.useRef<HTMLDivElement>(null);
 
-  // Callback which can be called to force a re-render of the editor.
+  // The `rerender` callback can be called to force a re-render of the editor.
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
+  const [, setTick] = React.useState(0);
   const rerender = React.useCallback(() => {
     peritext.refresh();
     setTick((tick) => tick + 1);
     if (onRender) onRender();
   }, [peritext]);
+  
+  // Plugins provided through props, or a default set of plugins.
+  const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [peritext, plugins_]);
 
-  const state: PeritextSurfaceState = React.useMemo(() => {
-    const state = new PeritextSurfaceState(peritext, create(peritext), rerender, plugins);
+  // Create the DOM element for the editor. And instantiate the state management.
+  const [state, stop] = React.useMemo(() => {
+    const div = document.createElement('div');
+    div.className = CssClass.Editor;
+    const events = createEvents(peritext);
+    const state = new PeritextSurfaceState(events, div, rerender, plugins);
+    const stop = state.start();
     onState?.(state);
-    return state;
-  }, [peritext, plugins, rerender, onState]);
+    return [state, stop];
+  }, [peritext, rerender, plugins]);
 
-  React.useEffect(() => state.start(), [state]);
+  // Call life-cycle methods on the state.
+  React.useLayoutEffect(() => stop, [stop]);
 
-  // biome-ignore lint: lint/correctness/useExhaustiveDependencies
-  const ref = React.useCallback(
-    (el: null | HTMLDivElement) => {
-      if (!el) {
-        if (dom) {
-          dom.stop();
-          dom.et.removeEventListener('change', rerender);
-          state.dom = void 0;
-          setDom(undefined);
-        }
-        return;
-      }
-      if (dom && dom.opts.source === el) return;
-      const newDom = new DomController({source: el, events: state.events, log: state.log});
-      const txt = state.peritext;
-      const uiHandle = new UiHandle(txt, newDom);
-      state.events.ui = uiHandle;
-      state.events.undo = newDom.annals;
-      newDom.start();
-      state.dom = newDom;
-      setDom(newDom);
-      newDom.et.addEventListener('change', rerender);
-    },
-    [peritext, state],
+  // Attach imperatively constructed <div> element to our container.
+  React.useLayoutEffect(() => {
+    const parent = ref.current;
+    if (!parent) return;
+    const el = state.el;
+    parent.appendChild(el);
+    return () => {
+      if (el.parentNode === parent) parent.removeChild(el);
+    };
+  }, [ref.current, state.el]);
+  
+  // Render the main body of the editor.
+  const block = peritext.blocks.root;
+  let children: React.ReactNode = createPortal(
+    <context.Provider value={state}>
+      {block ? <BlockView hash={block.hash} block={block} /> : null}
+    </context.Provider>,
+    state.el,
   );
 
-  const block = peritext.blocks.root;
-  if (!block) return null;
-
-  let children: React.ReactNode = (
-    <div ref={ref} className={CssClass.Editor}>
-      {!!dom && (
-        <context.Provider value={state}>
-          <BlockView hash={block.hash} block={block} />
-        </context.Provider>
-      )}
+  // Create container element, into which we will insert imperatively
+  // constructed <div> element.
+  children = (
+    <div ref={ref}>
+      {children}
     </div>
   );
 
-  for (const map of plugins) children = map.peritext?.(props, children, state) ?? children;
+  // Run the plugins to decorate our content body.
+  for (const map of plugins) children = map.peritext?.(children, state) ?? children;
 
+  // Return the final result.
   return children;
 });
