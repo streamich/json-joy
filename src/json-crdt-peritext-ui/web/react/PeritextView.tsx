@@ -8,6 +8,7 @@ import {PeritextSurfaceState} from './state';
 import {createEvents} from '../../events';
 import {context} from './context';
 import {BlockView} from './BlockView';
+import {useSyncStore} from './hooks';
 import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../../json-crdt-extensions';
 
@@ -33,15 +34,11 @@ export interface PeritextViewProps {
   peritext: Peritext;
   plugins?: PeritextPlugin[];
   onState?: (state: PeritextSurfaceState) => void;
-  onRender?: () => void;
 }
 
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
-  const {peritext, plugins: plugins_, onRender, onState} = props;
+  const {peritext, plugins: plugins_, onState} = props;
   const ref = React.useRef<HTMLDivElement>(null);
-
-  // The `setTick` is used to force re-renders.
-  const [, setTick] = React.useState(0);
   
   // Plugins provided through props, or a default set of plugins.
   const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [peritext, plugins_]);
@@ -51,12 +48,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     const div = document.createElement('div');
     div.className = CssClass.Editor;
     const events = createEvents(peritext);
-    const rerender = () => {
-      peritext.refresh();
-      setTick((tick) => tick + 1);
-      if (onRender) onRender();
-    };
-    const state = new PeritextSurfaceState(events, div, rerender, plugins);
+    const state = new PeritextSurfaceState(events, div, plugins);
     const stop = state.start();
     onState?.(state);
     return [div, state, stop] as const;
@@ -75,6 +67,26 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
       if (el.parentNode === parent) parent.removeChild(el);
     };
   }, [ref.current, el]);
+
+  // Return the final result.
+  return (
+    <context.Provider value={state}>
+      <PeritextViewInner div={ref} state={state} />
+    </context.Provider>
+  );
+});
+
+interface PeritextViewInnerProps {
+  state: PeritextSurfaceState;
+  div: React.RefObject<HTMLDivElement>;
+}
+
+const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) => {
+  const {state, div} = props;
+  const {peritext, render, el, plugins} = state;
+
+  // Subscribe to re-render events.
+  useSyncStore(render);
   
   // Render the main body of the editor.
   const block = peritext.blocks.root;
@@ -84,18 +96,15 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   // constructed <div> element.
   children = (
     <>
-      <div ref={ref} style={{visibility: 'hidden'}} />
+      <div ref={div} style={{visibility: 'hidden'}} />
       {children}
     </>
   );
 
   // Run the plugins to decorate our content body.
-  for (const map of plugins) children = map.peritext?.(children, state) ?? children;
+  for (const {peritext: decorator} of plugins)
+    if (decorator) children = decorator(children, state);
 
   // Return the final result.
-  return (
-    <context.Provider value={state}>
-      {children}
-    </context.Provider>
-  );
+  return children;
 });

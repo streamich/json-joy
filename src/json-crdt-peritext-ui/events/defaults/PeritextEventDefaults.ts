@@ -193,11 +193,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
       case 'tog': {
-        if (type !== void 0) editor.tglMarker(type, data);
+        if (type === undefined) throw new Error('TYPE_REQUIRED');
+        editor.tglMarker(type, data);
         break;
       }
       case 'upd': {
-        if (type !== void 0) editor.updMarker(type, data);
+        if (type === undefined) throw new Error('TYPE_REQUIRED');
+        editor.updMarker(type, data);
         break;
       }
       case 'del': {
