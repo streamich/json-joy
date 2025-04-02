@@ -4,7 +4,7 @@ import {put} from 'nano-theme';
 import {CssClass} from '../constants';
 import {CursorPlugin} from '../../plugins/cursor';
 import {defaultPlugin} from '../../plugins/minimal';
-import {PeritextSurfaceState} from './state';
+import {PeritextSurfaceState} from '../state';
 import {createEvents} from '../../events';
 import {context} from './context';
 import {BlockView} from './BlockView';

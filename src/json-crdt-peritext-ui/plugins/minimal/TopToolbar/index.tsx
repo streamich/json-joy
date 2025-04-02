@@ -5,7 +5,7 @@ import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import {useSyncStore} from '../../../web/react/hooks';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
-import type {PeritextSurfaceState} from '../../../web/react';
+import type {PeritextSurfaceState} from '../../../web';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceState;

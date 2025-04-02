@@ -4,7 +4,7 @@ import type {CaretViewProps} from './cursor/CaretView';
 import type {AnchorViewProps} from './cursor/AnchorView';
 import type {InlineViewProps} from './InlineView';
 import type {BlockViewProps} from './BlockView';
-import type {PeritextSurfaceState} from './state';
+import type {PeritextSurfaceState} from '../state';
 import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 
 export interface PeritextPlugin {

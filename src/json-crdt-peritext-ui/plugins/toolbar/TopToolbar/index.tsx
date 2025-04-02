@@ -6,7 +6,7 @@ import {ButtonGroup} from '../../../components/ButtonGroup';
 import {useSyncStore, useSyncStoreOpt} from '../../../web/react/hooks';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
 import {useToolbarPlugin} from '../context';
-import type {PeritextSurfaceState} from '../../../web/react';
+import type {PeritextSurfaceState} from '../../../web';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceState;

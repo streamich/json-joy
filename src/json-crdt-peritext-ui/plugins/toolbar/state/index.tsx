@@ -8,7 +8,7 @@ import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import type {UiLifeCyclesRender} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
-import type {PeritextSurfaceState} from '../../../web/react';
+import type {PeritextSurfaceState} from '../../../web';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 

@@ -1,3 +1,2 @@
-export type {PeritextSurfaceState} from './state';
-export * from './context';
-export * from './PeritextView';
+export {usePeritext} from './context';
+export {PeritextView, PeritextViewProps} from './PeritextView';

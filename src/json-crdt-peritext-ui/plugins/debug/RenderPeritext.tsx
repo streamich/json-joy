@@ -6,7 +6,7 @@ import {Console} from './Console';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {useSyncStore} from '../../web/react/hooks';
 import {DebugState} from './state';
-import type {PeritextSurfaceState} from '../../web/react';
+import type {PeritextSurfaceState} from '../../web';
 
 const blockClass = rule({
   pos: 'relative',
