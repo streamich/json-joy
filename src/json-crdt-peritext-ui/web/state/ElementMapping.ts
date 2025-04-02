@@ -1,6 +1,6 @@
 import {AvlMap} from "sonic-forest/lib/avl/AvlMap";
-import {compare, type ITimestampStruct} from "../../json-crdt-patch";
-import type {LeafBlock} from "../../json-crdt-extensions";
+import {compare, type ITimestampStruct} from "../../../json-crdt-patch";
+import type {LeafBlock} from "../../../json-crdt-extensions";
 
 /**
  * Mapping from Peritext slices to DOM elements. This allows faster DOM
