@@ -19,7 +19,7 @@ export interface BlockViewProps {
 export const BlockView: React.FC<BlockViewProps> = React.memo(
   (props) => {
     const {block, el} = props;
-    const {plugins, mapping} = usePeritext();
+    const {plugins, dom} = usePeritext();
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
       for (const inline of block.texts()) {
@@ -78,8 +78,9 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
       <span ref={(element) => {
         el?.(element);
         if (block instanceof LeafBlock) {
-          if (element) mapping.setBlock(block, element);
-          else mapping.delBlock(block);
+          const blockId = block.start.id;
+          if (element) dom.boundaries.set(blockId, element);
+          else dom.boundaries.del(blockId);
         }
       }} style={{position: 'relative', display: 'block'}}>
         {elements.length ? elements : Char.ZeroLengthSpace}

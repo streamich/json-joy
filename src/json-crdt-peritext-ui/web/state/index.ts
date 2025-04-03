@@ -1,7 +1,6 @@
 import {Log} from '../../../json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import {ElementMapping} from './ElementMapping';
 import type {PeritextPlugin} from '../react/types';
 import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
@@ -12,7 +11,6 @@ export class PeritextSurfaceState implements UiLifeCycles {
   public readonly dom: DomController;
   public readonly log: Log;
   public readonly render = new ValueSyncStore<number>(0);
-  public readonly mapping: ElementMapping = new ElementMapping();;
 
   public readonly rerender = (): void => {
     const {peritext, render} = this;

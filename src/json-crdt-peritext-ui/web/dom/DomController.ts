@@ -1,4 +1,5 @@
 import {printTree, type Printable} from 'tree-dump';
+import {AvlMap} from "sonic-forest/lib/avl/AvlMap";
 import {InputController} from './InputController';
 import {CursorController} from './CursorController';
 import {RichTextController} from './RichTextController';
@@ -8,12 +9,12 @@ import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {UiHandle} from '../../events/defaults/ui/UiHandle';
-import type {ITimestampStruct} from '../../../json-crdt-patch';
+import {compare, type ITimestampStruct} from '../../../json-crdt-patch';
 import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from '../types';
 import type {Log} from '../../../json-crdt/log/Log';
-import type {Inline} from '../../../json-crdt-extensions';
+import type {Inline, Peritext} from '../../../json-crdt-extensions';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextUiApi} from '../../events/defaults/ui/types';
 
@@ -24,6 +25,7 @@ export interface DomControllerOpts {
 }
 
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
+  public readonly txt: Peritext;
   public readonly et: PeritextEventTarget;
   public readonly keys: KeyController;
   public readonly comp: CompositionController;
@@ -31,10 +33,12 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly cursor: CursorController;
   public readonly richText: RichTextController;
   public readonly annals: AnnalsController;
+  public readonly boundaries = new AvlMap<ITimestampStruct, Element>(compare);
 
   constructor(public readonly opts: DomControllerOpts) {
     const {source, events, log} = opts;
     const {txt} = events;
+    this.txt = txt;
     const et = (this.et = opts.events.et);
     const keys = (this.keys = new KeyController({source}));
     const comp = (this.comp = new CompositionController({et, source, txt}));
@@ -77,6 +81,12 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   }
 
   protected findSpanContaining(range: Range): [span: HTMLSpanElement, inline: Inline] | undefined {
+    const start = range.start;
+    const marker = this.txt.overlay.getOrNextLowerMarker(start);
+    const markerId = marker?.id;
+    const el = this.boundaries.get(markerId);
+    // console.log('markerId', markerId);
+
     const spans = this.getSpans();
     const length = spans.length;
     for (let i = 0; i < length; i++) {
