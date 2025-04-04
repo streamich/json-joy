@@ -1,6 +1,4 @@
 import * as React from 'react';
-import useWindowSize from 'react-use/lib/useWindowSize';
-import useWindowScroll from 'react-use/lib/useWindowScroll';
 import type {Rect} from '../../../web/types';
 
 export type SetRect = (rect?: Rect) => void;
@@ -10,8 +8,6 @@ export interface CharOverlayProps extends React.HTMLAttributes<HTMLSpanElement> 
 }
 
 export const CharOverlay: React.FC<CharOverlayProps> = ({rectRef, ...rest}) => {
-  useWindowSize();
-  useWindowScroll();
   const ref = React.useRef<HTMLSpanElement | null>(null);
   // biome-ignore lint: lint/correctness/useExhaustiveDependencies
   React.useEffect(() => {

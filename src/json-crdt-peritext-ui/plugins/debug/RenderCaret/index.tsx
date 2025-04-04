@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import useWindowSize from 'react-use/lib/useWindowSize';
+import useWindowScroll from 'react-use/lib/useWindowScroll';
 import {useDebugCtx} from '../context';
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {useSyncStore} from '../../../web/react/hooks';
@@ -58,6 +60,8 @@ const eowCharacterOverlayStyles: React.CSSProperties = {
 };
 
 const DebugOverlay: React.FC<RenderCaretProps> = ({point}) => {
+  useWindowSize();
+  useWindowScroll();
   const {ctx, state} = useDebugCtx();
   const showCursorInfo = useSyncStore(state.showCursorInfo);
   const leftCharRef = React.useRef<SetRect>(null);
