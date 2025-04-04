@@ -79,8 +79,9 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
         el?.(element);
         if (block instanceof LeafBlock) {
           const blockId = block.start.id;
-          if (element) dom.boundaries.set(blockId, element);
-          else dom.boundaries.del(blockId);
+          const blocks = dom.blocks;
+          if (element) blocks.set(blockId, element);
+          else blocks.del(blockId);
         }
       }} style={{position: 'relative', display: 'block'}}>
         {elements.length ? elements : Char.ZeroLengthSpace}

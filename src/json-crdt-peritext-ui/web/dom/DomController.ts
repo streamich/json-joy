@@ -39,7 +39,12 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
    * Index of block HTML <div> elements keyed by the ID (timestamp) of the split
    * boundary that starts that block element.
    */
-  public readonly boundaries = new AvlMap<ITimestampStruct, Element>(compare);
+  public readonly blocks = new AvlMap<ITimestampStruct, HTMLSpanElement>(compare);
+
+  /**
+   * Index of inline HTML <span> elements keyed by the slice start {@link Point}.
+   */
+  public readonly inlines = new AvlMap<Point, HTMLSpanElement>((a, b) => a.cmpSpatial(b));
 
   constructor(public readonly opts: DomControllerOpts) {
     const {source, events, log} = opts;
@@ -88,21 +93,33 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
       const txt = this.txt;
       const marker = txt.overlay.getOrNextLowerMarker(blockInnerId);
       const markerId = marker?.id ?? txt.str.id;
-      el = this.boundaries.get(markerId);
+      el = this.blocks.get(markerId);
     }
     el ??= this.opts.source;
     return el.querySelectorAll('.jsonjoy-peritext-inline');
   }
 
-  protected findSpanContaining(range: Range): [span: HTMLSpanElement, inline: Inline] | undefined {
-    const spans = this.getSpans(range.start);
+  protected findSpanContaining(char: Range): HTMLSpanElement | undefined {
+    const start = char.start;
+    const overlayPoint = this.txt.overlay.getOrNextLower(start);
+    if (overlayPoint) {
+      const span = this.inlines.get(overlayPoint);
+      if (span) {
+        const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
+        if (inline) {
+          const contains = inline.contains(char);
+          if (contains) return span;
+        }
+      }
+    }
+    const spans = this.getSpans(start);
     const length = spans.length;
     for (let i = 0; i < length; i++) {
       const span = spans[i] as HTMLSpanElement;
       const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
       if (inline) {
-        const contains = inline.contains(range);
-        if (contains) return [span, inline];
+        const contains = inline.contains(char);
+        if (contains) return span;
       }
     }
     return;
@@ -115,8 +132,10 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const start = txt.point(id, Anchor.Before);
     const end = txt.point(id, Anchor.After);
     const charRange = txt.range(start, end);
-    const [span, inline] = this.findSpanContaining(charRange) || [];
-    if (!span || !inline) return;
+    const span = this.findSpanContaining(charRange);
+    if (!span) return;
+    const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
+    if (!inline) return;
     const textNode = span.firstChild as Text;
     if (!textNode) return;
     const range = document.createRange();
@@ -138,7 +157,8 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return (
       'DOM' +
       printTree(tab, [
-        (tab) => 'boundaries: ' + this.boundaries.toString(tab),
+        (tab) => 'blocks: ' + this.blocks.size(),
+        (tab) => 'inlines: ' + this.inlines.size(),
         (tab) => this.cursor.toString(tab),
         (tab) => this.keys.toString(tab),
         (tab) => this.comp.toString(tab),
