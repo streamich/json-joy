@@ -4,6 +4,9 @@ import {DomClipboard} from './clipboard/DomClipboard';
 import {create as createDataTransfer} from '../../json-crdt-extensions/peritext/transfer/create';
 import type {Peritext} from '../../json-crdt-extensions';
 
+/**
+ * @todo Move into separately importable file.
+ */
 export const createEvents = (txt: Peritext) => {
   const et = new PeritextEventTarget();
   const clipboard: PeritextEventDefaultsOpts['clipboard'] =
@@ -15,3 +18,5 @@ export const createEvents = (txt: Peritext) => {
   et.defaults = defaults;
   return defaults;
 };
+
+export * from './types';
