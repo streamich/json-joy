@@ -10,6 +10,7 @@ import {ElementAttr} from '../constants';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {UiHandle} from '../../events/defaults/ui/UiHandle';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch';
+import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from '../types';
@@ -33,6 +34,11 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly cursor: CursorController;
   public readonly richText: RichTextController;
   public readonly annals: AnnalsController;
+
+  /**
+   * Index of block HTML <div> elements keyed by the ID (timestamp) of the split
+   * boundary that starts that block element.
+   */
   public readonly boundaries = new AvlMap<ITimestampStruct, Element>(compare);
 
   constructor(public readonly opts: DomControllerOpts) {
@@ -76,18 +82,20 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     this.opts.source.focus();
   }
 
-  protected getSpans() {
-    return this.opts.source.querySelectorAll('.jsonjoy-peritext-inline');
+  protected getSpans(blockInnerId?: Point) {
+    let el: Element | undefined;
+    if (blockInnerId) {
+      const txt = this.txt;
+      const marker = txt.overlay.getOrNextLowerMarker(blockInnerId);
+      const markerId = marker?.id ?? txt.str.id;
+      el = this.boundaries.get(markerId);
+    }
+    el ??= this.opts.source;
+    return el.querySelectorAll('.jsonjoy-peritext-inline');
   }
 
   protected findSpanContaining(range: Range): [span: HTMLSpanElement, inline: Inline] | undefined {
-    const start = range.start;
-    const marker = this.txt.overlay.getOrNextLowerMarker(start);
-    const markerId = marker?.id;
-    const el = this.boundaries.get(markerId);
-    // console.log('markerId', markerId);
-
-    const spans = this.getSpans();
+    const spans = this.getSpans(range.start);
     const length = spans.length;
     for (let i = 0; i < length; i++) {
       const span = spans[i] as HTMLSpanElement;
@@ -130,6 +138,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return (
       'DOM' +
       printTree(tab, [
+        (tab) => 'boundaries: ' + this.boundaries.toString(tab),
         (tab) => this.cursor.toString(tab),
         (tab) => this.keys.toString(tab),
         (tab) => this.comp.toString(tab),
