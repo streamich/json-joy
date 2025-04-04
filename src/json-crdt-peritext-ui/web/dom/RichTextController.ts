@@ -47,7 +47,6 @@ export class RichTextController implements UiLifeCycles {
     el.addEventListener('keydown', onKeyDown);
     return () => {
       el.removeEventListener('keydown', onKeyDown);
-
     };
   }
 }

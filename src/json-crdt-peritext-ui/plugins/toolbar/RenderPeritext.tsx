@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Chrome} from './Chrome';
 import {context, type ToolbarPluginContextValue} from './context';
 import {ToolbarState} from './state';
-import type {PeritextSurfaceState, } from '../../web';
+import type {PeritextSurfaceState} from '../../web';
 import type {ToolbarPluginOpts} from './ToolbarPlugin';
 
 export interface RenderPeritextProps {

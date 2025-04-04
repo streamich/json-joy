@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {RenderInline} from './RenderInline';
-import {RenderPeritext, RenderPeritextProps} from './RenderPeritext';
+import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
 import {text} from '../minimal/text';
 import {RenderBlock} from './RenderBlock';
 import {RenderCaret} from './RenderCaret';

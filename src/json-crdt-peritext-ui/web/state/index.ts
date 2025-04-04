@@ -23,8 +23,8 @@ export class PeritextSurfaceState implements UiLifeCycles {
     public readonly el: HTMLElement,
     public readonly plugins: PeritextPlugin[],
   ) {
-    const peritext = this.peritext = events.txt;
-    const log = this.log = Log.from(peritext.model);
+    const peritext = (this.peritext = events.txt);
+    const log = (this.log = Log.from(peritext.model));
     this.dom = new DomController({
       events,
       log,

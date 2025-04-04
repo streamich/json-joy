@@ -28,7 +28,8 @@ export class UiHandle {
   public getPointRect(pos: number | Point<string>, right = true): Rect | undefined {
     const txt = this.txt;
     const point = typeof pos === 'number' ? txt.pointAt(pos) : pos.clone();
-    if (right) point.refBefore(); else point.refAfter();
+    if (right) point.refBefore();
+    else point.refAfter();
     return this.api.getCharRect?.(point.id);
   }
 

@@ -39,9 +39,9 @@ export interface PeritextViewProps {
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const {peritext, plugins: plugins_, onState} = props;
   const ref = React.useRef<HTMLDivElement>(null);
-  
+
   // Plugins provided through props, or a default set of plugins.
-  const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [peritext, plugins_]);
+  const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [plugins_]);
 
   // Create the DOM element for the editor. And instantiate the state management.
   const [el, state, stop] = React.useMemo(() => {
@@ -50,12 +50,15 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     const events = createEvents(peritext);
     const state = new PeritextSurfaceState(events, div, plugins);
     const stop = state.start();
-    onState?.(state);
     return [div, state, stop] as const;
   }, [peritext, plugins]);
 
   // Call life-cycle methods on the state.
   React.useLayoutEffect(() => stop, [stop]);
+
+  React.useLayoutEffect(() => {
+    onState?.(state);
+  }, [onState, state]);
 
   // Attach imperatively constructed <div> element to our container.
   React.useLayoutEffect(() => {
@@ -66,7 +69,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     return () => {
       if (el.parentNode === parent) parent.removeChild(el);
     };
-  }, [ref.current, el]);
+  }, [el]);
 
   // Return the final result.
   return (
@@ -87,7 +90,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
 
   // Subscribe to re-render events.
   useSyncStore(render);
-  
+
   // Render the main body of the editor.
   const block = peritext.blocks.root;
   let children: React.ReactNode = block ? createPortal(<BlockView hash={block.hash} block={block} />, el) : null;
@@ -102,8 +105,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   );
 
   // Run the plugins to decorate our content body.
-  for (const {peritext: decorator} of plugins)
-    if (decorator) children = decorator(children, state);
+  for (const {peritext: decorator} of plugins) if (decorator) children = decorator(children, state);
 
   // Return the final result.
   return children;

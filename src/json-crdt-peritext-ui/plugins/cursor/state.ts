@@ -5,16 +5,14 @@ import type {PeritextSurfaceState, UiLifeCycles} from '../../web';
 export class CursorState implements UiLifeCycles {
   /** Current score. */
   public readonly score: ValueSyncStore<number> = new ValueSyncStore(0);
-  
+
   /** By how much the score changed. */
   public readonly scoreDelta: ValueSyncStore<number> = new ValueSyncStore(0);
-  
+
   /** The last score that was shown to the user. */
   public readonly lastVisScore: ValueSyncStore<number> = new ValueSyncStore(0);
-  
-  constructor(
-    public readonly ctx: PeritextSurfaceState,
-  ) {}
+
+  constructor(public readonly ctx: PeritextSurfaceState) {}
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
   public start(): () => void {

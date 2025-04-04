@@ -75,6 +75,8 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
   const plugin = useCursorPlugin();
   const ref = React.useRef<HTMLSpanElement>(null);
+
+  // Place caret at the end of line wrap.
   React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -85,7 +87,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
       if (point.isAbs()) return;
       const rect = ctx.dom.getCharRect(point.id);
       if (!rect) return;
-      const nextPoint = point.copy(p => p.refBefore());
+      const nextPoint = point.copy((p) => p.refBefore());
       if (nextPoint.isAbs()) return;
       const rect2 = ctx.dom.getCharRect(nextPoint.id);
       if (!rect2) return;
@@ -96,7 +98,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
         style.left = dx + 'px';
       }
     }
-  }, [point]);
+  }, [point, ctx.dom.getCharRect]);
 
   const anchorForward = point.anchor === Anchor.Before;
 

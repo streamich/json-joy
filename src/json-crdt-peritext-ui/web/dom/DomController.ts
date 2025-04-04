@@ -1,5 +1,5 @@
 import {printTree, type Printable} from 'tree-dump';
-import {AvlMap} from "sonic-forest/lib/avl/AvlMap";
+import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {InputController} from './InputController';
 import {CursorController} from './CursorController';
 import {RichTextController} from './RichTextController';

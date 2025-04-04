@@ -75,15 +75,18 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
     }
 
     let children: React.ReactNode = (
-      <span ref={(element) => {
-        el?.(element);
-        if (block instanceof LeafBlock) {
-          const blockId = block.start.id;
-          const blocks = dom.blocks;
-          if (element) blocks.set(blockId, element);
-          else blocks.del(blockId);
-        }
-      }} style={{position: 'relative', display: 'block'}}>
+      <span
+        ref={(element) => {
+          el?.(element);
+          if (block instanceof LeafBlock) {
+            const blockId = block.start.id;
+            const blocks = dom.blocks;
+            if (element) blocks.set(blockId, element);
+            else blocks.del(blockId);
+          }
+        }}
+        style={{position: 'relative', display: 'block'}}
+      >
         {elements.length ? elements : Char.ZeroLengthSpace}
       </span>
     );
