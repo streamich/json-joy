@@ -74,16 +74,27 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
   const plugin = useCursorPlugin();
-  React.useLayoutEffect(() => {
+  const ref = React.useRef<HTMLSpanElement>(null);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const style = el.style;
+    style.top = '0px';
+    style.left = '0px';
     if (point.anchor === Anchor.After) {
       if (point.isAbs()) return;
       const rect = ctx.dom.getCharRect(point.id);
       if (!rect) return;
       const nextPoint = point.copy(p => p.refBefore());
       if (nextPoint.isAbs()) return;
-      console.log(nextPoint.id);
       const rect2 = ctx.dom.getCharRect(nextPoint.id);
-      console.log('rect', rect, rect2);
+      if (!rect2) return;
+      if (rect.x > rect2.x) {
+        const dx = rect.x + rect.width - rect2.x;
+        const dy = rect.y - rect2.y;
+        style.top = dy + 'px';
+        style.left = dx + 'px';
+      }
     }
   }, [point]);
 
@@ -105,7 +116,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   }
 
   return (
-    <span className={blockClass}>
+    <span ref={ref} className={blockClass}>
       {children}
       {score !== plugin.lastVisScore.value && (
         <CaretScore
