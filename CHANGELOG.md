@@ -1,3 +1,24 @@
+# [17.38.0](https://github.com/streamich/json-joy/compare/v17.37.0...v17.38.0) (2025-04-04)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 re-render debug overlays on screen size changes ([b299caf](https://github.com/streamich/json-joy/commit/b299caf5f97e105821ce31c4e48a6288e690d1d0))
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 create formal cursor state ([89640a9](https://github.com/streamich/json-joy/commit/89640a9c27a74bb614c9bc5d192cdbcd800e0ea8))
+* **json-crdt-peritext-ui:** 🎸 immediately construct <div> source node and state ([44e1596](https://github.com/streamich/json-joy/commit/44e15960438402d52eb58aa550db874a238f124c))
+* **json-crdt-peritext-ui:** 🎸 improve boundary element mapping ([4a35ac7](https://github.com/streamich/json-joy/commit/4a35ac79a65115ff96c170f6174e838b7e40f239))
+* **json-crdt-peritext-ui:** 🎸 improve DOM and React integration ([b744164](https://github.com/streamich/json-joy/commit/b7441648b4993b2eb35e3d3073c0d5b6a6a3a8c3))
+* **json-crdt-peritext-ui:** 🎸 improve re-rendering implementation ([98f69e7](https://github.com/streamich/json-joy/commit/98f69e7887514a32516ea51f4ee66304a6720e47))
+* **json-crdt-peritext-ui:** 🎸 index all inline elements ([44f4f2e](https://github.com/streamich/json-joy/commit/44f4f2ea34f868a186d870597df003d14be243c4))
+* **json-crdt-peritext-ui:** 🎸 index leaf block DOM elements ([9917b37](https://github.com/streamich/json-joy/commit/9917b37addd2af60ccdeb1826abb21816e6e31a8))
+* **json-crdt-peritext-ui:** 🎸 move state one folder up ([680213c](https://github.com/streamich/json-joy/commit/680213c8922acf9a9aab9c6af8d8e66f6fb6ec22))
+* **json-crdt-peritext-ui:** 🎸 position caret at line end ([87c5a7a](https://github.com/streamich/json-joy/commit/87c5a7af57734e4ae888387d92349921a7ee9901))
+* **json-crdt-peritext-ui:** 🎸 retrieve spans of first block ([deb7223](https://github.com/streamich/json-joy/commit/deb72236114857e648d442b817c9ff4f6bb0ed6e))
+
 # [17.37.0](https://github.com/streamich/json-joy/compare/v17.36.0...v17.37.0) (2025-04-01)
 
 
