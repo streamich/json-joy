@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">28.72% </span>
+                <span class="strong">28.52% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>81/282</span>
+                <span class='fraction'>81/284</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">31.81% </span>
+                <span class="strong">31.55% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>77/242</span>
+                <span class='fraction'>77/244</span>
             </div>
         
             
@@ -487,7 +487,10 @@
 <a name='L422'></a><a href='#L422'>422</a>
 <a name='L423'></a><a href='#L423'>423</a>
 <a name='L424'></a><a href='#L424'>424</a>
-<a name='L425'></a><a href='#L425'>425</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<a name='L425'></a><a href='#L425'>425</a>
+<a name='L426'></a><a href='#L426'>426</a>
+<a name='L427'></a><a href='#L427'>427</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -499,7 +502,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
@@ -684,8 +686,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -912,6 +916,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
@@ -923,7 +928,6 @@ import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types'
 import type {UndoCollector} from '../../types';
 import type {UiHandle} from './ui/UiHandle';
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
-import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
 &nbsp;
 const toText = <span class="fstat-no" title="function not covered" >(b</span>uf: Uint8Array) =&gt; <span class="cstat-no" title="statement not covered" >new TextDecoder().decode(buf);</span>
@@ -1106,11 +1110,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
 <span class="branch-1 cbranch-no" title="branch not covered" >      case 'tog': {</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (type !== void 0) <span class="cstat-no" title="statement not covered" >editor.tglMarker(type, data);</span></span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (type === undefined) <span class="cstat-no" title="statement not covered" >throw new Error('TYPE_REQUIRED');</span></span>
+<span class="cstat-no" title="statement not covered" >        editor.tglMarker(type, data);</span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
       }
 <span class="branch-2 cbranch-no" title="branch not covered" >      case 'upd': {</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (type !== void 0) <span class="cstat-no" title="statement not covered" >editor.updMarker(type, data);</span></span>
+<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (type === undefined) <span class="cstat-no" title="statement not covered" >throw new Error('TYPE_REQUIRED');</span></span>
+<span class="cstat-no" title="statement not covered" >        editor.updMarker(type, data);</span>
 <span class="cstat-no" title="statement not covered" >        break;</span>
       }
 <span class="branch-3 cbranch-no" title="branch not covered" >      case 'del': {</span>
@@ -1342,7 +1348,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-04-01T12:15:02.269Z
+                at 2025-04-04T22:42:46.565Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
