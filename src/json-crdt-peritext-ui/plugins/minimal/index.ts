@@ -6,7 +6,7 @@ import {RenderInline} from './RenderInline';
 import {RenderPeritext} from './RenderPeritext';
 import {RenderBlock} from './RenderBlock';
 import {text} from './text';
-import type {PeritextPlugin} from '../../react/types';
+import type {PeritextPlugin} from '../../web/react/types';
 
 const h = React.createElement;
 
@@ -17,5 +17,5 @@ export const defaultPlugin: PeritextPlugin = {
   anchor: (props) => h(RenderAnchor, <any>props),
   inline: (props, children) => h(RenderInline, props as any, children),
   block: (props, children) => h(RenderBlock, props as any, children),
-  peritext: (props, children, ctx) => h(RenderPeritext, {...props, children, ctx}),
+  peritext: (children, ctx) => h(RenderPeritext, {children, ctx}),
 };

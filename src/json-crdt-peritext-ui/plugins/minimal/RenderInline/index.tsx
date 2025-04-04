@@ -1,11 +1,11 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {usePeritext} from '../../../react';
-import {useSyncStoreOpt} from '../../../react/hooks';
+import {usePeritext} from '../../../web/react';
+import {useSyncStoreOpt} from '../../../web/react/hooks';
 import {DefaultRendererColors} from '../constants';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {Spoiler} from './Spoiler';
-import type {InlineViewProps} from '../../../react/InlineView';
+import type {InlineViewProps} from '../../../web/react/InlineView';
 
 interface RenderInlineSelectionProps extends RenderInlineProps {
   selection: [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''];

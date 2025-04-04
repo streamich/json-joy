@@ -1,13 +1,13 @@
-import {getCursorPosition, unit} from './util';
+import {getCursorPosition, unit} from '../util';
 import {ElementAttr} from '../constants';
-import {throttle} from '../../util/throttle';
-import {ValueSyncStore} from '../../util/events/sync-store';
+import {throttle} from '../../../util/throttle';
+import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
 import type {KeyController} from './KeyController';
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {UiLifeCycles} from './types';
-import type {Peritext} from '../../json-crdt-extensions/peritext';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {UiLifeCycles} from '../types';
+import type {Peritext} from '../../../json-crdt-extensions/peritext';
+import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 
 export interface CursorControllerOpts {
   /**
@@ -57,7 +57,7 @@ export class CursorController implements UiLifeCycles, Printable {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
+  public start() {
     const el = this.opts.source;
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
@@ -65,17 +65,15 @@ export class CursorController implements UiLifeCycles, Printable {
     el.addEventListener('blur', this.onBlur);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
-  }
-
-  public stop(): void {
-    const el = this.opts.source;
-    el.removeEventListener('mousedown', this.onMouseDown);
-    el.removeEventListener('keydown', this.onKeyDown);
-    el.removeEventListener('focus', this.onFocus);
-    el.removeEventListener('blur', this.onBlur);
-    document.removeEventListener('mousemove', this.onMouseMove);
-    document.removeEventListener('mouseup', this.onMouseUp);
-    this._cursor[1](); // Stop throttling loop.
+    return () => {
+      el.removeEventListener('mousedown', this.onMouseDown);
+      el.removeEventListener('keydown', this.onKeyDown);
+      el.removeEventListener('focus', this.onFocus);
+      el.removeEventListener('blur', this.onBlur);
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
+      this._cursor[1](); // Stop throttling loop.
+    };
   }
 
   public readonly focus = new ValueSyncStore<boolean>(false);

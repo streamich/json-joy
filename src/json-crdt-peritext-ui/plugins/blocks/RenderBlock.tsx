@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {Blockquote} from './Blockquote';
-import type {BlockViewProps} from '../../react/BlockView';
+import type {BlockViewProps} from '../../web/react/BlockView';
 
 export interface RenderBlockProps extends BlockViewProps {
   children: React.ReactNode;

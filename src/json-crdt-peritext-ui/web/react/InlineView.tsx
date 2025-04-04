@@ -2,7 +2,7 @@ import * as React from 'react';
 import {put} from 'nano-theme';
 import {CssClass, ElementAttr} from '../constants';
 import {usePeritext} from './context';
-import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
+import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 import type {SpanProps} from './types';
 
 put('.' + CssClass.Inline, {
@@ -47,7 +47,7 @@ export interface InlineViewProps {
 export const InlineView: React.FC<InlineViewProps> = (props) => {
   const {inline} = props;
   const ctx = usePeritext();
-  const {plugins} = ctx;
+  const {plugins, dom} = ctx;
   const ref = React.useRef<HTMLSpanElement | null>(null);
   const text = inline.text();
 
@@ -57,9 +57,14 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   let attr: SpanProps = {
     className: CssClass.Inline,
     ref: (span: HTMLSpanElement | null) => {
+      const inlines = dom.inlines;
+      const start = inline.start;
       ref.current = span as HTMLSpanElement;
       if (span) {
         (span as any)[ElementAttr.InlineOffset] = inline;
+        inlines.set(start, span);
+      } else {
+        inlines.del(start);
       }
     },
   };

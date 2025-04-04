@@ -1,14 +1,14 @@
 import * as React from 'react';
 import useHarmonicIntervalFn from 'react-use/lib/useHarmonicIntervalFn';
 import {keyframes, rule} from 'nano-theme';
-import {usePeritext} from '../../react/context';
-import {useSyncStore, useSyncStoreOpt} from '../../react/hooks';
+import {usePeritext} from '../../web/react/context';
+import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
 import {DefaultRendererColors} from './constants';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {useCursorPlugin} from './context';
 import {CaretScore} from '../../components/CaretScore';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
-import type {CaretViewProps} from '../../react/cursor/CaretView';
+import type {CaretViewProps} from '../../web/react/cursor/CaretView';
 
 const height = 1.5;
 const ms = 350;
@@ -74,6 +74,31 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
   const plugin = useCursorPlugin();
+  const ref = React.useRef<HTMLSpanElement>(null);
+
+  // Place caret at the end of line wrap.
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const style = el.style;
+    style.top = '0px';
+    style.left = '0px';
+    if (point.anchor === Anchor.After) {
+      if (point.isAbs()) return;
+      const rect = ctx.dom.getCharRect(point.id);
+      if (!rect) return;
+      const nextPoint = point.copy((p) => p.refBefore());
+      if (nextPoint.isAbs()) return;
+      const rect2 = ctx.dom.getCharRect(nextPoint.id);
+      if (!rect2) return;
+      if (rect.x > rect2.x) {
+        const dx = rect.x + rect.width - rect2.x;
+        const dy = rect.y - rect2.y;
+        style.top = dy + 'px';
+        style.left = dx + 'px';
+      }
+    }
+  }, [point, ctx.dom.getCharRect]);
 
   const anchorForward = point.anchor === Anchor.Before;
 
@@ -93,7 +118,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
   }
 
   return (
-    <span className={blockClass}>
+    <span ref={ref} className={blockClass}>
       {children}
       {score !== plugin.lastVisScore.value && (
         <CaretScore

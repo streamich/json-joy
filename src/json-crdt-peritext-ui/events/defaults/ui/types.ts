@@ -1,6 +1,6 @@
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
 import type {ITimestampStruct} from '../../../../json-crdt-patch';
-import type {Rect} from '../../../dom/types';
+import type {Rect} from '../../../web/types';
 
 /**
  * API which a rendering surface (UI) must implement to be used by the event

@@ -1,5 +1,5 @@
-import type {UndoManager, UndoItem} from '../../types';
-import type {UiLifeCycles} from '../types';
+import type {UndoManager, UndoItem} from '../../../types';
+import type {UiLifeCycles} from '../../types';
 
 /**
  * A Memory-based undo manager.
@@ -35,6 +35,7 @@ export class MemoryUndo implements UndoManager, UiLifeCycles {
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {}
-  public stop(): void {}
+  public start() {
+    return () => {};
+  }
 }

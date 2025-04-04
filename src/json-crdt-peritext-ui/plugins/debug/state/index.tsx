@@ -1,7 +1,7 @@
 import {ValueSyncStore} from '../../../../util/events/sync-store';
-import type {UiLifeCyclesRender} from '../../../dom/types';
+import type {UiLifeCycles} from '../../../web/types';
 
-export class DebugState implements UiLifeCyclesRender {
+export class DebugState implements UiLifeCycles {
   public readonly enabled = new ValueSyncStore<boolean>(false);
   public readonly showSliceOutlines = new ValueSyncStore<boolean>(true);
   public readonly showSliceInfo = new ValueSyncStore<boolean>(true);
@@ -30,7 +30,7 @@ export class DebugState implements UiLifeCyclesRender {
     }
   }
 
-  /** ------------------------------------------- {@link UiLifeCyclesRender} */
+  /** ------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
     return () => {};

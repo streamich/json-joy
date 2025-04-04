@@ -4,7 +4,7 @@ import {rule} from 'nano-theme';
 import {useDebugCtx} from '../context';
 import {ButtonGroup} from '../../../components/ButtonGroup';
 import {Button} from '../../../components/Button';
-import {useSyncStore} from '../../../react/hooks';
+import {useSyncStore} from '../../../web/react/hooks';
 
 const consoleClass = rule({
   bxz: 'border-box',

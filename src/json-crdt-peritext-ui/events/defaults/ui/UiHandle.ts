@@ -2,7 +2,7 @@ import {tick} from '../../../../json-crdt-patch';
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import type {Peritext} from '../../../../json-crdt-extensions';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
-import type {Rect} from '../../../dom/types';
+import type {Rect} from '../../../web/types';
 import type {PeritextUiApi, UiLineEdge, UiLineInfo} from './types';
 
 export class UiHandle {
@@ -27,11 +27,10 @@ export class UiHandle {
    */
   public getPointRect(pos: number | Point<string>, right = true): Rect | undefined {
     const txt = this.txt;
-    const point = typeof pos === 'number' ? txt.pointAt(pos) : pos;
-    const char = right ? point.rightChar() : point.leftChar();
-    if (!char) return;
-    const id = tick(char.chunk.id, char.off);
-    return this.api.getCharRect?.(id);
+    const point = typeof pos === 'number' ? txt.pointAt(pos) : pos.clone();
+    if (right) point.refBefore();
+    else point.refAfter();
+    return this.api.getCharRect?.(point.id);
   }
 
   public pointX(pos: number | Point<string>): [x: number, rect: Rect] | undefined {

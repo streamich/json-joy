@@ -1,6 +1,6 @@
 import type * as React from 'react';
 import {CommonSliceType} from '../../../json-crdt-extensions';
-import type {PeritextPlugin} from '../../react/types';
+import type {PeritextPlugin} from '../../web/react/types';
 import type {InlineAttrStack} from '../../../json-crdt-extensions/peritext/block/Inline';
 
 export const text: PeritextPlugin['text'] = (props, inline) => {

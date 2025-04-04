@@ -1,4 +1,4 @@
-import {create} from '..';
+import {createEvents} from '..';
 import {type Kit, runAlphabetKitTestSuite} from '../../../json-crdt-extensions/peritext/__tests__/setup';
 import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
 import {create as createTransfer} from '../../../json-crdt-extensions/peritext/transfer/create';
@@ -6,7 +6,7 @@ import {create as createTransfer} from '../../../json-crdt-extensions/peritext/t
 const testSuite = (getKit: () => Kit) => {
   const setup = () => {
     const kit = getKit();
-    const defaults = create(kit.peritext);
+    const defaults = createEvents(kit.peritext);
     const et = defaults.et;
     return {...kit, defaults, et};
   };

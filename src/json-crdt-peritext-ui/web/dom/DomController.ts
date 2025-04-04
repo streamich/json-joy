@@ -1,4 +1,5 @@
 import {printTree, type Printable} from 'tree-dump';
+import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {InputController} from './InputController';
 import {CursorController} from './CursorController';
 import {RichTextController} from './RichTextController';
@@ -6,15 +7,17 @@ import {KeyController} from './KeyController';
 import {CompositionController} from './CompositionController';
 import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
-import {Anchor} from '../../json-crdt-extensions/peritext/rga/constants';
-import type {ITimestampStruct} from '../../json-crdt-patch';
-import type {PeritextEventDefaults} from '../events/defaults/PeritextEventDefaults';
-import type {PeritextEventTarget} from '../events/PeritextEventTarget';
-import type {Rect, UiLifeCycles} from '../dom/types';
-import type {Log} from '../../json-crdt/log/Log';
-import type {Inline} from '../../json-crdt-extensions';
-import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
-import type {PeritextUiApi} from '../events/defaults/ui/types';
+import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
+import {UiHandle} from '../../events/defaults/ui/UiHandle';
+import {compare, type ITimestampStruct} from '../../../json-crdt-patch';
+import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
+import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
+import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {Rect, UiLifeCycles} from '../types';
+import type {Log} from '../../../json-crdt/log/Log';
+import type {Inline, Peritext} from '../../../json-crdt-extensions';
+import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
+import type {PeritextUiApi} from '../../events/defaults/ui/types';
 
 export interface DomControllerOpts {
   source: HTMLElement;
@@ -23,6 +26,7 @@ export interface DomControllerOpts {
 }
 
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
+  public readonly txt: Peritext;
   public readonly et: PeritextEventTarget;
   public readonly keys: KeyController;
   public readonly comp: CompositionController;
@@ -31,9 +35,21 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly richText: RichTextController;
   public readonly annals: AnnalsController;
 
+  /**
+   * Index of block HTML <div> elements keyed by the ID (timestamp) of the split
+   * boundary that starts that block element.
+   */
+  public readonly blocks = new AvlMap<ITimestampStruct, HTMLSpanElement>(compare);
+
+  /**
+   * Index of inline HTML <span> elements keyed by the slice start {@link Point}.
+   */
+  public readonly inlines = new AvlMap<Point, HTMLSpanElement>((a, b) => a.cmpSpatial(b));
+
   constructor(public readonly opts: DomControllerOpts) {
     const {source, events, log} = opts;
     const {txt} = events;
+    this.txt = txt;
     const et = (this.et = opts.events.et);
     const keys = (this.keys = new KeyController({source}));
     const comp = (this.comp = new CompositionController({et, source, txt}));
@@ -41,26 +57,28 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     this.cursor = new CursorController({et, source, txt, keys});
     this.richText = new RichTextController({et, source, txt});
     this.annals = new AnnalsController({et, txt, log});
+    const uiHandle = new UiHandle(txt, <PeritextUiApi>this);
+    events.ui = uiHandle;
+    events.undo = this.annals;
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
-    this.keys.start();
-    this.comp.start();
-    this.input.start();
-    this.cursor.start();
-    this.richText.start();
-    this.annals.start();
-  }
-
-  public stop(): void {
-    this.keys.stop();
-    this.comp.stop();
-    this.input.stop();
-    this.cursor.stop();
-    this.richText.stop();
-    this.annals.stop();
+  public start() {
+    const stopKeys = this.keys.start();
+    const stopComp = this.comp.start();
+    const stopInput = this.input.start();
+    const stopCursor = this.cursor.start();
+    const stopRichText = this.richText.start();
+    const stopAnnals = this.annals.start();
+    return () => {
+      stopKeys();
+      stopComp();
+      stopInput();
+      stopCursor();
+      stopRichText();
+      stopAnnals();
+    };
   }
 
   /** ------------------------------------------------- {@link PeritextUiApi} */
@@ -69,19 +87,39 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     this.opts.source.focus();
   }
 
-  protected getSpans() {
-    return this.opts.source.querySelectorAll('.jsonjoy-peritext-inline');
+  protected getSpans(blockInnerId?: Point) {
+    let el: Element | undefined;
+    if (blockInnerId) {
+      const txt = this.txt;
+      const marker = txt.overlay.getOrNextLowerMarker(blockInnerId);
+      const markerId = marker?.id ?? txt.str.id;
+      el = this.blocks.get(markerId);
+    }
+    el ??= this.opts.source;
+    return el.querySelectorAll('.jsonjoy-peritext-inline');
   }
 
-  protected findSpanContaining(range: Range): [span: HTMLSpanElement, inline: Inline] | undefined {
-    const spans = this.getSpans();
+  protected findSpanContaining(char: Range): HTMLSpanElement | undefined {
+    const start = char.start;
+    const overlayPoint = this.txt.overlay.getOrNextLower(start);
+    if (overlayPoint) {
+      const span = this.inlines.get(overlayPoint);
+      if (span) {
+        const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
+        if (inline) {
+          const contains = inline.contains(char);
+          if (contains) return span;
+        }
+      }
+    }
+    const spans = this.getSpans(start);
     const length = spans.length;
     for (let i = 0; i < length; i++) {
       const span = spans[i] as HTMLSpanElement;
       const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
       if (inline) {
-        const contains = inline.contains(range);
-        if (contains) return [span, inline];
+        const contains = inline.contains(char);
+        if (contains) return span;
       }
     }
     return;
@@ -94,8 +132,10 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const start = txt.point(id, Anchor.Before);
     const end = txt.point(id, Anchor.After);
     const charRange = txt.range(start, end);
-    const [span, inline] = this.findSpanContaining(charRange) || [];
-    if (!span || !inline) return;
+    const span = this.findSpanContaining(charRange);
+    if (!span) return;
+    const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
+    if (!inline) return;
     const textNode = span.firstChild as Text;
     if (!textNode) return;
     const range = document.createRange();
@@ -117,6 +157,8 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return (
       'DOM' +
       printTree(tab, [
+        (tab) => 'blocks: ' + this.blocks.size(),
+        (tab) => 'inlines: ' + this.inlines.size(),
         (tab) => this.cursor.toString(tab),
         (tab) => this.keys.toString(tab),
         (tab) => this.comp.toString(tab),

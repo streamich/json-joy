@@ -1,14 +1,14 @@
 import * as React from 'react';
-import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
+import {LeafBlock} from '../../../json-crdt-extensions/peritext/block/LeafBlock';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
 import {usePeritext} from './context';
-import {CommonSliceType} from '../../json-crdt-extensions';
+import {CommonSliceType} from '../../../json-crdt-extensions';
 import {CaretView} from './cursor/CaretView';
 import {FocusView} from './cursor/FocusView';
-import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../json-crdt-extensions/peritext/block/Inline';
+import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../../json-crdt-extensions/peritext/block/Inline';
 import {AnchorView} from './cursor/AnchorView';
-import type {Block} from '../../json-crdt-extensions/peritext/block/Block';
+import type {Block} from '../../../json-crdt-extensions/peritext/block/Block';
 
 export interface BlockViewProps {
   hash: number;
@@ -19,7 +19,7 @@ export interface BlockViewProps {
 export const BlockView: React.FC<BlockViewProps> = React.memo(
   (props) => {
     const {block, el} = props;
-    const {plugins} = usePeritext();
+    const {plugins, dom} = usePeritext();
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
       for (const inline of block.texts()) {
@@ -75,7 +75,18 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
     }
 
     let children: React.ReactNode = (
-      <span ref={(element) => el?.(element)} style={{position: 'relative', display: 'block'}}>
+      <span
+        ref={(element) => {
+          el?.(element);
+          if (block instanceof LeafBlock) {
+            const blockId = block.start.id;
+            const blocks = dom.blocks;
+            if (element) blocks.set(blockId, element);
+            else blocks.del(blockId);
+          }
+        }}
+        style={{position: 'relative', display: 'block'}}
+      >
         {elements.length ? elements : Char.ZeroLengthSpace}
       </span>
     );

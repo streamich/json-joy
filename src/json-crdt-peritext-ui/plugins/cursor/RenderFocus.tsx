@@ -2,9 +2,9 @@
 import * as React from 'react';
 import {rule, drule, keyframes} from 'nano-theme';
 import {DefaultRendererColors} from './constants';
-import {usePeritext} from '../../react';
-import {useSyncStoreOpt} from '../../react/hooks';
-import type {FocusViewProps} from '../../react/cursor/FocusView';
+import {usePeritext} from '../../web/react';
+import {useSyncStoreOpt} from '../../web/react/hooks';
+import type {FocusViewProps} from '../../web/react/cursor/FocusView';
 
 const width = 0.14;
 const animationTime = '1s';

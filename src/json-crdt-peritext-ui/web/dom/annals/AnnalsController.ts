@@ -1,11 +1,11 @@
 import {WebUndo} from './WebUndo';
 import {printTree, type Printable} from 'tree-dump';
-import type {Patch} from '../../../json-crdt-patch';
-import type {Peritext} from '../../../json-crdt-extensions';
-import type {UiLifeCycles} from '../types';
-import type {RedoCallback, RedoItem, UndoCallback, UndoCollector, UndoItem} from '../../types';
-import type {Log} from '../../../json-crdt/log/Log';
-import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {Patch} from '../../../../json-crdt-patch';
+import type {Peritext} from '../../../../json-crdt-extensions';
+import type {UiLifeCycles} from '../../types';
+import type {RedoCallback, RedoItem, UndoCallback, UndoCollector, UndoItem} from '../../../types';
+import type {Log} from '../../../../json-crdt/log/Log';
+import type {PeritextEventTarget} from '../../../events/PeritextEventTarget';
 
 export interface UndoRedoControllerOpts {
   log: Log;
@@ -37,8 +37,8 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
-  public start(): void {
-    this.manager.start();
+  public start() {
+    const stopManager = this.manager.start();
     const {opts, captured} = this;
     const {txt} = opts;
     txt.model.api.onFlush.listen((patch) => {
@@ -49,10 +49,9 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
         this.manager.push(item);
       }
     });
-  }
-
-  public stop(): void {
-    this.manager.stop();
+    return () => {
+      stopManager();
+    };
   }
 
   public readonly _undo: UndoCallback<Patch, Patch> = (doPatch: Patch) => {

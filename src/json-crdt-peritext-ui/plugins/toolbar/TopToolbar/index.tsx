@@ -3,10 +3,10 @@ import * as React from 'react';
 import {Button} from '../../../components/Button';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {ButtonGroup} from '../../../components/ButtonGroup';
-import {useSyncStore, useSyncStoreOpt} from '../../../react/hooks';
+import {useSyncStore, useSyncStoreOpt} from '../../../web/react/hooks';
 import {ButtonSeparator} from '../../../components/ButtonSeparator';
 import {useToolbarPlugin} from '../context';
-import type {PeritextSurfaceState} from '../../../react';
+import type {PeritextSurfaceState} from '../../../web';
 
 export interface TopToolbarProps {
   ctx: PeritextSurfaceState;

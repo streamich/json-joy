@@ -4,9 +4,9 @@ import {context} from './context';
 import {Button} from '../../components/Button';
 import {Console} from './Console';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import {useSyncStore} from '../../react/hooks';
+import {useSyncStore} from '../../web/react/hooks';
 import {DebugState} from './state';
-import type {PeritextSurfaceState, PeritextViewProps} from '../../react';
+import type {PeritextSurfaceState} from '../../web';
 
 const blockClass = rule({
   pos: 'relative',
@@ -28,11 +28,11 @@ const childrenDebugClass = rule({
   out: '1px dotted black !important',
 });
 
-export interface RenderPeritextProps extends PeritextViewProps {
+export interface RenderPeritextProps {
+  children: React.ReactNode;
+  ctx: PeritextSurfaceState;
   state?: DebugState;
   button?: boolean;
-  children?: React.ReactNode;
-  ctx?: PeritextSurfaceState;
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({state: state_, ctx, button, children}) => {
