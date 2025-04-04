@@ -133,6 +133,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const end = txt.point(id, Anchor.After);
     const charRange = txt.range(start, end);
     const span = this.findSpanContaining(charRange);
+    console.log('span', span);
     if (!span) return;
     const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
     if (!inline) return;

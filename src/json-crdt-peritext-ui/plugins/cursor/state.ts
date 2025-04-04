@@ -1,5 +1,5 @@
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import {ChangeDetail} from '../../events/types';
+import type {ChangeDetail} from '../../events/types';
 import type {PeritextSurfaceState, UiLifeCycles} from '../../web';
 
 export class CursorState implements UiLifeCycles {
@@ -16,11 +16,12 @@ export class CursorState implements UiLifeCycles {
     public readonly ctx: PeritextSurfaceState,
   ) {}
 
-  /* --------------------------------------------------- {@link UiLifeCycles} */
+  /** -------------------------------------------------- {@link UiLifeCycles} */
   public start(): () => void {
     const dom = this.ctx.dom;
     let lastNow: number = 0;
-    const listener = (event: CustomEvent<ChangeDetail>) => {
+
+    const onChange = (event: CustomEvent<ChangeDetail>) => {
       const now = Date.now();
       const timeDiff = now - lastNow;
       let delta = 0;
@@ -41,9 +42,10 @@ export class CursorState implements UiLifeCycles {
       this.scoreDelta.next(delta);
       lastNow = now;
     };
-    dom.et.addEventListener('change', listener);
+
+    dom.et.addEventListener('change', onChange);
     return () => {
-      dom.et.removeEventListener('change', listener);
+      dom.et.removeEventListener('change', onChange);
     };
   }
 }
