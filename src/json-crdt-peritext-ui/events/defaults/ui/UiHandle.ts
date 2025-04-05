@@ -82,6 +82,7 @@ export class UiHandle {
     while (true) {
       const next = curr.copy((p) => p.step(right ? 1 : -1));
       if (!next) return prepareReturn();
+      if (next.isAbs()) return prepareReturn();
       const nextRect = this.getPointRect(next, right);
       if (!nextRect) return prepareReturn();
       if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return prepareReturn();
@@ -93,6 +94,7 @@ export class UiHandle {
   public getLineInfo(pos: number | Point<string>): UiLineInfo | undefined {
     const txt = this.txt;
     const point = this.point(pos);
+    if (point.isAbs()) return;
     const isEndOfText = point.viewPos() === txt.strApi().length();
     if (isEndOfText) return;
     const left = this.getLineEnd(point, false);
@@ -108,6 +110,7 @@ export class UiHandle {
     const point = edge.copy((p) => p.step(direction));
     const success = txt.overlay.skipMarkers(point, direction);
     if (!success) return;
+    if (point.isAbs()) return;
     return this.getLineInfo(point);
   }
 }
