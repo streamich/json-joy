@@ -1206,4 +1206,16 @@ export class ToolbarState implements UiLifeCycles {
       ],
     };
   };
+
+  public readonly blockMenu = (): MenuItem => {
+    return {
+      name: 'Block menu',
+      more: true,
+      children: [
+        this.annotationsMenu(),
+        this.modifyMenu(),
+        this.clipboardMenu(),
+      ],
+    };
+  };
 }

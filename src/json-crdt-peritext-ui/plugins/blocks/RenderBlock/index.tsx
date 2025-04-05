@@ -1,8 +1,8 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
-import {CommonSliceType} from '../../../json-crdt-extensions';
+import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {Blockquote} from './Blockquote';
-import type {BlockViewProps} from '../../web/react/BlockView';
+import type {BlockViewProps} from '../../../web/react/BlockView';
 
 export interface RenderBlockProps extends BlockViewProps {
   children: React.ReactNode;
