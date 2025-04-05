@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {RenderInline} from './RenderInline';
+import {RenderInline} from './inline/RenderInline';
 import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
 import {text} from '../minimal/text';
-import {RenderBlock} from './RenderBlock';
+import {RenderBlock} from './block/RenderBlock';
 import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import type {PeritextPlugin} from '../../web/react/types';
