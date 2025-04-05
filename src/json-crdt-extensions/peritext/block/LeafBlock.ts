@@ -16,6 +16,10 @@ export class LeafBlock<Attr = unknown> extends Block<Attr> {
     return str;
   }
 
+  public isLeaf(): boolean {
+    return true;
+  }
+
   // ------------------------------------------------------------------- export
 
   public toJson(): PeritextMlElement {

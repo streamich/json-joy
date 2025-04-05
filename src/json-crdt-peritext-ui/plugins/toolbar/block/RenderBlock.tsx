@@ -1,17 +1,24 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
+import {LeafBlockFrame} from './LeafBlockFrame';
 import type {BlockViewProps} from '../../../web/react/BlockView';
 
 export interface RenderBlockProps extends BlockViewProps {
   children: React.ReactNode;
 }
 
-export const RenderBlock: React.FC<RenderBlockProps> = ({block, children}) => {
-  const tag = block.tag();
+export const RenderBlock: React.FC<RenderBlockProps> = (props) => {
+  const {block, children} = props;
 
-  return (
-    <div style={{border: '1px solid red'}}>
-      {children}
-    </div>
-  );
+  let element: React.ReactNode = children;
+
+  if (block.isLeaf()) {
+    element = (
+      <LeafBlockFrame {...props}>
+        {children}
+      </LeafBlockFrame>
+    );
+  }
+
+  return element;
 };
