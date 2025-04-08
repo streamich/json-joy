@@ -48,7 +48,7 @@ export class ToolbarState implements UiLifeCycles {
             const {activeLeafBlockId$} = this;
             const {overlay, editor} = txt;
             const value = activeLeafBlockId$.getValue();
-            if (!editor.hasCursor()) {
+            if (editor.cursorCard() !== 1 || !editor.cursor.isCollapsed()) {
               if (value) activeLeafBlockId$.next(null);
               return;
             }
