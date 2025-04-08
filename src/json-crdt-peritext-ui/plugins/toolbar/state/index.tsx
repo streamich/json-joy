@@ -1394,6 +1394,7 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Leaf block menu',
       maxToolbarItems: 1,
       more: true,
+      minWidth: 280,
       children: [
         this.blockTypeMenu(),
         secondBrain(),

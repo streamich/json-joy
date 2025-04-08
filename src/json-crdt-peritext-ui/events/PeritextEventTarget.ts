@@ -74,8 +74,8 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('format', detail);
   }
 
-  public marker(detail: MarkerDetail): void;
   public marker(action: MarkerDetail['action'], type: MarkerDetail['type'], data?: MarkerDetail['data']): void;
+  public marker(detail: MarkerDetail): void;
   public marker(a: MarkerDetail | MarkerDetail['action'], b?: MarkerDetail['type'], c?: MarkerDetail['data']): void {
     const detail: MarkerDetail = typeof a === 'object' ? a : {action: a, type: b, data: c};
     this.dispatch('marker', detail);
