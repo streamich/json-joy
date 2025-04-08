@@ -79,8 +79,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     if (point.isAbsStart()) {
       const first = this.first();
       if (!first) return;
-      if (first.isAbsStart()) return first;
-      point = first;
+      return first.isAbsStart() ? first : void 0;
     } else if (point.isAbsEnd()) return this.last();
     let curr: OverlayPoint<T> | undefined = this.root;
     let result: OverlayPoint<T> | undefined = undefined;
