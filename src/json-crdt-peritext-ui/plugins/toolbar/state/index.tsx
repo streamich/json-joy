@@ -8,6 +8,7 @@ import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
+import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -1229,6 +1230,7 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly blockTypeMenu = (): MenuItem => {
+    const et = this.surface.events.et;
     const menu: MenuItem = {
       name: 'Block type',
       expand: 1,
@@ -1239,31 +1241,38 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Paragraph',
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
               icon: () => <Iconista width={16} height={16} set="lucide" icon="pilcrow" />,
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="pilcrow" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.p);
+              },
             },
             {
               name: 'Blockquote',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.blockquote);
+              },
             },
             {
               name: 'Code block',
-              // icon: () => <Iconista width={16} height={16} set="tabler" icon="terminal" />,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.codeblock);
+              },
             },
             {
               name: 'Math block',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="math" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.mathblock);
+              },
             },
             {
               name: 'Pre-formatted',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.pre);
+              },
             },
           ],
         },
