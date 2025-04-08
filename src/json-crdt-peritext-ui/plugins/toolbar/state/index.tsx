@@ -6,6 +6,8 @@ import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
+import {BehaviorSubject} from 'rxjs';
+import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -17,6 +19,11 @@ export class ToolbarState implements UiLifeCycles {
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
 
+  /**
+   * The ID of the active (where the main cursor or focus is placed) leaf block.
+   */
+  public readonly activeLeafBlockId$ = new BehaviorSubject<ITimestampStruct | null>(null);
+
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: ToolbarPluginOpts,
@@ -27,6 +34,7 @@ export class ToolbarState implements UiLifeCycles {
   public start() {
     const {surface, showInlineToolbar} = this;
     const {dom, events} = surface;
+    const txt = dom.txt;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const source = dom!.opts.source;
@@ -34,10 +42,24 @@ export class ToolbarState implements UiLifeCycles {
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
       this.setLastEv(lastEvent);
-      // const lastEventIsCaretPositionChange =
-      //   lastEvent?.type === 'cursor' &&
-      //   typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
-      // this.showInlineToolbar.next(this.doShowInlineToolbar());
+      if (lastEvent) {
+        switch (lastEvent.type) {
+          case 'cursor': {
+            const {activeLeafBlockId$} = this;
+            const {overlay, editor} = txt;
+            const value = activeLeafBlockId$.getValue();
+            if (!editor.hasCursor()) {
+              if (value) activeLeafBlockId$.next(null);
+              return;
+            }
+            const focus = editor.cursor.focus();
+            const marker = overlay.getOrNextLowerMarker(focus);
+            const markerId = marker?.marker.start.id ?? txt.str.id;
+            const doSet = !value || compare(value, markerId) !== 0;
+            if (doSet) activeLeafBlockId$.next(markerId);
+          }
+        }
+      }
     });
 
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
@@ -55,7 +77,6 @@ export class ToolbarState implements UiLifeCycles {
 
     source?.addEventListener('mousedown', mouseDownListener);
     source?.addEventListener('mouseup', mouseUpListener);
-
     return () => {
       changeUnsubscribe();
       unsubscribeMouseDown?.();
@@ -69,15 +90,15 @@ export class ToolbarState implements UiLifeCycles {
     this.lastEventTs = Date.now();
   }
 
-  private doShowInlineToolbar(): boolean {
-    const {surface, lastEvent} = this;
-    if (surface.dom!.cursor.mouseDown.value) return false;
-    if (!lastEvent) return false;
-    const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
-    if (!lastEventIsCursorEvent) return false;
-    if (!surface.peritext.editor.cursorCount()) return false;
-    return true;
-  }
+  // private doShowInlineToolbar(): boolean {
+  //   const {surface, lastEvent} = this;
+  //   if (surface.dom!.cursor.mouseDown.value) return false;
+  //   if (!lastEvent) return false;
+  //   const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
+  //   if (!lastEventIsCursorEvent) return false;
+  //   if (!surface.peritext.editor.cursorCount()) return false;
+  //   return true;
+  // }
 
   // -------------------------------------------------------------------- Menus
 

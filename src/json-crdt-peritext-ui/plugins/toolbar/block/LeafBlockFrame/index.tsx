@@ -1,11 +1,11 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
 import {useToolbarPlugin} from '../../context';
-import {inlineText} from '../menuItems';
-import {ExpandableToolbar} from './ExpandableToolbar';
-import type {RenderBlockProps} from '../RenderBlock';
 import {AutoExpandableToolbar} from './AutoExpandableToolbar';
+import {compare} from '../../../../../json-crdt-patch';
+import type {RenderBlockProps} from '../RenderBlock';
 
 const blockClass = rule({
   d: 'block',
@@ -30,15 +30,20 @@ export interface LeafBlockFrameProps extends RenderBlockProps {
 }
 
 export const LeafBlockFrame: React.FC<LeafBlockFrameProps> = ({block, children}) => {
-  const state = useToolbarPlugin();
-  const menu = React.useMemo(() => state?.toolbar.leafBlockSmallMenu(), [state]);
+  const {toolbar} = useToolbarPlugin();
+  const activeLeafBlockId = useBehaviorSubject(toolbar.activeLeafBlockId$);
+  const menu = React.useMemo(() => toolbar.leafBlockSmallMenu(), [toolbar]);
+
+  const isBlockActive = !!activeLeafBlockId && (compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0);
 
   return (
     <div className={blockClass}>
       {children}
-      <div className={topLeftOverlay}>
-        <AutoExpandableToolbar menu={menu!} more={{small: true}} />
-      </div>
+      {isBlockActive && (
+        <div className={topLeftOverlay}>
+          <AutoExpandableToolbar menu={menu!} more={{small: true}} />
+        </div>
+      )}
       {/* <div className={topRightOverlay}>
         <InlineToolbarMenu menu={menu!} />
       </div> */}

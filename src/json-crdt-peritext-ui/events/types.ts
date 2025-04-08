@@ -376,3 +376,12 @@ export type PeritextEventDetailMap = {
   buffer: BufferDetail;
   annals: AnnalsDetail;
 };
+
+export type PeritextChangeEvent = CustomEvent<ChangeDetail>;
+export type PeritextInsertEvent = CustomEvent<InsertDetail>;
+export type PeritextDeleteEvent = CustomEvent<DeleteDetail>;
+export type PeritextCursorEvent = CustomEvent<CursorDetail>;
+export type PeritextFormatEvent = CustomEvent<FormatDetail>;
+export type PeritextMarkerEvent = CustomEvent<MarkerDetail>;
+export type PeritextBufferEvent = CustomEvent<BufferDetail>;
+export type PeritextAnnalsEvent = CustomEvent<AnnalsDetail>;
