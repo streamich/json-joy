@@ -130,8 +130,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     if (point.isAbsStart()) {
       const first = this.firstMarker();
       if (!first) return;
-      if (first.isAbsStart()) return first;
-      point = first;
+      return first.isAbsStart() ? first : void 0;
     } else if (point.isAbsEnd()) return this.lastMarker();
     let curr: MarkerOverlayPoint<T> | undefined = this.root2;
     let result: MarkerOverlayPoint<T> | undefined = undefined;

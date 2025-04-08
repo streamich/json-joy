@@ -313,3 +313,42 @@ describe('.getOrNextHigher()', () => {
     });
   });
 });
+
+describe('.getOrNextLowerMarker()', () => {
+  test('returns "undefined" when ahead of any points', () => {
+    const model = Model.create();
+    const api = model.api;
+    api.root({
+      text: '1234',
+      slices: [],
+    });
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    peritext.editor.cursor.setAt(2, 1);
+    peritext.editor.saved.insMarker(2);
+    peritext.refresh();
+    const str = peritext.str;
+    const id1 = str.find(1)!;
+    const p1 = peritext.point(id1, Anchor.After);
+    const p2 = peritext.pointStart()!;
+    const result1 = peritext.overlay.getOrNextLowerMarker(p1);
+    const result2 = peritext.overlay.getOrNextLowerMarker(p2);
+    expect(result1).toBe(undefined);
+    expect(result2).toBe(undefined);
+  });
+
+  test('returns "undefined" when at ABS start and there are no slices at ABS start', () => {
+    const model = Model.create();
+    const api = model.api;
+    api.root({
+      text: '1234',
+      slices: [],
+    });
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    peritext.editor.cursor.setAt(2, 1);
+    peritext.editor.saved.insMarker(2);
+    peritext.refresh();
+    const p1 = peritext.pointAbsStart();
+    const result = peritext.overlay.getOrNextLowerMarker(p1);
+    expect(result).toBe(undefined);
+  });
+});
