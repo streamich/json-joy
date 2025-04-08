@@ -4694,7 +4694,7 @@ rx-use@^1.8.1:
   resolved "https://registry.yarnpkg.com/rx-use/-/rx-use-1.8.1.tgz#d6dc272eed2197fe785b4b678a7220d856cff1d3"
   integrity sha512-GiwSeqF8IxH8vW2hEQEeyw4b99538u2iT1buSlR3ZFbSqpjLUMA1e8ulDZTYKReG+ajXNsub5+LD6kWBlpzV/g==
 
-rxjs@^7.8.1:
+rxjs@^7.8.2:
   version "7.8.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.2.tgz#955bc473ed8af11a002a2be52071bf475638607b"
   integrity sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==
