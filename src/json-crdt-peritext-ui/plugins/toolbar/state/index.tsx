@@ -1207,15 +1207,168 @@ export class ToolbarState implements UiLifeCycles {
     };
   };
 
-  public readonly blockMenu = (): MenuItem => {
-    return {
-      name: 'Block menu',
-      more: true,
+  public readonly blockTypeMenu = (): MenuItem => {
+    const menu: MenuItem = {
+      name: 'Block type',
+      expand: 1,
       children: [
-        this.annotationsMenu(),
-        this.modifyMenu(),
-        this.clipboardMenu(),
+        {
+          name: 'Text blocks',
+          expand: 3,
+          children: [
+            {
+              name: 'Paragraph',
+              // icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="pilcrow" />,
+              // icon: () => <Iconista width={15} height={15} set="radix" icon="pilcrow" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Blockquote',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Code block',
+              // icon: () => <Iconista width={16} height={16} set="tabler" icon="terminal" />,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Math block',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="math" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Pre-formatted',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          name: 'Headings',
+          sepBefore: true,
+          expand: 3,
+          children: [
+            {
+              name: 'Heading 1',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-1" />,
+              // icon: () => <Iconista width={16} height={16} set="simple" icon="h-1" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 2',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-2" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 3',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-3" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 4',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-4" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 5',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-5" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 6',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-6" />,
+              onSelect: () => {},
+            },
+            {
+              sepBefore: true,
+              name: 'Title',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Sub-title',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          sepBefore: true,
+          name: 'Lists',
+          expand: 3,
+          children: [
+            {
+              name: 'Bullet list',
+              // icon: () => <Iconista width={16} height={16} set="tabler" icon="list" />,
+              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--bulleted" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Numbered list',
+              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--numbered" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Task list',
+              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--checked" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          sepBefore: true,
+          name: 'Layouts',
+          expand: 0,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="layout" />,
+          children: [
+            {
+              name: 'Table',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="table" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Columns',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="columns" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          sepBefore: true,
+          name: 'Embed',
+          expand: 0,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="image-in-picture" />,
+          children: [
+            {
+              name: 'Image',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="photo-scan" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'File',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="file" />,
+              onSelect: () => {},
+            },
+          ],
+        },
       ],
     };
+    return menu;
+  };
+
+  public readonly leafBlockSmallMenu = (): MenuItem => {
+    const menu: MenuItem = {
+      name: 'Leaf block menu',
+      maxToolbarItems: 1,
+      more: true,
+      children: [
+        this.blockTypeMenu(),
+        secondBrain(),
+      ],
+    };
+    return menu;
   };
 }
