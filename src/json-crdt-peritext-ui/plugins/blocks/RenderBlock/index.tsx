@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {Blockquote} from './Blockquote';
+import {Codeblock} from './Codeblock';
 import type {BlockViewProps} from '../../../web/react/BlockView';
 
 export interface RenderBlockProps extends BlockViewProps {
@@ -14,6 +15,9 @@ export const RenderBlock: React.FC<RenderBlockProps> = (props) => {
   switch (tag) {
     case '':
       return children;
+    case CommonSliceType.codeblock: {
+      return <Codeblock {...props} />;
+    }
     case CommonSliceType.blockquote: {
       return <Blockquote {...props} />;
     }
