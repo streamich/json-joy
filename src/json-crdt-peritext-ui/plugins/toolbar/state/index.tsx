@@ -1247,17 +1247,17 @@ export class ToolbarState implements UiLifeCycles {
               },
             },
             {
-              name: 'Blockquote',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
-              onSelect: () => {
-                et.marker('upd', SliceTypeCon.blockquote);
-              },
-            },
-            {
               name: 'Code block',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
               onSelect: () => {
                 et.marker('upd', SliceTypeCon.codeblock);
+              },
+            },
+            {
+              name: 'Blockquote',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.blockquote);
               },
             },
             {
