@@ -5,7 +5,7 @@ import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {CommonSliceType} from '../../../../json-crdt-extensions';
+import {CommonSliceType, Peritext} from '../../../../json-crdt-extensions';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
@@ -16,6 +16,7 @@ import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
 export class ToolbarState implements UiLifeCycles {
+  public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
@@ -28,14 +29,15 @@ export class ToolbarState implements UiLifeCycles {
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: ToolbarPluginOpts,
-  ) {}
+  ) {
+    this.txt = this.surface.dom.txt;
+  }
 
   /** ------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
     const {surface, showInlineToolbar} = this;
     const {dom, events} = surface;
-    const txt = dom.txt;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const source = dom!.opts.source;
@@ -43,24 +45,7 @@ export class ToolbarState implements UiLifeCycles {
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
       this.setLastEv(lastEvent);
-      if (lastEvent) {
-        switch (lastEvent.type) {
-          case 'cursor': {
-            const {activeLeafBlockId$} = this;
-            const {overlay, editor} = txt;
-            const value = activeLeafBlockId$.getValue();
-            if (editor.cursorCard() !== 1 || !editor.cursor.isCollapsed()) {
-              if (value) activeLeafBlockId$.next(null);
-              return;
-            }
-            const focus = editor.cursor.focus();
-            const marker = overlay.getOrNextLowerMarker(focus);
-            const markerId = marker?.marker.start.id ?? txt.str.id;
-            const doSet = !value || compare(value, markerId) !== 0;
-            if (doSet) activeLeafBlockId$.next(markerId);
-          }
-        }
-      }
+      this._setActiveLeafBlockId();
     });
 
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
@@ -85,6 +70,21 @@ export class ToolbarState implements UiLifeCycles {
       source?.removeEventListener('mouseup', mouseUpListener);
     };
   }
+
+  private _setActiveLeafBlockId = () => {
+    const {activeLeafBlockId$, txt} = this;
+    const {overlay, editor} = txt;
+    const value = activeLeafBlockId$.getValue();
+    if (editor.cursorCard() !== 1 || !editor.cursor.isCollapsed()) {
+      if (value) activeLeafBlockId$.next(null);
+      return;
+    }
+    const focus = editor.cursor.focus();
+    const marker = overlay.getOrNextLowerMarker(focus);
+    const markerId = marker?.marker.start.id ?? txt.str.id;
+    const doSet = !value || compare(value, markerId) !== 0;
+    if (doSet) activeLeafBlockId$.next(markerId);
+  };
 
   private setLastEv(lastEvent: PeritextEventDetailMap['change']['ev']) {
     this.lastEvent = lastEvent;
