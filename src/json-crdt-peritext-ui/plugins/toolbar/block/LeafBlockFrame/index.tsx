@@ -32,7 +32,7 @@ export interface LeafBlockFrameProps extends RenderBlockProps {
 export const LeafBlockFrame: React.FC<LeafBlockFrameProps> = ({block, children}) => {
   const {toolbar} = useToolbarPlugin();
   const activeLeafBlockId = useBehaviorSubject(toolbar.activeLeafBlockId$);
-  const menu = React.useMemo(() => toolbar.leafBlockSmallMenu(), [toolbar]);
+  const menu = React.useMemo(() => toolbar.leafBlockSmallMenu({block}), [toolbar, block]);
 
   const isBlockActive = !!activeLeafBlockId && (compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0);
 

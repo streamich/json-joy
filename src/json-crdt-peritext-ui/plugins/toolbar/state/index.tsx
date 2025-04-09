@@ -5,7 +5,7 @@ import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {CommonSliceType, Peritext} from '../../../../json-crdt-extensions';
+import {CommonSliceType, LeafBlock, Peritext} from '../../../../json-crdt-extensions';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
@@ -1389,7 +1389,8 @@ export class ToolbarState implements UiLifeCycles {
     return menu;
   };
 
-  public readonly leafBlockSmallMenu = (): MenuItem => {
+  public readonly leafBlockSmallMenu = (ctx: LeafBlockMenuCtx): MenuItem => {
+    const et = this.surface.events.et;
     const menu: MenuItem = {
       name: 'Leaf block menu',
       maxToolbarItems: 1,
@@ -1404,8 +1405,10 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Select',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="select" />,
-              onSelect: () => {},
+              icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
+              onSelect: () => {
+                et.cursor({unit: 'block'});
+              },
             },
           ],
         },
@@ -1415,4 +1418,8 @@ export class ToolbarState implements UiLifeCycles {
     };
     return menu;
   };
+}
+
+export interface LeafBlockMenuCtx {
+  block: LeafBlock;
 }
