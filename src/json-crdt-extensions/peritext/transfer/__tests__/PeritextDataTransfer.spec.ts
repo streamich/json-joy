@@ -17,6 +17,14 @@ const setup = () => {
   return {...kit, transfer};
 };
 
+const assertMarkdownReExport = (markdown: string) => {
+  const kit = setup();
+  kit.transfer.fromMarkdown(0, markdown);
+  kit.peritext.refresh();
+  const back = kit.transfer.toMarkdown(kit.peritext.rangeAll()!);
+  expect(back).toBe(markdown);
+};
+
 test('ignores empty inline tags', () => {
   const {peritext, transfer} = setup();
   const html =
@@ -218,7 +226,6 @@ describe('Markdown', () => {
     const html = transfer.toHtml(all);
     expect(html).toBe('<blockquote><p>blockquote</p></blockquote>');
     const md2 = transfer.toMarkdown(all);
-    console.log(md2);
     expect(md2).toBe('> blockquote');
   });
 
@@ -271,5 +278,65 @@ describe('Markdown', () => {
     const md2 = transfer.toMarkdown(all);
     // console.log(md2);
     expect(md2).toBe('a' + md + 'b');
+  });
+
+  test('can re-export a single paragraph', () => {
+    assertMarkdownReExport('Hello world');
+  });
+
+  test('can re-export a paragraph and a blockquote', () => {
+    assertMarkdownReExport('Hello world\n\n> blockquote');
+  });
+
+  test('can re-export a single blockquote', () => {
+    assertMarkdownReExport('> blockquote');
+  });
+
+  test('can re-export a code block', () => {
+    assertMarkdownReExport('```\nconsole.log(123);\n```');
+  });
+
+  test.skip('can re-export a code with language specified', () => {
+    assertMarkdownReExport('```js\nconsole.log(123);\n```');
+  });
+
+  test('can re-export various block elements', () => {
+    assertMarkdownReExport('paragraph\n\n> blockquote');
+  });
+
+  test('can re-export various block elements', () => {
+    assertMarkdownReExport('paragraph\n\n> blockquote');
+    assertMarkdownReExport('paragraph\n\n> blockquot e\n\n```\ncode block\n```');
+    assertMarkdownReExport('paragraph\n\n> blockquot e\n\n```\ncode block\n```\n\nparagraph 2');
+    assertMarkdownReExport('paragraph\n\n> blockquot e\n\n```\ncode block\n```\n\nparagraph 2\n\n> blockquote 2');
+  });
+
+  test('can re-export various block elements with inline formatting', () => {
+    assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te');
+    assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```');
+    assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```\n\npar_a_g`a`ph 2');
+    assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```\n\npar_a_g`a`ph 2\n\n> blo__c__kqu`o`te 2');
+  });
+
+  test('can re-export demo text', () => {
+    const markdown =
+      'The German __automotive sector__ is in the process of _cutting ' +
+      'thousands of jobs_ as it grapples with a global shift toward electric vehicles ' +
+      '— a transformation Musk himself has been at the forefront of.' +
+      '\n\n' +
+      '> To be, or not to be: that is the question.' +
+      '\n\n' +
+      'This is code:' +
+      '\n\n' +
+      '```' +
+      '\n' +
+      'console.log(123);' +
+      '\n' +
+      '```' +
+      '\n\n' +
+      'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
+      'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
+      'is used by the Clipboard Events API to hold multiple representations of data.';
+    assertMarkdownReExport(markdown)
   });
 });
