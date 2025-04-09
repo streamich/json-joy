@@ -10,6 +10,72 @@ export interface ChangeDetail {
   ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | FormatDetail | MarkerDetail>;
 }
 
+export interface SelectionTransformFragment {
+  /**
+   * Specifies the amount of text to delete. If the value is negative, the
+   * deletion will be backwards. If positive, the deletion will be forwards.
+   * If `0`, the deletion will execute in both directions.
+   *
+   * For example, if the cursor is in the middle of a word and the length is
+   * set to `0`, the whole word will be deleted by expanding the selection
+   * in both directions.
+   *
+   * ```js
+   * {
+   *   len: 0,
+   *   unit: 'word',
+   * }
+   * ```
+   *
+   * Or, delete a single character forwards:
+   *
+   * ```js
+   * {
+   *   len: 1,
+   * }
+   * ```
+   *
+   * @default -1
+   */
+  len?: number;
+
+  /**
+   * Specifies the unit of the deletion. If `'char'`, the deletion will be
+   * executed by `len` characters. If `'word'`, the deletion will be executed
+   * by one word in the direction specified by `len`. If `'line'`, the deletion
+   * will be executed to the beginning or end of line, in direction specified
+   * by `len`.
+   *
+   * @default 'char'
+   */
+  unit?: 'char' | 'word' | 'line';
+  // unit?: [start: Position, end: Position] | 'cursor' | 'word' | 'line' | 'block' | 'all';
+  // unit?: [start: Position, end: Position];
+}
+
+export interface SelectionFragment {
+
+  /**
+   * Position in the document to start the deletion from. If not specified, the
+   * deletion is executed for all cursors in the document at their current
+   * positions. If specified, only one cursor will be placed at the specified
+   * position and the deletion will be executed from that position (while all
+   * other cursors will be removed).
+   *
+   * @default undefined
+   */
+  /**
+   * Specifies which edge of the selection to move. If `'focus'`, the focus
+   * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
+   * `'both'`, the whole selection will be moved. Defaults to `'both'`.
+   *
+   * When the value is set to `'new'`, a new cursor will be created at the
+   * position specified by the `at` field.
+   */
+  // edge?: 'focus' | 'anchor' | 'both' | 'new';
+  at?: Position | Selection | 'focus' | 'anchor' | 'caret';
+}
+
 /**
  * Event dispatched to insert text into the document.
  */
@@ -380,6 +446,15 @@ export interface AnnalsDetail {
  * for the beginning of the character and `1` for the end of the character.
  */
 export type Position = EditorPosition<string>;
+
+/**
+ * Selection represents a range of text in the document. The selection is
+ * represented as a 2-tuple of {@link Position} instances. The first element
+ * is the start position of the selection and the second element is the end
+ * position of the selection. The first element must appear before the second
+ * or equal to it in the document.
+ */
+export type Selection = [start: Position, end: Position];
 
 /**
  * A map of all Peritext rendering surface event types and their corresponding
