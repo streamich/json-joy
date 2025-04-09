@@ -1397,6 +1397,19 @@ export class ToolbarState implements UiLifeCycles {
       minWidth: 280,
       children: [
         this.blockTypeMenu(),
+        {
+          sepBefore: true,
+          name: 'Cursor actions',
+          expand: 4,
+          children: [
+            {
+              name: 'Select',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="select" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        this.clipboardMenu(),
         secondBrain(),
       ],
     };
