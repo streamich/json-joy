@@ -283,7 +283,10 @@ export interface MarkerDetail {
 }
 
 /**
- * The "buffer" event manages clipboard buffer actions: cut, copy, and paste.
+ * The "buffer" event manages clipboard buffer actions: cut, copy, and paste. It
+ * can be used to cut/copy the current selection or a custom range to clipboard.
+ * It can cut/copy the contents in various formats, such as native Peritext
+ * format, HTML, Markdown, plain text, and other miscellaneous formats.
  */
 export interface BufferDetail {
   /**
@@ -319,8 +322,24 @@ export interface BufferDetail {
    * The range of text to cut or copy. If not specified, the first selection of
    * the current cursor is used. If not specified and there is no cursor, the
    * whole document is used.
+   * 
+   * When multiple cursors are present, the range is calculated by using the
+   * first cursor.
+   * 
+   * Below is a description of the possible values:
+   * 
+   * - `cursor`: The current cursor selection.
+   * - `word`: The word at the current cursor position. Left and right edges of
+   *   the selection are moved to the beginning and end of the word.
+   * - `line`: The line at the current cursor caret or focus position.
+   * - `block`: The block at the current cursor caret or focus position.
+   * - `all`: The whole document.
+   * - `[start, end]`: A specific range of text to cut or copy.
+   * 
+   * @default 'cursor'
    */
-  range?: [start: Position, end: Position];
+  // unit?: [start: Position, end: Position] | 'cursor' | 'word' | 'line' | 'block' | 'all';
+  unit?: [start: Position, end: Position];
 
   /**
    * The data to paste into the document, when `action` is `"paste"`. If not

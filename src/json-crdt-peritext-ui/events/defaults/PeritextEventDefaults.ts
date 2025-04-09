@@ -219,9 +219,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     let range: undefined | Range<any>;
     const txt = this.txt;
     const editor = txt.editor;
-    if (detail.range) {
-      const p1 = editor.point(detail.range[0]);
-      const p2 = editor.point(detail.range[1]);
+    if (detail.unit) {
+      const p1 = editor.point(detail.unit[0]);
+      const p2 = editor.point(detail.unit[1]);
       range = txt.rangeFromPoints(p1, p2);
     } else {
       range = editor.getCursor()?.range();

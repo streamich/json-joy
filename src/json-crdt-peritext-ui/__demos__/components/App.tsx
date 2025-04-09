@@ -62,7 +62,7 @@ export const App: React.FC = () => {
             state.events.et.buffer({
               action: 'paste',
               format: 'md',
-              range: [0, 0],
+              unit: [0, 0],
               data: {
                 text: markdown,
               },
