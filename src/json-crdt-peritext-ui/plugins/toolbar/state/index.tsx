@@ -1404,7 +1404,7 @@ export class ToolbarState implements UiLifeCycles {
           expand: 4,
           children: [
             {
-              name: 'Select',
+              name: 'Select block',
               icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
               onSelect: () => {
                 et.cursor({unit: 'block'});
@@ -1412,11 +1412,90 @@ export class ToolbarState implements UiLifeCycles {
             },
           ],
         },
-        this.clipboardMenu(),
+        this.blockClipboardMenu(),
         secondBrain(),
       ],
     };
     return menu;
+  };
+
+  public readonly blockClipboardMenu = (): MenuItem => {
+    const et = this.surface.events.et;
+    return {
+      name: 'Copy, cut, and paste',
+      icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+      expand: 0,
+      sepBefore: true,
+      children: [
+        {
+          id: 'copy-menu',
+          name: 'Copy',
+          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Copy',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy'),
+            },
+            {
+              name: 'Copy text only',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy', 'text'),
+            },
+            this.copyAsMenu('copy'),
+          ],
+        },
+        {
+          name: 'Cut separator',
+          sep: true,
+        },
+        {
+          id: 'cut-menu',
+          name: 'Cut',
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Cut',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              onSelect: () => et.buffer('cut'),
+            },
+            {
+              name: 'Cut text only',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              onSelect: () => et.buffer('cut', 'text'),
+            },
+            this.copyAsMenu('cut'),
+          ],
+        },
+        {
+          name: 'Paste separator',
+          sep: true,
+        },
+        {
+          id: 'paste-menu',
+          name: 'Paste',
+          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Paste',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste'),
+            },
+            {
+              name: 'Paste text',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste', 'text'),
+            },
+            this.pasteAsMenu(),
+          ],
+        },
+      ],
+    };
   };
 }
 
