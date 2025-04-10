@@ -10,71 +10,103 @@ export interface ChangeDetail {
   ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | FormatDetail | MarkerDetail>;
 }
 
-export interface SelectionTransformFragment {
+/**
+ * The {@link SelectionFragment} interface allows to specify a range of text
+ * selection or a single caret position in the document.
+ * 
+ * If the `at` field is specified, the selection set will contain one selection,
+ * the one created at the specified position. If the `at` field is not specified,
+ * the selection set will contain all cursors in the document at their current
+ * positions.
+ */
+export interface SelectionFragment {
   /**
-   * Specifies the amount of text to delete. If the value is negative, the
-   * deletion will be backwards. If positive, the deletion will be forwards.
-   * If `0`, the deletion will execute in both directions.
-   *
-   * For example, if the cursor is in the middle of a word and the length is
-   * set to `0`, the whole word will be deleted by expanding the selection
-   * in both directions.
-   *
-   * ```js
-   * {
-   *   len: 0,
-   *   unit: 'word',
-   * }
-   * ```
-   *
-   * Or, delete a single character forwards:
-   *
-   * ```js
-   * {
-   *   len: 1,
-   * }
-   * ```
-   *
-   * @default -1
+   * Position in the document to create a selection over. If not specified, the
+   * operation is applied over all cursors in the document at their current
+   * positions. Or if operation is specified only for one cursor, it will be
+   * applied to the first (main) cursor.
+   * 
+   * If specified, a new temporary selection is created which is used to perform
+   * the operation on. Then, if specified, this selection is used to create a
+   * new main cursor, while all other cursors are removed.
+   * 
+   * @default undefined
    */
-  len?: number;
+  at?: Position | Selection;
+}
+
+/**
+ * The {@link SelectionMoveFragment} specified one or more selection
+ * transformations, which are applied to the selection set. All move operations
+ * are applied to each selection in the selection set.
+ */
+export interface SelectionMoveFragment {
+  /**
+   * A single operation or a list of operations to be applied to the selection
+   * set. The operations are applied in the order they are specified. The
+   * operations are applied to each selection in the selection set.
+   */
+  move?: SelectionMoveInstruction | SelectionMoveInstruction[];
+}
+
+/**
+ * Specifies a single move operation to be applied to the selection set.
+ */
+export type SelectionMoveInstruction = [
+  /**
+   * Specifies the selection edge to perform the operation on.
+   * 
+   * - `'start'`: The start edge of the selection.
+   * - `'end'`: The end edge of the selection.
+   * - `'focus'`: The focus edge of the selection. If the selection does not have
+   *   a focus edge (i.e. it is a {@link Range}, not a {@link Cursor}), the
+   *   focus is assumed to be the `'end'` edge of the selection.
+   * - `'anchor'`: The anchor edge of the selection. If the selection does not
+   *    have an anchor edge (i.e. it is a {@link Range}, not a {@link Cursor}), the
+   *    anchor is assumed to be the `'start'` edge of the selection.
+   * - `'both'`: Both selection edges are moved.
+   * 
+   * @default 'focus'
+   */
+  edge: 'start' | 'end' | 'focus' | 'anchor' | 'both',
 
   /**
-   * Specifies the unit of the deletion. If `'char'`, the deletion will be
-   * executed by `len` characters. If `'word'`, the deletion will be executed
-   * by one word in the direction specified by `len`. If `'line'`, the deletion
-   * will be executed to the beginning or end of line, in direction specified
-   * by `len`.
+   * Specifies the unit of the movement. The default unit of movement is one
+   * visible character, however, this can be changed to a different unit of
+   * movement:
+   *
+   * - `'point'`: Moves by one Peritext anchor point. Each character has two
+   *     anchor points, one from each side of the character.
+   * - `'char'`: Moves by one character. Skips one visible character.
+   * - `'word'`: Moves by one word. Skips all visible characters until the end
+   *     of a word.
+   * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
+   *     the line end is determined by a visual line wrap.
+   * - `'vert'`: Moves cursor up or down by one line, works if UI
+   *     API is provided. Determines the best position in the target line by
+   *     finding the position which has the closest relative offset from the
+   *     beginning of the line.
+   * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
+   *     blockequote, etc.
+   * - `'all'`: Moves to the beginning or end of the document.
    *
    * @default 'char'
    */
-  unit?: 'char' | 'word' | 'line';
-  // unit?: [start: Position, end: Position] | 'cursor' | 'word' | 'line' | 'block' | 'all';
-  // unit?: [start: Position, end: Position];
-}
-
-export interface SelectionFragment {
+  unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all',
 
   /**
-   * Position in the document to start the deletion from. If not specified, the
-   * deletion is executed for all cursors in the document at their current
-   * positions. If specified, only one cursor will be placed at the specified
-   * position and the deletion will be executed from that position (while all
-   * other cursors will be removed).
-   *
-   * @default undefined
+   * Specify the length of the movement or selection in units specified by the
+   * `unit` field.
    */
+  len?: number,
+
   /**
-   * Specifies which edge of the selection to move. If `'focus'`, the focus
-   * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
-   * `'both'`, the whole selection will be moved. Defaults to `'both'`.
-   *
-   * When the value is set to `'new'`, a new cursor will be created at the
-   * position specified by the `at` field.
+   * If `true`, the selection will be collapsed to a single point. The other
+   * edge of the selection will be moved to the same position as the specified
+   * edge.
    */
-  // edge?: 'focus' | 'anchor' | 'both' | 'new';
-  at?: Position | Selection | 'focus' | 'anchor' | 'caret';
-}
+  collapse?: boolean,
+];
 
 /**
  * Event dispatched to insert text into the document.
@@ -454,7 +486,7 @@ export type Position = EditorPosition<string>;
  * position of the selection. The first element must appear before the second
  * or equal to it in the document.
  */
-export type Selection = [start: Position, end: Position];
+export type Selection = [start: Position, end: Position, focusStart?: boolean];
 
 /**
  * A map of all Peritext rendering surface event types and their corresponding
