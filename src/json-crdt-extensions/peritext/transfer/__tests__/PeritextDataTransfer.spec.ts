@@ -315,7 +315,9 @@ describe('Markdown', () => {
     assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te');
     assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```');
     assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```\n\npar_a_g`a`ph 2');
-    assertMarkdownReExport('par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```\n\npar_a_g`a`ph 2\n\n> blo__c__kqu`o`te 2');
+    assertMarkdownReExport(
+      'par_a_g`a`ph\n\n> blo__c__kqu`o`te e\n\n```\ncode block\n```\n\npar_a_g`a`ph 2\n\n> blo__c__kqu`o`te 2',
+    );
   });
 
   test('can re-export demo text', () => {
@@ -337,6 +339,6 @@ describe('Markdown', () => {
       'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
       'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
       'is used by the Clipboard Events API to hold multiple representations of data.';
-    assertMarkdownReExport(markdown)
+    assertMarkdownReExport(markdown);
   });
 });
