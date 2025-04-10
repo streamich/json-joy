@@ -1,4 +1,4 @@
-import {printTs, tick} from '../../../json-crdt-patch';
+import {printTs} from '../../../json-crdt-patch';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import type {Point} from '../rga/Point';
@@ -22,6 +22,9 @@ import type {Point} from '../rga/Point';
  * side of the anchor is determined by the {@link Cursor#anchorSide} property.
  */
 export class Cursor<T = string> extends PersistedSlice<T> {
+  /**
+   * @todo Remove getter `get` here.
+   */
   public get anchorSide(): CursorAnchor {
     return this.type as CursorAnchor;
   }

@@ -24,12 +24,13 @@ import type {SliceRegistry} from '../registry/SliceRegistry';
 import type {
   CharIterator,
   CharPredicate,
-  Position,
+  EditorPosition,
   TextRangeUnit,
   ViewStyle,
   ViewRange,
   ViewSlice,
   EditorUi,
+  EditorSelection,
 } from './types';
 
 /**
@@ -605,8 +606,8 @@ export class Editor<T = string> implements Printable {
     });
   }
 
-  public selectAt(at: Position<T>, unit: TextRangeUnit | '', ui?: EditorUi<T>): void {
-    this.cursor.set(this.point(at));
+  public selectAt(at: EditorPosition<T>, unit: TextRangeUnit | '', ui?: EditorUi<T>): void {
+    this.cursor.set(this.pos2point(at));
     if (unit) this.select(unit, ui);
   }
 
@@ -1102,8 +1103,17 @@ export class Editor<T = string> implements Printable {
 
   // ------------------------------------------------------------------ various
 
-  public point(at: Position<T>): Point<T> {
-    return typeof at === 'number' ? this.txt.pointAt(at) : Array.isArray(at) ? this.txt.pointAt(at[0], at[1]) : at;
+  public pos2point(at: EditorPosition<T>): Point<T> {
+    const txt = this.txt;
+    return typeof at === 'number' ? txt.pointAt(at) : Array.isArray(at) ? txt.pointAt(at[0], at[1]) : at;
+  }
+
+  public sel2range(at: EditorSelection<T>): Range<T> {
+    if (!Array.isArray(at)) return at;
+    const [pos1, pos2] = at;
+    const p1 = this.pos2point(pos1);
+    const p2 = pos2 ? this.pos2point(pos2) : p1.clone();
+    return this.txt.rangeFromPoints(p1, p2);
   }
 
   public end(): Point<T> {

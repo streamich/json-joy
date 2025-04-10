@@ -79,15 +79,21 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const {len = -1, unit = 'char', at} = event.detail;
     const editor = this.txt.editor;
     if (at !== undefined) {
-      const point = editor.point(at);
+      const point = editor.pos2point(at);
       editor.cursor.set(point);
     }
     editor.delete(len, unit);
     this.undo?.capture();
   };
 
-  public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, edge, len, unit} = event.detail;
+  protected getSelSet({at}: events.SelectionFragment): events.SelectionSet {
+    const {editor} = this.txt;
+    return at ? [editor.sel2range(at)] : editor.cursors();
+  }
+
+  public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
+    // const set = this.getSelSet(detail);
+    const {at, edge, len, unit} = detail;
     const txt = this.txt;
     const editor = txt.editor;
 
@@ -95,7 +101,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     // cursor to that position, and leave only one active cursor. All other
     // are automatically removed when `editor.cursor` getter is accessed.
     if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
-      const point = editor.point(at);
+      const point = editor.pos2point(at);
       switch (edge) {
         case 'focus':
         case 'anchor': {
@@ -220,8 +226,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const txt = this.txt;
     const editor = txt.editor;
     if (detail.unit) {
-      const p1 = editor.point(detail.unit[0]);
-      const p2 = editor.point(detail.unit[1]);
+      const p1 = editor.pos2point(detail.unit[0]);
+      const p2 = editor.pos2point(detail.unit[1]);
       range = txt.rangeFromPoints(p1, p2);
     } else {
       range = editor.getCursor()?.range();

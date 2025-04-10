@@ -1,7 +1,9 @@
 import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
-import type {Position as EditorPosition} from '../../json-crdt-extensions/peritext/editor/types';
+import type {EditorPosition, EditorSelection} from '../../json-crdt-extensions/peritext/editor/types';
 import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
 import type {Patch} from '../../json-crdt-patch';
+import type {Cursor} from '../../json-crdt-extensions/peritext/editor/Cursor';
+import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -32,7 +34,7 @@ export interface SelectionFragment {
    * 
    * @default undefined
    */
-  at?: Position | Selection;
+  at?: Selection;
 }
 
 /**
@@ -481,12 +483,15 @@ export type Position = EditorPosition<string>;
 
 /**
  * Selection represents a range of text in the document. The selection is
- * represented as a 2-tuple of {@link Position} instances. The first element
- * is the start position of the selection and the second element is the end
- * position of the selection. The first element must appear before the second
- * or equal to it in the document.
+ * represented as {@link Range}, or constructed from as a 2-tuple of
+ * {@link Position} instances.
  */
-export type Selection = [start: Position, end: Position, focusStart?: boolean];
+export type Selection = EditorSelection<string>;
+
+/**
+ * A list of selection on top of which actions are performed.
+ */
+export type SelectionSet = IterableIterator<Range | Cursor> | Array<Range | Cursor>;
 
 /**
  * A map of all Peritext rendering surface event types and their corresponding
