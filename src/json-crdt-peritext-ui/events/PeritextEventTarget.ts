@@ -58,8 +58,8 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('cursor', detail);
   }
 
-  public move(len: number, unit?: CursorDetail['unit'], edge?: CursorDetail['edge']): void {
-    this.cursor({len, unit, edge});
+  public move(move?: CursorDetail['move'], at?: CursorDetail['at']): void {
+    this.cursor({move, at});
   }
 
   public format(type: FormatDetail['type'], behavior?: FormatDetail['behavior'], data?: FormatDetail['data']): void;

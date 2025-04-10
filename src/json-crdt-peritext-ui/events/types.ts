@@ -13,7 +13,7 @@ export interface ChangeDetail {
 }
 
 /**
- * The {@link SelectionFragment} interface allows to specify a range of text
+ * The {@link SelectionDetailPart} interface allows to specify a range of text
  * selection or a single caret position in the document.
  * 
  * If the `at` field is specified, the selection set will contain one selection,
@@ -21,7 +21,7 @@ export interface ChangeDetail {
  * the selection set will contain all cursors in the document at their current
  * positions.
  */
-export interface SelectionFragment {
+export interface SelectionDetailPart {
   /**
    * Position in the document to create a selection over. If not specified, the
    * operation is applied over all cursors in the document at their current
@@ -38,17 +38,17 @@ export interface SelectionFragment {
 }
 
 /**
- * The {@link SelectionMoveFragment} specified one or more selection
+ * The {@link SelectionMoveDetailPart} specified one or more selection
  * transformations, which are applied to the selection set. All move operations
  * are applied to each selection in the selection set.
  */
-export interface SelectionMoveFragment {
+export interface SelectionMoveDetailPart {
   /**
    * A single operation or a list of operations to be applied to the selection
    * set. The operations are applied in the order they are specified. The
    * operations are applied to each selection in the selection set.
    */
-  move?: SelectionMoveInstruction | SelectionMoveInstruction[];
+  move?: SelectionMoveInstruction[];
 }
 
 /**
@@ -66,16 +66,17 @@ export type SelectionMoveInstruction = [
    * - `'anchor'`: The anchor edge of the selection. If the selection does not
    *    have an anchor edge (i.e. it is a {@link Range}, not a {@link Cursor}), the
    *    anchor is assumed to be the `'start'` edge of the selection.
-   * - `'both'`: Both selection edges are moved.
    * 
    * @default 'focus'
    */
-  edge: 'start' | 'end' | 'focus' | 'anchor' | 'both',
+  edge: 'start' | 'end' | 'focus' | 'anchor',
 
   /**
-   * Specifies the unit of the movement. The default unit of movement is one
-   * visible character, however, this can be changed to a different unit of
-   * movement:
+   * Absolute position is specified using {@link Position} type. In which case
+   * the next `len` field is ignored.
+   *
+   * The relative movement is specified using one of the string constants.
+   * It specifies the unit of the movement. Possible movement units:
    *
    * - `'point'`: Moves by one Peritext anchor point. Each character has two
    *     anchor points, one from each side of the character.
@@ -92,13 +93,14 @@ export type SelectionMoveInstruction = [
    *     blockequote, etc.
    * - `'all'`: Moves to the beginning or end of the document.
    *
-   * @default 'char'
    */
-  unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all',
+  to: Position | 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all',
 
   /**
    * Specify the length of the movement or selection in units specified by the
    * `unit` field.
+   * 
+   * @default 1
    */
   len?: number,
 
@@ -229,7 +231,7 @@ export interface DeleteDetail {
  * {at: 10, edge: 'new'}
  * ```
  */
-export interface CursorDetail {
+export interface CursorDetail extends SelectionDetailPart, SelectionMoveDetailPart {
   /**
    * Position in the document to move the cursor to. If `-1` or undefined, the
    * current cursor position will be used as the starting point and `len` will
@@ -239,7 +241,7 @@ export interface CursorDetail {
    * second `0 | 1` member specifies the anchor point of the character: `0`
    * for the beginning of the character and `1` for the end of the character.
    */
-  at?: Position;
+  // at?: Position;
 
   /**
    * Specify the length of the movement or selection in units specified by the
@@ -248,7 +250,7 @@ export interface CursorDetail {
    * the selection. If the `at` field is not set, the `len` field specifies
    * the relative movement of the cursor.
    */
-  len?: number;
+  // len?: number;
 
   /**
    * Specifies the unit of the movement. If `'char'`, the cursor will be
@@ -274,7 +276,7 @@ export interface CursorDetail {
    *
    * @default 'char'
    */
-  unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all';
+  // unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all';
 
   /**
    * Specifies which edge of the selection to move. If `'focus'`, the focus
@@ -284,7 +286,7 @@ export interface CursorDetail {
    * When the value is set to `'new'`, a new cursor will be created at the
    * position specified by the `at` field.
    */
-  edge?: 'focus' | 'anchor' | 'both' | 'new';
+  // edge?: 'focus' | 'anchor' | 'both' | 'new';
 }
 
 /**
