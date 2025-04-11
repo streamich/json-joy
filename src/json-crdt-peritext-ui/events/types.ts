@@ -97,10 +97,11 @@ export type SelectionMoveInstruction = [
   to: Position | 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all',
 
   /**
-   * Specify the length of the movement or selection in units specified by the
-   * `unit` field.
+   * Specify the length of the movement (the number of steps) in units
+   * specified by the `to` field. If not specified, the default value is `0`,
+   * which results in no movement.
    * 
-   * @default 1
+   * @default 0
    */
   len?: number,
 

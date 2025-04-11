@@ -1,10 +1,10 @@
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
+import {CursorAnchor, type Peritext} from '../../../json-crdt-extensions/peritext';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
-import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
@@ -15,14 +15,14 @@ import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
-const getEdge = (selection: Range | Cursor, edge: events.SelectionMoveInstruction[0]): Point => {
-  switch (edge) {
-    case 'start': return selection.start;
-    case 'end': return selection.end;
-    case 'focus': return selection instanceof Cursor ? selection.focus() : selection.end;
-    case 'anchor': return selection instanceof Cursor ? selection.anchor() : selection.start;
-  }
-};
+const getEdge = (start: Point, end: Point, anchor: CursorAnchor, edge: events.SelectionMoveInstruction[0]): Point =>
+  edge === 'start'
+    ? start
+    : edge === 'end'
+      ? end
+      : edge === 'focus'
+        ? anchor === CursorAnchor.Start ? end : start
+        : anchor === CursorAnchor.Start ? start : end;
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -103,23 +103,24 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   protected moveSelSet(set: events.SelectionSet, {move}: events.SelectionMoveDetailPart): void {
     if (!move) return;
     const {txt, editorUi} = this;
-    for (const range of set) {
-      // TODO: collect all (range + anchor point changes) and call `.update()` once.
+    for (const selection of set) {
+      let start = selection.start;
+      let end = selection.end;
+      let anchor: CursorAnchor = selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End;
       for (const [edge, to, len, collapse] of move) {
-        const point = getEdge(range, edge);
+        const point = getEdge(start, end, anchor, edge);
         const point2 = typeof to === 'string'
           ? (len ? txt.editor.skip(point, len, to ?? 'char', editorUi) : point.clone())
           : txt.editor.pos2point(to);
-        const start = range.start === point ? point2 : range.start;
-        const end = range.end === point ? point2 : range.end;
-        // TODO: Consider focus and anchor, swap places (start <-> end).
-        range.set(start, end);
+        if (point === start) start = point2; else end = point2;
         if (collapse) {
-          // TODO: .collapseToStart() calls `.set()` underneath, instead of compute collapsing manually.
-          if (range.start === point) range.collapseToStart();
-          else range.collapseToEnd();
+          point2.refAfter();
+          if (point2 === start) end = point2.clone(); else start = point2.clone();
         }
       }
+      const range = txt.rangeFromPoints(start, end);
+      if (selection instanceof Cursor) selection.set(range.start, range.end, anchor);
+      else selection.setRange(range);
     }
   }
 
@@ -128,8 +129,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const set = this.getSelSet(detail);
     if (move) this.moveSelSet(set, detail);
     if (at) {
+      const {editor} = this.txt;
+      editor.delCursors();
       for (const range of set) {
-        this.txt.editor.cursor.setRange(range);
+        editor.cursor.setRange(range);
         break;
       }
     }
