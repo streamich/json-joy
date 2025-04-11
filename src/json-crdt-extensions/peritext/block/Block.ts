@@ -56,6 +56,10 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
     return this.marker?.data() as Attr | undefined;
   }
 
+  public isLeaf(): boolean {
+    return false;
+  }
+
   /**
    * Iterate through all overlay points of this block, until the next marker
    * (regardless if that marker is a child or not).

@@ -1,10 +1,10 @@
-import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
+import {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
+import {CursorAnchor, type Peritext} from '../../../json-crdt-extensions/peritext';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
-import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
@@ -14,6 +14,15 @@ import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
+
+const getEdge = (start: Point, end: Point, anchor: CursorAnchor, edge: events.SelectionMoveInstruction[0]): Point =>
+  edge === 'start'
+    ? start
+    : edge === 'end'
+      ? end
+      : edge === 'focus'
+        ? anchor === CursorAnchor.Start ? end : start
+        : anchor === CursorAnchor.Start ? start : end;
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -79,81 +88,122 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const {len = -1, unit = 'char', at} = event.detail;
     const editor = this.txt.editor;
     if (at !== undefined) {
-      const point = editor.point(at);
+      const point = editor.pos2point(at);
       editor.cursor.set(point);
     }
     editor.delete(len, unit);
     this.undo?.capture();
   };
 
-  public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, edge, len, unit} = event.detail;
-    const txt = this.txt;
-    const editor = txt.editor;
+  protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
+    const {editor} = this.txt;
+    return at ? [editor.sel2range(at)] : editor.cursors();
+  }
 
-    // If `at` is specified, it represents the absolute position. We move the
-    // cursor to that position, and leave only one active cursor. All other
-    // are automatically removed when `editor.cursor` getter is accessed.
-    if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
-      const point = editor.point(at);
-      switch (edge) {
-        case 'focus':
-        case 'anchor': {
-          const cursor = editor.cursor;
-          cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
-          if (cursor.isCollapsed()) {
-            const start = cursor.start;
-            start.refAfter();
-            cursor.set(start);
-          }
-          break;
-        }
-        case 'new': {
-          editor.addCursor(txt.range(point));
-          break;
-        }
-        // both
-        default: {
-          // Select a range from the "at" position to the specified length.
-          if (!!len && typeof len === 'number') {
-            const point2 = editor.skip(point, len, unit ?? 'char', this.editorUi);
-            const range = txt.rangeFromPoints(point, point2); // Sorted range.
-            editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
-          }
-          // Set caret (a collapsed cursor) at the specified position.
-          else {
-            point.refAfter();
-            editor.cursor.set(point);
-            if (unit) editor.select(unit, this.editorUi);
-          }
+  protected moveSelSet(set: events.SelectionSet, {move}: events.SelectionMoveDetailPart): void {
+    if (!move) return;
+    const {txt, editorUi} = this;
+    for (const selection of set) {
+      let start = selection.start;
+      let end = selection.end;
+      let anchor: CursorAnchor = selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End;
+      for (const [edge, to, len, collapse] of move) {
+        const point = getEdge(start, end, anchor, edge);
+        const point2 = typeof to === 'string'
+          ? (len ? txt.editor.skip(point, len, to ?? 'char', editorUi) : point.clone())
+          : txt.editor.pos2point(to);
+        if (point === start) start = point2; else end = point2;
+        if (collapse) {
+          point2.refAfter();
+          if (point2 === start) end = point2.clone(); else start = point2.clone();
         }
       }
-      return;
+      const range = txt.rangeFromPoints(start, end);
+      if (selection instanceof Cursor) selection.set(range.start, range.end, anchor);
+      else selection.setRange(range);
     }
+  }
 
-    // If `edge` is specified.
-    const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
-    if (isSpecificEdgeSelected) {
-      editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false, this.editorUi);
-      return;
-    }
-
-    // If `len` is specified.
-    if (len) {
-      const cursor = editor.cursor;
-      if (cursor.isCollapsed()) editor.move(len, unit ?? 'char', void 0, void 0, this.editorUi);
-      else {
-        if (len > 0) cursor.collapseToEnd();
-        else cursor.collapseToStart();
+  public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
+    const {at, move} = detail;
+    const set = this.getSelSet(detail);
+    if (move) this.moveSelSet(set, detail);
+    if (at) {
+      const {editor} = this.txt;
+      editor.delCursors();
+      for (const range of set) {
+        editor.cursor.setRange(range);
+        break;
       }
-      return;
     }
+    // // const set = this.getSelSet(detail);
+    // const {at, edge, len, unit} = detail;
+    // const txt = this.txt;
+    // const editor = txt.editor;
 
-    // If `unit` is specified.
-    if (unit) {
-      editor.select(unit, this.editorUi);
-      return;
-    }
+    // // If `at` is specified, it represents the absolute position. We move the
+    // // cursor to that position, and leave only one active cursor. All other
+    // // are automatically removed when `editor.cursor` getter is accessed.
+    // if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
+    //   const point = editor.pos2point(at);
+    //   switch (edge) {
+    //     case 'focus':
+    //     case 'anchor': {
+    //       const cursor = editor.cursor;
+    //       cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
+    //       if (cursor.isCollapsed()) {
+    //         const start = cursor.start;
+    //         start.refAfter();
+    //         cursor.set(start);
+    //       }
+    //       break;
+    //     }
+    //     case 'new': {
+    //       editor.addCursor(txt.range(point));
+    //       break;
+    //     }
+    //     // both
+    //     default: {
+    //       // Select a range from the "at" position to the specified length.
+    //       if (!!len && typeof len === 'number') {
+    //         const point2 = editor.skip(point, len, unit ?? 'char', this.editorUi);
+    //         const range = txt.rangeFromPoints(point, point2); // Sorted range.
+    //         editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
+    //       }
+    //       // Set caret (a collapsed cursor) at the specified position.
+    //       else {
+    //         point.refAfter();
+    //         editor.cursor.set(point);
+    //         if (unit) editor.select(unit, this.editorUi);
+    //       }
+    //     }
+    //   }
+    //   return;
+    // }
+
+    // // If `edge` is specified.
+    // const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
+    // if (isSpecificEdgeSelected) {
+    //   editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false, this.editorUi);
+    //   return;
+    // }
+
+    // // If `len` is specified.
+    // if (len) {
+    //   const cursor = editor.cursor;
+    //   if (cursor.isCollapsed()) editor.move(len, unit ?? 'char', void 0, void 0, this.editorUi);
+    //   else {
+    //     if (len > 0) cursor.collapseToEnd();
+    //     else cursor.collapseToStart();
+    //   }
+    //   return;
+    // }
+
+    // // If `unit` is specified.
+    // if (unit) {
+    //   editor.select(unit, this.editorUi);
+    //   return;
+    // }
   };
 
   public readonly format = (event: CustomEvent<events.FormatDetail>) => {
@@ -219,9 +269,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     let range: undefined | Range<any>;
     const txt = this.txt;
     const editor = txt.editor;
-    if (detail.range) {
-      const p1 = editor.point(detail.range[0]);
-      const p2 = editor.point(detail.range[1]);
+    if (detail.unit) {
+      const p1 = editor.pos2point(detail.unit[0]);
+      const p2 = editor.pos2point(detail.unit[1]);
       range = txt.rangeFromPoints(p1, p2);
     } else {
       range = editor.getCursor()?.range();
@@ -386,7 +436,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
                 break;
               }
             }
-            if (inserted) this.et.move(inserted, 'char');
+            // if (inserted) this.et.move(inserted, 'char');
             this.et.change();
             break;
           }
@@ -406,7 +456,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             if (!data) data = await clipboard.readData();
             const inserted = transfer.fromClipboard(range, data);
-            if (inserted) this.et.move(inserted, 'char');
+            // if (inserted) this.et.move([['both', 'char', inserted]]);
             this.et.change();
           }
         }

@@ -2165,7 +2165,6 @@ dunder-proto@^1.0.1:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -2841,7 +2840,7 @@ hyphenate-style-name@^1.0.2, hyphenate-style-name@^1.0.3:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.1.0.tgz#1797bf50369588b47b72ca6d5e65374607cf4436"
   integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
 
-iconista@^2.21.0:
+iconista@^2.23.0:
   version "2.23.0"
   resolved "https://registry.yarnpkg.com/iconista/-/iconista-2.23.0.tgz#c93c50ca07ad039231ab08bccb38ecd7db40482f"
   integrity sha512-NPh2pKQtZmj99+Ne4awFusyE6raC4RySgOo7NM90O2+fYoLcX6Gz7XUSQ1NgF/Kfnd2TSyfX1FkqT6iTswA4NQ==
@@ -3514,7 +3513,6 @@ jsesc@^3.0.2:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d":
   version "0.0.1"
-  uid ec825401dc05cbb74b9e0b3c4d6527399f54d54d
   resolved "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
 
 json-logic-js@^2.0.2:
@@ -3974,17 +3972,17 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nice-ui@^1.28.0:
-  version "1.28.0"
-  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.28.0.tgz#906fb08a9556aba06089741c29936e1a8cca83bd"
-  integrity sha512-P5ooBHzfTjY1hvwJrF3UJAmxcf+WdFfr7trGWeGg7fGCSrhfC747W6jedXWzZ6HOrO0t832AFKe1vM54U8Osdw==
+nice-ui@^1.29.1:
+  version "1.29.1"
+  resolved "https://registry.yarnpkg.com/nice-ui/-/nice-ui-1.29.1.tgz#50ae4f90a89054640f484b53966857d6292b2695"
+  integrity sha512-+6tR5gyBxgFai4JaercYx+Q0t5pAuPr2Aivo8hPMtHeX99PuT/7ta731pEHYtS7nNnHtUcddDErq42xSbYud1w==
   dependencies:
     "@material-ui/core" "^4.12.4"
     clipboard-copy "^4.0.1"
     code-colors-react "^3.3.0"
     codemirror "5"
     emoji-js "^3.8.0"
-    iconista "^2.21.0"
+    iconista "^2.23.0"
     libreact "^2.13.3"
     load-script "^2.0.0"
     md-mdast "^3.4.0"
@@ -4696,7 +4694,7 @@ rx-use@^1.8.1:
   resolved "https://registry.yarnpkg.com/rx-use/-/rx-use-1.8.1.tgz#d6dc272eed2197fe785b4b678a7220d856cff1d3"
   integrity sha512-GiwSeqF8IxH8vW2hEQEeyw4b99538u2iT1buSlR3ZFbSqpjLUMA1e8ulDZTYKReG+ajXNsub5+LD6kWBlpzV/g==
 
-rxjs@^7.8.1:
+rxjs@^7.8.2:
   version "7.8.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.2.tgz#955bc473ed8af11a002a2be52071bf475638607b"
   integrity sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==

@@ -95,6 +95,7 @@ export class CursorController implements UiLifeCycles, Printable {
     const {clientX, clientY} = ev;
     this.x = clientX;
     this.y = clientY;
+    const et = this.opts.et;
     switch (ev.detail) {
       case 1: {
         this.mouseDown.next(false);
@@ -102,34 +103,43 @@ export class CursorController implements UiLifeCycles, Printable {
         if (at === -1) return;
         this.selAnchor = at;
         const pressed = this.opts.keys.pressed;
-        const et = this.opts.et;
         if (pressed.has('Shift')) {
           ev.preventDefault();
-          et.cursor({at, unit: 'word'});
+          et.move([['start', 'word', -1], ['end', 'word', 1]], [at]);
         } else if (pressed.has('Alt')) {
           ev.preventDefault();
-          et.cursor({at, edge: 'new'});
+          // et.cursor({at, edge: 'new'});
         } else {
           this.mouseDown.next(true);
           ev.preventDefault();
-          et.cursor({at});
+          et.cursor({at: [at]});
         }
         break;
       }
       case 2:
         this.mouseDown.next(false);
         ev.preventDefault();
-        this.opts.et.cursor({unit: 'word'});
+        et.move([['start', 'word', -1], ['end', 'word', 1]]);
         break;
       case 3:
         this.mouseDown.next(false);
         ev.preventDefault();
-        this.opts.et.cursor({unit: 'block'});
+        et.move([['start', 'word', -1], ['end', 'word', 1]]);
         break;
       case 4:
         this.mouseDown.next(false);
         ev.preventDefault();
-        this.opts.et.cursor({unit: 'all'});
+        et.move([['start', 'line', -1], ['end', 'line', 1]]);
+        break;
+      case 5:
+        this.mouseDown.next(false);
+        ev.preventDefault();
+        et.move([['start', 'block', -1], ['end', 'block', 1]]);
+        break;
+      case 6:
+        this.mouseDown.next(false);
+        ev.preventDefault();
+        et.move([['start', 'all', -1], ['end', 'all', 1]]);
         break;
     }
   };
@@ -146,7 +156,7 @@ export class CursorController implements UiLifeCycles, Printable {
     if (mouseHasNotMoved) return;
     this.x = clientX;
     this.y = clientY;
-    this._cursor[0]({at: to, edge: 'focus'});
+    this._cursor[0]({move: [['focus', to]]});
   };
 
   private readonly onMouseUp = (ev: MouseEvent): void => {
@@ -161,19 +171,18 @@ export class CursorController implements UiLifeCycles, Printable {
       case 'ArrowUp':
       case 'ArrowDown': {
         event.preventDefault();
-        const direction = key === 'ArrowUp' ? -1 : 1;
-        et.move(direction, 'vert', event.shiftKey ? 'focus' : 'both');
+        et.move([['focus', 'vert', key === 'ArrowUp' ? -1 : 1, !event.shiftKey]]);
         break;
       }
       case 'ArrowLeft':
       case 'ArrowRight': {
         const direction = key === 'ArrowLeft' ? -1 : 1;
         event.preventDefault();
-        if (event.shiftKey) et.move(direction, unit(event) || 'char', 'focus');
-        else if (event.metaKey) et.move(direction, 'line');
-        else if (event.altKey && event.ctrlKey) et.move(direction, 'point');
-        else if (event.altKey || event.ctrlKey) et.move(direction, 'word');
-        else et.move(direction);
+        if (event.shiftKey) et.move([['focus', unit(event) || 'char', direction]]);
+        // else if (event.metaKey) et.move(direction, 'line');
+        // else if (event.altKey && event.ctrlKey) et.move(direction, 'point');
+        // else if (event.altKey || event.ctrlKey) et.move(direction, 'word');
+        else et.move([['focus', 'char', direction, true]]);
         break;
       }
       case 'Home':
@@ -181,13 +190,13 @@ export class CursorController implements UiLifeCycles, Printable {
         event.preventDefault();
         const direction = key === 'End' ? 1 : -1;
         const edge = event.shiftKey ? 'focus' : 'both';
-        et.move(direction, 'line', edge);
+        // et.move(direction, 'line', edge);
         return;
       }
       case 'a':
         if (event.metaKey || event.ctrlKey) {
           event.preventDefault();
-          et.cursor({unit: 'all'});
+          et.cursor({move: [['start', 'all', -1], ['end', 'all', 1]]});
           return;
         }
     }

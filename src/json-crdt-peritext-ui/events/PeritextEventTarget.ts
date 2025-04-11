@@ -58,8 +58,8 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('cursor', detail);
   }
 
-  public move(len: number, unit?: CursorDetail['unit'], edge?: CursorDetail['edge']): void {
-    this.cursor({len, unit, edge});
+  public move(move?: CursorDetail['move'], at?: CursorDetail['at']): void {
+    this.cursor({move, at});
   }
 
   public format(type: FormatDetail['type'], behavior?: FormatDetail['behavior'], data?: FormatDetail['data']): void;
@@ -74,7 +74,10 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('format', detail);
   }
 
-  public marker(detail: MarkerDetail): void {
+  public marker(action: MarkerDetail['action'], type: MarkerDetail['type'], data?: MarkerDetail['data']): void;
+  public marker(detail: MarkerDetail): void;
+  public marker(a: MarkerDetail | MarkerDetail['action'], b?: MarkerDetail['type'], c?: MarkerDetail['data']): void {
+    const detail: MarkerDetail = typeof a === 'object' ? a : {action: a, type: b, data: c};
     this.dispatch('marker', detail);
   }
 
