@@ -75,26 +75,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     public readonly opts: PeritextEventDefaultsOpts = {},
   ) {}
 
-  public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
-
-  public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
-    const text = event.detail.text;
-    const editor = this.txt.editor;
-    editor.insert(text);
-    this.undo?.capture();
-  };
-
-  public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
-    const {len = -1, unit = 'char', at} = event.detail;
-    const editor = this.txt.editor;
-    if (at !== undefined) {
-      const point = editor.pos2point(at);
-      editor.cursor.set(point);
-    }
-    editor.delete(len, unit);
-    this.undo?.capture();
-  };
-
   protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
     const {editor} = this.txt;
     return at ? [editor.sel2range(at)] : editor.cursors();
@@ -129,6 +109,40 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     }
   }
 
+  public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
+
+  public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
+    const text = event.detail.text;
+    const editor = this.txt.editor;
+    editor.insert(text);
+    this.undo?.capture();
+  };
+
+  public readonly delete = ({detail}: CustomEvent<events.DeleteDetail>) => {
+    const {move} = detail;
+    const set = [...this.getSelSet(detail)];
+    const editor = this.txt.editor;
+    let deleted: boolean = false;
+    for (const range of set) {
+      if (range.length()) {
+        deleted = true;
+        editor.delRange(range);
+        const start = range.start;
+        start.refAfter();
+        range.set(start);
+      }
+    }
+    if (deleted) return;
+    if (move) this.moveSelSet(set, detail);
+    for (const range of set) {
+      editor.delRange(range);
+      range.collapseToStart();
+      const start = range.start;
+      start.refAfter();
+      range.set(start);
+    }
+  };
+
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
     const {at, move, add} = detail;
     const set = this.getSelSet(detail);
@@ -148,74 +162,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         }
       }
     }
-    // // const set = this.getSelSet(detail);
-    // const {at, edge, len, unit} = detail;
-    // const txt = this.txt;
-    // const editor = txt.editor;
-
-    // // If `at` is specified, it represents the absolute position. We move the
-    // // cursor to that position, and leave only one active cursor. All other
-    // // are automatically removed when `editor.cursor` getter is accessed.
-    // if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
-    //   const point = editor.pos2point(at);
-    //   switch (edge) {
-    //     case 'focus':
-    //     case 'anchor': {
-    //       const cursor = editor.cursor;
-    //       cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
-    //       if (cursor.isCollapsed()) {
-    //         const start = cursor.start;
-    //         start.refAfter();
-    //         cursor.set(start);
-    //       }
-    //       break;
-    //     }
-    //     case 'new': {
-    //       editor.addCursor(txt.range(point));
-    //       break;
-    //     }
-    //     // both
-    //     default: {
-    //       // Select a range from the "at" position to the specified length.
-    //       if (!!len && typeof len === 'number') {
-    //         const point2 = editor.skip(point, len, unit ?? 'char', this.editorUi);
-    //         const range = txt.rangeFromPoints(point, point2); // Sorted range.
-    //         editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
-    //       }
-    //       // Set caret (a collapsed cursor) at the specified position.
-    //       else {
-    //         point.refAfter();
-    //         editor.cursor.set(point);
-    //         if (unit) editor.select(unit, this.editorUi);
-    //       }
-    //     }
-    //   }
-    //   return;
-    // }
-
-    // // If `edge` is specified.
-    // const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
-    // if (isSpecificEdgeSelected) {
-    //   editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false, this.editorUi);
-    //   return;
-    // }
-
-    // // If `len` is specified.
-    // if (len) {
-    //   const cursor = editor.cursor;
-    //   if (cursor.isCollapsed()) editor.move(len, unit ?? 'char', void 0, void 0, this.editorUi);
-    //   else {
-    //     if (len > 0) cursor.collapseToEnd();
-    //     else cursor.collapseToStart();
-    //   }
-    //   return;
-    // }
-
-    // // If `unit` is specified.
-    // if (unit) {
-    //   editor.select(unit, this.editorUi);
-    //   return;
-    // }
   };
 
   public readonly format = (event: CustomEvent<events.FormatDetail>) => {
