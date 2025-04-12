@@ -79,22 +79,25 @@ export type SelectionMoveInstruction = [
    * It specifies the unit of the movement. Possible movement units:
    *
    * - `'point'`: Moves by one Peritext anchor point. Each character has two
-   *     anchor points, one from each side of the character.
+   *   anchor points, one from each side of the character.
    * - `'char'`: Moves by one character. Skips one visible character.
    * - `'word'`: Moves by one word. Skips all visible characters until the end
-   *     of a word.
+   *   of a word.
    * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
-   *     the line end is determined by a visual line wrap.
+   *   the line end is determined by a visual line wrap.
+   * - `'vline'`: Moves to the beginning or end of "visual line", as the line
+   *   is rendered on the screen, due to soft line breaks (line wrapping).
    * - `'vert'`: Moves cursor up or down by one line, works if UI
-   *     API is provided. Determines the best position in the target line by
-   *     finding the position which has the closest relative offset from the
-   *     beginning of the line.
+   *   API is provided. Determines the best position in the target line by
+   *   finding the position which has the closest relative offset from the
+   *   beginning of the line.
    * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
-   *     blockquote, etc.
+   *   blockquote, etc.
    * - `'all'`: Moves to the beginning or end of the document.
-   *
+   * 
+   * @todo Introduce 'vline', "visual line" - soft line break.
    */
-  to: Position | 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all',
+  to: Position | 'point' | 'char' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
 
   /**
    * Specify the length of the movement (the number of steps) in units
@@ -124,58 +127,7 @@ export interface InsertDetail {
 /**
  * Event dispatched to delete text from the document.
  */
-// export interface DeleteDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
-export interface DeleteDetail {
-  /**
-   * Specifies the amount of text to delete. If the value is negative, the
-   * deletion will be backwards. If positive, the deletion will be forwards.
-   * If `0`, the deletion will execute in both directions.
-   *
-   * For example, if the cursor is in the middle of a word and the length is
-   * set to `0`, the whole word will be deleted by expanding the selection
-   * in both directions.
-   *
-   * ```js
-   * {
-   *   len: 0,
-   *   unit: 'word',
-   * }
-   * ```
-   *
-   * Or, delete a single character forwards:
-   *
-   * ```js
-   * {
-   *   len: 1,
-   * }
-   * ```
-   *
-   * @default -1
-   */
-  len?: number;
-
-  /**
-   * Specifies the unit of the deletion. If `'char'`, the deletion will be
-   * executed by `len` characters. If `'word'`, the deletion will be executed
-   * by one word in the direction specified by `len`. If `'line'`, the deletion
-   * will be executed to the beginning or end of line, in direction specified
-   * by `len`.
-   *
-   * @default 'char'
-   */
-  unit?: 'char' | 'word' | 'line';
-
-  /**
-   * Position in the document to start the deletion from. If not specified, the
-   * deletion is executed for all cursors in the document at their current
-   * positions. If specified, only one cursor will be placed at the specified
-   * position and the deletion will be executed from that position (while all
-   * other cursors will be removed).
-   *
-   * @default undefined
-   */
-  at?: Position;
-}
+export interface DeleteDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
 
 /**
  * The `cursor` event is emitted when caret or selection is changed. The event

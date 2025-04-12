@@ -495,6 +495,11 @@ export class Editor<T = string> implements Printable {
         return point;
       }
       case 'line': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
+        else for (let i = 0; i < -steps; i++) point = this.bol(point);
+        return point;
+      }
+      case 'vline': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = ui?.eol?.(point, 1) ?? this.eol(point);
         else for (let i = 0; i < -steps; i++) point = ui?.eol?.(point, -1) ?? this.bol(point);
         return point;
