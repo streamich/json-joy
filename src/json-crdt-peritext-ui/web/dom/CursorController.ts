@@ -178,11 +178,10 @@ export class CursorController implements UiLifeCycles, Printable {
       case 'ArrowRight': {
         const direction = key === 'ArrowLeft' ? -1 : 1;
         event.preventDefault();
-        if (event.shiftKey) et.move('focus', unit(event) || 'char', direction);
-        // else if (event.metaKey) et.move(direction, 'line');
-        else if (event.altKey && event.ctrlKey) et.move('focus', 'point', direction, true);
-        else if (event.altKey || event.ctrlKey) et.move('focus', 'word', direction, true);
-        else et.move('focus', 'char', direction, true);
+        if (event.metaKey) et.move('focus', 'line', direction, !event.shiftKey);
+        else if (event.altKey && event.ctrlKey) et.move('focus', 'point', direction, !event.shiftKey);
+        else if (event.altKey || event.ctrlKey) et.move('focus', 'word', direction, !event.shiftKey);
+        else et.move('focus', unit(event) || 'char', direction, !event.shiftKey);
         break;
       }
       case 'Home':
