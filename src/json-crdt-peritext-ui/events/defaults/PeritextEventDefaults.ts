@@ -118,9 +118,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           if (point2 === start) end = point2.clone(); else start = point2.clone();
         }
       }
-      const range = txt.rangeFromPoints(start, end);
-      if (selection instanceof Cursor) selection.set(range.start, range.end, anchor);
-      else selection.setRange(range);
+      if (start.cmpSpatial(end) > 0) {
+        const tmp = start;
+        start = end;
+        end = tmp;
+        anchor = anchor === CursorAnchor.Start ? CursorAnchor.End : CursorAnchor.Start;
+      }
+      if (selection instanceof Cursor) selection.set(start, end, anchor);
+      else selection.set(start, end);
     }
   }
 
@@ -312,34 +317,27 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             if (!transfer) return;
             let text = '';
             switch (format) {
-              case 'html': {
+              case 'html':
                 text = transfer.toHtml(range);
                 break;
-              }
-              case 'hast': {
+              case 'hast':
                 text = JSON.stringify(transfer.toHast(range), null, 2);
                 break;
-              }
-              case 'jsonml': {
+              case 'jsonml':
                 text = JSON.stringify(transfer.toJson(range), null, 2);
                 break;
-              }
-              case 'json': {
+              case 'json':
                 text = JSON.stringify(transfer.toView(range), null, 2);
                 break;
-              }
-              case 'mdast': {
+              case 'mdast':
                 text = JSON.stringify(transfer.toMdast(range), null, 2);
                 break;
-              }
-              case 'md': {
+              case 'md':
                 text = transfer.toMarkdown(range);
                 break;
-              }
-              case 'fragment': {
+              case 'fragment':
                 text = transfer.toFragment(range) + '';
                 break;
-              }
             }
             clipboard.writeText(text)?.catch((err) => console.error(err));
             if (action === 'cut') editor.collapseCursors();
