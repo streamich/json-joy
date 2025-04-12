@@ -130,15 +130,22 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   }
 
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
-    const {at, move} = detail;
+    const {at, move, add} = detail;
     const set = this.getSelSet(detail);
     if (move) this.moveSelSet(set, detail);
     if (at) {
       const {editor} = this.txt;
-      editor.delCursors();
-      for (const range of set) {
-        editor.cursor.setRange(range);
-        break;
+      if (add) {
+        for (const range of set) {
+          editor.addCursor(range);
+          break;
+        }
+      } else {
+        editor.delCursors();
+        for (const range of set) {
+          editor.cursor.setRange(range);
+          break;
+        }
       }
     }
     // // const set = this.getSelSet(detail);

@@ -1112,8 +1112,12 @@ export class Editor<T = string> implements Printable {
     if (!Array.isArray(at)) return at;
     const [pos1, pos2] = at;
     const p1 = this.pos2point(pos1);
-    const p2 = pos2 ? this.pos2point(pos2) : p1.clone();
-    return this.txt.rangeFromPoints(p1, p2);
+    const txt = this.txt;
+    if (pos2 === undefined) {
+      p1.refAfter();
+      return txt.range(p1);
+    }
+    return txt.rangeFromPoints(p1, this.pos2point(pos2));
   }
 
   public end(): Point<T> {

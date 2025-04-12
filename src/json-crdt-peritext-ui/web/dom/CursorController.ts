@@ -78,7 +78,7 @@ export class CursorController implements UiLifeCycles, Printable {
 
   public readonly focus = new ValueSyncStore<boolean>(false);
 
-  private readonly onFocus = (event: Event): void => {
+  private readonly onFocus = (): void => {
     this.focus.next(true);
   };
 
@@ -108,7 +108,7 @@ export class CursorController implements UiLifeCycles, Printable {
           et.move([['start', 'word', -1], ['end', 'word', 1]], [at]);
         } else if (pressed.has('Alt')) {
           ev.preventDefault();
-          // et.cursor({at, edge: 'new'});
+          et.cursor({at: [at], add: true});
         } else {
           this.mouseDown.next(true);
           ev.preventDefault();

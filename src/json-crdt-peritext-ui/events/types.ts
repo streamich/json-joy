@@ -90,7 +90,7 @@ export type SelectionMoveInstruction = [
    *     finding the position which has the closest relative offset from the
    *     beginning of the line.
    * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
-   *     blockequote, etc.
+   *     blockquote, etc.
    * - `'all'`: Moves to the beginning or end of the document.
    *
    */
@@ -99,7 +99,8 @@ export type SelectionMoveInstruction = [
   /**
    * Specify the length of the movement (the number of steps) in units
    * specified by the `to` field. If not specified, the default value is `0`,
-   * which results in no movement.
+   * which results in no movement. If the value is negative, the movement will
+   * be backwards. If positive, the movement will be forwards.
    * 
    * @default 0
    */
@@ -123,6 +124,7 @@ export interface InsertDetail {
 /**
  * Event dispatched to delete text from the document.
  */
+// export interface DeleteDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
 export interface DeleteDetail {
   /**
    * Specifies the amount of text to delete. If the value is negative, the
@@ -177,117 +179,97 @@ export interface DeleteDetail {
 
 /**
  * The `cursor` event is emitted when caret or selection is changed. The event
- * is applied to all cursors in the document.
+ * is applied to all cursors in the document. If the `at` field is specified,
+ * a new cursor is created at that position, and all other cursors are removed.
+ * 
+ * The `at` field allows to insert a new cursors at a specified location in the
+ * document and remove all other cursors. The `move` fields allows to perform
+ * one or more move operations to all cursors in the document.
  *
  * ## Scenarios
  *
  * Move caret to a specific position in text:
  *
  * ```ts
- * {at: 10}
+ * {at: [10]}
  * ```
  *
- * Move caret relative to current position:
+ * Move caret relative to current position by 10 characters forwards:
  *
  * ```ts
- * {len: 5}
+ * {move: [['focus', 'char', 10, true]]}
+ * ```
+ *
+ * Move caret only the focus edge of selections by 10 characters backwards:
+ *
+ * ```ts
+ * {move: [['focus', 'char', -10]]}
  * ```
  *
  * Move caret to the beginning of the word at a specific position:
  *
  * ```ts
- * {at: 10, len: -1, unit: 'word'}
+ * {at: [10], move: [['focus', 'word', -1, true]]}
  * ```
  *
  * Move caret to the end of word starting from the current position:
  *
  * ```ts
- * {len: 1, unit: 'word'}
+ * {move: [['focus', 'word', 1, true]]}
  * ```
  *
  * Move *anchor* edge of the selection to the beginning of the current line:
  *
  * ```ts
- * {len: -1, unit: 'line', edge: 'anchor'}
+ * {move: [['anchor', 'line', -1]]}
+ * ```
+ * 
+ * Move *anchor* edge of the selection exactly to after the second character in
+ * the document:
+ * 
+ * ```ts
+ * {move: [['anchor', 2]]}
  * ```
  *
  * Move *focus* edge of the selection to the end of a block at a specific position:
  *
  * ```ts
- * {at: 10, len: 1, unit: 'block', edge: 'focus'}
+ * {at: [10], move: [['focus', 'block', 1]]}
  * ```
  *
  * Select the whole document:
  *
  * ```ts
- * {unit: 'all'}
+ * {at: [0], move: [['focus', 'all', 1]]}
+ * ```
+ * 
+ * or
+ * 
+ * ```ts
+ * {move: [
+ *   ['start', 'all', -1],
+ *   ['end', 'all', 1],
+ * ]}
  * ```
  *
- * The editor supports multiple cursors. To create a new cursor, set the `edge`
- * field to `'new'`. The `at` field specifies the position of the new cursor.
- * The `len` field is ignored when the `edge` field is set to `'new'`. For
- * example:
+ * The editor supports multiple cursors. To insert a new cursor at a specific
+ * position, specify the `add` flag in addition to the `at` field. For example,
+ * insert a new cursor at position 10:
  *
  * ```ts
- * {at: 10, edge: 'new'}
+ * {at: [10], add: true}
  * ```
  */
 export interface CursorDetail extends SelectionDetailPart, SelectionMoveDetailPart {
   /**
-   * Position in the document to move the cursor to. If `-1` or undefined, the
-   * current cursor position will be used as the starting point and `len` will
-   * be used to determine the new position.
-   *
-   * If 2-tuple is provided, the first element is the character index and the
-   * second `0 | 1` member specifies the anchor point of the character: `0`
-   * for the beginning of the character and `1` for the end of the character.
+   * If `true`, the selection will be added to the current selection set, i.e.
+   * a new cursor will be inserted at the specified position into the document.
+   * Otherwise, the selection specified by the `at` field will be used to
+   * replace all other cursors in the document.
+   * 
+   * @default false
    */
-  // at?: Position;
-
-  /**
-   * Specify the length of the movement or selection in units specified by the
-   * `unit` field. If the `at` field is set, the `at` field specifies the
-   * absolute selection position and the `len` field specifies the length of
-   * the selection. If the `at` field is not set, the `len` field specifies
-   * the relative movement of the cursor.
-   */
-  // len?: number;
-
-  /**
-   * Specifies the unit of the movement. If `'char'`, the cursor will be
-   * moved by `len` characters. If `'word'`, the cursor will be moved by
-   * one word in the direction specified by `len`. If `'line'`, the cursor
-   * will be moved to the beginning or end of line, in direction specified
-   * by `len`.
-   *
-   * - `'point'`: Moves by one Peritext anchor point. Each character has two
-   *     anchor points, one from each side of the character.
-   * - `'char'`: Moves by one character. Skips one visible character.
-   * - `'word'`: Moves by one word. Skips all visible characters until the end
-   *     of a word.
-   * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
-   *     the line end is determined by a visual line wrap.
-   * - `'vert'`: Moves cursor up or down by one line, works if UI
-   *     API is provided. Determines the best position in the target line by
-   *     finding the position which has the closest relative offset from the
-   *     beginning of the line.
-   * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
-   *     blockequote, etc.
-   * - `'all'`: Moves to the beginning or end of the document.
-   *
-   * @default 'char'
-   */
-  // unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all';
-
-  /**
-   * Specifies which edge of the selection to move. If `'focus'`, the focus
-   * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
-   * `'both'`, the whole selection will be moved. Defaults to `'both'`.
-   *
-   * When the value is set to `'new'`, a new cursor will be created at the
-   * position specified by the `at` field.
-   */
-  // edge?: 'focus' | 'anchor' | 'both' | 'new';
+  add?: boolean;
 }
 
 /**
