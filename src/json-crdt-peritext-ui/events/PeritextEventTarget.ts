@@ -6,6 +6,7 @@ import type {
   DeleteDetail,
   MarkerDetail,
   BufferDetail,
+  SelectionMoveInstruction,
 } from './types';
 
 export type PeritextEventMap = {
@@ -58,8 +59,20 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('cursor', detail);
   }
 
-  public move(move?: CursorDetail['move'], at?: CursorDetail['at']): void {
-    this.cursor({move, at});
+  public move(
+    edge: SelectionMoveInstruction[0],
+    unit: SelectionMoveInstruction[1],
+    len?: SelectionMoveInstruction[2],
+    collapse?: SelectionMoveInstruction[3]
+  ): void;
+  public move(move?: CursorDetail['move'], at?: CursorDetail['at']): void;
+  public move(a?: any, b?: any, len?: any, collapse?: any): void {
+    if (typeof a === 'string') {
+      const move: SelectionMoveInstruction[] = [[a as SelectionMoveInstruction[0], b, len, collapse]];
+      this.cursor({move});
+    } else {
+      this.cursor({move: a, at: b});
+    }
   }
 
   public format(type: FormatDetail['type'], behavior?: FormatDetail['behavior'], data?: FormatDetail['data']): void;
