@@ -171,16 +171,16 @@ export class CursorController implements UiLifeCycles, Printable {
       case 'ArrowUp':
       case 'ArrowDown': {
         event.preventDefault();
-        et.move([['focus', 'vert', key === 'ArrowUp' ? -1 : 1, !event.shiftKey]]);
+        et.move('focus', 'vert', key === 'ArrowUp' ? -1 : 1, !event.shiftKey);
         break;
       }
       case 'ArrowLeft':
       case 'ArrowRight': {
         const direction = key === 'ArrowLeft' ? -1 : 1;
         event.preventDefault();
-        if (event.shiftKey) et.move([['focus', unit(event) || 'char', direction]]);
+        if (event.shiftKey) et.move('focus', unit(event) || 'char', direction);
         // else if (event.metaKey) et.move(direction, 'line');
-        // else if (event.altKey && event.ctrlKey) et.move(direction, 'point');
+        else if (event.altKey && event.ctrlKey) et.move('focus', 'point', direction, true);
         else if (event.altKey || event.ctrlKey) et.move('focus', 'word', direction, true);
         else et.move('focus', 'char', direction, true);
         break;
@@ -189,14 +189,13 @@ export class CursorController implements UiLifeCycles, Printable {
       case 'End': {
         event.preventDefault();
         const direction = key === 'End' ? 1 : -1;
-        const edge = event.shiftKey ? 'focus' : 'both';
-        // et.move(direction, 'line', edge);
+        et.move('focus', 'line', direction, !event.shiftKey);
         return;
       }
       case 'a':
         if (event.metaKey || event.ctrlKey) {
           event.preventDefault();
-          et.cursor({move: [['start', 'all', -1], ['end', 'all', 1]]});
+          et.cursor({at: [0, 0], move: [['end', 'all', 1]]});
           return;
         }
     }

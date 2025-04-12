@@ -114,8 +114,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           : txt.editor.pos2point(to);
         if (point === start) start = point2; else end = point2;
         if (collapse) {
-          point2.refAfter();
-          if (point2 === start) end = point2.clone(); else start = point2.clone();
+          if (to !== 'point') point2.refAfter();
+          if (point === start) end = point2.clone(); else start = point2.clone();
         }
       }
       if (start.cmpSpatial(end) > 0) {
