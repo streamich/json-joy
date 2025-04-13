@@ -1148,7 +1148,7 @@ export class Editor<T = string> implements Printable {
     const txt = this.txt;
     if (pos2 === undefined) {
       p1.refAfter();
-      return [txt.range(p1), CursorAnchor.End]
+      return [txt.range(p1), CursorAnchor.End];
     }
     const p2 = this.pos2point(pos2);
     const range = txt.rangeFromPoints(p1, p2);

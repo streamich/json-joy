@@ -84,7 +84,12 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     return at ? [editor.sel2range(at)[0]] : editor.cursors();
   }
 
-  protected moveRange(start: Point, end: Point, anchor: CursorAnchor, move?: events.SelectionMoveInstruction[]): [start: Point, end: Point, anchor: CursorAnchor] {
+  protected moveRange(
+    start: Point,
+    end: Point,
+    anchor: CursorAnchor,
+    move?: events.SelectionMoveInstruction[],
+  ): [start: Point, end: Point, anchor: CursorAnchor] {
     if (!move) return [start, end, anchor];
     const {txt, editorUi} = this;
     const start0 = start;
@@ -116,7 +121,12 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   protected moveSelSet(set: events.SelectionSet, {move}: events.SelectionMoveDetailPart): void {
     if (!move) return;
     for (const selection of set) {
-      const [start, end, anchor] = this.moveRange(selection.start, selection.end, selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End, move);
+      const [start, end, anchor] = this.moveRange(
+        selection.start,
+        selection.end,
+        selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End,
+        move,
+      );
       if (selection instanceof Cursor) selection.set(start, end, anchor);
       else selection.set(start, end);
     }

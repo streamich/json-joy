@@ -155,11 +155,11 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.insert(' ');
       kit.editor.cursor.setAt(8);
       expect(kit.editor.text()).toBe('abcde fghij klmnopqrstuvwxyz');
-        kit.et.delete({
-          move: [
-            ['start', 'word', -1],
-            ['end', 'word', 1],
-          ],
+      kit.et.delete({
+        move: [
+          ['start', 'word', -1],
+          ['end', 'word', 1],
+        ],
       });
       expect(kit.editor.text()).toBe('abcde  klmnopqrstuvwxyz');
     });

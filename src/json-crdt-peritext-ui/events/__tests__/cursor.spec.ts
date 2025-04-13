@@ -83,7 +83,7 @@ const testSuite = (getKit: () => Kit) => {
 
       test('can set selection at the document start using Point instance', () => {
         const kit = setup();
-        kit.et.cursor({at: [kit.peritext.pointStart()!, kit.peritext.pointStart()?.copy(p => p.step(5))]});
+        kit.et.cursor({at: [kit.peritext.pointStart()!, kit.peritext.pointStart()?.copy((p) => p.step(5))]});
         expect(kit.editor.cursor.start.viewPos()).toBe(0);
         expect(kit.editor.cursor.isCollapsed()).toBe(false);
         expect(kit.editor.cursor.text()).toBe('abcde');
@@ -123,7 +123,7 @@ const testSuite = (getKit: () => Kit) => {
         const lengths = [1, 2, 3, 5, 7, 13, 19];
         for (const length of lengths) {
           for (let i = length; i < view.length; i++) {
-            kit.et.cursor({at: [i, i-length]});
+            kit.et.cursor({at: [i, i - length]});
             expect(kit.editor.cursor.text()).toBe(view.slice(i - length, i));
           }
         }
@@ -386,10 +386,12 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.cursor({at: [5]});
         kit.et.insert(' ');
         kit.et.cursor({at: [4]});
-        kit.et.cursor({move: [
-          ['start', 'word', -1],
-          ['end', 'word', 1],
-        ]});
+        kit.et.cursor({
+          move: [
+            ['start', 'word', -1],
+            ['end', 'word', 1],
+          ],
+        });
         expect(kit.editor.cursor.text()).toBe('cd');
       });
 
@@ -399,10 +401,13 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.insert(' ');
         kit.et.cursor({at: [5]});
         kit.et.insert(' ');
-        kit.et.cursor({at: [4], move: [
-          ['start', 'word', -1],
-          ['end', 'word', 1],
-        ]});
+        kit.et.cursor({
+          at: [4],
+          move: [
+            ['start', 'word', -1],
+            ['end', 'word', 1],
+          ],
+        });
         expect(kit.editor.cursor.text()).toBe('cd');
       });
 
@@ -413,10 +418,12 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.cursor({at: [5]});
         kit.et.insert('\n');
         kit.et.cursor({at: [4]});
-        kit.et.cursor({move: [
-          ['start', 'line', -1],
-          ['end', 'line', 1],
-        ]});
+        kit.et.cursor({
+          move: [
+            ['start', 'line', -1],
+            ['end', 'line', 1],
+          ],
+        });
         expect(kit.editor.cursor.text()).toBe('cd');
       });
 
@@ -426,10 +433,13 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.insert('\n');
         kit.et.cursor({at: [5]});
         kit.et.insert('\n');
-        kit.et.cursor({at: [4],move: [
-          ['start', 'line', -1],
-          ['end', 'line', 1],
-        ]});
+        kit.et.cursor({
+          at: [4],
+          move: [
+            ['start', 'line', -1],
+            ['end', 'line', 1],
+          ],
+        });
         expect(kit.editor.cursor.text()).toBe('cd');
       });
     });
