@@ -118,9 +118,26 @@ export type SelectionMoveInstruction = [
 ];
 
 /**
+ * The {@link RangeEventDetail} base interface is used by events
+ * which apply change to a range (selection) of text in the document. Usually,
+ * the events will apply changes to all ranges in the selection, some event may
+ * use only the first range in the selection (like the "buffer" event).
+ * 
+ * Selection-based events work by first constructing a *selection set*, which
+ * is a list of {@link Range} or {@link Cursor} instances. They then apply the
+ * event to each selection in the selection set.
+ * 
+ * The selection set is constructed by using the `at` field to specify a single
+ * {@link Range} or, if not specified, all {@link Cursor} instances in the
+ * document are used. Then the `move` field is used to specify one or more move
+ * operations to be applied to each range in the selection set.
+ */
+export interface RangeEventDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
+
+/**
  * Event dispatched to insert text into the document.
  */
-export interface InsertDetail extends SelectionDetailPart, SelectionMoveDetailPart {
+export interface InsertDetail extends RangeEventDetail {
   text: string;
 }
 
@@ -132,7 +149,7 @@ export interface InsertDetail extends SelectionDetailPart, SelectionMoveDetailPa
  * are collapsed to a single point, while deleting all text and any annotations
  * contained in the selections.
  */
-export interface DeleteDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
+export interface DeleteDetail extends RangeEventDetail {}
 
 /**
  * The `cursor` event is emitted when caret or selection is changed. The event
@@ -217,7 +234,7 @@ export interface DeleteDetail extends SelectionDetailPart, SelectionMoveDetailPa
  * {at: [10], add: true}
  * ```
  */
-export interface CursorDetail extends SelectionDetailPart, SelectionMoveDetailPart {
+export interface CursorDetail extends RangeEventDetail {
   /**
    * If `true`, the selection will be added to the current selection set, i.e.
    * a new cursor will be inserted at the specified position into the document.
@@ -232,7 +249,7 @@ export interface CursorDetail extends SelectionDetailPart, SelectionMoveDetailPa
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface FormatDetail extends SelectionDetailPart, SelectionMoveDetailPart {
+export interface FormatDetail extends RangeEventDetail {
   /**
    * Type of the annotation. The type is used to determine the visual style of
    * the annotation, for example, the type `'bold'` may render the text in bold.
@@ -299,7 +316,7 @@ export interface FormatDetail extends SelectionDetailPart, SelectionMoveDetailPa
  * block. Removing a marker results into a "join" action, which merges two
  * adjacent blocks into one.
  */
-export interface MarkerDetail extends SelectionDetailPart, SelectionMoveDetailPart {
+export interface MarkerDetail extends RangeEventDetail {
   /**
    * The action to perform.
    *
@@ -330,7 +347,7 @@ export interface MarkerDetail extends SelectionDetailPart, SelectionMoveDetailPa
  * It can cut/copy the contents in various formats, such as native Peritext
  * format, HTML, Markdown, plain text, and other miscellaneous formats.
  */
-export interface BufferDetail {
+export interface BufferDetail extends RangeEventDetail {
   /**
    * The action to perform. The `'cut'` and `'copy'` actions generally work
    * the same way, the only difference is that the `'cut'` action removes the
