@@ -6,39 +6,48 @@ import type {Slices} from '../slice/Slices';
 import type {ITimestampStruct} from '../../../json-crdt-patch';
 import type {Range} from '../rga/Range';
 
+const forEachRange = <T, S extends PersistedSlice<T>>(selection: Range<T>[] | IterableIterator<Range<T>>, callback: (range: Range<T>) => S): S[] => {
+  const slices: S[] = [];
+  for (const cursor of selection) {
+    const slice = callback(cursor);
+    slices.push(slice);
+  }
+  return slices;
+};
+
 export class EditorSlices<T = string> {
   constructor(
     protected readonly txt: Peritext<T>,
     public readonly slices: Slices<T>,
   ) {}
 
-  protected insAtCursors<S extends PersistedSlice<T>>(selection: Range<T>[] | IterableIterator<Range<T>>, callback: (range: Range<T>) => S): S[] {
-    const slices: S[] = [];
-    for (const cursor of selection) {
-      const slice = callback(cursor);
-      slices.push(slice);
-    }
-    return slices;
+  public insStack(type: SliceType, data?: unknown | ITimestampStruct, selection?: Range<T>[] | IterableIterator<Range<T>>): PersistedSlice<T>[] {
+    const {slices, txt} = this;
+    selection ||= txt.editor.cursors();
+    return forEachRange(selection, (range) => slices.insStack(range.range(), type, data));
   }
 
-  public insStack(type: SliceType, data?: unknown | ITimestampStruct, selection: Range<T>[] | IterableIterator<Range<T>> = this.txt.editor.cursors()): PersistedSlice<T>[] {
-    return this.insAtCursors(selection, (cursor) => this.slices.insStack(cursor.range(), type, data));
+  public insOne(type: SliceType, data?: unknown | ITimestampStruct, selection?: Range<T>[] | IterableIterator<Range<T>>): PersistedSlice<T>[] {
+    const {slices, txt} = this;
+    selection ||= txt.editor.cursors();
+    return forEachRange(selection, (range) => slices.insOne(range.range(), type, data));
   }
 
-  public insOne(type: SliceType, data?: unknown | ITimestampStruct, selection: Range<T>[] | IterableIterator<Range<T>> = this.txt.editor.cursors()): PersistedSlice<T>[] {
-    return this.insAtCursors(selection, (cursor) => this.slices.insOne(cursor.range(), type, data));
+  public insErase(type: SliceType, data?: unknown | ITimestampStruct, selection?: Range<T>[] | IterableIterator<Range<T>>): PersistedSlice<T>[] {
+    const {slices, txt} = this;
+    selection ||= txt.editor.cursors();
+    return forEachRange(selection, (range) => slices.insErase(range.range(), type, data));
   }
 
-  public insErase(type: SliceType, data?: unknown | ITimestampStruct, selection: Range<T>[] | IterableIterator<Range<T>> = this.txt.editor.cursors()): PersistedSlice<T>[] {
-    return this.insAtCursors(selection, (cursor) => this.slices.insErase(cursor.range(), type, data));
-  }
-
-  public insMarker(type: SliceType, data?: unknown, separator?: string, selection: Range<T>[] | IterableIterator<Range<T>> = this.txt.editor.cursors()): MarkerSlice<T>[] {
-    return this.insAtCursors(selection, (cursor) => {
-      this.txt.editor.collapseCursor(cursor);
-      const after = cursor.start.clone();
+  public insMarker(type: SliceType, data?: unknown, separator?: string, selection?: Range<T>[] | IterableIterator<Range<T>>): MarkerSlice<T>[] {
+    const {slices, txt} = this;
+    const editor = txt.editor;
+    selection ||= txt.editor.cursors();
+    return forEachRange(selection, (range) => {
+      editor.collapseCursor(range);
+      const after = range.start.clone();
       after.refAfter();
-      const marker = this.slices.insMarkerAfter(after.id, type, data, separator);
+      const marker = slices.insMarkerAfter(after.id, type, data, separator);
       return marker;
     });
   }
