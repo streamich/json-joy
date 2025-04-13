@@ -111,10 +111,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
-  public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
-    const text = event.detail.text;
-    const editor = this.txt.editor;
-    editor.insert(text);
+  public readonly insert = ({detail}: CustomEvent<events.InsertDetail>) => {
+    const {move, text} = detail;
+    const set = [...this.getSelSet(detail)];
+    if (move) this.moveSelSet(set, detail);
+    this.txt.editor.insert(text, set);
     this.undo?.capture();
   };
 
@@ -132,7 +133,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         range.set(start);
       }
     }
-    if (deleted) return;
+    if (deleted) {
+      this.undo?.capture();
+      return;
+    }
     if (move) this.moveSelSet(set, detail);
     for (const range of set) {
       editor.delRange(range);
@@ -141,6 +145,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       start.refAfter();
       range.set(start);
     }
+    this.undo?.capture();
   };
 
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
@@ -155,7 +160,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           break;
         }
       } else {
-        editor.delCursors();
         for (const range of set) {
           editor.cursor.setRange(range);
           break;

@@ -75,12 +75,13 @@ export class ToolbarState implements UiLifeCycles {
     const {activeLeafBlockId$, txt} = this;
     const {overlay, editor} = txt;
     const value = activeLeafBlockId$.getValue();
-    if (editor.cursorCard() !== 1 || !editor.cursor.isCollapsed()) {
+    const cardinality = editor.cursorCard();
+    if (cardinality !== 1 || (cardinality === 1 && !editor.mainCursor()?.isCollapsed())) {
       if (value) activeLeafBlockId$.next(null);
       return;
     }
-    const focus = editor.cursor.focus();
-    const marker = overlay.getOrNextLowerMarker(focus);
+    const focus = editor.mainCursor()?.focus();
+    const marker = focus ? overlay.getOrNextLowerMarker(focus) : void 0;
     const markerId = marker?.marker.start.id ?? txt.str.id;
     const doSet = !value || compare(value, markerId) !== 0;
     if (doSet) activeLeafBlockId$.next(markerId);

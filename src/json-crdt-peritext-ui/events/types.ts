@@ -120,12 +120,17 @@ export type SelectionMoveInstruction = [
 /**
  * Event dispatched to insert text into the document.
  */
-export interface InsertDetail {
+export interface InsertDetail extends SelectionDetailPart, SelectionMoveDetailPart {
   text: string;
 }
 
 /**
- * Event dispatched to delete text from the document.
+ * Event dispatched to delete text from the document. The deletion happens by
+ * collapsing all selections to a single point and deleting the text and any
+ * annotations contained in the selections. If all selections are already
+ * collapsed, the moves specified in `move` are performed and all selections
+ * are collapsed to a single point, while deleting all text and any annotations
+ * contained in the selections.
  */
 export interface DeleteDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
 

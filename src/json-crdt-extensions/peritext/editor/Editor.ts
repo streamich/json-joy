@@ -115,6 +115,10 @@ export class Editor<T = string> implements Printable {
     };
   }
 
+  public mainCursor(): Cursor<T> | undefined {
+    return this.cursors0()();
+  }
+
   public cursors() {
     return new UndefEndIter(this.cursors0());
   }

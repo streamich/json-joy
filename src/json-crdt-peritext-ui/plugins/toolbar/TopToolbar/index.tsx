@@ -21,7 +21,8 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   if (!ctx.dom) return null;
 
-  const [complete] = editor.hasCursor() ? peritext.overlay.stat(editor.cursor) : [new Set()];
+  const cursor = editor.mainCursor();
+  const [complete] = cursor ? peritext.overlay.stat(cursor) : [new Set()];
 
   const inlineGroupButton = (type: string | number, name: React.ReactNode) => (
     <Button
