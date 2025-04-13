@@ -226,23 +226,16 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     this.undo?.capture();
   };
 
-  public readonly buffer = async (event: CustomEvent<events.BufferDetail>) => {
+  public readonly buffer = async ({detail}: CustomEvent<events.BufferDetail>) => {
+    const selection = [...this.getSelSet(detail)];
+    this.moveSelSet(selection, detail);
     const opts = this.opts;
     const clipboard = opts.clipboard;
     if (!clipboard) return;
-    const detail = event.detail;
     const {action, format} = detail;
-    let range: undefined | Range<any>;
     const txt = this.txt;
     const editor = txt.editor;
-    if (detail.unit) {
-      const p1 = editor.pos2point(detail.unit[0]);
-      const p2 = editor.pos2point(detail.unit[1]);
-      range = txt.rangeFromPoints(p1, p2);
-    } else {
-      range = editor.getCursor()?.range();
-      if (!range) range = txt.rangeAll();
-    }
+    let range: undefined | Range<any> = selection[0] ?? txt.rangeAll();
     if (!range) return;
     switch (action) {
       case 'cut':

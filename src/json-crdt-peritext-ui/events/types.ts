@@ -378,29 +378,6 @@ export interface BufferDetail extends RangeEventDetail {
   format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'md' | 'fragment' | 'style';
 
   /**
-   * The range of text to cut or copy. If not specified, the first selection of
-   * the current cursor is used. If not specified and there is no cursor, the
-   * whole document is used.
-   * 
-   * When multiple cursors are present, the range is calculated by using the
-   * first cursor.
-   * 
-   * Below is a description of the possible values:
-   * 
-   * - `cursor`: The current cursor selection.
-   * - `word`: The word at the current cursor position. Left and right edges of
-   *   the selection are moved to the beginning and end of the word.
-   * - `line`: The line at the current cursor caret or focus position.
-   * - `block`: The block at the current cursor caret or focus position.
-   * - `all`: The whole document.
-   * - `[start, end]`: A specific range of text to cut or copy.
-   * 
-   * @default 'cursor'
-   */
-  // unit?: [start: Position, end: Position] | 'cursor' | 'word' | 'line' | 'block' | 'all';
-  unit?: [start: Position, end: Position];
-
-  /**
    * The data to paste into the document, when `action` is `"paste"`. If not
    * specified, an attempt is made to retrieve the data from the clipboard.
    */
