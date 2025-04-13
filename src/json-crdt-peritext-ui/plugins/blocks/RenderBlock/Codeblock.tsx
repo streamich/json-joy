@@ -19,5 +19,9 @@ export interface CodeblockProps extends BlockViewProps {
 }
 
 export const Codeblock: React.FC<CodeblockProps> = ({block, children}) => {
-  return <pre className={blockClass}><code>{children}</code></pre>;
+  return (
+    <pre className={blockClass}>
+      <code>{children}</code>
+    </pre>
+  );
 };

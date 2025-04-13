@@ -48,7 +48,7 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     edge: SelectionMoveInstruction[0],
     unit: SelectionMoveInstruction[1],
     len?: SelectionMoveInstruction[2],
-    collapse?: SelectionMoveInstruction[3]
+    collapse?: SelectionMoveInstruction[3],
   ): void;
   public delete(detail?: DeleteDetail): void;
   public delete(a: any = {}, b?: any, len?: any, collapse?: any): void {
@@ -68,7 +68,7 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     edge: SelectionMoveInstruction[0],
     unit: SelectionMoveInstruction[1],
     len?: SelectionMoveInstruction[2],
-    collapse?: SelectionMoveInstruction[3]
+    collapse?: SelectionMoveInstruction[3],
   ): void;
   public move(move?: CursorDetail['move'], at?: CursorDetail['at']): void;
   public move(a?: any, b?: any, len?: any, collapse?: any): void {

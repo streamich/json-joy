@@ -19,7 +19,7 @@ const markdown =
   'This is code block:' +
   '\n\n' +
   '```\n' +
-  'console.log(123);\n' + 
+  'console.log(123);\n' +
   '```\n' +
   '\n\n' +
   'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +

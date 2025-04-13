@@ -105,7 +105,13 @@ export class CursorController implements UiLifeCycles, Printable {
         const pressed = this.opts.keys.pressed;
         if (pressed.has('Shift')) {
           ev.preventDefault();
-          et.move([['start', 'word', -1], ['end', 'word', 1]], [at]);
+          et.move(
+            [
+              ['start', 'word', -1],
+              ['end', 'word', 1],
+            ],
+            [at],
+          );
         } else if (pressed.has('Alt')) {
           ev.preventDefault();
           et.cursor({at: [at], add: true});
@@ -119,27 +125,42 @@ export class CursorController implements UiLifeCycles, Printable {
       case 2:
         this.mouseDown.next(false);
         ev.preventDefault();
-        et.move([['start', 'word', -1], ['end', 'word', 1]]);
+        et.move([
+          ['start', 'word', -1],
+          ['end', 'word', 1],
+        ]);
         break;
       case 3:
         this.mouseDown.next(false);
         ev.preventDefault();
-        et.move([['start', 'word', -1], ['end', 'word', 1]]);
+        et.move([
+          ['start', 'word', -1],
+          ['end', 'word', 1],
+        ]);
         break;
       case 4:
         this.mouseDown.next(false);
         ev.preventDefault();
-        et.move([['start', 'line', -1], ['end', 'line', 1]]);
+        et.move([
+          ['start', 'line', -1],
+          ['end', 'line', 1],
+        ]);
         break;
       case 5:
         this.mouseDown.next(false);
         ev.preventDefault();
-        et.move([['start', 'block', -1], ['end', 'block', 1]]);
+        et.move([
+          ['start', 'block', -1],
+          ['end', 'block', 1],
+        ]);
         break;
       case 6:
         this.mouseDown.next(false);
         ev.preventDefault();
-        et.move([['start', 'all', -1], ['end', 'all', 1]]);
+        et.move([
+          ['start', 'all', -1],
+          ['end', 'all', 1],
+        ]);
         break;
     }
   };

@@ -630,7 +630,10 @@ export class Editor<T = string> implements Printable {
 
   // --------------------------------------------------------------- formatting
 
-  public eraseFormatting(store: EditorSlices<T> = this.saved, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
+  public eraseFormatting(
+    store: EditorSlices<T> = this.saved,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+  ): void {
     const overlay = this.txt.overlay;
     for (const range of selection) {
       overlay.refresh();
@@ -658,7 +661,10 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public clearFormatting(store: EditorSlices<T> = this.saved, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
+  public clearFormatting(
+    store: EditorSlices<T> = this.saved,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+  ): void {
     const overlay = this.txt.overlay;
     overlay.refresh();
     for (const range of selection) {
@@ -853,7 +859,12 @@ export class Editor<T = string> implements Printable {
     return true;
   }
 
-  public split(type?: SliceType, data?: unknown, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(), slices: EditorSlices<T> = this.saved): void {
+  public split(
+    type?: SliceType,
+    data?: unknown,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    slices: EditorSlices<T> = this.saved,
+  ): void {
     if (type === void 0) {
       for (const range of selection) {
         this.collapseCursor(range);
@@ -924,8 +935,7 @@ export class Editor<T = string> implements Printable {
     slices: EditorSlices<T> = this.saved,
     def: SliceTypeStep = SliceTypeCon.p,
   ): void {
-    for (const range of selection)
-      this.tglMarkerAt(range.start, type, data, slices, def);
+    for (const range of selection) this.tglMarkerAt(range.start, type, data, slices, def);
   }
 
   /**
@@ -936,9 +946,13 @@ export class Editor<T = string> implements Printable {
    * @param slices The slices set to use, if new marker is inserted at the start
    *     of the document.
    */
-  public updMarker(type: SliceType, data?: unknown, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(), slices: EditorSlices<T> = this.saved): void {
-    for (const range of selection)
-      this.updMarkerAt(range.start, type, data, slices);
+  public updMarker(
+    type: SliceType,
+    data?: unknown,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    slices: EditorSlices<T> = this.saved,
+  ): void {
+    for (const range of selection) this.updMarkerAt(range.start, type, data, slices);
   }
 
   public delMarker(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {

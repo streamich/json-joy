@@ -15,7 +15,7 @@ export interface ChangeDetail {
 /**
  * The {@link SelectionDetailPart} interface allows to specify a range of text
  * selection or a single caret position in the document.
- * 
+ *
  * If the `at` field is specified, the selection set will contain one selection,
  * the one created at the specified position. If the `at` field is not specified,
  * the selection set will contain all cursors in the document at their current
@@ -27,11 +27,11 @@ export interface SelectionDetailPart {
    * operation is applied over all cursors in the document at their current
    * positions. Or if operation is specified only for one cursor, it will be
    * applied to the first (main) cursor.
-   * 
+   *
    * If specified, a new temporary selection is created which is used to perform
    * the operation on. Then, if specified, this selection is used to create a
    * new main cursor, while all other cursors are removed.
-   * 
+   *
    * @default undefined
    */
   at?: Selection;
@@ -57,7 +57,7 @@ export interface SelectionMoveDetailPart {
 export type SelectionMoveInstruction = [
   /**
    * Specifies the selection edge to perform the operation on.
-   * 
+   *
    * - `'start'`: The start edge of the selection.
    * - `'end'`: The end edge of the selection.
    * - `'focus'`: The focus edge of the selection. If the selection does not have
@@ -66,11 +66,10 @@ export type SelectionMoveInstruction = [
    * - `'anchor'`: The anchor edge of the selection. If the selection does not
    *    have an anchor edge (i.e. it is a {@link Range}, not a {@link Cursor}), the
    *    anchor is assumed to be the `'start'` edge of the selection.
-   * 
+   *
    * @default 'focus'
    */
   edge: 'start' | 'end' | 'focus' | 'anchor',
-
   /**
    * Absolute position is specified using {@link Position} type. In which case
    * the next `len` field is ignored.
@@ -94,21 +93,19 @@ export type SelectionMoveInstruction = [
    * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
    *   blockquote, etc.
    * - `'all'`: Moves to the beginning or end of the document.
-   * 
+   *
    * @todo Introduce 'vline', "visual line" - soft line break.
    */
   to: Position | 'point' | 'char' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
-
   /**
    * Specify the length of the movement (the number of steps) in units
    * specified by the `to` field. If not specified, the default value is `0`,
    * which results in no movement. If the value is negative, the movement will
    * be backwards. If positive, the movement will be forwards.
-   * 
+   *
    * @default 0
    */
   len?: number,
-
   /**
    * If `true`, the selection will be collapsed to a single point. The other
    * edge of the selection will be moved to the same position as the specified
@@ -122,11 +119,11 @@ export type SelectionMoveInstruction = [
  * which apply change to a range (selection) of text in the document. Usually,
  * the events will apply changes to all ranges in the selection, some event may
  * use only the first range in the selection (like the "buffer" event).
- * 
+ *
  * Selection-based events work by first constructing a *selection set*, which
  * is a list of {@link Range} or {@link Cursor} instances. They then apply the
  * event to each selection in the selection set.
- * 
+ *
  * The selection set is constructed by using the `at` field to specify a single
  * {@link Range} or, if not specified, all {@link Cursor} instances in the
  * document are used. Then the `move` field is used to specify one or more move
@@ -155,7 +152,7 @@ export interface DeleteDetail extends RangeEventDetail {}
  * The `cursor` event is emitted when caret or selection is changed. The event
  * is applied to all cursors in the document. If the `at` field is specified,
  * a new cursor is created at that position, and all other cursors are removed.
- * 
+ *
  * The `at` field allows to insert a new cursors at a specified location in the
  * document and remove all other cursors. The `move` fields allows to perform
  * one or more move operations to all cursors in the document.
@@ -197,10 +194,10 @@ export interface DeleteDetail extends RangeEventDetail {}
  * ```ts
  * {move: [['anchor', 'line', -1]]}
  * ```
- * 
+ *
  * Move *anchor* edge of the selection exactly to after the second character in
  * the document:
- * 
+ *
  * ```ts
  * {move: [['anchor', 2]]}
  * ```
@@ -216,9 +213,9 @@ export interface DeleteDetail extends RangeEventDetail {}
  * ```ts
  * {at: [0], move: [['focus', 'all', 1]]}
  * ```
- * 
+ *
  * or
- * 
+ *
  * ```ts
  * {move: [
  *   ['start', 'all', -1],
@@ -240,7 +237,7 @@ export interface CursorDetail extends RangeEventDetail {
    * a new cursor will be inserted at the specified position into the document.
    * Otherwise, the selection specified by the `at` field will be used to
    * replace all other cursors in the document.
-   * 
+   *
    * @default false
    */
   add?: boolean;

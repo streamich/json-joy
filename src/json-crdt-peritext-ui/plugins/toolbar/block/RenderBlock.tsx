@@ -13,11 +13,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = (props) => {
   let element: React.ReactNode = children;
 
   if (block.isLeaf()) {
-    element = (
-      <LeafBlockFrame {...props}>
-        {children}
-      </LeafBlockFrame>
-    );
+    element = <LeafBlockFrame {...props}>{children}</LeafBlockFrame>;
   }
 
   return element;

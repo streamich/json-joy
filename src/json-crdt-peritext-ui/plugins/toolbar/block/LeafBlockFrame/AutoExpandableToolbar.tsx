@@ -9,7 +9,12 @@ export interface AutoExpandableToolbarProps extends ExpandableToolbarProps {
   onPopupClose?: () => void;
 }
 
-export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({menu, disabled, onPopupClose, ...rest}) => {
+export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = ({
+  menu,
+  disabled,
+  onPopupClose,
+  ...rest
+}) => {
   const expandPoint = React.useRef<AnchorPoint>({x: 32, y: 32, dx: 1, dy: 1});
 
   return (

@@ -46,7 +46,17 @@ export const ExpandableToolbar: React.FC<ExpandableToolbarProps> = (props) => {
     );
   }
 
-  return <ToolbarMenu {...rest} more={{...more, onClick: expandPoint ? (e) => {
-    setView('context');
-  } : undefined}} />;
+  return (
+    <ToolbarMenu
+      {...rest}
+      more={{
+        ...more,
+        onClick: expandPoint
+          ? (e) => {
+              setView('context');
+            }
+          : undefined,
+      }}
+    />
+  );
 };

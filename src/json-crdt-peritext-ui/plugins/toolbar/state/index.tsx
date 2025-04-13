@@ -1408,10 +1408,12 @@ export class ToolbarState implements UiLifeCycles {
               name: 'Select block',
               icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
               onSelect: () => {
-                et.cursor({move: [
-                  ['start', 'block', -1],
-                  ['end', 'block', 1],
-                ]});
+                et.cursor({
+                  move: [
+                    ['start', 'block', -1],
+                    ['end', 'block', 1],
+                  ],
+                });
               },
             },
           ],

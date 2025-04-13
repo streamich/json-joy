@@ -21,8 +21,12 @@ const getEdge = (start: Point, end: Point, anchor: CursorAnchor, edge: events.Se
     : edge === 'end'
       ? end
       : edge === 'focus'
-        ? anchor === CursorAnchor.Start ? end : start
-        : anchor === CursorAnchor.Start ? start : end;
+        ? anchor === CursorAnchor.Start
+          ? end
+          : start
+        : anchor === CursorAnchor.Start
+          ? start
+          : end;
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -89,13 +93,18 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       let anchor: CursorAnchor = selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End;
       for (const [edge, to, len, collapse] of move) {
         const point = getEdge(start, end, anchor, edge);
-        const point2 = typeof to === 'string'
-          ? (len ? txt.editor.skip(point, len, to ?? 'char', editorUi) : point.clone())
-          : txt.editor.pos2point(to);
-        if (point === start) start = point2; else end = point2;
+        const point2 =
+          typeof to === 'string'
+            ? len
+              ? txt.editor.skip(point, len, to ?? 'char', editorUi)
+              : point.clone()
+            : txt.editor.pos2point(to);
+        if (point === start) start = point2;
+        else end = point2;
         if (collapse) {
           if (to !== 'point') point2.refAfter();
-          if (point === start) end = point2.clone(); else start = point2.clone();
+          if (point === start) end = point2.clone();
+          else start = point2.clone();
         }
       }
       if (start.cmpSpatial(end) > 0) {
@@ -408,10 +417,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             if (!data) data = await clipboard.readData();
             const inserted = transfer.fromClipboard(range, data);
-            if (inserted && editor.cursorCard() === 1) this.et.move([
-              ['start', 'char', inserted],
-              ['end', 'char', inserted],
-            ]);
+            if (inserted && editor.cursorCard() === 1)
+              this.et.move([
+                ['start', 'char', inserted],
+                ['end', 'char', inserted],
+              ]);
             this.et.change();
           }
         }
