@@ -81,38 +81,42 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
     const {editor} = this.txt;
-    return at ? [editor.sel2range(at)] : editor.cursors();
+    return at ? [editor.sel2range(at)[0]] : editor.cursors();
+  }
+
+  protected moveRange(start: Point, end: Point, anchor: CursorAnchor, move?: events.SelectionMoveInstruction[]): [start: Point, end: Point, anchor: CursorAnchor] {
+    if (!move) return [start, end, anchor];
+    const {txt, editorUi} = this;
+    const start0 = start;
+    for (const [edge, to, len, collapse] of move) {
+      const point = getEdge(start, end, anchor, edge);
+      const point2 =
+        typeof to === 'string'
+          ? len
+            ? txt.editor.skip(point, len, to ?? 'char', editorUi)
+            : point.clone()
+          : txt.editor.pos2point(to);
+      if (point === start) start = point2;
+      else end = point2;
+      if (collapse) {
+        if (to !== 'point') point2.refAfter();
+        if (point === start0) end = point2.clone();
+        else start = point2.clone();
+      }
+    }
+    if (start.cmpSpatial(end) > 0) {
+      const tmp = start;
+      start = end;
+      end = tmp;
+      anchor = anchor === CursorAnchor.Start ? CursorAnchor.End : CursorAnchor.Start;
+    }
+    return [start, end, anchor];
   }
 
   protected moveSelSet(set: events.SelectionSet, {move}: events.SelectionMoveDetailPart): void {
     if (!move) return;
-    const {txt, editorUi} = this;
     for (const selection of set) {
-      let start = selection.start;
-      let end = selection.end;
-      let anchor: CursorAnchor = selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End;
-      for (const [edge, to, len, collapse] of move) {
-        const point = getEdge(start, end, anchor, edge);
-        const point2 =
-          typeof to === 'string'
-            ? len
-              ? txt.editor.skip(point, len, to ?? 'char', editorUi)
-              : point.clone()
-            : txt.editor.pos2point(to);
-        if (point === start) start = point2;
-        else end = point2;
-        if (collapse) {
-          if (to !== 'point') point2.refAfter();
-          if (point === start) end = point2.clone();
-          else start = point2.clone();
-        }
-      }
-      if (start.cmpSpatial(end) > 0) {
-        const tmp = start;
-        start = end;
-        end = tmp;
-        anchor = anchor === CursorAnchor.Start ? CursorAnchor.End : CursorAnchor.Start;
-      }
+      const [start, end, anchor] = this.moveRange(selection.start, selection.end, selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End, move);
       if (selection instanceof Cursor) selection.set(start, end, anchor);
       else selection.set(start, end);
     }
@@ -159,21 +163,16 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
     const {at, move, add} = detail;
-    const set = this.getSelSet(detail);
-    if (move) this.moveSelSet(set, detail);
-    if (at) {
-      const {editor} = this.txt;
-      if (add) {
-        for (const range of set) {
-          editor.addCursor(range);
-          break;
-        }
-      } else {
-        for (const range of set) {
-          editor.cursor.setRange(range);
-          break;
-        }
-      }
+    if (at === void 0) {
+      const selection = this.getSelSet(detail);
+      this.moveSelSet(selection, detail);
+    } else {
+      const {txt} = this;
+      const {editor} = txt;
+      const [range, anchor0] = editor.sel2range(at);
+      const [start, end, anchor] = this.moveRange(range.start, range.end, anchor0, move);
+      if (add) editor.addCursor(txt.range(start, end), anchor);
+      else editor.cursor.set(start, end, anchor);
     }
   };
 

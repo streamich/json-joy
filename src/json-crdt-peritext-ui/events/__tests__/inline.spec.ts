@@ -13,7 +13,7 @@ const testSuite = (getKit: () => Kit) => {
 
   test('can add annotation to the current selection', async () => {
     const kit = setup();
-    kit.et.cursor({at: 3, len: 3});
+    kit.et.cursor({at: [3, 6]});
     kit.et.format({type: 'bold'});
     kit.editor.delCursors();
     kit.peritext.refresh();

@@ -13,7 +13,7 @@ const testSuite = (getKit: () => Kit) => {
 
   test('on [Enter] in <blockquote> adds new paragraph', async () => {
     const kit = setup();
-    kit.et.cursor({at: 5});
+    kit.et.cursor({at: [5]});
     kit.et.marker({action: 'ins', type: [SliceTypeCon.blockquote, SliceTypeCon.p]});
     kit.peritext.refresh();
     const transfer = createTransfer(kit.peritext);
@@ -21,7 +21,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(html1).toBe('<p>abcde</p><blockquote><p>fghijklmnopqrstuvwxyz</p></blockquote>');
     expect(kit.peritext.blocks.root.children.length).toBe(2);
     expect(kit.peritext.blocks.root.children[1].children.length).toBe(1);
-    kit.et.cursor({at: 10});
+    kit.et.cursor({at: [10]});
     kit.et.marker({action: 'ins'});
     kit.peritext.refresh();
     expect(kit.peritext.blocks.root.children.length).toBe(2);
@@ -32,13 +32,13 @@ const testSuite = (getKit: () => Kit) => {
 
   test('on [Enter] in empty <blockquote> splits the blockquote', async () => {
     const kit = setup();
-    kit.et.cursor({at: 5});
+    kit.et.cursor({at: [5]});
     kit.et.marker({action: 'ins', type: [SliceTypeCon.blockquote, SliceTypeCon.p]});
     kit.peritext.refresh();
     const transfer = createTransfer(kit.peritext);
     const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
     expect(html1).toBe('<p>abcde</p><blockquote><p>fghijklmnopqrstuvwxyz</p></blockquote>');
-    kit.et.cursor({at: 10});
+    kit.et.cursor({at: [10]});
     kit.et.marker({action: 'ins'});
     kit.peritext.refresh();
     const html2 = transfer.toHtml(kit.peritext.rangeAll()!);
@@ -53,13 +53,13 @@ const testSuite = (getKit: () => Kit) => {
 
   test('can split <p> in list, list item <li> and create two adjacent lists', async () => {
     const kit = setup();
-    kit.et.cursor({at: 3});
+    kit.et.cursor({at: [3]});
     kit.et.marker({action: 'ins', type: [SliceTypeCon.ul, SliceTypeCon.li, SliceTypeCon.p]});
     kit.peritext.refresh();
     const transfer = createTransfer(kit.peritext);
     const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
     expect(html1).toBe('<p>abc</p><ul><li><p>defghijklmnopqrstuvwxyz</p></li></ul>');
-    kit.et.cursor({at: 12});
+    kit.et.cursor({at: [12]});
     kit.et.marker({action: 'ins'});
     kit.peritext.refresh();
     const html2 = transfer.toHtml(kit.peritext.rangeAll()!);
@@ -76,7 +76,7 @@ const testSuite = (getKit: () => Kit) => {
 
   test('can consecutively split two nested lists with a blockquote', async () => {
     const kit = setup();
-    kit.et.cursor({at: 7});
+    kit.et.cursor({at: [7]});
     kit.et.marker({
       action: 'ins',
       type: [
@@ -94,7 +94,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(html1).toBe(
       '<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmnopqrstuvwxyz</p></blockquote></li></ul></li></ul>',
     );
-    kit.et.cursor({at: 15});
+    kit.et.cursor({at: [15]});
     const pressEnter = (): string => {
       kit.et.marker({action: 'ins'});
       kit.peritext.refresh();

@@ -1141,16 +1141,19 @@ export class Editor<T = string> implements Printable {
     return typeof at === 'number' ? txt.pointAt(at) : Array.isArray(at) ? txt.pointAt(at[0], at[1]) : at;
   }
 
-  public sel2range(at: EditorSelection<T>): Range<T> {
-    if (!Array.isArray(at)) return at;
+  public sel2range(at: EditorSelection<T>): [range: Range<T>, anchor: CursorAnchor] {
+    if (!Array.isArray(at)) return [at, CursorAnchor.End];
     const [pos1, pos2] = at;
     const p1 = this.pos2point(pos1);
     const txt = this.txt;
     if (pos2 === undefined) {
       p1.refAfter();
-      return txt.range(p1);
+      return [txt.range(p1), CursorAnchor.End]
     }
-    return txt.rangeFromPoints(p1, this.pos2point(pos2));
+    const p2 = this.pos2point(pos2);
+    const range = txt.rangeFromPoints(p1, p2);
+    const anchor: CursorAnchor = range.start === p1 ? CursorAnchor.Start : CursorAnchor.End;
+    return [range, anchor];
   }
 
   public end(): Point<T> {
