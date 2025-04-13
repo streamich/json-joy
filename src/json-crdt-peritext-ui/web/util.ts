@@ -11,8 +11,8 @@ export const getCursorPosition: GetCursorPosition =
         return range ? [range.startContainer, range.startOffset] : null;
       };
 
-export const unit = (event: KeyboardEvent): '' | 'word' | 'line' =>
-  event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : '';
+export const unit = (event: KeyboardEvent): '' | 'word' | 'vline' =>
+  event.metaKey ? 'vline' : event.altKey || event.ctrlKey ? 'word' : '';
 
 /**
  * Save the current browser selection, so that it can be restored later. Returns

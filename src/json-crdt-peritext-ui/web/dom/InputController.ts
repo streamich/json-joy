@@ -227,7 +227,7 @@ export class InputController implements UiLifeCycles {
           const deleteUnit = unit(event);
           if (deleteUnit) {
             event.preventDefault();
-            et.delete('focus', 'char', direction, true);
+            et.delete('focus', deleteUnit, direction);
           }
           break;
         }
