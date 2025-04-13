@@ -299,7 +299,7 @@ export interface FormatDetail extends SelectionDetailPart, SelectionMoveDetailPa
  * block. Removing a marker results into a "join" action, which merges two
  * adjacent blocks into one.
  */
-export interface MarkerDetail {
+export interface MarkerDetail extends SelectionDetailPart, SelectionMoveDetailPart {
   /**
    * The action to perform.
    *

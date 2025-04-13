@@ -198,26 +198,28 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     this.undo?.capture();
   };
 
-  public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
-    const {action, type, data} = event.detail;
+  public readonly marker = ({detail}: CustomEvent<events.MarkerDetail>) => {
+    const selection = [...this.getSelSet(detail)];
+    this.moveSelSet(selection, detail);
+    const {action, type, data} = detail;
     const editor = this.txt.editor;
     switch (action) {
       case 'ins': {
-        editor.split(type, data);
+        editor.split(type, data, selection);
         break;
       }
       case 'tog': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.tglMarker(type, data);
+        editor.tglMarker(type, data, selection);
         break;
       }
       case 'upd': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.updMarker(type, data);
+        editor.updMarker(type, data, selection);
         break;
       }
       case 'del': {
-        editor.delMarker();
+        editor.delMarker(selection);
         break;
       }
     }

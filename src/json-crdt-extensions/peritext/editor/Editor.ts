@@ -853,22 +853,22 @@ export class Editor<T = string> implements Printable {
     return true;
   }
 
-  public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+  public split(type?: SliceType, data?: unknown, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(), slices: EditorSlices<T> = this.saved): void {
     if (type === void 0) {
-      for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-        this.collapseCursor(cursor);
-        const didInsertMarker = this.splitAt(cursor.start, slices);
-        if (didInsertMarker) cursor.move(1);
+      for (const range of selection) {
+        this.collapseCursor(range);
+        const didInsertMarker = this.splitAt(range.start, slices);
+        if (didInsertMarker && range instanceof Cursor) range.move(1);
       }
     } else {
-      for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-        this.collapseCursor(cursor);
+      for (const range of selection) {
+        this.collapseCursor(range);
         if (type === void 0) {
           // TODO: detect current block type
           type = CommonSliceType.p;
         }
         slices.insMarker(type, data);
-        cursor.move(1);
+        if (range instanceof Cursor) range.move(1);
       }
     }
   }
@@ -920,11 +920,12 @@ export class Editor<T = string> implements Printable {
   public tglMarker(
     type: SliceType,
     data?: unknown,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
     slices: EditorSlices<T> = this.saved,
     def: SliceTypeStep = SliceTypeCon.p,
   ): void {
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
-      this.tglMarkerAt(cursor.start, type, data, slices, def);
+    for (const range of selection)
+      this.tglMarkerAt(range.start, type, data, slices, def);
   }
 
   /**
@@ -935,15 +936,15 @@ export class Editor<T = string> implements Printable {
    * @param slices The slices set to use, if new marker is inserted at the start
    *     of the document.
    */
-  public updMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
-      this.updMarkerAt(cursor.start, type, data, slices);
+  public updMarker(type: SliceType, data?: unknown, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(), slices: EditorSlices<T> = this.saved): void {
+    for (const range of selection)
+      this.updMarkerAt(range.start, type, data, slices);
   }
 
-  public delMarker(): void {
+  public delMarker(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
     const markerPoints = new Set<MarkerOverlayPoint<T>>();
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const markerPoint = this.txt.overlay.getOrNextLowerMarker(cursor.start);
+    for (const range of selection) {
+      const markerPoint = this.txt.overlay.getOrNextLowerMarker(range.start);
       if (markerPoint) markerPoints.add(markerPoint);
     }
     for (const markerPoint of markerPoints) {
