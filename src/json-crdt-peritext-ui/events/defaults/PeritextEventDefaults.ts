@@ -133,7 +133,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly delete = ({detail}: CustomEvent<events.DeleteDetail>) => {
-    const {move} = detail;
+    const {move, add, at} = detail;
     const set = [...this.getSelSet(detail)];
     const editor = this.txt.editor;
     let deleted: boolean = false;
@@ -158,6 +158,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       start.refAfter();
       range.set(start);
     }
+    if (add && at) editor.cursor.setRange(set[0]);
     this.undo?.capture();
   };
 

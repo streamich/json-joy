@@ -146,7 +146,13 @@ export interface InsertDetail extends RangeEventDetail {
  * are collapsed to a single point, while deleting all text and any annotations
  * contained in the selections.
  */
-export interface DeleteDetail extends RangeEventDetail {}
+export interface DeleteDetail extends RangeEventDetail {
+  /**
+   * If true and `at` is specified, the resulting `at` range will be set
+   * as the document cursor.
+   */
+  add?: boolean;
+}
 
 /**
  * The `cursor` event is emitted when caret or selection is changed. The event

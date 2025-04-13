@@ -44,6 +44,7 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('insert', {text});
   }
 
+  public delete(len: number, unit?: SelectionMoveInstruction[1]): void;
   public delete(
     edge: SelectionMoveInstruction[0],
     unit: SelectionMoveInstruction[1],
@@ -52,11 +53,13 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
   ): void;
   public delete(detail?: DeleteDetail): void;
   public delete(a: any = {}, b?: any, len?: any, collapse?: any): void {
-    if (typeof a === 'string') {
+    if (typeof a === 'number') {
+      this.dispatch('delete', {move: [['focus', b ?? 'char', a]]});
+    } else if (typeof a === 'string') {
       const move: SelectionMoveInstruction[] = [[a as SelectionMoveInstruction[0], b, len, collapse]];
       this.dispatch('delete', {move});
     } else {
-      this.dispatch('delete', {move: a, at: b});
+      this.dispatch('delete', a);
     }
   }
 
