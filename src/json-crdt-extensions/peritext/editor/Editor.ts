@@ -177,7 +177,7 @@ export class Editor<T = string> implements Printable {
    * the contents is removed and the cursor is set at the start of the range
    * as caret.
    */
-  public collapseCursor(cursor: Cursor<T>): void {
+  public collapseCursor(cursor: Range<T>): void {
     this.delRange(cursor);
     cursor.collapseToStart();
   }
@@ -630,11 +630,11 @@ export class Editor<T = string> implements Printable {
 
   // --------------------------------------------------------------- formatting
 
-  public eraseFormatting(store: EditorSlices<T> = this.saved): void {
+  public eraseFormatting(store: EditorSlices<T> = this.saved, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
     const overlay = this.txt.overlay;
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+    for (const range of selection) {
       overlay.refresh();
-      const contained = overlay.findContained(cursor);
+      const contained = overlay.findContained(range);
       for (const slice of contained) {
         if (slice instanceof PersistedSlice) {
           switch (slice.behavior) {
@@ -646,7 +646,7 @@ export class Editor<T = string> implements Printable {
         }
       }
       overlay.refresh();
-      const overlapping = overlay.findOverlapping(cursor);
+      const overlapping = overlay.findOverlapping(range);
       for (const slice of overlapping) {
         switch (slice.behavior) {
           case SliceBehavior.One:
@@ -658,11 +658,11 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public clearFormatting(store: EditorSlices<T> = this.saved): void {
+  public clearFormatting(store: EditorSlices<T> = this.saved, selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
     const overlay = this.txt.overlay;
     overlay.refresh();
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const overlapping = overlay.findOverlapping(cursor);
+    for (const range of selection) {
+      const overlapping = overlay.findOverlapping(range);
       for (const slice of overlapping) store.del(slice.id);
     }
   }
@@ -709,18 +709,19 @@ export class Editor<T = string> implements Printable {
     type: CommonSliceType | string | number,
     data?: unknown,
     store: EditorSlices<T> = this.saved,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
   ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
-    CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      if (cursor.isCollapsed()) {
+    SELECTION: for (const range of selection) {
+      if (range.isCollapsed()) {
         const pending = this.pending.value;
         if (pending.has(type)) pending.delete(type);
         else pending.set(type, data);
         this.pending.next(pending);
-        continue CURSORS;
+        continue SELECTION;
       }
-      this.toggleRangeExclFmt(cursor, type, data, store);
+      this.toggleRangeExclFmt(range, type, data, store);
     }
   }
 

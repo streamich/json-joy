@@ -232,7 +232,7 @@ export interface CursorDetail extends SelectionDetailPart, SelectionMoveDetailPa
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface FormatDetail {
+export interface FormatDetail extends SelectionDetailPart, SelectionMoveDetailPart {
   /**
    * Type of the annotation. The type is used to determine the visual style of
    * the annotation, for example, the type `'bold'` may render the text in bold.
