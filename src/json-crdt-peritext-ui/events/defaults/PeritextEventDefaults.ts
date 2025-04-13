@@ -411,7 +411,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             if (!data) data = await clipboard.readData();
             const inserted = transfer.fromClipboard(range, data);
-            // if (inserted) this.et.move([['both', 'char', inserted]]);
+            if (inserted && editor.cursorCard() === 1) this.et.move([
+              ['start', 'char', inserted],
+              ['end', 'char', inserted],
+            ]);
             this.et.change();
           }
         }
