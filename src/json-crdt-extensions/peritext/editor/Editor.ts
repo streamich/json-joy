@@ -107,8 +107,11 @@ export class Editor<T = string> implements Printable {
   public cursors0(): UndefIterator<Cursor<T>> {
     const iterator = this.txt.localSlices.iterator0();
     return () => {
-      const slice = iterator();
-      return slice instanceof Cursor ? slice : void 0;
+      while (true) {
+        const slice = iterator();
+        if (slice instanceof Cursor) return slice;
+        if (!slice) return;
+      }
     };
   }
 
@@ -197,37 +200,42 @@ export class Editor<T = string> implements Printable {
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
    */
-  public insert0(cursor: Cursor<T>, text: string): ITimespanStruct | undefined {
+  public insert0(range: Range<T>, text: string): ITimespanStruct | undefined {
     if (!text) return;
-    if (!cursor.isCollapsed()) this.delRange(cursor);
-    const after = cursor.start.clone();
+    if (!range.isCollapsed()) this.delRange(range);
+    const after = range.start.clone();
     after.refAfter();
     const txt = this.txt;
     const textId = txt.ins(after.id, text);
     const span = new Timespan(textId.sid, textId.time, text.length);
     const shift = text.length - 1;
     const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
-    cursor.set(point, point, CursorAnchor.Start);
+    if (range instanceof Cursor) range.set(point, point, CursorAnchor.Start);
+    else range.set(point);
     return span;
   }
 
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
-   * The applies any pending inline formatting to the inserted text.
+   * Then applies any pending inline formatting to the inserted text.
    */
-  public insert(text: string): ITimespanStruct[] {
+  public insert(text: string, ranges?: IterableIterator<Range<T>> | Range<T>[]): ITimespanStruct[] {
     const spans: ITimespanStruct[] = [];
-    if (!this.hasCursor()) this.addCursor();
-    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
-      const span = this.insert0(cursor, text);
+    if (!ranges) {
+      if (!this.hasCursor()) this.addCursor();
+      ranges = this.cursors();
+    }
+    if (!ranges) return [];
+    for (const range of ranges) {
+      const span = this.insert0(range, text);
       if (span) spans.push(span);
       const pending = this.pending.value;
       if (pending.size) {
         this.pending.next(new Map());
-        const start = cursor.start.clone();
+        const start = range.start.clone();
         start.step(-text.length);
-        const range = this.txt.range(start, cursor.end.clone());
-        for (const [type, data] of pending) this.toggleRangeExclFmt(range, type, data);
+        const toggleRange = this.txt.range(start, range.end.clone());
+        for (const [type, data] of pending) this.toggleRangeExclFmt(toggleRange, type, data);
       }
     }
     return spans;
