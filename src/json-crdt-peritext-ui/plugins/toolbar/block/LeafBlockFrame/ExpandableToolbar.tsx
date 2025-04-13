@@ -5,7 +5,7 @@ import {PositionAtPoint} from 'nice-ui/lib/utils/popup/PositionAtPoint';
 import {context as popupContext} from 'nice-ui/lib/4-card/Popup/context';
 import {ClickAway} from 'nice-ui/lib/utils/ClickAway';
 import {ToolbarMenuProvider} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/ToolbarMenuProvider';
-import {ToolbarMenuProps} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/types';
+import type {ToolbarMenuProps} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/types';
 import type {AnchorPoint} from 'nice-ui/lib/utils/popup';
 
 export type InlineMenuView = 'toolbar' | 'context';

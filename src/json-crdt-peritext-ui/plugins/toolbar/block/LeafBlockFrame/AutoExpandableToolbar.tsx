@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ExpandableToolbar, type ExpandableToolbarProps} from './ExpandableToolbar';
-import {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
+import type {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
 import type {AnchorPoint} from 'nice-ui/lib/utils/popup';
 
 export interface AutoExpandableToolbarProps extends ExpandableToolbarProps {

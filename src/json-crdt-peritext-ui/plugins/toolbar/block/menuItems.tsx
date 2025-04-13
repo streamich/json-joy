@@ -3,7 +3,7 @@ import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
+import type {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
 
 export const annotations = (): MenuItem => {
   return {

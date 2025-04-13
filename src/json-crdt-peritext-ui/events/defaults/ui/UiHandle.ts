@@ -63,7 +63,7 @@ export class UiHandle {
   }
 
   public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
-    let startPoint = this.point(pos);
+    const startPoint = this.point(pos);
     if (startPoint.isAbs()) return;
     const startRect = this.getPointRect(startPoint, right);
     if (!startRect) return;

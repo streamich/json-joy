@@ -235,7 +235,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const {action, format} = detail;
     const txt = this.txt;
     const editor = txt.editor;
-    let range: undefined | Range<any> = selection[0] ?? txt.rangeAll();
+    const range: undefined | Range<any> = selection[0] ?? txt.rangeAll();
     if (!range) return;
     switch (action) {
       case 'cut':
