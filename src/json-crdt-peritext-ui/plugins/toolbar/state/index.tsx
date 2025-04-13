@@ -5,7 +5,10 @@ import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {CommonSliceType} from '../../../../json-crdt-extensions';
+import {CommonSliceType, type LeafBlock, type Peritext} from '../../../../json-crdt-extensions';
+import {BehaviorSubject} from 'rxjs';
+import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
+import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -13,14 +16,22 @@ import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
 export class ToolbarState implements UiLifeCycles {
+  public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
 
+  /**
+   * The ID of the active (where the main cursor or focus is placed) leaf block.
+   */
+  public readonly activeLeafBlockId$ = new BehaviorSubject<ITimestampStruct | null>(null);
+
   constructor(
     public readonly surface: PeritextSurfaceState,
     public readonly opts: ToolbarPluginOpts,
-  ) {}
+  ) {
+    this.txt = this.surface.dom.txt;
+  }
 
   /** ------------------------------------------- {@link UiLifeCycles} */
 
@@ -34,10 +45,7 @@ export class ToolbarState implements UiLifeCycles {
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
       this.setLastEv(lastEvent);
-      // const lastEventIsCaretPositionChange =
-      //   lastEvent?.type === 'cursor' &&
-      //   typeof (lastEvent?.detail as PeritextEventDetailMap['cursor']).at === 'number';
-      // this.showInlineToolbar.next(this.doShowInlineToolbar());
+      this._setActiveLeafBlockId();
     });
 
     const unsubscribeMouseDown = mouseDown?.subscribe(() => {
@@ -55,7 +63,6 @@ export class ToolbarState implements UiLifeCycles {
 
     source?.addEventListener('mousedown', mouseDownListener);
     source?.addEventListener('mouseup', mouseUpListener);
-
     return () => {
       changeUnsubscribe();
       unsubscribeMouseDown?.();
@@ -64,20 +71,36 @@ export class ToolbarState implements UiLifeCycles {
     };
   }
 
+  private _setActiveLeafBlockId = () => {
+    const {activeLeafBlockId$, txt} = this;
+    const {overlay, editor} = txt;
+    const value = activeLeafBlockId$.getValue();
+    const cardinality = editor.cursorCard();
+    if (cardinality !== 1 || (cardinality === 1 && !editor.mainCursor()?.isCollapsed())) {
+      if (value) activeLeafBlockId$.next(null);
+      return;
+    }
+    const focus = editor.mainCursor()?.focus();
+    const marker = focus ? overlay.getOrNextLowerMarker(focus) : void 0;
+    const markerId = marker?.marker.start.id ?? txt.str.id;
+    const doSet = !value || compare(value, markerId) !== 0;
+    if (doSet) activeLeafBlockId$.next(markerId);
+  };
+
   private setLastEv(lastEvent: PeritextEventDetailMap['change']['ev']) {
     this.lastEvent = lastEvent;
     this.lastEventTs = Date.now();
   }
 
-  private doShowInlineToolbar(): boolean {
-    const {surface, lastEvent} = this;
-    if (surface.dom!.cursor.mouseDown.value) return false;
-    if (!lastEvent) return false;
-    const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
-    if (!lastEventIsCursorEvent) return false;
-    if (!surface.peritext.editor.cursorCount()) return false;
-    return true;
-  }
+  // private doShowInlineToolbar(): boolean {
+  //   const {surface, lastEvent} = this;
+  //   if (surface.dom!.cursor.mouseDown.value) return false;
+  //   if (!lastEvent) return false;
+  //   const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
+  //   if (!lastEventIsCursorEvent) return false;
+  //   if (!surface.peritext.editor.cursorCount()) return false;
+  //   return true;
+  // }
 
   // -------------------------------------------------------------------- Menus
 
@@ -1206,4 +1229,282 @@ export class ToolbarState implements UiLifeCycles {
       ],
     };
   };
+
+  public readonly blockTypeMenu = (): MenuItem => {
+    const et = this.surface.events.et;
+    const menu: MenuItem = {
+      name: 'Block type',
+      expand: 1,
+      children: [
+        {
+          name: 'Text blocks',
+          expand: 3,
+          children: [
+            {
+              name: 'Paragraph',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="pilcrow" />,
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.p);
+              },
+            },
+            {
+              name: 'Code block',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.codeblock);
+              },
+            },
+            {
+              name: 'Blockquote',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.blockquote);
+              },
+            },
+            {
+              name: 'Math block',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="math" />,
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.mathblock);
+              },
+            },
+            {
+              name: 'Pre-formatted',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.pre);
+              },
+            },
+          ],
+        },
+        {
+          name: 'Headings',
+          sepBefore: true,
+          expand: 3,
+          children: [
+            {
+              name: 'Heading 1',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-1" />,
+              // icon: () => <Iconista width={16} height={16} set="simple" icon="h-1" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 2',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-2" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 3',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-3" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 4',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-4" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 5',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-5" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Heading 6',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-6" />,
+              onSelect: () => {},
+            },
+            {
+              sepBefore: true,
+              name: 'Title',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Sub-title',
+              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          sepBefore: true,
+          name: 'Lists',
+          expand: 3,
+          children: [
+            {
+              name: 'Bullet list',
+              // icon: () => <Iconista width={16} height={16} set="tabler" icon="list" />,
+              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--bulleted" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Numbered list',
+              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--numbered" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Task list',
+              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--checked" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          sepBefore: true,
+          name: 'Layouts',
+          expand: 0,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="layout" />,
+          children: [
+            {
+              name: 'Table',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="table" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'Columns',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="columns" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+        {
+          sepBefore: true,
+          name: 'Embed',
+          expand: 0,
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="image-in-picture" />,
+          children: [
+            {
+              name: 'Image',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="photo-scan" />,
+              onSelect: () => {},
+            },
+            {
+              name: 'File',
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="file" />,
+              onSelect: () => {},
+            },
+          ],
+        },
+      ],
+    };
+    return menu;
+  };
+
+  public readonly leafBlockSmallMenu = (ctx: LeafBlockMenuCtx): MenuItem => {
+    const et = this.surface.events.et;
+    const menu: MenuItem = {
+      name: 'Leaf block menu',
+      maxToolbarItems: 1,
+      more: true,
+      minWidth: 280,
+      children: [
+        this.blockTypeMenu(),
+        {
+          sepBefore: true,
+          name: 'Cursor actions',
+          expand: 4,
+          children: [
+            {
+              name: 'Select block',
+              icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
+              onSelect: () => {
+                et.cursor({
+                  move: [
+                    ['start', 'block', -1],
+                    ['end', 'block', 1],
+                  ],
+                });
+              },
+            },
+          ],
+        },
+        this.blockClipboardMenu(),
+        secondBrain(),
+      ],
+    };
+    return menu;
+  };
+
+  public readonly blockClipboardMenu = (): MenuItem => {
+    const et = this.surface.events.et;
+    return {
+      name: 'Copy, cut, and paste',
+      icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+      expand: 0,
+      sepBefore: true,
+      children: [
+        {
+          id: 'copy-menu',
+          name: 'Copy',
+          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Copy',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy'),
+            },
+            {
+              name: 'Copy text only',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              onSelect: () => et.buffer('copy', 'text'),
+            },
+            this.copyAsMenu('copy'),
+          ],
+        },
+        {
+          name: 'Cut separator',
+          sep: true,
+        },
+        {
+          id: 'cut-menu',
+          name: 'Cut',
+          icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Cut',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              onSelect: () => et.buffer('cut'),
+            },
+            {
+              name: 'Cut text only',
+              danger: true,
+              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              onSelect: () => et.buffer('cut', 'text'),
+            },
+            this.copyAsMenu('cut'),
+          ],
+        },
+        {
+          name: 'Paste separator',
+          sep: true,
+        },
+        {
+          id: 'paste-menu',
+          name: 'Paste',
+          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+          expand: 5,
+          children: [
+            {
+              name: 'Paste',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste'),
+            },
+            {
+              name: 'Paste text',
+              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              onSelect: () => et.buffer('paste', 'text'),
+            },
+            this.pasteAsMenu(),
+          ],
+        },
+      ],
+    };
+  };
+}
+
+export interface LeafBlockMenuCtx {
+  block: LeafBlock;
 }

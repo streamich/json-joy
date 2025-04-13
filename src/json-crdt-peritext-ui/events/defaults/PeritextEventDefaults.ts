@@ -1,10 +1,10 @@
-import {CursorAnchor} from '../../../json-crdt-extensions/peritext/slice/constants';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
+import {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
+import {CursorAnchor, type Peritext} from '../../../json-crdt-extensions/peritext';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
-import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
@@ -14,6 +14,19 @@ import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
+
+const getEdge = (start: Point, end: Point, anchor: CursorAnchor, edge: events.SelectionMoveInstruction[0]): Point =>
+  edge === 'start'
+    ? start
+    : edge === 'end'
+      ? end
+      : edge === 'focus'
+        ? anchor === CursorAnchor.Start
+          ? end
+          : start
+        : anchor === CursorAnchor.Start
+          ? start
+          : end;
 
 export interface PeritextEventDefaultsOpts {
   clipboard?: PeritextClipboard;
@@ -66,167 +79,182 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     public readonly opts: PeritextEventDefaultsOpts = {},
   ) {}
 
+  protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
+    const {editor} = this.txt;
+    return at ? [editor.sel2range(at)[0]] : editor.cursors();
+  }
+
+  protected moveRange(
+    start: Point,
+    end: Point,
+    anchor: CursorAnchor,
+    move?: events.SelectionMoveInstruction[],
+  ): [start: Point, end: Point, anchor: CursorAnchor] {
+    if (!move) return [start, end, anchor];
+    const {txt, editorUi} = this;
+    const start0 = start;
+    for (const [edge, to, len, collapse] of move) {
+      const point = getEdge(start, end, anchor, edge);
+      const point2 =
+        typeof to === 'string'
+          ? len
+            ? txt.editor.skip(point, len, to ?? 'char', editorUi)
+            : point.clone()
+          : txt.editor.pos2point(to);
+      if (point === start) start = point2;
+      else end = point2;
+      if (collapse) {
+        if (to !== 'point') point2.refAfter();
+        if (point === start0) end = point2.clone();
+        else start = point2.clone();
+      }
+    }
+    if (start.cmpSpatial(end) > 0) {
+      const tmp = start;
+      start = end;
+      end = tmp;
+      anchor = anchor === CursorAnchor.Start ? CursorAnchor.End : CursorAnchor.Start;
+    }
+    return [start, end, anchor];
+  }
+
+  protected moveSelSet(set: events.SelectionSet, {move}: events.SelectionMoveDetailPart): void {
+    if (!move) return;
+    for (const selection of set) {
+      const [start, end, anchor] = this.moveRange(
+        selection.start,
+        selection.end,
+        selection instanceof Cursor ? selection.anchorSide : CursorAnchor.End,
+        move,
+      );
+      if (selection instanceof Cursor) selection.set(start, end, anchor);
+      else selection.set(start, end);
+    }
+  }
+
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {};
 
-  public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
-    const text = event.detail.text;
-    const editor = this.txt.editor;
-    editor.insert(text);
+  public readonly insert = ({detail}: CustomEvent<events.InsertDetail>) => {
+    const {move, text} = detail;
+    const set = [...this.getSelSet(detail)];
+    if (move) this.moveSelSet(set, detail);
+    this.txt.editor.insert(text, set);
     this.undo?.capture();
   };
 
-  public readonly delete = (event: CustomEvent<events.DeleteDetail>) => {
-    const {len = -1, unit = 'char', at} = event.detail;
+  public readonly delete = ({detail}: CustomEvent<events.DeleteDetail>) => {
+    const {move, add, at} = detail;
+    const set = [...this.getSelSet(detail)];
     const editor = this.txt.editor;
-    if (at !== undefined) {
-      const point = editor.point(at);
-      editor.cursor.set(point);
+    let deleted: boolean = false;
+    for (const range of set) {
+      if (range.length()) {
+        deleted = true;
+        editor.delRange(range);
+        const start = range.start;
+        start.refAfter();
+        range.set(start);
+      }
     }
-    editor.delete(len, unit);
+    if (deleted) {
+      this.undo?.capture();
+      return;
+    }
+    if (move) this.moveSelSet(set, detail);
+    for (const range of set) {
+      editor.delRange(range);
+      range.collapseToStart();
+      const start = range.start;
+      start.refAfter();
+      range.set(start);
+    }
+    if (add && at) editor.cursor.setRange(set[0]);
     this.undo?.capture();
   };
 
-  public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, edge, len, unit} = event.detail;
-    const txt = this.txt;
-    const editor = txt.editor;
-
-    // If `at` is specified, it represents the absolute position. We move the
-    // cursor to that position, and leave only one active cursor. All other
-    // are automatically removed when `editor.cursor` getter is accessed.
-    if ((typeof at === 'number' && at >= 0) || typeof at === 'object') {
-      const point = editor.point(at);
-      switch (edge) {
-        case 'focus':
-        case 'anchor': {
-          const cursor = editor.cursor;
-          cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
-          if (cursor.isCollapsed()) {
-            const start = cursor.start;
-            start.refAfter();
-            cursor.set(start);
-          }
-          break;
-        }
-        case 'new': {
-          editor.addCursor(txt.range(point));
-          break;
-        }
-        // both
-        default: {
-          // Select a range from the "at" position to the specified length.
-          if (!!len && typeof len === 'number') {
-            const point2 = editor.skip(point, len, unit ?? 'char', this.editorUi);
-            const range = txt.rangeFromPoints(point, point2); // Sorted range.
-            editor.cursor.set(range.start, range.end, len < 0 ? CursorAnchor.End : CursorAnchor.Start);
-          }
-          // Set caret (a collapsed cursor) at the specified position.
-          else {
-            point.refAfter();
-            editor.cursor.set(point);
-            if (unit) editor.select(unit, this.editorUi);
-          }
-        }
-      }
-      return;
-    }
-
-    // If `edge` is specified.
-    const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
-    if (isSpecificEdgeSelected) {
-      editor.move(len ?? 0, unit ?? 'char', edge === 'focus' ? 0 : 1, false, this.editorUi);
-      return;
-    }
-
-    // If `len` is specified.
-    if (len) {
-      const cursor = editor.cursor;
-      if (cursor.isCollapsed()) editor.move(len, unit ?? 'char', void 0, void 0, this.editorUi);
-      else {
-        if (len > 0) cursor.collapseToEnd();
-        else cursor.collapseToStart();
-      }
-      return;
-    }
-
-    // If `unit` is specified.
-    if (unit) {
-      editor.select(unit, this.editorUi);
-      return;
+  public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
+    const {at, move, add} = detail;
+    if (at === void 0) {
+      const selection = this.getSelSet(detail);
+      this.moveSelSet(selection, detail);
+    } else {
+      const {txt} = this;
+      const {editor} = txt;
+      const [range, anchor0] = editor.sel2range(at);
+      const [start, end, anchor] = this.moveRange(range.start, range.end, anchor0, move);
+      if (add) editor.addCursor(txt.range(start, end), anchor);
+      else editor.cursor.set(start, end, anchor);
     }
   };
 
-  public readonly format = (event: CustomEvent<events.FormatDetail>) => {
-    const {type, store = 'saved', behavior = 'one', data} = event.detail;
+  public readonly format = ({detail}: CustomEvent<events.FormatDetail>) => {
+    const selection = [...this.getSelSet(detail)];
+    this.moveSelSet(selection, detail);
+    const {type, store = 'saved', behavior = 'one', data} = detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (behavior) {
       case 'many': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        slices.insStack(type, data);
+        slices.insStack(type, data, selection);
         break;
       }
       case 'one': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.toggleExclFmt(type, data, slices);
+        editor.toggleExclFmt(type, data, slices, selection);
         break;
       }
       case 'erase': {
-        if (type === undefined) editor.eraseFormatting(slices);
-        else slices.insErase(type, data);
+        if (type === undefined) editor.eraseFormatting(slices, selection);
+        else slices.insErase(type, data, selection);
         break;
       }
       case 'clear': {
-        editor.clearFormatting(slices);
+        editor.clearFormatting(slices, selection);
         break;
       }
     }
     this.undo?.capture();
   };
 
-  public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {
-    const {action, type, data} = event.detail;
+  public readonly marker = ({detail}: CustomEvent<events.MarkerDetail>) => {
+    const selection = [...this.getSelSet(detail)];
+    this.moveSelSet(selection, detail);
+    const {action, type, data} = detail;
     const editor = this.txt.editor;
     switch (action) {
       case 'ins': {
-        editor.split(type, data);
+        editor.split(type, data, selection);
         break;
       }
       case 'tog': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.tglMarker(type, data);
+        editor.tglMarker(type, data, selection);
         break;
       }
       case 'upd': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.updMarker(type, data);
+        editor.updMarker(type, data, selection);
         break;
       }
       case 'del': {
-        editor.delMarker();
+        editor.delMarker(selection);
         break;
       }
     }
     this.undo?.capture();
   };
 
-  public readonly buffer = async (event: CustomEvent<events.BufferDetail>) => {
+  public readonly buffer = async ({detail}: CustomEvent<events.BufferDetail>) => {
+    const selection = [...this.getSelSet(detail)];
+    this.moveSelSet(selection, detail);
     const opts = this.opts;
     const clipboard = opts.clipboard;
     if (!clipboard) return;
-    const detail = event.detail;
     const {action, format} = detail;
-    let range: undefined | Range<any>;
     const txt = this.txt;
     const editor = txt.editor;
-    if (detail.range) {
-      const p1 = editor.point(detail.range[0]);
-      const p2 = editor.point(detail.range[1]);
-      range = txt.rangeFromPoints(p1, p2);
-    } else {
-      range = editor.getCursor()?.range();
-      if (!range) range = txt.rangeAll();
-    }
+    const range: undefined | Range<any> = selection[0] ?? txt.rangeAll();
     if (!range) return;
     switch (action) {
       case 'cut':
@@ -262,34 +290,27 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             if (!transfer) return;
             let text = '';
             switch (format) {
-              case 'html': {
+              case 'html':
                 text = transfer.toHtml(range);
                 break;
-              }
-              case 'hast': {
+              case 'hast':
                 text = JSON.stringify(transfer.toHast(range), null, 2);
                 break;
-              }
-              case 'jsonml': {
+              case 'jsonml':
                 text = JSON.stringify(transfer.toJson(range), null, 2);
                 break;
-              }
-              case 'json': {
+              case 'json':
                 text = JSON.stringify(transfer.toView(range), null, 2);
                 break;
-              }
-              case 'mdast': {
+              case 'mdast':
                 text = JSON.stringify(transfer.toMdast(range), null, 2);
                 break;
-              }
-              case 'md': {
+              case 'md':
                 text = transfer.toMarkdown(range);
                 break;
-              }
-              case 'fragment': {
+              case 'fragment':
                 text = transfer.toFragment(range) + '';
                 break;
-              }
             }
             clipboard.writeText(text)?.catch((err) => console.error(err));
             if (action === 'cut') editor.collapseCursors();
@@ -386,7 +407,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
                 break;
               }
             }
-            if (inserted) this.et.move(inserted, 'char');
+            // if (inserted) this.et.move(inserted, 'char');
             this.et.change();
             break;
           }
@@ -406,7 +427,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             }
             if (!data) data = await clipboard.readData();
             const inserted = transfer.fromClipboard(range, data);
-            if (inserted) this.et.move(inserted, 'char');
+            if (inserted && editor.cursorCard() === 1)
+              this.et.move([
+                ['start', 'char', inserted],
+                ['end', 'char', inserted],
+              ]);
             this.et.change();
           }
         }

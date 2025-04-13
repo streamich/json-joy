@@ -4,6 +4,7 @@ import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {TypedEventTarget} from '../../../util/events/TypedEventTarget';
 import type {CompositionController} from './CompositionController';
 import type {UiLifeCycles} from '../types';
+import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
 
 export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
@@ -53,7 +54,19 @@ export class InputController implements UiLifeCycles {
         case 'insertFromDrop':
         case 'insertFromPaste':
         case 'insertFromYank':
-        case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
+        case 'insertReplacementText':
+        // case 'insertFromYank': { // replace the current selection with content stored in a kill buffer
+        // }
+        // case 'insertFromDrop': { // insert content by means of drop
+        // }
+        // case 'insertFromPaste': { // paste content from clipboard or paste image from client provided image library
+        // }
+        // case 'insertFromPasteAsQuotation': { // paste content from the clipboard as a quotation
+        // }
+        // case 'insertTranspose': { // transpose the last two grapheme cluster. that were entered
+        // }
+        // case 'insertCompositionText': { // replace the current composition string
+        // }
         case 'insertText': {
           // TODO: handle `dataTransfer` Image drops, URL drops
           // TODO: handle `dataTransfer` HTML drops
@@ -70,46 +83,59 @@ export class InputController implements UiLifeCycles {
           }
           break;
         }
-        case 'deleteContentBackward': // delete the content directly before the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its start after the deletion
         case 'deleteContent': {
-          // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
           event.preventDefault();
-          et.delete(-1, 'char');
+          et.delete({});
+          break;
+        }
+        case 'deleteContentBackward': {
+          event.preventDefault();
+          et.delete('start', 'char', -1);
           break;
         }
         case 'deleteContentForward': {
-          // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
           event.preventDefault();
-          et.delete(1, 'char');
+          et.delete('end', 'char', 1);
           break;
         }
         case 'deleteWordBackward': {
-          // delete a word directly before the caret position
           event.preventDefault();
-          et.delete(-1, 'word');
+          et.delete('start', 'word', -1);
           break;
         }
         case 'deleteWordForward': {
-          // delete a word directly after the caret position
           event.preventDefault();
-          et.delete(1, 'word');
+          et.delete('end', 'word', 1);
+          break;
+        }
+        case 'deleteHardLineBackward': {
+          event.preventDefault();
+          et.delete('start', 'line', -1);
+          break;
+        }
+        case 'deleteHardLineForward': {
+          event.preventDefault();
+          et.delete('end', 'line', 1);
           break;
         }
         case 'deleteSoftLineBackward': {
-          // delete from the caret to the nearest visual line break before the caret position
-          et.delete(-1, 'line');
+          event.preventDefault();
+          et.delete('start', 'vline', -1);
           break;
         }
         case 'deleteSoftLineForward': {
-          // delete from the caret to the nearest visual line break after the caret position
-          et.delete(1, 'line');
+          event.preventDefault();
+          et.delete('end', 'vline', 1);
           break;
         }
-        case 'deleteEntireSoftLine': // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
-        case 'deleteHardLineBackward': // delete from the caret to the nearest beginning of a block element or br element before the caret position
-        case 'deleteHardLineForward': {
-          // delete from the caret to the nearest end of a block element or br element after the caret position
-          et.delete(-1, 'word');
+        case 'deleteEntireSoftLine': {
+          event.preventDefault();
+          et.delete({
+            move: [
+              ['start', 'vline', -1],
+              ['end', 'vline', 1],
+            ],
+          });
           break;
         }
         case 'insertLineBreak': {
@@ -123,40 +149,47 @@ export class InputController implements UiLifeCycles {
         // }
         // case 'insertHorizontalRule': { // insert a horizontal rule
         // }
-        // case 'insertFromYank': { // replace the current selection with content stored in a kill buffer
-        // }
-        // case 'insertFromDrop': { // insert content by means of drop
-        // }
-        // case 'insertFromPaste': { // paste content from clipboard or paste image from client provided image library
-        // }
-        // case 'insertFromPasteAsQuotation': { // paste content from the clipboard as a quotation
-        // }
-        // case 'insertTranspose': { // transpose the last two grapheme cluster. that were entered
-        // }
-        // case 'insertCompositionText': { // replace the current composition string
-        // }
         // case 'insertLink': { // insert a link
         // }
         // case 'deleteByDrag': { // remove content from the DOM by means of drag
         // }
-        // case 'deleteByCut': { // remove the current selection as part of a cut
-        // }
-        // case 'historyUndo': { // undo the last editing action
-        // }
-        // case 'historyRedo': { // to redo the last undone editing action
-        // }
-        // case 'formatBold': { // initiate bold text
-        // }
-        // case 'formatItalic': { // initiate italic text
-        // }
-        // case 'formatUnderline': { // initiate underline text
-        // }
-        // case 'formatStrikeThrough': { // initiate stricken through text
-        // }
-        // case 'formatSuperscript': { // initiate superscript text
-        // }
-        // case 'formatSubscript': { // initiate subscript text
-        // }
+        case 'deleteByCut': {
+          event.preventDefault();
+          et.buffer({action: 'cut'});
+          break;
+        }
+        // case 'historyUndo': {}
+        // case 'historyRedo': {}
+        case 'formatBold': {
+          event.preventDefault();
+          et.format(SliceTypeCon.b);
+          break;
+        }
+        case 'formatItalic': {
+          event.preventDefault();
+          et.format(SliceTypeCon.i);
+          break;
+        }
+        case 'formatUnderline': {
+          event.preventDefault();
+          et.format(SliceTypeCon.u);
+          break;
+        }
+        case 'formatStrikeThrough': {
+          event.preventDefault();
+          et.format(SliceTypeCon.s);
+          break;
+        }
+        case 'formatSuperscript': {
+          event.preventDefault();
+          et.format(SliceTypeCon.sup);
+          break;
+        }
+        case 'formatSubscript': {
+          event.preventDefault();
+          et.format(SliceTypeCon.sub);
+          break;
+        }
         // case 'formatJustifyFull': { // make the current selection fully justified
         // }
         // case 'formatJustifyCenter': { // center align the current selection
@@ -194,11 +227,12 @@ export class InputController implements UiLifeCycles {
           const deleteUnit = unit(event);
           if (deleteUnit) {
             event.preventDefault();
-            et.delete(direction, deleteUnit);
+            et.delete('focus', deleteUnit, direction);
           }
           break;
         }
         case 'Escape': {
+          // TODO: Use rendering surface imperative UI API here.
           const div = this.opts.source;
           if (div instanceof HTMLElement) {
             event.preventDefault();

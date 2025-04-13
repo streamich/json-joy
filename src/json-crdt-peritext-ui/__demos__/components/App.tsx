@@ -16,6 +16,12 @@ const markdown =
   '\n\n' +
   '> To be, or not to be: that is the question.' +
   '\n\n' +
+  'This is code block:' +
+  '\n\n' +
+  '```\n' +
+  'console.log(123);\n' +
+  '```\n' +
+  '\n\n' +
   'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
   'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
   'is used by the Clipboard Events API to hold multiple representations of data.';
@@ -56,7 +62,7 @@ export const App: React.FC = () => {
             state.events.et.buffer({
               action: 'paste',
               format: 'md',
-              range: [0, 0],
+              at: [0],
               data: {
                 text: markdown,
               },

@@ -24,12 +24,13 @@ import type {SliceRegistry} from '../registry/SliceRegistry';
 import type {
   CharIterator,
   CharPredicate,
-  Position,
+  EditorPosition,
   TextRangeUnit,
   ViewStyle,
   ViewRange,
   ViewSlice,
   EditorUi,
+  EditorSelection,
 } from './types';
 
 /**
@@ -106,9 +107,16 @@ export class Editor<T = string> implements Printable {
   public cursors0(): UndefIterator<Cursor<T>> {
     const iterator = this.txt.localSlices.iterator0();
     return () => {
-      const slice = iterator();
-      return slice instanceof Cursor ? slice : void 0;
+      while (true) {
+        const slice = iterator();
+        if (slice instanceof Cursor) return slice;
+        if (!slice) return;
+      }
     };
+  }
+
+  public mainCursor(): Cursor<T> | undefined {
+    return this.cursors0()();
   }
 
   public cursors() {
@@ -169,7 +177,7 @@ export class Editor<T = string> implements Printable {
    * the contents is removed and the cursor is set at the start of the range
    * as caret.
    */
-  public collapseCursor(cursor: Cursor<T>): void {
+  public collapseCursor(cursor: Range<T>): void {
     this.delRange(cursor);
     cursor.collapseToStart();
   }
@@ -196,37 +204,42 @@ export class Editor<T = string> implements Printable {
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
    */
-  public insert0(cursor: Cursor<T>, text: string): ITimespanStruct | undefined {
+  public insert0(range: Range<T>, text: string): ITimespanStruct | undefined {
     if (!text) return;
-    if (!cursor.isCollapsed()) this.delRange(cursor);
-    const after = cursor.start.clone();
+    if (!range.isCollapsed()) this.delRange(range);
+    const after = range.start.clone();
     after.refAfter();
     const txt = this.txt;
     const textId = txt.ins(after.id, text);
     const span = new Timespan(textId.sid, textId.time, text.length);
     const shift = text.length - 1;
     const point = txt.point(shift ? tick(textId, shift) : textId, Anchor.After);
-    cursor.set(point, point, CursorAnchor.Start);
+    if (range instanceof Cursor) range.set(point, point, CursorAnchor.Start);
+    else range.set(point);
     return span;
   }
 
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
-   * The applies any pending inline formatting to the inserted text.
+   * Then applies any pending inline formatting to the inserted text.
    */
-  public insert(text: string): ITimespanStruct[] {
+  public insert(text: string, ranges?: IterableIterator<Range<T>> | Range<T>[]): ITimespanStruct[] {
     const spans: ITimespanStruct[] = [];
-    if (!this.hasCursor()) this.addCursor();
-    for (let cursor: Cursor<T> | undefined, i = this.cursors0(); (cursor = i()); ) {
-      const span = this.insert0(cursor, text);
+    if (!ranges) {
+      if (!this.hasCursor()) this.addCursor();
+      ranges = this.cursors();
+    }
+    if (!ranges) return [];
+    for (const range of ranges) {
+      const span = this.insert0(range, text);
       if (span) spans.push(span);
       const pending = this.pending.value;
       if (pending.size) {
         this.pending.next(new Map());
-        const start = cursor.start.clone();
+        const start = range.start.clone();
         start.step(-text.length);
-        const range = this.txt.range(start, cursor.end.clone());
-        for (const [type, data] of pending) this.toggleRangeExclFmt(range, type, data);
+        const toggleRange = this.txt.range(start, range.end.clone());
+        for (const [type, data] of pending) this.toggleRangeExclFmt(toggleRange, type, data);
       }
     }
     return spans;
@@ -494,6 +507,11 @@ export class Editor<T = string> implements Printable {
         return point;
       }
       case 'line': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
+        else for (let i = 0; i < -steps; i++) point = this.bol(point);
+        return point;
+      }
+      case 'vline': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = ui?.eol?.(point, 1) ?? this.eol(point);
         else for (let i = 0; i < -steps; i++) point = ui?.eol?.(point, -1) ?? this.bol(point);
         return point;
@@ -605,18 +623,21 @@ export class Editor<T = string> implements Printable {
     });
   }
 
-  public selectAt(at: Position<T>, unit: TextRangeUnit | '', ui?: EditorUi<T>): void {
-    this.cursor.set(this.point(at));
+  public selectAt(at: EditorPosition<T>, unit: TextRangeUnit | '', ui?: EditorUi<T>): void {
+    this.cursor.set(this.pos2point(at));
     if (unit) this.select(unit, ui);
   }
 
   // --------------------------------------------------------------- formatting
 
-  public eraseFormatting(store: EditorSlices<T> = this.saved): void {
+  public eraseFormatting(
+    store: EditorSlices<T> = this.saved,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+  ): void {
     const overlay = this.txt.overlay;
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
+    for (const range of selection) {
       overlay.refresh();
-      const contained = overlay.findContained(cursor);
+      const contained = overlay.findContained(range);
       for (const slice of contained) {
         if (slice instanceof PersistedSlice) {
           switch (slice.behavior) {
@@ -628,7 +649,7 @@ export class Editor<T = string> implements Printable {
         }
       }
       overlay.refresh();
-      const overlapping = overlay.findOverlapping(cursor);
+      const overlapping = overlay.findOverlapping(range);
       for (const slice of overlapping) {
         switch (slice.behavior) {
           case SliceBehavior.One:
@@ -640,11 +661,14 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public clearFormatting(store: EditorSlices<T> = this.saved): void {
+  public clearFormatting(
+    store: EditorSlices<T> = this.saved,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+  ): void {
     const overlay = this.txt.overlay;
     overlay.refresh();
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const overlapping = overlay.findOverlapping(cursor);
+    for (const range of selection) {
+      const overlapping = overlay.findOverlapping(range);
       for (const slice of overlapping) store.del(slice.id);
     }
   }
@@ -691,18 +715,19 @@ export class Editor<T = string> implements Printable {
     type: CommonSliceType | string | number,
     data?: unknown,
     store: EditorSlices<T> = this.saved,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
   ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
-    CURSORS: for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      if (cursor.isCollapsed()) {
+    SELECTION: for (const range of selection) {
+      if (range.isCollapsed()) {
         const pending = this.pending.value;
         if (pending.has(type)) pending.delete(type);
         else pending.set(type, data);
         this.pending.next(pending);
-        continue CURSORS;
+        continue SELECTION;
       }
-      this.toggleRangeExclFmt(cursor, type, data, store);
+      this.toggleRangeExclFmt(range, type, data, store);
     }
   }
 
@@ -834,22 +859,27 @@ export class Editor<T = string> implements Printable {
     return true;
   }
 
-  public split(type?: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+  public split(
+    type?: SliceType,
+    data?: unknown,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    slices: EditorSlices<T> = this.saved,
+  ): void {
     if (type === void 0) {
-      for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-        this.collapseCursor(cursor);
-        const didInsertMarker = this.splitAt(cursor.start, slices);
-        if (didInsertMarker) cursor.move(1);
+      for (const range of selection) {
+        this.collapseCursor(range);
+        const didInsertMarker = this.splitAt(range.start, slices);
+        if (didInsertMarker && range instanceof Cursor) range.move(1);
       }
     } else {
-      for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-        this.collapseCursor(cursor);
+      for (const range of selection) {
+        this.collapseCursor(range);
         if (type === void 0) {
           // TODO: detect current block type
           type = CommonSliceType.p;
         }
         slices.insMarker(type, data);
-        cursor.move(1);
+        if (range instanceof Cursor) range.move(1);
       }
     }
   }
@@ -901,11 +931,11 @@ export class Editor<T = string> implements Printable {
   public tglMarker(
     type: SliceType,
     data?: unknown,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
     slices: EditorSlices<T> = this.saved,
     def: SliceTypeStep = SliceTypeCon.p,
   ): void {
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
-      this.tglMarkerAt(cursor.start, type, data, slices, def);
+    for (const range of selection) this.tglMarkerAt(range.start, type, data, slices, def);
   }
 
   /**
@@ -916,15 +946,19 @@ export class Editor<T = string> implements Printable {
    * @param slices The slices set to use, if new marker is inserted at the start
    *     of the document.
    */
-  public updMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i())
-      this.updMarkerAt(cursor.start, type, data, slices);
+  public updMarker(
+    type: SliceType,
+    data?: unknown,
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    slices: EditorSlices<T> = this.saved,
+  ): void {
+    for (const range of selection) this.updMarkerAt(range.start, type, data, slices);
   }
 
-  public delMarker(): void {
+  public delMarker(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
     const markerPoints = new Set<MarkerOverlayPoint<T>>();
-    for (let i = this.cursors0(), cursor = i(); cursor; cursor = i()) {
-      const markerPoint = this.txt.overlay.getOrNextLowerMarker(cursor.start);
+    for (const range of selection) {
+      const markerPoint = this.txt.overlay.getOrNextLowerMarker(range.start);
       if (markerPoint) markerPoints.add(markerPoint);
     }
     for (const markerPoint of markerPoints) {
@@ -1102,8 +1136,24 @@ export class Editor<T = string> implements Printable {
 
   // ------------------------------------------------------------------ various
 
-  public point(at: Position<T>): Point<T> {
-    return typeof at === 'number' ? this.txt.pointAt(at) : Array.isArray(at) ? this.txt.pointAt(at[0], at[1]) : at;
+  public pos2point(at: EditorPosition<T>): Point<T> {
+    const txt = this.txt;
+    return typeof at === 'number' ? txt.pointAt(at) : Array.isArray(at) ? txt.pointAt(at[0], at[1]) : at;
+  }
+
+  public sel2range(at: EditorSelection<T>): [range: Range<T>, anchor: CursorAnchor] {
+    if (!Array.isArray(at)) return [at, CursorAnchor.End];
+    const [pos1, pos2] = at;
+    const p1 = this.pos2point(pos1);
+    const txt = this.txt;
+    if (pos2 === undefined) {
+      p1.refAfter();
+      return [txt.range(p1), CursorAnchor.End];
+    }
+    const p2 = this.pos2point(pos2);
+    const range = txt.rangeFromPoints(p1, p2);
+    const anchor: CursorAnchor = range.start === p1 ? CursorAnchor.Start : CursorAnchor.End;
+    return [range, anchor];
   }
 
   public end(): Point<T> {

@@ -1,7 +1,9 @@
 import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
-import type {Position as EditorPosition} from '../../json-crdt-extensions/peritext/editor/types';
+import type {EditorPosition, EditorSelection} from '../../json-crdt-extensions/peritext/editor/types';
 import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
 import type {Patch} from '../../json-crdt-patch';
+import type {Cursor} from '../../json-crdt-extensions/peritext/editor/Cursor';
+import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -11,186 +13,246 @@ export interface ChangeDetail {
 }
 
 /**
+ * The {@link SelectionDetailPart} interface allows to specify a range of text
+ * selection or a single caret position in the document.
+ *
+ * If the `at` field is specified, the selection set will contain one selection,
+ * the one created at the specified position. If the `at` field is not specified,
+ * the selection set will contain all cursors in the document at their current
+ * positions.
+ */
+export interface SelectionDetailPart {
+  /**
+   * Position in the document to create a selection over. If not specified, the
+   * operation is applied over all cursors in the document at their current
+   * positions. Or if operation is specified only for one cursor, it will be
+   * applied to the first (main) cursor.
+   *
+   * If specified, a new temporary selection is created which is used to perform
+   * the operation on. Then, if specified, this selection is used to create a
+   * new main cursor, while all other cursors are removed.
+   *
+   * @default undefined
+   */
+  at?: Selection;
+}
+
+/**
+ * The {@link SelectionMoveDetailPart} specified one or more selection
+ * transformations, which are applied to the selection set. All move operations
+ * are applied to each selection in the selection set.
+ */
+export interface SelectionMoveDetailPart {
+  /**
+   * A single operation or a list of operations to be applied to the selection
+   * set. The operations are applied in the order they are specified. The
+   * operations are applied to each selection in the selection set.
+   */
+  move?: SelectionMoveInstruction[];
+}
+
+/**
+ * Specifies a single move operation to be applied to the selection set.
+ */
+export type SelectionMoveInstruction = [
+  /**
+   * Specifies the selection edge to perform the operation on.
+   *
+   * - `'start'`: The start edge of the selection.
+   * - `'end'`: The end edge of the selection.
+   * - `'focus'`: The focus edge of the selection. If the selection does not have
+   *   a focus edge (i.e. it is a {@link Range}, not a {@link Cursor}), the
+   *   focus is assumed to be the `'end'` edge of the selection.
+   * - `'anchor'`: The anchor edge of the selection. If the selection does not
+   *    have an anchor edge (i.e. it is a {@link Range}, not a {@link Cursor}), the
+   *    anchor is assumed to be the `'start'` edge of the selection.
+   *
+   * @default 'focus'
+   */
+  edge: 'start' | 'end' | 'focus' | 'anchor',
+  /**
+   * Absolute position is specified using {@link Position} type. In which case
+   * the next `len` field is ignored.
+   *
+   * The relative movement is specified using one of the string constants.
+   * It specifies the unit of the movement. Possible movement units:
+   *
+   * - `'point'`: Moves by one Peritext anchor point. Each character has two
+   *   anchor points, one from each side of the character.
+   * - `'char'`: Moves by one character. Skips one visible character.
+   * - `'word'`: Moves by one word. Skips all visible characters until the end
+   *   of a word.
+   * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
+   *   the line end is determined by a visual line wrap.
+   * - `'vline'`: Moves to the beginning or end of "visual line", as the line
+   *   is rendered on the screen, due to soft line breaks (line wrapping).
+   * - `'vert'`: Moves cursor up or down by one line, works if UI
+   *   API is provided. Determines the best position in the target line by
+   *   finding the position which has the closest relative offset from the
+   *   beginning of the line.
+   * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
+   *   blockquote, etc.
+   * - `'all'`: Moves to the beginning or end of the document.
+   *
+   * @todo Introduce 'vline', "visual line" - soft line break.
+   */
+  to: Position | 'point' | 'char' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
+  /**
+   * Specify the length of the movement (the number of steps) in units
+   * specified by the `to` field. If not specified, the default value is `0`,
+   * which results in no movement. If the value is negative, the movement will
+   * be backwards. If positive, the movement will be forwards.
+   *
+   * @default 0
+   */
+  len?: number,
+  /**
+   * If `true`, the selection will be collapsed to a single point. The other
+   * edge of the selection will be moved to the same position as the specified
+   * edge.
+   */
+  collapse?: boolean,
+];
+
+/**
+ * The {@link RangeEventDetail} base interface is used by events
+ * which apply change to a range (selection) of text in the document. Usually,
+ * the events will apply changes to all ranges in the selection, some event may
+ * use only the first range in the selection (like the "buffer" event).
+ *
+ * Selection-based events work by first constructing a *selection set*, which
+ * is a list of {@link Range} or {@link Cursor} instances. They then apply the
+ * event to each selection in the selection set.
+ *
+ * The selection set is constructed by using the `at` field to specify a single
+ * {@link Range} or, if not specified, all {@link Cursor} instances in the
+ * document are used. Then the `move` field is used to specify one or more move
+ * operations to be applied to each range in the selection set.
+ */
+export interface RangeEventDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
+
+/**
  * Event dispatched to insert text into the document.
  */
-export interface InsertDetail {
+export interface InsertDetail extends RangeEventDetail {
   text: string;
 }
 
 /**
- * Event dispatched to delete text from the document.
+ * Event dispatched to delete text from the document. The deletion happens by
+ * collapsing all selections to a single point and deleting the text and any
+ * annotations contained in the selections. If all selections are already
+ * collapsed, the moves specified in `move` are performed and all selections
+ * are collapsed to a single point, while deleting all text and any annotations
+ * contained in the selections.
  */
-export interface DeleteDetail {
+export interface DeleteDetail extends RangeEventDetail {
   /**
-   * Specifies the amount of text to delete. If the value is negative, the
-   * deletion will be backwards. If positive, the deletion will be forwards.
-   * If `0`, the deletion will execute in both directions.
-   *
-   * For example, if the cursor is in the middle of a word and the length is
-   * set to `0`, the whole word will be deleted by expanding the selection
-   * in both directions.
-   *
-   * ```js
-   * {
-   *   len: 0,
-   *   unit: 'word',
-   * }
-   * ```
-   *
-   * Or, delete a single character forwards:
-   *
-   * ```js
-   * {
-   *   len: 1,
-   * }
-   * ```
-   *
-   * @default -1
+   * If true and `at` is specified, the resulting `at` range will be set
+   * as the document cursor.
    */
-  len?: number;
-
-  /**
-   * Specifies the unit of the deletion. If `'char'`, the deletion will be
-   * executed by `len` characters. If `'word'`, the deletion will be executed
-   * by one word in the direction specified by `len`. If `'line'`, the deletion
-   * will be executed to the beginning or end of line, in direction specified
-   * by `len`.
-   *
-   * @default 'char'
-   */
-  unit?: 'char' | 'word' | 'line';
-
-  /**
-   * Position in the document to start the deletion from. If not specified, the
-   * deletion is executed for all cursors in the document at their current
-   * positions. If specified, only one cursor will be placed at the specified
-   * position and the deletion will be executed from that position (while all
-   * other cursors will be removed).
-   *
-   * @default undefined
-   */
-  at?: Position;
+  add?: boolean;
 }
 
 /**
  * The `cursor` event is emitted when caret or selection is changed. The event
- * is applied to all cursors in the document.
+ * is applied to all cursors in the document. If the `at` field is specified,
+ * a new cursor is created at that position, and all other cursors are removed.
+ *
+ * The `at` field allows to insert a new cursors at a specified location in the
+ * document and remove all other cursors. The `move` fields allows to perform
+ * one or more move operations to all cursors in the document.
  *
  * ## Scenarios
  *
  * Move caret to a specific position in text:
  *
  * ```ts
- * {at: 10}
+ * {at: [10]}
  * ```
  *
- * Move caret relative to current position:
+ * Move caret relative to current position by 10 characters forwards:
  *
  * ```ts
- * {len: 5}
+ * {move: [['focus', 'char', 10, true]]}
+ * ```
+ *
+ * Move caret only the focus edge of selections by 10 characters backwards:
+ *
+ * ```ts
+ * {move: [['focus', 'char', -10]]}
  * ```
  *
  * Move caret to the beginning of the word at a specific position:
  *
  * ```ts
- * {at: 10, len: -1, unit: 'word'}
+ * {at: [10], move: [['focus', 'word', -1, true]]}
  * ```
  *
  * Move caret to the end of word starting from the current position:
  *
  * ```ts
- * {len: 1, unit: 'word'}
+ * {move: [['focus', 'word', 1, true]]}
  * ```
  *
  * Move *anchor* edge of the selection to the beginning of the current line:
  *
  * ```ts
- * {len: -1, unit: 'line', edge: 'anchor'}
+ * {move: [['anchor', 'line', -1]]}
+ * ```
+ *
+ * Move *anchor* edge of the selection exactly to after the second character in
+ * the document:
+ *
+ * ```ts
+ * {move: [['anchor', 2]]}
  * ```
  *
  * Move *focus* edge of the selection to the end of a block at a specific position:
  *
  * ```ts
- * {at: 10, len: 1, unit: 'block', edge: 'focus'}
+ * {at: [10], move: [['focus', 'block', 1]]}
  * ```
  *
  * Select the whole document:
  *
  * ```ts
- * {unit: 'all'}
+ * {at: [0], move: [['focus', 'all', 1]]}
  * ```
  *
- * The editor supports multiple cursors. To create a new cursor, set the `edge`
- * field to `'new'`. The `at` field specifies the position of the new cursor.
- * The `len` field is ignored when the `edge` field is set to `'new'`. For
- * example:
+ * or
  *
  * ```ts
- * {at: 10, edge: 'new'}
+ * {move: [
+ *   ['start', 'all', -1],
+ *   ['end', 'all', 1],
+ * ]}
+ * ```
+ *
+ * The editor supports multiple cursors. To insert a new cursor at a specific
+ * position, specify the `add` flag in addition to the `at` field. For example,
+ * insert a new cursor at position 10:
+ *
+ * ```ts
+ * {at: [10], add: true}
  * ```
  */
-export interface CursorDetail {
+export interface CursorDetail extends RangeEventDetail {
   /**
-   * Position in the document to move the cursor to. If `-1` or undefined, the
-   * current cursor position will be used as the starting point and `len` will
-   * be used to determine the new position.
+   * If `true`, the selection will be added to the current selection set, i.e.
+   * a new cursor will be inserted at the specified position into the document.
+   * Otherwise, the selection specified by the `at` field will be used to
+   * replace all other cursors in the document.
    *
-   * If 2-tuple is provided, the first element is the character index and the
-   * second `0 | 1` member specifies the anchor point of the character: `0`
-   * for the beginning of the character and `1` for the end of the character.
+   * @default false
    */
-  at?: Position;
-
-  /**
-   * Specify the length of the movement or selection in units specified by the
-   * `unit` field. If the `at` field is set, the `at` field specifies the
-   * absolute selection position and the `len` field specifies the length of
-   * the selection. If the `at` field is not set, the `len` field specifies
-   * the relative movement of the cursor.
-   */
-  len?: number;
-
-  /**
-   * Specifies the unit of the movement. If `'char'`, the cursor will be
-   * moved by `len` characters. If `'word'`, the cursor will be moved by
-   * one word in the direction specified by `len`. If `'line'`, the cursor
-   * will be moved to the beginning or end of line, in direction specified
-   * by `len`.
-   *
-   * - `'point'`: Moves by one Peritext anchor point. Each character has two
-   *     anchor points, one from each side of the character.
-   * - `'char'`: Moves by one character. Skips one visible character.
-   * - `'word'`: Moves by one word. Skips all visible characters until the end
-   *     of a word.
-   * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
-   *     the line end is determined by a visual line wrap.
-   * - `'vert'`: Moves cursor up or down by one line, works if UI
-   *     API is provided. Determines the best position in the target line by
-   *     finding the position which has the closest relative offset from the
-   *     beginning of the line.
-   * - `'block'`: Moves to the beginning or end of block, i.e. paragraph,
-   *     blockequote, etc.
-   * - `'all'`: Moves to the beginning or end of the document.
-   *
-   * @default 'char'
-   */
-  unit?: 'point' | 'char' | 'word' | 'line' | 'vert' | 'block' | 'all';
-
-  /**
-   * Specifies which edge of the selection to move. If `'focus'`, the focus
-   * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
-   * `'both'`, the whole selection will be moved. Defaults to `'both'`.
-   *
-   * When the value is set to `'new'`, a new cursor will be created at the
-   * position specified by the `at` field.
-   */
-  edge?: 'focus' | 'anchor' | 'both' | 'new';
+  add?: boolean;
 }
 
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface FormatDetail {
+export interface FormatDetail extends RangeEventDetail {
   /**
    * Type of the annotation. The type is used to determine the visual style of
    * the annotation, for example, the type `'bold'` may render the text in bold.
@@ -257,7 +319,7 @@ export interface FormatDetail {
  * block. Removing a marker results into a "join" action, which merges two
  * adjacent blocks into one.
  */
-export interface MarkerDetail {
+export interface MarkerDetail extends RangeEventDetail {
   /**
    * The action to perform.
    *
@@ -283,9 +345,12 @@ export interface MarkerDetail {
 }
 
 /**
- * The "buffer" event manages clipboard buffer actions: cut, copy, and paste.
+ * The "buffer" event manages clipboard buffer actions: cut, copy, and paste. It
+ * can be used to cut/copy the current selection or a custom range to clipboard.
+ * It can cut/copy the contents in various formats, such as native Peritext
+ * format, HTML, Markdown, plain text, and other miscellaneous formats.
  */
-export interface BufferDetail {
+export interface BufferDetail extends RangeEventDetail {
   /**
    * The action to perform. The `'cut'` and `'copy'` actions generally work
    * the same way, the only difference is that the `'cut'` action removes the
@@ -314,13 +379,6 @@ export interface BufferDetail {
    * @default 'auto'
    */
   format?: 'auto' | 'text' | 'json' | 'jsonml' | 'hast' | 'html' | 'mdast' | 'md' | 'fragment' | 'style';
-
-  /**
-   * The range of text to cut or copy. If not specified, the first selection of
-   * the current cursor is used. If not specified and there is no cursor, the
-   * whole document is used.
-   */
-  range?: [start: Position, end: Position];
 
   /**
    * The data to paste into the document, when `action` is `"paste"`. If not
@@ -363,6 +421,18 @@ export interface AnnalsDetail {
 export type Position = EditorPosition<string>;
 
 /**
+ * Selection represents a range of text in the document. The selection is
+ * represented as {@link Range}, or constructed from as a 2-tuple of
+ * {@link Position} instances.
+ */
+export type Selection = EditorSelection<string>;
+
+/**
+ * A list of selection on top of which actions are performed.
+ */
+export type SelectionSet = IterableIterator<Range | Cursor> | Array<Range | Cursor>;
+
+/**
  * A map of all Peritext rendering surface event types and their corresponding
  * detail types.
  */
@@ -376,3 +446,12 @@ export type PeritextEventDetailMap = {
   buffer: BufferDetail;
   annals: AnnalsDetail;
 };
+
+export type PeritextChangeEvent = CustomEvent<ChangeDetail>;
+export type PeritextInsertEvent = CustomEvent<InsertDetail>;
+export type PeritextDeleteEvent = CustomEvent<DeleteDetail>;
+export type PeritextCursorEvent = CustomEvent<CursorDetail>;
+export type PeritextFormatEvent = CustomEvent<FormatDetail>;
+export type PeritextMarkerEvent = CustomEvent<MarkerDetail>;
+export type PeritextBufferEvent = CustomEvent<BufferDetail>;
+export type PeritextAnnalsEvent = CustomEvent<AnnalsDetail>;

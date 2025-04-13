@@ -64,6 +64,7 @@ export class UiHandle {
 
   public getLineEnd(pos: number | Point<string>, right = true): UiLineEdge | undefined {
     const startPoint = this.point(pos);
+    if (startPoint.isAbs()) return;
     const startRect = this.getPointRect(startPoint, right);
     if (!startRect) return;
     let curr = startPoint.clone();
@@ -81,6 +82,7 @@ export class UiHandle {
     while (true) {
       const next = curr.copy((p) => p.step(right ? 1 : -1));
       if (!next) return prepareReturn();
+      if (next.isAbs()) return prepareReturn();
       const nextRect = this.getPointRect(next, right);
       if (!nextRect) return prepareReturn();
       if (right ? nextRect.x < currRect.x : nextRect.x > currRect.x) return prepareReturn();
@@ -92,6 +94,7 @@ export class UiHandle {
   public getLineInfo(pos: number | Point<string>): UiLineInfo | undefined {
     const txt = this.txt;
     const point = this.point(pos);
+    if (point.isAbs()) return;
     const isEndOfText = point.viewPos() === txt.strApi().length();
     if (isEndOfText) return;
     const left = this.getLineEnd(point, false);
@@ -102,10 +105,12 @@ export class UiHandle {
 
   public getNextLineInfo(line: UiLineInfo, direction: 1 | -1 = 1): UiLineInfo | undefined {
     const edge = line[direction > 0 ? 1 : 0][0];
-    if (edge.viewPos() >= this.txt.str.length()) return;
+    const txt = this.txt;
+    if (edge.viewPos() >= txt.str.length()) return;
     const point = edge.copy((p) => p.step(direction));
-    const success = this.txt.overlay.skipMarkers(point, direction);
+    const success = txt.overlay.skipMarkers(point, direction);
     if (!success) return;
+    if (point.isAbs()) return;
     return this.getLineInfo(point);
   }
 }

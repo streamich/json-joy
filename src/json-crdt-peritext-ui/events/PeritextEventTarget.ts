@@ -6,6 +6,7 @@ import type {
   DeleteDetail,
   MarkerDetail,
   BufferDetail,
+  SelectionMoveInstruction,
 } from './types';
 
 export type PeritextEventMap = {
@@ -43,23 +44,43 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('insert', {text});
   }
 
-  public delete(len: DeleteDetail['len'], unit?: DeleteDetail['unit'], at?: DeleteDetail['at']): void;
-  public delete(detail: DeleteDetail): void;
+  public delete(len: number, unit?: SelectionMoveInstruction[1]): void;
   public delete(
-    lenOrDetail: DeleteDetail | DeleteDetail['len'],
-    unit?: DeleteDetail['unit'],
-    at?: DeleteDetail['at'],
-  ): void {
-    const detail: DeleteDetail = typeof lenOrDetail === 'object' ? lenOrDetail : {len: lenOrDetail, unit, at};
-    this.dispatch('delete', detail);
+    edge: SelectionMoveInstruction[0],
+    unit: SelectionMoveInstruction[1],
+    len?: SelectionMoveInstruction[2],
+    collapse?: SelectionMoveInstruction[3],
+  ): void;
+  public delete(detail?: DeleteDetail): void;
+  public delete(a: any = {}, b?: any, len?: any, collapse?: any): void {
+    if (typeof a === 'number') {
+      this.dispatch('delete', {move: [['focus', b ?? 'char', a]]});
+    } else if (typeof a === 'string') {
+      const move: SelectionMoveInstruction[] = [[a as SelectionMoveInstruction[0], b, len, collapse]];
+      this.dispatch('delete', {move});
+    } else {
+      this.dispatch('delete', a);
+    }
   }
 
   public cursor(detail: CursorDetail): void {
     this.dispatch('cursor', detail);
   }
 
-  public move(len: number, unit?: CursorDetail['unit'], edge?: CursorDetail['edge']): void {
-    this.cursor({len, unit, edge});
+  public move(
+    edge: SelectionMoveInstruction[0],
+    unit: SelectionMoveInstruction[1],
+    len?: SelectionMoveInstruction[2],
+    collapse?: SelectionMoveInstruction[3],
+  ): void;
+  public move(move?: CursorDetail['move'], at?: CursorDetail['at']): void;
+  public move(a?: any, b?: any, len?: any, collapse?: any): void {
+    if (typeof a === 'string') {
+      const move: SelectionMoveInstruction[] = [[a as SelectionMoveInstruction[0], b, len, collapse]];
+      this.cursor({move});
+    } else {
+      this.cursor({move: a, at: b});
+    }
   }
 
   public format(type: FormatDetail['type'], behavior?: FormatDetail['behavior'], data?: FormatDetail['data']): void;
@@ -74,7 +95,10 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     this.dispatch('format', detail);
   }
 
-  public marker(detail: MarkerDetail): void {
+  public marker(action: MarkerDetail['action'], type: MarkerDetail['type'], data?: MarkerDetail['data']): void;
+  public marker(detail: MarkerDetail): void;
+  public marker(a: MarkerDetail | MarkerDetail['action'], b?: MarkerDetail['type'], c?: MarkerDetail['data']): void {
+    const detail: MarkerDetail = typeof a === 'object' ? a : {action: a, type: b, data: c};
     this.dispatch('marker', detail);
   }
 
