@@ -1235,6 +1235,7 @@ export class ToolbarState implements UiLifeCycles {
     const menu: MenuItem = {
       name: 'Block type',
       expand: 1,
+      expandChild: 0,
       children: [
         {
           name: 'Text blocks',
@@ -1434,15 +1435,16 @@ export class ToolbarState implements UiLifeCycles {
               onSelect: () => {
                 et.cursor({
                   move: [
-                    ['start', 'block', -1],
-                    ['end', 'block', 1],
+                    ['anchor', 'block', -1],
+                    ['focus', 'block', 1],
                   ],
                 });
               },
             },
+            this.blockClipboardMenu(),
           ],
         },
-        this.blockClipboardMenu(),
+        
         secondBrain(),
       ],
     };
