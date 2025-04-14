@@ -1258,7 +1258,7 @@ export class ToolbarState implements UiLifeCycles {
               name: 'Blockquote',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
               onSelect: () => {
-                et.marker('upd', SliceTypeCon.blockquote);
+                et.marker('upd', [SliceTypeCon.blockquote, SliceTypeCon.p]);
               },
             },
             {
@@ -1285,44 +1285,59 @@ export class ToolbarState implements UiLifeCycles {
             {
               name: 'Heading 1',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="h-1" />,
-              // icon: () => <Iconista width={16} height={16} set="simple" icon="h-1" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.h1);
+              },
             },
             {
               name: 'Heading 2',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="h-2" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.h2);
+              },
             },
             {
               name: 'Heading 3',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="h-3" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.h3);
+              },
             },
             {
               name: 'Heading 4',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="h-4" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.h4);
+              },
             },
             {
               name: 'Heading 5',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="h-5" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.h5);
+              },
             },
             {
               name: 'Heading 6',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="h-6" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.h6);
+              },
             },
             {
               sepBefore: true,
               name: 'Title',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.title);
+              },
             },
             {
               name: 'Sub-title',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', SliceTypeCon.subtitle);
+              },
             },
           ],
         },
@@ -1333,19 +1348,24 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Bullet list',
-              // icon: () => <Iconista width={16} height={16} set="tabler" icon="list" />,
               icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--bulleted" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', [SliceTypeCon.ul, SliceTypeCon.li, SliceTypeCon.p]);
+              },
             },
             {
               name: 'Numbered list',
               icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--numbered" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', [SliceTypeCon.ol, SliceTypeCon.li, SliceTypeCon.p]);
+              },
             },
             {
               name: 'Task list',
               icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--checked" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', [SliceTypeCon.tl, SliceTypeCon.li, SliceTypeCon.p]);
+              },
             },
           ],
         },
@@ -1358,12 +1378,16 @@ export class ToolbarState implements UiLifeCycles {
             {
               name: 'Table',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="table" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', [SliceTypeCon.table, SliceTypeCon.row, SliceTypeCon.p]);
+              },
             },
             {
               name: 'Columns',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="columns" />,
-              onSelect: () => {},
+              onSelect: () => {
+                et.marker('upd', [SliceTypeCon.column, SliceTypeCon.p]);
+              },
             },
           ],
         },
