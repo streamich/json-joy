@@ -27,7 +27,7 @@ export interface RenderFocusProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
+export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
@@ -43,7 +43,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children}) => {
 
   let toolbarElement: React.ReactNode = null;
 
-  if (showInlineToolbarValue && !isScrubbing)
+  if (showInlineToolbarValue && !isScrubbing && (toolbar.txt.editor.mainCursor() === cursor))
     toolbarElement = (
       <CaretToolbar
         disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}

@@ -18,12 +18,12 @@ const topLeftOverlay = rule({
   l: '-72px',
 });
 
-const topRightOverlay = rule({
-  d: 'block',
-  pos: 'absolute',
-  t: '-36px',
-  r: '-16px',
-});
+// const topRightOverlay = rule({
+//   d: 'block',
+//   pos: 'absolute',
+//   t: '-36px',
+//   r: '-16px',
+// });
 
 export interface LeafBlockFrameProps extends RenderBlockProps {}
 

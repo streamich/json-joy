@@ -2,11 +2,13 @@
 import * as React from 'react';
 import {usePeritext} from '../context';
 import {Caret} from './Caret';
+import type {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
 
 export interface CaretViewProps {
   italic?: boolean;
   point: Point<string>;
+  cursor: Cursor<string>;
 }
 
 export const CaretView: React.FC<CaretViewProps> = (props) => {
