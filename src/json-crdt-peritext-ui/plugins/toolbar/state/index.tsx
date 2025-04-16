@@ -338,90 +338,80 @@ export class ToolbarState implements UiLifeCycles {
     };
   };
 
-  public readonly copyAsMenu = (type: 'copy' | 'cut', ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly copyAsMenu = (action: 'copy' | 'cut', ctx: ClipboardMenuCtx = {}): MenuItem => {
     const icon =
-      type === 'copy'
+      action === 'copy'
         ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
         : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
     const et = this.surface.events.et;
     const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
     const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
     const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
-    const onSelect = (format: BufferDetail['format']) => {
-      et.buffer(type, format);
-    };
     const markdownAction: MenuItem = {
       name: 'Markdown',
-      text: type + ' paste markdown md',
+      text: action + ' paste markdown md',
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        ctx.onBeforeAction?.(markdownAction);
-        onSelect('md');
+        et.buffer({...ctx.onBeforeAction?.(markdownAction), action, format: 'md'});
       },
     };
     const mdastAction: MenuItem = {
       name: 'MDAST',
-      text: type + ' paste markdown md mdast',
+      text: action + ' paste markdown md mdast',
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        ctx.onBeforeAction?.(markdownAction);
-        onSelect('mdast');
+        et.buffer({...ctx.onBeforeAction?.(mdastAction), action, format: 'mdast'});
       },
     };
     const htmlAction: MenuItem = {
       name: 'HTML',
-      text: type + ' paste html',
+      text: action + ' paste html',
       icon,
       right: iconHtml, 
       onSelect: () => {
-        ctx.onBeforeAction?.(htmlAction);
-        onSelect('html');
+        et.buffer({...ctx.onBeforeAction?.(htmlAction), action, format: 'html'});
       },
     };
     const hastAction: MenuItem = {
       name: 'HAST',
-      text: type + ' paste html hast',
+      text: action + ' paste html hast',
       icon,
       right: iconHtml,
       onSelect: () => {
-        ctx.onBeforeAction?.(hastAction);
-        onSelect('hast');
+        et.buffer({...ctx.onBeforeAction?.(hastAction), action, format: 'hast'});
       },
     };
     const jsonAction: MenuItem = {
       name: 'Range view',
-      text: type + ' paste range view peritext',
+      text: action + ' paste range view peritext',
       icon,
       right: iconJson,
       onSelect: () => {
-        ctx.onBeforeAction?.(jsonAction);
-        onSelect('json');
+        et.buffer({...ctx.onBeforeAction?.(jsonAction), action, format: 'json'});
       },
     };
     const jsonmlAction: MenuItem = {
       name: 'Fragment ML',
-      text: type + ' paste peritext fragment ml node',
+      text: action + ' paste peritext fragment ml node',
       icon,
       right: iconJson,
       onSelect: () => {
-        ctx.onBeforeAction?.(jsonmlAction);
-        onSelect('jsonml');
+        et.buffer({...ctx.onBeforeAction?.(jsonmlAction), action, format: 'jsonml'});
       },
     };
     const fragmentAction: MenuItem = {
       name: 'Fragment text',
-      text: type + 'peritext fragment debug',
+      text: action + 'peritext fragment debug',
       icon,
       right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
       onSelect: () => {
-        ctx.onBeforeAction?.(fragmentAction);
-        onSelect('fragment');
+        et.buffer({...ctx.onBeforeAction?.(fragmentAction), action, format: 'fragment'});
       },
     };
     return {
-      name: type === 'copy' ? 'Copy as' : 'Cut as',
+      name: action === 'copy' ? 'Copy as' : 'Cut as',
       more: true,
       icon,
       children: [
@@ -450,18 +440,13 @@ export class ToolbarState implements UiLifeCycles {
     const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
     const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
     const et = this.surface.events.et;
-    const onSelect = (format: BufferDetail['format']) => {
-      console.log('paste as', format);
-      et.buffer('paste', format);
-    };
     const markdownAction: MenuItem = {
       name: 'Markdown',
       text: 'paste markdown md',
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        ctx.onBeforeAction?.(markdownAction);
-        onSelect('md');
+        et.buffer({...ctx.onBeforeAction?.(markdownAction), action: 'paste', format: 'md'});
       },
     };
     const mdastAction: MenuItem = {
@@ -470,8 +455,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        ctx.onBeforeAction?.(markdownAction);
-        onSelect('mdast');
+        et.buffer({...ctx.onBeforeAction?.(mdastAction), action: 'paste', format: 'mdast'});
       },
     };
     const htmlAction: MenuItem = {
@@ -480,8 +464,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconHtml, 
       onSelect: () => {
-        ctx.onBeforeAction?.(htmlAction);
-        onSelect('html');
+        et.buffer({...ctx.onBeforeAction?.(htmlAction), action: 'paste', format: 'html'});
       },
     };
     const hastAction: MenuItem = {
@@ -490,8 +473,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconHtml,
       onSelect: () => {
-        ctx.onBeforeAction?.(hastAction);
-        onSelect('hast');
+        et.buffer({...ctx.onBeforeAction?.(hastAction), action: 'paste', format: 'hast'});
       },
     };
     const jsonAction: MenuItem = {
@@ -500,8 +482,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconJson,
       onSelect: () => {
-        ctx.onBeforeAction?.(jsonAction);
-        onSelect('json');
+        et.buffer({...ctx.onBeforeAction?.(jsonAction), action: 'paste', format: 'json'});
       },
     };
     const jsonmlAction: MenuItem = {
@@ -510,8 +491,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconJson,
       onSelect: () => {
-        ctx.onBeforeAction?.(jsonmlAction);
-        onSelect('jsonml');
+        et.buffer({...ctx.onBeforeAction?.(jsonmlAction), action: 'paste', format: 'jsonml'});
       },
     };
     return {
@@ -543,16 +523,14 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Copy',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
       onSelect: () => {
-        ctx.onBeforeAction?.(copyAction);
-        et.buffer('copy');
+        et.buffer({...ctx.onBeforeAction?.(copyAction), action: 'copy'});
       },
     };
     const copyTextOnlyAction: MenuItem = {
       name: 'Copy text only',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
       onSelect: () => {
-        ctx.onBeforeAction?.(copyTextOnlyAction);
-        et.buffer('copy', 'text');
+        et.buffer({...ctx.onBeforeAction?.(copyTextOnlyAction), action: 'copy', format: 'text'});
       },
     };
     const children: MenuItem[] = [
@@ -564,8 +542,7 @@ export class ToolbarState implements UiLifeCycles {
         name: 'Copy style',
         icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
         onSelect: () => {
-          ctx.onBeforeAction?.(copyStyleAction);
-          et.buffer('copy', 'style');
+          et.buffer({...ctx.onBeforeAction?.(copyStyleAction), action: 'copy', format: 'style'});
         },
       };
       children.push(copyStyleAction);
@@ -587,8 +564,7 @@ export class ToolbarState implements UiLifeCycles {
       danger: true,
       icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
       onSelect: () => {
-        ctx.onBeforeAction?.(cutAction);
-        et.buffer('cut');
+        et.buffer({...ctx.onBeforeAction?.(cutAction), action: 'cut'});
       },
     };
     const cutTextAction: MenuItem = {
@@ -596,8 +572,7 @@ export class ToolbarState implements UiLifeCycles {
       danger: true,
       icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
       onSelect: () => {
-        ctx.onBeforeAction?.(cutAction);
-        et.buffer('cut', 'text');
+        et.buffer({...ctx.onBeforeAction?.(cutTextAction), action: 'cut', format: 'text'});
       },
     };
     return {
@@ -619,16 +594,14 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Paste',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
       onSelect: () => {
-        ctx.onBeforeAction?.(pasteAction);
-        et.buffer('paste');
+        et.buffer({...ctx.onBeforeAction?.(pasteAction), action: 'paste'});
       },
     };
     const pasteTextAction: MenuItem = {
       name: 'Paste text',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
       onSelect: () => {
-        ctx.onBeforeAction?.(pasteTextAction);
-        et.buffer('paste', 'text');
+        et.buffer({...ctx.onBeforeAction?.(pasteTextAction), action: 'paste', format: 'text'});
       },
     };
     const children: MenuItem[] = [
@@ -640,8 +613,7 @@ export class ToolbarState implements UiLifeCycles {
         name: 'Paste style',
         icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
         onSelect: () => {
-          ctx.onBeforeAction?.(pasteTextAction);
-          et.buffer('paste', 'style');
+          et.buffer({...ctx.onBeforeAction?.(pasteStyleAction), action: 'paste', format: 'style'});
         },
       };
       children.push(pasteStyleAction);
@@ -657,7 +629,6 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly clipboardMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
-    const et = this.surface.events.et;
     const copyMenu = this.copyMenu(ctx);
     const cutMenu = this.cutMenu(ctx);
     const pasteMenu = this.pasteMenu(ctx);
@@ -1516,6 +1487,7 @@ export class ToolbarState implements UiLifeCycles {
 
   public readonly leafBlockSmallMenu = (ctx: LeafBlockMenuCtx): MenuItem => {
     const et = this.surface.events.et;
+    const block = ctx.block;
     const menu: MenuItem = {
       name: 'Leaf block menu',
       maxToolbarItems: 1,
@@ -1540,7 +1512,14 @@ export class ToolbarState implements UiLifeCycles {
                 });
               },
             },
-            this.clipboardMenu({hideStyleActions: true}),
+            this.clipboardMenu({
+              hideStyleActions: true,
+              onBeforeAction: (item) => {
+                return {
+                  at: [block.start, block.end],
+                };
+              },
+            }),
           ],
         },
         
@@ -1552,10 +1531,10 @@ export class ToolbarState implements UiLifeCycles {
 }
 
 export interface LeafBlockMenuCtx {
-  block: LeafBlock;
+  block: LeafBlock<string>;
 }
 
 export interface ClipboardMenuCtx {
   hideStyleActions?: boolean;
-  onBeforeAction?: (item: MenuItem) => void;
+  onBeforeAction?: (item: MenuItem) => (void | Partial<BufferDetail>);
 }
