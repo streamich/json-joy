@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
+import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
 import {useToolbarPlugin} from './context';
 import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../web/react/hooks';
 import type {CaretViewProps} from '../../web/react/cursor/CaretView';
@@ -31,7 +32,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
-  const enableAfterCoolDown = useTimeout(500, [toolbarVisibilityChangeTime]);
+  const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
   const isScrubbing = useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown) || false;
   // const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
   // const blurTimeout = useTimeout(300, [focus]);
@@ -45,11 +46,13 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
 
   if (showInlineToolbarValue && !isScrubbing && (toolbar.txt.editor.mainCursor() === cursor))
     toolbarElement = (
-      <CaretToolbar
-        disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
-        menu={toolbar.getSelectionMenu()}
-        onPopupClose={handleClose}
-      />
+      <MoveToViewport>
+        <CaretToolbar
+          disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
+          menu={toolbar.getSelectionMenu()}
+          onPopupClose={handleClose}
+        />
+      </MoveToViewport>
     );
 
   return (
