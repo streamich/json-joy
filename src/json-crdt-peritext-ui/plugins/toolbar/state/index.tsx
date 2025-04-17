@@ -349,56 +349,56 @@ export class ToolbarState implements UiLifeCycles {
     const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
     const markdownAction: MenuItem = {
       name: 'Markdown',
-      text: action + ' paste markdown md',
+      text: action + ' markdown md',
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(markdownAction), action, format: 'md'});
+        et.buffer({...ctx.onBeforeAction?.(markdownAction, action), action, format: 'md'});
       },
     };
     const mdastAction: MenuItem = {
       name: 'MDAST',
-      text: action + ' paste markdown md mdast',
+      text: action + ' markdown md mdast',
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(mdastAction), action, format: 'mdast'});
+        et.buffer({...ctx.onBeforeAction?.(mdastAction, action), action, format: 'mdast'});
       },
     };
     const htmlAction: MenuItem = {
       name: 'HTML',
-      text: action + ' paste html',
+      text: action + ' html',
       icon,
       right: iconHtml, 
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(htmlAction), action, format: 'html'});
+        et.buffer({...ctx.onBeforeAction?.(htmlAction, action), action, format: 'html'});
       },
     };
     const hastAction: MenuItem = {
       name: 'HAST',
-      text: action + ' paste html hast',
+      text: action + ' html hast',
       icon,
       right: iconHtml,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(hastAction), action, format: 'hast'});
+        et.buffer({...ctx.onBeforeAction?.(hastAction, action), action, format: 'hast'});
       },
     };
     const jsonAction: MenuItem = {
       name: 'Range view',
-      text: action + ' paste range view peritext',
+      text: action + ' range view peritext',
       icon,
       right: iconJson,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(jsonAction), action, format: 'json'});
+        et.buffer({...ctx.onBeforeAction?.(jsonAction, action), action, format: 'json'});
       },
     };
     const jsonmlAction: MenuItem = {
       name: 'Fragment ML',
-      text: action + ' paste peritext fragment ml node',
+      text: action + ' peritext fragment ml node',
       icon,
       right: iconJson,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(jsonmlAction), action, format: 'jsonml'});
+        et.buffer({...ctx.onBeforeAction?.(jsonmlAction, action), action, format: 'jsonml'});
       },
     };
     const fragmentAction: MenuItem = {
@@ -407,7 +407,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(fragmentAction), action, format: 'fragment'});
+        et.buffer({...ctx.onBeforeAction?.(fragmentAction, action), action, format: 'fragment'});
       },
     };
     return {
@@ -446,7 +446,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(markdownAction), action: 'paste', format: 'md'});
+        et.buffer({...ctx.onBeforeAction?.(markdownAction, 'paste'), action: 'paste', format: 'md'});
       },
     };
     const mdastAction: MenuItem = {
@@ -455,7 +455,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconMarkdown,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(mdastAction), action: 'paste', format: 'mdast'});
+        et.buffer({...ctx.onBeforeAction?.(mdastAction, 'paste'), action: 'paste', format: 'mdast'});
       },
     };
     const htmlAction: MenuItem = {
@@ -464,7 +464,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconHtml, 
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(htmlAction), action: 'paste', format: 'html'});
+        et.buffer({...ctx.onBeforeAction?.(htmlAction, 'paste'), action: 'paste', format: 'html'});
       },
     };
     const hastAction: MenuItem = {
@@ -473,7 +473,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconHtml,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(hastAction), action: 'paste', format: 'hast'});
+        et.buffer({...ctx.onBeforeAction?.(hastAction, 'paste'), action: 'paste', format: 'hast'});
       },
     };
     const jsonAction: MenuItem = {
@@ -482,7 +482,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconJson,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(jsonAction), action: 'paste', format: 'json'});
+        et.buffer({...ctx.onBeforeAction?.(jsonAction, 'paste'), action: 'paste', format: 'json'});
       },
     };
     const jsonmlAction: MenuItem = {
@@ -491,7 +491,7 @@ export class ToolbarState implements UiLifeCycles {
       icon,
       right: iconJson,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(jsonmlAction), action: 'paste', format: 'jsonml'});
+        et.buffer({...ctx.onBeforeAction?.(jsonmlAction, 'paste'), action: 'paste', format: 'jsonml'});
       },
     };
     return {
@@ -523,14 +523,14 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Copy',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(copyAction), action: 'copy'});
+        et.buffer({...ctx.onBeforeAction?.(copyAction, 'copy'), action: 'copy'});
       },
     };
     const copyTextOnlyAction: MenuItem = {
       name: 'Copy text only',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(copyTextOnlyAction), action: 'copy', format: 'text'});
+        et.buffer({...ctx.onBeforeAction?.(copyTextOnlyAction, 'copy'), action: 'copy', format: 'text'});
       },
     };
     const children: MenuItem[] = [
@@ -542,7 +542,7 @@ export class ToolbarState implements UiLifeCycles {
         name: 'Copy style',
         icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
         onSelect: () => {
-          et.buffer({...ctx.onBeforeAction?.(copyStyleAction), action: 'copy', format: 'style'});
+          et.buffer({...ctx.onBeforeAction?.(copyStyleAction, 'copy'), action: 'copy', format: 'style'});
         },
       };
       children.push(copyStyleAction);
@@ -564,7 +564,7 @@ export class ToolbarState implements UiLifeCycles {
       danger: true,
       icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(cutAction), action: 'cut'});
+        et.buffer({...ctx.onBeforeAction?.(cutAction, 'cut'), action: 'cut'});
       },
     };
     const cutTextAction: MenuItem = {
@@ -572,7 +572,7 @@ export class ToolbarState implements UiLifeCycles {
       danger: true,
       icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(cutTextAction), action: 'cut', format: 'text'});
+        et.buffer({...ctx.onBeforeAction?.(cutTextAction, 'cut'), action: 'cut', format: 'text'});
       },
     };
     return {
@@ -594,14 +594,14 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Paste',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(pasteAction), action: 'paste'});
+        et.buffer({...ctx.onBeforeAction?.(pasteAction, 'paste'), action: 'paste'});
       },
     };
     const pasteTextAction: MenuItem = {
       name: 'Paste text',
       icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
       onSelect: () => {
-        et.buffer({...ctx.onBeforeAction?.(pasteTextAction), action: 'paste', format: 'text'});
+        et.buffer({...ctx.onBeforeAction?.(pasteTextAction, 'paste'), action: 'paste', format: 'text'});
       },
     };
     const children: MenuItem[] = [
@@ -613,7 +613,7 @@ export class ToolbarState implements UiLifeCycles {
         name: 'Paste style',
         icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
         onSelect: () => {
-          et.buffer({...ctx.onBeforeAction?.(pasteStyleAction), action: 'paste', format: 'style'});
+          et.buffer({...ctx.onBeforeAction?.(pasteStyleAction, 'paste'), action: 'paste', format: 'style'});
         },
       };
       children.push(pasteStyleAction);
@@ -1504,19 +1504,18 @@ export class ToolbarState implements UiLifeCycles {
               name: 'Select block',
               icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
               onSelect: () => {
-                et.cursor({
-                  move: [
-                    ['anchor', 'block', -1],
-                    ['focus', 'block', 1],
-                  ],
-                });
+                let start = block.start.clone();
+                if (!start.isAbsStart()) start.step(1);
+                et.cursor({at: [start, block.end]});
               },
             },
             this.clipboardMenu({
               hideStyleActions: true,
-              onBeforeAction: (item) => {
+              onBeforeAction: (item, action) => {
+                let start = block.start.clone();
+                if (!start.isAbsStart() && (action === 'paste')) start.step(1);
                 return {
-                  at: [block.start, block.end],
+                  at: [start, block.end],
                 };
               },
             }),
@@ -1536,5 +1535,5 @@ export interface LeafBlockMenuCtx {
 
 export interface ClipboardMenuCtx {
   hideStyleActions?: boolean;
-  onBeforeAction?: (item: MenuItem) => (void | Partial<BufferDetail>);
+  onBeforeAction?: (item: MenuItem, action: 'cut' | 'copy' | 'paste') => (void | Partial<BufferDetail>);
 }

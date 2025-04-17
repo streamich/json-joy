@@ -272,7 +272,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           case 'text': {
             const text = range.text();
             clipboard.writeText(text)?.catch((err) => console.error(err));
-            if (action === 'cut') editor.collapseCursors();
+            if (action === 'cut') editor.collapseCursor(range);
             break;
           }
           case 'style': {
@@ -313,7 +313,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
                 break;
             }
             clipboard.writeText(text)?.catch((err) => console.error(err));
-            if (action === 'cut') editor.collapseCursors();
+            if (action === 'cut') editor.collapseCursor(range);
             break;
           }
           default: {
@@ -325,7 +325,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             } else {
               const data = transfer.toClipboard(range);
               clipboard.write(data as unknown as PeritextClipboardData<string>)?.catch((err) => console.error(err));
-              if (action === 'cut') editor.collapseCursors();
+              if (action === 'cut') editor.collapseCursor(range);
             }
           }
         }
