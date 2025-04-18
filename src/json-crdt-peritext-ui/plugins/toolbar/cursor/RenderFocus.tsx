@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
-import {useToolbarPlugin} from './context';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../web/react/hooks';
-import {CaretFrame} from './cursor/CaretFrame';
-import type {CaretViewProps} from '../../web/react/cursor/CaretView';
+import {useToolbarPlugin} from '../context';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
+import {CaretFrame} from './CaretFrame';
+import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 
 export interface RenderFocusProps extends CaretViewProps {
   children: React.ReactNode;
@@ -38,15 +38,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
       </MoveToViewport>
     );
 
-  under = (
-    <MoveToViewport>
-      <CaretToolbar
-        disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
-        menu={toolbar.getSelectionMenu()}
-        onPopupClose={handleClose}
-      />
-    </MoveToViewport>
-  );
+  under = over;
 
   return (
     <CaretFrame over={over} under={under}>

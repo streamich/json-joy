@@ -1,28 +1,10 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
-import {useToolbarPlugin} from './context';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../web/react/hooks';
-import {AfterTimeout} from '../../web/react/util/AfterTimeout';
-import type {CaretViewProps} from '../../web/react/cursor/CaretView';
-
-const height = 1.8;
-
-const blockClass = rule({
-  pos: 'relative',
-  w: '0px',
-  h: '100%',
-  va: 'bottom',
-});
-
-const overClass = rule({
-  pos: 'absolute',
-  b: `${height}em`,
-  l: 0,
-  isolation: 'isolate',
-  us: 'none',
-  transform: 'translateX(calc(-50% + 0px))',
-});
+import {useToolbarPlugin} from '../context';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
+import {AfterTimeout} from '../../../web/react/util/AfterTimeout';
+import {CaretFrame} from './CaretFrame';
+import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 
 export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
@@ -43,23 +25,19 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
     }, 5);
   }, []);
 
-  let toolbarElement = (
+  let over: React.ReactNode | undefined = (
     <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
   );
 
   if (doHideForCoolDown) {
-    toolbarElement = <AfterTimeout ms={500}>{toolbarElement}</AfterTimeout>;
+    over = <AfterTimeout ms={500}>{over}</AfterTimeout>;
   }
 
+  over = null;
+
   return (
-    <span className={blockClass}>
+    <CaretFrame over={over}>
       {children}
-      {/* <span
-        className={overClass}
-        contentEditable={false}
-      >
-        {(showCaretToolbarValue && focus) && (toolbarElement)}
-      </span> */}
-    </span>
+    </CaretFrame>
   );
 };
