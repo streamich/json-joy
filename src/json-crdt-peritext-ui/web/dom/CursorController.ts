@@ -107,8 +107,8 @@ export class CursorController implements UiLifeCycles, Printable {
           ev.preventDefault();
           et.move(
             [
-              ['start', 'word', -1],
-              ['end', 'word', 1],
+              ['anchor', 'word', -1],
+              ['focus', 'word', 1],
             ],
             [at],
           );
@@ -126,8 +126,8 @@ export class CursorController implements UiLifeCycles, Printable {
         this.mouseDown.next(false);
         ev.preventDefault();
         et.move([
-          ['start', 'word', -1],
-          ['end', 'word', 1],
+          ['anchor', 'word', -1],
+          ['focus', 'word', 1],
         ]);
         break;
       case 3:

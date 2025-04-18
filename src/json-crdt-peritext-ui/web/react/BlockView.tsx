@@ -26,17 +26,17 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
         const hasCursor = inline.hasCursor();
         if (hasCursor) {
           const attr = inline.attr();
-          const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
+          const italic = attr[CommonSliceType.i]?.[0];
           const cursorStart = inline.cursorStart();
           if (cursorStart) {
             const key = cursorStart.start.key() + '-a';
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
               if (cursorStart.isCollapsed())
-                element = <CaretView key={key} italic={!!italic} point={cursorStart.start} />;
+                element = <CaretView key={key} italic={!!italic} point={cursorStart.start} cursor={cursorStart} />;
               else {
                 const isItalic = italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing;
-                element = <FocusView key={key} italic={isItalic} />;
+                element = <FocusView key={key} italic={isItalic} cursor={cursorStart} />;
               }
             } else element = <AnchorView key={key} />;
             elements.push(element);
@@ -46,18 +46,20 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
         if (hasCursor) {
           const cursorEnd = inline.cursorEnd();
           const attr = inline.attr();
-          const italic = attr[CommonSliceType.i] && attr[CommonSliceType.i][0];
+          const italic = attr[CommonSliceType.i]?.[0];
           if (cursorEnd) {
             const key = cursorEnd.end.key() + '-b';
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
-              if (cursorEnd.isCollapsed()) element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} />;
+              if (cursorEnd.isCollapsed())
+                element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} />;
               else
                 element = (
                   <FocusView
                     key={key}
                     left
                     italic={italic instanceof InlineAttrStart || italic instanceof InlineAttrPassing}
+                    cursor={cursorEnd}
                   />
                 );
             } else element = <AnchorView key={key} />;

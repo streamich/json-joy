@@ -2,10 +2,12 @@
 import * as React from 'react';
 import {usePeritext} from '../context';
 import {Caret} from './Caret';
+import type {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 
 export interface FocusViewProps {
   left?: boolean;
   italic?: boolean;
+  cursor: Cursor<string>;
 }
 
 export const FocusView: React.FC<FocusViewProps> = (props) => {
