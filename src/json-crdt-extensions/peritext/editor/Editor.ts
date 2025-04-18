@@ -57,11 +57,11 @@ export class Editor<T = string> implements Printable {
   public readonly local: EditorSlices<T>;
 
   /**
-   * Formatting which will be applied to the next inserted text. This is a
-   * temporary store for formatting which is not yet applied to the text, but
-   * will be if the cursor is not moved. This is used for
-   * {@link SliceBehavior.One} formatting which is set as "pending" when user
-   * toggles it while cursor is caret.
+   * Formatting basic inline formatting which will be applied to the next
+   * inserted text. This is a temporary store for formatting which is not yet
+   * applied to the text, but will be if the cursor is not moved. This is used
+   * for {@link SliceBehavior.One} formatting which is set as "pending" when
+   * user toggles it while cursor is caret.
    */
   public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
 

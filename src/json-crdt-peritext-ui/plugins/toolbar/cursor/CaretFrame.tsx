@@ -5,6 +5,7 @@ const height = 1.8;
 
 const blockClass = rule({
   pos: 'relative',
+  z: 100,
   w: '0px',
   h: '100%',
   va: 'bottom',
@@ -12,6 +13,7 @@ const blockClass = rule({
 
 const overClass = rule({
   pos: 'absolute',
+  z: 101,
   b: `${height}em`,
   l: 0,
   isolation: 'isolate',
@@ -21,6 +23,7 @@ const overClass = rule({
 
 const underClass = rule({
   pos: 'absolute',
+  z: 102,
   t: `${height}em`,
   l: 0,
   isolation: 'isolate',

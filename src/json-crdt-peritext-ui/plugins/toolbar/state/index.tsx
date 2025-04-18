@@ -264,6 +264,7 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly annotationsMenu = (): MenuItem => {
+    const et = this.surface.events.et;
     return {
       name: 'Annotations',
       expand: 2,
@@ -273,7 +274,9 @@ export class ToolbarState implements UiLifeCycles {
           name: 'Link',
           // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
           icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-          onSelect: () => {},
+          onSelect: () => {
+            et.format(CommonSliceType.a, 'many');
+          },
         },
         // {
         //   name: 'Comment',
