@@ -113,7 +113,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
         : 'transparent',
   };
 
-  if (italic || pending.has(CommonSliceType.i)) {
+  if (italic || pending?.has(CommonSliceType.i)) {
     style.rotate = '11deg';
   }
 

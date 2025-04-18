@@ -25,7 +25,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
     <Button
       onClick={() => ctx.dom?.et.format(type)}
       onMouseDown={(e) => e.preventDefault()}
-      active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
+      active={(complete.has(type) && !pending?.has(type)) || (!complete.has(type) && pending?.has(type))}
     >
       {name}
     </Button>
@@ -41,7 +41,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
     <Button
       onClick={() => ctx.dom?.et.marker({action: 'tog', type})}
       onMouseDown={(e) => e.preventDefault()}
-      active={(complete.has(type) && !pending.has(type)) || (!complete.has(type) && pending.has(type))}
+      active={(complete.has(type) && !pending?.has(type)) || (!complete.has(type) && pending?.has(type))}
     >
       {name}
     </Button>

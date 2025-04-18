@@ -59,9 +59,11 @@ export class Editor<T = string> implements Printable {
   /**
    * Formatting which will be applied to the next inserted text. This is a
    * temporary store for formatting which is not yet applied to the text, but
-   * will be if the cursor is not moved.
+   * will be if the cursor is not moved. This is used for
+   * {@link SliceBehavior.One} formatting which is set as "pending" when user
+   * toggles it while cursor is caret.
    */
-  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown>>(new Map());
+  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
 
   public registry: SliceRegistry = createRegistry();
 
@@ -234,8 +236,8 @@ export class Editor<T = string> implements Printable {
       const span = this.insert0(range, text);
       if (span) spans.push(span);
       const pending = this.pending.value;
-      if (pending.size) {
-        this.pending.next(new Map());
+      if (pending?.size) {
+        this.pending.next(void 0);
         const start = range.start.clone();
         start.step(-text.length);
         const toggleRange = this.txt.range(start, range.end.clone());
@@ -721,7 +723,7 @@ export class Editor<T = string> implements Printable {
     this.txt.overlay.refresh();
     SELECTION: for (const range of selection) {
       if (range.isCollapsed()) {
-        const pending = this.pending.value;
+        const pending = this.pending.value ?? new Map();
         if (pending.has(type)) pending.delete(type);
         else pending.set(type, data);
         this.pending.next(pending);
@@ -1171,7 +1173,7 @@ export class Editor<T = string> implements Printable {
   public toString(tab: string = ''): string {
     const pending = this.pending.value;
     const pendingFormatted = {} as any;
-    for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
+    if (pending) for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
     return (
       'Editor' +
       printTree(tab, [
@@ -1181,7 +1183,7 @@ export class Editor<T = string> implements Printable {
             tab,
             [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
           ),
-        () => `pending ${stringify(pendingFormatted)}`,
+        pending ? (() => `pending ${stringify(pendingFormatted)}`) : null,
       ])
     );
   }
