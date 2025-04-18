@@ -9,6 +9,8 @@ import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 
 export type TagType = SliceTypeCon | number | string;
 
+const sliceCustomData = new WeakMap<SliceRegistryEntry<any, any, any>, Record<string, unknown>>();
+
 export class SliceRegistryEntry<
   Behavior extends SliceBehavior = SliceBehavior,
   Tag extends TagType = TagType,
@@ -16,6 +18,14 @@ export class SliceRegistryEntry<
 > {
   public isInline(): boolean {
     return this.behavior !== SliceBehavior.Marker;
+  }
+
+  public data(): Record<string, unknown> {
+    const data = sliceCustomData.get(this);
+    if (data) return data;
+    const newData = {};
+    sliceCustomData.set(this, newData);
+    return newData;
   }
 
   constructor(
@@ -123,6 +133,10 @@ export class SliceRegistry {
     }
     const tagStr = CommonSliceType[tag as SliceTypeCon];
     if (tagStr && typeof tagStr === 'string') _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
+  }
+
+  public get(tag: TagType): SliceRegistryEntry | undefined {
+    return this.map.get(tag);
   }
 
   public isContainer(tag: TagType): boolean {
