@@ -44,7 +44,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
 
   let toolbarElement: React.ReactNode = null;
 
-  if (showInlineToolbarValue && !isScrubbing && (toolbar.txt.editor.mainCursor() === cursor))
+  if (showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
     toolbarElement = (
       <MoveToViewport>
         <CaretToolbar

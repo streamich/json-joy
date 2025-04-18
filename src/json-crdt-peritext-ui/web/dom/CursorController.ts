@@ -127,7 +127,7 @@ export class CursorController implements UiLifeCycles, Printable {
         ev.preventDefault();
         et.move([
           ['anchor', 'word', -1],
-            ['focus', 'word', 1],
+          ['focus', 'word', 1],
         ]);
         break;
       case 3:

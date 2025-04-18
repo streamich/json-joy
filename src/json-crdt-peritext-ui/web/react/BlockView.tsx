@@ -51,7 +51,8 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             const key = cursorEnd.end.key() + '-b';
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
-              if (cursorEnd.isCollapsed()) element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} />;
+              if (cursorEnd.isCollapsed())
+                element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} />;
               else
                 element = (
                   <FocusView

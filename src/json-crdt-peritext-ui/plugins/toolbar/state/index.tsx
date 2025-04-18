@@ -369,7 +369,7 @@ export class ToolbarState implements UiLifeCycles {
       name: 'HTML',
       text: action + ' html',
       icon,
-      right: iconHtml, 
+      right: iconHtml,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(htmlAction, action), action, format: 'html'});
       },
@@ -462,7 +462,7 @@ export class ToolbarState implements UiLifeCycles {
       name: 'HTML',
       text: 'paste html',
       icon,
-      right: iconHtml, 
+      right: iconHtml,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(htmlAction, 'paste'), action: 'paste', format: 'html'});
       },
@@ -533,10 +533,7 @@ export class ToolbarState implements UiLifeCycles {
         et.buffer({...ctx.onBeforeAction?.(copyTextOnlyAction, 'copy'), action: 'copy', format: 'text'});
       },
     };
-    const children: MenuItem[] = [
-      copyAction,
-      copyTextOnlyAction,
-    ];
+    const children: MenuItem[] = [copyAction, copyTextOnlyAction];
     if (!ctx.hideStyleActions) {
       const copyStyleAction: MenuItem = {
         name: 'Copy style',
@@ -580,11 +577,7 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Cut',
       icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
       expand: 5,
-      children: [
-        cutAction,
-        cutTextAction,
-        this.copyAsMenu('cut', ctx),
-      ],
+      children: [cutAction, cutTextAction, this.copyAsMenu('cut', ctx)],
     };
   };
 
@@ -604,10 +597,7 @@ export class ToolbarState implements UiLifeCycles {
         et.buffer({...ctx.onBeforeAction?.(pasteTextAction, 'paste'), action: 'paste', format: 'text'});
       },
     };
-    const children: MenuItem[] = [
-      pasteAction,
-      pasteTextAction,
-    ];
+    const children: MenuItem[] = [pasteAction, pasteTextAction];
     if (!ctx.hideStyleActions) {
       const pasteStyleAction: MenuItem = {
         name: 'Paste style',
@@ -639,11 +629,7 @@ export class ToolbarState implements UiLifeCycles {
       icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
       expand: 0,
       sepBefore: true,
-      children: [
-        copyMenu,
-        cutMenu,
-        pasteMenu,
-      ],
+      children: [copyMenu, cutMenu, pasteMenu],
     };
   };
 
@@ -1504,7 +1490,7 @@ export class ToolbarState implements UiLifeCycles {
               name: 'Select block',
               icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
               onSelect: () => {
-                let start = block.start.clone();
+                const start = block.start.clone();
                 if (!start.isAbsStart()) start.step(1);
                 et.cursor({at: [start, block.end]});
               },
@@ -1512,8 +1498,8 @@ export class ToolbarState implements UiLifeCycles {
             this.clipboardMenu({
               hideStyleActions: true,
               onBeforeAction: (item, action) => {
-                let start = block.start.clone();
-                if (!start.isAbsStart() && (action === 'paste')) start.step(1);
+                const start = block.start.clone();
+                if (!start.isAbsStart() && action === 'paste') start.step(1);
                 return {
                   at: [start, block.end],
                 };
@@ -1521,7 +1507,7 @@ export class ToolbarState implements UiLifeCycles {
             }),
           ],
         },
-        
+
         secondBrain(),
       ],
     };
@@ -1535,5 +1521,5 @@ export interface LeafBlockMenuCtx {
 
 export interface ClipboardMenuCtx {
   hideStyleActions?: boolean;
-  onBeforeAction?: (item: MenuItem, action: 'cut' | 'copy' | 'paste') => (void | Partial<BufferDetail>);
+  onBeforeAction?: (item: MenuItem, action: 'cut' | 'copy' | 'paste') => void | Partial<BufferDetail>;
 }
