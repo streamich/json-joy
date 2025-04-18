@@ -1,3 +1,22 @@
+# [17.40.0](https://github.com/streamich/json-joy/compare/v17.39.0...v17.40.0) (2025-04-18)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 on double-click make sure the focus is in front ([b4ec3d3](https://github.com/streamich/json-joy/commit/b4ec3d38330d9ae3487b7a562c5b2f4626a7349c))
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add actions to block type menu ([a3bb8df](https://github.com/streamich/json-joy/commit/a3bb8dfe8eac11fa6f20faa3dc53245fe1ddfdec))
+* **json-crdt-peritext-ui:** 🎸 add heading renderers ([7f21ee7](https://github.com/streamich/json-joy/commit/7f21ee7b14c2dc9d9243265931124cab1a3a041b))
+* **json-crdt-peritext-ui:** 🎸 allow to specify partial implementation in cboard action ([8f8ee78](https://github.com/streamich/json-joy/commit/8f8ee78382e497921bc696fe6e559467c205292a))
+* **json-crdt-peritext-ui:** 🎸 create local expandable toolbar component ([253b541](https://github.com/streamich/json-joy/commit/253b541f6c15cff8c314a2b9d6a220b2cced154a))
+* **json-crdt-peritext-ui:** 🎸 improve clipboard action behavior ([77bc14f](https://github.com/streamich/json-joy/commit/77bc14f591ab08de3d5bd28456142af76030b2a6))
+* **json-crdt-peritext-ui:** 🎸 move focus toolbar into viewport ([4bfd16e](https://github.com/streamich/json-joy/commit/4bfd16ee5901459d9dde30a570c8c9d4d0e1c625))
+* **json-crdt-peritext-ui:** 🎸 show only main cursor toolbar over focus caret ([2a5cdd8](https://github.com/streamich/json-joy/commit/2a5cdd882bddec16875ba3176ae11436b8b433c2))
+* **json-crdt-peritext-ui:** 🎸 update block context menu ([c26aaab](https://github.com/streamich/json-joy/commit/c26aaab8881445fb5a155f30f0dc0f093f321ae3))
+
 # [17.39.0](https://github.com/streamich/json-joy/compare/v17.38.0...v17.39.0) (2025-04-13)
 
 
