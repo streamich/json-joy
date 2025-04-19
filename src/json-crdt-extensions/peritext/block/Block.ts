@@ -3,7 +3,7 @@ import {CONST, updateJson, updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
-import {formatType} from '../slice/util';
+import {formatType, getTag} from '../slice/util';
 import {Range} from '../rga/Range';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
@@ -45,11 +45,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   }
 
   public tag(): number | string {
-    const path = this.path;
-    const length = path.length;
-    if (!length) return '';
-    const step = path[length - 1];
-    return Array.isArray(step) ? step[0] : step;
+    return getTag(this.path);
   }
 
   public attr(): Attr | undefined {
