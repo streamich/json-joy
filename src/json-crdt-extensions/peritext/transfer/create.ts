@@ -11,6 +11,7 @@ export const create = (txt: Peritext) => {
     htmlImport,
     mdExport,
     mdImport,
+    registry: txt.editor.registry,
   });
   return transfer;
 };

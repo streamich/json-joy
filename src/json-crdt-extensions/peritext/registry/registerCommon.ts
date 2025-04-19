@@ -1,24 +1,24 @@
 import {s} from '../../../json-crdt-patch';
 import {SliceBehavior, SliceTypeCon as TAG} from '../slice/constants';
-import {SliceRegistry, SliceRegistryEntry, type TagType} from './SliceRegistry';
+import {SliceRegistry, type TypeTag} from './SliceRegistry';
+import {SliceRegistryEntry} from './SliceRegistryEntry';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {PeritextMlElement} from '../block/types';
 
-export const createRegistry = () => {
-  const registry = new SliceRegistry();
-  const undefSchema = s.con(undefined);
+const undefSchema = s.con(undefined);
 
+export const registerCommon = (registry: SliceRegistry) => {
   // --------------------------------------- Inline elements with "One" behavior
 
-  const i0 = <Tag extends TagType = TagType>(
+  const i0 = <Tag extends TypeTag = TypeTag>(
     tag: Tag,
     fromHtml?: SliceRegistryEntry<SliceBehavior.One, Tag, typeof undefSchema>['fromHtml'],
   ): void => {
     registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, undefSchema, false, void 0, fromHtml));
   };
 
-  const i1 = <Tag extends TagType = TagType>(tag: Tag, htmlTags: string[]): void => {
+  const i1 = <Tag extends TypeTag = TypeTag>(tag: Tag, htmlTags: string[]): void => {
     const fromHtml = {} as Record<any, any>;
     for (const htmlTag of htmlTags) fromHtml[htmlTag] = () => [tag, null];
     i0(tag, fromHtml);
@@ -78,7 +78,7 @@ export const createRegistry = () => {
     },
   );
 
-  const b0 = <Tag extends TagType = TagType>(tag: Tag, container: boolean) => {
+  const b0 = <Tag extends TypeTag = TypeTag>(tag: Tag, container: boolean) => {
     registry.add(new SliceRegistryEntry(SliceBehavior.Marker, tag, commonBlockSchema, container));
   };
 
@@ -114,11 +114,4 @@ export const createRegistry = () => {
   // b0(TAG.collapse, true);
   // b0(TAG.note, true);
   // b0(TAG.mathblock, false);
-
-  return registry;
 };
-
-/**
- * Default annotation type registry.
- */
-export const registry = createRegistry();
