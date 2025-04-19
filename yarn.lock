@@ -1800,6 +1800,20 @@ codemirror@5:
   resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.65.19.tgz#71016c701d6a4b6e1982b0f6e7186be65e49653d"
   integrity sha512-+aFkvqhaAVr1gferNMuN8vkTSrWIFvzlMV9I2KBLCWS2WpZ2+UAkZjlMZmEuT+gcXTi6RrGQCkWq1/bDtGqhIA==
 
+collaborative-editor@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/collaborative-editor/-/collaborative-editor-2.8.0.tgz#6c227a1626ae135be91bf98bc7d8d605404a6781"
+  integrity sha512-MBS9Zo26OstMps7JqCOpgQ5RvsB9OzvQd+ZV6qv8Vg/q2T6xfPH9PwXaR4L66SytcssfFkk5lGfRNRQpWyaeow==
+  dependencies:
+    fast-diff "^1.3.0"
+
+collaborative-input@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/collaborative-input/-/collaborative-input-1.6.1.tgz#98572f483b596189cb3040185032d329825c65f8"
+  integrity sha512-sc0YHqnf/G955i5xvDaaCmAtHK2wUSgyxwdZG857ZecI6Vp4PE84slHcczARshmkN/MJ+MarrVinM+TD3jgtPQ==
+  dependencies:
+    collaborative-editor "^2.8.0"
+
 collect-v8-coverage@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/collect-v8-coverage/-/collect-v8-coverage-1.0.2.tgz#c0b29bcd33bcd0779a1344c2136051e6afd3d9e9"
