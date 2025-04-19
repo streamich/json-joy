@@ -1,6 +1,6 @@
 import {s} from '../../../json-crdt-patch';
 import {SliceBehavior, SliceTypeCon as TAG} from '../slice/constants';
-import {CommonSliceType} from '../slice';
+import {CommonSliceType, type TypeTag} from '../slice';
 import {SliceRegistryEntry} from './SliceRegistryEntry';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {PeritextMlElement} from '../block/types';
@@ -9,10 +9,6 @@ import type {FromHtmlConverter, ToHtmlConverter} from './types';
 import type {Printable} from 'tree-dump';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
-
-const undefSchema = s.con(undefined);
-
-export type TypeTag = TAG | number | string;
 
 /**
  * Slice registry contains a record of possible inline an block formatting
@@ -27,13 +23,14 @@ export class SliceRegistry implements Printable {
    * Creates a new slice registry with common tag registered.
    */
   public static readonly withCommon = (): SliceRegistry => {
+    const undefSchema = s.con(undefined);
     const registry = new SliceRegistry();
     // --------------------------------------- Inline elements with "One" behavior
     const i0 = <Tag extends TypeTag = TypeTag>(
       tag: Tag,
       fromHtml?: SliceRegistryEntry<SliceBehavior.One, Tag, typeof undefSchema>['fromHtml'],
     ): void => {
-      registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, undefSchema, false, void 0, fromHtml));
+      registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, void 0, false, void 0, fromHtml));
     };
     const i1 = <Tag extends TypeTag = TypeTag>(tag: Tag, htmlTags: string[]): void => {
       const fromHtml = {} as Record<any, any>;

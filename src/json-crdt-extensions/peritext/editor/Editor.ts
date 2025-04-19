@@ -57,7 +57,7 @@ class NewSliceConfig {
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(entry: SliceRegistryEntry) {
-    const schema = s.obj({conf: entry.schema});
+    const schema = s.obj({conf: entry.schema || s.con(void 0)});
     this.model = Model.create(schema);
   }
 
@@ -763,8 +763,8 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public startSliceConfig(tag: SliceTypeCon | string | number, registry: SliceRegistry): NewSliceConfig | undefined {
-    const entry = registry.get(tag);
+  public startSliceConfig(tag: SliceTypeCon | string | number): NewSliceConfig | undefined {
+    const entry = this.getRegistry().get(tag);
     const newSliceConfig = this.newSliceConfig;
     if (!entry) {
       newSliceConfig.next(void 0);

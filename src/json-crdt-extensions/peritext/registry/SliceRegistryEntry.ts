@@ -65,7 +65,7 @@ export class SliceRegistryEntry<
     /**
      * Default expected schema of the slice data.
      */
-    public readonly schema: Schema,
+    public readonly schema: Schema | undefined = void 0,
 
     /**
      * This property is relevant only for block split markers. It specifies

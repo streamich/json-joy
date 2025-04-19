@@ -11,11 +11,12 @@ export interface RenderFocusProps extends CaretViewProps {
 }
 
 export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
-  const {toolbar} = useToolbarPlugin()!;
+  const {toolbar, surface} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
   const isScrubbing = useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown) || false;
+  const newSliceConfig = useSyncStore(surface.peritext.editor.newSliceConfig);
   // const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
   // const blurTimeout = useTimeout(300, [focus]);
 
@@ -27,7 +28,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   let over: React.ReactNode | undefined;
   let under: React.ReactNode | undefined;
 
-  if (showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
+  if (!newSliceConfig && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
     over = (
       <MoveToViewport>
         <CaretToolbar
@@ -38,7 +39,9 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
       </MoveToViewport>
     );
 
-  under = over;
+  if (!!newSliceConfig && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor) {
+    under = <span>config</span>;
+  }
 
   return (
     <CaretFrame over={over} under={under}>
