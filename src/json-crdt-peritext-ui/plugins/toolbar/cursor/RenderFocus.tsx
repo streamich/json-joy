@@ -16,13 +16,13 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
-  const isScrubbing = useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown) || false;
-  const newSliceConfig = useSyncStore(surface.peritext.editor.newSliceConfig);
-  // const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
+  const newSliceConfig = useSyncStore(toolbar.newSliceConfig);
+  // const focus = useSyncStoreOpt(surface.dom?.cursor.focus) || false;
   // const blurTimeout = useTimeout(300, [focus]);
 
   const handleClose = React.useCallback(() => {
-    //   toolbar.surface.dom?.focus();
+    //   surface.dom?.focus();
     //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 

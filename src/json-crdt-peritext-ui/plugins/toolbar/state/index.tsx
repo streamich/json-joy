@@ -9,6 +9,7 @@ import {CommonSliceType, type LeafBlock, type Peritext} from '../../../../json-c
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
+import {NewSliceConfig} from './format';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -20,6 +21,12 @@ export class ToolbarState implements UiLifeCycles {
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
   public readonly showInlineToolbar = new ValueSyncStore<[show: boolean, time: number]>([false, 0]);
+
+  /**
+   * New slice configuration. This is used for new slices which are not yet
+   * applied to the text as they need to be configured first.
+   */
+  public readonly newSliceConfig = new ValueSyncStore<NewSliceConfig | undefined>(void 0);
 
   /**
    * The ID of the active (where the main cursor or focus is placed) leaf block.
@@ -101,6 +108,18 @@ export class ToolbarState implements UiLifeCycles {
   //   if (!surface.peritext.editor.cursorCount()) return false;
   //   return true;
   // }
+
+  public startSliceConfig(tag: SliceTypeCon | string | number): NewSliceConfig | undefined {
+    const entry = this.txt.editor.getRegistry().get(tag);
+    const newSliceConfig = this.newSliceConfig;
+    if (!entry) {
+      newSliceConfig.next(void 0);
+      return;
+    }
+    const configState = new NewSliceConfig(entry);
+    newSliceConfig.next(configState);
+    return configState;
+  }
 
   // -------------------------------------------------------------------- Menus
 
@@ -275,7 +294,7 @@ export class ToolbarState implements UiLifeCycles {
           // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
           icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
           onSelect: () => {
-            et.format(CommonSliceType.a, 'many');
+            this.startSliceConfig(CommonSliceType.a);
           },
         },
         // {

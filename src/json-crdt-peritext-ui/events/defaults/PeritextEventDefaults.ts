@@ -196,13 +196,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     switch (behavior) {
       case 'many': {
         if (tag === undefined) throw new Error('TYPE_REQUIRED');
-        const entry = editor.getRegistry().get(tag);
-        const isConfigurable = !!entry?.schema;
-        if (isConfigurable) {
-          editor.startSliceConfig(tag);
-        } else {
-          slices.insStack(tag, data, selection);
-        }
+        slices.insStack(tag, data, selection);
         break;
       }
       case 'one': {

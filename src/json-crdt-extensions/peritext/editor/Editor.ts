@@ -12,9 +12,8 @@ import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
-import {s, tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
+import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
-import {Model, ObjApi} from '../../../json-crdt/model';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
@@ -31,10 +30,7 @@ import type {
   ViewSlice,
   EditorUi,
   EditorSelection,
-  SliceConfigState,
 } from './types';
-import type {ObjNode} from '../../../json-crdt/nodes';
-import type {SliceRegistryEntry} from '../registry/SliceRegistryEntry';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -54,19 +50,6 @@ const makeRangeExtendable = <T>(range: Range<T>): void => {
   }
 };
 
-class NewSliceConfig<Node extends ObjNode = ObjNode> implements SliceConfigState<Node> {
-  public readonly model: Model<ObjNode<{conf: any}>>;
-
-  constructor(public readonly def: SliceRegistryEntry) {
-    const schema = s.obj({conf: def.schema || s.con(void 0)});
-    this.model = Model.create(schema);
-  }
-
-  public conf(): ObjApi<Node> {
-    return this.model.api.obj(['conf']) as ObjApi<Node>;
-  }
-}
-
 export class Editor<T = string> implements Printable {
   public readonly saved: EditorSlices<T>;
   public readonly extra: EditorSlices<T>;
@@ -85,12 +68,6 @@ export class Editor<T = string> implements Printable {
    * user toggles it while cursor is caret.
    */
   public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
-
-  /**
-   * New slice configuration. This is used for new slices which are not yet
-   * applied to the text as they need to be configured first.
-   */
-  public readonly newSliceConfig = new ValueSyncStore<NewSliceConfig | undefined>(void 0);
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
@@ -762,18 +739,6 @@ export class Editor<T = string> implements Printable {
       }
       this.toggleRangeExclFmt(range, type, data, store);
     }
-  }
-
-  public startSliceConfig(tag: SliceTypeCon | string | number): NewSliceConfig | undefined {
-    const entry = this.getRegistry().get(tag);
-    const newSliceConfig = this.newSliceConfig;
-    if (!entry) {
-      newSliceConfig.next(void 0);
-      return;
-    }
-    const configState = new NewSliceConfig(entry);
-    newSliceConfig.next(configState);
-    return configState;
   }
 
   // --------------------------------------------------------- block formatting
