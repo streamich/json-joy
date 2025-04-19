@@ -39,7 +39,7 @@ export const createRegistry = () => {
 
   // -------------------------------------- Inline elements with "Many" behavior
 
-  const aSchema = s.obj({
+  const aSchema = s.obj({}, {
     href: s.str<string>(''),
     title: s.str<string>(''),
   });

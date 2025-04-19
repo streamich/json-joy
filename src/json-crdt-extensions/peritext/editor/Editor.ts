@@ -12,15 +12,16 @@ import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
-import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
+import {s, tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
+import {Model, ObjApi} from '../../../json-crdt/model';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
-import type {SliceRegistry} from '../registry/SliceRegistry';
+import type {SliceRegistry, SliceRegistryEntry} from '../registry/SliceRegistry';
 import type {
   CharIterator,
   CharPredicate,
@@ -32,6 +33,7 @@ import type {
   EditorUi,
   EditorSelection,
 } from './types';
+import type {ObjNode} from '../../../json-crdt/nodes';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -51,6 +53,19 @@ const makeRangeExtendable = <T>(range: Range<T>): void => {
   }
 };
 
+class NewSliceConfig {
+  public readonly model: Model<ObjNode<{conf: any}>>;
+
+  constructor(entry: SliceRegistryEntry) {
+    const schema = s.obj({conf: entry.schema});
+    this.model = Model.create(schema);
+  }
+
+  public data(): ObjApi {
+    return this.model.api.obj(['conf']);
+  }
+}
+
 export class Editor<T = string> implements Printable {
   public readonly saved: EditorSlices<T>;
   public readonly extra: EditorSlices<T>;
@@ -64,6 +79,8 @@ export class Editor<T = string> implements Printable {
    * user toggles it while cursor is caret.
    */
   public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
+
+  public readonly newSliceConfig = new ValueSyncStore<NewSliceConfig | undefined>(void 0);
 
   public registry: SliceRegistry = createRegistry();
 
@@ -714,7 +731,7 @@ export class Editor<T = string> implements Printable {
   }
 
   public toggleExclFmt(
-    type: CommonSliceType | string | number,
+    type: SliceTypeCon | string | number,
     data?: unknown,
     store: EditorSlices<T> = this.saved,
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
@@ -731,6 +748,18 @@ export class Editor<T = string> implements Printable {
       }
       this.toggleRangeExclFmt(range, type, data, store);
     }
+  }
+
+  public startSliceConfig(tag: SliceTypeCon | string | number, registry: SliceRegistry): NewSliceConfig | undefined {
+    const entry = registry.get(tag);
+    const newSliceConfig = this.newSliceConfig;
+    if (!entry) {
+      newSliceConfig.next(void 0);
+      return;
+    }
+    const configState = new NewSliceConfig(entry);
+    newSliceConfig.next(configState);
+    return configState;
   }
 
   // --------------------------------------------------------- block formatting
