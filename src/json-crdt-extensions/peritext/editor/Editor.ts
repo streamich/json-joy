@@ -31,6 +31,7 @@ import type {
   ViewSlice,
   EditorUi,
   EditorSelection,
+  SliceConfigState,
 } from './types';
 import type {ObjNode} from '../../../json-crdt/nodes';
 import type {SliceRegistryEntry} from '../registry/SliceRegistryEntry';
@@ -53,16 +54,16 @@ const makeRangeExtendable = <T>(range: Range<T>): void => {
   }
 };
 
-class NewSliceConfig {
+class NewSliceConfig<Node extends ObjNode = ObjNode> implements SliceConfigState<Node> {
   public readonly model: Model<ObjNode<{conf: any}>>;
 
-  constructor(entry: SliceRegistryEntry) {
-    const schema = s.obj({conf: entry.schema || s.con(void 0)});
+  constructor(public readonly def: SliceRegistryEntry) {
+    const schema = s.obj({conf: def.schema || s.con(void 0)});
     this.model = Model.create(schema);
   }
 
-  public data(): ObjApi {
-    return this.model.api.obj(['conf']);
+  public conf(): ObjApi<Node> {
+    return this.model.api.obj(['conf']) as ObjApi<Node>;
   }
 }
 

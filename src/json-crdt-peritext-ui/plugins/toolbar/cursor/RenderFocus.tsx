@@ -4,6 +4,7 @@ import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
 import {useToolbarPlugin} from '../context';
 import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
 import {CaretFrame} from './CaretFrame';
+import {InlineConfigCard} from '../cards/InlineConfigCard';
 import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 
 export interface RenderFocusProps extends CaretViewProps {
@@ -40,7 +41,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
     );
 
   if (!!newSliceConfig && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor) {
-    under = <span>config</span>;
+    under = <InlineConfigCard config={newSliceConfig} />;
   }
 
   return (
