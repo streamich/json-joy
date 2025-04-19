@@ -4,7 +4,8 @@ import {formatType} from '../slice/util';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
-import {createRegistry} from '../registry/registry';
+import {SliceRegistry} from '../registry/SliceRegistry';
+import {registerCommon} from '../registry/registerCommon';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
@@ -21,7 +22,6 @@ import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
-import type {SliceRegistry, SliceRegistryEntry} from '../registry/SliceRegistry';
 import type {
   CharIterator,
   CharPredicate,
@@ -34,6 +34,7 @@ import type {
   EditorSelection,
 } from './types';
 import type {ObjNode} from '../../../json-crdt/nodes';
+import type {SliceRegistryEntry} from '../registry/SliceRegistryEntry';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -72,6 +73,11 @@ export class Editor<T = string> implements Printable {
   public readonly local: EditorSlices<T>;
 
   /**
+   * The registry holds definitions of detailed behavior of various slice tags.
+   */
+  public readonly registry: SliceRegistry;
+
+  /**
    * Formatting basic inline formatting which will be applied to the next
    * inserted text. This is a temporary store for formatting which is not yet
    * applied to the text, but will be if the cursor is not moved. This is used
@@ -80,11 +86,16 @@ export class Editor<T = string> implements Printable {
    */
   public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
 
+  /**
+   * New slice configuration. This is used for new slices which are not yet
+   * applied to the text as they need to be configured first.
+   */
   public readonly newSliceConfig = new ValueSyncStore<NewSliceConfig | undefined>(void 0);
 
-  public registry: SliceRegistry = createRegistry();
-
   constructor(public readonly txt: Peritext<T>) {
+    const registry = this.registry = new SliceRegistry();
+    registerCommon(registry); // TODO: figure out a better place to put this
+
     this.saved = new EditorSlices(txt, txt.savedSlices);
     this.extra = new EditorSlices(txt, txt.extraSlices);
     this.local = new EditorSlices(txt, txt.localSlices);
@@ -1197,7 +1208,7 @@ export class Editor<T = string> implements Printable {
     return txt.pointStart() ?? txt.pointAbsStart();
   }
 
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
     const pending = this.pending.value;
@@ -1212,6 +1223,7 @@ export class Editor<T = string> implements Printable {
             tab,
             [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
           ),
+        (tab) => this.registry.toString(tab),
         pending ? (() => `pending ${stringify(pendingFormatted)}`) : null,
       ])
     );

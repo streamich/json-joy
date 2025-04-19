@@ -1,111 +1,13 @@
 import {SliceBehavior, type SliceTypeCon} from '../slice/constants';
 import {CommonSliceType} from '../slice';
+import {SliceRegistryEntry} from './SliceRegistryEntry';
+import {printTree} from 'tree-dump/lib/printTree';
 import type {PeritextMlElement} from '../block/types';
-import type {NodeBuilder} from '../../../json-crdt-patch';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
 import type {FromHtmlConverter, ToHtmlConverter} from './types';
-import type {JsonNodeView} from '../../../json-crdt/nodes';
-import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
+import type {Printable} from 'tree-dump';
 
-export type TagType = SliceTypeCon | number | string;
-
-const sliceCustomData = new WeakMap<SliceRegistryEntry<any, any, any>, Record<string, unknown>>();
-
-export class SliceRegistryEntry<
-  Behavior extends SliceBehavior = SliceBehavior,
-  Tag extends TagType = TagType,
-  Schema extends NodeBuilder = NodeBuilder,
-> {
-  public isInline(): boolean {
-    return this.behavior !== SliceBehavior.Marker;
-  }
-
-  public data(): Record<string, unknown> {
-    const data = sliceCustomData.get(this);
-    if (data) return data;
-    const newData = {};
-    sliceCustomData.set(this, newData);
-    return newData;
-  }
-
-  constructor(
-    /**
-     * Specifies whether the slice is an inline or block element. And if it is
-     * an inline element, whether multiple instances of the same tag are allowed
-     * to be applied to a range of tex - "Many", or only one instance - "One".
-     */
-    public readonly behavior: Behavior,
-
-    /**
-     * The tag name of this slice. The tag is one step in the type path of the
-     * slice. For example, below is a type path composed of three steps:
-     *
-     * ```js
-     * ['ul', 'li', 'p']
-     * ```
-     *
-     * Tag types are normally numbers of type {@link SliceTypeCon}, however,
-     * they can also be any arbitrary strings or numbers.
-     */
-    public readonly tag: Tag,
-
-    /**
-     * Default expected schema of the slice data.
-     */
-    public readonly schema: Schema,
-
-    /**
-     * This property is relevant only for block split markers. It specifies
-     * whether the block split marker is a container for other block elements.
-     *
-     * For example, a `blockquote` is a container for `paragraph` elements,
-     * however, a `paragraph` is not a container (it can only contain inline
-     * elements).
-     *
-     * If the marker slice is of the container sort, they tag can appear in the
-     * path steps of the type:
-     *
-     * ```
-     *
-     * ```
-     */
-    public readonly container: boolean = false,
-
-    /**
-     * Converts a node of this type to HTML representation: returns the HTML tag
-     * and attributes. The method receives {@link PeritextMlElement} as an
-     * argument, which is a tuple of internal HTML-like representation of the
-     * node.
-     */
-    public readonly toHtml:
-      | ToHtmlConverter<
-          PeritextMlElement<
-            Tag,
-            JsonNodeView<SchemaToJsonNode<Schema>>,
-            Behavior extends SliceBehavior.Marker ? false : true
-          >
-        >
-      | undefined = void 0,
-
-    /**
-     * Specifies a mapping of converters from HTML {@link JsonMlElement} to
-     * {@link PeritextMlElement}. This way a slice type can specify multiple
-     * HTML tags that are converted to the same slice type.
-     *
-     * For example, both, `<b>` and `<strong>` tags can be converted to the
-     * {@link SliceTypeCon.b} slice type.
-     */
-    public readonly fromHtml?: {
-      [htmlTag: string]: FromHtmlConverter<
-        PeritextMlElement<
-          Tag,
-          JsonNodeView<SchemaToJsonNode<Schema>>,
-          Behavior extends SliceBehavior.Marker ? false : true
-        >
-      >;
-    },
-  ) {}
-}
+export type TypeTag = SliceTypeCon | number | string;
 
 /**
  * Slice registry contains a record of possible inline an block formatting
@@ -115,9 +17,14 @@ export class SliceRegistryEntry<
  * @todo Consider moving the registry under the `/transfer` directory. Or maybe
  * `/slices` directory.
  */
-export class SliceRegistry {
-  private map: Map<TagType, SliceRegistryEntry> = new Map();
+export class SliceRegistry implements Printable {
+  private map: Map<TypeTag, SliceRegistryEntry> = new Map();
   private _fromHtml: Map<string, [entry: SliceRegistryEntry, converter: FromHtmlConverter][]> = new Map();
+
+  public clear(): void {
+    this.map.clear();
+    this._fromHtml.clear();
+  }
 
   public add(entry: SliceRegistryEntry<any, any, any>): void {
     const {tag, fromHtml} = entry;
@@ -135,11 +42,11 @@ export class SliceRegistry {
     if (tagStr && typeof tagStr === 'string') _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
   }
 
-  public get(tag: TagType): SliceRegistryEntry | undefined {
+  public get(tag: TypeTag): SliceRegistryEntry | undefined {
     return this.map.get(tag);
   }
 
-  public isContainer(tag: TagType): boolean {
+  public isContainer(tag: TypeTag): boolean {
     const entry = this.map.get(tag);
     return entry?.container ?? false;
   }
@@ -166,5 +73,11 @@ export class SliceRegistry {
       }
     }
     return;
+  }
+
+  /** ----------------------------------------------------- {@link Printable} */
+
+  public toString(tab: string = ''): string {
+    return `SliceRegistry` + printTree(tab, [...this.map.values()].map((entry) => tab => entry.toString(tab)));
   }
 }

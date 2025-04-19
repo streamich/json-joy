@@ -1,7 +1,7 @@
 import type {Range} from '../rga/Range';
 import type {Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {SliceBehavior} from './constants';
+import type {SliceBehavior, SliceTypeCon} from './constants';
 import type {nodes} from '../../../json-crdt-patch';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
@@ -44,6 +44,13 @@ import type {Anchor} from '../rga/constants';
 export type SliceType = SliceTypeStep | SliceTypeSteps;
 export type SliceTypeSteps = SliceTypeStep[];
 export type SliceTypeStep = string | number | [tag: string | number, discriminant: number];
+
+/**
+ * Tag is number or a string, the last type element if type is a list. Tag
+ * specifies the kind of the leaf block element. For example, if the full type
+ * is `['ul', 'li', 'p']`, then the tag is `<p>`.
+ */
+export type TypeTag = SliceTypeCon | number | string;
 
 /**
  * The JSON CRDT schema of the stored slices in the document. The slices are
