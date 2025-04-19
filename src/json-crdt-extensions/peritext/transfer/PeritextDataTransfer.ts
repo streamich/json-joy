@@ -14,7 +14,6 @@ export type PeritextDataTransferMarkdownExportTools = typeof import('./export-ma
 export type PeritextDataTransferMarkdownImportTools = typeof import('./import-markdown');
 
 export interface PeritextDataTransferOpts {
-  registry: SliceRegistry;
   htmlExport?: PeritextDataTransferHtmlExportTools;
   htmlImport?: PeritextDataTransferHtmlImportTools;
   mdExport?: PeritextDataTransferMarkdownExportTools;
@@ -131,7 +130,7 @@ export class PeritextDataTransfer<T = string> {
   }
 
   private _imp<D>(pos: number, data: D, transform: (data: D, registry: SliceRegistry) => PeritextMlNode): number {
-    const registry = this.opts.registry;
+    const registry = this.txt.editor.getRegistry();
     const json = transform(data, registry);
     return this.fromJson(pos, json);
   }
@@ -190,7 +189,7 @@ export class PeritextDataTransfer<T = string> {
       return range.start.viewPos();
     };
     if (html) {
-      const [view, style] = this.htmlI().importHtml(html, txt.editor.registry);
+      const [view, style] = this.htmlI().importHtml(html, txt.editor.getRegistry());
       if (style) {
         txt.editor.importStyle(range, style);
         return 0;

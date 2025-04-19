@@ -5,7 +5,6 @@ import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {SliceRegistry} from '../registry/SliceRegistry';
-import {registerCommon} from '../registry/registerCommon';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
@@ -75,7 +74,7 @@ export class Editor<T = string> implements Printable {
   /**
    * The registry holds definitions of detailed behavior of various slice tags.
    */
-  public readonly registry: SliceRegistry;
+  public registry: SliceRegistry | undefined;
 
   /**
    * Formatting basic inline formatting which will be applied to the next
@@ -93,12 +92,15 @@ export class Editor<T = string> implements Printable {
   public readonly newSliceConfig = new ValueSyncStore<NewSliceConfig | undefined>(void 0);
 
   constructor(public readonly txt: Peritext<T>) {
-    const registry = this.registry = new SliceRegistry();
-    registerCommon(registry); // TODO: figure out a better place to put this
-
     this.saved = new EditorSlices(txt, txt.savedSlices);
     this.extra = new EditorSlices(txt, txt.extraSlices);
     this.local = new EditorSlices(txt, txt.localSlices);
+  }
+
+  public getRegistry(): SliceRegistry {
+    let registry = this.registry;
+    if (!registry) this.registry = registry = SliceRegistry.withCommon();
+    return registry;
   }
 
   public text(): string {
@@ -836,7 +838,7 @@ export class Editor<T = string> implements Printable {
   }
 
   public getContainerPath(steps: SliceTypeSteps): SliceTypeSteps {
-    const registry = this.registry;
+    const registry = this.getRegistry();
     const length = steps.length;
     for (let i = length - 1; i >= 0; i--) {
       const step = steps[i];
@@ -859,7 +861,7 @@ export class Editor<T = string> implements Printable {
       const disc1 = Array.isArray(step1) ? step1[1] : 0;
       const disc2 = Array.isArray(step2) ? step2[1] : 0;
       if (tag1 !== tag2 || disc1 !== disc2) return i - 1;
-      if (!this.registry.isContainer(tag1)) return i - 1;
+      if (!this.getRegistry().isContainer(tag1)) return i - 1;
     }
     return min;
   }
@@ -1223,7 +1225,7 @@ export class Editor<T = string> implements Printable {
             tab,
             [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
           ),
-        (tab) => this.registry.toString(tab),
+        (tab) => this.getRegistry().toString(tab),
         pending ? (() => `pending ${stringify(pendingFormatted)}`) : null,
       ])
     );
