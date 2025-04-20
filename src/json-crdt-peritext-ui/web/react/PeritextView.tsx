@@ -15,9 +15,6 @@ put('.' + CssClass.Editor, {
   out: 0,
   whiteSpace: 'nowrap',
   wordWrap: 'break-word',
-  '::selection': {
-    bgc: 'transparent',
-  },
 
   /** @todo Move these to the default theme. */
   fontVariantNumeric: 'slashed-zero oldstyle-nums',

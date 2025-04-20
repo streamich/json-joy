@@ -17,11 +17,11 @@ const blockClassEnabled = rule({
   pos: 'relative',
   ['& .' + CssClass.Inline]: {
     'caret-color': 'red',
-  },
-  ['& .' + CssClass.Editor]: {
     '::selection': {
       bgc: 'red',
     },
+  },
+  ['& .' + CssClass.Editor]: {
     '&:focus': {
       out: '2px solid blue',
     },
