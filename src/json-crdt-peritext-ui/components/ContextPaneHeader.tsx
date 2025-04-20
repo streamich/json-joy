@@ -11,13 +11,25 @@ export interface ContextPaneHeaderProps {
 }
 
 export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({children, onBackClick, onCloseClick}) => {
-  return (
-    <ContextHeader compact>
+  let element = (
+    <Flex style={{alignItems: 'center'}}>
+      {!!onBackClick && <BasicButtonBack onClick={onBackClick} />}
+      {children}
+    </Flex>
+  );
+
+  if (onCloseClick) {
+    element = (
       <Flex style={{alignItems: 'center'}}>
-        {!!onBackClick && <BasicButtonBack onClick={onBackClick} />}
-        {children}
+        {element}
         {!!onCloseClick && <BasicButtonClose onClick={onCloseClick} />}
       </Flex>
+    );
+  }
+
+  return (
+    <ContextHeader compact>
+      {element}
     </ContextHeader>
   );
 };
