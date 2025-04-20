@@ -47,7 +47,7 @@ export class ToolbarState implements UiLifeCycles {
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
-    const source = dom!.opts.source;
+    const source = dom.el;
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;

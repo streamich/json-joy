@@ -6,10 +6,24 @@ import {Console} from './Console';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {useSyncStore} from '../../web/react/hooks';
 import {DebugState} from './state';
+import {CssClass} from '../../web/constants';
 import type {PeritextSurfaceState} from '../../web';
 
 const blockClass = rule({
   pos: 'relative',
+});
+
+const blockClassEnabled = rule({
+  pos: 'relative',
+  ['& .' + CssClass.Editor]: {
+    'caret-color': 'red',
+    '::selection': {
+      bgc: 'red',
+    },
+    '&:focus': {
+      out: '2px solid blue',
+    },
+  }
 });
 
 const btnClass = drule({
@@ -38,7 +52,7 @@ export interface RenderPeritextProps {
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({state: state_, ctx, button, children}) => {
   const theme = useTheme();
   const state = React.useMemo(() => state_ ?? new DebugState(), [state_]);
-  useSyncStore(state.enabled);
+  const enabled = useSyncStore(state.enabled);
   const value = React.useMemo(
     () => ({
       state,
@@ -56,7 +70,7 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({state: state_, ct
   return (
     <context.Provider value={value}>
       <div
-        className={blockClass}
+        className={blockClass + (enabled ? blockClassEnabled : '')}
         onKeyDown={(event) => {
           switch (event.key) {
             case 'D': {
