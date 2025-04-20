@@ -109,14 +109,14 @@ export class ToolbarState implements UiLifeCycles {
   //   return true;
   // }
 
-  public startSliceConfig(tag: SliceTypeCon | string | number): NewSliceConfig | undefined {
+  public startSliceConfig(tag: SliceTypeCon | string | number, menu?: MenuItem): NewSliceConfig | undefined {
     const entry = this.txt.editor.getRegistry().get(tag);
     const newSliceConfig = this.newSliceConfig;
     if (!entry) {
       newSliceConfig.next(void 0);
       return;
     }
-    const configState = new NewSliceConfig(entry);
+    const configState = new NewSliceConfig(entry, menu);
     newSliceConfig.next(configState);
     return configState;
   }
@@ -283,20 +283,20 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly annotationsMenu = (): MenuItem => {
-    const et = this.surface.events.et;
+    const linkAction: MenuItem = {
+      name: 'Link',
+      icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
+      // icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+      onSelect: () => {
+        this.startSliceConfig(CommonSliceType.a, linkAction);
+      },
+    };
     return {
       name: 'Annotations',
       expand: 2,
       sepBefore: true,
       children: [
-        {
-          name: 'Link',
-          // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-          icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-          onSelect: () => {
-            this.startSliceConfig(CommonSliceType.a);
-          },
-        },
+        linkAction,
         // {
         //   name: 'Comment',
         //   icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,

@@ -17,7 +17,6 @@ const overClass = rule({
   b: `${height}em`,
   l: 0,
   isolation: 'isolate',
-  us: 'none',
   transform: 'translateX(calc(-50% + 0px))',
 });
 
@@ -27,7 +26,6 @@ const underClass = rule({
   t: `${height}em`,
   l: 0,
   isolation: 'isolate',
-  us: 'none',
   transform: 'translateX(calc(-50% + 0px))',
 });
 
@@ -42,12 +40,12 @@ export const CaretFrame: React.FC<CaretFrameProps> = ({over, under, children}) =
     <span className={blockClass}>
       {children}
       {!!over && (
-        <span className={overClass} contentEditable={false}>
+        <span className={overClass} contentEditable={false} style={{'--jsonjoy-peritext-editable': 'no'} as any}>
           {over}
         </span>
       )}
       {!!under && (
-        <span className={underClass} contentEditable={false}>
+        <span className={underClass} contentEditable={false} style={{'--jsonjoy-peritext-editable': 'no'} as any}>
           {under}
         </span>
       )}
