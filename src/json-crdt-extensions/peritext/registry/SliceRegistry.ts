@@ -28,27 +28,28 @@ export class SliceRegistry implements Printable {
     // --------------------------------------- Inline elements with "One" behavior
     const i0 = <Tag extends TypeTag = TypeTag>(
       tag: Tag,
+      name: string,
       fromHtml?: SliceRegistryEntry<SliceBehavior.One, Tag, typeof undefSchema>['fromHtml'],
     ): void => {
-      registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, void 0, false, void 0, fromHtml));
+      registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, name, void 0, false, void 0, fromHtml));
     };
-    const i1 = <Tag extends TypeTag = TypeTag>(tag: Tag, htmlTags: string[]): void => {
+    const i1 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string, htmlTags: string[]): void => {
       const fromHtml = {} as Record<any, any>;
       for (const htmlTag of htmlTags) fromHtml[htmlTag] = () => [tag, null];
-      i0(tag, fromHtml);
+      i0(tag, name, fromHtml);
     };
-    i1(TAG.i, ['i', 'em']);
-    i1(TAG.b, ['b', 'strong']);
-    i1(TAG.s, ['s', 'strike']);
-    i0(TAG.u);
-    i0(TAG.code);
-    i0(TAG.mark);
-    i0(TAG.kbd);
-    i0(TAG.del);
-    i0(TAG.ins);
-    i0(TAG.sup);
-    i0(TAG.sub);
-    i0(TAG.math);
+    i1(TAG.i, 'Italic', ['i', 'em']);
+    i1(TAG.b, 'Bold', ['b', 'strong']);
+    i1(TAG.s, 'Strikethrough', ['s', 'strike']);
+    i0(TAG.u, 'Underline');
+    i0(TAG.code, 'Code');
+    i0(TAG.mark, 'Highlight');
+    i0(TAG.kbd, 'Keyboard');
+    i0(TAG.del, 'Delete');
+    i0(TAG.ins, 'Insert');
+    i0(TAG.sup, 'Superscript');
+    i0(TAG.sub, 'Subscript');
+    i0(TAG.math, 'Math');
   
     // -------------------------------------- Inline elements with "Many" behavior
     const aSchema = s.obj({}, {
@@ -56,7 +57,7 @@ export class SliceRegistry implements Printable {
       title: s.str<string>(''),
     });
     registry.add(
-      new SliceRegistryEntry(SliceBehavior.Many, TAG.a, aSchema, false, void 0, {
+      new SliceRegistryEntry(SliceBehavior.Many, TAG.a, 'Link', aSchema, false, void 0, {
         a: (jsonml) => {
           const attr = jsonml[1] || {};
           const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
@@ -88,26 +89,25 @@ export class SliceRegistry implements Printable {
         align: s.str<'left' | 'center' | 'right' | 'justify'>('left'),
       },
     );
-    const b0 = <Tag extends TypeTag = TypeTag>(tag: Tag, container: boolean) => {
-      registry.add(new SliceRegistryEntry(SliceBehavior.Marker, tag, commonBlockSchema, container));
+    const b0 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string, container: boolean) => {
+      registry.add(new SliceRegistryEntry(SliceBehavior.Marker, tag, name, commonBlockSchema, container));
     };
-    b0(TAG.p, false);
-    b0(TAG.blockquote, true);
-    b0(TAG.codeblock, false);
-    b0(TAG.pre, false);
-    b0(TAG.ul, true);
-    b0(TAG.ol, true);
-    b0(TAG.tl, true);
-    b0(TAG.ol, true);
-    b0(TAG.li, true);
-    b0(TAG.h1, false);
-    b0(TAG.h2, false);
-    b0(TAG.h3, false);
-    b0(TAG.h4, false);
-    b0(TAG.h5, false);
-    b0(TAG.h6, false);
-    b0(TAG.title, false);
-    b0(TAG.subtitle, false);
+    b0(TAG.p, 'Paragraph', false);
+    b0(TAG.blockquote, 'Blockquote', true);
+    b0(TAG.codeblock, 'Code block', false);
+    b0(TAG.pre, 'Pre-formatted', false);
+    b0(TAG.ul, 'Unordered list', true);
+    b0(TAG.ol, 'Ordered list', true);
+    b0(TAG.tl, 'Task list', true);
+    b0(TAG.li, 'List item', true);
+    b0(TAG.h1, 'Heading 1', false);
+    b0(TAG.h2, 'Heading 2', false);
+    b0(TAG.h3, 'Heading 3', false);
+    b0(TAG.h4, 'Heading 4', false);
+    b0(TAG.h5, 'Heading 5', false);
+    b0(TAG.h6, 'Heading 6', false);
+    b0(TAG.title, 'Title', false);
+    b0(TAG.subtitle, 'Subtitle', false);
     // b0(TAG.br, false);
     // b0(TAG.nl, false);
     // b0(TAG.hr, false);

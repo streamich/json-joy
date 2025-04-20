@@ -63,6 +63,11 @@ export class SliceRegistryEntry<
     public readonly tag: Tag,
 
     /**
+     * User friendly display name. Also used for translation purposes.
+     */
+    public readonly name: string,
+
+    /**
      * Default expected schema of the slice data.
      */
     public readonly schema: Schema | undefined = void 0,
