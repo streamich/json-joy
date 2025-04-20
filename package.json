@@ -108,6 +108,7 @@
     "benchmark": "^2.1.4",
     "collaborative-editor": "^2.8.0",
     "collaborative-input": "^1.6.1",
+    "collaborative-ui": "^1.6.0",
     "config-galore": "^1.0.0",
     "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
     "fast-json-patch": "^3.1.1",
