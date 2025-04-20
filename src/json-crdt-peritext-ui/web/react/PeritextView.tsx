@@ -96,7 +96,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   const block = state.peritext.blocks.root;
 
   let children: React.ReactNode = (
-    <div ref={div}>
+    <div ref={div} className={CssClass.Editor}>
       <BlockView hash={block.hash} block={block} />
     </div>
   );
