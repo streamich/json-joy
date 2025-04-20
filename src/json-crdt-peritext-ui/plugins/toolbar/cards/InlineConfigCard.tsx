@@ -2,6 +2,7 @@ import * as React from 'react';
 import {FormRow} from './FormRow';
 import {Button} from 'nice-ui/lib/2-inline-block/Button';
 import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
+import {ContextTitle} from 'nice-ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from 'nice-ui/lib/4-card/EmptyState';
 import {Breadcrumbs, Breadcrumb} from 'nice-ui/lib/3-list-item/Breadcrumbs';
 import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
@@ -11,6 +12,7 @@ import {CollaborativeInput} from '../../../components/CollaborativeInput';
 import {Input} from '../../../components/Input';
 import {useSyncStore} from '../../../web/react/hooks';
 import type {SliceConfigState} from '../state/types';
+import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 
 export interface InlineConfigCardProps {
   config: SliceConfigState<any>;
@@ -32,7 +34,7 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config}) => {
         {icon ? (
           <Flex style={{alignItems: 'center', display: 'flex', fontSize: '14px'}}>
             {/* <Avatar width={24} height={24} badge={icon} /> */}
-            <div style={{width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.1)', opacity: .7, margin: '0 6px 0 8px'}}>
+            <div style={{transform: 'scale(.8)', width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.1)', opacity: .7, margin: '0 6px 0 8px'}}>
               {icon}
             </div>
             {name}
@@ -52,8 +54,12 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config}) => {
             input={(ref) => <Input inp={ref} type={'text'} size={-1} placeholder={'Title'} />} />
         </FormRow> */}
       </div>
-      <EmptyState emoji=' ' />
-      {/* <ContextSep line /> */}
+
+      <ContextSep line />
+      <ContextTitle>Preview</ContextTitle>
+      <EmptyState emoji=' ' title=' ' />
+      <ContextSep line />
+      
       {/* <div style={{padding: '4px 16px'}}> */}
       <div style={{padding: '0px 16px'}}>
         <FormRow>
