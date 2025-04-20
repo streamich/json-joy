@@ -1,24 +1,19 @@
-import {CommonSliceType, type Peritext} from '../../../json-crdt-extensions/peritext';
-import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import {CommonSliceType} from '../../../json-crdt-extensions/peritext';
 import type {UiLifeCycles} from '../types';
-
-export interface RichTextControllerOpts {
-  source: HTMLElement;
-  txt: Peritext;
-  et: PeritextEventTarget;
-}
+import type {DomController} from './DomController';
 
 export class RichTextController implements UiLifeCycles {
-  public constructor(public readonly opts: RichTextControllerOpts) {}
+  public constructor(public readonly dom: DomController) {}
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const el = this.opts.source;
+    const dom = this.dom;
+    const el = dom.el;
     const onKeyDown = (event: KeyboardEvent): void => {
       const key = event.key;
       if (event.isComposing || key === 'Dead') return;
-      const et = this.opts.et;
+      const et = dom.et;
       if (event.metaKey || event.ctrlKey) {
         switch (key) {
           case 'b':

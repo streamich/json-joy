@@ -1,9 +1,8 @@
 import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from '../types';
+import type {DomController} from './DomController';
 
-export interface KeyControllerOpts {
-  source: HTMLElement;
-}
+export interface KeyControllerOpts {}
 
 /**
  * Keeps track of all pressed down keys.
@@ -14,7 +13,7 @@ export class KeyController implements UiLifeCycles, Printable {
    */
   public readonly pressed = new Set<string>();
 
-  public constructor(protected readonly opts: KeyControllerOpts) {}
+  public constructor(public readonly dom: DomController) {}
 
   public start() {
     const onKeyDown = (event: KeyboardEvent): void => {
@@ -33,14 +32,15 @@ export class KeyController implements UiLifeCycles, Printable {
     document.addEventListener('focus', onReset);
     document.addEventListener('compositionstart', onReset);
     document.addEventListener('compositionend', onReset);
-    this.opts.source.addEventListener('blur', onReset);
+    const el = this.dom.el;
+    el.addEventListener('blur', onReset);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keyup', onKeyUp);
       document.removeEventListener('focus', onReset);
       document.removeEventListener('compositionstart', onReset);
       document.removeEventListener('compositionend', onReset);
-      this.opts.source.removeEventListener('blur', onReset);
+      el.removeEventListener('blur', onReset);
     };
   }
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {createPortal} from 'react-dom';
 import {put} from 'nano-theme';
 import {CssClass} from '../constants';
 import {CursorPlugin} from '../../plugins/cursor';
@@ -32,44 +31,47 @@ put('.' + CssClass.Inline, {
 
 export interface PeritextViewProps {
   peritext: Peritext;
+
+  /**
+   * Array of plugins use to render editor content and provide additional
+   * functionality. The plugin list must be memorized and not recreated on
+   * every render. If omitted, a default set of plugins will be used.
+   */
   plugins?: PeritextPlugin[];
-  onState?: (state: PeritextSurfaceState) => void;
+
+  /**
+   * Called when the editor is started, DOM is created, main DOM handlers have
+   * been initialized. Receives the {@link PeritextSurfaceState} instance used
+   * to manage the editor.
+   *
+   * @param state json-joy Peritext state manager.
+   */
+  onStart?: (state: PeritextSurfaceState) => void;
 }
 
 export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
-  const {peritext, plugins: plugins_, onState} = props;
-  const ref = React.useRef<HTMLDivElement>(null);
+  const {peritext, plugins: plugins_, onStart: onState} = props;
+
+  // The `.stop()` is called when the editor unmounts.
+  const stop = React.useRef<undefined | (() => void)>(void 0);
 
   // Plugins provided through props, or a default set of plugins.
   const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [plugins_]);
 
-  // Create the DOM element for the editor. And instantiate the state management.
-  const [el, state, stop] = React.useMemo(() => {
-    const div = document.createElement('div');
-    div.className = CssClass.Editor;
-    const events = createEvents(peritext);
-    const state = new PeritextSurfaceState(events, div, plugins);
-    const stop = state.start();
-    return [div, state, stop] as const;
-  }, [peritext, plugins]);
+  /** Create the {@link PeritextSurfaceState} state management instance. */
+  const state = React.useMemo(() =>
+    new PeritextSurfaceState(createEvents(peritext), plugins), [peritext, plugins]);
 
-  // Call life-cycle methods on the state.
-  React.useLayoutEffect(() => stop, [stop]);
-
-  React.useLayoutEffect(() => {
+  /** Call `.start()` of {@link PeritextSurfaceState} and setup HTML element. */
+  const ref = (el: HTMLDivElement | null) => {
+    if (!el) return;
+    state.el = el;
+    stop.current = state.start();
     onState?.(state);
-  }, [onState, state]);
+  };
 
-  // Attach imperatively constructed <div> element to our container.
-  React.useLayoutEffect(() => {
-    const div = ref.current;
-    if (!div) return;
-    const parent = div.parentElement!;
-    parent.appendChild(el);
-    return () => {
-      if (el.parentNode === parent) parent.removeChild(el);
-    };
-  }, [el]);
+  /** Call `.stop()` of {@link PeritextSurfaceState} when the component unmounts. */
+  React.useLayoutEffect(() => () => stop.current?.(), [stop]);
 
   // Return the final result.
   return (
@@ -81,31 +83,27 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
 
 interface PeritextViewInnerProps {
   state: PeritextSurfaceState;
-  div: React.RefObject<HTMLDivElement>;
+  div: (div: HTMLDivElement | null) => void;
 }
 
 const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) => {
   const {state, div} = props;
-  const {peritext, render, el, plugins} = state;
 
   // Subscribe to re-render events.
-  useSyncStore(render);
+  useSyncStore(state.render);
 
   // Render the main body of the editor.
-  const block = peritext.blocks.root;
-  let children: React.ReactNode = block ? createPortal(<BlockView hash={block.hash} block={block} />, el) : null;
+  const block = state.peritext.blocks.root;
 
-  // Create container element, into which we will insert imperatively
-  // constructed <div> element.
-  children = (
-    <>
-      <div ref={div} style={{visibility: 'hidden'}} />
-      {children}
-    </>
+  let children: React.ReactNode = (
+    <div ref={div}>
+      <BlockView hash={block.hash} block={block} />
+    </div>
   );
 
   // Run the plugins to decorate our content body.
-  for (const {peritext: decorator} of plugins) if (decorator) children = decorator(children, state);
+  for (const plugin of state.plugins)
+    children = plugin.peritext?.(children, state) ?? children;
 
   // Return the final result.
   return children;

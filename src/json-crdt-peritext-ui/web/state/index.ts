@@ -20,22 +20,22 @@ export class PeritextSurfaceState implements UiLifeCycles {
 
   constructor(
     public readonly events: PeritextEventDefaults,
-    public readonly el: HTMLElement,
     public readonly plugins: PeritextPlugin[],
   ) {
     const peritext = (this.peritext = events.txt);
     const log = (this.log = Log.from(peritext.model));
-    this.dom = new DomController({
-      events,
-      log,
-      source: el,
-    });
+    this.dom = new DomController(events, log);
   }
 
+  /** -------------------------------------------------- {@link UiLifeCycles} */
+
+  public el!: HTMLElement;
+
   public start() {
-    const {dom, rerender} = this;
-    const et = dom.et;
+    const {dom, rerender, el} = this;
+    dom.el = el;
     const stopDom = dom.start();
+    const et = dom.et;
     et.addEventListener('change', rerender);
     return () => {
       this.log.destroy();

@@ -58,7 +58,7 @@ export const App: React.FC = () => {
         <PeritextView
           peritext={peritext}
           plugins={plugins}
-          onState={(state) => {
+          onStart={(state) => {
             state.events.et.buffer({
               action: 'paste',
               format: 'md',
