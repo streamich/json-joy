@@ -15,8 +15,10 @@ const blockClass = rule({
 
 const blockClassEnabled = rule({
   pos: 'relative',
-  ['& .' + CssClass.Editor]: {
+  ['& .' + CssClass.Inline]: {
     'caret-color': 'red',
+  },
+  ['& .' + CssClass.Editor]: {
     '::selection': {
       bgc: 'red',
     },

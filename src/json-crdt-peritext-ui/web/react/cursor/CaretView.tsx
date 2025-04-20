@@ -15,6 +15,6 @@ export const CaretView: React.FC<CaretViewProps> = (props) => {
   const {plugins} = usePeritext();
 
   let children: React.ReactNode = <Caret />;
-  for (const map of plugins) children = map.caret?.(props, children) ?? children;
+  for (const plugin of plugins) children = plugin.caret?.(props, children) ?? children;
   return children;
 };

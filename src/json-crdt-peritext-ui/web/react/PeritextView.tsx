@@ -15,7 +15,6 @@ put('.' + CssClass.Editor, {
   out: 0,
   whiteSpace: 'nowrap',
   wordWrap: 'break-word',
-  'caret-color': 'transparent',
   '::selection': {
     bgc: 'transparent',
   },

@@ -37,6 +37,12 @@ put('.' + CssClass.Inline, {
    * so that the text is more visually predictable.
    */
   fontVariantLigatures: 'none',
+
+  /**
+   * Hide the default system caret. Peritext renders its own caret in the
+   * `CaretView` component, which plugins can further customize.
+   */
+  caretColor: 'transparent',
 });
 
 export interface InlineViewProps {

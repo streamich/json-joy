@@ -9,7 +9,7 @@ export const Caret: React.FC = () => {
   const ref = useCaret();
 
   return (
-    <span id={dom?.cursor.caretId} ref={ref}>
+    <span id={dom.cursor.caretId} ref={ref}>
       {Char.ZeroLengthSpace}
     </span>
   );
