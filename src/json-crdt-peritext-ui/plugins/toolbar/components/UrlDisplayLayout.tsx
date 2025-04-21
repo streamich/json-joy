@@ -4,6 +4,10 @@ import {FixedColumn} from 'nice-ui/lib/3-list-item/FixedColumn';
 import {fonts} from 'nice-ui/lib/styles';
 import {Favicon} from '../../../components/Favicon';
 import {getDomain} from '../../../web/util';
+import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
+import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Flex} from 'nice-ui/lib/3-list-item/Flex';
+import {Split} from 'nice-ui/lib/3-list-item/Split';
 
 const iconClass = rule({
   d: 'flex',
@@ -34,6 +38,13 @@ const linkClass = rule({
   textOverflow: 'ellipsis',
 });
 
+const buttonGroupClass = rule({
+  d: 'flex',
+  flexDirection: 'row-reverse',
+  mr: '-4px -4px 4px 4px',
+  pd: '0',
+});
+
 export interface UrlDisplayLayoutProps {
   url: string;
 }
@@ -47,14 +58,24 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
 
   return (
     <>
-      <FixedColumn left={36} style={{alignItems: 'center'}}>
-        <div>
-          <div className={iconClass}>
-            <Favicon domain={domain} url={url} />
+      <Split>
+        <FixedColumn left={36} style={{alignItems: 'center'}}>
+          <div>
+            <div className={iconClass}>
+              <Favicon domain={domain} url={url} />
+            </div>
           </div>
+          <div className={domainClass}>{domainTruncated}</div>
+        </FixedColumn>
+        <div className={buttonGroupClass}>
+          <BasicButton width={32} height={32} round>
+            <Iconista width={16} height={16} set={'lucide'} icon='copy' />
+          </BasicButton>
+          <BasicButton width={32} height={32} round>
+            <Iconista width={16} height={16} set={'lucide'} icon='external-link' />
+          </BasicButton>
         </div>
-        <div className={domainClass}>{domainTruncated}</div>
-      </FixedColumn>
+      </Split>
       <div className={linkClass}>
         <a href={url} target='_blank' rel='noopener noreferrer'>{url}</a>
       </div>
