@@ -287,6 +287,8 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Link',
       icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
       // icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+      right: () => <Sidetip small>⌘ K</Sidetip>,
+      keys: ['⌘', 'k'],
       onSelect: () => {
         this.startSliceConfig(CommonSliceType.a, linkAction);
       },
