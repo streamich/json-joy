@@ -11,8 +11,9 @@ import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {CollaborativeInput} from '../../../components/CollaborativeInput';
 import {Input} from '../../../components/Input';
 import {useSyncStore} from '../../../web/react/hooks';
-import type {SliceConfigState} from '../state/types';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
+import {UrlDisplayCard} from './UrlDisplayCard';
+import type {SliceConfigState} from '../state/types';
 
 export interface InlineConfigCardProps {
   config: SliceConfigState<any>;
@@ -67,7 +68,13 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config, onSav
 
         <ContextSep line />
         <ContextTitle>Preview</ContextTitle>
-        <EmptyState emoji=' ' title=' ' />
+        {hrefView ? (
+          <div style={{display: 'flex', padding: '24px 16px 32px', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{maxWidth: 440}}>
+              <UrlDisplayCard url={hrefView} />
+            </div>
+          </div>
+        ) : <EmptyState emoji=' ' title=' ' />}
         <ContextSep line />
         
         {/* <div style={{padding: '4px 16px'}}> */}

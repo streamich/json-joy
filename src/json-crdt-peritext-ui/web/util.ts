@@ -30,3 +30,6 @@ export const saveSelection = (): (() => void) | undefined => {
     for (const range of ranges) selection.addRange(range);
   };
 };
+
+export const getDomain = (url: string): string | undefined =>
+  url.match(/^(?:[^:\/]+:)?(?:\/{1,5})?(([^\/$ \.]+)\.([^\/$ ]+))/i)?.[1];
