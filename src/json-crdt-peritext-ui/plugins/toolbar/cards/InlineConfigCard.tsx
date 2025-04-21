@@ -14,6 +14,7 @@ import {useSyncStore} from '../../../web/react/hooks';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {UrlDisplayCard} from './UrlDisplayCard';
 import type {SliceConfigState} from '../state/types';
+import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 
 export interface InlineConfigCardProps {
   config: SliceConfigState<any>;
@@ -51,14 +52,20 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config, onSav
           )}
         </ContextPaneHeader>
         <div style={{padding: '8px 16px'}}>
-          <FormRow title={'Address'}>
+          <FormRow>
             <CollaborativeInput str={href}
-              input={(ref) => <Input focus inp={ref} type={'text'} size={-1} placeholder={'https://'} onKeyDown={(e) => {
+              input={(ref) => <Input focus inp={ref} type={'text'} size={-1} placeholder={'https://'}
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   onSave();
                 }
-              }} />} />
+              }} right={(
+                <div style={{paddingRight: 8, width: 24, height: 24}}>
+                  {!!hrefView && <BasicButtonClose onClick={() => href().del(0, href().length())} />}
+                </div>
+              )}
+              />} />
           </FormRow>
           {/* <FormRow title={'Title'}>
             <CollaborativeInput str={title}
@@ -67,6 +74,7 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config, onSav
         </div>
 
         <ContextSep line />
+        <ContextSep />
         <ContextTitle>Preview</ContextTitle>
         {hrefView ? (
           <div style={{display: 'flex', padding: '24px 16px 32px', alignItems: 'center', justifyContent: 'center'}}>
