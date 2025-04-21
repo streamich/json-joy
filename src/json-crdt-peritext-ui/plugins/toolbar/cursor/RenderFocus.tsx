@@ -17,7 +17,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
   const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
-  const newSliceConfig = useSyncStore(toolbar.newSliceConfig);
+  const config = useSyncStore(toolbar.newSliceConfig);
   // const focus = useSyncStoreOpt(surface.dom?.cursor.focus) || false;
   // const blurTimeout = useTimeout(300, [focus]);
 
@@ -29,7 +29,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
   let over: React.ReactNode | undefined;
   let under: React.ReactNode | undefined;
 
-  if (!newSliceConfig && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
+  if (!config && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
     over = (
       <MoveToViewport>
         <CaretToolbar
@@ -40,8 +40,8 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
       </MoveToViewport>
     );
 
-  if (!!newSliceConfig && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor) {
-    under = <InlineConfigCard config={newSliceConfig} />;
+  if (!!config && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor) {
+    under = <InlineConfigCard config={config} onSave={config.save} />;
   }
 
   return (

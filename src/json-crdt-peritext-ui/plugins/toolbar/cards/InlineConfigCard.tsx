@@ -16,9 +16,10 @@ import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 
 export interface InlineConfigCardProps {
   config: SliceConfigState<any>;
+  onSave: () => void;
 }
 
-export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config}) => {
+export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config, onSave}) => {
   const {toolbar} = useToolbarPlugin();
   const api = config.conf();
   const href = React.useMemo(() => () => config.conf().str(['href']), [config]);
@@ -30,42 +31,52 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config}) => {
 
   return (
     <ContextPane style={{display: 'block', minWidth: 'calc(min(600px, max(50vw, 260px)))'}}>
-      <ContextPaneHeader onCloseClick={() => toolbar.newSliceConfig.next(void 0)}>
-        {icon ? (
-          <Flex style={{alignItems: 'center', display: 'flex', fontSize: '14px'}}>
-            {/* <Avatar width={24} height={24} badge={icon} /> */}
-            <div style={{transform: 'scale(.8)', width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.1)', opacity: .7, margin: '0 6px 0 8px'}}>
-              {icon}
-            </div>
-            {name}
-            {/* <Breadcrumbs crumbs={[<Breadcrumb compact>{name}</Breadcrumb>]} /> */}
-          </Flex>
-        ) : (
-          <Breadcrumbs crumbs={[<Breadcrumb compact>{name}</Breadcrumb>]} />
-        )}
-      </ContextPaneHeader>
-      <div style={{padding: '8px 16px'}}>
-        <FormRow title={'Address'}>
-          <CollaborativeInput str={href}
-            input={(ref) => <Input focus inp={ref} type={'text'} size={-1} placeholder={'https://'} />} />
-        </FormRow>
-        {/* <FormRow title={'Title'}>
-          <CollaborativeInput str={title}
-            input={(ref) => <Input inp={ref} type={'text'} size={-1} placeholder={'Title'} />} />
-        </FormRow> */}
-      </div>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        onSave();
+      }}>
+        <ContextPaneHeader onCloseClick={() => toolbar.newSliceConfig.next(void 0)}>
+          {icon ? (
+            <Flex style={{alignItems: 'center', display: 'flex', fontSize: '14px'}}>
+              {/* <Avatar width={24} height={24} badge={icon} /> */}
+              <div style={{transform: 'scale(.8)', width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.1)', opacity: .7, margin: '0 6px 0 8px'}}>
+                {icon}
+              </div>
+              {name}
+              {/* <Breadcrumbs crumbs={[<Breadcrumb compact>{name}</Breadcrumb>]} /> */}
+            </Flex>
+          ) : (
+            <Breadcrumbs crumbs={[<Breadcrumb compact>{name}</Breadcrumb>]} />
+          )}
+        </ContextPaneHeader>
+        <div style={{padding: '8px 16px'}}>
+          <FormRow title={'Address'}>
+            <CollaborativeInput str={href}
+              input={(ref) => <Input focus inp={ref} type={'text'} size={-1} placeholder={'https://'} onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  onSave();
+                }
+              }} />} />
+          </FormRow>
+          {/* <FormRow title={'Title'}>
+            <CollaborativeInput str={title}
+              input={(ref) => <Input inp={ref} type={'text'} size={-1} placeholder={'Title'} />} />
+          </FormRow> */}
+        </div>
 
-      <ContextSep line />
-      <ContextTitle>Preview</ContextTitle>
-      <EmptyState emoji=' ' title=' ' />
-      <ContextSep line />
-      
-      {/* <div style={{padding: '4px 16px'}}> */}
-      <div style={{padding: '0px 16px'}}>
-        <FormRow>
-          <Button lite block disabled={!hrefView}>Save</Button>
-        </FormRow>
-      </div>
+        <ContextSep line />
+        <ContextTitle>Preview</ContextTitle>
+        <EmptyState emoji=' ' title=' ' />
+        <ContextSep line />
+        
+        {/* <div style={{padding: '4px 16px'}}> */}
+        <div style={{padding: '0px 16px'}}>
+          <FormRow>
+            <Button small lite block disabled={!hrefView} submit>Save</Button>
+          </FormRow>
+        </div>
+      </form>
     </ContextPane>
   );
 };
