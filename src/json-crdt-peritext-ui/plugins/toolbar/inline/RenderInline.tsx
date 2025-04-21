@@ -6,6 +6,7 @@ import {Code} from './Code';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
+import {Link} from './Link';
 import type {InlineViewProps} from '../../../web/react/InlineView';
 
 export interface RenderInlineProps extends InlineViewProps {
@@ -16,6 +17,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const {inline, children} = props;
   const attrs = inline.attr();
   let element = children;
+  if (attrs[CommonSliceType.a]) element = <Link>{element}</Link>;
   if (attrs[CommonSliceType.mark]) element = <mark>{element}</mark>;
   if (attrs[CommonSliceType.sup]) element = <sup>{element}</sup>;
   if (attrs[CommonSliceType.sub]) element = <sub>{element}</sub>;
