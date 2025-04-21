@@ -43,7 +43,6 @@ export interface InputProps {
   select?: boolean;
   readOnly?: boolean;
   size?: number;
-  isInForm?: boolean;
   style?: any;
   waiting?: boolean;
   right?: React.ReactNode;
@@ -53,6 +52,7 @@ export interface InputProps {
   onFocus?: () => void;
   onPaste?: () => void;
   onEsc?: React.KeyboardEventHandler;
+  onKeyDown?: React.KeyboardEventHandler;
 }
 
 export const Input: React.FC<InputProps> = (props) => {
@@ -62,6 +62,7 @@ export const Input: React.FC<InputProps> = (props) => {
     placeholder,
     onPaste,
     onEsc,
+    onKeyDown,
     onChange,
     label,
     size,
@@ -89,15 +90,6 @@ export const Input: React.FC<InputProps> = (props) => {
     setFocus(false);
     props.onBlur?.();
   }, [props.onBlur]);
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!ref.current) return;
-      if (props.isInForm && e.key === 'Enter') {
-        ref.current.blur();
-      } else if (e.key === 'Escape') onEsc?.(e);
-    },
-    [ref.current],
-  );
 
   let rightElement: React.ReactNode = null;
 
@@ -133,7 +125,10 @@ export const Input: React.FC<InputProps> = (props) => {
     readOnly,
     onFocus,
     onBlur,
-    onKeyDown,
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (onEsc && e.key === 'Escape') onEsc(e);
+      onKeyDown?.(e);
+    },
     onPaste,
     onChange,
   };
