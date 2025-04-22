@@ -16,6 +16,10 @@ import {parseUrl} from '../../../web/util';
 import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import type {SliceConfigState} from '../state/types';
 
+const blockClass = rule({
+  maxW: '600px',
+});
+
 const headerClass = rule({
   d: 'flex',
   ai: 'center',
@@ -62,7 +66,7 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
   const name = config.menu?.name ?? config.def.name;
 
   return (
-    <form onSubmit={(e) => {
+    <form className={blockClass} onSubmit={(e) => {
       e.preventDefault();
       onSave();
     }}>

@@ -47,7 +47,7 @@ export class ToolbarState implements UiLifeCycles {
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
-    const source = dom.el;
+    const el = dom.el;
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
@@ -67,14 +67,27 @@ export class ToolbarState implements UiLifeCycles {
     const mouseUpListener = (event: MouseEvent) => {
       if (!showInlineToolbar.value[0]) showInlineToolbar.next([true, Date.now()]);
     };
+    const onKeyDown = (event: KeyboardEvent) => {
+      const newSliceConfig = this.newSliceConfig;
+      if (event.key === 'Escape') {
+        if (newSliceConfig.value) {
+          event.stopPropagation();
+          event.preventDefault
+          newSliceConfig.next(void 0);
+          return;
+        }
+      }
+    };
 
-    source?.addEventListener('mousedown', mouseDownListener);
-    source?.addEventListener('mouseup', mouseUpListener);
+    el.addEventListener('mousedown', mouseDownListener);
+    el.addEventListener('mouseup', mouseUpListener);
+    el.addEventListener('keydown', onKeyDown);
     return () => {
       changeUnsubscribe();
       unsubscribeMouseDown?.();
-      source?.removeEventListener('mousedown', mouseDownListener);
-      source?.removeEventListener('mouseup', mouseUpListener);
+      el.removeEventListener('mousedown', mouseDownListener);
+      el.removeEventListener('mouseup', mouseUpListener);
+      el.removeEventListener('keydown', onKeyDown);
     };
   }
 
