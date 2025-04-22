@@ -3,10 +3,9 @@ import {rule} from 'nano-theme';
 import {FixedColumn} from 'nice-ui/lib/3-list-item/FixedColumn';
 import {fonts} from 'nice-ui/lib/styles';
 import {Favicon} from '../../../components/Favicon';
-import {getDomain} from '../../../web/util';
+import {parseUrl} from '../../../web/util';
 import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {Split} from 'nice-ui/lib/3-list-item/Split';
 
 const iconClass = rule({
@@ -51,7 +50,8 @@ export interface UrlDisplayLayoutProps {
 
 export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
   const [domain, domainTruncated] = React.useMemo(() => {
-    const domain = getDomain(url) || '';
+    const parsed = parseUrl(url);
+    const domain = parsed?.hostname || '';
     const domainTruncated = domain && domain.length > 32 ? `${domain.slice(0, 32)}...` : domain;
     return [domain, domainTruncated];
   }, [url]);

@@ -12,6 +12,7 @@ import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {UrlDisplayCard} from '../cards/UrlDisplayCard';
 import {rule} from 'nano-theme';
+import {parseUrl} from '../../../web/util';
 import type {SliceConfigState} from '../state/types';
 
 const headerClass = rule({
@@ -46,6 +47,7 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
   const href = React.useMemo(() => () => config.conf().str(['href']), [config]);
   // const title = React.useMemo(() => () => config.conf().str(['title']), [config]);
   const hrefView = useSyncStore(href().events);
+  const parsed = React.useMemo(() => parseUrl(hrefView), [hrefView]);
 
   const icon = config.menu?.icon?.();
   const name = config.menu?.name ?? config.def.name;
@@ -117,7 +119,7 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
       <ContextSep line />
       
       <div style={{padding: '16px'}}>
-        <Button small lite={!hrefView} positive={!!hrefView} block disabled={!hrefView} submit>Save</Button>
+        <Button small lite={!hrefView} positive={!!parsed} block disabled={!hrefView} submit>Save</Button>
       </div>
     </form>
   );
