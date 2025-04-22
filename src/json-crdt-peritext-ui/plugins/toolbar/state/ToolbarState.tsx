@@ -11,7 +11,7 @@ import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
 import {NewSliceConfig} from './NewSliceConfig';
 import type {UiLifeCycles} from '../../../web/types';
-import type {BufferDetail, PeritextEventDetailMap} from '../../../events/types';
+import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
@@ -43,7 +43,7 @@ export class ToolbarState implements UiLifeCycles {
   /** ------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const {surface, showInlineToolbar} = this;
+    const {surface, showInlineToolbar, newSliceConfig} = this;
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
@@ -78,16 +78,27 @@ export class ToolbarState implements UiLifeCycles {
         }
       }
     };
-
+    const onCursor = ({detail}: PeritextCursorEvent) => {
+      // Close config popup on non-focus cursor moves.
+      if (newSliceConfig.value) {
+        const isFocusMove = detail.move && detail.move.length === 1 && detail.move[0][0] === 'focus';
+        if (!isFocusMove) {
+          this.newSliceConfig.next(void 0);
+        }
+      }
+    };
+    
     el.addEventListener('mousedown', mouseDownListener);
     el.addEventListener('mouseup', mouseUpListener);
     el.addEventListener('keydown', onKeyDown);
+    et.addEventListener('cursor', onCursor);
     return () => {
       changeUnsubscribe();
       unsubscribeMouseDown?.();
       el.removeEventListener('mousedown', mouseDownListener);
       el.removeEventListener('mouseup', mouseUpListener);
       el.removeEventListener('keydown', onKeyDown);
+      et.removeEventListener('cursor', onCursor);
     };
   }
 
