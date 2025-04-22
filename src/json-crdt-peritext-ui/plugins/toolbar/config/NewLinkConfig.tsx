@@ -14,6 +14,7 @@ import {UrlDisplayCard} from '../cards/UrlDisplayCard';
 import {rule} from 'nano-theme';
 import {parseUrl} from '../../../web/util';
 import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
+import {useStyles} from 'nice-ui/lib/styles/context';
 import type {SliceConfigState} from '../state/types';
 
 const blockClass = rule({
@@ -37,7 +38,7 @@ const iconClass = rule({
   d: 'flex',
   ai: 'center',
   jc: 'center',
-  bg: 'rgba(0,0,0,.1)',
+  bg: 'rgba(0,0,0,.08)',
   o: .7,
   '&>div': {
     transform: 'scale(.9)',
@@ -54,6 +55,7 @@ export interface NewLinkConfigProps {
 }
 
 export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) => {
+  const styles = useStyles();
   const {toolbar} = useToolbarPlugin();
   const inpRef = React.useRef<HTMLInputElement | null>(null);
   const api = config.conf();

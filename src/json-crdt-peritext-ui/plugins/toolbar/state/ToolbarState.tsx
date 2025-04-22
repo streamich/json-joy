@@ -68,13 +68,31 @@ export class ToolbarState implements UiLifeCycles {
       if (!showInlineToolbar.value[0]) showInlineToolbar.next([true, Date.now()]);
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      const newSliceConfig = this.newSliceConfig;
-      if (event.key === 'Escape') {
-        if (newSliceConfig.value) {
-          event.stopPropagation();
-          event.preventDefault
-          newSliceConfig.next(void 0);
-          return;
+      switch (event.key) {
+        case 'Escape': {
+          if (newSliceConfig.value) {
+            event.stopPropagation();
+            event.preventDefault
+            newSliceConfig.next(void 0);
+            return;
+          }
+          break;
+        }
+      }
+    };
+    const onKeyDownDocument = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'k': {
+          if (event.metaKey) {
+            const editor = this.txt.editor;
+            if (editor.hasCursor() && !editor.mainCursor()?.isCollapsed() && (!newSliceConfig.value || newSliceConfig.value.def.tag !== SliceTypeCon.a)) {
+              event.stopPropagation();
+              event.preventDefault
+              this.startSliceConfig(SliceTypeCon.a, this.linkMenuItem());
+              return;
+            }
+          }
+          break;
         }
       }
     };
@@ -91,6 +109,7 @@ export class ToolbarState implements UiLifeCycles {
     el.addEventListener('mousedown', mouseDownListener);
     el.addEventListener('mouseup', mouseUpListener);
     el.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keydown', onKeyDownDocument);
     et.addEventListener('cursor', onCursor);
     return () => {
       changeUnsubscribe();
@@ -98,6 +117,7 @@ export class ToolbarState implements UiLifeCycles {
       el.removeEventListener('mousedown', mouseDownListener);
       el.removeEventListener('mouseup', mouseUpListener);
       el.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keydown', onKeyDownDocument);
       et.removeEventListener('cursor', onCursor);
     };
   }
@@ -306,7 +326,7 @@ export class ToolbarState implements UiLifeCycles {
     };
   };
 
-  public readonly annotationsMenu = (): MenuItem => {
+  public readonly linkMenuItem = (): MenuItem => {
     const linkAction: MenuItem = {
       name: 'Link',
       icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
@@ -317,12 +337,17 @@ export class ToolbarState implements UiLifeCycles {
         this.startSliceConfig(CommonSliceType.a, linkAction);
       },
     };
+    return linkAction;
+  };
+
+  public readonly annotationsMenu = (): MenuItem => {
+    
     return {
       name: 'Annotations',
       expand: 2,
       sepBefore: true,
       children: [
-        linkAction,
+        this.linkMenuItem(),
         // {
         //   name: 'Comment',
         //   icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,
