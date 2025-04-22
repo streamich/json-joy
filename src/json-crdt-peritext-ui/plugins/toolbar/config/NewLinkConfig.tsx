@@ -106,7 +106,7 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
       <ContextSep />
       <ContextTitle>Preview</ContextTitle>
 
-      {hrefView ? (
+      {!!hrefView && (hrefView.length > 3) ? (
         <div style={{display: 'flex', padding: '14px 32px 26px', alignItems: 'center', justifyContent: 'center'}}>
           <UrlDisplayCard url={hrefView} />
         </div>
