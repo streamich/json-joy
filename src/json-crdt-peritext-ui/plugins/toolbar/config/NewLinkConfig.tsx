@@ -13,26 +13,35 @@ import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButt
 import {UrlDisplayCard} from '../cards/UrlDisplayCard';
 import {rule} from 'nano-theme';
 import {parseUrl} from '../../../web/util';
+import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import type {SliceConfigState} from '../state/types';
 
 const headerClass = rule({
+  d: 'flex',
+  ai: 'center',
   fz: '14px',
   us: 'none',
-  pdb: '8px',
 });
 
 const iconClass = rule({
-  transform: 'scale(.8)',
   fz: '14px',
   w: '28px',
   h: '28px',
   bdrad: '6px',
+  pd: '0',
+  mr: '0 8px 0 0',
   d: 'flex',
   ai: 'center',
   jc: 'center',
   bg: 'rgba(0,0,0,.1)',
   o: .7,
-  mr: '0 6px 0 4px',
+  '&>div': {
+    transform: 'scale(.9)',
+    transformOrigin: 'center',
+    d: 'flex',
+    ai: 'center',
+    jc: 'center',
+  },
 });
 
 export interface NewLinkConfigProps {
@@ -57,12 +66,12 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
       e.preventDefault();
       onSave();
     }}>
-      <ContextPaneHeader onCloseClick={() => toolbar.newSliceConfig.next(void 0)}>
+      <ContextPaneHeader short onCloseClick={() => toolbar.newSliceConfig.next(void 0)}>
         <div className={headerClass}>
           {icon ? (
             <Flex style={{alignItems: 'center'}}>
               <div className={iconClass}>
-                {icon}
+                <div>{icon}</div>
               </div>
               {name}
             </Flex>
@@ -71,8 +80,7 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
           )}
         </div>
       </ContextPaneHeader>
-
-      <div style={{background: '#fff', borderRadius: '8px 8px 0 0', margin: '-8px 0 -8px', width: '100%', height: '8px'}} />
+      <ContextPaneHeaderSep />
 
       <div style={{padding: '16px'}}>
         <CollaborativeInput str={href} input={(ref) => (
