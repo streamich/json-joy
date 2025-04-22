@@ -4,6 +4,7 @@ import {Paper} from 'nice-ui/lib/4-card/Paper';
 import {UrlDisplayLayout, UrlDisplayLayoutProps} from '../components/UrlDisplayLayout';
 
 const blockClass = rule({
+  w: '100%',
   minW: '220px',
   bxz: 'border-box',
   pd: '16px',

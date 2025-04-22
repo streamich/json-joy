@@ -105,19 +105,19 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) =>
       <ContextTitle>Preview</ContextTitle>
 
       {hrefView ? (
-        <div style={{display: 'flex', padding: '24px 16px 32px', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{maxWidth: 440}}>
-            <UrlDisplayCard url={hrefView} />
-          </div>
+        <div style={{display: 'flex', padding: '14px 32px 26px', alignItems: 'center', justifyContent: 'center'}}>
+          <UrlDisplayCard url={hrefView} />
         </div>
       ) : (
-        <EmptyState emoji=' ' title=' ' />
+        <div style={{margin: '-22px 0 -8px'}}>
+          <EmptyState emoji=' ' title=' ' />
+        </div>
       )}
 
       <ContextSep line />
       
       <div style={{padding: '16px'}}>
-        <Button small lite block disabled={!hrefView} submit>Save</Button>
+        <Button small lite={!hrefView} positive={!!hrefView} block disabled={!hrefView} submit>Save</Button>
       </div>
     </form>
   );
