@@ -247,6 +247,14 @@ export interface CursorDetail extends RangeEventDetail {
    * @default false
    */
   add?: boolean;
+
+  /**
+   * Swap cursor anchor and focus points. Performed after the move operations
+   * are applied to the selection set. The flip is applied only to the existing
+   * cursors in the selection set, not to the new cursor created by the `at`
+   * field.
+   */
+  flip?: boolean;
 }
 
 /**

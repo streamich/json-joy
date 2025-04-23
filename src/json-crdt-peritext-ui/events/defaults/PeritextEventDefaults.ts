@@ -173,16 +173,22 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
-    const {at, move, add} = detail;
+    const {at, move, add, flip} = detail;
     if (at === void 0) {
       const selection = this.getSelSet(detail);
       this.moveSelSet(selection, detail);
 
       // Collapse cursors if there are no visible characters between edges.
-      if (move && move.length === 1 && move[0][0] === 'focus') {
+      // (Only for relative focus edge moves.)
+      if (move && move.length === 1 && move[0][0] === 'focus')
         for (const range of selection)
           if (range.length() === 0) range.collapseToStart();
-      }
+
+      // Swap anchor and focus edges.
+      if (flip)
+        for (const range of selection)
+          if (range instanceof Cursor) range.anchorSide = range.anchorSide === CursorAnchor.Start
+            ? CursorAnchor.End : CursorAnchor.Start;
     } else {
       const {txt} = this;
       const {editor} = txt;

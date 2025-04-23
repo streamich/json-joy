@@ -4,7 +4,7 @@ import type {UiLifeCycles} from '../types';
 import type {DomController} from './DomController';
 
 class KeyPress {
-  public constructor(public readonly key: string, public readonly time: number) {}
+  public constructor(public readonly key: string, public readonly ts: number) {}
 }
 
 export interface KeyControllerOpts {}
