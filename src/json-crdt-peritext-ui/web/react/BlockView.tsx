@@ -26,6 +26,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
       let inline: Inline<string> | undefined;
       let prevInline: Inline<string> | undefined;
       for (const iterator = block.texts0(); (inline = iterator()); prevInline = inline) {
+        const k = inline.key();
         const hasCursor = inline.hasCursor();
 
         // Insert cursor before the inline text element.
@@ -34,7 +35,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
           const italic = attr[CommonSliceType.i]?.[0];
           const cursorStart = inline.cursorStart();
           if (cursorStart) {
-            const key = cursorStart.start.key() + '-a';
+            const key = k + '-a';
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
               if (cursorStart.isCollapsed()) {
@@ -49,7 +50,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
         }
 
         // Insert the inline text element itself.
-        const currInlineProps = {key: inline.key(), inline};
+        const currInlineProps = {key: k, inline};
         elements.push(h(InlineView, currInlineProps));
 
         // Insert cursor after the inline text element.
@@ -58,7 +59,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
           const attr = inline.attr();
           const italic = attr[CommonSliceType.i]?.[0];
           if (cursorEnd) {
-            const key = cursorEnd.end.key() + '-b';
+            const key = k + '-b';
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
               if (cursorEnd.isCollapsed()) {
