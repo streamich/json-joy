@@ -430,7 +430,7 @@ export type Selection = EditorSelection<string>;
 /**
  * A list of selection on top of which actions are performed.
  */
-export type SelectionSet = IterableIterator<Range | Cursor> | Array<Range | Cursor>;
+export type SelectionSet = Array<Range | Cursor>;
 
 /**
  * A map of all Peritext rendering surface event types and their corresponding

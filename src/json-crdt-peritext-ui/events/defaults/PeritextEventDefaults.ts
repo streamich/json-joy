@@ -81,7 +81,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
     const {editor} = this.txt;
-    return at ? [editor.sel2range(at)[0]] : editor.cursors();
+    return at ? [editor.sel2range(at)[0]] : [...editor.cursors()];
   }
 
   protected moveRange(
@@ -177,6 +177,12 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     if (at === void 0) {
       const selection = this.getSelSet(detail);
       this.moveSelSet(selection, detail);
+
+      // Collapse cursors if there are no visible characters between edges.
+      if (move && move.length === 1 && move[0][0] === 'focus') {
+        for (const range of selection)
+          if (range.length() === 0) range.collapseToStart();
+      }
     } else {
       const {txt} = this;
       const {editor} = txt;
