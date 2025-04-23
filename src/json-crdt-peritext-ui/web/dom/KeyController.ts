@@ -1,6 +1,11 @@
+import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from '../types';
 import type {DomController} from './DomController';
+
+class KeyPress {
+  public constructor(public readonly key: string, public readonly time: number) {}
+}
 
 export interface KeyControllerOpts {}
 
@@ -13,16 +18,31 @@ export class KeyController implements UiLifeCycles, Printable {
    */
   public readonly pressed = new Set<string>();
 
+  /**
+   * History of last 5 pressed keys.
+   */
+  public readonly history = new ValueSyncStore<KeyPress[]>([]);
+
   public constructor(public readonly dom: DomController) {}
+
+  /** ----------------------------------------------------- {@link Printable} */
 
   public start() {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (event.isComposing || event.key === 'Dead') return;
-      this.pressed.add(event.key);
+      const key = event.key;
+      if (event.isComposing || key === 'Dead') return;
+      const {pressed, history} = this;
+      pressed.add(key);
+      const press = new KeyPress(key, Date.now());
+      const historyList = history.value;
+      historyList.push(press);
+      if (historyList.length > 5) historyList.shift();
+      history.next(historyList, true);
     };
     const onKeyUp = (event: KeyboardEvent): void => {
-      if (event.isComposing || event.key === 'Dead') return;
-      this.pressed.delete(event.key);
+      const key = event.key;
+      if (event.isComposing || key === 'Dead') return;
+      this.pressed.delete(key);
     };
     const onReset = (): void => {
       this.pressed.clear();
@@ -47,6 +67,6 @@ export class KeyController implements UiLifeCycles, Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return `keys { pressed: [ ${[...this.pressed].map((key) => JSON.stringify(key)).join(', ')} ] }`;
+    return `keys { hold: [ ${[...this.pressed].map((key) => JSON.stringify(key)).join(', ')}, hist: [ ${this.history.value.map((press) => JSON.stringify(press.key)).join(', ')} ] ] }`;
   }
 }
