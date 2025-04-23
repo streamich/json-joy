@@ -105,15 +105,17 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
    */
   public texts0(): UndefIterator<Inline<T>> {
     const txt = this.txt;
+    const overlay = txt.overlay;
     const iterator = this.tuples0();
     const start = this.start;
     const end = this.end;
-    const startIsMarker = txt.overlay.isMarker(start.id);
-    const endIsMarker = txt.overlay.isMarker(end.id);
+    const startIsMarker = overlay.isMarker(start.id);
+    const endIsMarker = overlay.isMarker(end.id);
     let isFirst = true;
     let next = iterator();
     let closed = false;
-    return () => {
+    const newIterator = () => {
+      // START: while (true) {}
       if (closed) return;
       const pair = next;
       next = iterator();
@@ -127,6 +129,9 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
         if (startIsMarker) {
           point1 = point1.clone();
           point1.step(1);
+          // Skip condition when inline annotations tarts immediately at th
+          // beginning of the block.
+          if (point1.cmp(point2) === 0) return newIterator();
         }
       }
       if (!endIsMarker && end.cmpSpatial(overlayPoint2) < 0) {
@@ -135,6 +140,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
       }
       return new Inline(txt, overlayPoint1, overlayPoint2, point1, point2);
     };
+    return newIterator;
   }
 
   /**
