@@ -1,20 +1,18 @@
 import * as React from 'react';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
-import {useToolbarPlugin} from '../context';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
-import {AfterTimeout} from '../../../web/react/util/AfterTimeout';
-import {CaretFrame} from './CaretFrame';
-import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
+import {useToolbarPlugin} from '../../context';
+import {useSyncStore, useTimeout} from '../../../../web/react/hooks';
+import {AfterTimeout} from '../../../../web/react/util/AfterTimeout';
+import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
 
-export interface RenderCaretProps extends CaretViewProps {
+export interface CaretTopOverlayProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
+export const CaretTopOverlay: React.FC<CaretTopOverlayProps> = () => {
   const {toolbar} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
-  const [showCaretToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
-  const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const [, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
   const enableAfterCoolDown = useTimeout(500, [doHideForCoolDown]);
 
@@ -25,19 +23,15 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
     }, 5);
   }, []);
 
-  let over: React.ReactNode | undefined = (
+  let element: React.ReactNode | undefined = (
     <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
   );
 
   if (doHideForCoolDown) {
-    over = <AfterTimeout ms={500}>{over}</AfterTimeout>;
+    element = <AfterTimeout ms={500}>{element}</AfterTimeout>;
   }
 
-  over = null;
+  element = null;
 
-  return (
-    <CaretFrame over={over}>
-      {children}
-    </CaretFrame>
-  );
+  return element;
 };
