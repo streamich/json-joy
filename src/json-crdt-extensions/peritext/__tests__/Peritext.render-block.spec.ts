@@ -62,7 +62,6 @@ const runInlineSlicesTests = (
   <0>
     "abcdefghijklmnopqrstuvwxyz" {  }
   <unfurl> { link = "foobar" }
-    "" {  }
 "
 `);
     });
@@ -132,7 +131,6 @@ const runInlineSlicesTests = (
   <0>
     "abcdefghijklmno" {  }
   <paragraph> [  ]
-    "" {  }
     "pqrst" { BOLD = [ !u ] }
     "uvwxyz" {  }
 "

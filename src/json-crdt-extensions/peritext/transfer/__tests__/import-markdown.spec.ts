@@ -1,3 +1,4 @@
+import {SliceRegistry} from '../../registry/SliceRegistry';
 import {CommonSliceType} from '../../slice';
 import {SliceBehavior} from '../../slice/constants';
 import {fromMarkdown} from '../import-markdown';
@@ -5,7 +6,8 @@ import {fromMarkdown} from '../import-markdown';
 describe('fromMarkdown()', () => {
   test('a single paragraph', () => {
     const text = 'Hello world';
-    const peritextMl = fromMarkdown(text);
+    const registry = SliceRegistry.withCommon();
+    const peritextMl = fromMarkdown(text, registry);
     expect(peritextMl).toEqual(['', null, [CommonSliceType.p, null, 'Hello world']]);
   });
 
@@ -20,7 +22,8 @@ describe('fromMarkdown()', () => {
       'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains \n' +
       'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object \n' +
       'is used by the Clipboard Events API to hold multiple representations of data.\n';
-    const peritextMl = fromMarkdown(text);
+    const registry = SliceRegistry.withCommon();
+    const peritextMl = fromMarkdown(text, registry);
     expect(peritextMl).toEqual([
       '',
       null,
