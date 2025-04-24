@@ -10,6 +10,7 @@ import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
 import {NewSliceConfig} from './NewSliceConfig';
+import {Favicon} from '../../../components/Favicon';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -100,7 +101,13 @@ export class ToolbarState implements UiLifeCycles {
     const registry = this.txt.editor.getRegistry();
     const linkEntry = registry.get(SliceTypeCon.a);
     if (linkEntry) {
-      linkEntry.data().menu = this.linkMenuItem();
+      const data = linkEntry.data() as SliceRegistryEntryData;
+      data.menu = this.linkMenuItem();
+      data.renderIcon = ({slice}) => {
+        const data = slice.data() as {href: string};
+        if (!data || typeof data !== 'object') return;
+        return <Favicon url={data.href} />;
+      };
     }
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {

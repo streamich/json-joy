@@ -3,16 +3,16 @@ import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMe
 import {useToolbarPlugin} from '../../context';
 import type {Inline, Peritext, Slice} from '../../../../../json-crdt-extensions';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
-import type {ToolBarSliceRegistryEntry} from '../../types';
+import type {ToolbarSlice, ToolBarSliceRegistryEntry} from '../../types';
  
-class ToolbarSlice {
+class ToolbarSliceImpl implements ToolbarSlice {
   public constructor(
     public readonly slice: Slice<string>,
     public readonly def: ToolBarSliceRegistryEntry,
   ) {}
 }
 
-const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline) => {
+const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline): ToolbarSliceImpl[] => {
   const slices = inline?.p1.layers;
   const res: ToolbarSlice[] = [];
   if (!slices) return res;
@@ -24,7 +24,7 @@ const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline) => {
     if (!def) continue;
     const isConfigurable = !!def.schema;
     if (!isConfigurable) continue;
-    res.push(new ToolbarSlice(slice, def));
+    res.push(new ToolbarSliceImpl(slice, def));
   }
   return res;
 };
@@ -37,18 +37,20 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   const {fwd, bwd} = props;
   const inline = fwd || bwd;
   const {toolbar} = useToolbarPlugin();
-  const formatting = React.useMemo(() => getConfigurableFormattingItems(toolbar.txt, inline), [inline?.key()]);
+  const formattings = React.useMemo(() => getConfigurableFormattingItems(toolbar.txt, inline), [inline?.key()]);
 
-  if (!formatting.length) return;
+  if (!formattings.length) return;
 
   return (
     <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))'}}>
       <ContextSep />
-      {formatting.map(({slice, def}, index) => {
-        const menu = def.data().menu;
+      {formattings.map((formatting) => {
+        const {def, slice} = formatting;
+        const data = def.data();
+        const menu = data.menu;
         return (
-          <ContextItem inset icon={menu?.icon?.()} right={<div>right</div>} onClick={() => {}}>
-            {def.data().menu?.name ?? def.name}
+          <ContextItem inset icon={menu?.icon?.()} right={data.renderIcon?.(formatting)} onClick={() => {}}>
+            {menu?.name ?? def.name}
           </ContextItem>
         );
       })}
