@@ -160,8 +160,8 @@ export class Inline<T = string> extends Range<T> implements Printable {
   public attr(): InlineAttrs<T> {
     if (this._attr) return this._attr;
     const attr: InlineAttrs<T> = (this._attr = {});
-    const p1 = this.p1 as OverlayPoint<T>;
-    const p2 = this.p2 as OverlayPoint<T>;
+    const p1 = this.p1;
+    const p2 = this.p2;
     const slices1 = p1.layers;
     const slices2 = p1.markers;
     const slices3 = p2.isAbsEnd() ? p2.markers : [];
