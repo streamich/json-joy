@@ -1,20 +1,20 @@
 import * as React from 'react';
-import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu';
+import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {useToolbarPlugin} from '../../context';
-import type {SliceRegistryEntry} from '../../../../../json-crdt-extensions/peritext/registry/SliceRegistryEntry';
 import type {Inline, Peritext, Slice} from '../../../../../json-crdt-extensions';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
+import type {ToolBarSliceRegistryEntry} from '../../types';
  
-class FormattingItem {
+class ToolbarSlice {
   public constructor(
     public readonly slice: Slice<string>,
-    public readonly def: SliceRegistryEntry,
+    public readonly def: ToolBarSliceRegistryEntry,
   ) {}
 }
 
 const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline) => {
   const slices = inline?.p1.layers;
-  const res: FormattingItem[] = [];
+  const res: ToolbarSlice[] = [];
   if (!slices) return res;
   const registry = txt.editor.getRegistry();
   for (const slice of slices) {
@@ -24,7 +24,7 @@ const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline) => {
     if (!def) continue;
     const isConfigurable = !!def.schema;
     if (!isConfigurable) continue;
-    res.push(new FormattingItem(slice, def));
+    res.push(new ToolbarSlice(slice, def));
   }
   return res;
 };
@@ -42,10 +42,17 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   if (!formatting.length) return;
 
   return (
-    <ContextPane>
-      {formatting.map(({slice, def}, index) => (
-        <div>{slice.type}, {def.name}</div>
-      ))}
+    <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))'}}>
+      <ContextSep />
+      {formatting.map(({slice, def}, index) => {
+        const menu = def.data().menu;
+        return (
+          <ContextItem inset icon={menu?.icon?.()} right={<div>right</div>} onClick={() => {}}>
+            {def.data().menu?.name ?? def.name}
+          </ContextItem>
+        );
+      })}
+      <ContextSep />
     </ContextPane>
   );
 };
