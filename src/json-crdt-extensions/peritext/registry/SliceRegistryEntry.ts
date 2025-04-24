@@ -14,6 +14,7 @@ export class SliceRegistryEntry<
   Behavior extends SliceBehavior = SliceBehavior,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
+  Data extends Record<string, unknown> = Record<string, unknown>,
 > implements Printable {
   public isInline(): boolean {
     return this.behavior !== SliceBehavior.Marker;
@@ -33,10 +34,10 @@ export class SliceRegistryEntry<
    *
    * @returns The custom data of the slice.
    */
-  public data(): Record<string, unknown> {
-    const data = sliceCustomData.get(this);
+  public data(): Data {
+    const data = sliceCustomData.get(this) as Data | undefined;
     if (data) return data;
-    const newData = {};
+    const newData = {} as Data;
     sliceCustomData.set(this, newData);
     return newData;
   }

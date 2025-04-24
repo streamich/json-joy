@@ -5,7 +5,7 @@ import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {CommonSliceType, type LeafBlock, type Peritext} from '../../../../json-crdt-extensions';
+import {CommonSliceType, TypeTag, type LeafBlock, type Peritext} from '../../../../json-crdt-extensions';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
@@ -13,7 +13,7 @@ import {NewSliceConfig} from './NewSliceConfig';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
-import type {MenuItem} from '../types';
+import type {MenuItem, SliceRegistryEntryData, ToolBarSliceRegistryEntry} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
 export class ToolbarState implements UiLifeCycles {
@@ -40,6 +40,54 @@ export class ToolbarState implements UiLifeCycles {
     this.txt = this.surface.dom.txt;
   }
 
+  private _setActiveLeafBlockId = () => {
+    const {activeLeafBlockId$, txt} = this;
+    const {overlay, editor} = txt;
+    const value = activeLeafBlockId$.getValue();
+    const cardinality = editor.cursorCard();
+    if (cardinality !== 1 || (cardinality === 1 && !editor.mainCursor()?.isCollapsed())) {
+      if (value) activeLeafBlockId$.next(null);
+      return;
+    }
+    const focus = editor.mainCursor()?.focus();
+    const marker = focus ? overlay.getOrNextLowerMarker(focus) : void 0;
+    const markerId = marker?.marker.start.id ?? txt.str.id;
+    const doSet = !value || compare(value, markerId) !== 0;
+    if (doSet) activeLeafBlockId$.next(markerId);
+  };
+
+  private setLastEv(lastEvent: PeritextEventDetailMap['change']['ev']) {
+    this.lastEvent = lastEvent;
+    this.lastEventTs = Date.now();
+  }
+
+  // private doShowInlineToolbar(): boolean {
+  //   const {surface, lastEvent} = this;
+  //   if (surface.dom!.cursor.mouseDown.value) return false;
+  //   if (!lastEvent) return false;
+  //   const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
+  //   if (!lastEventIsCursorEvent) return false;
+  //   if (!surface.peritext.editor.cursorCount()) return false;
+  //   return true;
+  // }
+
+  public startSliceConfig(tag: SliceTypeCon | string | number, menu?: MenuItem): NewSliceConfig | undefined {
+    const entry = this.txt.editor.getRegistry().get(tag);
+    const newSliceConfig = this.newSliceConfig;
+    if (!entry) {
+      newSliceConfig.next(void 0);
+      return;
+    }
+    const configState = new NewSliceConfig(this, entry, menu);
+    newSliceConfig.next(configState);
+    return configState;
+  }
+
+  // public registerSlice(tag: TypeTag, data: SliceRegistryEntryData): ToolBarSliceRegistryEntry {
+  //   const registry = this.txt.editor.getRegistry();
+  //   const entry = registry.get(tag);
+  // }
+
   /** ------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
@@ -48,6 +96,12 @@ export class ToolbarState implements UiLifeCycles {
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
     const el = dom.el;
+
+    const registry = this.txt.editor.getRegistry();
+    const linkEntry = registry.get(SliceTypeCon.a);
+    if (linkEntry) {
+      linkEntry.data().menu = this.linkMenuItem();
+    }
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
@@ -131,49 +185,6 @@ export class ToolbarState implements UiLifeCycles {
       et.removeEventListener('cursor', onCursor);
       unsubscribeKeyHistory();
     };
-  }
-
-  private _setActiveLeafBlockId = () => {
-    const {activeLeafBlockId$, txt} = this;
-    const {overlay, editor} = txt;
-    const value = activeLeafBlockId$.getValue();
-    const cardinality = editor.cursorCard();
-    if (cardinality !== 1 || (cardinality === 1 && !editor.mainCursor()?.isCollapsed())) {
-      if (value) activeLeafBlockId$.next(null);
-      return;
-    }
-    const focus = editor.mainCursor()?.focus();
-    const marker = focus ? overlay.getOrNextLowerMarker(focus) : void 0;
-    const markerId = marker?.marker.start.id ?? txt.str.id;
-    const doSet = !value || compare(value, markerId) !== 0;
-    if (doSet) activeLeafBlockId$.next(markerId);
-  };
-
-  private setLastEv(lastEvent: PeritextEventDetailMap['change']['ev']) {
-    this.lastEvent = lastEvent;
-    this.lastEventTs = Date.now();
-  }
-
-  // private doShowInlineToolbar(): boolean {
-  //   const {surface, lastEvent} = this;
-  //   if (surface.dom!.cursor.mouseDown.value) return false;
-  //   if (!lastEvent) return false;
-  //   const lastEventIsCursorEvent = lastEvent?.type === 'cursor';
-  //   if (!lastEventIsCursorEvent) return false;
-  //   if (!surface.peritext.editor.cursorCount()) return false;
-  //   return true;
-  // }
-
-  public startSliceConfig(tag: SliceTypeCon | string | number, menu?: MenuItem): NewSliceConfig | undefined {
-    const entry = this.txt.editor.getRegistry().get(tag);
-    const newSliceConfig = this.newSliceConfig;
-    if (!entry) {
-      newSliceConfig.next(void 0);
-      return;
-    }
-    const configState = new NewSliceConfig(this, entry, menu);
-    newSliceConfig.next(configState);
-    return configState;
   }
 
   // -------------------------------------------------------------------- Menus
