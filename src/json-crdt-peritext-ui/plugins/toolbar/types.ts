@@ -36,6 +36,12 @@ export type ToolBarSliceRegistryEntry<
   Schema extends NodeBuilder = NodeBuilder,
 > = SliceRegistryEntry<Behavior, Tag, Schema, SliceRegistryEntryData>;
 
+/**
+ * Formatting is a specific application of known formatting option to a range of
+ * text. Formatting is composed of a specific {@link Slice} which stores the
+ * state (location, data) of the formatting and a {@link ToolBarSliceRegistryEntry}
+ * which defines the formatting type and its behavior.
+ */
 export interface Formatting {
   slice: Slice<string>;
   def: ToolBarSliceRegistryEntry;

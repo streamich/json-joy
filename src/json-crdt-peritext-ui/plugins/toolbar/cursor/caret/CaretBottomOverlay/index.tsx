@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
-import {useToolbarPlugin} from '../../context';
+import {useToolbarPlugin} from '../../../context';
 import {SYMBOL} from 'nano-theme';
-import {FormattingGenericIcon} from '../../components/FormattingGenericIcon';
-import type {Inline, Peritext, Slice} from '../../../../../json-crdt-extensions';
-import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
-import type {Formatting, ToolBarSliceRegistryEntry} from '../../types';
+import {FormattingGenericIcon} from '../../../components/FormattingGenericIcon';
+import type {Inline, Peritext, Slice} from '../../../../../../json-crdt-extensions';
+import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
+import type {Formatting, ToolBarSliceRegistryEntry} from '../../../types';
  
 class FormattingImpl implements Formatting {
   public constructor(
