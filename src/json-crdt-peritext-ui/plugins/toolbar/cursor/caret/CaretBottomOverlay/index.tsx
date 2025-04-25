@@ -18,8 +18,8 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   const formattings = React.useMemo(() => state.getFormatting(), [state]);
   const selected = useBehaviorSubject(state.selected$);
 
-  if (selected) {
-    return (<FormattingDisplay formatting={selected} onClose={() => state.select(null)} />);
+  if (selected || formattings.length === 1) {
+    return (<FormattingDisplay formatting={selected || formattings[0]} onClose={!selected ? void 0 : () => state.select(null)} />);
   }
 
   return <FormattingList formattings={formattings} onSelect={state.select} />;
