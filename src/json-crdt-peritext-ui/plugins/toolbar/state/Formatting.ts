@@ -12,4 +12,8 @@ export class Formatting {
     public readonly slice: Slice<string>,
     public readonly behavior: ToolbarSliceBehavior,
   ) {}
+
+  public key(): number {
+    return this.slice.hash;
+  }
 }
