@@ -4,6 +4,7 @@ import {SliceFormatting} from '../../../state/formattings';
 import {ContextPaneHeader} from '../../../../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../../../../components/ContextPaneHeaderSep';
 import {FormattingTitle} from '../../../components/FormattingTitle';
+import {FormattingEdit} from '../../../formatting/FormattingEdit';
 
 export interface FormattingDisplayProps {
   formatting: SliceFormatting;
@@ -20,7 +21,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       <ContextSep />
-      This is formatting....
+      <FormattingEdit formatting={formatting} />
       <ContextSep />
     </ContextPane>
   );

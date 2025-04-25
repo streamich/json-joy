@@ -29,6 +29,15 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    * formatting is text color, this would be the color name.
    */
   previewText?: (formatting: SliceFormatting) => string;
+
+  /**
+   * Render a small card, which can be rendered in a popup, to preview and
+   * configure the formatting.
+   *
+   * @param formatting The formatting slice.
+   * @returns A React node to be used as a preview of the formatting.
+   */
+  renderCard?: (formatting: SliceFormatting) => React.ReactNode;
 }
 
 export type ToolbarSliceBehavior<
