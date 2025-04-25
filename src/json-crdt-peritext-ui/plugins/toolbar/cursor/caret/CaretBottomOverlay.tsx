@@ -2,6 +2,7 @@ import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {useToolbarPlugin} from '../../context';
 import {SYMBOL} from 'nano-theme';
+import {FormattingGenericIcon} from '../../components/FormattingGenericIcon';
 import type {Inline, Peritext, Slice} from '../../../../../json-crdt-extensions';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
 import type {Formatting, ToolBarSliceRegistryEntry} from '../../types';
@@ -54,7 +55,7 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
         return (
           <ContextItem inset
             icon={menu?.icon?.()}
-            right={data.renderIcon?.(formatting)}
+            right={data.renderIcon?.(formatting) || <FormattingGenericIcon formatting={formatting} />}
             onClick={() => {}}
           >
             {menu?.name ?? def.name}
