@@ -9,7 +9,25 @@ export type {MenuItem};
 
 export interface SliceRegistryEntryData extends Record<string, unknown> {
   menu?: MenuItem;
-  renderIcon?: (formatting: ToolbarSlice) => React.ReactNode;
+
+  /**
+   * A function that returns a React node to be used as an icon for the
+   * formatting.
+   *
+   * @param formatting The formatting slice.
+   * @returns A React node to be used as an icon for the formatting.
+   */
+  renderIcon?: (formatting: Formatting) => React.ReactNode;
+
+  /**
+   * Returns a short description of the formatting, for the user to easily
+   * differentiate it from other formattings.
+   *
+   * @param formatting The formatting slice.
+   * @returns A short description of the formatting. For example, if the
+   * formatting is text color, this would be the color name.
+   */
+  previewText?: (formatting: Formatting) => string;
 }
 
 export type ToolBarSliceRegistryEntry<
@@ -18,7 +36,7 @@ export type ToolBarSliceRegistryEntry<
   Schema extends NodeBuilder = NodeBuilder,
 > = SliceRegistryEntry<Behavior, Tag, Schema, SliceRegistryEntryData>;
 
-export interface ToolbarSlice {
+export interface Formatting {
   slice: Slice<string>;
   def: ToolBarSliceRegistryEntry;
 }

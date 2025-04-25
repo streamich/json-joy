@@ -1,20 +1,21 @@
 import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {useToolbarPlugin} from '../../context';
+import {SYMBOL} from 'nano-theme';
 import type {Inline, Peritext, Slice} from '../../../../../json-crdt-extensions';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
-import type {ToolbarSlice, ToolBarSliceRegistryEntry} from '../../types';
+import type {Formatting, ToolBarSliceRegistryEntry} from '../../types';
  
-class ToolbarSliceImpl implements ToolbarSlice {
+class FormattingImpl implements Formatting {
   public constructor(
     public readonly slice: Slice<string>,
     public readonly def: ToolBarSliceRegistryEntry,
   ) {}
 }
 
-const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline): ToolbarSliceImpl[] => {
+const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline): Formatting[] => {
   const slices = inline?.p1.layers;
-  const res: ToolbarSlice[] = [];
+  const res: Formatting[] = [];
   if (!slices) return res;
   const registry = txt.editor.getRegistry();
   for (const slice of slices) {
@@ -24,7 +25,7 @@ const getConfigurableFormattingItems = (txt: Peritext, inline?: Inline): Toolbar
     if (!def) continue;
     const isConfigurable = !!def.schema;
     if (!isConfigurable) continue;
-    res.push(new ToolbarSliceImpl(slice, def));
+    res.push(new FormattingImpl(slice, def));
   }
   return res;
 };
@@ -48,9 +49,20 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
         const {def, slice} = formatting;
         const data = def.data();
         const menu = data.menu;
+        const previewText = data.previewText?.(formatting) || '';
+        const previewTextFormatted = previewText.length < 20 ? previewText : `${previewText.slice(0, 20)}${SYMBOL.ELLIPSIS}`;
         return (
-          <ContextItem inset icon={menu?.icon?.()} right={data.renderIcon?.(formatting)} onClick={() => {}}>
+          <ContextItem inset
+            icon={menu?.icon?.()}
+            right={data.renderIcon?.(formatting)}
+            onClick={() => {}}
+          >
             {menu?.name ?? def.name}
+            {!!previewTextFormatted && (
+              <span style={{opacity: 0.5}}>
+                {previewTextFormatted}
+              </span>
+            )}
           </ContextItem>
         );
       })}

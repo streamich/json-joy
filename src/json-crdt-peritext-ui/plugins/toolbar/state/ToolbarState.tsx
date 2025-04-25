@@ -108,6 +108,11 @@ export class ToolbarState implements UiLifeCycles {
         if (!data || typeof data !== 'object') return;
         return <Favicon url={data.href} />;
       };
+      data.previewText = ({slice}) => {
+        const data = slice.data() as {href: string};
+        if (!data || typeof data !== 'object') return '';
+        return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
+      };
     }
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {
