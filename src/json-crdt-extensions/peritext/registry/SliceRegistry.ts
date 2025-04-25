@@ -1,5 +1,5 @@
 import {s} from '../../../json-crdt-patch';
-import {SliceBehavior, SliceTypeCon as TAG} from '../slice/constants';
+import {SliceStacking, SliceTypeCon as TAG} from '../slice/constants';
 import {CommonSliceType, type TypeTag} from '../slice';
 import {SliceRegistryEntry} from './SliceRegistryEntry';
 import {printTree} from 'tree-dump/lib/printTree';
@@ -25,13 +25,13 @@ export class SliceRegistry implements Printable {
   public static readonly withCommon = (): SliceRegistry => {
     const undefSchema = s.con(undefined);
     const registry = new SliceRegistry();
-    // --------------------------------------- Inline elements with "One" behavior
+    //------------------------------ Inline elements with "One" stacking behavior
     const i0 = <Tag extends TypeTag = TypeTag>(
       tag: Tag,
       name: string,
-      fromHtml?: SliceRegistryEntry<SliceBehavior.One, Tag, typeof undefSchema>['fromHtml'],
+      fromHtml?: SliceRegistryEntry<SliceStacking.One, Tag, typeof undefSchema>['fromHtml'],
     ): void => {
-      registry.add(new SliceRegistryEntry(SliceBehavior.One, tag, name, void 0, false, void 0, fromHtml));
+      registry.add(new SliceRegistryEntry(SliceStacking.One, tag, name, void 0, false, void 0, fromHtml));
     };
     const i1 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string, htmlTags: string[]): void => {
       const fromHtml = {} as Record<any, any>;
@@ -51,13 +51,13 @@ export class SliceRegistry implements Printable {
     i0(TAG.sub, 'Subscript');
     i0(TAG.math, 'Math');
   
-    // -------------------------------------- Inline elements with "Many" behavior
+    // --------------------------- Inline elements with "Many" stacking behavior
     const aSchema = s.obj({}, {
       href: s.str<string>(''),
       title: s.str<string>(''),
     });
     registry.add(
-      new SliceRegistryEntry(SliceBehavior.Many, TAG.a, 'Link', aSchema, false, void 0, {
+      new SliceRegistryEntry(SliceStacking.Many, TAG.a, 'Link', aSchema, false, void 0, {
         a: (jsonml) => {
           const attr = jsonml[1] || {};
           const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
@@ -69,7 +69,7 @@ export class SliceRegistry implements Printable {
       }),
     );
   
-    // TODO: add more default annotations with "Many" behavior
+    // TODO: add more default annotations with "Many" stacking behavior
     // comment = SliceTypeCon.comment,
     // font = SliceTypeCon.font,
     // col = SliceTypeCon.col,
@@ -81,7 +81,7 @@ export class SliceRegistry implements Printable {
     // iembed = SliceTypeCon.iembed,
     // bookmark = SliceTypeCon.bookmark,
   
-    // ------------------------------------- Block elements with "Marker" behavior
+    // -------------------------- Block elements with "Marker" stacking behavior
     const commonBlockSchema = s.obj(
       {},
       {
@@ -90,7 +90,7 @@ export class SliceRegistry implements Printable {
       },
     );
     const b0 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string, container: boolean) => {
-      registry.add(new SliceRegistryEntry(SliceBehavior.Marker, tag, name, commonBlockSchema, container));
+      registry.add(new SliceRegistryEntry(SliceStacking.Marker, tag, name, commonBlockSchema, container));
     };
     b0(TAG.p, 'Paragraph', false);
     b0(TAG.blockquote, 'Blockquote', true);
@@ -176,7 +176,7 @@ export class SliceRegistry implements Printable {
           if (entry.isInline()) {
             const attr = result[1] ?? (result[1] = {});
             attr.inline = entry.isInline();
-            attr.behavior = !attr.inline ? SliceBehavior.Marker : (entry.behavior ?? SliceBehavior.Many);
+            attr.stacking = !attr.inline ? SliceStacking.Marker : (entry.stacking ?? SliceStacking.Many);
           }
           return result;
         }

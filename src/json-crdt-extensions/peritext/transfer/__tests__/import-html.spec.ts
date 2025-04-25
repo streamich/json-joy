@@ -1,7 +1,7 @@
 import {SliceRegistry} from '../../registry/SliceRegistry';
 import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
-import {SliceBehavior, SliceHeaderShift} from '../../slice/constants';
+import {SliceStacking, SliceHeaderShift} from '../../slice/constants';
 import {fromHtml, toViewRange} from '../import-html';
 
 describe('.fromHtml()', () => {
@@ -31,9 +31,9 @@ describe('.fromHtml()', () => {
       [
         CommonSliceType.p,
         null,
-        [CommonSliceType.i, {behavior: SliceBehavior.One, inline: true}, 'italic'],
+        [CommonSliceType.i, {stacking: SliceStacking.One, inline: true}, 'italic'],
         ' text, ',
-        [CommonSliceType.i, {behavior: SliceBehavior.One, inline: true}, 'more italic'],
+        [CommonSliceType.i, {stacking: SliceStacking.One, inline: true}, 'more italic'],
       ],
     ]);
   });
@@ -86,8 +86,8 @@ describe('.fromHtml()', () => {
       [
         CommonSliceType.p,
         null,
-        [CommonSliceType.b, {behavior: SliceBehavior.One, inline: true}, '1'],
-        [CommonSliceType.code, {behavior: SliceBehavior.One, inline: true}, '2'],
+        [CommonSliceType.b, {stacking: SliceStacking.One, inline: true}, '1'],
+        [CommonSliceType.code, {stacking: SliceStacking.One, inline: true}, '2'],
         '3',
       ],
       [CommonSliceType.blockquote, null, [CommonSliceType.p, null, '2b||!2b']],
@@ -167,7 +167,7 @@ describe('.toViewRange()', () => {
       0,
       [
         [
-          (SliceBehavior.One << SliceHeaderShift.Behavior) +
+          (SliceStacking.One << SliceHeaderShift.Stacking) +
             (Anchor.Before << SliceHeaderShift.X1Anchor) +
             (Anchor.After << SliceHeaderShift.X2Anchor),
           13,

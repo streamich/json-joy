@@ -1,7 +1,7 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
-import {SliceBehavior, SliceHeaderShift} from '../../slice/constants';
+import {SliceStacking, SliceHeaderShift} from '../../slice/constants';
 import {create} from '../../transfer/create';
 import type {ViewRange} from '../types';
 
@@ -71,7 +71,7 @@ const testSuite = (setup: () => Kit) => {
       peritext.refresh();
       const json = editor.export(range);
       const header =
-        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (SliceStacking.Marker << SliceHeaderShift.Stacking) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
       expect(json).toEqual(['ij\nkl', 8, [[header, 10, 10, CommonSliceType.p]]]);
@@ -89,15 +89,15 @@ const testSuite = (setup: () => Kit) => {
       peritext.refresh();
       const json = editor.export(range);
       const pHeader =
-        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (SliceStacking.Marker << SliceHeaderShift.Stacking) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
       const iHeader =
-        (SliceBehavior.One << SliceHeaderShift.Behavior) +
+        (SliceStacking.One << SliceHeaderShift.Stacking) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.After << SliceHeaderShift.X2Anchor);
       const blockquoteHeader =
-        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (SliceStacking.Marker << SliceHeaderShift.Stacking) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
       expect(json).toEqual([
@@ -144,8 +144,8 @@ const testSuite = (setup: () => Kit) => {
       const json = editor.exportStyle(editor.cursor);
       expect(json.length).toBe(2);
       expect(json).toEqual([
-        [SliceBehavior.One, 'bold'],
-        [SliceBehavior.One, 'italic'],
+        [SliceStacking.One, 'bold'],
+        [SliceStacking.One, 'italic'],
       ]);
     });
   });

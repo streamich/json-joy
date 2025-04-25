@@ -1,4 +1,4 @@
-import {SliceBehavior} from '../slice/constants';
+import {SliceStacking} from '../slice/constants';
 import {formatType} from '../slice/util';
 import type {PeritextMlElement} from '../block/types';
 import type {NodeBuilder} from '../../../json-crdt-patch';
@@ -11,13 +11,13 @@ import type {TypeTag} from '../slice';
 const sliceCustomData = new WeakMap<SliceRegistryEntry<any, any, any>, Record<string, unknown>>();
 
 export class SliceRegistryEntry<
-  Behavior extends SliceBehavior = SliceBehavior,
+  Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
   Data extends Record<string, unknown> = Record<string, unknown>,
 > implements Printable {
   public isInline(): boolean {
-    return this.behavior !== SliceBehavior.Marker;
+    return this.stacking !== SliceStacking.Marker;
   }
 
   /**
@@ -48,7 +48,7 @@ export class SliceRegistryEntry<
      * an inline element, whether multiple instances of the same tag are allowed
      * to be applied to a range of tex - "Many", or only one instance - "One".
      */
-    public readonly behavior: Behavior,
+    public readonly stacking: Stacking,
 
     /**
      * The tag name of this slice. The tag is one step in the type path of the
@@ -101,7 +101,7 @@ export class SliceRegistryEntry<
           PeritextMlElement<
             Tag,
             JsonNodeView<SchemaToJsonNode<Schema>>,
-            Behavior extends SliceBehavior.Marker ? false : true
+            Stacking extends SliceStacking.Marker ? false : true
           >
         >
       | undefined = void 0,
@@ -119,7 +119,7 @@ export class SliceRegistryEntry<
         PeritextMlElement<
           Tag,
           JsonNodeView<SchemaToJsonNode<Schema>>,
-          Behavior extends SliceBehavior.Marker ? false : true
+          Stacking extends SliceStacking.Marker ? false : true
         >
       >;
     },
@@ -128,6 +128,6 @@ export class SliceRegistryEntry<
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
-    return `${formatType(this.tag)} (${this.behavior}) ${JSON.stringify(Object.keys(this.data))}`;
+    return `${formatType(this.tag)} (${this.stacking}) ${JSON.stringify(Object.keys(this.data))}`;
   }
 }

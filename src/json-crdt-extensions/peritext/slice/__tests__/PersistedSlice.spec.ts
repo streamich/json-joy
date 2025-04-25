@@ -1,4 +1,4 @@
-import {SliceBehavior} from '../constants';
+import {SliceStacking} from '../constants';
 import {setup} from './setup';
 
 const setupSlice = () => {
@@ -11,7 +11,7 @@ const setupSlice = () => {
 test('can read slice data', () => {
   const {range, slice} = setupSlice();
   expect(slice.isSplit()).toBe(true);
-  expect(slice.behavior).toBe(SliceBehavior.Marker);
+  expect(slice.stacking).toBe(SliceStacking.Marker);
   expect(slice.type).toBe(0);
   expect(slice.data()).toBe(undefined);
   expect(slice.start).not.toBe(range.start);
@@ -34,9 +34,9 @@ describe('.update()', () => {
     });
   };
 
-  testUpdate('behavior', ({slice}) => {
-    slice.update({behavior: SliceBehavior.Erase});
-    expect(slice.behavior).toBe(SliceBehavior.Erase);
+  testUpdate('stacking', ({slice}) => {
+    slice.update({stacking: SliceStacking.Erase});
+    expect(slice.stacking).toBe(SliceStacking.Erase);
   });
 
   testUpdate('type', ({slice}) => {
