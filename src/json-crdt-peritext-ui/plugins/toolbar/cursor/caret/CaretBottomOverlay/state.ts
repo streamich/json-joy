@@ -28,7 +28,7 @@ export class CaretBottomState {
     return res;
   };
 
-  public readonly onSelect = (formatting: SliceFormatting) => {
+  public readonly select = (formatting: SliceFormatting | null) => {
     this.selected$.next(formatting);
   };
 }

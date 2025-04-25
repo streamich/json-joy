@@ -19,8 +19,8 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   const selected = useBehaviorSubject(state.selected$);
 
   if (selected) {
-    return (<FormattingDisplay formatting={selected} />);
+    return (<FormattingDisplay formatting={selected} onClose={() => state.select(null)} />);
   }
 
-  return <FormattingList formattings={formattings} onSelect={state.onSelect} />;
+  return <FormattingList formattings={formattings} onSelect={state.select} />;
 };

@@ -15,7 +15,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
 
   return (
     <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))'}}>
-      <ContextPaneHeader short onCloseClick={onClose}>
+      <ContextPaneHeader short onBackClick={onClose}>
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
