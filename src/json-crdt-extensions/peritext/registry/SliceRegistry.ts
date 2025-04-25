@@ -1,7 +1,7 @@
 import {s} from '../../../json-crdt-patch';
 import {SliceStacking, SliceTypeCon as TAG} from '../slice/constants';
 import {CommonSliceType, type TypeTag} from '../slice';
-import {SliceRegistryEntry} from './SliceRegistryEntry';
+import {SliceBehavior} from './SliceBehavior';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {PeritextMlElement} from '../block/types';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';
@@ -12,7 +12,7 @@ import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 
 /**
  * Slice registry contains a record of possible inline an block formatting
- * annotations. Each entry in the registry is a {@link SliceRegistryEntry} that
+ * annotations. Each entry in the registry is a {@link SliceBehavior} that
  * specifies the behavior, tag, and other properties of the slice.
  *
  * @todo Consider moving the registry under the `/transfer` directory. Or maybe
@@ -29,9 +29,9 @@ export class SliceRegistry implements Printable {
     const i0 = <Tag extends TypeTag = TypeTag>(
       tag: Tag,
       name: string,
-      fromHtml?: SliceRegistryEntry<SliceStacking.One, Tag, typeof undefSchema>['fromHtml'],
+      fromHtml?: SliceBehavior<SliceStacking.One, Tag, typeof undefSchema>['fromHtml'],
     ): void => {
-      registry.add(new SliceRegistryEntry(SliceStacking.One, tag, name, void 0, false, void 0, fromHtml));
+      registry.add(new SliceBehavior(SliceStacking.One, tag, name, void 0, false, void 0, fromHtml));
     };
     const i1 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string, htmlTags: string[]): void => {
       const fromHtml = {} as Record<any, any>;
@@ -57,7 +57,7 @@ export class SliceRegistry implements Printable {
       title: s.str<string>(''),
     });
     registry.add(
-      new SliceRegistryEntry(SliceStacking.Many, TAG.a, 'Link', aSchema, false, void 0, {
+      new SliceBehavior(SliceStacking.Many, TAG.a, 'Link', aSchema, false, void 0, {
         a: (jsonml) => {
           const attr = jsonml[1] || {};
           const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
@@ -90,7 +90,7 @@ export class SliceRegistry implements Printable {
       },
     );
     const b0 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string, container: boolean) => {
-      registry.add(new SliceRegistryEntry(SliceStacking.Marker, tag, name, commonBlockSchema, container));
+      registry.add(new SliceBehavior(SliceStacking.Marker, tag, name, commonBlockSchema, container));
     };
     b0(TAG.p, 'Paragraph', false);
     b0(TAG.blockquote, 'Blockquote', true);
@@ -128,15 +128,15 @@ export class SliceRegistry implements Printable {
   };
   
 
-  private map: Map<TypeTag, SliceRegistryEntry> = new Map();
-  private _fromHtml: Map<string, [entry: SliceRegistryEntry, converter: FromHtmlConverter][]> = new Map();
+  private map: Map<TypeTag, SliceBehavior> = new Map();
+  private _fromHtml: Map<string, [entry: SliceBehavior, converter: FromHtmlConverter][]> = new Map();
 
   public clear(): void {
     this.map.clear();
     this._fromHtml.clear();
   }
 
-  public add(entry: SliceRegistryEntry<any, any, any>): void {
+  public add(entry: SliceBehavior<any, any, any>): void {
     const {tag, fromHtml} = entry;
     this.map.set(tag, entry);
     const _fromHtml = this._fromHtml;
@@ -152,7 +152,7 @@ export class SliceRegistry implements Printable {
     if (tagStr && typeof tagStr === 'string') _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
   }
 
-  public get(tag: TypeTag): SliceRegistryEntry | undefined {
+  public get(tag: TypeTag): SliceBehavior | undefined {
     return this.map.get(tag);
   }
 

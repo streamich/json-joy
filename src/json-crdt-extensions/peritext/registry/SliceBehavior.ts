@@ -8,9 +8,9 @@ import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {Printable} from 'tree-dump';
 import type {TypeTag} from '../slice';
 
-const sliceCustomData = new WeakMap<SliceRegistryEntry<any, any, any>, Record<string, unknown>>();
+const sliceCustomData = new WeakMap<SliceBehavior<any, any, any>, Record<string, unknown>>();
 
-export class SliceRegistryEntry<
+export class SliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,

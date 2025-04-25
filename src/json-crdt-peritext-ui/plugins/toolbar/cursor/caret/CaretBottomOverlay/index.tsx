@@ -5,12 +5,12 @@ import {SYMBOL} from 'nano-theme';
 import {FormattingGenericIcon} from '../../../components/FormattingGenericIcon';
 import type {Inline, Peritext, Slice} from '../../../../../../json-crdt-extensions';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
-import type {Formatting, ToolBarSliceRegistryEntry} from '../../../types';
+import type {Formatting, ToolbarSliceBehavior} from '../../../types';
  
 class FormattingImpl implements Formatting {
   public constructor(
     public readonly slice: Slice<string>,
-    public readonly def: ToolBarSliceRegistryEntry,
+    public readonly def: ToolbarSliceBehavior,
   ) {}
 }
 

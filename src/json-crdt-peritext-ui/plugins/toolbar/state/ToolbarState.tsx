@@ -14,7 +14,7 @@ import {Favicon} from '../../../components/Favicon';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
-import type {MenuItem, SliceRegistryEntryData, ToolBarSliceRegistryEntry} from '../types';
+import type {MenuItem, SliceRegistryEntryData} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
 export class ToolbarState implements UiLifeCycles {
