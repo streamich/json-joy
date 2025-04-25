@@ -2,11 +2,11 @@ import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
 import {FormattingGenericIcon} from '../../../components/FormattingGenericIcon';
-import {Formatting} from '../../../state/Formatting';
+import {SliceFormatting} from '../../../state/formattings';
 
 export interface FormattingListProps {
-  formattings: Formatting[];
-  onSelect: (formatting: Formatting) => void;
+  formattings: SliceFormatting[];
+  onSelect: (formatting: SliceFormatting) => void;
 }
 
 export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSelect}) => {

@@ -1,19 +1,19 @@
 import {BehaviorSubject} from 'rxjs';
-import {Formatting} from '../../../state/Formatting';
+import {SliceFormatting} from '../../../state/formattings';
 import type {Inline} from '../../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../../state';
 
 export class CaretBottomState {
-  public readonly selected$ = new BehaviorSubject<Formatting | null>(null);
+  public readonly selected$ = new BehaviorSubject<SliceFormatting | null>(null);
 
   public constructor(
     public readonly state: ToolbarState,
     public readonly inline: Inline | undefined,
   ) {}
 
-  public getFormatting(inline: Inline | undefined = this.inline): Formatting[] {
+  public getFormatting(inline: Inline | undefined = this.inline): SliceFormatting[] {
     const slices = inline?.p1.layers;
-    const res: Formatting[] = [];
+    const res: SliceFormatting[] = [];
     if (!slices) return res;
     const registry = this.state.txt.editor.getRegistry();
     for (const slice of slices) {
@@ -23,12 +23,12 @@ export class CaretBottomState {
       if (!behavior) continue;
       const isConfigurable = !!behavior.schema;
       if (!isConfigurable) continue;
-      res.push(new Formatting(slice, behavior));
+      res.push(new SliceFormatting(behavior, slice));
     }
     return res;
   };
 
-  public readonly onSelect = (formatting: Formatting) => {
+  public readonly onSelect = (formatting: SliceFormatting) => {
     this.selected$.next(formatting);
   };
 }

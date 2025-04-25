@@ -3,6 +3,7 @@ import {useToolbarPlugin} from '../../../context';
 import {CaretBottomState} from './state';
 import {FormattingList} from './FormattingList';
 import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {FormattingDisplay} from './FormattingDisplay';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
 export interface CaretBottomOverlayProps extends CaretViewProps {
@@ -18,7 +19,7 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   const selected = useBehaviorSubject(state.selected$);
 
   if (selected) {
-    return (<div>selected: {selected.slice.toString()}</div>);
+    return (<FormattingDisplay formatting={selected} />);
   }
 
   return <FormattingList formattings={formattings} onSelect={state.onSelect} />;

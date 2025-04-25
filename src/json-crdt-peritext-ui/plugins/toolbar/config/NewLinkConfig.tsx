@@ -4,7 +4,6 @@ import {ContextTitle} from 'nice-ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from 'nice-ui/lib/4-card/EmptyState';
 import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
 import {useToolbarPlugin} from '../context';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {CollaborativeInput} from '../../../components/CollaborativeInput';
 import {Input} from '../../../components/Input';
 import {useSyncStore} from '../../../web/react/hooks';
@@ -15,7 +14,8 @@ import {rule} from 'nano-theme';
 import {parseUrl} from '../../../web/util';
 import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import {useStyles} from 'nice-ui/lib/styles/context';
-import type {SliceConfigState} from '../state/types';
+import {FormattingTitle} from '../components/FormattingTitle';
+import type {NewFormatting} from '../state/formattings';
 
 const blockClass = rule({
   maxW: '600px',
@@ -50,41 +50,26 @@ const iconClass = rule({
 });
 
 export interface NewLinkConfigProps {
-  config: SliceConfigState<any>;
+  formatting: NewFormatting;
   onSave: () => void;
 }
 
-export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({config, onSave}) => {
+export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({formatting, onSave}) => {
   const styles = useStyles();
   const {toolbar} = useToolbarPlugin();
   const inpRef = React.useRef<HTMLInputElement | null>(null);
-  const api = config.conf();
-  const href = React.useMemo(() => () => config.conf().str(['href']), [config]);
-  // const title = React.useMemo(() => () => config.conf().str(['title']), [config]);
+  const api = formatting.conf();
+  const href = React.useMemo(() => () => formatting.conf().str(['href']), [formatting]);
   const hrefView = useSyncStore(href().events);
   const parsed = React.useMemo(() => parseUrl(hrefView), [hrefView]);
-
-  const icon = config.menu?.icon?.();
-  const name = config.menu?.name ?? config.def.name;
 
   return (
     <form className={blockClass} onSubmit={(e) => {
       e.preventDefault();
       onSave();
     }}>
-      <ContextPaneHeader short onCloseClick={() => toolbar.newSliceConfig.next(void 0)}>
-        <div className={headerClass}>
-          {icon ? (
-            <Flex style={{alignItems: 'center'}}>
-              <div className={iconClass}>
-                <div>{icon}</div>
-              </div>
-              {name}
-            </Flex>
-          ) : (
-            name
-          )}
-        </div>
+      <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
+        <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
 

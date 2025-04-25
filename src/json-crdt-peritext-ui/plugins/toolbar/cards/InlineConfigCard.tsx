@@ -2,14 +2,14 @@ import * as React from 'react';
 import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
 import {NewLinkConfig} from '../config/NewLinkConfig';
 import {useToolbarPlugin} from '../context';
-import type {SliceConfigState} from '../state/types';
+import type {NewFormatting} from '../state/formattings';
 
 export interface InlineConfigCardProps {
-  config: SliceConfigState<any>;
+  formatting: NewFormatting;
   onSave: () => void;
 }
 
-export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config, onSave}) => {
+export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({formatting, onSave}) => {
   const {toolbar} = useToolbarPlugin();
 
   return (
@@ -17,11 +17,11 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({config, onSav
       if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
-        toolbar.newSliceConfig.next(void 0);
+        toolbar.newSlice.next(void 0);
       }
     }}>
       <ContextPane style={{display: 'block', minWidth: 'calc(min(600px, max(50vw, 260px)))'}}>
-        <NewLinkConfig config={config} onSave={onSave} />
+        <NewLinkConfig formatting={formatting} onSave={onSave} />
       </ContextPane>
     </div>
   );

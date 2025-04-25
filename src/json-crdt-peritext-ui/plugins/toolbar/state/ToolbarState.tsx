@@ -5,12 +5,12 @@ import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
-import {CommonSliceType, TypeTag, type LeafBlock, type Peritext} from '../../../../json-crdt-extensions';
+import {CommonSliceType, type LeafBlock, type Peritext} from '../../../../json-crdt-extensions';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
-import {NewSliceConfig} from './NewSliceConfig';
 import {Favicon} from '../../../components/Favicon';
+import {NewFormatting} from './formattings';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -27,7 +27,7 @@ export class ToolbarState implements UiLifeCycles {
    * New slice configuration. This is used for new slices which are not yet
    * applied to the text as they need to be configured first.
    */
-  public readonly newSliceConfig = new ValueSyncStore<NewSliceConfig | undefined>(void 0);
+  public readonly newSlice = new ValueSyncStore<NewFormatting | undefined>(void 0);
 
   /**
    * The ID of the active (where the main cursor or focus is placed) leaf block.
@@ -72,16 +72,19 @@ export class ToolbarState implements UiLifeCycles {
   //   return true;
   // }
 
-  public startSliceConfig(tag: SliceTypeCon | string | number, menu?: MenuItem): NewSliceConfig | undefined {
-    const entry = this.txt.editor.getRegistry().get(tag);
-    const newSliceConfig = this.newSliceConfig;
-    if (!entry) {
-      newSliceConfig.next(void 0);
+  public startSliceConfig(tag: SliceTypeCon | string | number, menu?: MenuItem): NewFormatting | undefined {
+    const editor = this.txt.editor;
+    const behavior = editor.getRegistry().get(tag);
+    const range = editor.mainCursor()?.range();
+    if (!range) return;
+    const newSlice = this.newSlice;
+    if (!behavior) {
+      newSlice.next(void 0);
       return;
     }
-    const configState = new NewSliceConfig(this, entry, menu);
-    newSliceConfig.next(configState);
-    return configState;
+    const formatting = new NewFormatting(behavior, range, this);
+    newSlice.next(formatting);
+    return formatting;
   }
 
   // public registerSlice(tag: TypeTag, data: SliceRegistryEntryData): ToolBarSliceRegistryEntry {
@@ -92,7 +95,7 @@ export class ToolbarState implements UiLifeCycles {
   /** ------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const {surface, showInlineToolbar, newSliceConfig} = this;
+    const {surface, showInlineToolbar, newSlice: newSliceConfig} = this;
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
@@ -103,12 +106,12 @@ export class ToolbarState implements UiLifeCycles {
     if (linkEntry) {
       const data = linkEntry.data() as SliceRegistryEntryData;
       data.menu = this.linkMenuItem();
-      data.renderIcon = ({slice}) => {
+      data.renderIcon = ({range: slice}) => {
         const data = slice.data() as {href: string};
         if (!data || typeof data !== 'object') return;
         return <Favicon url={data.href} />;
       };
-      data.previewText = ({slice}) => {
+      data.previewText = ({range: slice}) => {
         const data = slice.data() as {href: string};
         if (!data || typeof data !== 'object') return '';
         return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
@@ -151,7 +154,7 @@ export class ToolbarState implements UiLifeCycles {
         case 'k': {
           if (event.metaKey) {
             const editor = this.txt.editor;
-            if (editor.hasCursor() && !editor.mainCursor()?.isCollapsed() && (!newSliceConfig.value || newSliceConfig.value.def.tag !== SliceTypeCon.a)) {
+            if (editor.hasCursor() && !editor.mainCursor()?.isCollapsed() && (!newSliceConfig.value || newSliceConfig.value.behavior.tag !== SliceTypeCon.a)) {
               event.stopPropagation();
               event.preventDefault
               this.startSliceConfig(SliceTypeCon.a, this.linkMenuItem());
@@ -167,7 +170,7 @@ export class ToolbarState implements UiLifeCycles {
       if (newSliceConfig.value) {
         const isFocusMove = detail.move && detail.move.length === 1 && detail.move[0][0] === 'focus';
         if (!isFocusMove) {
-          this.newSliceConfig.next(void 0);
+          this.newSlice.next(void 0);
         }
       }
     };
