@@ -2,8 +2,9 @@ import type * as React from 'react';
 import type {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
 import type {SliceBehavior} from '../../../json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {SliceStacking} from '../../../json-crdt-extensions/peritext/slice/constants';
-import type {Slice, TypeTag} from '../../../json-crdt-extensions';
+import type {TypeTag} from '../../../json-crdt-extensions';
 import type {NodeBuilder} from '../../../json-crdt-patch';
+import type {Formatting} from './state/Formatting';
 
 export type {MenuItem};
 
@@ -35,14 +36,3 @@ export type ToolbarSliceBehavior<
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
 > = SliceBehavior<Stacking, Tag, Schema, SliceRegistryEntryData>;
-
-/**
- * Formatting is a specific application of known formatting option to a range of
- * text. Formatting is composed of a specific {@link Slice} which stores the
- * state (location, data) of the formatting and a {@link ToolbarSliceBehavior}
- * which defines the formatting type and its behavior.
- */
-export interface Formatting {
-  slice: Slice<string>;
-  def: ToolbarSliceBehavior;
-}
