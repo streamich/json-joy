@@ -11,6 +11,7 @@ import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
 import {Favicon} from '../../../components/Favicon';
 import {NewFormatting} from './formattings';
+import {UrlDisplayLayout} from '../components/UrlDisplayLayout';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -117,7 +118,9 @@ export class ToolbarState implements UiLifeCycles {
         return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
       };
       data.renderCard = (formatting) => {
-        return <div>LINK EDIT</div>;
+        const data = formatting.range.data() as {href: string};
+        if (!data || typeof data !== 'object') return;
+        return <UrlDisplayLayout url={data.href} />;
       };
     }
 

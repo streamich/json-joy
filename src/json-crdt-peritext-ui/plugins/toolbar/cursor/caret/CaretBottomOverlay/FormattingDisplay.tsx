@@ -15,14 +15,16 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
 
 
   return (
-    <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))'}}>
+    <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))', maxWidth: 600}}>
       <ContextPaneHeader short onBackClick={onClose}>
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
-      <ContextSep />
-      <FormattingEdit formatting={formatting} />
-      <ContextSep />
+      {/* <ContextSep /> */}
+      <div style={{padding: '4px 16px 16px'}}>
+        <FormattingEdit formatting={formatting} />
+      </div>
+      {/* <ContextSep /> */}
     </ContextPane>
   );
 };
