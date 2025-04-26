@@ -11,6 +11,7 @@ import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {useToolbarPlugin} from '../../../context';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -18,17 +19,24 @@ export interface FormattingDisplayProps {
 }
 
 export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
+  const {surface} = useToolbarPlugin();
   const [t] = useT();
 
   return (
-    <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))', maxWidth: 600}}>
+    <ContextPane style={{minWidth: 'calc(max(300px, min(400px, 80vw)))', maxWidth: 600}}>
       <ContextPaneHeader
         short
         onBackClick={onClose}
         right={(
           <Flex style={{justifyContent: 'flex-end'}}>
             <BasicTooltip renderTooltip={() => t('Delete')}>
-              <BasicButton color='red' size={32}>
+              <BasicButton size={32} onClick={() => {
+                surface.events.et.format({
+                  at: formatting.range,
+                  action: 'del',
+                });
+                onClose?.();
+              }}>
                 <Iconista set={'lucide'} icon={'trash'} width={16} height={16} />
               </BasicButton>
             </BasicTooltip>

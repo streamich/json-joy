@@ -1,6 +1,6 @@
+import {BehaviorSubject} from 'rxjs';
 import {Log} from '../../../json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
-import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {PeritextPlugin} from '../react/types';
 import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
 import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
@@ -10,12 +10,12 @@ export class PeritextSurfaceState implements UiLifeCycles {
   public readonly peritext: Peritext;
   public readonly dom: DomController;
   public readonly log: Log;
-  public readonly render = new ValueSyncStore<number>(0);
+  public readonly render$ = new BehaviorSubject<number>(0);
 
   public readonly rerender = (): void => {
-    const {peritext, render} = this;
+    const {peritext, render$} = this;
     peritext.refresh();
-    render.next(render.value + 1);
+    render$.next(render$.getValue() + 1);
   };
 
   constructor(

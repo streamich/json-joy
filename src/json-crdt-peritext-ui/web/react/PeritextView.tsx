@@ -7,7 +7,7 @@ import {PeritextSurfaceState} from '../state';
 import {createEvents} from '../../events';
 import {context} from './context';
 import {BlockView} from './BlockView';
-import {useSyncStore} from './hooks';
+import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
 import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../../json-crdt-extensions';
 
@@ -86,7 +86,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   const {state, div} = props;
 
   // Subscribe to re-render events.
-  useSyncStore(state.render);
+  useBehaviorSubject(state.render$);
 
   // Render the main body of the editor.
   const block = state.peritext.blocks.root;

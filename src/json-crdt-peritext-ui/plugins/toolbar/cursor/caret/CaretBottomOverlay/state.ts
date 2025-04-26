@@ -3,6 +3,7 @@ import {SavedFormatting} from '../../../state/formattings';
 import {PersistedSlice} from '../../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Inline} from '../../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../../state';
+import {subject} from '../../../../../util/rx';
 
 export class CaretBottomState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
@@ -12,22 +13,24 @@ export class CaretBottomState {
     public readonly inline: Inline | undefined,
   ) {}
 
-  public getFormatting(inline: Inline | undefined = this.inline): SavedFormatting[] {
-    const slices = inline?.p1.layers;
-    const res: SavedFormatting[] = [];
-    if (!slices) return res;
-    const registry = this.state.txt.editor.getRegistry();
-    for (const slice of slices) {
-      const tag = slice.type;
-      if (typeof tag !== 'number' && typeof tag !== 'string') continue;
-      const behavior = registry.get(tag);
-      if (!behavior) continue;
-      const isConfigurable = !!behavior.schema;
-      if (!isConfigurable) continue;
-      if (!(slice instanceof PersistedSlice)) continue;
-      res.push(new SavedFormatting(behavior, slice));
-    }
-    return res;
+  public getFormattings$(inline: Inline | undefined = this.inline): BehaviorSubject<SavedFormatting[]> {
+    return subject(this.state.surface.render$, () => {
+      const slices = inline?.p1.layers;
+      const res: SavedFormatting[] = [];
+      if (!slices) return res;
+      const registry = this.state.txt.editor.getRegistry();
+      for (const slice of slices) {
+        const tag = slice.type;
+        if (typeof tag !== 'number' && typeof tag !== 'string') continue;
+        const behavior = registry.get(tag);
+        if (!behavior) continue;
+        const isConfigurable = !!behavior.schema;
+        if (!isConfigurable) continue;
+        if (!(slice instanceof PersistedSlice)) continue;
+        res.push(new SavedFormatting(behavior, slice));
+      }
+      return res;
+    });
   };
 
   public readonly select = (formatting: SavedFormatting | null) => {

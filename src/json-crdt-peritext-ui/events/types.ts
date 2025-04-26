@@ -269,7 +269,9 @@ export interface FormatDetail extends RangeEventDetail {
    *   stack behavior `'one'`. For other annotations, it works the same as
    *   the `'ins'` action.
    * - The `'del'` action removes all annotations that intersect with
-   *   any part of the selection set.
+   *   any part of the selection set. If action is `'del'`, and the `at` field
+   *   contains a {@link PersistedSlice} instance, only that instance will be
+   *   deleted.
    * - The `'erase'` action tries to "erase" all annotations that intersect with
    *   any part of the selection set. It works by deleting all annotations which
    *   are contained. For annotations, which partially intersect with the

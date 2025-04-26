@@ -15,12 +15,14 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   const inline = fwd || bwd;
   const {toolbar} = useToolbarPlugin();
   const state = React.useMemo(() => new CaretBottomState(toolbar, inline), [toolbar, inline?.key()]);
-  const formattings = React.useMemo(() => state.getFormatting(), [state]);
+  const formattings = useBehaviorSubject(React.useMemo(() => state.getFormattings$(), [state]));
   const selected = useBehaviorSubject(state.selected$);
 
   if (selected || formattings.length === 1) {
     return (<FormattingDisplay formatting={selected || formattings[0]} onClose={!selected ? void 0 : () => state.select(null)} />);
   }
+
+  if (!formattings.length) return null;
 
   return <FormattingList formattings={formattings} onSelect={state.select} />;
 };
