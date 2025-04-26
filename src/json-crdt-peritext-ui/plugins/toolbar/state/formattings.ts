@@ -36,7 +36,7 @@ export class RangeFormatting<R extends Range<string> = Range<string>, Node exten
  * state (location, data) of the formatting and a {@link ToolbarSliceBehavior}
  * which defines the formatting behavior.
  */
-export class SliceFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<PersistedSlice<string>, Node> {
+export class SavedFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<PersistedSlice<string>, Node> {
   public constructor(
     public readonly behavior: ToolbarSliceBehavior,
     public readonly range: PersistedSlice<string>,
@@ -60,7 +60,7 @@ export class SliceFormatting<Node extends ObjNode = ObjNode> extends RangeFormat
 
 /**
  * New formatting which is being created. Once created, it will be promoted to
- * a {@link SliceFormatting} instance.
+ * a {@link SavedFormatting} instance.
  */
 export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<Range<string>, Node> {
   public readonly model: Model<ObjNode<{conf: any}>>;

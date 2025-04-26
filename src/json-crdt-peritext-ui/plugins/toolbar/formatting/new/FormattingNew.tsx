@@ -1,7 +1,9 @@
 import * as React from 'react';
 import type {NewProps} from '../../types';
 
-export const FormattingNew: React.FC<NewProps> = (props) => {
+export interface FormattingNewProps extends NewProps {}
+
+export const FormattingNew: React.FC<FormattingNewProps> = (props) => {
   const New = props.formatting.behavior.data().New;
 
   return (

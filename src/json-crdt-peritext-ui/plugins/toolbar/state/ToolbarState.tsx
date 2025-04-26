@@ -108,18 +108,18 @@ export class ToolbarState implements UiLifeCycles {
     if (linkEntry) {
       const data = linkEntry.data() as SliceRegistryEntryData;
       data.menu = this.linkMenuItem();
-      data.previewText = ({range: slice}) => {
-        const data = slice.data() as {href: string};
+      data.previewText = (formatting) => {
+        const data = formatting.conf()?.view() as {href: string};
         if (!data || typeof data !== 'object') return '';
         return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
       };
-      data.renderIcon = ({range}) => {
-        const data = range.data() as {href: string};
+      data.Icon = ({formatting}) => {
+        const data = formatting.conf()?.view() as {href: string};
         if (!data || typeof data !== 'object') return;
         return <Favicon url={data.href} />;
       };
       data.New = NewLinkConfig;
-      data.renderPreview = (formatting) => {
+      data.View = ({formatting}) => {
         const data = formatting.range.data() as {href: string};
         if (!data || typeof data !== 'object') return;
         return <UrlDisplayLayout url={data.href} />;

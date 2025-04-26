@@ -1,20 +1,20 @@
 import {BehaviorSubject} from 'rxjs';
-import {SliceFormatting} from '../../../state/formattings';
+import {SavedFormatting} from '../../../state/formattings';
 import {PersistedSlice} from '../../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Inline} from '../../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../../state';
 
 export class CaretBottomState {
-  public readonly selected$ = new BehaviorSubject<SliceFormatting | null>(null);
+  public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
 
   public constructor(
     public readonly state: ToolbarState,
     public readonly inline: Inline | undefined,
   ) {}
 
-  public getFormatting(inline: Inline | undefined = this.inline): SliceFormatting[] {
+  public getFormatting(inline: Inline | undefined = this.inline): SavedFormatting[] {
     const slices = inline?.p1.layers;
-    const res: SliceFormatting[] = [];
+    const res: SavedFormatting[] = [];
     if (!slices) return res;
     const registry = this.state.txt.editor.getRegistry();
     for (const slice of slices) {
@@ -25,12 +25,12 @@ export class CaretBottomState {
       const isConfigurable = !!behavior.schema;
       if (!isConfigurable) continue;
       if (!(slice instanceof PersistedSlice)) continue;
-      res.push(new SliceFormatting(behavior, slice));
+      res.push(new SavedFormatting(behavior, slice));
     }
     return res;
   };
 
-  public readonly select = (formatting: SliceFormatting | null) => {
+  public readonly select = (formatting: SavedFormatting | null) => {
     this.selected$.next(formatting);
   };
 }

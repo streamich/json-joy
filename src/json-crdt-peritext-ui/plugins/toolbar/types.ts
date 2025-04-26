@@ -4,7 +4,7 @@ import type {SliceBehavior} from '../../../json-crdt-extensions/peritext/registr
 import type {SliceStacking} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {TypeTag} from '../../../json-crdt-extensions';
 import type {NodeBuilder} from '../../../json-crdt-patch';
-import type {NewFormatting, SliceFormatting, ToolbarFormatting} from './state/formattings';
+import type {NewFormatting, SavedFormatting, ToolbarFormatting} from './state/formattings';
 
 export type {MenuItem};
 
@@ -27,13 +27,13 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    * @returns A short description of the formatting. For example, if the
    * formatting is text color, this would be the color name.
    */
-  previewText?: (formatting: SliceFormatting) => string;
+  previewText?: (formatting: ToolbarFormatting) => string;
 
   /**
    * A function that returns a React node to be used as an icon for the
    * formatting.
    */
-  renderIcon?: (formatting: SliceFormatting) => React.ReactNode;
+  Icon?: React.FC<IconProps>;
 
   /**
    * Render a small card-sized form which configures the initial state of the
@@ -45,16 +45,28 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    * Render a small card-sized view, which can be placed in a popup, to
    * preview the formatting.
    */
-  renderPreview?: (formatting: SliceFormatting) => React.ReactNode;
+  View?: React.FC<ViewProps>;
 
   /**
    * Render a small card-sized form to edit the formatting.
    */
-  renderEdit?: (formatting: SliceFormatting) => React.ReactNode;
+  Edit?: React.FC<EditProps>;
+}
+
+export interface IconProps {
+  formatting: ToolbarFormatting;
 }
 
 export interface NewProps {
   formatting: NewFormatting;
+}
+
+export interface ViewProps {
+  formatting: SavedFormatting;
+}
+
+export interface EditProps {
+  formatting: SavedFormatting;
 }
 
 /**

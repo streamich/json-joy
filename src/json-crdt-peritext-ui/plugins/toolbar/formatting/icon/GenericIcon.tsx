@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {Avatar} from 'nice-ui/lib/1-inline/Avatar';
-import type {SliceFormatting} from '../state/formattings';
+import type {FormattingIconProps} from './FormattingIcon';
 
-export interface FormattingGenericIconProps {
-  formatting: SliceFormatting;
-}
+export interface GenericIconProps extends FormattingIconProps {}
 
-export const FormattingGenericIcon: React.FC<FormattingGenericIconProps> = ({formatting}) => {
+export const GenericIcon: React.FC<GenericIconProps> = ({formatting}) => {
   const data = formatting.behavior.data();
-  const id = formatting.range.id;
+  const id = formatting.range.start.id;
   const time = id.time + '';
   const name = data?.previewText?.(formatting) || (time[time.length - 1] + time[time.length - 2] + time + '.' + id.sid);
 
