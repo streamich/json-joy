@@ -154,32 +154,32 @@ export class InputController implements UiLifeCycles {
         // case 'historyRedo': {}
         case 'formatBold': {
           event.preventDefault();
-          et.format(SliceTypeCon.b);
+          et.format('tog', SliceTypeCon.b);
           break;
         }
         case 'formatItalic': {
           event.preventDefault();
-          et.format(SliceTypeCon.i);
+          et.format('tog', SliceTypeCon.i);
           break;
         }
         case 'formatUnderline': {
           event.preventDefault();
-          et.format(SliceTypeCon.u);
+          et.format('tog', SliceTypeCon.u);
           break;
         }
         case 'formatStrikeThrough': {
           event.preventDefault();
-          et.format(SliceTypeCon.s);
+          et.format('tog', SliceTypeCon.s);
           break;
         }
         case 'formatSuperscript': {
           event.preventDefault();
-          et.format(SliceTypeCon.sup);
+          et.format('tog', SliceTypeCon.sup);
           break;
         }
         case 'formatSubscript': {
           event.preventDefault();
-          et.format(SliceTypeCon.sub);
+          et.format('tog', SliceTypeCon.sub);
           break;
         }
         // case 'formatJustifyFull': { // make the current selection fully justified

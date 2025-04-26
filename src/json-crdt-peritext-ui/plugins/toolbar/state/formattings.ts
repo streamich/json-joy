@@ -87,7 +87,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatti
     if (!data || typeof data !== 'object') return;
     if (!data.title) delete data.title;
     const et = state.surface.events.et;
-    et.format(this.behavior.tag, 'many', data);
+    et.format('tog', this.behavior.tag, 'many', data);
     et.cursor({move: [['focus', 'char', 0, true]]});
   };
 }

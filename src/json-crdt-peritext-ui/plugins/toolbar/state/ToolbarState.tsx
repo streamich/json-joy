@@ -232,7 +232,7 @@ export class ToolbarState implements UiLifeCycles {
               right: () => <Sidetip small>⌘ B</Sidetip>,
               keys: ['⌘', 'b'],
               onSelect: () => {
-                et.format(CommonSliceType.b);
+                et.format('tog', CommonSliceType.b);
               },
             },
             {
@@ -243,7 +243,7 @@ export class ToolbarState implements UiLifeCycles {
               right: () => <Sidetip small>⌘ I</Sidetip>,
               keys: ['⌘', 'i'],
               onSelect: () => {
-                et.format(CommonSliceType.i);
+                et.format('tog', CommonSliceType.i);
               },
             },
             {
@@ -252,7 +252,7 @@ export class ToolbarState implements UiLifeCycles {
               right: () => <Sidetip small>⌘ U</Sidetip>,
               keys: ['⌘', 'u'],
               onSelect: () => {
-                et.format(CommonSliceType.u);
+                et.format('tog', CommonSliceType.u);
               },
             },
             {
@@ -260,28 +260,28 @@ export class ToolbarState implements UiLifeCycles {
               // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
               icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
               onSelect: () => {
-                et.format(CommonSliceType.s);
+                et.format('tog', CommonSliceType.s);
               },
             },
             {
               name: 'Overline',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
               onSelect: () => {
-                et.format(CommonSliceType.overline);
+                et.format('tog', CommonSliceType.overline);
               },
             },
             {
               name: 'Highlight',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
               onSelect: () => {
-                et.format(CommonSliceType.mark);
+                et.format('tog', CommonSliceType.mark);
               },
             },
             {
               name: 'Classified',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
               onSelect: () => {
-                et.format(CommonSliceType.spoiler);
+                et.format('tog', CommonSliceType.spoiler);
               },
             },
           ],
@@ -298,49 +298,49 @@ export class ToolbarState implements UiLifeCycles {
               name: 'Code',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
               onSelect: () => {
-                et.format(CommonSliceType.code);
+                et.format('tog', CommonSliceType.code);
               },
             },
             {
               name: 'Math',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
               onSelect: () => {
-                et.format(CommonSliceType.math);
+                et.format('tog', CommonSliceType.math);
               },
             },
             {
               name: 'Superscript',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
               onSelect: () => {
-                et.format(CommonSliceType.sup);
+                et.format('tog', CommonSliceType.sup);
               },
             },
             {
               name: 'Subscript',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
               onSelect: () => {
-                et.format(CommonSliceType.sub);
+                et.format('tog', CommonSliceType.sub);
               },
             },
             {
               name: 'Keyboard key',
               icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
               onSelect: () => {
-                et.format(CommonSliceType.kbd);
+                et.format('tog', CommonSliceType.kbd);
               },
             },
             {
               name: 'Insertion',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
               onSelect: () => {
-                et.format(CommonSliceType.ins);
+                et.format('tog', CommonSliceType.ins);
               },
             },
             {
               name: 'Deletion',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
               onSelect: () => {
-                et.format(CommonSliceType.del);
+                et.format('tog', CommonSliceType.del);
               },
             },
           ],
@@ -443,7 +443,7 @@ export class ToolbarState implements UiLifeCycles {
           danger: true,
           icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
           onSelect: () => {
-            et.format({behavior: 'erase'});
+            et.format({action: 'erase'});
           },
         },
         {
@@ -452,7 +452,7 @@ export class ToolbarState implements UiLifeCycles {
           more: true,
           icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
           onSelect: () => {
-            et.format({behavior: 'clear'});
+            et.format({action: 'del'});
           },
         },
       ],

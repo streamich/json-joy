@@ -18,15 +18,15 @@ export class RichTextController implements UiLifeCycles {
         switch (key) {
           case 'b':
             event.preventDefault();
-            et.format(CommonSliceType.b);
+            et.format('tog', CommonSliceType.b);
             return;
           case 'i':
             event.preventDefault();
-            et.format(CommonSliceType.i);
+            et.format('tog', CommonSliceType.i);
             return;
           case 'u':
             event.preventDefault();
-            et.format(CommonSliceType.u);
+            et.format('tog', CommonSliceType.u);
             return;
         }
       }
@@ -34,7 +34,7 @@ export class RichTextController implements UiLifeCycles {
         switch (key) {
           case 'x':
             event.preventDefault();
-            et.format(CommonSliceType.s);
+            et.format('tog', CommonSliceType.s);
             return;
         }
       }

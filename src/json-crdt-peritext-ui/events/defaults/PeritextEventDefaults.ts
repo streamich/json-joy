@@ -202,27 +202,38 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public readonly format = ({detail}: CustomEvent<events.FormatDetail>) => {
     const selection = [...this.getSelSet(detail)];
     this.moveSelSet(selection, detail);
-    const {type: tag, store = 'saved', behavior = 'one', data} = detail;
+    const {action, type: tag, store = 'saved'} = detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
-    switch (behavior) {
-      case 'many': {
+    switch (action) {
+      case 'ins':
+      case 'tog': {
+        const {stack = 'one', data} = detail;
         if (tag === undefined) throw new Error('TYPE_REQUIRED');
-        slices.insStack(tag, data, selection);
+        switch (stack) {
+          case 'many': {
+            slices.insStack(tag, data, selection);
+            break;
+          }
+          case 'one': {
+            if (action === 'ins') slices.insOne(tag, data, selection);
+            else editor.toggleExclFmt(tag, data, slices, selection);
+            break;
+          }
+          case 'erase': {
+            slices.insOne(tag, data, selection);
+            break;
+          }
+        }
         break;
       }
-      case 'one': {
-        if (tag === undefined) throw new Error('TYPE_REQUIRED');
-        editor.toggleExclFmt(tag, data, slices, selection);
+      case 'del': {
+        editor.clearFormatting(slices, selection);
         break;
       }
       case 'erase': {
         if (tag === undefined) editor.eraseFormatting(slices, selection);
-        else slices.insErase(tag, data, selection);
-        break;
-      }
-      case 'clear': {
-        editor.clearFormatting(slices, selection);
+        else slices.insErase(tag, detail.data, selection);
         break;
       }
     }

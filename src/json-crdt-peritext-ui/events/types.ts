@@ -262,6 +262,23 @@ export interface CursorDetail extends RangeEventDetail {
  */
 export interface FormatDetail extends RangeEventDetail {
   /**
+   * The action to perform.
+   * 
+   * - The `'ins'` action inserts a new annotation into the document.
+   * - The `'tog'` action toggles the annotation on or off, for annotations of
+   *   stack behavior `'one'`. For other annotations, it works the same as
+   *   the `'ins'` action.
+   * - The `'del'` action removes all annotations that intersect with
+   *   any part of the selection set.
+   * - The `'erase'` action tries to "erase" all annotations that intersect with
+   *   any part of the selection set. It works by deleting all annotations which
+   *   are contained. For annotations, which partially intersect with the
+   *   selection set, a corresponding slice with "erase" stacking behavior is
+   *   inserted, which logically removes the annotation from the document.
+   */
+  action: 'ins' | 'tog' | 'del' | 'erase';
+
+  /**
    * Type of the annotation. The type is used to determine the visual style of
    * the annotation, for example, the type `'bold'` may render the text in bold.
    *
@@ -290,23 +307,22 @@ export interface FormatDetail extends RangeEventDetail {
   data?: unknown;
 
   /**
-   * Specifies the behavior of the annotation. If `'many'`, the annotation of
-   * this type will be stacked on top of each other, and all of them will be
-   * applied to the text, with the last annotation on top. If `'one'`,
-   * the annotation is not stacked, only one such annotation can be applied per
-   * character. The `'erase'` behavior is used to remove the `'many`' or
-   * `'one'` annotation from the the given range.
-   *
-   * The special `'clear'` behavior is used to remove all annotations
-   * that intersect with any part of any of the cursors in the document. Usage:
-   *
-   * ```js
-   * {type: 'clear'}
-   * ```
+   * Specifies the stacking behavior of the annotation.
+   * 
+   * - If `'many'`, the annotation of this type will be stacked on top of each
+   *   other, and all of them will be applied to the text, with the last
+   *   annotation on top.
+   * - If `'one'`, the annotation is not stacked, only one such annotation can
+   *   be applied per character. The last annotation "wins", i.e. the last
+   *   annotation in the document will be applied to the text.
+   * - The `'erase'` behavior is used to logically remove the `'many`' or
+   *   `'one'` annotation from the the given range. It works by logically
+   *   "erasing" all `'many'` or `'one'` annotations with the same `type`,
+   *   which were applied to the given range before.
    *
    * @default 'one'
    */
-  behavior?: 'one' | 'many' | 'erase' | 'clear';
+  stack?: 'one' | 'many' | 'erase';
 
   /**
    * The slice set where the annotation will be stored. `'saved'` is the main
