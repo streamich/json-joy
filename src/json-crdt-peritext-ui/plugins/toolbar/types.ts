@@ -4,21 +4,12 @@ import type {SliceBehavior} from '../../../json-crdt-extensions/peritext/registr
 import type {SliceStacking} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {TypeTag} from '../../../json-crdt-extensions';
 import type {NodeBuilder} from '../../../json-crdt-patch';
-import type {SliceFormatting} from './state/formattings';
+import type {NewFormatting, SliceFormatting} from './state/formattings';
 
 export type {MenuItem};
 
 export interface SliceRegistryEntryData extends Record<string, unknown> {
   menu?: MenuItem;
-
-  /**
-   * A function that returns a React node to be used as an icon for the
-   * formatting.
-   *
-   * @param formatting The formatting slice.
-   * @returns A React node to be used as an icon for the formatting.
-   */
-  renderIcon?: (formatting: SliceFormatting) => React.ReactNode;
 
   /**
    * Returns a short description of the formatting, for the user to easily
@@ -31,13 +22,27 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
   previewText?: (formatting: SliceFormatting) => string;
 
   /**
-   * Render a small card, which can be rendered in a popup, to preview and
-   * configure the formatting.
-   *
-   * @param formatting The formatting slice.
-   * @returns A React node to be used as a preview of the formatting.
+   * A function that returns a React node to be used as an icon for the
+   * formatting.
    */
-  renderCard?: (formatting: SliceFormatting) => React.ReactNode;
+  renderIcon?: (formatting: SliceFormatting) => React.ReactNode;
+
+  /**
+   * Render a small card-sized form which configures the initial state of the
+   * formatting, for it to be created.
+   */
+  renderNew?: (formatting: NewFormatting) => React.ReactNode;
+
+  /**
+   * Render a small card-sized view, which can be placed in a popup, to
+   * preview the formatting.
+   */
+  renderPreview?: (formatting: SliceFormatting) => React.ReactNode;
+
+  /**
+   * Render a small card-sized form to edit the formatting.
+   */
+  renderEdit?: (formatting: SliceFormatting) => React.ReactNode;
 }
 
 export type ToolbarSliceBehavior<

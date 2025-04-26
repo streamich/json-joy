@@ -6,7 +6,7 @@ export interface FormattingEditProps {
 }
 
 export const FormattingEdit: React.FC<FormattingEditProps> = ({formatting}) => {
-  const renderEdit = formatting.behavior.data().renderCard;
+  const renderEdit = formatting.behavior.data().renderPreview;
 
   return (
     renderEdit ? renderEdit(formatting) : <div>no editor</div>

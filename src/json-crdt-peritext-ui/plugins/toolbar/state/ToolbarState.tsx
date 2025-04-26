@@ -117,7 +117,7 @@ export class ToolbarState implements UiLifeCycles {
         if (!data || typeof data !== 'object') return '';
         return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
       };
-      data.renderCard = (formatting) => {
+      data.renderPreview = (formatting) => {
         const data = formatting.range.data() as {href: string};
         if (!data || typeof data !== 'object') return;
         return <UrlDisplayLayout url={data.href} />;
