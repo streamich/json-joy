@@ -31,7 +31,7 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    * Render a small card-sized form which configures the initial state of the
    * formatting, for it to be created.
    */
-  renderNew?: (formatting: NewFormatting) => React.ReactNode;
+  New?: React.FC<NewProps>;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to
@@ -43,6 +43,11 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    * Render a small card-sized form to edit the formatting.
    */
   renderEdit?: (formatting: SliceFormatting) => React.ReactNode;
+}
+
+export interface NewProps {
+  formatting: NewFormatting;
+  onSave: () => void;
 }
 
 export type ToolbarSliceBehavior<

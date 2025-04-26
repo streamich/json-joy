@@ -1,15 +1,14 @@
 import * as React from 'react';
 import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
-import {NewLinkConfig} from '../config/NewLinkConfig';
 import {useToolbarPlugin} from '../context';
+import {FormattingNew} from './FormattingNew';
 import type {NewFormatting} from '../state/formattings';
 
-export interface InlineConfigCardProps {
+export interface FormattingNewCardProps {
   formatting: NewFormatting;
-  onSave: () => void;
 }
 
-export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({formatting, onSave}) => {
+export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}) => {
   const {toolbar} = useToolbarPlugin();
 
   return (
@@ -21,7 +20,7 @@ export const InlineConfigCard: React.FC<InlineConfigCardProps> = ({formatting, o
       }
     }}>
       <ContextPane style={{display: 'block', minWidth: 'calc(min(600px, max(50vw, 260px)))'}}>
-        <NewLinkConfig formatting={formatting} onSave={onSave} />
+        <FormattingNew formatting={formatting} onSave={formatting.save} />
       </ContextPane>
     </div>
   );

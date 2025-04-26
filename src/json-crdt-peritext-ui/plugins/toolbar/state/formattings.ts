@@ -50,7 +50,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatti
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
-    public readonly behavior: SliceBehavior,
+    public readonly behavior: ToolbarSliceBehavior,
     public readonly range: Range<string>,
     public readonly state: ToolbarState,
   ) {

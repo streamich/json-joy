@@ -12,6 +12,7 @@ import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/cons
 import {Favicon} from '../../../components/Favicon';
 import {NewFormatting} from './formattings';
 import {UrlDisplayLayout} from '../components/UrlDisplayLayout';
+import {NewLinkConfig} from '../config/NewLinkConfig';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
@@ -107,16 +108,17 @@ export class ToolbarState implements UiLifeCycles {
     if (linkEntry) {
       const data = linkEntry.data() as SliceRegistryEntryData;
       data.menu = this.linkMenuItem();
-      data.renderIcon = ({range: slice}) => {
-        const data = slice.data() as {href: string};
-        if (!data || typeof data !== 'object') return;
-        return <Favicon url={data.href} />;
-      };
       data.previewText = ({range: slice}) => {
         const data = slice.data() as {href: string};
         if (!data || typeof data !== 'object') return '';
         return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
       };
+      data.renderIcon = ({range}) => {
+        const data = range.data() as {href: string};
+        if (!data || typeof data !== 'object') return;
+        return <Favicon url={data.href} />;
+      };
+      data.New = NewLinkConfig;
       data.renderPreview = (formatting) => {
         const data = formatting.range.data() as {href: string};
         if (!data || typeof data !== 'object') return;
