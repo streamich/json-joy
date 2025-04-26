@@ -7,8 +7,6 @@ import {parseUrl} from '../../../web/util';
 import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {useStyles} from 'nice-ui/lib/styles/context';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
 import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 
