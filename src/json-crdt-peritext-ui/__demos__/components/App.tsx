@@ -22,7 +22,7 @@ const markdown =
   'console.log(123);\n' +
   '```\n' +
   '\n\n' +
-  'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
+  'A `ClipboardEvent` is [dispatched for copy](https://github.com/users/streamich/projects/5/views/2), cut, and paste events, and it contains ' +
   'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
   'is used by the Clipboard Events API to hold multiple representations of data.';
 

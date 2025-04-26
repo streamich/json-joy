@@ -8,14 +8,17 @@ import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Split} from 'nice-ui/lib/3-list-item/Split';
 import {useStyles} from 'nice-ui/lib/styles/context';
+import {Space} from 'nice-ui/lib/3-list-item/Space';
+
+const iconColumn = 40;
 
 const iconClass = rule({
   d: 'flex',
   ai: 'center',
   jc: 'center',
-  w: '30px',
-  h: '30px',
-  mr: '-2px 0 0 -2px',
+  w: '32px',
+  h: '32px',
+  mr: '-4px 0',
   bg: 'rgba(250,250,250,.9)',
   bdrad: '15px',
   '& img': {
@@ -25,7 +28,7 @@ const iconClass = rule({
 
 const domainClass = rule({
   ...fonts.get('ui', 'mid', 1),
-  fz: '13px',
+  fz: '14px',
   maxW: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -35,6 +38,7 @@ const domainClass = rule({
 const linkClass = rule({
   ...fonts.get('ui', 'bold', 1),
   fz: '16px',
+  pd: `0 0 0 ${iconColumn}px`,
   maxW: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -42,9 +46,11 @@ const linkClass = rule({
 });
 
 const buttonGroupClass = rule({
+  w: '60px',
   d: 'flex',
+  ai: 'center',
   flexDirection: 'row-reverse',
-  mr: '-4px -4px 4px 4px',
+  // mr: '-4px -4px 4px 4px',
   pd: '0',
 });
 
@@ -62,28 +68,32 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
 
   return (
     <>
-      <Split>
-        <FixedColumn left={36} style={{alignItems: 'center'}}>
+      <Split style={{width: '100%', maxWidth: '100%'}}>
+        <div style={{maxWidth: 'calc(100% - 100px)'}}>
+          <FixedColumn left={iconColumn} style={{alignItems: 'center'}}>
+            <div>
+              <div className={iconClass}>
+                <Favicon domain={domain} url={url} />
+              </div>
+            </div>
+            <div className={domainClass}>{domainTruncated}</div>
+          </FixedColumn>
           <div>
-            <div className={iconClass}>
-            {/* <div className={iconClass} style={{backgroundColor: 'red'}}> */}
-              <Favicon domain={domain} url={url} />
+            <div className={linkClass}>
+              <a href={url} target='_blank' rel='noopener noreferrer'>{url}</a>
             </div>
           </div>
-          <div className={domainClass}>{domainTruncated}</div>
-        </FixedColumn>
+        </div>
         <div className={buttonGroupClass}>
-          <BasicButton width={32} height={32} round>
+          <BasicButton width={40} height={40} round>
             <Iconista width={16} height={16} set={'lucide'} icon='copy' />
           </BasicButton>
-          <BasicButton width={32} height={32} round>
+          <Space horizontal size={-1} />
+          <BasicButton width={40} height={40} round>
             <Iconista width={16} height={16} set={'lucide'} icon='external-link' />
           </BasicButton>
         </div>
       </Split>
-      <div className={linkClass}>
-        <a href={url} target='_blank' rel='noopener noreferrer'>{url}</a>
-      </div>
     </>
   );
 };
