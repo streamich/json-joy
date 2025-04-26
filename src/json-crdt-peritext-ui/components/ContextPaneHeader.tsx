@@ -32,9 +32,9 @@ export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({short, righ
     element = (
       <Split style={{alignItems: 'center'}}>
         {element}
-        <Flex>
-          {right}
+        <Flex style={{flexDirection: 'row-reverse'}}>
           {!!onCloseClick && <BasicButtonClose onClick={onCloseClick} />}
+          {right}
         </Flex>
       </Split>
     );

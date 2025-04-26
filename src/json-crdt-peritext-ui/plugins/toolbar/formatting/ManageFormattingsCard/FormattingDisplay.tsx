@@ -30,7 +30,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         right={(
           <Flex style={{justifyContent: 'flex-end'}}>
             <BasicTooltip renderTooltip={() => t('Delete')}>
-              <BasicButton size={32} onClick={() => {
+              <BasicButton size={32} rounder onClick={() => {
                 surface.events.et.format({
                   at: formatting.range,
                   action: 'del',
@@ -42,7 +42,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
             </BasicTooltip>
             <Space horizontal size={-2} />
             <BasicTooltip renderTooltip={() => t('Edit')}>
-              <BasicButton size={32}>
+              <BasicButton size={32} rounder>
                 <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
               </BasicButton>
             </BasicTooltip>
