@@ -8,12 +8,13 @@ import {Split} from 'nice-ui/lib/3-list-item/Split';
 
 export interface ContextPaneHeaderProps {
   short?: boolean;
+  right?: React.ReactNode;
   children?: React.ReactNode;
   onBackClick?: React.MouseEventHandler;
   onCloseClick?: React.MouseEventHandler;
 }
 
-export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({short, children, onBackClick, onCloseClick}) => {
+export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({short, right, children, onBackClick, onCloseClick}) => {
   let element = (
     <Flex style={{alignItems: 'center'}}>
       {!!onBackClick && (
@@ -27,11 +28,14 @@ export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({short, chil
     </Flex>
   );
 
-  if (onCloseClick) {
+  if (onCloseClick || right) {
     element = (
       <Split style={{alignItems: 'center'}}>
         {element}
-        {!!onCloseClick && <BasicButtonClose onClick={onCloseClick} />}
+        <Flex>
+          {right}
+          {!!onCloseClick && <BasicButtonClose onClick={onCloseClick} />}
+        </Flex>
       </Split>
     );
   }

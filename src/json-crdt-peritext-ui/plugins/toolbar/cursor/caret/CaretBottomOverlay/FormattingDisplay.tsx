@@ -1,10 +1,16 @@
 import * as React from 'react';
+import {useT} from 'use-t';
 import {ContextPane, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {SavedFormatting} from '../../../state/formattings';
 import {ContextPaneHeader} from '../../../../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../../../../components/ContextPaneHeaderSep';
 import {FormattingTitle} from '../../../components/FormattingTitle';
-import {FormattingEdit} from '../../../formatting/edit/FormattingEdit';
+import {FormattingView} from '../../../formatting/view/FormattingView';
+import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
+import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Flex} from 'nice-ui/lib/3-list-item/Flex';
+import {Space} from 'nice-ui/lib/3-list-item/Space';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -12,17 +18,35 @@ export interface FormattingDisplayProps {
 }
 
 export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
-
+  const [t] = useT();
 
   return (
     <ContextPane style={{minWidth: 'calc(max(220px, min(360px, 80vw)))', maxWidth: 600}}>
-      <ContextPaneHeader short onBackClick={onClose}>
+      <ContextPaneHeader
+        short
+        onBackClick={onClose}
+        right={(
+          <Flex style={{justifyContent: 'flex-end'}}>
+            <BasicTooltip renderTooltip={() => t('Delete')}>
+              <BasicButton color='red' size={32}>
+                <Iconista set={'lucide'} icon={'trash'} width={16} height={16} />
+              </BasicButton>
+            </BasicTooltip>
+            <Space horizontal size={-2} />
+            <BasicTooltip renderTooltip={() => t('Edit')}>
+              <BasicButton size={32}>
+                <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
+              </BasicButton>
+            </BasicTooltip>
+          </Flex>
+        )}
+      >
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {/* <ContextSep /> */}
       <div style={{padding: '4px 16px 16px'}}>
-        <FormattingEdit formatting={formatting} />
+        <FormattingView formatting={formatting} />
       </div>
       {/* <ContextSep /> */}
     </ContextPane>

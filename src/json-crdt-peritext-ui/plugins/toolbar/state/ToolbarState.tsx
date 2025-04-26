@@ -124,6 +124,9 @@ export class ToolbarState implements UiLifeCycles {
         if (!data || typeof data !== 'object') return;
         return <UrlDisplayLayout url={data.href} />;
       };
+      data.Edit = (props) => {
+        return <div>LINK EDIT</div>;
+      };
     }
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {

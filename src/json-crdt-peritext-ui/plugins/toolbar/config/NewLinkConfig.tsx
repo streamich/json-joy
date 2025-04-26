@@ -13,7 +13,6 @@ import {UrlDisplayCard} from '../cards/UrlDisplayCard';
 import {rule} from 'nano-theme';
 import {parseUrl} from '../../../web/util';
 import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
-import {useStyles} from 'nice-ui/lib/styles/context';
 import {FormattingTitle} from '../components/FormattingTitle';
 import {NewProps} from '../types';
 import type {CollaborativeStr} from 'collaborative-editor';
@@ -22,39 +21,9 @@ const blockClass = rule({
   maxW: '600px',
 });
 
-const headerClass = rule({
-  d: 'flex',
-  ai: 'center',
-  fz: '14px',
-  us: 'none',
-});
-
-const iconClass = rule({
-  fz: '14px',
-  w: '28px',
-  h: '28px',
-  bdrad: '6px',
-  pd: '0',
-  mr: '0 8px 0 0',
-  d: 'flex',
-  ai: 'center',
-  jc: 'center',
-  bg: 'rgba(0,0,0,.08)',
-  o: .7,
-  '&>div': {
-    transform: 'scale(.9)',
-    transformOrigin: 'center',
-    d: 'flex',
-    ai: 'center',
-    jc: 'center',
-  },
-});
-
 export const NewLinkConfig: React.FC<NewProps> = ({formatting}) => {
-  const styles = useStyles();
   const {toolbar} = useToolbarPlugin();
   const inpRef = React.useRef<HTMLInputElement | null>(null);
-  const api = formatting.conf();
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const hrefView = useSyncStoreOpt(href()?.events) || '';
   const parsed = React.useMemo(() => parseUrl(hrefView), [hrefView]);
