@@ -50,11 +50,10 @@ const iconClass = rule({
   },
 });
 
-export const NewLinkConfig: React.FC<NewProps> = ({state}) => {
+export const NewLinkConfig: React.FC<NewProps> = ({formatting}) => {
   const styles = useStyles();
   const {toolbar} = useToolbarPlugin();
   const inpRef = React.useRef<HTMLInputElement | null>(null);
-  const {formatting} = state;
   const api = formatting.conf();
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const hrefView = useSyncStoreOpt(href()?.events) || '';
@@ -67,7 +66,7 @@ export const NewLinkConfig: React.FC<NewProps> = ({state}) => {
   return (
     <form className={blockClass} onSubmit={(e) => {
       e.preventDefault();
-      state.save();
+      formatting.save();
     }}>
       <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
         <FormattingTitle formatting={formatting} />
@@ -87,7 +86,7 @@ export const NewLinkConfig: React.FC<NewProps> = ({state}) => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                state.save();
+                formatting.save();
               }
             }}
             right={(
