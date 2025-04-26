@@ -1,9 +1,9 @@
 import {BehaviorSubject} from 'rxjs';
-import {SavedFormatting} from '../../../state/formattings';
-import {PersistedSlice} from '../../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
-import type {Inline} from '../../../../../../json-crdt-extensions';
-import type {ToolbarState} from '../../../state';
-import {subject} from '../../../../../util/rx';
+import {SavedFormatting} from '../../state/formattings';
+import {PersistedSlice} from '../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
+import {subject} from '../../../../util/rx';
+import type {Inline} from '../../../../../json-crdt-extensions';
+import type {ToolbarState} from '../../state';
 
 export class CaretBottomState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);

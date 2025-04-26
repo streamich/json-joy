@@ -1,17 +1,17 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {ContextPane, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
-import {SavedFormatting} from '../../../state/formattings';
-import {ContextPaneHeader} from '../../../../../components/ContextPaneHeader';
-import {ContextPaneHeaderSep} from '../../../../../components/ContextPaneHeaderSep';
-import {FormattingTitle} from '../../../components/FormattingTitle';
-import {FormattingView} from '../../../formatting/view/FormattingView';
+import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu';
+import {SavedFormatting} from '../../state/formattings';
+import {ContextPaneHeader} from '../../../../components/ContextPaneHeader';
+import {ContextPaneHeaderSep} from '../../../../components/ContextPaneHeaderSep';
+import {FormattingTitle} from '../../components/FormattingTitle';
+import {FormattingView} from '../../formatting/view/FormattingView';
 import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
 import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {useToolbarPlugin} from '../../../context';
+import {useToolbarPlugin} from '../../context';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
