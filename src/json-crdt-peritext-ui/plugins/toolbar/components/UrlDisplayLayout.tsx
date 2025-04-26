@@ -7,6 +7,7 @@ import {parseUrl} from '../../../web/util';
 import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Split} from 'nice-ui/lib/3-list-item/Split';
+import {useStyles} from 'nice-ui/lib/styles/context';
 
 const iconClass = rule({
   d: 'flex',
@@ -14,9 +15,12 @@ const iconClass = rule({
   jc: 'center',
   w: '30px',
   h: '30px',
-  bg: '#fff',
   mr: '-2px 0 0 -2px',
+  bg: 'rgba(250,250,250,.9)',
   bdrad: '15px',
+  '& img': {
+    bdrad: '2px',
+  },
 });
 
 const domainClass = rule({
@@ -62,6 +66,7 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
         <FixedColumn left={36} style={{alignItems: 'center'}}>
           <div>
             <div className={iconClass}>
+            {/* <div className={iconClass} style={{backgroundColor: 'red'}}> */}
               <Favicon domain={domain} url={url} />
             </div>
           </div>
