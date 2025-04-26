@@ -9,6 +9,8 @@ import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Split} from 'nice-ui/lib/3-list-item/Split';
 import {useStyles} from 'nice-ui/lib/styles/context';
 import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {useT} from 'use-t';
 
 const iconColumn = 40;
 
@@ -59,6 +61,7 @@ export interface UrlDisplayLayoutProps {
 }
 
 export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
+  const [t] = useT();
   const [domain, domainTruncated] = React.useMemo(() => {
     const parsed = parseUrl(url);
     const domain = parsed?.hostname || '';
@@ -85,13 +88,16 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
           </div>
         </div>
         <div className={buttonGroupClass}>
-          <BasicButton width={40} height={40} round>
-            <Iconista width={16} height={16} set={'lucide'} icon='copy' />
-          </BasicButton>
-          <Space horizontal size={-1} />
-          <BasicButton width={40} height={40} round>
-            <Iconista width={16} height={16} set={'lucide'} icon='external-link' />
-          </BasicButton>
+          <BasicTooltip nowrap renderTooltip={() => t('Copy')}>
+            <BasicButton width={40} height={40} round>
+              <Iconista width={16} height={16} set={'lucide'} icon='copy' />
+            </BasicButton>
+          </BasicTooltip>
+          <BasicTooltip nowrap renderTooltip={() => t('Open')}>
+            <BasicButton width={40} height={40} round>
+              <Iconista width={16} height={16} set={'lucide'} icon='external-link' />
+            </BasicButton>
+          </BasicTooltip>
         </div>
       </Split>
     </>
