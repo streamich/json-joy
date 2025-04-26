@@ -1,5 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
 import {SliceFormatting} from '../../../state/formattings';
+import {PersistedSlice} from '../../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Inline} from '../../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../../state';
 
@@ -23,6 +24,7 @@ export class CaretBottomState {
       if (!behavior) continue;
       const isConfigurable = !!behavior.schema;
       if (!isConfigurable) continue;
+      if (!(slice instanceof PersistedSlice)) continue;
       res.push(new SliceFormatting(behavior, slice));
     }
     return res;

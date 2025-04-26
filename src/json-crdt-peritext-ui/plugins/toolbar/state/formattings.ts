@@ -6,19 +6,28 @@ import type {ToolbarSliceBehavior} from "../types";
 import type {SliceBehavior} from '../../../../json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {ObjNode} from '../../../../json-crdt/nodes';
 import type {ToolbarState} from '.';
+import type {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 
 export interface FormattingBase<B extends SliceBehavior<any, any, any, any>, R extends Range<string>> {
   behavior: B;
   range: R;
 }
 
-export interface ToolbarFormatting<R extends Range<string> = Range<string>> extends FormattingBase<ToolbarSliceBehavior, R> {}
+export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {
+  conf(): ObjApi<Node> | undefined;
+}
 
-export class RangeFormatting implements ToolbarFormatting<Range<string>> {
+export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> extends FormattingBase<ToolbarSliceBehavior, R>, FormattingWithConfig<Node> {}
+
+export class RangeFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> implements ToolbarFormatting<R, Node> {
   public constructor(
     public readonly behavior: ToolbarSliceBehavior,
-    public readonly range: Range<string>,
+    public readonly range: R,
   ) {}
+
+  public conf(): ObjApi<Node> | undefined {
+    return;
+  }
 }
 
 /**
@@ -27,11 +36,13 @@ export class RangeFormatting implements ToolbarFormatting<Range<string>> {
  * state (location, data) of the formatting and a {@link ToolbarSliceBehavior}
  * which defines the formatting behavior.
  */
-export class SliceFormatting implements ToolbarFormatting<Slice<string>> {
+export class SliceFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<PersistedSlice<string>, Node> {
   public constructor(
     public readonly behavior: ToolbarSliceBehavior,
-    public readonly range: Slice<string>,
-  ) {}
+    public readonly range: PersistedSlice<string>,
+  ) {
+    super(behavior, range);
+  }
 
   /**
    * @returns Unique key for this formatting. This is the hash of the slice.
@@ -40,13 +51,18 @@ export class SliceFormatting implements ToolbarFormatting<Slice<string>> {
   public key(): number {
     return this.range.hash;
   }
+
+  public conf(): ObjApi<Node> | undefined {
+    const node = this.range.dataNode();
+    return node instanceof ObjApi ? node : undefined;
+  }
 }
 
 /**
  * New formatting which is being created. Once created, it will be promoted to
  * a {@link SliceFormatting} instance.
  */
-export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting {
+export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<Range<string>, Node> {
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
@@ -59,7 +75,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatti
     this.model = Model.create(schema);
   }
 
-  public conf(): ObjApi<Node> {
+  public conf(): ObjApi<Node> | undefined {
     return this.model.api.obj(['conf']) as ObjApi<Node>;
   }
 

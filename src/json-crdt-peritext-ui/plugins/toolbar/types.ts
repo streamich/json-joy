@@ -4,12 +4,21 @@ import type {SliceBehavior} from '../../../json-crdt-extensions/peritext/registr
 import type {SliceStacking} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {TypeTag} from '../../../json-crdt-extensions';
 import type {NodeBuilder} from '../../../json-crdt-patch';
-import type {NewFormatting, SliceFormatting} from './state/formattings';
+import type {SliceFormatting, ToolbarFormatting} from './state/formattings';
+import type {FormattingNewState} from './formatting/new/FormattingNewState';
 
 export type {MenuItem};
 
 export interface SliceRegistryEntryData extends Record<string, unknown> {
   menu?: MenuItem;
+
+  /**
+   * @param formatting The formatting slice.
+   * @returns Validation result. If the formatting is valid, return 'good'
+   *     or 'fine'. If the formatting is invalid, return an array of validation
+   *     errors.
+   */
+  validate?: (formatting: ToolbarFormatting) => ValidationResult;
 
   /**
    * Returns a short description of the formatting, for the user to easily
@@ -46,8 +55,19 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
 }
 
 export interface NewProps {
-  formatting: NewFormatting;
-  onSave: () => void;
+  state: FormattingNewState;
+}
+
+/**
+ * Represents the result of a validation. The `good` and `fine` values
+ * represent a successful validation, while the `ValidationErrorResult[]` is
+ * a list of errors that occurred during validation.
+ */
+export type ValidationResult = 'good' | 'fine' | ValidationErrorResult[];
+
+export interface ValidationErrorResult {
+  message: string;
+  field?: string;
 }
 
 export type ToolbarSliceBehavior<

@@ -6,7 +6,7 @@ import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
 import {useToolbarPlugin} from '../context';
 import {CollaborativeInput} from '../../../components/CollaborativeInput';
 import {Input} from '../../../components/Input';
-import {useSyncStore} from '../../../web/react/hooks';
+import {useSyncStoreOpt} from '../../../web/react/hooks';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {UrlDisplayCard} from '../cards/UrlDisplayCard';
@@ -15,7 +15,8 @@ import {parseUrl} from '../../../web/util';
 import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import {useStyles} from 'nice-ui/lib/styles/context';
 import {FormattingTitle} from '../components/FormattingTitle';
-import type {NewFormatting} from '../state/formattings';
+import {NewProps} from '../types';
+import type {CollaborativeStr} from 'collaborative-editor';
 
 const blockClass = rule({
   maxW: '600px',
@@ -49,24 +50,24 @@ const iconClass = rule({
   },
 });
 
-export interface NewLinkConfigProps {
-  formatting: NewFormatting;
-  onSave: () => void;
-}
-
-export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({formatting, onSave}) => {
+export const NewLinkConfig: React.FC<NewProps> = ({state}) => {
   const styles = useStyles();
   const {toolbar} = useToolbarPlugin();
   const inpRef = React.useRef<HTMLInputElement | null>(null);
+  const {formatting} = state;
   const api = formatting.conf();
-  const href = React.useMemo(() => () => formatting.conf().str(['href']), [formatting]);
-  const hrefView = useSyncStore(href().events);
+  const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
+  const hrefView = useSyncStoreOpt(href()?.events) || '';
   const parsed = React.useMemo(() => parseUrl(hrefView), [hrefView]);
+
+  if (!href()) return null;
+
+  const str = href as (() => CollaborativeStr);
 
   return (
     <form className={blockClass} onSubmit={(e) => {
       e.preventDefault();
-      onSave();
+      state.save();
     }}>
       <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
         <FormattingTitle formatting={formatting} />
@@ -74,7 +75,7 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({formatting, onSave}
       <ContextPaneHeaderSep />
 
       <div style={{padding: '16px'}}>
-        <CollaborativeInput str={href} input={(ref) => (
+        <CollaborativeInput str={str} input={(ref) => (
           <Input focus
             inp={(el) => {
               ref(el);
@@ -86,13 +87,14 @@ export const NewLinkConfig: React.FC<NewLinkConfigProps> = ({formatting, onSave}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                onSave();
+                state.save();
               }
             }}
             right={(
               <div style={{paddingRight: 8, width: 24, height: 24}}>
                 {!!hrefView && <BasicButtonClose onClick={() => {
-                  href().del(0, href().length());
+                  const hrefApi = href();
+                  if (hrefApi) hrefApi.del(0, hrefApi.length());
                   inpRef.current?.focus();
                 }} />}
               </div>
