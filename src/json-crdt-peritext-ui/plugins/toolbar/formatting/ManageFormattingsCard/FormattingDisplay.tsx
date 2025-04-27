@@ -12,6 +12,7 @@ import {ContextPaneHeaderSep} from '../../../../components/ContextPaneHeaderSep'
 import {FormattingTitle} from '../../components/FormattingTitle';
 import {FormattingView} from '../../formatting/view/FormattingView';
 import {useToolbarPlugin} from '../../context';
+import {Code} from 'nice-ui/lib/1-inline/Code';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -28,7 +29,11 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         short
         onBackClick={onClose}
         right={(
-          <Flex style={{justifyContent: 'flex-end'}}>
+          <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+            <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
+              <Code spacious alt gray nowrap>{t('view')}</Code>
+            </div>
+            <Space horizontal />
             <BasicTooltip renderTooltip={() => t('Delete')}>
               <BasicButton size={32} rounder onClick={() => {
                 surface.events.et.format({

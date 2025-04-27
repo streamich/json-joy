@@ -50,7 +50,7 @@ const buttonGroupClass = rule({
   d: 'flex',
   ai: 'center',
   flexDirection: 'row-reverse',
-  // mr: '-4px -4px 4px 4px',
+  mr: '-4px',
   pd: '0',
 });
 
@@ -87,12 +87,12 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
         </div>
         <div className={buttonGroupClass}>
           <BasicTooltip nowrap renderTooltip={() => t('Copy')}>
-            <BasicButton width={40} height={40} round>
+            <BasicButton width={48} height={48} round>
               <Iconista width={16} height={16} set={'lucide'} icon='copy' />
             </BasicButton>
           </BasicTooltip>
           <BasicTooltip nowrap renderTooltip={() => t('Open')}>
-            <BasicButton width={40} height={40} round>
+            <BasicButton width={48} height={48} round>
               <Iconista width={16} height={16} set={'lucide'} icon='external-link' />
             </BasicButton>
           </BasicTooltip>

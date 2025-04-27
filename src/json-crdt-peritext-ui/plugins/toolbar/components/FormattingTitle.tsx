@@ -11,12 +11,12 @@ const blockClass = rule({
 });
 
 const iconClass = rule({
-  fz: '14px',
-  w: '28px',
-  h: '28px',
+  fz: '15.7px',
+  w: '30px',
+  h: '30px',
   bdrad: '6px',
   pd: '0',
-  mr: '0 8px 0 0',
+  mr: '1px 9px 1px 1px',
   d: 'flex',
   ai: 'center',
   jc: 'center',
