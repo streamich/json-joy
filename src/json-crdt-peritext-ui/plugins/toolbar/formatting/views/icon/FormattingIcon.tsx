@@ -4,10 +4,5 @@ import type {IconProps} from '../../../types';
 
 export interface FormattingIconProps extends IconProps {}
 
-export const FormattingIcon: React.FC<FormattingIconProps> = (props) => {
-  const Icon = props.formatting.behavior.data().Icon;
-
-  return (
-    Icon ? <Icon {...props} /> : <GenericIcon {...props} />
-  );
-};
+export const FormattingIcon: React.FC<FormattingIconProps> = (props) =>
+  props.formatting.behavior.data().renderIcon?.(props) ?? <GenericIcon {...props} />;

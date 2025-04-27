@@ -9,14 +9,12 @@ import {CommonSliceType, type LeafBlock, type Peritext} from '../../../../json-c
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
-import {Favicon} from '../../../components/Favicon';
 import {NewFormatting} from './formattings';
-import {UrlDisplayLayout} from '../components/UrlDisplayLayout';
-import {NewLinkConfig} from '../config/NewLinkConfig';
+import * as behavior from '../formatting/tags';
 import type {UiLifeCycles} from '../../../web/types';
 import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
-import type {MenuItem, SliceRegistryEntryData} from '../types';
+import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 
 export class ToolbarState implements UiLifeCycles {
@@ -104,30 +102,7 @@ export class ToolbarState implements UiLifeCycles {
     const el = dom.el;
 
     const registry = this.txt.editor.getRegistry();
-    const linkEntry = registry.get(SliceTypeCon.a);
-    if (linkEntry) {
-      const data = linkEntry.data() as SliceRegistryEntryData;
-      data.menu = this.linkMenuItem();
-      data.previewText = (formatting) => {
-        const data = formatting.conf()?.view() as {href: string};
-        if (!data || typeof data !== 'object') return '';
-        return (data.href || '').replace(/^(https?:\/\/)?(www\.)?/, '');
-      };
-      data.Icon = ({formatting}) => {
-        const data = formatting.conf()?.view() as {href: string};
-        if (!data || typeof data !== 'object') return;
-        return <Favicon url={data.href} />;
-      };
-      data.New = NewLinkConfig;
-      data.View = ({formatting}) => {
-        const data = formatting.range.data() as {href: string};
-        if (!data || typeof data !== 'object') return;
-        return <UrlDisplayLayout url={data.href} />;
-      };
-      data.Edit = (props) => {
-        return <div>LINK EDIT</div>;
-      };
-    }
+    Object.assign(registry.get(SliceTypeCon.a)?.data() || {}, behavior.a);
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
@@ -375,12 +350,7 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly linkMenuItem = (): MenuItem => {
-    const linkAction: MenuItem = {
-      name: 'Link',
-      icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-      // icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
-      right: () => <Sidetip small>⌘ K</Sidetip>,
-      keys: ['⌘', 'k'],
+    const linkAction: MenuItem = {...behavior.a.menu,
       onSelect: () => {
         this.startSliceConfig(CommonSliceType.a, linkAction);
       },

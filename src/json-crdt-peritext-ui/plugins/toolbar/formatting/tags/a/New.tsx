@@ -2,26 +2,26 @@ import * as React from 'react';
 import {Button} from 'nice-ui/lib/2-inline-block/Button';
 import {ContextTitle} from 'nice-ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from 'nice-ui/lib/4-card/EmptyState';
-import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
-import {useToolbarPlugin} from '../context';
-import {CollaborativeInput} from '../../../components/CollaborativeInput';
-import {Input} from '../../../components/Input';
-import {useSyncStoreOpt} from '../../../web/react/hooks';
+import {ContextPaneHeader} from '../../../../../components/ContextPaneHeader';
+import {useToolbarPlugin} from '../../../context';
+import {CollaborativeInput} from '../../../../../components/CollaborativeInput';
+import {Input} from '../../../../../components/Input';
+import {useSyncStoreOpt} from '../../../../../web/react/hooks';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import {UrlDisplayCard} from '../cards/UrlDisplayCard';
+import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
 import {rule} from 'nano-theme';
-import {parseUrl} from '../../../web/util';
-import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
-import {FormattingTitle} from '../formatting/FormattingTitle';
-import {NewProps} from '../types';
+import {parseUrl} from '../../../../../web/util';
+import {ContextPaneHeaderSep} from '../../../../../components/ContextPaneHeaderSep';
+import {FormattingTitle} from '../../FormattingTitle';
+import {NewProps} from '../../../types';
 import type {CollaborativeStr} from 'collaborative-editor';
 
 const blockClass = rule({
   maxW: '600px',
 });
 
-export const NewLinkConfig: React.FC<NewProps> = ({formatting}) => {
+export const New: React.FC<NewProps> = ({formatting}) => {
   const {toolbar} = useToolbarPlugin();
   const inpRef = React.useRef<HTMLInputElement | null>(null);
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);

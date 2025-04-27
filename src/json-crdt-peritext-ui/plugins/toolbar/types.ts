@@ -8,7 +8,7 @@ import type {NewFormatting, SavedFormatting, ToolbarFormatting} from './state/fo
 
 export type {MenuItem};
 
-export interface SliceRegistryEntryData extends Record<string, unknown> {
+export interface ToolbarSliceBehaviorData extends Record<string, unknown> {
   menu?: MenuItem;
 
   /**
@@ -33,7 +33,7 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    * A function that returns a React node to be used as an icon for the
    * formatting.
    */
-  Icon?: React.FC<IconProps>;
+  renderIcon?: (props: IconProps) => React.ReactNode;
 
   /**
    * Render a small card-sized form which configures the initial state of the
@@ -52,6 +52,16 @@ export interface SliceRegistryEntryData extends Record<string, unknown> {
    */
   Edit?: React.FC<EditProps>;
 }
+
+// export type ToolbarSliceBehaviorDataTuple = [
+//   menu?: ToolbarSliceBehaviorData['menu'],
+//   validate?: ToolbarSliceBehaviorData['validate'],
+//   previewText?: ToolbarSliceBehaviorData['previewText'],
+//   Icon?: ToolbarSliceBehaviorData['Icon'],
+//   New?: ToolbarSliceBehaviorData['New'],
+//   View?: ToolbarSliceBehaviorData['View'],
+//   Edit?: ToolbarSliceBehaviorData['Edit'],
+// ];
 
 export interface IconProps {
   formatting: ToolbarFormatting;
@@ -85,4 +95,4 @@ export type ToolbarSliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
-> = SliceBehavior<Stacking, Tag, Schema, SliceRegistryEntryData>;
+> = SliceBehavior<Stacking, Tag, Schema, ToolbarSliceBehaviorData>;
