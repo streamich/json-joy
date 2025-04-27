@@ -149,7 +149,8 @@ export class SliceRegistry implements Printable {
       }
     }
     const tagStr = CommonSliceType[tag as TAG];
-    if (tagStr && typeof tagStr === 'string') _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
+    if (tagStr && typeof tagStr === 'string' && (!fromHtml || !(tagStr in fromHtml)))
+      _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
   }
 
   public get(tag: TypeTag): SliceBehavior | undefined {

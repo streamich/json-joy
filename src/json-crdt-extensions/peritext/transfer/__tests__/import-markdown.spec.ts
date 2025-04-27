@@ -11,6 +11,13 @@ describe('fromMarkdown()', () => {
     expect(peritextMl).toEqual(['', null, [CommonSliceType.p, null, 'Hello world']]);
   });
 
+  test('can import a link', () => {
+    const text = '[Hello world](https://example.com)';
+    const registry = SliceRegistry.withCommon();
+    const peritextMl = fromMarkdown(text, registry);
+    expect(peritextMl).toMatchObject(['', null, [CommonSliceType.p, null, [CommonSliceType.a, {data: {href: 'https://example.com'}}, 'Hello world']]]);
+  });
+
   test('multi-block realistic example', () => {
     const text =
       'The German __automotive sector__ is in the process of *cutting \n' +
