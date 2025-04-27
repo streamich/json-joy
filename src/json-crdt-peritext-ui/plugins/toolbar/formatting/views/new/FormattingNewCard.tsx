@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
-import {useToolbarPlugin} from '../../context';
+import {useToolbarPlugin} from '../../../context';
 import {FormattingNew} from './FormattingNew';
-import type {NewFormatting} from '../../state/formattings';
+import type {NewFormatting} from '../../../state/formattings';
 
 export interface FormattingNewCardProps {
   formatting: NewFormatting;

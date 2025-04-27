@@ -13,7 +13,7 @@ import {UrlDisplayCard} from '../cards/UrlDisplayCard';
 import {rule} from 'nano-theme';
 import {parseUrl} from '../../../web/util';
 import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
-import {FormattingTitle} from '../components/FormattingTitle';
+import {FormattingTitle} from '../formatting/FormattingTitle';
 import {NewProps} from '../types';
 import type {CollaborativeStr} from 'collaborative-editor';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {NewProps} from '../../types';
+import type {NewProps} from '../../../types';
 
 export interface FormattingNewProps extends NewProps {}
 

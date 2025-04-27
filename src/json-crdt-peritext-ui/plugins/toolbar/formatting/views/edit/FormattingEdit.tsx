@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {EditProps} from '../../types';
+import type {EditProps} from '../../../types';
 
 export interface FormattingEditProps extends EditProps {}
 

@@ -9,8 +9,8 @@ import {Space} from 'nice-ui/lib/3-list-item/Space';
 import {SavedFormatting} from '../../state/formattings';
 import {ContextPaneHeader} from '../../../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../../../components/ContextPaneHeaderSep';
-import {FormattingTitle} from '../../components/FormattingTitle';
-import {FormattingView} from '../../formatting/view/FormattingView';
+import {FormattingTitle} from '../FormattingTitle';
+import {FormattingView} from '../views/view/FormattingView';
 import {useToolbarPlugin} from '../../context';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 

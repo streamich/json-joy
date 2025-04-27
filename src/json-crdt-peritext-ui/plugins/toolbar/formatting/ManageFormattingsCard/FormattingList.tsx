@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
 import {SavedFormatting} from '../../state/formattings';
-import {FormattingIcon} from '../../formatting/icon/FormattingIcon';
+import {FormattingIcon} from '../views/icon/FormattingIcon';
 
 export interface FormattingListProps {
   formattings: SavedFormatting[];

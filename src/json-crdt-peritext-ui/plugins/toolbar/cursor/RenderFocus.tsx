@@ -4,7 +4,7 @@ import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
 import {useToolbarPlugin} from '../context';
 import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
 import {CaretFrame} from './CaretFrame';
-import {FormattingNewCard} from '../formatting/new/FormattingNewCard';
+import {FormattingNewCard} from '../formatting/views/new/FormattingNewCard';
 import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 
 export interface RenderFocusProps extends CaretViewProps {
