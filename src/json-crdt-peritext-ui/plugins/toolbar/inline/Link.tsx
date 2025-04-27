@@ -3,16 +3,16 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 
 const blockClass = rule({
-  col: 'blue',
+  col: '#05f',
   td: 'underline',
-  textDecorationColor: 'blue',
+  textDecorationColor: '#05f',
   textDecorationThickness: '1px',
   textDecorationStyle: 'wavy',
   textUnderlineOffset: '.25em',
   // textDecorationSkipInk: 'all',
 
   '&:hover': {
-    col: 'blue',
+    col: '#05f',
   },
   pd: 0,
   mr: 0,
@@ -29,11 +29,14 @@ const blockClass = rule({
 
 export interface LinkProps {
   children: React.ReactNode;
+  layers?: number;
 }
 
 export const Link: React.FC<LinkProps> = (props) => {
-  const {children} = props;
+  const {children, layers = 1} = props;
+  const style: React.CSSProperties | undefined = layers < 2 ? void 0 : {
+    textDecorationThickness: Math.max(Math.min(.5 + layers * .5, 3), 1) + 'px',
+  };
 
-  // return <span className={blockClass}>{children}</span>;
-  return <span className={blockClass}>{children}</span>;
+  return <span className={blockClass} style={style}>{children}</span>;
 };

@@ -2,7 +2,18 @@ import * as React from 'react';
 import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
 import {useToolbarPlugin} from '../../../context';
 import {FormattingNew} from './FormattingNew';
+import {ContextPaneHeader} from '../../../../../components/ContextPaneHeader';
+import {FormattingTitle} from '../../FormattingTitle';
+import {ContextPaneHeaderSep} from '../../../../../components/ContextPaneHeaderSep';
+import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
+import {Button} from 'nice-ui/lib/2-inline-block/Button';
+import {rule} from 'nano-theme';
+import {useSyncStoreOpt} from '../../../../../web/react/hooks';
 import type {NewFormatting} from '../../../state/formattings';
+
+const blockClass = rule({
+  maxW: '600px',
+});
 
 export interface FormattingNewCardProps {
   formatting: NewFormatting;
@@ -10,6 +21,10 @@ export interface FormattingNewCardProps {
 
 export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}) => {
   const {toolbar} = useToolbarPlugin();
+  useSyncStoreOpt(formatting.conf()?.api);
+  const validation = formatting.validate();
+
+  const valid = validation === 'good' || validation === 'fine';
 
   return (
     <div onKeyDown={(e) => {
@@ -20,7 +35,25 @@ export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}
       }
     }}>
       <ContextPane style={{display: 'block', minWidth: 'calc(min(600px, max(50vw, 260px)))'}}>
-        <FormattingNew formatting={formatting} />
+        <form className={blockClass} onSubmit={(e) => {
+          e.preventDefault();
+          formatting.save();
+        }}>
+          <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
+            <FormattingTitle formatting={formatting} />
+          </ContextPaneHeader>
+          <ContextPaneHeaderSep />
+    
+          <div style={{padding: '16px'}}>
+            <FormattingNew formatting={formatting} />
+          </div>
+    
+          <ContextSep line />
+          
+          <div style={{padding: '16px'}}>
+            <Button small lite={!valid} positive={validation === 'good'} block disabled={!valid} submit>Save</Button>
+          </div>
+        </form>
       </ContextPane>
     </div>
   );

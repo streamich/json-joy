@@ -5,8 +5,18 @@ import {renderIcon} from './renderIcon';
 import {New} from './New';
 import {View} from './View';
 import {ToolbarSliceBehaviorData} from '../../../types';
+import {getDomain} from '../../../../../web/util';
 
 export const behavior = {
+  validate: (formatting) => {
+    const obj = formatting.conf()?.view() as {href: string};
+    if (!obj || typeof obj !== 'object') return [{code: 'INVALID_CONFIG'}];
+    const href = obj.href || '';
+    if (typeof href !== 'string') return [{code: 'INVALID_URL'}];
+    if (href.length < 4) return 'empty';
+    const domain = getDomain(href);
+    return domain ? 'good' : 'fine';
+  },
   menu: {
     name: 'Link',
     icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,

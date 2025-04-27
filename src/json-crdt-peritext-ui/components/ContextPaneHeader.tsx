@@ -41,7 +41,7 @@ export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({short, righ
   }
 
   return (
-    <ContextHeader style={{padding: short ? '12px 16px' : '16px'}}>
+    <ContextHeader style={{padding: short ? '12px 16px' : '16px', borderRadius: '8px 8px 0 0'}}>
       {element}
     </ContextHeader>
   );

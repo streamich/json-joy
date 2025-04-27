@@ -2,7 +2,7 @@ import {s} from '../../../../json-crdt-patch';
 import {Model, ObjApi} from '../../../../json-crdt/model';
 import type {Slice} from "../../../../json-crdt-extensions";
 import type {Range} from "../../../../json-crdt-extensions/peritext/rga/Range";
-import type {ToolbarSliceBehavior} from "../types";
+import type {ToolbarSliceBehavior, ValidationResult} from "../types";
 import type {SliceBehavior} from '../../../../json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {ObjNode} from '../../../../json-crdt/nodes';
 import type {ToolbarState} from '.';
@@ -27,6 +27,10 @@ export class RangeFormatting<R extends Range<string> = Range<string>, Node exten
 
   public conf(): ObjApi<Node> | undefined {
     return;
+  }
+
+  public validate(): ValidationResult {
+    return this.behavior.data()?.validate?.(this) ?? 'fine';
   }
 }
 

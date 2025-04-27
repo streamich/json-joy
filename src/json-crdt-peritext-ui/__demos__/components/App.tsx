@@ -11,7 +11,7 @@ import {DebugState} from '../../plugins/debug/state';
 
 const markdown =
   'The German __automotive sector__ is in the process of *cutting ' +
-  'thousands of jobs* as it grapples with a global shift toward electric vehicles ' +
+  'thousands of jobs* as, [Google Docs](https://developers.google.com/workspace/docs), it grapples with a global shift toward electric vehicles ' +
   '— a transformation Musk himself has been at the forefront of.' +
   '\n\n' +
   '> To be, or not to be: that is the question.' +
