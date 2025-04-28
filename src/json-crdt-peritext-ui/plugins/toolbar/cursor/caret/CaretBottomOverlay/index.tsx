@@ -3,9 +3,12 @@ import {ManageFormattingsCard} from '../../../formatting/ManageFormattingsCard';
 import {EntangledPortal, EntangledPortalStateOpts} from '../../../../../components/EntangledPortal';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
+const gap = 4
 const position: EntangledPortalStateOpts['position'] = (base, dest) => {
-  const x = base.x - (dest.width >> 1);
+  let x = base.x - (dest.width >> 1);
   const y = base.y;
+  if (x < gap) x = gap;
+  else if (x + dest.width + gap > window.innerWidth) x = window.innerWidth - dest.width - gap;
   return [x, y];
 };
 
