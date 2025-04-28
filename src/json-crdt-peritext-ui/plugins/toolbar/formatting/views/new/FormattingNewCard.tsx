@@ -36,7 +36,7 @@ export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}
         toolbar.newSlice.next(void 0);
       }
     }}>
-      <ContextPane style={{display: 'block', minWidth: 'calc(min(600px, max(50vw, 260px)))'}}>
+      <ContextPane style={{display: 'block', width: 'calc(min(600px, max(65vw, 260px)))'}}>
         <form className={blockClass} onSubmit={(e) => {
           e.preventDefault();
           formatting.save();
