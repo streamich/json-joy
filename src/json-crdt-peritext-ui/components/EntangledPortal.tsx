@@ -7,8 +7,7 @@ import type {UiLifeCycles, Rect} from '../web';
 
 export interface EntangledPortalStateOpts {
   anchor?: Partial<AnchorPoint>;
-  dx?: number;
-  dy?: number;
+  position?: (base: Rect, dest: Rect) => [x: number, y: number];
   onBase?: (el: HTMLSpanElement | null) => void; 
   onDest?: (el: HTMLElement | null) => void;
 }
@@ -22,17 +21,19 @@ class EntangledPortalState implements UiLifeCycles {
 
   public baseRect$: BehaviorSubject<Rect | undefined> = new BehaviorSubject<Rect | undefined>(void 0);
 
-  constructor (public props: EntangledPortalProps) {}
+  constructor (public opts: EntangledPortalProps) {}
 
   protected readonly entangle = (): void => {
-    const {dx = 0, dy = 0, anchor} = this.props;
-    const {baseRect$, destEl} = this;
+    const {destEl, opts} = this;
     if (!destEl) return;
-    const rect = this.baseRect$.getValue();
-    if (!rect) return;
+    const baseRect = this.baseRect$.getValue();
+    if (!baseRect) return;
+    let {x, y} = baseRect;
+    const {position} = opts;
+    if (position) [x, y] = position(baseRect, destEl.getBoundingClientRect());
     const style = destEl.style;
-    style.top = rect.y + 'px';
-    style.left = rect.x + 'px';
+    style.left = x + 'px';
+    style.top = y + 'px';
   };
   
   public readonly base = (el: HTMLSpanElement | null) => {
@@ -51,7 +52,7 @@ class EntangledPortalState implements UiLifeCycles {
         baseRect$.next(rect);
       });
     } else this.baseRect$.next(void 0);
-    this.props.onBase?.(el);
+    this.opts.onBase?.(el);
   };
   
   public readonly dest = (el: HTMLElement | null) => {
@@ -65,7 +66,7 @@ class EntangledPortalState implements UiLifeCycles {
       ).subscribe(this.entangle);
       this.entangle();
     }
-    this.props.onDest?.(el);
+    this.opts.onDest?.(el);
   };
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
@@ -87,10 +88,15 @@ export interface EntangledPortalProps extends EntangledPortalStateOpts {
   children?: React.ReactNode;
 }
 
+/**
+ * Renders a <span> with a <div> child rendered in a portal, such that the
+ * <div> position is entangled with the <span> position, the <div> moves
+ * with the <span> on resize and scroll.
+ */
 export const EntangledPortal: React.FC<EntangledPortalProps> = (props) => {
-  const {dx = 0, dy = 0, anchor, children} = props;
-  const state = React.useMemo(() => new EntangledPortalState({dx, dy, anchor}), []);
-  state.props = props;
+  const {children} = props;
+  const state = React.useMemo(() => new EntangledPortalState(props), []);
+  state.opts = props;
   React.useEffect(state.start, [state]);
 
   return (
