@@ -1,6 +1,6 @@
 import * as React from 'react';
-// import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
 import {ManageFormattingsCard} from '../../../formatting/ManageFormattingsCard';
+import {EntangledPortal} from '../../../../../components/EntangledPortal';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
 export interface CaretBottomOverlayProps extends CaretViewProps {
@@ -14,6 +14,8 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   if (!inline) return;
 
   return (
-    <ManageFormattingsCard inline={inline} />
+    <EntangledPortal>
+      <ManageFormattingsCard inline={inline} />
+    </EntangledPortal>
   );
 };
