@@ -4,7 +4,7 @@ import type {SliceBehavior} from '../../../json-crdt-extensions/peritext/registr
 import type {SliceStacking} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {TypeTag} from '../../../json-crdt-extensions';
 import type {NodeBuilder} from '../../../json-crdt-patch';
-import type {NewFormatting, SavedFormatting, ToolbarFormatting} from './state/formattings';
+import type {EditableFormatting, SavedFormatting, ToolbarFormatting} from './state/formattings';
 
 export type {MenuItem};
 
@@ -36,19 +36,14 @@ export interface ToolbarSliceBehaviorData extends Record<string, unknown> {
   renderIcon?: (props: IconProps) => React.ReactNode;
 
   /**
-   * Render a small card-sized form which configures the initial state of the
-   * formatting, for it to be created.
-   */
-  New?: React.FC<NewProps>;
-
-  /**
    * Render a small card-sized view, which can be placed in a popup, to
    * preview the formatting.
    */
   View?: React.FC<ViewProps>;
 
   /**
-   * Render a small card-sized form to edit the formatting.
+   * Render a small card-sized form which configures the state of the
+   * formatting.
    */
   Edit?: React.FC<EditProps>;
 }
@@ -67,16 +62,20 @@ export interface IconProps {
   formatting: ToolbarFormatting;
 }
 
-export interface NewProps {
-  formatting: NewFormatting;
-}
-
 export interface ViewProps {
   formatting: SavedFormatting;
 }
 
 export interface EditProps {
-  formatting: SavedFormatting;
+  /**
+   * The formatting slice to be edited.
+   */
+  formatting: EditableFormatting;
+
+  /**
+   * Set to `true` if the formatting is new and not yet saved.
+   */
+  isNew?: boolean;
 }
 
 /**

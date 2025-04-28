@@ -14,11 +14,12 @@ export class CaretBottomState {
   ) {}
 
   public getFormattings$(inline: Inline | undefined = this.inline): BehaviorSubject<SavedFormatting[]> {
-    return subject(this.state.surface.render$, () => {
+    const state = this.state;
+    return subject(state.surface.render$, () => {
       const slices = inline?.p1.layers;
       const res: SavedFormatting[] = [];
       if (!slices) return res;
-      const registry = this.state.txt.editor.getRegistry();
+      const registry = state.txt.editor.getRegistry();
       for (const slice of slices) {
         const tag = slice.type;
         if (typeof tag !== 'number' && typeof tag !== 'string') continue;
@@ -27,7 +28,7 @@ export class CaretBottomState {
         const isConfigurable = !!behavior.schema;
         if (!isConfigurable) continue;
         if (!(slice instanceof PersistedSlice)) continue;
-        res.push(new SavedFormatting(behavior, slice));
+        res.push(new SavedFormatting(behavior, slice, state));
       }
       return res;
     });

@@ -2,17 +2,19 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 
+const col = '#05f';
+
 const blockClass = rule({
-  col: '#05f',
+  col,
   td: 'underline',
-  textDecorationColor: '#05f',
+  textDecorationColor: col,
   textDecorationThickness: '1px',
   textDecorationStyle: 'wavy',
   textUnderlineOffset: '.25em',
   // textDecorationSkipInk: 'all',
 
   '&:hover': {
-    col: '#05f',
+    col: col,
   },
   pd: 0,
   mr: 0,

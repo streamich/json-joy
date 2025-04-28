@@ -19,10 +19,11 @@ export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {
 
 export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> extends FormattingBase<ToolbarSliceBehavior, R>, FormattingWithConfig<Node> {}
 
-export class RangeFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> implements ToolbarFormatting<R, Node> {
+export abstract class EditableFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> implements ToolbarFormatting<R, Node> {
   public constructor(
     public readonly behavior: ToolbarSliceBehavior,
     public readonly range: R,
+    public readonly state: ToolbarState,
   ) {}
 
   public conf(): ObjApi<Node> | undefined {
@@ -32,6 +33,8 @@ export class RangeFormatting<R extends Range<string> = Range<string>, Node exten
   public validate(): ValidationResult {
     return this.behavior.data()?.validate?.(this) ?? 'fine';
   }
+
+  public abstract readonly save: () => void;
 }
 
 /**
@@ -40,14 +43,7 @@ export class RangeFormatting<R extends Range<string> = Range<string>, Node exten
  * state (location, data) of the formatting and a {@link ToolbarSliceBehavior}
  * which defines the formatting behavior.
  */
-export class SavedFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<PersistedSlice<string>, Node> {
-  public constructor(
-    public readonly behavior: ToolbarSliceBehavior,
-    public readonly range: PersistedSlice<string>,
-  ) {
-    super(behavior, range);
-  }
-
+export class SavedFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<PersistedSlice<string>, Node> {
   /**
    * @returns Unique key for this formatting. This is the hash of the slice.
    *     This is used to identify the formatting in the UI.
@@ -60,13 +56,17 @@ export class SavedFormatting<Node extends ObjNode = ObjNode> extends RangeFormat
     const node = this.range.dataNode();
     return node instanceof ObjApi ? node : undefined;
   }
+
+  public readonly save = () => {
+    throw new Error('save() not implemented');
+  };
 }
 
 /**
  * New formatting which is being created. Once created, it will be promoted to
  * a {@link SavedFormatting} instance.
  */
-export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatting<Range<string>, Node> {
+export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<Range<string>, Node> {
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
@@ -74,7 +74,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatti
     public readonly range: Range<string>,
     public readonly state: ToolbarState,
   ) {
-    super(behavior, range);
+    super(behavior, range, state);
     const schema = s.obj({conf: behavior.schema || s.con(void 0)});
     this.model = Model.create(schema);
   }
@@ -86,12 +86,11 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends RangeFormatti
   public readonly save = () => {
     const state = this.state;
     state.newSlice.next(void 0);
-    const view = this.model.view();
-    const data = view.conf as Record<string, unknown>;
-    if (!data || typeof data !== 'object') return;
-    if (!data.title) delete data.title;
+    const view = this.conf()?.view() as Record<string, unknown>;
+    if (!view || typeof view !== 'object') return;
+    if (!view.title) delete view.title;
     const et = state.surface.events.et;
-    et.format('tog', this.behavior.tag, 'many', data);
+    et.format('tog', this.behavior.tag, 'many', view);
     et.cursor({move: [['focus', 'char', 0, true]]});
   };
 }

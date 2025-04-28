@@ -7,10 +7,14 @@ import {useSyncStoreOpt} from '../../../../../web/react/hooks';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
-import {NewProps} from '../../../types';
+import {EditableFormatting} from '../../../state/formattings';
 import type {CollaborativeStr} from 'collaborative-editor';
 
-export const New: React.FC<NewProps> = ({formatting}) => {
+export interface EditProps {
+  formatting: EditableFormatting;
+}
+
+export const Edit: React.FC<EditProps> = ({formatting}) => {
   const inpRef = React.useRef<HTMLInputElement | null>(null);
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const hrefView = useSyncStoreOpt(href()?.events) || '';

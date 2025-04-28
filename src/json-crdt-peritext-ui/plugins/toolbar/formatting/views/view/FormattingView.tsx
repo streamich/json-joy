@@ -1,7 +1,7 @@
 import * as React from 'react';
-import type {EditProps} from '../../../types';
+import type {ViewProps} from '../../../types';
 
-export interface FormattingViewProps extends EditProps {}
+export interface FormattingViewProps extends ViewProps {}
 
 export const FormattingView: React.FC<FormattingViewProps> = (props) => {
   const View = props.formatting.behavior.data().View;

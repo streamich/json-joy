@@ -1,3 +1,4 @@
+import {useT} from 'use-t';
 import * as React from 'react';
 import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
 import {useToolbarPlugin} from '../../../context';
@@ -20,6 +21,7 @@ export interface FormattingNewCardProps {
 }
 
 export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}) => {
+  const [t] = useT();
   const {toolbar} = useToolbarPlugin();
   useSyncStoreOpt(formatting.conf()?.api);
   const validation = formatting.validate();
@@ -51,7 +53,15 @@ export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}
           <ContextSep line />
           
           <div style={{padding: '16px'}}>
-            <Button small lite={!valid} positive={validation === 'good'} block disabled={!valid} submit>Save</Button>
+            <Button
+              small
+              lite={!valid}
+              positive={validation === 'good'}
+              block
+              disabled={!valid}
+              submit
+              onClick={formatting.save}
+            >{t('Save')}</Button>
           </div>
         </form>
       </ContextPane>
