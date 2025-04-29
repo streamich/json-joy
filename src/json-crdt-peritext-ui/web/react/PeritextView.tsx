@@ -72,8 +72,10 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   // Return the final result.
   return (
     <context.Provider value={state}>
-      <PeritextViewInner div={ref} state={state} />
-      <div ref={el => state.portalEl = el || void 0} style={{height: 0}}></div>
+      <div className={CssClass.Editor}>
+        <PeritextViewInner div={ref} state={state} />
+        <div ref={el => state.portalEl = el || void 0} style={{height: 0}}></div>
+      </div>
     </context.Provider>
   );
 });
