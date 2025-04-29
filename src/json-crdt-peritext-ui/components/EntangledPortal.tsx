@@ -85,6 +85,7 @@ class EntangledPortalState implements UiLifeCycles {
 }
 
 export interface EntangledPortalProps extends EntangledPortalStateOpts {
+  span?: React.HTMLAttributes<HTMLSpanElement>;
   children?: React.ReactNode;
 }
 
@@ -94,16 +95,13 @@ export interface EntangledPortalProps extends EntangledPortalStateOpts {
  * with the <span> on resize and scroll.
  */
 export const EntangledPortal: React.FC<EntangledPortalProps> = (props) => {
-  const {children} = props;
+  const {span, children} = props;
   const state = React.useMemo(() => new EntangledPortalState(props), []);
   state.opts = props;
   React.useEffect(state.start, [state]);
 
   return (
-    <span
-      style={{width: 1, height: 1, display: 'inline-block', border: '1px solid red'}}
-      ref={state.base}
-    >
+    <span {...span} ref={state.base}>
       <Portal>
         <div ref={state.dest}>
           {children}
