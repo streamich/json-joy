@@ -11,7 +11,7 @@ import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
 import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../../json-crdt-extensions';
 
-put('.' + CssClass.Editor, {
+put('.' + CssClass.Editable, {
   out: 0,
   whiteSpace: 'nowrap',
   wordWrap: 'break-word',
@@ -73,6 +73,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   return (
     <context.Provider value={state}>
       <PeritextViewInner div={ref} state={state} />
+      <div ref={el => state.portalEl = el || void 0} style={{height: 0}}></div>
     </context.Provider>
   );
 });
@@ -92,7 +93,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   const block = state.peritext.blocks.root;
 
   let children: React.ReactNode = (
-    <div ref={div} className={CssClass.Editor}>
+    <div ref={div} className={CssClass.Editable}>
       <BlockView hash={block.hash} block={block} />
     </div>
   );

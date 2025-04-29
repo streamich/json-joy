@@ -2,7 +2,7 @@ import * as React from 'react';
 import {AnchorPoint} from 'nice-ui/lib/utils/popup';
 import {BehaviorSubject, Subscription, throttleTime} from 'rxjs';
 import {resize$, rerender$} from '../util/rect$';
-import {Portal} from './Portal';
+import {EditorPortal} from '../web/react/util/EditorPortal';
 import type {UiLifeCycles, Rect} from '../web';
 
 export interface EntangledPortalStateOpts {
@@ -102,11 +102,11 @@ export const EntangledPortal: React.FC<EntangledPortalProps> = (props) => {
 
   return (
     <span {...span} ref={state.base}>
-      <Portal>
+      <EditorPortal>
         <div ref={state.dest}>
           {children}
         </div>
-      </Portal>
+      </EditorPortal>
     </span>
   );
 };

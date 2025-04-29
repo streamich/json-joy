@@ -7,6 +7,6 @@ export enum ElementAttr {
 }
 
 export enum CssClass {
-  Editor = 'jsonjoy-peritext-editor',
+  Editable = 'jsonjoy-peritext-editable',
   Inline = 'jsonjoy-peritext-inline',
 }

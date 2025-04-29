@@ -21,7 +21,7 @@ const blockClassEnabled = rule({
       bgc: 'red',
     },
   },
-  ['& .' + CssClass.Editor]: {
+  ['& .' + CssClass.Editable]: {
     '&:focus': {
       out: '2px solid blue',
     },

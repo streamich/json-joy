@@ -8,27 +8,31 @@ export interface PortalProps {
    * The children to render into the portal.
    */
   children: React.ReactNode;
+
+  /**
+   * The parent element to render the portal into. If not provided, the portal
+   * will be rendered into the body.
+   */
+  parent?: HTMLElement;
 }
 
-export const Portal: React.FC<PortalProps> = ({children}) => {
+export const Portal: React.FC<PortalProps> = ({children, parent}) => {
   const parentState = usePortal();
   const state = React.useMemo(() => {
     const state = new PortalState();
     state.parent = parentState;
     return state;
-  }, []);
-  const [el] = React.useState(() => {
-    const el = document.createElement('div');
-    document.body.appendChild(el);
+  }, [parent]);
+  const [el] = React.useState(() => document.createElement('div'));
+  React.useLayoutEffect(() => {
+    const container = parent || document.body;
+    container.appendChild(el);
     state.addRoot(el);
-    return el;
-  });
-  React.useEffect(() => {
     return () => {
       state.delRoot(el);
-      document.body.removeChild(el);
+      container.removeChild(el);
     };
-  }, []);
+  }, [parent]);
 
   return <context.Provider value={state}>{createPortal(children, el)}</context.Provider>;
 };
