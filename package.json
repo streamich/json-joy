@@ -106,6 +106,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "benchmark": "^2.1.4",
+    "clipboard-copy": "^4.0.1",
     "collaborative-editor": "^2.8.0",
     "collaborative-input": "^1.6.1",
     "collaborative-ui": "^1.6.0",

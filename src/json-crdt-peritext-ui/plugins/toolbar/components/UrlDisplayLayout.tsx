@@ -9,6 +9,7 @@ import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Split} from 'nice-ui/lib/3-list-item/Split';
 import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
+import {CopyButton} from './CopyButton';
 
 const iconColumn = 40;
 
@@ -86,11 +87,7 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url}) => {
           </div>
         </div>
         <div className={buttonGroupClass}>
-          <BasicTooltip nowrap renderTooltip={() => t('Copy')}>
-            <BasicButton width={48} height={48} round>
-              <Iconista width={16} height={16} set={'lucide'} icon='copy' />
-            </BasicButton>
-          </BasicTooltip>
+          <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
           <BasicTooltip nowrap renderTooltip={() => t('Open')}>
             <BasicButton width={48} height={48} round>
               <Iconista width={16} height={16} set={'lucide'} icon='external-link' />
