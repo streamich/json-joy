@@ -16,6 +16,7 @@ import {FormattingPane} from '../FormattingPane';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {ButtonSeparator} from '../../../../components/ButtonSeparator';
 import {FormattingEditForm} from './FormattingEditForm';
+import {SoftLockedDeleteButton} from '../../components/SoftLockedDeleteButton';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -46,17 +47,13 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
           </Flex>
         ) : (
           <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-            <BasicTooltip renderTooltip={() => t('Delete')}>
-              <BasicButton size={32} rounder onClick={() => {
-                surface.events.et.format({
-                  at: formatting.range,
-                  action: 'del',
-                });
-                onClose?.();
-              }}>
-                <Iconista set={'lucide'} icon={'trash'} width={16} height={16} />
-              </BasicButton>
-            </BasicTooltip>
+            <SoftLockedDeleteButton onDelete={() => {
+              surface.events.et.format({
+                at: formatting.range,
+                action: 'del',
+              });
+              onClose?.();
+            }} />
             <Space horizontal size={-2} />
             <ButtonSeparator />
             <Space horizontal size={-2} />
