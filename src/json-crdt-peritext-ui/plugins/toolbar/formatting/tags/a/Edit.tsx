@@ -27,7 +27,7 @@ export const Edit: React.FC<EditProps> = ({formatting}) => {
     <div style={{margin: -16}}>
       <div style={{padding: 16}}>
         <CollaborativeInput str={str} input={(ref) => (
-          <Input focus
+          <Input focus select
             inp={(el) => {
               ref(el);
               inpRef.current = el;

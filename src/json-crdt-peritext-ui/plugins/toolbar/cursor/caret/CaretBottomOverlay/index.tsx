@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {ManageFormattingsCard} from '../../../formatting/ManageFormattingsCard';
+import {FormattingsManagePane} from '../../../formatting/FormattingsManagePane';
 import {EntangledPortal, EntangledPortalStateOpts} from '../../../../../components/EntangledPortal';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
@@ -36,7 +36,7 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
 
   return (
     <EntangledPortal {...entangledProps}>
-      <ManageFormattingsCard inline={inline} />
+      <FormattingsManagePane inline={inline} />
     </EntangledPortal>
   );
 };

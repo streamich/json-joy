@@ -1,26 +1,26 @@
 import {useT} from 'use-t';
 import * as React from 'react';
-import {useToolbarPlugin} from '../../../context';
-import {FormattingNew} from './FormattingNew';
-import {ContextPaneHeader} from '../../../../../components/ContextPaneHeader';
-import {FormattingTitle} from '../../FormattingTitle';
-import {ContextPaneHeaderSep} from '../../../../../components/ContextPaneHeaderSep';
+import {useToolbarPlugin} from '../context';
+import {FormattingNew} from './views/new/FormattingNew';
+import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
+import {FormattingTitle} from './FormattingTitle';
+import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {Button} from 'nice-ui/lib/2-inline-block/Button';
 import {rule} from 'nano-theme';
-import {useSyncStoreOpt} from '../../../../../web/react/hooks';
-import {FormattingPane} from '../../FormattingPane';
-import type {NewFormatting} from '../../../state/formattings';
+import {useSyncStoreOpt} from '../../../web/react/hooks';
+import {FormattingPane} from './FormattingPane';
+import type {NewFormatting} from '../state/formattings';
 
 const blockClass = rule({
   maxW: '600px',
 });
 
-export interface FormattingNewCardProps {
+export interface FormattingsNewPaneProps {
   formatting: NewFormatting;
 }
 
-export const FormattingNewCard: React.FC<FormattingNewCardProps> = ({formatting}) => {
+export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formatting}) => {
   const [t] = useT();
   const {toolbar} = useToolbarPlugin();
   useSyncStoreOpt(formatting.conf()?.api);

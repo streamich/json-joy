@@ -6,11 +6,11 @@ import {FormattingDisplay} from './FormattingDisplay';
 import {useToolbarPlugin} from '../../context';
 import type {Inline} from '../../../../../json-crdt-extensions';
 
-export interface ManageFormattingsCardProps {
+export interface FormattingsManagePaneProps {
   inline: Inline;
 }
 
-export const ManageFormattingsCard: React.FC<ManageFormattingsCardProps> = ({inline}) => {
+export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inline}) => {
   const {toolbar} = useToolbarPlugin();
   const state = React.useMemo(() => new CaretBottomState(toolbar, inline), [toolbar, inline?.key()]);
   const formattings = useBehaviorSubject(React.useMemo(() => state.getFormattings$(), [state]));

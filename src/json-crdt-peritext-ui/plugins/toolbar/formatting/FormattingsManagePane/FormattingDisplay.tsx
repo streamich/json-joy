@@ -13,10 +13,9 @@ import {FormattingView} from '../views/view/FormattingView';
 import {useToolbarPlugin} from '../../context';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {FormattingPane} from '../FormattingPane';
-import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import {FormattingEdit} from '../views/edit/FormattingEdit';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {ButtonSeparator} from '../../../../components/ButtonSeparator';
+import {FormattingEditForm} from './FormattingEditForm';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -36,11 +35,13 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         right={view === 'edit' ? (
           <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
             <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
-              <Code spacious alt gray nowrap>{t('edit')}</Code>
+              <Code spacious alt gray nowrap>{t('editing')}</Code>
             </div>
             <Space horizontal />
-            <BasicTooltip renderTooltip={() => t('Close')}>
-              <BasicButtonClose size={32} rounder onClick={() => setView('view')} />
+            <BasicTooltip renderTooltip={() => t('Cancel editing')}>
+              <BasicButton size={32} rounder onClick={() => setView('view')}>
+                <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
+              </BasicButton>
             </BasicTooltip>
           </Flex>
         ) : (
@@ -70,14 +71,16 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
-      <ContextSep />
-      <div style={{padding: '4px 16px 16px'}}>
-        {view === 'edit' ? (
-          <FormattingEdit formatting={formatting} />
-        ) : (
-          <FormattingView formatting={formatting} />
-        )}
-      </div>
+      {view === 'edit' ? (
+        <FormattingEditForm formatting={formatting} />
+      ) : (
+        <>
+          <ContextSep />
+          <div style={{padding: '4px 16px 16px'}}>
+            <FormattingView formatting={formatting} />
+          </div>
+        </>
+      )}
     </FormattingPane>
   );
 };
