@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {ContextPane} from 'nice-ui/lib/4-card/ContextMenu';
 import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
 import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
@@ -13,6 +12,11 @@ import {FormattingTitle} from '../FormattingTitle';
 import {FormattingView} from '../views/view/FormattingView';
 import {useToolbarPlugin} from '../../context';
 import {Code} from 'nice-ui/lib/1-inline/Code';
+import {FormattingPane} from '../FormattingPane';
+import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {FormattingEdit} from '../views/edit/FormattingEdit';
+import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
+import {ButtonSeparator} from '../../../../components/ButtonSeparator';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -20,20 +24,27 @@ export interface FormattingDisplayProps {
 }
 
 export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
+  const [view, setView] = React.useState<'view' | 'edit'>('view');
   const {surface} = useToolbarPlugin();
   const [t] = useT();
 
   return (
-    <ContextPane style={{minWidth: 'calc(max(300px, min(400px, 80vw)))', maxWidth: 600}}>
+    <FormattingPane>
       <ContextPaneHeader
         short
         onBackClick={onClose}
-        right={(
+        right={view === 'edit' ? (
           <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
             <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
-              <Code spacious alt gray nowrap>{t('view')}</Code>
+              <Code spacious alt gray nowrap>{t('edit')}</Code>
             </div>
             <Space horizontal />
+            <BasicTooltip renderTooltip={() => t('Close')}>
+              <BasicButtonClose size={32} rounder onClick={() => setView('view')} />
+            </BasicTooltip>
+          </Flex>
+        ) : (
+          <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
             <BasicTooltip renderTooltip={() => t('Delete')}>
               <BasicButton size={32} rounder onClick={() => {
                 surface.events.et.format({
@@ -46,8 +57,10 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               </BasicButton>
             </BasicTooltip>
             <Space horizontal size={-2} />
+            <ButtonSeparator />
+            <Space horizontal size={-2} />
             <BasicTooltip renderTooltip={() => t('Edit')}>
-              <BasicButton size={32} rounder>
+              <BasicButton size={32} rounder onClick={() => setView('edit')}>
                 <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
               </BasicButton>
             </BasicTooltip>
@@ -57,11 +70,14 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
-      {/* <ContextSep /> */}
+      <ContextSep />
       <div style={{padding: '4px 16px 16px'}}>
-        <FormattingView formatting={formatting} />
+        {view === 'edit' ? (
+          <FormattingEdit formatting={formatting} />
+        ) : (
+          <FormattingView formatting={formatting} />
+        )}
       </div>
-      {/* <ContextSep /> */}
-    </ContextPane>
+    </FormattingPane>
   );
 };
