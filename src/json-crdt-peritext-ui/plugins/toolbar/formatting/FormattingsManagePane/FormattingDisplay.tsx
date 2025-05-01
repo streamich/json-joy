@@ -39,7 +39,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               <Code spacious alt gray nowrap>{t('editing')}</Code>
             </div>
             <Space horizontal />
-            <BasicTooltip renderTooltip={() => t('Cancel editing')}>
+            <BasicTooltip renderTooltip={() => t('Stop editing')}>
               <BasicButton size={32} rounder onClick={() => setView('view')}>
                 <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
               </BasicButton>
@@ -69,7 +69,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {view === 'edit' ? (
-        <FormattingEditForm formatting={formatting} />
+        <FormattingEditForm formatting={formatting} onDone={() => setView('view')} />
       ) : (
         <>
           <ContextSep />

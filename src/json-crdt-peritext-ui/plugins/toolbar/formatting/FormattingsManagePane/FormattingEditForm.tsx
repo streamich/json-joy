@@ -27,10 +27,10 @@ const blockClass = rule({
 
 export interface FormattingEditFormProps {
   formatting: SavedFormatting;
-  onSave?: () => void;
+  onDone?: () => void;
 }
 
-export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formatting, onSave}) => {
+export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formatting, onDone}) => {
   const [t] = useT();
   const {toolbar} = useToolbarPlugin();
   useSyncStoreOpt(formatting.conf()?.api);
@@ -38,10 +38,14 @@ export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formattin
 
   const valid = validation === 'good' || validation === 'fine';
 
+  const handleSubmit = () => {
+    onDone?.()
+  };
+
   return (
     <form className={blockClass} onSubmit={(e) => {
       e.preventDefault();
-      formatting.save();
+      handleSubmit();
     }}>
       <div style={{padding: '16px'}}>
         <FormattingEdit formatting={formatting} />
@@ -57,8 +61,8 @@ export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formattin
           block
           disabled={!valid}
           submit
-          onClick={formatting.save}
-        >{t('Save')}</Button>
+          onClick={handleSubmit}
+        >{t('Done')}</Button>
       </div>
     </form>
   );
