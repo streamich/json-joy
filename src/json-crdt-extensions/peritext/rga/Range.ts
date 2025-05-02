@@ -1,6 +1,6 @@
 import {Point} from './Point';
 import {Anchor} from './constants';
-import {updateNum} from '../../../json-hash';
+import {updateNum} from '../../../json-hash/hash';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';

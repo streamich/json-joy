@@ -10,7 +10,7 @@ import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
 import {interval, tick} from '../../json-crdt-patch/clock';
 import {Model, type StrApi} from '../../json-crdt/model';
-import {CONST, updateNum} from '../../json-hash';
+import {CONST, updateNum} from '../../json-hash/hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
 import {ExtraSlices} from './slice/ExtraSlices';

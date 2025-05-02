@@ -8,7 +8,7 @@ import {OverlayPoint} from './OverlayPoint';
 import {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
-import {CONST, updateNum} from '../../../json-hash';
+import {CONST, updateNum} from '../../../json-hash/hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {SliceBehavior} from '../slice/constants';

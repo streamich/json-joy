@@ -1,4 +1,4 @@
-import {hash} from '..';
+import {hash} from '../hash';
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 
 test('returns the same hash for empty objects', () => {
@@ -40,6 +40,12 @@ test('returns the same hash regardless of key order', () => {
 test('returns the same hash for array with values', () => {
   const res1 = hash([true, 'asdf', false]);
   const res2 = hash([true, 'asdf', false]);
+  expect(res1).toBe(res2);
+});
+
+test('different key order returns the same hash', () => {
+  const res1 = hash({bar: 'asdf', foo: 123});
+  const res2 = hash({foo: 123, bar: 'asdf'});
   expect(res1).toBe(res2);
 });
 
