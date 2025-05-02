@@ -153,4 +153,28 @@ describe('diff()', () => {
     assertPatch('', 'asdf asdf asdf asdf asdf asdf asdf asdf asdf');
     assertPatch('', 'a🙃b');
   });
+
+  test('common prefix', () => {
+    assertPatch('abc', 'xyz');
+    assertPatch('1234abcdef', '1234xyz');
+    assertPatch('1234', '1234xyz');
+    assertPatch('1234_', '1234xyz');
+  });
+
+  test('common suffix', () => {
+    assertPatch('abcdef1234', 'xyz1234');
+    assertPatch('1234abcdef', 'xyz1234');
+    assertPatch('1234', 'xyz1234');
+    assertPatch('_1234', 'xyz1234');
+  });
+
+  test('common overlap', () => {
+    assertPatch('ab', 'bc');
+    assertPatch('abc', 'abcd');
+    assertPatch('ab', 'abcd');
+    assertPatch('xab', 'abcd');
+    assertPatch('xabc', 'abcd');
+    assertPatch('xyabc', 'abcd_');
+    assertPatch('12345xxx', 'xxabcd');
+  });
 });
