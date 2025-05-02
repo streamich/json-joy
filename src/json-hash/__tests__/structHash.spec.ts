@@ -1,6 +1,15 @@
 import {clone} from '@jsonjoy.com/util/lib/json-clone';
-import {structHash} from '../structHash';
+import {structHash as structHash_} from '../structHash';
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+
+const isASCII = (str: string) => /^[\x00-\x7F]*$/.test(str);
+
+const structHash = (json: unknown): string => {
+  const hash = structHash_(json);
+  expect(hash.includes('\n')).toBe(false);
+  expect(isASCII(hash)).toBe(true);
+  return hash;
+};
 
 test('returns the same hash for empty objects', () => {
   const res1 = structHash({});
@@ -70,5 +79,7 @@ test('returns different hash for random JSON values', () => {
     const res3 = structHash(clone(json1));
     expect(res1).not.toBe(res2);
     expect(res1).toBe(res3);
+    expect(res1.includes('\n')).toBe(false);
+    expect(res2.includes('\n')).toBe(false);
   }
 });
