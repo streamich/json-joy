@@ -50,9 +50,20 @@ export class Diff {
   protected diffObj(src: ObjNode, dst: Record<string, unknown>): void {
     const builder = this.builder;
     const inserts: [key: string, value: ITimestampStruct][] = [];
+    const srcKeys: Record<string, 1> = {};
     src.forEach((key) => {
+      srcKeys[key] = 1;
       if (dst[key] === void 0) inserts.push([key, builder.const(undefined)]);
     });
+    const keys = Object.keys(dst);
+    const length = keys.length;
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      if (!srcKeys[key]) {
+        const value = dst[key];
+        inserts.push([key, builder.const(value)]);
+      }
+    }
     if (inserts.length) builder.insObj(src.id, inserts);
   }
 

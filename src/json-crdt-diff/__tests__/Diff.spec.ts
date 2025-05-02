@@ -4,11 +4,13 @@ import {Model} from '../../json-crdt/model';
 import {JsonNode} from '../../json-crdt/nodes';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
-  const patch = new Diff(model).diff(src, dst);
+  const patch1 = new Diff(model).diff(src, dst);
   // console.log(patch + '');
-  model.applyPatch(patch);
+  model.applyPatch(patch1);
   const view = src.view();
   expect(view).toEqual(dst);
+  const patch2 = new Diff(model).diff(src, dst);
+  expect(patch2.ops.length).toBe(0);
 };
 
 describe('str', () => {
@@ -62,6 +64,15 @@ describe('obj', () => {
       bar: 'xyz',
     });
     const dst = {foo: 'abc'};
+    assertDiff(model, model.root.child(), dst);
+  });
+
+  test('can add a key', () => {
+    const model = Model.create();
+    model.api.root({
+      foo: 'abc',
+    });
+    const dst = {foo: 'abc', bar: 'xyz'};
     assertDiff(model, model.root.child(), dst);
   });
 });
