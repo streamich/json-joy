@@ -488,3 +488,72 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
   }  
   return diff(src, dst);
 };
+
+export const src = (patch: Patch): string => {
+  let txt = '';
+  const length = patch.length;
+  for (let i = 0; i < length; i++) {
+    const op = patch[i];
+    switch (op[0]) {
+      case PATCH_OP_TYPE.EQUAL:
+      case PATCH_OP_TYPE.DELETE:
+        txt += op[1];
+        break;
+    }
+  }
+  return txt;
+};
+
+export const dst = (patch: Patch): string => {
+  let txt = '';
+  const length = patch.length;
+  for (let i = 0; i < length; i++) {
+    const op = patch[i];
+    switch (op[0]) {
+      case PATCH_OP_TYPE.EQUAL:
+      case PATCH_OP_TYPE.INSERT:
+        txt += op[1];
+        break;
+    }
+  }
+  return txt;
+};
+
+export const invertOp = (op: PatchOperation): PatchOperation => {
+  switch (op[0]) {
+    case PATCH_OP_TYPE.EQUAL:
+      return op;
+    case PATCH_OP_TYPE.INSERT:
+      return [PATCH_OP_TYPE.DELETE, op[1]];
+    case PATCH_OP_TYPE.DELETE:
+      return [PATCH_OP_TYPE.INSERT, op[1]];
+  }
+};
+
+export const invert = (patch: Patch): Patch => {
+  const inverted: Patch = [];
+  const length = patch.length;
+  for (let i = 0; i < length; i++) inverted.push(invertOp(patch[i]));
+  return inverted;
+};
+
+export const apply = (patch: Patch, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number) => void) => {
+  const length = patch.length;
+  let pos = 0;
+  for (let i = 0; i < length; i++) {
+    const op = patch[i];
+    switch (op[0]) {
+      case PATCH_OP_TYPE.EQUAL:
+        pos += op[1].length;
+        break;
+      case PATCH_OP_TYPE.INSERT:
+        const txt = op[1];
+        onInsert(pos, txt);
+        pos += txt.length;
+        break;
+      case PATCH_OP_TYPE.DELETE:
+        onDelete(pos, op[1].length);
+        break;
+    }
+  }
+};
