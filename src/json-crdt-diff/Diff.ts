@@ -19,8 +19,18 @@ export class Diff {
   protected diffStr(src: StrNode, dst: string): void {
     const view = src.view();
     if (view === dst) return;
-    const patch = diff(view, dst);
     const builder = this.builder;
+    // apply(diff(view, dst), (pos, txt) => {
+    //   const after = !pos ? src.id : src.find(pos - 1);
+    //   if (!after) throw new DiffError();
+    //   builder.insStr(src.id, after, txt);
+    //   pos += txt.length;
+    // }, (pos, len) => {
+    //   const spans = src.findInterval(pos, len);
+    //   if (!spans) throw new DiffError();
+    //   builder.del(src.id, spans);
+    // });
+    const patch = diff(view, dst);
     const length = patch.length;
     let pos = 0;
     for (let i = 0; i < length; i++) {
