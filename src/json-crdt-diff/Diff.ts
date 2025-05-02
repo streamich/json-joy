@@ -73,10 +73,19 @@ export class Diff {
     for (let i = 0; i < length; i++) {
       const key = keys[i];
       const dstValue = dst[key];
-      if (!srcKeys[key]) inserts.push([key, builder.json(dstValue)]);
-      else {
-        const node = src.get(key);
-        if (node) this.diffAny(node, dstValue);
+      overwrite: {
+        if (srcKeys[key]) {
+          const node = src.get(key);
+          if (node) {
+            try {
+              this.diffAny(node, dstValue);
+              break overwrite;
+            } catch (error) {
+              if (!(error instanceof DiffError)) throw error;
+            }
+          }
+        }
+        inserts.push([key, builder.json(dstValue)]);
       }
     }
     if (inserts.length) builder.insObj(src.id, inserts);
@@ -93,7 +102,6 @@ export class Diff {
     } else if (src instanceof VecNode) {
     } else if (src instanceof ValNode) {
     } else {
-      console.log(src, dst);
       throw new DiffError();
     }
   }

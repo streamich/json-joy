@@ -1,5 +1,5 @@
 import {Diff} from '../Diff';
-import {InsStrOp} from '../../json-crdt-patch';
+import {InsStrOp, s} from '../../json-crdt-patch';
 import {Model} from '../../json-crdt/model';
 import {JsonNode} from '../../json-crdt/nodes';
 
@@ -79,6 +79,12 @@ describe('obj', () => {
   test('can edit nested string', () => {
     const model = Model.create();
     model.api.root({foo: 'abc'});
+    const dst = {foo: 'abc!'};
+    assertDiff(model, model.root.child(), dst);
+  });
+
+  test('can update "con" string key', () => {
+    const model = Model.create(s.obj({foo: s.con('abc')}));
     const dst = {foo: 'abc!'};
     assertDiff(model, model.root.child(), dst);
   });
