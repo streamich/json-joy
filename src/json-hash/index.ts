@@ -1,4 +1,4 @@
-import type {JsonValue} from '@jsonjoy.com/json-pack/lib/types';
+import type {PackValue} from '@jsonjoy.com/json-pack/lib/types';
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 
 export enum CONST {
@@ -10,6 +10,7 @@ export enum CONST {
   ARRAY = 982452259,
   STRING = 982453601,
   OBJECT = 982454533,
+  BINARY = 982454837,
 }
 
 export const updateNum = (state: number, num: number): number => {
@@ -17,12 +18,24 @@ export const updateNum = (state: number, num: number): number => {
 };
 
 export const updateStr = (state: number, str: string): number => {
-  let i = str.length;
+  const length = str.length;
+  state = updateNum(state, CONST.STRING);
+  state = updateNum(state, length);
+  let i = length;
   while (i) state = (state << 5) + state + str.charCodeAt(--i);
   return state;
 };
 
-export const updateJson = (state: number, json: JsonValue): number => {
+export const updateBin = (state: number, bin: Uint8Array): number => {
+  const length = bin.length;
+  state = updateNum(state, CONST.BINARY);
+  state = updateNum(state, length);
+  let i = length;
+  while (i) state = (state << 5) + state + bin[--i];
+  return state;
+};
+
+export const updateJson = (state: number, json: PackValue): number => {
   switch (typeof json) {
     case 'number':
       return updateNum(state, json);
@@ -31,12 +44,13 @@ export const updateJson = (state: number, json: JsonValue): number => {
       return updateStr(state, json);
     case 'object': {
       if (json === null) return updateNum(state, CONST.NULL);
-      if (json instanceof Array) {
+      if (Array.isArray(json)) {
         const length = json.length;
         state = updateNum(state, CONST.ARRAY);
         for (let i = 0; i < length; i++) state = updateJson(state, json[i]);
         return state;
       }
+      if (json instanceof Uint8Array) return updateBin(state, json);
       state = updateNum(state, CONST.OBJECT);
       const keys = sort(Object.keys(json as object));
       const length = keys.length;
@@ -53,4 +67,4 @@ export const updateJson = (state: number, json: JsonValue): number => {
   return state;
 };
 
-export const hash = (json: JsonValue) => updateJson(CONST.START_STATE, json) >>> 0;
+export const hash = (json: PackValue) => updateJson(CONST.START_STATE, json) >>> 0;

@@ -43,6 +43,18 @@ test('returns the same hash for array with values', () => {
   expect(res1).toBe(res2);
 });
 
+test('same hash for binary data', () => {
+  const res1 = hash({data: new Uint8Array([1, 2, 3])});
+  const res2 = hash({data: new Uint8Array([1, 2, 3])});
+  expect(res1).toBe(res2);
+});
+
+test('different hash for binary data', () => {
+  const res1 = hash({data: new Uint8Array([1, 2, 3])});
+  const res2 = hash({data: new Uint8Array([1, 2, 4])});
+  expect(res1).not.toBe(res2);
+});
+
 test('returns different hash for random JSON values', () => {
   for (let i = 0; i < 100; i++) {
     const res1 = hash(RandomJson.generate() as any);
