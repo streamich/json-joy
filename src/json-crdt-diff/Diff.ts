@@ -1,4 +1,4 @@
-import {Patch, PatchBuilder} from '../json-crdt-patch';
+import {type ITimestampStruct, Patch, PatchBuilder} from '../json-crdt-patch';
 import {ArrNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
 import {diff, PATCH_OP_TYPE} from '../util/diff';
 import type {Model} from '../json-crdt/model';
@@ -47,13 +47,22 @@ export class Diff {
     }
   }
 
+  protected diffObj(src: ObjNode, dst: Record<string, unknown>): void {
+    const builder = this.builder;
+    const inserts: [key: string, value: ITimestampStruct][] = [];
+    src.forEach((key) => {
+      if (dst[key] === void 0) inserts.push([key, builder.const(undefined)]);
+    });
+    if (inserts.length) builder.insObj(src.id, inserts);
+  }
+
   public diff(src: JsonNode, dst: unknown): Patch {
     if (src instanceof StrNode) {
       if (typeof dst !== 'string') throw new DiffError();
       this.diffStr(src, dst);
     } else if (src instanceof ObjNode) {
       if (!dst || typeof dst !== 'object') throw new DiffError();
-      // ...
+      this.diffObj(src, dst as Record<string, unknown>);
     } else if (src instanceof ArrNode) {
     } else if (src instanceof VecNode) {
     } else if (src instanceof ValNode) {

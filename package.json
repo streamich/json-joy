@@ -153,6 +153,7 @@
           "",
           "demo",
           "json-cli",
+          "json-crdt-diff",
           "json-crdt-patch",
           "json-crdt-extensions",
           "json-crdt-peritext-ui",

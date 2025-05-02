@@ -1,8 +1,9 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {compare, type ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
+import {ConNode} from '../const/ConNode';
+import type {JsonNode, JsonNodeView} from '..';
 import type {Model} from '../../model';
 import type {Printable} from 'tree-dump/lib/types';
-import type {JsonNode, JsonNodeView} from '..';
 
 /**
  * Represents a `obj` JSON CRDT node, which is a Last-write-wins (LWW) object.
@@ -63,6 +64,15 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   public nodes(callback: (node: JsonNode, key: string) => void) {
     const index = this.doc.index;
     this.keys.forEach((id, key) => callback(index.get(id)!, key));
+  }
+
+  public forEach(callback: (key: string, value: JsonNode) => void) {
+    const index = this.doc.index;
+    this.keys.forEach((id, key) => {
+      const value = index.get(id);
+      if (!value || (value instanceof ConNode && value.val === void 0)) return;
+      callback(key, value);
+    });
   }
 
   // ----------------------------------------------------------------- JsonNode
