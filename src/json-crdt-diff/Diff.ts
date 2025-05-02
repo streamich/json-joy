@@ -18,6 +18,7 @@ export class Diff {
 
   protected diffStr(src: StrNode, dst: string): void {
     const view = src.view();
+    if (view === dst) return;
     const patch = diff(view, dst);
     const builder = this.builder;
     const length = patch.length;
@@ -25,9 +26,10 @@ export class Diff {
     for (let i = 0; i < length; i++) {
       const op = patch[i];
       switch (op[0]) {
-        case PATCH_OP_TYPE.EQUAL:
+        case PATCH_OP_TYPE.EQUAL: {
           pos += op[1].length;
           break;
+        }
         case PATCH_OP_TYPE.INSERT: {
           const txt = op[1];
           const after = !pos ? src.id : src.find(pos - 1);
@@ -53,21 +55,24 @@ export class Diff {
     const srcKeys: Record<string, 1> = {};
     src.forEach((key) => {
       srcKeys[key] = 1;
-      if (dst[key] === void 0) inserts.push([key, builder.const(undefined)]);
+      const dstValue = dst[key];
+      if (dstValue === void 0) inserts.push([key, builder.const(undefined)]);
     });
     const keys = Object.keys(dst);
     const length = keys.length;
     for (let i = 0; i < length; i++) {
       const key = keys[i];
-      if (!srcKeys[key]) {
-        const value = dst[key];
-        inserts.push([key, builder.const(value)]);
+      const dstValue = dst[key];
+      if (!srcKeys[key]) inserts.push([key, builder.json(dstValue)]);
+      else {
+        const node = src.get(key);
+        if (node) this.diffAny(node, dstValue);
       }
     }
     if (inserts.length) builder.insObj(src.id, inserts);
   }
 
-  public diff(src: JsonNode, dst: unknown): Patch {
+  public diffAny(src: JsonNode, dst: unknown): void {
     if (src instanceof StrNode) {
       if (typeof dst !== 'string') throw new DiffError();
       this.diffStr(src, dst);
@@ -77,7 +82,14 @@ export class Diff {
     } else if (src instanceof ArrNode) {
     } else if (src instanceof VecNode) {
     } else if (src instanceof ValNode) {
-    } else throw new DiffError();
+    } else {
+      console.log(src, dst);
+      throw new DiffError();
+    }
+  }
+
+  public diff(src: JsonNode, dst: unknown): Patch {
+    this.diffAny(src, dst);
     return this.builder.flush();
   }
 }

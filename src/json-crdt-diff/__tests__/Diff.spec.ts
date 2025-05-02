@@ -5,10 +5,10 @@ import {JsonNode} from '../../json-crdt/nodes';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
   const patch1 = new Diff(model).diff(src, dst);
-  // console.log(patch + '');
+  // console.log(patch1 + '');
   model.applyPatch(patch1);
-  const view = src.view();
-  expect(view).toEqual(dst);
+  expect(src.view()).toEqual(dst);
+  // console.log(model + '');
   const patch2 = new Diff(model).diff(src, dst);
   expect(patch2.ops.length).toBe(0);
 };
@@ -73,6 +73,13 @@ describe('obj', () => {
       foo: 'abc',
     });
     const dst = {foo: 'abc', bar: 'xyz'};
+    assertDiff(model, model.root.child(), dst);
+  });
+
+  test('can edit nested string', () => {
+    const model = Model.create();
+    model.api.root({foo: 'abc'});
+    const dst = {foo: 'abc!'};
     assertDiff(model, model.root.child(), dst);
   });
 });
