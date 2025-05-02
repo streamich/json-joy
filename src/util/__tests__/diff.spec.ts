@@ -1,4 +1,4 @@
-import {PATCH_OP_TYPE, diff, diffEdit} from '../diff';
+import {PATCH_OP_TYPE, Patch, diff, diffEdit} from '../diff';
 import {assertPatch} from './util';
 
 describe('diff()', () => {
@@ -176,5 +176,48 @@ describe('diff()', () => {
     assertPatch('xabc', 'abcd');
     assertPatch('xyabc', 'abcd_');
     assertPatch('12345xxx', 'xxabcd');
+  });
+});
+
+describe('diffEdit()', () => {
+  const assertDiffEdit = (prefix: string, edit: string, suffix: string) => {
+    const src1 = prefix + suffix;
+    const dst1 = prefix + edit + suffix;
+    const cursor1 = prefix.length + edit.length;
+    const patch1 = diffEdit(src1, dst1, cursor1);
+    assertPatch(src1, dst1, patch1);
+    const patch1Expected: Patch = [];
+    if (prefix) patch1Expected.push([PATCH_OP_TYPE.EQUAL, prefix]);
+    if (edit) patch1Expected.push([PATCH_OP_TYPE.INSERT, edit]);
+    if (suffix) patch1Expected.push([PATCH_OP_TYPE.EQUAL, suffix]);
+    expect(patch1).toEqual(patch1Expected);
+    const src2 = prefix + edit + suffix;
+    const dst2 = prefix + suffix;
+    const cursor2 = prefix.length;
+    const patch2 = diffEdit(src2, dst2, cursor2);
+    assertPatch(src2, dst2, patch2);
+    const patch2Expected: Patch = [];
+    if (prefix) patch2Expected.push([PATCH_OP_TYPE.EQUAL, prefix]);
+    if (edit) patch2Expected.push([PATCH_OP_TYPE.DELETE, edit]);
+    if (suffix) patch2Expected.push([PATCH_OP_TYPE.EQUAL, suffix]);
+    expect(patch2).toEqual(patch2Expected);
+  };
+
+  test('can handle various inserts', () => {
+    assertDiffEdit('', 'a', '');
+    assertDiffEdit('a', 'b', '');
+    assertDiffEdit('ab', 'c', '');
+    assertDiffEdit('abc', 'd', '');
+    assertDiffEdit('abcd', 'efg', '');
+    assertDiffEdit('abcd', '_', 'efg');
+    assertDiffEdit('abcd', '__', 'efg');
+    assertDiffEdit('abcd', '___', 'efg');
+    assertDiffEdit('', '_', 'var');
+    assertDiffEdit('', '_', '_var');
+    assertDiffEdit('a', 'b', 'c');
+    assertDiffEdit('Hello', ' world', '');
+    assertDiffEdit('Hello world', '!', '');
+    assertDiffEdit('aaa', 'bbb', 'ccc');
+    assertDiffEdit('1', '2', '3');
   });
 });
