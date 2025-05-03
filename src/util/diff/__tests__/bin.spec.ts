@@ -6,24 +6,24 @@ describe('toHex()', () => {
   test('can convert buffer to string', () => {
     const buffer = b(1, 2, 3, 4, 5);
     const hex = toStr(buffer);
-    expect(hex).toBe('AbAcAdAeAf');
+    expect(hex).toBe('\x01\x02\x03\x04\x05');
   });
 
   test('can convert buffer to string', () => {
     const buffer = b(0, 127, 255);
     const hex = toStr(buffer);
-    expect(hex).toBe('AaHpPp');
+    expect(hex).toBe('\x00\x7f\xff');
   });
 });
 
 describe('fromHex()', () => {
   test('can convert buffer to string', () => {
-    const buffer = toBin('AbAcAdAeAf');
+    const buffer = toBin('\x01\x02\x03\x04\x05');
     expect(buffer).toEqual(b(1, 2, 3, 4, 5));
   });
 
   test('can convert buffer to string', () => {
-    const buffer = toBin('AaHpPp');
+    const buffer = toBin('\x00\x7f\xff');
     expect(buffer).toEqual(b(0, 127, 255));
   });
 });
