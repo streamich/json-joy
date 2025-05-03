@@ -39,9 +39,7 @@ export const structHash = (val: unknown): string => {
         }
         return res + '}';
       }
-    case 'undefined':
-      return 'U';
     default:
-      throw new Error('Unsupported type: ' + typeof val);
+      return 'U';
   }
 };

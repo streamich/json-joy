@@ -1,8 +1,8 @@
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
 import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
-import type {Model} from '../../model';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {printTree} from 'tree-dump/lib/printTree';
+import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
 
@@ -176,8 +176,12 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   /** @ignore */
   public children(callback: (node: JsonNode) => void) {
     const index = this.doc.index;
-    for (let chunk = this.first(); chunk; chunk = this.next(chunk))
-      if (!chunk.del) for (const node of chunk.data!) callback(index.get(node)!);
+    for (let chunk = this.first(); chunk; chunk = this.next(chunk)) {
+      const data = chunk.data;
+      if (!data) continue;
+      const length = data.length;
+      for (let i = 0; i < length; i++) callback(index.get(data[i])!);
+    }
   }
 
   /** @ignore */
