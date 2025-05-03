@@ -66,6 +66,8 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     return currentId;
   }
 
+  // ----------------------------------------------------------------- extension
+
   /**
    * @ignore
    */
@@ -109,7 +111,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     return buf[0];
   }
 
-  // ----------------------------------------------------------------- JsonNode
+  /** ------------------------------------------------------ {@link JsonNode} */
 
   /**
    * @ignore
@@ -176,7 +178,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     return 'vec';
   }
 
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
     const extNode = this.ext();

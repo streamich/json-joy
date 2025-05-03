@@ -1,15 +1,17 @@
 import {Diff} from '../Diff';
 import {InsStrOp, s} from '../../json-crdt-patch';
 import {Model} from '../../json-crdt/model';
-import {JsonNode} from '../../json-crdt/nodes';
+import {JsonNode, ValNode} from '../../json-crdt/nodes';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
   const patch1 = new Diff(model).diff(src, dst);
+  // console.log(model + '');
   // console.log(patch1 + '');
   model.applyPatch(patch1);
-  expect(src.view()).toEqual(dst);
   // console.log(model + '');
+  expect(src.view()).toEqual(dst);
   const patch2 = new Diff(model).diff(src, dst);
+  // console.log(patch2 + '');
   expect(patch2.ops.length).toBe(0);
 };
 
@@ -98,12 +100,42 @@ describe('obj', () => {
     };
     const dst = {
       nested: {
-        inserted: [null],
+        inserted: null,
         edit: 'Abc!',
       },
     };
     const model = Model.create();
     model.api.root(src);
     assertDiff(model, model.root, dst);
+  });
+});
+
+describe('vec', () => {
+  test('can add an element', () => {
+    const model = Model.create(s.vec(s.con(1)));
+    const dst = [1, 2];
+    assertDiff(model, model.root, dst);
+  });
+
+  test('can remove an element', () => {
+    const model = Model.create(s.vec(s.con(1), s.con(2)));
+    const dst = [1];
+    assertDiff(model, model.root, dst);
+  });
+
+  test('can replace element', () => {
+    const model = Model.create(s.vec(s.con(1)));
+    const dst = [2];
+    assertDiff(model, model.root, dst);
+    expect(() => model.api.val([0])).toThrow();
+  });
+
+  test('can replace nested "val" node', () => {
+    const schema = s.vec(s.val(s.con(1)));
+    const model = Model.create(schema);
+    const dst = [2];
+    assertDiff(model, model.root, dst);
+    const node = model.api.val([0]);
+    expect(node.node).toBeInstanceOf(ValNode);
   });
 });
