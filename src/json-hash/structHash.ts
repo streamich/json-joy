@@ -1,3 +1,4 @@
+import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {hash} from "./hash";
 
 /**
@@ -30,7 +31,7 @@ export const structHash = (val: unknown): string => {
         return hash(val).toString(36);
       } else {
         const keys = Object.keys(val);
-        keys.sort();
+        sort(keys);
         let res = '{';
         const length = keys.length;
         for (let i = 0; i < length; i++) {

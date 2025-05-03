@@ -1,3 +1,4 @@
+import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {ArrNode, BinNode, ConNode, JsonNode, ObjNode, StrNode, ValNode, VecNode} from "../json-crdt";
 import {hash} from "./hash";
 import {structHash} from "./structHash";
@@ -18,7 +19,7 @@ export const structHashCrdt = (node?: JsonNode): string => {
   else if (node instanceof ObjNode) {
     let res = '{';
     const keys = Array.from(node.keys.keys());
-    keys.sort();
+    sort(keys);
     const length = keys.length;
     for (let i = 0; i < length; i++) {
       const key = keys[i];

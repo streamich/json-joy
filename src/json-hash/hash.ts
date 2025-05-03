@@ -1,5 +1,5 @@
-import type {PackValue} from '@jsonjoy.com/json-pack/lib/types';
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
+import type {PackValue} from '@jsonjoy.com/json-pack/lib/types';
 
 export enum CONST {
   START_STATE = 5381,
