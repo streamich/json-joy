@@ -1,4 +1,4 @@
-import {PATCH_OP_TYPE, Patch, diff, diffEdit} from '../diff';
+import {PATCH_OP_TYPE, Patch, diff, diffEdit} from '../diff/str';
 import {assertPatch} from './util';
 
 describe('diff()', () => {

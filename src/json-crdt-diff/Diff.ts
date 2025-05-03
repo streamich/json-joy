@@ -1,7 +1,7 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {type ITimestampStruct, Patch, PatchBuilder} from '../json-crdt-patch';
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
-import {diff, PATCH_OP_TYPE} from '../util/diff';
+import {diff, PATCH_OP_TYPE} from '../util/diff/str';
 import type {Model} from '../json-crdt/model';
 
 export class DiffError extends Error {
@@ -109,9 +109,8 @@ export class Diff {
     }
     for (let i = 0; i < min; i++) {
       const value = dst[i];
-      diff: {
-        const child = src.get(i);
-        if (!child) break diff;
+      const child = src.get(i);
+      if (child) {
         try {
           this.diffAny(child, value);
           continue;
