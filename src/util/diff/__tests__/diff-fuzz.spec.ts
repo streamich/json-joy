@@ -1,6 +1,6 @@
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {assertPatch} from './util';
-import {diff, diffEdit} from '../diff/str';
+import {diff, diffEdit} from '../str';
 const fastDiff = require('fast-diff') as typeof diff;
 
 const str = () => Math.random() > .7

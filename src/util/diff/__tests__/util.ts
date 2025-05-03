@@ -1,4 +1,4 @@
-import * as diff from "../diff/str";
+import * as diff from "../str";
 
 export const assertPatch = (src: string, dst: string, patch: diff.Patch = diff.diff(src, dst)) => {
   const src1 = diff.src(patch);
