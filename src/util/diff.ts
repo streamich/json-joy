@@ -462,22 +462,22 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
     const srcSfx = src.slice(srcLen - sfxLen);
     if (srcSfx !== dstSfx) break edit;
     const isInsert = dstLen > srcLen;
-    if (isInsert) ins: {
+    if (isInsert) {
       const pfxLen = srcLen - sfxLen;
       const srcPfx = src.slice(0, pfxLen);
       const dstPfx = dst.slice(0, pfxLen);
-      if (srcPfx !== dstPfx) break ins;
+      if (srcPfx !== dstPfx) break edit;
       const insert = dst.slice(pfxLen, caret);
       const patch: Patch = [];
       if (srcPfx) patch.push([PATCH_OP_TYPE.EQUAL, srcPfx]);
       if (insert) patch.push([PATCH_OP_TYPE.INSERT, insert]);
       if (dstSfx) patch.push([PATCH_OP_TYPE.EQUAL, dstSfx]);
       return patch;
-    } else del: {
+    } else {
       const pfxLen = dstLen - sfxLen;
       const dstPfx = dst.slice(0, pfxLen);
       const srcPfx = src.slice(0, pfxLen);
-      if (srcPfx !== dstPfx) break del;
+      if (srcPfx !== dstPfx) break edit;
       const del = src.slice(pfxLen, srcLen - sfxLen);
       const patch: Patch = [];
       if (srcPfx) patch.push([PATCH_OP_TYPE.EQUAL, srcPfx]);

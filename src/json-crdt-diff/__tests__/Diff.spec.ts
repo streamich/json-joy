@@ -88,4 +88,22 @@ describe('obj', () => {
     const dst = {foo: 'abc!'};
     assertDiff(model, model.root.child(), dst);
   });
+
+  test('nested object', () => {
+    const src = {
+      nested: {
+        remove: 123,
+        edit: 'abc',
+      },
+    };
+    const dst = {
+      nested: {
+        inserted: [null],
+        edit: 'Abc!',
+      },
+    };
+    const model = Model.create();
+    model.api.root(src);
+    assertDiff(model, model.root, dst);
+  });
 });

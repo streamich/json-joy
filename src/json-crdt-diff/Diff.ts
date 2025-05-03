@@ -91,6 +91,17 @@ export class Diff {
     if (inserts.length) builder.insObj(src.id, inserts);
   }
 
+  protected diffVal(src: ValNode, dst: unknown): void {
+    try {
+      this.diffAny(src.node(), dst);
+    } catch (error) {
+      if (error instanceof DiffError) {
+        const builder = this.builder;
+        builder.setVal(src.id, builder.json(dst));
+      } else throw error;
+    }
+  }
+
   public diffAny(src: JsonNode, dst: unknown): void {
     if (src instanceof StrNode) {
       if (typeof dst !== 'string') throw new DiffError();
@@ -101,6 +112,7 @@ export class Diff {
     } else if (src instanceof ArrNode) {
     } else if (src instanceof VecNode) {
     } else if (src instanceof ValNode) {
+      this.diffVal(src, dst);
     } else {
       throw new DiffError();
     }
