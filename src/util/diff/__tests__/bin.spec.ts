@@ -1,28 +1,69 @@
 import {b} from '@jsonjoy.com/util/lib/buffers/b';
-import {toHex, fromHex} from '../bin';
+import {toStr, toBin, diff, src, dst} from '../bin';
+import {PATCH_OP_TYPE} from '../str';
 
 describe('toHex()', () => {
   test('can convert buffer to string', () => {
     const buffer = b(1, 2, 3, 4, 5);
-    const hex = toHex(buffer);
+    const hex = toStr(buffer);
     expect(hex).toBe('AbAcAdAeAf');
   });
 
   test('can convert buffer to string', () => {
     const buffer = b(0, 127, 255);
-    const hex = toHex(buffer);
+    const hex = toStr(buffer);
     expect(hex).toBe('AaHpPp');
   });
 });
 
 describe('fromHex()', () => {
   test('can convert buffer to string', () => {
-    const buffer = fromHex('AbAcAdAeAf');
+    const buffer = toBin('AbAcAdAeAf');
     expect(buffer).toEqual(b(1, 2, 3, 4, 5));
   });
 
   test('can convert buffer to string', () => {
-    const buffer = fromHex('AaHpPp');
+    const buffer = toBin('AaHpPp');
     expect(buffer).toEqual(b(0, 127, 255));
+  });
+});
+
+describe('diff()', () => {
+  test('returns a single equality tuple, when buffers are identical', () => {
+    const patch = diff(b(1, 2, 3), b(1, 2, 3));
+    expect(patch).toEqual([[PATCH_OP_TYPE.EQUAL, toStr(b(1, 2, 3))]]);
+    expect(src(patch)).toEqual(b(1, 2, 3));
+    expect(dst(patch)).toEqual(b(1, 2, 3));
+  });
+
+  test('single character insert at the beginning', () => {
+    const patch1 = diff(b(1, 2, 3), b(0, 1, 2, 3));
+    expect(patch1).toEqual([
+      [PATCH_OP_TYPE.INSERT, toStr(b(0))],
+      [PATCH_OP_TYPE.EQUAL, toStr(b(1, 2, 3))],
+    ]);
+    expect(src(patch1)).toEqual(b(1, 2, 3));
+    expect(dst(patch1)).toEqual(b(0, 1, 2, 3));
+  });
+
+  test('single character insert at the end', () => {
+    const patch1 = diff(b(1, 2, 3), b(1, 2, 3, 4));
+    expect(patch1).toEqual([
+      [PATCH_OP_TYPE.EQUAL, toStr(b(1, 2, 3))],
+      [PATCH_OP_TYPE.INSERT, toStr(b(4))],
+    ]);
+    expect(src(patch1)).toEqual(b(1, 2, 3));
+    expect(dst(patch1)).toEqual(b(1, 2, 3, 4));
+  });
+
+  test('can delete char', () => {
+    const patch1 = diff(b(1, 2, 3), b(2, 3, 4));
+    expect(patch1).toEqual([
+      [PATCH_OP_TYPE.DELETE, toStr(b(1))],
+      [PATCH_OP_TYPE.EQUAL, toStr(b(2, 3))],
+      [PATCH_OP_TYPE.INSERT, toStr(b(4))],
+    ]);
+    expect(src(patch1)).toEqual(b(1, 2, 3));
+    expect(dst(patch1)).toEqual(b(2, 3, 4));
   });
 });

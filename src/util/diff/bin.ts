@@ -1,3 +1,5 @@
+import * as str from "./str";
+
 // Encoding of the lower 4 bits.
 const QUADS1 = 'abcdefghijklmnop';
 
@@ -14,7 +16,7 @@ for (let i = 0; i < 16; i++) {
   }
 }
 
-export const toHex = (buf: Uint8Array): string => {
+export const toStr = (buf: Uint8Array): string => {
   let hex = '';
   const length = buf.length;
   for (let i = 0; i < length; i++) hex += BIN_TO_HEX[buf[i]];
@@ -24,7 +26,7 @@ export const toHex = (buf: Uint8Array): string => {
 const START_CODE1 = 97; // 'a'.charCodeAt(0)
 const START_CODE2 = 65; // 'A'.charCodeAt(0);
 
-export const fromHex = (hex: string): Uint8Array => {
+export const toBin = (hex: string): Uint8Array => {
   const length = hex.length;
   const buf = new Uint8Array(length >> 1);
   let j = 0;
@@ -36,3 +38,15 @@ export const fromHex = (hex: string): Uint8Array => {
   }
   return buf;
 };
+
+export const diff = (src: Uint8Array, dst: Uint8Array): str.Patch => {
+  const txtSrc = toStr(src);
+  const txtDst = toStr(dst);
+  return str.diff(txtSrc, txtDst);
+};
+
+export const apply = (patch: str.Patch, onInsert: (pos: number, str: Uint8Array) => void, onDelete: (pos: number, len: number) => void) =>
+  str.apply(patch, (pos, str) => onInsert(pos, toBin(str)), onDelete);
+
+export const src = (patch: str.Patch): Uint8Array => toBin(str.src(patch));
+export const dst = (patch: str.Patch): Uint8Array => toBin(str.dst(patch));
