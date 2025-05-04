@@ -20,8 +20,8 @@ export const diff = (src: Uint8Array, dst: Uint8Array): str.Patch => {
   return str.diff(txtSrc, txtDst);
 };
 
-export const apply = (patch: str.Patch, onInsert: (pos: number, str: Uint8Array) => void, onDelete: (pos: number, len: number) => void) =>
-  str.apply(patch, (pos, str) => onInsert(pos, toBin(str)), onDelete);
+export const apply = (patch: str.Patch, onInsert: (pos: number, str: Uint8Array) => void, onDelete: (pos: number, len: number) => void, delayedMaterialization?: boolean) =>
+  str.apply(patch, (pos, str) => onInsert(pos, toBin(str)), onDelete, delayedMaterialization);
 
 export const src = (patch: str.Patch): Uint8Array => toBin(str.src(patch));
 export const dst = (patch: str.Patch): Uint8Array => toBin(str.dst(patch));

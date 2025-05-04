@@ -1,7 +1,8 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {type ITimestampStruct, Patch, PatchBuilder} from '../json-crdt-patch';
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
-import {diff, PATCH_OP_TYPE} from '../util/diff/str';
+import * as str from '../util/diff/str';
+import * as bin from '../util/diff/bin';
 import type {Model} from '../json-crdt/model';
 
 export class DiffError extends Error {
@@ -21,43 +22,32 @@ export class Diff {
     const view = src.view();
     if (view === dst) return;
     const builder = this.builder;
-    // apply(diff(view, dst), (pos, txt) => {
-    //   const after = !pos ? src.id : src.find(pos - 1);
-    //   if (!after) throw new DiffError();
-    //   builder.insStr(src.id, after, txt);
-    //   pos += txt.length;
-    // }, (pos, len) => {
-    //   const spans = src.findInterval(pos, len);
-    //   if (!spans) throw new DiffError();
-    //   builder.del(src.id, spans);
-    // });
-    const patch = diff(view, dst);
-    const length = patch.length;
-    let pos = 0;
-    for (let i = 0; i < length; i++) {
-      const op = patch[i];
-      switch (op[0]) {
-        case PATCH_OP_TYPE.EQUAL: {
-          pos += op[1].length;
-          break;
-        }
-        case PATCH_OP_TYPE.INSERT: {
-          const txt = op[1];
-          const after = !pos ? src.id : src.find(pos - 1);
-          if (!after) throw new DiffError();
-          builder.insStr(src.id, after, txt);
-          pos += txt.length;
-          break;
-        }
-        case PATCH_OP_TYPE.DELETE: {
-          const length = op[1].length;
-          const spans = src.findInterval(pos, length);
-          if (!spans) throw new DiffError();
-          builder.del(src.id, spans);
-          break;
-        }
-      }
-    }
+    str.apply(str.diff(view, dst), (pos, txt) => {
+      const after = !pos ? src.id : src.find(pos - 1);
+      if (!after) throw new DiffError();
+      builder.insStr(src.id, after, txt);
+      pos += txt.length;
+    }, (pos, len) => {
+      const spans = src.findInterval(pos, len);
+      if (!spans) throw new DiffError();
+      builder.del(src.id, spans);
+    }, true);
+  }
+
+  protected diffBin(src: BinNode, dst: Uint8Array): void {
+    const view = src.view();
+    if (view === dst) return;
+    const builder = this.builder;
+    bin.apply(bin.diff(view, dst), (pos, txt) => {
+      const after = !pos ? src.id : src.find(pos - 1);
+      if (!after) throw new DiffError();
+      builder.insBin(src.id, after, txt);
+      pos += txt.length;
+    }, (pos, len) => {
+      const spans = src.findInterval(pos, len);
+      if (!spans) throw new DiffError();
+      builder.del(src.id, spans);
+    }, true);
   }
 
   protected diffObj(src: ObjNode, dst: Record<string, unknown>): void {
@@ -153,7 +143,8 @@ export class Diff {
       if (!Array.isArray(dst)) throw new DiffError();
       this.diffVec(src, dst as unknown[]);
     } else if (src instanceof BinNode) {
-      throw new Error('not implemented');
+      if (!(dst instanceof Uint8Array)) throw new DiffError();
+      this.diffBin(src, dst);
     } else {
       throw new DiffError();
     }

@@ -537,7 +537,15 @@ export const invert = (patch: Patch): Patch => {
   return inverted;
 };
 
-export const apply = (patch: Patch, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number) => void) => {
+/**
+ * @param patch The patch to apply.
+ * @param onInsert Callback for insert operations.
+ * @param onDelete Callback for delete operations.
+ * @param delayedMaterialization Whether inserts and deletes are applied
+ *     immediately. If `true`, it is assumed that the size of the mutated
+ *     string does not change, the changes will be applied later.
+ */
+export const apply = (patch: Patch, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number) => void, delayedMaterialization?: boolean) => {
   const length = patch.length;
   let pos = 0;
   for (let i = 0; i < length; i++) {
@@ -549,10 +557,12 @@ export const apply = (patch: Patch, onInsert: (pos: number, str: string) => void
       case PATCH_OP_TYPE.INSERT:
         const txt = op[1];
         onInsert(pos, txt);
-        pos += txt.length;
+        if (!delayedMaterialization) pos += txt.length;
         break;
       case PATCH_OP_TYPE.DELETE:
-        onDelete(pos, op[1].length);
+        const len = op[1].length;
+        onDelete(pos, len);
+        if (delayedMaterialization) pos += len;
         break;
     }
   }
