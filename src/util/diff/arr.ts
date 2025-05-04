@@ -55,9 +55,14 @@ export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
         push(partial, 1);
         partial = PARTIAL_TYPE.NONE;
       } else {
+        if (index < 0 && !isLastOp) {
+          partial = ARR_PATCH_OP_TYPE.DIFF;
+          continue;
+        }
+        push(ARR_PATCH_OP_TYPE.DIFF, 1);
+        if (index < 0) break;
         lineStartOffset = index + 1;
-        // console.log("DIFF");
-        throw new Error("Not implemented");
+        partial = PARTIAL_TYPE.NONE;
       }
     }
     const lineCount = strCnt("\n", txt, lineStartOffset) + (isLastOp ? 1 : 0);
@@ -68,13 +73,9 @@ export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
         ? (type as unknown as ARR_PATCH_OP_TYPE) : ARR_PATCH_OP_TYPE.DIFF;
     }
     if (!lineCount) continue;
-    if (type === ARR_PATCH_OP_TYPE.EQUAL) {
-      push(ARR_PATCH_OP_TYPE.EQUAL, lineCount);
-    } else if (type === ARR_PATCH_OP_TYPE.INSERT) {
-      push(ARR_PATCH_OP_TYPE.INSERT, lineCount);
-    } else {
-      push(ARR_PATCH_OP_TYPE.DELETE, lineCount);
-    }
+    if (type === ARR_PATCH_OP_TYPE.EQUAL) push(ARR_PATCH_OP_TYPE.EQUAL, lineCount);
+    else if (type === ARR_PATCH_OP_TYPE.INSERT) push(ARR_PATCH_OP_TYPE.INSERT, lineCount);
+    else push(ARR_PATCH_OP_TYPE.DELETE, lineCount);
   }
   return arrPatch;
 };
