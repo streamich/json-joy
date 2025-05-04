@@ -1,7 +1,3 @@
-/**
- * This is a port of diff-patch-match to TypeScript.
- */
-
 export const enum PATCH_OP_TYPE {
   DELETE = -1,
   EQUAL = 0,
@@ -29,73 +25,83 @@ const endsWithPairStart = (str: string): boolean => {
  * Any edit section can move as long as it doesn't cross an equality.
  *
  * @param diff Array of diff tuples.
- * @param fix_unicode Whether to normalize to a unicode-correct diff
+ * @param fixUnicode Whether to normalize to a unicode-correct diff
  */
-const cleanupMerge = (diff: Patch, fix_unicode: boolean) => {
+const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
   diff.push([PATCH_OP_TYPE.EQUAL, '']);
   let pointer = 0;
-  let count_delete = 0;
-  let count_insert = 0;
-  let text_delete = '';
-  let text_insert = '';
+  let delCnt = 0;
+  let insCnt = 0;
+  let delTxt = '';
+  let insTxt = '';
   let commonLength: number = 0;
   while (pointer < diff.length) {
     if (pointer < diff.length - 1 && !diff[pointer][1]) {
       diff.splice(pointer, 1);
       continue;
     }
-    switch (diff[pointer][0]) {
+    const d1 = diff[pointer];
+    switch (d1[0]) {
       case PATCH_OP_TYPE.INSERT:
-        count_insert++;
-        text_insert += diff[pointer][1];
+        insCnt++;
         pointer++;
+        insTxt += d1[1];
         break;
       case PATCH_OP_TYPE.DELETE:
-        count_delete++;
-        text_delete += diff[pointer][1];
+        delCnt++;
         pointer++;
+        delTxt += d1[1];
         break;
       case PATCH_OP_TYPE.EQUAL: {
-        let previous_equality = pointer - count_insert - count_delete - 1;
-        if (fix_unicode) {
-          // prevent splitting of unicode surrogate pairs.  when fix_unicode is true,
+        let prevEq = pointer - insCnt - delCnt - 1;
+        if (fixUnicode) {
+          // prevent splitting of unicode surrogate pairs. When `fixUnicode` is true,
           // we assume that the old and new text in the diff are complete and correct
           // unicode-encoded JS strings, but the tuple boundaries may fall between
-          // surrogate pairs.  we fix this by shaving off stray surrogates from the end
-          // of the previous equality and the beginning of this equality.  this may create
-          // empty equalities or a common prefix or suffix.  for example, if AB and AC are
+          // surrogate pairs. We fix this by shaving off stray surrogates from the end
+          // of the previous equality and the beginning of this equality. This may create
+          // empty equalities or a common prefix or suffix. For example, if AB and AC are
           // emojis, `[[0, 'A'], [-1, 'BA'], [0, 'C']]` would turn into deleting 'ABAC' and
           // inserting 'AC', and then the common suffix 'AC' will be eliminated.  in this
           // particular case, both equalities go away, we absorb any previous inequalities,
           // and we keep scanning for the next equality before rewriting the tuples.
-          if (previous_equality >= 0 && endsWithPairStart(diff[previous_equality][1])) {
-            const stray = diff[previous_equality][1].slice(-1);
-            diff[previous_equality][1] = diff[previous_equality][1].slice(0, -1);
-            text_delete = stray + text_delete;
-            text_insert = stray + text_insert;
-            if (!diff[previous_equality][1]) {
-              // emptied out previous equality, so delete it and include previous delete/insert
-              diff.splice(previous_equality, 1);
-              pointer--;
-              let k = previous_equality - 1;
-              if (diff[k] && diff[k][0] === PATCH_OP_TYPE.INSERT) {
-                count_insert++;
-                text_insert = diff[k][1] + text_insert;
-                k--;
+          const d = diff[prevEq];
+          if (prevEq >= 0) {
+            let str = d[1];
+            if (endsWithPairStart(str)) {
+              const stray = str.slice(-1);
+              d[1] = str = str.slice(0, -1);
+              delTxt = stray + delTxt;
+              insTxt = stray + insTxt;
+              if (!str) {
+                // emptied out previous equality, so delete it and include previous delete/insert
+                diff.splice(prevEq, 1);
+                pointer--;
+                let k = prevEq - 1;
+                const dk = diff[k];
+                if (dk) {
+                  const type = dk[0];
+                  if (type === PATCH_OP_TYPE.INSERT) {
+                    insCnt++;
+                    k--;
+                    insTxt = dk[1] + insTxt;
+                  } else if (type === PATCH_OP_TYPE.DELETE) {
+                    delCnt++;
+                    k--;
+                    delTxt = dk[1] + delTxt;
+                  }
+                }
+                prevEq = k;
               }
-              if (diff[k] && diff[k][0] === PATCH_OP_TYPE.DELETE) {
-                count_delete++;
-                text_delete = diff[k][1] + text_delete;
-                k--;
-              }
-              previous_equality = k;
             }
           }
-          if (startsWithPairEnd(diff[pointer][1])) {
-            const stray = diff[pointer][1].charAt(0);
-            diff[pointer][1] = diff[pointer][1].slice(1);
-            text_delete += stray;
-            text_insert += stray;
+          const d1 = diff[pointer];
+          const str1 = d1[1];
+          if (startsWithPairEnd(str1)) {
+            const stray = str1.charAt(0);
+            d1[1] = str1.slice(1);
+            delTxt += stray;
+            insTxt += stray;
           }
         }
         if (pointer < diff.length - 1 && !diff[pointer][1]) {
@@ -103,63 +109,64 @@ const cleanupMerge = (diff: Patch, fix_unicode: boolean) => {
           diff.splice(pointer, 1);
           break;
         }
-        if (text_delete.length > 0 || text_insert.length > 0) {
+        const hasDelTxt = delTxt.length > 0;
+        const hasInsTxt = insTxt.length > 0;
+        if (hasDelTxt || hasInsTxt) {
           // note that diff_commonPrefix and diff_commonSuffix are unicode-aware
-          if (text_delete.length > 0 && text_insert.length > 0) {
+          if (hasDelTxt && hasInsTxt) {
             // Factor out any common prefixes.
-            commonLength = pfx(text_insert, text_delete);
+            commonLength = pfx(insTxt, delTxt);
             if (commonLength !== 0) {
-              if (previous_equality >= 0) {
-                diff[previous_equality][1] += text_insert.substring(0, commonLength);
+              if (prevEq >= 0) {
+                diff[prevEq][1] += insTxt.slice(0, commonLength);
               } else {
-                diff.splice(0, 0, [PATCH_OP_TYPE.EQUAL, text_insert.substring(0, commonLength)]);
+                diff.splice(0, 0, [PATCH_OP_TYPE.EQUAL, insTxt.slice(0, commonLength)]);
                 pointer++;
               }
-              text_insert = text_insert.substring(commonLength);
-              text_delete = text_delete.substring(commonLength);
+              insTxt = insTxt.slice(commonLength);
+              delTxt = delTxt.slice(commonLength);
             }
             // Factor out any common suffixes.
-            commonLength = sfx(text_insert, text_delete);
+            commonLength = sfx(insTxt, delTxt);
             if (commonLength !== 0) {
-              diff[pointer][1] = text_insert.substring(text_insert.length - commonLength) + diff[pointer][1];
-              text_insert = text_insert.substring(0, text_insert.length - commonLength);
-              text_delete = text_delete.substring(0, text_delete.length - commonLength);
+              diff[pointer][1] = insTxt.slice(insTxt.length - commonLength) + diff[pointer][1];
+              insTxt = insTxt.slice(0, insTxt.length - commonLength);
+              delTxt = delTxt.slice(0, delTxt.length - commonLength);
             }
           }
           // Delete the offending records and add the merged ones.
-          const n = count_insert + count_delete;
-          if (text_delete.length === 0 && text_insert.length === 0) {
+          const n = insCnt + delCnt;
+          const delTxtLen = delTxt.length;
+          const insTxtLen = insTxt.length;
+          if (delTxtLen === 0 && insTxtLen === 0) {
             diff.splice(pointer - n, n);
             pointer = pointer - n;
-          } else if (text_delete.length === 0) {
-            diff.splice(pointer - n, n, [PATCH_OP_TYPE.INSERT, text_insert]);
+          } else if (delTxtLen === 0) {
+            diff.splice(pointer - n, n, [PATCH_OP_TYPE.INSERT, insTxt]);
             pointer = pointer - n + 1;
-          } else if (text_insert.length === 0) {
-            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, text_delete]);
+          } else if (insTxtLen === 0) {
+            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, delTxt]);
             pointer = pointer - n + 1;
           } else {
-            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, text_delete], [PATCH_OP_TYPE.INSERT, text_insert]);
+            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, delTxt], [PATCH_OP_TYPE.INSERT, insTxt]);
             pointer = pointer - n + 2;
           }
         }
-        if (pointer !== 0 && diff[pointer - 1][0] === PATCH_OP_TYPE.EQUAL) {
+        const d0 = diff[pointer - 1];
+        if (pointer !== 0 && d0[0] === PATCH_OP_TYPE.EQUAL) {
           // Merge this equality with the previous one.
-          diff[pointer - 1][1] += diff[pointer][1];
+          d0[1] += diff[pointer][1];
           diff.splice(pointer, 1);
-        } else {
-          pointer++;
-        }
-        count_insert = 0;
-        count_delete = 0;
-        text_delete = '';
-        text_insert = '';
+        } else pointer++;
+        insCnt = 0;
+        delCnt = 0;
+        delTxt = '';
+        insTxt = '';
         break;
       }
     }
   }
-  if (diff[diff.length - 1][1] === '') {
-    diff.pop(); // Remove the dummy entry at the end.
-  }
+  if (diff[diff.length - 1][1] === '') diff.pop(); // Remove the dummy entry at the end.
 
   // Second pass: look for single edits surrounded on both sides by equalities
   // which can be shifted sideways to eliminate an equality.
@@ -168,19 +175,24 @@ const cleanupMerge = (diff: Patch, fix_unicode: boolean) => {
   pointer = 1;
   // Intentionally ignore the first and last element (don't need checking).
   while (pointer < diff.length - 1) {
-    if (diff[pointer - 1][0] === PATCH_OP_TYPE.EQUAL && diff[pointer + 1][0] === PATCH_OP_TYPE.EQUAL) {
+    const d0 = diff[pointer - 1];
+    const d2 = diff[pointer + 1];
+    if (d0[0] === PATCH_OP_TYPE.EQUAL && d2[0] === PATCH_OP_TYPE.EQUAL) {
       // This is a single edit surrounded by equalities.
-      if (diff[pointer][1].substring(diff[pointer][1].length - diff[pointer - 1][1].length) === diff[pointer - 1][1]) {
+      const str0 = d0[1];
+      const d1 = diff[pointer];
+      const str1 = d1[1];
+      const str2 = d2[1];
+      if (str1.slice(str1.length - str0.length) === str0) {
         // Shift the edit over the previous equality.
-        diff[pointer][1] =
-          diff[pointer - 1][1] + diff[pointer][1].substring(0, diff[pointer][1].length - diff[pointer - 1][1].length);
-        diff[pointer + 1][1] = diff[pointer - 1][1] + diff[pointer + 1][1];
+        diff[pointer][1] = str0 + str1.slice(0, str1.length - str0.length);
+        d2[1] = str0 + str2;
         diff.splice(pointer - 1, 1);
         changes = true;
-      } else if (diff[pointer][1].substring(0, diff[pointer + 1][1].length) === diff[pointer + 1][1]) {
+      } else if (str1.slice(0, str2.length) === str2) {
         // Shift the edit over the next equality.
-        diff[pointer - 1][1] += diff[pointer + 1][1];
-        diff[pointer][1] = diff[pointer][1].substring(diff[pointer + 1][1].length) + diff[pointer + 1][1];
+        d0[1] += d2[1];
+        d1[1] = str1.slice(str2.length) + str2;
         diff.splice(pointer + 1, 1);
         changes = true;
       }
@@ -188,7 +200,7 @@ const cleanupMerge = (diff: Patch, fix_unicode: boolean) => {
     pointer++;
   }
   // If shifts were made, the diff needs reordering and another shift sweep.
-  if (changes) cleanupMerge(diff, fix_unicode);
+  if (changes) cleanupMerge(diff, fixUnicode);
 };
 
 /**
@@ -202,14 +214,16 @@ const cleanupMerge = (diff: Patch, fix_unicode: boolean) => {
  * @return Array of diff tuples.
  */
 const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch => {
-  const diffsA = diff_(text1.substring(0, x), text2.substring(0, y), false);
-  const diffsB = diff_(text1.substring(x), text2.substring(y), false);
+  const diffsA = diff_(text1.slice(0, x), text2.slice(0, y), false);
+  const diffsB = diff_(text1.slice(x), text2.slice(y), false);
   return diffsA.concat(diffsB);
 };
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
  * and return the recursively constructed diff.
+ * 
+ * This is a port of `diff-patch-match` implementation to TypeScript.
  *
  * @see http://www.xmailserver.org/diff2.pdf EUGENE W. MYERS 1986 paper: An
  *     O(ND) Difference Algorithm and Its Variations.
@@ -246,8 +260,10 @@ const bisect = (text1: string, text2: string): Patch => {
     for (let k1 = -d + k1start; k1 <= d - k1end; k1 += 2) {
       const k1_offset = vOffset + k1;
       let x1: number = 0;
-      if (k1 === -d || (k1 !== d && v1[k1_offset - 1] < v1[k1_offset + 1])) x1 = v1[k1_offset + 1];
-      else x1 = v1[k1_offset - 1] + 1;
+      const v10 = v1[k1_offset - 1];
+      const v11 = v1[k1_offset + 1];
+      if (k1 === -d || (k1 !== d && v10 < v11)) x1 = v11;
+      else x1 = v10 + 1;
       let y1 = x1 - k1;
       while (x1 < text1Length && y1 < text2Length && text1.charAt(x1) === text2.charAt(y1)) {
         x1++;
@@ -258,17 +274,16 @@ const bisect = (text1: string, text2: string): Patch => {
       else if (y1 > text2Length) k1start += 2;
       else if (front) {
         const k2Offset = vOffset + delta - k1;
-        if (k2Offset >= 0 && k2Offset < vLength && v2[k2Offset] !== -1) {
-          if (x1 >= text1Length - v2[k2Offset]) return bisectSplit(text1, text2, x1, y1);
+        const v2Offset = v2[k2Offset];
+        if (k2Offset >= 0 && k2Offset < vLength && v2Offset !== -1) {
+          if (x1 >= text1Length - v2Offset) return bisectSplit(text1, text2, x1, y1);
         }
       }
     }
     // Walk the reverse path one step.
     for (let k2 = -d + k2start; k2 <= d - k2end; k2 += 2) {
       const k2_offset = vOffset + k2;
-      let x2: number = 0;
-      if (k2 === -d || (k2 !== d && v2[k2_offset - 1] < v2[k2_offset + 1])) x2 = v2[k2_offset + 1];
-      else x2 = v2[k2_offset - 1] + 1;
+      let x2 = k2 === -d || (k2 !== d && v2[k2_offset - 1] < v2[k2_offset + 1]) ? v2[k2_offset + 1] : v2[k2_offset - 1] + 1;
       let y2 = x2 - k2;
       while (
         x2 < text1Length &&
@@ -283,8 +298,8 @@ const bisect = (text1: string, text2: string): Patch => {
       else if (y2 > text2Length) k2start += 2;
       else if (!front) {
         const k1_offset = vOffset + delta - k2;
-        if (k1_offset >= 0 && k1_offset < vLength && v1[k1_offset] !== -1) {
-          const x1 = v1[k1_offset];
+        const x1 = v1[k1_offset];
+        if (k1_offset >= 0 && k1_offset < vLength && x1 !== -1) {
           const y1 = vOffset + x1 - k1_offset;
           x2 = text1Length - x2;
           if (x1 >= x2) return bisectSplit(text1, text2, x1, y1);
@@ -316,8 +331,8 @@ const diffNoCommonAffix = (src: string, dst: string): Patch => {
   const shortTextLength = short.length;
   const indexOfContainedShort = long.indexOf(short);
   if (indexOfContainedShort >= 0) {
-    const start = long.substring(0, indexOfContainedShort);
-    const end = long.substring(indexOfContainedShort + shortTextLength);
+    const start = long.slice(0, indexOfContainedShort);
+    const end = long.slice(indexOfContainedShort + shortTextLength);
     return text1Length > text2Length
       ? [
           [PATCH_OP_TYPE.DELETE, start],
@@ -352,7 +367,7 @@ export const pfx = (txt1: string, txt2: string) => {
   let mid = max;
   let start = 0;
   while (min < mid) {
-    if (txt1.substring(start, mid) === txt2.substring(start, mid)) {
+    if (txt1.slice(start, mid) === txt2.slice(start, mid)) {
       min = mid;
       start = min;
     } else max = mid;
@@ -379,8 +394,8 @@ export const sfx = (txt1: string, txt2: string): number => {
   let end = 0;
   while (min < mid) {
     if (
-      txt1.substring(txt1.length - mid, txt1.length - end) ===
-      txt2.substring(txt2.length - mid, txt2.length - end)
+      txt1.slice(txt1.length - mid, txt1.length - end) ===
+      txt2.slice(txt2.length - mid, txt2.length - end)
     ) {
       min = mid;
       end = min;
@@ -407,15 +422,15 @@ const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
 
   // Trim off common prefix (speedup).
   const prefixLength = pfx(src, dst);
-  const prefix = src.substring(0, prefixLength);
-  src = src.substring(prefixLength);
-  dst = dst.substring(prefixLength);
+  const prefix = src.slice(0, prefixLength);
+  src = src.slice(prefixLength);
+  dst = dst.slice(prefixLength);
 
   // Trim off common suffix (speedup).
   const suffixLength = sfx(src, dst);
-  const suffix = src.substring(src.length - suffixLength);
-  src = src.substring(0, src.length - suffixLength);
-  dst = dst.substring(0, dst.length - suffixLength);
+  const suffix = src.slice(src.length - suffixLength);
+  src = src.slice(0, src.length - suffixLength);
+  dst = dst.slice(0, dst.length - suffixLength);
 
   // Compute the diff on the middle block.
   const diff: Patch = diffNoCommonAffix(src, dst);
@@ -494,12 +509,7 @@ export const src = (patch: Patch): string => {
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
-    switch (op[0]) {
-      case PATCH_OP_TYPE.EQUAL:
-      case PATCH_OP_TYPE.DELETE:
-        txt += op[1];
-        break;
-    }
+    if (op[0] !== PATCH_OP_TYPE.INSERT) txt += op[1];
   }
   return txt;
 };
@@ -509,61 +519,46 @@ export const dst = (patch: Patch): string => {
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
-    switch (op[0]) {
-      case PATCH_OP_TYPE.EQUAL:
-      case PATCH_OP_TYPE.INSERT:
-        txt += op[1];
-        break;
-    }
+    if (op[0] !== PATCH_OP_TYPE.DELETE) txt += op[1];
   }
   return txt;
 };
 
-export const invertOp = (op: PatchOperation): PatchOperation => {
-  switch (op[0]) {
-    case PATCH_OP_TYPE.EQUAL:
-      return op;
-    case PATCH_OP_TYPE.INSERT:
-      return [PATCH_OP_TYPE.DELETE, op[1]];
-    case PATCH_OP_TYPE.DELETE:
-      return [PATCH_OP_TYPE.INSERT, op[1]];
-  }
-};
-
-export const invert = (patch: Patch): Patch => {
-  const inverted: Patch = [];
-  const length = patch.length;
-  for (let i = 0; i < length; i++) inverted.push(invertOp(patch[i]));
-  return inverted;
+const invertOp = (op: PatchOperation): PatchOperation => {
+  const type = op[0];
+  return type === PATCH_OP_TYPE.EQUAL
+    ? op
+    : type === PATCH_OP_TYPE.INSERT
+    ? [PATCH_OP_TYPE.DELETE, op[1]]
+    : [PATCH_OP_TYPE.INSERT, op[1]];
 };
 
 /**
+ * Inverts patch such that it can be applied to `dst` to get `src` (instead of
+ * `src` to get `dst`).
+ *
+ * @param patch The patch to invert.
+ * @returns Inverted patch.
+ */
+export const invert = (patch: Patch): Patch => patch.map(invertOp);
+
+/**
  * @param patch The patch to apply.
+ * @param srcLen The length of the source string.
  * @param onInsert Callback for insert operations.
  * @param onDelete Callback for delete operations.
- * @param delayedMaterialization Whether inserts and deletes are applied
- *     immediately. If `true`, it is assumed that the size of the mutated
- *     string does not change, the changes will be applied later.
  */
-export const apply = (patch: Patch, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number) => void, delayedMaterialization?: boolean) => {
+export const apply = (patch: Patch, srcLen: number, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number) => void) => {
   const length = patch.length;
-  let pos = 0;
-  for (let i = 0; i < length; i++) {
-    const op = patch[i];
-    switch (op[0]) {
-      case PATCH_OP_TYPE.EQUAL:
-        pos += op[1].length;
-        break;
-      case PATCH_OP_TYPE.INSERT:
-        const txt = op[1];
-        onInsert(pos, txt);
-        if (!delayedMaterialization) pos += txt.length;
-        break;
-      case PATCH_OP_TYPE.DELETE:
-        const len = op[1].length;
-        onDelete(pos, len);
-        if (delayedMaterialization) pos += len;
-        break;
+  let pos = srcLen;
+  for (let i = length - 1; i >= 0; i--) {
+    const [type, str] = patch[i];
+    if (type === PATCH_OP_TYPE.EQUAL) pos -= str.length;
+    else if (type === PATCH_OP_TYPE.INSERT) onInsert(pos, str);
+    else {
+      const len = str.length;
+      pos -= len;
+      onDelete(pos, len);
     }
   }
 };
