@@ -22,7 +22,7 @@ export class Diff {
     const view = src.view();
     if (view === dst) return;
     const builder = this.builder;
-    str.apply(str.diff(view, dst), (pos, txt) => {
+    str.apply(str.diff(view, dst), view.length, (pos, txt) => {
       const after = !pos ? src.id : src.find(pos - 1);
       if (!after) throw new DiffError();
       builder.insStr(src.id, after, txt);
@@ -31,14 +31,14 @@ export class Diff {
       const spans = src.findInterval(pos, len);
       if (!spans) throw new DiffError();
       builder.del(src.id, spans);
-    }, true);
+    });
   }
 
   protected diffBin(src: BinNode, dst: Uint8Array): void {
     const view = src.view();
     if (view === dst) return;
     const builder = this.builder;
-    bin.apply(bin.diff(view, dst), (pos, txt) => {
+    bin.apply(bin.diff(view, dst), view.length, (pos, txt) => {
       const after = !pos ? src.id : src.find(pos - 1);
       if (!after) throw new DiffError();
       builder.insBin(src.id, after, txt);
@@ -47,7 +47,7 @@ export class Diff {
       const spans = src.findInterval(pos, len);
       if (!spans) throw new DiffError();
       builder.del(src.id, spans);
-    }, true);
+    });
   }
 
   protected diffObj(src: ObjNode, dst: Record<string, unknown>): void {

@@ -4,7 +4,7 @@ export const assertPatch = (src: string, dst: string, patch: diff.Patch = diff.d
   const src1 = diff.src(patch);
   const dst1 = diff.dst(patch);
   let dst2 = src;
-  diff.apply(patch, (pos, str) => {
+  diff.apply(patch, dst2.length, (pos, str) => {
     dst2 = dst2.slice(0, pos) + str + dst2.slice(pos);
   }, (pos, len) => {
     dst2 = dst2.slice(0, pos) + dst2.slice(pos + len);
@@ -13,7 +13,7 @@ export const assertPatch = (src: string, dst: string, patch: diff.Patch = diff.d
   const src2 = diff.dst(inverted);
   const dst3 = diff.src(inverted);
   let src3 = dst;
-  diff.apply(inverted, (pos, str) => {
+  diff.apply(inverted, src3.length, (pos, str) => {
     src3 = src3.slice(0, pos) + str + src3.slice(pos);
   }, (pos, len) => {
     src3 = src3.slice(0, pos) + src3.slice(pos + len);
