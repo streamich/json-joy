@@ -165,4 +165,30 @@ describe('diff', () => {
       arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
     ]);
   });
+
+  test('diffs two consecutive elements', () => {
+    const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,3,455]\n[3]');
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+      arr.ARR_PATCH_OP_TYPE.DIFF, 2,
+    ]);
+  });
+
+  test('diffs middle element', () => {
+    const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,2,3,5]\n3');
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+      arr.ARR_PATCH_OP_TYPE.DIFF, 1,
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+    ]);
+  });
+
+  test('diffs middle element - 2', () => {
+    const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,4,3,5]\n3');
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+      arr.ARR_PATCH_OP_TYPE.DIFF, 1,
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+    ]);
+  });
 });

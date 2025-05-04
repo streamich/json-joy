@@ -317,7 +317,7 @@ describe('arr', () => {
       assertDiff(model, model.root, dst);
     });
 
-    test.only('xxx', () => {
+    test('xxx', () => {
       const model = Model.create();
       model.api.root([[1, 2, 3, 4, 5], 4, 5, 6, 7, 9, 0]);
       const dst: unknown[] = [[1, 2], 4, 77, 7, 'xyz'];

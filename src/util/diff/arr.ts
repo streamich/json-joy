@@ -79,3 +79,32 @@ export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
   }
   return arrPatch;
 };
+
+export const apply = (
+  patch: ArrPatch,
+  onInsert: (posSrc: number, posDst: number, len: number) => void,
+  onDelete: (pos: number, len: number) => void,
+  onDiff: (posSrc: number, posDst: number, len: number) => void,
+) => {
+  const length = patch.length;
+  let posSrc = 0;
+  let posDst = 0;
+  for (let i = 0; i < length; i += 2) {
+    const type = patch[i] as ARR_PATCH_OP_TYPE;
+    const len = patch[i + 1] as unknown as number;
+    if (type === ARR_PATCH_OP_TYPE.EQUAL) {
+      posSrc += len;
+      posDst += len;
+    } else if (type === ARR_PATCH_OP_TYPE.INSERT) {
+      onInsert(posSrc, posDst, len);
+      posDst += len;
+    } else if (type === ARR_PATCH_OP_TYPE.DELETE) {
+      onDelete(posSrc, len);
+      posSrc += len;
+    } else if (type === ARR_PATCH_OP_TYPE.DIFF) {
+      onDiff(posSrc, posDst, len);
+      posSrc += len;
+      posDst += len;
+    }
+  }
+};

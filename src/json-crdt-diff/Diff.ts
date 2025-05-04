@@ -3,10 +3,10 @@ import {ITimespanStruct, type ITimestampStruct, Patch, PatchBuilder, Timespan} f
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
 import * as str from '../util/diff/str';
 import * as bin from '../util/diff/bin';
+import * as arr from '../util/diff/arr';
 import type {Model} from '../json-crdt/model';
 import {structHashCrdt} from '../json-hash/structHashCrdt';
 import {structHash} from '../json-hash';
-import {strCnt} from '../util/strCnt';
 
 export class DiffError extends Error {
   constructor(message: string = 'DIFF') {
@@ -46,89 +46,45 @@ export class Diff {
     let txtDst = '';
     const srcLen = src.length();
     const dstLen = dst.length;
-    const inserts: [after: ITimestampStruct, views: unknown[]][] = [];
-    const trailingInserts: unknown[] = [];
-    const deletes: ITimespanStruct[] = [];
     src.children(node => {
       txtSrc += structHashCrdt(node) + '\n';
     });
     for (let i = 0; i < dstLen; i++) txtDst += structHash(dst[i]) + '\n';
     txtSrc = txtSrc.slice(0, -1);
     txtDst = txtDst.slice(0, -1);
-    const patch = str.diff(txtSrc, txtDst);
-    console.log(txtSrc);
-    console.log(txtDst);
-    console.log(patch);
-    let srcIdx = 0;
-    let dstIdx = 0;
-    const patchLen = patch.length;
-    const lastOpIndex = patchLen - 1;
-    let inTheMiddleOfLine = false;
-    for (let i = 0; i <= lastOpIndex; i++) {
-      const isLastOp = i === lastOpIndex;
-      const op = patch[i];
-      const [type, txt] = op;
-      if (!txt) continue;
-      let lineStartOffset = 0;
-      if (inTheMiddleOfLine) {
-        const index = txt.indexOf('\n');
-        if (index < 0 && !isLastOp) continue;
-        inTheMiddleOfLine = false;
-        lineStartOffset = index + 1;
-        const view = dst[dstIdx];
-        if (srcIdx >= srcLen) {
-          console.log('PUSH', op, view);
-          trailingInserts.push(view);
-        } else {
-          console.log('DIFF', op, srcIdx, dstIdx, view);
+    const patch = arr.diff(txtSrc, txtDst);
+    const inserts: [after: ITimestampStruct, views: unknown[]][] = [];
+    const deletes: ITimespanStruct[] = [];
+    arr.apply(patch,
+      (posSrc, posDst, len) => {
+        const views: unknown[] = dst.slice(posDst, posDst + len);
+        const after = posSrc ? src.find(posSrc - 1)! : src.id;
+        inserts.push([after, views]);
+      },
+      (pos, len) => deletes.push(...src.findInterval(pos, len)!),
+      (posSrc, posDst, len) => {
+        for (let i = 0; i < len; i++) {
+          const srcIdx = posSrc + i;
+          const dstIdx = posDst + i;
+          const view = dst[dstIdx];
           try {
             this.diffAny(src.getNode(srcIdx)!, view);
           } catch (error) {
             if (error instanceof DiffError) {
-              const id = src.find(srcIdx)!;
-              const span = new Timespan(id.sid, id.time, 1);
-              deletes.push(span);
+              const span = src.findInterval(srcIdx, 1)!;
+              deletes.push(...span);
               const after = srcIdx ? src.find(srcIdx - 1)! : src.id;
               inserts.push([after, [view]]);
             } else throw error;
           }
-          srcIdx++;
         }
-        if (isLastOp && index < 0) break;
-        dstIdx++;
-      }
-      inTheMiddleOfLine = txt[txt.length - 1] !== '\n';
-      const lineCount = strCnt('\n', txt, lineStartOffset) + (isLastOp ? 1 : 0);
-      if (!lineCount) continue;
-      if (type === str.PATCH_OP_TYPE.EQUAL) {
-        console.log('EQUAL', op);
-        srcIdx += lineCount;
-        dstIdx += lineCount;
-      } else if (type === str.PATCH_OP_TYPE.INSERT) {
-        const views: unknown[] = dst.slice(dstIdx, dstIdx + lineCount);
-        console.log('INSERT', op, views);
-        const after = srcIdx ? src.find(srcIdx - 1)! : src.id;
-        dstIdx += lineCount;
-        inserts.push([after, views]);
-      } else { // DELETE
-        console.log('DELETE', op);
-        for (let i = 0; i < lineCount; i++) {
-          const id = src.find(srcIdx)!;
-          const span = new Timespan(id.sid, id.time, 1);
-          deletes.push(span);
-          srcIdx++;
-        }
-      }
-    }
+      },
+    );
     const builder = this.builder;
     const length = inserts.length;
     for (let i = 0; i < length; i++) {
       const [after, views] = inserts[i];
       builder.insArr(src.id, after, views.map(view => builder.json(view)))
-    }
-    if (trailingInserts.length) {
-      const after = srcLen ? src.find(srcLen - 1)! : src.id;
-      builder.insArr(src.id, after, trailingInserts.map(view => builder.json(view)));
     }
     if (deletes.length) builder.del(src.id, deletes);
   }
