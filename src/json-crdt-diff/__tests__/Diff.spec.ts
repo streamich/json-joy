@@ -195,3 +195,140 @@ describe('vec', () => {
     expect(node.node).toBeInstanceOf(ValNode);
   });
 });
+
+describe('arr', () => {
+  describe('insert', () => {
+    test('can add an element', () => {
+      const model = Model.create();
+      model.api.root([1]);
+      const dst = [1, 2];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can add an element (when list of "con")', () => {
+      const model = Model.create(s.arr([s.con(1)]));
+      const dst = [1, 2];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can add two elements sequentially', () => {
+      const model = Model.create();
+      model.api.root([1, 4]);
+      const dst = [1, 2, 3, 4];
+      assertDiff(model, model.root, dst);
+    });
+  });
+
+  describe('delete', () => {
+    test('can remove an element (end of list)', () => {
+      const model = Model.create();
+      model.api.root([1, 2, 3]);
+      const dst = [1, 2];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can remove a "con" element (end of list)', () => {
+      const model = Model.create(s.arr([s.con(1), s.con(2), s.con(3)]));
+      const dst = [1, 2];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can remove an element (start of list)', () => {
+      const model = Model.create();
+      model.api.root([1, 2]);
+      const dst = [2];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can remove an element (middle list)', () => {
+      const model = Model.create();
+      model.api.root([1, 2, 3]);
+      const dst = [1, 3];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can remove whole list', () => {
+      const model = Model.create();
+      model.api.root([1, 2, 3]);
+      const dst: number[] = [];
+      assertDiff(model, model.root, dst);
+    });
+  });
+
+  describe('replace', () => {
+    test('can replace an element', () => {
+      const model = Model.create();
+      model.api.root([1, 2, 3]);
+      const dst: number[] = [1, 0, 3];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can replace an element (when elements are "con")', () => {
+      const model = Model.create(s.arr([s.con(1), s.con(2), s.con(3)]));
+      const dst: number[] = [1, 0, 3];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can replace an element (different type)', () => {
+      const model = Model.create();
+      model.api.root([1, 2, 3]);
+      const dst: unknown[] = [1, 'aha', 3];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('can replace an element (when elements are "con" and different type)', () => {
+      const model = Model.create(s.arr([s.con(1), s.con(2), s.con(3)]));
+      const dst: unknown[] = [1, 'asdf', 3];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('replace nested array - 1', () => {
+      const model = Model.create();
+      model.api.root([[2]]);
+      const dst: unknown[] = [2];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('replace nested array - 2', () => {
+      const model = Model.create();
+      model.api.root([[2]]);
+      const dst: unknown[] = [2, 1];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('replace nested array - 3', () => {
+      const model = Model.create();
+      model.api.root([[2]]);
+      const dst: unknown[] = [1, 2, 3];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('replace nested array - 4', () => {
+      const model = Model.create();
+      model.api.root([1, [2], 3]);
+      const dst: unknown[] = [1, 2, 3, 4];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('replace nested array - 5', () => {
+      const model = Model.create();
+      model.api.root([1, [2, 2.4], 3]);
+      const dst: unknown[] = [1, 2, 3, 4];
+      assertDiff(model, model.root, dst);
+    });
+
+    test.only('xxx', () => {
+      const model = Model.create();
+      model.api.root([[1, 2, 3, 4, 5], 4, 5, 6, 7, 9, 0]);
+      const dst: unknown[] = [[1, 2], 4, 77, 7, 'xyz'];
+      assertDiff(model, model.root, dst);
+    });
+
+    // test('nested changes', () => {
+    //   const model = Model.create();
+    //   model.api.root([1, 2, [1, 2, 3, 4, 5, 6], 4, 5, 6, 7, 8, 9, 0]);
+    //   const dst: unknown[] = ['2', [1, 2, 34, 5], 4, 77, 7, 8, 'xyz'];
+    //   assertDiff(model, model.root, dst);
+    // });
+  });
+});
