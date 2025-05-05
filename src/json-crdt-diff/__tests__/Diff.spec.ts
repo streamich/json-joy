@@ -16,6 +16,18 @@ const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
   expect(patch2.ops.length).toBe(0);
 };
 
+describe('con', () => {
+  test('binary in "con"', () => {
+    const model = Model.create(s.obj({
+      field: s.con(new Uint8Array([1, 2, 3])),
+    }));
+    const dst = {
+      field: new Uint8Array([1, 2, 3, 4]),
+    };
+    assertDiff(model, model.root, dst);
+  });
+});
+
 describe('str', () => {
   test('insert', () => {
     const model = Model.create();
@@ -85,6 +97,16 @@ describe('bin', () => {
     expect(str.view()).toEqual(bin);
     model.applyPatch(patch);
     expect(str.view()).toEqual(dst);
+  });
+
+  test('creates empty patch for equal values', () => {
+    const model = Model.create();
+    const bin = b(1, 2, 3, 4, 5);
+    model.api.root({bin});
+    const str = model.api.bin(['bin']);
+    const dst = b(1, 2, 3, 4, 5);
+    const patch = new Diff(model).diff(str.node, dst);
+    expect(patch.ops.length).toBe(0);
   });
 
   test('delete', () => {

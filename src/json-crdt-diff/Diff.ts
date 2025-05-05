@@ -1,4 +1,5 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {cmpUint8Array} from '@jsonjoy.com/util/lib/buffers/cmpUint8Array';
 import {ITimespanStruct, type ITimestampStruct, Patch, PatchBuilder, Timespan} from '../json-crdt-patch';
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
 import * as str from '../util/diff/str';
@@ -33,7 +34,7 @@ export class Diff {
 
   protected diffBin(src: BinNode, dst: Uint8Array): void {
     const view = src.view();
-    if (view === dst) return;
+    if (cmpUint8Array(view, dst)) return;
     const builder = this.builder;
     bin.apply(bin.diff(view, dst), view.length,
       (pos, txt) => builder.insBin(src.id, !pos ? src.id : src.find(pos - 1)!, txt),
@@ -116,7 +117,8 @@ export class Diff {
           }
         }
       }
-      inserts.push([key, builder.constOrJson(dstValue)]);
+      inserts.push([key, src.get(key) instanceof ConNode
+        ? builder.const(dstValue) : builder.constOrJson(dstValue)]);
     }
     if (inserts.length) builder.insObj(src.id, inserts);
   }
