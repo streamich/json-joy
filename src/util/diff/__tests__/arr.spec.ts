@@ -132,6 +132,14 @@ describe('delete', () => {
       arr.ARR_PATCH_OP_TYPE.INSERT, 1,
     ]);
   });
+
+  test('deletes both elements and replaces by one', () => {
+    const patch = arr.diff('0\n1', 'xyz');
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.DELETE, 2,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 1,
+    ]);
+  });
 });
 
 describe('diff', () => {
@@ -189,6 +197,15 @@ describe('diff', () => {
       arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
       arr.ARR_PATCH_OP_TYPE.DIFF, 1,
       arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+    ]);
+  });
+
+  test('insert first element, diff second', () => {
+    const patch = arr.diff('[2]', '1\n2\n3');
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.INSERT, 1,
+      arr.ARR_PATCH_OP_TYPE.DIFF, 1,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 1,
     ]);
   });
 });

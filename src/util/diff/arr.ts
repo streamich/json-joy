@@ -50,13 +50,19 @@ export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
     let lineStartOffset = 0;
     if (partial !== PARTIAL_TYPE.NONE) {
       const index = txt.indexOf("\n");
-      if (index === 0) {
+      const flushPartial = txt.indexOf("\n") === 0 || (isLastOp && partial === ARR_PATCH_OP_TYPE.DELETE && type === ARR_PATCH_OP_TYPE.INSERT);
+      if (flushPartial) {
         lineStartOffset = 1;
         push(partial, 1);
         partial = PARTIAL_TYPE.NONE;
       } else {
         if (index < 0 && !isLastOp) {
           partial = ARR_PATCH_OP_TYPE.DIFF;
+          continue;
+        }
+        if (partial === ARR_PATCH_OP_TYPE.DELETE && type === ARR_PATCH_OP_TYPE.INSERT) {
+          const lineCount = strCnt("\n", txt, lineStartOffset) + (isLastOp ? 1 : 0);      
+          push(ARR_PATCH_OP_TYPE.INSERT, lineCount);
           continue;
         }
         push(ARR_PATCH_OP_TYPE.DIFF, 1);
@@ -80,6 +86,22 @@ export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
   return arrPatch;
 };
 
+/**
+ * Applies the array patch to the source array. The source array is assumed to
+ * be materialized after the patch application, i.e., the positions in the
+ * patch are relative to the source array, they do not shift during the
+ * application.
+ *
+ * @param patch Array patch to apply.
+ * @param onInsert Callback for insert operations. `posSrc` is the position
+ *     between the source elements, starting from 0. `posDst` is the destination
+ *     element position, starting from 0.
+ * @param onDelete Callback for delete operations. `pos` is the position of
+ *     the source element, starting from 0.
+ * @param onDiff Callback for diff operations. `posSrc` and `posDst` are the
+ *     positions of the source and destination elements, respectively, starting
+ *     from 0.
+ */
 export const apply = (
   patch: ArrPatch,
   onInsert: (posSrc: number, posDst: number, len: number) => void,

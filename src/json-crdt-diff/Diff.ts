@@ -44,7 +44,6 @@ export class Diff {
   protected diffArr(src: ArrNode, dst: unknown[]): void {
     let txtSrc = '';
     let txtDst = '';
-    const srcLen = src.length();
     const dstLen = dst.length;
     src.children(node => {
       txtSrc += structHashCrdt(node) + '\n';
@@ -52,9 +51,10 @@ export class Diff {
     for (let i = 0; i < dstLen; i++) txtDst += structHash(dst[i]) + '\n';
     txtSrc = txtSrc.slice(0, -1);
     txtDst = txtDst.slice(0, -1);
-    const patch = arr.diff(txtSrc, txtDst);
     const inserts: [after: ITimestampStruct, views: unknown[]][] = [];
     const deletes: ITimespanStruct[] = [];
+    const patch = arr.diff(txtSrc, txtDst);
+    // console.log(patch);
     arr.apply(patch,
       (posSrc, posDst, len) => {
         const views: unknown[] = dst.slice(posDst, posDst + len);
@@ -82,7 +82,7 @@ export class Diff {
     );
     const builder = this.builder;
     const length = inserts.length;
-    for (let i = 0; i < length; i++) {
+    for (let i = length - 1; i >= 0; i--) {
       const [after, views] = inserts[i];
       builder.insArr(src.id, after, views.map(view => builder.json(view)))
     }

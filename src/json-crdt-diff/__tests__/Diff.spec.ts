@@ -317,18 +317,25 @@ describe('arr', () => {
       assertDiff(model, model.root, dst);
     });
 
-    test('xxx', () => {
+    test('diff first element, and various replacements later', () => {
       const model = Model.create();
       model.api.root([[1, 2, 3, 4, 5], 4, 5, 6, 7, 9, 0]);
       const dst: unknown[] = [[1, 2], 4, 77, 7, 'xyz'];
       assertDiff(model, model.root, dst);
     });
 
-    // test('nested changes', () => {
-    //   const model = Model.create();
-    //   model.api.root([1, 2, [1, 2, 3, 4, 5, 6], 4, 5, 6, 7, 8, 9, 0]);
-    //   const dst: unknown[] = ['2', [1, 2, 34, 5], 4, 77, 7, 8, 'xyz'];
-    //   assertDiff(model, model.root, dst);
-    // });
+    test('replaces both elements', () => {
+      const model = Model.create();
+      model.api.root([9, 0]);
+      const dst: unknown[] = ['xyz'];
+      assertDiff(model, model.root, dst);
+    });
+
+    test('nested changes', () => {
+      const model = Model.create();
+      model.api.root([1, 2, [1, 2, 3, 4, 5, 6], 4, 5, 6, 7, 8, 9, 0]);
+      const dst: unknown[] = ['2', [1, 2, 34, 5], 4, 77, 7, 8, 'xyz'];
+      assertDiff(model, model.root, dst);
+    });
   });
 });
