@@ -255,6 +255,8 @@ export interface OperationOr extends OperationBase {
 export type JsonPatchExtendedOperation =
   | OperationStrIns
   | OperationStrDel
+  | OperationBinIns
+  | OperationBinDel
   | OperationFlip
   | OperationInc
   | OperationSplit
@@ -299,6 +301,27 @@ export interface OperationStrDel extends OperationBase {
   readonly op: 'str_del';
   readonly pos: number;
   readonly str?: string;
+  readonly len?: number;
+}
+
+/**
+ * Inserts a `value` blob into a blob at position `pos`.
+ *
+ * @category JSON Patch Extended
+ */
+export interface OperationBinIns extends OperationBase {
+  readonly op: 'bin_ins';
+  readonly pos: number;
+  readonly bin: Uint8Array;
+}
+
+/**
+ * @category JSON Patch Extended
+ */
+export interface OperationBinDel extends OperationBase {
+  readonly op: 'bin_del';
+  readonly pos: number;
+  readonly bin?: Uint8Array;
   readonly len?: number;
 }
 

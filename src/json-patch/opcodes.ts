@@ -38,6 +38,9 @@ export type JsonPatchExtendedOpType =
   // Operations needed for text collaboration.
   | 'str_ins'
   | 'str_del'
+  // Operations needed for binary blob collaboration.
+  | 'bin_ins'
+  | 'bin_del'
   // Operations needed for Slate.js.
   | 'split'
   | 'merge'
