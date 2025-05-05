@@ -40,3 +40,58 @@ describe('str', () => {
     assertDiff(src, dst);
   });
 });
+
+describe('num', () => {
+  test('insert', () => {
+    const src = 1;
+    const dst = 2;
+    assertDiff(src, dst);
+  });
+});
+
+describe('obj', () => {
+  test('can remove single key', () => {
+    const src = {foo: 1};
+    const dst = {};
+    assertDiff(src, dst);
+  });
+
+  test('replace key', () => {
+    const src = {foo: 1};
+    const dst = {foo: 2};
+    assertDiff(src, dst);
+  });
+
+  test('diff inner string', () => {
+    const src = {foo: 'hello'};
+    const dst = {foo: 'hello!'};
+    assertDiff(src, dst);
+  });
+
+  test('can insert new key', () => {
+    const src = {};
+    const dst = {foo: 'hello!'};
+    assertDiff(src, dst);
+  });
+
+  test('can diff nested objects', () => {
+    const src = {
+      id: 1,
+      name: 'hello',
+      nested: {
+        id: 2,
+        name: 'world',
+        description: 'blablabla'
+      },
+    };
+    const dst = {
+      id: 3,
+      name: 'hello!',
+      nested: {
+        id: 2,
+        description: 'Please dont use "blablabla"'
+      },
+    };
+    assertDiff(src, dst);
+  });
+});

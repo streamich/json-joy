@@ -1,5 +1,6 @@
 // import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import type {Operation} from '../json-patch/codec/json/types';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import * as str from '../util/diff/str';
 import * as bin from '../util/diff/bin';
 import * as arr from '../util/diff/arr';
@@ -14,6 +15,11 @@ export class DiffError extends Error {
 export class Diff {
   protected patch: Operation[] = [];
 
+  protected diffVal(path: string, src: unknown, dst: unknown): void {
+    if (deepEqual(src, dst)) return;
+    this.patch.push({op: 'add', path, value: dst})
+  }
+
   protected diffStr(path: string, src: string, dst: string): void {
     if (src === dst) return;
     const patch = this.patch;
@@ -23,15 +29,29 @@ export class Diff {
     );
   }
 
-  protected diffBin(src: Uint8Array, dst: Uint8Array): void {
+  protected diffBin(path: string, src: Uint8Array, dst: Uint8Array): void {
     throw new Error('Not implemented');
   }
 
-  protected diffArr(src: unknown[], dst: unknown[]): void {
-    throw new Error('Not implemented');
+  protected diffObj(path: string, src: Record<string, unknown>, dst: Record<string, unknown>): void {
+    const patch = this.patch;
+    for (const key in src) {
+      if (key in dst) {
+        const val1 = src[key];
+        const val2 = dst[key];
+        if (val1 === val2) continue;
+        this.diffAny(path + '/' + key, val1, val2);
+      } else {
+        patch.push({op: 'remove', path: path + '/' + key});
+      }
+    }
+    for (const key in dst) {
+      if (key in src) continue;
+      patch.push({op: 'add', path: path + '/' + key, value: dst[key]});
+    }
   }
 
-  protected diffObj(src: Record<string, unknown>, dst: Record<string, unknown>): void {
+  protected diffArr(path: string, src: unknown[], dst: unknown[]): void {
     throw new Error('Not implemented');
   }
 
@@ -40,6 +60,18 @@ export class Diff {
       case 'string': {
         if (typeof dst !== 'string') throw new DiffError();
         this.diffStr(path, src, dst);
+        break;
+      }
+      case 'number':
+      case 'boolean':
+      case 'bigint': {
+        this.diffVal(path, src, dst);
+        break;
+      }
+      case 'object': {
+        if (!src || !dst || typeof dst !== 'object') return this.diffVal(path, src, dst);
+        if (Array.isArray(src) && Array.isArray(dst)) return this.diffArr(path, src, dst);
+        this.diffObj(path, src as Record<string, unknown>, dst as Record<string, unknown>);
         break;
       }
       default: throw new DiffError();
