@@ -89,7 +89,7 @@
     "@jsonjoy.com/json-pack": "^1.1.0",
     "@jsonjoy.com/json-pointer": "^1.0.0",
     "@jsonjoy.com/json-type": "^1.0.0",
-    "@jsonjoy.com/util": "^1.4.0",
+    "@jsonjoy.com/util": "^1.6.0",
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
     "nano-css": "^5.6.2",
