@@ -339,3 +339,17 @@ describe('arr', () => {
     });
   });
 });
+
+describe('scenarios', () => {
+  test('link element annotation', () => {
+    const model = Model.create(s.obj({
+      href: s.str('http://example.com/page?tab=1'),
+      title: s.str('example'),
+    }));
+    const dst = {
+      href: 'https://example.com/page-2',
+      title: 'Example page',
+    };
+    assertDiff(model, model.root, dst);
+  });
+});

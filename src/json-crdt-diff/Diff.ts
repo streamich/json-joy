@@ -58,7 +58,8 @@ export class Diff {
     arr.apply(patch,
       (posSrc, posDst, len) => {
         const views: unknown[] = dst.slice(posDst, posDst + len);
-        const after = posSrc ? src.find(posSrc - 1)! : src.id;
+        const after = posSrc ? src.find(posSrc - 1) : src.id;
+        if (!after) throw new DiffError();
         inserts.push([after, views]);
       },
       (pos, len) => deletes.push(...src.findInterval(pos, len)!),
@@ -73,7 +74,8 @@ export class Diff {
             if (error instanceof DiffError) {
               const span = src.findInterval(srcIdx, 1)!;
               deletes.push(...span);
-              const after = srcIdx ? src.find(srcIdx - 1)! : src.id;
+              const after = srcIdx ? src.find(srcIdx - 1) : src.id;
+              if (!after) throw new DiffError();
               inserts.push([after, [view]]);
             } else throw error;
           }
@@ -172,7 +174,7 @@ export class Diff {
       if (typeof dst !== 'string') throw new DiffError();
       this.diffStr(src, dst);
     } else if (src instanceof ObjNode) {
-      if (!dst || typeof dst !== 'object') throw new DiffError();
+      if (!dst || typeof dst !== 'object' || Array.isArray(dst)) throw new DiffError();
       this.diffObj(src, dst as Record<string, unknown>);
     } else if (src instanceof ValNode) {
       this.diffVal(src, dst);
