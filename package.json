@@ -162,6 +162,7 @@
           "json-ot",
           "json-patch-ot",
           "json-patch",
+          "json-patch-diff",
           "json-stable",
           "json-text",
           "json-walk",

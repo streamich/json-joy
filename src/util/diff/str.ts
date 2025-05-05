@@ -548,7 +548,7 @@ export const invert = (patch: Patch): Patch => patch.map(invertOp);
  * @param onInsert Callback for insert operations.
  * @param onDelete Callback for delete operations.
  */
-export const apply = (patch: Patch, srcLen: number, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number) => void) => {
+export const apply = (patch: Patch, srcLen: number, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number, str: string) => void) => {
   const length = patch.length;
   let pos = srcLen;
   for (let i = length - 1; i >= 0; i--) {
@@ -558,7 +558,7 @@ export const apply = (patch: Patch, srcLen: number, onInsert: (pos: number, str:
     else {
       const len = str.length;
       pos -= len;
-      onDelete(pos, len);
+      onDelete(pos, len, str);
     }
   }
 };
