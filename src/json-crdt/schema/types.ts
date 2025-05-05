@@ -4,29 +4,36 @@ import type {PeritextNode, QuillDeltaNode} from '../../json-crdt-extensions';
 import type {nodes as builder} from '../../json-crdt-patch';
 import type {ExtNode} from '../extensions/ExtNode';
 import type * as nodes from '../nodes';
+import {Extension} from '../extensions/Extension';
 
 // prettier-ignore
-export type SchemaToJsonNode<S> = S extends builder.str<infer T>
+export type SchemaToJsonNode<S, Extensions extends Extension<number, any, any, any, any>[] = []> = S extends builder.str<infer T>
   ? nodes.StrNode<T>
   : S extends builder.bin
     ? nodes.BinNode
     : S extends builder.con<infer T>
       ? nodes.ConNode<T>
       : S extends builder.val<infer T>
-        ? nodes.ValNode<SchemaToJsonNode<T>>
+        ? nodes.ValNode<SchemaToJsonNode<T,Extensions>>
         : S extends builder.vec<infer T>
-          ? nodes.VecNode<{[K in keyof T]: SchemaToJsonNode<T[K]>}>
+          ? nodes.VecNode<{[K in keyof T]: SchemaToJsonNode<T[K],Extensions>}>
           : S extends builder.obj<infer T>
-            ? nodes.ObjNode<{[K in keyof T]: SchemaToJsonNode<T[K]>}>
+            ? nodes.ObjNode<{[K in keyof T]: SchemaToJsonNode<T[K],Extensions>}>
             : S extends builder.arr<infer T>
-              ? nodes.ArrNode<SchemaToJsonNode<T>>
+              ? nodes.ArrNode<SchemaToJsonNode<T,Extensions>>
               : S extends builder.ext<ExtensionId.peritext, any>
                 ? nodes.VecNode<ExtensionVecData<PeritextNode>>
                 : S extends builder.ext<ExtensionId.quill, any>
                   ? nodes.VecNode<ExtensionVecData<QuillDeltaNode>>
                   : S extends builder.ext<ExtensionId.mval, any>
                     ? nodes.VecNode<ExtensionVecData<MvalNode>>
-                    : nodes.JsonNode;
+                    : S extends builder.ext<infer ExtId, any>
+                      ? Extensions extends (infer ExtsUnion)[] 
+                          ? Extract<ExtsUnion, { readonly id: ExtId }> extends Extension<any, any, infer M, any, any, any>
+                                ? M
+                                : never
+                          : never
+                      : nodes.JsonNode;
 
 export type ExtensionVecData<EDataNode extends ExtNode<any, any>> = {__BRAND__: 'ExtVecData'} & [
   header: nodes.ConNode<Uint8Array>,
