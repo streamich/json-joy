@@ -129,3 +129,32 @@ export const apply = (
     }
   }
 };
+
+/**
+ * Matches exact lines in the source and destination arrays.
+ *
+ * @param src Source array of lines.
+ * @param dst Destination array of lines.
+ * @returns An even length array of numbers, where each pair of numbers
+ *     an index in the source array and an index in the destination array.
+ */
+export const matchLines = (src: string[], dst: string[]): number[] => {
+  let dstIndex = 0;
+  const slen = src.length;
+  const dlen = dst.length;
+  // const min = Math.min(slen, dlen);
+  const result: number[] = [];
+  SRC: for (let srcIndex = 0; srcIndex < slen; srcIndex++) {
+    const s = src[srcIndex];
+    DST: for (let i = dstIndex; i < dlen; i++) {
+      const d = dst[i];
+      if (s === d) {
+        result.push(srcIndex, i);
+        dstIndex = i + 1;
+        if (dstIndex >= dlen) break SRC;
+        continue SRC;
+      }
+    }
+  }
+  return result;
+};
