@@ -4,10 +4,10 @@ import {applyPatch} from '../../json-patch';
 const assertDiff = (src: unknown, dst: unknown) => {
   const srcNested = {src};
   const patch1 = new Diff().diff('/src', src, dst);
-  const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
   // console.log(src);
-  // console.log(dst);
   // console.log(patch1);
+  // console.log(dst);
+  const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
   // console.log(res);
   expect(res).toEqual({src: dst});
   const patch2 = new Diff().diff('/src', (res as any)['src'], dst);
@@ -74,6 +74,27 @@ describe('obj', () => {
     assertDiff(src, dst);
   });
 
+  test('can change all primitive types', () => {
+    const src = {
+      obj: {
+        nil: null,
+        bool: true,
+        num: 1,
+        str: 'hello',
+      },
+    };
+    const dst = {
+      obj: {
+        nil: 1,
+        bool: false,
+        num: null,
+        num2: 2,
+        str: 'hello!',
+      },
+    };
+    assertDiff(src, dst);
+  });
+
   test('can diff nested objects', () => {
     const src = {
       id: 1,
@@ -92,6 +113,68 @@ describe('obj', () => {
         description: 'Please dont use "blablabla"'
       },
     };
+    assertDiff(src, dst);
+  });
+});
+
+describe('arr', () => {
+  test('can add element to an empty array', () => {
+    const src: unknown[] = [];
+    const dst: unknown[] = [1];
+    assertDiff(src, dst);
+  });
+
+  test('can add two elements to an empty array', () => {
+    const src: unknown[] = [];
+    const dst: unknown[] = [0, 1];
+    assertDiff(src, dst);
+  });
+
+  test('can add three elements to an empty array', () => {
+    const src: unknown[] = [];
+    const dst: unknown[] = [0, 1, 2];
+    assertDiff(src, dst);
+  });
+
+  test('can add multiple elements to an empty array', () => {
+    const src: unknown[] = [];
+    const dst: unknown[] = [0, 1, 2, 3, 4, 5];
+    assertDiff(src, dst);
+  });
+
+  test('can remove and add element', () => {
+    const src: unknown[] = [0];
+    const dst: unknown[] = [1];
+    assertDiff(src, dst);
+  });
+
+  test('can remove and add two elements', () => {
+    const src: unknown[] = [0];
+    const dst: unknown[] = [1, 2];
+    assertDiff(src, dst);
+  });
+
+  test('can overwrite the only element', () => {
+    const src: unknown[] = [0];
+    const dst: unknown[] = [2];
+    assertDiff(src, dst);
+  });
+
+  test('can overwrite second element', () => {
+    const src: unknown[] = [1, 0];
+    const dst: unknown[] = [1, 2];
+    assertDiff(src, dst);
+  });
+
+  test('can overwrite two elements', () => {
+    const src: unknown[] = [1, 2, 3, 4];
+    const dst: unknown[] = [1, 'x', 'x', 4];
+    assertDiff(src, dst);
+  });
+
+  test('can overwrite three elements, and add two more', () => {
+    const src: unknown[] = [1, 2, 3, 4];
+    const dst: unknown[] = ['x', 'x', 'x', 4, true, false];
     assertDiff(src, dst);
   });
 });

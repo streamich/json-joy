@@ -5,14 +5,13 @@ export const enum ARR_PATCH_OP_TYPE {
   DELETE = str.PATCH_OP_TYPE.DELETE,
   EQUAL = str.PATCH_OP_TYPE.EQUAL,
   INSERT = str.PATCH_OP_TYPE.INSERT,
-  PUSH = 2,
-  DIFF = 3,
+  DIFF = 2,
 }
 
 export type ArrPatch = number[];
 
 const enum PARTIAL_TYPE {
-  NONE = 24,
+  NONE = 9,
 }
 
 export const diff = (txtSrc: string, txtDst: string): ArrPatch => {

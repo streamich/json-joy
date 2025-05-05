@@ -1,10 +1,8 @@
-// import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import type {Operation} from '../json-patch/codec/json/types';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import * as str from '../util/diff/str';
-import * as bin from '../util/diff/bin';
 import * as arr from '../util/diff/arr';
 import {structHash} from '../json-hash';
+import type {Operation} from '../json-patch/codec/json/types';
 
 export class DiffError extends Error {
   constructor(message: string = 'DIFF') {
@@ -17,7 +15,7 @@ export class Diff {
 
   protected diffVal(path: string, src: unknown, dst: unknown): void {
     if (deepEqual(src, dst)) return;
-    this.patch.push({op: 'add', path, value: dst})
+    this.patch.push({op: 'replace', path, value: dst})
   }
 
   protected diffStr(path: string, src: string, dst: string): void {
@@ -52,7 +50,37 @@ export class Diff {
   }
 
   protected diffArr(path: string, src: unknown[], dst: unknown[]): void {
-    throw new Error('Not implemented');
+    let txtSrc = '';
+    let txtDst = '';
+    const srcLen = src.length;
+    const dstLen = dst.length;
+    for (let i = 0; i < srcLen; i++) txtSrc += structHash(src[i]) + '\n';
+    for (let i = 0; i < dstLen; i++) txtDst += structHash(dst[i]) + '\n';
+    txtSrc = txtSrc.slice(0, -1);
+    txtDst = txtDst.slice(0, -1);
+    const pfx = path + '/';
+    let srcShift = 0;
+    const patch = this.patch;
+    arr.apply(arr.diff(txtSrc, txtDst),
+      (posSrc, posDst, len) => {
+        for (let i = 0; i < len; i++) {
+          patch.push({op: 'add', path: pfx + (posSrc + srcShift + i), value: dst[posDst + i]});
+        }
+      },
+      (pos, len) => {
+        for (let i = 0; i < len; i++) {
+          patch.push({op: 'remove', path: pfx + (pos + srcShift + i)});
+          srcShift--;
+        }
+      },
+      (posSrc, posDst, len) => {
+        for (let i = 0; i < len; i++) {
+          const pos = posSrc + srcShift + i;
+          const value = dst[posDst + i];
+          this.diff(pfx + pos, src[pos], value);
+        }
+      },
+    );
   }
 
   public diffAny(path: string, src: unknown, dst: unknown): void {
@@ -70,34 +98,18 @@ export class Diff {
       }
       case 'object': {
         if (!src || !dst || typeof dst !== 'object') return this.diffVal(path, src, dst);
-        if (Array.isArray(src) && Array.isArray(dst)) return this.diffArr(path, src, dst);
+        if (Array.isArray(src)) {
+          if (Array.isArray(dst)) this.diffArr(path, src, dst);
+          else this.diffVal(path, src, dst);
+          return;
+        }
         this.diffObj(path, src as Record<string, unknown>, dst as Record<string, unknown>);
         break;
       }
-      default: throw new DiffError();
+      default:
+        this.diffVal(path, src, dst);
+        break;
     }
-    // if (src instanceof ConNode) {
-    //   const val = src.val;
-    //   if ((val !== dst) && !deepEqual(src.val, dst)) throw new DiffError();
-    // } else if (src instanceof StrNode) {
-    //   
-    // } else if (src instanceof ObjNode) {
-    //   if (!dst || typeof dst !== 'object' || Array.isArray(dst)) throw new DiffError();
-    //   this.diffObj(src, dst as Record<string, unknown>);
-    // } else if (src instanceof ValNode) {
-    //   this.diffVal(src, dst);
-    // } else if (src instanceof ArrNode) {
-    //   if (!Array.isArray(dst)) throw new DiffError();
-    //   this.diffArr(src, dst as unknown[]);
-    // } else if (src instanceof VecNode) {
-    //   if (!Array.isArray(dst)) throw new DiffError();
-    //   this.diffVec(src, dst as unknown[]);
-    // } else if (src instanceof BinNode) {
-    //   if (!(dst instanceof Uint8Array)) throw new DiffError();
-    //   this.diffBin(src, dst);
-    // } else {
-    //   
-    // }
   }
 
   public diff(path: string, src: unknown, dst: unknown): Operation[] {
