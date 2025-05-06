@@ -57,23 +57,23 @@ export class Diff {
     for (let i = 0; i < srcLen; i++) srcLines.push(structHash(src[i]));
     for (let i = 0; i < dstLen; i++) dstLines.push(structHash(dst[i]));
     const pfx = path + '/';
-    let srcShift = 0;
+    let shift = 0;
     const patch = this.patch;
+    // let deletes: number = 0;
     arr.apply(arr.diff(srcLines, dstLines),
       (posSrc, posDst, len) => {
-        for (let i = 0; i < len; i++) {
-          patch.push({op: 'add', path: pfx + (posSrc + srcShift + i), value: dst[posDst + i]});
-        }
+        for (let i = 0; i < len; i++)
+          patch.push({op: 'add', path: pfx + (posSrc + shift + i), value: dst[posDst + i]});
+        shift += len;;
       },
       (pos, len) => {
-        for (let i = 0; i < len; i++) {
-          patch.push({op: 'remove', path: pfx + (pos + srcShift + i)});
-          srcShift--;
-        }
+        for (let i = 0; i < len; i++)
+          patch.push({op: 'remove', path: pfx + (pos + shift)});
+        shift -= len;
       },
       (posSrc, posDst, len) => {
         for (let i = 0; i < len; i++) {
-          const pos = posSrc + srcShift + i;
+          const pos = posSrc + shift + i;
           const srcValue = src[posSrc + i];
           const dstValue = dst[posDst + i];
           this.diff(pfx + pos, srcValue, dstValue);

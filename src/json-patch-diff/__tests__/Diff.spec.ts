@@ -190,7 +190,7 @@ describe('arr', () => {
     assertDiff(src, dst);
   });
 
-  test('delete first two element', () => {
+  test('delete first two elements', () => {
     const src: unknown[] = [1, 2, 3, 4];
     const dst: unknown[] = [3, 4];
     assertDiff(src, dst);
