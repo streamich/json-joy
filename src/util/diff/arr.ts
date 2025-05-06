@@ -45,6 +45,7 @@ export const matchLines = (src: string[], dst: string[]): number[] => {
 };
 
 const enum PARTIAL_TYPE {
+  REPLACE = 8,
   NONE = 9,
 }
 
@@ -83,14 +84,20 @@ const diffLines = (srcTxt: string, dstTxt: string): ArrPatch => {
     let lineStartOffset = 0;
     if (partial !== PARTIAL_TYPE.NONE) {
       const index = txt.indexOf("\n");
-      const flushPartial = txt.indexOf("\n") === 0 || (isLastOp && partial === ARR_PATCH_OP_TYPE.DELETE && type === ARR_PATCH_OP_TYPE.INSERT);
+      const isImmediateFlush = index === 0;
+      const flushPartial = isImmediateFlush || (isLastOp && partial === ARR_PATCH_OP_TYPE.DELETE && type === ARR_PATCH_OP_TYPE.INSERT);
       if (flushPartial) {
         lineStartOffset = 1;
-        push(partial, 1);
+        if (isImmediateFlush && <any>partial === PARTIAL_TYPE.REPLACE) {
+          push(ARR_PATCH_OP_TYPE.DELETE, 1);
+          push(ARR_PATCH_OP_TYPE.INSERT, 1);
+        } else {
+          push(<ARR_PATCH_OP_TYPE>partial, 1);
+        }
         partial = PARTIAL_TYPE.NONE;
       } else {
         if (index < 0 && !isLastOp) {
-          partial = ARR_PATCH_OP_TYPE.DIFF;
+          partial = partial === ARR_PATCH_OP_TYPE.DELETE && (type === ARR_PATCH_OP_TYPE.INSERT) ? PARTIAL_TYPE.REPLACE : ARR_PATCH_OP_TYPE.DIFF;
           continue;
         }
         if (partial === ARR_PATCH_OP_TYPE.DELETE && type === ARR_PATCH_OP_TYPE.INSERT) {

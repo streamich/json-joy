@@ -43,7 +43,7 @@ describe('matchLines()', () => {
 });
 
 describe('diff()', () => {
-  test.only('...', () => {
+  test('can match various equal lines', () => {
     const patch = arr.diff(
       ['0', '1', '3', 'x', 'y', '4', '5'],
       ['1', '2', '3', '4', 'a', 'b', 'c', '5'],
@@ -60,9 +60,14 @@ describe('diff()', () => {
     ]);
   });
 
-  test('TODO', () => {
+  test('replace whole list', () => {
     const patch = arr.diff([ 'a', 'x' ], [ 'b', 'c', 'd' ]);
-    // expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.INSERT, 1]);
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.DELETE, 1,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 1,
+      arr.ARR_PATCH_OP_TYPE.DELETE, 1,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 2,
+    ]);
   });
 
   test('insert into empty list', () => {
