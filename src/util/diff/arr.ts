@@ -127,7 +127,10 @@ const diffLines = (srcTxt: string, dstTxt: string): ArrPatch => {
 };
 
 export const diff = (src: string[], dst: string[]): ArrPatch => {
+  // console.log(src);
+  // console.log(dst);
   const matches = matchLines(src, dst);
+  // console.log('MATCHES', matches);
   const length = matches.length;
   let lastSrcIndex = -1;
   let lastDstIndex = -1;

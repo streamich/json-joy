@@ -50,18 +50,16 @@ export class Diff {
   }
 
   protected diffArr(path: string, src: unknown[], dst: unknown[]): void {
-    let txtSrc = '';
-    let txtDst = '';
+    const srcLines: string[] = [];
+    const dstLines: string[] = [];
     const srcLen = src.length;
     const dstLen = dst.length;
-    for (let i = 0; i < srcLen; i++) txtSrc += structHash(src[i]) + '\n';
-    for (let i = 0; i < dstLen; i++) txtDst += structHash(dst[i]) + '\n';
-    txtSrc = txtSrc.slice(0, -1);
-    txtDst = txtDst.slice(0, -1);
+    for (let i = 0; i < srcLen; i++) srcLines.push(structHash(src[i]));
+    for (let i = 0; i < dstLen; i++) dstLines.push(structHash(dst[i]));
     const pfx = path + '/';
     let srcShift = 0;
     const patch = this.patch;
-    arr.apply(arr.diff(txtSrc, txtDst),
+    arr.apply(arr.diff(srcLines, dstLines),
       (posSrc, posDst, len) => {
         for (let i = 0; i < len; i++) {
           patch.push({op: 'add', path: pfx + (posSrc + srcShift + i), value: dst[posDst + i]});
@@ -76,8 +74,9 @@ export class Diff {
       (posSrc, posDst, len) => {
         for (let i = 0; i < len; i++) {
           const pos = posSrc + srcShift + i;
-          const value = dst[posDst + i];
-          this.diff(pfx + pos, src[pos], value);
+          const srcValue = src[posSrc + i];
+          const dstValue = dst[posDst + i];
+          this.diff(pfx + pos, srcValue, dstValue);
         }
       },
     );

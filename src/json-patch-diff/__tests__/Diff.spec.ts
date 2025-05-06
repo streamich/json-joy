@@ -5,7 +5,7 @@ const assertDiff = (src: unknown, dst: unknown) => {
   const srcNested = {src};
   const patch1 = new Diff().diff('/src', src, dst);
   // console.log(src);
-  console.log(patch1);
+  // console.log(patch1);
   // console.log(dst);
   const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
   // console.log(res);
@@ -197,7 +197,40 @@ describe('arr', () => {
   });
 });
 
-test.only('complex case', () => {
+test('array of objects diff', () => {
+  const src = [
+    {
+      id: 'xxxx',
+      name: 'Programming',
+      description: 'I love programming',
+    },
+    {
+      id: '123',
+      name: 'Cookies',
+      description: 'I love cookies',
+    },
+    {
+      id: 'xxxx',
+      name: 'Music',
+      description: 'I love music',
+    }
+  ];
+  const dst = [
+    {
+      id: '123',
+      name: 'Cookies',
+      description: 'I love cookies',
+    },
+    {
+      id: 'yyyy',
+      name: 'Music',
+      description: 'I love music',
+    },
+  ];
+  assertDiff(src, dst);
+});
+
+test('complex case', () => {
   const src = {
     id: 'xxxx-xxxxxx-xxxx-xxxx',
     name: 'Ivan',
@@ -246,13 +279,8 @@ test.only('complex case', () => {
       {
         id: 'yyyy',
         name: 'Music',
-        description: 'I love music.',
+        description: 'I love music',
       },
-      {
-        id: 'xxxx',
-        name: 'Sports',
-        description: 'I love sports',
-      }
     ],
     address: {
       city: 'New York City',
