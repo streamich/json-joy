@@ -5,7 +5,7 @@ const assertDiff = (src: unknown, dst: unknown) => {
   const srcNested = {src};
   const patch1 = new Diff().diff('/src', src, dst);
   // console.log(src);
-  // console.log(patch1);
+  console.log(patch1);
   // console.log(dst);
   const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
   // console.log(res);
@@ -177,4 +177,92 @@ describe('arr', () => {
     const dst: unknown[] = ['x', 'x', 'x', 4, true, false];
     assertDiff(src, dst);
   });
+
+  test('delete last element', () => {
+    const src: unknown[] = [1, 2, 3, 4];
+    const dst: unknown[] = [1, 2, 3];
+    assertDiff(src, dst);
+  });
+
+  test('delete first element', () => {
+    const src: unknown[] = [1, 2, 3, 4];
+    const dst: unknown[] = [2, 3, 4];
+    assertDiff(src, dst);
+  });
+
+  test('delete first two element', () => {
+    const src: unknown[] = [1, 2, 3, 4];
+    const dst: unknown[] = [3, 4];
+    assertDiff(src, dst);
+  });
+});
+
+test.only('complex case', () => {
+  const src = {
+    id: 'xxxx-xxxxxx-xxxx-xxxx',
+    name: 'Ivan',
+    tags: ['tag1', 'tag2'],
+    age: 30,
+    approved: true,
+    interests: [
+      {
+        id: 'xxxx',
+        name: 'Programming',
+        description: 'I love programming',
+      },
+      {
+        id: '123',
+        name: 'Cookies',
+        description: 'I love cookies',
+      },
+      {
+        id: 'xxxx',
+        name: 'Music',
+        description: 'I love music',
+      }
+    ],
+    address: {
+      city: 'New York',
+      state: 'NY',
+      zip: '10001',
+      location: {
+        lat: 40.7128,
+        lng: -74.0060,
+      }
+    },
+  };
+  const dst = {
+    id: 'yyyy-yyyyyy-yyyy-yyyy',
+    name: 'Ivans',
+    tags: ['tag2', 'tag3', 'tag4'],
+    age: 31,
+    approved: false,
+    interests: [
+      {
+        id: '123',
+        name: 'Cookies',
+        description: 'I love cookies',
+      },
+      {
+        id: 'yyyy',
+        name: 'Music',
+        description: 'I love music.',
+      },
+      {
+        id: 'xxxx',
+        name: 'Sports',
+        description: 'I love sports',
+      }
+    ],
+    address: {
+      city: 'New York City',
+      state: 'NY',
+      zip: '10002',
+      location: {
+        lat: 40.7128,
+        lng: 123.4567,
+      }
+    },
+  };
+  assertDiff(src, dst);
 });

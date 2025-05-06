@@ -43,37 +43,59 @@ describe('matchLines()', () => {
 });
 
 describe('diff()', () => {
+  test.only('...', () => {
+    const patch = arr.diff(
+      ['0', '1', '3', 'x', 'y', '4', '5'],
+      ['1', '2', '3', '4', 'a', 'b', 'c', '5'],
+    );
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.DELETE, 1,
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 1,
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+      arr.ARR_PATCH_OP_TYPE.DELETE, 2,
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 3,
+      arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
+    ]);
+  });
+
+  test('TODO', () => {
+    const patch = arr.diff([ 'a', 'x' ], [ 'b', 'c', 'd' ]);
+    // expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.INSERT, 1]);
+  });
+
   test('insert into empty list', () => {
-    const patch = arr.diff('', '1');
+    const patch = arr.diff([], ['1']);
     expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.INSERT, 1]);
   });
 
   test('both empty', () => {
-    const patch = arr.diff('', '');
+    const patch = arr.diff([], []);
     expect(patch).toEqual([]);
   });
 
   test('keep one', () => {
-    const patch = arr.diff('1', '1');
+    const patch = arr.diff(['1'], ['1']);
     expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.EQUAL, 1]);
   });
 
   test('keep two', () => {
-    const patch = arr.diff('1\n1', '1\n1');
+    const patch = arr.diff(['1', '1'], ['1', '1']);
     expect(patch).toEqual([
       arr.ARR_PATCH_OP_TYPE.EQUAL, 2,
     ]);
   });
 
   test('keep three', () => {
-    const patch = arr.diff('1\n1\n2', '1\n1\n2');
+    const patch = arr.diff(['1', '1', '2'], ['1', '1', '2']);
     expect(patch).toEqual([
       arr.ARR_PATCH_OP_TYPE.EQUAL, 3,
     ]);
   });
 
   test('keep two, delete one', () => {
-    const patch = arr.diff('1\n1\n2', '1\n1');
+    const patch = arr.diff(['1', '1', '2'], ['1', '1']);
     expect(patch).toEqual([
       arr.ARR_PATCH_OP_TYPE.EQUAL, 2,
       arr.ARR_PATCH_OP_TYPE.DELETE, 1,
@@ -81,7 +103,7 @@ describe('diff()', () => {
   });
 
   test('keep two, delete in the middle', () => {
-    const patch = arr.diff('1\n2\n3', '1\n3');
+    const patch = arr.diff(['1', '2', '3'], ['1', '3']);
     expect(patch).toEqual([
       arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
       arr.ARR_PATCH_OP_TYPE.DELETE, 1,
@@ -90,7 +112,7 @@ describe('diff()', () => {
   });
 
   test('keep two, delete the first one', () => {
-    const patch = arr.diff('1\n2\n3', '2\n3');
+    const patch = arr.diff(['1', '2', '3'], ['2', '3']);
     expect(patch).toEqual([
       arr.ARR_PATCH_OP_TYPE.DELETE, 1,
       arr.ARR_PATCH_OP_TYPE.EQUAL, 2,
@@ -99,17 +121,17 @@ describe('diff()', () => {
 
   describe('delete', () => {
     test('delete the only element', () => {
-      const patch = arr.diff('1', '');
+      const patch = arr.diff(['1'], []);
       expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.DELETE, 1]);
     });
 
     test('delete the only two element', () => {
-      const patch = arr.diff('1\n{}', '');
+      const patch = arr.diff(['1', '{}'], []);
       expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.DELETE, 2]);
     });
 
     test('delete two and three in a row', () => {
-      const patch = arr.diff('1\n2\n3\n4\n5\n6', '3');
+      const patch = arr.diff(['1', '2', '3', '4', '5', '6'], ['3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.DELETE, 2,
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
@@ -118,7 +140,7 @@ describe('diff()', () => {
     });
 
     test('delete the first one', () => {
-      const patch = arr.diff('1\n2\n3', '2\n3');
+      const patch = arr.diff(['1', '2', '3'], ['2', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.DELETE, 1,
         arr.ARR_PATCH_OP_TYPE.EQUAL, 2,
@@ -126,7 +148,7 @@ describe('diff()', () => {
     });
 
     test('delete the middle element', () => {
-      const patch = arr.diff('1\n2\n3', '1\n3');
+      const patch = arr.diff(['1', '2', '3'], ['1', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DELETE, 1,
@@ -135,7 +157,7 @@ describe('diff()', () => {
     });
 
     test('delete the last element', () => {
-      const patch = arr.diff('1\n2\n3', '1\n2');
+      const patch = arr.diff(['1', '2', '3'], ['1', '2']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 2,
         arr.ARR_PATCH_OP_TYPE.DELETE, 1,
@@ -143,7 +165,7 @@ describe('diff()', () => {
     });
 
     test('delete two first elements', () => {
-      const patch = arr.diff('1\n2\n3\n4', '3\n4');
+      const patch = arr.diff(['1', '2', '3', '4'], ['3', '4']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.DELETE, 2,
         arr.ARR_PATCH_OP_TYPE.EQUAL, 2,
@@ -151,7 +173,7 @@ describe('diff()', () => {
     });
 
     test('preserve one and delete one', () => {
-      const patch = arr.diff('1\n2', '1');
+      const patch = arr.diff(['1', '2'], ['1']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DELETE, 1,
@@ -159,7 +181,7 @@ describe('diff()', () => {
     });
     
     test('preserve one and delete one (reverse)', () => {
-      const patch = arr.diff('1\n2', '2');
+      const patch = arr.diff(['1', '2'], ['2']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.DELETE, 1,
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
@@ -167,7 +189,7 @@ describe('diff()', () => {
     });
     
     test('various deletes and inserts', () => {
-      const patch = arr.diff('1\n2\n[3]\n3\n5\n{a:4}\n5\n"6"', '1\n2\n[3]\n5\n{a:4}\n5\n"6"\n6');
+      const patch = arr.diff(['1', '2', '3', '3', '5', '{a:4}', '5', '"6"'], ['1', '2', '3', '5', '{a:4}', '5', '"6"', '6']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 3,
         arr.ARR_PATCH_OP_TYPE.DELETE, 1,
@@ -177,7 +199,7 @@ describe('diff()', () => {
     });
 
     test('deletes both elements and replaces by one', () => {
-      const patch = arr.diff('0\n1', 'xyz');
+      const patch = arr.diff(['0', '1'], ['xyz']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.DELETE, 2,
         arr.ARR_PATCH_OP_TYPE.INSERT, 1,
@@ -187,12 +209,12 @@ describe('diff()', () => {
 
   describe('diff', () => {
     test('diffs partially matching single element', () => {
-      const patch = arr.diff('[]', '[1]');
+      const patch = arr.diff(['[]'], ['[1]']);
       expect(patch).toEqual([arr.ARR_PATCH_OP_TYPE.DIFF, 1]);
     });
 
     test('diffs second element', () => {
-      const patch = arr.diff('1\n[]', '1\n[1]');
+      const patch = arr.diff(['1', '[]'], ['1', '[1]']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 1,
@@ -200,7 +222,7 @@ describe('diff()', () => {
     });
 
     test('diffs middle element', () => {
-      const patch = arr.diff('1\n2\n3', '1\n[2]\n3');
+      const patch = arr.diff(['1', '2', '3'], ['1', '[2]', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 1,
@@ -209,7 +231,7 @@ describe('diff()', () => {
     });
 
     test('diffs middle element - 2', () => {
-      const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,3,455]\n3');
+      const patch = arr.diff(['1', '[1,2,3,4]', '3'], ['1', '[1,3,455]', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 1,
@@ -218,7 +240,7 @@ describe('diff()', () => {
     });
 
     test('diffs two consecutive elements', () => {
-      const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,3,455]\n[3]');
+      const patch = arr.diff(['1', '[1,2,3,4]', '3'], ['1', '[1,3,455]', '[3]']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 2,
@@ -226,7 +248,7 @@ describe('diff()', () => {
     });
 
     test('diffs middle element', () => {
-      const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,2,3,5]\n3');
+      const patch = arr.diff(['1', '[1,2,3,4]', '3'], ['1', '[1,2,3,5]', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 1,
@@ -235,7 +257,7 @@ describe('diff()', () => {
     });
 
     test('diffs middle element - 2', () => {
-      const patch = arr.diff('1\n[1,2,3,4]\n3', '1\n[1,4,3,5]\n3');
+      const patch = arr.diff(['1', '[1,2,3,4]', '3'], ['1', '[1,4,3,5]', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.EQUAL, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 1,
@@ -244,7 +266,7 @@ describe('diff()', () => {
     });
 
     test('insert first element, diff second', () => {
-      const patch = arr.diff('[2]', '1\n2\n3');
+      const patch = arr.diff(['[2]'], ['1', '2', '3']);
       expect(patch).toEqual([
         arr.ARR_PATCH_OP_TYPE.INSERT, 1,
         arr.ARR_PATCH_OP_TYPE.DIFF, 1,

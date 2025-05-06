@@ -8,18 +8,52 @@ export const enum ARR_PATCH_OP_TYPE {
   DIFF = 2,
 }
 
+/**
+ * The patch type for the array diff. Consists of an even length array of
+ * numbers, where the first element of the pair is the operation type
+ * {@link ARR_PATCH_OP_TYPE} and the second element is the length of the
+ * operation.
+ */
 export type ArrPatch = number[];
+
+/**
+ * Matches exact lines in the source and destination arrays.
+ *
+ * @param src Source array of lines.
+ * @param dst Destination array of lines.
+ * @returns An even length array of numbers, where each pair of numbers
+ *     an index in the source array and an index in the destination array.
+ */
+export const matchLines = (src: string[], dst: string[]): number[] => {
+  let dstIndex = 0;
+  const slen = src.length;
+  const dlen = dst.length;
+  const result: number[] = [];
+  SRC: for (let srcIndex = 0; srcIndex < slen; srcIndex++) {
+    const s = src[srcIndex];
+    DST: for (let i = dstIndex; i < dlen; i++) {
+      const d = dst[i];
+      if (s === d) {
+        result.push(srcIndex, i);
+        dstIndex = i + 1;
+        if (dstIndex >= dlen) break SRC;
+        continue SRC;
+      }
+    }
+  }
+  return result;
+};
 
 const enum PARTIAL_TYPE {
   NONE = 9,
 }
 
-export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
+const diffLines = (srcTxt: string, dstTxt: string): ArrPatch => {
   const arrPatch: ArrPatch = [];
-  const patch = str.diff(txtSrc, txtDst);
+  const patch = str.diff(srcTxt, dstTxt);
   if (patch.length === 1) {
     if ((patch[0][0] as unknown as ARR_PATCH_OP_TYPE) === ARR_PATCH_OP_TYPE.INSERT) {
-      arrPatch.push(ARR_PATCH_OP_TYPE.INSERT, strCnt("\n", txtDst) + 1);
+      arrPatch.push(ARR_PATCH_OP_TYPE.INSERT, strCnt("\n", dstTxt) + 1);
       return arrPatch;
     }
   }
@@ -85,6 +119,41 @@ export const diff = (txtSrc: string, txtDst: string): ArrPatch => {
   return arrPatch;
 };
 
+export const diff = (src: string[], dst: string[]): ArrPatch => {
+  const matches = matchLines(src, dst);
+  const length = matches.length;
+  let lastSrcIndex = -1;
+  let lastDstIndex = -1;
+  let patch: ArrPatch = [];
+  for (let i = 0; i <= length; i += 2) {
+    const isLast = i === length;
+    const srcIndex = isLast ? src.length : matches[i];
+    const dstIndex = isLast ? dst.length : matches[i + 1];
+    if (lastSrcIndex + 1 !== srcIndex && lastDstIndex + 1 === dstIndex) {
+      patch.push(ARR_PATCH_OP_TYPE.DELETE, srcIndex - lastSrcIndex - 1);
+    } else if (lastSrcIndex + 1 === srcIndex && lastDstIndex + 1 !== dstIndex) {
+      patch.push(ARR_PATCH_OP_TYPE.INSERT, dstIndex - lastDstIndex - 1);
+    } else if (lastSrcIndex + 1 !== srcIndex && lastDstIndex + 1 !== dstIndex) {
+      const srcLines = src.slice(lastSrcIndex + 1, srcIndex);
+      const dstLines = dst.slice(lastDstIndex + 1, dstIndex);
+      const diffPatch = diffLines(srcLines.join("\n"), dstLines.join("\n"));
+      if (diffPatch.length) {
+        const patchLength = patch.length;
+        if (patchLength > 0 && patch[patchLength - 2] === diffPatch[0]) {
+          patch[patchLength - 1] += diffPatch[1];
+          patch = patch.concat(diffPatch.slice(2));
+        } else patch = patch.concat(diffPatch);
+      }
+    }
+    if (isLast) break;
+    if (patch.length > 0 && patch[patch.length - 2] === ARR_PATCH_OP_TYPE.EQUAL) patch[patch.length - 1]++;
+    else patch.push(ARR_PATCH_OP_TYPE.EQUAL, 1);
+    lastSrcIndex = srcIndex;
+    lastDstIndex = dstIndex;
+  }
+  return patch;
+};
+
 /**
  * Applies the array patch to the source array. The source array is assumed to
  * be materialized after the patch application, i.e., the positions in the
@@ -128,33 +197,4 @@ export const apply = (
       posDst += len;
     }
   }
-};
-
-/**
- * Matches exact lines in the source and destination arrays.
- *
- * @param src Source array of lines.
- * @param dst Destination array of lines.
- * @returns An even length array of numbers, where each pair of numbers
- *     an index in the source array and an index in the destination array.
- */
-export const matchLines = (src: string[], dst: string[]): number[] => {
-  let dstIndex = 0;
-  const slen = src.length;
-  const dlen = dst.length;
-  // const min = Math.min(slen, dlen);
-  const result: number[] = [];
-  SRC: for (let srcIndex = 0; srcIndex < slen; srcIndex++) {
-    const s = src[srcIndex];
-    DST: for (let i = dstIndex; i < dlen; i++) {
-      const d = dst[i];
-      if (s === d) {
-        result.push(srcIndex, i);
-        dstIndex = i + 1;
-        if (dstIndex >= dlen) break SRC;
-        continue SRC;
-      }
-    }
-  }
-  return result;
 };
