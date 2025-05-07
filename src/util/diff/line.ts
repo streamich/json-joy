@@ -39,6 +39,7 @@ export const agg = (patch: str.Patch): LinePatch => {
   const length = patch.length;
   let line: str.Patch = [];
   const push = (type: str.PATCH_OP_TYPE, str: string) => {
+    if (!str.length) return;
     const length = line.length;
     if (length) {
       const lastOp = line[length - 1];
@@ -58,8 +59,8 @@ export const agg = (patch: str.Patch): LinePatch => {
       push(type, str);
       continue LINES;
     } else {
-      push(type, str.slice(0, index + 1));
-      lines.push(line);
+      if (index > 0) push(type, str.slice(0, index + 1));
+      if (line.length) lines.push(line);
       line = [];
     }
     let prevIndex = index;
