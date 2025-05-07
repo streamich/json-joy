@@ -86,24 +86,25 @@ export const agg = (patch: str.Patch): LinePatch => {
         if (lineLength < 2) break NORMALIZE_LINE_START;
         const firstOp = line[0];
         const secondOp = line[1];
+        const secondOpType = secondOp[0];
         if (
           firstOp[0] === str.PATCH_OP_TYPE.EQL &&
-          secondOp[0] === str.PATCH_OP_TYPE.DEL
+          (secondOpType === str.PATCH_OP_TYPE.DEL || secondOpType === str.PATCH_OP_TYPE.INS)
         ) {
           for (let j = 2; j < lineLength; j++)
-            if (line[j][0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_START;
+            if (line[j][0] !== secondOpType) break NORMALIZE_LINE_START;
           for (let j = i + 1; j < length; j++) {
             const targetLine = lines[j];
             const targetLineLength = targetLine.length;
             if (targetLineLength <= 1) {
-              if (targetLine[0][0] !== str.PATCH_OP_TYPE.DEL)
+              if (targetLine[0][0] !== secondOpType)
                 break NORMALIZE_LINE_START;
             } else {
               const firstTargetLineOp = targetLine[0];
               const secondTargetLineOp = targetLine[1];
               const pfx = firstOp[1];
               if (
-                firstTargetLineOp[0] === str.PATCH_OP_TYPE.DEL &&
+                firstTargetLineOp[0] === secondOpType &&
                 secondTargetLineOp[0] === str.PATCH_OP_TYPE.EQL &&
                 pfx === firstTargetLineOp[1]
               ) {

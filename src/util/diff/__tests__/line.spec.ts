@@ -128,4 +128,73 @@ describe('diff', () => {
       ]
     ]);
   });
+
+  test('move first line to the end', () => {
+    const src = [
+      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
+      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
+      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
+      '{"id": "abc", "name": "Merry Jane"}',
+    ];
+    const dst = [
+      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
+      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
+      '{"id": "abc", "name": "Merry Jane"}',
+      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
+    ];
+    const patch = line.diffLines(src, dst);
+    expect(patch).toEqual([
+      [ [ -1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}' ] ],
+      [ [ 0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}' ] ],
+      [ [ 0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}' ] ],
+      [ [ 0, '{"id": "abc", "name": "Merry Jane"}' ] ],
+      [ [ 1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}' ] ],
+    ]);
+  });
+
+  test('move second line to the end', () => {
+    const src = [
+      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
+      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
+      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
+      '{"id": "abc", "name": "Merry Jane"}',
+    ];
+    const dst = [
+      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
+      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
+      '{"id": "abc", "name": "Merry Jane"}',
+      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
+    ];
+    const patch = line.diffLines(src, dst);
+    expect(patch).toEqual([
+      [ [ 0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}' ] ],
+      [ [ -1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}' ] ],
+      [ [ 0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}' ] ],
+      [ [ 0, '{"id": "abc", "name": "Merry Jane"}' ] ],
+      [ [ 1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}' ] ],
+    ]);
+  });
+
+  test('swap third and fourth lines', () => {
+    const src = [
+      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
+      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
+      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
+      '{"id": "abc", "name": "Merry Jane"}',
+    ];
+    const dst = [
+      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
+      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
+      '{"id": "abc", "name": "Merry Jane"}',
+      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
+    ];
+    const patch = line.diffLines(src, dst);
+    expect(patch).toEqual([
+      [ [ 0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}' ] ],
+      [ [ 0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}' ] ],
+      [ [ 1, '{"id": "abc", "name": "Merry Jane"}' ] ],
+      [ [ 0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}' ] ],
+      [ [ -1, '{"id": "abc", "name": "Merry Jane"}' ] ],
+    ]);
+  });
 });
