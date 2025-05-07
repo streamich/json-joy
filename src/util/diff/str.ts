@@ -5,7 +5,10 @@ export const enum PATCH_OP_TYPE {
 }
 
 export type Patch = PatchOperation[];
-export type PatchOperation = PatchOperationDelete | PatchOperationEqual | PatchOperationInsert;
+export type PatchOperation =
+  | PatchOperationDelete
+  | PatchOperationEqual
+  | PatchOperationInsert;
 export type PatchOperationDelete = [PATCH_OP_TYPE.DELETE, string];
 export type PatchOperationEqual = [PATCH_OP_TYPE.EQUAL, string];
 export type PatchOperationInsert = [PATCH_OP_TYPE.INSERT, string];
@@ -28,12 +31,12 @@ const endsWithPairStart = (str: string): boolean => {
  * @param fixUnicode Whether to normalize to a unicode-correct diff
  */
 const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
-  diff.push([PATCH_OP_TYPE.EQUAL, '']);
+  diff.push([PATCH_OP_TYPE.EQUAL, ""]);
   let pointer = 0;
   let delCnt = 0;
   let insCnt = 0;
-  let delTxt = '';
-  let insTxt = '';
+  let delTxt = "";
+  let insTxt = "";
   let commonLength: number = 0;
   while (pointer < diff.length) {
     if (pointer < diff.length - 1 && !diff[pointer][1]) {
@@ -120,7 +123,10 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
               if (prevEq >= 0) {
                 diff[prevEq][1] += insTxt.slice(0, commonLength);
               } else {
-                diff.splice(0, 0, [PATCH_OP_TYPE.EQUAL, insTxt.slice(0, commonLength)]);
+                diff.splice(0, 0, [
+                  PATCH_OP_TYPE.EQUAL,
+                  insTxt.slice(0, commonLength),
+                ]);
                 pointer++;
               }
               insTxt = insTxt.slice(commonLength);
@@ -129,7 +135,8 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
             // Factor out any common suffixes.
             commonLength = sfx(insTxt, delTxt);
             if (commonLength !== 0) {
-              diff[pointer][1] = insTxt.slice(insTxt.length - commonLength) + diff[pointer][1];
+              diff[pointer][1] =
+                insTxt.slice(insTxt.length - commonLength) + diff[pointer][1];
               insTxt = insTxt.slice(0, insTxt.length - commonLength);
               delTxt = delTxt.slice(0, delTxt.length - commonLength);
             }
@@ -148,7 +155,12 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
             diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, delTxt]);
             pointer = pointer - n + 1;
           } else {
-            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, delTxt], [PATCH_OP_TYPE.INSERT, insTxt]);
+            diff.splice(
+              pointer - n,
+              n,
+              [PATCH_OP_TYPE.DELETE, delTxt],
+              [PATCH_OP_TYPE.INSERT, insTxt]
+            );
             pointer = pointer - n + 2;
           }
         }
@@ -160,13 +172,13 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
         } else pointer++;
         insCnt = 0;
         delCnt = 0;
-        delTxt = '';
-        insTxt = '';
+        delTxt = "";
+        insTxt = "";
         break;
       }
     }
   }
-  if (diff[diff.length - 1][1] === '') diff.pop(); // Remove the dummy entry at the end.
+  if (diff[diff.length - 1][1] === "") diff.pop(); // Remove the dummy entry at the end.
 
   // Second pass: look for single edits surrounded on both sides by equalities
   // which can be shifted sideways to eliminate an equality.
@@ -213,7 +225,12 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
  * @param y Index of split point in text2.
  * @return Array of diff tuples.
  */
-const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch => {
+const bisectSplit = (
+  text1: string,
+  text2: string,
+  x: number,
+  y: number
+): Patch => {
   const diffsA = diff_(text1.slice(0, x), text2.slice(0, y), false);
   const diffsB = diff_(text1.slice(x), text2.slice(y), false);
   return diffsA.concat(diffsB);
@@ -222,7 +239,7 @@ const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
  * and return the recursively constructed diff.
- * 
+ *
  * This is a port of `diff-patch-match` implementation to TypeScript.
  *
  * @see http://www.xmailserver.org/diff2.pdf EUGENE W. MYERS 1986 paper: An
@@ -265,7 +282,11 @@ const bisect = (text1: string, text2: string): Patch => {
       if (k1 === -d || (k1 !== d && v10 < v11)) x1 = v11;
       else x1 = v10 + 1;
       let y1 = x1 - k1;
-      while (x1 < text1Length && y1 < text2Length && text1.charAt(x1) === text2.charAt(y1)) {
+      while (
+        x1 < text1Length &&
+        y1 < text2Length &&
+        text1.charAt(x1) === text2.charAt(y1)
+      ) {
         x1++;
         y1++;
       }
@@ -276,19 +297,24 @@ const bisect = (text1: string, text2: string): Patch => {
         const k2Offset = vOffset + delta - k1;
         const v2Offset = v2[k2Offset];
         if (k2Offset >= 0 && k2Offset < vLength && v2Offset !== -1) {
-          if (x1 >= text1Length - v2Offset) return bisectSplit(text1, text2, x1, y1);
+          if (x1 >= text1Length - v2Offset)
+            return bisectSplit(text1, text2, x1, y1);
         }
       }
     }
     // Walk the reverse path one step.
     for (let k2 = -d + k2start; k2 <= d - k2end; k2 += 2) {
       const k2_offset = vOffset + k2;
-      let x2 = k2 === -d || (k2 !== d && v2[k2_offset - 1] < v2[k2_offset + 1]) ? v2[k2_offset + 1] : v2[k2_offset - 1] + 1;
+      let x2 =
+        k2 === -d || (k2 !== d && v2[k2_offset - 1] < v2[k2_offset + 1])
+          ? v2[k2_offset + 1]
+          : v2[k2_offset - 1] + 1;
       let y2 = x2 - k2;
       while (
         x2 < text1Length &&
         y2 < text2Length &&
-        text1.charAt(text1Length - x2 - 1) === text2.charAt(text2Length - y2 - 1)
+        text1.charAt(text1Length - x2 - 1) ===
+          text2.charAt(text2Length - y2 - 1)
       ) {
         x2++;
         y2++;
@@ -453,12 +479,12 @@ export const diff = (src: string, dst: string): Patch => diff_(src, dst, true);
  * Considers simple insertion and deletion cases around the caret position in
  * the destination string. If the fast patch cannot be constructed, it falls
  * back to the default full implementation.
- * 
+ *
  * Cases considered:
- * 
+ *
  * 1. Insertion of a single or multiple characters right before the caret.
  * 2. Deletion of one or more characters right before the caret.
- * 
+ *
  * @param src Old string to be diffed.
  * @param dst New string to be diffed.
  * @param caret The position of the caret in the new string. Set to -1 to
@@ -500,12 +526,142 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
       if (dstSfx) patch.push([PATCH_OP_TYPE.EQUAL, dstSfx]);
       return patch;
     }
-  }  
+  }
   return diff(src, dst);
 };
 
+export const byLine = (patch: Patch): Patch[] => {
+  const lines: Patch[] = [];
+  const length = patch.length;
+  let line: Patch = [];
+  const push = (type: PATCH_OP_TYPE, str: string) => {
+    const length = line.length;
+    if (length) {
+      const lastOp = line[length - 1];
+      if (lastOp[0] === type) {
+        lastOp[1] += str;
+        return;
+      }
+    }
+    line.push([type, str]);
+  };
+  LINES: for (let i = 0; i < length; i++) {
+    const op = patch[i];
+    const type = op[0];
+    const str = op[1];
+    const index = str.indexOf("\n");
+    if (index < 0) {
+      push(type, str);
+      continue LINES;
+    } else {
+      push(type, str.slice(0, index + 1));
+      lines.push(line);
+      line = [];
+    }
+    let prevIndex = index;
+    const strLen = str.length;
+    LINE: while (prevIndex < strLen) {
+      let nextIndex = str.indexOf("\n", prevIndex + 1);
+      if (nextIndex < 0) {
+        push(type, str.slice(prevIndex + 1));
+        break LINE;
+      }
+      lines.push([[type, str.slice(prevIndex + 1, nextIndex + 1)]]);
+      prevIndex = nextIndex;
+    }
+  }
+  if (line.length) lines.push(line);
+  // console.log(lines);
+  NORMALIZE_LINE_ENDINGS: {
+    const length = lines.length;
+    for (let i = 0; i < length; i++) {
+      const line = lines[i];
+      const lineLength = line.length;
+      NORMALIZE_LINE_START: {
+        if (lineLength < 2) break NORMALIZE_LINE_START;
+        const firstOp = line[0];
+        const secondOp = line[1];
+        if (
+          firstOp[0] === PATCH_OP_TYPE.EQUAL &&
+          secondOp[0] === PATCH_OP_TYPE.DELETE
+        ) {
+          for (let j = 2; j < lineLength; j++)
+            if (line[j][0] !== PATCH_OP_TYPE.DELETE) break NORMALIZE_LINE_START;
+          for (let j = i + 1; j < length; j++) {
+            const targetLine = lines[j];
+            const targetLineLength = targetLine.length;
+            if (targetLineLength <= 1) {
+              if (targetLine[0][0] !== PATCH_OP_TYPE.DELETE)
+                break NORMALIZE_LINE_START;
+            } else {
+              const firstTargetLineOp = targetLine[0];
+              const secondTargetLineOp = targetLine[1];
+              const pfx = firstOp[1];
+              if (
+                firstTargetLineOp[0] === PATCH_OP_TYPE.DELETE &&
+                secondTargetLineOp[0] === PATCH_OP_TYPE.EQUAL &&
+                pfx === firstTargetLineOp[1]
+              ) {
+                line.splice(0, 1);
+                secondOp[1] = pfx + secondOp[1];
+                targetLine.splice(0, 1);
+                secondTargetLineOp[1] = pfx + secondTargetLineOp[1];
+              }
+            }
+          }
+        }
+      }
+      NORMALIZE_LINE_END: {
+        if (lineLength < 2) break NORMALIZE_LINE_END;
+        const lastOp = line[line.length - 1];
+        const lastOpStr = lastOp[1];
+        const secondLastOp = line[line.length - 2];
+        if (lastOp[0] === PATCH_OP_TYPE.DELETE) {
+          // if (lastOp[0] === PATCH_OP_TYPE.DELETE && secondLastOp[0] === PATCH_OP_TYPE.EQUAL) {
+          for (let j = i + 1; j < length; j++) {
+            const targetLine = lines[j];
+            const targetLineLength = targetLine.length;
+            if (targetLineLength <= 1) {
+              if (targetLine[0][0] !== PATCH_OP_TYPE.DELETE)
+                break NORMALIZE_LINE_END;
+            } else {
+              const targetLineLastOp = targetLine[targetLine.length - 1];
+              if (targetLineLastOp[0] !== PATCH_OP_TYPE.EQUAL)
+                break NORMALIZE_LINE_END;
+              for (let k = 0; k < targetLine.length - 1; k++)
+                if (targetLine[k][0] !== PATCH_OP_TYPE.DELETE)
+                  break NORMALIZE_LINE_END;
+              const keepStr = targetLineLastOp[1];
+              if (keepStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
+              const index = lastOpStr.lastIndexOf(keepStr);
+              if (index < 0) {
+                (lastOp[0] as PATCH_OP_TYPE) = PATCH_OP_TYPE.EQUAL;
+                if (secondLastOp[0] === PATCH_OP_TYPE.EQUAL) {
+                  secondLastOp[1] += lastOpStr;
+                  line.splice(lineLength - 1, 1);
+                }
+              } else {
+                lastOp[1] = lastOpStr.slice(0, index);
+                line.push([PATCH_OP_TYPE.EQUAL, keepStr]);
+              }
+              const targetLineSecondLastOp = targetLine[targetLine.length - 2];
+              if (targetLineSecondLastOp[0] === PATCH_OP_TYPE.DELETE) {
+                targetLineSecondLastOp[1] += keepStr;
+                targetLine.splice(targetLineLength - 1, 1);
+              } else {
+                (targetLineLastOp[0] as PATCH_OP_TYPE) = PATCH_OP_TYPE.DELETE;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return lines;
+};
+
 export const src = (patch: Patch): string => {
-  let txt = '';
+  let txt = "";
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
@@ -515,7 +671,7 @@ export const src = (patch: Patch): string => {
 };
 
 export const dst = (patch: Patch): string => {
-  let txt = '';
+  let txt = "";
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
@@ -548,7 +704,12 @@ export const invert = (patch: Patch): Patch => patch.map(invertOp);
  * @param onInsert Callback for insert operations.
  * @param onDelete Callback for delete operations.
  */
-export const apply = (patch: Patch, srcLen: number, onInsert: (pos: number, str: string) => void, onDelete: (pos: number, len: number, str: string) => void) => {
+export const apply = (
+  patch: Patch,
+  srcLen: number,
+  onInsert: (pos: number, str: string) => void,
+  onDelete: (pos: number, len: number, str: string) => void
+) => {
   const length = patch.length;
   let pos = srcLen;
   for (let i = length - 1; i >= 0; i--) {
