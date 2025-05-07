@@ -2,6 +2,29 @@ import * as str from "./str";
 
 export type LinePatch = str.Patch[];
 
+// const alignDeletesWithLines = (patch: str.Patch): str.Patch => {
+//   const length = patch.length;
+//   for (let i = 0; i < length - 2; i++) {
+//     const o1 = patch[i];
+//     const o1s = o1[1];
+//     if (o1[0] === str.PATCH_OP_TYPE.EQL && o1s[o1s.length - 1] !== '\n') {
+//       const o2 = patch[i + 1];
+//       const o3 = patch[i + 2];
+//       if (o2[0] === str.PATCH_OP_TYPE.DEL && o3[0] === str.PATCH_OP_TYPE.EQL) {
+//         const index = o1s.lastIndexOf("\n");
+//         if (index < 0) continue;
+//         const sfx = o1s.slice(index + 1);
+//         const o2s = o2[1];
+//         if (!o2s.endsWith(sfx)) continue;
+//         o1[1] = o1s.slice(0, index + 1);
+//         o2[1] = sfx + o2s.slice(0, o2s.length - sfx.length);
+//         o3[1] = sfx + o3[1];
+//       }
+//     }
+//   }
+//   return patch;
+// };
+
 /**
  * Aggregate character-by-character patch into a line-by-line patch.
  * 
@@ -9,7 +32,9 @@ export type LinePatch = str.Patch[];
  * @returns Line-level patch
  */
 export const agg = (patch: str.Patch): LinePatch => {
-  console.log(patch);
+  // console.log(patch);
+  // patch = alignDeletesWithLines(patch);
+  // console.log(patch);
   const lines: str.Patch[] = [];
   const length = patch.length;
   let line: str.Patch = [];
@@ -50,7 +75,7 @@ export const agg = (patch: str.Patch): LinePatch => {
     }
   }
   if (line.length) lines.push(line);
-  console.log(lines);
+  // console.log(lines);
   NORMALIZE_LINE_ENDINGS: {
     const length = lines.length;
     for (let i = 0; i < length; i++) {
@@ -136,7 +161,7 @@ export const agg = (patch: str.Patch): LinePatch => {
       }
     }
   }
-  console.log(lines);
+  // console.log(lines);
   return lines;
 };
 
@@ -144,4 +169,30 @@ export const diff = (src: string, dst: string): LinePatch => {
   const strPatch = str.diff(src, dst);
   const linePatch = agg(strPatch);
   return linePatch;
+};
+
+const removeNewlines = (patch: LinePatch): void => {
+  const length = patch.length;
+  for (let i = 0; i < length; i++) {
+    const line = patch[i];
+    const lineLength = line.length;
+    if (!lineLength) continue;
+    const lastOp = line[lineLength - 1];
+    const str = lastOp[1];
+    const strLength = str.length;
+    const endsWithNewline = str[strLength - 1] === "\n";
+    if (endsWithNewline) {
+      if (strLength === 1) {
+        line.splice(lineLength - 1, 1);
+      } else {
+        lastOp[1] = str.slice(0, strLength - 1);
+      }
+    }
+  }
+};
+
+export const diffLines = (src: string[], dst: string[]): LinePatch => {
+  const patch = diff(src.join('\n'), dst.join('\n'));
+  removeNewlines(patch);
+  return patch;
 };
