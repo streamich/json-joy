@@ -31,7 +31,7 @@ describe('fromHex()', () => {
 describe('diff()', () => {
   test('returns a single equality tuple, when buffers are identical', () => {
     const patch = diff(b(1, 2, 3), b(1, 2, 3));
-    expect(patch).toEqual([[PATCH_OP_TYPE.EQUAL, toStr(b(1, 2, 3))]]);
+    expect(patch).toEqual([[PATCH_OP_TYPE.EQL, toStr(b(1, 2, 3))]]);
     expect(src(patch)).toEqual(b(1, 2, 3));
     expect(dst(patch)).toEqual(b(1, 2, 3));
   });
@@ -39,8 +39,8 @@ describe('diff()', () => {
   test('single character insert at the beginning', () => {
     const patch1 = diff(b(1, 2, 3), b(0, 1, 2, 3));
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.INSERT, toStr(b(0))],
-      [PATCH_OP_TYPE.EQUAL, toStr(b(1, 2, 3))],
+      [PATCH_OP_TYPE.INS, toStr(b(0))],
+      [PATCH_OP_TYPE.EQL, toStr(b(1, 2, 3))],
     ]);
     expect(src(patch1)).toEqual(b(1, 2, 3));
     expect(dst(patch1)).toEqual(b(0, 1, 2, 3));
@@ -49,8 +49,8 @@ describe('diff()', () => {
   test('single character insert at the end', () => {
     const patch1 = diff(b(1, 2, 3), b(1, 2, 3, 4));
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.EQUAL, toStr(b(1, 2, 3))],
-      [PATCH_OP_TYPE.INSERT, toStr(b(4))],
+      [PATCH_OP_TYPE.EQL, toStr(b(1, 2, 3))],
+      [PATCH_OP_TYPE.INS, toStr(b(4))],
     ]);
     expect(src(patch1)).toEqual(b(1, 2, 3));
     expect(dst(patch1)).toEqual(b(1, 2, 3, 4));
@@ -59,9 +59,9 @@ describe('diff()', () => {
   test('can delete char', () => {
     const patch1 = diff(b(1, 2, 3), b(2, 3, 4));
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.DELETE, toStr(b(1))],
-      [PATCH_OP_TYPE.EQUAL, toStr(b(2, 3))],
-      [PATCH_OP_TYPE.INSERT, toStr(b(4))],
+      [PATCH_OP_TYPE.DEL, toStr(b(1))],
+      [PATCH_OP_TYPE.EQL, toStr(b(2, 3))],
+      [PATCH_OP_TYPE.INS, toStr(b(4))],
     ]);
     expect(src(patch1)).toEqual(b(1, 2, 3));
     expect(dst(patch1)).toEqual(b(2, 3, 4));

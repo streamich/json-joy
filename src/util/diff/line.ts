@@ -61,24 +61,24 @@ export const agg = (patch: str.Patch): LinePatch => {
         const firstOp = line[0];
         const secondOp = line[1];
         if (
-          firstOp[0] === str.PATCH_OP_TYPE.EQUAL &&
-          secondOp[0] === str.PATCH_OP_TYPE.DELETE
+          firstOp[0] === str.PATCH_OP_TYPE.EQL &&
+          secondOp[0] === str.PATCH_OP_TYPE.DEL
         ) {
           for (let j = 2; j < lineLength; j++)
-            if (line[j][0] !== str.PATCH_OP_TYPE.DELETE) break NORMALIZE_LINE_START;
+            if (line[j][0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_START;
           for (let j = i + 1; j < length; j++) {
             const targetLine = lines[j];
             const targetLineLength = targetLine.length;
             if (targetLineLength <= 1) {
-              if (targetLine[0][0] !== str.PATCH_OP_TYPE.DELETE)
+              if (targetLine[0][0] !== str.PATCH_OP_TYPE.DEL)
                 break NORMALIZE_LINE_START;
             } else {
               const firstTargetLineOp = targetLine[0];
               const secondTargetLineOp = targetLine[1];
               const pfx = firstOp[1];
               if (
-                firstTargetLineOp[0] === str.PATCH_OP_TYPE.DELETE &&
-                secondTargetLineOp[0] === str.PATCH_OP_TYPE.EQUAL &&
+                firstTargetLineOp[0] === str.PATCH_OP_TYPE.DEL &&
+                secondTargetLineOp[0] === str.PATCH_OP_TYPE.EQL &&
                 pfx === firstTargetLineOp[1]
               ) {
                 line.splice(0, 1);
@@ -95,40 +95,40 @@ export const agg = (patch: str.Patch): LinePatch => {
         const lastOp = line[line.length - 1];
         const lastOpStr = lastOp[1];
         const secondLastOp = line[line.length - 2];
-        if (lastOp[0] === str.PATCH_OP_TYPE.DELETE) {
+        if (lastOp[0] === str.PATCH_OP_TYPE.DEL) {
           // if (lastOp[0] === PATCH_OP_TYPE.DELETE && secondLastOp[0] === PATCH_OP_TYPE.EQUAL) {
           for (let j = i + 1; j < length; j++) {
             const targetLine = lines[j];
             const targetLineLength = targetLine.length;
             if (targetLineLength <= 1) {
-              if (targetLine[0][0] !== str.PATCH_OP_TYPE.DELETE)
+              if (targetLine[0][0] !== str.PATCH_OP_TYPE.DEL)
                 break NORMALIZE_LINE_END;
             } else {
               const targetLineLastOp = targetLine[targetLine.length - 1];
-              if (targetLineLastOp[0] !== str.PATCH_OP_TYPE.EQUAL)
+              if (targetLineLastOp[0] !== str.PATCH_OP_TYPE.EQL)
                 break NORMALIZE_LINE_END;
               for (let k = 0; k < targetLine.length - 1; k++)
-                if (targetLine[k][0] !== str.PATCH_OP_TYPE.DELETE)
+                if (targetLine[k][0] !== str.PATCH_OP_TYPE.DEL)
                   break NORMALIZE_LINE_END;
               const keepStr = targetLineLastOp[1];
               if (keepStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
               const index = lastOpStr.lastIndexOf(keepStr);
               if (index < 0) {
-                (lastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.EQUAL;
-                if (secondLastOp[0] === str.PATCH_OP_TYPE.EQUAL) {
+                (lastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.EQL;
+                if (secondLastOp[0] === str.PATCH_OP_TYPE.EQL) {
                   secondLastOp[1] += lastOpStr;
                   line.splice(lineLength - 1, 1);
                 }
               } else {
                 lastOp[1] = lastOpStr.slice(0, index);
-                line.push([str.PATCH_OP_TYPE.EQUAL, keepStr]);
+                line.push([str.PATCH_OP_TYPE.EQL, keepStr]);
               }
               const targetLineSecondLastOp = targetLine[targetLine.length - 2];
-              if (targetLineSecondLastOp[0] === str.PATCH_OP_TYPE.DELETE) {
+              if (targetLineSecondLastOp[0] === str.PATCH_OP_TYPE.DEL) {
                 targetLineSecondLastOp[1] += keepStr;
                 targetLine.splice(targetLineLength - 1, 1);
               } else {
-                (targetLineLastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.DELETE;
+                (targetLineLastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.DEL;
               }
             }
           }

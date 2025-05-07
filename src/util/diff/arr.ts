@@ -2,9 +2,9 @@ import {strCnt} from "../strCnt";
 import * as str from "./str";
 
 export const enum ARR_PATCH_OP_TYPE {
-  DELETE = str.PATCH_OP_TYPE.DELETE,
-  EQUAL = str.PATCH_OP_TYPE.EQUAL,
-  INSERT = str.PATCH_OP_TYPE.INSERT,
+  DELETE = str.PATCH_OP_TYPE.DEL,
+  EQUAL = str.PATCH_OP_TYPE.EQL,
+  INSERT = str.PATCH_OP_TYPE.INS,
   DIFF = 2,
 }
 

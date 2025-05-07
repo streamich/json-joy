@@ -4,7 +4,7 @@ import {assertPatch} from './util';
 describe('diff()', () => {
   test('returns a single equality tuple, when strings are identical', () => {
     const patch = diffEdit('hello', 'hello', 1);
-    expect(patch).toEqual([[PATCH_OP_TYPE.EQUAL, 'hello']]);
+    expect(patch).toEqual([[PATCH_OP_TYPE.EQL, 'hello']]);
     assertPatch('hello', 'hello', patch);
   });
 
@@ -13,16 +13,16 @@ describe('diff()', () => {
     const patch2 = diffEdit('hello', '_hello', 1);
     const patch3 = diffEdit('hello', '_hello', 4);
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.INSERT, '_'],
-      [PATCH_OP_TYPE.EQUAL, 'hello'],
+      [PATCH_OP_TYPE.INS, '_'],
+      [PATCH_OP_TYPE.EQL, 'hello'],
     ]);
     expect(patch2).toEqual([
-      [PATCH_OP_TYPE.INSERT, '_'],
-      [PATCH_OP_TYPE.EQUAL, 'hello'],
+      [PATCH_OP_TYPE.INS, '_'],
+      [PATCH_OP_TYPE.EQL, 'hello'],
     ]);
     expect(patch3).toEqual([
-      [PATCH_OP_TYPE.INSERT, '_'],
-      [PATCH_OP_TYPE.EQUAL, 'hello'],
+      [PATCH_OP_TYPE.INS, '_'],
+      [PATCH_OP_TYPE.EQL, 'hello'],
     ]);
     assertPatch('hello', '_hello', patch1);
     assertPatch('hello', '_hello', patch2);
@@ -34,16 +34,16 @@ describe('diff()', () => {
     const patch2 = diffEdit('hello', 'hello!', 6);
     const patch3 = diffEdit('hello', 'hello!', 2);
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.EQUAL, 'hello'],
-      [PATCH_OP_TYPE.INSERT, '!'],
+      [PATCH_OP_TYPE.EQL, 'hello'],
+      [PATCH_OP_TYPE.INS, '!'],
     ]);
     expect(patch2).toEqual([
-      [PATCH_OP_TYPE.EQUAL, 'hello'],
-      [PATCH_OP_TYPE.INSERT, '!'],
+      [PATCH_OP_TYPE.EQL, 'hello'],
+      [PATCH_OP_TYPE.INS, '!'],
     ]);
     expect(patch3).toEqual([
-      [PATCH_OP_TYPE.EQUAL, 'hello'],
-      [PATCH_OP_TYPE.INSERT, '!'],
+      [PATCH_OP_TYPE.EQL, 'hello'],
+      [PATCH_OP_TYPE.INS, '!'],
     ]);
     assertPatch('hello', 'hello!', patch1);
     assertPatch('hello', 'hello!', patch2);
@@ -53,8 +53,8 @@ describe('diff()', () => {
   test('single character removal at the beginning', () => {
     const patch = diff('hello', 'ello');
     expect(patch).toEqual([
-      [PATCH_OP_TYPE.DELETE, 'h'],
-      [PATCH_OP_TYPE.EQUAL, 'ello'],
+      [PATCH_OP_TYPE.DEL, 'h'],
+      [PATCH_OP_TYPE.EQL, 'ello'],
     ]);
     assertPatch('hello', 'ello', patch);
   });
@@ -63,12 +63,12 @@ describe('diff()', () => {
     const patch1 = diff('hello', 'hell');
     const patch2 = diffEdit('hello', 'hell', 4);
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.EQUAL, 'hell'],
-      [PATCH_OP_TYPE.DELETE, 'o'],
+      [PATCH_OP_TYPE.EQL, 'hell'],
+      [PATCH_OP_TYPE.DEL, 'o'],
     ]);
     expect(patch2).toEqual([
-      [PATCH_OP_TYPE.EQUAL, 'hell'],
-      [PATCH_OP_TYPE.DELETE, 'o'],
+      [PATCH_OP_TYPE.EQL, 'hell'],
+      [PATCH_OP_TYPE.DEL, 'o'],
     ]);
     assertPatch('hello', 'hell', patch1);
     assertPatch('hello', 'hell', patch2);
@@ -78,14 +78,14 @@ describe('diff()', () => {
     const patch1 = diff('hello', 'Hello');
     const patch2 = diffEdit('hello', 'Hello', 1);
     expect(patch1).toEqual([
-      [PATCH_OP_TYPE.DELETE, 'h'],
-      [PATCH_OP_TYPE.INSERT, 'H'],
-      [PATCH_OP_TYPE.EQUAL, 'ello'],
+      [PATCH_OP_TYPE.DEL, 'h'],
+      [PATCH_OP_TYPE.INS, 'H'],
+      [PATCH_OP_TYPE.EQL, 'ello'],
     ]);
     expect(patch2).toEqual([
-      [PATCH_OP_TYPE.DELETE, 'h'],
-      [PATCH_OP_TYPE.INSERT, 'H'],
-      [PATCH_OP_TYPE.EQUAL, 'ello'],
+      [PATCH_OP_TYPE.DEL, 'h'],
+      [PATCH_OP_TYPE.INS, 'H'],
+      [PATCH_OP_TYPE.EQL, 'ello'],
     ]);
     assertPatch('hello', 'Hello', patch1);
     assertPatch('hello', 'Hello', patch2);
@@ -94,9 +94,9 @@ describe('diff()', () => {
   test('single character replacement at the end', () => {
     const patch = diff('hello', 'hellO');
     expect(patch).toEqual([
-      [PATCH_OP_TYPE.EQUAL, 'hell'],
-      [PATCH_OP_TYPE.DELETE, 'o'],
-      [PATCH_OP_TYPE.INSERT, 'O'],
+      [PATCH_OP_TYPE.EQL, 'hell'],
+      [PATCH_OP_TYPE.DEL, 'o'],
+      [PATCH_OP_TYPE.INS, 'O'],
     ]);
     assertPatch('hello', 'hellO', patch);
   });
@@ -187,9 +187,9 @@ describe('diffEdit()', () => {
     const patch1 = diffEdit(src1, dst1, cursor1);
     assertPatch(src1, dst1, patch1);
     const patch1Expected: Patch = [];
-    if (prefix) patch1Expected.push([PATCH_OP_TYPE.EQUAL, prefix]);
-    if (edit) patch1Expected.push([PATCH_OP_TYPE.INSERT, edit]);
-    if (suffix) patch1Expected.push([PATCH_OP_TYPE.EQUAL, suffix]);
+    if (prefix) patch1Expected.push([PATCH_OP_TYPE.EQL, prefix]);
+    if (edit) patch1Expected.push([PATCH_OP_TYPE.INS, edit]);
+    if (suffix) patch1Expected.push([PATCH_OP_TYPE.EQL, suffix]);
     expect(patch1).toEqual(patch1Expected);
     const src2 = prefix + edit + suffix;
     const dst2 = prefix + suffix;
@@ -197,9 +197,9 @@ describe('diffEdit()', () => {
     const patch2 = diffEdit(src2, dst2, cursor2);
     assertPatch(src2, dst2, patch2);
     const patch2Expected: Patch = [];
-    if (prefix) patch2Expected.push([PATCH_OP_TYPE.EQUAL, prefix]);
-    if (edit) patch2Expected.push([PATCH_OP_TYPE.DELETE, edit]);
-    if (suffix) patch2Expected.push([PATCH_OP_TYPE.EQUAL, suffix]);
+    if (prefix) patch2Expected.push([PATCH_OP_TYPE.EQL, prefix]);
+    if (edit) patch2Expected.push([PATCH_OP_TYPE.DEL, edit]);
+    if (suffix) patch2Expected.push([PATCH_OP_TYPE.EQL, suffix]);
     expect(patch2).toEqual(patch2Expected);
   };
 

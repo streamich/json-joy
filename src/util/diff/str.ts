@@ -1,7 +1,7 @@
 export const enum PATCH_OP_TYPE {
-  DELETE = -1,
-  EQUAL = 0,
-  INSERT = 1,
+  DEL = -1,
+  EQL = 0,
+  INS = 1,
 }
 
 export type Patch = PatchOperation[];
@@ -9,9 +9,9 @@ export type PatchOperation =
   | PatchOperationDelete
   | PatchOperationEqual
   | PatchOperationInsert;
-export type PatchOperationDelete = [PATCH_OP_TYPE.DELETE, string];
-export type PatchOperationEqual = [PATCH_OP_TYPE.EQUAL, string];
-export type PatchOperationInsert = [PATCH_OP_TYPE.INSERT, string];
+export type PatchOperationDelete = [PATCH_OP_TYPE.DEL, string];
+export type PatchOperationEqual = [PATCH_OP_TYPE.EQL, string];
+export type PatchOperationInsert = [PATCH_OP_TYPE.INS, string];
 
 const startsWithPairEnd = (str: string) => {
   const code = str.charCodeAt(0);
@@ -31,7 +31,7 @@ const endsWithPairStart = (str: string): boolean => {
  * @param fixUnicode Whether to normalize to a unicode-correct diff
  */
 const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
-  diff.push([PATCH_OP_TYPE.EQUAL, ""]);
+  diff.push([PATCH_OP_TYPE.EQL, ""]);
   let pointer = 0;
   let delCnt = 0;
   let insCnt = 0;
@@ -45,17 +45,17 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
     }
     const d1 = diff[pointer];
     switch (d1[0]) {
-      case PATCH_OP_TYPE.INSERT:
+      case PATCH_OP_TYPE.INS:
         insCnt++;
         pointer++;
         insTxt += d1[1];
         break;
-      case PATCH_OP_TYPE.DELETE:
+      case PATCH_OP_TYPE.DEL:
         delCnt++;
         pointer++;
         delTxt += d1[1];
         break;
-      case PATCH_OP_TYPE.EQUAL: {
+      case PATCH_OP_TYPE.EQL: {
         let prevEq = pointer - insCnt - delCnt - 1;
         if (fixUnicode) {
           // prevent splitting of unicode surrogate pairs. When `fixUnicode` is true,
@@ -84,11 +84,11 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
                 const dk = diff[k];
                 if (dk) {
                   const type = dk[0];
-                  if (type === PATCH_OP_TYPE.INSERT) {
+                  if (type === PATCH_OP_TYPE.INS) {
                     insCnt++;
                     k--;
                     insTxt = dk[1] + insTxt;
-                  } else if (type === PATCH_OP_TYPE.DELETE) {
+                  } else if (type === PATCH_OP_TYPE.DEL) {
                     delCnt++;
                     k--;
                     delTxt = dk[1] + delTxt;
@@ -124,7 +124,7 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
                 diff[prevEq][1] += insTxt.slice(0, commonLength);
               } else {
                 diff.splice(0, 0, [
-                  PATCH_OP_TYPE.EQUAL,
+                  PATCH_OP_TYPE.EQL,
                   insTxt.slice(0, commonLength),
                 ]);
                 pointer++;
@@ -149,23 +149,23 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
             diff.splice(pointer - n, n);
             pointer = pointer - n;
           } else if (delTxtLen === 0) {
-            diff.splice(pointer - n, n, [PATCH_OP_TYPE.INSERT, insTxt]);
+            diff.splice(pointer - n, n, [PATCH_OP_TYPE.INS, insTxt]);
             pointer = pointer - n + 1;
           } else if (insTxtLen === 0) {
-            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DELETE, delTxt]);
+            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DEL, delTxt]);
             pointer = pointer - n + 1;
           } else {
             diff.splice(
               pointer - n,
               n,
-              [PATCH_OP_TYPE.DELETE, delTxt],
-              [PATCH_OP_TYPE.INSERT, insTxt]
+              [PATCH_OP_TYPE.DEL, delTxt],
+              [PATCH_OP_TYPE.INS, insTxt]
             );
             pointer = pointer - n + 2;
           }
         }
         const d0 = diff[pointer - 1];
-        if (pointer !== 0 && d0[0] === PATCH_OP_TYPE.EQUAL) {
+        if (pointer !== 0 && d0[0] === PATCH_OP_TYPE.EQL) {
           // Merge this equality with the previous one.
           d0[1] += diff[pointer][1];
           diff.splice(pointer, 1);
@@ -189,7 +189,7 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
   while (pointer < diff.length - 1) {
     const d0 = diff[pointer - 1];
     const d2 = diff[pointer + 1];
-    if (d0[0] === PATCH_OP_TYPE.EQUAL && d2[0] === PATCH_OP_TYPE.EQUAL) {
+    if (d0[0] === PATCH_OP_TYPE.EQL && d2[0] === PATCH_OP_TYPE.EQL) {
       // This is a single edit surrounded by equalities.
       const str0 = d0[1];
       const d1 = diff[pointer];
@@ -334,8 +334,8 @@ const bisect = (text1: string, text2: string): Patch => {
     }
   }
   return [
-    [PATCH_OP_TYPE.DELETE, text1],
-    [PATCH_OP_TYPE.INSERT, text2],
+    [PATCH_OP_TYPE.DEL, text1],
+    [PATCH_OP_TYPE.INS, text2],
   ];
 };
 
@@ -348,8 +348,8 @@ const bisect = (text1: string, text2: string): Patch => {
  * @return A {@link Patch} - an array of patch operations.
  */
 const diffNoCommonAffix = (src: string, dst: string): Patch => {
-  if (!src) return [[PATCH_OP_TYPE.INSERT, dst]];
-  if (!dst) return [[PATCH_OP_TYPE.DELETE, src]];
+  if (!src) return [[PATCH_OP_TYPE.INS, dst]];
+  if (!dst) return [[PATCH_OP_TYPE.DEL, src]];
   const text1Length = src.length;
   const text2Length = dst.length;
   const long = text1Length > text2Length ? src : dst;
@@ -361,20 +361,20 @@ const diffNoCommonAffix = (src: string, dst: string): Patch => {
     const end = long.slice(indexOfContainedShort + shortTextLength);
     return text1Length > text2Length
       ? [
-          [PATCH_OP_TYPE.DELETE, start],
-          [PATCH_OP_TYPE.EQUAL, short],
-          [PATCH_OP_TYPE.DELETE, end],
+          [PATCH_OP_TYPE.DEL, start],
+          [PATCH_OP_TYPE.EQL, short],
+          [PATCH_OP_TYPE.DEL, end],
         ]
       : [
-          [PATCH_OP_TYPE.INSERT, start],
-          [PATCH_OP_TYPE.EQUAL, short],
-          [PATCH_OP_TYPE.INSERT, end],
+          [PATCH_OP_TYPE.INS, start],
+          [PATCH_OP_TYPE.EQL, short],
+          [PATCH_OP_TYPE.INS, end],
         ];
   }
   if (shortTextLength === 1)
     return [
-      [PATCH_OP_TYPE.DELETE, src],
-      [PATCH_OP_TYPE.INSERT, dst],
+      [PATCH_OP_TYPE.DEL, src],
+      [PATCH_OP_TYPE.INS, dst],
     ];
   return bisect(src, dst);
 };
@@ -444,7 +444,7 @@ export const sfx = (txt1: string, txt2: string): number => {
  * @return A {@link Patch} - an array of patch operations.
  */
 const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
-  if (src === dst) return src ? [[PATCH_OP_TYPE.EQUAL, src]] : [];
+  if (src === dst) return src ? [[PATCH_OP_TYPE.EQL, src]] : [];
 
   // Trim off common prefix (speedup).
   const prefixLength = pfx(src, dst);
@@ -460,8 +460,8 @@ const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
 
   // Compute the diff on the middle block.
   const diff: Patch = diffNoCommonAffix(src, dst);
-  if (prefix) diff.unshift([PATCH_OP_TYPE.EQUAL, prefix]);
-  if (suffix) diff.push([PATCH_OP_TYPE.EQUAL, suffix]);
+  if (prefix) diff.unshift([PATCH_OP_TYPE.EQL, prefix]);
+  if (suffix) diff.push([PATCH_OP_TYPE.EQL, suffix]);
   cleanupMerge(diff, fixUnicode);
   return diff;
 };
@@ -510,9 +510,9 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
       if (srcPfx !== dstPfx) break edit;
       const insert = dst.slice(pfxLen, caret);
       const patch: Patch = [];
-      if (srcPfx) patch.push([PATCH_OP_TYPE.EQUAL, srcPfx]);
-      if (insert) patch.push([PATCH_OP_TYPE.INSERT, insert]);
-      if (dstSfx) patch.push([PATCH_OP_TYPE.EQUAL, dstSfx]);
+      if (srcPfx) patch.push([PATCH_OP_TYPE.EQL, srcPfx]);
+      if (insert) patch.push([PATCH_OP_TYPE.INS, insert]);
+      if (dstSfx) patch.push([PATCH_OP_TYPE.EQL, dstSfx]);
       return patch;
     } else {
       const pfxLen = dstLen - sfxLen;
@@ -521,9 +521,9 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
       if (srcPfx !== dstPfx) break edit;
       const del = src.slice(pfxLen, srcLen - sfxLen);
       const patch: Patch = [];
-      if (srcPfx) patch.push([PATCH_OP_TYPE.EQUAL, srcPfx]);
-      if (del) patch.push([PATCH_OP_TYPE.DELETE, del]);
-      if (dstSfx) patch.push([PATCH_OP_TYPE.EQUAL, dstSfx]);
+      if (srcPfx) patch.push([PATCH_OP_TYPE.EQL, srcPfx]);
+      if (del) patch.push([PATCH_OP_TYPE.DEL, del]);
+      if (dstSfx) patch.push([PATCH_OP_TYPE.EQL, dstSfx]);
       return patch;
     }
   }
@@ -535,7 +535,7 @@ export const src = (patch: Patch): string => {
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
-    if (op[0] !== PATCH_OP_TYPE.INSERT) txt += op[1];
+    if (op[0] !== PATCH_OP_TYPE.INS) txt += op[1];
   }
   return txt;
 };
@@ -545,18 +545,18 @@ export const dst = (patch: Patch): string => {
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
-    if (op[0] !== PATCH_OP_TYPE.DELETE) txt += op[1];
+    if (op[0] !== PATCH_OP_TYPE.DEL) txt += op[1];
   }
   return txt;
 };
 
 const invertOp = (op: PatchOperation): PatchOperation => {
   const type = op[0];
-  return type === PATCH_OP_TYPE.EQUAL
+  return type === PATCH_OP_TYPE.EQL
     ? op
-    : type === PATCH_OP_TYPE.INSERT
-    ? [PATCH_OP_TYPE.DELETE, op[1]]
-    : [PATCH_OP_TYPE.INSERT, op[1]];
+    : type === PATCH_OP_TYPE.INS
+    ? [PATCH_OP_TYPE.DEL, op[1]]
+    : [PATCH_OP_TYPE.INS, op[1]];
 };
 
 /**
@@ -584,8 +584,8 @@ export const apply = (
   let pos = srcLen;
   for (let i = length - 1; i >= 0; i--) {
     const [type, str] = patch[i];
-    if (type === PATCH_OP_TYPE.EQUAL) pos -= str.length;
-    else if (type === PATCH_OP_TYPE.INSERT) onInsert(pos, str);
+    if (type === PATCH_OP_TYPE.EQL) pos -= str.length;
+    else if (type === PATCH_OP_TYPE.INS) onInsert(pos, str);
     else {
       const len = str.length;
       pos -= len;
