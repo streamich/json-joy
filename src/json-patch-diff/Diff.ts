@@ -59,7 +59,6 @@ export class Diff {
     const pfx = path + '/';
     let shift = 0;
     const patch = this.patch;
-    // let deletes: number = 0;
     arr.apply(arr.diff(srcLines, dstLines),
       (posSrc, posDst, len) => {
         for (let i = 0; i < len; i++)

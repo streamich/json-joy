@@ -69,8 +69,8 @@ const diffLines = (srcTxt: string, dstTxt: string): ArrPatch => {
     }
     arrPatch.push(type, count);
   };
-  // console.log(txtSrc);
-  // console.log(txtDst);
+  // console.log(srcTxt);
+  // console.log(dstTxt);
   // console.log(patch);
   const patchLen = patch.length;
   const lastOpIndex = patchLen - 1;

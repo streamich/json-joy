@@ -124,6 +124,22 @@ describe('diff()', () => {
     ]);
   });
 
+  test('fuzzer - 1', () => {
+    const src = [ 'b', 'a' ];
+    const dst = [
+      '7', '3', 'd',
+      '7', '9', '9',
+      '9'
+    ];
+    // [ 1, 2, -1, 2, 1, 4 ]
+    const patch = arr.diff(src, dst);
+    expect(patch).toEqual([
+      arr.ARR_PATCH_OP_TYPE.INSERT, 2,
+      arr.ARR_PATCH_OP_TYPE.DELETE, 2,
+      arr.ARR_PATCH_OP_TYPE.INSERT, 5,
+    ]);
+  });
+
   describe('delete', () => {
     test('delete the only element', () => {
       const patch = arr.diff(['1'], []);

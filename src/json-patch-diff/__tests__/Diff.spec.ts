@@ -1,19 +1,4 @@
-import {Diff} from '../Diff';
-import {applyPatch} from '../../json-patch';
-
-const assertDiff = (src: unknown, dst: unknown) => {
-  const srcNested = {src};
-  const patch1 = new Diff().diff('/src', src, dst);
-  // console.log(src);
-  // console.log(patch1);
-  // console.log(dst);
-  const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
-  // console.log(res);
-  expect(res).toEqual({src: dst});
-  const patch2 = new Diff().diff('/src', (res as any)['src'], dst);
-  // console.log(patch2);
-  expect(patch2.length).toBe(0);
-};
+import {assertDiff} from './util';
 
 describe('str', () => {
   test('insert', () => {
@@ -193,6 +178,18 @@ describe('arr', () => {
   test('delete first two elements', () => {
     const src: unknown[] = [1, 2, 3, 4];
     const dst: unknown[] = [3, 4];
+    assertDiff(src, dst);
+  });
+
+  test.only('fuzzer - 1', () => {
+    const src: unknown[] = [
+      11, 10, 4, 6,
+       3,  1, 5
+    ];
+    const dst: unknown[] = [
+      7, 3, 13, 7, 9,
+      9, 9,  4, 9
+    ];
     assertDiff(src, dst);
   });
 });
