@@ -1,6 +1,51 @@
 import * as str from "./str";
 
-export type LinePatch = str.Patch[];
+export const enum LINE_PATCH_OP_TYPE {
+  /**
+   * The whole line is deleted. Delete the current src line and advance the src
+   * counter.
+   */
+  DEL = -1,
+
+  /**
+   * Lines are equal in src and dst. Keep the line in src and advance, both, src
+   * and dst counters.
+   */
+  EQL = 0,
+
+  /**
+   * The whole line is inserted. Insert the current dst line and advance the dst
+   * counter.
+   */
+  INS = 1,
+
+  /**
+   * The line is modified. Execute inner diff between the current src and dst
+   * lines. Keep the line in src and advance the src and dst counters.
+   */
+  MIX = 2,
+}
+
+export type LinePatchOp = [
+  type: LINE_PATCH_OP_TYPE,
+
+  /**
+   * Assignment of this operation to the line in the `src` array.
+   */
+  src: number,
+
+  /**
+   * Assignment of this operation to the line in the `dst` array.
+   */
+  dst: number,
+
+  /**
+   * Character-level patch.
+   */
+  patch: str.Patch,
+];
+
+export type LinePatch = LinePatchOp[];
 
 /**
  * Aggregate character-by-character patch into a line-by-line patch.
@@ -8,7 +53,7 @@ export type LinePatch = str.Patch[];
  * @param patch Character-level patch
  * @returns Line-level patch
  */
-export const agg = (patch: str.Patch): LinePatch => {
+export const agg = (patch: str.Patch): str.Patch[] => {
   // console.log(patch);
   const lines: str.Patch[] = [];
   const length = patch.length;
@@ -152,39 +197,59 @@ export const agg = (patch: str.Patch): LinePatch => {
   return lines;
 };
 
-export const diff = (src: string, dst: string): LinePatch => {
-  const strPatch = str.diff(src, dst);
-  const linePatch = agg(strPatch);
-  return linePatch;
-};
-
-const removeNewlines = (patch: LinePatch): void => {
-  const length = patch.length;
+export const diff = (src: string[], dst: string[]): LinePatch => {
+  const srcTxt = src.join('\n');
+  const dstTxt = dst.join('\n');
+  const strPatch = str.diff(srcTxt, dstTxt);
+  const lines = agg(strPatch);
+  const length = lines.length;
+  const patch: LinePatch = [];
+  let srcIdx = -1;
+  let dstIdx = -1;
   for (let i = 0; i < length; i++) {
-    const line = patch[i];
+    const line = lines[i];
     const lineLength = line.length;
     if (!lineLength) continue;
     const lastOp = line[lineLength - 1];
-    const str = lastOp[1];
-    const strLength = str.length;
-    const endsWithNewline = str[strLength - 1] === "\n";
+    const txt = lastOp[1];
+    const strLength = txt.length;
+    const endsWithNewline = txt[strLength - 1] === "\n";
     if (endsWithNewline) {
       if (strLength === 1) {
         line.splice(lineLength - 1, 1);
       } else {
-        lastOp[1] = str.slice(0, strLength - 1);
+        lastOp[1] = txt.slice(0, strLength - 1);
       }
     }
+    let lineType: LINE_PATCH_OP_TYPE = LINE_PATCH_OP_TYPE.EQL;
+    if (lineLength === 1) {
+      const op = line[0];
+      const type = op[0];
+      if (type === str.PATCH_OP_TYPE.EQL) {
+        srcIdx++;
+        dstIdx++;
+      } else if (type === str.PATCH_OP_TYPE.INS) {
+        dstIdx++;
+        lineType = LINE_PATCH_OP_TYPE.INS;
+      } else if (type === str.PATCH_OP_TYPE.DEL) {
+        srcIdx++;
+        lineType = LINE_PATCH_OP_TYPE.DEL;
+      }
+    } else {
+      const lastOpType = lastOp[0];
+      if (lastOpType === str.PATCH_OP_TYPE.EQL) {
+        lineType = LINE_PATCH_OP_TYPE.MIX;
+        srcIdx++;
+        dstIdx++;
+      } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
+        lineType = LINE_PATCH_OP_TYPE.INS;
+        dstIdx++;
+      } else if (lastOpType === str.PATCH_OP_TYPE.DEL) {
+        lineType = LINE_PATCH_OP_TYPE.DEL;
+        srcIdx++;
+      }
+    }
+    patch.push([lineType, srcIdx, dstIdx, line]);
   }
-};
-
-export const diffLines = (src: string[], dst: string[]): LinePatch => {
-  const srcTxt = src.join('\n');
-  const dstTxt = dst.join('\n');
-  // console.log(srcTxt);
-  // console.log(dstTxt);
-  const patch = diff(srcTxt, dstTxt);
-  console.log(patch);
-  removeNewlines(patch);
   return patch;
 };

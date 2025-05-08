@@ -9,9 +9,9 @@ export type PatchOperation =
   | PatchOperationDelete
   | PatchOperationEqual
   | PatchOperationInsert;
-export type PatchOperationDelete = [PATCH_OP_TYPE.DEL, string];
-export type PatchOperationEqual = [PATCH_OP_TYPE.EQL, string];
-export type PatchOperationInsert = [PATCH_OP_TYPE.INS, string];
+export type PatchOperationDelete = [type: PATCH_OP_TYPE.DEL, txt: string];
+export type PatchOperationEqual = [type: PATCH_OP_TYPE.EQL, txt: string];
+export type PatchOperationInsert = [type: PATCH_OP_TYPE.INS, txt: string];
 
 const startsWithPairEnd = (str: string) => {
   const code = str.charCodeAt(0);
