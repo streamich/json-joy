@@ -70,6 +70,7 @@ export const agg = (patch: str.Patch): str.Patch[] => {
     }
     line.push([type, str]);
   };
+  // console.log("PATCH", patch);
   LINES: for (let i = 0; i < length; i++) {
     const op = patch[i];
     const type = op[0];
@@ -79,7 +80,7 @@ export const agg = (patch: str.Patch): str.Patch[] => {
       push(type, str);
       continue LINES;
     } else {
-      if (index > 0) push(type, str.slice(0, index + 1));
+      push(type, str.slice(0, index + 1));
       if (line.length) lines.push(line);
       line = [];
     }
@@ -212,19 +213,23 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
   let dstIdx = -1;
   for (let i = 0; i < length; i++) {
     const line = lines[i];
-    const lineLength = line.length;
+    let lineLength = line.length;
     if (!lineLength) continue;
     const lastOp = line[lineLength - 1];
     const txt = lastOp[1];
-    const strLength = txt.length;
-    const endsWithNewline = txt[strLength - 1] === "\n";
-    if (endsWithNewline) {
-      if (strLength === 1) {
-        line.splice(lineLength - 1, 1);
-      } else {
-        lastOp[1] = txt.slice(0, strLength - 1);
+    if (txt === "\n") {
+      line.splice(lineLength - 1, 1);
+    } else {
+      const strLength = txt.length;
+      if (txt[strLength - 1] === "\n") {
+        if (strLength === 1) {
+          line.splice(lineLength - 1, 1);
+        } else {
+          lastOp[1] = txt.slice(0, strLength - 1);
+        }
       }
     }
+    lineLength = line.length;
     let lineType: LINE_PATCH_OP_TYPE = LINE_PATCH_OP_TYPE.EQL;
     if (lineLength === 1) {
       const op = line[0];

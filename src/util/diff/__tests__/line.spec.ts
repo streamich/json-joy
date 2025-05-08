@@ -482,4 +482,26 @@ describe("diff", () => {
       [ -1, 5, 2, expect.any(Array) ],
     ]);
   });
+
+  test("fuzzer - 3", () => {
+    const src = [
+      '{aaaaaaaaaaa}',
+      '{bbbbbbbbbbb}',
+      '{"75":259538477846144,"dadqM`0I":322795818.54331195,"<":"f*ßlwäm&=_y@w\\n","53aghXOyD%lC2":373122194.60806453,"\\\\9=M!\\"\\\\Tl-":"r.VdPY`mOQ"}',
+      '{11111111111111111111}',
+    ];
+    const dst = [
+      '{"\\\\ 3[9}0dz+FaW\\"M":"rX?","P.Ed-s-VgiQDuNk":"18","}56zyy3FnC":["<lmi",-3889491443023091]}',
+      '{"75":259538477846144,"dadqM`0I":322795818.54331195,"<":"f*ßlwäm&=_y@w\\n","53aghXOyD%lC2":373122194.60806453,"\\\\9=M!\\"\\\\Tl-":"r.VdPY`mOQ"}',
+      '{222222222222222222222}',
+    ];
+    const patch = line.diff(src, dst).map(x => [x[0], x[1], x[2]])
+    // console.log(patch);
+    expect(patch).toEqual([
+      [ -1, 0, -1 ],
+      [ 2, 1, 0 ],
+      [ 0, 2, 1 ],
+      [ 2, 3, 2 ],
+    ]);
+  });
 });
