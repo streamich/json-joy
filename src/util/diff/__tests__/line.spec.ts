@@ -432,4 +432,54 @@ describe("diff", () => {
       ],
     ]);
   });
+
+  test("fuzzer - 2 (simplified)", () => {
+    const src = [
+      '{asdfasdfasdf}',
+      '{12341234123412341234}',
+      `{zzzzzzzzzzzzzzzzzz}`,
+      '{12341234123412341234}',
+      '{00000000000000000000}',
+      '{12341234123412341234}'
+    ];
+    const dst = [
+      '{asdfasdfasdf}',
+      `{zzzzzzzzzzzzzzzzzz}`,
+      '{00000000000000000000}',
+    ];
+    const patch = line.diff(src, dst);
+    expect(patch).toEqual([
+      [ 0, 0, 0, expect.any(Array) ],
+      [ -1, 1, 0, expect.any(Array) ],
+      [ 0, 2, 1, expect.any(Array) ],
+      [ -1, 3, 1, expect.any(Array) ],
+      [ 0, 4, 2, expect.any(Array) ],
+      [ -1, 5, 2, expect.any(Array) ],
+    ]);
+  });
+
+  test("fuzzer - 2", () => {
+    const src = [
+      '{"qED5<awEr":"_gHl_\\\\+","_`":[],"6X":null,"%48l KyT3M]Eotd":-6409426829312515,"nvxKtO.2Nkq-X":{}}',
+      '{"uP)+":"8","DcGl^1iAx}uE":188611474.7459,"03 B-Z":939556741.5467653,"KkMot\\"LI%QOq":[true]}',
+      `{"c25}_Q/jJsc":"JE4\\\\{","f} ":"\\"D='qW]Lq#v^","md{*%1y[":81520766.60595253,"e[3OT]-N-!*g90K1":320733106.7235495,"\\"yteVM6&PI":"8fC Og8:+6(A"}`,
+      '{"T{Ugtn}B-]Wm`ZK":{"*VJlpfRw":697504436.1312399},"s.BOS9;bv_ZA3oD":{},"|Ir":[879007792.6766524]}',
+      '{"K!Lr|=PykM":"Q8W6","{K. i`e{;M{)C=@b":-97,"+[":";\'}HLR4Q2To:Gw>","Zoypj-Ock^\'":714499113.6419818,"j::O\\"ON.^iud#":{}}',
+      '{"{\\\\^]wa":[",M/u= |Nu=,2J"],"\\\\D6;;h-,O\\\\-|":181373753.3018791,"[n6[!Z)4":"6H:p-N(uM","sK\\\\8C":[]}'
+    ];
+    const dst = [
+      '{"qED5<awEr":"_gHl_\\\\+","_`":[],"6X":null,"%48l KyT3M]Eotd":-6409426829312515,"nvxKtO.2Nkq-X":{}}',
+      `{"c25}_Q/jJsc":"JE4\\\\{","f} ":"\\"D='qW]Lq#v^","md{*%1y[":81520766.60595253,"e[3OT]-N-!*g90K1":320733106.7235495,"\\"yteVM6&PI":"8fC Og8:+6(A"}`,
+      '{"K!Lr|=PykM":"Q8W6","{K. i`e{;M{)C=@b":-97,"+[":";\'}HLR4Q2To:Gw>","Zoypj-Ock^\'":714499113.6419818,"j::O\\"ON.^iud#":{}}'
+    ];
+    const patch = line.diff(src, dst);
+    expect(patch).toEqual([
+      [ 0, 0, 0, expect.any(Array) ],
+      [ -1, 1, 0, expect.any(Array) ],
+      [ 0, 2, 1, expect.any(Array) ],
+      [ -1, 3, 1, expect.any(Array) ],
+      [ 0, 4, 2, expect.any(Array) ],
+      [ -1, 5, 2, expect.any(Array) ],
+    ]);
+  });
 });

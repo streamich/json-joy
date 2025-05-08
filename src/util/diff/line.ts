@@ -42,14 +42,14 @@ export type LinePatchOp = [
   /**
    * Character-level patch.
    */
-  patch: str.Patch,
+  patch: str.Patch
 ];
 
 export type LinePatch = LinePatchOp[];
 
 /**
  * Aggregate character-by-character patch into a line-by-line patch.
- * 
+ *
  * @param patch Character-level patch
  * @returns Line-level patch
  */
@@ -96,12 +96,12 @@ export const agg = (patch: str.Patch): str.Patch[] => {
     }
   }
   if (line.length) lines.push(line);
-  // console.log('LINES', lines);
+  // console.log("LINES", lines);
   NORMALIZE_LINE_ENDINGS: {
     const length = lines.length;
     for (let i = 0; i < length; i++) {
       const line = lines[i];
-      const lineLength = line.length;
+      let lineLength = line.length;
       NORMALIZE_LINE_START: {
         if (lineLength < 2) break NORMALIZE_LINE_START;
         const firstOp = line[0];
@@ -109,34 +109,35 @@ export const agg = (patch: str.Patch): str.Patch[] => {
         const secondOpType = secondOp[0];
         if (
           firstOp[0] === str.PATCH_OP_TYPE.EQL &&
-          (secondOpType === str.PATCH_OP_TYPE.DEL || secondOpType === str.PATCH_OP_TYPE.INS)
+          (secondOpType === str.PATCH_OP_TYPE.DEL ||
+            secondOpType === str.PATCH_OP_TYPE.INS)
         ) {
           for (let j = 2; j < lineLength; j++)
             if (line[j][0] !== secondOpType) break NORMALIZE_LINE_START;
           for (let j = i + 1; j < length; j++) {
             const targetLine = lines[j];
             const targetLineLength = targetLine.length;
-            if (targetLineLength <= 1) {
-              if (targetLine[0][0] !== secondOpType)
-                break NORMALIZE_LINE_START;
+            const pfx = firstOp[1];
+            let targetLineFirstOp;
+            let targetLineSecondOp;
+            if (
+              targetLine.length > 1 &&
+              (targetLineFirstOp = targetLine[0])[0] === secondOpType &&
+              (targetLineSecondOp = targetLine[1])[0] === str.PATCH_OP_TYPE.EQL &&
+              pfx === targetLineFirstOp[1]
+            ) {
+              line.splice(0, 1);
+              secondOp[1] = pfx + secondOp[1];
+              targetLineSecondOp[1] = pfx + targetLineSecondOp[1];
+              targetLine.splice(0, 1);
             } else {
-              const firstTargetLineOp = targetLine[0];
-              const secondTargetLineOp = targetLine[1];
-              const pfx = firstOp[1];
-              if (
-                firstTargetLineOp[0] === secondOpType &&
-                secondTargetLineOp[0] === str.PATCH_OP_TYPE.EQL &&
-                pfx === firstTargetLineOp[1]
-              ) {
-                line.splice(0, 1);
-                secondOp[1] = pfx + secondOp[1];
-                targetLine.splice(0, 1);
-                secondTargetLineOp[1] = pfx + secondTargetLineOp[1];
-              }
+              for (let k = 0; k < targetLineLength; k++)
+                if (targetLine[k][0] !== secondOpType) break NORMALIZE_LINE_START;
             }
           }
         }
       }
+      lineLength = line.length;
       NORMALIZE_LINE_END: {
         if (lineLength < 2) break NORMALIZE_LINE_END;
         const lastOp = line[line.length - 1];
@@ -158,8 +159,8 @@ export const agg = (patch: str.Patch): str.Patch[] => {
                 if (targetLine[k][0] !== str.PATCH_OP_TYPE.DEL)
                   break NORMALIZE_LINE_END;
               let keepStr = targetLineLastOp[1];
-              const keepStrEndsWithNl = keepStr.endsWith('\n');
-              if (!keepStrEndsWithNl) keepStr += '\n';
+              const keepStrEndsWithNl = keepStr.endsWith("\n");
+              if (!keepStrEndsWithNl) keepStr += "\n";
               if (keepStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
               if (!lastOpStr.endsWith(keepStr)) break NORMALIZE_LINE_END;
               const index = lastOpStr.length - keepStr.length;
@@ -182,10 +183,13 @@ export const agg = (patch: str.Patch): str.Patch[] => {
               }
               const targetLineSecondLastOp = targetLine[targetLine.length - 2];
               if (targetLineSecondLastOp[0] === str.PATCH_OP_TYPE.DEL) {
-                targetLineSecondLastOp[1] += keepStrEndsWithNl ? keepStr : keepStr.slice(0, -1);
+                targetLineSecondLastOp[1] += keepStrEndsWithNl
+                  ? keepStr
+                  : keepStr.slice(0, -1);
                 targetLine.splice(targetLineLength - 1, 1);
               } else {
-                (targetLineLastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.DEL;
+                (targetLineLastOp[0] as str.PATCH_OP_TYPE) =
+                  str.PATCH_OP_TYPE.DEL;
               }
             }
           }
@@ -193,13 +197,13 @@ export const agg = (patch: str.Patch): str.Patch[] => {
       }
     }
   }
-  // console.log('NORMALIZED LINES', lines);
+  // console.log("NORMALIZED LINES", lines);
   return lines;
 };
 
 export const diff = (src: string[], dst: string[]): LinePatch => {
-  const srcTxt = src.join('\n');
-  const dstTxt = dst.join('\n');
+  const srcTxt = src.join("\n");
+  const dstTxt = dst.join("\n");
   const strPatch = str.diff(srcTxt, dstTxt);
   const lines = agg(strPatch);
   const length = lines.length;
