@@ -496,12 +496,35 @@ describe("diff", () => {
       '{222222222222222222222}',
     ];
     const patch = line.diff(src, dst).map(x => [x[0], x[1], x[2]])
-    // console.log(patch);
     expect(patch).toEqual([
       [ -1, 0, -1 ],
       [ 2, 1, 0 ],
       [ 0, 2, 1 ],
       [ 2, 3, 2 ],
+    ]);
+  });
+
+  test("fuzzer - 4", () => {
+    const src = [
+      '{"fE#vTih,M!q+TTR":-8702114011119315,"`F\\"M9":true,"]9+FC9f{48NnX":{"+\\\\]IQ7":"a;br-^_m"},"s&":"%n18QdrUewc8Nh8<"}',
+      '{"<\\"R}d\\"HY65":[53195032.194879085,710289417.4711887],"WH]":"qqqqqqqqqq","W&0fQhOd8":96664625.24402197}',
+      '{"!2{:XVc3":[814507837.3286607,"A+m+}=p$Y&T"],"?[Tks9wg,pRLz.G":[[]]}',
+      '{"X^бbAq,":247853730.363063,"+ Mkjq_":-7253373307869407,"`J\\"[^)W KVFk":{"I&a?\\\\\\"1q\\\\":{"66666666666666":">}v1I7y48`JJIG5{"}}}'
+    ];
+    const dst = [
+      '{"fE#vTih,M!q+TTR":-8702114011119315,"`F\\"M9":true,"]9+FC9f{48NnX":{"+\\\\]IQ7":"a;br-^_m"},"s&":"%n18QdrUewc8Nh8<"}',
+      '{"!2{:XVc3":[814507837.3286607,"A+m+}=p$Y&T"],"?[Tks9wg,pRLz.G":[[]]}',
+      `{"}'-":["o=^\\\\tXk@4",false],"*nF(tbVE=L\\"LiA":-17541,"5a,?p8=]TBLT_x^":916988130.3227228}`,
+      `{"+.i5D's>W4#EJ%7B":">IYF9h","IeK?Dg{/3>hq7\\\\B[":64967,"KI,cnб!Ty%":2913242861126036,"rv9O@j":false,"dj":"N>"}`
+    ];
+    const patch = line.diff(src, dst).map(x => [x[0], x[1], x[2]])
+    // console.log(patch);
+    expect(patch).toEqual([
+      [ 0, 0, 0 ],
+      [ -1, 1, 0 ],
+      [ 0, 2, 1 ],
+      [ 1, 2, 2 ],
+      [ 2, 3, 3 ],
     ]);
   });
 });
