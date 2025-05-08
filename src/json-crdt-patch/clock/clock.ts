@@ -203,6 +203,14 @@ export class ClockVector extends LogicalClock implements IClockVector {
     return clock;
   }
 
+  public toCompact(): number[] {
+    const result: number[] = [this.sid, this.time - 1];
+    this.peers.forEach(ts => {
+      result.push(ts.sid, ts.time);
+    });
+    return result;
+  }
+
   /**
    * Returns a human-readable string representation of the clock vector.
    *
