@@ -51,7 +51,7 @@ export const agg = (patch: str.Patch): LinePatch => {
     }
   }
   if (line.length) lines.push(line);
-  // console.log(lines);
+  // console.log('LINES', lines);
   NORMALIZE_LINE_ENDINGS: {
     const length = lines.length;
     for (let i = 0; i < length; i++) {
@@ -112,9 +112,12 @@ export const agg = (patch: str.Patch): LinePatch => {
               for (let k = 0; k < targetLine.length - 1; k++)
                 if (targetLine[k][0] !== str.PATCH_OP_TYPE.DEL)
                   break NORMALIZE_LINE_END;
-              const keepStr = targetLineLastOp[1];
+              let keepStr = targetLineLastOp[1];
+              const keepStrEndsWithNl = keepStr.endsWith('\n');
+              if (!keepStrEndsWithNl) keepStr += '\n';
               if (keepStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
-              const index = lastOpStr.lastIndexOf(keepStr);
+              if (!lastOpStr.endsWith(keepStr)) break NORMALIZE_LINE_END;
+              const index = lastOpStr.length - keepStr.length;
               if (index < 0) {
                 (lastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.EQL;
                 if (secondLastOp[0] === str.PATCH_OP_TYPE.EQL) {
@@ -134,7 +137,7 @@ export const agg = (patch: str.Patch): LinePatch => {
               }
               const targetLineSecondLastOp = targetLine[targetLine.length - 2];
               if (targetLineSecondLastOp[0] === str.PATCH_OP_TYPE.DEL) {
-                targetLineSecondLastOp[1] += keepStr;
+                targetLineSecondLastOp[1] += keepStrEndsWithNl ? keepStr : keepStr.slice(0, -1);
                 targetLine.splice(targetLineLength - 1, 1);
               } else {
                 (targetLineLastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.DEL;
@@ -145,7 +148,7 @@ export const agg = (patch: str.Patch): LinePatch => {
       }
     }
   }
-  // console.log(lines);
+  // console.log('NORMALIZED LINES', lines);
   return lines;
 };
 
@@ -176,7 +179,12 @@ const removeNewlines = (patch: LinePatch): void => {
 };
 
 export const diffLines = (src: string[], dst: string[]): LinePatch => {
-  const patch = diff(src.join('\n'), dst.join('\n'));
+  const srcTxt = src.join('\n');
+  const dstTxt = dst.join('\n');
+  // console.log(srcTxt);
+  // console.log(dstTxt);
+  const patch = diff(srcTxt, dstTxt);
+  console.log(patch);
   removeNewlines(patch);
   return patch;
 };
