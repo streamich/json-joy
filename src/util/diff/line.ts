@@ -230,35 +230,39 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
         }
       }
     }
-    lineLength = line.length;
     let lineType: LINE_PATCH_OP_TYPE = LINE_PATCH_OP_TYPE.EQL;
-    if (lineLength === 1) {
-      const op = line[0];
-      const type = op[0];
-      if (type === str.PATCH_OP_TYPE.EQL) {
-        srcIdx++;
-        dstIdx++;
-      } else if (type === str.PATCH_OP_TYPE.INS) {
-        dstIdx++;
+    lineLength = line.length;
+    if (i + 1 === length) {
+      if (srcIdx + 1 < src.length) {
+        if (dstIdx + 1 < dst.length) {
+          if (lineLength === 1 && line[0][0] === str.PATCH_OP_TYPE.EQL) {
+            lineType = LINE_PATCH_OP_TYPE.EQL;
+          } else {
+            lineType = LINE_PATCH_OP_TYPE.MIX;
+          }
+          srcIdx++;
+          dstIdx++;
+        } else {
+          lineType = LINE_PATCH_OP_TYPE.DEL;
+          srcIdx++;
+        }
+      } else {
         lineType = LINE_PATCH_OP_TYPE.INS;
-      } else if (type === str.PATCH_OP_TYPE.DEL) {
-        srcIdx++;
-        lineType = LINE_PATCH_OP_TYPE.DEL;
+        dstIdx++;
       }
     } else {
-      if (i + 1 === length) {
-        if (srcIdx + 1 < src.length) {
-          if (dstIdx + 1 < dst.length) {
-            lineType = LINE_PATCH_OP_TYPE.MIX;
-            srcIdx++;
-            dstIdx++;
-          } else {
-            lineType = LINE_PATCH_OP_TYPE.DEL;
-            srcIdx++;
-          }
-        } else {
-          lineType = LINE_PATCH_OP_TYPE.INS;
+      if (lineLength === 1) {
+        const op = line[0];
+        const type = op[0];
+        if (type === str.PATCH_OP_TYPE.EQL) {
+          srcIdx++;
           dstIdx++;
+        } else if (type === str.PATCH_OP_TYPE.INS) {
+          dstIdx++;
+          lineType = LINE_PATCH_OP_TYPE.INS;
+        } else if (type === str.PATCH_OP_TYPE.DEL) {
+          srcIdx++;
+          lineType = LINE_PATCH_OP_TYPE.DEL;
         }
       } else {
         if (lastOpType === str.PATCH_OP_TYPE.EQL) {

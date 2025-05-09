@@ -518,13 +518,30 @@ describe("diff", () => {
       `{"+.i5D's>W4#EJ%7B":">IYF9h","IeK?Dg{/3>hq7\\\\B[":64967,"KI,cnб!Ty%":2913242861126036,"rv9O@j":false,"dj":"N>"}`
     ];
     const patch = line.diff(src, dst).map(x => [x[0], x[1], x[2]])
-    // console.log(patch);
     expect(patch).toEqual([
       [ 0, 0, 0 ],
       [ -1, 1, 0 ],
       [ 0, 2, 1 ],
       [ 1, 2, 2 ],
       [ 2, 3, 3 ],
+    ]);
+  });
+
+  test("fuzzer - 5", () => {
+    const src = [
+      '{"1111":[true,true],"111111111111111":-34785,"YRb#H`%Q`9yQ;":"S@>/8#"}',
+      '{"$?":145566270.31451553,"&;\\\\V":729010872.7196132,"B4Xm[[X4":"WLFBc>*popRot]Y",") 8a%d@":811080332.6947087,"LnRab_vKhgz":"%"}'
+    ];
+    const dst = [
+      `{"YC9rf7Kg3fI(":"=aEe5Jw7R)m\\\\0Q","b-)-xPNm3":"1%","MHPcv?h\\"'j\\\\z;$?>":[],"LybE:":"|xWDk9r|s%:O0%(","/y@Uz433>:l[%":true}`,
+      '{"1111":[true,true],"111111111111111":-34785,"YRb#H`%Q`9yQ;":"S@>/8#"}'
+    ];
+    const patch = line.diff(src, dst).map(x => [x[0], x[1], x[2]])
+    // console.log(patch);
+    expect(patch).toEqual([
+      [ 1, -1, 0 ],
+      [ -1, 0, 0 ],
+      [ 2, 1, 1 ],
     ]);
   });
 });
