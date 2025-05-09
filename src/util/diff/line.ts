@@ -203,8 +203,8 @@ export const agg = (patch: str.Patch): str.Patch[] => {
 };
 
 export const diff = (src: string[], dst: string[]): LinePatch => {
-  const srcTxt = src.join("\n");
-  const dstTxt = dst.join("\n");
+  const srcTxt = src.join("\n") + '\n';
+  const dstTxt = dst.join("\n") + '\n';
   const strPatch = str.diff(srcTxt, dstTxt);
   const lines = agg(strPatch);
   const length = lines.length;
@@ -251,9 +251,9 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
         dstIdx++;
       }
     } else {
-      if (lineLength === 1) {
-        const op = line[0];
-        const type = op[0];
+      const op = line[0];
+      const type = op[0];
+      if (lineLength === 1 && type === lastOpType) {
         if (type === str.PATCH_OP_TYPE.EQL) {
           srcIdx++;
           dstIdx++;
