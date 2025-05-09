@@ -17,11 +17,13 @@ const assertDiff = (src: string[], dst: string[]) => {
   expect(res).toEqual(dst);
 };
 
-const iterations = 100;
+const iterations = 1000;
+const minElements = 2;
+const maxElements = 6;
 
 test('produces valid patch', () => {
   for (let i = 0; i < iterations; i++) {
-    const elements = 2 + Math.ceil(Math.random() * 5);
+    const elements = minElements + Math.ceil(Math.random() * (maxElements - minElements));
     const src: string[] = [];
     const dst: string[] = [];
     for (let i = 0; i < elements; i++) {
