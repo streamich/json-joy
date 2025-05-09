@@ -181,7 +181,7 @@ describe('arr', () => {
     assertDiff(src, dst);
   });
 
-  test.only('fuzzer - 1', () => {
+  test('fuzzer - 1', () => {
     const src: unknown[] = [
       11, 10, 4, 6,
        3,  1, 5

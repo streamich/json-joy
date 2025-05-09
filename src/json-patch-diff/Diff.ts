@@ -1,6 +1,6 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import * as str from '../util/diff/str';
-import * as arr from '../util/diff/arr';
+import * as line from '../util/diff/line';
 import {structHash} from '../json-hash';
 import type {Operation} from '../json-patch/codec/json/types';
 
@@ -57,28 +57,27 @@ export class Diff {
     for (let i = 0; i < srcLen; i++) srcLines.push(structHash(src[i]));
     for (let i = 0; i < dstLen; i++) dstLines.push(structHash(dst[i]));
     const pfx = path + '/';
-    let shift = 0;
     const patch = this.patch;
-    arr.apply(arr.diff(srcLines, dstLines),
-      (posSrc, posDst, len) => {
-        for (let i = 0; i < len; i++)
-          patch.push({op: 'add', path: pfx + (posSrc + shift + i), value: dst[posDst + i]});
-        shift += len;;
-      },
-      (pos, len) => {
-        for (let i = 0; i < len; i++)
-          patch.push({op: 'remove', path: pfx + (pos + shift)});
-        shift -= len;
-      },
-      (posSrc, posDst, len) => {
-        for (let i = 0; i < len; i++) {
-          const pos = posSrc + shift + i;
-          const srcValue = src[posSrc + i];
-          const dstValue = dst[posDst + i];
-          this.diff(pfx + pos, srcValue, dstValue);
-        }
-      },
-    );
+    const linePatch = line.diff(srcLines, dstLines);
+    const length = linePatch.length;
+    for (let i = length - 1; i >= 0; i--) {
+      const [type, srcIdx, dstIdx] = linePatch[i];
+      switch (type) {
+        case line.LINE_PATCH_OP_TYPE.EQL:
+          break;
+        case line.LINE_PATCH_OP_TYPE.MIX:
+          const srcValue = src[srcIdx];
+          const dstValue = dst[dstIdx];
+          this.diff(pfx + srcIdx, srcValue, dstValue);
+          break;
+        case line.LINE_PATCH_OP_TYPE.INS:
+          patch.push({op: 'add', path: pfx + (srcIdx + 1), value: dst[dstIdx]});
+          break;
+        case line.LINE_PATCH_OP_TYPE.DEL:
+          patch.push({op: 'remove', path: pfx + srcIdx});
+          break;
+      }
+    }
   }
 
   public diffAny(path: string, src: unknown, dst: unknown): void {
