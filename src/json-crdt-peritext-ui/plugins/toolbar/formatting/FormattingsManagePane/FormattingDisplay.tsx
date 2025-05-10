@@ -5,7 +5,6 @@ import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {Space} from 'nice-ui/lib/3-list-item/Space';
-import type {SavedFormatting} from '../../state/formattings';
 import {ContextPaneHeader} from '../../../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../../../components/ContextPaneHeaderSep';
 import {FormattingTitle} from '../FormattingTitle';
@@ -17,6 +16,9 @@ import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {ButtonSeparator} from '../../../../components/ButtonSeparator';
 import {FormattingEditForm} from './FormattingEditForm';
 import {SoftLockedDeleteButton} from '../../components/SoftLockedDeleteButton';
+import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useFormatting} from './context';
+import type {SavedFormatting} from '../../state/formattings';
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -24,7 +26,8 @@ export interface FormattingDisplayProps {
 }
 
 export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
-  const [view, setView] = React.useState<'view' | 'edit'>('view');
+  const state = useFormatting();
+  const view = useBehaviorSubject(state.view$);
   const {surface} = useToolbarPlugin();
   const [t] = useT();
 
@@ -43,7 +46,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               </div>
               <Space horizontal />
               <BasicTooltip renderTooltip={() => t('Stop editing')}>
-                <BasicButton size={32} rounder onClick={() => setView('view')}>
+                <BasicButton size={32} rounder onClick={() => state.view$.next('view')}>
                   <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
                 </BasicButton>
               </BasicTooltip>
@@ -63,7 +66,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               <ButtonSeparator />
               <Space horizontal size={-2} />
               <BasicTooltip renderTooltip={() => t('Edit')}>
-                <BasicButton size={32} rounder onClick={() => setView('edit')}>
+                <BasicButton size={32} rounder onClick={() => state.view$.next('edit')}>
                   <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
                 </BasicButton>
               </BasicTooltip>
@@ -75,7 +78,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {view === 'edit' ? (
-        <FormattingEditForm formatting={formatting} onDone={() => setView('view')} />
+        <FormattingEditForm formatting={formatting} onDone={() => state.view$.next('view')} />
       ) : (
         <>
           <ContextSep />

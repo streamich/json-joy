@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useT} from 'use-t';
-import {useToolbarPlugin} from '../../context';
 import {FormattingEdit} from '../views/edit/FormattingEdit';
 import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {Button} from 'nice-ui/lib/2-inline-block/Button';
@@ -20,7 +19,6 @@ export interface FormattingEditFormProps {
 
 export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formatting, onDone}) => {
   const [t] = useT();
-  const {toolbar} = useToolbarPlugin();
   useSyncStoreOpt(formatting.conf()?.api);
   const validation = formatting.validate();
 

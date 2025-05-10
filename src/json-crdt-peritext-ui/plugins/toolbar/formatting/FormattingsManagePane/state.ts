@@ -5,8 +5,9 @@ import {subject} from '../../../../util/rx';
 import type {Inline} from '../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../state';
 
-export class CaretBottomState {
+export class FormattingManageState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
+  public readonly view$ = new BehaviorSubject<'view' | 'edit'>('view');
 
   public constructor(
     public readonly state: ToolbarState,
