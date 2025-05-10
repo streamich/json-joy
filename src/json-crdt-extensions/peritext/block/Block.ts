@@ -114,8 +114,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
     let isFirst = true;
     let next = iterator();
     let closed = false;
-    const newIterator = () => {
-      // START: while (true) {}
+    const newIterator: UndefIterator<Inline<T>> = () => {
       if (closed) return;
       const pair = next;
       next = iterator();
