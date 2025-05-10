@@ -1,10 +1,10 @@
 import {unit} from '../util';
+import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {TypedEventTarget} from '../../../util/events/TypedEventTarget';
-import type {CompositionController} from './CompositionController';
 import type {UiLifeCycles} from '../types';
-import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
+import type {DomController} from './DomController';
 
 export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
@@ -16,30 +16,22 @@ export interface InputControllerEventSourceMap {
 
 export type InputControllerEventSource = TypedEventTarget<InputControllerEventSourceMap>;
 
-export interface InputControllerOpts {
-  source: InputControllerEventSource;
-  txt: Peritext;
-  et: PeritextEventTarget;
-  comp: CompositionController;
-}
-
 /**
  * Processes incoming DOM "input" events (such as "beforeinput", "input",
  * "keydown", etc.) and translates them into Peritext events.
  */
 export class InputController implements UiLifeCycles {
-  protected readonly source: InputControllerEventSource;
   protected readonly txt: Peritext;
   public readonly et: PeritextEventTarget;
 
-  public constructor(protected readonly opts: InputControllerOpts) {
-    this.source = opts.source;
-    this.txt = opts.txt;
-    this.et = opts.et;
+  public constructor(protected readonly dom: DomController) {
+    this.txt = dom.txt;
+    this.et = dom.et;
   }
 
   public start() {
     const onBeforeInput = (event: InputEvent): void => {
+      if (!this.dom.isEditable(event.target as Element)) return;
       // TODO: prevent default more selectively?
       const et = this.et;
       const inputType = event.inputType;
@@ -162,32 +154,32 @@ export class InputController implements UiLifeCycles {
         // case 'historyRedo': {}
         case 'formatBold': {
           event.preventDefault();
-          et.format(SliceTypeCon.b);
+          et.format('tog', SliceTypeCon.b);
           break;
         }
         case 'formatItalic': {
           event.preventDefault();
-          et.format(SliceTypeCon.i);
+          et.format('tog', SliceTypeCon.i);
           break;
         }
         case 'formatUnderline': {
           event.preventDefault();
-          et.format(SliceTypeCon.u);
+          et.format('tog', SliceTypeCon.u);
           break;
         }
         case 'formatStrikeThrough': {
           event.preventDefault();
-          et.format(SliceTypeCon.s);
+          et.format('tog', SliceTypeCon.s);
           break;
         }
         case 'formatSuperscript': {
           event.preventDefault();
-          et.format(SliceTypeCon.sup);
+          et.format('tog', SliceTypeCon.sup);
           break;
         }
         case 'formatSubscript': {
           event.preventDefault();
-          et.format(SliceTypeCon.sub);
+          et.format('tog', SliceTypeCon.sub);
           break;
         }
         // case 'formatJustifyFull': { // make the current selection fully justified
@@ -217,6 +209,7 @@ export class InputController implements UiLifeCycles {
       }
     };
     const onKeyDown = (event: KeyboardEvent): void => {
+      if (!this.dom.isEditable(event.target as Element)) return;
       const key = event.key;
       if (event.isComposing || key === 'Dead') return;
       const et = this.et;
@@ -233,7 +226,7 @@ export class InputController implements UiLifeCycles {
         }
         case 'Escape': {
           // TODO: Use rendering surface imperative UI API here.
-          const div = this.opts.source;
+          const div = this.dom.el;
           if (div instanceof HTMLElement) {
             event.preventDefault();
             div.blur();
@@ -243,14 +236,17 @@ export class InputController implements UiLifeCycles {
       }
     };
     const onCopy = (event: ClipboardEvent): void => {
+      if (!this.dom.isEditable(event.target as Element)) return;
       event.preventDefault();
       this.et.buffer({action: 'copy'});
     };
     const onCut = (event: ClipboardEvent): void => {
+      if (!this.dom.isEditable(event.target as Element)) return;
       event.preventDefault();
       this.et.buffer({action: 'cut'});
     };
     const onPaste = (event: ClipboardEvent): void => {
+      if (!this.dom.isEditable(event.target as Element)) return;
       event.preventDefault();
       const text = event.clipboardData?.getData('text/plain');
       const html = event.clipboardData?.getData('text/html');
@@ -259,15 +255,13 @@ export class InputController implements UiLifeCycles {
         this.et.buffer({action: 'paste', data});
       }
     };
-    const el = this.opts.source;
-    (el as any).contentEditable = 'true';
+    const el = this.dom.el;
     el.addEventListener('beforeinput', onBeforeInput);
     el.addEventListener('keydown', onKeyDown);
     el.addEventListener('copy', onCopy);
     el.addEventListener('cut', onCut);
     el.addEventListener('paste', onPaste);
     return () => {
-      (el as any).contentEditable = 'false';
       el.removeEventListener('beforeinput', onBeforeInput);
       el.removeEventListener('keydown', onKeyDown);
       el.removeEventListener('copy', onCopy);

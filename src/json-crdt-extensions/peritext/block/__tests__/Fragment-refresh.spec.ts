@@ -5,6 +5,7 @@ import {
   setupAlphabetWithDeletesKit,
   setupAlphabetWithTwoChunksKit,
 } from '../../__tests__/setup';
+import {LeafBlock} from '../LeafBlock';
 
 const runTests = (setup: () => Kit) => {
   test('updates block hash only where something was changed - leading block', () => {
@@ -62,6 +63,24 @@ const runTests = (setup: () => Kit) => {
     const firstBlockHash2 = peritext.blocks.root.children[0].hash;
     expect(rootHash1).not.toBe(rootHash2);
     expect(firstBlockHash1).not.toBe(firstBlockHash2);
+  });
+
+  test('does not create collapsed Inline at the beginning of block', () => {
+    const {editor, peritext} = setup();
+    editor.cursor.setAt(0);
+    editor.saved.insMarker('p');
+    editor.cursor.setAt(1, 4);
+    editor.saved.insOne('strong');
+    peritext.refresh();
+    const fragment = peritext.blocks.root;
+    const block = fragment.children[0];
+    expect(block instanceof LeafBlock).toBe(true);
+    expect(block.tag()).toBe('p');
+    const [inline0, inline1] = block.texts();
+    expect(inline0.text()).toBe('abcd');
+    expect(!!inline0.attr().strong).toBe(true);
+    expect(inline1.text()).toBe('efghijklmnopqrstuvwxyz');
+    expect(!!inline1.attr().strong).toBe(false);
   });
 };
 

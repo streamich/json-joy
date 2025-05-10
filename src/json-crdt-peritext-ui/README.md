@@ -12,6 +12,15 @@ is the most user-facing layer, and at the bottom is the most foundational layer.
 - Rendering surface plugins
 - React rendering surface `<PeritextFragment controller={DomController} />`
 - DOM event handlers, `new DomController(defaults: PeritextEventDefaults)`
-- Peritext events, `create(txt: Peritext): PeritextEventDefaults`
+
+- `PeritextEventDefaults`
+- `PeritextEventTarget`
+- `DataTransfer`
+- `Editor`
+- `SliceRegistry`
+- `Fragment`
+- `Overlay`
 - Peritext JSON CRDT extension, `Peritext`
+- `Log`
+- `ModelApi`
 - JSON CRDT, `Model`

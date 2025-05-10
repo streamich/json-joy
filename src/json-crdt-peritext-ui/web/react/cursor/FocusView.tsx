@@ -14,6 +14,6 @@ export const FocusView: React.FC<FocusViewProps> = (props) => {
   const {plugins} = usePeritext();
 
   let children: React.ReactNode = <Caret />;
-  for (const map of plugins) children = map.focus?.(props, children) ?? children;
+  for (const plugin of plugins) children = plugin.focus?.(props, children) ?? children;
   return children;
 };

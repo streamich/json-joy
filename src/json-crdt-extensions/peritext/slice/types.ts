@@ -1,7 +1,7 @@
 import type {Range} from '../rga/Range';
 import type {Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {SliceBehavior} from './constants';
+import type {SliceStacking, SliceTypeCon} from './constants';
 import type {nodes} from '../../../json-crdt-patch';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
@@ -46,6 +46,13 @@ export type SliceTypeSteps = SliceTypeStep[];
 export type SliceTypeStep = string | number | [tag: string | number, discriminant: number];
 
 /**
+ * Tag is number or a string, the last type element if type is a list. Tag
+ * specifies the kind of the leaf block element. For example, if the full type
+ * is `['ul', 'li', 'p']`, then the tag is `<p>`.
+ */
+export type TypeTag = SliceTypeCon | number | string;
+
+/**
  * The JSON CRDT schema of the stored slices in the document. The slices are
  * stored compactly in "vec" nodes, with the first *header* element storing
  * multiple values in a single integer.
@@ -53,8 +60,8 @@ export type SliceTypeStep = string | number | [tag: string | number, discriminan
 export type SliceSchema = nodes.vec<
   [
     /**
-     * The header stores the behavior {@link SliceBehavior} of the slice as well
-     * as anchor {@link Anchor} points of the x1 and x2 points.
+     * The header stores the stacking behavior {@link SliceStacking} of the
+     * slice as well as anchor {@link Anchor} points of the x1 and x2 points.
      */
     header: nodes.con<number>,
     /**
@@ -66,15 +73,16 @@ export type SliceSchema = nodes.vec<
      */
     x2: nodes.con<ITimestampStruct | 0>,
     /**
-     * App specific type of the slice. For slices with "split" behavior, this
-     * is a path of block nesting. For other slices, it specifies inline formatting, such
-     * as bold, italic, etc.; the value has to be a primitive number or a string.
+     * App specific type of the slice. For slices with "Marker" stacking
+     * behavior, this is a path of block nesting. For other slices, it
+     * specifies inline formatting, such as bold, italic, etc.; the value has
+     * to be a primitive number or a string.
      */
     type: nodes.con<SliceType>,
     /**
      * Reference to additional metadata about the slice, usually an object. If
-     * data is not set, it will default to `1`. For "erase" slice behavior, data
-     * should not be specified.
+     * data is not set, it will default to `1`. For "Erase" stacking behavior,
+     * data should not be specified.
      *
      * In reality this `vec` term can be of any type, it can even be missing
      * entirely. It is typed here as a placeholder for the actual data type.
@@ -109,16 +117,24 @@ export interface Slice<T = string> extends Range<T>, Stateful {
   id: ITimestampStruct;
 
   /**
-   * The low-level behavior of the slice. Specifies whether the slice is a split,
-   * i.e. a "marker" for a block split, in which case it represents a single
-   * place in the text where text is split into blocks. Otherwise, specifies
-   * the low-level behavior or the rich-text formatting of the slice.
+   * The low-level stacking behavior of the slice. Specifies whether the
+   * slice is a split, i.e. a "marker" for a block split, in which case it
+   * represents a single place in the text where text is split into blocks.
+   * Otherwise, specifies the low-level behavior or the rich-text formatting
+   * of the slice.
    */
-  behavior: SliceBehavior;
+  stacking: SliceStacking;
 
   /**
-   * The high-level behavior of the slice. Specifies the user-defined type of the
-   * slice, e.g. paragraph, heading, blockquote, etc.
+   * The high-level behavior identifier of the slice. Specifies the
+   * user-defined type of the slice, e.g. paragraph, heading, blockquote, etc.
+   *
+   * Usually the type is a number or string primitive, in which case it is
+   * referred to as *tag*.
+   *
+   * The type is a list only for nested blocks, e.g. `['ul', 'li']`, in which
+   * case the type is a list of tags. The last tag in the list is the
+   * "leaf" tag, which is the type of the leaf block element.
    */
   type: SliceType;
 
@@ -148,9 +164,9 @@ export interface MutableSlice<T = string> extends Slice<T> {
  */
 export interface SliceUpdateParams<T> {
   /**
-   * When set, updates the behavior of the slice.
+   * When set, updates the stacking behavior of the slice.
    */
-  behavior?: SliceBehavior;
+  stacking?: SliceStacking;
 
   /**
    * When set, updates the type of the slice.

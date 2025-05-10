@@ -23,16 +23,19 @@ import type {SliceSchema, SliceType} from './slice/types';
 import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
 import type {AbstractRga} from '../../json-crdt/nodes/rga';
 import type {ChunkSlice} from './util/ChunkSlice';
+import type {Stateful} from './types';
 
 const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
+const LOCAL_DATA_SCHEMA = EXTRA_SLICES_SCHEMA;
 
-type SlicesModel = Model<SchemaToJsonNode<typeof EXTRA_SLICES_SCHEMA>>;
+export type ExtraSlicesModel = Model<SchemaToJsonNode<typeof EXTRA_SLICES_SCHEMA>>;
+export type LocalModel = Model<SchemaToJsonNode<typeof LOCAL_DATA_SCHEMA>>;
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
  * interact with the text.
  */
-export class Peritext<T = string> implements Printable {
+export class Peritext<T = string> implements Printable, Stateful {
   /**
    * *Slices* are rich-text annotations that appear in the text. The "saved"
    * slices are the ones that are persisted in the document.
@@ -76,8 +79,8 @@ export class Peritext<T = string> implements Printable {
     public readonly str: AbstractRga<T>,
     slices: ArrNode,
     // TODO: Add test that verifies that SIDs are different across all three models.
-    extraSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
-    localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
+    extraSlicesModel: ExtraSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
+    localSlicesModel: LocalModel = Model.create(LOCAL_DATA_SCHEMA, SESSION.LOCAL),
   ) {
     this.savedSlices = new Slices(this, slices);
     this.extraSlices = new ExtraSlices(this, extraSlicesModel.root.node().get(0)!);
@@ -327,7 +330,7 @@ export class Peritext<T = string> implements Printable {
     api.apply();
   }
 
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
     const nl = () => '';
@@ -348,7 +351,7 @@ export class Peritext<T = string> implements Printable {
     );
   }
 
-  // ----------------------------------------------------------------- Stateful
+  /** ------------------------------------------------------ {@link Stateful} */
 
   public hash: number = 0;
 

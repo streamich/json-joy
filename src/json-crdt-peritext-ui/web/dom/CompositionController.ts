@@ -1,19 +1,12 @@
 import type {Printable} from 'tree-dump';
-import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {UiLifeCycles} from '../types';
-import type {Peritext} from '../../../json-crdt-extensions/peritext';
-
-export interface CompositionControllerOpts {
-  source: HTMLElement;
-  txt: Peritext;
-  et: PeritextEventTarget;
-}
+import type {DomController} from './DomController';
 
 export class CompositionController implements UiLifeCycles, Printable {
   public composing = false;
   public data: string = '';
 
-  public constructor(public readonly opts: CompositionControllerOpts) {}
+  public constructor(public readonly dom: DomController) {}
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
@@ -30,9 +23,9 @@ export class CompositionController implements UiLifeCycles, Printable {
       this.composing = false;
       this.data = '';
       const text = event.data;
-      if (text) this.opts.et.insert(text);
+      if (text) this.dom.et.insert(text);
     };
-    const el = this.opts.source;
+    const el = this.dom.el;
     el.addEventListener('compositionstart', onStart);
     el.addEventListener('compositionupdate', onUpdate);
     el.addEventListener('compositionend', onEnd);

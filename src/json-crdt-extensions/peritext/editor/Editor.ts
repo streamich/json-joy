@@ -4,7 +4,7 @@ import {formatType} from '../slice/util';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
-import {createRegistry} from '../registry/registry';
+import {SliceRegistry} from '../registry/SliceRegistry';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {stringify} from '../../../json-text/stringify';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
@@ -13,14 +13,13 @@ import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
-import {CursorAnchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
+import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
 import type {MarkerSlice} from '../slice/MarkerSlice';
-import type {SliceRegistry} from '../registry/SliceRegistry';
 import type {
   CharIterator,
   CharPredicate,
@@ -57,18 +56,29 @@ export class Editor<T = string> implements Printable {
   public readonly local: EditorSlices<T>;
 
   /**
-   * Formatting which will be applied to the next inserted text. This is a
-   * temporary store for formatting which is not yet applied to the text, but
-   * will be if the cursor is not moved.
+   * The registry holds definitions of detailed behavior of various slice tags.
    */
-  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown>>(new Map());
+  public registry: SliceRegistry | undefined;
 
-  public registry: SliceRegistry = createRegistry();
+  /**
+   * Formatting basic inline formatting which will be applied to the next
+   * inserted text. This is a temporary store for formatting which is not yet
+   * applied to the text, but will be if the cursor is not moved. This is used
+   * for {@link SliceStacking.One} formatting which is set as "pending" when
+   * user toggles it while cursor is caret.
+   */
+  public readonly pending = new ValueSyncStore<Map<CommonSliceType | string | number, unknown> | undefined>(void 0);
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
     this.extra = new EditorSlices(txt, txt.extraSlices);
     this.local = new EditorSlices(txt, txt.localSlices);
+  }
+
+  public getRegistry(): SliceRegistry {
+    let registry = this.registry;
+    if (!registry) this.registry = registry = SliceRegistry.withCommon();
+    return registry;
   }
 
   public text(): string {
@@ -80,7 +90,7 @@ export class Editor<T = string> implements Printable {
   public addCursor(range: Range<T> = this.txt.rangeAt(0), anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
     const cursor = this.txt.localSlices.ins<Cursor<T>, typeof Cursor>(
       range,
-      SliceBehavior.Cursor,
+      SliceStacking.Cursor,
       anchor,
       undefined,
       Cursor,
@@ -234,8 +244,8 @@ export class Editor<T = string> implements Printable {
       const span = this.insert0(range, text);
       if (span) spans.push(span);
       const pending = this.pending.value;
-      if (pending.size) {
-        this.pending.next(new Map());
+      if (pending?.size) {
+        this.pending.next(void 0);
         const start = range.start.clone();
         start.step(-text.length);
         const toggleRange = this.txt.range(start, range.end.clone());
@@ -258,7 +268,7 @@ export class Editor<T = string> implements Printable {
     const overlay = txt.overlay;
     const contained = overlay.findContained(range);
     for (const slice of contained)
-      if (slice instanceof PersistedSlice && slice.behavior !== SliceBehavior.Cursor) slice.del();
+      if (slice instanceof PersistedSlice && slice.stacking !== SliceStacking.Cursor) slice.del();
     txt.delStr(range);
   }
 
@@ -640,10 +650,10 @@ export class Editor<T = string> implements Printable {
       const contained = overlay.findContained(range);
       for (const slice of contained) {
         if (slice instanceof PersistedSlice) {
-          switch (slice.behavior) {
-            case SliceBehavior.One:
-            case SliceBehavior.Many:
-            case SliceBehavior.Erase:
+          switch (slice.stacking) {
+            case SliceStacking.One:
+            case SliceStacking.Many:
+            case SliceStacking.Erase:
               slice.del();
           }
         }
@@ -651,9 +661,9 @@ export class Editor<T = string> implements Printable {
       overlay.refresh();
       const overlapping = overlay.findOverlapping(range);
       for (const slice of overlapping) {
-        switch (slice.behavior) {
-          case SliceBehavior.One:
-          case SliceBehavior.Many: {
+        switch (slice.stacking) {
+          case SliceStacking.One:
+          case SliceStacking.Many: {
             store.insErase(slice.type);
           }
         }
@@ -712,7 +722,7 @@ export class Editor<T = string> implements Printable {
   }
 
   public toggleExclFmt(
-    type: CommonSliceType | string | number,
+    type: SliceTypeCon | string | number,
     data?: unknown,
     store: EditorSlices<T> = this.saved,
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
@@ -721,7 +731,7 @@ export class Editor<T = string> implements Printable {
     this.txt.overlay.refresh();
     SELECTION: for (const range of selection) {
       if (range.isCollapsed()) {
-        const pending = this.pending.value;
+        const pending = this.pending.value ?? new Map();
         if (pending.has(type)) pending.delete(type);
         else pending.set(type, data);
         this.pending.next(pending);
@@ -794,7 +804,7 @@ export class Editor<T = string> implements Printable {
   }
 
   public getContainerPath(steps: SliceTypeSteps): SliceTypeSteps {
-    const registry = this.registry;
+    const registry = this.getRegistry();
     const length = steps.length;
     for (let i = length - 1; i >= 0; i--) {
       const step = steps[i];
@@ -817,7 +827,7 @@ export class Editor<T = string> implements Printable {
       const disc1 = Array.isArray(step1) ? step1[1] : 0;
       const disc2 = Array.isArray(step2) ? step2[1] : 0;
       if (tag1 !== tag2 || disc1 !== disc2) return i - 1;
-      if (!this.registry.isContainer(tag1)) return i - 1;
+      if (!this.getRegistry().isContainer(tag1)) return i - 1;
     }
     return min;
   }
@@ -983,15 +993,15 @@ export class Editor<T = string> implements Printable {
     for (const slice of slices) {
       const isSavedSlice = slice.id.sid === txt.model.clock.sid;
       if (!isSavedSlice) continue;
-      const behavior = slice.behavior;
-      switch (behavior) {
-        case SliceBehavior.One:
-        case SliceBehavior.Many:
-        case SliceBehavior.Erase:
-        case SliceBehavior.Marker: {
-          const {behavior, type, start, end} = slice;
+      const stacking = slice.stacking;
+      switch (stacking) {
+        case SliceStacking.One:
+        case SliceStacking.Many:
+        case SliceStacking.Erase:
+        case SliceStacking.Marker: {
+          const {stacking, type, start, end} = slice;
           const header: number =
-            (behavior << SliceHeaderShift.Behavior) +
+            (stacking << SliceHeaderShift.Stacking) +
             (start.anchor << SliceHeaderShift.X1Anchor) +
             (end.anchor << SliceHeaderShift.X2Anchor);
           const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), type];
@@ -1020,12 +1030,12 @@ export class Editor<T = string> implements Printable {
       const isSavedSlice = slice.id.sid === txt.model.clock.sid;
       if (!isSavedSlice) continue;
       if (!slice.contains(range)) continue;
-      const behavior = slice.behavior;
-      switch (behavior) {
-        case SliceBehavior.One:
-        case SliceBehavior.Many:
-        case SliceBehavior.Erase: {
-          const sliceFormatting: ViewStyle = [behavior, slice.type];
+      const stacking = slice.stacking;
+      switch (stacking) {
+        case SliceStacking.One:
+        case SliceStacking.Many:
+        case SliceStacking.Erase: {
+          const sliceFormatting: ViewStyle = [stacking, slice.type];
           const data = slice.data();
           if (data !== void 0) sliceFormatting.push(data);
           formatting.push(sliceFormatting);
@@ -1042,8 +1052,8 @@ export class Editor<T = string> implements Printable {
     const firstSlice = slices[0];
     if (firstSlice) {
       const [header, x1, , type] = firstSlice;
-      const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
-      const isBlockSplitMarker = behavior === SliceBehavior.Marker;
+      const stacking: SliceStacking = (header & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
+      const isBlockSplitMarker = stacking === SliceStacking.Marker;
       if (isBlockSplitMarker) {
         const markerStartsAtZero = x1 - offset === 0;
         if (markerStartsAtZero) {
@@ -1070,8 +1080,8 @@ export class Editor<T = string> implements Printable {
     for (let i = 0; i < length; i++) {
       const slice = slices[i];
       const [header, x1] = slice;
-      const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
-      const isBlockSplitMarker = behavior === SliceBehavior.Marker;
+      const stacking: SliceStacking = (header & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
+      const isBlockSplitMarker = stacking === SliceStacking.Marker;
       if (isBlockSplitMarker) {
         const end = x1 - offset;
         texts.push(text.slice(curr, end));
@@ -1107,7 +1117,7 @@ export class Editor<T = string> implements Printable {
       const [header, x1, x2, type, data] = slice;
       const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
       const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
-      const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
+      const stacking: SliceStacking = (header & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
       const x1Src = x1 - offset;
       const x2Src = x2 - offset;
       const x1Capped = Math.max(0, x1Src);
@@ -1120,7 +1130,7 @@ export class Editor<T = string> implements Printable {
       if (anchor2 === Anchor.Before) range.end.refBefore();
       // else range.end.refAfter();
       if (range.end.isAbs()) range.end.refAfter();
-      txt.savedSlices.ins(range, behavior, type, data);
+      txt.savedSlices.ins(range, stacking, type, data);
     }
     return curr - pos;
   }
@@ -1129,8 +1139,8 @@ export class Editor<T = string> implements Printable {
     const txt = this.txt;
     const length = formatting.length;
     for (let i = 0; i < length; i++) {
-      const [behavior, type, data] = formatting[i];
-      txt.savedSlices.ins(range, behavior, type, data);
+      const [stacking, type, data] = formatting[i];
+      txt.savedSlices.ins(range, stacking, type, data);
     }
   }
 
@@ -1166,12 +1176,12 @@ export class Editor<T = string> implements Printable {
     return txt.pointStart() ?? txt.pointAbsStart();
   }
 
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
     const pending = this.pending.value;
     const pendingFormatted = {} as any;
-    for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
+    if (pending) for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
     return (
       'Editor' +
       printTree(tab, [
@@ -1181,7 +1191,8 @@ export class Editor<T = string> implements Printable {
             tab,
             [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
           ),
-        () => `pending ${stringify(pendingFormatted)}`,
+        (tab) => this.getRegistry().toString(tab),
+        pending ? () => `pending ${stringify(pendingFormatted)}` : null,
       ])
     );
   }

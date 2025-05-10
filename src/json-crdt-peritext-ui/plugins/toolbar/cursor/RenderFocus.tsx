@@ -1,51 +1,36 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
 import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
-import {useToolbarPlugin} from './context';
-import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../web/react/hooks';
-import type {CaretViewProps} from '../../web/react/cursor/CaretView';
-
-const height = 1.8;
-
-const blockClass = rule({
-  pos: 'relative',
-  w: '0px',
-  h: '100%',
-  va: 'bottom',
-});
-
-const overClass = rule({
-  pos: 'absolute',
-  b: `${height}em`,
-  l: 0,
-  isolation: 'isolate',
-  us: 'none',
-  transform: 'translateX(calc(-50% + 0px))',
-});
+import {useToolbarPlugin} from '../context';
+import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../web/react/hooks';
+import {CaretFrame} from './CaretFrame';
+import {FormattingsNewPane} from '../formatting/FormattingsNewPane';
+import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
 
 export interface RenderFocusProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
 export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
-  const {toolbar} = useToolbarPlugin()!;
+  const {toolbar, surface} = useToolbarPlugin()!;
   const showInlineToolbar = toolbar.showInlineToolbar;
   const [showInlineToolbarValue, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const enableAfterCoolDown = useTimeout(300, [toolbarVisibilityChangeTime]);
-  const isScrubbing = useSyncStoreOpt(toolbar.surface.dom?.cursor.mouseDown) || false;
-  // const focus = useSyncStoreOpt(toolbar.surface.dom?.cursor.focus) || false;
+  const isScrubbing = useSyncStoreOpt(surface.dom?.cursor.mouseDown) || false;
+  const formatting = useSyncStore(toolbar.newSlice);
+  // const focus = useSyncStoreOpt(surface.dom?.cursor.focus) || false;
   // const blurTimeout = useTimeout(300, [focus]);
 
   const handleClose = React.useCallback(() => {
-    //   toolbar.surface.dom?.focus();
+    //   surface.dom?.focus();
     //   // if (showInlineToolbar.value) showInlineToolbar.next(false);
   }, []);
 
-  let toolbarElement: React.ReactNode = null;
+  let over: React.ReactNode | undefined;
+  let under: React.ReactNode | undefined;
 
-  if (showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
-    toolbarElement = (
+  if (!formatting && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor)
+    over = (
       <MoveToViewport>
         <CaretToolbar
           disabled={!enableAfterCoolDown /* || (!focus && blurTimeout) */}
@@ -55,12 +40,13 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
       </MoveToViewport>
     );
 
+  if (!!formatting && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor) {
+    under = <FormattingsNewPane formatting={formatting} />;
+  }
+
   return (
-    <span className={blockClass}>
+    <CaretFrame over={over} under={under}>
       {children}
-      <span className={overClass} contentEditable={false}>
-        {toolbarElement}
-      </span>
-    </span>
+    </CaretFrame>
   );
 };

@@ -12,18 +12,12 @@ import {UiHandle} from '../../events/defaults/ui/UiHandle';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch';
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
+import type {Log} from '../../../json-crdt/log/Log';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from '../types';
-import type {Log} from '../../../json-crdt/log/Log';
 import type {Inline, Peritext} from '../../../json-crdt-extensions';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextUiApi} from '../../events/defaults/ui/types';
-
-export interface DomControllerOpts {
-  source: HTMLElement;
-  events: PeritextEventDefaults;
-  log: Log;
-}
 
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly txt: Peritext;
@@ -46,25 +40,46 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
    */
   public readonly inlines = new AvlMap<Point, HTMLSpanElement>((a, b) => a.cmpSpatial(b));
 
-  constructor(public readonly opts: DomControllerOpts) {
-    const {source, events, log} = opts;
+  constructor(
+    public readonly events: PeritextEventDefaults,
+    public readonly log: Log,
+  ) {
     const {txt} = events;
     this.txt = txt;
-    const et = (this.et = opts.events.et);
-    const keys = (this.keys = new KeyController({source}));
-    const comp = (this.comp = new CompositionController({et, source, txt}));
-    this.input = new InputController({et, source, txt, comp});
-    this.cursor = new CursorController({et, source, txt, keys});
-    this.richText = new RichTextController({et, source, txt});
-    this.annals = new AnnalsController({et, txt, log});
+    this.et = events.et;
+    this.keys = new KeyController(this);
+    this.comp = new CompositionController(this);
+    this.input = new InputController(this);
+    this.cursor = new CursorController(this);
+    this.richText = new RichTextController(this);
+    this.annals = new AnnalsController(this);
     const uiHandle = new UiHandle(txt, <PeritextUiApi>this);
     events.ui = uiHandle;
     events.undo = this.annals;
   }
 
+  public isEditable(el: Element): boolean {
+    if (!(el as any).isContentEditable) return false;
+    const computed = getComputedStyle(el);
+    return (
+      computed.getPropertyValue('--jsonjoy-peritext-id') === this.et.id + '' &&
+      computed.getPropertyValue('--jsonjoy-peritext-editable') === 'yes'
+    );
+  }
+
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
+  /**
+   * Must be set before calling {@link start}.
+   */
+  public el!: HTMLElement;
+
   public start() {
+    const {et, el} = this;
+    (el as any).contentEditable = 'true';
+    const style = el.style;
+    style.setProperty('--jsonjoy-peritext-id', et.id + '');
+    style.setProperty('--jsonjoy-peritext-editable', 'yes');
     const stopKeys = this.keys.start();
     const stopComp = this.comp.start();
     const stopInput = this.input.start();
@@ -72,6 +87,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const stopRichText = this.richText.start();
     const stopAnnals = this.annals.start();
     return () => {
+      (el as any).contentEditable = 'false';
       stopKeys();
       stopComp();
       stopInput();
@@ -84,7 +100,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   /** ------------------------------------------------- {@link PeritextUiApi} */
 
   public focus(): void {
-    this.opts.source.focus();
+    this.el.focus();
   }
 
   protected getSpans(blockInnerId?: Point) {
@@ -95,7 +111,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
       const markerId = marker?.id ?? txt.str.id;
       el = this.blocks.get(markerId);
     }
-    el ??= this.opts.source;
+    el ??= this.el;
     return el.querySelectorAll('.jsonjoy-peritext-inline');
   }
 
@@ -126,7 +142,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   }
 
   public getCharRect(char: number | ITimestampStruct): Rect | undefined {
-    const txt = this.opts.events.txt;
+    const txt = this.events.txt;
     const id = typeof char === 'number' ? txt.str.find(char) : char;
     if (!id) return;
     const start = txt.point(id, Anchor.Before);

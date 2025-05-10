@@ -10,12 +10,49 @@ import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 export interface PeritextPlugin {
   // --------------------------------------------------- Block-level formatting
 
+  /**
+   * Renders UI around the whole editor. This extension can be used to receive
+   * the {@link PeritextSurfaceState} and setup the plugin's state management,
+   * even if the plugin does not need to render anything, the plugin can simply
+   * return `children`.
+   *
+   * @param children Opaque children that MUST be rendered inside the block.
+   * @param state The state manager of the editor.
+   * @returns Must return a React node.
+   */
   peritext?: (children: React.ReactNode, state: PeritextSurfaceState) => React.ReactNode;
+
+  /**
+   * Renders a rich-text block element. This extension point allows the plugin
+   * to style different block types differently. For example, a plugin can render
+   * a blockquote differently than a paragraph.
+   *
+   * @param props Props for the block component.
+   * @param children Opaque children that MUST be rendered inside the block.
+   * @returns Must return a React node.
+   */
   block?: (props: BlockViewProps, children: React.ReactNode) => React.ReactNode;
 
   // -------------------------------------------------------- Inline formatting
 
+  /**
+   * Renders a rich-text inline element. This extension point allows the plugin
+   * to style different inline types differently. For example, a plugin can render
+   * a link differently than a bold text.
+   *
+   * @param props Props for the inline component.
+   * @param children Opaque children that MUST be rendered inside the inline.
+   * @returns Must return a React node.
+   */
   inline?: (props: InlineViewProps, children: React.ReactNode) => React.ReactNode;
+
+  /**
+   * The `text` extension point allows to change how inline text is rendered
+   * without changing the rendered output of the inline element itself, as is
+   * the case with the `inline` extension point. This extension point allows
+   * to just change the HTML properties of the text node, without changing the
+   * underlying DOM structure.
+   */
   text?: (props: SpanProps, inline: Inline, surface: PeritextSurfaceState) => SpanProps | undefined;
 
   // ------------------------------------------------------------------ Cursors

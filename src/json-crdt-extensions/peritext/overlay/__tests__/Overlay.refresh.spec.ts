@@ -2,7 +2,7 @@ import {Model, type ObjApi} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
-import {SliceBehavior} from '../../slice/constants';
+import {SliceStacking} from '../../slice/constants';
 
 const setup = () => {
   const sid = 123456789;
@@ -115,7 +115,7 @@ describe('Overlay.refresh()', () => {
         kit.peritext.editor.cursor.setAt(0, 1);
         const [slice] = kit.peritext.editor.saved.insStack(123);
         refresh();
-        slice.update({behavior: SliceBehavior.Erase});
+        slice.update({stacking: SliceStacking.Erase});
       });
 
       testRefresh('when slice data is overwritten', (kit, refresh) => {
@@ -213,7 +213,7 @@ describe('Overlay.refresh()', () => {
         const range = kit.peritext.rangeAt(2, 7);
         const slice = kit.peritext.extraSlices.insStack(range, 123);
         refresh();
-        slice.update({behavior: SliceBehavior.Erase});
+        slice.update({stacking: SliceStacking.Erase});
       });
 
       testRefresh('when slice data is overwritten', (kit, refresh) => {
