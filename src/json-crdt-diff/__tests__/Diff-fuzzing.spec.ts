@@ -26,3 +26,28 @@ test('from random JSON to random JSON', () => {
     assertDiff(src, dst);
   }
 });
+
+test('two random arrays of integers', () => {
+  const iterations = 100;
+
+  const randomArray = () => {
+    const len = Math.floor(Math.random() * 10);
+    const arr: unknown[] = [];
+    for (let i = 0; i < len; i++) {
+      arr.push(Math.ceil(Math.random() * 13));
+    }
+    return arr;
+  };
+
+  for (let i = 0; i < iterations; i++) {
+    const src = randomArray();
+    const dst = randomArray();
+    try {
+      assertDiff(src, dst);
+    } catch (error) {
+      console.error('src', src);
+      console.error('dst', dst);
+      throw error;
+    }
+  }
+});
