@@ -1,20 +1,26 @@
-import {Diff} from '../Diff';
+import {JsonCrdtDiff} from '../JsonCrdtDiff';
 import {InsStrOp, s} from '../../json-crdt-patch';
 import {Model} from '../../json-crdt/model';
 import {JsonNode, ValNode} from '../../json-crdt/nodes';
 import {b} from '@jsonjoy.com/util/lib/buffers/b';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
-  const patch1 = new Diff(model).diff(src, dst);
+  const patch1 = new JsonCrdtDiff(model).diff(src, dst);
   // console.log(model + '');
   // console.log(dst);
   // console.log(patch1 + '');
   model.applyPatch(patch1);
   // console.log(model + '');
   expect(src.view()).toEqual(dst);
-  const patch2 = new Diff(model).diff(src, dst);
+  const patch2 = new JsonCrdtDiff(model).diff(src, dst);
   // console.log(patch2 + '');
   expect(patch2.ops.length).toBe(0);
+};
+
+const assertDiff2 = (src: unknown, dst: unknown) => {
+  const model = Model.create();
+  model.api.root(src);
+  assertDiff(model, model.root.child(), dst);
 };
 
 describe('con', () => {
@@ -36,7 +42,7 @@ describe('str', () => {
     model.api.root({str: src});
     const str = model.api.str(['str']);
     const dst = 'hello world!';
-    const patch = new Diff(model).diff(str.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(str.node, dst);
     expect(patch.ops.length).toBe(1);
     expect(patch.ops[0].name()).toBe('ins_str');
     expect((patch.ops[0] as InsStrOp).data).toBe('!');
@@ -51,7 +57,7 @@ describe('str', () => {
     model.api.root({str: src});
     const str = model.api.str(['str']);
     const dst = 'hello world';
-    const patch = new Diff(model).diff(str.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(str.node, dst);
     expect(patch.ops.length).toBe(1);
     expect(patch.ops[0].name()).toBe('del');
     expect(str.view()).toBe(src);
@@ -65,7 +71,7 @@ describe('str', () => {
     model.api.root({str: src});
     const str = model.api.str(['str']);
     const dst = '2x3y';
-    const patch = new Diff(model).diff(str.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(str.node, dst);
     expect(str.view()).toBe(src);
     model.applyPatch(patch);
     expect(str.view()).toBe(dst);
@@ -77,7 +83,7 @@ describe('str', () => {
     model.api.root({str: src});
     const str = model.api.str(['str']);
     const dst = 'Hello world!';
-    const patch = new Diff(model).diff(str.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(str.node, dst);
     expect(str.view()).toBe(src);
     model.applyPatch(patch);
     expect(str.view()).toBe(dst);
@@ -91,7 +97,7 @@ describe('bin', () => {
     model.api.root({bin});
     const str = model.api.bin(['bin']);
     const dst = b(1, 2, 3, 4, 123, 5);
-    const patch = new Diff(model).diff(str.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(str.node, dst);
     expect(patch.ops.length).toBe(1);
     expect(patch.ops[0].name()).toBe('ins_bin');
     expect((patch.ops[0] as InsStrOp).data).toEqual(b(123));
@@ -106,7 +112,7 @@ describe('bin', () => {
     model.api.root({bin});
     const str = model.api.bin(['bin']);
     const dst = b(1, 2, 3, 4, 5);
-    const patch = new Diff(model).diff(str.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(str.node, dst);
     expect(patch.ops.length).toBe(0);
   });
 
@@ -116,7 +122,7 @@ describe('bin', () => {
     model.api.root({bin: src});
     const bin = model.api.bin(['bin']);
     const dst = b(1, 2, 3, 4);
-    const patch = new Diff(model).diff(bin.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(bin.node, dst);
     expect(patch.ops.length).toBe(1);
     expect(patch.ops[0].name()).toBe('del');
     expect(bin.view()).toEqual(src);
@@ -130,7 +136,7 @@ describe('bin', () => {
     model.api.root({bin: src});
     const bin = model.api.bin(['bin']);
     const dst = b(2, 3, 4, 5, 6);
-    const patch = new Diff(model).diff(bin.node, dst);
+    const patch = new JsonCrdtDiff(model).diff(bin.node, dst);
     expect(bin.view()).toEqual(src);
     model.applyPatch(patch);
     expect(bin.view()).toEqual(dst);
@@ -186,6 +192,11 @@ describe('obj', () => {
     const model = Model.create();
     model.api.root(src);
     assertDiff(model, model.root, dst);
+  });
+
+  test('can change "str" key to number or back', () => {
+    assertDiff2({foo: 'abc'}, {foo: 123});
+    assertDiff2({foo: 123}, {foo: 'abc'});
   });
 });
 

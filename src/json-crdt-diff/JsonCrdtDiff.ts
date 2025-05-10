@@ -15,7 +15,7 @@ export class DiffError extends Error {
   }
 }
 
-export class Diff {
+export class JsonCrdtDiff {
   protected builder: PatchBuilder;
 
   public constructor(protected readonly model: Model<any>) {
