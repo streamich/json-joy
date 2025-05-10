@@ -1,21 +1,5 @@
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
-import * as line from '../line';
-
-const assertDiff = (src: string[], dst: string[]) => {
-  const diff = line.diff(src, dst);
-  const res: string[] = [];
-  for (let [type, srcIdx, dstIdx, patch] of diff) {
-    if (type === line.LINE_PATCH_OP_TYPE.DEL) {
-    } else if (type === line.LINE_PATCH_OP_TYPE.INS) {
-      res.push(dst[dstIdx]);
-    } else if (type === line.LINE_PATCH_OP_TYPE.EQL) {
-      res.push(src[srcIdx]);
-    } else if (type === line.LINE_PATCH_OP_TYPE.MIX) {
-      res.push(dst[dstIdx]);
-    }
-  }
-  expect(res).toEqual(dst);
-};
+import {assertDiff} from './line';
 
 const iterations = 1000;
 const minElements = 2;
