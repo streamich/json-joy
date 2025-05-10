@@ -1,6 +1,6 @@
 import type {OpTest} from '../../op';
 import {$$find} from '@jsonjoy.com/json-pointer/lib/codegen/find';
-import {$$deepEqual} from '@jsonjoy.com/util/lib/json-equal/$$deepEqual';
+import {deepEqualCodegen} from '@jsonjoy.com/util/lib/json-equal/deepEqualCodegen';
 import {type JavaScriptLinked, compileClosure, type JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';
@@ -9,7 +9,7 @@ export const $$test = (op: OpTest): JavaScriptLinked<ApplyFn> => {
   const js = /* js */ `
 (function(wrapper){
   var find = ${$$find(op.path)};
-  var deepEqual = ${$$deepEqual(op.value)};
+  var deepEqual = ${deepEqualCodegen(op.value)};
   return wrapper(function(doc){
     var val = find(doc);
     if (val === undefined) return ${op.not ? 'true' : 'false'};

@@ -1,4 +1,4 @@
-import {CONST, updateNum} from '../json-hash';
+import {CONST, updateNum} from '../json-hash/hash';
 import {ConNode, ValNode, ObjNode, VecNode, ArrNode} from './nodes';
 import {AbstractRga} from './nodes/rga';
 import {last2} from 'sonic-forest/lib/util2';
