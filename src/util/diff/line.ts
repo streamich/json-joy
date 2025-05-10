@@ -212,6 +212,8 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
   const patch: LinePatch = [];
   let srcIdx = -1;
   let dstIdx = -1;
+  const srcLength = src.length;
+  const dstLength = dst.length;
   for (let i = 0; i < length; i++) {
     const line = lines[i];
     let lineLength = line.length;
@@ -219,28 +221,21 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
     const lastOp = line[lineLength - 1];
     const lastOpType = lastOp[0];
     const txt = lastOp[1];
-    if (txt === "\n") {
-      line.splice(lineLength - 1, 1);
-    } else {
+    if (txt === "\n") line.splice(lineLength - 1, 1);
+    else {
       const strLength = txt.length;
       if (txt[strLength - 1] === "\n") {
-        if (strLength === 1) {
-          line.splice(lineLength - 1, 1);
-        } else {
-          lastOp[1] = txt.slice(0, strLength - 1);
-        }
+        if (strLength === 1) line.splice(lineLength - 1, 1);
+        else lastOp[1] = txt.slice(0, strLength - 1);
       }
     }
     let lineType: LINE_PATCH_OP_TYPE = LINE_PATCH_OP_TYPE.EQL;
     lineLength = line.length;
     if (i + 1 === length) {
-      if (srcIdx + 1 < src.length) {
-        if (dstIdx + 1 < dst.length) {
-          if (lineLength === 1 && line[0][0] === str.PATCH_OP_TYPE.EQL) {
-            lineType = LINE_PATCH_OP_TYPE.EQL;
-          } else {
-            lineType = LINE_PATCH_OP_TYPE.MIX;
-          }
+      if (srcIdx + 1 < srcLength) {
+        if (dstIdx + 1 < dstLength) {
+          lineType = lineLength === 1 && line[0][0] === str.PATCH_OP_TYPE.EQL
+            ? LINE_PATCH_OP_TYPE.EQL : LINE_PATCH_OP_TYPE.MIX;
           srcIdx++;
           dstIdx++;
         } else {
@@ -254,29 +249,19 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
     } else {
       const op = line[0];
       const type = op[0];
-      if (lineLength === 1 && type === lastOpType) {
-        if (type === str.PATCH_OP_TYPE.EQL) {
-          srcIdx++;
-          dstIdx++;
-        } else if (type === str.PATCH_OP_TYPE.INS) {
-          dstIdx++;
-          lineType = LINE_PATCH_OP_TYPE.INS;
-        } else if (type === str.PATCH_OP_TYPE.DEL) {
-          srcIdx++;
-          lineType = LINE_PATCH_OP_TYPE.DEL;
-        }
-      } else {
-        if (lastOpType === str.PATCH_OP_TYPE.EQL) {
-          lineType = LINE_PATCH_OP_TYPE.MIX;
-          srcIdx++;
-          dstIdx++;
-        } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
-          lineType = LINE_PATCH_OP_TYPE.INS;
-          dstIdx++;
-        } else if (lastOpType === str.PATCH_OP_TYPE.DEL) {
-          lineType = LINE_PATCH_OP_TYPE.DEL;
-          srcIdx++;
-        }
+      if (lineLength === 1 && type === lastOpType && type === str.PATCH_OP_TYPE.EQL) {
+        srcIdx++;
+        dstIdx++;
+      } else if (lastOpType === str.PATCH_OP_TYPE.EQL) {
+        lineType = LINE_PATCH_OP_TYPE.MIX;
+        srcIdx++;
+        dstIdx++;
+      } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
+        lineType = LINE_PATCH_OP_TYPE.INS;
+        dstIdx++;
+      } else if (lastOpType === str.PATCH_OP_TYPE.DEL) {
+        lineType = LINE_PATCH_OP_TYPE.DEL;
+        srcIdx++;
       }
     }
     patch.push([lineType, srcIdx, dstIdx, line]);
