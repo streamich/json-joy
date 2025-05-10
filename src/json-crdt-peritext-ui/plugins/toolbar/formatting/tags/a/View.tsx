@@ -1,5 +1,6 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
-import {ViewProps} from '../../../types';
+import type {ViewProps} from '../../../types';
 import {UrlDisplayLayout} from '../../../components/UrlDisplayLayout';
 
 export const View: React.FC<ViewProps> = ({formatting}) => {

@@ -1,7 +1,8 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Paper} from 'nice-ui/lib/4-card/Paper';
-import {UrlDisplayLayout, UrlDisplayLayoutProps} from '../components/UrlDisplayLayout';
+import {UrlDisplayLayout, type UrlDisplayLayoutProps} from '../components/UrlDisplayLayout';
 
 const blockClass = rule({
   w: '100%',

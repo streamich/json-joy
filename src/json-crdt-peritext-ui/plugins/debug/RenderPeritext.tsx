@@ -25,7 +25,7 @@ const blockClassEnabled = rule({
     '&:focus': {
       out: '2px solid blue',
     },
-  }
+  },
 });
 
 const btnClass = drule({

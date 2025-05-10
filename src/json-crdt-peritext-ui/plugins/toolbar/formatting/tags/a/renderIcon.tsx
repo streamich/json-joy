@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IconProps} from '../../../types';
+import type {IconProps} from '../../../types';
 import {Favicon} from '../../../../../components/Favicon';
 
 export const renderIcon = ({formatting}: IconProps) => {

@@ -50,12 +50,15 @@ export class SliceRegistry implements Printable {
     i0(TAG.sup, 'Superscript');
     i0(TAG.sub, 'Subscript');
     i0(TAG.math, 'Math');
-  
+
     // --------------------------- Inline elements with "Many" stacking behavior
-    const aSchema = s.obj({}, {
-      href: s.str<string>(''),
-      title: s.str<string>(''),
-    });
+    const aSchema = s.obj(
+      {},
+      {
+        href: s.str<string>(''),
+        title: s.str<string>(''),
+      },
+    );
     registry.add(
       new SliceBehavior(SliceStacking.Many, TAG.a, 'Link', aSchema, false, void 0, {
         a: (jsonml) => {
@@ -68,7 +71,7 @@ export class SliceRegistry implements Printable {
         },
       }),
     );
-  
+
     // TODO: add more default annotations with "Many" stacking behavior
     // comment = SliceTypeCon.comment,
     // font = SliceTypeCon.font,
@@ -80,7 +83,7 @@ export class SliceRegistry implements Printable {
     // iaside = SliceTypeCon.iaside,
     // iembed = SliceTypeCon.iembed,
     // bookmark = SliceTypeCon.bookmark,
-  
+
     // -------------------------- Block elements with "Marker" stacking behavior
     const commonBlockSchema = s.obj(
       {},
@@ -126,7 +129,6 @@ export class SliceRegistry implements Printable {
 
     return registry;
   };
-  
 
   private map: Map<TypeTag, SliceBehavior> = new Map();
   private _fromHtml: Map<string, [entry: SliceBehavior, converter: FromHtmlConverter][]> = new Map();
@@ -189,6 +191,12 @@ export class SliceRegistry implements Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
-    return `SliceRegistry` + printTree(tab, [...this.map.values()].map((entry) => tab => entry.toString(tab)));
+    return (
+      'SliceRegistry' +
+      printTree(
+        tab,
+        [...this.map.values()].map((entry) => (tab) => entry.toString(tab)),
+      )
+    );
   }
 }

@@ -1,3 +1,4 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {GenericIcon} from './GenericIcon';
 import type {IconProps} from '../../../types';

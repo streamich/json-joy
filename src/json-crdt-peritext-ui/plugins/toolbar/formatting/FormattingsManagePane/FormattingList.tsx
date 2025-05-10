@@ -1,7 +1,8 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
-import {SavedFormatting} from '../../state/formattings';
+import type {SavedFormatting} from '../../state/formattings';
 import {FormattingIcon} from '../views/icon/FormattingIcon';
 
 export interface FormattingListProps {
@@ -20,20 +21,18 @@ export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSe
         const data = behavior.data();
         const menu = data.menu;
         const previewText = data.previewText?.(formatting) || '';
-        const previewTextFormatted = previewText.length < 20 ? previewText : `${previewText.slice(0, 20)}${SYMBOL.ELLIPSIS}`;
+        const previewTextFormatted =
+          previewText.length < 20 ? previewText : `${previewText.slice(0, 20)}${SYMBOL.ELLIPSIS}`;
         return (
-          <ContextItem inset
+          <ContextItem
+            inset
             key={formatting.key()}
             icon={menu?.icon?.()}
             right={<FormattingIcon formatting={formatting} />}
             onClick={() => onSelect(formatting)}
           >
             {menu?.name ?? behavior.name}
-            {!!previewTextFormatted && (
-              <span style={{opacity: 0.5}}>
-                {previewTextFormatted}
-              </span>
-            )}
+            {!!previewTextFormatted && <span style={{opacity: 0.5}}>{previewTextFormatted}</span>}
           </ContextItem>
         );
       })}

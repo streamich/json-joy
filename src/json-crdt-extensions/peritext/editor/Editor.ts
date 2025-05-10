@@ -1192,7 +1192,7 @@ export class Editor<T = string> implements Printable {
             [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
           ),
         (tab) => this.getRegistry().toString(tab),
-        pending ? (() => `pending ${stringify(pendingFormatted)}`) : null,
+        pending ? () => `pending ${stringify(pendingFormatted)}` : null,
       ])
     );
   }

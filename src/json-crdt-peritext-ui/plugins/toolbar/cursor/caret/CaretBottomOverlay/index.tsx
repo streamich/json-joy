@@ -1,14 +1,15 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {FormattingsManagePane} from '../../../formatting/FormattingsManagePane';
-import {EntangledPortal, EntangledPortalStateOpts} from '../../../../../components/EntangledPortal';
+import {EntangledPortal, type EntangledPortalStateOpts} from '../../../../../components/EntangledPortal';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
 const spanClass = rule({
   pe: 'none',
 });
 
-const gap = 4
+const gap = 4;
 const position: EntangledPortalStateOpts['position'] = (base, dest) => {
   let x = base.x - (dest.width >> 1);
   const y = base.y;

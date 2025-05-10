@@ -1,14 +1,14 @@
 import * as React from 'react';
-import {AnchorPoint} from 'nice-ui/lib/utils/popup';
-import {BehaviorSubject, Subscription, throttleTime} from 'rxjs';
+import {BehaviorSubject, type Subscription, throttleTime} from 'rxjs';
 import {resize$, rerender$} from '../util/rect$';
 import {EditorPortal} from '../web/react/util/EditorPortal';
+import type {AnchorPoint} from 'nice-ui/lib/utils/popup';
 import type {UiLifeCycles, Rect} from '../web';
 
 export interface EntangledPortalStateOpts {
   anchor?: Partial<AnchorPoint>;
   position?: (base: Rect, dest: Rect) => [x: number, y: number];
-  onBase?: (el: HTMLSpanElement | null) => void; 
+  onBase?: (el: HTMLSpanElement | null) => void;
   onDest?: (el: HTMLElement | null) => void;
 }
 
@@ -21,7 +21,7 @@ class EntangledPortalState implements UiLifeCycles {
 
   public baseRect$: BehaviorSubject<Rect | undefined> = new BehaviorSubject<Rect | undefined>(void 0);
 
-  constructor (public opts: EntangledPortalProps) {}
+  constructor(public opts: EntangledPortalProps) {}
 
   protected readonly entangle = (): void => {
     const {destEl, opts} = this;
@@ -35,7 +35,7 @@ class EntangledPortalState implements UiLifeCycles {
     style.left = x + 'px';
     style.top = y + 'px';
   };
-  
+
   public readonly base = (el: HTMLSpanElement | null) => {
     this.baseEl = el;
     this.baseSub?.unsubscribe();
@@ -43,34 +43,41 @@ class EntangledPortalState implements UiLifeCycles {
     if (el) {
       const baseRect$ = this.baseRect$;
       baseRect$.next(el.getBoundingClientRect());
-      this.baseSub = rerender$(el).pipe(
-        throttleTime(20, void 0, {trailing: true}),
-      ).subscribe(() => {
-        const rect = el.getBoundingClientRect();
-        const oldRect = baseRect$.getValue();
-        if (oldRect && rect.x === oldRect.x && rect.y === oldRect.y && rect.width === oldRect.width && rect.height === oldRect.height) return;
-        baseRect$.next(rect);
-      });
+      this.baseSub = rerender$(el)
+        .pipe(throttleTime(20, void 0, {trailing: true}))
+        .subscribe(() => {
+          const rect = el.getBoundingClientRect();
+          const oldRect = baseRect$.getValue();
+          if (
+            oldRect &&
+            rect.x === oldRect.x &&
+            rect.y === oldRect.y &&
+            rect.width === oldRect.width &&
+            rect.height === oldRect.height
+          )
+            return;
+          baseRect$.next(rect);
+        });
     } else this.baseRect$.next(void 0);
     this.opts.onBase?.(el);
   };
-  
+
   public readonly dest = (el: HTMLElement | null) => {
     this.destEl = el;
     this.destSub?.unsubscribe();
     this.destSub = void 0;
     if (el) {
       el.style.position = 'fixed';
-      this.destSub = resize$(el).pipe(
-        throttleTime(20, void 0, {trailing: true}),
-      ).subscribe(this.entangle);
+      this.destSub = resize$(el)
+        .pipe(throttleTime(20, void 0, {trailing: true}))
+        .subscribe(this.entangle);
       this.entangle();
     }
     this.opts.onDest?.(el);
   };
 
   /** -------------------------------------------------- {@link UiLifeCycles} */
-  
+
   public readonly start = () => {
     const subscription = this.baseRect$.subscribe(() => {
       this.entangle();
@@ -96,16 +103,16 @@ export interface EntangledPortalProps extends EntangledPortalStateOpts {
  */
 export const EntangledPortal: React.FC<EntangledPortalProps> = (props) => {
   const {span, children} = props;
+  // biome-ignore lint: props are set on every re-render in the render body
   const state = React.useMemo(() => new EntangledPortalState(props), []);
   state.opts = props;
+  // biome-ignore lint: too many dependencies
   React.useEffect(state.start, [state]);
 
   return (
     <span {...span} ref={state.base}>
       <EditorPortal>
-        <div ref={state.dest}>
-          {children}
-        </div>
+        <div ref={state.dest}>{children}</div>
       </EditorPortal>
     </span>
   );

@@ -15,7 +15,8 @@ export class SliceBehavior<
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
   Data extends Record<string, unknown> = Record<string, unknown>,
-> implements Printable {
+> implements Printable
+{
   public isInline(): boolean {
     return this.stacking !== SliceStacking.Marker;
   }
@@ -25,9 +26,9 @@ export class SliceBehavior<
    * to store custom rendering-specific data. This is useful for storing, for
    * example, React component references, which is specific to the rendering
    * layer.
-   * 
+   *
    * Usage:
-   * 
+   *
    * ```ts
    * registry.get(SliceTypeCon.a)?.data().ReactConfig = ReactConfigCompForLink;
    * ```

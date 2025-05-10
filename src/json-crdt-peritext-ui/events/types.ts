@@ -263,7 +263,7 @@ export interface CursorDetail extends RangeEventDetail {
 export interface FormatDetail extends RangeEventDetail {
   /**
    * The action to perform.
-   * 
+   *
    * - The `'ins'` action inserts a new annotation into the document.
    * - The `'tog'` action toggles the annotation on or off, for annotations of
    *   stack behavior `'one'`. For other annotations, it works the same as
@@ -310,7 +310,7 @@ export interface FormatDetail extends RangeEventDetail {
 
   /**
    * Specifies the stacking behavior of the annotation.
-   * 
+   *
    * - If `'many'`, the annotation of this type will be stacked on top of each
    *   other, and all of them will be applied to the text, with the last
    *   annotation on top.

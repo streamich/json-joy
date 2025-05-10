@@ -1,5 +1,6 @@
-import {useT} from 'use-t';
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
+import {useT} from 'use-t';
 import {useToolbarPlugin} from '../context';
 import {FormattingNew} from './views/new/FormattingNew';
 import {ContextPaneHeader} from '../../../components/ContextPaneHeader';
@@ -30,21 +31,24 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
 
   return (
     <FormattingPane onEsc={() => toolbar.newSlice.next(void 0)}>
-      <form className={blockClass} onSubmit={(e) => {
-        e.preventDefault();
-        formatting.save();
-      }}>
+      <form
+        className={blockClass}
+        onSubmit={(e) => {
+          e.preventDefault();
+          formatting.save();
+        }}
+      >
         <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
           <FormattingTitle formatting={formatting} />
         </ContextPaneHeader>
         <ContextPaneHeaderSep />
-  
+
         <div style={{padding: '16px'}}>
           <FormattingNew formatting={formatting} />
         </div>
-  
+
         <ContextSep line />
-        
+
         <div style={{padding: '16px'}}>
           <Button
             small
@@ -54,7 +58,9 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
             disabled={!valid}
             submit
             onClick={formatting.save}
-          >{t('Save')}</Button>
+          >
+            {t('Save')}
+          </Button>
         </div>
       </form>
     </FormattingPane>

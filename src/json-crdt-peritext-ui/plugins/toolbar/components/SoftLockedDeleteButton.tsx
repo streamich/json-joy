@@ -13,15 +13,19 @@ export const SoftLockedDeleteButton: React.FC<SoftLockedDeleteButtonProps> = ({o
   const [locked, setLocked] = React.useState(true);
 
   return (
-    <BasicTooltip renderTooltip={() => locked ? t('Unlock delete') : t('Delete')}>
-      <BasicButton size={32} rounder onClick={() => {
-        if (locked) {
-          setLocked(false);
-          return;
-        }
-        onDelete();
-      }}>
-        <Iconista set={'lucide'} icon={'trash'} width={16} height={16} style={{opacity: locked ? .5 : 1}} />
+    <BasicTooltip renderTooltip={() => (locked ? t('Unlock delete') : t('Delete'))}>
+      <BasicButton
+        size={32}
+        rounder
+        onClick={() => {
+          if (locked) {
+            setLocked(false);
+            return;
+          }
+          onDelete();
+        }}
+      >
+        <Iconista set={'lucide'} icon={'trash'} width={16} height={16} style={{opacity: locked ? 0.5 : 1}} />
       </BasicButton>
     </BasicTooltip>
   );

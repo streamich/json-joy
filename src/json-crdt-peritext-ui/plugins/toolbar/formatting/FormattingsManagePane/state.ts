@@ -32,7 +32,7 @@ export class CaretBottomState {
       }
       return res;
     });
-  };
+  }
 
   public readonly select = (formatting: SavedFormatting | null) => {
     this.selected$.next(formatting);

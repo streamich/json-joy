@@ -127,7 +127,7 @@ export class ToolbarState implements UiLifeCycles {
         case 'Escape': {
           if (newSliceConfig.value) {
             event.stopPropagation();
-            event.preventDefault
+            event.preventDefault;
             newSliceConfig.next(void 0);
             return;
           }
@@ -140,9 +140,13 @@ export class ToolbarState implements UiLifeCycles {
         case 'k': {
           if (event.metaKey) {
             const editor = this.txt.editor;
-            if (editor.hasCursor() && !editor.mainCursor()?.isCollapsed() && (!newSliceConfig.value || newSliceConfig.value.behavior.tag !== SliceTypeCon.a)) {
+            if (
+              editor.hasCursor() &&
+              !editor.mainCursor()?.isCollapsed() &&
+              (!newSliceConfig.value || newSliceConfig.value.behavior.tag !== SliceTypeCon.a)
+            ) {
               event.stopPropagation();
-              event.preventDefault
+              event.preventDefault;
               this.startSliceConfig(SliceTypeCon.a, this.linkMenuItem());
               return;
             }
@@ -160,7 +164,7 @@ export class ToolbarState implements UiLifeCycles {
         }
       }
     };
-    
+
     el.addEventListener('mousedown', mouseDownListener);
     el.addEventListener('mouseup', mouseUpListener);
     el.addEventListener('keydown', onKeyDown);
@@ -350,7 +354,8 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly linkMenuItem = (): MenuItem => {
-    const linkAction: MenuItem = {...behavior.a.menu,
+    const linkAction: MenuItem = {
+      ...behavior.a.menu,
       onSelect: () => {
         this.startSliceConfig(CommonSliceType.a, linkAction);
       },
@@ -359,7 +364,6 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly annotationsMenu = (): MenuItem => {
-    
     return {
       name: 'Annotations',
       expand: 2,

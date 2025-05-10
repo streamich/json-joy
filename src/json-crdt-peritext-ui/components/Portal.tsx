@@ -18,12 +18,14 @@ export interface PortalProps {
 
 export const Portal: React.FC<PortalProps> = ({children, parent}) => {
   const parentState = usePortal();
+  // biome-ignore lint: hook dependency list manually managed
   const state = React.useMemo(() => {
     const state = new PortalState();
     state.parent = parentState;
     return state;
   }, [parent]);
   const [el] = React.useState(() => document.createElement('div'));
+  // biome-ignore lint: hook dependency list manually managed
   React.useLayoutEffect(() => {
     const container = parent || document.body;
     container.appendChild(el);

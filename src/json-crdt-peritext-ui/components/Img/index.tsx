@@ -10,8 +10,11 @@ export const Img: React.FC<ImgProps> = (props) => {
 
   if (error && renderError) return renderError(error, props);
 
-  return createElement('img', {...rest, onError: (e: unknown) => {
-    setError(e);
-    onError?.(e as any);
-  }});
+  return createElement('img', {
+    ...rest,
+    onError: (e: unknown) => {
+      setError(e);
+      onError?.(e as any);
+    },
+  });
 };

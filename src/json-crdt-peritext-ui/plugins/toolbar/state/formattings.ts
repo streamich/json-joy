@@ -1,8 +1,8 @@
 import {s} from '../../../../json-crdt-patch';
 import {Model, ObjApi} from '../../../../json-crdt/model';
-import type {Slice} from "../../../../json-crdt-extensions";
-import type {Range} from "../../../../json-crdt-extensions/peritext/rga/Range";
-import type {ToolbarSliceBehavior, ValidationResult} from "../types";
+import type {Slice} from '../../../../json-crdt-extensions';
+import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
+import type {ToolbarSliceBehavior, ValidationResult} from '../types';
 import type {SliceBehavior} from '../../../../json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {ObjNode} from '../../../../json-crdt/nodes';
 import type {ToolbarState} from '.';
@@ -17,9 +17,13 @@ export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {
   conf(): ObjApi<Node> | undefined;
 }
 
-export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> extends FormattingBase<ToolbarSliceBehavior, R>, FormattingWithConfig<Node> {}
+export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
+  extends FormattingBase<ToolbarSliceBehavior, R>,
+    FormattingWithConfig<Node> {}
 
-export abstract class EditableFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode> implements ToolbarFormatting<R, Node> {
+export abstract class EditableFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
+  implements ToolbarFormatting<R, Node>
+{
   public constructor(
     public readonly behavior: ToolbarSliceBehavior,
     public readonly range: R,

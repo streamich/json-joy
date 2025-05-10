@@ -22,7 +22,6 @@ export interface PeritextPlugin {
    */
   peritext?: (children: React.ReactNode, state: PeritextSurfaceState) => React.ReactNode;
 
-
   /**
    * Renders a rich-text block element. This extension point allows the plugin
    * to style different block types differently. For example, a plugin can render

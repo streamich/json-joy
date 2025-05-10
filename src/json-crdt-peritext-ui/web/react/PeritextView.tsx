@@ -55,8 +55,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [plugins_]);
 
   /** Create the {@link PeritextSurfaceState} state management instance. */
-  const state = React.useMemo(() =>
-    new PeritextSurfaceState(createEvents(peritext), plugins), [peritext, plugins]);
+  const state = React.useMemo(() => new PeritextSurfaceState(createEvents(peritext), plugins), [peritext, plugins]);
 
   /** Call `.start()` of {@link PeritextSurfaceState} and setup HTML element. */
   const ref = (el: HTMLDivElement | null) => {
@@ -67,14 +66,14 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   };
 
   /** Call `.stop()` of {@link PeritextSurfaceState} when the component unmounts. */
-  React.useLayoutEffect(() => () => stop.current?.(), [stop]);
+  React.useLayoutEffect(() => () => stop.current?.(), []);
 
   // Return the final result.
   return (
     <context.Provider value={state}>
       <div className={CssClass.Editor}>
         <PeritextViewInner div={ref} state={state} />
-        <div ref={el => state.portalEl = el || void 0} style={{height: 0}}></div>
+        <div ref={(el) => (state.portalEl = el || void 0)} style={{height: 0}} />
       </div>
     </context.Provider>
   );
@@ -101,8 +100,7 @@ const PeritextViewInner: React.FC<PeritextViewInnerProps> = React.memo((props) =
   );
 
   // Run the plugins to decorate our content body.
-  for (const plugin of state.plugins)
-    children = plugin.peritext?.(children, state) ?? children;
+  for (const plugin of state.plugins) children = plugin.peritext?.(children, state) ?? children;
 
   // Return the final result.
   return children;

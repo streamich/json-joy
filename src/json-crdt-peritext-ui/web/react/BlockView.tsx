@@ -7,7 +7,12 @@ import {usePeritext} from './context';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {CaretView} from './cursor/CaretView';
 import {FocusView} from './cursor/FocusView';
-import {Inline, InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../../json-crdt-extensions/peritext/block/Inline';
+import {
+  type Inline,
+  InlineAttrEnd,
+  InlineAttrPassing,
+  InlineAttrStart,
+} from '../../../json-crdt-extensions/peritext/block/Inline';
 import {AnchorView} from './cursor/AnchorView';
 import type {Block} from '../../../json-crdt-extensions/peritext/block/Block';
 
@@ -39,7 +44,16 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
               if (cursorStart.isCollapsed()) {
-                element = <CaretView key={key} italic={!!italic} point={cursorStart.start} cursor={cursorStart} fwd={inline} bwd={prevInline} />;
+                element = (
+                  <CaretView
+                    key={key}
+                    italic={!!italic}
+                    point={cursorStart.start}
+                    cursor={cursorStart}
+                    fwd={inline}
+                    bwd={prevInline}
+                  />
+                );
               } else {
                 const isItalic = italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing;
                 element = <FocusView key={key} italic={isItalic} cursor={cursorStart} />;
@@ -63,7 +77,9 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
               if (cursorEnd.isCollapsed()) {
-                element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} bwd={inline} />;
+                element = (
+                  <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} bwd={inline} />
+                );
               } else
                 element = (
                   <FocusView

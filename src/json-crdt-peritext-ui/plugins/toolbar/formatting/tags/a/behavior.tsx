@@ -4,7 +4,7 @@ import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
 import {renderIcon} from './renderIcon';
 import {View} from './View';
 import {Edit} from './Edit';
-import {ToolbarSliceBehaviorData} from '../../../types';
+import type {ToolbarSliceBehaviorData} from '../../../types';
 import {getDomain} from '../../../../../web/util';
 
 export const behavior = {

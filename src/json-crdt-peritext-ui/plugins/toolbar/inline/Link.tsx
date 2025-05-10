@@ -36,9 +36,16 @@ export interface LinkProps {
 
 export const Link: React.FC<LinkProps> = (props) => {
   const {children, layers = 1} = props;
-  const style: React.CSSProperties | undefined = layers < 2 ? void 0 : {
-    textDecorationThickness: Math.max(Math.min(.5 + layers * .5, 3), 1) + 'px',
-  };
+  const style: React.CSSProperties | undefined =
+    layers < 2
+      ? void 0
+      : {
+          textDecorationThickness: Math.max(Math.min(0.5 + layers * 0.5, 3), 1) + 'px',
+        };
 
-  return <span className={blockClass} style={style}>{children}</span>;
+  return (
+    <span className={blockClass} style={style}>
+      {children}
+    </span>
+  );
 };

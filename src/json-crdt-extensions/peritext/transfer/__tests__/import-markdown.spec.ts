@@ -15,7 +15,11 @@ describe('fromMarkdown()', () => {
     const text = '[Hello world](https://example.com)';
     const registry = SliceRegistry.withCommon();
     const peritextMl = fromMarkdown(text, registry);
-    expect(peritextMl).toMatchObject(['', null, [CommonSliceType.p, null, [CommonSliceType.a, {data: {href: 'https://example.com'}}, 'Hello world']]]);
+    expect(peritextMl).toMatchObject([
+      '',
+      null,
+      [CommonSliceType.p, null, [CommonSliceType.a, {data: {href: 'https://example.com'}}, 'Hello world']],
+    ]);
   });
 
   test('multi-block realistic example', () => {

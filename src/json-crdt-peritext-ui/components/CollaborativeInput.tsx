@@ -1,12 +1,12 @@
 import {createElement, useMemo, useLayoutEffect} from 'react';
 import {bind} from 'collaborative-input';
-import {UiLifeCycles} from '../web';
+import type {UiLifeCycles} from '../web';
 import type {CollaborativeStr} from 'collaborative-editor';
 
 class CollaborativeInputState implements UiLifeCycles {
   protected _unbind: (() => void) | undefined;
 
-  constructor (public readonly props: CollaborativeInputProps) {}
+  constructor(public readonly props: CollaborativeInputProps) {}
 
   protected readonly unbind = () => {
     this._unbind?.();
@@ -44,7 +44,9 @@ export interface CollaborativeInputProps extends React.InputHTMLAttributes<HTMLI
 
 export const CollaborativeInput: React.FC<CollaborativeInputProps> = (props) => {
   const {str, polling, inp, input, ...rest} = props;
+  // biome-ignore lint: hook dependency list manually managed
   const state = useMemo(() => new CollaborativeInputState(props), [str, polling]);
+  // biome-ignore lint: hook dependency list manually managed
   useLayoutEffect(state.start, [state]);
 
   if (input) return input(state.ref);

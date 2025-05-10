@@ -78,9 +78,9 @@ const runTests = (setup: () => Kit) => {
     expect(block.tag()).toBe('p');
     const [inline0, inline1] = block.texts();
     expect(inline0.text()).toBe('abcd');
-    expect(!!inline0.attr()['strong']).toBe(true);
+    expect(!!inline0.attr().strong).toBe(true);
     expect(inline1.text()).toBe('efghijklmnopqrstuvwxyz');
-    expect(!!inline1.attr()['strong']).toBe(false);
+    expect(!!inline1.attr().strong).toBe(false);
   });
 };
 

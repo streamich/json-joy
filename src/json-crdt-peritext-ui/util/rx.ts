@@ -1,4 +1,4 @@
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject} from 'rxjs';
 
 export const subject = <T, N>(source: BehaviorSubject<T>, mapper: (value: T) => N): BehaviorSubject<N> => {
   const value = mapper(source.getValue());

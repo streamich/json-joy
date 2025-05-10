@@ -61,8 +61,10 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public isEditable(el: Element): boolean {
     if (!(el as any).isContentEditable) return false;
     const computed = getComputedStyle(el);
-    return (computed.getPropertyValue('--jsonjoy-peritext-id') === this.et.id + '') &&
-      (computed.getPropertyValue('--jsonjoy-peritext-editable') === 'yes');
+    return (
+      computed.getPropertyValue('--jsonjoy-peritext-id') === this.et.id + '' &&
+      computed.getPropertyValue('--jsonjoy-peritext-editable') === 'yes'
+    );
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */

@@ -1,3 +1,4 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {ContextHeader} from './ContextHeader';
 import {Space} from 'nice-ui/lib/3-list-item/Space';
@@ -14,7 +15,13 @@ export interface ContextPaneHeaderProps {
   onCloseClick?: React.MouseEventHandler;
 }
 
-export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({short, right, children, onBackClick, onCloseClick}) => {
+export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({
+  short,
+  right,
+  children,
+  onBackClick,
+  onCloseClick,
+}) => {
   let element = (
     <Flex style={{alignItems: 'center'}}>
       {!!onBackClick && (

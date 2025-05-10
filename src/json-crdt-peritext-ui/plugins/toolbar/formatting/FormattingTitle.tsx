@@ -1,3 +1,4 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {rule} from 'nano-theme';
@@ -21,7 +22,7 @@ const iconClass = rule({
   ai: 'center',
   jc: 'center',
   bg: 'rgba(0,0,0,.08)',
-  o: .7,
+  o: 0.7,
   '&>div': {
     transform: 'scale(.9)',
     transformOrigin: 'center',

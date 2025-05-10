@@ -128,10 +128,10 @@ export interface Slice<T = string> extends Range<T>, Stateful {
   /**
    * The high-level behavior identifier of the slice. Specifies the
    * user-defined type of the slice, e.g. paragraph, heading, blockquote, etc.
-   * 
+   *
    * Usually the type is a number or string primitive, in which case it is
    * referred to as *tag*.
-   * 
+   *
    * The type is a list only for nested blocks, e.g. `['ul', 'li']`, in which
    * case the type is a list of tags. The last tag in the list is the
    * "leaf" tag, which is the type of the leaf block element.

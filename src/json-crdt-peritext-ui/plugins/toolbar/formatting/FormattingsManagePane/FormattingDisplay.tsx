@@ -5,7 +5,7 @@ import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {SavedFormatting} from '../../state/formattings';
+import type {SavedFormatting} from '../../state/formattings';
 import {ContextPaneHeader} from '../../../../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../../../../components/ContextPaneHeaderSep';
 import {FormattingTitle} from '../FormattingTitle';
@@ -33,37 +33,43 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       <ContextPaneHeader
         short
         onBackClick={onClose}
-        right={view === 'edit' ? (
-          <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-            <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
-              <Code spacious alt gray nowrap>{t('editing')}</Code>
-            </div>
-            <Space horizontal />
-            <BasicTooltip renderTooltip={() => t('Stop editing')}>
-              <BasicButton size={32} rounder onClick={() => setView('view')}>
-                <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
-              </BasicButton>
-            </BasicTooltip>
-          </Flex>
-        ) : (
-          <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-            <SoftLockedDeleteButton onDelete={() => {
-              surface.events.et.format({
-                at: formatting.range,
-                action: 'del',
-              });
-              onClose?.();
-            }} />
-            <Space horizontal size={-2} />
-            <ButtonSeparator />
-            <Space horizontal size={-2} />
-            <BasicTooltip renderTooltip={() => t('Edit')}>
-              <BasicButton size={32} rounder onClick={() => setView('edit')}>
-                <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
-              </BasicButton>
-            </BasicTooltip>
-          </Flex>
-        )}
+        right={
+          view === 'edit' ? (
+            <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+              <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
+                <Code spacious alt gray nowrap>
+                  {t('editing')}
+                </Code>
+              </div>
+              <Space horizontal />
+              <BasicTooltip renderTooltip={() => t('Stop editing')}>
+                <BasicButton size={32} rounder onClick={() => setView('view')}>
+                  <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
+                </BasicButton>
+              </BasicTooltip>
+            </Flex>
+          ) : (
+            <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+              <SoftLockedDeleteButton
+                onDelete={() => {
+                  surface.events.et.format({
+                    at: formatting.range,
+                    action: 'del',
+                  });
+                  onClose?.();
+                }}
+              />
+              <Space horizontal size={-2} />
+              <ButtonSeparator />
+              <Space horizontal size={-2} />
+              <BasicTooltip renderTooltip={() => t('Edit')}>
+                <BasicButton size={32} rounder onClick={() => setView('edit')}>
+                  <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
+                </BasicButton>
+              </BasicTooltip>
+            </Flex>
+          )
+        }
       >
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>

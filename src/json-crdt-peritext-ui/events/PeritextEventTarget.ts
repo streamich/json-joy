@@ -83,7 +83,12 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     }
   }
 
-  public format(action: FormatDetail['action'], type: FormatDetail['type'], stack?: FormatDetail['stack'], data?: FormatDetail['data']): void;
+  public format(
+    action: FormatDetail['action'],
+    type: FormatDetail['type'],
+    stack?: FormatDetail['stack'],
+    data?: FormatDetail['data'],
+  ): void;
   public format(detail: FormatDetail): void;
   public format(
     a: FormatDetail | FormatDetail['action'],
@@ -92,7 +97,9 @@ export class PeritextEventTarget extends SubscriptionEventTarget<PeritextEventMa
     data?: FormatDetail['data'],
   ): void {
     const detail: FormatDetail =
-      typeof a === 'object' && !Array.isArray(a) ? (a as FormatDetail) : ({action: a, type, stack, data} as FormatDetail);
+      typeof a === 'object' && !Array.isArray(a)
+        ? (a as FormatDetail)
+        : ({action: a, type, stack, data} as FormatDetail);
     this.dispatch('format', detail);
   }
 

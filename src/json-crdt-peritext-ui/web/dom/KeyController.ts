@@ -4,10 +4,11 @@ import type {UiLifeCycles} from '../types';
 import type {DomController} from './DomController';
 
 class KeyPress {
-  public constructor(public readonly key: string, public readonly ts: number) {}
+  public constructor(
+    public readonly key: string,
+    public readonly ts: number,
+  ) {}
 }
-
-export interface KeyControllerOpts {}
 
 /**
  * Keeps track of all pressed down keys.
