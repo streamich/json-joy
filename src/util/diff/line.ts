@@ -205,6 +205,7 @@ export const agg = (patch: str.Patch): str.Patch[] => {
 export const diff = (src: string[], dst: string[]): LinePatch => {
   const srcTxt = src.join("\n") + '\n';
   const dstTxt = dst.join("\n") + '\n';
+  if (srcTxt === dstTxt) return [];
   const strPatch = str.diff(srcTxt, dstTxt);
   const lines = agg(strPatch);
   const length = lines.length;

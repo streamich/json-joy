@@ -7,6 +7,7 @@ import {b} from '@jsonjoy.com/util/lib/buffers/b';
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
   const patch1 = new Diff(model).diff(src, dst);
   // console.log(model + '');
+  // console.log(dst);
   // console.log(patch1 + '');
   model.applyPatch(patch1);
   // console.log(model + '');

@@ -4,10 +4,10 @@ import {ITimespanStruct, type ITimestampStruct, Patch, PatchBuilder, Timespan} f
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
 import * as str from '../util/diff/str';
 import * as bin from '../util/diff/bin';
-import * as arr from '../util/diff/arr';
-import type {Model} from '../json-crdt/model';
+import * as line from '../util/diff/line';
 import {structHashCrdt} from '../json-hash/structHashCrdt';
 import {structHash} from '../json-hash';
+import type {Model} from '../json-crdt/model';
 
 export class DiffError extends Error {
   constructor(message: string = 'DIFF') {
@@ -43,49 +43,55 @@ export class Diff {
   }
 
   protected diffArr(src: ArrNode, dst: unknown[]): void {
-    let txtSrc = '';
-    let txtDst = '';
-    const dstLen = dst.length;
+    const srcLines: string[] = [];
     src.children(node => {
-      txtSrc += structHashCrdt(node) + '\n';
+      srcLines.push(structHashCrdt(node));
     });
-    for (let i = 0; i < dstLen; i++) txtDst += structHash(dst[i]) + '\n';
-    txtSrc = txtSrc.slice(0, -1);
-    txtDst = txtDst.slice(0, -1);
+    const dstLines: string[] = [];
+    const dstLength = dst.length;
+    for (let i = 0; i < dstLength; i++) dstLines.push(structHash(dst[i]));
+    const linePatch = line.diff(srcLines, dstLines);
+    if (!linePatch.length) return;
     const inserts: [after: ITimestampStruct, views: unknown[]][] = [];
     const deletes: ITimespanStruct[] = [];
-    const patch = arr.diff(txtSrc, txtDst);
-    // console.log(patch);
-    arr.apply(patch,
-      (posSrc, posDst, len) => {
-        const views: unknown[] = dst.slice(posDst, posDst + len);
-        const after = posSrc ? src.find(posSrc - 1) : src.id;
-        if (!after) throw new DiffError();
-        inserts.push([after, views]);
-      },
-      (pos, len) => deletes.push(...src.findInterval(pos, len)!),
-      (posSrc, posDst, len) => {
-        for (let i = 0; i < len; i++) {
-          const srcIdx = posSrc + i;
-          const dstIdx = posDst + i;
-          const view = dst[dstIdx];
+    const patchLength = linePatch.length;
+    for (let i = patchLength - 1; i >= 0; i--) {
+      const [type, posSrc, posDst] = linePatch[i];
+      switch (type) {
+        case line.LINE_PATCH_OP_TYPE.EQL:
+          break;
+        case line.LINE_PATCH_OP_TYPE.INS: {
+          const view = dst[posDst];
+          const after = posSrc >= 0 ? src.find(posSrc) : src.id;
+          if (!after) throw new DiffError();
+          inserts.push([after, [view]]);
+          break;
+        }
+        case line.LINE_PATCH_OP_TYPE.DEL: {
+          const span = src.findInterval(posSrc, 1);
+          if (!span || !span.length) throw new DiffError();
+          deletes.push(...span);
+          break;
+        }
+        case line.LINE_PATCH_OP_TYPE.MIX: {
+          const view = dst[posDst];
           try {
-            this.diffAny(src.getNode(srcIdx)!, view);
+            this.diffAny(src.getNode(posSrc)!, view);
           } catch (error) {
             if (error instanceof DiffError) {
-              const span = src.findInterval(srcIdx, 1)!;
+              const span = src.findInterval(posSrc, 1)!;
               deletes.push(...span);
-              const after = srcIdx ? src.find(srcIdx - 1) : src.id;
+              const after = posSrc ? src.find(posSrc - 1) : src.id;
               if (!after) throw new DiffError();
               inserts.push([after, [view]]);
             } else throw error;
           }
         }
-      },
-    );
+      }
+    }
     const builder = this.builder;
     const length = inserts.length;
-    for (let i = length - 1; i >= 0; i--) {
+    for (let i = 0; i < length; i++) {
       const [after, views] = inserts[i];
       builder.insArr(src.id, after, views.map(view => builder.json(view)))
     }
