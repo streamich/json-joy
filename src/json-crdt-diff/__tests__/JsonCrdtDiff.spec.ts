@@ -1,7 +1,7 @@
 import {JsonCrdtDiff} from '../JsonCrdtDiff';
-import {InsStrOp, s} from '../../json-crdt-patch';
+import {type InsStrOp, s} from '../../json-crdt-patch';
 import {Model} from '../../json-crdt/model';
-import {JsonNode, ValNode} from '../../json-crdt/nodes';
+import {type JsonNode, ValNode} from '../../json-crdt/nodes';
 import {b} from '@jsonjoy.com/util/lib/buffers/b';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
@@ -25,9 +25,11 @@ const assertDiff2 = (src: unknown, dst: unknown) => {
 
 describe('con', () => {
   test('binary in "con"', () => {
-    const model = Model.create(s.obj({
-      field: s.con(new Uint8Array([1, 2, 3])),
-    }));
+    const model = Model.create(
+      s.obj({
+        field: s.con(new Uint8Array([1, 2, 3])),
+      }),
+    );
     const dst = {
       field: new Uint8Array([1, 2, 3, 4]),
     };
@@ -376,10 +378,12 @@ describe('arr', () => {
 
 describe('scenarios', () => {
   test('link element annotation', () => {
-    const model = Model.create(s.obj({
-      href: s.str('http://example.com/page?tab=1'),
-      title: s.str('example'),
-    }));
+    const model = Model.create(
+      s.obj({
+        href: s.str('http://example.com/page?tab=1'),
+        title: s.str('example'),
+      }),
+    );
     const dst = {
       href: 'https://example.com/page-2',
       title: 'Example page',

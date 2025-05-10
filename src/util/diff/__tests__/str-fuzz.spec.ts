@@ -3,9 +3,8 @@ import {assertPatch} from './util';
 import {diff, diffEdit} from '../str';
 const fastDiff = require('fast-diff') as typeof diff;
 
-const str = () => Math.random() > .7
-  ? RandomJson.genString(Math.ceil(Math.random() * 200))
-  : Math.random().toString(36).slice(2);
+const str = () =>
+  Math.random() > 0.7 ? RandomJson.genString(Math.ceil(Math.random() * 200)) : Math.random().toString(36).slice(2);
 const iterations = 100;
 
 test('fuzzing diff()', () => {

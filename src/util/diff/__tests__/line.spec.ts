@@ -1,8 +1,8 @@
-import * as line from "../line";
-import { assertDiff } from "./line";
+import * as line from '../line';
+import {assertDiff} from './line';
 
-describe("diff", () => {
-  test("delete all lines", () => {
+describe('diff', () => {
+  test('delete all lines', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -14,17 +14,12 @@ describe("diff", () => {
     expect(patch).toEqual([
       [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
       [-1, 1, -1, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        -1,
-        2,
-        -1,
-        [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [-1, 2, -1, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [-1, 3, -1, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
     ]);
   });
 
-  test("delete all but first line", () => {
+  test('delete all but first line', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -36,27 +31,19 @@ describe("diff", () => {
     expect(patch).toEqual([
       [0, 0, 0, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
       [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        -1,
-        2,
-        0,
-        [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [-1, 2, 0, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [-1, 3, 0, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
     ]);
   });
 
-  test("delete all but middle lines line", () => {
+  test('delete all but middle lines line', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
       '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
       '{"id": "abc", "name": "Merry Jane"}',
     ];
-    const dst = [
-      '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
-      '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
-    ];
+    const dst = ['{"id": "xxx-yyyyyyy", "name": "Joe Doe"}', '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
       [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
@@ -66,7 +53,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("delete all but the last line", () => {
+  test('delete all but the last line', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -78,52 +65,36 @@ describe("diff", () => {
     expect(patch).toEqual([
       [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
       [-1, 1, -1, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        -1,
-        2,
-        -1,
-        [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [-1, 2, -1, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [0, 3, 0, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
     ]);
   });
 
-  test("normalize line beginnings (delete two middle ones)", () => {
+  test('normalize line beginnings (delete two middle ones)', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
       '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
       '{"id": "abc", "name": "Merry Jane"}',
     ];
-    const dst = [
-      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
-      '{"id": "abc", "name": "Merry Jane"}',
-    ];
+    const dst = ['{"id": "xxx-xxxxxxx", "name": "Hello, world"}', '{"id": "abc", "name": "Merry Jane"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
       [0, 0, 0, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
       [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        -1,
-        2,
-        0,
-        [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [-1, 2, 0, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [0, 3, 1, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
     ]);
   });
 
-  test("normalize line endings", () => {
+  test('normalize line endings', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "hello world!"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
       '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}',
       '{"id": "abc", "name": "Merry Jane"}',
     ];
-    const dst = [
-      '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
-      '{"id": "abc", "name": "Merry Jane!"}',
-    ];
+    const dst = ['{"id": "xxx-xxxxxxx", "name": "Hello, world"}', '{"id": "abc", "name": "Merry Jane!"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
       [
@@ -132,36 +103,31 @@ describe("diff", () => {
         0,
         [
           [0, '{"id": "xxx-xxxxxxx", "name": "'],
-          [-1, "h"],
-          [1, "H"],
-          [0, "ello"],
-          [1, ","],
-          [0, " world"],
-          [-1, "!"],
+          [-1, 'h'],
+          [1, 'H'],
+          [0, 'ello'],
+          [1, ','],
+          [0, ' world'],
+          [-1, '!'],
           [0, '"}'],
         ],
       ],
       [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        -1,
-        2,
-        0,
-        [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [-1, 2, 0, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [
         2,
         3,
         1,
         [
           [0, '{"id": "abc", "name": "Merry Jane'],
-          [1, "!"],
+          [1, '!'],
           [0, '"}'],
         ],
       ],
     ]);
   });
 
-  test("move first line to the end", () => {
+  test('move first line to the end', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -184,7 +150,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("move second line to the end", () => {
+  test('move second line to the end', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -207,7 +173,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("swap third and fourth lines", () => {
+  test('swap third and fourth lines', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -230,7 +196,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("move last line to the beginning", () => {
+  test('move last line to the beginning', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -253,7 +219,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("move second to last line to the beginning", () => {
+  test('move second to last line to the beginning', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -268,25 +234,15 @@ describe("diff", () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [
-        1,
-        -1,
-        0,
-        [[1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [1, -1, 0, [[1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [0, 0, 1, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
       [0, 1, 2, [[0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        -1,
-        2,
-        2,
-        [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']],
-      ],
+      [-1, 2, 2, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [0, 3, 3, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
     ]);
   });
 
-  test("swap first and second lines", () => {
+  test('swap first and second lines', () => {
     const src = [
       '{"id": "xxx-xxxxxxx", "name": "Hello, world!!!!!!!!!!!!!!!!!!!!!!!!!"}',
       '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}',
@@ -302,33 +258,20 @@ describe("diff", () => {
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
       [1, -1, 0, [[1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [
-        0,
-        0,
-        1,
-        [
-          [
-            0,
-            '{"id": "xxx-xxxxxxx", "name": "Hello, world!!!!!!!!!!!!!!!!!!!!!!!!!"}',
-          ],
-        ],
-      ],
+      [0, 0, 1, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world!!!!!!!!!!!!!!!!!!!!!!!!!"}']]],
       [-1, 1, 1, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
       [0, 2, 2, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
       [0, 3, 3, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
     ]);
   });
 
-  test("fuze two elements into one", () => {
+  test('fuze two elements into one', () => {
     const src = [
       '{"asdfasdfasdf": 2398239234, "aaaa": "aaaaaaa"}',
       '{"bbbb": "bbbbbbbbbbbbbbb", "cccc": "ccccccccccccccccc"}',
       '{"this": "is a test", "number": 1234567890}',
     ];
-    const dst = [
-      '{"aaaa": "aaaaaaa", "bbbb": "bbbbbbbbbbbbbbb"}',
-      '{"this": "is a test", "number": 1234567890}',
-    ];
+    const dst = ['{"aaaa": "aaaaaaa", "bbbb": "bbbbbbbbbbbbbbb"}', '{"this": "is a test", "number": 1234567890}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
       [
@@ -339,7 +282,7 @@ describe("diff", () => {
           [0, '{"a'],
           [-1, 'sdfasdfasdf": 2398239234, "a'],
           [0, 'aaa": "aaaaaaa"'],
-          [-1, "}"],
+          [-1, '}'],
         ],
       ],
       [
@@ -347,8 +290,8 @@ describe("diff", () => {
         1,
         0,
         [
-          [-1, "{"],
-          [1, ", "],
+          [-1, '{'],
+          [1, ', '],
           [0, '"bbbb": "bbbbbbbbbbbbbbb'],
           [-1, '", "cccc": "ccccccccccccccccc'],
           [0, '"}'],
@@ -358,11 +301,8 @@ describe("diff", () => {
     ]);
   });
 
-  test("split two elements into one", () => {
-    const src = [
-      '{"aaaa": "aaaaaaa", "bbbb": "bbbbbbbbbbbbbbb"}',
-      '{"this": "is a test", "number": 1234567890}',
-    ];
+  test('split two elements into one', () => {
+    const src = ['{"aaaa": "aaaaaaa", "bbbb": "bbbbbbbbbbbbbbb"}', '{"this": "is a test", "number": 1234567890}'];
     const dst = [
       '{"asdfasdfasdf": 2398239234, "aaaa": "aaaaaaa"}',
       '{"bbbb": "bbbbbbbbbbbbbbb", "cccc": "ccccccccccccccccc"}',
@@ -378,8 +318,8 @@ describe("diff", () => {
           [0, '{"a'],
           [1, 'sdfasdfasdf": 2398239234, "a'],
           [0, 'aaa": "aaaaaaa"'],
-          [-1, ", "],
-          [1, "}"],
+          [-1, ', '],
+          [1, '}'],
         ],
       ],
       [
@@ -387,7 +327,7 @@ describe("diff", () => {
         0,
         1,
         [
-          [1, "{"],
+          [1, '{'],
           [0, '"bbbb": "bbbbbbbbbbbbbbb'],
           [1, '", "cccc": "ccccccccccccccccc'],
           [0, '"}'],
@@ -397,58 +337,49 @@ describe("diff", () => {
     ]);
   });
 
-  test("various examples", () => {
-    assertDiff(
-      ["0", "1", "3", "x", "y", "4", "5"],
-      ["1", "2", "3", "4", "a", "b", "c", "5"]
-    );
-    assertDiff(["a", "x"], ["b", "c", "d"]);
+  test('various examples', () => {
+    assertDiff(['0', '1', '3', 'x', 'y', '4', '5'], ['1', '2', '3', '4', 'a', 'b', 'c', '5']);
+    assertDiff(['a', 'x'], ['b', 'c', 'd']);
     assertDiff([], []);
-    assertDiff(["1"], []);
-    assertDiff([], ["1"]);
-    assertDiff(["1"], ["1"]);
-    assertDiff(["1", "2"], ["1", "2"]);
-    assertDiff(["1", "2"], ["1", "3", "2"]);
-    assertDiff(["1", "3", "2"], ["1", "2"]);
-    assertDiff(
-      ["1", "2", "3", "4", "5", "6", "7"],
-      ["0", "1", "2", "5", "x", "y", "z", "a", "b", "7", "8"]
-    );
-    assertDiff([], ["1"]);
+    assertDiff(['1'], []);
+    assertDiff([], ['1']);
+    assertDiff(['1'], ['1']);
+    assertDiff(['1', '2'], ['1', '2']);
+    assertDiff(['1', '2'], ['1', '3', '2']);
+    assertDiff(['1', '3', '2'], ['1', '2']);
+    assertDiff(['1', '2', '3', '4', '5', '6', '7'], ['0', '1', '2', '5', 'x', 'y', 'z', 'a', 'b', '7', '8']);
+    assertDiff([], ['1']);
     assertDiff([], []);
-    assertDiff(["1"], ["1"]);
-    assertDiff(["1", "1"], ["1", "1"]);
-    assertDiff(["1", "1", "2"], ["1", "1", "2"]);
-    assertDiff(["1", "1", "2"], ["1", "1"]);
-    assertDiff(["1", "2", "3"], ["1", "3"]);
-    assertDiff(["1", "2", "3"], ["2", "3"]);
-    assertDiff(["b", "a"], ["7", "3", "d", "7", "9", "9", "9"]);
-    assertDiff(["1"], []);
-    assertDiff(["1", "{}"], []);
-    assertDiff(["1", "2", "3", "4", "5", "6"], ["3"]);
-    assertDiff(["1", "2", "3"], ["2", "3"]);
-    assertDiff(["1", "2", "3"], ["1", "3"]);
-    assertDiff(["1", "2", "3"], ["1", "2"]);
-    assertDiff(["1", "2", "3", "4"], ["3", "4"]);
-    assertDiff(["1", "2"], ["1"]);
-    assertDiff(["1", "2"], ["2"]);
-    assertDiff(
-      ["1", "2", "3", "3", "5", "{a:4}", "5", '"6"'],
-      ["1", "2", "3", "5", "{a:4}", "5", '"6"', "6"]
-    );
-    assertDiff(["0", "1"], ["xyz"]);
+    assertDiff(['1'], ['1']);
+    assertDiff(['1', '1'], ['1', '1']);
+    assertDiff(['1', '1', '2'], ['1', '1', '2']);
+    assertDiff(['1', '1', '2'], ['1', '1']);
+    assertDiff(['1', '2', '3'], ['1', '3']);
+    assertDiff(['1', '2', '3'], ['2', '3']);
+    assertDiff(['b', 'a'], ['7', '3', 'd', '7', '9', '9', '9']);
+    assertDiff(['1'], []);
+    assertDiff(['1', '{}'], []);
+    assertDiff(['1', '2', '3', '4', '5', '6'], ['3']);
+    assertDiff(['1', '2', '3'], ['2', '3']);
+    assertDiff(['1', '2', '3'], ['1', '3']);
+    assertDiff(['1', '2', '3'], ['1', '2']);
+    assertDiff(['1', '2', '3', '4'], ['3', '4']);
+    assertDiff(['1', '2'], ['1']);
+    assertDiff(['1', '2'], ['2']);
+    assertDiff(['1', '2', '3', '3', '5', '{a:4}', '5', '"6"'], ['1', '2', '3', '5', '{a:4}', '5', '"6"', '6']);
+    assertDiff(['0', '1'], ['xyz']);
 
-    assertDiff(["[]"], ["[1]"]);
-    assertDiff(["1", "[]"], ["1", "[1]"]);
-    assertDiff(["1", "2", "3"], ["1", "[2]", "3"]);
-    assertDiff(["1", "[1,2,3,4]", "3"], ["1", "[1,3,455]", "3"]);
-    assertDiff(["1", "[1,2,3,4]", "3"], ["1", "[1,3,455]", "[3]"]);
-    assertDiff(["1", "[1,2,3,4]", "3"], ["1", "[1,2,3,5]", "3"]);
-    assertDiff(["1", "[1,2,3,4]", "3"], ["1", "[1,4,3,5]", "3"]);
-    assertDiff(["[2]"], ["1", "2", "3"]);
+    assertDiff(['[]'], ['[1]']);
+    assertDiff(['1', '[]'], ['1', '[1]']);
+    assertDiff(['1', '2', '3'], ['1', '[2]', '3']);
+    assertDiff(['1', '[1,2,3,4]', '3'], ['1', '[1,3,455]', '3']);
+    assertDiff(['1', '[1,2,3,4]', '3'], ['1', '[1,3,455]', '[3]']);
+    assertDiff(['1', '[1,2,3,4]', '3'], ['1', '[1,2,3,5]', '3']);
+    assertDiff(['1', '[1,2,3,4]', '3'], ['1', '[1,4,3,5]', '3']);
+    assertDiff(['[2]'], ['1', '2', '3']);
   });
 
-  test("fuzzer - 1", () => {
+  test('fuzzer - 1', () => {
     const src = [
       '{"KW*V":"Wj6/Y1mgmm6n","uP1`NNND":{")zR8r|^KR":{}},"YYyO7.+>#.6AQ?U":"1%EA(q+S!}*","b\\nyc*o.":487228790.90332836}',
       '{"CO:_":238498277.2025599,"Gu4":{"pv`6^#.%9ka1*":true},"(x@cpBcAWb!_\\"{":963865518.3697702,"/Pda+3}:s(/sG{":"fj`({"}',
@@ -461,34 +392,20 @@ describe("diff", () => {
     expect(patch).toEqual([
       [-1, 0, -1, expect.any(Array)],
       [2, 1, 0, expect.any(Array)],
-      [
-        -1,
-        2,
-        0,
-        [
-          [
-            -1,
-            '{".yk_":201,"KV1C":"yq#Af","b+Cö.EOa":["DDDDDDDDDDDDDDDD"],"%":[]}',
-          ],
-        ],
-      ],
+      [-1, 2, 0, [[-1, '{".yk_":201,"KV1C":"yq#Af","b+Cö.EOa":["DDDDDDDDDDDDDDDD"],"%":[]}']]],
     ]);
   });
 
-  test("fuzzer - 2 (simplified)", () => {
+  test('fuzzer - 2 (simplified)', () => {
     const src = [
-      "{asdfasdfasdf}",
-      "{12341234123412341234}",
-      `{zzzzzzzzzzzzzzzzzz}`,
-      "{12341234123412341234}",
-      "{00000000000000000000}",
-      "{12341234123412341234}",
+      '{asdfasdfasdf}',
+      '{12341234123412341234}',
+      '{zzzzzzzzzzzzzzzzzz}',
+      '{12341234123412341234}',
+      '{00000000000000000000}',
+      '{12341234123412341234}',
     ];
-    const dst = [
-      "{asdfasdfasdf}",
-      `{zzzzzzzzzzzzzzzzzz}`,
-      "{00000000000000000000}",
-    ];
+    const dst = ['{asdfasdfasdf}', '{zzzzzzzzzzzzzzzzzz}', '{00000000000000000000}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
       [0, 0, 0, expect.any(Array)],
@@ -500,7 +417,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("fuzzer - 2", () => {
+  test('fuzzer - 2', () => {
     const src = [
       '{"qED5<awEr":"_gHl_\\\\+","_`":[],"6X":null,"%48l KyT3M]Eotd":-6409426829312515,"nvxKtO.2Nkq-X":{}}',
       '{"uP)+":"8","DcGl^1iAx}uE":188611474.7459,"03 B-Z":939556741.5467653,"KkMot\\"LI%QOq":[true]}',
@@ -525,17 +442,17 @@ describe("diff", () => {
     ]);
   });
 
-  test("fuzzer - 3", () => {
+  test('fuzzer - 3', () => {
     const src = [
-      "{aaaaaaaaaaa}",
-      "{bbbbbbbbbbb}",
+      '{aaaaaaaaaaa}',
+      '{bbbbbbbbbbb}',
       '{"75":259538477846144,"dadqM`0I":322795818.54331195,"<":"f*ßlwäm&=_y@w\\n","53aghXOyD%lC2":373122194.60806453,"\\\\9=M!\\"\\\\Tl-":"r.VdPY`mOQ"}',
-      "{11111111111111111111}",
+      '{11111111111111111111}',
     ];
     const dst = [
       '{"\\\\ 3[9}0dz+FaW\\"M":"rX?","P.Ed-s-VgiQDuNk":"18","}56zyy3FnC":["<lmi",-3889491443023091]}',
       '{"75":259538477846144,"dadqM`0I":322795818.54331195,"<":"f*ßlwäm&=_y@w\\n","53aghXOyD%lC2":373122194.60806453,"\\\\9=M!\\"\\\\Tl-":"r.VdPY`mOQ"}',
-      "{222222222222222222222}",
+      '{222222222222222222222}',
     ];
     const patch = line.diff(src, dst).map((x) => [x[0], x[1], x[2]]);
     expect(patch).toEqual([
@@ -546,7 +463,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("fuzzer - 4", () => {
+  test('fuzzer - 4', () => {
     const src = [
       '{"fE#vTih,M!q+TTR":-8702114011119315,"`F\\"M9":true,"]9+FC9f{48NnX":{"+\\\\]IQ7":"a;br-^_m"},"s&":"%n18QdrUewc8Nh8<"}',
       '{"<\\"R}d\\"HY65":[53195032.194879085,710289417.4711887],"WH]":"qqqqqqqqqq","W&0fQhOd8":96664625.24402197}',
@@ -569,7 +486,7 @@ describe("diff", () => {
     ]);
   });
 
-  test("fuzzer - 5", () => {
+  test('fuzzer - 5', () => {
     const src = [
       '{"1111":[true,true],"111111111111111":-34785,"YRb#H`%Q`9yQ;":"S@>/8#"}',
       '{"$?":145566270.31451553,"&;\\\\V":729010872.7196132,"B4Xm[[X4":"WLFBc>*popRot]Y",") 8a%d@":811080332.6947087,"LnRab_vKhgz":"%"}',

@@ -10,7 +10,7 @@ export const assertDiff = (src: unknown, dst: unknown) => {
   const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
   // console.log(res);
   expect(res).toEqual({src: dst});
-  const patch2 = new JsonPatchDiff().diff('/src', (res as any)['src'], dst);
+  const patch2 = new JsonPatchDiff().diff('/src', (res as any).src, dst);
   // console.log(patch2);
   expect(patch2.length).toBe(0);
 };

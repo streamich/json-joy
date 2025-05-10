@@ -9,13 +9,15 @@ export class JsonPatchDiff {
 
   protected diffVal(path: string, src: unknown, dst: unknown): void {
     if (deepEqual(src, dst)) return;
-    this.patch.push({op: 'replace', path, value: dst})
+    this.patch.push({op: 'replace', path, value: dst});
   }
 
   protected diffStr(path: string, src: string, dst: string): void {
     if (src === dst) return;
     const patch = this.patch;
-    str.apply(str.diff(src, dst), src.length,
+    str.apply(
+      str.diff(src, dst),
+      src.length,
       (pos, str) => patch.push({op: 'str_ins', path, pos, str}),
       (pos, len, str) => patch.push({op: 'str_del', path, pos, len, str}),
     );
@@ -59,11 +61,12 @@ export class JsonPatchDiff {
       switch (type) {
         case line.LINE_PATCH_OP_TYPE.EQL:
           break;
-        case line.LINE_PATCH_OP_TYPE.MIX:
+        case line.LINE_PATCH_OP_TYPE.MIX: {
           const srcValue = src[srcIdx];
           const dstValue = dst[dstIdx];
           this.diff(pfx + srcIdx, srcValue, dstValue);
           break;
+        }
         case line.LINE_PATCH_OP_TYPE.INS:
           patch.push({op: 'add', path: pfx + (srcIdx + 1), value: dst[dstIdx]});
           break;
@@ -77,7 +80,7 @@ export class JsonPatchDiff {
   public diffAny(path: string, src: unknown, dst: unknown): void {
     switch (typeof src) {
       case 'string': {
-        if (typeof dst == 'string') this.diffStr(path, src, dst);
+        if (typeof dst === 'string') this.diffStr(path, src, dst);
         else this.diffVal(path, src, dst);
         break;
       }
@@ -88,7 +91,10 @@ export class JsonPatchDiff {
         break;
       }
       case 'object': {
-        if (!src || !dst || typeof dst !== 'object') return this.diffVal(path, src, dst);
+        if (!src || !dst || typeof dst !== 'object') {
+          this.diffVal(path, src, dst);
+          return;
+        }
         if (Array.isArray(src)) {
           if (Array.isArray(dst)) this.diffArr(path, src, dst);
           else this.diffVal(path, src, dst);

@@ -5,10 +5,7 @@ export const enum PATCH_OP_TYPE {
 }
 
 export type Patch = PatchOperation[];
-export type PatchOperation =
-  | PatchOperationDelete
-  | PatchOperationEqual
-  | PatchOperationInsert;
+export type PatchOperation = PatchOperationDelete | PatchOperationEqual | PatchOperationInsert;
 export type PatchOperationDelete = [type: PATCH_OP_TYPE.DEL, txt: string];
 export type PatchOperationEqual = [type: PATCH_OP_TYPE.EQL, txt: string];
 export type PatchOperationInsert = [type: PATCH_OP_TYPE.INS, txt: string];
@@ -31,12 +28,12 @@ const endsWithPairStart = (str: string): boolean => {
  * @param fixUnicode Whether to normalize to a unicode-correct diff
  */
 const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
-  diff.push([PATCH_OP_TYPE.EQL, ""]);
+  diff.push([PATCH_OP_TYPE.EQL, '']);
   let pointer = 0;
   let delCnt = 0;
   let insCnt = 0;
-  let delTxt = "";
-  let insTxt = "";
+  let delTxt = '';
+  let insTxt = '';
   let commonLength: number = 0;
   while (pointer < diff.length) {
     if (pointer < diff.length - 1 && !diff[pointer][1]) {
@@ -123,10 +120,7 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
               if (prevEq >= 0) {
                 diff[prevEq][1] += insTxt.slice(0, commonLength);
               } else {
-                diff.splice(0, 0, [
-                  PATCH_OP_TYPE.EQL,
-                  insTxt.slice(0, commonLength),
-                ]);
+                diff.splice(0, 0, [PATCH_OP_TYPE.EQL, insTxt.slice(0, commonLength)]);
                 pointer++;
               }
               insTxt = insTxt.slice(commonLength);
@@ -135,8 +129,7 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
             // Factor out any common suffixes.
             commonLength = sfx(insTxt, delTxt);
             if (commonLength !== 0) {
-              diff[pointer][1] =
-                insTxt.slice(insTxt.length - commonLength) + diff[pointer][1];
+              diff[pointer][1] = insTxt.slice(insTxt.length - commonLength) + diff[pointer][1];
               insTxt = insTxt.slice(0, insTxt.length - commonLength);
               delTxt = delTxt.slice(0, delTxt.length - commonLength);
             }
@@ -155,12 +148,7 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
             diff.splice(pointer - n, n, [PATCH_OP_TYPE.DEL, delTxt]);
             pointer = pointer - n + 1;
           } else {
-            diff.splice(
-              pointer - n,
-              n,
-              [PATCH_OP_TYPE.DEL, delTxt],
-              [PATCH_OP_TYPE.INS, insTxt]
-            );
+            diff.splice(pointer - n, n, [PATCH_OP_TYPE.DEL, delTxt], [PATCH_OP_TYPE.INS, insTxt]);
             pointer = pointer - n + 2;
           }
         }
@@ -172,13 +160,13 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
         } else pointer++;
         insCnt = 0;
         delCnt = 0;
-        delTxt = "";
-        insTxt = "";
+        delTxt = '';
+        insTxt = '';
         break;
       }
     }
   }
-  if (diff[diff.length - 1][1] === "") diff.pop(); // Remove the dummy entry at the end.
+  if (diff[diff.length - 1][1] === '') diff.pop(); // Remove the dummy entry at the end.
 
   // Second pass: look for single edits surrounded on both sides by equalities
   // which can be shifted sideways to eliminate an equality.
@@ -225,12 +213,7 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
  * @param y Index of split point in text2.
  * @return Array of diff tuples.
  */
-const bisectSplit = (
-  text1: string,
-  text2: string,
-  x: number,
-  y: number
-): Patch => {
+const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch => {
   const diffsA = diff_(text1.slice(0, x), text2.slice(0, y), false);
   const diffsB = diff_(text1.slice(x), text2.slice(y), false);
   return diffsA.concat(diffsB);
@@ -282,11 +265,7 @@ const bisect = (text1: string, text2: string): Patch => {
       if (k1 === -d || (k1 !== d && v10 < v11)) x1 = v11;
       else x1 = v10 + 1;
       let y1 = x1 - k1;
-      while (
-        x1 < text1Length &&
-        y1 < text2Length &&
-        text1.charAt(x1) === text2.charAt(y1)
-      ) {
+      while (x1 < text1Length && y1 < text2Length && text1.charAt(x1) === text2.charAt(y1)) {
         x1++;
         y1++;
       }
@@ -297,8 +276,7 @@ const bisect = (text1: string, text2: string): Patch => {
         const k2Offset = vOffset + delta - k1;
         const v2Offset = v2[k2Offset];
         if (k2Offset >= 0 && k2Offset < vLength && v2Offset !== -1) {
-          if (x1 >= text1Length - v2Offset)
-            return bisectSplit(text1, text2, x1, y1);
+          if (x1 >= text1Length - v2Offset) return bisectSplit(text1, text2, x1, y1);
         }
       }
     }
@@ -306,15 +284,12 @@ const bisect = (text1: string, text2: string): Patch => {
     for (let k2 = -d + k2start; k2 <= d - k2end; k2 += 2) {
       const k2_offset = vOffset + k2;
       let x2 =
-        k2 === -d || (k2 !== d && v2[k2_offset - 1] < v2[k2_offset + 1])
-          ? v2[k2_offset + 1]
-          : v2[k2_offset - 1] + 1;
+        k2 === -d || (k2 !== d && v2[k2_offset - 1] < v2[k2_offset + 1]) ? v2[k2_offset + 1] : v2[k2_offset - 1] + 1;
       let y2 = x2 - k2;
       while (
         x2 < text1Length &&
         y2 < text2Length &&
-        text1.charAt(text1Length - x2 - 1) ===
-          text2.charAt(text2Length - y2 - 1)
+        text1.charAt(text1Length - x2 - 1) === text2.charAt(text2Length - y2 - 1)
       ) {
         x2++;
         y2++;
@@ -419,10 +394,7 @@ export const sfx = (txt1: string, txt2: string): number => {
   let mid = max;
   let end = 0;
   while (min < mid) {
-    if (
-      txt1.slice(txt1.length - mid, txt1.length - end) ===
-      txt2.slice(txt2.length - mid, txt2.length - end)
-    ) {
+    if (txt1.slice(txt1.length - mid, txt1.length - end) === txt2.slice(txt2.length - mid, txt2.length - end)) {
       min = mid;
       end = min;
     } else max = mid;
@@ -531,7 +503,7 @@ export const diffEdit = (src: string, dst: string, caret: number) => {
 };
 
 export const src = (patch: Patch): string => {
-  let txt = "";
+  let txt = '';
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
@@ -541,7 +513,7 @@ export const src = (patch: Patch): string => {
 };
 
 export const dst = (patch: Patch): string => {
-  let txt = "";
+  let txt = '';
   const length = patch.length;
   for (let i = 0; i < length; i++) {
     const op = patch[i];
@@ -555,8 +527,8 @@ const invertOp = (op: PatchOperation): PatchOperation => {
   return type === PATCH_OP_TYPE.EQL
     ? op
     : type === PATCH_OP_TYPE.INS
-    ? [PATCH_OP_TYPE.DEL, op[1]]
-    : [PATCH_OP_TYPE.INS, op[1]];
+      ? [PATCH_OP_TYPE.DEL, op[1]]
+      : [PATCH_OP_TYPE.INS, op[1]];
 };
 
 /**
@@ -578,7 +550,7 @@ export const apply = (
   patch: Patch,
   srcLen: number,
   onInsert: (pos: number, str: string) => void,
-  onDelete: (pos: number, len: number, str: string) => void
+  onDelete: (pos: number, len: number, str: string) => void,
 ) => {
   const length = patch.length;
   let pos = srcLen;

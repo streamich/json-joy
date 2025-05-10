@@ -1,14 +1,14 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
-import {ArrNode, BinNode, ConNode, JsonNode, ObjNode, StrNode, ValNode, VecNode} from "../json-crdt";
-import {hash} from "./hash";
-import {structHash} from "./structHash";
+import {ArrNode, BinNode, ConNode, type JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../json-crdt';
+import {hash} from './hash';
+import {structHash} from './structHash';
 
 /**
  * Constructs a structural hash of the view of the node.
  *
  * Produces a *structural hash* of a JSON CRDT node. Works the same as
  * `structHash, but uses the `JsonNode` interface instead of a generic value.
- * 
+ *
  * @todo PERF: instead of constructing a "str" and "bin" view, iterate over
  *     the RGA chunks and hash them directly.
  */

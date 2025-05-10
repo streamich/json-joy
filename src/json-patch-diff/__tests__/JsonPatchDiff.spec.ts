@@ -92,7 +92,7 @@ describe('obj', () => {
       nested: {
         id: 2,
         name: 'world',
-        description: 'blablabla'
+        description: 'blablabla',
       },
     };
     const dst = {
@@ -100,7 +100,7 @@ describe('obj', () => {
       name: 'hello!',
       nested: {
         id: 2,
-        description: 'Please dont use "blablabla"'
+        description: 'Please dont use "blablabla"',
       },
     };
     assertDiff(src, dst);
@@ -192,14 +192,8 @@ describe('arr', () => {
   });
 
   test('fuzzer - 1', () => {
-    const src: unknown[] = [
-      11, 10, 4, 6,
-       3,  1, 5
-    ];
-    const dst: unknown[] = [
-      7, 3, 13, 7, 9,
-      9, 9,  4, 9
-    ];
+    const src: unknown[] = [11, 10, 4, 6, 3, 1, 5];
+    const dst: unknown[] = [7, 3, 13, 7, 9, 9, 9, 4, 9];
     assertDiff(src, dst);
   });
 });
@@ -220,7 +214,7 @@ test('array of objects diff', () => {
       id: 'xxxx',
       name: 'Music',
       description: 'I love music',
-    }
+    },
   ];
   const dst = [
     {
@@ -259,7 +253,7 @@ test('complex case', () => {
         id: 'xxxx',
         name: 'Music',
         description: 'I love music',
-      }
+      },
     ],
     address: {
       city: 'New York',
@@ -267,8 +261,8 @@ test('complex case', () => {
       zip: '10001',
       location: {
         lat: 40.7128,
-        lng: -74.0060,
-      }
+        lng: -74.006,
+      },
     },
   };
   const dst = {
@@ -296,7 +290,7 @@ test('complex case', () => {
       location: {
         lat: 40.7128,
         lng: 123.4567,
-      }
+      },
     },
   };
   assertDiff(src, dst);

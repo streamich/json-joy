@@ -2,6 +2,7 @@ import {structHash as structHash_} from '../structHash';
 import {structHashCrdt} from '../structHashCrdt';
 import {Model} from '../../json-crdt';
 
+// biome-ignore lint: \x00 character
 const isASCII = (str: string) => /^[\x00-\x7F]*$/.test(str);
 
 export const assertStructHash = (json: unknown): string => {

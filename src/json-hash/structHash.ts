@@ -1,5 +1,5 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
-import {hash} from "./hash";
+import {hash} from './hash';
 
 /**
  * Produces a *structural hash* of a JSON value.
@@ -9,12 +9,13 @@ import {hash} from "./hash";
  *
  * The hash is guaranteed to contain only printable ASCII characters, excluding
  * the newline character.
- * 
+ *
  * @param val A JSON value to hash.
  */
 export const structHash = (val: unknown): string => {
   switch (typeof val) {
-    case 'string': return hash(val).toString(36);
+    case 'string':
+      return hash(val).toString(36);
     case 'number':
     case 'bigint':
       return val.toString(36);

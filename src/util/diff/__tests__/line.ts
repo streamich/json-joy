@@ -7,7 +7,7 @@ export const assertDiff = (src: string[], dst: string[]) => {
   // console.log(diff);
   const res: string[] = [];
   if (diff.length) {
-    for (let [type, srcIdx, dstIdx, patch] of diff) {
+    for (const [type, srcIdx, dstIdx, patch] of diff) {
       if (type === line.LINE_PATCH_OP_TYPE.DEL) {
       } else if (type === line.LINE_PATCH_OP_TYPE.INS) {
         res.push(dst[dstIdx]);

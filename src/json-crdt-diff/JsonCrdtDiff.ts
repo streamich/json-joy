@@ -1,6 +1,6 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {cmpUint8Array} from '@jsonjoy.com/util/lib/buffers/cmpUint8Array';
-import {ITimespanStruct, type ITimestampStruct, Patch, PatchBuilder, Timespan} from '../json-crdt-patch';
+import {type ITimespanStruct, type ITimestampStruct, type Patch, PatchBuilder, Timespan} from '../json-crdt-patch';
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
 import * as str from '../util/diff/str';
 import * as bin from '../util/diff/bin';
@@ -26,7 +26,9 @@ export class JsonCrdtDiff {
     const view = src.view();
     if (view === dst) return;
     const builder = this.builder;
-    str.apply(str.diff(view, dst), view.length,
+    str.apply(
+      str.diff(view, dst),
+      view.length,
       (pos, txt) => builder.insStr(src.id, !pos ? src.id : src.find(pos - 1)!, txt),
       (pos, len) => builder.del(src.id, src.findInterval(pos, len)),
     );
@@ -36,7 +38,9 @@ export class JsonCrdtDiff {
     const view = src.view();
     if (cmpUint8Array(view, dst)) return;
     const builder = this.builder;
-    bin.apply(bin.diff(view, dst), view.length,
+    bin.apply(
+      bin.diff(view, dst),
+      view.length,
       (pos, txt) => builder.insBin(src.id, !pos ? src.id : src.find(pos - 1)!, txt),
       (pos, len) => builder.del(src.id, src.findInterval(pos, len)),
     );
@@ -44,7 +48,7 @@ export class JsonCrdtDiff {
 
   protected diffArr(src: ArrNode, dst: unknown[]): void {
     const srcLines: string[] = [];
-    src.children(node => {
+    src.children((node) => {
       srcLines.push(structHashCrdt(node));
     });
     const dstLines: string[] = [];
@@ -93,7 +97,11 @@ export class JsonCrdtDiff {
     const length = inserts.length;
     for (let i = 0; i < length; i++) {
       const [after, views] = inserts[i];
-      builder.insArr(src.id, after, views.map(view => builder.json(view)))
+      builder.insArr(
+        src.id,
+        after,
+        views.map((view) => builder.json(view)),
+      );
     }
     if (deletes.length) builder.del(src.id, deletes);
   }
@@ -102,6 +110,7 @@ export class JsonCrdtDiff {
     const builder = this.builder;
     const inserts: [key: string, value: ITimestampStruct][] = [];
     const srcKeys = new Set<string>();
+    // biome-ignore lint: .forEach is fastest here
     src.forEach((key) => {
       srcKeys.add(key);
       const dstValue = dst[key];
@@ -123,8 +132,7 @@ export class JsonCrdtDiff {
           }
         }
       }
-      inserts.push([key, src.get(key) instanceof ConNode
-        ? builder.const(dstValue) : builder.constOrJson(dstValue)]);
+      inserts.push([key, src.get(key) instanceof ConNode ? builder.const(dstValue) : builder.constOrJson(dstValue)]);
     }
     if (inserts.length) builder.insObj(src.id, inserts);
   }
@@ -177,7 +185,7 @@ export class JsonCrdtDiff {
   public diffAny(src: JsonNode, dst: unknown): void {
     if (src instanceof ConNode) {
       const val = src.val;
-      if ((val !== dst) && !deepEqual(src.val, dst)) throw new DiffError();
+      if (val !== dst && !deepEqual(src.val, dst)) throw new DiffError();
     } else if (src instanceof StrNode) {
       if (typeof dst !== 'string') throw new DiffError();
       this.diffStr(src, dst);

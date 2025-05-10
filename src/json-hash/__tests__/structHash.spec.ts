@@ -2,6 +2,7 @@ import {clone} from '@jsonjoy.com/util/lib/json-clone';
 import {structHash as structHash_} from '../structHash';
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 
+// biome-ignore lint: \x00 character
 const isASCII = (str: string) => /^[\x00-\x7F]*$/.test(str);
 
 const structHash = (json: unknown): string => {
