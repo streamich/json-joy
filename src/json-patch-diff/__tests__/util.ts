@@ -1,16 +1,16 @@
-import {Diff} from '../Diff';
+import {JsonPatchDiff} from '../JsonPatchDiff';
 import {applyPatch} from '../../json-patch';
 
 export const assertDiff = (src: unknown, dst: unknown) => {
   const srcNested = {src};
-  const patch1 = new Diff().diff('/src', src, dst);
+  const patch1 = new JsonPatchDiff().diff('/src', src, dst);
   // console.log(src);
   // console.log(patch1);
   // console.log(dst);
   const {doc: res} = applyPatch(srcNested, patch1, {mutate: false});
   // console.log(res);
   expect(res).toEqual({src: dst});
-  const patch2 = new Diff().diff('/src', (res as any)['src'], dst);
+  const patch2 = new JsonPatchDiff().diff('/src', (res as any)['src'], dst);
   // console.log(patch2);
   expect(patch2.length).toBe(0);
 };

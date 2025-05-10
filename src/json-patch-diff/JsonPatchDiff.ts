@@ -4,7 +4,7 @@ import * as line from '../util/diff/line';
 import {structHash} from '../json-hash';
 import type {Operation} from '../json-patch/codec/json/types';
 
-export class Diff {
+export class JsonPatchDiff {
   protected patch: Operation[] = [];
 
   protected diffVal(path: string, src: unknown, dst: unknown): void {
