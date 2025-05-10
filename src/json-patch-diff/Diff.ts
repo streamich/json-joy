@@ -4,12 +4,6 @@ import * as line from '../util/diff/line';
 import {structHash} from '../json-hash';
 import type {Operation} from '../json-patch/codec/json/types';
 
-export class DiffError extends Error {
-  constructor(message: string = 'DIFF') {
-    super(message);
-  }
-}
-
 export class Diff {
   protected patch: Operation[] = [];
 
@@ -83,8 +77,8 @@ export class Diff {
   public diffAny(path: string, src: unknown, dst: unknown): void {
     switch (typeof src) {
       case 'string': {
-        if (typeof dst !== 'string') throw new DiffError();
-        this.diffStr(path, src, dst);
+        if (typeof dst == 'string') this.diffStr(path, src, dst);
+        else this.diffVal(path, src, dst);
         break;
       }
       case 'number':

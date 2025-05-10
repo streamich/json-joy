@@ -53,6 +53,11 @@ describe('obj', () => {
     assertDiff(src, dst);
   });
 
+  test('string key type change', () => {
+    assertDiff({foo: 'asdf'}, {foo: 123});
+    assertDiff({foo: 123}, {foo: 'asdf'});
+  });
+
   test('can insert new key', () => {
     const src = {};
     const dst = {foo: 'hello!'};
@@ -103,6 +108,11 @@ describe('obj', () => {
 });
 
 describe('arr', () => {
+  test('string element type change', () => {
+    assertDiff(['asdf'], [123]);
+    assertDiff([123], ['asdf']);
+  });
+
   test('can add element to an empty array', () => {
     const src: unknown[] = [];
     const dst: unknown[] = [1];
