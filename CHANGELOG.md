@@ -1,3 +1,67 @@
+# [17.41.0](https://github.com/streamich/json-joy/compare/v17.40.0...v17.41.0) (2025-05-10)
+
+
+### Bug Fixes
+
+* **json-crdt-diff:** 🐛 correct issues found by fuzzer ([c6fbe17](https://github.com/streamich/json-joy/commit/c6fbe17d3e71b3b78c383eb252b2e3f685e50062))
+* **json-crdt-diff:** 🐛 improve array diff edge cases ([7d68bc1](https://github.com/streamich/json-joy/commit/7d68bc14202e229da54e4b17836bbb3fe2e8fde0))
+* **json-crdt-diff:** 🐛 use unicode encoding for binary data ([1df2781](https://github.com/streamich/json-joy/commit/1df2781ce147385dadf6b496aa372b9ebea4f90a))
+* **json-patch-diff:** 🐛 allow string node type change ([68b8b27](https://github.com/streamich/json-joy/commit/68b8b27a91921d2374458e9808d2eebb36b9e7ff))
+* **util:** 🐛 correct line diff line beginning normalization ([a29b4b7](https://github.com/streamich/json-joy/commit/a29b4b770df838e78dc4602686f5766e39c40d41))
+* **util:** 🐛 correctly assign last line patch operation ([20d1199](https://github.com/streamich/json-joy/commit/20d11994cff5fac370c37021069d23a744a5a6ff))
+* **util:** 🐛 correctly compute diff source offset ([cb247c8](https://github.com/streamich/json-joy/commit/cb247c8980dac73be918c8c213a00e31e670a57c))
+* **util:** 🐛 correctly determini line operation on last line no-newline op ([82a97fe](https://github.com/streamich/json-joy/commit/82a97fea844bdc819dac48bcc1d0d8fd562e3816))
+* **util:** 🐛 do not emit empty operations ([7383d95](https://github.com/streamich/json-joy/commit/7383d954325643150796eb6dee517f154e76342e))
+* **util:** 🐛 do not emit empty operations ([bdde345](https://github.com/streamich/json-joy/commit/bdde34547b060f58ee07137c3a5dccd92b50cc28))
+* **util:** 🐛 handle correctly array shifts ([1cbc8a5](https://github.com/streamich/json-joy/commit/1cbc8a5063e2a093cafa3dcab35e33f20ff43737))
+* **util:** 🐛 improve handling of line separators ([33a8316](https://github.com/streamich/json-joy/commit/33a83168f9cd3f63e9ca4e4d3378781331d9594e))
+* **util:** 🐛 improve line diff assignment, use a newline char per line ([11eaaa8](https://github.com/streamich/json-joy/commit/11eaaa8f62a7d08f9ebbe29e8d262b0b439357c5))
+* **util:** 🐛 keep new-line on line end fixes ([b5a9b99](https://github.com/streamich/json-joy/commit/b5a9b99c6f11a18686de47af6e6b1a9c3a05ca2a))
+
+
+### Features
+
+* **json-crdt-diff:** 🎸 handle case where "obj" value not compatible with dst value ([587d2c5](https://github.com/streamich/json-joy/commit/587d2c5264bb6d2b99132ad2834c110130776dec))
+* **json-crdt-diff:** 🎸 implement "bin" node diffing ([c03ede5](https://github.com/streamich/json-joy/commit/c03ede50816ba7660e2eaac5a1c5e8aa8684b5c3))
+* **json-crdt-diff:** 🎸 implement "val" node diff ([030023b](https://github.com/streamich/json-joy/commit/030023b0cfd1263e8ff47061e67e257ae06cc78a))
+* **json-crdt-diff:** 🎸 implement array diff apply(), start using arrayd diff in CRDT ([bc25ff6](https://github.com/streamich/json-joy/commit/bc25ff6e56afb26fe3b7e70159bdeefc8147e768))
+* **json-crdt-diff:** 🎸 implement diff for "vec" nodes ([4e3067e](https://github.com/streamich/json-joy/commit/4e3067ec6dc7532a50508599de339f12c6de97bf))
+* **json-crdt-diff:** 🎸 implement initial "arr" node diff ([fd88982](https://github.com/streamich/json-joy/commit/fd88982f17978d44fe9fa6827d436b154156bca2))
+* **json-crdt-diff:** 🎸 implement StrNode diff ([f1db4d8](https://github.com/streamich/json-joy/commit/f1db4d8eb2f0ebfb6a77afc16a2057dba00fd2fc))
+* **json-crdt-diff:** 🎸 improve binary node handling ([9ae5c90](https://github.com/streamich/json-joy/commit/9ae5c9090934ca04b544f6c7357234f829d1837f))
+* **json-crdt-diff:** 🎸 insert missing keys into "obj" ([14e64fb](https://github.com/streamich/json-joy/commit/14e64fbaa27fffacfa157167dea40159a98b892e))
+* **json-crdt-diff:** 🎸 pass in source length on patch application ([5968a47](https://github.com/streamich/json-joy/commit/5968a473e6e69c254f3c0beb74dd249d211e57b8))
+* **json-crdt-diff:** 🎸 remove deleted "obj" keys ([a0e148f](https://github.com/streamich/json-joy/commit/a0e148f0473137ffa59e263cbd794f108869d4de))
+* **json-crdt-diff:** 🎸 support entering "obj" entries ([036b58e](https://github.com/streamich/json-joy/commit/036b58e90a47511e75ebe5e67a08184ef8f8aa4e))
+* **json-crdt-diff:** 🎸 use line diff in JSON CRDT diff ([ff97192](https://github.com/streamich/json-joy/commit/ff9719248c2a3c189fcae84613835248088fe38a))
+* **json-crdt-peritext-ui:** 🎸 implement text diff ([395b4db](https://github.com/streamich/json-joy/commit/395b4dbc3e6042732d27d5c07ea815add017e045))
+* **json-hash:** 🎸 assert structural hash in variants ([9187472](https://github.com/streamich/json-joy/commit/9187472891fe91607497bbf5b46eedc0ac0bc473))
+* **json-hash:** 🎸 implement structural hashing for CRDT nodes ([ada9067](https://github.com/streamich/json-joy/commit/ada9067690c83ecd7a1adef2975cde0e3d08b41b))
+* **json-hash:** 🎸 produce hashes for binary data ([3abcfcf](https://github.com/streamich/json-joy/commit/3abcfcf980833fd89fc8391c6f6979b9b0bc9cc4))
+* **json-patch-diff:** 🎸 add array node diff implementation ([a6a28ef](https://github.com/streamich/json-joy/commit/a6a28ef54303bfe6aff96e18209266c0cf729d56))
+* **json-patch-diff:** 🎸 implement diff for object nodes ([d7066d3](https://github.com/streamich/json-joy/commit/d7066d383d22678731275347194af8c2e1261f58))
+* **json-patch-diff:** 🎸 setup JSON Patch diff algorithm implementation ([0427a1a](https://github.com/streamich/json-joy/commit/0427a1a780c79d99f55f6c672eb436760e9a2d95))
+* **json-patch-diff:** 🎸 use line diff in JSON Patch diff ([83694ad](https://github.com/streamich/json-joy/commit/83694adacd1828f089264c3253bee6619821a2b0))
+* **util:** 🎸 add diff utility methods ([0fb9c7c](https://github.com/streamich/json-joy/commit/0fb9c7c0dd2a0f1b9033bb8a74c8a4d5c166e7dc))
+* **util:** 🎸 add initial implementation of line matching ([d89fb9e](https://github.com/streamich/json-joy/commit/d89fb9ecf1cef5a0383a701a094de0186344d28e))
+* **util:** 🎸 cleanup array diff ([64fc4b7](https://github.com/streamich/json-joy/commit/64fc4b789c8e2fcac78a9a9f182bc527834cffe9))
+* **util:** 🎸 create line-by-line patch module ([ca9ae65](https://github.com/streamich/json-joy/commit/ca9ae6594ef53c6cc4c15c1ae225d8e57dc9fe7e))
+* **util:** 🎸 handle new line chars ([5ff05bf](https://github.com/streamich/json-joy/commit/5ff05bfe26039bf0558dc4257da571839cccfa2a))
+* **util:** 🎸 implement array diff child element entry ([1853633](https://github.com/streamich/json-joy/commit/18536339d01e5e08dc4ec3370752e964a8f6682e))
+* **util:** 🎸 implement binary to hex transforms ([66c37c1](https://github.com/streamich/json-joy/commit/66c37c1e6523cb4c681a7329c453af2d9bdd79c1))
+* **util:** 🎸 implement diff for binary data ([a740d02](https://github.com/streamich/json-joy/commit/a740d02676c100b216cf615224e16913fbc3f68a))
+* **util:** 🎸 implement line matching ([b75cbfe](https://github.com/streamich/json-joy/commit/b75cbfe6906fadd9ebe237712e42358a639a5edf))
+* **util:** 🎸 initial by-line diff implementation ([d786e53](https://github.com/streamich/json-joy/commit/d786e53ebfd5ec4a322aff8f23dedd7f0a976ce4))
+* **util:** 🎸 initial, outer, implementation of array diff ([2a40471](https://github.com/streamich/json-joy/commit/2a40471cbbed24f6b283b3a50be667f2a52b9276))
+* **util:** 🎸 match line in line patch ([68f131e](https://github.com/streamich/json-joy/commit/68f131e93d8c80712afbe7d8851163df127879a6))
+* **util:** 🎸 normalize line beginnings across inserts ([b6f142a](https://github.com/streamich/json-joy/commit/b6f142a46f8af929536b32023466ac322e7ba386))
+
+
+### Performance Improvements
+
+* **json-hash:** ⚡️ use custom insertion sort implementation ([b55ff6a](https://github.com/streamich/json-joy/commit/b55ff6abc66d0a27f74acee010d8c231f2688a8a))
+* **util:** ⚡️ cleanup line diff algorithm ([0330f0d](https://github.com/streamich/json-joy/commit/0330f0d4c1ce7c13b49926c249f50e844dd65d62))
+
 # [17.40.0](https://github.com/streamich/json-joy/compare/v17.39.0...v17.40.0) (2025-04-18)
 
 

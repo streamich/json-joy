@@ -1,5 +1,5 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import {CONST, updateJson, updateNum} from '../../../json-hash';
+import {CONST, updateJson, updateNum} from '../../../json-hash/hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';

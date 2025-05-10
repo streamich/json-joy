@@ -1,6 +1,6 @@
 import {Timestamp} from '../../../../json-crdt-patch';
 import {updateId} from '../../../../json-crdt/hash';
-import {updateNum} from '../../../../json-hash';
+import {updateNum} from '../../../../json-hash/hash';
 import {
   type Kit,
   setupKit,

@@ -13,7 +13,7 @@ import {
   SliceTypeName,
   SliceTypeCon,
 } from './constants';
-import {CONST} from '../../../json-hash';
+import {CONST} from '../../../json-hash/hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';

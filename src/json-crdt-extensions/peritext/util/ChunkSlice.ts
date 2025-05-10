@@ -1,4 +1,4 @@
-import {CONST, updateNum} from '../../../json-hash';
+import {CONST, updateNum} from '../../../json-hash/hash';
 import {updateId} from '../../../json-crdt/hash';
 import {type ITimestampStruct, Timestamp, printTs} from '../../../json-crdt-patch/clock';
 import type {IChunkSlice} from './types';

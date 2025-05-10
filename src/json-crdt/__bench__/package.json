@@ -10,12 +10,12 @@
     "bench:codecs:sizes": "npx ts-node bench.codecs.sizes.ts"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.2.8",
+    "@automerge/automerge": "2.2.9",
     "@collabs/collabs": "0.13.4",
     "diamond-types-node": "1.0.2",
     "loro-crdt": "^0.4.1",
     "rope.js": "0.1.0",
-    "yjs": "13.6.24",
+    "yjs": "13.6.26",
     "ywasm": "0.16.10"
   }
 }

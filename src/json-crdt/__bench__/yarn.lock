@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@automerge/automerge@2.2.8":
-  version "2.2.8"
-  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.8.tgz#6e33f271b99a652751c1a53048df2a2b2a80dcc2"
-  integrity sha512-kP6Z9lIkNeIGe/jhF8SUQAgUMwVjtXCBL0eZEgQGCoWvPNTPcg8fnQco28XkYBrfkkuqiEUAbdHhJmSp0y79ug==
+"@automerge/automerge@2.2.9":
+  version "2.2.9"
+  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.9.tgz#d575f888dde39d0483e0b6bc6f5316740e996689"
+  integrity sha512-6HM52Ops79hAQBWMg/t0MNfGOdEiXyenQjO9F1hKZq0RWDsMLpPa1SzRy/C4/4UyX67sTHuA5CwBpH34SpfZlA==
   dependencies:
     uuid "^9.0.0"
 
@@ -123,9 +123,9 @@ isomorphic.js@^0.2.4:
   integrity sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==
 
 lib0@^0.2.99:
-  version "0.2.104"
-  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.104.tgz#1d9c8d4a8a88897b543a6f81fbd92e8605080282"
-  integrity sha512-1tqKRANSPTcjs/yjPoKh52oRM2u5AYdd8jie8sDiN8/5kpWWiQSHUGgtB4VEXLw1chVL3QPSPp8q9RWqzSn2FA==
+  version "0.2.105"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.105.tgz#bced516f96616ff4d039badf53724b833287b4cd"
+  integrity sha512-5vtbuBi2P43ZYOfVMV+TZYkWEa0J9kijXirzEgrPA+nJDQCtMx805/rqW4G1nXbM9IRIhwW+OyNNgcQdbhKfSw==
   dependencies:
     isomorphic.js "^0.2.4"
 
@@ -180,10 +180,10 @@ uuid@^9.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
   integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
-yjs@13.6.24:
-  version "13.6.24"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.24.tgz#056f40c7ccfd16a6487f507bb21e12ede994b2b3"
-  integrity sha512-xn/pYLTZa3uD1uDG8lpxfLRo5SR/rp0frdASOl2a71aYNvUXdWcLtVL91s2y7j+Q8ppmjZ9H3jsGVgoFMbT2VA==
+yjs@13.6.26:
+  version "13.6.26"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.26.tgz#ab0928484f20249bcbe01a73e911b57d918f1bae"
+  integrity sha512-wiARO3wixu7mtoRP5f7LqpUtsURP9SmNgXUt3RlnZg4qDuF7dUjthwIvwxIDmK55dPw4Wl4QdW5A3ag0atwu7g==
   dependencies:
     lib0 "^0.2.99"
 
