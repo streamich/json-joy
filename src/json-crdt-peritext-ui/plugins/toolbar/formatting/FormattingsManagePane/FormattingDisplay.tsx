@@ -46,7 +46,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               </div>
               <Space horizontal />
               <BasicTooltip renderTooltip={() => t('Stop editing')}>
-                <BasicButton size={32} rounder onClick={() => state.view$.next('view')}>
+                <BasicButton size={32} rounder onClick={state.switchToViewPanel}>
                   <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
                 </BasicButton>
               </BasicTooltip>
@@ -66,7 +66,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               <ButtonSeparator />
               <Space horizontal size={-2} />
               <BasicTooltip renderTooltip={() => t('Edit')}>
-                <BasicButton size={32} rounder onClick={() => state.view$.next('edit')}>
+                <BasicButton size={32} rounder onClick={state.switchToEditPanel}>
                   <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
                 </BasicButton>
               </BasicTooltip>
@@ -78,7 +78,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {view === 'edit' ? (
-        <FormattingEditForm formatting={formatting} onDone={() => state.view$.next('view')} />
+        <FormattingEditForm formatting={formatting} onDone={state.returnFromEditPanelAndSave} />
       ) : (
         <>
           <ContextSep />

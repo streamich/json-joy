@@ -2,12 +2,16 @@ import {BehaviorSubject} from 'rxjs';
 import {SavedFormatting} from '../../state/formattings';
 import {PersistedSlice} from '../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import {subject} from '../../../../util/rx';
+import {toSchema} from '../../../../../json-crdt/schema/toSchema';
+import {Model, ObjApi} from '../../../../../json-crdt/model';
+import {ObjNode} from '../../../../../json-crdt/nodes';
 import type {Inline} from '../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../state';
 
 export class FormattingManageState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
   public readonly view$ = new BehaviorSubject<'view' | 'edit'>('view');
+  public readonly editing$ = new BehaviorSubject<SavedShadowFormatting | undefined>(undefined);
 
   public constructor(
     public readonly state: ToolbarState,
@@ -37,5 +41,41 @@ export class FormattingManageState {
 
   public readonly select = (formatting: SavedFormatting | null) => {
     this.selected$.next(formatting);
+  };
+
+  public readonly switchToViewPanel = (): void => {
+    this.view$.next('view');
+    // TODO: Clear the `editing$` state
+  };
+
+  public readonly switchToEditPanel = (): void => {
+    const selected = this.selected$.getValue();
+    if (!selected) return;
+    this.view$.next('edit');
+    const formatting = new SavedShadowFormatting(selected);
+    this.editing$.next(formatting);
+  };
+
+  public readonly returnFromEditPanelAndSave = (): void => {
+    console.log('saveEdits');
+  };
+}
+
+export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends SavedFormatting<Node> {
+  protected _model: Model<any>;
+
+  constructor(protected readonly saved: SavedFormatting<Node>) {
+    super(saved.behavior, saved.range, saved.state);
+    const nodeApi = saved.conf();
+    const schema = nodeApi ? toSchema(nodeApi.node) : void 0;
+    this._model = Model.create(schema);
+  }
+
+  public conf(): ObjApi<Node> | undefined {
+    return this._model.api.obj([]) as ObjApi<Node>;
+  }
+
+  public readonly save = () => {
+    throw new Error('save() not implemented');
   };
 }

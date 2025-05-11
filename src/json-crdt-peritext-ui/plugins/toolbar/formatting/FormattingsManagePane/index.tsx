@@ -16,6 +16,11 @@ export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inl
   // biome-ignore lint: too many dependencies
   const state = React.useMemo(() => new FormattingManageState(toolbar, inline), [toolbar, inline?.key()]);
   const formattings = useBehaviorSubject(React.useMemo(() => state.getFormattings$(), [state]));
+  React.useLayoutEffect(() => {
+    if (formattings.length === 1) {
+      state.select(formattings[0]);
+    }
+  }, [formattings]);
   const selected = useBehaviorSubject(state.selected$);
 
   if (selected || formattings.length === 1) {
