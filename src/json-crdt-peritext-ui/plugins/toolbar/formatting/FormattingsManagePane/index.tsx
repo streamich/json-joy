@@ -28,7 +28,7 @@ export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inl
       <context.Provider value={state}>
         <FormattingDisplay
           formatting={selected || formattings[0]}
-          onClose={!selected ? void 0 : () => state.select(null)}
+          onClose={!selected || (formattings.length === 1) ? void 0 : () => state.select(null)}
         />
       </context.Provider>
     );
