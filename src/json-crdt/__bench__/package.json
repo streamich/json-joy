@@ -15,7 +15,7 @@
     "diamond-types-node": "1.0.2",
     "loro-crdt": "^0.4.1",
     "rope.js": "0.1.0",
-    "yjs": "13.6.26",
+    "yjs": "13.6.27",
     "ywasm": "0.16.10"
   }
 }
