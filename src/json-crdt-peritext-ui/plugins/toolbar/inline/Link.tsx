@@ -1,6 +1,7 @@
 // biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import type {InlineAttrStack} from '../../../../json-crdt-extensions';
 
 const col = '#05f';
 
@@ -32,10 +33,11 @@ const blockClass = rule({
 export interface LinkProps {
   children: React.ReactNode;
   layers?: number;
+  stack: InlineAttrStack;
 }
 
 export const Link: React.FC<LinkProps> = (props) => {
-  const {children, layers = 1} = props;
+  const {children, layers = 1, stack} = props;
   const style: React.CSSProperties | undefined =
     layers < 2
       ? void 0
@@ -44,7 +46,7 @@ export const Link: React.FC<LinkProps> = (props) => {
         };
 
   return (
-    <span className={blockClass} style={style}>
+    <span className={blockClass} style={style} title={(stack[0].slice.data() as {title?: string})?.title}>
       {children}
     </span>
   );
