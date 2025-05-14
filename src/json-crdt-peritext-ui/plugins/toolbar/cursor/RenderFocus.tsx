@@ -41,7 +41,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({children, cursor}) => {
     );
 
   if (!!formatting && showInlineToolbarValue && !isScrubbing && toolbar.txt.editor.mainCursor() === cursor) {
-    under = <FormattingsNewPane formatting={formatting} />;
+    under = <FormattingsNewPane formatting={formatting} onSave={() => formatting.save()} />;
   }
 
   return (

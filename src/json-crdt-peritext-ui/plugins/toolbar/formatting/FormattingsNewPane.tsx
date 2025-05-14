@@ -19,9 +19,10 @@ const blockClass = rule({
 
 export interface FormattingsNewPaneProps {
   formatting: NewFormatting;
+  onSave: () => void;
 }
 
-export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formatting}) => {
+export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formatting, onSave}) => {
   const [t] = useT();
   const {toolbar} = useToolbarPlugin();
   useSyncStoreOpt(formatting.conf()?.api);
@@ -29,14 +30,16 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
 
   const valid = validation === 'good' || validation === 'fine';
 
+  const handleSave = (e?: React.BaseSyntheticEvent) => {
+    e?.preventDefault();
+    onSave();
+  };
+
   return (
     <FormattingPane onEsc={() => toolbar.newSlice.next(void 0)}>
       <form
         className={blockClass}
-        onSubmit={(e) => {
-          e.preventDefault();
-          formatting.save();
-        }}
+        onSubmit={handleSave}
       >
         <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
           <FormattingTitle formatting={formatting} />
@@ -44,7 +47,7 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
         <ContextPaneHeaderSep />
 
         <div style={{padding: '16px'}}>
-          <FormattingNew formatting={formatting} />
+          <FormattingNew formatting={formatting} onSave={handleSave} />
         </div>
 
         <ContextSep line />
@@ -57,7 +60,7 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
             block
             disabled={!valid}
             submit
-            onClick={formatting.save}
+            onClick={handleSave}
           >
             {t('Save')}
           </Button>

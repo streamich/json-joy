@@ -17,7 +17,7 @@ import {ButtonSeparator} from '../../../../components/ButtonSeparator';
 import {FormattingEditForm} from './FormattingEditForm';
 import {SoftLockedDeleteButton} from '../../components/SoftLockedDeleteButton';
 import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
-import {useFormatting} from './context';
+import {useFormattingPane} from './context';
 import type {SavedFormatting} from '../../state/formattings';
 
 export interface FormattingDisplayProps {
@@ -26,10 +26,13 @@ export interface FormattingDisplayProps {
 }
 
 export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
-  const state = useFormatting();
+  const state = useFormattingPane();
+  const editFormatting = useBehaviorSubject(state.editing$);
   const view = useBehaviorSubject(state.view$);
   const {surface} = useToolbarPlugin();
   const [t] = useT();
+
+  const doEdit = view === 'edit' && !!editFormatting;
 
   return (
     <FormattingPane>
@@ -37,7 +40,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         short
         onBackClick={onClose}
         right={
-          view === 'edit' ? (
+          doEdit ? (
             <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
               <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
                 <Code spacious alt gray nowrap>
@@ -77,8 +80,8 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         <FormattingTitle formatting={formatting} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
-      {view === 'edit' ? (
-        <FormattingEditForm formatting={formatting} onDone={state.returnFromEditPanelAndSave} />
+      {doEdit ? (
+        <FormattingEditForm formatting={editFormatting} onSave={state.returnFromEditPanelAndSave} />
       ) : (
         <>
           <ContextSep />

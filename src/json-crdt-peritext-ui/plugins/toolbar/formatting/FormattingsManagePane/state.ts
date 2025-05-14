@@ -7,6 +7,7 @@ import {Model, ObjApi} from '../../../../../json-crdt/model';
 import {ObjNode} from '../../../../../json-crdt/nodes';
 import type {Inline} from '../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../state';
+import {JsonCrdtDiff} from '../../../../../json-crdt-diff/JsonCrdtDiff';
 
 export class FormattingManageState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
@@ -45,7 +46,7 @@ export class FormattingManageState {
 
   public readonly switchToViewPanel = (): void => {
     this.view$.next('view');
-    // TODO: Clear the `editing$` state
+    this.editing$.next(void 0);
   };
 
   public readonly switchToEditPanel = (): void => {
@@ -57,14 +58,24 @@ export class FormattingManageState {
   };
 
   public readonly returnFromEditPanelAndSave = (): void => {
-    console.log('saveEdits');
+    const shadowFormatting = this.editing$.getValue();
+    if (!shadowFormatting) return;
+    const view = shadowFormatting.conf()!.view();
+    const formatting = shadowFormatting.saved;
+    const data = formatting.conf();
+    if (!data) return;
+    const model = data.api.model;
+    const patch = new JsonCrdtDiff(model).diff(data.node, view);
+    if (patch.ops.length) model.applyPatch(patch);
+    this.switchToViewPanel();
+    this.state.surface.rerender();
   };
 }
 
 export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends SavedFormatting<Node> {
   protected _model: Model<any>;
 
-  constructor(protected readonly saved: SavedFormatting<Node>) {
+  constructor(public readonly saved: SavedFormatting<Node>) {
     super(saved.behavior, saved.range, saved.state);
     const nodeApi = saved.conf();
     const schema = nodeApi ? toSchema(nodeApi.node) : void 0;
@@ -74,8 +85,4 @@ export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends Saved
   public conf(): ObjApi<Node> | undefined {
     return this._model.api.obj([]) as ObjApi<Node>;
   }
-
-  public readonly save = () => {
-    throw new Error('save() not implemented');
-  };
 }

@@ -73,6 +73,11 @@ export interface EditProps {
   formatting: EditableFormatting;
 
   /**
+   * The function to be called when the formatting is saved.
+   */
+  onSave: () => void;
+
+  /**
    * Set to `true` if the formatting is new and not yet saved.
    */
   isNew?: boolean;

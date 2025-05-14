@@ -37,8 +37,6 @@ export abstract class EditableFormatting<R extends Range<string> = Range<string>
   public validate(): ValidationResult {
     return this.behavior.data()?.validate?.(this) ?? 'fine';
   }
-
-  public abstract readonly save: () => void;
 }
 
 /**
@@ -60,10 +58,6 @@ export class SavedFormatting<Node extends ObjNode = ObjNode> extends EditableFor
     const node = this.range.dataNode();
     return node instanceof ObjApi ? node : undefined;
   }
-
-  public readonly save = () => {
-    throw new Error('save() not implemented');
-  };
 }
 
 /**

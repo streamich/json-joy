@@ -12,9 +12,10 @@ import type {CollaborativeStr} from 'collaborative-editor';
 
 export interface EditProps {
   formatting: EditableFormatting;
+  onSave: () => void;
 }
 
-export const Edit: React.FC<EditProps> = ({formatting}) => {
+export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const inpRef = React.useRef<HTMLInputElement | null>(null);
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const hrefView = useSyncStoreOpt(href()?.events) || '';
@@ -42,7 +43,7 @@ export const Edit: React.FC<EditProps> = ({formatting}) => {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  formatting.save();
+                  onSave();
                 }
               }}
               right={
