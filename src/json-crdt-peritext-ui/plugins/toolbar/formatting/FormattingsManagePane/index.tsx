@@ -23,6 +23,8 @@ export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inl
   }, [formattings]);
   const selected = useBehaviorSubject(state.selected$);
 
+  if (!formattings.length) return null;
+
   if (selected || formattings.length === 1) {
     return (
       <context.Provider value={state}>
@@ -33,8 +35,6 @@ export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inl
       </context.Provider>
     );
   }
-
-  if (!formattings.length) return null;
 
   return (
     <context.Provider value={state}>
