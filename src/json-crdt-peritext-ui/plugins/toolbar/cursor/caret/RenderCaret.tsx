@@ -1,6 +1,6 @@
 // biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
-import {CaretFrame} from '../CaretFrame';
+import {CaretFrame} from '../util/CaretFrame';
 import {CaretTopOverlay} from './CaretTopOverlay';
 import {CaretBottomOverlay} from './CaretBottomOverlay';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
