@@ -72,6 +72,24 @@ export class SliceRegistry implements Printable {
       }),
     );
 
+    const colSchema = s.obj(
+      {},
+      {
+        color: s.str<string>(''),
+      },
+    );
+    registry.add(
+      new SliceBehavior(SliceStacking.Many, TAG.col, 'Color', colSchema, false, void 0, {
+        col: (jsonml) => {
+          const attr = jsonml[1] || {};
+          const data: JsonNodeView<SchemaToJsonNode<typeof colSchema>> = {
+            color: attr.color ?? '',
+          };
+          return [TAG.col, {data, inline: true}] as PeritextMlElement<TAG.col, any, true>;
+        },
+      }),
+    );
+
     // TODO: add more default annotations with "Many" stacking behavior
     // comment = SliceTypeCon.comment,
     // font = SliceTypeCon.font,

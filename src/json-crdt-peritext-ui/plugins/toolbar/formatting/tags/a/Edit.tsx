@@ -56,7 +56,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
             />
           )}
         />
-      ) : (
+      ) : !data.href ? null : (
         <Button
           icon={<Iconista set={'lucide'} icon={'plus'} width={16} height={16} />}
           size={-1}

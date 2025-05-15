@@ -24,8 +24,6 @@ export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => 
   const inline = fwd || bwd;
   const {toolbar} = useToolbarPlugin()!;
 
-  console.log(toolbar.lastEvent?.detail);
-
   if (!inline) return;
   if (!isDirectCaretPlacement(toolbar.lastEvent)) return;
 
