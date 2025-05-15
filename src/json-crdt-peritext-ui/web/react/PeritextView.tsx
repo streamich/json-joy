@@ -12,6 +12,8 @@ import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../../json-crdt-extensions';
 
 put('.' + CssClass.Editable, {
+  pos: 'relative',
+  zIndex: 1,
   out: 0,
   whiteSpace: 'nowrap',
   wordWrap: 'break-word',
@@ -19,6 +21,12 @@ put('.' + CssClass.Editable, {
   /** @todo Move these to the default theme. */
   fontVariantNumeric: 'slashed-zero oldstyle-nums',
   fontOpticalSizing: 'auto',
+});
+
+put('.' + CssClass.Overlays, {
+  pos: 'relative',
+  zIndex: 2,
+  h: '0px',
 });
 
 put('.' + CssClass.Inline, {
@@ -73,7 +81,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     <context.Provider value={state}>
       <div className={CssClass.Editor}>
         <PeritextViewInner div={ref} state={state} />
-        <div ref={(el) => (state.portalEl = el || void 0)} style={{height: 0}} />
+        <div ref={(el) => (state.portalEl = el || void 0)} className={CssClass.Overlays} />
       </div>
     </context.Provider>
   );
