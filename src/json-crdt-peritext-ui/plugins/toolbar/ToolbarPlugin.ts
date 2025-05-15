@@ -3,8 +3,8 @@ import {RenderInline} from './inline/RenderInline';
 import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
 import {text} from '../minimal/text';
 import {RenderBlock} from './block/RenderBlock';
-import {RenderCaret} from './RenderCaret';
-import {RenderFocus} from './RenderFocus';
+import {RenderCaret} from './cursor/caret/RenderCaret';
+import {RenderFocus} from './cursor/focus/RenderFocus';
 import type {PeritextPlugin} from '../../web/react/types';
 import type {DebugState} from '../debug/state';
 

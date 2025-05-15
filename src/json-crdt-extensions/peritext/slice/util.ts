@@ -30,6 +30,16 @@ export const validateType = (type: SliceType) => {
   }
 };
 
+export const getTag = (type: SliceType): string | number => {
+  if (!Array.isArray(type)) return type;
+  const length = type.length;
+  if (!length) return '';
+  const tagWithMaybeDiscriminant = type[length - 1];
+  const hasDiscriminant = Array.isArray(tagWithMaybeDiscriminant);
+  const tag = hasDiscriminant ? tagWithMaybeDiscriminant[0] : tagWithMaybeDiscriminant;
+  return tag;
+};
+
 export const formatType = (step: SliceTypeStep): string => {
   let tag: string | number = '';
   let discriminant: number = -1;

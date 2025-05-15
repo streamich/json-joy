@@ -3,22 +3,10 @@ import {ElementAttr} from '../constants';
 import {throttle} from '../../../util/throttle';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
-import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {UiLifeCycles} from '../types';
-import type {Peritext} from '../../../json-crdt-extensions/peritext';
 import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
-
-export interface CursorControllerOpts {
-  /**
-   * Element to attach the controller to, this element will be used to listen to
-   * "beforeinput" events and will be put into "contenteditable" mode.
-   */
-  source: HTMLElement;
-  txt: Peritext;
-  et: PeritextEventTarget;
-  keys: KeyController;
-}
+import type {DomController} from './DomController';
 
 /**
  * Controller for handling text selection and cursor movements. Listens to
@@ -29,9 +17,10 @@ export class CursorController implements UiLifeCycles, Printable {
 
   private readonly _cursor: [fn: PeritextEventTarget['cursor'], stop: () => void];
 
-  public constructor(public readonly opts: CursorControllerOpts) {
-    this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
-    this._cursor = throttle(opts.et.cursor.bind(opts.et), 25);
+  public constructor(public readonly dom: DomController) {
+    const et = dom.et;
+    this.caretId = 'jsonjoy.com-peritext-caret-' + et.id;
+    this._cursor = throttle(et.cursor.bind(et), 25);
   }
 
   /** The position where user started to scrub the text. */
@@ -58,7 +47,7 @@ export class CursorController implements UiLifeCycles, Printable {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const el = this.opts.source;
+    const el = this.dom.el;
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
     el.addEventListener('focus', this.onFocus);
@@ -78,11 +67,13 @@ export class CursorController implements UiLifeCycles, Printable {
 
   public readonly focus = new ValueSyncStore<boolean>(false);
 
-  private readonly onFocus = (): void => {
+  private readonly onFocus = (ev: FocusEvent): void => {
+    if (!this.dom.isEditable(ev.target as Element)) return;
     this.focus.next(true);
   };
 
-  private readonly onBlur = (): void => {
+  private readonly onBlur = (ev: FocusEvent): void => {
+    if (!this.dom.isEditable(ev.target as Element)) return;
     this.focus.next(false);
   };
 
@@ -91,18 +82,19 @@ export class CursorController implements UiLifeCycles, Printable {
   public readonly mouseDown = new ValueSyncStore<boolean>(false);
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
-    if (!this.focus.value && this.opts.txt.editor.hasCursor()) return;
+    if (!this.dom.isEditable(ev.target as Element)) return;
+    if (!this.focus.value && this.dom.txt.editor.hasCursor()) return;
     const {clientX, clientY} = ev;
     this.x = clientX;
     this.y = clientY;
-    const et = this.opts.et;
+    const et = this.dom.et;
     switch (ev.detail) {
       case 1: {
         this.mouseDown.next(false);
         const at = this.posAtPoint(clientX, clientY);
         if (at === -1) return;
         this.selAnchor = at;
-        const pressed = this.opts.keys.pressed;
+        const pressed = this.dom.keys.pressed;
         if (pressed.has('Shift')) {
           ev.preventDefault();
           et.move(
@@ -185,9 +177,10 @@ export class CursorController implements UiLifeCycles, Printable {
   };
 
   private onKeyDown = (event: KeyboardEvent): void => {
+    if (!this.dom.isEditable(event.target as Element)) return;
     const key = event.key;
     if (event.isComposing || key === 'Dead') return;
-    const et = this.opts.et;
+    const et = this.dom.et;
     switch (key) {
       case 'ArrowUp':
       case 'ArrowDown': {

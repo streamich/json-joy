@@ -2,6 +2,7 @@ import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import {CursorAnchor, type Peritext} from '../../../json-crdt-extensions/peritext';
+import {PersistedSlice} from '../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -81,7 +82,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
     const {editor} = this.txt;
-    return at ? [editor.sel2range(at)[0]] : editor.cursors();
+    return at ? [editor.sel2range(at)[0]] : [...editor.cursors()];
   }
 
   protected moveRange(
@@ -173,10 +174,21 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
-    const {at, move, add} = detail;
+    const {at, move, add, flip} = detail;
     if (at === void 0) {
       const selection = this.getSelSet(detail);
       this.moveSelSet(selection, detail);
+
+      // Collapse cursors if there are no visible characters between edges.
+      // (Only for relative focus edge moves.)
+      if (move && move.length === 1 && move[0][0] === 'focus')
+        for (const range of selection) if (range.length() === 0) range.collapseToStart();
+
+      // Swap anchor and focus edges.
+      if (flip)
+        for (const range of selection)
+          if (range instanceof Cursor)
+            range.anchorSide = range.anchorSide === CursorAnchor.Start ? CursorAnchor.End : CursorAnchor.Start;
     } else {
       const {txt} = this;
       const {editor} = txt;
@@ -190,27 +202,43 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public readonly format = ({detail}: CustomEvent<events.FormatDetail>) => {
     const selection = [...this.getSelSet(detail)];
     this.moveSelSet(selection, detail);
-    const {type, store = 'saved', behavior = 'one', data} = detail;
+    const {action, type: tag, store = 'saved'} = detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
-    switch (behavior) {
-      case 'many': {
-        if (type === undefined) throw new Error('TYPE_REQUIRED');
-        slices.insStack(type, data, selection);
+    switch (action) {
+      case 'ins':
+      case 'tog': {
+        const {stack = 'one', data} = detail;
+        if (tag === undefined) throw new Error('TYPE_REQUIRED');
+        switch (stack) {
+          case 'many': {
+            slices.insStack(tag, data, selection);
+            break;
+          }
+          case 'one': {
+            if (action === 'ins') slices.insOne(tag, data, selection);
+            else editor.toggleExclFmt(tag, data, slices, selection);
+            break;
+          }
+          case 'erase': {
+            slices.insOne(tag, data, selection);
+            break;
+          }
+        }
         break;
       }
-      case 'one': {
-        if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.toggleExclFmt(type, data, slices, selection);
+      case 'del': {
+        const {at} = detail;
+        if (!tag && at && at instanceof PersistedSlice) {
+          at.del();
+        } else {
+          editor.clearFormatting(slices, selection);
+        }
         break;
       }
       case 'erase': {
-        if (type === undefined) editor.eraseFormatting(slices, selection);
-        else slices.insErase(type, data, selection);
-        break;
-      }
-      case 'clear': {
-        editor.clearFormatting(slices, selection);
+        if (tag === undefined) editor.eraseFormatting(slices, selection);
+        else slices.insErase(tag, detail.data, selection);
         break;
       }
     }

@@ -11,7 +11,7 @@ import {DebugState} from '../../plugins/debug/state';
 
 const markdown =
   'The German __automotive sector__ is in the process of *cutting ' +
-  'thousands of jobs* as it grapples with a global shift toward electric vehicles ' +
+  'thousands of jobs* as, [Google Docs](https://developers.google.com/workspace/docs), it grapples with a global shift toward electric vehicles ' +
   '— a transformation Musk himself has been at the forefront of.' +
   '\n\n' +
   '> To be, or not to be: that is the question.' +
@@ -22,7 +22,7 @@ const markdown =
   'console.log(123);\n' +
   '```\n' +
   '\n\n' +
-  'A `ClipboardEvent` is dispatched for copy, cut, and paste events, and it contains ' +
+  'A `ClipboardEvent` is [dispatched for copy](https://github.com/users/streamich/projects/5/views/2), cut, and paste events, and it contains ' +
   'a `clipboardData` property of type `DataTransfer`. The `DataTransfer` object ' +
   'is used by the Clipboard Events API to hold multiple representations of data.';
 
@@ -48,7 +48,7 @@ export const App: React.FC = () => {
     const toolbarPlugin = new ToolbarPlugin({debug: debugState});
     const blocksPlugin = new BlocksPlugin();
     const debugPlugin = new DebugPlugin({state: debugState});
-    return [cursorPlugin, toolbarPlugin, blocksPlugin, debugPlugin];
+    return [cursorPlugin, blocksPlugin, toolbarPlugin, debugPlugin];
   }, []);
 
   return (
@@ -58,7 +58,7 @@ export const App: React.FC = () => {
         <PeritextView
           peritext={peritext}
           plugins={plugins}
-          onState={(state) => {
+          onStart={(state) => {
             state.events.et.buffer({
               action: 'paste',
               format: 'md',

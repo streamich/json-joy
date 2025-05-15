@@ -1,6 +1,6 @@
 import {isEmpty} from '@jsonjoy.com/util/lib/isEmpty';
 import {PersistedSlice} from '../peritext/slice/PersistedSlice';
-import {SliceBehavior} from '../peritext/slice/constants';
+import {SliceStacking} from '../peritext/slice/constants';
 import type {OverlayPoint} from '../peritext/overlay/OverlayPoint';
 import type {QuillDeltaAttributes} from './types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
@@ -13,13 +13,13 @@ export const getAttributes = (overlayPoint: OverlayPoint): QuillDeltaAttributes 
   for (let i = 0; i < layerLength; i++) {
     const slice = layers[i];
     if (!(slice instanceof PersistedSlice)) continue;
-    switch (slice.behavior) {
-      case SliceBehavior.One: {
+    switch (slice.stacking) {
+      case SliceStacking.One: {
         const tag = slice.type as PathStep;
         if (tag) attributes[tag] = slice.data();
         break;
       }
-      case SliceBehavior.Erase: {
+      case SliceStacking.Erase: {
         const tag = slice.type as PathStep;
         if (tag) delete attributes[tag];
         break;

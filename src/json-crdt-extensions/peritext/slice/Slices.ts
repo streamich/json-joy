@@ -4,7 +4,7 @@ import {PersistedSlice} from './PersistedSlice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash/hash';
-import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
+import {SliceHeaderShift, SliceStacking, SliceTupleIndex} from './constants';
 import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
 import {Chars} from '../constants';
@@ -40,10 +40,10 @@ export class Slices<T = string> implements Stateful, Printable {
     ) => S,
   >(
     range: Range<T>,
-    behavior: SliceBehavior,
+    stacking: SliceStacking,
     type: SliceType,
     data?: unknown,
-    Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice,
+    Klass: K = stacking === SliceStacking.Marker ? <any>MarkerSlice : PersistedSlice,
   ): S {
     const slicesModel = this.set.doc;
     const set = this.set;
@@ -52,9 +52,9 @@ export class Slices<T = string> implements Stateful, Printable {
     const tupleId = builder.vec();
     const start = range.start.clone();
     const end = range.end.clone();
-    behavior = behavior & 0b111;
+    stacking = stacking & 0b111;
     const header =
-      (behavior << SliceHeaderShift.Behavior) +
+      (stacking << SliceHeaderShift.Stacking) +
       ((start.anchor & 0b1) << SliceHeaderShift.X1Anchor) +
       ((end.anchor & 0b1) << SliceHeaderShift.X2Anchor);
     const headerId = builder.const(header);
@@ -75,13 +75,13 @@ export class Slices<T = string> implements Stateful, Printable {
     const tuple = slicesModel.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const slice = new Klass(slicesModel, this.txt, chunk, tuple, behavior, type, start, end);
+    const slice = new Klass(slicesModel, this.txt, chunk, tuple, stacking, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
 
   public insMarker(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): MarkerSlice<T> {
-    return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice<T>;
+    return this.ins(range, SliceStacking.Marker, type, data) as MarkerSlice<T>;
   }
 
   public insMarkerAfter(
@@ -108,15 +108,15 @@ export class Slices<T = string> implements Stateful, Printable {
   }
 
   public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    return this.ins(range, SliceBehavior.Many, type, data);
+    return this.ins(range, SliceStacking.Many, type, data);
   }
 
   public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    return this.ins(range, SliceBehavior.One, type, data);
+    return this.ins(range, SliceStacking.One, type, data);
   }
 
   public insErase(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    return this.ins(range, SliceBehavior.Erase, type, data);
+    return this.ins(range, SliceStacking.Erase, type, data);
   }
 
   protected unpack(chunk: ArrChunk): PersistedSlice<T> {
@@ -128,7 +128,7 @@ export class Slices<T = string> implements Stateful, Printable {
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
     let slice = PersistedSlice.deserialize<T>(model, txt, chunk, tuple);
     if (slice.isSplit())
-      slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
+      slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.stacking, slice.type, slice.start, slice.end);
     return slice;
   }
 

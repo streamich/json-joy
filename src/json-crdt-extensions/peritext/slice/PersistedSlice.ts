@@ -7,9 +7,9 @@ import type {Anchor} from '../rga/constants';
 import {
   SliceHeaderMask,
   SliceHeaderShift,
-  SliceBehavior,
+  SliceStacking,
   SliceTupleIndex,
-  SliceBehaviorName,
+  SliceStackingName,
   SliceTypeName,
   SliceTypeCon,
 } from './constants';
@@ -47,11 +47,11 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     validateType(type);
     const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
     const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
-    const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
+    const stacking: SliceStacking = (header & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
     const rga = txt.str as unknown as AbstractRga<T>;
     const p1 = new Point<T>(rga, id1, anchor1);
     const p2 = new Point<T>(rga, id2, anchor2);
-    const slice = new PersistedSlice<T>(model, txt, chunk, tuple, behavior, type, p1, p2);
+    const slice = new PersistedSlice<T>(model, txt, chunk, tuple, stacking, type, p1, p2);
     return slice;
   }
 
@@ -67,7 +67,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     protected readonly chunk: ArrChunk,
     /** The `vec` node which stores the serialized contents of this slice. */
     public readonly tuple: VecNode,
-    behavior: SliceBehavior,
+    stacking: SliceStacking,
     type: SliceType,
     public start: Point<T>,
     public end: Point<T>,
@@ -75,12 +75,12 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     super(txt.str as unknown as AbstractRga<T>, start, end);
     this.rga = txt.str as unknown as AbstractRga<T>;
     this.id = chunk.id;
-    this.behavior = behavior;
+    this.stacking = stacking;
     this.type = type;
   }
 
   public isSplit(): boolean {
-    return this.behavior === SliceBehavior.Marker;
+    return this.stacking === SliceStacking.Marker;
   }
 
   protected tupleApi() {
@@ -106,7 +106,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   // ------------------------------------------------------------- MutableSlice
 
   public readonly id: ITimestampStruct;
-  public behavior: SliceBehavior;
+  public stacking: SliceStacking;
   public type: SliceType;
 
   public tag(): SliceTypeStep {
@@ -122,12 +122,13 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public update(params: SliceUpdateParams<T>): void {
     let updateHeader = false;
     const changes: [number, unknown][] = [];
-    if (params.behavior !== undefined) {
-      this.behavior = params.behavior;
+    const stacking = params.stacking;
+    if (stacking !== undefined) {
+      this.stacking = stacking;
       updateHeader = true;
     }
-    if (params.range) {
-      const range = params.range;
+    const range = params.range;
+    if (range) {
       updateHeader = true;
       changes.push([SliceTupleIndex.X1, s.con(range.start.id)], [SliceTupleIndex.X2, s.con(range.end.id)]);
       this.start = range.start;
@@ -140,7 +141,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
       const header =
-        (this.behavior << SliceHeaderShift.Behavior) +
+        (this.stacking << SliceHeaderShift.Stacking) +
         (this.start.anchor << SliceHeaderShift.X1Anchor) +
         (this.end.anchor << SliceHeaderShift.X2Anchor);
       changes.push([SliceTupleIndex.Header, s.con(header)]);
@@ -191,7 +192,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     if (changed) {
       const tuple = this.tuple;
       const slice = PersistedSlice.deserialize<T>(this.model, this.txt, this.chunk, tuple);
-      this.behavior = slice.behavior;
+      this.stacking = slice.stacking;
       this.type = slice.type;
       this.start = slice.start;
       this.end = slice.end;
@@ -203,9 +204,9 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   public toStringName(): string {
     if (typeof this.type === 'number' && Math.abs(this.type) <= 64 && SliceTypeName[this.type]) {
-      return `slice [${SliceBehaviorName[this.behavior]}] <${SliceTypeName[this.type]}>`;
+      return `slice [${SliceStackingName[this.stacking]}] <${SliceTypeName[this.type]}>`;
     }
-    return `slice [${SliceBehaviorName[this.behavior]}] ${JSON.stringify(this.type)}`;
+    return `slice [${SliceStackingName[this.stacking]}] ${JSON.stringify(this.type)}`;
   }
 
   protected toStringHeaderName(): string {
@@ -213,7 +214,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const dataFormatted = data ? prettyOneLine(data) : '∅';
     const dataLengthBreakpoint = 32;
     const header = `${this.toStringName()} ${super.toString('', true)}, ${
-      SliceBehaviorName[this.behavior]
+      SliceStackingName[this.stacking]
     }, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
     return header;
   }

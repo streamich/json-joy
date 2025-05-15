@@ -182,7 +182,7 @@ export class JsonCrdtDiff {
     }
   }
 
-  public diffAny(src: JsonNode, dst: unknown): void {
+  protected diffAny(src: JsonNode, dst: unknown): void {
     if (src instanceof ConNode) {
       const val = src.val;
       if (val !== dst && !deepEqual(src.val, dst)) throw new DiffError();

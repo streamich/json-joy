@@ -24,6 +24,9 @@ export class EditorSlices<T = string> {
     public readonly slices: Slices<T>,
   ) {}
 
+  /**
+   * @todo Rename to `insMany`.
+   */
   public insStack(
     type: SliceType,
     data?: unknown | ITimestampStruct,

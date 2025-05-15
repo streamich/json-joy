@@ -12,6 +12,7 @@ export const AnchorView: React.FC<AnchorViewProps> = (props) => {
   // This zero-width non-breaking space prevents word wrapping at position where
   // anchor is inserted.
   let children: React.ReactNode = Char.ZeroLengthSpace;
-  for (const map of plugins) children = map.anchor?.(props, children) ?? children;
+
+  for (const plugin of plugins) children = plugin.anchor?.(props, children) ?? children;
   return children;
 };

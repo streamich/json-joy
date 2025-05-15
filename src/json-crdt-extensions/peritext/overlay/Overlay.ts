@@ -11,7 +11,7 @@ import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash/hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
-import {SliceBehavior} from '../slice/constants';
+import {SliceStacking} from '../slice/constants';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
@@ -455,14 +455,14 @@ export class Overlay<T = string> implements Printable, Stateful {
         const slice = layers[i];
         const type = slice.type;
         if (typeof type === 'object') continue LAYERS;
-        const behavior = slice.behavior;
-        BEHAVIOR: switch (behavior) {
-          case SliceBehavior.One:
+        const stacking = slice.stacking;
+        STACKING: switch (stacking) {
+          case SliceStacking.One:
             current.add(type);
-            break BEHAVIOR;
-          case SliceBehavior.Erase:
+            break STACKING;
+          case SliceStacking.Erase:
             current.delete(type);
-            break BEHAVIOR;
+            break STACKING;
         }
       }
       if (isFirst) {

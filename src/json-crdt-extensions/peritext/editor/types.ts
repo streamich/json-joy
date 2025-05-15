@@ -2,7 +2,7 @@ import type {UndefIterator} from '../../../util/iterator';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {SliceType} from '../slice';
-import type {SliceBehavior} from '../slice/constants';
+import type {SliceStacking} from '../slice/constants';
 import type {ChunkSlice} from '../util/ChunkSlice';
 
 export type CharIterator<T> = UndefIterator<ChunkSlice<T>>;
@@ -17,7 +17,7 @@ export type ViewRange = [text: string, textPosition: number, slices: ViewSlice[]
 
 export type ViewSlice = [header: number, x1: number, x2: number, type: SliceType, data?: unknown];
 
-export type ViewStyle = [behavior: SliceBehavior, type: SliceType, data?: unknown];
+export type ViewStyle = [stacking: SliceStacking, type: SliceType, data?: unknown];
 
 /**
  * UI API which can be injected during various methods of the editor. Used to

@@ -3,7 +3,7 @@ import {Peritext} from '../../Peritext';
 import type {Range} from '../../rga/Range';
 import {Anchor} from '../../rga/constants';
 import type {PersistedSlice} from '../PersistedSlice';
-import {SliceBehavior} from '../constants';
+import {SliceStacking} from '../constants';
 import {setup} from './setup';
 
 test('initially slice list is empty', () => {
@@ -17,11 +17,11 @@ describe('.ins()', () => {
   test('can insert a slice', () => {
     const {peritext, slices} = setup();
     const range = peritext.rangeAt(12, 7);
-    const slice = slices.ins(range, SliceBehavior.Many, 'b', {bold: true});
+    const slice = slices.ins(range, SliceStacking.Many, 'b', {bold: true});
     expect(peritext.savedSlices.size()).toBe(1);
     expect(slice.start).toStrictEqual(range.start);
     expect(slice.end).toStrictEqual(range.end);
-    expect(slice.behavior).toBe(SliceBehavior.Many);
+    expect(slice.stacking).toBe(SliceStacking.Many);
     expect(slice.type).toBe('b');
     expect(slice.data()).toStrictEqual({bold: true});
   });
@@ -80,16 +80,16 @@ describe('.ins()', () => {
     const ranges = [r1, r2, r3, r4];
     const types = ['b', ['li', 'ul'], 0, 123, [1, 2, 3]];
     const datas = [{bold: true}, {list: 'ul'}, 0, 123, [1, 2, 3], null, undefined];
-    const behaviors = [SliceBehavior.Many, SliceBehavior.Erase, SliceBehavior.One, SliceBehavior.Marker];
+    const stackingList = [SliceStacking.Many, SliceStacking.Erase, SliceStacking.One, SliceStacking.Marker];
     for (const range of ranges) {
       for (const type of types) {
         for (const data of datas) {
-          for (const behavior of behaviors) {
+          for (const stacking of stackingList) {
             const {peritext, model} = setup();
-            const slice = peritext.savedSlices.ins(range, behavior, type, data);
+            const slice = peritext.savedSlices.ins(range, stacking, type, data);
             expect(slice.start.cmp(range.start)).toBe(0);
             expect(slice.end.cmp(range.end)).toBe(0);
-            expect(slice.behavior).toBe(behavior);
+            expect(slice.stacking).toBe(stacking);
             expect(slice.type).toStrictEqual(type);
             expect(slice.data()).toStrictEqual(data);
             const buf = model.toBinary();
@@ -99,7 +99,7 @@ describe('.ins()', () => {
             const slice2 = peritext2.savedSlices.get(slice.id)!;
             expect(slice2.start.cmp(range.start)).toBe(0);
             expect(slice2.end.cmp(range.end)).toBe(0);
-            expect(slice2.behavior).toBe(behavior);
+            expect(slice2.stacking).toBe(stacking);
             expect(slice2.type).toStrictEqual(type);
             expect(slice2.data()).toStrictEqual(data);
           }
@@ -175,9 +175,9 @@ describe('.refresh()', () => {
     });
   };
 
-  testSliceUpdate('slice behavior change', ({slice}) => {
-    slice.update({behavior: SliceBehavior.Many});
-    expect(slice.behavior).toBe(SliceBehavior.Many);
+  testSliceUpdate('slice stacking change', ({slice}) => {
+    slice.update({stacking: SliceStacking.Many});
+    expect(slice.stacking).toBe(SliceStacking.Many);
   });
 
   testSliceUpdate('slice type change', ({slice}) => {

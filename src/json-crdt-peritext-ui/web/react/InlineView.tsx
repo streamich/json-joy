@@ -37,6 +37,18 @@ put('.' + CssClass.Inline, {
    * so that the text is more visually predictable.
    */
   fontVariantLigatures: 'none',
+
+  /**
+   * Hide the default system caret (and selection). Peritext renders its own
+   * caret and selection, see `CaretView` component as example.
+   *
+   * The default Peritext caret and selection are invisible, but the plugins
+   * can fully customize their appearance.
+   */
+  caretColor: 'transparent',
+  '::selection': {
+    bgc: 'transparent',
+  },
 });
 
 export interface InlineViewProps {

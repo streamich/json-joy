@@ -44,6 +44,9 @@
 			},
 			"a11y": {
 				"noSvgWithoutTitle": "off"
+			},
+			"performance": {
+				"noDelete": "off"
 			}
 		}
 	}

@@ -1,8 +1,7 @@
 import {html as _html} from 'very-small-parser/lib/html';
 import {fromHast as _fromHast} from 'very-small-parser/lib/html/json-ml/fromHast';
 import {SliceTypeName} from '../slice';
-import {registry as defaultRegistry} from '../registry/registry';
-import {SliceBehavior, SliceHeaderShift} from '../slice/constants';
+import {SliceStacking, SliceHeaderShift} from '../slice/constants';
 import {Anchor} from '../rga/constants';
 import {toPlainText} from 'very-small-parser/lib/toPlainText';
 import {walk} from 'very-small-parser/lib/html/json-ml/walk';
@@ -48,7 +47,7 @@ class ViewRangeBuilder {
     if (hasType && !inline && isFirstChildInline) {
       this.text += '\n';
       const header =
-        (SliceBehavior.Marker << SliceHeaderShift.Behavior) +
+        (SliceStacking.Marker << SliceHeaderShift.Stacking) +
         (Anchor.Before << SliceHeaderShift.X1Anchor) +
         (Anchor.Before << SliceHeaderShift.X2Anchor);
       const slice: ViewSlice = [header, start, start, path.length ? [...path, type] : type];
@@ -62,9 +61,9 @@ class ViewRangeBuilder {
         header: number = 0;
       if (inline) {
         end = this.text.length;
-        const behavior: SliceBehavior = attr?.behavior ?? SliceBehavior.Many;
+        const stacking: SliceStacking = attr?.stacking ?? SliceStacking.Many;
         header =
-          (behavior << SliceHeaderShift.Behavior) +
+          (stacking << SliceHeaderShift.Stacking) +
           (Anchor.Before << SliceHeaderShift.X1Anchor) +
           (Anchor.After << SliceHeaderShift.X2Anchor);
         const slice: ViewSlice = [header, start, end, type];
@@ -98,7 +97,7 @@ const BLOCK_TAGS_REWRITE = new Map<string, string>([
 // HTML elements to rewrite as different inline elements.
 const INLINE_TAGS_REWRITE = new Map<string, string>([['span', '']]);
 
-export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = defaultRegistry): PeritextMlNode => {
+export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry): PeritextMlNode => {
   if (typeof jsonml === 'string') return jsonml;
   let tag = jsonml[0];
   let inlineHtmlTag = false;
@@ -143,12 +142,12 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry = default
   return node;
 };
 
-export const fromHast = (hast: THtmlToken, registry?: SliceRegistry): PeritextMlNode => {
+export const fromHast = (hast: THtmlToken, registry: SliceRegistry): PeritextMlNode => {
   const jsonml = _fromHast(hast);
   return fromJsonMl(jsonml, registry);
 };
 
-export const fromHtml = (html: string, registry?: SliceRegistry): PeritextMlNode => {
+export const fromHtml = (html: string, registry: SliceRegistry): PeritextMlNode => {
   const hast = _html.parsef(html);
   return fromHast(hast, registry);
 };
@@ -184,11 +183,11 @@ const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportDat
   return [jsonml];
 };
 
-export const importHtml = (html: string): [view?: ViewRange, style?: ViewStyle[]] => {
+export const importHtml = (html: string, registry: SliceRegistry): [view?: ViewRange, style?: ViewStyle[]] => {
   const [jsonml, data] = getExportData(html);
   if (data?.style) return [void 0, data.style];
   if (data?.view) return [data.view];
-  const node = fromJsonMl(jsonml!);
+  const node = fromJsonMl(jsonml!, registry);
   return [toViewRange(node)];
 };
 

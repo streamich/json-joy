@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {createElement as h} from 'react';
 import {LeafBlock} from '../../../json-crdt-extensions/peritext/block/LeafBlock';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
@@ -6,7 +7,12 @@ import {usePeritext} from './context';
 import {CommonSliceType} from '../../../json-crdt-extensions';
 import {CaretView} from './cursor/CaretView';
 import {FocusView} from './cursor/FocusView';
-import {InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../../../json-crdt-extensions/peritext/block/Inline';
+import {
+  type Inline,
+  InlineAttrEnd,
+  InlineAttrPassing,
+  InlineAttrStart,
+} from '../../../json-crdt-extensions/peritext/block/Inline';
 import {AnchorView} from './cursor/AnchorView';
 import type {Block} from '../../../json-crdt-extensions/peritext/block/Block';
 
@@ -22,19 +28,33 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
     const {plugins, dom} = usePeritext();
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
-      for (const inline of block.texts()) {
+      let inline: Inline<string> | undefined;
+      let prevInline: Inline<string> | undefined;
+      for (const iterator = block.texts0(); (inline = iterator()); prevInline = inline) {
+        const k = inline.key();
         const hasCursor = inline.hasCursor();
+
+        // Insert cursor before the inline text element.
         if (hasCursor) {
           const attr = inline.attr();
           const italic = attr[CommonSliceType.i]?.[0];
           const cursorStart = inline.cursorStart();
           if (cursorStart) {
-            const key = cursorStart.start.key() + '-a';
+            const key = k + '-a';
             let element: React.ReactNode;
             if (cursorStart.isStartFocused()) {
-              if (cursorStart.isCollapsed())
-                element = <CaretView key={key} italic={!!italic} point={cursorStart.start} cursor={cursorStart} />;
-              else {
+              if (cursorStart.isCollapsed()) {
+                element = (
+                  <CaretView
+                    key={key}
+                    italic={!!italic}
+                    point={cursorStart.start}
+                    cursor={cursorStart}
+                    fwd={inline}
+                    bwd={prevInline}
+                  />
+                );
+              } else {
                 const isItalic = italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing;
                 element = <FocusView key={key} italic={isItalic} cursor={cursorStart} />;
               }
@@ -42,18 +62,25 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
             elements.push(element);
           }
         }
-        elements.push(<InlineView key={inline.key()} inline={inline} />);
+
+        // Insert the inline text element itself.
+        const currInlineProps = {key: k, inline};
+        elements.push(h(InlineView, currInlineProps));
+
+        // Insert cursor after the inline text element.
         if (hasCursor) {
           const cursorEnd = inline.cursorEnd();
           const attr = inline.attr();
           const italic = attr[CommonSliceType.i]?.[0];
           if (cursorEnd) {
-            const key = cursorEnd.end.key() + '-b';
+            const key = k + '-b';
             let element: React.ReactNode;
             if (cursorEnd.isEndFocused()) {
-              if (cursorEnd.isCollapsed())
-                element = <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} />;
-              else
+              if (cursorEnd.isCollapsed()) {
+                element = (
+                  <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} bwd={inline} />
+                );
+              } else
                 element = (
                   <FocusView
                     key={key}

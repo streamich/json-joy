@@ -1,4 +1,3 @@
-import {registry as defaultRegistry} from '../registry/registry';
 import type {Range} from '../rga/Range';
 import type {ViewRange} from '../editor/types';
 import type {SliceRegistry} from '../registry/SliceRegistry';
@@ -15,7 +14,6 @@ export type PeritextDataTransferMarkdownExportTools = typeof import('./export-ma
 export type PeritextDataTransferMarkdownImportTools = typeof import('./import-markdown');
 
 export interface PeritextDataTransferOpts {
-  registry?: SliceRegistry;
   htmlExport?: PeritextDataTransferHtmlExportTools;
   htmlImport?: PeritextDataTransferHtmlImportTools;
   mdExport?: PeritextDataTransferMarkdownExportTools;
@@ -41,7 +39,7 @@ export interface ClipboardImport {
 export class PeritextDataTransfer<T = string> {
   constructor(
     public readonly txt: Peritext<T>,
-    public readonly opts: PeritextDataTransferOpts = {},
+    public readonly opts: PeritextDataTransferOpts,
   ) {}
 
   // ------------------------------------------------------------------ exports
@@ -132,7 +130,7 @@ export class PeritextDataTransfer<T = string> {
   }
 
   private _imp<D>(pos: number, data: D, transform: (data: D, registry: SliceRegistry) => PeritextMlNode): number {
-    const registry = this.opts.registry ?? defaultRegistry;
+    const registry = this.txt.editor.getRegistry();
     const json = transform(data, registry);
     return this.fromJson(pos, json);
   }
@@ -191,7 +189,7 @@ export class PeritextDataTransfer<T = string> {
       return range.start.viewPos();
     };
     if (html) {
-      const [view, style] = this.htmlI().importHtml(html);
+      const [view, style] = this.htmlI().importHtml(html, txt.editor.getRegistry());
       if (style) {
         txt.editor.importStyle(range, style);
         return 0;

@@ -1,6 +1,6 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior, SliceTypeName} from '../slice/constants';
+import {SliceStacking, SliceTypeName} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {Cursor} from '../editor/Cursor';
@@ -160,8 +160,8 @@ export class Inline<T = string> extends Range<T> implements Printable {
   public attr(): InlineAttrs<T> {
     if (this._attr) return this._attr;
     const attr: InlineAttrs<T> = (this._attr = {});
-    const p1 = this.p1 as OverlayPoint<T>;
-    const p2 = this.p2 as OverlayPoint<T>;
+    const p1 = this.p1;
+    const p2 = this.p2;
     const slices1 = p1.layers;
     const slices2 = p1.markers;
     const slices3 = p2.isAbsEnd() ? p2.markers : [];
@@ -174,22 +174,22 @@ export class Inline<T = string> extends Range<T> implements Printable {
       const slice = i >= length12 ? slices3[i - length12] : i >= length1 ? slices2[i - length1] : slices1[i];
       if (slice instanceof Range) {
         const type = slice.type as PathStep;
-        switch (slice.behavior) {
-          case SliceBehavior.Cursor: {
+        switch (slice.stacking) {
+          case SliceStacking.Cursor: {
             const stack: InlineAttrStack<T> = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
             stack.push(this.createAttr(slice));
             break;
           }
-          case SliceBehavior.Many: {
+          case SliceStacking.Many: {
             const stack: InlineAttrStack<T> = attr[type] ?? (attr[type] = []);
             stack.push(this.createAttr(slice));
             break;
           }
-          case SliceBehavior.One: {
+          case SliceStacking.One: {
             attr[type] = [this.createAttr(slice)];
             break;
           }
-          case SliceBehavior.Erase: {
+          case SliceStacking.Erase: {
             delete attr[type];
             break;
           }
