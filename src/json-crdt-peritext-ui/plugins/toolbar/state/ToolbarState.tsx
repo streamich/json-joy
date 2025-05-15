@@ -73,20 +73,15 @@ export class ToolbarState implements UiLifeCycles {
   // }
 
   public startSliceConfig(tag: SliceTypeCon | string | number, menu?: MenuItem): NewFormatting | undefined {
-    console.log(1);
     const editor = this.txt.editor;
     const behavior = editor.getRegistry().get(tag);
-    console.log(2);
     const range = editor.mainCursor()?.range();
     if (!range) return;
-    console.log(3);
     const newSlice = this.newSlice;
     if (!behavior) {
-      console.log(4);
       newSlice.next(void 0);
       return;
     }
-    console.log(5);
     const formatting = new NewFormatting(behavior, range, this);
     newSlice.next(formatting);
     return formatting;
