@@ -16,6 +16,7 @@ export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inl
   // biome-ignore lint: too many dependencies
   const state = React.useMemo(() => new FormattingManageState(toolbar, inline), [toolbar, inline?.key()]);
   const formattings = useBehaviorSubject(React.useMemo(() => state.getFormattings$(), [state]));
+  // biome-ignore lint: manually manage dependencies
   React.useLayoutEffect(() => {
     if (formattings.length === 1) {
       state.select(formattings[0]);
@@ -30,7 +31,7 @@ export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inl
       <context.Provider value={state}>
         <FormattingDisplay
           formatting={selected || formattings[0]}
-          onClose={!selected || (formattings.length === 1) ? void 0 : () => state.select(null)}
+          onClose={!selected || formattings.length === 1 ? void 0 : () => state.select(null)}
         />
       </context.Provider>
     );

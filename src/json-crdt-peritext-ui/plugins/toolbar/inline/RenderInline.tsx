@@ -18,7 +18,12 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const attrs = inline.attr();
   let element = children;
   const a = attrs[SliceTypeCon.a];
-  if (a) element = <Link layers={a.length} stack={a}>{element}</Link>;
+  if (a)
+    element = (
+      <Link layers={a.length} stack={a}>
+        {element}
+      </Link>
+    );
   if (attrs[SliceTypeCon.mark]) element = <mark>{element}</mark>;
   if (attrs[SliceTypeCon.sup]) element = <sup>{element}</sup>;
   if (attrs[SliceTypeCon.sub]) element = <sub>{element}</sub>;

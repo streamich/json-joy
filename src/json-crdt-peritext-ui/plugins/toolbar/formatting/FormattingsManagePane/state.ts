@@ -3,11 +3,11 @@ import {SavedFormatting} from '../../state/formattings';
 import {PersistedSlice} from '../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import {subject} from '../../../../util/rx';
 import {toSchema} from '../../../../../json-crdt/schema/toSchema';
-import {Model, ObjApi} from '../../../../../json-crdt/model';
-import {ObjNode} from '../../../../../json-crdt/nodes';
+import {JsonCrdtDiff} from '../../../../../json-crdt-diff/JsonCrdtDiff';
+import {Model, type ObjApi} from '../../../../../json-crdt/model';
+import type {ObjNode} from '../../../../../json-crdt/nodes';
 import type {Inline} from '../../../../../json-crdt-extensions';
 import type {ToolbarState} from '../../state';
-import {JsonCrdtDiff} from '../../../../../json-crdt-diff/JsonCrdtDiff';
 
 export class FormattingManageState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);

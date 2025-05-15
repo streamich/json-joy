@@ -10,7 +10,7 @@ const spanClass = rule({
 const gap = 4;
 const position: EntangledPortalStateOpts['position'] = (base, dest) => {
   let x = base.x - (dest.width >> 1);
-  let y = base.y - dest.height;
+  const y = base.y - dest.height;
   if (x < gap) x = gap;
   else if (x + dest.width + gap > window.innerWidth) x = window.innerWidth - dest.width - gap;
   return [x, y];
@@ -28,9 +28,5 @@ export interface TopPanePortalProps {
 }
 
 export const TopPanePortal: React.FC<TopPanePortalProps> = ({children}) => {
-  return (
-    <EntangledPortal {...entangledProps}>
-      {children}
-    </EntangledPortal>
-  );
+  return <EntangledPortal {...entangledProps}>{children}</EntangledPortal>;
 };

@@ -43,15 +43,7 @@ export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formattin
       <ContextSep line />
 
       <div style={{padding: '16px'}}>
-        <Button
-          small
-          lite={!valid}
-          positive={validation === 'good'}
-          block
-          disabled={!valid}
-          submit
-          onClick={() => {}}
-        >
+        <Button small lite={!valid} positive={validation === 'good'} block disabled={!valid} submit onClick={() => {}}>
           {t('Done')}
         </Button>
       </div>

@@ -13,7 +13,7 @@ import {useT} from 'use-t';
 import type {EditableFormatting} from '../../../state/formattings';
 import type {CollaborativeStr} from 'collaborative-editor';
 
-type Data = {href: string, title?: string};
+type Data = {href: string; title?: string};
 
 export interface EditProps {
   formatting: EditableFormatting;
@@ -27,7 +27,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const [showTitle, setShowTitle] = React.useState(!!formatting.conf()?.view()?.title);
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const titleStr = React.useMemo(() => () => formatting.conf()?.str(['title']), [formatting]);
-  const data: Data = useSyncStoreOpt(formatting.conf()!.events) as Data || {url: ''};
+  const data: Data = (useSyncStoreOpt(formatting.conf()!.events) as Data) || {url: ''};
 
   if (!href()) return null;
 
@@ -74,8 +74,8 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
             }, 20);
           }}
         >
-            {t('Title')}
-          </Button>
+          {t('Title')}
+        </Button>
       )}
     </div>
   );

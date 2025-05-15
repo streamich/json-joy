@@ -79,7 +79,15 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
                 <Favicon domain={domain} url={url} />
               </div>
             </div>
-            <div className={domainClass}>{title ? <><strong>{title}</strong> • {domainTruncated}</> : domainTruncated}</div>
+            <div className={domainClass}>
+              {title ? (
+                <>
+                  <strong>{title}</strong> • {domainTruncated}
+                </>
+              ) : (
+                domainTruncated
+              )}
+            </div>
           </FixedColumn>
           <div>
             <div className={linkClass}>

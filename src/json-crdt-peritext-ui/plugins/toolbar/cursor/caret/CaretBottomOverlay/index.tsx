@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FormattingsManagePane} from '../../../formatting/FormattingsManagePane';
 import {BottomPanePortal} from '../../util/BottomPanePortal';
 import {useToolbarPlugin} from '../../../context';
-import {PeritextEventDetailMap} from '../../../../../events';
+import type {PeritextEventDetailMap} from '../../../../../events';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
 const isDirectCaretPlacement = (event: PeritextEventDetailMap['change']['ev'] | undefined): boolean => {
@@ -12,7 +12,14 @@ const isDirectCaretPlacement = (event: PeritextEventDetailMap['change']['ev'] | 
     const at = detail.at;
     if (Array.isArray(at) && at.length === 1 && typeof at[0] === 'number') return true;
     const move = detail.move;
-    if (Array.isArray(move) && move.length === 1 && Array.isArray(move[0]) && move[0][0] === 'focus' && typeof move[0][1] === 'number') return true;
+    if (
+      Array.isArray(move) &&
+      move.length === 1 &&
+      Array.isArray(move[0]) &&
+      move[0][0] === 'focus' &&
+      typeof move[0][1] === 'number'
+    )
+      return true;
   }
   return false;
 };

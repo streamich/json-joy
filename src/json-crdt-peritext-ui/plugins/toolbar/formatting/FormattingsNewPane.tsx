@@ -37,10 +37,7 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
 
   return (
     <FormattingPane onEsc={() => toolbar.newSlice.next(void 0)}>
-      <form
-        className={blockClass}
-        onSubmit={handleSave}
-      >
+      <form className={blockClass} onSubmit={handleSave}>
         <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
           <FormattingTitle formatting={formatting} />
         </ContextPaneHeader>

@@ -16,7 +16,13 @@ const position: EntangledPortalStateOpts['position'] = (base, dest) => {
   const {scrollY} = window;
   const body = document.body;
   const html = document.documentElement;
-  const pageHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+  const pageHeight = Math.max(
+    body.scrollHeight,
+    body.offsetHeight,
+    html.clientHeight,
+    html.scrollHeight,
+    html.offsetHeight,
+  );
   if (base.y + dest.height + scrollY > pageHeight) y = base.y - (base.y + dest.height + scrollY - pageHeight);
   return [x, y];
 };
@@ -33,9 +39,5 @@ export interface BottomPanePortalProps {
 }
 
 export const BottomPanePortal: React.FC<BottomPanePortalProps> = ({children}) => {
-  return (
-    <EntangledPortal {...entangledProps}>
-      {children}
-    </EntangledPortal>
-  );
+  return <EntangledPortal {...entangledProps}>{children}</EntangledPortal>;
 };
