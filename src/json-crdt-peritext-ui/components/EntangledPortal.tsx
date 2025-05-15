@@ -2,11 +2,9 @@ import * as React from 'react';
 import {BehaviorSubject, type Subscription, throttleTime} from 'rxjs';
 import {resize$, rerender$} from '../util/rect$';
 import {EditorPortal} from '../web/react/util/EditorPortal';
-import type {AnchorPoint} from 'nice-ui/lib/utils/popup';
 import type {UiLifeCycles, Rect} from '../web';
 
 export interface EntangledPortalStateOpts {
-  anchor?: Partial<AnchorPoint>;
   position?: (base: Rect, dest: Rect) => [x: number, y: number];
   onBase?: (el: HTMLSpanElement | null) => void;
   onDest?: (el: HTMLElement | null) => void;

@@ -1,4 +1,4 @@
-import {defer, Observable, merge, fromEvent, map} from 'rxjs';
+import { defer, Observable, merge, fromEvent, map } from 'rxjs';
 
 export const resize$ = (el: HTMLElement): Observable<number> => {
   let cnt = 0;
@@ -10,4 +10,11 @@ export const resize$ = (el: HTMLElement): Observable<number> => {
 };
 
 export const rerender$ = (el: HTMLElement): Observable<void> =>
-  defer(() => merge(resize$(el), fromEvent(window, 'resize'), fromEvent(window, 'scroll'))).pipe(map(() => void 0));
+  defer(() =>
+    merge(
+      resize$(el),
+      fromEvent(window, 'resize'),
+      fromEvent(window, 'scroll'),
+      fromEvent(screen.orientation, 'change'),
+    )
+  ).pipe(map(() => void 0));
