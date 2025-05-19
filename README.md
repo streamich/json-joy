@@ -21,6 +21,8 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - [**Website**](https://jsonjoy.com)
 - [**Documentation**](https://jsonjoy.com/libs/json-joy-js)
 - [**Blog posts**](https://jsonjoy.com/blog)
+  - [_ollaborative Text Editors (Part 2): Plain Text Synchronization_](https://jsonjoy.com/blog/collaborative-text-sync-plain-text)
+  - [_Collaborative Text Editors (Part 1): Prelude_](https://jsonjoy.com/blog/collaborative-text-sync-prelude)
   - [_Fuzz Testing RGA CRDT_](https://jsonjoy.com/blog/fuzz-testing-rga-crdt)
   - [_Benchmarking JSON Serialization Codecs_](https://jsonjoy.com/blog/json-codec-benchmarks)
   - [_List CRDT Benchmarks_](https://jsonjoy.com/blog/list-crdt-benchmarks)
