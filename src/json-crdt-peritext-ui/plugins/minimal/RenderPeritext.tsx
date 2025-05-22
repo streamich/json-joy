@@ -2,8 +2,8 @@ import * as React from 'react';
 import {Chrome} from './Chrome';
 import {context, type MinimalPluginContextValue} from './context';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import type {ChangeDetail} from '../../events/types';
 import type {PeritextSurfaceState} from '../../web';
+import type {ChangeDetail} from '../../../json-crdt-extensions/peritext/events';
 
 export interface RenderPeritextProps {
   ctx: PeritextSurfaceState;

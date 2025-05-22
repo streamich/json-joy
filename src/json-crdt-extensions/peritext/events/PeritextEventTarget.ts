@@ -1,4 +1,4 @@
-import {SubscriptionEventTarget} from '../../util/events/TypedEventTarget';
+import {SubscriptionEventTarget} from '../../../util/events/TypedEventTarget';
 import type {
   PeritextEventDetailMap,
   CursorDetail,

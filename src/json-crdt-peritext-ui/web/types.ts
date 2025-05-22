@@ -11,4 +11,4 @@ export interface UiLifeCycles {
   start(): () => void;
 }
 
-export type Rect = Pick<DOMRect, 'x' | 'y' | 'width' | 'height'>;
+export {Rect} from '../../json-crdt-extensions/peritext/events/defaults/ui/types';

@@ -1,7 +1,7 @@
-import type {Peritext} from '../../../json-crdt-extensions';
-import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
-import {DelOp, equal, InsArrOp, InsBinOp, InsStrOp, type Patch, Timestamp} from '../../../json-crdt-patch';
-import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
+import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
+import {DelOp, equal, InsArrOp, InsBinOp, InsStrOp, type Patch, Timestamp} from '../../../../json-crdt-patch';
+import type {Peritext} from '../../../../json-crdt-extensions';
+import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 
 /**
  * Given an undo/redo patch/batch, calculates a good cursor position to place

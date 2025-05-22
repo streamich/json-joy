@@ -1,5 +1,5 @@
-import {CursorAnchor} from '../../../json-crdt-extensions';
-import {type Kit, runAlphabetKitTestSuite} from '../../../json-crdt-extensions/peritext/__tests__/setup';
+import {CursorAnchor} from '../../../../json-crdt-extensions';
+import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
 import {PeritextEventDefaults} from '../defaults/PeritextEventDefaults';
 import {PeritextEventTarget} from '../PeritextEventTarget';
 

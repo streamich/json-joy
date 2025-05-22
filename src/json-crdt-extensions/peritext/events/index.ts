@@ -1,8 +1,8 @@
 import {PeritextEventDefaults, type PeritextEventDefaultsOpts} from './defaults/PeritextEventDefaults';
 import {PeritextEventTarget} from './PeritextEventTarget';
 import {DomClipboard} from './clipboard/DomClipboard';
-import {create as createDataTransfer} from '../../json-crdt-extensions/peritext/transfer/create';
-import type {Peritext} from '../../json-crdt-extensions';
+import {create as createDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/create';
+import type {Peritext} from '../../../json-crdt-extensions';
 
 /**
  * @todo Move into separately importable file.

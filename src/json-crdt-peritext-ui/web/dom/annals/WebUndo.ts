@@ -1,4 +1,4 @@
-import {saveSelection} from '../../util';
+import {saveSelection} from '../../../../util/dom';
 import type {UndoManager, UndoItem} from '../../../types';
 import type {UiLifeCycles} from '../../types';
 

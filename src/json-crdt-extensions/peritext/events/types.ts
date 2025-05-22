@@ -1,9 +1,9 @@
-import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
-import type {EditorPosition, EditorSelection} from '../../json-crdt-extensions/peritext/editor/types';
-import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
-import type {Patch} from '../../json-crdt-patch';
-import type {Cursor} from '../../json-crdt-extensions/peritext/editor/Cursor';
-import type {Range} from '../../json-crdt-extensions/peritext/rga/Range';
+import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
+import type {EditorPosition, EditorSelection} from '../../../json-crdt-extensions/peritext/editor/types';
+import type {SliceType} from '../../../json-crdt-extensions/peritext/slice/types';
+import type {Patch} from '../../../json-crdt-patch';
+import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
+import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 
 /**
  * Dispatched every time any other event is dispatched.

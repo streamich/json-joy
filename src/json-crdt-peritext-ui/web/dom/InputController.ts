@@ -1,7 +1,7 @@
 import {unit} from '../util';
 import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from '../../../json-crdt-extensions/peritext';
-import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
+import type {PeritextEventTarget} from '../../../json-crdt-extensions/peritext/events/PeritextEventTarget';
 import type {TypedEventTarget} from '../../../util/events/TypedEventTarget';
 import type {UiLifeCycles} from '../types';
 import type {DomController} from './DomController';

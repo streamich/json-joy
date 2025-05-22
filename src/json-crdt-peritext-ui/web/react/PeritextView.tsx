@@ -4,10 +4,10 @@ import {CssClass} from '../constants';
 import {CursorPlugin} from '../../plugins/cursor';
 import {defaultPlugin} from '../../plugins/minimal';
 import {PeritextSurfaceState} from '../state';
-import {createEvents} from '../../events';
 import {context} from './context';
 import {BlockView} from './BlockView';
 import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {createEvents} from '../../../json-crdt-extensions/peritext/events';
 import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../../json-crdt-extensions';
 

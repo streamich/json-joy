@@ -1,7 +1,7 @@
 import {createEvents} from '..';
-import {type Kit, runAlphabetKitTestSuite} from '../../../json-crdt-extensions/peritext/__tests__/setup';
-import {SliceTypeCon} from '../../../json-crdt-extensions/peritext/slice/constants';
-import {create as createTransfer} from '../../../json-crdt-extensions/peritext/transfer/create';
+import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
+import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
+import {create as createTransfer} from '../../../../json-crdt-extensions/peritext/transfer/create';
 
 const testSuite = (getKit: () => Kit) => {
   const setup = () => {
