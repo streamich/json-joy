@@ -1,3 +1,10 @@
+# [17.43.0](https://github.com/streamich/json-joy/compare/v17.42.0...v17.43.0) (2025-05-22)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 move Peritext events into the extension folder ([6cb6b69](https://github.com/streamich/json-joy/commit/6cb6b69a12815e5fd01197a98a8985578b9cb9f8))
+
 # [17.42.0](https://github.com/streamich/json-joy/compare/v17.41.0...v17.42.0) (2025-05-15)
 
 
