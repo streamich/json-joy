@@ -15,7 +15,11 @@ import type {UiLifeCycles} from '../../../web/types';
 import type {PeritextSurfaceState} from '../../../web';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
-import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../../json-crdt-extensions/peritext/events';
+import type {
+  BufferDetail,
+  PeritextCursorEvent,
+  PeritextEventDetailMap,
+} from '../../../../json-crdt-extensions/peritext/events';
 
 export class ToolbarState implements UiLifeCycles {
   public readonly txt: Peritext;
