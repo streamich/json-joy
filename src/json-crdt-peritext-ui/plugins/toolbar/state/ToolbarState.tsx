@@ -12,10 +12,14 @@ import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/cons
 import {NewFormatting} from './formattings';
 import * as behavior from '../formatting/tags';
 import type {UiLifeCycles} from '../../../web/types';
-import type {BufferDetail, PeritextCursorEvent, PeritextEventDetailMap} from '../../../events/types';
 import type {PeritextSurfaceState} from '../../../web';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
+import type {
+  BufferDetail,
+  PeritextCursorEvent,
+  PeritextEventDetailMap,
+} from '../../../../json-crdt-extensions/peritext/events';
 
 export class ToolbarState implements UiLifeCycles {
   public readonly txt: Peritext;

@@ -3,7 +3,7 @@ import {Log} from '../../../json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
 import type {PeritextPlugin} from '../react/types';
 import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
-import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
+import type {PeritextEventDefaults} from '../../../json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';
 import type {UiLifeCycles} from '../types';
 
 export class PeritextSurfaceState implements UiLifeCycles {

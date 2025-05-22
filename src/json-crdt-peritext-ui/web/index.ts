@@ -1,3 +1,4 @@
 export * from './react';
+export * from './types';
 export {PeritextSurfaceState} from './state';
-export {UiLifeCycles, Rect} from './types';
+export {UiLifeCycles} from './types';

@@ -1,18 +1,18 @@
-import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
+import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
-import {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
-import {CursorAnchor, type Peritext} from '../../../json-crdt-extensions/peritext';
-import {PersistedSlice} from '../../../json-crdt-extensions/peritext/slice/PersistedSlice';
-import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type {PeritextDataTransfer} from '../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
+import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
+import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
+import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
+import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
+import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
-import type {EditorSlices} from '../../../json-crdt-extensions/peritext/editor/EditorSlices';
+import type {EditorSlices} from '../../../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type * as events from '../types';
 import type {PeritextClipboard, PeritextClipboardData} from '../clipboard/types';
-import type {UndoCollector} from '../../types';
+import type {UndoCollector} from './types';
 import type {UiHandle} from './ui/UiHandle';
-import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
-import type {EditorUi} from '../../../json-crdt-extensions/peritext/editor/types';
+import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
+import type {EditorUi} from '../../../../json-crdt-extensions/peritext/editor/types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 

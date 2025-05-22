@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FormattingsManagePane} from '../../../formatting/FormattingsManagePane';
 import {BottomPanePortal} from '../../util/BottomPanePortal';
 import {useToolbarPlugin} from '../../../context';
-import type {PeritextEventDetailMap} from '../../../../../events';
+import type {PeritextEventDetailMap} from '../../../../../../json-crdt-extensions/peritext/events';
 import type {CaretViewProps} from '../../../../../web/react/cursor/CaretView';
 
 const isDirectCaretPlacement = (event: PeritextEventDetailMap['change']['ev'] | undefined): boolean => {

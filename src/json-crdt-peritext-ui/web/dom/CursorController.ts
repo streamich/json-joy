@@ -3,10 +3,10 @@ import {ElementAttr} from '../constants';
 import {throttle} from '../../../util/throttle';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import type {Printable} from 'tree-dump';
-import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {UiLifeCycles} from '../types';
 import type {Inline} from '../../../json-crdt-extensions/peritext/block/Inline';
 import type {DomController} from './DomController';
+import type {PeritextEventTarget} from '../../../json-crdt-extensions/peritext/events/PeritextEventTarget';
 
 /**
  * Controller for handling text selection and cursor movements. Listens to

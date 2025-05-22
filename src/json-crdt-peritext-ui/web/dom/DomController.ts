@@ -8,16 +8,16 @@ import {CompositionController} from './CompositionController';
 import {AnnalsController} from './annals/AnnalsController';
 import {ElementAttr} from '../constants';
 import {Anchor} from '../../../json-crdt-extensions/peritext/rga/constants';
-import {UiHandle} from '../../events/defaults/ui/UiHandle';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch';
+import {UiHandle} from '../../../json-crdt-extensions/peritext/events/defaults/ui/UiHandle';
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
-import type {PeritextEventDefaults} from '../../events/defaults/PeritextEventDefaults';
 import type {Log} from '../../../json-crdt/log/Log';
-import type {PeritextEventTarget} from '../../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from '../types';
 import type {Inline, Peritext} from '../../../json-crdt-extensions';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type {PeritextUiApi} from '../../events/defaults/ui/types';
+import type {PeritextEventTarget} from '../../../json-crdt-extensions/peritext/events/PeritextEventTarget';
+import type {PeritextUiApi} from '../../../json-crdt-extensions/peritext/events/defaults/ui/types';
+import type {PeritextEventDefaults} from '../../../json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';
 
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly txt: Peritext;

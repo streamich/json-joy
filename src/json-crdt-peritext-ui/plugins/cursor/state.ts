@@ -1,5 +1,5 @@
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import type {ChangeDetail} from '../../events/types';
+import type {ChangeDetail} from '../../../json-crdt-extensions/peritext/events';
 import type {PeritextSurfaceState, UiLifeCycles} from '../../web';
 
 export class CursorState implements UiLifeCycles {

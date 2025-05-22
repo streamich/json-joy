@@ -1,9 +1,7 @@
-import {tick} from '../../../../json-crdt-patch';
-import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
-import type {Peritext} from '../../../../json-crdt-extensions';
-import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
-import type {Rect} from '../../../web/types';
-import type {PeritextUiApi, UiLineEdge, UiLineInfo} from './types';
+import {Anchor} from '../../../../../json-crdt-extensions/peritext/rga/constants';
+import type {Peritext} from '../../../../../json-crdt-extensions';
+import type {Point} from '../../../../../json-crdt-extensions/peritext/rga/Point';
+import type {PeritextUiApi, Rect, UiLineEdge, UiLineInfo} from './types';
 
 export class UiHandle {
   constructor(
