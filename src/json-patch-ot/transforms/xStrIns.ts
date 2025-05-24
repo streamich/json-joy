@@ -24,7 +24,7 @@ export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
         }
       }
     }
-    if (ins.pos < del.pos) return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
+    if (ins.pos <= del.pos) return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
     return op;
   }
 

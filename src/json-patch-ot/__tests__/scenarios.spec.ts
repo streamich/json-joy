@@ -1013,6 +1013,32 @@ const groups: ScenarioGroup[] = [
       },
     ],
   },
+  {
+    name: 'str_ins x str_del (same position)',
+    scenarios: [
+      {
+        name: 'Deletes at same position as insert.',
+        docStart: {a: 'abcde'},
+        user1: [{op: 'str_ins', path: '/a', pos: 0, str: 'X'}],
+        user2: [{op: 'str_del', path: '/a', pos: 0, str: 'abc'}],
+        docEnd: {a: 'Xde'},
+      },
+      {
+        name: 'Deletes at same non-zero position as insert.',
+        docStart: {a: '12abcde'},
+        user1: [{op: 'str_ins', path: '/a', pos: 2, str: 'X'}],
+        user2: [{op: 'str_del', path: '/a', pos: 2, str: 'abc'}],
+        docEnd: {a: '12Xde'},
+      },
+      {
+        name: 'Deletes at higher position than insert.',
+        docStart: {a: 'hello world'},
+        user1: [{op: 'str_ins', path: '/a', pos: 2, str: 'XX'}],
+        user2: [{op: 'str_del', path: '/a', pos: 8, str: 'rld'}],
+        docEnd: {a: 'heXXllo wo'},
+      },
+    ],
+  },
   /*
   {
     name: 'move x replace',
@@ -1049,3 +1075,4 @@ for (const group of groups) {
     }
   });
 }
+
