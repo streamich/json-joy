@@ -1039,6 +1039,24 @@ const groups: ScenarioGroup[] = [
       },
     ],
   },
+  {
+    name: 'str_ins x str_del (different paths)',
+    scenarios: [
+      {
+        name: 'Operations on different paths should not interfere.',
+        docStart: {
+          a: 'hello',
+          b: 'world',
+        },
+        user1: [{op: 'str_ins', path: '/a', pos: 0, str: 'X'}],
+        user2: [{op: 'str_del', path: '/b', pos: 0, str: 'wor'}],
+        docEnd: {
+          a: 'Xhello',
+          b: 'ld',
+        },
+      },
+    ],
+  },
   /*
   {
     name: 'move x replace',
@@ -1075,4 +1093,3 @@ for (const group of groups) {
     }
   });
 }
-

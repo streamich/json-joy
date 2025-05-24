@@ -1,7 +1,9 @@
 import {type Op, OpStrDel, OpStrIns} from '../../json-patch/op';
+import {isPathEqual} from '@jsonjoy.com/json-pointer';
 
 export const xStrDel = (del: OpStrDel, op: Op): null | Op | Op[] => {
   if (op instanceof OpStrIns) {
+    if (!isPathEqual(del.path, op.path)) return op;
     const ins = op;
     if (ins.pos > del.pos) {
       const deleteLength = del.deleteLength();
@@ -11,6 +13,7 @@ export const xStrDel = (del: OpStrDel, op: Op): null | Op | Op[] => {
   }
 
   if (op instanceof OpStrDel) {
+    if (!isPathEqual(del.path, op.path)) return op;
     const opLen = op.deleteLength();
     const delLen = del.deleteLength();
     const overlapLen1 = del.pos + delLen - op.pos;
