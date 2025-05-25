@@ -23,7 +23,7 @@ test('creates a string-set 2-tuple', () => {
   api.apply([{retain: 1}, {insert: 'b'}]);
   api.apply([{retain: 2}, {insert: 'c'}]);
   const model2 = Model.fromBinary(model.toBinary());
-  expect(model2.view()).toMatchObject([expect.any(Uint8Array), ['abc', []]]);
+  expect(model2.view()).toMatchObject([expect.any(Uint8Array), ['abc', [], {}]]);
 });
 
 test('can annotate range with attribute', () => {

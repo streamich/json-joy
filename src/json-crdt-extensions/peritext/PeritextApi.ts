@@ -15,7 +15,7 @@ export class PeritextApi extends NodeApi<PeritextNode> implements ExtApi<Peritex
     public readonly api: ModelApi<any>,
   ) {
     super(node, api);
-    this.txt = new Peritext(api.model, node.text(), node.slices());
+    this.txt = new Peritext(api.model, node.text(), node.slices(), api.wrap(node.docdata()));
     this.editor = this.txt.editor;
   }
 

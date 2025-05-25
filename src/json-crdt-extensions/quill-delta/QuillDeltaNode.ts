@@ -11,13 +11,14 @@ import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 import type {StringChunk} from '../peritext/util/types';
 import type {OverlayTuple} from '../peritext/overlay/types';
 import type {QuillDataNode, QuillDeltaAttributes, QuillDeltaOp, QuillDeltaOpInsert} from './types';
+import type {ObjNode} from '../../json-crdt/nodes';
 
 export class QuillDeltaNode extends ExtNode<QuillDataNode> {
   public readonly txt: Peritext<string>;
 
   constructor(public readonly data: QuillDataNode) {
     super(data);
-    this.txt = new Peritext<string>(data.doc, this.text(), this.slices());
+    this.txt = new Peritext<string>(data.doc, this.text(), this.slices(), data.doc.api.wrap(this.docdata()));
   }
 
   public text(): StrNode<string> {
@@ -26,6 +27,10 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
 
   public slices(): ArrNode {
     return this.data.get(1)!;
+  }
+  
+  public docdata(): ObjNode<{}> {
+    return this.data.get(2)!;
   }
 
   // ------------------------------------------------------------------ ExtNode

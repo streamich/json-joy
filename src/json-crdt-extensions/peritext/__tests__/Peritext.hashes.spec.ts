@@ -8,8 +8,9 @@ const setup = (insertNumbers = (editor: Editor) => editor.insert('Hello world!')
   model.api.root({
     text: '',
     slices: [],
+    data: {},
   });
-  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
+  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node, model.api.obj(['data']));
   const editor = peritext.editor;
   insertNumbers(editor);
   const view = () => {

@@ -9,8 +9,9 @@ const setup = () => {
   model.api.root({
     text: 'abc',
     slices: [],
+    data: {},
   });
-  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
+  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node, model.api.obj(['data']));
   return {model, peritext};
 };
 
@@ -120,9 +121,10 @@ describe('.cmpSpatial()', () => {
     model.api.root({
       text: '3',
       slices: [],
+      data: {},
     });
     const str = model.api.str(['text']).node;
-    const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+    const peritext = new Peritext(model, str, model.api.arr(['slices']).node, model.api.obj(['data']));
     const chunk3 = str.root!;
     model.api.str(['text']).ins(1, '4');
     const chunk4 = str.last()!;
@@ -251,9 +253,10 @@ const setupWithText = () => {
   model.api.root({
     text: '3',
     slices: [],
+    data: {},
   });
   const str = model.api.str(['text']).node;
-  const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+  const peritext = new Peritext(model, str, model.api.arr(['slices']).node, model.api.obj(['data']));
   const chunk3 = str.root!;
   model.api.str(['text']).ins(1, '4');
   const chunk4 = str.last()!;
@@ -287,9 +290,10 @@ const setupWithChunkedText = () => {
   model.api.root({
     text: '',
     slices: [],
+    data: {},
   });
   const str = model.api.str(['text']).node;
-  const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+  const peritext = new Peritext(model, str, model.api.arr(['slices']).node, model.api.obj(['data']));
   model.api.str(['text']).ins(0, '789');
   const chunk3 = str.first()!;
   model.api.str(['text']).ins(0, 'd');
@@ -649,9 +653,10 @@ describe('.leftChar()', () => {
     model.api.root({
       text: 'abc',
       slices: [],
+      data: {},
     });
     const str = model.api.str(['text']).node;
-    const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+    const peritext = new Peritext(model, str, model.api.arr(['slices']).node, model.api.obj(['data']));
     model.api.str(['text']).del(0, 3);
     model.api.str(['text']).ins(0, '00a1b2c3');
     model.api.str(['text']).del(0, 2);
@@ -740,9 +745,10 @@ describe('.rightChar()', () => {
     model.api.root({
       text: 'abc',
       slices: [],
+      data: {},
     });
     const str = model.api.str(['text']).node;
-    const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+    const peritext = new Peritext(model, str, model.api.arr(['slices']).node, model.api.obj(['data']));
     const point0 = peritext.pointAt(0);
     const char0 = point0.rightChar()!;
     expect(char0.chunk.data!.slice(char0.off, char0.off + 1)).toBe('a');

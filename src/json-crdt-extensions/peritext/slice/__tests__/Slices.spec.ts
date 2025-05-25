@@ -94,7 +94,7 @@ describe('.ins()', () => {
             expect(slice.data()).toStrictEqual(data);
             const buf = model.toBinary();
             const model2 = Model.fromBinary(buf);
-            const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node);
+            const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node, model2.api.obj(['data']));
             peritext2.refresh();
             const slice2 = peritext2.savedSlices.get(slice.id)!;
             expect(slice2.start.cmp(range.start)).toBe(0);

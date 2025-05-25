@@ -1,119 +1,161 @@
-import {tick} from '../../../../json-crdt-patch/clock';
-import {Model} from '../../../../json-crdt/model';
-import {Peritext} from '../../Peritext';
-import type {Point} from '../../rga/Point';
-import {Anchor} from '../../rga/constants';
-import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
-import type {Chunk} from '../../../../json-crdt/nodes/rga';
+import { tick } from "../../../../json-crdt-patch/clock";
+import { Model } from "../../../../json-crdt/model";
+import { Peritext } from "../../Peritext";
+import { Anchor } from "../../rga/constants";
+import { setupNumbersWithTombstonesKit } from "../../__tests__/setup";
+import type { Point } from "../../rga/Point";
+import type { Chunk } from "../../../../json-crdt/nodes/rga";
 
 const setup = () => {
   const model = Model.withLogicalClock();
   const api = model.api;
   api.root({
-    text: '',
+    text: "",
     slices: [],
+    data: {},
   });
-  api.str(['text']).ins(0, 'wworld');
-  api.str(['text']).ins(0, 'helo ');
-  api.str(['text']).ins(2, 'l');
-  api.str(['text']).del(7, 1);
-  const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
-  const {overlay} = peritext;
-  return {model, peritext, overlay};
+  api.str(["text"]).ins(0, "wworld");
+  api.str(["text"]).ins(0, "helo ");
+  api.str(["text"]).ins(2, "l");
+  api.str(["text"]).del(7, 1);
+  const peritext = new Peritext(
+    model,
+    api.str(["text"]).node,
+    api.arr(["slices"]).node,
+    api.obj(["data"]),
+  );
+  const { overlay } = peritext;
+  return { model, peritext, overlay };
 };
 
-describe('.chunkSlices0()', () => {
-  test('can iterate through all chunk chunks', () => {
-    const {peritext, overlay} = setup();
+describe(".chunkSlices0()", () => {
+  test("can iterate through all chunk chunks", () => {
+    const { peritext, overlay } = setup();
     const chunk1 = peritext.str.first();
     const chunk2 = peritext.str.last();
-    let str = '';
+    let str = "";
     const point1 = peritext.point(chunk1!.id, Anchor.Before);
-    const point2 = peritext.point(tick(chunk2!.id, chunk2!.span - 1), Anchor.After);
+    const point2 = peritext.point(
+      tick(chunk2!.id, chunk2!.span - 1),
+      Anchor.After
+    );
     overlay.chunkSlices0(undefined, point1, point2, (chunk, off, len) => {
       str += (chunk.data as string).slice(off, off + len);
     });
-    expect(str).toBe('hello world');
+    expect(str).toBe("hello world");
   });
 
   test('can skip first character using "After" anchor attachment', () => {
-    const {peritext, overlay} = setup();
+    const { peritext, overlay } = setup();
     const chunk1 = peritext.str.first();
     const chunk2 = peritext.str.last();
-    let str = '';
+    let str = "";
     const point1 = peritext.point(chunk1!.id, Anchor.After);
-    const point2 = peritext.point(tick(chunk2!.id, chunk2!.span - 1), Anchor.After);
+    const point2 = peritext.point(
+      tick(chunk2!.id, chunk2!.span - 1),
+      Anchor.After
+    );
     overlay.chunkSlices0(undefined, point1, point2, (chunk, off, len) => {
       str += (chunk.data as string).slice(off, off + len);
     });
-    expect(str).toBe('ello world');
+    expect(str).toBe("ello world");
   });
 
   test('can skip last character using "Before" anchor attachment', () => {
-    const {peritext, overlay} = setup();
+    const { peritext, overlay } = setup();
     const chunk1 = peritext.str.first();
     const chunk2 = peritext.str.last();
-    let str = '';
+    let str = "";
     const point1 = peritext.point(chunk1!.id, Anchor.After);
-    const point2 = peritext.point(tick(chunk2!.id, chunk2!.span - 1), Anchor.Before);
+    const point2 = peritext.point(
+      tick(chunk2!.id, chunk2!.span - 1),
+      Anchor.Before
+    );
     overlay.chunkSlices0(undefined, point1, point2, (chunk, off, len) => {
       str += (chunk.data as string).slice(off, off + len);
     });
-    expect(str).toBe('ello worl');
+    expect(str).toBe("ello worl");
   });
 
-  test('can skip first chunk, by anchoring to the end of it', () => {
-    const {peritext, overlay} = setup();
+  test("can skip first chunk, by anchoring to the end of it", () => {
+    const { peritext, overlay } = setup();
     const chunk1 = peritext.str.first();
     const chunk2 = peritext.str.last();
-    let str = '';
-    const endOfFirstChunk = peritext.point(tick(chunk1!.id, chunk1!.span - 1), Anchor.After);
-    const point2 = peritext.point(tick(chunk2!.id, chunk2!.span - 1), Anchor.After);
-    overlay.chunkSlices0(undefined, endOfFirstChunk, point2, (chunk, off, len) => {
-      str += (chunk.data as string).slice(off, off + len);
-    });
+    let str = "";
+    const endOfFirstChunk = peritext.point(
+      tick(chunk1!.id, chunk1!.span - 1),
+      Anchor.After
+    );
+    const point2 = peritext.point(
+      tick(chunk2!.id, chunk2!.span - 1),
+      Anchor.After
+    );
+    overlay.chunkSlices0(
+      undefined,
+      endOfFirstChunk,
+      point2,
+      (chunk, off, len) => {
+        str += (chunk.data as string).slice(off, off + len);
+      }
+    );
     expect(str).toBe(peritext.strApi().view().slice(chunk1!.span));
   });
 
-  test('can skip first chunk, by anchoring to the beginning of second chunk', () => {
-    const {peritext, overlay} = setup();
+  test("can skip first chunk, by anchoring to the beginning of second chunk", () => {
+    const { peritext, overlay } = setup();
     const firstChunk = peritext.str.first()!;
     const secondChunk = peritext.str.next(firstChunk)!;
     const lastChunk = peritext.str.last()!;
-    let str = '';
+    let str = "";
     const startOfChunkTwo = peritext.point(secondChunk.id, Anchor.Before);
-    const point2 = peritext.point(tick(lastChunk!.id, lastChunk!.span - 1), Anchor.After);
-    overlay.chunkSlices0(undefined, startOfChunkTwo, point2, (chunk, off, len) => {
-      str += (chunk.data as string).slice(off, off + len);
-    });
+    const point2 = peritext.point(
+      tick(lastChunk!.id, lastChunk!.span - 1),
+      Anchor.After
+    );
+    overlay.chunkSlices0(
+      undefined,
+      startOfChunkTwo,
+      point2,
+      (chunk, off, len) => {
+        str += (chunk.data as string).slice(off, off + len);
+      }
+    );
     expect(str).toBe(peritext.strApi().view().slice(firstChunk.span));
   });
 
-  test('can skip one character of the second chunk', () => {
-    const {peritext, overlay} = setup();
+  test("can skip one character of the second chunk", () => {
+    const { peritext, overlay } = setup();
     const firstChunk = peritext.str.first()!;
     const secondChunk = peritext.str.next(firstChunk)!;
     const lastChunk = peritext.str.last()!;
-    let str = '';
+    let str = "";
     const startOfChunkTwo = peritext.point(secondChunk.id, Anchor.After);
-    const point2 = peritext.point(tick(lastChunk!.id, lastChunk!.span - 1), Anchor.After);
-    overlay.chunkSlices0(undefined, startOfChunkTwo, point2, (chunk, off, len) => {
-      str += (chunk.data as string).slice(off, off + len);
-    });
+    const point2 = peritext.point(
+      tick(lastChunk!.id, lastChunk!.span - 1),
+      Anchor.After
+    );
+    overlay.chunkSlices0(
+      undefined,
+      startOfChunkTwo,
+      point2,
+      (chunk, off, len) => {
+        str += (chunk.data as string).slice(off, off + len);
+      }
+    );
     expect(str).toBe(
       peritext
         .strApi()
         .view()
-        .slice(firstChunk.span + 1),
+        .slice(firstChunk.span + 1)
     );
   });
 
   const testAllPossibleChunkPointCombinations = (peritext: Peritext) => {
-    test('can generate slices for all possible chunk point combinations', () => {
+    test("can generate slices for all possible chunk point combinations", () => {
       const overlay = peritext.overlay;
       let chunk1 = peritext.str.first();
       const getText = (p1: Point, p2: Point) => {
-        let str = '';
+        let str = "";
         overlay.chunkSlices0(undefined, p1, p2, (chunk, off, len) => {
           str += (chunk.data as string).slice(off, off + len);
         });
@@ -151,7 +193,7 @@ describe('.chunkSlices0()', () => {
                 point1 = peritext.point(tick(chunk1.id, i), Anchor.After);
                 point2 = peritext.point(tick(chunk1.id, j), Anchor.Before);
                 str1 = getText(point1, point2);
-                str2 = i >= j ? '' : (chunk1.data as string).slice(i + 1, j);
+                str2 = i >= j ? "" : (chunk1.data as string).slice(i + 1, j);
                 expect(str1).toBe(str2);
               }
             }
@@ -220,13 +262,13 @@ describe('.chunkSlices0()', () => {
     });
   };
 
-  describe('with hello world text', () => {
-    const {peritext} = setup();
+  describe("with hello world text", () => {
+    const { peritext } = setup();
     testAllPossibleChunkPointCombinations(peritext);
   });
 
   describe('with "integer list" text', () => {
-    const {peritext} = setupNumbersWithTombstonesKit();
+    const { peritext } = setupNumbersWithTombstonesKit();
     testAllPossibleChunkPointCombinations(peritext);
   });
 });

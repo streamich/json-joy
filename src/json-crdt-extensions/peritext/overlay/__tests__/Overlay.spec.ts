@@ -10,12 +10,13 @@ const setup = () => {
     text: '',
     slices: [],
     markers: [],
+    data: {},
   });
   model.api.str(['text']).ins(0, 'wworld');
   model.api.str(['text']).ins(0, 'helo ');
   model.api.str(['text']).ins(2, 'l');
   model.api.str(['text']).del(7, 1);
-  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
+  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node, model.api.obj(['data']));
   return {model, peritext};
 };
 

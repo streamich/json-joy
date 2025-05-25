@@ -13,8 +13,9 @@ describe('.getOrNextLower()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(2, 1);
     peritext.editor.saved.insStack(2);
     peritext.refresh();
@@ -34,8 +35,9 @@ describe('.getOrNextLower()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(2, 1);
     peritext.editor.saved.insStack(2);
     peritext.refresh();
@@ -50,8 +52,9 @@ describe('.getOrNextLower()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(1, 1);
     peritext.editor.saved.insStack(2);
     peritext.refresh();
@@ -73,8 +76,9 @@ describe('.getOrNextLower()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     const str = peritext.str;
     const id1 = str.find(1)!;
     const id2 = str.find(2)!;
@@ -96,8 +100,9 @@ describe('.getOrNextLower()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     const editor = peritext.editor;
     editor.cursor.setAt(0, 1);
     const [slice1] = editor.saved.insStack(1);
@@ -191,8 +196,9 @@ describe('.getOrNextHigher()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(1, 1);
     peritext.editor.saved.insStack(2);
     peritext.refresh();
@@ -212,8 +218,9 @@ describe('.getOrNextHigher()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(2, 1);
     peritext.editor.saved.insStack(2);
     peritext.refresh();
@@ -228,8 +235,9 @@ describe('.getOrNextHigher()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     const editor = peritext.editor;
     editor.cursor.setAt(0, 1);
     const [slice1] = editor.saved.insStack(1);
@@ -321,8 +329,9 @@ describe('.getOrNextLowerMarker()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(2, 1);
     peritext.editor.saved.insMarker(2);
     peritext.refresh();
@@ -342,8 +351,9 @@ describe('.getOrNextLowerMarker()', () => {
     api.root({
       text: '1234',
       slices: [],
+      data: {},
     });
-    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+    const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
     peritext.editor.cursor.setAt(2, 1);
     peritext.editor.saved.insMarker(2);
     peritext.refresh();

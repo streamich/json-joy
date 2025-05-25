@@ -3,13 +3,13 @@ import {Anchor} from './rga/constants';
 import {Point} from './rga/Point';
 import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';
-import {type ArrNode, StrNode} from '../../json-crdt/nodes';
+import {type ArrNode, ObjNode, StrNode} from '../../json-crdt/nodes';
 import {Slices} from './slice/Slices';
 import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
 import {interval, tick} from '../../json-crdt-patch/clock';
-import {Model, type StrApi} from '../../json-crdt/model';
+import {Model, ObjApi, type StrApi} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash/hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
@@ -78,6 +78,7 @@ export class Peritext<T = string> implements Printable, Stateful {
     // TODO: Rename `str` to `rga`.
     public readonly str: AbstractRga<T>,
     slices: ArrNode,
+    public readonly data: ObjApi<ObjNode<any>>,
     // TODO: Add test that verifies that SIDs are different across all three models.
     extraSlicesModel: ExtraSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
     localSlicesModel: LocalModel = Model.create(LOCAL_DATA_SCHEMA, SESSION.LOCAL),

@@ -9,12 +9,13 @@ const setup = () => {
   api.root({
     text: '',
     slices: [],
+    data: {},
   });
   api.str(['text']).ins(0, 'wworld');
   api.str(['text']).ins(0, 'helo ');
   api.str(['text']).ins(2, 'l');
   api.str(['text']).del(7, 1);
-  const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
+  const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node, api.obj(['data']));
   const {overlay} = peritext;
   return {model, peritext, overlay};
 };
