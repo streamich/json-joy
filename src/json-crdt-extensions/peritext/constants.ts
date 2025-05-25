@@ -30,10 +30,20 @@ export const SCHEMA = (text: string) =>
        * The text of the node. All rich-text textual data is stored in this node.
        */
       str: nodes.str<string>,
+
       /**
        * The slices of the node. All rich-text annotations are stored in this
        * node.
        */
       slices: nodes.arr<SliceSchema>,
+
+      /**
+       * *doc data* - document level persisted settings.
+       */
+      data: nodes.obj<{}>,
     ]
-  >(s.str<string>(text), s.arr<SliceSchema>([]));
+  >(
+    s.str<string>(text),
+    s.arr<SliceSchema>([]),
+    s.obj({}),
+  );
