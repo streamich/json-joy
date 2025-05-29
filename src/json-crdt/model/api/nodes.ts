@@ -76,7 +76,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param path Path to the child node to find.
    * @returns Local changes API for the child node at the given path.
    */
-  public in(path?: ApiPath) {
+  public in(path?: ApiPath): ConApi | ValApi | VecApi | ObjApi | StrApi | BinApi | ArrApi {
     const node = this.find(path);
     return this.api.wrap(node as any);
   }

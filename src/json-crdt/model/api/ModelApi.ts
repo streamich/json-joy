@@ -75,16 +75,16 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    * Returns a local change API for the given node. If an instance already
    * exists, returns the existing instance.
    */
-  public wrap(node: ValNode): ValApi;
-  public wrap(node: StrNode<any>): StrApi;
-  public wrap(node: BinNode): BinApi;
-  public wrap(node: ArrNode): ArrApi;
-  public wrap(node: ObjNode): ObjApi;
-  public wrap(node: ConNode): ConApi;
-  public wrap(node: VecNode): VecApi;
+  public wrap<N extends ValNode>(node: N): ValApi;
+  public wrap<N extends StrNode<any>>(node: N): StrApi;
+  public wrap<N extends BinNode>(node: N): BinApi;
+  public wrap<N extends ArrNode>(node: N): ArrApi;
+  public wrap<N extends ObjNode>(node: N): ObjApi;
+  public wrap<N extends ConNode>(node: N): ConApi;
+  public wrap<N extends VecNode>(node: N): VecApi;
   public wrap(node: JsonNode): NodeApi;
   public wrap(node: ExtNode<any, any>): NodeApi;
-  public wrap(node: JsonNode) {
+  public wrap(node: any) {
     if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
     else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
     else if (node instanceof BinNode) return node.api || (node.api = new BinApi(node, this));
