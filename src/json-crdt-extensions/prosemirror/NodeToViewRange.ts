@@ -8,10 +8,8 @@ import type {ProseMirrorNode, ProseMirrorTextNode} from "./types";
  * annotation ranges, which is the natural view format for a Peritext model.
  */
 export class NodeToViewRange {
-  static readonly convert = (node: ProseMirrorNode): ViewRange => {
-    const builder = new NodeToViewRange();
-    return builder.convert(node);
-  };
+  static readonly convert = (node: ProseMirrorNode): ViewRange =>
+    new NodeToViewRange().convert(node);
 
   private text = '';
   private slices: ViewSlice[] = [];
@@ -28,8 +26,7 @@ export class NodeToViewRange {
       let length = 0;
       if (content && ((length = content.length) > 0)) {
         const isFirstChildInline = content[0].type.name === 'text';
-        const insertPendingBlockSplit = isFirstChildInline && path.length > 0;
-        if (insertPendingBlockSplit) {
+        if (isFirstChildInline) {
           this.text += '\n';
           const header =
             (SliceStacking.Marker << SliceHeaderShift.Stacking) +
@@ -69,7 +66,15 @@ export class NodeToViewRange {
   }
 
   public convert(node: ProseMirrorNode): ViewRange {
-    this.conv(node, []);
+    const content = node.content?.content;
+    let length = 0;
+    if (content && ((length = content.length) > 0)) {
+      const path: string[] = [];
+      for (let i = 0; i < length; i++) {
+        const child = content[i];
+        this.conv(child, path);
+      }
+    }
     const view: ViewRange = [this.text, 0, this.slices];
     return view;
   }

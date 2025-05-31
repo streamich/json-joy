@@ -1,10 +1,10 @@
-import {Peritext} from '../peritext';
+import {Block, Inline, LeafBlock, Peritext} from '../peritext';
 import {ExtensionId} from '../constants';
 import {MNEMONIC} from './constants';
 import {ExtNode} from '../../json-crdt/extensions/ExtNode';
 import type {StrNode} from '../../json-crdt/nodes/str/StrNode';
 import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
-import type {ProseMirrorDataNode, ProseMirrorJsonNode} from './types';
+import type {ProseMirrorDataNode, ProseMirrorJsonNode, ProseMirrorJsonTextNode} from './types';
 
 export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
   public readonly txt: Peritext<string>;
@@ -32,19 +32,41 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
   private _view: ProseMirrorJsonNode | null = null;
   private _viewHash: number = -1;
 
+  private toPM(block: Block | LeafBlock): ProseMirrorJsonNode {
+    const content: ProseMirrorJsonTextNode[] = [];
+    const node: ProseMirrorJsonNode = {
+      type: block.tag() + '',
+      content,
+    };
+    if (block instanceof LeafBlock) {
+      for (let iterator = block.texts0(), inline: Inline | undefined; inline = iterator();) {
+        const textNode: ProseMirrorJsonTextNode = {
+          type: 'text',
+          text: inline.text(),
+        };
+        let attrs = inline.attr();
+        for (const key in attrs) {
+          textNode.attrs = attrs;
+          break;
+        }
+        content.push(textNode);
+      }
+    }
+    return node;
+  }
+
   public view(): ProseMirrorJsonNode {
     const {txt, _view} = this;
     const hash = txt.refresh();
     if (_view && hash === this._viewHash) return _view;
-    const nextView: ProseMirrorJsonNode = {
-      type: 'doc',
-      content: [],
-    };
-
-    console.log(txt + '');
-    
+    const content: ProseMirrorJsonNode[] = [];
+    const node: ProseMirrorJsonNode = {type: 'doc', content};
+    const block = txt.blocks.root;
+    const children = block.children;
+    const length = children.length;
+    for (let i = 0; i < length; i++) content.push(this.toPM(children[i]));
     this._viewHash = hash;
-    this._view = nextView;
-    return nextView;
+    this._view = node;
+    return node;
   }
 }
