@@ -17,25 +17,25 @@ export interface ProseMirrorJsonMark {
 export type ProseMirrorAttrs = Record<string, unknown>;
 
 export interface ProseMirrorNode {
-  type: ProseMirrorNodeType;
-  attrs?: ProseMirrorAttrs;
-  content?: ProseMirrorFragment;
-  marks?: ProseMirrorMark[];
+  readonly type: ProseMirrorNodeType;
+  readonly attrs?: ProseMirrorAttrs;
+  readonly content?: ProseMirrorFragment;
+  readonly marks?: readonly ProseMirrorMark[];
 }
 
 export interface ProseMirrorTextNode extends ProseMirrorNode {
-  text: string;
+  readonly text: string;
 }
 
 export interface ProseMirrorNodeType {
-  name: string;
+  readonly name: string;
 }
 
 export interface ProseMirrorFragment {
-  content: (ProseMirrorNode | ProseMirrorTextNode)[];
+  readonly content: readonly (ProseMirrorNode | ProseMirrorTextNode)[];
 }
 
 export interface ProseMirrorMark {
-  type: ProseMirrorNodeType;
-  attrs?: ProseMirrorAttrs;
+  readonly type: ProseMirrorNodeType;
+  readonly attrs?: ProseMirrorAttrs;
 }

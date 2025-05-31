@@ -3,6 +3,10 @@ import {SliceHeaderShift, SliceStacking} from "../peritext/slice/constants";
 import type {ViewRange, ViewSlice} from "../peritext/editor/types";
 import type {ProseMirrorNode, ProseMirrorTextNode} from "./types";
 
+/**
+ * Converts ProseMirror raw nodes to a {@link ViewRange} flat string with
+ * annotation ranges, which is the natural view format for a Peritext model.
+ */
 export class NodeToViewRange {
   static readonly convert = (node: ProseMirrorNode): ViewRange => {
     const builder = new NodeToViewRange();
