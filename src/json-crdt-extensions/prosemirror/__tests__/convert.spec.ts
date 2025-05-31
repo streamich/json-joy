@@ -106,6 +106,46 @@ describe("NodeToViewRange", () => {
         blockquote(p('paragraph 2')), 
       ) as Node;
       const viewRange = NodeToViewRange.convert(node);
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+    });
+
+    test("three <blockquote> with <paragraph> each", () => {
+      const node = doc(
+        blockquote(p('paragraph 1')),
+        blockquote(p('paragraph 2')), 
+        blockquote(p('paragraph 3')), 
+      ) as Node;
+      const viewRange = NodeToViewRange.convert(node);
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+    });
+
+    test("discriminant two levels deep", () => {
+      const node = doc(
+        blockquote(
+          blockquote(p('paragraph 1')),
+          blockquote(p('paragraph 2')), 
+        ),
+        blockquote(
+          blockquote(p('paragraph 1')),
+          blockquote(p('paragraph 2')), 
+          blockquote(p('paragraph 3')), 
+        ), 
+        blockquote(
+          blockquote(p('paragraph 1')),
+          blockquote(p('paragraph 2')),
+        ), 
+      ) as Node;
+      const viewRange = NodeToViewRange.convert(node);
       // console.log(JSON.stringify(node.toJSON(), null, 2));
       // console.log(JSON.stringify(viewRange, null, 2));
       const model = Model.create(ext.prosemirror.new());
