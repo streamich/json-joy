@@ -1,4 +1,4 @@
-import type {PeritextNode, PeritextApi, QuillDeltaNode, QuillDeltaApi} from '../../../json-crdt-extensions';
+import type {PeritextNode, PeritextApi, QuillDeltaNode, QuillDeltaApi, ProseMirrorNode, ProseMirrorApi} from '../../../json-crdt-extensions';
 import type * as types from '../../nodes';
 import type * as nodes from './nodes';
 import type {Path} from '@jsonjoy.com/json-pointer';
@@ -26,7 +26,9 @@ export type JsonNodeApi<N> = N extends types.ConNode<any>
                   ? PeritextApi
                   : N extends QuillDeltaNode
                     ? QuillDeltaApi
-                    : never;
+                    : N extends ProseMirrorNode
+                      ? ProseMirrorApi
+                      : never;
 
 export type ApiOperation = ApiOperationAdd | ApiOperationReplace | ApiOperationMerge | ApiOperationRemove;
 

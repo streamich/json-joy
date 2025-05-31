@@ -17,13 +17,15 @@ describe("NodeToViewRange", () => {
       // console.log(node);
       console.log(node.toJSON());
       console.log(viewRange);
-
-      const model = Model.create(ext.peritext.new(''));
-      const peritext = model.api.in().asExt(ext.peritext);
-      peritext.txt.editor.import(0, viewRange);
-      peritext.txt.refresh();
-      const html = peritext.txt.blocks.toJson();
-      console.log(html);
+      const model = Model.create(s.obj({
+        prose: ext.prosemirror.new(''),
+      }));
+      console.log(model + '');
+      // const prosemirror = model.api.in().asExt(ext.prosemirror);
+      const prosemirror = model.s.prose.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      const view = prosemirror.view();
+      console.log(view);
     });
 
     test("can convert a two-block document", () => {
