@@ -1,3 +1,6 @@
+import type {PeritextDataNode} from "../peritext/types";
+
+export type ProseMirrorDataNode = PeritextDataNode;
 export interface ProseMirrorJsonNode {
   type: string;
   attrs?: Record<string, unknown>;
