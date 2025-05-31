@@ -3,7 +3,7 @@ import { ModelWithExt as Model, ext } from "../../ModelWithExt";
 import { NodeToViewRange } from "../NodeToViewRange";
 import { node1 } from "./fixtures";
 import { Node, Schema } from "prosemirror-model";
-import { doc, blockquote, h1, h2, p, em } from "prosemirror-test-builder";
+import { doc, blockquote, h1, h2, p, em, strong} from "prosemirror-test-builder";
 import { ProseMirrorNode } from "../types";
 
 describe("NodeToViewRange", () => {
@@ -25,6 +25,21 @@ describe("NodeToViewRange", () => {
       const prosemirror = model.s.prose.toExt();
       prosemirror.node.txt.editor.import(0, viewRange);
       const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+    });
+
+    test("single text paragraph with a single inline formatting", () => {
+      const node = doc(p('Text: ', strong('bold'), '!')) as Node;
+      const viewRange = NodeToViewRange.convert(node);
+      // console.log(JSON.stringify(node.toJSON(), null, 2));
+      // console.log(JSON.stringify(viewRange, null, 2));
+      const model = Model.create(ext.prosemirror.new(''));
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      // console.log(prosemirror.node.txt + '');
+      const view = prosemirror.view();
+      // console.log(JSON.stringify(view, null, 2));
       expect(view).toEqual(node.toJSON());
     });
 
