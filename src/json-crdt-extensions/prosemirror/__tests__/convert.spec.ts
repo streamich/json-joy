@@ -2,9 +2,9 @@ import { s } from "../../../json-crdt-patch";
 import { ModelWithExt as Model, ext } from "../../ModelWithExt";
 import { NodeToViewRange } from "../NodeToViewRange";
 import { node1 } from "./fixtures";
-import { Node, Schema } from 'prosemirror-model';
-import {doc, blockquote, h1, h2, p, em} from "prosemirror-test-builder";
-import {ProseMirrorNode} from "../types";
+import { Node, Schema } from "prosemirror-model";
+import { doc, blockquote, h1, h2, p, em } from "prosemirror-test-builder";
+import { ProseMirrorNode } from "../types";
 
 describe("NodeToViewRange", () => {
   describe("convert()", () => {
@@ -13,19 +13,19 @@ describe("NodeToViewRange", () => {
       // console.log(node);
       // console.log(node.toJSON());
       const node = doc(p("hello")) as Node;
-      const viewRange = NodeToViewRange.convert(node);
       // console.log(node);
-      console.log(node.toJSON());
-      console.log(viewRange);
-      const model = Model.create(s.obj({
-        prose: ext.prosemirror.new(''),
-      }));
-      console.log(model + '');
-      // const prosemirror = model.api.in().asExt(ext.prosemirror);
+      const viewRange = NodeToViewRange.convert(node);
+      // console.log(node.toJSON());
+      // console.log(viewRange);
+      const model = Model.create(
+        s.obj({
+          prose: ext.prosemirror.new(""),
+        })
+      );
       const prosemirror = model.s.prose.toExt();
       prosemirror.node.txt.editor.import(0, viewRange);
       const view = prosemirror.view();
-      console.log(view);
+      expect(view).toEqual(node.toJSON());
     });
 
     test("can convert a two-block document", () => {
@@ -45,53 +45,49 @@ describe("NodeToViewRange", () => {
       expect(html).toEqual([
         "",
         null,
+        ["heading", null, "Hello world"],
         [
-          "doc",
+          "blockquote",
           null,
-          ["heading", null, "Hello world"],
           [
-            "blockquote",
+            "bullet_list",
             null,
             [
-              "bullet_list",
+              "list_item",
               null,
               [
-                "list_item",
+                "paragraph",
                 null,
+                "This is a ",
                 [
-                  "paragraph",
-                  null,
-                  "This is a ",
-                  [
-                    "strong",
-                    {
-                      inline: true,
-                    },
-                    "Prose",
-                  ],
-                  [
-                    "strong",
-                    {
-                      inline: true,
-                    },
-                    [
-                      "em",
-                      {
-                        inline: true,
-                      },
-                      "Mirror",
-                    ],
-                  ],
-                  " ",
+                  "strong",
+                  {
+                    inline: true,
+                  },
+                  "Prose",
+                ],
+                [
+                  "strong",
+                  {
+                    inline: true,
+                  },
                   [
                     "em",
                     {
                       inline: true,
                     },
-                    "editor",
+                    "Mirror",
                   ],
-                  " example.",
                 ],
+                " ",
+                [
+                  "em",
+                  {
+                    inline: true,
+                  },
+                  "editor",
+                ],
+                " example.",
               ],
             ],
           ],
