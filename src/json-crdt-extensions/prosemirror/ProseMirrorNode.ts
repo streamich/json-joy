@@ -2,9 +2,10 @@ import {Block, Inline, LeafBlock, Peritext} from '../peritext';
 import {ExtensionId} from '../constants';
 import {MNEMONIC} from './constants';
 import {ExtNode} from '../../json-crdt/extensions/ExtNode';
+import {PersistedSlice} from '../peritext/slice/PersistedSlice';
 import type {StrNode} from '../../json-crdt/nodes/str/StrNode';
 import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
-import type {ProseMirrorDataNode, ProseMirrorJsonNode, ProseMirrorJsonTextNode} from './types';
+import type {ProseMirrorAttrs, ProseMirrorDataNode, ProseMirrorJsonMark, ProseMirrorJsonNode, ProseMirrorJsonTextNode} from './types';
 
 export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
   public readonly txt: Peritext<string>;
@@ -44,10 +45,21 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
           type: 'text',
           text: inline.text(),
         };
-        let attrs = inline.attr();
-        for (const key in attrs) {
-          textNode.attrs = attrs;
-          break;
+        const slices = inline.p1.layers;
+        const length = slices.length;
+        if (length > 0) {
+          const marks: ProseMirrorJsonMark[] = [];
+          for (let i = 0; i < length; i++) {
+            const slice = slices[i];
+            if (slice instanceof PersistedSlice) {
+              const tag = slice.tag() + '';
+              const data = slice.data();
+              const mark: ProseMirrorJsonMark = {type: tag};
+              if (data && typeof data == 'object' && !Array.isArray(data)) mark.attrs = data as ProseMirrorAttrs;
+              marks.push(mark);
+            }
+          }
+          textNode.marks = marks;
         }
         content.push(textNode);
       }

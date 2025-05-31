@@ -6,6 +6,12 @@ import type {ProseMirrorNode, ProseMirrorTextNode} from "./types";
 /**
  * Converts ProseMirror raw nodes to a {@link ViewRange} flat string with
  * annotation ranges, which is the natural view format for a Peritext model.
+ * 
+ * Usage:
+ * 
+ * ```typescript
+ * NodeToViewRange.convert(node);
+ * ```
  */
 export class NodeToViewRange {
   static readonly convert = (node: ProseMirrorNode): ViewRange =>
