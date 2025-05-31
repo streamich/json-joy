@@ -1,7 +1,8 @@
 import {Anchor} from "../peritext/rga/constants";
 import {SliceHeaderShift, SliceStacking} from "../peritext/slice/constants";
 import type {ViewRange, ViewSlice} from "../peritext/editor/types";
-import type {ProseMirrorNode, ProseMirrorTextNode} from "./types";
+import type {ProseMirrorFragment, ProseMirrorNode, ProseMirrorTextNode} from "./types";
+import type {SliceTypeStep, SliceTypeSteps} from "../peritext";
 
 /**
  * Converts ProseMirror raw nodes to a {@link ViewRange} flat string with
@@ -20,7 +21,7 @@ export class NodeToViewRange {
   private text = '';
   private slices: ViewSlice[] = [];
 
-  private conv(node: ProseMirrorNode, path: string[]): void {
+  private conv(node: ProseMirrorNode, path: SliceTypeSteps, nodeDiscriminator: number): void {
     const text = this.text;
     const start = text.length;
     let inlineText: string = '';
@@ -32,21 +33,19 @@ export class NodeToViewRange {
       let length = 0;
       if (content && ((length = content.length) > 0)) {
         const isFirstChildInline = content[0].type.name === 'text';
+        const step: SliceTypeStep = nodeDiscriminator ? [type, nodeDiscriminator] : type;
         if (isFirstChildInline) {
           this.text += '\n';
           const header =
             (SliceStacking.Marker << SliceHeaderShift.Stacking) +
             (Anchor.Before << SliceHeaderShift.X1Anchor) +
             (Anchor.Before << SliceHeaderShift.X2Anchor);
-          const slice: ViewSlice = [header, start, start, [...path, type]];
+          const slice: ViewSlice = [header, start, start, [...path, step]];
           const data = node.attrs?.data;
           if (data) slice.push(data);
           this.slices.push(slice);
         }
-        for (let i = 0; i < length; i++) {
-          const child = content[i];
-          this.conv(child, [...path, type]);
-        }
+        this.convContent([...path, step], content);
       }
     }
     const marks = node.marks;
@@ -71,16 +70,23 @@ export class NodeToViewRange {
     }
   }
 
+  private convContent(path: SliceTypeSteps, content: ProseMirrorFragment['content']): void {
+    let prevTag: string = '';
+    let discriminator: number = 0;
+    const length = content.length;
+    for (let i = 0; i < length; i++) {
+      const child = content[i];
+      const tag = child.type.name;
+      discriminator = tag === prevTag ? discriminator + 1 : 0;
+      this.conv(child, path, discriminator);
+      prevTag = tag;
+    }
+  }
+
   public convert(node: ProseMirrorNode): ViewRange {
     const content = node.content?.content;
     let length = 0;
-    if (content && ((length = content.length) > 0)) {
-      const path: string[] = [];
-      for (let i = 0; i < length; i++) {
-        const child = content[i];
-        this.conv(child, path);
-      }
-    }
+    if (content && ((length = content.length) > 0)) this.convContent([], content);
     const view: ViewRange = [this.text, 0, this.slices];
     return view;
   }

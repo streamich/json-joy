@@ -34,7 +34,7 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
   private _viewHash: number = -1;
 
   private toPM(block: Block | LeafBlock): ProseMirrorJsonNode {
-    const content: ProseMirrorJsonTextNode[] = [];
+    const content: ProseMirrorJsonNode['content'] = [];
     const node: ProseMirrorJsonNode = {
       type: block.tag() + '',
       content,
@@ -65,6 +65,10 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
         }
         content.push(textNode);
       }
+    } else {
+      const children = block.children;
+      const length = children.length;
+      for (let i = 0; i < length; i++) content.push(this.toPM(children[i]));  
     }
     return node;
   }
