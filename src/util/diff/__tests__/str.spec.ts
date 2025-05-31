@@ -1,4 +1,4 @@
-import {PATCH_OP_TYPE, type Patch, diff, diffEdit} from '../str';
+import {PATCH_OP_TYPE, type Patch, diff, diffEdit, overlap} from '../str';
 import {assertPatch} from './util';
 
 describe('diff()', () => {
@@ -219,5 +219,16 @@ describe('diffEdit()', () => {
     assertDiffEdit('Hello world', '!', '');
     assertDiffEdit('aaa', 'bbb', 'ccc');
     assertDiffEdit('1', '2', '3');
+  });
+});
+
+describe('overlap()', () => {
+  test('can compute various overlaps', () => {
+    expect(overlap('abc', 'xyz')).toEqual(0);
+    expect(overlap('abc', 'cxyz')).toEqual(1);
+    expect(overlap('abc', 'xyzc')).toEqual(0);
+    expect(overlap('abc', 'xyza')).toEqual(0);
+    expect(overlap('Have some CoCo and CoCo', 'CoCo and CoCo is here.')).toEqual('CoCo and CoCo'.length);
+    expect(overlap('Fire at Will', 'William Riker is number one')).toEqual('Will'.length);
   });
 });

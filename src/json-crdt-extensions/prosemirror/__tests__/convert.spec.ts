@@ -1,6 +1,5 @@
 import {s} from '../../../json-crdt-patch';
 import {ModelWithExt} from '../../ModelWithExt';
-import {toHtml} from '../../peritext/transfer/export-html';
 import {NodeToViewRange} from '../convert';
 import {node1} from "./fixtures";
 
