@@ -3,7 +3,7 @@ import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import AttributeMap from './AttributeMap';
 import Op from './Op';
 import OpIterator from './OpIterator';
-import diff from 'fast-diff';
+import * as str from '../../../util/diff/str';
 
 const NULL_CHARACTER = String.fromCharCode(0); // Placeholder char for embed in diff()
 
@@ -336,7 +336,7 @@ class Delta {
     return delta;
   }
 
-  diff(other: Delta, cursor?: number | diff.CursorInfo): Delta {
+  diff(other: Delta, cursor: number = 0): Delta {
     if (this.ops === other.ops) {
       return new Delta();
     }
@@ -352,24 +352,26 @@ class Delta {
         .join('');
     });
     const retDelta = new Delta();
-    const diffResult = diff(strings[0], strings[1], cursor, true);
+    const patch = str.diffEdit(strings[0], strings[1], cursor);
+    str.cleanupPatch(patch);
+    console.log(patch);
     const thisIter = new OpIterator(this.ops);
     const otherIter = new OpIterator(other.ops);
-    diffResult.forEach((component: diff.Diff) => {
+    patch.forEach((component: str.PatchOperation) => {
       let length = component[1].length;
       while (length > 0) {
         let opLength = 0;
         switch (component[0]) {
-          case diff.INSERT:
+          case str.PATCH_OP_TYPE.INS:
             opLength = Math.min(otherIter.peekLength(), length);
             retDelta.push(otherIter.next(opLength));
             break;
-          case diff.DELETE:
+          case str.PATCH_OP_TYPE.DEL:
             opLength = Math.min(length, thisIter.peekLength());
             thisIter.next(opLength);
             retDelta.delete(opLength);
             break;
-          case diff.EQUAL:
+          case str.PATCH_OP_TYPE.EQL:
             opLength = Math.min(
               thisIter.peekLength(),
               otherIter.peekLength(),
@@ -390,6 +392,7 @@ class Delta {
         length -= opLength;
       }
     });
+    console.log(retDelta.ops);
     return retDelta.chop();
   }
 

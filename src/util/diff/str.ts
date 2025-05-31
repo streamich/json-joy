@@ -407,6 +407,40 @@ export const sfx = (txt1: string, txt2: string): number => {
 };
 
 /**
+ * Determine if the suffix of one string is the prefix of another.
+ * 
+ * @see http://neil.fraser.name/news/2010/11/04/
+ *
+ * @param str1 First string.
+ * @param str2 Second string.
+ * @return {number} The number of characters common to the end of the first
+ *     string and the start of the second string.
+ */
+export const overlap = (str1: string, str2: string): number => {
+  const str1Len = str1.length;
+  const str2Len = str2.length;
+  if (str1Len === 0 || str2Len === 0) return 0;
+  let minLen = str1Len;
+  if (str1Len > str2Len) {
+    minLen = str2Len;
+    str1 = str1.substring(str1Len - str2Len);
+  } else if (str1Len < str2Len) str2 = str2.substring(0, str1Len);
+  if (str1 === str2) return minLen;
+  let best = 0;
+  let length = 1;
+  while (true) {
+    const pattern = str1.substring(minLen - length);
+    const found = str2.indexOf(pattern);
+    if (found == -1) return best;
+    length += found;
+    if (found === 0 || str1.substring(minLen - length) == str2.substring(0, length)) {
+      best = length;
+      length++;
+    }
+  }
+};
+
+/**
  * Find the differences between two texts. Simplifies the problem by stripping
  * any common prefix or suffix off the texts before diffing.
  *
