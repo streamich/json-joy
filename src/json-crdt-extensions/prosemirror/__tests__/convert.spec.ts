@@ -9,14 +9,8 @@ import { ProseMirrorNode } from "../types";
 describe("NodeToViewRange", () => {
   describe("convert()", () => {
     test("single text paragraph", () => {
-      // const node = doc(p("a", em("b")), p("hello"), blockquote(h1("bye")));
-      // console.log(node);
-      // console.log(node.toJSON());
       const node = doc(p("hello")) as Node;
-      // console.log(node);
       const viewRange = NodeToViewRange.convert(node);
-      // console.log(node.toJSON());
-      // console.log(viewRange);
       const model = Model.create(
         s.obj({
           prose: ext.prosemirror.new(""),
@@ -31,15 +25,26 @@ describe("NodeToViewRange", () => {
     test("single text paragraph with a single inline formatting", () => {
       const node = doc(p('Text: ', strong('bold'), '!')) as Node;
       const viewRange = NodeToViewRange.convert(node);
-      // console.log(JSON.stringify(node.toJSON(), null, 2));
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+    });
+
+    test.only("single text paragraph wrapped in inline formatting", () => {
+      const node = doc(p(strong('bold'))) as Node;
+      const viewRange = NodeToViewRange.convert(node);
+      console.log(JSON.stringify(node.toJSON(), null, 2));
       // console.log(JSON.stringify(viewRange, null, 2));
-      const model = Model.create(ext.prosemirror.new(''));
+      const model = Model.create(ext.prosemirror.new());
       const prosemirror = model.s.toExt();
       prosemirror.node.txt.editor.import(0, viewRange);
       prosemirror.node.txt.refresh();
       // console.log(prosemirror.node.txt + '');
       const view = prosemirror.view();
-      // console.log(JSON.stringify(view, null, 2));
+      console.log(JSON.stringify(view, null, 2));
       expect(view).toEqual(node.toJSON());
     });
 
