@@ -41,9 +41,11 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
     };
     if (block instanceof LeafBlock) {
       for (let iterator = block.texts0(), inline: Inline | undefined; inline = iterator();) {
+        const text = inline.text();
+        if (!text) continue;
         const textNode: ProseMirrorJsonTextNode = {
           type: 'text',
-          text: inline.text(),
+          text,
         };
         const slices = inline.p1.layers;
         const length = slices.length;
