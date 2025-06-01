@@ -38,15 +38,15 @@ export class NodeToViewRange {
       if (doEmitSplitMarker) {
         this.text += '\n';
         const header =
-        (SliceStacking.Marker << SliceHeaderShift.Stacking) +
-        (Anchor.Before << SliceHeaderShift.X1Anchor) +
-        (Anchor.Before << SliceHeaderShift.X2Anchor);
+          (SliceStacking.Marker << SliceHeaderShift.Stacking) +
+          (Anchor.Before << SliceHeaderShift.X1Anchor) +
+          (Anchor.Before << SliceHeaderShift.X2Anchor);
         const slice: ViewSlice = [header, start, start, [...path, step]];
         const data = node.attrs?.data;
         if (data) slice.push(data);
         this.slices.push(slice);
       }
-      if (length > 0) this.convContent([...path, step], content!);
+      if (length > 0) this.cont([...path, step], content!);
     }
     const marks = node.marks;
     let length = 0;
@@ -70,7 +70,7 @@ export class NodeToViewRange {
     }
   }
 
-  private convContent(path: SliceTypeSteps, content: ProseMirrorFragment['content']): void {
+  private cont(path: SliceTypeSteps, content: ProseMirrorFragment['content']): void {
     let prevTag: string = '';
     let discriminator: number = 0;
     const length = content.length;
@@ -86,7 +86,7 @@ export class NodeToViewRange {
   public convert(node: ProseMirrorNode): ViewRange {
     const content = node.content?.content;
     let length = 0;
-    if (content && ((length = content.length) > 0)) this.convContent([], content);
+    if (content && ((length = content.length) > 0)) this.cont([], content);
     const view: ViewRange = [this.text, 0, this.slices];
     return view;
   }
