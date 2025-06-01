@@ -30,23 +30,23 @@ export class NodeToViewRange {
     } else {
       const type = node.type.name;
       const content = node.content?.content;
-      let length = 0;
-      if (content && ((length = content.length) > 0)) {
-        const isFirstChildInline = content[0].type.name === 'text';
-        const step: SliceTypeStep = nodeDiscriminator ? [type, nodeDiscriminator] : type;
-        if (isFirstChildInline) {
-          this.text += '\n';
-          const header =
-            (SliceStacking.Marker << SliceHeaderShift.Stacking) +
-            (Anchor.Before << SliceHeaderShift.X1Anchor) +
-            (Anchor.Before << SliceHeaderShift.X2Anchor);
-          const slice: ViewSlice = [header, start, start, [...path, step]];
-          const data = node.attrs?.data;
-          if (data) slice.push(data);
-          this.slices.push(slice);
-        }
-        this.convContent([...path, step], content);
+      const step: SliceTypeStep = nodeDiscriminator ? [type, nodeDiscriminator] : type;
+      const length = content?.length ?? 0;
+      const hasNoChildren = length === 0;
+      const isFirstChildInline = content?.[0]?.type.name === 'text';
+      const doEmitSplitMarker = hasNoChildren || isFirstChildInline;
+      if (doEmitSplitMarker) {
+        this.text += '\n';
+        const header =
+        (SliceStacking.Marker << SliceHeaderShift.Stacking) +
+        (Anchor.Before << SliceHeaderShift.X1Anchor) +
+        (Anchor.Before << SliceHeaderShift.X2Anchor);
+        const slice: ViewSlice = [header, start, start, [...path, step]];
+        const data = node.attrs?.data;
+        if (data) slice.push(data);
+        this.slices.push(slice);
       }
+      if (length > 0) this.convContent([...path, step], content!);
     }
     const marks = node.marks;
     let length = 0;

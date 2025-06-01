@@ -3,8 +3,7 @@ import { ModelWithExt as Model, ext } from "../../ModelWithExt";
 import { NodeToViewRange } from "../NodeToViewRange";
 import { node1 } from "./fixtures";
 import { Node, Schema } from "prosemirror-model";
-import { doc, blockquote, h1, h2, p, em, strong} from "prosemirror-test-builder";
-import { ProseMirrorNode } from "../types";
+import { schema, doc, blockquote, p, em, strong, eq} from "prosemirror-test-builder";
 
 describe("NodeToViewRange", () => {
   describe("convert()", () => {
@@ -127,6 +126,21 @@ describe("NodeToViewRange", () => {
       prosemirror.node.txt.refresh();
       const view = prosemirror.view();
       expect(view).toEqual(node.toJSON());
+      const node2 = Node.fromJSON(schema, view);
+      expect(eq(node, node2)).toBe(true);
+    });
+
+    test("empty paragraphs", () => {
+      const node = doc(p(), p()) as Node;
+      const viewRange = NodeToViewRange.convert(node);
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+      const node2 = Node.fromJSON(schema, view);
+      expect(eq(node, node2)).toBe(true);
     });
 
     test("discriminant two levels deep", () => {
