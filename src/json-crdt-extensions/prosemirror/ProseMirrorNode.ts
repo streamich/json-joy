@@ -35,10 +35,7 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
 
   private toPM(block: Block | LeafBlock): ProseMirrorJsonNode {
     const content: ProseMirrorJsonNode['content'] = [];
-    const node: ProseMirrorJsonNode = {
-      type: block.tag() + '',
-      content,
-    };
+    const node: ProseMirrorJsonNode = {type: block.tag() + ''};
     if (block instanceof LeafBlock) {
       for (let iterator = block.texts0(), inline: Inline | undefined; inline = iterator();) {
         const text = inline.text();
@@ -70,6 +67,7 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
       const length = children.length;
       for (let i = 0; i < length; i++) content.push(this.toPM(children[i]));  
     }
+    if (content.length) node.content = content;
     return node;
   }
 
