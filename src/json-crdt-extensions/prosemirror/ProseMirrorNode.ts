@@ -68,6 +68,13 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
       for (let i = 0; i < length; i++) content.push(this.toPM(children[i]));  
     }
     if (content.length) node.content = content;
+    const data = block.marker?.data();
+    if (data && typeof data === 'object') {
+      for (const _ in data) {
+        node.attrs = data as ProseMirrorAttrs;
+        break;
+      }
+    }
     return node;
   }
 

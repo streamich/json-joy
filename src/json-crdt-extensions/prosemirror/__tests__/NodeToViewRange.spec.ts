@@ -1,9 +1,8 @@
 import { s } from "../../../json-crdt-patch";
 import { ModelWithExt as Model, ext } from "../../ModelWithExt";
 import { NodeToViewRange } from "../NodeToViewRange";
-import { node1 } from "./fixtures";
-import { Node, Schema } from "prosemirror-model";
-import { schema, doc, blockquote, p, em, strong, eq} from "prosemirror-test-builder";
+import { Node } from "prosemirror-model";
+import { schema, doc, blockquote, p, em, strong, eq, h2, h1} from "prosemirror-test-builder";
 
 describe("NodeToViewRange", () => {
   describe("convert()", () => {
@@ -143,6 +142,22 @@ describe("NodeToViewRange", () => {
       expect(eq(node, node2)).toBe(true);
     });
 
+    test("block element <h2> with attributes", () => {
+      const node = doc(h2('hello world')) as Node;
+      const viewRange = NodeToViewRange.convert(node);
+      // console.log(JSON.stringify(node.toJSON(), null, 2));
+      // console.log(JSON.stringify(viewRange, null, 2));
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      const view = prosemirror.view();
+      // console.log(JSON.stringify(view, null, 2));
+      expect(view).toEqual(node.toJSON());
+      const node2 = Node.fromJSON(schema, view);
+      expect(eq(node, node2)).toBe(true);
+    });
+
     test("discriminant two levels deep", () => {
       const node = doc(
         blockquote(
@@ -173,74 +188,26 @@ describe("NodeToViewRange", () => {
     });
 
     test("can convert a two-block document", () => {
-      const viewRange = NodeToViewRange.convert(node1);
-      // console.log(JSON.stringify(viewRange, null, 2));
-      const model = Model.create(
-        s.obj({
-          text: Model.ext.peritext.new(""),
-        })
-      );
-      // console.log(model + '');
-      const peritext = model.api.vec(["text"]).asExt(Model.ext.peritext);
-      peritext.txt.editor.import(0, viewRange);
-      peritext.txt.refresh();
-      const html = peritext.txt.blocks.toJson();
-      // console.log(JSON.stringify(html, null, 2));
-      expect(html).toEqual([
-        "",
-        null,
-        ["heading", null, "Hello world"],
-        [
-          "blockquote",
-          null,
-          [
-            "bullet_list",
-            null,
-            [
-              "list_item",
-              null,
-              [
-                "paragraph",
-                null,
-                "This is a ",
-                [
-                  "strong",
-                  {
-                    inline: true,
-                  },
-                  "Prose",
-                ],
-                [
-                  "strong",
-                  {
-                    inline: true,
-                  },
-                  [
-                    "em",
-                    {
-                      inline: true,
-                    },
-                    "Mirror",
-                  ],
-                ],
-                " ",
-                [
-                  "em",
-                  {
-                    inline: true,
-                  },
-                  "editor",
-                ],
-                " example.",
-              ],
-            ],
-          ],
-        ],
-      ]);
-      // console.log(peritext + '');
-      const viewRange2 = peritext.txt.editor.export(peritext.txt.rangeAll()!);
-      // console.log(JSON.stringify(viewRange2, null, 2));
-      expect(viewRange2).toEqual(viewRange);
+      const node = doc(
+        h1("Hello world"),
+        blockquote(
+          p(
+            "This is a ",
+            strong("Prose"),
+            strong(em("Mirror")),
+            " editor example.",
+          )
+        )
+      ) as Node;
+      const viewRange = NodeToViewRange.convert(node);
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+      const node2 = Node.fromJSON(schema, view);
+      expect(eq(node, node2)).toBe(true);
     });
   });
 });

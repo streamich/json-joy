@@ -42,7 +42,7 @@ export class NodeToViewRange {
           (Anchor.Before << SliceHeaderShift.X1Anchor) +
           (Anchor.Before << SliceHeaderShift.X2Anchor);
         const slice: ViewSlice = [header, start, start, [...path, step]];
-        const data = node.attrs?.data;
+        const data = node.attrs;
         if (data) slice.push(data);
         this.slices.push(slice);
       }

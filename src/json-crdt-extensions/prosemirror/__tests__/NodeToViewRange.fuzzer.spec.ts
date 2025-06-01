@@ -1,11 +1,9 @@
 import { s } from "../../../json-crdt-patch";
 import { ModelWithExt as Model, ext } from "../../ModelWithExt";
 import { NodeToViewRange } from "../NodeToViewRange";
-import { node1 } from "./fixtures";
-import { Node, Schema } from "prosemirror-model";
+import { Node } from "prosemirror-model";
 import { Fuzzer } from '@jsonjoy.com/util/lib/Fuzzer';
-import { schema, doc, blockquote, ul, ol, li, p, pre, h1, h2, h3, em, strong, MarkBuilder, a} from "prosemirror-test-builder";
-import {block} from "very-small-parser/lib/markdown";
+import { doc, blockquote, ul, ol, li, p, pre, h1, h2, h3, em, strong, MarkBuilder, a} from "prosemirror-test-builder";
 import {RandomJson} from "@jsonjoy.com/util/lib/json-random";
 
 class NodeToViewRangeFuzzer {
