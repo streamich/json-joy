@@ -119,7 +119,7 @@ export namespace nodes {
    * s.vec(s.str(''), s.str('hello'));
    * ```
    */
-  export class vec<T extends NodeBuilder[]> extends NodeBuilder {
+  export class vec<T extends (NodeBuilder | undefined)[]> extends NodeBuilder {
     public readonly type = 'vec';
 
     constructor(public readonly value: T) {
@@ -130,6 +130,7 @@ export namespace nodes {
           const elementPairs: [index: number, value: ITimestampStruct][] = [];
           for (let i = 0; i < length; i++) {
             const element = value[i];
+            if (!element) continue;
             const elementId = element.build(builder);
             elementPairs.push([i, elementId]);
           }
