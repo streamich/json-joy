@@ -3,6 +3,7 @@ import { ModelWithExt as Model, ext } from "../../ModelWithExt";
 import { NodeToViewRange } from "../NodeToViewRange";
 import { Node } from "prosemirror-model";
 import { schema, doc, blockquote, p, em, strong, eq, h2, h1} from "prosemirror-test-builder";
+import {fuzzer1} from "./fixtures";
 
 describe("NodeToViewRange", () => {
   describe("convert()", () => {
@@ -205,6 +206,22 @@ describe("NodeToViewRange", () => {
       prosemirror.node.txt.editor.import(0, viewRange);
       prosemirror.node.txt.refresh();
       const view = prosemirror.view();
+      expect(view).toEqual(node.toJSON());
+      const node2 = Node.fromJSON(schema, view);
+      expect(eq(node, node2)).toBe(true);
+    });
+
+    test.skip("fuzzer 1", () => {
+      const node = fuzzer1;
+      const viewRange = NodeToViewRange.convert(node);
+      console.log(JSON.stringify(viewRange, null, 2));
+      const model = Model.create(ext.prosemirror.new());
+      const prosemirror = model.s.toExt();
+      prosemirror.node.txt.editor.import(0, viewRange);
+      prosemirror.node.txt.refresh();
+      console.log(prosemirror.node.txt + '');
+      const view = prosemirror.view();
+      console.log(JSON.stringify(view, null, 2));
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
       expect(eq(node, node2)).toBe(true);
