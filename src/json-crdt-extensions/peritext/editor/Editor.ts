@@ -897,7 +897,6 @@ export class Editor<T = string> implements Printable {
   public setStartMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): MarkerSlice<T> {
     const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
     after.refAfter();
-    if (Array.isArray(type) && type.length === 1) type = type[0];
     return slices.slices.insMarkerAfter(after.id, type, data);
   }
 

@@ -35,7 +35,7 @@ export const updateBin = (state: number, bin: Uint8Array): number => {
   return state;
 };
 
-export const updateJson = (state: number, json: PackValue): number => {
+export const updateJson = (state: number, json: unknown): number => {
   switch (typeof json) {
     case 'number':
       return updateNum(state, json);

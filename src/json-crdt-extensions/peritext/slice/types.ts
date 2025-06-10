@@ -2,7 +2,7 @@ import type {Range} from '../rga/Range';
 import type {Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceStacking, SliceTypeCon} from './constants';
-import type {nodes} from '../../../json-crdt-patch';
+import type {NodeBuilder, nodes} from '../../../json-crdt-patch';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
 import type {Anchor} from '../rga/constants';
@@ -41,9 +41,9 @@ import type {Anchor} from '../rga/constants';
  * [['<blockquote>', 1], '<p>']
  * ```
  */
-export type SliceType = SliceTypeStep | SliceTypeSteps;
+export type SliceType = TypeTag | SliceTypeSteps;
 export type SliceTypeSteps = SliceTypeStep[];
-export type SliceTypeStep = string | number | [tag: string | number, discriminant: number];
+export type SliceTypeStep = TypeTag | [tag: TypeTag, discriminant: number, data?: Record<string, unknown>];
 
 /**
  * Tag is number or a string, the last type element if type is a list. Tag
@@ -64,28 +64,39 @@ export type SliceSchema = nodes.vec<
      * slice as well as anchor {@link Anchor} points of the x1 and x2 points.
      */
     header: nodes.con<number>,
+
     /**
      * ID of the start {@link Point} of the slice.
      */
     x1: nodes.con<ITimestampStruct>,
+
     /**
      * ID of the end {@link Point} of the slice, if 0 then it is equal to x1.
      */
     x2: nodes.con<ITimestampStruct | 0>,
+
     /**
      * App specific type of the slice. For slices with "Marker" stacking
      * behavior, this is a path of block nesting. For other slices, it
      * specifies inline formatting, such as bold, italic, etc.; the value has
      * to be a primitive number or a string.
      */
-    type: nodes.con<SliceType>,
+    // type: nodes.con<SliceType>,
+    type: nodes.con<TypeTag> | nodes.arr<
+      nodes.con<TypeTag> |
+      nodes.vec<[
+        tag: nodes.con<TypeTag>,
+        discriminant: nodes.con<number>,
+        data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
+        {}>,
+      ]>
+    >,
+
     /**
-     * Reference to additional metadata about the slice, usually an object. If
-     * data is not set, it will default to `1`. For "Erase" stacking behavior,
-     * data should not be specified.
-     *
-     * In reality this `vec` term can be of any type, it can even be missing
-     * entirely. It is typed here as a placeholder for the actual data type.
+     * Reference to additional metadata about the slice, usually an object.
+     * Normally used for inline formatting, block formatting attaches data to
+     * specific block tags in the steps of the `type` field. This field is
+     * optional.
      */
     data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
     {}>,
