@@ -777,7 +777,7 @@ export class Editor<T = string> implements Printable {
    * @param type The type of the marker.
    * @returns The inserted marker slice.
    */
-  public insStartMarker(type: SliceType): MarkerSlice<T> {
+  public insStartMarker(type: SliceTypeSteps): MarkerSlice<T> {
     const txt = this.txt;
     const start = txt.pointStart() ?? txt.pointAbsStart();
     start.refAfter();
@@ -794,7 +794,7 @@ export class Editor<T = string> implements Printable {
    * @param type The new block type.
    * @returns The marker slice at the point, or a new marker slice if there is none.
    */
-  public setBlockType(point: Point<T>, type: SliceType): MarkerSlice<T> {
+  public setBlockType(point: Point<T>, type: SliceTypeSteps): MarkerSlice<T> {
     const marker = this.getMarker(point);
     if (marker) {
       marker.update({type});
@@ -894,7 +894,7 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public setStartMarker(type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): MarkerSlice<T> {
+  public setStartMarker(type: SliceTypeSteps, data?: unknown, slices: EditorSlices<T> = this.saved): MarkerSlice<T> {
     const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
     after.refAfter();
     return slices.slices.insMarkerAfter(after.id, type, data);
@@ -902,7 +902,7 @@ export class Editor<T = string> implements Printable {
 
   public tglMarkerAt(
     point: Point<T>,
-    type: SliceType,
+    type: SliceTypeSteps,
     data?: unknown,
     slices: EditorSlices<T> = this.saved,
     def: SliceTypeStep = SliceTypeCon.p,
@@ -911,21 +911,19 @@ export class Editor<T = string> implements Printable {
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {
       const marker = markerPoint.marker;
-      const tag = marker.tag();
-      if (!Array.isArray(type)) type = [type];
-      const typeTag = type[type.length - 1];
-      if (tag === typeTag) type = [...type.slice(0, -1), def];
-      if (Array.isArray(type) && type.length === 1) type = type[0];
+      const markerTag = marker.tag();
+      const tagStep = type[type.length - 1];
+      const tag = Array.isArray(tagStep) ? tagStep[0] : tagStep;
+      if (markerTag === tag) type = [...type.slice(0, -1), def];
       marker.update({type});
     } else this.setStartMarker(type, data, slices);
   }
 
-  public updMarkerAt(point: Point<T>, type: SliceType, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+  public updMarkerAt(point: Point<T>, type: SliceTypeSteps, data?: unknown, slices: EditorSlices<T> = this.saved): void {
     const overlay = this.txt.overlay;
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {
       const marker = markerPoint.marker;
-      if (Array.isArray(type) && type.length === 1) type = type[0];
       marker.update({type});
     } else this.setStartMarker(type, data, slices);
   }
@@ -938,7 +936,7 @@ export class Editor<T = string> implements Printable {
    * @param data Custom data of the slice.
    */
   public tglMarker(
-    type: SliceType,
+    type: SliceTypeSteps,
     data?: unknown,
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
     slices: EditorSlices<T> = this.saved,
@@ -956,7 +954,7 @@ export class Editor<T = string> implements Printable {
    *     of the document.
    */
   public updMarker(
-    type: SliceType,
+    type: SliceTypeSteps,
     data?: unknown,
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
     slices: EditorSlices<T> = this.saved,
@@ -1102,7 +1100,7 @@ export class Editor<T = string> implements Printable {
         const [, , , type, data] = split;
         const after = txt.pointAt(curr);
         after.refAfter();
-        txt.savedSlices.insMarkerAfter(after.id, type, data);
+        txt.savedSlices.insMarkerAfter(after.id, type as SliceTypeSteps, data);
         curr += 1;
       }
     }

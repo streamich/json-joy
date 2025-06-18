@@ -1,7 +1,7 @@
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
-import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
+import {CursorAnchor, SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
@@ -257,12 +257,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       }
       case 'tog': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.tglMarker(type, data, selection);
+        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
+        editor.tglMarker(steps, data, selection);
         break;
       }
       case 'upd': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.updMarker(type, data, selection);
+        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
+        editor.updMarker(steps, data, selection);
         break;
       }
       case 'del': {

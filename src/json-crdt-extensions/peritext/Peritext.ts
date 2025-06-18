@@ -19,7 +19,7 @@ import {updateRga} from '../../json-crdt/hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MarkerSlice} from './slice/MarkerSlice';
-import type {SliceSchema, SliceType} from './slice/types';
+import type {SliceSchema, SliceTypeSteps} from './slice/types';
 import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
 import type {AbstractRga} from '../../json-crdt/nodes/rga';
 import type {ChunkSlice} from './util/ChunkSlice';
@@ -312,7 +312,7 @@ export class Peritext<T = string> implements Printable, Stateful {
   /** @deprecated Use the method in `Editor` and `Cursor` instead. */
   public insMarker(
     after: ITimestampStruct,
-    type: SliceType,
+    type: SliceTypeSteps,
     data?: unknown,
     char: string = Chars.BlockSplitSentinel,
   ): MarkerSlice<T> {

@@ -70,6 +70,7 @@ export class EditorSlices<T = string> {
       editor.collapseCursor(range);
       const after = range.start.clone();
       after.refAfter();
+      type = Array.isArray(type) ? type : [type];
       const marker = slices.insMarkerAfter(after.id, type, data, separator);
       return marker;
     });

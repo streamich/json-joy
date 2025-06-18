@@ -10,7 +10,7 @@ import {VecNode} from '../../../json-crdt/nodes';
 import {Chars} from '../constants';
 import {Anchor} from '../rga/constants';
 import type {Range} from '../rga/Range';
-import type {Slice, SliceType} from './types';
+import type {Slice, SliceType, SliceTypeSteps} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -80,13 +80,13 @@ export class Slices<T = string> implements Stateful, Printable {
     return slice;
   }
 
-  public insMarker(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): MarkerSlice<T> {
+  public insMarker(range: Range<T>, type: SliceTypeSteps, data?: unknown | ITimestampStruct): MarkerSlice<T> {
     return this.ins(range, SliceStacking.Marker, type, data) as MarkerSlice<T>;
   }
 
   public insMarkerAfter(
     after: ITimestampStruct,
-    type: SliceType,
+    type: SliceTypeSteps,
     data?: unknown,
     separator: string = Chars.BlockSplitSentinel,
   ): MarkerSlice<T> {
