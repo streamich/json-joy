@@ -1,6 +1,6 @@
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorPosition, EditorSelection} from '../../../json-crdt-extensions/peritext/editor/types';
-import type {SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/peritext/slice/types';
+import type {Slice, SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/peritext/slice/types';
 import type {Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
@@ -132,6 +132,13 @@ export type SelectionMoveInstruction = [
 export interface RangeEventDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
 
 /**
+ * Specifies the concrete slice to be used in the event.
+ */
+export interface SliceEventPart {
+  slice?: Slice;
+}
+
+/**
  * Event dispatched to insert text into the document.
  */
 export interface InsertDetail extends RangeEventDetail {
@@ -260,7 +267,7 @@ export interface CursorDetail extends RangeEventDetail {
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface FormatDetail extends RangeEventDetail {
+export interface FormatDetail extends RangeEventDetail, SliceEventPart {
   /**
    * The action to perform.
    *
