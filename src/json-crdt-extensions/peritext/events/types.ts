@@ -1,9 +1,10 @@
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorPosition, EditorSelection} from '../../../json-crdt-extensions/peritext/editor/types';
-import type {Slice, SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/peritext/slice/types';
+import type {SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/peritext/slice/types';
 import type {Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
+import type { PersistedSlice } from '../slice/PersistedSlice';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -115,6 +116,13 @@ export type SelectionMoveInstruction = [
 ];
 
 /**
+ * Specifies the concrete slice to be used 
+ */
+export interface SliceDetailPart {
+  slice?: PersistedSlice;
+}
+
+/**
  * The {@link RangeEventDetail} base interface is used by events
  * which apply change to a range (selection) of text in the document. Usually,
  * the events will apply changes to all ranges in the selection, some event may
@@ -130,13 +138,6 @@ export type SelectionMoveInstruction = [
  * operations to be applied to each range in the selection set.
  */
 export interface RangeEventDetail extends SelectionDetailPart, SelectionMoveDetailPart {}
-
-/**
- * Specifies the concrete slice to be used in the event.
- */
-export interface SliceEventPart {
-  slice?: Slice;
-}
 
 /**
  * Event dispatched to insert text into the document.
@@ -267,7 +268,7 @@ export interface CursorDetail extends RangeEventDetail {
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface FormatDetail extends RangeEventDetail, SliceEventPart {
+export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
   /**
    * The action to perform.
    *
