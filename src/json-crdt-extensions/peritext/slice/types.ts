@@ -16,13 +16,17 @@ import type {Anchor} from '../rga/constants';
  * ```ts
  * 'bold'
  * '<b>'
+ * 'p'
+ * '<p>'
  * ['paragraph']
+ * ['<p>']
  * ```
  *
  * Slice types can specify block nesting:
  *
  * ```ts
  * ['blockquote', 'paragraph']
+ * ['<blockquote>', '<p>']
  * ['ul', 'li', 'code']
  * ```
  *
@@ -39,6 +43,17 @@ import type {Anchor} from '../rga/constants';
  * ```ts
  * [['<blockquote>', 0], '<p>']
  * [['<blockquote>', 1], '<p>']
+ * ```
+ * 
+ * Each block nesting level can have a custom data object:
+ * 
+ * ```ts
+ * [['<blockquote>', 0, {author: 'Alice'}], '<p>']
+ * [
+ *   ['list', 0, {type: 'ordered'}],
+ *   '<li>',
+ *   ['<p>', 0, {indent: 2}]
+ * ]
  * ```
  */
 export type SliceType = TypeTag | SliceTypeSteps;
@@ -80,8 +95,52 @@ export type SliceSchema = nodes.vec<
      * behavior, this is a path of block nesting. For other slices, it
      * specifies inline formatting, such as bold, italic, etc.; the value has
      * to be a primitive number or a string.
+     * 
+     * Inline formatting is encoded as a single "con" node:
+     * 
+     * ```ts
+     * s.con('bold')
+     * ```
+     * 
+     * The most basic one-level block split can be encoded as a single
+     * "con" node:
+     * 
+     * ```ts
+     * s.con('p')
+     * ```
+     * 
+     * Nested blocks are encoded as an "arr" node of "con" nodes or "vec" tuples.
+     * The "con" nodes are when only the tag is specified, while the "vec" tuples
+     * are used when the tag is accompanied by a discriminant and/or custom data
+     * (attributes of the block).
+     * 
+     * ```ts
+     * s.vec([
+     *   s.con('blockquote'),
+     *   s.con('p')
+     * ])
+     * 
+     * s.vec([
+     *  // <ul:0>
+     *  s.con('ul'),
+     * 
+     *  // <li:1>
+     *  s.vec([
+     *   s.con('li'),
+     *   s.con(1), // discriminant
+     *  ]),
+     *  
+     *  // <p:0 indent="2">
+     *  s.vec([
+     *    s.con('p'),
+     *    s.con(0), // discriminant
+     *    s.obj({ // data
+     *      indent: 2,
+     *    }),
+     *  ]),
+     * ])
+     * ```
      */
-    // type: nodes.con<SliceType>,
     type: nodes.con<TypeTag> | nodes.arr<
       nodes.con<TypeTag> |
       nodes.vec<[
