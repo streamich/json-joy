@@ -129,6 +129,48 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.peritext.savedSlices.size()).toBe(1);
     });
   });
+
+  describe('"tog" action', () => {
+    test('can toggle annotation', () => {
+      const kit = setup();
+      expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(0);
+      kit.et.cursor({at: [3, 6]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>abc<b>def</b>ghijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(1);
+      kit.et.cursor({at: [3, 6]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(0);
+      kit.et.cursor({at: [3, 6]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>abc<b>def</b>ghijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(1);
+    });
+
+    test('can toggle inside an annotation', () => {
+      const kit = setup();
+      expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(0);
+      kit.et.cursor({at: [2, 7]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>ab<b>cdefg</b>hijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(1);
+      kit.et.cursor({at: [3, 6]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>ab<b>c</b>def<b>g</b>hijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(2);
+      kit.et.cursor({at: [3, 6]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>ab<b>c</b><b>def</b><b>g</b>hijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(2);
+      kit.et.cursor({at: [3, 6]});
+      kit.et.format({action: 'tog', type: SliceTypeCon.b});
+      expect(kit.toHtml()).toBe('<p>ab<b>c</b>def<b>g</b>hijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(2);
+    });
+  });
 };
 
 describe('"format" event', () => {
