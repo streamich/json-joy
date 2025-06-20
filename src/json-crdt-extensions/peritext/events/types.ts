@@ -263,6 +263,11 @@ export interface CursorDetail extends RangeEventDetail {
    * field.
    */
   flip?: boolean;
+
+  /**
+   * If `true`, all cursors in the document will be removed.
+   */
+  clear?: boolean;
 }
 
 /**
