@@ -24,6 +24,7 @@ import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
 import type {AbstractRga} from '../../json-crdt/nodes/rga';
 import type {ChunkSlice} from './util/ChunkSlice';
 import type {Stateful} from './types';
+import type {PersistedSlice} from './slice/PersistedSlice';
 
 const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
 const LOCAL_DATA_SCHEMA = EXTRA_SLICES_SCHEMA;
@@ -36,26 +37,6 @@ export type LocalModel = Model<SchemaToJsonNode<typeof LOCAL_DATA_SCHEMA>>;
  * interact with the text.
  */
 export class Peritext<T = string> implements Printable, Stateful {
-  /**
-   * *Slices* are rich-text annotations that appear in the text. The "saved"
-   * slices are the ones that are persisted in the document.
-   */
-  public readonly savedSlices: Slices<T>;
-
-  /**
-   * *Extra slices* are slices that are not persisted in the document. However,
-   * they are still shared across users, i.e. they are ephemerally persisted
-   * during the editing session.
-   */
-  public readonly extraSlices: Slices<T>;
-
-  /**
-   * *Local slices* are slices that are not persisted in the document and are
-   * not shared with other users. They are used only for local annotations for
-   * the current user.
-   */
-  public readonly localSlices: Slices<T>;
-
   public readonly editor: Editor<T>;
   public readonly overlay = new Overlay<T>(this);
   public readonly blocks: Fragment<T>;
@@ -96,17 +77,6 @@ export class Peritext<T = string> implements Printable, Stateful {
   public strApi(): StrApi {
     if (this.str instanceof StrNode) return this.model.api.wrap(this.str);
     throw new Error('INVALID_STR');
-  }
-
-  /** Select a single character before a point. */
-  public findCharBefore(point: Point<T>): Range<T> | undefined {
-    if (point.anchor === Anchor.After) {
-      const chunk = point.chunk();
-      if (chunk && !chunk.del) return this.range(this.point(point.id, Anchor.Before), point);
-    }
-    const id = point.prevId();
-    if (!id) return;
-    return this.range(this.point(id, Anchor.Before), this.point(id, Anchor.After));
   }
 
   // ------------------------------------------------------------------- points
@@ -305,6 +275,32 @@ export class Peritext<T = string> implements Printable, Stateful {
     if (this.extraSlices.delSlices(slices)) deleted = true;
     if (this.localSlices.delSlices(slices)) deleted = true;
     return deleted;
+  }
+
+  // ------------------------------------------------------------------- slices
+
+  /**
+   * *Slices* are rich-text annotations that appear in the text. The "saved"
+   * slices are the ones that are persisted in the document.
+   */
+  public readonly savedSlices: Slices<T>;
+
+  /**
+   * *Extra slices* are slices that are not persisted in the document. However,
+   * they are still shared across users, i.e. they are ephemerally persisted
+   * during the editing session.
+   */
+  public readonly extraSlices: Slices<T>;
+
+  /**
+   * *Local slices* are slices that are not persisted in the document and are
+   * not shared with other users. They are used only for local annotations for
+   * the current user.
+   */
+  public readonly localSlices: Slices<T>;
+
+  public getSlice(id: ITimestampStruct): PersistedSlice<T> | undefined {
+    return this.savedSlices.get(id) || this.localSlices.get(id) || this.extraSlices.get(id);
   }
 
   // ------------------------------------------------------------------ markers

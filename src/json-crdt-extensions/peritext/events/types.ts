@@ -1,7 +1,7 @@
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorPosition, EditorSelection} from '../../../json-crdt-extensions/peritext/editor/types';
 import type {SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/peritext/slice/types';
-import type {Patch} from '../../../json-crdt-patch';
+import type {ITimestampStruct, Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type { PersistedSlice } from '../slice/PersistedSlice';
@@ -116,10 +116,14 @@ export type SelectionMoveInstruction = [
 ];
 
 /**
- * Specifies the concrete slice to be used 
+ * Specifies the concrete slice to be used
  */
 export interface SliceDetailPart {
-  slice?: PersistedSlice;
+  /**
+   * An instance of {@link PersistedSlice} or its ID {@link ITimestampStruct} used
+   * to retrieve the slice from the document.
+   */
+  slice?: PersistedSlice | ITimestampStruct;
 }
 
 /**
@@ -282,9 +286,8 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
    *   stack behavior `'one'`. For other annotations, it works the same as
    *   the `'ins'` action.
    * - The `'del'` action removes all annotations that intersect with
-   *   any part of the selection set. If action is `'del'`, and the `at` field
-   *   contains a {@link PersistedSlice} instance, only that instance will be
-   *   deleted.
+   *   any part of the selection set. If action is `'del'`, and the `slice` field
+   *   is specified, only that slice will be deleted.
    * - The `'erase'` action tries to "erase" all annotations that intersect with
    *   any part of the selection set. It works by deleting all annotations which
    *   are contained. For annotations, which partially intersect with the
