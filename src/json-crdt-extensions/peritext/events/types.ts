@@ -293,8 +293,13 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
    *   are contained. For annotations, which partially intersect with the
    *   selection set, a corresponding slice with "erase" stacking behavior is
    *   inserted, which logically removes the annotation from the document.
+   * - The `'upd'` action updates the formatting data using a diff with the
+   *   current value. If the `slice` field is specified, the annotation will be
+   *   updated to the specified slice. If the `slice` field is not specified,
+   *   the `data` will be updated on the first annotation in the selection set
+   *   with the same `type`.
    */
-  action: 'ins' | 'tog' | 'del' | 'erase';
+  action: 'ins' | 'tog' | 'del' | 'erase' | 'upd';
 
   /**
    * Type of the annotation. The type is used to determine the visual style of

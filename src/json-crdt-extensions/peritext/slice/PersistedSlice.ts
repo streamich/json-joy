@@ -18,6 +18,7 @@ import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
+import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {type Model, ObjApi} from '../../../json-crdt/model';
 import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -171,6 +172,20 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       ]);
     }
     return this.dataNode() as unknown as ObjApi<ObjNode>;
+  }
+
+  public mergeData(data: unknown): void {
+    const {model} = this;
+    const diff = new JsonCrdtDiff(model);
+    if (!!data && typeof data === 'object' && !Array.isArray(data)) {
+      const dataNode = this.dataAsObj();
+      const patch = diff.diff(dataNode.node, data);
+      model.applyPatch(patch);
+    } else {
+      this.tupleApi().set([
+        [SliceTupleIndex.Data, s.jsonCon(data)],
+      ]);
+    }
   }
 
   public getStore(): Slices<T> | undefined {

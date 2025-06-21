@@ -166,6 +166,19 @@ const testSuite = (getKit: () => Kit) => {
     });
   });
 
+  describe('"upd" action', () => {
+    test('can update', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
+      kit.et.format({action: 'upd', slice, data: {"color":"green", "opacity":1}});
+      expect(slice.data()).toEqual({color: 'green', opacity: 1});
+    });
+  });
+
   describe('data', () => {
     test('can retrive formatting data, when specified as "obj"', () => {
       const kit = setup();
@@ -180,6 +193,9 @@ const testSuite = (getKit: () => Kit) => {
       const obj2 = slice.dataAsObj();
       expect(obj2 instanceof ObjApi).toBe(true);
       expect(obj2.view()).toEqual({color: 'red'});
+      obj2.set({color: 'blue'});
+      expect(slice.data()).toEqual({color: 'blue'});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"blue"}\'>klmnopqrst</col>uvwxyz</p>');
     });
 
     test('can retrive formatting data, when non-"obj" node used', () => {
