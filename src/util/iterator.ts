@@ -1,23 +1,31 @@
+/**
+ * Next function which returns `undefined` or a value of type `T`.
+ * This is used in iterators that can end with an `undefined` value, which
+ * indicates the end of iteration.
+ *
+ * @todo Rename to `UndEndNext`.
+ */
 export type UndefIterator<T> = () => undefined | T;
 
-export class UndefEndIter<T> implements IterableIterator<T> {
-  constructor(private readonly i: UndefIterator<T>) {}
-
-  public next(): IteratorResult<T, T> {
-    const value = this.i();
-    return new IterRes(value, value === undefined) as IteratorResult<T>;
+/**
+ * Creates an iterator out of {@linke UndefIterator} function.
+ *
+ * @todo Rename to `UndEndIterator`.
+ */
+export class UndefEndIter<T> extends Iterator<T, T> implements IterableIterator<T> {
+  constructor(private readonly n: UndefIterator<T>) {
+    super();
   }
 
-  [Symbol.iterator]() {
-    return this;
+  public next(): IteratorResult<T, T> {
+    const value = this.n();
+    return new Res(value, value === undefined) as IteratorResult<T>;
   }
 }
 
-export class IterRes<T> {
+class Res<T> {
   constructor(
     public readonly value: T,
     public readonly done: boolean,
   ) {}
 }
-
-export const iter = <T>(i: UndefIterator<T>) => new UndefEndIter(i);

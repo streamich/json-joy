@@ -18,14 +18,14 @@ import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
-import type {VecNode} from '../../../json-crdt/nodes';
+import {type Model, ObjApi} from '../../../json-crdt/model';
+import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
 import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps, SliceTypeStep, TypeTag} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
-import type {Model} from '../../../json-crdt/model';
 import type {Peritext} from '../Peritext';
 import type {Slices} from './Slices';
 
@@ -161,6 +161,16 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public dataNode() {
     const node = this.tuple.get(SliceTupleIndex.Data);
     return node && this.model.api.wrap(node);
+  }
+
+  public dataAsObj(): ObjApi<ObjNode> {
+    const node = this.dataNode();
+    if (!(node instanceof ObjApi)) {
+      this.tupleApi().set([
+        [SliceTupleIndex.Data, s.obj({})],
+      ]);
+    }
+    return this.dataNode() as unknown as ObjApi<ObjNode>;
   }
 
   public getStore(): Slices<T> | undefined {

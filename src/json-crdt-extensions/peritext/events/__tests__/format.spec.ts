@@ -1,4 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
+import {ArrApi, ObjApi} from '../../../../json-crdt/model';
 import { SliceTypeCon } from '../../slice/constants';
 import {PersistedSlice} from '../../slice/PersistedSlice';
 import { getEventsKit } from './setup';
@@ -13,6 +14,13 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.b});
       const html = kit.toHtml();
       expect(html).toBe('<p>abc<b>def</b>ghijklmnopqrstuvwxyz</p>');
+    });
+
+    test('can insert formatting with data', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'red'}});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"red"}\'>klmnopqrst</col>uvwxyz</p>');
     });
   });
 
@@ -93,14 +101,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.i});
       kit.et.cursor({at: [0]})
       expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
-      let slice: PersistedSlice | undefined;
-      const iterator = kit.peritext.savedSlices.iterator0();
-      for (let item = iterator(); item; item = iterator()) {
-        if (item instanceof PersistedSlice && item.type === SliceTypeCon.i) {
-          slice = item;
-          break;
-        }
-      }
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.i);
       kit.et.cursor({clear: true});
       kit.et.format({action: 'del', slice});
       expect(kit.toHtml()).toBe('<p>abcde<b>fghijklmno</b>pqrstuvwxyz</p>');
@@ -115,14 +116,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.i});
       kit.et.cursor({at: [0]})
       expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
-      let slice: PersistedSlice | undefined;
-      const iterator = kit.peritext.savedSlices.iterator0();
-      for (let item = iterator(); item; item = iterator()) {
-        if (item instanceof PersistedSlice && item.type === SliceTypeCon.b) {
-          slice = item;
-          break;
-        }
-      }
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.b)!;
       kit.et.cursor({clear: true});
       kit.et.format({action: 'del', slice: slice!.id});
       expect(kit.toHtml()).toBe('<p>abcdefghij<i>klmnopqrst</i>uvwxyz</p>');
@@ -169,6 +163,53 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'tog', type: SliceTypeCon.b});
       expect(kit.toHtml()).toBe('<p>ab<b>c</b>def<b>g</b>hijklmnopqrstuvwxyz</p>');
       expect(kit.peritext.savedSlices.size()).toBe(2);
+    });
+  });
+
+  describe('data', () => {
+    test('can retrive formatting data, when specified as "obj"', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'red'}});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"red"}\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual({color: 'red'});
+      const obj = slice.dataNode()!;
+      expect(obj instanceof ObjApi).toBe(true);
+      expect((obj as unknown as ObjApi).view()).toEqual({color: 'red'});
+      const obj2 = slice.dataAsObj();
+      expect(obj2 instanceof ObjApi).toBe(true);
+      expect(obj2.view()).toEqual({color: 'red'});
+    });
+
+    test('can retrive formatting data, when non-"obj" node used', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: 'red'});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'"red"\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual('red');
+      const obj = slice.dataNode()!;
+      expect(obj.view()).toEqual('red');
+    });
+
+    test('can force-convert data to "obj" node', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: ['green', 'red']});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'["green","red"]\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual(['green', 'red']);
+      const api = slice.dataNode()!;
+      expect(api instanceof ArrApi).toBe(true);
+      expect(api.view()).toEqual(['green', 'red']);
+      const obj = slice.dataAsObj();
+      expect(obj instanceof ObjApi).toBe(true);
+      expect(obj.view()).toEqual({});
+      expect(slice.data()).toEqual({});
+      const api2 = slice.dataNode()!;
+      expect(api2 instanceof ObjApi).toBe(true);
+      expect(api2.view()).toEqual({});
     });
   });
 };
