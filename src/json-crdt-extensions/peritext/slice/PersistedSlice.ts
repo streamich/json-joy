@@ -174,6 +174,22 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.dataNode() as unknown as ObjApi<ObjNode>;
   }
 
+  /**
+   * Overwrites the data of this slice with the given data.
+   *
+   * @param data Data to set for this slice. The data can be any JSON value, but
+   *     it is recommended to use an object.
+   */
+  public setData(data: unknown): void {
+    this.tupleApi().set([[SliceTupleIndex.Data, s.jsonCon(data)]]);
+  }
+
+  /**
+   * Merges object data into the slice's data using JSON CRDT diffing.
+   *
+   * @param data Data to merge into the slice. If the data is an object, it will be
+   *     merged with the existing data of the slice using JSON CRDT diffing.
+   */
   public mergeData(data: unknown): void {
     const {model} = this;
     const diff = new JsonCrdtDiff(model);
@@ -181,11 +197,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       const dataNode = this.dataAsObj();
       const patch = diff.diff(dataNode.node, data);
       model.applyPatch(patch);
-    } else {
-      this.tupleApi().set([
-        [SliceTupleIndex.Data, s.jsonCon(data)],
-      ]);
-    }
+    } else this.setData(data);
   }
 
   public getStore(): Slices<T> | undefined {

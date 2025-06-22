@@ -248,12 +248,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         else slices.insErase(tag, detail.data, selection);
         break;
       }
-      case 'upd': {
+      case 'upd':
+      case 'set': {
         const {slice} = detail;
         if (slice) {
           const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
           if (persistedSlice instanceof PersistedSlice) {
-            persistedSlice.mergeData(detail.data);
+            if (action === 'set') persistedSlice.setData(detail.data);
+            else persistedSlice.mergeData(detail.data);
           }
         }
         break;

@@ -202,6 +202,41 @@ const testSuite = (getKit: () => Kit) => {
     });
   });
 
+  describe('"set" action', () => {
+    test('can overwrite formatting data', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
+      kit.et.format({action: 'set', slice, data: {"color":"red"}});
+      expect(slice.data()).toEqual({color: 'red'});
+    });
+
+    test('can overwrite formatting data with non-object', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
+      kit.et.format({action: 'set', slice, data: 123});
+      expect(slice.data()).toEqual(123);
+    });
+
+    test('can overwrite non-object with object', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: true});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'true\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual(true);
+      kit.et.format({action: 'set', slice, data: {col: '#fff'}});
+      expect(slice.data()).toEqual({col: '#fff'});
+    });
+  });
+
   describe('data', () => {
     test('can retrive formatting data, when specified as "obj"', () => {
       const kit = setup();

@@ -298,8 +298,10 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
    *   updated to the specified slice. If the `slice` field is not specified,
    *   the `data` will be updated on the first annotation in the selection set
    *   with the same `type`.
+   * - The `'set'` action ovewrites the formatting data of the slice specified
+   *   by the `slice` field with the `data` field.
    */
-  action: 'ins' | 'tog' | 'del' | 'erase' | 'upd';
+  action: 'ins' | 'tog' | 'del' | 'erase' | 'upd' | 'set';
 
   /**
    * Type of the annotation. The type is used to determine the visual style of
