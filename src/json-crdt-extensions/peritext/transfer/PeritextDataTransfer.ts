@@ -124,8 +124,7 @@ export class PeritextDataTransfer<T = string> {
   }
 
   public fromJson(pos: number, json: PeritextMlElement | PeritextMlNode): number {
-    const tools = this.htmlI();
-    const view = tools.toViewRange(json);
+    const view = this.htmlI().toViewRange(json);
     return this.fromView(pos, view);
   }
 
