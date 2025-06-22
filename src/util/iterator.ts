@@ -5,15 +5,13 @@
  *
  * @todo Rename to `UndEndNext`.
  */
-export type UndefIterator<T> = () => undefined | T;
+export type UndEndNext<T> = () => undefined | T;
 
 /**
  * Creates an iterator out of {@linke UndefIterator} function.
- *
- * @todo Rename to `UndEndIterator`.
  */
-export class UndefEndIter<T> extends Iterator<T, T> implements IterableIterator<T> {
-  constructor(private readonly n: UndefIterator<T>) {
+export class UndEndIterator<T> extends Iterator<T, T> implements IterableIterator<T> {
+  constructor(private readonly n: UndEndNext<T>) {
     super();
   }
 

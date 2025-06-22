@@ -11,7 +11,7 @@ import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import type {Point} from '../rga/Point';
@@ -114,7 +114,7 @@ export class Editor<T = string> implements Printable {
     return cursor ?? this.addCursor();
   }
 
-  public cursors0(): UndefIterator<Cursor<T>> {
+  public cursors0(): UndEndNext<Cursor<T>> {
     const iterator = this.txt.localSlices.iterator0();
     return () => {
       while (true) {
@@ -130,7 +130,7 @@ export class Editor<T = string> implements Printable {
   }
 
   public cursors() {
-    return new UndefEndIter(this.cursors0());
+    return new UndEndIterator(this.cursors0());
   }
 
   public forCursor(callback: (cursor: Cursor<T>) => void): void {

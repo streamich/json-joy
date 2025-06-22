@@ -9,7 +9,7 @@ import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
 import {Chars} from '../constants';
 import {Anchor} from '../rga/constants';
-import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import type {Range} from '../rga/Range';
 import type {Slice, SliceType} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -171,13 +171,13 @@ export class Slices<T = string> implements Stateful, Printable {
   /**
    * @todo Rename to `each0`.
    */
-  public iterator0(): UndefIterator<PersistedSlice<T>> {
+  public iterator0(): UndEndNext<PersistedSlice<T>> {
     const iterator = this.list.iterator0();
     return () => iterator()?.v;
   }
 
-  public each(): UndefEndIter<PersistedSlice<T>> {
-    return new UndefEndIter<PersistedSlice<T>>(this.iterator0());
+  public each(): UndEndIterator<PersistedSlice<T>> {
+    return new UndEndIterator<PersistedSlice<T>>(this.iterator0());
   }
 
   public forEach(callback: (item: PersistedSlice<T>) => void): void {

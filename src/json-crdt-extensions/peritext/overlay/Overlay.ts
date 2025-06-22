@@ -10,7 +10,7 @@ import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash/hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
-import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {SliceStacking} from '../slice/constants';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
@@ -196,7 +196,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     }) as Chunk<T>;
   }
 
-  public points0(after: undefined | OverlayPoint<T>, inclusive?: boolean): UndefIterator<OverlayPoint<T>> {
+  public points0(after: undefined | OverlayPoint<T>, inclusive?: boolean): UndEndNext<OverlayPoint<T>> {
     let curr = after ? (inclusive ? after : next(after)) : this.first();
     return () => {
       const ret = curr;
@@ -206,7 +206,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   public points(after?: undefined | OverlayPoint<T>, inclusive?: boolean): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.points0(after, inclusive));
+    return new UndEndIterator(this.points0(after, inclusive));
   }
 
   /**
@@ -220,7 +220,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns All marker points in the overlay, starting from the given marker
    *     point.
    */
-  public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
+  public markers0(after: undefined | MarkerOverlayPoint<T>): UndEndNext<MarkerOverlayPoint<T>> {
     let curr = after ? next2(after) : first2(this.root2);
     return () => {
       const ret = curr;
@@ -229,8 +229,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public markers(after?: undefined | MarkerOverlayPoint<T>): UndefEndIter<MarkerOverlayPoint<T>> {
-    return new UndefEndIter(this.markers0(after));
+  public markers(after?: undefined | MarkerOverlayPoint<T>): UndEndIterator<MarkerOverlayPoint<T>> {
+    return new UndEndIterator(this.markers0(after));
   }
 
   /**
@@ -242,7 +242,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns All marker points in the overlay, starting from the given marker
    *     point.
    */
-  public markersFrom0(point: Point<T>): UndefIterator<MarkerOverlayPoint<T>> {
+  public markersFrom0(point: Point<T>): UndEndNext<MarkerOverlayPoint<T>> {
     if (point.isAbsStart()) return this.markers0(undefined);
     let after = this.getOrNextLowerMarker(point);
     if (after && after.cmp(point) === 0) after = prev2(after);
@@ -261,7 +261,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    *     continues until the end of the overlay.
    * @returns Iterator that returns pairs of overlay points.
    */
-  public markerPairs0(start: Point<T>, end?: Point<T>): UndefIterator<MarkerOverlayPair<T>> {
+  public markerPairs0(start: Point<T>, end?: Point<T>): UndEndNext<MarkerOverlayPair<T>> {
     const i = this.markersFrom0(start);
     let closed = false;
     let p1: MarkerOverlayPoint<T> | undefined;
@@ -293,7 +293,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {
+  public pairs0(after: undefined | OverlayPoint<T>): UndEndNext<OverlayPair<T>> {
     const isEmpty = !this.root;
     if (isEmpty) {
       const u = undefined;
@@ -325,10 +325,10 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   public pairs(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayPair<T>> {
-    return new UndefEndIter(this.pairs0(after));
+    return new UndEndIterator(this.pairs0(after));
   }
 
-  public tuples0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayTuple<T>> {
+  public tuples0(after: undefined | OverlayPoint<T>): UndEndNext<OverlayTuple<T>> {
     const iterator = this.pairs0(after);
     return () => {
       const pair = iterator();
@@ -340,7 +340,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   public tuples(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayTuple<T>> {
-    return new UndefEndIter(this.tuples0(after));
+    return new UndEndIterator(this.tuples0(after));
   }
 
   /**

@@ -1,11 +1,11 @@
-import type {UndefIterator} from '../../../util/iterator';
+import type {UndEndNext} from '../../../util/iterator';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {SliceType} from '../slice';
 import type {SliceStacking} from '../slice/constants';
 import type {ChunkSlice} from '../util/ChunkSlice';
 
-export type CharIterator<T> = UndefIterator<ChunkSlice<T>>;
+export type CharIterator<T> = UndEndNext<ChunkSlice<T>>;
 export type CharPredicate<T> = (char: T) => boolean;
 
 export type EditorPosition<T = string> = Point<T> | number | [at: number, anchor: 0 | 1];

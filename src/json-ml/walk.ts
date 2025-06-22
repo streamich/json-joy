@@ -1,7 +1,7 @@
-import {iter, type UndefIterator} from '../util/iterator';
+import {UndEndIterator, type UndEndNext} from '../util/iterator';
 import type {JsonMlNode} from './types';
 
-export const walk0 = (node: JsonMlNode): UndefIterator<JsonMlNode> => {
+export const walk0 = (node: JsonMlNode): UndEndNext<JsonMlNode> => {
   const stack: JsonMlNode[] = [node];
   return () => {
     const node = stack.pop();
@@ -12,4 +12,4 @@ export const walk0 = (node: JsonMlNode): UndefIterator<JsonMlNode> => {
   };
 };
 
-export const walk = (node: JsonMlNode) => iter(walk0(node));
+export const walk = (node: JsonMlNode) => new UndEndIterator(walk0(node));
