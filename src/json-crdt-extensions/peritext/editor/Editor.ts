@@ -919,7 +919,12 @@ export class Editor<T = string> implements Printable {
     } else this.setStartMarker(type, data, slices);
   }
 
-  public updMarkerAt(point: Point<T>, type: SliceTypeSteps, data?: unknown, slices: EditorSlices<T> = this.saved): void {
+  public updMarkerAt(
+    point: Point<T>,
+    type: SliceTypeSteps,
+    data?: unknown,
+    slices: EditorSlices<T> = this.saved,
+  ): void {
     const overlay = this.txt.overlay;
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {

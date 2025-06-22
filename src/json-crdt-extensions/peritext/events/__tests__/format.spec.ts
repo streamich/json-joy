@@ -1,9 +1,9 @@
 import {color} from 'nano-theme';
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
 import {ArrApi, ObjApi} from '../../../../json-crdt/model';
-import { SliceTypeCon } from '../../slice/constants';
+import {SliceTypeCon} from '../../slice/constants';
 import {PersistedSlice} from '../../slice/PersistedSlice';
-import { getEventsKit } from './setup';
+import {getEventsKit} from './setup';
 
 const testSuite = (getKit: () => Kit) => {
   const setup = () => getEventsKit(getKit);
@@ -100,7 +100,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.b});
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.i});
-      kit.et.cursor({at: [0]})
+      kit.et.cursor({at: [0]});
       expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.i);
       kit.et.cursor({clear: true});
@@ -115,7 +115,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.b});
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.i});
-      kit.et.cursor({at: [0]})
+      kit.et.cursor({at: [0]});
       expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.b)!;
       kit.et.cursor({clear: true});
@@ -171,11 +171,13 @@ const testSuite = (getKit: () => Kit) => {
     test('can diff an "obj" node', () => {
       const kit = setup();
       kit.et.cursor({at: [10, 20]});
-      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
-      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>');
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: 0.5}});
+      expect(kit.toHtml()).toBe(
+        '<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>',
+      );
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
-      kit.et.format({action: 'upd', slice, data: {"color":"green", "opacity":1}});
+      kit.et.format({action: 'upd', slice, data: {color: 'green', opacity: 1}});
       expect(slice.data()).toEqual({color: 'green', opacity: 1});
     });
 
@@ -186,7 +188,7 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'["data"]\'>klmnopqrst</col>uvwxyz</p>');
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
       expect(slice.data()).toEqual(['data']);
-      kit.et.format({action: 'upd', slice, data: {"color":"green", "opacity":1}});
+      kit.et.format({action: 'upd', slice, data: {color: 'green', opacity: 1}});
       expect(slice.data()).toEqual({color: 'green', opacity: 1});
     });
 
@@ -206,19 +208,23 @@ const testSuite = (getKit: () => Kit) => {
     test('can overwrite formatting data', () => {
       const kit = setup();
       kit.et.cursor({at: [10, 20]});
-      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
-      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>');
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: 0.5}});
+      expect(kit.toHtml()).toBe(
+        '<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>',
+      );
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
-      kit.et.format({action: 'set', slice, data: {"color":"red"}});
+      kit.et.format({action: 'set', slice, data: {color: 'red'}});
       expect(slice.data()).toEqual({color: 'red'});
     });
 
     test('can overwrite formatting data with non-object', () => {
       const kit = setup();
       kit.et.cursor({at: [10, 20]});
-      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
-      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>');
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: 0.5}});
+      expect(kit.toHtml()).toBe(
+        '<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>',
+      );
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
       kit.et.format({action: 'set', slice, data: 123});
@@ -229,7 +235,7 @@ const testSuite = (getKit: () => Kit) => {
       const kit = setup();
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: true});
-      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'true\'>klmnopqrst</col>uvwxyz</p>');
+      expect(kit.toHtml()).toBe("<p>abcdefghij<col data-attr='true'>klmnopqrst</col>uvwxyz</p>");
       const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
       expect(slice.data()).toEqual(true);
       kit.et.format({action: 'set', slice, data: {col: '#fff'}});

@@ -4,7 +4,7 @@ import type {SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/perite
 import type {ITimestampStruct, Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type { PersistedSlice } from '../slice/PersistedSlice';
+import type {PersistedSlice} from '../slice/PersistedSlice';
 
 /**
  * Dispatched every time any other event is dispatched.

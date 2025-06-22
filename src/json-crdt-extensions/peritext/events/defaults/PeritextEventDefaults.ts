@@ -1,7 +1,7 @@
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
-import {CursorAnchor, SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
+import {CursorAnchor, type SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';

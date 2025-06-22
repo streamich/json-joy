@@ -1,5 +1,5 @@
-import { createEvents } from '..';
-import {type Kit} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
+import {createEvents} from '..';
+import type {Kit} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
 
 export const getEventsKit = (getKit: () => Kit) => {
   const kit = getKit();

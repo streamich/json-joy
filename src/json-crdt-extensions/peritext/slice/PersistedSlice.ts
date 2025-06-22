@@ -23,7 +23,15 @@ import {type Model, ObjApi} from '../../../json-crdt/model';
 import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
-import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps, SliceTypeStep, TypeTag} from './types';
+import type {
+  MutableSlice,
+  SliceView,
+  SliceType,
+  SliceUpdateParams,
+  SliceTypeSteps,
+  SliceTypeStep,
+  TypeTag,
+} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
@@ -167,9 +175,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public dataAsObj(): ObjApi<ObjNode> {
     const node = this.dataNode();
     if (!(node instanceof ObjApi)) {
-      this.tupleApi().set([
-        [SliceTupleIndex.Data, s.obj({})],
-      ]);
+      this.tupleApi().set([[SliceTupleIndex.Data, s.obj({})]]);
     }
     return this.dataNode() as unknown as ObjApi<ObjNode>;
   }

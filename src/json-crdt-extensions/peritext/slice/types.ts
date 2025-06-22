@@ -44,9 +44,9 @@ import type {Anchor} from '../rga/constants';
  * [['<blockquote>', 0], '<p>']
  * [['<blockquote>', 1], '<p>']
  * ```
- * 
+ *
  * Each block nesting level can have a custom data object:
- * 
+ *
  * ```ts
  * [['<blockquote>', 0, {author: 'Alice'}], '<p>']
  * [
@@ -79,57 +79,54 @@ export type SliceSchema = nodes.vec<
      * slice as well as anchor {@link Anchor} points of the x1 and x2 points.
      */
     header: nodes.con<number>,
-
     /**
      * ID of the start {@link Point} of the slice.
      */
     x1: nodes.con<ITimestampStruct>,
-
     /**
      * ID of the end {@link Point} of the slice, if 0 then it is equal to x1.
      */
     x2: nodes.con<ITimestampStruct | 0>,
-
     /**
      * App specific type of the slice. For slices with "Marker" stacking
      * behavior, this is a path of block nesting. For other slices, it
      * specifies inline formatting, such as bold, italic, etc.; the value has
      * to be a primitive number or a string.
-     * 
+     *
      * Inline formatting is encoded as a single "con" node:
-     * 
+     *
      * ```ts
      * s.con('bold')
      * ```
-     * 
+     *
      * The most basic one-level block split can be encoded as a single
      * "con" node:
-     * 
+     *
      * ```ts
      * s.con('p')
      * ```
-     * 
+     *
      * Nested blocks are encoded as an "arr" node of "con" nodes or "vec" tuples.
      * The "con" nodes are when only the tag is specified, while the "vec" tuples
      * are used when the tag is accompanied by a discriminant and/or custom data
      * (attributes of the block).
-     * 
+     *
      * ```ts
      * s.vec([
      *   s.con('blockquote'),
      *   s.con('p')
      * ])
-     * 
+     *
      * s.vec([
      *  // <ul:0>
      *  s.con('ul'),
-     * 
+     *
      *  // <li:1>
      *  s.vec([
      *   s.con('li'),
      *   s.con(1), // discriminant
      *  ]),
-     *  
+     *
      *  // <p:0 indent="2">
      *  s.vec([
      *    s.con('p'),
@@ -141,16 +138,19 @@ export type SliceSchema = nodes.vec<
      * ])
      * ```
      */
-    type: nodes.con<TypeTag> | nodes.arr<
-      nodes.con<TypeTag> |
-      nodes.vec<[
-        tag: nodes.con<TypeTag>,
-        discriminant: nodes.con<number>,
-        data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
-        {}>,
-      ]>
-    >,
-
+    type:
+      | nodes.con<TypeTag>
+      | nodes.arr<
+          | nodes.con<TypeTag>
+          | nodes.vec<
+              [
+                tag: nodes.con<TypeTag>,
+                discriminant: nodes.con<number>,
+                data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
+                {}>,
+              ]
+            >
+        >,
     /**
      * Reference to additional metadata about the slice, usually an object.
      * Normally used for inline formatting, block formatting attaches data to
