@@ -177,7 +177,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public mergeData(data: unknown): void {
     const {model} = this;
     const diff = new JsonCrdtDiff(model);
-    if (!!data && typeof data === 'object' && !Array.isArray(data)) {
+    if (this.dataNode() instanceof ObjApi && !!data && typeof data === 'object' && !Array.isArray(data)) {
       const dataNode = this.dataAsObj();
       const patch = diff.diff(dataNode.node, data);
       model.applyPatch(patch);

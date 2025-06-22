@@ -1,3 +1,4 @@
+import {color} from 'nano-theme';
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
 import {ArrApi, ObjApi} from '../../../../json-crdt/model';
 import { SliceTypeCon } from '../../slice/constants';
@@ -167,7 +168,7 @@ const testSuite = (getKit: () => Kit) => {
   });
 
   describe('"upd" action', () => {
-    test('can update', () => {
+    test('can diff an "obj" node', () => {
       const kit = setup();
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'green', opacity: .5}});
@@ -176,6 +177,28 @@ const testSuite = (getKit: () => Kit) => {
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
       kit.et.format({action: 'upd', slice, data: {"color":"green", "opacity":1}});
       expect(slice.data()).toEqual({color: 'green', opacity: 1});
+    });
+
+    test('can overwrite a non-"obj" node', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: ['data']});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'["data"]\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual(['data']);
+      kit.et.format({action: 'upd', slice, data: {"color":"green", "opacity":1}});
+      expect(slice.data()).toEqual({color: 'green', opacity: 1});
+    });
+
+    test('can overwrite by non object', () => {
+      const kit = setup();
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'red'}});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"red"}\'>klmnopqrst</col>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      expect(slice.data()).toEqual({color: 'red'});
+      kit.et.format({action: 'upd', slice, data: 'test'});
+      expect(slice.data()).toEqual('test');
     });
   });
 
