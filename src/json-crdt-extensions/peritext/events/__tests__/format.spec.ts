@@ -100,7 +100,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.i});
       kit.et.cursor({at: [0]});
       expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.i);
+      const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.i);
       kit.et.cursor({clear: true});
       kit.et.format({action: 'del', slice});
       expect(kit.toHtml()).toBe('<p>abcde<b>fghijklmno</b>pqrstuvwxyz</p>');
@@ -115,7 +115,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.format({action: 'ins', type: SliceTypeCon.i});
       kit.et.cursor({at: [0]});
       expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.b)!;
+      const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.b)!;
       kit.et.cursor({clear: true});
       kit.et.format({action: 'del', slice: slice!.id});
       expect(kit.toHtml()).toBe('<p>abcdefghij<i>klmnopqrst</i>uvwxyz</p>');
@@ -173,7 +173,7 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.toHtml()).toBe(
         '<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>',
       );
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
       kit.et.format({action: 'upd', slice, data: {color: 'green', opacity: 1}});
       expect(slice.data()).toEqual({color: 'green', opacity: 1});
@@ -184,7 +184,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: ['data']});
       expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'["data"]\'>klmnopqrst</col>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual(['data']);
       kit.et.format({action: 'upd', slice, data: {color: 'green', opacity: 1}});
       expect(slice.data()).toEqual({color: 'green', opacity: 1});
@@ -195,7 +195,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'red'}});
       expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"red"}\'>klmnopqrst</col>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'red'});
       kit.et.format({action: 'upd', slice, data: 'test'});
       expect(slice.data()).toEqual('test');
@@ -210,7 +210,7 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.toHtml()).toBe(
         '<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>',
       );
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
       kit.et.format({action: 'set', slice, data: {color: 'red'}});
       expect(slice.data()).toEqual({color: 'red'});
@@ -223,7 +223,7 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.toHtml()).toBe(
         '<p>abcdefghij<col data-attr=\'{"color":"green","opacity":0.5}\'>klmnopqrst</col>uvwxyz</p>',
       );
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'green', opacity: 0.5});
       kit.et.format({action: 'set', slice, data: 123});
       expect(slice.data()).toEqual(123);
@@ -234,7 +234,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: true});
       expect(kit.toHtml()).toBe("<p>abcdefghij<col data-attr='true'>klmnopqrst</col>uvwxyz</p>");
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual(true);
       kit.et.format({action: 'set', slice, data: {col: '#fff'}});
       expect(slice.data()).toEqual({col: '#fff'});
@@ -247,7 +247,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: {color: 'red'}});
       expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'{"color":"red"}\'>klmnopqrst</col>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual({color: 'red'});
       const obj = slice.dataNode()!;
       expect(obj instanceof ObjApi).toBe(true);
@@ -265,7 +265,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: 'red'});
       expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'"red"\'>klmnopqrst</col>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual('red');
       const obj = slice.dataNode()!;
       expect(obj.view()).toEqual('red');
@@ -276,7 +276,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [10, 20]});
       kit.et.format({action: 'ins', type: SliceTypeCon.col, data: ['green', 'red']});
       expect(kit.toHtml()).toBe('<p>abcdefghij<col data-attr=\'["green","red"]\'>klmnopqrst</col>uvwxyz</p>');
-      const slice = kit.peritext.savedSlices.each().find(({type}) => type === SliceTypeCon.col)!;
+      const slice = kit.peritext.savedSlices.each().find(slice => slice.type() === SliceTypeCon.col)!;
       expect(slice.data()).toEqual(['green', 'red']);
       const api = slice.dataNode()!;
       expect(api instanceof ArrApi).toBe(true);

@@ -19,7 +19,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     const slices = kit.peritext.overlay.findOverlapping(kit.peritext.rangeAt(5));
     const [slice] = slices;
-    expect(slice.type).toBe('bold');
+    expect(slice.type()).toBe('bold');
   });
 };
 

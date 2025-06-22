@@ -206,7 +206,7 @@ export interface Slice<T = string> extends Range<T>, Stateful {
    * case the type is a list of tags. The last tag in the list is the
    * "leaf" tag, which is the type of the leaf block element.
    */
-  type: SliceType;
+  type(): SliceType;
 
   /**
    * High-level user-defined metadata of the slice, which accompanies the slice

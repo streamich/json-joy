@@ -49,18 +49,17 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const header = +(tuple.get(0)!.view() as SliceView[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
-    const type = tuple.get(3)!.view() as SliceType;
     if (typeof header !== 'number') throw new Error('INVALID_HEADER');
     if (!(id1 instanceof Timestamp)) throw new Error('INVALID_ID');
     if (!(id2 instanceof Timestamp)) throw new Error('INVALID_ID');
-    validateType(type);
     const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
     const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
     const stacking: SliceStacking = (header & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
     const rga = txt.str as unknown as AbstractRga<T>;
     const p1 = new Point<T>(rga, id1, anchor1);
     const p2 = new Point<T>(rga, id2, anchor2);
-    const slice = new PersistedSlice<T>(model, txt, chunk, tuple, stacking, type, p1, p2);
+    const slice = new PersistedSlice<T>(model, txt, chunk, tuple, stacking, p1, p2);
+    validateType(slice.type());
     return slice;
   }
 
@@ -77,7 +76,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     /** The `vec` node which stores the serialized contents of this slice. */
     public readonly tuple: VecNode,
     stacking: SliceStacking,
-    type: SliceType,
     public start: Point<T>,
     public end: Point<T>,
   ) {
@@ -85,7 +83,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     this.rga = txt.str as unknown as AbstractRga<T>;
     this.id = chunk.id;
     this.stacking = stacking;
-    this.type = type;
   }
 
   public isSplit(): boolean {
@@ -112,19 +109,28 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     this.update({range: this});
   }
 
-  // ------------------------------------------------------------- MutableSlice
+  /** -------------------------------------------------- {@link MutableSlice} */
 
   public readonly id: ITimestampStruct;
   public stacking: SliceStacking;
-  public type: SliceType;
+
+  public typeNode() {
+    const node = this.tuple.get(SliceTupleIndex.Type)!;
+    if (!node) return;
+    return this.model.api.wrap(node);
+  }
+
+  public type(): SliceType {
+    return this.typeNode()?.view() as SliceType;
+  }
 
   public typeSteps(): SliceTypeSteps {
-    const type = this.type ?? SliceTypeCon.p;
+    const type = this.type() ?? SliceTypeCon.p;
     return Array.isArray(type) ? type : [type];
   }
 
   public tagStep(): SliceTypeStep {
-    const type = this.type;
+    const type = this.type();
     return Array.isArray(type) ? type[type.length - 1] : type;
   }
 
@@ -149,8 +155,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.end = range.start === range.end ? range.end.clone() : range.end;
     }
     if (params.type !== undefined) {
-      this.type = params.type;
-      changes.push([SliceTupleIndex.Type, s.con(this.type)]);
+      changes.push([SliceTupleIndex.Type, s.jsonCon(params.type)]);
     }
     if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
@@ -162,6 +167,30 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     }
     this.tupleApi().set(changes);
   }
+
+  public getStore(): Slices<T> | undefined {
+    const txt = this.txt;
+    const sid = this.id.sid;
+    let store = txt.savedSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    store = txt.localSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    store = txt.extraSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    return;
+  }
+
+  public del(): void {
+    const store = this.getStore();
+    if (!store) return;
+    store.del(this.id);
+  }
+
+  public isDel(): boolean {
+    return this.chunk.del;
+  }
+
+  // -------------------------------------------------- slice data manipulation
 
   public data(): unknown | undefined {
     return this.tuple.get(SliceTupleIndex.Data)?.view();
@@ -206,29 +235,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     } else this.setData(data);
   }
 
-  public getStore(): Slices<T> | undefined {
-    const txt = this.txt;
-    const sid = this.id.sid;
-    let store = txt.savedSlices;
-    if (sid === store.set.doc.clock.sid) return store;
-    store = txt.localSlices;
-    if (sid === store.set.doc.clock.sid) return store;
-    store = txt.extraSlices;
-    if (sid === store.set.doc.clock.sid) return store;
-    return;
-  }
-
-  public del(): void {
-    const store = this.getStore();
-    if (!store) return;
-    store.del(this.id);
-  }
-
-  public isDel(): boolean {
-    return this.chunk.del;
-  }
-
-  // ----------------------------------------------------------------- Stateful
+  /** ------------------------------------------------------ {@link Stateful} */
 
   public hash: number = 0;
 
@@ -241,20 +248,20 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       const tuple = this.tuple;
       const slice = PersistedSlice.deserialize<T>(this.model, this.txt, this.chunk, tuple);
       this.stacking = slice.stacking;
-      this.type = slice.type;
       this.start = slice.start;
       this.end = slice.end;
     }
     return this.hash;
   }
 
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toStringName(): string {
-    if (typeof this.type === 'number' && Math.abs(this.type) <= 64 && SliceTypeName[this.type]) {
-      return `slice [${SliceStackingName[this.stacking]}] <${SliceTypeName[this.type]}>`;
+    const type = this.type();
+    if (typeof type === 'number' && Math.abs(type) <= 64 && SliceTypeName[type]) {
+      return `slice [${SliceStackingName[this.stacking]}] <${SliceTypeName[type]}>`;
     }
-    return `slice [${SliceStackingName[this.stacking]}] ${JSON.stringify(this.type)}`;
+    return `slice [${SliceStackingName[this.stacking]}] ${JSON.stringify(type)}`;
   }
 
   protected toStringHeaderName(): string {
@@ -263,7 +270,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const dataLengthBreakpoint = 32;
     const header = `${this.toStringName()} ${super.toString('', true)}, ${
       SliceStackingName[this.stacking]
-    }, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
+    }, ${JSON.stringify(this.type())}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
     return header;
   }
 

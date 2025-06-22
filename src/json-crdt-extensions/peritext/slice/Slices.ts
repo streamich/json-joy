@@ -75,7 +75,7 @@ export class Slices<T = string> implements Stateful, Printable {
     const tuple = slicesModel.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const slice = new Klass(slicesModel, this.txt, chunk, tuple, stacking, type, start, end);
+    const slice = new Klass(slicesModel, this.txt, chunk, tuple, stacking, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
@@ -128,7 +128,7 @@ export class Slices<T = string> implements Stateful, Printable {
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
     let slice = PersistedSlice.deserialize<T>(model, txt, chunk, tuple);
     if (slice.isSplit())
-      slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.stacking, slice.type, slice.start, slice.end);
+      slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.stacking, slice.start, slice.end);
     return slice;
   }
 

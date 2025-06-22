@@ -664,7 +664,7 @@ export class Editor<T = string> implements Printable {
         switch (slice.stacking) {
           case SliceStacking.One:
           case SliceStacking.Many: {
-            store.insErase(slice.type);
+            store.insErase(slice.type());
           }
         }
       }
@@ -698,7 +698,7 @@ export class Editor<T = string> implements Printable {
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
     const contained = overlay.findContained(range);
-    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type === type) slice.del();
+    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type() === type) slice.del();
     if (needToRemoveFormatting) {
       overlay.refresh();
       const [complete2, partial2] = overlay.stat(range, 1e6);
@@ -763,7 +763,7 @@ export class Editor<T = string> implements Printable {
   public getBlockType(point: Point<T>): [type: SliceTypeSteps, marker?: MarkerSlice<T> | undefined] {
     const marker = this.getMarker(point);
     if (!marker) return [[SliceTypeCon.p]];
-    let steps = marker?.type ?? [SliceTypeCon.p];
+    let steps = marker?.type() ?? [SliceTypeCon.p];
     if (!Array.isArray(steps)) steps = [steps];
     return [steps, marker];
   }
@@ -1001,12 +1001,12 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.Many:
         case SliceStacking.Erase:
         case SliceStacking.Marker: {
-          const {stacking, type, start, end} = slice;
+          const {stacking, start, end} = slice;
           const header: number =
             (stacking << SliceHeaderShift.Stacking) +
             (start.anchor << SliceHeaderShift.X1Anchor) +
             (end.anchor << SliceHeaderShift.X2Anchor);
-          const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), type];
+          const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), slice.type()];
           const data = slice.data();
           if (data !== void 0) viewSlice.push(data);
           viewSlices.push(viewSlice);
@@ -1037,7 +1037,7 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.One:
         case SliceStacking.Many:
         case SliceStacking.Erase: {
-          const sliceFormatting: ViewStyle = [stacking, slice.type];
+          const sliceFormatting: ViewStyle = [stacking, slice.type()];
           const data = slice.data();
           if (data !== void 0) sliceFormatting.push(data);
           formatting.push(sliceFormatting);

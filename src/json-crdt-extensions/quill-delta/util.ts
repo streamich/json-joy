@@ -15,12 +15,12 @@ export const getAttributes = (overlayPoint: OverlayPoint): QuillDeltaAttributes 
     if (!(slice instanceof PersistedSlice)) continue;
     switch (slice.stacking) {
       case SliceStacking.One: {
-        const tag = slice.type as PathStep;
+        const tag = slice.type() as PathStep;
         if (tag) attributes[tag] = slice.data();
         break;
       }
       case SliceStacking.Erase: {
-        const tag = slice.type as PathStep;
+        const tag = slice.type() as PathStep;
         if (tag) delete attributes[tag];
         break;
       }

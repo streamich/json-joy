@@ -22,7 +22,7 @@ describe('.ins()', () => {
     expect(slice.start).toStrictEqual(range.start);
     expect(slice.end).toStrictEqual(range.end);
     expect(slice.stacking).toBe(SliceStacking.Many);
-    expect(slice.type).toBe('b');
+    expect(slice.type()).toBe('b');
     expect(slice.data()).toStrictEqual({bold: true});
   });
 
@@ -90,7 +90,7 @@ describe('.ins()', () => {
             expect(slice.start.cmp(range.start)).toBe(0);
             expect(slice.end.cmp(range.end)).toBe(0);
             expect(slice.stacking).toBe(stacking);
-            expect(slice.type).toStrictEqual(type);
+            expect(slice.type()).toStrictEqual(type);
             expect(slice.data()).toStrictEqual(data);
             const buf = model.toBinary();
             const model2 = Model.fromBinary(buf);
@@ -100,7 +100,7 @@ describe('.ins()', () => {
             expect(slice2.start.cmp(range.start)).toBe(0);
             expect(slice2.end.cmp(range.end)).toBe(0);
             expect(slice2.stacking).toBe(stacking);
-            expect(slice2.type).toStrictEqual(type);
+            expect(slice2.type()).toStrictEqual(type);
             expect(slice2.data()).toStrictEqual(data);
           }
         }
@@ -162,7 +162,7 @@ describe('.refresh()', () => {
       const hash1 = peritext.savedSlices.refresh();
       const hash2 = peritext.savedSlices.refresh();
       expect(hash1).toBe(hash2);
-      expect(slice.type).toBe('b');
+      expect(slice.type()).toBe('b');
       update({range, slice});
       const hash3 = peritext.savedSlices.refresh();
       const hash4 = peritext.savedSlices.refresh();
@@ -182,7 +182,7 @@ describe('.refresh()', () => {
 
   testSliceUpdate('slice type change', ({slice}) => {
     slice.update({type: 123});
-    expect(slice.type).toBe(123);
+    expect(slice.type()).toBe(123);
   });
 
   testSliceUpdate('slice data overwrite', ({slice}) => {

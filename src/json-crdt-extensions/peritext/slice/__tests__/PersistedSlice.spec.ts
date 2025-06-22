@@ -12,7 +12,7 @@ test('can read slice data', () => {
   const {range, slice} = setupSlice();
   expect(slice.isSplit()).toBe(true);
   expect(slice.stacking).toBe(SliceStacking.Marker);
-  expect(slice.type).toBe(0);
+  expect(slice.type()).toBe(0);
   expect(slice.data()).toBe(undefined);
   expect(slice.start).not.toBe(range.start);
   expect(slice.start.cmp(range.start)).toBe(0);
@@ -41,7 +41,7 @@ describe('.update()', () => {
 
   testUpdate('type', ({slice}) => {
     slice.update({type: 1});
-    expect(slice.type).toBe(1);
+    expect(slice.type()).toBe(1);
   });
 
   testUpdate('data', ({slice}) => {
