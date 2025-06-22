@@ -1,9 +1,10 @@
 import type {Point} from '../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorPosition, EditorSelection} from '../../../json-crdt-extensions/peritext/editor/types';
-import type {SliceType} from '../../../json-crdt-extensions/peritext/slice/types';
-import type {Patch} from '../../../json-crdt-patch';
+import type {SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/peritext/slice/types';
+import type {ITimestampStruct, Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
+import type {PersistedSlice} from '../slice/PersistedSlice';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -113,6 +114,17 @@ export type SelectionMoveInstruction = [
    */
   collapse?: boolean,
 ];
+
+/**
+ * Specifies the concrete slice to be used
+ */
+export interface SliceDetailPart {
+  /**
+   * An instance of {@link PersistedSlice} or its ID {@link ITimestampStruct} used
+   * to retrieve the slice from the document.
+   */
+  slice?: PersistedSlice | ITimestampStruct;
+}
 
 /**
  * The {@link RangeEventDetail} base interface is used by events
@@ -255,12 +267,17 @@ export interface CursorDetail extends RangeEventDetail {
    * field.
    */
   flip?: boolean;
+
+  /**
+   * If `true`, all cursors in the document will be removed.
+   */
+  clear?: boolean;
 }
 
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
  */
-export interface FormatDetail extends RangeEventDetail {
+export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
   /**
    * The action to perform.
    *
@@ -269,16 +286,22 @@ export interface FormatDetail extends RangeEventDetail {
    *   stack behavior `'one'`. For other annotations, it works the same as
    *   the `'ins'` action.
    * - The `'del'` action removes all annotations that intersect with
-   *   any part of the selection set. If action is `'del'`, and the `at` field
-   *   contains a {@link PersistedSlice} instance, only that instance will be
-   *   deleted.
+   *   any part of the selection set. If action is `'del'`, and the `slice` field
+   *   is specified, only that slice will be deleted.
    * - The `'erase'` action tries to "erase" all annotations that intersect with
    *   any part of the selection set. It works by deleting all annotations which
    *   are contained. For annotations, which partially intersect with the
    *   selection set, a corresponding slice with "erase" stacking behavior is
    *   inserted, which logically removes the annotation from the document.
+   * - The `'upd'` action updates the formatting data using a diff with the
+   *   current value. If the `slice` field is specified, the annotation will be
+   *   updated to the specified slice. If the `slice` field is not specified,
+   *   the `data` will be updated on the first annotation in the selection set
+   *   with the same `type`.
+   * - The `'set'` action ovewrites the formatting data of the slice specified
+   *   by the `slice` field with the `data` field.
    */
-  action: 'ins' | 'tog' | 'del' | 'erase';
+  action: 'ins' | 'tog' | 'del' | 'erase' | 'upd' | 'set';
 
   /**
    * Type of the annotation. The type is used to determine the visual style of
@@ -359,7 +382,7 @@ export interface MarkerDetail extends RangeEventDetail {
    *
    * @default SliceType.Paragraph
    */
-  type?: SliceType;
+  type?: TypeTag | SliceTypeSteps;
 
   /**
    * Block-specific custom data. For example, a paragraph block may store

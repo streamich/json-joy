@@ -18,14 +18,23 @@ import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
-import type {VecNode} from '../../../json-crdt/nodes';
+import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
+import {type Model, ObjApi} from '../../../json-crdt/model';
+import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
-import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps, SliceTypeStep} from './types';
+import type {
+  MutableSlice,
+  SliceView,
+  SliceType,
+  SliceUpdateParams,
+  SliceTypeSteps,
+  SliceTypeStep,
+  TypeTag,
+} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
-import type {Model} from '../../../json-crdt/model';
 import type {Peritext} from '../Peritext';
 import type {Slices} from './Slices';
 
@@ -109,14 +118,19 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public stacking: SliceStacking;
   public type: SliceType;
 
-  public tag(): SliceTypeStep {
+  public typeSteps(): SliceTypeSteps {
+    const type = this.type ?? SliceTypeCon.p;
+    return Array.isArray(type) ? type : [type];
+  }
+
+  public tagStep(): SliceTypeStep {
     const type = this.type;
     return Array.isArray(type) ? type[type.length - 1] : type;
   }
 
-  public typeSteps(): SliceTypeSteps {
-    const type = this.type ?? SliceTypeCon.p;
-    return Array.isArray(type) ? type : [type];
+  public tag(): TypeTag {
+    const step = this.tagStep();
+    return Array.isArray(step) ? step[0] : step;
   }
 
   public update(params: SliceUpdateParams<T>): void {
@@ -156,6 +170,40 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public dataNode() {
     const node = this.tuple.get(SliceTupleIndex.Data);
     return node && this.model.api.wrap(node);
+  }
+
+  public dataAsObj(): ObjApi<ObjNode> {
+    const node = this.dataNode();
+    if (!(node instanceof ObjApi)) {
+      this.tupleApi().set([[SliceTupleIndex.Data, s.obj({})]]);
+    }
+    return this.dataNode() as unknown as ObjApi<ObjNode>;
+  }
+
+  /**
+   * Overwrites the data of this slice with the given data.
+   *
+   * @param data Data to set for this slice. The data can be any JSON value, but
+   *     it is recommended to use an object.
+   */
+  public setData(data: unknown): void {
+    this.tupleApi().set([[SliceTupleIndex.Data, s.jsonCon(data)]]);
+  }
+
+  /**
+   * Merges object data into the slice's data using JSON CRDT diffing.
+   *
+   * @param data Data to merge into the slice. If the data is an object, it will be
+   *     merged with the existing data of the slice using JSON CRDT diffing.
+   */
+  public mergeData(data: unknown): void {
+    const {model} = this;
+    const diff = new JsonCrdtDiff(model);
+    if (this.dataNode() instanceof ObjApi && !!data && typeof data === 'object' && !Array.isArray(data)) {
+      const dataNode = this.dataAsObj();
+      const patch = diff.diff(dataNode.node, data);
+      model.applyPatch(patch);
+    } else this.setData(data);
   }
 
   public getStore(): Slices<T> | undefined {

@@ -9,6 +9,7 @@ import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
 import {Chars} from '../constants';
 import {Anchor} from '../rga/constants';
+import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import type {Range} from '../rga/Range';
 import type {Slice, SliceType} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -17,7 +18,6 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
-import type {UndefIterator} from '../../../util/iterator';
 
 export class Slices<T = string> implements Stateful, Printable {
   private list = new AvlMap<ITimestampStruct, PersistedSlice<T>>(compare);
@@ -168,12 +168,19 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.list._size;
   }
 
-  public iterator0(): UndefIterator<Slice<T>> {
+  /**
+   * @todo Rename to `each0`.
+   */
+  public iterator0(): UndEndNext<PersistedSlice<T>> {
     const iterator = this.list.iterator0();
     return () => iterator()?.v;
   }
 
-  public forEach(callback: (item: Slice<T>) => void): void {
+  public each(): UndEndIterator<PersistedSlice<T>> {
+    return new UndEndIterator<PersistedSlice<T>>(this.iterator0());
+  }
+
+  public forEach(callback: (item: PersistedSlice<T>) => void): void {
     // biome-ignore lint: list is not iterable
     this.list.forEach((node) => callback(node.v));
   }

@@ -12,6 +12,26 @@ const testSuite = (getKit: () => Kit) => {
     return {...kit, et};
   };
 
+  describe('clearing all cursors', () => {
+    test('can remove a single caret cursor', () => {
+      const kit = setup();
+      kit.et.cursor({at: [2]});
+      expect(kit.editor.cursorCount()).toBe(1);
+      kit.et.cursor({clear: true});
+      expect(kit.editor.cursorCount()).toBe(0);
+    });
+
+    test('can remove multiple cursors', () => {
+      const kit = setup();
+      kit.et.cursor({at: [2]});
+      expect(kit.editor.cursorCount()).toBe(1);
+      kit.et.cursor({at: [3, 5], add: true});
+      expect(kit.editor.cursorCount()).toBe(2);
+      kit.et.cursor({clear: true});
+      expect(kit.editor.cursorCount()).toBe(0);
+    });
+  });
+
   describe('with absolute position ("at" property set)', () => {
     describe('caret', () => {
       test('can set the caret at the document start', () => {

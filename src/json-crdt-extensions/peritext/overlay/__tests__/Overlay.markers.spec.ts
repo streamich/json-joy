@@ -1,4 +1,4 @@
-import {UndefEndIter} from '../../../../util/iterator';
+import {UndEndIterator} from '../../../../util/iterator';
 import {type Kit, runNumbersKitTestSuite} from '../../__tests__/setup';
 import type {Point} from '../../rga/Point';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
@@ -108,7 +108,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const {peritext} = setup();
       peritext.overlay.refresh();
       const point = peritext.pointAt(3);
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(0);
     });
 
@@ -118,7 +118,7 @@ const runMarkersTests = (setup: () => Kit) => {
       editor.saved.insMarker('<paragraph>');
       peritext.overlay.refresh();
       const point = peritext.pointAt(3);
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
       expect(list[0] instanceof MarkerOverlayPoint).toBe(true);
     });
@@ -129,7 +129,7 @@ const runMarkersTests = (setup: () => Kit) => {
       editor.saved.insMarker('<paragraph>');
       peritext.overlay.refresh();
       const point = peritext.pointAt(1);
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
       expect(list[0] instanceof MarkerOverlayPoint).toBe(true);
     });
@@ -146,7 +146,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const [m1] = editor.local.insMarker('<p1>');
       peritext.overlay.refresh();
       const point = peritext.pointAt(1);
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(3);
       for (const m of list) expect(m instanceof MarkerOverlayPoint).toBe(true);
       expect(list[0].marker).toBe(m1);
@@ -166,7 +166,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const [m1] = editor.local.insMarker('<p1>');
       peritext.overlay.refresh();
       const point = peritext.pointAbsStart();
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(3);
       for (const m of list) expect(m instanceof MarkerOverlayPoint).toBe(true);
       expect(list[0].marker).toBe(m1);
@@ -180,7 +180,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const [marker] = editor.extra.insMarker(0);
       peritext.overlay.refresh();
       const point = peritext.pointAbsStart();
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
       expect(list[0].marker).toBe(marker);
       editor.extra.del(marker);
@@ -194,7 +194,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const [marker] = editor.extra.insMarker(0);
       peritext.overlay.refresh();
       const point = peritext.pointAbsStart();
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
       expect(list[0].marker).toBe(marker);
       editor.extra.del(marker);
@@ -208,7 +208,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const [marker] = editor.extra.insMarker('0');
       peritext.overlay.refresh();
       const point = peritext.pointAt(1);
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
       expect(list[0].marker).toBe(marker);
       editor.extra.del(marker);
@@ -222,7 +222,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const [marker] = editor.extra.insMarker('0');
       peritext.overlay.refresh();
       const point = peritext.pointAt(1);
-      const list = [...new UndefEndIter(peritext.overlay.markersFrom0(point))];
+      const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
       expect(list[0].marker).toBe(marker);
       editor.extra.del(marker);
@@ -238,7 +238,7 @@ const runMarkersTests = (setup: () => Kit) => {
         peritext.overlay.refresh();
         const point = peritext.pointAt(3);
         const iterator = peritext.overlay.markerPairs0(point);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -248,7 +248,7 @@ const runMarkersTests = (setup: () => Kit) => {
         peritext.overlay.refresh();
         const point = peritext.pointAbsStart();
         const iterator = peritext.overlay.markerPairs0(point);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -259,7 +259,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(2);
         const end = peritext.pointAt(4);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -270,7 +270,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(2);
         const end = peritext.pointAt(2);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -281,7 +281,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(2);
         const end = peritext.pointAbsEnd();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -292,7 +292,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAbsStart();
         const end = peritext.pointAbsEnd();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -303,7 +303,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAbsStart();
         const end = peritext.pointAbsStart();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -314,7 +314,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAbsEnd();
         const end = peritext.pointAbsEnd();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0]).toEqual([undefined, undefined]);
       });
@@ -332,7 +332,7 @@ const runMarkersTests = (setup: () => Kit) => {
       test('start before marker', () => {
         const {peritext} = create();
         const point = peritext.pointAt(1);
-        const list = [...new UndefEndIter(peritext.overlay.markerPairs0(point))];
+        const list = [...new UndEndIterator(peritext.overlay.markerPairs0(point))];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
@@ -344,7 +344,7 @@ const runMarkersTests = (setup: () => Kit) => {
       test('start point equals marker', () => {
         const {peritext} = create();
         const point = peritext.pointAt(5);
-        const list = [...new UndefEndIter(peritext.overlay.markerPairs0(point))];
+        const list = [...new UndEndIterator(peritext.overlay.markerPairs0(point))];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBeInstanceOf(MarkerOverlayPoint);
         expect(list[0][1]).toBe(undefined);
@@ -353,7 +353,7 @@ const runMarkersTests = (setup: () => Kit) => {
       test('start point after marker', () => {
         const {peritext} = create();
         const point = peritext.pointAt(6);
-        const list = [...new UndefEndIter(peritext.overlay.markerPairs0(point))];
+        const list = [...new UndEndIterator(peritext.overlay.markerPairs0(point))];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -364,7 +364,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(1);
         const end = peritext.pointAt(3);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -375,7 +375,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(2);
         const end = peritext.pointAt(7);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
@@ -388,7 +388,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointStart()!;
         const end = peritext.pointEnd()!;
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
@@ -401,7 +401,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAbsStart();
         const end = peritext.pointAbsEnd();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
@@ -414,7 +414,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(6);
         const end = peritext.pointAt(7);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -425,7 +425,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(7);
         const end = peritext.pointAt(7);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -436,7 +436,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(2);
         const end = peritext.pointAt(2);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -447,7 +447,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAt(5);
         const end = peritext.pointAt(5);
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBeInstanceOf(MarkerOverlayPoint);
         expect(list[0][1]).toBe(undefined);
@@ -458,7 +458,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAbsStart();
         const end = peritext.pointAbsStart();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -469,7 +469,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointStart()!;
         const end = peritext.pointStart()!;
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -480,7 +480,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointAbsEnd();
         const end = peritext.pointAbsEnd();
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -491,7 +491,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const start = peritext.pointEnd()!;
         const end = peritext.pointEnd()!;
         const iterator = peritext.overlay.markerPairs0(start, end);
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
         expect(list[0][0]).toBe(undefined);
         expect(list[0][1]).toBe(undefined);
@@ -511,7 +511,7 @@ const runMarkersTests = (setup: () => Kit) => {
         const [m1] = kit.editor.local.insMarker('<p1>');
         kit.peritext.overlay.refresh();
         const iterator = kit.peritext.overlay.markerPairs0(start(kit), end?.(kit));
-        const list = [...new UndefEndIter(iterator)];
+        const list = [...new UndEndIterator(iterator)];
         const markers = [...kit.peritext.overlay.markers()];
         return {...kit, m1, m2, m3, list, markers};
       };

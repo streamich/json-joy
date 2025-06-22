@@ -60,7 +60,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               <SoftLockedDeleteButton
                 onDelete={() => {
                   surface.events.et.format({
-                    at: formatting.range,
+                    slice: formatting.range,
                     action: 'del',
                   });
                   onClose?.();

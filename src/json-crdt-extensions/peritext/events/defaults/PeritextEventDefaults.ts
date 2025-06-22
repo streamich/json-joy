@@ -1,7 +1,7 @@
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
-import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
+import {CursorAnchor, type SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
@@ -174,7 +174,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = ({detail}: CustomEvent<events.CursorDetail>) => {
-    const {at, move, add, flip} = detail;
+    const {at, move, add, flip, clear} = detail;
+    if (clear === true) {
+      this.txt.editor.delCursors();
+      return;
+    }
     if (at === void 0) {
       const selection = this.getSelSet(detail);
       this.moveSelSet(selection, detail);
@@ -228,9 +232,12 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
       case 'del': {
-        const {at} = detail;
-        if (!tag && at && at instanceof PersistedSlice) {
-          at.del();
+        const {slice} = detail;
+        if (!tag && slice) {
+          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof PersistedSlice) {
+            persistedSlice.del();
+          }
         } else {
           editor.clearFormatting(slices, selection);
         }
@@ -239,6 +246,18 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'erase': {
         if (tag === undefined) editor.eraseFormatting(slices, selection);
         else slices.insErase(tag, detail.data, selection);
+        break;
+      }
+      case 'upd':
+      case 'set': {
+        const {slice} = detail;
+        if (slice) {
+          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof PersistedSlice) {
+            if (action === 'set') persistedSlice.setData(detail.data);
+            else persistedSlice.mergeData(detail.data);
+          }
+        }
         break;
       }
     }
@@ -257,12 +276,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       }
       case 'tog': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.tglMarker(type, data, selection);
+        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
+        editor.tglMarker(steps, data, selection);
         break;
       }
       case 'upd': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
-        editor.updMarker(type, data, selection);
+        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
+        editor.updMarker(steps, data, selection);
         break;
       }
       case 'del': {

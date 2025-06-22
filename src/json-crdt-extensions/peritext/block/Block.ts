@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '../../../json-hash/hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatType, getTag} from '../slice/util';
 import {Range} from '../rga/Range';
@@ -60,7 +60,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
    * Iterate through all overlay points of this block, until the next marker
    * (regardless if that marker is a child or not).
    */
-  public points0(withMarker: boolean = false): UndefIterator<OverlayPoint<T>> {
+  public points0(withMarker: boolean = false): UndEndNext<OverlayPoint<T>> {
     const txt = this.txt;
     const overlay = txt.overlay;
     const iterator = overlay.points0(this.marker);
@@ -82,10 +82,10 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   }
 
   public points(withMarker?: boolean): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.points0(withMarker));
+    return new UndEndIterator(this.points0(withMarker));
   }
 
-  protected tuples0(): UndefIterator<OverlayTuple<T>> {
+  protected tuples0(): UndEndNext<OverlayTuple<T>> {
     const overlay = this.txt.overlay;
     const marker = this.marker;
     const iterator = overlay.tuples0(marker);
@@ -103,7 +103,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   /**
    * @todo Consider moving inline-related methods to {@link LeafBlock}.
    */
-  public texts0(): UndefIterator<Inline<T>> {
+  public texts0(): UndEndNext<Inline<T>> {
     const txt = this.txt;
     const overlay = txt.overlay;
     const iterator = this.tuples0();
@@ -114,7 +114,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
     let isFirst = true;
     let next = iterator();
     let closed = false;
-    const newIterator: UndefIterator<Inline<T>> = () => {
+    const newIterator: UndEndNext<Inline<T>> = () => {
       if (closed) return;
       const pair = next;
       next = iterator();
@@ -146,7 +146,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
    * @todo Consider moving inline-related methods to {@link LeafBlock}.
    */
   public texts(): IterableIterator<Inline<T>> {
-    return new UndefEndIter(this.texts0());
+    return new UndEndIterator(this.texts0());
   }
 
   public text(): string {

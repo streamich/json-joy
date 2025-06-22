@@ -6,8 +6,9 @@ import type {Peritext} from '../../../json-crdt-extensions';
 
 /**
  * @todo Move into separately importable file.
+ * @todo Rename to `createDefaults`.
  */
-export const createEvents = (txt: Peritext) => {
+export const createEvents = (txt: Peritext): PeritextEventDefaults => {
   const et = new PeritextEventTarget();
   const clipboard: PeritextEventDefaultsOpts['clipboard'] =
     typeof navigator === 'object' && navigator && navigator.clipboard
