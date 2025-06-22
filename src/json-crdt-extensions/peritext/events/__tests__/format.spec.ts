@@ -1,8 +1,6 @@
-import {color} from 'nano-theme';
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
 import {ArrApi, ObjApi} from '../../../../json-crdt/model';
 import {SliceTypeCon} from '../../slice/constants';
-import {PersistedSlice} from '../../slice/PersistedSlice';
 import {getEventsKit} from './setup';
 
 const testSuite = (getKit: () => Kit) => {
