@@ -1,3 +1,25 @@
+# [17.44.0](https://github.com/streamich/json-joy/compare/v17.43.0...v17.44.0) (2025-06-22)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly overwrite formatting data ([da100fd](https://github.com/streamich/json-joy/commit/da100fdf2a37d1c9e8a8477e2cc8f22af3930910))
+* **json-crdt-extensions:** 🐛 do not type into array unnecessarily ([fe236cc](https://github.com/streamich/json-joy/commit/fe236cc415a99637520c36aad77f826f135ae5f2))
+* **json-crdt-peritext-ui:** 🐛 remove formatting by its ID ([350a45c](https://github.com/streamich/json-joy/commit/350a45c474c2ba7ba5dff581881c66c86af1adb6))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add "format" event "set" action ([3c4a344](https://github.com/streamich/json-joy/commit/3c4a344d4fb2e7ae0589d7413eb26f625317a10d))
+* **json-crdt-extensions:** 🎸 add ability to clear all cursors ([e58aa07](https://github.com/streamich/json-joy/commit/e58aa07b338f3f6650cf23eeb8020f7132359c39))
+* **json-crdt-extensions:** 🎸 add ability to remove formatting by ID ([d371ba6](https://github.com/streamich/json-joy/commit/d371ba6293c86c179d49bc666e31bb8c0f1c3774))
+* **json-crdt-extensions:** 🎸 add attr data to multiple levels ([d92ccb1](https://github.com/streamich/json-joy/commit/d92ccb196feb3818b88dc42079e564d9fd90cc81))
+* **json-crdt-extensions:** 🎸 add event part to select specific slice ([f4b5796](https://github.com/streamich/json-joy/commit/f4b579695535b863e1d3c14ca16ceda6fa1ec506))
+* **json-crdt-extensions:** 🎸 add initial "upd" formatting implementation ([1f43820](https://github.com/streamich/json-joy/commit/1f4382056f470f6b693e4e97f97419f3d13bb9d4))
+* **json-crdt-extensions:** 🎸 can retrieve formatting data and force it to be "obj" node ([dceae02](https://github.com/streamich/json-joy/commit/dceae025977480bca7da3c72d98be97db5e4186c))
+* **json-crdt-extensions:** 🎸 cleanup slice type annotations ([167a78b](https://github.com/streamich/json-joy/commit/167a78b209b759dafc5b1099e2d2b6c6c1f1fb7a))
+* **util:** 🎸 add basic Iterator polyfill ([6edbe87](https://github.com/streamich/json-joy/commit/6edbe8777d55f8f224fbcb25752e01e08b9a535e))
+
 # [17.43.0](https://github.com/streamich/json-joy/compare/v17.42.0...v17.43.0) (2025-05-22)
 
 
