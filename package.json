@@ -66,7 +66,7 @@
     "bench:json-ot:ot-string:apply": "cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:apply",
     "bench:json-ot:ot-string:compose-and-transform": "yarn build && cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:compose-and-transform",
     "coverage": "yarn test --collectCoverage",
-    "typedoc": "npx typedoc@0.25.13 --tsconfig tsconfig.build.json",
+    "typedoc": "npx typedoc@0.28.5 --tsconfig tsconfig.build.json",
     "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
