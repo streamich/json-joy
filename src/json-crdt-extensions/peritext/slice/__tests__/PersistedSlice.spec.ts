@@ -151,4 +151,98 @@ describe('type retrieval an manipulation', () => {
       expect(slice.tag(4)).toEqual('p');
     });
   });
+
+  describe('.tagDisc()', () => {
+    test('basic type', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(3, 8);
+      const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
+      expect(slice.tagDisc()).toBe(0);
+      expect(slice.tagDisc(1)).toBe(0);
+      expect(slice.tagDisc(2)).toBe(0);
+    });
+
+    test('nested', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
+      expect(slice.tagDisc()).toEqual(0);
+      expect(slice.tagDisc(0)).toEqual(0);
+      expect(slice.tagDisc(1)).toEqual(0);
+      expect(slice.tagDisc(2)).toEqual(0);
+      expect(slice.tagDisc(3)).toEqual(0);
+      expect(slice.tagDisc(4)).toEqual(0);
+    });
+
+    test('nested with discriminants', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
+      expect(slice.tagDisc()).toEqual(0);
+      expect(slice.tagDisc(0)).toEqual(1);
+      expect(slice.tagDisc(1)).toEqual(0);
+      expect(slice.tagDisc(2)).toEqual(0);
+      expect(slice.tagDisc(3)).toEqual(0);
+      expect(slice.tagDisc(4)).toEqual(0);
+    });
+
+    test('nested with data', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 2, {indent: 2}]]);
+      expect(slice.tagDisc()).toEqual(2);
+      expect(slice.tagDisc(0)).toEqual(1);
+      expect(slice.tagDisc(1)).toEqual(0);
+      expect(slice.tagDisc(2)).toEqual(2);
+      expect(slice.tagDisc(3)).toEqual(2);
+      expect(slice.tagDisc(4)).toEqual(2);
+    });
+  });
+
+  describe('.tagData()', () => {
+    test('basic type', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(3, 8);
+      const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
+      expect(slice.tagData()).toBe(void 0);
+      expect(slice.tagData(1)).toBe(void 0);
+      expect(slice.tagData(2)).toBe(void 0);
+    });
+
+    test('nested', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
+      expect(slice.tagData()).toEqual(void 0);
+      expect(slice.tagData(0)).toEqual(void 0);
+      expect(slice.tagData(1)).toEqual(void 0);
+      expect(slice.tagData(2)).toEqual(void 0);
+      expect(slice.tagData(3)).toEqual(void 0);
+      expect(slice.tagData(4)).toEqual(void 0);
+    });
+
+    test('nested with discriminants', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
+      expect(slice.tagData()).toEqual(void 0);
+      expect(slice.tagData(0)).toEqual(void 0);
+      expect(slice.tagData(1)).toEqual(void 0);
+      expect(slice.tagData(2)).toEqual(void 0);
+      expect(slice.tagData(3)).toEqual(void 0);
+      expect(slice.tagData(4)).toEqual(void 0);
+    });
+
+    test('nested with data', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 2, {indent: 2}]]);
+      expect(slice.tagData()).toEqual({indent: 2});
+      expect(slice.tagData(0)).toEqual({type: 'todo'});
+      expect(slice.tagData(1)).toEqual(void 0);
+      expect(slice.tagData(2)).toEqual({indent: 2});
+      expect(slice.tagData(3)).toEqual({indent: 2});
+      expect(slice.tagData(4)).toEqual({indent: 2});
+    });
+  });
 });

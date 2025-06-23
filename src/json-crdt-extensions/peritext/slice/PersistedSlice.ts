@@ -19,10 +19,10 @@ import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
-import {type Model, ObjApi} from '../../../json-crdt/model';
+import {type Model, NodeApi, ObjApi} from '../../../json-crdt/model';
 import {ArrNode, ConNode, type ObjNode, type VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {ArrChunk} from '../../../json-crdt/nodes';
+import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
 import type {
   MutableSlice,
   SliceView,
@@ -157,7 +157,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return Array.isArray(step) ? step[0] : step;
   }
 
-  public discriminant(index?: number): number {
+  public tagDisc(index?: number): number {
     const step = this.typeStep(index);
     if (!step) return 0;
     return Array.isArray(step) ? (step[1] ?? 0) : 0;
@@ -167,6 +167,14 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const step = this.typeStep(index);
     if (!step) return;
     return Array.isArray(step) ? step[2] : void 0;
+  }
+
+  public tagDataNode(index?: number): NodeApi<JsonNode<unknown>> | undefined {
+    throw new Error('Not implemented');
+  }
+
+  public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
+    throw new Error('Not implemented');
   }
 
   public update(params: SliceUpdateParams<T>): void {
@@ -226,7 +234,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.tuple.get(SliceTupleIndex.Data)?.view();
   }
 
-  public dataNode() {
+  public dataNode(): NodeApi<JsonNode<unknown>> | undefined {
     const node = this.tuple.get(SliceTupleIndex.Data);
     return node && this.model.api.wrap(node);
   }
