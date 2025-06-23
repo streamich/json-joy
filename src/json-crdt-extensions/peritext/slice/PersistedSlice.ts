@@ -145,9 +145,10 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   }
 
   public typeStep(index?: number): SliceTypeStep | undefined {
-    if (typeof index !== 'number') index = this.typeLen() - 1;
+    const typeLen = this.typeLen();
+    if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
     const type = this.type();
-    return Array.isArray(type) ? type[type.length - 1] : (index === 0 ? type : void 0);
+    return Array.isArray(type) ? type[index] : type;
   }
 
   public tag(index?: number): TypeTag {
