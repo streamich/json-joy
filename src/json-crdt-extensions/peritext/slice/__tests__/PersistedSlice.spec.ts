@@ -73,3 +73,35 @@ describe('.del() and .isDel()', () => {
     expect(slice3).toBe(undefined);
   });
 });
+
+describe('type retrieval an manipulation', () => {
+  describe('.type()', () => {
+    test('basic type', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(3, 8);
+      const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
+      expect(slice.type()).toBe('test');
+    });
+
+    test('nested', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
+      expect(slice.type()).toEqual(['ul', 'li', 'p']);
+    });
+
+    test('nested with discriminants', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
+      expect(slice.type()).toEqual([['ul', 1], ['li', 0], 'p']);
+    });
+
+    test('nested with data', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
+      expect(slice.type()).toEqual([['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
+    });
+  });
+});

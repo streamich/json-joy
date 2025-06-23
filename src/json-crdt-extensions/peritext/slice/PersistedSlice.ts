@@ -20,7 +20,7 @@ import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {type Model, ObjApi} from '../../../json-crdt/model';
-import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
+import {ArrNode, ConNode, type ObjNode, type VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
 import type {
@@ -115,13 +115,28 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public stacking: SliceStacking;
 
   public typeNode() {
-    const node = this.tuple.get(SliceTupleIndex.Type)!;
+    return this.tuple.get(SliceTupleIndex.Type);
+  }
+
+  public typeApi() {
+    const node = this.typeNode();
     if (!node) return;
     return this.model.api.wrap(node);
   }
 
   public type(): SliceType {
-    return this.typeNode()?.view() as SliceType;
+    return this.typeApi()?.view() as SliceType;
+  }
+
+  public typeLen(): number {
+    const node = this.typeNode();
+    if (!node) return 1;
+    if (node instanceof ArrNode) return node.length();
+    if (node instanceof ConNode) {
+      const view = node.view();
+      if (Array.isArray(view)) return view.length;
+    }
+    return 1;
   }
 
   public typeSteps(): SliceTypeSteps {
@@ -129,14 +144,28 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return Array.isArray(type) ? type : [type];
   }
 
-  public tagStep(): SliceTypeStep {
+  public typeStep(index?: number): SliceTypeStep | undefined {
+    if (typeof index !== 'number') index = this.typeLen() - 1;
     const type = this.type();
-    return Array.isArray(type) ? type[type.length - 1] : type;
+    return Array.isArray(type) ? type[type.length - 1] : (index === 0 ? type : void 0);
   }
 
-  public tag(): TypeTag {
-    const step = this.tagStep();
+  public tag(index?: number): TypeTag {
+    const step = this.typeStep(index);
+    if (!step) return 0;
     return Array.isArray(step) ? step[0] : step;
+  }
+
+  public discriminant(index?: number): number {
+    const step = this.typeStep(index);
+    if (!step) return 0;
+    return Array.isArray(step) ? (step[1] ?? 0) : 0;
+  }
+
+  public tagData(index?: number): unknown | undefined {
+    const step = this.typeStep(index);
+    if (!step) return;
+    return Array.isArray(step) ? step[2] : void 0;
   }
 
   public update(params: SliceUpdateParams<T>): void {
