@@ -20,7 +20,7 @@ import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {type Model, NodeApi, ObjApi} from '../../../json-crdt/model';
-import {ArrNode, ConNode, type ObjNode, type VecNode} from '../../../json-crdt/nodes';
+import {ArrNode, ConNode, VecNode, type ObjNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
 import type {
@@ -233,7 +233,15 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return;
   }
 
+  public tagDataNode(index?: number): JsonNode<unknown> | undefined {
+    const stepNode = this.typeStepNode(index);
+    if (!stepNode) return;
+    return stepNode instanceof VecNode ? stepNode.get(2) : void 0;
+  }
+
   public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
+    // const stepNode = this.typeStepNode(index);
+    // if (!stepNode) return;
     throw new Error('Not implemented');
   }
 

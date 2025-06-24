@@ -1,4 +1,4 @@
-import {StrNode, VecNode} from '../../../../json-crdt/nodes';
+import {ObjNode, StrNode, VecNode} from '../../../../json-crdt/nodes';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
 
@@ -309,6 +309,56 @@ describe('type retrieval an manipulation', () => {
       expect(slice.typeStepNode(2)!.view()).toEqual(['p', 2, {indent: 2}]);
       expect(slice.typeStepNode(3)!.view()).toEqual(['p', 2, {indent: 2}]);
       expect(slice.typeStepNode(4)!.view()).toEqual(['p', 2, {indent: 2}]);
+    });
+  });
+
+  describe('.tagDataNode()', () => {
+    test('basic type', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(3, 8);
+      const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
+      expect(slice.tagDataNode()).toBe(void 0);
+      expect(slice.tagDataNode(1)).toBe(void 0);
+      expect(slice.tagDataNode(2)).toBe(void 0);
+    });
+
+    test('nested', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
+      expect(slice.tagDataNode()).toBe(void 0);
+      expect(slice.tagDataNode(0)).toBe(void 0);
+      expect(slice.tagDataNode(1)).toBe(void 0);
+      expect(slice.tagDataNode(2)).toBe(void 0);
+      expect(slice.tagDataNode(3)).toBe(void 0);
+      expect(slice.tagDataNode(4)).toBe(void 0);
+    });
+
+    test('nested with discriminants', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
+      expect(slice.tagDataNode()).toBe(void 0);
+      expect(slice.tagDataNode(0)).toBe(void 0);
+      expect(slice.tagDataNode(1)).toBe(void 0);
+      expect(slice.tagDataNode(2)).toBe(void 0);
+      expect(slice.tagDataNode(3)).toBe(void 0);
+      expect(slice.tagDataNode(4)).toBe(void 0);
+    });
+
+    test('nested with data', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 2, {indent: 2}]]);
+      expect(slice.tagDataNode() instanceof ObjNode).toBe(true);
+      expect(slice.tagDataNode(0) instanceof ObjNode).toBe(true);
+      expect(slice.tagDataNode(1)).toBe(void 0);
+      expect(slice.tagDataNode(2) instanceof ObjNode).toBe(true);
+      expect(slice.tagDataNode(3) instanceof ObjNode).toBe(true);
+      expect(slice.tagDataNode()!.view()).toEqual({indent: 2});
+      expect(slice.tagDataNode(0)!.view()).toEqual({type: 'todo'});
+      expect(slice.tagDataNode(2)!.view()).toEqual({indent: 2});
+      expect(slice.tagDataNode(3)!.view()).toEqual({indent: 2});
     });
   });
 });
