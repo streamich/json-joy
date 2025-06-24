@@ -114,6 +114,59 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public readonly id: ITimestampStruct;
   public stacking: SliceStacking;
 
+  public update(params: SliceUpdateParams<T>): void {
+    let updateHeader = false;
+    const changes: [number, unknown][] = [];
+    const stacking = params.stacking;
+    if (stacking !== undefined) {
+      this.stacking = stacking;
+      updateHeader = true;
+    }
+    const range = params.range;
+    if (range) {
+      updateHeader = true;
+      changes.push([SliceTupleIndex.X1, s.con(range.start.id)], [SliceTupleIndex.X2, s.con(range.end.id)]);
+      this.start = range.start;
+      this.end = range.start === range.end ? range.end.clone() : range.end;
+    }
+    if (params.type !== undefined) {
+      changes.push([SliceTupleIndex.Type, s.jsonCon(params.type)]);
+    }
+    if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
+    if (updateHeader) {
+      const header =
+        (this.stacking << SliceHeaderShift.Stacking) +
+        (this.start.anchor << SliceHeaderShift.X1Anchor) +
+        (this.end.anchor << SliceHeaderShift.X2Anchor);
+      changes.push([SliceTupleIndex.Header, s.con(header)]);
+    }
+    this.tupleApi().set(changes);
+  }
+
+  public getStore(): Slices<T> | undefined {
+    const txt = this.txt;
+    const sid = this.id.sid;
+    let store = txt.savedSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    store = txt.localSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    store = txt.extraSlices;
+    if (sid === store.set.doc.clock.sid) return store;
+    return;
+  }
+
+  public del(): void {
+    const store = this.getStore();
+    if (!store) return;
+    store.del(this.id);
+  }
+
+  public isDel(): boolean {
+    return this.chunk.del;
+  }
+
+  // -------------------------------------------------- slice type manipulation
+
   public typeNode() {
     return this.tuple.get(SliceTupleIndex.Type);
   }
@@ -169,63 +222,19 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return Array.isArray(step) ? step[2] : void 0;
   }
 
-  public tagDataNode(index?: number): NodeApi<JsonNode<unknown>> | undefined {
-    throw new Error('Not implemented');
+  public typeStepNode(index?: number): JsonNode<unknown> | undefined {
+    const typeNode = this.typeNode();
+    if (!typeNode) return;
+    if (typeNode instanceof ArrNode) {
+      const length = typeNode.length();
+      if (typeof index !== 'number' || index > length - 1) index = length - 1;
+      return typeNode.getNode(index);
+    }
+    return;
   }
 
   public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
     throw new Error('Not implemented');
-  }
-
-  public update(params: SliceUpdateParams<T>): void {
-    let updateHeader = false;
-    const changes: [number, unknown][] = [];
-    const stacking = params.stacking;
-    if (stacking !== undefined) {
-      this.stacking = stacking;
-      updateHeader = true;
-    }
-    const range = params.range;
-    if (range) {
-      updateHeader = true;
-      changes.push([SliceTupleIndex.X1, s.con(range.start.id)], [SliceTupleIndex.X2, s.con(range.end.id)]);
-      this.start = range.start;
-      this.end = range.start === range.end ? range.end.clone() : range.end;
-    }
-    if (params.type !== undefined) {
-      changes.push([SliceTupleIndex.Type, s.jsonCon(params.type)]);
-    }
-    if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
-    if (updateHeader) {
-      const header =
-        (this.stacking << SliceHeaderShift.Stacking) +
-        (this.start.anchor << SliceHeaderShift.X1Anchor) +
-        (this.end.anchor << SliceHeaderShift.X2Anchor);
-      changes.push([SliceTupleIndex.Header, s.con(header)]);
-    }
-    this.tupleApi().set(changes);
-  }
-
-  public getStore(): Slices<T> | undefined {
-    const txt = this.txt;
-    const sid = this.id.sid;
-    let store = txt.savedSlices;
-    if (sid === store.set.doc.clock.sid) return store;
-    store = txt.localSlices;
-    if (sid === store.set.doc.clock.sid) return store;
-    store = txt.extraSlices;
-    if (sid === store.set.doc.clock.sid) return store;
-    return;
-  }
-
-  public del(): void {
-    const store = this.getStore();
-    if (!store) return;
-    store.del(this.id);
-  }
-
-  public isDel(): boolean {
-    return this.chunk.del;
   }
 
   // -------------------------------------------------- slice data manipulation

@@ -10,6 +10,7 @@ import {VecNode} from '../../../json-crdt/nodes';
 import {Chars} from '../constants';
 import {Anchor} from '../rga/constants';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
+import {s} from '../../../json-crdt-patch';
 import type {Range} from '../rga/Range';
 import type {Slice, SliceType} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -49,7 +50,7 @@ export class Slices<T = string> implements Stateful, Printable {
     const set = this.set;
     const api = slicesModel.api;
     const builder = api.builder;
-    const tupleId = builder.vec();
+    const stepId = builder.vec();
     const start = range.start.clone();
     const end = range.end.clone();
     stacking = stacking & 0b111;
@@ -60,19 +61,21 @@ export class Slices<T = string> implements Stateful, Printable {
     const headerId = builder.const(header);
     const x1Id = builder.const(start.id);
     const x2Id = builder.const(compare(start.id, end.id) === 0 ? 0 : end.id);
-    const subtypeId = builder.const(type);
+    let typeId: ITimestampStruct = Array.isArray(type)
+      ? s.arr(type.map(step => Array.isArray(step) ? s.vec(...step.map(v => s.jsonCon(v))) : s.jsonCon(step))).build(builder)
+      : builder.constOrJson(type);
     const tupleKeysUpdate: [key: number, value: ITimestampStruct][] = [
       [SliceTupleIndex.Header, headerId],
       [SliceTupleIndex.X1, x1Id],
       [SliceTupleIndex.X2, x2Id],
-      [SliceTupleIndex.Type, subtypeId],
+      [SliceTupleIndex.Type, typeId],
     ];
     if (data !== undefined) tupleKeysUpdate.push([SliceTupleIndex.Data, builder.json(data)]);
-    builder.insVec(tupleId, tupleKeysUpdate);
-    const chunkId = builder.insArr(set.id, set.id, [tupleId]);
+    builder.insVec(stepId, tupleKeysUpdate);
+    const chunkId = builder.insArr(set.id, set.id, [stepId]);
     // TODO: Consider using `s` schema here.
     api.apply();
-    const tuple = slicesModel.index.get(tupleId) as VecNode;
+    const tuple = slicesModel.index.get(stepId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
     const slice = new Klass(slicesModel, this.txt, chunk, tuple, stacking, start, end);
