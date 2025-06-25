@@ -2,6 +2,7 @@ import type {JsonNodeApi} from './types';
 import type * as nodes from '../../nodes';
 import type {PeritextNode, QuillDeltaNode} from '../../../json-crdt-extensions';
 import type {VecNodeExtensionData} from '../../schema/types';
+import type {PathStep} from '@jsonjoy.com/json-pointer';
 
 export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
   toApi(): JsonNodeApi<N>;
@@ -47,3 +48,15 @@ export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
                   : N extends QuillDeltaNode
                     ? ProxyNode<QuillDeltaNode>
                     : never;
+
+export type ProxyPathEndMethod<Args extends unknown[], Return> = (path: PathStep[], ...args: Args) => Return;
+export type ProxyPathUserEndMethod<M extends ProxyPathEndMethod<any[], any>> = M extends ProxyPathEndMethod<infer Args, infer Return> ? ((...args: Args) => Return) : never;
+export type ProxyPathNodeStep<Api, Next> = Api & Record<string | number, Next>;
+export type ProxyPathNode<Api> = ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, any>>>>>>>>;
+
+export const proxy = <EndMethod extends ProxyPathEndMethod<any[], any>>(fn: EndMethod, path: PathStep[] = []): ProxyPathNode<ProxyPathUserEndMethod<EndMethod>> => {
+  return new Proxy(() => {}, {
+    get: (target, prop, receiver) => (path.push(String(prop)), proxy(fn, path)),
+    apply: (target, thisArg, args) => fn(path, ...args),
+  }) as unknown as ProxyPathNode<ProxyPathUserEndMethod<EndMethod>>;
+};
