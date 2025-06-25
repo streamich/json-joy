@@ -266,6 +266,18 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return this.model.view();
   }
 
+  /**
+   * Reads the value at the given path in the model. If no path is provided,
+   * returns the root node's view.
+   *
+   * @param path Path at which to read the value.
+   * @returns The value at the given path, or the root node's view if no path
+   *     is provided.
+   */
+  public read(path?: ApiPath): unknown {
+    return this.r.read(path);
+  }
+
   private inTx = false;
   public transaction(callback: () => void) {
     if (this.inTx) callback();

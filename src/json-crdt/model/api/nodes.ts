@@ -175,6 +175,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.node.view() as unknown as JsonNodeView<N>;
   }
 
+  public read(path?: ApiPath): unknown {
+    return !path ? this.view() : this.in(path).view();
+  }
+
   public proxy(): types.ProxyNode<N> {
     return {
       toApi: () => <any>this,
