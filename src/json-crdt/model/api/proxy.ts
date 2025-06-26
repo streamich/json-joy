@@ -3,6 +3,7 @@ import type * as nodes from '../../nodes';
 import type {PeritextNode, QuillDeltaNode} from '../../../json-crdt-extensions';
 import type {VecNodeExtensionData} from '../../schema/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
+import type {NodeApi} from '..';
 
 export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
   toApi(): JsonNodeApi<N>;
@@ -49,6 +50,21 @@ export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
                     ? ProxyNode<QuillDeltaNode>
                     : never;
 
+export type JsonNodeToProxyPathNodeEnd<N> = {$?: JsonNodeApi<N>};
+
+// prettier-ignore
+export type JsonNodeToProxyPathNode<N> = 0 extends (1 & N)
+  ? ProxyPathNode<{$?: NodeApi<N extends nodes.JsonNode<unknown> ? N : nodes.JsonNode>}>
+  : N extends nodes.ArrNode<infer Element>
+    ? JsonNodeToProxyPathNode<Element>[] & JsonNodeToProxyPathNodeEnd<N>
+    : N extends nodes.ObjNode<infer Obj>
+      ? {[K in keyof Obj]: JsonNodeToProxyPathNode<Obj[K]>} & JsonNodeToProxyPathNodeEnd<N>
+      : N extends nodes.VecNode<infer Tuple>
+        ? {[K in keyof Tuple]: JsonNodeToProxyPathNode<Tuple[K]>} & JsonNodeToProxyPathNodeEnd<N>
+        : nodes.JsonNode<unknown> extends N
+          ? ProxyPathNode<{$?: NodeApi<N extends nodes.JsonNode<unknown> ? N : nodes.JsonNode>}>
+          : JsonNodeToProxyPathNodeEnd<N>;
+
 export type ProxyPathEndMethod<Args extends unknown[], Return> = (path: PathStep[], ...args: Args) => Return;
 export type ProxyPathUserEndMethod<M extends ProxyPathEndMethod<any[], any>> = M extends ProxyPathEndMethod<infer Args, infer Return> ? ((...args: Args) => Return) : never;
 export type ProxyPathNodeStep<Api, Next> = Api & Record<string | number, Next>;
@@ -62,5 +78,3 @@ export const proxy = <EndMethod extends ProxyPathEndMethod<any[], any>>(fn: EndM
 
 export const proxy$ = <EndMethod extends ProxyPathEndMethod<any[], any>, Sentinel extends string>(fn: EndMethod, sentinel: Sentinel, path: PathStep[] = []): ProxyPathNode<{[k in Sentinel]: ReturnType<EndMethod>}> =>
   new Proxy({}, {get: (t, prop, r) => prop === sentinel ? fn(path) : (path.push(String(prop)), proxy$(fn, sentinel, path))}) as any;
-
-type A = any extends nodes.JsonNode ? true : false;

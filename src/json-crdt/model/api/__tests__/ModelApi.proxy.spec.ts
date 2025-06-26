@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ConApi, ObjApi, StrApi, VecApi, ValApi, ArrApi, BinApi} from '../nodes';
+import {ConApi, ObjApi, StrApi, VecApi, ValApi, ArrApi, BinApi, NodeApi} from '../nodes';
 import {ConNode, RootNode, ObjNode, StrNode, type ValNode} from '../../../nodes';
 import {s} from '../../../../json-crdt-patch';
 import type {ProxyNodeVal} from '../proxy';
@@ -112,5 +112,84 @@ describe('supports all node types', () => {
   test('con - 3', () => {
     expect(model.s.obj.num.toApi()).toBeInstanceOf(ConApi);
     expect(model.s.obj.num.toView()).toStrictEqual(1234);
+  });
+});
+
+describe('$ proxy', () => {
+  const schema = s.obj({
+    obj: s.obj({
+      str: s.str('asdf'),
+      num: s.con(1234),
+      address: s.obj({
+        city: s.str<string>('New York'),
+        zip: s.con(10001),
+      }),
+    }),
+    vec: s.vec(s.con('asdf'), s.con(1234), s.con(true), s.con(null)),
+    arr: s.arr([s.con('asdf'), s.val(s.con(0))]),
+    bin: s.bin(new Uint8Array([1, 2, 3])),
+  });
+
+  test('returns NodeApi? for un-typed model', () => {
+    const model1 = Model.create();
+    const model2 = Model.create<any>() as Model<any>;
+    model1.api.root(schema);
+    model2.api.root(schema);
+    const node1 = model1.api.$.obj.str.$;
+    const node2 = model2.api.$.obj.str.$;
+    const assertNodeApi = (node?: NodeApi) => {
+      expect(node instanceof NodeApi).toBe(true);
+    };
+    assertNodeApi(node1);
+    assertNodeApi(node2);
+    expect(node1?.asStr().view()).toBe('asdf');
+    expect(node2?.asStr().view()).toBe('asdf');
+  });
+
+  test('returns StrApi? for typed model', () => {
+    const model = Model.create(schema);
+    const node = model.api.$.obj.str.$;
+    const assertStrApi = (node?: StrApi) => {
+      expect(node instanceof StrApi).toBe(true);
+    };
+    assertStrApi(node);
+    expect(node?.view()).toBe('asdf');
+  });
+
+  test('can access various node types', () => {
+    const model = Model.create(schema);
+    expect(model.api.$.obj.str.$?.view()).toBe('asdf');
+    expect(model.api.$.obj.num.$?.view()).toBe(1234);
+    expect(model.api.$.obj.address.city.$?.view()).toBe('New York');
+    expect(model.api.$.obj.address.zip.$?.view()).toBe(10001);
+    expect(model.api.$.vec[0].$?.view()).toBe('asdf');
+    expect(model.api.$.vec[1].$?.view()).toBe(1234);
+    expect(model.api.$.vec[2].$?.view()).toBe(true);
+    expect(model.api.$.vec[3].$?.view()).toBe(null);
+    expect(model.api.$.arr[0].$?.view()).toBe('asdf');
+    expect(model.api.$.arr[1].$?.view()).toBe(0);
+    expect(model.api.$.bin.$?.view()).toEqual(new Uint8Array([1, 2, 3]));
+    expect(model.api.$.obj.address.$!.view()).toEqual({
+      city: 'New York',
+      zip: 10001,
+    });
+    expect(model.api.$.obj.address.$ instanceof ObjApi).toBe(true);
+  });
+
+  test('returns undefined if node not found', () => {
+    const model = Model.create(schema);
+    expect(model.api.$.vec[10].$?.view()).toBe(undefined);
+    expect(model.api.$.arr[111].$?.view()).toBe(undefined);
+    expect((model.api.$.arr as any).asdf.$?.view()).toBe(undefined);
+  });
+
+  test('returns undefined if node not found in un-typed model', () => {
+    const model = Model.create();
+    model.api.root(schema);
+    expect(model.api.$.asdfasdfasdf.$?.view()).toBe(undefined);
+    expect(model.api.$[0].$?.view()).toBe(undefined);
+    expect(model.api.$.vec[10].$?.view()).toBe(undefined);
+    expect(model.api.$.arr[111].$?.view()).toBe(undefined);
+    expect(model.api.$.arr.asdf.$?.view()).toBe(undefined);
   });
 });

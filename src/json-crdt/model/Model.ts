@@ -6,10 +6,10 @@ import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
-import type {SchemaToJsonNode} from '../schema/types';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
+import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -277,6 +277,10 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    */
   public get s() {
     return this.api.r.proxy().val;
+  }
+
+  public get $() {
+    return this.api.$;
   }
 
   /**

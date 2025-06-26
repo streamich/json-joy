@@ -1,11 +1,12 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
 import {type ApiPath, ArrApi, BinApi, ConApi, type NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
-import type {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import type {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
+import {JsonNodeToProxyPathNode, proxy$} from './proxy';
 import {ExtNode} from '../../extensions/ExtNode';
+import type {Patch} from '../../../json-crdt-patch/Patch';
+import type {SyncStore} from '../../../util/events/sync-store';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
@@ -109,6 +110,16 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   /** @ignore */
   public get node() {
     return this.r.get();
+  }
+
+  public get $(): JsonNodeToProxyPathNode<N> {
+    return proxy$(path => {
+      try {
+        return this.wrap(this.find(path));
+      } catch {
+        return;
+      }
+    }, '$') as any;
   }
 
   /**
