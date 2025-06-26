@@ -54,9 +54,13 @@ export type ProxyPathUserEndMethod<M extends ProxyPathEndMethod<any[], any>> = M
 export type ProxyPathNodeStep<Api, Next> = Api & Record<string | number, Next>;
 export type ProxyPathNode<Api> = ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, ProxyPathNodeStep<Api, any>>>>>>>>;
 
-export const proxy = <EndMethod extends ProxyPathEndMethod<any[], any>>(fn: EndMethod, path: PathStep[] = []): ProxyPathNode<ProxyPathUserEndMethod<EndMethod>> => {
-  return new Proxy(() => {}, {
+export const proxy = <EndMethod extends ProxyPathEndMethod<any[], any>>(fn: EndMethod, path: PathStep[] = []): ProxyPathNode<ProxyPathUserEndMethod<EndMethod>> =>
+  new Proxy(() => {}, {
     get: (target, prop, receiver) => (path.push(String(prop)), proxy(fn, path)),
     apply: (target, thisArg, args) => fn(path, ...args),
-  }) as unknown as ProxyPathNode<ProxyPathUserEndMethod<EndMethod>>;
-};
+  }) as any;
+
+export const proxy$ = <EndMethod extends ProxyPathEndMethod<any[], any>, Sentinel extends string>(fn: EndMethod, sentinel: Sentinel, path: PathStep[] = []): ProxyPathNode<{[k in Sentinel]: ReturnType<EndMethod>}> =>
+  new Proxy({}, {get: (t, prop, r) => prop === sentinel ? fn(path) : (path.push(String(prop)), proxy$(fn, sentinel, path))}) as any;
+
+type A = any extends nodes.JsonNode ? true : false;
