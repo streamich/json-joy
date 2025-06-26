@@ -33,5 +33,5 @@ test('.length()', () => {
       bin: s.bin(new Uint8Array([1, 2, 3])),
     }),
   );
-  expect(doc.find.val.bin.toApi().length()).toBe(3);
+  expect(doc.api.r.proxy().val.bin.toApi().length()).toBe(3);
 });

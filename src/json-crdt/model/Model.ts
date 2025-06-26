@@ -270,13 +270,6 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
-   * Experimental node retrieval API using proxy objects.
-   */
-  public get find() {
-    return this.api.r.proxy();
-  }
-
-  /**
    * Experimental node retrieval API using proxy objects. Returns a strictly
    * typed proxy wrapper around the value of the root node.
    *
