@@ -1,10 +1,10 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {find} from './find';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
-import type {Path} from '@jsonjoy.com/json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
 import type {JsonNode, JsonNodeView} from '../../nodes';
@@ -176,7 +176,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public read(path?: ApiPath): unknown {
-    return !path ? this.view() : this.in(path).view();
+    try {
+      return !path ? this.view() : this.in(path).view();
+    } catch {
+      return;
+    }
   }
 
   public proxy(): types.ProxyNode<N> {
