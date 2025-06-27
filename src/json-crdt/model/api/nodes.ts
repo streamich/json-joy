@@ -201,11 +201,13 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public add(path: ApiPath, value: unknown): boolean {
     const [parent, key] = breakPath(path);
-    const node = this.in(parent);
-    if (node instanceof ObjApi) {
-      node.set({[key]: value});
-      return true;
-    }
+    try {
+      const node = this.in(parent);
+      if (node instanceof ObjApi) {
+        node.set({[key]: value});
+        return true;
+      }
+    } catch {}
     return false;
   }
 

@@ -54,24 +54,68 @@ describe('.read()', () => {
 });
 
 describe('.add()', () => {
-  test('can add key to an object', () => {
-    const doc = createTypedModel();
-    expect(doc.api.read('/obj/newKey')).toBe(undefined);
-    doc.api.add('/obj/newKey', 'newValue');
-    expect(doc.api.read('/obj/newKey')).toBe('newValue');
-  });
+  describe('"obj" node', () => {
+    test('can add key to an object', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/newKey')).toBe(undefined);
+      doc.api.add('/obj/newKey', 'newValue');
+      expect(doc.api.read('/obj/newKey')).toBe('newValue');
+    });
 
-  test('can add key to root object', () => {
-    const doc = createTypedModel();
-    expect(doc.api.read('/newKey')).toBe(undefined);
-    doc.api.add('/newKey', 'newValue');
-    expect(doc.api.read('/newKey')).toBe('newValue');
-  });
+    test('can add key to root object', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/newKey')).toBe(undefined);
+      doc.api.add('/newKey', 'newValue');
+      expect(doc.api.read('/newKey')).toBe('newValue');
+    });
 
-  test('can add key to root object - 2', () => {
-    const doc = createTypedModel();
-    expect(doc.api.read(['newKey'])).toBe(undefined);
-    doc.api.add(['newKey'], 'newValue');
-    expect(doc.api.read(['newKey'])).toBe('newValue');
+    test('can add key to root object - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read(['newKey'])).toBe(undefined);
+      doc.api.add(['newKey'], 'newValue');
+      expect(doc.api.read(['newKey'])).toBe('newValue');
+    });
+
+    test('can overwrite key', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/str')).toBe('abc');
+      doc.api.add('/str', 'baz');
+      expect(doc.api.read('/str')).toBe('baz');
+      doc.api.add('/str', 'gg');
+      expect(doc.api.read('/str')).toBe('gg');
+    });
+
+    test('returns true when key was added', () => {
+      const doc = createTypedModel();
+      const success1 = doc.api.add('/str', 1);
+      const success2 = doc.api.add('/asdf', 2);
+      expect(success1).toBe(true);
+      expect(success2).toBe(true);
+    });
+
+    test('returns true when key was overwritten', () => {
+      const doc = createTypedModel();
+      doc.api.add('/str', 1);
+      const success = doc.api.add('/str', 2);
+      expect(success).toBe(true);
+    });
+
+    test('returns false when was not able to set key', () => {
+      const doc = createTypedModel();
+      const success1 = doc.api.add('/str/0', 1);
+      const success2 = doc.api.add('/asdf/asdf/asdf', 1);
+      expect(success1).toBe(false);
+      expect(success2).toBe(false);
+    });
+
+    test('can delete a key by setting it to undefined', () => {
+      const doc = createTypedModel();
+      expect('str' in doc.view()).toBe(true);
+      doc.api.add('/str', undefined);
+      expect('str' in doc.view()).toBe(false);
+      doc.api.add('/str', null);
+      expect('str' in doc.view()).toBe(true);
+      expect(doc.api.read('/str')).toBe(null);
+    });
   });
 });

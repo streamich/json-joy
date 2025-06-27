@@ -289,8 +289,8 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return this.r.read(path);
   }
 
-  public add(path: ApiPath, value: unknown): void {
-    this.r.add(path, value);
+  public add(path: ApiPath, value: unknown) {
+    return this.r.add(path, value);
   }
 
   private inTx = false;
