@@ -40,11 +40,10 @@ export type ApiPath = string | number | Path | undefined;
  *
  * @category Local API
  */
-export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
-  constructor(
-    public node: N,
-    public readonly api: ModelApi<any>,
-  ) {}
+export class NodeApi<N extends JsonNode = JsonNode, Extensions extends Extension<number, any, any, any, any>[] = []>
+  implements Printable
+{
+  constructor(public node: N, public readonly api: ModelApi<any>) {}
 
   /** @ignore */
   private ev: undefined | NodeEvents<N> = undefined;
@@ -144,7 +143,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param ext Extension of the node
    * @returns API of the extension
    */
-  public asExt(): JsonNodeApi<VecNodeExtensionData<N>> | ExtApi<any> | undefined;
+  public asExt(): JsonNodeApi<VecNodeExtensionData<N>, Extensions> | ExtApi<any> | undefined;
   public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
     ext: Extension<any, any, EN, EApi, any, any>,
   ): EApi;
@@ -340,12 +339,15 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
  *
  * @category Local API
  */
-export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
+export class ValApi<
+  N extends ValNode<any> = ValNode<any>,
+  Extensions extends Extension<number, any, any, any, any>[] = [],
+> extends NodeApi<N> {
   /**
    * Get API instance of the inner node.
    * @returns Inner node API.
    */
-  public get(): JsonNodeApi<N extends ValNode<infer T> ? T : JsonNode> {
+  public get(): JsonNodeApi<N extends ValNode<infer T> ? T : JsonNode, Extensions> {
     return this.in() as any;
   }
 
@@ -388,14 +390,17 @@ type UnVecNode<N> = N extends VecNode<infer T> ? T : never;
  *
  * @category Local API
  */
-export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
+export class VecApi<
+  N extends VecNode<any> = VecNode<any>,
+  Extensions extends Extension<number, any, any, any, any>[] = [],
+> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param key Object key to get.
    * @returns A specified child node API.
    */
-  public get<K extends keyof UnVecNode<N>>(key: K): JsonNodeApi<UnVecNode<N>[K]> {
+  public get<K extends keyof UnVecNode<N>>(key: K): JsonNodeApi<UnVecNode<N>[K], Extensions> {
     return this.in(key as string) as any;
   }
 
@@ -460,14 +465,17 @@ type UnObjNode<N> = N extends ObjNode<infer T> ? T : never;
  *
  * @category Local API
  */
-export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
+export class ObjApi<
+  N extends ObjNode<any> = ObjNode<any>,
+  Extensions extends Extension<number, any, any, any, any>[] = [],
+> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param key Object key to get.
    * @returns A specified child node API.
    */
-  public get<K extends keyof UnObjNode<N>>(key: K): JsonNodeApi<UnObjNode<N>[K]> {
+  public get<K extends keyof UnObjNode<N>>(key: K): JsonNodeApi<UnObjNode<N>[K], Extensions> {
     return this.in(key as string) as any;
   }
 
@@ -704,14 +712,17 @@ type UnArrNode<N> = N extends ArrNode<infer T> ? T : never;
  *
  * @category Local API
  */
-export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
+export class ArrApi<
+  N extends ArrNode<any> = ArrNode<any>,
+  Extensions extends Extension<number, any, any, any, any>[] = [],
+> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param index Index of the element to get.
    * @returns Child node API for the element at the given index.
    */
-  public get(index: number): JsonNodeApi<UnArrNode<N>> {
+  public get(index: number): JsonNodeApi<UnArrNode<N>, Extensions> {
     return this.in(index) as any;
   }
 

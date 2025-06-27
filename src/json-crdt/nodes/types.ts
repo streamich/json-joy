@@ -1,4 +1,7 @@
 import type {Identifiable} from '../../json-crdt-patch/types';
+import {ExtNode} from '../extensions/ExtNode';
+import {ExtensionVecData} from '../schema/types';
+import {VecNode} from './vec/VecNode';
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an
@@ -46,4 +49,10 @@ export interface JsonNode<View = unknown> extends Identifiable {
   api: undefined | unknown; // JsonNodeApi<this>;
 }
 
-export type JsonNodeView<N> = N extends JsonNode<infer V> ? V : {[K in keyof N]: JsonNodeView<N[K]>};
+export type JsonNodeView<N> = N extends ExtNode<any, infer V>
+  ? V
+  : N extends VecNode<ExtensionVecData<infer N2>>
+  ? JsonNodeView<N2>
+  : N extends JsonNode<infer V>
+  ? V
+  : {[K in keyof N]: JsonNodeView<N[K]>};
