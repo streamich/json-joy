@@ -1,3 +1,26 @@
+# [17.45.0](https://github.com/streamich/json-joy/compare/v17.44.0...v17.45.0) (2025-06-27)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 allow updating key on root object ([9eafd61](https://github.com/streamich/json-joy/commit/9eafd6118c98e67e0595c7c5ac521ac6c416eda5))
+
+
+### Features
+
+* **json-crdt:** 🎸 add ability add object key ([861b1c1](https://github.com/streamich/json-joy/commit/861b1c1acd83c8b89b6abe265bba715efafab356))
+* **json-crdt:** 🎸 add NodeApi .replace() method ([32d91e1](https://github.com/streamich/json-joy/commit/32d91e154971d132487e1dacc9718141befd2599))
+* **json-crdt:** 🎸 finalize .add() method implementation ([a151272](https://github.com/streamich/json-joy/commit/a151272d608dd96575ed3996049c27d47131bae1))
+* **json-crdt:** 🎸 implement .add() method for "arr" nodes ([35c4ee9](https://github.com/streamich/json-joy/commit/35c4ee917317b6979bceffda3e3071b24e8a2f26))
+* **json-crdt:** 🎸 implement .remove() method ([1d96827](https://github.com/streamich/json-joy/commit/1d96827a00cfbf08b7c4b4146445e242aed2e3cd))
+* **json-crdt:** 🎸 implement new proxy API ([1578bfc](https://github.com/streamich/json-joy/commit/1578bfceb8d071710504a61df391fda504c48e3b))
+* **json-crdt:** 🎸 implement path proxy helper ([58c75ee](https://github.com/streamich/json-joy/commit/58c75ee00cab522a43b497173b81bfb027740c11))
+* **json-crdt:** 🎸 implement proxy$() helper ([de85136](https://github.com/streamich/json-joy/commit/de85136936635e235f8deb477d1aba69b79dfefa))
+* **json-crdt:** 🎸 implement view .read() retrieval method ([633fa97](https://github.com/streamich/json-joy/commit/633fa97bbb53dd630572cd47b7d452251e6e7c6c))
+* **json-crdt:** 🎸 improve .read() implementation ([b60fc88](https://github.com/streamich/json-joy/commit/b60fc889f87669c95c95ac54f020132a7ddc51a7))
+* **json-crdt:** 🎸 improve "obj" node .add() API ([9bd5bb2](https://github.com/streamich/json-joy/commit/9bd5bb2e8e5e8f36f5aab3f0f742b49f07e9cfc6))
+* **json-crdt:** 🎸 remove .find getter ([5f4bce6](https://github.com/streamich/json-joy/commit/5f4bce6b977cd83a707b1cbc12f9b5f8a4c5b9c0))
+
 # [17.44.0](https://github.com/streamich/json-joy/compare/v17.43.0...v17.44.0) (2025-06-22)
 
 
