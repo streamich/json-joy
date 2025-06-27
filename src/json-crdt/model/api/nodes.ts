@@ -1,10 +1,12 @@
 import {printTree} from 'tree-dump/lib/printTree';
+import {get} from '@jsonjoy.com/json-pointer/lib/get';
+import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import {find} from './find';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
-import type {Path} from '@jsonjoy.com/json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
 import type {JsonNode, JsonNodeView} from '../../nodes';
@@ -13,6 +15,23 @@ import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
+
+const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | number] => {
+  if (!path) return [void 0, ''];
+  if (typeof path === 'number') return [void 0, path];
+  if (typeof path === 'string') path = toPath(path);
+  switch (path.length) {
+    case 0:
+      return [void 0, ''];
+    case 1:
+      return [void 0, path[0]];
+    default: {
+      const key = path[path.length - 1];
+      const parent = path.slice(0, -1);
+      return [parent, key];
+    }
+  }
+};
 
 export type ApiPath = string | number | Path | undefined;
 
@@ -173,6 +192,118 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public view(): JsonNodeView<N> {
     return this.node.view() as unknown as JsonNodeView<N>;
+  }
+
+  public select(path?: ApiPath, leaf?: boolean) {
+    try {
+      let node = path ? this.find(path) : this.node;
+      if (leaf) while (node instanceof ValNode) node = node.child();
+      return this.api.wrap(node);
+    } catch (e) {
+      return;
+    }
+  }
+
+  public read(path?: ApiPath): unknown {
+    const view = this.view();
+    if (Array.isArray(path)) return get(view, path);
+    if (!path) return view;
+    let path2: string = path + '';
+    if (path && path2[0] !== '/') path2 = '/' + path2;
+    return get(view, toPath(path2));
+  }
+
+  public add(path: ApiPath, value: unknown): boolean {
+    const [parent, key] = breakPath(path);
+    ADD: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        node.set({[key]: value});
+      } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
+        const length = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else if (key === '-') index = length;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break ADD;
+        }
+        if (index !== index) break ADD;
+        if (index < 0) index = 0;
+        if (index > length) index = length;
+        if (node instanceof ArrApi) {
+          node.ins(index, Array.isArray(value) ? value : [value]);
+        } else if (node instanceof StrApi) {
+          node.ins(index, value + '');
+        } else if (node instanceof BinApi) {
+          if (!(value instanceof Uint8Array)) break ADD;
+          node.ins(index, value);
+        }
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, value]]);
+      } else break ADD;
+      return true;
+    } catch {}
+    return false;
+  }
+
+  public replace(path: ApiPath, value: unknown): boolean {
+    const [parent, key] = breakPath(path);
+    REPLACE: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        const keyStr = key + '';
+        if (!node.has(keyStr)) break REPLACE;
+        node.set({[key]: value});
+      } else if (node instanceof ArrApi) {
+        const length = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break REPLACE;
+        }
+        if (index !== index || index < 0 || index > length - 1) break REPLACE;
+        const element = node.node.getNode(index);
+        if (element instanceof ValNode) {
+          this.api.wrap(element).set(value);
+        } else {
+          node.ins(index, [value]);
+          node.del(index + 1, 1);
+        }
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, value]]);
+      } else break REPLACE;
+      return true;
+    } catch {}
+    return false;
+  }
+
+  public remove(path: ApiPath, length: number = 1): boolean {
+    const [parent, key] = breakPath(path);
+    REMOVE: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        const keyStr = key + '';
+        if (!node.has(keyStr)) break REMOVE;
+        node.del([keyStr]);
+      } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
+        const len = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else if (key === '-') index = length;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break REMOVE;
+        }
+        if (index !== index || index < 0 || index > len) break REMOVE;
+        node.del(index, Math.min(length, len - index));
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, void 0]]);
+      } else break REMOVE;
+      return true;
+    } catch {}
+    return false;
   }
 
   public proxy(): types.ProxyNode<N> {
@@ -370,6 +501,16 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       keys.map((key) => [key, builder.const(undefined)]),
     );
     api.apply();
+  }
+
+  /**
+   * Checks if a key exists in the object.
+   *
+   * @param key Key to check.
+   * @returns True if the key exists, false otherwise.
+   */
+  public has(key: string): boolean {
+    return this.node.keys.has(key);
   }
 
   /**

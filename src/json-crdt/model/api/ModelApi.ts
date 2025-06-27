@@ -1,11 +1,12 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
 import {type ApiPath, ArrApi, BinApi, ConApi, type NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
-import type {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import type {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
+import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
 import {ExtNode} from '../../extensions/ExtNode';
+import type {Patch} from '../../../json-crdt-patch/Patch';
+import type {SyncStore} from '../../../util/events/sync-store';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
@@ -106,9 +107,23 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return new ValApi(this.model.root, this);
   }
 
-  /** @ignore */
+  /**
+   * @ignore
+   *
+   * @todo Remove this getter?
+   */
   public get node() {
     return this.r.get();
+  }
+
+  public get $(): JsonNodeToProxyPathNode<N> {
+    return proxy$((path) => {
+      try {
+        return this.wrap(this.find(path));
+      } catch {
+        return;
+      }
+    }, '$') as any;
   }
 
   /**
@@ -264,6 +279,34 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    */
   public view() {
     return this.model.view();
+  }
+
+  public select(path?: ApiPath, leaf?: boolean) {
+    return this.r.select(path, leaf);
+  }
+
+  /**
+   * Reads the value at the given path in the model. If no path is provided,
+   * returns the root node's view.
+   *
+   * @param path Path at which to read the value.
+   * @returns The value at the given path, or the root node's view if no path
+   *     is provided.
+   */
+  public read(path?: ApiPath): unknown {
+    return this.r.read(path);
+  }
+
+  public add(path: ApiPath, value: unknown): boolean {
+    return this.r.add(path, value);
+  }
+
+  public replace(path: ApiPath, value: unknown): boolean {
+    return this.r.replace(path, value);
+  }
+
+  public remove(path: ApiPath, length?: number): boolean {
+    return this.r.remove(path, length);
   }
 
   private inTx = false;

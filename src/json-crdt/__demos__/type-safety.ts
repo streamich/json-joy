@@ -58,7 +58,7 @@ console.log(model.view().text);
 console.log(model.view().flags[0]);
 // true
 
-console.log(model.find.val.toApi() + '');
+console.log(model.s.toApi() + '');
 // ObjectApi
 // └─ ObjNode 1234.1
 //    ├─ "num"
@@ -74,7 +74,7 @@ console.log(model.find.val.toApi() + '');
 //              └─ [1]: ValNode 1234.13
 //                      └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.flags.toApi() + '');
+console.log(model.s.flags.toApi() + '');
 // ArrApi
 // └─ ArrNode 1234.9
 //    └─ ArrChunk 1234.14!2 len:2
@@ -83,20 +83,20 @@ console.log(model.find.val.flags.toApi() + '');
 //       └─ [1]: ValNode 1234.13
 //               └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.flags[1].toApi() + '');
+console.log(model.s.flags[1].toApi() + '');
 // ValApi
 // └─ ValNode 1234.13
 //    └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.flags[1].val.toApi() + '');
+console.log(model.s.flags[1].val.toApi() + '');
 // ConApi
 // └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.num.toApi() + '');
+console.log(model.s.num.toApi() + '');
 // ConApi
 // └─ ConNode 1234.2 { 123 }
 
-console.log(model.find.val.text.toApi() + '');
+console.log(model.s.text.toApi() + '');
 // StrApi
 // └─ StrNode 1234.3 { "hello" }
 //    └─ StrChunk 1234.4!5 len:5 { "hello" }

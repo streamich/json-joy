@@ -33,7 +33,7 @@ test('.length()', () => {
       str: s.str('hello world'),
     }),
   );
-  expect(doc.find.val.str.toApi().length()).toBe(11);
+  expect(doc.s.str.toApi().length()).toBe(11);
 });
 
 describe('position tracking', () => {
@@ -43,7 +43,7 @@ describe('position tracking', () => {
         str: s.str('hello world'),
       }),
     );
-    const str = doc.find.val.str.toApi();
+    const str = doc.s.str.toApi();
     for (let i = -1; i < str.length(); i++) {
       const id = str.findId(i);
       expect(str.findPos(id)).toBe(i);
@@ -56,7 +56,7 @@ describe('position tracking', () => {
         str: s.str('123456'),
       }),
     );
-    const str = doc.find.val.str.toApi();
+    const str = doc.s.str.toApi();
     const ids: ITimestampStruct[] = [];
     for (let i = -1; i < str.length(); i++) ids.push(str.findId(i));
     str.ins(3, 'abc');
