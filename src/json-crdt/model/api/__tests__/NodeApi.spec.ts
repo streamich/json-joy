@@ -53,6 +53,15 @@ describe('.read()', () => {
     expect(doc.api.read(['obj', 'asdf'])).toBe(undefined);
     expect(doc.api.read(['arr', 10])).toBe(undefined);
   });
+
+  test('can read within a "con" node', () => {
+    const doc = Model.create(s.obj({
+      con: s.con({
+        foo: [1, 2, 3]
+      }),
+    }))
+    expect(doc.api.read('/con/foo/1')).toBe(2);
+  });
 });
 
 describe('.add()', () => {
@@ -76,6 +85,13 @@ describe('.add()', () => {
       expect(doc.api.read(['newKey'])).toBe(undefined);
       doc.api.add(['newKey'], 'newValue');
       expect(doc.api.read(['newKey'])).toBe('newValue');
+    });
+
+    test('can used on ObjApi', () => {
+      const doc = createTypedModel();
+      doc.$.obj.$!.add('/xxx', 'y');
+      expect(doc.$.obj.$?.read('/xxx')).toBe('y');
+      expect(doc.api.read('/obj/xxx')).toBe('y');
     });
 
     test('can overwrite key', () => {

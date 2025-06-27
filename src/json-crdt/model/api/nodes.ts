@@ -1,10 +1,11 @@
 import {printTree} from 'tree-dump/lib/printTree';
+import {get} from '@jsonjoy.com/json-pointer/lib/get';
+import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import {find} from './find';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
-import {toPath} from '@jsonjoy.com/json-pointer';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
@@ -192,17 +193,18 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public read(path?: ApiPath): unknown {
-    try {
-      return !path ? this.view() : this.in(path).view();
-    } catch {
-      return;
-    }
+    const view = this.view();
+    if (Array.isArray(path)) return get(view, path);
+    if (!path) return view;
+    let path2: string = path + '';
+    if (path && path2[0] !== '/') path2 = '/' + path2;
+    return get(view, toPath(path2));
   }
 
   public add(path: ApiPath, value: unknown): boolean {
     const [parent, key] = breakPath(path);
     try {
-      let node: unknown = this.in(parent);
+      let node: unknown = parent ? this.in(parent) : this;
       while (node instanceof ValApi) node = node.in();
       if (node instanceof ObjApi) {
         node.set({[key]: value});
