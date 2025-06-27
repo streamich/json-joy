@@ -206,6 +206,20 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       if (node instanceof ObjApi) {
         node.set({[key]: value});
         return true;
+      } else if (node instanceof ArrApi) {
+        const length = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else if (key === '-') index = length;
+        else {
+          index = ~~key;
+          if (index + '' !== key) return false;
+        }
+        if (index !== index) return false;
+        if (index < 0) index = 0;
+        if (index > length) index = length;
+        node.ins(index, [value]);
+        return true;
       }
     } catch {}
     return false;

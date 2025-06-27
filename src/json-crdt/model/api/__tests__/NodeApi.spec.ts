@@ -118,4 +118,67 @@ describe('.add()', () => {
       expect(doc.api.read('/str')).toBe(null);
     });
   });
+
+  describe('"arr" node', () => {
+    test('can add element to the end of array', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/2')).toBe(undefined);
+      const success = doc.api.add('/arr/2', 'newValue');
+      expect(doc.api.read('/arr/2')).toBe('newValue');
+      expect(success).toBe(true);
+    });
+
+    test('can add element to the end of array when index too high', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/2')).toBe(undefined);
+      const success = doc.api.add('/arr/9999', 'newValue');
+      expect(doc.api.read('/arr/2')).toBe('newValue');
+      expect(success).toBe(true);
+    });
+
+    test('can add element to the end of array when index is "-"', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/2')).toBe(undefined);
+      const success = doc.api.add('/arr/-', 'newValue');
+      expect(doc.api.read('/arr/2')).toBe('newValue');
+      expect(success).toBe(true);
+    });
+
+    test('can add element to the beginning of array', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/0')).toBe('asdf');
+      const success = doc.api.add('/arr/0', 0);
+      expect(doc.api.read('/arr/0')).toBe(0);
+      expect(doc.api.read('/arr/1')).toBe('asdf');
+      expect(success).toBe(true);
+    });
+
+    test('can add element to the middle of array', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/1')).toBe(0);
+      const success = doc.api.add('/arr/1', 123);
+      expect(doc.api.read('/arr/1')).toBe(123);
+      expect(doc.api.read('/arr/2')).toBe(0);
+      expect(success).toBe(true);
+    });
+
+    test('returns "false" when cannot insert into array', () => {
+      const doc = createTypedModel();
+      const success1 = doc.api.add('/arr/1.1', 123);
+      const success2 = doc.api.add('/arr/adsf', 123);
+      const success3 = doc.api.add('/arr/Infinity', 123);
+      expect(success1).toBe(false);
+      expect(success2).toBe(false);
+      expect(success3).toBe(false);
+    });
+  });
+
+  test.todo('"vec" node');
+  test.todo('"str" node');
+  test.todo('"bin" node');
+  test.todo('"val" node');
+  test.todo('"con" node');
 });
+
+test.todo('.merge()');
+test.todo('.shallowMerge()');
