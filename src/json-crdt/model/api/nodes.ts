@@ -192,6 +192,16 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.node.view() as unknown as JsonNodeView<N>;
   }
 
+  public select(path?: ApiPath, leaf?: boolean) {
+    try {
+      let node = path ? this.find(path) : this.node;
+      if (leaf) while (node instanceof ValNode) node = node.child();
+      return this.api.wrap(node);
+    } catch (e) {
+      return;
+    }
+  }
+
   public read(path?: ApiPath): unknown {
     const view = this.view();
     if (Array.isArray(path)) return get(view, path);
@@ -203,12 +213,16 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public add(path: ApiPath, value: unknown): boolean {
     const [parent, key] = breakPath(path);
+    let node: NodeApi<any> = this;
     try {
-      let node: unknown = parent ? this.in(parent) : this;
+      node = parent ? this.in(parent) : this;
       while (node instanceof ValApi) node = node.in();
+    } catch {
+      return false;
+    }
+    ADD: {
       if (node instanceof ObjApi) {
         node.set({[key]: value});
-        return true;
       } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
         const length = node.length();
         let index: number = 0;
@@ -216,9 +230,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         else if (key === '-') index = length;
         else {
           index = ~~key;
-          if (index + '' !== key) return false;
+          if (index + '' !== key) break ADD;
         }
-        if (index !== index) return false;
+        if (index !== index) break ADD;
         if (index < 0) index = 0;
         if (index > length) index = length;
         if (node instanceof ArrApi) {
@@ -226,15 +240,52 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         } else if (node instanceof StrApi) {
           node.ins(index, value + '');
         } else if (node instanceof BinApi) {
-          if (!(value instanceof Uint8Array)) return false;
+          if (!(value instanceof Uint8Array)) break ADD;
           node.ins(index, value);
         }
-        return true;
       } else if (node instanceof VecApi) {
         node.set([[~~key, value]]);
-        return true;
-      }
-    } catch {}
+      } else break ADD;
+      return true;
+    }
+    return false;
+  }
+
+  public replace(path: ApiPath, value: unknown): boolean {
+    const [parent, key] = breakPath(path);
+    let node: NodeApi<any> = this;
+    try {
+      node = parent ? this.in(parent) : this;
+      while (node instanceof ValApi) node = node.in();
+    } catch {
+      return false;
+    }
+    REPLACE: {
+      if (node instanceof ObjApi) {
+        const keyStr = key + '';
+        if (!node.has(keyStr)) break REPLACE;
+        node.set({[key]: value});
+      } else if (node instanceof ArrApi) {
+        const length = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break REPLACE;
+        }
+        if (index !== index || index < 0 || index > length - 1) break REPLACE;
+        const element = node.node.getNode(index);
+        if (element instanceof ValNode) {
+          this.api.wrap(element).set(value);
+        } else {
+          node.ins(index, [value]);
+          node.del(index + 1, 1);
+        }
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, value]]);
+      } else break REPLACE;
+      return true;
+    }
     return false;
   }
 
@@ -433,6 +484,16 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       keys.map((key) => [key, builder.const(undefined)]),
     );
     api.apply();
+  }
+
+  /**
+   * Checks if a key exists in the object.
+   *
+   * @param key Key to check.
+   * @returns True if the key exists, false otherwise.
+   */
+  public has(key: string): boolean {
+    return this.node.keys.has(key);
   }
 
   /**

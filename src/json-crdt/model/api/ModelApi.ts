@@ -107,7 +107,11 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return new ValApi(this.model.root, this);
   }
 
-  /** @ignore */
+  /**
+   * @ignore
+   * 
+   * @todo Remove this getter?
+   */
   public get node() {
     return this.r.get();
   }
@@ -277,6 +281,10 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return this.model.view();
   }
 
+  public select(path?: ApiPath, leaf?: boolean) {
+    return this.r.select(path, leaf);
+  }
+
   /**
    * Reads the value at the given path in the model. If no path is provided,
    * returns the root node's view.
@@ -291,6 +299,10 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
 
   public add(path: ApiPath, value: unknown) {
     return this.r.add(path, value);
+  }
+
+  public replace(path: ApiPath, value: unknown) {
+    return this.r.replace(path, value);
   }
 
   private inTx = false;

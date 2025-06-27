@@ -186,6 +186,15 @@ describe('.add()', () => {
       expect(doc.api.read('/arr/1')).toBe('asdf');
       expect(success).toBe(true);
     });
+    
+    test('can add element to the beginning of array (on "arr" node)', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/0')).toBe('asdf');
+      const success = doc.api.arr('/arr').add('/0', 0);
+      expect(doc.api.read('/arr/0')).toBe(0);
+      expect(doc.api.read('/arr/1')).toBe('asdf');
+      expect(success).toBe(true);
+    });
 
     test('can add element to the middle of array', () => {
       const doc = createTypedModel();
@@ -318,6 +327,62 @@ describe('.add()', () => {
       const success1 = doc.api.add('/obj/foo', 'baz');
       expect(doc.view()).toEqual({obj: {foo: 'baz'}});
       expect(success1).toBe(true);
+    });
+  });
+});
+
+describe('.replace()', () => {
+  describe('"obj" node', () => {
+    test('can replace value in "obj" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.replace('/obj/str', 'newValue');
+      expect(doc.api.read('/obj/str')).toBe('newValue');
+      expect(success).toBe(true);
+    });
+
+    test('can replace value in "obj" node - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.obj(['obj']).replace('/str', s.arr([s.con(true)]));
+      expect(doc.api.read('/obj/str')).toEqual([true]);
+      expect(success).toBe(true);
+    });
+
+    test('cannot replace non-existing key', () => {
+      const doc = createTypedModel();
+      const success = doc.api.replace('/obj/asdfasdf', 'newValue');
+      expect(doc.api.read('/obj/asdfasdf')).toBe(undefined);
+      expect(success).toBe(false);
+    });
+
+    test('cannot replace non-existing key - 2', () => {
+      const doc = createTypedModel();
+      const success = doc.api.obj('obj').replace('/asdfasdf', 'newValue');
+      expect(doc.api.read('/obj/asdfasdf')).toBe(undefined);
+      expect(success).toBe(false);
+    });
+  });
+  
+  describe('"arr" node', () => {
+    test('can replace "val" value in "arr" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/1')).toBe(0);
+      expect(doc.api.select('/arr')?.asArr().length()).toBe(2);
+      const success = doc.api.replace('/arr/1', 'newValue');
+      expect(doc.api.read('/arr/1')).toBe('newValue');
+      expect(doc.api.select('/arr')?.asArr().length()).toBe(2);
+      expect(success).toBe(true);
+    });
+
+    test('can replace non-"val" value in "arr" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/0')).toBe('asdf');
+      expect(doc.api.select('/arr')?.asArr().length()).toBe(2);
+      const success = doc.api.replace('/arr/0', 'newValue');
+      expect(doc.api.read('/arr/0')).toBe('newValue');
+      expect(doc.api.select('/arr')?.asArr().length()).toBe(2);
+      expect(success).toBe(true);
     });
   });
 });
