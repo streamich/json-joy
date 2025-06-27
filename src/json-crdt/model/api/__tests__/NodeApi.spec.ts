@@ -1,4 +1,6 @@
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
+import {ConApi, ObjApi} from '../nodes';
 import {createTypedModel, createUntypedModel} from './fixtures';
 
 describe('.read()', () => {
@@ -102,7 +104,7 @@ describe('.add()', () => {
 
     test('returns false when was not able to set key', () => {
       const doc = createTypedModel();
-      const success1 = doc.api.add('/str/0', 1);
+      const success1 = doc.api.add('/str/0/0', 1);
       const success2 = doc.api.add('/asdf/asdf/asdf', 1);
       expect(success1).toBe(false);
       expect(success2).toBe(false);
@@ -116,6 +118,22 @@ describe('.add()', () => {
       doc.api.add('/str', null);
       expect('str' in doc.view()).toBe(true);
       expect(doc.api.read('/str')).toBe(null);
+    });
+
+    test('can set key to a complex value', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/newKey')).toBe(undefined);
+      doc.api.add('/obj/newKey', { nested: { deep: { value: 4 } } });
+      expect(doc.api.read('/obj/newKey')).toEqual({ nested: { deep: { value: 4 } } });
+      expect((doc.$.obj as any).newKey.$ instanceof ObjApi).toBe(true);
+    });
+
+    test('can specify exact schema for the new value', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/newKey')).toBe(undefined);
+      doc.api.add('/obj/newKey', s.con({ nested: { deep: { value: 4 } } }));
+      expect(doc.api.read('/obj/newKey')).toEqual({ nested: { deep: { value: 4 } } });
+      expect((doc.$.obj as any).newKey.$ instanceof ConApi).toBe(true);
     });
   });
 
@@ -171,13 +189,121 @@ describe('.add()', () => {
       expect(success2).toBe(false);
       expect(success3).toBe(false);
     });
+
+    test('"arr" should allow to insert multiple elements at once', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr')).toEqual(['asdf', 0]);
+      const success1 = doc.api.add('/arr/1', ['new1', 'new2']);
+      expect(doc.api.read('/arr')).toEqual(['asdf', 'new1', 'new2', 0]);
+      expect(success1).toBe(true);
+    });
+
+    test('"arr" should allow inserting an array', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr')).toEqual(['asdf', 0]);
+      const success1 = doc.api.add('/arr/1', [['new1', 'new2']]);
+      expect(doc.api.read('/arr')).toEqual(['asdf', ['new1', 'new2'], 0]);
+      expect(success1).toBe(true);
+    });
   });
 
-  test.todo('"vec" node');
-  test.todo('"str" node');
-  test.todo('"bin" node');
-  test.todo('"val" node');
-  test.todo('"con" node');
+  describe('"vec" node', () => {
+    test('can update elements', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/vec/0')).toBe('asdf');
+      doc.api.add('/vec/0', 'newValue');
+      expect(doc.api.read('/vec/0')).toBe('newValue');
+      expect(doc.api.read('/vec/1')).toBe(1234);
+      doc.api.add('/vec/1', 5678);
+      expect(doc.api.read('/vec/1')).toBe(5678);
+      expect(doc.api.read('/vec/2')).toBe(true);
+      doc.api.add('/vec/2', false);
+      expect(doc.api.read('/vec/2')).toBe(false);
+      expect(doc.api.read('/vec/3')).toBe(null);
+      doc.api.add('/vec/3', 'newNull');
+      expect(doc.api.read('/vec/3')).toBe('newNull');
+    });
+  });
+
+  describe('"str" node', () => {
+    test('can insert text', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      doc.api.add('/obj/str/0', '0');
+      expect(doc.api.read('/obj/str')).toBe('0asdf');
+      doc.api.add('/obj/str/2', 'XX');
+      expect(doc.api.read('/obj/str')).toBe('0aXXsdf');
+      doc.api.add('/obj/str/5', '___');
+      expect(doc.api.read('/obj/str')).toBe('0aXXs___df');
+    });
+
+    test('can append text', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      doc.api.add('/obj/str/4', '4');
+      expect(doc.api.read('/obj/str')).toBe('asdf4');
+    });
+
+    test('can append text - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read(['obj', 'str'])).toBe('asdf');
+      doc.api.add(['obj', 'str', '-'], '! aha!');
+      expect(doc.api.read(['obj', 'str'])).toBe('asdf! aha!');
+    });
+  });
+
+  describe('"bin" node', () => {
+    test('can insert text', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3]));
+      doc.api.add('/bin/0', new Uint8Array([0]));
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([0, 1, 2, 3]));
+      doc.api.add('/bin/2', new Uint8Array([99]));
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([0, 1, 99, 2, 3]));
+      doc.api.add('/bin/4', new Uint8Array([100]));
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([0, 1, 99, 2, 100, 3]));
+    });
+
+    test('can append text', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3]));
+      doc.api.add('/bin/3', new Uint8Array([4]));
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3, 4]));
+    });
+
+    test('can append text - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3]));
+      doc.api.add('/bin/-', new Uint8Array([4]));
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3, 4]));
+    });
+  });
+
+  describe('"val" node', () => {
+    test('when parent is wrapped in "val" node', () => {
+      const doc = Model.create(s.obj({
+        obj: s.val(s.obj({
+          foo: s.str('bar'),
+        })),
+      }));
+      expect(doc.view()).toEqual({obj: {foo: 'bar'}});
+      const success1 = doc.api.add('/obj/foo', 'baz');
+      expect(doc.view()).toEqual({obj: {foo: 'baz'}});
+      expect(success1).toBe(true);
+    });
+
+    test('when parent is wrapped in "val" node three times', () => {
+      const doc = Model.create(s.obj({
+        obj: s.val(s.val(s.val(s.obj({
+          foo: s.str('bar'),
+        })))),
+      }));
+      expect(doc.view()).toEqual({obj: {foo: 'bar'}});
+      const success1 = doc.api.add('/obj/foo', 'baz');
+      expect(doc.view()).toEqual({obj: {foo: 'baz'}});
+      expect(success1).toBe(true);
+    });
+  });
 });
 
 test.todo('.merge()');

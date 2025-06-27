@@ -202,11 +202,12 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   public add(path: ApiPath, value: unknown): boolean {
     const [parent, key] = breakPath(path);
     try {
-      const node = this.in(parent);
+      let node: unknown = this.in(parent);
+      while (node instanceof ValApi) node = node.in();
       if (node instanceof ObjApi) {
         node.set({[key]: value});
         return true;
-      } else if (node instanceof ArrApi) {
+      } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
         const length = node.length();
         let index: number = 0;
         if (typeof key === 'number') index = key;
@@ -218,7 +219,17 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         if (index !== index) return false;
         if (index < 0) index = 0;
         if (index > length) index = length;
-        node.ins(index, [value]);
+        if (node instanceof ArrApi) {
+          node.ins(index, Array.isArray(value) ? value : [value]);
+        } else if (node instanceof StrApi) {
+          node.ins(index, value + '');
+        } else if (node instanceof BinApi) {
+          if (!(value instanceof Uint8Array)) return false;
+          node.ins(index, value);
+        }
+        return true;
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, value]]);
         return true;
       }
     } catch {}
