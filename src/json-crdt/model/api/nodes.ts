@@ -213,14 +213,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public add(path: ApiPath, value: unknown): boolean {
     const [parent, key] = breakPath(path);
-    let node: NodeApi<any> = this;
-    try {
-      node = parent ? this.in(parent) : this;
-      while (node instanceof ValApi) node = node.in();
-    } catch {
-      return false;
-    }
-    ADD: {
+    ADD: try {
+      const node = this.select(parent, true);
       if (node instanceof ObjApi) {
         node.set({[key]: value});
       } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
@@ -247,20 +241,14 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         node.set([[~~key, value]]);
       } else break ADD;
       return true;
-    }
+    } catch {}
     return false;
   }
 
   public replace(path: ApiPath, value: unknown): boolean {
     const [parent, key] = breakPath(path);
-    let node: NodeApi<any> = this;
-    try {
-      node = parent ? this.in(parent) : this;
-      while (node instanceof ValApi) node = node.in();
-    } catch {
-      return false;
-    }
-    REPLACE: {
+    REPLACE: try {
+      const node = this.select(parent, true);
       if (node instanceof ObjApi) {
         const keyStr = key + '';
         if (!node.has(keyStr)) break REPLACE;
@@ -285,7 +273,34 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         node.set([[~~key, value]]);
       } else break REPLACE;
       return true;
-    }
+    } catch {}
+    return false;
+  }
+  
+  public remove(path: ApiPath, length: number = 1): boolean {
+    const [parent, key] = breakPath(path);
+    REMOVE: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        const keyStr = key + '';
+        if (!node.has(keyStr)) break REMOVE;
+        node.del([keyStr]);
+      } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
+        const len = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else if (key === '-') index = length;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break REMOVE;
+        }
+        if (index !== index || index < 0 || index > len) break REMOVE;
+        node.del(index, Math.min(length, len - index));
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, void 0]]);
+      } else break REMOVE;
+      return true;
+    } catch {}
     return false;
   }
 

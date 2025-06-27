@@ -387,5 +387,105 @@ describe('.replace()', () => {
   });
 });
 
+describe('.remove()', () => {
+  describe('"obj" node', () => {
+    test('can remove value in "obj" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.remove('/obj/str');
+      expect(doc.api.read('/obj/str')).toBe(undefined);
+      expect(success).toBe(true);
+    });
+
+    test('returns false if key does not exist', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.remove('/obj/nonexistent');
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      expect(success).toBe(false);
+    });
+  });
+
+  describe('"arr" node', () => {
+    test('can remove value in "arr" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/1')).toBe(0);
+      const success = doc.api.remove('/arr/1');
+      expect(doc.api.read('/arr/1')).toBe(undefined);
+      expect(success).toBe(true);
+    });
+
+    test('returns false if index does not exist', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/arr/1')).toBe(0);
+      const success = doc.api.remove('/arr/9999');
+      expect(doc.api.read('/arr/1')).toBe(0);
+      expect(success).toBe(false);
+    });
+
+    test('can remove two elements at once', () => {
+      const doc = Model.create(s.arr([s.con(1), s.con(2), s.con(3), s.con(4), s.con(5)]));
+      expect(doc.api.read()).toEqual([1, 2, 3, 4, 5]);
+      const success = doc.api.remove('/1', 2);
+      expect(doc.api.read()).toEqual([1, 4, 5]);
+      expect(success).toBe(true);
+    });
+  });
+
+  describe('"str" node', () => {
+    test('can remove text from "str" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.remove('/obj/str/1', 2);
+      expect(doc.api.read('/obj/str')).toBe('af');
+      expect(success).toBe(true);
+    });
+
+    test('can remove text from "str" node - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.remove(['obj', 'str', 0]);
+      expect(doc.api.read('/obj/str')).toBe('sdf');
+      expect(success).toBe(true);
+    });
+  });
+
+  describe('"bin" node', () => {
+    test('can remove bytes from "bin" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3]));
+      const success = doc.api.remove('/bin/1', 2);
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1]));
+      expect(success).toBe(true);
+    });
+
+    test('can remove bytes from "bin" node - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([1, 2, 3]));
+      const success = doc.api.remove(['bin', 0]);
+      expect(doc.api.read('/bin')).toEqual(new Uint8Array([2, 3]));
+      expect(success).toBe(true);
+    });
+  });
+
+  describe('"vec" node', () => {
+    test('can remove value from "vec" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/vec/0')).toBe('asdf');
+      const success = doc.api.remove('/vec/0');
+      expect(doc.api.read('/vec/0')).toBe(undefined);
+      expect(success).toBe(true);
+    });
+
+    test('returns false if index does not exist', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/vec/0')).toBe('asdf');
+      const success = doc.api.remove('/vec/9999');
+      expect(doc.api.read('/vec/0')).toBe('asdf');
+      expect(success).toBe(false);
+    });
+  });
+});
+
 test.todo('.merge()');
 test.todo('.shallowMerge()');

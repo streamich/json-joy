@@ -297,12 +297,16 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return this.r.read(path);
   }
 
-  public add(path: ApiPath, value: unknown) {
+  public add(path: ApiPath, value: unknown): boolean {
     return this.r.add(path, value);
   }
 
-  public replace(path: ApiPath, value: unknown) {
+  public replace(path: ApiPath, value: unknown): boolean {
     return this.r.replace(path, value);
+  }
+
+  public remove(path: ApiPath, length?: number): boolean {
+    return this.r.remove(path, length);
   }
 
   private inTx = false;
