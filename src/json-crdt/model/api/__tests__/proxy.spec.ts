@@ -29,9 +29,10 @@ describe('proxy()', () => {
   });
 
   test('can provide custom API', () => {
-    const path = () => proxy((path) => ({
-      join: () => path.join('.'),
-    }));
+    const path = () =>
+      proxy((path) => ({
+        join: () => path.join('.'),
+      }));
     expect(path().a.b[2].c().join()).toBe('a.b.2.c');
   });
 });

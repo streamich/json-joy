@@ -55,11 +55,13 @@ describe('.read()', () => {
   });
 
   test('can read within a "con" node', () => {
-    const doc = Model.create(s.obj({
-      con: s.con({
-        foo: [1, 2, 3]
+    const doc = Model.create(
+      s.obj({
+        con: s.con({
+          foo: [1, 2, 3],
+        }),
       }),
-    }))
+    );
     expect(doc.api.read('/con/foo/1')).toBe(2);
   });
 });
@@ -139,16 +141,16 @@ describe('.add()', () => {
     test('can set key to a complex value', () => {
       const doc = createTypedModel();
       expect(doc.api.read('/obj/newKey')).toBe(undefined);
-      doc.api.add('/obj/newKey', { nested: { deep: { value: 4 } } });
-      expect(doc.api.read('/obj/newKey')).toEqual({ nested: { deep: { value: 4 } } });
+      doc.api.add('/obj/newKey', {nested: {deep: {value: 4}}});
+      expect(doc.api.read('/obj/newKey')).toEqual({nested: {deep: {value: 4}}});
       expect((doc.$.obj as any).newKey.$ instanceof ObjApi).toBe(true);
     });
 
     test('can specify exact schema for the new value', () => {
       const doc = createTypedModel();
       expect(doc.api.read('/obj/newKey')).toBe(undefined);
-      doc.api.add('/obj/newKey', s.con({ nested: { deep: { value: 4 } } }));
-      expect(doc.api.read('/obj/newKey')).toEqual({ nested: { deep: { value: 4 } } });
+      doc.api.add('/obj/newKey', s.con({nested: {deep: {value: 4}}}));
+      expect(doc.api.read('/obj/newKey')).toEqual({nested: {deep: {value: 4}}});
       expect((doc.$.obj as any).newKey.$ instanceof ConApi).toBe(true);
     });
   });
@@ -186,7 +188,7 @@ describe('.add()', () => {
       expect(doc.api.read('/arr/1')).toBe('asdf');
       expect(success).toBe(true);
     });
-    
+
     test('can add element to the beginning of array (on "arr" node)', () => {
       const doc = createTypedModel();
       expect(doc.api.read('/arr/0')).toBe('asdf');
@@ -306,11 +308,15 @@ describe('.add()', () => {
 
   describe('"val" node', () => {
     test('when parent is wrapped in "val" node', () => {
-      const doc = Model.create(s.obj({
-        obj: s.val(s.obj({
-          foo: s.str('bar'),
-        })),
-      }));
+      const doc = Model.create(
+        s.obj({
+          obj: s.val(
+            s.obj({
+              foo: s.str('bar'),
+            }),
+          ),
+        }),
+      );
       expect(doc.view()).toEqual({obj: {foo: 'bar'}});
       const success1 = doc.api.add('/obj/foo', 'baz');
       expect(doc.view()).toEqual({obj: {foo: 'baz'}});
@@ -318,11 +324,19 @@ describe('.add()', () => {
     });
 
     test('when parent is wrapped in "val" node three times', () => {
-      const doc = Model.create(s.obj({
-        obj: s.val(s.val(s.val(s.obj({
-          foo: s.str('bar'),
-        })))),
-      }));
+      const doc = Model.create(
+        s.obj({
+          obj: s.val(
+            s.val(
+              s.val(
+                s.obj({
+                  foo: s.str('bar'),
+                }),
+              ),
+            ),
+          ),
+        }),
+      );
       expect(doc.view()).toEqual({obj: {foo: 'bar'}});
       const success1 = doc.api.add('/obj/foo', 'baz');
       expect(doc.view()).toEqual({obj: {foo: 'baz'}});
@@ -363,7 +377,7 @@ describe('.replace()', () => {
       expect(success).toBe(false);
     });
   });
-  
+
   describe('"arr" node', () => {
     test('can replace "val" value in "arr" node', () => {
       const doc = createTypedModel();

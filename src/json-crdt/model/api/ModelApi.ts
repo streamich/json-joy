@@ -3,7 +3,7 @@ import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../
 import {type ApiPath, ArrApi, BinApi, ConApi, type NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
-import {JsonNodeToProxyPathNode, proxy$} from './proxy';
+import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Patch} from '../../../json-crdt-patch/Patch';
 import type {SyncStore} from '../../../util/events/sync-store';
@@ -109,7 +109,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
 
   /**
    * @ignore
-   * 
+   *
    * @todo Remove this getter?
    */
   public get node() {
@@ -117,7 +117,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   }
 
   public get $(): JsonNodeToProxyPathNode<N> {
-    return proxy$(path => {
+    return proxy$((path) => {
       try {
         return this.wrap(this.find(path));
       } catch {

@@ -33,12 +33,16 @@ export const createUntypedModel = () => {
         },
       },
     },
-    arr: [1, 2, {
-      nested: [1, 2, 3],
-      deep: {
-        value: 4
-      }
-    }],
+    arr: [
+      1,
+      2,
+      {
+        nested: [1, 2, 3],
+        deep: {
+          value: 4,
+        },
+      },
+    ],
   });
   return doc;
 };

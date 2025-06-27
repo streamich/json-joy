@@ -21,8 +21,10 @@ const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | numb
   if (typeof path === 'number') return [void 0, path];
   if (typeof path === 'string') path = toPath(path);
   switch (path.length) {
-    case 0: return [void 0, ''];
-    case 1: return [void 0, path[0]];
+    case 0:
+      return [void 0, ''];
+    case 1:
+      return [void 0, path[0]];
     default: {
       const key = path[path.length - 1];
       const parent = path.slice(0, -1);
@@ -276,7 +278,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     } catch {}
     return false;
   }
-  
+
   public remove(path: ApiPath, length: number = 1): boolean {
     const [parent, key] = breakPath(path);
     REMOVE: try {
