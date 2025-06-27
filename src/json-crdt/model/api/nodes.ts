@@ -4,6 +4,7 @@ import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
+import {toPath} from '@jsonjoy.com/json-pointer';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
@@ -13,6 +14,21 @@ import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
+
+const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | number] => {
+  if (!path) return [void 0, ''];
+  if (typeof path === 'number') return [void 0, path];
+  if (typeof path === 'string') path = toPath(path);
+  switch (path.length) {
+    case 0: return [void 0, ''];
+    case 1: return [void 0, path[0]];
+    default: {
+      const key = path[path.length - 1];
+      const parent = path.slice(0, -1);
+      return [parent, key];
+    }
+  }
+};
 
 export type ApiPath = string | number | Path | undefined;
 
@@ -181,6 +197,16 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     } catch {
       return;
     }
+  }
+
+  public add(path: ApiPath, value: unknown): boolean {
+    const [parent, key] = breakPath(path);
+    const node = this.in(parent);
+    if (node instanceof ObjApi) {
+      node.set({[key]: value});
+      return true;
+    }
+    return false;
   }
 
   public proxy(): types.ProxyNode<N> {

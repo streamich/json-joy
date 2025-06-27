@@ -1,4 +1,5 @@
 import {Model} from '../../Model';
+import {createTypedModel, createUntypedModel} from './fixtures';
 
 describe('.read()', () => {
   test('can retrieve own view', () => {
@@ -25,30 +26,8 @@ describe('.read()', () => {
     expect(arr.read(['2'])).toEqual(3);
   });
 
-  const create = () => {
-    const doc = Model.create();
-    doc.api.root({
-      foo: 'bar',
-      obj: {
-        nested: {
-          value: 42,
-          deep: {
-            another: 'value',
-          },
-        },
-      },
-      arr: [1, 2, {
-        nested: [1, 2, 3],
-        deep: {
-          value: 4
-        }
-      }],
-    });
-    return doc;
-  };
-
   test('retrieve deep within document', () => {
-    const doc = create();
+    const doc = createUntypedModel();
     expect(doc.api.r.read('/foo')).toEqual('bar');
     expect(doc.api.read('/foo')).toEqual('bar');
     expect(doc.api.read('/arr/0')).toEqual(1);
@@ -64,12 +43,35 @@ describe('.read()', () => {
   });
 
   test('returns "undefined" for non-existing path', () => {
-    const doc = create();
+    const doc = createUntypedModel();
     expect(doc.api.read('/asdfasdfasdf')).toBe(undefined);
     expect(doc.api.read('/obj/asdf')).toBe(undefined);
     expect(doc.api.read('/arr/10')).toBe(undefined);
     expect(doc.api.read(['asdfasdfasdf'])).toBe(undefined);
     expect(doc.api.read(['obj', 'asdf'])).toBe(undefined);
     expect(doc.api.read(['arr', 10])).toBe(undefined);
+  });
+});
+
+describe('.add()', () => {
+  test('can add key to an object', () => {
+    const doc = createTypedModel();
+    expect(doc.api.read('/obj/newKey')).toBe(undefined);
+    doc.api.add('/obj/newKey', 'newValue');
+    expect(doc.api.read('/obj/newKey')).toBe('newValue');
+  });
+
+  test('can add key to root object', () => {
+    const doc = createTypedModel();
+    expect(doc.api.read('/newKey')).toBe(undefined);
+    doc.api.add('/newKey', 'newValue');
+    expect(doc.api.read('/newKey')).toBe('newValue');
+  });
+
+  test('can add key to root object - 2', () => {
+    const doc = createTypedModel();
+    expect(doc.api.read(['newKey'])).toBe(undefined);
+    doc.api.add(['newKey'], 'newValue');
+    expect(doc.api.read(['newKey'])).toBe('newValue');
   });
 });
