@@ -1,4 +1,4 @@
-import {s, vec} from '../../../../json-crdt-patch';
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a tuple', () => {
@@ -45,7 +45,7 @@ describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.create();
     const api = doc.api;
-    api.set(vec(1, 2));
+    api.set(s.vec(s.con(1), s.con(2)));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
@@ -65,7 +65,7 @@ describe('events', () => {
   test('does not fire event when view does not change', async () => {
     const doc = Model.create();
     const api = doc.api;
-    api.set(vec(1, 2));
+    api.set(s.vec(s.con(1), s.con(2)));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
@@ -88,7 +88,7 @@ describe('events', () => {
   test('can un-subscribe to "view" events', async () => {
     const doc = Model.create();
     const api = doc.api;
-    api.set(vec(1, 2));
+    api.set(s.vec(s.con(1), s.con(2)));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
@@ -109,7 +109,7 @@ describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.create();
     const api = doc.api;
-    api.set(vec(1, 2));
+    api.set(s.vec(s.con(1), s.con(2)));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);

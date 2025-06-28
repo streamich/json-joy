@@ -19,7 +19,6 @@ import {type IClock, type ITimestampStruct, type ITimespanStruct, ts, Timestamp}
 import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
-import {VectorDelayedValue} from './builder/Tuple';
 import {Konst} from './builder/Konst';
 import {NodeBuilder} from './builder/DelayedValueBuilder';
 
@@ -355,20 +354,6 @@ export class PatchBuilder {
   }
 
   /**
-   * Run builder commands to create a tuple.
-   */
-  public jsonVec(vector: unknown[]): ITimestampStruct {
-    const id = this.vec();
-    const length = vector.length;
-    if (length) {
-      const writes: [index: number, value: ITimestampStruct][] = [];
-      for (let i = 0; i < length; i++) writes.push([i, this.constOrJson(vector[i])]);
-      this.insVec(id, writes);
-    }
-    return id;
-  }
-
-  /**
    * Run the necessary builder commands to create any arbitrary JSON value.
    */
   public json(json: unknown): ITimestampStruct {
@@ -376,7 +361,6 @@ export class PatchBuilder {
     if (json === undefined) return this.const(json);
     if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
-    if (json instanceof VectorDelayedValue) return this.jsonVec(json.slots);
     if (json instanceof Konst) return this.const(json.val);
     if (json instanceof NodeBuilder) return json.build(this);
     switch (typeof json) {

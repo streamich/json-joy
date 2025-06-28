@@ -6,8 +6,7 @@
  *     npx nodemon -q -x ts-node src/json-crdt/__demos__/toString-array.ts
  */
 
-import {Model} from '..';
-import {vec} from '../../json-crdt-patch/builder/Tuple';
+import {Model, s} from '..';
 
 const model = Model.create(void 0, 123);
 
@@ -20,12 +19,14 @@ model.api.set({
   foo: 'abc',
   bar: true,
   baz: 123,
-  qux: vec(1, 'a', 'asf'),
+  qux: s.vec(s.con(1), s.str('a'), s.str('asf')),
 });
 
 const str = model.api.str(['foo']);
 
-str.ins(3, 'def').ins(6, 'ghi').del(1, 2);
+str.ins(3, 'def');
+str.ins(6, 'ghi');
+str.del(1, 2);
 
 model.api.obj([]).del(['baz']);
 model.api.obj([]).set({

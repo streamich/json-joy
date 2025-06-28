@@ -1,6 +1,5 @@
 import {s} from '../../../../../json-crdt-patch';
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
-import {vec} from '../../../../../json-crdt-patch/builder/Tuple';
 import {Model} from '../../../../model';
 
 export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) => {
@@ -36,7 +35,7 @@ export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) =>
 
   test('tuple', () => {
     const model = Model.create();
-    model.api.set(vec(1, 2, 3));
+    model.api.set(s.vec(s.con(1), s.con(2), s.con(3)));
     assertCodec(model);
   });
 
