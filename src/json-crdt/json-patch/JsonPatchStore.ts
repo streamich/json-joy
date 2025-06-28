@@ -3,7 +3,7 @@ import type {JsonNodeApi} from '../model/api/types';
 import {JsonPatch} from './JsonPatch';
 import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import type {Path} from '@jsonjoy.com/json-pointer/lib/types';
-import type {Model} from '../model';
+import type {Model, NodeApi} from '../model';
 import type {Operation, OperationAdd, OperationRemove, OperationReplace} from '../../json-patch';
 import type {JsonNode, JsonNodeView} from '../nodes';
 
@@ -14,10 +14,11 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   constructor(
     public readonly model: Model<N>,
     public readonly path: Path = [],
+    public readonly base?: NodeApi<any>,
   ) {
     this.pfx = path.length ? path.join() : '';
     const api = model.api;
-    this.patcher = new JsonPatch(model, path);
+    this.patcher = new JsonPatch(model, path, base);
     this.subscribe = (listener) => api.onChange.listen(listener);
   }
 
@@ -55,7 +56,7 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   public readonly get = (path: string | Path = ''): unknown => this.patcher.get(path);
 
   public bind(path: string | Path): JsonPatchStore<N> {
-    return new JsonPatchStore(this.model, this.path.concat(toPath(path)));
+    return new JsonPatchStore(this.model, this.path.concat(toPath(path)), this.base);
   }
 
   public api(): JsonNodeApi<N> | undefined {
