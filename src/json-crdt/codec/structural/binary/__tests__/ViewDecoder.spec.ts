@@ -3,7 +3,7 @@ import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {ViewDecoder} from '../ViewDecoder';
-import {konst} from '../../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../../json-crdt-patch';
 
 describe('logical', () => {
   test('can decode various documents', () => {
@@ -45,7 +45,7 @@ describe('logical', () => {
   test('decodes "con" timestamp as null', () => {
     const model = Model.create();
     model.api.set({
-      foo: konst(new Timestamp(model.clock.sid, 2)),
+      foo: s.con(new Timestamp(model.clock.sid, 2)),
     });
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();

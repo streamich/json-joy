@@ -1,12 +1,11 @@
 import {QuillConst} from './constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
-import {konst} from '../../json-crdt-patch/builder/Konst';
 import {SliceStacking} from '../peritext/slice/constants';
 import {PersistedSlice} from '../peritext/slice/PersistedSlice';
 import {diffAttributes, getAttributes, removeErasures} from './util';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {QuillDeltaNode} from './QuillDeltaNode';
-import type {ArrApi, ArrNode, ExtApi, StrApi} from '../../json-crdt';
+import {s, type ArrApi, type ArrNode, type ExtApi, type StrApi} from '../../json-crdt';
 import type {
   QuillDeltaAttributes,
   QuillDeltaOpDelete,
@@ -29,7 +28,7 @@ const updateAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | unde
     if (value === null) {
       savedSlices.ins(range, SliceStacking.Erase, key);
     } else {
-      savedSlices.ins(range, SliceStacking.One, key, konst(value));
+      savedSlices.ins(range, SliceStacking.One, key, s.con(value));
     }
   }
 };

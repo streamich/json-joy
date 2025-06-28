@@ -10,7 +10,7 @@
 console.clear();
 
 // Import all necessary dependencies.
-import {Model, konst} from '..';
+import {Model, s} from '..';
 
 const main = async () => {
   // Create a new JSON CRDT document.
@@ -69,7 +69,7 @@ const main = async () => {
   model.api
     .arr(['my', 'deep', 'arr'])
     .del(1, 1)
-    .ins(1, [konst(2)]);
+    .ins(1, [s.con(2)]);
   // });
   await new Promise((r) => setTimeout(r, 1));
   console.log('');

@@ -19,7 +19,6 @@ import {type IClock, type ITimestampStruct, type ITimespanStruct, ts, Timestamp}
 import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
-import {Konst} from './builder/Konst';
 import {NodeBuilder} from './builder/DelayedValueBuilder';
 
 const maybeConst = (x: unknown): boolean => {
@@ -361,7 +360,6 @@ export class PatchBuilder {
     if (json === undefined) return this.const(json);
     if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
-    if (json instanceof Konst) return this.const(json.val);
     if (json instanceof NodeBuilder) return json.build(this);
     switch (typeof json) {
       case 'object':

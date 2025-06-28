@@ -1,5 +1,4 @@
 import {s} from '../../../../../json-crdt-patch';
-import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 import {Model} from '../../../../model';
 
 export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) => {
@@ -11,7 +10,7 @@ export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) =>
 
   test('const number', () => {
     const model = Model.create();
-    model.api.set(konst(123));
+    model.api.set(s.con(123));
     assertCodec(model);
   });
 

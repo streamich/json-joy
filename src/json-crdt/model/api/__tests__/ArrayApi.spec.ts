@@ -1,4 +1,4 @@
-import {konst} from '../../../../json-crdt-patch';
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {
@@ -51,7 +51,7 @@ describe('events', () => {
     await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);
-    doc.api.arr(['myArr']).ins(1, [konst(2)]);
+    doc.api.arr(['myArr']).ins(1, [s.con(2)]);
     await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);

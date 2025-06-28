@@ -6,8 +6,7 @@
  *     npx nodemon -q -x ts-node src/json-crdt/__demos__/docs-arr.ts
  */
 
-import {Model} from '..';
-import {konst} from '../../json-crdt-patch';
+import {Model, s} from '..';
 
 console.clear();
 
@@ -34,7 +33,7 @@ console.log(model.root + '');
 //                      └─ StrChunk 1234.14!3 len:3 { "red" }
 
 model.api.obj([]).set({
-  tags: [konst('big'), konst('small'), konst('red')],
+  tags: [s.con('big'), s.con('small'), s.con('red')],
 });
 
 console.log(model.view());
@@ -60,7 +59,7 @@ console.log(tags + '');
 //       ├─ [1]: ConNode 1234.24 { "small" }
 //       └─ [2]: ConNode 1234.25 { "red" }
 
-tags.ins(1, [konst('medium'), konst('blue')]);
+tags.ins(1, [s.con('medium'), s.con('blue')]);
 console.log(tags + '');
 // ArrApi
 // └─ ArrNode 1234.22

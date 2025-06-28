@@ -1,8 +1,7 @@
-import {Model} from '../../../../';
+import {Model, s} from '../../../../';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {compare, equal, Timestamp, ClockVector} from '../../../../../json-crdt-patch/clock';
-import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -61,7 +60,7 @@ test('simple string document decoded string node ID is correct', () => {
 test('can encode ID as const value', () => {
   const model = Model.create();
   model.api.set({
-    foo: konst(new Timestamp(model.clock.sid, 2)),
+    foo: s.con(new Timestamp(model.clock.sid, 2)),
   });
   const encoded = JSON.stringify(encoder.encode(model));
   const decoded = decoder.decode(JSON.parse(encoded));

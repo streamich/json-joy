@@ -6,14 +6,14 @@
  *     npx ts-node src/json-crdt-patch/__demos__/PatchBuilder-konst.ts
  */
 
-import {PatchBuilder, Patch, konst} from '..';
+import {PatchBuilder, s} from '..';
 import {LogicalClock} from '../clock';
 
 const clock = new LogicalClock(123, 456);
 const builder = new PatchBuilder(clock);
 
 builder.json({
-  bools: konst([true, false]),
+  bools: s.con([true, false]),
 }),
   console.log(builder.patch + '');
 

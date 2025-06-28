@@ -116,5 +116,4 @@ export * from './operations';
 export * from './Patch';
 export * from './PatchBuilder';
 export * from './builder/schema';
-export * from './builder/Konst';
 export * from './builder/DelayedValueBuilder';

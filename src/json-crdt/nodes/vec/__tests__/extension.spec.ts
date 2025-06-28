@@ -1,5 +1,5 @@
 import {mval} from '../../../../json-crdt-extensions/mval';
-import {konst} from '../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../../../json-crdt/model';
 
 test('can specify extension name', () => {
@@ -46,7 +46,7 @@ test('exposes API to edit extension data', () => {
     mv: mval.new(),
   });
   const nodeApi = model.api.in('mv').asExt(mval);
-  nodeApi.set(konst('lol'));
+  nodeApi.set(s.con('lol'));
   expect(model.view()).toEqual({
     mv: ['lol'],
   });
