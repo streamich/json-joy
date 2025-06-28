@@ -164,35 +164,11 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   }
 
   public get(path: string | Path): unknown {
-    return this._get(this.toPath(path));
-  }
-
-  private _get(steps: Path): unknown {
-    const model = this.model;
-    if (!steps.length) return model.view();
-    else {
-      try {
-        const objSteps = steps.slice(0, steps.length - 1);
-        const node = model.api.find(objSteps);
-        const key = steps[steps.length - 1];
-        if (node instanceof ObjNode) {
-          return node.get(String(key))?.view();
-        } else if (node instanceof ArrNode) {
-          const index = ~~key;
-          if ('' + index !== key) throw new Error('INVALID_INDEX');
-          const arrNode = node.getNode(index);
-          if (!arrNode) throw new Error('NOT_FOUND');
-          return arrNode.view();
-        }
-      } catch {
-        return;
-      }
-    }
-    return undefined;
+    return this.model.api.read(this.toPath(path));
   }
 
   private json(steps: Path): unknown {
-    const json = this._get(steps);
+    const json = this.model.api.read(steps);
     if (json === undefined) throw new Error('NOT_FOUND');
     return json;
   }
