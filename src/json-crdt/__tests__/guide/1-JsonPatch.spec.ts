@@ -3,7 +3,7 @@
 import {Model} from '../..';
 import {JsonPatch} from '../../json-patch';
 
-const doc = Model.withLogicalClock();
+const doc = Model.create();
 const jsonPatch = new JsonPatch(doc);
 
 test('can edit document using JSON Patch operations', () => {

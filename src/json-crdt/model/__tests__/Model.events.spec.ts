@@ -3,7 +3,7 @@ import {Model} from '../Model';
 
 describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a value is set', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.onpatch = () => {
       cnt++;
@@ -24,7 +24,7 @@ describe('DOM Level 0, .onchange event system', () => {
   });
 
   it('should trigger the onchange event when a value is set to the same value', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.onpatch = () => {
       cnt++;
@@ -40,7 +40,7 @@ describe('DOM Level 0, .onchange event system', () => {
   });
 
   it('should trigger the onchange event when a value is deleted', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.onpatch = () => {
       cnt++;
@@ -58,7 +58,7 @@ describe('DOM Level 0, .onchange event system', () => {
   });
 
   it('should trigger the onchange event when a non-existent value is deleted', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.onpatch = () => {
       cnt++;
@@ -76,7 +76,7 @@ describe('DOM Level 0, .onchange event system', () => {
   });
 
   it('should trigger when root value is changed', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.onpatch = () => {
       cnt++;
@@ -97,8 +97,8 @@ describe('DOM Level 0, .onchange event system', () => {
 
   describe('event types', () => {
     it('should trigger the onchange event with a RESET event type', () => {
-      const model1 = Model.withLogicalClock();
-      const model2 = Model.withLogicalClock();
+      const model1 = Model.create();
+      const model2 = Model.create();
       model2.api.set([1, 2, 3]);
       let cnt = 0;
       model1.onreset = () => {

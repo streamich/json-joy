@@ -3,7 +3,7 @@ import {SESSION} from '../../../json-crdt-patch/constants';
 import {Model} from '../Model';
 
 test('can set object schema', () => {
-  const model = Model.withLogicalClock().setSchema(
+  const model = Model.create().setSchema(
     s.obj({
       str: s.str('asdf'),
       con: s.con(123),
@@ -14,7 +14,7 @@ test('can set object schema', () => {
 });
 
 test('can set map schema', () => {
-  const model = Model.withLogicalClock().setSchema(
+  const model = Model.create().setSchema(
     s.map<nodes.str | nodes.con<number>>({
       str: s.str('asdf'),
       con1: s.con(123),
@@ -28,7 +28,7 @@ test('can set map schema', () => {
 });
 
 test('uses global session ID by default', () => {
-  const model = Model.withLogicalClock().setSchema(
+  const model = Model.create().setSchema(
     s.obj({
       id: s.str<string>('asdf'),
       num: s.con(123),
@@ -44,14 +44,14 @@ test('allows to specify custom session ID', () => {
     id: s.str<string>('asdf'),
     num: s.con(123),
   });
-  const model = Model.withLogicalClock().setSchema(schema, false);
+  const model = Model.create().setSchema(schema, false);
   expect(model.api.r.get().node.id.sid).toBe(model.clock.sid);
   expect(model.api.r.get().get('id').node.id.sid).toBe(model.clock.sid);
   expect(model.api.r.get().get('num').node.id.sid).toBe(model.clock.sid);
 });
 
 test('resets session ID to user specified', () => {
-  const model = Model.withLogicalClock().setSchema(
+  const model = Model.create().setSchema(
     s.obj({
       id: s.str<string>('asdf'),
       num: s.con(123),

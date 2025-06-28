@@ -12,7 +12,7 @@ test('view should preserve identity', () => {
 });
 
 test('can set new values in single fork', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
   model.api.set({
     mv: mval.new(1),
@@ -26,7 +26,7 @@ test('can set new values in single fork', () => {
 });
 
 test('removes tombstones on insert', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
   model.api.set({
     mv: mval.new(1),
@@ -42,7 +42,7 @@ test('removes tombstones on insert', () => {
 });
 
 test('contains two values when two forks set value concurrently', () => {
-  const model1 = Model.withLogicalClock();
+  const model1 = Model.create();
   model1.ext.register(mval);
   model1.api.set({
     mv: mval.new(1),
@@ -65,7 +65,7 @@ test('contains two values when two forks set value concurrently', () => {
 });
 
 test('contains one value when a fork overwrites a register', () => {
-  const model1 = Model.withLogicalClock();
+  const model1 = Model.create();
   model1.ext.register(mval);
   model1.api.set({
     mv: mval.new(1),

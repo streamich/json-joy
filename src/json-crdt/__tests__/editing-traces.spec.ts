@@ -20,7 +20,7 @@ describe('concurrent traces', () => {
   for (const traceName of traces) {
     test(`"${traceName}" trace`, async () => {
       const [batch, view] = loadConcurrentTrace(traceName);
-      const model = Model.withLogicalClock(123123123);
+      const model = Model.create(void 0, 123123123);
       model.applyBatch(batch);
       expect(model.view()).toBe(view);
     });
@@ -43,7 +43,7 @@ describe('fuzzer traces', () => {
   for (const traceName of traces) {
     test(`"${traceName}" trace`, async () => {
       const [batch, doc] = loadFuzzerTrace(traceName);
-      const model = Model.withLogicalClock(1000000);
+      const model = Model.create(void 0, 1000000);
       model.applyBatch(batch);
       expect(Model.fromBinary(model.toBinary()).toString()).toBe(doc.toString());
       expect(model.view()).toStrictEqual(doc.view());

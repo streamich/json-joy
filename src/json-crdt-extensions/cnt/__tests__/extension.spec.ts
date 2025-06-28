@@ -11,7 +11,7 @@ test('view should preserve identity', () => {
 });
 
 test('can set new values in single fork', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(cnt);
   model.api.set({
     counter: cnt.new(24),
@@ -26,7 +26,7 @@ test('can set new values in single fork', () => {
 });
 
 test('two concurrent users can increment the counter', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(cnt);
   model.api.set({
     counter: cnt.new(),

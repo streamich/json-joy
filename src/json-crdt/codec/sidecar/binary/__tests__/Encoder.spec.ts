@@ -6,7 +6,7 @@ import {Decoder} from '../Decoder';
 import {Timestamp} from '../../../../../json-crdt-patch/clock';
 
 test('con', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -21,7 +21,7 @@ test('con', () => {
 });
 
 test('con - timestamp', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -36,7 +36,7 @@ test('con - timestamp', () => {
 });
 
 test('val', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -51,7 +51,7 @@ test('val', () => {
 });
 
 test('obj', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -66,7 +66,7 @@ test('obj', () => {
 });
 
 test('obj - 2', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -85,7 +85,7 @@ test('obj - 2', () => {
 });
 
 test('obj - with deleted keys', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -104,7 +104,7 @@ test('obj - with deleted keys', () => {
 });
 
 test('obj - supports "__proto__" key', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -123,7 +123,7 @@ test('obj - supports "__proto__" key', () => {
 });
 
 test('vec', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -138,7 +138,7 @@ test('vec', () => {
 });
 
 test('vec - 2', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -153,7 +153,7 @@ test('vec - 2', () => {
 });
 
 test('vec - with gaps', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -169,7 +169,7 @@ test('vec - with gaps', () => {
 });
 
 test('str', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -185,7 +185,7 @@ test('str', () => {
 });
 
 test('str - with deleted chunks', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -202,7 +202,7 @@ test('str - with deleted chunks', () => {
 });
 
 test('bin', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -218,7 +218,7 @@ test('bin', () => {
 });
 
 test('bin - with deleted chunks', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -234,7 +234,7 @@ test('bin - with deleted chunks', () => {
 });
 
 test('arr', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
@@ -250,7 +250,7 @@ test('arr', () => {
 });
 
 test('arr - with deleted chunks', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();

@@ -8,13 +8,13 @@
 
 import {Model} from '..';
 
-// const model = Model.withLogicalClock(1234);
+// const model = Model.create(void 0, 1234);
 
 // console.log(model + '');
 // console.log(model.view());
 // console.log(model.toString());
 
-const model = Model.withLogicalClock(1234); // 1234 is the session ID
+const model = Model.create(void 0, 1234); // 1234 is the session ID
 console.log(model + '');
 
 // model.api.root({

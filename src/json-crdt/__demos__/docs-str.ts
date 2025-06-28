@@ -8,7 +8,7 @@
 
 import {Model} from '..';
 
-const model = Model.withLogicalClock(1234); // 1234 is session ID
+const model = Model.create(void 0, 1234); // 1234 is session ID
 
 model.api.set({
   text: 'hello',

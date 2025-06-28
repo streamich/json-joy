@@ -9,7 +9,7 @@
 import {Model} from '..';
 import {ClockVector} from '../../json-crdt-patch/clock';
 
-const str = Model.withLogicalClock(new ClockVector(1234, 0));
+const str = Model.create(void 0, new ClockVector(1234, 0));
 
 console.log('');
 console.log('Empty document:');

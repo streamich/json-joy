@@ -10,7 +10,7 @@ import {Model} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234); // 1234 is session ID
+const model = Model.create(void 0, 1234); // 1234 is session ID
 
 model.api.set({
   blob: new Uint8Array([1, 2, 3, 14, 15, 16, 17]),

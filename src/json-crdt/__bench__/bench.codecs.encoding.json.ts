@@ -32,7 +32,7 @@ const benchmark: IBenchmark = {
     {
       name: 'Model.toBinary() - with logical clock',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         model.api.set(json);
         return () => model.toBinary();
       },

@@ -7,7 +7,7 @@ import {Extension} from '../../../extensions/Extension';
 import {ExtNode} from '../../../extensions/ExtNode';
 
 test('treats a simple "vec" node as a vector', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     vec: s.vec(),
   });
@@ -18,7 +18,7 @@ test('treats a simple "vec" node as a vector', () => {
 });
 
 test('does not treat "vec" node as extension, if extension is not registered in registry', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     vec: s.vec(),
   });
@@ -63,7 +63,7 @@ describe('sample extension', () => {
   );
 
   test('can run an extension', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(DoubleConcatExt);
     model.api.set({
       str: DoubleConcatExt.new('foo'),
@@ -74,7 +74,7 @@ describe('sample extension', () => {
   });
 
   test('can use extension node', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(DoubleConcatExt);
     model.api.set({
       str: DoubleConcatExt.new('abc'),
@@ -84,7 +84,7 @@ describe('sample extension', () => {
   });
 
   test('can use extension API node', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(DoubleConcatExt);
     model.api.set({
       str: DoubleConcatExt.new('abc'),

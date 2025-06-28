@@ -6,7 +6,7 @@ import {interval, ClockVector, tick} from '../../../json-crdt-patch/clock';
 describe('Document', () => {
   describe('array', () => {
     test('can create an array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       doc.applyPatch(builder.patch);
@@ -15,7 +15,7 @@ describe('Document', () => {
     });
 
     test('can set array as document root', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       builder.root(arrId);
@@ -24,7 +24,7 @@ describe('Document', () => {
     });
 
     test('can add one element to array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -35,7 +35,7 @@ describe('Document', () => {
     });
 
     test('can add two elements to array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -47,7 +47,7 @@ describe('Document', () => {
     });
 
     test('can have array-in-array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr1 = builder.arr();
       const arr2 = builder.arr();
@@ -58,7 +58,7 @@ describe('Document', () => {
     });
 
     test('can add two elements with two operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -71,7 +71,7 @@ describe('Document', () => {
     });
 
     test('can add three elements sequentially with three operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -86,7 +86,7 @@ describe('Document', () => {
     });
 
     test('can add three elements with in-the-middle insertion', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -101,7 +101,7 @@ describe('Document', () => {
     });
 
     test('can add three elements with two operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -115,7 +115,7 @@ describe('Document', () => {
     });
 
     test('can insert after last element in the chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -130,7 +130,7 @@ describe('Document', () => {
     });
 
     test('can insert after last element in the chunk twice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -147,7 +147,7 @@ describe('Document', () => {
     });
 
     test('can insert after last element twice for the same chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -163,7 +163,7 @@ describe('Document', () => {
     });
 
     test('can apply same patch trice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -181,7 +181,7 @@ describe('Document', () => {
     });
 
     test('insert at the beginning of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -195,7 +195,7 @@ describe('Document', () => {
     });
 
     test('insert at the beginning of a chunk using two patches', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder1 = new PatchBuilder(doc.clock);
       const arrId = builder1.arr();
       const t = builder1.const(true);
@@ -211,7 +211,7 @@ describe('Document', () => {
     });
 
     test('insert at the beginning of a chunk trice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -227,7 +227,7 @@ describe('Document', () => {
     });
 
     test('can delete a single element from single-element chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -244,7 +244,7 @@ describe('Document', () => {
     });
 
     test('can delete a single element from single-element chunk in the middle of array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -261,7 +261,7 @@ describe('Document', () => {
     });
 
     test('delete last element in a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -275,7 +275,7 @@ describe('Document', () => {
     });
 
     test('delete first two elements in chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -289,7 +289,7 @@ describe('Document', () => {
     });
 
     test('delete a section in the middle of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -303,7 +303,7 @@ describe('Document', () => {
     });
 
     test('delete two chunks using one delete operation', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -320,7 +320,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t1 = builder.const(true);
@@ -342,7 +342,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t1 = builder.const(true);
@@ -359,7 +359,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion - 2', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t1 = builder.const(true);
@@ -376,7 +376,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion - 3', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t1 = builder.const(true);
@@ -393,7 +393,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion - 4', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const t = builder.const(true);
@@ -408,7 +408,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one one-element one-chunk array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const f = builder.const(false);
@@ -420,7 +420,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one one-chunk array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [builder.const(false), builder.const(true), builder.const(true)]);
@@ -434,7 +434,7 @@ describe('Document', () => {
     });
 
     test('can find ID in multi-chunk array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -458,7 +458,7 @@ describe('Document', () => {
     });
 
     test('can find value in multi-chunk array', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -483,7 +483,7 @@ describe('Document', () => {
     });
 
     test('can find span within one chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -500,7 +500,7 @@ describe('Document', () => {
     });
 
     test('can find span at the beginning of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -517,7 +517,7 @@ describe('Document', () => {
     });
 
     test('can find span at the end of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -534,7 +534,7 @@ describe('Document', () => {
     });
 
     test('can find span across two chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -557,7 +557,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -585,7 +585,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks - 2', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -613,7 +613,7 @@ describe('Document', () => {
     });
 
     test('can find span across two chunks, second with on element', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const t = builder.const(true);
@@ -638,7 +638,7 @@ describe('Document', () => {
     });
 
     test('can insert element into a forked model', () => {
-      const model1 = Model.withLogicalClock(new ClockVector(1234, 0));
+      const model1 = Model.create(void 0, new ClockVector(1234, 0));
       model1.api.set([[1]]);
       const model2 = model1.fork();
       model1.api.arr([]).ins(0, [2]);
@@ -648,7 +648,7 @@ describe('Document', () => {
     });
 
     test('array in forked document is independent', () => {
-      const model1 = Model.withLogicalClock();
+      const model1 = Model.create();
       model1.api.set([1, {}]);
       const model2 = model1.fork();
       expect(model1.view()).toEqual([1, {}]);

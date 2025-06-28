@@ -9,7 +9,7 @@
 import {Model} from '..';
 import {vec} from '../../json-crdt-patch/builder/Tuple';
 
-const model = Model.withLogicalClock(123);
+const model = Model.create(void 0, 123);
 
 model.api.set(1);
 model.api.set(2);

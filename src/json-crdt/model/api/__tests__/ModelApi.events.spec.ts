@@ -3,7 +3,7 @@ import {Model} from '../../Model';
 
 describe('FanOut event API', () => {
   test('dispatches "change" events on document change', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     let cnt = 0;
     api.set({a: {}});
@@ -20,7 +20,7 @@ describe('FanOut event API', () => {
   });
 
   test('fires change event once for all batched updates', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     let cnt = 0;
     api.set({a: {}});
@@ -35,7 +35,7 @@ describe('FanOut event API', () => {
   });
 
   test('can have multiple subscribers', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     let cnt = 0;
     api.set({a: {}});
@@ -54,7 +54,7 @@ describe('FanOut event API', () => {
   });
 
   it('fires "change" event when a value is set to the same value', async () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.api.onChanges.listen(() => {
       cnt++;
@@ -70,7 +70,7 @@ describe('FanOut event API', () => {
   });
 
   it('fires change event when a value is deleted', async () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.api.onChanges.listen(() => {
       cnt++;
@@ -87,7 +87,7 @@ describe('FanOut event API', () => {
   });
 
   test('reports local change type when a value is set locally', async () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     let bufferPoint: number | undefined;
     model.api.onLocalChange.listen((pointer) => {
@@ -103,7 +103,7 @@ describe('FanOut event API', () => {
   });
 
   test('reports remote change type when a value is set remotely', async () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     let patchFromEvent: Patch | undefined;
     model.api.onPatch.listen((p) => {
@@ -122,7 +122,7 @@ describe('FanOut event API', () => {
   });
 
   test('reports remote and local changes when both types are present', async () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     let set: any[] | undefined;
     model.api.onChanges.listen((changes) => {
@@ -144,12 +144,12 @@ describe('FanOut event API', () => {
   });
 
   test('reports reset change when model is reset', async () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     let cnt = 0;
     model.api.onReset.listen(() => {
       cnt++;
     });
-    const model2 = Model.withLogicalClock();
+    const model2 = Model.create();
     model2.api.set(123);
     await Promise.resolve();
     expect(cnt).toBe(0);
@@ -159,8 +159,8 @@ describe('FanOut event API', () => {
   });
 
   test('on reset builder is flushed', async () => {
-    const model = Model.withLogicalClock();
-    const model2 = Model.withLogicalClock();
+    const model = Model.create();
+    const model2 = Model.create();
     model2.api.set(123);
     model.api.set('asdf');
     expect(model.api.builder.patch.ops.length > 0).toBe(true);
@@ -170,8 +170,8 @@ describe('FanOut event API', () => {
   });
 
   test('on reset other events are not emitted', async () => {
-    const model = Model.withLogicalClock();
-    const model2 = Model.withLogicalClock();
+    const model = Model.create();
+    const model2 = Model.create();
     model2.api.set(123);
     model.api.set('asdf');
     let cntReset = 0;
@@ -197,7 +197,7 @@ describe('FanOut event API', () => {
 describe('fanout', () => {
   describe('changes', () => {
     test('emits events on document change', async () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const api = doc.api;
       let cnt = 0;
       api.set({a: {}});
@@ -214,7 +214,7 @@ describe('fanout', () => {
     });
 
     test('can have multiple subscribers', async () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const api = doc.api;
       let cnt = 0;
       api.set({a: {}});

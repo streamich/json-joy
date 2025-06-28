@@ -8,7 +8,7 @@ const encoder = new Encoder();
 const decoder = new Decoder();
 
 test('encoding/decoding a model results in the same node IDs', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(5, 0));
+  const model1 = Model.create(void 0, new ClockVector(5, 0));
   model1.api.set('');
   expect(model1.view()).toStrictEqual('');
   model1.api.str([]).ins(0, 'a');
@@ -22,7 +22,7 @@ test('encoding/decoding a model results in the same node IDs', () => {
 });
 
 test('forking and encoding/decoding results in the same node IDs', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(3, 0));
+  const model1 = Model.create(void 0, new ClockVector(3, 0));
   model1.api.set('abc');
   expect(model1.view()).toStrictEqual('abc');
   const model2 = model1.fork(4);
@@ -35,7 +35,7 @@ test('forking and encoding/decoding results in the same node IDs', () => {
 });
 
 test('vector clocks are the same after decoding', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(555555, 0));
+  const model1 = Model.create(void 0, new ClockVector(555555, 0));
   model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
@@ -43,7 +43,7 @@ test('vector clocks are the same after decoding', () => {
 });
 
 test('decoded root node ID is correct', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(666666, 0));
+  const model1 = Model.create(void 0, new ClockVector(666666, 0));
   model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
@@ -51,7 +51,7 @@ test('decoded root node ID is correct', () => {
 });
 
 test('simple string document decoded string node ID is correct', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(777777, 0));
+  const model1 = Model.create(void 0, new ClockVector(777777, 0));
   model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
@@ -59,7 +59,7 @@ test('simple string document decoded string node ID is correct', () => {
 });
 
 test('can encode ID as const value', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     foo: konst(new Timestamp(model.clock.sid, 2)),
   });

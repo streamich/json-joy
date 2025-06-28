@@ -3,7 +3,7 @@ import {ConApi, ObjApi, ValApi} from '../nodes';
 import {Model} from '../../Model';
 
 describe('can use .in() method to reference any model node', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
 
   test('can access root node', () => {
     const node = doc.api.r.asVal();

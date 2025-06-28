@@ -8,7 +8,7 @@ import type * as types from './types';
 export class Decoder {
   public decode({time, root}: types.JsonCrdtVerboseDocument): Model {
     const isServerClock = typeof time === 'number';
-    const doc = isServerClock ? Model.withServerClock(time) : Model.withLogicalClock(this.cClock(time));
+    const doc = isServerClock ? Model.withServerClock(time) : Model.create(void 0, this.cClock(time));
     this.cRoot(doc, root);
     return doc;
   }

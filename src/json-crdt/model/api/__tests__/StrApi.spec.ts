@@ -3,7 +3,7 @@ import type {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
   api.set([0, '123', 2]);
   const str = api.str([1]);
@@ -16,7 +16,7 @@ test('can edit a simple string', () => {
 });
 
 test('can delete across two chunks', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
   api.set('');
   const str = api.str([]);
@@ -28,7 +28,7 @@ test('can delete across two chunks', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       str: s.str('hello world'),
     }),
@@ -38,7 +38,7 @@ test('.length()', () => {
 
 describe('position tracking', () => {
   test('can convert position into global coordinates and back', () => {
-    const doc = Model.withLogicalClock().setSchema(
+    const doc = Model.create().setSchema(
       s.obj({
         str: s.str('hello world'),
       }),
@@ -51,7 +51,7 @@ describe('position tracking', () => {
   });
 
   test('shifts position when text is inserted in the middle', () => {
-    const doc = Model.withLogicalClock().setSchema(
+    const doc = Model.create().setSchema(
       s.obj({
         str: s.str('123456'),
       }),
@@ -67,7 +67,7 @@ describe('position tracking', () => {
 
 describe('events', () => {
   test('can subscribe to "view" events', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set('');
     const str = api.str([]);
@@ -88,7 +88,7 @@ describe('events', () => {
   });
 
   test('batches consecutive updates into one "view" event dispatch', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set('');
     const str = api.str([]);
@@ -106,7 +106,7 @@ describe('events', () => {
 
   describe('.changes', () => {
     test('can listen to events', async () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const api = doc.api;
       api.set('');
       const str = api.str([]);
@@ -129,7 +129,7 @@ describe('events', () => {
 
   describe('SyncStore', () => {
     test('can listen to events', async () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const api = doc.api;
       api.set('');
       const str = api.str([]);

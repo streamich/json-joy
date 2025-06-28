@@ -3,7 +3,7 @@ import {ValNode} from '../../nodes';
 import {Model} from '../Model';
 
 test('removes from index rewritten root nodes', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set(123);
   const rootValue = doc.root.val;
   expect(!!doc.index.get(rootValue)).toBe(true);
@@ -12,7 +12,7 @@ test('removes from index rewritten root nodes', () => {
 });
 
 test('removes from index rewritten object keys', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set({
     foo: 123,
   });
@@ -24,7 +24,7 @@ test('removes from index rewritten object keys', () => {
 });
 
 test('removes from index deleted object keys', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set({
     foo: 123,
   });
@@ -36,7 +36,7 @@ test('removes from index deleted object keys', () => {
 });
 
 test('removes from index rewritten ValNode register values', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set([123]);
   const register = doc.api.val([0]).node;
   expect(register).toBeInstanceOf(ValNode);
@@ -47,7 +47,7 @@ test('removes from index rewritten ValNode register values', () => {
 });
 
 test('removes from index deleted array element nodes', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set([123, 456]);
   const val1 = doc.api.val([0]).node.id;
   const val2 = doc.api.val([1]).node.id;
@@ -59,7 +59,7 @@ test('removes from index deleted array element nodes', () => {
 });
 
 test('removes from index recursively after object key overwrite', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set({
     foo: {
       bar: 123,
@@ -82,7 +82,7 @@ test('removes from index recursively after object key overwrite', () => {
 });
 
 test('removes from index recursively after array element delete', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set([
     0,
     1,
@@ -109,7 +109,7 @@ test('removes from index recursively after array element delete', () => {
 });
 
 test('removes from index recursively after LWW register write', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set([0, 1, 2]);
   doc.api.val([2]).set({
     foo: {
@@ -136,7 +136,7 @@ test('removes from index recursively after LWW register write', () => {
 });
 
 test('removes from index recursively after LWW register write', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set([0, 1, 2]);
   doc.api.val([2]).set({
     foo: {
@@ -163,7 +163,7 @@ test('removes from index recursively after LWW register write', () => {
 });
 
 test('calling .view() on dangling "obj" when it was deleted, should not throw', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       foo: s.obj({
         bar: s.obj({
@@ -189,7 +189,7 @@ test('calling .view() on dangling "obj" when it was deleted, should not throw', 
 });
 
 test('calling .view() on dangling "arr" when it was deleted, should not throw', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       foo: s.obj({
         bar: s.arr([s.con(123), s.str('asdf')]),
@@ -204,7 +204,7 @@ test('calling .view() on dangling "arr" when it was deleted, should not throw', 
 });
 
 test('calling .view() on dangling "vec" when it was deleted, should not throw', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       foo: s.obj({
         bar: s.vec(s.con(123), s.str('asdf')),
@@ -219,7 +219,7 @@ test('calling .view() on dangling "vec" when it was deleted, should not throw', 
 });
 
 test('calling .view() on dangling "val" when it was deleted, should not throw', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       foo: s.obj({
         bar: s.val(s.str('asdf')),

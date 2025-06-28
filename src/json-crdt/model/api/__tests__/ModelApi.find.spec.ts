@@ -3,7 +3,7 @@ import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
 
 describe('find', () => {
   test('can find a key in root object', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const builder1 = new PatchBuilder(doc.clock);
     const obj1 = builder1.obj();
     const f = builder1.const(false);
@@ -14,7 +14,7 @@ describe('find', () => {
   });
 
   test('can find the root value', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const builder1 = new PatchBuilder(doc.clock);
     const t = builder1.const(true);
     builder1.root(t);
@@ -23,7 +23,7 @@ describe('find', () => {
   });
 
   test('can find elements in an array', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const builder1 = new PatchBuilder(doc.clock);
     const obj = builder1.json([1, 'f', true]);
     builder1.root(obj);
@@ -34,7 +34,7 @@ describe('find', () => {
   });
 
   test('can find values in complex object', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const builder1 = new PatchBuilder(doc.clock);
     const json = {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
@@ -73,7 +73,7 @@ describe('find', () => {
   });
 
   test('can use finder (.find()) on a sub-node', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set({
       foo: {
@@ -108,7 +108,7 @@ describe('find', () => {
   });
 
   test('can use finder (.find()) on a sub-array', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set({
       foo: {

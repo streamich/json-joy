@@ -8,7 +8,7 @@ import {Encoder} from '../../codec/structural/verbose/Encoder';
 import {inspect} from 'util';
 
 const encoder = new Encoder();
-const model = Model.withLogicalClock(123);
+const model = Model.create(void 0, 123);
 
 model.api.set({
   time: 123456,

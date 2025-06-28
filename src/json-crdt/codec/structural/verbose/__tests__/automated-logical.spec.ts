@@ -8,7 +8,7 @@ import {binaryDocuments} from '../../../../../__tests__/binary-documents';
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {
     test(name, () => {
-      const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
+      const doc1 = Model.create(void 0, new ClockVector(222, 0));
       doc1.api.set(json);
       const encoder = new Encoder();
       const decoder = new Decoder();
@@ -27,7 +27,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
     const decoder = new Decoder();
 
     test(name, () => {
-      const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
+      const doc1 = Model.create(void 0, new ClockVector(222, 0));
       doc1.api.set(json);
       const encoded1 = encoder.encode(doc1);
       const doc2 = decoder.decode(encoded1);

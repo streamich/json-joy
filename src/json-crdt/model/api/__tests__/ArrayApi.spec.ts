@@ -2,7 +2,7 @@ import {konst} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set({
     arr: [1, 2, 3],
   });
@@ -15,7 +15,7 @@ test('can insert a value and delete all previous ones', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   doc.api.set({
     arr: [1, 2, 3],
   });
@@ -25,7 +25,7 @@ test('.length()', () => {
 
 describe('events', () => {
   test('fires onViewChanges event on change', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     doc.api.set({
       myArr: [1, 2, 3],
     });
@@ -40,7 +40,7 @@ describe('events', () => {
   });
 
   test('does not fire onViewChanges event when resulting view is the same', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     doc.api.set({
       myArr: [1, 2, 3],
     });

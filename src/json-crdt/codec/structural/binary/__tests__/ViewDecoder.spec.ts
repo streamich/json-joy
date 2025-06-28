@@ -7,7 +7,7 @@ import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 
 describe('logical', () => {
   test('can decode various documents', () => {
-    const doc1 = Model.withLogicalClock(new ClockVector(222, 1));
+    const doc1 = Model.create(void 0, new ClockVector(222, 1));
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const decoder = new Decoder();
@@ -43,7 +43,7 @@ describe('logical', () => {
   });
 
   test('decodes "con" timestamp as null', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.api.set({
       foo: konst(new Timestamp(model.clock.sid, 2)),
     });
@@ -55,7 +55,7 @@ describe('logical', () => {
   });
 
   test('can decode a simple number', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.api.set(123);
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
@@ -65,7 +65,7 @@ describe('logical', () => {
   });
 
   test('can decode a simple string', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.api.set('asdf');
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
@@ -75,7 +75,7 @@ describe('logical', () => {
   });
 
   test('can decode a simple object', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.api.set({yes: false});
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();

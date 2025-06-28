@@ -33,7 +33,7 @@ const benchmark: IBenchmark = {
     {
       name: 'structural > binary (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         model.api.set(json);
         return () => model.toBinary();
       },
@@ -50,7 +50,7 @@ const benchmark: IBenchmark = {
     {
       name: 'structural > compact (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new CompactEncoder();
         model.api.set(json);
         return () => cborEncoder.encode(encoder.encode(model));
@@ -68,7 +68,7 @@ const benchmark: IBenchmark = {
     {
       name: 'structural > verbose (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new VerboseEncoder();
         model.api.set(json);
         return () => cborEncoder.encode(encoder.encode(model));
@@ -86,7 +86,7 @@ const benchmark: IBenchmark = {
     {
       name: 'indexed (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new IndexedEncoder();
         model.api.set(json);
         return () => encoder.encode(model);
@@ -104,7 +104,7 @@ const benchmark: IBenchmark = {
     {
       name: 'sidecar (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new SidecarEncoder();
         model.api.set(json);
         return () => encoder.encode(model);

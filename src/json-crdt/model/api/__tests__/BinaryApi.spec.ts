@@ -2,7 +2,7 @@ import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a simple binary', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
   api.set([0, new Uint8Array([1, 2, 3]), 2]);
   const bin = api.bin([1]);
@@ -16,7 +16,7 @@ test('can edit a simple binary', () => {
 });
 
 test('can delete across two chunks', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
   api.set(new Uint8Array([]));
   const bin = api.bin([]);
@@ -28,7 +28,7 @@ test('can delete across two chunks', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       bin: s.bin(new Uint8Array([1, 2, 3])),
     }),

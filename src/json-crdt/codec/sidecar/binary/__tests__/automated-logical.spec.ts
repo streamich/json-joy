@@ -9,7 +9,7 @@ import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {
     test(name, () => {
-      const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
+      const doc1 = Model.create(void 0, new ClockVector(222, 0));
       doc1.api.set(json);
       const encoder = new Encoder();
       const decoder = new Decoder();
@@ -27,7 +27,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
     const cborDecoder = new CborDecoder();
 
     test(name, () => {
-      const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
+      const doc1 = Model.create(void 0, new ClockVector(222, 0));
       doc1.api.set(json);
       const [view, sidecar] = encoder.encode(doc1);
       const doc2 = decoder.decode(cborDecoder.read(view), sidecar);

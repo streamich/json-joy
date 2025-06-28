@@ -3,7 +3,7 @@ import {Peritext} from '../../Peritext';
 import {Anchor} from '../constants';
 
 const setup = (insert: (peritext: Peritext) => void = (peritext) => peritext.strApi().ins(0, 'Hello world!')) => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     text: '',
     slices: [],

@@ -11,7 +11,7 @@ import {CntExt} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234);
+const model = Model.create(void 0, 1234);
 
 model.ext.register(CntExt);
 

@@ -10,7 +10,7 @@ import {inspect} from 'util';
 
 const encoder = new Encoder();
 const encoderCompactBinary = new EncoderCompactBinary();
-const model = Model.withLogicalClock(123);
+const model = Model.create(void 0, 123);
 
 model.api.set({
   time: 123,

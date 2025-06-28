@@ -5,7 +5,7 @@ import {tick} from '../../../../json-crdt-patch/clock';
 import type {Point} from '../Point';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     text: 'abc',
     slices: [],
@@ -116,7 +116,7 @@ describe('.cmpSpatial()', () => {
   });
 
   test('correctly orders points when tombstones are present', () => {
-    const model = Model.withLogicalClock(123456);
+    const model = Model.create(void 0, 123456);
     model.api.set({
       text: '3',
       slices: [],
@@ -247,7 +247,7 @@ describe('.chunk()', () => {
 });
 
 const setupWithText = () => {
-  const model = Model.withLogicalClock(123456);
+  const model = Model.create(void 0, 123456);
   model.api.set({
     text: '3',
     slices: [],
@@ -283,7 +283,7 @@ const setupWithText = () => {
 };
 
 const setupWithChunkedText = () => {
-  const model = Model.withLogicalClock(123456);
+  const model = Model.create(void 0, 123456);
   model.api.set({
     text: '',
     slices: [],
@@ -645,7 +645,7 @@ describe('.prevId()', () => {
 
 describe('.leftChar()', () => {
   test('returns the left character', () => {
-    const model = Model.withLogicalClock(123456);
+    const model = Model.create(void 0, 123456);
     model.api.set({
       text: 'abc',
       slices: [],
@@ -736,7 +736,7 @@ describe('.leftChar()', () => {
 
 describe('.rightChar()', () => {
   test('returns the right character', () => {
-    const model = Model.withLogicalClock(123456);
+    const model = Model.create(void 0, 123456);
     model.api.set({
       text: 'abc',
       slices: [],

@@ -4,7 +4,7 @@ describe('recursive node references are not allowed', () => {
   describe('arr', () => {
     describe('ins_arr', () => {
       test('reference to parent object in same patch', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const objId = builder.obj();
         const arrId = builder.arr();
@@ -17,7 +17,7 @@ describe('recursive node references are not allowed', () => {
       });
 
       test('reference to parent object in second patch', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const objId = builder.obj();
         const arrId = builder.arr();
@@ -37,7 +37,7 @@ describe('recursive node references are not allowed', () => {
   describe('obj', () => {
     describe('ins_obj', () => {
       test('reference to object self in own key', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const objId = builder.obj();
         builder.insObj(objId, [
@@ -51,7 +51,7 @@ describe('recursive node references are not allowed', () => {
       });
 
       test('reference to object self in own key in separate patch', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const objId = builder.obj();
         builder.insObj(objId, [['con', builder.const(2)]]);
@@ -69,7 +69,7 @@ describe('recursive node references are not allowed', () => {
   describe('vec', () => {
     describe('ins_vec', () => {
       test('reference to parent object in same patch', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const vecId = builder.vec();
         builder.insVec(vecId, [
@@ -83,7 +83,7 @@ describe('recursive node references are not allowed', () => {
       });
 
       test('reference to parent object in second patch', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const vecId = builder.vec();
         builder.insVec(vecId, [
@@ -104,7 +104,7 @@ describe('recursive node references are not allowed', () => {
   describe('val', () => {
     describe('ins_val', () => {
       test('reference to parent object in second patch', () => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const builder = model.api.builder;
         const objId = builder.obj();
         const valId = builder.val();

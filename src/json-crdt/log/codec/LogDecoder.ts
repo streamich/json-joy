@@ -108,7 +108,7 @@ export class LogDecoder {
       if (!history || !startSerialized) {
         // TODO: Handle case where new model should be started with server clock: `return Model.withServerClock()`.
         // TODO: Handle case where model has to be started with extensions...
-        return Model.withLogicalClock(SESSION.GLOBAL);
+        return Model.create(void 0, SESSION.GLOBAL);
       }
       return this.deserializeModel(startSerialized);
     };

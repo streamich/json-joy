@@ -13,7 +13,7 @@ console.clear();
 import {Model, PatchBuilder} from '..';
 
 // Create a new JSON CRDT document.
-const model = Model.withLogicalClock(1234); // 1234 is the session ID
+const model = Model.create(void 0, 1234); // 1234 is the session ID
 
 // Clone the model now for future reset.
 const model0 = model.clone();

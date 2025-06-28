@@ -5,7 +5,7 @@ import {s} from '../../../../json-crdt-patch';
 import type {ProxyNodeVal} from '../proxy';
 
 test('proxy API supports object types', () => {
-  const model = Model.withLogicalClock() as any as Model<
+  const model = Model.create() as any as Model<
     ObjNode<{
       foo: StrNode;
       bar: ConNode<number>;
@@ -44,7 +44,7 @@ test('proxy API supports object types', () => {
 });
 
 describe('supports all node types', () => {
-  const model = Model.withLogicalClock().setSchema(
+  const model = Model.create().setSchema(
     s.obj({
       obj: s.obj({
         str: s.str('asdf'),

@@ -7,7 +7,7 @@ test('can specify extension name', () => {
 });
 
 test('can create a new multi-value register', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
   model.api.set({
     mv: mval.new(),
@@ -18,7 +18,7 @@ test('can create a new multi-value register', () => {
 });
 
 test('can provide initial value', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
   model.api.set({
     mv: mval.new({foo: 'bar'}),
@@ -29,7 +29,7 @@ test('can provide initial value', () => {
 });
 
 test('can read view from node or API node', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
   model.api.set({
     mv: mval.new('foo'),
@@ -40,7 +40,7 @@ test('can read view from node or API node', () => {
 });
 
 test('exposes API to edit extension data', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
   model.api.set({
     mv: mval.new(),
@@ -54,7 +54,7 @@ test('exposes API to edit extension data', () => {
 
 describe('extension validity checks', () => {
   test('does not treat VecNode as extension if header is too long', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(mval);
     model.api.set({
       mv: mval.new(),
@@ -70,7 +70,7 @@ describe('extension validity checks', () => {
   });
 
   test('does not treat VecNode as extension if header sid is wrong', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(mval);
     model.api.set({
       mv: mval.new(),
@@ -84,7 +84,7 @@ describe('extension validity checks', () => {
   });
 
   test('does not treat VecNode as extension if header time is wrong', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(mval);
     model.api.set({
       mv: mval.new(),

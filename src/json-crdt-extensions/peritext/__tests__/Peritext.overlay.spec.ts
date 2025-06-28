@@ -3,7 +3,7 @@ import {size} from 'sonic-forest/lib/util';
 import {Peritext} from '../Peritext';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     text: '',
     slices: [],

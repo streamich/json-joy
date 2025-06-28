@@ -8,7 +8,7 @@
 
 import {Model} from '..';
 
-const model = Model.withLogicalClock(1234); // 1234 is the session ID
+const model = Model.create(void 0, 1234); // 1234 is the session ID
 
 // No events
 // model.applyPatch();

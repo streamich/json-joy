@@ -5,7 +5,7 @@ import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './se
 
 const run = (setup: () => Kit) => {
   test('can run .refresh() on empty state', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.api.set({
       text: '',
       slices: [],

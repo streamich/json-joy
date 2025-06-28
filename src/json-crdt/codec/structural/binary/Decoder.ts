@@ -30,7 +30,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
       this.decodeClockTable();
       if (!model) {
         const clock = this.clockDecoder!.clock;
-        model = Model.withLogicalClock(clock);
+        model = Model.create(void 0, clock);
       }
     }
     this.doc = model;

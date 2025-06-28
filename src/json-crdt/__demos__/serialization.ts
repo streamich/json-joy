@@ -18,7 +18,7 @@ const schema = s.obj({
   temperature: s.con(36.6),
 });
 
-const model = Model.withLogicalClock(1234).setSchema(schema);
+const model = Model.create(void 0, 1234).setSchema(schema);
 
 console.log(model + '');
 // model

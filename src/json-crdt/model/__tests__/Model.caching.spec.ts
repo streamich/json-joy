@@ -1,7 +1,7 @@
 import {Model} from '..';
 
 test('returns cached value, when shallow object keys not modified', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     a: {
       value: 1,
@@ -26,7 +26,7 @@ test('returns cached value, when shallow object keys not modified', () => {
 });
 
 test('returns cached value, when shallow array is not modified', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     a: [1],
     b: [2],
@@ -47,7 +47,7 @@ test('returns cached value, when shallow array is not modified', () => {
 });
 
 test('caches multiple levels deep objects', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.api.set({
     foo: [
       {

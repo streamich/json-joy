@@ -41,7 +41,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    * uses them to create the initial state of the log.
    *
    * @param model A new JSON CRDT model, just created with
-   *              `Model.withLogicalClock()` or `Model.withServerClock()`.
+   *              `Model.create()` or `Model.withServerClock()`.
    * @returns A new `PatchLog` instance.
    */
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {

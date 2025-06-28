@@ -10,7 +10,7 @@ test('can edit a tuple', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       vec: s.vec(s.con(1), s.con(2)),
     }),
@@ -19,7 +19,7 @@ test('.length()', () => {
 });
 
 test('.push()', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       vec: s.vec(s.con(1), s.con(2)),
     }),
@@ -32,7 +32,7 @@ test('.push()', () => {
 });
 
 test('.view() is not readonly', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       vec: s.vec(s.con(1), s.con(2)),
     }),
@@ -43,7 +43,7 @@ test('.view() is not readonly', () => {
 
 describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set(vec(1, 2));
     let cnt = 0;
@@ -63,7 +63,7 @@ describe('events', () => {
   });
 
   test('does not fire event when view does not change', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set(vec(1, 2));
     let cnt = 0;
@@ -86,7 +86,7 @@ describe('events', () => {
   });
 
   test('can un-subscribe to "view" events', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set(vec(1, 2));
     let cnt = 0;
@@ -107,7 +107,7 @@ describe('events', () => {
   });
 
   test('can subscribe and un-subscribe to "view" events', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
     api.set(vec(1, 2));
     let cnt = 0;

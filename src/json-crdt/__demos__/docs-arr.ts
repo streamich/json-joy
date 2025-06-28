@@ -11,7 +11,7 @@ import {konst} from '../../json-crdt-patch';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234); // 1234 is session ID
+const model = Model.create(void 0, 1234); // 1234 is session ID
 
 model.api.set({
   tags: ['big', 'small', 'red'],

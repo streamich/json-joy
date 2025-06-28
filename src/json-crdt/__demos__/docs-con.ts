@@ -10,7 +10,7 @@ import {Model} from '..';
 import {konst} from '../../json-crdt-patch';
 import {Timestamp} from '../../json-crdt-patch/clock';
 
-const model = Model.withLogicalClock(1234);
+const model = Model.create(void 0, 1234);
 model.api.set({
   num: 123,
   bool: true,
