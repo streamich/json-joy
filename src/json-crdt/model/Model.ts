@@ -53,21 +53,6 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
-   * Create a CRDT model which uses logical clock. Logical clock assigns a
-   * logical timestamp to every node and operation. Logical timestamp consists
-   * of a session ID and sequence number 2-tuple. Logical clocks allow to
-   * sync peer-to-peer.
-   *
-   * @param clockOrSessionId Logical clock to use.
-   * @returns CRDT model.
-   *
-   * @deprecated Use `Model.create()` instead.
-   */
-  public static readonly withLogicalClock = (clockOrSessionId?: clock.ClockVector | number): Model => {
-    return Model.create(void 0, clockOrSessionId);
-  };
-
-  /**
    * Create a CRDT model which uses server clock. In this model a central server
    * timestamps each operation with a sequence number. Each timestamp consists
    * simply of a sequence number, which was assigned by a server. In this model
