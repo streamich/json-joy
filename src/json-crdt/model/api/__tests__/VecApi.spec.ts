@@ -2,7 +2,7 @@ import {s, vec} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a tuple', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
   api.root(api.builder.vec());
   api.vec([]).set([[1, 'a']]);

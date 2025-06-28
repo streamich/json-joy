@@ -2,7 +2,7 @@ import * as operations from '../../json-crdt-patch/operations';
 import * as clock from '../../json-crdt-patch/clock';
 import {ConNode} from '../nodes/const/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
-import {ModelApi} from './api/ModelApi';
+import {ModelApi} from './api';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
