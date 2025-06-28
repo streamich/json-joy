@@ -500,6 +500,3 @@ describe('.remove()', () => {
     });
   });
 });
-
-test.todo('.merge()');
-test.todo('.shallowMerge()');

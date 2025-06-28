@@ -6,6 +6,7 @@ import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
+import * as diff from '../../../json-crdt-diff';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
@@ -15,6 +16,7 @@ import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
+import type {Patch} from '../../../json-crdt-patch';
 
 const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | number] => {
   if (!path) return [void 0, ''];
@@ -304,6 +306,14 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       return true;
     } catch {}
     return false;
+  }
+
+  public diff(value: unknown): Patch {
+    return diff.diff(this, value);
+  }
+
+  public merge(value: unknown): void {
+    diff.merge(this, value);
   }
 
   public proxy(): types.ProxyNode<N> {
