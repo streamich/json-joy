@@ -29,4 +29,4 @@ root.events.onViewChanges.listen(() => {
   console.log('Root value changed');
 });
 
-model.api.root(123);
+model.api.set(123);

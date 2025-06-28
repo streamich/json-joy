@@ -10,7 +10,7 @@ describe('can use .in() method to reference any model node', () => {
     expect(node.node).toBeInstanceOf(RootNode);
   });
 
-  doc.api.root({
+  doc.api.set({
     foo: [1],
   });
   doc.api.r.in('/foo/0').asVal().set({bar: 'baz'});

@@ -16,7 +16,7 @@ const main = async () => {
   // Create a new JSON CRDT document.
   const model = Model.withLogicalClock(1234); // 1234 is the session ID
 
-  model.api.root({
+  model.api.set({
     my: {
       deep: {
         arr: [],

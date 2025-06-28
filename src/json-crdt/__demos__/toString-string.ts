@@ -16,7 +16,7 @@ console.log('Empty document:');
 console.log('');
 console.log(str.toString());
 
-str.api.root('');
+str.api.set('');
 
 console.log('');
 console.log('String as document root:');

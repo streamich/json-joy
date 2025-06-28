@@ -10,7 +10,7 @@ test('con', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.con(123));
+  model.api.set(s.con(123));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -25,7 +25,7 @@ test('con - timestamp', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.con(new Timestamp(666, 1)));
+  model.api.set(s.con(new Timestamp(666, 1)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -40,7 +40,7 @@ test('val', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.val(s.con(123)));
+  model.api.set(s.val(s.con(123)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -55,7 +55,7 @@ test('obj', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({foo: null});
+  model.api.set({foo: null});
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -70,7 +70,7 @@ test('obj - 2', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({
+  model.api.set({
     a: 1,
     c: -3,
     b: 2,
@@ -89,7 +89,7 @@ test('obj - with deleted keys', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({
+  model.api.set({
     a: 1,
     b: 2,
     c: 3,
@@ -108,7 +108,7 @@ test('obj - supports "__proto__" key', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({
+  model.api.set({
     a: 1,
     b: 2,
     __proto__: 3,
@@ -127,7 +127,7 @@ test('vec', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.vec(s.con(false)));
+  model.api.set(s.vec(s.con(false)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -142,7 +142,7 @@ test('vec - 2', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.vec(s.con(false), s.con(1), s.con(null)));
+  model.api.set(s.vec(s.con(false), s.con(1), s.con(null)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -157,7 +157,7 @@ test('vec - with gaps', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.vec(s.con(1)));
+  model.api.set(s.vec(s.con(1)));
   model.api.vec([]).set([[2, s.con(3)]]);
   expect(model.view()).toStrictEqual([1, undefined, 3]);
   const [view, meta] = encoder.encode(model);
@@ -173,7 +173,7 @@ test('str', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root('Hello');
+  model.api.set('Hello');
   model.api.str([]).ins(5, ' World');
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
@@ -189,7 +189,7 @@ test('str - with deleted chunks', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root('Hello');
+  model.api.set('Hello');
   model.api.str([]).ins(5, ' World');
   const model2 = model.fork();
   model2.api.str([]).ins(3, '~');
@@ -206,7 +206,7 @@ test('bin', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(new Uint8Array([1, 2, 3]));
+  model.api.set(new Uint8Array([1, 2, 3]));
   model.api.bin([]).ins(3, new Uint8Array([4, 5, 6]));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
@@ -222,7 +222,7 @@ test('bin - with deleted chunks', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(new Uint8Array([1, 2, 3, 4, 5]));
+  model.api.set(new Uint8Array([1, 2, 3, 4, 5]));
   const model2 = model.fork();
   model.api.bin([]).del(1, 2);
   const [view, meta] = encoder.encode(model);
@@ -238,7 +238,7 @@ test('arr', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root([1, 2, 3]);
+  model.api.set([1, 2, 3]);
   model.api.arr([]).ins(3, [4, 5, 6]);
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
@@ -254,7 +254,7 @@ test('arr - with deleted chunks', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root([1, 2, 3, 4, 5]);
+  model.api.set([1, 2, 3, 4, 5]);
   const model2 = model.fork();
   model.api.arr([]).del(1, 2);
   const [view, meta] = encoder.encode(model);

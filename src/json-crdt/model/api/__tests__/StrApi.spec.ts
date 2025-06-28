@@ -5,7 +5,7 @@ import {Model} from '../../Model';
 test('can edit a simple string', () => {
   const doc = Model.withLogicalClock();
   const api = doc.api;
-  api.root([0, '123', 2]);
+  api.set([0, '123', 2]);
   const str = api.str([1]);
   str.ins(0, '0');
   str.ins(4, '-xxxx');
@@ -18,7 +18,7 @@ test('can edit a simple string', () => {
 test('can delete across two chunks', () => {
   const doc = Model.withLogicalClock();
   const api = doc.api;
-  api.root('');
+  api.set('');
   const str = api.str([]);
   str.ins(0, 'aaa');
   str.ins(0, 'bbb');
@@ -69,7 +69,7 @@ describe('events', () => {
   test('can subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root('');
+    api.set('');
     const str = api.str([]);
     let cnt = 0;
     const onView = () => cnt++;
@@ -90,7 +90,7 @@ describe('events', () => {
   test('batches consecutive updates into one "view" event dispatch', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root('');
+    api.set('');
     const str = api.str([]);
     let cnt = 0;
     const onChange = () => cnt++;
@@ -108,7 +108,7 @@ describe('events', () => {
     test('can listen to events', async () => {
       const doc = Model.withLogicalClock();
       const api = doc.api;
-      api.root('');
+      api.set('');
       const str = api.str([]);
       let cnt = 0;
       const onView = () => cnt++;
@@ -131,7 +131,7 @@ describe('events', () => {
     test('can listen to events', async () => {
       const doc = Model.withLogicalClock();
       const api = doc.api;
-      api.root('');
+      api.set('');
       const str = api.str([]);
       let cnt = 0;
       const onView = () => cnt++;

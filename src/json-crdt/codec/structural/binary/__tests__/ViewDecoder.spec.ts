@@ -22,7 +22,7 @@ describe('logical', () => {
       expect(decoded2).toStrictEqual(doc1.view());
     };
     assertCanDecode();
-    doc1.api.root([1, 'asdf', false, {}, {foo: 'bar', s: {foo: 'foo'}}]);
+    doc1.api.set([1, 'asdf', false, {}, {foo: 'bar', s: {foo: 'foo'}}]);
     assertCanDecode();
     doc1.api.str([1]).ins(4, '!');
     assertCanDecode();
@@ -44,7 +44,7 @@ describe('logical', () => {
 
   test('decodes "con" timestamp as null', () => {
     const model = Model.withLogicalClock();
-    model.api.root({
+    model.api.set({
       foo: konst(new Timestamp(model.clock.sid, 2)),
     });
     const encoder = new Encoder();
@@ -56,7 +56,7 @@ describe('logical', () => {
 
   test('can decode a simple number', () => {
     const model = Model.withLogicalClock();
-    model.api.root(123);
+    model.api.set(123);
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
@@ -66,7 +66,7 @@ describe('logical', () => {
 
   test('can decode a simple string', () => {
     const model = Model.withLogicalClock();
-    model.api.root('asdf');
+    model.api.set('asdf');
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
@@ -76,7 +76,7 @@ describe('logical', () => {
 
   test('can decode a simple object', () => {
     const model = Model.withLogicalClock();
-    model.api.root({yes: false});
+    model.api.set({yes: false});
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);

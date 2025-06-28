@@ -8,7 +8,7 @@ import {ExtNode} from '../../../extensions/ExtNode';
 
 test('treats a simple "vec" node as a vector', () => {
   const model = Model.withLogicalClock();
-  model.api.root({
+  model.api.set({
     vec: s.vec(),
   });
   expect(model.view()).toEqual({
@@ -19,7 +19,7 @@ test('treats a simple "vec" node as a vector', () => {
 
 test('does not treat "vec" node as extension, if extension is not registered in registry', () => {
   const model = Model.withLogicalClock();
-  model.api.root({
+  model.api.set({
     vec: s.vec(),
   });
   const vec = model.api.vec(['vec']);
@@ -65,7 +65,7 @@ describe('sample extension', () => {
   test('can run an extension', () => {
     const model = Model.withLogicalClock();
     model.ext.register(DoubleConcatExt);
-    model.api.root({
+    model.api.set({
       str: DoubleConcatExt.new('foo'),
     });
     expect(model.view()).toEqual({
@@ -76,7 +76,7 @@ describe('sample extension', () => {
   test('can use extension node', () => {
     const model = Model.withLogicalClock();
     model.ext.register(DoubleConcatExt);
-    model.api.root({
+    model.api.set({
       str: DoubleConcatExt.new('abc'),
     });
     const extNode = model.api.in(['str']).asExt(DoubleConcatExt).node;
@@ -86,7 +86,7 @@ describe('sample extension', () => {
   test('can use extension API node', () => {
     const model = Model.withLogicalClock();
     model.ext.register(DoubleConcatExt);
-    model.api.root({
+    model.api.set({
       str: DoubleConcatExt.new('abc'),
     });
     const extStr = model.api.in(['str']).asExt(DoubleConcatExt);

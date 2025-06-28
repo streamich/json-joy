@@ -3,7 +3,7 @@ import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {
   const doc = Model.withLogicalClock();
-  doc.api.root({
+  doc.api.set({
     arr: [1, 2, 3],
   });
   const arr = doc.api.arr(['arr']);
@@ -16,7 +16,7 @@ test('can insert a value and delete all previous ones', () => {
 
 test('.length()', () => {
   const doc = Model.withLogicalClock();
-  doc.api.root({
+  doc.api.set({
     arr: [1, 2, 3],
   });
   const arr = doc.api.arr(['arr']);
@@ -26,7 +26,7 @@ test('.length()', () => {
 describe('events', () => {
   test('fires onViewChanges event on change', async () => {
     const doc = Model.withLogicalClock();
-    doc.api.root({
+    doc.api.set({
       myArr: [1, 2, 3],
     });
     const events: any[] = [];
@@ -41,7 +41,7 @@ describe('events', () => {
 
   test('does not fire onViewChanges event when resulting view is the same', async () => {
     const doc = Model.withLogicalClock();
-    doc.api.root({
+    doc.api.set({
       myArr: [1, 2, 3],
     });
     const events: any[] = [];

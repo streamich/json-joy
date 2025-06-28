@@ -5,7 +5,7 @@ import {render} from './render';
 
 const setup = (insertNumbers = (editor: Editor) => editor.insert('Hello world!'), sid?: number) => {
   const model = Model.withLogicalClock(sid);
-  model.api.root({
+  model.api.set({
     text: '',
     slices: [],
   });

@@ -576,7 +576,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     if (isNewDocument) {
       const oldSid = c.sid;
       if (useGlobalSession) c.sid = SESSION.GLOBAL;
-      this.api.root(schema);
+      this.api.set(schema);
       if (useGlobalSession) this.setSid(oldSid);
     }
     return <any>this;

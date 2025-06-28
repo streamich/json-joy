@@ -4,7 +4,7 @@ import {Model} from '../../Model';
 test('can edit a tuple', () => {
   const doc = Model.create();
   const api = doc.api;
-  api.root(api.builder.vec());
+  api.set(api.builder.vec());
   api.vec([]).set([[1, 'a']]);
   expect(api.vec([]).view()).toEqual([undefined, 'a']);
 });
@@ -45,7 +45,7 @@ describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(vec(1, 2));
+    api.set(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
@@ -65,7 +65,7 @@ describe('events', () => {
   test('does not fire event when view does not change', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(vec(1, 2));
+    api.set(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
@@ -88,7 +88,7 @@ describe('events', () => {
   test('can un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(vec(1, 2));
+    api.set(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
@@ -109,7 +109,7 @@ describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(vec(1, 2));
+    api.set(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);

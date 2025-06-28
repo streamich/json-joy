@@ -7,7 +7,7 @@ const isASCII = (str: string) => /^[\x00-\x7F]*$/.test(str);
 
 export const assertStructHash = (json: unknown): string => {
   const model = Model.create();
-  model.api.root(json);
+  model.api.set(json);
   const hash1 = structHashCrdt(model.root);
   const hash2 = structHash_(json);
   // console.log(hash1);

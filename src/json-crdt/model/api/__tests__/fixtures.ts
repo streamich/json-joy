@@ -23,7 +23,7 @@ export const createTypedModel = () => Model.create(schema);
 
 export const createUntypedModel = () => {
   const doc = Model.create();
-  doc.api.root({
+  doc.api.set({
     foo: 'bar',
     obj: {
       nested: {

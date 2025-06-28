@@ -75,7 +75,7 @@ describe('find', () => {
   test('can use finder (.find()) on a sub-node', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root({
+    api.set({
       foo: {
         bar: {
           baz: 1,
@@ -110,7 +110,7 @@ describe('find', () => {
   test('can use finder (.find()) on a sub-array', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root({
+    api.set({
       foo: {
         bar: [1],
       },

@@ -9,7 +9,7 @@ import type {Chunk} from '../../../../json-crdt/nodes/rga';
 const setup = () => {
   const model = Model.withLogicalClock();
   const api = model.api;
-  api.root({
+  api.set({
     text: '',
     slices: [],
   });

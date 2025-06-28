@@ -4,7 +4,7 @@ import {Anchor} from '../constants';
 
 const setup = (insert: (peritext: Peritext) => void = (peritext) => peritext.strApi().ins(0, 'Hello world!')) => {
   const model = Model.withLogicalClock();
-  model.api.root({
+  model.api.set({
     text: '',
     slices: [],
   });

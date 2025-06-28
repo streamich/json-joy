@@ -8,7 +8,7 @@ test('can construct delta with new line character', () => {
   const model = Model.create();
   model.ext.register(mval);
   model.ext.register(quill);
-  model.api.root(quill.new('\n'));
+  model.api.set(quill.new('\n'));
   expect(model.view()).toMatchObject([{insert: '\n'}]);
 });
 
@@ -16,7 +16,7 @@ test('creates a string-set 2-tuple', () => {
   const model = Model.create();
   model.ext.register(mval);
   model.ext.register(quill);
-  model.api.root(quill.new(''));
+  model.api.set(quill.new(''));
   model.api.apply();
   const api = model.api.in().asExt(quill);
   api.apply([{insert: 'a'}]);
@@ -30,7 +30,7 @@ test('can annotate range with attribute', () => {
   const model = Model.create();
   model.ext.register(mval);
   model.ext.register(quill);
-  model.api.root({
+  model.api.set({
     foo: 'bar',
     richText: quill.new('Hello world!'),
   });
@@ -53,7 +53,7 @@ test('can annotate range with attribute', () => {
 test('inserting in the middle of annotated text does not create new slice', () => {
   const model = Model.create();
   model.ext.register(quill);
-  model.api.root(quill.new(''));
+  model.api.set(quill.new(''));
   const api = model.api.in().asExt(quill);
   api.apply([{insert: 'ac', attributes: {bold: true}}]);
   api.node.txt.overlay.refresh();
@@ -66,7 +66,7 @@ test('inserting in the middle of annotated text does not create new slice', () =
 test('inserting in the middle of annotated text does not create new slice - 2', () => {
   const model = Model.create();
   model.ext.register(quill);
-  model.api.root(quill.new(''));
+  model.api.set(quill.new(''));
   const api = model.api.in().asExt(quill);
   api.apply([{insert: '\n'}]);
   api.apply([{insert: 'aaa'}]);
@@ -81,7 +81,7 @@ test('inserting in the middle of annotated text does not create new slice - 2', 
 test('can insert text in an annotated range', () => {
   const model = Model.create();
   model.ext.register(quill);
-  model.api.root(quill.new('\n'));
+  model.api.set(quill.new('\n'));
   const api = model.api.in().asExt(quill);
   api.apply([{insert: 'abc xyz'}]);
   api.apply([{retain: 4}, {retain: 3, attributes: {bold: true}}]);
@@ -94,7 +94,7 @@ test('can insert text in an annotated range', () => {
 test('can insert italic-only text in bold text', () => {
   const model = Model.create();
   model.ext.register(quill);
-  model.api.root(quill.new(''));
+  model.api.set(quill.new(''));
   const api = model.api.in().asExt(quill);
   api.apply([{insert: 'aa', attributes: {bold: true}}]);
   api.apply([{retain: 1}, {insert: 'b', attributes: {italic: true}}]);
@@ -112,7 +112,7 @@ test('can insert italic-only text in bold text', () => {
 test('can remove a bold text annotation', () => {
   const model = Model.create();
   model.ext.register(quill);
-  model.api.root(quill.new(''));
+  model.api.set(quill.new(''));
   const api = model.api.in().asExt(quill);
   let delta = new Delta([]);
   const apply = (ops: QuillDeltaPatch['ops']) => {

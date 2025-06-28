@@ -8,7 +8,7 @@ import {binaryDocuments} from '../../../../../__tests__/binary-documents';
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   test(name, () => {
     const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
-    doc1.api.root(json);
+    doc1.api.set(json);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);

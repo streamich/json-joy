@@ -20,7 +20,7 @@ const model = Model.withLogicalClock(1234) as any as Model<
 console.log(model.view());
 console.log(model + '');
 
-model.api.root({
+model.api.set({
   counter: 0,
   text: 'Hello',
 });

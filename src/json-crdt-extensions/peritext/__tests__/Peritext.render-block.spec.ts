@@ -9,7 +9,7 @@ const runInlineSlicesTests = (
 ) => {
   const setup = () => {
     const model = Model.withLogicalClock();
-    model.api.root({
+    model.api.set({
       text: '',
       slices: [],
     });

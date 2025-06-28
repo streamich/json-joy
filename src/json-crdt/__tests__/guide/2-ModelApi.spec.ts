@@ -8,7 +8,7 @@ test('can edit document using JSON Patch operations', () => {
   // console.log(doc.view());
   // console.log(doc.toString());
 
-  doc.api.root({foo: 'bar'});
+  doc.api.set({foo: 'bar'});
 
   // console.log(doc.view());
   // console.log(doc.toString());

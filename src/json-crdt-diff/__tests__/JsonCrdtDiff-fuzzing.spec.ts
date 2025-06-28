@@ -4,7 +4,7 @@ import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 
 const assertDiff = (src: unknown, dst: unknown) => {
   const model = Model.create();
-  model.api.root(src);
+  model.api.set(src);
   const patch1 = new JsonCrdtDiff(model).diff(model.root, dst);
   // console.log(model + '');
   // console.log(patch1 + '');

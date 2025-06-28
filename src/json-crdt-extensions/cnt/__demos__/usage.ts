@@ -15,7 +15,7 @@ const model = Model.withLogicalClock(1234);
 
 model.ext.register(CntExt);
 
-model.api.root({
+model.api.set({
   cnt: CntExt.new(42),
 });
 

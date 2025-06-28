@@ -33,7 +33,7 @@ describe('.rebase()', () => {
 
     test('can advance patch ID', () => {
       const model = Model.create();
-      model.api.root({
+      model.api.set({
         foo: 'bar',
         num: s.con(123),
         arr: [null],
@@ -55,7 +55,7 @@ describe('.rebase()', () => {
     test('transforms "con" ID values, if they share the patch SID', () => {
       const model = Model.create();
       const sid = model.clock.sid;
-      model.api.root({
+      model.api.set({
         id1: s.con(ts(4, 5)),
         id2: s.con(ts(model.clock.sid, 5)),
       });

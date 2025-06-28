@@ -15,7 +15,7 @@ const model = Model.withLogicalClock(1234);
 
 model.ext.register(MvalExt);
 
-model.api.root(MvalExt.new(s.con(1)));
+model.api.set(MvalExt.new(s.con(1)));
 
 console.log('');
 console.log('Model with extension:');

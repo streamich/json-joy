@@ -8,7 +8,7 @@ test('can add TypeScript types to Model view', () => {
       bar: ConNode<number>;
     }>
   >;
-  model.api.root({
+  model.api.set({
     foo: 'asdf',
     bar: 1234,
   });

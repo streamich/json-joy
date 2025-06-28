@@ -6,7 +6,7 @@ import {Decoder} from '../Decoder';
 describe('logical', () => {
   test('decodes clock', () => {
     const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
-    doc1.api.root(123);
+    doc1.api.set(123);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
@@ -28,7 +28,7 @@ describe('logical', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);
@@ -46,7 +46,7 @@ describe('logical', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);
@@ -64,7 +64,7 @@ describe('logical', () => {
 describe('server', () => {
   test('decodes clock', () => {
     const doc1 = Model.withServerClock();
-    doc1.api.root(123);
+    doc1.api.set(123);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
@@ -85,7 +85,7 @@ describe('server', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);
@@ -103,7 +103,7 @@ describe('server', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);

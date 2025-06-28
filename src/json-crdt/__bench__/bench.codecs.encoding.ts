@@ -26,7 +26,7 @@ const benchmark: IBenchmark = {
       name: 'structural > binary (with server clock)',
       setup: (json: any) => {
         const model = Model.withServerClock();
-        model.api.root(json);
+        model.api.set(json);
         return () => model.toBinary();
       },
     },
@@ -34,7 +34,7 @@ const benchmark: IBenchmark = {
       name: 'structural > binary (with logical clock)',
       setup: (json: any) => {
         const model = Model.withLogicalClock();
-        model.api.root(json);
+        model.api.set(json);
         return () => model.toBinary();
       },
     },
@@ -43,7 +43,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new CompactEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => cborEncoder.encode(encoder.encode(model));
       },
     },
@@ -52,7 +52,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withLogicalClock();
         const encoder = new CompactEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => cborEncoder.encode(encoder.encode(model));
       },
     },
@@ -61,7 +61,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new VerboseEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => cborEncoder.encode(encoder.encode(model));
       },
     },
@@ -70,7 +70,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withLogicalClock();
         const encoder = new VerboseEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => cborEncoder.encode(encoder.encode(model));
       },
     },
@@ -79,7 +79,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new IndexedEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => encoder.encode(model);
       },
     },
@@ -88,7 +88,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withLogicalClock();
         const encoder = new IndexedEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => encoder.encode(model);
       },
     },
@@ -97,7 +97,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new SidecarEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => encoder.encode(model);
       },
     },
@@ -106,7 +106,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withLogicalClock();
         const encoder = new SidecarEncoder();
-        model.api.root(json);
+        model.api.set(json);
         return () => encoder.encode(model);
       },
     },

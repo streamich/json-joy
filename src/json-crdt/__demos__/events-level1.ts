@@ -116,7 +116,7 @@ const main = async () => {
   // Execute a local change.
   console.log('Executing: model.api.root(456)');
   console.log('');
-  model.api.root(456);
+  model.api.set(456);
   await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
@@ -128,7 +128,7 @@ const main = async () => {
   console.log('Executing: model.api.transaction(() => { ... })');
   console.log('');
   model.api.transaction(() => {
-    model.api.root({});
+    model.api.set({});
     model.api.obj([]).set({
       a: 'b',
     });

@@ -11,12 +11,12 @@ import {vec} from '../../json-crdt-patch/builder/Tuple';
 
 const model = Model.withLogicalClock(123);
 
-model.api.root(1);
-model.api.root(2);
-model.api.root(3);
-model.api.root('');
-model.api.root('abc');
-model.api.root({
+model.api.set(1);
+model.api.set(2);
+model.api.set(3);
+model.api.set('');
+model.api.set('abc');
+model.api.set({
   foo: 'abc',
   bar: true,
   baz: 123,

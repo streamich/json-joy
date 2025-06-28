@@ -11,7 +11,7 @@ test('proxy API supports object types', () => {
       bar: ConNode<number>;
     }>
   >;
-  model.api.root({
+  model.api.set({
     foo: 'asdf',
     bar: 1234,
   });
@@ -133,8 +133,8 @@ describe('$ proxy', () => {
   test('returns NodeApi? for un-typed model', () => {
     const model1 = Model.create();
     const model2 = Model.create<any>() as Model<any>;
-    model1.api.root(schema);
-    model2.api.root(schema);
+    model1.api.set(schema);
+    model2.api.set(schema);
     const node1 = model1.api.$.obj.str.$;
     const node2 = model2.api.$.obj.str.$;
     const assertNodeApi = (node?: NodeApi) => {
@@ -185,7 +185,7 @@ describe('$ proxy', () => {
 
   test('returns undefined if node not found in un-typed model', () => {
     const model = Model.create();
-    model.api.root(schema);
+    model.api.set(schema);
     expect(model.api.$.asdfasdfasdf.$?.view()).toBe(undefined);
     expect(model.api.$[0].$?.view()).toBe(undefined);
     expect(model.api.$.vec[10].$?.view()).toBe(undefined);

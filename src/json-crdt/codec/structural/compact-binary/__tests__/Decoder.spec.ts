@@ -5,7 +5,7 @@ import {Decoder} from '../Decoder';
 
 test('decodes clock', () => {
   const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
-  doc1.api.root(123);
+  doc1.api.set(123);
   const encoder = new Encoder();
   const decoder = new Decoder();
   const encoded = encoder.encode(doc1);
@@ -27,7 +27,7 @@ test('decodes all types', () => {
     nil: null,
     bool: [true, false],
   };
-  doc1.api.root(json);
+  doc1.api.set(json);
   const decoder = new Decoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
@@ -45,7 +45,7 @@ test('can edit documents after decoding', () => {
     nil: null,
     bool: [true, false],
   };
-  doc1.api.root(json);
+  doc1.api.set(json);
   const decoder = new Decoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);

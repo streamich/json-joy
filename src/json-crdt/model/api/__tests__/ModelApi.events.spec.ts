@@ -6,7 +6,7 @@ describe('FanOut event API', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     let cnt = 0;
-    api.root({a: {}});
+    api.set({a: {}});
     expect(cnt).toBe(0);
     api.onChanges.listen(() => {
       cnt++;
@@ -23,7 +23,7 @@ describe('FanOut event API', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     let cnt = 0;
-    api.root({a: {}});
+    api.set({a: {}});
     expect(cnt).toBe(0);
     api.onChanges.listen(() => {
       cnt++;
@@ -38,7 +38,7 @@ describe('FanOut event API', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     let cnt = 0;
-    api.root({a: {}});
+    api.set({a: {}});
     expect(cnt).toBe(0);
     api.onChanges.listen(() => {
       cnt++;
@@ -61,7 +61,7 @@ describe('FanOut event API', () => {
     });
     await Promise.resolve();
     expect(cnt).toBe(0);
-    model.api.root({foo: 123});
+    model.api.set({foo: 123});
     await Promise.resolve();
     expect(cnt).toBe(1);
     model.api.obj([]).set({foo: 123});
@@ -77,7 +77,7 @@ describe('FanOut event API', () => {
     });
     await Promise.resolve();
     expect(cnt).toBe(0);
-    model.api.root({foo: 123});
+    model.api.set({foo: 123});
     await Promise.resolve();
     expect(cnt).toBe(1);
     model.api.obj([]).set({foo: undefined});
@@ -96,7 +96,7 @@ describe('FanOut event API', () => {
     });
     await Promise.resolve();
     expect(cnt).toBe(0);
-    model.api.root(123);
+    model.api.set(123);
     await Promise.resolve();
     expect(cnt).toBe(1);
     expect(typeof bufferPoint).toBe('number');
@@ -135,7 +135,7 @@ describe('FanOut event API', () => {
     builder.root(builder.json(123));
     const patch = builder.flush();
     model.applyPatch(patch);
-    model.api.root(321);
+    model.api.set(321);
     await Promise.resolve();
     expect(cnt).toBe(1);
     expect((set as any[]).length).toBe(2);
@@ -150,7 +150,7 @@ describe('FanOut event API', () => {
       cnt++;
     });
     const model2 = Model.withLogicalClock();
-    model2.api.root(123);
+    model2.api.set(123);
     await Promise.resolve();
     expect(cnt).toBe(0);
     model.reset(model2);
@@ -161,8 +161,8 @@ describe('FanOut event API', () => {
   test('on reset builder is flushed', async () => {
     const model = Model.withLogicalClock();
     const model2 = Model.withLogicalClock();
-    model2.api.root(123);
-    model.api.root('asdf');
+    model2.api.set(123);
+    model.api.set('asdf');
     expect(model.api.builder.patch.ops.length > 0).toBe(true);
     model.reset(model2);
     await Promise.resolve();
@@ -172,8 +172,8 @@ describe('FanOut event API', () => {
   test('on reset other events are not emitted', async () => {
     const model = Model.withLogicalClock();
     const model2 = Model.withLogicalClock();
-    model2.api.root(123);
-    model.api.root('asdf');
+    model2.api.set(123);
+    model.api.set('asdf');
     let cntReset = 0;
     let cntPatch = 0;
     let cntLocal = 0;
@@ -200,7 +200,7 @@ describe('fanout', () => {
       const doc = Model.withLogicalClock();
       const api = doc.api;
       let cnt = 0;
-      api.root({a: {}});
+      api.set({a: {}});
       expect(cnt).toBe(0);
       api.onChanges.listen(() => {
         cnt++;
@@ -217,7 +217,7 @@ describe('fanout', () => {
       const doc = Model.withLogicalClock();
       const api = doc.api;
       let cnt = 0;
-      api.root({a: {}});
+      api.set({a: {}});
       expect(cnt).toBe(0);
       api.onChanges.listen(() => {
         cnt++;

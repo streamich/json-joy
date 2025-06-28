@@ -10,7 +10,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {
     test(name, () => {
       const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
-      doc1.api.root(json);
+      doc1.api.set(json);
       const encoder = new Encoder();
       const decoder = new Decoder();
       const cborDecoder = new CborDecoder();
@@ -28,7 +28,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
 
     test(name, () => {
       const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
-      doc1.api.root(json);
+      doc1.api.set(json);
       const [view, sidecar] = encoder.encode(doc1);
       const doc2 = decoder.decode(cborDecoder.read(view), sidecar);
       expect(doc1.view()).toEqual(json);

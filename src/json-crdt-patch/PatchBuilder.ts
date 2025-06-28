@@ -169,10 +169,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public root(val: ITimestampStruct): ITimestampStruct {
-    this.pad();
-    const id = this.clock.tick(1);
-    this.patch.ops.push(new InsValOp(id, ORIGIN, val));
-    return id;
+    return this.setVal(ORIGIN, val);
   }
 
   /**

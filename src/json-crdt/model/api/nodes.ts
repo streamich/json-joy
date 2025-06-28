@@ -930,9 +930,10 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
    * @deprecated Use `.set()` instead.
    */
   public root(json: unknown): this {
-    const builder = this.builder;
-    builder.root(builder.json(json));
-    this.apply();
+    return this.set(json as any);
+  }
+  public set(json: unknown): this {
+    super.set(json as any);
     return this;
   }
 

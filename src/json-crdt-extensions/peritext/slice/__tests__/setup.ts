@@ -3,7 +3,7 @@ import {Peritext} from '../../Peritext';
 
 export const setup = () => {
   const model = Model.withLogicalClock(12345678);
-  model.api.root({
+  model.api.set({
     text: '',
     slices: [],
   });

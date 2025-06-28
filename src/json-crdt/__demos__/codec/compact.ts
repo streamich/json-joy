@@ -12,7 +12,7 @@ const encoder = new Encoder();
 const encoderCompactBinary = new EncoderCompactBinary();
 const model = Model.withLogicalClock(123);
 
-model.api.root({
+model.api.set({
   time: 123,
   name: 'Vadim',
   verified: true,

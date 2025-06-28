@@ -18,7 +18,7 @@ const setup = (
   },
 ) => {
   const model = Model.create(void 0, 858549494849333);
-  model.api.root({
+  model.api.set({
     text: '',
     slices: [],
   });

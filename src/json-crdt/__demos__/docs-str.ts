@@ -10,7 +10,7 @@ import {Model} from '..';
 
 const model = Model.withLogicalClock(1234); // 1234 is session ID
 
-model.api.root({
+model.api.set({
   text: 'hello',
 });
 

@@ -41,7 +41,7 @@ describe('.find()', () => {
 describe('.read()', () => {
   test('can retrieve own view', () => {
     const doc = Model.create();
-    doc.api.root({
+    doc.api.set({
       arr: [1, 2, 3],
     });
     const arr = doc.api.arr(['arr']);
@@ -52,7 +52,7 @@ describe('.read()', () => {
 
   test('can retrieve array element', () => {
     const doc = Model.create();
-    doc.api.root({
+    doc.api.set({
       arr: [1, 2, 3],
     });
     const arr = doc.api.arr(['arr']);

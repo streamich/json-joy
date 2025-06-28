@@ -2,7 +2,7 @@ import {Model} from '../../../Model';
 
 test('applying old operations has no effect', () => {
   const doc = Model.withLogicalClock();
-  doc.api.root({
+  doc.api.set({
     str: 'asdf',
     num: 123,
     bool: [true],

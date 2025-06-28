@@ -7,7 +7,7 @@ import {logDecoderOpts} from '../logDecoderOpts';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
-  model.api.root(view);
+  model.api.set(view);
   const log = Log.fromNewModel(model);
   const encoder = new LogEncoder(logEncoderOpts);
   const decoder = new LogDecoder(logDecoderOpts);

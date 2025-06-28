@@ -639,7 +639,7 @@ describe('Document', () => {
 
     test('can insert element into a forked model', () => {
       const model1 = Model.withLogicalClock(new ClockVector(1234, 0));
-      model1.api.root([[1]]);
+      model1.api.set([[1]]);
       const model2 = model1.fork();
       model1.api.arr([]).ins(0, [2]);
       model2.api.arr([]).ins(0, [3]);
@@ -649,7 +649,7 @@ describe('Document', () => {
 
     test('array in forked document is independent', () => {
       const model1 = Model.withLogicalClock();
-      model1.api.root([1, {}]);
+      model1.api.set([1, {}]);
       const model2 = model1.fork();
       expect(model1.view()).toEqual([1, {}]);
       expect(model2.view()).toEqual([1, {}]);

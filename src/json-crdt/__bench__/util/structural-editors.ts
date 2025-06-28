@@ -44,7 +44,7 @@ const editorJsonJoy: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => model.toBinary(),
     };
@@ -59,7 +59,7 @@ const editorJsonJoyServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => model.toBinary(),
     };
@@ -77,7 +77,7 @@ const editorJsonJoyCompact: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderCompact.encode(model);
@@ -95,7 +95,7 @@ const editorJsonJoyCompactServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderCompact.encode(model);
@@ -116,7 +116,7 @@ const editorJsonJoyVerbose: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderVerbose.encode(model);
@@ -134,7 +134,7 @@ const editorJsonJoyVerboseServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderVerbose.encode(model);
@@ -155,7 +155,7 @@ const editorJsonJoyIndexed: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderIndexed.encode(model);
@@ -173,7 +173,7 @@ const editorJsonJoyIndexedServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderIndexed.encode(model);
@@ -198,7 +198,7 @@ const editorJsonJoySidecar: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderSidecar.encode(model);
@@ -220,7 +220,7 @@ const editorJsonJoySidecarServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderSidecar.encode(model);

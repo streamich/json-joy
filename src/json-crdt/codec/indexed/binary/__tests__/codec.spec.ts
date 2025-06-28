@@ -10,7 +10,7 @@ const decoder = new Decoder();
 
 test('encoding/decoding a model results in the same node IDs', () => {
   const model1 = Model.withLogicalClock(new ClockVector(5, 0));
-  model1.api.root('');
+  model1.api.set('');
   expect(model1.view()).toStrictEqual('');
   model1.api.str([]).ins(0, 'a');
   const encoded1 = encoder.encode(model1);
@@ -24,7 +24,7 @@ test('encoding/decoding a model results in the same node IDs', () => {
 
 test('forking and encoding/decoding results in the same node IDs', () => {
   const model1 = Model.withLogicalClock(new ClockVector(3, 0));
-  model1.api.root('abc');
+  model1.api.set('abc');
   expect(model1.view()).toStrictEqual('abc');
   const model2 = model1.fork(4);
   const encoded2 = encoder.encode(model2);
@@ -37,7 +37,7 @@ test('forking and encoding/decoding results in the same node IDs', () => {
 
 test('vector clocks are the same after decoding', () => {
   const model1 = Model.withLogicalClock(new ClockVector(555555, 0));
-  model1.api.root('');
+  model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
   expect(model1.clock).toStrictEqual(decoded1.clock);
@@ -45,7 +45,7 @@ test('vector clocks are the same after decoding', () => {
 
 test('decoded root node ID is correct', () => {
   const model1 = Model.withLogicalClock(new ClockVector(666666, 0));
-  model1.api.root('');
+  model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
   expect(equal(model1.root.id, decoded1.root.id)).toBe(true);
@@ -53,7 +53,7 @@ test('decoded root node ID is correct', () => {
 
 test('simple string document decoded string node ID is correct', () => {
   const model1 = Model.withLogicalClock(new ClockVector(777777, 0));
-  model1.api.root('');
+  model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
   expect(equal(model1.api.str([]).node.id, decoded1.api.str([]).node.id)).toBe(true);
@@ -61,7 +61,7 @@ test('simple string document decoded string node ID is correct', () => {
 
 test('can encode ID as const value', () => {
   const model = Model.withLogicalClock();
-  model.api.root({
+  model.api.set({
     foo: konst(new Timestamp(model.clock.sid, 2)),
   });
   const encoded = encoder.encode(model);
@@ -75,7 +75,7 @@ test('can encode ID as const value', () => {
 describe('basic types', () => {
   test('con', () => {
     const model = Model.withLogicalClock();
-    model.api.root(konst(123));
+    model.api.set(konst(123));
     const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
@@ -91,7 +91,7 @@ describe('basic types', () => {
 
   test('obj', () => {
     const model = Model.withLogicalClock();
-    model.api.root({foo: null});
+    model.api.set({foo: null});
     const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
@@ -99,7 +99,7 @@ describe('basic types', () => {
 
   test('vec', () => {
     const model = Model.withLogicalClock();
-    model.api.root(s.vec(s.con(false)));
+    model.api.set(s.vec(s.con(false)));
     const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
@@ -107,7 +107,7 @@ describe('basic types', () => {
 
   test('str', () => {
     const model = Model.withLogicalClock();
-    model.api.root('');
+    model.api.set('');
     const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
@@ -115,7 +115,7 @@ describe('basic types', () => {
 
   test('str - 2', () => {
     const model = Model.withLogicalClock();
-    model.api.root('Hello, ');
+    model.api.set('Hello, ');
     model.api.str([]).ins(7, 'world!');
     model.api.str([]).del(5, 1);
     const encoded = encoder.encode(model);
@@ -125,7 +125,7 @@ describe('basic types', () => {
 
   test('bin', () => {
     const model = Model.withLogicalClock();
-    model.api.root(new Uint8Array([]));
+    model.api.set(new Uint8Array([]));
     const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
@@ -133,7 +133,7 @@ describe('basic types', () => {
 
   test('bin - 2', () => {
     const model = Model.withLogicalClock();
-    model.api.root(new Uint8Array([1]));
+    model.api.set(new Uint8Array([1]));
     model.api.bin([]).ins(1, new Uint8Array([2, 3, 4]));
     model.api.bin([]).del(2, 1);
     const encoded = encoder.encode(model);
@@ -143,7 +143,7 @@ describe('basic types', () => {
 
   test('arr', () => {
     const model = Model.withLogicalClock();
-    model.api.root([-1]);
+    model.api.set([-1]);
     const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
@@ -151,7 +151,7 @@ describe('basic types', () => {
 
   test('arr - 2', () => {
     const model = Model.withLogicalClock();
-    model.api.root([-1]);
+    model.api.set([-1]);
     model.api.arr([]).ins(1, [2, 3, 4]);
     model.api.arr([]).del(2, 1);
     const encoded = encoder.encode(model);

@@ -99,7 +99,7 @@ describe('DOM Level 0, .onchange event system', () => {
     it('should trigger the onchange event with a RESET event type', () => {
       const model1 = Model.withLogicalClock();
       const model2 = Model.withLogicalClock();
-      model2.api.root([1, 2, 3]);
+      model2.api.set([1, 2, 3]);
       let cnt = 0;
       model1.onreset = () => {
         cnt++;

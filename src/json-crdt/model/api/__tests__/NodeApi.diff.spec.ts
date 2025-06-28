@@ -3,7 +3,7 @@ import {Model} from '../../Model';
 describe('.merge()', () => {
   test('can merge changes into an object', () => {
     const doc = Model.create();
-    doc.api.root({
+    doc.api.set({
       foo: 'bar',
       x: 123,
     });

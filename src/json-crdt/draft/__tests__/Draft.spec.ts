@@ -3,7 +3,7 @@ import {Draft} from '../Draft';
 
 test('base and head are independent', () => {
   const base = Model.withLogicalClock();
-  base.api.root({
+  base.api.set({
     foo: 'bar',
   });
   const draft = new Draft({
@@ -22,7 +22,7 @@ test('base and head are independent', () => {
 
 const setup = () => {
   const base = Model.withLogicalClock();
-  base.api.root({});
+  base.api.set({});
   const draft = new Draft({
     base: base.fork(),
     head: [],

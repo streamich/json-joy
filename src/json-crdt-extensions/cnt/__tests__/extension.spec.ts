@@ -4,7 +4,7 @@ import {Model} from '../../../json-crdt/model';
 test('view should preserve identity', () => {
   const model = Model.create();
   model.ext.register(cnt);
-  model.api.root({
+  model.api.set({
     counter: cnt.new(),
   });
   expect(model.view()).toBe(model.view());
@@ -13,7 +13,7 @@ test('view should preserve identity', () => {
 test('can set new values in single fork', () => {
   const model = Model.withLogicalClock();
   model.ext.register(cnt);
-  model.api.root({
+  model.api.set({
     counter: cnt.new(24),
   });
   expect(model.view()).toEqual({counter: 24});
@@ -28,7 +28,7 @@ test('can set new values in single fork', () => {
 test('two concurrent users can increment the counter', () => {
   const model = Model.withLogicalClock();
   model.ext.register(cnt);
-  model.api.root({
+  model.api.set({
     counter: cnt.new(),
   });
   expect(model.view()).toEqual({counter: 0});

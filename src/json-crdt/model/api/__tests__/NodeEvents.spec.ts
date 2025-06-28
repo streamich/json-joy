@@ -2,7 +2,7 @@ import {Model} from '../..';
 
 test('does not fire events after node is deleted', async () => {
   const model = Model.withLogicalClock();
-  model.api.root({
+  model.api.set({
     foo: {
       bar: {
         baz: 'asdf',

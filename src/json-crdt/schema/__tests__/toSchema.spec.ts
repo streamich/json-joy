@@ -83,7 +83,7 @@ test('can copy a model with extension', () => {
     count: cnt.new(1),
   });
   const model = Model.create();
-  model.api.root(schema);
+  model.api.set(schema);
   model.ext.register(cnt);
   const copy = toSchema(model.root.node());
   const model2 = Model.create(copy, model.clock.sid);

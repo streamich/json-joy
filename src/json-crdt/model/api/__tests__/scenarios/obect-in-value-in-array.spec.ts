@@ -2,7 +2,7 @@ import {Model} from '../../../Model';
 
 test('handles ObjNode inside ValNode, which was set on ArrNode', () => {
   const doc = Model.withLogicalClock();
-  doc.api.root([123]);
+  doc.api.set([123]);
   doc.api.val('/0').set({
     foo: 'bar',
   });

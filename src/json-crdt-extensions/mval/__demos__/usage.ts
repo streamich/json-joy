@@ -15,7 +15,7 @@ const model = Model.withLogicalClock(1234);
 
 model.ext.register(MvalExt);
 
-model.api.root({
+model.api.set({
   obj: {
     name: s.con('John'),
     score: MvalExt.new(s.con(1)),

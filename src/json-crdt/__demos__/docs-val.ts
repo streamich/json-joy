@@ -22,7 +22,7 @@ console.log(model + '');
 // });
 // console.log(model + '');
 
-model.api.root([42, 69]);
+model.api.set([42, 69]);
 console.log(model + '');
 
 model.api.val([0]).set(99);

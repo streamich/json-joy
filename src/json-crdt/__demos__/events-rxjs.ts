@@ -28,7 +28,7 @@ const main = async () => {
 
   // Execute a local change.
   console.log('Executing: model.api.root(456)');
-  model.api.root(456);
+  model.api.set(456);
   await new Promise((r) => setTimeout(r, 1));
 };
 

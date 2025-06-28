@@ -11,7 +11,7 @@ import {konst} from '../../json-crdt-patch';
 import {Timestamp} from '../../json-crdt-patch/clock';
 
 const model = Model.withLogicalClock(1234);
-model.api.root({
+model.api.set({
   num: 123,
   bool: true,
   nil: null,
@@ -20,7 +20,7 @@ model.api.root({
 console.log(model.view());
 console.log(model.toString());
 
-model.api.root({
+model.api.set({
   str: 'hello',
   obj: {foo: 'bar'},
   arr: [1],
@@ -28,7 +28,7 @@ model.api.root({
 console.log(model + '');
 console.log(model.view());
 
-model.api.root({
+model.api.set({
   str: konst('hello'),
   obj: konst({foo: 'bar'}),
   arr: konst([1]),
@@ -36,14 +36,14 @@ model.api.root({
 console.log(model + '');
 console.log(model.view());
 
-model.api.root({
+model.api.set({
   undef: undefined,
   stamp: konst(new Timestamp(1234, 5678)),
 });
 console.log(model + '');
 console.log(model.view());
 
-model.api.root({
+model.api.set({
   foo: {
     bar: 42,
   },
