@@ -1,10 +1,9 @@
-import { InsStrOp } from '../../../../json-crdt-patch';
+import { InsStrOp, s } from '../../../../json-crdt-patch';
 import { Model } from '../../Model';
 
 describe('.diff()', () => {
   test('can merge changes into a string', () => {
-    const doc = Model.create();
-    doc.api.set({
+    const doc = Model.create({
       foo: {
         bar: {
           baz: 'asdf',
@@ -33,8 +32,7 @@ describe('.diff()', () => {
 
 describe('.merge()', () => {
   test('can merge changes into an object', () => {
-    const doc = Model.create();
-    doc.api.set({
+    const doc = Model.create({
       foo: 'bar',
       x: 123,
     });
