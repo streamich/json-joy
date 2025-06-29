@@ -424,7 +424,9 @@ export const schema = {
   },
 
   /**
-   * Recursively creates a schema node tree from any POJO.
+   * Recursively creates a schema node tree from any POJO. Same as {@link json}, but
+   * converts constant values to {@link nodes.con} nodes, instead wrapping them into
+   * {@link nodes.val} nodes.
    * 
    * @todo Remove this once "arr" RGA supports in-place updates.
    */

@@ -2,6 +2,21 @@ import {Model} from '../../json-crdt/model';
 import {NodeBuilder, s} from '../schema';
 
 describe('nodes', () => {
+  describe('obj', () => {
+    test('can create basic "obj" schema', () => {
+      const schema = s.obj({
+        num: s.con(123),
+      });
+      const model = Model.create(schema, 123456789);
+      expect(model.view()).toEqual({
+        num: 123,
+      });
+      expect(model.api.select('', true)?.node.name()).toBe('obj');
+      expect(model.api.select('/num', false)?.node.name()).toBe('con');
+      expect(model.api.select('/num', true)?.node.name()).toBe('con');
+    });
+  });
+
   describe('json', () => {
     const assertSchemasEqual = <A extends NodeBuilder, B extends A>(
       schema1: A,
