@@ -1,7 +1,18 @@
+import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
+import {Timestamp, type ITimestampStruct} from './clock';
 import type {PatchBuilder} from './PatchBuilder';
-import type {ITimestampStruct} from './clock';
 
-/* tslint:disable no-namespace class-name */
+const maybeConst = (x: unknown): boolean => {
+  switch (typeof x) {
+    case 'number':
+    case 'boolean':
+    case 'undefined':
+      return true;
+    case 'object':
+      return x === null || x instanceof Timestamp;
+    default: return false;
+  }
+};
 
 export type NodeBuilderCallback = (builder: PatchBuilder) => ITimestampStruct;
 
@@ -241,44 +252,6 @@ export namespace nodes {
   }
 
   /**
-   * Convenience class for recursively creating a node tree from any POJO. It
-   * uses the {@link Builder.json} method to create a JSON node. It can be used
-   * similar to TypeScript's *any* type, where the value can be anything.
-   *
-   * Example:
-   *
-   * ```typescript
-   * s.json({name: 'Alice', age: 30});
-   * ```
-   */
-  export class json<T> extends NodeBuilder {
-    public readonly type = 'json';
-
-    constructor(public readonly value: T) {
-      super((builder) => builder.json(value));
-    }
-  }
-
-  /**
-   * Convenience class for recursively creating a node tree from any POJO. It
-   * uses the {@link Builder.constOrJson} method to create a JSON node. It can
-   * be used similar to TypeScript's *any* type, where the value can be anything.
-   *
-   * Example:
-   *
-   * ```typescript
-   * s.jsonCon({name: 'Alice', age: 30});
-   * ```
-   */
-  export class jsonCon<T> extends NodeBuilder {
-    public readonly type = 'jsonCon';
-
-    constructor(public readonly value: T) {
-      super((builder) => builder.constOrJson(value));
-    }
-  }
-
-  /**
    * Creates an extension node schema. The extension node is a tuple with a
    * sentinel header and a data node. The sentinel header is a 3-byte
    * {@link Uint8Array}, which makes this "vec" node to be treated as an
@@ -315,8 +288,41 @@ export namespace nodes {
       });
     }
   }
+
+  /**
+   * Converts a POJO value to a JSON CRDT node schema. It recursively converts
+   * the value to a node schema, where each property is a node builder.
+   */
+  export type json<V> = V extends NodeBuilder
+    ? V
+    : V extends Array<infer T>
+      ? nodes.arr<json<T>>
+      : V extends Uint8Array
+        ? nodes.bin
+        : V extends Record<string, any>
+          ? nodes.obj<{[K in keyof V]: jsonCon<V[K]>}>
+          : V extends string
+            ? nodes.str<V>
+            : V extends boolean
+              ? nodes.val<nodes.con<boolean>>
+              : nodes.val<nodes.con<V>>;
+
+  /**
+   * Same as {@link json}, but converts constant values to
+   * {@link nodes.con} nodes, instead wrapping them into {@link nodes.val} nodes.
+   */
+  export type jsonCon<V> = V extends number
+      ? nodes.con<V>
+      : V extends boolean
+        ? nodes.con<V>
+        : V extends null
+          ? nodes.con<V>
+          : V extends undefined
+            ? nodes.con<V>
+            : V extends ITimestampStruct
+              ? nodes.val<nodes.con<V>>
+              : json<V>;
 }
-/* tslint:enable no-namespace class-name */
 
 /**
  * Schema builder. Use this to create a JSON CRDT model schema and the default
@@ -395,22 +401,36 @@ export const schema = {
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
 
   /**
-   * Recursively creates a node tree from any POJO. It uses the
-   * {@link Builder.json} method to create a JSON node. It can be used similar
-   * to TypeScript's *any* type, where the value can be anything.
-   *
-   * @param value Default value.
+   * Recursively creates a node tree from any POJO.
    */
-  json: <T>(value: T) => new nodes.json<T>(value),
+  json: <T>(value: T): nodes.json<T> => {
+    switch (typeof value) {
+      case 'object': {
+        if (!value) return s.val(s.con(value)) as any;
+        if (value instanceof NodeBuilder) return value as any;
+        else if (Array.isArray(value)) return s.arr(value.map(v => s.json(v))) as any;
+        else if (isUint8Array(value)) return s.bin(value) as any;
+        else if (value instanceof Timestamp) return s.val(s.con(value)) as any;
+        else {
+          const obj: Record<string, NodeBuilder> = {};
+          const keys = Object.keys(value);
+          for (const key of keys) obj[key] = s.jsonCon((value as any)[key]);
+          return s.obj(obj) as any;
+        }
+      }
+      case 'string': return s.str(value) as any;
+      default: return s.val(s.con(value)) as any;
+    }
+  },
 
   /**
-   * Recursively creates a node tree from any POJO. It uses the
-   * {@link Builder.constOrJson} method to create a JSON node. It can be used
-   * similar to TypeScript's *any* type, where the value can be anything.
-   *
-   * @param value Default value.
+   * Recursively creates a schema node tree from any POJO.
+   * 
+   * @todo Remove this once "arr" RGA supports in-place updates.
    */
-  jsonCon: <T>(value: T) => new nodes.jsonCon<T>(value),
+  jsonCon: <T>(value: T): nodes.jsonCon<T> => {
+    return maybeConst(value) ? s.con(value) as any : s.json(value) as any;
+  },
 
   /**
    * Creates an extension node schema.
