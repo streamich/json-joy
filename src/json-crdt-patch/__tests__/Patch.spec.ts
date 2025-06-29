@@ -1,5 +1,5 @@
 import {Model} from '../../json-crdt/model';
-import {s} from '../builder/schema';
+import {s} from '../schema';
 import {LogicalClock, ts} from '../clock';
 import {SESSION} from '../constants';
 import type {InsArrOp} from '../operations';

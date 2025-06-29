@@ -19,7 +19,7 @@ import {type IClock, type ITimestampStruct, type ITimespanStruct, ts, Timestamp}
 import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
-import {NodeBuilder} from './builder/DelayedValueBuilder';
+import {NodeBuilder} from './schema';
 
 const maybeConst = (x: unknown): boolean => {
   switch (typeof x) {

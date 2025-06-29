@@ -115,5 +115,4 @@ export * from './clock';
 export * from './operations';
 export * from './Patch';
 export * from './PatchBuilder';
-export * from './builder/schema';
-export * from './builder/DelayedValueBuilder';
+export * from './schema';

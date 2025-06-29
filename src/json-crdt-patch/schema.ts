@@ -1,7 +1,16 @@
-import {NodeBuilder} from './DelayedValueBuilder';
-import type {ITimestampStruct} from '../clock';
+import type {PatchBuilder} from './PatchBuilder';
+import type {ITimestampStruct} from './clock';
 
 /* tslint:disable no-namespace class-name */
+
+export type NodeBuilderCallback = (builder: PatchBuilder) => ITimestampStruct;
+
+/**
+ * @category Patch
+ */
+export class NodeBuilder {
+  constructor(public readonly build: NodeBuilderCallback) {}
+}
 
 /**
  * This namespace contains all the node builders. Each node builder is a
