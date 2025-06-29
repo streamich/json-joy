@@ -160,8 +160,8 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public insObj(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
-    this.pad();
     if (!data.length) throw new Error('EMPTY_TUPLES');
+    this.pad();
     const id = this.clock.tick(1);
     const op = new operations.InsObjOp(id, obj, data);
     const span = op.span();
@@ -176,8 +176,8 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public insVec(obj: ITimestampStruct, data: [index: number, value: ITimestampStruct][]): ITimestampStruct {
-    this.pad();
     if (!data.length) throw new Error('EMPTY_TUPLES');
+    this.pad();
     const id = this.clock.tick(1);
     const op = new operations.InsVecOp(id, obj, data);
     const span = op.span();
@@ -206,8 +206,8 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public insStr(obj: ITimestampStruct, ref: ITimestampStruct, data: string): ITimestampStruct {
-    this.pad();
     if (!data.length) throw new Error('EMPTY_STRING');
+    this.pad();
     const id = this.clock.tick(1);
     const op = new operations.InsStrOp(id, obj, ref, data);
     const span = op.span();
@@ -222,8 +222,8 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public insBin(obj: ITimestampStruct, ref: ITimestampStruct, data: Uint8Array): ITimestampStruct {
-    this.pad();
     if (!data.length) throw new Error('EMPTY_BINARY');
+    this.pad();
     const id = this.clock.tick(1);
     const op = new operations.InsBinOp(id, obj, ref, data);
     const span = op.span();
@@ -243,6 +243,19 @@ export class PatchBuilder {
     const op = new operations.InsArrOp(id, arr, ref, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Update an element in an "arr" object.
+   *
+   * @returns ID of the new operation.
+   */
+  public updArr(arr: ITimestampStruct, ref: ITimestampStruct, val: ITimestampStruct): ITimestampStruct {
+    this.pad();
+    const id = this.clock.tick(1);
+    const op = new operations.UpdArrOp(id, arr, ref, val);
     this.patch.ops.push(op);
     return id;
   }

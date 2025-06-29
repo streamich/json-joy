@@ -21,6 +21,7 @@ export type JsonCrdtPatchOperation =
   | operations.InsStrOp
   | operations.InsBinOp
   | operations.InsArrOp
+  | operations.UpdArrOp
   | operations.DelOp
   | operations.NopOp;
 
@@ -130,6 +131,8 @@ export class Patch implements Printable {
       else if (op instanceof operations.NewArrOp) patchOps.push(new operations.NewArrOp(ts(op.id)));
       else if (op instanceof operations.InsArrOp)
         patchOps.push(new operations.InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
+      else if (op instanceof operations.UpdArrOp)
+        patchOps.push(new operations.UpdArrOp(ts(op.id), ts(op.obj), ts(op.ref), ts(op.val)));
       else if (op instanceof operations.InsStrOp)
         patchOps.push(new operations.InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
       else if (op instanceof operations.InsBinOp)

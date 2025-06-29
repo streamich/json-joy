@@ -296,45 +296,45 @@ export class InsArrOp extends Op implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    return super.toString()  + `, obj = ${printTs(
-      this.obj,
-    )} { ${printTs(this.ref)} ← ${this.data.map(printTs).join(', ')} }`;
+    const obj = printTs(this.obj);
+    const ref = printTs(this.ref);
+    const data = this.data.map(printTs).join(', ');
+    return super.toString()  + ', obj = ' + obj + ' { ' + ref + ' ← ' + data + ' }';
   }
 }
 
-// /**
-//  * Operation which updates an existing element in an array.
-//  *
-//  * @category Operations
-//  */
-// export class UpdArrOp implements IJsonCrdtPatchEditOperation {
-//   /**
-//     * @param id ID of this operation.
-//     * @param obj and "arr" object ID where to update an element.
-//     * @param ref ID of the element to update.
-//     * @param val ID of the new value to set.
-//    */
-//   constructor(
-//     public readonly id: ITimestampStruct,
-//     public readonly obj: ITimestampStruct,
-//     public readonly ref: ITimestampStruct,
-//     public readonly val: ITimestampStruct,
-//   ) {}
+/**
+ * Operation which updates an existing element in an array.
+ *
+ * @category Operations
+ */
+export class UpdArrOp extends Op implements IJsonCrdtPatchEditOperation {
+  /**
+    * @param id ID of this operation.
+    * @param obj and "arr" object ID where to update an element.
+    * @param ref ID of the element to update.
+    * @param val ID of the new value to set.
+   */
+  constructor(
+    public readonly id: ITimestampStruct,
+    public readonly obj: ITimestampStruct,
+    public readonly ref: ITimestampStruct,
+    public readonly val: ITimestampStruct,
+  ) {
+    super(id);
+  }
 
-//   public span(): number {
-//     return 1;
-//   }
+  public name() {
+    return 'upd_arr' as const;
+  }
 
-//   public name() {
-//     return 'upd_arr' as const;
-//   }
-
-//   public toString(): string {
-//     return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(
-//       this.obj,
-//     )} { ${printTs(this.ref)} : ${printTs(this.val)} }`;
-//   }
-// }
+  public toString(): string {
+    const obj = printTs(this.obj);
+    const ref = printTs(this.ref);
+    const val = printTs(this.val);
+    return super.toString()  + ', obj = ' + obj + ' { ' + ref + ': ' + val + ' }';
+  }
+}
 
 /**
  * Operation which deletes one or more ranges of values in some object.

@@ -61,6 +61,7 @@ export const enum JsonCrdtPatchOpcode {
   ins_str = 0b01000 | JsonCrdtDataType.str, // 12
   ins_bin = 0b01000 | JsonCrdtDataType.bin, // 13
   ins_arr = 0b01000 | JsonCrdtDataType.arr, // 14
+  upd_arr = 0b01000 | JsonCrdtDataType.arr + 1, // 15
   del = 0b10000, // 16
   nop = 0b10001, // 17
 }
@@ -79,6 +80,7 @@ export const enum JsonCrdtPatchOpcodeOverlay {
   ins_str = JsonCrdtPatchOpcode.ins_str << 3,
   ins_bin = JsonCrdtPatchOpcode.ins_bin << 3,
   ins_arr = JsonCrdtPatchOpcode.ins_arr << 3,
+  upd_arr = JsonCrdtPatchOpcode.upd_arr << 3,
   del = JsonCrdtPatchOpcode.del << 3,
   nop = JsonCrdtPatchOpcode.nop << 3,
 }
