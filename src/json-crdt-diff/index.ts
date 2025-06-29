@@ -4,7 +4,7 @@ import {JsonCrdtDiff} from './JsonCrdtDiff';
 
 export const diff = (src: NodeApi<any>, dst: unknown): Patch => {
   const diff = new JsonCrdtDiff(src.api.model);
-  const patch = diff.diff(src.api.model.root, dst);
+  const patch = diff.diff(src.node, dst);
   return patch;
 }
 
