@@ -205,6 +205,14 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         for (let i = 0; i < length; i++) this.encodeId(elements[i]);
         break;
       }
+      case operations.UpdArrOp: {
+        const operation = <operations.UpdArrOp>op;
+        writer.u8(JsonCrdtPatchOpcodeOverlay.upd_arr);
+        this.encodeId(operation.obj);
+        this.encodeId(operation.ref);
+        this.encodeId(operation.val);
+        break;
+      }
       case operations.DelOp: {
         const operation = <operations.DelOp>op;
         const what = operation.what;

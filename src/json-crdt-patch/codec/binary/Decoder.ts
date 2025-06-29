@@ -165,6 +165,13 @@ export class Decoder extends CborDecoder<CrdtReader> {
         builder.insArr(obj, after, elements);
         break;
       }
+      case JsonCrdtPatchOpcode.upd_arr: {
+        const obj = this.decodeId();
+        const ref = this.decodeId();
+        const val = this.decodeId();
+        builder.updArr(obj, ref, val);
+        break;
+      }
       case JsonCrdtPatchOpcode.del: {
         const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
