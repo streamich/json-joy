@@ -1,4 +1,4 @@
-export enum SESSION {
+export const enum SESSION {
   /**
    * Session ID which is reserved by the JSON CRDT Patch protocol for internal
    * usage. This session ID cannot be used by users when editing the documents.
@@ -32,12 +32,12 @@ export enum SESSION {
   MAX = 9007199254740991,
 }
 
-export enum SYSTEM_SESSION_TIME {
+export const enum SYSTEM_SESSION_TIME {
   ORIGIN = 0,
   UNDEFINED = 1,
 }
 
-export enum JsonCrdtDataType {
+export const enum JsonCrdtDataType {
   con = 0b000,
   val = 0b001,
   obj = 0b010,
@@ -47,7 +47,7 @@ export enum JsonCrdtDataType {
   arr = 0b110,
 }
 
-export enum JsonCrdtPatchOpcode {
+export const enum JsonCrdtPatchOpcode {
   new_con = 0b00000 | JsonCrdtDataType.con, // 0
   new_val = 0b00000 | JsonCrdtDataType.val, // 1
   new_obj = 0b00000 | JsonCrdtDataType.obj, // 2
@@ -65,7 +65,7 @@ export enum JsonCrdtPatchOpcode {
   nop = 0b10001, // 17
 }
 
-export enum JsonCrdtPatchOpcodeOverlay {
+export const enum JsonCrdtPatchOpcodeOverlay {
   new_con = JsonCrdtPatchOpcode.new_con << 3,
   new_val = JsonCrdtPatchOpcode.new_val << 3,
   new_obj = JsonCrdtPatchOpcode.new_obj << 3,
