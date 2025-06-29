@@ -1,3 +1,25 @@
+# [17.46.0](https://github.com/streamich/json-joy/compare/v17.45.0...v17.46.0) (2025-06-29)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 correctly pick diff node ([e6bbde3](https://github.com/streamich/json-joy/commit/e6bbde3d4b20e6d4e66d258cc75b2d1587df1ec9))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 implement schema auto-generation from POJO values ([bea3a69](https://github.com/streamich/json-joy/commit/bea3a691c07b17796ecacbeb784465f3aea7959b))
+* **json-crdt-patch:** 🎸 remove deprecated "vec" utility ([a580140](https://github.com/streamich/json-joy/commit/a5801405281a859effc5f6779de80b2f44a02f04))
+* **json-crdt-patch:** 🎸 remove deprecated konst() utility ([73e7cd1](https://github.com/streamich/json-joy/commit/73e7cd1ade2bddb33d02dfc208d031af0a6fc765))
+* **json-crdt:** 🎸 allow setting schema with arbitrary JavaScript value ([f46c136](https://github.com/streamich/json-joy/commit/f46c136d31fda295baa5f7cf6ada42608991b68b))
+* **json-crdt:** 🎸 allow to specify relative root ([0382669](https://github.com/streamich/json-joy/commit/038266988c3afd3675bc100377865d6a56641e46))
+* **json-crdt:** 🎸 expose diff/merge API on NodeApi ([2ec9335](https://github.com/streamich/json-joy/commit/2ec9335172875b9bec29103f782aac25c22dc10a))
+* **json-crdt:** 🎸 make ModelApi wrap the root node ([d45a259](https://github.com/streamich/json-joy/commit/d45a259afe0bcc69b98757bbe52d42461a2b9a7a))
+* **json-crdt:** 🎸 remove depreacted .withLogicalClock() method ([4c2ebed](https://github.com/streamich/json-joy/commit/4c2ebedfc5ca81141e2c0b3200803ae2bbe53d4a))
+* **json-crdt:** 🎸 remove usage of deprecated .root() method ([f3bb3c3](https://github.com/streamich/json-joy/commit/f3bb3c3c0ee26398184b4bd9b70d3563f6d594dc))
+* **json-crdt:** 🎸 update .withServerClock() factory ([bd9149d](https://github.com/streamich/json-joy/commit/bd9149db711176814713f925f389acdba3c55238))
+* **json-crdt:** 🎸 use API-buil-int .read() method ([e3f94b6](https://github.com/streamich/json-joy/commit/e3f94b6318257084d5741f0c04c4093dafcf757d))
+
 # [17.45.0](https://github.com/streamich/json-joy/compare/v17.44.0...v17.45.0) (2025-06-27)
 
 
