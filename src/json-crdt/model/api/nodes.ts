@@ -926,7 +926,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
    *
    * @param json JSON/CBOR value to set as the view of the model.
    * @returns Reference to itself.
-   * 
+   *
    * @deprecated Use `.set()` instead.
    */
   public root(json: unknown): this {

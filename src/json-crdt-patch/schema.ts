@@ -10,7 +10,8 @@ const maybeConst = (x: unknown): boolean => {
       return true;
     case 'object':
       return x === null || x instanceof Timestamp;
-    default: return false;
+    default:
+      return false;
   }
 };
 
@@ -312,16 +313,16 @@ export namespace nodes {
    * {@link nodes.con} nodes, instead wrapping them into {@link nodes.val} nodes.
    */
   export type jsonCon<V> = V extends number
+    ? nodes.con<V>
+    : V extends boolean
       ? nodes.con<V>
-      : V extends boolean
+      : V extends null
         ? nodes.con<V>
-        : V extends null
+        : V extends undefined
           ? nodes.con<V>
-          : V extends undefined
-            ? nodes.con<V>
-            : V extends ITimestampStruct
-              ? nodes.val<nodes.con<V>>
-              : json<V>;
+          : V extends ITimestampStruct
+            ? nodes.val<nodes.con<V>>
+            : json<V>;
 }
 
 /**
@@ -408,7 +409,7 @@ export const schema = {
       case 'object': {
         if (!value) return s.val(s.con(value)) as any;
         if (value instanceof NodeBuilder) return value as any;
-        else if (Array.isArray(value)) return s.arr(value.map(v => s.json(v))) as any;
+        else if (Array.isArray(value)) return s.arr(value.map((v) => s.json(v))) as any;
         else if (isUint8Array(value)) return s.bin(value) as any;
         else if (value instanceof Timestamp) return s.val(s.con(value)) as any;
         else {
@@ -418,8 +419,10 @@ export const schema = {
           return s.obj(obj) as any;
         }
       }
-      case 'string': return s.str(value) as any;
-      default: return s.val(s.con(value)) as any;
+      case 'string':
+        return s.str(value) as any;
+      default:
+        return s.val(s.con(value)) as any;
     }
   },
 
@@ -427,11 +430,11 @@ export const schema = {
    * Recursively creates a schema node tree from any POJO. Same as {@link json}, but
    * converts constant values to {@link nodes.con} nodes, instead wrapping them into
    * {@link nodes.val} nodes.
-   * 
+   *
    * @todo Remove this once "arr" RGA supports in-place updates.
    */
   jsonCon: <T>(value: T): nodes.jsonCon<T> => {
-    return maybeConst(value) ? s.con(value) as any : s.json(value) as any;
+    return maybeConst(value) ? (s.con(value) as any) : (s.json(value) as any);
   },
 
   /**

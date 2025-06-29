@@ -167,7 +167,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   }
 
   public get(path: string | Path): unknown {
-    return (this.base ?? this.model.api.r).read(this.toPath(path)); 
+    return (this.base ?? this.model.api.r).read(this.toPath(path));
   }
 
   private json(steps: Path): unknown {
@@ -177,7 +177,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   }
 
   private setRoot(json: unknown) {
-    const root = (this.base?.node ?? this.model.root);
+    const root = this.base?.node ?? this.model.root;
     const builder = this.builder();
     builder.setVal(root.id, builder.json(json));
   }

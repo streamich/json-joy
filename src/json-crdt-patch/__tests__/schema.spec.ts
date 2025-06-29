@@ -1,5 +1,5 @@
 import {Model} from '../../json-crdt/model';
-import {NodeBuilder, s} from '../schema';
+import {type NodeBuilder, s} from '../schema';
 
 describe('nodes', () => {
   describe('obj', () => {
@@ -18,10 +18,7 @@ describe('nodes', () => {
   });
 
   describe('json', () => {
-    const assertSchemasEqual = <A extends NodeBuilder, B extends A>(
-      schema1: A,
-      schema2: B,
-    ): void => {
+    const assertSchemasEqual = <A extends NodeBuilder, B extends A>(schema1: A, schema2: B): void => {
       const model1 = Model.create(schema1, 123456789);
       const model2 = Model.create(schema2, 123456789);
       // console.log(model1 + '');
@@ -53,16 +50,7 @@ describe('nodes', () => {
     });
 
     test('can create schema out of an array', () => {
-      const schema1 = s.json([
-        1,
-        2,
-        3,
-        'a',
-        'b',
-        true,
-        null,
-        undefined
-      ]);
+      const schema1 = s.json([1, 2, 3, 'a', 'b', true, null, undefined]);
       const schema2 = s.arr([
         s.val(s.con(1)),
         s.val(s.con(2)),

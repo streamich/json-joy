@@ -1,5 +1,5 @@
-import { InsStrOp, s } from '../../../../json-crdt-patch';
-import { Model } from '../../Model';
+import {InsStrOp, s} from '../../../../json-crdt-patch';
+import {Model} from '../../Model';
 
 describe('.diff()', () => {
   test('can merge changes into a string', () => {
