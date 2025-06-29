@@ -94,6 +94,8 @@ test('encodes a patch with all operation types', () => {
   assertCodec();
   builder.arr();
   assertCodec();
+  builder.updArr(ts(1, 1), ts(2, 2), ts(3, 3));
+  assertCodec();
 });
 
 test('supports consts with undefined value', () => {

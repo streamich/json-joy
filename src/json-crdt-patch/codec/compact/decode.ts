@@ -114,6 +114,13 @@ export const decode = (data: types.CompactCodecPatch): Patch => {
         builder.insArr(obj, ref, elements);
         break;
       }
+      case JsonCrdtPatchOpcode.upd_arr: {
+        const obj = timestamp(sid, op[1]);
+        const ref = timestamp(sid, op[2]);
+        const val = timestamp(sid, op[3]);
+        builder.updArr(obj, ref, val);
+        break;
+      }
       case JsonCrdtPatchOpcode.del: {
         const obj = timestamp(sid, op[1]);
         const spans = op[2];
