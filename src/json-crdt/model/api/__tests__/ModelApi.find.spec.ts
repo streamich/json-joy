@@ -6,7 +6,7 @@ describe('find', () => {
     const doc = Model.create();
     const builder1 = new PatchBuilder(doc.clock);
     const obj1 = builder1.obj();
-    const f = builder1.const(false);
+    const f = builder1.con(false);
     builder1.insObj(obj1, [['foo', f]]);
     builder1.root(obj1);
     doc.applyPatch(builder1.patch);
@@ -16,7 +16,7 @@ describe('find', () => {
   test('can find the root value', () => {
     const doc = Model.create();
     const builder1 = new PatchBuilder(doc.clock);
-    const t = builder1.const(true);
+    const t = builder1.con(true);
     builder1.root(t);
     doc.applyPatch(builder1.patch);
     expect(doc.api.find([]).view()).toBe(true);

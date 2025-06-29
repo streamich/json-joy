@@ -215,7 +215,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
             const newId = schema.build(builder);
             data.push([key, newId] as any);
           } else {
-            data.push([key, builder.const(undefined)] as any);
+            data.push([key, builder.con(undefined)] as any);
           }
         }
         if (data.length) {

@@ -106,7 +106,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
         const valueNode = node.get(stringKey);
         if (valueNode === undefined) throw new Error('NOT_FOUND');
         if (valueNode instanceof ConNode && valueNode.val === undefined) throw new Error('NOT_FOUND');
-        builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
+        builder.insObj(node.id, [[stringKey, builder.con(undefined)]]);
       } else if (node instanceof ArrNode) {
         const key = steps[steps.length - 1];
         const index = ~~key;

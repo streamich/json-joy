@@ -57,10 +57,10 @@ export class Slices<T = string> implements Stateful, Printable {
       (stacking << SliceHeaderShift.Stacking) +
       ((start.anchor & 0b1) << SliceHeaderShift.X1Anchor) +
       ((end.anchor & 0b1) << SliceHeaderShift.X2Anchor);
-    const headerId = builder.const(header);
-    const x1Id = builder.const(start.id);
-    const x2Id = builder.const(compare(start.id, end.id) === 0 ? 0 : end.id);
-    const subtypeId = builder.const(type);
+    const headerId = builder.con(header);
+    const x1Id = builder.con(start.id);
+    const x2Id = builder.con(compare(start.id, end.id) === 0 ? 0 : end.id);
+    const subtypeId = builder.con(type);
     const tupleKeysUpdate: [key: number, value: ITimestampStruct][] = [
       [SliceTupleIndex.Header, headerId],
       [SliceTupleIndex.X1, x1Id],

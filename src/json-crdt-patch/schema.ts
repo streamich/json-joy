@@ -35,7 +35,7 @@ export namespace nodes {
     public readonly type = 'con';
 
     constructor(public readonly raw: T) {
-      super((builder) => builder.const(raw));
+      super((builder) => builder.con(raw));
     }
   }
 

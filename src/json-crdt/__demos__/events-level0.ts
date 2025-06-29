@@ -34,7 +34,7 @@ model.onreset = () => {
 
 // Construct a JSON CRDT Patch which sets the document value to `123`.
 const builder = new PatchBuilder(model.clock);
-builder.root(builder.const(123));
+builder.root(builder.con(123));
 const patch = builder.flush();
 
 // Print out the document state.

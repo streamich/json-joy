@@ -11,7 +11,7 @@ test('local time is incremented on local operation application', () => {
   const doc = Model.create();
   const time = doc.clock.time;
   const builder1 = new PatchBuilder(doc.clock);
-  const t = builder1.const(true);
+  const t = builder1.con(true);
   builder1.root(t);
   doc.applyPatch(builder1.patch);
   expect(doc.view()).toEqual(true);
@@ -22,7 +22,7 @@ test('local time is incremented on remote operation application', () => {
   const doc = Model.create();
   const builder1 = new PatchBuilder(new LogicalClock(123, 1));
   const time = doc.clock.time;
-  const t = builder1.const(true);
+  const t = builder1.con(true);
   builder1.root(t);
   doc.applyPatch(builder1.patch);
   expect(doc.view()).toEqual(true);

@@ -9,7 +9,7 @@ describe('recursive node references are not allowed', () => {
         const objId = builder.obj();
         const arrId = builder.arr();
         builder.insObj(objId, [['arr', arrId]]);
-        builder.insArr(arrId, arrId, [builder.const(1), objId]);
+        builder.insArr(arrId, arrId, [builder.con(1), objId]);
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
@@ -22,7 +22,7 @@ describe('recursive node references are not allowed', () => {
         const objId = builder.obj();
         const arrId = builder.arr();
         builder.insObj(objId, [['arr', arrId]]);
-        builder.insArr(arrId, arrId, [builder.const(1)]);
+        builder.insArr(arrId, arrId, [builder.con(1)]);
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
@@ -41,7 +41,7 @@ describe('recursive node references are not allowed', () => {
         const builder = model.api.builder;
         const objId = builder.obj();
         builder.insObj(objId, [
-          ['con', builder.const(2)],
+          ['con', builder.con(2)],
           ['obj', objId],
         ]);
         builder.root(objId);
@@ -54,7 +54,7 @@ describe('recursive node references are not allowed', () => {
         const model = Model.create();
         const builder = model.api.builder;
         const objId = builder.obj();
-        builder.insObj(objId, [['con', builder.const(2)]]);
+        builder.insObj(objId, [['con', builder.con(2)]]);
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
@@ -73,7 +73,7 @@ describe('recursive node references are not allowed', () => {
         const builder = model.api.builder;
         const vecId = builder.vec();
         builder.insVec(vecId, [
-          [0, builder.const(1)],
+          [0, builder.con(1)],
           [1, vecId],
         ]);
         builder.root(vecId);
@@ -87,7 +87,7 @@ describe('recursive node references are not allowed', () => {
         const builder = model.api.builder;
         const vecId = builder.vec();
         builder.insVec(vecId, [
-          [0, builder.const(1)],
+          [0, builder.con(1)],
           [1, vecId],
         ]);
         builder.root(vecId);

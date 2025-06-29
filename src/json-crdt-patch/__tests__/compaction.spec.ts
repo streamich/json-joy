@@ -56,7 +56,7 @@ describe('.combine()', () => {
     const builder1 = new PatchBuilder(new LogicalClock(123456789, 1));
     const builder2 = new PatchBuilder(new LogicalClock(123456789, 100));
     builder1.str();
-    builder2.const(123);
+    builder2.con(123);
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
     combine([patch1, patch2]);
@@ -74,7 +74,7 @@ describe('.combine()', () => {
     const builder3 = new PatchBuilder(new LogicalClock(123456789, 110));
     const builder4 = new PatchBuilder(new LogicalClock(123456789, 220));
     builder1.str();
-    builder2.const(123);
+    builder2.con(123);
     builder3.obj();
     builder4.bin();
     const patch1 = builder1.flush();
@@ -92,7 +92,7 @@ describe('.combine()', () => {
     const builder1 = new PatchBuilder(new LogicalClock(1111111, 1));
     const builder2 = new PatchBuilder(new LogicalClock(2222222, 100));
     builder1.str();
-    builder2.const(123);
+    builder2.con(123);
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
     expect(() => combine([patch1, patch2])).toThrow(new Error('SID_MISMATCH'));
@@ -100,7 +100,7 @@ describe('.combine()', () => {
 
   test('first patch can be empty', () => {
     const builder2 = new PatchBuilder(new LogicalClock(2222222, 100));
-    builder2.const(123);
+    builder2.con(123);
     const patch1 = new Patch();
     const patch2 = builder2.flush();
     combine([patch1, patch2]);
@@ -109,7 +109,7 @@ describe('.combine()', () => {
 
   test('second patch can be empty', () => {
     const builder2 = new PatchBuilder(new LogicalClock(2222222, 100));
-    builder2.const(123);
+    builder2.con(123);
     const patch1 = new Patch();
     const patch2 = builder2.flush();
     const str1 = patch2 + '';
@@ -123,7 +123,7 @@ describe('.combine()', () => {
     const builder1 = new PatchBuilder(new LogicalClock(123456789, 1));
     const builder2 = new PatchBuilder(new LogicalClock(123456789, 100));
     builder1.str();
-    builder2.const(123);
+    builder2.con(123);
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
     expect(() => combine([patch2, patch1])).toThrow(new Error('TIMESTAMP_CONFLICT'));

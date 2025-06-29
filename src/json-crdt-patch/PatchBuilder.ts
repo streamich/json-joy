@@ -123,7 +123,7 @@ export class PatchBuilder {
    * @param value JSON value
    * @returns ID of the new operation.
    */
-  public const(value: unknown): ITimestampStruct {
+  public con(value: unknown): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
     this.patch.ops.push(new operations.NewConOp(id, value));
@@ -287,7 +287,7 @@ export class PatchBuilder {
       const tuples: [key: string, value: ITimestampStruct][] = [];
       for (const k of keys) {
         const value = (obj as any)[k];
-        const valueId = value instanceof Timestamp ? value : maybeConst(value) ? this.const(value) : this.json(value);
+        const valueId = value instanceof Timestamp ? value : maybeConst(value) ? this.con(value) : this.json(value);
         tuples.push([k, valueId]);
       }
       this.insObj(id, tuples);
@@ -331,7 +331,7 @@ export class PatchBuilder {
    */
   public jsonVal(value: unknown): ITimestampStruct {
     const valId = this.val();
-    const id = this.const(value);
+    const id = this.con(value);
     this.setVal(valId, id);
     return valId;
   }
@@ -341,7 +341,7 @@ export class PatchBuilder {
    */
   public json(json: unknown): ITimestampStruct {
     if (json instanceof Timestamp) return json;
-    if (json === undefined) return this.const(json);
+    if (json === undefined) return this.con(json);
     if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
     if (json instanceof NodeBuilder) return json.build(this);
@@ -369,7 +369,7 @@ export class PatchBuilder {
    */
   public constOrJson(value: unknown): ITimestampStruct {
     if (value instanceof Timestamp) return value;
-    return maybeConst(value) ? this.const(value) : this.json(value);
+    return maybeConst(value) ? this.con(value) : this.json(value);
   }
 
   /**
@@ -380,7 +380,7 @@ export class PatchBuilder {
    * @returns ID of the new "con" object.
    */
   public maybeConst(value: unknown | Timestamp): Timestamp {
-    return value instanceof Timestamp ? value : this.const(value);
+    return value instanceof Timestamp ? value : this.con(value);
   }
 
   // ------------------------------------------------------------------ Private

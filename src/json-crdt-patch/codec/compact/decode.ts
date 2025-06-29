@@ -41,7 +41,7 @@ export const decode = (data: types.CompactCodecPatch): Patch => {
     switch (op[0]) {
       case JsonCrdtPatchOpcode.new_con: {
         const [, value, isTimestamp] = op;
-        builder.const(isTimestamp ? timestamp(sid, value as types.CompactCodecTimestamp) : value);
+        builder.con(isTimestamp ? timestamp(sid, value as types.CompactCodecTimestamp) : value);
         break;
       }
       case JsonCrdtPatchOpcode.new_val: {

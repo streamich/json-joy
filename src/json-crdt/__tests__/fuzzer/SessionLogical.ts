@@ -152,7 +152,7 @@ export class SessionLogical {
       builder.insObj(node.id, [[key, valueId]]);
     } else {
       // console.log('DELETING KEY', JSON.stringify(key))
-      builder.insObj(node.id, [[key, builder.const(undefined)]]);
+      builder.insObj(node.id, [[key, builder.con(undefined)]]);
     }
     return builder.patch;
   }

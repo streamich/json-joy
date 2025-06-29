@@ -19,7 +19,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.vec();
       builder.insVec(id, [
-        [0, builder.const(1)],
+        [0, builder.con(1)],
         [1, builder.json('2')],
       ]);
       doc.applyPatch(builder.patch);
@@ -32,7 +32,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.vec();
       builder.insVec(id, [
-        [0, builder.const(1)],
+        [0, builder.con(1)],
         [2, builder.json({})],
       ]);
       doc.applyPatch(builder.patch);

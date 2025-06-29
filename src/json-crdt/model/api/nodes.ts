@@ -517,7 +517,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
     const {builder} = api;
     api.builder.insObj(
       node.id,
-      keys.map((key) => [key, builder.const(undefined)]),
+      keys.map((key) => [key, builder.con(undefined)]),
     );
     api.apply();
   }
