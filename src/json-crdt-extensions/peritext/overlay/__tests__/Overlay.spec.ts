@@ -5,8 +5,8 @@ import {Anchor} from '../../rga/constants';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
-  model.api.root({
+  const model = Model.create();
+  model.api.set({
     text: '',
     slices: [],
     markers: [],

@@ -8,7 +8,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {
     test(name, () => {
       const doc1 = Model.withServerClock();
-      doc1.api.root(json);
+      doc1.api.set(json);
       const encoder = new Encoder();
       const decoder = new Decoder();
       const encoded1 = encoder.encode(doc1);
@@ -27,7 +27,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
 
     test(name, () => {
       const doc1 = Model.withServerClock();
-      doc1.api.root(json);
+      doc1.api.set(json);
       const encoded1 = encoder.encode(doc1);
       const doc2 = decoder.decode(encoded1);
       const encoded2 = encoder.encode(doc1);

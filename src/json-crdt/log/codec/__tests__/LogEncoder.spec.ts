@@ -8,7 +8,7 @@ import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
-  model.api.root(view);
+  model.api.set(view);
   const log = Log.fromNewModel(model);
   const encoder = new LogEncoder(logEncoderOpts);
   return {model, log, encoder};

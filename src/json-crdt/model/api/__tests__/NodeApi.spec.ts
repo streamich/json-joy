@@ -3,10 +3,63 @@ import {Model} from '../../Model';
 import {ConApi, ObjApi} from '../nodes';
 import {createTypedModel, createUntypedModel} from './fixtures';
 
+describe('.find()', () => {
+  test('can resolve multiple nested "val" nodes in the middle of path', () => {
+    const doc = Model.create();
+    doc.api.set(
+      s.obj({
+        obj: s.val(
+          s.val(
+            s.val(
+              s.obj({
+                key: s.str('value'),
+              }),
+            ),
+          ),
+        ),
+      }),
+    );
+    const node = doc.api.find(['obj', 'key']);
+    expect(node.view()).toBe('value');
+  });
+
+  test('can resolve multiple nested "val" nodes at the end of path', () => {
+    const doc = Model.create();
+    doc.api.set(
+      s.obj({
+        obj: s.obj({
+          key: s.val(s.val(s.val(s.str('value')))),
+        }),
+      }),
+    );
+    const node = doc.api.find(['obj', 'key']);
+    expect(node.view()).toBe('value');
+  });
+
+  test('can resolve multiple nested "val" nodes in the beginning of path', () => {
+    const doc = Model.create();
+    doc.api.set(
+      s.val(
+        s.val(
+          s.val(
+            s.obj({
+              obj: s.obj({
+                key: s.str('value'),
+              }),
+            }),
+          ),
+        ),
+      ),
+    );
+    const node = doc.api.find(['obj', 'key']);
+    expect(node.view()).toBe('value');
+  });
+});
+
 describe('.read()', () => {
   test('can retrieve own view', () => {
     const doc = Model.create();
-    doc.api.root({
+    doc.api.set({
       arr: [1, 2, 3],
     });
     const arr = doc.api.arr(['arr']);
@@ -17,7 +70,7 @@ describe('.read()', () => {
 
   test('can retrieve array element', () => {
     const doc = Model.create();
-    doc.api.root({
+    doc.api.set({
       arr: [1, 2, 3],
     });
     const arr = doc.api.arr(['arr']);
@@ -500,6 +553,3 @@ describe('.remove()', () => {
     });
   });
 });
-
-test.todo('.merge()');
-test.todo('.shallowMerge()');

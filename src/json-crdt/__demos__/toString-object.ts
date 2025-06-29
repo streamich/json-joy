@@ -15,7 +15,7 @@ console.log('Empty document:');
 console.log('');
 console.log(model.toString());
 
-model.api.root({});
+model.api.set({});
 
 console.log('');
 console.log('Object as document root:');

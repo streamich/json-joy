@@ -30,7 +30,7 @@ export class JsonCrdtFuzzer {
 
   constructor(opts: Partial<FuzzerOptions> = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
-    this.model = Model.withLogicalClock();
+    this.model = Model.create();
     this.picker = new Picker(this.opts);
   }
 

@@ -40,11 +40,11 @@ const editorNativeJs: StructuralEditor = {
 const editorJsonJoy: StructuralEditor = {
   name: 'json-joy > structural > binary',
   factory: (snapshot?: Uint8Array) => {
-    const model: Model = snapshot ? Model.fromBinary(snapshot) : Model.withLogicalClock();
+    const model: Model = snapshot ? Model.fromBinary(snapshot) : Model.create();
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => model.toBinary(),
     };
@@ -59,7 +59,7 @@ const editorJsonJoyServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => model.toBinary(),
     };
@@ -73,11 +73,11 @@ const decoderCompact = new CompactDecoder();
 const editorJsonJoyCompact: StructuralEditor = {
   name: 'json-joy > structural > compact (CBOR)',
   factory: (snapshot?: Uint8Array) => {
-    const model: Model = snapshot ? decoderCompact.decode(cborDecoder.read(snapshot) as any) : Model.withLogicalClock();
+    const model: Model = snapshot ? decoderCompact.decode(cborDecoder.read(snapshot) as any) : Model.create();
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderCompact.encode(model);
@@ -95,7 +95,7 @@ const editorJsonJoyCompactServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderCompact.encode(model);
@@ -112,11 +112,11 @@ const decoderVerbose = new VerboseDecoder();
 const editorJsonJoyVerbose: StructuralEditor = {
   name: 'json-joy > structural > verbose (CBOR)',
   factory: (snapshot?: Uint8Array) => {
-    const model: Model = snapshot ? decoderVerbose.decode(cborDecoder.read(snapshot) as any) : Model.withLogicalClock();
+    const model: Model = snapshot ? decoderVerbose.decode(cborDecoder.read(snapshot) as any) : Model.create();
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderVerbose.encode(model);
@@ -134,7 +134,7 @@ const editorJsonJoyVerboseServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderVerbose.encode(model);
@@ -151,11 +151,11 @@ const decoderIndexed = new IndexedDecoder();
 const editorJsonJoyIndexed: StructuralEditor = {
   name: 'json-joy > indexed (CBOR)',
   factory: (snapshot?: Uint8Array) => {
-    const model: Model = snapshot ? decoderIndexed.decode(cborDecoder.read(snapshot) as any) : Model.withLogicalClock();
+    const model: Model = snapshot ? decoderIndexed.decode(cborDecoder.read(snapshot) as any) : Model.create();
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderIndexed.encode(model);
@@ -173,7 +173,7 @@ const editorJsonJoyIndexedServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderIndexed.encode(model);
@@ -194,11 +194,11 @@ const editorJsonJoySidecar: StructuralEditor = {
     if (snapshot) {
       const [view, sidecar] = cborDecoder.read(snapshot) as any[];
       model = decoderSidecar.decode(view, sidecar);
-    } else model = Model.withLogicalClock();
+    } else model = Model.create();
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderSidecar.encode(model);
@@ -220,7 +220,7 @@ const editorJsonJoySidecarServerClock: StructuralEditor = {
     const instance: StructuralEditorInstance = {
       view: () => model.view(),
       setRoot: (pojo: unknown) => {
-        model.api.root(pojo);
+        model.api.set(pojo);
       },
       toBlob: () => {
         const compact = encoderSidecar.encode(model);

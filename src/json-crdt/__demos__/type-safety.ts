@@ -10,7 +10,7 @@ import {Model, type n} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234) as any as Model<
+const model = Model.create(void 0, 1234) as any as Model<
   n.obj<{
     num: n.con<number>;
     text: n.str;
@@ -22,7 +22,7 @@ const model = Model.withLogicalClock(1234) as any as Model<
 console.log(model + '');
 console.log(model.view());
 
-model.api.root({
+model.api.set({
   num: 123,
   text: 'hello',
   flags: [true, false],

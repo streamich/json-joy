@@ -80,7 +80,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
     switch (opcode) {
       case JsonCrdtPatchOpcode.new_con: {
         const length = octet & 0b111;
-        builder.const(!length ? this.val() : this.decodeId());
+        builder.con(!length ? this.val() : this.decodeId());
         break;
       }
       case JsonCrdtPatchOpcode.new_val: {

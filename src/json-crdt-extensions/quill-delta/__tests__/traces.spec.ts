@@ -74,7 +74,7 @@ for (const [name, trace] of traces) {
     const model = Model.create();
     model.ext.register(ValueMvExt);
     model.ext.register(QuillDeltaExt);
-    model.api.root(QuillDeltaExt.new(''));
+    model.api.set(QuillDeltaExt.new(''));
     const quill = model.api.in().asExt(QuillDeltaExt);
     assertTrace(trace, quill);
   });

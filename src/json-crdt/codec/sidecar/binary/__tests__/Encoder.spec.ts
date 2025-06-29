@@ -6,11 +6,11 @@ import {Decoder} from '../Decoder';
 import {Timestamp} from '../../../../../json-crdt-patch/clock';
 
 test('con', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.con(123));
+  model.api.set(s.con(123));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -21,11 +21,11 @@ test('con', () => {
 });
 
 test('con - timestamp', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.con(new Timestamp(666, 1)));
+  model.api.set(s.con(new Timestamp(666, 1)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -36,11 +36,11 @@ test('con - timestamp', () => {
 });
 
 test('val', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.val(s.con(123)));
+  model.api.set(s.val(s.con(123)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -51,11 +51,11 @@ test('val', () => {
 });
 
 test('obj', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({foo: null});
+  model.api.set({foo: null});
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -66,11 +66,11 @@ test('obj', () => {
 });
 
 test('obj - 2', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({
+  model.api.set({
     a: 1,
     c: -3,
     b: 2,
@@ -85,11 +85,11 @@ test('obj - 2', () => {
 });
 
 test('obj - with deleted keys', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({
+  model.api.set({
     a: 1,
     b: 2,
     c: 3,
@@ -104,11 +104,11 @@ test('obj - with deleted keys', () => {
 });
 
 test('obj - supports "__proto__" key', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root({
+  model.api.set({
     a: 1,
     b: 2,
     __proto__: 3,
@@ -123,11 +123,11 @@ test('obj - supports "__proto__" key', () => {
 });
 
 test('vec', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.vec(s.con(false)));
+  model.api.set(s.vec(s.con(false)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -138,11 +138,11 @@ test('vec', () => {
 });
 
 test('vec - 2', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.vec(s.con(false), s.con(1), s.con(null)));
+  model.api.set(s.vec(s.con(false), s.con(1), s.con(null)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
   const decoded = decoder.decode(viewDecoded, meta);
@@ -153,11 +153,11 @@ test('vec - 2', () => {
 });
 
 test('vec - with gaps', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(s.vec(s.con(1)));
+  model.api.set(s.vec(s.con(1)));
   model.api.vec([]).set([[2, s.con(3)]]);
   expect(model.view()).toStrictEqual([1, undefined, 3]);
   const [view, meta] = encoder.encode(model);
@@ -169,11 +169,11 @@ test('vec - with gaps', () => {
 });
 
 test('str', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root('Hello');
+  model.api.set('Hello');
   model.api.str([]).ins(5, ' World');
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
@@ -185,11 +185,11 @@ test('str', () => {
 });
 
 test('str - with deleted chunks', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root('Hello');
+  model.api.set('Hello');
   model.api.str([]).ins(5, ' World');
   const model2 = model.fork();
   model2.api.str([]).ins(3, '~');
@@ -202,11 +202,11 @@ test('str - with deleted chunks', () => {
 });
 
 test('bin', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(new Uint8Array([1, 2, 3]));
+  model.api.set(new Uint8Array([1, 2, 3]));
   model.api.bin([]).ins(3, new Uint8Array([4, 5, 6]));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
@@ -218,11 +218,11 @@ test('bin', () => {
 });
 
 test('bin - with deleted chunks', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(new Uint8Array([1, 2, 3, 4, 5]));
+  model.api.set(new Uint8Array([1, 2, 3, 4, 5]));
   const model2 = model.fork();
   model.api.bin([]).del(1, 2);
   const [view, meta] = encoder.encode(model);
@@ -234,11 +234,11 @@ test('bin - with deleted chunks', () => {
 });
 
 test('arr', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root([1, 2, 3]);
+  model.api.set([1, 2, 3]);
   model.api.arr([]).ins(3, [4, 5, 6]);
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
@@ -250,11 +250,11 @@ test('arr', () => {
 });
 
 test('arr - with deleted chunks', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root([1, 2, 3, 4, 5]);
+  model.api.set([1, 2, 3, 4, 5]);
   const model2 = model.fork();
   model.api.arr([]).del(1, 2);
   const [view, meta] = encoder.encode(model);

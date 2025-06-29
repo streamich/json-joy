@@ -348,9 +348,9 @@ const testCases: TestCase[] = [
 
 for (const {only, name, doc1, doc2, patches, throws} of testCases) {
   (only ? test.only : test)(name, () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     const jsonPatch = new JsonPatch(model);
-    if (doc1 !== undefined) model.api.root(doc1);
+    if (doc1 !== undefined) model.api.set(doc1);
     if (throws) {
       expect(() => {
         for (const patch of patches) jsonPatch.apply(patch);

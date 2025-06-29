@@ -1,9 +1,10 @@
 import type * as clock from '../json-crdt-patch/clock';
 import * as ext from './ext';
-import type {NodeBuilder} from '../json-crdt-patch';
 import {Extensions} from '../json-crdt/extensions/Extensions';
 import {Model} from '../json-crdt/model';
+import type {NodeBuilder} from '../json-crdt-patch';
 import type {SchemaToJsonNode} from '../json-crdt/schema/types';
+import type {JsonNode} from '../json-crdt/nodes';
 
 const extensions = new Extensions();
 
@@ -17,10 +18,10 @@ export {ext};
 export class ModelWithExt {
   public static readonly ext = ext;
 
-  public static readonly create = <S extends NodeBuilder>(
+  public static readonly create = <S extends NodeBuilder | unknown>(
     schema?: S,
     sidOrClock: clock.ClockVector | number = Model.sid(),
-  ): Model<SchemaToJsonNode<S>> => {
+  ): Model<S extends NodeBuilder ? SchemaToJsonNode<S> : JsonNode> => {
     const model = Model.create(schema, sidOrClock);
     model.ext = extensions;
     return model;

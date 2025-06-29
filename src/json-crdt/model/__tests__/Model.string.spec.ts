@@ -6,7 +6,7 @@ import {interval, tick} from '../../../json-crdt-patch/clock';
 describe('Document', () => {
   describe('string', () => {
     test('can create an string', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       doc.applyPatch(builder.patch);
@@ -15,7 +15,7 @@ describe('Document', () => {
     });
 
     test('can set string as document root', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       builder.root(str);
@@ -24,7 +24,7 @@ describe('Document', () => {
     });
 
     test('can add one char to a string', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       builder.insStr(str, str, 'a');
@@ -34,7 +34,7 @@ describe('Document', () => {
     });
 
     test('can add long string in one operation', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       builder.insStr(str, str, 'asdf');
@@ -44,7 +44,7 @@ describe('Document', () => {
     });
 
     test('can insert three characters sequentially using three operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '1');
@@ -56,7 +56,7 @@ describe('Document', () => {
     });
 
     test('can insert three characters with two operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '1');
@@ -67,7 +67,7 @@ describe('Document', () => {
     });
 
     test('can insert at the end of two-char string', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
@@ -78,7 +78,7 @@ describe('Document', () => {
     });
 
     test('can insert at the end of two-char string twice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
@@ -90,7 +90,7 @@ describe('Document', () => {
     });
 
     test('can insert at the end of the same two-char string twice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
@@ -103,7 +103,7 @@ describe('Document', () => {
     });
 
     test('can apply the same patch trice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
@@ -117,7 +117,7 @@ describe('Document', () => {
     });
 
     test('can insert at the beginning of two-char string', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
@@ -131,7 +131,7 @@ describe('Document', () => {
     });
 
     test('can delete a single char from one-char chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'x');
@@ -146,7 +146,7 @@ describe('Document', () => {
     });
 
     test('can delete a single char from one-char chunk in the middle of string', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'x');
@@ -162,7 +162,7 @@ describe('Document', () => {
     });
 
     test('can delete last char in two-char chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'xy');
@@ -176,7 +176,7 @@ describe('Document', () => {
     });
 
     test('can delete first two chars in three-char chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abc');
@@ -190,7 +190,7 @@ describe('Document', () => {
     });
 
     test('can delete a substring in the middle of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abcdefg');
@@ -204,7 +204,7 @@ describe('Document', () => {
     });
 
     test('can delete two chunks using one delete operation', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'm');
@@ -221,7 +221,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'Hello');
@@ -237,7 +237,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'Hello');
@@ -255,7 +255,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one one-char chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'H');
@@ -267,7 +267,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'Hello');
@@ -279,7 +279,7 @@ describe('Document', () => {
     });
 
     test('can find ID in second chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'Hello');
@@ -298,7 +298,7 @@ describe('Document', () => {
     });
 
     test('can find span within one chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abc');
@@ -313,7 +313,7 @@ describe('Document', () => {
     });
 
     test('can find span within one chunk - 2', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abcde');
@@ -328,7 +328,7 @@ describe('Document', () => {
     });
 
     test('can find span at the beginning of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abcde');
@@ -343,7 +343,7 @@ describe('Document', () => {
     });
 
     test('can find span at the end of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abcde');
@@ -358,7 +358,7 @@ describe('Document', () => {
     });
 
     test('can find span across two chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abc');
@@ -378,7 +378,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abc');
@@ -403,7 +403,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks - 2', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abc');
@@ -428,7 +428,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks - 3', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'abc');
@@ -453,7 +453,7 @@ describe('Document', () => {
     });
 
     test('merges sequential inserts into one chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       builder.root(str);

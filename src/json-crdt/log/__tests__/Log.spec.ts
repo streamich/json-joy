@@ -4,7 +4,7 @@ import {Log} from '../Log';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
-  model.api.root(view);
+  model.api.set(view);
   const log = Log.fromNewModel(model);
   return {log};
 };

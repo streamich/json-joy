@@ -27,7 +27,7 @@ const benchmark: IBenchmark = {
       name: 'structural > binary (with server clock)',
       setup: (json: any) => {
         const model = Model.withServerClock();
-        model.api.root(json);
+        model.api.set(json);
         const blob = model.toBinary();
         return () => Model.fromBinary(blob);
       },
@@ -35,8 +35,8 @@ const benchmark: IBenchmark = {
     {
       name: 'structural > binary (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
-        model.api.root(json);
+        const model = Model.create();
+        model.api.set(json);
         const blob = model.toBinary();
         return () => Model.fromBinary(blob);
       },
@@ -46,7 +46,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new CompactEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const blob = cborEncoder.encode(encoder.encode(model));
         const decoder = new CompactDecoder();
         return () => decoder.decode(cborDecoder.read(blob) as any);
@@ -55,9 +55,9 @@ const benchmark: IBenchmark = {
     {
       name: 'structural > compact (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new CompactEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const blob = cborEncoder.encode(encoder.encode(model));
         const decoder = new CompactDecoder();
         return () => decoder.decode(cborDecoder.read(blob) as any);
@@ -68,7 +68,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new VerboseEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const blob = cborEncoder.encode(encoder.encode(model));
         const decoder = new VerboseDecoder();
         return () => decoder.decode(cborDecoder.read(blob) as any);
@@ -77,9 +77,9 @@ const benchmark: IBenchmark = {
     {
       name: 'structural > verbose (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new VerboseEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const blob = cborEncoder.encode(encoder.encode(model));
         const decoder = new VerboseDecoder();
         return () => decoder.decode(cborDecoder.read(blob) as any);
@@ -90,7 +90,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new IndexedEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const encoded = encoder.encode(model);
         const decoder = new IndexedDecoder();
         return () => decoder.decode(encoded);
@@ -99,9 +99,9 @@ const benchmark: IBenchmark = {
     {
       name: 'indexed (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new IndexedEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const encoded = encoder.encode(model);
         const decoder = new IndexedDecoder();
         return () => decoder.decode(encoded);
@@ -112,7 +112,7 @@ const benchmark: IBenchmark = {
       setup: (json: any) => {
         const model = Model.withServerClock();
         const encoder = new SidecarEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const [viewBlob, encoded] = encoder.encode(model);
         const decoder = new SidecarDecoder();
         return () => {
@@ -124,9 +124,9 @@ const benchmark: IBenchmark = {
     {
       name: 'sidecar (with logical clock)',
       setup: (json: any) => {
-        const model = Model.withLogicalClock();
+        const model = Model.create();
         const encoder = new SidecarEncoder();
-        model.api.root(json);
+        model.api.set(json);
         const [viewBlob, encoded] = encoder.encode(model);
         const decoder = new SidecarDecoder();
         return () => {

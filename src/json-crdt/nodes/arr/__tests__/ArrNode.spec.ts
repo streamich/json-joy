@@ -11,12 +11,12 @@ test('can insert two booleans into an array', () => {
   doc.applyPatch(builder1.patch);
 
   const builder2 = new PatchBuilder(doc.clock);
-  const t = builder2.const(true);
+  const t = builder2.con(true);
   const ins1 = builder2.insArr(arr, arr, [t]);
   doc.applyPatch(builder2.patch);
 
   const builder3 = new PatchBuilder(doc.clock);
-  const f = builder3.const(false);
+  const f = builder3.con(false);
   builder3.insArr(arr, ins1, [f]);
   doc.applyPatch(builder3.patch);
 

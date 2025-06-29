@@ -11,11 +11,11 @@ import {CntExt} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234);
+const model = Model.create(void 0, 1234);
 
 model.ext.register(CntExt);
 
-model.api.root({
+model.api.set({
   counter: CntExt.new(1),
 });
 console.log(model + '');

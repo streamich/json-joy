@@ -2,8 +2,8 @@ import {Model} from '../../../json-crdt/model';
 import {Peritext} from '../Peritext';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
-  model.api.root({
+  const model = Model.create();
+  model.api.set({
     text: '',
     slices: [],
   });

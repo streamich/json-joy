@@ -8,8 +8,8 @@ const runInlineSlicesTests = (
   insertNumbers = (editor: Editor) => void editor.insert('abcdefghijklmnopqrstuvwxyz'),
 ) => {
   const setup = () => {
-    const model = Model.withLogicalClock();
-    model.api.root({
+    const model = Model.create();
+    model.api.set({
       text: '',
       slices: [],
     });

@@ -3,11 +3,11 @@ import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {ViewDecoder} from '../ViewDecoder';
-import {konst} from '../../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../../json-crdt-patch';
 
 describe('logical', () => {
   test('can decode various documents', () => {
-    const doc1 = Model.withLogicalClock(new ClockVector(222, 1));
+    const doc1 = Model.create(void 0, new ClockVector(222, 1));
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const decoder = new Decoder();
@@ -22,7 +22,7 @@ describe('logical', () => {
       expect(decoded2).toStrictEqual(doc1.view());
     };
     assertCanDecode();
-    doc1.api.root([1, 'asdf', false, {}, {foo: 'bar', s: {foo: 'foo'}}]);
+    doc1.api.set([1, 'asdf', false, {}, {foo: 'bar', s: {foo: 'foo'}}]);
     assertCanDecode();
     doc1.api.str([1]).ins(4, '!');
     assertCanDecode();
@@ -43,9 +43,9 @@ describe('logical', () => {
   });
 
   test('decodes "con" timestamp as null', () => {
-    const model = Model.withLogicalClock();
-    model.api.root({
-      foo: konst(new Timestamp(model.clock.sid, 2)),
+    const model = Model.create();
+    model.api.set({
+      foo: s.con(new Timestamp(model.clock.sid, 2)),
     });
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
@@ -55,8 +55,8 @@ describe('logical', () => {
   });
 
   test('can decode a simple number', () => {
-    const model = Model.withLogicalClock();
-    model.api.root(123);
+    const model = Model.create();
+    model.api.set(123);
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
@@ -65,8 +65,8 @@ describe('logical', () => {
   });
 
   test('can decode a simple string', () => {
-    const model = Model.withLogicalClock();
-    model.api.root('asdf');
+    const model = Model.create();
+    model.api.set('asdf');
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);
@@ -75,8 +75,8 @@ describe('logical', () => {
   });
 
   test('can decode a simple object', () => {
-    const model = Model.withLogicalClock();
-    model.api.root({yes: false});
+    const model = Model.create();
+    model.api.set({yes: false});
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
     const encoded = encoder.encode(model);

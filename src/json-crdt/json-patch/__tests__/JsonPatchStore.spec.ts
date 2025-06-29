@@ -187,7 +187,7 @@ test('can return empty view', () => {
 
 test('returns selected sub-view', () => {
   const model = Model.create();
-  model.api.root({
+  model.api.set({
     ui: {
       state: {
         foo: 'bar',
@@ -196,7 +196,7 @@ test('returns selected sub-view', () => {
   });
   const store = new JsonPatchStore(model, ['ui', 'state']);
   expect(store.getSnapshot()).toEqual({foo: 'bar'});
-  model.api.root({
+  model.api.set({
     ui: {
       state: null,
     },
@@ -206,18 +206,18 @@ test('returns selected sub-view', () => {
 
 test('returns "undefined" on missing sub-view', () => {
   const model = Model.create();
-  model.api.root({
+  model.api.set({
     ui: {},
   });
   const store = new JsonPatchStore(model, ['ui', 'state']);
   expect(store.getSnapshot()).toBe(undefined);
-  model.api.root(undefined);
+  model.api.set(undefined);
   expect(store.getSnapshot()).toBe(undefined);
 });
 
 test('returns "undefined" on missing store .get(path)', () => {
   const model = Model.create();
-  model.api.root({
+  model.api.set({
     ui: {
       state: {
         foo: 'bar',
@@ -233,7 +233,7 @@ test('returns "undefined" on missing store .get(path)', () => {
 
 test('can bind to a missing sub-view', () => {
   const model = Model.create();
-  model.api.root({
+  model.api.set({
     ui: {
       state: {
         foo: 'bar',
@@ -253,7 +253,7 @@ test('can bind to a missing sub-view', () => {
 describe('.add()', () => {
   test('can modify existing key', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -268,7 +268,7 @@ describe('.add()', () => {
 
   test('can insert into array', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           arr: [],
@@ -283,7 +283,7 @@ describe('.add()', () => {
 
   test('can append to array', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           arr: [],
@@ -300,7 +300,7 @@ describe('.add()', () => {
 
   test('can add a new key', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -316,7 +316,7 @@ describe('.add()', () => {
 describe('.replace()', () => {
   test('can modify existing key', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -331,7 +331,7 @@ describe('.replace()', () => {
 
   test('can replace array element', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           arr: [1, '2', 3],
@@ -345,7 +345,7 @@ describe('.replace()', () => {
 
   test('throws, when updating non-existing key', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -360,7 +360,7 @@ describe('.replace()', () => {
 describe('.remove()', () => {
   test('can remove existing key', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -375,7 +375,7 @@ describe('.remove()', () => {
 
   test('can remove array element', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -392,7 +392,7 @@ describe('.remove()', () => {
 
   test('can remove array element - 2', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -413,7 +413,7 @@ describe('.remove()', () => {
 
   test('throws when removing non-existing element', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -429,7 +429,7 @@ describe('.remove()', () => {
 describe('.del()', () => {
   test('can remove existing key', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -444,7 +444,7 @@ describe('.del()', () => {
 
   test('can remove array element', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',
@@ -461,7 +461,7 @@ describe('.del()', () => {
 
   test('does nothing when key missing', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       ui: {
         state: {
           foo: 'bar',

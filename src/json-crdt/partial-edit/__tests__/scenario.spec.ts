@@ -8,8 +8,8 @@ const encoder = new Encoder();
 const decoder = new Decoder();
 
 test('two concurrent users can apply partial updates', () => {
-  const doc1 = Model.withLogicalClock();
-  doc1.api.root({
+  const doc1 = Model.create();
+  doc1.api.set({
     id: 123,
     name: 'John',
     verified: false,

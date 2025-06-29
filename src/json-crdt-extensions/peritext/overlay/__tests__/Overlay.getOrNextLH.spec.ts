@@ -10,7 +10,7 @@ describe('.getOrNextLower()', () => {
   test('returns "undefined" when ahead of any points', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -31,7 +31,7 @@ describe('.getOrNextLower()', () => {
   test('returns "undefined" when at ABS start and there are no slices at ABS start', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -47,7 +47,7 @@ describe('.getOrNextLower()', () => {
   test('combines overlay points - right anchor', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -70,7 +70,7 @@ describe('.getOrNextLower()', () => {
   test('combines overlay points - right anchor 2', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -93,7 +93,7 @@ describe('.getOrNextLower()', () => {
   test('can iterate through all character points', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -188,7 +188,7 @@ describe('.getOrNextHigher()', () => {
   test('returns "undefined" when after of all points', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -209,7 +209,7 @@ describe('.getOrNextHigher()', () => {
   test('returns "undefined" when at ABS end and there are no slices at ABS end', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -225,7 +225,7 @@ describe('.getOrNextHigher()', () => {
   test('can iterate through all character points', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -318,7 +318,7 @@ describe('.getOrNextLowerMarker()', () => {
   test('returns "undefined" when ahead of any points', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });
@@ -339,7 +339,7 @@ describe('.getOrNextLowerMarker()', () => {
   test('returns "undefined" when at ABS start and there are no slices at ABS start', () => {
     const model = Model.create();
     const api = model.api;
-    api.root({
+    api.set({
       text: '1234',
       slices: [],
     });

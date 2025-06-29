@@ -15,7 +15,7 @@ import {Model} from '..';
 
 const main = async () => {
   // Create a new JSON CRDT document.
-  const model = Model.withLogicalClock(1234); // 1234 is the session ID
+  const model = Model.create(void 0, 1234); // 1234 is the session ID
 
   const view$ = new BehaviorSubject(model.view());
   const unsubscribe = model.api.onChanges.listen(() => {
@@ -28,7 +28,7 @@ const main = async () => {
 
   // Execute a local change.
   console.log('Executing: model.api.root(456)');
-  model.api.root(456);
+  model.api.set(456);
   await new Promise((r) => setTimeout(r, 1));
 };
 

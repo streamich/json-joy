@@ -5,8 +5,8 @@ import {ClockVector} from '../../../../../json-crdt-patch/clock';
 
 describe('server', () => {
   test('decodes clock', () => {
-    const doc1 = Model.withServerClock(0);
-    doc1.api.root(123);
+    const doc1 = Model.withServerClock(void 0, 0);
+    doc1.api.set(123);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
@@ -16,7 +16,7 @@ describe('server', () => {
   });
 
   test('decodes all types', () => {
-    const doc1 = Model.withServerClock(0);
+    const doc1 = Model.withServerClock(void 0, 0);
     const json = {
       str: 'asdf',
       arr: [1, 2, 3],
@@ -25,7 +25,7 @@ describe('server', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
@@ -36,7 +36,7 @@ describe('server', () => {
 });
 
 test('can edit documents after decoding', () => {
-  const doc1 = Model.withServerClock(0);
+  const doc1 = Model.withServerClock(void 0, 0);
   const json = {
     str: 'asdf',
     arr: [1, 2, 3],
@@ -45,7 +45,7 @@ test('can edit documents after decoding', () => {
     nil: null,
     bool: [true, false],
   };
-  doc1.api.root(json);
+  doc1.api.set(json);
   const encoder = new Encoder();
   const decoder = new Decoder();
   const encoded = encoder.encode(doc1);
@@ -62,8 +62,8 @@ test('can edit documents after decoding', () => {
 
 describe('logical', () => {
   test('decodes clock', () => {
-    const doc1 = Model.withLogicalClock(new ClockVector(222, 1));
-    doc1.api.root(123);
+    const doc1 = Model.create(void 0, new ClockVector(222, 1));
+    doc1.api.set(123);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
@@ -74,7 +74,7 @@ describe('logical', () => {
   });
 
   test('decodes all types', () => {
-    const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
+    const doc1 = Model.create(void 0, new ClockVector(222, 0));
     const json = {
       str: 'asdf',
       arr: [1, 2, 3],
@@ -83,7 +83,7 @@ describe('logical', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);
@@ -93,7 +93,7 @@ describe('logical', () => {
   });
 
   test('can edit documents after decoding', () => {
-    const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
+    const doc1 = Model.create(void 0, new ClockVector(222, 0));
     const json = {
       str: 'asdf',
       arr: [1, 2, 3],
@@ -102,7 +102,7 @@ describe('logical', () => {
       nil: null,
       bool: [true, false],
     };
-    doc1.api.root(json);
+    doc1.api.set(json);
     const encoder = new Encoder();
     const decoder = new Decoder();
     const encoded = encoder.encode(doc1);

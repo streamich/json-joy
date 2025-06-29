@@ -1,9 +1,9 @@
-import {konst} from '../../../../json-crdt-patch';
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {
-  const doc = Model.withLogicalClock();
-  doc.api.root({
+  const doc = Model.create();
+  doc.api.set({
     arr: [1, 2, 3],
   });
   const arr = doc.api.arr(['arr']);
@@ -15,8 +15,8 @@ test('can insert a value and delete all previous ones', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock();
-  doc.api.root({
+  const doc = Model.create();
+  doc.api.set({
     arr: [1, 2, 3],
   });
   const arr = doc.api.arr(['arr']);
@@ -25,8 +25,8 @@ test('.length()', () => {
 
 describe('events', () => {
   test('fires onViewChanges event on change', async () => {
-    const doc = Model.withLogicalClock();
-    doc.api.root({
+    const doc = Model.create();
+    doc.api.set({
       myArr: [1, 2, 3],
     });
     const events: any[] = [];
@@ -40,8 +40,8 @@ describe('events', () => {
   });
 
   test('does not fire onViewChanges event when resulting view is the same', async () => {
-    const doc = Model.withLogicalClock();
-    doc.api.root({
+    const doc = Model.create();
+    doc.api.set({
       myArr: [1, 2, 3],
     });
     const events: any[] = [];
@@ -51,7 +51,7 @@ describe('events', () => {
     await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);
-    doc.api.arr(['myArr']).ins(1, [konst(2)]);
+    doc.api.arr(['myArr']).ins(1, [s.con(2)]);
     await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);

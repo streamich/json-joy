@@ -4,7 +4,7 @@ import {JsonPatch} from '../JsonPatch';
 describe('prefixed', () => {
   test('add', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       level1: {
         level2: {},
       },
@@ -22,7 +22,7 @@ describe('prefixed', () => {
 
   test('replace', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       level1: {
         level2: {
           a: 'b',
@@ -42,7 +42,7 @@ describe('prefixed', () => {
 
   test('remove', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       level1: {
         level2: {
           foo: [0, {b: 'c'}, 1],
@@ -62,7 +62,7 @@ describe('prefixed', () => {
 
   test('move', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       level1: {
         level2: {
           a: 'b',
@@ -82,7 +82,7 @@ describe('prefixed', () => {
 
   test('copy', () => {
     const model = Model.create();
-    model.api.root({
+    model.api.set({
       level1: {
         level2: {
           a: 'b',

@@ -2,13 +2,13 @@
 
 import {Model} from '../..';
 
-const doc = Model.withLogicalClock();
+const doc = Model.create();
 
 test('can edit document using JSON Patch operations', () => {
   // console.log(doc.view());
   // console.log(doc.toString());
 
-  doc.api.root({foo: 'bar'});
+  doc.api.set({foo: 'bar'});
 
   // console.log(doc.view());
   // console.log(doc.toString());

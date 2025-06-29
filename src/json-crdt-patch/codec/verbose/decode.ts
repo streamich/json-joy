@@ -23,9 +23,9 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
     switch (op.op) {
       case 'new_con': {
         if (op.timestamp) {
-          builder.const(decodeId(op.value as types.JsonCodecTimestamp));
+          builder.con(decodeId(op.value as types.JsonCodecTimestamp));
         } else {
-          builder.const(op.value);
+          builder.con(op.value);
         }
         break;
       }

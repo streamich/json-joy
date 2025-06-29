@@ -1,8 +1,8 @@
 import {Model} from '../Model';
 
 test('"obj" node returns same object if deep equality does not change', () => {
-  const model = Model.withLogicalClock();
-  model.api.root({
+  const model = Model.create();
+  model.api.set({
     foo: 'bar',
     qux: [1, 2, 3],
   });

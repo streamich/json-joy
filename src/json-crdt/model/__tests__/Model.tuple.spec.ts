@@ -5,7 +5,7 @@ import {VecNode} from '../../nodes';
 describe('Document', () => {
   describe('tuple', () => {
     test('can create a tuple', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.vec();
       doc.applyPatch(builder.patch);
@@ -15,11 +15,11 @@ describe('Document', () => {
     });
 
     test('can add elements to the tuple', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.vec();
       builder.insVec(id, [
-        [0, builder.const(1)],
+        [0, builder.con(1)],
         [1, builder.json('2')],
       ]);
       doc.applyPatch(builder.patch);
@@ -28,11 +28,11 @@ describe('Document', () => {
     });
 
     test('tuple holes are filled with "undefined" values', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.vec();
       builder.insVec(id, [
-        [0, builder.const(1)],
+        [0, builder.con(1)],
         [2, builder.json({})],
       ]);
       doc.applyPatch(builder.patch);

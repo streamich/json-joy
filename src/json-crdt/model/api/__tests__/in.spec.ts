@@ -3,14 +3,14 @@ import {ConApi, ObjApi, ValApi} from '../nodes';
 import {Model} from '../../Model';
 
 describe('can use .in() method to reference any model node', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
 
   test('can access root node', () => {
     const node = doc.api.r.asVal();
     expect(node.node).toBeInstanceOf(RootNode);
   });
 
-  doc.api.root({
+  doc.api.set({
     foo: [1],
   });
   doc.api.r.in('/foo/0').asVal().set({bar: 'baz'});

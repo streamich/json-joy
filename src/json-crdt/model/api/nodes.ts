@@ -5,16 +5,23 @@ import {find} from './find';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
+import {FanOut} from 'thingies/lib/fanout';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
+import * as diff from '../../../json-crdt-diff';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
-import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from './proxy';
-import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
+import type {Patch} from '../../../json-crdt-patch';
+import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
+import type {SyncStore} from '../../../util/events/sync-store';
+import type {Model} from '../Model';
+import type {JsonNode, JsonNodeView} from '../../nodes';
 
 const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | number] => {
   if (!path) return [void 0, ''];
@@ -71,7 +78,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @returns JSON CRDT node at the given path.
    */
   public find(path?: ApiPath): JsonNode {
-    const node = this.node;
+    let node: JsonNode<any> = this.node;
+    /**
+     * @todo Remove this .child() loop, and remove the `.child()` method from JsonNode interface.
+     */
     if (path === undefined) {
       if (typeof node.child === 'function') {
         const child = node.child();
@@ -85,7 +95,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     }
     if (typeof path === 'string' && !!path && path[0] !== '/') path = '/' + path;
     if (typeof path === 'number') path = [path];
-    return find(this.node, path);
+    while (node instanceof ValNode) node = node.child()!;
+    return find(node, path);
   }
 
   /**
@@ -122,7 +133,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public asVec(): VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
-    throw new Error('NOT_ARR');
+    throw new Error('NOT_VEC');
   }
 
   public asObj(): ObjApi {
@@ -132,7 +143,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public asCon(): ConApi {
     if (this.node instanceof ConNode) return this.api.wrap(this.node);
-    throw new Error('NOT_CONST');
+    throw new Error('NOT_CON');
   }
 
   /**
@@ -304,6 +315,14 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       return true;
     } catch {}
     return false;
+  }
+
+  public diff(value: unknown): Patch {
+    return diff.diff(this, value);
+  }
+
+  public merge(value: unknown): void {
+    diff.merge(this, value);
   }
 
   public proxy(): types.ProxyNode<N> {
@@ -498,7 +517,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
     const {builder} = api;
     api.builder.insObj(
       node.id,
-      keys.map((key) => [key, builder.const(undefined)]),
+      keys.map((key) => [key, builder.con(undefined)]),
     );
     api.apply();
   }
@@ -779,4 +798,258 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     );
     return proxy as types.ProxyNodeArr<N>;
   }
+}
+
+/**
+ * Local changes API for a JSON CRDT model. This class is the main entry point
+ * for executing local user actions on a JSON CRDT document.
+ *
+ * @category Local API
+ */
+export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>> implements SyncStore<JsonNodeView<N>> {
+  /**
+   * Patch builder for the local changes.
+   */
+  public builder: PatchBuilder;
+
+  /**
+   * Index of the next operation in builder's patch to be committed locally.
+   *
+   * @ignore
+   */
+  public next: number = 0;
+
+  /** Emitted before the model is reset, using the `.reset()` method. */
+  public readonly onBeforeReset = new FanOut<void>();
+  /** Emitted after the model is reset, using the `.reset()` method. */
+  public readonly onReset = new FanOut<void>();
+  /** Emitted before a patch is applied using `model.applyPatch()`. */
+  public readonly onBeforePatch = new FanOut<Patch>();
+  /** Emitted after a patch is applied using `model.applyPatch()`. */
+  public readonly onPatch = new FanOut<Patch>();
+  /** Emitted before local changes through `model.api` are applied. */
+  public readonly onBeforeLocalChange = new FanOut<number>();
+  /** Emitted after local changes through `model.api` are applied. */
+  public readonly onLocalChange = new FanOut<number>();
+  /**
+   * Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask.
+   */
+  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
+  /** Emitted before a transaction is started. */
+  public readonly onBeforeTransaction = new FanOut<void>();
+  /** Emitted after transaction completes. */
+  public readonly onTransaction = new FanOut<void>();
+  /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
+  public readonly onChange = new MergeFanOut<number | Patch | undefined>([
+    this.onReset,
+    this.onPatch,
+    this.onLocalChange,
+  ]);
+  /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
+  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | undefined>(this.onChange);
+  /** Emitted when the `model.api` builder change buffer is flushed. */
+  public readonly onFlush = new FanOut<Patch>();
+
+  /**
+   * @param model Model instance on which the API operates.
+   */
+  constructor(public readonly model: Model<N>) {
+    super(model.root, void 0 as any);
+    (this as any).api = this;
+    this.builder = new PatchBuilder(model.clock);
+    model.onbeforereset = () => this.onBeforeReset.emit();
+    model.onreset = () => this.onReset.emit();
+    model.onbeforepatch = (patch) => this.onBeforePatch.emit(patch);
+    model.onpatch = (patch) => this.onPatch.emit(patch);
+  }
+
+  /**
+   * Returns a local change API for the given node. If an instance already
+   * exists, returns the existing instance.
+   */
+  public wrap(node: ValNode): ValApi;
+  public wrap(node: StrNode<any>): StrApi;
+  public wrap(node: BinNode): BinApi;
+  public wrap(node: ArrNode): ArrApi;
+  public wrap(node: ObjNode): ObjApi;
+  public wrap(node: ConNode): ConApi;
+  public wrap(node: VecNode): VecApi;
+  public wrap(node: JsonNode): NodeApi;
+  public wrap(node: ExtNode<any, any>): NodeApi;
+  public wrap(node: JsonNode) {
+    if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
+    else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
+    else if (node instanceof BinNode) return node.api || (node.api = new BinApi(node, this));
+    else if (node instanceof ArrNode) return node.api || (node.api = new ArrApi(node, this));
+    else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
+    else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
+    else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
+    else if (node instanceof ExtNode) {
+      if (node.api) return node.api;
+      const extension = this.model.ext.get(node.extId)!;
+      return (node.api = new extension.Api(node, this));
+    } else throw new Error('UNKNOWN_NODE');
+  }
+
+  /**
+   * Local changes API for the root node.
+   */
+  public get r() {
+    return new ValApi(this.model.root, this);
+  }
+
+  public get $(): JsonNodeToProxyPathNode<N> {
+    return proxy$((path) => {
+      try {
+        return this.wrap(this.find(path));
+      } catch {
+        return;
+      }
+    }, '$') as any;
+  }
+
+  /**
+   * Traverses the model starting from the root node and returns a local
+   * changes API for a node at the given path.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a node at the given path.
+   */
+  public in(path?: ApiPath) {
+    return this.r.in(path);
+  }
+
+  /**
+   * Given a JSON/CBOR value, constructs CRDT nodes recursively out of it and
+   * sets the root node of the model to the constructed nodes.
+   *
+   * @param json JSON/CBOR value to set as the view of the model.
+   * @returns Reference to itself.
+   *
+   * @deprecated Use `.set()` instead.
+   */
+  public root(json: unknown): this {
+    return this.set(json as any);
+  }
+  public set(json: unknown): this {
+    super.set(json as any);
+    return this;
+  }
+
+  /**
+   * Apply locally any operations from the `.builder`, which haven't been
+   * applied yet.
+   */
+  public apply() {
+    const ops = this.builder.patch.ops;
+    const length = ops.length;
+    const model = this.model;
+    const from = this.next;
+    this.onBeforeLocalChange.emit(from);
+    for (let i = this.next; i < length; i++) model.applyOperation(ops[i]);
+    this.next = length;
+    model.tick++;
+    this.onLocalChange.emit(from);
+  }
+
+  /**
+   * Advance patch pointer to the end without applying the operations. With the
+   * idea that they have already been applied locally.
+   *
+   * You need to manually call `this.onBeforeLocalChange.emit(this.next)` before
+   * calling this method.
+   *
+   * @ignore
+   */
+  public advance() {
+    const from = this.next;
+    this.next = this.builder.patch.ops.length;
+    this.model.tick++;
+    this.onLocalChange.emit(from);
+  }
+
+  public select(path?: ApiPath, leaf?: boolean) {
+    return this.r.select(path, leaf);
+  }
+
+  /**
+   * Reads the value at the given path in the model. If no path is provided,
+   * returns the root node's view.
+   *
+   * @param path Path at which to read the value.
+   * @returns The value at the given path, or the root node's view if no path
+   *     is provided.
+   */
+  public read(path?: ApiPath): unknown {
+    return this.r.read(path);
+  }
+
+  public add(path: ApiPath, value: unknown): boolean {
+    return this.r.add(path, value);
+  }
+
+  public replace(path: ApiPath, value: unknown): boolean {
+    return this.r.replace(path, value);
+  }
+
+  public remove(path: ApiPath, length?: number): boolean {
+    return this.r.remove(path, length);
+  }
+
+  private inTx = false;
+  public transaction(callback: () => void) {
+    if (this.inTx) callback();
+    else {
+      this.inTx = true;
+      try {
+        this.onBeforeTransaction.emit();
+        callback();
+        this.onTransaction.emit();
+      } finally {
+        this.inTx = false;
+      }
+    }
+  }
+
+  /**
+   * Flushes the builder and returns a patch.
+   *
+   * @returns A JSON CRDT patch.
+   * @todo Make this return undefined if there are no operations in the builder.
+   */
+  public flush(): Patch {
+    const patch = this.builder.flush();
+    this.next = 0;
+    if (patch.ops.length) this.onFlush.emit(patch);
+    return patch;
+  }
+
+  public stopAutoFlush?: () => void = undefined;
+
+  /**
+   * Begins to automatically flush buffered operations into patches, grouping
+   * operations by microtasks or by transactions. To capture the patch, listen
+   * to the `.onFlush` event.
+   *
+   * @returns Callback to stop auto flushing.
+   */
+  public autoFlush(drainNow = false): () => void {
+    const drain = () => this.builder.patch.ops.length && this.flush();
+    const onLocalChangesUnsubscribe = this.onLocalChanges.listen(drain);
+    const onBeforeTransactionUnsubscribe = this.onBeforeTransaction.listen(drain);
+    const onTransactionUnsubscribe = this.onTransaction.listen(drain);
+    if (drainNow) drain();
+    return (this.stopAutoFlush = () => {
+      this.stopAutoFlush = undefined;
+      onLocalChangesUnsubscribe();
+      onBeforeTransactionUnsubscribe();
+      onTransactionUnsubscribe();
+    });
+  }
+
+  // ---------------------------------------------------------------- SyncStore
+
+  public readonly subscribe = (callback: () => void) => this.onChanges.listen(() => callback());
+  public readonly getSnapshot = () => this.view() as JsonNodeView<N>;
 }

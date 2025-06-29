@@ -6,7 +6,7 @@
 const {Model} = require('../../../lib/json-crdt');
 const json = require('../../data/json6');
 
-const doc1 = Model.withLogicalClock();
+const doc1 = Model.create();
 const doc2 = Model.withServerClock();
 
 doc1.api.root(json);

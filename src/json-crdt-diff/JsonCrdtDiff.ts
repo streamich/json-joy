@@ -114,7 +114,7 @@ export class JsonCrdtDiff {
     src.forEach((key) => {
       srcKeys.add(key);
       const dstValue = dst[key];
-      if (dstValue === void 0) inserts.push([key, builder.const(undefined)]);
+      if (dstValue === void 0) inserts.push([key, builder.con(undefined)]);
     });
     const keys = Object.keys(dst);
     const length = keys.length;
@@ -132,7 +132,7 @@ export class JsonCrdtDiff {
           }
         }
       }
-      inserts.push([key, src.get(key) instanceof ConNode ? builder.const(dstValue) : builder.constOrJson(dstValue)]);
+      inserts.push([key, src.get(key) instanceof ConNode ? builder.con(dstValue) : builder.constOrJson(dstValue)]);
     }
     if (inserts.length) builder.insObj(src.id, inserts);
   }
@@ -151,7 +151,7 @@ export class JsonCrdtDiff {
         const child = index.get(id);
         const isDeleted = !child || (child instanceof ConNode && child.val === void 0);
         if (isDeleted) return;
-        edits.push([i, builder.const(void 0)]);
+        edits.push([i, builder.con(void 0)]);
       }
     }
     for (let i = 0; i < min; i++) {

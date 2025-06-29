@@ -20,7 +20,7 @@ export class Decoder {
     this.decoder.reader.reset(meta);
     this.decodeClockTable();
     const clock = this.clockDecoder!.clock;
-    this.doc = Model.withLogicalClock(clock);
+    this.doc = Model.create(void 0, clock);
     this.doc.root = new nodes.RootNode(this.doc, this.cRoot(view).id);
     this.clockDecoder = undefined;
     return this.doc;

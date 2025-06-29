@@ -1,5 +1,5 @@
 import {mval} from '../../../../json-crdt-extensions/mval';
-import {konst} from '../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../../../json-crdt/model';
 
 test('can specify extension name', () => {
@@ -7,9 +7,9 @@ test('can specify extension name', () => {
 });
 
 test('can create a new multi-value register', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
-  model.api.root({
+  model.api.set({
     mv: mval.new(),
   });
   expect(model.view()).toEqual({
@@ -18,9 +18,9 @@ test('can create a new multi-value register', () => {
 });
 
 test('can provide initial value', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
-  model.api.root({
+  model.api.set({
     mv: mval.new({foo: 'bar'}),
   });
   expect(model.view()).toEqual({
@@ -29,9 +29,9 @@ test('can provide initial value', () => {
 });
 
 test('can read view from node or API node', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
-  model.api.root({
+  model.api.set({
     mv: mval.new('foo'),
   });
   const api = model.api.in('mv').asExt()!;
@@ -40,13 +40,13 @@ test('can read view from node or API node', () => {
 });
 
 test('exposes API to edit extension data', () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   model.ext.register(mval);
-  model.api.root({
+  model.api.set({
     mv: mval.new(),
   });
   const nodeApi = model.api.in('mv').asExt(mval);
-  nodeApi.set(konst('lol'));
+  nodeApi.set(s.con('lol'));
   expect(model.view()).toEqual({
     mv: ['lol'],
   });
@@ -54,9 +54,9 @@ test('exposes API to edit extension data', () => {
 
 describe('extension validity checks', () => {
   test('does not treat VecNode as extension if header is too long', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(mval);
-    model.api.root({
+    model.api.set({
       mv: mval.new(),
     });
     const buf = new Uint8Array(4);
@@ -70,9 +70,9 @@ describe('extension validity checks', () => {
   });
 
   test('does not treat VecNode as extension if header sid is wrong', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(mval);
-    model.api.root({
+    model.api.set({
       mv: mval.new(),
     });
     const buf = model.api.con(['mv', 0]).node.view() as Uint8Array;
@@ -84,9 +84,9 @@ describe('extension validity checks', () => {
   });
 
   test('does not treat VecNode as extension if header time is wrong', () => {
-    const model = Model.withLogicalClock();
+    const model = Model.create();
     model.ext.register(mval);
-    model.api.root({
+    model.api.set({
       mv: mval.new(),
     });
     const buf = model.api.con(['mv', 0]).node.view() as Uint8Array;
