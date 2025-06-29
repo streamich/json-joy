@@ -5,7 +5,7 @@ import {ClockVector} from '../../../../../json-crdt-patch/clock';
 
 describe('server', () => {
   test('decodes clock', () => {
-    const doc1 = Model.withServerClock(0);
+    const doc1 = Model.withServerClock(void 0, 0);
     doc1.api.set(123);
     const encoder = new Encoder();
     const decoder = new Decoder();
@@ -16,7 +16,7 @@ describe('server', () => {
   });
 
   test('decodes all types', () => {
-    const doc1 = Model.withServerClock(0);
+    const doc1 = Model.withServerClock(void 0, 0);
     const json = {
       str: 'asdf',
       arr: [1, 2, 3],
@@ -36,7 +36,7 @@ describe('server', () => {
 });
 
 test('can edit documents after decoding', () => {
-  const doc1 = Model.withServerClock(0);
+  const doc1 = Model.withServerClock(void 0, 0);
   const json = {
     str: 'asdf',
     arr: [1, 2, 3],

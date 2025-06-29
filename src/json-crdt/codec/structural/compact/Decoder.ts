@@ -18,7 +18,7 @@ export class Decoder {
       this.clockDecoder = ClockDecoder.fromArr(time as number[]);
     }
     const model = isServerTime
-      ? Model.withServerClock(time as number)
+      ? Model.withServerClock(void 0, time as number)
       : Model.create(void 0, this.clockDecoder!.clock);
     const val = root ? this.decNode(model, root) : UNDEFINED;
     model.root = new nodes.RootNode(model, val.id);

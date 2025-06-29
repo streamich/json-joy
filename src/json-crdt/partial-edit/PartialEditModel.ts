@@ -4,8 +4,8 @@ import {Model} from '../model/Model';
 export class PartialEditModel extends Model {
   public deletes: ITimestampStruct[] = [];
 
-  protected deleteNodeTree(value: ITimestampStruct) {
+  protected _gcTree(value: ITimestampStruct) {
     this.deletes.push(value);
-    super.deleteNodeTree(value);
+    super._gcTree(value);
   }
 }

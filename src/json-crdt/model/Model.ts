@@ -53,22 +53,6 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
-   * Create a CRDT model which uses server clock. In this model a central server
-   * timestamps each operation with a sequence number. Each timestamp consists
-   * simply of a sequence number, which was assigned by a server. In this model
-   * all operations are approved, persisted and re-distributed to all clients by
-   * a central server.
-   *
-   * @param time Latest known server sequence number.
-   * @returns CRDT model.
-   *
-   * @deprecated Use `Model.create()` instead: `Model.create(undefined, SESSION.SERVER)`.
-   */
-  public static readonly withServerClock = (time: number = 1): Model => {
-    return Model.create(void 0, new clock.ServerClockVector(SESSION.SERVER, time));
-  };
-
-  /**
    * Create a new JSON CRDT model. If a schema is provided, the model is
    * strictly typed and the default value of the model is set to the default
    * value of the schema.
@@ -153,6 +137,20 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     if (schema) model.setSchema(schema, true);
     return model;
   };
+
+  /**
+   * Create a CRDT model which uses server clock. In this model a central server
+   * timestamps each operation with a sequence number. Each timestamp consists
+   * simply of a sequence number, which was assigned by a server. In this model
+   * all operations are approved, persisted and re-distributed to all clients by
+   * a central server. The session ID part of the clock is the same for all
+   * clients, i.e. {@link SESSION.SERVER}.
+   *
+   * @param time Latest known server sequence number.
+   * @returns CRDT model.
+   */
+  public static readonly withServerClock = <S extends NodeBuilder>(schema?: S, time: number = 1) =>
+    Model.create(schema, new clock.ServerClockVector(SESSION.SERVER, time));
 
   /**
    * Decodes a model from a "binary" structural encoding.
@@ -375,7 +373,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           if (!valueNode) continue;
           if (node.id.time >= tuple[1].time) continue;
           const old = node.put(tuple[0] + '', valueNode.id);
-          if (old) this.deleteNodeTree(old);
+          if (old) this._gcTree(old);
         }
       }
     } else if (op instanceof operations.InsVecOp) {
@@ -389,7 +387,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           if (!valueNode) continue;
           if (node.id.time >= tuple[1].time) continue;
           const old = node.put(Number(tuple[0]), valueNode.id);
-          if (old) this.deleteNodeTree(old);
+          if (old) this._gcTree(old);
         }
       }
     } else if (op instanceof operations.InsValOp) {
@@ -399,7 +397,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
         const newValue = index.get(op.val);
         if (newValue) {
           const old = node.set(op.val);
-          if (old) this.deleteNodeTree(old);
+          if (old) this._gcTree(old);
         }
       }
     } else if (op instanceof operations.InsArrOp) {
@@ -425,7 +423,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           const span = op.what[i];
           for (let j = 0; j < span.span; j++) {
             const id = node.getById(new clock.Timestamp(span.sid, span.time + j));
-            if (id) this.deleteNodeTree(id);
+            if (id) this._gcTree(id);
           }
         }
         node.delete(op.what);
@@ -449,14 +447,14 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    *
    * @ignore
    */
-  protected deleteNodeTree(value: clock.ITimestampStruct) {
+  protected _gcTree(value: clock.ITimestampStruct) {
     const isSystemNode = value.sid === SESSION.SYSTEM;
     if (isSystemNode) return;
     const node = this.index.get(value);
     if (!node) return;
     const api = node.api;
     if (api) (api as NodeApi).events.handleDelete();
-    node.children((child) => this.deleteNodeTree(child.id));
+    node.children((child) => this._gcTree(child.id));
     this.index.del(value);
   }
 
