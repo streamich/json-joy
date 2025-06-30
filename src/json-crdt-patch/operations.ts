@@ -225,9 +225,7 @@ export class InsStrOp extends Op implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    return super.toString() + `, obj = ${printTs(
-      this.obj,
-    )} { ${printTs(this.ref)} ← ${JSON.stringify(this.data)} }`;
+    return super.toString() + `, obj = ${printTs(this.obj)} { ${printTs(this.ref)} ← ${JSON.stringify(this.data)} }`;
   }
 }
 
@@ -299,7 +297,7 @@ export class InsArrOp extends Op implements IJsonCrdtPatchEditOperation {
     const obj = printTs(this.obj);
     const ref = printTs(this.ref);
     const data = this.data.map(printTs).join(', ');
-    return super.toString()  + ', obj = ' + obj + ' { ' + ref + ' ← ' + data + ' }';
+    return super.toString() + ', obj = ' + obj + ' { ' + ref + ' ← ' + data + ' }';
   }
 }
 
@@ -310,10 +308,10 @@ export class InsArrOp extends Op implements IJsonCrdtPatchEditOperation {
  */
 export class UpdArrOp extends Op implements IJsonCrdtPatchEditOperation {
   /**
-    * @param id ID of this operation.
-    * @param obj and "arr" object ID where to update an element.
-    * @param ref ID of the element to update.
-    * @param val ID of the new value to set.
+   * @param id ID of this operation.
+   * @param obj and "arr" object ID where to update an element.
+   * @param ref ID of the element to update.
+   * @param val ID of the new value to set.
    */
   constructor(
     public readonly id: ITimestampStruct,
@@ -332,7 +330,7 @@ export class UpdArrOp extends Op implements IJsonCrdtPatchEditOperation {
     const obj = printTs(this.obj);
     const ref = printTs(this.ref);
     const val = printTs(this.val);
-    return super.toString()  + ', obj = ' + obj + ' { ' + ref + ': ' + val + ' }';
+    return super.toString() + ', obj = ' + obj + ' { ' + ref + ': ' + val + ' }';
   }
 }
 

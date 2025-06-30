@@ -41,8 +41,6 @@ test('can encode "upd_arr" operation', () => {
   const encoded = encode(builder.patch);
   expect(encoded).toEqual({
     id: [5, 28],
-    ops: [
-      {op: 'upd_arr', obj: [5, 25], ref: [5, 26], value: [5, 27]},
-    ],
+    ops: [{op: 'upd_arr', obj: [5, 25], ref: [5, 26], value: [5, 27]}],
   });
 });

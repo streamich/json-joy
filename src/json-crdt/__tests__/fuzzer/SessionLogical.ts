@@ -161,7 +161,7 @@ export class SessionLogical {
     const opcode = this.fuzzer.picker.pickArrayOperation(node);
     const builder = new PatchBuilder(model.clock);
     const length = node.length();
-    if (!length || (opcode === InsArrOp)) {
+    if (!length || opcode === InsArrOp) {
       const json = RandomJson.generate({nodeCount: Math.ceil(Math.random() * 5)});
       const valueId = builder.json(json);
       if (!length) builder.insArr(node.id, node.id, [valueId]);

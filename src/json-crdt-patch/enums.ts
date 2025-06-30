@@ -61,7 +61,7 @@ export const enum JsonCrdtPatchOpcode {
   ins_str = 0b01000 | JsonCrdtDataType.str, // 12
   ins_bin = 0b01000 | JsonCrdtDataType.bin, // 13
   ins_arr = 0b01000 | JsonCrdtDataType.arr, // 14
-  upd_arr = 0b01000 | JsonCrdtDataType.arr + 1, // 15
+  upd_arr = 0b01000 | (JsonCrdtDataType.arr + 1), // 15
   del = 0b10000, // 16
   nop = 0b10001, // 17
 }

@@ -73,9 +73,11 @@ describe('.create<Schema>()', () => {
     const model = Model.create({
       key1: 'value1',
       key2: {
-        key3: [{
-          foo: 'bar',
-        }],
+        key3: [
+          {
+            foo: 'bar',
+          },
+        ],
       },
     });
     expect(model.$.key2.key3[0].foo.$?.view()).toBe('bar');

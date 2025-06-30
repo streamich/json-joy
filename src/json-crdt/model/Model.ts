@@ -133,7 +133,11 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           ? new clock.ServerClockVector(SESSION.SERVER, 1)
           : new clock.ClockVector(sidOrClock, 1)
         : sidOrClock;
-    type Node = undefined extends S ? JsonNode : S extends NodeBuilder ? SchemaToJsonNode<S> : SchemaToJsonNode<nodes.json<S>>;
+    type Node = undefined extends S
+      ? JsonNode
+      : S extends NodeBuilder
+        ? SchemaToJsonNode<S>
+        : SchemaToJsonNode<nodes.json<S>>;
     const model: Model<Node> = new Model<Node>(cl);
     if (schema !== void 0) model.setSchema(schema instanceof NodeBuilder ? schema : s.json(schema), true);
     return model;

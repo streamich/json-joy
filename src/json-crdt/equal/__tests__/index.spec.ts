@@ -47,42 +47,51 @@ describe('equalSchema(), with content comparison', () => {
   });
 
   test('returns false for slightly different nodes', () => {
-    assertSchemasDifferent({
-      foo: 'bar',
-      num: 123,
-      obj: {key: 'value'},
-      arr: [1, 2, 3],
-      bool: true,
-    }, {
-      foo: 'bar',
-      num: 124,
-      obj: {key: 'value'},
-      arr: [1, 2, 3],
-      bool: true,
-    });
+    assertSchemasDifferent(
+      {
+        foo: 'bar',
+        num: 123,
+        obj: {key: 'value'},
+        arr: [1, 2, 3],
+        bool: true,
+      },
+      {
+        foo: 'bar',
+        num: 124,
+        obj: {key: 'value'},
+        arr: [1, 2, 3],
+        bool: true,
+      },
+    );
   });
 
   test('returns false for slightly different nodes - 2', () => {
-    assertSchemasDifferent({
-      foo: 'baz',
-      num: 123,
-      obj: {key: 'value'},
-      arr: [1, 2, 3],
-      bool: true,
-    }, {
-      foo: 'baz',
-      num: 123,
-      obj: {key: 'valee'},
-      arr: [1, 2, 3],
-      bool: true,
-    });
+    assertSchemasDifferent(
+      {
+        foo: 'baz',
+        num: 123,
+        obj: {key: 'value'},
+        arr: [1, 2, 3],
+        bool: true,
+      },
+      {
+        foo: 'baz',
+        num: 123,
+        obj: {key: 'valee'},
+        arr: [1, 2, 3],
+        bool: true,
+      },
+    );
   });
 
   test('returns false for slightly different nodes - 3', () => {
-    assertSchemasDifferent({
-      bin: new Uint8Array([1, 2, 3]),
-    }, {
-      bin: new Uint8Array([1, 0, 3]),
-    });
+    assertSchemasDifferent(
+      {
+        bin: new Uint8Array([1, 2, 3]),
+      },
+      {
+        bin: new Uint8Array([1, 0, 3]),
+      },
+    );
   });
 });

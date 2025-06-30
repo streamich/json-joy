@@ -1,4 +1,4 @@
-import {nodes, s} from '../../../../json-crdt-patch';
+import {type nodes, s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {

@@ -671,7 +671,7 @@ describe('Document', () => {
         doc.applyPatch(patch);
         expect(doc.view()).toEqual([1, 0, 3]);
       });
-      
+
       test('removes subtree replaced by the latest op', () => {
         const doc = Model.create([1, {foo: [1, 2, 3]}, 3]);
         const node = doc.root.child();

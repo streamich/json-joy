@@ -114,9 +114,9 @@ export class ArrNode<Element extends JsonNode = JsonNode>
    * Returns ID of the RGA slot (not the referenced JSON node) at a given position
    * in the array. The ID is a timestamp the unique slot of the element in the RGA.
    * To retrieve the JSON node ID referenced by the slot, use {@link get} method.
-   * 
+   *
    * @todo Rename to `getRef`.
-   * 
+   *
    * @param position The position of the element to get.
    * @returns ID of the RGA slot.
    */
@@ -137,7 +137,7 @@ export class ArrNode<Element extends JsonNode = JsonNode>
 
   /**
    * Updates an array element in-place. Used by the "upd_arr" operation.
-   * 
+   *
    * @todo Verify that the new ID is greater than the old ID.
    *
    * @param ref A reference to the element slot in the array.

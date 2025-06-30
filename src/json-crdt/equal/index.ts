@@ -1,5 +1,5 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {ArrNode, BinNode, ConNode, JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
+import {ArrNode, BinNode, ConNode, type JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
 
 /**
  * Deeply checks if two JSON nodes have the same schema and values. Does not
@@ -14,7 +14,8 @@ export const equalSchema = <A extends JsonNode<any>>(a: A, b: unknown, compareCo
   if (a === b) return true;
   if (a instanceof ConNode) return b instanceof ConNode && (!compareContent || deepEqual(a.val, b.val));
   else if (a instanceof ValNode) return b instanceof ValNode && equalSchema(a.node(), b.node(), compareContent);
-  else if (a instanceof StrNode) return b instanceof StrNode && (!compareContent || (a.length() === b.length() && a.view() === b.view()));
+  else if (a instanceof StrNode)
+    return b instanceof StrNode && (!compareContent || (a.length() === b.length() && a.view() === b.view()));
   else if (a instanceof ObjNode) {
     if (!(b instanceof ObjNode)) return false;
     const keys1 = a.keys;
