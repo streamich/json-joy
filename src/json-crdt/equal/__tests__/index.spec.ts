@@ -2,18 +2,33 @@ import {Model} from '../../model';
 import {equalSchema} from '..';
 import {s} from '../../../json-crdt-patch';
 
-describe('equalSchema()', () => {
+describe('equalSchema(), schema only', () => {
+  const assertSchemasEqual = (a: unknown, b: unknown): void => {
+    const model1 = Model.create(a);
+    const model2 = Model.create(b);
+    const result = equalSchema(model1.root, model2.root, false);
+    expect(result).toBe(true);
+  };
+
+  test('returns true for identical nodes', () => {
+    assertSchemasEqual(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 4]));
+    assertSchemasEqual({foo: 'bar', num: 123}, {foo: 'baz', num: 456});
+    expect(() => assertSchemasEqual({foo: 'bar', num: 123}, {foo: 'baz', num: 456, x: 'y'})).toThrow();
+  });
+});
+
+describe('equalSchema(), with content comparison', () => {
   const assertSchemasEqual = (a: unknown): void => {
     const model1 = Model.create(a);
     const model2 = Model.create(a);
-    const result = equalSchema(model1.root, model2.root);
+    const result = equalSchema(model1.root, model2.root, true);
     expect(result).toBe(true);
   };
 
   const assertSchemasDifferent = (a: unknown, b: unknown): void => {
     const model1 = Model.create(a);
     const model2 = Model.create(b);
-    const result = equalSchema(model1.root, model2.root);
+    const result = equalSchema(model1.root, model2.root, true);
     expect(result).toBe(false);
   };
 
