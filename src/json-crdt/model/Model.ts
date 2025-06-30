@@ -1,15 +1,15 @@
 import * as operations from '../../json-crdt-patch/operations';
 import * as clock from '../../json-crdt-patch/clock';
-import {ConNode} from '../nodes/const/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {ModelApi} from './api';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {ConNode} from '../nodes/const/ConNode';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {NodeBuilder, s} from '../../json-crdt-patch';
+import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
@@ -126,16 +126,20 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   public static readonly create = <S extends NodeBuilder | unknown>(
     schema?: S,
     sidOrClock: clock.ClockVector | number = Model.sid(),
-  ): Model<S extends NodeBuilder ? SchemaToJsonNode<S> : JsonNode> => {
+  ) => {
     const cl =
       typeof sidOrClock === 'number'
         ? sidOrClock === SESSION.SERVER
           ? new clock.ServerClockVector(SESSION.SERVER, 1)
           : new clock.ClockVector(sidOrClock, 1)
         : sidOrClock;
-    type Node = S extends NodeBuilder ? SchemaToJsonNode<S> : JsonNode;
-    const model = new Model<Node>(cl);
-    if (schema) model.setSchema(schema instanceof NodeBuilder ? schema : s.json(schema), true);
+    type Node = undefined extends S
+      ? JsonNode
+      : S extends NodeBuilder
+        ? SchemaToJsonNode<S>
+        : SchemaToJsonNode<nodes.json<S>>;
+    const model: Model<Node> = new Model<Node>(cl);
+    if (schema !== void 0) model.setSchema(schema instanceof NodeBuilder ? schema : s.json(schema), true);
     return model;
   };
 
@@ -258,7 +262,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * typed proxy wrapper around the value of the root node.
    */
   public get s() {
-    return this.api.r.proxy().val;
+    return this.api.s._;
   }
 
   /**
@@ -416,6 +420,15 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
         }
         if (nodes.length) node.ins(op.ref, op.id, nodes);
       }
+    } else if (op instanceof operations.UpdArrOp) {
+      const node = index.get(op.obj);
+      if (node instanceof ArrNode) {
+        const val = op.val;
+        if (index.get(val)) {
+          const old = node.upd(op.ref, val);
+          if (old) this._gcTree(old);
+        }
+      }
     } else if (op instanceof operations.DelOp) {
       const node = index.get(op.obj);
       if (node instanceof ArrNode) {
@@ -508,6 +521,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     if (api) {
       api.flush();
       api.builder.clock = this.clock;
+      api.node = this.root;
     }
     // biome-ignore lint: index is not iterable
     index.forEach(({v: node}) => {

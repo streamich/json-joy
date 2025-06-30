@@ -1,27 +1,43 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {type ITimestampStruct, type ITimespanStruct, Timestamp, printTs} from './clock';
 import type {IJsonCrdtPatchEditOperation, IJsonCrdtPatchOperation} from './types';
+import type {JsonCrdtPatchMnemonic} from './codec/verbose';
+
+abstract class Op implements IJsonCrdtPatchOperation {
+  constructor(public readonly id: ITimestampStruct) {}
+
+  public span(): number {
+    return 1;
+  }
+
+  public abstract name(): JsonCrdtPatchMnemonic;
+
+  public toString(): string {
+    let str: string = this.name() + ' ' + printTs(this.id);
+    const span = this.span();
+    if (span > 1) str += '!' + span;
+    return str;
+  }
+}
 
 /**
  * Operation which creates a constant "con" data type.
  *
  * @category Operations
  */
-export class NewConOp implements IJsonCrdtPatchOperation {
+export class NewConOp extends Op implements IJsonCrdtPatchOperation {
   constructor(
     public readonly id: ITimestampStruct,
     public readonly val: unknown | undefined | ITimestampStruct,
-  ) {}
-
-  public span(): number {
-    return 1;
+  ) {
+    super(id);
   }
 
   public name() {
     return 'new_con' as const;
   }
 
-  public toString(tab: string = ''): string {
+  public toString(): string {
     const val = this.val;
     const klass = 'Uint8Array';
     const valFormatted =
@@ -32,7 +48,7 @@ export class NewConOp implements IJsonCrdtPatchOperation {
             ? `${klass} { ${('' + val).replaceAll(',', ', ')} }`
             : `${klass}(${val.length})`
           : `{ ${JSON.stringify(val)} }`;
-    return `${this.name()} ${printTs(this.id)} ${valFormatted}`;
+    return super.toString() + ' ' + valFormatted;
   }
 }
 
@@ -41,19 +57,9 @@ export class NewConOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class NewValOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct) {}
-
-  public span(): number {
-    return 1;
-  }
-
+export class NewValOp extends Op implements IJsonCrdtPatchOperation {
   public name() {
     return 'new_val' as const;
-  }
-
-  public toString(): string {
-    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -62,19 +68,9 @@ export class NewValOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class NewObjOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct) {}
-
-  public span(): number {
-    return 1;
-  }
-
+export class NewObjOp extends Op implements IJsonCrdtPatchOperation {
   public name() {
     return 'new_obj' as const;
-  }
-
-  public toString(): string {
-    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -83,19 +79,9 @@ export class NewObjOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class NewVecOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct) {}
-
-  public span(): number {
-    return 1;
-  }
-
+export class NewVecOp extends Op implements IJsonCrdtPatchOperation {
   public name() {
     return 'new_vec' as const;
-  }
-
-  public toString(): string {
-    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -104,19 +90,9 @@ export class NewVecOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class NewStrOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct) {}
-
-  public span(): number {
-    return 1;
-  }
-
+export class NewStrOp extends Op implements IJsonCrdtPatchOperation {
   public name() {
     return 'new_str' as const;
-  }
-
-  public toString(): string {
-    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -125,19 +101,9 @@ export class NewStrOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class NewBinOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct) {}
-
-  public span(): number {
-    return 1;
-  }
-
+export class NewBinOp extends Op implements IJsonCrdtPatchOperation {
   public name() {
     return 'new_bin' as const;
-  }
-
-  public toString(tab: string = ''): string {
-    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -146,19 +112,9 @@ export class NewBinOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class NewArrOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct) {}
-
-  public span(): number {
-    return 1;
-  }
-
+export class NewArrOp extends Op implements IJsonCrdtPatchOperation {
   public name() {
     return 'new_arr' as const;
-  }
-
-  public toString(): string {
-    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -167,24 +123,21 @@ export class NewArrOp implements IJsonCrdtPatchOperation {
  *
  * @category Operations
  */
-export class InsValOp implements IJsonCrdtPatchEditOperation {
+export class InsValOp extends Op implements IJsonCrdtPatchEditOperation {
   constructor(
     public readonly id: ITimestampStruct,
-    /** @todo Rename to `node`. */
     public readonly obj: ITimestampStruct,
     public readonly val: ITimestampStruct,
-  ) {}
-
-  public span(): number {
-    return 1;
+  ) {
+    super(id);
   }
 
   public name() {
     return 'ins_val' as const;
   }
 
-  public toString(tab: string = ''): string {
-    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}, val = ${printTs(this.val)}`;
+  public toString(): string {
+    return super.toString() + `, obj = ${printTs(this.obj)}, val = ${printTs(this.val)}`;
   }
 }
 
@@ -193,15 +146,13 @@ export class InsValOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class InsObjOp implements IJsonCrdtPatchEditOperation {
+export class InsObjOp extends Op implements IJsonCrdtPatchEditOperation {
   constructor(
     public readonly id: ITimestampStruct,
     public readonly obj: ITimestampStruct,
     public readonly data: [key: string, value: ITimestampStruct][],
-  ) {}
-
-  public span(): number {
-    return 1;
+  ) {
+    super(id);
   }
 
   public name() {
@@ -209,7 +160,7 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    const header = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
+    const header = super.toString() + `, obj = ${printTs(this.obj)}`;
     return (
       header +
       printTree(
@@ -225,15 +176,13 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class InsVecOp implements IJsonCrdtPatchEditOperation {
+export class InsVecOp extends Op implements IJsonCrdtPatchEditOperation {
   constructor(
     public readonly id: ITimestampStruct,
     public readonly obj: ITimestampStruct,
     public readonly data: [key: number, value: ITimestampStruct][],
-  ) {}
-
-  public span(): number {
-    return 1;
+  ) {
+    super(id);
   }
 
   public name() {
@@ -241,7 +190,7 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    const header = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
+    const header = super.toString() + `, obj = ${printTs(this.obj)}`;
     return (
       header +
       printTree(
@@ -257,13 +206,15 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class InsStrOp implements IJsonCrdtPatchEditOperation {
+export class InsStrOp extends Op implements IJsonCrdtPatchEditOperation {
   constructor(
     public readonly id: ITimestampStruct,
     public readonly obj: ITimestampStruct,
     public readonly ref: ITimestampStruct,
     public data: string,
-  ) {}
+  ) {
+    super(id);
+  }
 
   public span(): number {
     return this.data.length;
@@ -274,9 +225,7 @@ export class InsStrOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(
-      this.obj,
-    )} { ${printTs(this.ref)} ← ${JSON.stringify(this.data)} }`;
+    return super.toString() + `, obj = ${printTs(this.obj)} { ${printTs(this.ref)} ← ${JSON.stringify(this.data)} }`;
   }
 }
 
@@ -285,13 +234,15 @@ export class InsStrOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class InsBinOp implements IJsonCrdtPatchEditOperation {
+export class InsBinOp extends Op implements IJsonCrdtPatchEditOperation {
   constructor(
     public readonly id: ITimestampStruct,
     public readonly obj: ITimestampStruct,
     public readonly ref: ITimestampStruct,
     public readonly data: Uint8Array,
-  ) {}
+  ) {
+    super(id);
+  }
 
   public span(): number {
     return this.data.length;
@@ -301,9 +252,9 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
     return 'ins_bin' as const;
   }
 
-  public toString(tab: string = ''): string {
+  public toString(): string {
     const ref = printTs(this.ref);
-    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)} { ${ref} ← ${this.data} }`;
+    return super.toString() + `, obj = ${printTs(this.obj)} { ${ref} ← ${this.data} }`;
   }
 }
 
@@ -312,7 +263,7 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class InsArrOp implements IJsonCrdtPatchEditOperation {
+export class InsArrOp extends Op implements IJsonCrdtPatchEditOperation {
   /**
    * @param id ID if the first operation in this compound operation.
    * @param obj ID of the array where to insert elements. In theory `arr` is
@@ -330,7 +281,9 @@ export class InsArrOp implements IJsonCrdtPatchEditOperation {
     public readonly obj: ITimestampStruct,
     public readonly ref: ITimestampStruct,
     public readonly data: ITimestampStruct[],
-  ) {}
+  ) {
+    super(id);
+  }
 
   public span(): number {
     return this.data.length;
@@ -341,9 +294,43 @@ export class InsArrOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(
-      this.obj,
-    )} { ${printTs(this.ref)} ← ${this.data.map(printTs).join(', ')} }`;
+    const obj = printTs(this.obj);
+    const ref = printTs(this.ref);
+    const data = this.data.map(printTs).join(', ');
+    return super.toString() + ', obj = ' + obj + ' { ' + ref + ' ← ' + data + ' }';
+  }
+}
+
+/**
+ * Operation which updates an existing element in an array.
+ *
+ * @category Operations
+ */
+export class UpdArrOp extends Op implements IJsonCrdtPatchEditOperation {
+  /**
+   * @param id ID of this operation.
+   * @param obj and "arr" object ID where to update an element.
+   * @param ref ID of the element to update.
+   * @param val ID of the new value to set.
+   */
+  constructor(
+    public readonly id: ITimestampStruct,
+    public readonly obj: ITimestampStruct,
+    public readonly ref: ITimestampStruct,
+    public readonly val: ITimestampStruct,
+  ) {
+    super(id);
+  }
+
+  public name() {
+    return 'upd_arr' as const;
+  }
+
+  public toString(): string {
+    const obj = printTs(this.obj);
+    const ref = printTs(this.ref);
+    const val = printTs(this.val);
+    return super.toString() + ', obj = ' + obj + ' { ' + ref + ': ' + val + ' }';
   }
 }
 
@@ -353,7 +340,7 @@ export class InsArrOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class DelOp implements IJsonCrdtPatchEditOperation {
+export class DelOp extends Op implements IJsonCrdtPatchEditOperation {
   /**
    * @param id ID of this operation.
    * @param obj Object in which to delete something.
@@ -363,10 +350,8 @@ export class DelOp implements IJsonCrdtPatchEditOperation {
     public readonly id: ITimestampStruct,
     public readonly obj: ITimestampStruct,
     public readonly what: ITimespanStruct[],
-  ) {}
-
-  public span(): number {
-    return 1;
+  ) {
+    super(id);
   }
 
   public name() {
@@ -375,7 +360,7 @@ export class DelOp implements IJsonCrdtPatchEditOperation {
 
   public toString(): string {
     const spans = this.what.map((span) => printTs(span) + '!' + span.span).join(', ');
-    return `${this.name()} ${printTs(this.id)}, obj = ${printTs(this.obj)} { ${spans} }`;
+    return super.toString() + `, obj = ${printTs(this.obj)} { ${spans} }`;
   }
 }
 
@@ -385,11 +370,13 @@ export class DelOp implements IJsonCrdtPatchEditOperation {
  *
  * @category Operations
  */
-export class NopOp implements IJsonCrdtPatchOperation {
+export class NopOp extends Op implements IJsonCrdtPatchOperation {
   constructor(
     public readonly id: ITimestampStruct,
     public readonly len: number,
-  ) {}
+  ) {
+    super(id);
+  }
 
   public span(): number {
     return this.len;
@@ -397,9 +384,5 @@ export class NopOp implements IJsonCrdtPatchOperation {
 
   public name() {
     return 'nop' as const;
-  }
-
-  public toString(): string {
-    return `${this.name()} ${printTs(this.id)}!${this.len}`;
   }
 }

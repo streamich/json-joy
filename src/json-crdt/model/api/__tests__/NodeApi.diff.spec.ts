@@ -36,7 +36,7 @@ describe('.merge()', () => {
       foo: 'bar',
       x: 123,
     });
-    doc.api.r.merge({
+    doc.api.merge({
       foo: 'baz!',
       x: 123,
       y: 'new',
@@ -57,7 +57,7 @@ describe('.merge()', () => {
         },
       },
     });
-    doc.api.r.merge({
+    doc.api.merge({
       foo: {
         bar: {
           baz: 'asdf!',

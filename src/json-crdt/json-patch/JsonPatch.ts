@@ -167,11 +167,11 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   }
 
   public get(path: string | Path): unknown {
-    return (this.base ?? this.model.api.r).read(this.toPath(path));
+    return (this.base ?? this.model.api).read(this.toPath(path));
   }
 
   private json(steps: Path): unknown {
-    const json = (this.base ?? this.model.api.r).read(steps);
+    const json = (this.base ?? this.model.api).read(steps);
     if (json === undefined) throw new Error('NOT_FOUND');
     return json;
   }

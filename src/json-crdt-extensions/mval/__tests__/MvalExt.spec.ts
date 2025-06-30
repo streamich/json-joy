@@ -8,7 +8,7 @@ test('view should preserve identity', () => {
       mv: mval.new(1),
     }),
   );
-  expect(model.s.mv.toView()).toBe(model.s.mv.toView());
+  expect(model.s.mv.$.view()).toBe(model.s.mv.$.view());
 });
 
 test('can set new values in single fork', () => {

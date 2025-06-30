@@ -42,6 +42,7 @@ export type CompactCodecOperation =
   | CompactCodecInsStrOperation
   | CompactCodecInsBinOperation
   | CompactCodecInsArrOperation
+  | CompactCodecUpdArrOperation
   | CompactCodecDelOperation
   | CompactCodecNopOperation;
 
@@ -251,6 +252,20 @@ export type CompactCodecInsArrOperation = [
   after: CompactCodecTimestamp,
   /** Values to insert in the array. */
   values: JsonCodecTimestamp[],
+];
+
+/** Operation which updates an existing element in an "arr" RGA array data type. */
+export type CompactCodecUpdArrOperation = [
+  /** Operation type. */
+  op: JsonCrdtPatchOpcode.upd_arr,
+  /** Object on which to perform the operation. */
+  obj: CompactCodecTimestamp,
+  /**
+   * Specifies the ID of element to update.
+   */
+  ref: CompactCodecTimestamp,
+  /** ID of the new value to set. */
+  value: CompactCodecTimestamp,
 ];
 
 /**

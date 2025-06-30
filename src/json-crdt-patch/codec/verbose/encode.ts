@@ -85,6 +85,13 @@ export const encode = (patch: Patch): types.JsonCodecPatch => {
         after: encodeTimestamp(op.ref),
         values: op.data.map(encodeTimestamp),
       });
+    } else if (op instanceof operations.UpdArrOp) {
+      ops.push({
+        op: 'upd_arr',
+        obj: encodeTimestamp(op.obj),
+        ref: encodeTimestamp(op.ref),
+        value: encodeTimestamp(op.val),
+      });
     } else if (op instanceof operations.DelOp) {
       const encoded: types.JsonCodecDelOperation = {
         op: 'del',

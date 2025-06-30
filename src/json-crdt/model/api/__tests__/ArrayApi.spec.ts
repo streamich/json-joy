@@ -1,4 +1,4 @@
-import {s} from '../../../../json-crdt-patch';
+import {type nodes, s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {
@@ -14,13 +14,44 @@ test('can insert a value and delete all previous ones', () => {
   expect(arr.view()).toEqual([42, 69]);
 });
 
-test('.length()', () => {
-  const doc = Model.create();
-  doc.api.set({
-    arr: [1, 2, 3],
+describe('.length()', () => {
+  test('returns "arr" length', () => {
+    const doc = Model.create();
+    doc.api.set({
+      arr: [1, 2, 3],
+    });
+    const arr = doc.api.arr(['arr']);
+    expect(arr.length()).toBe(3);
   });
-  const arr = doc.api.arr(['arr']);
-  expect(arr.length()).toBe(3);
+});
+
+describe('.push()', () => {
+  test('can append elements to the end of array', () => {
+    const doc = Model.create(s.arr<nodes.con<number>>([]));
+    const arr = doc.$.$!;
+    expect(arr.view()).toEqual([]);
+    arr.push(1);
+    expect(arr.view()).toEqual([1]);
+    arr.push(2, 3);
+    expect(arr.view()).toEqual([1, 2, 3]);
+    arr.push(4);
+    expect(arr.view()).toEqual([1, 2, 3, 4]);
+    arr.push(5, 6, 7);
+    expect(arr.view()).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  });
+});
+
+describe('.upd()', () => {
+  test('can update array element', () => {
+    const doc = Model.create([1, 2, 3]);
+    const arr = doc.$.$!;
+    expect(arr.view()).toEqual([1, 2, 3]);
+    arr.upd(1, 42);
+    expect(arr.view()).toEqual([1, 42, 3]);
+    arr.upd(2, 69);
+    arr.upd(1, 24);
+    expect(arr.view()).toEqual([1, 24, 69]);
+  });
 });
 
 describe('events', () => {

@@ -325,11 +325,18 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     diff.merge(this, value);
   }
 
-  public proxy(): types.ProxyNode<N> {
-    return {
-      toApi: () => <any>this,
-      toView: () => this.node.view() as any,
-    };
+  public get s(): types.ProxyNode<N> {
+    return {$: this} as unknown as types.ProxyNode<N>;
+  }
+
+  public get $(): JsonNodeToProxyPathNode<N> {
+    return proxy$((path) => {
+      try {
+        return this.api.wrap(this.find(path));
+      } catch {
+        return;
+      }
+    }, '$') as any;
   }
 
   public toString(tab: string = ''): string {
@@ -346,11 +353,8 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeCon<N> {
-    return {
-      toApi: () => <any>this,
-      toView: () => this.node.view(),
-    };
+  public get s(): types.ProxyNodeCon<N> {
+    return {$: this} as unknown as types.ProxyNodeCon<N>;
   }
 }
 
@@ -386,14 +390,13 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access the value of the
    * node by accessing the `.val` property.
    */
-  public proxy(): types.ProxyNodeVal<N> {
+  public get s(): types.ProxyNodeVal<N> {
     const self = this;
     const proxy = {
-      toApi: () => <any>this,
-      toView: () => this.node.view(),
-      get val() {
+      $: this,
+      get _() {
         const childNode = self.node.node();
-        return (<any>self).api.wrap(childNode).proxy();
+        return (<any>self).api.wrap(childNode).s;
       },
     };
     return <any>proxy;
@@ -452,19 +455,18 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access vector elements by
    * index.
    */
-  public proxy(): types.ProxyNodeVec<N> {
+  public get s(): types.ProxyNodeVec<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           if (prop === 'toExt') return () => this.asExt();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return (<any>this).api.wrap(child).proxy();
+          return (<any>this).api.wrap(child).s;
         },
       },
     );
@@ -536,17 +538,16 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access object properties
    * by key.
    */
-  public proxy(): types.ProxyNodeObj<N> {
+  public get s(): types.ProxyNodeObj<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           const key = String(prop);
           const child = this.node.get(key);
           if (!child) throw new Error('NO_SUCH_KEY');
-          return (<any>this).api.wrap(child).proxy();
+          return (<any>this).api.wrap(child).s;
         },
       },
     );
@@ -648,11 +649,8 @@ export class StrApi extends NodeApi<StrNode> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeStr {
-    return {
-      toApi: () => this,
-      toView: () => this.node.view(),
-    };
+  public get s(): types.ProxyNodeStr {
+    return {$: this};
   }
 }
 
@@ -706,11 +704,8 @@ export class BinApi extends NodeApi<BinNode> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeBin {
-    return {
-      toApi: () => this,
-      toView: () => this.node.view(),
-    };
+  public get s(): types.ProxyNodeBin {
+    return {$: this};
   }
 }
 
@@ -738,8 +733,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * Inserts elements at a given position.
    *
    * @param index Position at which to insert elements.
-   * @param values JSON/CBOR values or IDs of the values to insert.
-   * @returns Reference to itself.
+   * @param values Values or schema of the elements to insert.
    */
   public ins(index: number, values: Array<JsonNodeView<N>[number]>): void {
     const {api, node} = this;
@@ -749,6 +743,31 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     const valueIds: ITimestampStruct[] = [];
     for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
     builder.insArr(node.id, after, valueIds);
+    api.apply();
+  }
+
+  /**
+   * Inserts elements at the end of the array.
+   *
+   * @param values Values or schema of the elements to insert at the end of the array.
+   */
+  public push(...values: JsonNodeView<N>[number][]): void {
+    const length = this.length();
+    this.ins(length, values);
+  }
+
+  /**
+   * Updates (overwrites) an element at a given position.
+   *
+   * @param index Position at which to update the element.
+   * @param value Value or schema of the element to replace with.
+   */
+  public upd(index: number, value: JsonNodeView<N>[number]): void {
+    const {api, node} = this;
+    const ref = node.getId(index);
+    if (!ref) throw new Error('OUT_OF_BOUNDS');
+    const {builder} = api;
+    builder.updArr(node.id, ref, builder.constOrJson(value));
     api.apply();
   }
 
@@ -781,18 +800,17 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    *
    * @returns Proxy object that allows to access array elements by index.
    */
-  public proxy(): types.ProxyNodeArr<N> {
+  public get s(): types.ProxyNodeArr<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.getNode(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return (this.api.wrap(child) as any).proxy();
+          return (this.api.wrap(child) as any).s;
         },
       },
     );
@@ -893,34 +911,6 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   }
 
   /**
-   * Local changes API for the root node.
-   */
-  public get r() {
-    return new ValApi(this.model.root, this);
-  }
-
-  public get $(): JsonNodeToProxyPathNode<N> {
-    return proxy$((path) => {
-      try {
-        return this.wrap(this.find(path));
-      } catch {
-        return;
-      }
-    }, '$') as any;
-  }
-
-  /**
-   * Traverses the model starting from the root node and returns a local
-   * changes API for a node at the given path.
-   *
-   * @param path Path at which to locate a node.
-   * @returns A local changes API for a node at the given path.
-   */
-  public in(path?: ApiPath) {
-    return this.r.in(path);
-  }
-
-  /**
    * Given a JSON/CBOR value, constructs CRDT nodes recursively out of it and
    * sets the root node of the model to the constructed nodes.
    *
@@ -967,34 +957,6 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
     this.next = this.builder.patch.ops.length;
     this.model.tick++;
     this.onLocalChange.emit(from);
-  }
-
-  public select(path?: ApiPath, leaf?: boolean) {
-    return this.r.select(path, leaf);
-  }
-
-  /**
-   * Reads the value at the given path in the model. If no path is provided,
-   * returns the root node's view.
-   *
-   * @param path Path at which to read the value.
-   * @returns The value at the given path, or the root node's view if no path
-   *     is provided.
-   */
-  public read(path?: ApiPath): unknown {
-    return this.r.read(path);
-  }
-
-  public add(path: ApiPath, value: unknown): boolean {
-    return this.r.add(path, value);
-  }
-
-  public replace(path: ApiPath, value: unknown): boolean {
-    return this.r.replace(path, value);
-  }
-
-  public remove(path: ApiPath, length?: number): boolean {
-    return this.r.remove(path, length);
   }
 
   private inTx = false;

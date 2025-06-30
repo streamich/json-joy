@@ -1,4 +1,4 @@
-import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
+import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp, UpdArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import type {JsonNode, ObjNode, ArrNode, BinNode, StrNode} from '../../nodes';
 import type {Model} from '../../model/Model';
@@ -7,7 +7,7 @@ import type {FuzzerOptions} from './types';
 
 type StringOp = typeof InsStrOp | typeof DelOp;
 type BinaryOp = typeof InsBinOp | typeof DelOp;
-type ArrayOp = typeof InsArrOp | typeof DelOp;
+type ArrayOp = typeof InsArrOp | typeof DelOp | typeof UpdArrOp;
 type ObjectOp = typeof InsObjOp | typeof DelOp;
 
 const commonKeys = ['a', 'op', 'test', 'name', '', '__proto__'];
@@ -56,6 +56,7 @@ export class Picker {
   public pickArrayOperation(node: ArrNode): ArrayOp {
     if (!node.length()) return InsArrOp;
     if (Math.random() > 0.45) return InsArrOp;
+    if (Math.random() > 0.45) return UpdArrOp;
     else return DelOp;
   }
 

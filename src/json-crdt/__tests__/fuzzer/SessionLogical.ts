@@ -4,7 +4,7 @@ import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decod
 import {Decoder as BinaryDecoder} from '../../codec/structural/binary/Decoder';
 import {Decoder as CompactDecoder} from '../../codec/structural/compact/Decoder';
 import {Decoder as JsonDecoder} from '../../codec/structural/verbose/Decoder';
-import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
+import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp, UpdArrOp} from '../../../json-crdt-patch/operations';
 import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeJson} from '../../../json-crdt-patch/codec/verbose/encode';
 import {Encoder as BinaryEncoder} from '../../codec/structural/binary/Encoder';
@@ -161,7 +161,7 @@ export class SessionLogical {
     const opcode = this.fuzzer.picker.pickArrayOperation(node);
     const builder = new PatchBuilder(model.clock);
     const length = node.length();
-    if (opcode === InsArrOp) {
+    if (!length || opcode === InsArrOp) {
       const json = RandomJson.generate({nodeCount: Math.ceil(Math.random() * 5)});
       const valueId = builder.json(json);
       if (!length) builder.insArr(node.id, node.id, [valueId]);
@@ -172,6 +172,14 @@ export class SessionLogical {
           const afterId = node.find(pos - 1)!;
           builder.insArr(node.id, afterId, [valueId]);
         }
+      }
+    } else if (opcode === UpdArrOp) {
+      const pos = Math.floor(Math.random() * length);
+      const keyId = node.find(pos);
+      if (keyId) {
+        const json = RandomJson.generate({nodeCount: Math.ceil(Math.random() * 5)});
+        const valueId = builder.json(json);
+        builder.updArr(node.id, keyId, valueId);
       }
     } else {
       if (!length) return builder.patch;

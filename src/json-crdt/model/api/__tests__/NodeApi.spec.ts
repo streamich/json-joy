@@ -83,7 +83,7 @@ describe('.read()', () => {
 
   test('retrieve deep within document', () => {
     const doc = createUntypedModel();
-    expect(doc.api.r.read('/foo')).toEqual('bar');
+    expect(doc.api.read('/foo')).toEqual('bar');
     expect(doc.api.read('/foo')).toEqual('bar');
     expect(doc.api.read('/arr/0')).toEqual(1);
     expect(doc.api.read('/arr/2/nested/1')).toEqual(2);

@@ -36,6 +36,7 @@ export type JsonCodecOperation =
   | JsonCodecInsStrOperation
   | JsonCodecInsBinOperation
   | JsonCodecInsArrOperation
+  | JsonCodecUpdArrOperation
   | JsonCodecDelOperation
   | JsonCodecNopOperation;
 
@@ -87,6 +88,7 @@ export type JsonCrdtPatchMnemonic =
   | 'ins_str'
   | 'ins_bin'
   | 'ins_arr'
+  | 'upd_arr'
   | 'del'
   | 'nop';
 
@@ -230,6 +232,17 @@ export interface JsonCodecInsArrOperation extends JsonCodecObjectOperation<'ins_
 
   /** Values to insert in the array. */
   values: JsonCodecTimestamp[];
+}
+
+/** Operation which updates an existing "arr" RGA array element in-place. */
+export interface JsonCodecUpdArrOperation extends JsonCodecObjectOperation<'upd_arr'> {
+  /**
+   * Specifies the ID of element to update.
+   */
+  ref: JsonCodecTimestamp;
+
+  /** The new value to set for the element. */
+  value: JsonCodecTimestamp;
 }
 
 /**

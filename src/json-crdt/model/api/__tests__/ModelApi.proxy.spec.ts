@@ -15,16 +15,16 @@ test('proxy API supports object types', () => {
     foo: 'asdf',
     bar: 1234,
   });
-  const root = model.api.r.proxy();
-  const rootApi = root.toApi();
+  const root = model.api.s;
+  const rootApi = root.$;
   expect(rootApi).toBeInstanceOf(ValApi);
   expect(rootApi.node).toBeInstanceOf(RootNode);
   expect(rootApi.view()).toStrictEqual({
     foo: 'asdf',
     bar: 1234,
   });
-  const obj = root.val;
-  const objApi: ObjApi = obj.toApi();
+  const obj = root._;
+  const objApi: ObjApi = obj.$;
   expect(objApi).toBeInstanceOf(ObjApi);
   expect(objApi.node).toBeInstanceOf(ObjNode);
   expect(objApi.view()).toStrictEqual({
@@ -32,12 +32,12 @@ test('proxy API supports object types', () => {
     bar: 1234,
   });
   const foo = obj.foo;
-  const fooApi: StrApi = foo.toApi();
+  const fooApi: StrApi = foo.$;
   expect(fooApi).toBeInstanceOf(StrApi);
   expect(fooApi.node).toBeInstanceOf(StrNode);
   expect(fooApi.view()).toStrictEqual('asdf');
   const bar = obj.bar;
-  const barApi: ConApi = bar.toApi();
+  const barApi: ConApi = bar.$;
   expect(barApi).toBeInstanceOf(ConApi);
   expect(barApi.node).toBeInstanceOf(ConNode);
   expect(barApi.view()).toStrictEqual(1234);
@@ -59,59 +59,59 @@ describe('supports all node types', () => {
   // console.log(model.root + '');
 
   test('object as root node', () => {
-    const proxy = model.api.r.proxy();
-    const obj = proxy.val;
-    const objApi: ObjApi = obj.toApi();
+    const proxy = model.api.s;
+    const obj = proxy._;
+    const objApi: ObjApi = obj.$;
     expect(objApi).toBeInstanceOf(ObjApi);
     expect(objApi.node).toBeInstanceOf(ObjNode);
-    expect(obj.toView().obj).not.toBe(undefined);
-    expect(obj.toView().vec).not.toBe(undefined);
+    expect(obj.$.view().obj).not.toBe(undefined);
+    expect(obj.$.view().vec).not.toBe(undefined);
   });
 
   test('nested object', () => {
-    expect(model.s.obj.toApi()).toBeInstanceOf(ObjApi);
-    expect(model.s.obj.toView().str).not.toBe(undefined);
-    expect(model.s.obj.toView().num).not.toBe(undefined);
+    expect(model.s.obj.$).toBeInstanceOf(ObjApi);
+    expect(model.s.obj.$.view().str).not.toBe(undefined);
+    expect(model.s.obj.$.view().num).not.toBe(undefined);
   });
 
   test('str', () => {
-    expect(model.s.obj.str.toApi()).toBeInstanceOf(StrApi);
-    expect(model.s.obj.str.toView()).toStrictEqual('asdf');
+    expect(model.s.obj.str.$).toBeInstanceOf(StrApi);
+    expect(model.s.obj.str.$.view()).toStrictEqual('asdf');
   });
 
   test('bin', () => {
-    expect(model.s.bin.toApi()).toBeInstanceOf(BinApi);
-    expect(model.s.bin.toView()).toStrictEqual(new Uint8Array([1, 2, 3]));
+    expect(model.s.bin.$).toBeInstanceOf(BinApi);
+    expect(model.s.bin.$.view()).toStrictEqual(new Uint8Array([1, 2, 3]));
   });
 
   test('vec', () => {
-    expect(model.s.vec.toApi()).toBeInstanceOf(VecApi);
-    expect(model.s.vec.toView()).toStrictEqual(['asdf', 1234, true, null]);
+    expect(model.s.vec.$).toBeInstanceOf(VecApi);
+    expect(model.s.vec.$.view()).toStrictEqual(['asdf', 1234, true, null]);
   });
 
   test('arr', () => {
-    expect(model.s.arr.toApi()).toBeInstanceOf(ArrApi);
-    expect(model.s.arr.toView()).toStrictEqual(['asdf', 0]);
+    expect(model.s.arr.$).toBeInstanceOf(ArrApi);
+    expect(model.s.arr.$.view()).toStrictEqual(['asdf', 0]);
   });
 
   test('val', () => {
-    expect(model.s.arr[1].toApi()).toBeInstanceOf(ValApi);
-    expect(model.s.arr[1].toView()).toStrictEqual(0);
+    expect(model.s.arr[1].$).toBeInstanceOf(ValApi);
+    expect(model.s.arr[1].$.view()).toStrictEqual(0);
   });
 
   test('con', () => {
-    expect(model.s.arr[0].toApi()).toBeInstanceOf(ConApi);
-    expect(model.s.arr[0].toView()).toStrictEqual('asdf');
+    expect(model.s.arr[0].$).toBeInstanceOf(ConApi);
+    expect(model.s.arr[0].$.view()).toStrictEqual('asdf');
   });
 
   test('con - 2', () => {
-    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>).val.toApi()).toBeInstanceOf(ConApi);
-    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>).val.toView()).toStrictEqual(0);
+    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>)._.$).toBeInstanceOf(ConApi);
+    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>)._.$.view()).toStrictEqual(0);
   });
 
   test('con - 3', () => {
-    expect(model.s.obj.num.toApi()).toBeInstanceOf(ConApi);
-    expect(model.s.obj.num.toView()).toStrictEqual(1234);
+    expect(model.s.obj.num.$).toBeInstanceOf(ConApi);
+    expect(model.s.obj.num.$.view()).toStrictEqual(1234);
   });
 });
 

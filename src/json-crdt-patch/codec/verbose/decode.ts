@@ -83,6 +83,10 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
         builder.insArr(decodeId(op.obj), decodeId(op.after || op.obj), op.values.map(decodeId));
         break;
       }
+      case 'upd_arr': {
+        builder.updArr(decodeId(op.obj), decodeId(op.ref), decodeId(op.value));
+        break;
+      }
       case 'del': {
         builder.del(
           decodeId(op.obj),
