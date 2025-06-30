@@ -1,3 +1,28 @@
+# [17.47.0](https://github.com/streamich/json-joy/compare/v17.46.0...v17.47.0) (2025-06-30)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 update "arr" element only when new ID is higher ([f38c487](https://github.com/streamich/json-joy/commit/f38c4870b8cb27513e4a8f0dece1232b8656c7ed))
+* **json-crdt:** 🐛 update ModelApi internal state on RESET event ([a1699cb](https://github.com/streamich/json-joy/commit/a1699cbe48674002f1d6b9ed141fc24384aba2e3))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 add "upd_arr" operation encoding in "binary" codec ([9cb2c9c](https://github.com/streamich/json-joy/commit/9cb2c9c89d6c792cca85b0c00c0951ebefa0927d))
+* **json-crdt-patch:** 🎸 add "upd_arr" operation to "compact" encoding ([b16b8a7](https://github.com/streamich/json-joy/commit/b16b8a7e6df539e42ee33c3795d9a038e33d1376))
+* **json-crdt-patch:** 🎸 introduce "upd_arr" operation ([29c66df](https://github.com/streamich/json-joy/commit/29c66df639a3493b44a175211bb6d85aaf3ee8ef))
+* **json-crdt-patch:** 🎸 make enums const ([e0932dd](https://github.com/streamich/json-joy/commit/e0932dd036baf7334646264738b6c8ccff6c73cc))
+* **json-crdt-patch:** 🎸 support "upd_arr" operation in "verbose" codec ([13ab57f](https://github.com/streamich/json-joy/commit/13ab57fa6e0b423b35d22bd67eea80cc35ac2815))
+* **json-crdt:** 🎸 add ArrApi.upd() method ([2bb9133](https://github.com/streamich/json-joy/commit/2bb9133f5afe038d015157e68555bfc11209572d))
+* **json-crdt:** 🎸 add suppoort in Model and ArrNode for "upd_arr" operation ([2826899](https://github.com/streamich/json-joy/commit/2826899a7fb7c51ba82d2ed1a646e9702c4e595b))
+* **json-crdt:** 🎸 change terminal node interface in proxy API ([37b3d14](https://github.com/streamich/json-joy/commit/37b3d141932cc74c8f8e2483c84f53f3cfd19dd2))
+* **json-crdt:** 🎸 implement ArrApi.push() method ([e9f7a79](https://github.com/streamich/json-joy/commit/e9f7a79cce64668f344f506316d73c2065793f9e))
+* **json-crdt:** 🎸 implement deep schema equality check ([afa9d5c](https://github.com/streamich/json-joy/commit/afa9d5c99c5bb0839d5a719c00b455969448a7a6))
+* **json-crdt:** 🎸 improve Model.create() schema inference from types ([6b8de6f](https://github.com/streamich/json-joy/commit/6b8de6fe3479f0e35d94d40014d2caf715d567ec))
+* **json-crdt:** 🎸 improve schema comparison script ([7d071f5](https://github.com/streamich/json-joy/commit/7d071f5dcc9fb58cac8d10f0988a4c1b952a07a7))
+* **json-crdt:** 🎸 move .$ getter proxy API to NodeApi class ([142b393](https://github.com/streamich/json-joy/commit/142b39344a7b91f346c34f26d98db7ac8824c91b))
+
 # [17.46.0](https://github.com/streamich/json-joy/compare/v17.45.0...v17.46.0) (2025-06-29)
 
 
