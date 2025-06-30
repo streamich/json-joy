@@ -752,6 +752,17 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     api.apply();
   }
 
+  // TODO: Implement `.push()` method.
+
+  public upd(index: number, value: JsonNodeView<N>[number]): void {
+    const {api, node} = this;
+    const ref = node.getId(index);
+    if (!ref) throw new Error('OUT_OF_BOUNDS');
+    const {builder} = api;
+    builder.updArr(node.id, ref, builder.constOrJson(value));
+    api.apply();
+  }
+
   /**
    * Deletes a range of elements at a given position.
    *

@@ -14,13 +14,28 @@ test('can insert a value and delete all previous ones', () => {
   expect(arr.view()).toEqual([42, 69]);
 });
 
-test('.length()', () => {
-  const doc = Model.create();
-  doc.api.set({
-    arr: [1, 2, 3],
+describe('.length()', () => {
+  test('returns "arr" length', () => {
+    const doc = Model.create();
+    doc.api.set({
+      arr: [1, 2, 3],
+    });
+    const arr = doc.api.arr(['arr']);
+    expect(arr.length()).toBe(3);
   });
-  const arr = doc.api.arr(['arr']);
-  expect(arr.length()).toBe(3);
+});
+
+describe('.upd()', () => {
+  test('can update array element', () => {
+    const doc = Model.create([1, 2, 3]);
+    const arr = doc.$.$!;
+    expect(arr.view()).toEqual([1, 2, 3]);
+    arr.upd(1, 42);
+    expect(arr.view()).toEqual([1, 42, 3]);
+    arr.upd(2, 69);
+    arr.upd(1, 24);
+    expect(arr.view()).toEqual([1, 24, 69]);
+  });
 });
 
 describe('events', () => {
