@@ -517,6 +517,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     if (api) {
       api.flush();
       api.builder.clock = this.clock;
+      api.node = this.root;
     }
     // biome-ignore lint: index is not iterable
     index.forEach(({v: node}) => {
