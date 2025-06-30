@@ -325,7 +325,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     diff.merge(this, value);
   }
 
-  public proxy(): types.ProxyNode<N> {
+  public get s(): types.ProxyNode<N> {
     return {$: this} as unknown as types.ProxyNode<N>;
   }
 
@@ -353,7 +353,7 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeCon<N> {
+  public get s(): types.ProxyNodeCon<N> {
     return {$: this} as unknown as types.ProxyNodeCon<N>;
   }
 }
@@ -390,13 +390,13 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access the value of the
    * node by accessing the `.val` property.
    */
-  public proxy(): types.ProxyNodeVal<N> {
+  public get s(): types.ProxyNodeVal<N> {
     const self = this;
     const proxy = {
       $: this,
       get val() {
         const childNode = self.node.node();
-        return (<any>self).api.wrap(childNode).proxy();
+        return (<any>self).api.wrap(childNode).s;
       },
     };
     return <any>proxy;
@@ -455,7 +455,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access vector elements by
    * index.
    */
-  public proxy(): types.ProxyNodeVec<N> {
+  public get s(): types.ProxyNodeVec<N> {
     const proxy = new Proxy(
       {},
       {
@@ -466,7 +466,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return (<any>this).api.wrap(child).proxy();
+          return (<any>this).api.wrap(child).s;
         },
       },
     );
@@ -538,7 +538,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access object properties
    * by key.
    */
-  public proxy(): types.ProxyNodeObj<N> {
+  public get s(): types.ProxyNodeObj<N> {
     const proxy = new Proxy(
       {},
       {
@@ -547,7 +547,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
           const key = String(prop);
           const child = this.node.get(key);
           if (!child) throw new Error('NO_SUCH_KEY');
-          return (<any>this).api.wrap(child).proxy();
+          return (<any>this).api.wrap(child).s;
         },
       },
     );
@@ -649,7 +649,7 @@ export class StrApi extends NodeApi<StrNode> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeStr {
+  public get s(): types.ProxyNodeStr {
     return {$: this};
   }
 }
@@ -704,7 +704,7 @@ export class BinApi extends NodeApi<BinNode> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeBin {
+  public get s(): types.ProxyNodeBin {
     return {$: this};
   }
 }
@@ -800,7 +800,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    *
    * @returns Proxy object that allows to access array elements by index.
    */
-  public proxy(): types.ProxyNodeArr<N> {
+  public get s(): types.ProxyNodeArr<N> {
     const proxy = new Proxy(
       {},
       {
@@ -810,7 +810,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.getNode(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return (this.api.wrap(child) as any).proxy();
+          return (this.api.wrap(child) as any).s;
         },
       },
     );

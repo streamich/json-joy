@@ -258,7 +258,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * typed proxy wrapper around the value of the root node.
    */
   public get s() {
-    return this.api.proxy().val;
+    return this.api.s.val;
   }
 
   /**
