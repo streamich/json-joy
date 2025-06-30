@@ -687,6 +687,19 @@ describe('Document', () => {
         expect(doc.view()).toEqual([1, 0, 3]);
         expect(indexSize0 - indexSize1).toBe(7);
       });
+
+      test('does not update "arr" element, if ID is lower than current', () => {
+        const doc = Model.create([1, 2, 3]);
+        const node = doc.root.child();
+        const secondElementId = node.getId(1)!;
+        const builder = new PatchBuilder(new ClockVector(1234567, 0));
+        builder.flush();
+        const constId = builder.con(0);
+        builder.updArr(node.id, secondElementId, constId);
+        const patch = builder.flush();
+        doc.applyPatch(patch);
+        expect(doc.view()).toEqual([1, 2, 3]);
+      });
     });
   });
 });

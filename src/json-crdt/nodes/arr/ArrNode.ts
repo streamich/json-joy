@@ -1,5 +1,5 @@
 import {AbstractRga, type Chunk} from '../rga/AbstractRga';
-import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {compare, type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Model} from '../../model';
@@ -115,6 +115,8 @@ export class ArrNode<Element extends JsonNode = JsonNode>
    * in the array. The ID is a timestamp the unique slot of the element in the RGA.
    * To retrieve the JSON node ID referenced by the slot, use {@link get} method.
    * 
+   * @todo Rename to `getRef`.
+   * 
    * @param position The position of the element to get.
    * @returns ID of the RGA slot.
    */
@@ -133,16 +135,26 @@ export class ArrNode<Element extends JsonNode = JsonNode>
     return chunk.data![offset];
   }
 
+  /**
+   * Updates an array element in-place. Used by the "upd_arr" operation.
+   * 
+   * @todo Verify that the new ID is greater than the old ID.
+   *
+   * @param ref A reference to the element slot in the array.
+   * @param val A new value to set in the slot.
+   * @returns The old value of the slot, if any.
+   */
   public upd(ref: ITimestampStruct, val: ITimestampStruct): ITimestampStruct | undefined {
     const chunk = this.findById(ref);
     if (!chunk) return;
     const data = chunk.data;
     if (!data) return;
     const offset = ref.time - chunk.id.time;
-    const oldVal = data[offset];
+    const currentVal = data[offset];
+    if (currentVal && compare(currentVal, val) >= 0) return;
     data[offset] = val;
     this.onChange();
-    return oldVal;
+    return currentVal;
   }
 
   // -------------------------------------------------------------- AbstractRga
