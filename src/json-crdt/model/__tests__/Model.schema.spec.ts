@@ -35,9 +35,9 @@ describe('.setSchema()', () => {
         num: s.con(123),
       }),
     );
-    expect(model.api.r.get().node.id.sid).toBe(SESSION.GLOBAL);
-    expect(model.api.r.get().get('id').node.id.sid).toBe(SESSION.GLOBAL);
-    expect(model.api.r.get().get('num').node.id.sid).toBe(SESSION.GLOBAL);
+    expect(model.api.get().node.id.sid).toBe(SESSION.GLOBAL);
+    expect(model.api.get().get('id').node.id.sid).toBe(SESSION.GLOBAL);
+    expect(model.api.get().get('num').node.id.sid).toBe(SESSION.GLOBAL);
   });
 
   test('allows to specify custom session ID', () => {
@@ -46,9 +46,9 @@ describe('.setSchema()', () => {
       num: s.con(123),
     });
     const model = Model.create().setSchema(schema, false);
-    expect(model.api.r.get().node.id.sid).toBe(model.clock.sid);
-    expect(model.api.r.get().get('id').node.id.sid).toBe(model.clock.sid);
-    expect(model.api.r.get().get('num').node.id.sid).toBe(model.clock.sid);
+    expect(model.api.get().node.id.sid).toBe(model.clock.sid);
+    expect(model.api.get().get('id').node.id.sid).toBe(model.clock.sid);
+    expect(model.api.get().get('num').node.id.sid).toBe(model.clock.sid);
   });
 
   test('resets session ID to user specified', () => {
@@ -59,12 +59,12 @@ describe('.setSchema()', () => {
       }),
     );
     expect(model.view().num).toBe(123);
-    expect(model.api.r.get().get('num').node.id.sid).toBe(SESSION.GLOBAL);
-    model.api.r.get().set({
+    expect(model.api.get().get('num').node.id.sid).toBe(SESSION.GLOBAL);
+    model.api.get().set({
       num: 456,
     });
     expect(model.view().num).toBe(456);
-    expect(model.api.r.get().get('num').node.id.sid).not.toBe(SESSION.GLOBAL);
+    expect(model.api.get().get('num').node.id.sid).not.toBe(SESSION.GLOBAL);
   });
 });
 

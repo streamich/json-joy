@@ -900,13 +900,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
     } else throw new Error('UNKNOWN_NODE');
   }
 
-  /**
-   * Local changes API for the root node.
-   */
-  public get r() {
-    return new ValApi(this.model.root, this);
-  }
-
+  // TODO: Move to node.
   public get $(): JsonNodeToProxyPathNode<N> {
     return proxy$((path) => {
       try {
@@ -915,17 +909,6 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
         return;
       }
     }, '$') as any;
-  }
-
-  /**
-   * Traverses the model starting from the root node and returns a local
-   * changes API for a node at the given path.
-   *
-   * @param path Path at which to locate a node.
-   * @returns A local changes API for a node at the given path.
-   */
-  public in(path?: ApiPath) {
-    return this.r.in(path);
   }
 
   /**
@@ -975,34 +958,6 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
     this.next = this.builder.patch.ops.length;
     this.model.tick++;
     this.onLocalChange.emit(from);
-  }
-
-  public select(path?: ApiPath, leaf?: boolean) {
-    return this.r.select(path, leaf);
-  }
-
-  /**
-   * Reads the value at the given path in the model. If no path is provided,
-   * returns the root node's view.
-   *
-   * @param path Path at which to read the value.
-   * @returns The value at the given path, or the root node's view if no path
-   *     is provided.
-   */
-  public read(path?: ApiPath): unknown {
-    return this.r.read(path);
-  }
-
-  public add(path: ApiPath, value: unknown): boolean {
-    return this.r.add(path, value);
-  }
-
-  public replace(path: ApiPath, value: unknown): boolean {
-    return this.r.replace(path, value);
-  }
-
-  public remove(path: ApiPath, length?: number): boolean {
-    return this.r.remove(path, length);
   }
 
   private inTx = false;

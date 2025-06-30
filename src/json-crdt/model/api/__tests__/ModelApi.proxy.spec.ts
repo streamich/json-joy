@@ -15,7 +15,7 @@ test('proxy API supports object types', () => {
     foo: 'asdf',
     bar: 1234,
   });
-  const root = model.api.r.proxy();
+  const root = model.api.proxy();
   const rootApi = root.$;
   expect(rootApi).toBeInstanceOf(ValApi);
   expect(rootApi.node).toBeInstanceOf(RootNode);
@@ -59,7 +59,7 @@ describe('supports all node types', () => {
   // console.log(model.root + '');
 
   test('object as root node', () => {
-    const proxy = model.api.r.proxy();
+    const proxy = model.api.proxy();
     const obj = proxy.val;
     const objApi: ObjApi = obj.$;
     expect(objApi).toBeInstanceOf(ObjApi);
