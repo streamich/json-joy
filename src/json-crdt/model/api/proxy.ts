@@ -9,7 +9,7 @@ export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {$: JsonNo
 
 export type ProxyNodeCon<N extends nodes.ConNode<any>> = ProxyNode<N>;
 export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {
-  val: JsonNodeToProxyNode<ReturnType<N['child']>>;
+  _: JsonNodeToProxyNode<ReturnType<N['child']>>;
 };
 export type ProxyNodeVec<N extends nodes.VecNode<any>> = ProxyNode<N> & {
   [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<nodes.JsonNodeView<N>[K]>;

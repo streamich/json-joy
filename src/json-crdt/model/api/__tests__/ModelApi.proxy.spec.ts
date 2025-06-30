@@ -23,7 +23,7 @@ test('proxy API supports object types', () => {
     foo: 'asdf',
     bar: 1234,
   });
-  const obj = root.val;
+  const obj = root._;
   const objApi: ObjApi = obj.$;
   expect(objApi).toBeInstanceOf(ObjApi);
   expect(objApi.node).toBeInstanceOf(ObjNode);
@@ -60,7 +60,7 @@ describe('supports all node types', () => {
 
   test('object as root node', () => {
     const proxy = model.api.s;
-    const obj = proxy.val;
+    const obj = proxy._;
     const objApi: ObjApi = obj.$;
     expect(objApi).toBeInstanceOf(ObjApi);
     expect(objApi.node).toBeInstanceOf(ObjNode);
@@ -105,8 +105,8 @@ describe('supports all node types', () => {
   });
 
   test('con - 2', () => {
-    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>).val.$).toBeInstanceOf(ConApi);
-    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>).val.$.view()).toStrictEqual(0);
+    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>)._.$).toBeInstanceOf(ConApi);
+    expect((model.s.arr[1] as ProxyNodeVal<ValNode<ConNode<number>>>)._.$.view()).toStrictEqual(0);
   });
 
   test('con - 3', () => {

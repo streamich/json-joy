@@ -36,7 +36,7 @@ describe('.s', () => {
   });
 
   test('can resolve a "val" node', () => {
-    const str = model.s.val.val.$;
+    const str = model.s.val._.$;
     expect(str.view()).toBe('Hello');
   });
 });

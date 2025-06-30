@@ -394,7 +394,7 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
     const self = this;
     const proxy = {
       $: this,
-      get val() {
+      get _() {
         const childNode = self.node.node();
         return (<any>self).api.wrap(childNode).s;
       },

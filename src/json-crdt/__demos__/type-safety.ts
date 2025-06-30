@@ -88,7 +88,7 @@ console.log(model.s.flags[1].$ + '');
 // └─ ValNode 1234.13
 //    └─ ConNode 1234.12 { false }
 
-console.log(model.s.flags[1].val.$ + '');
+console.log(model.s.flags[1]._.$ + '');
 // ConApi
 // └─ ConNode 1234.12 { false }
 
