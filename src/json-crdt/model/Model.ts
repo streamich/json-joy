@@ -1,15 +1,14 @@
 import * as operations from '../../json-crdt-patch/operations';
 import * as clock from '../../json-crdt-patch/clock';
-import {ConNode} from '../nodes/const/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {ModelApi} from './api';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {ConNode, RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {NodeBuilder, s} from '../../json-crdt-patch';
+import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
 import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
@@ -126,16 +125,16 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   public static readonly create = <S extends NodeBuilder | unknown>(
     schema?: S,
     sidOrClock: clock.ClockVector | number = Model.sid(),
-  ): Model<S extends NodeBuilder ? SchemaToJsonNode<S> : JsonNode> => {
+  ) => {
     const cl =
       typeof sidOrClock === 'number'
         ? sidOrClock === SESSION.SERVER
           ? new clock.ServerClockVector(SESSION.SERVER, 1)
           : new clock.ClockVector(sidOrClock, 1)
         : sidOrClock;
-    type Node = S extends NodeBuilder ? SchemaToJsonNode<S> : JsonNode;
+    type Node = S extends undefined ? JsonNode : S extends NodeBuilder ? SchemaToJsonNode<S> : SchemaToJsonNode<nodes.json<S>>;
     const model = new Model<Node>(cl);
-    if (schema) model.setSchema(schema instanceof NodeBuilder ? schema : s.json(schema), true);
+    if (schema !== void 0) model.setSchema(schema instanceof NodeBuilder ? schema : s.json(schema), true);
     return model;
   };
 
