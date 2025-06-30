@@ -329,6 +329,16 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return {$: this} as unknown as types.ProxyNode<N>;
   }
 
+  public get $(): JsonNodeToProxyPathNode<N> {
+    return proxy$((path) => {
+      try {
+        return this.api.wrap(this.find(path));
+      } catch {
+        return;
+      }
+    }, '$') as any;
+  }
+
   public toString(tab: string = ''): string {
     return 'api' + printTree(tab, [(tab) => this.node.toString(tab)]);
   }
@@ -898,17 +908,6 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
       const extension = this.model.ext.get(node.extId)!;
       return (node.api = new extension.Api(node, this));
     } else throw new Error('UNKNOWN_NODE');
-  }
-
-  // TODO: Move to node.
-  public get $(): JsonNodeToProxyPathNode<N> {
-    return proxy$((path) => {
-      try {
-        return this.wrap(this.find(path));
-      } catch {
-        return;
-      }
-    }, '$') as any;
   }
 
   /**

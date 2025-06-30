@@ -58,9 +58,11 @@ export type JsonNodeToProxyPathNode<N> = 0 extends 1 & N
       ? {[K in keyof Obj]: JsonNodeToProxyPathNode<Obj[K]>} & JsonNodeToProxyPathNodeEnd<N>
       : N extends nodes.VecNode<infer Tuple>
         ? {[K in keyof Tuple]: JsonNodeToProxyPathNode<Tuple[K]>} & JsonNodeToProxyPathNodeEnd<N>
-        : nodes.JsonNode<unknown> extends N
-          ? ProxyPathNode<{$?: NodeApi<N extends nodes.JsonNode<unknown> ? N : nodes.JsonNode>}>
-          : JsonNodeToProxyPathNodeEnd<N>;
+        : N extends nodes.RootNode<infer M>
+          ? JsonNodeToProxyPathNode<M>
+          : nodes.JsonNode<unknown> extends N
+            ? ProxyPathNode<{$?: NodeApi<N extends nodes.JsonNode<unknown> ? N : nodes.JsonNode>}>
+            : JsonNodeToProxyPathNodeEnd<N>;
 
 export type ProxyPathEndMethod<Args extends unknown[], Return> = (path: PathStep[], ...args: Args) => Return;
 export type ProxyPathUserEndMethod<M extends ProxyPathEndMethod<any[], any>> = M extends ProxyPathEndMethod<
