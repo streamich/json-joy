@@ -1,4 +1,4 @@
-import {s} from '../../../../json-crdt-patch';
+import {nodes, s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can insert a value and delete all previous ones', () => {
@@ -22,6 +22,22 @@ describe('.length()', () => {
     });
     const arr = doc.api.arr(['arr']);
     expect(arr.length()).toBe(3);
+  });
+});
+
+describe('.push()', () => {
+  test('can append elements to the end of array', () => {
+    const doc = Model.create(s.arr<nodes.con<number>>([]));
+    const arr = doc.$.$!;
+    expect(arr.view()).toEqual([]);
+    arr.push(1);
+    expect(arr.view()).toEqual([1]);
+    arr.push(2, 3);
+    expect(arr.view()).toEqual([1, 2, 3]);
+    arr.push(4);
+    expect(arr.view()).toEqual([1, 2, 3, 4]);
+    arr.push(5, 6, 7);
+    expect(arr.view()).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 });
 

@@ -738,8 +738,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * Inserts elements at a given position.
    *
    * @param index Position at which to insert elements.
-   * @param values JSON/CBOR values or IDs of the values to insert.
-   * @returns Reference to itself.
+   * @param values Values or schema of the elements to insert.
    */
   public ins(index: number, values: Array<JsonNodeView<N>[number]>): void {
     const {api, node} = this;
@@ -752,8 +751,22 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     api.apply();
   }
 
-  // TODO: Implement `.push()` method.
+  /**
+   * Inserts elements at the end of the array.
+   *
+   * @param values Values or schema of the elements to insert at the end of the array.
+   */
+  public push(...values: JsonNodeView<N>[number][]): void {
+    const length = this.length();
+    this.ins(length, values);
+  }
 
+  /**
+   * Updates (overwrites) an element at a given position.
+   *
+   * @param index Position at which to update the element.
+   * @param value Value or schema of the element to replace with.
+   */
   public upd(index: number, value: JsonNodeView<N>[number]): void {
     const {api, node} = this;
     const ref = node.getId(index);
