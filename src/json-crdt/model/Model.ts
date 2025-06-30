@@ -416,6 +416,15 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
         }
         if (nodes.length) node.ins(op.ref, op.id, nodes);
       }
+    } else if (op instanceof operations.UpdArrOp) {
+      const node = index.get(op.obj);
+      if (node instanceof ArrNode) {
+        const val = op.val;
+        if (index.get(val)) {
+          const old = node.upd(op.ref, val);
+          if (old) this._gcTree(old);
+        }
+      }
     } else if (op instanceof operations.DelOp) {
       const node = index.get(op.obj);
       if (node instanceof ArrNode) {

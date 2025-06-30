@@ -110,11 +110,39 @@ export class ArrNode<Element extends JsonNode = JsonNode>
     return this.doc.index.get(id);
   }
 
+  /**
+   * Returns ID of the RGA slot (not the referenced JSON node) at a given position
+   * in the array. The ID is a timestamp the unique slot of the element in the RGA.
+   * To retrieve the JSON node ID referenced by the slot, use {@link get} method.
+   * 
+   * @param position The position of the element to get.
+   * @returns ID of the RGA slot.
+   */
+  public getId(position: number): ITimestampStruct | undefined {
+    const pair = this.findChunk(position);
+    if (!pair) return undefined;
+    const [chunk, offset] = pair;
+    const id = chunk.id;
+    return !offset ? id : tick(id, offset);
+  }
+
   public getById(id: ITimestampStruct): E | undefined {
     const chunk = this.findById(id);
     if (!chunk || chunk.del) return undefined;
     const offset = id.time - chunk.id.time;
     return chunk.data![offset];
+  }
+
+  public upd(ref: ITimestampStruct, val: ITimestampStruct): ITimestampStruct | undefined {
+    const chunk = this.findById(ref);
+    if (!chunk) return;
+    const data = chunk.data;
+    if (!data) return;
+    const offset = ref.time - chunk.id.time;
+    const oldVal = data[offset];
+    data[offset] = val;
+    this.onChange();
+    return oldVal;
   }
 
   // -------------------------------------------------------------- AbstractRga

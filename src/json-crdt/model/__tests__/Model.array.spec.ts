@@ -657,5 +657,36 @@ describe('Document', () => {
       expect(model1.view()).toEqual([1, {}]);
       expect(model2.view()).toEqual([1, {foo: 'bar'}]);
     });
+
+    describe('array updates', () => {
+      test('can update array element in-place', () => {
+        const doc = Model.create([1, 2, 3]);
+        const node = doc.root.child();
+        const secondElementId = node.getId(1)!;
+        const builder = doc.api.builder;
+        builder.flush();
+        const constId = builder.con(0);
+        builder.updArr(node.id, secondElementId, constId);
+        const patch = builder.flush();
+        doc.applyPatch(patch);
+        expect(doc.view()).toEqual([1, 0, 3]);
+      });
+      
+      test('removes subtree replaced by the latest op', () => {
+        const doc = Model.create([1, {foo: [1, 2, 3]}, 3]);
+        const node = doc.root.child();
+        const secondElementId = node.getId(1)!;
+        const builder = doc.api.builder;
+        builder.flush();
+        const constId = builder.con(0);
+        builder.updArr(node.id, secondElementId, constId);
+        const patch = builder.flush();
+        const indexSize0 = doc.index.size();
+        doc.applyPatch(patch);
+        const indexSize1 = doc.index.size();
+        expect(doc.view()).toEqual([1, 0, 3]);
+        expect(indexSize0 - indexSize1).toBe(7);
+      });
+    });
   });
 });
