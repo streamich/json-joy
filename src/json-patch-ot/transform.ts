@@ -6,10 +6,9 @@ import {xforms} from './transforms';
  * already accepted patches.
  *
  * @param accepted Array of already accepted operations.
- * @param proposed Array of proposed operations. Proposed operations are mutated inline.
- * @param acceptedWins Whether accepted operation should win on when paths match exactly.
+ * @param proposed Array of proposed operations.
  *
- * @returns Array of transformed changes
+ * @returns Array of transformed changes.
  */
 export const transform = (accepted: readonly Op[], proposed: readonly Op[]): readonly Op[] => {
   const length = accepted.length;
