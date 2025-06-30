@@ -10,8 +10,8 @@ describe('.setSchema()', () => {
         con: s.con(123),
       }),
     );
-    expect(model.s.str.toApi().view()).toBe('asdf');
-    expect(model.s.con.toApi().view()).toBe(123);
+    expect(model.s.str.$.view()).toBe('asdf');
+    expect(model.s.con.$.view()).toBe(123);
   });
 
   test('can set map schema', () => {
@@ -21,8 +21,8 @@ describe('.setSchema()', () => {
         con1: s.con(123),
       }),
     );
-    expect(model.s.str.toApi().view()).toBe('asdf');
-    expect(model.s.con1.toApi().view()).toBe(123);
+    expect(model.s.str.$.view()).toBe('asdf');
+    expect(model.s.con1.$.view()).toBe(123);
     expect(model.view().str).toBe('asdf');
     expect(model.view().con1).toBe(123);
     expect(model.view().anyKeyAllowed).toBe(undefined);

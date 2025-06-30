@@ -326,10 +326,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public proxy(): types.ProxyNode<N> {
-    return {
-      toApi: () => <any>this,
-      toView: () => this.node.view() as any,
-    };
+    return {$: this} as unknown as types.ProxyNode<N>;
   }
 
   public toString(tab: string = ''): string {
@@ -347,10 +344,7 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node.
    */
   public proxy(): types.ProxyNodeCon<N> {
-    return {
-      toApi: () => <any>this,
-      toView: () => this.node.view(),
-    };
+    return {$: this} as unknown as types.ProxyNodeCon<N>;
   }
 }
 
@@ -389,8 +383,7 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
   public proxy(): types.ProxyNodeVal<N> {
     const self = this;
     const proxy = {
-      toApi: () => <any>this,
-      toView: () => this.node.view(),
+      $: this,
       get val() {
         const childNode = self.node.node();
         return (<any>self).api.wrap(childNode).proxy();
@@ -457,8 +450,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           if (prop === 'toExt') return () => this.asExt();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
@@ -541,8 +533,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           const key = String(prop);
           const child = this.node.get(key);
           if (!child) throw new Error('NO_SUCH_KEY');
@@ -649,10 +640,7 @@ export class StrApi extends NodeApi<StrNode> {
    * Returns a proxy object for this node.
    */
   public proxy(): types.ProxyNodeStr {
-    return {
-      toApi: () => this,
-      toView: () => this.node.view(),
-    };
+    return {$: this};
   }
 }
 
@@ -707,10 +695,7 @@ export class BinApi extends NodeApi<BinNode> {
    * Returns a proxy object for this node.
    */
   public proxy(): types.ProxyNodeBin {
-    return {
-      toApi: () => this,
-      toView: () => this.node.view(),
-    };
+    return {$: this};
   }
 }
 
@@ -810,8 +795,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.getNode(index);

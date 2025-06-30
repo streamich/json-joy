@@ -5,10 +5,7 @@ import type {VecNodeExtensionData} from '../../schema/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {NodeApi} from '..';
 
-export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
-  toApi(): JsonNodeApi<N>;
-  toView(): nodes.JsonNodeView<N>;
-}
+export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {$: JsonNodeApi<N>};
 
 export type ProxyNodeCon<N extends nodes.ConNode<any>> = ProxyNode<N>;
 export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {

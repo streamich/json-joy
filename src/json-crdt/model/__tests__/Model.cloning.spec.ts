@@ -245,9 +245,9 @@ describe('reset()', () => {
       }),
     );
     const doc2 = doc1.fork();
-    doc2.s.text.toApi().ins(4, 'o');
-    const str = doc1.s.text.toApi();
-    expect(str === doc2.s.text.toApi()).toBe(false);
+    doc2.s.text.$.ins(4, 'o');
+    const str = doc1.s.text.$;
+    expect(str === doc2.s.text.$).toBe(false);
     expect(str.view()).toBe('hell');
     doc1.reset(doc2);
     expect(str.view()).toBe('hello');
@@ -260,7 +260,7 @@ describe('reset()', () => {
       }),
     );
     const doc2 = doc1.fork();
-    doc2.s.text.toApi().ins(4, 'o');
+    doc2.s.text.$.ins(4, 'o');
     expect(doc1.clock).toBe(doc1.api.builder.clock);
     expect(doc2.clock).toBe(doc2.api.builder.clock);
     doc1.reset(doc2);

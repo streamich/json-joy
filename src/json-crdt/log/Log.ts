@@ -47,7 +47,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
     const sid = model.clock.sid;
     const log = new Log<N>(
-      () => Model.create<any>(undefined, sid) as Model<N>,
+      () => Model.create(undefined, sid) as unknown as Model<N>,
     ); /** @todo Maybe provide second arg to `new Log(...)` */
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());

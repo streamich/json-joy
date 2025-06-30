@@ -4,7 +4,8 @@ import {encoder, decoder} from '../codec/structural/binary/shared';
 import {ModelApi} from './api';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {ConNode, RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {ConNode} from '../nodes/const/ConNode';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
@@ -132,8 +133,8 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           ? new clock.ServerClockVector(SESSION.SERVER, 1)
           : new clock.ClockVector(sidOrClock, 1)
         : sidOrClock;
-    type Node = S extends undefined ? JsonNode : S extends NodeBuilder ? SchemaToJsonNode<S> : SchemaToJsonNode<nodes.json<S>>;
-    const model = new Model<Node>(cl);
+    type Node = undefined extends S ? JsonNode : S extends NodeBuilder ? SchemaToJsonNode<S> : SchemaToJsonNode<nodes.json<S>>;
+    const model: Model<Node> = new Model<Node>(cl);
     if (schema !== void 0) model.setSchema(schema instanceof NodeBuilder ? schema : s.json(schema), true);
     return model;
   };

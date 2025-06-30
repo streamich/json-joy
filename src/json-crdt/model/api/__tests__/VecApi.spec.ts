@@ -15,7 +15,7 @@ test('.length()', () => {
       vec: s.vec(s.con(1), s.con(2)),
     }),
   );
-  expect(doc.s.vec.toApi().length()).toBe(2);
+  expect(doc.s.vec.$.length()).toBe(2);
 });
 
 test('.push()', () => {
@@ -25,9 +25,9 @@ test('.push()', () => {
     }),
   );
   expect(doc.view().vec).toEqual([1, 2]);
-  doc.s.vec.toApi().push(3);
+  doc.s.vec.$.push(3);
   expect(doc.view().vec).toEqual([1, 2, 3]);
-  doc.s.vec.toApi().push(4, 5, '6');
+  doc.s.vec.$.push(4, 5, '6');
   expect(doc.view().vec).toEqual([1, 2, 3, 4, 5, '6']);
 });
 
@@ -37,7 +37,7 @@ test('.view() is not readonly', () => {
       vec: s.vec(s.con(1), s.con(2)),
     }),
   );
-  const view = doc.s.vec.toApi().view();
+  const view = doc.s.vec.$.view();
   view[1] = 12;
 });
 
