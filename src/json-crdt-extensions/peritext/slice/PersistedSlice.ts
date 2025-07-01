@@ -17,7 +17,7 @@ import {CONST} from '../../../json-hash/hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
-import {s} from '../../../json-crdt-patch';
+import {NodeBuilder, s} from '../../../json-crdt-patch';
 import * as schema from './schema';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {ArrApi, ConApi, type Model, NodeApi, ObjApi, VecApi} from '../../../json-crdt/model';
@@ -38,6 +38,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Slices} from './Slices';
+import {Tag} from './Tag';
 
 /**
  * A persisted slice is a slice that is stored in a {@link Model}. It is used for
@@ -94,6 +95,12 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.model.api.wrap(this.tuple);
   }
 
+  // protected setType(schema: NodeBuilder): void {
+  //   this.tupleApi().set([
+  //     [SliceTupleIndex.Type, schema.type(type as SliceTypeSteps)],
+  //   ]);
+  // }
+
   // ---------------------------------------------------------------- mutations
 
   public set(start: Point<T>, end: Point<T> = start): void {
@@ -131,7 +138,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.end = range.start === range.end ? range.end.clone() : range.end;
     }
     if (params.type !== undefined) {
-      changes.push([SliceTupleIndex.Type, s.jsonCon(params.type)]);
+      changes.push([SliceTupleIndex.Type, params.type instanceof NodeBuilder ? params.type : s.jsonCon(params.type)]);
     }
     if (hasOwnProp(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
@@ -176,6 +183,17 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const node = this.typeNode();
     if (!node) return;
     return this.model.api.wrap(node);
+  }
+
+  /**
+   * Nested tag API for nested block types.
+   *
+   * @param index The position of the tag in the type array. If not specified,
+   *     returns the last tag (255). Maximum index is 255.
+   * @returns Slice tag API for the given position.
+   */
+  public tag(index: number = 255): Tag<T> {
+    return new Tag<T>(this, index);
   }
 
   public typeAsArr(): ArrApi {
@@ -250,23 +268,23 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return Array.isArray(type) ? type[index] : type;
   }
 
-  public tag(index?: number): TypeTag {
-    const step = this.typeStep(index);
-    if (!step) return 0;
-    return Array.isArray(step) ? step[0] : step;
-  }
+  // public tag(index?: number): TypeTag {
+  //   const step = this.typeStep(index);
+  //   if (!step) return 0;
+  //   return Array.isArray(step) ? step[0] : step;
+  // }
 
-  public tagDisc(index?: number): number {
-    const step = this.typeStep(index);
-    if (!step) return 0;
-    return Array.isArray(step) ? (step[1] ?? 0) : 0;
-  }
+  // public tagDisc(index?: number): number {
+  //   const step = this.typeStep(index);
+  //   if (!step) return 0;
+  //   return Array.isArray(step) ? (step[1] ?? 0) : 0;
+  // }
 
-  public tagData(index?: number): unknown | undefined {
-    const step = this.typeStep(index);
-    if (!step) return;
-    return Array.isArray(step) ? step[2] : void 0;
-  }
+  // public tagData(index?: number): unknown | undefined {
+  //   const step = this.typeStep(index);
+  //   if (!step) return;
+  //   return Array.isArray(step) ? step[2] : void 0;
+  // }
 
   // public typeStepNodeAsVec(index?: number): VecNode | undefined {
   //   const arr = this.typeNodeAsArr();
