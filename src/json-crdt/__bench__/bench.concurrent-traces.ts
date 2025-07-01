@@ -9,7 +9,7 @@ const traceName = 'friendsforever';
 const [batch, view] = loadConcurrentTrace(traceName);
 
 const timeBatchRun = (batch: Patch[]) => {
-  const model = Model.withLogicalClock(123123123);
+  const model = Model.create(void 0, 123123123);
   const start = performance.now();
   model.applyBatch(batch);
   const end = performance.now();

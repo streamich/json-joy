@@ -4,8 +4,8 @@ import {Decoder} from '../Decoder';
 
 test('can deserialize a model', () => {
   const encoder = new Encoder();
-  const doc = Model.withLogicalClock();
-  doc.api.root({a: 123, b: 'c', c: new Uint8Array([1, 2]), arr: [1], z: {}});
+  const doc = Model.create();
+  doc.api.set({a: 123, b: 'c', c: new Uint8Array([1, 2]), arr: [1], z: {}});
   const result = encoder.encode(doc);
   const decoder = new Decoder();
   const doc2 = decoder.decode(result);

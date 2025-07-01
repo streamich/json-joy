@@ -74,7 +74,7 @@ const subscribe = (model: Model) => {
 
 const main = async () => {
   // Create a new JSON CRDT document.
-  const model = Model.withLogicalClock(1234); // 1234 is the session ID
+  const model = Model.create(void 0, 1234); // 1234 is the session ID
 
   // Clone the model now for future reset.
   const model0 = model.clone();
@@ -84,7 +84,7 @@ const main = async () => {
 
   // Construct a JSON CRDT Patch which sets the document value to `123`.
   const builder = new PatchBuilder(model.clock);
-  builder.root(builder.const(123));
+  builder.root(builder.con(123));
   const patch = builder.flush();
 
   // Print out the document state.
@@ -116,7 +116,7 @@ const main = async () => {
   // Execute a local change.
   console.log('Executing: model.api.root(456)');
   console.log('');
-  model.api.root(456);
+  model.api.set(456);
   await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
@@ -128,7 +128,7 @@ const main = async () => {
   console.log('Executing: model.api.transaction(() => { ... })');
   console.log('');
   model.api.transaction(() => {
-    model.api.root({});
+    model.api.set({});
     model.api.obj([]).set({
       a: 'b',
     });

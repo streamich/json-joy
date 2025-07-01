@@ -5,7 +5,7 @@ import {ClockVector, tick} from '../../../json-crdt-patch/clock';
 describe('Scenarios', () => {
   // https://youtu.be/GXJ0D2tfZCM?t=2359
   test('concurrently insert text at different positions', () => {
-    const doc = Model.withLogicalClock(new ClockVector(100, 0));
+    const doc = Model.create(void 0, new ClockVector(100, 0));
     const builder1 = new PatchBuilder(doc.clock);
     const str = builder1.str();
     const ins1 = builder1.insStr(str, str, 'Helo');
@@ -26,7 +26,7 @@ describe('Scenarios', () => {
   });
 
   test('concurrently insert text at different positions (reverse)', () => {
-    const doc = Model.withLogicalClock(new ClockVector(100, 0));
+    const doc = Model.create(void 0, new ClockVector(100, 0));
     const builder1 = new PatchBuilder(doc.clock);
     const str = builder1.str();
     const ins1 = builder1.insStr(str, str, 'Helo');
@@ -48,7 +48,7 @@ describe('Scenarios', () => {
 
   // https://youtu.be/GXJ0D2tfZCM?t=2587
   test('concurrently insert text at the same position', () => {
-    const doc = Model.withLogicalClock(new ClockVector(100, 0));
+    const doc = Model.create(void 0, new ClockVector(100, 0));
     const builder1 = new PatchBuilder(doc.clock);
     const str = builder1.str();
     const ins1 = builder1.insStr(str, str, 'abc');
@@ -70,7 +70,7 @@ describe('Scenarios', () => {
   });
 
   test('concurrently insert text at the same position (2)', () => {
-    const doc = Model.withLogicalClock(new ClockVector(100, 0));
+    const doc = Model.create(void 0, new ClockVector(100, 0));
     const builder1 = new PatchBuilder(doc.clock);
     const str = builder1.str();
     const ins1 = builder1.insStr(str, str, 'abc');

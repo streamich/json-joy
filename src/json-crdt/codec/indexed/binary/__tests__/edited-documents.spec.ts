@@ -6,8 +6,8 @@ import {Decoder} from '../Decoder';
 test('editing document ', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
-  const doc1 = Model.withLogicalClock(new ClockVector(233322, 0));
-  doc1.api.root({
+  const doc1 = Model.create(void 0, new ClockVector(233322, 0));
+  doc1.api.set({
     id: 123456,
     name: 'John',
     age: 23,

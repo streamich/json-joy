@@ -3,9 +3,9 @@ import type {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
-  api.root([0, '123', 2]);
+  api.set([0, '123', 2]);
   const str = api.str([1]);
   str.ins(0, '0');
   str.ins(4, '-xxxx');
@@ -16,9 +16,9 @@ test('can edit a simple string', () => {
 });
 
 test('can delete across two chunks', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const api = doc.api;
-  api.root('');
+  api.set('');
   const str = api.str([]);
   str.ins(0, 'aaa');
   str.ins(0, 'bbb');
@@ -28,22 +28,22 @@ test('can delete across two chunks', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(
+  const doc = Model.create().setSchema(
     s.obj({
       str: s.str('hello world'),
     }),
   );
-  expect(doc.find.val.str.toApi().length()).toBe(11);
+  expect(doc.s.str.$.length()).toBe(11);
 });
 
 describe('position tracking', () => {
   test('can convert position into global coordinates and back', () => {
-    const doc = Model.withLogicalClock().setSchema(
+    const doc = Model.create().setSchema(
       s.obj({
         str: s.str('hello world'),
       }),
     );
-    const str = doc.find.val.str.toApi();
+    const str = doc.s.str.$;
     for (let i = -1; i < str.length(); i++) {
       const id = str.findId(i);
       expect(str.findPos(id)).toBe(i);
@@ -51,12 +51,12 @@ describe('position tracking', () => {
   });
 
   test('shifts position when text is inserted in the middle', () => {
-    const doc = Model.withLogicalClock().setSchema(
+    const doc = Model.create().setSchema(
       s.obj({
         str: s.str('123456'),
       }),
     );
-    const str = doc.find.val.str.toApi();
+    const str = doc.s.str.$;
     const ids: ITimestampStruct[] = [];
     for (let i = -1; i < str.length(); i++) ids.push(str.findId(i));
     str.ins(3, 'abc');
@@ -67,9 +67,9 @@ describe('position tracking', () => {
 
 describe('events', () => {
   test('can subscribe to "view" events', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root('');
+    api.set('');
     const str = api.str([]);
     let cnt = 0;
     const onView = () => cnt++;
@@ -88,9 +88,9 @@ describe('events', () => {
   });
 
   test('batches consecutive updates into one "view" event dispatch', async () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root('');
+    api.set('');
     const str = api.str([]);
     let cnt = 0;
     const onChange = () => cnt++;
@@ -106,9 +106,9 @@ describe('events', () => {
 
   describe('.changes', () => {
     test('can listen to events', async () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const api = doc.api;
-      api.root('');
+      api.set('');
       const str = api.str([]);
       let cnt = 0;
       const onView = () => cnt++;
@@ -129,9 +129,9 @@ describe('events', () => {
 
   describe('SyncStore', () => {
     test('can listen to events', async () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const api = doc.api;
-      api.root('');
+      api.set('');
       const str = api.str([]);
       let cnt = 0;
       const onView = () => cnt++;

@@ -31,13 +31,17 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     public readonly id: ITimestampStruct,
   ) {}
 
+  public length(): number {
+    return this.elements.length;
+  }
+
   /**
    * Retrieves the ID of an element at the given index.
    *
    * @param index Index of the element to get.
    * @returns ID of the element at the given index, if any.
    */
-  public val(index: number): undefined | ITimestampStruct {
+  public val(index: number): ITimestampStruct | undefined {
     return this.elements[index] as ITimestampStruct | undefined;
   }
 
@@ -47,7 +51,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
    * @param index Index of the element to get.
    * @returns JSON CRDT node at the given index, if any.
    */
-  public get<Index extends number>(index: Index): undefined | Value[Index] {
+  public get<Index extends number>(index: Index): Value[Index] | undefined {
     const id = this.elements[index] as ITimestampStruct | undefined;
     if (!id) return undefined;
     return this.doc.index.get(id);
@@ -56,7 +60,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  public put(index: number, id: ITimestampStruct): undefined | ITimestampStruct {
+  public put(index: number, id: ITimestampStruct): ITimestampStruct | undefined {
     if (index > CRDT_CONSTANTS.MAX_TUPLE_LENGTH) throw new Error('OUT_OF_BOUNDS');
     const currentId = this.val(index);
     if (currentId && compare(currentId, id) >= 0) return;

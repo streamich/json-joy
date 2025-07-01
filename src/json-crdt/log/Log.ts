@@ -41,13 +41,13 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    * uses them to create the initial state of the log.
    *
    * @param model A new JSON CRDT model, just created with
-   *              `Model.withLogicalClock()` or `Model.withServerClock()`.
+   *              `Model.create()` or `Model.withServerClock()`.
    * @returns A new `PatchLog` instance.
    */
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
     const sid = model.clock.sid;
     const log = new Log<N>(
-      () => Model.create<any>(undefined, sid) as Model<N>,
+      () => Model.create(undefined, sid) as unknown as Model<N>,
     ); /** @todo Maybe provide second arg to `new Log(...)` */
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
@@ -215,7 +215,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
             const newId = schema.build(builder);
             data.push([key, newId] as any);
           } else {
-            data.push([key, builder.const(undefined)] as any);
+            data.push([key, builder.con(undefined)] as any);
           }
         }
         if (data.length) {

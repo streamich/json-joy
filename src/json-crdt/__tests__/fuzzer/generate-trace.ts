@@ -29,7 +29,7 @@ for (const patch of fuzzer.patches) {
   patches.push(patch);
 }
 
-const model = Model.withLogicalClock();
+const model = Model.create();
 model.applyBatch(patches);
 const cborEncoder = new CborEncoder(new Writer());
 fs.writeFileSync(__dirname + '/trace.cbor', cborEncoder.encode(patches.map((p) => p.toBinary())));

@@ -26,8 +26,8 @@ export const editorStrNode: SequentialTraceEditor = {
 export const editorJsonJoy: SequentialTraceEditor = {
   name: 'json-joy',
   factory: () => {
-    const model = Model.withLogicalClock();
-    model.api.root('');
+    const model = Model.create();
+    model.api.set('');
     const str = model.api.str([]);
     return {
       ins: (pos: number, insert: string) => {

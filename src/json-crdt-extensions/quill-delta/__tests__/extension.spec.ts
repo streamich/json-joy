@@ -15,7 +15,7 @@ const schema = s.obj({
 
 test('view should preserve identity', () => {
   const model = ModelWithExt.create(schema);
-  expect(model.s.nested.obj.text.toView()).toBe(model.s.nested.obj.text.toView());
+  expect(model.s.nested.obj.text.$.view()).toBe(model.s.nested.obj.text.$.view());
 });
 
 describe('typed access', () => {
@@ -43,7 +43,7 @@ describe('typed access', () => {
 
   test('can access Quill Delta node using parent proxy selector', () => {
     const model = ModelWithExt.create(schema);
-    const api = model.s.nested.obj.text.toApi();
+    const api = model.s.nested.obj.text.$;
     expect(api).toBeInstanceOf(VecApi);
     let node = api.node.ext();
     expect(node).toBeInstanceOf(QuillDeltaNode);

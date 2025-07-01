@@ -7,9 +7,9 @@ import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import type {Chunk} from '../../../../json-crdt/nodes/rga';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
+  const model = Model.create();
   const api = model.api;
-  api.root({
+  api.set({
     text: '',
     slices: [],
   });

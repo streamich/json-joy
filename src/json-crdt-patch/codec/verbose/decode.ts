@@ -23,9 +23,9 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
     switch (op.op) {
       case 'new_con': {
         if (op.timestamp) {
-          builder.const(decodeId(op.value as types.JsonCodecTimestamp));
+          builder.con(decodeId(op.value as types.JsonCodecTimestamp));
         } else {
-          builder.const(op.value);
+          builder.con(op.value);
         }
         break;
       }
@@ -81,6 +81,10 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
       }
       case 'ins_arr': {
         builder.insArr(decodeId(op.obj), decodeId(op.after || op.obj), op.values.map(decodeId));
+        break;
+      }
+      case 'upd_arr': {
+        builder.updArr(decodeId(op.obj), decodeId(op.ref), decodeId(op.value));
         break;
       }
       case 'del': {

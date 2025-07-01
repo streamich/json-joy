@@ -7,7 +7,7 @@ import {SliceStacking} from '../../slice/constants';
 const setup = () => {
   const sid = 123456789;
   const model = Model.create(undefined, sid);
-  model.api.root({
+  model.api.set({
     text: '',
     slices: [],
     markers: [],

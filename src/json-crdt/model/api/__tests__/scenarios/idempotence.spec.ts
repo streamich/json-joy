@@ -1,8 +1,8 @@
 import {Model} from '../../../Model';
 
 test('applying old operations has no effect', () => {
-  const doc = Model.withLogicalClock();
-  doc.api.root({
+  const doc = Model.create();
+  doc.api.set({
     str: 'asdf',
     num: 123,
     bool: [true],

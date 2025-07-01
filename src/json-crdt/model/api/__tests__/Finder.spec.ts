@@ -1,8 +1,8 @@
 import {Model} from '../../Model';
 
 test('can find element by JSON Pointer', () => {
-  const doc = Model.withLogicalClock();
-  doc.api.root({
+  const doc = Model.create();
+  doc.api.set({
     foo: {
       bar: [
         {

@@ -6,7 +6,7 @@ import {interval, tick} from '../../../json-crdt-patch/clock';
 describe('Document', () => {
   describe('binary', () => {
     test('can create a binary', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       doc.applyPatch(builder.patch);
@@ -15,7 +15,7 @@ describe('Document', () => {
     });
 
     test('can set binary as document root', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       builder.root(id);
@@ -24,7 +24,7 @@ describe('Document', () => {
     });
 
     test('can add one octet to a binary', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       builder.insBin(id, id, new Uint8Array([1]));
@@ -34,7 +34,7 @@ describe('Document', () => {
     });
 
     test('can add many octets in one operation', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       builder.insBin(id, id, new Uint8Array([1, 2, 3, 4]));
@@ -44,7 +44,7 @@ describe('Document', () => {
     });
 
     test('can insert three octets sequentially using three operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1]));
@@ -56,7 +56,7 @@ describe('Document', () => {
     });
 
     test('can insert three octets with two operations', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1]));
@@ -67,7 +67,7 @@ describe('Document', () => {
     });
 
     test('can insert at the end of two-octet binary', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
@@ -78,7 +78,7 @@ describe('Document', () => {
     });
 
     test('can insert at the end of two-octet binary twice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
@@ -90,7 +90,7 @@ describe('Document', () => {
     });
 
     test('can insert at the end of the same two-octet binary twice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
@@ -102,7 +102,7 @@ describe('Document', () => {
     });
 
     test('can apply the same patch trice', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
@@ -116,7 +116,7 @@ describe('Document', () => {
     });
 
     test('can insert at the beginning of two-octet binary', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
@@ -130,7 +130,7 @@ describe('Document', () => {
     });
 
     test('can delete a single octet from one-octet chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([5]));
@@ -144,7 +144,7 @@ describe('Document', () => {
     });
 
     test('can delete a single octet from one-octet chunk in the middle of binary', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([5]));
@@ -159,7 +159,7 @@ describe('Document', () => {
     });
 
     test('can delete last octet in two-octet chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
@@ -173,7 +173,7 @@ describe('Document', () => {
     });
 
     test('can delete first two octets in three-octet chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([2, 3, 4]));
@@ -187,7 +187,7 @@ describe('Document', () => {
     });
 
     test('can delete a range in the middle of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([0, 1, 2, 3, 4, 5, 6]));
@@ -201,7 +201,7 @@ describe('Document', () => {
     });
 
     test('can delete two chunks using one delete operation', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1]));
@@ -218,7 +218,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -238,7 +238,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -255,7 +255,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one one-octet chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array(4));
@@ -266,7 +266,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -277,7 +277,7 @@ describe('Document', () => {
     });
 
     test('can find ID in second chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -293,7 +293,7 @@ describe('Document', () => {
     });
 
     test('can find span within one chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3]));
@@ -308,7 +308,7 @@ describe('Document', () => {
     });
 
     test('can find span within one chunk - 2', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -323,7 +323,7 @@ describe('Document', () => {
     });
 
     test('can find span at the beginning of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -338,7 +338,7 @@ describe('Document', () => {
     });
 
     test('can find span at the end of a chunk', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
@@ -353,7 +353,7 @@ describe('Document', () => {
     });
 
     test('can find span across two chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3]));
@@ -373,7 +373,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3]));
@@ -398,7 +398,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks - 2', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3]));
@@ -423,7 +423,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks - 3', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3]));

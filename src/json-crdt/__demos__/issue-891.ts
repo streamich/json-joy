@@ -12,7 +12,7 @@ import {Model} from '..';
 
 const model = Model.create(void 0, 12345);
 
-model.api.root({});
+model.api.set({});
 model.api.flush();
 const obj = model.api.obj([]);
 

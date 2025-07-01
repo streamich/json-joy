@@ -22,9 +22,9 @@ test('encodes a patch with all operation types', () => {
   assertCodec();
   builder.bin();
   assertCodec();
-  builder.const(123);
+  builder.con(123);
   assertCodec();
-  builder.const({foo: 'bar'});
+  builder.con({foo: 'bar'});
   assertCodec();
   builder.insObj(ts(4, 1), [['asdf', ts(4, 4)]]);
   assertCodec();
@@ -53,6 +53,8 @@ test('encodes a patch with all operation types', () => {
   assertCodec();
   builder.arr();
   assertCodec();
+  builder.updArr(ts(1, 1), ts(2, 2), ts(3, 3));
+  assertCodec();
 });
 
 test('supports consts with undefined value', () => {
@@ -67,7 +69,7 @@ test('supports consts with undefined value', () => {
   assertCodec();
   builder.obj();
   assertCodec();
-  builder.const(undefined);
+  builder.con(undefined);
   assertCodec();
 });
 
@@ -101,7 +103,7 @@ test('can set tuple slots', () => {
 test('can encode an ID', () => {
   const clock = new LogicalClock(12345678, 123);
   const builder = new PatchBuilder(clock);
-  const constId = builder.const(new Timestamp(555, 666));
+  const constId = builder.con(new Timestamp(555, 666));
   builder.root(constId);
   const encoded = JSON.stringify(encode(builder.patch));
   const decoded = decode(JSON.parse(encoded));
@@ -113,7 +115,7 @@ test('can encode an ID', () => {
 test('can encode custom metadata', () => {
   const clock = new LogicalClock(12345678, 123);
   const builder = new PatchBuilder(clock);
-  const constId = builder.const(new Timestamp(555, 666));
+  const constId = builder.con(new Timestamp(555, 666));
   builder.root(constId);
   const patch = builder.flush();
   patch.meta = {foo: 'bar'};
@@ -125,7 +127,7 @@ test('can encode custom metadata', () => {
 test('metadata can be a falsy value', () => {
   const clock = new LogicalClock(12345678, 123);
   const builder = new PatchBuilder(clock);
-  const constId = builder.const(new Timestamp(555, 666));
+  const constId = builder.con(new Timestamp(555, 666));
   builder.root(constId);
   const patch = builder.flush();
   patch.meta = false;

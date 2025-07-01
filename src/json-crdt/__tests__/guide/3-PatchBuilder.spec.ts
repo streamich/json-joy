@@ -3,7 +3,7 @@
 import {Model} from '../..';
 import {tick} from '../../../json-crdt-patch/clock';
 
-const doc = Model.withLogicalClock();
+const doc = Model.create();
 const builder = doc.api.builder;
 
 test('can edit document using JSON Patch operations', () => {

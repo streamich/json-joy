@@ -327,7 +327,7 @@ const setup = (
   sid?: number,
 ) => {
   const model = Model.create(void 0, sid);
-  model.api.root({
+  model.api.set({
     text: '',
     slices: [],
   });

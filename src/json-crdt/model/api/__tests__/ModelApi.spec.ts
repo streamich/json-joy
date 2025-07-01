@@ -2,9 +2,9 @@ import {Model} from '../../Model';
 
 describe('string manipulation', () => {
   test('can edit strings', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root('');
+    api.set('');
     api.str([]).ins(0, 'var foo = bar');
     api.str([]).ins(10, '"');
     api.str([]).ins(14, '";');
@@ -14,9 +14,9 @@ describe('string manipulation', () => {
   });
 
   test('can edit strings - 2', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root({foo: [123, '', 5]});
+    api.set({foo: [123, '', 5]});
     api.str(['foo', 1]).ins(0, 'var foo = bar');
     api.str(['foo', 1]).ins(10, '"');
     api.str(['foo', 1]).ins(14, '";');
@@ -30,9 +30,9 @@ describe('string manipulation', () => {
 
 describe('number manipulation', () => {
   test('can edit numbers in object', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root({
+    api.set({
       a: [
         {
           b: 123,
@@ -57,9 +57,9 @@ describe('number manipulation', () => {
   });
 
   test('can edit numbers in arrays', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root({
+    api.set({
       a: [123],
     });
     expect(doc.view()).toEqual({
@@ -74,9 +74,9 @@ describe('number manipulation', () => {
 
 describe('array manipulation', () => {
   test('can edit arrays', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root([]);
+    api.set([]);
     expect(doc.view()).toEqual([]);
     api.arr([]).ins(0, [1, 2, true, null, false, 'asdf']);
     expect(doc.view()).toEqual([1, 2, true, null, false, 'asdf']);
@@ -91,9 +91,9 @@ describe('array manipulation', () => {
 
 describe('object manipulation', () => {
   test('can create objects', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root({a: {}});
+    api.set({a: {}});
     expect(doc.view()).toEqual({a: {}});
     api.obj([]).set({gg: true});
     expect(doc.view()).toEqual({a: {}, gg: true});
@@ -102,9 +102,9 @@ describe('object manipulation', () => {
   });
 
   test('can delete object keys', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root({a: 'a'});
+    api.set({a: 'a'});
     expect(doc.view()).toEqual({a: 'a'});
     api.obj([]).set({b: 'b', c: {c: 'c'}});
     expect(doc.view()).toEqual({a: 'a', b: 'b', c: {c: 'c'}});
@@ -116,14 +116,14 @@ describe('object manipulation', () => {
     expect(doc.view()).toEqual({a: 'a'});
     api.obj([]).set({a: undefined});
     expect(doc.view()).toEqual({});
-    api.root({gg: 'bet'});
+    api.set({gg: 'bet'});
     expect(doc.view()).toEqual({gg: 'bet'});
   });
 
   test('can use ID to insert in object', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root({a: 'a'});
+    api.set({a: 'a'});
     expect(doc.view()).toEqual({a: 'a'});
     const str = api.builder.str();
     api.obj('').set({
@@ -133,9 +133,9 @@ describe('object manipulation', () => {
   });
 
   test('can use ID to insert in array', () => {
-    const doc = Model.withLogicalClock();
+    const doc = Model.create();
     const api = doc.api;
-    api.root([1, 2]);
+    api.set([1, 2]);
     expect(doc.view()).toEqual([1, 2]);
     const str = api.builder.str();
     api.arr('').ins(1, [str]);

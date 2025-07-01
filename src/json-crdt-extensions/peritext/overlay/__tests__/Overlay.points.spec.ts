@@ -6,7 +6,7 @@ import type {OverlayPoint} from '../OverlayPoint';
 const setup = () => {
   const model = Model.create();
   const api = model.api;
-  api.root({
+  api.set({
     text: '',
     slices: [],
   });

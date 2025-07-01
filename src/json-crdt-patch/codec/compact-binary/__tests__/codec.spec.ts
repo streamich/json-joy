@@ -74,9 +74,9 @@ test('encodes a patch with all operation types', () => {
   assertCodec();
   builder.bin();
   assertCodec();
-  builder.const(123);
+  builder.con(123);
   assertCodec();
-  builder.const({foo: 'bar'});
+  builder.con({foo: 'bar'});
   assertCodec();
   builder.insObj(ts(4, 1), [['asdf', ts(4, 4)]]);
   assertCodec();
@@ -104,6 +104,8 @@ test('encodes a patch with all operation types', () => {
   builder.nop(5);
   assertCodec();
   builder.arr();
+  assertCodec();
+  builder.updArr(ts(1, 1), ts(2, 2), ts(3, 3));
   assertCodec();
 });
 

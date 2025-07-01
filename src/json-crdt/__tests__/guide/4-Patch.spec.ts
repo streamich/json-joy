@@ -7,7 +7,7 @@ import {NewStrOp, InsValOp, NewObjOp, InsObjOp, InsStrOp} from '../../../json-cr
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 
-const doc = Model.withLogicalClock();
+const doc = Model.create();
 const clock = doc.clock;
 const patch = new Patch();
 

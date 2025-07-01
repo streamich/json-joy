@@ -6,16 +6,15 @@
  *     npx nodemon -q -x ts-node src/json-crdt/__demos__/docs-vec.ts
  */
 
-import {Model} from '..';
-import {vec} from '../../json-crdt-patch';
+import {Model, s} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234); // 1234 is session ID
+const model = Model.create(void 0, 1234); // 1234 is session ID
 
-model.api.root({
+model.api.set({
   foo: {
-    bar: vec(1, 2),
+    bar: s.vec(s.con(1), s.con(2)),
   },
 });
 

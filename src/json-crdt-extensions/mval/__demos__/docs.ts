@@ -11,11 +11,11 @@ import {MvalExt} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234);
+const model = Model.create(void 0, 1234);
 
 model.ext.register(MvalExt);
 
-model.api.root({
+model.api.set({
   score: MvalExt.new(1),
 });
 console.log(model + '');

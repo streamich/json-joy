@@ -1,16 +1,17 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {ObjNode, ArrNode, type JsonNode, ConNode} from '../nodes';
+import {ObjNode, ArrNode, type JsonNode, ConNode, StrNode} from '../nodes';
 import {toPath, isChild} from '@jsonjoy.com/json-pointer/lib/util';
 import {interval} from '../../json-crdt-patch/clock';
 import type {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import type {Path} from '@jsonjoy.com/json-pointer/lib/types';
-import type {Model} from '../model';
+import type {Model, NodeApi} from '../model';
 import type {Operation} from '../../json-patch';
 
 export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   constructor(
     protected readonly model: Model<N>,
     protected readonly pfx: Path = [],
+    protected readonly base?: NodeApi<any>,
   ) {}
 
   public apply(ops: Operation[]): this {
@@ -68,7 +69,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     if (!steps.length) this.setRoot(value);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
-      const node = this.model.api.find(objSteps);
+      const node = this.base?.find(objSteps) ?? this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjNode) {
         builder.insObj(node.id, [[String(key), builder.json(value)]]); // TODO: see if "con" nodes can be used here in some cases.
@@ -98,14 +99,14 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     if (!steps.length) this.setRoot(null);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
-      const node = this.model.api.find(objSteps);
+      const node = this.base?.find(objSteps) ?? this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjNode) {
         const stringKey = String(key);
         const valueNode = node.get(stringKey);
         if (valueNode === undefined) throw new Error('NOT_FOUND');
         if (valueNode instanceof ConNode && valueNode.val === undefined) throw new Error('NOT_FOUND');
-        builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
+        builder.insObj(node.id, [[stringKey, builder.con(undefined)]]);
       } else if (node instanceof ArrNode) {
         const key = steps[steps.length - 1];
         const index = ~~key;
@@ -145,7 +146,8 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
 
   public strIns(path: string | Path, pos: number, str: string): void {
     path = this.toPath(path);
-    const {node} = this.model.api.str(path);
+    const node = this.base?.find(path) ?? this.model.api.find(path);
+    if (!(node instanceof StrNode)) throw new Error('NOT_FOUND');
     const length = node.length();
     const after = pos ? node.find(length < pos ? length - 1 : pos - 1) : node.id;
     if (!after) throw new Error('OUT_OF_BOUNDS');
@@ -154,7 +156,8 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
 
   public strDel(path: string | Path, pos: number, len: number, str: string = ''): void {
     path = this.toPath(path);
-    const {node} = this.model.api.str(path);
+    const node = this.base?.find(path) ?? this.model.api.find(path);
+    if (!(node instanceof StrNode)) throw new Error('NOT_FOUND');
     const length = node.length();
     if (length <= pos) return;
     const deletionLength = Math.min(len ?? str!.length, length - pos);
@@ -164,41 +167,18 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   }
 
   public get(path: string | Path): unknown {
-    return this._get(this.toPath(path));
-  }
-
-  private _get(steps: Path): unknown {
-    const model = this.model;
-    if (!steps.length) return model.view();
-    else {
-      try {
-        const objSteps = steps.slice(0, steps.length - 1);
-        const node = model.api.find(objSteps);
-        const key = steps[steps.length - 1];
-        if (node instanceof ObjNode) {
-          return node.get(String(key))?.view();
-        } else if (node instanceof ArrNode) {
-          const index = ~~key;
-          if ('' + index !== key) throw new Error('INVALID_INDEX');
-          const arrNode = node.getNode(index);
-          if (!arrNode) throw new Error('NOT_FOUND');
-          return arrNode.view();
-        }
-      } catch {
-        return;
-      }
-    }
-    return undefined;
+    return (this.base ?? this.model.api).read(this.toPath(path));
   }
 
   private json(steps: Path): unknown {
-    const json = this._get(steps);
+    const json = (this.base ?? this.model.api).read(steps);
     if (json === undefined) throw new Error('NOT_FOUND');
     return json;
   }
 
   private setRoot(json: unknown) {
+    const root = this.base?.node ?? this.model.root;
     const builder = this.builder();
-    builder.root(builder.json(json));
+    builder.setVal(root.id, builder.json(json));
   }
 }

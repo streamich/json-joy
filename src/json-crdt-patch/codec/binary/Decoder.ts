@@ -80,7 +80,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
     switch (opcode) {
       case JsonCrdtPatchOpcode.new_con: {
         const length = octet & 0b111;
-        builder.const(!length ? this.val() : this.decodeId());
+        builder.con(!length ? this.val() : this.decodeId());
         break;
       }
       case JsonCrdtPatchOpcode.new_val: {
@@ -163,6 +163,13 @@ export class Decoder extends CborDecoder<CrdtReader> {
         const elements: ITimestampStruct[] = [];
         for (let i = 0; i < length; i++) elements.push(this.decodeId());
         builder.insArr(obj, after, elements);
+        break;
+      }
+      case JsonCrdtPatchOpcode.upd_arr: {
+        const obj = this.decodeId();
+        const ref = this.decodeId();
+        const val = this.decodeId();
+        builder.updArr(obj, ref, val);
         break;
       }
       case JsonCrdtPatchOpcode.del: {

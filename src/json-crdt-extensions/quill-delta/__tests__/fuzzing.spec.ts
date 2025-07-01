@@ -6,7 +6,7 @@ for (let j = 0; j < 250; j++) {
   test('fuzz - ' + j, () => {
     const model = Model.create();
     model.ext.register(QuillDeltaExt);
-    model.api.root(QuillDeltaExt.new(''));
+    model.api.set(QuillDeltaExt.new(''));
     const quill = model.api.in().asExt(QuillDeltaExt);
     const fuzzer = new QuillDeltaFuzzer({
       maxOperationsPerPatch: 3,

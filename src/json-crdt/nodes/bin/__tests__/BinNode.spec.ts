@@ -4,7 +4,7 @@ import {Model} from '../../../model';
 import type {BinNode} from '../BinNode';
 
 test('merges sequential chunks', () => {
-  const doc = Model.withLogicalClock();
+  const doc = Model.create();
   const builder1 = new PatchBuilder(doc.clock);
 
   const bin = builder1.bin();

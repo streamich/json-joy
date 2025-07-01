@@ -1,8 +1,8 @@
 import * as operations from '../../operations';
 import {type ITimespanStruct, type ITimestampStruct, Timestamp} from '../../clock';
-import type {Patch} from '../../Patch';
 import {JsonCrdtPatchOpcode, SESSION} from '../../constants';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
+import type {Patch} from '../../Patch';
 import type * as types from './types';
 
 const timestamp = (sid: number, ts: ITimestampStruct): types.CompactCodecTimestamp => {
@@ -102,6 +102,14 @@ export const encode = (patch: Patch): types.CompactCodecPatch => {
         timestamp(sid, op.obj),
         timestamp(sid, op.ref),
         elements,
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.UpdArrOp) {
+      const operation: types.CompactCodecUpdArrOperation = [
+        JsonCrdtPatchOpcode.upd_arr,
+        timestamp(sid, op.obj),
+        timestamp(sid, op.ref),
+        timestamp(sid, op.val),
       ];
       res.push(operation);
     } else if (op instanceof operations.DelOp) {

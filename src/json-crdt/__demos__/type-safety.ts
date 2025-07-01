@@ -10,7 +10,7 @@ import {Model, type n} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234) as any as Model<
+const model = Model.create(void 0, 1234) as any as Model<
   n.obj<{
     num: n.con<number>;
     text: n.str;
@@ -22,7 +22,7 @@ const model = Model.withLogicalClock(1234) as any as Model<
 console.log(model + '');
 console.log(model.view());
 
-model.api.root({
+model.api.set({
   num: 123,
   text: 'hello',
   flags: [true, false],
@@ -58,7 +58,7 @@ console.log(model.view().text);
 console.log(model.view().flags[0]);
 // true
 
-console.log(model.find.val.toApi() + '');
+console.log(model.s.$ + '');
 // ObjectApi
 // └─ ObjNode 1234.1
 //    ├─ "num"
@@ -74,7 +74,7 @@ console.log(model.find.val.toApi() + '');
 //              └─ [1]: ValNode 1234.13
 //                      └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.flags.toApi() + '');
+console.log(model.s.flags.$ + '');
 // ArrApi
 // └─ ArrNode 1234.9
 //    └─ ArrChunk 1234.14!2 len:2
@@ -83,20 +83,20 @@ console.log(model.find.val.flags.toApi() + '');
 //       └─ [1]: ValNode 1234.13
 //               └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.flags[1].toApi() + '');
+console.log(model.s.flags[1].$ + '');
 // ValApi
 // └─ ValNode 1234.13
 //    └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.flags[1].val.toApi() + '');
+console.log(model.s.flags[1]._.$ + '');
 // ConApi
 // └─ ConNode 1234.12 { false }
 
-console.log(model.find.val.num.toApi() + '');
+console.log(model.s.num.$ + '');
 // ConApi
 // └─ ConNode 1234.2 { 123 }
 
-console.log(model.find.val.text.toApi() + '');
+console.log(model.s.text.$ + '');
 // StrApi
 // └─ StrNode 1234.3 { "hello" }
 //    └─ StrChunk 1234.4!5 len:5 { "hello" }

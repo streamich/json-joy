@@ -1,15 +1,14 @@
-import {Model} from '../../../../';
+import {Model, s} from '../../../../';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {compare, equal, Timestamp, ClockVector} from '../../../../../json-crdt-patch/clock';
-import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
 
 test('encoding/decoding a model results in the same node IDs', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(5, 0));
-  model1.api.root('');
+  const model1 = Model.create(void 0, new ClockVector(5, 0));
+  model1.api.set('');
   expect(model1.view()).toStrictEqual('');
   model1.api.str([]).ins(0, 'a');
   const encoded1 = encoder.encode(model1);
@@ -22,8 +21,8 @@ test('encoding/decoding a model results in the same node IDs', () => {
 });
 
 test('forking and encoding/decoding results in the same node IDs', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(3, 0));
-  model1.api.root('abc');
+  const model1 = Model.create(void 0, new ClockVector(3, 0));
+  model1.api.set('abc');
   expect(model1.view()).toStrictEqual('abc');
   const model2 = model1.fork(4);
   const encoded2 = encoder.encode(model2);
@@ -35,33 +34,33 @@ test('forking and encoding/decoding results in the same node IDs', () => {
 });
 
 test('vector clocks are the same after decoding', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(555555, 0));
-  model1.api.root('');
+  const model1 = Model.create(void 0, new ClockVector(555555, 0));
+  model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
   expect(model1.clock).toStrictEqual(decoded1.clock);
 });
 
 test('decoded root node ID is correct', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(666666, 0));
-  model1.api.root('');
+  const model1 = Model.create(void 0, new ClockVector(666666, 0));
+  model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
   expect(equal(model1.root.id, decoded1.root.id)).toBe(true);
 });
 
 test('simple string document decoded string node ID is correct', () => {
-  const model1 = Model.withLogicalClock(new ClockVector(777777, 0));
-  model1.api.root('');
+  const model1 = Model.create(void 0, new ClockVector(777777, 0));
+  model1.api.set('');
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
   expect(equal(model1.api.str([]).node.id, decoded1.api.str([]).node.id)).toBe(true);
 });
 
 test('can encode ID as const value', () => {
-  const model = Model.withLogicalClock();
-  model.api.root({
-    foo: konst(new Timestamp(model.clock.sid, 2)),
+  const model = Model.create();
+  model.api.set({
+    foo: s.con(new Timestamp(model.clock.sid, 2)),
   });
   const encoded = JSON.stringify(encoder.encode(model));
   const decoded = decoder.decode(JSON.parse(encoded));

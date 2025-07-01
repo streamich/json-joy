@@ -8,7 +8,7 @@
 
 import {Model} from '..';
 
-const model = Model.withLogicalClock(1234); // 1234 is the session ID
+const model = Model.create(void 0, 1234); // 1234 is the session ID
 
 // No events
 // model.applyPatch();
@@ -24,9 +24,9 @@ const model = Model.withLogicalClock(1234); // 1234 is the session ID
 // });
 
 // DOM Level 2 node events
-const root = model.api.r;
+const root = model.api;
 root.events.onViewChanges.listen(() => {
   console.log('Root value changed');
 });
 
-model.api.root(123);
+model.api.set(123);

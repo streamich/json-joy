@@ -1,18 +1,44 @@
 import {printTree} from 'tree-dump/lib/printTree';
+import {get} from '@jsonjoy.com/json-pointer/lib/get';
+import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import {find} from './find';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
-import type {Path} from '@jsonjoy.com/json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
+import {FanOut} from 'thingies/lib/fanout';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
+import * as diff from '../../../json-crdt-diff';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
-import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from './proxy';
-import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
+import type {Patch} from '../../../json-crdt-patch';
+import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
+import type {SyncStore} from '../../../util/events/sync-store';
+import type {Model} from '../Model';
+import type {JsonNode, JsonNodeView} from '../../nodes';
+
+const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | number] => {
+  if (!path) return [void 0, ''];
+  if (typeof path === 'number') return [void 0, path];
+  if (typeof path === 'string') path = toPath(path);
+  switch (path.length) {
+    case 0:
+      return [void 0, ''];
+    case 1:
+      return [void 0, path[0]];
+    default: {
+      const key = path[path.length - 1];
+      const parent = path.slice(0, -1);
+      return [parent, key];
+    }
+  }
+};
 
 export type ApiPath = string | number | Path | undefined;
 
@@ -52,7 +78,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @returns JSON CRDT node at the given path.
    */
   public find(path?: ApiPath): JsonNode {
-    const node = this.node;
+    let node: JsonNode<any> = this.node;
+    /**
+     * @todo Remove this .child() loop, and remove the `.child()` method from JsonNode interface.
+     */
     if (path === undefined) {
       if (typeof node.child === 'function') {
         const child = node.child();
@@ -66,7 +95,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     }
     if (typeof path === 'string' && !!path && path[0] !== '/') path = '/' + path;
     if (typeof path === 'number') path = [path];
-    return find(this.node, path);
+    while (node instanceof ValNode) node = node.child()!;
+    return find(node, path);
   }
 
   /**
@@ -103,7 +133,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public asVec(): VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
-    throw new Error('NOT_ARR');
+    throw new Error('NOT_VEC');
   }
 
   public asObj(): ObjApi {
@@ -113,7 +143,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public asCon(): ConApi {
     if (this.node instanceof ConNode) return this.api.wrap(this.node);
-    throw new Error('NOT_CONST');
+    throw new Error('NOT_CON');
   }
 
   /**
@@ -175,11 +205,138 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.node.view() as unknown as JsonNodeView<N>;
   }
 
-  public proxy(): types.ProxyNode<N> {
-    return {
-      toApi: () => <any>this,
-      toView: () => this.node.view() as any,
-    };
+  public select(path?: ApiPath, leaf?: boolean) {
+    try {
+      let node = path ? this.find(path) : this.node;
+      if (leaf) while (node instanceof ValNode) node = node.child();
+      return this.api.wrap(node);
+    } catch (e) {
+      return;
+    }
+  }
+
+  public read(path?: ApiPath): unknown {
+    const view = this.view();
+    if (Array.isArray(path)) return get(view, path);
+    if (!path) return view;
+    let path2: string = path + '';
+    if (path && path2[0] !== '/') path2 = '/' + path2;
+    return get(view, toPath(path2));
+  }
+
+  public add(path: ApiPath, value: unknown): boolean {
+    const [parent, key] = breakPath(path);
+    ADD: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        node.set({[key]: value});
+      } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
+        const length = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else if (key === '-') index = length;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break ADD;
+        }
+        if (index !== index) break ADD;
+        if (index < 0) index = 0;
+        if (index > length) index = length;
+        if (node instanceof ArrApi) {
+          node.ins(index, Array.isArray(value) ? value : [value]);
+        } else if (node instanceof StrApi) {
+          node.ins(index, value + '');
+        } else if (node instanceof BinApi) {
+          if (!(value instanceof Uint8Array)) break ADD;
+          node.ins(index, value);
+        }
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, value]]);
+      } else break ADD;
+      return true;
+    } catch {}
+    return false;
+  }
+
+  public replace(path: ApiPath, value: unknown): boolean {
+    const [parent, key] = breakPath(path);
+    REPLACE: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        const keyStr = key + '';
+        if (!node.has(keyStr)) break REPLACE;
+        node.set({[key]: value});
+      } else if (node instanceof ArrApi) {
+        const length = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break REPLACE;
+        }
+        if (index !== index || index < 0 || index > length - 1) break REPLACE;
+        const element = node.node.getNode(index);
+        if (element instanceof ValNode) {
+          this.api.wrap(element).set(value);
+        } else {
+          node.ins(index, [value]);
+          node.del(index + 1, 1);
+        }
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, value]]);
+      } else break REPLACE;
+      return true;
+    } catch {}
+    return false;
+  }
+
+  public remove(path: ApiPath, length: number = 1): boolean {
+    const [parent, key] = breakPath(path);
+    REMOVE: try {
+      const node = this.select(parent, true);
+      if (node instanceof ObjApi) {
+        const keyStr = key + '';
+        if (!node.has(keyStr)) break REMOVE;
+        node.del([keyStr]);
+      } else if (node instanceof ArrApi || node instanceof StrApi || node instanceof BinApi) {
+        const len = node.length();
+        let index: number = 0;
+        if (typeof key === 'number') index = key;
+        else if (key === '-') index = length;
+        else {
+          index = ~~key;
+          if (index + '' !== key) break REMOVE;
+        }
+        if (index !== index || index < 0 || index > len) break REMOVE;
+        node.del(index, Math.min(length, len - index));
+      } else if (node instanceof VecApi) {
+        node.set([[~~key, void 0]]);
+      } else break REMOVE;
+      return true;
+    } catch {}
+    return false;
+  }
+
+  public diff(value: unknown): Patch {
+    return diff.diff(this, value);
+  }
+
+  public merge(value: unknown): void {
+    diff.merge(this, value);
+  }
+
+  public get s(): types.ProxyNode<N> {
+    return {$: this} as unknown as types.ProxyNode<N>;
+  }
+
+  public get $(): JsonNodeToProxyPathNode<N> {
+    return proxy$((path) => {
+      try {
+        return this.api.wrap(this.find(path));
+      } catch {
+        return;
+      }
+    }, '$') as any;
   }
 
   public toString(tab: string = ''): string {
@@ -196,11 +353,8 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeCon<N> {
-    return {
-      toApi: () => <any>this,
-      toView: () => this.node.view(),
-    };
+  public get s(): types.ProxyNodeCon<N> {
+    return {$: this} as unknown as types.ProxyNodeCon<N>;
   }
 }
 
@@ -236,14 +390,13 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access the value of the
    * node by accessing the `.val` property.
    */
-  public proxy(): types.ProxyNodeVal<N> {
+  public get s(): types.ProxyNodeVal<N> {
     const self = this;
     const proxy = {
-      toApi: () => <any>this,
-      toView: () => this.node.view(),
-      get val() {
+      $: this,
+      get _() {
         const childNode = self.node.node();
-        return (<any>self).api.wrap(childNode).proxy();
+        return (<any>self).api.wrap(childNode).s;
       },
     };
     return <any>proxy;
@@ -302,19 +455,18 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    * Returns a proxy object for this node. Allows to access vector elements by
    * index.
    */
-  public proxy(): types.ProxyNodeVec<N> {
+  public get s(): types.ProxyNodeVec<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           if (prop === 'toExt') return () => this.asExt();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return (<any>this).api.wrap(child).proxy();
+          return (<any>this).api.wrap(child).s;
         },
       },
     );
@@ -367,26 +519,35 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
     const {builder} = api;
     api.builder.insObj(
       node.id,
-      keys.map((key) => [key, builder.const(undefined)]),
+      keys.map((key) => [key, builder.con(undefined)]),
     );
     api.apply();
+  }
+
+  /**
+   * Checks if a key exists in the object.
+   *
+   * @param key Key to check.
+   * @returns True if the key exists, false otherwise.
+   */
+  public has(key: string): boolean {
+    return this.node.keys.has(key);
   }
 
   /**
    * Returns a proxy object for this node. Allows to access object properties
    * by key.
    */
-  public proxy(): types.ProxyNodeObj<N> {
+  public get s(): types.ProxyNodeObj<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           const key = String(prop);
           const child = this.node.get(key);
           if (!child) throw new Error('NO_SUCH_KEY');
-          return (<any>this).api.wrap(child).proxy();
+          return (<any>this).api.wrap(child).s;
         },
       },
     );
@@ -488,11 +649,8 @@ export class StrApi extends NodeApi<StrNode> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeStr {
-    return {
-      toApi: () => this,
-      toView: () => this.node.view(),
-    };
+  public get s(): types.ProxyNodeStr {
+    return {$: this};
   }
 }
 
@@ -546,11 +704,8 @@ export class BinApi extends NodeApi<BinNode> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeBin {
-    return {
-      toApi: () => this,
-      toView: () => this.node.view(),
-    };
+  public get s(): types.ProxyNodeBin {
+    return {$: this};
   }
 }
 
@@ -578,8 +733,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * Inserts elements at a given position.
    *
    * @param index Position at which to insert elements.
-   * @param values JSON/CBOR values or IDs of the values to insert.
-   * @returns Reference to itself.
+   * @param values Values or schema of the elements to insert.
    */
   public ins(index: number, values: Array<JsonNodeView<N>[number]>): void {
     const {api, node} = this;
@@ -589,6 +743,31 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     const valueIds: ITimestampStruct[] = [];
     for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
     builder.insArr(node.id, after, valueIds);
+    api.apply();
+  }
+
+  /**
+   * Inserts elements at the end of the array.
+   *
+   * @param values Values or schema of the elements to insert at the end of the array.
+   */
+  public push(...values: JsonNodeView<N>[number][]): void {
+    const length = this.length();
+    this.ins(length, values);
+  }
+
+  /**
+   * Updates (overwrites) an element at a given position.
+   *
+   * @param index Position at which to update the element.
+   * @param value Value or schema of the element to replace with.
+   */
+  public upd(index: number, value: JsonNodeView<N>[number]): void {
+    const {api, node} = this;
+    const ref = node.getId(index);
+    if (!ref) throw new Error('OUT_OF_BOUNDS');
+    const {builder} = api;
+    builder.updArr(node.id, ref, builder.constOrJson(value));
     api.apply();
   }
 
@@ -621,21 +800,218 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    *
    * @returns Proxy object that allows to access array elements by index.
    */
-  public proxy(): types.ProxyNodeArr<N> {
+  public get s(): types.ProxyNodeArr<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === '$') return this;
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.getNode(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return (this.api.wrap(child) as any).proxy();
+          return (this.api.wrap(child) as any).s;
         },
       },
     );
     return proxy as types.ProxyNodeArr<N>;
   }
+}
+
+/**
+ * Local changes API for a JSON CRDT model. This class is the main entry point
+ * for executing local user actions on a JSON CRDT document.
+ *
+ * @category Local API
+ */
+export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>> implements SyncStore<JsonNodeView<N>> {
+  /**
+   * Patch builder for the local changes.
+   */
+  public builder: PatchBuilder;
+
+  /**
+   * Index of the next operation in builder's patch to be committed locally.
+   *
+   * @ignore
+   */
+  public next: number = 0;
+
+  /** Emitted before the model is reset, using the `.reset()` method. */
+  public readonly onBeforeReset = new FanOut<void>();
+  /** Emitted after the model is reset, using the `.reset()` method. */
+  public readonly onReset = new FanOut<void>();
+  /** Emitted before a patch is applied using `model.applyPatch()`. */
+  public readonly onBeforePatch = new FanOut<Patch>();
+  /** Emitted after a patch is applied using `model.applyPatch()`. */
+  public readonly onPatch = new FanOut<Patch>();
+  /** Emitted before local changes through `model.api` are applied. */
+  public readonly onBeforeLocalChange = new FanOut<number>();
+  /** Emitted after local changes through `model.api` are applied. */
+  public readonly onLocalChange = new FanOut<number>();
+  /**
+   * Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask.
+   */
+  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
+  /** Emitted before a transaction is started. */
+  public readonly onBeforeTransaction = new FanOut<void>();
+  /** Emitted after transaction completes. */
+  public readonly onTransaction = new FanOut<void>();
+  /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
+  public readonly onChange = new MergeFanOut<number | Patch | undefined>([
+    this.onReset,
+    this.onPatch,
+    this.onLocalChange,
+  ]);
+  /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
+  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | undefined>(this.onChange);
+  /** Emitted when the `model.api` builder change buffer is flushed. */
+  public readonly onFlush = new FanOut<Patch>();
+
+  /**
+   * @param model Model instance on which the API operates.
+   */
+  constructor(public readonly model: Model<N>) {
+    super(model.root, void 0 as any);
+    (this as any).api = this;
+    this.builder = new PatchBuilder(model.clock);
+    model.onbeforereset = () => this.onBeforeReset.emit();
+    model.onreset = () => this.onReset.emit();
+    model.onbeforepatch = (patch) => this.onBeforePatch.emit(patch);
+    model.onpatch = (patch) => this.onPatch.emit(patch);
+  }
+
+  /**
+   * Returns a local change API for the given node. If an instance already
+   * exists, returns the existing instance.
+   */
+  public wrap(node: ValNode): ValApi;
+  public wrap(node: StrNode<any>): StrApi;
+  public wrap(node: BinNode): BinApi;
+  public wrap(node: ArrNode): ArrApi;
+  public wrap(node: ObjNode): ObjApi;
+  public wrap(node: ConNode): ConApi;
+  public wrap(node: VecNode): VecApi;
+  public wrap(node: JsonNode): NodeApi;
+  public wrap(node: ExtNode<any, any>): NodeApi;
+  public wrap(node: JsonNode) {
+    if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
+    else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
+    else if (node instanceof BinNode) return node.api || (node.api = new BinApi(node, this));
+    else if (node instanceof ArrNode) return node.api || (node.api = new ArrApi(node, this));
+    else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
+    else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
+    else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
+    else if (node instanceof ExtNode) {
+      if (node.api) return node.api;
+      const extension = this.model.ext.get(node.extId)!;
+      return (node.api = new extension.Api(node, this));
+    } else throw new Error('UNKNOWN_NODE');
+  }
+
+  /**
+   * Given a JSON/CBOR value, constructs CRDT nodes recursively out of it and
+   * sets the root node of the model to the constructed nodes.
+   *
+   * @param json JSON/CBOR value to set as the view of the model.
+   * @returns Reference to itself.
+   *
+   * @deprecated Use `.set()` instead.
+   */
+  public root(json: unknown): this {
+    return this.set(json as any);
+  }
+  public set(json: unknown): this {
+    super.set(json as any);
+    return this;
+  }
+
+  /**
+   * Apply locally any operations from the `.builder`, which haven't been
+   * applied yet.
+   */
+  public apply() {
+    const ops = this.builder.patch.ops;
+    const length = ops.length;
+    const model = this.model;
+    const from = this.next;
+    this.onBeforeLocalChange.emit(from);
+    for (let i = this.next; i < length; i++) model.applyOperation(ops[i]);
+    this.next = length;
+    model.tick++;
+    this.onLocalChange.emit(from);
+  }
+
+  /**
+   * Advance patch pointer to the end without applying the operations. With the
+   * idea that they have already been applied locally.
+   *
+   * You need to manually call `this.onBeforeLocalChange.emit(this.next)` before
+   * calling this method.
+   *
+   * @ignore
+   */
+  public advance() {
+    const from = this.next;
+    this.next = this.builder.patch.ops.length;
+    this.model.tick++;
+    this.onLocalChange.emit(from);
+  }
+
+  private inTx = false;
+  public transaction(callback: () => void) {
+    if (this.inTx) callback();
+    else {
+      this.inTx = true;
+      try {
+        this.onBeforeTransaction.emit();
+        callback();
+        this.onTransaction.emit();
+      } finally {
+        this.inTx = false;
+      }
+    }
+  }
+
+  /**
+   * Flushes the builder and returns a patch.
+   *
+   * @returns A JSON CRDT patch.
+   * @todo Make this return undefined if there are no operations in the builder.
+   */
+  public flush(): Patch {
+    const patch = this.builder.flush();
+    this.next = 0;
+    if (patch.ops.length) this.onFlush.emit(patch);
+    return patch;
+  }
+
+  public stopAutoFlush?: () => void = undefined;
+
+  /**
+   * Begins to automatically flush buffered operations into patches, grouping
+   * operations by microtasks or by transactions. To capture the patch, listen
+   * to the `.onFlush` event.
+   *
+   * @returns Callback to stop auto flushing.
+   */
+  public autoFlush(drainNow = false): () => void {
+    const drain = () => this.builder.patch.ops.length && this.flush();
+    const onLocalChangesUnsubscribe = this.onLocalChanges.listen(drain);
+    const onBeforeTransactionUnsubscribe = this.onBeforeTransaction.listen(drain);
+    const onTransactionUnsubscribe = this.onTransaction.listen(drain);
+    if (drainNow) drain();
+    return (this.stopAutoFlush = () => {
+      this.stopAutoFlush = undefined;
+      onLocalChangesUnsubscribe();
+      onBeforeTransactionUnsubscribe();
+      onTransactionUnsubscribe();
+    });
+  }
+
+  // ---------------------------------------------------------------- SyncStore
+
+  public readonly subscribe = (callback: () => void) => this.onChanges.listen(() => callback());
+  public readonly getSnapshot = () => this.view() as JsonNodeView<N>;
 }

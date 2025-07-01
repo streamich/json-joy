@@ -35,7 +35,7 @@ describe('clone()', () => {
 
   test('can clone a document with string edits', () => {
     const doc1 = Model.create();
-    doc1.api.root({
+    doc1.api.set({
       foo: 'abc',
     });
     doc1.api.str(['foo']).ins(3, 'd');
@@ -49,7 +49,7 @@ describe('clone()', () => {
 
   test('can clone a document with string deletes', () => {
     const doc1 = Model.create();
-    doc1.api.root({
+    doc1.api.set({
       foo: 'abc',
     });
     doc1.api.str(['foo']).ins(3, 'df');
@@ -64,7 +64,7 @@ describe('clone()', () => {
 
   test('can clone a document with object edits', () => {
     const doc1 = Model.create();
-    doc1.api.root({
+    doc1.api.set({
       foo: {
         a: 1,
       },
@@ -91,7 +91,7 @@ describe('clone()', () => {
 
   test('can clone array with edits', () => {
     const doc1 = Model.create();
-    doc1.api.root({
+    doc1.api.set({
       foo: {
         a: [1],
       },
@@ -115,10 +115,10 @@ describe('clone()', () => {
     expect(doc1.clock.sid === doc2.clock.sid).toBe(true);
     expect(doc1.view()).toBe(undefined);
     expect(doc2.view()).toBe(undefined);
-    doc1.api.root(123);
+    doc1.api.set(123);
     expect(doc1.view()).toBe(123);
     expect(doc2.view()).toBe(undefined);
-    doc2.api.root([]);
+    doc2.api.set([]);
     expect(doc1.view()).toBe(123);
     expect(doc2.view()).toStrictEqual([]);
   });
@@ -174,7 +174,7 @@ describe('fork()', () => {
       return i < 20 ? 0.5 : i < 24 ? 0.1 : i < 30 ? 0.5 : rnd();
     };
     const model = Model.create();
-    model.api.root(123);
+    model.api.set(123);
     const model2 = model.fork();
     const model3 = model2.fork();
     expect(model.clock.sid).not.toBe(model2.clock.sid);
@@ -188,8 +188,8 @@ describe('reset()', () => {
   test('resets model state', () => {
     const doc1 = Model.create();
     const doc2 = Model.create();
-    doc1.api.root({foo: 123});
-    doc2.api.root({
+    doc1.api.set({foo: 123});
+    doc2.api.set({
       text: 'hello',
     });
     doc2.api.str(['text']).ins(5, ' world');
@@ -209,8 +209,8 @@ describe('reset()', () => {
   test('models can be edited separately', () => {
     const doc1 = Model.create();
     const doc2 = Model.create();
-    doc1.api.root({foo: 123});
-    doc2.api.root({
+    doc1.api.set({foo: 123});
+    doc2.api.set({
       text: 'hello',
     });
     doc2.api.str(['text']).ins(5, ' world');
@@ -226,8 +226,8 @@ describe('reset()', () => {
   test('emits change event on reset', async () => {
     const doc1 = Model.create();
     const doc2 = Model.create();
-    doc1.api.root({foo: 123});
-    doc2.api.root({
+    doc1.api.set({foo: 123});
+    doc2.api.set({
       text: 'hello',
     });
     doc2.api.str(['text']).ins(5, ' world');
@@ -245,9 +245,9 @@ describe('reset()', () => {
       }),
     );
     const doc2 = doc1.fork();
-    doc2.s.text.toApi().ins(4, 'o');
-    const str = doc1.s.text.toApi();
-    expect(str === doc2.s.text.toApi()).toBe(false);
+    doc2.s.text.$.ins(4, 'o');
+    const str = doc1.s.text.$;
+    expect(str === doc2.s.text.$).toBe(false);
     expect(str.view()).toBe('hell');
     doc1.reset(doc2);
     expect(str.view()).toBe('hello');
@@ -260,7 +260,7 @@ describe('reset()', () => {
       }),
     );
     const doc2 = doc1.fork();
-    doc2.s.text.toApi().ins(4, 'o');
+    doc2.s.text.$.ins(4, 'o');
     expect(doc1.clock).toBe(doc1.api.builder.clock);
     expect(doc2.clock).toBe(doc2.api.builder.clock);
     doc1.reset(doc2);

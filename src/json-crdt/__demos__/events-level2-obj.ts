@@ -10,13 +10,13 @@
 console.clear();
 
 // Import all necessary dependencies.
-import {Model, konst} from '..';
+import {Model, s} from '..';
 
 const main = async () => {
   // Create a new JSON CRDT document.
-  const model = Model.withLogicalClock(1234); // 1234 is the session ID
+  const model = Model.create(void 0, 1234); // 1234 is the session ID
 
-  model.api.root({
+  model.api.set({
     my: {
       deep: {
         obj: {},
@@ -49,7 +49,7 @@ const main = async () => {
   // Apply changes, which don't result in view change.
   console.log('Changes which result in only model change:');
   console.log('');
-  model.api.obj(['my', 'deep', 'obj']).set({foo: konst('bar')});
+  model.api.obj(['my', 'deep', 'obj']).set({foo: s.con('bar')});
   await new Promise((r) => setTimeout(r, 1));
   console.log('');
 

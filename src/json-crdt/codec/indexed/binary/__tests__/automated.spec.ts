@@ -10,8 +10,8 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
     test(name, () => {
       const encoder = new Encoder();
       const decoder = new Decoder();
-      const doc1 = Model.withLogicalClock(new ClockVector(233322, 0));
-      doc1.api.root(json);
+      const doc1 = Model.create(void 0, new ClockVector(233322, 0));
+      doc1.api.set(json);
       const encoded1 = encoder.encode(doc1);
       const doc2 = decoder.decode(encoded1);
       const encoded2 = encoder.encode(doc2);
@@ -27,8 +27,8 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
     const decoder = new Decoder();
 
     test(name, () => {
-      const doc1 = Model.withLogicalClock(new ClockVector(233322, 0));
-      doc1.api.root(json);
+      const doc1 = Model.create(void 0, new ClockVector(233322, 0));
+      doc1.api.set(json);
       const encoded1 = encoder.encode(doc1);
       const doc2 = decoder.decode(encoded1);
       const encoded2 = encoder.encode(doc2);

@@ -3,7 +3,7 @@ import {Model} from '../../../../json-crdt/model';
 import {ChunkSlice} from '../ChunkSlice';
 
 const setup = () => {
-  const model = Model.withLogicalClock().setSchema(s.str('Hello world'), false);
+  const model = Model.create().setSchema(s.str('Hello world'), false);
   const node = model.root.node();
   const chunk = node.first()!;
   return {
