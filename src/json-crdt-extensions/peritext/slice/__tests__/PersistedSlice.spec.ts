@@ -1,3 +1,4 @@
+import {ArrApi, ConApi, VecApi} from '../../../../json-crdt/model';
 import {ArrNode, ConNode, ObjNode, VecNode} from '../../../../json-crdt/nodes';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
@@ -106,13 +107,13 @@ describe('type retrieval an manipulation', () => {
     });
   });
 
-  describe('.typeNodeAsArr()', () => {
+  describe('.typeAsArr()', () => {
     test('can convert basic type to an "arr" node', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, 'p');
-      const node = slice.typeNodeAsArr();
-      expect(node instanceof ArrNode).toBe(true);
+      const node = slice.typeAsArr();
+      expect(node instanceof ArrApi).toBe(true);
       expect(node.view()).toEqual(['p']);
     });
 
@@ -120,8 +121,8 @@ describe('type retrieval an manipulation', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, ['p']);
-      const node1 = slice.typeNode();
-      const node2 = slice.typeNodeAsArr();
+      const node1 = slice.typeApi();
+      const node2 = slice.typeAsArr();
       expect(node2).toBe(node1);
     });
   });
@@ -267,73 +268,73 @@ describe('type retrieval an manipulation', () => {
     });
   });
 
-  describe('.typeStepNode()', () => {
+  describe('.typeStepApi()', () => {
     test('basic type', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(3, 8);
       const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
-      expect(slice.typeStepNode() instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(0) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(1) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(2) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode()?.view()).toBe('test');
-      expect(slice.typeStepNode(0)?.view()).toBe('test');
-      expect(slice.typeStepNode(1)?.view()).toBe('test');
-      expect(slice.typeStepNode(2)?.view()).toBe('test');
+      expect(slice.typeStepApi() instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(0) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(1) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(2) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi()?.view()).toBe('test');
+      expect(slice.typeStepApi(0)?.view()).toBe('test');
+      expect(slice.typeStepApi(1)?.view()).toBe('test');
+      expect(slice.typeStepApi(2)?.view()).toBe('test');
     });
 
     test('nested', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
-      expect(slice.typeStepNode() instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(0) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(1) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(2) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(3) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(4) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode()!.view()).toBe('p');
-      expect(slice.typeStepNode(0)!.view()).toBe('ul');
-      expect(slice.typeStepNode(1)!.view()).toBe('li');
-      expect(slice.typeStepNode(2)!.view()).toBe('p');
-      expect(slice.typeStepNode(3)!.view()).toBe('p');
-      expect(slice.typeStepNode(4)!.view()).toBe('p');
+      expect(slice.typeStepApi() instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(0) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(1) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(2) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(3) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(4) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi()!.view()).toBe('p');
+      expect(slice.typeStepApi(0)!.view()).toBe('ul');
+      expect(slice.typeStepApi(1)!.view()).toBe('li');
+      expect(slice.typeStepApi(2)!.view()).toBe('p');
+      expect(slice.typeStepApi(3)!.view()).toBe('p');
+      expect(slice.typeStepApi(4)!.view()).toBe('p');
     });
 
     test('nested with discriminants', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
-      expect(slice.typeStepNode() instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(0) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(1) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(2) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(3) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode(4) instanceof ConNode).toBe(true);
-      expect(slice.typeStepNode()!.view()).toEqual('p');
-      expect(slice.typeStepNode(0)!.view()).toEqual(['ul', 1]);
-      expect(slice.typeStepNode(1)!.view()).toEqual(['li', 0]);
-      expect(slice.typeStepNode(2)!.view()).toEqual('p');
-      expect(slice.typeStepNode(3)!.view()).toEqual('p');
-      expect(slice.typeStepNode(4)!.view()).toEqual('p');
+      expect(slice.typeStepApi() instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(0) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(1) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(2) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(3) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi(4) instanceof ConApi).toBe(true);
+      expect(slice.typeStepApi()!.view()).toEqual('p');
+      expect(slice.typeStepApi(0)!.view()).toEqual(['ul', 1]);
+      expect(slice.typeStepApi(1)!.view()).toEqual(['li', 0]);
+      expect(slice.typeStepApi(2)!.view()).toEqual('p');
+      expect(slice.typeStepApi(3)!.view()).toEqual('p');
+      expect(slice.typeStepApi(4)!.view()).toEqual('p');
     });
 
     test('nested with data', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 2, {indent: 2}]]);
-      expect(slice.typeStepNode() instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(0) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(1) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(2) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(3) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(4) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode()!.view()).toEqual(['p', 2, {indent: 2}]);
-      expect(slice.typeStepNode(0)!.view()).toEqual(['ul', 1, {type: 'todo'}]);
-      expect(slice.typeStepNode(1)!.view()).toEqual(['li', 0]);
-      expect(slice.typeStepNode(2)!.view()).toEqual(['p', 2, {indent: 2}]);
-      expect(slice.typeStepNode(3)!.view()).toEqual(['p', 2, {indent: 2}]);
-      expect(slice.typeStepNode(4)!.view()).toEqual(['p', 2, {indent: 2}]);
+      expect(slice.typeStepApi() instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(0) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(1) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(2) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(3) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi(4) instanceof VecApi).toBe(true);
+      expect(slice.typeStepApi()!.view()).toEqual(['p', 2, {indent: 2}]);
+      expect(slice.typeStepApi(0)!.view()).toEqual(['ul', 1, {type: 'todo'}]);
+      expect(slice.typeStepApi(1)!.view()).toEqual(['li', 0]);
+      expect(slice.typeStepApi(2)!.view()).toEqual(['p', 2, {indent: 2}]);
+      expect(slice.typeStepApi(3)!.view()).toEqual(['p', 2, {indent: 2}]);
+      expect(slice.typeStepApi(4)!.view()).toEqual(['p', 2, {indent: 2}]);
     });
   });
 
