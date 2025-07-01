@@ -1,4 +1,4 @@
-import {ObjNode, StrNode, VecNode} from '../../../../json-crdt/nodes';
+import {ArrNode, ConNode, ObjNode, VecNode} from '../../../../json-crdt/nodes';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
 
@@ -103,6 +103,26 @@ describe('type retrieval an manipulation', () => {
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
       expect(slice.type()).toEqual([['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
+    });
+  });
+
+  describe('.typeNodeAsArr()', () => {
+    test('can convert basic type to an "arr" node', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, 'p');
+      const node = slice.typeNodeAsArr();
+      expect(node instanceof ArrNode).toBe(true);
+      expect(node.view()).toEqual(['p']);
+    });
+
+    test('returns existing type node if already of "arr" type', () => {
+      const kit = setup();
+      const range = kit.peritext.rangeAt(9);
+      const slice = kit.peritext.savedSlices.insMarker(range, ['p']);
+      const node1 = slice.typeNode();
+      const node2 = slice.typeNodeAsArr();
+      expect(node2).toBe(node1);
     });
   });
 
@@ -252,21 +272,26 @@ describe('type retrieval an manipulation', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(3, 8);
       const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
-      expect(slice.typeStepNode()).toBe(void 0);
-      expect(slice.typeStepNode(1)).toBe(void 0);
-      expect(slice.typeStepNode(2)).toBe(void 0);
+      expect(slice.typeStepNode() instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(0) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(1) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(2) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode()?.view()).toBe('test');
+      expect(slice.typeStepNode(0)?.view()).toBe('test');
+      expect(slice.typeStepNode(1)?.view()).toBe('test');
+      expect(slice.typeStepNode(2)?.view()).toBe('test');
     });
 
     test('nested', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
-      expect(slice.typeStepNode() instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(0) instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(1) instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(2) instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(3) instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(4) instanceof StrNode).toBe(true);
+      expect(slice.typeStepNode() instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(0) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(1) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(2) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(3) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(4) instanceof ConNode).toBe(true);
       expect(slice.typeStepNode()!.view()).toBe('p');
       expect(slice.typeStepNode(0)!.view()).toBe('ul');
       expect(slice.typeStepNode(1)!.view()).toBe('li');
@@ -279,12 +304,12 @@ describe('type retrieval an manipulation', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
-      expect(slice.typeStepNode() instanceof StrNode).toBe(true);
+      expect(slice.typeStepNode() instanceof ConNode).toBe(true);
       expect(slice.typeStepNode(0) instanceof VecNode).toBe(true);
       expect(slice.typeStepNode(1) instanceof VecNode).toBe(true);
-      expect(slice.typeStepNode(2) instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(3) instanceof StrNode).toBe(true);
-      expect(slice.typeStepNode(4) instanceof StrNode).toBe(true);
+      expect(slice.typeStepNode(2) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(3) instanceof ConNode).toBe(true);
+      expect(slice.typeStepNode(4) instanceof ConNode).toBe(true);
       expect(slice.typeStepNode()!.view()).toEqual('p');
       expect(slice.typeStepNode(0)!.view()).toEqual(['ul', 1]);
       expect(slice.typeStepNode(1)!.view()).toEqual(['li', 0]);

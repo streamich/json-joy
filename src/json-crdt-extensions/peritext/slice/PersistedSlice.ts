@@ -18,9 +18,10 @@ import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
+import * as schema from './schema';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {type Model, NodeApi, ObjApi} from '../../../json-crdt/model';
-import {ArrNode, ConNode, VecNode, type ObjNode} from '../../../json-crdt/nodes';
+import {ArrNode, ConNode, ObjNode, VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
 import type {
@@ -171,6 +172,16 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.tuple.get(SliceTupleIndex.Type);
   }
 
+  public typeNodeAsArr(): ArrNode {
+    const node = this.typeNode();
+    if (node instanceof ArrNode) return node;
+    const type = this.type();
+    this.tupleApi().set([
+      [SliceTupleIndex.Type, Array.isArray(type) ? schema.type(type) : schema.type([type])],
+    ]);
+    return this.typeNode() as ArrNode;
+  }
+
   public typeApi() {
     const node = this.typeNode();
     if (!node) return;
@@ -223,15 +234,21 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   }
 
   public typeStepNode(index?: number): JsonNode<unknown> | undefined {
-    const typeNode = this.typeNode();
-    if (!typeNode) return;
-    if (typeNode instanceof ArrNode) {
-      const length = typeNode.length();
-      if (typeof index !== 'number' || index > length - 1) index = length - 1;
-      return typeNode.getNode(index);
-    }
-    return;
+    const type = this.typeNodeAsArr();
+    const typeLen = type.length();
+    if (typeLen === 0) return;
+    if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
+    return type.getNode(index);
   }
+
+  // public typeStepNodeAsVec(index?: number): VecNode | undefined {
+  //   const type = this.typeNodeAsArr();
+  //   const typeLen = type.length();
+  //   if (typeLen === 0) return;
+  //   if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
+  //   const step = this.typeStepNode(index);
+  //   // if (!step) return;
+  // }
 
   public tagDataNode(index?: number): JsonNode<unknown> | undefined {
     const stepNode = this.typeStepNode(index);
@@ -239,11 +256,19 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return stepNode instanceof VecNode ? stepNode.get(2) : void 0;
   }
 
-  public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
-    // const stepNode = this.typeStepNode(index);
-    // if (!stepNode) return;
-    throw new Error('Not implemented');
-  }
+  // public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
+  //   const node = this.tagDataNode(index);
+  //   if (node instanceof ObjNode) {
+  //     return this.model.api.wrap(node);
+  //   }
+  //   if (node instanceof VecNode) {
+  //     const objNode = node.get(2);
+  //     if (objNode instanceof ObjNode) {
+  //       return this.model.api.wrap(objNode);
+  //     }
+  //   }
+  //   return undefined;
+  // }
 
   // -------------------------------------------------- slice data manipulation
 
