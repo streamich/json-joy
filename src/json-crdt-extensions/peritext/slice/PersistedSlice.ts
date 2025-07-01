@@ -20,7 +20,7 @@ import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
 import * as schema from './schema';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
-import {ArrApi, type Model, NodeApi, ObjApi} from '../../../json-crdt/model';
+import {ArrApi, ConApi, type Model, NodeApi, ObjApi, VecApi} from '../../../json-crdt/model';
 import {ArrNode, ConNode, ObjNode, VecNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
@@ -193,6 +193,25 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.typeApi() as unknown as ArrApi;
   }
 
+  public typeStepAsVec(index?: number): VecApi {
+    const arr = this.typeAsArr();
+    let typeLen = arr.length();
+    if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
+    const vec = arr.get(index);
+    if (vec instanceof VecApi) return vec;
+    const tag = vec instanceof ConApi ? vec.view() : 0;
+    arr.upd(index, s.vec(s.con(tag)));
+    return arr.get(index) as VecApi;
+  }
+
+  public tagDataAsObj(index?: number): ObjApi {
+    const vec = this.typeStepAsVec(index);
+    const data = vec.select(2);
+    if (data instanceof ObjApi) return data;
+    vec.set([[2, s.obj({})]]);
+    return vec.get(2) as ObjApi;
+  }
+
   public typeStepApi(index?: number): NodeApi {
     const arr = this.typeAsArr();
     let typeLen = arr.length();
@@ -203,10 +222,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
     return arr.get(index) as NodeApi;
   }
-
-  // public typeStepAsVec(index?: number): VecNode | undefined {
-
-  // }
 
   public type(): SliceType {
     return this.typeApi()?.view() as SliceType;
@@ -268,25 +283,25 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   //   // // if (!step) return;
   // }
 
-  public tagDataNode(index?: number): JsonNode<unknown> | undefined {
-    const stepNode = this.typeStepApi(index);
-    if (!stepNode) return;
-    return stepNode instanceof VecNode ? stepNode.get(2) : void 0;
-  }
+  // public tagDataNode(index?: number): JsonNode<unknown> | undefined {
+  //   const stepNode = this.typeStepApi(index);
+  //   if (!stepNode) return;
+  //   return stepNode instanceof VecNode ? stepNode.get(2) : void 0;
+  // }
 
-  public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
-    const node = this.tagDataNode(index);
-    if (node instanceof ObjNode) {
-      return this.model.api.wrap(node);
-    }
-    if (node instanceof VecNode) {
-      const objNode = node.get(2);
-      if (objNode instanceof ObjNode) {
-        return this.model.api.wrap(objNode);
-      }
-    }
-    return undefined;
-  }
+  // public tagDataNodeAsObj(index?: number): ObjApi<ObjNode> | undefined {
+  //   const node = this.tagDataNode(index);
+  //   if (node instanceof ObjNode) {
+  //     return this.model.api.wrap(node);
+  //   }
+  //   if (node instanceof VecNode) {
+  //     const objNode = node.get(2);
+  //     if (objNode instanceof ObjNode) {
+  //       return this.model.api.wrap(objNode);
+  //     }
+  //   }
+  //   return undefined;
+  // }
 
   // -------------------------------------------------- slice data manipulation
 

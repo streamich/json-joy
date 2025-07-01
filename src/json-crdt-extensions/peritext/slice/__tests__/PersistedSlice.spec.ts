@@ -1,4 +1,4 @@
-import {ArrApi, ConApi, VecApi} from '../../../../json-crdt/model';
+import {ArrApi, ConApi, ObjApi, VecApi} from '../../../../json-crdt/model';
 import {ArrNode, ConNode, ObjNode, VecNode} from '../../../../json-crdt/nodes';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
@@ -104,26 +104,6 @@ describe('type retrieval an manipulation', () => {
       const range = kit.peritext.rangeAt(9);
       const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
       expect(slice.type()).toEqual([['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
-    });
-  });
-
-  describe('.typeAsArr()', () => {
-    test('can convert basic type to an "arr" node', () => {
-      const kit = setup();
-      const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, 'p');
-      const node = slice.typeAsArr();
-      expect(node instanceof ArrApi).toBe(true);
-      expect(node.view()).toEqual(['p']);
-    });
-
-    test('returns existing type node if already of "arr" type', () => {
-      const kit = setup();
-      const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, ['p']);
-      const node1 = slice.typeApi();
-      const node2 = slice.typeAsArr();
-      expect(node2).toBe(node1);
     });
   });
 
@@ -338,53 +318,146 @@ describe('type retrieval an manipulation', () => {
     });
   });
 
-  describe('.tagDataNode()', () => {
-    test('basic type', () => {
-      const kit = setup();
-      const range = kit.peritext.rangeAt(3, 8);
-      const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
-      expect(slice.tagDataNode()).toBe(void 0);
-      expect(slice.tagDataNode(1)).toBe(void 0);
-      expect(slice.tagDataNode(2)).toBe(void 0);
+  // describe('.tagDataNode()', () => {
+  //   test('basic type', () => {
+  //     const kit = setup();
+  //     const range = kit.peritext.rangeAt(3, 8);
+  //     const slice = kit.peritext.savedSlices.insOne(range, 'test', {});
+  //     expect(slice.tagDataNode()).toBe(void 0);
+  //     expect(slice.tagDataNode(1)).toBe(void 0);
+  //     expect(slice.tagDataNode(2)).toBe(void 0);
+  //   });
+
+  //   test('nested', () => {
+  //     const kit = setup();
+  //     const range = kit.peritext.rangeAt(9);
+  //     const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
+  //     expect(slice.tagDataNode()).toBe(void 0);
+  //     expect(slice.tagDataNode(0)).toBe(void 0);
+  //     expect(slice.tagDataNode(1)).toBe(void 0);
+  //     expect(slice.tagDataNode(2)).toBe(void 0);
+  //     expect(slice.tagDataNode(3)).toBe(void 0);
+  //     expect(slice.tagDataNode(4)).toBe(void 0);
+  //   });
+
+  //   test('nested with discriminants', () => {
+  //     const kit = setup();
+  //     const range = kit.peritext.rangeAt(9);
+  //     const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
+  //     expect(slice.tagDataNode()).toBe(void 0);
+  //     expect(slice.tagDataNode(0)).toBe(void 0);
+  //     expect(slice.tagDataNode(1)).toBe(void 0);
+  //     expect(slice.tagDataNode(2)).toBe(void 0);
+  //     expect(slice.tagDataNode(3)).toBe(void 0);
+  //     expect(slice.tagDataNode(4)).toBe(void 0);
+  //   });
+
+  //   test.only('nested with data', () => {
+  //     const kit = setup();
+  //     const range = kit.peritext.rangeAt(9);
+  //     const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 2, {indent: 2}]]);
+  //     console.log(slice.tagDataNode());
+  //     expect(slice.tagDataNode() instanceof ObjNode).toBe(true);
+  //     // expect(slice.tagDataNode(0) instanceof ObjNode).toBe(true);
+  //     // expect(slice.tagDataNode(1)).toBe(void 0);
+  //     // expect(slice.tagDataNode(2) instanceof ObjNode).toBe(true);
+  //     // expect(slice.tagDataNode(3) instanceof ObjNode).toBe(true);
+  //     // expect(slice.tagDataNode()!.view()).toEqual({indent: 2});
+  //     // expect(slice.tagDataNode(0)!.view()).toEqual({type: 'todo'});
+  //     // expect(slice.tagDataNode(2)!.view()).toEqual({indent: 2});
+  //     // expect(slice.tagDataNode(3)!.view()).toEqual({indent: 2});
+  //   });
+  // });
+
+  describe('...asX()', () => {
+    describe('.typeAsArr()', () => {
+      test('can convert basic type to an "arr" node', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, 'p');
+        const node = slice.typeAsArr();
+        expect(node instanceof ArrApi).toBe(true);
+        expect(node.view()).toEqual(['p']);
+      });
+
+      test('returns existing type node if already of "arr" type', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, ['p']);
+        const node1 = slice.typeApi();
+        const node2 = slice.typeAsArr();
+        expect(node2).toBe(node1);
+      });
     });
 
-    test('nested', () => {
-      const kit = setup();
-      const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, ['ul', 'li', 'p']);
-      expect(slice.tagDataNode()).toBe(void 0);
-      expect(slice.tagDataNode(0)).toBe(void 0);
-      expect(slice.tagDataNode(1)).toBe(void 0);
-      expect(slice.tagDataNode(2)).toBe(void 0);
-      expect(slice.tagDataNode(3)).toBe(void 0);
-      expect(slice.tagDataNode(4)).toBe(void 0);
+    describe('.typeStepAsVec()', () => {
+      test('can convert basic type to a "vec" step', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, 'p');
+        const node = slice.typeStepAsVec(0);
+        expect(node instanceof VecApi).toBe(true);
+        expect(node.view()).toEqual(['p']);
+      });
+
+      test('can convert basic type to a "vec" step - 2', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, ['p']);
+        const node = slice.typeStepAsVec(0);
+        expect(node instanceof VecApi).toBe(true);
+        expect(node.view()).toEqual(['p']);
+      });
+
+      test('can convert basic type to a "vec" step - 3', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, [['p', 0]]);
+        const node = slice.typeStepAsVec(0);
+        expect(node instanceof VecApi).toBe(true);
+        expect(node.view()).toEqual(['p', 0]);
+      });
+
+      test('returns existing type node if already of "arr" type', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, ['p']);
+        const node1 = slice.typeApi();
+        const node2 = slice.typeAsArr();
+        expect(node2).toBe(node1);
+      });
     });
 
-    test('nested with discriminants', () => {
-      const kit = setup();
-      const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1], ['li', 0], 'p']);
-      expect(slice.tagDataNode()).toBe(void 0);
-      expect(slice.tagDataNode(0)).toBe(void 0);
-      expect(slice.tagDataNode(1)).toBe(void 0);
-      expect(slice.tagDataNode(2)).toBe(void 0);
-      expect(slice.tagDataNode(3)).toBe(void 0);
-      expect(slice.tagDataNode(4)).toBe(void 0);
-    });
+    describe('.tagDataAsObj()', () => {
+      test('creates empty {} object, when not provided', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, 'p');
+        const node = slice.tagDataAsObj(0);
+        expect(node instanceof ObjApi).toBe(true);
+        expect(node.view()).toEqual({});
+      });
 
-    test('nested with data', () => {
-      const kit = setup();
-      const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 2, {indent: 2}]]);
-      expect(slice.tagDataNode() instanceof ObjNode).toBe(true);
-      expect(slice.tagDataNode(0) instanceof ObjNode).toBe(true);
-      expect(slice.tagDataNode(1)).toBe(void 0);
-      expect(slice.tagDataNode(2) instanceof ObjNode).toBe(true);
-      expect(slice.tagDataNode(3) instanceof ObjNode).toBe(true);
-      expect(slice.tagDataNode()!.view()).toEqual({indent: 2});
-      expect(slice.tagDataNode(0)!.view()).toEqual({type: 'todo'});
-      expect(slice.tagDataNode(2)!.view()).toEqual({indent: 2});
-      expect(slice.tagDataNode(3)!.view()).toEqual({indent: 2});
+      test('converts node to "obj", if not already "obj', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, [['p', 0, [] as any]]);
+        const node = slice.tagDataAsObj(0);
+        expect(node instanceof ObjApi).toBe(true);
+        expect(node.view()).toEqual({});
+      });
+
+      test('returns existing data node', () => {
+        const kit = setup();
+        const range = kit.peritext.rangeAt(9);
+        const slice = kit.peritext.savedSlices.insMarker(range, [['blockquote', 0, {foo: 'bar'}], ['p', 0, {indent: 2}]]);
+        const obj0 = slice.tagDataAsObj(0);
+        const obj1 = slice.tagDataAsObj(1);
+        const obj2 = slice.tagDataAsObj(2);
+        expect(obj0.view()).toEqual({foo: 'bar'});
+        expect(obj1.view()).toEqual({indent: 2});
+        expect(obj2.view()).toEqual({indent: 2});
+      });
     });
   });
 });
