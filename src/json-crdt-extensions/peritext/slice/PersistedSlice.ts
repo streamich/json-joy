@@ -22,6 +22,7 @@ import * as schema from './schema';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {ArrApi, ConApi, type Model, NodeApi, ObjApi, VecApi} from '../../../json-crdt/model';
 import {ArrNode, ConNode, ObjNode, VecNode} from '../../../json-crdt/nodes';
+import {NestedType} from './NestedType';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
 import type {
@@ -31,14 +32,12 @@ import type {
   SliceUpdateParams,
   SliceTypeSteps,
   SliceTypeStep,
-  TypeTag,
 } from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Slices} from './Slices';
-import {Tag} from './Tag';
 
 /**
  * A persisted slice is a slice that is stored in a {@link Model}. It is used for
@@ -185,15 +184,8 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.model.api.wrap(node);
   }
 
-  /**
-   * Nested tag API for nested block types.
-   *
-   * @param index The position of the tag in the type array. If not specified,
-   *     returns the last tag (255). Maximum index is 255.
-   * @returns Slice tag API for the given position.
-   */
-  public tag(index: number = 255): Tag<T> {
-    return new Tag<T>(this, index);
+  public nestedType(): NestedType<T> {
+    return new NestedType<T>(this);
   }
 
   public typeAsArr(): ArrApi {

@@ -1,9 +1,7 @@
 import {s} from "../../../json-crdt-patch";
-import {ArrApi, ConApi, ObjApi, VecApi} from "../../../json-crdt/model";
+import {ConApi, ObjApi, VecApi} from "../../../json-crdt/model";
 import {ConNode, ObjNode, VecNode} from "../../../json-crdt/nodes";
-import type {PersistedSlice} from "./PersistedSlice";
-import * as schema from './schema';
-import type {SliceTypeSteps} from "./types";
+import type {NestedType} from "./NestedType";
 
 /**
  * Represents a single nested tag in a slice type. For example, in a slice type
@@ -11,30 +9,15 @@ import type {SliceTypeSteps} from "./types";
  * is a tag for the blockquote and a tag for the paragraph. Each tag can
  * contain a discriminant and data.
  */
-export class Tag<T = string> {
-  constructor (protected slice: PersistedSlice<T>, public readonly index: number) {}
-
-  /** Enforces slice type to be an "arr" of tags. */
-  protected asArr(): ArrApi {
-    const {slice} = this;
-    const api = slice.typeApi();
-    if (api && api.node.name() === 'arr') return api as unknown as ArrApi;
-    let type: unknown;
-    if (!api) type = [0];
-    else {
-      type = api.view();
-      if (!Array.isArray(type)) type = typeof type === 'number' || typeof type === 'string' ? [type] : [0];
-    }
-    slice.update({type: schema.type(type as SliceTypeSteps)})
-    return slice.typeApi() as unknown as ArrApi;
-  }
+export class NestedTag<T = string> {
+  constructor (protected readonly type: NestedType<T>, public readonly index: number) {}
 
   /**
    * Enforces current tag at `index` to be a "vec" node, which contains
    * a tag, a discriminant and an object with data.
    */
   public asVec(): VecApi<VecNode<[ConNode<number | string>, ConNode<number>, ObjNode]>> {
-    const arr = this.asArr();
+    const arr = this.type.asArr();
     let typeLen = arr.length();
     let index: number = this.index;
     if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
@@ -74,7 +57,7 @@ export class Tag<T = string> {
    *
    * @returns The discriminant value.
    */
-  public disriminant(): number {
+  public discriminant(): number {
     const disciminant = this.asVec().select(1)?.view() || 0;
     return typeof disciminant === 'number' ? disciminant : 0;
   }

@@ -207,7 +207,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public select(path?: ApiPath, leaf?: boolean) {
     try {
-      let node = path ? this.find(path) : this.node;
+      let node = path !== void 0 ? this.find(path) : this.node;
       if (leaf) while (node instanceof ValNode) node = node.child();
       return this.api.wrap(node);
     } catch (e) {

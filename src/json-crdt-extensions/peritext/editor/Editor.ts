@@ -911,7 +911,7 @@ export class Editor<T = string> implements Printable {
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {
       const marker = markerPoint.marker;
-      const markerTag = marker.tag();
+      const markerTag = marker.nestedType().tag().name();
       const tagStep = type[type.length - 1];
       const tag = Array.isArray(tagStep) ? tagStep[0] : tagStep;
       if (markerTag === tag) type = [...type.slice(0, -1), def];
