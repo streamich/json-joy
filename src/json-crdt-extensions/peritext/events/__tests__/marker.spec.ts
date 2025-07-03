@@ -62,7 +62,7 @@ const testSuite = (getKit: () => Kit) => {
   });
 
   describe('"del" action', () => {
-    test('delete specific PersistedSlice', () => {
+    test('delete specific PersistedSlice by reference and by ID', () => {
       const kit = setup();
       kit.et.cursor({at: [5]});
       kit.et.marker({action: 'ins', type: SliceTypeCon.p});
@@ -75,22 +75,11 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.marker({action: 'del', slice});
       expect(kit.toHtml()).toBe('<p>abcdefghi</p><blockquote><p>jklmnopqrstuvwxyz</p></blockquote>');
       expect(kit.peritext.savedSlices.size()).toBe(1);
+      const slice2 = kit.peritext.savedSlices.each().find((slice) => true)!;
+      kit.et.marker({action: 'del', slice: slice2.id});
+      expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(0);
     });
-
-    // test('delete specific PersistedSlice by ID', () => {
-    //   const kit = setup();
-    //   kit.et.cursor({at: [5, 15]});
-    //   kit.et.format({action: 'ins', type: SliceTypeCon.b});
-    //   kit.et.cursor({at: [10, 20]});
-    //   kit.et.format({action: 'ins', type: SliceTypeCon.i});
-    //   kit.et.cursor({at: [0]});
-    //   expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
-    //   const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.b)!;
-    //   kit.et.cursor({clear: true});
-    //   kit.et.format({action: 'del', slice: slice!.id});
-    //   expect(kit.toHtml()).toBe('<p>abcdefghij<i>klmnopqrst</i>uvwxyz</p>');
-    //   expect(kit.peritext.savedSlices.size()).toBe(1);
-    // });
   });
 
   // describe('"upd" action', () => {
