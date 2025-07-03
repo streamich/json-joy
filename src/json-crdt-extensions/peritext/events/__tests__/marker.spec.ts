@@ -61,6 +61,38 @@ const testSuite = (getKit: () => Kit) => {
     });
   });
 
+  describe('"del" action', () => {
+    test('delete specific PersistedSlice', () => {
+      const kit = setup();
+      kit.et.cursor({at: [5, 15]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.b});
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.i});
+      kit.et.cursor({at: [0]});
+      expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.i);
+      kit.et.cursor({clear: true});
+      kit.et.format({action: 'del', slice});
+      expect(kit.toHtml()).toBe('<p>abcde<b>fghijklmno</b>pqrstuvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(1);
+    });
+
+    test('delete specific PersistedSlice by ID', () => {
+      const kit = setup();
+      kit.et.cursor({at: [5, 15]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.b});
+      kit.et.cursor({at: [10, 20]});
+      kit.et.format({action: 'ins', type: SliceTypeCon.i});
+      kit.et.cursor({at: [0]});
+      expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
+      const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.b)!;
+      kit.et.cursor({clear: true});
+      kit.et.format({action: 'del', slice: slice!.id});
+      expect(kit.toHtml()).toBe('<p>abcdefghij<i>klmnopqrst</i>uvwxyz</p>');
+      expect(kit.peritext.savedSlices.size()).toBe(1);
+    });
+  });
+
   describe('scenarios', () => {
     test('on [Enter] in <blockquote> adds new paragraph', async () => {
       const kit = setup();
