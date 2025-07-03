@@ -13,6 +13,7 @@ import type {UndoCollector} from './types';
 import type {UiHandle} from './ui/UiHandle';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorUi} from '../../../../json-crdt-extensions/peritext/editor/types';
+import {MarkerSlice} from '../../slice/MarkerSlice';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -235,7 +236,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         const {slice} = detail;
         if (!tag && slice) {
           const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof PersistedSlice) {
+          if (persistedSlice instanceof PersistedSlice && !persistedSlice.isSplit()) {
             persistedSlice.del();
           }
         } else {
@@ -281,7 +282,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         break;
       }
       case 'del': {
-        editor.delMarker(selection);
+        const {slice} = detail;
+        if (slice) {
+          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof MarkerSlice) persistedSlice.del();
+        } else {
+          editor.delMarker(selection);
+        }
         break;
       }
     }
