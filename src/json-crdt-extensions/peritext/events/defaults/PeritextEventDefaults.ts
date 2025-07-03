@@ -274,12 +274,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         editor.split(type, data, selection);
         break;
       }
-      case 'tog': {
-        if (type === undefined) throw new Error('TYPE_REQUIRED');
-        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
-        editor.tglMarker(steps, data, selection);
-        break;
-      }
       case 'upd': {
         if (type === undefined) throw new Error('TYPE_REQUIRED');
         const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
