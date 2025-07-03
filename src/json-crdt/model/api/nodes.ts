@@ -265,7 +265,6 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         if (!node.has(keyStr)) break REPLACE;
         node.set({[key]: value});
       } else if (node instanceof ArrApi) {
-        // TODO: use `upd` method instead
         const length = node.length();
         let index: number = 0;
         if (typeof key === 'number') index = key;
@@ -274,13 +273,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
           if (index + '' !== key) break REPLACE;
         }
         if (index !== index || index < 0 || index > length - 1) break REPLACE;
-        const element = node.node.getNode(index);
-        if (element instanceof ValNode) {
-          this.api.wrap(element).set(value);
-        } else {
-          node.ins(index, [value]);
-          node.del(index + 1, 1);
-        }
+        node.upd(index, value);
       } else if (node instanceof VecApi) {
         node.set([[~~key, value]]);
       } else break REPLACE;
