@@ -553,3 +553,107 @@ describe('.remove()', () => {
     });
   });
 });
+
+describe('.op()', () => {
+  describe('add', () => {
+    test('can add value in "obj" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.op(['add', '/obj/str', 'newValue']);
+      expect(doc.api.read('/obj/str')).toBe('newValue');
+      expect(success).toBe(true);
+    });
+
+    test('can add value in "obj" node - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.obj(['obj']).op(['add', '/str', s.arr([s.con(true)])]);
+      expect(doc.api.read('/obj/str')).toEqual([true]);
+      expect(success).toBe(true);
+    });
+
+    test('can insert text into string', () => {
+      const doc = Model.create({foo: 'bar'});
+      expect(doc.api.read('/foo')).toBe('bar');
+      const success = doc.api.op(['add', '/foo/3', '!!']);
+      expect(doc.api.read('/foo')).toBe('bar!!');
+      expect(success).toBe(true);
+    });
+  });
+
+  describe('replace', () => {
+    test('can replace value in "obj" node', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.op(['replace', '/obj/str', 'newValue']);
+      expect(doc.api.read('/obj/str')).toBe('newValue');
+      expect(success).toBe(true);
+    });
+
+    test('can replace value in "obj" node - 2', () => {
+      const doc = createTypedModel();
+      expect(doc.api.read('/obj/str')).toBe('asdf');
+      const success = doc.api.obj(['obj']).op(['replace', '/str', s.arr([s.con(true)])]);
+      expect(doc.api.read('/obj/str')).toEqual([true]);
+      expect(success).toBe(true);
+    });
+
+    test('cannot replace non-existing key', () => {
+      const doc = createTypedModel();
+      const success = doc.api.op(['replace', '/obj/asdfasdf', 'newValue']);
+      expect(doc.api.read('/obj/asdfasdf')).toBe(undefined);
+      expect(success).toBe(false);
+    });
+
+    test('cannot replace non-existing key - 2', () => {
+      const doc = createTypedModel();
+      const success = doc.api.obj('obj').op(['replace', '/asdfasdf', 'newValue']);
+      expect(doc.api.read('/obj/asdfasdf')).toBe(undefined);
+      expect(success).toBe(false);
+    });
+  });
+
+  describe('remove', () => {
+    test('can remove text from string', () => {
+      const doc = Model.create({foo: 'bar'});
+      expect(doc.api.read('/foo')).toBe('bar');
+      const success = doc.api.op(['remove', '/foo/1']);
+      expect(doc.api.read('/foo')).toBe('br');
+      expect(success).toBe(true);
+    });
+
+    test('can remove arr element', () => {
+      const doc = Model.create({foo: [1, 2, 3, 4]});
+      expect(doc.api.read('/foo')).toEqual([1, 2, 3, 4]);
+      const success = doc.api.op(['remove', '/foo/1', 2]);
+      expect(doc.api.read('/foo')).toEqual([1, 4]);
+      expect(success).toBe(true);
+    });
+  });
+
+  describe('merge', () => {
+    test('into object', () => {
+      const doc = Model.create({foo: 'bar'});
+      expect(doc.api.read('/foo')).toBe('bar');
+      const success = doc.api.op(['merge', '', {foo: 'baz', x: 42}]);
+      expect(doc.api.read('')).toEqual({foo: 'baz', x: 42});
+      expect(success).toBe(true);
+    });
+
+    test('update string', () => {
+      const doc = Model.create({foo: {bar: 'baz'}});
+      expect(doc.api.read('/foo/bar')).toBe('baz');
+      const success = doc.api.op(['merge', '/foo/bar', 'baz!']);
+      expect(doc.api.read('/foo/bar')).toBe('baz!');
+      expect(success).toBe(true);
+    });
+
+    test('returns false if node not found', () => {
+      const doc = Model.create({foo: {bar: 'baz'}});
+      expect(doc.api.read('/foo/bar')).toBe('baz');
+      const success = doc.api.op(['merge', '/foo/bar/baz', 'baz!']);
+      expect(doc.api.read('/foo/bar')).toBe('baz');
+      expect(success).toBe(false);
+    });
+  });
+});
