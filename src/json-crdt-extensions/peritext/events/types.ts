@@ -367,14 +367,91 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
  * is a "split" action, it creates two new paragraph blocks from the original
  * block. Removing a marker results into a "join" action, which merges two
  * adjacent blocks into one.
+ *
+ * ## Scenarios
+ *
+ * To split a block (say, a paragraph) at a specific position, you simply insert
+ * a new block marker at that position.
+ *
+ * ```ts
+ * {action: 'ins', type: SliceTypeTag.p}
+ * {action: 'ins', type: 'p'}
+ * {action: 'ins', type: '<p>'}
+ * {action: 'ins', type: ['p']}
+ * {action: 'ins', type: [['p', 0, {indetation: 1}]]}
+ * ```
+ *
+ * To remove all markers at the current selection, use the `'del'` action.
+ *
+ * ```ts
+ * {action: 'del'}
+ * ```
+ *
+ * To remove a specific marker identified by its {@link PersistedSlice} reference
+ * pass the slice or its ID in the `slice` field:
+ *
+ * ```ts
+ * {action: 'del', slice: slice}
+ * {action: 'del', slice: slice.id}
+ * ```
+ *
+ * To increase nesting level of a block, you have to insert new tags into an
+ * existing block type:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: 'type',
+ *   ops: [
+ *     ['add', '/1', [
+ *       ['ul', 0, {type: 'task-list'}],
+ *       ['li', 1, {checked: false}],
+ *     ]],
+ *   ],
+ * }
+ * ```
+ *
+ * ... delete tags:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: 'type',
+ *   ops: [
+ *     ['remove', '/1', 2],
+ *   ],
+ * }
+ * ```
+ *
+ * ... change discriminant at index:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: ['tag', 0],
+ *   ops: [
+ *     ['replace', '/1', 1],
+ *   ],
+ * }
+ * ```
+ *
+ * ... change tag data at index:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: ['data', 1],
+ *   ops: [
+ *     ['replace', '/checked', true],
+ *   ],
+ * }
+ * ```
  */
-export interface MarkerDetail extends RangeEventDetail {
+export interface MarkerDetail extends RangeEventDetail, SliceDetailPart {
   /**
    * The action to perform.
-   *
-   * @default 'tog'
    */
-  action?: 'tog' | 'ins' | 'del' | 'upd';
+  action: 'ins' | 'del' | 'upd';
 
   /**
    * The type tag applied to the new block, if the action is `'ins'`. If the
@@ -385,8 +462,7 @@ export interface MarkerDetail extends RangeEventDetail {
   type?: TypeTag | SliceTypeSteps;
 
   /**
-   * Block-specific custom data. For example, a paragraph block may store
-   * the alignment and indentation information in this field.
+   * Custom data stored with the marker.
    *
    * @default undefined
    */
