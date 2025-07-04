@@ -3,6 +3,7 @@ import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 import {CursorAnchor, type SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
+import {MarkerSlice} from '../../slice/MarkerSlice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -13,7 +14,6 @@ import type {UndoCollector} from './types';
 import type {UiHandle} from './ui/UiHandle';
 import type {Point} from '../../../../json-crdt-extensions/peritext/rga/Point';
 import type {EditorUi} from '../../../../json-crdt-extensions/peritext/editor/types';
-import {MarkerSlice} from '../../slice/MarkerSlice';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -275,12 +275,6 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         editor.split(type, data, selection);
         break;
       }
-      case 'upd': {
-        if (type === undefined) throw new Error('TYPE_REQUIRED');
-        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
-        editor.updMarker(steps, data, selection);
-        break;
-      }
       case 'del': {
         const {slice} = detail;
         if (slice) {
@@ -288,6 +282,13 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           if (persistedSlice instanceof MarkerSlice) persistedSlice.del();
         } else {
           editor.delMarker(selection);
+        }
+        break;
+      }
+      case 'upd': {
+        const {target, ops} = detail;
+        if (target && ops) {
+          editor.updMarker(selection, target as any, ops);
         }
         break;
       }

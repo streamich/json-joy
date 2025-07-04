@@ -82,22 +82,66 @@ const testSuite = (getKit: () => Kit) => {
     });
   });
 
-  // describe('"upd" action', () => {
-  //   test('can update marker type', () => {
-  //     const kit = setup();
-  //     kit.et.cursor({at: [5, 15]});
-  //     kit.et.format({action: 'ins', type: SliceTypeCon.b});
-  //     kit.et.cursor({at: [10, 20]});
-  //     kit.et.format({action: 'ins', type: SliceTypeCon.i});
-  //     kit.et.cursor({at: [0]});
-  //     expect(kit.toHtml()).toBe('<p>abcde<b>fghij</b><i><b>klmno</b></i><i>pqrst</i>uvwxyz</p>');
-  //     const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.i);
-  //     kit.et.cursor({clear: true});
-  //     kit.et.format({action: 'del', slice});
-  //     expect(kit.toHtml()).toBe('<p>abcde<b>fghijklmno</b>pqrstuvwxyz</p>');
-  //     expect(kit.peritext.savedSlices.size()).toBe(1);
-  //   });
-  // });
+  describe('"upd" action', () => {
+    describe('type', () => {
+      test('can append a tags and remove tags', () => {
+        const kit = setup();
+        kit.et.cursor({at: [8]});
+        kit.et.marker({action: 'ins', type: SliceTypeCon.blockquote});
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: 'type',
+          ops: [
+            ['add', '/-', SliceTypeCon.p],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: 'type',
+          ops: [
+            ['add', '/2', [
+              [SliceTypeCon.ul, 0, {type: 'tasks'}],
+              SliceTypeCon.li,
+            ]],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p><ul><li>ijklmnopqrstuvwxyz</li></ul></p></blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: 'type',
+          ops: [
+            ['remove', [1]],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><ul><li>ijklmnopqrstuvwxyz</li></ul></blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: 'type',
+          ops: [
+            ['remove', '/1', 2],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
+      });
+
+      test('handles case when last tag is deleted (delets whole marker)', () => {
+        const kit = setup();
+        kit.et.cursor({at: [8]});
+        kit.et.marker({action: 'ins', type: SliceTypeCon.blockquote});
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: 'type',
+          ops: [
+            ['remove', '/0'],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
+      });
+    });
+  });
 
   describe('scenarios', () => {
     test('on [Enter] in <blockquote> adds new paragraph', async () => {

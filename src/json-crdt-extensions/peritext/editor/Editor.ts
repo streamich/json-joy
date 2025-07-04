@@ -31,6 +31,7 @@ import type {
   EditorUi,
   EditorSelection,
 } from './types';
+import type {ApiOperation} from '../../../json-crdt/model/api/types';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -919,20 +920,6 @@ export class Editor<T = string> implements Printable {
     } else this.setStartMarker(type, data, slices);
   }
 
-  public updMarkerAt(
-    point: Point<T>,
-    type: SliceTypeSteps,
-    data?: unknown,
-    slices: EditorSlices<T> = this.saved,
-  ): void {
-    const overlay = this.txt.overlay;
-    const markerPoint = overlay.getOrNextLowerMarker(point);
-    if (markerPoint) {
-      const marker = markerPoint.marker;
-      marker.update({type});
-    } else this.setStartMarker(type, data, slices);
-  }
-
   /**
    * Toggle the type of a block split between the slice type and the default
    * (paragraph) block type.
@@ -950,23 +937,6 @@ export class Editor<T = string> implements Printable {
     for (const range of selection) this.tglMarkerAt(range.start, type, data, slices, def);
   }
 
-  /**
-   * Update the type of a block split at all cursor positions.
-   *
-   * @param type Slice type to set.
-   * @param data Custom data of the slice.
-   * @param slices The slices set to use, if new marker is inserted at the start
-   *     of the document.
-   */
-  public updMarker(
-    type: SliceTypeSteps,
-    data?: unknown,
-    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
-    slices: EditorSlices<T> = this.saved,
-  ): void {
-    for (const range of selection) this.updMarkerAt(range.start, type, data, slices);
-  }
-
   public delMarker(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
     const markerPoints = new Set<MarkerOverlayPoint<T>>();
     for (const range of selection) {
@@ -977,6 +947,38 @@ export class Editor<T = string> implements Printable {
       const boundary = markerPoint.marker.boundary();
       this.delRange(boundary);
     }
+  }
+
+  public updMarkerSlice(
+    marker: MarkerSlice<T>,
+    target: 'type',
+    ops: ApiOperation[],
+  ): void {
+    const node = target === 'type' ? marker.nestedType().asArr() : void 0;
+    if (!node) return;
+    for (const op of ops) node.op(op);
+    if (node.length() === 0) marker.del();
+  }
+
+  public updMarkerAt(
+    point: Point<T>,
+    target: 'type',
+    ops: ApiOperation[],
+    slices: EditorSlices<T> = this.saved,
+  ): void {
+    const overlay = this.txt.overlay;
+    const markerPoint = overlay.getOrNextLowerMarker(point);
+    const marker: MarkerSlice<T> = markerPoint?.marker ?? this.setStartMarker([SliceTypeCon.p], void 0, slices);
+    return this.updMarkerSlice(marker, target, ops);
+  }
+
+  public updMarker(
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    target: 'type',
+    ops: ApiOperation[],
+    slices: EditorSlices<T> = this.saved,
+  ): void {
+    for (const range of selection) this.updMarkerAt(range.start, target, ops, slices);
   }
 
   // ---------------------------------------------------------- export / import

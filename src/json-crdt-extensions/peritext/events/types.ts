@@ -5,6 +5,7 @@ import type {ITimestampStruct, Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PersistedSlice} from '../slice/PersistedSlice';
+import type {ApiOperation} from '../../../json-crdt/model/api/types';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -467,6 +468,30 @@ export interface MarkerDetail extends RangeEventDetail, SliceDetailPart {
    * @default undefined
    */
   data?: unknown;
+
+  /**
+   * The type target node to use for the update operation, if the action is
+   * `'upd'`. The target can be one of the following:
+   *
+   * - `'type'`: The type of the block, i.e. an array of tags, for example,
+   *   `['p', 'blockquote']`. Or `[['p', 0, {indentation: 1}], 'blockquote']`.
+   * - `['tag', index]`: The tag at the specified index in the type array.
+   *   The target node to which the operations are applied is enforced to
+   *   be a "vec" node where the first element is the type tag, the second
+   *   element is the discriminant, and the third element is the data
+   *   associated with the tag. For example, `['p', 0, {indentation: 1}]`.
+   * - `['data', index]`: The data of the tag at the specified index
+   *   in the type array. The target node to which the operations are applied
+   *   are enfored to be an "obj" node.
+   */
+  target?: 'type' | ['tag', index: number] | ['data', index: number];
+
+  /**
+   * The list of operations to perform on the target node, when the action is
+   * `'upd'`. The operations are applied to the target node in the order they
+   * are specified using the {@link NodeApi.op} API.
+   */
+  ops?: ApiOperation[];
 }
 
 /**
