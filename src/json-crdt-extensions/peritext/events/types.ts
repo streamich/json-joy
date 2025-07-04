@@ -484,7 +484,7 @@ export interface MarkerDetail extends RangeEventDetail, SliceDetailPart {
    *   in the type array. The target node to which the operations are applied
    *   are enfored to be an "obj" node.
    */
-  target?: 'type' | ['tag', index: number] | ['data', index: number];
+  target?: 'type' | ['tag', index?: number] | ['data', index?: number];
 
   /**
    * The list of operations to perform on the target node, when the action is

@@ -14,6 +14,7 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
+import {ArrApi} from '../../../json-crdt/model';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
@@ -30,6 +31,7 @@ import type {
   ViewSlice,
   EditorUi,
   EditorSelection,
+  MarkerUpdateTarget,
 } from './types';
 import type {ApiOperation} from '../../../json-crdt/model/api/types';
 
@@ -951,18 +953,24 @@ export class Editor<T = string> implements Printable {
 
   public updMarkerSlice(
     marker: MarkerSlice<T>,
-    target: 'type',
+    target: MarkerUpdateTarget,
     ops: ApiOperation[],
   ): void {
-    const node = target === 'type' ? marker.nestedType().asArr() : void 0;
+    const node = target === 'type'
+    ? marker.nestedType().asArr()
+      : target[0] === 'tag'
+      ? marker.nestedType().tag(target[1]).asVec()
+        : target[0] === 'data'
+        ? marker.nestedType().tag(target[1])?.data()
+          : void 0;
     if (!node) return;
     for (const op of ops) node.op(op);
-    if (node.length() === 0) marker.del();
+    if (target === 'type' && node instanceof ArrApi &&  node.length() === 0) marker.del();
   }
 
   public updMarkerAt(
     point: Point<T>,
-    target: 'type',
+    target: MarkerUpdateTarget,
     ops: ApiOperation[],
     slices: EditorSlices<T> = this.saved,
   ): void {
@@ -974,7 +982,7 @@ export class Editor<T = string> implements Printable {
 
   public updMarker(
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
-    target: 'type',
+    target: MarkerUpdateTarget,
     ops: ApiOperation[],
     slices: EditorSlices<T> = this.saved,
   ): void {

@@ -141,6 +141,43 @@ const testSuite = (getKit: () => Kit) => {
         expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
       });
     });
+
+    describe('tag', () => {
+      test('can update tag name', () => {
+        const kit = setup();
+        kit.et.cursor({at: [8]});
+        kit.et.marker({action: 'ins', type: SliceTypeCon.blockquote});
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: ['tag', 0],
+          ops: [
+            ['replace', '/0', SliceTypeCon.p],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><p>ijklmnopqrstuvwxyz</p>');
+      });
+
+      test('can update discriminant', () => {
+        const kit = setup();
+        kit.et.cursor({at: [8]});
+        kit.et.marker({action: 'ins', type: SliceTypeCon.p});
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><p>ijklmnopqrstuvwxyz</p>');
+        const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.p);
+        expect(slice?.nestedType().tag(0).discriminant()).toBe(0);
+        kit.et.cursor({at: [12]});
+        kit.et.marker({
+          action: 'upd',
+          target: ['tag', 0],
+          ops: [
+            ['replace', '/1', 1],
+          ],
+        });
+        expect(slice?.nestedType().tag(0).discriminant()).toBe(1);
+        slice?.nestedType().tag(0).setDiscriminant(2);
+        expect(slice?.nestedType().tag(0).discriminant()).toBe(2);
+      });
+    });
   });
 
   describe('scenarios', () => {

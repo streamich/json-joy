@@ -288,7 +288,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'upd': {
         const {target, ops} = detail;
         if (target && ops) {
-          editor.updMarker(selection, target as any, ops);
+          editor.updMarker(selection, target, ops);
         }
         break;
       }

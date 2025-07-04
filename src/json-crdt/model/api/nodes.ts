@@ -240,11 +240,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         if (index !== index) break ADD;
         if (index < 0) index = 0;
         if (index > length) index = length;
-        if (node instanceof ArrApi) {
-          node.ins(index, Array.isArray(value) ? value : [value]);
-        } else if (node instanceof StrApi) {
-          node.ins(index, value + '');
-        } else if (node instanceof BinApi) {
+        if (node instanceof ArrApi) node.ins(index, Array.isArray(value) ? value : [value]);
+        else if (node instanceof StrApi) node.ins(index, value + '');
+        else if (node instanceof BinApi) {
           if (!(value instanceof Uint8Array)) break ADD;
           node.ins(index, value);
         }
@@ -272,11 +270,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
           index = ~~key;
           if (index + '' !== key) break REPLACE;
         }
-        if (index !== index || index < 0 || index > length - 1) break REPLACE;
-        node.upd(index, value);
-      } else if (node instanceof VecApi) {
-        node.set([[~~key, value]]);
-      } else break REPLACE;
+        if (index !== index || index < 0 || index > length) break REPLACE;
+        if (index === length) node.ins(index, [value]);
+        else node.upd(index, value);
+      } else if (node instanceof VecApi) node.set([[~~key, value]]);
+      else break REPLACE;
       return true;
     } catch {}
     return false;
@@ -343,7 +341,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public toString(tab: string = ''): string {
-    return 'api' + printTree(tab, [(tab) => this.node.toString(tab)]);
+    const name = this.constructor === NodeApi ? '*' : this.node.name();
+    return 'api(' + name + ')' + printTree(tab, [(tab) => this.node.toString(tab)]);
   }
 }
 
