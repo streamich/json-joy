@@ -107,7 +107,7 @@ const testSuite = (getKit: () => Kit) => {
             ]],
           ],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p><ul><li>ijklmnopqrstuvwxyz</li></ul></p></blockquote>');
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></p></blockquote>');
         kit.et.marker({
           action: 'upd',
           target: 'type',
@@ -115,7 +115,7 @@ const testSuite = (getKit: () => Kit) => {
             ['remove', [1]],
           ],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><ul><li>ijklmnopqrstuvwxyz</li></ul></blockquote>');
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></blockquote>');
         kit.et.marker({
           action: 'upd',
           target: 'type',
@@ -176,6 +176,35 @@ const testSuite = (getKit: () => Kit) => {
         expect(slice?.nestedType().tag(0).discriminant()).toBe(1);
         slice?.nestedType().tag(0).setDiscriminant(2);
         expect(slice?.nestedType().tag(0).discriminant()).toBe(2);
+      });
+    });
+
+    describe('data', () => {
+      test('can add and update tag data', () => {
+        const kit = setup();
+        kit.et.cursor({at: [8]});
+        kit.et.marker({action: 'ins', type: SliceTypeCon.blockquote});
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: ['data', 0],
+          ops: [
+            ['add', '/author', 'Quasimodo'],
+            ['add', '/source', 'Journal of Hunchbacks'],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote data-attr=\'{"author":"Quasimodo","source":"Journal of Hunchbacks"}\'>ijklmnopqrstuvwxyz</blockquote>');
+        kit.et.marker({
+          action: 'upd',
+          target: ['data', 0],
+          ops: [
+            ['merge', '', {
+              author: 'Pierre Gringoire',
+              source: 'Journal of Hunchbacks',
+            }],
+          ],
+        });
+        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote data-attr=\'{"author":"Pierre Gringoire","source":"Journal of Hunchbacks"}\'>ijklmnopqrstuvwxyz</blockquote>');
       });
     });
   });
