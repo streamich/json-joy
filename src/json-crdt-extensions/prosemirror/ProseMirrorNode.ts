@@ -51,7 +51,7 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
           for (let i = 0; i < length; i++) {
             const slice = slices[i];
             if (slice instanceof PersistedSlice) {
-              const tag = slice.tag() + '';
+              const tag = slice.type() + '';
               const data = slice.data();
               const mark: ProseMirrorJsonMark = {type: tag};
               if (data && typeof data == 'object' && !Array.isArray(data)) mark.attrs = data as ProseMirrorAttrs;
@@ -65,10 +65,10 @@ export class ProseMirrorNode extends ExtNode<ProseMirrorDataNode> {
     } else {
       const children = block.children;
       const length = children.length;
-      for (let i = 0; i < length; i++) content.push(this.toPM(children[i]));  
+      for (let i = 0; i < length; i++) content.push(this.toPM(children[i]));
     }
     if (content.length) node.content = content;
-    const data = block.marker?.data();
+    const data = block.attr();
     if (data && typeof data === 'object') {
       for (const _ in data) {
         node.attrs = data as ProseMirrorAttrs;
