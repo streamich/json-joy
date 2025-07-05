@@ -37,4 +37,8 @@ export enum OPCODE {
   and = 43,
   not = 44,
   or = 45,
+
+  // Binary editing.
+  bin_ins = 60,
+  bin_del = 61,
 }
