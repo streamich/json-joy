@@ -207,24 +207,32 @@ const testSuite = (getKit: () => Kit) => {
       test('can update the correct tag data', () => {
         const kit = setup();
         kit.et.cursor({at: [8]});
-        kit.et.marker({action: 'ins', type: [['ul', 0, {type: 'tasks'}], ['li', 0 , {done: false}]]});
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><ul data-attr=\'{"type":"tasks"}\'><li data-attr=\'{"done":false}\'>ijklmnopqrstuvwxyz</li></ul>');
+        kit.et.marker({
+          action: 'ins',
+          type: [
+            ['ul', 0, {type: 'tasks'}],
+            ['li', 0, {done: false}],
+          ],
+        });
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><ul data-attr=\'{"type":"tasks"}\'><li data-attr=\'{"done":false}\'>ijklmnopqrstuvwxyz</li></ul>',
+        );
         kit.et.marker({
           action: 'upd',
           target: ['data', 0],
-          ops: [
-            ['add', '/type', 'ordered'],
-          ],
+          ops: [['add', '/type', 'ordered']],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><ul data-attr=\'{"type":"ordered"}\'><li data-attr=\'{"done":false}\'>ijklmnopqrstuvwxyz</li></ul>');
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><ul data-attr=\'{"type":"ordered"}\'><li data-attr=\'{"done":false}\'>ijklmnopqrstuvwxyz</li></ul>',
+        );
         kit.et.marker({
           action: 'upd',
           target: ['data', 1],
-          ops: [
-            ['replace', '/done', true],
-          ],
+          ops: [['replace', '/done', true]],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><ul data-attr=\'{"type":"ordered"}\'><li data-attr=\'{"done":true}\'>ijklmnopqrstuvwxyz</li></ul>');
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><ul data-attr=\'{"type":"ordered"}\'><li data-attr=\'{"done":true}\'>ijklmnopqrstuvwxyz</li></ul>',
+        );
       });
     });
   });
