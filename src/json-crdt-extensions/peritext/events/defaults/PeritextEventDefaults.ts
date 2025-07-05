@@ -3,6 +3,7 @@ import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 import {CursorAnchor, type SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
+import {MarkerSlice} from '../../slice/MarkerSlice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -235,7 +236,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         const {slice} = detail;
         if (!tag && slice) {
           const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof PersistedSlice) {
+          if (persistedSlice instanceof PersistedSlice && !persistedSlice.isSplit()) {
             persistedSlice.del();
           }
         } else {
@@ -274,20 +275,21 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         editor.split(type, data, selection);
         break;
       }
-      case 'tog': {
-        if (type === undefined) throw new Error('TYPE_REQUIRED');
-        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
-        editor.tglMarker(steps, data, selection);
+      case 'del': {
+        const {slice} = detail;
+        if (slice) {
+          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof MarkerSlice) persistedSlice.del();
+        } else {
+          editor.delMarker(selection);
+        }
         break;
       }
       case 'upd': {
-        if (type === undefined) throw new Error('TYPE_REQUIRED');
-        const steps: SliceTypeSteps = Array.isArray(type) ? type : [type];
-        editor.updMarker(steps, data, selection);
-        break;
-      }
-      case 'del': {
-        editor.delMarker(selection);
+        const {target, ops} = detail;
+        if (target && ops) {
+          editor.updMarker(target, ops, selection);
+        }
         break;
       }
     }

@@ -52,3 +52,5 @@ export interface EditorUi<T = string> {
    */
   vert?(point: Point<T>, steps: number): Point<T> | undefined;
 }
+
+export type MarkerUpdateTarget = 'type' | ['tag', index?: number] | ['data', index?: number];

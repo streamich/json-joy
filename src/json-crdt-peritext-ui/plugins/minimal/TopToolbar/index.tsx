@@ -39,7 +39,8 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   const blockGroupButtom = (type: string | number, name: React.ReactNode) => (
     <Button
-      onClick={() => ctx.dom?.et.marker({action: 'tog', type})}
+      // onClick={() => ctx.dom?.et.marker({action: 'tog', type})}
+      onClick={() => {}}
       onMouseDown={(e) => e.preventDefault()}
       active={(complete.has(type) && !pending?.has(type)) || (!complete.has(type) && pending?.has(type))}
     >

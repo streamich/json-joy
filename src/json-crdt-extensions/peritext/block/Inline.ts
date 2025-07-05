@@ -173,7 +173,7 @@ export class Inline<T = string> extends Range<T> implements Printable {
     for (let i = 0; i < length123; i++) {
       const slice = i >= length12 ? slices3[i - length12] : i >= length1 ? slices2[i - length1] : slices1[i];
       if (slice instanceof Range) {
-        const type = slice.type as PathStep;
+        const type = slice.type() as PathStep;
         switch (slice.stacking) {
           case SliceStacking.Cursor: {
             const stack: InlineAttrStack<T> = attr[SliceTypeName.Cursor] ?? (attr[SliceTypeName.Cursor] = []);
@@ -322,9 +322,10 @@ export class Inline<T = string> extends Range<T> implements Printable {
                     : formatType(key) +
                         ' = ' +
                         stringify(
-                          attr[key].map((attr) =>
-                            attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data(),
-                          ),
+                          attr[key].map((attr) => {
+                            const slice = attr.slice;
+                            return slice instanceof Cursor ? [slice.type(), slice.data()] : slice.data();
+                          }),
                         );
                 }),
               ),

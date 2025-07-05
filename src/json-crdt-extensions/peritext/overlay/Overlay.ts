@@ -453,7 +453,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       const length = layers.length;
       LAYERS: for (let i = 0; i < length; i++) {
         const slice = layers[i];
-        const type = slice.type;
+        const type = slice.type();
         if (typeof type === 'object') continue LAYERS;
         const stacking = slice.stacking;
         STACKING: switch (stacking) {

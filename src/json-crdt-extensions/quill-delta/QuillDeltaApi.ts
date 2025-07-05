@@ -47,10 +47,10 @@ const rewriteAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | und
       if (slice instanceof PersistedSlice) {
         const isContained = range.contains(slice);
         if (!isContained) {
-          relevantOverlappingButNotContained.add(slice.type as PathStep);
+          relevantOverlappingButNotContained.add(slice.type() as PathStep);
           return;
         }
-        const type = slice.type as PathStep;
+        const type = slice.type() as PathStep;
         if (type in attributes) {
           savedSlices.del(slice.id);
         }

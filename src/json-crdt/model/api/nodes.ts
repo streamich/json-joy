@@ -15,7 +15,7 @@ import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
 import type * as types from './proxy';
 import type {Printable} from 'tree-dump/lib/types';
-import type {JsonNodeApi} from './types';
+import type {ApiOperation, ApiPath, JsonNodeApi} from './types';
 import type {VecNodeExtensionData} from '../../schema/types';
 import type {Patch} from '../../../json-crdt-patch';
 import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
@@ -39,8 +39,6 @@ const breakPath = (path: ApiPath): [parent: Path | undefined, key: string | numb
     }
   }
 };
-
-export type ApiPath = string | number | Path | undefined;
 
 /**
  * A generic local changes API for a JSON CRDT node.
@@ -207,7 +205,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public select(path?: ApiPath, leaf?: boolean) {
     try {
-      let node = path ? this.find(path) : this.node;
+      let node = path !== void 0 ? this.find(path) : this.node;
       if (leaf) while (node instanceof ValNode) node = node.child();
       return this.api.wrap(node);
     } catch (e) {
@@ -242,11 +240,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
         if (index !== index) break ADD;
         if (index < 0) index = 0;
         if (index > length) index = length;
-        if (node instanceof ArrApi) {
-          node.ins(index, Array.isArray(value) ? value : [value]);
-        } else if (node instanceof StrApi) {
-          node.ins(index, value + '');
-        } else if (node instanceof BinApi) {
+        if (node instanceof ArrApi) node.ins(index, Array.isArray(value) ? value : [value]);
+        else if (node instanceof StrApi) node.ins(index, value + '');
+        else if (node instanceof BinApi) {
           if (!(value instanceof Uint8Array)) break ADD;
           node.ins(index, value);
         }
@@ -274,17 +270,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
           index = ~~key;
           if (index + '' !== key) break REPLACE;
         }
-        if (index !== index || index < 0 || index > length - 1) break REPLACE;
-        const element = node.node.getNode(index);
-        if (element instanceof ValNode) {
-          this.api.wrap(element).set(value);
-        } else {
-          node.ins(index, [value]);
-          node.del(index + 1, 1);
-        }
-      } else if (node instanceof VecApi) {
-        node.set([[~~key, value]]);
-      } else break REPLACE;
+        if (index !== index || index < 0 || index > length) break REPLACE;
+        if (index === length) node.ins(index, [value]);
+        else node.upd(index, value);
+      } else if (node instanceof VecApi) node.set([[~~key, value]]);
+      else break REPLACE;
       return true;
     } catch {}
     return false;
@@ -317,12 +307,27 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return false;
   }
 
-  public diff(value: unknown): Patch {
+  public diff(value: unknown): Patch | undefined {
     return diff.diff(this, value);
   }
 
-  public merge(value: unknown): void {
-    diff.merge(this, value);
+  public merge(value: unknown): Patch | undefined {
+    return diff.merge(this, value);
+  }
+
+  public op(operation: ApiOperation): boolean {
+    if (!Array.isArray(operation)) return false;
+    const [type, path, value] = operation;
+    switch (type) {
+      case 'add':
+        return this.add(path, value);
+      case 'replace':
+        return this.replace(path, value);
+      case 'merge':
+        return !!this.select(path)?.merge(value);
+      case 'remove':
+        return this.remove(path, value);
+    }
   }
 
   public get s(): types.ProxyNode<N> {
@@ -340,7 +345,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public toString(tab: string = ''): string {
-    return 'api' + printTree(tab, [(tab) => this.node.toString(tab)]);
+    const name = this.constructor === NodeApi ? '*' : this.node.name();
+    return 'api(' + name + ')' + printTree(tab, [(tab) => this.node.toString(tab)]);
   }
 }
 

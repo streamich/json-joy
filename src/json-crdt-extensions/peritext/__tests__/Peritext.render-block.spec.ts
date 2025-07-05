@@ -1,7 +1,7 @@
 import {Model} from '../../../json-crdt/model';
 import {Peritext} from '../Peritext';
-import type {Editor} from '../editor/Editor';
 import {render} from './render';
+import type {Editor} from '../editor/Editor';
 
 const runInlineSlicesTests = (
   desc: string,
@@ -30,7 +30,7 @@ const runInlineSlicesTests = (
     test('can insert marker in the middle of text', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(10);
-      editor.saved.insMarker(['p'], {foo: 'bar'});
+      editor.saved.insMarker([['p', 0, {foo: 'bar'}]]);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -44,7 +44,7 @@ const runInlineSlicesTests = (
     test('can insert at the beginning of text', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(0);
-      editor.saved.insMarker(['p'], {foo: 'bar'});
+      editor.saved.insMarker([['p', 0, {foo: 'bar'}]]);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <p> { foo = "bar" }
@@ -53,10 +53,61 @@ const runInlineSlicesTests = (
 `);
     });
 
+    test('nested block data', () => {
+      const {view, editor} = setup();
+      editor.cursor.setAt(5);
+      editor.saved.insMarker([
+        ['ul', 0, {type: 'tasks'}],
+        ['li', 0, {completed: false}],
+      ]);
+      editor.cursor.setAt(10);
+      editor.saved.insMarker([
+        ['ul', 0, {type: 'tasks'}],
+        ['li', 1, {completed: true}],
+      ]);
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "abcde" {  }
+  <ul> { type = "tasks" }
+    <li> { completed = !f }
+      "fghi" {  }
+    <li> { completed = !t }
+      "jklmnopqrstuvwxyz" {  }
+"
+`);
+    });
+
+    test('nested block data - 2', () => {
+      const {view, editor} = setup();
+      editor.cursor.setAt(5);
+      editor.saved.insMarker([
+        ['ul', 0, {type: 'tasks'}],
+        ['li', 0, {completed: false}],
+      ]);
+      editor.cursor.setAt(10);
+      editor.saved.insMarker([
+        ['ul', 1, {type: 'tasks'}],
+        ['li', 0, {completed: true}],
+      ]);
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "abcde" {  }
+  <ul> { type = "tasks" }
+    <li> { completed = !f }
+      "fghi" {  }
+  <ul> { type = "tasks" }
+    <li> { completed = !t }
+      "jklmnopqrstuvwxyz" {  }
+"
+`);
+    });
+
     test('can insert at the end of text', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(26);
-      editor.saved.insMarker(['unfurl'], {link: 'foobar'});
+      editor.saved.insMarker([['unfurl', 0, {link: 'foobar'}]]);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
@@ -71,14 +122,14 @@ const runInlineSlicesTests = (
       editor.cursor.setAt(5, 5);
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(15);
-      editor.saved.insMarker(['paragraph'], []);
+      editor.saved.insMarker(['paragraph']);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
     "abcde" {  }
     "fghij" { BOLD = [ !u ] }
     "klmno" {  }
-  <paragraph> [  ]
+  <paragraph>
     "pqrstuvwxyz" {  }
 "
 `);
@@ -89,14 +140,14 @@ const runInlineSlicesTests = (
       editor.cursor.setAt(5, 5);
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
-      editor.saved.insMarker(['paragraph'], []);
+      editor.saved.insMarker(['paragraph']);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
     "abcde" {  }
     "fghij" { BOLD = [ !u ] }
     "" {  }
-  <paragraph> [  ]
+  <paragraph>
     "klmnopqrstuvwxyz" {  }
 "
 `);
@@ -107,12 +158,12 @@ const runInlineSlicesTests = (
       editor.cursor.setAt(15, 5);
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
-      editor.saved.insMarker(['paragraph'], []);
+      editor.saved.insMarker(['paragraph']);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
     "abcdefghij" {  }
-  <paragraph> [  ]
+  <paragraph>
     "klmno" {  }
     "pqrst" { BOLD = [ !u ] }
     "uvwxyz" {  }
@@ -125,12 +176,12 @@ const runInlineSlicesTests = (
       editor.cursor.setAt(15, 5);
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(15);
-      editor.saved.insMarker(['paragraph'], []);
+      editor.saved.insMarker(['paragraph']);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
     "abcdefghijklmno" {  }
-  <paragraph> [  ]
+  <paragraph>
     "pqrst" { BOLD = [ !u ] }
     "uvwxyz" {  }
 "
@@ -142,13 +193,13 @@ const runInlineSlicesTests = (
       editor.cursor.setAt(5, 10);
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
-      editor.saved.insMarker(['paragraph'], []);
+      editor.saved.insMarker(['paragraph']);
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
     "abcde" {  }
     "fghij" { BOLD = [ !u ] }
-  <paragraph> [  ]
+  <paragraph>
     "klmno" { BOLD = [ !u ] }
     "pqrstuvwxyz" {  }
 "
@@ -158,9 +209,9 @@ const runInlineSlicesTests = (
     test('can annotate with slice over two block splits', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(10);
-      editor.saved.insMarker(['p'], []);
+      editor.saved.insMarker(['p']);
       editor.cursor.setAt(15);
-      editor.saved.insMarker(['p'], []);
+      editor.saved.insMarker(['p']);
       editor.cursor.setAt(8, 15);
       editor.saved.insOne('BOLD');
       expect(view()).toMatchInlineSnapshot(`
@@ -168,9 +219,9 @@ const runInlineSlicesTests = (
   <0>
     "abcdefgh" {  }
     "ij" { BOLD = [ !u ] }
-  <p> [  ]
+  <p>
     "klmn" { BOLD = [ !u ] }
-  <p> [  ]
+  <p>
     "opqrstu" { BOLD = [ !u ] }
     "vwxyz" {  }
 "
@@ -180,16 +231,16 @@ const runInlineSlicesTests = (
     test('can insert two blocks', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(10);
-      editor.saved.insMarker('p', {});
+      editor.saved.insMarker('p');
       editor.cursor.setAt(10 + 10 + 1);
-      editor.saved.insMarker('p', {});
+      editor.saved.insMarker('p');
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
     "abcdefghij" {  }
-  <p> {  }
+  <p>
     "klmnopqrst" {  }
-  <p> {  }
+  <p>
     "uvwxyz" {  }
 "
 `);

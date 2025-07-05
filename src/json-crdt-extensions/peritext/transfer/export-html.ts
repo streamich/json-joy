@@ -10,7 +10,8 @@ import type {ViewStyle, ViewRange} from '../editor/types';
 export const toJsonMl = (json: PeritextMlNode): JsonMlNode => {
   if (typeof json === 'string') return json;
   const [tag, attr, ...children] = json;
-  const namedTag = tag === '' ? tag : SliceTypeName[tag as any];
+  let namedTag = tag === '' ? tag : SliceTypeName[tag as any];
+  if (typeof namedTag !== 'string') namedTag = tag + '';
   const htmlTag = namedTag ?? (attr?.inline ? 'span' : 'div');
   const htmlAttr = attr && attr.data !== void 0 ? {'data-attr': JSON.stringify(attr.data)} : null;
   const htmlNode: JsonMlNode = [htmlTag, htmlAttr];

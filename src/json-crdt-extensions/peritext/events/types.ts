@@ -5,6 +5,7 @@ import type {ITimestampStruct, Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
 import type {PersistedSlice} from '../slice/PersistedSlice';
+import type {ApiOperation} from '../../../json-crdt/model/api/types';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -367,14 +368,105 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
  * is a "split" action, it creates two new paragraph blocks from the original
  * block. Removing a marker results into a "join" action, which merges two
  * adjacent blocks into one.
+ *
+ * ## Scenarios
+ *
+ * To split a block (say, a paragraph) at a specific position, you simply insert
+ * a new block marker at that position.
+ *
+ * ```ts
+ * {action: 'ins', type: SliceTypeTag.p}
+ * {action: 'ins', type: 'p'}
+ * {action: 'ins', type: '<p>'}
+ * {action: 'ins', type: ['p']}
+ * {action: 'ins', type: [['p', 0, {indetation: 1}]]}
+ * ```
+ *
+ * To remove all markers at the current selection, use the `'del'` action.
+ *
+ * ```ts
+ * {action: 'del'}
+ * ```
+ *
+ * To remove a specific marker identified by its {@link PersistedSlice} reference
+ * pass the slice or its ID in the `slice` field:
+ *
+ * ```ts
+ * {action: 'del', slice: slice}
+ * {action: 'del', slice: slice.id}
+ * ```
+ *
+ * To increase nesting level of a block, you have to insert new tags into an
+ * existing block type:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: 'type',
+ *   ops: [
+ *     ['add', '/1', [
+ *       ['ul', 0, {type: 'task-list'}],
+ *       ['li', 1, {checked: false}],
+ *     ]],
+ *   ],
+ * }
+ * ```
+ *
+ * ... delete tags:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: 'type',
+ *   ops: [
+ *     ['remove', '/1', 2],
+ *   ],
+ * }
+ * ```
+ *
+ * ... change discriminant at index:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: ['tag', 0],
+ *   ops: [
+ *     ['replace', '/1', 1],
+ *   ],
+ * }
+ * ```
+ *
+ * ... change tag data at index:
+ *
+ * ```ts
+ * {
+ *   action: 'upd',
+ *   select: ['data', 1],
+ *   ops: [
+ *     ['replace', '/checked', true],
+ *   ],
+ * }
+ * ```
  */
-export interface MarkerDetail extends RangeEventDetail {
+export interface MarkerDetail extends RangeEventDetail, SliceDetailPart {
   /**
    * The action to perform.
    *
-   * @default 'tog'
+   * - The `'ins'` action inserts a new block marker at the current selection.
+   *   It splits the current block at the selection point, creating a new block
+   *   boundary (marker). The block type may be nested (say `['p', 'blockquote']`),
+   *   which will result in a nested block structure, for example,
+   *   `<p><blockquote>text</blockquote></p>`. Use the `type` field to specify
+   *   the block type.
+   * - The `'del'` action removes all block markers which begin just before
+   *   the startu of the current selection ranges. To remove a specific block
+   *   marker, specify the `slice` field with the {@link MarkerSlice} or its
+   *   ID {@link ITimestampStruct}.
+   * - The `'upd'` action lets you update an existing block marker. Use the
+   *   `target` to specify the target node to update, and the `ops` field to
+   *   specify the operations to perform on the target node.
    */
-  action?: 'tog' | 'ins' | 'del' | 'upd';
+  action: 'ins' | 'del' | 'upd';
 
   /**
    * The type tag applied to the new block, if the action is `'ins'`. If the
@@ -385,12 +477,35 @@ export interface MarkerDetail extends RangeEventDetail {
   type?: TypeTag | SliceTypeSteps;
 
   /**
-   * Block-specific custom data. For example, a paragraph block may store
-   * the alignment and indentation information in this field.
+   * Custom data stored with the marker.
    *
    * @default undefined
    */
   data?: unknown;
+
+  /**
+   * The type target node to use for the update operation, if the action is
+   * `'upd'`. The target can be one of the following:
+   *
+   * - `'type'`: The type of the block, i.e. an array of tags, for example,
+   *   `['p', 'blockquote']`. Or `[['p', 0, {indentation: 1}], 'blockquote']`.
+   * - `['tag', index]`: The tag at the specified index in the type array.
+   *   The target node to which the operations are applied is enforced to
+   *   be a "vec" node where the first element is the type tag, the second
+   *   element is the discriminant, and the third element is the data
+   *   associated with the tag. For example, `['p', 0, {indentation: 1}]`.
+   * - `['data', index]`: The data of the tag at the specified index
+   *   in the type array. The target node to which the operations are applied
+   *   are enfored to be an "obj" node.
+   */
+  target?: 'type' | ['tag', index?: number] | ['data', index?: number];
+
+  /**
+   * The list of operations to perform on the target node, when the action is
+   * `'upd'`. The operations are applied to the target node in the order they
+   * are specified using the {@link NodeApi.op} API.
+   */
+  ops?: ApiOperation[];
 }
 
 /**

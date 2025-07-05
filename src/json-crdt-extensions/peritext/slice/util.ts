@@ -17,7 +17,7 @@ export const validateType = (type: SliceType) => {
           case 'number':
             continue LOOP;
           case 'object':
-            if (!Array.isArray(step) || step.length !== 2) throw new Error('INVALID_TYPE');
+            if (!Array.isArray(step) || step.length > 3 || step.length < 1) throw new Error('INVALID_TYPE');
             continue LOOP;
           default:
             throw new Error('INVALID_TYPE');

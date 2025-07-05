@@ -23,7 +23,7 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> implements H
   }
 
   public type(): SliceType {
-    return this.marker && this.marker.type;
+    return this.marker && this.marker.type();
   }
 
   public data(): unknown {

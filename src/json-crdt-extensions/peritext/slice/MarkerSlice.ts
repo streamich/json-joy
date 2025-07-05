@@ -19,4 +19,14 @@ export class MarkerSlice<T = string> extends PersistedSlice<T> {
     end.anchor = Anchor.After;
     return this.txt.range(start, end);
   }
+
+  public del(): void {
+    super.del();
+    const txt = this.txt;
+    const range = txt.range(
+      this.start,
+      this.start.copy((p) => (p.anchor = Anchor.After)),
+    );
+    txt.delStr(range);
+  }
 }

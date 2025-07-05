@@ -14,6 +14,7 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
+import {ArrApi} from '../../../json-crdt/model';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
@@ -30,7 +31,9 @@ import type {
   ViewSlice,
   EditorUi,
   EditorSelection,
+  MarkerUpdateTarget,
 } from './types';
+import type {ApiOperation} from '../../../json-crdt/model/api/types';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -664,7 +667,7 @@ export class Editor<T = string> implements Printable {
         switch (slice.stacking) {
           case SliceStacking.One:
           case SliceStacking.Many: {
-            store.insErase(slice.type);
+            store.insErase(slice.type());
           }
         }
       }
@@ -698,7 +701,7 @@ export class Editor<T = string> implements Printable {
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
     const contained = overlay.findContained(range);
-    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type === type) slice.del();
+    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type() === type) slice.del();
     if (needToRemoveFormatting) {
       overlay.refresh();
       const [complete2, partial2] = overlay.stat(range, 1e6);
@@ -763,7 +766,7 @@ export class Editor<T = string> implements Printable {
   public getBlockType(point: Point<T>): [type: SliceTypeSteps, marker?: MarkerSlice<T> | undefined] {
     const marker = this.getMarker(point);
     if (!marker) return [[SliceTypeCon.p]];
-    let steps = marker?.type ?? [SliceTypeCon.p];
+    let steps = marker?.type() ?? [SliceTypeCon.p];
     if (!Array.isArray(steps)) steps = [steps];
     return [steps, marker];
   }
@@ -911,24 +914,10 @@ export class Editor<T = string> implements Printable {
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {
       const marker = markerPoint.marker;
-      const markerTag = marker.tag();
+      const markerTag = marker.nestedType().tag().name();
       const tagStep = type[type.length - 1];
       const tag = Array.isArray(tagStep) ? tagStep[0] : tagStep;
       if (markerTag === tag) type = [...type.slice(0, -1), def];
-      marker.update({type});
-    } else this.setStartMarker(type, data, slices);
-  }
-
-  public updMarkerAt(
-    point: Point<T>,
-    type: SliceTypeSteps,
-    data?: unknown,
-    slices: EditorSlices<T> = this.saved,
-  ): void {
-    const overlay = this.txt.overlay;
-    const markerPoint = overlay.getOrNextLowerMarker(point);
-    if (markerPoint) {
-      const marker = markerPoint.marker;
       marker.update({type});
     } else this.setStartMarker(type, data, slices);
   }
@@ -950,23 +939,6 @@ export class Editor<T = string> implements Printable {
     for (const range of selection) this.tglMarkerAt(range.start, type, data, slices, def);
   }
 
-  /**
-   * Update the type of a block split at all cursor positions.
-   *
-   * @param type Slice type to set.
-   * @param data Custom data of the slice.
-   * @param slices The slices set to use, if new marker is inserted at the start
-   *     of the document.
-   */
-  public updMarker(
-    type: SliceTypeSteps,
-    data?: unknown,
-    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
-    slices: EditorSlices<T> = this.saved,
-  ): void {
-    for (const range of selection) this.updMarkerAt(range.start, type, data, slices);
-  }
-
   public delMarker(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
     const markerPoints = new Set<MarkerOverlayPoint<T>>();
     for (const range of selection) {
@@ -977,6 +949,41 @@ export class Editor<T = string> implements Printable {
       const boundary = markerPoint.marker.boundary();
       this.delRange(boundary);
     }
+  }
+
+  public updMarkerSlice(marker: MarkerSlice<T>, target: MarkerUpdateTarget, ops: ApiOperation[]): void {
+    const node =
+      target === 'type'
+        ? marker.nestedType().asArr()
+        : target[0] === 'tag'
+          ? marker.nestedType().tag(target[1]).asVec()
+          : target[0] === 'data'
+            ? marker.nestedType().tag(target[1])?.data()
+            : void 0;
+    if (!node) return;
+    for (const op of ops) node.op(op);
+    if (target === 'type' && node instanceof ArrApi && node.length() === 0) marker.del();
+  }
+
+  public updMarkerAt(
+    point: Point<T>,
+    target: MarkerUpdateTarget,
+    ops: ApiOperation[],
+    slices: EditorSlices<T> = this.saved,
+  ): void {
+    const overlay = this.txt.overlay;
+    const markerPoint = overlay.getOrNextLowerMarker(point);
+    const marker: MarkerSlice<T> = markerPoint?.marker ?? this.setStartMarker([SliceTypeCon.p], void 0, slices);
+    this.updMarkerSlice(marker, target, ops);
+  }
+
+  public updMarker(
+    target: MarkerUpdateTarget,
+    ops: ApiOperation[],
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    slices: EditorSlices<T> = this.saved,
+  ): void {
+    for (const range of selection) this.updMarkerAt(range.start, target, ops, slices);
   }
 
   // ---------------------------------------------------------- export / import
@@ -1001,12 +1008,12 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.Many:
         case SliceStacking.Erase:
         case SliceStacking.Marker: {
-          const {stacking, type, start, end} = slice;
+          const {stacking, start, end} = slice;
           const header: number =
             (stacking << SliceHeaderShift.Stacking) +
             (start.anchor << SliceHeaderShift.X1Anchor) +
             (end.anchor << SliceHeaderShift.X2Anchor);
-          const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), type];
+          const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), slice.type()];
           const data = slice.data();
           if (data !== void 0) viewSlice.push(data);
           viewSlices.push(viewSlice);
@@ -1037,7 +1044,7 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.One:
         case SliceStacking.Many:
         case SliceStacking.Erase: {
-          const sliceFormatting: ViewStyle = [stacking, slice.type];
+          const sliceFormatting: ViewStyle = [stacking, slice.type()];
           const data = slice.data();
           if (data !== void 0) sliceFormatting.push(data);
           formatting.push(sliceFormatting);

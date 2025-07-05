@@ -7,7 +7,7 @@ const setup = () => {
   const data = {
     source: 'http://example.com',
   };
-  kit.peritext.editor.saved.insMarker(['li', 'blockquote'], data);
+  kit.peritext.editor.saved.insMarker(['li', ['blockquote', 0, data]]);
   kit.peritext.refresh();
   const marker = kit.peritext.overlay.markers().next().value!;
   const type = marker.type();

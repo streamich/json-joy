@@ -9,14 +9,14 @@ describe('.diff()', () => {
           baz: 'asdf',
         },
       },
-    });
+    })!;
     const patch = doc.api.diff({
       foo: {
         bar: {
           baz: 'asdf!',
         },
       },
-    });
+    })!;
     expect(patch.ops[0] instanceof InsStrOp).toBe(true);
     expect((patch.ops[0] as InsStrOp).data).toBe('!');
     doc.applyPatch(patch);
