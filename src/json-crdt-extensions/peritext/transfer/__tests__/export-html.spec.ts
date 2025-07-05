@@ -57,6 +57,14 @@ const testSuite = (setupKit: () => Kit) => {
     peritext.refresh();
     expect(toHtml()).toBe('<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
   });
+
+  test('outputs nested block data', () => {
+    const {peritext, editor, toHtml} = setup();
+    editor.cursor.setAt(8);
+    editor.saved.insMarker([[SliceTypeCon.blockquote, 0, {author: 'Mark Twain'}], [SliceTypeCon.p, 0, {indent: 1}]]);
+    peritext.refresh();
+    expect(toHtml()).toBe('<p>abcdefgh</p><blockquote data-attr=\'{"author":"Mark Twain"}\'><p data-attr=\'{"indent":1}\'>ijklmnopqrstuvwxyz</p></blockquote>');
+  });
 };
 
 describe('HTML export', () => {

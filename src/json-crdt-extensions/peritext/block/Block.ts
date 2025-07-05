@@ -5,6 +5,7 @@ import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatType, getTag} from '../slice/util';
 import {Range} from '../rga/Range';
+import {stringify} from '../../../json-text/stringify';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump';
@@ -49,7 +50,12 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   }
 
   public attr(): Attr | undefined {
-    return this.marker?.data() as Attr | undefined;
+    const path = this.path;
+    const length = path.length;
+    if (length === 0) return;
+    const tagStep = path[length - 1];
+    if (!Array.isArray(tagStep)) return;
+    return tagStep[2] as Attr | undefined;
   }
 
   public isLeaf(): boolean {
@@ -197,7 +203,8 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
     const tag = this.path.map((step) => formatType(step)).join('.');
-    const header = `${super.toString('', true)} ${hash} ${tag} `;
+    const data = stringify(this.attr());
+    const header = `${super.toString('', true)} ${hash} ${tag} ${data}`;
     return header;
   }
 
