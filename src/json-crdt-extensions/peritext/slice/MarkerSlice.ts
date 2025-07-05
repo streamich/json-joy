@@ -23,7 +23,10 @@ export class MarkerSlice<T = string> extends PersistedSlice<T> {
   public del(): void {
     super.del();
     const txt = this.txt;
-    const range = txt.range(this.start, this.start.copy(p => p.anchor = Anchor.After));
+    const range = txt.range(
+      this.start,
+      this.start.copy((p) => (p.anchor = Anchor.After)),
+    );
     txt.delStr(range);
   }
 }

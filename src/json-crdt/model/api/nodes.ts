@@ -319,10 +319,14 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     if (!Array.isArray(operation)) return false;
     const [type, path, value] = operation;
     switch (type) {
-      case 'add': return this.add(path, value);
-      case 'replace': return this.replace(path, value);
-      case 'merge': return !!this.select(path)?.merge(value)
-      case 'remove': return this.remove(path, value);
+      case 'add':
+        return this.add(path, value);
+      case 'replace':
+        return this.replace(path, value);
+      case 'merge':
+        return !!this.select(path)?.merge(value);
+      case 'remove':
+        return this.remove(path, value);
     }
   }
 

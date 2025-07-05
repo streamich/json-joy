@@ -1,4 +1,4 @@
-import {Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
 import * as htmlExport from '../export-html';
 import * as htmlImport from '../import-html';
 import * as mdExport from '../export-markdown';
@@ -35,7 +35,9 @@ const testSuite = (setupKit: () => Kit) => {
     editor.cursor.setAt(4);
     editor.saved.insMarker([[SliceTypeCon.blockquote, 1], SliceTypeCon.p]);
     peritext.refresh();
-    expect(toHtml()).toBe('<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
+    expect(toHtml()).toBe(
+      '<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>',
+    );
   });
 
   test('can discriminate <blockquote> tags - implicit 0 discriminant', () => {
@@ -45,7 +47,9 @@ const testSuite = (setupKit: () => Kit) => {
     editor.cursor.setAt(4);
     editor.saved.insMarker([[SliceTypeCon.blockquote, 1], SliceTypeCon.p]);
     peritext.refresh();
-    expect(toHtml()).toBe('<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
+    expect(toHtml()).toBe(
+      '<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>',
+    );
   });
 
   test('can discriminate <blockquote> tags - implicit 0 discriminant - 2', () => {
@@ -55,15 +59,22 @@ const testSuite = (setupKit: () => Kit) => {
     editor.cursor.setAt(4);
     editor.saved.insMarker([[SliceTypeCon.blockquote, 1], SliceTypeCon.p]);
     peritext.refresh();
-    expect(toHtml()).toBe('<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
+    expect(toHtml()).toBe(
+      '<p>abcd</p><blockquote><p>efgh</p></blockquote><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>',
+    );
   });
 
   test('outputs nested block data', () => {
     const {peritext, editor, toHtml} = setup();
     editor.cursor.setAt(8);
-    editor.saved.insMarker([[SliceTypeCon.blockquote, 0, {author: 'Mark Twain'}], [SliceTypeCon.p, 0, {indent: 1}]]);
+    editor.saved.insMarker([
+      [SliceTypeCon.blockquote, 0, {author: 'Mark Twain'}],
+      [SliceTypeCon.p, 0, {indent: 1}],
+    ]);
     peritext.refresh();
-    expect(toHtml()).toBe('<p>abcdefgh</p><blockquote data-attr=\'{"author":"Mark Twain"}\'><p data-attr=\'{"indent":1}\'>ijklmnopqrstuvwxyz</p></blockquote>');
+    expect(toHtml()).toBe(
+      '<p>abcdefgh</p><blockquote data-attr=\'{"author":"Mark Twain"}\'><p data-attr=\'{"indent":1}\'>ijklmnopqrstuvwxyz</p></blockquote>',
+    );
   });
 };
 

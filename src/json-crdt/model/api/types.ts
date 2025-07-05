@@ -28,11 +28,7 @@ export type JsonNodeApi<N> = N extends types.ConNode<any>
                     ? QuillDeltaApi
                     : never;
 
-export type ApiOperation =
-  | ApiOperationAdd
-  | ApiOperationReplace
-  | ApiOperationMerge
-  | ApiOperationRemove;
+export type ApiOperation = ApiOperationAdd | ApiOperationReplace | ApiOperationMerge | ApiOperationRemove;
 
 export type ApiOperationBase<Type extends string> = [type: Type, path: ApiPath];
 export type ApiOperationBaseWithValue<Type extends string, Value = unknown> = [...ApiOperationBase<Type>, value: Value];

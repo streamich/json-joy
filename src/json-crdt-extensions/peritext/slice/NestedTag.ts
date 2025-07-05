@@ -1,7 +1,7 @@
-import {s} from "../../../json-crdt-patch";
-import {ConApi, ObjApi, VecApi} from "../../../json-crdt/model";
-import {ConNode, ObjNode, VecNode} from "../../../json-crdt/nodes";
-import type {NestedType} from "./NestedType";
+import {s} from '../../../json-crdt-patch';
+import {ConApi, ObjApi, VecApi} from '../../../json-crdt/model';
+import type {ConNode, ObjNode, VecNode} from '../../../json-crdt/nodes';
+import type {NestedType} from './NestedType';
 
 /**
  * Represents a single nested tag in a slice type. For example, in a slice type
@@ -10,7 +10,10 @@ import type {NestedType} from "./NestedType";
  * contain a discriminant and data.
  */
 export class NestedTag<T = string> {
-  constructor (protected readonly type: NestedType<T>, public readonly index: number) {}
+  constructor(
+    protected readonly type: NestedType<T>,
+    public readonly index: number,
+  ) {}
 
   /**
    * Enforces current tag at `index` to be a "vec" node, which contains
@@ -18,7 +21,7 @@ export class NestedTag<T = string> {
    */
   public asVec(): VecApi<VecNode<[ConNode<number | string>, ConNode<number>, ObjNode]>> {
     const arr = this.type.asArr();
-    let typeLen = arr.length();
+    const typeLen = arr.length();
     let index: number = this.index;
     if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
     const vec = arr.get(index);

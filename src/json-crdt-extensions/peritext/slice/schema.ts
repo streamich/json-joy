@@ -1,5 +1,5 @@
-import {NodeBuilder, s} from "../../../json-crdt-patch";
-import {SliceType, SliceTypeStep} from "./types";
+import {type NodeBuilder, s} from '../../../json-crdt-patch';
+import type {SliceType, SliceTypeStep} from './types';
 
 export const type = (sliceType: SliceType) =>
   Array.isArray(sliceType) ? s.arr(sliceType.map(step)) : s.con(sliceType);

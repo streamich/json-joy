@@ -130,7 +130,10 @@ describe('NestedTag', () => {
     test('returns existing data node', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, [['blockquote', 0, {foo: 'bar'}], ['p', 1, {indent: 2}]]);
+      const slice = kit.peritext.savedSlices.insMarker(range, [
+        ['blockquote', 0, {foo: 'bar'}],
+        ['p', 1, {indent: 2}],
+      ]);
       const obj0 = slice.nestedType().tag(0).data();
       const obj1 = slice.nestedType().tag(1).data();
       const obj2 = slice.nestedType().tag(2).data();

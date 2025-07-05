@@ -103,8 +103,16 @@ describe('type retrieval an manipulation', () => {
     test('nested with data', () => {
       const kit = setup();
       const range = kit.peritext.rangeAt(9);
-      const slice = kit.peritext.savedSlices.insMarker(range, [['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
-      expect(slice.type()).toEqual([['ul', 1, {type: 'todo'}], ['li', 0], ['p', 0, {indent: 2}]]);
+      const slice = kit.peritext.savedSlices.insMarker(range, [
+        ['ul', 1, {type: 'todo'}],
+        ['li', 0],
+        ['p', 0, {indent: 2}],
+      ]);
+      expect(slice.type()).toEqual([
+        ['ul', 1, {type: 'todo'}],
+        ['li', 0],
+        ['p', 0, {indent: 2}],
+      ]);
     });
   });
 
@@ -451,7 +459,10 @@ describe('type retrieval an manipulation', () => {
         test('returns existing data node', () => {
           const kit = setup();
           const range = kit.peritext.rangeAt(9);
-          const slice = kit.peritext.savedSlices.insMarker(range, [['blockquote', 0, {foo: 'bar'}], ['p', 1, {indent: 2}]]);
+          const slice = kit.peritext.savedSlices.insMarker(range, [
+            ['blockquote', 0, {foo: 'bar'}],
+            ['p', 1, {indent: 2}],
+          ]);
           const obj0 = slice.nestedType().tag(0).data();
           const obj1 = slice.nestedType().tag(1).data();
           const obj2 = slice.nestedType().tag(2).data();

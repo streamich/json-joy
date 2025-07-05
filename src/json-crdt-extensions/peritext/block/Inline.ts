@@ -324,7 +324,7 @@ export class Inline<T = string> extends Range<T> implements Printable {
                         stringify(
                           attr[key].map((attr) => {
                             const slice = attr.slice;
-                            return slice instanceof Cursor ? [slice.type(), slice.data()] : slice.data()
+                            return slice instanceof Cursor ? [slice.type(), slice.data()] : slice.data();
                           }),
                         );
                 }),

@@ -128,8 +128,7 @@ export class Slices<T = string> implements Stateful, Printable {
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
     let slice = PersistedSlice.deserialize<T>(model, txt, chunk, tuple);
-    if (slice.isSplit())
-      slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.stacking, slice.start, slice.end);
+    if (slice.isSplit()) slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.stacking, slice.start, slice.end);
     return slice;
   }
 

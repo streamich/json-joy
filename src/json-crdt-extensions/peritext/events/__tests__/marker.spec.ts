@@ -57,7 +57,9 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.marker({action: 'ins', type: [[SliceTypeCon.blockquote, 1], SliceTypeCon.p]});
       kit.peritext.refresh();
       const html = kit.toHtml();
-      expect(html).toBe('<p>abcde</p><blockquote><p>fghi</p></blockquote><blockquote><p>jklmnopqrstuvwxyz</p></blockquote>');
+      expect(html).toBe(
+        '<p>abcde</p><blockquote><p>fghi</p></blockquote><blockquote><p>jklmnopqrstuvwxyz</p></blockquote>',
+      );
     });
   });
 
@@ -92,36 +94,29 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.marker({
           action: 'upd',
           target: 'type',
-          ops: [
-            ['add', '/-', SliceTypeCon.p],
-          ],
+          ops: [['add', '/-', SliceTypeCon.p]],
         });
         expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
         kit.et.marker({
           action: 'upd',
           target: 'type',
-          ops: [
-            ['add', '/2', [
-              [SliceTypeCon.ul, 0, {type: 'tasks'}],
-              SliceTypeCon.li,
-            ]],
-          ],
+          ops: [['add', '/2', [[SliceTypeCon.ul, 0, {type: 'tasks'}], SliceTypeCon.li]]],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></p></blockquote>');
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><blockquote><p><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></p></blockquote>',
+        );
         kit.et.marker({
           action: 'upd',
           target: 'type',
-          ops: [
-            ['remove', [1]],
-          ],
+          ops: [['remove', [1]]],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></blockquote>');
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><blockquote><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></blockquote>',
+        );
         kit.et.marker({
           action: 'upd',
           target: 'type',
-          ops: [
-            ['remove', '/1', 2],
-          ],
+          ops: [['remove', '/1', 2]],
         });
         expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
       });
@@ -134,9 +129,7 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.marker({
           action: 'upd',
           target: 'type',
-          ops: [
-            ['remove', '/0'],
-          ],
+          ops: [['remove', '/0']],
         });
         expect(kit.toHtml()).toBe('<p>abcdefghijklmnopqrstuvwxyz</p>');
       });
@@ -151,9 +144,7 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.marker({
           action: 'upd',
           target: ['tag', 0],
-          ops: [
-            ['replace', '/0', SliceTypeCon.p],
-          ],
+          ops: [['replace', '/0', SliceTypeCon.p]],
         });
         expect(kit.toHtml()).toBe('<p>abcdefgh</p><p>ijklmnopqrstuvwxyz</p>');
       });
@@ -169,9 +160,7 @@ const testSuite = (getKit: () => Kit) => {
         kit.et.marker({
           action: 'upd',
           target: ['tag', 0],
-          ops: [
-            ['replace', '/1', 1],
-          ],
+          ops: [['replace', '/1', 1]],
         });
         expect(slice?.nestedType().tag(0).discriminant()).toBe(1);
         slice?.nestedType().tag(0).setDiscriminant(2);
@@ -193,18 +182,26 @@ const testSuite = (getKit: () => Kit) => {
             ['add', '/source', 'Journal of Hunchbacks'],
           ],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote data-attr=\'{"author":"Quasimodo","source":"Journal of Hunchbacks"}\'>ijklmnopqrstuvwxyz</blockquote>');
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><blockquote data-attr=\'{"author":"Quasimodo","source":"Journal of Hunchbacks"}\'>ijklmnopqrstuvwxyz</blockquote>',
+        );
         kit.et.marker({
           action: 'upd',
           target: ['data', 0],
           ops: [
-            ['merge', '', {
-              author: 'Pierre Gringoire',
-              source: 'Journal of Hunchbacks',
-            }],
+            [
+              'merge',
+              '',
+              {
+                author: 'Pierre Gringoire',
+                source: 'Journal of Hunchbacks',
+              },
+            ],
           ],
         });
-        expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote data-attr=\'{"author":"Pierre Gringoire","source":"Journal of Hunchbacks"}\'>ijklmnopqrstuvwxyz</blockquote>');
+        expect(kit.toHtml()).toBe(
+          '<p>abcdefgh</p><blockquote data-attr=\'{"author":"Pierre Gringoire","source":"Journal of Hunchbacks"}\'>ijklmnopqrstuvwxyz</blockquote>',
+        );
       });
     });
   });

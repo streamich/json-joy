@@ -951,21 +951,18 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public updMarkerSlice(
-    marker: MarkerSlice<T>,
-    target: MarkerUpdateTarget,
-    ops: ApiOperation[],
-  ): void {
-    const node = target === 'type'
-    ? marker.nestedType().asArr()
-      : target[0] === 'tag'
-      ? marker.nestedType().tag(target[1]).asVec()
-        : target[0] === 'data'
-        ? marker.nestedType().tag(target[1])?.data()
-          : void 0;
+  public updMarkerSlice(marker: MarkerSlice<T>, target: MarkerUpdateTarget, ops: ApiOperation[]): void {
+    const node =
+      target === 'type'
+        ? marker.nestedType().asArr()
+        : target[0] === 'tag'
+          ? marker.nestedType().tag(target[1]).asVec()
+          : target[0] === 'data'
+            ? marker.nestedType().tag(target[1])?.data()
+            : void 0;
     if (!node) return;
     for (const op of ops) node.op(op);
-    if (target === 'type' && node instanceof ArrApi &&  node.length() === 0) marker.del();
+    if (target === 'type' && node instanceof ArrApi && node.length() === 0) marker.del();
   }
 
   public updMarkerAt(
@@ -977,13 +974,13 @@ export class Editor<T = string> implements Printable {
     const overlay = this.txt.overlay;
     const markerPoint = overlay.getOrNextLowerMarker(point);
     const marker: MarkerSlice<T> = markerPoint?.marker ?? this.setStartMarker([SliceTypeCon.p], void 0, slices);
-    return this.updMarkerSlice(marker, target, ops);
+    this.updMarkerSlice(marker, target, ops);
   }
 
   public updMarker(
-    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
     target: MarkerUpdateTarget,
     ops: ApiOperation[],
+    selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
     slices: EditorSlices<T> = this.saved,
   ): void {
     for (const range of selection) this.updMarkerAt(range.start, target, ops, slices);

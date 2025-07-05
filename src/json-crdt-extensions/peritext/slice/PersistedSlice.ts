@@ -20,19 +20,12 @@ import {validateType} from './util';
 import {NodeBuilder, s} from '../../../json-crdt-patch';
 import * as schema from './schema';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
-import {ArrApi, ConApi, type Model, NodeApi, ObjApi, VecApi} from '../../../json-crdt/model';
-import {ArrNode, ConNode, ObjNode, VecNode} from '../../../json-crdt/nodes';
+import {type ArrApi, ConApi, type Model, type NodeApi, ObjApi, VecApi} from '../../../json-crdt/model';
+import {ArrNode, ConNode, type ObjNode, type VecNode} from '../../../json-crdt/nodes';
 import {NestedType} from './NestedType';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
-import type {
-  MutableSlice,
-  SliceView,
-  SliceType,
-  SliceUpdateParams,
-  SliceTypeSteps,
-  SliceTypeStep,
-} from './types';
+import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps, SliceTypeStep} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
@@ -197,15 +190,13 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       type = api.view();
       if (!Array.isArray(type)) type = typeof type === 'number' || typeof type === 'string' ? [type] : [0];
     }
-    this.tupleApi().set([
-      [SliceTupleIndex.Type, schema.type(type as SliceTypeSteps)],
-    ]);
+    this.tupleApi().set([[SliceTupleIndex.Type, schema.type(type as SliceTypeSteps)]]);
     return this.typeApi() as unknown as ArrApi;
   }
 
   public typeStepAsVec(index?: number): VecApi {
     const arr = this.typeAsArr();
-    let typeLen = arr.length();
+    const typeLen = arr.length();
     if (typeof index !== 'number' || index > typeLen - 1) index = typeLen - 1;
     const vec = arr.get(index);
     if (vec instanceof VecApi) return vec;
