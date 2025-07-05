@@ -176,9 +176,9 @@
 <a name='L111'></a><a href='#L111'>111</a>
 <a name='L112'></a><a href='#L112'>112</a>
 <a name='L113'></a><a href='#L113'>113</a>
-<a name='L114'></a><a href='#L114'>114</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">61x</span>
-<span class="cline-any cline-yes">61x</span>
-<span class="cline-any cline-yes">61x</span>
+<a name='L114'></a><a href='#L114'>114</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">63x</span>
+<span class="cline-any cline-yes">63x</span>
+<span class="cline-any cline-yes">63x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -199,12 +199,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">61x</span>
+<span class="cline-any cline-yes">63x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9771x</span>
+<span class="cline-any cline-yes">10217x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -230,14 +230,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12687x</span>
-<span class="cline-any cline-yes">12687x</span>
-<span class="cline-any cline-yes">12687x</span>
-<span class="cline-any cline-yes">12687x</span>
-<span class="cline-any cline-yes">12687x</span>
-<span class="cline-any cline-yes">10233x</span>
-<span class="cline-any cline-yes">10233x</span>
-<span class="cline-any cline-yes">10233x</span>
+<span class="cline-any cline-yes">13255x</span>
+<span class="cline-any cline-yes">13255x</span>
+<span class="cline-any cline-yes">13255x</span>
+<span class="cline-any cline-yes">13255x</span>
+<span class="cline-any cline-yes">13255x</span>
+<span class="cline-any cline-yes">10639x</span>
+<span class="cline-any cline-yes">10639x</span>
+<span class="cline-any cline-yes">10639x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -260,10 +260,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">136x</span>
-<span class="cline-any cline-yes">136x</span>
-<span class="cline-any cline-yes">136x</span>
-<span class="cline-any cline-yes">136x</span>
+<span class="cline-any cline-yes">232x</span>
+<span class="cline-any cline-yes">232x</span>
+<span class="cline-any cline-yes">232x</span>
+<span class="cline-any cline-yes">232x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -271,10 +271,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2097x</span>
-<span class="cline-any cline-yes">2097x</span>
-<span class="cline-any cline-yes">2097x</span>
-<span class="cline-any cline-yes">2097x</span>
+<span class="cline-any cline-yes">2357x</span>
+<span class="cline-any cline-yes">2357x</span>
+<span class="cline-any cline-yes">2357x</span>
+<span class="cline-any cline-yes">2357x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -317,15 +317,15 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
    * @todo Remove getter `get` here.
    */
   public get anchorSide(): CursorAnchor {
-    return this.type as CursorAnchor;
+    return this.type() as CursorAnchor;
   }
 &nbsp;
   public isStartFocused(): boolean {
-    return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;
+    return this.type() === CursorAnchor.End || this.start.cmp(this.end) === 0;
   }
 &nbsp;
   public isEndFocused(): boolean {
-    return this.type === CursorAnchor.Start || <span class="branch-1 cbranch-no" title="branch not covered" >this.start.cmp(this.end) === 0;</span>
+    return this.type() === CursorAnchor.Start || <span class="branch-1 cbranch-no" title="branch not covered" >this.start.cmp(this.end) === 0;</span>
   }
 &nbsp;
   // ---------------------------------------------------------------- mutations
@@ -409,7 +409,7 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-30T22:38:03.528Z
+                at 2025-07-05T10:49:17.559Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
