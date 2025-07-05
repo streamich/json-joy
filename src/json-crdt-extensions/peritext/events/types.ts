@@ -451,6 +451,20 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
 export interface MarkerDetail extends RangeEventDetail, SliceDetailPart {
   /**
    * The action to perform.
+   *
+   * - The `'ins'` action inserts a new block marker at the current selection.
+   *   It splits the current block at the selection point, creating a new block
+   *   boundary (marker). The block type may be nested (say `['p', 'blockquote']`),
+   *   which will result in a nested block structure, for example,
+   *   `<p><blockquote>text</blockquote></p>`. Use the `type` field to specify
+   *   the block type.
+   * - The `'del'` action removes all block markers which begin just before
+   *   the startu of the current selection ranges. To remove a specific block
+   *   marker, specify the `slice` field with the {@link MarkerSlice} or its
+   *   ID {@link ITimestampStruct}.
+   * - The `'upd'` action lets you update an existing block marker. Use the
+   *   `target` to specify the target node to update, and the `ops` field to
+   *   specify the operations to perform on the target node.
    */
   action: 'ins' | 'del' | 'upd';
 
