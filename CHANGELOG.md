@@ -1,3 +1,34 @@
+# [17.48.0](https://github.com/streamich/json-joy/compare/v17.47.0...v17.48.0) (2025-07-05)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly retrieve type discriminants ([9f062ae](https://github.com/streamich/json-joy/commit/9f062aebc54f5891aa41b7ad2da8a317fba95ff9))
+* **json-crdt-peritext-ui:** 🐛 allow string type tag names ([e5eeefc](https://github.com/streamich/json-joy/commit/e5eeefc6f28000718b04666017b3e28979991d06))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add slice Tag class implementation ([80a133f](https://github.com/streamich/json-joy/commit/80a133fc32be89c3eb9930786c3fee22946afb7a))
+* **json-crdt-extensions:** 🎸 implement .tagDataAsObj() getter method ([3d4adb7](https://github.com/streamich/json-joy/commit/3d4adb7ae105ab634b0ec6e51973272980c653ef))
+* **json-crdt-extensions:** 🎸 implement PersistedSlice.tagDataNode() method ([483802b](https://github.com/streamich/json-joy/commit/483802bc0a640372b0d6839a6e580966ef7895c4))
+* **json-crdt-extensions:** 🎸 implement various type handling utilities ([37a3d16](https://github.com/streamich/json-joy/commit/37a3d1630a8a10d222f79b8bc51ea7649125a455))
+* **json-crdt-extensions:** 🎸 improve .typeStepNode() implementation ([ffd8985](https://github.com/streamich/json-joy/commit/ffd8985be3c2c395c0c7df17973072ae6cf55182))
+* **json-crdt-extensions:** 🎸 improve nested type setup ([52ab5ae](https://github.com/streamich/json-joy/commit/52ab5ae3c285dee27cf5cf0b377518e4f09e18d8))
+* **json-crdt-extensions:** 🎸 improve PersistedSlice .tag() implementation ([4f15c04](https://github.com/streamich/json-joy/commit/4f15c04f0dbfde420cdf6014f623b746224ef2c5))
+* **json-crdt-extensions:** 🎸 improve slice type APIs ([a380b23](https://github.com/streamich/json-joy/commit/a380b2363faa1887703b4a2ecfa637accbf1a136))
+* **json-crdt-extensions:** 🎸 make slice type be a method ([5dc54dc](https://github.com/streamich/json-joy/commit/5dc54dcad0bbd46a127e91107bba65dd24561b66))
+* **json-crdt-extensions:** 🎸 return correct tag data and tag discriminant ([48eb69c](https://github.com/streamich/json-joy/commit/48eb69c509634babfaf9bb256334ba056e21469f))
+* **json-crdt-extensions:** 🎸 specify marker detailed event interface ([63e720a](https://github.com/streamich/json-joy/commit/63e720a040b36695011e06478f40d57e793b0e8a))
+* **json-crdt-extensions:** 🎸 update .typeStepApi() method ([9760c50](https://github.com/streamich/json-joy/commit/9760c500938d0cc11c7305e2769fc2e16037f758))
+* **json-crdt-peritext-ui:** 🎸 add support for tag updates in "marker" events ([6b4b675](https://github.com/streamich/json-joy/commit/6b4b675b45f855b447cfcba9d0d5ff1f19103e32))
+* **json-crdt-peritext-ui:** 🎸 add support for type update in marker "upd" event ([ab7384a](https://github.com/streamich/json-joy/commit/ab7384a928cf5a9a422e580fc70596f0d06e27c0))
+* **json-crdt-peritext-ui:** 🎸 use correct nested block data ([e7235fd](https://github.com/streamich/json-joy/commit/e7235fd070155e81b935ce145449d483401aa624))
+* **json-crdt:** 🎸 add node .op API ([2e4ed50](https://github.com/streamich/json-joy/commit/2e4ed50940a5ca243e9cf42204b1fde3653a9575))
+* **json-crdt:** 🎸 implement .del() method on MarkerSlice ([6a619b7](https://github.com/streamich/json-joy/commit/6a619b7c6193e8213598bea6de8fb9fe60d4d8af))
+* **json-crdt:** 🎸 use .upd() API of "arr" node in .replace() call ([726bbfe](https://github.com/streamich/json-joy/commit/726bbfe10db5b1383e8a34a9dc10f25d0516ba2c))
+* **json-patch-diff:** 🎸 update diff API ([c134cf4](https://github.com/streamich/json-joy/commit/c134cf4cf943cbf6f18ef16a403ed0aec61404ec))
+
 # [17.47.0](https://github.com/streamich/json-joy/compare/v17.46.0...v17.47.0) (2025-06-30)
 
 
