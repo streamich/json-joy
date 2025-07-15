@@ -13,8 +13,8 @@ test('can create basic JSX elements', () => {
 
   expect(jsx).toEqual([
     SliceTypeCon.div,
-    { data: { className: 'test' }, inline: false, stacking: 0 },
-    [ SliceTypeCon.b, { inline: true, stacking: 2 }, 'Hello' ]
+    {data: {className: 'test'}, inline: false, stacking: 0},
+    [SliceTypeCon.b, {inline: true, stacking: 2}, 'Hello'],
   ]);
 });
 
