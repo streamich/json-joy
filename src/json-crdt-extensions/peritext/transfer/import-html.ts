@@ -31,7 +31,7 @@ class ViewRangeBuilder {
   private slices: ViewSlice[] = [];
 
   private build0(node: PeritextMlNode, path: (string | number)[]): boolean {
-    const skipWhitespace = path.length < 2;
+    const skipWhitespace = path.length < 1;
     if (typeof node === 'string') {
       if (skipWhitespace && !node.trim()) return false;
       this.text += node;

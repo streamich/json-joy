@@ -45,6 +45,7 @@ export const enum SliceTypeCon {
   collapse = 28, // Collapsible block
   note = 29, // Note block
   mathblock = 30, // <math> block
+  div = 31,
 
   // ------------------------------------------------ inline slices (-64 to -1)
   Cursor = -1,
@@ -113,6 +114,7 @@ export enum SliceTypeName {
   collapse = SliceTypeCon.collapse,
   note = SliceTypeCon.note,
   mathblock = SliceTypeCon.mathblock,
+  div = SliceTypeCon.div,
 
   Cursor = SliceTypeCon.Cursor,
   RemoteCursor = SliceTypeCon.RemoteCursor,
