@@ -140,15 +140,16 @@
   "jest": {
     "moduleFileExtensions": [
       "ts",
-      "js"
+      "js",
+      "tsx"
     ],
     "transform": {
-      "^.+\\.ts$": "ts-jest"
+      "^.+\\.tsx?$": "ts-jest"
     },
     "transformIgnorePatterns": [
       ".*/node_modules/.*"
     ],
-    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.ts$"
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$"
   },
   "config": {
     "commitizen": {

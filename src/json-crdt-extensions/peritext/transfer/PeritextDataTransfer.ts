@@ -77,7 +77,9 @@ export class PeritextDataTransfer<T = string> {
     return tools.toHast(json);
   }
 
-  public toHtml(range: Range<T>, tab?: string, indent?: string): string {
+  public toHtml(range?: Range<T>, tab?: string, indent?: string): string {
+    if (!range) range = this.txt.rangeAll();
+    if (!range) return '';
     const tools = this.htmlE();
     const json = this.toJson(range);
     return tools.toHtml(json, tab, indent);
