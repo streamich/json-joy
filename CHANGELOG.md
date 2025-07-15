@@ -1,3 +1,10 @@
+# [17.49.0](https://github.com/streamich/json-joy/compare/v17.48.0...v17.49.0) (2025-07-15)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add JSX capability to Peritext data transfer ([902950e](https://github.com/streamich/json-joy/commit/902950e58c6e5c73b90ca9509f8bc26d946555fb))
+
 # [17.48.0](https://github.com/streamich/json-joy/compare/v17.47.0...v17.48.0) (2025-07-05)
 
 
