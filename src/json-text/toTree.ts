@@ -4,14 +4,14 @@ import {stringify} from './stringify';
 const isPrimitive = (value: unknown): boolean => typeof value !== 'object' || value === null;
 const isOneLineValue = (value: unknown): boolean => {
   if (isPrimitive(value)) return true;
-  if (value instanceof Array && !value.length) return true;
+  if (Array.isArray(value) && !value.length) return true;
   if (value && typeof value === 'object' && !Object.keys(value).length) return true;
   return false;
 };
 const isSimpleString = (str: string) => /^[a-z0-9]+$/i.test(str);
 
 export const toTree = (value: unknown, tab: string = ''): string => {
-  if (value instanceof Array) {
+  if (Array.isArray(value)) {
     if (value.length === 0) return '[]';
     return printTree(
       tab,

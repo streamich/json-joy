@@ -49,7 +49,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
     this.patchSid = clock.sid;
     const builder = (this.builder = new PatchBuilder(clock));
     const map = this.val();
-    if (map instanceof Array) builder.patch.meta = map[0];
+    if (Array.isArray(map)) builder.patch.meta = map[0];
     this.decodeOperations();
     return builder.patch;
   }

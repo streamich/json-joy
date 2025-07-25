@@ -12,7 +12,7 @@ const timestamp = (sid: number, ts: ITimestampStruct): types.CompactCodecTimesta
 
 const timespan = (sid: number, span: ITimespanStruct): types.CompactCodecTimespan => {
   const ts = timestamp(sid, span);
-  if (ts instanceof Array) {
+  if (Array.isArray(ts)) {
     ts.push(span.span);
     return ts;
   }
