@@ -12,9 +12,7 @@ export const throttle = <F extends (...args: any[]) => void>(fn: F, ms: number =
     if (timer) return;
     timer = setTimeout(() => {
       timer = 0;
-      if (lastArgs) {
-        fn.apply(null, lastArgs);
-      }
+      fn.apply(null, lastArgs!);
     }, ms);
   }) as F;
   return [out, stop];
