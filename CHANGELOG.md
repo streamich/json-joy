@@ -1,3 +1,10 @@
+## [17.49.1](https://github.com/streamich/json-joy/compare/v17.49.0...v17.49.1) (2025-07-25)
+
+
+### Bug Fixes
+
+* user `Array.isArray()` for more reliable array check ([d16828f](https://github.com/streamich/json-joy/commit/d16828f54001186900e27c34025a88a8d70c05df))
+
 # [17.49.0](https://github.com/streamich/json-joy/compare/v17.48.0...v17.49.0) (2025-07-15)
 
 
