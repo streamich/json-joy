@@ -34,7 +34,7 @@ export const msgpackSizeFast = (value: unknown): number => {
     case 'boolean':
       return 1;
   }
-  if (value instanceof Array) return arraySize(value);
+  if (Array.isArray(value)) return arraySize(value);
   if (isUint8Array(value)) return 5 + value.length;
   if (value instanceof JsonPackValue) return (value as JsonPackValue).val.length;
   if (value instanceof JsonPackExtension) return 6 + (value as JsonPackExtension).val.length;

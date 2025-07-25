@@ -237,7 +237,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
           index = ~~key;
           if (index + '' !== key) break ADD;
         }
-        if (index !== index) break ADD;
+        if (Number.isNaN(index)) break ADD;
         if (index < 0) index = 0;
         if (index > length) index = length;
         if (node instanceof ArrApi) node.ins(index, Array.isArray(value) ? value : [value]);
@@ -270,7 +270,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
           index = ~~key;
           if (index + '' !== key) break REPLACE;
         }
-        if (index !== index || index < 0 || index > length) break REPLACE;
+        if (Number.isNaN(index) || index < 0 || index > length) break REPLACE;
         if (index === length) node.ins(index, [value]);
         else node.upd(index, value);
       } else if (node instanceof VecApi) node.set([[~~key, value]]);
@@ -297,7 +297,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
           index = ~~key;
           if (index + '' !== key) break REMOVE;
         }
-        if (index !== index || index < 0 || index > len) break REMOVE;
+        if (Number.isNaN(index) || index < 0 || index > len) break REMOVE;
         node.del(index, Math.min(length, len - index));
       } else if (node instanceof VecApi) {
         node.set([[~~key, void 0]]);

@@ -160,7 +160,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     if (!(node instanceof StrNode)) throw new Error('NOT_FOUND');
     const length = node.length();
     if (length <= pos) return;
-    const deletionLength = Math.min(len ?? str!.length, length - pos);
+    const deletionLength = Math.min(len ?? str.length, length - pos);
     const range = node.findInterval(pos, deletionLength);
     if (!range) throw new Error('OUT_OF_BOUNDS');
     this.builder().del(node.id, range);
