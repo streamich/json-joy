@@ -4,7 +4,6 @@ import type {OperationTestString} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -52,14 +51,5 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
     const opcode: OPCODE_TEST_STRING = verbose ? 'test_string' : OPCODE.test_string;
     const path = parent ? this.path.slice(parent.path.length) : this.path;
     return this.not ? [opcode, path, this.pos, this.str, 1] : [opcode, path, this.pos, this.str];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(this.not ? 5 : 4);
-    encoder.writer.u8(OPCODE.test_string);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
-    encoder.encodeNumber(this.pos);
-    encoder.encodeString(this.str);
-    if (this.not) encoder.writer.u8(1);
   }
 }

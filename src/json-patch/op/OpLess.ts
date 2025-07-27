@@ -4,7 +4,6 @@ import type {OperationLess} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Predicate
@@ -44,12 +43,5 @@ export class OpLess extends AbstractPredicateOp<'less'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactLessOp {
     const opcode: OPCODE_LESS = verbose ? 'less' : OPCODE.less;
     return [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.less);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
-    encoder.encodeNumber(this.value);
   }
 }

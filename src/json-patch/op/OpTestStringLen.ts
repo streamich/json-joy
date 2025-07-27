@@ -4,7 +4,6 @@ import type {OperationTestStringLen} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -48,13 +47,5 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     const opcode: OPCODE_TEST_STRING_LEN = verbose ? 'test_string_len' : OPCODE.test_string_len;
     const path = parent ? this.path.slice(parent.path.length) : this.path;
     return this.not ? [opcode, path, this.len, 1] : [opcode, path, this.len];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(this.not ? 4 : 3);
-    encoder.writer.u8(OPCODE.test_string_len);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
-    encoder.encodeNumber(this.len);
-    if (this.not) encoder.writer.u8(1);
   }
 }

@@ -4,7 +4,6 @@ import type {OperationType, JsonPatchTypes} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 const {isArray} = Array;
 
@@ -49,12 +48,5 @@ export class OpType extends AbstractPredicateOp<'type'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactTypeOp {
     const opcode: OPCODE_TYPE = verbose ? 'type' : OPCODE.type;
     return [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.type);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
-    encoder.encodeString(this.value);
   }
 }

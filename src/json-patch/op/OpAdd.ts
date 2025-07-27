@@ -4,7 +4,6 @@ import type {OperationAdd} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch
@@ -50,12 +49,5 @@ export class OpAdd extends AbstractOp<'add'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactAddOp {
     const opcode: OPCODE_ADD = verbose ? 'add' : OPCODE.add;
     return [opcode, this.path, this.value];
-  }
-
-  public encode(encoder: IMessagePackEncoder) {
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.add);
-    encoder.encodeArray(this.path as unknown[]);
-    encoder.encodeAny(this.value);
   }
 }

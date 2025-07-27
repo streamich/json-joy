@@ -5,7 +5,6 @@ import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
 import {type Path, toPath, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch
@@ -43,12 +42,5 @@ export class OpMove extends AbstractOp<'move'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactMoveOp {
     const opcode: OPCODE_MOVE = verbose ? 'move' : OPCODE.move;
     return [opcode, this.path, this.from];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.move);
-    encoder.encodeArray(this.path as unknown[]);
-    encoder.encodeArray(this.from as unknown[]);
   }
 }

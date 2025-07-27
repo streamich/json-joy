@@ -3,7 +3,6 @@ import {AbstractOp} from './AbstractOp';
 import type {OperationStrDel} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -68,19 +67,5 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     return typeof this.str === 'string'
       ? [opcode, this.path, this.pos, this.str]
       : ([opcode, this.path, this.pos, 0, this.len] as CompactStrDelOp);
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    const hasStr = typeof this.str === 'string';
-    encoder.encodeArrayHeader(hasStr ? 4 : 5);
-    encoder.writer.u8(OPCODE.str_del);
-    encoder.encodeArray(this.path as unknown[]);
-    encoder.encodeNumber(this.pos);
-    if (hasStr) {
-      encoder.encodeString(this.str as string);
-    } else {
-      encoder.writer.u8(0);
-      encoder.encodeNumber(this.len!);
-    }
   }
 }

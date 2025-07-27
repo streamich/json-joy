@@ -3,7 +3,6 @@ import {AbstractOp} from './AbstractOp';
 import type {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 const {isArray} = Array;
 
@@ -69,14 +68,5 @@ export class OpExtend extends AbstractOp<'extend'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactExtendOp {
     const opcode: OPCODE_EXTEND = verbose ? 'extend' : OPCODE.extend;
     return this.deleteNull ? [opcode, this.path, this.props, 1] : [opcode, this.path, this.props];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    const {deleteNull} = this;
-    encoder.encodeArrayHeader(deleteNull ? 4 : 3);
-    encoder.writer.u8(OPCODE.extend);
-    encoder.encodeArray(this.path as unknown[]);
-    encoder.encodeObject(this.props);
-    if (deleteNull) encoder.writer.u8(1);
   }
 }
