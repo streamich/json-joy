@@ -3,7 +3,6 @@ import {AbstractOp} from './AbstractOp';
 import type {OperationInc} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -44,12 +43,5 @@ export class OpInc extends AbstractOp<'inc'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactIncOp {
     const opcode: OPCODE_INC = verbose ? 'inc' : OPCODE.inc;
     return [opcode, this.path, this.inc];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.inc);
-    encoder.encodeArray(this.path as unknown[]);
-    encoder.encodeNumber(this.inc);
   }
 }

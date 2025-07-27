@@ -4,7 +4,6 @@ import type {OperationDefined} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Predicate
@@ -35,11 +34,5 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactDefinedOp {
     const opcode: OPCODE_DEFINED = verbose ? 'defined' : OPCODE.defined;
     return [opcode, parent ? this.path.slice(parent.path.length) : this.path];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(2);
-    encoder.writer.u8(OPCODE.defined);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
   }
 }

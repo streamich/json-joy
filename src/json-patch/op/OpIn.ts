@@ -5,7 +5,6 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Predicate
@@ -44,12 +43,5 @@ export class OpIn extends AbstractPredicateOp<'in'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactInOp {
     const opcode: OPCODE_IN = verbose ? 'in' : OPCODE.in;
     return [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.in);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
-    encoder.encodeArray(this.value);
   }
 }

@@ -3,7 +3,6 @@ import {AbstractOp} from './AbstractOp';
 import type {OperationFlip} from '../types';
 import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -35,11 +34,5 @@ export class OpFlip extends AbstractOp<'flip'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactFlipOp {
     const opcode: OPCODE_FLIP = verbose ? 'flip' : OPCODE.flip;
     return [opcode, this.path];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(2);
-    encoder.writer.u8(OPCODE.flip);
-    encoder.encodeArray(this.path as unknown[]);
   }
 }

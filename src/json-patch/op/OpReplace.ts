@@ -4,7 +4,6 @@ import type {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch
@@ -51,14 +50,5 @@ export class OpReplace extends AbstractOp<'replace'> {
     return this.oldValue === undefined
       ? [opcode, this.path, this.value]
       : [opcode, this.path, this.value, this.oldValue];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    const hasOldValue = this.oldValue !== undefined;
-    encoder.encodeArrayHeader(hasOldValue ? 4 : 3);
-    encoder.writer.u8(OPCODE.replace);
-    encoder.encodeArray(this.path as unknown[]);
-    encoder.encodeAny(this.value);
-    if (hasOldValue) encoder.encodeAny(this.oldValue);
   }
 }

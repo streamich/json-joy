@@ -5,7 +5,6 @@ import type {OperationAnd, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
 import {type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import type {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Predicate
@@ -47,15 +46,5 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
       parent ? this.path.slice(parent.path.length) : this.path,
       this.ops.map((op) => op.toCompact(this, verbose)),
     ];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    const path = parent ? this.path.slice(parent.path.length) : this.path;
-    encoder.encodeArrayHeader(3);
-    encoder.writer.u8(OPCODE.and);
-    encoder.encodeArray(path as unknown[]);
-    const length = this.ops.length;
-    encoder.encodeArrayHeader(length);
-    for (let i = 0; i < length; i++) this.ops[i].encode(encoder, this);
   }
 }

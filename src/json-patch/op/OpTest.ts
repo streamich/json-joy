@@ -5,7 +5,6 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch
@@ -49,13 +48,5 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     const path = parent ? this.path.slice(parent.path.length) : this.path;
     const opcode: OPCODE_TEST = verbose ? 'test' : OPCODE.test;
     return this.not ? [opcode, path, this.value, 1] : [opcode, path, this.value];
-  }
-
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    encoder.encodeArrayHeader(this.not ? 4 : 3);
-    encoder.writer.u8(OPCODE.test);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
-    encoder.encodeAny(this.value);
-    if (this.not) encoder.writer.u8(1);
   }
 }
