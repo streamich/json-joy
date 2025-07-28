@@ -27,18 +27,18 @@ describe('nodes', () => {
       const model = Model.create(User, 123456789);
       const view = model.view();
       
+      // The recursive field should not appear in the view by default since it would be empty
       expect(view).toEqual({
         id: 'user123',
         name: 'John',
       });
       
-      // The friend field should exist in the schema but be undefined in the view
-      // since it's optional and not set by default
+      // But the fields should be accessible through the API 
       expect(model.api.select('', true)?.node.name()).toBe('obj');
       expect(model.api.select('/id', false)?.node.name()).toBe('str');
       expect(model.api.select('/name', false)?.node.name()).toBe('str');
       
-      // Can access the friend field through the API even though it's not in the view
+      // The friend field should exist in the schema
       const friendPath = model.api.select('/friend', false);
       expect(friendPath?.node.name()).toBe('obj');
     });
@@ -55,12 +55,13 @@ describe('nodes', () => {
       const model = Model.create(Node, 123456789);
       const view = model.view();
       
+      // The recursive fields should not appear in the view by default
       expect(view).toEqual({
         key: 'root',
         value: 'rootValue',
       });
       
-      // Verify the schema structure
+      // Verify the schema structure  
       expect(model.api.select('', true)?.node.name()).toBe('obj');
       expect(model.api.select('/key', false)?.node.name()).toBe('str');
       expect(model.api.select('/value', false)?.node.name()).toBe('str');
@@ -98,6 +99,7 @@ describe('nodes', () => {
       const model = Model.create(Person, 123456789);
       const view = model.view();
       
+      // Non-recursive optional fields should appear, recursive ones should not
       expect(view).toEqual({
         id: 'p1',
         name: 'Jane', 

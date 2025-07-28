@@ -19,6 +19,8 @@ export type NodeBuilderCallback = (builder: PatchBuilder) => ITimestampStruct;
 
 // Global memo for tracking NodeBuilder build results during a build operation
 let globalBuildMemo: WeakMap<NodeBuilder, ITimestampStruct> | null = null;
+// Track which NodeBuilders are currently being built to detect cycles
+let currentlyBuilding: WeakSet<NodeBuilder> | null = null;
 
 /**
  * @category Patch
@@ -30,10 +32,11 @@ export class NodeBuilder {
    * Build this NodeBuilder with memoization to handle recursive references.
    */
   public buildSafe(builder: PatchBuilder): ITimestampStruct {
-    // Initialize global memo if this is the top-level build
+    // Initialize global state if this is the top-level build
     const isTopLevel = globalBuildMemo === null;
     if (isTopLevel) {
       globalBuildMemo = new WeakMap<NodeBuilder, ITimestampStruct>();
+      currentlyBuilding = new WeakSet<NodeBuilder>();
     }
       
     try {
@@ -43,16 +46,42 @@ export class NodeBuilder {
         return existingResult;
       }
       
-      // Build the NodeBuilder and memoize the result
-      const result = this.build(builder);
-      globalBuildMemo!.set(this, result);
-      return result;
+      // Check if we're currently building this NodeBuilder (cycle detection)
+      if (currentlyBuilding!.has(this)) {
+        // Create a placeholder for the cycle
+        const placeholder = this.createPlaceholder(builder);
+        return placeholder;
+      }
+      
+      // Mark this NodeBuilder as currently being built
+      currentlyBuilding!.add(this);
+      
+      try {
+        // Build the NodeBuilder
+        const result = this.build(builder);
+        // Memoize the result
+        globalBuildMemo!.set(this, result);
+        return result;
+      } finally {
+        // Remove from currently building set
+        currentlyBuilding!.delete(this);
+      }
     } finally {
-      // Clear global memo if this was the top-level build
+      // Clear global state if this was the top-level build
       if (isTopLevel) {
         globalBuildMemo = null;
+        currentlyBuilding = null;
       }
     }
+  }
+
+  /**
+   * Create a placeholder for this NodeBuilder to prevent infinite recursion.
+   */
+  protected createPlaceholder(builder: PatchBuilder): ITimestampStruct {
+    // For most NodeBuilders, we'll create an empty object as a placeholder
+    // The actual implementation should be based on the NodeBuilder type
+    return builder.obj();
   }
 }
 
@@ -274,6 +303,31 @@ export namespace nodes {
 
     public optional<OO extends Record<string, NodeBuilderOrFactory>>(): obj<T, O & OO> {
       return this as unknown as obj<T, O & OO>;
+    }
+
+    /**
+     * Create a placeholder for this obj NodeBuilder to prevent infinite recursion.
+     */
+    protected createPlaceholder(builder: PatchBuilder): ITimestampStruct {
+      // For obj nodes, create an object with only the required fields (no optional fields)
+      // This prevents infinite recursion while still providing the expected structure
+      const objId = builder.obj();
+      const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
+      
+      // Only add required fields to the placeholder, skip optional fields
+      const keys = Object.keys(this.obj);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const nodeBuilderOrFactory = this.obj[key];
+        const valueId = safelyBuildNodeBuilderOrFactory(nodeBuilderOrFactory, builder);
+        keyValuePairs.push([key, valueId]);
+      }
+      
+      if (keyValuePairs.length > 0) {
+        builder.insObj(objId, keyValuePairs);
+      }
+      
+      return objId;
     }
   }
 

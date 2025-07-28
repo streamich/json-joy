@@ -357,7 +357,7 @@ export class PatchBuilder {
     if (json === undefined) return this.con(json);
     if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
-    if (json instanceof NodeBuilder) return json.build(this);
+    if (json instanceof NodeBuilder) return json.buildSafe(this);
     switch (typeof json) {
       case 'object':
         return json === null ? this.jsonVal(json) : this.jsonObj(json!);
