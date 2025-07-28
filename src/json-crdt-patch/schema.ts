@@ -17,12 +17,65 @@ const maybeConst = (x: unknown): boolean => {
 
 export type NodeBuilderCallback = (builder: PatchBuilder) => ITimestampStruct;
 
+// Global memo for tracking NodeBuilder build results during a build operation
+let globalBuildMemo: WeakMap<NodeBuilder, ITimestampStruct> | null = null;
+
 /**
  * @category Patch
  */
 export class NodeBuilder {
   constructor(public readonly build: NodeBuilderCallback) {}
+
+  /**
+   * Build this NodeBuilder with memoization to handle recursive references.
+   */
+  public buildSafe(builder: PatchBuilder): ITimestampStruct {
+    // Initialize global memo if this is the top-level build
+    const isTopLevel = globalBuildMemo === null;
+    if (isTopLevel) {
+      globalBuildMemo = new WeakMap<NodeBuilder, ITimestampStruct>();
+    }
+      
+    try {
+      // Check if we've already built this NodeBuilder
+      const existingResult = globalBuildMemo!.get(this);
+      if (existingResult) {
+        return existingResult;
+      }
+      
+      // Build the NodeBuilder and memoize the result
+      const result = this.build(builder);
+      globalBuildMemo!.set(this, result);
+      return result;
+    } finally {
+      // Clear global memo if this was the top-level build
+      if (isTopLevel) {
+        globalBuildMemo = null;
+      }
+    }
+  }
 }
+
+/**
+ * A type that represents either a NodeBuilder directly or a function that returns one.
+ * This enables recursive schema definitions.
+ */
+export type NodeBuilderOrFactory = NodeBuilder | (() => NodeBuilder);
+
+/**
+ * Helper to safely build a NodeBuilder or function wrapper, handling recursive references.
+ */
+const safelyBuildNodeBuilderOrFactory = (
+  nodeBuilderOrFactory: NodeBuilderOrFactory, 
+  builder: PatchBuilder
+): ITimestampStruct => {
+  // Resolve function wrapper to NodeBuilder if needed
+  const nodeBuilder = typeof nodeBuilderOrFactory === 'function' 
+    ? nodeBuilderOrFactory() 
+    : nodeBuilderOrFactory;
+    
+  return nodeBuilder.buildSafe(builder);
+};
 
 /**
  * This namespace contains all the node builders. Each node builder is a
@@ -101,7 +154,7 @@ export namespace nodes {
     constructor(public readonly value: T) {
       super((builder) => {
         const valId = builder.val();
-        const valueId = value.build(builder);
+        const valueId = value.buildSafe(builder);
         builder.setVal(valId, valueId);
         return valId;
       });
@@ -130,7 +183,7 @@ export namespace nodes {
           const elementPairs: [index: number, value: ITimestampStruct][] = [];
           for (let i = 0; i < length; i++) {
             const element = value[i];
-            const elementId = element.build(builder);
+            const elementId = element.buildSafe(builder);
             elementPairs.push([i, elementId]);
           }
           builder.insVec(vecId, elementPairs);
@@ -167,6 +220,17 @@ export namespace nodes {
    * )
    * ```
    *
+   * Support recursive schemas using function wrappers:
+   *
+   * ```ts
+   * const User = s.obj({
+   *   id: s.str(''),
+   *   name: s.str(''),
+   * }, {
+   *   friend: () => User,
+   * });
+   * ```
+   *
    * Or, specify only the type, using the `optional` method:
    *
    * ```ts
@@ -179,9 +243,9 @@ export namespace nodes {
    * ```
    */
   export class obj<
-    T extends Record<string, NodeBuilder>,
+    T extends Record<string, NodeBuilderOrFactory>,
     // biome-ignore lint: TODO: improve {} type in the future
-    O extends Record<string, NodeBuilder> = {},
+    O extends Record<string, NodeBuilderOrFactory> = {},
   > extends NodeBuilder {
     public readonly type = 'obj';
 
@@ -198,7 +262,8 @@ export namespace nodes {
         if (length) {
           for (let i = 0; i < length; i++) {
             const key = keys[i];
-            const valueId = merged[key].build(builder);
+            const nodeBuilderOrFactory = merged[key];
+            const valueId = safelyBuildNodeBuilderOrFactory(nodeBuilderOrFactory, builder);
             keyValuePairs.push([key, valueId]);
           }
           builder.insObj(objId, keyValuePairs);
@@ -207,7 +272,7 @@ export namespace nodes {
       });
     }
 
-    public optional<OO extends Record<string, NodeBuilder>>(): obj<T, O & OO> {
+    public optional<OO extends Record<string, NodeBuilderOrFactory>>(): obj<T, O & OO> {
       return this as unknown as obj<T, O & OO>;
     }
   }
@@ -222,7 +287,7 @@ export namespace nodes {
    * s.map<nodes.con<number>>
    * ```
    */
-  export type map<R extends NodeBuilder> = obj<Record<string, R>, Record<string, R>>;
+  export type map<R extends NodeBuilderOrFactory> = obj<Record<string, R>, Record<string, R>>;
 
   /**
    * The `arr` class represents a "arr" JSON CRDT node. As the generic type
@@ -244,7 +309,7 @@ export namespace nodes {
         const length = arr.length;
         if (length) {
           const valueIds: ITimestampStruct[] = [];
-          for (let i = 0; i < length; i++) valueIds.push(arr[i].build(builder));
+          for (let i = 0; i < length; i++) valueIds.push(arr[i].buildSafe(builder));
           builder.insArr(arrId, arrId, valueIds);
         }
         return arrId;
@@ -283,7 +348,7 @@ export namespace nodes {
         buf[2] = tupleId.time % 256;
         builder.insVec(tupleId, [
           [0, builder.constOrJson(s.con(buf))],
-          [1, data.build(builder)],
+          [1, data.buildSafe(builder)],
         ]);
         return tupleId;
       });
@@ -381,7 +446,7 @@ export const schema = {
    * @param obj Default value, required object keys.
    * @param opt Default value of optional object keys.
    */
-  obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
+  obj: <T extends Record<string, NodeBuilderOrFactory>, O extends Record<string, NodeBuilderOrFactory>>(obj: T, opt?: O) =>
     new nodes.obj<T, O>(obj, opt),
 
   /**
@@ -391,7 +456,7 @@ export const schema = {
    *
    * @param obj Default value.
    */
-  map: <R extends NodeBuilder>(obj: Record<string, R>): nodes.map<R> =>
+  map: <R extends NodeBuilderOrFactory>(obj: Record<string, R>): nodes.map<R> =>
     schema.obj<Record<string, R>, Record<string, R>>(obj),
 
   /**

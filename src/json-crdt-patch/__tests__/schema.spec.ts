@@ -15,6 +15,101 @@ describe('nodes', () => {
       expect(model.api.select('/num', false)?.node.name()).toBe('con');
       expect(model.api.select('/num', true)?.node.name()).toBe('con');
     });
+
+    test('can create recursive schema with self-reference', () => {
+      const User: any = s.obj({
+        id: s.str('user123'),
+        name: s.str('John'),
+      }, {
+        friend: () => User,
+      });
+      
+      const model = Model.create(User, 123456789);
+      const view = model.view();
+      
+      expect(view).toEqual({
+        id: 'user123',
+        name: 'John',
+      });
+      
+      // The friend field should exist in the schema but be undefined in the view
+      // since it's optional and not set by default
+      expect(model.api.select('', true)?.node.name()).toBe('obj');
+      expect(model.api.select('/id', false)?.node.name()).toBe('str');
+      expect(model.api.select('/name', false)?.node.name()).toBe('str');
+      
+      // Can access the friend field through the API even though it's not in the view
+      const friendPath = model.api.select('/friend', false);
+      expect(friendPath?.node.name()).toBe('obj');
+    });
+
+    test('can create binary tree schema with multiple recursive references', () => {
+      const Node: any = s.obj({
+        key: s.str('root'),
+        value: s.str('rootValue'),
+      }, {
+        left: () => Node,
+        right: () => Node,
+      });
+      
+      const model = Model.create(Node, 123456789);
+      const view = model.view();
+      
+      expect(view).toEqual({
+        key: 'root',
+        value: 'rootValue',
+      });
+      
+      // Verify the schema structure
+      expect(model.api.select('', true)?.node.name()).toBe('obj');
+      expect(model.api.select('/key', false)?.node.name()).toBe('str');
+      expect(model.api.select('/value', false)?.node.name()).toBe('str');
+      expect(model.api.select('/left', false)?.node.name()).toBe('obj');
+      expect(model.api.select('/right', false)?.node.name()).toBe('obj');
+    });
+
+    test('recursive schema should work with nested access', () => {
+      const User: any = s.obj({
+        id: s.str('user1'),  
+        name: s.str('Alice'),
+      }, {
+        friend: () => User,
+      });
+      
+      const model = Model.create(User, 123456789);
+      
+      // We should be able to access nested paths even though they're not populated
+      expect(model.api.select('/friend/id', false)?.node.name()).toBe('str');
+      expect(model.api.select('/friend/name', false)?.node.name()).toBe('str'); 
+      expect(model.api.select('/friend/friend', false)?.node.name()).toBe('obj');
+      expect(model.api.select('/friend/friend/id', false)?.node.name()).toBe('str');
+    });
+
+    test('mixed recursive and non-recursive fields work together', () => {
+      const Person: any = s.obj({
+        id: s.str('p1'),
+        name: s.str('Jane'),
+        age: s.con(25),
+      }, {
+        spouse: () => Person,
+        children: s.arr([])
+      });
+      
+      const model = Model.create(Person, 123456789);
+      const view = model.view();
+      
+      expect(view).toEqual({
+        id: 'p1',
+        name: 'Jane', 
+        age: 25,
+        children: []
+      });
+      
+      // Verify schema structure
+      expect(model.api.select('/spouse', false)?.node.name()).toBe('obj');
+      expect(model.api.select('/spouse/id', false)?.node.name()).toBe('str');
+      expect(model.api.select('/children', false)?.node.name()).toBe('arr');
+    });
   });
 
   describe('json', () => {
