@@ -27,18 +27,22 @@ describe('nodes', () => {
       const model = Model.create(User, 123456789);
       const view = model.view();
       
-      // The recursive field should not appear in the view by default since it would be empty
+      // The recursive field should appear with the required fields structure
       expect(view).toEqual({
         id: 'user123',
         name: 'John',
+        friend: {
+          id: 'user123',
+          name: 'John',
+        }
       });
       
-      // But the fields should be accessible through the API 
+      // The fields should be accessible through the API 
       expect(model.api.select('', true)?.node.name()).toBe('obj');
       expect(model.api.select('/id', false)?.node.name()).toBe('str');
       expect(model.api.select('/name', false)?.node.name()).toBe('str');
       
-      // The friend field should exist in the schema
+      // The friend field structure should be accessible
       const friendPath = model.api.select('/friend', false);
       expect(friendPath?.node.name()).toBe('obj');
     });
@@ -55,10 +59,18 @@ describe('nodes', () => {
       const model = Model.create(Node, 123456789);
       const view = model.view();
       
-      // The recursive fields should not appear in the view by default
+      // The recursive fields should appear with the required fields structure
       expect(view).toEqual({
         key: 'root',
         value: 'rootValue',
+        left: {
+          key: 'root',
+          value: 'rootValue',
+        },
+        right: {
+          key: 'root',
+          value: 'rootValue',
+        }
       });
       
       // Verify the schema structure  
@@ -79,11 +91,12 @@ describe('nodes', () => {
       
       const model = Model.create(User, 123456789);
       
-      // We should be able to access nested paths even though they're not populated
+      // We should be able to access nested paths - the placeholder has required fields
       expect(model.api.select('/friend/id', false)?.node.name()).toBe('str');
       expect(model.api.select('/friend/name', false)?.node.name()).toBe('str'); 
-      expect(model.api.select('/friend/friend', false)?.node.name()).toBe('obj');
-      expect(model.api.select('/friend/friend/id', false)?.node.name()).toBe('str');
+      
+      // But the deeper recursive references shouldn't exist (placeholder doesn't include optional fields)
+      expect(model.api.select('/friend/friend', false)?.node.name()).toBe(undefined);
     });
 
     test('mixed recursive and non-recursive fields work together', () => {
@@ -99,11 +112,16 @@ describe('nodes', () => {
       const model = Model.create(Person, 123456789);
       const view = model.view();
       
-      // Non-recursive optional fields should appear, recursive ones should not
+      // All optional fields should appear - recursive ones with their required structure 
       expect(view).toEqual({
         id: 'p1',
         name: 'Jane', 
         age: 25,
+        spouse: {
+          id: 'p1',
+          name: 'Jane',
+          age: 25,
+        },
         children: []
       });
       

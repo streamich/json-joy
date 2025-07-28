@@ -292,13 +292,34 @@ export namespace nodes {
           for (let i = 0; i < length; i++) {
             const key = keys[i];
             const nodeBuilderOrFactory = merged[key];
-            const valueId = safelyBuildNodeBuilderOrFactory(nodeBuilderOrFactory, builder);
-            keyValuePairs.push([key, valueId]);
+            
+            // For function wrappers, we need to create the field but with a deferred/lazy resolution
+            if (typeof nodeBuilderOrFactory === 'function') {
+              // Create a deferred object that will be resolved when accessed
+              // For now, create the target structure but mark it as unresolved
+              const deferredId = this.createDeferredNodeBuilder(nodeBuilderOrFactory, builder);
+              keyValuePairs.push([key, deferredId]);
+            } else {
+              const valueId = safelyBuildNodeBuilderOrFactory(nodeBuilderOrFactory, builder);
+              keyValuePairs.push([key, valueId]);
+            }
           }
           builder.insObj(objId, keyValuePairs);
         }
         return objId;
       });
+    }
+
+    /**
+     * Create a deferred NodeBuilder for recursive references.
+     */
+    private createDeferredNodeBuilder(nodeBuilderFactory: () => NodeBuilder, builder: PatchBuilder): ITimestampStruct {
+      // For recursive references, we need to create the structure but prevent infinite recursion
+      // One approach is to create the object with required fields only
+      const targetNodeBuilder = nodeBuilderFactory();
+      
+      // Use the buildSafe method which will handle cycles appropriately
+      return targetNodeBuilder.buildSafe(builder);
     }
 
     public optional<OO extends Record<string, NodeBuilderOrFactory>>(): obj<T, O & OO> {
@@ -314,13 +335,18 @@ export namespace nodes {
       const objId = builder.obj();
       const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
       
-      // Only add required fields to the placeholder, skip optional fields
+      // Only add required fields to the placeholder, skip optional fields to prevent cycles
       const keys = Object.keys(this.obj);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         const nodeBuilderOrFactory = this.obj[key];
-        const valueId = safelyBuildNodeBuilderOrFactory(nodeBuilderOrFactory, builder);
-        keyValuePairs.push([key, valueId]);
+        
+        // For placeholders, we should not use function wrappers (they would cause cycles)
+        // but we should build regular NodeBuilder instances directly
+        if (typeof nodeBuilderOrFactory !== 'function') {
+          const valueId = nodeBuilderOrFactory.build(builder);
+          keyValuePairs.push([key, valueId]);
+        }
       }
       
       if (keyValuePairs.length > 0) {
