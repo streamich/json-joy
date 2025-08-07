@@ -67,14 +67,25 @@ function fixEsmImports(dir) {
       // Fix problematic external imports
       content = content.replace(
         /import\s*\{\s*printTree\s*\}\s*from\s*['"]tree-dump\/lib\/printTree['"];/g,
-        `// Temporarily disabled for ESM compatibility
-const printTree = (...args) => {
-  try {
-    return require('tree-dump/lib/printTree').printTree(...args);
-  } catch {
-    return '';
-  }
-};`
+        `// ESM compatibility: tree-dump doesn't support ESM properly
+let printTree;
+try {
+  printTree = (await import('tree-dump/lib/printTree.js')).printTree;
+} catch {
+  printTree = (...args) => '';
+}`
+      );
+      
+      content = content.replace(
+        /import\s*\{\s*AvlMap\s*\}\s*from\s*['"]sonic-forest\/lib\/avl\/AvlMap['"];/g,
+        `// ESM compatibility workaround for sonic-forest
+let AvlMap;
+try {
+  AvlMap = (await import('sonic-forest/lib/avl/AvlMap.js')).AvlMap;
+} catch {
+  // Fallback to Map if AvlMap is not available
+  AvlMap = Map;
+}`
       );
       
       fs.writeFileSync(filePath, content);
