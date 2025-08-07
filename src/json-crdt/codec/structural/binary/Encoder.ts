@@ -1,4 +1,14 @@
-import * as nodes from '../../../nodes';
+import {
+  ConNode,
+  ValNode,
+  RootNode,
+  ObjNode,
+  VecNode,
+  StrNode,
+  BinNode,
+  ArrNode,
+  JsonNode
+} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
 import {type ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
@@ -74,7 +84,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected ts: (ts: ITimestampStruct) => void = this.tsLogical;
 
-  protected cRoot(root: nodes.RootNode): void {
+  protected cRoot(root: RootNode): void {
     const val = root.val;
     if (val.sid === SESSION.SYSTEM) this.writer.u8(0);
     else this.cNode(root.node());
@@ -89,18 +99,18 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cNode(node: nodes.JsonNode): void {
+  protected cNode(node: JsonNode): void {
     // TODO: PERF: use a switch?
-    if (node instanceof nodes.ConNode) this.cCon(node);
-    else if (node instanceof nodes.ValNode) this.cVal(node);
-    else if (node instanceof nodes.StrNode) this.cStr(node);
-    else if (node instanceof nodes.ObjNode) this.cObj(node);
-    else if (node instanceof nodes.VecNode) this.cVec(node);
-    else if (node instanceof nodes.ArrNode) this.cArr(node);
-    else if (node instanceof nodes.BinNode) this.cBin(node);
+    if (node instanceof ConNode) this.cCon(node);
+    else if (node instanceof ValNode) this.cVal(node);
+    else if (node instanceof StrNode) this.cStr(node);
+    else if (node instanceof ObjNode) this.cObj(node);
+    else if (node instanceof VecNode) this.cVec(node);
+    else if (node instanceof ArrNode) this.cArr(node);
+    else if (node instanceof BinNode) this.cBin(node);
   }
 
-  protected cCon(node: nodes.ConNode): void {
+  protected cCon(node: ConNode): void {
     const val = node.val;
     this.ts(node.id);
     if (val instanceof Timestamp) {
@@ -112,13 +122,13 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cVal(node: nodes.ValNode): void {
+  protected cVal(node: ValNode): void {
     this.ts(node.id);
     this.writer.u8(0b00100000); // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
     this.cNode(node.node());
   }
 
-  protected cObj(node: nodes.ObjNode): void {
+  protected cObj(node: ObjNode): void {
     this.ts(node.id);
     const keys = node.keys;
     this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, keys.size);
@@ -130,7 +140,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     this.cNode(this.doc.index.get(val)!);
   };
 
-  protected cVec(node: nodes.VecNode): void {
+  protected cVec(node: VecNode): void {
     const elements = node.elements;
     const length = elements.length;
     this.ts(node.id);
@@ -143,7 +153,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cStr(node: nodes.StrNode): void {
+  protected cStr(node: StrNode): void {
     const ts = this.ts;
     ts(node.id);
     this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
@@ -154,7 +164,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cBin(node: nodes.BinNode): void {
+  protected cBin(node: BinNode): void {
     const ts = this.ts;
     const writer = this.writer;
     ts(node.id);
@@ -169,7 +179,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cArr(node: nodes.ArrNode): void {
+  protected cArr(node: ArrNode): void {
     const ts = this.ts;
     const writer = this.writer;
     ts(node.id);
