@@ -70,7 +70,7 @@ export class LogDecoder {
   }
 
   public deserialize(components: types.LogComponentsWithFrontier, params: DeserializeParams = {}): DecodeResult {
-    const [view, metadata, model, , ...frontier] = components;
+    const [view, header, model, , ...frontier] = components;
     const result: DecodeResult = {};
     if (params.view) result.view = view;
     if (params.history) result.history = this.deserializeHistory(components);
@@ -79,7 +79,7 @@ export class LogDecoder {
       if (result.history) {
         result.frontier = result.history;
       } else if (model) {
-        const modelFormat = metadata[1];
+        const modelFormat = header[1];
         const start = (): Model => {
           const isSidecar = modelFormat === FileModelEncoding.SidecarBinary;
           if (isSidecar) {
@@ -102,7 +102,7 @@ export class LogDecoder {
   }
 
   public deserializeHistory(components: types.LogComponentsWithFrontier): Log {
-    const [, , , history, ...frontier] = components;
+    const [, header, , history, ...frontier] = components;
     const [startSerialized] = history;
     const start = (): Model => {
       if (!history || !startSerialized) {
@@ -112,7 +112,7 @@ export class LogDecoder {
       }
       return this.deserializeModel(startSerialized);
     };
-    const log = new Log(start);
+    const log = new Log(start, void 0, header[0]);
     const end = log.end;
     if (history) {
       const [, patches] = history;

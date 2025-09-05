@@ -34,7 +34,7 @@ import type {JsonNode} from '../nodes/types';
  *
  * @todo Make this implement UILifecycle (start, stop) interface.
  */
-export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
+export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<string, unknown> = Record<string, unknown>> implements Printable {
   /**
    * Creates a `PatchLog` instance from a newly JSON CRDT model. Checks if
    * the model API buffer has any initial operations applied, if yes, it
@@ -59,6 +59,13 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
     const beginning = () => Model.fromBinary<N>(frozen);
     return new Log<N>(beginning, model);
   }
+
+  /**
+   * Custom metadata associated with the log, it will be stored in the log's
+   * header when serialized with {@link LogEncoder} and can be used to store
+   * additional information about the log.
+   */
+  public metadata: Metadata;
 
   /**
    * The collection of patches which are applied to the `start()` model to reach
@@ -94,6 +101,8 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
      * @readonly
      */
     public readonly end: Model<N> = start(),
+
+    metadata?: Metadata
   ) {
     const onPatch = (patch: Patch) => {
       const id = patch.getId();
@@ -103,6 +112,7 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
     const api = end.api;
     this.__onPatch = api.onPatch.listen(onPatch);
     this.__onFlush = api.onFlush.listen(onPatch);
+    this.metadata = metadata ?? {} as Metadata;
   }
 
   /**

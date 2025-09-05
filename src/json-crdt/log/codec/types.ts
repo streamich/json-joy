@@ -1,13 +1,13 @@
 import type {FileModelEncoding} from './constants';
 
-export type LogHeader<LogMetadata extends Record<string, unknown> = Record<string, unknown>> = [
-  map: LogMetadata,
+export type LogHeader<metadata extends Record<string, unknown> = Record<string, unknown>> = [
+  metadata: metadata,
   modelFormat: FileModelEncoding,
 ];
 
-export type LogComponents<LogMetadata extends Record<string, unknown> = Record<string, unknown>> = [
+export type LogComponents<Metadata extends Record<string, unknown> = Record<string, unknown>> = [
   view: unknown | null,
-  header: LogHeader<LogMetadata>,
+  header: LogHeader<Metadata>,
   model: Uint8Array | unknown | null,
   history: LogHistory,
 ];
