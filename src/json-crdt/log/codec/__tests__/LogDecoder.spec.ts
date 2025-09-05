@@ -36,6 +36,20 @@ describe('can decode from blob', () => {
     expect(history!.start().view()).toEqual(undefined);
     expect(history!.end.view()).toEqual({foo: 'bar'});
   });
+
+  test('can store custom metadata keys', () => {
+    const {log, encoder, decoder} = setup({foo: 'bar'});
+    const metadata = {
+      baz: 'qux',
+      time: 123,
+      active: true,
+    };
+    log.metadata = {...metadata};
+    const blob = encoder.encode(log, {format: 'seq.cbor'});
+    const decoded1 = decoder.decode(blob, {format: 'seq.cbor', frontier: true, history: true});
+    expect(decoded1.frontier?.metadata).toEqual(metadata);
+    expect(decoded1.history?.metadata).toEqual(metadata);
+  });
 });
 
 const assertEncoding = (log: Log, params: EncodingParams) => {

@@ -24,12 +24,12 @@ export class LogEncoder {
 
   public serialize(log: Log, params: SerializeParams = {}): types.LogComponents {
     if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
-    const metadata: types.LogMetadata = [{}, FileModelEncoding.Auto];
+    const header: types.LogHeader = [log.metadata ?? {}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
     switch (modelFormat) {
       case 'sidecar': {
-        metadata[1] = FileModelEncoding.SidecarBinary;
+        header[1] = FileModelEncoding.SidecarBinary;
         const encoder = this.options.sidecarEncoder;
         if (!encoder) throw new Error('NO_SIDECAR_ENCODER');
         const [, uint8] = encoder.encode(log.end);
@@ -102,7 +102,7 @@ export class LogEncoder {
       default:
         throw new Error(`Invalid history format: ${patchFormat}`);
     }
-    return [params.noView ? null : log.end.view(), metadata, model, history];
+    return [params.noView ? null : log.end.view(), header, model, history];
   }
 
   public encode(log: Log, params: EncodingParams): Uint8Array {
