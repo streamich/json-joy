@@ -1,14 +1,13 @@
 import type {FileModelEncoding} from './constants';
 
-export type LogMetadata = [
-  // biome-ignore lint: allow brackets
-  map: {},
+export type LogHeader<LogMetadata extends Record<string, unknown> = Record<string, unknown>> = [
+  map: LogMetadata,
   modelFormat: FileModelEncoding,
 ];
 
-export type LogComponents = [
+export type LogComponents<LogMetadata extends Record<string, unknown> = Record<string, unknown>> = [
   view: unknown | null,
-  metadata: LogMetadata,
+  header: LogHeader<LogMetadata>,
   model: Uint8Array | unknown | null,
   history: LogHistory,
 ];

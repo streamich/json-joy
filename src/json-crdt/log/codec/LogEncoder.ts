@@ -24,7 +24,7 @@ export class LogEncoder {
 
   public serialize(log: Log, params: SerializeParams = {}): types.LogComponents {
     if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
-    const metadata: types.LogMetadata = [{}, FileModelEncoding.Auto];
+    const metadata: types.LogHeader = [{}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
     switch (modelFormat) {
