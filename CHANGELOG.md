@@ -1,3 +1,11 @@
+# [17.50.0](https://github.com/streamich/json-joy/compare/v17.49.1...v17.50.0) (2025-09-05)
+
+
+### Features
+
+* **json-crdt:** 🎸 improve metadata and header types ([32f4dc0](https://github.com/streamich/json-joy/commit/32f4dc03bbe49659283c603d71b59dfaf7241cc1))
+* **json-crdt:** 🎸 store `Log` metadata in file ([d0373f9](https://github.com/streamich/json-joy/commit/d0373f9d7f042788f719d6223a139febeeb63d2a))
+
 ## [17.49.1](https://github.com/streamich/json-joy/compare/v17.49.0...v17.49.1) (2025-07-25)
 
 
