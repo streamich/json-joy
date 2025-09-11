@@ -144,23 +144,41 @@ describe('.findMax()', () => {
   });
 });
 
-describe('.clone()', () => {
-  const setup = () => {
-    const model = Model.create({foo: 'bar'});
-    const log1 = Log.fromNewModel(model);
-    log1.metadata = {time: 123};
-    log1.end.api.obj([]).set({x: 1});
-    log1.end.api.flush();
-    log1.end.api.obj([]).set({y: 2});
-    log1.end.api.flush();
-    log1.end.api.obj([]).set({foo: 'baz'});
-    log1.end.api.flush();
-    const log2 = log1.clone();
-    return {log1, log2};
-  };
+const setupTwoLogs = () => {
+  const model = Model.create({foo: 'bar'});
+  const log1 = Log.fromNewModel(model);
+  log1.metadata = {time: 123};
+  log1.end.api.obj([]).set({x: 1});
+  log1.end.api.flush();
+  log1.end.api.obj([]).set({y: 2});
+  log1.end.api.flush();
+  log1.end.api.obj([]).set({foo: 'baz'});
+  log1.end.api.flush();
+  const log2 = log1.clone();
+  return {log1, log2};
+};
 
+const assertLogsEqual = (log1: Log<any, any>, log2: Log<any, any>) => {
+  expect(log1.start()).not.toBe(log2.start());
+  expect(deepEqual(log1.start().view(), log2.start().view())).toBe(true);
+  expect(log1.start().clock.sid).toEqual(log2.start().clock.sid);
+  expect(log1.start().clock.time).toEqual(log2.start().clock.time);
+  expect(log1.end).not.toBe(log2.end);
+  expect(deepEqual(log1.end.view(), log2.end.view())).toBe(true);
+  expect(log1.end.clock.sid).toEqual(log2.end.clock.sid);
+  expect(log1.end.clock.time).toEqual(log2.end.clock.time);
+  expect(log1.metadata).not.toBe(log2.metadata);
+  expect(deepEqual(log1.metadata, log2.metadata)).toBe(true);
+  expect(log1.patches.size()).toBe(log2.patches.size());
+  expect(log1.patches.min!.v.toBinary()).toEqual(log2.patches.min!.v.toBinary());
+  expect(log1.patches.max!.v.toBinary()).toEqual(log2.patches.max!.v.toBinary());
+  expect(log1.patches.min!.v).not.toBe(log2.patches.min!.v);
+  expect(log1.patches.max!.v).not.toBe(log2.patches.max!.v);
+};
+
+describe('.clone()', () => {
   test('start model has the same view and clock', () => {
-    const {log1, log2} = setup();
+    const {log1, log2} = setupTwoLogs();
     expect(log1.start()).not.toBe(log2.start());
     expect(deepEqual(log1.start().view(), log2.start().view())).toBe(true);
     expect(log1.start().clock.sid).toEqual(log2.start().clock.sid);
@@ -168,7 +186,7 @@ describe('.clone()', () => {
   });
 
   test('end model has the same view and clock', () => {
-    const {log1, log2} = setup();
+    const {log1, log2} = setupTwoLogs();
     expect(log1.end).not.toBe(log2.end);
     expect(deepEqual(log1.end.view(), log2.end.view())).toBe(true);
     expect(log1.end.clock.sid).toEqual(log2.end.clock.sid);
@@ -176,13 +194,13 @@ describe('.clone()', () => {
   });
 
   test('metadata is the same but has different identity', () => {
-    const {log1, log2} = setup();
+    const {log1, log2} = setupTwoLogs();
     expect(log1.metadata).not.toBe(log2.metadata);
     expect(deepEqual(log1.metadata, log2.metadata)).toBe(true);
   });
 
   test('patch log is the same', () => {
-    const {log1, log2} = setup();
+    const {log1, log2} = setupTwoLogs();
     expect(log1.patches.size()).toBe(log2.patches.size());
     expect(log1.patches.min!.v.toBinary()).toEqual(log2.patches.min!.v.toBinary());
     expect(log1.patches.max!.v.toBinary()).toEqual(log2.patches.max!.v.toBinary());
@@ -191,7 +209,8 @@ describe('.clone()', () => {
   });
 
   test('can evolve logs independently', () => {
-    const {log1, log2} = setup();
+    const {log1, log2} = setupTwoLogs();
+    assertLogsEqual(log1, log2);
     log1.end.api.obj([]).set({a: 1});
     log1.end.api.flush();
     expect(log1.end.view()).toEqual({foo: 'baz', x: 1, y: 2, a: 1});
@@ -203,27 +222,79 @@ describe('.clone()', () => {
   });
 });
 
-describe('.rebase()', () => {
-  test('can advance the log from start', () => {
-    const model = Model.create();
-    const sid0 = model.clock.sid;
-    const sid1 = Model.sid();
-    model.api.set({foo: 'bar'});
-    const log = Log.fromNewModel(model);
-    log.end.api.obj([]).set({x: 1});
-    const patch1 = log.end.api.flush();
-    log.end.setSid(sid1);
-    log.end.api.obj([]).set({y: 2});
-    const patch2 = log.end.api.flush();
-    log.end.setSid(sid0);
-    log.end.api.obj([]).set({foo: 'baz'});
-    const patch3 = log.end.api.flush();
-    const found0 = log.findMax(sid0);
-    const found1 = log.findMax(sid1);
-    const found2 = log.findMax(12345);
-    expect(found0).toBe(patch3);
-    expect(found1).toBe(patch2);
-    expect(found2).toBe(void 0);
+describe('.rebaseBatch()', () => {
+  test('can rebase a concurrent batch onto another log', () => {
+    const {log1, log2} = setupTwoLogs();
+    log1.end.api.obj([]).set({a: 1});
+    log2.end.api.obj([]).set({b: 2});
+    const patch1 = log1.end.api.flush();
+    const patch2 = log2.end.api.flush();
+    expect(patch1.toBinary()).not.toEqual(patch2.toBinary());
+    expect(patch1.getId()?.sid).toBe(patch2.getId()?.sid);
+    expect(patch1.getId()?.time).toBe(patch2.getId()?.time);
+    expect(patch1.span()).toEqual(patch2.span());
+    const [patch3] = log1.rebaseBatch([patch2]);
+    expect(patch1.toBinary()).not.toEqual(patch3.toBinary());
+    expect(patch1.getId()?.sid).toBe(patch3.getId()?.sid);
+    expect(patch1.getId()!.time + patch1.span()).toBe(patch3.getId()?.time);
+    log1.end.applyPatch(patch3);
+    expect(log1.end.view()).toEqual({foo: 'baz', x: 1, y: 2, a: 1, b: 2});
+    expect(log2.end.view()).toEqual({foo: 'baz', x: 1, y: 2, b: 2});
+    expect(() => assertLogsEqual(log1, log2)).toThrow();
+    log2.reset(log1.clone());
+    assertLogsEqual(log1, log2);
+  });
+
+  test('can rebase a concurrent batch onto another log (multiple patches)', () => {
+    const {log1, log2} = setupTwoLogs();
+    log1.end.api.obj([]).set({a: 1});
+    log2.end.api.obj([]).set({b: 2});
+    log1.end.api.flush();
+    const patch2 = log2.end.api.flush();
+    log1.end.api.obj([]).set({a: 2});
+    log2.end.api.obj([]).set({b: 3});
+    log1.end.api.flush();
+    const patch4 = log2.end.api.flush();
+    log2.end.api.obj([]).set({b: 3});
+    const patch5 = log2.end.api.flush();
+    const batch2 = [patch2, patch4, patch5];
+    expect(log1.end.view()).toEqual({foo: 'baz', x: 1, y: 2, a: 2});
+    expect(log2.end.view()).toEqual({foo: 'baz', x: 1, y: 2, b: 3});
+    const batch3 = log1.rebaseBatch(batch2);
+    expect(batch3[0].getId()!.time).toBe(log1.end.clock.time);
+    log1.end.applyBatch(batch3);
+    expect(log1.end.view()).toEqual({foo: 'baz', x: 1, y: 2, a: 2, b: 3});
+    expect(log2.end.view()).toEqual({foo: 'baz', x: 1, y: 2, b: 3});
+    expect(() => assertLogsEqual(log1, log2)).toThrow();
+    log2.reset(log1.clone());
+    assertLogsEqual(log1, log2);
+  });
+
+  test('can specify rebase sid', () => {
+    const {log1, log2} = setupTwoLogs();
+    expect(log1.end.clock.sid).toBe(log2.end.clock.sid);
+    log1.end.api.obj([]).set({a: 1});
+    log2.end.api.obj([]).set({b: 2});
+    log1.end.api.flush();
+    const patch2 = log2.end.api.flush();
+    log1.end.setSid(12345);
+    log1.end.api.obj([]).set({a: 2});
+    log2.end.api.obj([]).set({b: 3});
+    log1.end.api.flush();
+    const patch4 = log2.end.api.flush();
+    log2.end.api.obj([]).set({b: 3});
+    const patch5 = log2.end.api.flush();
+    const batch2 = [patch2, patch4, patch5];
+    expect(log1.end.view()).toEqual({foo: 'baz', x: 1, y: 2, a: 2});
+    expect(log2.end.view()).toEqual({foo: 'baz', x: 1, y: 2, b: 3});
+    const batch3 = log1.rebaseBatch(batch2, log2.end.clock.sid);
+    expect(batch3[0].getId()!.time).not.toBe(log1.end.clock.time);
+    log1.end.applyBatch(batch3);
+    expect(log1.end.view()).toEqual({foo: 'baz', x: 1, y: 2, a: 2, b: 3});
+    expect(log2.end.view()).toEqual({foo: 'baz', x: 1, y: 2, b: 3});
+    expect(() => assertLogsEqual(log1, log2)).toThrow();
+    log2.reset(log1.clone());
+    assertLogsEqual(log1, log2);
   });
 });
 
