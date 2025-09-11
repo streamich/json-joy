@@ -1,3 +1,12 @@
+# [17.51.0](https://github.com/streamich/json-joy/compare/v17.50.0...v17.51.0) (2025-09-11)
+
+
+### Features
+
+* 🎸 add `.findMax()` utility ([28359d3](https://github.com/streamich/json-joy/commit/28359d37a276aa0373b3212422c2be99122ad9c5))
+* 🎸 add `Log.rebaseBatch()` and `Log.reset()` methods ([20e5630](https://github.com/streamich/json-joy/commit/20e5630dd6bdd1b79a54af18b20434f8d88d8585))
+* 🎸 implement `Log.clone()` method ([4f26c28](https://github.com/streamich/json-joy/commit/4f26c2803d53b0efb3985fd24ee4309986576d8d))
+
 # [17.50.0](https://github.com/streamich/json-joy/compare/v17.49.1...v17.50.0) (2025-09-05)
 
 
