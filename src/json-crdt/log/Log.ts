@@ -1,5 +1,5 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {first, next} from 'sonic-forest/lib/util';
+import {first, next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
 import {Model} from '../model';
@@ -158,6 +158,22 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
       clone.applyPatch(node.v);
     }
     return clone;
+  }
+
+  /**
+   * Finds the latest patch for a given session ID.
+   *
+   * @param sid Session ID to find the latest patch for.
+   * @return The latest patch for the given session ID, or `undefined` if no
+   *     such patch exists.
+   */
+  public findMax(sid: number): Patch | undefined {
+    let curr = this.patches.max;
+    while (curr) {
+      if (curr.k.sid === sid) return curr.v;
+      curr = prev(curr);
+    }
+    return;
   }
 
   /**

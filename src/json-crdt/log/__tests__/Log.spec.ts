@@ -119,6 +119,30 @@ describe('.advanceTo()', () => {
   });
 });
 
+describe('.findMax()', () => {
+  test('can advance the log from start', () => {
+    const model = Model.create();
+    const sid0 = model.clock.sid;
+    const sid1 = Model.sid();
+    model.api.set({foo: 'bar'});
+    const log = Log.fromNewModel(model);
+    log.end.api.obj([]).set({x: 1});
+    const patch1 = log.end.api.flush();
+    log.end.setSid(sid1);
+    log.end.api.obj([]).set({y: 2});
+    const patch2 = log.end.api.flush();
+    log.end.setSid(sid0);
+    log.end.api.obj([]).set({foo: 'baz'});
+    const patch3 = log.end.api.flush();
+    const found0 = log.findMax(sid0);
+    const found1 = log.findMax(sid1);
+    const found2 = log.findMax(12345);
+    expect(found0).toBe(patch3);
+    expect(found1).toBe(patch2);
+    expect(found2).toBe(void 0);
+  });
+});
+
 describe('.undo()', () => {
   describe('RGA', () => {
     describe('str', () => {
