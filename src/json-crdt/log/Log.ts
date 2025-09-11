@@ -2,6 +2,7 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
+import {cloneBinary} from '@jsonjoy.com/util/lib/json-clone/cloneBinary';
 import {Model} from '../model';
 import {toSchema} from '../schema/toSchema';
 import {
@@ -197,6 +198,23 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
       return model;
     };
   }
+
+  /**
+   * Finds the latest patch for a given session ID.
+   *
+   * @param sid Session ID to find the latest patch for.
+   * @return The latest patch for the given session ID, or `undefined` if no
+   *     such patch exists.
+   */
+  public findMax(sid: number): Patch | undefined {
+    let curr = this.patches.max;
+    while (curr) {
+      if (curr.k.sid === sid) return curr.v;
+      curr = prev(curr);
+    }
+    return;
+  }
+
 
   /**
    * Creates a patch which reverts the given patch. The RGA insertion operations
