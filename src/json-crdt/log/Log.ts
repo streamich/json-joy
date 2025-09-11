@@ -1,7 +1,8 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {first, next} from 'sonic-forest/lib/util';
+import {first, next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
+import {cloneBinary} from '@jsonjoy.com/util/lib/json-clone/cloneBinary';
 import {Model} from '../model';
 import {toSchema} from '../schema/toSchema';
 import {
@@ -77,7 +78,7 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
    *
    * @readonly
    */
-  public readonly patches = new AvlMap<ITimestampStruct, Patch>(compare);
+  public patches = new AvlMap<ITimestampStruct, Patch>(compare);
 
   private __onPatch: FanOutUnsubscribe;
   private __onFlush: FanOutUnsubscribe;
@@ -124,7 +125,6 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
   public destroy() {
     this.__onPatch();
     this.__onFlush();
-    this.patches.clear();
   }
 
   /**
@@ -180,6 +180,106 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
       /** @todo Freeze the old model here, by `model.toBinary()`, it needs to be cloned on .start() anyways. */
       return model;
     };
+  }
+
+  /**
+   * Finds the latest patch for a given session ID.
+   *
+   * @param sid Session ID to find the latest patch for.
+   * @return The latest patch for the given session ID, or `undefined` if no
+   *     such patch exists.
+   */
+  public findMax(sid: number): Patch | undefined {
+    let curr = this.patches.max;
+    while (curr) {
+      if (curr.k.sid === sid) return curr.v;
+      curr = prev(curr);
+    }
+    return;
+  }
+
+  /**
+   * @returns A deep clone of the log, including the start function, metadata,
+   *     patches, and the end model.
+   */
+  public clone(): Log<N, Metadata> {
+    const start = this.start;
+    const metadata = cloneBinary(this.metadata) as Metadata;
+    const end = this.end.clone();
+    const log = new Log(start, end, metadata);
+    for (const {v} of this.patches.entries()) {
+      const patch = v.clone();
+      const id = patch.getId();
+      if (!id) continue;
+      log.patches.set(id, patch);
+    }
+    return log;
+  }
+
+  // /**
+  //  * Adds a batch of patches to the log, without applying them to the `end`
+  //  * model. It is assumed that the patches are already applied to the `end`
+  //  * model, this method only adds them to the internal patch collection.
+  //  *
+  //  * If you need to apply patches to the `end` model, use `end.applyBatch(batch)`,
+  //  * it will apply them to the model and add them to the log automatically.
+  //  *
+  //  * @param batch Array of patches to add to the log.
+  //  */
+  // public add(batch: Patch[]): void {
+  //   const patches = this.patches;
+  //   for (const patch of batch) {
+  //     const id = patch.getId();
+  //     if (id) patches.set(id, patch);
+  //   }
+  // }
+
+  /**
+   * Rebase a batch of patches on top of the current end of the log, or on top
+   * of the latest patch for a given session ID.
+   *
+   * @param batch A batch of patches to rebase.
+   * @param sid Session ID to find the latest patch for rebasing. If not provided,
+   *     the latest patch in the log is used.
+   * @returns The rebased patches.
+   */
+  public rebaseBatch(batch: Patch[], sid?: number): Patch[] {
+    const rebasePatch = sid ? this.findMax(sid) : this.patches.max?.v;
+    if (!rebasePatch) return batch;
+    const rebaseId = rebasePatch.getId();
+    if (!rebaseId) return batch;
+    let nextTime = rebaseId.time + rebasePatch.span();
+    const rebased: Patch[] = [];
+    const length = batch.length;
+    for (let i = 0; i < length; i++) {
+      const patch = batch[i].rebase(nextTime);
+      nextTime += patch.span();
+      rebased.push(patch);
+    }
+    return rebased;
+  }
+
+  /**
+   * Resets the log to the state of another log. Consumes all state fron the `to`
+   * log. The `to` log will be destroyed and should not be used after calling
+   * this method.
+   *
+   * If you want to preserve the `to` log, use `.clone()` method first.
+   *
+   * ```ts
+   * const log1 = new Log();
+   * const log2 = new Log();
+   * log1.reset(log2.clone());
+   * ```
+   *
+   * @param to The log to consume the state from.
+   */
+  public reset(to: Log<N, Metadata>): void {
+    this.start = to.start;
+    this.metadata = to.metadata;
+    this.patches = to.patches;
+    this.end.reset(to.end);
+    to.destroy();
   }
 
   /**
