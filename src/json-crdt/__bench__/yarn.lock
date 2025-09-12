@@ -2,12 +2,10 @@
 # yarn lockfile v1
 
 
-"@automerge/automerge@2.2.9":
-  version "2.2.9"
-  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.9.tgz#d575f888dde39d0483e0b6bc6f5316740e996689"
-  integrity sha512-6HM52Ops79hAQBWMg/t0MNfGOdEiXyenQjO9F1hKZq0RWDsMLpPa1SzRy/C4/4UyX67sTHuA5CwBpH34SpfZlA==
-  dependencies:
-    uuid "^9.0.0"
+"@automerge/automerge@3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-3.1.2.tgz#57161ff5716f8c10f5a065b24c3a4885f853ba7d"
+  integrity sha512-rAZRLAMrboBJGMmZXPOfYiwkmHXho6RjhUOIrlmf+Buukt/DN1oee8kHfpI3U4etetvGgqf5JaFVbydQpKT/Vg==
 
 "@collabs/collabs@0.13.4":
   version "0.13.4"
@@ -174,11 +172,6 @@ tslib@^2.0.1:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
-
-uuid@^9.0.0:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
-  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 yjs@13.6.27:
   version "13.6.27"

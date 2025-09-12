@@ -10,7 +10,7 @@
     "bench:codecs:sizes": "npx ts-node bench.codecs.sizes.ts"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.2.9",
+    "@automerge/automerge": "3.1.2",
     "@collabs/collabs": "0.13.4",
     "diamond-types-node": "1.0.2",
     "loro-crdt": "^0.4.1",
