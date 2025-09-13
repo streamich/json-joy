@@ -134,17 +134,10 @@ long@^4.0.0:
   resolved "https://registry.yarnpkg.com/long/-/long-4.0.0.tgz#9a7b71cfb7d361a194ea555241c92f7468d5bf28"
   integrity sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==
 
-loro-crdt@^0.4.1:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/loro-crdt/-/loro-crdt-0.4.3.tgz#58ba611a4ef104897d84a4e75e5399cfb7a63cab"
-  integrity sha512-ofUEXrieS2py9t0Ee+7ebgCCRwbiQthP9SuQ/J1AmUsOQl2+2feYqPlTYFKdP1BvAnus1SCNLNng4jRJlv/ydg==
-  dependencies:
-    loro-wasm "0.4.3"
-
-loro-wasm@0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/loro-wasm/-/loro-wasm-0.4.3.tgz#bf1583d066238d8d170d275f3ef3044249df2400"
-  integrity sha512-k9Nr2wlRCX59ar4o0CU840vabeB+NOEkkrGG02hWsT2MaLGJ5IeKrAK22DpMrdhDgX1F4L8A6L+cL6vDlpirRA==
+loro-crdt@^1.0.0:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/loro-crdt/-/loro-crdt-1.7.3.tgz#c63387de1cfb6376309f59091325a5643422f2e1"
+  integrity sha512-bP/Su2mVDf0ieIdOH8RyQ4Dg8hIJUQCzwTfzpuPtQl7XoAk2tzYe5Dt77kIAmioN6DyCI0Frbt2Nr9lHBPf9Mw==
 
 protobufjs@~6.9.0:
   version "6.9.0"
