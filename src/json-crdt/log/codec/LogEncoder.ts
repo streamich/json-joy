@@ -23,7 +23,6 @@ export class LogEncoder {
   constructor(protected readonly options: LogEncoderOpts = {}) {}
 
   public serialize(log: Log, params: SerializeParams = {}): types.LogComponents {
-    if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
     const header: types.LogHeader = [log.metadata ?? {}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';

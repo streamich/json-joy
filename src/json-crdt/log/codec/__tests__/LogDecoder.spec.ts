@@ -14,6 +14,15 @@ const setup = (view: unknown) => {
   return {model, log, encoder, decoder};
 };
 
+test('can use "sidecar" model encoding, without stored view', () => {
+  const {log, encoder, decoder} = setup({foo: 'bar'});
+  const view = log.end.view();
+  const blob = encoder.encode(log, {format: 'seq.cbor', model: 'sidecar', history: 'binary', noView: true});
+  const decoded = decoder.decode(blob, {format: 'seq.cbor', frontier: true, history: false, sidecarView: view});
+  const {frontier} = decoded;
+  expect(frontier!.end.view()).toEqual({foo: 'bar'});
+});
+
 describe('can decode from blob', () => {
   test('.ndjson', () => {
     const {log, encoder, decoder} = setup({foo: 'bar'});
