@@ -1,3 +1,10 @@
+# [17.52.0](https://github.com/streamich/json-joy/compare/v17.51.0...v17.52.0) (2025-09-25)
+
+
+### Features
+
+* **json-crdt:** 🎸 allow Log file "sidecar" encoding without stored view ([3d94516](https://github.com/streamich/json-joy/commit/3d94516389fd432d201c5df6b2e4c4ae7c8e5309))
+
 # [17.51.0](https://github.com/streamich/json-joy/compare/v17.50.0...v17.51.0) (2025-09-11)
 
 
