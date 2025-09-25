@@ -70,7 +70,9 @@ export class LogDecoder {
   }
 
   public deserialize(components: types.LogComponentsWithFrontier, params: DeserializeParams = {}): DecodeResult {
-    const [view, header, model, , ...frontier] = components;
+    let view = components[0];
+    if (view === null && params.sidecarView !== undefined) view = params.sidecarView;
+    const [, header, model, , ...frontier] = components;
     const result: DecodeResult = {};
     if (params.view) result.view = view;
     if (params.history) result.history = this.deserializeHistory(components);
@@ -161,6 +163,12 @@ export interface DeserializeParams {
    * the {@link DecodeResult}.
    */
   view?: boolean;
+
+  /**
+   * Used when model encoding format is "sidecar" and no view is stored in
+   * the log. The view is required to decode the sidecar binary model.
+   */
+  sidecarView?: unknown;
 
   /**
    * Whether to return decoded frontier of the log in the {@link DecodeResult}.
