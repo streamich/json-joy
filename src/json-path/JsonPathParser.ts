@@ -422,7 +422,8 @@ export class JsonPathParser extends Parser {
       this.ws();
       if (this.eof()) break;
       // Check if we've reached a delimiter that ends the path in filter context
-      if (this.is(')') || this.is(',') || this.is('&&') || this.is('||') || this.isComparisonOperator() || this.is(']')) break;
+      if (this.is(')') || this.is(',') || this.is('&&') || this.is('||') || this.isComparisonOperator() || this.is(']'))
+        break;
       const segment = this.parseFilterPathSegment();
       segments.push(segment);
     }

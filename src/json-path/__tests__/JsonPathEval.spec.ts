@@ -1,5 +1,5 @@
-import {JsonPathEval} from "../JsonPathEval";
-import {arrayData, bookstore, complexData, data0} from "./fixtures";
+import {JsonPathEval} from '../JsonPathEval';
+import {arrayData, bookstore, complexData, data0} from './fixtures';
 
 describe('JsonPathEval', () => {
   describe('named selector', () => {
@@ -63,7 +63,7 @@ describe('JsonPathEval', () => {
       const result = JsonPathEval.run(expr, data0);
       expect(result.length).toBe(2);
       // Results should include both book array and bicycle object
-      const values = result.map(r => r.data);
+      const values = result.map((r) => r.data);
       expect(values).toContainEqual(data0.store.book);
       expect(values).toContainEqual(data0.store.bicycle);
     });
@@ -165,7 +165,7 @@ describe('JsonPathEval', () => {
     test('array value comparison', () => {
       const expr = '$.a[?@ > 3.5]';
       const result = JsonPathEval.run(expr, complexData);
-      const values = result.map(r => r.data);
+      const values = result.map((r) => r.data);
       expect(values).toEqual([5, 4, 6]);
     });
   });
@@ -175,7 +175,7 @@ describe('JsonPathEval', () => {
       const expr = '$..price';
       const result = JsonPathEval.run(expr, data0);
       expect(result.length).toBe(3); // Two book prices + bicycle price
-      const values = result.map(r => r.data);
+      const values = result.map((r) => r.data);
       expect(values).toContain(8.95);
       expect(values).toContain(12.99);
       expect(values).toContain(399);
@@ -193,7 +193,7 @@ describe('JsonPathEval', () => {
       const result = JsonPathEval.run(expr, {a: {b: 1}, c: [2, 3]});
       // Should select all descendant values
       expect(result.length).toBeGreaterThan(0);
-      const values = result.map(r => r.data);
+      const values = result.map((r) => r.data);
       expect(values).toContain(1);
       expect(values).toContain(2);
       expect(values).toContain(3);
@@ -261,11 +261,11 @@ describe('JsonPathEval', () => {
       const expr = '$.store.book[*].author';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(4);
-      const authors = result.map(r => r.data);
-      expect(authors).toContain("Nigel Rees");
-      expect(authors).toContain("Evelyn Waugh");
-      expect(authors).toContain("Herman Melville");
-      expect(authors).toContain("J. R. R. Tolkien");
+      const authors = result.map((r) => r.data);
+      expect(authors).toContain('Nigel Rees');
+      expect(authors).toContain('Evelyn Waugh');
+      expect(authors).toContain('Herman Melville');
+      expect(authors).toContain('J. R. R. Tolkien');
     });
 
     test('$..author - all authors', () => {
@@ -284,49 +284,48 @@ describe('JsonPathEval', () => {
       const expr = '$..book[2]';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(1);
-      expect((result[0].data as any).title).toBe("Moby Dick");
+      expect((result[0].data as any).title).toBe('Moby Dick');
     });
 
     test('$..book[-1] - the last book', () => {
       const expr = '$..book[-1]';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(1);
-      expect((result[0].data as any).title).toBe("The Lord of the Rings");
+      expect((result[0].data as any).title).toBe('The Lord of the Rings');
     });
 
     test('$..book[0,1] - the first two books', () => {
       const expr = '$..book[0,1]';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(2);
-      expect((result[0].data as any).title).toBe("Sayings of the Century");
-      expect((result[1].data as any).title).toBe("Sword of Honour");
+      expect((result[0].data as any).title).toBe('Sayings of the Century');
+      expect((result[1].data as any).title).toBe('Sword of Honour');
     });
 
     test('$..book[:2] - the first two books', () => {
       const expr = '$..book[:2]';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(2);
-      expect((result[0].data as any).title).toBe("Sayings of the Century");
-      expect((result[1].data as any).title).toBe("Sword of Honour");
+      expect((result[0].data as any).title).toBe('Sayings of the Century');
+      expect((result[1].data as any).title).toBe('Sword of Honour');
     });
 
     test('$..book[?@.isbn] - all books with an ISBN number', () => {
       const expr = '$..book[?@.isbn]';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(2);
-      const titles = result.map(r => (r.data as any).title);
-      expect(titles).toContain("Moby Dick");
-      expect(titles).toContain("The Lord of the Rings");
+      const titles = result.map((r) => (r.data as any).title);
+      expect(titles).toContain('Moby Dick');
+      expect(titles).toContain('The Lord of the Rings');
     });
 
     test('$..book[?@.price<10] - all books cheaper than 10', () => {
       const expr = '$..book[?@.price < 10]';
       const result = JsonPathEval.run(expr, bookstore);
       expect(result.length).toBe(2);
-      const titles = result.map(r => (r.data as any).title);
-      expect(titles).toContain("Sayings of the Century");
-      expect(titles).toContain("Moby Dick");
+      const titles = result.map((r) => (r.data as any).title);
+      expect(titles).toContain('Sayings of the Century');
+      expect(titles).toContain('Moby Dick');
     });
   });
 });
-

@@ -1,4 +1,4 @@
-import {NormalizedPath} from "./types";
+import type {NormalizedPath} from './types';
 
 export class Value {
   constructor(

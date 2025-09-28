@@ -489,28 +489,23 @@ describe('JsonPathParser', () => {
       for (const {expr, path} of tests) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
-        
+
         const filterSelector = result.path?.segments[0]?.selectors[0];
         expect(filterSelector?.type).toBe('filter');
         expect((filterSelector as any).expression.type).toBe('existence');
-        
+
         const existencePath = (filterSelector as any).expression.path;
         expect(existencePath.segments.length).toBeGreaterThan(0);
       }
     });
 
     test('should parse existence filters with bracket notation', () => {
-      const tests = [
-        '$[?@["key with spaces"]]',
-        '$[?@[\'single-quotes\']]',
-        '$[?@[0].name]',
-        '$[?@[-1]]',
-      ];
+      const tests = ['$[?@["key with spaces"]]', "$[?@['single-quotes']]", '$[?@[0].name]', '$[?@[-1]]'];
 
       for (const expr of tests) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
-        
+
         const filterSelector = result.path?.segments[0]?.selectors[0];
         expect(filterSelector?.type).toBe('filter');
         expect((filterSelector as any).expression.type).toBe('existence');
@@ -520,12 +515,12 @@ describe('JsonPathParser', () => {
     test('should parse combined existence and comparison filters', () => {
       const result = JsonPathParser.parse('$[?@.isbn && @.price < 20]');
       expect(result.success).toBe(true);
-      
+
       const filterSelector = result.path?.segments[0]?.selectors[0];
       expect(filterSelector?.type).toBe('filter');
       expect((filterSelector as any).expression.type).toBe('logical');
       expect((filterSelector as any).expression.operator).toBe('&&');
-      
+
       // Left side should be existence
       expect((filterSelector as any).expression.left.type).toBe('existence');
       // Right side should be comparison
@@ -856,7 +851,7 @@ describe('JsonPathParser', () => {
       const filterSelector = filterSegment?.selectors[0];
       expect(filterSelector?.type).toBe('filter');
       expect((filterSelector as any).expression.type).toBe('existence');
-      
+
       // Check the existence expression path
       const existencePath = (filterSelector as any).expression.path;
       expect(existencePath.segments).toHaveLength(1);

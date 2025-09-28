@@ -77,8 +77,8 @@ export class JsonPathEval {
       const data = input.data;
       if (data && typeof data === 'object' && !Array.isArray(data)) {
         const key = selector.name;
-        if (data.hasOwnProperty(key))
-          output.push(new Value(input, key, (data as any)[key]));
+        // biome-ignore lint: object hasOwnProperty check is intentional, Object.hasOwn is too recent
+        if (data.hasOwnProperty(key)) output.push(new Value(input, key, (data as any)[key]));
       }
     }
   }
@@ -114,6 +114,7 @@ export class JsonPathEval {
       } else if (data && typeof data === 'object') {
         // For objects, select all member values (order is not guaranteed per RFC 9535)
         for (const key in data) {
+          // biome-ignore lint: object hasOwnProperty check is intentional, Object.hasOwn is too recent
           if (data.hasOwnProperty(key)) {
             output.push(new Value(input, key, (data as any)[key]));
           }
@@ -125,20 +126,20 @@ export class JsonPathEval {
 
   protected evalSlice(inputs: Value[], selector: types.SliceSelector, output: Value[] = []): void {
     const step = selector.step !== undefined ? selector.step : 1;
-    
+
     // Handle step = 0 case (no elements selected per RFC 9535)
     if (step === 0) {
       return;
     }
-    
+
     const length = inputs.length;
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
       const data = input.data;
       if (!Array.isArray(data)) continue;
-      
+
       const len = data.length;
-      
+
       // Determine default start and end based on step direction
       let start: number, end: number;
       if (step >= 0) {
@@ -148,15 +149,15 @@ export class JsonPathEval {
         start = selector.start !== undefined ? selector.start : len - 1;
         end = selector.end !== undefined ? selector.end : -len - 1;
       }
-      
+
       // Normalize start and end indices
       const normalizeIndex = (idx: number, length: number): number => {
         return idx >= 0 ? idx : length + idx;
       };
-      
+
       const nStart = normalizeIndex(start, len);
       const nEnd = normalizeIndex(end, len);
-      
+
       // Calculate bounds based on step direction
       let lower: number, upper: number;
       if (step >= 0) {
@@ -166,7 +167,7 @@ export class JsonPathEval {
         upper = Math.min(Math.max(nStart, -1), len - 1);
         lower = Math.min(Math.max(nEnd, -1), len - 1);
       }
-      
+
       // Select elements based on step direction
       if (step > 0) {
         for (let idx = lower; idx < upper; idx += step) {
@@ -185,7 +186,7 @@ export class JsonPathEval {
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
       const data = input.data;
-      
+
       if (Array.isArray(data)) {
         // Filter array elements
         for (let j = 0; j < data.length; j++) {
@@ -198,6 +199,7 @@ export class JsonPathEval {
       } else if (data && typeof data === 'object') {
         // Filter object member values
         for (const key in data) {
+          // biome-ignore lint: object hasOwnProperty check is intentional, Object.hasOwn is too recent
           if (data.hasOwnProperty(key)) {
             const memberValue = (data as any)[key];
             const memberValueNode = new Value(input, key, memberValue);
@@ -211,14 +213,18 @@ export class JsonPathEval {
     }
   }
 
-  protected evalRecursiveDescent(inputs: Value[], selector: types.RecursiveDescentSelector, output: Value[] = []): void {
+  protected evalRecursiveDescent(
+    inputs: Value[],
+    selector: types.RecursiveDescentSelector,
+    output: Value[] = [],
+  ): void {
     const length = inputs.length;
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
       // Collect all descendants (including the input node itself)
       const descendants: Value[] = [];
       this.collectDescendants(input, descendants);
-      
+
       // Apply the wrapped selector to all descendants
       this.evalSelector(descendants, selector.selector, output);
     }
@@ -227,7 +233,7 @@ export class JsonPathEval {
   private collectDescendants(node: Value, output: Value[]): void {
     output.push(node);
     const data = node.data;
-    
+
     if (Array.isArray(data)) {
       // Visit array elements in order
       for (let i = 0; i < data.length; i++) {
@@ -237,6 +243,7 @@ export class JsonPathEval {
     } else if (data && typeof data === 'object') {
       // Visit object member values (order not guaranteed)
       for (const key in data) {
+        // biome-ignore lint: object hasOwnProperty check is intentional, Object.hasOwn is too recent
         if (data.hasOwnProperty(key)) {
           const child = new Value(node, key, (data as any)[key]);
           this.collectDescendants(child, output);
@@ -269,7 +276,7 @@ export class JsonPathEval {
   private evalComparisonExpression(expression: types.ComparisonExpression, currentNode: Value): boolean {
     const leftValue = this.evalValueExpression(expression.left, currentNode);
     const rightValue = this.evalValueExpression(expression.right, currentNode);
-    
+
     switch (expression.operator) {
       case '==':
         return this.compareEqual(leftValue, rightValue);
@@ -291,11 +298,15 @@ export class JsonPathEval {
   private evalLogicalExpression(expression: types.LogicalExpression, currentNode: Value): boolean {
     switch (expression.operator) {
       case '&&':
-        return this.evalFilterExpression(expression.left, currentNode) && 
-               this.evalFilterExpression(expression.right, currentNode);
+        return (
+          this.evalFilterExpression(expression.left, currentNode) &&
+          this.evalFilterExpression(expression.right, currentNode)
+        );
       case '||':
-        return this.evalFilterExpression(expression.left, currentNode) || 
-               this.evalFilterExpression(expression.right, currentNode);
+        return (
+          this.evalFilterExpression(expression.left, currentNode) ||
+          this.evalFilterExpression(expression.right, currentNode)
+        );
       default:
         return false;
     }
@@ -322,11 +333,12 @@ export class JsonPathEval {
         return this.data;
       case 'literal':
         return expression.value;
-      case 'path':
+      case 'path': {
         if (!expression.path.segments) return undefined;
         const evaluator = new JsonPathEval(expression.path, currentNode.data);
         const result = evaluator.eval();
         return result.length === 1 ? result[0].data : undefined;
+      }
       case 'function':
         // Placeholder for function value expressions
         return undefined;
@@ -339,13 +351,13 @@ export class JsonPathEval {
     // Handle empty nodelist/Nothing cases
     if (left === undefined && right === undefined) return true;
     if (left === undefined || right === undefined) return false;
-    
+
     // Strict equality for primitives
     if (left === right) return true;
-    
+
     // Type mismatch
     if (typeof left !== typeof right) return false;
-    
+
     // Array comparison
     if (Array.isArray(left) && Array.isArray(right)) {
       if (left.length !== right.length) return false;
@@ -354,7 +366,7 @@ export class JsonPathEval {
       }
       return true;
     }
-    
+
     // Object comparison
     if (left && right && typeof left === 'object' && typeof right === 'object') {
       const leftKeys = Object.keys(left);
@@ -366,24 +378,24 @@ export class JsonPathEval {
       }
       return true;
     }
-    
+
     return false;
   }
 
   private compareLess(left: any, right: any): boolean {
     // Handle empty nodelist/Nothing cases
     if (left === undefined || right === undefined) return false;
-    
+
     // Both numbers
     if (typeof left === 'number' && typeof right === 'number') {
       return left < right;
     }
-    
+
     // Both strings
     if (typeof left === 'string' && typeof right === 'string') {
       return left < right;
     }
-    
+
     // Other types don't support < comparison
     return false;
   }
