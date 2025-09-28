@@ -46,14 +46,14 @@ describe('JSONPath utilities', () => {
       const result = JsonPathParser.parse("$.store['book', 'bicycle'][0, 1]");
       expect(result.success).toBe(true);
       const str = jsonPathToString(result.path!);
-      expect(str).toBe("$.store[.book,.bicycle][[0],[1]]");
+      expect(str).toBe('$.store[.book,.bicycle][[0],[1]]');
     });
 
     test('should convert mixed union selector to string', () => {
       const result = JsonPathParser.parse("$[0, 'name', 2]");
       expect(result.success).toBe(true);
       const str = jsonPathToString(result.path!);
-      expect(str).toBe("$[[0],.name,[2]]");
+      expect(str).toBe('$[[0],.name,[2]]');
     });
   });
 

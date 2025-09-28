@@ -13,7 +13,7 @@ describe('JsonPathParser', () => {
         success: true,
         path: {
           segments: [],
-        }
+        },
       });
     });
 
@@ -27,12 +27,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'name',
-                  name: 'name'
-                }
-              ]
-            }
-          ]
-        }
+                  name: 'name',
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -46,12 +46,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'name',
-                  name: 'name'
-                }
-              ]
-            }
-          ]
-        }
+                  name: 'name',
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -65,12 +65,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'name',
-                  name: 'name'
-                }
-              ]
-            }
-          ]
-        }
+                  name: 'name',
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -84,12 +84,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'index',
-                  index: 0
-                }
-              ]
-            }
-          ]
-        }
+                  index: 0,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -103,12 +103,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'index',
-                  index: -1
-                }
-              ]
-            }
-          ]
-        }
+                  index: -1,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -121,12 +121,12 @@ describe('JsonPathParser', () => {
             {
               selectors: [
                 {
-                  type: 'wildcard'
-                }
-              ]
-            }
-          ]
-        }
+                  type: 'wildcard',
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -139,12 +139,12 @@ describe('JsonPathParser', () => {
             {
               selectors: [
                 {
-                  type: 'wildcard'
-                }
-              ]
-            }
-          ]
-        }
+                  type: 'wildcard',
+                },
+              ],
+            },
+          ],
+        },
       });
     });
   });
@@ -161,12 +161,12 @@ describe('JsonPathParser', () => {
                 {
                   type: 'slice',
                   start: 1,
-                  end: 3
-                }
-              ]
-            }
-          ]
-        }
+                  end: 3,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -182,12 +182,12 @@ describe('JsonPathParser', () => {
                   type: 'slice',
                   start: 1,
                   end: 10,
-                  step: 2
-                }
-              ]
-            }
-          ]
-        }
+                  step: 2,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -201,12 +201,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'slice',
-                  step: 4
-                }
-              ]
-            }
-          ]
-        }
+                  step: 4,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -220,12 +220,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'slice',
-                  start: 2
-                }
-              ]
-            }
-          ]
-        }
+                  start: 2,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -239,12 +239,12 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'slice',
-                  end: 3
-                }
-              ]
-            }
-          ]
-        }
+                  end: 3,
+                },
+              ],
+            },
+          ],
+        },
       });
     });
   });
@@ -260,36 +260,36 @@ describe('JsonPathParser', () => {
               selectors: [
                 {
                   type: 'name',
-                  name: 'store'
-                }
-              ]
+                  name: 'store',
+                },
+              ],
             },
             {
               selectors: [
                 {
                   type: 'name',
-                  name: 'book'
-                }
-              ]
+                  name: 'book',
+                },
+              ],
             },
             {
               selectors: [
                 {
                   type: 'index',
-                  index: 0
-                }
-              ]
+                  index: 0,
+                },
+              ],
             },
             {
               selectors: [
                 {
                   type: 'name',
-                  name: 'title'
-                }
-              ]
-            }
-          ]
-        }
+                  name: 'title',
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -329,23 +329,23 @@ describe('JsonPathParser', () => {
                             selectors: [
                               {
                                 type: 'name',
-                                name: 'price'
-                              }
-                            ]
-                          }
-                        ]
-                      }
+                                name: 'price',
+                              },
+                            ],
+                          },
+                        ],
+                      },
                     },
                     right: {
                       type: 'literal',
-                      value: 10
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        }
+                      value: 10,
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
       });
     });
 
@@ -362,28 +362,28 @@ describe('JsonPathParser', () => {
 
     test('should parse filter with all comparison operators', () => {
       const tests = [
-        { expr: '$[?(@.price == 10)]', op: '==' },
-        { expr: '$[?(@.price != 10)]', op: '!=' },
-        { expr: '$[?(@.price < 10)]', op: '<' },
-        { expr: '$[?(@.price <= 10)]', op: '<=' },
-        { expr: '$[?(@.price > 10)]', op: '>' },
-        { expr: '$[?(@.price >= 10)]', op: '>=' },
+        {expr: '$[?(@.price == 10)]', op: '=='},
+        {expr: '$[?(@.price != 10)]', op: '!='},
+        {expr: '$[?(@.price < 10)]', op: '<'},
+        {expr: '$[?(@.price <= 10)]', op: '<='},
+        {expr: '$[?(@.price > 10)]', op: '>'},
+        {expr: '$[?(@.price >= 10)]', op: '>='},
       ];
 
-      tests.forEach(({expr, op}) => {
+      for (const {expr, op} of tests) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
         const selector = result.path?.segments[0]?.selectors[0];
         expect(selector?.type).toBe('filter');
         expect((selector as any)?.expression.type).toBe('comparison');
         expect((selector as any)?.expression.operator).toBe(op);
-      });
+      }
     });
 
     test('should parse filter with logical AND', () => {
       const result = JsonPathParser.parse('$[?(@.price < 10 && @.author == "Tolkien")]');
       expect(result.success).toBe(true);
-      
+
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
       expect((selector as any)?.expression.type).toBe('logical');
@@ -393,7 +393,7 @@ describe('JsonPathParser', () => {
     test('should parse filter with logical OR', () => {
       const result = JsonPathParser.parse('$[?(@.price < 10 || @.price > 100)]');
       expect(result.success).toBe(true);
-      
+
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
       expect((selector as any)?.expression.type).toBe('logical');
@@ -403,7 +403,7 @@ describe('JsonPathParser', () => {
     test('should parse filter with negation', () => {
       const result = JsonPathParser.parse('$[?(!@.isbn)]');
       expect(result.success).toBe(true);
-      
+
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
       expect((selector as any)?.expression.type).toBe('negation');
@@ -412,7 +412,7 @@ describe('JsonPathParser', () => {
     test('should parse filter with parentheses', () => {
       const result = JsonPathParser.parse('$[?((@.price < 10) && (@.category == "fiction"))]');
       expect(result.success).toBe(true);
-      
+
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
       expect((selector as any)?.expression.type).toBe('logical');
@@ -421,7 +421,7 @@ describe('JsonPathParser', () => {
     test('should parse existence test filter', () => {
       const result = JsonPathParser.parse('$[?(@.isbn)]');
       expect(result.success).toBe(true);
-      
+
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
       expect((selector as any)?.expression.type).toBe('existence');
@@ -429,31 +429,31 @@ describe('JsonPathParser', () => {
 
     test('should parse filter with different literal types', () => {
       const tests = [
-        { expr: '$[?(@.name == "test")]', value: 'test' },
-        { expr: "$[?(@.name == 'test')]", value: 'test' },
-        { expr: '$[?(@.price == 42)]', value: 42 },
-        { expr: '$[?(@.price == 3.14)]', value: 3.14 },
-        { expr: '$[?(@.active == true)]', value: true },
-        { expr: '$[?(@.active == false)]', value: false },
-        { expr: '$[?(@.value == null)]', value: null },
+        {expr: '$[?(@.name == "test")]', value: 'test'},
+        {expr: "$[?(@.name == 'test')]", value: 'test'},
+        {expr: '$[?(@.price == 42)]', value: 42},
+        {expr: '$[?(@.price == 3.14)]', value: 3.14},
+        {expr: '$[?(@.active == true)]', value: true},
+        {expr: '$[?(@.active == false)]', value: false},
+        {expr: '$[?(@.value == null)]', value: null},
       ];
 
-      tests.forEach(({expr, value}) => {
+      for (const {expr, value} of tests) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
         const selector = result.path?.segments[0]?.selectors[0];
         expect((selector as any)?.expression.right.value).toEqual(value);
-      });
+      }
     });
 
     test('should parse filter with complex path expressions', () => {
       const result = JsonPathParser.parse('$[?(@.book[0].author == "Tolkien")]');
       expect(result.success).toBe(true);
-      
+
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
       expect((selector as any)?.expression.type).toBe('comparison');
-      
+
       const leftPath = (selector as any)?.expression.left.path;
       expect(leftPath.segments).toHaveLength(3);
       expect(leftPath.segments[0].selectors[0]).toMatchObject({type: 'name', name: 'book'});
@@ -469,12 +469,12 @@ describe('JsonPathParser', () => {
         '$[?search(@.description, "test")]',
       ];
 
-      tests.forEach(expr => {
+      for (const expr of tests) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
         const selector = result.path?.segments[0]?.selectors[0];
         expect(selector?.type).toBe('filter');
-      });
+      }
     });
 
     test('should parse complex nested filter expressions', () => {
@@ -511,7 +511,7 @@ describe('JsonPathParser', () => {
                                   ],
                                 },
                               ],
-                            }
+                            },
                           },
                           right: {
                             type: 'literal',
@@ -575,7 +575,7 @@ describe('JsonPathParser', () => {
       });
     });
   });
-      
+
   describe('RFC 9535 examples', () => {
     test('should parse "$.store.book[*].author"', () => {
       const result = JsonPathParser.parse('$.store.book[*].author');
@@ -682,7 +682,7 @@ describe('JsonPathParser', () => {
     });
 
     test('should parse union selector with negative indices', () => {
-      const result = JsonPathParser.parse("$[-1, -2, 0]");
+      const result = JsonPathParser.parse('$[-1, -2, 0]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -718,7 +718,7 @@ describe('JsonPathParser', () => {
     });
 
     test('should handle empty union selector (single element)', () => {
-      const result = JsonPathParser.parse("$[0]");
+      const result = JsonPathParser.parse('$[0]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 

@@ -14,9 +14,7 @@ export class JsonPathParser extends Parser {
    * @param pathStr - JSONPath expression string (e.g., "$.store.book[0].title").
    * @returns Parse result with structured representation or error information.
    */
-  public static parse = (pathStr: string): types.ParseResult =>
-    new JsonPathParser().parse(pathStr);
-  
+  public static parse = (pathStr: string): types.ParseResult => new JsonPathParser().parse(pathStr);
 
   /**
    * Parse a JSONPath expression string into a structured representation
@@ -129,9 +127,7 @@ export class JsonPathParser extends Parser {
     }
 
     if (recursive && selectors.length === 1) {
-      return Ast.segment([
-        Ast.selector.recursiveDescent(selectors[0])
-      ]);
+      return Ast.segment([Ast.selector.recursiveDescent(selectors[0])]);
     }
 
     return Ast.segment(selectors, recursive || undefined);
@@ -148,7 +144,7 @@ export class JsonPathParser extends Parser {
       // Filter expression
       this.skip(1); // Skip ?
       this.ws();
-      
+
       // Parentheses are optional according to RFC 9535, but commonly used
       let hasParens = false;
       if (this.is('(')) {
@@ -156,9 +152,9 @@ export class JsonPathParser extends Parser {
         this.skip(1);
         this.ws();
       }
-      
+
       const expression = this.parseFilterExpression();
-      
+
       if (hasParens) {
         this.ws();
         if (!this.is(')')) {
@@ -166,7 +162,7 @@ export class JsonPathParser extends Parser {
         }
         this.skip(1);
       }
-      
+
       return Ast.selector.filter(expression);
     } else if (this.is("'") || this.is('"')) {
       // Quoted string selector
@@ -252,13 +248,15 @@ export class JsonPathParser extends Parser {
 
   private parseUnaryExpression(): types.FilterExpression {
     this.ws();
-    if (this.is('!')) { // Handle logical NOT operator
+    if (this.is('!')) {
+      // Handle logical NOT operator
       this.skip(1);
       this.ws();
       const expression = this.parseUnaryExpression();
       return Ast.expression.negation(expression);
     }
-    if (this.is('(')) { // Handle parenthesized expressions
+    if (this.is('(')) {
+      // Handle parenthesized expressions
       this.skip(1);
       this.ws();
       const expression = this.parseFilterExpression();
@@ -271,7 +269,7 @@ export class JsonPathParser extends Parser {
     }
     return this.parsePrimaryExpression();
   }
-  
+
   private parsePrimaryExpression(): types.FilterExpression {
     const left = this.parseValueExpression();
     this.ws();
@@ -294,14 +292,14 @@ export class JsonPathParser extends Parser {
     // If no comparison operator, treat as existence test
     return Ast.expression.existence(Ast.path([])); // TODO: implement proper existence test with the path
   }
-  
+
   private parseFunctionName(): string {
     const start = this.pos;
     if (!this.match(/[a-z]/)) throw new Error('Expected function name');
     while (this.match(/[a-zA-Z0-9_]/)) this.skip(1);
     return this.str.slice(start, this.pos);
   }
-  
+
   private parseFunctionExpression(): types.FunctionExpression {
     const name = this.parseFunctionName();
     this.ws();
@@ -328,11 +326,11 @@ export class JsonPathParser extends Parser {
     this.skip(1);
     return Ast.expression.function(name, args);
   }
-  
+
   private isComparisonOperator(): boolean {
     return this.is('==') || this.is('!=') || this.is('<=') || this.is('>=') || this.is('<') || this.is('>');
   }
-  
+
   private parseComparisonOperator(): types.ComparisonExpression['operator'] {
     if (this.is('==')) {
       this.skip(2);
@@ -381,13 +379,16 @@ export class JsonPathParser extends Parser {
         return value.path(Ast.path(segments));
       }
       return value.current();
-    } else if (this.is('$')) { // Root node path
+    } else if (this.is('$')) {
+      // Root node path
       this.skip(1);
       const segments = this.parsePathSegments();
       return value.path(Ast.path(segments));
-    } else if (this.is("'") || this.is('"')) { // String literal
+    } else if (this.is("'") || this.is('"')) {
+      // String literal
       return value.literal(this.parseString());
-    } else if (this.match(/[0-9-]/)) { // Number literal
+    } else if (this.match(/[0-9-]/)) {
+      // Number literal
       return value.literal(this.parseNumber());
     } else if (this.is('true')) {
       this.skip(4);
@@ -448,7 +449,8 @@ export class JsonPathParser extends Parser {
     this.skip(1); // Skip opening quote
     const start = this.pos;
     while (!this.eof() && !this.is(quote))
-      if (this.is('\\')) this.skip(2); // Skip escape sequence
+      if (this.is('\\'))
+        this.skip(2); // Skip escape sequence
       else this.skip(1);
     if (this.eof()) throw new Error('Unterminated string literal');
     const value = this.str.slice(start, this.pos);

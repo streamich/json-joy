@@ -94,10 +94,10 @@ export interface JSONPath {
 /**
  * Filter expression types
  */
-export type FilterExpression = 
-  | ComparisonExpression 
-  | LogicalExpression 
-  | ExistenceExpression 
+export type FilterExpression =
+  | ComparisonExpression
+  | LogicalExpression
+  | ExistenceExpression
   | FunctionExpression
   | ParenExpression
   | NegationExpression;
@@ -140,10 +140,10 @@ export interface NegationExpression {
 /**
  * Value expressions in filters
  */
-export type ValueExpression = 
-  | CurrentNodeExpression 
-  | RootNodeExpression 
-  | LiteralExpression 
+export type ValueExpression =
+  | CurrentNodeExpression
+  | RootNodeExpression
+  | LiteralExpression
   | PathExpression
   | FunctionExpression;
 
