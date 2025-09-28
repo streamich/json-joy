@@ -375,7 +375,7 @@ export class JsonPathParser extends Parser {
     if (this.is('@')) {
       this.skip(1);
       if (this.is('.') || this.is('[')) {
-        const segments = this.parsePathSegments();
+        const segments = this.parseFilterPathSegments();
         return value.path(Ast.path(segments));
       }
       return value.current();
@@ -416,24 +416,69 @@ export class JsonPathParser extends Parser {
     return segments;
   }
 
-  private parseRelativePath(): string {
-    const start = this.pos;
-    let depth = 0;
+  private parseFilterPathSegments(): types.PathSegment[] {
+    const segments: types.PathSegment[] = [];
     while (!this.eof()) {
-      const char = this.peek() as string;
-      if (char === '[') {
-        depth++;
-      } else if (char === ']') {
-        depth--;
-        if (depth < 0) break;
-      } else if (char === ')' && depth === 0) {
+      this.ws();
+      if (this.eof()) break;
+      // Check if we've reached a delimiter that ends the path in filter context
+      if (this.is(')') || this.is(',') || this.is('&&') || this.is('||') || this.isComparisonOperator() || this.is(']'))
         break;
-      } else if (/\s/.test(char) && depth === 0) {
-        break;
-      }
-      this.skip(1);
+      const segment = this.parseFilterPathSegment();
+      segments.push(segment);
     }
-    return this.str.slice(start, this.pos);
+    return segments;
+  }
+
+  private parseFilterPathSegment(): types.PathSegment {
+    this.ws();
+    const selectors: types.AnySelector[] = [];
+
+    if (this.is('.')) {
+      // Dot notation: .name, .*, etc.
+      this.skip(1); // Skip .
+      this.ws(); // Skip whitespace after .
+
+      if (this.is('*')) {
+        // Wildcard
+        this.skip(1);
+        selectors.push(Ast.selector.wildcard());
+      } else {
+        // Named selector
+        const name = this.parseIdentifier();
+        selectors.push(Ast.selector.named(name));
+      }
+    } else if (this.is('[')) {
+      // Bracket notation: [index], ['name'], [*], [start:end], [a,b,c] etc.
+      this.skip(1); // Skip [
+      this.ws();
+
+      // Parse comma-separated list of selectors
+      do {
+        this.ws();
+        const selector = this.parseBracketSelector();
+        selectors.push(selector);
+        this.ws();
+
+        // Check for comma to continue, or ] to end
+        if (this.is(',')) {
+          this.skip(1); // Skip comma
+          this.ws();
+        } else {
+          break;
+        }
+      } while (!this.eof() && !this.is(']'));
+
+      this.ws();
+      if (!this.is(']')) {
+        throw new Error('Expected ] to close bracket selector');
+      }
+      this.skip(1); // Skip ]
+    } else {
+      throw new Error('Expected . or [ to start filter path segment');
+    }
+
+    return Ast.segment(selectors);
   }
 
   private parseIdentifier(): string {
