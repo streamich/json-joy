@@ -4,5 +4,5 @@
  */
 
 export * from './types';
-export * from './JsonPath';
+export * from './JsonPathParser';
 export * from './util';
