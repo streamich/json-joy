@@ -1,13 +1,26 @@
+import {JsonPathParser} from './JsonPathParser';
 import {Value} from './Value';
 import type * as types from './types';
 
 export class JsonPathEval {
+  public static run = (path: string | types.JSONPath, data: unknown): Value[] => {
+    let ast: types.JSONPath;
+    if (typeof path === 'string') {
+      const parsed = JsonPathParser.parse(path);
+      if (!parsed.success || !parsed.path || parsed.error)
+        throw new Error(`Invalid JSONPath: ${parsed.error} [position = ${parsed.position}, path = ${path}]`);
+      ast = parsed.path;
+    } else ast = path;
+    const evaluator = new JsonPathEval(ast, data);
+    return evaluator.eval();
+  };
+
   constructor(
     public readonly path: types.JSONPath,
     public readonly data: unknown,
   ) {}
 
-  eval() {
+  eval(): Value[] {
     let input: Value[] = [new Value(null, '$', this.data)];
     let output: Value[] = [];
     const segments = this.path.segments;
