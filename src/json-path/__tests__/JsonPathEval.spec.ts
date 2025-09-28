@@ -1,31 +1,6 @@
 import {JsonPathEval} from "../JsonPathEval";
 import {JsonPathParser} from "../JsonPathParser";
-
-const data0 = {
-  store: {
-    book: [
-      { title: 'Harry Potter', author: 'J.K. Rowling', price: 8.95 },
-      { title: 'The Hobbit', author: 'J.R.R. Tolkien', price: 12.99 }
-    ],
-    bicycle: {
-      color: 'red',
-      price: 399
-    }
-  }
-};
-
-const arrayData = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
-
-const complexData = {
-  a: [3, 5, 1, 2, 4, 6,
-      {"b": "j"},
-      {"b": "k"},
-      {"b": {}},
-      {"b": "kilo"}
-     ],
-  o: {"p": 1, "q": 2, "r": 3, "s": 5, "t": {"u": 6}},
-  e: "f"
-};
+import {arrayData, bookstore, complexData, data0} from "./fixtures";
 
 describe('JsonPathEval', () => {
   describe('named selector', () => {
@@ -345,19 +320,6 @@ describe('JsonPathEval', () => {
   });
 
   describe('RFC 9535 compliance examples', () => {
-    // Examples from RFC 9535 Table 2
-    const bookstore = {
-      "store": {
-        "book": [
-          { "category": "reference", "author": "Nigel Rees", "title": "Sayings of the Century", "price": 8.95 },
-          { "category": "fiction", "author": "Evelyn Waugh", "title": "Sword of Honour", "price": 12.99 },
-          { "category": "fiction", "author": "Herman Melville", "title": "Moby Dick", "isbn": "0-553-21311-3", "price": 8.99 },
-          { "category": "fiction", "author": "J. R. R. Tolkien", "title": "The Lord of the Rings", "isbn": "0-395-19395-8", "price": 22.99 }
-        ],
-        "bicycle": { "color": "red", "price": 399 }
-      }
-    };
-
     test('$.store.book[*].author - the authors of all books in the store', () => {
       const expr = '$.store.book[*].author';
       const ast = JsonPathParser.parse(expr);
