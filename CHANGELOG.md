@@ -1,3 +1,16 @@
+# [17.53.0](https://github.com/streamich/json-joy/compare/v17.52.0...v17.53.0) (2025-09-28)
+
+
+### Features
+
+* 🎸 add AST builder ([5d6b4e2](https://github.com/streamich/json-joy/commit/5d6b4e2a7a7b7e6b0de0347bccf7d0fbcfc72cc6))
+* 🎸 add missing expression types and AST builder ([3340ea5](https://github.com/streamich/json-joy/commit/3340ea51bbdb0bf61ae56e372bfd5ecd94a914ac))
+* 🎸 add support for union selectors ([fc0f562](https://github.com/streamich/json-joy/commit/fc0f5624b24b31ce4ae3210db3e7c56077e3fa03))
+* 🎸 extract generic `Parser` class ([991758b](https://github.com/streamich/json-joy/commit/991758b46e74b7412c33558d18152fb90ef4439f))
+* 🎸 implement expression parsing ([6e44ad9](https://github.com/streamich/json-joy/commit/6e44ad98f08b62bef2abfd84a571c0b30fc88572))
+* 🎸 start Ast builder class ([44ce014](https://github.com/streamich/json-joy/commit/44ce01420257b8de6186e157cb8a9ec28cb446e0))
+* 🎸 use AST builder in parser ([eaa1cba](https://github.com/streamich/json-joy/commit/eaa1cba75ef1083a0999352c130175af739d5ae4))
+
 # [17.52.0](https://github.com/streamich/json-joy/compare/v17.51.0...v17.52.0) (2025-09-25)
 
 
