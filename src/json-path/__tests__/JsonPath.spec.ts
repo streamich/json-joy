@@ -392,11 +392,134 @@ describe('JsonPathParser', () => {
       expect(selectors?.[1]).toMatchObject({type: 'wildcard'});
     });
 
-    test('should parse "$.store.book[0,1]" (union - not implemented yet)', () => {
-      // This would be for union selectors, which we haven't implemented yet
-      // Just test that it doesn't crash
-      const result = JsonPathParser.parse('$.store.book[0]');
+    test('should parse "$.store.book[0,1]" (union selector)', () => {
+      const result = JsonPathParser.parse('$.store.book[0,1]');
       expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(3);
+
+      // Check the third segment (book[0,1]) has two selectors
+      const bookSegment = result.path?.segments[2];
+      expect(bookSegment?.selectors).toHaveLength(2);
+      expect(bookSegment?.selectors[0]).toMatchObject({type: 'index', index: 0});
+      expect(bookSegment?.selectors[1]).toMatchObject({type: 'index', index: 1});
+    });
+
+    test('should parse union selector with string keys', () => {
+      const result = JsonPathParser.parse("$['a','b','c']");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'name', name: 'a'});
+      expect(segment?.selectors[1]).toMatchObject({type: 'name', name: 'b'});
+      expect(segment?.selectors[2]).toMatchObject({type: 'name', name: 'c'});
+    });
+
+    test('should parse mixed union selector (numbers and strings)', () => {
+      const result = JsonPathParser.parse("$[0, 'name', 2]");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'index', index: 0});
+      expect(segment?.selectors[1]).toMatchObject({type: 'name', name: 'name'});
+      expect(segment?.selectors[2]).toMatchObject({type: 'index', index: 2});
+    });
+
+    test('should parse union selector with wildcard', () => {
+      const result = JsonPathParser.parse("$[*, 0, 'key']");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'wildcard'});
+      expect(segment?.selectors[1]).toMatchObject({type: 'index', index: 0});
+      expect(segment?.selectors[2]).toMatchObject({type: 'name', name: 'key'});
+    });
+
+    test('should parse union selector with slices', () => {
+      const result = JsonPathParser.parse("$[0:2, 5, 'key']");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'slice', start: 0, end: 2, step: undefined});
+      expect(segment?.selectors[1]).toMatchObject({type: 'index', index: 5});
+      expect(segment?.selectors[2]).toMatchObject({type: 'name', name: 'key'});
+    });
+
+    test('should handle whitespace in union selectors', () => {
+      const result = JsonPathParser.parse("$[ 0 , 'name' , 2 ]");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'index', index: 0});
+      expect(segment?.selectors[1]).toMatchObject({type: 'name', name: 'name'});
+      expect(segment?.selectors[2]).toMatchObject({type: 'index', index: 2});
+    });
+
+    test('should parse union selector with negative indices', () => {
+      const result = JsonPathParser.parse("$[-1, -2, 0]");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'index', index: -1});
+      expect(segment?.selectors[1]).toMatchObject({type: 'index', index: -2});
+      expect(segment?.selectors[2]).toMatchObject({type: 'index', index: 0});
+    });
+
+    test('should parse complex nested union selectors', () => {
+      const result = JsonPathParser.parse("$.store['book', 'bicycle'][0, -1, 'title']");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(3);
+
+      // First segment: .store
+      const storeSegment = result.path?.segments[0];
+      expect(storeSegment?.selectors).toHaveLength(1);
+      expect(storeSegment?.selectors[0]).toMatchObject({type: 'name', name: 'store'});
+
+      // Second segment: ['book', 'bicycle']
+      const categorySegment = result.path?.segments[1];
+      expect(categorySegment?.selectors).toHaveLength(2);
+      expect(categorySegment?.selectors[0]).toMatchObject({type: 'name', name: 'book'});
+      expect(categorySegment?.selectors[1]).toMatchObject({type: 'name', name: 'bicycle'});
+
+      // Third segment: [0, -1, 'title']
+      const itemSegment = result.path?.segments[2];
+      expect(itemSegment?.selectors).toHaveLength(3);
+      expect(itemSegment?.selectors[0]).toMatchObject({type: 'index', index: 0});
+      expect(itemSegment?.selectors[1]).toMatchObject({type: 'index', index: -1});
+      expect(itemSegment?.selectors[2]).toMatchObject({type: 'name', name: 'title'});
+    });
+
+    test('should handle empty union selector (single element)', () => {
+      const result = JsonPathParser.parse("$[0]");
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(1);
+      expect(segment?.selectors[0]).toMatchObject({type: 'index', index: 0});
+    });
+
+    test('should handle union selector with double quotes', () => {
+      const result = JsonPathParser.parse('$["first", "second", 0]');
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(1);
+
+      const segment = result.path?.segments[0];
+      expect(segment?.selectors).toHaveLength(3);
+      expect(segment?.selectors[0]).toMatchObject({type: 'name', name: 'first'});
+      expect(segment?.selectors[1]).toMatchObject({type: 'name', name: 'second'});
+      expect(segment?.selectors[2]).toMatchObject({type: 'index', index: 0});
     });
 
     test('should parse "$.store.book[-1]"', () => {

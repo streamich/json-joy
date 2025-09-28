@@ -92,97 +92,25 @@ export class JsonPathParser extends Parser {
         selectors.push({type: 'name', name} as types.NamedSelector);
       }
     } else if (this.is('[')) {
-      // Bracket notation: [index], ['name'], [*], [start:end], etc.
+      // Bracket notation: [index], ['name'], [*], [start:end], [a,b,c] etc.
       this.skip(1); // Skip [
       this.ws();
 
-      if (this.is('*')) {
-        // Wildcard
-        this.skip(1);
-        selectors.push({type: 'wildcard'} as types.WildcardSelector);
-      } else if (this.is('?')) {
-        // Filter expression - simplified implementation for now
-        this.skip(1); // Skip ?
+      // Parse comma-separated list of selectors
+      do {
         this.ws();
-        if (!this.is('(')) {
-          throw new Error('Expected ( after ?');
-        }
+        const selector = this.parseBracketSelector();
+        selectors.push(selector);
+        this.ws();
 
-        // For now, just parse the entire filter as one block
-        let parenCount = 0;
-        const start = this.pos;
-        while (!this.eof()) {
-          const char = this.peek() as string;
-          if (char === '(') {
-            parenCount++;
-          } else if (char === ')') {
-            parenCount--;
-            if (parenCount === 0) {
-              this.skip(1); // Skip final )
-              break;
-            }
-          }
-          this.skip(1);
-        }
-
-        if (parenCount > 0) {
-          throw new Error('Expected ) to close filter expression');
-        }
-
-        // Create a simple filter expression
-        const expression: types.FilterExpression = {
-          type: 'existence',
-          path: {segments: []},
-        } as types.ExistenceExpression;
-
-        selectors.push({type: 'filter', expression} as types.FilterSelector);
-      } else if (this.is("'") || this.is('"')) {
-        // Quoted string selector
-        const name = this.parseString();
-        selectors.push({type: 'name', name} as types.NamedSelector);
-      } else {
-        // Number or slice
-        let first: number | undefined;
-        if (!this.is(':')) {
-          first = this.parseNumber();
+        // Check for comma to continue, or ] to end
+        if (this.is(',')) {
+          this.skip(1); // Skip comma
           this.ws();
-        }
-
-        if (this.is(':')) {
-          // Slice selector
-          this.skip(1); // Skip :
-          this.ws();
-
-          let end: number | undefined;
-          let step: number | undefined;
-
-          if (!this.is(']') && !this.is(':')) {
-            end = this.parseNumber();
-            this.ws();
-          }
-
-          if (this.is(':')) {
-            this.skip(1); // Skip :
-            this.ws();
-            if (!this.is(']')) {
-              step = this.parseNumber();
-            }
-          }
-
-          selectors.push({
-            type: 'slice',
-            start: first,
-            end,
-            step,
-          } as types.SliceSelector);
         } else {
-          // Index selector
-          if (first === undefined) {
-            throw new Error('Expected index or slice');
-          }
-          selectors.push({type: 'index', index: first} as types.IndexSelector);
+          break;
         }
-      }
+      } while (!this.eof() && !this.is(']'));
 
       this.ws();
       if (!this.is(']')) {
@@ -214,6 +142,98 @@ export class JsonPathParser extends Parser {
     }
 
     return {selectors, recursive: recursive || undefined};
+  }
+
+  private parseBracketSelector(): types.AnySelector {
+    this.ws();
+
+    if (this.is('*')) {
+      // Wildcard
+      this.skip(1);
+      return {type: 'wildcard'} as types.WildcardSelector;
+    } else if (this.is('?')) {
+      // Filter expression - simplified implementation for now
+      this.skip(1); // Skip ?
+      this.ws();
+      if (!this.is('(')) {
+        throw new Error('Expected ( after ?');
+      }
+
+      // For now, just parse the entire filter as one block
+      let parenCount = 0;
+      const start = this.pos;
+      while (!this.eof()) {
+        const char = this.peek() as string;
+        if (char === '(') {
+          parenCount++;
+        } else if (char === ')') {
+          parenCount--;
+          if (parenCount === 0) {
+            this.skip(1); // Skip final )
+            break;
+          }
+        }
+        this.skip(1);
+      }
+
+      if (parenCount > 0) {
+        throw new Error('Expected ) to close filter expression');
+      }
+
+      // Create a simple filter expression
+      const expression: types.FilterExpression = {
+        type: 'existence',
+        path: {segments: []},
+      } as types.ExistenceExpression;
+
+      return {type: 'filter', expression} as types.FilterSelector;
+    } else if (this.is("'") || this.is('"')) {
+      // Quoted string selector
+      const name = this.parseString();
+      return {type: 'name', name} as types.NamedSelector;
+    } else {
+      // Number or slice
+      let first: number | undefined;
+      if (!this.is(':')) {
+        first = this.parseNumber();
+        this.ws();
+      }
+
+      if (this.is(':')) {
+        // Slice selector
+        this.skip(1); // Skip :
+        this.ws();
+
+        let end: number | undefined;
+        let step: number | undefined;
+
+        if (!this.is(']') && !this.is(':') && !this.is(',')) {
+          end = this.parseNumber();
+          this.ws();
+        }
+
+        if (this.is(':')) {
+          this.skip(1); // Skip :
+          this.ws();
+          if (!this.is(']') && !this.is(',')) {
+            step = this.parseNumber();
+          }
+        }
+
+        return {
+          type: 'slice',
+          start: first,
+          end,
+          step,
+        } as types.SliceSelector;
+      } else {
+        // Index selector
+        if (first === undefined) {
+          throw new Error('Expected index or slice');
+        }
+        return {type: 'index', index: first} as types.IndexSelector;
+      }
+    }
   }
 
   private parseFilterExpression(): types.FilterExpression {
