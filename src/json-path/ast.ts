@@ -19,7 +19,9 @@ export class Ast {
     public static logical = (operator: types.LogicalExpression['operator'], left: types.FilterExpression, right: types.FilterExpression): types.LogicalExpression => 
       new LogicalExpression(operator, left, right);
     public static existence = (path: types.JSONPath): types.ExistenceExpression => new ExistenceExpression(path);
-    public static function = (name: string, args: types.ValueExpression[]): types.FunctionExpression => new FunctionExpression(name, args);
+    public static function = (name: string, args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[]): types.FunctionExpression => new FunctionExpression(name, args);
+    public static paren = (expression: types.FilterExpression): types.ParenExpression => new ParenthesizedExpression(expression);
+    public static negation = (expression: types.FilterExpression): types.NegationExpression => new NegationExpression(expression);
   };
 
   public static value = class value {
@@ -115,7 +117,21 @@ class FunctionExpression implements types.FunctionExpression {
   public readonly type: 'function' = 'function';
   constructor(
     public readonly name: string,
-    public readonly args: types.ValueExpression[],
+    public readonly args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+  ) {}
+}
+
+class ParenthesizedExpression implements types.ParenExpression {
+  public readonly type: 'paren' = 'paren';
+  constructor(
+    public readonly expression: types.FilterExpression,
+  ) {}
+}
+
+class NegationExpression implements types.NegationExpression {
+  public readonly type: 'negation' = 'negation';
+  constructor(
+    public readonly expression: types.FilterExpression,
   ) {}
 }
 

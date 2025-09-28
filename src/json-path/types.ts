@@ -94,7 +94,13 @@ export interface JSONPath {
 /**
  * Filter expression types
  */
-export type FilterExpression = ComparisonExpression | LogicalExpression | ExistenceExpression | FunctionExpression;
+export type FilterExpression = 
+  | ComparisonExpression 
+  | LogicalExpression 
+  | ExistenceExpression 
+  | FunctionExpression
+  | ParenExpression
+  | NegationExpression;
 
 export interface ComparisonExpression {
   type: 'comparison';
@@ -118,13 +124,28 @@ export interface ExistenceExpression {
 export interface FunctionExpression {
   type: 'function';
   name: string;
-  args: ValueExpression[];
+  args: (ValueExpression | FilterExpression | JSONPath)[];
+}
+
+export interface ParenExpression {
+  type: 'paren';
+  expression: FilterExpression;
+}
+
+export interface NegationExpression {
+  type: 'negation';
+  expression: FilterExpression;
 }
 
 /**
  * Value expressions in filters
  */
-export type ValueExpression = CurrentNodeExpression | RootNodeExpression | LiteralExpression | PathExpression;
+export type ValueExpression = 
+  | CurrentNodeExpression 
+  | RootNodeExpression 
+  | LiteralExpression 
+  | PathExpression
+  | FunctionExpression;
 
 export interface CurrentNodeExpression {
   type: 'current';
