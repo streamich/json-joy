@@ -468,12 +468,37 @@ describe('JsonPathParser', () => {
         '$[?match(@.email, ".*@example\\.com")]',
         '$[?search(@.description, "test")]',
       ];
-
-      for (const expr of tests) {
+      for (const [i, expr] of tests.entries()) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
         const selector = result.path?.segments[0]?.selectors[0];
         expect(selector?.type).toBe('filter');
+        expect(selector).toMatchObject({
+          type: 'filter',
+        });
+      }
+    });
+
+    test('should parse function expressions', () => {
+      const tests = [
+        '$[?length(@.name)]',
+        '$[?count(@.items)]',
+        '$[?match(@.email, ".*@example\\.com")]',
+        '$[?search(@.description, "test")]',
+      ];
+      const names = ['length', 'count', 'match', 'search'];
+      for (const [i, expr] of tests.entries()) {
+        const result = JsonPathParser.parse(expr);
+        expect(result.success).toBe(true);
+        const selector = result.path?.segments[0]?.selectors[0];
+        expect(selector?.type).toBe('filter');
+        expect(selector).toMatchObject({
+          type: 'filter',
+          expression: {
+            type: 'function',
+            name: names[i],
+          },
+        });
       }
     });
 
