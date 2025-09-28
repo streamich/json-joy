@@ -232,12 +232,7 @@ export class JsonPathParser extends Parser {
       this.skip(2);
       this.ws();
       const right = this.parseLogicalAndExpression();
-      left = {
-        type: 'logical',
-        operator: '||',
-        left,
-        right,
-      } as types.LogicalExpression;
+      left = Ast.expression.logical('||', left, right);
     }
 
     return left;
@@ -250,12 +245,7 @@ export class JsonPathParser extends Parser {
       this.skip(2);
       this.ws();
       const right = this.parseComparisonExpression();
-      left = {
-        type: 'logical',
-        operator: '&&',
-        left,
-        right,
-      } as types.LogicalExpression;
+      left = Ast.expression.logical('&&', left, right);
     }
 
     return left;
@@ -264,142 +254,74 @@ export class JsonPathParser extends Parser {
   private parseComparisonExpression(): types.FilterExpression {
     const left = this.parseValueExpression();
     this.ws();
-
-    // Check for comparison operators
+    const {comparison, existence} = Ast.expression;
     if (this.is('==')) {
       this.skip(2);
       this.ws();
       const right = this.parseValueExpression();
-      return {
-        type: 'comparison',
-        operator: '==',
-        left,
-        right,
-      } as types.ComparisonExpression;
+      return comparison('==', left, right);
     } else if (this.is('!=')) {
       this.skip(2);
       this.ws();
       const right = this.parseValueExpression();
-      return {
-        type: 'comparison',
-        operator: '!=',
-        left,
-        right,
-      } as types.ComparisonExpression;
+      return comparison('!=', left, right);
     } else if (this.is('<=')) {
       this.skip(2);
       this.ws();
       const right = this.parseValueExpression();
-      return {
-        type: 'comparison',
-        operator: '<=',
-        left,
-        right,
-      } as types.ComparisonExpression;
+      return comparison('<=', left, right);
     } else if (this.is('>=')) {
       this.skip(2);
       this.ws();
       const right = this.parseValueExpression();
-      return {
-        type: 'comparison',
-        operator: '>=',
-        left,
-        right,
-      } as types.ComparisonExpression;
+      return comparison('>=', left, right);
     } else if (this.is('<')) {
       this.skip(1);
       this.ws();
       const right = this.parseValueExpression();
-      return {
-        type: 'comparison',
-        operator: '<',
-        left,
-        right,
-      } as types.ComparisonExpression;
+      return comparison('<', left, right);
     } else if (this.is('>')) {
       this.skip(1);
       this.ws();
       const right = this.parseValueExpression();
-      return {
-        type: 'comparison',
-        operator: '>',
-        left,
-        right,
-      } as types.ComparisonExpression;
+      return comparison('>', left, right);
     }
-
-    // If no comparison operator, treat as existence test
-    return {
-      type: 'existence',
-      path: {segments: []}, // This would need the path from the left expression
-    } as types.ExistenceExpression;
+    return existence(Ast.path([])); // TODO: Verify what to do here
   }
 
   private parseValueExpression(): types.ValueExpression {
     this.ws();
-
+    const value = Ast.value;
     if (this.is('@')) {
-      // Current node
       this.skip(1);
-
       if (this.is('.') || this.is('[')) {
-        // Path from current node
         const pathStr = this.parseRelativePath();
-        return {
-          type: 'path',
-          path: this.parse('@' + pathStr).path!,
-        } as types.PathExpression;
+        return value.path(this.parse('@' + pathStr).path!);
       }
-
-      return {type: 'current'} as types.CurrentNodeExpression;
-    } else if (this.is('$')) {
-      // Root node path
+      return value.current();
+    } else if (this.is('$')) { // Root node path
       const pathStr = this.parseRelativePath();
-      return {
-        type: 'path',
-        path: this.parse('$' + pathStr).path!,
-      } as types.PathExpression;
-    } else if (this.is("'") || this.is('"')) {
-      // String literal
-      const value = this.parseString();
-      return {
-        type: 'literal',
-        value,
-      } as types.LiteralExpression;
-    } else if (this.match(/[0-9-]/)) {
-      // Number literal
-      const value = this.parseNumber();
-      return {
-        type: 'literal',
-        value,
-      } as types.LiteralExpression;
+      return value.path(this.parse('$' + pathStr).path!);
+    } else if (this.is("'") || this.is('"')) { // String literal
+      return value.literal(this.parseString());
+    } else if (this.match(/[0-9-]/)) { // Number literal
+      return value.literal(this.parseNumber());
     } else if (this.is('true')) {
       this.skip(4);
-      return {
-        type: 'literal',
-        value: true,
-      } as types.LiteralExpression;
+      return value.literal(true);
     } else if (this.is('false')) {
       this.skip(5);
-      return {
-        type: 'literal',
-        value: false,
-      } as types.LiteralExpression;
+      return value.literal(false);
     } else if (this.is('null')) {
       this.skip(4);
-      return {
-        type: 'literal',
-        value: null,
-      } as types.LiteralExpression;
+      return value.literal(null);
     }
-
     throw new Error('Expected value expression');
   }
 
   private parseRelativePath(): string {
     const start = this.pos;
     let depth = 0;
-
     while (!this.eof()) {
       const char = this.peek() as string;
       if (char === '[') {
@@ -414,49 +336,27 @@ export class JsonPathParser extends Parser {
       }
       this.skip(1);
     }
-
     return this.str.slice(start, this.pos);
   }
 
   private parseIdentifier(): string {
     const start = this.pos;
-
-    if (!this.match(/[a-zA-Z_]/)) {
-      throw new Error('Expected identifier');
-    }
-
-    while (this.match(/[a-zA-Z0-9_]/)) {
-      this.skip(1);
-    }
-
+    if (!this.match(/[a-zA-Z_]/)) throw new Error('Expected identifier');
+    while (this.match(/[a-zA-Z0-9_]/)) this.skip(1);
     return this.str.slice(start, this.pos);
   }
 
   private parseString(): string {
     const quote = this.peek();
-    if (quote !== "'" && quote !== '"') {
-      throw new Error('Expected string literal');
-    }
-
+    if (quote !== "'" && quote !== '"') throw new Error('Expected string literal');
     this.skip(1); // Skip opening quote
     const start = this.pos;
-
-    while (!this.eof() && !this.is(quote)) {
-      if (this.is('\\')) {
-        this.skip(2); // Skip escape sequence
-      } else {
-        this.skip(1);
-      }
-    }
-
-    if (this.eof()) {
-      throw new Error('Unterminated string literal');
-    }
-
+    while (!this.eof() && !this.is(quote))
+      if (this.is('\\')) this.skip(2); // Skip escape sequence
+      else this.skip(1);
+    if (this.eof()) throw new Error('Unterminated string literal');
     const value = this.str.slice(start, this.pos);
     this.skip(1); // Skip closing quote
-
-    // Process escape sequences
     return value.replace(/\\./g, (match: string) => {
       switch (match[1]) {
         case 'n':
