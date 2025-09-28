@@ -4,6 +4,7 @@
  */
 
 import {Parser} from './Parser';
+import {Ast} from './ast';
 import type * as types from './types';
 
 export class JsonPathParser extends Parser {
@@ -24,10 +25,7 @@ export class JsonPathParser extends Parser {
     try {
       this.reset(pathStr);
       const path = this.parseJSONPath();
-      return {
-        success: true,
-        path,
-      };
+      return {success: true, path};
     } catch (error) {
       return {
         success: false,
@@ -57,7 +55,7 @@ export class JsonPathParser extends Parser {
       segments.push(segment);
     }
 
-    return {segments};
+    return Ast.path(segments);
   }
 
   private parsePathSegment(): types.PathSegment {
@@ -85,11 +83,11 @@ export class JsonPathParser extends Parser {
       if (this.is('*')) {
         // Wildcard
         this.skip(1);
-        selectors.push({type: 'wildcard'} as types.WildcardSelector);
+        selectors.push(Ast.selector.wildcard());
       } else {
         // Named selector
         const name = this.parseIdentifier();
-        selectors.push({type: 'name', name} as types.NamedSelector);
+        selectors.push(Ast.selector.named(name));
       }
     } else if (this.is('[')) {
       // Bracket notation: [index], ['name'], [*], [start:end], [a,b,c] etc.
@@ -121,27 +119,22 @@ export class JsonPathParser extends Parser {
       // After recursive descent, we can have an identifier or wildcard
       if (this.is('*')) {
         this.skip(1);
-        selectors.push({type: 'wildcard'} as types.WildcardSelector);
+        selectors.push(Ast.selector.wildcard());
       } else {
         const name = this.parseIdentifier();
-        selectors.push({type: 'name', name} as types.NamedSelector);
+        selectors.push(Ast.selector.named(name));
       }
     } else {
       throw new Error('Expected . or [ to start path segment');
     }
 
     if (recursive && selectors.length === 1) {
-      return {
-        selectors: [
-          {
-            type: 'recursive-descent',
-            selector: selectors[0],
-          } as types.RecursiveDescentSelector,
-        ],
-      };
+      return Ast.segment([
+        Ast.selector.recursiveDescent(selectors[0])
+      ]);
     }
 
-    return {selectors, recursive: recursive || undefined};
+    return Ast.segment(selectors, recursive || undefined);
   }
 
   private parseBracketSelector(): types.AnySelector {
@@ -150,7 +143,7 @@ export class JsonPathParser extends Parser {
     if (this.is('*')) {
       // Wildcard
       this.skip(1);
-      return {type: 'wildcard'} as types.WildcardSelector;
+      return Ast.selector.wildcard();
     } else if (this.is('?')) {
       // Filter expression - simplified implementation for now
       this.skip(1); // Skip ?
@@ -181,16 +174,13 @@ export class JsonPathParser extends Parser {
       }
 
       // Create a simple filter expression
-      const expression: types.FilterExpression = {
-        type: 'existence',
-        path: {segments: []},
-      } as types.ExistenceExpression;
+      const expression = Ast.expression.existence(Ast.path([]));
 
-      return {type: 'filter', expression} as types.FilterSelector;
+      return Ast.selector.filter(expression);
     } else if (this.is("'") || this.is('"')) {
       // Quoted string selector
       const name = this.parseString();
-      return {type: 'name', name} as types.NamedSelector;
+      return Ast.selector.named(name);
     } else {
       // Number or slice
       let first: number | undefined;
@@ -220,18 +210,13 @@ export class JsonPathParser extends Parser {
           }
         }
 
-        return {
-          type: 'slice',
-          start: first,
-          end,
-          step,
-        } as types.SliceSelector;
+        return Ast.selector.slice(first, end, step);
       } else {
         // Index selector
         if (first === undefined) {
           throw new Error('Expected index or slice');
         }
-        return {type: 'index', index: first} as types.IndexSelector;
+        return Ast.selector.index(first);
       }
     }
   }
