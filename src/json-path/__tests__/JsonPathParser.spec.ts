@@ -479,6 +479,59 @@ describe('JsonPathParser', () => {
       }
     });
 
+    test('should parse existence filters with complex paths', () => {
+      const tests = [
+        {expr: '$[?@.nested.property]', path: ['nested', 'property']},
+        {expr: '$[?@.items[0]]', path: [['items', 0]]},
+        {expr: '$[?@.data.values[*].name]', path: ['data', 'values', '*', 'name']},
+      ];
+
+      for (const {expr, path} of tests) {
+        const result = JsonPathParser.parse(expr);
+        expect(result.success).toBe(true);
+        
+        const filterSelector = result.path?.segments[0]?.selectors[0];
+        expect(filterSelector?.type).toBe('filter');
+        expect((filterSelector as any).expression.type).toBe('existence');
+        
+        const existencePath = (filterSelector as any).expression.path;
+        expect(existencePath.segments.length).toBeGreaterThan(0);
+      }
+    });
+
+    test('should parse existence filters with bracket notation', () => {
+      const tests = [
+        '$[?@["key with spaces"]]',
+        '$[?@[\'single-quotes\']]',
+        '$[?@[0].name]',
+        '$[?@[-1]]',
+      ];
+
+      for (const expr of tests) {
+        const result = JsonPathParser.parse(expr);
+        expect(result.success).toBe(true);
+        
+        const filterSelector = result.path?.segments[0]?.selectors[0];
+        expect(filterSelector?.type).toBe('filter');
+        expect((filterSelector as any).expression.type).toBe('existence');
+      }
+    });
+
+    test('should parse combined existence and comparison filters', () => {
+      const result = JsonPathParser.parse('$[?@.isbn && @.price < 20]');
+      expect(result.success).toBe(true);
+      
+      const filterSelector = result.path?.segments[0]?.selectors[0];
+      expect(filterSelector?.type).toBe('filter');
+      expect((filterSelector as any).expression.type).toBe('logical');
+      expect((filterSelector as any).expression.operator).toBe('&&');
+      
+      // Left side should be existence
+      expect((filterSelector as any).expression.left.type).toBe('existence');
+      // Right side should be comparison
+      expect((filterSelector as any).expression.right.type).toBe('comparison');
+    });
+
     test('should parse function expressions', () => {
       const tests = [
         '$[?length(@.name)]',
@@ -783,6 +836,49 @@ describe('JsonPathParser', () => {
       expect(selector.type).toBe('slice');
       expect(selector.start).toBe(0);
       expect(selector.end).toBe(2);
+    });
+
+    test('should parse "$..book[?@.isbn]" - existence filter with recursive descent', () => {
+      const result = JsonPathParser.parse('$..book[?@.isbn]');
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(2);
+
+      // First segment: ..book (recursive descent)
+      const recursiveSegment = result.path?.segments[0];
+      expect(recursiveSegment?.selectors).toHaveLength(1);
+      const recursiveSelector = recursiveSegment?.selectors[0];
+      expect(recursiveSelector?.type).toBe('recursive-descent');
+      expect((recursiveSelector as any).selector).toMatchObject({type: 'name', name: 'book'});
+
+      // Second segment: [?@.isbn] (filter)
+      const filterSegment = result.path?.segments[1];
+      expect(filterSegment?.selectors).toHaveLength(1);
+      const filterSelector = filterSegment?.selectors[0];
+      expect(filterSelector?.type).toBe('filter');
+      expect((filterSelector as any).expression.type).toBe('existence');
+      
+      // Check the existence expression path
+      const existencePath = (filterSelector as any).expression.path;
+      expect(existencePath.segments).toHaveLength(1);
+      expect(existencePath.segments[0].selectors[0]).toMatchObject({type: 'name', name: 'isbn'});
+    });
+
+    test('should parse "$..book[?@.price<10]" - comparison filter with recursive descent', () => {
+      const result = JsonPathParser.parse('$..book[?@.price<10]');
+      expect(result.success).toBe(true);
+      expect(result.path?.segments).toHaveLength(2);
+
+      // First segment: ..book (recursive descent)
+      const recursiveSegment = result.path?.segments[0];
+      expect(recursiveSegment?.selectors[0]?.type).toBe('recursive-descent');
+
+      // Second segment: [?@.price<10] (filter)
+      const filterSegment = result.path?.segments[1];
+      const filterSelector = filterSegment?.selectors[0];
+      expect(filterSelector?.type).toBe('filter');
+      expect((filterSelector as any).expression.type).toBe('comparison');
+      expect((filterSelector as any).expression.operator).toBe('<');
+      expect((filterSelector as any).expression.right.value).toBe(10);
     });
   });
 

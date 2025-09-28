@@ -195,7 +195,7 @@ describe('JsonPathEval', () => {
       expect((result[0].data as any).b).toBe('k');
     });
 
-    test.skip('existence filter - not yet supported by parser', () => {
+    test('existence filter', () => {
       const expr = '$.a[?@.b]';
       const ast = JsonPathParser.parse(expr);
       const evaluator = new JsonPathEval(ast.path!, complexData);
@@ -387,7 +387,7 @@ describe('JsonPathEval', () => {
       expect((result[1].data as any).title).toBe("Sword of Honour");
     });
 
-    test.skip('$..book[?@.isbn] - all books with an ISBN number - not yet supported by parser', () => {
+    test('$..book[?@.isbn] - all books with an ISBN number', () => {
       const expr = '$..book[?@.isbn]';
       const ast = JsonPathParser.parse(expr);
       const evaluator = new JsonPathEval(ast.path!, bookstore);
