@@ -308,7 +308,7 @@ describe('JsonPathParser', () => {
   });
 
   describe('Filter expressions', () => {
-    test.skip('should parse simple filter', () => {
+    test('should parse simple comparison filter', () => {
       const result = JsonPathParser.parse('$[?(@.price < 10)]');
       expect(result).toMatchObject<ParseResult>({
         success: true,
@@ -356,6 +356,135 @@ describe('JsonPathParser', () => {
 
       const selector = result.path?.segments[0]?.selectors[0];
       expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('comparison');
+      expect((selector as any)?.expression.operator).toBe('==');
+    });
+
+    test('should parse filter with all comparison operators', () => {
+      const tests = [
+        { expr: '$[?(@.price == 10)]', op: '==' },
+        { expr: '$[?(@.price != 10)]', op: '!=' },
+        { expr: '$[?(@.price < 10)]', op: '<' },
+        { expr: '$[?(@.price <= 10)]', op: '<=' },
+        { expr: '$[?(@.price > 10)]', op: '>' },
+        { expr: '$[?(@.price >= 10)]', op: '>=' },
+      ];
+
+      tests.forEach(({expr, op}) => {
+        const result = JsonPathParser.parse(expr);
+        expect(result.success).toBe(true);
+        const selector = result.path?.segments[0]?.selectors[0];
+        expect(selector?.type).toBe('filter');
+        expect((selector as any)?.expression.type).toBe('comparison');
+        expect((selector as any)?.expression.operator).toBe(op);
+      });
+    });
+
+    test('should parse filter with logical AND', () => {
+      const result = JsonPathParser.parse('$[?(@.price < 10 && @.author == "Tolkien")]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('logical');
+      expect((selector as any)?.expression.operator).toBe('&&');
+    });
+
+    test('should parse filter with logical OR', () => {
+      const result = JsonPathParser.parse('$[?(@.price < 10 || @.price > 100)]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('logical');
+      expect((selector as any)?.expression.operator).toBe('||');
+    });
+
+    test('should parse filter with negation', () => {
+      const result = JsonPathParser.parse('$[?(!@.isbn)]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('negation');
+    });
+
+    test('should parse filter with parentheses', () => {
+      const result = JsonPathParser.parse('$[?((@.price < 10) && (@.category == "fiction"))]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('logical');
+    });
+
+    test('should parse existence test filter', () => {
+      const result = JsonPathParser.parse('$[?(@.isbn)]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('existence');
+    });
+
+    test('should parse filter with different literal types', () => {
+      const tests = [
+        { expr: '$[?(@.name == "test")]', value: 'test' },
+        { expr: "$[?(@.name == 'test')]", value: 'test' },
+        { expr: '$[?(@.price == 42)]', value: 42 },
+        { expr: '$[?(@.price == 3.14)]', value: 3.14 },
+        { expr: '$[?(@.active == true)]', value: true },
+        { expr: '$[?(@.active == false)]', value: false },
+        { expr: '$[?(@.value == null)]', value: null },
+      ];
+
+      tests.forEach(({expr, value}) => {
+        const result = JsonPathParser.parse(expr);
+        expect(result.success).toBe(true);
+        const selector = result.path?.segments[0]?.selectors[0];
+        expect((selector as any)?.expression.right.value).toEqual(value);
+      });
+    });
+
+    test('should parse filter with complex path expressions', () => {
+      const result = JsonPathParser.parse('$[?(@.book[0].author == "Tolkien")]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('comparison');
+      
+      const leftPath = (selector as any)?.expression.left.path;
+      expect(leftPath.segments).toHaveLength(3);
+      expect(leftPath.segments[0].selectors[0]).toMatchObject({type: 'name', name: 'book'});
+      expect(leftPath.segments[1].selectors[0]).toMatchObject({type: 'index', index: 0});
+      expect(leftPath.segments[2].selectors[0]).toMatchObject({type: 'name', name: 'author'});
+    });
+
+    test('should parse filter with function expressions', () => {
+      const tests = [
+        '$[?length(@.name) > 5]',
+        '$[?count(@.items) == 3]',
+        '$[?match(@.email, ".*@example\\.com")]',
+        '$[?search(@.description, "test")]',
+      ];
+
+      tests.forEach(expr => {
+        const result = JsonPathParser.parse(expr);
+        expect(result.success).toBe(true);
+        const selector = result.path?.segments[0]?.selectors[0];
+        expect(selector?.type).toBe('filter');
+      });
+    });
+
+    test('should parse complex nested filter expressions', () => {
+      const result = JsonPathParser.parse('$[?((@.price < 10 || @.price > 100) && @.category == "book")]');
+      expect(result.success).toBe(true);
+      
+      const selector = result.path?.segments[0]?.selectors[0];
+      expect(selector?.type).toBe('filter');
+      expect((selector as any)?.expression.type).toBe('logical');
+      expect((selector as any)?.expression.operator).toBe('&&');
     });
   });
 

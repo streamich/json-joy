@@ -29,6 +29,7 @@ export class Ast {
     public static root = (): types.RootNodeExpression => new RootNodeExpression();
     public static literal = (value: string | number | boolean | null): types.LiteralExpression => new LiteralExpression(value);
     public static path = (path: types.JSONPath): types.PathExpression => new PathExpression(path);
+    public static function = (name: string, args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[]): types.FunctionExpression => new FunctionExpression(name, args);
   };
 }
 

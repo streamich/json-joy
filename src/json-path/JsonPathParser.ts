@@ -145,37 +145,28 @@ export class JsonPathParser extends Parser {
       this.skip(1);
       return Ast.selector.wildcard();
     } else if (this.is('?')) {
-      // Filter expression - simplified implementation for now
+      // Filter expression
       this.skip(1); // Skip ?
       this.ws();
-      if (!this.is('(')) {
-        throw new Error('Expected ( after ?');
+      
+      // Parentheses are optional according to RFC 9535, but commonly used
+      let hasParens = false;
+      if (this.is('(')) {
+        hasParens = true;
+        this.skip(1);
+        this.ws();
       }
-
-      // For now, just parse the entire filter as one block
-      let parenCount = 0;
-      const start = this.pos;
-      while (!this.eof()) {
-        const char = this.peek() as string;
-        if (char === '(') {
-          parenCount++;
-        } else if (char === ')') {
-          parenCount--;
-          if (parenCount === 0) {
-            this.skip(1); // Skip final )
-            break;
-          }
+      
+      const expression = this.parseFilterExpression();
+      
+      if (hasParens) {
+        this.ws();
+        if (!this.is(')')) {
+          throw new Error('Expected ) to close filter expression');
         }
         this.skip(1);
       }
-
-      if (parenCount > 0) {
-        throw new Error('Expected ) to close filter expression');
-      }
-
-      // Create a simple filter expression
-      const expression = Ast.expression.existence(Ast.path([]));
-
+      
       return Ast.selector.filter(expression);
     } else if (this.is("'") || this.is('"')) {
       // Quoted string selector
@@ -227,12 +218,14 @@ export class JsonPathParser extends Parser {
 
   private parseLogicalOrExpression(): types.FilterExpression {
     let left = this.parseLogicalAndExpression();
+    this.ws();
 
     while (this.is('||')) {
       this.skip(2);
       this.ws();
       const right = this.parseLogicalAndExpression();
       left = Ast.expression.logical('||', left, right);
+      this.ws();
     }
 
     return left;
@@ -240,68 +233,158 @@ export class JsonPathParser extends Parser {
 
   private parseLogicalAndExpression(): types.FilterExpression {
     let left = this.parseComparisonExpression();
+    this.ws();
 
     while (this.is('&&')) {
       this.skip(2);
       this.ws();
       const right = this.parseComparisonExpression();
       left = Ast.expression.logical('&&', left, right);
+      this.ws();
     }
 
     return left;
   }
 
   private parseComparisonExpression(): types.FilterExpression {
+    return this.parseUnaryExpression();
+  }
+
+  private parseUnaryExpression(): types.FilterExpression {
+    this.ws();
+    if (this.is('!')) { // Handle logical NOT operator
+      this.skip(1);
+      this.ws();
+      const expression = this.parseUnaryExpression();
+      return Ast.expression.negation(expression);
+    }
+    if (this.is('(')) { // Handle parenthesized expressions
+      this.skip(1);
+      this.ws();
+      const expression = this.parseFilterExpression();
+      this.ws();
+      if (!this.is(')')) {
+        throw new Error('Expected ) to close parenthesized expression');
+      }
+      this.skip(1);
+      return Ast.expression.paren(expression);
+    }
+    return this.parsePrimaryExpression();
+  }
+  
+  private parsePrimaryExpression(): types.FilterExpression {
     const left = this.parseValueExpression();
     this.ws();
-    const {comparison, existence} = Ast.expression;
+    if (this.isComparisonOperator()) {
+      const operator = this.parseComparisonOperator();
+      this.ws();
+      const right = this.parseValueExpression();
+      return Ast.expression.comparison(operator, left, right);
+    }
+    // If no comparison operator, this is an existence test
+    if (left.type === 'path') {
+      return Ast.expression.existence(left.path);
+    } else if (left.type === 'current') {
+      // @  by itself is an existence test for current node
+      return Ast.expression.existence(Ast.path([]));
+    } else if (left.type === 'function') {
+      // Function expressions can be used as test expressions (e.g., $[?match(@.name, "pattern")])
+      return left as types.FilterExpression;
+    }
+    // If no comparison operator, treat as existence test
+    return Ast.expression.existence(Ast.path([])); // TODO: implement proper existence test with the path
+  }
+  
+  private parseFunctionName(): string {
+    const start = this.pos;
+    if (!this.match(/[a-z]/)) throw new Error('Expected function name');
+    while (this.match(/[a-zA-Z0-9_]/)) this.skip(1);
+    return this.str.slice(start, this.pos);
+  }
+  
+  private parseFunctionExpression(): types.FunctionExpression {
+    const name = this.parseFunctionName();
+    this.ws();
+    if (!this.is('(')) throw new Error('Expected "(" after function name');
+    this.skip(1); // Skip (
+    this.ws();
+
+    const args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[] = [];
+    if (!this.is(')')) {
+      do {
+        this.ws();
+        // Try to parse as value expression first
+        const arg = this.parseValueExpression();
+        args.push(arg);
+        this.ws();
+        if (this.is(',')) {
+          this.skip(1);
+          this.ws();
+        } else break;
+      } while (!this.eof() && !this.is(')'));
+    }
+    this.ws();
+    if (!this.is(')')) throw new Error('Expected ")" to close function arguments');
+    this.skip(1);
+    return Ast.expression.function(name, args);
+  }
+  
+  private isComparisonOperator(): boolean {
+    return this.is('==') || this.is('!=') || this.is('<=') || this.is('>=') || this.is('<') || this.is('>');
+  }
+  
+  private parseComparisonOperator(): types.ComparisonExpression['operator'] {
     if (this.is('==')) {
       this.skip(2);
-      this.ws();
-      const right = this.parseValueExpression();
-      return comparison('==', left, right);
+      return '==';
     } else if (this.is('!=')) {
       this.skip(2);
-      this.ws();
-      const right = this.parseValueExpression();
-      return comparison('!=', left, right);
+      return '!=';
     } else if (this.is('<=')) {
       this.skip(2);
-      this.ws();
-      const right = this.parseValueExpression();
-      return comparison('<=', left, right);
+      return '<=';
     } else if (this.is('>=')) {
       this.skip(2);
-      this.ws();
-      const right = this.parseValueExpression();
-      return comparison('>=', left, right);
+      return '>=';
     } else if (this.is('<')) {
       this.skip(1);
-      this.ws();
-      const right = this.parseValueExpression();
-      return comparison('<', left, right);
+      return '<';
     } else if (this.is('>')) {
       this.skip(1);
-      this.ws();
-      const right = this.parseValueExpression();
-      return comparison('>', left, right);
+      return '>';
     }
-    return existence(Ast.path([])); // TODO: Verify what to do here
+    throw new Error('Expected comparison operator');
   }
 
   private parseValueExpression(): types.ValueExpression {
     this.ws();
     const value = Ast.value;
+    // Check for function expressions first
+    if (this.match(/[a-z]/)) {
+      const start = this.pos;
+      const name = this.parseFunctionName();
+      this.ws();
+      if (this.is('(')) {
+        // It's a function call - reset and parse as function
+        this.pos = start;
+        const funcExpr = this.parseFunctionExpression();
+        return value.function(funcExpr.name, funcExpr.args);
+      } else {
+        // Reset position, it's not a function
+        this.pos = start;
+      }
+    }
     if (this.is('@')) {
       this.skip(1);
       if (this.is('.') || this.is('[')) {
-        const pathStr = this.parseRelativePath();
-        return value.path(this.parse('@' + pathStr).path!);
+        const segments = this.parsePathSegments();
+        return value.path(Ast.path(segments));
       }
       return value.current();
     } else if (this.is('$')) { // Root node path
-      const pathStr = this.parseRelativePath();
-      return value.path(this.parse('$' + pathStr).path!);
+      this.skip(1);
+      const segments = this.parsePathSegments();
+      return value.path(Ast.path(segments));
     } else if (this.is("'") || this.is('"')) { // String literal
       return value.literal(this.parseString());
     } else if (this.match(/[0-9-]/)) { // Number literal
@@ -317,6 +400,19 @@ export class JsonPathParser extends Parser {
       return value.literal(null);
     }
     throw new Error('Expected value expression');
+  }
+
+  private parsePathSegments(): types.PathSegment[] {
+    const segments: types.PathSegment[] = [];
+    while (!this.eof()) {
+      this.ws();
+      if (this.eof()) break;
+      // Check if we've reached a delimiter that ends the path
+      if (this.is(')') || this.is(',') || this.is('&&') || this.is('||') || this.isComparisonOperator()) break;
+      const segment = this.parsePathSegment();
+      segments.push(segment);
+    }
+    return segments;
   }
 
   private parseRelativePath(): string {
