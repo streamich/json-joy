@@ -3,6 +3,7 @@
  * https://www.rfc-editor.org/rfc/rfc9535.html
  */
 
+import {Parser} from './Parser';
 import type {
   JSONPath,
   PathSegment,
@@ -20,71 +21,15 @@ import type {
   ExistenceExpression,
   ValueExpression,
   CurrentNodeExpression,
-  RootNodeExpression,
   LiteralExpression,
   PathExpression,
-} from '../types';
-
-/**
- * Simple parser for JSONPath strings
- */
-class SimpleParser {
-  public input: string;
-  public pos: number;
-
-  constructor() {
-    this.input = '';
-    this.pos = 0;
-  }
-
-  reset(input: string): void {
-    this.input = input;
-    this.pos = 0;
-  }
-
-  eof(): boolean {
-    return this.pos >= this.input.length;
-  }
-
-  peek(expected?: string | RegExp | number): string | boolean {
-    if (typeof expected === 'number') {
-      // Peek n characters
-      return this.input.substring(this.pos, this.pos + expected) || '';
-    }
-
-    if (this.eof()) return '';
-
-    if (expected === undefined) {
-      return this.input[this.pos];
-    }
-
-    if (typeof expected === 'string') {
-      return this.input.substring(this.pos, this.pos + expected.length) === expected;
-    }
-
-    if (expected instanceof RegExp) {
-      return expected.test(this.input[this.pos]);
-    }
-
-    return false;
-  }
-
-  skip(count: number): void {
-    this.pos += count;
-  }
-
-  skipWhitespace(): void {
-    while (!this.eof() && /\s/.test(this.input[this.pos])) {
-      this.pos++;
-    }
-  }
-}
+} from './types';
 
 export class JSONPathParser {
-  private parser: SimpleParser;
+  private parser: Parser;
 
   constructor() {
-    this.parser = new SimpleParser();
+    this.parser = new Parser();
   }
 
   /**
@@ -111,16 +56,16 @@ export class JSONPathParser {
     const segments: PathSegment[] = [];
 
     // Root path starts with $
-    this.parser.skipWhitespace();
-    if (!this.parser.peek('$')) {
+    this.parser.ws();
+    if (!this.parser.is('$')) {
       throw new Error('JSONPath must start with $');
     }
     this.parser.skip(1); // Skip $
-    this.parser.skipWhitespace(); // Skip whitespace after $
+    this.parser.ws(); // Skip whitespace after $
 
     // Parse segments
     while (!this.parser.eof()) {
-      this.parser.skipWhitespace();
+      this.parser.ws();
       if (this.parser.eof()) break;
 
       const segment = this.parsePathSegment();
@@ -131,10 +76,10 @@ export class JSONPathParser {
   }
 
   private parsePathSegment(): PathSegment {
-    this.parser.skipWhitespace();
+    this.parser.ws();
 
     // Check for recursive descent (..)
-    const recursive = this.parser.peek('..') as boolean;
+    const recursive = this.parser.is('..') as boolean;
     if (recursive) {
       this.parser.skip(2); // Skip ..
       // After .., we should have a selector without requiring . or [
@@ -147,12 +92,12 @@ export class JSONPathParser {
     const selectors: AnySelector[] = [];
 
     // Handle different selector formats
-    if (this.parser.peek('.')) {
+    if (this.parser.is('.')) {
       // Dot notation: .name, .*, etc.
       this.parser.skip(1); // Skip .
-      this.parser.skipWhitespace(); // Skip whitespace after .
+      this.parser.ws(); // Skip whitespace after .
 
-      if (this.parser.peek('*')) {
+      if (this.parser.is('*')) {
         // Wildcard
         this.parser.skip(1);
         selectors.push({type: 'wildcard'} as WildcardSelector);
@@ -161,20 +106,20 @@ export class JSONPathParser {
         const name = this.parseIdentifier();
         selectors.push({type: 'name', name} as NamedSelector);
       }
-    } else if (this.parser.peek('[')) {
+    } else if (this.parser.is('[')) {
       // Bracket notation: [index], ['name'], [*], [start:end], etc.
       this.parser.skip(1); // Skip [
-      this.parser.skipWhitespace();
+      this.parser.ws();
 
-      if (this.parser.peek('*')) {
+      if (this.parser.is('*')) {
         // Wildcard
         this.parser.skip(1);
         selectors.push({type: 'wildcard'} as WildcardSelector);
-      } else if (this.parser.peek('?')) {
+      } else if (this.parser.is('?')) {
         // Filter expression - simplified implementation for now
         this.parser.skip(1); // Skip ?
-        this.parser.skipWhitespace();
-        if (!this.parser.peek('(')) {
+        this.parser.ws();
+        if (!this.parser.is('(')) {
           throw new Error('Expected ( after ?');
         }
 
@@ -206,35 +151,35 @@ export class JSONPathParser {
         } as ExistenceExpression;
 
         selectors.push({type: 'filter', expression} as FilterSelector);
-      } else if (this.parser.peek("'") || this.parser.peek('"')) {
+      } else if (this.parser.is("'") || this.parser.is('"')) {
         // Quoted string selector
         const name = this.parseString();
         selectors.push({type: 'name', name} as NamedSelector);
       } else {
         // Number or slice
         let first: number | undefined;
-        if (!this.parser.peek(':')) {
+        if (!this.parser.is(':')) {
           first = this.parseNumber();
-          this.parser.skipWhitespace();
+          this.parser.ws();
         }
 
-        if (this.parser.peek(':')) {
+        if (this.parser.is(':')) {
           // Slice selector
           this.parser.skip(1); // Skip :
-          this.parser.skipWhitespace();
+          this.parser.ws();
 
           let end: number | undefined;
           let step: number | undefined;
 
-          if (!this.parser.peek(']') && !this.parser.peek(':')) {
+          if (!this.parser.is(']') && !this.parser.is(':')) {
             end = this.parseNumber();
-            this.parser.skipWhitespace();
+            this.parser.ws();
           }
 
-          if (this.parser.peek(':')) {
+          if (this.parser.is(':')) {
             this.parser.skip(1); // Skip :
-            this.parser.skipWhitespace();
-            if (!this.parser.peek(']')) {
+            this.parser.ws();
+            if (!this.parser.is(']')) {
               step = this.parseNumber();
             }
           }
@@ -254,14 +199,14 @@ export class JSONPathParser {
         }
       }
 
-      this.parser.skipWhitespace();
-      if (!this.parser.peek(']')) {
+      this.parser.ws();
+      if (!this.parser.is(']')) {
         throw new Error('Expected ] to close bracket selector');
       }
       this.parser.skip(1); // Skip ]
-    } else if (recursive && this.parser.peek(/[a-zA-Z_*]/)) {
+    } else if (recursive && this.parser.match(/[a-zA-Z_*]/)) {
       // After recursive descent, we can have an identifier or wildcard
-      if (this.parser.peek('*')) {
+      if (this.parser.is('*')) {
         this.parser.skip(1);
         selectors.push({type: 'wildcard'} as WildcardSelector);
       } else {
@@ -293,9 +238,9 @@ export class JSONPathParser {
   private parseLogicalOrExpression(): FilterExpression {
     let left = this.parseLogicalAndExpression();
 
-    while (this.parser.peek('||')) {
+    while (this.parser.is('||')) {
       this.parser.skip(2);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseLogicalAndExpression();
       left = {
         type: 'logical',
@@ -311,9 +256,9 @@ export class JSONPathParser {
   private parseLogicalAndExpression(): FilterExpression {
     let left = this.parseComparisonExpression();
 
-    while (this.parser.peek('&&')) {
+    while (this.parser.is('&&')) {
       this.parser.skip(2);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseComparisonExpression();
       left = {
         type: 'logical',
@@ -328,12 +273,12 @@ export class JSONPathParser {
 
   private parseComparisonExpression(): FilterExpression {
     const left = this.parseValueExpression();
-    this.parser.skipWhitespace();
+    this.parser.ws();
 
     // Check for comparison operators
-    if (this.parser.peek('==')) {
+    if (this.parser.is('==')) {
       this.parser.skip(2);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseValueExpression();
       return {
         type: 'comparison',
@@ -341,9 +286,9 @@ export class JSONPathParser {
         left,
         right,
       } as ComparisonExpression;
-    } else if (this.parser.peek('!=')) {
+    } else if (this.parser.is('!=')) {
       this.parser.skip(2);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseValueExpression();
       return {
         type: 'comparison',
@@ -351,9 +296,9 @@ export class JSONPathParser {
         left,
         right,
       } as ComparisonExpression;
-    } else if (this.parser.peek('<=')) {
+    } else if (this.parser.is('<=')) {
       this.parser.skip(2);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseValueExpression();
       return {
         type: 'comparison',
@@ -361,9 +306,9 @@ export class JSONPathParser {
         left,
         right,
       } as ComparisonExpression;
-    } else if (this.parser.peek('>=')) {
+    } else if (this.parser.is('>=')) {
       this.parser.skip(2);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseValueExpression();
       return {
         type: 'comparison',
@@ -371,9 +316,9 @@ export class JSONPathParser {
         left,
         right,
       } as ComparisonExpression;
-    } else if (this.parser.peek('<')) {
+    } else if (this.parser.is('<')) {
       this.parser.skip(1);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseValueExpression();
       return {
         type: 'comparison',
@@ -381,9 +326,9 @@ export class JSONPathParser {
         left,
         right,
       } as ComparisonExpression;
-    } else if (this.parser.peek('>')) {
+    } else if (this.parser.is('>')) {
       this.parser.skip(1);
-      this.parser.skipWhitespace();
+      this.parser.ws();
       const right = this.parseValueExpression();
       return {
         type: 'comparison',
@@ -401,13 +346,13 @@ export class JSONPathParser {
   }
 
   private parseValueExpression(): ValueExpression {
-    this.parser.skipWhitespace();
+    this.parser.ws();
 
-    if (this.parser.peek('@')) {
+    if (this.parser.is('@')) {
       // Current node
       this.parser.skip(1);
 
-      if (this.parser.peek('.') || this.parser.peek('[')) {
+      if (this.parser.is('.') || this.parser.is('[')) {
         // Path from current node
         const pathStr = this.parseRelativePath();
         return {
@@ -417,40 +362,40 @@ export class JSONPathParser {
       }
 
       return {type: 'current'} as CurrentNodeExpression;
-    } else if (this.parser.peek('$')) {
+    } else if (this.parser.is('$')) {
       // Root node path
       const pathStr = this.parseRelativePath();
       return {
         type: 'path',
         path: this.parse('$' + pathStr).path!,
       } as PathExpression;
-    } else if (this.parser.peek("'") || this.parser.peek('"')) {
+    } else if (this.parser.is("'") || this.parser.is('"')) {
       // String literal
       const value = this.parseString();
       return {
         type: 'literal',
         value,
       } as LiteralExpression;
-    } else if (this.parser.peek(/[0-9-]/)) {
+    } else if (this.parser.match(/[0-9-]/)) {
       // Number literal
       const value = this.parseNumber();
       return {
         type: 'literal',
         value,
       } as LiteralExpression;
-    } else if (this.parser.peek('true')) {
+    } else if (this.parser.is('true')) {
       this.parser.skip(4);
       return {
         type: 'literal',
         value: true,
       } as LiteralExpression;
-    } else if (this.parser.peek('false')) {
+    } else if (this.parser.is('false')) {
       this.parser.skip(5);
       return {
         type: 'literal',
         value: false,
       } as LiteralExpression;
-    } else if (this.parser.peek('null')) {
+    } else if (this.parser.is('null')) {
       this.parser.skip(4);
       return {
         type: 'literal',
@@ -480,21 +425,21 @@ export class JSONPathParser {
       this.parser.skip(1);
     }
 
-    return this.parser.input.slice(start, this.parser.pos);
+    return this.parser.str.slice(start, this.parser.pos);
   }
 
   private parseIdentifier(): string {
     const start = this.parser.pos;
 
-    if (!this.parser.peek(/[a-zA-Z_]/)) {
+    if (!this.parser.match(/[a-zA-Z_]/)) {
       throw new Error('Expected identifier');
     }
 
-    while (this.parser.peek(/[a-zA-Z0-9_]/)) {
+    while (this.parser.match(/[a-zA-Z0-9_]/)) {
       this.parser.skip(1);
     }
 
-    return this.parser.input.slice(start, this.parser.pos);
+    return this.parser.str.slice(start, this.parser.pos);
   }
 
   private parseString(): string {
@@ -506,8 +451,8 @@ export class JSONPathParser {
     this.parser.skip(1); // Skip opening quote
     const start = this.parser.pos;
 
-    while (!this.parser.eof() && !this.parser.peek(quote)) {
-      if (this.parser.peek('\\')) {
+    while (!this.parser.eof() && !this.parser.is(quote)) {
+      if (this.parser.is('\\')) {
         this.parser.skip(2); // Skip escape sequence
       } else {
         this.parser.skip(1);
@@ -518,7 +463,7 @@ export class JSONPathParser {
       throw new Error('Unterminated string literal');
     }
 
-    const value = this.parser.input.slice(start, this.parser.pos);
+    const value = this.parser.str.slice(start, this.parser.pos);
     this.parser.skip(1); // Skip closing quote
 
     // Process escape sequences
@@ -551,46 +496,46 @@ export class JSONPathParser {
   private parseNumber(): number {
     const start = this.parser.pos;
 
-    if (this.parser.peek('-')) {
+    if (this.parser.is('-')) {
       this.parser.skip(1);
     }
 
-    if (!this.parser.peek(/[0-9]/)) {
+    if (!this.parser.match(/[0-9]/)) {
       throw new Error('Expected number');
     }
 
-    if (this.parser.peek('0')) {
+    if (this.parser.is('0')) {
       this.parser.skip(1);
     } else {
-      while (this.parser.peek(/[0-9]/)) {
+      while (this.parser.match(/[0-9]/)) {
         this.parser.skip(1);
       }
     }
 
-    if (this.parser.peek('.')) {
+    if (this.parser.is('.')) {
       this.parser.skip(1);
-      if (!this.parser.peek(/[0-9]/)) {
+      if (!this.parser.match(/[0-9]/)) {
         throw new Error('Expected digit after decimal point');
       }
-      while (this.parser.peek(/[0-9]/)) {
+      while (this.parser.match(/[0-9]/)) {
         this.parser.skip(1);
       }
     }
 
-    if (this.parser.peek(/[eE]/)) {
+    if (this.parser.match(/[eE]/)) {
       this.parser.skip(1);
-      if (this.parser.peek(/[+-]/)) {
+      if (this.parser.match(/[+-]/)) {
         this.parser.skip(1);
       }
-      if (!this.parser.peek(/[0-9]/)) {
+      if (!this.parser.match(/[0-9]/)) {
         throw new Error('Expected digit in exponent');
       }
-      while (this.parser.peek(/[0-9]/)) {
+      while (this.parser.match(/[0-9]/)) {
         this.parser.skip(1);
       }
     }
 
-    const numStr = this.parser.input.slice(start, this.parser.pos);
+    const numStr = this.parser.str.slice(start, this.parser.pos);
     return Number.parseFloat(numStr);
   }
 }

@@ -2,19 +2,19 @@
  * JSONPath parser tests based on RFC 9535
  */
 
-import {parseJSONPath, JSONPathParser} from '../index';
-import type {JSONPath, NamedSelector, IndexSelector, WildcardSelector, SliceSelector} from '../types';
+import {parse} from '../index';
+import type {NamedSelector, IndexSelector, WildcardSelector, SliceSelector} from '../types';
 
 describe('JSONPathParser', () => {
   describe('Basic parsing', () => {
     test('should parse root selector', () => {
-      const result = parseJSONPath('$');
+      const result = parse('$');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(0);
     });
 
     test('should parse dot notation', () => {
-      const result = parseJSONPath('$.name');
+      const result = parse('$.name');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -24,7 +24,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse bracket notation with string', () => {
-      const result = parseJSONPath("$['name']");
+      const result = parse("$['name']");
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -34,7 +34,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse bracket notation with double quotes', () => {
-      const result = parseJSONPath('$["name"]');
+      const result = parse('$["name"]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -44,7 +44,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse array index', () => {
-      const result = parseJSONPath('$[0]');
+      const result = parse('$[0]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -54,7 +54,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse negative array index', () => {
-      const result = parseJSONPath('$[-1]');
+      const result = parse('$[-1]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -64,7 +64,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse wildcard selector', () => {
-      const result = parseJSONPath('$.*');
+      const result = parse('$.*');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -73,7 +73,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse bracket wildcard selector', () => {
-      const result = parseJSONPath('$[*]');
+      const result = parse('$[*]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -84,7 +84,7 @@ describe('JSONPathParser', () => {
 
   describe('Array slicing', () => {
     test('should parse slice with start and end', () => {
-      const result = parseJSONPath('$[1:3]');
+      const result = parse('$[1:3]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -96,7 +96,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse slice with start, end, and step', () => {
-      const result = parseJSONPath('$[1:10:2]');
+      const result = parse('$[1:10:2]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -108,7 +108,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse slice with only start', () => {
-      const result = parseJSONPath('$[2:]');
+      const result = parse('$[2:]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -120,7 +120,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse slice with only end', () => {
-      const result = parseJSONPath('$[:3]');
+      const result = parse('$[:3]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -134,7 +134,7 @@ describe('JSONPathParser', () => {
 
   describe('Complex paths', () => {
     test('should parse multi-segment path', () => {
-      const result = parseJSONPath('$.store.book[0].title');
+      const result = parse('$.store.book[0].title');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(4);
 
@@ -160,7 +160,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse path with mixed notation', () => {
-      const result = parseJSONPath("$.store['book'][0]['title']");
+      const result = parse("$.store['book'][0]['title']");
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(4);
 
@@ -175,7 +175,7 @@ describe('JSONPathParser', () => {
 
   describe('Filter expressions', () => {
     test('should parse simple filter', () => {
-      const result = parseJSONPath('$[?(@.price < 10)]');
+      const result = parse('$[?(@.price < 10)]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -184,7 +184,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse filter with equality', () => {
-      const result = parseJSONPath("$[?(@.author == 'Tolkien')]");
+      const result = parse("$[?(@.author == 'Tolkien')]");
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -233,7 +233,7 @@ describe('JSONPathParser', () => {
     };
 
     test('should parse "$.store.book[*].author"', () => {
-      const result = parseJSONPath('$.store.book[*].author');
+      const result = parse('$.store.book[*].author');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(4);
 
@@ -245,7 +245,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse "$..author"', () => {
-      const result = parseJSONPath('$..author');
+      const result = parse('$..author');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -254,7 +254,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse "$.store.*"', () => {
-      const result = parseJSONPath('$.store.*');
+      const result = parse('$.store.*');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(2);
 
@@ -266,12 +266,12 @@ describe('JSONPathParser', () => {
     test('should parse "$.store.book[0,1]" (union - not implemented yet)', () => {
       // This would be for union selectors, which we haven't implemented yet
       // Just test that it doesn't crash
-      const result = parseJSONPath('$.store.book[0]');
+      const result = parse('$.store.book[0]');
       expect(result.success).toBe(true);
     });
 
     test('should parse "$.store.book[-1]"', () => {
-      const result = parseJSONPath('$.store.book[-1]');
+      const result = parse('$.store.book[-1]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(3);
 
@@ -281,7 +281,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should parse "$.store.book[0:2]"', () => {
-      const result = parseJSONPath('$.store.book[0:2]');
+      const result = parse('$.store.book[0:2]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(3);
 
@@ -294,24 +294,24 @@ describe('JSONPathParser', () => {
 
   describe('Error handling', () => {
     test('should fail on invalid JSONPath without $', () => {
-      const result = parseJSONPath('.name');
+      const result = parse('.name');
       expect(result.success).toBe(false);
       expect(result.error).toContain('JSONPath must start with $');
     });
 
     test('should fail on unterminated string', () => {
-      const result = parseJSONPath("$['unterminated");
+      const result = parse("$['unterminated");
       expect(result.success).toBe(false);
       expect(result.error).toContain('Unterminated string literal');
     });
 
     test('should fail on invalid bracket notation', () => {
-      const result = parseJSONPath('$[invalid]');
+      const result = parse('$[invalid]');
       expect(result.success).toBe(false);
     });
 
     test('should fail on unclosed bracket', () => {
-      const result = parseJSONPath('$[0');
+      const result = parse('$[0');
       expect(result.success).toBe(false);
       expect(result.error).toContain('Expected ] to close bracket selector');
     });
@@ -319,7 +319,7 @@ describe('JSONPathParser', () => {
 
   describe('Edge cases', () => {
     test('should handle empty string keys', () => {
-      const result = parseJSONPath("$['']");
+      const result = parse("$['']");
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -329,7 +329,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should handle keys with special characters', () => {
-      const result = parseJSONPath("$['key with spaces']");
+      const result = parse("$['key with spaces']");
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -339,7 +339,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should handle escaped characters in strings', () => {
-      const result = parseJSONPath("$['key\\'with\\'quotes']");
+      const result = parse("$['key\\'with\\'quotes']");
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -349,7 +349,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should handle zero index', () => {
-      const result = parseJSONPath('$[0]');
+      const result = parse('$[0]');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
@@ -359,7 +359,7 @@ describe('JSONPathParser', () => {
     });
 
     test('should handle whitespace', () => {
-      const result = parseJSONPath('$ . name [ 0 ] ');
+      const result = parse('$ . name [ 0 ] ');
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(2);
     });
