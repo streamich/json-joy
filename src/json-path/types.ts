@@ -174,3 +174,5 @@ export interface ParseResult {
   error?: string;
   position?: number;
 }
+
+export type NormalizedPath = (string | number)[];
