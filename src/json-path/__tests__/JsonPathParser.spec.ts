@@ -479,15 +479,103 @@ describe('JsonPathParser', () => {
 
     test('should parse complex nested filter expressions', () => {
       const result = JsonPathParser.parse('$[?((@.price < 10 || @.price > 100) && @.category == "book")]');
-      expect(result.success).toBe(true);
-      
-      const selector = result.path?.segments[0]?.selectors[0];
-      expect(selector?.type).toBe('filter');
-      expect((selector as any)?.expression.type).toBe('logical');
-      expect((selector as any)?.expression.operator).toBe('&&');
+      expect(result).toMatchObject({
+        success: true,
+        path: {
+          segments: [
+            {
+              selectors: [
+                {
+                  type: 'filter',
+                  expression: {
+                    type: 'logical',
+                    operator: '&&',
+                    left: {
+                      type: 'paren',
+                      expression: {
+                        type: 'logical',
+                        operator: '||',
+                        left: {
+                          type: 'comparison',
+                          operator: '<',
+                          left: {
+                            type: 'path',
+                            path: {
+                              segments: [
+                                {
+                                  selectors: [
+                                    {
+                                      type: 'name',
+                                      name: 'price',
+                                    },
+                                  ],
+                                },
+                              ],
+                            }
+                          },
+                          right: {
+                            type: 'literal',
+                            value: 10,
+                          },
+                        },
+                        right: {
+                          type: 'comparison',
+                          operator: '>',
+                          left: {
+                            type: 'path',
+                            path: {
+                              segments: [
+                                {
+                                  selectors: [
+                                    {
+                                      type: 'name',
+                                      name: 'price',
+                                    },
+                                  ],
+                                },
+                              ],
+                            },
+                          },
+                          right: {
+                            type: 'literal',
+                            value: 100,
+                          },
+                        },
+                      },
+                    },
+                    right: {
+                      type: 'comparison',
+                      operator: '==',
+                      left: {
+                        type: 'path',
+                        path: {
+                          segments: [
+                            {
+                              selectors: [
+                                {
+                                  type: 'name',
+                                  name: 'category',
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                      right: {
+                        type: 'literal',
+                        value: 'book',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
     });
   });
-
+      
   describe('RFC 9535 examples', () => {
     test('should parse "$.store.book[*].author"', () => {
       const result = JsonPathParser.parse('$.store.book[*].author');
