@@ -1,3 +1,13 @@
+# [17.54.0](https://github.com/streamich/json-joy/compare/v17.53.0...v17.54.0) (2025-09-28)
+
+
+### Features
+
+* 🎸 add .run() method ([5543370](https://github.com/streamich/json-joy/commit/5543370f8fb7edaf37e13248e2e70a9981ed01f9))
+* 🎸 add support for existence filters ([f54bba9](https://github.com/streamich/json-joy/commit/f54bba93c3f58717cca39dbcc742ae65bcd4706e))
+* 🎸 progress on evaluator implementation ([5bf437c](https://github.com/streamich/json-joy/commit/5bf437c68209830202d310d2a56e46a6d1879398))
+* 🎸 start JSONPath evaluator implementation ([1bd98be](https://github.com/streamich/json-joy/commit/1bd98bef7b472d99cd523d37ff807a07980c94e3))
+
 # [17.53.0](https://github.com/streamich/json-joy/compare/v17.52.0...v17.53.0) (2025-09-28)
 
 
