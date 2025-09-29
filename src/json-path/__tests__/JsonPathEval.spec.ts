@@ -1,5 +1,5 @@
 import {JsonPathEval} from '../JsonPathEval';
-import {arrayData, bookstore, complexData, data0} from './fixtures';
+import {arrayData, bookstore, complexData, data0, testData} from './fixtures';
 
 describe('JsonPathEval', () => {
   describe('named selector', () => {
@@ -326,6 +326,268 @@ describe('JsonPathEval', () => {
       const titles = result.map((r) => (r.data as any).title);
       expect(titles).toContain('Sayings of the Century');
       expect(titles).toContain('Moby Dick');
+    });
+  });
+
+  describe('JSONPath function extensions (RFC 9535)', () => {
+    describe('length() function', () => {
+      test('length of string', () => {
+        const expr = '$[?length(@.info.name) == 10]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('length of array', () => {
+        const expr = '$[?length(@.authors) == 3]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('length of object', () => {
+        const expr = '$[?length(@.info.contacts) == 2]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('length of array with books >= 4', () => {
+        const expr = '$[?length(@.store.book) >= 4]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('length with non-existent property returns nothing', () => {
+        const expr = '$[?length(@.nonexistent) == 0]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('length of primitive values returns nothing', () => {
+        const expr = '$[?length(@.store.bicycle.price) == 0]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('length function with Unicode characters', () => {
+        const unicodeData = { text: 'Hello 🌍 World' };
+        const expr = '$[?length(@.text) == 13]';
+        const result = JsonPathEval.run(expr, unicodeData);
+        expect(result.length).toBe(1);
+      });
+    });
+
+    describe('count() function', () => {
+      test('count all books', () => {
+        const expr = '$[?count(@.store.book[*]) == 4]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('count books with ISBN', () => {
+        const expr = '$[?count(@.store.book[?@.isbn]) == 2]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('count all descendants', () => {
+        const expr = '$[?count(@..*) > 20]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('count with empty result', () => {
+        const expr = '$[?count(@.nonexistent[*]) == 0]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('count specific property occurrences', () => {
+        const expr = '$[?count(@..price) == 5]'; // 4 books + 1 bicycle
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+    });
+
+    describe('match() function', () => {
+      test('match exact string pattern', () => {
+        const expr = '$.store.book[?match(@.category, "fiction")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(3); // Three fiction books
+      });
+
+      test('match with character class', () => {
+        const expr = '$.store.book[?match(@.title, ".*Lord.*")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+        expect((result[0].data as any).title).toBe('The Lord of the Rings');
+      });
+
+      test('match ISBN pattern', () => {
+        const expr = '$.store.book[?match(@.isbn, "[0-9]+-[0-9]+-[0-9]+-[0-9]+")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(2);
+      });
+
+      test('match case sensitive', () => {
+        const expr = '$.store.book[?match(@.category, "Fiction")]'; // Capital F
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('match with anchors', () => {
+        const expr = '$.store.book[?match(@.author, ".*Tolkien")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('match non-string returns false', () => {
+        const expr = '$.store.book[?match(@.price, "12\\.99")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0); // price is number, not string
+      });
+
+      test('match invalid regex returns false', () => {
+        const expr = '$.store.book[?match(@.title, "[")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+    });
+
+    describe('search() function', () => {
+      test('search substring in title', () => {
+        const expr = '$.store.book[?search(@.title, "Lord")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+        expect((result[0].data as any).title).toBe('The Lord of the Rings');
+      });
+
+      test('search pattern in author names', () => {
+        const expr = '$.store.book[?search(@.author, "[JE].*")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(2); // J. R. R. Tolkien and Evelyn Waugh
+      });
+
+      test('search with character classes', () => {
+        const expr = '$.store.book[?search(@.title, "[Ss]word")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+        expect((result[0].data as any).title).toBe('Sword of Honour');
+      });
+
+      test('search digit pattern', () => {
+        const expr = '$.store.book[?search(@.isbn, "[0-9]+")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(2);
+      });
+
+      test('search case insensitive-like pattern', () => {
+        const expr = '$.store.book[?search(@.category, "[Ff]iction")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(3);
+      });
+
+      test('search non-string returns false', () => {
+        const expr = '$.store.book[?search(@.price, "99")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('search with word boundaries', () => {
+        const expr = '$.authors[?search(@, "^Bob$")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+        expect(result[0].data).toBe('Bob');
+      });
+    });
+
+    describe('value() function', () => {
+      test('value from single node', () => {
+        const expr = '$[?value(@..color) == "red"]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('value from single price query', () => {
+        const expr = '$.store.book[?value(@.price) < 10]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(2);
+      });
+
+      test('value from multiple nodes returns nothing', () => {
+        const expr = '$[?value(@..price) == 8.95]'; // Multiple prices exist
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0); // Should return nothing for multiple nodes
+      });
+
+      test('value from empty query returns nothing', () => {
+        const expr = '$[?value(@.nonexistent) == null]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('value with specific property', () => {
+        const expr = '$.store.book[?value(@.isbn) != null]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(2);
+      });
+    });
+
+    describe('combined function usage', () => {
+      test('length and count together', () => {
+        const expr = '$[?length(@.authors) == count(@.authors[*])]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('match and search difference', () => {
+        const matchExpr = '$.store.book[?match(@.title, "Lord")]';
+        const searchExpr = '$.store.book[?search(@.title, "Lord")]';
+        
+        const matchResult = JsonPathEval.run(matchExpr, testData);
+        const searchResult = JsonPathEval.run(searchExpr, testData);
+        
+        expect(matchResult.length).toBe(0); // Exact match fails
+        expect(searchResult.length).toBe(1); // Substring search succeeds
+      });
+
+      test('nested function calls', () => {
+        const expr = '$[?count(@.store.book[?length(@.title) > 15]) == 2]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(1);
+      });
+
+      test('value with length filter', () => {
+        const expr = '$.store.book[?length(value(@.title)) > 10]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(3); // All but "Moby Dick"
+      });
+
+      test('functions in logical expressions', () => {
+        const expr = '$.store.book[?length(@.title) > 10 && search(@.category, "fiction")]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(2); // Sword of Honour and The Lord of the Rings
+      });
+    });
+
+    describe('error cases and edge cases', () => {
+      test('functions with wrong argument count', () => {
+        const expr = '$[?length(@.name, @.other) == 5]'; // Wrong arg count
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('unknown function returns false', () => {
+        const expr = '$[?unknown(@.name) == true]';
+        const result = JsonPathEval.run(expr, testData);
+        expect(result.length).toBe(0);
+      });
+
+      test('function with null values', () => {
+        const nullData = { items: [null, '', 0, false] };
+        const expr = '$.items[?length(@) == 0]';
+        const result = JsonPathEval.run(expr, nullData);
+        expect(result.length).toBe(1); // Only empty string has length 0
+        expect(result[0].data).toBe('');
+      });
     });
   });
 });
