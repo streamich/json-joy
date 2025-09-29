@@ -434,6 +434,16 @@ export class JsonPathParser extends Parser {
     this.ws();
     const selectors: types.AnySelector[] = [];
 
+    // Check for recursive descent (..)
+    const recursive = this.is('..') as boolean;
+    if (recursive) {
+      this.skip(2); // Skip ..
+      // After .., we should have a selector without requiring . or [
+      if (this.eof()) {
+        throw new Error('Expected selector after ..');
+      }
+    }
+
     if (this.is('.')) {
       // Dot notation: .name, .*, etc.
       this.skip(1); // Skip .
@@ -474,11 +484,24 @@ export class JsonPathParser extends Parser {
         throw new Error('Expected ] to close bracket selector');
       }
       this.skip(1); // Skip ]
+    } else if (recursive && this.match(/[a-zA-Z_*]/)) {
+      // After recursive descent, we can have an identifier or wildcard
+      if (this.is('*')) {
+        this.skip(1);
+        selectors.push(Ast.selector.wildcard());
+      } else {
+        const name = this.parseIdentifier();
+        selectors.push(Ast.selector.named(name));
+      }
     } else {
       throw new Error('Expected . or [ to start filter path segment');
     }
 
-    return Ast.segment(selectors);
+    if (recursive && selectors.length === 1) {
+      return Ast.segment([Ast.selector.recursiveDescent(selectors[0])]);
+    }
+
+    return Ast.segment(selectors, recursive || undefined);
   }
 
   private parseIdentifier(): string {
