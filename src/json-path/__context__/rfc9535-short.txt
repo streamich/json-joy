@@ -958,67 +958,16 @@ Function extensions add filter expression functionality. Each has a unique regis
 
 2.4.1.  Type System for Function Expressions
 
-   Each parameter and the result of a function extension must have a
-   declared type.
+Function parameters and results have declared types for well-typedness checking:
+- ValueType: JSON values or Nothing
+- LogicalType: LogicalTrue or LogicalFalse  
+- NodesType: Nodelists
 
-   Declared types enable checking a JSONPath query for well-typedness
-   independent of any query argument the JSONPath query is applied to.
-
-   Table 13 defines the available types in terms of the instances they
-   contain.
-
-               +=============+=============================+
-               | Type        | Instances                   |
-               +=============+=============================+
-               | ValueType   | JSON values or Nothing      |
-               +-------------+-----------------------------+
-               | LogicalType | LogicalTrue or LogicalFalse |
-               +-------------+-----------------------------+
-               | NodesType   | Nodelists                   |
-               +-------------+-----------------------------+
-
-                  Table 13: Function Extension Type System
-
-   Notes:
-
-   *  The only instances that can be directly represented in JSONPath
-      syntax are certain JSON values in ValueType expressed as literals
-      (which, in JSONPath, are limited to primitive values).
-
-   *  The special result Nothing represents the absence of a JSON value
-      and is distinct from any JSON value, including null.
-
-   *  LogicalTrue and LogicalFalse are unrelated to the JSON values
-      expressed by the literals true and false.
+Nothing represents absence of JSON value (distinct from null). LogicalTrue/False are distinct from JSON true/false.
 
 2.4.2.  Type Conversion
 
-   Just as queries can be used in logical expressions by testing for the
-   existence of at least one node (Section 2.3.5.2.1), a function
-   expression of declared type NodesType can be used as a function
-   argument for a parameter of declared type LogicalType, with the
-   equivalent conversion rule:
-
-   *  If the nodelist contains one or more nodes, the conversion result
-      is LogicalTrue.
-
-   *  If the nodelist is empty, the conversion result is LogicalFalse.
-
-   Notes:
-
-   *  Extraction of a value from a nodelist can be performed in several
-      ways, so an implicit conversion from NodesType to ValueType may be
-      surprising and has therefore not been defined.
-
-   *  A function expression with a declared type of NodesType can
-      indirectly be used as an argument for a parameter of declared type
-      ValueType by wrapping the expression in a call to a function
-      extension, such as value() (see Section 2.4.8), that takes a
-      parameter of type NodesType and returns a result of type
-      ValueType.
-
-   The well-typedness of function expressions can now be defined in
-   terms of this type system.
+NodesType→LogicalType conversion: non-empty nodelist→LogicalTrue, empty→LogicalFalse. No implicit NodesType→ValueType conversion (use value() function).
 
 2.4.3.  Well-Typedness of Function Expressions
 
@@ -1037,187 +986,49 @@ Function expressions must be well-typed:
 
 2.4.4.  length() Function Extension
 
-   Parameters:
-      1.  ValueType
+Parameters: ValueType → Result: ValueType (unsigned integer or Nothing)
 
-   Result:  ValueType (unsigned integer or Nothing)
+Returns length of strings (Unicode scalar values), arrays (elements), objects (members). Other types return Nothing.
 
-   The length() function extension provides a way to compute the length
-   of a value and make that available for further processing in the
-   filter expression:
-
-   $[?length(@.authors) >= 5]
-
-   Its only argument is an instance of ValueType (possibly taken from a
-   singular query, as in the example above).  The result is also an
-   instance of ValueType: an unsigned integer or the special result
-   Nothing.
-
-   *  If the argument value is a string, the result is the number of
-      Unicode scalar values in the string.
-
-   *  If the argument value is an array, the result is the number of
-      elements in the array.
-
-   *  If the argument value is an object, the result is the number of
-      members in the object.
-
-   *  For any other argument value, the result is the special result
-      Nothing.
+Example: $[?length(@.authors) >= 5]
 
 2.4.5.  count() Function Extension
 
-   Parameters:
-      1.  NodesType
+Parameters: NodesType → Result: ValueType (unsigned integer)
 
-   Result:  ValueType (unsigned integer)
+Returns number of nodes in nodelist. No deduplication performed.
 
-   The count() function extension provides a way to obtain the number of
-   nodes in a nodelist and make that available for further processing in
-   the filter expression:
-
-   $[?count(@.*.author) >= 5]
-
-   Its only argument is a nodelist.  The result is a value (an unsigned
-   integer) that gives the number of nodes in the nodelist.
-
-   Notes:
-
-   *  There is no deduplication of the nodelist.
-
-   *  The number of nodes in the nodelist is counted independent of
-      their values or any children they may have, e.g., the count of a
-      non-empty singular nodelist such as count(@) is always 1.
+Example: $[?count(@.*.author) >= 5]
 
 2.4.6.  match() Function Extension
 
-   Parameters:
-      1.  ValueType (string)
+Parameters: ValueType (string), ValueType (I-Regexp string) → Result: LogicalType
 
-      2.  ValueType (string conforming to [RFC9485])
+Tests if entire string matches I-Regexp pattern. Returns LogicalFalse for invalid inputs.
 
-   Result:  LogicalType
-
-   The match() function extension provides a way to check whether (the
-   entirety of; see Section 2.4.7) a given string matches a given
-   regular expression, which is in the form described in [RFC9485].
-
-   $[?match(@.date, "1974-05-..")]
-
-   Its arguments are instances of ValueType (possibly taken from a
-   singular query, as for the first argument in the example above).  If
-   the first argument is not a string or the second argument is not a
-   string conforming to [RFC9485], the result is LogicalFalse.
-   Otherwise, the string that is the first argument is matched against
-   the I-Regexp contained in the string that is the second argument; the
-   result is LogicalTrue if the string matches the I-Regexp and is
-   LogicalFalse otherwise.
+Example: $[?match(@.date, "1974-05-..")]
 
 2.4.7.  search() Function Extension
 
-   Parameters:
-      1.  ValueType (string)
+Parameters: ValueType (string), ValueType (I-Regexp string) → Result: LogicalType
 
-      2.  ValueType (string conforming to [RFC9485])
+Tests if string contains substring matching I-Regexp pattern. Returns LogicalFalse for invalid inputs.
 
-   Result:  LogicalType
-
-   The search() function extension provides a way to check whether a
-   given string contains a substring that matches a given regular
-   expression, which is in the form described in [RFC9485].
-
-   $[?search(@.author, "[BR]ob")]
-
-   Its arguments are instances of ValueType (possibly taken from a
-   singular query, as for the first argument in the example above).  If
-   the first argument is not a string or the second argument is not a
-   string conforming to [RFC9485], the result is LogicalFalse.
-   Otherwise, the string that is the first argument is searched for a
-   substring that matches the I-Regexp contained in the string that is
-   the second argument; the result is LogicalTrue if at least one such
-   substring exists and is LogicalFalse otherwise.
+Example: $[?search(@.author, "[BR]ob")]
 
 2.4.8.  value() Function Extension
 
-   Parameters:
-      1.  NodesType
+Parameters: NodesType → Result: ValueType
 
-   Result:  ValueType
+Converts nodelist to value: single node→node value, empty/multiple→Nothing. Singular queries don't need this function.
 
-   The value() function extension provides a way to convert an instance
-   of NodesType to a value and make that available for further
-   processing in the filter expression:
-
-   $[?value(@..color) == "red"]
-
-   Its only argument is an instance of NodesType (possibly taken from a
-   filter-query, as in the example above).  The result is an instance of
-   ValueType.
-
-   *  If the argument contains a single node, the result is the value of
-      the node.
-
-   *  If the argument is the empty nodelist or contains multiple nodes,
-      the result is Nothing.
-
-   Note: A singular query may be used anywhere where a ValueType is
-   expected, so there is no need to use the value() function extension
-   with a singular query.
+Example: $[?value(@..color) == "red"]
 
 2.4.9.  Examples
 
-    +======================+==========================================+
-    |        Query         | Comment                                  |
-    +======================+==========================================+
-    |  $[?length(@) < 3]   | well-typed                               |
-    +----------------------+------------------------------------------+
-    | $[?length(@.*) < 3]  | not well-typed since @.* is a non-       |
-    |                      | singular query                           |
-    +----------------------+------------------------------------------+
-    | $[?count(@.*) == 1]  | well-typed                               |
-    +----------------------+------------------------------------------+
-    |  $[?count(1) == 1]   | not well-typed since 1 is not a query or |
-    |                      | function expression                      |
-    +----------------------+------------------------------------------+
-    |  $[?count(foo(@.*))  | well-typed, where foo() is a function    |
-    |        == 1]         | extension with a parameter of type       |
-    |                      | NodesType and result type NodesType      |
-    +----------------------+------------------------------------------+
-    | $[?match(@.timezone, | well-typed                               |
-    |    'Europe/.*')]     |                                          |
-    +----------------------+------------------------------------------+
-    | $[?match(@.timezone, | not well-typed as LogicalType may not be |
-    |   'Europe/.*') ==    | used in comparisons                      |
-    |        true]         |                                          |
-    +----------------------+------------------------------------------+
-    |  $[?value(@..color)  | well-typed                               |
-    |      == "red"]       |                                          |
-    +----------------------+------------------------------------------+
-    | $[?value(@..color)]  | not well-typed as ValueType may not be   |
-    |                      | used in a test expression                |
-    +----------------------+------------------------------------------+
-    |     $[?bar(@.a)]     | well-typed for any function bar() with a |
-    |                      | parameter of any declared type and       |
-    |                      | result type LogicalType                  |
-    +----------------------+------------------------------------------+
-    |     $[?bnl(@.*)]     | well-typed for any function bnl() with a |
-    |                      | parameter of declared type NodesType or  |
-    |                      | LogicalType and result type LogicalType  |
-    +----------------------+------------------------------------------+
-    |    $[?blt(1==1)]     | well-typed, where blt() is a function    |
-    |                      | with a parameter of declared type        |
-    |                      | LogicalType and result type LogicalType  |
-    +----------------------+------------------------------------------+
-    |      $[?blt(1)]      | not well-typed for the same function     |
-    |                      | blt(), as 1 is not a query, logical-     |
-    |                      | expr, or function expression             |
-    +----------------------+------------------------------------------+
-    |      $[?bal(1)]      | well-typed, where bal() is a function    |
-    |                      | with a parameter of declared type        |
-    |                      | ValueType and result type LogicalType    |
-    +----------------------+------------------------------------------+
+Well-typed: $[?length(@) < 3], $[?count(@.*) == 1], $[?match(@.timezone, 'Europe/.*')], $[?value(@..color) == "red"]
 
-                   Table 14: Function Expression Examples
+Not well-typed: $[?length(@.*) < 3] (non-singular query), $[?count(1) == 1] (literal instead of query), $[?match(@.timezone, 'Europe/.*') == true] (LogicalType in comparison), $[?value(@..color)] (ValueType in test expression)
 
 2.5.  Segments
 
