@@ -433,30 +433,7 @@ Example: $ applied to {"k": "v"} returns [{"k": "v"}]
 
 2.3.4.2.1.  Informal Introduction
 
-   This section is informative.
-
-   Array slicing is inspired by the behavior of the
-   Array.prototype.slice method of the JavaScript language, as defined
-   by the ECMA-262 standard [ECMA-262], with the addition of the step
-   parameter, which is inspired by the Python slice expression.
-
-   The array slice expression start:end:step selects elements at indices
-   starting at start, incrementing by step, and ending with end (which
-   is itself excluded).  So, for example, the expression 1:3 (where step
-   defaults to 1) selects elements with indices 1 and 2 (in that order),
-   whereas 1:5:2 selects elements with indices 1 and 3.
-
-   When step is negative, elements are selected in reverse order.  Thus,
-   for example, 5:1:-2 selects elements with indices 5 and 3 (in that
-   order), and ::-1 selects all the elements of an array in reverse
-   order.
-
-   When step is 0, no elements are selected.  (This is the one case that
-   differs from the behavior of Python, which raises an error in this
-   case.)
-
-   The following section specifies the behavior fully, without depending
-   on JavaScript or Python behavior.
+Array slicing: start:end:step selects indices from start (inclusive) to end (exclusive) by step. Negative step reverses order. Step 0 selects nothing.
 
 2.3.4.2.2.  Normative Semantics
 
@@ -590,146 +567,46 @@ Example: $ applied to {"k": "v"} returns [{"k": "v"}]
 
 2.3.5.  Filter Selector
 
-   Filter selectors are used to iterate over the elements or members of
-   structured values, i.e., JSON arrays and objects.  The structured
-   values are identified in the nodelist offered by the child or
-   descendant segment using the filter selector.
-
-   For each iteration (element/member), a logical expression (the
-   _filter expression_) is evaluated, which decides whether the node of
-   the element/member is selected.  (While a logical expression
-   evaluates to what mathematically is a Boolean value, this
-   specification uses the term _logical_ to maintain a distinction from
-   the Boolean values that JSON can represent.)
-
-   During the iteration process, the filter expression receives the node
-   of each array element or object member value of the structured value
-   being filtered; this element or member value is then known as the
-   _current node_.
-
-   The current node can be used as the start of one or more JSONPath
-   queries in subexpressions of the filter expression, notated via the
-   current-node-identifier @. Each JSONPath query can be used either for
-   testing existence of a result of the query, for obtaining a specific
-   JSON value resulting from that query that can then be used in a
-   comparison, or as a _function argument_.
-
-   Filter selectors may use function extensions, which are covered in
-   Section 2.4.  Within the logical expression for a filter selector,
-   function expressions can be used to operate on nodelists and values.
-   The set of available functions is extensible, with a number of
-   functions predefined (see Section 2.4) and the ability to register
-   further functions provided by the "Function Extensions" subregistry
-   (Section 3.2).  When a function is defined, it is given a unique
-   name, and its return value and each of its parameters are given a
-   _declared type_. The type system is limited in scope; its purpose is
-   to express restrictions that, without functions, are implicit in the
-   grammar of filter expressions.  The type system also guides
-   conversions (Section 2.4.2) that mimic the way different kinds of
-   expressions are handled in the grammar when function expressions are
-   not in use.
+Filter selectors iterate over array elements or object members, evaluating a logical expression for each to decide selection. The current node (@) represents each element/member being tested. Supports function extensions with declared types for parameters and results.
 
 2.3.5.1.  Syntax
 
-   The filter selector has the form ?<logical-expr>.
+Filter selector: ?<logical-expr>. Supports Boolean operators (||, &&, !), comparisons (==, !=, <, <=, >, >=), existence tests, and function expressions. Current node accessible via @.
 
    filter-selector     = "?" S logical-expr
 
-   As the filter expression is composed of constituents free of side
-   effects, the order of evaluation does not need to be (and is not)
-   defined.  Similarly, for conjunction (&&) and disjunction (||)
-   (defined later), both a short-circuiting and a fully evaluating
-   implementation will lead to the same result; both implementation
-   strategies are therefore valid.
-
-   The current node is accessible via the current node identifier @.
-   This identifier addresses the current node of the filter-selector
-   that is directly enclosing the identifier.  Note: Within nested
-   filter-selectors, there is no syntax to address the current node of
-   any other than the directly enclosing filter-selector (i.e., of
-   filter-selectors enclosing the filter-selector that is directly
-   enclosing the identifier).
-
-   Logical expressions offer the usual Boolean operators (|| for OR, &&
-   for AND, and ! for NOT).  They have the normal semantics of Boolean
-   algebra and obey its laws (for example, see [BOOLEAN-LAWS]).
-   Parentheses MAY be used within logical-expr for grouping.
-
-   It is not required that logical-expr consist of a parenthesized
-   expression (which was required in [JSONPath-orig]), although it can
-   be, and the semantics are the same as without the parentheses.
-
    logical-expr        = logical-or-expr
    logical-or-expr     = logical-and-expr *(S "||" S logical-and-expr)
-                           ; disjunction
-                           ; binds less tightly than conjunction
    logical-and-expr    = basic-expr *(S "&&" S basic-expr)
-                           ; conjunction
-                           ; binds more tightly than disjunction
 
-   basic-expr          = paren-expr /
-                         comparison-expr /
-                         test-expr
-
+   basic-expr          = paren-expr / comparison-expr / test-expr
    paren-expr          = [logical-not-op S] "(" S logical-expr S ")"
-                                           ; parenthesized expression
-   logical-not-op      = "!"               ; logical NOT operator
-
-   A test expression either tests the existence of a node designated by
-   an embedded query (see Section 2.3.5.2.1) or tests the result of a
-   function expression (see Section 2.4).  In the latter case, if the
-   function's declared result type is LogicalType (see Section 2.4.1),
-   it tests whether the result is LogicalTrue; if the function's
-   declared result type is NodesType, it tests whether the result is
-   non-empty.  If the function's declared result type is ValueType, its
-   use in a test expression is not well-typed (see Section 2.4.3).
+   logical-not-op      = "!"
 
    test-expr           = [logical-not-op S]
-                         (filter-query / ; existence/non-existence
-                          function-expr) ; LogicalType or NodesType
+                         (filter-query / function-expr)
    filter-query        = rel-query / jsonpath-query
    rel-query           = current-node-identifier segments
    current-node-identifier = "@"
 
-   Comparison expressions are available for comparisons between
-   primitive values (that is, numbers, strings, true, false, and null).
-   These can be obtained via literal values; singular queries, each of
-   which selects at most one node, the value of which is then used; or
-   function expressions (see Section 2.4) of type ValueType.
-
    comparison-expr     = comparable S comparison-op S comparable
-   literal             = number / string-literal /
-                         true / false / null
-   comparable          = literal /
-                         singular-query / ; singular query value
-                         function-expr    ; ValueType
-   comparison-op       = "==" / "!=" /
-                         "<=" / ">=" /
-                         "<"  / ">"
+   literal             = number / string-literal / true / false / null
+   comparable          = literal / singular-query / function-expr
+   comparison-op       = "==" / "!=" / "<=" / ">=" / "<" / ">"
 
    singular-query      = rel-singular-query / abs-singular-query
    rel-singular-query  = current-node-identifier singular-query-segments
    abs-singular-query  = root-identifier singular-query-segments
    singular-query-segments = *(S (name-segment / index-segment))
-   name-segment        = ("[" name-selector "]") /
-                         ("." member-name-shorthand)
+   name-segment        = ("[" name-selector "]") / ("." member-name-shorthand)
    index-segment       = "[" index-selector "]"
 
-   Literals can be notated in the way that is usual for JSON (with the
-   extension that strings can use single-quote delimiters).
-
-   Note: Alphabetic characters in quoted strings are case-insensitive in
-   ABNF, so within a floating point number, the ABNF expression "e" can
-   be either the character 'e' or 'E'.
-
-   true, false, and null are lowercase only (case-sensitive).
-
-   number              = (int / "-0") [ frac ] [ exp ] ; decimal number
-   frac                = "." 1*DIGIT                  ; decimal fraction
-   exp                 = "e" [ "-" / "+" ] 1*DIGIT    ; decimal exponent
-   true                = %x74.72.75.65                ; true
-   false               = %x66.61.6c.73.65             ; false
-   null                = %x6e.75.6c.6c                ; null
+   number              = (int / "-0") [ frac ] [ exp ]
+   frac                = "." 1*DIGIT
+   exp                 = "e" [ "-" / "+" ] 1*DIGIT
+   true                = %x74.72.75.65
+   false               = %x66.61.6c.73.65
+   null                = %x6e.75.6c.6c
 
    Table 10 lists filter expression operators in order of precedence
    from highest (binds most tightly) to lowest (binds least tightly).
@@ -1065,26 +942,7 @@ Example: $ applied to {"k": "v"} returns [{"k": "v"}]
 
 2.4.  Function Extensions
 
-   Beyond the filter expression functionality defined in the preceding
-   subsections, JSONPath defines an extension point that can be used to
-   add filter expression functionality: "Function Extensions".
-
-   This section defines the extension point and some function extensions
-   that use this extension point.  While these mechanisms are designed
-   to use the extension point, they are an integral part of the JSONPath
-   specification and are expected to be implemented like any other
-   integral part of this specification.
-
-   A function extension defines a registered name (see Section 3.2) that
-   can be applied to a sequence of zero or more arguments, producing a
-   result.  Each registered function name is unique.
-
-   A function extension MUST be defined such that its evaluation is free
-   of side effects, i.e., all possible orders of evaluation and choices
-   of short-circuiting or full evaluation of an expression containing it
-   MUST lead to the same result.  (Note: Memoization or logging are not
-   side effects in this sense as they are visible at the implementation
-   level only -- they do not influence the result of the evaluation.)
+Function extensions add filter expression functionality. Each has a unique registered name, takes arguments, produces results, and must be side-effect free.
 
    function-name       = function-name-first *function-name-char
    function-name-first = LCALPHA
@@ -1097,12 +955,6 @@ Example: $ applied to {"k": "v"} returns [{"k": "v"}]
                          filter-query / ; (includes singular-query)
                          logical-expr /
                          function-expr
-
-   Any function expressions in a query must be well-formed (by
-   conforming to the above ABNF) and well-typed; otherwise, the JSONPath
-   implementation MUST raise an error (see Section 2.1).  To define
-   which function expressions are well-typed, a type system is first
-   introduced.
 
 2.4.1.  Type System for Function Expressions
 
@@ -1621,80 +1473,17 @@ Function expressions must be well-typed:
 
 2.6.  Semantics of null
 
-   Note: JSON null is treated the same as any other JSON value, i.e., it
-   is not taken to mean "undefined" or "missing".
+JSON null is treated as any other JSON value (not "undefined" or "missing").
 
 2.6.1.  Examples
 
-   JSON:
+JSON: {"a": null, "b": [null], "c": [{}], "null": 1}
 
-   {"a": null, "b": [null], "c": [{}], "null": 1}
-
-   Queries:
-
-   +=================+========+===========+===========================+
-   |      Query      | Result |   Result  | Comment                   |
-   |                 |        |   Paths   |                           |
-   +=================+========+===========+===========================+
-   |       $.a       | null   |   $['a']  | Object value              |
-   +-----------------+--------+-----------+---------------------------+
-   |      $.a[0]     |        |           | null used as array        |
-   +-----------------+--------+-----------+---------------------------+
-   |      $.a.d      |        |           | null used as object       |
-   +-----------------+--------+-----------+---------------------------+
-   |      $.b[0]     | null   | $['b'][0] | Array value               |
-   +-----------------+--------+-----------+---------------------------+
-   |      $.b[*]     | null   | $['b'][0] | Array value               |
-   +-----------------+--------+-----------+---------------------------+
-   |     $.b[?@]     | null   | $['b'][0] | Existence                 |
-   +-----------------+--------+-----------+---------------------------+
-   |  $.b[?@==null]  | null   | $['b'][0] | Comparison                |
-   +-----------------+--------+-----------+---------------------------+
-   | $.c[?@.d==null] |        |           | Comparison with "missing" |
-   |                 |        |           | value                     |
-   +-----------------+--------+-----------+---------------------------+
-   |      $.null     | 1      | $['null'] | Not JSON null at all,     |
-   |                 |        |           | just a member name string |
-   +-----------------+--------+-----------+---------------------------+
-
-           Table 17: Examples Involving (or Not Involving) null
+Examples: $.a → null, $.a[0] → (empty), $.b[0] → null, $.b[?@] → null, $.b[?@==null] → null, $.c[?@.d==null] → (empty), $.null → 1
 
 2.7.  Normalized Paths
 
-   A Normalized Path is a unique representation of the location of a
-   node in a value that uniquely identifies the node in the value.
-   Specifically, a Normalized Path is a JSONPath query with restricted
-   syntax (defined below), e.g., $['book'][3], which when applied to the
-   value, results in a nodelist consisting of just the node identified
-   by the Normalized Path.  Note: A Normalized Path represents the
-   identity of a node _in a specific value_. There is precisely one
-   Normalized Path identifying any particular node in a value.
-
-   A nodelist may be represented compactly in JSON as an array of
-   strings, where the strings are Normalized Paths.
-
-   Normalized Paths provide a predictable format that simplifies testing
-   and post-processing of nodelists, e.g., to remove duplicate nodes.
-   Normalized Paths are used in this document as result paths in
-   examples.
-
-   Normalized Paths use the canonical bracket notation, rather than dot
-   notation.
-
-   Single quotes are used in Normalized Paths to delimit string member
-   names.  This reduces the number of characters that need escaping when
-   Normalized Paths appear in strings delimited by double quotes, e.g.,
-   in JSON texts.
-
-   Certain characters are escaped in Normalized Paths in one and only
-   one way; all other characters are unescaped.
-
-      |  Note: Normalized Paths are singular queries, but not all
-      |  singular queries are Normalized Paths.  For example, $[-3] is a
-      |  singular query but is not a Normalized Path.  The Normalized
-      |  Path equivalent to $[-3] would have an index equal to the array
-      |  length minus 3.  (The array length must be at least 3 if $[-3]
-      |  is to identify a node.)
+Normalized Path: unique JSONPath representation of a node's location. Uses bracket notation with single quotes for member names.
 
    normalized-path      = root-identifier *(normal-index-segment)
    normal-index-segment = "[" normal-selector "]"
@@ -1733,33 +1522,9 @@ Function expressions must be well-typed:
    normal-index-selector = "0" / (DIGIT1 *DIGIT)
                            ; non-negative decimal integer
 
-   Since there can only be one Normalized Path identifying a given node,
-   the syntax stipulates which characters are escaped and which are not.
-   So the definition of normal-hexchar is designed for hex escaping of
-   characters that are not straightforwardly printable, for example,
-   U+000B LINE TABULATION, but for which no standard JSON escape, such
-   as \n, is available.
-
 2.7.1.  Examples
 
-       +=============+=================+==========================+
-       |     Path    | Normalized Path | Comment                  |
-       +=============+=================+==========================+
-       |     $.a     |      $['a']     | Object value             |
-       +-------------+-----------------+--------------------------+
-       |     $[1]    |       $[1]      | Array index              |
-       +-------------+-----------------+--------------------------+
-       |    $[-3]    |       $[2]      | Negative array index for |
-       |             |                 | an array of length 5     |
-       +-------------+-----------------+--------------------------+
-       |  $.a.b[1:2] |  $['a']['b'][1] | Nested structure         |
-       +-------------+-----------------+--------------------------+
-       | $["\u000B"] |   $['\u000b']   | Unicode escape           |
-       +-------------+-----------------+--------------------------+
-       | $["\u0061"] |      $['a']     | Unicode character        |
-       +-------------+-----------------+--------------------------+
-
-                    Table 18: Normalized Path Examples
+Examples: $.a → $['a'], $[1] → $[1], $[-3] → $[2] (array length 5), $.a.b[1:2] → $['a']['b'][1], $["\u000B"] → $['\u000b']
 
 Appendix A.  Collected ABNF Grammars
 
