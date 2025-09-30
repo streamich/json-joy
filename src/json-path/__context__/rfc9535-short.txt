@@ -128,107 +128,27 @@ Example JSON (bookstore):
 
 2.1.  Overview
 
-   A JSONPath _expression_ is a string that, when applied to a JSON
-   value (the _query argument_), selects zero or more nodes of the
-   argument and outputs these nodes as a nodelist.
+JSONPath queries are UTF-8 strings that select nodes from JSON values and return nodelists.
 
-   A query MUST be encoded using UTF-8.  The grammar for queries given
-   in this document assumes that its UTF-8 form is first decoded into
-   Unicode scalar values as described in [RFC3629]; implementation
-   approaches that lead to an equivalent result are possible.
+Requirements:
+- Must be well-formed (conform to ABNF syntax) and valid (meet semantic constraints)
+- Integer values must be in I-JSON range: [-(2^53)+1, (2^53)-1]  
+- Function extensions must be well-typed
+- Implementations MUST raise errors for invalid queries
 
-   A string to be used as a JSONPath query needs to be _well-formed_ and
-   _valid_. A string is a well-formed JSONPath query if it conforms to
-   the ABNF syntax in this document.  A well-formed JSONPath query is
-   valid if it also fulfills both semantic requirements posed by this
-   document, which are as follows:
+Syntax: jsonpath-query = root-identifier segments
 
-   1.  Integer numbers in the JSONPath query that are relevant to the
-       JSONPath processing (e.g., index values and steps) MUST be within
-       the range of exact integer values defined in Internet JSON
-       (I-JSON) (see Section 2.2 of [RFC7493]), namely within the
-       interval [-(2^53)+1, (2^53)-1].
+Execution:
+1. Root identifier ($) produces nodelist with root node
+2. Each segment processes input nodelist → output nodelist sequentially  
+3. Final result is concatenated nodelist from last segment
+4. Empty results valid; duplicates preserved
 
-   2.  Uses of function extensions MUST be _well-typed_, as described in
-       Section 2.4.3.
-
-   A JSONPath implementation MUST raise an error for any query that is
-   not well-formed and valid.  The well-formedness and the validity of
-   JSONPath queries are independent of the JSON value the query is
-   applied to.  No further errors relating to the well-formedness and
-   the validity of a JSONPath query can be raised during application of
-   the query to a value.  This clearly separates well-formedness/
-   validity errors in the query from mismatches that may actually stem
-   from flaws in the data.
-
-   Mismatches between the structure expected by a valid query and the
-   structure found in the data can lead to empty query results, which
-   may be unexpected and indicate bugs in either.  JSONPath
-   implementations might therefore want to provide diagnostics to the
-   application developer that aid in finding the cause of empty results.
-
-   Obviously, an implementation can still fail when executing a JSONPath
-   query, e.g., because of resource depletion, but this is not modeled
-   in this document.  However, the implementation MUST NOT silently
-   malfunction.  Specifically, if a valid JSONPath query is evaluated
-   against a structured value whose size is too large to process the
-   query correctly (for instance, requiring the processing of numbers
-   that fall outside the range of exact values), the implementation MUST
-   provide an indication of overflow.
-
-   (Readers familiar with the HTTP error model may be reminded of 400
-   type errors when pondering well-formedness and validity, and they may
-   recognize resource depletion and related errors as comparable to 500
-   type errors.)
-
-2.1.1.  Syntax
-
-   Syntactically, a JSONPath query consists of a root identifier ($),
-   which stands for a nodelist that contains the root node of the query
-   argument, followed by a possibly empty sequence of _segments_.
-
-   jsonpath-query      = root-identifier segments
-   segments            = *(S segment)
-
-   B                   = %x20 /    ; Space
-                         %x09 /    ; Horizontal tab
-                         %x0A /    ; Line feed or New line
-                         %x0D      ; Carriage return
-   S                   = *B        ; optional blank space
-
-   The syntax and semantics of segments are defined in Section 2.5.
-
-Execution Semantics:
-1. Query execution starts with root identifier ($) producing root node
-2. Each segment processes input nodelist and produces output nodelist  
-3. Segments are applied sequentially: root → segment1 → segment2 → ...
-4. Final result is concatenated nodelist from last segment
-5. Empty results are valid; duplicates are preserved
-6. Implementations must produce identical results but can use any algorithm
-
-2.1.3.  Example
-
-   Consider this example.  With the query argument
-   {"a":[{"b":0},{"b":1},{"c":2}]}, the query $.a[*].b selects the
-   following list of nodes (denoted here by their values): 0, 1.
-
-   The query consists of $ followed by three segments: .a, [*], and .b.
-
-   First, $ produces a nodelist consisting of just the query argument.
-
-   Next, .a selects from any object input node and selects the node of
-   any member value of the input node corresponding to the member name
-   "a".  The result is again a list containing a single node:
-   [{"b":0},{"b":1},{"c":2}].
-
-   Next, [*] selects all the elements from the input array node.  The
-   result is a list of three nodes: {"b":0}, {"b":1}, and {"c":2}.
-
-   Finally, .b selects from any object input node with a member name b
-   and selects the node of the member value of the input node
-   corresponding to that name.  The result is a list containing 0, 1.
-   This is the concatenation of three lists: two of length one
-   containing 0, 1, respectively, and one of length zero.
+Example: $.a[*].b on {"a":[{"b":0},{"b":1},{"c":2}]} → [0, 1]
+- $ → [{"a":[{"b":0},{"b":1},{"c":2}]}]
+- .a → [[{"b":0},{"b":1},{"c":2}]]  
+- [*] → [{"b":0}, {"b":1}, {"c":2}]
+- .b → [0, 1] (concatenates [0], [1], [])
 
 2.2.  Root Identifier ($)
 
