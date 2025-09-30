@@ -42,87 +42,28 @@ This document treats the query argument as a tree of nodes. Each node is either 
 
 1.2.  JSONPath Overview
 
-JSONPath expressions consist of an identifier ($) followed by zero or more segments. Each segment contains one or more selectors.
+JSONPath: identifier ($) + segments, each containing selectors.
+Notations: bracket $['store']['book'][0] or dot $.store.book[0] 
+Elements: $ (root), @ (current), [selectors] (children), ..[selectors] (descendants)
 
-Syntax Forms:
-- Bracket notation: $['store']['book'][0]['title'] 
-- Dot notation: $.store.book[0].title (shorthand)
+Syntax Reference:
+$ = root, @ = current, 'name' = member, * = wildcard, 3 = index, 
+0:5:2 = slice, ?expr = filter, length() = function
 
-Expression Structure:
-- Identifiers: $ (root), @ (current node in filters)
-- Segments: [selectors] (children), ..[selectors] (descendants)  
-- Selectors: name, wildcard (*), index, slice, filter
+1.5.  Examples
 
-JSONPath Syntax Reference:
+JSON: {"store": {"book": [{"author": "Rees", "price": 8.95}, {"author": "Waugh", "price": 12.99}, {"author": "Melville", "isbn": "123", "price": 8.99}], "bicycle": {"price": 399}}}
 
-| Syntax Element   | Description                          |
-|------------------|--------------------------------------|
-| $                | root node identifier                |
-| @                | current node identifier (filters)   |
-| [selectors]      | child segment                        |
-| .name            | shorthand for ['name']               |
-| .*               | shorthand for [*]                    |
-| ..[selectors]    | descendant segment                   |
-| ..name           | shorthand for ..['name']             |
-| ..*              | shorthand for ..[*]                  |
-| 'name'           | name selector                        |
-| *                | wildcard selector                    |
-| 3                | index selector (0-based)             |
-| 0:100:5          | array slice start:end:step           |
-| ?<logical-expr>  | filter selector                      |
-| length(@.foo)    | function extension                   |
-
-                    Table 1: Overview of JSONPath Syntax
-
-1.5.  JSONPath Examples
-
-Example JSON (bookstore):
-{
-  "store": {
-    "book": [
-      {"category": "reference", "author": "Nigel Rees", "title": "Sayings of the Century", "price": 8.95},
-      {"category": "fiction", "author": "Evelyn Waugh", "title": "Sword of Honour", "price": 12.99},
-      {"category": "fiction", "author": "Herman Melville", "title": "Moby Dick", "isbn": "0-553-21311-3", "price": 8.99},
-      {"category": "fiction", "author": "J. R. R. Tolkien", "title": "The Lord of the Rings", "isbn": "0-395-19395-8", "price": 22.99}
-    ],
-    "bicycle": {"color": "red", "price": 399}
-  }
-}
-
-    +========================+=======================================+
-    | JSONPath               | Intended Result                       |
-    +========================+=======================================+
-    | $.store.book[*].author | the authors of all books in the store |
-    +------------------------+---------------------------------------+
-    | $..author              | all authors                           |
-    +------------------------+---------------------------------------+
-    | $.store.*              | all things in the store, which are    |
-    |                        | some books and a red bicycle          |
-    +------------------------+---------------------------------------+
-    | $.store..price         | the prices of everything in the store |
-    +------------------------+---------------------------------------+
-    | $..book[2]             | the third book                        |
-    +------------------------+---------------------------------------+
-    | $..book[2].author      | the third book's author               |
-    +------------------------+---------------------------------------+
-    | $..book[2].publisher   | empty result: the third book does not |
-    |                        | have a "publisher" member             |
-    +------------------------+---------------------------------------+
-    | $..book[-1]            | the last book in order                |
-    +------------------------+---------------------------------------+
-    | $..book[0,1]           | the first two books                   |
-    | $..book[:2]            |                                       |
-    +------------------------+---------------------------------------+
-    | $..book[?@.isbn]       | all books with an ISBN number         |
-    +------------------------+---------------------------------------+
-    | $..book[?@.price<10]   | all books cheaper than 10             |
-    +------------------------+---------------------------------------+
-    | $..*                   | all member values and array elements  |
-    |                        | contained in the input value          |
-    +------------------------+---------------------------------------+
-
-         Table 2: Example JSONPath Expressions and Their Intended
-              Results When Applied to the Example JSON Value
+Examples:
+$.store.book[*].author → all book authors
+$..author → all authors  
+$.store.* → all store items
+$..book[2] → third book
+$..book[-1] → last book
+$..book[:2] → first two books
+$..book[?@.isbn] → books with ISBN
+$..book[?@.price<10] → books under $10
+$..* → all values
 
 2.  JSONPath Syntax and Semantics
 
