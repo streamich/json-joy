@@ -1,5 +1,7 @@
 import {readFileSync} from 'fs';
 import {MsgPackDecoderFast} from '@jsonjoy.com/json-pack/lib/msgpack';
+// Apply runtime patch for CBOR decoder issue #925
+import '../util/cbor-decoder-fix';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import * as JSONB from '@jsonjoy.com/json-pack/lib/json-binary';
 import arg from 'arg';
