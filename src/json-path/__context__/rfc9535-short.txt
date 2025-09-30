@@ -1,493 +1,93 @@
 
+JSONPath: Query Expressions for JSON (RFC 9535)
 
+JSONPath defines a string syntax for selecting and extracting JSON values from within a given JSON value.
 
-
-Internet Engineering Task Force (IETF)                   S. Gössner, Ed.
-Request for Comments: 9535                       Fachhochschule Dortmund
-Category: Standards Track                             G. Normington, Ed.
-ISSN: 2070-1721                                                         
-                                                         C. Bormann, Ed.
-                                                  Universität Bremen TZI
-                                                           February 2024
-
-
-                  JSONPath: Query Expressions for JSON
-
-Abstract
-
-   JSONPath defines a string syntax for selecting and extracting JSON
-   (RFC 8259) values from within a given JSON value.
-
-Status of This Memo
-
-   This is an Internet Standards Track document.
-
-   This document is a product of the Internet Engineering Task Force
-   (IETF).  It represents the consensus of the IETF community.  It has
-   received public review and has been approved for publication by the
-   Internet Engineering Steering Group (IESG).  Further information on
-   Internet Standards is available in Section 2 of RFC 7841.
-
-   Information about the current status of this document, any errata,
-   and how to provide feedback on it may be obtained at
-   https://www.rfc-editor.org/info/rfc9535.
-
-Copyright Notice
-
-   Copyright (c) 2024 IETF Trust and the persons identified as the
-   document authors.  All rights reserved.
-
-   This document is subject to BCP 78 and the IETF Trust's Legal
-   Provisions Relating to IETF Documents
-   (https://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Revised BSD License text as described in Section 4.e of the
-   Trust Legal Provisions and are provided without warranty as described
-   in the Revised BSD License.
-
-Table of Contents
-
-   1.  Introduction
-     1.1.  Terminology
-       1.1.1.  JSON Values as Trees of Nodes
-     1.2.  History
-     1.3.  JSON Values
-     1.4.  Overview of JSONPath Expressions
-       1.4.1.  Identifiers
-       1.4.2.  Segments
-       1.4.3.  Selectors
-       1.4.4.  Summary
-     1.5.  JSONPath Examples
-   2.  JSONPath Syntax and Semantics
-     2.1.  Overview
-       2.1.1.  Syntax
-       2.1.2.  Semantics
-       2.1.3.  Example
-     2.2.  Root Identifier
-       2.2.1.  Syntax
-       2.2.2.  Semantics
-       2.2.3.  Examples
-     2.3.  Selectors
-       2.3.1.  Name Selector
-         2.3.1.1.  Syntax
-         2.3.1.2.  Semantics
-         2.3.1.3.  Examples
-       2.3.2.  Wildcard Selector
-         2.3.2.1.  Syntax
-         2.3.2.2.  Semantics
-         2.3.2.3.  Examples
-       2.3.3.  Index Selector
-         2.3.3.1.  Syntax
-         2.3.3.2.  Semantics
-         2.3.3.3.  Examples
-       2.3.4.  Array Slice Selector
-         2.3.4.1.  Syntax
-         2.3.4.2.  Semantics
-         2.3.4.3.  Examples
-       2.3.5.  Filter Selector
-         2.3.5.1.  Syntax
-         2.3.5.2.  Semantics
-         2.3.5.3.  Examples
-     2.4.  Function Extensions
-       2.4.1.  Type System for Function Expressions
-       2.4.2.  Type Conversion
-       2.4.3.  Well-Typedness of Function Expressions
-       2.4.4.  length() Function Extension
-       2.4.5.  count() Function Extension
-       2.4.6.  match() Function Extension
-       2.4.7.  search() Function Extension
-       2.4.8.  value() Function Extension
-       2.4.9.  Examples
-     2.5.  Segments
-       2.5.1.  Child Segment
-         2.5.1.1.  Syntax
-         2.5.1.2.  Semantics
-         2.5.1.3.  Examples
-       2.5.2.  Descendant Segment
-         2.5.2.1.  Syntax
-         2.5.2.2.  Semantics
-         2.5.2.3.  Examples
-     2.6.  Semantics of null
-       2.6.1.  Examples
-     2.7.  Normalized Paths
-       2.7.1.  Examples
-   3.  IANA Considerations
-     3.1.  Registration of Media Type application/jsonpath
-     3.2.  Function Extensions Subregistry
-   4.  Security Considerations
-     4.1.  Attack Vectors on JSONPath Implementations
-     4.2.  Attack Vectors on How JSONPath Queries Are Formed
-     4.3.  Attacks on Security Mechanisms That Employ JSONPath
-   5.  References
-     5.1.  Normative References
-     5.2.  Informative References
-   Appendix A.  Collected ABNF Grammars
-   Appendix B.  Inspired by XPath
-     B.1.  JSONPath and XPath
-   Appendix C.  JSON Pointer
-   Acknowledgements
-   Contributors
-   Authors' Addresses
+Contents:
+1. Introduction and Terminology
+2. JSONPath Syntax and Semantics
+   - Root Identifier ($)
+   - Selectors (name, wildcard, index, slice, filter)
+   - Function Extensions
+   - Segments (child, descendant)
+Appendix: ABNF Grammar
 
 1.  Introduction
 
-   JSON [RFC8259] is a popular representation format for structured data
-   values.  JSONPath defines a string syntax for selecting and
-   extracting JSON values from within a given JSON value.
-
-   In relation to JSON Pointer [RFC6901], JSONPath is not intended as a
-   replacement but as a more powerful companion.  See Appendix C.
+JSONPath defines a string syntax for selecting and extracting JSON values from within a given JSON value. It's a more powerful companion to JSON Pointer.
 
 1.1.  Terminology
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in
-   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
-
-   The grammatical rules in this document are to be interpreted as ABNF,
-   as described in [RFC5234].  ABNF terminal values in this document
-   define Unicode scalar values rather than their UTF-8 encoding.  For
-   example, the Unicode PLACE OF INTEREST SIGN (U+2318) would be defined
-   in ABNF as %x2318.
-
-   Functions are referred to using the function name followed by a pair
-   of parentheses, as in fname().
-
-   The terminology of [RFC8259] applies except where clarified below.
-   The terms "primitive" and "structured" are used to group different
-   kinds of values as in Section 1 of [RFC8259].  JSON objects and
-   arrays are structured; all other values are primitive.  Definitions
-   for "object", "array", "number", and "string" remain unchanged.
-   Importantly, "object" and "array" in particular do not take on a
-   generic meaning, such as they would in a general programming context.
-
-   The terminology of [RFC9485] applies.
-
-   Additional terms used in this document are defined below.
-
-   Value:  As per [RFC8259], a data item conforming to the generic data
-      model of JSON, i.e., primitive data (numbers, text strings, and
-      the special values null, true, and false), or structured data
-      (JSON objects and arrays).  [RFC8259] focuses on the textual
-      representation of JSON values and does not fully define the value
-      abstraction assumed here.
-
-   Member:  A name/value pair in an object.  (A member is not itself a
-      value.)
-
-   Name:  The name (a string) in a name/value pair constituting a
-      member.  This is also used in [RFC8259], but that specification
-      does not formally define it.  It is included here for
-      completeness.
-
-   Element:  A value in a JSON array.
-
-   Index:  An integer that identifies a specific element in an array.
-
-   Query:  Short name for a JSONPath expression.
-
-   Query Argument:  Short name for the value a JSONPath expression is
-      applied to.
-
-   Location:  The position of a value within the query argument.  This
-      can be thought of as a sequence of names and indexes navigating to
-      the value through the objects and arrays in the query argument,
-      with the empty sequence indicating the query argument itself.  A
-      location can be represented as a Normalized Path (defined below).
-
-   Node:  The pair of a value along with its location within the query
-      argument.
-
-   Root Node:  The unique node whose value is the entire query argument.
-
-   Root Node Identifier:  The expression $, which refers to the root
-      node of the query argument.
-
-   Current Node Identifier:  The expression @, which refers to the
-      current node in the context of the evaluation of a filter
-      expression (described later).
-
-   Children (of a node):  If the node is an array, the nodes of its
-      elements; if the node is an object, the nodes of its member
-      values.  If the node is neither an array nor an object, it has no
-      children.
-
-   Descendants (of a node):  The children of the node, together with the
-      children of its children, and so forth recursively.  More
-      formally, the "descendants" relation between nodes is the
-      transitive closure of the "children" relation.
-
-   Depth (of a descendant node within a value):  The number of ancestors
-      of the node within the value.  The root node of the value has
-      depth zero, the children of the root node have depth one, their
-      children have depth two, and so forth.
-
-   Nodelist:  A list of nodes.  While a nodelist can be represented in
-      JSON, e.g., as an array, this document does not require or assume
-      any particular representation.
-
-   Parameter:  Formal parameter (of a function) that can take a function
-      argument (an actual parameter) in a function expression.
-
-   Normalized Path:  A form of JSONPath expression that identifies a
-      node in a value by providing a query that results in exactly that
-      node.  Each node in a query argument is identified by exactly one
-      Normalized Path (we say that the Normalized Path is "unique" for
-      that node), and to be a Normalized Path for a specific query
-      argument, the Normalized Path needs to identify exactly one node.
-      This is similar to, but syntactically different from, a JSON
-      Pointer [RFC6901].  Note: This definition is based on the
-      syntactical definition in Section 2.7; JSONPath expressions that
-      identify a node in a value but do not conform to that syntax are
-      not Normalized Paths.
-
-   Unicode Scalar Value:  Any Unicode [UNICODE] code point except high-
-      surrogate and low-surrogate code points (in other words, integers
-      in the inclusive base 16 ranges, either 0 to D7FF or E000 to
-      10FFFF).  JSONPath queries are sequences of Unicode scalar values.
-
-   Segment:  One of the constructs that selects children ([<selectors>])
-      or descendants (..[<selectors>]) of an input value.
-
-   Selector:  A single item within a segment that takes the input value
-      and produces a nodelist consisting of child nodes of the input
-      value.
-
-   Singular Query:  A JSONPath expression built from segments that have
-      been syntactically restricted in a certain way (Section 2.3.5.1)
-      so that, regardless of the input value, the expression produces a
-      nodelist containing at most one node.  Note: JSONPath expressions
-      that always produce a singular nodelist but do not conform to the
-      syntax in Section 2.3.5.1 are not singular queries.
-
-1.1.1.  JSON Values as Trees of Nodes
-
-   This document models the query argument as a tree of JSON values,
-   each with its own node.  A node is either the root node or one of its
-   descendants.
-
-   This document models the result of applying a query to the query
-   argument as a nodelist (a list of nodes).
-
-   Nodes are the selectable parts of the query argument.  The only parts
-   of an object that can be selected by a query are the member values.
-   Member names and members (name/value pairs) cannot be selected.
-   Thus, member values have nodes, but members and member names do not.
-   Similarly, member values are children of an object, but members and
-   member names are not.
-
-1.2.  History
-
-   This document is based on Stefan Gössner's popular JSONPath proposal
-   (dated 2007-02-21) [JSONPath-orig], builds on the experience from the
-   widespread deployment of its implementations, and provides a
-   normative specification for it.
-
-   Appendix B describes how JSONPath was inspired by XML's XPath
-   [XPath].
-
-   JSONPath was intended as a lightweight companion to JSON
-   implementations in programming languages such as PHP and JavaScript,
-   so instead of defining its own expression language, like XPath did,
-   JSONPath delegated parts of a query to the underlying runtime, e.g.,
-   JavaScript's eval() function.  As JSONPath was implemented in more
-   environments, JSONPath expressions became decreasingly portable.  For
-   example, regular expression processing was often delegated to a
-   convenient regular expression engine.
-
-   This document aims to remove such implementation-specific
-   dependencies and serve as a common JSONPath specification that can be
-   used across programming languages and environments.  This means that
-   backwards compatibility is not always achieved; a design principle of
-   this document is to go with a "consensus" between implementations
-   even if it is rough, as long as that does not jeopardize the
-   objective of obtaining a usable, stable JSON query language.
-
-   The term _JSONPath_ was chosen because of the XPath inspiration and
-   also because the outcome of a query consists of _paths_ identifying
-   nodes in the JSON query argument.
-
-1.3.  JSON Values
-
-   The JSON value a JSONPath query is applied to is, by definition, a
-   valid JSON value.  A JSON value is often constructed by parsing a
-   JSON text.
-
-   The parsing of a JSON text into a JSON value and what happens if a
-   JSON text does not represent valid JSON are not defined by this
-   document.  Sections 4 and 8 of [RFC8259] identify specific situations
-   that may conform to the grammar for JSON texts but are not
-   interoperable uses of JSON, as they may cause unpredictable behavior.
-   This document does not attempt to define predictable behavior for
-   JSONPath queries in these situations.
-
-   Specifically, the "Semantics" subsections of Sections 2.3.1, 2.3.2,
-   2.3.5, and 2.5.2 describe behavior that becomes unpredictable when
-   the JSON value for one of the objects under consideration was
-   constructed out of JSON text that exhibits multiple members for a
-   single object that share the same member name ("duplicate names"; see
-   Section 4 of [RFC8259]).  Also, when selecting a child by name
-   (Section 2.3.1) and comparing strings (Section 2.3.5.2.2), it is
-   assumed these strings are sequences of Unicode scalar values; the
-   behavior becomes unpredictable if they are not (Section 8.2 of
-   [RFC8259]).
-
-1.4.  Overview of JSONPath Expressions
-
-   A JSONPath expression is applied to a JSON value, known as the query
-   argument.  The output is a nodelist.
-
-   A JSONPath expression consists of an identifier followed by a series
-   of zero or more segments, each of which contains one or more
-   selectors.
-
-1.4.1.  Identifiers
-
-   The root node identifier $ refers to the root node of the query
-   argument, i.e., to the argument as a whole.
-
-   The current node identifier @ refers to the current node in the
-   context of the evaluation of a filter expression (Section 2.3.5).
-
-1.4.2.  Segments
-
-   Segments select children ([<selectors>]) or descendants
-   (..[<selectors>]) of an input value.
-
-   Segments can use _bracket notation_, for example:
-
-   $['store']['book'][0]['title']
-
-   or the more compact _dot notation_, for example:
-
-   $.store.book[0].title
-
-   Bracket notation contains one or more (comma-separated) selectors of
-   any kind.  Selectors are detailed in the next section.
-
-   A JSONPath expression may use a combination of bracket and dot
-   notations.
-
-   This document treats the bracket notations as canonical and defines
-   the shorthand dot notation in terms of bracket notation.  Examples
-   and descriptions use shorthand where convenient.
-
-1.4.3.  Selectors
-
-   A name selector, e.g., 'name', selects a named child of an object.
-
-   An index selector, e.g., 3, selects an indexed child of an array.
-
-   In the expression [*], a wildcard * (Section 2.3.2) selects all
-   children of a node, and in the expression ..[*], it selects all
-   descendants of a node.
-
-   An array slice start:end:step (Section 2.3.4) selects a series of
-   elements from an array, giving a start position, an end position, and
-   an optional step value that moves the position from the start to the
-   end.
-
-   A filter expression ?<logical-expr> selects certain children of an
-   object or array, as in:
-
-   $.store.book[?@.price < 10].title
-
-1.4.4.  Summary
-
-   Table 1 provides a brief overview of JSONPath syntax.
-
-   +==================+================================================+
-   | Syntax Element   | Description                                    |
-   +==================+================================================+
-   | $                | root node identifier (Section 2.2)             |
-   +------------------+------------------------------------------------+
-   | @                | current node identifier (Section 2.3.5)        |
-   |                  | (valid only within filter selectors)           |
-   +------------------+------------------------------------------------+
-   | [<selectors>]    | child segment (Section 2.5.1): selects         |
-   |                  | zero or more children of a node                |
-   +------------------+------------------------------------------------+
-   | .name            | shorthand for ['name']                         |
-   +------------------+------------------------------------------------+
-   | .*               | shorthand for [*]                              |
-   +------------------+------------------------------------------------+
-   | ..[<selectors>]  | descendant segment (Section 2.5.2):            |
-   |                  | selects zero or more descendants of a node     |
-   +------------------+------------------------------------------------+
-   | ..name           | shorthand for ..['name']                       |
-   +------------------+------------------------------------------------+
-   | ..*              | shorthand for ..[*]                            |
-   +------------------+------------------------------------------------+
-   | 'name'           | name selector (Section 2.3.1): selects a       |
-   |                  | named child of an object                       |
-   +------------------+------------------------------------------------+
-   | *                | wildcard selector (Section 2.3.2): selects     |
-   |                  | all children of a node                         |
-   +------------------+------------------------------------------------+
-   | 3                | index selector (Section 2.3.3): selects an     |
-   |                  | indexed child of an array (from 0)             |
-   +------------------+------------------------------------------------+
-   | 0:100:5          | array slice selector (Section 2.3.4):          |
-   |                  | start:end:step for arrays                      |
-   +------------------+------------------------------------------------+
-   | ?<logical-expr>  | filter selector (Section 2.3.5): selects       |
-   |                  | particular children using a logical            |
-   |                  | expression                                     |
-   +------------------+------------------------------------------------+
-   | length(@.foo)    | function extension (Section 2.4): invokes      |
-   |                  | a function in a filter expression              |
-   +------------------+------------------------------------------------+
+Key Terms:
+- Value: JSON primitive (number, string, true, false, null) or structured (object, array) data
+- Member: Name/value pair in an object
+- Element: A value in an array  
+- Index: Integer identifying array element
+- Query: JSONPath expression
+- Query Argument: The JSON value being queried
+- Node: Value + its location within query argument
+- Root Node: Node whose value is the entire query argument
+- Children: For arrays - element nodes; for objects - member value nodes
+- Descendants: Children + their children recursively
+- Nodelist: List of nodes (query result)
+- Selector: Produces child nodes from input value
+- Segment: Selects children ([selectors]) or descendants (..[selectors])
+- Singular Query: Expression producing at most one node
+
+Identifiers:
+- Root Node Identifier ($): References root node
+- Current Node Identifier (@): References current node in filter expressions
+
+This document treats the query argument as a tree of nodes. Each node is either the root or one of its descendants. Query results are nodelists.
+
+1.2.  JSONPath Overview
+
+JSONPath expressions consist of an identifier ($) followed by zero or more segments. Each segment contains one or more selectors.
+
+Syntax Forms:
+- Bracket notation: $['store']['book'][0]['title'] 
+- Dot notation: $.store.book[0].title (shorthand)
+
+Expression Structure:
+- Identifiers: $ (root), @ (current node in filters)
+- Segments: [selectors] (children), ..[selectors] (descendants)  
+- Selectors: name, wildcard (*), index, slice, filter
+
+JSONPath Syntax Reference:
+
+| Syntax Element   | Description                          |
+|------------------|--------------------------------------|
+| $                | root node identifier                |
+| @                | current node identifier (filters)   |
+| [selectors]      | child segment                        |
+| .name            | shorthand for ['name']               |
+| .*               | shorthand for [*]                    |
+| ..[selectors]    | descendant segment                   |
+| ..name           | shorthand for ..['name']             |
+| ..*              | shorthand for ..[*]                  |
+| 'name'           | name selector                        |
+| *                | wildcard selector                    |
+| 3                | index selector (0-based)             |
+| 0:100:5          | array slice start:end:step           |
+| ?<logical-expr>  | filter selector                      |
+| length(@.foo)    | function extension                   |
 
                     Table 1: Overview of JSONPath Syntax
 
 1.5.  JSONPath Examples
 
-   This section is informative.  It provides examples of JSONPath
-   expressions.
-
-   The examples are based on the simple JSON value shown in Figure 1,
-   representing a bookstore (which also has a bicycle).
-
-   { "store": {
-       "book": [
-         { "category": "reference",
-           "author": "Nigel Rees",
-           "title": "Sayings of the Century",
-           "price": 8.95
-         },
-         { "category": "fiction",
-           "author": "Evelyn Waugh",
-           "title": "Sword of Honour",
-           "price": 12.99
-         },
-         { "category": "fiction",
-           "author": "Herman Melville",
-           "title": "Moby Dick",
-           "isbn": "0-553-21311-3",
-           "price": 8.99
-         },
-         { "category": "fiction",
-           "author": "J. R. R. Tolkien",
-           "title": "The Lord of the Rings",
-           "isbn": "0-395-19395-8",
-           "price": 22.99
-         }
-       ],
-       "bicycle": {
-         "color": "red",
-         "price": 399
-       }
-     }
-   }
-
-                        Figure 1: Example JSON Value
-
-   Table 2 shows some JSONPath queries that might be applied to this
-   example and their intended results.
+Example JSON (bookstore):
+{
+  "store": {
+    "book": [
+      {"category": "reference", "author": "Nigel Rees", "title": "Sayings of the Century", "price": 8.95},
+      {"category": "fiction", "author": "Evelyn Waugh", "title": "Sword of Honour", "price": 12.99},
+      {"category": "fiction", "author": "Herman Melville", "title": "Moby Dick", "isbn": "0-553-21311-3", "price": 8.99},
+      {"category": "fiction", "author": "J. R. R. Tolkien", "title": "The Lord of the Rings", "isbn": "0-395-19395-8", "price": 22.99}
+    ],
+    "bicycle": {"color": "red", "price": 399}
+  }
+}
 
     +========================+=======================================+
     | JSONPath               | Intended Result                       |
@@ -598,52 +198,13 @@ Table of Contents
 
    The syntax and semantics of segments are defined in Section 2.5.
 
-2.1.2.  Semantics
-
-   In this document, the semantics of a JSONPath query define the
-   required results and do not prescribe the internal workings of an
-   implementation.  This document may describe semantics in a procedural
-   step-by-step fashion; however, such descriptions are normative only
-   in the sense that any implementation MUST produce an identical result
-   but not in the sense that implementers are required to use the same
-   algorithms.
-
-   The semantics are that a valid query is executed against a value (the
-   _query argument_) and produces a nodelist (i.e., a list of zero or
-   more nodes of the value).
-
-   The query is a root identifier followed by a sequence of zero or more
-   segments, each of which is applied to the result of the previous root
-   identifier or segment and provides input to the next segment.  These
-   results and inputs take the form of nodelists.
-
-   The nodelist resulting from the root identifier contains a single
-   node (the query argument).  The nodelist resulting from the last
-   segment is presented as the result of the query.  Depending on the
-   specific API, it might be presented as an array of the JSON values at
-   the nodes, an array of Normalized Paths referencing the nodes, or
-   both -- or some other representation as desired by the
-   implementation.  Note: An empty nodelist is a valid query result.
-
-   A segment operates on each of the nodes in its input nodelist in
-   turn, and the resultant nodelists are concatenated in the order of
-   the input nodelist they were derived from to produce the result of
-   the segment.  A node may be selected more than once and appears that
-   number of times in the nodelist.  Duplicate nodes are not removed.
-
-   A syntactically valid segment MUST NOT produce errors when executing
-   the query.  This means that some operations that might be considered
-   erroneous, such as using an index lying outside the range of an
-   array, simply result in fewer nodes being selected.  (Additional
-   discussion of this property can be found in the introduction of
-   Section 2.1.)
-
-   As a consequence of this approach, if any of the segments produces an
-   empty nodelist, then the whole query produces an empty nodelist.
-
-   If the semantics of a query give an implementation a choice of
-   producing multiple possible orderings, a particular implementation
-   may produce distinct orderings in successive runs of the query.
+Execution Semantics:
+1. Query execution starts with root identifier ($) producing root node
+2. Each segment processes input nodelist and produces output nodelist  
+3. Segments are applied sequentially: root → segment1 → segment2 → ...
+4. Final result is concatenated nodelist from last segment
+5. Empty results are valid; duplicates are preserved
+6. Implementations must produce identical results but can use any algorithm
 
 2.1.3.  Example
 
@@ -669,53 +230,11 @@ Table of Contents
    This is the concatenation of three lists: two of length one
    containing 0, 1, respectively, and one of length zero.
 
-2.2.  Root Identifier
+2.2.  Root Identifier ($)
 
-2.2.1.  Syntax
-
-   Every JSONPath query (except those inside filter expressions; see
-   Section 2.3.5) MUST begin with the root identifier $.
-
-   root-identifier     = "$"
-
-2.2.2.  Semantics
-
-   The root identifier $ represents the root node of the query argument
-   and produces a nodelist consisting of that root node.
-
-2.2.3.  Examples
-
-      |  Note: In this example and the following examples in Sections
-      |  2.2 and 2.3, except for Table 11, we will present a JSON text
-      |  to show the JSON value used as the query argument to the
-      |  queries in the examples and then a table with the following
-      |  columns:
-      |  
-      |     *  Query: an example query to be applied to the query
-      |        argument
-      |  
-      |     *  Result: the query result as a list of JSON values that
-      |        were located in the query argument
-      |  
-      |     *  Result Path: the query result as a list of (normalized)
-      |        paths into the query argument, giving locations of the
-      |        JSON values in the previous column
-      |  
-      |     *  Comment: descriptive information
-
-   JSON:
-
-   {"k": "v"}
-
-   Queries:
-
-             +=======+============+=============+===========+
-             | Query | Result     | Result Path | Comment   |
-             +=======+============+=============+===========+
-             |   $   | {"k": "v"} |      $      | Root node |
-             +-------+------------+-------------+-----------+
-
-                     Table 3: Root Identifier Example
+Syntax: root-identifier = "$"
+Semantics: Represents the root node, produces nodelist with single root node
+Example: $ applied to {"k": "v"} returns [{"k": "v"}]
 
 2.3.  Selectors
 
@@ -2425,289 +1944,6 @@ Table of Contents
 
                     Table 18: Normalized Path Examples
 
-3.  IANA Considerations
-
-3.1.  Registration of Media Type application/jsonpath
-
-   IANA has registered the following media type [RFC6838]:
-
-   Type name:  application
-
-   Subtype name:  jsonpath
-
-   Required parameters:  N/A
-
-   Optional parameters:  N/A
-
-   Encoding considerations:  binary (UTF-8)
-
-   Security considerations:  See the Security Considerations section of
-      RFC 9535.
-
-   Interoperability considerations:  N/A
-
-   Published specification:  RFC 9535
-
-   Applications that use this media type:  Applications that need to
-      convey queries in JSON data
-
-   Fragment identifier considerations:  N/A
-
-   Additional information:
-
-      Deprecated alias names for this type:  N/A
-      Magic number(s):  N/A
-      File extension(s):  N/A
-      Macintosh file type code(s):  N/A
-
-   Person & email address to contact for further information:
-      iesg@ietf.org
-
-   Intended usage:  COMMON
-
-   Restrictions on usage:  N/A
-
-   Author:  JSONPath WG
-
-   Change controller:  IETF
-
-3.2.  Function Extensions Subregistry
-
-   Per this specification, IANA has created a new "Function Extensions"
-   subregistry in a new "JSONPath" registry.  The "Function Extensions"
-   subregistry has the policy "Expert Review" (Section 4.5 of
-   [RFC8126]).
-
-   The experts are instructed to be frugal in the allocation of function
-   extension names that are suggestive of generally applicable
-   semantics, keeping them in reserve for functions that are likely to
-   enjoy wide use and can make good use of their conciseness.  The
-   expert is also instructed to direct the registrant to provide a
-   specification (Section 4.6 of [RFC8126]) but can make exceptions, for
-   instance, when a specification is not available at the time of
-   registration but is likely forthcoming.  If the expert becomes aware
-   of function extensions that are deployed and in use, they may also
-   initiate a registration on their own if they deem such a registration
-   can avert potential future collisions.
-
-   Each entry in the subregistry must include the following:
-
-   Function Name:
-      A lowercase ASCII [RFC0020] string that starts with a letter and
-      can contain letters, digits, and underscore characters afterwards
-      ([a-z][_a-z0-9]*).  No other entry in the subregistry can have the
-      same function name.
-
-   Brief description:
-      A brief description
-
-   Parameters:
-      A comma-separated list of zero or more declared types, one for
-      each of the arguments expected for this function extension
-
-   Result:
-      The declared type of the result for this function extension
-
-   Change Controller:
-      See Section 2.3 of [RFC8126].
-
-   Reference:
-      A reference document that provides a description of the function
-      extension
-
-   The initial entries in this subregistry are listed in Table 19; the
-   entries in the "Change Controller" column all have the value "IETF",
-   and the entries in the "Reference" column all have the value
-   "Section 2.4 of RFC 9535":
-
-    +===============+=====================+============+=============+
-    | Function Name | Brief Description   | Parameters | Result      |
-    +===============+=====================+============+=============+
-    | length        | length of string,   | ValueType  | ValueType   |
-    |               | array, or object    |            |             |
-    +---------------+---------------------+------------+-------------+
-    | count         | size of nodelist    | NodesType  | ValueType   |
-    +---------------+---------------------+------------+-------------+
-    | match         | regular expression  | ValueType, | LogicalType |
-    |               | full match          | ValueType  |             |
-    +---------------+---------------------+------------+-------------+
-    | search        | regular expression  | ValueType, | LogicalType |
-    |               | substring match     | ValueType  |             |
-    +---------------+---------------------+------------+-------------+
-    | value         | value of the single | NodesType  | ValueType   |
-    |               | node in nodelist    |            |             |
-    +---------------+---------------------+------------+-------------+
-
-     Table 19: Initial Entries in the Function Extensions Subregistry
-
-4.  Security Considerations
-
-   Security considerations for JSONPath can stem from:
-
-   *  attack vectors on JSONPath implementations,
-
-   *  attack vectors on how JSONPath queries are formed, and
-
-   *  the way JSONPath is used in security-relevant mechanisms.
-
-4.1.  Attack Vectors on JSONPath Implementations
-
-   Historically, JSONPath has often been implemented by feeding parts of
-   the query to an underlying programming language engine, e.g.,
-   JavaScript's eval() function.  This approach is well known to lead to
-   injection attacks and would require perfect input validation to
-   prevent these attacks (see Section 12 of [RFC8259] for similar
-   considerations for JSON itself).  Instead, JSONPath implementations
-   need to implement the entire syntax of the query without relying on
-   the parsers of programming language engines.
-
-   Attacks on availability may attempt to trigger unusually expensive
-   runtime performance exhibited by certain implementations in certain
-   cases.  (See Section 10 of [RFC8949] for issues in hash-table
-   implementations and Section 8 of [RFC9485] for performance issues in
-   regular expression implementations.)  Implementers need to be aware
-   that good average performance is not sufficient as long as an
-   attacker can choose to submit specially crafted JSONPath queries or
-   query arguments that trigger surprisingly high, possibly exponential,
-   CPU usage or, for example, via a naive recursive implementation of
-   the descendant segment, stack overflow.  Implementations need to have
-   appropriate resource management to mitigate these attacks.
-
-4.2.  Attack Vectors on How JSONPath Queries Are Formed
-
-   JSONPath queries are often not static but formed from variables that
-   provide index values, member names, or values to compare with in a
-   filter expression.  These variables need to be validated (e.g., only
-   allowing specific constructs such as .name to be formed when the
-   given values allow that) and translated (e.g., by escaping string
-   delimiters).  Not performing these validations and translations
-   correctly can lead to unexpected failures, which can lead to
-   availability, confidentiality, and integrity breaches, in particular,
-   if an adversary has control over the values (e.g., by entering them
-   into a web form).  The resulting class of attacks, _injections_
-   (e.g., SQL injections), is consistently found among the top causes of
-   application security vulnerabilities and requires particular
-   attention.
-
-4.3.  Attacks on Security Mechanisms That Employ JSONPath
-
-   Where JSONPath is used as a part of a security mechanism, attackers
-   can attempt to provoke unexpected or unpredictable behavior or take
-   advantage of differences in behavior between JSONPath
-   implementations.
-
-   Unexpected or unpredictable behavior can arise from a query argument
-   with certain constructs described as unpredictable by [RFC8259].
-   Predictable behavior can be expected, except in relation to the
-   ordering of objects, for any query argument conforming with
-   [RFC7493].
-
-   Other attacks can target the behavior of underlying technologies,
-   such as UTF-8 (see Section 10 of [RFC3629]) and the Unicode character
-   set.
-
-5.  References
-
-5.1.  Normative References
-
-   [RFC0020]  Cerf, V., "ASCII format for network interchange", STD 80,
-              RFC 20, DOI 10.17487/RFC0020, October 1969,
-              <https://www.rfc-editor.org/info/rfc20>.
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <https://www.rfc-editor.org/info/rfc2119>.
-
-   [RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO
-              10646", STD 63, RFC 3629, DOI 10.17487/RFC3629, November
-              2003, <https://www.rfc-editor.org/info/rfc3629>.
-
-   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
-              Specifications: ABNF", STD 68, RFC 5234,
-              DOI 10.17487/RFC5234, January 2008,
-              <https://www.rfc-editor.org/info/rfc5234>.
-
-   [RFC6838]  Freed, N., Klensin, J., and T. Hansen, "Media Type
-              Specifications and Registration Procedures", BCP 13,
-              RFC 6838, DOI 10.17487/RFC6838, January 2013,
-              <https://www.rfc-editor.org/info/rfc6838>.
-
-   [RFC7493]  Bray, T., Ed., "The I-JSON Message Format", RFC 7493,
-              DOI 10.17487/RFC7493, March 2015,
-              <https://www.rfc-editor.org/info/rfc7493>.
-
-   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
-              Writing an IANA Considerations Section in RFCs", BCP 26,
-              RFC 8126, DOI 10.17487/RFC8126, June 2017,
-              <https://www.rfc-editor.org/info/rfc8126>.
-
-   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
-              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
-              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
-
-   [RFC8259]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
-              Interchange Format", STD 90, RFC 8259,
-              DOI 10.17487/RFC8259, December 2017,
-              <https://www.rfc-editor.org/info/rfc8259>.
-
-   [RFC9485]  Bormann, C. and T. Bray, "I-Regexp: An Interoperable
-              Regular Expression Format", RFC 9485,
-              DOI 10.17487/RFC9485, October 2023,
-              <https://www.rfc-editor.org/info/rfc9485>.
-
-   [UNICODE]  The Unicode Consortium, "The Unicode® Standard",
-              <https://www.unicode.org/versions/latest/>.  At the time
-              of writing,
-              <https://www.unicode.org/versions/Unicode15.0.0/
-              UnicodeStandard-15.0.pdf>.
-
-5.2.  Informative References
-
-   [BOOLEAN-LAWS]
-              "Boolean algebra: Laws", December 2023,
-              <https://en.wikipedia.org/w/
-              index.php?title=Boolean_algebra&oldid=1191386550#Laws>.
-
-   [COMPARISON]
-              Burgmer, C., "JSONPath Comparison",
-              <https://cburgmer.github.io/json-path-comparison/>.
-
-   [E4X]      ISO, "Information technology - ECMAScript for XML (E4X)
-              specification", Withdrawn, ISO/IEC 22537:2006, February
-              2006, <https://www.iso.org/standard/41002.html>.  An
-              equivalent specification, also withdrawn, is available
-              from <https://ecma-international.org/publications-and-
-              standards/standards/ecma-357>.
-
-   [ECMA-262] ECMA International, "ECMAScript Language Specification",
-              Standard ECMA-262, Third Edition, December 1999,
-              <https://www.ecma-international.org/wp-content/uploads/
-              ECMA-262_3rd_edition_december_1999.pdf>.
-
-   [JSONPath-orig]
-              Gössner, S., "JSONPath - XPath for JSON", February 2007,
-              <https://goessner.net/articles/JsonPath/>.
-
-   [RFC6901]  Bryan, P., Ed., Zyp, K., and M. Nottingham, Ed.,
-              "JavaScript Object Notation (JSON) Pointer", RFC 6901,
-              DOI 10.17487/RFC6901, April 2013,
-              <https://www.rfc-editor.org/info/rfc6901>.
-
-   [RFC8949]  Bormann, C. and P. Hoffman, "Concise Binary Object
-              Representation (CBOR)", STD 94, RFC 8949,
-              DOI 10.17487/RFC8949, December 2020,
-              <https://www.rfc-editor.org/info/rfc8949>.
-
-   [SLICE]    "Slice notation", commit 82f95b4, July 2022,
-              <https://github.com/tc39/proposal-slice-notation>.
-
-   [XPath]    Berglund, A., Ed., Chamberlin, D., Ed., Simeon, J., Ed.,
-              Robie, J., Ed., Fernandez, M., Ed., Kay, M., Ed., and S.
-              Boag, Ed., "XML Path Language (XPath) 2.0 (Second
-              Edition)", W3C REC-xpath20-20101214, 14 December 2010,
-              <https://www.w3.org/TR/2010/REC-xpath20-20101214/>.
-
 Appendix A.  Collected ABNF Grammars
 
    This appendix collects the ABNF grammar from the ABNF passages used
@@ -2907,190 +2143,3 @@ Appendix A.  Collected ABNF Grammars
                            ; non-negative decimal integer
 
            Figure 3: Collected ABNF of JSONPath Normalized Paths
-
-Appendix B.  Inspired by XPath
-
-   This appendix is informative.
-
-   At the time JSONPath was invented, XML was noted for the availability
-   of powerful tools to analyze, transform, and selectively extract data
-   from XML documents.  [XPath] is one of these tools.
-
-   In 2007, the need for something solving the same class of problems
-   for the emerging JSON community became apparent, specifically for:
-
-   *  finding data interactively and extracting them out of JSON values
-      [RFC8259] without special scripting and
-
-   *  specifying the relevant parts of the JSON data in a request by a
-      client, so the server can reduce the amount of data in its
-      response, minimizing bandwidth usage.
-
-   (Note: XPath has evolved since 2007, and recent versions even
-   nominally support operating inside JSON values.  This appendix only
-   discusses the more widely used version of XPath that was available in
-   2007.)
-
-   JSONPath picks up the overall feeling of XPath but maps the concepts
-   to syntax (and partially semantics) that would be familiar to someone
-   using JSON in a dynamic language.
-
-   For example, in popular dynamic programming languages such as
-   JavaScript, Python, and PHP, the semantics of the XPath expression:
-
-   /store/book[1]/title
-
-   can be realized in the expression:
-
-   x.store.book[0].title
-
-   or in bracket notation:
-
-   x['store']['book'][0]['title']
-
-   with the variable x holding the query argument.
-
-   The JSONPath language was designed to:
-
-   *  be naturally based on those language characteristics,
-
-   *  cover only the most essential parts of XPath 1.0,
-
-   *  be lightweight in code size and memory consumption, and
-
-   *  be runtime efficient.
-
-B.1.  JSONPath and XPath
-
-   JSONPath expressions apply to JSON values in the same way as XPath
-   expressions are used in combination with an XML document.  JSONPath
-   uses $ to refer to the root node of the query argument, similar to
-   XPath's / at the front.
-
-   JSONPath expressions move further down the hierarchy using _dot
-   notation_ ($.store.book[0].title) or the _bracket notation_
-   ($['store']['book'][0]['title']); both replace XPath's / within query
-   expressions, where _dot notation_ serves as a lightweight but limited
-   syntax while _bracket notation_ is a heavyweight but more general
-   syntax.
-
-   Both JSONPath and XPath use * for a wildcard.  JSONPath's descendant
-   segment notation, starting with .., borrowed from [E4X], is similar
-   to XPath's //. The array slicing construct [start:end:step] is unique
-   to JSONPath, inspired by [SLICE] from ECMASCRIPT 4.
-
-   Filter expressions are supported via the syntax ?<logical-expr> as
-   in:
-
-   $.store.book[?@.price < 10].title
-
-   Table 20 extends Table 1 by providing a comparison with similar XPath
-   concepts.
-
-    +==========+==================+===================================+
-    | XPath    | JSONPath         | Description                       |
-    +==========+==================+===================================+
-    | /        | $                | the root XML element              |
-    +----------+------------------+-----------------------------------+
-    | .        | @                | the current XML element           |
-    +----------+------------------+-----------------------------------+
-    | /        | . or []          | child operator                    |
-    +----------+------------------+-----------------------------------+
-    | ..       | n/a              | parent operator                   |
-    +----------+------------------+-----------------------------------+
-    | //       | ..name,          | descendants (JSONPath borrows     |
-    |          | ..[index], ..*,  | this syntax from E4X)             |
-    |          | or ..[*]         |                                   |
-    +----------+------------------+-----------------------------------+
-    | *        | *                | wildcard: All XML elements        |
-    |          |                  | regardless of their names         |
-    +----------+------------------+-----------------------------------+
-    | @        | n/a              | attribute access: JSON values do  |
-    |          |                  | not have attributes               |
-    +----------+------------------+-----------------------------------+
-    | []       | []               | subscript operator used to        |
-    |          |                  | iterate over XML element          |
-    |          |                  | collections and for predicates    |
-    +----------+------------------+-----------------------------------+
-    | |        | [,]              | Union operator (results in a      |
-    |          |                  | combination of node sets); called |
-    |          |                  | list operator in JSONPath, allows |
-    |          |                  | combining member names, array     |
-    |          |                  | indices, and slices               |
-    +----------+------------------+-----------------------------------+
-    | n/a      | [start:end:step] | array slice operator borrowed     |
-    |          |                  | from ES4                          |
-    +----------+------------------+-----------------------------------+
-    | []       | ?                | applies a filter (script)         |
-    |          |                  | expression                        |
-    +----------+------------------+-----------------------------------+
-    | seamless | n/a              | expression engine                 |
-    +----------+------------------+-----------------------------------+
-    | ()       | n/a              | grouping                          |
-    +----------+------------------+-----------------------------------+
-
-                Table 20: XPath Syntax Compared to JSONPath
-
-   For further illustration, Table 21 shows some XPath expressions and
-   their JSONPath equivalents.
-
-   +=======================+========================+==================+
-   | XPath                 | JSONPath               | Result           |
-   +=======================+========================+==================+
-   | /store/book/author    | $.store.book[*].author | the authors      |
-   |                       |                        | of all books     |
-   |                       |                        | in the store     |
-   +-----------------------+------------------------+------------------+
-   | //author              | $..author              | all authors      |
-   +-----------------------+------------------------+------------------+
-   | /store/*              | $.store.*              | all things in    |
-   |                       |                        | store, which     |
-   |                       |                        | are some         |
-   |                       |                        | books and a      |
-   |                       |                        | red bicycle      |
-   +-----------------------+------------------------+------------------+
-   | /store//price         | $.store..price         | the prices of    |
-   |                       |                        | everything in    |
-   |                       |                        | the store        |
-   +-----------------------+------------------------+------------------+
-   | //book[3]             | $..book[2]             | the third        |
-   |                       |                        | book             |
-   +-----------------------+------------------------+------------------+
-   | //book[last()]        | $..book[-1]            | the last book    |
-   |                       |                        | in order         |
-   +-----------------------+------------------------+------------------+
-   | //book[position()<3]  | $..book[0,1]           | the first two    |
-   |                       | $..book[:2]            | books            |
-   +-----------------------+------------------------+------------------+
-   | //book[isbn]          | $..book[?@.isbn]       | filter all       |
-   |                       |                        | books with an    |
-   |                       |                        | ISBN number      |
-   +-----------------------+------------------------+------------------+
-   | //book[price<10]      | $..book[?@.price<10]   | filter all       |
-   |                       |                        | books cheaper    |
-   |                       |                        | than 10          |
-   +-----------------------+------------------------+------------------+
-   | //*                   | $..*                   | all elements     |
-   |                       |                        | in an XML        |
-   |                       |                        | document; all    |
-   |                       |                        | member values    |
-   |                       |                        | and array        |
-   |                       |                        | elements         |
-   |                       |                        | contained in     |
-   |                       |                        | input value      |
-   +-----------------------+------------------------+------------------+
-
-     Table 21: Example XPath Expressions and Their JSONPath Equivalents
-
-   XPath has a lot more functionality (location paths in unabbreviated
-   syntax, operators, and functions) than listed in this comparison.
-   Moreover, there are significant differences in how the subscript
-   operator works in XPath and JSONPath:
-
-   *  Square brackets in XPath expressions always operate on the _node
-      set_ resulting from the previous path fragment.  Indices always
-      start at 1.
-
-   *  With JSONPath, square brackets operate on each of the nodes in the
-      _nodelist_ resulting from the previous query segment.  Array
-      indices always start at 0.
