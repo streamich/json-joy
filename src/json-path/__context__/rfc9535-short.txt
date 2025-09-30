@@ -1170,62 +1170,18 @@ Example: $ applied to {"k": "v"} returns [{"k": "v"}]
 
 2.4.3.  Well-Typedness of Function Expressions
 
-   For a function expression to be well-typed:
+Function expressions must be well-typed:
 
-   1.  Its declared type must be well-typed in the context in which it
-       occurs.
+1. Declared type must match context:
+   - As test-expr: LogicalType or NodesType
+   - As comparable: ValueType  
+   - As function-argument: Must fulfill parameter type rules
 
-       As per the grammar, a function expression can occur in three
-       different immediate contexts, which lead to the following
-       conditions for well-typedness:
-
-       As a test-expr in a logical expression:
-          The function's declared result type is LogicalType or (giving
-          rise to conversion as per Section 2.4.2) NodesType.
-
-       As a comparable in a comparison:
-          The function's declared result type is ValueType.
-
-       As a function-argument in another function expression:
-          The function's declared result type fulfills the following
-          rules for the corresponding parameter of the enclosing
-          function.
-
-   2.  Its arguments must be well-typed for the declared type of the
-       corresponding parameters.
-
-       The arguments of the function expression are well-typed when each
-       argument of the function can be used for the declared type of the
-       corresponding parameter, according to one of the following
-       conditions:
-
-       *  When the argument is a function expression with the same
-          declared result type as the declared type of the parameter.
-
-       *  When the declared type of the parameter is LogicalType and the
-          argument is one of the following:
-
-          -  A function expression with declared result type NodesType.
-             In this case, the argument is converted to LogicalType as
-             per Section 2.4.2.
-
-          -  A logical-expr that is not a function expression.
-
-       *  When the declared type of the parameter is NodesType and the
-          argument is a query (which includes singular query).
-
-       *  When the declared type of the parameter is ValueType and the
-          argument is one of the following:
-
-          -  A value expressed as a literal.
-
-          -  A singular query.  In this case:
-
-             o  If the query results in a nodelist consisting of a
-                single node, the argument is the value of the node.
-
-             o  If the query results in an empty nodelist, the argument
-                is the special result Nothing.
+2. Arguments must match parameter types:
+   - Function expression: Same declared result type as parameter
+   - LogicalType parameter accepts: NodesType function (converted), logical-expr
+   - NodesType parameter accepts: Any query
+   - ValueType parameter accepts: Literals, singular queries (single node→value, empty→Nothing)
 
 2.4.4.  length() Function Extension
 
