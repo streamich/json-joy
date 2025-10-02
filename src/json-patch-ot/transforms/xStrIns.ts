@@ -4,6 +4,7 @@ import {type Op, OpStrDel, OpStrIns} from '../../json-patch/op';
 export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
   if (op instanceof OpStrIns) {
     if (ins.pos > op.pos) return op;
+    if (ins.pos === op.pos && ins.str === op.str) return null; // discard equal inserts
     return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
   } else if (op instanceof OpStrDel) {
     const del = op;
