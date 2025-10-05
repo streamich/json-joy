@@ -123,9 +123,9 @@ isomorphic.js@^0.2.4:
   integrity sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==
 
 lib0@^0.2.99:
-  version "0.2.105"
-  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.105.tgz#bced516f96616ff4d039badf53724b833287b4cd"
-  integrity sha512-5vtbuBi2P43ZYOfVMV+TZYkWEa0J9kijXirzEgrPA+nJDQCtMx805/rqW4G1nXbM9IRIhwW+OyNNgcQdbhKfSw==
+  version "0.2.114"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.114.tgz#0b0e55c3ffa8768fe3d9efca971059f465db4baf"
+  integrity sha512-gcxmNFzA4hv8UYi8j43uPlQ7CGcyMJ2KQb5kZASw6SnAKAf10hK12i2fjrS3Cl/ugZa5Ui6WwIu1/6MIXiHttQ==
   dependencies:
     isomorphic.js "^0.2.4"
 
