@@ -17,10 +17,15 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {printOctets} from '@jsonjoy.com/util/lib/buffers/printOctets';
 
+export interface ChunkData<T> {
+  length: number;
+  slice: (start: number, end: number) => ChunkData<T>;
+}
+
 /**
  * @category CRDT Node
  */
-export interface Chunk<T> {
+export interface Chunk<T extends ChunkData<T>> {
   /** Unique sortable ID of this chunk and its span. */
   id: ITimestampStruct;
   /** Length of the logical clock interval of this chunk. */
@@ -56,35 +61,35 @@ export interface Chunk<T> {
   /** Return a deep copy of itself. */
   clone(): Chunk<T>;
   /** Return the data of the chunk, if not deleted. */
-  view(): T & {slice: (start: number, end: number) => T};
+  view(): T;
 }
 
-const compareById = (c1: Chunk<unknown>, c2: Chunk<unknown>): number => {
+const compareById = (c1: Chunk<ChunkData<any>>, c2: Chunk<ChunkData<any>>): number => {
   const ts1 = c1.id;
   const ts2 = c2.id;
   return ts1.sid - ts2.sid || ts1.time - ts2.time;
 };
 
-const updateLenOne = (chunk: Chunk<unknown>): void => {
+const updateLenOne = (chunk: Chunk<ChunkData<any>>): void => {
   const l = chunk.l;
   const r = chunk.r;
   chunk.len = (chunk.del ? 0 : chunk.span) + (l ? l.len : 0) + (r ? r.len : 0);
 };
 
-const updateLenOneLive = (chunk: Chunk<unknown>): void => {
+const updateLenOneLive = (chunk: Chunk<ChunkData<any>>): void => {
   const l = chunk.l;
   const r = chunk.r;
   chunk.len = chunk.span + (l ? l.len : 0) + (r ? r.len : 0);
 };
 
-const dLen = (chunk: Chunk<unknown> | undefined, delta: number): void => {
+const dLen = (chunk: Chunk<ChunkData<any>> | undefined, delta: number): void => {
   while (chunk) {
     chunk.len += delta;
     chunk = chunk.p;
   }
 };
 
-const next = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
+const next = <T extends ChunkData<any>>(curr: Chunk<T>): Chunk<T> | undefined => {
   const r = curr.r;
   if (r) {
     curr = r;
@@ -100,7 +105,7 @@ const next = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
   return p;
 };
 
-const prev = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
+const prev = <T extends ChunkData<any>>(curr: Chunk<T>): Chunk<T> | undefined => {
   const l = curr.l;
   if (l) {
     curr = l;
@@ -119,7 +124,7 @@ const prev = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
 /**
  * @category CRDT Node
  */
-export abstract class AbstractRga<T> {
+export abstract class AbstractRga<T extends ChunkData<any>> {
   public root: Chunk<T> | undefined = undefined;
   public ids: Chunk<T> | undefined = undefined;
   public count: number = 0;
