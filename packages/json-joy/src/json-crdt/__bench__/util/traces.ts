@@ -45,8 +45,7 @@ export const sequentialTraceNames: SequentialTraceName[] = [
 ];
 
 export const traces = {
-  filename: (name: SequentialTraceName) =>
-    path.resolve(editingTracesDir, 'sequential_traces', `${name}.json.gz`),
+  filename: (name: SequentialTraceName) => path.resolve(editingTracesDir, 'sequential_traces', `${name}.json.gz`),
   get: (name: SequentialTraceName) => {
     if (!cache[name]) {
       const filename = traces.filename(name);
