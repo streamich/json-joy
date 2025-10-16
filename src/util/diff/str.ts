@@ -10,6 +10,33 @@ export type PatchOperationDelete = [type: PATCH_OP_TYPE.DEL, txt: string];
 export type PatchOperationEqual = [type: PATCH_OP_TYPE.EQL, txt: string];
 export type PatchOperationInsert = [type: PATCH_OP_TYPE.INS, txt: string];
 
+export const normalize = (patch: Patch): Patch => {
+  const length = patch.length;
+  if (length < 2) return patch;
+  let i: number = 0;
+  CHECK_IS_NORMALIZED: {
+    if (!patch[0][1]) break CHECK_IS_NORMALIZED;
+    i = 1;
+    for (; i < length; i++) {
+      const prev = patch[i - 1];
+      const curr = patch[i];
+      if (!curr[1]) break CHECK_IS_NORMALIZED;
+      if (prev[0] === curr[0]) break CHECK_IS_NORMALIZED;
+    }
+    return patch;
+  }
+  const normalized: Patch = [];
+  for (let j = 0; j < i; j++) normalized.push(patch[j]);
+  for (let j = i; j < length; j++) {
+    const op = patch[j];
+    if (!op[1]) continue;
+    const last = normalized.length > 0 ? normalized[normalized.length - 1] : null;
+    if (last && last[0] === op[0]) last[1] += op[1];
+    else normalized.push(op);
+  }
+  return normalized;
+};
+
 const startsWithPairEnd = (str: string) => {
   const code = str.charCodeAt(0);
   return code >= 0xdc00 && code <= 0xdfff;
@@ -404,6 +431,40 @@ export const sfx = (txt1: string, txt2: string): number => {
   const isSurrogatePairEnd = code >= 0xd800 && code <= 0xdbff;
   if (isSurrogatePairEnd) mid--;
   return mid;
+};
+
+/**
+ * Determine if the suffix of one string is the prefix of another.
+ *
+ * @see http://neil.fraser.name/news/2010/11/04/
+ *
+ * @param str1 First string.
+ * @param str2 Second string.
+ * @return {number} The number of characters common to the end of the first
+ *     string and the start of the second string.
+ */
+export const overlap = (str1: string, str2: string): number => {
+  const str1Len = str1.length;
+  const str2Len = str2.length;
+  if (str1Len === 0 || str2Len === 0) return 0;
+  let minLen = str1Len;
+  if (str1Len > str2Len) {
+    minLen = str2Len;
+    str1 = str1.substring(str1Len - str2Len);
+  } else if (str1Len < str2Len) str2 = str2.substring(0, str1Len);
+  if (str1 === str2) return minLen;
+  let best = 0;
+  let length = 1;
+  while (true) {
+    const pattern = str1.substring(minLen - length);
+    const found = str2.indexOf(pattern);
+    if (found === -1) return best;
+    length += found;
+    if (found === 0 || str1.substring(minLen - length) === str2.substring(0, length)) {
+      best = length;
+      length++;
+    }
+  }
 };
 
 /**
