@@ -82,7 +82,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       return first.isAbsStart() ? first : void 0;
     } else if (point.isAbsEnd()) return this.last();
     let curr: OverlayPoint<T> | undefined = this.root;
-    let result: OverlayPoint<T> | undefined = undefined;
+    let result: OverlayPoint<T> | undefined;
     while (curr) {
       const cmp = curr.cmpSpatial(point);
       if (cmp === 0) return curr;
@@ -107,7 +107,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       return last.isAbsEnd() ? last : void 0;
     } else if (point.isAbsStart()) return this.first();
     let curr: OverlayPoint<T> | undefined = this.root;
-    let result: OverlayPoint<T> | undefined = undefined;
+    let result: OverlayPoint<T> | undefined;
     while (curr) {
       const cmp = curr.cmpSpatial(point);
       if (cmp === 0) return curr;
@@ -133,7 +133,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       return first.isAbsStart() ? first : void 0;
     } else if (point.isAbsEnd()) return this.lastMarker();
     let curr: MarkerOverlayPoint<T> | undefined = this.root2;
-    let result: MarkerOverlayPoint<T> | undefined = undefined;
+    let result: MarkerOverlayPoint<T> | undefined;
     while (curr) {
       const cmp = curr.cmpSpatial(point);
       if (cmp === 0) return curr;
@@ -442,34 +442,34 @@ export class Overlay<T = string> implements Printable, Stateful {
     let partial: Set<SliceType> = new Set<SliceType>();
     let isFirst = true;
     let markerCount = 0;
-    OVERLAY: for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
+    for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
       if (point instanceof MarkerOverlayPoint) {
         markerCount++;
         if (markerCount >= endOnMarker) break;
-        continue OVERLAY;
+        continue;
       }
       const current = new Set<SliceType>();
       const layers = point.layers;
       const length = layers.length;
-      LAYERS: for (let i = 0; i < length; i++) {
+      for (let i = 0; i < length; i++) {
         const slice = layers[i];
         const type = slice.type();
-        if (typeof type === 'object') continue LAYERS;
+        if (typeof type === 'object') continue;
         const stacking = slice.stacking;
-        STACKING: switch (stacking) {
+        switch (stacking) {
           case SliceStacking.One:
             current.add(type);
-            break STACKING;
+            break;
           case SliceStacking.Erase:
             current.delete(type);
-            break STACKING;
+            break;
         }
       }
       if (isFirst) {
         isFirst = false;
         if (hasLeadingPoint) complete = current;
         else partial = current;
-        continue OVERLAY;
+        continue;
       }
       for (const type of complete)
         if (!current.has(type)) {
@@ -530,7 +530,6 @@ export class Overlay<T = string> implements Printable, Stateful {
     const sliceSet = this.slices;
     state = updateNum(state, slices.hash);
     if (changed) {
-      // biome-ignore lint: slices is not iterable
       slices.forEach((slice) => {
         let tuple: [start: OverlayPoint<T>, end: OverlayPoint<T>] | undefined = sliceSet.get(slice);
         if (tuple) {
@@ -656,7 +655,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const firstChunk = str.first();
     if (!firstChunk) return stateTotal;
     let chunk: Chunk<T> | undefined = firstChunk;
-    let marker: MarkerOverlayPoint<T> | undefined = undefined;
+    let marker: MarkerOverlayPoint<T> | undefined;
     const i = this.tuples0(undefined);
     let state: number = CONST.START_STATE;
     for (let pair = i(); pair; pair = i()) {

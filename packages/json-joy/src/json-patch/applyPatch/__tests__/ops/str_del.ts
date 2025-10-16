@@ -1,4 +1,4 @@
-import type {OperationStrDel, OperationStrIns} from '../../..';
+import type {OperationStrDel} from '../../..';
 import type {ApplyPatch} from '../../types';
 
 export const testStrDelOp = (applyPatch: ApplyPatch) => {

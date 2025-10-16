@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {CommonSliceType} from '../../../../json-crdt-extensions';
 import {Blockquote} from './Blockquote';

@@ -5,6 +5,7 @@
 		"lineWidth": 120
 	},
 	"javascript": {
+		"jsxRuntime": "reactClassic",
 		"formatter": {
 			"quoteStyle": "single",
 			"trailingCommas": "all",
@@ -39,13 +40,15 @@
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",
-				"useOptionalChain": "off"
+				"useOptionalChain": "off",
+				"noCommaOperator": "off"
 			},
 			"security": {
 				"noGlobalEval": "off"
 			},
 			"a11y": {
-				"noSvgWithoutTitle": "off"
+				"noSvgWithoutTitle": "off",
+				"noStaticElementInteractions": "off"
 			},
 			"correctness": {
 				"noUnusedFunctionParameters": "off"

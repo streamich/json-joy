@@ -1,4 +1,4 @@
-import {encodeUtf8Write, encodeFrom, encodeNative, encodeTe, encode, EncodeString} from '../encode';
+import {encodeUtf8Write, encodeFrom, encodeNative, encodeTe, encode, type EncodeString} from '../encode';
 
 const ascii = (): string => {
   return String.fromCharCode(Math.floor(32 + Math.random() * (126 - 32)));

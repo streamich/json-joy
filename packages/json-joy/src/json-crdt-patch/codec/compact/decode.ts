@@ -32,7 +32,7 @@ export const decode = (data: types.CompactCodecPatch): Patch => {
   const x = header[0];
   const clock = Array.isArray(x) ? new ClockVector(x[0], x[1]) : new ServerClockVector(SESSION.SERVER, x as number);
   const sid = clock.sid;
-  const time = clock.time;
+  const _time = clock.time;
   const builder = new PatchBuilder(clock);
   const length = data.length;
 

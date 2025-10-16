@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {Flex} from 'nice-ui/lib/3-list-item/Flex';
 import {rule} from 'nano-theme';

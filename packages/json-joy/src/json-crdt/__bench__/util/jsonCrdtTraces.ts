@@ -6,7 +6,7 @@ export let jsonCrdtTracesDir: string;
 try {
   // Try require.resolve first (works when CWD is at root)
   jsonCrdtTracesDir = path.dirname(require.resolve('json-crdt-traces/package.json'));
-} catch (error) {
+} catch (_error) {
   // Fallback: traverse up to find node_modules
   let current = __dirname;
   for (let i = 0; i < 10; i++) {

@@ -68,14 +68,14 @@ export const agg = (patch: str.Patch): str.Patch[] => {
     line.push([type, str]);
   };
   // console.log("PATCH", patch);
-  LINES: for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     const op = patch[i];
     const type = op[0];
     const str = op[1];
     const index = str.indexOf('\n');
     if (index < 0) {
       push(type, str);
-      continue LINES;
+      continue;
     } else {
       push(type, str.slice(0, index + 1));
       if (line.length) lines.push(line);
@@ -83,11 +83,11 @@ export const agg = (patch: str.Patch): str.Patch[] => {
     }
     let prevIndex = index;
     const strLen = str.length;
-    LINE: while (prevIndex < strLen) {
+    while (prevIndex < strLen) {
       const nextIndex = str.indexOf('\n', prevIndex + 1);
       if (nextIndex < 0) {
         push(type, str.slice(prevIndex + 1));
-        break LINE;
+        break;
       }
       lines.push([[type, str.slice(prevIndex + 1, nextIndex + 1)]]);
       prevIndex = nextIndex;

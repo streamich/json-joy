@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {rule, theme} from 'nano-theme';
 import type {InlineAttr} from '../../../../json-crdt-extensions';

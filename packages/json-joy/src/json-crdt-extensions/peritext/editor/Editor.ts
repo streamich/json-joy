@@ -732,13 +732,13 @@ export class Editor<T = string> implements Printable {
   ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
-    SELECTION: for (const range of selection) {
+    for (const range of selection) {
       if (range.isCollapsed()) {
         const pending = this.pending.value ?? new Map();
         if (pending.has(type)) pending.delete(type);
         else pending.set(type, data);
         this.pending.next(pending);
-        continue SELECTION;
+        continue;
       }
       this.toggleRangeExclFmt(range, type, data, store);
     }

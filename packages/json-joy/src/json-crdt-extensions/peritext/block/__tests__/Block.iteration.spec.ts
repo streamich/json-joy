@@ -1,7 +1,6 @@
 import {setupHelloWorldKit} from '../../__tests__/setup';
 import {MarkerOverlayPoint} from '../../overlay/MarkerOverlayPoint';
 import {OverlayPoint} from '../../overlay/OverlayPoint';
-import {Inline} from '../Inline';
 
 const setupTwoBlockDocument = () => {
   const kit = setupHelloWorldKit();

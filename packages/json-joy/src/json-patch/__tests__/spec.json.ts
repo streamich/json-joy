@@ -164,10 +164,7 @@ export default [
     doc: {
       foo: 'bar',
     },
-    patch: [
-      // @ts-ignore
-      {path: '/baz', value: 'qux', op: 'remove'},
-    ],
+    patch: [{path: '/baz', value: 'qux', op: 'remove'}],
     error: "operation has two 'op' members",
     disabled: true,
   },

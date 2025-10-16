@@ -196,7 +196,6 @@ export class ClockVector extends LogicalClock implements IClockVector {
   public fork(sessionId: number): ClockVector {
     const clock = new ClockVector(sessionId, this.time);
     if (sessionId !== this.sid) clock.observe(tick(this, -1), 1);
-    // biome-ignore lint: using .forEach() on Map is the fastest way to iterate
     this.peers.forEach((peer) => {
       clock.observe(peer, 1);
     });
@@ -213,7 +212,6 @@ export class ClockVector extends LogicalClock implements IClockVector {
     const last = this.peers.size;
     let i = 1;
     let lines = '';
-    // biome-ignore lint: using .forEach() on Map is the fastest way to iterate
     this.peers.forEach((clock) => {
       const isLast = i === last;
       lines += `\n${tab}${isLast ? '└─' : '├─'} ${clock.sid}.${clock.time}`;

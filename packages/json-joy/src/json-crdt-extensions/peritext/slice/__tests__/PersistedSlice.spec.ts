@@ -1,6 +1,4 @@
-import {s} from '@jsonjoy.com/json-type';
-import {ArrApi, ConApi, ObjApi, VecApi} from '../../../../json-crdt/model';
-import {ArrNode, ConNode, ObjNode, VecNode} from '../../../../json-crdt/nodes';
+import {ObjApi, VecApi} from '../../../../json-crdt/model';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
 

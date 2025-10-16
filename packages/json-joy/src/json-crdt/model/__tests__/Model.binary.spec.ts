@@ -49,7 +49,7 @@ describe('Document', () => {
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1]));
       const ins2 = builder.insBin(id, ins1, new Uint8Array([2]));
-      const ins3 = builder.insBin(id, ins2, new Uint8Array([3]));
+      const _ins3 = builder.insBin(id, ins2, new Uint8Array([3]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual(new Uint8Array([1, 2, 3]));
@@ -60,7 +60,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1]));
-      const ins2 = builder.insBin(id, ins1, new Uint8Array([2, 3]));
+      const _ins2 = builder.insBin(id, ins1, new Uint8Array([2, 3]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual(new Uint8Array([1, 2, 3]));
@@ -71,7 +71,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
-      const ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
+      const _ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual(new Uint8Array([1, 2, 3, 4]));
@@ -83,7 +83,7 @@ describe('Document', () => {
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
       const ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
-      const ins3 = builder.insBin(id, tick(ins2, 1), new Uint8Array([5]));
+      const _ins3 = builder.insBin(id, tick(ins2, 1), new Uint8Array([5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual(new Uint8Array([1, 2, 3, 4, 5]));
@@ -94,8 +94,8 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
-      const ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
-      const ins3 = builder.insBin(id, tick(ins1, 1), new Uint8Array([5]));
+      const _ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
+      const _ins3 = builder.insBin(id, tick(ins1, 1), new Uint8Array([5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual(new Uint8Array([1, 2, 5, 3, 4]));
@@ -106,8 +106,8 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
-      const ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
-      const ins3 = builder.insBin(id, tick(ins1, 1), new Uint8Array([5]));
+      const _ins2 = builder.insBin(id, tick(ins1, 1), new Uint8Array([3, 4]));
+      const _ins3 = builder.insBin(id, tick(ins1, 1), new Uint8Array([5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
@@ -120,7 +120,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2]));
-      const ins2 = builder.insBin(id, ins1, new Uint8Array([3, 4]));
+      const _ins2 = builder.insBin(id, ins1, new Uint8Array([3, 4]));
       builder.root(id);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
@@ -134,7 +134,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([5]));
-      const ins2 = builder.insBin(id, ins1, new Uint8Array([13]));
+      const _ins2 = builder.insBin(id, ins1, new Uint8Array([13]));
       builder.del(id, [interval(ins1, 0, 1)]);
       builder.root(id);
       doc.applyPatch(builder.patch);
@@ -149,7 +149,7 @@ describe('Document', () => {
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([5]));
       const ins2 = builder.insBin(id, ins1, new Uint8Array([6]));
-      const ins3 = builder.insBin(id, ins2, new Uint8Array([7]));
+      const _ins3 = builder.insBin(id, ins2, new Uint8Array([7]));
       builder.del(id, [interval(ins2, 0, 1)]);
       builder.root(id);
       doc.applyPatch(builder.patch);
@@ -207,7 +207,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1]));
       const ins2 = builder.insBin(id, ins1, new Uint8Array([2]));
       const ins3 = builder.insBin(id, ins2, new Uint8Array([3]));
-      const ins4 = builder.insBin(id, ins3, new Uint8Array([4]));
+      const _ins4 = builder.insBin(id, ins3, new Uint8Array([4]));
       builder.del(id, [interval(ins2, 0, 2)]);
       builder.root(id);
       doc.applyPatch(builder.patch);
@@ -224,7 +224,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
       const ins2 = builder.insBin(id, tick(ins1, 4), new Uint8Array([6]));
       const ins3 = builder.insBin(id, ins2, new Uint8Array([7, 8, 9, 10, 11, 12]));
-      const ins4 = builder.insBin(
+      const _ins4 = builder.insBin(
         id,
         tick(ins3, 5),
         new Uint8Array([13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]),
@@ -242,8 +242,8 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const id = builder.bin();
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
-      const ins2 = builder.insBin(id, ins1, new Uint8Array([11]));
-      const ins3 = builder.insBin(id, tick(ins1, 4), new Uint8Array([22]));
+      const _ins2 = builder.insBin(id, ins1, new Uint8Array([11]));
+      const _ins3 = builder.insBin(id, tick(ins1, 4), new Uint8Array([22]));
       builder.del(id, [interval(ins1, 0, 3)]);
       builder.root(id);
       doc.applyPatch(builder.patch);

@@ -18,7 +18,7 @@ const main = async () => {
   const model = Model.create(void 0, 1234); // 1234 is the session ID
 
   const view$ = new BehaviorSubject(model.view());
-  const unsubscribe = model.api.onChanges.listen(() => {
+  const _unsubscribe = model.api.onChanges.listen(() => {
     view$.next(model.view());
   });
 

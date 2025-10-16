@@ -468,7 +468,7 @@ describe('JsonPathParser', () => {
         '$[?match(@.email, ".*@example\\.com")]',
         '$[?search(@.description, "test")]',
       ];
-      for (const [i, expr] of tests.entries()) {
+      for (const [_i, expr] of tests.entries()) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
         const selector = result.path?.segments[0]?.selectors[0];
@@ -486,7 +486,7 @@ describe('JsonPathParser', () => {
         {expr: '$[?@.data.values[*].name]', path: ['data', 'values', '*', 'name']},
       ];
 
-      for (const {expr, path} of tests) {
+      for (const {expr} of tests) {
         const result = JsonPathParser.parse(expr);
         expect(result.success).toBe(true);
 

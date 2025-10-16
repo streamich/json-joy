@@ -43,7 +43,7 @@ export interface CollaborativeInputProps extends React.InputHTMLAttributes<HTMLI
 }
 
 export const CollaborativeInput: React.FC<CollaborativeInputProps> = (props) => {
-  const {str, polling, inp, input, ...rest} = props;
+  const {str, polling, inp: _inp, input, ...rest} = props;
   // biome-ignore lint: hook dependency list manually managed
   const state = useMemo(() => new CollaborativeInputState(props), [str, polling]);
   // biome-ignore lint: hook dependency list manually managed

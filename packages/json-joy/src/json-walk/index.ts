@@ -17,7 +17,6 @@ export const walk = (value: unknown, callback: (value: unknown) => void): void =
       case Map:
       case Set: {
         const mapOrSet = value as Set<unknown> | Map<unknown, unknown>;
-        // biome-ignore lint: .forEach() is the fastest way to iterate over a Set or Map
         mapOrSet.forEach((val) => walk(val, callback));
         break;
       }

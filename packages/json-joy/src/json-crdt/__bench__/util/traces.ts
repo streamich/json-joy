@@ -17,7 +17,7 @@ export let editingTracesDir: string;
 try {
   // Try require.resolve first (works when CWD is at root)
   editingTracesDir = path.dirname(require.resolve('editing-traces/package.json'));
-} catch (error) {
+} catch (_error) {
   // Fallback: traverse up to find node_modules
   let current = __dirname;
   for (let i = 0; i < 10; i++) {

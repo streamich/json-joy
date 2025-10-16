@@ -15,7 +15,7 @@ export const unit = (event: KeyboardEvent): '' | 'word' | 'vline' =>
   event.metaKey ? 'vline' : event.altKey || event.ctrlKey ? 'word' : '';
 
 export const getDomain = (url: string): string | undefined =>
-  url.match(/^(?:[^:\/]+:)?(?:\/{1,5})?(([^\/$ \.]+)\.([^\/$ ]+))/i)?.[1];
+  url.match(/^(?:[^:/]+:)?(?:\/{1,5})?(([^/$ .]+)\.([^/$ ]+))/i)?.[1];
 
 export const parseUrl = (url: string): URL | undefined => {
   try {

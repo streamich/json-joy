@@ -13,7 +13,6 @@ export class ClockTable {
   public static from(clock: IClockVector): ClockTable {
     const table = new ClockTable();
     table.push(new Timestamp(clock.sid, clock.time - 1));
-    // biome-ignore lint: using .forEach() on Map is the fastest way to iterate
     clock.peers.forEach((id) => table.push(id));
     return table;
   }

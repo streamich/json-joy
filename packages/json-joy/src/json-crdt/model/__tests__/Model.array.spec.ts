@@ -79,7 +79,7 @@ describe('Document', () => {
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t]);
       const ins2 = builder.insArr(arrId, ins1, [n]);
-      const ins3 = builder.insArr(arrId, ins2, [f]);
+      const _ins3 = builder.insArr(arrId, ins2, [f]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, null, false]);
@@ -93,8 +93,8 @@ describe('Document', () => {
       const f = builder.con(false);
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t]);
-      const ins2 = builder.insArr(arrId, ins1, [n]);
-      const ins3 = builder.insArr(arrId, ins1, [f]);
+      const _ins2 = builder.insArr(arrId, ins1, [n]);
+      const _ins3 = builder.insArr(arrId, ins1, [f]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, false, null]);
@@ -108,7 +108,7 @@ describe('Document', () => {
       const f = builder.con(false);
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t]);
-      const ins3 = builder.insArr(arrId, ins1, [f, n]);
+      const _ins3 = builder.insArr(arrId, ins1, [f, n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, false, null]);
@@ -123,7 +123,7 @@ describe('Document', () => {
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, t]);
       const lastElementId = tick(ins1, 1);
-      const ins2 = builder.insArr(arrId, lastElementId, [f, n]);
+      const _ins2 = builder.insArr(arrId, lastElementId, [f, n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, true, false, null]);
@@ -140,7 +140,7 @@ describe('Document', () => {
       const lastElementId1 = tick(ins1, 1);
       const ins2 = builder.insArr(arrId, lastElementId1, [f, n]);
       const lastElementId2 = tick(ins2, 1);
-      const ins3 = builder.insArr(arrId, lastElementId2, [n]);
+      const _ins3 = builder.insArr(arrId, lastElementId2, [n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, true, false, null, null]);
@@ -155,8 +155,8 @@ describe('Document', () => {
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, t]);
       const lastElementId1 = tick(ins1, 1);
-      const ins2 = builder.insArr(arrId, lastElementId1, [f, n]);
-      const ins3 = builder.insArr(arrId, lastElementId1, [n]);
+      const _ins2 = builder.insArr(arrId, lastElementId1, [f, n]);
+      const _ins3 = builder.insArr(arrId, lastElementId1, [n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, true, null, false, null]);
@@ -171,8 +171,8 @@ describe('Document', () => {
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, t]);
       const lastElementId1 = tick(ins1, 1);
-      const ins2 = builder.insArr(arrId, lastElementId1, [f, n]);
-      const ins3 = builder.insArr(arrId, lastElementId1, [n]);
+      const _ins2 = builder.insArr(arrId, lastElementId1, [f, n]);
+      const _ins3 = builder.insArr(arrId, lastElementId1, [n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
@@ -188,7 +188,7 @@ describe('Document', () => {
       const f = builder.con(false);
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, t]);
-      const ins2 = builder.insArr(arrId, ins1, [f, n]);
+      const _ins2 = builder.insArr(arrId, ins1, [f, n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual([true, false, null, true]);
@@ -204,7 +204,7 @@ describe('Document', () => {
       const ins1 = builder1.insArr(arrId, arrId, [t, t]);
       builder1.root(arrId);
       const builder2 = new PatchBuilder(doc.clock);
-      const ins2 = builder2.insArr(arrId, ins1, [f, n]);
+      const _ins2 = builder2.insArr(arrId, ins1, [f, n]);
       doc.applyPatch(builder1.patch);
       doc.applyPatch(builder2.patch);
       expect(doc.view()).toEqual([true, false, null, true]);
@@ -218,7 +218,7 @@ describe('Document', () => {
       const f = builder.con(false);
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, t]);
-      const ins2 = builder.insArr(arrId, ins1, [f, n]);
+      const _ins2 = builder.insArr(arrId, ins1, [f, n]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
@@ -232,7 +232,7 @@ describe('Document', () => {
       const arrId = builder.arr();
       const t = builder.con(true);
       const f = builder.con(false);
-      const n = builder.con(null);
+      const _n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t]);
       const ins2 = builder.insArr(arrId, ins1, [f]);
       builder.del(arrId, [interval(ins2, 0, 1)]);
@@ -252,7 +252,7 @@ describe('Document', () => {
       const n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t]);
       const ins2 = builder.insArr(arrId, ins1, [f]);
-      const ins3 = builder.insArr(arrId, ins2, [n]);
+      const _ins3 = builder.insArr(arrId, ins2, [n]);
       builder.del(arrId, [interval(ins2, 0, 1)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -266,7 +266,7 @@ describe('Document', () => {
       const arrId = builder.arr();
       const t = builder.con(true);
       const f = builder.con(false);
-      const n = builder.con(null);
+      const _n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, f]);
       builder.del(arrId, [interval(ins1, 1, 1)]);
       builder.root(arrId);
@@ -312,7 +312,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arrId, arrId, [t]);
       const ins2 = builder.insArr(arrId, ins1, [f]);
       const ins3 = builder.insArr(arrId, ins2, [n]);
-      const ins4 = builder.insArr(arrId, ins3, [t]);
+      const _ins4 = builder.insArr(arrId, ins3, [t]);
       builder.del(arrId, [interval(ins2, 0, 2)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -334,7 +334,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arrId, arrId, [t1, t2, t3]);
       const ins2 = builder.insArr(arrId, tick(ins1, 2), [f1, f2]);
       const ins3 = builder.insArr(arrId, tick(ins2, 1), [n]);
-      const ins4 = builder.insArr(arrId, ins3, [f3, f4]);
+      const _ins4 = builder.insArr(arrId, ins3, [f3, f4]);
       builder.del(arrId, [interval(ins1, 1, 6)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -351,7 +351,7 @@ describe('Document', () => {
       const f1 = builder.con(false);
       const f2 = builder.con(false);
       const ins1 = builder.insArr(arrId, arrId, [t1, t2, t3]);
-      const ins2 = builder.insArr(arrId, tick(ins1, 1), [f1, f2]);
+      const _ins2 = builder.insArr(arrId, tick(ins1, 1), [f1, f2]);
       builder.del(arrId, [interval(ins1, 1, 2)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -368,7 +368,7 @@ describe('Document', () => {
       const f1 = builder.con(false);
       const f2 = builder.con(false);
       const ins1 = builder.insArr(arrId, arrId, [t1, t2, t3]);
-      const ins2 = builder.insArr(arrId, tick(ins1, 1), [f1, f2]);
+      const _ins2 = builder.insArr(arrId, tick(ins1, 1), [f1, f2]);
       builder.del(arrId, [interval(ins1, 2, 1)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -385,7 +385,7 @@ describe('Document', () => {
       const f1 = builder.con(false);
       const f2 = builder.con(false);
       const ins1 = builder.insArr(arrId, arrId, [t1, t2, t3]);
-      const ins2 = builder.insArr(arrId, tick(ins1, 1), [f1, f2]);
+      const _ins2 = builder.insArr(arrId, tick(ins1, 1), [f1, f2]);
       builder.del(arrId, [interval(ins1, 1, 1)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -398,9 +398,9 @@ describe('Document', () => {
       const arrId = builder.arr();
       const t = builder.con(true);
       const f = builder.con(false);
-      const n = builder.con(null);
+      const _n = builder.con(null);
       const ins1 = builder.insArr(arrId, arrId, [t, t, t]);
-      const ins2 = builder.insArr(arrId, tick(ins1, 1), [f, f]);
+      const _ins2 = builder.insArr(arrId, tick(ins1, 1), [f, f]);
       builder.del(arrId, [interval(ins1, 0, 3)]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
@@ -463,10 +463,10 @@ describe('Document', () => {
       const arr = builder.arr();
       const t = builder.con(true);
       const f = builder.con(false);
-      const n = builder.con(null);
+      const _n = builder.con(null);
       const ins1 = builder.insArr(arr, arr, [f, t, t]);
       const ins2 = builder.insArr(arr, tick(ins1, 2), [f, t, t]);
-      const ins3 = builder.insArr(arr, tick(ins2, 2), [f, t, t]);
+      const _ins3 = builder.insArr(arr, tick(ins2, 2), [f, t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.index.get(arr)! as ArrNode;
@@ -623,7 +623,7 @@ describe('Document', () => {
       builder.nop(1);
       const ins2 = builder.insArr(arr, tick(ins1, 3), [t]);
       builder.nop(1);
-      const ins3 = builder.insArr(arr, ins2, [t, t]);
+      const _ins3 = builder.insArr(arr, ins2, [t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.index.get(arr)! as ArrNode;

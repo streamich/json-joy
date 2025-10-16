@@ -515,7 +515,7 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
             },
           ],
         };
-        const newObj = applyPatch(
+        const _newObj = applyPatch(
           obj,
           [
             {
@@ -1173,7 +1173,7 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
             },
           ],
         };
-        const newObj = applyPatch(
+        const _newObj = applyPatch(
           obj,
           [
             {

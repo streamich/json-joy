@@ -67,7 +67,7 @@ export class JsonOtFuzzer extends Fuzzer {
     // Current state of the document as operation is being performed.
     let currentDocument = clone(doc);
     let regId = 0;
-    const registers = new Map<number, unknown>();
+    const _registers = new Map<number, unknown>();
     const pick: JsonOpPickComponent[] = [];
     const data: JsonOpDataComponent[] = [];
     const drop: JsonOpDropComponent[] = [];
@@ -198,7 +198,7 @@ export class JsonOtFuzzer extends Fuzzer {
       const path = this.pickPath(currentDocument);
       const value = RandomJson.genNumber();
       const ref = find(currentDocument, path);
-      const doOverwriteAtPath = Math.random() < 0.3 || !ref.obj;
+      const _doOverwriteAtPath = Math.random() < 0.3 || !ref.obj;
       if (isObjectReference(ref)) {
         const key = RandomJson.genString(4);
         const newPath = [...path.slice(0, path.length - 1), key];

@@ -36,7 +36,7 @@ describe('Document', () => {
         [2, builder.json({})],
       ]);
       doc.applyPatch(builder.patch);
-      const obj = doc.index.get(id);
+      const _obj = doc.index.get(id);
     });
   });
 });

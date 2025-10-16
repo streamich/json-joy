@@ -360,7 +360,7 @@ export class JsonPathParser extends Parser {
     // Check for function expressions first
     if (this.match(/[a-z]/)) {
       const start = this.pos;
-      const name = this.parseFunctionName();
+      const _name = this.parseFunctionName();
       this.ws();
       if (this.is('(')) {
         // It's a function call - reset and parse as function

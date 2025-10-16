@@ -405,7 +405,7 @@ describe('.remove()', () => {
     expect(store.getSnapshot()).toEqual({foo: 'bar', arr: [1, 3]});
     expect(store.get()).toEqual({foo: 'bar', arr: [1, 3]});
     expect(op).toEqual({op: 'remove', path: ['arr', 1]});
-    const op2 = store.remove(['arr', '1']);
+    const _op2 = store.remove(['arr', '1']);
     expect(store.get()).toEqual({foo: 'bar', arr: [1]});
     store.remove('/arr/0');
     expect(store.get()).toEqual({foo: 'bar', arr: []});

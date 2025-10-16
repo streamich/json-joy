@@ -195,7 +195,7 @@ import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
 import {Decoder as SidecarDecoder} from '../codec/sidecar/binary/Decoder';
 const sidecarEncoder = new SidecarEncoder();
 const sidecarDecoder = new SidecarDecoder();
-const [view, sidecar] = sidecarEncoder.encode(model);
+const [_view, sidecar] = sidecarEncoder.encode(model);
 console.log(formatWithOptions({depth: 30}, sidecar));
 // Uint8Array(18) [
 //   0,   0, 0, 10,  26, 67, 25,

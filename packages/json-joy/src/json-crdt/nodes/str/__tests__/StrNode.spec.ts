@@ -53,7 +53,7 @@ const assetTreeIsValid = (tree: StrNode, chunk: StrChunk | undefined = tree.root
   if (tree.root === chunk) {
     let str = '';
     let size = 0;
-    let prev: StrChunk | undefined = undefined;
+    let prev: StrChunk | undefined;
     for (const chunk of chunks(tree)) {
       size++;
       str += chunk.data ? chunk.data : '';

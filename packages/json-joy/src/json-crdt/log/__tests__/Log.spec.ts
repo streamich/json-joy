@@ -128,7 +128,7 @@ describe('.findMax()', () => {
     model.api.set({foo: 'bar'});
     const log = Log.fromNewModel(model);
     log.end.api.obj([]).set({x: 1});
-    const patch1 = log.end.api.flush();
+    const _patch1 = log.end.api.flush();
     log.end.setSid(sid1);
     log.end.api.obj([]).set({y: 2});
     const patch2 = log.end.api.flush();
@@ -436,7 +436,7 @@ describe('.undo()', () => {
       expect(log.end.view()).toEqual({obj: {foo: 'baz'}});
       const patch = log.end.api.flush();
       expect(patch.ops.length).toBe(2);
-      const insOp = patch.ops.find((op) => op.name() === 'ins_obj')!;
+      const _insOp = patch.ops.find((op) => op.name() === 'ins_obj')!;
       const undo = log.undo(patch);
       expect(undo.ops.length).toBe(2);
       expect(log.end.view()).toEqual({obj: {foo: 'baz'}});
@@ -452,7 +452,7 @@ describe('.undo()', () => {
       expect(log.end.view()).toEqual({obj: {}});
       const patch = log.end.api.flush();
       expect(patch.ops.length).toBe(2);
-      const insOp = patch.ops.find((op) => op.name() === 'ins_obj')!;
+      const _insOp = patch.ops.find((op) => op.name() === 'ins_obj')!;
       const undo = log.undo(patch);
       expect(undo.ops.length).toBe(2);
       expect(log.end.view()).toEqual({obj: {}});
@@ -468,7 +468,7 @@ describe('.undo()', () => {
       expect(log.end.view()).toEqual({vec: ['baz']});
       const patch = log.end.api.flush();
       expect(patch.ops.length).toBe(2);
-      const insOp = patch.ops.find((op) => op.name() === 'ins_vec')!;
+      const _insOp = patch.ops.find((op) => op.name() === 'ins_vec')!;
       const undo = log.undo(patch);
       expect(undo.ops.length).toBe(2);
       expect(log.end.view()).toEqual({vec: ['baz']});
@@ -484,7 +484,7 @@ describe('.undo()', () => {
       expect(log.end.view()).toEqual({vec: [undefined]});
       const patch = log.end.api.flush();
       expect(patch.ops.length).toBe(2);
-      const insOp = patch.ops.find((op) => op.name() === 'ins_vec')!;
+      const _insOp = patch.ops.find((op) => op.name() === 'ins_vec')!;
       const undo = log.undo(patch);
       expect(undo.ops.length).toBe(2);
       expect(log.end.view()).toEqual({vec: [undefined]});
@@ -500,7 +500,7 @@ describe('.undo()', () => {
       expect(log.end.view()).toEqual({arr: [2]});
       const patch = log.end.api.flush();
       expect(patch.ops.length).toBe(2);
-      const insOp = patch.ops.find((op) => op.name() === 'ins_val')!;
+      const _insOp = patch.ops.find((op) => op.name() === 'ins_val')!;
       const undo = log.undo(patch);
       expect(undo.ops.length).toBe(2);
       expect(log.end.view()).toEqual({arr: [2]});

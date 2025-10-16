@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {LeafBlockFrame} from './LeafBlockFrame';
 import type {BlockViewProps} from '../../../web/react/BlockView';

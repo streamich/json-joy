@@ -1,4 +1,4 @@
-import {InsStrOp, s} from '../../../../json-crdt-patch';
+import {InsStrOp} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 describe('.diff()', () => {

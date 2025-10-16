@@ -160,7 +160,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
     ext?: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
-    let extNode: ExtNode<any> | undefined = undefined;
+    let extNode: ExtNode<any> | undefined;
     const node: JsonNode | undefined = this.node;
     if (node instanceof ExtNode) extNode = node;
     if (node instanceof VecNode) extNode = node.ext();
@@ -208,7 +208,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       let node = path !== void 0 ? this.find(path) : this.node;
       if (leaf) while (node instanceof ValNode) node = node.child();
       return this.api.wrap(node);
-    } catch (e) {
+    } catch (_e) {
       return;
     }
   }

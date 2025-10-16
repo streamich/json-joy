@@ -1,5 +1,5 @@
 import {Slice} from './Slice';
-import {IWriterGrowable, IWriter} from './types';
+import type {IWriterGrowable, IWriter} from './types';
 
 const EMPTY_UINT8 = new Uint8Array([]);
 const EMPTY_VIEW = new DataView(EMPTY_UINT8.buffer);

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 

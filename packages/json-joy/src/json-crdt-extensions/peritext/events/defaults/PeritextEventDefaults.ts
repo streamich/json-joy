@@ -1,7 +1,7 @@
 import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
-import {CursorAnchor, type SliceTypeSteps, type Peritext} from '../../../../json-crdt-extensions/peritext';
+import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
 import {MarkerSlice} from '../../slice/MarkerSlice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
@@ -427,34 +427,34 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             range.collapseToStart();
             const start = range.start;
             const pos = start.viewPos();
-            let inserted: number = 0;
+            let _inserted: number = 0;
             switch (format) {
               case 'html': {
-                inserted = transfer.fromHtml(pos, text);
+                _inserted = transfer.fromHtml(pos, text);
                 break;
               }
               case 'hast': {
                 const json = JSON.parse(text);
-                inserted = transfer.fromHast(pos, json);
+                _inserted = transfer.fromHast(pos, json);
                 break;
               }
               case 'jsonml': {
                 const json = JSON.parse(text);
-                inserted = transfer.fromJson(pos, json);
+                _inserted = transfer.fromJson(pos, json);
                 break;
               }
               case 'json': {
                 const json = JSON.parse(text);
-                inserted = transfer.fromView(pos, json);
+                _inserted = transfer.fromView(pos, json);
                 break;
               }
               case 'mdast': {
                 const json = JSON.parse(text);
-                inserted = transfer.fromMdast(pos, json);
+                _inserted = transfer.fromMdast(pos, json);
                 break;
               }
               case 'md': {
-                inserted = transfer.fromMarkdown(pos, text);
+                _inserted = transfer.fromMarkdown(pos, text);
                 break;
               }
             }

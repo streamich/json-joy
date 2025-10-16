@@ -233,9 +233,11 @@ describe('Writer', () => {
   describe('u64', () => {
     test('writes 64-bit unsigned integer as number', () => {
       const writer = new Writer();
+      // biome-ignore lint: number as u64 is safe for this test
       writer.u64(0x1234567890abcdef);
       expect(writer.x).toBe(8);
       const value = writer.view.getBigUint64(0);
+      // biome-ignore lint: number as u64 is safe for this test
       expect(value).toBe(BigInt(0x1234567890abcdef));
     });
 
@@ -250,16 +252,18 @@ describe('Writer', () => {
   describe('f64', () => {
     test('writes 64-bit float', () => {
       const writer = new Writer();
-      writer.f64(3.14159);
+      writer.f64(Math.PI);
       expect(writer.x).toBe(8);
       const value = writer.view.getFloat64(0);
-      expect(value).toBeCloseTo(3.14159);
+      expect(value).toBeCloseTo(Math.PI);
     });
 
     test('writes negative float', () => {
       const writer = new Writer();
+      // biome-ignore lint: I'm just writing -e
       writer.f64(-2.71828);
       const value = writer.view.getFloat64(0);
+      // biome-ignore lint: I'm just writing -e
       expect(value).toBeCloseTo(-2.71828);
     });
   });
@@ -287,6 +291,7 @@ describe('Writer', () => {
   describe('u8u64', () => {
     test('writes byte and 64-bit qword', () => {
       const writer = new Writer();
+      // biome-ignore lint: number as u64 is safe for this test
       writer.u8u64(0xff, 0x123456789abcdef0);
       expect(writer.x).toBe(9);
       expect(writer.uint8[0]).toBe(0xff);
@@ -307,10 +312,12 @@ describe('Writer', () => {
   describe('u8f64', () => {
     test('writes byte and 64-bit float', () => {
       const writer = new Writer();
+      // biome-ignore lint: just a pi
       writer.u8f64(0xbb, 3.14159);
       expect(writer.x).toBe(9);
       expect(writer.uint8[0]).toBe(0xbb);
       const value = writer.view.getFloat64(1);
+      // biome-ignore lint: just a pi
       expect(value).toBeCloseTo(3.14159);
     });
   });
@@ -597,7 +604,7 @@ describe('Writer', () => {
     test('handles all unicode control characters', () => {
       const writer = new Writer();
       const str = '\t\n\r\f\b\v';
-      const length = writer.utf8(str);
+      const _length = writer.utf8(str);
       const result = writer.flush();
       const decoded = new TextDecoder().decode(result);
       expect(decoded).toBe(str);

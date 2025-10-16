@@ -29,7 +29,7 @@ test('can infer view type of CRDT nodes', () => {
     n13: N13;
   }>;
   type View = JsonNodeView<N14>;
-  const a: View = {
+  const _a: View = {
     n1: 123,
     n2: true,
     n3: 'foo',

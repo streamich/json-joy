@@ -1,6 +1,4 @@
-/** @jsx h */
-/** @jsxFrag h */
-import {h} from '../jsx';
+import * as React from 'react';
 import {SliceTypeCon} from '../../slice/constants';
 import {setup} from './setup';
 

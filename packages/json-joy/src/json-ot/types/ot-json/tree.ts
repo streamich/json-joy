@@ -6,7 +6,7 @@ const toStringNode = (self: PickNode | DropNode, tab: string = ''): string => {
   let children = '';
   const last = self.children.size - 1;
   let i = 0;
-  for (const [index, node] of self.children) {
+  for (const [_index, node] of self.children) {
     const isLast = i === last;
     children += `\n${tab}${isLast ? ' └─ ' : ' ├─ '}${node.toString(tab + (isLast ? '    ' : ' │  '))}`;
     i++;
@@ -100,7 +100,7 @@ export class Register {
   }
 
   removeDrop(drop: DropNode) {
-    const index = this.drops.findIndex((v) => v === drop);
+    const index = this.drops.indexOf(drop);
     if (index > -1) this.drops.splice(index, 1);
   }
 
@@ -118,7 +118,7 @@ export class Register {
 
 export class OpTree {
   public static from(op: JsonOp): OpTree {
-    const [test, pick = [], data = [], drop = [], edit = []] = op;
+    const [test, pick = [], data = [], drop = [], _edit = []] = op;
     const tree = new OpTree();
     if (test.length) tree.test.push(...test);
     for (let i = 0; i < pick.length; i++) {
@@ -248,7 +248,6 @@ export class OpTree {
     // Compose deletes.
     const d1: DropNode = this.drop;
     const d2: DropNode = other.drop;
-    // biome-ignore lint: using .forEach() is the fastest way to iterate over a Map
     other.register.forEach((register2) => {
       // Update pick path.
       if (register2.pick) {
@@ -391,7 +390,6 @@ export class OpTree {
 
   protected pushDropNode(drop: JsonOpDropComponent[], node: DropNode): void {
     if (node.regId >= 0) drop.push([node.regId, node.path.slice(0, node.pathLength)]);
-    // biome-ignore lint: using .forEach() is the fastest way to iterate over a Map
     node.children.forEach((child) => {
       this.pushDropNode(drop, child);
     });
@@ -402,7 +400,7 @@ export class OpTree {
     let registers = 'Registers';
     const lastRegister = this.register.size - 1;
     let i = 0;
-    for (const [id, register] of this.register) {
+    for (const [_id, register] of this.register) {
       const isLast = i === lastRegister;
       registers += `\n${tab}${isLast ? '│  └─' : '│  ├─'} ${register}`;
       i++;

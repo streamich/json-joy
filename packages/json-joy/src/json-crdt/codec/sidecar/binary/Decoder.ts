@@ -44,7 +44,6 @@ export class Decoder {
   }
 
   protected ts(): ITimestampStruct {
-    const decoderTime = this.time!;
     const [sessionIndex, timeDiff] = this.decoder.reader.id();
     return this.clockDecoder!.decodeId(sessionIndex, timeDiff);
   }
@@ -115,7 +114,6 @@ export class Decoder {
     const obj = new nodes.VecNode(this.doc, id);
     if (!Array.isArray(view) || view.length !== length) throw new Error('INVALID_VEC');
     const elements = obj.elements;
-    const reader = this.decoder.reader;
     for (let i = 0; i < length; i++) {
       const child = this.cNode(view[i]);
       const childId = child.id;

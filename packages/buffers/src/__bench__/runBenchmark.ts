@@ -48,7 +48,7 @@ export const runBenchmark = (benchmark: IBenchmark): PayloadResult[] => {
     for (const runner of benchmark.runners) {
       const fn = runner.setup(data);
       if (benchmark.warmup) for (let i = 0; i < benchmark.warmup; i++) fn(data);
-      let isCorrect: undefined | boolean = undefined;
+      let isCorrect: undefined | boolean;
       if (benchmark.test) {
         try {
           isCorrect = benchmark.test(data, fn(data));

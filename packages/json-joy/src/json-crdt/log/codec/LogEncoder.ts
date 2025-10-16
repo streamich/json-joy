@@ -63,7 +63,6 @@ export class LogEncoder {
     switch (patchFormat) {
       case 'binary': {
         history[0] = log.start().toBinary();
-        // biome-ignore lint: allow .forEach(), for now
         log.patches.forEach(({v}) => {
           history[1].push(v.toBinary());
         });
@@ -76,7 +75,6 @@ export class LogEncoder {
         const encodeCompact = this.options.patchCompactEncoder;
         if (!encodeCompact) throw new Error('NO_COMPACT_PATCH_ENCODER');
         const list = history[1];
-        // biome-ignore lint: allow .forEach(), for now
         log.patches.forEach(({v}) => {
           list.push(encodeCompact(v));
         });
@@ -89,7 +87,6 @@ export class LogEncoder {
         const encodeVerbose = this.options.patchVerboseEncoder;
         if (!encodeVerbose) throw new Error('NO_VERBOSE_PATCH_ENCODER');
         const list = history[1];
-        // biome-ignore lint: allow .forEach(), for now
         log.patches.forEach(({v}) => {
           list.push(encodeVerbose(v));
         });

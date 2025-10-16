@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {Avatar} from 'nice-ui/lib/1-inline/Avatar';
 import type {FormattingIconProps} from './FormattingIcon';

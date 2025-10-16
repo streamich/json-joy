@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {ContextPane, type ContextPaneProps} from 'nice-ui/lib/4-card/ContextMenu/ContextPane';
 

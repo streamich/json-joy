@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';

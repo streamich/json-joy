@@ -27,9 +27,9 @@
 // function foo(_node: ObjApi<SimpleObjectNodeType>) {}
 // foo(model.api.node)
 
-import {type JsonNodeView, Model} from '..';
+import {Model} from '..';
 import {s} from '../../json-crdt-patch';
-import type {SchemaToJsonNode} from '../schema/types';
+// import type {SchemaToJsonNode} from '../schema/types';
 
 const SimpleObjectSchema = s.obj({
   text: s.con<string>('foo'),
@@ -37,8 +37,8 @@ const SimpleObjectSchema = s.obj({
 
 const model = Model.create(SimpleObjectSchema);
 
-type SimpleObjectNodeType = SchemaToJsonNode<typeof SimpleObjectSchema>;
-type SimpleObjectI = JsonNodeView<SimpleObjectNodeType>;
+// type SimpleObjectNodeType = SchemaToJsonNode<typeof SimpleObjectSchema>;
+// type SimpleObjectI = JsonNodeView<SimpleObjectNodeType>;
 // type SimpleObjectI = ReturnType<(typeof model)['view']>;
 
 console.log(model + '');

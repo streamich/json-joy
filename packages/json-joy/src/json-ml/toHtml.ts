@@ -1,6 +1,6 @@
 import type {JsonMlNode} from './types';
 
-const escapeText = (str: string): string => str.replace(/[\u00A0-\u9999<>\&]/gim, (i) => '&#' + i.charCodeAt(0) + ';');
+const escapeText = (str: string): string => str.replace(/[\u00A0-\u9999<>&]/gim, (i) => '&#' + i.charCodeAt(0) + ';');
 
 const escapeAttr = (str: string): string => str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 

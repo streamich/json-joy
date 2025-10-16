@@ -110,7 +110,6 @@ export class JsonCrdtDiff {
     const builder = this.builder;
     const inserts: [key: string, value: ITimestampStruct][] = [];
     const srcKeys = new Set<string>();
-    // biome-ignore lint: .forEach is fastest here
     src.forEach((key) => {
       srcKeys.add(key);
       const dstValue = dst[key];

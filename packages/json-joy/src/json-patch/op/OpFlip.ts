@@ -1,7 +1,7 @@
 import type {CompactFlipOp, OPCODE_FLIP} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import type {OperationFlip} from '../types';
-import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import {find, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 
 /**

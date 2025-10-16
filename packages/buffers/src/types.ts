@@ -1,4 +1,3 @@
-import {Reader} from './Reader';
 import type {Slice} from './Slice';
 
 export interface IWriter {

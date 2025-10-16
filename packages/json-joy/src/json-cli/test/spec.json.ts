@@ -167,7 +167,7 @@ const testCases: TestCase[] = [
       foo: 'bar',
     },
     patch: [
-      // @ts-ignore
+      // @ts-expect-error
       {path: '/baz', value: 'qux', op: 'remove'},
     ],
     error: "operation has two 'op' members",

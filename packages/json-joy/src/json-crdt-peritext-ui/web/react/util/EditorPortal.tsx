@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {Portal} from '../../../components/Portal';
 import {usePeritext} from '../context';

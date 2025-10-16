@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {useDebugCtx} from './context';
 import {DebugLabel} from '../../components/DebugLabel';
@@ -21,12 +20,12 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   const keys: (number | string)[] = Object.keys(inline.attr());
   const tags: string[] = [];
   const length = keys.length;
-  let hasCursor = false;
+  let _hasCursor = false;
   for (let i = 0; i < length; i++) {
     let tag: string | number = keys[i];
     if (typeof tag === 'string' && Number(tag) + '' === tag) tag = Number(tag);
     if (tag === SliceTypeCon.Cursor) {
-      hasCursor = true;
+      _hasCursor = true;
       continue;
     }
     tag = SliceTypeName[tag as any] ?? tag + '';

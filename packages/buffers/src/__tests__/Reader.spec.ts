@@ -436,9 +436,10 @@ describe('Reader', () => {
     test('reads 64-bit float', () => {
       const buffer = new ArrayBuffer(8);
       const view = new DataView(buffer);
-      view.setFloat64(0, 3.14159265);
+      view.setFloat64(0, Math.PI);
       const data = new Uint8Array(buffer);
       const reader = new Reader(data);
+      // biome-ignore lint: ignore precision
       expect(reader.f64()).toBeCloseTo(3.14159265, 8);
       expect(reader.x).toBe(8);
     });
@@ -446,9 +447,11 @@ describe('Reader', () => {
     test('reads negative double', () => {
       const buffer = new ArrayBuffer(8);
       const view = new DataView(buffer);
+      // biome-ignore lint: ignore precision
       view.setFloat64(0, -2.718281828);
       const data = new Uint8Array(buffer);
       const reader = new Reader(data);
+      // biome-ignore lint: ignore precision
       expect(reader.f64()).toBeCloseTo(-2.718281828, 8);
     });
 
@@ -1017,9 +1020,9 @@ describe('Reader', () => {
         data[i] = i % 256;
       }
       const reader = new Reader(data);
-      let checksum = 0;
+      let _checksum = 0;
       for (let i = 0; i < size; i++) {
-        checksum += reader.u8();
+        _checksum += reader.u8();
       }
       expect(reader.x).toBe(size);
     });

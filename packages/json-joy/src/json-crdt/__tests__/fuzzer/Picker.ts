@@ -22,7 +22,6 @@ export class Picker {
   public pickNode(model: Model): JsonNode | null {
     const nodes: JsonNode[] = [];
     const index = model.index;
-    // biome-ignore lint: index is not iterable
     index.forEach(({v: node}) => nodes.push(node));
     if (!nodes.length) return null;
     return Fuzzer.pick(nodes);

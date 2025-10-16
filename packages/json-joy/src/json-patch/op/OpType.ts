@@ -30,7 +30,6 @@ export class OpType extends AbstractPredicateOp<'type'> {
     const {val} = find(doc, this.path);
     if (val === null) return this.value === 'null';
     if (isArray(val)) return this.value === 'array';
-    // biome-ignore lint: comparison to value is on purpose
     if (typeof val === this.value) return true;
     if (typeof val === 'number' && val === Math.round(val) && this.value === 'integer') return true;
     return false;

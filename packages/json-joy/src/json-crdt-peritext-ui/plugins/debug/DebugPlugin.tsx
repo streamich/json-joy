@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {RenderInline} from './RenderInline';
 import {RenderBlock} from './RenderBlock';
 import {RenderCaret} from './RenderCaret';

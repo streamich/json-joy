@@ -392,7 +392,6 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
 
   public toString(tab?: string) {
     const patches: Patch[] = [];
-    // biome-ignore lint: patches are not iterable
     this.patches.forEach(({v}) => patches.push(v));
     return (
       'log' +

@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {FormattingNewGeneric} from './FormattingNewGeneric';
 import type {EditProps} from '../../../types';

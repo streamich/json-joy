@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {ContextHeader} from './ContextHeader';
 import {Space} from 'nice-ui/lib/3-list-item/Space';

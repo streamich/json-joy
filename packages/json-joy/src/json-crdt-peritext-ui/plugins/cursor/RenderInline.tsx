@@ -1,4 +1,3 @@
-// biome-ignore lint: React is used for JSX
 import * as React from 'react';
 import {usePeritext} from '../../web/react';
 import {useSyncStoreOpt} from '../../web/react/hooks';

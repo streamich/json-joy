@@ -28,7 +28,7 @@ test('can edit document using JSON Patch operations', () => {
   // console.log(doc.view());
   // console.log(doc.toString());
 
-  const insert4 = builder.insStr(str, insert3, 'qux! ');
+  const _insert4 = builder.insStr(str, insert3, 'qux! ');
   doc.api.apply();
 
   // console.log(doc.view());

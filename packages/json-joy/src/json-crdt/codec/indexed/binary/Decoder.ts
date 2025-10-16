@@ -135,7 +135,7 @@ export class Decoder {
 
   private decodeStrChunk = (): nodes.StrChunk => {
     const decoder = this.dec;
-    const reader = decoder.reader;
+    const _reader = decoder.reader;
     const id = this.ts();
     const val = decoder.val();
     if (typeof val === 'string') return new nodes.StrChunk(id, val.length, val);

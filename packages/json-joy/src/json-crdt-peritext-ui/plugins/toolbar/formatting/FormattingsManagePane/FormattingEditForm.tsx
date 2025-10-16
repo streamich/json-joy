@@ -1,4 +1,3 @@
-// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useT} from 'use-t';

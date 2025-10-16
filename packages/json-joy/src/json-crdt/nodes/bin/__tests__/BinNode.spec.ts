@@ -16,7 +16,7 @@ test('merges sequential chunks', () => {
   doc.applyPatch(builder2.patch);
 
   const builder3 = new PatchBuilder(doc.clock);
-  const ins2 = builder3.insBin(bin, tick(ins1, 1), new Uint8Array([3, 4]));
+  const _ins2 = builder3.insBin(bin, tick(ins1, 1), new Uint8Array([3, 4]));
   doc.applyPatch(builder3.patch);
 
   const node = doc.index.get(bin) as BinNode;

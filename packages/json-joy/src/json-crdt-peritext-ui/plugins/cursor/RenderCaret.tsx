@@ -85,7 +85,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
         style.left = dx + 'px';
       }
     }
-  }, [point, ctx.dom.getCharRect]);
+  }, [point, ctx.dom.getCharRect, ctx.dom]);
 
   const anchorForward = point.anchor === Anchor.Before;
 

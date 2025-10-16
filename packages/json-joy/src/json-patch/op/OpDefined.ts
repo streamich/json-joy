@@ -1,7 +1,7 @@
 import type {CompactDefinedOp, OPCODE_DEFINED} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import type {OperationDefined} from '../types';
-import {find, type Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
+import {find, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {AbstractOp} from './AbstractOp';
 

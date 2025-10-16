@@ -6,7 +6,6 @@ export default (uint8: Uint8Array, start: number, length: number): string => {
     const b1 = uint8[x++]!;
     if ((b1 & 0x80) === 0) {
       str += String.fromCharCode(b1);
-      continue;
     } else if ((b1 & 0xe0) === 0xc0) {
       str += String.fromCharCode(((b1 & 0x1f) << 6) | (uint8[x++]! & 0x3f));
     } else if ((b1 & 0xf0) === 0xe0) {

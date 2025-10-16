@@ -42,7 +42,6 @@ const rewriteAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | und
   const relevantOverlappingButNotContained = new Set<PathStep>();
   if (length) {
     const savedSlices = txt.savedSlices;
-    // biome-ignore lint: slices is not iterable
     slices.forEach((slice) => {
       if (slice instanceof PersistedSlice) {
         const isContained = range.contains(slice);

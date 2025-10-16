@@ -21,7 +21,6 @@ export const useSyncStoreOpt = <T>(store: SyncStore<T | undefined> = emptySyncSt
 export const useTimeout = (ms: number, deps: React.DependencyList = [ms]) => {
   const [ready, setReady] = React.useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: ready do not need to memoize it
   React.useEffect(() => {
     if (ready) setReady(false);
 
@@ -32,6 +31,7 @@ export const useTimeout = (ms: number, deps: React.DependencyList = [ms]) => {
     return () => {
       clearTimeout(timer);
     };
+    // biome-ignore lint: useExhaustiveDependencies: want to control deps manually
   }, deps);
 
   return ready;
