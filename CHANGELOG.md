@@ -1,3 +1,17 @@
+# [17.55.0](https://github.com/streamich/json-joy/compare/v17.54.0...v17.55.0) (2025-10-16)
+
+
+### Bug Fixes
+
+* 🐛 correct current node `@..` parsing ([7a2f3ff](https://github.com/streamich/json-joy/commit/7a2f3ffebf95c56bf58c3c50204c18c26e17ac50))
+
+
+### Features
+
+* 🎸 add function evaluation ([6a205ee](https://github.com/streamich/json-joy/commit/6a205ee1961a82acf9c171c0b5ccbd981e422681))
+* 🎸 add RFC 9535 document ([bd391dd](https://github.com/streamich/json-joy/commit/bd391dd2816fb7d5ced4f0ea0ab6edae9cfe4f19))
+* **util:** 🎸 add overlap() and normalize() methods to string diffing ([dfe18b5](https://github.com/streamich/json-joy/commit/dfe18b599f21b8f916ab6a42088abd93e087e1e2))
+
 # [17.54.0](https://github.com/streamich/json-joy/compare/v17.53.0...v17.54.0) (2025-09-28)
 
 
