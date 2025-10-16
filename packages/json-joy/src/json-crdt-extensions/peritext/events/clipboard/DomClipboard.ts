@@ -97,11 +97,11 @@ export class DomClipboard implements PeritextClipboard {
         case 'text/plain':
         case 'text/html':
         case 'image/png': {
-          clipboardData[type] = new Blob([data[type]], {type});
+          clipboardData[type] = new Blob([data[type] as BlobPart], {type});
           break;
         }
         default: {
-          clipboardData['web ' + type] = new Blob([data[type]], {type});
+          clipboardData['web ' + type] = new Blob([data[type] as BlobPart], {type});
         }
       }
     }

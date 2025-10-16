@@ -100,18 +100,9 @@
     "yjs": "^13.6.18"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "tsx"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "transformIgnorePatterns": [
-      ".*/node_modules/.*"
-    ],
-    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$"
+    "projects": [
+      "packages/*/package.json"
+    ]
   },
   "config": {
     "commitizen": {

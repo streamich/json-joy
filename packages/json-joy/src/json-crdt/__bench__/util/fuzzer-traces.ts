@@ -4,10 +4,10 @@ import {Patch} from '../../../json-crdt-patch';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {Model} from '../../model';
 import {bufferToUint8Array} from '@jsonjoy.com/util/lib/buffers/bufferToUint8Array';
+import {jsonCrdtTracesDir} from './jsonCrdtTraces';
 
 export const loadFuzzerTrace = (traceName: string): [batch: Patch[], model: Model] => {
-  const root = path.resolve(__dirname, '..', '..', '..', '..');
-  const dir = path.join(root, 'node_modules', 'json-crdt-traces', 'traces', 'fuzzer', 'processed', traceName);
+  const dir = path.join(jsonCrdtTracesDir, 'traces', 'fuzzer', 'processed', traceName);
   const patchFile = path.join(dir, 'patches.bin');
   const modelFile = path.join(dir, 'model.bin');
   const buf = fs.readFileSync(patchFile);

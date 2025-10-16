@@ -59,5 +59,25 @@
   "dependencies": {},
   "devDependencies": {
     "json-pack-napi": "^0.0.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
   }
 }

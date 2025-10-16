@@ -11,7 +11,28 @@ const loadTrace = (filename: SequentialTraceName) => {
 };
 
 const cache = {} as Record<SequentialTraceName, SequentialTrace>;
-const rootFolder = path.resolve(__dirname, '..', '..', '..', '..');
+
+// Resolve editing-traces at module load time
+export let editingTracesDir: string;
+try {
+  // Try require.resolve first (works when CWD is at root)
+  editingTracesDir = path.dirname(require.resolve('editing-traces/package.json'));
+} catch (error) {
+  // Fallback: traverse up to find node_modules
+  let current = __dirname;
+  for (let i = 0; i < 10; i++) {
+    const candidate = path.join(current, 'node_modules', 'editing-traces');
+    if (fs.existsSync(candidate)) {
+      editingTracesDir = candidate;
+      break;
+    }
+    const parent = path.dirname(current);
+    if (parent === current) {
+      throw new Error('Could not find editing-traces module');
+    }
+    current = parent;
+  }
+}
 
 export const sequentialTraceNames: SequentialTraceName[] = [
   'automerge-paper',
@@ -25,7 +46,7 @@ export const sequentialTraceNames: SequentialTraceName[] = [
 
 export const traces = {
   filename: (name: SequentialTraceName) =>
-    path.resolve(rootFolder, 'node_modules', 'editing-traces', 'sequential_traces', `${name}.json.gz`),
+    path.resolve(editingTracesDir, 'sequential_traces', `${name}.json.gz`),
   get: (name: SequentialTraceName) => {
     if (!cache[name]) {
       const filename = traces.filename(name);

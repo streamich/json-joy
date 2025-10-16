@@ -3,10 +3,10 @@ import * as fs from 'fs';
 import {Patch} from '../../../json-crdt-patch';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {JsonDecoder} from '@jsonjoy.com/json-pack/lib/json/JsonDecoder';
+import {jsonCrdtTracesDir} from './jsonCrdtTraces';
 
 export const loadConcurrentTrace = (traceName: string): [batch: Patch[], view: unknown] => {
-  const root = path.resolve(__dirname, '..', '..', '..', '..');
-  const dir = path.join(root, 'node_modules', 'json-crdt-traces', 'traces', 'text', 'concurrent', traceName);
+  const dir = path.join(jsonCrdtTracesDir, 'traces', 'text', 'concurrent', traceName);
   const patchFile = path.join(dir, 'patches.bin');
   const viewFile = path.join(dir, 'view.json');
   const buf = fs.readFileSync(patchFile);

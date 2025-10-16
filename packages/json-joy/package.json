@@ -133,6 +133,8 @@
     "yjs": "^13.6.18"
   },
   "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
     "moduleFileExtensions": [
       "ts",
       "js",
@@ -144,7 +146,11 @@
     "transformIgnorePatterns": [
       ".*/node_modules/.*"
     ],
-    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$"
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
   },
   "config": {
     "commitizen": {
