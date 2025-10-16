@@ -5,7 +5,11 @@ import type * as types from './types';
 /**
  * Function signature for JSONPath functions
  */
-type JSONPathFunction = (args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[], currentNode: Value, evaluator: JsonPathEval) => any;
+type JSONPathFunction = (
+  args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+  currentNode: Value,
+  evaluator: JsonPathEval,
+) => any;
 
 export class JsonPathEval {
   public static run = (path: string | types.JSONPath, data: unknown): Value[] => {
@@ -355,23 +359,23 @@ export class JsonPathEval {
 
   private evalFunctionExpression(expression: types.FunctionExpression, currentNode: Value): boolean {
     const result = this.evaluateFunction(expression, currentNode);
-    
+
     // Functions in test expressions should return LogicalType
     // If the function returns a value, convert it to boolean
     if (typeof result === 'boolean') {
       return result;
     }
-    
+
     // For count() and length() returning numbers, convert to boolean (non-zero is true)
     if (typeof result === 'number') {
       return result !== 0;
     }
-    
+
     // For nodelists, true if non-empty
     if (Array.isArray(result)) {
       return result.length > 0;
     }
-    
+
     // For other values, check if they exist (not null/undefined)
     return result != null;
   }
@@ -386,17 +390,17 @@ export class JsonPathEval {
         return expression.value;
       case 'path': {
         if (!expression.path.segments) return undefined;
-        
+
         // Evaluate path segments starting from current node
         let currentResults = [currentNode];
-        
+
         for (const segment of expression.path.segments) {
           currentResults = this.evalSegment(currentResults, segment);
           if (currentResults.length === 0) break; // No results, early exit
         }
-        
+
         // For function arguments, we want the actual data, not Value objects
-        return currentResults.map(v => v.data);
+        return currentResults.map((v) => v.data);
       }
       case 'function':
         return this.evaluateFunction(expression, currentNode);
@@ -477,13 +481,13 @@ export class JsonPathEval {
    * Uses the function registry for extensible function support
    */
   private evaluateFunction(expression: types.FunctionExpression, currentNode: Value): any {
-    const { name, args } = expression;
-    
+    const {name, args} = expression;
+
     const func = this.funcs.get(name);
     if (func) {
       return func(args, currentNode, this);
     }
-    
+
     // Unknown function - return false for logical context, undefined for value context
     return false;
   }
@@ -493,12 +497,16 @@ export class JsonPathEval {
    * Parameters: ValueType
    * Result: ValueType (unsigned integer or Nothing)
    */
-  private lengthFunction(args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[], currentNode: Value, evaluator: JsonPathEval): number | undefined {
+  private lengthFunction(
+    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    currentNode: Value,
+    evaluator: JsonPathEval,
+  ): number | undefined {
     if (args.length !== 1) return undefined;
 
     const [arg] = args;
     const result = this.getValueFromArg(arg, currentNode, evaluator);
-    
+
     // For length() function, we need the single value
     let value: any;
     if (Array.isArray(result)) {
@@ -517,7 +525,7 @@ export class JsonPathEval {
     if (value && typeof value === 'object' && value !== null) {
       return Object.keys(value).length;
     }
-    
+
     return undefined; // Nothing for other types
   }
 
@@ -526,12 +534,16 @@ export class JsonPathEval {
    * Parameters: NodesType
    * Result: ValueType (unsigned integer)
    */
-  private countFunction(args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[], currentNode: Value, evaluator: JsonPathEval): number {
+  private countFunction(
+    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    currentNode: Value,
+    evaluator: JsonPathEval,
+  ): number {
     if (args.length !== 1) return 0;
 
     const [arg] = args;
     const result = this.getValueFromArg(arg, currentNode, evaluator);
-    
+
     // Count logic based on RFC 9535:
     // For count(), we count the number of nodes selected by the expression
     if (Array.isArray(result)) {
@@ -549,14 +561,18 @@ export class JsonPathEval {
    * Parameters: ValueType (string), ValueType (string conforming to RFC9485)
    * Result: LogicalType
    */
-  private matchFunction(args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[], currentNode: Value, evaluator: JsonPathEval): boolean {
+  private matchFunction(
+    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    currentNode: Value,
+    evaluator: JsonPathEval,
+  ): boolean {
     if (args.length !== 2) return false;
 
     const [stringArg, regexArg] = args;
-    
+
     const strResult = this.getValueFromArg(stringArg, currentNode, evaluator);
     const regexResult = this.getValueFromArg(regexArg, currentNode, evaluator);
-    
+
     // Handle array results (get single value)
     const str = Array.isArray(strResult) ? (strResult.length === 1 ? strResult[0] : undefined) : strResult;
     const regex = Array.isArray(regexResult) ? (regexResult.length === 1 ? regexResult[0] : undefined) : regexResult;
@@ -579,14 +595,18 @@ export class JsonPathEval {
    * Parameters: ValueType (string), ValueType (string conforming to RFC9485)
    * Result: LogicalType
    */
-  private searchFunction(args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[], currentNode: Value, evaluator: JsonPathEval): boolean {
+  private searchFunction(
+    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    currentNode: Value,
+    evaluator: JsonPathEval,
+  ): boolean {
     if (args.length !== 2) return false;
 
     const [stringArg, regexArg] = args;
-    
+
     const strResult = this.getValueFromArg(stringArg, currentNode, evaluator);
     const regexResult = this.getValueFromArg(regexArg, currentNode, evaluator);
-    
+
     // Handle array results (get single value)
     const str = Array.isArray(strResult) ? (strResult.length === 1 ? strResult[0] : undefined) : strResult;
     const regex = Array.isArray(regexResult) ? (regexResult.length === 1 ? regexResult[0] : undefined) : regexResult;
@@ -609,12 +629,16 @@ export class JsonPathEval {
    * Parameters: NodesType
    * Result: ValueType
    */
-  private valueFunction(args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[], currentNode: Value, evaluator: JsonPathEval): any {
+  private valueFunction(
+    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    currentNode: Value,
+    evaluator: JsonPathEval,
+  ): any {
     if (args.length !== 1) return undefined;
 
     const [nodeArg] = args;
     const result = this.getValueFromArg(nodeArg, currentNode, evaluator);
-    
+
     // For value() function, return single value if exactly one result,
     // otherwise undefined (following RFC 9535 value() semantics)
     if (Array.isArray(result)) {
@@ -627,7 +651,11 @@ export class JsonPathEval {
   /**
    * Helper to get value from function argument
    */
-  private getValueFromArg(arg: types.ValueExpression | types.FilterExpression | types.JSONPath, currentNode: Value, evaluator: JsonPathEval): any {
+  private getValueFromArg(
+    arg: types.ValueExpression | types.FilterExpression | types.JSONPath,
+    currentNode: Value,
+    evaluator: JsonPathEval,
+  ): any {
     if (this.isValueExpression(arg)) {
       return evaluator.evalValueExpression(arg, currentNode);
     } else if (this.isJSONPath(arg)) {
@@ -643,15 +671,13 @@ export class JsonPathEval {
    * Type guard for ValueExpression
    */
   private isValueExpression(arg: any): arg is types.ValueExpression {
-    return arg && typeof arg === 'object' && 
-           ['current', 'root', 'literal', 'path', 'function'].includes(arg.type);
+    return arg && typeof arg === 'object' && ['current', 'root', 'literal', 'path', 'function'].includes(arg.type);
   }
 
   /**
    * Type guard for JSONPath
    */
   private isJSONPath(arg: any): arg is types.JSONPath {
-    return arg && typeof arg === 'object' && 
-           Array.isArray(arg.segments);
+    return arg && typeof arg === 'object' && Array.isArray(arg.segments);
   }
 }

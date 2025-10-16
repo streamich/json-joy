@@ -368,7 +368,7 @@ describe('JsonPathEval', () => {
       });
 
       test('length function with Unicode characters', () => {
-        const unicodeData = { text: 'Hello 🌍 World' };
+        const unicodeData = {text: 'Hello 🌍 World'};
         const expr = '$[?length(@.text) == 13]';
         const result = JsonPathEval.run(expr, unicodeData);
         expect(result.length).toBe(1);
@@ -541,10 +541,10 @@ describe('JsonPathEval', () => {
       test('match and search difference', () => {
         const matchExpr = '$.store.book[?match(@.title, "Lord")]';
         const searchExpr = '$.store.book[?search(@.title, "Lord")]';
-        
+
         const matchResult = JsonPathEval.run(matchExpr, testData);
         const searchResult = JsonPathEval.run(searchExpr, testData);
-        
+
         expect(matchResult.length).toBe(0); // Exact match fails
         expect(searchResult.length).toBe(1); // Substring search succeeds
       });
@@ -582,7 +582,7 @@ describe('JsonPathEval', () => {
       });
 
       test('function with null values', () => {
-        const nullData = { items: [null, '', 0, false] };
+        const nullData = {items: [null, '', 0, false]};
         const expr = '$.items[?length(@) == 0]';
         const result = JsonPathEval.run(expr, nullData);
         expect(result.length).toBe(1); // Only empty string has length 0
