@@ -1,4 +1,7 @@
-import * as React from 'react';
+/** @jsx h */
+/** @jsxFrag h */
+// biome-ignore lint: this import is necessary for JSX
+import {h} from '../jsx';
 import {SliceTypeCon} from '../../slice/constants';
 import {setup} from './setup';
 
