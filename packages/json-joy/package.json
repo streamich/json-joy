@@ -1,5 +1,6 @@
 {
-  "name": "json-joy-monorepo",
+  "name": "json-joy",
+  "version": "17.55.0",
   "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
@@ -40,16 +41,39 @@
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --write ./src",
     "clean": "npx rimraf@5.0.5 lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log src/**/__bench__/node_modules src/**/__bench__/yarn-error.log",
+    "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "build:esm": "tsc --project tsconfig.build.json --module ESNext --target ESNEXT --outDir esm",
+    "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\" \"yarn build:esm\"",
+    "build": "yarn build:es2020",
     "jest": "jest",
     "test": "jest --maxWorkers 7",
+    "test:all": "yarn lint && yarn test && yarn build:all && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn demo:json-patch",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "test:cli": "yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack",
+    "test:cli:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
+    "test:cli:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
+    "test:cli:pack": "./bin/json-pack-test.js ./bin/json-pack.js",
+    "demo:json-patch": "npx ts-node src/json-patch/__demos__/json-patch.ts",
+    "demo:ui:peritext": "webpack serve --config ./src/json-crdt-peritext-ui/__demos__/webpack.config.js",
+    "bench:json-crdt:traces:crdt-libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:traces:crdt-libs",
+    "bench:json-crdt:traces:non-crdt-libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:traces:non-crdt-libs",
+    "bench:json-crdt:concurrent-traces": "cd src/json-crdt/__bench__ && yarn && yarn bench:concurrent-traces",
+    "bench:json-crdt:codecs:encoding": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding",
+    "bench:json-crdt:codecs:decoding": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:decoding",
+    "bench:json-crdt:codecs:encoding:json": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding:json",
+    "bench:json-crdt:codecs:encoding:libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding:libs",
+    "bench:json-crdt:codecs:sizes": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:sizes",
+    "bench:json-ot:ot-string:apply": "cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:apply",
+    "bench:json-ot:ot-string:compose-and-transform": "yarn build && cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:compose-and-transform",
     "coverage": "yarn test --collectCoverage",
+    "typedoc": "npx typedoc@0.28.5 --tsconfig tsconfig.build.json",
+    "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
+    "jj": "npx ts-node src/json-cli/jj.ts",
     "upgrade:check": "npx npm-check-updates@16.14",
     "upgrade:interactive": "npx npm-check-updates@16.14 --interactive"
   },
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "peerDependencies": {
     "rxjs": "7",
     "tslib": "2"
@@ -59,20 +83,29 @@
       "optional": true
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "@jsonjoy.com/base64": "^1.1.2",
+    "@jsonjoy.com/json-expression": "^1.0.0",
+    "@jsonjoy.com/json-pack": "^1.1.0",
+    "@jsonjoy.com/json-pointer": "^1.0.1",
+    "@jsonjoy.com/json-type": "^1.0.0",
+    "@jsonjoy.com/util": "^1.6.0",
+    "arg": "^5.0.2",
+    "hyperdyperid": "^1.2.0",
+    "nano-css": "^5.6.2",
+    "sonic-forest": "^1.2.0",
+    "thingies": "^2.1.1",
+    "tree-dump": "^1.0.2",
+    "very-small-parser": "^1.13.0"
+  },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
     "@radix-ui/react-icons": "^1.3.1",
-    "@types/benchmark": "^2.1.5",
-    "@types/jest": "^29.5.12",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
-    "benchmark": "^2.1.4",
     "clipboard-copy": "^4.0.1",
     "collaborative-editor": "^2.8.0",
     "collaborative-input": "^1.6.1",
     "collaborative-ui": "^1.6.0",
-    "config-galore": "^1.0.0",
     "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
     "fast-diff": "^1.3.0",
     "fast-json-patch": "^3.1.1",
@@ -138,6 +171,25 @@
         ]
       }
     }
+  },
+  "release": {
+    "branches": [
+      "master",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ]
   },
   "keywords": [
     "collaborative",
