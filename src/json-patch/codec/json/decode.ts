@@ -1,5 +1,3 @@
-import type {Op, PredicateOp} from '../../op';
-import type {Operation} from './types';
 import {OpAdd} from '../../op/OpAdd';
 import {OpRemove} from '../../op/OpRemove';
 import {OpReplace} from '../../op/OpReplace';
@@ -30,8 +28,10 @@ import {OpNot} from '../../op/OpNot';
 import {OpMatches} from '../../op/OpMatches';
 import {OpType} from '../../op/OpType';
 import {toPath} from '@jsonjoy.com/json-pointer';
-import type {JsonPatchOptions} from '../../types';
 import {createMatcherDefault} from '../../util';
+import type {Op, PredicateOp} from '../../op';
+import type {Operation} from './types';
+import type {JsonPatchOptions} from '../../types';
 
 export const operationToOp = (op: Operation, options: JsonPatchOptions): Op => {
   switch (op.op) {

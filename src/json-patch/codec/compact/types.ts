@@ -50,6 +50,7 @@ export type OPCODE_SPLIT = OPCODE.split | 'split';
 export type OPCODE_STARTS = OPCODE.starts | 'starts';
 export type OPCODE_STR_DEL = OPCODE.str_del | 'str_del';
 export type OPCODE_STR_INS = OPCODE.str_ins | 'str_ins';
+export type OPCODE_BIN_INS = OPCODE.bin_ins | 'bin_ins';
 export type OPCODE_TEST = OPCODE.test | 'test';
 export type OPCODE_TEST_STRING = OPCODE.test_string | 'test_string';
 export type OPCODE_TEST_STRING_LEN = OPCODE.test_string_len | 'test_string_len';
@@ -245,6 +246,11 @@ export type CompactStrDelOp =
  * @category JSON Patch Extended
  */
 export type CompactStrInsOp = [opcode: OPCODE_STR_INS, path: string | Path, pos: number, str: string];
+
+/**
+ * @category JSON Patch Extended
+ */
+export type CompactBinInsOp = [opcode: OPCODE_BIN_INS, path: string | Path, pos: number, bin: Uint8Array];
 
 /**
  * @category JSON Patch Extended
