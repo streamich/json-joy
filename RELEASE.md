@@ -33,6 +33,12 @@ Perform a dry run:
 yarn workspaces foreach -A --no-private npm publish --dry-run
 ```
 
+Login with NPM:
+
+```bash
+yarn npm login
+```
+
 Publish to NPM:
 
 ```bash
