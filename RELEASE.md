@@ -17,7 +17,7 @@ yarn build
 Update version in root `package.json`:
 
 ```bash
-npm version <major|minor|patch|pre*|{version}> --no-git-tag-version
+npm version --no-git-tag-version <major|minor|patch|pre*|{version}>
 ```
 
 Synchronize versions across all packages:
