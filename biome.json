@@ -41,7 +41,8 @@
 			"complexity": {
 				"noStaticOnlyClass": "off",
 				"useOptionalChain": "off",
-				"noCommaOperator": "off"
+				"noCommaOperator": "off",
+				"noUselessLabel": "off"
 			},
 			"security": {
 				"noGlobalEval": "off"
