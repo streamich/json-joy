@@ -1,11 +1,14 @@
 import {operationToOp} from '../../json-patch/codec/json';
 import {type Op, OpStrDel, OpStrIns} from '../../json-patch/op';
+import {isPathEqual} from '@jsonjoy.com/json-pointer';
 
 export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
   if (op instanceof OpStrIns) {
+    if (!isPathEqual(ins.path, op.path)) return op;
     if (ins.pos > op.pos) return op;
     return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
   } else if (op instanceof OpStrDel) {
+    if (!isPathEqual(ins.path, op.path)) return op;
     const del = op;
     if (del.pos < ins.pos) {
       const deleteLength: number = typeof del.str === 'string' ? del.str.length : del.len!;
@@ -24,7 +27,7 @@ export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
         }
       }
     }
-    if (ins.pos < del.pos) return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
+    if (ins.pos <= del.pos) return operationToOp({...op.toJson(), pos: op.pos + ins.str.length}, {});
     return op;
   }
 
