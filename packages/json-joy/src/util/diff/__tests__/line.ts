@@ -4,7 +4,6 @@ export const assertDiff = (src: string[], dst: string[]) => {
   // console.log('src', src);
   // console.log('dst', dst);
   const diff = line.diff(src, dst);
-  // console.log(diff);
   const res: string[] = [];
   if (diff.length) {
     for (const [type, srcIdx, dstIdx] of diff) {

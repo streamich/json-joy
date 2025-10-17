@@ -36,10 +36,6 @@ export type LinePatchOp = [
    * Assignment of this operation to the line in the `dst` array.
    */
   dst: number,
-  /**
-   * Character-level patch.
-   */
-  patch: str.Patch,
 ];
 
 export type LinePatch = LinePatchOp[];
@@ -68,14 +64,14 @@ export const agg = (patch: str.Patch): str.Patch[] => {
     line.push([type, str]);
   };
   // console.log("PATCH", patch);
-  for (let i = 0; i < length; i++) {
+  LINES: for (let i = 0; i < length; i++) {
     const op = patch[i];
     const type = op[0];
     const str = op[1];
     const index = str.indexOf('\n');
     if (index < 0) {
       push(type, str);
-      continue;
+      continue LINES;
     } else {
       push(type, str.slice(0, index + 1));
       if (line.length) lines.push(line);
@@ -83,11 +79,11 @@ export const agg = (patch: str.Patch): str.Patch[] => {
     }
     let prevIndex = index;
     const strLen = str.length;
-    while (prevIndex < strLen) {
+    LINE: while (prevIndex < strLen) {
       const nextIndex = str.indexOf('\n', prevIndex + 1);
       if (nextIndex < 0) {
         push(type, str.slice(prevIndex + 1));
-        break;
+        break LINE;
       }
       lines.push([[type, str.slice(prevIndex + 1, nextIndex + 1)]]);
       prevIndex = nextIndex;
@@ -98,91 +94,93 @@ export const agg = (patch: str.Patch): str.Patch[] => {
   {
     const length = lines.length;
     for (let i = 0; i < length; i++) {
-      const line = lines[i];
-      let lineLength = line.length;
+      const line = (lines[i] = str.normalize(lines[i]));
+      const lineLength = line.length;
       NORMALIZE_LINE_START: {
         if (lineLength < 2) break NORMALIZE_LINE_START;
         const firstOp = line[0];
         const secondOp = line[1];
         const secondOpType = secondOp[0];
-        if (
-          firstOp[0] === str.PATCH_OP_TYPE.EQL &&
-          (secondOpType === str.PATCH_OP_TYPE.DEL || secondOpType === str.PATCH_OP_TYPE.INS)
-        ) {
-          for (let j = 2; j < lineLength; j++) if (line[j][0] !== secondOpType) break NORMALIZE_LINE_START;
-          for (let j = i + 1; j < length; j++) {
-            const targetLine = lines[j];
-            const targetLineLength = targetLine.length;
-            const pfx = firstOp[1];
-            let targetLineFirstOp: str.PatchOperation;
-            let targetLineSecondOp: str.PatchOperation;
-            if (
-              targetLine.length > 1 &&
-              (targetLineFirstOp = targetLine[0])[0] === secondOpType &&
-              (targetLineSecondOp = targetLine[1])[0] === str.PATCH_OP_TYPE.EQL &&
-              pfx === targetLineFirstOp[1]
-            ) {
-              line.splice(0, 1);
-              secondOp[1] = pfx + secondOp[1];
-              targetLineSecondOp[1] = pfx + targetLineSecondOp[1];
-              targetLine.splice(0, 1);
-            } else {
-              for (let k = 0; k < targetLineLength; k++)
-                if (targetLine[k][0] !== secondOpType) break NORMALIZE_LINE_START;
-            }
-          }
+        if (firstOp[0] !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_START;
+        if (secondOpType !== str.PATCH_OP_TYPE.DEL && secondOpType !== str.PATCH_OP_TYPE.INS)
+          break NORMALIZE_LINE_START;
+        for (let j = 2; j < lineLength; j++) if (line[j][0] !== secondOpType) break NORMALIZE_LINE_START;
+        for (let j = i + 1; j < length; j++) {
+          const targetLine = (lines[j] = str.normalize(lines[j]));
+          const targetLineLength = targetLine.length;
+          const pfx = firstOp[1];
+          let targetLineFirstOp: str.PatchOperation;
+          let targetLineSecondOp: str.PatchOperation;
+          if (
+            targetLine.length > 1 &&
+            (targetLineFirstOp = targetLine[0])[0] === secondOpType &&
+            (targetLineSecondOp = targetLine[1])[0] === str.PATCH_OP_TYPE.EQL &&
+            pfx === targetLineFirstOp[1]
+          ) {
+            line.splice(0, 1);
+            secondOp[1] = pfx + secondOp[1];
+            targetLineSecondOp[1] = pfx + targetLineSecondOp[1];
+            targetLine.splice(0, 1);
+            break NORMALIZE_LINE_START;
+          } else
+            for (let k = 0; k < targetLineLength; k++)
+              if (targetLine[k][0] !== secondOpType) break NORMALIZE_LINE_START;
         }
       }
-      lineLength = line.length;
       NORMALIZE_LINE_END: {
-        if (lineLength < 2) break NORMALIZE_LINE_END;
+        /**
+         * Brings forward EQL line ending if equivalent DEL line ending exists
+         * in some following line and all inbetween operations are DEL.
+         *
+         * From:
+         *
+         * ```
+         * Line 1: [EQL, 'Hell'], [DEL, 'o\n']
+         * Line 2: [DEL, ' wor'], [DEL, 'ld\n']
+         * Line 3: [DEL, 'gog'], [EQL, 'o\n']
+         * ```
+         *
+         * To:
+         *
+         * ```
+         * Line 1: [EQL, 'Hello\n']
+         * Line 2: [DEL, ' wor'], [DEL, 'ld\n']
+         * Line 3: [DEL, 'gogo\n']
+         * ```
+         */
+        if (line.length < 2) break NORMALIZE_LINE_END;
         const lastOp = line[line.length - 1];
         const lastOpStr = lastOp[1];
-        const secondLastOp = line[line.length - 2];
-        if (lastOp[0] === str.PATCH_OP_TYPE.DEL) {
-          // if (lastOp[0] === PATCH_OP_TYPE.DELETE && secondLastOp[0] === PATCH_OP_TYPE.EQUAL) {
-          for (let j = i + 1; j < length; j++) {
-            const targetLine = lines[j];
-            const targetLineLength = targetLine.length;
-            if (targetLineLength <= 1) {
-              if (targetLine[0][0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_END;
-            } else {
-              const targetLineLastOp = targetLine[targetLine.length - 1];
-              if (targetLineLastOp[0] !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_END;
-              for (let k = 0; k < targetLine.length - 1; k++)
-                if (targetLine[k][0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_END;
-              let keepStr = targetLineLastOp[1];
-              const keepStrEndsWithNl = keepStr.endsWith('\n');
-              if (!keepStrEndsWithNl) keepStr += '\n';
-              if (keepStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
-              if (!lastOpStr.endsWith(keepStr)) break NORMALIZE_LINE_END;
-              const index = lastOpStr.length - keepStr.length;
-              if (index < 0) {
-                (lastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.EQL;
-                if (secondLastOp[0] === str.PATCH_OP_TYPE.EQL) {
-                  secondLastOp[1] += lastOpStr;
-                  line.splice(lineLength - 1, 1);
-                }
-              } else if (index === 0) {
-                line.splice(lineLength - 1, 1);
-                if (secondLastOp[0] === str.PATCH_OP_TYPE.EQL) {
-                  secondLastOp[1] += keepStr;
-                } else {
-                  line.push([str.PATCH_OP_TYPE.EQL, keepStr]);
-                }
-              } else {
-                lastOp[1] = lastOpStr.slice(0, index);
-                line.push([str.PATCH_OP_TYPE.EQL, keepStr]);
-              }
-              const targetLineSecondLastOp = targetLine[targetLine.length - 2];
-              if (targetLineSecondLastOp[0] === str.PATCH_OP_TYPE.DEL) {
-                targetLineSecondLastOp[1] += keepStrEndsWithNl ? keepStr : keepStr.slice(0, -1);
-                targetLine.splice(targetLineLength - 1, 1);
-              } else {
-                (targetLineLastOp[0] as str.PATCH_OP_TYPE) = str.PATCH_OP_TYPE.DEL;
-              }
-            }
+        if (lastOp[0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_END;
+        NEXT_LINE: for (let j = i + 1; j < length; j++) {
+          const targetLine = (lines[j] = str.normalize(lines[j]));
+          const targetLineLength = targetLine.length;
+          let targetLineLastOp: str.PatchOperation;
+          if (targetLineLength === 0) continue NEXT_LINE;
+          if (targetLineLength === 1) {
+            targetLineLastOp = targetLine[0];
+            const targetLineLastOpType = targetLineLastOp[0];
+            if (targetLineLastOpType === str.PATCH_OP_TYPE.DEL) continue NEXT_LINE;
+            if (targetLine[0][0] !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_END;
+          } else {
+            targetLineLastOp = targetLine[1];
+            if (targetLineLength > 2) break NORMALIZE_LINE_END;
+            const first = targetLine[0];
+            if (first[0] !== str.PATCH_OP_TYPE.DEL) break NORMALIZE_LINE_END;
           }
+          const targetLineLastOpType = targetLineLastOp[0];
+          if (targetLineLastOpType === str.PATCH_OP_TYPE.DEL) continue NEXT_LINE;
+          if (targetLineLastOpType !== str.PATCH_OP_TYPE.EQL) break NORMALIZE_LINE_END;
+          const moveStr = targetLineLastOp[1];
+          if (moveStr.length > lastOpStr.length) break NORMALIZE_LINE_END;
+          if (!lastOpStr.endsWith(moveStr)) break NORMALIZE_LINE_END;
+          const index = lastOpStr.length - moveStr.length;
+          lastOp[1] = lastOpStr.slice(0, index);
+          line.push([str.PATCH_OP_TYPE.EQL, moveStr]);
+          targetLineLastOp[0] = <any>str.PATCH_OP_TYPE.DEL;
+          lines[i] = str.normalize(lines[i]);
+          lines[j] = str.normalize(lines[j]);
+          break NORMALIZE_LINE_END;
         }
       }
     }
@@ -192,6 +190,8 @@ export const agg = (patch: str.Patch): str.Patch[] => {
 };
 
 export const diff = (src: string[], dst: string[]): LinePatch => {
+  if (!dst.length) return src.map((_, i) => [LINE_PATCH_OP_TYPE.DEL, i, -1]);
+  if (!src.length) return dst.map((_, i) => [LINE_PATCH_OP_TYPE.INS, -1, i]);
   const srcTxt = src.join('\n') + '\n';
   const dstTxt = dst.join('\n') + '\n';
   if (srcTxt === dstTxt) return [];
@@ -220,29 +220,9 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
     }
     let lineType: LINE_PATCH_OP_TYPE = LINE_PATCH_OP_TYPE.EQL;
     lineLength = line.length;
-    if (i + 1 === length) {
-      if (srcIdx + 1 < srcLength) {
-        if (dstIdx + 1 < dstLength) {
-          lineType =
-            lineLength === 1 && line[0][0] === str.PATCH_OP_TYPE.EQL ? LINE_PATCH_OP_TYPE.EQL : LINE_PATCH_OP_TYPE.MIX;
-          srcIdx++;
-          dstIdx++;
-        } else {
-          lineType = LINE_PATCH_OP_TYPE.DEL;
-          srcIdx++;
-        }
-      } else {
-        lineType = LINE_PATCH_OP_TYPE.INS;
-        dstIdx++;
-      }
-    } else {
-      const op = line[0];
-      const type = op[0];
-      if (lineLength === 1 && type === lastOpType && type === str.PATCH_OP_TYPE.EQL) {
-        srcIdx++;
-        dstIdx++;
-      } else if (lastOpType === str.PATCH_OP_TYPE.EQL) {
-        lineType = LINE_PATCH_OP_TYPE.MIX;
+    if (!lineLength) {
+      if (lastOpType === str.PATCH_OP_TYPE.EQL) {
+        lineType = LINE_PATCH_OP_TYPE.EQL;
         srcIdx++;
         dstIdx++;
       } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
@@ -252,8 +232,75 @@ export const diff = (src: string[], dst: string[]): LinePatch => {
         lineType = LINE_PATCH_OP_TYPE.DEL;
         srcIdx++;
       }
+    } else {
+      if (i + 1 === length) {
+        if (srcIdx + 1 < srcLength) {
+          if (dstIdx + 1 < dstLength) {
+            lineType =
+              lineLength === 1 && line[0][0] === str.PATCH_OP_TYPE.EQL
+                ? LINE_PATCH_OP_TYPE.EQL
+                : LINE_PATCH_OP_TYPE.MIX;
+            srcIdx++;
+            dstIdx++;
+          } else {
+            lineType = LINE_PATCH_OP_TYPE.DEL;
+            srcIdx++;
+          }
+        } else {
+          lineType = LINE_PATCH_OP_TYPE.INS;
+          dstIdx++;
+        }
+      } else {
+        const op = line[0];
+        const type = op[0];
+        if (lineLength === 1 && type === lastOpType && type === str.PATCH_OP_TYPE.EQL) {
+          srcIdx++;
+          dstIdx++;
+        } else if (lastOpType === str.PATCH_OP_TYPE.EQL) {
+          lineType = LINE_PATCH_OP_TYPE.MIX;
+          srcIdx++;
+          dstIdx++;
+        } else if (lastOpType === str.PATCH_OP_TYPE.INS) {
+          lineType = LINE_PATCH_OP_TYPE.INS;
+          dstIdx++;
+        } else if (lastOpType === str.PATCH_OP_TYPE.DEL) {
+          lineType = LINE_PATCH_OP_TYPE.DEL;
+          srcIdx++;
+        }
+      }
     }
-    patch.push([lineType, srcIdx, dstIdx, line]);
+    if (lineType === LINE_PATCH_OP_TYPE.EQL) {
+      if (src[srcIdx] !== dst[dstIdx]) {
+        lineType = LINE_PATCH_OP_TYPE.MIX;
+      }
+    }
+    patch.push([lineType, srcIdx, dstIdx]);
   }
+  // console.log("LINE PATCH", patch);
   return patch;
+};
+
+export const apply = (
+  patch: LinePatch,
+  onDelete: (pos: number) => void,
+  onInsert: (srcPos: number, dstPos: number) => void,
+  onMix: (srcPos: number, dstPos: number) => void,
+) => {
+  const length = patch.length;
+  LOOP: for (let i = length - 1; i >= 0; i--) {
+    const [type, posSrc, posDst] = patch[i];
+    switch (type) {
+      case LINE_PATCH_OP_TYPE.EQL:
+        continue LOOP;
+      case LINE_PATCH_OP_TYPE.DEL:
+        onDelete(posSrc);
+        break;
+      case LINE_PATCH_OP_TYPE.INS:
+        onInsert(posSrc, posDst);
+        break;
+      case LINE_PATCH_OP_TYPE.MIX:
+        onMix(posSrc, posDst);
+        break;
+    }
+  }
 };

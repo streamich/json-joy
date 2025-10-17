@@ -12,10 +12,10 @@ describe('diff', () => {
     const dst: string[] = [];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [-1, 1, -1, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [-1, 2, -1, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [-1, 3, -1, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
+      [-1, 0, -1],
+      [-1, 1, -1],
+      [-1, 2, -1],
+      [-1, 3, -1],
     ]);
   });
 
@@ -29,10 +29,10 @@ describe('diff', () => {
     const dst = ['{"id": "xxx-xxxxxxx", "name": "Hello, world"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [0, 0, 0, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [-1, 2, 0, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [-1, 3, 0, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
+      [0, 0, 0],
+      [-1, 1, 0],
+      [-1, 2, 0],
+      [-1, 3, 0],
     ]);
   });
 
@@ -46,10 +46,10 @@ describe('diff', () => {
     const dst = ['{"id": "xxx-yyyyyyy", "name": "Joe Doe"}', '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [0, 1, 0, [[0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [0, 2, 1, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [-1, 3, 1, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
+      [-1, 0, -1],
+      [0, 1, 0],
+      [0, 2, 1],
+      [-1, 3, 1],
     ]);
   });
 
@@ -63,10 +63,10 @@ describe('diff', () => {
     const dst = ['{"id": "abc", "name": "Merry Jane"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [-1, 1, -1, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [-1, 2, -1, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 3, 0, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
+      [-1, 0, -1],
+      [-1, 1, -1],
+      [-1, 2, -1],
+      [0, 3, 0],
     ]);
   });
 
@@ -80,10 +80,10 @@ describe('diff', () => {
     const dst = ['{"id": "xxx-xxxxxxx", "name": "Hello, world"}', '{"id": "abc", "name": "Merry Jane"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [0, 0, 0, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [-1, 2, 0, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 3, 1, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
+      [0, 0, 0],
+      [-1, 1, 0],
+      [-1, 2, 0],
+      [0, 3, 1],
     ]);
   });
 
@@ -97,33 +97,10 @@ describe('diff', () => {
     const dst = ['{"id": "xxx-xxxxxxx", "name": "Hello, world"}', '{"id": "abc", "name": "Merry Jane!"}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [
-        2,
-        0,
-        0,
-        [
-          [0, '{"id": "xxx-xxxxxxx", "name": "'],
-          [-1, 'h'],
-          [1, 'H'],
-          [0, 'ello'],
-          [1, ','],
-          [0, ' world'],
-          [-1, '!'],
-          [0, '"}'],
-        ],
-      ],
-      [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [-1, 2, 0, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [
-        2,
-        3,
-        1,
-        [
-          [0, '{"id": "abc", "name": "Merry Jane'],
-          [1, '!'],
-          [0, '"}'],
-        ],
-      ],
+      [2, 0, 0],
+      [-1, 1, 0],
+      [-1, 2, 0],
+      [2, 3, 1],
     ]);
   });
 
@@ -142,11 +119,11 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [-1, 0, -1, [[-1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [0, 1, 0, [[0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [0, 2, 1, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 3, 2, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
-      [1, 3, 3, [[1, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
+      [-1, 0, -1],
+      [0, 1, 0],
+      [0, 2, 1],
+      [0, 3, 2],
+      [1, 3, 3],
     ]);
   });
 
@@ -165,11 +142,11 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [0, 0, 0, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [-1, 1, 0, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [0, 2, 1, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 3, 2, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
-      [1, 3, 3, [[1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
+      [0, 0, 0],
+      [-1, 1, 0],
+      [0, 2, 1],
+      [0, 3, 2],
+      [1, 3, 3],
     ]);
   });
 
@@ -188,11 +165,11 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [0, 0, 0, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [0, 1, 1, [[0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [1, 1, 2, [[1, '{"id": "abc", "name": "Merry Jane"}']]],
-      [0, 2, 3, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [-1, 3, 3, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
+      [0, 0, 0],
+      [0, 1, 1],
+      [1, 1, 2],
+      [0, 2, 3],
+      [-1, 3, 3],
     ]);
   });
 
@@ -211,11 +188,11 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [1, -1, 0, [[1, '{"id": "abc", "name": "Merry Jane"}']]],
-      [0, 0, 1, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [0, 1, 2, [[0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [0, 2, 3, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [-1, 3, 3, [[-1, '{"id": "abc", "name": "Merry Jane"}']]],
+      [1, -1, 0],
+      [0, 0, 1],
+      [0, 1, 2],
+      [0, 2, 3],
+      [-1, 3, 3],
     ]);
   });
 
@@ -234,11 +211,11 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [1, -1, 0, [[1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 0, 1, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world"}']]],
-      [0, 1, 2, [[0, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [-1, 2, 2, [[-1, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 3, 3, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
+      [1, -1, 0],
+      [0, 0, 1],
+      [0, 1, 2],
+      [-1, 2, 2],
+      [0, 3, 3],
     ]);
   });
 
@@ -257,11 +234,11 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [1, -1, 0, [[1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [0, 0, 1, [[0, '{"id": "xxx-xxxxxxx", "name": "Hello, world!!!!!!!!!!!!!!!!!!!!!!!!!"}']]],
-      [-1, 1, 1, [[-1, '{"id": "xxx-yyyyyyy", "name": "Joe Doe"}']]],
-      [0, 2, 2, [[0, '{"id": "lkasdjflkasjdf", "name": "Winston Churchill"}']]],
-      [0, 3, 3, [[0, '{"id": "abc", "name": "Merry Jane"}']]],
+      [1, -1, 0],
+      [0, 0, 1],
+      [-1, 1, 1],
+      [0, 2, 2],
+      [0, 3, 3],
     ]);
   });
 
@@ -274,30 +251,9 @@ describe('diff', () => {
     const dst = ['{"aaaa": "aaaaaaa", "bbbb": "bbbbbbbbbbbbbbb"}', '{"this": "is a test", "number": 1234567890}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [
-        -1,
-        0,
-        -1,
-        [
-          [0, '{"a'],
-          [-1, 'sdfasdfasdf": 2398239234, "a'],
-          [0, 'aaa": "aaaaaaa"'],
-          [-1, '}'],
-        ],
-      ],
-      [
-        2,
-        1,
-        0,
-        [
-          [-1, '{'],
-          [1, ', '],
-          [0, '"bbbb": "bbbbbbbbbbbbbbb'],
-          [-1, '", "cccc": "ccccccccccccccccc'],
-          [0, '"}'],
-        ],
-      ],
-      [0, 2, 1, [[0, '{"this": "is a test", "number": 1234567890}']]],
+      [-1, 0, -1],
+      [2, 1, 0],
+      [0, 2, 1],
     ]);
   });
 
@@ -310,30 +266,9 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [
-        1,
-        -1,
-        0,
-        [
-          [0, '{"a'],
-          [1, 'sdfasdfasdf": 2398239234, "a'],
-          [0, 'aaa": "aaaaaaa"'],
-          [-1, ', '],
-          [1, '}'],
-        ],
-      ],
-      [
-        2,
-        0,
-        1,
-        [
-          [1, '{'],
-          [0, '"bbbb": "bbbbbbbbbbbbbbb'],
-          [1, '", "cccc": "ccccccccccccccccc'],
-          [0, '"}'],
-        ],
-      ],
-      [0, 1, 2, [[0, '{"this": "is a test", "number": 1234567890}']]],
+      [1, -1, 0],
+      [2, 0, 1],
+      [0, 1, 2],
     ]);
   });
 
@@ -390,9 +325,9 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [-1, 0, -1, expect.any(Array)],
-      [2, 1, 0, expect.any(Array)],
-      [-1, 2, 0, [[-1, '{".yk_":201,"KV1C":"yq#Af","b+Cö.EOa":["DDDDDDDDDDDDDDDD"],"%":[]}']]],
+      [-1, 0, -1],
+      [2, 1, 0],
+      [-1, 2, 0],
     ]);
   });
 
@@ -408,12 +343,12 @@ describe('diff', () => {
     const dst = ['{asdfasdfasdf}', '{zzzzzzzzzzzzzzzzzz}', '{00000000000000000000}'];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [0, 0, 0, expect.any(Array)],
-      [-1, 1, 0, expect.any(Array)],
-      [0, 2, 1, expect.any(Array)],
-      [-1, 3, 1, expect.any(Array)],
-      [0, 4, 2, expect.any(Array)],
-      [-1, 5, 2, expect.any(Array)],
+      [0, 0, 0],
+      [-1, 1, 0],
+      [0, 2, 1],
+      [-1, 3, 1],
+      [0, 4, 2],
+      [-1, 5, 2],
     ]);
   });
 
@@ -433,12 +368,12 @@ describe('diff', () => {
     ];
     const patch = line.diff(src, dst);
     expect(patch).toEqual([
-      [0, 0, 0, expect.any(Array)],
-      [-1, 1, 0, expect.any(Array)],
-      [0, 2, 1, expect.any(Array)],
-      [-1, 3, 1, expect.any(Array)],
-      [0, 4, 2, expect.any(Array)],
-      [-1, 5, 2, expect.any(Array)],
+      [0, 0, 0],
+      [-1, 1, 0],
+      [0, 2, 1],
+      [-1, 3, 1],
+      [0, 4, 2],
+      [-1, 5, 2],
     ]);
   });
 
@@ -502,5 +437,63 @@ describe('diff', () => {
       [2, 0, 1],
       [-1, 1, 1],
     ]);
+  });
+
+  test('fuzzer - 6', () => {
+    const src = ['-19', 'm3uzl6', 'j8b0po', '[m3uz5c;]'];
+    const dst = ['[1e;3;{o47l5:3f,};]', '[-q;1;]', 'o', '[-t;]'];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 7', () => {
+    const src = ['32', '110', '43444', '4431', '22'];
+    const dst = ['1131', '11011', '12323', '1230', '1'];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 8', () => {
+    const src = ['2123', '04', '1233', '3301'];
+    const dst = ['204'];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 9', () => {
+    const src = ['2212', '3', '312', '3421', '04022'];
+    const dst = ['2', '2', '20', '4334'];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 10', () => {
+    const src = ['11906'];
+    const dst = ['09252', '', '53277', '3', ''];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 11', () => {
+    const src = ['046', '6095'];
+    const dst = ['', '', '082', '98'];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 12', () => {
+    const src = ['', '7', '20', '09'];
+    const dst = ['', ''];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+  });
+
+  test('fuzzer - 13', () => {
+    const src = [''];
+    const dst: string[] = [];
+    assertDiff(src, dst);
+    assertDiff(dst, src);
+    assertDiff(dst, dst);
+    assertDiff(src, src);
   });
 });
