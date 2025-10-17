@@ -198,8 +198,10 @@ export class Writer implements IWriter, IWriterGrowable {
    * @returns The number of bytes written
    */
   public utf8(str: string): number {
-    const maxLength = str.length * 4;
-    if (maxLength < 168) return this.utf8Native(str);
+    const theoreticalMaxLength = str.length * 4;
+    if (theoreticalMaxLength < 168) return this.utf8Native(str);
+    this.ensureCapacity(theoreticalMaxLength);
+    const maxLength = this.size - this.x;
     if (utf8Write) {
       const writeLength = utf8Write.call(this.uint8, str, this.x, maxLength);
       this.x += writeLength;
@@ -211,7 +213,7 @@ export class Writer implements IWriter, IWriterGrowable {
       const writeLength = buf.write(str, 0, maxLength, 'utf8');
       this.x += writeLength;
       return writeLength;
-    } else if (maxLength > 1024 && textEncoder) {
+    } else if (theoreticalMaxLength > 1024 && textEncoder) {
       const writeLength = textEncoder!.encodeInto(str, this.uint8.subarray(this.x, this.x + maxLength)).written!;
       this.x += writeLength;
       return writeLength;
