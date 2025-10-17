@@ -5,6 +5,7 @@ yarn lint
 yarn format
 yarn typecheck
 yarn test
+yarn typedoc
 ```
 
 Prepare for release:
