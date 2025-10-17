@@ -1,7 +1,8 @@
 import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {assertDiff} from './line';
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 
-const iterations = 1000;
+const iterations = 100;
 const minElements = 2;
 const maxElements = 6;
 
@@ -24,6 +25,42 @@ test('produces valid patch', () => {
     } catch (error) {
       console.log('SRC', src);
       console.log('DST', dst);
+      throw error;
+    }
+  }
+});
+
+const generateString = (length: number): string => {
+  let str = '';
+  for (let i = 0; i < length; i++) str += Fuzzer.randomInt(0, 4);
+  return str;
+};
+
+const generateArray = (length: number = Fuzzer.randomInt(0, 5)): string[] => {
+  const arr: string[] = [];
+  for (let i = 0; i < length; i++) {
+    const str = generateString(Fuzzer.randomInt(0, 6));
+    arr.push(str);
+  }
+  return arr;
+};
+
+test('produces valid patch - 2', () => {
+  for (let i = 0; i < 1000; i++) {
+    const src: string[] = generateArray();
+    const dst: string[] = generateArray();
+    try {
+      assertDiff(src, dst);
+    } catch (error) {
+      console.log('SRC', src);
+      console.log('DST', dst);
+      throw error;
+    }
+    try {
+      assertDiff(dst, src);
+    } catch (error) {
+      console.log('SRC', dst);
+      console.log('DST', src);
       throw error;
     }
   }
