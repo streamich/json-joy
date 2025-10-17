@@ -892,6 +892,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/codegen@workspace:packages/codegen":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/codegen@workspace:packages/codegen"
+  peerDependencies:
+    tslib: 2
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/jit-router@npm:^1.0.1":
   version: 1.0.1
   resolution: "@jsonjoy.com/jit-router@npm:1.0.1"
