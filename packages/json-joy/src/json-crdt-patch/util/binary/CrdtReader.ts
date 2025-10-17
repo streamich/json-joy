@@ -1,4 +1,4 @@
-import {Reader} from '@jsonjoy.com/util/lib/buffers/Reader';
+import {Reader} from '@jsonjoy.com/buffers/lib/Reader';
 
 /** @todo Rename file name. */
 export class CrdtReader extends Reader {
