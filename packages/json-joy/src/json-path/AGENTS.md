@@ -1,0 +1,2 @@
+- JSONPath parser and evaluator implementation based on RFC 9535
+- Specification: https://www.rfc-editor.org/rfc/rfc9535.html

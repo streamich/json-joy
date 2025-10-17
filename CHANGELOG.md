@@ -1,3 +1,201 @@
+# [17.55.0](https://github.com/streamich/json-joy/compare/v17.54.0...v17.55.0) (2025-10-16)
+
+
+### Bug Fixes
+
+* 🐛 correct current node `@..` parsing ([7a2f3ff](https://github.com/streamich/json-joy/commit/7a2f3ffebf95c56bf58c3c50204c18c26e17ac50))
+
+
+### Features
+
+* 🎸 add function evaluation ([6a205ee](https://github.com/streamich/json-joy/commit/6a205ee1961a82acf9c171c0b5ccbd981e422681))
+* 🎸 add RFC 9535 document ([bd391dd](https://github.com/streamich/json-joy/commit/bd391dd2816fb7d5ced4f0ea0ab6edae9cfe4f19))
+* **util:** 🎸 add overlap() and normalize() methods to string diffing ([dfe18b5](https://github.com/streamich/json-joy/commit/dfe18b599f21b8f916ab6a42088abd93e087e1e2))
+
+# [17.54.0](https://github.com/streamich/json-joy/compare/v17.53.0...v17.54.0) (2025-09-28)
+
+
+### Features
+
+* 🎸 add .run() method ([5543370](https://github.com/streamich/json-joy/commit/5543370f8fb7edaf37e13248e2e70a9981ed01f9))
+* 🎸 add support for existence filters ([f54bba9](https://github.com/streamich/json-joy/commit/f54bba93c3f58717cca39dbcc742ae65bcd4706e))
+* 🎸 progress on evaluator implementation ([5bf437c](https://github.com/streamich/json-joy/commit/5bf437c68209830202d310d2a56e46a6d1879398))
+* 🎸 start JSONPath evaluator implementation ([1bd98be](https://github.com/streamich/json-joy/commit/1bd98bef7b472d99cd523d37ff807a07980c94e3))
+
+# [17.53.0](https://github.com/streamich/json-joy/compare/v17.52.0...v17.53.0) (2025-09-28)
+
+
+### Features
+
+* 🎸 add AST builder ([5d6b4e2](https://github.com/streamich/json-joy/commit/5d6b4e2a7a7b7e6b0de0347bccf7d0fbcfc72cc6))
+* 🎸 add missing expression types and AST builder ([3340ea5](https://github.com/streamich/json-joy/commit/3340ea51bbdb0bf61ae56e372bfd5ecd94a914ac))
+* 🎸 add support for union selectors ([fc0f562](https://github.com/streamich/json-joy/commit/fc0f5624b24b31ce4ae3210db3e7c56077e3fa03))
+* 🎸 extract generic `Parser` class ([991758b](https://github.com/streamich/json-joy/commit/991758b46e74b7412c33558d18152fb90ef4439f))
+* 🎸 implement expression parsing ([6e44ad9](https://github.com/streamich/json-joy/commit/6e44ad98f08b62bef2abfd84a571c0b30fc88572))
+* 🎸 start Ast builder class ([44ce014](https://github.com/streamich/json-joy/commit/44ce01420257b8de6186e157cb8a9ec28cb446e0))
+* 🎸 use AST builder in parser ([eaa1cba](https://github.com/streamich/json-joy/commit/eaa1cba75ef1083a0999352c130175af739d5ae4))
+
+# [17.52.0](https://github.com/streamich/json-joy/compare/v17.51.0...v17.52.0) (2025-09-25)
+
+
+### Features
+
+* **json-crdt:** 🎸 allow Log file "sidecar" encoding without stored view ([3d94516](https://github.com/streamich/json-joy/commit/3d94516389fd432d201c5df6b2e4c4ae7c8e5309))
+
+# [17.51.0](https://github.com/streamich/json-joy/compare/v17.50.0...v17.51.0) (2025-09-11)
+
+
+### Features
+
+* 🎸 add `.findMax()` utility ([28359d3](https://github.com/streamich/json-joy/commit/28359d37a276aa0373b3212422c2be99122ad9c5))
+* 🎸 add `Log.rebaseBatch()` and `Log.reset()` methods ([20e5630](https://github.com/streamich/json-joy/commit/20e5630dd6bdd1b79a54af18b20434f8d88d8585))
+* 🎸 implement `Log.clone()` method ([4f26c28](https://github.com/streamich/json-joy/commit/4f26c2803d53b0efb3985fd24ee4309986576d8d))
+
+# [17.50.0](https://github.com/streamich/json-joy/compare/v17.49.1...v17.50.0) (2025-09-05)
+
+
+### Features
+
+* **json-crdt:** 🎸 improve metadata and header types ([32f4dc0](https://github.com/streamich/json-joy/commit/32f4dc03bbe49659283c603d71b59dfaf7241cc1))
+* **json-crdt:** 🎸 store `Log` metadata in file ([d0373f9](https://github.com/streamich/json-joy/commit/d0373f9d7f042788f719d6223a139febeeb63d2a))
+
+## [17.49.1](https://github.com/streamich/json-joy/compare/v17.49.0...v17.49.1) (2025-07-25)
+
+
+### Bug Fixes
+
+* user `Array.isArray()` for more reliable array check ([d16828f](https://github.com/streamich/json-joy/commit/d16828f54001186900e27c34025a88a8d70c05df))
+
+# [17.49.0](https://github.com/streamich/json-joy/compare/v17.48.0...v17.49.0) (2025-07-15)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add JSX capability to Peritext data transfer ([902950e](https://github.com/streamich/json-joy/commit/902950e58c6e5c73b90ca9509f8bc26d946555fb))
+
+# [17.48.0](https://github.com/streamich/json-joy/compare/v17.47.0...v17.48.0) (2025-07-05)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly retrieve type discriminants ([9f062ae](https://github.com/streamich/json-joy/commit/9f062aebc54f5891aa41b7ad2da8a317fba95ff9))
+* **json-crdt-peritext-ui:** 🐛 allow string type tag names ([e5eeefc](https://github.com/streamich/json-joy/commit/e5eeefc6f28000718b04666017b3e28979991d06))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add slice Tag class implementation ([80a133f](https://github.com/streamich/json-joy/commit/80a133fc32be89c3eb9930786c3fee22946afb7a))
+* **json-crdt-extensions:** 🎸 implement .tagDataAsObj() getter method ([3d4adb7](https://github.com/streamich/json-joy/commit/3d4adb7ae105ab634b0ec6e51973272980c653ef))
+* **json-crdt-extensions:** 🎸 implement PersistedSlice.tagDataNode() method ([483802b](https://github.com/streamich/json-joy/commit/483802bc0a640372b0d6839a6e580966ef7895c4))
+* **json-crdt-extensions:** 🎸 implement various type handling utilities ([37a3d16](https://github.com/streamich/json-joy/commit/37a3d1630a8a10d222f79b8bc51ea7649125a455))
+* **json-crdt-extensions:** 🎸 improve .typeStepNode() implementation ([ffd8985](https://github.com/streamich/json-joy/commit/ffd8985be3c2c395c0c7df17973072ae6cf55182))
+* **json-crdt-extensions:** 🎸 improve nested type setup ([52ab5ae](https://github.com/streamich/json-joy/commit/52ab5ae3c285dee27cf5cf0b377518e4f09e18d8))
+* **json-crdt-extensions:** 🎸 improve PersistedSlice .tag() implementation ([4f15c04](https://github.com/streamich/json-joy/commit/4f15c04f0dbfde420cdf6014f623b746224ef2c5))
+* **json-crdt-extensions:** 🎸 improve slice type APIs ([a380b23](https://github.com/streamich/json-joy/commit/a380b2363faa1887703b4a2ecfa637accbf1a136))
+* **json-crdt-extensions:** 🎸 make slice type be a method ([5dc54dc](https://github.com/streamich/json-joy/commit/5dc54dcad0bbd46a127e91107bba65dd24561b66))
+* **json-crdt-extensions:** 🎸 return correct tag data and tag discriminant ([48eb69c](https://github.com/streamich/json-joy/commit/48eb69c509634babfaf9bb256334ba056e21469f))
+* **json-crdt-extensions:** 🎸 specify marker detailed event interface ([63e720a](https://github.com/streamich/json-joy/commit/63e720a040b36695011e06478f40d57e793b0e8a))
+* **json-crdt-extensions:** 🎸 update .typeStepApi() method ([9760c50](https://github.com/streamich/json-joy/commit/9760c500938d0cc11c7305e2769fc2e16037f758))
+* **json-crdt-peritext-ui:** 🎸 add support for tag updates in "marker" events ([6b4b675](https://github.com/streamich/json-joy/commit/6b4b675b45f855b447cfcba9d0d5ff1f19103e32))
+* **json-crdt-peritext-ui:** 🎸 add support for type update in marker "upd" event ([ab7384a](https://github.com/streamich/json-joy/commit/ab7384a928cf5a9a422e580fc70596f0d06e27c0))
+* **json-crdt-peritext-ui:** 🎸 use correct nested block data ([e7235fd](https://github.com/streamich/json-joy/commit/e7235fd070155e81b935ce145449d483401aa624))
+* **json-crdt:** 🎸 add node .op API ([2e4ed50](https://github.com/streamich/json-joy/commit/2e4ed50940a5ca243e9cf42204b1fde3653a9575))
+* **json-crdt:** 🎸 implement .del() method on MarkerSlice ([6a619b7](https://github.com/streamich/json-joy/commit/6a619b7c6193e8213598bea6de8fb9fe60d4d8af))
+* **json-crdt:** 🎸 use .upd() API of "arr" node in .replace() call ([726bbfe](https://github.com/streamich/json-joy/commit/726bbfe10db5b1383e8a34a9dc10f25d0516ba2c))
+* **json-patch-diff:** 🎸 update diff API ([c134cf4](https://github.com/streamich/json-joy/commit/c134cf4cf943cbf6f18ef16a403ed0aec61404ec))
+
+# [17.47.0](https://github.com/streamich/json-joy/compare/v17.46.0...v17.47.0) (2025-06-30)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 update "arr" element only when new ID is higher ([f38c487](https://github.com/streamich/json-joy/commit/f38c4870b8cb27513e4a8f0dece1232b8656c7ed))
+* **json-crdt:** 🐛 update ModelApi internal state on RESET event ([a1699cb](https://github.com/streamich/json-joy/commit/a1699cbe48674002f1d6b9ed141fc24384aba2e3))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 add "upd_arr" operation encoding in "binary" codec ([9cb2c9c](https://github.com/streamich/json-joy/commit/9cb2c9c89d6c792cca85b0c00c0951ebefa0927d))
+* **json-crdt-patch:** 🎸 add "upd_arr" operation to "compact" encoding ([b16b8a7](https://github.com/streamich/json-joy/commit/b16b8a7e6df539e42ee33c3795d9a038e33d1376))
+* **json-crdt-patch:** 🎸 introduce "upd_arr" operation ([29c66df](https://github.com/streamich/json-joy/commit/29c66df639a3493b44a175211bb6d85aaf3ee8ef))
+* **json-crdt-patch:** 🎸 make enums const ([e0932dd](https://github.com/streamich/json-joy/commit/e0932dd036baf7334646264738b6c8ccff6c73cc))
+* **json-crdt-patch:** 🎸 support "upd_arr" operation in "verbose" codec ([13ab57f](https://github.com/streamich/json-joy/commit/13ab57fa6e0b423b35d22bd67eea80cc35ac2815))
+* **json-crdt:** 🎸 add ArrApi.upd() method ([2bb9133](https://github.com/streamich/json-joy/commit/2bb9133f5afe038d015157e68555bfc11209572d))
+* **json-crdt:** 🎸 add suppoort in Model and ArrNode for "upd_arr" operation ([2826899](https://github.com/streamich/json-joy/commit/2826899a7fb7c51ba82d2ed1a646e9702c4e595b))
+* **json-crdt:** 🎸 change terminal node interface in proxy API ([37b3d14](https://github.com/streamich/json-joy/commit/37b3d141932cc74c8f8e2483c84f53f3cfd19dd2))
+* **json-crdt:** 🎸 implement ArrApi.push() method ([e9f7a79](https://github.com/streamich/json-joy/commit/e9f7a79cce64668f344f506316d73c2065793f9e))
+* **json-crdt:** 🎸 implement deep schema equality check ([afa9d5c](https://github.com/streamich/json-joy/commit/afa9d5c99c5bb0839d5a719c00b455969448a7a6))
+* **json-crdt:** 🎸 improve Model.create() schema inference from types ([6b8de6f](https://github.com/streamich/json-joy/commit/6b8de6fe3479f0e35d94d40014d2caf715d567ec))
+* **json-crdt:** 🎸 improve schema comparison script ([7d071f5](https://github.com/streamich/json-joy/commit/7d071f5dcc9fb58cac8d10f0988a4c1b952a07a7))
+* **json-crdt:** 🎸 move .$ getter proxy API to NodeApi class ([142b393](https://github.com/streamich/json-joy/commit/142b39344a7b91f346c34f26d98db7ac8824c91b))
+
+# [17.46.0](https://github.com/streamich/json-joy/compare/v17.45.0...v17.46.0) (2025-06-29)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 correctly pick diff node ([e6bbde3](https://github.com/streamich/json-joy/commit/e6bbde3d4b20e6d4e66d258cc75b2d1587df1ec9))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 implement schema auto-generation from POJO values ([bea3a69](https://github.com/streamich/json-joy/commit/bea3a691c07b17796ecacbeb784465f3aea7959b))
+* **json-crdt-patch:** 🎸 remove deprecated "vec" utility ([a580140](https://github.com/streamich/json-joy/commit/a5801405281a859effc5f6779de80b2f44a02f04))
+* **json-crdt-patch:** 🎸 remove deprecated konst() utility ([73e7cd1](https://github.com/streamich/json-joy/commit/73e7cd1ade2bddb33d02dfc208d031af0a6fc765))
+* **json-crdt:** 🎸 allow setting schema with arbitrary JavaScript value ([f46c136](https://github.com/streamich/json-joy/commit/f46c136d31fda295baa5f7cf6ada42608991b68b))
+* **json-crdt:** 🎸 allow to specify relative root ([0382669](https://github.com/streamich/json-joy/commit/038266988c3afd3675bc100377865d6a56641e46))
+* **json-crdt:** 🎸 expose diff/merge API on NodeApi ([2ec9335](https://github.com/streamich/json-joy/commit/2ec9335172875b9bec29103f782aac25c22dc10a))
+* **json-crdt:** 🎸 make ModelApi wrap the root node ([d45a259](https://github.com/streamich/json-joy/commit/d45a259afe0bcc69b98757bbe52d42461a2b9a7a))
+* **json-crdt:** 🎸 remove depreacted .withLogicalClock() method ([4c2ebed](https://github.com/streamich/json-joy/commit/4c2ebedfc5ca81141e2c0b3200803ae2bbe53d4a))
+* **json-crdt:** 🎸 remove usage of deprecated .root() method ([f3bb3c3](https://github.com/streamich/json-joy/commit/f3bb3c3c0ee26398184b4bd9b70d3563f6d594dc))
+* **json-crdt:** 🎸 update .withServerClock() factory ([bd9149d](https://github.com/streamich/json-joy/commit/bd9149db711176814713f925f389acdba3c55238))
+* **json-crdt:** 🎸 use API-buil-int .read() method ([e3f94b6](https://github.com/streamich/json-joy/commit/e3f94b6318257084d5741f0c04c4093dafcf757d))
+
+# [17.45.0](https://github.com/streamich/json-joy/compare/v17.44.0...v17.45.0) (2025-06-27)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 allow updating key on root object ([9eafd61](https://github.com/streamich/json-joy/commit/9eafd6118c98e67e0595c7c5ac521ac6c416eda5))
+
+
+### Features
+
+* **json-crdt:** 🎸 add ability add object key ([861b1c1](https://github.com/streamich/json-joy/commit/861b1c1acd83c8b89b6abe265bba715efafab356))
+* **json-crdt:** 🎸 add NodeApi .replace() method ([32d91e1](https://github.com/streamich/json-joy/commit/32d91e154971d132487e1dacc9718141befd2599))
+* **json-crdt:** 🎸 finalize .add() method implementation ([a151272](https://github.com/streamich/json-joy/commit/a151272d608dd96575ed3996049c27d47131bae1))
+* **json-crdt:** 🎸 implement .add() method for "arr" nodes ([35c4ee9](https://github.com/streamich/json-joy/commit/35c4ee917317b6979bceffda3e3071b24e8a2f26))
+* **json-crdt:** 🎸 implement .remove() method ([1d96827](https://github.com/streamich/json-joy/commit/1d96827a00cfbf08b7c4b4146445e242aed2e3cd))
+* **json-crdt:** 🎸 implement new proxy API ([1578bfc](https://github.com/streamich/json-joy/commit/1578bfceb8d071710504a61df391fda504c48e3b))
+* **json-crdt:** 🎸 implement path proxy helper ([58c75ee](https://github.com/streamich/json-joy/commit/58c75ee00cab522a43b497173b81bfb027740c11))
+* **json-crdt:** 🎸 implement proxy$() helper ([de85136](https://github.com/streamich/json-joy/commit/de85136936635e235f8deb477d1aba69b79dfefa))
+* **json-crdt:** 🎸 implement view .read() retrieval method ([633fa97](https://github.com/streamich/json-joy/commit/633fa97bbb53dd630572cd47b7d452251e6e7c6c))
+* **json-crdt:** 🎸 improve .read() implementation ([b60fc88](https://github.com/streamich/json-joy/commit/b60fc889f87669c95c95ac54f020132a7ddc51a7))
+* **json-crdt:** 🎸 improve "obj" node .add() API ([9bd5bb2](https://github.com/streamich/json-joy/commit/9bd5bb2e8e5e8f36f5aab3f0f742b49f07e9cfc6))
+* **json-crdt:** 🎸 remove .find getter ([5f4bce6](https://github.com/streamich/json-joy/commit/5f4bce6b977cd83a707b1cbc12f9b5f8a4c5b9c0))
+
+# [17.44.0](https://github.com/streamich/json-joy/compare/v17.43.0...v17.44.0) (2025-06-22)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly overwrite formatting data ([da100fd](https://github.com/streamich/json-joy/commit/da100fdf2a37d1c9e8a8477e2cc8f22af3930910))
+* **json-crdt-extensions:** 🐛 do not type into array unnecessarily ([fe236cc](https://github.com/streamich/json-joy/commit/fe236cc415a99637520c36aad77f826f135ae5f2))
+* **json-crdt-peritext-ui:** 🐛 remove formatting by its ID ([350a45c](https://github.com/streamich/json-joy/commit/350a45c474c2ba7ba5dff581881c66c86af1adb6))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add "format" event "set" action ([3c4a344](https://github.com/streamich/json-joy/commit/3c4a344d4fb2e7ae0589d7413eb26f625317a10d))
+* **json-crdt-extensions:** 🎸 add ability to clear all cursors ([e58aa07](https://github.com/streamich/json-joy/commit/e58aa07b338f3f6650cf23eeb8020f7132359c39))
+* **json-crdt-extensions:** 🎸 add ability to remove formatting by ID ([d371ba6](https://github.com/streamich/json-joy/commit/d371ba6293c86c179d49bc666e31bb8c0f1c3774))
+* **json-crdt-extensions:** 🎸 add attr data to multiple levels ([d92ccb1](https://github.com/streamich/json-joy/commit/d92ccb196feb3818b88dc42079e564d9fd90cc81))
+* **json-crdt-extensions:** 🎸 add event part to select specific slice ([f4b5796](https://github.com/streamich/json-joy/commit/f4b579695535b863e1d3c14ca16ceda6fa1ec506))
+* **json-crdt-extensions:** 🎸 add initial "upd" formatting implementation ([1f43820](https://github.com/streamich/json-joy/commit/1f4382056f470f6b693e4e97f97419f3d13bb9d4))
+* **json-crdt-extensions:** 🎸 can retrieve formatting data and force it to be "obj" node ([dceae02](https://github.com/streamich/json-joy/commit/dceae025977480bca7da3c72d98be97db5e4186c))
+* **json-crdt-extensions:** 🎸 cleanup slice type annotations ([167a78b](https://github.com/streamich/json-joy/commit/167a78b209b759dafc5b1099e2d2b6c6c1f1fb7a))
+* **util:** 🎸 add basic Iterator polyfill ([6edbe87](https://github.com/streamich/json-joy/commit/6edbe8777d55f8f224fbcb25752e01e08b9a535e))
+
 # [17.43.0](https://github.com/streamich/json-joy/compare/v17.42.0...v17.43.0) (2025-05-22)
 
 

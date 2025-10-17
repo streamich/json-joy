@@ -1,13 +1,11 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
+	"$schema": "https://biomejs.dev/schemas/2.2.6/schema.json",
 	"formatter": {
 		"indentStyle": "space",
 		"lineWidth": 120
 	},
 	"javascript": {
+		"jsxRuntime": "reactClassic",
 		"formatter": {
 			"quoteStyle": "single",
 			"trailingCommas": "all",
@@ -25,25 +23,36 @@
 				"noInferrableTypes": "off",
 				"noUselessElse": "off",
 				"noParameterAssign": "off",
-				"noCommaOperator": "off",
 				"useSingleVarDeclarator": "off",
+				"noUnusedTemplateLiteral": "off",
 				"useLiteralEnumMembers": "off"
 			},
 			"suspicious": {
 				"noExplicitAny": "off",
 				"useIsArray": "off",
 				"noAssignInExpressions": "off",
+				"useIterableCallbackReturn": "off",
+				"useAdjacentOverloadSignatures": "off",
 				"noConfusingLabels": "off",
 				"noConfusingVoidType": "off",
-				"noConstEnum": "off"
+				"noConstEnum": "off",
+				"noSelfCompare": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",
 				"useOptionalChain": "off",
+				"noCommaOperator": "off",
 				"noUselessLabel": "off"
 			},
+			"security": {
+				"noGlobalEval": "off"
+			},
 			"a11y": {
-				"noSvgWithoutTitle": "off"
+				"noSvgWithoutTitle": "off",
+				"noStaticElementInteractions": "off"
+			},
+			"correctness": {
+				"noUnusedFunctionParameters": "off"
 			},
 			"performance": {
 				"noDelete": "off"

@@ -1,0 +1,1538 @@
+
+JSONPath: Query Expressions for JSON (RFC 9535)
+
+JSONPath defines a string syntax for selecting and extracting JSON values from within a given JSON value.
+
+Contents:
+1. Introduction and Terminology
+2. JSONPath Syntax and Semantics
+   - Root Identifier ($)
+   - Selectors (name, wildcard, index, slice, filter)
+   - Function Extensions
+   - Segments (child, descendant)
+Appendix: ABNF Grammar
+
+1.  Introduction
+
+JSONPath defines a string syntax for selecting and extracting JSON values from within a given JSON value. It's a more powerful companion to JSON Pointer.
+
+1.1.  Terminology
+
+Key Terms:
+- Value: JSON primitive (number, string, true, false, null) or structured (object, array) data
+- Member: Name/value pair in an object
+- Element: A value in an array  
+- Index: Integer identifying array element
+- Query: JSONPath expression
+- Query Argument: The JSON value being queried
+- Node: Value + its location within query argument
+- Root Node: Node whose value is the entire query argument
+- Children: For arrays - element nodes; for objects - member value nodes
+- Descendants: Children + their children recursively
+- Nodelist: List of nodes (query result)
+- Selector: Produces child nodes from input value
+- Segment: Selects children ([selectors]) or descendants (..[selectors])
+- Singular Query: Expression producing at most one node
+
+Identifiers:
+- Root Node Identifier ($): References root node
+- Current Node Identifier (@): References current node in filter expressions
+
+This document treats the query argument as a tree of nodes. Each node is either the root or one of its descendants. Query results are nodelists.
+
+1.2.  JSONPath Overview
+
+JSONPath: identifier ($) + segments, each containing selectors.
+Notations: bracket $['store']['book'][0] or dot $.store.book[0] 
+Elements: $ (root), @ (current), [selectors] (children), ..[selectors] (descendants)
+
+Syntax Reference:
+$ = root, @ = current, 'name' = member, * = wildcard, 3 = index, 
+0:5:2 = slice, ?expr = filter, length() = function
+
+1.5.  Examples
+
+JSON: {"store": {"book": [{"author": "Rees", "price": 8.95}, {"author": "Waugh", "price": 12.99}, {"author": "Melville", "isbn": "123", "price": 8.99}], "bicycle": {"price": 399}}}
+
+Examples:
+$.store.book[*].author → all book authors
+$..author → all authors  
+$.store.* → all store items
+$..book[2] → third book
+$..book[-1] → last book
+$..book[:2] → first two books
+$..book[?@.isbn] → books with ISBN
+$..book[?@.price<10] → books under $10
+$..* → all values
+
+2.  JSONPath Syntax and Semantics
+
+2.1.  Overview
+
+JSONPath queries are UTF-8 strings that select nodes from JSON values and return nodelists.
+
+Requirements:
+- Must be well-formed (conform to ABNF syntax) and valid (meet semantic constraints)
+- Integer values must be in I-JSON range: [-(2^53)+1, (2^53)-1]  
+- Function extensions must be well-typed
+- Implementations MUST raise errors for invalid queries
+
+Syntax: jsonpath-query = root-identifier segments
+
+Execution:
+1. Root identifier ($) produces nodelist with root node
+2. Each segment processes input nodelist → output nodelist sequentially  
+3. Final result is concatenated nodelist from last segment
+4. Empty results valid; duplicates preserved
+
+Example: $.a[*].b on {"a":[{"b":0},{"b":1},{"c":2}]} → [0, 1]
+- $ → [{"a":[{"b":0},{"b":1},{"c":2}]}]
+- .a → [[{"b":0},{"b":1},{"c":2}]]  
+- [*] → [{"b":0}, {"b":1}, {"c":2}]
+- .b → [0, 1] (concatenates [0], [1], [])
+
+2.2.  Root Identifier ($)
+
+Syntax: root-identifier = "$"
+Semantics: Represents the root node, produces nodelist with single root node
+Example: $ applied to {"k": "v"} returns [{"k": "v"}]
+
+2.3.  Selectors
+
+   Selectors appear only inside child segments (Section 2.5.1) and
+   descendant segments (Section 2.5.2).
+
+   A selector produces a nodelist consisting of zero or more children of
+   the input value.
+
+   There are various kinds of selectors that produce children of
+   objects, children of arrays, or children of either objects or arrays.
+
+   selector            = name-selector /
+                         wildcard-selector /
+                         slice-selector /
+                         index-selector /
+                         filter-selector
+
+   The syntax and semantics of each kind of selector are defined below.
+
+2.3.1.  Name Selector
+
+2.3.1.1.  Syntax
+
+   A name selector '<name>' selects at most one object member value.
+
+   In contrast to JSON, the JSONPath syntax allows strings to be
+   enclosed in _single_ or _double_ quotes.
+
+   name-selector       = string-literal
+
+   string-literal      = %x22 *double-quoted %x22 /     ; "string"
+                         %x27 *single-quoted %x27       ; 'string'
+
+   double-quoted       = unescaped /
+                         %x27      /                    ; '
+                         ESC %x22  /                    ; \"
+                         ESC escapable
+
+   single-quoted       = unescaped /
+                         %x22      /                    ; "
+                         ESC %x27  /                    ; \'
+                         ESC escapable
+
+   ESC                 = %x5C                           ; \ backslash
+
+   unescaped           = %x20-21 /                      ; see RFC 8259
+                            ; omit 0x22 "
+                         %x23-26 /
+                            ; omit 0x27 '
+                         %x28-5B /
+                            ; omit 0x5C \
+                         %x5D-D7FF /
+                            ; skip surrogate code points
+                         %xE000-10FFFF
+
+   escapable           = %x62 / ; b BS backspace U+0008
+                         %x66 / ; f FF form feed U+000C
+                         %x6E / ; n LF line feed U+000A
+                         %x72 / ; r CR carriage return U+000D
+                         %x74 / ; t HT horizontal tab U+0009
+                         "/"  / ; / slash (solidus) U+002F
+                         "\"  / ; \ backslash (reverse solidus) U+005C
+                         (%x75 hexchar) ;  uXXXX U+XXXX
+
+   hexchar             = non-surrogate /
+                         (high-surrogate "\" %x75 low-surrogate)
+   non-surrogate       = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /
+                         ("D" %x30-37 2HEXDIG )
+   high-surrogate      = "D" ("8"/"9"/"A"/"B") 2HEXDIG
+   low-surrogate       = "D" ("C"/"D"/"E"/"F") 2HEXDIG
+
+   HEXDIG              = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+
+   Notes:
+
+   *  Double-quoted strings follow the JSON string syntax (Section 7 of
+      [RFC8259]); single-quoted strings follow an analogous pattern.  No
+      attempt was made to improve on this syntax, so if it is desired to
+      escape characters with scalar values above 0xFFFF, such as U+1F041
+      ("🁁", DOMINO TILE HORIZONTAL-02-02), they need to be represented
+      by a pair of surrogate escapes ("\uD83C\uDC41" in this case).
+
+   *  Alphabetic characters in quoted strings are case-insensitive in
+      ABNF, so each of the hexadecimal digits within \u escapes (as
+      specified in rules referenced by hexchar) can be either lowercase
+      or uppercase, while the u in \u needs to be lowercase (indicated
+      as %x75).
+
+2.3.1.2.  Semantics
+
+   A name-selector string MUST be converted to a member name M by
+   removing the surrounding quotes and replacing each escape sequence
+   with its equivalent Unicode character, as shown in Table 4:
+
+   +=================+===================+=============================+
+   | Escape Sequence | Unicode Character | Description                 |
+   +=================+===================+=============================+
+   |        \b       |       U+0008      | BS backspace                |
+   +-----------------+-------------------+-----------------------------+
+   |        \t       |       U+0009      | HT horizontal tab           |
+   +-----------------+-------------------+-----------------------------+
+   |        \n       |       U+000A      | LF line feed                |
+   +-----------------+-------------------+-----------------------------+
+   |        \f       |       U+000C      | FF form feed                |
+   +-----------------+-------------------+-----------------------------+
+   |        \r       |       U+000D      | CR carriage return          |
+   +-----------------+-------------------+-----------------------------+
+   |        \"       |       U+0022      | quotation mark              |
+   +-----------------+-------------------+-----------------------------+
+   |        \'       |       U+0027      | apostrophe                  |
+   +-----------------+-------------------+-----------------------------+
+   |        \/       |       U+002F      | slash (solidus)             |
+   +-----------------+-------------------+-----------------------------+
+   |        \\       |       U+005C      | backslash (reverse          |
+   |                 |                   | solidus)                    |
+   +-----------------+-------------------+-----------------------------+
+   |      \uXXXX     |        see        | hexadecimal escape          |
+   |                 |  Section 2.3.1.1  |                             |
+   +-----------------+-------------------+-----------------------------+
+
+                   Table 4: Escape Sequence Replacements
+
+   Applying the name-selector to an object node selects a member value
+   whose name equals the member name M or selects nothing if there is no
+   such member value.  Nothing is selected from a value that is not an
+   object.
+
+   Note: Processing the name selector requires comparing the member name
+   string M with member name strings in the JSON to which the selector
+   is being applied.  Two strings MUST be considered equal if and only
+   if they are identical sequences of Unicode scalar values.  In other
+   words, normalization operations MUST NOT be applied to either the
+   member name string M from the JSONPath or the member name strings in
+   the JSON prior to comparison.
+
+2.3.1.3.  Examples
+
+   JSON:
+
+   {
+     "o": {"j j": {"k.k": 3}},
+     "'": {"@": 2}
+   }
+
+   Queries:
+
+   The examples in Table 5 show the name selector in use by child
+   segments.
+
+    +====================+=======+=======================+============+
+    |       Query        |Result |      Result Paths     | Comment    |
+    +====================+=======+=======================+============+
+    |     $.o['j j']     |{"k.k":|     $['o']['j j']     | Named      |
+    |                    |3}     |                       | value in   |
+    |                    |       |                       | a nested   |
+    |                    |       |                       | object     |
+    +--------------------+-------+-----------------------+------------+
+    | $.o['j j']['k.k']  |3      |  $['o']['j j']['k.k'] | Nesting    |
+    |                    |       |                       | further    |
+    |                    |       |                       | down       |
+    +--------------------+-------+-----------------------+------------+
+    | $.o["j j"]["k.k"]  |3      |  $['o']['j j']['k.k'] | Different  |
+    |                    |       |                       | delimiter  |
+    |                    |       |                       | in the     |
+    |                    |       |                       | query,     |
+    |                    |       |                       | unchanged  |
+    |                    |       |                       | Normalized |
+    |                    |       |                       | Path       |
+    +--------------------+-------+-----------------------+------------+
+    |    $["'"]["@"]     |2      |      $['\'']['@']     | Unusual    |
+    |                    |       |                       | member     |
+    |                    |       |                       | names      |
+    +--------------------+-------+-----------------------+------------+
+
+                      Table 5: Name Selector Examples
+
+2.3.2.  Wildcard Selector
+
+2.3.2.1.  Syntax
+
+   The wildcard selector consists of an asterisk.
+
+   wildcard-selector   = "*"
+
+2.3.2.2.  Semantics
+
+   A wildcard selector selects the nodes of all children of an object or
+   array.  The order in which the children of an object appear in the
+   resultant nodelist is not stipulated, since JSON objects are
+   unordered.  Children of an array appear in array order in the
+   resultant nodelist.
+
+   Note that the children of an object are its member values, not its
+   member names.
+
+   The wildcard selector selects nothing from a primitive JSON value
+   (that is, a number, a string, true, false, or null).
+
+2.3.2.3.  Examples
+
+   JSON:
+
+   {
+     "o": {"j": 1, "k": 2},
+     "a": [5, 3]
+   }
+
+   Queries:
+
+   The examples in Table 6 show the wildcard selector in use by a child
+   segment.
+
+          +========+==========+=============+===================+
+          | Query  | Result   |    Result   | Comment           |
+          |        |          |    Paths    |                   |
+          +========+==========+=============+===================+
+          |  $[*]  | {"j": 1, |    $['o']   | Object values     |
+          |        | "k": 2}  |    $['a']   |                   |
+          |        | [5, 3]   |             |                   |
+          +--------+----------+-------------+-------------------+
+          | $.o[*] | 1        | $['o']['j'] | Object values     |
+          |        | 2        | $['o']['k'] |                   |
+          +--------+----------+-------------+-------------------+
+          | $.o[*] | 2        | $['o']['k'] | Alternative       |
+          |        | 1        | $['o']['j'] | result            |
+          +--------+----------+-------------+-------------------+
+          | $.o[*, | 1        | $['o']['j'] | Non-deterministic |
+          |   *]   | 2        | $['o']['k'] | ordering          |
+          |        | 2        | $['o']['k'] |                   |
+          |        | 1        | $['o']['j'] |                   |
+          +--------+----------+-------------+-------------------+
+          | $.a[*] | 5        |  $['a'][0]  | Array members     |
+          |        | 3        |  $['a'][1]  |                   |
+          +--------+----------+-------------+-------------------+
+
+                    Table 6: Wildcard Selector Examples
+
+   The example above with the query $.o[*, *] shows that the wildcard
+   selector may produce nodelists in distinct orders each time it
+   appears in the child segment when it is applied to an object node
+   with two or more members (but not when it is applied to object nodes
+   with fewer than two members or to array nodes).
+
+2.3.3.  Index Selector
+
+2.3.3.1.  Syntax
+
+   An index selector <index> matches at most one array element value.
+
+   index-selector      = int                        ; decimal integer
+
+   int                 = "0" /
+                         (["-"] DIGIT1 *DIGIT)      ; - optional
+   DIGIT1              = %x31-39                    ; 1-9 non-zero digit
+
+   Applying the numerical index-selector selects the corresponding
+   element.  JSONPath allows it to be negative (see Section 2.3.3.2).
+
+   To be valid, the index selector value MUST be in the I-JSON range of
+   exact values (see Section 2.1).
+
+   Notes:
+
+   *  An index-selector is an integer (in base 10, as in JSON numbers).
+
+   *  As in JSON numbers, the syntax does not allow octal-like integers
+      with leading zeros, such as 01 or -01.
+
+2.3.3.2.  Semantics
+
+   A non-negative index-selector applied to an array selects an array
+   element using a zero-based index.  For example, the selector 0
+   selects the first, and the selector 4 selects the fifth element of a
+   sufficiently long array.  Nothing is selected, and it is not an
+   error, if the index lies outside the range of the array.  Nothing is
+   selected from a value that is not an array.
+
+   A negative index-selector counts from the array end backwards,
+   obtaining an equivalent non-negative index-selector by adding the
+   length of the array to the negative index.  For example, the selector
+   -1 selects the last, and the selector -2 selects the penultimate
+   element of an array with at least two elements.  As with non-negative
+   indexes, it is not an error if such an element does not exist; this
+   simply means that no element is selected.
+
+2.3.3.3.  Examples
+
+   JSON:
+
+   ["a","b"]
+
+   Queries:
+
+   The examples in Table 7 show the index selector in use by a child
+   segment.
+
+    +=======+========+==============+================================+
+    | Query | Result | Result Paths | Comment                        |
+    +=======+========+==============+================================+
+    |  $[1] | "b"    |     $[1]     | Element of array               |
+    +-------+--------+--------------+--------------------------------+
+    | $[-2] | "a"    |     $[0]     | Element of array, from the end |
+    +-------+--------+--------------+--------------------------------+
+
+                     Table 7: Index Selector Examples
+
+2.3.4.  Array Slice Selector
+
+2.3.4.1.  Syntax
+
+   The array slice selector has the form <start>:<end>:<step>.  It
+   matches elements from arrays starting at index <start> and ending at
+   (but not including) <end>, while incrementing by step with a default
+   of 1.
+
+   slice-selector      = [start S] ":" S [end S] [":" [S step ]]
+
+   start               = int       ; included in selection
+   end                 = int       ; not included in selection
+   step                = int       ; default: 1
+
+   The slice selector consists of three optional decimal integers
+   separated by colons.  The second colon can be omitted when the third
+   integer is omitted.
+
+   To be valid, the integers provided MUST be in the I-JSON range of
+   exact values (see Section 2.1).
+
+2.3.4.2.  Semantics
+
+   The slice selector was inspired by the slice operator that was
+   proposed for ECMAScript 4 (ES4), which was never released, and that
+   of Python.
+
+2.3.4.2.1.  Informal Introduction
+
+Array slicing: start:end:step selects indices from start (inclusive) to end (exclusive) by step. Negative step reverses order. Step 0 selects nothing.
+
+2.3.4.2.2.  Normative Semantics
+
+   A slice expression selects a subset of the elements of the input
+   array in the same order as the array or the reverse order, depending
+   on the sign of the step parameter.  It selects no nodes from a node
+   that is not an array.
+
+   A slice is defined by the two slice parameters, start and end, and an
+   iteration delta, step.  Each of these parameters is optional.  In the
+   rest of this section, len denotes the length of the input array.
+
+   The default value for step is 1.  The default values for start and
+   end depend on the sign of step, as shown in Table 8.
+
+                    +===========+=========+==========+
+                    | Condition | start   | end      |
+                    +===========+=========+==========+
+                    | step >= 0 | 0       | len      |
+                    +-----------+---------+----------+
+                    | step < 0  | len - 1 | -len - 1 |
+                    +-----------+---------+----------+
+
+                       Table 8: Default Array Slice
+                           start and end Values
+
+   Slice expression parameters start and end are not directly usable as
+   slice bounds and must first be normalized.  Normalization for this
+   purpose is defined as:
+
+   FUNCTION Normalize(i, len):
+     IF i >= 0 THEN
+       RETURN i
+     ELSE
+       RETURN len + i
+     END IF
+
+   The result of the array index expression i applied to an array of
+   length len is the result of the array slicing expression Normalize(i,
+   len):Normalize(i, len)+1:1.
+
+   Slice expression parameters start and end are used to derive slice
+   bounds lower and upper.  The direction of the iteration, defined by
+   the sign of step, determines which of the parameters is the lower
+   bound and which is the upper bound:
+
+   FUNCTION Bounds(start, end, step, len):
+     n_start = Normalize(start, len)
+     n_end = Normalize(end, len)
+
+     IF step >= 0 THEN
+       lower = MIN(MAX(n_start, 0), len)
+       upper = MIN(MAX(n_end, 0), len)
+     ELSE
+       upper = MIN(MAX(n_start, -1), len-1)
+       lower = MIN(MAX(n_end, -1), len-1)
+     END IF
+
+     RETURN (lower, upper)
+
+   The slice expression selects elements with indices between the lower
+   and upper bounds.  In the following pseudocode, a(i) is the i+1th
+   element of the array a (i.e., a(0) is the first element, a(1) the
+   second, and so forth).
+
+   IF step > 0 THEN
+
+     i = lower
+     WHILE i < upper:
+       SELECT a(i)
+       i = i + step
+     END WHILE
+
+   ELSE if step < 0 THEN
+
+     i = upper
+     WHILE lower < i:
+       SELECT a(i)
+       i = i + step
+     END WHILE
+
+   END IF
+
+   When step = 0, no elements are selected, and the result array is
+   empty.
+
+2.3.4.3.  Examples
+
+   JSON:
+
+   ["a", "b", "c", "d", "e", "f", "g"]
+
+   Queries:
+
+   The examples in Table 9 show the array slice selector in use by a
+   child segment.
+
+                +===========+========+========+==========+
+                |   Query   | Result | Result | Comment  |
+                |           |        | Paths  |          |
+                +===========+========+========+==========+
+                |   $[1:3]  | "b"    |  $[1]  | Slice    |
+                |           | "c"    |  $[2]  | with     |
+                |           |        |        | default  |
+                |           |        |        | step     |
+                +-----------+--------+--------+----------+
+                |   $[5:]   | "f"    |  $[5]  | Slice    |
+                |           | "g"    |  $[6]  | with no  |
+                |           |        |        | end      |
+                |           |        |        | index    |
+                +-----------+--------+--------+----------+
+                |  $[1:5:2] | "b"    |  $[1]  | Slice    |
+                |           | "d"    |  $[3]  | with     |
+                |           |        |        | step 2   |
+                +-----------+--------+--------+----------+
+                | $[5:1:-2] | "f"    |  $[5]  | Slice    |
+                |           | "d"    |  $[3]  | with     |
+                |           |        |        | negative |
+                |           |        |        | step     |
+                +-----------+--------+--------+----------+
+                |  $[::-1]  | "g"    |  $[6]  | Slice in |
+                |           | "f"    |  $[5]  | reverse  |
+                |           | "e"    |  $[4]  | order    |
+                |           | "d"    |  $[3]  |          |
+                |           | "c"    |  $[2]  |          |
+                |           | "b"    |  $[1]  |          |
+                |           | "a"    |  $[0]  |          |
+                +-----------+--------+--------+----------+
+
+                  Table 9: Array Slice Selector Examples
+
+2.3.5.  Filter Selector
+
+Filter selectors iterate over array elements or object members, evaluating a logical expression for each to decide selection. The current node (@) represents each element/member being tested. Supports function extensions with declared types for parameters and results.
+
+2.3.5.1.  Syntax
+
+Filter selector: ?<logical-expr>. Supports Boolean operators (||, &&, !), comparisons (==, !=, <, <=, >, >=), existence tests, and function expressions. Current node accessible via @.
+
+   filter-selector     = "?" S logical-expr
+
+   logical-expr        = logical-or-expr
+   logical-or-expr     = logical-and-expr *(S "||" S logical-and-expr)
+   logical-and-expr    = basic-expr *(S "&&" S basic-expr)
+
+   basic-expr          = paren-expr / comparison-expr / test-expr
+   paren-expr          = [logical-not-op S] "(" S logical-expr S ")"
+   logical-not-op      = "!"
+
+   test-expr           = [logical-not-op S]
+                         (filter-query / function-expr)
+   filter-query        = rel-query / jsonpath-query
+   rel-query           = current-node-identifier segments
+   current-node-identifier = "@"
+
+   comparison-expr     = comparable S comparison-op S comparable
+   literal             = number / string-literal / true / false / null
+   comparable          = literal / singular-query / function-expr
+   comparison-op       = "==" / "!=" / "<=" / ">=" / "<" / ">"
+
+   singular-query      = rel-singular-query / abs-singular-query
+   rel-singular-query  = current-node-identifier singular-query-segments
+   abs-singular-query  = root-identifier singular-query-segments
+   singular-query-segments = *(S (name-segment / index-segment))
+   name-segment        = ("[" name-selector "]") / ("." member-name-shorthand)
+   index-segment       = "[" index-selector "]"
+
+   number              = (int / "-0") [ frac ] [ exp ]
+   frac                = "." 1*DIGIT
+   exp                 = "e" [ "-" / "+" ] 1*DIGIT
+   true                = %x74.72.75.65
+   false               = %x66.61.6c.73.65
+   null                = %x6e.75.6c.6c
+
+   Table 10 lists filter expression operators in order of precedence
+   from highest (binds most tightly) to lowest (binds least tightly).
+
+            +============+======================+=============+
+            | Precedence |    Operator type     |    Syntax   |
+            +============+======================+=============+
+            |     5      |       Grouping       |    (...)    |
+            |            | Function Expressions | _name_(...) |
+            +------------+----------------------+-------------+
+            |     4      |     Logical NOT      |      !      |
+            +------------+----------------------+-------------+
+            |     3      |      Relations       |    == !=    |
+            |            |                      |  < <= > >=  |
+            +------------+----------------------+-------------+
+            |     2      |     Logical AND      |      &&     |
+            +------------+----------------------+-------------+
+            |     1      |      Logical OR      |      ||     |
+            +------------+----------------------+-------------+
+
+              Table 10: Filter Expression Operator Precedence
+
+2.3.5.2.  Semantics
+
+   The filter selector works with arrays and objects exclusively.  Its
+   result is a list of (_zero_, _one_, _multiple_, or _all_) their array
+   elements or member values, respectively.  Applied to a primitive
+   value, it selects nothing (and therefore does not contribute to the
+   result of the filter selector).
+
+   In the resultant nodelist, children of an array are ordered by their
+   position in the array.  The order in which the children of an object
+   (as opposed to an array) appear in the resultant nodelist is not
+   stipulated, since JSON objects are unordered.
+
+2.3.5.2.1.  Existence Tests
+
+   A query by itself in a logical context is an existence test that
+   yields true if the query selects at least one node and yields false
+   if the query does not select any nodes.
+
+   Existence tests differ from comparisons in that:
+
+   *  They work with arbitrary relative or absolute queries (not just
+      singular queries).
+
+   *  They work with queries that select structured values.
+
+   To examine the value of a node selected by a query, an explicit
+   comparison is necessary.  For example, to test whether the node
+   selected by the query @.foo has the value null, use @.foo == null
+   (see Section 2.6) rather than the negated existence test !@.foo
+   (which yields false if @.foo selects a node, regardless of the node's
+   value).  Similarly, @.foo == false yields true only if @.foo selects
+   a node and the value of that node is false.
+
+2.3.5.2.2.  Comparisons
+
+   The comparison operators == and < are defined first, and then these
+   are used to define !=, <=, >, and >=.
+
+   When either side of a comparison results in an empty nodelist or the
+   special result Nothing (see Section 2.4.1):
+
+   *  A comparison using the operator == yields true if and only the
+      other side also results in an empty nodelist or the special result
+      Nothing.
+
+   *  A comparison using the operator < yields false.
+
+   When any query or function expression on either side of a comparison
+   results in a nodelist consisting of a single node, that side is
+   replaced by the value of its node and then:
+
+   *  A comparison using the operator == yields true if and only if the
+      comparison is between:
+
+      -  numbers expected to interoperate, as per Section 2.2 of I-JSON
+         [RFC7493], that compare equal using normal mathematical
+         equality,
+
+      -  numbers, at least one of which is not expected to interoperate
+         as per I-JSON, where the numbers compare equal using an
+         implementation-specific equality,
+
+      -  equal primitive values that are not numbers,
+
+      -  equal arrays, that is, arrays of the same length where each
+         element of the first array is equal to the corresponding
+         element of the second array, or
+
+      -  equal objects with no duplicate names, that is, where:
+
+         o  both objects have the same collection of names (with no
+            duplicates) and
+
+         o  for each of those names, the values associated with the name
+            by the objects are equal.
+
+   *  A comparison using the operator < yields true if and only if the
+      comparison is between values that are both numbers or both strings
+      and that satisfy the comparison:
+
+      -  numbers expected to interoperate, as per Section 2.2 of I-JSON
+         [RFC7493], MUST compare using the normal mathematical ordering;
+         numbers not expected to interoperate, as per I-JSON, MAY
+         compare using an implementation-specific ordering,
+
+      -  the empty string compares less than any non-empty string, and
+
+      -  a non-empty string compares less than another non-empty string
+         if and only if the first string starts with a lower Unicode
+         scalar value than the second string or if both strings start
+         with the same Unicode scalar value and the remainder of the
+         first string compares less than the remainder of the second
+         string.
+
+   !=, <=, >, and >= are defined in terms of the other comparison
+   operators.  For any a and b:
+
+   *  The comparison a != b yields true if and only if a == b yields
+      false.
+
+   *  The comparison a <= b yields true if and only if a < b yields true
+      or a == b yields true.
+
+   *  The comparison a > b yields true if and only if b < a yields true.
+
+   *  The comparison a >= b yields true if and only if b < a yields true
+      or a == b yields true.
+
+2.3.5.3.  Examples
+
+   The first set of examples shows some comparison expressions and their
+   result with a given JSON value as input.
+
+   JSON:
+
+   {
+     "obj": {"x": "y"},
+     "arr": [2, 3]
+   }
+
+   Comparisons:
+
+       +========================+========+========================+
+       |       Comparison       | Result |        Comment         |
+       +========================+========+========================+
+       | $.absent1 == $.absent2 |  true  |    Empty nodelists     |
+       +------------------------+--------+------------------------+
+       | $.absent1 <= $.absent2 |  true  |     == implies <=      |
+       +------------------------+--------+------------------------+
+       |    $.absent == 'g'     | false  |     Empty nodelist     |
+       +------------------------+--------+------------------------+
+       | $.absent1 != $.absent2 | false  |    Empty nodelists     |
+       +------------------------+--------+------------------------+
+       |    $.absent != 'g'     |  true  |     Empty nodelist     |
+       +------------------------+--------+------------------------+
+       |         1 <= 2         |  true  |   Numeric comparison   |
+       +------------------------+--------+------------------------+
+       |         1 > 2          | false  |   Numeric comparison   |
+       +------------------------+--------+------------------------+
+       |       13 == '13'       | false  |     Type mismatch      |
+       +------------------------+--------+------------------------+
+       |       'a' <= 'b'       |  true  |   String comparison    |
+       +------------------------+--------+------------------------+
+       |       'a' > 'b'        | false  |   String comparison    |
+       +------------------------+--------+------------------------+
+       |     $.obj == $.arr     | false  |     Type mismatch      |
+       +------------------------+--------+------------------------+
+       |     $.obj != $.arr     |  true  |     Type mismatch      |
+       +------------------------+--------+------------------------+
+       |     $.obj == $.obj     |  true  |   Object comparison    |
+       +------------------------+--------+------------------------+
+       |     $.obj != $.obj     | false  |   Object comparison    |
+       +------------------------+--------+------------------------+
+       |     $.arr == $.arr     |  true  |    Array comparison    |
+       +------------------------+--------+------------------------+
+       |     $.arr != $.arr     | false  |    Array comparison    |
+       +------------------------+--------+------------------------+
+       |      $.obj == 17       | false  |     Type mismatch      |
+       +------------------------+--------+------------------------+
+       |      $.obj != 17       |  true  |     Type mismatch      |
+       +------------------------+--------+------------------------+
+       |     $.obj <= $.arr     | false  | Objects and arrays do  |
+       |                        |        | not offer < comparison |
+       +------------------------+--------+------------------------+
+       |     $.obj < $.arr      | false  | Objects and arrays do  |
+       |                        |        | not offer < comparison |
+       +------------------------+--------+------------------------+
+       |     $.obj <= $.obj     |  true  |     == implies <=      |
+       +------------------------+--------+------------------------+
+       |     $.arr <= $.arr     |  true  |     == implies <=      |
+       +------------------------+--------+------------------------+
+       |       1 <= $.arr       | false  | Arrays do not offer <  |
+       |                        |        |       comparison       |
+       +------------------------+--------+------------------------+
+       |       1 >= $.arr       | false  | Arrays do not offer <  |
+       |                        |        |       comparison       |
+       +------------------------+--------+------------------------+
+       |       1 > $.arr        | false  | Arrays do not offer <  |
+       |                        |        |       comparison       |
+       +------------------------+--------+------------------------+
+       |       1 < $.arr        | false  | Arrays do not offer <  |
+       |                        |        |       comparison       |
+       +------------------------+--------+------------------------+
+       |      true <= true      |  true  |     == implies <=      |
+       +------------------------+--------+------------------------+
+       |      true > true       | false  | Booleans do not offer  |
+       |                        |        |      < comparison      |
+       +------------------------+--------+------------------------+
+
+                      Table 11: Comparison Examples
+
+   The second set of examples shows some complete JSONPath queries that
+   make use of filter selectors and the results of evaluating these
+   queries on a given JSON value as input.  (Note: Two of the queries
+   employ function extensions; please see Sections 2.4.6 and 2.4.7 for
+   details about these.)
+
+   JSON:
+
+   {
+     "a": [3, 5, 1, 2, 4, 6,
+           {"b": "j"},
+           {"b": "k"},
+           {"b": {}},
+           {"b": "kilo"}
+          ],
+     "o": {"p": 1, "q": 2, "r": 3, "s": 5, "t": {"u": 6}},
+     "e": "f"
+   }
+
+   Queries:
+
+   The examples in Table 12 show the filter selector in use by a child
+   segment.
+
+   +==================+==============+=============+===================+
+   |      Query       | Result       |    Result   | Comment           |
+   |                  |              |    Paths    |                   |
+   +==================+==============+=============+===================+
+   |   $.a[?@.b ==    | {"b":        |  $['a'][9]  | Member value      |
+   |     'kilo']      | "kilo"}      |             | comparison        |
+   +------------------+--------------+-------------+-------------------+
+   |   $.a[?(@.b ==   | {"b":        |  $['a'][9]  | Equivalent query  |
+   |     'kilo')]     | "kilo"}      |             | with enclosing    |
+   |                  |              |             | parentheses       |
+   +------------------+--------------+-------------+-------------------+
+   |   $.a[?@>3.5]    | 5            |  $['a'][1]  | Array value       |
+   |                  | 4            |  $['a'][4]  | comparison        |
+   |                  | 6            |  $['a'][5]  |                   |
+   +------------------+--------------+-------------+-------------------+
+   |    $.a[?@.b]     | {"b": "j"}   |  $['a'][6]  | Array value       |
+   |                  | {"b": "k"}   |  $['a'][7]  | existence         |
+   |                  | {"b": {}}    |  $['a'][8]  |                   |
+   |                  | {"b":        |  $['a'][9]  |                   |
+   |                  | "kilo"}      |             |                   |
+   +------------------+--------------+-------------+-------------------+
+   |     $[?@.*]      | [3, 5, 1,    |    $['a']   | Existence of non- |
+   |                  | 2, 4, 6,     |    $['o']   | singular queries  |
+   |                  | {"b": "j"},  |             |                   |
+   |                  | {"b": "k"},  |             |                   |
+   |                  | {"b": {}},   |             |                   |
+   |                  | {"b":        |             |                   |
+   |                  | "kilo"}]     |             |                   |
+   |                  | {"p": 1,     |             |                   |
+   |                  | "q": 2,      |             |                   |
+   |                  | "r": 3,      |             |                   |
+   |                  | "s": 5,      |             |                   |
+   |                  | "t": {"u":   |             |                   |
+   |                  | 6}}          |             |                   |
+   +------------------+--------------+-------------+-------------------+
+   |   $[?@[?@.b]]    | [3, 5, 1,    |    $['a']   | Nested filters    |
+   |                  | 2, 4, 6,     |             |                   |
+   |                  | {"b": "j"},  |             |                   |
+   |                  | {"b": "k"},  |             |                   |
+   |                  | {"b": {}},   |             |                   |
+   |                  | {"b":        |             |                   |
+   |                  | "kilo"}]     |             |                   |
+   +------------------+--------------+-------------+-------------------+
+   | $.o[?@<3, ?@<3]  | 1            | $['o']['p'] | Non-deterministic |
+   |                  | 2            | $['o']['q'] | ordering          |
+   |                  | 2            | $['o']['q'] |                   |
+   |                  | 1            | $['o']['p'] |                   |
+   +------------------+--------------+-------------+-------------------+
+   | $.a[?@<2 || @.b  | 1            |  $['a'][2]  | Array value       |
+   |     == "k"]      | {"b": "k"}   |  $['a'][7]  | logical OR        |
+   +------------------+--------------+-------------+-------------------+
+   | $.a[?match(@.b,  | {"b": "j"}   |  $['a'][6]  | Array value       |
+   |     "[jk]")]     | {"b": "k"}   |  $['a'][7]  | regular           |
+   |                  |              |             | expression match  |
+   +------------------+--------------+-------------+-------------------+
+   | $.a[?search(@.b, | {"b": "j"}   |  $['a'][6]  | Array value       |
+   |     "[jk]")]     | {"b": "k"}   |  $['a'][7]  | regular           |
+   |                  | {"b":        |  $['a'][9]  | expression search |
+   |                  | "kilo"}      |             |                   |
+   +------------------+--------------+-------------+-------------------+
+   | $.o[?@>1 && @<4] | 2            | $['o']['q'] | Object value      |
+   |                  | 3            | $['o']['r'] | logical AND       |
+   +------------------+--------------+-------------+-------------------+
+   | $.o[?@>1 && @<4] | 3            | $['o']['r'] | Alternative       |
+   |                  | 2            | $['o']['q'] | result            |
+   +------------------+--------------+-------------+-------------------+
+   | $.o[?@.u || @.x] | {"u": 6}     | $['o']['t'] | Object value      |
+   |                  |              |             | logical OR        |
+   +------------------+--------------+-------------+-------------------+
+   | $.a[?@.b == $.x] | 3            |  $['a'][0]  | Comparison of     |
+   |                  | 5            |  $['a'][1]  | queries with no   |
+   |                  | 1            |  $['a'][2]  | values            |
+   |                  | 2            |  $['a'][3]  |                   |
+   |                  | 4            |  $['a'][4]  |                   |
+   |                  | 6            |  $['a'][5]  |                   |
+   +------------------+--------------+-------------+-------------------+
+   |   $.a[?@ == @]   | 3            |  $['a'][0]  | Comparisons of    |
+   |                  | 5            |  $['a'][1]  | primitive and of  |
+   |                  | 1            |  $['a'][2]  | structured values |
+   |                  | 2            |  $['a'][3]  |                   |
+   |                  | 4            |  $['a'][4]  |                   |
+   |                  | 6            |  $['a'][5]  |                   |
+   |                  | {"b": "j"}   |  $['a'][6]  |                   |
+   |                  | {"b": "k"}   |  $['a'][7]  |                   |
+   |                  | {"b": {}}    |  $['a'][8]  |                   |
+   |                  | {"b":        |  $['a'][9]  |                   |
+   |                  | "kilo"}      |             |                   |
+   +------------------+--------------+-------------+-------------------+
+
+                     Table 12: Filter Selector Examples
+
+   The example above with the query $.o[?@<3, ?@<3] shows that a filter
+   selector may produce nodelists in distinct orders each time it
+   appears in the child segment.
+
+2.4.  Function Extensions
+
+Function extensions add filter expression functionality. Each has a unique registered name, takes arguments, produces results, and must be side-effect free.
+
+   function-name       = function-name-first *function-name-char
+   function-name-first = LCALPHA
+   function-name-char  = function-name-first / "_" / DIGIT
+   LCALPHA             = %x61-7A  ; "a".."z"
+
+   function-expr       = function-name "(" S [function-argument
+                            *(S "," S function-argument)] S ")"
+   function-argument   = literal /
+                         filter-query / ; (includes singular-query)
+                         logical-expr /
+                         function-expr
+
+2.4.1.  Type System for Function Expressions
+
+Function parameters and results have declared types for well-typedness checking:
+- ValueType: JSON values or Nothing
+- LogicalType: LogicalTrue or LogicalFalse  
+- NodesType: Nodelists
+
+Nothing represents absence of JSON value (distinct from null). LogicalTrue/False are distinct from JSON true/false.
+
+2.4.2.  Type Conversion
+
+NodesType→LogicalType conversion: non-empty nodelist→LogicalTrue, empty→LogicalFalse. No implicit NodesType→ValueType conversion (use value() function).
+
+2.4.3.  Well-Typedness of Function Expressions
+
+Function expressions must be well-typed:
+
+1. Declared type must match context:
+   - As test-expr: LogicalType or NodesType
+   - As comparable: ValueType  
+   - As function-argument: Must fulfill parameter type rules
+
+2. Arguments must match parameter types:
+   - Function expression: Same declared result type as parameter
+   - LogicalType parameter accepts: NodesType function (converted), logical-expr
+   - NodesType parameter accepts: Any query
+   - ValueType parameter accepts: Literals, singular queries (single node→value, empty→Nothing)
+
+2.4.4.  length() Function Extension
+
+Parameters: ValueType → Result: ValueType (unsigned integer or Nothing)
+
+Returns length of strings (Unicode scalar values), arrays (elements), objects (members). Other types return Nothing.
+
+Example: $[?length(@.authors) >= 5]
+
+2.4.5.  count() Function Extension
+
+Parameters: NodesType → Result: ValueType (unsigned integer)
+
+Returns number of nodes in nodelist. No deduplication performed.
+
+Example: $[?count(@.*.author) >= 5]
+
+2.4.6.  match() Function Extension
+
+Parameters: ValueType (string), ValueType (I-Regexp string) → Result: LogicalType
+
+Tests if entire string matches I-Regexp pattern. Returns LogicalFalse for invalid inputs.
+
+Example: $[?match(@.date, "1974-05-..")]
+
+2.4.7.  search() Function Extension
+
+Parameters: ValueType (string), ValueType (I-Regexp string) → Result: LogicalType
+
+Tests if string contains substring matching I-Regexp pattern. Returns LogicalFalse for invalid inputs.
+
+Example: $[?search(@.author, "[BR]ob")]
+
+2.4.8.  value() Function Extension
+
+Parameters: NodesType → Result: ValueType
+
+Converts nodelist to value: single node→node value, empty/multiple→Nothing. Singular queries don't need this function.
+
+Example: $[?value(@..color) == "red"]
+
+2.4.9.  Examples
+
+Well-typed: $[?length(@) < 3], $[?count(@.*) == 1], $[?match(@.timezone, 'Europe/.*')], $[?value(@..color) == "red"]
+
+Not well-typed: $[?length(@.*) < 3] (non-singular query), $[?count(1) == 1] (literal instead of query), $[?match(@.timezone, 'Europe/.*') == true] (LogicalType in comparison), $[?value(@..color)] (ValueType in test expression)
+
+2.5.  Segments
+
+   For each node in an input nodelist, segments apply one or more
+   selectors to the node and concatenate the results of each selector
+   into per-input-node nodelists, which are then concatenated in the
+   order of the input nodelist to form a single segment result nodelist.
+
+   It turns out that the more segments there are in a query, the greater
+   the depth in the input value of the nodes of the resultant nodelist:
+
+   *  A query with N segments, where N >= 0, produces a nodelist
+      consisting of nodes at depth in the input value of N or greater.
+
+   *  A query with N segments, where N >= 0, all of which are child
+      segments (Section 2.5.1), produces a nodelist consisting of nodes
+      precisely at depth N in the input value.
+
+   There are two kinds of segments: child segments and descendant
+   segments.
+
+   segment             = child-segment / descendant-segment
+
+   The syntax and semantics of each kind of segment are defined below.
+
+2.5.1.  Child Segment
+
+2.5.1.1.  Syntax
+
+   The child segment consists of a non-empty, comma-separated sequence
+   of selectors enclosed in square brackets.
+
+   Shorthand notations are also provided for when there is a single
+   wildcard or name selector.
+
+   child-segment       = bracketed-selection /
+                         ("."
+                          (wildcard-selector /
+                           member-name-shorthand))
+
+   bracketed-selection = "[" S selector *(S "," S selector) S "]"
+
+   member-name-shorthand = name-first *name-char
+   name-first          = ALPHA /
+                         "_"   /
+                         %x80-D7FF /
+                            ; skip surrogate code points
+                         %xE000-10FFFF
+   name-char           = name-first / DIGIT
+
+   DIGIT               = %x30-39              ; 0-9
+   ALPHA               = %x41-5A / %x61-7A    ; A-Z / a-z
+
+   .*, a child-segment directly built from a wildcard-selector, is
+   shorthand for [*].
+
+   .<member-name>, a child-segment built from a member-name-shorthand,
+   is shorthand for ['<member-name>'].  Note: This can only be used with
+   member names that are composed of certain characters, as specified in
+   the ABNF rule member-name-shorthand.  Thus, for example, $.foo.bar is
+   shorthand for $['foo']['bar'] (but not for $['foo.bar']).
+
+2.5.1.2.  Semantics
+
+   A child segment contains a sequence of selectors, each of which
+   selects zero or more children of the input value.
+
+   Selectors of different kinds may be combined within a single child
+   segment.
+
+   For each node in the input nodelist, the resulting nodelist of a
+   child segment is the concatenation of the nodelists from each of its
+   selectors in the order that the selectors appear in the list.  Note:
+   Any node matched by more than one selector is kept as many times in
+   the nodelist.
+
+   Where a selector can produce a nodelist in more than one possible
+   order, each occurrence of the selector in the child segment may
+   produce a nodelist in a distinct order.
+
+   In summary, a child segment drills down one more level into the
+   structure of the input value.
+
+2.5.1.3.  Examples
+
+   JSON:
+
+   ["a", "b", "c", "d", "e", "f", "g"]
+
+   Queries:
+
+                 +========+========+========+============+
+                 | Query  | Result | Result | Comment    |
+                 |        |        | Paths  |            |
+                 +========+========+========+============+
+                 |  $[0,  | "a"    |  $[0]  | Indices    |
+                 |   3]   | "d"    |  $[3]  |            |
+                 +--------+--------+--------+------------+
+                 | $[0:2, | "a"    |  $[0]  | Slice and  |
+                 |   5]   | "b"    |  $[1]  | index      |
+                 |        | "f"    |  $[5]  |            |
+                 +--------+--------+--------+------------+
+                 |  $[0,  | "a"    |  $[0]  | Duplicated |
+                 |   0]   | "a"    |  $[0]  | entries    |
+                 +--------+--------+--------+------------+
+
+                      Table 15: Child Segment Examples
+
+2.5.2.  Descendant Segment
+
+2.5.2.1.  Syntax
+
+   The descendant segment consists of a double dot .. followed by a
+   child segment (using bracket notation).
+
+   Shorthand notations are also provided that correspond to the
+   shorthand forms of the child segment.
+
+   descendant-segment  = ".." (bracketed-selection /
+                               wildcard-selector /
+                               member-name-shorthand)
+
+   ..*, the descendant-segment directly built from a wildcard-selector,
+   is shorthand for ..[*].
+
+   ..<member-name>, a descendant-segment built from a member-name-
+   shorthand, is shorthand for ..['<member-name>'].  Note: As with the
+   similar shorthand of a child-segment, this can only be used with
+   member names that are composed of certain characters, as specified in
+   the ABNF rule member-name-shorthand.
+
+   Note: On its own, .. is not a valid segment.
+
+2.5.2.2.  Semantics
+
+   A descendant segment produces zero or more descendants of an input
+   value.
+
+   For each node in the input nodelist, a descendant selector visits the
+   input node and each of its descendants such that:
+
+   *  nodes of any array are visited in array order, and
+
+   *  nodes are visited before their descendants.
+
+   The order in which the children of an object are visited is not
+   stipulated, since JSON objects are unordered.
+
+   Suppose the descendant segment is of the form ..[<selectors>] (after
+   converting any shorthand form to bracket notation), and the nodes, in
+   the order visited, are D1, ..., Dn (where n >= 1).  Note: D1 is the
+   input value.
+
+   For each i such that 1 <= i <= n, the nodelist Ri is defined to be a
+   result of applying the child segment [<selectors>] to the node Di.
+
+   For each node in the input nodelist, the result of the descendant
+   segment is the concatenation of R1, ..., Rn (in that order).  These
+   results are then concatenated in input nodelist order to form the
+   result of the segment.
+
+   In summary, a descendant segment drills down one or more levels into
+   the structure of each input value.
+
+2.5.2.3.  Examples
+
+   JSON:
+
+   {
+     "o": {"j": 1, "k": 2},
+     "a": [5, 3, [{"j": 4}, {"k": 6}]]
+   }
+
+   Queries:
+
+   (Note that the fourth example can be expressed in two equivalent
+   queries, shown in Table 16 in one table row instead of two almost-
+   identical rows.)
+
+   +==========+================+===================+===================+
+   |  Query   | Result         |    Result Paths   | Comment           |
+   +==========+================+===================+===================+
+   |   $..j   | 1              |    $['o']['j']    | Object values     |
+   |          | 4              | $['a'][2][0]['j'] |                   |
+   +----------+----------------+-------------------+-------------------+
+   |   $..j   | 4              | $['a'][2][0]['j'] | Alternative       |
+   |          | 1              |    $['o']['j']    | result            |
+   +----------+----------------+-------------------+-------------------+
+   |  $..[0]  | 5              |     $['a'][0]     | Array values      |
+   |          | {"j": 4}       |    $['a'][2][0]   |                   |
+   +----------+----------------+-------------------+-------------------+
+   |  $..[*]  | {"j": 1,       |       $['o']      | All values        |
+   |    or    | "k": 2}        |       $['a']      |                   |
+   |   $..*   | [5, 3,         |    $['o']['j']    |                   |
+   |          | [{"j": 4},     |    $['o']['k']    |                   |
+   |          | {"k": 6}]]     |     $['a'][0]     |                   |
+   |          | 1              |     $['a'][1]     |                   |
+   |          | 2              |     $['a'][2]     |                   |
+   |          | 5              |    $['a'][2][0]   |                   |
+   |          | 3              |    $['a'][2][1]   |                   |
+   |          | [{"j": 4},     | $['a'][2][0]['j'] |                   |
+   |          | {"k": 6}]      | $['a'][2][1]['k'] |                   |
+   |          | {"j": 4}       |                   |                   |
+   |          | {"k": 6}       |                   |                   |
+   |          | 4              |                   |                   |
+   |          | 6              |                   |                   |
+   +----------+----------------+-------------------+-------------------+
+   |   $..o   | {"j": 1,       |       $['o']      | Input value is    |
+   |          | "k": 2}        |                   | visited           |
+   +----------+----------------+-------------------+-------------------+
+   | $.o..[*, | 1              |    $['o']['j']    | Non-deterministic |
+   |    *]    | 2              |    $['o']['k']    | ordering          |
+   |          | 2              |    $['o']['k']    |                   |
+   |          | 1              |    $['o']['j']    |                   |
+   +----------+----------------+-------------------+-------------------+
+   | $.a..[0, | 5              |     $['a'][0]     | Multiple segments |
+   |    1]    | 3              |     $['a'][1]     |                   |
+   |          | {"j": 4}       |    $['a'][2][0]   |                   |
+   |          | {"k": 6}       |    $['a'][2][1]   |                   |
+   +----------+----------------+-------------------+-------------------+
+
+                   Table 16: Descendant Segment Examples
+
+   Note: The ordering of the results for the $..[*] and $..* examples
+   above is not guaranteed, except that:
+
+   *  {"j": 1, "k": 2} must appear before 1 and 2,
+
+   *  [5, 3, [{"j": 4}, {"k": 6}]] must appear before 5, 3, and [{"j":
+      4}, {"k": 6}],
+
+   *  5 must appear before 3, which must appear before [{"j": 4}, {"k":
+      6}],
+
+   *  5 and 3 must appear before {"j": 4}, 4, {"k": 6}, and 6,
+
+   *  [{"j": 4}, {"k": 6}] must appear before {"j": 4} and {"k": 6},
+
+   *  {"j": 4} must appear before {"k": 6},
+
+   *  {"k": 6} must appear before 4, and
+
+   *  4 must appear before 6.
+
+   The example above with the query $.o..[*, *] shows that a selector
+   may produce nodelists in distinct orders each time it appears in the
+   descendant segment.
+
+   The example above with the query $.a..[0, 1] shows that the child
+   segment [0, 1] is applied to each node in turn (rather than the nodes
+   being visited once per selector, which is the case for some JSONPath
+   implementations that do not conform to this specification).
+
+2.6.  Semantics of null
+
+JSON null is treated as any other JSON value (not "undefined" or "missing").
+
+2.6.1.  Examples
+
+JSON: {"a": null, "b": [null], "c": [{}], "null": 1}
+
+Examples: $.a → null, $.a[0] → (empty), $.b[0] → null, $.b[?@] → null, $.b[?@==null] → null, $.c[?@.d==null] → (empty), $.null → 1
+
+2.7.  Normalized Paths
+
+Normalized Path: unique JSONPath representation of a node's location. Uses bracket notation with single quotes for member names.
+
+   normalized-path      = root-identifier *(normal-index-segment)
+   normal-index-segment = "[" normal-selector "]"
+   normal-selector      = normal-name-selector / normal-index-selector
+   normal-name-selector = %x27 *normal-single-quoted %x27 ; 'string'
+   normal-single-quoted = normal-unescaped /
+                          ESC normal-escapable
+   normal-unescaped     =    ; omit %x0-1F control codes
+                          %x20-26 /
+                             ; omit 0x27 '
+                          %x28-5B /
+                             ; omit 0x5C \
+                          %x5D-D7FF /
+                             ; skip surrogate code points
+                          %xE000-10FFFF
+
+   normal-escapable     = %x62 / ; b BS backspace U+0008
+                          %x66 / ; f FF form feed U+000C
+                          %x6E / ; n LF line feed U+000A
+                          %x72 / ; r CR carriage return U+000D
+                          %x74 / ; t HT horizontal tab U+0009
+                          "'" /  ; ' apostrophe U+0027
+                          "\" /  ; \ backslash (reverse solidus) U+005C
+                          (%x75 normal-hexchar)
+                                          ; certain values u00xx U+00XX
+   normal-hexchar       = "0" "0"
+                          (
+                             ("0" %x30-37) / ; "00"-"07"
+                                ; omit U+0008-U+000A BS HT LF
+                             ("0" %x62) /    ; "0b"
+                                ; omit U+000C-U+000D FF CR
+                             ("0" %x65-66) / ; "0e"-"0f"
+                             ("1" normal-HEXDIG)
+                          )
+   normal-HEXDIG        = DIGIT / %x61-66    ; "0"-"9", "a"-"f"
+   normal-index-selector = "0" / (DIGIT1 *DIGIT)
+                           ; non-negative decimal integer
+
+2.7.1.  Examples
+
+Examples: $.a → $['a'], $[1] → $[1], $[-3] → $[2] (array length 5), $.a.b[1:2] → $['a']['b'][1], $["\u000B"] → $['\u000b']
+
+Appendix A.  Collected ABNF Grammars
+
+   This appendix collects the ABNF grammar from the ABNF passages used
+   throughout the document.
+
+   Figure 2 contains the collected ABNF grammar that defines the syntax
+   of a JSONPath query.
+
+   jsonpath-query      = root-identifier segments
+   segments            = *(S segment)
+
+   B                   = %x20 /    ; Space
+                         %x09 /    ; Horizontal tab
+                         %x0A /    ; Line feed or New line
+                         %x0D      ; Carriage return
+   S                   = *B        ; optional blank space
+   root-identifier     = "$"
+   selector            = name-selector /
+                         wildcard-selector /
+                         slice-selector /
+                         index-selector /
+                         filter-selector
+   name-selector       = string-literal
+
+   string-literal      = %x22 *double-quoted %x22 /     ; "string"
+                         %x27 *single-quoted %x27       ; 'string'
+
+   double-quoted       = unescaped /
+                         %x27      /                    ; '
+                         ESC %x22  /                    ; \"
+                         ESC escapable
+
+   single-quoted       = unescaped /
+                         %x22      /                    ; "
+                         ESC %x27  /                    ; \'
+                         ESC escapable
+
+   ESC                 = %x5C                           ; \ backslash
+
+   unescaped           = %x20-21 /                      ; see RFC 8259
+                            ; omit 0x22 "
+                         %x23-26 /
+                            ; omit 0x27 '
+                         %x28-5B /
+                            ; omit 0x5C \
+                         %x5D-D7FF /
+                            ; skip surrogate code points
+                         %xE000-10FFFF
+
+   escapable           = %x62 / ; b BS backspace U+0008
+                         %x66 / ; f FF form feed U+000C
+                         %x6E / ; n LF line feed U+000A
+                         %x72 / ; r CR carriage return U+000D
+                         %x74 / ; t HT horizontal tab U+0009
+                         "/"  / ; / slash (solidus) U+002F
+                         "\"  / ; \ backslash (reverse solidus) U+005C
+                         (%x75 hexchar) ;  uXXXX U+XXXX
+
+   hexchar             = non-surrogate /
+                         (high-surrogate "\" %x75 low-surrogate)
+   non-surrogate       = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /
+                         ("D" %x30-37 2HEXDIG )
+   high-surrogate      = "D" ("8"/"9"/"A"/"B") 2HEXDIG
+   low-surrogate       = "D" ("C"/"D"/"E"/"F") 2HEXDIG
+
+   HEXDIG              = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+   wildcard-selector   = "*"
+   index-selector      = int                        ; decimal integer
+
+   int                 = "0" /
+                         (["-"] DIGIT1 *DIGIT)      ; - optional
+   DIGIT1              = %x31-39                    ; 1-9 non-zero digit
+   slice-selector      = [start S] ":" S [end S] [":" [S step ]]
+
+   start               = int       ; included in selection
+   end                 = int       ; not included in selection
+   step                = int       ; default: 1
+   filter-selector     = "?" S logical-expr
+   logical-expr        = logical-or-expr
+   logical-or-expr     = logical-and-expr *(S "||" S logical-and-expr)
+                           ; disjunction
+                           ; binds less tightly than conjunction
+   logical-and-expr    = basic-expr *(S "&&" S basic-expr)
+                           ; conjunction
+                           ; binds more tightly than disjunction
+
+   basic-expr          = paren-expr /
+                         comparison-expr /
+                         test-expr
+
+   paren-expr          = [logical-not-op S] "(" S logical-expr S ")"
+                                           ; parenthesized expression
+   logical-not-op      = "!"               ; logical NOT operator
+   test-expr           = [logical-not-op S]
+                         (filter-query / ; existence/non-existence
+                          function-expr) ; LogicalType or NodesType
+   filter-query        = rel-query / jsonpath-query
+   rel-query           = current-node-identifier segments
+   current-node-identifier = "@"
+   comparison-expr     = comparable S comparison-op S comparable
+   literal             = number / string-literal /
+                         true / false / null
+   comparable          = literal /
+                         singular-query / ; singular query value
+                         function-expr    ; ValueType
+   comparison-op       = "==" / "!=" /
+                         "<=" / ">=" /
+                         "<"  / ">"
+
+   singular-query      = rel-singular-query / abs-singular-query
+   rel-singular-query  = current-node-identifier singular-query-segments
+   abs-singular-query  = root-identifier singular-query-segments
+   singular-query-segments = *(S (name-segment / index-segment))
+   name-segment        = ("[" name-selector "]") /
+                         ("." member-name-shorthand)
+   index-segment       = "[" index-selector "]"
+   number              = (int / "-0") [ frac ] [ exp ] ; decimal number
+   frac                = "." 1*DIGIT                  ; decimal fraction
+   exp                 = "e" [ "-" / "+" ] 1*DIGIT    ; decimal exponent
+   true                = %x74.72.75.65                ; true
+   false               = %x66.61.6c.73.65             ; false
+   null                = %x6e.75.6c.6c                ; null
+   function-name       = function-name-first *function-name-char
+   function-name-first = LCALPHA
+   function-name-char  = function-name-first / "_" / DIGIT
+   LCALPHA             = %x61-7A  ; "a".."z"
+
+   function-expr       = function-name "(" S [function-argument
+                            *(S "," S function-argument)] S ")"
+   function-argument   = literal /
+                         filter-query / ; (includes singular-query)
+                         logical-expr /
+                         function-expr
+   segment             = child-segment / descendant-segment
+   child-segment       = bracketed-selection /
+                         ("."
+                          (wildcard-selector /
+                           member-name-shorthand))
+
+   bracketed-selection = "[" S selector *(S "," S selector) S "]"
+
+   member-name-shorthand = name-first *name-char
+   name-first          = ALPHA /
+                         "_"   /
+                         %x80-D7FF /
+                            ; skip surrogate code points
+                         %xE000-10FFFF
+   name-char           = name-first / DIGIT
+
+   DIGIT               = %x30-39              ; 0-9
+   ALPHA               = %x41-5A / %x61-7A    ; A-Z / a-z
+   descendant-segment  = ".." (bracketed-selection /
+                               wildcard-selector /
+                               member-name-shorthand)
+
+                Figure 2: Collected ABNF of JSONPath Queries
+
+   Figure 3 contains the collected ABNF grammar that defines the syntax
+   of a JSONPath Normalized Path while also using the rules root-
+   identifier, ESC, DIGIT, and DIGIT1 from Figure 2.
+
+   normalized-path      = root-identifier *(normal-index-segment)
+   normal-index-segment = "[" normal-selector "]"
+   normal-selector      = normal-name-selector / normal-index-selector
+   normal-name-selector = %x27 *normal-single-quoted %x27 ; 'string'
+   normal-single-quoted = normal-unescaped /
+                          ESC normal-escapable
+   normal-unescaped     =    ; omit %x0-1F control codes
+                          %x20-26 /
+                             ; omit 0x27 '
+                          %x28-5B /
+                             ; omit 0x5C \
+                          %x5D-D7FF /
+                             ; skip surrogate code points
+                          %xE000-10FFFF
+
+   normal-escapable     = %x62 / ; b BS backspace U+0008
+                          %x66 / ; f FF form feed U+000C
+                          %x6E / ; n LF line feed U+000A
+                          %x72 / ; r CR carriage return U+000D
+                          %x74 / ; t HT horizontal tab U+0009
+                          "'" /  ; ' apostrophe U+0027
+                          "\" /  ; \ backslash (reverse solidus) U+005C
+                          (%x75 normal-hexchar)
+                                          ; certain values u00xx U+00XX
+   normal-hexchar       = "0" "0"
+                          (
+                             ("0" %x30-37) / ; "00"-"07"
+                                ; omit U+0008-U+000A BS HT LF
+                             ("0" %x62) /    ; "0b"
+                                ; omit U+000C-U+000D FF CR
+                             ("0" %x65-66) / ; "0e"-"0f"
+                             ("1" normal-HEXDIG)
+                          )
+   normal-HEXDIG        = DIGIT / %x61-66    ; "0"-"9", "a"-"f"
+   normal-index-selector = "0" / (DIGIT1 *DIGIT)
+                           ; non-negative decimal integer
+
+           Figure 3: Collected ABNF of JSONPath Normalized Paths

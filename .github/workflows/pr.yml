@@ -13,45 +13,45 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [20.x, 22.x, 24.x]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn test:ci --ci
+      - run: yarn test
   lint-and-co:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [20.x, 22.x, 24.x]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn build:all
-      - run: yarn lint
       - run: yarn format
-      - run: yarn test:cli:pointer
-      - run: yarn test:cli:patch
-      - run: yarn test:cli:pack
-      - run: yarn demo:json-patch
+      - run: yarn lint
+      - run: yarn typecheck
+      - run: yarn build
   typedoc:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [20.x, 22.x, 24.x]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: yarn
