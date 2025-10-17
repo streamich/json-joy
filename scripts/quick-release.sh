@@ -88,7 +88,15 @@ yarn workspaces foreach -A --no-private npm publish
 echo -e "${GREEN}✓ Published to NPM${NC}\n"
 
 # Step 8: Create Git tag and push to remote
-echo -e "${YELLOW}Step 8: Creating Git tag and pushing to remote...${NC}"
+echo -e "${YELLOW}Step 8: Ready to create Git tag and push to remote${NC}"
+read -p "Do you want to proceed with creating tag v${NEW_VERSION} and pushing a new commit to remote? (yes/no): " CONFIRM_GIT
+
+if [ "$CONFIRM_GIT" != "yes" ]; then
+    echo -e "${RED}Git tag and push cancelled by user${NC}"
+    exit 1
+fi
+
+echo "Creating Git tag and pushing to remote..."
 git add .
 git commit -m "chore: release v${NEW_VERSION}"
 git tag "v${NEW_VERSION}"
