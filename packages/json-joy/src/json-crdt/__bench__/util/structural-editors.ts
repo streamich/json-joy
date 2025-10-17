@@ -1,6 +1,8 @@
 import {Model} from '../../model';
 import * as Y from 'yjs';
+// @ts-expect-error
 import * as Yrs from 'ywasm';
+// @ts-expect-error
 import * as Automerge from '@automerge/automerge';
 import type {StructuralEditor, StructuralEditorInstance} from './types';
 import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder';

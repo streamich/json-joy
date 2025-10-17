@@ -7,23 +7,23 @@
  */
 
 import {Model} from '../../../json-crdt';
-import {CntExt} from '..';
+import {cnt} from '..';
 
 console.clear();
 
 const model = Model.create(void 0, 1234);
 
-model.ext.register(CntExt);
+model.ext.register(cnt);
 
 model.api.set({
-  cnt: CntExt.new(42),
+  cnt: cnt.new(42),
 });
 
 console.log('');
 console.log('Initial value:');
 console.log(model + '');
 
-const api = model.api.in(['cnt']).asExt(CntExt);
+const api = model.api.in(['cnt']).asExt(cnt);
 
 api.inc(10);
 

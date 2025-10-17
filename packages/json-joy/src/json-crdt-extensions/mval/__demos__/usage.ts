@@ -7,18 +7,18 @@
  */
 
 import {Model, s} from '../../../json-crdt';
-import {MvalExt} from '..';
+import {mval} from '..';
 
 console.clear();
 
 const model = Model.create(void 0, 1234);
 
-model.ext.register(MvalExt);
+model.ext.register(mval);
 
 model.api.set({
   obj: {
     name: s.con('John'),
-    score: MvalExt.new(s.con(1)),
+    score: mval.new(s.con(1)),
   },
 });
 
@@ -26,7 +26,7 @@ console.log('');
 console.log('Initial value:');
 console.log(model + '');
 
-const api = model.api.in(['obj', 'score']).asExt(MvalExt);
+const api = model.api.in(['obj', 'score']).asExt(mval);
 
 api.set(s.con(5));
 
@@ -36,7 +36,7 @@ console.log(model + '');
 
 const model2 = model.fork();
 
-const api2 = model2.api.in(['obj', 'score']).asExt(MvalExt);
+const api2 = model2.api.in(['obj', 'score']).asExt(mval);
 
 api.set(s.con(10));
 api2.set(s.con(20));

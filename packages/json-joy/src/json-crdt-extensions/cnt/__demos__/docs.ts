@@ -7,16 +7,16 @@
  */
 
 import {Model} from '../../../json-crdt';
-import {CntExt} from '..';
+import {cnt} from '..';
 
 console.clear();
 
 const model = Model.create(void 0, 1234);
 
-model.ext.register(CntExt);
+model.ext.register(cnt);
 
 model.api.set({
-  counter: CntExt.new(1),
+  counter: cnt.new(1),
 });
 console.log(model + '');
 
@@ -24,7 +24,7 @@ console.log(model + '');
 // 2-3 days for finding damages ...
 // ..
 
-const api = model.api.in(['counter']).asExt(CntExt);
+const api = model.api.in(['counter']).asExt(cnt);
 const values = api.view();
 
 console.log(values);

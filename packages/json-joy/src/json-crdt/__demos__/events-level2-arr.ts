@@ -66,10 +66,9 @@ const main = async () => {
   console.log('More changes which result in only model change:');
   console.log('');
   // model.api.transaction(() => {
-  model.api
-    .arr(['my', 'deep', 'arr'])
-    .del(1, 1)
-    .ins(1, [s.con(2)]);
+  const arr = model.api.arr(['my', 'deep', 'arr']);
+  arr.del(1, 1);
+  arr.ins(1, [s.con(2)]);
   // });
   await new Promise((r) => setTimeout(r, 1));
   console.log('');

@@ -72,7 +72,8 @@
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "jj": "npx ts-node src/json-cli/jj.ts",
     "upgrade:check": "npx npm-check-updates@16.14",
-    "upgrade:interactive": "npx npm-check-updates@16.14 --interactive"
+    "upgrade:interactive": "npx npm-check-updates@16.14 --interactive",
+    "typecheck": "tsc -p ."
   },
   "peerDependencies": {
     "rxjs": "7",

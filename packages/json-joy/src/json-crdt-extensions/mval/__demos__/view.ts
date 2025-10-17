@@ -7,15 +7,15 @@
  */
 
 import {Model, s} from '../../../json-crdt';
-import {MvalExt} from '..';
+import {mval} from '..';
 
 console.clear();
 
 const model = Model.create(void 0, 1234);
 
-model.ext.register(MvalExt);
+model.ext.register(mval);
 
-model.api.set(MvalExt.new(s.con(1)));
+model.api.set(mval.new(s.con(1)));
 
 console.log('');
 console.log('Model with extension:');

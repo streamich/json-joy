@@ -31,7 +31,8 @@ console.log('Set initial string value:');
 console.log('');
 console.log(str.toString());
 
-str.api.str([]).ins(2, 'l').ins(10, '!');
+str.api.str([]).ins(2, 'l');
+str.api.str([]).ins(10, '!');
 
 console.log('');
 console.log('After fixing errors in the string:');

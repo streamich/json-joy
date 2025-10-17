@@ -7,20 +7,20 @@
  */
 
 import {Model, s} from '../../../json-crdt';
-import {MvalExt} from '..';
+import {mval} from '..';
 
 console.clear();
 
 const model = Model.create(void 0, 1234);
 
-model.ext.register(MvalExt);
+model.ext.register(mval);
 
 model.api.set({
-  score: MvalExt.new(1),
+  score: mval.new(1),
 });
 console.log(model + '');
 
-const api = model.api.in(['score']).asExt(MvalExt);
+const api = model.api.in(['score']).asExt(mval);
 const values = api.view();
 
 console.log(values);

@@ -1,9 +1,14 @@
 import {editorJsonJoy, editorStrNode} from './json-joy';
+// @ts-expect-error
 import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';
+// @ts-expect-error
 import Yrs from 'ywasm';
+// @ts-expect-error
 import * as Automerge from '@automerge/automerge';
+// @ts-expect-error
 import {CRuntime, CText} from '@collabs/collabs';
+// @ts-expect-error
 import {Loro} from 'loro-crdt';
 import type {SequentialTraceEditor} from '../types';
 const Rope = require('rope.js');
@@ -60,18 +65,18 @@ const editorAutomerge: SequentialTraceEditor = {
   name: 'Automerge',
   factory: () => {
     let doc = Automerge.init();
-    doc = Automerge.change(doc, (doc) => {
-      (<any>doc).text = new Automerge.Text();
+    doc = Automerge.change(doc, (doc: any) => {
+      doc.text = new Automerge.Text();
     });
     return {
       ins: (pos: number, insert: string) => {
-        doc = Automerge.change(doc, (doc) => {
-          (<any>doc).text.insertAt(pos, ...insert.split(''));
+        doc = Automerge.change(doc, (doc: any) => {
+          doc.text.insertAt(pos, ...insert.split(''));
         });
       },
       del: (pos: number, len: number) => {
-        doc = Automerge.change(doc, (doc) => {
-          (<any>doc).text.deleteAt(pos, len);
+        doc = Automerge.change(doc, (doc: any) => {
+          doc.text.deleteAt(pos, len);
         });
       },
       get: () => (doc as any).text + '',
@@ -86,7 +91,7 @@ const editorCollabs: SequentialTraceEditor = {
   name: 'collabs',
   factory: () => {
     const doc = new CRuntime();
-    const text: CText = doc.registerCollab('text', (init) => new CText(init));
+    const text: CText = doc.registerCollab('text', (init: any) => new CText(init));
     return {
       ins: (pos: number, insert: string) => {
         doc.transact(() => {

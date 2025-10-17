@@ -8,7 +8,7 @@ import {applyPatch as v2} from '../applyPatch/v2';
 import {applyPatch as v3} from '../applyPatch/v3';
 import {applyPatch as v4} from '../applyPatch/v4';
 import {applyPatch as applyPatchFastJsonPatch} from 'fast-json-patch';
-import {clone} from '../../json-clone';
+import {clone} from '@jsonjoy.com/util/lib/json-clone';
 
 const doc = {foo: {bar: 123}, arr: [1, {}]};
 const patch: Operation[] = [
