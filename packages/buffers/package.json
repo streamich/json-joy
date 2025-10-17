@@ -1,6 +1,5 @@
 {
   "name": "@jsonjoy.com/buffers",
-  "private": false,
   "publishConfig": {
     "access": "public"
   },
@@ -56,7 +55,6 @@
   "peerDependencies": {
     "tslib": "2"
   },
-  "dependencies": {},
   "devDependencies": {
     "json-pack-napi": "^0.0.2"
   },

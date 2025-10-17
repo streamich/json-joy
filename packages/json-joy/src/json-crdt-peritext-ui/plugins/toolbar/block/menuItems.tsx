@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {Iconista} from 'nice-ui/lib/icons/Iconista';
 import {Code} from 'nice-ui/lib/1-inline/Code';
 import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';

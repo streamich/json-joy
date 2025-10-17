@@ -52,7 +52,7 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
           <Button
             small
             lite={!valid}
-            positive={validation === 'good'}
+            // positive={validation === 'good'}
             block
             disabled={!valid}
             submit
