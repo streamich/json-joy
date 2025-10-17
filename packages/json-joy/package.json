@@ -88,7 +88,7 @@
     "@jsonjoy.com/base64": "workspace:*",
     "@jsonjoy.com/buffers": "workspace:*",
     "@jsonjoy.com/json-expression": "^1.0.0",
-    "@jsonjoy.com/json-pack": "^1.1.0",
+    "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/json-type": "^1.0.0",
     "@jsonjoy.com/util": "workspace:*",

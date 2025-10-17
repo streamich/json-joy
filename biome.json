@@ -36,7 +36,8 @@
 				"noConfusingLabels": "off",
 				"noConfusingVoidType": "off",
 				"noConstEnum": "off",
-				"noSelfCompare": "off"
+				"noSelfCompare": "off",
+				"noCatchAssign": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",
@@ -52,7 +53,8 @@
 				"noStaticElementInteractions": "off"
 			},
 			"correctness": {
-				"noUnusedFunctionParameters": "off"
+				"noUnusedFunctionParameters": "off",
+				"noVoidTypeReturn": "off"
 			},
 			"performance": {
 				"noDelete": "off"
