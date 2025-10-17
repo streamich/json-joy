@@ -37,7 +37,7 @@
   "scripts": {
     "clean": "yarn workspaces foreach -Apt run clean",
     "build": "yarn workspaces foreach -Apt run build",
-    "test": "yarn workspaces foreach -Apt run test",
+    "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 7",
     "format": "biome format ./src ./packages/*/src",
     "format:fix": "biome format --write ./src ./packages/*/src",
     "lint": "biome lint ./src ./packages/*/src",
