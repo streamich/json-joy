@@ -1,3 +1,24 @@
+## Quick Release Guide
+
+Simply run the `quick-release.sh` script with an optional version bump type or
+specific version:
+
+```bash
+# Use default (minor) version bump
+./scripts/quick-release.sh
+
+# Specify version bump type
+./scripts/quick-release.sh patch
+./scripts/quick-release.sh major
+./scripts/quick-release.sh 1.2.3
+```
+
+It will test test and build the packages and publish them to NPM, then create
+a git commit and tag for the new version.
+
+
+## Manual Release Steps
+
 Verify code quality and correctness:
 
 ```bash
