@@ -44,3 +44,12 @@ Publish to NPM:
 ```bash
 yarn workspaces foreach -A --no-private npm publish
 ```
+
+Create a Git tag and push to remote:
+
+```bash
+git add .
+git commit -m "chore: release v$(node -p "require('./package.json').version")"
+git tag v$(node -p "require('./package.json').version")
+git push origin --tags
+```
