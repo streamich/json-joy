@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["packages/*/src"],
+  "typedocOptions": {
+    "entryPoints": [
+      "packages/json-joy/src/json-crdt/index.ts",
+      "packages/json-joy/src/json-crdt/codec/structural/binary/index.ts",
+      "packages/json-joy/src/json-crdt/codec/structural/compact/index.ts",
+      "packages/json-joy/src/json-crdt/codec/structural/verbose/index.ts",
+      "packages/json-joy/src/json-crdt/codec/indexed/binary/index.ts",
+      "packages/json-joy/src/json-crdt/codec/sidecar/binary/index.ts",
+      "packages/json-joy/src/json-crdt-patch/codec/verbose/index.ts",
+      "packages/json-joy/src/json-crdt-patch/codec/compact/index.ts",
+      "packages/json-joy/src/json-crdt-patch/codec/binary/index.ts",
+      "packages/json-joy/src/json-pack/index.ts",
+      "packages/json-joy/src/json-patch/index.ts",
+      "packages/json-joy/src/json-patch-ot/index.ts",
+      "packages/json-joy/src/json-pointer/index.ts",
+      "packages/json-joy/src/json-rpc/index.ts",
+      "packages/json-joy/src/json-rx/index.ts",
+      "packages/json-joy/src/json-type/index.ts",
+      "packages/json-joy/src/json-random/index.ts"
+    ],
+    "out": "typedocs"
+  }
+}

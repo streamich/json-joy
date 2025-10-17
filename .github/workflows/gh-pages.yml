@@ -14,6 +14,7 @@ jobs:
         node-version: [24.x]
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -21,7 +22,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn typedoc
-      - run: yarn coverage
+      - run: yarn test:coverage
       - run: yarn build:pages
       - name: Publish to gh-pages
         uses: peaceiris/actions-gh-pages@v4
