@@ -966,6 +966,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/json-random@workspace:packages/json-random":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-random@workspace:packages/json-random"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+  peerDependencies:
+    tslib: 2
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-type@npm:^1.0.0":
   version: 1.8.0
   resolution: "@jsonjoy.com/json-type@npm:1.8.0"
