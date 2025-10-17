@@ -85,7 +85,7 @@
     }
   },
   "dependencies": {
-    "@jsonjoy.com/base64": "^1.1.2",
+    "@jsonjoy.com/base64": "workspace:*",
     "@jsonjoy.com/buffers": "workspace:*",
     "@jsonjoy.com/json-expression": "^1.0.0",
     "@jsonjoy.com/json-pack": "^1.1.0",

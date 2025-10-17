@@ -1,33 +1,27 @@
 {
-  "name": "@jsonjoy.com/buffers",
+  "name": "@jsonjoy.com/base64",
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.56.0",
-  "description": "Various helper utilities for working with buffers and binary data",
+  "version": "0.0.1",
+  "description": "High-performance Base64 encoder and decoder",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/buffers",
-  "repository": "jsonjoy-com/buffers",
+  "homepage": "https://github.com/jsonjoy-com/base64",
+  "repository": "jsonjoy-com/base64",
   "license": "Apache-2.0",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
   "keywords": [
-    "buffer",
-    "buffers",
-    "uint8array",
-    "binary",
-    "utf8",
-    "string",
-    "encoding",
-    "decoding",
-    "reader",
-    "writer",
-    "streaming"
+    "base64",
+    "base64url",
+    "base64-url",
+    "base64urlsafe",
+    "base64url-safe"
   ],
   "engines": {
     "node": ">=10.0"
@@ -76,6 +70,7 @@
     "tslib": "2"
   },
   "devDependencies": {
-    "json-pack-napi": "^0.0.2"
+    "base64-js": "^1.5.1",
+    "js-base64": "^3.7.2"
   }
 }
