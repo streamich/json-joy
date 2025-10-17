@@ -12,38 +12,20 @@
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
-  "engines": {
-    "node": ">=10.0"
-  },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "typings": "lib/index.d.ts",
-  "bin": {
-    "jj": "./bin/jj.js",
-    "json-pack": "./bin/json-pack.js",
-    "json-pack-test": "./bin/json-pack-test.js",
-    "json-patch": "./bin/json-patch.js",
-    "json-patch-test": "./bin/json-patch-test.js",
-    "json-pointer": "./bin/json-pointer.js",
-    "json-pointer-test": "./bin/json-pointer-test.js",
-    "json-unpack": "./bin/json-unpack.js"
-  },
-  "files": [
-    "LICENSE",
-    "bin/",
-    "lib/",
-    "esm/"
-  ],
   "scripts": {
-    "clean": "yarn workspaces foreach -Apt run clean",
+    "clean": "rimraf lib coverage typedocs gh-pages && yarn workspaces foreach -Apt run clean",
     "build": "yarn workspaces foreach -Apt run build",
     "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 7",
+    "test:coverage": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 7 --collectCoverage",
     "format": "biome format ./packages/*/src",
     "format:fix": "biome format --write ./packages/*/src",
     "lint": "biome lint ./packages/*/src",
     "lint:fix": "biome lint --write ./packages/*/src",
     "typecheck": "yarn workspaces foreach -Apt run typecheck",
-    "coverage": "yarn test --collectCoverage",
+    "typedoc": "npx typedoc@0.28.5 --tsconfig tsconfig.typedoc.json",
+    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn test:coverage && yarn build:pages && yarn deploy:pages",
     "upgrade:check": "npx npm-check-updates@16.14",
     "upgrade:interactive": "npx npm-check-updates@16.14 --interactive"
   },
@@ -88,6 +70,7 @@
     "quill-delta": "^5.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "rimraf": "^6.0.1",
     "rxjs": "^7.8.2",
     "ts-jest": "^29.4.0",
     "ts-loader": "^9.5.2",

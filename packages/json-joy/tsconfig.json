@@ -2,27 +2,5 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
   },
-  "include": ["src"],
-  "typedocOptions": {
-    "entryPoints": [
-      "src/json-crdt/index.ts",
-      "src/json-crdt/codec/structural/binary/index.ts",
-      "src/json-crdt/codec/structural/compact/index.ts",
-      "src/json-crdt/codec/structural/verbose/index.ts",
-      "src/json-crdt/codec/indexed/binary/index.ts",
-      "src/json-crdt/codec/sidecar/binary/index.ts",
-      "src/json-crdt-patch/codec/verbose/index.ts",
-      "src/json-crdt-patch/codec/compact/index.ts",
-      "src/json-crdt-patch/codec/binary/index.ts",
-      "src/json-pack/index.ts",
-      "src/json-patch/index.ts",
-      "src/json-patch-ot/index.ts",
-      "src/json-pointer/index.ts",
-      "src/json-rpc/index.ts",
-      "src/json-rx/index.ts",
-      "src/json-type/index.ts",
-      "src/json-random/index.ts"
-    ],
-    "out": "typedocs"
-  }
+  "include": ["src"]
 }

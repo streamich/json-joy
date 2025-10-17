@@ -21,7 +21,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn typedoc
-      - run: yarn coverage
+      - run: yarn test:coverage
       - run: yarn build:pages
       - name: Publish to gh-pages
         uses: peaceiris/actions-gh-pages@v4

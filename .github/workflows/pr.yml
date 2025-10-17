@@ -36,13 +36,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn build:all
-      - run: yarn lint
       - run: yarn format
-      - run: yarn test:cli:pointer
-      - run: yarn test:cli:patch
-      - run: yarn test:cli:pack
-      - run: yarn demo:json-patch
+      - run: yarn lint
+      - run: yarn typecheck
+      - run: yarn build
   typedoc:
     runs-on: ubuntu-latest
     strategy:
