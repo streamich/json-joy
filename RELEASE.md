@@ -29,5 +29,11 @@ Synchronize versions across all packages:
 Perform a dry run:
 
 ```bash
-yarn workspaces foreach -Apt npm publish --dry-run
+yarn workspaces foreach -A --no-private npm publish --dry-run
+```
+
+Publish to NPM:
+
+```bash
+yarn workspaces foreach -A --no-private npm publish
 ```
