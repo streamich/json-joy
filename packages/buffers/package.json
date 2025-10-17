@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.1",
+  "version": "17.55.0",
   "description": "Various helper utilities for working with buffers and binary data",
   "author": {
     "name": "streamich",
@@ -40,14 +40,14 @@
     "lib/"
   ],
   "scripts": {
-    "clean": "npx rimraf@5.0.5 lib typedocs coverage gh-pages yarn-error.log",
+    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
     "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
     "test": "jest --maxWorkers 7",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
     "coverage": "yarn test --collectCoverage",
     "typedoc": "typedoc",
-    "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "typecheck": "tsc -p ."
