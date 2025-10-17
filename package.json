@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "clean": "yarn workspaces foreach -Apt run clean",
-    "build": "yarn clean && yarn workspaces foreach -Apt run build",
+    "build": "yarn workspaces foreach -Apt run build",
     "test": "yarn workspaces foreach -Apt run test",
     "format": "biome format ./src ./packages/*/src",
     "format:fix": "biome format --write ./src ./packages/*/src",

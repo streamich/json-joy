@@ -62,7 +62,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
           size={-1}
           outline
           ghost
-          round
+          radius={2}
           style={{borderStyle: 'dashed'}}
           onClick={() => {
             if (typeof formatting.conf()?.view()?.title !== 'string') {

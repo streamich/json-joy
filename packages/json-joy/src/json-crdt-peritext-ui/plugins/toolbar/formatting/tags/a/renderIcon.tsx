@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type {IconProps} from '../../../types';
 import {Favicon} from '../../../../../components/Favicon';
 

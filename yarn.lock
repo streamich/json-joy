@@ -857,7 +857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/buffers@workspace:packages/buffers":
+"@jsonjoy.com/buffers@workspace:*, @jsonjoy.com/buffers@workspace:packages/buffers":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/buffers@workspace:packages/buffers"
   dependencies:
@@ -5350,6 +5350,7 @@ __metadata:
   resolution: "json-joy@workspace:packages/json-joy"
   dependencies:
     "@jsonjoy.com/base64": "npm:^1.1.2"
+    "@jsonjoy.com/buffers": "workspace:*"
     "@jsonjoy.com/json-expression": "npm:^1.0.0"
     "@jsonjoy.com/json-pack": "npm:^1.1.0"
     "@jsonjoy.com/json-pointer": "npm:^1.0.1"
