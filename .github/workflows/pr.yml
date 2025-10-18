@@ -40,8 +40,8 @@ jobs:
       - run: yarn install --immutable
       - run: yarn format
       - run: yarn lint
-      - run: yarn typecheck
       - run: yarn build
+      - run: yarn typecheck
   typedoc:
     runs-on: ubuntu-latest
     strategy:
