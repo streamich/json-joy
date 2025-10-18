@@ -46,6 +46,8 @@ export class Nfsv4TcpClient implements Nfsv4Client {
   private connecting = false;
   private xid = 0;
   private pendingRequests = new Map<number, PendingRequest>();
+  private rmDecoder: RmRecordDecoder;
+  private rpcDecoder: RpcMessageDecoder;
   private readonly nfsDecoder: Nfsv4Decoder;
   private readonly nfsEncoder: Nfsv4FullEncoder;
 

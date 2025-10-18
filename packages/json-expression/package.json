@@ -73,6 +73,5 @@
   "dependencies": {
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/util": "workspace:*"
-  },
-  "devDependencies": {}
+  }
 }

@@ -1,14 +1,14 @@
 import {decode} from '@shelacek/ubjson';
 import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
-import type {PackValue} from '../../types';
 import {UbjsonEncoder} from '../UbjsonEncoder';
+import type {PackValue} from '../../types';
 
 const writer = new Writer(16);
 const encoder = new UbjsonEncoder(writer);
 
 const assertEncoder = (value: PackValue, expected: PackValue = value) => {
   const encoded1 = encoder.encode(value);
-  const decoded = decode(encoded1, {useTypedArrays: true});
+  const decoded = decode(encoded1 as any, {useTypedArrays: true});
   expect(decoded).toEqual(expected);
 };
 
