@@ -5974,15 +5974,6 @@ __metadata:
   peerDependenciesMeta:
     rxjs:
       optional: true
-  bin:
-    jj: ./bin/jj.js
-    json-pack: ./bin/json-pack.js
-    json-pack-test: ./bin/json-pack-test.js
-    json-patch: ./bin/json-patch.js
-    json-patch-test: ./bin/json-patch-test.js
-    json-pointer: ./bin/json-pointer.js
-    json-pointer-test: ./bin/json-pointer-test.js
-    json-unpack: ./bin/json-unpack.js
   languageName: unknown
   linkType: soft
 
