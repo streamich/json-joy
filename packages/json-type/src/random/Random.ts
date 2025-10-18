@@ -114,12 +114,13 @@ export class Random {
     let max = Number.MAX_SAFE_INTEGER;
     const schema = type.getSchema();
     const {lt, lte, gt, gte} = schema;
+    const isIntegerFormat = schema.format && ['i8', 'i16', 'i32', 'i64', 'i', 'u8', 'u16', 'u32', 'u64', 'u'].includes(schema.format);
     if (gt !== undefined) min = gt;
     if (gte !== undefined)
       if (gte === lte) return gte;
-      else min = gte + 0.000000000000001;
+      else min = isIntegerFormat ? gte : gte + 0.000000000000001;
     if (lt !== undefined) max = lt;
-    if (lte !== undefined) max = lte - 0.000000000000001;
+    if (lte !== undefined) max = isIntegerFormat ? lte : lte - 0.000000000000001;
     if (min >= max) return max;
     if (schema.format) {
       switch (schema.format) {
