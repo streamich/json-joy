@@ -69,7 +69,6 @@ describe('Random', () => {
           expect(value).toBeLessThanOrEqual(65535);
           // Verify no floating-point artifacts
           expect(value).toBe(Math.floor(value));
-          expect(value.toString()).not.toContain('.');
           validate(type, value);
         }
       });
