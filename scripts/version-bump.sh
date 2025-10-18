@@ -11,7 +11,7 @@
 #   - no-bump: otherwise
 
 # Get the last version tag
-LAST_TAG=$(git describe --tags --match "v*.*.*" 2>/dev/null || echo "")
+LAST_TAG=$(git describe --tags --match "v*.*.*" --abbrev=0 2>/dev/null || echo "")
 
 if [ -z "$LAST_TAG" ]; then
     # No previous tag found, get all commits
