@@ -1,5 +1,5 @@
-import {JavaScriptLinked} from '.';
-import {JavaScript} from './types';
+import type {JavaScriptLinked} from '.';
+import type {JavaScript} from './types';
 
 // tslint:disable-next-line
 export const compile = <T>(js: JavaScript<T>): T => eval(js);

@@ -1,5 +1,5 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {cmpUint8Array} from '@jsonjoy.com/util/lib/buffers/cmpUint8Array';
+import {cmpUint8Array} from '@jsonjoy.com/buffers/lib/cmpUint8Array';
 import {type ITimespanStruct, type ITimestampStruct, type Patch, PatchBuilder} from '../json-crdt-patch';
 import {ArrNode, BinNode, ConNode, ObjNode, StrNode, ValNode, VecNode, type JsonNode} from '../json-crdt/nodes';
 import * as str from '../util/diff/str';

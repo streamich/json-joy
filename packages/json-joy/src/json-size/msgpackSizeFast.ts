@@ -1,5 +1,5 @@
 import {JsonPackExtension, JsonPackValue} from '@jsonjoy.com/json-pack/lib/msgpack';
-import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
+import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
 
 const arraySize = (arr: unknown[]): number => {
   let size = 2;

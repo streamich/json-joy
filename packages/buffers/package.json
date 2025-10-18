@@ -52,12 +52,6 @@
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "typecheck": "tsc -p ."
   },
-  "peerDependencies": {
-    "tslib": "2"
-  },
-  "devDependencies": {
-    "json-pack-napi": "^0.0.2"
-  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
@@ -77,5 +71,11 @@
     "testPathIgnorePatterns": [
       "node_modules"
     ]
+  },
+  "peerDependencies": {
+    "tslib": "2"
+  },
+  "devDependencies": {
+    "json-pack-napi": "^0.0.2"
   }
 }

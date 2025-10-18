@@ -4,7 +4,7 @@ import {type ITimespanStruct, type ITimestampStruct, ts} from '../../../../json-
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {StrNode} from '../StrNode';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import * as path from 'path';
 import * as fs from 'fs';
 

@@ -1,0 +1,1096 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can import metaschema 1`] = `
+"Module
+└─ aliases
+   ├─ Display
+   │  └─ obj "Display options for JSON Type"
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     └─ "description"?
+   │         └─ str
+   ├─ SchemaExample
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     └─ "value"
+   │         └─ any
+   ├─ SchemaBase
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ str
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     └─ "metadata"?
+   │         └─ map
+   │            └─ any
+   ├─ AnySchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "any"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     └─ "metadata"?
+   │         └─ map
+   │            └─ any
+   ├─ ConSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "con"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     └─ "value"
+   │         └─ any
+   ├─ BoolSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "bool"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     └─ "metadata"?
+   │         └─ map
+   │            └─ any
+   ├─ NumSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "num"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "format"?
+   │     │   └─ or
+   │     │      ├─ discriminator: [
+   │     │      │    "?",
+   │     │      │    [
+   │     │      │      "==",
+   │     │      │      "f64",
+   │     │      │      [
+   │     │      │        "$",
+   │     │      │        "",
+   │     │      │        null
+   │     │      │      ]
+   │     │      │    ],
+   │     │      │    12,
+   │     │      │    [
+   │     │      │      "?",
+   │     │      │      [
+   │     │      │        "==",
+   │     │      │        "f32",
+   │     │      │        [
+   │     │      │          "$",
+   │     │      │          "",
+   │     │      │          null
+   │     │      │        ]
+   │     │      │      ],
+   │     │      │      11,
+   │     │      │      [
+   │     │      │        "?",
+   │     │      │        [
+   │     │      │          "==",
+   │     │      │          "u64",
+   │     │      │          [
+   │     │      │            "$",
+   │     │      │            "",
+   │     │      │            null
+   │     │      │          ]
+   │     │      │        ],
+   │     │      │        10,
+   │     │      │        [
+   │     │      │          "?",
+   │     │      │          [
+   │     │      │            "==",
+   │     │      │            "u32",
+   │     │      │            [
+   │     │      │              "$",
+   │     │      │              "",
+   │     │      │              null
+   │     │      │            ]
+   │     │      │          ],
+   │     │      │          9,
+   │     │      │          [
+   │     │      │            "?",
+   │     │      │            [
+   │     │      │              "==",
+   │     │      │              "u16",
+   │     │      │              [
+   │     │      │                "$",
+   │     │      │                "",
+   │     │      │                null
+   │     │      │              ]
+   │     │      │            ],
+   │     │      │            8,
+   │     │      │            [
+   │     │      │              "?",
+   │     │      │              [
+   │     │      │                "==",
+   │     │      │                "u8",
+   │     │      │                [
+   │     │      │                  "$",
+   │     │      │                  "",
+   │     │      │                  null
+   │     │      │                ]
+   │     │      │              ],
+   │     │      │              7,
+   │     │      │              [
+   │     │      │                "?",
+   │     │      │                [
+   │     │      │                  "==",
+   │     │      │                  "i64",
+   │     │      │                  [
+   │     │      │                    "$",
+   │     │      │                    "",
+   │     │      │                    null
+   │     │      │                  ]
+   │     │      │                ],
+   │     │      │                6,
+   │     │      │                [
+   │     │      │                  "?",
+   │     │      │                  [
+   │     │      │                    "==",
+   │     │      │                    "i32",
+   │     │      │                    [
+   │     │      │                      "$",
+   │     │      │                      "",
+   │     │      │                      null
+   │     │      │                    ]
+   │     │      │                  ],
+   │     │      │                  5,
+   │     │      │                  [
+   │     │      │                    "?",
+   │     │      │                    [
+   │     │      │                      "==",
+   │     │      │                      "i16",
+   │     │      │                      [
+   │     │      │                        "$",
+   │     │      │                        "",
+   │     │      │                        null
+   │     │      │                      ]
+   │     │      │                    ],
+   │     │      │                    4,
+   │     │      │                    [
+   │     │      │                      "?",
+   │     │      │                      [
+   │     │      │                        "==",
+   │     │      │                        "i8",
+   │     │      │                        [
+   │     │      │                          "$",
+   │     │      │                          "",
+   │     │      │                          null
+   │     │      │                        ]
+   │     │      │                      ],
+   │     │      │                      3,
+   │     │      │                      [
+   │     │      │                        "?",
+   │     │      │                        [
+   │     │      │                          "==",
+   │     │      │                          "f",
+   │     │      │                          [
+   │     │      │                            "$",
+   │     │      │                            "",
+   │     │      │                            null
+   │     │      │                          ]
+   │     │      │                        ],
+   │     │      │                        2,
+   │     │      │                        [
+   │     │      │                          "?",
+   │     │      │                          [
+   │     │      │                            "==",
+   │     │      │                            "u",
+   │     │      │                            [
+   │     │      │                              "$",
+   │     │      │                              "",
+   │     │      │                              null
+   │     │      │                            ]
+   │     │      │                          ],
+   │     │      │                          1,
+   │     │      │                          0
+   │     │      │                        ]
+   │     │      │                      ]
+   │     │      │                    ]
+   │     │      │                  ]
+   │     │      │                ]
+   │     │      │              ]
+   │     │      │            ]
+   │     │      │          ]
+   │     │      │        ]
+   │     │      │      ]
+   │     │      │    ]
+   │     │      │  ]
+   │     │      ├─ con → "i"
+   │     │      ├─ con → "u"
+   │     │      ├─ con → "f"
+   │     │      ├─ con → "i8"
+   │     │      ├─ con → "i16"
+   │     │      ├─ con → "i32"
+   │     │      ├─ con → "i64"
+   │     │      ├─ con → "u8"
+   │     │      ├─ con → "u16"
+   │     │      ├─ con → "u32"
+   │     │      ├─ con → "u64"
+   │     │      ├─ con → "f32"
+   │     │      └─ con → "f64"
+   │     ├─ "gt"?
+   │     │   └─ num
+   │     ├─ "gte"?
+   │     │   └─ num
+   │     ├─ "lt"?
+   │     │   └─ num
+   │     └─ "lte"?
+   │         └─ num
+   ├─ StrSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "str"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "format"?
+   │     │   └─ or
+   │     │      ├─ discriminator: [
+   │     │      │    "?",
+   │     │      │    [
+   │     │      │      "==",
+   │     │      │      "utf8",
+   │     │      │      [
+   │     │      │        "$",
+   │     │      │        "",
+   │     │      │        null
+   │     │      │      ]
+   │     │      │    ],
+   │     │      │    1,
+   │     │      │    0
+   │     │      │  ]
+   │     │      ├─ con → "ascii"
+   │     │      └─ con → "utf8"
+   │     ├─ "ascii"?
+   │     │   └─ bool
+   │     ├─ "noJsonEscape"?
+   │     │   └─ bool
+   │     ├─ "min"?
+   │     │   └─ num
+   │     └─ "max"?
+   │         └─ num
+   ├─ BinSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "bin"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "type"
+   │     │   └─ ref → [Schema]
+   │     ├─ "format"?
+   │     │   └─ or
+   │     │      ├─ discriminator: [
+   │     │      │    "?",
+   │     │      │    [
+   │     │      │      "==",
+   │     │      │      "bencode",
+   │     │      │      [
+   │     │      │        "$",
+   │     │      │        "",
+   │     │      │        null
+   │     │      │      ]
+   │     │      │    ],
+   │     │      │    7,
+   │     │      │    [
+   │     │      │      "?",
+   │     │      │      [
+   │     │      │        "==",
+   │     │      │        "ubjson",
+   │     │      │        [
+   │     │      │          "$",
+   │     │      │          "",
+   │     │      │          null
+   │     │      │        ]
+   │     │      │      ],
+   │     │      │      6,
+   │     │      │      [
+   │     │      │        "?",
+   │     │      │        [
+   │     │      │          "==",
+   │     │      │          "bson",
+   │     │      │          [
+   │     │      │            "$",
+   │     │      │            "",
+   │     │      │            null
+   │     │      │          ]
+   │     │      │        ],
+   │     │      │        5,
+   │     │      │        [
+   │     │      │          "?",
+   │     │      │          [
+   │     │      │            "==",
+   │     │      │            "ion",
+   │     │      │            [
+   │     │      │              "$",
+   │     │      │              "",
+   │     │      │              null
+   │     │      │            ]
+   │     │      │          ],
+   │     │      │          4,
+   │     │      │          [
+   │     │      │            "?",
+   │     │      │            [
+   │     │      │              "==",
+   │     │      │              "resp3",
+   │     │      │              [
+   │     │      │                "$",
+   │     │      │                "",
+   │     │      │                null
+   │     │      │              ]
+   │     │      │            ],
+   │     │      │            3,
+   │     │      │            [
+   │     │      │              "?",
+   │     │      │              [
+   │     │      │                "==",
+   │     │      │                "msgpack",
+   │     │      │                [
+   │     │      │                  "$",
+   │     │      │                  "",
+   │     │      │                  null
+   │     │      │                ]
+   │     │      │              ],
+   │     │      │              2,
+   │     │      │              [
+   │     │      │                "?",
+   │     │      │                [
+   │     │      │                  "==",
+   │     │      │                  "cbor",
+   │     │      │                  [
+   │     │      │                    "$",
+   │     │      │                    "",
+   │     │      │                    null
+   │     │      │                  ]
+   │     │      │                ],
+   │     │      │                1,
+   │     │      │                0
+   │     │      │              ]
+   │     │      │            ]
+   │     │      │          ]
+   │     │      │        ]
+   │     │      │      ]
+   │     │      │    ]
+   │     │      │  ]
+   │     │      ├─ con → "json"
+   │     │      ├─ con → "cbor"
+   │     │      ├─ con → "msgpack"
+   │     │      ├─ con → "resp3"
+   │     │      ├─ con → "ion"
+   │     │      ├─ con → "bson"
+   │     │      ├─ con → "ubjson"
+   │     │      └─ con → "bencode"
+   │     ├─ "min"?
+   │     │   └─ num
+   │     └─ "max"?
+   │         └─ num
+   ├─ ArrSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "arr"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "type"?
+   │     │   └─ ref → [Schema]
+   │     ├─ "head"?
+   │     │   └─ arr
+   │     │      └─ ref → [Schema]
+   │     ├─ "tail"?
+   │     │   └─ arr
+   │     │      └─ ref → [Schema]
+   │     ├─ "min"?
+   │     │   └─ num
+   │     └─ "max"?
+   │         └─ num
+   ├─ KeySchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "key"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "key"
+   │     │   └─ str
+   │     ├─ "value"
+   │     │   └─ ref → [Schema]
+   │     └─ "optional"?
+   │         └─ bool
+   ├─ ObjSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "obj"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "keys"
+   │     │   └─ arr
+   │     │      └─ ref → [KeySchema]
+   │     ├─ "extends"?
+   │     │   └─ arr
+   │     │      └─ str
+   │     ├─ "decodeUnknownKeys"?
+   │     │   └─ bool
+   │     └─ "encodeUnknownKeys"?
+   │         └─ bool
+   ├─ MapSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "map"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "key"?
+   │     │   └─ ref → [Schema]
+   │     └─ "value"
+   │         └─ ref → [Schema]
+   ├─ RefSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "ref"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     └─ "ref"
+   │         └─ str
+   ├─ OrSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "or"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "types"
+   │     │   └─ arr
+   │     │      └─ ref → [Schema]
+   │     └─ "discriminator"
+   │         └─ any
+   ├─ FnSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "fn"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "req"
+   │     │   └─ ref → [Schema]
+   │     └─ "res"
+   │         └─ ref → [Schema]
+   ├─ FnRxSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "fn$"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "req"
+   │     │   └─ ref → [Schema]
+   │     └─ "res"
+   │         └─ ref → [Schema]
+   ├─ AliasSchema
+   │  └─ obj
+   │     ├─ "title"?
+   │     │   └─ str
+   │     ├─ "intro"?
+   │     │   └─ str
+   │     ├─ "description"?
+   │     │   └─ str
+   │     ├─ "kind"
+   │     │   └─ con → "key"
+   │     ├─ "meta"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "default"?
+   │     │   └─ any
+   │     ├─ "examples"?
+   │     │   └─ arr
+   │     │      └─ ref → [SchemaExample]
+   │     ├─ "deprecated"?
+   │     │   └─ obj
+   │     │      └─ "info"?
+   │     │          └─ str
+   │     ├─ "metadata"?
+   │     │   └─ map
+   │     │      └─ any
+   │     ├─ "key"
+   │     │   └─ str
+   │     ├─ "value"
+   │     │   └─ ref → [Schema]
+   │     ├─ "optional"?
+   │     │   └─ bool
+   │     └─ "pub"?
+   │         └─ bool
+   ├─ ModuleSchema
+   │  └─ obj
+   │     ├─ "kind"
+   │     │   └─ con → "module"
+   │     └─ "keys"
+   │         └─ arr
+   │            └─ ref → [AliasSchema]
+   ├─ JsonSchema
+   │  └─ or
+   │     ├─ discriminator: [
+   │     │    "?",
+   │     │    [
+   │     │      "==",
+   │     │      "map",
+   │     │      [
+   │     │        "$",
+   │     │        "/kind",
+   │     │        null
+   │     │      ]
+   │     │    ],
+   │     │    8,
+   │     │    [
+   │     │      "?",
+   │     │      [
+   │     │        "==",
+   │     │        "key",
+   │     │        [
+   │     │          "$",
+   │     │          "/kind",
+   │     │          null
+   │     │        ]
+   │     │      ],
+   │     │      7,
+   │     │      [
+   │     │        "?",
+   │     │        [
+   │     │          "==",
+   │     │          "obj",
+   │     │          [
+   │     │            "$",
+   │     │            "/kind",
+   │     │            null
+   │     │          ]
+   │     │        ],
+   │     │        6,
+   │     │        [
+   │     │          "?",
+   │     │          [
+   │     │            "==",
+   │     │            "con",
+   │     │            [
+   │     │              "$",
+   │     │              "/kind",
+   │     │              null
+   │     │            ]
+   │     │          ],
+   │     │          5,
+   │     │          [
+   │     │            "?",
+   │     │            [
+   │     │              "==",
+   │     │              "arr",
+   │     │              [
+   │     │                "$",
+   │     │                "/kind",
+   │     │                null
+   │     │              ]
+   │     │            ],
+   │     │            4,
+   │     │            [
+   │     │              "?",
+   │     │              [
+   │     │                "==",
+   │     │                "bin",
+   │     │                [
+   │     │                  "$",
+   │     │                  "/kind",
+   │     │                  null
+   │     │                ]
+   │     │              ],
+   │     │              3,
+   │     │              [
+   │     │                "?",
+   │     │                [
+   │     │                  "==",
+   │     │                  "str",
+   │     │                  [
+   │     │                    "$",
+   │     │                    "/kind",
+   │     │                    null
+   │     │                  ]
+   │     │                ],
+   │     │                2,
+   │     │                [
+   │     │                  "?",
+   │     │                  [
+   │     │                    "==",
+   │     │                    "num",
+   │     │                    [
+   │     │                      "$",
+   │     │                      "/kind",
+   │     │                      null
+   │     │                    ]
+   │     │                  ],
+   │     │                  1,
+   │     │                  0
+   │     │                ]
+   │     │              ]
+   │     │            ]
+   │     │          ]
+   │     │        ]
+   │     │      ]
+   │     │    ]
+   │     │  ]
+   │     ├─ ref → [BoolSchema]
+   │     ├─ ref → [NumSchema]
+   │     ├─ ref → [StrSchema]
+   │     ├─ ref → [BinSchema]
+   │     ├─ ref → [ArrSchema]
+   │     ├─ ref → [ConSchema]
+   │     ├─ ref → [ObjSchema]
+   │     ├─ ref → [KeySchema]
+   │     └─ ref → [MapSchema]
+   └─ Schema
+      └─ or
+         ├─ discriminator: [
+         │    "?",
+         │    [
+         │      "==",
+         │      "fn$",
+         │      [
+         │        "$",
+         │        "/kind",
+         │        null
+         │      ]
+         │    ],
+         │    13,
+         │    [
+         │      "?",
+         │      [
+         │        "==",
+         │        "fn",
+         │        [
+         │          "$",
+         │          "/kind",
+         │          null
+         │        ]
+         │      ],
+         │      12,
+         │      [
+         │        "?",
+         │        [
+         │          "==",
+         │          "any",
+         │          [
+         │            "$",
+         │            "/kind",
+         │            null
+         │          ]
+         │        ],
+         │        11,
+         │        [
+         │          "?",
+         │          [
+         │            "==",
+         │            "or",
+         │            [
+         │              "$",
+         │              "/kind",
+         │              null
+         │            ]
+         │          ],
+         │          10,
+         │          [
+         │            "?",
+         │            [
+         │              "==",
+         │              "ref",
+         │              [
+         │                "$",
+         │                "/kind",
+         │                null
+         │              ]
+         │            ],
+         │            9,
+         │            [
+         │              "?",
+         │              [
+         │                "==",
+         │                "map",
+         │                [
+         │                  "$",
+         │                  "/kind",
+         │                  null
+         │                ]
+         │              ],
+         │              8,
+         │              [
+         │                "?",
+         │                [
+         │                  "==",
+         │                  "key",
+         │                  [
+         │                    "$",
+         │                    "/kind",
+         │                    null
+         │                  ]
+         │                ],
+         │                7,
+         │                [
+         │                  "?",
+         │                  [
+         │                    "==",
+         │                    "obj",
+         │                    [
+         │                      "$",
+         │                      "/kind",
+         │                      null
+         │                    ]
+         │                  ],
+         │                  6,
+         │                  [
+         │                    "?",
+         │                    [
+         │                      "==",
+         │                      "con",
+         │                      [
+         │                        "$",
+         │                        "/kind",
+         │                        null
+         │                      ]
+         │                    ],
+         │                    5,
+         │                    [
+         │                      "?",
+         │                      [
+         │                        "==",
+         │                        "arr",
+         │                        [
+         │                          "$",
+         │                          "/kind",
+         │                          null
+         │                        ]
+         │                      ],
+         │                      4,
+         │                      [
+         │                        "?",
+         │                        [
+         │                          "==",
+         │                          "bin",
+         │                          [
+         │                            "$",
+         │                            "/kind",
+         │                            null
+         │                          ]
+         │                        ],
+         │                        3,
+         │                        [
+         │                          "?",
+         │                          [
+         │                            "==",
+         │                            "str",
+         │                            [
+         │                              "$",
+         │                              "/kind",
+         │                              null
+         │                            ]
+         │                          ],
+         │                          2,
+         │                          [
+         │                            "?",
+         │                            [
+         │                              "==",
+         │                              "num",
+         │                              [
+         │                                "$",
+         │                                "/kind",
+         │                                null
+         │                              ]
+         │                            ],
+         │                            1,
+         │                            0
+         │                          ]
+         │                        ]
+         │                      ]
+         │                    ]
+         │                  ]
+         │                ]
+         │              ]
+         │            ]
+         │          ]
+         │        ]
+         │      ]
+         │    ]
+         │  ]
+         ├─ ref → [JsonSchema]
+         ├─ ref → [RefSchema]
+         ├─ ref → [OrSchema]
+         ├─ ref → [AnySchema]
+         ├─ ref → [FnSchema]
+         └─ ref → [FnRxSchema]"
+`;

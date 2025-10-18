@@ -1,0 +1,130 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can print a type 1`] = `
+"obj
+├─ "id" "The id of the object"
+│   └─ str
+├─ "tags" "Always use tags"
+│   └─ arr "Tags"
+│      └─ str
+├─ "optional"?
+│   └─ any
+├─ "booleanProperty"
+│   └─ bool
+├─ "numberProperty"
+│   └─ num
+├─ "binaryProperty"
+│   └─ bin
+│      └─ any
+├─ "arrayProperty"
+│   └─ arr
+│      └─ any
+├─ "objectProperty"
+│   └─ obj
+│      └─ "id"
+│          └─ str
+├─ "unionProperty"
+│   └─ or
+│      ├─ discriminator: [
+│      │    "?",
+│      │    [
+│      │      "==",
+│      │      null,
+│      │      [
+│      │        "$",
+│      │        "",
+│      │        ""
+│      │      ]
+│      │    ],
+│      │    2,
+│      │    [
+│      │      "?",
+│      │      [
+│      │        "==",
+│      │        [
+│      │          "type",
+│      │          [
+│      │            "$",
+│      │            ""
+│      │          ]
+│      │        ],
+│      │        "number"
+│      │      ],
+│      │      1,
+│      │      0
+│      │    ]
+│      │  ]
+│      ├─ str
+│      ├─ num
+│      └─ con → null
+├─ "enumAsConst"?
+│   └─ or
+│      ├─ discriminator: [
+│      │    "?",
+│      │    [
+│      │      "==",
+│      │      "c",
+│      │      [
+│      │        "$",
+│      │        "",
+│      │        null
+│      │      ]
+│      │    ],
+│      │    2,
+│      │    [
+│      │      "?",
+│      │      [
+│      │        "==",
+│      │        "b",
+│      │        [
+│      │          "$",
+│      │          "",
+│      │          null
+│      │        ]
+│      │      ],
+│      │      1,
+│      │      0
+│      │    ]
+│      │  ]
+│      ├─ con → "a"
+│      ├─ con → "b"
+│      └─ con → "c"
+├─ "refField"?
+│   └─ ref → [refId]
+├─ "und"?
+│   └─ con → undefined
+├─ "operation"
+│   └─ obj
+│      ├─ "type"
+│      │   └─ con "Always use replace" → "replace"
+│      ├─ "path"
+│      │   └─ str
+│      └─ "value"
+│          └─ any
+├─ "binaryOperation"
+│   └─ bin
+│      └─ arr "Should always have 3 elements"
+│         └─ [ head, ... ]
+│            ├─ con "7 is the magic number" → 7
+│            ├─ str
+│            └─ any
+├─ "map"
+│   └─ map
+│      └─ num
+├─ "simpleFn1"
+│   └─ fn
+│      ├─ req: con → undefined
+│      └─ res: con → undefined
+├─ "simpleFn2"
+│   └─ fn$
+│      ├─ req: con → undefined
+│      └─ res: con → undefined
+└─ "function"
+    └─ fn
+       ├─ req: obj
+       │       └─ "id"
+       │           └─ str
+       └─ res: obj
+               └─ "name"
+                   └─ str"
+`;

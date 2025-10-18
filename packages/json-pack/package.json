@@ -1,0 +1,125 @@
+{
+  "name": "@jsonjoy.com/json-pack",
+  "version": "0.0.1",
+  "description": "High-performance JSON serialization library",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/jsonjoy-com/json-pack",
+  "repository": "jsonjoy-com/json-pack",
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json",
+    "cbor",
+    "dag-json",
+    "dag-cbor",
+    "pack",
+    "msgpack",
+    "MessagePack",
+    "json-pack",
+    "ubjson",
+    "bencode",
+    "ion",
+    "amazon-ion",
+    "bson",
+    "resp",
+    "resp3",
+    "redis",
+    "resp-3",
+    "resp2"
+  ],
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "test": "jest --maxWorkers 7",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "coverage": "yarn test --collectCoverage",
+    "typedoc": "typedoc",
+    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
+    "typecheck": "tsc -p ."
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
+  },
+  "peerDependencies": {
+    "tslib": "2"
+  },
+  "dependencies": {
+    "@jsonjoy.com/base64": "workspace:*",
+    "@jsonjoy.com/buffers": "workspace:*",
+    "@jsonjoy.com/codegen": "workspace:*",
+    "@jsonjoy.com/json-pointer": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "hyperdyperid": "^1.2.0",
+    "thingies": "^2.5.0",
+    "tree-dump": "^1.1.0"
+  },
+  "devDependencies": {
+    "@msgpack/msgpack": "^3.0.0-beta2",
+    "@redis/client": "^1.5.12",
+    "@shelacek/ubjson": "^1.1.1",
+    "app-root-path": "^3.1.0",
+    "axios": "^1.3.5",
+    "base64-js": "^1.5.1",
+    "bson": "^5.4.0",
+    "cbor": "^9.0.2",
+    "cbor-js": "^0.1.0",
+    "cbor-sync": "^1.0.4",
+    "cbor-x": "^1.5.9",
+    "cborg": "^2.0.3",
+    "fast-safe-stringify": "^2.1.1",
+    "fast-stable-stringify": "^1.0.0",
+    "fastest-stable-stringify": "^2.0.2",
+    "ion-js": "^4.3.0",
+    "js-base64": "^3.7.2",
+    "jsbi": "^4.3.0",
+    "json-pack-napi": "^0.0.2",
+    "memfs": "^4.49.0",
+    "messagepack": "^1.1.12",
+    "msgpack-lite": "^0.1.26",
+    "msgpack5": "^6.0.2",
+    "msgpackr": "^1.6.0",
+    "pako": "^2.0.4",
+    "redis-parser": "^3.0.0",
+    "safe-stable-stringify": "^2.3.1",
+    "secure-json-parse": "^2.4.0",
+    "tinybench": "^2.4.0",
+    "tslib": "^2.6.2",
+    "websocket": "^1.0.35"
+  }
+}

@@ -19,16 +19,6 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
-  "bin": {
-    "jj": "./bin/jj.js",
-    "json-pack": "./bin/json-pack.js",
-    "json-pack-test": "./bin/json-pack-test.js",
-    "json-patch": "./bin/json-patch.js",
-    "json-patch-test": "./bin/json-patch-test.js",
-    "json-pointer": "./bin/json-pointer.js",
-    "json-pointer-test": "./bin/json-pointer-test.js",
-    "json-unpack": "./bin/json-unpack.js"
-  },
   "files": [
     "LICENSE",
     "bin/",
@@ -85,20 +75,20 @@
     }
   },
   "dependencies": {
-    "@jsonjoy.com/base64": "^1.1.2",
+    "@jsonjoy.com/base64": "workspace:*",
     "@jsonjoy.com/buffers": "workspace:*",
-    "@jsonjoy.com/json-expression": "^1.0.0",
-    "@jsonjoy.com/json-pack": "^1.1.0",
-    "@jsonjoy.com/json-pointer": "^1.0.1",
-    "@jsonjoy.com/json-type": "^1.0.0",
-    "@jsonjoy.com/util": "^1.6.0",
+    "@jsonjoy.com/json-expression": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
+    "@jsonjoy.com/json-pointer": "workspace:*",
+    "@jsonjoy.com/json-type": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
     "nano-css": "^5.6.2",
-    "sonic-forest": "^1.2.0",
-    "thingies": "^2.1.1",
-    "tree-dump": "^1.0.2",
-    "very-small-parser": "^1.13.0"
+    "sonic-forest": "^1.2.1",
+    "thingies": "^2.5.0",
+    "tree-dump": "^1.1.0",
+    "very-small-parser": "^1.14.0"
   },
   "devDependencies": {
     "@monaco-editor/react": "^4.7.0",

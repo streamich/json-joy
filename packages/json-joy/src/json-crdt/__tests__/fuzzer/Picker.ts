@@ -1,5 +1,5 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp, UpdArrOp} from '../../../json-crdt-patch/operations';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import type {JsonNode, ObjNode, ArrNode, BinNode, StrNode} from '../../nodes';
 import type {Model} from '../../model/Model';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';

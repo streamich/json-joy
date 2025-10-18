@@ -2,7 +2,7 @@ import {JsonCrdtDiff} from '../JsonCrdtDiff';
 import {type InsStrOp, s} from '../../json-crdt-patch';
 import {Model} from '../../json-crdt/model';
 import {type JsonNode, ValNode} from '../../json-crdt/nodes';
-import {b} from '@jsonjoy.com/util/lib/buffers/b';
+import {b} from '@jsonjoy.com/buffers/lib/b';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
   const patch1 = new JsonCrdtDiff(model).diff(src, dst);
