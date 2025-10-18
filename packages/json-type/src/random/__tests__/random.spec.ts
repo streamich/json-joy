@@ -58,6 +58,35 @@ describe('Random', () => {
         }
       });
 
+      test('num with integer format and gte/lte always produces clean integers', () => {
+        // Test u16 format with gte/lte constraints (the configuration that was failing)
+        const type = t.Number({format: 'u16', gte: 1, lte: 65535});
+        for (let i = 0; i < 100; i++) {
+          const value = Random.gen(type);
+          expect(typeof value).toBe('number');
+          expect(Number.isInteger(value)).toBe(true);
+          expect(value).toBeGreaterThanOrEqual(1);
+          expect(value).toBeLessThanOrEqual(65535);
+          // Verify no floating-point artifacts
+          expect(value).toBe(Math.floor(value));
+          expect(value.toString()).not.toContain('.');
+          validate(type, value);
+        }
+      });
+
+      test('num with all integer formats produces clean integers', () => {
+        const integerFormats = ['i8', 'i16', 'i32', 'u8', 'u16', 'u32'] as const;
+        for (const format of integerFormats) {
+          const type = t.Number({format, gte: 1, lte: 100});
+          for (let i = 0; i < 50; i++) {
+            const value = Random.gen(type);
+            expect(Number.isInteger(value)).toBe(true);
+            expect(value).toBe(Math.floor(value));
+            validate(type, value);
+          }
+        }
+      });
+
       test('bool generates valid booleans', () => {
         const type = t.Boolean();
         for (let i = 0; i < 10; i++) {
