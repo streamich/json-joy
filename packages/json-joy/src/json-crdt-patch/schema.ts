@@ -1,4 +1,4 @@
-import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
+import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
 import {Timestamp, type ITimestampStruct} from './clock';
 import type {PatchBuilder} from './PatchBuilder';
 

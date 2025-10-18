@@ -1,4 +1,4 @@
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import {assertPatch} from './util';
 import {diff, diffEdit} from '../str';
 const fastDiff = require('fast-diff') as typeof diff;

@@ -5,7 +5,7 @@ import type {Patch} from '../../../json-crdt-patch';
 import {Model} from '../../model';
 import {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import * as fs from 'fs';
 
 const sessionNum = 100;

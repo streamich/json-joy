@@ -1,10 +1,10 @@
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {XdrEncoder} from '../../../xdr/XdrEncoder';
 import {MountProc} from './constants';
 import {Nfsv3EncodingError} from '../errors';
 import type * as msg from './messages';
 import type * as structs from './structs';
-import type {IWriter, IWriterGrowable} from '@jsonjoy.com/util/lib/buffers';
+import type {IWriter, IWriterGrowable} from '@jsonjoy.com/buffers';
 
 export class MountEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> {
   protected readonly xdr: XdrEncoder;

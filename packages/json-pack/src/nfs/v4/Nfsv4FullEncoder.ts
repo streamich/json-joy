@@ -7,7 +7,7 @@ import type {RpcOpaqueAuth} from '../../rpc/messages';
 import {RpcAcceptStat} from '../../rpc/constants';
 import type {XdrEncoder} from '../../xdr';
 import type * as msg from './messages';
-import type {IWriter, IWriterGrowable} from '@jsonjoy.com/util/lib/buffers';
+import type {IWriter, IWriterGrowable} from '@jsonjoy.com/buffers';
 
 export class Nfsv4FullEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> {
   public readonly nfsEncoder: Nfsv4Encoder<W>;

@@ -1,4 +1,4 @@
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import {CborEncoderFast} from '../CborEncoderFast';
 import {CborEncoder} from '../CborEncoder';
 import {CborEncoderStable} from '../CborEncoderStable';

@@ -1,4 +1,4 @@
-import {b} from '@jsonjoy.com/util/lib/buffers/b';
+import {b} from '@jsonjoy.com/buffers/lib/b';
 import {toStr, toBin, diff, src, dst, apply} from '../bin';
 import {PATCH_OP_TYPE, invert} from '../str';
 

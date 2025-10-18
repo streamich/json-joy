@@ -1,6 +1,6 @@
 import {type NodeBuilder, s, nodes} from '../../../json-crdt-patch';
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {cmpUint8Array} from '@jsonjoy.com/util/lib/buffers/cmpUint8Array';
+import {cmpUint8Array} from '@jsonjoy.com/buffers/lib/cmpUint8Array';
 import {Model} from '../../model';
 import {toSchema} from '../toSchema';
 import {cnt} from '../../../json-crdt-extensions';

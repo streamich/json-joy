@@ -1,4 +1,4 @@
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {Reader} from '@jsonjoy.com/buffers/lib/Reader';
 import {RpcMsgType, RpcReplyStat, RPC_VERSION} from './constants';
 import {RpcEncodingError} from './errors';
@@ -9,7 +9,7 @@ import {
   RpcRejectedReplyMessage,
   type RpcMessage,
 } from './messages';
-import type {IWriter, IWriterGrowable} from '@jsonjoy.com/util/lib/buffers';
+import type {IWriter, IWriterGrowable} from '@jsonjoy.com/buffers';
 
 export class RpcMessageEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> {
   constructor(public readonly writer: W = new Writer() as any) {}

@@ -1,4 +1,4 @@
-import type {JavaScript} from '@jsonjoy.com/util/lib/codegen';
+import type {JavaScript} from '@jsonjoy.com/codegen';
 import type {Path} from '../types';
 
 export const $$find = (path: Path): JavaScript<(doc: unknown) => unknown> => {

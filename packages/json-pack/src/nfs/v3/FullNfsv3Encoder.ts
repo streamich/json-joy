@@ -1,4 +1,4 @@
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {Nfsv3Encoder} from './Nfsv3Encoder';
 import {RpcMessageEncoder} from '../../rpc/RpcMessageEncoder';
 import {RmRecordEncoder} from '../../rm/RmRecordEncoder';
@@ -6,7 +6,7 @@ import {type Nfsv3Proc, Nfsv3Const} from './constants';
 import type {RpcOpaqueAuth} from '../../rpc/messages';
 import {RpcAcceptStat} from '../../rpc/constants';
 import type * as msg from './messages';
-import type {IWriter, IWriterGrowable} from '@jsonjoy.com/util/lib/buffers';
+import type {IWriter, IWriterGrowable} from '@jsonjoy.com/buffers';
 
 const MAX_SINGLE_FRAME_SIZE = 0x7fffffff;
 const RM_HEADER_SIZE = 4;

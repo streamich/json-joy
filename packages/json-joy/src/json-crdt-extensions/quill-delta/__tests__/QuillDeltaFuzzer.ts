@@ -3,7 +3,7 @@ import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {isEmpty} from '@jsonjoy.com/util/lib/isEmpty';
 import type {QuillDeltaAttributes, QuillDeltaOp, QuillDeltaOpInsert, QuillDeltaOpRetain, QuillTrace} from '../types';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import {removeErasures} from '../util';
 
 export interface QuillDeltaFuzzerOptions {

@@ -1,5 +1,5 @@
 import {hash} from '../hash';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 
 test('returns the same hash for empty objects', () => {
   const res1 = hash({});

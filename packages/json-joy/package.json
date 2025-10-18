@@ -87,18 +87,18 @@
   "dependencies": {
     "@jsonjoy.com/base64": "workspace:*",
     "@jsonjoy.com/buffers": "workspace:*",
-    "@jsonjoy.com/json-expression": "^1.0.0",
+    "@jsonjoy.com/json-expression": "workspace:*",
     "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/json-pointer": "workspace:*",
-    "@jsonjoy.com/json-type": "^1.0.0",
+    "@jsonjoy.com/json-type": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
     "nano-css": "^5.6.2",
-    "sonic-forest": "^1.2.0",
-    "thingies": "^2.1.1",
-    "tree-dump": "^1.0.2",
-    "very-small-parser": "^1.13.0"
+    "sonic-forest": "^1.2.1",
+    "thingies": "^2.5.0",
+    "tree-dump": "^1.1.0",
+    "very-small-parser": "^1.14.0"
   },
   "devDependencies": {
     "@monaco-editor/react": "^4.7.0",

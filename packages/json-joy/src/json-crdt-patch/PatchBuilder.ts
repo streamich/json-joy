@@ -1,6 +1,6 @@
 import * as operations from './operations';
 import {type IClock, type ITimestampStruct, type ITimespanStruct, ts, Timestamp} from './clock';
-import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
+import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
 import {NodeBuilder} from './schema';

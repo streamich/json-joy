@@ -1,4 +1,4 @@
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import {IonEncoderFast} from '../IonEncoderFast';
 import {IonDecoder} from '../IonDecoder';
 

@@ -1,4 +1,4 @@
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {Encoder as SidecarEncoder} from '../../codec/sidecar/binary/Encoder';
 import {Encoder as StructuralEncoderCompact} from '../../codec/structural/compact/Encoder';
 import {Encoder as StructuralEncoderVerbose} from '../../codec/structural/verbose/Encoder';

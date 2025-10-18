@@ -1,5 +1,5 @@
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
-import {toBuf} from '@jsonjoy.com/util/lib/buffers/toBuf';
+import {RandomJson} from '@jsonjoy.com/json-random';
+import {toBuf} from '@jsonjoy.com/buffers/lib/toBuf';
 import {assertPatch} from './util';
 import * as bin from '../bin';
 

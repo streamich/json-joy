@@ -1,7 +1,7 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {first, next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
-import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
+import {listToUint8} from '@jsonjoy.com/buffers/lib/concat';
 import {cloneBinary} from '@jsonjoy.com/util/lib/json-clone/cloneBinary';
 import {Model} from '../model';
 import {toSchema} from '../schema/toSchema';

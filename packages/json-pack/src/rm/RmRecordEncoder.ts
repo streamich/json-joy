@@ -1,5 +1,5 @@
-import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
-import type {IWriter, IWriterGrowable} from '@jsonjoy.com/util/lib/buffers';
+import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
+import type {IWriter, IWriterGrowable} from '@jsonjoy.com/buffers';
 
 const RM_HEADER_SIZE = 4;
 const MAX_SINGLE_FRAME_SIZE = 0x7fffffff;
