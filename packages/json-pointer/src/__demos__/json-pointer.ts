@@ -6,7 +6,7 @@
  *     npx ts-node src/json-pointer/__demos__/json-pointer.ts
  */
 
-import {find, unescapeComponent, escapeComponent, parseJsonPointer, formatJsonPointer} from '../../json-pointer';
+import {find, unescapeComponent, escapeComponent, parseJsonPointer, formatJsonPointer} from '../..';
 
 const doc = {
   foo: {

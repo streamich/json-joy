@@ -1,16 +1,12 @@
 /* tslint:disable no-console */
 
-import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
-import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
-import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import {ModuleType} from '..';
-import type {CompiledBinaryEncoder} from '../codegen/types';
 
 const system = new ModuleType();
 const {t} = system;
 
-const response = system.alias(
+const _response = system.alias(
   'Response',
   t.Object(
     t.Key(
@@ -63,27 +59,27 @@ const json = {
   },
 };
 
-const jsonTextEncoder = response.type.jsonTextEncoder();
-const jsonEncoderFn = response.type.encoder(EncodingFormat.Json) as CompiledBinaryEncoder;
-const cborEncoderFn = response.type.encoder(EncodingFormat.Cbor) as CompiledBinaryEncoder;
+// const jsonTextEncoder = response.type.jsonTextEncoder();
+// const jsonEncoderFn = response.type.encoder(EncodingFormat.Json) as CompiledBinaryEncoder;
+// const cborEncoderFn = response.type.encoder(EncodingFormat.Cbor) as CompiledBinaryEncoder;
 
-const jsonEncoder = new JsonEncoder(new Writer());
+// const jsonEncoder = new JsonEncoder(new Writer());
 const cborEncoder = new CborEncoder();
 
 const {Suite} = require('benchmark');
 const suite = new Suite();
 suite
-  .add(`json-type "json" text encoder and Buffer.from()`, () => {
-    Buffer.from(jsonTextEncoder(json));
-  })
-  .add(`json-type "json" encoder`, () => {
-    jsonEncoderFn(json, jsonEncoder);
-    jsonEncoder.writer.flush();
-  })
-  .add(`json-type "cbor" encoder`, () => {
-    cborEncoderFn(json, cborEncoder);
-    cborEncoder.writer.flush();
-  })
+  // .add(`json-type "json" text encoder and Buffer.from()`, () => {
+  //   Buffer.from(jsonTextEncoder(json));
+  // })
+  // .add(`json-type "json" encoder`, () => {
+  //   jsonEncoderFn(json, jsonEncoder);
+  //   jsonEncoder.writer.flush();
+  // })
+  // .add(`json-type "cbor" encoder`, () => {
+  //   cborEncoderFn(json, cborEncoder);
+  //   cborEncoder.writer.flush();
+  // })
   .add(`json-pack CborEncoder`, () => {
     cborEncoder.encode(json);
   })
