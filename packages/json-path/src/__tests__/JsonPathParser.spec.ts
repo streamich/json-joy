@@ -3,13 +3,13 @@
  */
 
 import {JsonPathParser} from '../index';
-import type {NamedSelector, IndexSelector, SliceSelector, ParseResult} from '../types';
+import type {INamedSelector, IIndexSelector, ISliceSelector, IParseResult} from '../types';
 
 describe('JsonPathParser', () => {
   describe('Basic parsing', () => {
     test('should parse root selector', () => {
       const result = JsonPathParser.parse('$');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [],
@@ -19,7 +19,7 @@ describe('JsonPathParser', () => {
 
     test('should parse dot notation', () => {
       const result = JsonPathParser.parse('$.name');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -38,7 +38,7 @@ describe('JsonPathParser', () => {
 
     test('should parse bracket notation with string', () => {
       const result = JsonPathParser.parse("$['name']");
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -57,7 +57,7 @@ describe('JsonPathParser', () => {
 
     test('should parse bracket notation with double quotes', () => {
       const result = JsonPathParser.parse('$["name"]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -76,7 +76,7 @@ describe('JsonPathParser', () => {
 
     test('should parse array index', () => {
       const result = JsonPathParser.parse('$[0]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -95,7 +95,7 @@ describe('JsonPathParser', () => {
 
     test('should parse negative array index', () => {
       const result = JsonPathParser.parse('$[-1]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -114,7 +114,7 @@ describe('JsonPathParser', () => {
 
     test('should parse wildcard selector', () => {
       const result = JsonPathParser.parse('$.*');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -132,7 +132,7 @@ describe('JsonPathParser', () => {
 
     test('should parse bracket wildcard selector', () => {
       const result = JsonPathParser.parse('$[*]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -152,7 +152,7 @@ describe('JsonPathParser', () => {
   describe('Array slicing', () => {
     test('should parse slice with start and end', () => {
       const result = JsonPathParser.parse('$[1:3]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -172,7 +172,7 @@ describe('JsonPathParser', () => {
 
     test('should parse slice with start, end, and step', () => {
       const result = JsonPathParser.parse('$[1:10:2]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -193,7 +193,7 @@ describe('JsonPathParser', () => {
 
     test('should parse slice with only step step', () => {
       const result = JsonPathParser.parse('$[::4]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -212,7 +212,7 @@ describe('JsonPathParser', () => {
 
     test('should parse slice with only start', () => {
       const result = JsonPathParser.parse('$[2:]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -231,7 +231,7 @@ describe('JsonPathParser', () => {
 
     test('should parse slice with only end', () => {
       const result = JsonPathParser.parse('$[:3]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -252,7 +252,7 @@ describe('JsonPathParser', () => {
   describe('Complex paths', () => {
     test('should parse multi-segment path', () => {
       const result = JsonPathParser.parse('$.store.book[0].title');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -310,7 +310,7 @@ describe('JsonPathParser', () => {
   describe('Filter expressions', () => {
     test('should parse simple comparison filter', () => {
       const result = JsonPathParser.parse('$[?(@.price < 10)]');
-      expect(result).toMatchObject<ParseResult>({
+      expect(result).toMatchObject<IParseResult>({
         success: true,
         path: {
           segments: [
@@ -817,7 +817,7 @@ describe('JsonPathParser', () => {
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(3);
 
-      const selector = result.path?.segments[2].selectors[0] as IndexSelector;
+      const selector = result.path?.segments[2].selectors[0] as IIndexSelector;
       expect(selector.type).toBe('index');
       expect(selector.index).toBe(-1);
     });
@@ -827,7 +827,7 @@ describe('JsonPathParser', () => {
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(3);
 
-      const selector = result.path?.segments[2].selectors[0] as SliceSelector;
+      const selector = result.path?.segments[2].selectors[0] as ISliceSelector;
       expect(selector.type).toBe('slice');
       expect(selector.start).toBe(0);
       expect(selector.end).toBe(2);
@@ -908,7 +908,7 @@ describe('JsonPathParser', () => {
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
-      const selector = result.path?.segments[0].selectors[0] as NamedSelector;
+      const selector = result.path?.segments[0].selectors[0] as INamedSelector;
       expect(selector.type).toBe('name');
       expect(selector.name).toBe('');
     });
@@ -918,7 +918,7 @@ describe('JsonPathParser', () => {
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
-      const selector = result.path?.segments[0].selectors[0] as NamedSelector;
+      const selector = result.path?.segments[0].selectors[0] as INamedSelector;
       expect(selector.type).toBe('name');
       expect(selector.name).toBe('key with spaces');
     });
@@ -928,7 +928,7 @@ describe('JsonPathParser', () => {
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
-      const selector = result.path?.segments[0].selectors[0] as NamedSelector;
+      const selector = result.path?.segments[0].selectors[0] as INamedSelector;
       expect(selector.type).toBe('name');
       expect(selector.name).toBe("key'with'quotes");
     });
@@ -938,7 +938,7 @@ describe('JsonPathParser', () => {
       expect(result.success).toBe(true);
       expect(result.path?.segments).toHaveLength(1);
 
-      const selector = result.path?.segments[0].selectors[0] as IndexSelector;
+      const selector = result.path?.segments[0].selectors[0] as IIndexSelector;
       expect(selector.type).toBe('index');
       expect(selector.index).toBe(0);
     });

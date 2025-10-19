@@ -5,4 +5,7 @@
 
 export * from './types';
 export * from './JsonPathParser';
+export * from './ast';
+export * from './JsonPathEval';
+export * from './JsonPathCodegen';
 export * from './util';

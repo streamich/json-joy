@@ -1,0 +1,78 @@
+{
+  "name": "@jsonjoy.com/json-path",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "17.59.0",
+  "description": "JSONPath implementation for TypeScript and JavaScript",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/jsonjoy-com/json-path#readme",
+  "repository": "jsonjoy-com/json-path",
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "json",
+    "jsonpath",
+    "json-path",
+    "jsonquery",
+    "query"
+  ],
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "test": "jest --maxWorkers 7",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "coverage": "yarn test --collectCoverage",
+    "typedoc": "typedoc",
+    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
+    "typecheck": "tsc -p ."
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
+  },
+  "dependencies": {
+    "@jsonjoy.com/codegen": "workspace:*"
+  },
+  "peerDependencies": {
+    "tslib": "2"
+  },
+  "devDependencies": {
+    "jsonpath-plus": "^10.3.0"
+  }
+}

@@ -6,14 +6,14 @@ import type * as types from './types';
  * Function signature for JSONPath functions
  */
 type JSONPathFunction = (
-  args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+  args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
   currentNode: Value,
   evaluator: JsonPathEval,
 ) => any;
 
 export class JsonPathEval {
-  public static run = (path: string | types.JSONPath, data: unknown): Value[] => {
-    let ast: types.JSONPath;
+  public static run = (path: string | types.IJSONPath, data: unknown): Value[] => {
+    let ast: types.IJSONPath;
     if (typeof path === 'string') {
       const parsed = JsonPathParser.parse(path);
       if (!parsed.success || !parsed.path || parsed.error)
@@ -36,7 +36,7 @@ export class JsonPathEval {
   ]);
 
   constructor(
-    public readonly path: types.JSONPath,
+    public readonly path: types.IJSONPath,
     public readonly data: unknown,
   ) {}
 
@@ -52,7 +52,7 @@ export class JsonPathEval {
     return output;
   }
 
-  evalSegment(input: Value[], segment: types.PathSegment): Value[] {
+  evalSegment(input: Value[], segment: types.IPathSegment): Value[] {
     const output: Value[] = [];
     const selectors = segment.selectors;
     const length = selectors.length;
@@ -60,7 +60,7 @@ export class JsonPathEval {
     return output;
   }
 
-  evalSelector(inputs: Value[], selector: types.AnySelector, output: Value[] = []): Value[] {
+  evalSelector(inputs: Value[], selector: types.IAnySelector, output: Value[] = []): Value[] {
     switch (selector.type) {
       case 'name': {
         this.evalNamed(inputs, selector, output);
@@ -90,7 +90,7 @@ export class JsonPathEval {
     return output;
   }
 
-  protected evalNamed(inputs: Value[], selector: types.NamedSelector, output: Value[] = []): void {
+  protected evalNamed(inputs: Value[], selector: types.INamedSelector, output: Value[] = []): void {
     const length = inputs.length;
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
@@ -103,7 +103,7 @@ export class JsonPathEval {
     }
   }
 
-  protected evalIndex(inputs: Value[], selector: types.IndexSelector, output: Value[] = []): void {
+  protected evalIndex(inputs: Value[], selector: types.IIndexSelector, output: Value[] = []): void {
     const length = inputs.length;
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
@@ -121,7 +121,7 @@ export class JsonPathEval {
     }
   }
 
-  protected evalWildcard(inputs: Value[], selector: types.WildcardSelector, output: Value[] = []): void {
+  protected evalWildcard(inputs: Value[], selector: types.IWildcardSelector, output: Value[] = []): void {
     const length = inputs.length;
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
@@ -144,7 +144,7 @@ export class JsonPathEval {
     }
   }
 
-  protected evalSlice(inputs: Value[], selector: types.SliceSelector, output: Value[] = []): void {
+  protected evalSlice(inputs: Value[], selector: types.ISliceSelector, output: Value[] = []): void {
     const step = selector.step !== undefined ? selector.step : 1;
 
     // Handle step = 0 case (no elements selected per RFC 9535)
@@ -201,7 +201,7 @@ export class JsonPathEval {
     }
   }
 
-  protected evalFilter(inputs: Value[], selector: types.FilterSelector, output: Value[] = []): void {
+  protected evalFilter(inputs: Value[], selector: types.IFilterSelector, output: Value[] = []): void {
     const length = inputs.length;
     for (let i = 0; i < length; i++) {
       const input = inputs[i];
@@ -241,7 +241,7 @@ export class JsonPathEval {
 
   protected evalRecursiveDescent(
     inputs: Value[],
-    selector: types.RecursiveDescentSelector,
+    selector: types.IRecursiveDescentSelector,
     output: Value[] = [],
   ): void {
     const length = inputs.length;
@@ -279,7 +279,7 @@ export class JsonPathEval {
     // For primitive values, no children to visit
   }
 
-  private evalFilterExpression(expression: types.FilterExpression, currentNode: Value): boolean {
+  private evalFilterExpression(expression: types.IFilterExpression, currentNode: Value): boolean {
     // Simplified implementation of filter expression evaluation
     switch (expression.type) {
       case 'comparison':
@@ -299,7 +299,7 @@ export class JsonPathEval {
     }
   }
 
-  private evalComparisonExpression(expression: types.ComparisonExpression, currentNode: Value): boolean {
+  private evalComparisonExpression(expression: types.IComparisonExpression, currentNode: Value): boolean {
     const leftValue = this.evalValueExpression(expression.left, currentNode);
     const rightValue = this.evalValueExpression(expression.right, currentNode);
 
@@ -332,7 +332,7 @@ export class JsonPathEval {
     }
   }
 
-  private evalLogicalExpression(expression: types.LogicalExpression, currentNode: Value): boolean {
+  private evalLogicalExpression(expression: types.ILogicalExpression, currentNode: Value): boolean {
     switch (expression.operator) {
       case '&&':
         return (
@@ -349,7 +349,7 @@ export class JsonPathEval {
     }
   }
 
-  private evalExistenceExpression(expression: types.ExistenceExpression, currentNode: Value): boolean {
+  private evalExistenceExpression(expression: types.IExistenceExpression, currentNode: Value): boolean {
     // Evaluate the path from the current node and check if it selects any nodes
     if (!expression.path.segments) return false;
     const evaluator = new JsonPathEval(expression.path, currentNode.data);
@@ -357,7 +357,7 @@ export class JsonPathEval {
     return result.length > 0;
   }
 
-  private evalFunctionExpression(expression: types.FunctionExpression, currentNode: Value): boolean {
+  private evalFunctionExpression(expression: types.IFunctionExpression, currentNode: Value): boolean {
     const result = this.evaluateFunction(expression, currentNode);
 
     // Functions in test expressions should return LogicalType
@@ -380,7 +380,7 @@ export class JsonPathEval {
     return result != null;
   }
 
-  private evalValueExpression(expression: types.ValueExpression, currentNode: Value): any {
+  private evalValueExpression(expression: types.IValueExpression, currentNode: Value): any {
     switch (expression.type) {
       case 'current':
         return currentNode.data;
@@ -480,7 +480,7 @@ export class JsonPathEval {
    * Evaluate a function expression according to RFC 9535
    * Uses the function registry for extensible function support
    */
-  private evaluateFunction(expression: types.FunctionExpression, currentNode: Value): any {
+  private evaluateFunction(expression: types.IFunctionExpression, currentNode: Value): any {
     const {name, args} = expression;
 
     const func = this.funcs.get(name);
@@ -498,7 +498,7 @@ export class JsonPathEval {
    * Result: ValueType (unsigned integer or Nothing)
    */
   private lengthFunction(
-    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
     currentNode: Value,
     evaluator: JsonPathEval,
   ): number | undefined {
@@ -535,7 +535,7 @@ export class JsonPathEval {
    * Result: ValueType (unsigned integer)
    */
   private countFunction(
-    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
     currentNode: Value,
     evaluator: JsonPathEval,
   ): number {
@@ -562,7 +562,7 @@ export class JsonPathEval {
    * Result: LogicalType
    */
   private matchFunction(
-    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
     currentNode: Value,
     evaluator: JsonPathEval,
   ): boolean {
@@ -596,7 +596,7 @@ export class JsonPathEval {
    * Result: LogicalType
    */
   private searchFunction(
-    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
     currentNode: Value,
     evaluator: JsonPathEval,
   ): boolean {
@@ -630,7 +630,7 @@ export class JsonPathEval {
    * Result: ValueType
    */
   private valueFunction(
-    args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
     currentNode: Value,
     evaluator: JsonPathEval,
   ): any {
@@ -652,7 +652,7 @@ export class JsonPathEval {
    * Helper to get value from function argument
    */
   private getValueFromArg(
-    arg: types.ValueExpression | types.FilterExpression | types.JSONPath,
+    arg: types.IValueExpression | types.IFilterExpression | types.IJSONPath,
     currentNode: Value,
     evaluator: JsonPathEval,
   ): any {
@@ -670,14 +670,14 @@ export class JsonPathEval {
   /**
    * Type guard for ValueExpression
    */
-  private isValueExpression(arg: any): arg is types.ValueExpression {
+  private isValueExpression(arg: any): arg is types.IValueExpression {
     return arg && typeof arg === 'object' && ['current', 'root', 'literal', 'path', 'function'].includes(arg.type);
   }
 
   /**
    * Type guard for JSONPath
    */
-  private isJSONPath(arg: any): arg is types.JSONPath {
+  private isJSONPath(arg: any): arg is types.IJSONPath {
     return arg && typeof arg === 'object' && Array.isArray(arg.segments);
   }
 }
