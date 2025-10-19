@@ -1042,6 +1042,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-path@workspace:packages/json-path":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-path@workspace:packages/json-path"
+  peerDependencies:
+    tslib: 2
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-pointer@npm:^1.0.0, @jsonjoy.com/json-pointer@npm:^1.0.2":
   version: 1.0.2
   resolution: "@jsonjoy.com/json-pointer@npm:1.0.2"

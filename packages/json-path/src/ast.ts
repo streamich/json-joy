@@ -51,7 +51,6 @@ export class Ast {
   };
 }
 
-// Selector implementations with consistent property order for V8 hidden classes
 class Named implements types.NamedSelector {
   public readonly type = 'name' as const;
   constructor(public readonly name: string) {}
@@ -96,7 +95,6 @@ class JSONPath implements types.JSONPath {
   constructor(public readonly segments: types.PathSegment[]) {}
 }
 
-// Filter expression implementations
 class ComparisonExpression implements types.ComparisonExpression {
   public readonly type = 'comparison' as const;
   constructor(

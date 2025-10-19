@@ -12,4 +12,4 @@ export type * from './json-crdt';
 export type * from './json-crdt-patch';
 export type * from './json-crdt-extensions';
 export type * from './json-patch/types';
-export type * from './json-path/types';
+export type * from '../../json-path/src/types';
