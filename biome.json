@@ -37,13 +37,15 @@
 				"noConfusingVoidType": "off",
 				"noConstEnum": "off",
 				"noSelfCompare": "off",
-				"noCatchAssign": "off"
+				"noCatchAssign": "off",
+				"noControlCharactersInRegex": "off"
 			},
 			"complexity": {
 				"noStaticOnlyClass": "off",
 				"useOptionalChain": "off",
 				"noCommaOperator": "off",
-				"noUselessLabel": "off"
+				"noUselessLabel": "off",
+				"noBannedTypes": "off"
 			},
 			"security": {
 				"noGlobalEval": "off"
