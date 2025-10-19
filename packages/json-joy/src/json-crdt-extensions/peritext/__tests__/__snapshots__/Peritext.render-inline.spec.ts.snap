@@ -1,0 +1,736 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`numbers "0123456789", no edits can annotate a contained region at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "12" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "34" { BOLD = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "012" { BOLD = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate end of text 1`] = `
+"<>
+  <0>
+    "0123456" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate middle of text 1`] = `
+"<>
+  <0>
+    "012" {}
+    "345" { BOLD = [ !u ] }
+    "6789" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate overlapping regions at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "1" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "2" { ITALIC = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate overlapping regions in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { ITALIC = [ !u ] }
+    "789" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate three intermingled regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "1" { ITALIC = [ !u ] }
+    "23" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "45" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "67" { BOLD = [ !u ], UNDERLINE = [ !u ] }
+    "8" { UNDERLINE = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate twice contained region at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "5" { BOLD = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "8" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "9" { BOLD = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate twice contained region in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "8" { BOLD = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate two adjacent regions 1`] = `
+"<>
+  <0>
+    "" {}
+    "01" { BOLD = [ !u ] }
+    "" {}
+    "234" { ITALIC = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate two adjacent regions at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "56" { BOLD = [ !u ] }
+    "" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can annotate two regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "12" { BOLD = [ !u ] }
+    "34" {}
+    "567" { ITALIC = [ !u ] }
+    "89" {}
+"
+`;
+
+exports[`numbers "0123456789", no edits can insert zero length slice 1`] = `
+"<>
+  <0>
+    "01" {}
+    "23456789" { CURSOR = [ !u ] }
+"
+`;
+
+exports[`numbers "0123456789", no edits renders plain text 1`] = `
+"<>
+  <0>
+    "0123456789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate a contained region at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "12" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "34" { BOLD = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "012" { BOLD = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate end of text 1`] = `
+"<>
+  <0>
+    "0123456" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate middle of text 1`] = `
+"<>
+  <0>
+    "012" {}
+    "345" { BOLD = [ !u ] }
+    "6789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate overlapping regions at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "1" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "2" { ITALIC = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate overlapping regions in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { ITALIC = [ !u ] }
+    "789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate three intermingled regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "1" { ITALIC = [ !u ] }
+    "23" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "45" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "67" { BOLD = [ !u ], UNDERLINE = [ !u ] }
+    "8" { UNDERLINE = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate twice contained region at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "5" { BOLD = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "8" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "9" { BOLD = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate twice contained region in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "8" { BOLD = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate two adjacent regions 1`] = `
+"<>
+  <0>
+    "" {}
+    "01" { BOLD = [ !u ] }
+    "" {}
+    "234" { ITALIC = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate two adjacent regions at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "56" { BOLD = [ !u ] }
+    "" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can annotate two regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "12" { BOLD = [ !u ] }
+    "34" {}
+    "567" { ITALIC = [ !u ] }
+    "89" {}
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks can insert zero length slice 1`] = `
+"<>
+  <0>
+    "01" {}
+    "23456789" { CURSOR = [ !u ] }
+"
+`;
+
+exports[`numbers "0123456789", two RGA chunks renders plain text 1`] = `
+"<>
+  <0>
+    "0123456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate a contained region at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "12" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "34" { BOLD = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "012" { BOLD = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate end of text 1`] = `
+"<>
+  <0>
+    "0123456" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate middle of text 1`] = `
+"<>
+  <0>
+    "012" {}
+    "345" { BOLD = [ !u ] }
+    "6789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate overlapping regions at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "1" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "2" { ITALIC = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate overlapping regions in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { ITALIC = [ !u ] }
+    "789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate three intermingled regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "1" { ITALIC = [ !u ] }
+    "23" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "45" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "67" { BOLD = [ !u ], UNDERLINE = [ !u ] }
+    "8" { UNDERLINE = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate twice contained region at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "5" { BOLD = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "8" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "9" { BOLD = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate twice contained region in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "8" { BOLD = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate two adjacent regions 1`] = `
+"<>
+  <0>
+    "" {}
+    "01" { BOLD = [ !u ] }
+    "" {}
+    "234" { ITALIC = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate two adjacent regions at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "56" { BOLD = [ !u ] }
+    "" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can annotate two regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "12" { BOLD = [ !u ] }
+    "34" {}
+    "567" { ITALIC = [ !u ] }
+    "89" {}
+"
+`;
+
+exports[`numbers "0123456789", with RGA split can insert zero length slice 1`] = `
+"<>
+  <0>
+    "01" {}
+    "23456789" { CURSOR = [ !u ] }
+"
+`;
+
+exports[`numbers "0123456789", with RGA split renders plain text 1`] = `
+"<>
+  <0>
+    "0123456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate a contained region at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "12" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "34" { BOLD = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "012" { BOLD = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate end of text 1`] = `
+"<>
+  <0>
+    "0123456" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate middle of text 1`] = `
+"<>
+  <0>
+    "012" {}
+    "345" { BOLD = [ !u ] }
+    "6789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate overlapping regions at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "1" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "2" { ITALIC = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate overlapping regions in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { ITALIC = [ !u ] }
+    "789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate three intermingled regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "1" { ITALIC = [ !u ] }
+    "23" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "45" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "67" { BOLD = [ !u ], UNDERLINE = [ !u ] }
+    "8" { UNDERLINE = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate twice contained region at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "5" { BOLD = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "8" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "9" { BOLD = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate twice contained region in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "8" { BOLD = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate two adjacent regions 1`] = `
+"<>
+  <0>
+    "" {}
+    "01" { BOLD = [ !u ] }
+    "" {}
+    "234" { ITALIC = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate two adjacent regions at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "56" { BOLD = [ !u ] }
+    "" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can annotate two regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "12" { BOLD = [ !u ] }
+    "34" {}
+    "567" { ITALIC = [ !u ] }
+    "89" {}
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones can insert zero length slice 1`] = `
+"<>
+  <0>
+    "01" {}
+    "23456789" { CURSOR = [ !u ] }
+"
+`;
+
+exports[`numbers "0123456789", with default schema and tombstones renders plain text 1`] = `
+"<>
+  <0>
+    "0123456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate a contained region at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "12" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "34" { BOLD = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "012" { BOLD = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate end of text 1`] = `
+"<>
+  <0>
+    "0123456" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate middle of text 1`] = `
+"<>
+  <0>
+    "012" {}
+    "345" { BOLD = [ !u ] }
+    "6789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate overlapping regions at the beginning of text 1`] = `
+"<>
+  <0>
+    "" {}
+    "0" { BOLD = [ !u ] }
+    "1" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "2" { ITALIC = [ !u ] }
+    "3456789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate overlapping regions in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { ITALIC = [ !u ] }
+    "789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate three intermingled regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "1" { ITALIC = [ !u ] }
+    "23" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "45" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "67" { BOLD = [ !u ], UNDERLINE = [ !u ] }
+    "8" { UNDERLINE = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate twice contained region at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "5" { BOLD = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "8" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "9" { BOLD = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate twice contained region in the middle of text 1`] = `
+"<>
+  <0>
+    "0123" {}
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "8" { BOLD = [ !u ] }
+    "9" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate two adjacent regions 1`] = `
+"<>
+  <0>
+    "" {}
+    "01" { BOLD = [ !u ] }
+    "" {}
+    "234" { ITALIC = [ !u ] }
+    "56789" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate two adjacent regions at the end of text 1`] = `
+"<>
+  <0>
+    "01234" {}
+    "56" { BOLD = [ !u ] }
+    "" {}
+    "789" { ITALIC = [ !u ] }
+    "" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can annotate two regions 1`] = `
+"<>
+  <0>
+    "0" {}
+    "12" { BOLD = [ !u ] }
+    "34" {}
+    "567" { ITALIC = [ !u ] }
+    "89" {}
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes can insert zero length slice 1`] = `
+"<>
+  <0>
+    "01" {}
+    "23456789" { CURSOR = [ !u ] }
+"
+`;
+
+exports[`numbers "0123456789", with multiple deletes renders plain text 1`] = `
+"<>
+  <0>
+    "0123456789" {}
+"
+`;
