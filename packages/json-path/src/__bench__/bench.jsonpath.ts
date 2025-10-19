@@ -1,11 +1,13 @@
 /* tslint:disable no-console */
 
+// Run: npx ts-node packages/json-path/src/__bench__/bench.jsonpath.ts
+
 import * as Benchmark from 'benchmark';
 import {JsonPathParser} from '../JsonPathParser';
 import {JsonPathEval} from '../JsonPathEval';
 import {JsonPathCodegen} from '../JsonPathCodegen';
 import {JSONPath} from 'jsonpath-plus';
-import {bookstore, testData, complexData} from '../__tests__/fixtures';
+import {bookstore} from '../__tests__/fixtures';
 
 const suite = new Benchmark.Suite();
 
