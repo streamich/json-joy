@@ -19,11 +19,8 @@ jobs:
         with:
           node-version: 24.x
           cache: yarn
-      - name: Validate cache
-        env:
-          YARN_NODE_LINKER: pnp
-          YARN_ENABLE_SCRIPTS: false
-        run: yarn --immutable
+      - name: Install dependencies
+        run: yarn install --immutable
       - run: yarn build
   unit-tests-24:
     needs: install-and-build-24
