@@ -31,26 +31,14 @@ const runInlineSlicesTests = (
       const {view, editor} = setup();
       editor.cursor.setAt(10);
       editor.saved.insMarker([['p', 0, {foo: 'bar'}]]);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcdefghij" {  }
-  <p> { foo = "bar" }
-    "klmnopqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can insert at the beginning of text', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(0);
       editor.saved.insMarker([['p', 0, {foo: 'bar'}]]);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <p> { foo = "bar" }
-    "abcdefghijklmnopqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('nested block data', () => {
@@ -65,17 +53,7 @@ const runInlineSlicesTests = (
         ['ul', 0, {type: 'tasks'}],
         ['li', 1, {completed: true}],
       ]);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcde" {  }
-  <ul> { type = "tasks" }
-    <li> { completed = !f }
-      "fghi" {  }
-    <li> { completed = !t }
-      "jklmnopqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('nested block data - 2', () => {
@@ -90,31 +68,14 @@ const runInlineSlicesTests = (
         ['ul', 1, {type: 'tasks'}],
         ['li', 0, {completed: true}],
       ]);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcde" {  }
-  <ul> { type = "tasks" }
-    <li> { completed = !f }
-      "fghi" {  }
-  <ul> { type = "tasks" }
-    <li> { completed = !t }
-      "jklmnopqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can insert at the end of text', () => {
       const {view, editor} = setup();
       editor.cursor.setAt(26);
       editor.saved.insMarker([['unfurl', 0, {link: 'foobar'}]]);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcdefghijklmnopqrstuvwxyz" {  }
-  <unfurl> { link = "foobar" }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can split text after slice', () => {
@@ -123,16 +84,7 @@ const runInlineSlicesTests = (
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(15);
       editor.saved.insMarker(['paragraph']);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcde" {  }
-    "fghij" { BOLD = [ !u ] }
-    "klmno" {  }
-  <paragraph>
-    "pqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can split text right after slice', () => {
@@ -141,16 +93,7 @@ const runInlineSlicesTests = (
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
       editor.saved.insMarker(['paragraph']);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcde" {  }
-    "fghij" { BOLD = [ !u ] }
-    "" {  }
-  <paragraph>
-    "klmnopqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can split text before slice', () => {
@@ -159,16 +102,7 @@ const runInlineSlicesTests = (
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
       editor.saved.insMarker(['paragraph']);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcdefghij" {  }
-  <paragraph>
-    "klmno" {  }
-    "pqrst" { BOLD = [ !u ] }
-    "uvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can split text right before slice', () => {
@@ -177,15 +111,7 @@ const runInlineSlicesTests = (
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(15);
       editor.saved.insMarker(['paragraph']);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcdefghijklmno" {  }
-  <paragraph>
-    "pqrst" { BOLD = [ !u ] }
-    "uvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can split text in the middle of a slice', () => {
@@ -194,16 +120,7 @@ const runInlineSlicesTests = (
       editor.saved.insOne('BOLD');
       editor.cursor.setAt(10);
       editor.saved.insMarker(['paragraph']);
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcde" {  }
-    "fghij" { BOLD = [ !u ] }
-  <paragraph>
-    "klmno" { BOLD = [ !u ] }
-    "pqrstuvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can annotate with slice over two block splits', () => {
@@ -214,18 +131,7 @@ const runInlineSlicesTests = (
       editor.saved.insMarker(['p']);
       editor.cursor.setAt(8, 15);
       editor.saved.insOne('BOLD');
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcdefgh" {  }
-    "ij" { BOLD = [ !u ] }
-  <p>
-    "klmn" { BOLD = [ !u ] }
-  <p>
-    "opqrstu" { BOLD = [ !u ] }
-    "vwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
 
     test('can insert two blocks', () => {
@@ -234,16 +140,7 @@ const runInlineSlicesTests = (
       editor.saved.insMarker('p');
       editor.cursor.setAt(10 + 10 + 1);
       editor.saved.insMarker('p');
-      expect(view()).toMatchInlineSnapshot(`
-"<>
-  <0>
-    "abcdefghij" {  }
-  <p>
-    "klmnopqrst" {  }
-  <p>
-    "uvwxyz" {  }
-"
-`);
+      expect(view()).toMatchSnapshot();
     });
   });
 };

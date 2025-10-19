@@ -141,14 +141,7 @@ export type SliceSchema = nodes.vec<
       | nodes.con<TypeTag>
       | nodes.arr<
           | nodes.con<TypeTag>
-          | nodes.vec<
-              [
-                tag: nodes.con<TypeTag>,
-                discriminant: nodes.con<number>,
-                data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
-                {}>,
-              ]
-            >
+          | nodes.vec<[tag: nodes.con<TypeTag>, discriminant: nodes.con<number>, data: nodes.obj<{}>]>
         >,
     /**
      * Reference to additional metadata about the slice, usually an object.
@@ -156,8 +149,7 @@ export type SliceSchema = nodes.vec<
      * specific block tags in the steps of the `type` field. This field is
      * optional.
      */
-    data: nodes.obj<// biome-ignore lint: TODO: improve the type of the data node
-    {}>,
+    data: nodes.obj<{}>,
   ]
 >;
 

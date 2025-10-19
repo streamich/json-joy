@@ -1,5 +1,7 @@
 import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
 import {Timestamp, type ITimestampStruct} from './clock';
+import * as print from '../util/print';
+import {printTree, type Printable} from 'tree-dump';
 import type {PatchBuilder} from './PatchBuilder';
 
 const maybeConst = (x: unknown): boolean => {
@@ -15,13 +17,28 @@ const maybeConst = (x: unknown): boolean => {
   }
 };
 
-export type NodeBuilderCallback = (builder: PatchBuilder) => ITimestampStruct;
-
 /**
  * @category Patch
  */
 export class NodeBuilder {
-  constructor(public readonly build: NodeBuilderCallback) {}
+  constructor(public readonly _build?: (builder: PatchBuilder) => ITimestampStruct) {}
+
+  public build(builder: PatchBuilder): ITimestampStruct {
+    return this._build?.(builder) ?? builder.con(void 0);
+  }
+}
+
+/**
+ * @category Patch
+ */
+export abstract class SchemaNode extends NodeBuilder implements Printable {
+  // TODO: Rename to `kind` or `name`?
+  public abstract readonly type: string;
+  public abstract build(builder: PatchBuilder): ITimestampStruct;
+
+  public toString(tab?: string): string {
+    return this.type;
+  }
 }
 
 /**
@@ -43,11 +60,19 @@ export namespace nodes {
    * s.con<0 | 1>(0);
    * ```
    */
-  export class con<T extends unknown | ITimestampStruct> extends NodeBuilder {
+  export class con<T extends unknown | ITimestampStruct> extends SchemaNode {
     public readonly type = 'con';
 
     constructor(public readonly raw: T) {
-      super((builder) => builder.con(raw));
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      return builder.con(this.raw);
+    }
+
+    public toString(tab?: string): string {
+      return this.type + ' ' + print.con(this.raw);
     }
   }
 
@@ -64,22 +89,38 @@ export namespace nodes {
    * s.str<'' | 'hello' | 'world'>('hello');
    * ```
    */
-  export class str<T extends string = string> extends NodeBuilder {
+  export class str<T extends string = string> extends SchemaNode {
     public readonly type = 'str';
 
     constructor(public readonly raw: T) {
-      super((builder) => builder.json(raw));
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      return builder.json(this.raw);
+    }
+
+    public toString(tab?: string): string {
+      return this.type + ' ' + print.con(this.raw);
     }
   }
 
   /**
    * The `bin` class represents a "bin" JSON CRDT node.
    */
-  export class bin extends NodeBuilder {
+  export class bin extends SchemaNode {
     public readonly type = 'bin';
 
     constructor(public readonly raw: Uint8Array) {
-      super((builder) => builder.json(raw));
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      return builder.json(this.raw);
+    }
+
+    public toString(tab?: string): string {
+      return this.type + ' ' + print.bin(this.raw);
     }
   }
 
@@ -95,16 +136,22 @@ export namespace nodes {
    * s.val(s.str('hello'));
    * ```
    */
-  export class val<T extends NodeBuilder> extends NodeBuilder {
+  export class val<T extends NodeBuilder> extends SchemaNode {
     public readonly type = 'val';
 
     constructor(public readonly value: T) {
-      super((builder) => {
-        const valId = builder.val();
-        const valueId = value.build(builder);
-        builder.setVal(valId, valueId);
-        return valId;
-      });
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      const valId = builder.val();
+      const valueId = this.value.build(builder);
+      builder.setVal(valId, valueId);
+      return valId;
+    }
+
+    public toString(tab?: string): string {
+      return this.type + printTree(tab, [(tab) => (this.value as {} as SchemaNode).toString(tab)]);
     }
   }
 
@@ -119,24 +166,40 @@ export namespace nodes {
    * s.vec(s.str(''), s.str('hello'));
    * ```
    */
-  export class vec<T extends NodeBuilder[]> extends NodeBuilder {
+  export class vec<T extends (NodeBuilder | undefined)[]> extends SchemaNode {
     public readonly type = 'vec';
 
     constructor(public readonly value: T) {
-      super((builder) => {
-        const vecId = builder.vec();
-        const length = value.length;
-        if (length) {
-          const elementPairs: [index: number, value: ITimestampStruct][] = [];
-          for (let i = 0; i < length; i++) {
-            const element = value[i];
-            const elementId = element.build(builder);
-            elementPairs.push([i, elementId]);
-          }
-          builder.insVec(vecId, elementPairs);
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      const vecId = builder.vec();
+      const value = this.value;
+      const length = value.length;
+      if (length) {
+        const elementPairs: [index: number, value: ITimestampStruct][] = [];
+        for (let i = 0; i < length; i++) {
+          const element = value[i];
+          if (!element) continue;
+          const elementId = element.build(builder);
+          elementPairs.push([i, elementId]);
         }
-        return vecId;
-      });
+        builder.insVec(vecId, elementPairs);
+      }
+      return vecId;
+    }
+
+    public toString(tab?: string): string {
+      return (
+        this.type +
+        printTree(tab, [
+          ...this.value.map(
+            (child, i) => (tab: string) =>
+              `${i}: ${child ? (child as {} as SchemaNode).toString(tab) : print.line(child)}`,
+          ),
+        ])
+      );
     }
   }
 
@@ -180,35 +243,54 @@ export namespace nodes {
    */
   export class obj<
     T extends Record<string, NodeBuilder>,
-    // biome-ignore lint: TODO: improve {} type in the future
     O extends Record<string, NodeBuilder> = {},
-  > extends NodeBuilder {
+  > extends SchemaNode {
     public readonly type = 'obj';
 
     constructor(
       public readonly obj: T,
       public readonly opt?: O,
     ) {
-      super((builder) => {
-        const objId = builder.obj();
-        const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
-        const merged = {...obj, ...opt};
-        const keys = Object.keys(merged);
-        const length = keys.length;
-        if (length) {
-          for (let i = 0; i < length; i++) {
-            const key = keys[i];
-            const valueId = merged[key].build(builder);
-            keyValuePairs.push([key, valueId]);
-          }
-          builder.insObj(objId, keyValuePairs);
-        }
-        return objId;
-      });
+      super();
     }
 
     public optional<OO extends Record<string, NodeBuilder>>(): obj<T, O & OO> {
       return this as unknown as obj<T, O & OO>;
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      const objId = builder.obj();
+      const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
+      const merged = {...this.obj, ...this.opt};
+      const keys = Object.keys(merged);
+      const length = keys.length;
+      if (length) {
+        for (let i = 0; i < length; i++) {
+          const key = keys[i];
+          const valueId = merged[key].build(builder);
+          keyValuePairs.push([key, valueId]);
+        }
+        builder.insObj(objId, keyValuePairs);
+      }
+      return objId;
+    }
+
+    public toString(tab: string = ''): string {
+      return (
+        this.type +
+        printTree(tab, [
+          ...[...Object.entries(this.obj)].map(
+            ([key, child]) =>
+              (tab: string) =>
+                print.line(key) + printTree(tab + ' ', [(tab) => (<SchemaNode>child).toString(tab)]),
+          ),
+          ...[...Object.entries(this.opt ?? [])].map(
+            ([key, child]) =>
+              (tab: string) =>
+                print.line(key) + '?' + printTree(tab + ' ', [(tab) => (<SchemaNode>child).toString(tab)]),
+          ),
+        ])
+      );
     }
   }
 
@@ -235,20 +317,35 @@ export namespace nodes {
    * s.arr([s.str(''), s.str('hello')]);
    * ```
    */
-  export class arr<T extends NodeBuilder> extends NodeBuilder {
+  export class arr<T extends NodeBuilder> extends SchemaNode {
     public readonly type = 'arr';
 
     constructor(public readonly arr: T[]) {
-      super((builder) => {
-        const arrId = builder.arr();
-        const length = arr.length;
-        if (length) {
-          const valueIds: ITimestampStruct[] = [];
-          for (let i = 0; i < length; i++) valueIds.push(arr[i].build(builder));
-          builder.insArr(arrId, arrId, valueIds);
-        }
-        return arrId;
-      });
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      const arrId = builder.arr();
+      const arr = this.arr;
+      const length = arr.length;
+      if (length) {
+        const valueIds: ITimestampStruct[] = [];
+        for (let i = 0; i < length; i++) valueIds.push(arr[i].build(builder));
+        builder.insArr(arrId, arrId, valueIds);
+      }
+      return arrId;
+    }
+
+    public toString(tab?: string): string {
+      return (
+        this.type +
+        printTree(tab, [
+          ...this.arr.map(
+            (child, i) => (tab: string) =>
+              `[${i}]: ${child ? (child as {} as SchemaNode).toString(tab) : print.line(child)}`,
+          ),
+        ])
+      );
     }
   }
 
@@ -265,7 +362,7 @@ export namespace nodes {
    * - 1 byte for the sid of the tuple id, modulo 256
    * - 1 byte for the time of the tuple id, modulo 256
    */
-  export class ext<ID extends number, T extends NodeBuilder> extends NodeBuilder {
+  export class ext<ID extends number, T extends NodeBuilder> extends SchemaNode {
     public readonly type = 'ext';
 
     /**
@@ -276,17 +373,23 @@ export namespace nodes {
       public readonly id: ID,
       public readonly data: T,
     ) {
-      super((builder) => {
-        const buf = new Uint8Array([id, 0, 0]);
-        const tupleId = builder.vec();
-        buf[1] = tupleId.sid % 256;
-        buf[2] = tupleId.time % 256;
-        builder.insVec(tupleId, [
-          [0, builder.constOrJson(s.con(buf))],
-          [1, data.build(builder)],
-        ]);
-        return tupleId;
-      });
+      super();
+    }
+
+    public build(builder: PatchBuilder): ITimestampStruct {
+      const buf = new Uint8Array([this.id, 0, 0]);
+      const tupleId = builder.vec();
+      buf[1] = tupleId.sid % 256;
+      buf[2] = tupleId.time % 256;
+      builder.insVec(tupleId, [
+        [0, builder.constOrJson(s.con(buf))],
+        [1, this.data.build(builder)],
+      ]);
+      return tupleId;
+    }
+
+    public toString(tab?: string): string {
+      return this.type + '(' + this.id + ')' + printTree(tab, [(tab) => (this.data as {} as SchemaNode).toString(tab)]);
     }
   }
 

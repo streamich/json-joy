@@ -1,10 +1,8 @@
 // License: https://github.com/BridgeAR/safe-stable-stringify/blob/78891ff37c6e8936118b8fa47ed59dd761c3208a/LICENSE
 
 const strEscapeSequencesRegExp =
-  // biome-ignore lint: regex escapes are fine
   /[\u0000-\u001f\u0022\u005c\ud800-\udfff]|[\ud800-\udbff](?![\udc00-\udfff])|(?:[^\ud800-\udbff]|^)[\udc00-\udfff]/;
 const strEscapeSequencesReplacer =
-  // biome-ignore lint: regex escapes are fine
   /[\u0000-\u001f\u0022\u005c\ud800-\udfff]|[\ud800-\udbff](?![\udc00-\udfff])|(?:[^\ud800-\udbff]|^)[\udc00-\udfff]/g;
 const meta = [
   '\\u0000',

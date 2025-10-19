@@ -1,5 +1,6 @@
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {hash} from './hash';
+import {Timestamp} from '../json-crdt-patch';
 
 /**
  * Produces a *structural hash* of a JSON value.
@@ -23,10 +24,11 @@ export const structHash = (val: unknown): string => {
       return val ? 'T' : 'F';
     case 'object':
       if (val === null) return 'N';
+      if (val instanceof Timestamp) return (val.sid % 2000000).toString(36) + '.' + val.time.toString(36);
       if (Array.isArray(val)) {
         const length = val.length;
         let res = '[';
-        for (let i = 0; i < length; i++) res += structHash(val[i]) + ',';
+        for (let i = 0; i < length; i++) res += structHash(val[i]) + ';';
         return res + ']';
       } else if (val instanceof Uint8Array) {
         return hash(val).toString(36);

@@ -6,7 +6,7 @@ import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {SliceRegistry} from '../registry/SliceRegistry';
 import {PersistedSlice} from '../slice/PersistedSlice';
-import {stringify} from '../../../json-text/stringify';
+import {toLine} from 'pojo-dump/lib/toLine';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
@@ -1201,7 +1201,7 @@ export class Editor<T = string> implements Printable {
             [...this.cursors()].map((cursor) => (tab) => cursor.toString(tab)),
           ),
         (tab) => this.getRegistry().toString(tab),
-        pending ? () => `pending ${stringify(pendingFormatted)}` : null,
+        pending ? () => `pending ${toLine(pendingFormatted)}` : null,
       ])
     );
   }

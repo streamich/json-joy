@@ -2,7 +2,6 @@ import * as React from 'react';
 import {usePeritext} from '../context';
 import {Char} from '../../constants';
 
-// biome-ignore lint: empty interface is expected
 export type AnchorViewProps = {};
 
 export const AnchorView: React.FC<AnchorViewProps> = (props) => {

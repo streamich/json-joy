@@ -1,8 +1,8 @@
 import {clone} from '@jsonjoy.com/util/lib/json-clone';
 import {structHash as structHash_} from '../structHash';
 import {RandomJson} from '@jsonjoy.com/json-random';
+import {ts} from '../../json-crdt-patch';
 
-// biome-ignore lint: \x00 character
 const isASCII = (str: string) => /^[\x00-\x7F]*$/.test(str);
 
 const structHash = (json: unknown): string => {
@@ -69,6 +69,12 @@ test('same hash for binary data', () => {
 test('different hash for binary data', () => {
   const res1 = structHash({data: new Uint8Array([1, 2, 3])});
   const res2 = structHash({data: new Uint8Array([1, 2, 4])});
+  expect(res1).not.toBe(res2);
+});
+
+test('explicitly supports Timestamp hashing', () => {
+  const res1 = structHash({data: ts(5, 6)});
+  const res2 = structHash({data: {sid: 5, time: 6}});
   expect(res1).not.toBe(res2);
 });
 
