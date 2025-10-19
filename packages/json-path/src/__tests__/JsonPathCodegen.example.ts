@@ -8,24 +8,16 @@ import {JsonPathCodegen} from '../JsonPathCodegen';
 const codegen1 = new JsonPathCodegen({
   segments: [
     {
-      selectors: [
-        {type: 'name', name: 'store'},
-      ],
+      selectors: [{type: 'name', name: 'store'}],
     },
     {
-      selectors: [
-        {type: 'name', name: 'book'},
-      ],
+      selectors: [{type: 'name', name: 'book'}],
     },
     {
-      selectors: [
-        {type: 'wildcard'},
-      ],
+      selectors: [{type: 'wildcard'}],
     },
     {
-      selectors: [
-        {type: 'name', name: 'title'},
-      ],
+      selectors: [{type: 'name', name: 'title'}],
     },
   ],
 });
@@ -44,18 +36,24 @@ const data = {
 
 console.log('Example 1: $.store.book[*].title');
 const results1 = compiledFn1(data);
-console.log('Results:', results1.map((v) => v.data));
+console.log(
+  'Results:',
+  results1.map((v) => v.data),
+);
 // Output: ['Book 1', 'Book 2', 'Book 3']
 
 // Example 2: Using static run method (compiles on demand)
 console.log('\nExample 2: Using static run method');
 const results2 = JsonPathCodegen.run('$.store.book[?@.price < 12].title', data);
-console.log('Results:', results2.map((v) => v.data));
+console.log(
+  'Results:',
+  results2.map((v) => v.data),
+);
 // Output: ['Book 1', 'Book 3']
 
 // Example 3: Demonstrating performance benefit
 console.log('\nExample 3: Performance comparison');
-const query = '$.store.book[*].title';
+const _query = '$.store.book[*].title';
 
 // Compile once, use many times
 const compiledFn = new JsonPathCodegen({
@@ -68,5 +66,11 @@ const compiledFn = new JsonPathCodegen({
 }).compile();
 
 console.log('Compiled function can be reused efficiently for multiple queries on different data');
-console.log('Result 1:', compiledFn(data).map((v) => v.data));
-console.log('Result 2:', compiledFn({store: {book: [{title: 'New Book'}]}}).map((v) => v.data));
+console.log(
+  'Result 1:',
+  compiledFn(data).map((v) => v.data),
+);
+console.log(
+  'Result 2:',
+  compiledFn({store: {book: [{title: 'New Book'}]}}).map((v) => v.data),
+);

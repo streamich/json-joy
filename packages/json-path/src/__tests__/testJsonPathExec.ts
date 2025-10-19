@@ -272,13 +272,13 @@ export const testJsonPathExec = (run: typeof JsonPathEval.run) => {
         test('example from docs', () => {
           const expr = '$.event.data.name';
           const data = {
-            "event": {
-              "agency": "MI6",
-              "data": {
-                "name": "James Bond",
-                "id": "007"
-              }
-            }
+            event: {
+              agency: 'MI6',
+              data: {
+                name: 'James Bond',
+                id: '007',
+              },
+            },
           };
           const result = run(expr, data);
           expect(result.length).toBe(1);
