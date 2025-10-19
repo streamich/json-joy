@@ -23,7 +23,8 @@ jobs:
         env:
           YARN_NODE_LINKER: pnp
           YARN_ENABLE_SCRIPTS: false
-        run: yarn --immutable && yarn build
+        run: yarn --immutable
+      - run: yarn build
   unit-tests-24:
     needs: install-and-build-24
     runs-on: ubuntu-latest
