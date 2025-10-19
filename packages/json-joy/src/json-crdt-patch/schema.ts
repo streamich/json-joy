@@ -180,7 +180,6 @@ export namespace nodes {
    */
   export class obj<
     T extends Record<string, NodeBuilder>,
-    // biome-ignore lint: TODO: improve {} type in the future
     O extends Record<string, NodeBuilder> = {},
   > extends NodeBuilder {
     public readonly type = 'obj';

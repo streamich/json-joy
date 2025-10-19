@@ -31,7 +31,6 @@ const isNonNumeric = (value: unknown): boolean => {
 const hasUnicodeIssues = (value: unknown): boolean => {
   if (typeof value === 'string') {
     // Check for non-ASCII characters that have encoding issues
-    // biome-ignore lint: control character check is intentional
     return /[^\x00-\x7F]/.test(value);
   }
   if (Array.isArray(value)) return value.some(hasUnicodeIssues);
