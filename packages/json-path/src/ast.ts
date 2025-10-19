@@ -1,67 +1,67 @@
 import type * as types from './types';
 
 export class Ast {
-  public static path = (segments: types.PathSegment[]): types.JSONPath => new JSONPath(segments);
-  public static segment = (selectors: types.AnySelector[], recursive?: boolean): types.PathSegment =>
+  public static path = (segments: types.IPathSegment[]): types.IJSONPath => new JSONPath(segments);
+  public static segment = (selectors: types.IAnySelector[], recursive?: boolean): types.IPathSegment =>
     new PathSegment(selectors, recursive);
 
   public static selector = class selector {
-    public static named = (name: string): types.NamedSelector => new Named(name);
-    public static index = (index: number): types.IndexSelector => new Index(index);
-    public static slice = (start?: number, end?: number, step?: number): types.SliceSelector =>
+    public static named = (name: string): types.INamedSelector => new Named(name);
+    public static index = (index: number): types.IIndexSelector => new Index(index);
+    public static slice = (start?: number, end?: number, step?: number): types.ISliceSelector =>
       new Slice(start, end, step);
-    public static wildcard = (): types.WildcardSelector => new Wildcard();
-    public static recursiveDescent = (selector: types.AnySelector): types.RecursiveDescentSelector =>
+    public static wildcard = (): types.IWildcardSelector => new Wildcard();
+    public static recursiveDescent = (selector: types.IAnySelector): types.IRecursiveDescentSelector =>
       new RecursiveDescent(selector);
-    public static filter = (expression: types.FilterExpression): types.FilterSelector => new Filter(expression);
+    public static filter = (expression: types.IFilterExpression): types.IFilterSelector => new Filter(expression);
   };
 
   public static expression = class expression {
     public static comparison = (
-      operator: types.ComparisonExpression['operator'],
-      left: types.ValueExpression,
-      right: types.ValueExpression,
-    ): types.ComparisonExpression => new ComparisonExpression(operator, left, right);
+      operator: types.IComparisonExpression['operator'],
+      left: types.IValueExpression,
+      right: types.IValueExpression,
+    ): types.IComparisonExpression => new ComparisonExpression(operator, left, right);
     public static logical = (
-      operator: types.LogicalExpression['operator'],
-      left: types.FilterExpression,
-      right: types.FilterExpression,
-    ): types.LogicalExpression => new LogicalExpression(operator, left, right);
-    public static existence = (path: types.JSONPath): types.ExistenceExpression => new ExistenceExpression(path);
+      operator: types.ILogicalExpression['operator'],
+      left: types.IFilterExpression,
+      right: types.IFilterExpression,
+    ): types.ILogicalExpression => new LogicalExpression(operator, left, right);
+    public static existence = (path: types.IJSONPath): types.IExistenceExpression => new ExistenceExpression(path);
     public static function = (
       name: string,
-      args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
-    ): types.FunctionExpression => new FunctionExpression(name, args);
-    public static paren = (expression: types.FilterExpression): types.ParenExpression =>
+      args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
+    ): types.IFunctionExpression => new FunctionExpression(name, args);
+    public static paren = (expression: types.IFilterExpression): types.IParenExpression =>
       new ParenthesizedExpression(expression);
-    public static negation = (expression: types.FilterExpression): types.NegationExpression =>
+    public static negation = (expression: types.IFilterExpression): types.INegationExpression =>
       new NegationExpression(expression);
   };
 
   public static value = class value {
-    public static current = (): types.CurrentNodeExpression => new CurrentNodeExpression();
-    public static root = (): types.RootNodeExpression => new RootNodeExpression();
-    public static literal = (value: string | number | boolean | null): types.LiteralExpression =>
+    public static current = (): types.ICurrentNodeExpression => new CurrentNodeExpression();
+    public static root = (): types.IRootNodeExpression => new RootNodeExpression();
+    public static literal = (value: string | number | boolean | null): types.ILiteralExpression =>
       new LiteralExpression(value);
-    public static path = (path: types.JSONPath): types.PathExpression => new PathExpression(path);
+    public static path = (path: types.IJSONPath): types.IPathExpression => new PathExpression(path);
     public static function = (
       name: string,
-      args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
-    ): types.FunctionExpression => new FunctionExpression(name, args);
+      args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
+    ): types.IFunctionExpression => new FunctionExpression(name, args);
   };
 }
 
-class Named implements types.NamedSelector {
+class Named implements types.INamedSelector {
   public readonly type = 'name' as const;
   constructor(public readonly name: string) {}
 }
 
-class Index implements types.IndexSelector {
+class Index implements types.IIndexSelector {
   public readonly type = 'index' as const;
   constructor(public readonly index: number) {}
 }
 
-class Slice implements types.SliceSelector {
+class Slice implements types.ISliceSelector {
   public readonly type = 'slice' as const;
   constructor(
     public readonly start?: number,
@@ -70,86 +70,86 @@ class Slice implements types.SliceSelector {
   ) {}
 }
 
-class Wildcard implements types.WildcardSelector {
+class Wildcard implements types.IWildcardSelector {
   public readonly type = 'wildcard' as const;
 }
 
-class RecursiveDescent implements types.RecursiveDescentSelector {
+class RecursiveDescent implements types.IRecursiveDescentSelector {
   public readonly type = 'recursive-descent' as const;
-  constructor(public readonly selector: types.AnySelector) {}
+  constructor(public readonly selector: types.IAnySelector) {}
 }
 
-class Filter implements types.FilterSelector {
+class Filter implements types.IFilterSelector {
   public readonly type = 'filter' as const;
-  constructor(public readonly expression: types.FilterExpression) {}
+  constructor(public readonly expression: types.IFilterExpression) {}
 }
 
-class PathSegment implements types.PathSegment {
+class PathSegment implements types.IPathSegment {
   constructor(
-    public readonly selectors: types.AnySelector[],
+    public readonly selectors: types.IAnySelector[],
     public readonly recursive?: boolean,
   ) {}
 }
 
-class JSONPath implements types.JSONPath {
-  constructor(public readonly segments: types.PathSegment[]) {}
+class JSONPath implements types.IJSONPath {
+  constructor(public readonly segments: types.IPathSegment[]) {}
 }
 
-class ComparisonExpression implements types.ComparisonExpression {
+class ComparisonExpression implements types.IComparisonExpression {
   public readonly type = 'comparison' as const;
   constructor(
-    public readonly operator: types.ComparisonExpression['operator'],
-    public readonly left: types.ValueExpression,
-    public readonly right: types.ValueExpression,
+    public readonly operator: types.IComparisonExpression['operator'],
+    public readonly left: types.IValueExpression,
+    public readonly right: types.IValueExpression,
   ) {}
 }
 
-class LogicalExpression implements types.LogicalExpression {
+class LogicalExpression implements types.ILogicalExpression {
   public readonly type = 'logical' as const;
   constructor(
-    public readonly operator: types.LogicalExpression['operator'],
-    public readonly left: types.FilterExpression,
-    public readonly right: types.FilterExpression,
+    public readonly operator: types.ILogicalExpression['operator'],
+    public readonly left: types.IFilterExpression,
+    public readonly right: types.IFilterExpression,
   ) {}
 }
 
-class ExistenceExpression implements types.ExistenceExpression {
+class ExistenceExpression implements types.IExistenceExpression {
   public readonly type = 'existence' as const;
-  constructor(public readonly path: types.JSONPath) {}
+  constructor(public readonly path: types.IJSONPath) {}
 }
 
-class FunctionExpression implements types.FunctionExpression {
+class FunctionExpression implements types.IFunctionExpression {
   public readonly type = 'function' as const;
   constructor(
     public readonly name: string,
-    public readonly args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[],
+    public readonly args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[],
   ) {}
 }
 
-class ParenthesizedExpression implements types.ParenExpression {
+class ParenthesizedExpression implements types.IParenExpression {
   public readonly type = 'paren' as const;
-  constructor(public readonly expression: types.FilterExpression) {}
+  constructor(public readonly expression: types.IFilterExpression) {}
 }
 
-class NegationExpression implements types.NegationExpression {
+class NegationExpression implements types.INegationExpression {
   public readonly type = 'negation' as const;
-  constructor(public readonly expression: types.FilterExpression) {}
+  constructor(public readonly expression: types.IFilterExpression) {}
 }
 
-class CurrentNodeExpression implements types.CurrentNodeExpression {
+class CurrentNodeExpression implements types.ICurrentNodeExpression {
   public readonly type = 'current' as const;
 }
 
-class RootNodeExpression implements types.RootNodeExpression {
+class RootNodeExpression implements types.IRootNodeExpression {
   public readonly type = 'root' as const;
 }
 
-class LiteralExpression implements types.LiteralExpression {
+class LiteralExpression implements types.ILiteralExpression {
   public readonly type = 'literal' as const;
   constructor(public readonly value: string | number | boolean | null) {}
 }
 
-class PathExpression implements types.PathExpression {
+class PathExpression implements types.IPathExpression {
   public readonly type = 'path' as const;
-  constructor(public readonly path: types.JSONPath) {}
+  constructor(public readonly path: types.IJSONPath) {}
 }

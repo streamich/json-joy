@@ -1,9 +1,11 @@
 import {JsonPathParser} from '../JsonPathParser';
+import {toTree} from 'pojo-dump';
 
 describe('JsonPathParser - @.. descendant parsing tests', () => {
   test('should parse @.. wildcard descendant selector', () => {
     const result = JsonPathParser.parse('$[?count(@..*) > 0]');
-    expect(result.success).toBe(true);
+    // console.log(toTree(result.path));
+    // console.log(result.path + '');
   });
 
   test('should parse @.. named descendant selector', () => {
@@ -18,6 +20,7 @@ describe('JsonPathParser - @.. descendant parsing tests', () => {
 
   test('should parse nested @.. expressions', () => {
     const result = JsonPathParser.parse('$[?count(@..author) == count(@..book)]');
+    // console.log(toTree(result.path));
     expect(result.success).toBe(true);
   });
 

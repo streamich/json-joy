@@ -2,12 +2,12 @@
  * JSONPath utility functions
  */
 
-import type {JSONPath, AnySelector} from './types';
+import type {IJSONPath, IAnySelector} from './types';
 
 /**
  * Convert a JSONPath to a human-readable string representation
  */
-export function jsonPathToString(jsonPath: JSONPath): string {
+export function jsonPathToString(jsonPath: IJSONPath): string {
   let result = '$';
 
   for (const segment of jsonPath.segments) {
@@ -26,7 +26,7 @@ export function jsonPathToString(jsonPath: JSONPath): string {
 /**
  * Convert a selector to string representation
  */
-function selectorToString(selector: AnySelector): string {
+function selectorToString(selector: IAnySelector): string {
   switch (selector.type) {
     case 'name':
       return `.${selector.name}`;
@@ -44,7 +44,7 @@ function selectorToString(selector: AnySelector): string {
     case 'wildcard':
       return '.*';
     case 'recursive-descent':
-      return `..${selectorToString(selector.selector as AnySelector)}`;
+      return `..${selectorToString(selector.selector as IAnySelector)}`;
     case 'filter':
       return '[?(...)]'; // Simplified representation
     default:
@@ -55,7 +55,7 @@ function selectorToString(selector: AnySelector): string {
 /**
  * Check if two JSONPath expressions are equivalent
  */
-export function jsonPathEquals(path1: JSONPath, path2: JSONPath): boolean {
+export function jsonPathEquals(path1: IJSONPath, path2: IJSONPath): boolean {
   if (path1.segments.length !== path2.segments.length) {
     return false;
   }
@@ -85,7 +85,7 @@ export function jsonPathEquals(path1: JSONPath, path2: JSONPath): boolean {
 /**
  * Check if two selectors are equivalent
  */
-function selectorEquals(sel1: AnySelector, sel2: AnySelector): boolean {
+function selectorEquals(sel1: IAnySelector, sel2: IAnySelector): boolean {
   if (sel1.type !== sel2.type) {
     return false;
   }
@@ -103,7 +103,7 @@ function selectorEquals(sel1: AnySelector, sel2: AnySelector): boolean {
       return true;
     case 'recursive-descent': {
       const rdSel = sel2 as typeof sel1;
-      return selectorEquals(sel1.selector as AnySelector, rdSel.selector as AnySelector);
+      return selectorEquals(sel1.selector as IAnySelector, rdSel.selector as IAnySelector);
     }
     case 'filter':
       // For now, just return true - would need deep comparison of filter expressions
@@ -117,7 +117,7 @@ function selectorEquals(sel1: AnySelector, sel2: AnySelector): boolean {
  * Get all property names that could be accessed by a JSONPath
  * This is a simple analysis that doesn't handle complex filters
  */
-export function getAccessedProperties(jsonPath: JSONPath): string[] {
+export function getAccessedProperties(jsonPath: IJSONPath): string[] {
   const properties: string[] = [];
 
   for (const segment of jsonPath.segments) {
@@ -126,7 +126,7 @@ export function getAccessedProperties(jsonPath: JSONPath): string[] {
         properties.push(selector.name);
       } else if (selector.type === 'recursive-descent') {
         if (selector.selector.type === 'name') {
-          const nameSelector = selector.selector as Extract<AnySelector, {type: 'name'}>;
+          const nameSelector = selector.selector as Extract<IAnySelector, {type: 'name'}>;
           properties.push(nameSelector.name);
         }
       }

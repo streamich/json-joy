@@ -6,7 +6,7 @@
 /**
  * Base interface for all JSONPath selectors
  */
-export interface Selector {
+export interface ISelector {
   type: string;
 }
 
@@ -14,7 +14,7 @@ export interface Selector {
  * Named selector for property access
  * Examples: .name, ['key'], ["quoted-key"]
  */
-export interface NamedSelector extends Selector {
+export interface INamedSelector extends ISelector {
   type: 'name';
   name: string;
 }
@@ -23,7 +23,7 @@ export interface NamedSelector extends Selector {
  * Index selector for array element access
  * Examples: [0], [42], [-1]
  */
-export interface IndexSelector extends Selector {
+export interface IIndexSelector extends ISelector {
   type: 'index';
   index: number;
 }
@@ -32,7 +32,7 @@ export interface IndexSelector extends Selector {
  * Slice selector for array slicing
  * Examples: [start:end], [start:end:step], [:end], [start:]
  */
-export interface SliceSelector extends Selector {
+export interface ISliceSelector extends ISelector {
   type: 'slice';
   start?: number;
   end?: number;
@@ -43,7 +43,7 @@ export interface SliceSelector extends Selector {
  * Wildcard selector for selecting all elements
  * Examples: .*, [*]
  */
-export interface WildcardSelector extends Selector {
+export interface IWildcardSelector extends ISelector {
   type: 'wildcard';
 }
 
@@ -51,126 +51,126 @@ export interface WildcardSelector extends Selector {
  * Recursive descent selector
  * Examples: ..name, ..[0], ..*
  */
-export interface RecursiveDescentSelector extends Selector {
+export interface IRecursiveDescentSelector extends ISelector {
   type: 'recursive-descent';
-  selector: AnySelector;
+  selector: IAnySelector;
 }
 
 /**
  * Filter expression for conditional selection
  * Examples: [?(@.price < 10)], [?(@.author == 'Tolkien')]
  */
-export interface FilterSelector extends Selector {
+export interface IFilterSelector extends ISelector {
   type: 'filter';
-  expression: FilterExpression;
+  expression: IFilterExpression;
 }
 
 /**
  * Union of all selector types
  */
-export type AnySelector =
-  | NamedSelector
-  | IndexSelector
-  | SliceSelector
-  | WildcardSelector
-  | RecursiveDescentSelector
-  | FilterSelector;
+export type IAnySelector =
+  | INamedSelector
+  | IIndexSelector
+  | ISliceSelector
+  | IWildcardSelector
+  | IRecursiveDescentSelector
+  | IFilterSelector;
 
 /**
  * JSONPath segment containing one or more selectors
  */
-export interface PathSegment {
-  selectors: AnySelector[];
+export interface IPathSegment {
+  selectors: IAnySelector[];
   recursive?: boolean;
 }
 
 /**
  * Complete JSONPath expression
  */
-export interface JSONPath {
-  segments: PathSegment[];
+export interface IJSONPath {
+  segments: IPathSegment[];
 }
 
 /**
  * Filter expression types
  */
-export type FilterExpression =
-  | ComparisonExpression
-  | LogicalExpression
-  | ExistenceExpression
-  | FunctionExpression
-  | ParenExpression
-  | NegationExpression;
+export type IFilterExpression =
+  | IComparisonExpression
+  | ILogicalExpression
+  | IExistenceExpression
+  | IFunctionExpression
+  | IParenExpression
+  | INegationExpression;
 
-export interface ComparisonExpression {
+export interface IComparisonExpression {
   type: 'comparison';
   operator: '==' | '!=' | '<' | '<=' | '>' | '>=';
-  left: ValueExpression;
-  right: ValueExpression;
+  left: IValueExpression;
+  right: IValueExpression;
 }
 
-export interface LogicalExpression {
+export interface ILogicalExpression {
   type: 'logical';
   operator: '&&' | '||';
-  left: FilterExpression;
-  right: FilterExpression;
+  left: IFilterExpression;
+  right: IFilterExpression;
 }
 
-export interface ExistenceExpression {
+export interface IExistenceExpression {
   type: 'existence';
-  path: JSONPath;
+  path: IJSONPath;
 }
 
-export interface FunctionExpression {
+export interface IFunctionExpression {
   type: 'function';
   name: string;
-  args: (ValueExpression | FilterExpression | JSONPath)[];
+  args: (IValueExpression | IFilterExpression | IJSONPath)[];
 }
 
-export interface ParenExpression {
+export interface IParenExpression {
   type: 'paren';
-  expression: FilterExpression;
+  expression: IFilterExpression;
 }
 
-export interface NegationExpression {
+export interface INegationExpression {
   type: 'negation';
-  expression: FilterExpression;
+  expression: IFilterExpression;
 }
 
 /**
  * Value expressions in filters
  */
-export type ValueExpression =
-  | CurrentNodeExpression
-  | RootNodeExpression
-  | LiteralExpression
-  | PathExpression
-  | FunctionExpression;
+export type IValueExpression =
+  | ICurrentNodeExpression
+  | IRootNodeExpression
+  | ILiteralExpression
+  | IPathExpression
+  | IFunctionExpression;
 
-export interface CurrentNodeExpression {
+export interface ICurrentNodeExpression {
   type: 'current';
 }
 
-export interface RootNodeExpression {
+export interface IRootNodeExpression {
   type: 'root';
 }
 
-export interface LiteralExpression {
+export interface ILiteralExpression {
   type: 'literal';
   value: string | number | boolean | null;
 }
 
-export interface PathExpression {
+export interface IPathExpression {
   type: 'path';
-  path: JSONPath;
+  path: IJSONPath;
 }
 
 /**
  * Parse result
  */
-export interface ParseResult {
+export interface IParseResult {
   success: boolean;
-  path?: JSONPath;
+  path?: IJSONPath;
   error?: string;
   position?: number;
 }

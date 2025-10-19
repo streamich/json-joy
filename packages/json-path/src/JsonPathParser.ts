@@ -14,12 +14,12 @@ export class JsonPathParser extends Parser {
    * @param pathStr - JSONPath expression string (e.g., "$.store.book[0].title").
    * @returns Parse result with structured representation or error information.
    */
-  public static parse = (pathStr: string): types.ParseResult => new JsonPathParser().parse(pathStr);
+  public static parse = (pathStr: string): types.IParseResult => new JsonPathParser().parse(pathStr);
 
   /**
    * Parse a JSONPath expression string into a structured representation
    */
-  parse(pathStr: string): types.ParseResult {
+  parse(pathStr: string): types.IParseResult {
     try {
       this.reset(pathStr);
       const path = this.parseJSONPath();
@@ -33,8 +33,8 @@ export class JsonPathParser extends Parser {
     }
   }
 
-  private parseJSONPath(): types.JSONPath {
-    const segments: types.PathSegment[] = [];
+  private parseJSONPath(): types.IJSONPath {
+    const segments: types.IPathSegment[] = [];
 
     // Root path starts with $
     this.ws();
@@ -56,7 +56,7 @@ export class JsonPathParser extends Parser {
     return Ast.path(segments);
   }
 
-  private parsePathSegment(): types.PathSegment {
+  private parsePathSegment(): types.IPathSegment {
     this.ws();
 
     // Check for recursive descent (..)
@@ -70,7 +70,7 @@ export class JsonPathParser extends Parser {
     }
 
     // Parse selectors
-    const selectors: types.AnySelector[] = [];
+    const selectors: types.IAnySelector[] = [];
 
     // Handle different selector formats
     if (this.is('.')) {
@@ -133,7 +133,7 @@ export class JsonPathParser extends Parser {
     return Ast.segment(selectors, recursive || undefined);
   }
 
-  private parseBracketSelector(): types.AnySelector {
+  private parseBracketSelector(): types.IAnySelector {
     this.ws();
 
     if (this.is('*')) {
@@ -208,11 +208,11 @@ export class JsonPathParser extends Parser {
     }
   }
 
-  private parseFilterExpression(): types.FilterExpression {
+  private parseFilterExpression(): types.IFilterExpression {
     return this.parseLogicalOrExpression();
   }
 
-  private parseLogicalOrExpression(): types.FilterExpression {
+  private parseLogicalOrExpression(): types.IFilterExpression {
     let left = this.parseLogicalAndExpression();
     this.ws();
 
@@ -227,7 +227,7 @@ export class JsonPathParser extends Parser {
     return left;
   }
 
-  private parseLogicalAndExpression(): types.FilterExpression {
+  private parseLogicalAndExpression(): types.IFilterExpression {
     let left = this.parseComparisonExpression();
     this.ws();
 
@@ -242,11 +242,11 @@ export class JsonPathParser extends Parser {
     return left;
   }
 
-  private parseComparisonExpression(): types.FilterExpression {
+  private parseComparisonExpression(): types.IFilterExpression {
     return this.parseUnaryExpression();
   }
 
-  private parseUnaryExpression(): types.FilterExpression {
+  private parseUnaryExpression(): types.IFilterExpression {
     this.ws();
     if (this.is('!')) {
       // Handle logical NOT operator
@@ -270,7 +270,7 @@ export class JsonPathParser extends Parser {
     return this.parsePrimaryExpression();
   }
 
-  private parsePrimaryExpression(): types.FilterExpression {
+  private parsePrimaryExpression(): types.IFilterExpression {
     const left = this.parseValueExpression();
     this.ws();
     if (this.isComparisonOperator()) {
@@ -287,7 +287,7 @@ export class JsonPathParser extends Parser {
       return Ast.expression.existence(Ast.path([]));
     } else if (left.type === 'function') {
       // Function expressions can be used as test expressions (e.g., $[?match(@.name, "pattern")])
-      return left as types.FilterExpression;
+      return left as types.IFilterExpression;
     }
     // If no comparison operator, treat as existence test
     return Ast.expression.existence(Ast.path([])); // TODO: implement proper existence test with the path
@@ -300,14 +300,14 @@ export class JsonPathParser extends Parser {
     return this.str.slice(start, this.pos);
   }
 
-  private parseFunctionExpression(): types.FunctionExpression {
+  private parseFunctionExpression(): types.IFunctionExpression {
     const name = this.parseFunctionName();
     this.ws();
     if (!this.is('(')) throw new Error('Expected "(" after function name');
     this.skip(1); // Skip (
     this.ws();
 
-    const args: (types.ValueExpression | types.FilterExpression | types.JSONPath)[] = [];
+    const args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[] = [];
     if (!this.is(')')) {
       do {
         this.ws();
@@ -331,7 +331,7 @@ export class JsonPathParser extends Parser {
     return this.is('==') || this.is('!=') || this.is('<=') || this.is('>=') || this.is('<') || this.is('>');
   }
 
-  private parseComparisonOperator(): types.ComparisonExpression['operator'] {
+  private parseComparisonOperator(): types.IComparisonExpression['operator'] {
     if (this.is('==')) {
       this.skip(2);
       return '==';
@@ -354,7 +354,7 @@ export class JsonPathParser extends Parser {
     throw new Error('Expected comparison operator');
   }
 
-  private parseValueExpression(): types.ValueExpression {
+  private parseValueExpression(): types.IValueExpression {
     this.ws();
     const value = Ast.value;
     // Check for function expressions first
@@ -403,8 +403,8 @@ export class JsonPathParser extends Parser {
     throw new Error('Expected value expression');
   }
 
-  private parsePathSegments(): types.PathSegment[] {
-    const segments: types.PathSegment[] = [];
+  private parsePathSegments(): types.IPathSegment[] {
+    const segments: types.IPathSegment[] = [];
     while (!this.eof()) {
       this.ws();
       if (this.eof()) break;
@@ -416,8 +416,8 @@ export class JsonPathParser extends Parser {
     return segments;
   }
 
-  private parseFilterPathSegments(): types.PathSegment[] {
-    const segments: types.PathSegment[] = [];
+  private parseFilterPathSegments(): types.IPathSegment[] {
+    const segments: types.IPathSegment[] = [];
     while (!this.eof()) {
       this.ws();
       if (this.eof()) break;
@@ -430,9 +430,9 @@ export class JsonPathParser extends Parser {
     return segments;
   }
 
-  private parseFilterPathSegment(): types.PathSegment {
+  private parseFilterPathSegment(): types.IPathSegment {
     this.ws();
-    const selectors: types.AnySelector[] = [];
+    const selectors: types.IAnySelector[] = [];
 
     // Check for recursive descent (..)
     const recursive = this.is('..') as boolean;
