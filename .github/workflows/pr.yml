@@ -9,9 +9,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  unit:
+  tests-01:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20.x, 22.x, 24.x]
     steps:
@@ -24,10 +25,28 @@ jobs:
           cache: yarn
       - run: yarn install --immutable
       - run: yarn build
-      - run: yarn test
-  lint-and-co:
+      - run: yarn test packages/json-joy/
+  tests-02:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn test --testPathIgnorePatterns packages/json-joy/
+  linter-and-types:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
       matrix:
         node-version: [20.x, 22.x, 24.x]
     steps:
@@ -43,19 +62,4 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn typecheck
-  typedoc:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x, 24.x]
-    steps:
-      - uses: actions/checkout@v4
-      - run: corepack enable
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
-      - run: yarn install --immutable
-      - run: yarn build
       - run: yarn typedoc
