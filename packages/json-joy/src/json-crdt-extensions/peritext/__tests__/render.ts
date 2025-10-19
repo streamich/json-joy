@@ -1,19 +1,19 @@
 import {LeafBlock} from '../block/LeafBlock';
-import {stringify} from '../../../json-text/stringify';
+import {toLine} from 'pojo-dump/lib/toLine';
 import type {Block} from '../block/Block';
 import type {Inline} from '../block/Inline';
 
 const renderInline = <T>(inline: Inline<T>, tab: string): string => {
-  const text = stringify(inline.text());
+  const text = toLine(inline.text());
   const attr: any = {};
   const attributes = inline.attr();
   for (const key in attributes) attr[key] = attributes[key].map((a) => a.slice.data());
-  return `${tab}${text} ${stringify(attr)}\n`;
+  return `${tab}${text} ${toLine(attr)}\n`;
 };
 
 const renderBlockHeader = <T>(block: Block<T>, tab: string, hash?: boolean): string => {
   const attr = block.attr();
-  const attrStr = attr ? ' ' + stringify(attr) : '';
+  const attrStr = attr ? ' ' + toLine(attr) : '';
   const tag = `<${block.tag()}>`;
   const hashStr = hash ? ` #${block.hash.toString(36).slice(-3)}` : '';
   return tab + tag + attrStr + hashStr + '\n';

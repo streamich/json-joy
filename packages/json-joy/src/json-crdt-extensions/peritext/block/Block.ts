@@ -3,9 +3,9 @@ import {CONST, updateJson, updateNum} from '../../../json-hash/hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {Inline} from './Inline';
-import {formatType, getTag} from '../slice/util';
+import {formatStep, getTag} from '../slice/util';
 import {Range} from '../rga/Range';
-import {stringify} from '../../../json-text/stringify';
+import {toLine} from 'pojo-dump/lib/toLine';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump';
@@ -202,8 +202,8 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
 
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
-    const tag = this.path.map((step) => formatType(step)).join('.');
-    const data = stringify(this.attr());
+    const tag = this.path.map((step) => formatStep(step)).join('.');
+    const data = toLine(this.attr());
     const header = `${super.toString('', true)} ${hash} ${tag} ${data}`;
     return header;
   }

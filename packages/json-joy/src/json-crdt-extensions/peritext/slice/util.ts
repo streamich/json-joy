@@ -1,4 +1,5 @@
 import {SliceTypeName} from './constants';
+import {toLine} from 'pojo-dump/lib/toLine';
 import type {SliceType, SliceTypeStep} from '../slice/types';
 
 export const validateType = (type: SliceType) => {
@@ -40,15 +41,20 @@ export const getTag = (type: SliceType): string | number => {
   return tag;
 };
 
-export const formatType = (step: SliceTypeStep): string => {
+export const formatStep = (step: SliceTypeStep): string => {
   let tag: string | number = '';
   let discriminant: number = -1;
+  let data: unknown;
   if (Array.isArray(step)) {
     tag = step[0];
     discriminant = step[1];
+    data = step[2];
   } else {
     tag = step;
   }
   if (typeof tag === 'number' && Math.abs(tag) <= 64 && SliceTypeName[tag]) tag = SliceTypeName[tag] ?? tag;
-  return '<' + tag + (discriminant >= 0 ? ':' + discriminant : '') + '>';
+  return '<' + tag + (discriminant >= 0 ? ':' + discriminant : '') + (data !== void 0 ? ' ' + toLine(data) : '') + '>';
 };
+
+export const formatType = (type: SliceType): string =>
+  Array.isArray(type) ? type.map(formatStep).join('.') : formatStep(type);

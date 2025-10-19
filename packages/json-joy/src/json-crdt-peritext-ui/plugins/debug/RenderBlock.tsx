@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useDebugCtx} from './context';
-import {formatType} from '../../../json-crdt-extensions/peritext/slice/util';
+import {formatStep} from '../../../json-crdt-extensions/peritext/slice/util';
 import {DebugLabel} from '../../components/DebugLabel';
 import {useSyncStore} from '../../web/react/hooks';
 import type {BlockViewProps} from '../../web/react/BlockView';
@@ -33,7 +33,7 @@ export const RenderBlock: React.FC<RenderBlockProps> = ({block, hash, children})
     <div style={{position: 'relative'}}>
       {showSliceInfo && (
         <div contentEditable={false} className={labelContainerClass} onMouseDown={(e) => e.preventDefault()}>
-          <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatType(type)).join('.')}</DebugLabel>
+          <DebugLabel right={hash.toString(36)}>{block.path.map((type) => formatStep(type)).join('.')}</DebugLabel>
         </div>
       )}
       {showSliceOutlines ? <div style={{outline: '1px dotted blue'}}>{children}</div> : children}

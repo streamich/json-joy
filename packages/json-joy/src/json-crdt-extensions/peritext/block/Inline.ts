@@ -1,11 +1,11 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import {stringify} from '../../../json-text/stringify';
+import {toLine} from 'pojo-dump/lib/toLine';
 import {SliceStacking, SliceTypeName} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {Cursor} from '../editor/Cursor';
 import {hashId} from '../../../json-crdt/hash';
-import {formatType} from '../slice/util';
+import {formatStep} from '../slice/util';
 import type {Point} from '../rga/Point';
 import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
@@ -319,9 +319,9 @@ export class Inline<T = string> extends Range<T> implements Printable {
                 attrKeys.map((key) => () => {
                   return key === '-1'
                     ? '▚ (cursor)'
-                    : formatType(key) +
+                    : formatStep(key) +
                         ' = ' +
-                        stringify(
+                        toLine(
                           attr[key].map((attr) => {
                             const slice = attr.slice;
                             return slice instanceof Cursor ? [slice.type(), slice.data()] : slice.data();
