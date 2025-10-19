@@ -131,15 +131,15 @@ suite
   })
   .on('complete', function (this: any) {
     console.log('\n=== Results Summary ===');
-    
+
     // Group results by query type
     const groups = ['Simple', 'Recursive', 'Filter', 'Function', 'Wildcard'];
-    
+
     groups.forEach((group) => {
       const groupTests = this.filter((bench: any) => bench.name.startsWith(`[${group}]`));
       if (groupTests.length > 0) {
         console.log(`\n${group} Query:`);
-        
+
         // Sort by ops/sec
         const sorted = groupTests.sort((a: any, b: any) => b.hz - a.hz);
         sorted.forEach((bench: any, index: number) => {
@@ -152,5 +152,3 @@ suite
     });
   })
   .run();
-
-

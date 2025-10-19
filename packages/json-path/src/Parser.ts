@@ -33,7 +33,7 @@ export class Parser {
     const {str, pos, length} = this;
     const expLen = expected.length;
     if (pos + expLen > length) return false;
-    
+
     // Optimized: check character by character without creating substring
     for (let i = 0; i < expLen; i++) {
       if (str[pos + i] !== expected[i]) return false;

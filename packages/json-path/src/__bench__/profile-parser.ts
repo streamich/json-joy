@@ -16,7 +16,7 @@ console.log(`Profiling parser with ${iterations} iterations\n`);
 
 queries.forEach((query) => {
   console.log(`Query: ${query}`);
-  
+
   // Test with new parser each time (like JsonPathParser.parse does)
   console.time('  New parser each time');
   for (let i = 0; i < iterations; i++) {
@@ -24,7 +24,7 @@ queries.forEach((query) => {
     parser.parse(query);
   }
   console.timeEnd('  New parser each time');
-  
+
   // Test with reused parser
   const reuseParser = new JsonPathParser();
   console.time('  Reused parser');
@@ -32,7 +32,7 @@ queries.forEach((query) => {
     reuseParser.parse(query);
   }
   console.timeEnd('  Reused parser');
-  
+
   console.log('');
 });
 
