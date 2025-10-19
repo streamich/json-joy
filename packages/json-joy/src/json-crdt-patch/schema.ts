@@ -1,8 +1,8 @@
-import { isUint8Array } from '@jsonjoy.com/buffers/lib/isUint8Array';
-import { Timestamp, type ITimestampStruct } from './clock';
+import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
+import {Timestamp, type ITimestampStruct} from './clock';
 import * as print from '../util/print';
-import { printTree, type Printable } from 'tree-dump';
-import type { PatchBuilder } from './PatchBuilder';
+import {printTree, type Printable} from 'tree-dump';
+import type {PatchBuilder} from './PatchBuilder';
 
 const maybeConst = (x: unknown): boolean => {
   switch (typeof x) {
@@ -21,9 +21,7 @@ const maybeConst = (x: unknown): boolean => {
  * @category Patch
  */
 export class NodeBuilder {
-  constructor(
-    public readonly _build?: (builder: PatchBuilder) => ITimestampStruct
-  ) {}
+  constructor(public readonly _build?: (builder: PatchBuilder) => ITimestampStruct) {}
 
   public build(builder: PatchBuilder): ITimestampStruct {
     return this._build?.(builder) ?? builder.con(void 0);
@@ -153,12 +151,7 @@ export namespace nodes {
     }
 
     public toString(tab?: string): string {
-      return (
-        this.type +
-        printTree(tab, [
-          (tab) => (this.value as {} as SchemaNode).toString(tab),
-        ])
-      );
+      return this.type + printTree(tab, [(tab) => (this.value as {} as SchemaNode).toString(tab)]);
     }
   }
 
@@ -203,11 +196,7 @@ export namespace nodes {
         printTree(tab, [
           ...this.value.map(
             (child, i) => (tab: string) =>
-              `${i}: ${
-                child
-                  ? (child as {} as SchemaNode).toString(tab)
-                  : print.line(child)
-              }`
+              `${i}: ${child ? (child as {} as SchemaNode).toString(tab) : print.line(child)}`,
           ),
         ])
       );
@@ -254,11 +243,14 @@ export namespace nodes {
    */
   export class obj<
     T extends Record<string, NodeBuilder>,
-    O extends Record<string, NodeBuilder> = {}
+    O extends Record<string, NodeBuilder> = {},
   > extends SchemaNode {
     public readonly type = 'obj';
 
-    constructor(public readonly obj: T, public readonly opt?: O) {
+    constructor(
+      public readonly obj: T,
+      public readonly opt?: O,
+    ) {
       super();
     }
 
@@ -269,7 +261,7 @@ export namespace nodes {
     public build(builder: PatchBuilder): ITimestampStruct {
       const objId = builder.obj();
       const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
-      const merged = { ...this.obj, ...this.opt };
+      const merged = {...this.obj, ...this.opt};
       const keys = Object.keys(merged);
       const length = keys.length;
       if (length) {
@@ -290,19 +282,12 @@ export namespace nodes {
           ...[...Object.entries(this.obj)].map(
             ([key, child]) =>
               (tab: string) =>
-                print.line(key) +
-                printTree(tab + ' ', [
-                  (tab) => (<SchemaNode>child).toString(tab),
-                ])
+                print.line(key) + printTree(tab + ' ', [(tab) => (<SchemaNode>child).toString(tab)]),
           ),
           ...[...Object.entries(this.opt ?? [])].map(
             ([key, child]) =>
               (tab: string) =>
-                print.line(key) +
-                '?' +
-                printTree(tab + ' ', [
-                  (tab) => (<SchemaNode>child).toString(tab),
-                ])
+                print.line(key) + '?' + printTree(tab + ' ', [(tab) => (<SchemaNode>child).toString(tab)]),
           ),
         ])
       );
@@ -319,10 +304,7 @@ export namespace nodes {
    * s.map<nodes.con<number>>
    * ```
    */
-  export type map<R extends NodeBuilder> = obj<
-    Record<string, R>,
-    Record<string, R>
-  >;
+  export type map<R extends NodeBuilder> = obj<Record<string, R>, Record<string, R>>;
 
   /**
    * The `arr` class represents a "arr" JSON CRDT node. As the generic type
@@ -360,11 +342,7 @@ export namespace nodes {
         printTree(tab, [
           ...this.arr.map(
             (child, i) => (tab: string) =>
-              `[${i}]: ${
-                child
-                  ? (child as {} as SchemaNode).toString(tab)
-                  : print.line(child)
-              }`
+              `[${i}]: ${child ? (child as {} as SchemaNode).toString(tab) : print.line(child)}`,
           ),
         ])
       );
@@ -384,17 +362,17 @@ export namespace nodes {
    * - 1 byte for the sid of the tuple id, modulo 256
    * - 1 byte for the time of the tuple id, modulo 256
    */
-  export class ext<
-    ID extends number,
-    T extends NodeBuilder
-  > extends SchemaNode {
+  export class ext<ID extends number, T extends NodeBuilder> extends SchemaNode {
     public readonly type = 'ext';
 
     /**
      * @param id A unique extension ID.
      * @param data Schema of the data node of the extension.
      */
-    constructor(public readonly id: ID, public readonly data: T) {
+    constructor(
+      public readonly id: ID,
+      public readonly data: T,
+    ) {
       super();
     }
 
@@ -411,13 +389,7 @@ export namespace nodes {
     }
 
     public toString(tab?: string): string {
-      return (
-        this.type +
-        '(' +
-        this.id +
-        ')' +
-        printTree(tab, [(tab) => (this.data as {} as SchemaNode).toString(tab)])
-      );
+      return this.type + '(' + this.id + ')' + printTree(tab, [(tab) => (this.data as {} as SchemaNode).toString(tab)]);
     }
   }
 
@@ -428,16 +400,16 @@ export namespace nodes {
   export type json<V> = V extends NodeBuilder
     ? V
     : V extends Array<infer T>
-    ? nodes.arr<json<T>>
-    : V extends Uint8Array
-    ? nodes.bin
-    : V extends Record<string, any>
-    ? nodes.obj<{ [K in keyof V]: jsonCon<V[K]> }>
-    : V extends string
-    ? nodes.str<V>
-    : V extends boolean
-    ? nodes.val<nodes.con<boolean>>
-    : nodes.val<nodes.con<V>>;
+      ? nodes.arr<json<T>>
+      : V extends Uint8Array
+        ? nodes.bin
+        : V extends Record<string, any>
+          ? nodes.obj<{[K in keyof V]: jsonCon<V[K]>}>
+          : V extends string
+            ? nodes.str<V>
+            : V extends boolean
+              ? nodes.val<nodes.con<boolean>>
+              : nodes.val<nodes.con<V>>;
 
   /**
    * Same as {@link json}, but converts constant values to
@@ -446,14 +418,14 @@ export namespace nodes {
   export type jsonCon<V> = V extends number
     ? nodes.con<V>
     : V extends boolean
-    ? nodes.con<V>
-    : V extends null
-    ? nodes.con<V>
-    : V extends undefined
-    ? nodes.con<V>
-    : V extends ITimestampStruct
-    ? nodes.val<nodes.con<V>>
-    : json<V>;
+      ? nodes.con<V>
+      : V extends null
+        ? nodes.con<V>
+        : V extends undefined
+          ? nodes.con<V>
+          : V extends ITimestampStruct
+            ? nodes.val<nodes.con<V>>
+            : json<V>;
 }
 
 /**
@@ -512,13 +484,8 @@ export const schema = {
    * @param obj Default value, required object keys.
    * @param opt Default value of optional object keys.
    */
-  obj: <
-    T extends Record<string, NodeBuilder>,
-    O extends Record<string, NodeBuilder>
-  >(
-    obj: T,
-    opt?: O
-  ) => new nodes.obj<T, O>(obj, opt),
+  obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
+    new nodes.obj<T, O>(obj, opt),
 
   /**
    * This is an alias for {@link schema.obj}. It creates a "map" node schema,
@@ -545,8 +512,7 @@ export const schema = {
       case 'object': {
         if (!value) return s.val(s.con(value)) as any;
         if (value instanceof NodeBuilder) return value as any;
-        else if (Array.isArray(value))
-          return s.arr(value.map((v) => s.json(v))) as any;
+        else if (Array.isArray(value)) return s.arr(value.map((v) => s.json(v))) as any;
         else if (isUint8Array(value)) return s.bin(value) as any;
         else if (value instanceof Timestamp) return s.val(s.con(value)) as any;
         else {
@@ -580,8 +546,7 @@ export const schema = {
    * @param id A unique extension ID.
    * @param data Schema of the data node of the extension.
    */
-  ext: <ID extends number, T extends NodeBuilder>(id: ID, data: T) =>
-    new nodes.ext<ID, T>(id, data),
+  ext: <ID extends number, T extends NodeBuilder>(id: ID, data: T) => new nodes.ext<ID, T>(id, data),
 };
 
 /**
