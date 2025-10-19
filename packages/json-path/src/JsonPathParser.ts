@@ -294,10 +294,33 @@ export class JsonPathParser extends Parser {
   }
 
   private parseFunctionName(): string {
+    const {str, length} = this;
     const start = this.pos;
-    if (!this.match(/[a-z]/)) throw new Error('Expected function name');
-    while (this.match(/[a-zA-Z0-9_]/)) this.skip(1);
-    return this.str.slice(start, this.pos);
+    let pos = start;
+    
+    // First character must be lowercase letter
+    if (pos >= length) throw new Error('Expected function name');
+    const firstCode = str.charCodeAt(pos);
+    if (!(firstCode >= 97 && firstCode <= 122)) { // a-z
+      throw new Error('Expected function name');
+    }
+    pos++;
+    
+    // Subsequent characters can be letter, digit, or underscore
+    while (pos < length) {
+      const code = str.charCodeAt(pos);
+      if ((code >= 65 && code <= 90) || // A-Z
+          (code >= 97 && code <= 122) || // a-z
+          (code >= 48 && code <= 57) || // 0-9
+          code === 95) { // _
+        pos++;
+      } else {
+        break;
+      }
+    }
+    
+    this.pos = pos;
+    return str.slice(start, pos);
   }
 
   private parseFunctionExpression(): types.IFunctionExpression {
@@ -505,10 +528,35 @@ export class JsonPathParser extends Parser {
   }
 
   private parseIdentifier(): string {
+    const {str, length} = this;
     const start = this.pos;
-    if (!this.match(/[a-zA-Z_]/)) throw new Error('Expected identifier');
-    while (this.match(/[a-zA-Z0-9_]/)) this.skip(1);
-    return this.str.slice(start, this.pos);
+    let pos = start;
+    
+    // First character must be letter or underscore
+    if (pos >= length) throw new Error('Expected identifier');
+    const firstCode = str.charCodeAt(pos);
+    if (!((firstCode >= 65 && firstCode <= 90) || // A-Z
+          (firstCode >= 97 && firstCode <= 122) || // a-z
+          firstCode === 95)) { // _
+      throw new Error('Expected identifier');
+    }
+    pos++;
+    
+    // Subsequent characters can be letter, digit, or underscore
+    while (pos < length) {
+      const code = str.charCodeAt(pos);
+      if ((code >= 65 && code <= 90) || // A-Z
+          (code >= 97 && code <= 122) || // a-z
+          (code >= 48 && code <= 57) || // 0-9
+          code === 95) { // _
+        pos++;
+      } else {
+        break;
+      }
+    }
+    
+    this.pos = pos;
+    return str.slice(start, pos);
   }
 
   private parseString(): string {
@@ -550,48 +598,77 @@ export class JsonPathParser extends Parser {
   }
 
   private parseNumber(): number {
+    const {str, length} = this;
     const start = this.pos;
+    let pos = start;
 
-    if (this.is('-')) {
-      this.skip(1);
+    // Optional minus sign
+    if (pos < length && str.charCodeAt(pos) === 45) { // '-'
+      pos++;
     }
 
-    if (!this.match(/[0-9]/)) {
+    // Must have at least one digit
+    if (pos >= length || str.charCodeAt(pos) < 48 || str.charCodeAt(pos) > 57) { // 0-9
       throw new Error('Expected number');
     }
 
-    if (this.is('0')) {
-      this.skip(1);
+    // Integer part
+    if (str.charCodeAt(pos) === 48) { // '0'
+      pos++;
     } else {
-      while (this.match(/[0-9]/)) {
-        this.skip(1);
+      while (pos < length) {
+        const code = str.charCodeAt(pos);
+        if (code >= 48 && code <= 57) { // 0-9
+          pos++;
+        } else {
+          break;
+        }
       }
     }
 
-    if (this.is('.')) {
-      this.skip(1);
-      if (!this.match(/[0-9]/)) {
+    // Optional decimal part
+    if (pos < length && str.charCodeAt(pos) === 46) { // '.'
+      pos++;
+      if (pos >= length || str.charCodeAt(pos) < 48 || str.charCodeAt(pos) > 57) {
         throw new Error('Expected digit after decimal point');
       }
-      while (this.match(/[0-9]/)) {
-        this.skip(1);
+      while (pos < length) {
+        const code = str.charCodeAt(pos);
+        if (code >= 48 && code <= 57) { // 0-9
+          pos++;
+        } else {
+          break;
+        }
       }
     }
 
-    if (this.match(/[eE]/)) {
-      this.skip(1);
-      if (this.match(/[+-]/)) {
-        this.skip(1);
-      }
-      if (!this.match(/[0-9]/)) {
-        throw new Error('Expected digit in exponent');
-      }
-      while (this.match(/[0-9]/)) {
-        this.skip(1);
+    // Optional exponent
+    if (pos < length) {
+      const code = str.charCodeAt(pos);
+      if (code === 101 || code === 69) { // 'e' or 'E'
+        pos++;
+        if (pos < length) {
+          const signCode = str.charCodeAt(pos);
+          if (signCode === 43 || signCode === 45) { // '+' or '-'
+            pos++;
+          }
+        }
+        if (pos >= length || str.charCodeAt(pos) < 48 || str.charCodeAt(pos) > 57) {
+          throw new Error('Expected digit in exponent');
+        }
+        while (pos < length) {
+          const code = str.charCodeAt(pos);
+          if (code >= 48 && code <= 57) { // 0-9
+            pos++;
+          } else {
+            break;
+          }
+        }
       }
     }
 
-    const numStr = this.str.slice(start, this.pos);
+    this.pos = pos;
+    const numStr = str.slice(start, pos);
     return Number.parseFloat(numStr);
   }
 }
