@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">65.9% </span>
+                <span class="strong">65.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>29/44</span>
+                <span class='fraction'>32/49</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">42.85% </span>
+                <span class="strong">37.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/28</span>
+                <span class='fraction'>12/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/3</span>
+                <span class='fraction'>2/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.69% </span>
+                <span class="strong">67.56% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>23/33</span>
+                <span class='fraction'>25/37</span>
             </div>
         
             
@@ -117,14 +117,21 @@
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
 <a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">67x</span>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">67x</span>
+<span class="cline-any cline-yes">67x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">67x</span>
-<span class="cline-any cline-yes">16134x</span>
+<span class="cline-any cline-yes">16193x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15237x</span>
+<span class="cline-any cline-yes">15296x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">897x</span>
 <span class="cline-any cline-yes">897x</span>
@@ -162,6 +169,8 @@
 <span class="cline-any cline-yes">67x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -171,7 +180,11 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">67x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {SliceTypeName} from './constants';
+import {toLine} from 'pojo-dump/lib/toLine';
 import type {SliceType, SliceTypeStep} from '../slice/types';
 &nbsp;
 export const validateType = (type: SliceType) =&gt; {
@@ -213,18 +226,23 @@ export const getTag = (type: SliceType): string | number =&gt; {
   return tag;
 };
 &nbsp;
-export const formatType = <span class="fstat-no" title="function not covered" >(s</span>tep: SliceTypeStep): string =&gt; {
+export const formatStep = <span class="fstat-no" title="function not covered" >(s</span>tep: SliceTypeStep): string =&gt; {
   let tag: string | number = <span class="cstat-no" title="statement not covered" >'';</span>
   let discriminant: number = <span class="cstat-no" title="statement not covered" >-1;</span>
+  let data: unknown;
 <span class="cstat-no" title="statement not covered" >  if (Array.isArray(step)) {</span>
 <span class="cstat-no" title="statement not covered" >    tag = step[0];</span>
 <span class="cstat-no" title="statement not covered" >    discriminant = step[1];</span>
+<span class="cstat-no" title="statement not covered" >    data = step[2];</span>
   } else {
 <span class="cstat-no" title="statement not covered" >    tag = step;</span>
   }
 <span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof tag === 'number' &amp;&amp; Math.abs(tag) &lt;= 64 &amp;&amp; SliceTypeName[tag]) <span class="cstat-no" title="statement not covered" >tag = SliceTypeName[tag] ?? tag;</span></span>
-<span class="cstat-no" title="statement not covered" >  return '&lt;' + tag + (discriminant &gt;= 0 ? ':' + discriminant : '') + '&gt;';</span>
+<span class="cstat-no" title="statement not covered" >  return '&lt;' + tag + (discriminant &gt;= 0 ? ':' + discriminant : '') + (data !== void 0 ? ' ' + toLine(data) : '') + '&gt;';</span>
 };
+&nbsp;
+export const formatType = <span class="fstat-no" title="function not covered" >(t</span>ype: SliceType): string =&gt;
+<span class="cstat-no" title="statement not covered" >  Array.isArray(type) ? type.map(formatStep).join('.') : formatStep(type);</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -232,7 +250,7 @@ export const formatType = <span class="fstat-no" title="function not covered" >(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-18T20:44:28.445Z
+                at 2025-10-19T13:11:43.284Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

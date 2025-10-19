@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-joy/src/json-text/stringify.ts</title>
+    <title>Code coverage report for json-joy/src/json-hash/structHashSchema.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">json-joy/src/json-text</a> stringify.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">json-joy/src/json-hash</a> structHashSchema.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.47% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/19</span>
+                <span class='fraction'>29/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/10</span>
+                <span class='fraction'>13/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.75% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/16</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
@@ -91,70 +91,61 @@
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">66x</span>
-<span class="cline-any cline-yes">1802x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">317x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">19567x</span>
+<span class="cline-any cline-yes">7164x</span>
+<span class="cline-any cline-yes">5206x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">12202x</span>
+<span class="cline-any cline-yes">12202x</span>
+<span class="cline-any cline-yes">12202x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">2784x</span>
+<span class="cline-any cline-yes">2422x</span>
+<span class="cline-any cline-yes">1931x</span>
+<span class="cline-any cline-yes">1931x</span>
+<span class="cline-any cline-yes">4425x</span>
+<span class="cline-any cline-yes">1931x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">491x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1460x</span>
-<span class="cline-any cline-yes">328x</span>
-<span class="cline-any cline-yes">1141x</span>
-<span class="cline-any cline-yes">1141x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">559x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">570x</span>
-<span class="cline-any cline-yes">570x</span>
-<span class="cline-any cline-yes">358x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * @todo Rename to `toLine`?
- */
-export const stringify = (value: unknown, spacing: string = ' '): string =&gt; {
-  switch (value) {
-    case null:
-      return '!n';
-    case undefined:
-      return '!u';
-    case true:
-      return '!t';
-    case false:
-      return '!f';
-  }
-  if (Array.isArray(value))
-    return `[${spacing}${value.map((v) =&gt; stringify(v, spacing)).join(',' + spacing)}${spacing}]`;
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (value instanceof Uint8Array) <span class="cstat-no" title="statement not covered" >return `${value}`;</span>
-  switch (typeof value) {
-    case 'number':
-      return `${value}`;
-    case 'string':
-      return JSON.stringify(value);
-    case 'object': {
-      const keys = Object.keys(value as object);
-      return `{${spacing}${keys
-        .map((k) =&gt; `${k}${spacing}=${spacing}${stringify((value as any)[k], spacing)}`)
-        .join(',' + spacing)}${spacing}}`;
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
+import {nodes, type SchemaNode} from '../json-crdt-patch/schema';
+import {hash} from './hash';
+import {structHash} from './structHash';
+&nbsp;
+export const structHashSchema = (node?: SchemaNode | unknown): string =&gt; {
+  if (node instanceof nodes.con || node instanceof nodes.str || node instanceof nodes.bin) return structHash(node.raw);
+  else if (node instanceof nodes.val) return structHashSchema(node.value);
+  else if (node instanceof nodes.obj) {
+    let res = '{';
+    const fields = {...node.obj, ...node.opt};
+    const keys = Object.keys(fields);
+    sort(keys);
+    const length = keys.length;
+    for (let i = 0; i &lt; length; i++) {
+      const key = keys[i];
+      const value = fields[key];
+      res += hash(key).toString(36) + ':' + structHashSchema(value) + ',';
     }
+    return res + '}';
+  } else if (node instanceof nodes.arr || node instanceof nodes.vec) {
+    let res = '[';
+    const children = node instanceof nodes.arr ? node.arr : <span class="branch-1 cbranch-no" title="branch not covered" >node.value;</span>
+    for (const child of children) res += structHashSchema(child) + ';';
+    return res + ']';
   }
-<span class="cstat-no" title="statement not covered" >  return '?';</span>
+  return structHash(node);
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -163,7 +154,7 @@ export const stringify = (value: unknown, spacing: string = ' '): string =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-18T20:44:28.445Z
+                at 2025-10-19T13:11:43.284Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
