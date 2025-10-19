@@ -91,15 +91,13 @@ export class JsonPathCodegen {
     const iVar = codegen.r();
     const inputNodeVar = codegen.r();
     const dataVar = codegen.r();
-    const keyVar = codegen.r();
-    codegen.js(`var ${keyVar} = ${JSON.stringify(selector.name)};`);
-    codegen.js(`for (var ${iVar} = 0; ${iVar} < ${inputVar}.length; ${iVar}++) {`);
-    codegen.js(`var ${inputNodeVar} = ${inputVar}[${iVar}];`);
-    codegen.js(`var ${dataVar} = ${inputNodeVar}.data;`);
-    codegen.js(`if (${dataVar} && typeof ${dataVar} === 'object' && !Array.isArray(${dataVar})) {`);
-    codegen.js(`if (${dataVar}.hasOwnProperty(${keyVar})) {`);
-    codegen.js(`${outputVar}.push(new Value(${inputNodeVar}, ${keyVar}, ${dataVar}[${keyVar}]));`);
-    codegen.js(`}`);
+    const key = JSON.stringify(selector.name);
+    const len = `${inputVar}.length`;
+    codegen.js(`for (var ${iVar} = 0, ${inputNodeVar}, ${dataVar}; ${iVar} < ${len}; ${iVar}++) {`);
+    codegen.js(`${inputNodeVar} = ${inputVar}[${iVar}];`);
+    codegen.js(`${dataVar} = ${inputNodeVar}.data;`);
+    codegen.js(`if (${dataVar} && typeof ${dataVar} === 'object' && !Array.isArray(${dataVar}) && ${dataVar}.hasOwnProperty(${key})) {`);
+    codegen.js(`${outputVar}.push(new Value(${inputNodeVar}, ${key}, ${dataVar}[${key}]));`);
     codegen.js(`}`);
     codegen.js(`}`);
   }
@@ -114,11 +112,12 @@ export class JsonPathCodegen {
     const inputNodeVar = codegen.r();
     const dataVar = codegen.r();
     const indexVar = codegen.r();
-    codegen.js(`for (var ${iVar} = 0; ${iVar} < ${inputVar}.length; ${iVar}++) {`);
-    codegen.js(`var ${inputNodeVar} = ${inputVar}[${iVar}];`);
-    codegen.js(`var ${dataVar} = ${inputNodeVar}.data;`);
+    const len = `${inputVar}.length`;
+    codegen.js(`for (var ${iVar} = 0, ${inputNodeVar}, ${dataVar}, ${indexVar}; ${iVar} < ${len}; ${iVar}++) {`);
+    codegen.js(`${inputNodeVar} = ${inputVar}[${iVar}];`);
+    codegen.js(`${dataVar} = ${inputNodeVar}.data;`);
     codegen.js(`if (Array.isArray(${dataVar})) {`);
-    codegen.js(`var ${indexVar} = ${selector.index};`);
+    codegen.js(`${indexVar} = ${selector.index};`);
     codegen.js(`if (${indexVar} < 0) ${indexVar} = ${dataVar}.length + ${indexVar};`);
     codegen.js(`if (${indexVar} >= 0 && ${indexVar} < ${dataVar}.length) {`);
     codegen.js(`var child = ${dataVar}[${indexVar}];`);
@@ -129,7 +128,7 @@ export class JsonPathCodegen {
     codegen.js(`}`);
     codegen.js(`}`);
   }
-
+  
   protected generateWildcardSelector(
     selector: types.IWildcardSelector,
     inputVar: string,
@@ -141,10 +140,10 @@ export class JsonPathCodegen {
     const dataVar = codegen.r();
     const jVar = codegen.r();
     const keyVar = codegen.r();
-
-    codegen.js(`for (var ${iVar} = 0; ${iVar} < ${inputVar}.length; ${iVar}++) {`);
-    codegen.js(`var ${inputNodeVar} = ${inputVar}[${iVar}];`);
-    codegen.js(`var ${dataVar} = ${inputNodeVar}.data;`);
+    const len = `${inputVar}.length`;
+    codegen.js(`for (var ${iVar} = 0, ${inputNodeVar}, ${dataVar}; ${iVar} < ${len}; ${iVar}++) {`);
+    codegen.js(`${inputNodeVar} = ${inputVar}[${iVar}];`);
+    codegen.js(`${dataVar} = ${inputNodeVar}.data;`);
     codegen.js(`if (Array.isArray(${dataVar})) {`);
     codegen.js(`for (var ${jVar} = 0; ${jVar} < ${dataVar}.length; ${jVar}++) {`);
     codegen.js(`${outputVar}.push(new Value(${inputNodeVar}, ${jVar}, ${dataVar}[${jVar}]));`);
@@ -166,12 +165,7 @@ export class JsonPathCodegen {
   ): void {
     const codegen = this.codegen;
     const step = selector.step !== undefined ? selector.step : 1;
-
-    // Handle step = 0 case
-    if (step === 0) {
-      return;
-    }
-
+    if (step === 0) return;
     const iVar = codegen.r();
     const inputNodeVar = codegen.r();
     const dataVar = codegen.r();
@@ -183,10 +177,10 @@ export class JsonPathCodegen {
     const lowerVar = codegen.r();
     const upperVar = codegen.r();
     const idxVar = codegen.r();
-
-    codegen.js(`for (var ${iVar} = 0; ${iVar} < ${inputVar}.length; ${iVar}++) {`);
-    codegen.js(`var ${inputNodeVar} = ${inputVar}[${iVar}];`);
-    codegen.js(`var ${dataVar} = ${inputNodeVar}.data;`);
+    const len = `${inputVar}.length`;
+    codegen.js(`for (var ${iVar} = 0, ${inputNodeVar}, ${dataVar}; ${iVar} < ${len}; ${iVar}++) {`);
+    codegen.js(`${inputNodeVar} = ${inputVar}[${iVar}];`);
+    codegen.js(`${dataVar} = ${inputNodeVar}.data;`);
     codegen.js(`if (Array.isArray(${dataVar})) {`);
     codegen.js(`var ${lenVar} = ${dataVar}.length;`);
 
@@ -245,10 +239,11 @@ export class JsonPathCodegen {
     const keyVar = this.codegen.r();
     const memberValueVar = this.codegen.r();
     const memberValueNodeVar = this.codegen.r();
+    const len = `${inputVar}.length`;
 
-    codegen.js(`for (var ${iVar} = 0; ${iVar} < ${inputVar}.length; ${iVar}++) {`);
-    codegen.js(`var ${inputNodeVar} = ${inputVar}[${iVar}];`);
-    codegen.js(`var ${dataVar} = ${inputNodeVar}.data;`);
+    codegen.js(`for (var ${iVar} = 0, ${inputNodeVar}, ${dataVar}; ${iVar} < ${len}; ${iVar}++) {`);
+    codegen.js(`${inputNodeVar} = ${inputVar}[${iVar}];`);
+    codegen.js(`${dataVar} = ${inputNodeVar}.data;`);
 
     // Special case: root-level filter on single object
     codegen.js(`if (${inputNodeVar}.step === "$" && ${dataVar} && typeof ${dataVar} === "object" && !Array.isArray(${dataVar})) {`);
@@ -312,40 +307,43 @@ export class JsonPathCodegen {
     const rightVar = this.generateValueExpression(expression.right, currentNodeVar);
     const codegen = this.codegen;
     const resultVar = codegen.r();
+    const leftTempVar = codegen.r();
+    const rightTempVar = codegen.r();
 
-    codegen.js(`var ${resultVar} = (function() {`);
-    codegen.js(`var left = ${leftVar};`);
-    codegen.js(`var right = ${rightVar};`);
+    codegen.js(`var ${leftTempVar} = ${leftVar};`);
+    codegen.js(`var ${rightTempVar} = ${rightVar};`);
 
     // Handle undefined/Nothing cases
-    codegen.js(`if (left === undefined || right === undefined) {`);
-    codegen.js(`if (${JSON.stringify(expression.operator)} === "==" && left === undefined && right === undefined) return true;`);
-    codegen.js(`return false;`);
-    codegen.js(`}`);
+    codegen.js(`if (${leftTempVar} === undefined || ${rightTempVar} === undefined) {`);
+    if (expression.operator === '==') {
+      codegen.js(`var ${resultVar} = ${leftTempVar} === undefined && ${rightTempVar} === undefined;`);
+    } else {
+      codegen.js(`var ${resultVar} = false;`);
+    }
+    codegen.js(`} else {`);
 
     // Generate comparison based on operator
-    switch (expression.operator) {
-      case '==':
-        codegen.js(`return ${this.generateCompareEqual('left', 'right')};`);
-        break;
-      case '!=':
-        codegen.js(`return !(${this.generateCompareEqual('left', 'right')});`);
-        break;
-      case '<':
-        codegen.js(`return ${this.generateCompareLess('left', 'right')};`);
-        break;
-      case '<=':
-        codegen.js(`return ${this.generateCompareLess('left', 'right')} || ${this.generateCompareEqual('left', 'right')};`);
-        break;
-      case '>':
-        codegen.js(`return ${this.generateCompareLess('right', 'left')};`);
-        break;
-      case '>=':
-        codegen.js(`return ${this.generateCompareLess('right', 'left')} || ${this.generateCompareEqual('left', 'right')};`);
-        break;
-    }
+    const compareExpr = (() => {
+      switch (expression.operator) {
+        case '==':
+          return this.generateCompareEqual(leftTempVar, rightTempVar);
+        case '!=':
+          return `!(${this.generateCompareEqual(leftTempVar, rightTempVar)})`;
+        case '<':
+          return this.generateCompareLess(leftTempVar, rightTempVar);
+        case '<=':
+          return `${this.generateCompareLess(leftTempVar, rightTempVar)} || ${this.generateCompareEqual(leftTempVar, rightTempVar)}`;
+        case '>':
+          return this.generateCompareLess(rightTempVar, leftTempVar);
+        case '>=':
+          return `${this.generateCompareLess(rightTempVar, leftTempVar)} || ${this.generateCompareEqual(leftTempVar, rightTempVar)}`;
+        default:
+          return 'false';
+      }
+    })();
 
-    codegen.js(`})();`);
+    codegen.js(`var ${resultVar} = ${compareExpr};`);
+    codegen.js(`}`);
 
     return resultVar;
   }
@@ -441,73 +439,85 @@ export class JsonPathCodegen {
     // Link the function implementations
     switch (expression.name) {
       case 'length':
-        codegen.js(`var ${resultVar} = (function() {`);
         if (expression.args.length !== 1) {
-          codegen.js(`return undefined;`);
+          codegen.js(`var ${resultVar} = undefined;`);
         } else {
           const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar);
-          codegen.js(`var value = ${argVar};`);
-          codegen.js(`if (Array.isArray(value)) value = value.length === 1 ? value[0] : undefined;`);
-          codegen.js(`if (typeof value === "string") return [...value].length;`);
-          codegen.js(`if (Array.isArray(value)) return value.length;`);
-          codegen.js(`if (value && typeof value === "object" && value !== null) return Object.keys(value).length;`);
-          codegen.js(`return undefined;`);
+          const valueVar = codegen.r();
+          codegen.js(`var ${valueVar} = ${argVar};`);
+          codegen.js(`if (Array.isArray(${valueVar})) ${valueVar} = ${valueVar}.length === 1 ? ${valueVar}[0] : undefined;`);
+          codegen.js(`if (typeof ${valueVar} === "string") {`);
+          codegen.js(`var ${resultVar} = [...${valueVar}].length;`);
+          codegen.js(`} else if (Array.isArray(${valueVar})) {`);
+          codegen.js(`var ${resultVar} = ${valueVar}.length;`);
+          codegen.js(`} else if (${valueVar} && typeof ${valueVar} === "object" && ${valueVar} !== null) {`);
+          codegen.js(`var ${resultVar} = Object.keys(${valueVar}).length;`);
+          codegen.js(`} else {`);
+          codegen.js(`var ${resultVar} = undefined;`);
+          codegen.js(`}`);
         }
-        codegen.js(`})();`);
         break;
 
       case 'count':
-        codegen.js(`var ${resultVar} = (function() {`);
         if (expression.args.length !== 1) {
-          codegen.js(`return 0;`);
+          codegen.js(`var ${resultVar} = 0;`);
         } else {
           const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar);
-          codegen.js(`var result = ${argVar};`);
-          codegen.js(`if (Array.isArray(result)) return result.length;`);
-          codegen.js(`if (result === undefined) return 0;`);
-          codegen.js(`return 1;`);
+          const resVar = codegen.r();
+          codegen.js(`var ${resVar} = ${argVar};`);
+          codegen.js(`if (Array.isArray(${resVar})) {`);
+          codegen.js(`var ${resultVar} = ${resVar}.length;`);
+          codegen.js(`} else if (${resVar} === undefined) {`);
+          codegen.js(`var ${resultVar} = 0;`);
+          codegen.js(`} else {`);
+          codegen.js(`var ${resultVar} = 1;`);
+          codegen.js(`}`);
         }
-        codegen.js(`})();`);
         break;
 
       case 'match':
       case 'search':
-        codegen.js(`var ${resultVar} = (function() {`);
         if (expression.args.length !== 2) {
-          codegen.js(`return false;`);
+          codegen.js(`var ${resultVar} = false;`);
         } else {
           const arg1Var = this.generateFunctionArg(expression.args[0], currentNodeVar);
           const arg2Var = this.generateFunctionArg(expression.args[1], currentNodeVar);
-          codegen.js(`var str = ${arg1Var};`);
-          codegen.js(`var regex = ${arg2Var};`);
-          codegen.js(`if (Array.isArray(str)) str = str.length === 1 ? str[0] : undefined;`);
-          codegen.js(`if (Array.isArray(regex)) regex = regex.length === 1 ? regex[0] : undefined;`);
-          codegen.js(`if (typeof str !== "string" || typeof regex !== "string") return false;`);
+          const strVar = codegen.r();
+          const regexVar = codegen.r();
+          codegen.js(`var ${strVar} = ${arg1Var};`);
+          codegen.js(`var ${regexVar} = ${arg2Var};`);
+          codegen.js(`if (Array.isArray(${strVar})) ${strVar} = ${strVar}.length === 1 ? ${strVar}[0] : undefined;`);
+          codegen.js(`if (Array.isArray(${regexVar})) ${regexVar} = ${regexVar}.length === 1 ? ${regexVar}[0] : undefined;`);
+          codegen.js(`if (typeof ${strVar} !== "string" || typeof ${regexVar} !== "string") {`);
+          codegen.js(`var ${resultVar} = false;`);
+          codegen.js(`} else {`);
           codegen.js(`try {`);
           if (expression.name === 'match') {
-            codegen.js(`var regExp = new RegExp("^" + regex + "$");`);
+            codegen.js(`var regExp = new RegExp("^" + ${regexVar} + "$");`);
           } else {
-            codegen.js(`var regExp = new RegExp(regex);`);
+            codegen.js(`var regExp = new RegExp(${regexVar});`);
           }
-          codegen.js(`return regExp.test(str);`);
+          codegen.js(`var ${resultVar} = regExp.test(${strVar});`);
           codegen.js(`} catch (e) {`);
-          codegen.js(`return false;`);
+          codegen.js(`var ${resultVar} = false;`);
+          codegen.js(`}`);
           codegen.js(`}`);
         }
-        codegen.js(`})();`);
         break;
 
       case 'value':
-        codegen.js(`var ${resultVar} = (function() {`);
         if (expression.args.length !== 1) {
-          codegen.js(`return undefined;`);
+          codegen.js(`var ${resultVar} = undefined;`);
         } else {
           const argVar = this.generateFunctionArg(expression.args[0], currentNodeVar);
-          codegen.js(`var result = ${argVar};`);
-          codegen.js(`if (Array.isArray(result)) return result.length === 1 ? result[0] : undefined;`);
-          codegen.js(`return result;`);
+          const resVar = codegen.r();
+          codegen.js(`var ${resVar} = ${argVar};`);
+          codegen.js(`if (Array.isArray(${resVar})) {`);
+          codegen.js(`var ${resultVar} = ${resVar}.length === 1 ? ${resVar}[0] : undefined;`);
+          codegen.js(`} else {`);
+          codegen.js(`var ${resultVar} = ${resVar};`);
+          codegen.js(`}`);
         }
-        codegen.js(`})();`);
         break;
 
       default:
@@ -517,14 +527,16 @@ export class JsonPathCodegen {
 
     // Convert to logical if needed
     if (asLogical) {
-      const logicalVar = this.codegen.r();
-      codegen.js(`var ${logicalVar} = (function() {`);
-      codegen.js(`var result = ${resultVar};`);
-      codegen.js(`if (typeof result === "boolean") return result;`);
-      codegen.js(`if (typeof result === "number") return result !== 0;`);
-      codegen.js(`if (Array.isArray(result)) return result.length > 0;`);
-      codegen.js(`return result != null;`);
-      codegen.js(`})();`);
+      const logicalVar = codegen.r();
+      codegen.js(`if (typeof ${resultVar} === "boolean") {`);
+      codegen.js(`var ${logicalVar} = ${resultVar};`);
+      codegen.js(`} else if (typeof ${resultVar} === "number") {`);
+      codegen.js(`var ${logicalVar} = ${resultVar} !== 0;`);
+      codegen.js(`} else if (Array.isArray(${resultVar})) {`);
+      codegen.js(`var ${logicalVar} = ${resultVar}.length > 0;`);
+      codegen.js(`} else {`);
+      codegen.js(`var ${logicalVar} = ${resultVar} != null;`);
+      codegen.js(`}`);
       return logicalVar;
     }
 
@@ -588,10 +600,11 @@ export class JsonPathCodegen {
     const iVar = codegen.r();
     const inputNodeVar = codegen.r();
     const descendantsVar = codegen.r();
+    const len = `${inputVar}.length`;
 
-    codegen.js(`for (var ${iVar} = 0; ${iVar} < ${inputVar}.length; ${iVar}++) {`);
-    codegen.js(`var ${inputNodeVar} = ${inputVar}[${iVar}];`);
-    codegen.js(`var ${descendantsVar} = [];`);
+    codegen.js(`for (var ${iVar} = 0, ${inputNodeVar}, ${descendantsVar}; ${iVar} < ${len}; ${iVar}++) {`);
+    codegen.js(`${inputNodeVar} = ${inputVar}[${iVar}];`);
+    codegen.js(`${descendantsVar} = [];`);
     
     // Collect descendants
     this.generateCollectDescendants(inputNodeVar, descendantsVar);
