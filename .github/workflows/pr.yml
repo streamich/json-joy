@@ -9,21 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  install-and-build-24:
-    name: Prepare yarn cache
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.x
-          cache: yarn
-      - name: Install dependencies
-        run: yarn install --immutable
-      - run: yarn build
   unit-tests:
-    needs: install-and-build-24
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -41,7 +27,6 @@ jobs:
       - run: yarn build
       - run: yarn test
   lint-and-typecheck:
-    needs: install-and-build-24
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
