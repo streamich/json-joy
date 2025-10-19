@@ -6,7 +6,12 @@ import type * as types from './types';
 export type JsonPathCompiledFn = (data: unknown) => Value[];
 
 export class JsonPathCodegen {
-  public static run = (path: string | types.IJSONPath, data: unknown): Value[] => {
+  public static run(path: string | types.IJSONPath, data: unknown): Value[] {
+    const fn = JsonPathCodegen.compile(path);
+    return fn(data);
+  }
+
+  public static compile(path: string | types.IJSONPath): JsonPathCompiledFn {
     let ast: types.IJSONPath;
     if (typeof path === 'string') {
       const parsed = JsonPathParser.parse(path);
@@ -15,9 +20,8 @@ export class JsonPathCodegen {
       ast = parsed.path;
     } else ast = path;
     const codegen = new JsonPathCodegen(ast);
-    const fn = codegen.compile();
-    return fn(data);
-  };
+    return codegen.compile();
+  }
 
   protected readonly codegen: Codegen<JsonPathCompiledFn>;
 
