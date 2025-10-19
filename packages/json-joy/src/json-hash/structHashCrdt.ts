@@ -30,7 +30,7 @@ export const structHashCrdt = (node?: JsonNode): string => {
   } else if (node instanceof ArrNode || node instanceof VecNode) {
     let res = '[';
     node.children((child) => {
-      res += structHashCrdt(child) + ',';
+      res += structHashCrdt(child) + ';';
     });
     return res + ']';
   } else if (node instanceof BinNode) return hash(node.view()).toString(36);
