@@ -1,5 +1,5 @@
 import {JsonPathEval} from '../JsonPathEval';
-import {arrayData, bookstore, complexData, data0, testData} from './fixtures';
+import {arrayData, bookstore, complexData, data0, jsonpathDotComExample, testData} from './fixtures';
 
 describe('JsonPathEval', () => {
   describe('named selector', () => {
@@ -253,6 +253,37 @@ describe('JsonPathEval', () => {
       const result = JsonPathEval.run(expr, deep);
       expect(result.length).toBe(1);
       expect(result[0].data).toBe('deep');
+    });
+  });
+
+  describe('real-world examples', () => {
+    describe('jsonpath.com front page examples', () => {
+      test('phone number type', () => {
+        const expr = '$.phoneNumbers[:1].type';
+        const result = JsonPathEval.run(expr, jsonpathDotComExample);
+        expect(result.length).toBe(1);
+        expect(result[0].data).toBe('iPhone');
+        expect(result[0].pointer()).toBe("$['phoneNumbers'][0]['type']");
+      });
+    });
+
+    describe('hevodata.com', () => {
+      test('example from docs', () => {
+        const expr = '$.event.data.name';
+        const data = {
+          "event": {
+            "agency": "MI6",
+            "data": {
+              "name": "James Bond",
+              "id": "007"
+            }
+          }
+        };
+        const result = JsonPathEval.run(expr, data);
+        expect(result.length).toBe(1);
+        expect(result[0].data).toBe('James Bond');
+        expect(result[0].pointer()).toBe("$['event']['data']['name']");
+      });
     });
   });
 
