@@ -28,13 +28,13 @@ if echo "$COMMITS" | grep -q "^BREAKING CHANGE:"; then
 fi
 
 # Check for feat:, perf:, or release: commits
-if echo "$COMMITS" | grep -q "^feat:\|^perf:\|^release:"; then
+if echo "$COMMITS" | grep -q "^feat:\|^feat(\|^perf:\|^perf(\|^release:|^release("; then
     echo "minor"
     exit 0
 fi
 
 # Check for fix: or refactor: commits
-if echo "$COMMITS" | grep -q "^fix:\|^refactor:"; then
+if echo "$COMMITS" | grep -q "^fix:\|^fix(\|^refactor:\|^refactor("; then
     echo "patch"
     exit 0
 fi
