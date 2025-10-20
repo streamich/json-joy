@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.60.0",
+  "version": "17.61.0",
   "description": "High-performance JSON serialization library",
   "author": {
     "name": "streamich",
