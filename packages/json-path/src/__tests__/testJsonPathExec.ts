@@ -3,6 +3,29 @@ import type {JsonPathEval} from '../JsonPathEval';
 
 export const testJsonPathExec = (run: typeof JsonPathEval.run) => {
   describe('JSONPath specification', () => {
+    describe('root selector', () => {
+      test('select root from object', () => {
+        const expr = '$';
+        const data = {foo: 'bar'};
+        const result = run(expr, data);
+        expect(result.length).toBe(1);
+        expect(result[0].data).toEqual(data);
+        expect(result[0].pointer()).toBe('$');
+      });
+
+      test('mis-formatted root "$."', () => {
+        const expr = '$.';
+        const data = {foo: 'bar'};
+        expect(() => run(expr, data)).toThrow();
+      });
+
+      test('mis-formatted root ""', () => {
+        const expr = '';
+        const data = {foo: 'bar'};
+        expect(() => run(expr, data)).toThrow();
+      });
+    });
+
     describe('named selector', () => {
       test('basic object selection', () => {
         const expr = '$.store.book[0].title';
