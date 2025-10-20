@@ -26,6 +26,33 @@ export const testJsonPathExec = (run: typeof JsonPathEval.run) => {
       });
     });
 
+    describe('recursive descent from root', () => {
+      test('$.. should be invalid (RFC 9535 Section 2.5.2.1)', () => {
+        const expr = '$..';
+        const data = {foo: 'bar'};
+        expect(() => run(expr, data)).toThrow();
+      });
+
+      test('$..*', () => {
+        const expr = '$..*';
+        const data = {
+          type: 'Program',
+          body: [],
+          sourceType: 'module',
+          range: [0, 1718],
+        };
+        const result = run(expr, data);
+        // $..*selects all descendants: all member values and array elements
+        // RFC 9535: "all member values and array elements contained in the input value"
+        expect(result.length).toBe(6);
+        const dataList = result.map((r) => r.data);
+        // Should contain all primitive and structured values in descendants
+        expect(dataList).toContain('Program'); // value of "type"
+        expect(dataList).toContain('module'); // value of "sourceType"
+        expect(dataList).toEqual(expect.arrayContaining(['Program', [], 'module', [0, 1718], 0, 1718]));
+      });
+    });
+
     describe('named selector', () => {
       test('basic object selection', () => {
         const expr = '$.store.book[0].title';

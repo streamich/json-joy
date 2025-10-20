@@ -63,7 +63,7 @@ export class JsonPathParser extends Parser {
     const recursive = this.is('..') as boolean;
     if (recursive) {
       this.skip(2); // Skip ..
-      // After .., we should have a selector without requiring . or [
+      // After .., we must have a selector (RFC 9535 Section 2.5.2.1: "On its own, .. is not a valid segment")
       if (this.eof()) {
         throw new Error('Expected selector after ..');
       }
