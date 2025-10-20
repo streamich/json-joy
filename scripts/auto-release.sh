@@ -83,6 +83,7 @@ git add .
 git commit -m "chore: release v${NEW_VERSION}"
 git tag "v${NEW_VERSION}"
 git push origin --tags
+git push -u origin master
 
 echo -e "${GREEN}✓ Git tag created and pushed${NC}\n"
 

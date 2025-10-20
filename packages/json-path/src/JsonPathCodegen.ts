@@ -40,9 +40,11 @@ export class JsonPathCodegen {
     codegen.js('var input = [new Value(null, "$", data)];');
     codegen.js('var output = [];');
     const segments = this.path.segments;
-    for (let i = 0; i < segments.length; i++) {
+    const length = segments.length;
+    if (!length) codegen.js('output = input;');
+    for (let i = 0; i < length; i++) {
       this.generateSegment(segments[i], 'input', 'output');
-      if (i < segments.length - 1) {
+      if (i < length - 1) {
         codegen.js('input = output;');
         codegen.js('output = [];');
       }

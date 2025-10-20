@@ -45,6 +45,7 @@ export class JsonPathEval {
     let output: Value[] = [];
     const segments = this.path.segments;
     const length = segments.length;
+    if (length === 0) return input;
     for (let i = 0; i < length; i++) {
       output = this.evalSegment(input, segments[i]);
       input = output;
