@@ -2,5 +2,5 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
   },
-  "include": ["src", "../json-path/src"]
+  "include": ["src"]
 }
