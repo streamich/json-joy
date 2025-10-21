@@ -2,6 +2,7 @@ import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import * as str from '../util/diff/str';
 import * as line from '../util/diff/line';
 import {structHash} from '../json-hash';
+import {escapeComponent} from '@jsonjoy.com/json-pointer/lib/util';
 import type {Operation} from '../json-patch/codec/json/types';
 
 export class JsonPatchDiff {
@@ -34,14 +35,14 @@ export class JsonPatchDiff {
         const val1 = src[key];
         const val2 = dst[key];
         if (val1 === val2) continue;
-        this.diffAny(path + '/' + key, val1, val2);
+        this.diffAny(path + '/' + escapeComponent(key), val1, val2);
       } else {
-        patch.push({op: 'remove', path: path + '/' + key});
+        patch.push({op: 'remove', path: path + '/' + escapeComponent(key)});
       }
     }
     for (const key in dst) {
       if (key in src) continue;
-      patch.push({op: 'add', path: path + '/' + key, value: dst[key]});
+      patch.push({op: 'add', path: path + '/' + escapeComponent(key), value: dst[key]});
     }
   }
 
