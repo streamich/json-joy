@@ -79,6 +79,16 @@ export class JsonPatchDiff {
   }
 
   public diffAny(path: string, src: unknown, dst: unknown): void {
+    // Check for type changes first
+    const srcType = Array.isArray(src) ? 'array' : typeof src;
+    const dstType = Array.isArray(dst) ? 'array' : typeof dst;
+
+    if (srcType !== dstType) {
+      // Different types, replace entirely
+      this.diffVal(path, src, dst);
+      return;
+    }
+
     switch (typeof src) {
       case 'string': {
         if (typeof dst === 'string') this.diffStr(path, src, dst);
