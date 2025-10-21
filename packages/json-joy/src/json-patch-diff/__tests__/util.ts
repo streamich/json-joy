@@ -1,6 +1,6 @@
 import {JsonPatchDiff} from '../JsonPatchDiff';
 import {applyPatch} from '../../json-patch';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 
 export const assertDiff = (src: unknown, dst: unknown) => {
   const srcNested = {src};

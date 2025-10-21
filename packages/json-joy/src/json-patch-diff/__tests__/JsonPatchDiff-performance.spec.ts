@@ -1,5 +1,5 @@
 import {assertDiff, randomMixedArray, randomObject, randomNestedStructure, createSimilarDocument} from './util';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import {JsonPatchDiff} from '../JsonPatchDiff';
 
 describe('Performance and Stress Tests', () => {
