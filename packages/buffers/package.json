@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.61.0",
+  "version": "17.61.1",
   "description": "Various helper utilities for working with buffers and binary data",
   "author": {
     "name": "streamich",
