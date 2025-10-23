@@ -404,6 +404,22 @@ describe('Unicode edge cases', () => {
     assertPatch(nfd, nfc);
     assertPatch(`hello ${nfc}`, `hello ${nfd}`);
   });
+
+  test('handles complex emoji with ZWJ sequences', () => {
+    // Test the specific case mentioned in the issue: chef emoji with ZWJ
+    const chefEmoji = '👨‍🍳'; // chef emoji (man + ZWJ + cooking)
+    const src = chefEmoji;
+    const dst = 'chef' + chefEmoji;
+
+    const patch = diff(src, dst);
+    assertPatch(src, dst, patch);
+
+    // Verify the patch structure
+    expect(patch).toEqual([
+      [PATCH_OP_TYPE.INS, 'chef'],
+      [PATCH_OP_TYPE.EQL, chefEmoji],
+    ]);
+  });
 });
 
 describe('Algorithm edge cases', () => {
