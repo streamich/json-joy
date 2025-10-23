@@ -389,22 +389,46 @@ const diffNoCommonAffix = (src: string, dst: string): Patch => {
  * @return The number of characters common to the start of each string.
  */
 export const pfx = (txt1: string, txt2: string) => {
-  if (!txt1 || !txt2 || txt1.charAt(0) !== txt2.charAt(0)) return 0;
+  if (!txt1 || !txt2) return 0;
+
+  const segmenter = new Intl.Segmenter('en', {granularity: 'grapheme'});
+  const segments1 = Array.from(segmenter.segment(txt1));
+  const segments2 = Array.from(segmenter.segment(txt2));
+
+  if (segments1.length === 0 || segments2.length === 0 || segments1[0].segment !== segments2[0].segment) {
+    return 0;
+  }
+
   let min = 0;
-  let max = Math.min(txt1.length, txt2.length);
+  let max = Math.min(segments1.length, segments2.length);
   let mid = max;
   let start = 0;
+
   while (min < mid) {
-    if (txt1.slice(start, mid) === txt2.slice(start, mid)) {
+    const slice1 = segments1
+      .slice(start, mid)
+      .map((s) => s.segment)
+      .join('');
+    const slice2 = segments2
+      .slice(start, mid)
+      .map((s) => s.segment)
+      .join('');
+    if (slice1 === slice2) {
       min = mid;
       start = min;
-    } else max = mid;
+    } else {
+      max = mid;
+    }
     mid = Math.floor((max - min) / 2 + min);
   }
-  const code = txt1.charCodeAt(mid - 1);
-  const isSurrogatePairStart = code >= 0xd800 && code <= 0xdbff;
-  if (isSurrogatePairStart) mid--;
-  return mid;
+
+  // Convert grapheme count back to character count
+  let charCount = 0;
+  for (let i = 0; i < min; i++) {
+    charCount += segments1[i].segment.length;
+  }
+
+  return charCount;
 };
 
 /**
@@ -415,22 +439,50 @@ export const pfx = (txt1: string, txt2: string) => {
  * @return The number of characters common to the end of each string.
  */
 export const sfx = (txt1: string, txt2: string): number => {
-  if (!txt1 || !txt2 || txt1.slice(-1) !== txt2.slice(-1)) return 0;
+  if (!txt1 || !txt2) return 0;
+
+  const segmenter = new Intl.Segmenter('en', {granularity: 'grapheme'});
+  const segments1 = Array.from(segmenter.segment(txt1));
+  const segments2 = Array.from(segmenter.segment(txt2));
+
+  if (
+    segments1.length === 0 ||
+    segments2.length === 0 ||
+    segments1[segments1.length - 1].segment !== segments2[segments2.length - 1].segment
+  ) {
+    return 0;
+  }
+
   let min = 0;
-  let max = Math.min(txt1.length, txt2.length);
+  let max = Math.min(segments1.length, segments2.length);
   let mid = max;
   let end = 0;
+
   while (min < mid) {
-    if (txt1.slice(txt1.length - mid, txt1.length - end) === txt2.slice(txt2.length - mid, txt2.length - end)) {
+    const slice1 = segments1
+      .slice(segments1.length - mid, segments1.length - end)
+      .map((s) => s.segment)
+      .join('');
+    const slice2 = segments2
+      .slice(segments2.length - mid, segments2.length - end)
+      .map((s) => s.segment)
+      .join('');
+    if (slice1 === slice2) {
       min = mid;
       end = min;
-    } else max = mid;
+    } else {
+      max = mid;
+    }
     mid = Math.floor((max - min) / 2 + min);
   }
-  const code = txt1.charCodeAt(txt1.length - mid);
-  const isSurrogatePairEnd = code >= 0xd800 && code <= 0xdbff;
-  if (isSurrogatePairEnd) mid--;
-  return mid;
+
+  // Convert grapheme count back to character count
+  let charCount = 0;
+  for (let i = segments1.length - min; i < segments1.length; i++) {
+    charCount += segments1[i].segment.length;
+  }
+
+  return charCount;
 };
 
 /**
