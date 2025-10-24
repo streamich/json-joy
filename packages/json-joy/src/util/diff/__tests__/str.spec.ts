@@ -1,5 +1,36 @@
-import {PATCH_OP_TYPE, type Patch, diff, diffEdit, overlap, normalize, apply, src, dst, invert} from '../str';
+import {PATCH_OP_TYPE, type Patch, diff, diffEdit, overlap, normalize, apply, src, dst, invert, pfx, sfx} from '../str';
 import {assertPatch} from './util';
+
+describe('pfx()', () => {
+  test('finds common prefixes', () => {
+    expect(pfx('abc', 'b')).toEqual(0);
+    expect(pfx('abc', 'a')).toEqual(1);
+    expect(pfx('abc', 'ab')).toEqual(2);
+    expect(pfx('abc', 'abc')).toEqual(3);
+    expect(pfx('abc', 'abcd')).toEqual(3);
+    expect(pfx('abc', 'abcde')).toEqual(3);
+    expect(pfx('👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect(pfx('👨‍🍳', '👨‍🍳chef')).toEqual(5);
+    expect(pfx('👨‍🍳chef', '👨‍🍳')).toEqual(5);
+    expect(pfx('👨‍🍳👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect('👨‍🍳chef'.slice(0, 5)).toBe('👨‍🍳');
+  });
+});
+
+describe('sfx()', () => {
+  test('finds common suffixes', () => {
+    expect(sfx('abc', 'b')).toEqual(0);
+    expect(sfx('abc', 'c')).toEqual(1);
+    expect(sfx('abc', 'bc')).toEqual(2);
+    expect(sfx('abc', 'abc')).toEqual(3);
+    expect(sfx('abc', '_abc')).toEqual(3);
+    expect(sfx('abc', 'abcd')).toEqual(0);
+    expect(sfx('👨‍🍳', '👨‍🍳')).toEqual(5);
+    // expect(sfx('👨‍🍳', '👨‍🍳chef')).toEqual(5);
+    // expect(sfx('👨‍🍳chef', '👨‍🍳')).toEqual(5);
+    // expect(sfx('👨‍🍳👨‍🍳', '👨‍🍳')).toEqual(5);
+  });
+});
 
 describe('normalize()', () => {
   test('joins consecutive same type operations', () => {

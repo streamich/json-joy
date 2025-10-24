@@ -388,7 +388,7 @@ const diffNoCommonAffix = (src: string, dst: string): Patch => {
  * @param txt2 Second string.
  * @return The number of characters common to the start of each string.
  */
-export const pfx = (txt1: string, txt2: string) => {
+export const pfx = (txt1: string, txt2: string): number => {
   if (!txt1 || !txt2 || txt1.charAt(0) !== txt2.charAt(0)) return 0;
   let min = 0;
   let max = Math.min(txt1.length, txt2.length);
