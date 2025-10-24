@@ -26,9 +26,11 @@ describe('sfx()', () => {
     expect(sfx('abc', '_abc')).toEqual(3);
     expect(sfx('abc', 'abcd')).toEqual(0);
     expect(sfx('👨‍🍳', '👨‍🍳')).toEqual(5);
-    // expect(sfx('👨‍🍳', '👨‍🍳chef')).toEqual(5);
-    // expect(sfx('👨‍🍳chef', '👨‍🍳')).toEqual(5);
-    // expect(sfx('👨‍🍳👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect(sfx('👨‍🍳', '👨‍🍳chef')).toEqual(0);
+    expect(sfx('👨‍🍳chef', '👨‍🍳')).toEqual(0);
+    expect(sfx('👨‍🍳', 'chef👨‍🍳')).toEqual(5);
+    expect(sfx('chef👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect(sfx('👨‍🍳👨‍🍳', '👨‍🍳')).toEqual(5);
   });
 });
 
@@ -434,6 +436,18 @@ describe('Unicode edge cases', () => {
     assertPatch(nfc, nfd);
     assertPatch(nfd, nfc);
     assertPatch(`hello ${nfc}`, `hello ${nfd}`);
+  });
+
+   test('handles complex emoji with ZWJ sequences', () => {
+    const chefEmoji = '👨‍🍳'; // chef emoji (man + ZWJ + cooking)
+    const src = chefEmoji;
+    const dst = 'chef' + chefEmoji;
+    const patch = normalize(diff(src, dst));
+    assertPatch(src, dst, patch);
+    expect(patch).toEqual([
+      [PATCH_OP_TYPE.INS, 'chef'],
+      [PATCH_OP_TYPE.EQL, chefEmoji],
+    ]);
   });
 });
 
