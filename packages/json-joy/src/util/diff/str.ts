@@ -388,7 +388,7 @@ const diffNoCommonAffix = (src: string, dst: string): Patch => {
  * @param txt2 Second string.
  * @return The number of characters common to the start of each string.
  */
-export const pfx = (txt1: string, txt2: string) => {
+export const pfx = (txt1: string, txt2: string): number => {
   if (!txt1 || !txt2 || txt1.charAt(0) !== txt2.charAt(0)) return 0;
   let min = 0;
   let max = Math.min(txt1.length, txt2.length);
@@ -427,9 +427,35 @@ export const sfx = (txt1: string, txt2: string): number => {
     } else max = mid;
     mid = Math.floor((max - min) / 2 + min);
   }
-  const code = txt1.charCodeAt(txt1.length - mid);
-  const isSurrogatePairEnd = code >= 0xd800 && code <= 0xdbff;
-  if (isSurrogatePairEnd) mid--;
+  // Check if we're splitting a surrogate pair or combining character sequence
+  // We need to check the character BEFORE the matched suffix to see if we're
+  // splitting a grapheme cluster.
+  if (mid > 0 && mid < txt1.length) {
+    const boundaryPos = txt1.length - mid - 1;
+    const code = txt1.charCodeAt(boundaryPos);
+    const isHighSurrogate = code >= 0xd800 && code <= 0xdbff;
+    const isCombining =
+      code === 0x200d || // ZWJ
+      (code >= 0xfe00 && code <= 0xfe0f) || // Variation selectors
+      (code >= 0x0300 && code <= 0x036f); // Combining diacritical marks
+
+    if (isHighSurrogate || isCombining) {
+      // We're splitting a grapheme cluster. Walk backwards to include the full cluster.
+      mid--;
+      while (mid > 0) {
+        const pos = txt1.length - mid - 1;
+        if (pos < 0) break;
+        const prevCode = txt1.charCodeAt(pos);
+        const isPrevHighSurrogate = prevCode >= 0xd800 && prevCode <= 0xdbff;
+        const isPrevCombining =
+          prevCode === 0x200d ||
+          (prevCode >= 0xfe00 && prevCode <= 0xfe0f) ||
+          (prevCode >= 0x0300 && prevCode <= 0x036f);
+        if (!isPrevHighSurrogate && !isPrevCombining) break;
+        mid--;
+      }
+    }
+  }
   return mid;
 };
 

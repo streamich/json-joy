@@ -1,5 +1,149 @@
-import {PATCH_OP_TYPE, type Patch, diff, diffEdit, overlap, normalize, apply, src, dst, invert} from '../str';
+import {PATCH_OP_TYPE, type Patch, diff, diffEdit, overlap, normalize, apply, src, dst, invert, pfx, sfx} from '../str';
 import {assertPatch} from './util';
+
+describe('pfx()', () => {
+  test('finds common prefixes', () => {
+    expect(pfx('abc', 'b')).toEqual(0);
+    expect(pfx('abc', 'a')).toEqual(1);
+    expect(pfx('abc', 'ab')).toEqual(2);
+    expect(pfx('abc', 'abc')).toEqual(3);
+    expect(pfx('abc', 'abcd')).toEqual(3);
+    expect(pfx('abc', 'abcde')).toEqual(3);
+    expect(pfx('👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect(pfx('👨‍🍳', '👨‍🍳chef')).toEqual(5);
+    expect(pfx('👨‍🍳chef', '👨‍🍳')).toEqual(5);
+    expect(pfx('👨‍🍳👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect('👨‍🍳chef'.slice(0, 5)).toBe('👨‍🍳');
+  });
+
+  test('handles grapheme clusters with ZWJ (Zero Width Joiner)', () => {
+    const family = '👨‍👩‍👧‍👦';
+    expect(pfx(family, family)).toEqual(11);
+    expect(pfx(family + 'abc', family)).toEqual(11);
+    expect(pfx(family + 'abc', family + 'xyz')).toEqual(11);
+    expect(pfx('prefix' + family, 'prefix' + family)).toEqual(6 + 11);
+    const womanTech = '👩🏽‍💻';
+    expect(pfx(womanTech, womanTech)).toEqual(7);
+    expect(pfx(womanTech + 'code', womanTech)).toEqual(7);
+    expect(pfx('hello' + womanTech, 'hello' + womanTech)).toEqual(5 + 7);
+  });
+
+  test('handles flag emojis (regional indicators)', () => {
+    const usFlag = '🇺🇸';
+    const ukFlag = '🇬🇧';
+    expect(pfx(usFlag, usFlag)).toEqual(4);
+    expect(pfx(usFlag + 'USA', usFlag)).toEqual(4);
+    expect(pfx(usFlag, ukFlag)).toEqual(0);
+    expect(pfx('hello' + usFlag, 'hello' + usFlag)).toEqual(5 + 4);
+  });
+
+  test('handles combining diacritical marks', () => {
+    const combining = 'e\u0301'; // e + combining acute accent
+    expect(pfx(combining, combining)).toEqual(2);
+    expect(pfx(combining + 'llo', combining)).toEqual(2);
+    expect(pfx('hello' + combining, 'hello' + combining)).toEqual(5 + 2);
+
+    // Multiple combining marks
+    const multiCombining = 'a\u0301\u0302\u0303';
+    expect(pfx(multiCombining, multiCombining)).toEqual(4);
+  });
+
+  test('handles variation selectors', () => {
+    const heartText = '❤\uFE0E'; // text style
+    const heartEmoji = '❤\uFE0F'; // emoji style
+    expect(pfx(heartText, heartText)).toEqual(2);
+    expect(pfx(heartEmoji, heartEmoji)).toEqual(2);
+    expect(pfx(heartText, heartEmoji)).toEqual(1); // Only the base character matches
+  });
+
+  test('handles mixed grapheme clusters', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+    const combined = chef + family;
+    expect(pfx(combined, combined)).toEqual(16);
+    expect(pfx(combined + 'text', combined)).toEqual(16);
+    expect(pfx('abc' + combined, 'abc' + combined)).toEqual(3 + 16);
+  });
+});
+
+describe('sfx()', () => {
+  test('finds common suffixes', () => {
+    expect(sfx('abc', 'b')).toEqual(0);
+    expect(sfx('abc', 'c')).toEqual(1);
+    expect(sfx('abc', 'bc')).toEqual(2);
+    expect(sfx('abc', 'abc')).toEqual(3);
+    expect(sfx('abc', '_abc')).toEqual(3);
+    expect(sfx('abc', 'abcd')).toEqual(0);
+    expect(sfx('👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect(sfx('👨‍🍳', '👨‍🍳chef')).toEqual(0);
+    expect(sfx('👨‍🍳chef', '👨‍🍳')).toEqual(0);
+    expect(sfx('👨‍🍳', 'chef👨‍🍳')).toEqual(5);
+    expect(sfx('chef👨‍🍳', '👨‍🍳')).toEqual(5);
+    expect(sfx('👨‍🍳👨‍🍳', '👨‍🍳')).toEqual(5);
+  });
+
+  test('handles grapheme clusters with ZWJ (Zero Width Joiner)', () => {
+    const family = '👨‍👩‍👧‍👦';
+    expect(sfx(family, family)).toEqual(11);
+    expect(sfx('abc' + family, family)).toEqual(11);
+    expect(sfx('xyz' + family, 'abc' + family)).toEqual(11);
+    expect(sfx(family + 'suffix', family + 'suffix')).toEqual(6 + 11);
+    const womanTech = '👩🏽‍💻';
+    expect(sfx(womanTech, womanTech)).toEqual(7);
+    expect(sfx('code' + womanTech, womanTech)).toEqual(7);
+    expect(sfx(womanTech + 'hello', womanTech + 'hello')).toEqual(5 + 7);
+  });
+
+  test('handles flag emojis (regional indicators)', () => {
+    const usFlag = '🇺🇸';
+    const ukFlag = '🇬🇧';
+    expect(sfx(usFlag, usFlag)).toEqual(4);
+    expect(sfx('USA' + usFlag, usFlag)).toEqual(4);
+    expect(sfx(usFlag, ukFlag)).toEqual(0);
+    expect(sfx(usFlag + 'hello', usFlag + 'hello')).toEqual(5 + 4);
+  });
+
+  test('handles combining diacritical marks', () => {
+    const combining = 'e\u0301'; // e + combining acute accent
+    expect(sfx(combining, combining)).toEqual(2);
+    expect(sfx('ell' + combining, combining)).toEqual(2);
+    expect(sfx(combining + 'hello', combining + 'hello')).toEqual(5 + 2);
+    const multiCombining = 'a\u0301\u0302\u0303'; // a with multiple accents
+    expect(sfx(multiCombining, multiCombining)).toEqual(4);
+    expect(sfx('text' + multiCombining, multiCombining)).toEqual(4);
+  });
+
+  test('handles variation selectors', () => {
+    const heartText = '❤\uFE0E'; // text style
+    const heartEmoji = '❤\uFE0F'; // emoji style
+    expect(sfx(heartText, heartText)).toEqual(2);
+    expect(sfx(heartEmoji, heartEmoji)).toEqual(2);
+    expect(sfx(heartText, heartEmoji)).toEqual(0);
+    expect(sfx('love' + heartEmoji, heartEmoji)).toEqual(2);
+  });
+
+  test('handles mixed grapheme clusters', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+    const combined = family + chef;
+    expect(sfx(combined, combined)).toEqual(16);
+    expect(sfx('text' + combined, combined)).toEqual(16);
+    expect(sfx(combined + 'abc', combined + 'abc')).toEqual(3 + 16);
+  });
+
+  test('does not split grapheme clusters at boundaries', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+
+    // Ensure we don't split in the middle of a grapheme cluster
+    expect(sfx('x' + chef, chef)).toEqual(5); // full chef emoji
+    expect(sfx('xy' + family, family)).toEqual(11); // full family emoji
+
+    // When the suffix is part of a larger grapheme, it should not match partially
+    expect(sfx('👨‍🍳👩', '👩')).toEqual(2); // Just the woman emoji at end
+    expect(sfx('text👨‍🍳', '👨‍🍳')).toEqual(5); // Full chef emoji
+  });
+});
 
 describe('normalize()', () => {
   test('joins consecutive same type operations', () => {
@@ -240,6 +384,75 @@ describe('diff()', () => {
     assertPatch('a🙃b', 'a👋b');
   });
 
+  test('grapheme clusters with ZWJ (Zero Width Joiner)', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+    const womanTech = '👩🏽‍💻';
+    assertPatch(chef, family);
+    assertPatch(family, chef);
+    assertPatch(womanTech, chef);
+    assertPatch('hello', 'hello' + chef);
+    assertPatch('hello', chef + 'hello');
+    assertPatch('hello world', 'hello' + family + 'world');
+    assertPatch('hello' + chef, 'hello');
+    assertPatch(chef + 'hello', 'hello');
+    assertPatch('hello' + family + 'world', 'helloworld');
+    assertPatch(chef + family, family + chef);
+    assertPatch('a' + chef + 'b' + family + 'c', 'x' + family + 'y' + chef + 'z');
+    assertPatch('The ' + chef + ' cooks', 'A ' + chef + ' bakes');
+    assertPatch('Team: ' + family, 'Group: ' + womanTech);
+  });
+
+  test('flag emojis (regional indicators)', () => {
+    const ruFlag = '🇷🇺';
+    const chFlag = '🇨🇳';
+    const inFlag = '🇮🇳';
+    assertPatch(ruFlag, chFlag);
+    assertPatch(chFlag, inFlag);
+    assertPatch('Made in ' + ruFlag, 'Made in ' + chFlag);
+    assertPatch(ruFlag + ' USA', chFlag + ' UK');
+    assertPatch('Hello ' + ruFlag + ' world', 'Hello ' + inFlag + ' world');
+    assertPatch(ruFlag + chFlag, chFlag + ruFlag);
+    assertPatch('Flags: ' + ruFlag + chFlag + inFlag, 'Flags: ' + inFlag + chFlag + ruFlag);
+  });
+
+  test('combining diacritical marks', () => {
+    const combining1 = 'e\u0301';
+    const combining2 = 'e\u0300';
+    const precomposed = 'é';
+    assertPatch(combining1, combining2);
+    assertPatch(combining1, precomposed);
+    assertPatch(precomposed, combining1);
+    assertPatch('cafe\u0301', 'café');
+    assertPatch('naïve', 'naive');
+    assertPatch('résumé', 'resume');
+    const multiCombining = 'a\u0301\u0302\u0303';
+    assertPatch('test' + multiCombining, 'test');
+    assertPatch('test', 'test' + multiCombining);
+  });
+
+  test('variation selectors', () => {
+    const heartText = '❤\uFE0E'; // text style
+    const heartEmoji = '❤\uFE0F'; // emoji style
+    assertPatch(heartText, heartEmoji);
+    assertPatch(heartEmoji, heartText);
+    assertPatch('I ' + heartText + ' code', 'I ' + heartEmoji + ' code');
+    assertPatch('Love ' + heartEmoji, 'Love ' + heartText);
+  });
+
+  test('complex grapheme clusters in real scenarios', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+    const womanTech = '👩🏽‍💻';
+    const usFlag = '🇺🇸';
+    assertPatch('Hey ' + chef + ', dinner ready?', 'Hi ' + womanTech + ', code ready?');
+    assertPatch(family + ' going to ' + usFlag, family + ' staying home');
+    assertPatch(
+      'The ' + chef + ' from ' + usFlag + ' is amazing',
+      'A ' + womanTech + ' from ' + usFlag + ' is brilliant',
+    );
+  });
+
   test('same strings', () => {
     assertPatch('', '');
     assertPatch('1', '1');
@@ -331,6 +544,33 @@ describe('diffEdit()', () => {
     assertDiffEdit('aaa', 'bbb', 'ccc');
     assertDiffEdit('1', '2', '3');
   });
+
+  test('handles grapheme cluster inserts and deletes', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+    const womanTech = '👩🏽‍💻';
+    const usFlag = '🇺🇸';
+
+    // Insert grapheme clusters
+    assertDiffEdit('', chef, '');
+    assertDiffEdit('Hello ', chef, '');
+    assertDiffEdit('', chef, ' world');
+    assertDiffEdit('Hello ', chef, ' world');
+    assertDiffEdit('Team: ', family, ' rocks!');
+
+    // Insert multiple grapheme clusters
+    assertDiffEdit('', chef + family, '');
+    assertDiffEdit('Coders: ', womanTech + chef, ' win');
+
+    // Insert with flags
+    assertDiffEdit('Made in ', usFlag, '');
+    assertDiffEdit('', usFlag, ' USA');
+
+    // Combining characters
+    const combining = 'e\u0301';
+    assertDiffEdit('caf', combining, '');
+    assertDiffEdit('', combining, ' accent');
+  });
 });
 
 describe('overlap()', () => {
@@ -352,6 +592,21 @@ describe('overlap()', () => {
   test('edge cases with identical strings', () => {
     expect(overlap('abc', 'abc')).toEqual(3);
     expect(overlap('a', 'a')).toEqual(1);
+  });
+
+  test('handles grapheme clusters', () => {
+    const chef = '👨‍🍳';
+    const family = '👨‍👩‍👧‍👦';
+
+    // Overlap with grapheme clusters
+    expect(overlap('hello' + chef, chef + 'world')).toEqual(5);
+    expect(overlap('abc' + family, family + 'xyz')).toEqual(11);
+
+    // No overlap when grapheme differs
+    expect(overlap('hello' + chef, family + 'world')).toEqual(0);
+
+    // Text overlap with grapheme clusters
+    expect(overlap('prefix' + chef, chef + 'suffix')).toEqual(5);
   });
 });
 
@@ -403,6 +658,18 @@ describe('Unicode edge cases', () => {
     assertPatch(nfc, nfd);
     assertPatch(nfd, nfc);
     assertPatch(`hello ${nfc}`, `hello ${nfd}`);
+  });
+
+  test('handles complex emoji with ZWJ sequences', () => {
+    const chefEmoji = '👨‍🍳'; // chef emoji (man + ZWJ + cooking)
+    const src = chefEmoji;
+    const dst = 'chef' + chefEmoji;
+    const patch = normalize(diff(src, dst));
+    assertPatch(src, dst, patch);
+    expect(patch).toEqual([
+      [PATCH_OP_TYPE.INS, 'chef'],
+      [PATCH_OP_TYPE.EQL, chefEmoji],
+    ]);
   });
 });
 
