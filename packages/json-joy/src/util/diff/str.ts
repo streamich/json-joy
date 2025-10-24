@@ -434,11 +434,11 @@ export const sfx = (txt1: string, txt2: string): number => {
     const boundaryPos = txt1.length - mid - 1;
     const code = txt1.charCodeAt(boundaryPos);
     const isHighSurrogate = code >= 0xd800 && code <= 0xdbff;
-    const isCombining = 
+    const isCombining =
       code === 0x200d || // ZWJ
       (code >= 0xfe00 && code <= 0xfe0f) || // Variation selectors
       (code >= 0x0300 && code <= 0x036f); // Combining diacritical marks
-    
+
     if (isHighSurrogate || isCombining) {
       // We're splitting a grapheme cluster. Walk backwards to include the full cluster.
       mid--;
@@ -447,7 +447,7 @@ export const sfx = (txt1: string, txt2: string): number => {
         if (pos < 0) break;
         const prevCode = txt1.charCodeAt(pos);
         const isPrevHighSurrogate = prevCode >= 0xd800 && prevCode <= 0xdbff;
-        const isPrevCombining = 
+        const isPrevCombining =
           prevCode === 0x200d ||
           (prevCode >= 0xfe00 && prevCode <= 0xfe0f) ||
           (prevCode >= 0x0300 && prevCode <= 0x036f);

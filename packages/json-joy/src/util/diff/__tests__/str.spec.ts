@@ -42,7 +42,7 @@ describe('pfx()', () => {
     expect(pfx(combining, combining)).toEqual(2);
     expect(pfx(combining + 'llo', combining)).toEqual(2);
     expect(pfx('hello' + combining, 'hello' + combining)).toEqual(5 + 2);
-    
+
     // Multiple combining marks
     const multiCombining = 'a\u0301\u0302\u0303';
     expect(pfx(multiCombining, multiCombining)).toEqual(4);
@@ -134,11 +134,11 @@ describe('sfx()', () => {
   test('does not split grapheme clusters at boundaries', () => {
     const chef = '👨‍🍳';
     const family = '👨‍👩‍👧‍👦';
-    
+
     // Ensure we don't split in the middle of a grapheme cluster
     expect(sfx('x' + chef, chef)).toEqual(5); // full chef emoji
     expect(sfx('xy' + family, family)).toEqual(11); // full family emoji
-    
+
     // When the suffix is part of a larger grapheme, it should not match partially
     expect(sfx('👨‍🍳👩', '👩')).toEqual(2); // Just the woman emoji at end
     expect(sfx('text👨‍🍳', '👨‍🍳')).toEqual(5); // Full chef emoji
@@ -445,17 +445,11 @@ describe('diff()', () => {
     const family = '👨‍👩‍👧‍👦';
     const womanTech = '👩🏽‍💻';
     const usFlag = '🇺🇸';
-    assertPatch(
-      'Hey ' + chef + ', dinner ready?',
-      'Hi ' + womanTech + ', code ready?'
-    );
-    assertPatch(
-      family + ' going to ' + usFlag,
-      family + ' staying home'
-    );
+    assertPatch('Hey ' + chef + ', dinner ready?', 'Hi ' + womanTech + ', code ready?');
+    assertPatch(family + ' going to ' + usFlag, family + ' staying home');
     assertPatch(
       'The ' + chef + ' from ' + usFlag + ' is amazing',
-      'A ' + womanTech + ' from ' + usFlag + ' is brilliant'
+      'A ' + womanTech + ' from ' + usFlag + ' is brilliant',
     );
   });
 
@@ -556,22 +550,22 @@ describe('diffEdit()', () => {
     const family = '👨‍👩‍👧‍👦';
     const womanTech = '👩🏽‍💻';
     const usFlag = '🇺🇸';
-    
+
     // Insert grapheme clusters
     assertDiffEdit('', chef, '');
     assertDiffEdit('Hello ', chef, '');
     assertDiffEdit('', chef, ' world');
     assertDiffEdit('Hello ', chef, ' world');
     assertDiffEdit('Team: ', family, ' rocks!');
-    
+
     // Insert multiple grapheme clusters
     assertDiffEdit('', chef + family, '');
     assertDiffEdit('Coders: ', womanTech + chef, ' win');
-    
+
     // Insert with flags
     assertDiffEdit('Made in ', usFlag, '');
     assertDiffEdit('', usFlag, ' USA');
-    
+
     // Combining characters
     const combining = 'e\u0301';
     assertDiffEdit('caf', combining, '');
@@ -603,14 +597,14 @@ describe('overlap()', () => {
   test('handles grapheme clusters', () => {
     const chef = '👨‍🍳';
     const family = '👨‍👩‍👧‍👦';
-    
+
     // Overlap with grapheme clusters
     expect(overlap('hello' + chef, chef + 'world')).toEqual(5);
     expect(overlap('abc' + family, family + 'xyz')).toEqual(11);
-    
+
     // No overlap when grapheme differs
     expect(overlap('hello' + chef, family + 'world')).toEqual(0);
-    
+
     // Text overlap with grapheme clusters
     expect(overlap('prefix' + chef, chef + 'suffix')).toEqual(5);
   });
@@ -666,7 +660,7 @@ describe('Unicode edge cases', () => {
     assertPatch(`hello ${nfc}`, `hello ${nfd}`);
   });
 
-   test('handles complex emoji with ZWJ sequences', () => {
+  test('handles complex emoji with ZWJ sequences', () => {
     const chefEmoji = '👨‍🍳'; // chef emoji (man + ZWJ + cooking)
     const src = chefEmoji;
     const dst = 'chef' + chefEmoji;
