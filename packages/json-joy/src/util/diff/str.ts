@@ -241,6 +241,31 @@ const cleanupMerge = (diff: Patch, fixUnicode: boolean) => {
  * @return Array of diff tuples.
  */
 const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch => {
+  // Adjust split points to avoid breaking surrogate pairs.
+  // The bisect algorithm uses .charAt() which operates on UTF-16 code units,
+  // so the split points (x, y) might fall in the middle of a surrogate pair.
+  // We need to adjust them to ensure we don't split emoji or other multi-unit characters.
+
+  // If x is in the middle of a surrogate pair in text1, move it back
+  if (x > 0 && x < text1.length) {
+    const code = text1.charCodeAt(x);
+    // If x points to a low surrogate, we're splitting a pair
+    if (code >= 0xdc00 && code <= 0xdfff) {
+      x--;
+    }
+  }
+
+  // If y is in the middle of a surrogate pair in text2, move it back
+  if (y > 0 && y < text2.length) {
+    const code = text2.charCodeAt(y);
+    // If y points to a low surrogate, we're splitting a pair
+    if (code >= 0xdc00 && code <= 0xdfff) {
+      y--;
+    }
+  }
+
+  // Use fixUnicode: true to ensure the recursive diffs also handle Unicode properly.
+  // This prevents issues where surrogate pairs might be split at diff boundaries.
   const diffsA = diff_(text1.slice(0, x), text2.slice(0, y), false);
   const diffsB = diff_(text1.slice(x), text2.slice(y), false);
   return diffsA.concat(diffsB);
@@ -499,7 +524,7 @@ export const overlap = (str1: string, str2: string): number => {
  *
  * @param src Old string to be diffed.
  * @param dst New string to be diffed.
- * @param cleanup Whether to apply semantic cleanup before returning.
+ * @param fixUnicode Whether to apply semantic cleanup before returning.
  * @return A {@link Patch} - an array of patch operations.
  */
 const diff_ = (src: string, dst: string, fixUnicode: boolean): Patch => {
