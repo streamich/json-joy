@@ -1,3 +1,4 @@
+// biome-ignore lint: lint/style/useImportType
 import * as React from 'react';
 import {useT} from 'use-t';
 import {useToolbarPlugin} from '../context';
@@ -52,7 +53,7 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
           <Button
             small
             lite={!valid}
-            // positive={validation === 'good'}
+            primary={validation === 'good'}
             block
             disabled={!valid}
             submit

@@ -1,12 +1,11 @@
 import {s} from '../../../../json-crdt-patch';
 import {Model, ObjApi} from '../../../../json-crdt/model';
-import type {Slice} from '../../../../json-crdt-extensions';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {ToolbarSliceBehavior, ValidationResult} from '../types';
 import type {SliceBehavior} from '../../../../json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {ObjNode} from '../../../../json-crdt/nodes';
 import type {ToolbarState} from '.';
-import type {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
+import type {Slice} from '../../../../json-crdt-extensions/peritext/slice/Slice';
 
 export interface FormattingBase<B extends SliceBehavior<any, any, any, any>, R extends Range<string>> {
   behavior: B;
@@ -45,7 +44,7 @@ export abstract class EditableFormatting<R extends Range<string> = Range<string>
  * state (location, data) of the formatting and a {@link ToolbarSliceBehavior}
  * which defines the formatting behavior.
  */
-export class SavedFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<PersistedSlice<string>, Node> {
+export class SavedFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<Slice<string>, Node> {
   /**
    * @returns Unique key for this formatting. This is the hash of the slice.
    *     This is used to identify the formatting in the UI.
