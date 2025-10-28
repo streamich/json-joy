@@ -9,13 +9,13 @@ import {
   Timestamp,
 } from '../../../json-crdt-patch/clock';
 import {isUint8Array} from '@jsonjoy.com/buffers/lib/isUint8Array';
+import {printOctets} from '@jsonjoy.com/buffers/lib/printOctets';
 import {rSplay, lSplay, llSplay, rrSplay, lrSplay, rlSplay} from 'sonic-forest/lib/splay/util';
 import {splay2} from 'sonic-forest/lib/splay/util2';
 import {insert2, remove2} from 'sonic-forest/lib/util2';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
-import {printOctets} from '@jsonjoy.com/util/lib/buffers/printOctets';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 
 /**
