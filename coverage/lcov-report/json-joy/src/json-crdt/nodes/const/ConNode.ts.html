@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/12</span>
+                <span class='fraction'>9/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/4</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/12</span>
+                <span class='fraction'>9/11</span>
             </div>
         
             
@@ -128,11 +128,8 @@
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a>
-<a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">174x</span>
+<a name='L66'></a><a href='#L66'>66</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">174x</span>
+<span class="cline-any cline-yes">174x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -152,8 +149,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">412515x</span>
-<span class="cline-any cline-yes">412515x</span>
+<span class="cline-any cline-yes">426748x</span>
+<span class="cline-any cline-yes">426748x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -178,13 +175,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">251966x</span>
+<span class="cline-any cline-yes">259598x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">412515x</span>
+<span class="cline-any cline-yes">426748x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14652x</span>
@@ -195,13 +192,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7308x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7308x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7308x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {type ITimestampStruct, printTs, Timestamp} from '../../../json-crdt-patch/clock';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {con as printCon} from '../../../util/print';
+import {type ITimestampStruct, printTs, Timestamp} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 &nbsp;
@@ -262,12 +255,7 @@ export class ConNode&lt;View = unknown | ITimestampStruct&gt; implements JsonNod
   // ---------------------------------------------------------------- Printable
 &nbsp;
   public toString(tab?: string): string {
-    const val = this.val;
-    const valFormatted =
-      val instanceof Uint8Array
-        ? <span class="branch-0 cbranch-no" title="branch not covered" >`Uint8Array { ${('' + val).replaceAll(',', ', ')} }`</span>
-        : `{ ${val instanceof Timestamp ? <span class="branch-0 cbranch-no" title="branch not covered" >printTs(val as Timestamp) </span>: JSON.stringify(val)} }`;
-    return `${this.name()} ${printTs(this.id)} ${valFormatted}`;
+    return this.name() + ' ' + printTs(this.id) + ' ' + printCon(this.val);
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -277,7 +265,7 @@ export class ConNode&lt;View = unknown | ITimestampStruct&gt; implements JsonNod
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-24T22:15:18.611Z
+                at 2025-10-28T10:25:57.611Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>
