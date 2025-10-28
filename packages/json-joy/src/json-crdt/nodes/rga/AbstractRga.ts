@@ -8,14 +8,15 @@ import {
   containsId,
   Timestamp,
 } from '../../../json-crdt-patch/clock';
-import {isUint8Array} from '@jsonjoy.com//buffers/lib/isUint8Array';
+import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 import {rSplay, lSplay, llSplay, rrSplay, lrSplay, rlSplay} from 'sonic-forest/lib/splay/util';
 import {splay2} from 'sonic-forest/lib/splay/util2';
 import {insert2, remove2} from 'sonic-forest/lib/util2';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
-import {printOctets} from '@jsonjoy.com/buffers/lib/printOctets';
+import {printOctets} from '@jsonjoy.com/util/lib/buffers/printOctets';
+import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 
 /**
  * @category CRDT Node
@@ -119,7 +120,7 @@ const prev = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
 /**
  * @category CRDT Node
  */
-export abstract class AbstractRga<T> {
+export abstract class AbstractRga<T, C extends Chunk<T> = Chunk<T>> {
   public root: Chunk<T> | undefined = undefined;
   public ids: Chunk<T> | undefined = undefined;
   public count: number = 0;
@@ -443,21 +444,21 @@ export abstract class AbstractRga<T> {
 
   // ---------------------------------------------------------------- Retrieval
 
-  public first(): Chunk<T> | undefined {
-    let curr = this.root;
+  public first(): C | undefined {
+    let curr = this.root as C;
     while (curr) {
       const l = curr.l;
-      if (l) curr = l;
+      if (l) curr = l as C;
       else return curr;
     }
     return curr;
   }
 
   public last(): Chunk<T> | undefined {
-    let curr = this.root;
+    let curr = this.root as C;
     while (curr) {
       const r = curr.r;
-      if (r) curr = r;
+      if (r) curr = r as C;
       else return curr;
     }
     return curr;
@@ -504,6 +505,19 @@ export abstract class AbstractRga<T> {
     if (isRightChild) return parentPos + (p.del ? 0 : p.span) + (l ? l.len : 0);
     const r = chunk.r;
     return parentPos - (chunk.del ? 0 : chunk.span) - (r ? r.len : 0);
+  }
+
+  public chunks0(): UndEndNext<C> {
+    let chunk: C | undefined = this.first();
+    return () => {
+      const result = chunk;
+      if (chunk) chunk = next(chunk) as C | undefined;
+      return result;
+    };
+  }
+
+  public chunks(): UndEndIterator<C> {
+    return new UndEndIterator(this.chunks0());
   }
 
   // --------------------------------------------------------------- Insertions
@@ -687,12 +701,12 @@ export abstract class AbstractRga<T> {
     if (left) this.mergeTombstones(left, start);
   }
 
-  public removeTombstones(): void {
+  public rmTombstones(): void {
     let curr = this.first();
     const list: Chunk<T>[] = [];
     while (curr) {
       if (curr.del) list.push(curr);
-      curr = next(curr);
+      curr = next(curr) as C | undefined;
     }
     for (let i = 0; i < list.length; i++) this.deleteChunk(list[i]);
   }
@@ -793,6 +807,13 @@ export abstract class AbstractRga<T> {
     return chunk;
   }
 
+  public posById(id: ITimestampStruct): number | undefined {
+    const chunk = this.findById(id);
+    if (!chunk) return;
+    const pos = this.pos(chunk);
+    return chunk.del ? pos : pos + (id.time - chunk.id.time);
+  }
+
   /**
    * @param id ID of character to start the search from.
    * @returns Previous ID in the RGA sequence.
@@ -886,7 +907,7 @@ export abstract class AbstractRga<T> {
     let curr = this.first();
     return () => {
       const res = curr;
-      if (curr) curr = next(curr);
+      if (curr) curr = next(curr) as C | undefined;
       return res;
     };
   }
