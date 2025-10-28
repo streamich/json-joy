@@ -245,7 +245,7 @@ const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch 
   // The bisect algorithm uses .charAt() which operates on UTF-16 code units,
   // so the split points (x, y) might fall in the middle of a surrogate pair.
   // We need to adjust them to ensure we don't split emoji or other multi-unit characters.
-  
+
   // If x is in the middle of a surrogate pair in text1, move it back
   if (x > 0 && x < text1.length) {
     const code = text1.charCodeAt(x);
@@ -254,7 +254,7 @@ const bisectSplit = (text1: string, text2: string, x: number, y: number): Patch 
       x--;
     }
   }
-  
+
   // If y is in the middle of a surrogate pair in text2, move it back
   if (y > 0 && y < text2.length) {
     const code = text2.charCodeAt(y);
