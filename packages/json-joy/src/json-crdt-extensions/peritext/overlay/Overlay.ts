@@ -5,11 +5,10 @@ import {first2, insert2, last2, next2, prev2, remove2} from 'sonic-forest/lib/ut
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {OverlayPoint} from './OverlayPoint';
-import {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash/hash';
-import {MarkerSlice} from '../slice/MarkerSlice';
+import {Slice} from '../slice/Slice';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {SliceStacking} from '../slice/constants';
 import type {Point} from '../rga/Point';
@@ -18,12 +17,59 @@ import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
-import type {MutableSlice, Slice, SliceType} from '../slice/types';
-import type {Slices} from '../slice/Slices';
-import type {MarkerOverlayPair, OverlayPair, OverlayTuple} from './types';
-import type {Comparator} from 'sonic-forest/lib/types';
+import type {OverlayPair, OverlayTuple} from './types';
+import type {Comparator, HeadlessNode} from 'sonic-forest/lib/types';
+import type {SliceType} from '../slice';
+import type {HeadlessNode2} from 'sonic-forest/lib/types2';
 
-const spatialComparator: Comparator<OverlayPoint> = (a: OverlayPoint, b: OverlayPoint) => a.cmpSpatial(b);
+const find = <T, N extends HeadlessNode & T>(
+  root: N | undefined,
+  comparison: T,
+  comparator: Comparator<T>,
+): N | undefined => {
+  let curr: N | undefined = root;
+  while (curr) {
+    const cmp = comparator(comparison, curr);
+    if (cmp === 0) return curr;
+    curr = cmp < 0 ? (curr.l as N | undefined) : (curr.r as N | undefined);
+  }
+  return curr;
+};
+
+const find2 = <T, N extends HeadlessNode2 & T>(
+  root: N | undefined,
+  comparison: T,
+  comparator: Comparator<T>,
+): N | undefined => {
+  let curr: N | undefined = root;
+  while (curr) {
+    const cmp = comparator(comparison, curr);
+    if (cmp === 0) return curr;
+    curr = cmp < 0 ? (curr.l2 as N | undefined) : (curr.r2 as N | undefined);
+  }
+  return curr;
+};
+
+export const insert = <T, N extends HeadlessNode & T>(
+  root: N | undefined,
+  node: N,
+  comparator: Comparator<T>,
+): N | undefined => {
+  if (!root) return node;
+  let curr: N | undefined = root;
+  while (curr) {
+    const cmp = comparator(node, curr);
+    const next: N | undefined = cmp < 0 ? (curr.l as N | undefined) : (curr.r as N | undefined);
+    if (!next) {
+      if (cmp < 0) insertLeft(node, curr);
+      else insertRight(node, curr);
+      break;
+    } else curr = next;
+  }
+  return root;
+};
+
+const spatialComparator: Comparator<OverlayPoint<any>> = (a: OverlayPoint, b: OverlayPoint) => a.cmpSpatial(b);
 
 /**
  * Overlay is a tree structure that represents all the intersections of slices
@@ -33,8 +79,11 @@ const spatialComparator: Comparator<OverlayPoint> = (a: OverlayPoint, b: Overlay
  * based on the current state of the text and slices.
  */
 export class Overlay<T = string> implements Printable, Stateful {
+  /**
+   * @todo Make it an AVL tree.
+   */
   public root: OverlayPoint<T> | undefined = undefined;
-  public root2: MarkerOverlayPoint<T> | undefined = undefined;
+  public root2: OverlayPoint<T> | undefined = undefined;
 
   /** A virtual absolute start point, used when the absolute start is missing. */
   public readonly START: OverlayPoint<T>;
@@ -52,10 +101,6 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new OverlayPoint(this.txt.str, id, anchor);
   }
 
-  private mPoint(marker: MarkerSlice<T>, anchor: Anchor): MarkerOverlayPoint<T> {
-    return new MarkerOverlayPoint(this.txt.str, marker.start.id, anchor, marker);
-  }
-
   public first(): OverlayPoint<T> | undefined {
     return this.root ? first(this.root) : undefined;
   }
@@ -64,12 +109,20 @@ export class Overlay<T = string> implements Printable, Stateful {
     return this.root ? last(this.root) : undefined;
   }
 
-  public firstMarker(): MarkerOverlayPoint<T> | undefined {
+  public firstMarker(): OverlayPoint<T> | undefined {
     return this.root2 ? first2(this.root2) : undefined;
   }
 
-  public lastMarker(): MarkerOverlayPoint<T> | undefined {
+  public lastMarker(): OverlayPoint<T> | undefined {
     return this.root2 ? last2(this.root2) : undefined;
+  }
+
+  public get(point: Point<T>): OverlayPoint<T> | undefined {
+    return find<Point<T>, OverlayPoint<T>>(this.root, point, spatialComparator as Comparator<Point<T>>);
+  }
+
+  public getMarker(point: Point<T>): OverlayPoint<T> | undefined {
+    return find2<Point<T>, OverlayPoint<T>>(this.root2, point, spatialComparator as Comparator<Point<T>>);
   }
 
   /**
@@ -82,7 +135,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       return first.isAbsStart() ? first : void 0;
     } else if (point.isAbsEnd()) return this.last();
     let curr: OverlayPoint<T> | undefined = this.root;
-    let result: OverlayPoint<T> | undefined;
+    let result: OverlayPoint<T> | undefined = undefined;
     while (curr) {
       const cmp = curr.cmpSpatial(point);
       if (cmp === 0) return curr;
@@ -107,7 +160,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       return last.isAbsEnd() ? last : void 0;
     } else if (point.isAbsStart()) return this.first();
     let curr: OverlayPoint<T> | undefined = this.root;
-    let result: OverlayPoint<T> | undefined;
+    let result: OverlayPoint<T> | undefined = undefined;
     while (curr) {
       const cmp = curr.cmpSpatial(point);
       if (cmp === 0) return curr;
@@ -123,17 +176,17 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   /**
-   * Retrieve a {@link MarkerOverlayPoint} at the specified point or the
+   * Retrieve a {@link OverlayPoint} at the specified point or the
    * previous one, measured in spacial dimension.
    */
-  public getOrNextLowerMarker(point: Point<T>): MarkerOverlayPoint<T> | undefined {
+  public getOrNextLowerMarker(point: Point<T>): OverlayPoint<T> | undefined {
     if (point.isAbsStart()) {
       const first = this.firstMarker();
       if (!first) return;
       return first.isAbsStart() ? first : void 0;
     } else if (point.isAbsEnd()) return this.lastMarker();
-    let curr: MarkerOverlayPoint<T> | undefined = this.root2;
-    let result: MarkerOverlayPoint<T> | undefined;
+    let curr: OverlayPoint<T> | undefined = this.root2;
+    let result: OverlayPoint<T> | undefined = undefined;
     while (curr) {
       const cmp = curr.cmpSpatial(point);
       if (cmp === 0) return curr;
@@ -210,7 +263,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   /**
-   * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
+   * Returns all {@link OverlayPoint} instances in the overlay, starting
    * from the given marker point, not including the marker point itself.
    *
    * If the `after` parameter is not provided, the iteration starts from the
@@ -220,7 +273,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns All marker points in the overlay, starting from the given marker
    *     point.
    */
-  public markers0(after: undefined | MarkerOverlayPoint<T>): UndEndNext<MarkerOverlayPoint<T>> {
+  public markers0(after: undefined | OverlayPoint<T>): UndEndNext<OverlayPoint<T>> {
     let curr = after ? next2(after) : first2(this.root2);
     return () => {
       const ret = curr;
@@ -229,12 +282,12 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public markers(after?: undefined | MarkerOverlayPoint<T>): UndEndIterator<MarkerOverlayPoint<T>> {
+  public markers(after?: undefined | OverlayPoint<T>): UndEndIterator<OverlayPoint<T>> {
     return new UndEndIterator(this.markers0(after));
   }
 
   /**
-   * Returns all {@link MarkerOverlayPoint} instances in the overlay, starting
+   * Returns all {@link OverlayPoint} instances in the overlay, starting
    * from a give {@link Point}, including any marker overlay points that are
    * at the same position as the given point.
    *
@@ -242,7 +295,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns All marker points in the overlay, starting from the given marker
    *     point.
    */
-  public markersFrom0(point: Point<T>): UndEndNext<MarkerOverlayPoint<T>> {
+  public markersFrom0(point: Point<T>): UndEndNext<OverlayPoint<T>> {
     if (point.isAbsStart()) return this.markers0(undefined);
     let after = this.getOrNextLowerMarker(point);
     if (after && after.cmp(point) === 0) after = prev2(after);
@@ -261,11 +314,11 @@ export class Overlay<T = string> implements Printable, Stateful {
    *     continues until the end of the overlay.
    * @returns Iterator that returns pairs of overlay points.
    */
-  public markerPairs0(start: Point<T>, end?: Point<T>): UndEndNext<MarkerOverlayPair<T>> {
+  public markerPairs0(start: Point<T>, end?: Point<T>): UndEndNext<OverlayPair<T>> {
     const i = this.markersFrom0(start);
     let closed = false;
-    let p1: MarkerOverlayPoint<T> | undefined;
-    let p2: MarkerOverlayPoint<T> | undefined = i();
+    let p1: OverlayPoint<T> | undefined;
+    let p2: OverlayPoint<T> | undefined = i();
     if (p2) {
       if (p2.isAbsStart() || !p2.cmp(start)) {
         p1 = p2;
@@ -286,14 +339,14 @@ export class Overlay<T = string> implements Printable, Stateful {
           return [p1, cmp ? void 0 : p2];
         }
       }
-      const result: MarkerOverlayPair<T> = [p1, p2];
+      const result: OverlayPair<T> = [p1, p2];
       p1 = p2;
       p2 = i();
       return result;
     };
   }
 
-  public pairs0(after: undefined | OverlayPoint<T>): UndEndNext<OverlayPair<T>> {
+  public pairs0(after: undefined | OverlayPoint<T>, inclusive?: boolean): UndEndNext<OverlayPair<T>> {
     const isEmpty = !this.root;
     if (isEmpty) {
       const u = undefined;
@@ -302,7 +355,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     }
     let p1: OverlayPoint<T> | undefined;
     let p2: OverlayPoint<T> | undefined = after;
-    const iterator = this.points0(after);
+    const iterator = this.points0(after, inclusive);
     return () => {
       const next = iterator();
       const isEnd = !next;
@@ -324,12 +377,12 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public pairs(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayPair<T>> {
-    return new UndEndIterator(this.pairs0(after));
+  public pairs(after?: undefined | OverlayPoint<T>, inclusive?: boolean): IterableIterator<OverlayPair<T>> {
+    return new UndEndIterator(this.pairs0(after, inclusive));
   }
 
-  public tuples0(after: undefined | OverlayPoint<T>): UndEndNext<OverlayTuple<T>> {
-    const iterator = this.pairs0(after);
+  public tuples0(after: undefined | OverlayPoint<T>, inclusive?: boolean): UndEndNext<OverlayTuple<T>> {
+    const iterator = this.pairs0(after, inclusive);
     return () => {
       const pair = iterator();
       if (!pair) return;
@@ -339,8 +392,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public tuples(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayTuple<T>> {
-    return new UndEndIterator(this.tuples0(after));
+  public tuples(after?: undefined | OverlayPoint<T>, inclusive?: boolean): IterableIterator<OverlayTuple<T>> {
+    return new UndEndIterator(this.tuples0(after, inclusive));
   }
 
   /**
@@ -380,8 +433,8 @@ export class Overlay<T = string> implements Printable, Stateful {
         const slice = slices[i];
         if (!result.has(slice) && range.contains(slice)) result.add(slice);
       }
-      if (point instanceof MarkerOverlayPoint) {
-        const marker = point.marker;
+      if (point instanceof OverlayPoint && point.isMarker()) {
+        const marker = point.markers[0];
         if (marker && !result.has(marker) && range.contains(marker)) result.add(marker);
       }
     } while (point && (point = next(point)) && range.containsPoint(point));
@@ -404,8 +457,8 @@ export class Overlay<T = string> implements Printable, Stateful {
       const slices = point.layers;
       const length = slices.length;
       for (let i = 0; i < length; i++) result.add(slices[i]);
-      if (point instanceof MarkerOverlayPoint) {
-        const marker = point.marker;
+      if (point instanceof OverlayPoint && point.isMarker()) {
+        const marker = point.markers[0];
         if (marker) result.add(marker);
       }
     } while (point && (point = next(point)) && range.containsPoint(point));
@@ -442,34 +495,34 @@ export class Overlay<T = string> implements Printable, Stateful {
     let partial: Set<SliceType> = new Set<SliceType>();
     let isFirst = true;
     let markerCount = 0;
-    for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
-      if (point instanceof MarkerOverlayPoint) {
+    OVERLAY: for (let point = iterator(); point && point.cmpSpatial(end) < 0; point = iterator()) {
+      if (point instanceof OverlayPoint && point.isMarker()) {
         markerCount++;
         if (markerCount >= endOnMarker) break;
-        continue;
+        continue OVERLAY;
       }
       const current = new Set<SliceType>();
       const layers = point.layers;
       const length = layers.length;
-      for (let i = 0; i < length; i++) {
+      LAYERS: for (let i = 0; i < length; i++) {
         const slice = layers[i];
         const type = slice.type();
-        if (typeof type === 'object') continue;
+        if (typeof type === 'object') continue LAYERS;
         const stacking = slice.stacking;
-        switch (stacking) {
+        STACKING: switch (stacking) {
           case SliceStacking.One:
             current.add(type);
-            break;
+            break STACKING;
           case SliceStacking.Erase:
             current.delete(type);
-            break;
+            break STACKING;
         }
       }
       if (isFirst) {
         isFirst = false;
         if (hasLeadingPoint) complete = current;
         else partial = current;
-        continue;
+        continue OVERLAY;
       }
       for (const type of complete)
         if (!current.has(type)) {
@@ -490,7 +543,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   public isMarker(id: ITimestampStruct): boolean {
     const p = this.txt.point(id, Anchor.Before);
     const op = this.getOrNextLower(p);
-    return op instanceof MarkerOverlayPoint && op.id.time === id.time && op.id.sid === id.sid;
+    return op instanceof OverlayPoint && op.isMarker() && op.id.time === id.time && op.id.sid === id.sid;
   }
 
   public skipMarkers(point: Point<T>, direction: -1 | 1): boolean {
@@ -503,18 +556,91 @@ export class Overlay<T = string> implements Printable, Stateful {
     return false;
   }
 
-  // ----------------------------------------------------------------- Stateful
+  /** ------------------------------------------------------ {@link Stateful} */
 
   public hash: number = 0;
 
-  public refresh(slicesOnly: boolean = false): number {
-    const txt = this.txt;
-    let hash: number = CONST.START_STATE;
-    hash = this.refreshSlices(hash, txt.savedSlices);
-    hash = this.refreshSlices(hash, txt.extraSlices);
-    hash = this.refreshSlices(hash, txt.localSlices);
+  private clear(): void {
+    this.root = void 0;
+    this.root2 = void 0;
+    this.slices.clear();
+  }
 
-    // TODO: Move test hash calculation out of the overlay.
+  public refresh(slicesOnly: boolean = false): number {
+    const {txt, slices} = this;
+    let hash: number = CONST.START_STATE;
+    {
+      const {savedSlices, extraSlices, localSlices} = txt;
+      const savedSlicesOldHash = savedSlices.hash;
+      const savedSlicesHash = savedSlices.refresh();
+      const savedSlicesChanged = savedSlicesOldHash !== savedSlicesHash;
+      hash = updateNum(hash, savedSlicesHash);
+      const extraSlicesOldHash = extraSlices.hash;
+      const extraSlicesHash = extraSlices.refresh();
+      const extraSlicesChanged = extraSlicesOldHash !== extraSlicesHash;
+      hash = updateNum(hash, extraSlicesHash);
+      const localSlicesOldHash = localSlices.hash;
+      const localSlicesHash = localSlices.refresh();
+      const localSlicesChanged = localSlicesOldHash !== localSlicesHash;
+      hash = updateNum(hash, localSlicesHash);
+      if (savedSlicesChanged || extraSlicesChanged || localSlicesChanged) {
+        // this.clear();
+        // savedSlices.forEach((slice) => {
+        //   if (slice.isSplit()) this.insMarker(slice);
+        //   else this.insSlice(slice);
+        // });
+        // extraSlices.forEach((slice) => {
+        //   if (slice.isSplit()) this.insMarker(slice);
+        //   else this.insSlice(slice);
+        // });
+        // localSlices.forEach((slice) => {
+        //   if (slice.isSplit()) this.insMarker(slice);
+        //   else this.insSlice(slice);
+        // });
+
+        if (savedSlicesChanged || extraSlicesChanged) {
+          this.clear();
+          // TODO: Implement complete rebuild routine from scratch. It should
+          //       be efficient and fast: (1) retrieve all slices from all
+          //       sources, (2) sort them by start point, (3) insert them into
+          //       the overlay and update hashes in one go.
+        } else if (localSlicesChanged) {
+          slices.forEach((tuple, slice) => {
+            const mutSlice = slice as Slice<T>;
+            if (mutSlice.isDel?.()) this.delSlice(slice, tuple);
+          });
+        }
+        if (savedSlicesChanged || extraSlicesChanged) {
+          // biome-ignore lint: .forEach() is the way to iterate here.
+          savedSlices.forEach((slice) => {
+            if (slice.isMarker()) this.upsertSlice(slice);
+            else this.upsertSlice(slice);
+          });
+          // biome-ignore lint: .forEach() is the way to iterate here.
+          extraSlices.forEach((slice) => {
+            if (slice.isMarker()) this.upsertSlice(slice);
+            else this.upsertSlice(slice);
+          });
+        }
+        if (localSlicesChanged || savedSlicesChanged || extraSlicesChanged) {
+          const sliceSet = this.slices;
+          // biome-ignore lint: .forEach() is the way to iterate here.
+          localSlices.forEach((slice) => {
+            const tuple = sliceSet.get(slice);
+            if (tuple) {
+              const positionMoved = tuple[0].cmp(slice.start) !== 0 || tuple[1].cmp(slice.end) !== 0;
+              if (positionMoved) this.delSlice(slice, tuple);
+            }
+          });
+          // biome-ignore lint: .forEach() is the way to iterate here.
+          localSlices.forEach((slice) => {
+            const tuple = slice.isMarker() ? this.upsertSlice(slice) : this.upsertSlice(slice);
+            this.slices.set(slice, tuple);
+          });
+        }
+      }
+    }
+    // TODO: Move text hash calculation out of the overlay.
     if (!slicesOnly) {
       // hash = updateRga(hash, txt.str);
       hash = this.refreshTextSlices(hash);
@@ -524,47 +650,43 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public readonly slices = new Map<Slice<T>, [start: OverlayPoint<T>, end: OverlayPoint<T>]>();
 
-  private refreshSlices(state: number, slices: Slices<T>): number {
-    const oldSlicesHash = slices.hash;
-    const changed = oldSlicesHash !== slices.refresh();
-    const sliceSet = this.slices;
-    state = updateNum(state, slices.hash);
-    if (changed) {
-      slices.forEach((slice) => {
-        let tuple: [start: OverlayPoint<T>, end: OverlayPoint<T>] | undefined = sliceSet.get(slice);
-        if (tuple) {
-          if ((slice as any).isDel && (slice as any).isDel()) {
-            this.delSlice(slice, tuple);
-            return;
-          }
-          const positionMoved = tuple[0].cmp(slice.start) !== 0 || tuple[1].cmp(slice.end) !== 0;
-          if (positionMoved) this.delSlice(slice, tuple);
-          else return;
+  private upsertSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
+    if (slice.isMarker()) {
+      const start = slice.start;
+      const overlayPointOrLower = this.getOrNextLower(start);
+      if (overlayPointOrLower) {
+        const isStart = !overlayPointOrLower.cmp(start);
+        if (isStart) {
+          overlayPointOrLower.addMarkerRef(slice);
+          const markerOverlayPoint = this.getMarker(start);
+          if (!markerOverlayPoint) this.root2 = insert2(this.root2, overlayPointOrLower, spatialComparator);
+          return [overlayPointOrLower, overlayPointOrLower];
         }
-        tuple = slice instanceof MarkerSlice ? this.insMarker(slice) : this.insSlice(slice);
-        this.slices.set(slice, tuple);
-      });
-      if (slices.size() < sliceSet.size) {
-        sliceSet.forEach((tuple, slice) => {
-          const mutSlice = slice as Slice | MutableSlice;
-          if ((<MutableSlice>mutSlice).isDel) {
-            if (!(<MutableSlice>mutSlice).isDel()) return;
-            this.delSlice(slice, tuple);
-          }
-        });
       }
+      const markerOverlayPointOrLower = this.getOrNextLowerMarker(start);
+      if (markerOverlayPointOrLower) {
+        const isStart = !markerOverlayPointOrLower.cmp(start);
+        if (isStart) {
+          markerOverlayPointOrLower.addMarkerRef(slice);
+          this.root = insert(this.root, markerOverlayPointOrLower, spatialComparator);
+          return [markerOverlayPointOrLower, markerOverlayPointOrLower];
+        }
+      }
+      const point = new OverlayPoint(this.txt.str, start.id, Anchor.Before);
+      point.addMarkerRef(slice);
+      this.root = insert(this.root, point, spatialComparator);
+      this.root2 = insert2(this.root2, point, spatialComparator);
+      const prevPoint = prev(point);
+      if (prevPoint) point.layers.push(...prevPoint.layers);
+      return [point, point];
     }
-    return state;
-  }
-
-  private insSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
     const x0 = slice.start;
     const x1 = slice.end;
-    const [start, isStartNew] = this.upsertPoint(x0);
-    const [end, isEndNew] = this.upsertPoint(x1);
+    const [start, isStartNew] = this.upsertPoint(slice.start);
+    const [end, isEndNew] = this.upsertPoint(slice.end);
     const isCollapsed = x0.cmp(x1) === 0;
-    start.refs.push(new OverlayRefSliceStart(slice));
-    end.refs.push(new OverlayRefSliceEnd(slice));
+    start.upsertStartRef(slice);
+    end.upsertEndRef(slice);
     if (isStartNew) {
       const beforeStartPoint = prev(start);
       if (beforeStartPoint) start.layers.push(...beforeStartPoint.layers);
@@ -581,69 +703,49 @@ export class Overlay<T = string> implements Printable, Stateful {
     return [start, end];
   }
 
-  private insMarker(slice: MarkerSlice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    const point = this.mPoint(slice, Anchor.Before);
-    const pivot = this.insPoint(point);
-    if (!pivot) {
-      point.refs.push(slice);
-      const prevPoint = prev(point);
-      if (prevPoint) point.layers.push(...prevPoint.layers);
-    }
-    return [point, point];
-  }
-
   private delSlice(slice: Slice<T>, [start, end]: [start: OverlayPoint<T>, end: OverlayPoint<T>]): void {
-    this.slices.delete(slice);
-    let curr: OverlayPoint<T> | undefined = start;
-    do {
-      curr.removeLayer(slice);
-      curr.removeMarker(slice);
-      curr = next(curr);
-    } while (curr && curr !== end);
-    start.removeRef(slice);
-    end.removeRef(slice);
-    if (!start.refs.length) this.delPoint(start);
-    if (!end.refs.length && start !== end) this.delPoint(end);
-  }
-
-  /**
-   * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
-   * in the tree, sorted by spatial dimension.
-   */
-  private upsertPoint(point: Point<T>): [point: OverlayPoint<T>, isNew: boolean] {
-    const newPoint = this.point(point.id, point.anchor);
-    const pivot = this.insPoint(newPoint);
-    if (pivot) return [pivot, false];
-    return [newPoint, true];
+    if (slice instanceof Slice && slice.isMarker()) {
+      this.slices.delete(slice);
+      this.root2 = remove2(this.root2, start as OverlayPoint<T>);
+      this.root = remove(this.root, start);
+    } else {
+      this.slices.delete(slice);
+      let curr: OverlayPoint<T> | undefined = start;
+      do {
+        curr.removeLayer(slice);
+        curr.removeMarker(slice);
+        curr = next(curr);
+      } while (curr && curr !== end);
+      start.removeRef(slice);
+      end.removeRef(slice);
+      if (!start.refs.length) this.delPoint(start);
+      if (!end.refs.length && start !== end) this.delPoint(end);
+    }
   }
 
   /**
    * Inserts a point into the tree, sorted by spatial dimension.
+   * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
+   * in the tree, sorted by spatial dimension.
+   *
    * @param point Point to insert.
    * @returns Returns the existing point if it was already in the tree.
    */
-  private insPoint(point: OverlayPoint<T>): OverlayPoint<T> | undefined {
-    if (point instanceof MarkerOverlayPoint) {
-      this.root2 = insert2(this.root2, point, spatialComparator);
-      // if (this.root2 !== point) this.root2 = splay2(this.root2!, point, 10);
-    }
-    let pivot = this.getOrNextLower(point);
-    if (!pivot) pivot = first(this.root);
-    if (!pivot) {
-      this.root = point;
-      return;
-    } else {
-      if (pivot.cmp(point) === 0) return pivot;
-      const cmp = pivot.cmpSpatial(point);
-      if (cmp < 0) insertRight(point, pivot);
-      else insertLeft(point, pivot);
-    }
-    if (this.root !== point) this.root = splay(this.root!, point, 10);
-    return;
+  private upsertPoint(point: Point<T>): [point: OverlayPoint<T>, isNew: boolean] {
+    let overlayPointOrLower = this.getOrNextLower(point);
+    overlayPointOrLower ??= first(this.root);
+    if (!overlayPointOrLower) return [(this.root = this.point(point.id, point.anchor)), true];
+    if (overlayPointOrLower.cmp(point) === 0) return [overlayPointOrLower, false];
+    const cmp = overlayPointOrLower.cmpSpatial(point);
+    const overlayPoint = this.getMarker(point) ?? this.point(point.id, point.anchor);
+    if (cmp < 0) insertRight(overlayPoint, overlayPointOrLower);
+    else insertLeft(overlayPoint, overlayPointOrLower);
+    if (this.root !== overlayPoint) this.root = splay(this.root!, overlayPoint, 10);
+    return [overlayPoint, true];
   }
 
   private delPoint(point: OverlayPoint<T>): void {
-    if (point instanceof MarkerOverlayPoint) this.root2 = remove2(this.root2, point);
+    if (point.p2) this.root2 = remove2(this.root2, point);
     this.root = remove(this.root, point);
   }
 
@@ -655,7 +757,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const firstChunk = str.first();
     if (!firstChunk) return stateTotal;
     let chunk: Chunk<T> | undefined = firstChunk;
-    let marker: MarkerOverlayPoint<T> | undefined;
+    let marker: OverlayPoint<T> | undefined = undefined;
     const i = this.tuples0(undefined);
     let state: number = CONST.START_STATE;
     for (let pair = i(); pair; pair = i()) {
@@ -673,7 +775,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       for (const slice of p1.markers) state = updateNum(state, slice.hash);
       p1.hash = overlayPointHash;
       stateTotal = updateNum(stateTotal, overlayPointHash);
-      if (p2 instanceof MarkerOverlayPoint) {
+      if (p2 && p2.isMarker()) {
         if (marker) {
           marker.textHash = state;
         } else {
@@ -684,15 +786,15 @@ export class Overlay<T = string> implements Printable, Stateful {
         marker = p2;
       }
     }
-    if ((marker as any) instanceof MarkerOverlayPoint) {
-      (marker as any as MarkerOverlayPoint<T>).textHash = state;
+    if (marker && marker.isMarker()) {
+      marker.textHash = state;
     } else {
       this.leadingTextHash = state;
     }
     return stateTotal;
   }
 
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
     const printPoint = (tab: string, point: OverlayPoint<T>): string => {
@@ -704,7 +806,7 @@ export class Overlay<T = string> implements Printable, Stateful {
         ])
       );
     };
-    const printMarkerPoint = (tab: string, point: MarkerOverlayPoint<T>): string => {
+    const printMarkerPoint = (tab: string, point: OverlayPoint<T>): string => {
       return (
         point.toString(tab) +
         printBinary(tab, [

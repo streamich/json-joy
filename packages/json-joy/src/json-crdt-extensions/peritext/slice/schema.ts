@@ -1,4 +1,6 @@
-import {type NodeBuilder, s} from '../../../json-crdt-patch';
+import {compare, type NodeBuilder, s} from '../../../json-crdt-patch';
+import {SliceHeaderShift, type SliceStacking} from './constants';
+import type {Range} from '../rga/Range';
 import type {SliceType, SliceTypeStep} from './types';
 
 export const type = (sliceType: SliceType) =>
@@ -13,4 +15,20 @@ export const step = (sliceStep: SliceTypeStep) => {
     return s.vec(...tuple);
   }
   return s.con(sliceStep);
+};
+
+export const slice = (range: Range<any>, stacking: SliceStacking, sliceType: SliceType, data?: unknown) => {
+  const {start, end} = range;
+  const header =
+    (stacking << SliceHeaderShift.Stacking) +
+    ((start.anchor & 0b1) << SliceHeaderShift.X1Anchor) +
+    ((end.anchor & 0b1) << SliceHeaderShift.X2Anchor);
+  const elements = [
+    s.con(header),
+    s.con(start.id),
+    s.con(!compare(start.id, end.id) ? 0 : end.id),
+    type(sliceType),
+  ] as const;
+  if (data !== void 0) (elements as any).push(s.json(data));
+  return s.vec(...elements);
 };

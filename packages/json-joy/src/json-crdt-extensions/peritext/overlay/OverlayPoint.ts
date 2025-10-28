@@ -2,22 +2,36 @@ import {Point} from '../rga/Point';
 import {compare} from '../../../json-crdt-patch/clock';
 import {type OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {printTree} from 'tree-dump/lib/printTree';
-import type {MarkerSlice} from '../slice/MarkerSlice';
+import {formatType} from '../slice/util';
+import type {SliceType} from '../slice/types';
+import type {Slice} from '../slice/Slice';
 import type {HeadlessNode} from 'sonic-forest/lib/types';
 import type {PrintChild, Printable} from 'tree-dump/lib/types';
-import type {Slice} from '../slice/types';
+import type {HeadlessNode2} from 'sonic-forest/lib/types2';
 
 /**
  * A {@link Point} which is indexed in the {@link Overlay} tree. Represents
  * sparse locations in the string of the places where annotation slices start,
  * end, or are broken down by other intersecting slices.
  */
-export class OverlayPoint<T = string> extends Point<T> implements Printable, HeadlessNode {
+export class OverlayPoint<T = string> extends Point<T> implements Printable, HeadlessNode, HeadlessNode2 {
   /**
    * Hash of text contents until the next {@link OverlayPoint}. This field is
    * modified by the {@link Overlay} tree.
    */
   public hash: number = 0;
+
+  /** -------------------------------------------------- {@link HeadlessNode} */
+
+  public p: OverlayPoint<T> | undefined = undefined;
+  public l: OverlayPoint<T> | undefined = undefined;
+  public r: OverlayPoint<T> | undefined = undefined;
+
+  /** ------------------------------------------------- {@link HeadlessNode2} */
+
+  public p2: OverlayPoint<T> | undefined = undefined;
+  public l2: OverlayPoint<T> | undefined = undefined;
+  public r2: OverlayPoint<T> | undefined = undefined;
 
   // ------------------------------------------------------------------- layers
 
@@ -80,13 +94,121 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
     }
   }
 
+  // --------------------------------------------------------------------- refs
+
+  /**
+   * Sorted list of all references to rich-text constructs.
+   */
+  public readonly refs: OverlayRef<T>[] = [];
+
+  /**
+   * Insert a reference to a marker.
+   *
+   * @param slice A marker (split slice).
+   */
+  public addMarkerRef(slice: Slice<T>): void {
+    const markers = this.markers;
+    const length = markers.length;
+    for (let i = 0; i < length; i++) if (markers[i] === slice) return;
+    this.refs.push(slice);
+    this.addMarker(slice);
+  }
+
+  public upsertStartRef(slice: Slice<T>): OverlayRefSliceStart<T> {
+    const refs = this.refs;
+    const length = refs.length;
+    for (let i = 0; i < length; i++) {
+      const ref = refs[i];
+      if (ref instanceof OverlayRefSliceStart && ref.slice === slice) return ref;
+    }
+    const ref = new OverlayRefSliceStart<T>(slice);
+    this.refs.push(ref);
+    return ref;
+  }
+
+  public upsertEndRef(slice: Slice<T>): OverlayRefSliceEnd<T> {
+    const refs = this.refs;
+    const length = refs.length;
+    for (let i = 0; i < length; i++) {
+      const ref = refs[i];
+      if (ref instanceof OverlayRefSliceEnd && ref.slice === slice) return ref;
+    }
+    const ref = new OverlayRefSliceEnd<T>(slice);
+    this.refs.push(ref);
+    return ref;
+  }
+
+  /**
+   * Removes a reference to a marker or a slice, and remove the corresponding
+   * layer or marker.
+   *
+   * @param slice A slice to remove the reference to.
+   */
+  public removeRef(slice: Slice<T>): void {
+    const refs = this.refs;
+    const length = refs.length;
+    for (let i = 0; i < length; i++) {
+      const ref = refs[i];
+      if (ref === slice) {
+        refs.splice(i, 1);
+        this.removeMarker(slice);
+        return;
+      }
+      if (
+        (ref instanceof OverlayRefSliceStart && ref.slice === slice) ||
+        (ref instanceof OverlayRefSliceEnd && ref.slice === slice)
+      ) {
+        refs.splice(i, 1);
+        this.removeLayer(slice);
+        return;
+      }
+    }
+  }
+
   // ------------------------------------------------------------------ markers
+
+  /**
+   * Hash value of the following text contents, up until the next marker.
+   */
+  public textHash: number = 0;
+
+  /**
+   * @deprecated Use `this.marker().type()` instead.
+   */
+  public type(): SliceType {
+    return this.markers[0] && this.markers[0].type();
+  }
+
+  /**
+   * @deprecated Use `this.marker().data()` instead.
+   */
+  public data(): unknown {
+    return this.markers[0] && this.markers[0].data();
+  }
 
   /**
    * Collapsed slices - markers (block splits), which represent a single point
    * in the text, even if the start and end of the slice are different.
+   *
+   * @todo This normally should never be a list, but a single item. Enforce?
    */
   public readonly markers: Slice<T>[] = [];
+
+  /**
+   * @deprecated Make this a method.
+   */
+  get marker(): Slice<T> {
+    const marker = this.markers[0];
+    if (!marker) throw new Error('NO_MARKER');
+    return marker;
+  }
+
+  public isMarker(): boolean {
+    const markers = this.markers;
+    const length = markers.length;
+    for (let i = 0; i < length; i++) if (markers[i].isMarker()) return true;
+    return false;
+  }
 
   /**
    * Inserts a slice to the list of markers which represent a single point in
@@ -95,6 +217,8 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
    * the state of the point. The markers are sorted by the slice ID.
    *
    * @param slice Slice to add to the marker list.
+   *
+   * @todo Make this method private.
    */
   public addMarker(slice: Slice<T>): void {
     const markers = this.markers;
@@ -140,80 +264,35 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
     }
   }
 
-  // --------------------------------------------------------------------- refs
-
-  /**
-   * Sorted list of all references to rich-text constructs.
-   */
-  public readonly refs: OverlayRef<T>[] = [];
-
-  /**
-   * Insert a reference to a marker.
-   *
-   * @param slice A marker (split slice).
-   */
-  public addMarkerRef(slice: MarkerSlice<T>): void {
-    this.refs.push(slice);
-    this.addMarker(slice);
-  }
-
-  /**
-   * Insert a layer that starts at this point.
-   *
-   * @param slice A slice that starts at this point.
-   */
-  public addLayerStartRef(slice: Slice<T>): void {
-    this.refs.push(new OverlayRefSliceStart<T>(slice));
-    this.addLayer(slice);
-  }
-
-  /**
-   * Insert a layer that ends at this point.
-   *
-   * @param slice A slice that ends at this point.
-   */
-  public addLayerEndRef(slice: Slice<T>): void {
-    this.refs.push(new OverlayRefSliceEnd(slice));
-  }
-
-  /**
-   * Removes a reference to a marker or a slice, and remove the corresponding
-   * layer or marker.
-   *
-   * @param slice A slice to remove the reference to.
-   */
-  public removeRef(slice: Slice<T>): void {
-    const refs = this.refs;
-    const length = refs.length;
-    for (let i = 0; i < length; i++) {
-      const ref = refs[i];
-      if (ref === slice) {
-        refs.splice(i, 1);
-        this.removeMarker(slice);
-        return;
-      }
-      if (
-        (ref instanceof OverlayRefSliceStart && ref.slice === slice) ||
-        (ref instanceof OverlayRefSliceEnd && ref.slice === slice)
-      ) {
-        refs.splice(i, 1);
-        this.removeLayer(slice);
-        return;
-      }
-    }
-  }
-
-  // ---------------------------------------------------------------- Printable
+  /** ----------------------------------------------------- {@link Printable} */
 
   public toStringName(): string {
-    return 'OverlayPoint';
+    return 'OverlayPoint' + (this.isMarker() ? '::Marker' : '');
   }
 
   public toStringHeader(tab: string = '', lite?: boolean): string {
-    return super.toString(tab, lite);
+    const header = super.toString(tab, lite);
+    if (this.isMarker()) {
+      const hash = lite ? '' : `#${this.textHash.toString(36).slice(-4)}`;
+      const typeFormatted = formatType(this.type());
+      const typeFormatted2 = lite ? '' : ' ' + typeFormatted;
+      return `${header}${lite ? '' : ' '}${hash}${typeFormatted2}`;
+    }
+    return header;
   }
 
   public toString(tab: string = '', lite?: boolean): string {
+    if (this.isMarker()) {
+      return (
+        this.toStringHeader(tab, lite) +
+        (lite
+          ? ''
+          : printTree(
+              tab,
+              this.markers.map((slice) => (tab: string) => slice.toString(tab)),
+            ))
+      );
+    }
     const refs = lite ? '' : `, refs = ${this.refs.length}`;
     const header = this.toStringHeader(tab, lite) + refs;
     if (lite) return header;
@@ -226,10 +305,4 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
     for (let i = 0; i < markerLength; i++) children.push((tab) => markers[i].toString(tab));
     return header + printTree(tab, children);
   }
-
-  // ------------------------------------------------------------- HeadlessNode
-
-  public p: OverlayPoint<T> | undefined = undefined;
-  public l: OverlayPoint<T> | undefined = undefined;
-  public r: OverlayPoint<T> | undefined = undefined;
 }

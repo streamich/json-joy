@@ -3,28 +3,27 @@ import {Point} from '../rga/Point';
 import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
-import type {Anchor} from '../rga/constants';
 import {
   SliceHeaderMask,
   SliceHeaderShift,
   SliceStacking,
   SliceTupleIndex,
   SliceStackingName,
-  SliceTypeName,
   SliceTypeCon,
 } from './constants';
 import {CONST} from '../../../json-hash/hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
-import {validateType} from './util';
+import {formatType, validateType} from './util';
 import {NodeBuilder, s} from '../../../json-crdt-patch';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
+import {NestedType} from './NestedType';
+import {Anchor} from '../rga/constants';
 import {type Model, type NodeApi, ObjApi} from '../../../json-crdt/model';
 import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
-import {NestedType} from './NestedType';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
-import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps} from './types';
+import type {ArrChunk, ArrNode, JsonNode} from '../../../json-crdt/nodes';
+import type {SliceView, SliceType, SliceUpdateParams, SliceTypeSteps} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
@@ -32,13 +31,24 @@ import type {Peritext} from '../Peritext';
 import type {Slices} from './Slices';
 
 /**
- * A persisted slice is a slice that is stored in a {@link Model}. It is used for
- * rich-text formatting and annotations.
+ * A slice is stored in a {@link Model} as a "vec" node. It is used for
+ * rich-text formatting annotations and block splits.
  *
- * @todo Maybe rename to "saved", "stored", "mutable".
+ * Slices represent Peritext's rich-text formatting/splits. The "slice"
+ * concept captures both: (1) range annotations; as well as, (2) *markers*,
+ * which are a single-point annotations. The markers are used as block splits,
+ * e.g. paragraph, heading, blockquote, etc. In markers, the start and end
+ * positions of the range are normally the same, but could also wrap around
+ * a single RGA chunk.
  */
-export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {
-  public static deserialize<T>(model: Model, txt: Peritext<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
+export class Slice<T = string> extends Range<T> implements Stateful, Printable {
+  public static deserialize<T>(
+    model: Model,
+    txt: Peritext<T>,
+    arr: ArrNode,
+    chunk: ArrChunk,
+    tuple: VecNode,
+  ): Slice<T> {
     const header = +(tuple.get(0)!.view() as SliceView[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
@@ -51,7 +61,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const rga = txt.str as unknown as AbstractRga<T>;
     const p1 = new Point<T>(rga, id1, anchor1);
     const p2 = new Point<T>(rga, id2, anchor2);
-    const slice = new PersistedSlice<T>(model, txt, chunk, tuple, stacking, p1, p2);
+    const slice = new Slice<T>(model, txt, arr, chunk, tuple, stacking, p1, p2);
     validateType(slice.type());
     return slice;
   }
@@ -59,11 +69,27 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   /** @todo Use API node here. */
   protected readonly rga: AbstractRga<T>;
 
+  /**
+   * ID of the slice. ID is used for layer sorting.
+   */
+  public readonly id: ITimestampStruct;
+
+  /**
+   * The low-level stacking behavior of the slice. Specifies whether the
+   * slice is a split, i.e. a "marker" for a block split, in which case it
+   * represents a single place in the text where text is split into blocks.
+   * Otherwise, specifies the low-level behavior or the rich-text formatting
+   * of the slice.
+   */
+  public stacking: SliceStacking;
+
   constructor(
     /** The `Model` where the slice is stored. */
     protected readonly model: Model,
     /** The Peritext context. */
     protected readonly txt: Peritext<T>,
+    /** The "arr" node where the slice is stored. */
+    protected readonly arr: ArrNode,
     /** The `arr` chunk of `arr` where the slice is stored. */
     protected readonly chunk: ArrChunk,
     /** The `vec` node which stores the serialized contents of this slice. */
@@ -74,23 +100,39 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   ) {
     super(txt.str as unknown as AbstractRga<T>, start, end);
     this.rga = txt.str as unknown as AbstractRga<T>;
+    // TODO: Chunk could potentially contain multiple entries, handle that case.
     this.id = chunk.id;
     this.stacking = stacking;
   }
 
-  public isSplit(): boolean {
+  /**
+   * Represents a block split in the text, i.e. it is a *marker* that shows
+   * where a block was split. Markers also insert one "\n" new line character.
+   * Both marker ends are attached to the "before" anchor fo the "\n" new line
+   * character, i.e. it is *collapsed* to the "before" anchor.
+   */
+  public isMarker(): boolean {
     return this.stacking === SliceStacking.Marker;
   }
 
-  protected tupleApi() {
+  public tupleApi() {
     return this.model.api.wrap(this.tuple);
   }
 
-  // protected setType(schema: NodeBuilder): void {
-  //   this.tupleApi().set([
-  //     [SliceTupleIndex.Type, schema.type(type as SliceTypeSteps)],
-  //   ]);
-  // }
+  public pos(): number {
+    return this.arr.posById(this.id) || 0;
+  }
+
+  /**
+   * Returns the {@link Range} which exactly contains the block boundary of this
+   * marker.
+   */
+  public boundary(): Range<T> {
+    const start = this.start;
+    const end = start.clone();
+    end.anchor = Anchor.After;
+    return this.txt.range(start, end);
+  }
 
   // ---------------------------------------------------------------- mutations
 
@@ -107,11 +149,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     super.expand();
     this.update({range: this});
   }
-
-  /** -------------------------------------------------- {@link MutableSlice} */
-
-  public readonly id: ITimestampStruct;
-  public stacking: SliceStacking;
 
   public update(params: SliceUpdateParams<T>): void {
     let updateHeader = false;
@@ -142,6 +179,10 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     this.tupleApi().set(changes);
   }
 
+  public isSaved(): boolean {
+    return this.tuple.id.sid === this.txt.model.clock.sid;
+  }
+
   public getStore(): Slices<T> | undefined {
     const txt = this.txt;
     const sid = this.id.sid;
@@ -154,12 +195,26 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return;
   }
 
+  /**
+   * Delete this slice from its backing store.
+   */
   public del(): void {
     const store = this.getStore();
     if (!store) return;
     store.del(this.id);
+    if (this.isMarker()) {
+      const txt = this.txt;
+      const range = txt.range(
+        this.start,
+        this.start.copy((p) => (p.anchor = Anchor.After)),
+      );
+      txt.delStr(range);
+    }
   }
 
+  /**
+   * Whether the slice is deleted.
+   */
   public isDel(): boolean {
     return this.chunk.del;
   }
@@ -180,6 +235,17 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return new NestedType<T>(this);
   }
 
+  /**
+   * The high-level behavior identifier of the slice. Specifies the
+   * user-defined type of the slice, e.g. paragraph, heading, blockquote, etc.
+   *
+   * Usually the type is a number or string primitive, in which case it is
+   * referred to as *tag*.
+   *
+   * The type is a list only for nested blocks, e.g. `['ul', 'li']`, in which
+   * case the type is a list of tags. The last tag in the list is the
+   * "leaf" tag, which is the type of the leaf block element.
+   */
   public type(): SliceType {
     return this.typeNode()?.view() as SliceType;
   }
@@ -191,6 +257,10 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   // -------------------------------------------------- slice data manipulation
 
+  /**
+   * High-level user-defined metadata of the slice, which accompanies the slice
+   * type.
+   */
   public data(): unknown | undefined {
     return this.tuple.get(SliceTupleIndex.Data)?.view();
   }
@@ -245,7 +315,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     this.hash = state;
     if (changed) {
       const tuple = this.tuple;
-      const slice = PersistedSlice.deserialize<T>(this.model, this.txt, this.chunk, tuple);
+      const slice = Slice.deserialize<T>(this.model, this.txt, this.arr, this.chunk, tuple);
       this.stacking = slice.stacking;
       this.start = slice.start;
       this.end = slice.end;
@@ -256,20 +326,19 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   /** ----------------------------------------------------- {@link Printable} */
 
   public toStringName(): string {
-    const type = this.type();
-    if (typeof type === 'number' && Math.abs(type) <= 64 && SliceTypeName[type]) {
-      return `slice [${SliceStackingName[this.stacking]}] <${SliceTypeName[type]}>`;
-    }
-    return `slice [${SliceStackingName[this.stacking]}] ${JSON.stringify(type)}`;
+    const typeFormatted = formatType(this.type());
+    const stackingFormatted = SliceStackingName[this.stacking];
+    return `Slice::${stackingFormatted} ${typeFormatted}`;
   }
 
   protected toStringHeaderName(): string {
     const data = this.data();
     const dataFormatted = data ? prettyOneLine(data) : '∅';
     const dataLengthBreakpoint = 32;
-    const header = `${this.toStringName()} ${super.toString('', true)}, ${
-      SliceStackingName[this.stacking]
-    }, ${JSON.stringify(this.type())}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
+    const typeFormatted = formatType(this.type());
+    const stackingFormatted = SliceStackingName[this.stacking];
+    const dataFormattedShort = dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : '';
+    const header = `${this.toStringName()} ${super.toString('', true)}, ${stackingFormatted}, ${typeFormatted}${dataFormattedShort}`;
     return header;
   }
 

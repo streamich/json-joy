@@ -1,5 +1,4 @@
 import {setupHelloWorldKit} from '../../__tests__/setup';
-import {MarkerOverlayPoint} from '../../overlay/MarkerOverlayPoint';
 import {OverlayPoint} from '../../overlay/OverlayPoint';
 
 const setupTwoBlockDocument = () => {
@@ -88,7 +87,8 @@ describe('points', () => {
     expect(points2.length).toBe(5);
     expect(points1[0]).toBeInstanceOf(OverlayPoint);
     expect(points1[0]).toBe(peritext.overlay.START);
-    expect(points2[0]).toBeInstanceOf(MarkerOverlayPoint);
+    expect(points2[0]).toBeInstanceOf(OverlayPoint);
+    expect(points2[0]?.isMarker()).toBe(true);
   });
 });
 

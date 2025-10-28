@@ -104,8 +104,8 @@ const testSuite = (setup: () => Kit) => {
         'ij\nklmno\npqr',
         8,
         [
-          [pHeader, 10, 10, CommonSliceType.p],
           [iHeader, 12, 14, CommonSliceType.i],
+          [pHeader, 10, 10, CommonSliceType.p],
           [blockquoteHeader, 16, 16, CommonSliceType.blockquote],
         ],
       ]);

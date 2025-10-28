@@ -1,6 +1,6 @@
 import {printTs} from '../../../json-crdt-patch';
 import {CursorAnchor} from '../slice/constants';
-import {PersistedSlice} from '../slice/PersistedSlice';
+import {Slice} from '../slice/Slice';
 import type {Point} from '../rga/Point';
 
 /**
@@ -21,7 +21,7 @@ import type {Point} from '../rga/Point';
  * side is the one that stays in place when the user presses the arrow keys. The
  * side of the anchor is determined by the {@link Cursor#anchorSide} property.
  */
-export class Cursor<T = string> extends PersistedSlice<T> {
+export class Cursor<T = string> extends Slice<T> {
   /**
    * @todo Remove getter `get` here.
    */

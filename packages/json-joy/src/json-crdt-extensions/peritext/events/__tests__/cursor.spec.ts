@@ -373,7 +373,7 @@ const testSuite = (getKit: () => Kit) => {
     describe('collapses selection into the direction of movement', () => {
       test('when focus is at end of selection', () => {
         const kit = setup();
-        const _view = kit.editor.text();
+        const view = kit.editor.text();
         kit.et.cursor({at: [10, 10 + 10]});
         kit.et.cursor({move: [['focus', 'char', 0, true]]});
         expect(kit.editor.cursor.start.viewPos()).toBe(20);
@@ -386,7 +386,7 @@ const testSuite = (getKit: () => Kit) => {
 
       test('when focus is at the start of the selection', () => {
         const kit = setup();
-        const _view = kit.editor.text();
+        const view = kit.editor.text();
         kit.et.cursor({at: [20, 20 - 10]});
         kit.et.cursor({move: [['end', 'char', 0, true]]});
         expect(kit.editor.cursor.start.viewPos()).toBe(20);

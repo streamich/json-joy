@@ -25,7 +25,8 @@ export class SliceRegistry implements Printable {
   public static readonly withCommon = (): SliceRegistry => {
     const undefSchema = s.con(undefined);
     const registry = new SliceRegistry();
-    //------------------------------ Inline elements with "One" stacking behavior
+
+    //----------------------------- Inline elements with "One" stacking behavior
     const i0 = <Tag extends TypeTag = TypeTag>(
       tag: Tag,
       name: string,
@@ -168,7 +169,7 @@ export class SliceRegistry implements Printable {
         _fromHtml.set(htmlTag, converters);
       }
     }
-    const tagStr = CommonSliceType[tag as TAG];
+    const tagStr = CommonSliceType[tag as any];
     if (tagStr && typeof tagStr === 'string' && (!fromHtml || !(tagStr in fromHtml)))
       _fromHtml.set(tagStr, [[entry, () => [tag, null]]]);
   }

@@ -4,7 +4,7 @@ import type {SliceTypeSteps, TypeTag} from '../../../json-crdt-extensions/perite
 import type {ITimestampStruct, Patch} from '../../../json-crdt-patch';
 import type {Cursor} from '../../../json-crdt-extensions/peritext/editor/Cursor';
 import type {Range} from '../../../json-crdt-extensions/peritext/rga/Range';
-import type {PersistedSlice} from '../slice/PersistedSlice';
+import type {Slice} from '../slice/Slice';
 import type {ApiOperation} from '../../../json-crdt/model/api/types';
 
 /**
@@ -121,10 +121,10 @@ export type SelectionMoveInstruction = [
  */
 export interface SliceDetailPart {
   /**
-   * An instance of {@link PersistedSlice} or its ID {@link ITimestampStruct} used
+   * An instance of {@link Slice} or its ID {@link ITimestampStruct} used
    * to retrieve the slice from the document.
    */
-  slice?: PersistedSlice | ITimestampStruct;
+  slice?: Slice | ITimestampStruct;
 }
 
 /**
@@ -388,7 +388,7 @@ export interface FormatDetail extends RangeEventDetail, SliceDetailPart {
  * {action: 'del'}
  * ```
  *
- * To remove a specific marker identified by its {@link PersistedSlice} reference
+ * To remove a specific marker identified by its {@link Slice} reference
  * pass the slice or its ID in the `slice` field:
  *
  * ```ts

@@ -144,9 +144,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    *          character, 1 is after the first character, etc.).
    */
   public viewPos(): number {
-    const pos = this.pos();
     const isAbs = equal(this.rga.id, this.id);
     if (isAbs) return this.anchor === Anchor.After ? 0 : this.rga.length();
+    const pos = this.pos();
     return this.anchor === Anchor.Before ? pos : pos + 1;
   }
 

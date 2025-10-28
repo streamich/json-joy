@@ -7,8 +7,7 @@ import {type ArrNode, StrNode} from '../../json-crdt/nodes';
 import {Slices} from './slice/Slices';
 import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
-import {Chars} from './constants';
-import {interval, tick} from '../../json-crdt-patch/clock';
+import {tick} from '../../json-crdt-patch/clock';
 import {Model, type StrApi} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash/hash';
 import {SESSION} from '../../json-crdt-patch/constants';
@@ -18,13 +17,12 @@ import {Fragment} from './block/Fragment';
 import {updateRga} from '../../json-crdt/hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
-import type {MarkerSlice} from './slice/MarkerSlice';
 import type {SliceSchema, SliceTypeSteps} from './slice/types';
 import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
 import type {AbstractRga} from '../../json-crdt/nodes/rga';
 import type {ChunkSlice} from './util/ChunkSlice';
 import type {Stateful} from './types';
-import type {PersistedSlice} from './slice/PersistedSlice';
+import type {Slice} from './slice/Slice';
 
 const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
 const LOCAL_DATA_SCHEMA = EXTRA_SLICES_SCHEMA;
@@ -75,7 +73,8 @@ export class Peritext<T = string> implements Printable, Stateful {
   }
 
   public strApi(): StrApi {
-    if (this.str instanceof StrNode) return this.model.api.wrap(this.str);
+    const str = this.str;
+    if (str instanceof StrNode) return this.model.api.wrap(str);
     throw new Error('INVALID_STR');
   }
 
@@ -98,7 +97,7 @@ export class Peritext<T = string> implements Printable, Stateful {
    *
    * @param pos Position of the character in the text.
    * @param anchor Whether the point should attach before or after a character.
-   *               Defaults to "before".
+   *     Defaults to "before".
    * @returns The point.
    */
   public pointAt(pos: number, anchor: Anchor = Anchor.Before): Point<T> {
@@ -108,6 +107,27 @@ export class Peritext<T = string> implements Printable, Stateful {
     const id = str.find(pos);
     if (!id) return this.point(str.id, pos ? Anchor.Before : Anchor.After);
     return this.point(id, anchor);
+  }
+
+  /**
+   * Creates a point at a view position in the text, between characters.
+   *
+   * @param pos Position between characters in the text.
+   * @param anchor Whether the point should attach before or after a character.
+   *     Defaults to "after".
+   * @returns The point.
+   */
+  public pointIn(pos: number, anchor: Anchor = Anchor.After): Point<T> {
+    const str = this.str;
+    if (anchor === Anchor.After) {
+      if (!pos) return this.pointAbsStart();
+      const id = str.find(pos - 1);
+      if (!id) return this.pointEnd() ?? this.pointAbsStart();
+      return this.point(id, Anchor.After);
+    } else {
+      const id = str.find(pos);
+      return id ? this.point(id, Anchor.Before) : this.pointAbsEnd();
+    }
   }
 
   /**
@@ -299,31 +319,15 @@ export class Peritext<T = string> implements Printable, Stateful {
    */
   public readonly localSlices: Slices<T>;
 
-  public getSlice(id: ITimestampStruct): PersistedSlice<T> | undefined {
+  public getSlice(id: ITimestampStruct): Slice<T> | undefined {
     return this.savedSlices.get(id) || this.localSlices.get(id) || this.extraSlices.get(id);
   }
 
   // ------------------------------------------------------------------ markers
 
   /** @deprecated Use the method in `Editor` and `Cursor` instead. */
-  public insMarker(
-    after: ITimestampStruct,
-    type: SliceTypeSteps,
-    data?: unknown,
-    char: string = Chars.BlockSplitSentinel,
-  ): MarkerSlice<T> {
-    return this.savedSlices.insMarkerAfter(after, type, data, char);
-  }
-
-  /** @todo This can probably use .del() */
-  public delMarker(split: MarkerSlice<T>): void {
-    const str = this.str;
-    const api = this.model.api;
-    const builder = api.builder;
-    const strChunk = split.start.chunk();
-    if (strChunk) builder.del(str.id, [interval(strChunk.id, 0, 1)]);
-    builder.del(this.savedSlices.set.id, [interval(split.id, 0, 1)]);
-    api.apply();
+  public insMarker(after: ITimestampStruct, type: SliceTypeSteps, data?: unknown): Slice<T> {
+    return this.savedSlices.insMarkerAfter(after, type, data);
   }
 
   /** ----------------------------------------------------- {@link Printable} */

@@ -1,4 +1,6 @@
-import {ObjApi, VecApi} from '../../../../json-crdt/model';
+import {s} from '@jsonjoy.com/json-type';
+import {ArrApi, ConApi, ObjApi, VecApi} from '../../../../json-crdt/model';
+import {ArrNode, ConNode, ObjNode, VecNode} from '../../../../json-crdt/nodes';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
 
@@ -11,7 +13,7 @@ const setupSlice = () => {
 
 test('can read slice data', () => {
   const {range, slice} = setupSlice();
-  expect(slice.isSplit()).toBe(true);
+  expect(slice.isMarker()).toBe(true);
   expect(slice.stacking).toBe(SliceStacking.Marker);
   expect(slice.type()).toBe(0);
   expect(slice.data()).toBe(undefined);

@@ -2,8 +2,7 @@ import {Anchor} from '../../../../json-crdt-extensions/peritext/rga/constants';
 import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
-import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
-import {MarkerSlice} from '../../slice/MarkerSlice';
+import {Slice} from '../../../../json-crdt-extensions/peritext/slice/Slice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -235,8 +234,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'del': {
         const {slice} = detail;
         if (!tag && slice) {
-          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof PersistedSlice && !persistedSlice.isSplit()) {
+          const persistedSlice = slice instanceof Slice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof Slice && !persistedSlice.isMarker()) {
             persistedSlice.del();
           }
         } else {
@@ -253,8 +252,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'set': {
         const {slice} = detail;
         if (slice) {
-          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof PersistedSlice) {
+          const persistedSlice = slice instanceof Slice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof Slice) {
             if (action === 'set') persistedSlice.setData(detail.data);
             else persistedSlice.mergeData(detail.data);
           }
@@ -278,18 +277,16 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'del': {
         const {slice} = detail;
         if (slice) {
-          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof MarkerSlice) persistedSlice.del();
+          const persistedSlice = slice instanceof Slice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice?.isMarker()) persistedSlice.del();
         } else {
-          editor.delMarker(selection);
+          editor.delMarkerSelection(selection);
         }
         break;
       }
       case 'upd': {
         const {target, ops} = detail;
-        if (target && ops) {
-          editor.updMarker(target, ops, selection);
-        }
+        if (target && ops) editor.updMarker(target, ops, selection);
         break;
       }
     }
@@ -427,34 +424,34 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             range.collapseToStart();
             const start = range.start;
             const pos = start.viewPos();
-            let _inserted: number = 0;
+            let inserted: number = 0;
             switch (format) {
               case 'html': {
-                _inserted = transfer.fromHtml(pos, text);
+                inserted = transfer.fromHtml(pos, text);
                 break;
               }
               case 'hast': {
                 const json = JSON.parse(text);
-                _inserted = transfer.fromHast(pos, json);
+                inserted = transfer.fromHast(pos, json);
                 break;
               }
               case 'jsonml': {
                 const json = JSON.parse(text);
-                _inserted = transfer.fromJson(pos, json);
+                inserted = transfer.fromJson(pos, json);
                 break;
               }
               case 'json': {
                 const json = JSON.parse(text);
-                _inserted = transfer.fromView(pos, json);
+                inserted = transfer.fromView(pos, json);
                 break;
               }
               case 'mdast': {
                 const json = JSON.parse(text);
-                _inserted = transfer.fromMdast(pos, json);
+                inserted = transfer.fromMdast(pos, json);
                 break;
               }
               case 'md': {
-                _inserted = transfer.fromMarkdown(pos, text);
+                inserted = transfer.fromMarkdown(pos, text);
                 break;
               }
             }

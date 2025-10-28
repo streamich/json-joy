@@ -9,73 +9,92 @@ export enum CursorAnchor {
   End = 1,
 }
 
+// biome-ignore format: keep table layout
 export const enum SliceTypeCon {
-  // ---------------------------------------------------- block slices (0 to 64)
-  p = 0, // <p>
-  blockquote = 1, // <blockquote>
-  codeblock = 2, // <pre><code>
-  pre = 3, // <pre>
-  ul = 4, // <ul>
-  ol = 5, // <ol>
-  tl = 6, // - [ ] Task list
-  li = 7, // <li>
-  h1 = 8, // <h1>
-  h2 = 9, // <h2>
-  h3 = 10, // <h3>
-  h4 = 11, // <h4>
-  h5 = 12, // <h5>
-  h6 = 13, // <h6>
-  title = 14, // <title>
-  subtitle = 15, // <subtitle>
-  br = 16, // <br>
-  nl = 17, // \n
-  hr = 18, // <hr>
-  page = 19, // Page break
-  aside = 20, // <aside>
-  embed = 21, // <embed>, <iframe>, <object>, <video>, <audio>, etc.
-  column = 22, // <div style="column-count: ..."> (represents 2 and 3 column layouts)
-  contents = 23, // Table of contents
-  table = 24, // <table>
-  row = 25, // Table row
-  cell = 26, // Table cell
+  // ------------------------ block slices (positive integers, starting from 0)
+  p                 = 0,                      // <p>
+  blockquote        = 1 + p,                  // <blockquote> (used by Quill)
+  codeblock         = 1 + blockquote,         // <code>
+  'code-block'      = 1 + codeblock,          // <code> (same as <codeblock>, used by Quill)
+  code_block        = 2 + codeblock,          // <code> (same as <codeblock>, used by Prosemirror)
+  pre               = 1 + code_block,         // <pre>
+  ul                = 1 + pre,                // <ul>
+  ol                = 1 + ul,                 // <ol>
+  tl                = 1 + ol,                 // - [ ] Task list
+  li                = 1 + tl,                 // <li>
+  list              = 1 + li,                 // A generic list (used by Quill)
+  h1                = 1 + list,               // <h1>
+  h2                = 1 + h1,                 // <h2>
+  h3                = 1 + h2,                 // <h3>
+  h4                = 1 + h3,                 // <h4>
+  h5                = 1 + h4,                 // <h5>
+  h6                = 1 + h5,                 // <h6>
+  heading           = 1 + h6,                 // <heading level="3"> (same as <h3>)
+  header            = 1 + heading,            // <header level="3"> (same as <h3>, used by Quill)
+  title             = 1 + header,             // <title> (whole document title)
+  subtitle          = 1 + title,              // <subtitle> (whole document subtitle)
+  br                = 1 + subtitle,           // <br>
+  hard_break        = 1 + br,                 // Same as <br> (used by Prosemirror)
+  nl                = 1 + hard_break,         // \n
+  hr                = 1 + nl,                 // <hr>
+  horizontal_rule   = 1 + hr,                 // Same as <hr> (used by Prosemirror)
+  page              = 1 + horizontal_rule,    // Page break
+  aside             = 1 + page,               // <aside>
+  imgblock          = 1 + aside,              // <img> (image)
+  embed             = 1 + imgblock,           // <embed>, <iframe>, <object>, <video>, <audio>, etc.
+  column            = 1 + embed,              // <div style="column-count: ...">
+  contents          = 1 + column,             // Table of contents
+  table             = 1 + contents,           // <table>
+  tr                = 1 + table,              // <tr> (table row)
+  td                = 1 + tr,                 // <td> (table cell)
+  cl                = 1 + td,                 // Collapsible list
+  collapse          = 1 + cl,                 // Collapsible block
+  note              = 1 + collapse,           // Note block
+  mathblock         = 1 + note,               // <math> block
+  div               = 1 + mathblock,          // <div>
 
-  // TODO: rename to `cl` (collapsible list)?
-  collapselist = 27, // Collapsible list - > List item
-
-  collapse = 28, // Collapsible block
-  note = 29, // Note block
-  mathblock = 30, // <math> block
-  div = 31,
-
-  // ------------------------------------------------ inline slices (-64 to -1)
-  Cursor = -1,
-  RemoteCursor = -2,
-  b = -3, // <b>
-  i = -4, // <i>
-  u = -5, // <u>
-  s = -6, // <s>
-  code = -7, // <code>
-  mark = -8, // <mark>
-  a = -9, // <a>
-  comment = -10, // User comment attached to a slice
-  del = -11, // <del>
-  ins = -12, // <ins>
-  sup = -13, // <sup>
-  sub = -14, // <sub>
-  math = -15, // <math> inline
-  font = -16, // <span style="font-family: ...">
-  col = -17, // <span style="color: ...">
-  bg = -18, // <span style="background: ...">
-  kbd = -19, // <kbd>
-  spoiler = -20, // <span style="color: transparent; background: black">
-  q = -21, // <q> (inline quote)
-  cite = -22, // <cite> (inline citation)
-  footnote = -23, // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
-  ref = -24, // <a> with href="#ref-..." and title="Reference ..." (Reference to some element in the document)
-  iaside = -25, // Inline <aside>
-  iembed = -26, // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
-  bookmark = -27, // UI for creating a link to this slice
-  overline = -28, // <span style="text-decoration: overline">
+  // ---------------------- inline slices (negative integers, starting from -1)
+  Cursor            = -1,                     // Current user's cursors.
+  RemoteCursor      = -1 + Cursor,            // Remote collaborator cursors.
+  b                 = -1 + RemoteCursor,      // <b>
+  bold              = -1 + b,                 // <bold> (same as <b>, used in Slate and Quill)
+  strong            = -1 + bold,              // <strong> (similar to <b>, used in Prosemirror)
+  i                 = -1 + strong,            // <i>
+  italic            = -1 + i,                 // <em> (same as <i>, used in Slate and Quill)
+  em                = -1 + italic,            // <em> (similar to <i>, used in Prosemirror)
+  u                 = -1 + em,                // <u>
+  underline         = -1 + u,                 // <underline> (same as <u>, used in Slate and Quill)
+  overline          = -1 + underline,         // <span style="text-decoration: overline">
+  s                 = -1 + overline,          // <s>
+  strike            = -1 + s,                 // <strike> (same as <s>, used by Quill)
+  strikethrough     = -1 + strike,            // <strikethrough> (same as <s>)
+  code              = -1 + strikethrough,     // <code>
+  mark              = -1 + code,              // <mark>
+  a                 = -1 + mark,              // <a>
+  link              = -1 + a,                 // <link> (same as <a>, used in Prosemirror and Quill)
+  img               = -1 + link,              // inline <img>
+  image             = -1 + img,               // <image> (same as <img>, used in Quill)
+  comment           = -1 + image,             // User comment attached to a slice
+  del               = -1 + comment,           // <del>
+  ins               = -1 + del,               // <ins>
+  sup               = -1 + ins,               // <sup>
+  sub               = -1 + sup,               // <sub>
+  script            = -1 + sub,               // { script: 'sub' | 'sup' } (used in Quill)
+  math              = -1 + script,            // <math> inline
+  font              = -1 + math,              // <span style="font-family: ..."> (used in Quill)
+  col               = -1 + font,              // <span style="color: ...">
+  color             = -1 + col,               // Same as col, used by Quill
+  bg                = -1 + color,             // <span style="background: ...">
+  background        = -1 + bg,                // Same as bg, used by Quill
+  kbd               = -1 + background,        // <kbd>
+  spoiler           = -1 + kbd,               // <span style="color: transparent; background: black">
+  q                 = -1 + spoiler,           // <q> (inline quote)
+  cite              = -1 + q,                 // <cite> (inline citation)
+  footnote          = -1 + cite,              // <sup> or <a> with href="#footnote-..." and title="Footnote ..."
+  ref               = -1 + footnote,          // <a> with href="#ref-..." and title="Reference ..." (Reference to some element in the document)
+  iaside            = -1 + ref,               // Inline <aside>
+  iembed            = -1 + iaside,            // inline embed (any media, dropdown, Google Docs-like chips: date, person, file, etc.)
+  bookmark          = -1 + iembed,            // UI for creating a link to this slice
 }
 
 /**
@@ -86,31 +105,39 @@ export enum SliceTypeName {
   p = SliceTypeCon.p,
   blockquote = SliceTypeCon.blockquote,
   codeblock = SliceTypeCon.codeblock,
+  'code-block' = SliceTypeCon['code-block'],
+  code_block = SliceTypeCon.code_block,
   pre = SliceTypeCon.pre,
   ul = SliceTypeCon.ul,
   ol = SliceTypeCon.ol,
   tl = SliceTypeCon.tl,
   li = SliceTypeCon.li,
+  list = SliceTypeCon.list,
   h1 = SliceTypeCon.h1,
   h2 = SliceTypeCon.h2,
   h3 = SliceTypeCon.h3,
   h4 = SliceTypeCon.h4,
   h5 = SliceTypeCon.h5,
   h6 = SliceTypeCon.h6,
+  heading = SliceTypeCon.heading,
+  header = SliceTypeCon.header,
   title = SliceTypeCon.title,
   subtitle = SliceTypeCon.subtitle,
   br = SliceTypeCon.br,
+  hard_break = SliceTypeCon.hard_break,
   nl = SliceTypeCon.nl,
   hr = SliceTypeCon.hr,
+  horizontal_rule = SliceTypeCon.horizontal_rule,
   page = SliceTypeCon.page,
   aside = SliceTypeCon.aside,
+  imgblock = SliceTypeCon.imgblock,
   embed = SliceTypeCon.embed,
   column = SliceTypeCon.column,
   contents = SliceTypeCon.contents,
   table = SliceTypeCon.table,
-  row = SliceTypeCon.row,
-  cell = SliceTypeCon.cell,
-  collapselist = SliceTypeCon.collapselist,
+  tr = SliceTypeCon.tr,
+  td = SliceTypeCon.td,
+  cl = SliceTypeCon.cl,
   collapse = SliceTypeCon.collapse,
   note = SliceTypeCon.note,
   mathblock = SliceTypeCon.mathblock,
@@ -119,29 +146,44 @@ export enum SliceTypeName {
   Cursor = SliceTypeCon.Cursor,
   RemoteCursor = SliceTypeCon.RemoteCursor,
   b = SliceTypeCon.b,
+  bold = SliceTypeCon.bold,
+  strong = SliceTypeCon.strong,
   i = SliceTypeCon.i,
+  italic = SliceTypeCon.italic,
+  em = SliceTypeCon.em,
   u = SliceTypeCon.u,
+  underline = SliceTypeCon.underline,
+  overline = SliceTypeCon.overline,
   s = SliceTypeCon.s,
+  strike = SliceTypeCon.strike,
+  strikethrough = SliceTypeCon.strikethrough,
   code = SliceTypeCon.code,
   mark = SliceTypeCon.mark,
   a = SliceTypeCon.a,
+  link = SliceTypeCon.link,
+  img = SliceTypeCon.img,
+  image = SliceTypeCon.image,
   comment = SliceTypeCon.comment,
   del = SliceTypeCon.del,
   ins = SliceTypeCon.ins,
   sup = SliceTypeCon.sup,
   sub = SliceTypeCon.sub,
+  script = SliceTypeCon.script,
   math = SliceTypeCon.math,
   font = SliceTypeCon.font,
   col = SliceTypeCon.col,
+  color = SliceTypeCon.color,
   bg = SliceTypeCon.bg,
+  background = SliceTypeCon.background,
   kbd = SliceTypeCon.kbd,
   spoiler = SliceTypeCon.spoiler,
+  q = SliceTypeCon.q,
+  cite = SliceTypeCon.cite,
   footnote = SliceTypeCon.footnote,
   ref = SliceTypeCon.ref,
   iaside = SliceTypeCon.iaside,
   iembed = SliceTypeCon.iembed,
   bookmark = SliceTypeCon.bookmark,
-  overline = SliceTypeCon.overline,
 }
 
 /** Slice header octet (8 bits) masking specification. */

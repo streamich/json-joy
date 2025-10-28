@@ -75,6 +75,7 @@ const testSuite = (getKit: () => Kit) => {
       const slice = kit.peritext.savedSlices.each().find((slice) => slice.type() === SliceTypeCon.p);
       kit.et.cursor({clear: true});
       kit.et.marker({action: 'del', slice});
+      kit.peritext.refresh();
       expect(kit.toHtml()).toBe('<p>abcdefghi</p><blockquote><p>jklmnopqrstuvwxyz</p></blockquote>');
       expect(kit.peritext.savedSlices.size()).toBe(1);
       const slice2 = kit.peritext.savedSlices.each().find((slice) => true)!;
@@ -90,18 +91,21 @@ const testSuite = (getKit: () => Kit) => {
         const kit = setup();
         kit.et.cursor({at: [8]});
         kit.et.marker({action: 'ins', type: SliceTypeCon.blockquote});
+        kit.peritext.refresh();
         expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote>ijklmnopqrstuvwxyz</blockquote>');
         kit.et.marker({
           action: 'upd',
           target: 'type',
           ops: [['add', '/-', SliceTypeCon.p]],
         });
+        kit.peritext.refresh();
         expect(kit.toHtml()).toBe('<p>abcdefgh</p><blockquote><p>ijklmnopqrstuvwxyz</p></blockquote>');
         kit.et.marker({
           action: 'upd',
           target: 'type',
           ops: [['add', '/2', [[SliceTypeCon.ul, 0, {type: 'tasks'}], SliceTypeCon.li]]],
         });
+        kit.peritext.refresh();
         expect(kit.toHtml()).toBe(
           '<p>abcdefgh</p><blockquote><p><ul data-attr=\'{"type":"tasks"}\'><li>ijklmnopqrstuvwxyz</li></ul></p></blockquote>',
         );
@@ -248,6 +252,7 @@ const testSuite = (getKit: () => Kit) => {
       expect(html1).toBe('<p>abcde</p><blockquote><p>fghijklmnopqrstuvwxyz</p></blockquote>');
       expect(kit.peritext.blocks.root.children.length).toBe(2);
       expect(kit.peritext.blocks.root.children[1].children.length).toBe(1);
+      kit.peritext.refresh();
       kit.et.cursor({at: [10]});
       kit.et.marker({action: 'ins'});
       kit.peritext.refresh();
