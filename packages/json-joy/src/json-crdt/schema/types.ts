@@ -21,17 +21,18 @@ export type SchemaToJsonNode<S> = S extends builder.str<infer T>
             : S extends builder.arr<infer T>
               ? nodes.ArrNode<SchemaToJsonNode<T>>
               : S extends builder.ext<ExtensionId.peritext, any>
-                ? nodes.VecNode<ExtensionVecData<PeritextNode>>
+                ? ExtensionNode<PeritextNode>
                 : S extends builder.ext<ExtensionId.quill, any>
-                  ? nodes.VecNode<ExtensionVecData<QuillDeltaNode>>
+                  ? ExtensionNode<QuillDeltaNode>
                   : S extends builder.ext<ExtensionId.mval, any>
-                    ? nodes.VecNode<ExtensionVecData<MvalNode>>
+                    ? ExtensionNode<MvalNode>
                     : nodes.JsonNode;
 
-export type ExtensionVecData<EDataNode extends ExtNode<any, any>> = {__BRAND__: 'ExtVecData'} & [
-  header: nodes.ConNode<Uint8Array>,
-  data: EDataNode,
-];
+export type ExtensionNode<E extends ExtNode<any>> = nodes.VecNode<ExtensionVecData<E>>;
+
+export type ExtensionVecData<EDataNode extends ExtNode<any, any>> = {
+  __BRAND__: 'ExtVecData';
+} & [header: nodes.ConNode<Uint8Array>, data: EDataNode];
 
 // prettier-ignore
 export type VecNodeExtensionData<N> = N extends nodes.VecNode<infer T>

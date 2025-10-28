@@ -1,12 +1,12 @@
 import {Model} from '../../model';
-import {equalSchema} from '..';
+import {cmp} from '..';
 import {s} from '../../../json-crdt-patch';
 
 describe('equalSchema(), schema only', () => {
   const assertSchemasEqual = (a: unknown, b: unknown): void => {
     const model1 = Model.create(a);
     const model2 = Model.create(b);
-    const result = equalSchema(model1.root, model2.root, false);
+    const result = cmp(model1.root, model2.root, false);
     expect(result).toBe(true);
   };
 
@@ -21,14 +21,14 @@ describe('equalSchema(), with content comparison', () => {
   const assertSchemasEqual = (a: unknown): void => {
     const model1 = Model.create(a);
     const model2 = Model.create(a);
-    const result = equalSchema(model1.root, model2.root, true);
+    const result = cmp(model1.root, model2.root, true);
     expect(result).toBe(true);
   };
 
   const assertSchemasDifferent = (a: unknown, b: unknown): void => {
     const model1 = Model.create(a);
     const model2 = Model.create(b);
-    const result = equalSchema(model1.root, model2.root, true);
+    const result = cmp(model1.root, model2.root, true);
     expect(result).toBe(false);
   };
 

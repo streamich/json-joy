@@ -1,3 +1,4 @@
+import {con as printCon} from '../../../util/print';
 import {type ITimestampStruct, printTs, Timestamp} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -59,11 +60,6 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string): string {
-    const val = this.val;
-    const valFormatted =
-      val instanceof Uint8Array
-        ? `Uint8Array { ${('' + val).replaceAll(',', ', ')} }`
-        : `{ ${val instanceof Timestamp ? printTs(val as Timestamp) : JSON.stringify(val)} }`;
-    return `${this.name()} ${printTs(this.id)} ${valFormatted}`;
+    return this.name() + ' ' + printTs(this.id) + ' ' + printCon(this.val);
   }
 }

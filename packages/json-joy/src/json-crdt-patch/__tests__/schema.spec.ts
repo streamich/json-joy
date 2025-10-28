@@ -1,6 +1,9 @@
 import {Model} from '../../json-crdt/model';
 import {type NodeBuilder, s} from '../schema';
 
+const escapeTerminalCtrlChars = (str: string): string =>
+  str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 describe('nodes', () => {
   describe('obj', () => {
     test('can create basic "obj" schema', () => {
@@ -15,6 +18,67 @@ describe('nodes', () => {
       expect(model.api.select('/num', false)?.node.name()).toBe('con');
       expect(model.api.select('/num', true)?.node.name()).toBe('con');
     });
+  });
+
+  test('can print schema', () => {
+    const schema = s.obj(
+      {
+        name: s.str('abc'),
+        age: s.con(123),
+        data: s.bin(new Uint8Array([0xff, 0x00, 0x44, 0x55])),
+        important: s.val(s.con(null)),
+        undefined: s.con(undefined),
+        coords: s.vec(s.con(1.1232), s.con(2.1232)),
+        tags: s.arr([s.str('tag1'), s.str('tag2')]),
+        extension: s.ext(
+          5,
+          s.obj({
+            foo: s.con('bar'),
+          }),
+        ),
+      },
+      {
+        verified: s.con(true),
+        signature: s.con(new Uint8Array([1, 2, 3])),
+        label: s.con('x78398ks-asdf'),
+      },
+    );
+    const str = schema + '';
+    expect('\n' + escapeTerminalCtrlChars(str)).toBe(`
+obj
+├─ "name"
+│   └─ str { "abc" }
+├─ "age"
+│   └─ con { 123 }
+├─ "data"
+│   └─ bin { 255, 0, 68, 85 }
+├─ "important"
+│   └─ val
+│      └─ con { !n }
+├─ "undefined"
+│   └─ con { !u }
+├─ "coords"
+│   └─ vec
+│      ├─ 0: con { 1.1232 }
+│      └─ 1: con { 2.1232 }
+├─ "tags"
+│   └─ arr
+│      ├─ [0]: str { "tag1" }
+│      └─ [1]: str { "tag2" }
+├─ "extension"
+│   └─ ext(5)
+│      └─ obj
+│         └─ "foo"
+│             └─ con { "bar" }
+├─ "verified"?
+│   └─ con { !t }
+├─ "signature"?
+│   └─ con Uint8Array { 1, 2, 3 }
+└─ "label"?
+    └─ con { "x78398ks-asdf" }`);
+    // console.log(str);
+    // const model = Model.create(schema);
+    // console.log(model.root.child() + '');
   });
 
   describe('json', () => {
