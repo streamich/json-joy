@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.61.1",
+  "version": "17.62.0",
   "description": "No-dependencies, low-level, high-performance JIT code generation package for JavaScript",
   "author": {
     "name": "streamich",

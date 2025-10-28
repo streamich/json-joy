@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.61.1",
+  "version": "17.62.0",
   "description": "High-performance JSON Pointer implementation",
   "author": {
     "name": "streamich",
