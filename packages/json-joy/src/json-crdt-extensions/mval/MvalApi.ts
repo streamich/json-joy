@@ -10,7 +10,7 @@ export class MvalApi extends NodeApi<MvalNode> implements ExtApi<MvalNode> {
     const length = rgaApi.length();
     rgaApi.del(0, length);
     rgaApi.ins(0, [builder.json(json)]);
-    rgaApi.node.removeTombstones();
+    rgaApi.node.rmTombstones();
     return this;
   }
 }

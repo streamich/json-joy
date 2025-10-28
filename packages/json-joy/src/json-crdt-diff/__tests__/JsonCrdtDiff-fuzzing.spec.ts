@@ -1,6 +1,6 @@
 import {JsonCrdtDiff} from '../JsonCrdtDiff';
 import {Model} from '../../json-crdt/model';
-import {RandomJson} from '@jsonjoy.com/json-random';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 
 const assertDiff = (src: unknown, dst: unknown) => {
   const model = Model.create();
