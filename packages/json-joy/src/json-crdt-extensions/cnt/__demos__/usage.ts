@@ -6,7 +6,7 @@
  *     npx nodemon -q -x ts-node src/json-crdt-extensions/cnt/__demos__/usage.ts
  */
 
-import {Model, s} from '../../../json-crdt';
+import {Model} from '../../../json-crdt';
 import {cnt} from '..';
 
 console.clear();

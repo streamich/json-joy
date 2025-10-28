@@ -1,4 +1,4 @@
-import {type Kit, runAlphabetKitTestSuite, setupAlphabetKit, setupKit} from '../../__tests__/setup';
+import {type Kit, setupAlphabetKit, setupKit} from '../../__tests__/setup';
 import {CommonSliceType} from '../../slice';
 import {SliceTypeCon} from '../../slice/constants';
 import * as fixtures from './fixtures';

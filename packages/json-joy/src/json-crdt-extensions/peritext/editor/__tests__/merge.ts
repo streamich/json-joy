@@ -1,23 +1,23 @@
 import type {ViewRange} from '../types';
-import {logTree, toTree} from 'pojo-dump';
+// import {logTree, toTree} from 'pojo-dump';
 import {ModelWithExt, ext} from '../../../ModelWithExt';
 import type {PeritextNode} from '../../PeritextNode';
 import type {Model} from '../../../../json-crdt/model';
 import type {ExtensionNode} from '../../../../json-crdt/schema/types';
 
-const normalizeViewRange = (view: ViewRange): void => {
-  const [, offset, slices] = view;
-  const length = slices.length;
-  if (offset > 0) {
-    view[1] = 0;
-    for (let i = 0; i < length; i++) {
-      const slice = slices[i];
-      slice[1] += offset;
-      slice[2] += offset;
-    }
-  }
-  slices.sort((a, b) => a[1] - b[1] || a[2] - b[2] || 1);
-};
+// const normalizeViewRange = (view: ViewRange): void => {
+//   const [, offset, slices] = view;
+//   const length = slices.length;
+//   if (offset > 0) {
+//     view[1] = 0;
+//     for (let i = 0; i < length; i++) {
+//       const slice = slices[i];
+//       slice[1] += offset;
+//       slice[2] += offset;
+//     }
+//   }
+//   slices.sort((a, b) => a[1] - b[1] || a[2] - b[2] || 1);
+// };
 
 export const assertCanMergeInto = (model: Model<ExtensionNode<PeritextNode>>, view: ViewRange): void => {
   // logTree(view);
@@ -46,7 +46,6 @@ export const assertCanMergeIntoEmptyDocument = (view: ViewRange): void => {
 
 export const assertCanMergeViewTrain = (views: ViewRange[]): void => {
   const model = ModelWithExt.create(ext.peritext.new(''), 1234567890123);
-  const i = 1;
   for (const view of views) {
     // console.log(`Merging view ${i++} of ${views.length}`);
     assertCanMergeInto(model, view);

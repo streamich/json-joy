@@ -1,11 +1,9 @@
 import type {Range} from '../rga/Range';
-import type {Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceStacking, SliceTypeCon} from './constants';
 import type {NodeBuilder, nodes} from '../../../json-crdt-patch';
 import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {JsonNodeView} from '../../../json-crdt/nodes';
-import type {Anchor} from '../rga/constants';
 
 /**
  * Represents a developer-defined type of a slice, allows developers to assign

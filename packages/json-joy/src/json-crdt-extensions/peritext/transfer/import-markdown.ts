@@ -1,6 +1,5 @@
 import {toHast} from 'very-small-parser/lib/markdown/block/toHast';
 import {block} from 'very-small-parser/lib/markdown/block';
-import {fromHast as _fromHast} from 'very-small-parser/lib/html/json-ml/fromHast';
 import {fromHast} from './import-html';
 import type {IRoot} from 'very-small-parser/lib/markdown/block/types';
 import type {PeritextMlNode} from '../block/types';

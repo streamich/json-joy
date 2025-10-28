@@ -5,7 +5,6 @@ import {first2, insert2, last2, next2, prev2, remove2} from 'sonic-forest/lib/ut
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {OverlayPoint} from './OverlayPoint';
-import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {compare, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash/hash';
 import {Slice} from '../slice/Slice';
@@ -611,12 +610,10 @@ export class Overlay<T = string> implements Printable, Stateful {
           });
         }
         if (savedSlicesChanged || extraSlicesChanged) {
-          // biome-ignore lint: .forEach() is the way to iterate here.
           savedSlices.forEach((slice) => {
             if (slice.isMarker()) this.upsertSlice(slice);
             else this.upsertSlice(slice);
           });
-          // biome-ignore lint: .forEach() is the way to iterate here.
           extraSlices.forEach((slice) => {
             if (slice.isMarker()) this.upsertSlice(slice);
             else this.upsertSlice(slice);
@@ -624,7 +621,6 @@ export class Overlay<T = string> implements Printable, Stateful {
         }
         if (localSlicesChanged || savedSlicesChanged || extraSlicesChanged) {
           const sliceSet = this.slices;
-          // biome-ignore lint: .forEach() is the way to iterate here.
           localSlices.forEach((slice) => {
             const tuple = sliceSet.get(slice);
             if (tuple) {
@@ -632,7 +628,6 @@ export class Overlay<T = string> implements Printable, Stateful {
               if (positionMoved) this.delSlice(slice, tuple);
             }
           });
-          // biome-ignore lint: .forEach() is the way to iterate here.
           localSlices.forEach((slice) => {
             const tuple = slice.isMarker() ? this.upsertSlice(slice) : this.upsertSlice(slice);
             this.slices.set(slice, tuple);
