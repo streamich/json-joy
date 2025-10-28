@@ -1,26 +1,25 @@
 import {Cursor} from './Cursor';
 import {Anchor} from '../rga/constants';
-import {formatType} from '../slice/util';
+import {formatStep} from '../slice/util';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
 import {SliceRegistry} from '../registry/SliceRegistry';
-import {PersistedSlice} from '../slice/PersistedSlice';
+import {Slice} from '../slice/Slice';
 import {toLine} from 'pojo-dump/lib/toLine';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
-import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
-import {tick, Timespan, type ITimespanStruct} from '../../../json-crdt-patch';
+import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import {ArrApi} from '../../../json-crdt/model';
+import * as schema from '../slice/schema';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {ChunkSlice} from '../util/ChunkSlice';
-import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {
   CharIterator,
   CharPredicate,
@@ -34,6 +33,8 @@ import type {
   MarkerUpdateTarget,
 } from './types';
 import type {ApiOperation} from '../../../json-crdt/model/api/types';
+import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
+import {OverlayPoint} from '../overlay/OverlayPoint';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -270,8 +271,7 @@ export class Editor<T = string> implements Printable {
     const txt = this.txt;
     const overlay = txt.overlay;
     const contained = overlay.findContained(range);
-    for (const slice of contained)
-      if (slice instanceof PersistedSlice && slice.stacking !== SliceStacking.Cursor) slice.del();
+    for (const slice of contained) if (slice instanceof Slice && slice.stacking !== SliceStacking.Cursor) slice.del();
     txt.delStr(range);
   }
 
@@ -467,8 +467,8 @@ export class Editor<T = string> implements Printable {
     let overlayPoint = overlay.getOrNextHigher(point);
     if (!overlayPoint) return this.end();
     if (point.cmp(overlayPoint) === 0) overlayPoint = next(overlayPoint);
-    while (!(overlayPoint instanceof MarkerOverlayPoint) && overlayPoint) overlayPoint = next(overlayPoint);
-    if (overlayPoint instanceof MarkerOverlayPoint) {
+    while (overlayPoint instanceof OverlayPoint && !overlayPoint.isMarker()) overlayPoint = next(overlayPoint);
+    if (overlayPoint instanceof OverlayPoint && overlayPoint.isMarker()) {
       const point = overlayPoint.clone();
       point.refAfter();
       return point;
@@ -486,8 +486,8 @@ export class Editor<T = string> implements Printable {
     if (point.isAbsStart()) return point;
     let overlayPoint = overlay.getOrNextLower(point);
     if (!overlayPoint) return this.start();
-    while (!(overlayPoint instanceof MarkerOverlayPoint) && overlayPoint) overlayPoint = prev(overlayPoint);
-    if (overlayPoint instanceof MarkerOverlayPoint) {
+    while (overlayPoint instanceof OverlayPoint && !overlayPoint.isMarker()) overlayPoint = prev(overlayPoint);
+    if (overlayPoint instanceof OverlayPoint && overlayPoint.isMarker()) {
       const point = overlayPoint.clone();
       point.refBefore();
       return point;
@@ -652,7 +652,7 @@ export class Editor<T = string> implements Printable {
       overlay.refresh();
       const contained = overlay.findContained(range);
       for (const slice of contained) {
-        if (slice instanceof PersistedSlice) {
+        if (slice instanceof Slice) {
           switch (slice.stacking) {
             case SliceStacking.One:
             case SliceStacking.Many:
@@ -701,7 +701,7 @@ export class Editor<T = string> implements Printable {
     const needToRemoveFormatting = complete.has(type);
     makeRangeExtendable(range);
     const contained = overlay.findContained(range);
-    for (const slice of contained) if (slice instanceof PersistedSlice && slice.type() === type) slice.del();
+    for (const slice of contained) if (slice instanceof Slice && slice.type() === type) slice.del();
     if (needToRemoveFormatting) {
       overlay.refresh();
       const [complete2, partial2] = overlay.stat(range, 1e6);
@@ -732,13 +732,13 @@ export class Editor<T = string> implements Printable {
   ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
-    for (const range of selection) {
+    SELECTION: for (const range of selection) {
       if (range.isCollapsed()) {
         const pending = this.pending.value ?? new Map();
         if (pending.has(type)) pending.delete(type);
         else pending.set(type, data);
         this.pending.next(pending);
-        continue;
+        continue SELECTION;
       }
       this.toggleRangeExclFmt(range, type, data, store);
     }
@@ -752,8 +752,8 @@ export class Editor<T = string> implements Printable {
    * @param point The point to get the marker at.
    * @returns The split marker at the point, if any.
    */
-  public getMarker(point: Point<T>): MarkerSlice<T> | undefined {
-    return this.txt.overlay.getOrNextLowerMarker(point)?.marker;
+  public getMarker(point: Point<T>): Slice<T> | undefined {
+    return this.txt.overlay.getOrNextLowerMarker(point)?.markers[0];
   }
 
   /**
@@ -763,7 +763,7 @@ export class Editor<T = string> implements Printable {
    * @param point The point to get the block type at.
    * @returns Current block type at the point.
    */
-  public getBlockType(point: Point<T>): [type: SliceTypeSteps, marker?: MarkerSlice<T> | undefined] {
+  public getBlockType(point: Point<T>): [type: SliceTypeSteps, marker?: Slice<T> | undefined] {
     const marker = this.getMarker(point);
     if (!marker) return [[SliceTypeCon.p]];
     let steps = marker?.type() ?? [SliceTypeCon.p];
@@ -780,7 +780,7 @@ export class Editor<T = string> implements Printable {
    * @param type The type of the marker.
    * @returns The inserted marker slice.
    */
-  public insStartMarker(type: SliceTypeSteps): MarkerSlice<T> {
+  public insStartMarker(type: SliceTypeSteps): Slice<T> {
     const txt = this.txt;
     const start = txt.pointStart() ?? txt.pointAbsStart();
     start.refAfter();
@@ -797,7 +797,7 @@ export class Editor<T = string> implements Printable {
    * @param type The new block type.
    * @returns The marker slice at the point, or a new marker slice if there is none.
    */
-  public setBlockType(point: Point<T>, type: SliceTypeSteps): MarkerSlice<T> {
+  public setBlockType(point: Point<T>, type: SliceTypeSteps): Slice<T> {
     const marker = this.getMarker(point);
     if (marker) {
       marker.update({type});
@@ -897,7 +897,7 @@ export class Editor<T = string> implements Printable {
     }
   }
 
-  public setStartMarker(type: SliceTypeSteps, data?: unknown, slices: EditorSlices<T> = this.saved): MarkerSlice<T> {
+  public setStartMarker(type: SliceTypeSteps, data?: unknown, slices: EditorSlices<T> = this.saved): Slice<T> {
     const after = this.txt.pointStart() ?? this.txt.pointAbsStart();
     after.refAfter();
     return slices.slices.insMarkerAfter(after.id, type, data);
@@ -913,7 +913,7 @@ export class Editor<T = string> implements Printable {
     const overlay = this.txt.overlay;
     const markerPoint = overlay.getOrNextLowerMarker(point);
     if (markerPoint) {
-      const marker = markerPoint.marker;
+      const marker = markerPoint.markers[0];
       const markerTag = marker.nestedType().tag().name();
       const tagStep = type[type.length - 1];
       const tag = Array.isArray(tagStep) ? tagStep[0] : tagStep;
@@ -939,19 +939,24 @@ export class Editor<T = string> implements Printable {
     for (const range of selection) this.tglMarkerAt(range.start, type, data, slices, def);
   }
 
-  public delMarker(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
-    const markerPoints = new Set<MarkerOverlayPoint<T>>();
+  public delMarker(split: Slice<T>): void {
+    const boundary = split.boundary();
+    this.delRange(boundary);
+  }
+
+  public delMarkerSelection(selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors()): void {
+    const markerPoints = new Set<OverlayPoint<T>>();
     for (const range of selection) {
       const markerPoint = this.txt.overlay.getOrNextLowerMarker(range.start);
       if (markerPoint) markerPoints.add(markerPoint);
     }
-    for (const markerPoint of markerPoints) {
-      const boundary = markerPoint.marker.boundary();
-      this.delRange(boundary);
-    }
+    for (const markerPoint of markerPoints) this.delMarker(markerPoint.markers[0]);
   }
 
-  public updMarkerSlice(marker: MarkerSlice<T>, target: MarkerUpdateTarget, ops: ApiOperation[]): void {
+  /**
+   * @todo This detailed update operation should move to the {@link Slice} class.
+   */
+  public updMarkerSlice(marker: Slice<T>, target: MarkerUpdateTarget, ops: ApiOperation[]): void {
     const node =
       target === 'type'
         ? marker.nestedType().asArr()
@@ -973,7 +978,7 @@ export class Editor<T = string> implements Printable {
   ): void {
     const overlay = this.txt.overlay;
     const markerPoint = overlay.getOrNextLowerMarker(point);
-    const marker: MarkerSlice<T> = markerPoint?.marker ?? this.setStartMarker([SliceTypeCon.p], void 0, slices);
+    const marker: Slice<T> = markerPoint?.markers[0] ?? this.setStartMarker([SliceTypeCon.p], void 0, slices);
     this.updMarkerSlice(marker, target, ops);
   }
 
@@ -988,7 +993,21 @@ export class Editor<T = string> implements Printable {
 
   // ---------------------------------------------------------- export / import
 
-  public export(range: Range<T>): ViewRange {
+  public exportSlice(slice: Slice<T>): ViewSlice {
+    const {stacking, start, end} = slice;
+    const header: number =
+      (stacking << SliceHeaderShift.Stacking) +
+      (start.anchor << SliceHeaderShift.X1Anchor) +
+      (end.anchor << SliceHeaderShift.X2Anchor);
+    const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), slice.type()];
+    const data = slice.data();
+    if (data !== void 0) viewSlice.push(data);
+    return viewSlice;
+  }
+
+  public export(range?: Range<T>): ViewRange {
+    if (!range) range = this.txt.rangeAll();
+    if (!range) return ['', 0, []];
     const r = range.range();
     r.start.refBefore();
     r.end.refAfter();
@@ -998,8 +1017,10 @@ export class Editor<T = string> implements Printable {
     const view: ViewRange = [text, offset, viewSlices];
     const txt = this.txt;
     const overlay = txt.overlay;
-    const slices = overlay.findOverlapping(r);
+    const slices = Array.from(overlay.findOverlapping(r));
+    slices.sort((a, b) => (a instanceof Slice && b instanceof Slice ? a.pos() - b.pos() : 0));
     for (const slice of slices) {
+      if (!(slice instanceof Slice) || !slice.isSaved()) continue;
       const isSavedSlice = slice.id.sid === txt.model.clock.sid;
       if (!isSavedSlice) continue;
       const stacking = slice.stacking;
@@ -1008,14 +1029,7 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.Many:
         case SliceStacking.Erase:
         case SliceStacking.Marker: {
-          const {stacking, start, end} = slice;
-          const header: number =
-            (stacking << SliceHeaderShift.Stacking) +
-            (start.anchor << SliceHeaderShift.X1Anchor) +
-            (end.anchor << SliceHeaderShift.X2Anchor);
-          const viewSlice: ViewSlice = [header, start.viewPos(), end.viewPos(), slice.type()];
-          const data = slice.data();
-          if (data !== void 0) viewSlice.push(data);
+          const viewSlice = this.exportSlice(slice);
           viewSlices.push(viewSlice);
         }
       }
@@ -1030,7 +1044,9 @@ export class Editor<T = string> implements Printable {
    * @param range Range copy formatting from, normally a single visible character.
    * @returns A list of serializable inline formatting applied to the selected range.
    */
-  public exportStyle(range: Range<T>): ViewStyle[] {
+  public exportStyle(range?: Range<T>): ViewStyle[] {
+    if (!range) range = this.txt.rangeAll();
+    if (!range) return [];
     const formatting: ViewStyle[] = [];
     const txt = this.txt;
     const overlay = txt.overlay;
@@ -1153,6 +1169,74 @@ export class Editor<T = string> implements Printable {
     }
   }
 
+  // ----------------------------------------------------- diff / patch / merge
+
+  /**
+   * Merges the given destination view range with the current document, computes
+   * a minimal patch and immediately applies it to the document.
+   *
+   * @param dst Destination view range to merge with the current document.
+   * @returns Returns two patches: the first one for the text contents, the
+   *     second one for the rich-text slices.
+   */
+  public merge(dst: ViewRange): [patch1: Patch | undefined, patch2: Patch | undefined, patch3: Patch | undefined] {
+    const [text, offset, slices] = dst;
+    if (offset !== 0) throw new Error('DOC'); // Only full document diff supported.
+    const txt = this.txt;
+    const str = txt.str;
+    const startTime = txt.model.clock.time;
+    const patch1 = txt.strApi().merge(text);
+
+    let patch2: Patch | undefined;
+    {
+      // Block split `'\n'` new line characters must be standalone RGA chunks.
+      // Here we enforce that by removing all newly inserted `'\n'` characters
+      // and replacing them with a single `'\n'` character, which we ensure is
+      // always a standalone RGA chunk.
+      const model = txt.model;
+      const builder = new PatchBuilder(model.clock.clone());
+      let hasChange = false;
+      for (const slice of slices) {
+        const stacking: SliceStacking = (slice[0] & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
+        if (stacking === SliceStacking.Marker) {
+          const pos = slice[1];
+          const id = str.find(pos);
+          if (id && id.time + 1 > startTime) {
+            builder.insStr(str.id, id, '\n');
+            builder.nop(1);
+            builder.del(str.id, [tss(id.sid, id.time, 1)]);
+            hasChange = true;
+          }
+        }
+      }
+      if (hasChange) {
+        patch2 = builder.flush();
+        model.applyPatch(patch2);
+      }
+    }
+
+    let patch3: Patch | undefined;
+    {
+      const dstSlices: ReturnType<typeof schema.slice>[] = [];
+      for (const [header, start, end, type, data] of slices) {
+        const stacking: SliceStacking = (header & SliceHeaderMask.Stacking) >>> SliceHeaderShift.Stacking;
+        const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
+        const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
+        const startPoint = txt.pointIn(start, anchor1);
+        const endPoint = txt.pointIn(end, anchor2);
+        const range = txt.range(startPoint, endPoint);
+        const sliceSchema = schema.slice(range, stacking, type, data);
+        dstSlices.push(sliceSchema);
+      }
+      const differ = new JsonCrdtDiff(txt.model);
+      patch3 = differ.diff(txt.savedSlices.set, s.arr(dstSlices));
+      if (patch3.ops.length) txt.model.applyPatch(patch3);
+      else patch3 = void 0;
+    }
+
+    return [patch1, patch2, patch3];
+  }
+
   // ------------------------------------------------------------------ various
 
   public pos2point(at: EditorPosition<T>): Point<T> {
@@ -1190,7 +1274,7 @@ export class Editor<T = string> implements Printable {
   public toString(tab: string = ''): string {
     const pending = this.pending.value;
     const pendingFormatted = {} as any;
-    if (pending) for (const [type, data] of pending) pendingFormatted[formatType(type)] = data;
+    if (pending) for (const [type, data] of pending) pendingFormatted[formatStep(type)] = data;
     return (
       'Editor' +
       printTree(tab, [

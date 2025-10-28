@@ -1543,7 +1543,7 @@ export class ToolbarState implements UiLifeCycles {
               name: 'Table',
               icon: () => <Iconista width={16} height={16} set="tabler" icon="table" />,
               onSelect: () => {
-                et.marker('upd', [SliceTypeCon.table, SliceTypeCon.row, SliceTypeCon.p]);
+                et.marker('upd', [SliceTypeCon.table, SliceTypeCon.tr, SliceTypeCon.p]);
               },
             },
             {

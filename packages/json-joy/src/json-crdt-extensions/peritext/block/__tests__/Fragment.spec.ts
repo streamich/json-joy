@@ -1,5 +1,4 @@
 import {setupHelloWorldKit} from '../../__tests__/setup';
-import {MarkerOverlayPoint} from '../../overlay/MarkerOverlayPoint';
 import {Block} from '../Block';
 import {LeafBlock} from '../LeafBlock';
 import {CommonSliceType} from '../../slice';
@@ -32,7 +31,7 @@ test('can construct a two-paragraph document', () => {
   expect(paragraph1.path).toEqual([0]);
   expect(paragraph2.path).toEqual(['p']);
   expect(paragraph1.marker).toBe(undefined);
-  expect(paragraph2.marker instanceof MarkerOverlayPoint).toBe(true);
+  expect(paragraph2.marker?.isMarker()).toBe(true);
 });
 
 test('first inline element does not contain marker text', () => {

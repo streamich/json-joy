@@ -1,7 +1,7 @@
 import {UndEndIterator} from '../../../../util/iterator';
 import {type Kit, runNumbersKitTestSuite} from '../../__tests__/setup';
 import type {Point} from '../../rga/Point';
-import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
+import {OverlayPoint} from '../OverlayPoint';
 
 const runMarkersTests = (setup: () => Kit) => {
   describe('.markers()', () => {
@@ -19,7 +19,7 @@ const runMarkersTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       const list = [...peritext.overlay.markers()];
       expect(list.length).toBe(1);
-      expect(list[0] instanceof MarkerOverlayPoint).toBe(true);
+      expect(list[0].isMarker()).toBe(true);
     });
 
     test('can iterate through multiple markers', () => {
@@ -35,10 +35,10 @@ const runMarkersTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       const list = [...peritext.overlay.markers()];
       expect(list.length).toBe(3);
-      for (const m of list) expect(m instanceof MarkerOverlayPoint).toBe(true);
-      expect(list[0].marker).toBe(m1);
-      expect(list[1].marker).toBe(m2);
-      expect(list[2].marker).toBe(m3);
+      for (const m of list) expect(m.isMarker()).toBe(true);
+      expect(list[0].markers[0]).toBe(m1);
+      expect(list[1].markers[0]).toBe(m2);
+      expect(list[2].markers[0]).toBe(m3);
     });
 
     test('can delete markers', () => {
@@ -120,7 +120,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const point = peritext.pointAt(3);
       const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
-      expect(list[0] instanceof MarkerOverlayPoint).toBe(true);
+      expect(list[0].isMarker()).toBe(true);
     });
 
     test('returns a single marker (when point is before marker position)', () => {
@@ -131,7 +131,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const point = peritext.pointAt(1);
       const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
-      expect(list[0] instanceof MarkerOverlayPoint).toBe(true);
+      expect(list[0].isMarker()).toBe(true);
     });
 
     test('can iterate through multiple markers', () => {
@@ -148,7 +148,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const point = peritext.pointAt(1);
       const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(3);
-      for (const m of list) expect(m instanceof MarkerOverlayPoint).toBe(true);
+      for (const m of list) expect(m.isMarker()).toBe(true);
       expect(list[0].marker).toBe(m1);
       expect(list[1].marker).toBe(m2);
       expect(list[2].marker).toBe(m3);
@@ -168,7 +168,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const point = peritext.pointAbsStart();
       const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(3);
-      for (const m of list) expect(m instanceof MarkerOverlayPoint).toBe(true);
+      for (const m of list) expect(m.isMarker()).toBe(true);
       expect(list[0].marker).toBe(m1);
       expect(list[1].marker).toBe(m2);
       expect(list[2].marker).toBe(m3);
@@ -196,7 +196,7 @@ const runMarkersTests = (setup: () => Kit) => {
       const point = peritext.pointAbsStart();
       const list = [...new UndEndIterator(peritext.overlay.markersFrom0(point))];
       expect(list.length).toBe(1);
-      expect(list[0].marker).toBe(marker);
+      expect(list[0].markers[0]).toBe(marker);
       editor.extra.del(marker);
       peritext.overlay.refresh();
       expect([...peritext.overlay.markers()].length).toBe(0);
@@ -335,8 +335,10 @@ const runMarkersTests = (setup: () => Kit) => {
         const list = [...new UndEndIterator(peritext.overlay.markerPairs0(point))];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
-        expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
-        expect(list[1][0]).toBeInstanceOf(MarkerOverlayPoint);
+        expect(list[0][1]).toBeInstanceOf(OverlayPoint);
+        expect(list[0][1]?.isMarker()).toBe(true);
+        expect(list[1][0]).toBeInstanceOf(OverlayPoint);
+        expect(list[1][0]?.isMarker()).toBe(true);
         expect(list[1][1]).toBe(undefined);
         expect(list[0][1]).toBe(list[1][0]);
       });
@@ -346,7 +348,8 @@ const runMarkersTests = (setup: () => Kit) => {
         const point = peritext.pointAt(5);
         const list = [...new UndEndIterator(peritext.overlay.markerPairs0(point))];
         expect(list.length).toBe(1);
-        expect(list[0][0]).toBeInstanceOf(MarkerOverlayPoint);
+        expect(list[0][0]).toBeInstanceOf(OverlayPoint);
+        expect(list[0][0]?.isMarker()).toBe(true);
         expect(list[0][1]).toBe(undefined);
       });
 
@@ -378,8 +381,10 @@ const runMarkersTests = (setup: () => Kit) => {
         const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
-        expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
-        expect(list[1][0]).toBeInstanceOf(MarkerOverlayPoint);
+        expect(list[0][1]).toBeInstanceOf(OverlayPoint);
+        expect(list[0][1]?.isMarker()).toBe(true);
+        expect(list[1][0]).toBeInstanceOf(OverlayPoint);
+        expect(list[1][0]?.isMarker()).toBe(true);
         expect(list[1][1]).toBe(undefined);
       });
 
@@ -391,8 +396,10 @@ const runMarkersTests = (setup: () => Kit) => {
         const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
-        expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
-        expect(list[1][0]).toBeInstanceOf(MarkerOverlayPoint);
+        expect(list[0][1]).toBeInstanceOf(OverlayPoint);
+        expect(list[0][1]?.isMarker()).toBe(true);
+        expect(list[1][0]).toBeInstanceOf(OverlayPoint);
+        expect(list[1][0]?.isMarker()).toBe(true);
         expect(list[1][1]).toBe(undefined);
       });
 
@@ -404,8 +411,10 @@ const runMarkersTests = (setup: () => Kit) => {
         const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(2);
         expect(list[0][0]).toBe(undefined);
-        expect(list[0][1]).toBeInstanceOf(MarkerOverlayPoint);
-        expect(list[1][0]).toBeInstanceOf(MarkerOverlayPoint);
+        expect(list[0][1]).toBeInstanceOf(OverlayPoint);
+        expect(list[0][1]?.isMarker()).toBe(true);
+        expect(list[1][0]).toBeInstanceOf(OverlayPoint);
+        expect(list[1][0]?.isMarker()).toBe(true);
         expect(list[1][1]).toBe(undefined);
       });
 
@@ -449,7 +458,8 @@ const runMarkersTests = (setup: () => Kit) => {
         const iterator = peritext.overlay.markerPairs0(start, end);
         const list = [...new UndEndIterator(iterator)];
         expect(list.length).toBe(1);
-        expect(list[0][0]).toBeInstanceOf(MarkerOverlayPoint);
+        expect(list[0][0]).toBeInstanceOf(OverlayPoint);
+        expect(list[0][0]?.isMarker()).toBe(true);
         expect(list[0][1]).toBe(undefined);
       });
 

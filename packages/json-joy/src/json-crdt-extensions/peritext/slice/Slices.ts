@@ -1,18 +1,16 @@
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {printTree} from 'tree-dump/lib/printTree';
-import {PersistedSlice} from './PersistedSlice';
+import {Slice} from './Slice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash/hash';
 import {SliceHeaderShift, SliceStacking, SliceTupleIndex} from './constants';
-import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
-import {Chars} from '../constants';
 import {Anchor} from '../rga/constants';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import * as schema from './schema';
 import type {Range} from '../rga/Range';
-import type {Slice, SliceType} from './types';
+import type {SliceType} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -21,7 +19,7 @@ import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 
 export class Slices<T = string> implements Stateful, Printable {
-  private list = new AvlMap<ITimestampStruct, PersistedSlice<T>>(compare);
+  private list = new AvlMap<ITimestampStruct, Slice<T>>(compare);
 
   protected readonly rga: AbstractRga<T>;
 
@@ -34,20 +32,15 @@ export class Slices<T = string> implements Stateful, Printable {
     this.rga = txt.str as unknown as AbstractRga<T>;
   }
 
-  public ins<
-    S extends PersistedSlice<T>,
-    K extends new (
-      ...args: ConstructorParameters<typeof PersistedSlice<T>>
-    ) => S,
-  >(
+  public ins<S extends Slice<T>, K extends new (...args: ConstructorParameters<typeof Slice<T>>) => S>(
     range: Range<T>,
     stacking: SliceStacking,
     type: SliceType,
     data?: unknown,
-    Klass: K = stacking === SliceStacking.Marker ? <any>MarkerSlice : PersistedSlice,
+    Klass: K = <any>Slice,
   ): S {
     const slicesModel = this.set.doc;
-    const set = this.set;
+    const arr = this.set;
     const api = slicesModel.api;
     const builder = api.builder;
     const stepId = builder.vec();
@@ -65,32 +58,28 @@ export class Slices<T = string> implements Stateful, Printable {
     const tupleKeysUpdate: [key: number, value: ITimestampStruct][] = [
       [SliceTupleIndex.Header, headerId],
       [SliceTupleIndex.X1, x1Id],
+      // TODO: Make `x2Id` undefined, when `start.id` and `end.id` are equal.
       [SliceTupleIndex.X2, x2Id],
       [SliceTupleIndex.Type, typeId],
     ];
     if (data !== undefined) tupleKeysUpdate.push([SliceTupleIndex.Data, builder.json(data)]);
     builder.insVec(stepId, tupleKeysUpdate);
-    const chunkId = builder.insArr(set.id, set.id, [stepId]);
+    const chunkId = builder.insArr(arr.id, arr.id, [stepId]);
     // TODO: Consider using `s` schema here.
     api.apply();
     const tuple = slicesModel.index.get(stepId) as VecNode;
-    const chunk = set.findById(chunkId)!;
+    const chunk = arr.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const slice = new Klass(slicesModel, this.txt, chunk, tuple, stacking, start, end);
+    const slice = new Klass(slicesModel, this.txt, arr, chunk, tuple, stacking, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
 
-  public insMarker(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): MarkerSlice<T> {
-    return this.ins(range, SliceStacking.Marker, type, data) as MarkerSlice<T>;
+  public insMarker(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
+    return this.ins(range, SliceStacking.Marker, type, data) as Slice<T>;
   }
 
-  public insMarkerAfter(
-    after: ITimestampStruct,
-    type: SliceType,
-    data?: unknown,
-    separator: string = Chars.BlockSplitSentinel,
-  ): MarkerSlice<T> {
+  public insMarkerAfter(after: ITimestampStruct, type: SliceType, data?: unknown): Slice<T> {
     // TODO: test condition when cursors is at absolute or relative starts
     const txt = this.txt;
     const api = txt.model.api;
@@ -101,38 +90,38 @@ export class Slices<T = string> implements Stateful, Printable {
      */
     builder.nop(1);
     // TODO: Handle case when marker is inserted at the abs start, prevent abs start/end inserts.
-    const textId = builder.insStr(txt.str.id, after, separator);
+    const textId = builder.insStr(txt.str.id, after, '\n');
     api.apply();
     const point = txt.point(textId, Anchor.Before);
     const range = txt.range(point, point.clone());
     return this.insMarker(range, type, data);
   }
 
-  public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
+  public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
     return this.ins(range, SliceStacking.Many, type, data);
   }
 
-  public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
+  public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
     return this.ins(range, SliceStacking.One, type, data);
   }
 
-  public insErase(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
+  public insErase(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
     return this.ins(range, SliceStacking.Erase, type, data);
   }
 
-  protected unpack(chunk: ArrChunk): PersistedSlice<T> {
+  protected unpack(arr: ArrNode, chunk: ArrChunk): Slice<T> {
     const txt = this.txt;
     const model = this.set.doc;
     const tupleId = chunk.data ? chunk.data[0] : undefined;
     if (!tupleId) throw new Error('SLICE_NOT_FOUND');
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
-    let slice = PersistedSlice.deserialize<T>(model, txt, chunk, tuple);
-    if (slice.isSplit()) slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.stacking, slice.start, slice.end);
+    let slice = Slice.deserialize<T>(model, txt, arr, chunk, tuple);
+    if (slice.isMarker()) slice = new Slice<T>(model, txt, arr, chunk, tuple, slice.stacking, slice.start, slice.end);
     return slice;
   }
 
-  public get(id: ITimestampStruct): PersistedSlice<T> | undefined {
+  public get(id: ITimestampStruct): Slice<T> | undefined {
     return this.list.get(id);
   }
 
@@ -152,7 +141,7 @@ export class Slices<T = string> implements Stateful, Printable {
     const api = doc.api;
     const spans: ITimespanStruct[] = [];
     for (const slice of slices) {
-      if (slice instanceof PersistedSlice) {
+      if (slice instanceof Slice) {
         const id = slice.id;
         if (!set.findById(id)) continue;
         spans.push(new Timespan(id.sid, id.time, 1));
@@ -171,16 +160,16 @@ export class Slices<T = string> implements Stateful, Printable {
   /**
    * @todo Rename to `each0`.
    */
-  public iterator0(): UndEndNext<PersistedSlice<T>> {
+  public iterator0(): UndEndNext<Slice<T>> {
     const iterator = this.list.iterator0();
     return () => iterator()?.v;
   }
 
-  public each(): UndEndIterator<PersistedSlice<T>> {
-    return new UndEndIterator<PersistedSlice<T>>(this.iterator0());
+  public each(): UndEndIterator<Slice<T>> {
+    return new UndEndIterator<Slice<T>>(this.iterator0());
   }
 
-  public forEach(callback: (item: PersistedSlice<T>) => void): void {
+  public forEach(callback: (item: Slice<T>) => void): void {
     this.list.forEach((node) => callback(node.v));
   }
 
@@ -199,7 +188,7 @@ export class Slices<T = string> implements Stateful, Printable {
         if (chunk.del) {
           if (item) this.list.del(chunk.id);
         } else {
-          if (!item) this.list.set(chunk.id, this.unpack(chunk));
+          if (!item) this.list.set(chunk.id, this.unpack(this.set, chunk));
         }
       }
     }

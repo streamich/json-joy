@@ -11,8 +11,8 @@ import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
-import type {Slice} from '../slice/types';
 import type {PeritextMlAttributes, PeritextMlNode} from './types';
+import type {Slice} from '../slice/Slice';
 
 export abstract class AbstractInlineAttr<T = string> {
   constructor(public slice: Slice<T>) {}

@@ -1,6 +1,6 @@
 import {BehaviorSubject} from 'rxjs';
 import {SavedFormatting} from '../../state/formattings';
-import {PersistedSlice} from '../../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
+import {Slice} from '../../../../../json-crdt-extensions/peritext/slice/Slice';
 import {subject} from '../../../../util/rx';
 import {toSchema} from '../../../../../json-crdt/schema/toSchema';
 import {JsonCrdtDiff} from '../../../../../json-crdt-diff/JsonCrdtDiff';
@@ -33,7 +33,7 @@ export class FormattingManageState {
         if (!behavior) continue;
         const isConfigurable = !!behavior.schema;
         if (!isConfigurable) continue;
-        if (!(slice instanceof PersistedSlice)) continue;
+        if (!(slice instanceof Slice)) continue;
         res.push(new SavedFormatting(behavior, slice, state));
       }
       return res;

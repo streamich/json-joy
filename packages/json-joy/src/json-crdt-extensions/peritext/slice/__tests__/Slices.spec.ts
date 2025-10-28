@@ -2,7 +2,7 @@ import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import type {Range} from '../../rga/Range';
 import {Anchor} from '../../rga/constants';
-import type {PersistedSlice} from '../PersistedSlice';
+import type {Slice} from '../Slice';
 import {SliceStacking} from '../constants';
 import {setup} from './setup';
 
@@ -154,7 +154,7 @@ describe('.delSlices()', () => {
 });
 
 describe('.refresh()', () => {
-  const testSliceUpdate = (name: string, update: (controls: {range: Range; slice: PersistedSlice}) => void) => {
+  const testSliceUpdate = (name: string, update: (controls: {range: Range; slice: Slice}) => void) => {
     test('changes hash on: ' + name, () => {
       const {peritext, encodeAndDecode} = setup();
       const range = peritext.rangeAt(6, 5);

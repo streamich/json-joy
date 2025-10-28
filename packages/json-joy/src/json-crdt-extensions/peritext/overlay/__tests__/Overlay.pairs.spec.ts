@@ -8,8 +8,7 @@ import {
   setupNumbersWithTwoChunksKit,
 } from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
-import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
-import {OverlayPoint} from '../OverlayPoint';
+import type {OverlayPoint} from '../OverlayPoint';
 
 const runPairsTests = (setup: () => Kit) => {
   describe('.pairs() full range', () => {
@@ -124,10 +123,10 @@ const runPairsTests = (setup: () => Kit) => {
         [p2, p3],
         [p3, undefined],
       ]);
-      expect(p1 instanceof MarkerOverlayPoint).toBe(true);
-      expect(p2 instanceof OverlayPoint).toBe(true);
-      expect(p3 instanceof OverlayPoint).toBe(true);
-      expect((p1 as MarkerOverlayPoint).marker).toBe(marker);
+      expect(p1.isMarker()).toBe(true);
+      expect(!p2.isMarker()).toBe(true);
+      expect(!p3.isMarker()).toBe(true);
+      expect((p1 as OverlayPoint).marker).toBe(marker);
       expect(p2.layers.length).toBe(2);
       expect(p3.layers.length).toBe(0);
       expect(p2.refs.length).toBe(2);

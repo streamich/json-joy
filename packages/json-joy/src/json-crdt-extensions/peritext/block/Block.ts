@@ -1,13 +1,12 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '../../../json-hash/hash';
-import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {Inline} from './Inline';
 import {formatStep, getTag} from '../slice/util';
 import {Range} from '../rga/Range';
 import {toLine} from 'pojo-dump/lib/toLine';
+import {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Point} from '../rga/Point';
-import type {OverlayPoint} from '../overlay/OverlayPoint';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
@@ -28,7 +27,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
   constructor(
     public readonly txt: Peritext<T>,
     public readonly path: SliceTypeSteps,
-    public readonly marker: MarkerOverlayPoint<T> | undefined,
+    public readonly marker: OverlayPoint<T> | undefined,
     public start: Point<T>,
     public end: Point<T>,
   ) {
@@ -79,7 +78,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
       if (closed) return;
       const point = iterator();
       if (!point) return;
-      if (point instanceof MarkerOverlayPoint) {
+      if (point.isMarker()) {
         closed = true;
         return;
       }
@@ -101,7 +100,8 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
       let pair = iterator();
       while (!marker && pair && pair[1] && pair[1].cmpSpatial(this.start) < 0) pair = iterator();
       if (!pair) return (closed = true), void 0;
-      if (!pair[1] || pair[1] instanceof MarkerOverlayPoint) closed = true;
+      const second = pair[1];
+      if (!second || (second instanceof OverlayPoint && second.isMarker())) closed = true;
       return pair;
     };
   }
@@ -116,7 +116,6 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
     const start = this.start;
     const end = this.end;
     const startIsMarker = overlay.isMarker(start.id);
-    const endIsMarker = overlay.isMarker(end.id);
     let isFirst = true;
     let next = iterator();
     let closed = false;
@@ -134,12 +133,11 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
         if (startIsMarker) {
           point1 = point1.clone();
           point1.step(1);
-          // Skip condition when inline annotations tarts immediately at th
-          // beginning of the block.
-          if (point1.cmp(point2) === 0) return newIterator();
+          if (point1.cmpSpatial(point2) >= 0) return newIterator();
         }
       }
-      if (!endIsMarker && end.cmpSpatial(overlayPoint2) < 0) {
+      // TODO: PERF: Speed up this check. Do the check only if necessary.
+      if (end.cmpSpatial(overlayPoint2) < 0) {
         closed = true;
         point2 = end;
       }
@@ -185,7 +183,7 @@ export class Block<T = string, Attr = unknown> extends Range<T> implements IBloc
     state = updateJson(state, path);
     const marker = this.marker;
     if (marker) {
-      state = updateNum(state, marker.marker.refresh());
+      state = updateNum(state, marker.markers[0].refresh());
       state = updateNum(state, marker.textHash);
     } else {
       state = updateNum(state, this.txt.overlay.leadingTextHash);

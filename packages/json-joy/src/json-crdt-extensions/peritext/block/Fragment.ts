@@ -4,12 +4,12 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {LeafBlock} from './LeafBlock';
 import {Range} from '../rga/Range';
 import {CommonSliceType, type SliceTypeSteps} from '../slice';
-import type {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';
 import type {Point} from '../rga/Point';
 import type {PeritextMlElement} from './types';
+import type {OverlayPoint} from '../overlay/OverlayPoint';
 
 /**
  * A *fragment* represents a structural slice of a rich-text document. A
@@ -55,7 +55,7 @@ export class Fragment<T = string> extends Range<T> implements Printable, Statefu
   private insertBlock(
     parent: Block<T>,
     path: SliceTypeSteps,
-    marker: undefined | MarkerOverlayPoint<T>,
+    marker: undefined | OverlayPoint<T>,
     end: Point<T> = this.end,
   ): Block<T> {
     const txt = this.txt;

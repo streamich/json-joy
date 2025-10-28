@@ -45,7 +45,8 @@
 				"useOptionalChain": "off",
 				"noCommaOperator": "off",
 				"noUselessLabel": "off",
-				"noBannedTypes": "off"
+				"noBannedTypes": "off",
+				"noUselessUndefinedInitialization": "off"
 			},
 			"security": {
 				"noGlobalEval": "off"

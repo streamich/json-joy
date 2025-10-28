@@ -97,7 +97,6 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[0].texts()][0].attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(
     InlineAttrStartPoint,
   );
-
   editor.cursor.move(1);
   peritext.refresh();
   expect(peritext.blocks.root.children.length).toBe(2);
@@ -113,15 +112,14 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[1].texts()][0].attr()).toEqual({});
   editor.cursor.move(1);
   peritext.refresh();
+  // console.log(peritext + '');
   expect(peritext.blocks.root.children.length).toBe(2);
   expect([...peritext.blocks.root.children[0].texts()].length).toBe(1);
   expect([...peritext.blocks.root.children[0].texts()][0].text()).toBe('a');
   expect([...peritext.blocks.root.children[0].texts()][0].attr()).toEqual({});
-  expect([...peritext.blocks.root.children[1].texts()].length).toBe(2);
-  expect([...peritext.blocks.root.children[1].texts()][0].text()).toBe('');
-  expect([...peritext.blocks.root.children[1].texts()][0].attr()).toEqual({});
-  expect([...peritext.blocks.root.children[1].texts()][1].text()).toBe('b');
-  expect([...peritext.blocks.root.children[1].texts()][1].attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(
+  expect([...peritext.blocks.root.children[1].texts()].length).toBe(1);
+  expect([...peritext.blocks.root.children[1].texts()][0].text()).toBe('b');
+  expect([...peritext.blocks.root.children[1].texts()][0].attr()[SliceTypeName.Cursor][0]).toBeInstanceOf(
     InlineAttrStartPoint,
   );
   editor.cursor.move(1);

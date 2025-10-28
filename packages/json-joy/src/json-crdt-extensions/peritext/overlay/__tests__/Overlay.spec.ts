@@ -1,8 +1,7 @@
 import {Model} from '../../../../json-crdt/model';
-import {first, next} from 'sonic-forest/lib/util';
+import {first, next, size} from 'sonic-forest/lib/util';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../rga/constants';
-import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 
 const setup = () => {
   const model = Model.create();
@@ -73,8 +72,8 @@ describe('markers', () => {
       peritext.editor.cursor.set(marker.start.clone());
       peritext.overlay.refresh();
       const overlayMarkerPoint = peritext.overlay.root2!;
-      expect(overlayMarkerPoint instanceof MarkerOverlayPoint).toBe(true);
-      expect(overlayMarkerPoint.markers.length).toBe(1);
+      expect(overlayMarkerPoint.isMarker()).toBe(true);
+      expect(overlayMarkerPoint.markers.length).toBe(2);
       expect(overlayMarkerPoint.markers.find((m) => m === peritext.editor.cursor)).toBe(peritext.editor.cursor);
     });
   });
@@ -86,7 +85,7 @@ describe('markers', () => {
       const [slice] = peritext.editor.saved.insMarker(['p'], '¶');
       peritext.refresh();
       expect(markerCount(peritext)).toBe(1);
-      peritext.delMarker(slice);
+      peritext.editor.delMarker(slice);
       peritext.refresh();
       expect(markerCount(peritext)).toBe(0);
     });
@@ -99,7 +98,7 @@ describe('markers', () => {
       const [slice] = peritext.editor.saved.insMarker(['p'], '¶');
       peritext.refresh();
       expect(markerCount(peritext)).toBe(2);
-      peritext.delMarker(slice);
+      peritext.editor.delMarker(slice);
       peritext.refresh();
       expect(markerCount(peritext)).toBe(1);
     });
@@ -137,9 +136,9 @@ describe('slices', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(6, 2);
       peritext.editor.saved.insStack('em', {emphasis: true});
-      expect(peritext.overlay.slices.size).toBe(0);
+      expect(size(peritext.overlay.root)).toBe(0);
       peritext.overlay.refresh();
-      expect(peritext.overlay.slices.size).toBe(2);
+      expect(size(peritext.overlay.root)).toBe(2);
       const points = [...peritext.overlay.points()];
       expect(points.length).toBe(2);
       expect(points[0].pos()).toBe(6);
@@ -154,9 +153,9 @@ describe('slices', () => {
       peritext.editor.saved.insStack('em', {emphasis: true});
       peritext.editor.cursor.setAt(4, 8);
       peritext.editor.saved.insStack('strong', {bold: true});
-      expect(peritext.overlay.slices.size).toBe(0);
+      expect(size(peritext.overlay.root)).toBe(0);
       peritext.overlay.refresh();
-      expect(peritext.overlay.slices.size).toBe(3);
+      expect(size(peritext.overlay.root)).toBe(4);
       const points = [...peritext.overlay.points()];
       expect(points.length).toBe(4);
     });
@@ -214,7 +213,7 @@ describe('slices', () => {
       peritext.editor.cursor.setAt(6);
       peritext.editor.saved.insMarker(['p']);
       peritext.refresh();
-      const point = peritext.overlay.find((point) => point instanceof MarkerOverlayPoint)!;
+      const point = peritext.overlay.find((point) => point.isMarker())!;
       expect(point.layers.length).toBe(0);
       peritext.editor.cursor.setAt(2, 2);
       peritext.editor.saved.insStack('<i>');
@@ -234,11 +233,14 @@ describe('slices', () => {
       const [slice] = peritext.editor.saved.insStack('em', {emphasis: true});
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
-      expect(peritext.overlay.slices.size).toBe(2);
+      expect(size(peritext.overlay.root)).toBe(2);
       peritext.savedSlices.del(slice.id);
-      expect(peritext.overlay.slices.size).toBe(2);
+      expect(size(peritext.overlay.root)).toBe(2);
       peritext.overlay.refresh();
-      expect(peritext.overlay.slices.size).toBe(1);
+      expect(size(peritext.overlay.root)).toBe(2);
+      peritext.editor.delCursors();
+      peritext.overlay.refresh();
+      expect(size(peritext.overlay.root)).toBe(0);
     });
   });
 });

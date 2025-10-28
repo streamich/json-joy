@@ -1,7 +1,7 @@
 import {QuillConst} from './constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {SliceStacking} from '../peritext/slice/constants';
-import {PersistedSlice} from '../peritext/slice/PersistedSlice';
+import {Slice} from '../peritext/slice/Slice';
 import {diffAttributes, getAttributes, removeErasures} from './util';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {QuillDeltaNode} from './QuillDeltaNode';
@@ -43,7 +43,7 @@ const rewriteAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | und
   if (length) {
     const savedSlices = txt.savedSlices;
     slices.forEach((slice) => {
-      if (slice instanceof PersistedSlice) {
+      if (slice instanceof Slice) {
         const isContained = range.contains(slice);
         if (!isContained) {
           relevantOverlappingButNotContained.add(slice.type() as PathStep);

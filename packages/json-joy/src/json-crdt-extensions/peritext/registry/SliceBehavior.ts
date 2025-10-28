@@ -1,5 +1,5 @@
 import {SliceStacking} from '../slice/constants';
-import {formatType} from '../slice/util';
+import {formatStep} from '../slice/util';
 import type {PeritextMlElement} from '../block/types';
 import type {NodeBuilder} from '../../../json-crdt-patch';
 import type {FromHtmlConverter, ToHtmlConverter} from './types';
@@ -129,6 +129,6 @@ export class SliceBehavior<
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
-    return `${formatType(this.tag)} (${this.stacking}) ${JSON.stringify(Object.keys(this.data))}`;
+    return `${formatStep(this.tag)} (${this.stacking}) ${JSON.stringify(Object.keys(this.data))}`;
   }
 }

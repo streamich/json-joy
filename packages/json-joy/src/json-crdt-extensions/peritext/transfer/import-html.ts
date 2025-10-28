@@ -169,7 +169,7 @@ const getExportData = (html: string): [jsonml: undefined | JsonMlNode, exportDat
     let node: JsonMlNode | undefined;
     while ((node = iterator())) {
       if (node && typeof node === 'object') {
-        const [_tag, attr] = node;
+        const [, attr] = node;
         if (attr?.[attrName]) {
           const jsonBase64 = attr[attrName];
           const buffer = fromBase64(jsonBase64);

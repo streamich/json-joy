@@ -26,13 +26,31 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
       const {editor, peritext, view} = setup();
       editor.cursor.setAt(1);
       peritext.refresh();
-      expect(view()).toMatchSnapshot();
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "a" {}
+    "bcdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
+"
+`);
       editor.cursor.move(1);
       peritext.refresh();
-      expect(view()).toMatchSnapshot();
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "ab" {}
+    "cdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
+"
+`);
       editor.cursor.move(2);
       peritext.refresh();
-      expect(view()).toMatchSnapshot();
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "abcd" {}
+    "efghijklmnopqrstuvwxyz" { -1 = [ !u ] }
+"
+`);
     });
 
     test('can move cursor forward - starting the beginning of the string', () => {
@@ -40,16 +58,33 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
       editor.cursor.setAt(0);
       peritext.refresh();
       // console.log(view());
-      expect(view()).toMatchSnapshot();
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "abcdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
+"
+`);
       editor.cursor.move(1);
       peritext.refresh();
       // console.log(view());
       // console.log(peritext + '');
-      expect(view()).toMatchSnapshot();
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "a" {}
+    "bcdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
+"
+`);
       editor.cursor.move(2);
       peritext.refresh();
       // console.log(view());
-      expect(view()).toMatchSnapshot();
+      expect(view()).toMatchInlineSnapshot(`
+"<>
+  <0>
+    "abc" {}
+    "defghijklmnopqrstuvwxyz" { -1 = [ !u ] }
+"
+`);
     });
 
     test('can move cursor backward - starting from middle', () => {

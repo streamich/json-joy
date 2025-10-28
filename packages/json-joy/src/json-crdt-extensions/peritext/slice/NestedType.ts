@@ -1,11 +1,11 @@
 import type {ArrApi} from '../../../json-crdt/model';
 import {NestedTag} from './NestedTag';
-import type {PersistedSlice} from './PersistedSlice';
 import * as schema from './schema';
+import type {Slice} from './Slice';
 import type {SliceTypeSteps} from './types';
 
 export class NestedType<T = string> {
-  constructor(protected slice: PersistedSlice<T>) {}
+  constructor(protected slice: Slice<T>) {}
 
   /** Enforces slice type to be an "arr" of tags. */
   public asArr(): ArrApi {
