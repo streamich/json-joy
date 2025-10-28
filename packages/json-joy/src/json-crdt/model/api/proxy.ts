@@ -16,6 +16,7 @@ export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {
 export type ProxyNodeVec<N extends nodes.VecNode<any>> = ProxyNode<N> & {
   [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<nodes.JsonNodeView<N>[K]>;
 } & {
+  /** @todo Rename to `asExt()`. */
   toExt: () => JsonNodeApi<VecNodeExtensionData<N>>;
 };
 export type ProxyNodeObj<N extends nodes.ObjNode<any>> = ProxyNode<N> & {
