@@ -1,5 +1,5 @@
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 import type {ViewRange, ViewSlice} from '../types';
 import {SliceHeaderShift, SliceStacking} from '../../slice/constants';
 import {Anchor} from '../../rga/constants';
