@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">43.36% </span>
+                <span class="strong">43.19% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>147/339</span>
+                <span class='fraction'>146/338</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">45.05% </span>
+                <span class="strong">44.67% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>132/293</span>
+                <span class='fraction'>130/291</span>
             </div>
         
             
@@ -562,11 +562,7 @@
 <a name='L497'></a><a href='#L497'>497</a>
 <a name='L498'></a><a href='#L498'>498</a>
 <a name='L499'></a><a href='#L499'>499</a>
-<a name='L500'></a><a href='#L500'>500</a>
-<a name='L501'></a><a href='#L501'>501</a>
-<a name='L502'></a><a href='#L502'>502</a>
-<a name='L503'></a><a href='#L503'>503</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
+<a name='L500'></a><a href='#L500'>500</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
@@ -857,8 +853,6 @@
 <span class="cline-any cline-yes">66x</span>
 <span class="cline-any cline-yes">66x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">66x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">276x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1071,8 +1065,7 @@
 import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
-import {PersistedSlice} from '../../../../json-crdt-extensions/peritext/slice/PersistedSlice';
-import {MarkerSlice} from '../../slice/MarkerSlice';
+import {Slice} from '../../../../json-crdt-extensions/peritext/slice/Slice';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -1304,8 +1297,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'del': {
         const {slice} = detail;
         if (!tag &amp;&amp; slice) {
-          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof PersistedSlice &amp;&amp; !persistedSlice.isSplit()) {
+          const persistedSlice = slice instanceof Slice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice instanceof Slice &amp;&amp; !persistedSlice.isMarker()) {
             persistedSlice.del();
           }
         } else {
@@ -1322,8 +1315,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'set': {
         const {slice} = detail;
         if (slice) {
-          const persistedSlice = slice instanceof PersistedSlice ? slice : <span class="branch-1 cbranch-no" title="branch not covered" >this.txt.getSlice(slice);</span>
-          if (persistedSlice instanceof PersistedSlice) {
+          const persistedSlice = slice instanceof Slice ? slice : <span class="branch-1 cbranch-no" title="branch not covered" >this.txt.getSlice(slice);</span>
+          if (persistedSlice instanceof Slice) {
             if (action === 'set') persistedSlice.setData(detail.data);
             else persistedSlice.mergeData(detail.data);
           }
@@ -1347,18 +1340,16 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       case 'del': {
         const {slice} = detail;
         if (slice) {
-          const persistedSlice = slice instanceof PersistedSlice ? slice : this.txt.getSlice(slice);
-          if (persistedSlice instanceof MarkerSlice) persistedSlice.del();
+          const persistedSlice = slice instanceof Slice ? slice : this.txt.getSlice(slice);
+          if (persistedSlice?.isMarker()) persistedSlice.del();
         } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-<span class="cstat-no" title="statement not covered" >          editor.delMarker(selection);</span>
+<span class="cstat-no" title="statement not covered" >          editor.delMarkerSelection(selection);</span>
         }
         break;
       }
       case 'upd': {
         const {target, ops} = detail;
-        if (target &amp;&amp; ops) {
-          editor.updMarker(target, ops, selection);
-        }
+        if (target &amp;&amp; ops) editor.updMarker(target, ops, selection);
         break;
       }
     }
@@ -1576,7 +1567,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T10:25:57.611Z
+                at 2025-10-28T21:24:24.613Z
             </div>
         <script src="../../../../../../prettify.js"></script>
         <script>

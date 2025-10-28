@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-joy/src/json-crdt-extensions/peritext/slice/PersistedSlice.ts</title>
+    <title>Code coverage report for json-joy/src/json-crdt-extensions/peritext/slice/Slice.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../../../prettify.css" />
     <link rel="stylesheet" href="../../../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../../../index.html">All files</a> / <a href="index.html">json-joy/src/json-crdt-extensions/peritext/slice</a> PersistedSlice.ts</h1>
+        <h1><a href="../../../../../index.html">All files</a> / <a href="index.html">json-joy/src/json-crdt-extensions/peritext/slice</a> Slice.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">79.41% </span>
+                <span class="strong">80.13% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>108/136</span>
+                <span class='fraction'>121/151</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">48.93% </span>
+                <span class="strong">56.52% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>23/47</span>
+                <span class='fraction'>26/46</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">82.75% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>20/25</span>
+                <span class='fraction'>24/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.46% </span>
+                <span class="strong">83.8% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>106/127</span>
+                <span class='fraction'>119/142</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -348,98 +348,209 @@
 <a name='L283'></a><a href='#L283'>283</a>
 <a name='L284'></a><a href='#L284'>284</a>
 <a name='L285'></a><a href='#L285'>285</a>
-<a name='L286'></a><a href='#L286'>286</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-yes">16069x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-yes">30898x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">580x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10797x</span>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">69x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-yes">18596x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-yes">33926x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">121396x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10818x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7068x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -459,44 +570,43 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10761x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10782x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10654x</span>
-<span class="cline-any cline-yes">10654x</span>
-<span class="cline-any cline-yes">10654x</span>
-<span class="cline-any cline-yes">10654x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10675x</span>
+<span class="cline-any cline-yes">10675x</span>
+<span class="cline-any cline-yes">10675x</span>
+<span class="cline-any cline-yes">10675x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10737x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10758x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10761x</span>
-<span class="cline-any cline-yes">10761x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-yes">10782x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10658x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10658x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10761x</span>
+<span class="cline-any cline-yes">10679x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10679x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-yes">10782x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1681x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">56x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -505,19 +615,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">69060x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54342x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1759x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">59304x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -531,7 +655,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54151x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">59113x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -542,7 +677,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11040x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12193x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -586,40 +725,39 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30898x</span>
+<span class="cline-any cline-yes">33926x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">148836x</span>
-<span class="cline-any cline-yes">148836x</span>
-<span class="cline-any cline-yes">148836x</span>
-<span class="cline-any cline-yes">148836x</span>
-<span class="cline-any cline-yes">148836x</span>
-<span class="cline-any cline-yes">15502x</span>
-<span class="cline-any cline-yes">15502x</span>
-<span class="cline-any cline-yes">15502x</span>
-<span class="cline-any cline-yes">15502x</span>
-<span class="cline-any cline-yes">15502x</span>
+<span class="cline-any cline-yes">152314x</span>
+<span class="cline-any cline-yes">152314x</span>
+<span class="cline-any cline-yes">152314x</span>
+<span class="cline-any cline-yes">152314x</span>
+<span class="cline-any cline-yes">152314x</span>
+<span class="cline-any cline-yes">17054x</span>
+<span class="cline-any cline-yes">17054x</span>
+<span class="cline-any cline-yes">17054x</span>
+<span class="cline-any cline-yes">17054x</span>
+<span class="cline-any cline-yes">17054x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">148836x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">152314x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -638,28 +776,27 @@ import {Point} from '../rga/Point';
 import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
-import type {Anchor} from '../rga/constants';
 import {
   SliceHeaderMask,
   SliceHeaderShift,
   SliceStacking,
   SliceTupleIndex,
   SliceStackingName,
-  SliceTypeName,
   SliceTypeCon,
 } from './constants';
 import {CONST} from '../../../json-hash/hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {prettyOneLine} from '../../../json-pretty';
-import {validateType} from './util';
+import {formatType, validateType} from './util';
 import {NodeBuilder, s} from '../../../json-crdt-patch';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
+import {NestedType} from './NestedType';
+import {Anchor} from '../rga/constants';
 import {type Model, type NodeApi, ObjApi} from '../../../json-crdt/model';
 import type {ObjNode, VecNode} from '../../../json-crdt/nodes';
-import {NestedType} from './NestedType';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {ArrChunk, JsonNode} from '../../../json-crdt/nodes';
-import type {MutableSlice, SliceView, SliceType, SliceUpdateParams, SliceTypeSteps} from './types';
+import type {ArrChunk, ArrNode, JsonNode} from '../../../json-crdt/nodes';
+import type {SliceView, SliceType, SliceUpdateParams, SliceTypeSteps} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
@@ -667,13 +804,24 @@ import type {Peritext} from '../Peritext';
 import type {Slices} from './Slices';
 &nbsp;
 /**
- * A persisted slice is a slice that is stored in a {@link Model}. It is used for
- * rich-text formatting and annotations.
+ * A slice is stored in a {@link Model} as a "vec" node. It is used for
+ * rich-text formatting annotations and block splits.
  *
- * @todo Maybe rename to "saved", "stored", "mutable".
+ * Slices represent Peritext's rich-text formatting/splits. The "slice"
+ * concept captures both: (1) range annotations; as well as, (2) *markers*,
+ * which are a single-point annotations. The markers are used as block splits,
+ * e.g. paragraph, heading, blockquote, etc. In markers, the start and end
+ * positions of the range are normally the same, but could also wrap around
+ * a single RGA chunk.
  */
-export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements MutableSlice&lt;T&gt;, Stateful, Printable {
-  public static deserialize&lt;T&gt;(model: Model, txt: Peritext&lt;T&gt;, chunk: ArrChunk, tuple: VecNode): PersistedSlice&lt;T&gt; {
+export class Slice&lt;T = string&gt; extends Range&lt;T&gt; implements Stateful, Printable {
+  public static deserialize&lt;T&gt;(
+    model: Model,
+    txt: Peritext&lt;T&gt;,
+    arr: ArrNode,
+    chunk: ArrChunk,
+    tuple: VecNode,
+  ): Slice&lt;T&gt; {
     const header = +(tuple.get(0)!.view() as SliceView[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
@@ -686,7 +834,7 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
     const rga = txt.str as unknown as AbstractRga&lt;T&gt;;
     const p1 = new Point&lt;T&gt;(rga, id1, anchor1);
     const p2 = new Point&lt;T&gt;(rga, id2, anchor2);
-    const slice = new PersistedSlice&lt;T&gt;(model, txt, chunk, tuple, stacking, p1, p2);
+    const slice = new Slice&lt;T&gt;(model, txt, arr, chunk, tuple, stacking, p1, p2);
     validateType(slice.type());
     return slice;
   }
@@ -694,11 +842,27 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
   /** @todo Use API node here. */
   protected readonly rga: AbstractRga&lt;T&gt;;
 &nbsp;
+  /**
+   * ID of the slice. ID is used for layer sorting.
+   */
+  public readonly id: ITimestampStruct;
+&nbsp;
+  /**
+   * The low-level stacking behavior of the slice. Specifies whether the
+   * slice is a split, i.e. a "marker" for a block split, in which case it
+   * represents a single place in the text where text is split into blocks.
+   * Otherwise, specifies the low-level behavior or the rich-text formatting
+   * of the slice.
+   */
+  public stacking: SliceStacking;
+&nbsp;
   constructor(
     /** The `Model` where the slice is stored. */
     protected readonly model: Model,
     /** The Peritext context. */
     protected readonly txt: Peritext&lt;T&gt;,
+    /** The "arr" node where the slice is stored. */
+    protected readonly arr: ArrNode,
     /** The `arr` chunk of `arr` where the slice is stored. */
     protected readonly chunk: ArrChunk,
     /** The `vec` node which stores the serialized contents of this slice. */
@@ -709,23 +873,39 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
   ) {
     super(txt.str as unknown as AbstractRga&lt;T&gt;, start, end);
     this.rga = txt.str as unknown as AbstractRga&lt;T&gt;;
+    // TODO: Chunk could potentially contain multiple entries, handle that case.
     this.id = chunk.id;
     this.stacking = stacking;
   }
 &nbsp;
-  public isSplit(): boolean {
+  /**
+   * Represents a block split in the text, i.e. it is a *marker* that shows
+   * where a block was split. Markers also insert one "\n" new line character.
+   * Both marker ends are attached to the "before" anchor fo the "\n" new line
+   * character, i.e. it is *collapsed* to the "before" anchor.
+   */
+  public isMarker(): boolean {
     return this.stacking === SliceStacking.Marker;
   }
 &nbsp;
-  protected tupleApi() {
+  public tupleApi() {
     return this.model.api.wrap(this.tuple);
   }
 &nbsp;
-  // protected setType(schema: NodeBuilder): void {
-  //   this.tupleApi().set([
-  //     [SliceTupleIndex.Type, schema.type(type as SliceTypeSteps)],
-  //   ]);
-  // }
+  public pos(): number {
+    return this.arr.posById(this.id) || 0;
+  }
+&nbsp;
+  /**
+   * Returns the {@link Range} which exactly contains the block boundary of this
+   * marker.
+   */
+  public boundary(): Range&lt;T&gt; {
+    const start = this.start;
+    const end = start.clone();
+    end.anchor = Anchor.After;
+    return this.txt.range(start, end);
+  }
 &nbsp;
   // ---------------------------------------------------------------- mutations
 &nbsp;
@@ -742,11 +922,6 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
     super.expand();
     this.update({range: this});
   }
-&nbsp;
-  /** -------------------------------------------------- {@link MutableSlice} */
-&nbsp;
-  public readonly id: ITimestampStruct;
-  public stacking: SliceStacking;
 &nbsp;
   public update(params: SliceUpdateParams&lt;T&gt;): void {
     let updateHeader = false;
@@ -777,6 +952,10 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
     this.tupleApi().set(changes);
   }
 &nbsp;
+  public isSaved(): boolean {
+    return this.tuple.id.sid === this.txt.model.clock.sid;
+  }
+&nbsp;
   public getStore(): Slices&lt;T&gt; | undefined {
     const txt = this.txt;
     const sid = this.id.sid;
@@ -789,12 +968,26 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
 <span class="cstat-no" title="statement not covered" >    return;</span>
   }
 &nbsp;
+  /**
+   * Delete this slice from its backing store.
+   */
   public del(): void {
     const store = this.getStore();
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!store) <span class="cstat-no" title="statement not covered" >return;</span>
     store.del(this.id);
+    if (this.isMarker()) {
+      const txt = this.txt;
+      const range = txt.range(
+        this.start,
+        this.start.copy((p) =&gt; (p.anchor = Anchor.After)),
+      );
+      txt.delStr(range);
+    }
   }
 &nbsp;
+  /**
+   * Whether the slice is deleted.
+   */
   public isDel(): boolean {
     return this.chunk.del;
   }
@@ -815,6 +1008,17 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
     return new NestedType&lt;T&gt;(this);
   }
 &nbsp;
+  /**
+   * The high-level behavior identifier of the slice. Specifies the
+   * user-defined type of the slice, e.g. paragraph, heading, blockquote, etc.
+   *
+   * Usually the type is a number or string primitive, in which case it is
+   * referred to as *tag*.
+   *
+   * The type is a list only for nested blocks, e.g. `['ul', 'li']`, in which
+   * case the type is a list of tags. The last tag in the list is the
+   * "leaf" tag, which is the type of the leaf block element.
+   */
   public type(): SliceType {
     return this.typeNode()?.view() as SliceType;
   }
@@ -826,6 +1030,10 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
 &nbsp;
   // -------------------------------------------------- slice data manipulation
 &nbsp;
+  /**
+   * High-level user-defined metadata of the slice, which accompanies the slice
+   * type.
+   */
   public data(): unknown | undefined {
     return this.tuple.get(SliceTupleIndex.Data)?.view();
   }
@@ -880,7 +1088,7 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
     this.hash = state;
     if (changed) {
       const tuple = this.tuple;
-      const slice = PersistedSlice.deserialize&lt;T&gt;(this.model, this.txt, this.chunk, tuple);
+      const slice = Slice.deserialize&lt;T&gt;(this.model, this.txt, this.arr, this.chunk, tuple);
       this.stacking = slice.stacking;
       this.start = slice.start;
       this.end = slice.end;
@@ -891,20 +1099,19 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
   /** ----------------------------------------------------- {@link Printable} */
 &nbsp;
   public <span class="fstat-no" title="function not covered" >toStringName(</span>): string {
-    const type = <span class="cstat-no" title="statement not covered" >this.type();</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof type === 'number' &amp;&amp; Math.abs(type) &lt;= 64 &amp;&amp; SliceTypeName[type]) {</span>
-<span class="cstat-no" title="statement not covered" >      return `slice [${SliceStackingName[this.stacking]}] &lt;${SliceTypeName[type]}&gt;`;</span>
-    }
-<span class="cstat-no" title="statement not covered" >    return `slice [${SliceStackingName[this.stacking]}] ${JSON.stringify(type)}`;</span>
+    const typeFormatted = <span class="cstat-no" title="statement not covered" >formatType(this.type());</span>
+    const stackingFormatted = <span class="cstat-no" title="statement not covered" >SliceStackingName[this.stacking];</span>
+<span class="cstat-no" title="statement not covered" >    return `Slice::${stackingFormatted} ${typeFormatted}`;</span>
   }
 &nbsp;
   protected <span class="fstat-no" title="function not covered" >toStringHeaderName(</span>): string {
     const data = <span class="cstat-no" title="statement not covered" >this.data();</span>
     const dataFormatted = <span class="cstat-no" title="statement not covered" >data ? prettyOneLine(data) : '∅';</span>
     const dataLengthBreakpoint = <span class="cstat-no" title="statement not covered" >32;</span>
-    const header = <span class="cstat-no" title="statement not covered" >`${this.toStringName()} ${super.toString('', true)}, ${</span>
-      SliceStackingName[this.stacking]
-    }, ${JSON.stringify(this.type())}${dataFormatted.length &lt; dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
+    const typeFormatted = <span class="cstat-no" title="statement not covered" >formatType(this.type());</span>
+    const stackingFormatted = <span class="cstat-no" title="statement not covered" >SliceStackingName[this.stacking];</span>
+    const dataFormattedShort = <span class="cstat-no" title="statement not covered" >dataFormatted.length &lt; dataLengthBreakpoint ? `, ${dataFormatted}` : '';</span>
+    const header = <span class="cstat-no" title="statement not covered" >`${this.toStringName()} ${super.toString('', true)}, ${stackingFormatted}, ${typeFormatted}${dataFormattedShort}`;</span>
 <span class="cstat-no" title="statement not covered" >    return header;</span>
   }
 &nbsp;
@@ -925,7 +1132,7 @@ export class PersistedSlice&lt;T = string&gt; extends Range&lt;T&gt; implements 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T10:25:57.611Z
+                at 2025-10-28T21:24:24.613Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>
