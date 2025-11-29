@@ -2,7 +2,6 @@ import {Writer} from '@jsonjoy.com/buffers/lib/Writer';
 import {CONST, MAJOR_OVERLAY} from './constants';
 import type {IWriter, IWriterGrowable} from '@jsonjoy.com/buffers/lib';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
-import type {Slice} from '@jsonjoy.com/buffers/lib/Slice';
 
 const isSafeInteger = Number.isSafeInteger;
 
@@ -18,11 +17,6 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
   public encode(value: unknown): Uint8Array {
     this.writeAny(value);
     return this.writer.flush();
-  }
-
-  public encodeToSlice(value: unknown): Slice {
-    this.writeAny(value);
-    return this.writer.flushSlice();
   }
 
   public writeAny(value: unknown): void {
