@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.31% </span>
+                <span class="strong">59.3% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>43/69</span>
+                <span class='fraction'>51/86</span>
             </div>
         
             
@@ -883,7 +883,7 @@
 import {CborDecoderBase} from './CborDecoderBase';
 import {JsonPackValue} from '../JsonPackValue';
 import type {Path} from '@jsonjoy.com/json-pointer';
-import type {IReader, IReaderResettable} from '@jsonjoy.com/buffers/lib';
+import type {IReader, IReaderResettable} from '@jsonjoy.com/buffers';
 &nbsp;
 export class CborDecoder&lt;
   R extends IReader &amp; IReaderResettable = IReader &amp; IReaderResettable,
@@ -922,7 +922,7 @@ export class CborDecoder&lt;
     const map: Map&lt;unknown, unknown&gt; = <span class="cstat-no" title="statement not covered" >new Map();</span>
 <span class="cstat-no" title="statement not covered" >    while (this.reader.peak() !== CONST.END) {</span>
       const key = <span class="cstat-no" title="statement not covered" >this.readAny();</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.reader.peak() === CONST.END) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_OBJ_BREAK;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this.reader.peak() === CONST.END) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_OBJ_BREAK;</span></span>
       const value = <span class="cstat-no" title="statement not covered" >this.readAny();</span>
 <span class="cstat-no" title="statement not covered" >      map.set(key, value);</span>
     }
@@ -1019,8 +1019,8 @@ export class CborDecoder&lt;
     const octet = <span class="cstat-no" title="statement not covered" >this.reader.u8();</span>
     const major = <span class="cstat-no" title="statement not covered" >octet &gt;&gt; 5;</span>
     const minor = <span class="cstat-no" title="statement not covered" >octet &amp; CONST.MINOR_MASK;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (major !== MAJOR.BIN) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_BIN_CHUNK_MAJOR;</span></span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (minor &gt; 27) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_BIN_CHUNK_MINOR;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (major !== MAJOR.BIN) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_BIN_CHUNK_MAJOR;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (minor &gt; 27) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_BIN_CHUNK_MINOR;</span></span>
 <span class="cstat-no" title="statement not covered" >    this.skipBin(minor);</span>
   }
 &nbsp;
@@ -1039,8 +1039,8 @@ export class CborDecoder&lt;
     const octet = <span class="cstat-no" title="statement not covered" >this.reader.u8();</span>
     const major = <span class="cstat-no" title="statement not covered" >octet &gt;&gt; 5;</span>
     const minor = <span class="cstat-no" title="statement not covered" >octet &amp; CONST.MINOR_MASK;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (major !== MAJOR.STR) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_STR_CHUNK_MAJOR;</span></span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (minor &gt; 27) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_STR_CHUNK_MINOR;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (major !== MAJOR.STR) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_STR_CHUNK_MAJOR;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (minor &gt; 27) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_STR_CHUNK_MINOR;</span></span>
 <span class="cstat-no" title="statement not covered" >    this.skipStr(minor);</span>
   }
 &nbsp;
@@ -1074,7 +1074,7 @@ export class CborDecoder&lt;
 &nbsp;
   public <span class="fstat-no" title="function not covered" >skipTag(</span>minor: number): void {
     const length = <span class="cstat-no" title="statement not covered" >this.skipMinorLen(minor);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (length &lt; 0) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_MINOR;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (length &lt; 0) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_MINOR;</span></span>
 <span class="cstat-no" title="statement not covered" >    this.skipAny();</span>
   }
 &nbsp;
@@ -1197,7 +1197,7 @@ export class CborDecoder&lt;
     const obj: Record&lt;string, unknown&gt; = <span class="cstat-no" title="statement not covered" >{};</span>
 <span class="cstat-no" title="statement not covered" >    while (this.reader.peak() !== CONST.END) {</span>
       const key = <span class="cstat-no" title="statement not covered" >this.key();</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.reader.peak() === CONST.END) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_OBJ_BREAK;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this.reader.peak() === CONST.END) <span class="cstat-no" title="statement not covered" >throw ERROR.UNEXPECTED_OBJ_BREAK;</span></span>
       const value = <span class="cstat-no" title="statement not covered" >this.readPrimitiveOrVal();</span>
 <span class="cstat-no" title="statement not covered" >      obj[key] = value;</span>
     }
@@ -1209,7 +1209,7 @@ export class CborDecoder&lt;
 &nbsp;
   public readArrLevel(minor: number): unknown[] {
     const length = this.readMinorLen(minor);
-    if (length &gt;= 0) return this.readArrRawLevel(length);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (length &gt;= 0) return this.readArrRawLevel(length);
 <span class="cstat-no" title="statement not covered" >    return this.readArrIndefLevel();</span>
   }
 &nbsp;
@@ -1233,7 +1233,7 @@ export class CborDecoder&lt;
     const major = octet &gt;&gt; 5;
     if (major !== expectedMajor) throw ERROR.UNEXPECTED_MAJOR;
     const minor = octet &amp; CONST.MINOR_MASK;
-    if (minor &lt; 24) return minor;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (minor &lt; 24) return minor;
 <span class="cstat-no" title="statement not covered" >    switch (minor) {</span>
       case 24:
 <span class="cstat-no" title="statement not covered" >        return this.reader.u8();</span>
@@ -1294,7 +1294,7 @@ export class CborDecoder&lt;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

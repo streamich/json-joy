@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">54% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/25</span>
+                <span class='fraction'>27/50</span>
             </div>
         
             
@@ -522,7 +522,7 @@ export const enum FH {
  */
 export const encodePathFh = <span class="fstat-no" title="function not covered" >(a</span>bsolutePath: string): Uint8Array | undefined =&gt; {
   const utf8Length = <span class="cstat-no" title="statement not covered" >Buffer.byteLength(absolutePath, 'utf8');</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (utf8Length + 1 &gt; FH.MAX_SIZE) <span class="cstat-no" title="statement not covered" >return undefined;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (utf8Length + 1 &gt; FH.MAX_SIZE) <span class="cstat-no" title="statement not covered" >return undefined;</span></span>
   const u8 = <span class="cstat-no" title="statement not covered" >new Uint8Array(1 + utf8Length);</span>
 <span class="cstat-no" title="statement not covered" >  u8[0] = FH_TYPE.PATH;</span>
 <span class="cstat-no" title="statement not covered" >  encode(u8, absolutePath, 1, utf8Length);</span>
@@ -531,8 +531,8 @@ export const encodePathFh = <span class="fstat-no" title="function not covered" 
 &nbsp;
 export const decodePathFh = <span class="fstat-no" title="function not covered" >(f</span>h: Uint8Array): string | undefined =&gt; {
   const length = <span class="cstat-no" title="statement not covered" >fh.length;</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (length &lt; 2) <span class="cstat-no" title="statement not covered" >return undefined;</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (fh[0] !== FH_TYPE.PATH) <span class="cstat-no" title="statement not covered" >return undefined;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (length &lt; 2) <span class="cstat-no" title="statement not covered" >return undefined;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (fh[0] !== FH_TYPE.PATH) <span class="cstat-no" title="statement not covered" >return undefined;</span></span>
 <span class="cstat-no" title="statement not covered" >  return decodeUtf8(fh, 1, length - 1);</span>
 };
 &nbsp;
@@ -566,13 +566,13 @@ export class FileHandleMapper {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (type === FH_TYPE.PATH) {
 <span class="cstat-no" title="statement not covered" >      try {</span>
         const path = <span class="cstat-no" title="statement not covered" >decodePathFh(fh);</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!path) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_BADHANDLE;</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!path) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_BADHANDLE;</span></span>
 <span class="cstat-no" title="statement not covered" >        return path;</span>
       } catch {
 <span class="cstat-no" title="statement not covered" >        throw Nfsv4Stat.NFS4ERR_BADHANDLE;</span>
       }
     }
-    if (type === FH_TYPE.ID) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (type === FH_TYPE.ID) {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (length !== 8) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_BADHANDLE;</span>
       const stamp = (fh[1] &lt;&lt; 8) | fh[2];
       <span class="missing-if-branch" title="if path not taken" >I</span>if (stamp !== this.stamp) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_FHEXPIRED;</span>
@@ -607,9 +607,9 @@ export class FileHandleMapper {
     const id = fh[3] * 0x100000000 + fh[4] * 0x1000000 + (fh[5] &lt;&lt; 16) + (fh[6] &lt;&lt; 8) + fh[7];
     const {idToPath, pathToId, maxFhTableSize} = this;
     ENFORCE_FH_TABLE_SIZE_LIMIT: {
-      if (idToPath.size &lt;= maxFhTableSize) break ENFORCE_FH_TABLE_SIZE_LIMIT;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (idToPath.size &lt;= maxFhTableSize) break ENFORCE_FH_TABLE_SIZE_LIMIT;
       const entry = <span class="cstat-no" title="statement not covered" >idToPath.entries().next().value;</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (entry) {</span>
+<span class="cstat-no" title="statement not covered" >      if (entry) {</span>
         const [id, path] = <span class="cstat-no" title="statement not covered" >entry;</span>
 <span class="cstat-no" title="statement not covered" >        idToPath.delete(id);</span>
 <span class="cstat-no" title="statement not covered" >        pathToId.delete(path);</span>
@@ -630,7 +630,7 @@ export class FileHandleMapper {
     const type = fh[0];
     <span class="missing-if-branch" title="if path not taken" >I</span>if (type === FH_TYPE.ROOT) <span class="cstat-no" title="statement not covered" >return true;</span>
     <span class="missing-if-branch" title="if path not taken" >I</span>if (type === FH_TYPE.PATH) <span class="cstat-no" title="statement not covered" >return true;</span>
-    if (type === FH_TYPE.ID) return true;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (type === FH_TYPE.ID) return true;
 <span class="cstat-no" title="statement not covered" >    return false;</span>
   }
 &nbsp;
@@ -709,7 +709,7 @@ export class FileHandleMapper {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../../../../prettify.js"></script>
         <script>

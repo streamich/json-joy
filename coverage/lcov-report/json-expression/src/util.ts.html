@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">78.26% </span>
+                <span class="strong">79.32% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>108/138</span>
+                <span class='fraction'>142/179</span>
             </div>
         
             
@@ -958,14 +958,14 @@ export const member = (container: unknown, index: unknown): unknown =&gt; {
 };
 &nbsp;
 export const asBin = (value: unknown): Uint8Array =&gt; {
-  if (value instanceof Uint8Array) return value;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (value instanceof Uint8Array) return value;
 <span class="cstat-no" title="statement not covered" >  throw new Error('NOT_BINARY');</span>
 };
 &nbsp;
 // ---------------------------------------------------- String operator helpers
 &nbsp;
 export const asStr = (value: unknown): string =&gt; {
-  if (typeof value === 'string') return value;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof value === 'string') return value;
 <span class="cstat-no" title="statement not covered" >  throw new Error('NOT_STRING');</span>
 };
 &nbsp;
@@ -1034,7 +1034,7 @@ export const isTime = (value: unknown): boolean =&gt; {
   const tzH: number = +(matches[6] || <span class="branch-1 cbranch-no" title="branch not covered" >0)</span>;
   const tzM: number = +(matches[7] || <span class="branch-1 cbranch-no" title="branch not covered" >0)</span>;
   <span class="missing-if-branch" title="if path not taken" >I</span>if (tzH &gt; 23 || tzM &gt; 59 || !tz) <span class="cstat-no" title="statement not covered" >return false;</span>
-  if (hr &lt;= 23 &amp;&amp; min &lt;= 59 &amp;&amp; sec &lt; 60) return true;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (hr &lt;= 23 &amp;&amp; min &lt;= 59 &amp;&amp; sec &lt; 60) return true;
   const utcMin = <span class="cstat-no" title="statement not covered" >min - tzM * tzSign;</span>
   const utcHr = <span class="cstat-no" title="statement not covered" >hr - tzH * tzSign - (utcMin &lt; 0 ? 1 : 0);</span>
 <span class="cstat-no" title="statement not covered" >  return (utcHr === 23 || utcHr === -1) &amp;&amp; (utcMin === 59 || utcMin === -1) &amp;&amp; sec &lt; 61;</span>
@@ -1058,7 +1058,7 @@ export const u8 = (bin: unknown, pos: unknown) =&gt; {
 // ----------------------------------------------------- Array operator helpers
 &nbsp;
 export const asArr = (value: unknown): unknown[] =&gt; {
-  if (value instanceof Array) return value as unknown[];
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (value instanceof Array) return value as unknown[];
 <span class="cstat-no" title="statement not covered" >  throw new Error('NOT_ARRAY');</span>
 };
 &nbsp;
@@ -1167,7 +1167,7 @@ export const reduce = (
 // ---------------------------------------------------- Object operator helpers
 &nbsp;
 export const asObj = (value: unknown): object =&gt; {
-  if (type(value) === 'object') return value as object;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (type(value) === 'object') return value as object;
 <span class="cstat-no" title="statement not covered" >  throw new Error('NOT_OBJECT');</span>
 };
 &nbsp;
@@ -1213,7 +1213,7 @@ export const isLiteral = <span class="fstat-no" title="function not covered" >(v
 &nbsp;
 export const asLiteral = &lt;T&gt;(value: Literal&lt;T&gt;): T =&gt; {
   <span class="missing-if-branch" title="if path not taken" >I</span>if (value instanceof Array) {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (value.length !== 1) <span class="cstat-no" title="statement not covered" >throw new Error('Invalid literal.');</span></span>
+<span class="cstat-no" title="statement not covered" >    if (value.length !== 1) <span class="cstat-no" title="statement not covered" >throw new Error('Invalid literal.');</span></span>
 <span class="cstat-no" title="statement not covered" >    return value[0];</span>
   } else return value;
 };
@@ -1251,7 +1251,7 @@ export const operatorsToMap = (operators: OperatorDefinition&lt;Expression&gt;[]
 export const parseVar = (name: string): [name: string, pointer: string] =&gt; {
   if (name[0] === '/') return ['', name];
   const slashIndex = name.indexOf('/');
-  if (slashIndex === -1) return [name, ''];
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (slashIndex === -1) return [name, ''];
 <span class="cstat-no" title="statement not covered" >  return [name.slice(0, slashIndex), name.slice(slashIndex)];</span>
 };
 &nbsp;</pre></td></tr></table></pre>
@@ -1261,7 +1261,7 @@ export const parseVar = (name: string): [name: string, pointer: string] =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

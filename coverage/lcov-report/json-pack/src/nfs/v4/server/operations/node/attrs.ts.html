@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">27.41% </span>
+                <span class="strong">33.73% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/62</span>
+                <span class='fraction'>28/83</span>
             </div>
         
             
@@ -694,37 +694,37 @@ export const encodeAttrs = (
           break;
         }
 <span class="branch-7 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_SPACE_AVAIL: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(fsStats.spaceAvail);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-8 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_SPACE_FREE: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(fsStats.spaceFree);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-9 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_SPACE_TOTAL: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(fsStats.spaceTotal);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-10 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_FILES_AVAIL: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(fsStats.filesAvail);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-11 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_FILES_FREE: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(fsStats.filesFree);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-12 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_FILES_TOTAL: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!fsStats) <span class="cstat-no" title="statement not covered" >break;</span></span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(fsStats.filesTotal);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
@@ -760,14 +760,14 @@ export const encodeAttrs = (
           break;
         }
 <span class="branch-16 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_CHANGE: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (!stats) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (!stats) <span class="cstat-no" title="statement not covered" >break;</span></span>
           const changeTime = <span class="cstat-no" title="statement not covered" >BigInt(Math.floor(stats.mtimeMs * 1000000));</span>
 <span class="cstat-no" title="statement not covered" >          xdr.writeUnsignedHyper(changeTime);</span>
 <span class="cstat-no" title="statement not covered" >          setBit(supportedMask, attrNum);</span>
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-17 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_LEASE_TIME: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (leaseTime !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >          if (leaseTime !== undefined) {</span>
 <span class="cstat-no" title="statement not covered" >            xdr.writeUnsignedInt(leaseTime);</span>
 <span class="cstat-no" title="statement not covered" >            setBit(supportedMask, attrNum);</span>
           }
@@ -810,14 +810,14 @@ export const encodeAttrs = (
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-25 cbranch-no" title="branch not covered" >        case Nfsv4Attr.FATTR4_FILEHANDLE: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (fh) {</span>
+<span class="cstat-no" title="statement not covered" >          if (fh) {</span>
 <span class="cstat-no" title="statement not covered" >            xdr.writeVarlenOpaque(fh);</span>
 <span class="cstat-no" title="statement not covered" >            setBit(supportedMask, attrNum);</span>
           }
 <span class="cstat-no" title="statement not covered" >          break;</span>
         }
 <span class="branch-26 cbranch-no" title="branch not covered" >        default: {</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (SET_ONLY_ATTRS.has(attrNum)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_INVAL;</span></span>
+<span class="cstat-no" title="statement not covered" >          if (SET_ONLY_ATTRS.has(attrNum)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_INVAL;</span></span>
         }
       }
     }
@@ -832,7 +832,7 @@ export const encodeAttrs = (
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../../../../prettify.js"></script>
         <script>

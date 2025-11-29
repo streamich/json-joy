@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25.38% </span>
+                <span class="strong">24.57% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>50/197</span>
+                <span class='fraction'>58/236</span>
             </div>
         
             
@@ -1653,7 +1653,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 &nbsp;
   private <span class="fstat-no" title="function not covered" >writePreOpAttr(</span>attr: structs.Nfsv3PreOpAttr): void {
 <span class="cstat-no" title="statement not covered" >    this.xdr.writeBoolean(attr.attributesFollow);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (attr.attributesFollow &amp;&amp; attr.attributes) {</span>
+<span class="cstat-no" title="statement not covered" >    if (attr.attributesFollow &amp;&amp; attr.attributes) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccAttr(attr.attributes);</span>
     }
   }
@@ -1665,7 +1665,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 &nbsp;
   private <span class="fstat-no" title="function not covered" >writePostOpFh(</span>fh: structs.Nfsv3PostOpFh): void {
 <span class="cstat-no" title="statement not covered" >    this.xdr.writeBoolean(fh.handleFollows);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (fh.handleFollows &amp;&amp; fh.handle) {</span>
+<span class="cstat-no" title="statement not covered" >    if (fh.handleFollows &amp;&amp; fh.handle) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeFh(fh.handle);</span>
     }
   }
@@ -1673,7 +1673,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
   private writeSetMode(setMode: structs.Nfsv3SetMode): void {
     const xdr = this.xdr;
     xdr.writeBoolean(setMode.set);
-    if (setMode.set &amp;&amp; setMode.mode !== undefined) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (setMode.set &amp;&amp; setMode.mode !== undefined) {
       xdr.writeUnsignedInt(setMode.mode);
     }
   }
@@ -1745,12 +1745,12 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
     switch (how.mode) {
       case Nfsv3CreateMode.UNCHECKED:
       case Nfsv3CreateMode.GUARDED:
-        if (how.objAttributes) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (how.objAttributes) {
           this.writeSattr(how.objAttributes);
         }
         break;
       case Nfsv3CreateMode.EXCLUSIVE:
-        if (how.verf) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (how.verf) {
           xdr.writeOpaque(how.verf);
         }
         break;
@@ -1761,24 +1761,24 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    this.xdr.writeUnsignedInt(data.type);</span>
 <span class="cstat-no" title="statement not covered" >    switch (data.type) {</span>
       case Nfsv3FType.NF3CHR:
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (data.chr) {</span>
+<span class="cstat-no" title="statement not covered" >        if (data.chr) {</span>
 <span class="cstat-no" title="statement not covered" >          this.writeSattr(data.chr.devAttributes);</span>
 <span class="cstat-no" title="statement not covered" >          this.writeSpecData(data.chr.spec);</span>
         }
 <span class="cstat-no" title="statement not covered" >        break;</span>
       case Nfsv3FType.NF3BLK:
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (data.blk) {</span>
+<span class="cstat-no" title="statement not covered" >        if (data.blk) {</span>
 <span class="cstat-no" title="statement not covered" >          this.writeSattr(data.blk.devAttributes);</span>
 <span class="cstat-no" title="statement not covered" >          this.writeSpecData(data.blk.spec);</span>
         }
 <span class="cstat-no" title="statement not covered" >        break;</span>
       case Nfsv3FType.NF3SOCK:
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (data.sock) {</span>
+<span class="cstat-no" title="statement not covered" >        if (data.sock) {</span>
 <span class="cstat-no" title="statement not covered" >          this.writeSattr(data.sock);</span>
         }
 <span class="cstat-no" title="statement not covered" >        break;</span>
       case Nfsv3FType.NF3FIFO:
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (data.pipe) {</span>
+<span class="cstat-no" title="statement not covered" >        if (data.pipe) {</span>
 <span class="cstat-no" title="statement not covered" >          this.writeSattr(data.pipe);</span>
         }
 <span class="cstat-no" title="statement not covered" >        break;</span>
@@ -1800,7 +1800,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 &nbsp;
   private <span class="fstat-no" title="function not covered" >writeEntryPlus(</span>entry: structs.Nfsv3EntryPlus | undefined): void {
     const xdr = <span class="cstat-no" title="statement not covered" >this.xdr;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!entry) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!entry) {</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeBoolean(false);</span>
 <span class="cstat-no" title="statement not covered" >      return;</span>
     }
@@ -1829,7 +1829,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 &nbsp;
   private writeGetattrResponse(res: msg.Nfsv3GetattrResponse): void {
     this.xdr.writeUnsignedInt(res.status);
-    if (res.status === 0 &amp;&amp; res.resok) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (res.status === 0 &amp;&amp; res.resok) {
       this.writeFattr(res.resok.objAttributes);
     }
   }
@@ -1844,7 +1844,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    this.xdr.writeUnsignedInt(res.status);</span>
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.objWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.objWcc);</span>
     }
   }
@@ -1859,7 +1859,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      this.writeFh(res.resok.object);</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.objAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.dirAttributes);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.dirAttributes);</span>
     }
   }
@@ -1875,7 +1875,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.objAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.access);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.objAttributes);</span>
     }
   }
@@ -1889,7 +1889,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.symlinkAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeFilename(res.resok.data);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.symlinkAttributes);</span>
     }
   }
@@ -1909,7 +1909,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
       xdr.writeUnsignedInt(res.resok.count);
       xdr.writeBoolean(res.resok.eof);
       xdr.writeVarlenOpaque(res.resok.data);
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span><span class="missing-if-branch" title="else path not taken" >E</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.fileAttributes);</span>
     }
   }
@@ -1931,7 +1931,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.count);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.committed);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeOpaque(res.resok.verf);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.fileWcc);</span>
     }
   }
@@ -1947,7 +1947,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      this.writePostOpFh(res.resok.obj);</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.objAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.dirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.dirWcc);</span>
     }
   }
@@ -1963,7 +1963,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      this.writePostOpFh(res.resok.obj);</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.objAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.dirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.dirWcc);</span>
     }
   }
@@ -1980,7 +1980,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      this.writePostOpFh(res.resok.obj);</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.objAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.dirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.dirWcc);</span>
     }
   }
@@ -1996,7 +1996,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      this.writePostOpFh(res.resok.obj);</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.objAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.dirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.dirWcc);</span>
     }
   }
@@ -2009,7 +2009,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    this.xdr.writeUnsignedInt(res.status);</span>
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.dirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.dirWcc);</span>
     }
   }
@@ -2022,7 +2022,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    this.xdr.writeUnsignedInt(res.status);</span>
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.dirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.dirWcc);</span>
     }
   }
@@ -2037,7 +2037,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.fromDirWcc);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.toDirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.fromDirWcc);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.toDirWcc);</span>
     }
@@ -2053,7 +2053,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.fileAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.linkDirWcc);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.fileAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.linkDirWcc);</span>
     }
@@ -2074,7 +2074,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
       this.writePostOpAttr(res.resok.dirAttributes);
       xdr.writeOpaque(res.resok.cookieverf);
       this.writeDirList(res.resok.reply);
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span><span class="missing-if-branch" title="else path not taken" >E</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.dirAttributes);</span>
     }
   }
@@ -2095,7 +2095,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resok.dirAttributes);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeOpaque(res.resok.cookieverf);</span>
 <span class="cstat-no" title="statement not covered" >      this.writeDirListPlus(res.resok.reply);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.dirAttributes);</span>
     }
   }
@@ -2116,7 +2116,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedHyper(res.resok.ffiles);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedHyper(res.resok.afiles);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.invarsec);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.objAttributes);</span>
     }
   }
@@ -2141,7 +2141,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.timeDelta.seconds);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.timeDelta.nseconds);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeUnsignedInt(res.resok.properties);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.objAttributes);</span>
     }
   }
@@ -2161,7 +2161,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >      xdr.writeBoolean(res.resok.chownRestricted);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeBoolean(res.resok.caseInsensitive);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeBoolean(res.resok.casePreserving);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writePostOpAttr(res.resfail.objAttributes);</span>
     }
   }
@@ -2179,7 +2179,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
 <span class="cstat-no" title="statement not covered" >    if (res.status === 0 &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resok.fileWcc);</span>
 <span class="cstat-no" title="statement not covered" >      xdr.writeOpaque(res.resok.verf);</span>
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res.resfail) {</span>
+    } else <span class="cstat-no" title="statement not covered" >if (res.resfail) {</span>
 <span class="cstat-no" title="statement not covered" >      this.writeWccData(res.resfail.fileWcc);</span>
     }
   }
@@ -2191,7 +2191,7 @@ export class Nfsv3Encoder&lt;W extends IWriter &amp; IWriterGrowable = IWriter &
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

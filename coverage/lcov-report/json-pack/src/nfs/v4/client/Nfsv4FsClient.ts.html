@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">54.66% </span>
+                <span class="strong">62.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>123/225</span>
+                <span class='fraction'>193/308</span>
             </div>
         
             
@@ -1987,8 +1987,8 @@ export class Nfsv4FsClient implements NfsFsClient {
   private encodeData(data: misc.TPromisesData): Uint8Array {
     if (data instanceof Uint8Array) return data;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (data instanceof ArrayBuffer) <span class="cstat-no" title="statement not covered" >return new Uint8Array(data);</span>
-    if (typeof data === 'string') return new TextEncoder().encode(data);
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (Buffer.isBuffer(data)) <span class="cstat-no" title="statement not covered" >return new Uint8Array(data);</span></span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof data === 'string') return new TextEncoder().encode(data);
+<span class="cstat-no" title="statement not covered" >    if (Buffer.isBuffer(data)) <span class="cstat-no" title="statement not covered" >return new Uint8Array(data);</span></span>
 <span class="cstat-no" title="statement not covered" >    throw new Error('Unsupported data type');</span>
   }
 &nbsp;
@@ -2059,11 +2059,11 @@ export class Nfsv4FsClient implements NfsFsClient {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (readRes.status !== Nfsv4Stat.NFS4_OK || !readRes.resok) {
 <span class="cstat-no" title="statement not covered" >          throw new Error(`Failed to read file: ${readRes.status}`);</span>
         }
-        if (readRes.resok.data.length &gt; 0) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (readRes.resok.data.length &gt; 0) {
           chunks.push(readRes.resok.data);
           offset += BigInt(readRes.resok.data.length);
         }
-        if (readRes.resok.eof) break;
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (readRes.resok.eof) break;
       }
     } finally {
       await this.closeStateid(openOwner, stateid);
@@ -2316,7 +2316,7 @@ export class Nfsv4FsClient implements NfsFsClient {
           for (let bit = 0; bit &lt; 32; bit++) {
             if (!(word &amp; (1 &lt;&lt; bit))) continue;
             const attrNum = i * 32 + bit;
-            if (attrNum === Nfsv4Attr.FATTR4_TYPE) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (attrNum === Nfsv4Attr.FATTR4_TYPE) {
               fileType = xdr.readUnsignedInt();
             }
           }
@@ -2479,7 +2479,7 @@ export class Nfsv4FsClient implements NfsFsClient {
           }
         }
       } catch (err) {
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!force) <span class="cstat-no" title="statement not covered" >throw err;</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!force) <span class="cstat-no" title="statement not covered" >throw err;</span></span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
     }
@@ -2494,10 +2494,10 @@ export class Nfsv4FsClient implements NfsFsClient {
       }
       const removeRes = response.resarray[response.resarray.length - 1] as msg.Nfsv4RemoveResponse;
       <span class="missing-if-branch" title="if path not taken" >I</span>if (removeRes.status !== Nfsv4Stat.NFS4_OK) {
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!force) <span class="cstat-no" title="statement not covered" >throw new Error(`Failed to remove: ${removeRes.status}`);</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!force) <span class="cstat-no" title="statement not covered" >throw new Error(`Failed to remove: ${removeRes.status}`);</span></span>
       }
     } catch (err) {
-      if (!force) throw err;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (!force) throw err;
     }
   };
 &nbsp;
@@ -2509,9 +2509,9 @@ export class Nfsv4FsClient implements NfsFsClient {
     if (mode === 0) {
       accessMask = Nfsv4Access.ACCESS4_READ;
     } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; 4) <span class="cstat-no" title="statement not covered" >accessMask |= Nfsv4Access.ACCESS4_READ;</span></span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; 2) <span class="cstat-no" title="statement not covered" >accessMask |= Nfsv4Access.ACCESS4_MODIFY;</span></span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; 1) <span class="cstat-no" title="statement not covered" >accessMask |= Nfsv4Access.ACCESS4_EXECUTE;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (mode &amp; 4) <span class="cstat-no" title="statement not covered" >accessMask |= Nfsv4Access.ACCESS4_READ;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (mode &amp; 2) <span class="cstat-no" title="statement not covered" >accessMask |= Nfsv4Access.ACCESS4_MODIFY;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (mode &amp; 1) <span class="cstat-no" title="statement not covered" >accessMask |= Nfsv4Access.ACCESS4_EXECUTE;</span></span>
     }
     operations.push(nfs.ACCESS(accessMask));
     const response = await this.fs.compound(operations);
@@ -2671,7 +2671,7 @@ export class Nfsv4FsClient implements NfsFsClient {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (readlinkRes.status !== Nfsv4Stat.NFS4_OK || !readlinkRes.resok) {
 <span class="cstat-no" title="statement not covered" >      throw new Error(`Failed to read link: ${readlinkRes.status}`);</span>
     }
-    if (!encoding || <span class="branch-1 cbranch-no" title="branch not covered" >encoding === 'utf8')</span> {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!encoding || <span class="branch-1 cbranch-no" title="branch not covered" >encoding === 'utf8')</span> {
       return readlinkRes.resok.link;
     }
 <span class="cstat-no" title="statement not covered" >    return Buffer.from(readlinkRes.resok.link, 'utf8');</span>
@@ -2771,7 +2771,7 @@ export class Nfsv4FsClient implements NfsFsClient {
 <span class="cstat-no" title="statement not covered" >          access = Nfsv4OpenAccess.OPEN4_SHARE_ACCESS_BOTH;</span>
         }
       }
-    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span><span class="missing-if-branch" title="else path not taken" >E</span>if (typeof flags === 'number') {</span>
+    } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (typeof flags === 'number') {</span>
       const O_RDONLY = <span class="cstat-no" title="statement not covered" >0;</span>
       const O_WRONLY = <span class="cstat-no" title="statement not covered" >1;</span>
       const O_RDWR = <span class="cstat-no" title="statement not covered" >2;</span>
@@ -2830,7 +2830,7 @@ export class Nfsv4FsClient implements NfsFsClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

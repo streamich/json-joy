@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">48.78% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>31/62</span>
+                <span class='fraction'>40/82</span>
             </div>
         
             
@@ -439,7 +439,7 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
       if (length === 0) return '';
       else <span class="missing-if-branch" title="else path not taken" >E</span>{
         const a = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if ((a &amp; 0x80) &gt; 1) {</span>
+<span class="cstat-no" title="statement not covered" >        if ((a &amp; 0x80) &gt; 1) {</span>
 <span class="cstat-no" title="statement not covered" >          position -= 1;</span>
 <span class="cstat-no" title="statement not covered" >          return;</span>
         }
@@ -452,9 +452,9 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
 <span class="cstat-no" title="statement not covered" >        position -= 2;</span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
-      if (length &lt; 3) return fromCharCode(a, b);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (length &lt; 3) return fromCharCode(a, b);
       const c = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if ((c &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >      if ((c &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >        position -= 3;</span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
@@ -486,9 +486,9 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
 <span class="cstat-no" title="statement not covered" >        position -= 6;</span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
-      if (length &lt; 7) return fromCharCode(a, b, c, d, e, f);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (length &lt; 7) return fromCharCode(a, b, c, d, e, f);
       const g = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if ((g &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >      if ((g &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >        position -= 7;</span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
@@ -506,7 +506,7 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
 <span class="cstat-no" title="statement not covered" >        if (length === 8) <span class="cstat-no" title="statement not covered" >return fromCharCode(a, b, c, d, e, f, g, h);</span></span>
         else {
           const i = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if ((i &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >          if ((i &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >            position -= 9;</span>
 <span class="cstat-no" title="statement not covered" >            return;</span>
           }
@@ -531,7 +531,7 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
         const j = <span class="cstat-no" title="statement not covered" >src[position++];</span>
         const k = <span class="cstat-no" title="statement not covered" >src[position++];</span>
         const l = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if ((i &amp; 0x80) &gt; 0 || (j &amp; 0x80) &gt; 0 || (k &amp; 0x80) &gt; 0 || (l &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >        if ((i &amp; 0x80) &gt; 0 || (j &amp; 0x80) &gt; 0 || (k &amp; 0x80) &gt; 0 || (l &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >          position -= 12;</span>
 <span class="cstat-no" title="statement not covered" >          return;</span>
         }
@@ -539,7 +539,7 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
 <span class="cstat-no" title="statement not covered" >          if (length === 12) <span class="cstat-no" title="statement not covered" >return fromCharCode(a, b, c, d, e, f, g, h, i, j, k, l);</span></span>
           else {
             const m = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if ((m &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >            if ((m &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >              position -= 13;</span>
 <span class="cstat-no" title="statement not covered" >              return;</span>
             }
@@ -548,13 +548,13 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
         } else {
           const m = <span class="cstat-no" title="statement not covered" >src[position++];</span>
           const n = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if ((m &amp; 0x80) &gt; 0 || (n &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >          if ((m &amp; 0x80) &gt; 0 || (n &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >            position -= 14;</span>
 <span class="cstat-no" title="statement not covered" >            return;</span>
           }
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (length &lt; 15) <span class="cstat-no" title="statement not covered" >return fromCharCode(a, b, c, d, e, f, g, h, i, j, k, l, m, n);</span></span>
+<span class="cstat-no" title="statement not covered" >          if (length &lt; 15) <span class="cstat-no" title="statement not covered" >return fromCharCode(a, b, c, d, e, f, g, h, i, j, k, l, m, n);</span></span>
           const o = <span class="cstat-no" title="statement not covered" >src[position++];</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if ((o &amp; 0x80) &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >          if ((o &amp; 0x80) &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >            position -= 15;</span>
 <span class="cstat-no" title="statement not covered" >            return;</span>
           }
@@ -571,7 +571,7 @@ export const decodeAsciiMax15 = (src: Uint8Array, position: number, length: numb
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

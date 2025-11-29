@@ -32,7 +32,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/437</span>
+                <span class='fraction'>0/472</span>
             </div>
         
             
@@ -2108,29 +2108,29 @@ export const formatNfsv4LockType = <span class="fstat-no" title="function not co
 &nbsp;
 export const formatNfsv4Access = <span class="fstat-no" title="function not covered" >(a</span>ccess: number): string =&gt; {
   const flags: string[] = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (access &amp; constants.Nfsv4Access.ACCESS4_READ) <span class="cstat-no" title="statement not covered" >flags.push('READ');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (access &amp; constants.Nfsv4Access.ACCESS4_LOOKUP) <span class="cstat-no" title="statement not covered" >flags.push('LOOKUP');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (access &amp; constants.Nfsv4Access.ACCESS4_MODIFY) <span class="cstat-no" title="statement not covered" >flags.push('MODIFY');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (access &amp; constants.Nfsv4Access.ACCESS4_EXTEND) <span class="cstat-no" title="statement not covered" >flags.push('EXTEND');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (access &amp; constants.Nfsv4Access.ACCESS4_DELETE) <span class="cstat-no" title="statement not covered" >flags.push('DELETE');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (access &amp; constants.Nfsv4Access.ACCESS4_EXECUTE) <span class="cstat-no" title="statement not covered" >flags.push('EXECUTE');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (access &amp; constants.Nfsv4Access.ACCESS4_READ) <span class="cstat-no" title="statement not covered" >flags.push('READ');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (access &amp; constants.Nfsv4Access.ACCESS4_LOOKUP) <span class="cstat-no" title="statement not covered" >flags.push('LOOKUP');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (access &amp; constants.Nfsv4Access.ACCESS4_MODIFY) <span class="cstat-no" title="statement not covered" >flags.push('MODIFY');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (access &amp; constants.Nfsv4Access.ACCESS4_EXTEND) <span class="cstat-no" title="statement not covered" >flags.push('EXTEND');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (access &amp; constants.Nfsv4Access.ACCESS4_DELETE) <span class="cstat-no" title="statement not covered" >flags.push('DELETE');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (access &amp; constants.Nfsv4Access.ACCESS4_EXECUTE) <span class="cstat-no" title="statement not covered" >flags.push('EXECUTE');</span></span>
 <span class="cstat-no" title="statement not covered" >  return flags.length &gt; 0 ? flags.join('|') : `0x${access.toString(16)}`;</span>
 };
 &nbsp;
 export const formatNfsv4Mode = <span class="fstat-no" title="function not covered" >(m</span>ode: number): string =&gt; {
   const flags: string[] = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_SUID) <span class="cstat-no" title="statement not covered" >flags.push('SUID');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_SGID) <span class="cstat-no" title="statement not covered" >flags.push('SGID');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_SVTX) <span class="cstat-no" title="statement not covered" >flags.push('SVTX');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_RUSR) <span class="cstat-no" title="statement not covered" >flags.push('RUSR');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_WUSR) <span class="cstat-no" title="statement not covered" >flags.push('WUSR');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_XUSR) <span class="cstat-no" title="statement not covered" >flags.push('XUSR');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_RGRP) <span class="cstat-no" title="statement not covered" >flags.push('RGRP');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_WGRP) <span class="cstat-no" title="statement not covered" >flags.push('WGRP');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_XGRP) <span class="cstat-no" title="statement not covered" >flags.push('XGRP');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_ROTH) <span class="cstat-no" title="statement not covered" >flags.push('ROTH');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_WOTH) <span class="cstat-no" title="statement not covered" >flags.push('WOTH');</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (mode &amp; constants.Nfsv4Mode.MODE4_XOTH) <span class="cstat-no" title="statement not covered" >flags.push('XOTH');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_SUID) <span class="cstat-no" title="statement not covered" >flags.push('SUID');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_SGID) <span class="cstat-no" title="statement not covered" >flags.push('SGID');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_SVTX) <span class="cstat-no" title="statement not covered" >flags.push('SVTX');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_RUSR) <span class="cstat-no" title="statement not covered" >flags.push('RUSR');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_WUSR) <span class="cstat-no" title="statement not covered" >flags.push('WUSR');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_XUSR) <span class="cstat-no" title="statement not covered" >flags.push('XUSR');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_RGRP) <span class="cstat-no" title="statement not covered" >flags.push('RGRP');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_WGRP) <span class="cstat-no" title="statement not covered" >flags.push('WGRP');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_XGRP) <span class="cstat-no" title="statement not covered" >flags.push('XGRP');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_ROTH) <span class="cstat-no" title="statement not covered" >flags.push('ROTH');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_WOTH) <span class="cstat-no" title="statement not covered" >flags.push('WOTH');</span></span>
+<span class="cstat-no" title="statement not covered" >  if (mode &amp; constants.Nfsv4Mode.MODE4_XOTH) <span class="cstat-no" title="statement not covered" >flags.push('XOTH');</span></span>
   const octal = <span class="cstat-no" title="statement not covered" >mode.toString(8).padStart(4, '0');</span>
 <span class="cstat-no" title="statement not covered" >  return flags.length &gt; 0 ? `${octal} (${flags.join('|')})` : octal;</span>
 };
@@ -2143,7 +2143,7 @@ export const formatNfsv4Bitmap = <span class="fstat-no" title="function not cove
 };
 &nbsp;
 const formatBytes = <span class="fstat-no" title="function not covered" >(d</span>ata: Uint8Array, maxLen = <span class="branch-0 cbranch-no" title="branch not covered" >32)</span>: string =&gt; {
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (data.length === 0) <span class="cstat-no" title="statement not covered" >return '[]';</span></span>
+<span class="cstat-no" title="statement not covered" >  if (data.length === 0) <span class="cstat-no" title="statement not covered" >return '[]';</span></span>
   const hex = <span class="cstat-no" title="statement not covered" >Array.from(data.slice(0, maxLen), <span class="fstat-no" title="function not covered" >(b</span>) =&gt; <span class="cstat-no" title="statement not covered" >b.toString(16).padStart(2, '0'))</span>.join(' ');</span>
 <span class="cstat-no" title="statement not covered" >  return data.length &gt; maxLen ? `[${hex}... (${data.length} bytes)]` : `[${hex}]`;</span>
 };
@@ -2232,7 +2232,7 @@ export const formatNfsv4Request = <span class="fstat-no" title="function not cov
 <span class="cstat-no" title="statement not covered" >    return `WRITE stateid = ${formatStateid(req.stateid, tab)}, offset = ${req.offset}, stable = ${formatNfsv4StableHow(req.stable)}, length = ${req.data.length}`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (req instanceof msg.Nfsv4ReleaseLockOwnerRequest) {</span>
 <span class="cstat-no" title="statement not covered" >    return 'RELEASE_LOCKOWNER';</span>
-  } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (req instanceof msg.Nfsv4IllegalRequest) {</span>
+  } else <span class="cstat-no" title="statement not covered" >if (req instanceof msg.Nfsv4IllegalRequest) {</span>
 <span class="cstat-no" title="statement not covered" >    return 'ILLEGAL';</span>
   }
 <span class="cstat-no" title="statement not covered" >  return 'Unknown Request';</span>
@@ -2240,13 +2240,13 @@ export const formatNfsv4Request = <span class="fstat-no" title="function not cov
 &nbsp;
 export const formatNfsv4Response = <span class="fstat-no" title="function not covered" >(r</span>es: msg.Nfsv4Response, tab: string = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span>: string =&gt; {
 <span class="cstat-no" title="statement not covered" >  if (res instanceof msg.Nfsv4AccessResponse) {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      return `ACCESS (${formatNfsv4Stat(res.status)}) supported = ${formatNfsv4Access(res.resok.supported)}, access = ${formatNfsv4Access(res.resok.access)}`;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `ACCESS (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4CloseResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`stateid = ${formatStateid(res.resok!.openStateid, tab)}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `CLOSE (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
@@ -2260,26 +2260,26 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
 <span class="cstat-no" title="statement not covered" >    return `DELEGRETURN (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4GetattrResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`attrs = ${formatNfsv4Bitmap(res.resok!.objAttributes.attrmask)}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `GETATTR (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4GetfhResponse) {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      return `GETFH (${formatNfsv4Stat(res.status)}) fh = ${formatFileHandle(res.resok.object)}`;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `GETFH (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4LinkResponse) {</span>
 <span class="cstat-no" title="statement not covered" >    return `LINK (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4LockResponse) {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      return `LOCK (${formatNfsv4Stat(res.status)}) stateid = ${formatStateid(res.resok.lockStateid, tab)}`;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `LOCK (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4LocktResponse) {</span>
 <span class="cstat-no" title="statement not covered" >    return `LOCKT (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4LockuResponse) {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      return `LOCKU (${formatNfsv4Stat(res.status)}) stateid = ${formatStateid(res.resok.lockStateid, tab)}`;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `LOCKU (${formatNfsv4Stat(res.status)})`;</span>
@@ -2290,7 +2290,7 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4NverifyResponse) {</span>
 <span class="cstat-no" title="statement not covered" >    return `NVERIFY (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4OpenResponse) {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      return `OPEN (${formatNfsv4Stat(res.status)}) stateid = ${formatStateid(res.resok.stateid, tab)}`;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `OPEN (${formatNfsv4Stat(res.status)})`;</span>
@@ -2298,13 +2298,13 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
 <span class="cstat-no" title="statement not covered" >    return `OPENATTR (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4OpenConfirmResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`stateid = ${formatStateid(res.resok!.openStateid, tab)}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `OPEN_CONFIRM (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4OpenDowngradeResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`stateid = ${formatStateid(res.resok!.openStateid, tab)}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `OPEN_DOWNGRADE (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
@@ -2315,7 +2315,7 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4PutrootfhResponse) {</span>
 <span class="cstat-no" title="statement not covered" >    return `PUTROOTFH (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4ReadResponse) {</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      return `READ (${formatNfsv4Stat(res.status)}) eof = ${res.resok.eof}, length = ${res.resok.data.length}`;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `READ (${formatNfsv4Stat(res.status)})`;</span>
@@ -2323,7 +2323,7 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
 <span class="cstat-no" title="statement not covered" >    return `READDIR (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4ReadlinkResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`link = "${res.resok!.link}"`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `READLINK (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
@@ -2341,13 +2341,13 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
 <span class="cstat-no" title="statement not covered" >    return `SECINFO (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4SetattrResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`attrsset = ${formatNfsv4Bitmap(res.resok!.attrsset)}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `SETATTR (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4SetclientidResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`clientid = ${res.resok!.clientid}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `SETCLIENTID (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
@@ -2357,14 +2357,14 @@ export const formatNfsv4Response = <span class="fstat-no" title="function not co
 <span class="cstat-no" title="statement not covered" >    return `VERIFY (${formatNfsv4Stat(res.status)})`;</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4WriteResponse) {</span>
     const items: Array&lt;(tab: string) =&gt; string&gt; = <span class="cstat-no" title="statement not covered" >[];</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
+<span class="cstat-no" title="statement not covered" >    if (res.status === constants.Nfsv4Stat.NFS4_OK &amp;&amp; res.resok) {</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`count = ${res.resok!.count}`)</span>;</span>
 <span class="cstat-no" title="statement not covered" >      items.push(<span class="fstat-no" title="function not covered" >(t</span>ab) =&gt; <span class="cstat-no" title="statement not covered" >`committed = ${formatNfsv4StableHow(res.resok!.committed)}`)</span>;</span>
     }
 <span class="cstat-no" title="statement not covered" >    return `WRITE (${formatNfsv4Stat(res.status)})` + printTree(tab, items);</span>
   } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4ReleaseLockOwnerResponse) {</span>
 <span class="cstat-no" title="statement not covered" >    return `RELEASE_LOCKOWNER (${formatNfsv4Stat(res.status)})`;</span>
-  } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (res instanceof msg.Nfsv4IllegalResponse) {</span>
+  } else <span class="cstat-no" title="statement not covered" >if (res instanceof msg.Nfsv4IllegalResponse) {</span>
 <span class="cstat-no" title="statement not covered" >    return `ILLEGAL (${formatNfsv4Stat(res.status)})`;</span>
   }
 <span class="cstat-no" title="statement not covered" >  return 'Unknown Response';</span>
@@ -2398,7 +2398,7 @@ export const formatNfsv4CompoundResponse = <span class="fstat-no" title="functio
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

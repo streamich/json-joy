@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.34% </span>
+                <span class="strong">58.94% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>164/286</span>
+                <span class='fraction'>257/436</span>
             </div>
         
             
@@ -3359,20 +3359,20 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     map: Map&lt;bigint, ClientRecord&gt;,
     clientIdString: Uint8Array,
   ): [bigint, ClientRecord] | undefined {
-<span class="cstat-no" title="statement not covered" >    for (const entry of map.entries()) <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (cmpUint8Array(entry[1].clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >return entry;</span></span></span>
+<span class="cstat-no" title="statement not covered" >    for (const entry of map.entries()) <span class="cstat-no" title="statement not covered" >if (cmpUint8Array(entry[1].clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >return entry;</span></span></span>
 <span class="cstat-no" title="statement not covered" >    return;</span>
   }
 &nbsp;
   protected <span class="fstat-no" title="function not covered" >enforceClientLimit(</span>): void {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.clients.size &lt;= this.maxClients) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (this.clients.size &lt;= this.maxClients) <span class="cstat-no" title="statement not covered" >return;</span></span>
     const firstKey = <span class="cstat-no" title="statement not covered" >this.clients.keys().next().value;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (firstKey !== undefined) <span class="cstat-no" title="statement not covered" >this.clients.delete(firstKey);</span></span>
+<span class="cstat-no" title="statement not covered" >    if (firstKey !== undefined) <span class="cstat-no" title="statement not covered" >this.clients.delete(firstKey);</span></span>
   }
 &nbsp;
   protected <span class="fstat-no" title="function not covered" >enforcePendingClientLimit(</span>): void {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.pendingClients.size &lt; this.maxPendingClients) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (this.pendingClients.size &lt; this.maxPendingClients) <span class="cstat-no" title="statement not covered" >return;</span></span>
     const firstKey = <span class="cstat-no" title="statement not covered" >this.pendingClients.keys().next().value;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (firstKey !== undefined) <span class="cstat-no" title="statement not covered" >this.pendingClients.delete(firstKey);</span></span>
+<span class="cstat-no" title="statement not covered" >    if (firstKey !== undefined) <span class="cstat-no" title="statement not covered" >this.pendingClients.delete(firstKey);</span></span>
   }
 &nbsp;
   protected makeOpenOwnerKey(clientid: bigint, owner: Uint8Array): string {
@@ -3522,7 +3522,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     let clientid: bigint = <span class="cstat-no" title="statement not covered" >0n;</span>
 <span class="cstat-no" title="statement not covered" >    if (confirmedClientEntry) {</span>
       const existingRecord = <span class="cstat-no" title="statement not covered" >confirmedClientEntry[1];</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (existingRecord.principal !== principal) <span class="cstat-no" title="statement not covered" >return new msg.Nfsv4SetclientidResponse(Nfsv4Stat.NFS4ERR_CLID_INUSE);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (existingRecord.principal !== principal) <span class="cstat-no" title="statement not covered" >return new msg.Nfsv4SetclientidResponse(Nfsv4Stat.NFS4ERR_CLID_INUSE);</span></span>
 <span class="cstat-no" title="statement not covered" >      this.pendingClients.delete(clientid);</span>
 <span class="cstat-no" title="statement not covered" >      clientid = confirmedClientEntry[0];</span>
       const verifierMatch = <span class="cstat-no" title="statement not covered" >cmpUint8Array(existingRecord.verifier, verifier);</span>
@@ -3536,12 +3536,12 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       }
     } else {
       const pendingClientEntry = <span class="cstat-no" title="statement not covered" >this.findClientByIdString(this.pendingClients, clientIdString);</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (pendingClientEntry) {</span>
+<span class="cstat-no" title="statement not covered" >      if (pendingClientEntry) {</span>
         const existingRecord = <span class="cstat-no" title="statement not covered" >pendingClientEntry[1];</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (existingRecord.principal !== principal)</span>
+<span class="cstat-no" title="statement not covered" >        if (existingRecord.principal !== principal)</span>
 <span class="cstat-no" title="statement not covered" >          return new msg.Nfsv4SetclientidResponse(Nfsv4Stat.NFS4ERR_CLID_INUSE);</span>
         const verifierMatch = <span class="cstat-no" title="statement not covered" >cmpUint8Array(existingRecord.verifier, verifier);</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (verifierMatch &amp;&amp; existingRecord.cache) {</span>
+<span class="cstat-no" title="statement not covered" >        if (verifierMatch &amp;&amp; existingRecord.cache) {</span>
           // The client is re-registering with the same ID string and verifier.
           // Return cached response.
 <span class="cstat-no" title="statement not covered" >          return existingRecord.cache;</span>
@@ -3566,7 +3566,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
 &nbsp;
     // Remove any existing pending records with same ID string.
 <span class="cstat-no" title="statement not covered" >    for (const [id, entry] of this.pendingClients.entries())</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (cmpUint8Array(entry.clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >this.pendingClients.delete(id);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (cmpUint8Array(entry.clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >this.pendingClients.delete(id);</span></span>
 <span class="cstat-no" title="statement not covered" >    this.enforcePendingClientLimit();</span>
 <span class="cstat-no" title="statement not covered" >    this.pendingClients.set(clientid, newRecord);</span>
 &nbsp;
@@ -3585,19 +3585,19 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     const clientid = <span class="cstat-no" title="statement not covered" >request.clientid;</span>
     const setclientidConfirm = <span class="cstat-no" title="statement not covered" >request.setclientidConfirm.data;</span>
     const pendingRecord = <span class="cstat-no" title="statement not covered" >pendingClients.get(clientid);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!pendingRecord) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!pendingRecord) {</span>
       const confirmedRecord = <span class="cstat-no" title="statement not covered" >this.clients.get(clientid);</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (confirmedRecord &amp;&amp; cmpUint8Array(confirmedRecord.setclientidConfirm, setclientidConfirm))</span>
+<span class="cstat-no" title="statement not covered" >      if (confirmedRecord &amp;&amp; cmpUint8Array(confirmedRecord.setclientidConfirm, setclientidConfirm))</span>
 <span class="cstat-no" title="statement not covered" >        return new msg.Nfsv4SetclientidConfirmResponse(Nfsv4Stat.NFS4_OK);</span>
 <span class="cstat-no" title="statement not covered" >      return new msg.Nfsv4SetclientidConfirmResponse(Nfsv4Stat.NFS4ERR_STALE_CLIENTID);</span>
     }
     const principal = <span class="cstat-no" title="statement not covered" >ctx.getPrincipal();</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (pendingRecord.principal !== principal)</span>
+<span class="cstat-no" title="statement not covered" >    if (pendingRecord.principal !== principal)</span>
 <span class="cstat-no" title="statement not covered" >      return new msg.Nfsv4SetclientidConfirmResponse(Nfsv4Stat.NFS4ERR_CLID_INUSE);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!cmpUint8Array(pendingRecord.setclientidConfirm, setclientidConfirm))</span>
+<span class="cstat-no" title="statement not covered" >    if (!cmpUint8Array(pendingRecord.setclientidConfirm, setclientidConfirm))</span>
 <span class="cstat-no" title="statement not covered" >      return new msg.Nfsv4SetclientidConfirmResponse(Nfsv4Stat.NFS4ERR_STALE_CLIENTID);</span>
     const oldConfirmed = <span class="cstat-no" title="statement not covered" >this.findClientByIdString(this.clients, pendingRecord.clientIdString);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (oldConfirmed) {</span>
+<span class="cstat-no" title="statement not covered" >    if (oldConfirmed) {</span>
       const clientid2 = <span class="cstat-no" title="statement not covered" >oldConfirmed[0];</span>
 <span class="cstat-no" title="statement not covered" >      this.clients.delete(clientid2);</span>
 <span class="cstat-no" title="statement not covered" >      pendingClients.delete(clientid2);</span>
@@ -3608,9 +3608,9 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     // Remove any existing pending records with same ID string.
     const clientIdString = <span class="cstat-no" title="statement not covered" >pendingRecord.clientIdString;</span>
 <span class="cstat-no" title="statement not covered" >    for (const [id, entry] of pendingClients.entries())</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (cmpUint8Array(entry.clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >pendingClients.delete(id);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (cmpUint8Array(entry.clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >pendingClients.delete(id);</span></span>
 <span class="cstat-no" title="statement not covered" >    for (const [id, entry] of clients.entries())</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (cmpUint8Array(entry.clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >clients.delete(id);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (cmpUint8Array(entry.clientIdString, clientIdString)) <span class="cstat-no" title="statement not covered" >clients.delete(id);</span></span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    this.enforceClientLimit();</span>
 <span class="cstat-no" title="statement not covered" >    clients.set(clientid, pendingRecord);</span>
@@ -3670,10 +3670,10 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
   private absolutePath(path: string): string {
     const dir = this.dir;
     if (path === dir) return dir;
-    if (path.startsWith(dir + NodePath.sep) || <span class="branch-1 cbranch-no" title="branch not covered" >path.startsWith(dir + '/'))</span> return path;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (path.startsWith(dir + NodePath.sep) || <span class="branch-1 cbranch-no" title="branch not covered" >path.startsWith(dir + '/'))</span> return path;
     const absolutePath = <span class="cstat-no" title="statement not covered" >NodePath.join(dir, path);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (absolutePath.length &lt; dir.length) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!absolutePath.startsWith(dir)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (absolutePath.length &lt; dir.length) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!absolutePath.startsWith(dir)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
 <span class="cstat-no" title="statement not covered" >    return absolutePath;</span>
   }
 &nbsp;
@@ -3688,7 +3688,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     try {
       stats = await promises.stat(currentPathAbsolute);
     } catch (err: unknown) {
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode('ENOENT', err)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (isErrCode('ENOENT', err)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
 <span class="cstat-no" title="statement not covered" >      throw Nfsv4Stat.NFS4ERR_IO;</span>
     }
     <span class="missing-if-branch" title="if path not taken" >I</span>if (stats.isSymbolicLink()) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_SYMLINK;</span>
@@ -3698,8 +3698,8 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       const targetStats = await promises.stat(targetAbsolutePath);
       <span class="missing-if-branch" title="if path not taken" >I</span>if (!targetStats) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span>
     } catch (err: any) {
-      if (isErrCode('ENOENT', err)) throw Nfsv4Stat.NFS4ERR_NOENT;
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode('EACCES', err)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_ACCESS;</span></span>
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (isErrCode('ENOENT', err)) throw Nfsv4Stat.NFS4ERR_NOENT;
+<span class="cstat-no" title="statement not covered" >      if (isErrCode('EACCES', err)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_ACCESS;</span></span>
 <span class="cstat-no" title="statement not covered" >      throw Nfsv4Stat.NFS4ERR_IO;</span>
     }
     fh.setCfh(ctx, targetAbsolutePath);
@@ -3715,7 +3715,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     try {
       stats = await promises.stat(currentPathAbsolute);
     } catch (err: any) {
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode('ENOENT', err)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (isErrCode('ENOENT', err)) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOENT;</span></span>
 <span class="cstat-no" title="statement not covered" >      throw Nfsv4Stat.NFS4ERR_IO;</span>
     }
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!stats.isDirectory()) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_NOTDIR;</span>
@@ -3765,28 +3765,28 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     const mode = stats.mode;
     let supported = 0;
     let access = 0;
-    if (requestedAccess &amp; Nfsv4Access.ACCESS4_READ) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (requestedAccess &amp; Nfsv4Access.ACCESS4_READ) {
       supported |= Nfsv4Access.ACCESS4_READ;
-      if (mode &amp; 0o444) access |= Nfsv4Access.ACCESS4_READ;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (mode &amp; 0o444) access |= Nfsv4Access.ACCESS4_READ;
     }
     if (requestedAccess &amp; Nfsv4Access.ACCESS4_LOOKUP) {
       supported |= Nfsv4Access.ACCESS4_LOOKUP;
-      if (isDirectory &amp;&amp; mode &amp; 0o111) access |= Nfsv4Access.ACCESS4_LOOKUP;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (isDirectory &amp;&amp; mode &amp; 0o111) access |= Nfsv4Access.ACCESS4_LOOKUP;
     }
     if (requestedAccess &amp; Nfsv4Access.ACCESS4_MODIFY) {
       supported |= Nfsv4Access.ACCESS4_MODIFY;
-      if (mode &amp; 0o222) access |= Nfsv4Access.ACCESS4_MODIFY;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (mode &amp; 0o222) access |= Nfsv4Access.ACCESS4_MODIFY;
     }
     if (requestedAccess &amp; Nfsv4Access.ACCESS4_EXTEND) {
       supported |= Nfsv4Access.ACCESS4_EXTEND;
-      if (mode &amp; 0o222) access |= Nfsv4Access.ACCESS4_EXTEND;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (mode &amp; 0o222) access |= Nfsv4Access.ACCESS4_EXTEND;
     }
     if (requestedAccess &amp; Nfsv4Access.ACCESS4_DELETE) {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (!isDirectory) {
 <span class="cstat-no" title="statement not covered" >        supported |= 0;</span>
       } else {
         supported |= Nfsv4Access.ACCESS4_DELETE;
-        if (mode &amp; 0o222) access |= Nfsv4Access.ACCESS4_DELETE;
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (mode &amp; 0o222) access |= Nfsv4Access.ACCESS4_DELETE;
       }
     }
     if (requestedAccess &amp; Nfsv4Access.ACCESS4_EXECUTE) {
@@ -3824,7 +3824,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       const changeTime = BigInt(Math.floor(stats.mtimeMs * 1000000));
       const view = new DataView(cookieverf.buffer);
       view.setBigUint64(0, changeTime, false);
-      if (!cmpUint8Array(requestedCookieverf, cookieverf)) throw Nfsv4Stat.NFS4ERR_NOT_SAME;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (!cmpUint8Array(requestedCookieverf, cookieverf)) throw Nfsv4Stat.NFS4ERR_NOT_SAME;
     }
     let dirents: Dirent[];
     try {
@@ -3838,8 +3838,8 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     let startIndex = 0;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (cookie &gt; 0n) {
 <span class="cstat-no" title="statement not covered" >      startIndex = Number(cookie) - 2;</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (startIndex &lt; 0) <span class="cstat-no" title="statement not covered" >startIndex = 0;</span></span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (startIndex &gt; dirents.length) <span class="cstat-no" title="statement not covered" >startIndex = dirents.length;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (startIndex &lt; 0) <span class="cstat-no" title="statement not covered" >startIndex = 0;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (startIndex &gt; dirents.length) <span class="cstat-no" title="statement not covered" >startIndex = dirents.length;</span></span>
     }
     let eof = true;
     const fsStats = await this.fsStats();
@@ -3905,7 +3905,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     const filePath = NodePath.join(currentPathAbsolute, filename);
     const requestKey = this.makeOpenRequestKey(ownerKey, filePath, request);
     if (replayCandidate) {
-      if (ownerState.lastRequestKey === requestKey &amp;&amp; ownerState.lastResponse) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (ownerState.lastRequestKey === requestKey &amp;&amp; ownerState.lastResponse) {
         return ownerState.lastResponse;
       }
 <span class="cstat-no" title="statement not covered" >      return new msg.Nfsv4OpenResponse(Nfsv4Stat.NFS4ERR_BAD_SEQID);</span>
@@ -4015,7 +4015,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!ownerState) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_BAD_STATEID;</span>
     const seqidValidation = this.validateSeqid(request.seqid, ownerState.seqid);
     if (seqidValidation === 'invalid') throw Nfsv4Stat.NFS4ERR_BAD_SEQID;
-    if (seqidValidation === 'replay') {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (seqidValidation === 'replay') {
       const newStateid = new struct.Nfsv4Stateid(openFile.stateid.seqid, openFile.stateid.other);
       const resok = new msg.Nfsv4OpenConfirmResOk(newStateid);
       return new msg.Nfsv4OpenConfirmResponse(Nfsv4Stat.NFS4_OK, resok);
@@ -4061,8 +4061,8 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       return new msg.Nfsv4OpenDowngradeResponse(Nfsv4Stat.NFS4_OK, resok);
     }
     ownerState.seqid = request.seqid;
-    if ((request.shareAccess &amp; ~openFile.shareAccess) !== 0) throw Nfsv4Stat.NFS4ERR_INVAL;
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if ((request.shareDeny &amp; ~openFile.shareDeny) !== 0) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_INVAL;</span></span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if ((request.shareAccess &amp; ~openFile.shareAccess) !== 0) throw Nfsv4Stat.NFS4ERR_INVAL;
+<span class="cstat-no" title="statement not covered" >    if ((request.shareDeny &amp; ~openFile.shareDeny) !== 0) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_INVAL;</span></span>
     const newSeqid = <span class="cstat-no" title="statement not covered" >this.nextStateidSeqid++;</span>
     const newStateid = <span class="cstat-no" title="statement not covered" >new struct.Nfsv4Stateid(newSeqid, openFile.stateid.other);</span>
     const oldKey = <span class="cstat-no" title="statement not covered" >stateidKey;</span>
@@ -4108,12 +4108,12 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     ownerState.seqid = request.seqid;
     try {
       const handle = openFile.fd as any;
-      if (handle &amp;&amp; typeof handle.close === 'function') {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (handle &amp;&amp; typeof handle.close === 'function') {
         await handle.close();
       }
     } catch (err) {
       const status = <span class="cstat-no" title="statement not covered" >normalizeNodeFsError(err, ctx.connection.logger);</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (status !== Nfsv4Stat.NFS4ERR_NOENT) {</span>
+<span class="cstat-no" title="statement not covered" >      if (status !== Nfsv4Stat.NFS4ERR_NOENT) {</span>
 <span class="cstat-no" title="statement not covered" >        return new msg.Nfsv4CloseResponse(status);</span>
       }
     }
@@ -4135,7 +4135,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
 <span class="cstat-no" title="statement not covered" >    try {</span>
 <span class="cstat-no" title="statement not covered" >      await this.promises.lstat(filePath);</span>
     } catch (err) {
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode(err, 'ENOENT')) {</span>
+<span class="cstat-no" title="statement not covered" >      if (isErrCode(err, 'ENOENT')) {</span>
 <span class="cstat-no" title="statement not covered" >        return new msg.Nfsv4SecinfoResponse(Nfsv4Stat.NFS4ERR_NOENT);</span>
       }
       const status = <span class="cstat-no" title="statement not covered" >normalizeNodeFsError(err, ctx.connection.logger);</span>
@@ -4183,7 +4183,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
         if (lockOwnerState.lastRequestKey !== requestKey) {
           return new msg.Nfsv4LockResponse(Nfsv4Stat.NFS4ERR_BAD_SEQID);
         }
-        if (lockOwnerState.lastResponse) return lockOwnerState.lastResponse;
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (lockOwnerState.lastResponse) return lockOwnerState.lastResponse;
 <span class="cstat-no" title="statement not covered" >        return new msg.Nfsv4LockResponse(Nfsv4Stat.NFS4ERR_BAD_SEQID);</span>
       }
       lockOwnerState.seqid = existingOwner.lockSeqid;
@@ -4224,7 +4224,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     }
     if (seqidValidation === 'replay') {
       for (const [_key, lock] of this.locks.entries()) {
-        if (
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (
           lock.lockOwnerKey === this.makeLockOwnerKey(lockOwnerData.clientid, lockOwnerData.owner) &amp;&amp;
           lock.path === currentPath &amp;&amp;
           lock.offset === offset &amp;&amp;
@@ -4259,11 +4259,11 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       this.lockOwners.set(lockOwnerKey, lockOwnerState);
     } else <span class="missing-if-branch" title="else path not taken" >E</span>{
       const lockSeqidValidation = <span class="cstat-no" title="statement not covered" >this.validateSeqid(openToLock.lockSeqid, lockOwnerState.seqid);</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (lockSeqidValidation === 'invalid') {</span>
+<span class="cstat-no" title="statement not covered" >      if (lockSeqidValidation === 'invalid') {</span>
 <span class="cstat-no" title="statement not covered" >        return new msg.Nfsv4LockResponse(Nfsv4Stat.NFS4ERR_BAD_SEQID);</span>
       }
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (lockSeqidValidation === 'replay') {</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (lockOwnerState.lastRequestKey === lockRequestKey &amp;&amp; lockOwnerState.lastResponse) {</span>
+<span class="cstat-no" title="statement not covered" >      if (lockSeqidValidation === 'replay') {</span>
+<span class="cstat-no" title="statement not covered" >        if (lockOwnerState.lastRequestKey === lockRequestKey &amp;&amp; lockOwnerState.lastResponse) {</span>
 <span class="cstat-no" title="statement not covered" >          return lockOwnerState.lastResponse;</span>
         }
 <span class="cstat-no" title="statement not covered" >        return new msg.Nfsv4LockResponse(Nfsv4Stat.NFS4ERR_BAD_SEQID);</span>
@@ -4319,7 +4319,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     lockOwnerState.seqid = seqid;
     const lockKey = this.makeLockKey(lockStateid, offset, length);
     const lock = this.locks.get(lockKey);
-    if (lock) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (lock) {
       this.locks.delete(lockKey);
       lockOwnerState.locks.delete(lockKey);
     }
@@ -4338,7 +4338,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     const {lockOwner} = <span class="cstat-no" title="statement not covered" >request;</span>
     const ownerKey = <span class="cstat-no" title="statement not covered" >this.makeLockOwnerKey(lockOwner.clientid, lockOwner.owner);</span>
     const lockOwnerState = <span class="cstat-no" title="statement not covered" >this.lockOwners.get(ownerKey);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!lockOwnerState) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_BAD_STATEID;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!lockOwnerState) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_BAD_STATEID;</span></span>
 <span class="cstat-no" title="statement not covered" >    for (const lockKey of lockOwnerState.locks) <span class="cstat-no" title="statement not covered" >this.locks.delete(lockKey);</span></span>
 <span class="cstat-no" title="statement not covered" >    this.lockOwners.delete(ownerKey);</span>
 <span class="cstat-no" title="statement not covered" >    return new msg.Nfsv4ReleaseLockOwnerResponse(Nfsv4Stat.NFS4_OK);</span>
@@ -4347,7 +4347,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
   public <span class="fstat-no" title="function not covered" >async </span>RENEW(request: msg.Nfsv4RenewRequest, ctx: Nfsv4OperationCtx): Promise&lt;msg.Nfsv4RenewResponse&gt; {
     const clientid = <span class="cstat-no" title="statement not covered" >request.clientid;</span>
     const client = <span class="cstat-no" title="statement not covered" >this.clients.get(clientid);</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!client) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_STALE_CLIENTID;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!client) <span class="cstat-no" title="statement not covered" >throw Nfsv4Stat.NFS4ERR_STALE_CLIENTID;</span></span>
 <span class="cstat-no" title="statement not covered" >    return new msg.Nfsv4RenewResponse(Nfsv4Stat.NFS4_OK);</span>
   }
 &nbsp;
@@ -4476,7 +4476,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       if (request.stable === Nfsv4StableHow.FILE_SYNC4 || request.stable === Nfsv4StableHow.DATA_SYNC4) {
         // fd.datasync or fd.sync
         if (typeof fd.datasync === 'function') await fd.datasync();
-        else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span><span class="missing-if-branch" title="else path not taken" >E</span>if (typeof fd.sync === 'function') <span class="cstat-no" title="statement not covered" >await fd.sync();</span></span>
+        else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (typeof fd.sync === 'function') <span class="cstat-no" title="statement not covered" >await fd.sync();</span></span>
       }
       const verifier = new struct.Nfsv4Verifier(randomBytes(8));
       const resok = new msg.Nfsv4WriteResOk(bytesWritten, committed, verifier);
@@ -4512,7 +4512,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
     // If there is an open file corresponding to this path, prefer that fd
     let fd: any;
     for (const openFile of this.openFiles.values()) {
-      if (openFile.path === currentPathAbsolute) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (openFile.path === currentPathAbsolute) {
         fd = openFile.fd as any;
         break;
       }
@@ -4527,7 +4527,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
         const handle = <span class="cstat-no" title="statement not covered" >await this.promises.open(currentPathAbsolute, this.fs.constants.O_RDONLY);</span>
 <span class="cstat-no" title="statement not covered" >        try {</span>
 <span class="cstat-no" title="statement not covered" >          if (typeof handle.datasync === 'function') <span class="cstat-no" title="statement not covered" >await handle.datasync();</span></span>
-          else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>if (typeof handle.sync === 'function') <span class="cstat-no" title="statement not covered" >await handle.sync();</span></span>
+          else <span class="cstat-no" title="statement not covered" >if (typeof handle.sync === 'function') <span class="cstat-no" title="statement not covered" >await handle.sync();</span></span>
         } finally {
 <span class="cstat-no" title="statement not covered" >          try {</span>
 <span class="cstat-no" title="statement not covered" >            await handle.close();</span>
@@ -4555,7 +4555,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       if (objType === Nfsv4FType.NF4DIR) {
         let mode = 0o777;
         try {
-          if (request.createattrs &amp;&amp; request.createattrs.attrmask) {
+          <span class="missing-if-branch" title="else path not taken" >E</span>if (request.createattrs &amp;&amp; request.createattrs.attrmask) {
             const dec = new XdrDecoder();
             dec.reader.reset(request.createattrs.attrVals);
             const maskSet = parseBitmask(request.createattrs.attrmask.mask);
@@ -4574,7 +4574,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
       } else {
         let mode = 0o666;
         try {
-          if (request.createattrs &amp;&amp; request.createattrs.attrmask) {
+          <span class="missing-if-branch" title="else path not taken" >E</span>if (request.createattrs &amp;&amp; request.createattrs.attrmask) {
             const dec = new XdrDecoder();
             dec.reader.reset(request.createattrs.attrVals);
             const maskSet = parseBitmask(request.createattrs.attrmask.mask);
@@ -4680,7 +4680,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
             case Nfsv4Attr.FATTR4_OWNER: {
               const owner = dec.readString();
               const parsedUid = parseInt(owner, 10);
-              if (!Number.isNaN(parsedUid)) {
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (!Number.isNaN(parsedUid)) {
                 uid = parsedUid;
               }
               break;
@@ -4688,7 +4688,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
             case Nfsv4Attr.FATTR4_OWNER_GROUP: {
               const group = dec.readString();
               const parsedGid = parseInt(group, 10);
-              if (!Number.isNaN(parsedGid)) {
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (!Number.isNaN(parsedGid)) {
                 gid = parsedGid;
               }
               break;
@@ -4700,7 +4700,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
             }
             case Nfsv4Attr.FATTR4_TIME_ACCESS_SET: {
               const setIt = dec.readUnsignedInt();
-              if (setIt === 1) {
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (setIt === 1) {
                 const seconds = Number(dec.readHyper());
                 const nseconds = dec.readUnsignedInt();
                 atime = new Date(seconds * 1000 + nseconds / 1000000);
@@ -4709,7 +4709,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
             }
             case Nfsv4Attr.FATTR4_TIME_MODIFY_SET: {
               const setIt = dec.readUnsignedInt();
-              if (setIt === 1) {
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (setIt === 1) {
                 const seconds = Number(dec.readHyper());
                 const nseconds = dec.readUnsignedInt();
                 mtime = new Date(seconds * 1000 + nseconds / 1000000);
@@ -4798,7 +4798,7 @@ export class Nfsv4OperationsNode implements Nfsv4Operations {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../../../../prettify.js"></script>
         <script>

@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.32% </span>
+                <span class="strong">81.39% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>124/142</span>
+                <span class='fraction'>140/172</span>
             </div>
         
             
@@ -2226,7 +2226,7 @@ export class Nfsv4Decoder {
     for (let i = 0; i &lt; count; i++) {
       const op = xdr.readUnsignedInt() as Nfsv4Op;
       const request = this.decodeRequest(op);
-      if (request) argarray.push(request);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (request) argarray.push(request);
     }
     return new msg.Nfsv4CompoundRequest(tag, minorversion, argarray);
   }
@@ -2241,7 +2241,7 @@ export class Nfsv4Decoder {
     for (let i = 0; i &lt; count; i++) {
       const op = xdr.readUnsignedInt() as Nfsv4Op;
       const response = this.decodeResponse(op);
-      if (response) resarray.push(response);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (response) resarray.push(response);
     }
     return new msg.Nfsv4CompoundResponse(status, tag, resarray);
   }
@@ -2611,7 +2611,7 @@ export class Nfsv4Decoder {
   private <span class="fstat-no" title="function not covered" >readSecInfoFlavor(</span>): structs.Nfsv4SecInfoFlavor {
     const xdr = <span class="cstat-no" title="statement not covered" >this.xdr;</span>
     const flavor = <span class="cstat-no" title="statement not covered" >xdr.readUnsignedInt();</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (flavor === 6) {</span>
+<span class="cstat-no" title="statement not covered" >    if (flavor === 6) {</span>
       const oid = <span class="cstat-no" title="statement not covered" >xdr.readVarlenOpaque();</span>
       const qop = <span class="cstat-no" title="statement not covered" >xdr.readUnsignedInt();</span>
       const service = <span class="cstat-no" title="statement not covered" >xdr.readUnsignedInt();</span>
@@ -2624,7 +2624,7 @@ export class Nfsv4Decoder {
   private decodeAccessResponse(): msg.Nfsv4AccessResponse {
     const xdr = this.xdr;
     const status = xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const supported = xdr.readUnsignedInt();
       const access = xdr.readUnsignedInt();
       return new msg.Nfsv4AccessResponse(status, new msg.Nfsv4AccessResOk(supported, access));
@@ -2705,7 +2705,7 @@ export class Nfsv4Decoder {
 &nbsp;
   private decodeGetattrResponse(): msg.Nfsv4GetattrResponse {
     const status = this.xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const objAttributes = this.readFattr();
       return new msg.Nfsv4GetattrResponse(status, new msg.Nfsv4GetattrResOk(objAttributes));
     }
@@ -2718,7 +2718,7 @@ export class Nfsv4Decoder {
 &nbsp;
   private decodeGetfhResponse(): msg.Nfsv4GetfhResponse {
     const status = this.xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const object = this.readFh();
       return new msg.Nfsv4GetfhResponse(status, new msg.Nfsv4GetfhResOk(object));
     }
@@ -2929,7 +2929,7 @@ export class Nfsv4Decoder {
   private decodeReadResponse(): msg.Nfsv4ReadResponse {
     const xdr = this.xdr;
     const status = xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const eof = xdr.readBoolean();
       const data = xdr.readVarlenOpaque();
       return new msg.Nfsv4ReadResponse(status, new msg.Nfsv4ReadResOk(eof, data));
@@ -2950,7 +2950,7 @@ export class Nfsv4Decoder {
   private decodeReaddirResponse(): msg.Nfsv4ReaddirResponse {
     const xdr = this.xdr;
     const status = xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const cookieverf = this.readVerifier();
       const entries: structs.Nfsv4Entry[] = [];
       while (xdr.readBoolean()) {
@@ -3043,7 +3043,7 @@ export class Nfsv4Decoder {
   private decodeSecinfoResponse(): msg.Nfsv4SecinfoResponse {
     const xdr = this.xdr;
     const status = xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const count = xdr.readUnsignedInt();
       const flavors: structs.Nfsv4SecInfoFlavor[] = [];
       for (let i = 0; i &lt; count; i++) <span class="cstat-no" title="statement not covered" >flavors.push(this.readSecInfoFlavor());</span>
@@ -3074,7 +3074,7 @@ export class Nfsv4Decoder {
   private decodeSetclientidResponse(): msg.Nfsv4SetclientidResponse {
     const xdr = this.xdr;
     const status = xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const clientid = xdr.readUnsignedHyper();
       const setclientidConfirm = this.readVerifier();
       return new msg.Nfsv4SetclientidResponse(status, new msg.Nfsv4SetclientidResOk(clientid, setclientidConfirm));
@@ -3156,7 +3156,7 @@ export class Nfsv4Decoder {
         return this.decodeCbCompoundResponse();
       }
     } catch (err) {
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (err instanceof RangeError) {</span>
+<span class="cstat-no" title="statement not covered" >      if (err instanceof RangeError) {</span>
 <span class="cstat-no" title="statement not covered" >        reader.x = startPos;</span>
 <span class="cstat-no" title="statement not covered" >        return undefined;</span>
       }
@@ -3174,7 +3174,7 @@ export class Nfsv4Decoder {
     for (let i = 0; i &lt; count; i++) {
       const op = xdr.readUnsignedInt() as Nfsv4CbOp;
       const request = this.decodeCbRequest(op);
-      if (request) argarray.push(request);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (request) argarray.push(request);
     }
     return new msg.Nfsv4CbCompoundRequest(tag, minorversion, callbackIdent, argarray);
   }
@@ -3188,7 +3188,7 @@ export class Nfsv4Decoder {
     for (let i = 0; i &lt; count; i++) {
       const op = xdr.readUnsignedInt() as Nfsv4CbOp;
       const response = this.decodeCbResponse(op);
-      if (response) resarray.push(response);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (response) resarray.push(response);
     }
     return new msg.Nfsv4CbCompoundResponse(status, tag, resarray);
   }
@@ -3227,7 +3227,7 @@ export class Nfsv4Decoder {
 &nbsp;
   private decodeCbGetattrResponse(): msg.Nfsv4CbGetattrResponse {
     const status = this.xdr.readUnsignedInt();
-    if (status === 0) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (status === 0) {
       const objAttributes = this.readFattr();
       return new msg.Nfsv4CbGetattrResponse(status, new msg.Nfsv4CbGetattrResOk(objAttributes));
     }
@@ -3262,7 +3262,7 @@ export class Nfsv4Decoder {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

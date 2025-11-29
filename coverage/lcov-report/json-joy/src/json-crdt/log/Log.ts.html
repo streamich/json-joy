@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.28% </span>
+                <span class="strong">75.94% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>50/56</span>
+                <span class='fraction'>60/79</span>
             </div>
         
             
@@ -942,7 +942,7 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
       () =&gt; Model.create(undefined, sid) as unknown as Model&lt;N&gt;,
     ); /** @todo Maybe provide second arg to `new Log(...)` */
     const api = model.api;
-    if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;
   }
 &nbsp;
@@ -1199,7 +1199,7 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
       // TODO: Do not overwrite already deleted values? Or needed for concurrency? Orphaned nodes.
       if (op instanceof InsValOp) {
         const val = model.index.get(op.obj);
-        if (val instanceof ValNode) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (val instanceof ValNode) {
           const schema = toSchema(val.node());
           const newId = schema.build(builder);
           builder.setVal(op.obj, newId);
@@ -1210,7 +1210,7 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
         for (const [key] of op.data) {
           let value: JsonNode | undefined;
           if (container instanceof ObjNode) value = container.get(key + '');
-          else if (container instanceof VecNode) value = container.get(+key);
+          else <span class="missing-if-branch" title="else path not taken" >E</span>if (container instanceof VecNode) value = container.get(+key);
           if (value) {
             const schema = toSchema(value);
             const newId = schema.build(builder);
@@ -1219,20 +1219,20 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
 <span class="cstat-no" title="statement not covered" >            data.push([key, builder.con(undefined)] as any);</span>
           }
         }
-        if (data.length) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (data.length) {
           if (op instanceof InsObjOp) builder.insObj(op.obj, data as InsObjOp['data']);
-          else if (op instanceof InsVecOp) builder.insVec(op.obj, data as InsVecOp['data']);
+          else <span class="missing-if-branch" title="else path not taken" >E</span>if (op instanceof InsVecOp) builder.insVec(op.obj, data as InsVecOp['data']);
         }
       } else if (op instanceof DelOp) {
         const node = model.index.find(op.obj);
-        if (node) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (node) {
           const rga = node.v;
           if (rga instanceof StrNode) {
             let str = '';
             for (const span of op.what) str += rga.spanView(span).join('');
             let after = op.obj;
             const firstDelSpan = op.what[0];
-            if (firstDelSpan) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (firstDelSpan) {
               const after2 = rga.prevId(firstDelSpan);
               if (after2) after = after2;
             }
@@ -1242,20 +1242,20 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
             for (const span of op.what) buffers.push(...rga.spanView(span));
             let after = op.obj;
             const firstDelSpan = op.what[0];
-            if (firstDelSpan) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (firstDelSpan) {
               const after2 = rga.prevId(firstDelSpan);
-              if (after2) after = after2;
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (after2) after = after2;
             }
             const blob = listToUint8(buffers);
             builder.insBin(op.obj, after, blob);
-          } else if (rga instanceof ArrNode) {
+          } else <span class="missing-if-branch" title="else path not taken" >E</span>if (rga instanceof ArrNode) {
             const copies: ITimestampStruct[] = [];
             for (const span of op.what) {
               const ids2 = rga.spanView(span);
               for (const ids of ids2) {
                 for (const id of ids) {
                   const node = model.index.get(id);
-                  if (node) {
+                  <span class="missing-if-branch" title="else path not taken" >E</span>if (node) {
                     const schema = toSchema(node);
                     const newId = schema.build(builder);
                     copies.push(newId);
@@ -1265,9 +1265,9 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
             }
             let after = op.obj;
             const firstDelSpan = op.what[0];
-            if (firstDelSpan) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (firstDelSpan) {
               const after2 = rga.prevId(firstDelSpan);
-              if (after2) after = after2;
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (after2) after = after2;
             }
             builder.insArr(op.obj, after, copies);
           }
@@ -1306,7 +1306,7 @@ export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;, Metadata extends R
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

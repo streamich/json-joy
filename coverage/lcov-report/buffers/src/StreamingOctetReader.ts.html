@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">7.69% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>2/26</span>
             </div>
         
             
@@ -493,13 +493,13 @@ export class StreamingOctetReader {
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >copy(</span>size: number, dst: Uint8Array, pos: number): void {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!size) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!size) <span class="cstat-no" title="statement not covered" >return;</span></span>
 <span class="cstat-no" title="statement not covered" >    this.assertSize(size);</span>
     const chunk0 = <span class="cstat-no" title="statement not covered" >this.chunks[0]!;</span>
     const size0 = <span class="cstat-no" title="statement not covered" >Math.min(chunk0.length - this.x, size);</span>
 <span class="cstat-no" title="statement not covered" >    dst.set(chunk0.subarray(this.x, this.x + size0), pos);</span>
 <span class="cstat-no" title="statement not covered" >    size -= size0;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (size &lt;= 0) {</span>
+<span class="cstat-no" title="statement not covered" >    if (size &lt;= 0) {</span>
 <span class="cstat-no" title="statement not covered" >      this.skipUnsafe(size0);</span>
 <span class="cstat-no" title="statement not covered" >      return;</span>
     }
@@ -521,7 +521,7 @@ export class StreamingOctetReader {
     mask: [number, number, number, number],
     maskIndex: number,
   ): void {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!size) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!size) <span class="cstat-no" title="statement not covered" >return;</span></span>
 <span class="cstat-no" title="statement not covered" >    this.assertSize(size);</span>
     const chunk0 = <span class="cstat-no" title="statement not covered" >this.chunks[0]!;</span>
     let x = <span class="cstat-no" title="statement not covered" >this.x;</span>
@@ -529,7 +529,7 @@ export class StreamingOctetReader {
     const end = <span class="cstat-no" title="statement not covered" >x + size0;</span>
 <span class="cstat-no" title="statement not covered" >    for (; x &lt; end; ) <span class="cstat-no" title="statement not covered" >dst[pos++] = chunk0[x++] ^ mask[maskIndex++ % 4];</span></span>
 <span class="cstat-no" title="statement not covered" >    size -= size0;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (size &lt;= 0) {</span>
+<span class="cstat-no" title="statement not covered" >    if (size &lt;= 0) {</span>
 <span class="cstat-no" title="statement not covered" >      this.skipUnsafe(size0);</span>
 <span class="cstat-no" title="statement not covered" >      return;</span>
     }
@@ -558,11 +558,11 @@ export class StreamingOctetReader {
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >skipUnsafe(</span>n: number): void {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!n) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!n) <span class="cstat-no" title="statement not covered" >return;</span></span>
     const chunk = <span class="cstat-no" title="statement not covered" >this.chunks[0]!;</span>
     const chunkLength = <span class="cstat-no" title="statement not covered" >chunk.length;</span>
     const remaining = <span class="cstat-no" title="statement not covered" >chunkLength - this.x;</span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (remaining &gt; n) {</span>
+<span class="cstat-no" title="statement not covered" >    if (remaining &gt; n) {</span>
 <span class="cstat-no" title="statement not covered" >      this.x = this.x + n;</span>
 <span class="cstat-no" title="statement not covered" >      return;</span>
     }
@@ -598,7 +598,7 @@ export class StreamingOctetReader {
 <span class="cstat-no" title="statement not covered" >    while (i &lt; length) {</span>
       let code = <span class="cstat-no" title="statement not covered" >this.u8() ^ mask[maskIndex++ % 4];</span>
 <span class="cstat-no" title="statement not covered" >      i++;</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if ((code &amp; 0x80) !== 0) {</span>
+<span class="cstat-no" title="statement not covered" >      if ((code &amp; 0x80) !== 0) {</span>
         const octet2 = <span class="cstat-no" title="statement not covered" >(this.u8() ^ mask[maskIndex++ % 4]) &amp; 0x3f;</span>
 <span class="cstat-no" title="statement not covered" >        i++;</span>
 <span class="cstat-no" title="statement not covered" >        if ((code &amp; 0xe0) === 0xc0) {</span>
@@ -609,7 +609,7 @@ export class StreamingOctetReader {
 <span class="cstat-no" title="statement not covered" >          if ((code &amp; 0xf0) === 0xe0) {</span>
 <span class="cstat-no" title="statement not covered" >            code = ((code &amp; 0x1f) &lt;&lt; 12) | (octet2 &lt;&lt; 6) | octet3;</span>
           } else {
-<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if ((code &amp; 0xf8) === 0xf0) {</span>
+<span class="cstat-no" title="statement not covered" >            if ((code &amp; 0xf8) === 0xf0) {</span>
               const octet4 = <span class="cstat-no" title="statement not covered" >(this.u8() ^ mask[maskIndex++ % 4]) &amp; 0x3f;</span>
 <span class="cstat-no" title="statement not covered" >              i++;</span>
               let unit = <span class="cstat-no" title="statement not covered" >((code &amp; 0x07) &lt;&lt; 0x12) | (octet2 &lt;&lt; 0x0c) | (octet3 &lt;&lt; 0x06) | octet4;</span>
@@ -637,7 +637,7 @@ export class StreamingOctetReader {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

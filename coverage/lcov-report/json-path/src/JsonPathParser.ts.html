@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.92% </span>
+                <span class="strong">78.21% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>180/231</span>
+                <span class='fraction'>219/280</span>
             </div>
         
             
@@ -1647,7 +1647,7 @@ export class JsonPathParser extends Parser {
         if (this.is(':')) {
           this.skip(1); // Skip :
           this.ws();
-          if (!this.is(']') &amp;&amp; !this.is(',')) {
+          <span class="missing-if-branch" title="else path not taken" >E</span>if (!this.is(']') &amp;&amp; !this.is(',')) {
             step = this.parseNumber();
           }
         }
@@ -1740,7 +1740,7 @@ export class JsonPathParser extends Parser {
     } else <span class="missing-if-branch" title="if path not taken" >I</span>if (left.type === 'current') {
       // @  by itself is an existence test for current node
 <span class="cstat-no" title="statement not covered" >      return Ast.expression.existence(Ast.path([]));</span>
-    } else if (left.type === 'function') {
+    } else <span class="missing-if-branch" title="else path not taken" >E</span>if (left.type === 'function') {
       // Function expressions can be used as test expressions (e.g., $[?match(@.name, "pattern")])
       return left as types.IFilterExpression;
     }
@@ -1790,7 +1790,7 @@ export class JsonPathParser extends Parser {
     this.ws();
 &nbsp;
     const args: (types.IValueExpression | types.IFilterExpression | types.IJSONPath)[] = [];
-    if (!this.is(')')) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!this.is(')')) {
       do {
         this.ws();
         // Try to parse as value expression first
@@ -1829,7 +1829,7 @@ export class JsonPathParser extends Parser {
     } else if (this.is('&lt;')) {
       this.skip(1);
       return '&lt;';
-    } else if (this.is('&gt;')) {
+    } else <span class="missing-if-branch" title="else path not taken" >E</span>if (this.is('&gt;')) {
       this.skip(1);
       return '&gt;';
     }
@@ -1878,7 +1878,7 @@ export class JsonPathParser extends Parser {
     } else if (this.is('false')) {
       this.skip(5);
       return value.literal(false);
-    } else if (this.is('null')) {
+    } else <span class="missing-if-branch" title="else path not taken" >E</span>if (this.is('null')) {
       this.skip(4);
       return value.literal(null);
     }
@@ -1889,9 +1889,9 @@ export class JsonPathParser extends Parser {
     const segments: types.IPathSegment[] = <span class="cstat-no" title="statement not covered" >[];</span>
 <span class="cstat-no" title="statement not covered" >    while (!this.eof()) {</span>
 <span class="cstat-no" title="statement not covered" >      this.ws();</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.eof()) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this.eof()) <span class="cstat-no" title="statement not covered" >break;</span></span>
       // Check if we've reached a delimiter that ends the path
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.is(')') || this.is(',') || this.is('&amp;&amp;') || this.is('||') || this.isComparisonOperator()) <span class="cstat-no" title="statement not covered" >break;</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this.is(')') || this.is(',') || this.is('&amp;&amp;') || this.is('||') || this.isComparisonOperator()) <span class="cstat-no" title="statement not covered" >break;</span></span>
       const segment = <span class="cstat-no" title="statement not covered" >this.parsePathSegment();</span>
 <span class="cstat-no" title="statement not covered" >      segments.push(segment);</span>
     }
@@ -2121,14 +2121,14 @@ export class JsonPathParser extends Parser {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (code === 101 || code === 69) {
         // 'e' or 'E'
 <span class="cstat-no" title="statement not covered" >        pos++;</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (pos &lt; length) {</span>
+<span class="cstat-no" title="statement not covered" >        if (pos &lt; length) {</span>
           const signCode = <span class="cstat-no" title="statement not covered" >str.charCodeAt(pos);</span>
-<span class="cstat-no" title="statement not covered" >          <span class="missing-if-branch" title="if path not taken" >I</span>if (signCode === 43 || signCode === 45) {</span>
+<span class="cstat-no" title="statement not covered" >          if (signCode === 43 || signCode === 45) {</span>
             // '+' or '-'
 <span class="cstat-no" title="statement not covered" >            pos++;</span>
           }
         }
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (pos &gt;= length || str.charCodeAt(pos) &lt; 48 || str.charCodeAt(pos) &gt; 57) {</span>
+<span class="cstat-no" title="statement not covered" >        if (pos &gt;= length || str.charCodeAt(pos) &lt; 48 || str.charCodeAt(pos) &gt; 57) {</span>
 <span class="cstat-no" title="statement not covered" >          throw new Error('Expected digit in exponent');</span>
         }
 <span class="cstat-no" title="statement not covered" >        while (pos &lt; length) {</span>
@@ -2155,7 +2155,7 @@ export class JsonPathParser extends Parser {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

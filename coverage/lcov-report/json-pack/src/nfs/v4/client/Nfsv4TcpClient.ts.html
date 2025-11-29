@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.3% </span>
+                <span class="strong">40.27% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>19/46</span>
+                <span class='fraction'>29/72</span>
             </div>
         
             
@@ -627,18 +627,18 @@ export class Nfsv4TcpClient implements Nfsv4Client {
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >async </span>connect(): Promise&lt;void&gt; {
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.connected) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.connecting) <span class="cstat-no" title="statement not covered" >throw new Error('Connection already in progress');</span></span>
+<span class="cstat-no" title="statement not covered" >    if (this.connected) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (this.connecting) <span class="cstat-no" title="statement not covered" >throw new Error('Connection already in progress');</span></span>
 <span class="cstat-no" title="statement not covered" >    return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      this.connecting = true;</span>
       const onError = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>rr: Error) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        this.connecting = false;</span>
 <span class="cstat-no" title="statement not covered" >        this.connected = false;</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Socket error:', err);</span></span>
+<span class="cstat-no" title="statement not covered" >        if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Socket error:', err);</span></span>
 <span class="cstat-no" title="statement not covered" >        reject(err);</span>
       };
       const socket = <span class="cstat-no" title="statement not covered" >net.connect({host: this.host, port: this.port}, <span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.log(`Connected to NFSv4 server at ${this.host}:${this.port}`);</span></span>
+<span class="cstat-no" title="statement not covered" >        if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.log(`Connected to NFSv4 server at ${this.host}:${this.port}`);</span></span>
 <span class="cstat-no" title="statement not covered" >        socket.removeListener('error', onError);</span>
 <span class="cstat-no" title="statement not covered" >        resolve();</span>
 <span class="cstat-no" title="statement not covered" >        this.setSocket(socket);</span>
@@ -653,7 +653,7 @@ export class Nfsv4TcpClient implements Nfsv4Client {
     socket.on('error', <span class="fstat-no" title="function not covered" >(e</span>rr: Error) =&gt; {
 <span class="cstat-no" title="statement not covered" >      this.connecting = false;</span>
 <span class="cstat-no" title="statement not covered" >      this.connected = false;</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Socket error:', err);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Socket error:', err);</span></span>
     });
     this.connected = true;
     this.connecting = false;
@@ -665,10 +665,10 @@ export class Nfsv4TcpClient implements Nfsv4Client {
     rmDecoder.push(data);
     let record = rmDecoder.readRecord();
     while (record) {
-      if (record.size()) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (record.size()) {
         const rpcMessage = rpcDecoder.decodeMessage(record);
         if (rpcMessage) this.onRpcMessage(rpcMessage);
-        else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span><span class="missing-if-branch" title="else path not taken" >E</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Failed to decode RPC message');</span></span>
+        else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Failed to decode RPC message');</span></span>
       }
       record = rmDecoder.readRecord();
     }
@@ -678,18 +678,18 @@ export class Nfsv4TcpClient implements Nfsv4Client {
     if (msg instanceof RpcAcceptedReplyMessage) {
       const pending = this.pendingRequests.get(msg.xid);
       <span class="missing-if-branch" title="if path not taken" >I</span>if (!pending) {
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error(`No pending request for XID ${msg.xid}`);</span></span>
+<span class="cstat-no" title="statement not covered" >        if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error(`No pending request for XID ${msg.xid}`);</span></span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
       this.pendingRequests.delete(msg.xid);
-      if (pending.timeout) clearTimeout(pending.timeout);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (pending.timeout) clearTimeout(pending.timeout);
       <span class="missing-if-branch" title="if path not taken" >I</span>if (msg.stat !== 0) {
 <span class="cstat-no" title="statement not covered" >        pending.reject(new Error(`RPC accepted reply error: stat=${msg.stat}`));</span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
       if (!msg.results) {
         // NULL procedure has no results, check if resolve expects no arguments
-        if (pending.resolve.length === 0) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (pending.resolve.length === 0) {
           (pending.resolve as any)();
           return;
         }
@@ -704,15 +704,15 @@ export class Nfsv4TcpClient implements Nfsv4Client {
       pending.resolve(response);
     } else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (msg instanceof RpcRejectedReplyMessage) {</span>
       const pending = <span class="cstat-no" title="statement not covered" >this.pendingRequests.get(msg.xid);</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (!pending) {</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error(`No pending request for XID ${msg.xid}`);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (!pending) {</span>
+<span class="cstat-no" title="statement not covered" >        if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error(`No pending request for XID ${msg.xid}`);</span></span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
       }
 <span class="cstat-no" title="statement not covered" >      this.pendingRequests.delete(msg.xid);</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (pending.timeout) <span class="cstat-no" title="statement not covered" >clearTimeout(pending.timeout);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (pending.timeout) <span class="cstat-no" title="statement not covered" >clearTimeout(pending.timeout);</span></span>
 <span class="cstat-no" title="statement not covered" >      pending.reject(new Error(`RPC rejected reply: stat=${msg.stat}`));</span>
     } else {
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Unexpected RPC message type:', msg);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.error('Unexpected RPC message type:', msg);</span></span>
     }
   }
 &nbsp;
@@ -722,7 +722,7 @@ export class Nfsv4TcpClient implements Nfsv4Client {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (this.debug) <span class="cstat-no" title="statement not covered" >this.logger.log('Connection closed');</span>
     const error = new Error('Connection closed');
     this.pendingRequests.forEach((pending, xid) =&gt; {
-      if (pending.timeout) clearTimeout(pending.timeout);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (pending.timeout) clearTimeout(pending.timeout);
       pending.reject(error);
     });
     this.pendingRequests.clear();
@@ -789,7 +789,7 @@ export class Nfsv4TcpClient implements Nfsv4Client {
   }
 &nbsp;
   public close(): void {
-    if (this.socket) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.socket) {
       this.socket.end();
       this.socket = null;
     }
@@ -808,7 +808,7 @@ export class Nfsv4TcpClient implements Nfsv4Client {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

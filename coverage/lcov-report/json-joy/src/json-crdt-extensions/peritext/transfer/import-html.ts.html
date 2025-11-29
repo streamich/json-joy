@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.41% </span>
+                <span class="strong">73.8% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>48/62</span>
+                <span class='fraction'>62/84</span>
             </div>
         
             
@@ -518,7 +518,7 @@ class ViewRangeBuilder {
     if (hasType &amp;&amp; inline) {
       let end: number = 0,
         header: number = 0;
-      if (inline) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (inline) {
         end = this.text.length;
         const stacking: SliceStacking = attr?.stacking ?? <span class="branch-1 cbranch-no" title="branch not covered" >SliceStacking.Many;</span>
         header =
@@ -560,7 +560,7 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry): Peritex
   if (typeof jsonml === 'string') return jsonml;
   let tag = jsonml[0];
   let inlineHtmlTag = false;
-  if (typeof tag === 'string') {
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof tag === 'string') {
     tag = tag.toLowerCase();
     if (IGNORE_TAGS.has(tag)) return '';
     const mapped = BLOCK_TAGS_REWRITE.get(tag);
@@ -585,7 +585,7 @@ export const fromJsonMl = (jsonml: JsonMlNode, registry: SliceRegistry): Peritex
     node[0] = res[0];
     node[1] = res[1];
   } else {
-    if (typeof tag === 'string') node[0] = SliceTypeName[tag as any] ?? tag;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof tag === 'string') node[0] = SliceTypeName[tag as any] ?? tag;
     const attr = jsonml[1] || {};
     let data = null;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (attr['data-attr'] !== void 0) {
@@ -623,13 +623,13 @@ const getExportData = <span class="fstat-no" title="function not covered" >(h</s
   const maybeHasPeritextExport = <span class="cstat-no" title="statement not covered" >html.includes(attrName);</span>
   const hast = <span class="cstat-no" title="statement not covered" >_html.parsef(html);</span>
   const jsonml = <span class="cstat-no" title="statement not covered" >_fromHast(hast);</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (maybeHasPeritextExport) {</span>
+<span class="cstat-no" title="statement not covered" >  if (maybeHasPeritextExport) {</span>
     const iterator = <span class="cstat-no" title="statement not covered" >walk(jsonml);</span>
     let node: JsonMlNode | undefined;
 <span class="cstat-no" title="statement not covered" >    while ((node = iterator())) {</span>
-<span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (node &amp;&amp; typeof node === 'object') {</span>
+<span class="cstat-no" title="statement not covered" >      if (node &amp;&amp; typeof node === 'object') {</span>
         const [, attr] = <span class="cstat-no" title="statement not covered" >node;</span>
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (attr?.[attrName]) {</span>
+<span class="cstat-no" title="statement not covered" >        if (attr?.[attrName]) {</span>
           const jsonBase64 = <span class="cstat-no" title="statement not covered" >attr[attrName];</span>
           const buffer = <span class="cstat-no" title="statement not covered" >fromBase64(jsonBase64);</span>
           const json = <span class="cstat-no" title="statement not covered" >new TextDecoder().decode(buffer);</span>
@@ -644,8 +644,8 @@ const getExportData = <span class="fstat-no" title="function not covered" >(h</s
 &nbsp;
 export const importHtml = <span class="fstat-no" title="function not covered" >(h</span>tml: string, registry: SliceRegistry): [view?: ViewRange, style?: ViewStyle[]] =&gt; {
   const [jsonml, data] = <span class="cstat-no" title="statement not covered" >getExportData(html);</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (data?.style) <span class="cstat-no" title="statement not covered" >return [void 0, data.style];</span></span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (data?.view) <span class="cstat-no" title="statement not covered" >return [data.view];</span></span>
+<span class="cstat-no" title="statement not covered" >  if (data?.style) <span class="cstat-no" title="statement not covered" >return [void 0, data.style];</span></span>
+<span class="cstat-no" title="statement not covered" >  if (data?.view) <span class="cstat-no" title="statement not covered" >return [data.view];</span></span>
   const node = <span class="cstat-no" title="statement not covered" >fromJsonMl(jsonml!, registry);</span>
 <span class="cstat-no" title="statement not covered" >  return [toViewRange(node)];</span>
 };
@@ -661,7 +661,7 @@ export const importStyle = <span class="fstat-no" title="function not covered" >
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-28T22:02:58.810Z
+                at 2025-11-29T17:01:46.872Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>
