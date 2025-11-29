@@ -24,12 +24,6 @@ const benchmark: IBenchmark = {
         return (json: any) => encoder.encode(json);
       },
     },
-    {
-      name: 'Slice',
-      setup: () => {
-        return (json: any) => encoder.encodeToSlice(json);
-      },
-    },
   ],
 };
 
