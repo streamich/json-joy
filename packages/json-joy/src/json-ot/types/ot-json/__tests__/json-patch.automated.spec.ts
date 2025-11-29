@@ -27,7 +27,7 @@ describe('automated', () => {
               test.patch.forEach(validateOperation as any);
               const op = toJsonOp(test.patch);
               apply(test.doc, op);
-            }).toThrowError();
+            }).toThrow();
           });
         } else throw new Error('invalid test case');
       }

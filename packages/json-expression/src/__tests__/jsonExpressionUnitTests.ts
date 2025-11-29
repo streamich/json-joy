@@ -128,8 +128,8 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws throws when dividing by zero', () => {
-        expect(() => check(['divide', 1, 0], 0)).toThrowError(new Error('DIVISION_BY_ZERO'));
-        expect(() => check(['/', ['+', 1, 1], 0], 0)).toThrowError(new Error('DIVISION_BY_ZERO'));
+        expect(() => check(['divide', 1, 0], 0)).toThrow(new Error('DIVISION_BY_ZERO'));
+        expect(() => check(['/', ['+', 1, 1], 0], 0)).toThrow(new Error('DIVISION_BY_ZERO'));
       });
     });
 
@@ -160,8 +160,8 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws throws when dividing by zero', () => {
-        expect(() => check(['mod', 1, 0], 0)).toThrowError(new Error('DIVISION_BY_ZERO'));
-        expect(() => check(['%', ['+', 1, 1], 0], 0)).toThrowError(new Error('DIVISION_BY_ZERO'));
+        expect(() => check(['mod', 1, 0], 0)).toThrow(new Error('DIVISION_BY_ZERO'));
+        expect(() => check(['%', ['+', 1, 1], 0], 0)).toThrow(new Error('DIVISION_BY_ZERO'));
       });
     });
 

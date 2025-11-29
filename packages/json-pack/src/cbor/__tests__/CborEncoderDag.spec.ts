@@ -96,7 +96,7 @@ describe('only extension = 42 is permitted', () => {
   test('can throw on unknown custom class', () => {
     const encoder = new IpfsCborEncoder();
     const _encoded1 = encoder.encode({a: 'a', b: new CID('b')});
-    expect(() => encoder.encode({a: 'a', b: new NotCID('b')})).toThrowError(new Error('Unknown value type'));
+    expect(() => encoder.encode({a: 'a', b: new NotCID('b')})).toThrow(new Error('Unknown value type'));
   });
 });
 

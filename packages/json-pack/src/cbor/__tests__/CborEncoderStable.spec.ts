@@ -222,6 +222,6 @@ describe('recursion', () => {
     const obj2 = {b: 2};
     (<any>obj1).b = obj2;
     (<any>obj2).a = obj1;
-    expect(() => encoder.encode(obj1)).toThrowError('Recursive object');
+    expect(() => encoder.encode(obj1)).toThrow('Recursive object');
   });
 });
