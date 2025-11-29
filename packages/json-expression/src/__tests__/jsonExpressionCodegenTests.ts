@@ -413,9 +413,7 @@ export const jsonExpressionCodegenTests = (
     describe('substr', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['substr', 'str'] as any, '')).toThrow(
-            new Error('"substr" operator expects 3 operands.'),
-          );
+          expect(() => check(['substr', 'str'] as any, '')).toThrow(new Error('"substr" operator expects 3 operands.'));
           expect(() => check(['substr', 'str', 1, 1, 1] as any, '')).toThrow(
             new Error('"substr" operator expects 3 operands.'),
           );
@@ -540,9 +538,7 @@ export const jsonExpressionCodegenTests = (
         test('throws on too few or too many operands', () => {
           expect(() => check(['><', 1] as any, '')).toThrow(new Error('"><" operator expects 3 operands.'));
           expect(() => check(['><', 1, 2] as any, '')).toThrow(new Error('"><" operator expects 3 operands.'));
-          expect(() => check(['><', 1, 2, 3, 4] as any, '')).toThrow(
-            new Error('"><" operator expects 3 operands.'),
-          );
+          expect(() => check(['><', 1, 2, 3, 4] as any, '')).toThrow(new Error('"><" operator expects 3 operands.'));
         });
       }
 
@@ -639,9 +635,7 @@ export const jsonExpressionCodegenTests = (
     describe('plus', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['+', 1] as any, '')).toThrow(
-            new Error('"+" operator expects at least two operands.'),
-          );
+          expect(() => check(['+', 1] as any, '')).toThrow(new Error('"+" operator expects at least two operands.'));
         });
       }
 
@@ -662,9 +656,7 @@ export const jsonExpressionCodegenTests = (
     describe('minus', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['-', 1] as any, '')).toThrow(
-            new Error('"-" operator expects at least two operands.'),
-          );
+          expect(() => check(['-', 1] as any, '')).toThrow(new Error('"-" operator expects at least two operands.'));
         });
       }
 
@@ -680,9 +672,7 @@ export const jsonExpressionCodegenTests = (
     describe('multiplication', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['*', 1] as any, '')).toThrow(
-            new Error('"*" operator expects at least two operands.'),
-          );
+          expect(() => check(['*', 1] as any, '')).toThrow(new Error('"*" operator expects at least two operands.'));
         });
       }
 
@@ -698,9 +688,7 @@ export const jsonExpressionCodegenTests = (
     describe('division', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['/', 1] as any, '')).toThrow(
-            new Error('"/" operator expects at least two operands.'),
-          );
+          expect(() => check(['/', 1] as any, '')).toThrow(new Error('"/" operator expects at least two operands.'));
         });
       }
 
@@ -739,9 +727,7 @@ export const jsonExpressionCodegenTests = (
     describe('round', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['round', 1, 1] as any, '')).toThrow(
-            new Error('"round" operator expects 1 operands.'),
-          );
+          expect(() => check(['round', 1, 1] as any, '')).toThrow(new Error('"round" operator expects 1 operands.'));
         });
       }
 
@@ -789,9 +775,7 @@ export const jsonExpressionCodegenTests = (
     describe('floor', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['floor', 1, 1] as any, '')).toThrow(
-            new Error('"floor" operator expects 1 operands.'),
-          );
+          expect(() => check(['floor', 1, 1] as any, '')).toThrow(new Error('"floor" operator expects 1 operands.'));
         });
       }
 
