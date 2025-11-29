@@ -49,5 +49,5 @@ test('throws when at least one test fails', () => {
       [],
       [],
     ]);
-  }).toThrowError();
+  }).toThrow();
 });

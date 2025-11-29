@@ -48,7 +48,7 @@ describe('shallow reading values, without parsing the document', () => {
     test('throws if value is not an object', () => {
       const encoded = encoder.encode([]);
       decoder.reader.reset(encoded);
-      expect(() => decoder.readObjHdr()).toThrowError();
+      expect(() => decoder.readObjHdr()).toThrow();
     });
   });
 
@@ -100,7 +100,7 @@ describe('shallow reading values, without parsing the document', () => {
     test('throws if value is not an array', () => {
       const encoded = encoder.encode({});
       decoder.reader.reset(encoded);
-      expect(() => decoder.readArrHdr()).toThrowError();
+      expect(() => decoder.readArrHdr()).toThrow();
     });
   });
 
@@ -129,13 +129,13 @@ describe('shallow reading values, without parsing the document', () => {
     test('throws if array index is out of bounds', () => {
       const encoded = encoder.encode([1, 2, 3]);
       decoder.reader.reset(encoded);
-      expect(() => decoder.findIndex(3).readAny()).toThrowError();
+      expect(() => decoder.findIndex(3).readAny()).toThrow();
     });
 
     test('throws when reading value from an empty array', () => {
       const encoded = encoder.encode([]);
       decoder.reader.reset(encoded);
-      expect(() => decoder.findIndex(0).readAny()).toThrowError();
+      expect(() => decoder.findIndex(0).readAny()).toThrow();
     });
   });
 

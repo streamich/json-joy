@@ -69,7 +69,7 @@ describe('genShallowRead', () => {
 
   test('throws when selector is out of bounds of array', () => {
     const doc = [1234, 'asdf', {}, null, false];
-    expect(() => assetShallowRead(doc, [5])).toThrowError();
+    expect(() => assetShallowRead(doc, [5])).toThrow();
   });
 
   test('can read from complex nested document', () => {
@@ -125,6 +125,6 @@ describe('genShallowRead', () => {
     decoder.reader.reset(encoded);
     const fn = genShallowReader(['asdf']);
     // console.log(fn.toString());
-    expect(() => fn(decoder)).toThrowError();
+    expect(() => fn(decoder)).toThrow();
   });
 });

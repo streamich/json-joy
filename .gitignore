@@ -127,3 +127,5 @@ typedocs/
 out.bin
 
 /gh-pages/
+
+.claude/

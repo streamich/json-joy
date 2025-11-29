@@ -33,14 +33,14 @@ test('can replace existing key', () => {
 
 test('throws when replacing non-existing key', () => {
   const op = toJsonOp([{op: 'replace', path: '/a/foo', value: 123}]);
-  expect(() => apply({x: 1, a: {bar: 2}}, op)).toThrowError();
+  expect(() => apply({x: 1, a: {bar: 2}}, op)).toThrow();
 });
 
 test('can execute "test" operation', () => {
   const op1 = toJsonOp([{op: 'test', path: '/a/bar', value: [0]}]);
   const op2 = toJsonOp([{op: 'test', path: '/a/bar', value: [1]}]);
   expect(apply({x: 1, a: {bar: [0]}}, op1)).toStrictEqual({x: 1, a: {bar: [0]}});
-  expect(() => apply({x: 1, a: {bar: [0]}}, op2)).toThrowError();
+  expect(() => apply({x: 1, a: {bar: [0]}}, op2)).toThrow();
 });
 
 test('can execute a patch', () => {

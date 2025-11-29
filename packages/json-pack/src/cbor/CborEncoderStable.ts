@@ -1,7 +1,7 @@
-import {CborEncoder} from './CborEncoder';
 import {sort} from '@jsonjoy.com/util/lib/sort/insertion2';
-import {MAJOR_OVERLAY} from './constants';
 import {objKeyCmp} from '@jsonjoy.com/util/lib/objKeyCmp';
+import {CborEncoder} from './CborEncoder';
+import {MAJOR_OVERLAY} from './constants';
 
 const strHeaderLength = (strSize: number): 1 | 2 | 3 | 5 => {
   if (strSize <= 23) return 1;

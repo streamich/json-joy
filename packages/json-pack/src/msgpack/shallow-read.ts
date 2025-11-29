@@ -1,5 +1,5 @@
-import type {Path} from '@jsonjoy.com/json-pointer';
 import {Codegen} from '@jsonjoy.com/codegen/lib/Codegen';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {MsgPackDecoder} from './MsgPackDecoder';
 
 type Decoder = Pick<MsgPackDecoder, 'readObjHdr' | 'readStrHdr' | 'readArrHdr' | 'skipAny'>;
