@@ -11,6 +11,7 @@ extensions.register(ext.cnt);
 extensions.register(ext.mval);
 extensions.register(ext.peritext);
 extensions.register(ext.quill);
+extensions.register(ext.prosemirror);
 
 export {ext};
 
@@ -31,7 +32,7 @@ export class ModelWithExt {
     sid?: number,
     schema?: S,
   ): Model<SchemaToJsonNode<S>> => {
-    const model = Model.load(data, sid, schema);
+    const model = Model.load<S>(data, sid, schema);
     model.ext = extensions;
     return model;
   };
