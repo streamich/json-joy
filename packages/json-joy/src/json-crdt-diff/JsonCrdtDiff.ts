@@ -221,6 +221,7 @@ export class JsonCrdtDiff {
     } else if (src instanceof ObjNode) {
       if (dst instanceof nodes.obj) dst = dst.opt ? {...dst.obj, ...dst.opt} : dst.obj;
       if (dst instanceof NodeBuilder) throw new DiffError();
+      if (dst instanceof Uint8Array) throw new DiffError();
       if (!dst || typeof dst !== 'object' || Array.isArray(dst)) throw new DiffError();
       this.diffObj(src, dst as Record<string, unknown>);
     } else if (src instanceof ValNode) {
