@@ -10,6 +10,7 @@ import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
 import * as diff from '../../../json-crdt-diff';
+import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
@@ -538,6 +539,20 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    */
   public has(key: string): boolean {
     return this.node.keys.has(key);
+  }
+
+  /** Diffs only keys present in `dst` object. */
+  diffKeys(dst: Record<string, unknown>): Patch | undefined {
+    const diff = new JsonCrdtDiff(this.api.model);
+    const patch = diff.diffDstKeys(this.node, dst);
+    return patch.ops.length ? patch : void 0;
+  }
+
+  /** Merges only keys present in `dst` object. */
+  mergeKeys(dst: Record<string, unknown>): Patch | undefined {
+    const patch = this.diffKeys(dst);
+    if (patch) this.api.model.applyLocalPatch(patch);
+    return patch;
   }
 
   /**

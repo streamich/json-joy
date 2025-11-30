@@ -10,6 +10,6 @@ export const diff = (src: NodeApi<any>, dst: unknown): Patch | undefined => {
 
 export const merge = (src: NodeApi<any>, dst: unknown): Patch | undefined => {
   const patch = diff(src, dst);
-  if (patch) src.api.model.applyPatch(patch);
+  if (patch) src.api.model.applyLocalPatch(patch);
   return patch;
 };
