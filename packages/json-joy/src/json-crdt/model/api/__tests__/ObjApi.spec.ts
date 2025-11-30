@@ -1,6 +1,6 @@
 import {Model} from '../../Model';
 
-describe('merge', () => {
+describe('.merge()', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.create({
       obj: {
@@ -19,7 +19,9 @@ describe('merge', () => {
       baz: 'new',
     });
   });
+});
 
+describe('.mergeKeys()', () => {
   test('can merge specific key', async () => {
     const doc = Model.create({
       obj: {
@@ -45,5 +47,91 @@ describe('merge', () => {
       bar: '1234',
       x: 'y',
     });
+  });
+
+  test('"str" key overwritten by "bin"', async () => {
+    const doc = Model.create({
+      obj: {
+        foo: 'asdf',
+        bar: 123,
+      },
+    });
+    const api = doc.api;
+    const obj = api.obj(['obj']);
+    obj.mergeKeys({foo: new Uint8Array([1, 2, 3])});
+    expect(obj.view()).toEqual({
+      foo: new Uint8Array([1, 2, 3]),
+      bar: 123,
+    });
+  });
+
+  test('"obj" key overwritten by "bin"', async () => {
+    const doc = Model.create({
+      obj: {
+        foo: {a: 1, b: 2},
+        bar: 123,
+      },
+    });
+    const api = doc.api;
+    const obj = api.obj(['obj']);
+    obj.mergeKeys({foo: new Uint8Array([1, 2, 3])});
+    expect(obj.view()).toEqual({
+      foo: new Uint8Array([1, 2, 3]),
+      bar: 123,
+    });
+  });
+
+  test('"bin" key overwritten by "obj"', async () => {
+    const doc = Model.create({
+      obj: {
+        foo: new Uint8Array([1, 2, 3]),
+        bar: 123,
+      },
+    });
+    const api = doc.api;
+    const obj = api.obj(['obj']);
+    obj.mergeKeys({foo: {a: 1, b: 2}});
+    expect(obj.view()).toEqual({
+      foo: {a: 1, b: 2},
+      bar: 123,
+    });
+  });
+
+  test('"bin" key overwritten by "bin"', async () => {
+    const doc = Model.create({
+      obj: {
+        foo: new Uint8Array([1, 2, 3]),
+        bar: 123,
+      },
+    });
+    const api = doc.api;
+    const obj = api.obj(['obj']);
+    const fooId = api.bin(['obj', 'foo']).node.id;
+    obj.mergeKeys({foo: new Uint8Array([3, 4, 5, 6])});
+    const fooId2 = api.bin(['obj', 'foo']).node.id;
+    expect(obj.view()).toEqual({
+      foo: new Uint8Array([3, 4, 5, 6]),
+      bar: 123,
+    });
+    expect(fooId).toBe(fooId2);
+  });
+
+  test('"str" key overwritten by "str"', async () => {
+    const doc = Model.create({
+      obj: {
+        foo: 'asdf',
+        bar: 123,
+      },
+    });
+    const api = doc.api;
+    const obj = api.obj(['obj']);
+    const fooId = api.str(['obj', 'foo']).node.id;
+    obj.mergeKeys({foo: 'Asdf!'});
+    const fooId2 = api.str(['obj', 'foo']).node.id;
+    expect(obj.view()).toEqual({
+      foo: 'Asdf!',
+      bar: 123,
+    });
+    expect(fooId).toBe(fooId2);
   });
 });
