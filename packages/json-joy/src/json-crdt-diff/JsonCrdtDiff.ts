@@ -264,7 +264,6 @@ export class JsonCrdtDiff {
       }
       try {
         this.diffAny(child, dstValue);
-        continue;
       } catch (error) {
         if (error instanceof DiffError) inserts.push([key, this.buildConView(dstValue)]);
         else throw error;
