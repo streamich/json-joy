@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.64.0",
+  "version": "17.65.0",
   "description": "Random JSON generation, structured JSON by schema generation, no dependencies.",
   "author": {
     "name": "streamich",
