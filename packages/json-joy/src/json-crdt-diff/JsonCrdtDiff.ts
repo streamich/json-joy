@@ -248,6 +248,32 @@ export class JsonCrdtDiff {
     return this.builder.flush();
   }
 
+  /** Diffs only keys present in the destination object. */
+  public diffDstKeys(src: ObjNode, dst: Record<string, unknown>): Patch {
+    const builder = this.builder;
+    const inserts: [key: string, value: ITimestampStruct][] = [];
+    const keys: string[] = Object.keys(dst);
+    const keyLength = keys.length;
+    for (let i = 0; i < keyLength; i++) {
+      const key = keys[i];
+      const child = src.get(key);
+      const dstValue = dst[key];
+      if (!child) {
+        inserts.push([key, this.buildConView(dstValue)]);
+        continue;
+      }
+      try {
+        this.diffAny(child, dstValue);
+        continue;
+      } catch (error) {
+        if (error instanceof DiffError) inserts.push([key, this.buildConView(dstValue)]);
+        else throw error;
+      }
+    }
+    if (inserts.length) builder.insObj(src.id, inserts);
+    return this.builder.flush();
+  }
+
   protected buildView(dst: unknown): ITimestampStruct {
     const builder = this.builder;
     if (dst instanceof Timestamp) return builder.con(dst);
