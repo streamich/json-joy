@@ -3,6 +3,7 @@ export enum ExtensionId {
   cnt = 1,
   peritext = 2,
   quill = 3,
+  prosemirror = 4,
 }
 
 export enum ExtensionName {
@@ -10,4 +11,5 @@ export enum ExtensionName {
   cnt = ExtensionId.cnt,
   peritext = ExtensionId.peritext,
   quill = ExtensionId.quill,
+  prosemirror = ExtensionId.prosemirror,
 }
