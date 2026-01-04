@@ -363,7 +363,7 @@ describe('deep clone state verification', () => {
       doc1.api.set({a: 1});
       doc1.api.flush();
       const doc2 = doc1.fork();
-      expect(doc1.tick).toBe(doc2.tick)
+      expect(doc1.tick).toBe(doc2.tick);
       doc2.api.obj([]).set({b: 2});
       doc1.applyPatch(doc2.api.flush());
       expect(doc1.tick).toBeGreaterThan(0);

@@ -172,7 +172,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
 
   /**
    * @ignore
-   * 
+   *
    * - `doc`: provided
    * - `id`: shared, immutable
    * - `elements`: shallow copy, elements are immutable
