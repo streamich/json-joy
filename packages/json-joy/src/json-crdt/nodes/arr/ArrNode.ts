@@ -233,11 +233,12 @@ export class ArrNode<Element extends JsonNode = JsonNode>
     const clone = new ArrNode<Element>(doc, this.id);
     const count = this.count;
     if (!count) return clone;
-    const chunks: ArrChunk[] = [];
-    for (let chunk = this.first(); chunk; chunk = this.next(chunk) as ArrChunk | undefined)
-      chunks.push(chunk.clone());
-    let i = 0;
-    clone.ingest(count, () => chunks[i++]);
+    let chunk = this.first();
+    clone.ingest(count, () => {
+      const ret = chunk!.clone();
+      chunk = this.next(chunk!);
+      return ret!;
+    });
     return clone;
   }
 

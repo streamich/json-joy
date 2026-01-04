@@ -117,11 +117,12 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
     const clone = new StrNode<T>(this.id);
     const count = this.count;
     if (!count) return clone;
-    const chunks: StrChunk[] = [];
-    for (let chunk = this.first(); chunk; chunk = this.next(chunk) as StrChunk | undefined)
-      chunks.push((chunk as StrChunk).clone());
-    let i = 0;
-    clone.ingest(count, () => chunks[i++]);
+    let chunk = this.first();
+    clone.ingest(count, () => {
+      const ret = chunk!.clone();
+      chunk = this.next(chunk!);
+      return ret!;
+    });
     return clone;
   }
 
