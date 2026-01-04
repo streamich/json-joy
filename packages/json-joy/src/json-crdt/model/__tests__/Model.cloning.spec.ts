@@ -268,3 +268,348 @@ describe('reset()', () => {
     expect(doc2.clock).toBe(doc2.api.builder.clock);
   });
 });
+
+describe('deep clone state verification', () => {
+  describe('string sharing (memory efficiency)', () => {
+    test('StrChunk data strings are shared between original and clone', () => {
+      const doc1 = Model.create();
+      doc1.api.set({text: 'hello world'});
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      const str1 = doc1.api.str(['text']).node;
+      const str2 = doc2.api.str(['text']).node;
+      expect(str1.view()).toBe('hello world');
+      expect(str2.view()).toBe('hello world');
+      const chunk1 = str1.first()!;
+      const chunk2 = str2.first()!;
+      expect(chunk1.data).toBe(chunk2.data);
+    });
+
+    test('object keys are shared between original and clone', () => {
+      const doc1 = Model.create();
+      doc1.api.set({myLongKeyName: 123, anotherKey: 'test'});
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      const obj1 = doc1.api.obj([]).node;
+      const obj2 = doc2.api.obj([]).node;
+      const keys1 = Array.from(obj1.keys.keys()).sort();
+      const keys2 = Array.from(obj2.keys.keys()).sort();
+      expect(keys1).toEqual(['anotherKey', 'myLongKeyName']);
+      expect(keys2).toEqual(['anotherKey', 'myLongKeyName']);
+    });
+  });
+
+  describe('binary data sharing', () => {
+    test('BinChunk Uint8Array data is shared between original and clone', () => {
+      const doc1 = Model.create();
+      const data = new Uint8Array([1, 2, 3, 4, 5]);
+      doc1.api.set({bin: schema.bin(data)});
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      const bin1 = doc1.api.bin(['bin']).node;
+      const bin2 = doc2.api.bin(['bin']).node;
+      expect(bin1.view()).toEqual(data);
+      expect(bin2.view()).toEqual(data);
+
+      // Verify the underlying Uint8Array data is shared (same reference)
+      const chunk1 = bin1.first()!;
+      const chunk2 = bin2.first()!;
+      expect(chunk1.data).toBe(chunk2.data);
+    });
+  });
+
+  describe('clock state', () => {
+    test('clone has same clock time', () => {
+      const doc1 = Model.create();
+      doc1.api.set({a: 1, b: 2});
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      expect(doc2.clock.time).toBe(doc1.clock.time);
+      expect(doc2.clock.sid).toBe(doc1.clock.sid);
+    });
+
+    test('fork has same clock time but different session ID', () => {
+      const doc1 = Model.create();
+      doc1.api.set({a: 1, b: 2});
+      doc1.api.flush();
+      const doc2 = doc1.fork();
+      expect(doc2.clock.time).toBe(doc1.clock.time);
+      expect(doc2.clock.sid).not.toBe(doc1.clock.sid);
+    });
+
+    test('clone preserves peer information in clock vector', () => {
+      const doc1 = Model.create();
+      doc1.api.set({a: 1});
+      doc1.api.flush();
+      // Simulate receiving changes from another peer
+      const doc2 = doc1.fork();
+      doc2.api.obj([]).set({b: 2});
+      const patch = doc2.api.flush();
+      doc1.applyPatch(patch);
+      // Clone should preserve peer info
+      const doc3 = doc1.clone();
+      expect(doc3.clock.peers.size).toBe(doc1.clock.peers.size);
+      doc1.clock.peers.forEach((peerClock, sid) => {
+        const clonedPeerClock = doc3.clock.peers.get(sid);
+        expect(clonedPeerClock).toBeDefined();
+        expect(clonedPeerClock!.time).toBe(peerClock.time);
+      });
+    });
+  });
+
+  describe('model tick', () => {
+    test('clone preserves model tick', () => {
+      const doc1 = Model.create();
+      doc1.api.set({a: 1});
+      doc1.api.flush();
+      const doc2 = doc1.fork();
+      expect(doc1.tick).toBe(doc2.tick)
+      doc2.api.obj([]).set({b: 2});
+      doc1.applyPatch(doc2.api.flush());
+      expect(doc1.tick).toBeGreaterThan(0);
+      const doc3 = doc1.clone();
+      expect(doc3.tick).toBe(doc1.tick);
+    });
+  });
+
+  describe('index completeness', () => {
+    test('clone has all nodes in index', () => {
+      const doc1 = Model.create();
+      doc1.api.set({
+        str: 'hello',
+        num: 42,
+        bool: true,
+        nil: null,
+        arr: [1, 2, 3],
+        obj: {nested: 'value'},
+      });
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      let count1 = 0;
+      let count2 = 0;
+      doc1.index.forEach(() => count1++);
+      doc2.index.forEach(() => count2++);
+      expect(count2).toBe(count1);
+    });
+
+    test('clone has independent index', () => {
+      const doc1 = Model.create();
+      doc1.api.set({a: 1});
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      // Indexes should be different objects
+      expect(doc2.index).not.toBe(doc1.index);
+      // Adding to doc1 should not affect doc2
+      doc1.api.obj([]).set({b: 2});
+      doc1.api.flush();
+      let count1 = 0;
+      let count2 = 0;
+      doc1.index.forEach(() => count1++);
+      doc2.index.forEach(() => count2++);
+      expect(count1).toBeGreaterThan(count2);
+    });
+  });
+
+  describe('extensions', () => {
+    test('clone has cloned extensions', () => {
+      const doc1 = Model.create();
+      doc1.ext.register({} as any);
+      doc1.api.set({a: 1});
+      doc1.api.flush();
+      const doc2 = doc1.clone();
+      expect(doc2.ext).not.toBe(doc1.ext);
+      expect(doc2.ext.size()).toBe(doc1.ext.size());
+    });
+  });
+
+  describe('API independence', () => {
+    test('clone does not have API instance until accessed', () => {
+      const doc1 = Model.create();
+      doc1.api.set({a: 1});
+      doc1.api.flush();
+      // Access api on doc1
+      expect(doc1.api).toBeDefined();
+      const doc2 = doc1.clone();
+      expect((doc2 as any)._api).toBeUndefined();
+      // doc2 should have its own API when accessed
+      expect(doc2.api).toBeDefined();
+      expect(doc2.api).not.toBe(doc1.api);
+    });
+
+    test('node APIs are not shared between clones', () => {
+      const doc1 = Model.create();
+      doc1.api.set({str: 'hello'});
+      doc1.api.flush();
+      // Access node API on doc1
+      const strApi1 = doc1.api.str(['str']);
+      expect(strApi1).toBeDefined();
+      const doc2 = doc1.clone();
+      // doc2's node API should be different
+      const strApi2 = doc2.api.str(['str']);
+      expect(strApi2).not.toBe(strApi1);
+    });
+  });
+
+  describe('RGA structure', () => {
+    test('StrNode clone preserves RGA structure with splits', () => {
+      const doc1 = Model.create();
+      doc1.api.set({text: 'abc'});
+      doc1.api.str(['text']).ins(3, 'def');
+      doc1.api.str(['text']).del(1, 2); // Creates tombstones
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+
+      // Verify views match
+      expect(doc2.view()).toEqual(doc1.view());
+
+      // Verify chunk counts match
+      const str1 = doc1.api.str(['text']).node;
+      const str2 = doc2.api.str(['text']).node;
+      expect(str2.count).toBe(str1.count);
+      expect(str2.length()).toBe(str1.length());
+    });
+
+    test('ArrNode clone preserves RGA structure', () => {
+      const doc1 = Model.create();
+      doc1.api.set({arr: [1, 2, 3]});
+      doc1.api.arr(['arr']).ins(3, [4, 5]);
+      doc1.api.arr(['arr']).del(1, 2); // Delete some elements
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+
+      // Verify views match
+      expect(doc2.view()).toEqual(doc1.view());
+
+      // Verify chunk counts match
+      const arr1 = doc1.api.arr(['arr']).node;
+      const arr2 = doc2.api.arr(['arr']).node;
+      expect(arr2.count).toBe(arr1.count);
+      expect(arr2.length()).toBe(arr1.length());
+    });
+
+    test('BinNode clone preserves RGA structure', () => {
+      const doc1 = Model.create();
+      doc1.api.set({bin: schema.bin(new Uint8Array([1, 2, 3]))});
+      doc1.api.bin(['bin']).ins(3, new Uint8Array([4, 5]));
+      doc1.api.bin(['bin']).del(1, 2);
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+
+      // Verify views match
+      const view1 = (doc1.view() as any).bin;
+      const view2 = (doc2.view() as any).bin;
+      expect(view2).toEqual(view1);
+
+      // Verify chunk counts match
+      const bin1 = doc1.api.bin(['bin']).node;
+      const bin2 = doc2.api.bin(['bin']).node;
+      expect(bin2.count).toBe(bin1.count);
+      expect(bin2.length()).toBe(bin1.length());
+    });
+  });
+
+  describe('mutation isolation', () => {
+    test('modifying clone does not affect original', () => {
+      const doc1 = Model.create();
+      doc1.api.set({text: 'hello'});
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+      doc2.api.str(['text']).ins(5, ' world');
+      doc2.api.flush();
+
+      expect(doc1.view()).toEqual({text: 'hello'});
+      expect(doc2.view()).toEqual({text: 'hello world'});
+    });
+
+    test('modifying original does not affect clone', () => {
+      const doc1 = Model.create();
+      doc1.api.set({text: 'hello'});
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+
+      doc1.api.str(['text']).ins(5, ' world');
+      doc1.api.flush();
+
+      expect(doc1.view()).toEqual({text: 'hello world'});
+      expect(doc2.view()).toEqual({text: 'hello'});
+    });
+
+    test('mutations to object in clone are isolated', () => {
+      const doc1 = Model.create();
+      doc1.api.set({
+        obj: {a: 1, b: 2},
+      });
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+      doc2.api.obj(['obj']).set({c: 3});
+      doc2.api.obj(['obj']).del(['a']);
+      doc2.api.flush();
+
+      expect(doc1.view()).toEqual({obj: {a: 1, b: 2}});
+      expect(doc2.view()).toEqual({obj: {b: 2, c: 3}});
+    });
+
+    test('mutations to array in clone are isolated', () => {
+      const doc1 = Model.create();
+      doc1.api.set({arr: [1, 2, 3]});
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+      doc2.api.arr(['arr']).ins(0, [0]);
+      doc2.api.arr(['arr']).del(3, 1); // Delete index 3 (which is value 3)
+      doc2.api.flush();
+
+      expect(doc1.view()).toEqual({arr: [1, 2, 3]});
+      expect(doc2.view()).toEqual({arr: [0, 1, 2]});
+    });
+  });
+
+  describe('complex documents', () => {
+    test('clone of deeply nested document', () => {
+      const doc1 = Model.create();
+      doc1.api.set({
+        level1: {
+          level2: {
+            level3: {
+              value: 'deep',
+              arr: [1, [2, [3]]],
+            },
+          },
+        },
+      });
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+
+      expect(doc2.view()).toEqual(doc1.view());
+
+      // Modify deep value in clone
+      doc2.api.obj(['level1', 'level2', 'level3']).set({value: 'modified'});
+      doc2.api.flush();
+
+      expect((doc1.view() as any).level1.level2.level3.value).toBe('deep');
+      expect((doc2.view() as any).level1.level2.level3.value).toBe('modified');
+    });
+
+    test('clone with vectors', () => {
+      const doc1 = Model.create();
+      doc1.api.set({
+        vec: schema.vec(schema.con(1), schema.con(2), schema.con(3)),
+      });
+      doc1.api.flush();
+
+      const doc2 = doc1.clone();
+
+      const view1 = doc1.view() as any;
+      const view2 = doc2.view() as any;
+
+      expect(view2.vec).toEqual(view1.vec);
+    });
+  });
+});

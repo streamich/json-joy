@@ -79,6 +79,10 @@ export class BinChunk implements Chunk<Uint8Array> {
 export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
   // ----------------------------------------------------------------- JsonNode
 
+  public name(): string {
+    return 'bin';
+  }
+
   /** @ignore */
   private _view: null | Uint8Array = null;
   public view(): Uint8Array {
@@ -111,11 +115,20 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
   }
 
   /** @ignore */
-  public api: undefined | unknown = undefined;
-
-  public name(): string {
-    return 'bin';
+  public clone(): BinNode {
+    const clone = new BinNode(this.id);
+    const count = this.count;
+    if (!count) return clone;
+    const chunks: BinChunk[] = [];
+    for (let chunk = this.first(); chunk; chunk = this.next(chunk) as BinChunk | undefined)
+      chunks.push(chunk.clone());
+    let i = 0;
+    clone.ingest(count, () => chunks[i++]);
+    return clone;
   }
+  
+  /** @ignore */
+  public api: undefined | unknown = undefined;
 
   // -------------------------------------------------------------- AbstractRga
 

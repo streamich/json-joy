@@ -85,6 +85,11 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
     return 'val';
   }
 
+  /** @ignore */
+  public clone(doc: Model<any>): ValNode<Value> {
+    return new ValNode(doc, this.id, this.val);
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
