@@ -173,6 +173,10 @@ export class ArrNode<Element extends JsonNode = JsonNode>
 
   // ----------------------------------------------------------------- JsonNode
 
+  public name(): string {
+    return 'arr';
+  }
+
   /** @ignore */
   public child() {
     return undefined;
@@ -225,11 +229,21 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   }
 
   /** @ignore */
-  public api: undefined | unknown = undefined;
-
-  public name(): string {
-    return 'arr';
+  public clone(doc: Model<any>): ArrNode<Element> {
+    const clone = new ArrNode<Element>(doc, this.id);
+    const count = this.count;
+    if (!count) return clone;
+    let chunk = this.first();
+    clone.ingest(count, () => {
+      const ret = chunk!.clone();
+      chunk = this.next(chunk!);
+      return ret!;
+    });
+    return clone;
   }
+
+  /** @ignore */
+  public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable
 

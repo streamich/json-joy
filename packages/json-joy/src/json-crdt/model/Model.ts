@@ -476,14 +476,36 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * Creates a copy of this model with a new session ID. If the session ID is
    * not provided, a random session ID is generated.
    *
+   * This performs a deep clone of all model state without serialization,
+   * which allows sharing of immutable data like strings, binary buffers, and IDs
+   * between the original and the clone for memory efficiency.
+   *
    * @param sessionId Session ID to use for the new model.
    * @returns A copy of this model with a new session ID.
    */
   public fork(sessionId: number = this.rndSid()): Model<N> {
-    const copy = Model.fromBinary(this.toBinary()) as unknown as Model<N>;
-    if (copy.clock.sid !== sessionId && copy.clock instanceof clock.ClockVector)
-      copy.clock = copy.clock.fork(sessionId);
-    copy.ext = this.ext;
+    const clonedClock =
+      this.clock instanceof clock.ClockVector
+        ? this.clock.fork(sessionId)
+        : (this.clock as clock.ServerClockVector).clone();
+    const copy = new Model<N>(clonedClock);
+    copy.ext = this.ext.clone();
+    const index = this.index;
+    const copyIndex = copy.index;
+    index.forEach(({v: node}) => {
+      let cloned: JsonNode;
+      if (node instanceof ConNode) cloned = node.clone();
+      else if (node instanceof ValNode) cloned = node.clone(copy);
+      else if (node instanceof ObjNode) cloned = node.clone(copy);
+      else if (node instanceof VecNode) cloned = node.clone(copy);
+      else if (node instanceof StrNode) cloned = node.clone();
+      else if (node instanceof BinNode) cloned = node.clone();
+      else if (node instanceof ArrNode) cloned = node.clone(copy);
+      else throw new Error('UNKNOWN_NODE');
+      copyIndex.set(cloned.id, cloned);
+    });
+    copy.root = this.root.clone(copy) as RootNode<N>;
+    copy.tick = this.tick;
     return copy;
   }
 

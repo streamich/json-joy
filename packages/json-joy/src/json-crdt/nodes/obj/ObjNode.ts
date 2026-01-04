@@ -77,41 +77,33 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
 
   // ----------------------------------------------------------------- JsonNode
 
-  /**
-   * @ignore
-   */
+  public name(): string {
+    return 'obj';
+  }
+
+  /** @ignore */
   public children(callback: (node: JsonNode) => void) {
     const index = this.doc.index;
     this.keys.forEach((id, key) => callback(index.get(id)!));
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public child() {
     return undefined;
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public container(): JsonNode | undefined {
     return this;
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   private _tick: number = 0;
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   private _view = {} as JsonNodeView<Value>;
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public view(): JsonNodeView<Value> {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
@@ -135,14 +127,15 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
     return useCache ? _view : ((this._tick = tick), (this._view = view));
   }
 
-  /**
-   * @ignore
-   */
-  public api: undefined | unknown = undefined;
-
-  public name(): string {
-    return 'obj';
+  /** @ignore */
+  public clone(doc: Model<any>): ObjNode<Value> {
+    const clone = new ObjNode<Value>(doc, this.id);
+    this.keys.forEach((id, key) => clone.keys.set(key, id));
+    return clone;
   }
+
+  /** @ignore */
+  public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable
 

@@ -10,7 +10,7 @@ export class BinChunk implements Chunk<Uint8Array> {
   public readonly id: ITimestampStruct;
   public span: number;
   public del: boolean;
-  public data: Uint8Array | undefined;
+  public data: Readonly<Uint8Array> | undefined;
   public len: number;
   public p: BinChunk | undefined;
   public l: BinChunk | undefined;
@@ -20,7 +20,7 @@ export class BinChunk implements Chunk<Uint8Array> {
   public r2: BinChunk | undefined;
   public s: BinChunk | undefined;
 
-  constructor(id: ITimestampStruct, span: number, buf: Uint8Array | undefined) {
+  constructor(id: ITimestampStruct, span: number, buf: Readonly<Uint8Array> | undefined) {
     this.id = id;
     this.span = span;
     this.len = buf ? span : 0;
@@ -79,6 +79,10 @@ export class BinChunk implements Chunk<Uint8Array> {
 export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
   // ----------------------------------------------------------------- JsonNode
 
+  public name(): string {
+    return 'bin';
+  }
+
   /** @ignore */
   private _view: null | Uint8Array = null;
   public view(): Uint8Array {
@@ -111,11 +115,21 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
   }
 
   /** @ignore */
-  public api: undefined | unknown = undefined;
-
-  public name(): string {
-    return 'bin';
+  public clone(): BinNode {
+    const clone = new BinNode(this.id);
+    const count = this.count;
+    if (!count) return clone;
+    let chunk = this.first();
+    clone.ingest(count, () => {
+      const ret = chunk!.clone();
+      chunk = this.next(chunk!);
+      return ret!;
+    });
+    return clone;
   }
+
+  /** @ignore */
+  public api: undefined | unknown = undefined;
 
   // -------------------------------------------------------------- AbstractRga
 

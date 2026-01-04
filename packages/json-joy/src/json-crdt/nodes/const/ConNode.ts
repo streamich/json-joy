@@ -25,21 +25,19 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
 
   // ----------------------------------------------------------------- JsonNode
 
-  /**
-   * @ignore
-   */
+  public name(): string {
+    return 'con';
+  }
+
+  /** @ignore */
   public children() {}
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public child() {
     return undefined;
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public container(): JsonNode | undefined {
     return undefined;
   }
@@ -48,14 +46,13 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
     return this.val;
   }
 
-  /**
-   * @ignore
-   */
-  public api: undefined | unknown = undefined;
-
-  public name(): string {
-    return 'con';
+  /** @ignore */
+  public clone(): ConNode<View> {
+    return new ConNode(this.id, this.val);
   }
+
+  /** @ignore */
+  public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable
 

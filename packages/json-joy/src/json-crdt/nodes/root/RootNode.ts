@@ -22,4 +22,9 @@ export class RootNode<Value extends JsonNode = JsonNode> extends ValNode<Value> 
   public name(): string {
     return 'root';
   }
+
+  /** @ignore */
+  public clone(doc: Model<any>): RootNode<Value> {
+    return new RootNode(doc, this.val);
+  }
 }
