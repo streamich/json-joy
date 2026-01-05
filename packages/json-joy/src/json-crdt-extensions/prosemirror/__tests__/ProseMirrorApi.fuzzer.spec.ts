@@ -1,7 +1,6 @@
 import type {Node} from 'prosemirror-model';
 import {NodeToViewRangeFuzzer} from './fuzzer';
 import {assertCanMergeTrain} from './setup';
-import {logTree} from 'pojo-dump';
 
 test('can merge document train', () => {
   for (let i = 0; i < 3; i++) {

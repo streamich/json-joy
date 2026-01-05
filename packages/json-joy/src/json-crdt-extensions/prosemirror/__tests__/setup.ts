@@ -1,4 +1,3 @@
-import {logTree} from 'pojo-dump';
 import {ModelWithExt as Model, ext} from '../../ModelWithExt';
 import {FromPm} from '../FromPm';
 import {Node} from 'prosemirror-model';

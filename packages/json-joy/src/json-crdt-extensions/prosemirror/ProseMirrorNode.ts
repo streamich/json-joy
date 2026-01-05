@@ -79,9 +79,9 @@ export class ProseMirrorNode extends ExtNode<PmDataNode> {
   }
 
   public view(): PmJsonNode {
-    const {txt, _view} = this;
+    const {txt} = this;
     const hash = txt.refresh();
-    if (_view && hash === this._viewHash) return _view;
+    if (this._view && hash === this._viewHash) return this._view;
     const content: PmJsonNode[] = [];
     const node: PmJsonNode = {type: 'doc', content};
     const block = txt.blocks.root;
