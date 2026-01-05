@@ -16,7 +16,7 @@ import {
   type MarkBuilder,
   a,
 } from 'prosemirror-test-builder';
-import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
+import {RandomJson} from '@jsonjoy.com/json-random';
 
 export class NodeToViewRangeFuzzer {
   public static readonly doc = () => new NodeToViewRangeFuzzer().createDocumentNode();

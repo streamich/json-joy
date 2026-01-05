@@ -7072,6 +7072,7 @@ __metadata:
     "@jsonjoy.com/json-expression": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
+    "@jsonjoy.com/json-random": "workspace:*"
     "@jsonjoy.com/json-type": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     "@radix-ui/react-icons": "npm:^1.3.1"
