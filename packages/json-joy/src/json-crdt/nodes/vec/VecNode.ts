@@ -117,23 +117,21 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
 
   /** ------------------------------------------------------ {@link JsonNode} */
 
-  /**
-   * @ignore
-   */
+  public name(): string {
+    return 'vec';
+  }
+
+  /** @ignore */
   public child(): ExtNode<JsonNode> | undefined {
     return this.ext();
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public container(): JsonNode | undefined {
     return this;
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public children(callback: (node: JsonNode) => void) {
     const elements = this.elements;
     const length = elements.length;
@@ -146,14 +144,10 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     }
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   private _view = [] as JsonNodeView<Value>;
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public view(): JsonNodeView<Value> {
     const extNode = this.ext();
     if (extNode) return extNode.view() as any;
@@ -173,13 +167,25 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     return useCache ? _view : (this._view = arr);
   }
 
-  /**
-   * @ignore
-   */
+  /** @ignore */
   public api: undefined | unknown = undefined;
 
-  public name(): string {
-    return 'vec';
+  /**
+   * @ignore
+   *
+   * - `doc`: provided
+   * - `id`: shared, immutable
+   * - `elements`: shallow copy, elements are immutable
+   * - `__extNode`: not copied, will be lazily initialized
+   * - `_view`: not copied, will be lazily initialized
+   * - `api`: not copied
+   */
+  public clone(doc: Model<any>): VecNode<any> {
+    const clone = new VecNode<Value>(doc, this.id);
+    const elements = this.elements;
+    const length = elements.length;
+    for (let i = 0; i < length; i++) clone.elements.push(elements[i]);
+    return clone as any;
   }
 
   /** ----------------------------------------------------- {@link Printable} */

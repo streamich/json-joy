@@ -58,6 +58,10 @@ export class StrChunk implements Chunk<string> {
     this.data = '';
   }
 
+  /**
+   * - `id`, `span`, `len`, `del`, `data`: copied, set by constructor
+   * - `p`, `l`, `r`, `p2`, `l2`, `r2`, `s`: not copied, set when inserted into RGA
+   */
   public clone(): StrChunk {
     const chunk = new StrChunk(this.id, this.span, this.data);
     return chunk;
@@ -106,6 +110,20 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
 
   public name(): string {
     return 'str';
+  }
+
+  /** @ignore */
+  public clone(): StrNode<T> {
+    const clone = new StrNode<T>(this.id);
+    const count = this.count;
+    if (!count) return clone;
+    let chunk = this.first();
+    clone.ingest(count, () => {
+      const ret = chunk!.clone();
+      chunk = this.next(chunk!);
+      return ret!;
+    });
+    return clone;
   }
 
   // -------------------------------------------------------------- AbstractRga
