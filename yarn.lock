@@ -5627,13 +5627,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^10.0.3":
-  version: 10.1.3
-  resolution: "immer@npm:10.1.3"
-  checksum: 10c0/b3929022c1999935c9c5e9491fce20d883c15a04072628056f3b8c51a63ac0876d1c1f25cec146e325c30c906bc7f15a636c29ed53156f0a3049150f152df4c8
-  languageName: node
-  linkType: hard
-
 "import-local@npm:^3.0.2, import-local@npm:^3.2.0":
   version: 3.2.0
   resolution: "import-local@npm:3.2.0"
@@ -7101,7 +7094,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     rxjs: "npm:^7.8.2"
-    slate: "npm:^0.117.2"
+    slate: "npm:^0.120.0"
     sonic-forest: "npm:^1.2.1"
     thingies: "npm:^2.5.0"
     tree-dump: "npm:^1.1.0"
@@ -9683,13 +9676,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"slate@npm:^0.117.2":
-  version: 0.117.2
-  resolution: "slate@npm:0.117.2"
-  dependencies:
-    immer: "npm:^10.0.3"
-    tiny-warning: "npm:^1.0.3"
-  checksum: 10c0/bf9a58322160b0f458f918ff98ad64a31c9365c74b155eb3cef723a1a67c27fe66f5d73b7a57c235946ce00f90d2d3834a92ae04729f5b6bd09365232fa549cf
+"slate@npm:^0.120.0":
+  version: 0.120.0
+  resolution: "slate@npm:0.120.0"
+  checksum: 10c0/af83b41f2b076444eb441e4d8747f1d629a7a555b5234adf79cc12ea37b517a35722e779270a421eaec803b04b805a0a6f284e31f9da2b063b097ba99a4c9ecb
   languageName: node
   linkType: hard
 
@@ -10167,7 +10157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-warning@npm:^1.0.2, tiny-warning@npm:^1.0.3":
+"tiny-warning@npm:^1.0.2":
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: 10c0/ef8531f581b30342f29670cb41ca248001c6fd7975ce22122bd59b8d62b4fc84ad4207ee7faa95cde982fa3357cd8f4be650142abc22805538c3b1392d7084fa
