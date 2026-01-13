@@ -18,14 +18,19 @@ export interface SlateTextNode {
 // ----------------------------------------------------------------- operations
 
 export type SlateOperation = SlateTextOperation | SlateNodeOperation | SlateSelectionOperation;
-export type SlateTextOperation = SlateInsertTextOperation | SlateRemoveTextOperation;
+export type SlateTextOperation =
+  | SlateInsertTextOperation
+  | SlateRemoveTextOperation
+  | SlateSetNodeOperation
+  | SlateSplitNodeOperation
+  | SlateMergeNodeOperation;
 export type SlateNodeOperation =
   | SlateInsertNodeOperation
   | SlateRemoveNodeOperation
+  | SlateSplitNodeOperation
   | SlateMergeNodeOperation
-  | SlateMoveNodeOperation
   | SlateSetNodeOperation
-  | SlateSplitNodeOperation;
+  | SlateMoveNodeOperation;
 export type SlateSelectionOperation = SlateSetSelectionOperation;
 
 export interface SlateInsertTextOperation {
