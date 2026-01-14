@@ -58,7 +58,8 @@ export class SlateTraceRecorder {
 
 export class SlateTraceRunner {
   public readonly editor = createEditor();
-  protected index: number = 0;
+  protected nextOpIdx: number = 0;
+  protected nextCheckpointIdx: number = 0;
 
   public static readonly from = (trace: SlateTrace): SlateTraceRunner => new SlateTraceRunner(trace);
 
@@ -67,7 +68,7 @@ export class SlateTraceRunner {
   }
 
   public readonly next = (): SlateOperation | undefined => {
-    const operation = this.trace.operations[this.index++];
+    const operation = this.trace.operations[this.nextOpIdx++];
     if (!operation) return;
     Transforms.transform(this.editor, operation);
     return operation;
@@ -75,6 +76,13 @@ export class SlateTraceRunner {
 
   public runToEnd = (): void => {
     while (this.next());
+  };
+
+  public readonly toNextCheckpoint = (): void => {
+    const checkpointIdx = this.trace.checkpoints[this.nextCheckpointIdx++];
+    if (checkpointIdx === undefined) return;
+    while (this.nextOpIdx < checkpointIdx) this.next();
+    this.editor.normalize();
   };
 
   public readonly state = (): SlateDocument => this.editor.children as SlateDocument;
