@@ -116,3 +116,9 @@ export interface SlatePoint {
 }
 
 export type SlatePath = number[];
+
+// ------------------------------------------------------------------ extension
+
+import type {PeritextDataNode} from '../peritext/types';
+
+export type SlateDataNode = PeritextDataNode;
