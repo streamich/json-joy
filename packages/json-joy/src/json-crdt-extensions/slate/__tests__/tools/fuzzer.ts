@@ -1,5 +1,5 @@
 import {createEditor, Editor, Element, Transforms} from 'slate';
-import type {SlateDocument, SlateDescendantNode, SlateElementNode, SlateTextNode, SlateRange, SlatePoint} from '../types';
+import type {SlateDocument, SlateDescendantNode, SlateElementNode, SlateTextNode, SlateRange, SlatePoint} from '../../types';
 
 export type Rng = () => number;
 
