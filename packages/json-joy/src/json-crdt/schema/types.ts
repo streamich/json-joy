@@ -1,6 +1,6 @@
 import type {ExtensionId} from '../../json-crdt-extensions';
 import type {MvalNode} from '../../json-crdt-extensions/mval/MvalNode';
-import type {PeritextNode, QuillDeltaNode, ProseMirrorNode} from '../../json-crdt-extensions';
+import type {PeritextNode, QuillDeltaNode, ProseMirrorNode, SlateNode} from '../../json-crdt-extensions';
 import type {nodes as builder} from '../../json-crdt-patch';
 import type {ExtNode} from '../extensions/ExtNode';
 import type * as nodes from '../nodes';
@@ -26,9 +26,11 @@ export type SchemaToJsonNode<S> = S extends builder.str<infer T>
                   ? ExtensionNode<QuillDeltaNode>
                   : S extends builder.ext<ExtensionId.prosemirror, any>
                     ? ExtensionNode<ProseMirrorNode>
-                    : S extends builder.ext<ExtensionId.mval, any>
-                      ? ExtensionNode<MvalNode>
-                      : nodes.JsonNode;
+                    : S extends builder.ext<ExtensionId.slate, any>
+                      ? ExtensionNode<SlateNode>
+                      : S extends builder.ext<ExtensionId.mval, any>
+                        ? ExtensionNode<MvalNode>
+                        : nodes.JsonNode;
 
 export type ExtensionNode<E extends ExtNode<any>> = nodes.VecNode<ExtensionVecData<E>>;
 
@@ -61,9 +63,11 @@ export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
                 ? builder.ext<ExtensionId.quill, any>
                 : EDataNode extends ProseMirrorNode
                   ? builder.ext<ExtensionId.prosemirror, any>
-                  : EDataNode extends MvalNode
-                    ? builder.ext<ExtensionId.mval, any>
-                    : builder.ext<number, any>
+                  : EDataNode extends SlateNode
+                    ? builder.ext<ExtensionId.slate, any>
+                    : EDataNode extends MvalNode
+                      ? builder.ext<ExtensionId.mval, any>
+                      : builder.ext<number, any>
             : builder.vec<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
           : N extends nodes.ObjNode<infer T>
             ? builder.obj<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
