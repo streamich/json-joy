@@ -1,8 +1,9 @@
 import {ModelWithExt as Model, ext} from '../../../ModelWithExt';
 import {FromSlate} from '../../FromSlate';
+import {SlateTrace, SlateTraceRunner} from './traces';
 import type {SlateDocument} from '../../types';
 
-export const assertCanConvert = (doc: SlateDocument) => {
+export const assertSlatePeritextSlateRoundtrip = (doc: SlateDocument) => {
   const viewRange = FromSlate.convert(doc);
   const model = Model.create(ext.slate.new());
   const slate = model.s.toExt();
@@ -10,6 +11,15 @@ export const assertCanConvert = (doc: SlateDocument) => {
   slate.node.txt.refresh();
   const view = slate.view();
   expect(view).toEqual(doc);
+};
+
+export const assertRoundtripForTraceCheckpoints = (trace: SlateTrace) => {
+  const runner = new SlateTraceRunner(trace);
+  while (!runner.endReached()) {
+    runner.toNextCheckpoint();
+    const state = runner.state();
+    assertSlatePeritextSlateRoundtrip(state);
+  }
 };
 
 export const assertCanMergeInto = (doc1: SlateDocument, doc2: SlateDocument) => {
