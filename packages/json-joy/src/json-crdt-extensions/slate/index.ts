@@ -8,10 +8,10 @@ import type {SlateDataNode} from './types';
 
 export {SlateNode, SlateApi};
 
-export const slate = new Extension<
+export const slate = new Extension<ExtensionId.slate, SlateDataNode, SlateNode, SlateApi, [text?: string]>(
   ExtensionId.slate,
-  SlateDataNode,
+  MNEMONIC,
   SlateNode,
   SlateApi,
-  [text?: string]
->(ExtensionId.slate, MNEMONIC, SlateNode, SlateApi, (text: string = '') => SCHEMA(text));
+  (text: string = '') => SCHEMA(text),
+);

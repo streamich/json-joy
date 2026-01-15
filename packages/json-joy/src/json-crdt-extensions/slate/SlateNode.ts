@@ -30,12 +30,12 @@ const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
       }
       textChildren.push(textNode);
     }
-    const attr = block.attr();
     const node: SlateElementNode = {
       type: block.tag() + '',
       children: textChildren.length ? textChildren : [{text: ''}],
-      ...(attr && typeof attr === 'object' ? attr : {}),
     };
+    const attr = block.attr();
+    if (typeof attr === 'object') Object.assign(node, attr);
     return node;
   } else {
     const children: SlateElementNode[] = [];
