@@ -1,4 +1,4 @@
-import type {SlateTrace} from '../traces';
+import type {SlateTrace} from '../../tools/traces';
 
 export const slateBlockAttributesTrace: SlateTrace = {
   start: [
