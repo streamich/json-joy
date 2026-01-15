@@ -483,7 +483,7 @@ export const slateBlockAttributesTrace: SlateTrace = {
       offset: 4,
       text: ' ',
     },
-    {d
+    {
       type: 'insert_text',
       path: [1, 0],
       offset: 5,

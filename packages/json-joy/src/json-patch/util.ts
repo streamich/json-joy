@@ -1,5 +1,5 @@
 import type {CreateRegexMatcher} from '.';
-import type {SlateTextNode, SlateElementNode} from './types';
+import type {SlateTextNode, SlateElementNode} from './slate';
 
 const {isArray} = Array;
 

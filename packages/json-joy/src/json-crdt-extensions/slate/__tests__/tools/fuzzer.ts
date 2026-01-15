@@ -1,10 +1,16 @@
 import {createEditor, Editor, Element, Transforms} from 'slate';
-import type {SlateDocument, SlateDescendantNode, SlateElementNode, SlateTextNode, SlateRange, SlatePoint} from '../../types';
+import type {
+  SlateDocument,
+  SlateDescendantNode,
+  SlateElementNode,
+  SlateTextNode,
+  SlateRange,
+  SlatePoint,
+} from '../../types';
 
 export type Rng = () => number;
 
-export const createEmptyDocument = (): SlateDocument =>
-  [{type: 'paragraph', children: [{text: ''}]}];
+export const createEmptyDocument = (): SlateDocument => [{type: 'paragraph', children: [{text: ''}]}];
 
 export const createRng = (seed: number): Rng => {
   let m_w = seed;
@@ -19,7 +25,7 @@ export const createRng = (seed: number): Rng => {
 };
 
 class FlatNode {
-  constructor (
+  constructor(
     public readonly path: number[],
     public readonly node: SlateDescendantNode,
   ) {}
@@ -32,7 +38,8 @@ export const flatten = (doc: SlateDocument): FlatNode[] => {
     for (let i = 0; i < length; i++) {
       const node = elements[i];
       nodes.push(new FlatNode([...path, i], node));
-      if (!('text' in node) && (node as SlateElementNode).children) walk((node as SlateElementNode).children, [...path, i]);
+      if (!('text' in node) && (node as SlateElementNode).children)
+        walk((node as SlateElementNode).children, [...path, i]);
     }
   };
   walk(doc);
@@ -58,8 +65,8 @@ const randomText = (rng: Rng, length: number): string => {
   return result;
 };
 
-const blockElementTypes: string [] = ['paragraph', 'h1', 'list-item', 'bulleted-list', 'numbered-list'];
-const inlineFormattingMarks: string [] = ['bold', 'italic', 'underline', 'code'];
+const blockElementTypes: string[] = ['paragraph', 'h1', 'list-item', 'bulleted-list', 'numbered-list'];
+const inlineFormattingMarks: string[] = ['bold', 'italic', 'underline', 'code'];
 
 export class SlateFuzzer {
   public readonly rng: Rng;
@@ -88,15 +95,16 @@ export class SlateFuzzer {
 
   public generateRandomPoint(): SlatePoint | undefined {
     const doc = this.getDocument();
-    const flatNodes = flatten(doc).filter(n => 'text' in n.node);
+    const flatNodes = flatten(doc).filter((n) => 'text' in n.node);
     const index = randomInt(this.rng, 0, flatNodes.length - 1);
     const node = flatNodes[index] as FlatNode | undefined;
     if (!node) return;
-    const maxOffset = 'text' in node.node
-      ? (node.node as SlateTextNode).text.length
-      : 'children' in node.node
-        ? (node.node as SlateElementNode).children.length
-        : 0;
+    const maxOffset =
+      'text' in node.node
+        ? (node.node as SlateTextNode).text.length
+        : 'children' in node.node
+          ? (node.node as SlateElementNode).children.length
+          : 0;
     const offset = randomInt(this.rng, 0, maxOffset);
     return {path: node.path, offset};
   }
@@ -104,7 +112,7 @@ export class SlateFuzzer {
   public generateRandomRange(): SlateRange | undefined {
     const anchor = this.generateRandomPoint();
     if (!anchor) return;
-    const focus = this.rng() > .5 ? this.generateRandomPoint() ?? anchor : anchor;
+    const focus = this.rng() > 0.5 ? (this.generateRandomPoint() ?? anchor) : anchor;
     return {anchor, focus};
   }
 
@@ -144,14 +152,10 @@ export class SlateFuzzer {
         const type = this.pick(blockElementTypes);
         // console.log('setNodes - block type', type);
         const editor = this.editor;
-        Transforms.setNodes(
-          this.editor,
-          {type} as any,
-          {
-            // Ensure we only target block-level elements, not text nodes
-            match: n => Element.isElement(n) && Editor.isBlock(editor, n)
-          }
-        );
+        Transforms.setNodes(this.editor, {type} as any, {
+          // Ensure we only target block-level elements, not text nodes
+          match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
+        });
       },
     ]);
     op();

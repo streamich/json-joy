@@ -1,5 +1,4 @@
 export * from './codec/json/types';
-export * from './slate';
 
 export type CreateRegexMatcher = (pattern: string, ignoreCase: boolean) => RegexMatcher;
 export type RegexMatcher = (value: string) => boolean;

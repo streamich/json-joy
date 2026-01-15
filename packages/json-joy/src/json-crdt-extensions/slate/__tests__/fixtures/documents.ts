@@ -1,5 +1,5 @@
-import type {SlateDocument} from "../../types";
-import {a, blockquote, em, h1, h2, h3, li, ol, p, strong, txt, ul} from "../tools/builder";
+import type {SlateDocument} from '../../types';
+import {a, blockquote, em, h1, h2, h3, li, ol, p, strong, txt, ul} from '../tools/builder';
 
 export const paragraph: SlateDocument = [p({}, txt('This is a paragraph.'))];
 
@@ -23,24 +23,14 @@ export const blockquotes: SlateDocument = [
   ),
 ];
 
-export const list: SlateDocument = [
-  ul(
-    li(p({}, txt('Item 1'))),
-    li(p({}, txt('Item 2'))),
-    li(p({}, txt('Item 3'))),
-  ),
-];
+export const list: SlateDocument = [ul(li(p({}, txt('Item 1'))), li(p({}, txt('Item 2'))), li(p({}, txt('Item 3'))))];
 
 export const nestedList: SlateDocument = [
   ul(
     li(p({}, txt('Item 1'))),
     li(
       p({}, txt('Item 2')),
-      ul(
-        li(p({}, txt('Subitem 2.1'))),
-        li(p({}, txt('Subitem 2.2'))),
-        li(p({}, txt('Subitem 2.3'))),
-      ),
+      ul(li(p({}, txt('Subitem 2.1'))), li(p({}, txt('Subitem 2.2'))), li(p({}, txt('Subitem 2.3')))),
     ),
     li(p({}, txt('Item 3'))),
   ),
@@ -57,7 +47,12 @@ export const headings: SlateDocument = [
 
 export const realisticDoc: SlateDocument = [
   h1(txt('Main Title')),
-  p({}, txt('This is the '), em('introduction'), txt(' paragraph. It introduces the document and provides some context.')),
+  p(
+    {},
+    txt('This is the '),
+    em('introduction'),
+    txt(' paragraph. It introduces the document and provides some context.'),
+  ),
   blockquote({}, p({}, txt('This is a quote from someone.'))),
   h2(txt('Section 1')),
   p({}, txt('This is the first section.')),
@@ -85,7 +80,8 @@ export const realisticDoc: SlateDocument = [
 ];
 
 export const inlineStyles: SlateDocument = [
-  p({},
+  p(
+    {},
     txt('This is a paragraph with '),
     em('emphasized text'),
     txt(', '),
@@ -97,7 +93,8 @@ export const inlineStyles: SlateDocument = [
 ];
 
 export const nestedInlines: SlateDocument = [
-  p({},
+  p(
+    {},
     txt('This is a paragraph with '),
     {text: 'nested ', em: true},
     {text: 'inline styles', em: true, strong: true},
@@ -108,7 +105,8 @@ export const nestedInlines: SlateDocument = [
 ];
 
 export const nestedInlinesWithAttributes: SlateDocument = [
-  p({},
+  p(
+    {},
     txt('This is a paragraph with '),
     {text: 'nested ', em: true},
     {text: 'inline styles', em: true, strong: true},
@@ -119,7 +117,8 @@ export const nestedInlinesWithAttributes: SlateDocument = [
 ];
 
 export const nestedInlinesWithAttributes2: SlateDocument = [
-  p({},
+  p(
+    {},
     txt('This is a paragraph with '),
     {text: 'nested ', em: true},
     {text: 'inline styles', em: true, strong: true},

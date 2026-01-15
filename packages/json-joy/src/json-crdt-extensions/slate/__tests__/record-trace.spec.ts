@@ -1,6 +1,4 @@
-import {createEditor} from 'slate';
-import {clone, SlateTraceRecorder, type SlateTrace} from './traces';
-import type {SlateDocument, SlateOperation} from '../types';
+import {SlateTraceRecorder, type SlateTrace} from './tools/traces';
 
 test('record trace', () => {
   const recorder = new SlateTraceRecorder();
