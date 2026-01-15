@@ -1,12 +1,12 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
-import type {SlateElementNode, SlateNode, SlateTextNode} from '../../..';
+import type {SlateElementNode, SlateTextNode} from '../../../slate';
 
 export const testSplitOp = (applyPatch: ApplyPatch) => {
   describe('split', () => {
     describe('Slate.js examples', () => {
       test('split a single "ab" paragraphs into two', () => {
-        const state: SlateNode['children'] = [
+        const state: SlateElementNode['children'] = [
           {
             children: [
               {
@@ -39,7 +39,7 @@ export const testSplitOp = (applyPatch: ApplyPatch) => {
       });
 
       test('split two element blocks into one', () => {
-        const state: SlateNode['children'] = [
+        const state: SlateElementNode['children'] = [
           {
             children: [
               {
@@ -79,7 +79,7 @@ export const testSplitOp = (applyPatch: ApplyPatch) => {
       });
 
       test('can split paragraph in two and insert a character', () => {
-        const state: SlateNode['children'] = [
+        const state: SlateElementNode['children'] = [
           {
             children: [
               {

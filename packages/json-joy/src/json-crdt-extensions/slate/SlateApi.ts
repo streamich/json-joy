@@ -1,11 +1,11 @@
 import {NodeApi} from '../../json-crdt/model/api/nodes';
-import {FromPm} from './FromPm';
-import type {ProseMirrorNode} from './ProseMirrorNode';
+import {FromSlate} from './FromSlate';
+import type {SlateNode} from './SlateNode';
 import type {ArrApi, ArrNode, ExtApi, StrApi} from '../../json-crdt';
 import type {SliceNode} from '../peritext/slice/types';
-import type {PmNode} from './types';
+import type {SlateDocument} from './types';
 
-export class ProseMirrorApi extends NodeApi<ProseMirrorNode> implements ExtApi<ProseMirrorNode> {
+export class SlateApi extends NodeApi<SlateNode> implements ExtApi<SlateNode> {
   public text(): StrApi {
     return this.api.wrap(this.node.text());
   }
@@ -14,9 +14,9 @@ export class ProseMirrorApi extends NodeApi<ProseMirrorNode> implements ExtApi<P
     return this.api.wrap(this.node.slices());
   }
 
-  public mergePmNode(node: PmNode) {
+  public mergeSlateDoc(doc: SlateDocument) {
     const txt = this.node.txt;
-    const viewRange = FromPm.convert(node);
+    const viewRange = FromSlate.convert(doc);
     txt.editor.merge(viewRange);
   }
 }
