@@ -1,5 +1,5 @@
 import {FromSlate} from '../FromSlate';
-import * as traces from './traces';
+import * as traces from './tools/traces';
 
 describe('FromSlate', () => {
   describe('convert()', () => {

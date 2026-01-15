@@ -1,6 +1,6 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
-import type {SlateElementNode, SlateNode, SlateTextNode} from '../../..';
+import type {SlateElementNode, SlateTextNode} from '../../../slate';
 
 export const testMergeOp = (applyPatch: ApplyPatch) => {
   describe('merge', () => {
@@ -85,7 +85,7 @@ export const testMergeOp = (applyPatch: ApplyPatch) => {
     });
 
     test('can merge two Slate.js paragraphs', () => {
-      const state: SlateNode['children'] = [
+      const state: SlateElementNode['children'] = [
         {
           type: 'paragraph',
           children: [

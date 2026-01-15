@@ -1,5 +1,5 @@
 import {createEditor, Transforms, type Editor} from 'slate';
-import type {SlateDocument, SlateOperation} from '../types';
+import type {SlateDocument, SlateOperation} from '../../types';
 
 export const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
