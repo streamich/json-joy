@@ -1,10 +1,11 @@
 import {FromSlate} from '../FromSlate';
-import * as traces from './tools/traces';
+import * as traces from './fixtures/traces';
+import {SlateTraceRunner} from './tools/traces';
 
 describe('FromSlate', () => {
   describe('convert()', () => {
     test('single text paragraph', () => {
-      const runner = traces.SlateTraceRunner.from(traces.variousOperations);
+      const runner = SlateTraceRunner.from(traces.slateVariousEditingTrace);
       // runner.next();
       // runner.next();
       // runner.next();

@@ -62,16 +62,20 @@ describe('convert: Slate-Peritext-Slate', () => {
   });
 
   describe('traces', () => {
-    test('...', () => {
+    test('roundtrip each checkpoint of traces', () => {
       assertRoundtripForTraceCheckpoints(traces.slateEnterCharsTrace);
       assertRoundtripForTraceCheckpoints(traces.slateInsertCharsTrace);
       assertRoundtripForTraceCheckpoints(traces.slateDeleteCharsTrace);
       assertRoundtripForTraceCheckpoints(traces.slateInsertRangeTrace);
       assertRoundtripForTraceCheckpoints(traces.slateRangeDeletesTrace);
       assertRoundtripForTraceCheckpoints(traces.slateAddInlineFormattingTrace);
-      // assertRoundtripForTraceCheckpoints(traces.slateToggleInlineFormattingTrace);
+      assertRoundtripForTraceCheckpoints(traces.slateToggleInlineFormattingTrace);
       assertRoundtripForTraceCheckpoints(traces.slateCrossBlockInlineFormattingTrace);
-      // assertRoundtripForTraceCheckpoints(traces.slateOverlappingFormattingTrace);
+      assertRoundtripForTraceCheckpoints(traces.slateOverlappingFormattingTrace);
+      assertRoundtripForTraceCheckpoints(traces.slateBlockSplitsTrace);
+      assertRoundtripForTraceCheckpoints(traces.slateBlockJoinTrace);
+      assertRoundtripForTraceCheckpoints(traces.slateBlockJoinThroughDeleteTrace);
+      assertRoundtripForTraceCheckpoints(traces.slateBlockAttributesTrace);
       assertRoundtripForTraceCheckpoints(traces.slateVariousEditingTrace);
     });
   });
