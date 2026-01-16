@@ -1,5 +1,5 @@
-import * as fixtures from './fixtures';
-import {assertCanMergeInto, assertCanMergeTrain, assertEmptyMerge} from './setup';
+import * as fixtures from './fixtures/documents';
+import {assertCanMergeInto, assertCanMergeTrain, assertEmptyMerge} from './tools/assertions';
 
 describe('.mergeSlateDoc()', () => {
   test('can merge "twoBlockquotes" fixture into "paragraphs" fixture', () => {
