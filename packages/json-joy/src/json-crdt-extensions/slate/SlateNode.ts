@@ -12,21 +12,21 @@ const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
     const textChildren: SlateTextNode[] = [];
     for (let iterator = block.texts0(), inline: Inline | undefined; (inline = iterator()); ) {
       const text = inline.text();
-      if (!text) continue;
-      const textNode: SlateTextNode = {text};
-      const slices = inline.p1.layers;
-      const length = slices.length;
-      for (let i = 0; i < length; i++) {
-        const slice = slices[i];
-        if (slice instanceof Slice) {
-          const tag = slice.type() + '';
-          const data = slice.data();
-          if (data && typeof data === 'object' && !Array.isArray(data)) {
-            Object.assign(textNode, {[tag]: data});
-          } else {
-            textNode[tag] = data !== undefined ? data : true;
-          }
-        }
+      const attr = inline.attr();
+      const attrKeys = Object.keys(attr);
+      // Skip only if there's no text AND no decorations
+      if (!text && attrKeys.length === 0) continue;
+      const textNode: SlateTextNode = {text: text || ''};
+      const length = attrKeys.length;
+      ATTRS: for (let i = 0; i < length; i++) {
+        const tag = attrKeys[i];
+        const stack = attr[tag];
+        if (!stack || stack.length <= 0) continue ATTRS;
+        const slice = stack[0].slice;
+        if (!(slice instanceof Slice)) continue ATTRS;
+        const data = slice.data();
+        if (data && typeof data === 'object' && !Array.isArray(data)) Object.assign(textNode, {[tag]: data});
+        else textNode[tag] = data !== undefined ? data : true;
       }
       textChildren.push(textNode);
     }
@@ -44,9 +44,9 @@ const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
     for (let i = 0; i < length; i++) children.push(blockToSlateNode(blockChildren[i]));
     const attr = block.attr();
     const node: SlateElementNode = {
+      ...(attr && typeof attr === 'object' ? attr : {}),
       type: block.tag() + '',
       children: children.length ? children : [{text: ''}],
-      ...(attr && typeof attr === 'object' ? attr : {}),
     };
     return node;
   }

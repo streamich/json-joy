@@ -1,13 +1,8 @@
 import {SlateTraceRecorder, type SlateTrace} from './tools/traces';
 
-test('record trace', () => {
-  const recorder = new SlateTraceRecorder();
+test.skip('record trace', () => {
+  const recorder = SlateTraceRecorder.create();
   const editor = recorder.editor;
-
-  // for (const op of trace) if (op.type !== 'set_selection') {
-  //   Transforms.transform(editor, <any>op)
-  // }
-
   editor.select(editor.point([0, 0]));
   editor.insertText('Hello, world!');
   editor.select({path: [0, 0], offset: 1});
@@ -22,6 +17,8 @@ test('record trace', () => {
     anchor: {path: [1, 0], offset: 1},
     focus: {path: [1, 0], offset: 6},
   });
+  editor.addMark('bold', true);
+  editor.removeMark('bold');
   editor.addMark('bold', true);
   editor.select({
     anchor: {path: [1, 2], offset: 0},
@@ -39,9 +36,7 @@ test('record trace', () => {
     focus: {path: [0, 0], offset: 2},
   });
   editor.addMark('highlighted', true);
-
   const trace: SlateTrace = recorder.getTrace();
-
   console.log('TRACE:', JSON.stringify(trace, null, 0));
   console.log(JSON.stringify(editor.children, null, 2));
 });
