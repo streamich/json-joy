@@ -19,7 +19,9 @@ export interface SlateTrace {
 }
 
 export class SlateTraceRecorder {
-  public static create(initialValue: SlateDocument = [{type: 'paragraph', children: [{text: ''}]}]): SlateTraceRecorder {
+  public static create(
+    initialValue: SlateDocument = [{type: 'paragraph', children: [{text: ''}]}],
+  ): SlateTraceRecorder {
     const editor = createEditor();
     editor.children = clone(initialValue);
     return new SlateTraceRecorder(editor);

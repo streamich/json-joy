@@ -1,6 +1,6 @@
 import {ModelWithExt as Model, ext} from '../../../ModelWithExt';
 import {FromSlate} from '../../FromSlate';
-import {SlateTrace, SlateTraceRunner} from './traces';
+import {type SlateTrace, SlateTraceRunner} from './traces';
 import type {SlateDocument} from '../../types';
 
 export const assertSlatePeritextSlateRoundtrip = (doc: SlateDocument) => {

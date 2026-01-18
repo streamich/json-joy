@@ -7,7 +7,7 @@ import type {
   SlateRange,
   SlatePoint,
 } from '../../types';
-import {SlateTrace, SlateTraceRecorder} from './traces';
+import {type SlateTrace, SlateTraceRecorder} from './traces';
 
 export type Rng = () => number;
 
@@ -70,7 +70,11 @@ const blockElementTypes: string[] = ['paragraph', 'h1', 'list-item', 'bulleted-l
 const inlineFormattingMarks: string[] = ['bold', 'italic', 'underline', 'code'];
 
 export class SlateFuzzer {
-  public static genTrace(seed: number = Math.floor(Math.random() * 1000000), minOps: number = 10, maxOps: number = 50): SlateTrace {
+  public static genTrace(
+    seed: number = Math.floor(Math.random() * 1000000),
+    minOps: number = 10,
+    maxOps: number = 50,
+  ): SlateTrace {
     const fuzzer = new SlateFuzzer(seed);
     const recorder = new SlateTraceRecorder(fuzzer.editor);
     const totalOps = randomInt(fuzzer.rng, minOps, maxOps);

@@ -25,8 +25,7 @@ const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
         const slice = stack[0].slice;
         if (!(slice instanceof Slice)) continue ATTRS;
         const data = slice.data();
-        if (data && typeof data === 'object' && !Array.isArray(data))
-          Object.assign(textNode, {[tag]: data});
+        if (data && typeof data === 'object' && !Array.isArray(data)) Object.assign(textNode, {[tag]: data});
         else textNode[tag] = data !== undefined ? data : true;
       }
       textChildren.push(textNode);
