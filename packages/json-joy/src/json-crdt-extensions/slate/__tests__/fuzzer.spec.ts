@@ -2,7 +2,7 @@ import { SlateFuzzer } from './tools/fuzzer';
 import { assertRoundtripForTraceCheckpoints } from './tools/assertions';
 import { SlateTrace } from './tools/traces';
 
-test.skip('run random fuzzer trace through roundtrip', () => {
+test('run random fuzzer trace through roundtrip', () => {
   for (let i = 0; i < 10; i++) {
     const seed: number = Math.floor(Math.random() * 1000000);
     const trace = SlateFuzzer.genTrace(seed);
