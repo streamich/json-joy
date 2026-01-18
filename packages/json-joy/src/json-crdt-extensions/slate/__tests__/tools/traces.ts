@@ -19,15 +19,20 @@ export interface SlateTrace {
 }
 
 export class SlateTraceRecorder {
+  public static create(initialValue: SlateDocument = [{type: 'paragraph', children: [{text: ''}]}]): SlateTraceRecorder {
+    const editor = createEditor();
+    editor.children = clone(initialValue);
+    return new SlateTraceRecorder(editor);
+  }
+
   public readonly editor: Editor;
   public readonly start: SlateDocument;
   public readonly operations: SlateOperation[] = [];
   public readonly checkpoints: number[] = [];
 
-  constructor(initialValue: SlateDocument = [{type: 'paragraph', children: [{text: ''}]}]) {
-    this.start = clone(initialValue);
-    this.editor = createEditor();
-    this.editor.children = initialValue;
+  constructor(editor: Editor) {
+    this.editor = editor;
+    this.start = clone(editor.children as SlateDocument);
     const {apply, normalizeNode} = this.editor;
 
     // 1. Capture every operation into our permanent log
@@ -58,8 +63,8 @@ export class SlateTraceRecorder {
 
 export class SlateTraceRunner {
   public readonly editor = createEditor();
-  protected nextOpIdx: number = 0;
-  protected nextCheckpointIdx: number = 0;
+  public nextOpIdx: number = 0;
+  public nextCheckpointIdx: number = 0;
 
   public static readonly from = (trace: SlateTrace): SlateTraceRunner => new SlateTraceRunner(trace);
 

@@ -18,7 +18,15 @@ export const assertRoundtripForTraceCheckpoints = (trace: SlateTrace) => {
   while (!runner.endReached()) {
     runner.toNextCheckpoint();
     const state = runner.state();
-    assertSlatePeritextSlateRoundtrip(state);
+    try {
+      assertSlatePeritextSlateRoundtrip(state);
+    } catch (error) {
+      console.log('nextOpIdx:', runner.nextOpIdx);
+      console.log(`operation (${runner.nextOpIdx - 1}):`, runner.trace.operations[runner.nextOpIdx - 1]);
+      console.log(`operation (${runner.nextOpIdx}):`, runner.trace.operations[runner.nextOpIdx]);
+      console.log(JSON.stringify(runner.editor.children, null, 2));
+      throw error;
+    }
   }
 };
 

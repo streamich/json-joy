@@ -50,7 +50,7 @@ export interface SlateRemoveTextOperation {
 export interface SlateInsertNodeOperation {
   type: 'insert_node';
   path: SlatePath;
-  node: SlateElementNode;
+  node: SlateDescendantNode;
 }
 
 export interface SlateRemoveNodeOperation {
