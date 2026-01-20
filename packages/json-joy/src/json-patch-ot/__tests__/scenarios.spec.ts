@@ -785,6 +785,14 @@ const groups: ScenarioGroup[] = [
         user2: [{op: 'str_ins', path: '/a', pos: 2, str: '_bar_'}],
         docEnd: {a: '12_foo__bar_345'},
       },
+      {
+        // changed: discard multiple same inserts (will typically happen in markdown task lists)
+        name: 'Merge equal inserts at same position.',
+        docStart: {a: '12345'},
+        user1: [{op: 'str_ins', path: '/a', pos: 2, str: '_foo_'}],
+        user2: [{op: 'str_ins', path: '/a', pos: 2, str: '_foo_'}],
+        docEnd: {a: '12_foo_345'},
+      },
     ],
   },
   {
