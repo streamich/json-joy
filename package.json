@@ -95,6 +95,8 @@
         "maxMessageLength": 90,
         "scopes": [
           "",
+          "collaborative-slate",
+          "collaborative-prosemirror",
           "demo",
           "json-cli",
           "json-crdt-diff",
