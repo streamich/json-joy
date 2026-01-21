@@ -1359,6 +1359,8 @@ __metadata:
     "@types/react-dom": "npm:^19"
     "@udecode/plate": "npm:^49.0.0"
     "@udecode/plate-basic-marks": "npm:^49.0.0"
+    "@udecode/plate-block-quote": "npm:^49.0.0"
+    "@udecode/plate-code-block": "npm:^49.0.0"
     "@udecode/plate-common": "npm:^42.0.0"
     "@udecode/plate-heading": "npm:^49.0.0"
     css-loader: "npm:^7.1.2"
@@ -2600,6 +2602,28 @@ __metadata:
     react: ">=18.0.0"
     react-dom: ">=18.0.0"
   checksum: 10c0/90999ecacb4b0bed37f38277872e6133175573151532c40fae97373ae53ecf35af676ab1da1a158f7815fcd927ad5c1cc925384e899c1a92ec87347b79aaf4fd
+  languageName: node
+  linkType: hard
+
+"@udecode/plate-block-quote@npm:^49.0.0":
+  version: 49.0.0
+  resolution: "@udecode/plate-block-quote@npm:49.0.0"
+  peerDependencies:
+    "@udecode/plate": ">=49.0.0"
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: 10c0/19255874fae82e5c74b1220688efe4adb602d4f49ab15bb9159be4988fdbb0862c8fe2b7d4ec97b28c4c4cb70a330c998e1401858a20650be7475fc5d7437663
+  languageName: node
+  linkType: hard
+
+"@udecode/plate-code-block@npm:^49.0.0":
+  version: 49.0.0
+  resolution: "@udecode/plate-code-block@npm:49.0.0"
+  peerDependencies:
+    "@udecode/plate": ">=49.0.0"
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: 10c0/11a94ee5868cfebd24a2b524498be97786442c7a7005874655940dd569ccae2087a47542c1c8a96a45f046308c4c8a5b6be2ea7e2096ba3e653969e43d300abb
   languageName: node
   linkType: hard
 

@@ -106,6 +106,8 @@
     "@types/react-dom": "^19",
     "@udecode/plate": "^49.0.0",
     "@udecode/plate-basic-marks": "^49.0.0",
+    "@udecode/plate-block-quote": "^49.0.0",
+    "@udecode/plate-code-block": "^49.0.0",
     "@udecode/plate-common": "^42.0.0",
     "@udecode/plate-heading": "^49.0.0",
     "css-loader": "^7.1.2",

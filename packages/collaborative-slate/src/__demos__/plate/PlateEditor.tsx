@@ -4,6 +4,7 @@ import {
   Plate,
   PlateContent,
   usePlateEditor,
+  ParagraphPlugin,
 } from '@udecode/plate/react';
 import {
   BoldPlugin,
@@ -11,32 +12,165 @@ import {
   UnderlinePlugin,
   CodePlugin,
 } from '@udecode/plate-basic-marks/react';
-import {ParagraphPlugin} from '@udecode/plate/react';
 import {HeadingPlugin} from '@udecode/plate-heading/react';
+import {BlockquotePlugin} from '@udecode/plate-block-quote/react';
+import {CodeBlockPlugin, CodeLinePlugin} from '@udecode/plate-code-block/react';
 import {Editor} from 'slate';
 import {bind} from '../../index';
+import {plateInitialValue} from '../shared/initialValue';
 
-// Custom leaf component for marks (bold, italic, underline, code)
+const ParagraphElement = ({attributes, children}: any) => (
+  <p
+    {...attributes}
+    style={{
+      margin: '0 0 1em 0',
+      lineHeight: 1.7,
+    }}
+  >
+    {children}
+  </p>
+);
+
+const HeadingElement = ({attributes, children, element}: any) => {
+  const level = element.type?.replace('h', '') || '1';
+  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+
+  const styles: Record<string, React.CSSProperties> = {
+    h1: {
+      fontSize: '2.25rem',
+      fontWeight: 800,
+      letterSpacing: '-0.025em',
+      marginTop: '2rem',
+      marginBottom: '1rem',
+      lineHeight: 1.1,
+      color: '#0f172a',
+    },
+    h2: {
+      fontSize: '1.875rem',
+      fontWeight: 700,
+      letterSpacing: '-0.02em',
+      marginTop: '1.75rem',
+      marginBottom: '0.75rem',
+      lineHeight: 1.2,
+      color: '#1e293b',
+      borderBottom: '1px solid #e2e8f0',
+      paddingBottom: '0.5rem',
+    },
+    h3: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+      marginTop: '1.5rem',
+      marginBottom: '0.5rem',
+      lineHeight: 1.3,
+      color: '#334155',
+    },
+  };
+
+  return (
+    <Tag {...attributes} style={styles[Tag] || styles.h3}>
+      {children}
+    </Tag>
+  );
+};
+
+const BlockquoteElement = ({attributes, children}: any) => (
+  <blockquote
+    {...attributes}
+    style={{
+      borderLeft: '4px solid #6366f1',
+      marginLeft: 0,
+      marginRight: 0,
+      marginTop: '1rem',
+      marginBottom: '1rem',
+      paddingLeft: '1.5rem',
+      paddingTop: '0.75rem',
+      paddingBottom: '0.75rem',
+      backgroundColor: 'linear-gradient(to right, #f8fafc, transparent)',
+      background: 'linear-gradient(to right, rgba(99, 102, 241, 0.05), transparent)',
+      borderRadius: '0 8px 8px 0',
+      fontStyle: 'italic',
+      color: '#475569',
+    }}
+  >
+    {children}
+  </blockquote>
+);
+
+const CodeBlockElement = ({attributes, children, element}: any) => (
+  <div {...attributes} style={{margin: '1.5rem 0', position: 'relative'}}>
+    {element.lang && (
+      <div
+        contentEditable={false}
+        style={{
+          position: 'absolute',
+          top: '0',
+          right: '0',
+          fontSize: '0.75rem',
+          color: '#94a3b8',
+          textTransform: 'uppercase',
+          fontFamily: 'monospace',
+          userSelect: 'none',
+          backgroundColor: '#334155',
+          padding: '4px 12px',
+          borderRadius: '0 8px 0 8px',
+          letterSpacing: '0.05em',
+        }}
+      >
+        {element.lang}
+      </div>
+    )}
+    <pre
+      style={{
+        backgroundColor: '#1e293b',
+        color: '#e2e8f0',
+        padding: '1.25rem',
+        borderRadius: '8px',
+        fontFamily: '"JetBrains Mono", "Fira Code", "SF Mono", Monaco, Consolas, monospace',
+        fontSize: '0.875rem',
+        lineHeight: 1.7,
+        overflow: 'auto',
+        margin: 0,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <code>{children}</code>
+    </pre>
+  </div>
+);
+
+const CodeLineElement = ({attributes, children}: any) => (
+  <div {...attributes} style={{minHeight: '1.7em'}}>
+    {children}
+  </div>
+);
+
+// ============================================================================
+// Custom Leaf Component for text marks
+// ============================================================================
+
 const RichLeaf = ({attributes, children, leaf}: any) => {
   let content = children;
 
   if (leaf.bold) {
-    content = <strong>{content}</strong>;
+    content = <strong style={{fontWeight: 600}}>{content}</strong>;
   }
   if (leaf.italic) {
     content = <em>{content}</em>;
   }
   if (leaf.underline) {
-    content = <u>{content}</u>;
+    content = <u style={{textDecorationColor: '#6366f1', textUnderlineOffset: '2px'}}>{content}</u>;
   }
   if (leaf.code) {
     content = (
       <code
         style={{
-          backgroundColor: '#f4f4f4',
-          padding: '2px 4px',
-          borderRadius: '3px',
-          fontFamily: 'monospace',
+          backgroundColor: '#f1f5f9',
+          color: '#be185d',
+          padding: '0.125rem 0.375rem',
+          borderRadius: '4px',
+          fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+          fontSize: '0.875em',
+          fontWeight: 500,
         }}
       >
         {content}
@@ -47,155 +181,76 @@ const RichLeaf = ({attributes, children, leaf}: any) => {
   return <span {...attributes}>{content}</span>;
 };
 
-// Custom paragraph element
-const ParagraphElement = ({attributes, children}: any) => {
-  return (
-    <p {...attributes} style={{margin: '0 0 8px 0'}}>
-      {children}
-    </p>
-  );
-};
+// ============================================================================
+// Toolbar Components
+// ============================================================================
 
-// Custom heading elements
-const HeadingElement = ({attributes, children, element}: any) => {
-  const level = element.type?.replace('h', '') || '1';
-  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-
-  const styles: Record<string, React.CSSProperties> = {
-    h1: {fontSize: '2em', fontWeight: 'bold', margin: '0 0 16px 0'},
-    h2: {fontSize: '1.5em', fontWeight: 'bold', margin: '0 0 12px 0'},
-    h3: {fontSize: '1.17em', fontWeight: 'bold', margin: '0 0 10px 0'},
-  };
-
-  return (
-    <Tag {...attributes} style={styles[Tag] || {}}>
-      {children}
-    </Tag>
-  );
-};
-
-// Initial document content
-const initialValue = [
-  {
-    type: 'h1',
-    children: [{text: 'Welcome to Plate.js'}],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: 'Plate.js is a powerful rich-text editor framework built on top of '},
-      {text: 'Slate.js', bold: true},
-      {text: '. It provides a plugin-based architecture for building complex editors.'},
-    ],
-  },
-  {
-    type: 'h2',
-    children: [{text: 'Features'}],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: 'This demo includes basic text formatting:'},
-    ],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: '• '},
-      {text: 'Bold text', bold: true},
-      {text: ' (Ctrl/Cmd+B)'},
-    ],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: '• '},
-      {text: 'Italic text', italic: true},
-      {text: ' (Ctrl/Cmd+I)'},
-    ],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: '• '},
-      {text: 'Underlined text', underline: true},
-      {text: ' (Ctrl/Cmd+U)'},
-    ],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: '• '},
-      {text: 'Inline code', code: true},
-      {text: ' (Ctrl/Cmd+`)'},
-    ],
-  },
-  {
-    type: 'h2',
-    children: [{text: 'Collaboration'}],
-  },
-  {
-    type: 'p',
-    children: [
-      {text: 'This editor will be integrated with '},
-      {text: 'json-joy', bold: true, italic: true},
-      {text: ' JSON CRDTs for real-time collaborative editing.'},
-    ],
-  },
-];
-
-// Toolbar button component
 interface ToolbarButtonProps {
-  editor: any;
-  format: string;
-  label: string;
-  style?: React.CSSProperties;
+  active?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  title?: string;
 }
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = ({editor, format, label, style}) => {
-  const marks = Editor.marks(editor);
-  const isActive = marks ? (marks as any)[format] === true : false;
+const ToolbarButton: React.FC<ToolbarButtonProps> = ({active, disabled, onClick, children, title}) => (
+  <button
+    title={title}
+    disabled={disabled}
+    style={{
+      width: '36px',
+      height: '36px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: 'none',
+      borderRadius: '8px',
+      background: active ? '#6366f1' : 'transparent',
+      color: active ? 'white' : '#64748b',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      fontSize: '14px',
+      fontWeight: 500,
+      transition: 'all 0.15s ease',
+      opacity: disabled ? 0.5 : 1,
+    }}
+    onMouseDown={(e) => {
+      e.preventDefault();
+      if (!disabled) onClick();
+    }}
+    onMouseOver={(e) => {
+      if (!active && !disabled) {
+        e.currentTarget.style.backgroundColor = '#f1f5f9';
+      }
+    }}
+    onMouseOut={(e) => {
+      if (!active) {
+        e.currentTarget.style.backgroundColor = 'transparent';
+      }
+    }}
+  >
+    {children}
+  </button>
+);
 
-  return (
-    <button
-      style={{
-        padding: '6px 12px',
-        marginRight: '4px',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        background: isActive ? '#333' : 'white',
-        color: isActive ? 'white' : '#333',
-        cursor: 'pointer',
-        fontWeight: format === 'bold' ? 'bold' : 'normal',
-        fontStyle: format === 'italic' ? 'italic' : 'normal',
-        textDecoration: format === 'underline' ? 'underline' : 'none',
-        fontFamily: format === 'code' ? 'monospace' : 'inherit',
-        ...style,
-      }}
-      onMouseDown={(e) => {
-        e.preventDefault();
-        // Toggle mark using Plate's transform API
-        if (isActive) {
-          Editor.removeMark(editor, format);
-        } else {
-          Editor.addMark(editor, format, true);
-        }
-      }}
-    >
-      {label}
-    </button>
-  );
-};
+const ToolbarSeparator = () => (
+  <div style={{width: '1px', height: '24px', backgroundColor: '#e2e8f0', margin: '0 4px'}} />
+);
+
+// ============================================================================
+// Main Plate Editor Component
+// ============================================================================
 
 export const PlateEditor: React.FC = () => {
-  // Create the Plate editor with plugins
   const editor = usePlateEditor({
-    value: initialValue,
+    value: plateInitialValue,
     plugins: [
       // Block plugins
       ParagraphPlugin,
       HeadingPlugin,
-      // Mark plugins - these handle keyboard shortcuts automatically
+      BlockquotePlugin,
+      CodeBlockPlugin,
+      CodeLinePlugin,
+      // Mark plugins
       BoldPlugin,
       ItalicPlugin,
       UnderlinePlugin,
@@ -208,6 +263,9 @@ export const PlateEditor: React.FC = () => {
         h1: HeadingElement,
         h2: HeadingElement,
         h3: HeadingElement,
+        blockquote: BlockquoteElement,
+        code_block: CodeBlockElement,
+        code_line: CodeLineElement,
         // Leaf components
         bold: RichLeaf,
         italic: RichLeaf,
@@ -217,72 +275,154 @@ export const PlateEditor: React.FC = () => {
     },
   });
 
-  // Force re-render for toolbar state
   const [, forceUpdate] = React.useState({});
 
   // Connect to json-joy peritext (mock for now)
-  // The Plate editor IS a Slate editor, so we can use it directly with bind()
   useEffect(() => {
     const mockPeritextNode = {};
-    // editor from usePlateEditor is compatible with Slate's Editor interface
     const unbind = bind(mockPeritextNode, editor as unknown as Editor);
     return unbind;
   }, [editor]);
 
-  // Handle keyboard shortcut for code (Plate doesn't have default)
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === '`') {
-        event.preventDefault();
-        const marks = Editor.marks(editor as any);
-        if (marks && (marks as any).code) {
-          Editor.removeMark(editor as any, 'code');
-        } else {
-          Editor.addMark(editor as any, 'code', true);
-        }
-        forceUpdate({});
+  // Toggle mark helper
+  const toggleMark = useCallback(
+    (key: string) => {
+      const marks = Editor.marks(editor as any);
+      if (marks && (marks as any)[key]) {
+        Editor.removeMark(editor as any, key);
+      } else {
+        Editor.addMark(editor as any, key, true);
       }
+      forceUpdate({});
     },
     [editor]
+  );
+
+  // Check if mark is active
+  const isMarkActive = useCallback(
+    (key: string) => {
+      const marks = Editor.marks(editor as any);
+      return marks ? !!(marks as any)[key] : false;
+    },
+    [editor]
+  );
+
+  // Handle keyboard shortcuts
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key) {
+          case '`':
+            event.preventDefault();
+            toggleMark('code');
+            break;
+        }
+      }
+    },
+    [toggleMark]
   );
 
   return (
     <div
       style={{
-        border: '1px solid #ccc',
-        borderRadius: '8px',
+        background: 'white',
+        borderRadius: '16px',
+        boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
         overflow: 'hidden',
       }}
     >
       <Plate editor={editor} onSelectionChange={() => forceUpdate({})}>
-        {/* Toolbar */}
+        {/* Modern Toolbar */}
         <div
           style={{
-            borderBottom: '1px solid #ccc',
-            padding: '8px',
-            background: '#f9f9f9',
+            padding: '12px 16px',
+            background: 'linear-gradient(to bottom, #fafafa, #f5f5f5)',
+            borderBottom: '1px solid #e5e7eb',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2px',
+            flexWrap: 'wrap',
           }}
         >
-          <ToolbarButton editor={editor} format="bold" label="B" />
-          <ToolbarButton editor={editor} format="italic" label="I" />
-          <ToolbarButton editor={editor} format="underline" label="U" />
-          <ToolbarButton editor={editor} format="code" label="</>" />
+          {/* Heading dropdown would go here - simplified to buttons */}
+          <ToolbarButton
+            onClick={() => {
+              /* Toggle H1 - requires more complex logic with Plate */
+            }}
+            title="Heading 1"
+          >
+            H1
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              /* Toggle H2 */
+            }}
+            title="Heading 2"
+          >
+            H2
+          </ToolbarButton>
+
+          <ToolbarSeparator />
+
+          <ToolbarButton active={isMarkActive('bold')} onClick={() => toggleMark('bold')} title="Bold (⌘B)">
+            <strong>B</strong>
+          </ToolbarButton>
+          <ToolbarButton active={isMarkActive('italic')} onClick={() => toggleMark('italic')} title="Italic (⌘I)">
+            <em>I</em>
+          </ToolbarButton>
+          <ToolbarButton
+            active={isMarkActive('underline')}
+            onClick={() => toggleMark('underline')}
+            title="Underline (⌘U)"
+          >
+            <span style={{textDecoration: 'underline'}}>U</span>
+          </ToolbarButton>
+          <ToolbarButton active={isMarkActive('code')} onClick={() => toggleMark('code')} title="Inline Code (⌘`)">
+            <span style={{fontFamily: 'monospace', fontSize: '12px'}}>&lt;/&gt;</span>
+          </ToolbarButton>
+
+          <ToolbarSeparator />
+
+          <ToolbarButton onClick={() => {}} title="Block Quote">
+            <span style={{fontSize: '18px', lineHeight: 1}}>❝</span>
+          </ToolbarButton>
+          <ToolbarButton onClick={() => {}} title="Code Block">
+            <span style={{fontFamily: 'monospace', fontSize: '11px'}}>{'{ }'}</span>
+          </ToolbarButton>
         </div>
 
-        {/* Editable Area */}
+        {/* Editor Content */}
         <PlateContent
           style={{
-            padding: '16px',
-            minHeight: '300px',
+            padding: '32px 40px',
+            minHeight: '500px',
             fontSize: '16px',
-            lineHeight: '1.6',
+            lineHeight: 1.7,
+            color: '#1e293b',
             outline: 'none',
           }}
-          placeholder="Start typing..."
+          placeholder="Start writing..."
           spellCheck
           autoFocus
           onKeyDown={handleKeyDown}
         />
+
+        {/* Footer with info */}
+        <div
+          style={{
+            padding: '12px 16px',
+            background: '#f9fafb',
+            borderTop: '1px solid #e5e7eb',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '12px',
+            color: '#9ca3af',
+          }}
+        >
+          <span>Powered by Plate.js + json-joy CRDTs</span>
+          <span>⌘B Bold · ⌘I Italic · ⌘U Underline · ⌘` Code</span>
+        </div>
       </Plate>
     </div>
   );
