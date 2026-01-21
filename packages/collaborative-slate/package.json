@@ -9,8 +9,12 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy",
-  "repository": "streamich/json-joy",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-slate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/collaborative-slate"
+  },
   "license": "Apache-2.0",
   "funding": {
     "type": "github",
@@ -20,11 +24,16 @@
     "json",
     "crdt",
     "slate",
+    "slatejs",
+    "plate",
+    "platejs",
     "collaborative",
     "rich-text",
     "editor",
     "json-joy",
-    "sync"
+    "peritext",
+    "sync",
+    "real-time"
   ],
   "engines": {
     "node": ">=10.0"
@@ -47,7 +56,9 @@
     "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "demo:slate": "webpack serve --config src/__demos__/slate/webpack.config.js",
+    "demo:plate": "webpack serve --config src/__demos__/plate/webpack.config.js"
   },
   "jest": {
     "preset": "ts-jest",
@@ -70,7 +81,45 @@
     ]
   },
   "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "slate": ">=0.100.0",
+    "slate-react": ">=0.100.0",
     "tslib": "2"
   },
-  "devDependencies": {}
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    },
+    "slate": {
+      "optional": false
+    },
+    "slate-react": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@udecode/plate": "^49.0.0",
+    "@udecode/plate-basic-marks": "^49.0.0",
+    "@udecode/plate-common": "^42.0.0",
+    "@udecode/plate-heading": "^49.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.6",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "slate": "^0.123.0",
+    "slate-dom": "^0.123.0",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.123.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.3"
+  }
 }
