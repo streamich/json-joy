@@ -15,7 +15,7 @@ import {
 import {HeadingPlugin} from '@udecode/plate-heading/react';
 import {BlockquotePlugin} from '@udecode/plate-block-quote/react';
 import {CodeBlockPlugin, CodeLinePlugin} from '@udecode/plate-code-block/react';
-import {Editor} from 'slate';
+import {Editor, Transforms, Element as SlateElement} from 'slate';
 import {bind} from '../../index';
 import {plateInitialValue} from '../shared/initialValue';
 
@@ -77,7 +77,7 @@ const BlockquoteElement = ({attributes, children}: any) => (
   <blockquote
     {...attributes}
     style={{
-      borderLeft: '4px solid #6366f1',
+      borderLeft: '4px solid #64748b',
       marginLeft: 0,
       marginRight: 0,
       marginTop: '1rem',
@@ -85,8 +85,7 @@ const BlockquoteElement = ({attributes, children}: any) => (
       paddingLeft: '1.5rem',
       paddingTop: '0.75rem',
       paddingBottom: '0.75rem',
-      backgroundColor: 'linear-gradient(to right, #f8fafc, transparent)',
-      background: 'linear-gradient(to right, rgba(99, 102, 241, 0.05), transparent)',
+      background: 'linear-gradient(to right, rgba(100, 116, 139, 0.08), transparent)',
       borderRadius: '0 8px 8px 0',
       fontStyle: 'italic',
       color: '#475569',
@@ -158,14 +157,14 @@ const RichLeaf = ({attributes, children, leaf}: any) => {
     content = <em>{content}</em>;
   }
   if (leaf.underline) {
-    content = <u style={{textDecorationColor: '#6366f1', textUnderlineOffset: '2px'}}>{content}</u>;
+    content = <u style={{textDecorationColor: '#64748b', textUnderlineOffset: '2px'}}>{content}</u>;
   }
   if (leaf.code) {
     content = (
       <code
         style={{
           backgroundColor: '#f1f5f9',
-          color: '#be185d',
+          color: '#334155',
           padding: '0.125rem 0.375rem',
           borderRadius: '4px',
           fontFamily: '"JetBrains Mono", "Fira Code", monospace',
@@ -205,7 +204,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({active, disabled, onClick,
       justifyContent: 'center',
       border: 'none',
       borderRadius: '8px',
-      background: active ? '#6366f1' : 'transparent',
+      background: active ? '#374151' : 'transparent',
       color: active ? 'white' : '#64748b',
       cursor: disabled ? 'not-allowed' : 'pointer',
       fontSize: '14px',
@@ -284,6 +283,59 @@ export const PlateEditor: React.FC = () => {
     return unbind;
   }, [editor]);
 
+  // Check if block type is active
+  const isBlockActive = useCallback(
+    (type: string): boolean => {
+      try {
+        const {selection} = editor as any;
+        if (!selection) return false;
+
+        const [match] = Editor.nodes(editor as any, {
+          at: Editor.unhangRange(editor as any, selection),
+          match: (n) => SlateElement.isElement(n) && (n as any).type === type,
+        });
+        return !!match;
+      } catch {
+        return false;
+      }
+    },
+    [editor]
+  );
+
+  // Toggle block type
+  const toggleBlock = useCallback(
+    (type: string) => {
+      const isActive = isBlockActive(type);
+
+      if (type === 'code_block') {
+        // Code blocks need special handling (wrap/unwrap)
+        if (isActive) {
+          Transforms.setNodes(editor as any, {type: 'p'} as any, {
+            match: (n: any) => n.type === 'code_line',
+          });
+          Transforms.unwrapNodes(editor as any, {
+            match: (n: any) => n.type === 'code_block',
+          });
+        } else {
+          Transforms.setNodes(editor as any, {type: 'code_line'} as any, {
+            match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor as any, n),
+          });
+          Transforms.wrapNodes(editor as any, {
+            type: 'code_block',
+            children: [],
+          } as any);
+        }
+      } else {
+        // Simple blocks (headings, blockquote, paragraph)
+        Transforms.setNodes(editor as any, {type: isActive ? 'p' : type} as any, {
+          match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor as any, n),
+        });
+      }
+      forceUpdate({});
+    },
+    [editor, isBlockActive]
+  );
+
   // Toggle mark helper
   const toggleMark = useCallback(
     (key: string) => {
@@ -344,19 +396,17 @@ export const PlateEditor: React.FC = () => {
             flexWrap: 'wrap',
           }}
         >
-          {/* Heading dropdown would go here - simplified to buttons */}
+          {/* Block type buttons */}
           <ToolbarButton
-            onClick={() => {
-              /* Toggle H1 - requires more complex logic with Plate */
-            }}
+            active={isBlockActive('h1')}
+            onClick={() => toggleBlock('h1')}
             title="Heading 1"
           >
             H1
           </ToolbarButton>
           <ToolbarButton
-            onClick={() => {
-              /* Toggle H2 */
-            }}
+            active={isBlockActive('h2')}
+            onClick={() => toggleBlock('h2')}
             title="Heading 2"
           >
             H2
@@ -383,10 +433,18 @@ export const PlateEditor: React.FC = () => {
 
           <ToolbarSeparator />
 
-          <ToolbarButton onClick={() => {}} title="Block Quote">
+          <ToolbarButton
+            active={isBlockActive('blockquote')}
+            onClick={() => toggleBlock('blockquote')}
+            title="Block Quote"
+          >
             <span style={{fontSize: '18px', lineHeight: 1}}>❝</span>
           </ToolbarButton>
-          <ToolbarButton onClick={() => {}} title="Code Block">
+          <ToolbarButton
+            active={isBlockActive('code_block')}
+            onClick={() => toggleBlock('code_block')}
+            title="Code Block"
+          >
             <span style={{fontFamily: 'monospace', fontSize: '11px'}}>{'{ }'}</span>
           </ToolbarButton>
         </div>

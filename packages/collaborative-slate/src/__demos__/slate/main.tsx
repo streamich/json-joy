@@ -10,7 +10,7 @@ style.textContent = `
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    background: #f8fafc;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
     min-height: 100vh;
   }
   ::selection {

@@ -10,11 +10,11 @@ style.textContent = `
     margin: 0;
     padding: 0;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
     min-height: 100vh;
   }
   ::selection {
-    background: #a5b4fc;
+    background: #4b5563;
   }
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 `;
@@ -36,15 +36,15 @@ const App: React.FC = () => {
         <h1 style={{
           fontSize: '2.5rem',
           fontWeight: 800,
-          color: 'white',
+          color: '#f1f5f9',
           margin: '0 0 12px 0',
-          textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+          textShadow: '0 2px 10px rgba(0,0,0,0.3)',
           letterSpacing: '-0.02em',
         }}>
           Plate.js Editor
         </h1>
         <p style={{
-          color: 'rgba(255,255,255,0.85)',
+          color: 'rgba(226,232,240,0.8)',
           margin: 0,
           lineHeight: 1.6,
           fontSize: '1.125rem',
@@ -58,13 +58,13 @@ const App: React.FC = () => {
       <footer style={{
         marginTop: '32px',
         textAlign: 'center',
-        color: 'rgba(255,255,255,0.7)',
+        color: 'rgba(148,163,184,0.8)',
         fontSize: '14px',
       }}>
         Part of{' '}
         <a
           href="https://github.com/streamich/json-joy"
-          style={{color: 'white', textDecoration: 'underline'}}
+          style={{color: '#94a3b8', textDecoration: 'underline'}}
         >
           json-joy
         </a>
