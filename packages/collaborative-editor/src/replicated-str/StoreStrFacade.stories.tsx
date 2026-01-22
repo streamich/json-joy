@@ -101,7 +101,7 @@ const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) =>
 };
 
 const meta: Meta<typeof Demo> = {
-  title: 'StoreStrFacade',
+  title: 'collaborative-editor/StoreStrFacade',
   component: Demo,
   argTypes: {},
 };

@@ -129,3 +129,6 @@ out.bin
 /gh-pages/
 
 .claude/
+
+*storybook.log
+storybook-static

@@ -94,10 +94,24 @@ const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) =>
   );
 };
 
-const meta: Meta<typeof Text> = {
-  title: 'InputFacade',
+const meta: Meta<typeof Demo> = {
+  title: 'collaborative-editor/InputFacade',
   component: Demo as any,
-  argTypes: {},
+  argTypes: {
+    textarea: {
+      control: { type: 'boolean' },
+    },
+    Facade: {
+      control: { type: 'select' },
+      options: {
+        Facade0: InputFacade0,
+        Facade1: InputFacade1,
+        Facade2: InputFacade2,
+        Facade3: InputFacade3,
+        Facade4: InputFacade4,
+      },
+    },
+  },
 };
 
 export default meta;
@@ -105,6 +119,7 @@ export default meta;
 export const Facade0: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade0,
+    textarea: false,
   } as any,
 };
 
@@ -118,6 +133,7 @@ export const Facade0Textarea: StoryObj<typeof meta> = {
 export const Facade1: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade1,
+    textarea: false,
   } as any,
 };
 
@@ -131,6 +147,7 @@ export const Facade1Textarea: StoryObj<typeof meta> = {
 export const Facade2: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade2,
+    textarea: false,
   } as any,
 };
 
@@ -144,6 +161,7 @@ export const Facade2Textarea: StoryObj<typeof meta> = {
 export const Facade3: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade3,
+    textarea: false,
   } as any,
 };
 
@@ -157,6 +175,7 @@ export const Facade3Textarea: StoryObj<typeof meta> = {
 export const Facade4: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade4,
+    textarea: false,
   } as any,
 };
 
