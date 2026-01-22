@@ -151,7 +151,7 @@ const Element: React.FC<RenderElementProps> = ({attributes, children, element}) 
         <blockquote
           {...attributes}
           style={{
-            borderLeft: '4px solid #6366f1',
+            borderLeft: '6px solid #64748b',
             marginLeft: 0,
             marginRight: 0,
             marginTop: '0.5rem',
@@ -237,7 +237,7 @@ const MarkButton: React.FC<MarkButtonProps> = ({format, label, editor, icon}) =>
         justifyContent: 'center',
         border: '1px solid #e2e8f0',
         borderRadius: '6px',
-        background: isActive ? '#4f46e5' : 'white',
+        background: isActive ? '#374151' : 'white',
         color: isActive ? 'white' : '#374151',
         cursor: 'pointer',
         fontWeight: format === 'bold' ? 700 : 400,
@@ -282,7 +282,7 @@ const BlockButton: React.FC<BlockButtonProps> = ({format, label, editor, level, 
         justifyContent: 'center',
         border: '1px solid #e2e8f0',
         borderRadius: '6px',
-        background: isActive ? '#4f46e5' : 'white',
+        background: isActive ? '#374151' : 'white',
         color: isActive ? 'white' : '#374151',
         cursor: 'pointer',
         fontSize: '14px',
@@ -361,6 +361,7 @@ export const SlateEditor: React.FC = () => {
   return (
     <div
       style={{
+        background: '#fff',
         border: '1px solid #e2e8f0',
         borderRadius: '12px',
         overflow: 'hidden',

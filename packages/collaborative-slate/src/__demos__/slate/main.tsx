@@ -10,11 +10,11 @@ style.textContent = `
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    background: linear-gradient(135deg, #f7faff 0%, #d4d8ec 100%);
     min-height: 100vh;
   }
   ::selection {
-    background: #c7d2fe;
+    background: #fec7d2;
   }
 `;
 document.head.appendChild(style);
@@ -48,7 +48,7 @@ const App: React.FC = () => {
         color: '#94a3b8',
         fontSize: '14px',
       }}>
-        Part of <a href="https://github.com/streamich/json-joy" style={{color: '#6366f1'}}>json-joy</a> —
+        Part of <a href="https://github.com/streamich/json-joy" style={{color: '#07f'}}>json-joy</a> —
         @jsonjoy.com/collaborative-slate
       </footer>
     </div>
