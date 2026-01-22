@@ -1,8 +1,10 @@
 import type { StorybookConfig } from '@storybook/react-webpack5';
 
-import { dirname } from "path"
+import { dirname, resolve } from "path"
 
 import { fileURLToPath } from "url"
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
 * This function is used to resolve the absolute path of a package.
@@ -18,6 +20,27 @@ const config: StorybookConfig = {
   "addons": [
     getAbsolutePath('@storybook/addon-webpack5-compiler-swc')
   ],
-  "framework": getAbsolutePath('@storybook/react-webpack5')
+  "framework": getAbsolutePath('@storybook/react-webpack5'),
+  webpackFinal: async (config) => {
+    // Resolve workspace package lib/* imports to src/* for development
+    // This allows Storybook to work without building packages first
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'json-joy/lib': resolve(__dirname, '../packages/json-joy/src'),
+      '@jsonjoy.com/base64/lib': resolve(__dirname, '../packages/base64/src'),
+      '@jsonjoy.com/buffers/lib': resolve(__dirname, '../packages/buffers/src'),
+      '@jsonjoy.com/codegen/lib': resolve(__dirname, '../packages/codegen/src'),
+      '@jsonjoy.com/json-expression/lib': resolve(__dirname, '../packages/json-expression/src'),
+      '@jsonjoy.com/json-pack/lib': resolve(__dirname, '../packages/json-pack/src'),
+      '@jsonjoy.com/json-path/lib': resolve(__dirname, '../packages/json-path/src'),
+      '@jsonjoy.com/json-pointer/lib': resolve(__dirname, '../packages/json-pointer/src'),
+      '@jsonjoy.com/json-pointer': resolve(__dirname, '../packages/json-pointer/src'),
+      '@jsonjoy.com/json-random/lib': resolve(__dirname, '../packages/json-random/src'),
+      '@jsonjoy.com/json-type/lib': resolve(__dirname, '../packages/json-type/src'),
+      '@jsonjoy.com/util/lib': resolve(__dirname, '../packages/util/src'),
+    };
+    return config;
+  },
 };
 export default config;

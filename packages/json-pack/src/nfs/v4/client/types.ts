@@ -40,5 +40,4 @@ export interface NfsFsClient
     | 'mkdtemp'
     | 'statfs'
     | 'watch'
-    | 'glob'
   > {}

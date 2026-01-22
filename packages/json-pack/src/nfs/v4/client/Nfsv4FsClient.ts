@@ -914,7 +914,8 @@ export class Nfsv4FsClient implements NfsFsClient {
     throw new Error('Not implemented.');
   };
 
-  public readonly glob = (pattern: string, options?: opts.IGlobOptions): Promise<string[]> => {
-    throw new Error('Not implemented.');
-  };
+  // glob is not supported in current memfs version
+  // public readonly glob = (pattern: string, options?: opts.IGlobOptions): Promise<string[]> => {
+  //   throw new Error('Not implemented.');
+  // };
 }
