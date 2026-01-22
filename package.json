@@ -95,6 +95,7 @@
         "maxMessageLength": 90,
         "scopes": [
           "",
+          "collaborative-editor",
           "collaborative-slate",
           "collaborative-prosemirror",
           "demo",
