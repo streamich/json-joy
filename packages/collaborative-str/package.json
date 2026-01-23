@@ -1,5 +1,5 @@
 {
-  "name": "@jsonjoy.com/collaborative-editor",
+  "name": "@jsonjoy.com/collaborative-str",
   "publishConfig": {
     "access": "public"
   },
@@ -9,11 +9,11 @@
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-editor",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-str",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/collaborative-editor"
+    "directory": "packages/collaborative-str"
   },
   "license": "Apache-2.0",
   "funding": {
@@ -24,7 +24,8 @@
     "collaborative",
     "multiplayer",
     "binding",
-    "collaborative-editor",
+    "collaborative-str",
+    "str",
     "editor",
     "input",
     "textarea",

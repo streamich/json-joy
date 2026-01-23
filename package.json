@@ -59,9 +59,6 @@
     "@types/react-dom": "^19",
     "benchmark": "^2.1.4",
     "clipboard-copy": "^4.0.1",
-    "collaborative-editor": "^2.8.0",
-    "collaborative-input": "^1.6.1",
-    "collaborative-ui": "^1.6.0",
     "config-galore": "^1.0.0",
     "editing-traces": "https://github.com/streamich/editing-traces#145f79871a7bf54162f55d84eb6b8381db7b65b8",
     "fast-diff": "^1.3.0",
@@ -101,7 +98,7 @@
         "maxMessageLength": 90,
         "scopes": [
           "",
-          "collaborative-editor",
+          "collaborative-str",
           "collaborative-slate",
           "collaborative-prosemirror",
           "demo",

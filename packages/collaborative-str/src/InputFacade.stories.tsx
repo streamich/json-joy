@@ -1,11 +1,8 @@
 import * as React from 'react';
-import {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
-import {StrBinding} from '../StrBinding';
-import {InputFacade0, InputFacade1, InputFacade2, InputFacade3, InputFacade4} from '../InputFacade';
-import {model0} from '../__tests__/fixtures';
-import {StoreStrFacade} from './StoreStrFacade';
-import {ReplicatedStr} from './ReplicatedStr';
+import {StrBinding} from './StrBinding';
+import {InputFacade0, InputFacade1, InputFacade2, InputFacade3, InputFacade4} from './InputFacade';
 import type {Meta, StoryObj} from '@storybook/react';
+import {model0} from './__tests__/fixtures';
 
 const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) => {
   const inputRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(null);
@@ -19,11 +16,8 @@ const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) =>
     if (!inputRef.current) return;
     const input = inputRef.current;
     const editor = new Facade(input);
-    const store = new JsonPatchStore(model, []);
-    const facade = new StoreStrFacade(store, true);
-    const str = new ReplicatedStr(facade);
-    const binding = new StrBinding(() => str, editor);
-    binding.bind(false);
+    const binding = new StrBinding(() => model.api.str([]), editor);
+    binding.bind(true);
     return () => {
       binding.unbind();
     };
@@ -101,9 +95,23 @@ const Demo: React.FC<{textarea: boolean; Facade: any}> = ({textarea, Facade}) =>
 };
 
 const meta: Meta<typeof Demo> = {
-  title: 'collaborative-editor/StoreStrFacade',
-  component: Demo,
-  argTypes: {},
+  title: 'collaborative-str/InputFacade',
+  component: Demo as any,
+  argTypes: {
+    textarea: {
+      control: { type: 'boolean' },
+    },
+    Facade: {
+      control: { type: 'select' },
+      options: {
+        Facade0: InputFacade0,
+        Facade1: InputFacade1,
+        Facade2: InputFacade2,
+        Facade3: InputFacade3,
+        Facade4: InputFacade4,
+      },
+    },
+  },
 };
 
 export default meta;
@@ -111,6 +119,7 @@ export default meta;
 export const Facade0: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade0,
+    textarea: false,
   } as any,
 };
 
@@ -124,6 +133,7 @@ export const Facade0Textarea: StoryObj<typeof meta> = {
 export const Facade1: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade1,
+    textarea: false,
   } as any,
 };
 
@@ -137,6 +147,7 @@ export const Facade1Textarea: StoryObj<typeof meta> = {
 export const Facade2: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade2,
+    textarea: false,
   } as any,
 };
 
@@ -150,6 +161,7 @@ export const Facade2Textarea: StoryObj<typeof meta> = {
 export const Facade3: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade3,
+    textarea: false,
   } as any,
 };
 
@@ -163,6 +175,7 @@ export const Facade3Textarea: StoryObj<typeof meta> = {
 export const Facade4: StoryObj<typeof meta> = {
   args: {
     Facade: InputFacade4,
+    textarea: false,
   } as any,
 };
 

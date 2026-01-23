@@ -21,6 +21,11 @@ export type EditorSelection = [start: number, end: number, direction: -1 | 0 | 1
  * A facade for the editor, which is used by the binding to communicate with
  * the editor. The editor can be any plain text editor, such as a textarea
  * or an input element, or a code editor, such as CodeMirror or Monaco.
+ * 
+ * The more methods are implemented, the more granular the binding can be when
+ * syncing changes between the model and the editor. The minimal implementation
+ * only requires the `get` and `set` methods implemented, which will make the
+ * collaborative editing binding work in a basic way.
  */
 export interface EditorFacade {
   // ----------------------------------------------------------------- Contents
