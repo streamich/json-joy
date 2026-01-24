@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "es2020",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "sourceMap": true
+  },
+  "exclude": ["node_modules", "dist", "lib", "./**/__tests__/**/*", "./**/*.stories.ts", "./**/*.stories.tsx"]
+}

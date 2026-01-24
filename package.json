@@ -30,7 +30,7 @@
     "upgrade:check": "npx npm-check-updates@16.14",
     "upgrade:interactive": "npx npm-check-updates@16.14 --interactive",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook:build": "storybook build"
   },
   "private": true,
   "workspaces": [
@@ -71,6 +71,7 @@
     "nano-theme": "^1.4.3",
     "nice-ui": "^1.30.0",
     "quill-delta": "^5.1.0",
+    "raw-loader": "^4.0.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "rimraf": "^6.1.2",
@@ -128,6 +129,7 @@
           "json-stable",
           "json-text",
           "json-walk",
+          "ui",
           "util"
         ]
       }
