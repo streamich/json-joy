@@ -1643,6 +1643,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill"
+  dependencies:
+    json-joy: "workspace:*"
+    quill: "npm:^2.0.3"
+    quill-delta: "npm:^5.1.0"
+  peerDependencies:
+    quill: ">=2"
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate"

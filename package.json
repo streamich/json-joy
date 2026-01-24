@@ -108,6 +108,7 @@
           "collaborative-monaco-react",
           "collaborative-prosemirror",
           "collaborative-quill",
+          "collaborative-quill-react",
           "collaborative-slate",
           "collaborative-str",
           "collaborative-ui",
