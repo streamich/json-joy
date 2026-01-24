@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {bind} from '.';
+import {bind} from '@jsonjoy.com/collaborative-monaco';
 import {Editor, type EditorProps} from '@monaco-editor/react';
-import type {CollaborativeStr} from 'collaborative-editor';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 
 export interface CollaborativeMonacoProps extends EditorProps {
   str: () => CollaborativeStr;

@@ -3,7 +3,7 @@ import {Model, s} from 'json-joy/lib/json-crdt';
 import type {Meta, StoryObj} from '@storybook/react';
 import * as monaco from 'monaco-editor';
 import {monarchLatexLang} from './__tests__/latexLang';
-import {CollaborativeMonaco} from './CollaborativeMonaco';
+import {CollaborativeMonaco} from '.';
 
 monaco.languages.register({
   id: 'latex',
@@ -44,16 +44,19 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <div>
-      <CollaborativeMonaco
-        height={'200px'}
-        str={() => model.s.$}
-        options={{
-          language: 'latex',
-        }}
-        onMount={(editor) => {
-          (editorRef as any).current = editor;
-        }}
-      />
+      {/* Stop keyboard events from bubbling to Storybook shortcuts */}
+      <div onKeyDown={(e) => e.stopPropagation()}>
+        <CollaborativeMonaco
+          height={'200px'}
+          str={() => model.s.$}
+          options={{
+            language: 'latex',
+          }}
+          onMount={(editor) => {
+            (editorRef as any).current = editor;
+          }}
+        />
+      </div>
       <div>
         <button type={'button'} onClick={() => insert('!')}>
           Append "!" to editor
@@ -129,7 +132,7 @@ const Editor: React.FC<EditorProps> = ({
 };
 
 const meta: Meta<EditorProps> = {
-  title: 'collaborative-monaco/Monaco Editor',
+  title: 'collaborative-monaco-react/Monaco Editor',
   component: Editor as any,
   argTypes: {},
 };

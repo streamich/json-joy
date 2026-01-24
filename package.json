@@ -104,6 +104,7 @@
           "collaborative-input",
           "collaborative-lexical",
           "collaborative-monaco",
+          "collaborative-monaco-react",
           "collaborative-prosemirror",
           "collaborative-quill",
           "collaborative-slate",

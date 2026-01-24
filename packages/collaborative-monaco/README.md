@@ -35,21 +35,4 @@ unbind();
 
 ## React Usage
 
-Installation:
-
-```
-npm install json-joy @jsonjoy.com/collaborative-monaco monaco-editor @monaco-editor/react react react-dom
-```
-
-Usage:
-
-```tsx
-import {Model, s} from 'json-joy/lib/json-crdt';
-import {CollaborativeMonaco} from '@jsonjoy.com/collaborative-monaco/lib/CollaborativeMonaco';
-
-const model = Model.create(s.str('hello'));
-
-const MyComponent = () => {
-  return <CollaborativeMonaco str={model.s.toApi()} />
-};
-```
+For React integration, use the [`@jsonjoy.com/collaborative-monaco-react`](https://github.com/streamich/json-joy/tree/master/packages/collaborative-monaco-react) package.

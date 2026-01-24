@@ -1599,11 +1599,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-monaco@workspace:packages/collaborative-monaco":
+"@jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react":
   version: 0.0.0-use.local
-  resolution: "@jsonjoy.com/collaborative-monaco@workspace:packages/collaborative-monaco"
+  resolution: "@jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react"
   dependencies:
-    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@monaco-editor/react": "npm:^4.7.0"
     "@storybook/react": "npm:^10.2.0"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
@@ -1611,6 +1612,21 @@ __metadata:
     monaco-editor: "npm:^0.55.1"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
+  peerDependencies:
+    "@monaco-editor/react": "*"
+    monaco-editor: "*"
+    react: "*"
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/collaborative-monaco@workspace:*, @jsonjoy.com/collaborative-monaco@workspace:packages/collaborative-monaco":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-monaco@workspace:packages/collaborative-monaco"
+  dependencies:
+    "@jsonjoy.com/collaborative-str": "workspace:*"
+    json-joy: "workspace:*"
+    monaco-editor: "npm:^0.55.1"
   peerDependencies:
     monaco-editor: "*"
     tslib: "*"

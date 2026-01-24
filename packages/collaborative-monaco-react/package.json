@@ -1,19 +1,19 @@
 {
-  "name": "@jsonjoy.com/collaborative-monaco",
+  "name": "@jsonjoy.com/collaborative-monaco-react",
   "publishConfig": {
     "access": "public"
   },
   "version": "17.65.0",
-  "description": "Binding for collaborative editing support in Monaco Editor. Connects JSON CRDT str node to Monaco Editor.",
+  "description": "React component for collaborative editing in Monaco Editor. Connects JSON CRDT str node to Monaco Editor.",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-monaco",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-monaco-react",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/collaborative-monaco"
+    "directory": "packages/collaborative-monaco-react"
   },
   "license": "AGPL-3.0-only",
   "funding": {
@@ -29,23 +29,29 @@
     "binding",
     "collaborative-editor",
     "editor",
-    "input",
-    "textarea",
-    "contenteditable",
+    "react",
     "json-crdt",
     "json",
     "crdt"
   ],
   "dependencies": {
-    "@jsonjoy.com/collaborative-str": "workspace:*",
-    "json-joy": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco": "workspace:*"
   },
   "peerDependencies": {
+    "@monaco-editor/react": "*",
     "monaco-editor": "*",
+    "react": "*",
     "tslib": "*"
   },
   "devDependencies": {
-    "monaco-editor": "^0.55.1"
+    "@monaco-editor/react": "^4.7.0",
+    "@storybook/react": "^10.2.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "json-joy": "workspace:*",
+    "monaco-editor": "^0.55.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "engines": {
     "node": ">=10.0"
