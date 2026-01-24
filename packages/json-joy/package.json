@@ -8,7 +8,7 @@
   },
   "homepage": "https://github.com/streamich/json-joy",
   "repository": "streamich/json-joy",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-only",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"

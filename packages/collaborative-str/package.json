@@ -15,7 +15,7 @@
     "url": "https://github.com/streamich/json-joy.git",
     "directory": "packages/collaborative-str"
   },
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-only",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
