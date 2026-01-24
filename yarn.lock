@@ -1461,6 +1461,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input"
+  dependencies:
+    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@storybook/react": "npm:^10.2.0"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    json-joy: "workspace:*"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate"
@@ -1504,7 +1520,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-str@workspace:packages/collaborative-str":
+"@jsonjoy.com/collaborative-str@workspace:*, @jsonjoy.com/collaborative-str@workspace:packages/collaborative-str":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-str@workspace:packages/collaborative-str"
   dependencies:
