@@ -28,27 +28,9 @@ unbind();
 ```
 
 
-## React Usage
+## React
 
-Installation:
-
-```
-npm install @jsonjoy.com/collaborative-quill json-joy quill quill-delta react react-dom
-```
-
-Usage:
-
-
-```tsx
-import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
-import {CollaborativeQuill} from '@jsonjoy.com/collaborative-quill/lib/CollaborativeQuill';
-
-const model = ModelWithExt.create(ext.quill.new('abc'));
-
-const MyComponent = () => {
-  return <CollaborativeQuill api={model.s.toExt()} />
-};
-```
+For React components, see [`@jsonjoy.com/collaborative-quill-react`](../collaborative-quill-react).
 
 
 ## Preview

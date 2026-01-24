@@ -1643,7 +1643,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill":
+"@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"
+  dependencies:
+    "@jsonjoy.com/collaborative-quill": "workspace:*"
+    "@storybook/react": "npm:^10.2.0"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    json-joy: "workspace:*"
+    quill: "npm:^2.0.3"
+    quill-delta: "npm:^5.1.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+  peerDependencies:
+    quill: ">=2"
+    react: "*"
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/collaborative-quill@workspace:*, @jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill"
   dependencies:

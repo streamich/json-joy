@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Quill, {type QuillOptions} from 'quill';
-import {QuillBinding} from '../QuillBinding';
+import {bind} from '@jsonjoy.com/collaborative-quill';
 import {loadCss} from './loadCss';
 import {QuillDeltaApi} from 'json-joy/lib/json-crdt-extensions/quill-delta/QuillDeltaApi';
 import {opts} from './constants';
-import type {OnEditorChange, OnSelectionChange, OnTextChange} from '../types';
+import type {OnEditorChange, OnSelectionChange, OnTextChange} from '@jsonjoy.com/collaborative-quill';
 
 export interface CollaborativeQuillProps extends React.HTMLAttributes<HTMLDivElement> {
   api: () => QuillDeltaApi | undefined;
@@ -39,7 +39,7 @@ export const CollaborativeQuill: React.FC<CollaborativeQuillProps> = ({
     if (!themeCss) themeCss = `https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.${options.theme || 'snow'}.css`;
     loadCss(themeCss, themeCss);
     const editor = new Quill(div, options);
-    const unbind = QuillBinding.bind(api, editor);
+    const unbind = bind(api, editor);
     onEditor?.(editor);
     const handleChange: OnEditorChange = (eventName: 'text-change' | 'selection-change', ...args: unknown[]) => {
       switch (eventName) {
