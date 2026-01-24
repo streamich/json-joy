@@ -18,7 +18,7 @@ const Demo: React.FC = () => {
   return (
     <div>
       <CollaborativeQuill api={api} onEditor={(editor) => (editorRef.current = editor)} />
-      {/* <br />
+      <br />
       <div>
         <button
           onClick={() => {
@@ -68,7 +68,7 @@ const Demo: React.FC = () => {
       </div>
       <pre style={{fontSize: '10px'}}>
         <code>{model.toString()}</code>
-      </pre> */}
+      </pre>
     </div>
   );
 };
