@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "./tsconfig",
   "compilerOptions": {
   },
-  "include": ["src"],
   "exclude": [
     "src/demo",
     "src/__tests__",
@@ -16,6 +15,8 @@
     "src/**/__tape__/**/*.*",
     "*.test.ts",
     "*.spec.ts",
+    "src/**/__stories__/**/*.*",
+    "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
 }

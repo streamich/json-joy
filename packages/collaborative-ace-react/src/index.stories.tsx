@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Model} from 'json-joy/lib/json-crdt';
-import {CollaborativeAce} from './CollaborativeAce';
+import {CollaborativeAce} from '.';
 import type {Ace} from 'ace-builds';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -113,7 +113,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
 };
 
 const meta: Meta<EditorProps> = {
-  title: 'collaborative-ace/Ace Editor',
+  title: 'collaborative-ace-react/Ace Editor',
   component: Editor as any,
   argTypes: {},
 };

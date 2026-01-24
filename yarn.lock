@@ -1542,11 +1542,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-ace@workspace:packages/collaborative-ace":
+"@jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react":
   version: 0.0.0-use.local
-  resolution: "@jsonjoy.com/collaborative-ace@workspace:packages/collaborative-ace"
+  resolution: "@jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react"
   dependencies:
-    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/collaborative-ace": "workspace:*"
     "@storybook/react": "npm:^10.2.0"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
@@ -1557,11 +1557,21 @@ __metadata:
     react-dom: "npm:^19.2.3"
   peerDependencies:
     ace-builds: "*"
+    react: "*"
     react-ace: "*"
     tslib: "*"
-  peerDependenciesMeta:
-    react-ace:
-      optional: true
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/collaborative-ace@workspace:*, @jsonjoy.com/collaborative-ace@workspace:packages/collaborative-ace":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-ace@workspace:packages/collaborative-ace"
+  dependencies:
+    "@jsonjoy.com/collaborative-str": "workspace:*"
+    ace-builds: "npm:^1.43.6"
+  peerDependencies:
+    ace-builds: "*"
+    tslib: "*"
   languageName: unknown
   linkType: soft
 

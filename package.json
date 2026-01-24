@@ -99,6 +99,7 @@
         "scopes": [
           "",
           "collaborative-ace",
+          "collaborative-ace-react",
           "collaborative-codemirror",
           "collaborative-devtools",
           "collaborative-input",

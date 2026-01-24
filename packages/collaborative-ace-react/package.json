@@ -1,19 +1,19 @@
 {
-  "name": "@jsonjoy.com/collaborative-ace",
+  "name": "@jsonjoy.com/collaborative-ace-react",
   "publishConfig": {
     "access": "public"
   },
   "version": "17.65.0",
-  "description": "Binding for collaborative editing support in Ace Editor. Connects JSON CRDT str node to Ace Editor.",
+  "description": "React component for collaborative editing in Ace Editor. Connects JSON CRDT str node to Ace Editor.",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-ace",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-ace-react",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/collaborative-ace"
+    "directory": "packages/collaborative-ace-react"
   },
   "license": "AGPL-3.0-only",
   "funding": {
@@ -29,22 +29,29 @@
     "binding",
     "collaborative-editor",
     "editor",
-    "input",
-    "textarea",
-    "contenteditable",
+    "react",
     "json-crdt",
     "json",
     "crdt"
   ],
   "dependencies": {
-    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/collaborative-ace": "workspace:*"
   },
   "peerDependencies": {
     "ace-builds": "*",
+    "react": "*",
+    "react-ace": "*",
     "tslib": "*"
   },
   "devDependencies": {
-    "ace-builds": "^1.43.6"
+    "@storybook/react": "^10.2.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "ace-builds": "^1.43.6",
+    "json-joy": "workspace:*",
+    "react": "^19.2.3",
+    "react-ace": "^14.0.1",
+    "react-dom": "^19.2.3"
   },
   "engines": {
     "node": ">=10.0"

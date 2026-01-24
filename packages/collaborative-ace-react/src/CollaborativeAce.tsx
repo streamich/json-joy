@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AceEditor, {type IAceEditorProps} from 'react-ace';
-import {bind} from '.';
-import type {CollaborativeStr} from 'collaborative-editor';
+import {bind} from '@jsonjoy.com/collaborative-ace';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 import type {Ace} from 'ace-builds';
 
 export type Editor = Ace.Editor;
