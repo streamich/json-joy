@@ -36,7 +36,7 @@ export type LocalModel = Model<SchemaToJsonNode<typeof LOCAL_DATA_SCHEMA>>;
  */
 export class Peritext<T = string> implements Printable, Stateful {
   public readonly editor: Editor<T>;
-  public readonly overlay = new Overlay<T>(this);
+  public readonly overlay: Overlay<T>;
   public readonly blocks: Fragment<T>;
 
   /**
@@ -61,6 +61,7 @@ export class Peritext<T = string> implements Printable, Stateful {
     extraSlicesModel: ExtraSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
     localSlicesModel: LocalModel = Model.create(LOCAL_DATA_SCHEMA, SESSION.LOCAL),
   ) {
+    this.overlay = new Overlay<T>(this);
     this.savedSlices = new Slices(this, slices);
     this.extraSlices = new ExtraSlices(this, extraSlicesModel.root.node().get(0)!);
     const localApi = localSlicesModel.api;
