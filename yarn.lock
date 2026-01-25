@@ -6125,13 +6125,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.1.7":
-  version: 3.1.7
-  resolution: "dompurify@npm:3.1.7"
-  checksum: 10c0/fcceef2e9f824d712a056fa699b0538f3337f5cf00ccb7227bdc7eba5463823e15d9aecc00a2fd81c726b28a71e7b09f0eb8a2fde1021c40e35f12dc67b66394
-  languageName: node
-  linkType: hard
-
 "dompurify@npm:3.2.7":
   version: 3.2.7
   resolution: "dompurify@npm:3.2.7"
@@ -9157,7 +9150,7 @@ __metadata:
     jest: "npm:^30.2.0"
     json-crdt-traces: "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
     json-logic-js: "npm:^2.0.2"
-    monaco-editor: "npm:^0.54.0"
+    monaco-editor: "npm:^0.55.1"
     nano-theme: "npm:^1.4.3"
     nice-ui: "npm:^1.30.0"
     quill-delta: "npm:^5.1.0"
@@ -10046,16 +10039,6 @@ __metadata:
   version: 1.0.2
   resolution: "module-error@npm:1.0.2"
   checksum: 10c0/584a43a1bb2720c6c6c771e257a308af4f042a17c17b1472a2c855130a1ad93ba516a82ae7ac2ce2d03062e521cc53c03ec0ce153795d895312d7747fb3bb99b
-  languageName: node
-  linkType: hard
-
-"monaco-editor@npm:^0.54.0":
-  version: 0.54.0
-  resolution: "monaco-editor@npm:0.54.0"
-  dependencies:
-    dompurify: "npm:3.1.7"
-    marked: "npm:14.0.0"
-  checksum: 10c0/40198c0bac873d10804a89c991c014088943b23625d68149cb38fc52c3438c896803f645a36a6f75e0d961c87e8726073cb504e2427fc33850e0b034ff6229ee
   languageName: node
   linkType: hard
 
