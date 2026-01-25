@@ -1805,7 +1805,6 @@ __metadata:
     "@jsonjoy.com/collaborative-str": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
-    "@jsonjoy.com/reactive-rpc": "npm:^2.5.0"
     "@jsonjoy.com/ui": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     "@material-ui/core": "npm:^4.12.4"
@@ -1813,7 +1812,6 @@ __metadata:
     clickable-json: "npm:^1.15.1"
     codemirror: "npm:^6.0.2"
     flexible-input: "npm:^1.0.3"
-    json-crdt-repo: "npm:^1.5.0"
     json-joy: "workspace:*"
     monaco-editor: "npm:^0.55.1"
     nano-theme: "npm:^1.5.0"
@@ -9069,7 +9067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-crdt-repo@npm:^1.4.0, json-crdt-repo@npm:^1.5.0":
+"json-crdt-repo@npm:^1.4.0":
   version: 1.5.0
   resolution: "json-crdt-repo@npm:1.5.0"
   dependencies:

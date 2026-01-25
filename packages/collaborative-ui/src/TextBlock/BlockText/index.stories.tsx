@@ -3,7 +3,7 @@ import {BlockText} from '.';
 
 export default {
   component: BlockText,
-  title: '<TextBlock>/<BlockText>',
+  title: 'collaborative-ui/<TextBlock>/<BlockText>',
 };
 
 export const Default = {

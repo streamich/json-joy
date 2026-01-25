@@ -11,7 +11,6 @@ import {ComponentsPage} from './pages/ComponentsPage';
 import {CustomComponentsProvider} from 'nice-ui/lib/markdown';
 import {custom} from './markdown/custom';
 import {ExplorerPage} from './pages/ExplorerPage';
-import {LiveDemosPage} from './pages/LiveDemosPage';
 
 export type AppProps = Record<string, never>;
 
@@ -26,7 +25,6 @@ export const App: React.FC<AppProps> = () => {
         <context.Provider value={service}>
           <Header />
           <Route match={'/explorer'} render={() => <ExplorerPage />} />
-          <Route match={'/demos'} render={() => <LiveDemosPage />} />
           <Route match={'/guidelines'} render={() => <GuidelinesPage />} />
           <Route match={'/components'} render={() => <ComponentsPage />} />
         </context.Provider>
