@@ -36,6 +36,11 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-webpack5-compiler-swc')
   ],
   "framework": getAbsolutePath('@storybook/react-webpack5'),
+  typescript: {
+    // Disable react-docgen to avoid parse errors on non-React TypeScript files
+    // that use angle-bracket type assertions or JSDoc {@link} tags
+    reactDocgen: false,
+  },
   webpackFinal: async (config) => {
     // Resolve workspace package lib/* imports to src/* for development
     // This allows Storybook to work without building packages first

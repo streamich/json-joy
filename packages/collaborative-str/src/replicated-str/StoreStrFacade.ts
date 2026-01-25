@@ -29,26 +29,26 @@ export class StoreStrFacade implements ReplicatedStrFacade {
     this.subscribe = store.subscribe;
     this.tick = strict
       ? undefined
-      : () => ((<JsonPatchStore<any>>this.store).api?.() as StrApi)?.asStr?.().api.model.tick ?? 0;
+      : () => ((this.store as JsonPatchStore<any>).api?.() as StrApi)?.asStr?.().api.model.tick ?? 0;
   }
 
   get findId(): undefined | ReplicatedStrFacade['findId'] {
     if (this.strict) return void 0;
-    const str = ((<JsonPatchStore<any>>this.store).api?.() as StrApi)?.asStr?.();
+    const str = ((this.store as JsonPatchStore<any>).api?.() as StrApi)?.asStr?.();
     if (!str) return void 0;
     return str.findId.bind(str);
   }
 
   get findPos(): undefined | ReplicatedStrFacade['findPos'] {
     if (this.strict) return void 0;
-    const str = ((<JsonPatchStore<any>>this.store).api?.() as StrApi)?.asStr?.();
+    const str = ((this.store as JsonPatchStore<any>).api?.() as StrApi)?.asStr?.();
     if (!str) return void 0;
     return str.findPos.bind(str);
   }
 
   get transaction(): undefined | ReplicatedStrFacade['transaction'] {
     if (this.strict) return void 0;
-    const str = ((<JsonPatchStore<any>>this.store).api?.() as StrApi)?.asStr?.();
+    const str = ((this.store as JsonPatchStore<any>).api?.() as StrApi)?.asStr?.();
     if (!str) return void 0;
     return str.api.transaction.bind(str.api);
   }

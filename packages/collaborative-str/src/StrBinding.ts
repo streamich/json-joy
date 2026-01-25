@@ -63,7 +63,7 @@ export class StrBinding {
     const editor = this.editor;
     const str = this.str();
     if (!str) return;
-    const view = <string | undefined>(this.view = str.view()) || '';
+    const view = ((this.view = str.view()) as string | undefined) || '';
     if (editor.ins && editor.del) {
       const editorText = editor.get();
       if (view === editorText) return;
