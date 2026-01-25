@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {GlobalCss} from 'nano-theme';
-import {NiceUiProvider} from 'nice-ui/lib/context';
+import {NiceUiProvider} from '@jsonjoy.com/ui/lib/context';
 import {ModelWithExt, ext} from '../../../json-crdt-extensions';
 import {PeritextView} from '../../web/react';
 import {CursorPlugin} from '../../plugins/cursor';

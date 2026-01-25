@@ -15,7 +15,7 @@ Provide user's image as the `src` prop.
 ~~~
 
 ```tsx
-import {Avatar} from 'nice-ui/lib/inline/Avatar';
+import {Avatar} from '@jsonjoy.com/ui/lib/inline/Avatar';
 
 <Avatar width={64} src={''} />
 ```

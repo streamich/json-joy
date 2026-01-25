@@ -3,7 +3,7 @@ import {rerender$, resize$} from '../../PeritextWebUi/util/rect$';
 import {BehaviorSubject, type Subscription, throttleTime} from 'rxjs';
 import {EditorPortal} from '../../PeritextWebUi/react/util/EditorPortal';
 import type {Rect} from '../../PeritextWebUi/types';
-import type {UiLifeCycles} from 'nice-ui/lib/types';
+import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 export interface EntangledPortalStateOpts {
   position?: (base: Rect, dest: Rect) => [x: number, y: number];

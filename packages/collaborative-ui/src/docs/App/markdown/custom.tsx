@@ -1,8 +1,8 @@
 import * as React from 'react';
-import type {CustomComponents} from 'nice-ui/lib/markdown';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {Avatar} from 'nice-ui/lib/1-inline/Avatar';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import type {CustomComponents} from '@jsonjoy.com/ui/lib/markdown';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Avatar} from '@jsonjoy.com/ui/lib/1-inline/Avatar';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 
 export const custom: CustomComponents = {
   Avatar: (props) => <Avatar {...props} />,

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import type {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
-import {Button} from 'nice-ui/lib/2-inline-block/Button';
+import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {useStore} from '../../hooks/useStore';
 import {StrAdapterNative} from '../../StrAdapterNative';
 import {TitleInput} from './inputs/TitleInput';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import type {TodosView, TodoView} from './types';
 import {Background} from './Background';
 

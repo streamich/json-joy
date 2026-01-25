@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {SpinnerBars} from 'nice-ui/lib/2-inline-block/SpinnerBars';
+import {SpinnerBars} from '@jsonjoy.com/ui/lib/2-inline-block/SpinnerBars';
 import type {DemoProps} from './types';
 
 const DisplayTodos = React.lazy(() => import('./DisplayTodos'));

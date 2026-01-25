@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {MiniTitle} from 'nice-ui/lib/3-list-item/MiniTitle';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 
 export interface CardHeaderProps {
   title?: React.ReactNode;

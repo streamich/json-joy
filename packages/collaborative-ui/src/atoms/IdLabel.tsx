@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Code} from 'nice-ui/lib/1-inline/Code';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 
 export interface IdLabelProps {
   children: React.ReactNode;

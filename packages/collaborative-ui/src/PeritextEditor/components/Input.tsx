@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {SpinnerBars} from 'nice-ui/lib/2-inline-block/SpinnerBars';
-import {NotchedOutline} from 'nice-ui/lib/2-inline-block/NotchedOutline';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {fonts} from 'nice-ui/lib/styles';
-import {useStyles} from 'nice-ui/lib/styles/context';
+import {SpinnerBars} from '@jsonjoy.com/ui/lib/2-inline-block/SpinnerBars';
+import {NotchedOutline} from '@jsonjoy.com/ui/lib/2-inline-block/NotchedOutline';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {fonts} from '@jsonjoy.com/ui/lib/styles';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const outlineClass = rule({
   pd: '0px !important',

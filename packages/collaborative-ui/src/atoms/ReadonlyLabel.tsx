@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Code} from 'nice-ui/lib/1-inline/Code';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 
 export interface ReadonlyLabelProps {

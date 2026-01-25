@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {CopyButton} from '../CopyButton';
 import {rule, useTheme} from 'nano-theme';
 import {CodeblockLayout} from '../CodeblockLayout';

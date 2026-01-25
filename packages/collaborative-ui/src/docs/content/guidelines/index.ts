@@ -1,4 +1,4 @@
-import type {ContentPage} from 'nice-ui/lib/6-page/DocsPages/types';
+import type {ContentPage} from '@jsonjoy.com/ui/lib/6-page/DocsPages/types';
 import {gettingStartedPage} from './getting-started';
 import {routingPage} from './routing';
 import {themingPage} from './theming';

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {ExplorerMenu} from '../ExplorerMenu';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {Separator} from 'nice-ui/lib/3-list-item/Separator';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {DropArea} from '../DropArea';
 import {useExplorer} from '../context';
 import {CreateButton} from '../../molecules/CreateButton';
-import {MiniTitle} from 'nice-ui/lib/3-list-item/MiniTitle';
-import {NiceUiSizes} from 'nice-ui/lib/constants';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 import {TraceSelector} from '../TraceSelector';
-import {Text} from 'nice-ui/lib/1-inline/Text';
+import {Text} from '@jsonjoy.com/ui/lib/1-inline/Text';
 import {useT} from 'use-t';
 
 export type ExplorerSidenavProps = Record<string, never>;

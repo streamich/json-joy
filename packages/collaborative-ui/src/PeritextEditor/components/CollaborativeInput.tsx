@@ -1,7 +1,7 @@
 import {createElement, useMemo, useLayoutEffect} from 'react';
 import {bind} from 'collaborative-input';
 import type {CollaborativeStr} from 'collaborative-editor';
-import type {UiLifeCycles} from 'nice-ui/lib/types';
+import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 class CollaborativeInputState implements UiLifeCycles {
   protected _unbind: (() => void) | undefined;

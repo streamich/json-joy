@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {LogoStatic} from 'nice-ui/lib/1-inline/LogoStatic';
-import {Text} from 'nice-ui/lib/1-inline/Text';
-import {Link} from 'nice-ui/lib/1-inline/Link';
-import {FixedColumn} from 'nice-ui/lib/3-list-item/FixedColumn';
+import {LogoStatic} from '@jsonjoy.com/ui/lib/1-inline/LogoStatic';
+import {Text} from '@jsonjoy.com/ui/lib/1-inline/Text';
+import {Link} from '@jsonjoy.com/ui/lib/1-inline/Link';
+import {FixedColumn} from '@jsonjoy.com/ui/lib/3-list-item/FixedColumn';
 
 export type Props = Record<string, never>;
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {TopNav} from 'nice-ui/lib/5-block/TopNav';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
+import {TopNav} from '@jsonjoy.com/ui/lib/5-block/TopNav';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Left} from './Left';
 import {Right} from './Right';
 

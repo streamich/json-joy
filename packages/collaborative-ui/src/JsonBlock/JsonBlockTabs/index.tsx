@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {BasicButton} from 'nice-ui/lib/2-inline-block/BasicButton';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {JsonBlockState} from '../JsonBlockState';
 
 export interface JsonBlockTabsProps {

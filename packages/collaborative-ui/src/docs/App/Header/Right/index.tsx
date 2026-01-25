@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {BasicButtonMore} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonMore';
-import {Popup} from 'nice-ui/lib/4-card/Popup';
-import {ContextItem, ContextPane, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
+import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {ContextItem, ContextPane, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {ThemeContextItem} from './ThemeContextItem';
 
 export type Props = Record<string, never>;
@@ -18,7 +18,7 @@ export const Right: React.FC<Props> = () => {
         renderContext={() => (
           <ContextPane right style={{minWidth: 260}}>
             <ContextSep />
-            <ContextItem closePopup to={'https://github.com/streamich/nice-ui'}>
+            <ContextItem closePopup to={'https://github.com/streamich/json-joy/tree/master/packages/ui'}>
               <Split style={{alignItems: 'center'}}>
                 <span>{t('GitHub repository')}</span>
                 <Iconista set="fontawesome_brands" icon="github" width={16} height={16} />

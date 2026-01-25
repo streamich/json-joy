@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {ContextHeader} from './ContextHeader';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {BasicButtonBack} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonBack';
-import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {BasicButtonBack} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonBack';
+import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 
 export interface ContextPaneHeaderProps {
   short?: boolean;

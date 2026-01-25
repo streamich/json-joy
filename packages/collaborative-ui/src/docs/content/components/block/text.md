@@ -5,5 +5,5 @@ You import the block components from the `5-block` folder
 to reduce the bundle size.
 
 ```ts
-import {Component, ComponentProps} from 'nice-ui/lib/5-block/Component';
+import {Component, ComponentProps} from '@jsonjoy.com/ui/lib/5-block/Component';
 ```

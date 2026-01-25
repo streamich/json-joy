@@ -1,5 +1,5 @@
 import type {ContentPage} from './types';
-import {augmentContentPages} from 'nice-ui/lib/6-page/DocsPages/util';
+import {augmentContentPages} from '@jsonjoy.com/ui/lib/6-page/DocsPages/util';
 import {componentsPage} from './components';
 import {guidelinesPage} from './guidelines';
 

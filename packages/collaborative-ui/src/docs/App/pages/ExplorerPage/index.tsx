@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {pageutils} from 'nice-ui/lib/6-page/DocsPages/util';
+import {pageutils} from '@jsonjoy.com/ui/lib/6-page/DocsPages/util';
 import {content} from '../../../content';
-import {ConnectedSubNav} from 'nice-ui/lib/5-block/SubNav/ConnectedSubNav';
+import {ConnectedSubNav} from '@jsonjoy.com/ui/lib/5-block/SubNav/ConnectedSubNav';
 import {DocsFooter} from '../../components/DocsFooter';
 import {JsonCrdtExplorer} from '../../../../JsonCrdtExplorer';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {Page} from 'nice-ui/lib/6-page/Page';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {Page} from '@jsonjoy.com/ui/lib/6-page/Page';
 
 const page = pageutils.find(content, ['guidelines'])!;
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import HighlightCode from 'nice-ui/lib/1-inline/HighlightCode';
+import HighlightCode from '@jsonjoy.com/ui/lib/1-inline/HighlightCode';
 import {encoder as cborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/shared';
 import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import {rule, theme, useTheme} from 'nano-theme';

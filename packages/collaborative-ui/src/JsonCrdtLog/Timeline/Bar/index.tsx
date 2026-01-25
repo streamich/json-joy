@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {drule, useTheme} from 'nano-theme';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
 import {Tick} from './Tick';
 import {useLogState} from '../../context';

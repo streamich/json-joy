@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {CopyButton} from '../CopyButton';
 import {useT} from 'use-t';
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ValueSyncStore} from '../../../../util/events/sync-store';
 import {secondBrain} from './menus';
-import {Code} from 'nice-ui/lib/1-inline/Code';
-import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {CommonSliceType, type LeafBlock, type Peritext} from '../../../../json-crdt-extensions';
 import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from '../../../../json-crdt-patch';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 
 export const behavior = {

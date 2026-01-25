@@ -1,5 +1,5 @@
-import {Button, type ButtonProps} from 'nice-ui/lib/2-inline-block/Button';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Button, type ButtonProps} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as React from 'react';
 
 export interface CreateButtonProps extends ButtonProps {

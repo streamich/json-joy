@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Popup} from 'nice-ui/lib/4-card/Popup';
-import {ContextItem, ContextPane, ContextSep, ContextTitle} from 'nice-ui/lib/4-card/ContextMenu';
-import {Button} from 'nice-ui/lib/2-inline-block/Button';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {ContextItem, ContextPane, ContextSep, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
 import {useT} from 'use-t';
 import {useExplorer} from '../context';

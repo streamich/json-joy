@@ -1,8 +1,8 @@
 import * as React from 'react';
-// import {ExpandableToolbar, type ExpandableToolbarProps} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/ExpandableToolbar';
+// import {ExpandableToolbar, type ExpandableToolbarProps} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/ExpandableToolbar';
 import {ExpandableToolbar, type ExpandableToolbarProps} from './ExpandableToolbar';
-import type {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
-import type {AnchorPoint} from 'nice-ui/lib/utils/popup';
+import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 
 export interface AutoExpandableToolbarProps extends ExpandableToolbarProps {
   menu: MenuItem;

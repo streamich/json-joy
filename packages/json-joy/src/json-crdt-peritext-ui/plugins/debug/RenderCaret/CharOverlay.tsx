@@ -4,7 +4,7 @@ import type {Rect} from '../../../web/types';
 export type SetRect = (rect?: Rect) => void;
 
 export interface CharOverlayProps extends React.HTMLAttributes<HTMLSpanElement> {
-  rectRef: React.RefObject<SetRect>;
+  rectRef: React.RefObject<SetRect | null>;
 }
 
 export const CharOverlay: React.FC<CharOverlayProps> = ({rectRef, ...rest}) => {

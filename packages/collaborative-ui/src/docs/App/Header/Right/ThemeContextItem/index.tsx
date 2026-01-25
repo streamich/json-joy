@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {ContextItem} from 'nice-ui/lib/4-card/ContextMenu';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {Checkbox} from 'nice-ui/lib/2-inline-block/Checkbox';
-import {useNiceUiServices} from 'nice-ui/lib/context';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {ContextItem} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
+import {useNiceUiServices} from '@jsonjoy.com/ui/lib/context';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 
 export type Props = Record<string, never>;
 

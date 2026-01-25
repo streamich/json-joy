@@ -1,5 +1,5 @@
 import {createElement as h, useMemo} from 'react';
-import {Avatar} from 'nice-ui/lib/1-inline/Avatar';
+import {Avatar} from '@jsonjoy.com/ui/lib/1-inline/Avatar';
 import {Img, type ImgProps} from '../Img';
 import {getDomain} from '../../util';
 

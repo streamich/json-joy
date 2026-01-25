@@ -4,11 +4,11 @@ import {Services} from '../services/Services';
 import {context} from './context';
 import {Header} from './Header';
 import {GuidelinesPage} from './pages/GuidelinesPage';
-import {NiceUiProvider} from 'nice-ui/lib/context';
-import {NiceUiContentService} from 'nice-ui/lib/context/services/NiceUiContentService';
+import {NiceUiProvider} from '@jsonjoy.com/ui/lib/context';
+import {NiceUiContentService} from '@jsonjoy.com/ui/lib/context/services/NiceUiContentService';
 import {content} from '../content';
 import {ComponentsPage} from './pages/ComponentsPage';
-import {CustomComponentsProvider} from 'nice-ui/lib/markdown';
+import {CustomComponentsProvider} from '@jsonjoy.com/ui/lib/markdown';
 import {custom} from './markdown/custom';
 import {ExplorerPage} from './pages/ExplorerPage';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 
 export interface SoftLockedDeleteButtonProps {

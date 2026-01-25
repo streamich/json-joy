@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {createPortal} from 'react-dom';
-import {context, usePortal} from 'nice-ui/lib/utils/portal/context';
-import {PortalState} from 'nice-ui/lib/utils/portal/PortalState';
+import {context, usePortal} from '@jsonjoy.com/ui/lib/utils/portal/context';
+import {PortalState} from '@jsonjoy.com/ui/lib/utils/portal/PortalState';
 
 export interface PortalProps {
   /**

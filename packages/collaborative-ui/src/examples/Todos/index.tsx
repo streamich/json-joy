@@ -1,15 +1,15 @@
 import * as React from 'react';
-import {Paper} from 'nice-ui/lib/4-card/Paper';
-import {MiniTitle} from 'nice-ui/lib/3-list-item/MiniTitle';
-import {Separator} from 'nice-ui/lib/3-list-item/Separator';
+import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {rule} from 'nano-theme';
 import type {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
 import {NewItem} from './NewItem';
 import {List} from './List';
-import BasicButton from 'nice-ui/lib/2-inline-block/BasicButton';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {useStore} from '../../hooks/useStore';
 import type {TodosView} from './types';
 

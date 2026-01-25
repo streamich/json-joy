@@ -2,7 +2,7 @@ import * as React from 'react';
 import {rule, drule, useTheme} from 'nano-theme';
 import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
 import type {ITimestampStruct, Patch} from 'json-joy/lib/json-crdt';
-import {Code} from 'nice-ui/lib/1-inline/Code';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {useLogState} from '../../context';
 import {sidColor} from '../../../util/sidColor';
 

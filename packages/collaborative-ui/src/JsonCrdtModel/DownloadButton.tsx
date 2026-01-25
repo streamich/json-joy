@@ -6,14 +6,14 @@ import {Encoder as VerboseEncoder} from 'json-joy/lib/json-crdt/codec/structural
 import {Encoder as CompactEncoder} from 'json-joy/lib/json-crdt/codec/structural/compact/Encoder';
 import {Encoder as IndexedEncoder} from 'json-joy/lib/json-crdt/codec/indexed/binary/Encoder';
 import {Encoder as SidecarEncoder} from 'json-joy/lib/json-crdt/codec/sidecar/binary/Encoder';
-import {Code} from 'nice-ui/lib/1-inline/Code';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
-import {ContextItem, ContextSep, ContextPane, ContextTitle} from 'nice-ui/lib/4-card/ContextMenu';
-import {Popup} from 'nice-ui/lib/4-card/Popup';
-import {BasicButton} from 'nice-ui/lib/2-inline-block/BasicButton';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {ContextItem, ContextSep, ContextPane, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {DownloadIcon} from '../icons/DownloadIcon';
 import {downloadBlob} from '../util/downloadBlob';
 

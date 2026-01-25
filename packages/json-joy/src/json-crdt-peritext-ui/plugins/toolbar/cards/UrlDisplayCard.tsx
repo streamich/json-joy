@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {Paper} from 'nice-ui/lib/4-card/Paper';
+import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {UrlDisplayLayout, type UrlDisplayLayoutProps} from '../components/UrlDisplayLayout';
 
 const blockClass = rule({

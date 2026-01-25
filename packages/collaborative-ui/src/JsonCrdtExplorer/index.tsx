@@ -2,10 +2,10 @@ import * as React from 'react';
 import {JsonCrdtExplorerState} from './JsonCrdtExplorerState';
 import {ExplorerSidenav} from './ExplorerSidenav';
 import {context} from './context';
-import TwoColumnLayout from 'nice-ui/lib/6-page/TwoColumnLayout';
+import TwoColumnLayout from '@jsonjoy.com/ui/lib/6-page/TwoColumnLayout';
 import {Preview} from './Preview';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
-import {NiceUiSizes} from 'nice-ui/lib/constants';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 
 export interface JsonCrdtExplorerProps {
   state?: JsonCrdtExplorerState;

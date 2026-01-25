@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {TextBlock} from '../../TextBlock';
 import {useModelTick} from '../../hooks/useModelTick';
-import {Scrollbox} from 'nice-ui/lib/4-card/Scrollbox';
+import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 
 export interface JsonCrdtLogTextualProps {

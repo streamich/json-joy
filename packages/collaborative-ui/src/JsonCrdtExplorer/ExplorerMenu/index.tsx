@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {Menu} from 'nice-ui/lib/4-card/Menu';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {Menu} from '@jsonjoy.com/ui/lib/4-card/Menu';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../context';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {NiceUiSizes} from 'nice-ui/lib/constants';
-import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
+import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 
 export type ExplorerMenuProps = Record<string, never>;
 

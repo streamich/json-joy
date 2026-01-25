@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {rule} from 'nano-theme';
 import type {ToolbarFormatting} from '../state/formattings';
 

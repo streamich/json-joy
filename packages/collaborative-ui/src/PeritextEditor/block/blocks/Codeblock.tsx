@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {fonts} from 'nice-ui/lib/styles';
+import {fonts} from '@jsonjoy.com/ui/lib/styles';
 import type {BlockViewProps} from '../../../PeritextWebUi/react/BlockView';
 
 const blockClass = rule({

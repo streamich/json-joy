@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {rule, theme} from 'nano-theme';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {JsonBlockState} from '../JsonBlockState';
 import {FlexibleInput} from 'flexible-input';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {JsonBlockTabs} from '../JsonBlockTabs';
 
 const css = {

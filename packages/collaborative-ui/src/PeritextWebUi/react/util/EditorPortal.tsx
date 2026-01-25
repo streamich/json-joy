@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Portal} from 'nice-ui/lib/utils/portal/Portal';
+import {Portal} from '@jsonjoy.com/ui/lib/utils/portal/Portal';
 import {usePeritext} from '../context';
 
 export interface EditorPortalProps {

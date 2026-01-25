@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {Paper} from 'nice-ui/lib/4-card/Paper';
-import {MiniTitle} from 'nice-ui/lib/3-list-item/MiniTitle';
-import {Separator} from 'nice-ui/lib/3-list-item/Separator';
+import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {useSelectNode} from '../../hooks/useSelectNode';
 import {rule} from 'nano-theme';
 import {Title} from './Title';

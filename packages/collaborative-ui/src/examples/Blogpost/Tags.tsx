@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Label} from 'nice-ui/lib/1-inline/Label';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
+import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Row} from './Row';
 import {s} from 'json-joy/lib/json-crdt';
 import {FlexibleInput} from 'flexible-input';

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonBlockText} from './JsonBlockText';
 import {JsonBlockClickable} from './JsonBlockClickable';
 import {CodeblockLayout} from '../CodeblockLayout';

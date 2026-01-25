@@ -6,5 +6,5 @@ You import the card components from the `4-card` folder
 to reduce the bundle size.
 
 ```ts
-import {Component, ComponentProps} from 'nice-ui/lib/4-card/Component';
+import {Component, ComponentProps} from '@jsonjoy.com/ui/lib/4-card/Component';
 ```

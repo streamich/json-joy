@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule, lightTheme as theme, useRule, useTheme} from 'nano-theme';
-import {Link} from 'nice-ui/lib/1-inline/Link';
+import {Link} from '@jsonjoy.com/ui/lib/1-inline/Link';
 
 export const blockClass = rule({
   ...theme.font.ui1.mid,

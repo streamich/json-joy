@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {Code} from 'nice-ui/lib/1-inline/Code';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 
 const css = {
   row: rule({

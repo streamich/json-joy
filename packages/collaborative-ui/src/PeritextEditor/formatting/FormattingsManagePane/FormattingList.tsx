@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ContextPane, ContextItem, ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
+import {ContextPane, ContextItem, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {SYMBOL} from 'nano-theme';
 import type {SavedFormatting} from '../../state/formattings';
 import {FormattingIcon} from '../views/icon/FormattingIcon';

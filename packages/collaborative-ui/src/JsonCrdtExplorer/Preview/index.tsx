@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {useExplorer} from '../context';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonCrdtLog} from '../../JsonCrdtLog';
-import {Code} from 'nice-ui/lib/1-inline/Code';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {FlexibleInput} from 'flexible-input';
 import {DemoDisplay} from '../../DemoDisplay';
 

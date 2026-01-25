@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useStyles} from 'nice-ui/lib/styles/context';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 export const ContextPaneHeaderSep: React.FC = () => {
   const style = useStyles();

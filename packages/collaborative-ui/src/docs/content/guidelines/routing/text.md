@@ -10,5 +10,5 @@ npm install react-router-lite
 Or, import it directly from the Nice UI library.
 
 ```jsx
-import {Router, Route, Link} from 'nice-ui/lib/misc/router';
+import {Router, Route, Link} from '@jsonjoy.com/ui/lib/misc/router';
 ```

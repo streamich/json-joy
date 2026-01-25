@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useToolbarPlugin} from '../../context';
 import {AutoExpandableToolbar} from './AutoExpandableToolbar';
 import {compare} from '../../../../../json-crdt-patch';

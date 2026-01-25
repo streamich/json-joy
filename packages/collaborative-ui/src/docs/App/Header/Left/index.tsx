@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {HorizontalNav} from 'nice-ui/lib/5-block/HorizontalNav';
+import {HorizontalNav} from '@jsonjoy.com/ui/lib/5-block/HorizontalNav';
 import {content} from '../../../content';
-import {useNiceUiServices} from 'nice-ui/lib/context';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useNiceUiServices} from '@jsonjoy.com/ui/lib/context';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useT} from 'use-t';
 import {Logo} from './Logo';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 
 export type Props = Record<string, never>;
 

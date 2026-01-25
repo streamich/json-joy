@@ -2,7 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {TopToolbar} from './TopToolbar';
 import {useToolbarPlugin} from '../context';
-import {useStyles} from 'nice-ui/lib/styles/context';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const blockClass = rule({
   bg: 'white',

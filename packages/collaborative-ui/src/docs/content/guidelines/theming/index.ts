@@ -1,4 +1,4 @@
-import type {ContentPage} from 'nice-ui/lib/6-page/DocsPages/types';
+import type {ContentPage} from '@jsonjoy.com/ui/lib/6-page/DocsPages/types';
 
 export const themingPage: ContentPage = {
   name: 'Theming',

@@ -1,7 +1,7 @@
-Install `nice-ui` package.
+Install `@jsonjoy.com/ui` package.
 
 ```
-npm install nice-ui
+npm install @jsonjoy.com/ui
 ```
 
 Install all peer dependencies.
@@ -10,10 +10,10 @@ Install all peer dependencies.
 npm install react react-dom rxjs tslib
 ```
 
-In your React application you will want to set up the Nice UI context provider.
+In your React application you will want to set up the json-joy UI context provider.
 
 ```jsx
-import {NiceUiProvider} from 'nice-ui';
+import {NiceUiProvider} from '@jsonjoy.com/ui/lib/context';
 
 const App = () => {
   return (

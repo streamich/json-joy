@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Checkbox} from 'nice-ui/lib/2-inline-block/Checkbox';
+import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
 import {Row} from './Row';
 import type {BlogpostApi} from './schema';
 

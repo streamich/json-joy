@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import {Button} from 'nice-ui/lib/2-inline-block/Button';
-import {ContextTitle} from 'nice-ui/lib/4-card/ContextMenu/ContextTitle';
-import {EmptyState} from 'nice-ui/lib/4-card/EmptyState';
-import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
+import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
+import {ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextTitle';
+import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
+import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useT} from 'use-t';
 import {useSyncStoreOpt} from '../../../../PeritextWebUi/react/hooks';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';

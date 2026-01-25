@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CaretToolbar} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
+import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from '../../context';
 import {useSyncStore, useTimeout} from '../../../PeritextWebUi/react/hooks';
 import {AfterTimeout} from '../../../PeritextWebUi/react/util/AfterTimeout';

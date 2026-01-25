@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {drule, theme, useTheme} from 'nano-theme';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {Flex} from 'nice-ui/lib/3-list-item/Flex';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 
 const css = {

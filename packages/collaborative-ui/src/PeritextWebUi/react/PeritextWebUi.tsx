@@ -7,7 +7,7 @@ import {defaultPlugin} from '../plugins/minimal';
 import {PeritextSurfaceState} from '../state';
 import {context} from './context';
 import {BlockView} from './BlockView';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {PeritextPlugin} from './types';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 

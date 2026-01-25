@@ -3424,15 +3424,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.3.0":
-  version: 18.3.7
-  resolution: "@types/react-dom@npm:18.3.7"
-  peerDependencies:
-    "@types/react": ^18.0.0
-  checksum: 10c0/8bd309e2c3d1604a28a736a24f96cbadf6c05d5288cfef8883b74f4054c961b6b3a5e997fd5686e492be903c8f3380dba5ec017eff3906b1256529cd2d39603e
-  languageName: node
-  linkType: hard
-
 "@types/react-dom@npm:^19, @types/react-dom@npm:^19.1.9":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
@@ -3459,16 +3450,6 @@ __metadata:
     "@types/scheduler": "npm:^0.16"
     csstype: "npm:^3.2.2"
   checksum: 10c0/be88dc8596b216107c3d21ab8fd8e0cf96cca651022d91011d0e0d6837122df66df6e5d0b4b05a55ae25ac3e4991768302bec5f9b93743d4f1300e290c05822a
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.3.11":
-  version: 18.3.27
-  resolution: "@types/react@npm:18.3.27"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.2.2"
-  checksum: 10c0/a761d2f58de03d0714806cc65d32bb3d73fb33a08dd030d255b47a295e5fff2a775cf1c20b786824d8deb6454eaccce9bc6998d9899c14fc04bbd1b0b0b72897
   languageName: node
   linkType: hard
 
@@ -5357,7 +5338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"code-colors-react@npm:^3.3.0, code-colors-react@npm:^3.4.0":
+"code-colors-react@npm:^3.4.0":
   version: 3.4.0
   resolution: "code-colors-react@npm:3.4.0"
   dependencies:
@@ -5380,13 +5361,6 @@ __metadata:
   peerDependencies:
     tslib: "*"
   checksum: 10c0/948328b8eaf3a2ecc868591ae92edc14472457e61598fba3b2a486bea9590490ab73992695ac6c94f79b823ef66ac3a374193101af37a72562de935a38f0fab1
-  languageName: node
-  linkType: hard
-
-"codemirror@npm:5":
-  version: 5.65.20
-  resolution: "codemirror@npm:5.65.20"
-  checksum: 10c0/a1efc27d6c550f65b8ebe9c4229b7c4bb99e3856595779573597773f72aa576750f67765a598cb881d9238128d7b43be287f26e8a83bb2d42c2b2f0c0decb190
   languageName: node
   linkType: hard
 
@@ -6216,7 +6190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"emoji-js@npm:^3.8.1, emoji-js@npm:^3.9.0":
+"emoji-js@npm:^3.9.0":
   version: 3.9.0
   resolution: "emoji-js@npm:3.9.0"
   dependencies:
@@ -9148,10 +9122,6 @@ __metadata:
     jest: "npm:^30.2.0"
     json-crdt-traces: "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
     json-logic-js: "npm:^2.0.2"
-    monaco-editor: "npm:^0.55.1"
-    nano-theme: "npm:^1.4.3"
-    nice-ui: "npm:^1.30.0"
-    quill-delta: "npm:^5.1.0"
     raw-loader: "npm:^4.0.2"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
@@ -9188,10 +9158,11 @@ __metadata:
     "@jsonjoy.com/json-pointer": "workspace:*"
     "@jsonjoy.com/json-random": "workspace:*"
     "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     "@radix-ui/react-icons": "npm:^1.3.1"
-    "@types/react": "npm:^18.3.11"
-    "@types/react-dom": "npm:^18.3.0"
+    "@types/react": "npm:^19.1.12"
+    "@types/react-dom": "npm:^19.1.9"
     arg: "npm:^5.0.2"
     clipboard-copy: "npm:^4.0.1"
     collaborative-editor: "npm:^2.9.0"
@@ -9207,7 +9178,6 @@ __metadata:
     json-logic-js: "npm:^2.0.2"
     nano-css: "npm:^5.6.2"
     nano-theme: "npm:^1.4.3"
-    nice-ui: "npm:^1.30.0"
     pojo-dump: "npm:^1.4.0"
     prosemirror-model: "npm:^1.25.1"
     prosemirror-test-builder: "npm:^1.1.1"
@@ -10276,15 +10246,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nice-ui@npm:^1.30.0, nice-ui@npm:^1.31.1":
-  version: 1.32.0
-  resolution: "nice-ui@npm:1.32.0"
+"nice-ui@portal:./packages/ui::locator=json-joy-monorepo%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "nice-ui@portal:./packages/ui::locator=json-joy-monorepo%40workspace%3A."
   dependencies:
-    "@material-ui/core": "npm:^4.12.4"
+    "@codemirror/lang-markdown": "npm:^6.3.2"
+    "@codemirror/state": "npm:^6.5.2"
+    "@codemirror/view": "npm:^6.36.5"
     clipboard-copy: "npm:^4.0.1"
-    code-colors-react: "npm:^3.3.0"
-    codemirror: "npm:5"
-    emoji-js: "npm:^3.8.1"
+    code-colors-react: "npm:^3.4.0"
+    codemirror: "npm:^6.0.1"
+    emoji-js: "npm:^3.9.0"
     iconista: "npm:^2.23.0"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
@@ -10292,25 +10264,24 @@ __metadata:
     nano-theme: "npm:^1.5.0"
     notistack: "npm:^3.0.2"
     papaparse: "npm:^5.5.3"
-    qrcode-generator: "npm:^1.4.4"
+    qrcode-generator: "npm:^2.0.4"
     react-colorful: "npm:^5.6.1"
     react-embed: "npm:^3.7.0"
     react-router-lite: "npm:^1.6.0"
     react-sticky-box: "npm:^2.0.5"
     react-use: "npm:^17.6.0"
-    rx-use: "npm:^1.8.2"
+    rx-use: "npm:^1.9.0"
     slugify: "npm:^1.6.6"
     thingies: "npm:^2.5.0"
-    use-t: "npm:^1.6.3"
-    very-small-parser: "npm:^1.12.0"
+    use-t: "npm:^1.6.4"
+    very-small-parser: "npm:^1.14.0"
   peerDependencies:
     react: "*"
     react-dom: "*"
     rxjs: 7
     tslib: 2
-  checksum: 10c0/a37cb9ce063975a373661f5b7262e627d789f49ec860b5a6c6e53d3a2e1dca294a7310e88370b5a06c63dfed4b82559cbc95ccb04cae2abc2424c2fc0c5ae002
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "no-case@npm:^3.0.4":
   version: 3.0.4
@@ -11182,13 +11153,6 @@ __metadata:
   version: 1.1.5
   resolution: "pvutils@npm:1.1.5"
   checksum: 10c0/e968b07b78a58fec9377fe7aa6342c8cfa21c8fb4afc4e51e1489bd42bec6dc71b8a52541d0aede0aea17adec7ca3f89f29f56efdc31d0083cc02e9bb5721bcf
-  languageName: node
-  linkType: hard
-
-"qrcode-generator@npm:^1.4.4":
-  version: 1.5.2
-  resolution: "qrcode-generator@npm:1.5.2"
-  checksum: 10c0/4e0a43ba1c0212cf8ec39654cc7a5bebda96ee00453dc5732e98af4cf681c6786d2c189d4657d8d4fa6486f07573c1edb85fbb7af5e78972f843b7db8457a9b7
   languageName: node
   linkType: hard
 

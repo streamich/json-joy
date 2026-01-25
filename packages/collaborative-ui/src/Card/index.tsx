@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import Paper from 'nice-ui/lib/4-card/Paper';
-import {Scrollbox} from 'nice-ui/lib/4-card/Scrollbox';
+import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
+import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
 
 export * from './CardHeader';
 

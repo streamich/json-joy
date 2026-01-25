@@ -6,7 +6,7 @@ import {defaultPlugin} from '../../plugins/minimal';
 import {PeritextSurfaceState} from '../state';
 import {context} from './context';
 import {BlockView} from './BlockView';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {createEvents} from '../../../json-crdt-extensions/peritext/events';
 import type {PeritextPlugin} from './types';
 import type {Peritext} from '../../../json-crdt-extensions';
@@ -81,7 +81,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
     <context.Provider value={state}>
       <div className={CssClass.Editor}>
         <PeritextViewInner div={ref} state={state} />
-        <div ref={(el) => (state.portalEl = el || void 0)} className={CssClass.Overlays} />
+        <div ref={(el) => { state.portalEl = el || void 0; }} className={CssClass.Overlays} />
       </div>
     </context.Provider>
   );

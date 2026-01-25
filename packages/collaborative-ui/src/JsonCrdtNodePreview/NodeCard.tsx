@@ -1,10 +1,10 @@
 import type {Model} from 'json-joy/lib/json-crdt';
 import * as React from 'react';
 import type {JsonNode} from 'json-joy/lib/json-crdt/nodes/types';
-import {MiniTitle} from 'nice-ui/lib/3-list-item/MiniTitle';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {LogicalTimestamp} from '../LogicalTimestamp';
-import {Code} from 'nice-ui/lib/1-inline/Code';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {CardLayout} from '../CardLayout';
 import {CopyText} from '../CopyText';
 

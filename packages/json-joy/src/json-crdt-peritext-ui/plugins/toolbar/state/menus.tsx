@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
-import {Code} from 'nice-ui/lib/1-inline/Code';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {FontStyleButton} from 'nice-ui/lib/2-inline-block/FontStyleButton';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import type {MenuItem} from '../types';
 
 export const secondBrain = (): MenuItem => {

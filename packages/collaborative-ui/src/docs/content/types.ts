@@ -1,1 +1,1 @@
-export type {ContentPage, PageTypes} from 'nice-ui/lib/6-page/DocsPages/types';
+export type {ContentPage, PageTypes} from '@jsonjoy.com/ui/lib/6-page/DocsPages/types';

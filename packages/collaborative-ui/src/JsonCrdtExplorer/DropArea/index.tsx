@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {Paper} from 'nice-ui/lib/4-card/Paper';
+import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useDropArea from 'react-use/lib/useDropArea';
 import {drule, rule, useTheme} from 'nano-theme';
 import {useT} from 'use-t';
 import {useExplorer} from '../context';
-import {Text} from 'nice-ui/lib/1-inline/Text';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {Text} from '@jsonjoy.com/ui/lib/1-inline/Text';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 
 const css = {
   block: rule({

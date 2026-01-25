@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {Checkbox} from 'nice-ui/lib/2-inline-block/Checkbox';
-import {FixedColumn} from 'nice-ui/lib/3-list-item/FixedColumn';
+import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
+import {FixedColumn} from '@jsonjoy.com/ui/lib/3-list-item/FixedColumn';
 import {TitleInput} from './inputs/TitleInput';
 import type {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
 import type {TodoView} from './types';
 import {StrAdapter} from '../../StrAdapter';
 import {Background} from './Background';
-import {BasicButtonClose} from 'nice-ui/lib/2-inline-block/BasicButton/BasicButtonClose';
+import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 
 export interface ItemProps {
   task: TodoView;

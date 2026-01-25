@@ -9,5 +9,5 @@ to reduce the bundle size.
 import {
   Component,
   ComponentProps,
-} from 'nice-ui/lib/2-inline-block/Component';
+} from '@jsonjoy.com/ui/lib/2-inline-block/Component';
 ```

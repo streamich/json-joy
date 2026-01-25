@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Avatar} from 'nice-ui/lib/1-inline/Avatar';
+import {Avatar} from '@jsonjoy.com/ui/lib/1-inline/Avatar';
 import type {FormattingIconProps} from './FormattingIcon';
 
 export interface GenericIconProps extends FormattingIconProps {}

@@ -36,6 +36,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "resolutions": {
+    "nice-ui": "portal:./packages/ui"
+  },
   "peerDependencies": {
     "rxjs": "7",
     "tslib": "2"
@@ -67,10 +70,6 @@
     "jest": "^30.2.0",
     "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d",
     "json-logic-js": "^2.0.2",
-    "monaco-editor": "^0.55.1",
-    "nano-theme": "^1.4.3",
-    "nice-ui": "^1.30.0",
-    "quill-delta": "^5.1.0",
     "raw-loader": "^4.0.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

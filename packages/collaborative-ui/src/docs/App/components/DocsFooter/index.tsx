@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {Link} from 'nice-ui/lib/1-inline/Link';
-import {Footer} from 'nice-ui/lib/5-block/Footer/Footer';
-import {FooterSection} from 'nice-ui/lib/5-block/Footer/FooterSection';
+import {Link} from '@jsonjoy.com/ui/lib/1-inline/Link';
+import {Footer} from '@jsonjoy.com/ui/lib/5-block/Footer/Footer';
+import {FooterSection} from '@jsonjoy.com/ui/lib/5-block/Footer/FooterSection';
 
 export type Props = Record<string, never>;
 

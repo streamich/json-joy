@@ -18,7 +18,7 @@ export const Right: React.FC<Props> = () => {
         renderContext={() => (
           <ContextPane right style={{minWidth: 260}}>
             <ContextSep />
-            <ContextItem to={'https://github.com/streamich/nice-ui'}>
+            <ContextItem to={'https://github.com/streamich/json-joy/tree/master/packages/ui'}>
               <Split style={{alignItems: 'center'}}>
                 <span>{t('GitHub repository')}</span>
                 <Iconista set="fontawesome_brands" icon="github" width={16} height={16} />

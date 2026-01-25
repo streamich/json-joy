@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {ContextItem, ContextSep, ContextPane} from 'nice-ui/lib/4-card/ContextMenu';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
-import {Popup} from 'nice-ui/lib/4-card/Popup';
-import {BasicButton} from 'nice-ui/lib/2-inline-block/BasicButton';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {ContextItem, ContextSep, ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtPatchState} from './JsonCrdtPatchState';
 

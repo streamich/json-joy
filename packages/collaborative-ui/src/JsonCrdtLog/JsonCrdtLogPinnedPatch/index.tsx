@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useLogState} from '../context';
 import {JsonCrdtPatch} from '../../JsonCrdtPatch';
 import {Patch} from 'json-joy/lib/json-crdt';

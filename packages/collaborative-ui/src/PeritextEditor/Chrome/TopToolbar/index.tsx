@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useToolbarPlugin} from '../../context';
 import {useSyncStore, useSyncStoreOpt} from '../../../PeritextWebUi/react/hooks';
-import {ToolbarMenu} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu';
+import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import type {PeritextSurfaceState} from '../../../PeritextWebUi/state';
 
 export interface TopToolbarProps {

@@ -5,5 +5,5 @@ You import the page components from the `6-page` folder
 to reduce the bundle size.
 
 ```ts
-import {Component, ComponentProps} from 'nice-ui/lib/6-page/Component';
+import {Component, ComponentProps} from '@jsonjoy.com/ui/lib/6-page/Component';
 ```

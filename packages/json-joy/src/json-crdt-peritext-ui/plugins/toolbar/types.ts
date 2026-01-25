@@ -1,5 +1,5 @@
 import type * as React from 'react';
-import type {MenuItem} from 'nice-ui/lib/4-card/StructuralMenu/types';
+import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import type {SliceBehavior} from '../../../json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {SliceStacking} from '../../../json-crdt-extensions/peritext/slice/constants';
 import type {TypeTag} from '../../../json-crdt-extensions';

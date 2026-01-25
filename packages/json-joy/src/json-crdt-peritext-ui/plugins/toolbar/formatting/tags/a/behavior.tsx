@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {Sidetip} from 'nice-ui/lib/1-inline/Sidetip';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {renderIcon} from './renderIcon';
 import {View} from './View';
 import {Edit} from './Edit';

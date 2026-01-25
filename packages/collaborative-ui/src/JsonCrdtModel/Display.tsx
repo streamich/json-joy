@@ -1,16 +1,16 @@
 import * as React from 'react';
 import type {Model} from 'json-joy/lib/json-crdt';
 import {rule} from 'nano-theme';
-import {Space} from 'nice-ui/lib/3-list-item/Space';
-import {Checkbox} from 'nice-ui/lib/2-inline-block/Checkbox';
-import {Scrollbox} from 'nice-ui/lib/4-card/Scrollbox';
-import {Split} from 'nice-ui/lib/3-list-item/Split';
-import {MiniTitle} from 'nice-ui/lib/3-list-item/MiniTitle';
-import {useBehaviorSubject} from 'nice-ui/lib/hooks/useBehaviorSubject';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
+import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {JsonCrdtModelState} from './JsonCrdtModelState';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {BasicButton} from 'nice-ui/lib/2-inline-block/BasicButton';
-import {BasicTooltip} from 'nice-ui/lib/4-card/BasicTooltip';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 
