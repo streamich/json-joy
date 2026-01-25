@@ -1,0 +1,116 @@
+{
+  "name": "@jsonjoy.com/collaborative-ui",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "17.65.0",
+  "description": "React component library for building real-time collaborative editing applications.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/collaborative-ui"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "collaborative",
+    "ui",
+    "collaborative-ui",
+    "multiplayer",
+    "realtime",
+    "presence",
+    "presence-ui",
+    "components",
+    "react",
+    "textarea",
+    "json-crdt",
+    "json",
+    "crdt"
+  ],
+  "dependencies": {
+    "@jsonjoy.com/collaborative-codemirror": "workspace:*",
+    "@jsonjoy.com/collaborative-input": "workspace:*",
+    "@jsonjoy.com/collaborative-monaco": "workspace:*",
+    "@jsonjoy.com/collaborative-quill": "workspace:*",
+    "@jsonjoy.com/collaborative-str": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
+    "@jsonjoy.com/json-pointer": "workspace:*",
+    "@jsonjoy.com/reactive-rpc": "^2.5.0",
+    "@jsonjoy.com/ui": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "@material-ui/core": "^4.12.4",
+    "clickable-json": "^1.15.1",
+    "flexible-input": "^1.0.3",
+    "json-crdt-repo": "^1.5.0",
+    "json-joy": "workspace:*",
+    "nano-theme": "^1.5.0",
+    "quill": "^2.0.3",
+    "quill-delta": "^5.1.0",
+    "react-use": "^17.6.0",
+    "sonic-forest": "^1.2.1",
+    "thingies": "^2.5.0",
+    "use-t": "^1.6.4"
+  },
+  "peerDependencies": {
+    "@monaco-editor/react": "*",
+    "monaco-editor": "*",
+    "react": "*",
+    "react-dom": "*",
+    "rxjs": "*",
+    "tslib": "2"
+  },
+  "devDependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "codemirror": "^6.0.2",
+    "monaco-editor": "^0.55.1",
+    "rxjs": "^7.8.2"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "test": "jest --maxWorkers 7",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "coverage": "yarn test --collectCoverage",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -p ."
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
+  }
+}

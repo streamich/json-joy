@@ -1635,7 +1635,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-codemirror@workspace:packages/collaborative-codemirror":
+"@jsonjoy.com/collaborative-codemirror@workspace:*, @jsonjoy.com/collaborative-codemirror@workspace:packages/collaborative-codemirror":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-codemirror@workspace:packages/collaborative-codemirror"
   dependencies:
@@ -1653,7 +1653,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
+"@jsonjoy.com/collaborative-input@workspace:*, @jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input"
   dependencies:
@@ -1791,6 +1791,46 @@ __metadata:
     react-dom: "npm:^19.2.3"
   peerDependencies:
     tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui"
+  dependencies:
+    "@jsonjoy.com/collaborative-codemirror": "workspace:*"
+    "@jsonjoy.com/collaborative-input": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@jsonjoy.com/collaborative-quill": "workspace:*"
+    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/json-pointer": "workspace:*"
+    "@jsonjoy.com/reactive-rpc": "npm:^2.5.0"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    "@material-ui/core": "npm:^4.12.4"
+    "@monaco-editor/react": "npm:^4.7.0"
+    clickable-json: "npm:^1.15.1"
+    codemirror: "npm:^6.0.2"
+    flexible-input: "npm:^1.0.3"
+    json-crdt-repo: "npm:^1.5.0"
+    json-joy: "workspace:*"
+    monaco-editor: "npm:^0.55.1"
+    nano-theme: "npm:^1.5.0"
+    quill: "npm:^2.0.3"
+    quill-delta: "npm:^5.1.0"
+    react-use: "npm:^17.6.0"
+    rxjs: "npm:^7.8.2"
+    sonic-forest: "npm:^1.2.1"
+    thingies: "npm:^2.5.0"
+    use-t: "npm:^1.6.4"
+  peerDependencies:
+    "@monaco-editor/react": "*"
+    monaco-editor: "*"
+    react: "*"
+    react-dom: "*"
+    rxjs: "*"
+    tslib: 2
   languageName: unknown
   linkType: soft
 
@@ -2084,7 +2124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/ui@workspace:packages/ui":
+"@jsonjoy.com/ui@workspace:*, @jsonjoy.com/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/ui@workspace:packages/ui"
   dependencies:
@@ -9036,7 +9076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-crdt-repo@npm:^1.4.0":
+"json-crdt-repo@npm:^1.4.0, json-crdt-repo@npm:^1.5.0":
   version: 1.5.0
   resolution: "json-crdt-repo@npm:1.5.0"
   dependencies:
