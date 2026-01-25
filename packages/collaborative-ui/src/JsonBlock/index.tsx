@@ -8,7 +8,7 @@ import {rule, theme} from 'nano-theme';
 import {JsonBlockState} from './JsonBlockState';
 import {JsonBlockToolbar} from './JsonBlockToolbar';
 import {JsonBlockToolbarRight} from './JsonBlockToolbarRight';
-import type {OnChange} from 'clickable-json/lib/ClickableJson/types';
+import type {OnChange} from '@jsonjoy.com/click-json/lib/ClickableJson/types';
 
 const css = {
   pointer: rule({

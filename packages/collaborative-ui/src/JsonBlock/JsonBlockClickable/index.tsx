@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {ClickableJson} from 'clickable-json';
+import {ClickableJson} from '@jsonjoy.com/click-json';
 import {select} from '../../util/select';
-import type {OnChange} from 'clickable-json/lib/ClickableJson/types';
+import type {OnChange} from '@jsonjoy.com/click-json/lib/ClickableJson/types';
 
 const css = {
   block: rule({

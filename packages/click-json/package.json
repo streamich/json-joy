@@ -1,19 +1,19 @@
 {
-  "name": "@jsonjoy.com/collaborative-ui",
+  "name": "@jsonjoy.com/click-json",
   "publishConfig": {
     "access": "public"
   },
   "version": "17.65.0",
-  "description": "React component library for building real-time collaborative editing applications.",
+  "description": "Interactive JSON and JSON CRDT viewer and editor",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-ui",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/click-json",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/collaborative-ui"
+    "directory": "packages/click-json"
   },
   "license": "AGPL-3.0-only",
   "funding": {
@@ -21,55 +21,44 @@
     "url": "https://github.com/sponsors/streamich"
   },
   "keywords": [
-    "collaborative",
-    "ui",
-    "collaborative-ui",
-    "multiplayer",
-    "realtime",
-    "presence",
-    "presence-ui",
-    "components",
-    "react",
-    "textarea",
-    "json-crdt",
     "json",
-    "crdt"
+    "crdt",
+    "viewer",
+    "editor",
+    "tree",
+    "structured",
+    "react",
+    "json-crdt",
+    "json-joy",
+    "click-json",
+    "clickable",
+    "interactive",
+    "collaborative",
+    "multiplayer",
+    "click",
+    "ui"
   ],
   "dependencies": {
-    "@jsonjoy.com/click-json": "workspace:*",
-    "@jsonjoy.com/collaborative-codemirror": "workspace:*",
-    "@jsonjoy.com/collaborative-input": "workspace:*",
-    "@jsonjoy.com/collaborative-monaco": "workspace:*",
-    "@jsonjoy.com/collaborative-quill": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",
-    "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
-    "@material-ui/core": "^4.12.4",
     "flexible-input": "^1.0.3",
     "json-joy": "workspace:*",
-    "nano-theme": "^1.5.0",
-    "quill": "^2.0.3",
-    "quill-delta": "^5.1.0",
-    "react-use": "^17.6.0",
-    "sonic-forest": "^1.2.1",
-    "thingies": "^2.5.0",
     "use-t": "^1.6.4"
   },
   "peerDependencies": {
-    "@monaco-editor/react": "*",
-    "monaco-editor": "*",
+    "nano-theme": "*",
     "react": "*",
     "react-dom": "*",
-    "rxjs": "*",
     "tslib": "2"
   },
   "devDependencies": {
-    "@monaco-editor/react": "^4.7.0",
-    "codemirror": "^6.0.2",
-    "monaco-editor": "^0.55.1",
-    "rxjs": "^7.8.2"
+    "@types/react": "^19.2.9",
+    "nano-theme": "^1.5.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tslib": "^2.8.1"
   },
   "engines": {
     "node": ">=10.0"

@@ -15,6 +15,7 @@ function getAbsolutePath(value: string) {
 }
 // List of packages that contain stories
 const packages = [
+  'click-json',
   'collaborative-ace-react',
   'collaborative-codemirror',
   'collaborative-input',

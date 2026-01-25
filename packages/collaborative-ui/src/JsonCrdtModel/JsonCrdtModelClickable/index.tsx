@@ -1,6 +1,6 @@
 import type {Model} from 'json-joy/lib/json-crdt';
 import * as React from 'react';
-import {ClickableJsonCrdt} from 'clickable-json';
+import {ClickableJsonCrdt} from '@jsonjoy.com/click-json';
 import {rule} from 'nano-theme';
 import {JsonCrdtNodePreviewById} from '../../JsonCrdtNodePreview';
 import {useModelTick} from '../../hooks/useModelTick';

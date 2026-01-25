@@ -98,6 +98,7 @@
         "maxMessageLength": 90,
         "scopes": [
           "",
+          "click-json",
           "collaborative-ace",
           "collaborative-ace-react",
           "collaborative-codemirror",

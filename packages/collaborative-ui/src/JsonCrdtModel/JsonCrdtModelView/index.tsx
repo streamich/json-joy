@@ -14,7 +14,7 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonBlock} from '../../JsonBlock';
 import {JsonBlockToolbar} from '../../JsonBlock/JsonBlockToolbar';
 import {JsonBlockToolbarRight} from '../../JsonBlock/JsonBlockToolbarRight';
-import type {OnChange} from 'clickable-json/lib/ClickableJson/types';
+import type {OnChange} from '@jsonjoy.com/click-json/lib/ClickableJson/types';
 import {useModelTick} from '../../hooks/useModelTick';
 import {LogReadonlyLabel} from '../../atoms/ReadonlyLabel';
 

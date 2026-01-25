@@ -1585,6 +1585,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/click-json@workspace:*, @jsonjoy.com/click-json@workspace:packages/click-json":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/click-json@workspace:packages/click-json"
+  dependencies:
+    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/json-pointer": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    "@types/react": "npm:^19.2.9"
+    flexible-input: "npm:^1.0.3"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+    tslib: "npm:^2.8.1"
+    use-t: "npm:^1.6.4"
+  peerDependencies:
+    nano-theme: "*"
+    react: "*"
+    react-dom: "*"
+    tslib: 2
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/codegen@npm:^1.0.0":
   version: 1.0.0
   resolution: "@jsonjoy.com/codegen@npm:1.0.0"
@@ -1798,6 +1822,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui"
   dependencies:
+    "@jsonjoy.com/click-json": "workspace:*"
     "@jsonjoy.com/collaborative-codemirror": "workspace:*"
     "@jsonjoy.com/collaborative-input": "workspace:*"
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
@@ -1809,7 +1834,6 @@ __metadata:
     "@jsonjoy.com/util": "workspace:*"
     "@material-ui/core": "npm:^4.12.4"
     "@monaco-editor/react": "npm:^4.7.0"
-    clickable-json: "npm:^1.15.1"
     codemirror: "npm:^6.0.2"
     flexible-input: "npm:^1.0.3"
     json-joy: "workspace:*"
@@ -3453,7 +3477,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19, @types/react@npm:^19.1.12":
+"@types/react@npm:^19, @types/react@npm:^19.1.12, @types/react@npm:^19.2.9":
   version: 19.2.9
   resolution: "@types/react@npm:19.2.9"
   dependencies:
