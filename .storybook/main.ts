@@ -50,6 +50,8 @@ const config: StorybookConfig = {
       // Alias nice-ui to @jsonjoy.com/ui (nice-ui was migrated to @jsonjoy.com/ui)
       'nice-ui/lib': resolve(__dirname, '../packages/ui/src'),
       'nice-ui': resolve(__dirname, '../packages/ui/src'),
+      '@jsonjoy.com/ui/lib': resolve(__dirname, '../packages/ui/src'),
+      '@jsonjoy.com/ui': resolve(__dirname, '../packages/ui/src'),
       'json-joy/lib': resolve(__dirname, '../packages/json-joy/src'),
       '@jsonjoy.com/base64/lib': resolve(__dirname, '../packages/base64/src'),
       '@jsonjoy.com/buffers/lib': resolve(__dirname, '../packages/buffers/src'),
