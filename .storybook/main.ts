@@ -13,10 +13,25 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function getAbsolutePath(value: string) {
   return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)))
 }
+// List of packages that contain stories
+const packages = [
+  'collaborative-ace-react',
+  'collaborative-codemirror',
+  'collaborative-input',
+  'collaborative-monaco-react',
+  'collaborative-quill-react',
+  'collaborative-str',
+  'collaborative-ui',
+  'json-joy',
+  'ui',
+];
+
 const config: StorybookConfig = {
-  "stories": [
-    "../packages/*/src/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-  ],
+  "stories": packages.map(pkg => ({
+    directory: `../packages/${pkg}/src`,
+    files: '**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    titlePrefix: pkg,
+  })),
   "addons": [
     getAbsolutePath('@storybook/addon-webpack5-compiler-swc')
   ],
