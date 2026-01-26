@@ -2,19 +2,24 @@ import * as React from 'react';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextItem, ContextPane, ContextSep, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
 import {useT} from 'use-t';
 import {useExplorer} from '../context';
 
+const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment'});
+const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
+const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
+const ShopIcon = makeIcon({set: 'ant_outline', icon: 'shop'});
+
 const icon = (trace: traces.TraceDefinition) => {
   switch (trace.type) {
     case 'json':
-      return <Iconista width={16} height={16} set={'ant_outline'} icon={'apartment'} />;
+      return <ApartmentIcon width={16} height={16} />;
     case 'text':
-      return <Iconista width={16} height={16} set="elastic" icon="vis_text" />;
+      return <VisTextIcon width={16} height={16} />;
     case 'rich-text':
-      return <Iconista width={16} height={16} set="ant_outline" icon="highlight" />;
+      return <HighlightIcon width={16} height={16} />;
     default:
       return null;
   }
@@ -84,7 +89,7 @@ export const TraceSelector: React.FC<TraceSelectorProps> = ({width = 240, expand
         block
         ghost
         radius={1}
-        icon={<Iconista width={16} height={16} set="ant_outline" icon="shop" />}
+        icon={<ShopIcon width={16} height={16} />}
         loading={loading}
         disabled={loading}
         size={expanded ? 1 : 0}

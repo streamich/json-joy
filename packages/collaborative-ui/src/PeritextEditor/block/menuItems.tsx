@@ -1,10 +1,101 @@
 import * as React from 'react';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 
+// Annotations icons
+const LinkIcon = makeIcon({set: "radix", icon: "link-2"});
+const CommentIcon = makeIcon({set: "lineicons", icon: "comment-1-text"});
+const BookmarkIcon = makeIcon({set: "lineicons", icon: "flag-2"});
+const FootnoteIcon = makeIcon({set: "lucide", icon: "footprints"});
+const AsideIcon = makeIcon({set: "tabler", icon: "box-align-right"});
+
+// Second brain icons
+const SecondBrainIcon = makeIcon({set: "tabler", icon: "brain"});
+const MakeShorterIcon = makeIcon({set: "tabler", icon: "viewport-short"});
+const MakeLongerIcon = makeIcon({set: "tabler", icon: "viewport-tall"});
+
+// Formatting icons
+const BoldIcon = makeIcon({set: "radix", icon: "font-bold"});
+const ItalicIcon = makeIcon({set: "lucide", icon: "italic"});
+const UnderlineIcon = makeIcon({set: "tabler", icon: "underline"});
+const StrikethroughIcon = makeIcon({set: "tabler", icon: "strikethrough"});
+const OverlineIcon = makeIcon({set: "tabler", icon: "overline"});
+const HighlightIcon = makeIcon({set: "tabler", icon: "highlight"});
+const ClassifiedIcon = makeIcon({set: "tabler", icon: "lock-password"});
+const CodeIcon = makeIcon({set: "tabler", icon: "code"});
+const MathIcon = makeIcon({set: "tabler", icon: "math-integral-x"});
+const SuperscriptIcon = makeIcon({set: "tabler", icon: "superscript"});
+const SubscriptIcon = makeIcon({set: "tabler", icon: "subscript"});
+const KeyboardIcon = makeIcon({set: "lucide", icon: "keyboard"});
+const InsertionIcon = makeIcon({set: "tabler", icon: "pencil-plus"});
+const DeletionIcon = makeIcon({set: "tabler", icon: "pencil-minus"});
+
+// Artistic icons
+const PaintbrushIcon = makeIcon({set: "lucide", icon: "paintbrush"});
+const PaintBucketIcon = makeIcon({set: "lucide", icon: "paint-bucket"});
+const BorderLeftIcon = makeIcon({set: "tabler", icon: "border-left"});
+
+// Typesetting icons
+const TypographyIcon = makeIcon({set: "tabler", icon: "typography"});
+const FontStyleIcon = makeIcon({set: "radix", icon: "font-style"});
+const FontFamilyIcon = makeIcon({set: "radix", icon: "font-family"});
+const FontSizeIcon = makeIcon({set: "radix", icon: "font-size"});
+const LetterSpacingIcon = makeIcon({set: "radix", icon: "letter-spacing"});
+const LetterCaseUppercaseIcon = makeIcon({set: "radix", icon: "letter-case-uppercase"});
+const LetterCaseLowercaseIcon = makeIcon({set: "radix", icon: "letter-case-lowercase"});
+
+// Modify icons
+const LayersIcon = makeIcon({set: "radix", icon: "layers"});
+const EraserIcon = makeIcon({set: "tabler", icon: "eraser"});
+const TrashIcon = makeIcon({set: "tabler", icon: "trash"});
+
+// Clipboard icons
+const CopyIcon = makeIcon({set: "lucide", icon: "copy"});
+const ClipboardCopyIcon = makeIcon({set: "radix", icon: "clipboard-copy"});
+const MarkdownIcon = makeIcon({set: "simple", icon: "markdown"});
+const Html5Icon = makeIcon({set: "simple", icon: "html5"});
+const ScissorsIcon = makeIcon({set: "tabler", icon: "scissors"});
+const ClipboardIcon = makeIcon({set: "radix", icon: "clipboard"});
+
+// Insert icons
+const BetweenVerticalEndIcon = makeIcon({set: "lucide", icon: "between-vertical-end"});
+const ButtonIcon = makeIcon({set: "radix", icon: "button"});
+const CalendarIcon = makeIcon({set: "radix", icon: "calendar"});
+const WalletIcon = makeIcon({set: "tabler", icon: "wallet"});
+const DropdownMenuIcon = makeIcon({set: "radix", icon: "dropdown-menu"});
+const PlusIcon = makeIcon({set: "radix", icon: "plus"});
+const SewingPinIcon = makeIcon({set: "radix", icon: "sewing-pin"});
+const FileIcon = makeIcon({set: "radix", icon: "file"});
+const TemplateIcon = makeIcon({set: "tabler", icon: "template"});
+const RadixKeyboardIcon = makeIcon({set: "radix", icon: "keyboard"});
+const SmilePlusIcon = makeIcon({set: "lucide", icon: "smile-plus"});
+const OmegaIcon = makeIcon({set: "lucide", icon: "omega"});
+const VariableIcon = makeIcon({set: "lucide", icon: "variable"});
+const SquareChevronRightIcon = makeIcon({set: "lucide", icon: "square-chevron-right"});
+
+// Block element icons
+const PilcrowIcon = makeIcon({set: "lucide", icon: "pilcrow"});
+const QuoteIcon = makeIcon({set: "lucide", icon: "quote"});
+const MathBlockIcon = makeIcon({set: "tabler", icon: "math"});
+const TypeIcon = makeIcon({set: "lucide", icon: "type"});
+const H1Icon = makeIcon({set: "tabler", icon: "h-1"});
+const H2Icon = makeIcon({set: "tabler", icon: "h-2"});
+const H3Icon = makeIcon({set: "tabler", icon: "h-3"});
+const H4Icon = makeIcon({set: "tabler", icon: "h-4"});
+const H5Icon = makeIcon({set: "tabler", icon: "h-5"});
+const H6Icon = makeIcon({set: "tabler", icon: "h-6"});
+const ListBulletedIcon = makeIcon({set: "ibm_32", icon: "list--bulleted"});
+const ListNumberedIcon = makeIcon({set: "ibm_32", icon: "list--numbered"});
+const ListCheckedIcon = makeIcon({set: "ibm_32", icon: "list--checked"});
+const LayoutIcon = makeIcon({set: "tabler", icon: "layout"});
+const TableIcon = makeIcon({set: "tabler", icon: "table"});
+const ColumnsIcon = makeIcon({set: "tabler", icon: "columns"});
+const ImageInPictureIcon = makeIcon({set: "tabler", icon: "image-in-picture"});
+const PhotoScanIcon = makeIcon({set: "tabler", icon: "photo-scan"});
+const TablerFileIcon = makeIcon({set: "tabler", icon: "file"});
 export const annotations = (): MenuItem => {
   return {
     name: 'Annotations',
@@ -12,8 +103,8 @@ export const annotations = (): MenuItem => {
     children: [
       {
         name: 'Link',
-        // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-        icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+        // icon: () => <LinkIcon width={15} height={15} />,
+        icon: () => <LinkIcon width={15} height={15} />,
         active: {
           getSnapshot: () => true,
           subscribe: () => () => {},
@@ -24,28 +115,28 @@ export const annotations = (): MenuItem => {
       },
       {
         name: 'Comment',
-        icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,
+        icon: () => <CommentIcon width={16} height={16} />,
         onSelect: () => {
           console.log('Comment');
         },
       },
       {
         name: 'Bookmark',
-        icon: () => <Iconista width={16} height={16} set="lineicons" icon="flag-2" />,
+        icon: () => <BookmarkIcon width={16} height={16} />,
         onSelect: () => {
           console.log('Bookmark');
         },
       },
       {
         name: 'Footnote',
-        icon: () => <Iconista width={16} height={16} set="lucide" icon="footprints" />,
+        icon: () => <FootnoteIcon width={16} height={16} />,
         onSelect: () => {
           console.log('Footnote');
         },
       },
       {
         name: 'Aside',
-        icon: () => <Iconista width={16} height={16} set="tabler" icon="box-align-right" />,
+        icon: () => <AsideIcon width={16} height={16} />,
         onSelect: () => {
           console.log('Aside');
         },
@@ -66,7 +157,7 @@ export const secondBrain = (): MenuItem => {
       </>
     ),
     right: () => <Sidetip small>{'AI'}</Sidetip>,
-    icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
+    icon: () => <SecondBrainIcon style={{color: 'purple'}} width={16} height={16} />,
     children: [
       {
         name: 'Ask question',
@@ -76,12 +167,12 @@ export const secondBrain = (): MenuItem => {
         children: [
           {
             name: 'Make shorter',
-            icon: () => <Iconista width={16} height={16} set="tabler" icon="viewport-short" />,
+            icon: () => <MakeShorterIcon width={16} height={16} />,
             onSelect: () => {},
           },
           {
             name: 'Make longer',
-            icon: () => <Iconista width={16} height={16} set="tabler" icon="viewport-tall" />,
+            icon: () => <MakeLongerIcon width={16} height={16} />,
             onSelect: () => {},
           },
           {name: 'Add humor'},
@@ -280,8 +371,8 @@ export const inlineText: MenuItem = {
           children: [
             {
               name: 'Bold',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-bold" />,
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
+              icon: () => <BoldIcon width={15} height={15} />,
+              // icon: () => <BoldIcon width={16} height={16} />,
               right: () => <Sidetip small>⌘ B</Sidetip>,
               keys: ['⌘', 'b'],
               onSelect: () => {
@@ -290,9 +381,9 @@ export const inlineText: MenuItem = {
             },
             {
               name: 'Italic',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-italic" />,
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="italic" />,
-              icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
+              // icon: () => <ItalicIcon width={15} height={15} />,
+              // icon: () => <ItalicIcon width={16} height={16} />,
+              icon: () => <ItalicIcon width={14} height={14} />,
               right: () => <Sidetip small>⌘ I</Sidetip>,
               active: {
                 getSnapshot: () => true,
@@ -305,7 +396,7 @@ export const inlineText: MenuItem = {
             },
             {
               name: 'Underline',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
+              icon: () => <UnderlineIcon width={16} height={16} />,
               right: () => <Sidetip small>⌘ U</Sidetip>,
               keys: ['⌘', 'u'],
               onSelect: () => {
@@ -314,29 +405,29 @@ export const inlineText: MenuItem = {
             },
             {
               name: 'Strikethrough',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
+              // icon: () => <StrikethroughIcon width={15} height={15} />,
+              icon: () => <StrikethroughIcon width={16} height={16} />,
               onSelect: () => {
                 console.log('Strikethrough');
               },
             },
             {
               name: 'Overline',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
+              icon: () => <OverlineIcon width={16} height={16} />,
               onSelect: () => {
                 console.log('Overline');
               },
             },
             {
               name: 'Highlight',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
+              icon: () => <HighlightIcon width={16} height={16} />,
               onSelect: () => {
                 console.log('Highlight');
               },
             },
             {
               name: 'Classified',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
+              icon: () => <ClassifiedIcon width={16} height={16} />,
               onSelect: () => {
                 console.log('Classified');
               },
@@ -353,37 +444,37 @@ export const inlineText: MenuItem = {
           children: [
             {
               name: 'Code',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+              icon: () => <CodeIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Math',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
+              icon: () => <MathIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Superscript',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
+              icon: () => <SuperscriptIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Subscript',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
+              icon: () => <SubscriptIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Keyboard key',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
+              icon: () => <KeyboardIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Insertion',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
+              icon: () => <InsertionIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Deletion',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
+              icon: () => <DeletionIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -398,17 +489,17 @@ export const inlineText: MenuItem = {
           children: [
             {
               name: 'Color',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="paintbrush" />,
+              icon: () => <PaintbrushIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Background',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="paint-bucket" />,
+              icon: () => <PaintBucketIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Border',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="border-left" />,
+              icon: () => <BorderLeftIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -429,7 +520,7 @@ export const inlineText: MenuItem = {
       name: 'Typesetting',
       expand: 4,
       openOnTitleHov: true,
-      icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
+      icon: () => <TypographyIcon width={16} height={16} />,
       onSelect: () => {},
       children: [
         {
@@ -460,27 +551,27 @@ export const inlineText: MenuItem = {
         {
           name: 'Custom typeface',
           expand: 10,
-          icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
+          icon: () => <FontStyleIcon width={15} height={15} />,
           children: [
             {
               name: 'Typeface',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
+              // icon: () => <FontStyleIcon width={15} height={15} />,
+              icon: () => <FontFamilyIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Text size',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
+              icon: () => <FontSizeIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Letter spacing',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+              icon: () => <LetterSpacingIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Word spacing',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+              icon: () => <LetterSpacingIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
@@ -489,12 +580,12 @@ export const inlineText: MenuItem = {
             },
             {
               name: 'Large caps',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
+              icon: () => <LetterCaseUppercaseIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Small caps',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
+              icon: () => <LetterCaseLowercaseIcon width={15} height={15} />,
               onSelect: () => {},
             },
           ],
@@ -518,20 +609,20 @@ export const inlineText: MenuItem = {
             </Code>
           ),
           more: true,
-          icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
+          icon: () => <LayersIcon width={15} height={15} />,
           onSelect: () => {},
         },
         {
           name: 'Erase formatting',
           danger: true,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
+          icon: () => <EraserIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Delete all in range',
           danger: true,
           more: true,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
+          icon: () => <TrashIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -542,37 +633,37 @@ export const inlineText: MenuItem = {
     },
     {
       name: 'Copy, cut, and paste',
-      // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-      icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+      // icon: () => <ClipboardCopyIcon width={15} height={15} />,
+      icon: () => <CopyIcon width={16} height={16} />,
       expand: 0,
       children: [
         {
           id: 'copy-menu',
           name: 'Copy',
-          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+          // icon: () => <ClipboardCopyIcon width={15} height={15} />,
+          icon: () => <ClipboardCopyIcon width={15} height={15} />,
           expand: 5,
           children: [
             {
               name: 'Copy',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              icon: () => <ClipboardCopyIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Copy text only',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              icon: () => <ClipboardCopyIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Copy as Markdown',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+              icon: () => <ClipboardCopyIcon width={15} height={15} />,
+              right: () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />,
               onSelect: () => {},
             },
             {
               name: 'Copy as HTML',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-              right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+              icon: () => <ClipboardCopyIcon width={15} height={15} />,
+              right: () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />,
               onSelect: () => {},
             },
           ],
@@ -584,34 +675,34 @@ export const inlineText: MenuItem = {
         {
           id: 'cut-menu',
           name: 'Cut',
-          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+          // icon: () => <ClipboardCopyIcon width={15} height={15} />,
+          icon: () => <ScissorsIcon width={16} height={16} />,
           expand: 5,
           children: [
             {
               name: 'Cut',
               danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              icon: () => <ScissorsIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Cut text only',
               danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              icon: () => <ScissorsIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Cut as Markdown',
               danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+              icon: () => <ScissorsIcon width={16} height={16} />,
+              right: () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />,
               onSelect: () => {},
             },
             {
               name: 'Cut as HTML',
               danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-              right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+              icon: () => <ScissorsIcon width={16} height={16} />,
+              right: () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />,
               onSelect: () => {},
             },
           ],
@@ -623,22 +714,22 @@ export const inlineText: MenuItem = {
         {
           id: 'paste-menu',
           name: 'Paste',
-          icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+          icon: () => <ClipboardIcon width={15} height={15} />,
           expand: 5,
           children: [
             {
               name: 'Paste',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              icon: () => <ClipboardIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Paste text only',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              icon: () => <ClipboardIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Paste formatting',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              icon: () => <ClipboardIcon width={15} height={15} />,
               onSelect: () => {},
             },
           ],
@@ -647,34 +738,34 @@ export const inlineText: MenuItem = {
     },
     {
       name: 'Insert',
-      icon: () => <Iconista width={16} height={16} set="lucide" icon="between-vertical-end" />,
+      icon: () => <BetweenVerticalEndIcon width={16} height={16} />,
       children: [
         {
           name: 'Smart chip',
-          icon: () => <Iconista width={15} height={15} set="radix" icon="button" />,
+          icon: () => <ButtonIcon width={15} height={15} />,
           children: [
             {
               name: 'Date',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
+              icon: () => <CalendarIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'AI chip',
-              icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
+              icon: () => <SecondBrainIcon style={{color: 'purple'}} width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Solana wallet',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
+              icon: () => <WalletIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Dropdown',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+              icon: () => <DropdownMenuIcon width={15} height={15} />,
               children: [
                 {
                   name: 'Create new',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
+                  icon: () => <PlusIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
@@ -688,12 +779,12 @@ export const inlineText: MenuItem = {
                   children: [
                     {
                       name: 'Configuration 1',
-                      icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                      icon: () => <DropdownMenuIcon width={15} height={15} />,
                       onSelect: () => {},
                     },
                     {
                       name: 'Configuration 2',
-                      icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                      icon: () => <DropdownMenuIcon width={15} height={15} />,
                       onSelect: () => {},
                     },
                   ],
@@ -709,12 +800,12 @@ export const inlineText: MenuItem = {
                   children: [
                     {
                       name: 'Project status',
-                      icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                      icon: () => <DropdownMenuIcon width={15} height={15} />,
                       onSelect: () => {},
                     },
                     {
                       name: 'Review status',
-                      icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                      icon: () => <DropdownMenuIcon width={15} height={15} />,
                       onSelect: () => {},
                     },
                   ],
@@ -725,8 +816,8 @@ export const inlineText: MenuItem = {
         },
         {
           name: 'Link',
-          // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-          icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+          // icon: () => <LinkIcon width={15} height={15} />,
+          icon: () => <LinkIcon width={15} height={15} />,
           active: {
             getSnapshot: () => true,
             subscribe: () => () => {},
@@ -735,18 +826,18 @@ export const inlineText: MenuItem = {
         },
         {
           name: 'Reference',
-          icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
+          icon: () => <SewingPinIcon width={15} height={15} />,
           onSelect: () => {},
         },
         {
           name: 'File',
-          icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
+          icon: () => <FileIcon width={15} height={15} />,
           onSelect: () => {},
         },
         {
           name: 'Template',
           text: 'building blocks',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="template" />,
+          icon: () => <TemplateIcon width={16} height={16} />,
           children: [
             {
               name: 'Meeting notes',
@@ -776,22 +867,22 @@ export const inlineText: MenuItem = {
         },
         {
           name: 'On-screen keyboard',
-          icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
+          icon: () => <RadixKeyboardIcon width={15} height={15} />,
           onSelect: () => {},
         },
         {
           name: 'Emoji',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
+          icon: () => <SmilePlusIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Special characters',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
+          icon: () => <OmegaIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Variable',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
+          icon: () => <VariableIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -799,7 +890,7 @@ export const inlineText: MenuItem = {
     {
       name: 'Developer tools',
       danger: true,
-      icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
+      icon: () => <SquareChevronRightIcon width={16} height={16} />,
       onSelect: () => {},
     },
   ],
@@ -814,30 +905,30 @@ export const blockElement: MenuItem = {
       children: [
         {
           name: 'Paragraph',
-          // icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="pilcrow" />,
-          // icon: () => <Iconista width={15} height={15} set="radix" icon="pilcrow" />,
+          // icon: () => <TypeIcon width={16} height={16} />,
+          icon: () => <PilcrowIcon width={16} height={16} />,
+          // icon: () => <PilcrowIcon width={15} height={15} />,
           onSelect: () => {},
         },
         {
           name: 'Blockquote',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
+          icon: () => <QuoteIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Code block',
-          // icon: () => <Iconista width={16} height={16} set="tabler" icon="terminal" />,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+          // icon: () => <CodeIcon width={16} height={16} />,
+          icon: () => <CodeIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Math block',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="math" />,
+          icon: () => <MathBlockIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Pre-formatted',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+          icon: () => <TypeIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -852,44 +943,44 @@ export const blockElement: MenuItem = {
       children: [
         {
           name: 'Heading 1',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="h-1" />,
-          // icon: () => <Iconista width={16} height={16} set="simple" icon="h-1" />,
+          icon: () => <H1Icon width={16} height={16} />,
+          // icon: () => <H1Icon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Heading 2',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="h-2" />,
+          icon: () => <H2Icon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Heading 3',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="h-3" />,
+          icon: () => <H3Icon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Heading 4',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="h-4" />,
+          icon: () => <H4Icon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Heading 5',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="h-5" />,
+          icon: () => <H5Icon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Heading 6',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="h-6" />,
+          icon: () => <H6Icon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           sepBefore: true,
           name: 'Title',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+          icon: () => <TypeIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Sub-title',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+          icon: () => <TypeIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -901,18 +992,18 @@ export const blockElement: MenuItem = {
       children: [
         {
           name: 'Bullet list',
-          // icon: () => <Iconista width={16} height={16} set="tabler" icon="list" />,
-          icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--bulleted" />,
+          // icon: () => <ListBulletedIcon width={16} height={16} />,
+          icon: () => <ListBulletedIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Numbered list',
-          icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--numbered" />,
+          icon: () => <ListNumberedIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Task list',
-          icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--checked" />,
+          icon: () => <ListCheckedIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -925,16 +1016,16 @@ export const blockElement: MenuItem = {
     {
       name: 'Layouts',
       expand: 0,
-      icon: () => <Iconista width={16} height={16} set="tabler" icon="layout" />,
+      icon: () => <LayoutIcon width={16} height={16} />,
       children: [
         {
           name: 'Table',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="table" />,
+          icon: () => <TableIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'Columns',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="columns" />,
+          icon: () => <ColumnsIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -942,16 +1033,16 @@ export const blockElement: MenuItem = {
     {
       name: 'Embed',
       expand: 0,
-      icon: () => <Iconista width={16} height={16} set="tabler" icon="image-in-picture" />,
+      icon: () => <ImageInPictureIcon width={16} height={16} />,
       children: [
         {
           name: 'Image',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="photo-scan" />,
+          icon: () => <PhotoScanIcon width={16} height={16} />,
           onSelect: () => {},
         },
         {
           name: 'File',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="file" />,
+          icon: () => <TablerFileIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],

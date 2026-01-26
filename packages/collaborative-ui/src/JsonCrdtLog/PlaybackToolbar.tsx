@@ -2,12 +2,15 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {PlayIcon} from '../icons/PlayIcon';
 import {PauseIcon} from '../icons/PauseIcon';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {JsonCrdtLogState} from './JsonCrdtLogState';
+
+const VerticalRightIcon = makeIcon({set: 'ant_outline', icon: 'vertical-right'});
+const VerticalLeftIcon = makeIcon({set: 'ant_outline', icon: 'vertical-left'});
 
 export interface PlaybackToolbarProps {
   state: JsonCrdtLogState;
@@ -26,12 +29,12 @@ export const PlaybackToolbar: React.FC<PlaybackToolbarProps> = ({state}) => {
         <>
           <BasicTooltip nowrap renderTooltip={() => t('Pin previous state')}>
             <BasicButton onClick={state.prev}>
-              <Iconista set="ant_outline" icon="vertical-right" width={16} height={16} />
+              <VerticalRightIcon width={16} height={16} />
             </BasicButton>
           </BasicTooltip>
           <BasicTooltip nowrap renderTooltip={() => t('Pin next state')}>
             <BasicButton onClick={state.next}>
-              <Iconista set="ant_outline" icon="vertical-left" width={16} height={16} />
+              <VerticalLeftIcon width={16} height={16} />
             </BasicButton>
           </BasicTooltip>
         </>

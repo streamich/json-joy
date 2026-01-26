@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ContextItem, ContextSep, ContextPane, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -9,6 +9,10 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtModelState} from './JsonCrdtModelState';
+
+const CubeIcon = makeIcon({set: 'auth0', icon: 'cube'});
+const HooksIcon = makeIcon({set: 'auth0', icon: 'hooks'});
+const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
 
 export interface ViewSelectProps {
   state: JsonCrdtModelState;
@@ -53,7 +57,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setModelView('interactive')}
             grey={modelView === 'interactive'}
-            icon={<Iconista set="auth0" icon="cube" width={16} height={16} />}
+            icon={<CubeIcon width={16} height={16} />}
           >
             {t('Explore')}
           </ContextItem>
@@ -62,7 +66,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setModelView('index')}
             grey={modelView === 'index'}
-            icon={<Iconista set="auth0" icon="hooks" width={16} height={16} />}
+            icon={<HooksIcon width={16} height={16} />}
           >
             {t('Node index')}
           </ContextItem>
@@ -71,7 +75,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setModelView('debug')}
             grey={modelView === 'debug'}
-            icon={<Iconista set="elastic" icon="vis_text" width={16} height={16} />}
+            icon={<VisTextIcon width={16} height={16} />}
           >
             {t('Textual')}
           </ContextItem>

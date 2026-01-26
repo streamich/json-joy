@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {FormattingTitle} from '../FormattingTitle';
@@ -19,6 +19,9 @@ import {ContextPaneHeader} from '../../components/ContextPaneHeader';
 import {ButtonSeparator} from '../../../PeritextWebUi/components/ButtonSeparator';
 import {ContextPaneHeaderSep} from '../../components/ContextPaneHeaderSep';
 import type {SavedFormatting} from '../../state/formattings';
+
+const PencilOffIcon = makeIcon({set: 'lucide', icon: 'pencil-off'});
+const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -50,7 +53,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               <Space horizontal />
               <BasicTooltip renderTooltip={() => t('Stop editing')}>
                 <BasicButton size={32} rounder onClick={state.switchToViewPanel}>
-                  <Iconista set={'lucide'} icon={'pencil-off'} width={16} height={16} />
+                  <PencilOffIcon width={16} height={16} />
                 </BasicButton>
               </BasicTooltip>
             </Flex>
@@ -70,7 +73,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
               <Space horizontal size={-2} />
               <BasicTooltip renderTooltip={() => t('Edit')}>
                 <BasicButton size={32} rounder onClick={state.switchToEditPanel}>
-                  <Iconista set={'lucide'} icon={'pencil'} width={16} height={16} />
+                  <PencilIcon width={16} height={16} />
                 </BasicButton>
               </BasicTooltip>
             </Flex>

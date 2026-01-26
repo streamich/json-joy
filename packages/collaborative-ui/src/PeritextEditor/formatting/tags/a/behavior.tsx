@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {renderIcon} from './renderIcon';
 import {View} from './View';
@@ -7,11 +7,14 @@ import {Edit} from './Edit';
 import {getDomain} from '../../../util';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 
+const LinkIcon = makeIcon({set: 'lucide', icon: 'link'});
+const LinkRadixIcon = makeIcon({set: 'radix', icon: 'link-2'});
+
 export const behavior = {
   menu: {
     name: 'Link',
-    icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-    // icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+    icon: () => <LinkIcon width={15} height={15} />,
+    // icon: () => <LinkRadixIcon width={15} height={15} />,
     right: () => <Sidetip small>⌘ K</Sidetip>,
     keys: ['⌘', 'k'],
   },

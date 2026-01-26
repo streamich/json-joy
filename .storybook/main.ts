@@ -34,7 +34,8 @@ const config: StorybookConfig = {
     titlePrefix: pkg,
   })),
   "addons": [
-    getAbsolutePath('@storybook/addon-webpack5-compiler-swc')
+    getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
+    getAbsolutePath("@storybook/addon-a11y")
   ],
   "framework": getAbsolutePath('@storybook/react-webpack5'),
   typescript: {

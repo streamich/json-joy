@@ -3,9 +3,11 @@ import {useT} from 'use-t';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextItem, ContextPane, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {ThemeContextItem} from './ThemeContextItem';
+
+const GitHubIcon = makeIcon({set: 'fontawesome_brands', icon: 'github'});
 
 export type Props = Record<string, never>;
 
@@ -21,7 +23,7 @@ export const Right: React.FC<Props> = () => {
             <ContextItem closePopup to={'https://github.com/streamich/json-joy/tree/master/packages/ui'}>
               <Split style={{alignItems: 'center'}}>
                 <span>{t('GitHub repository')}</span>
-                <Iconista set="fontawesome_brands" icon="github" width={16} height={16} />
+                <GitHubIcon width={16} height={16} />
               </Split>
             </ContextItem>
             <ContextSep />

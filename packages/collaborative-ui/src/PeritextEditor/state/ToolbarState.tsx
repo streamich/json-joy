@@ -1,7 +1,101 @@
 import * as React from 'react';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+
+// Preloaded icons - Radix set
+const FontBoldIcon = makeIcon({set: 'radix', icon: 'font-bold'});
+const FontItalicIcon = makeIcon({set: 'radix', icon: 'font-italic'});
+const StrikethroughRadixIcon = makeIcon({set: 'radix', icon: 'strikethrough'});
+const ClipboardCopyIcon = makeIcon({set: 'radix', icon: 'clipboard-copy'});
+const ClipboardIcon = makeIcon({set: 'radix', icon: 'clipboard'});
+const DropdownMenuIcon = makeIcon({set: 'radix', icon: 'dropdown-menu'});
+const LetterSpacingIcon = makeIcon({set: 'radix', icon: 'letter-spacing'});
+const FontStyleIcon = makeIcon({set: 'radix', icon: 'font-style'});
+const FontFamilyIcon = makeIcon({set: 'radix', icon: 'font-family'});
+const FontSizeIcon = makeIcon({set: 'radix', icon: 'font-size'});
+const LetterCaseUppercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-uppercase'});
+const LetterCaseLowercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-lowercase'});
+const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
+const RadixKeyboardIcon = makeIcon({set: 'radix', icon: 'keyboard'});
+const RadixFileIcon = makeIcon({set: 'radix', icon: 'file'});
+const CalendarIcon = makeIcon({set: 'radix', icon: 'calendar'});
+const ButtonIcon = makeIcon({set: 'radix', icon: 'button'});
+const SewingPinIcon = makeIcon({set: 'radix', icon: 'sewing-pin'});
+const PlusIcon = makeIcon({set: 'radix', icon: 'plus'});
+const LinkRadixIcon = makeIcon({set: 'radix', icon: 'link-2'});
+
+// Preloaded icons - Tabler set
+const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline'});
+const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough'});
+const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline'});
+const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight'});
+const LockPasswordIcon = makeIcon({set: 'tabler', icon: 'lock-password'});
+const CodeIcon = makeIcon({set: 'tabler', icon: 'code'});
+const MathIntegralXIcon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
+const SuperscriptIcon = makeIcon({set: 'tabler', icon: 'superscript'});
+const SubscriptIcon = makeIcon({set: 'tabler', icon: 'subscript'});
+const PencilPlusIcon = makeIcon({set: 'tabler', icon: 'pencil-plus'});
+const PencilMinusIcon = makeIcon({set: 'tabler', icon: 'pencil-minus'});
+const BorderLeftIcon = makeIcon({set: 'tabler', icon: 'border-left'});
+const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
+const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
+const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
+const ScissorsIcon = makeIcon({set: 'tabler', icon: 'scissors'});
+const JsonIcon = makeIcon({set: 'tabler', icon: 'json'});
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography'});
+const TemplateIcon = makeIcon({set: 'tabler', icon: 'template'});
+const WalletIcon = makeIcon({set: 'tabler', icon: 'wallet'});
+const BrainIcon = makeIcon({set: 'tabler', icon: 'brain'});
+const H1Icon = makeIcon({set: 'tabler', icon: 'h-1'});
+const H2Icon = makeIcon({set: 'tabler', icon: 'h-2'});
+const H3Icon = makeIcon({set: 'tabler', icon: 'h-3'});
+const H4Icon = makeIcon({set: 'tabler', icon: 'h-4'});
+const H5Icon = makeIcon({set: 'tabler', icon: 'h-5'});
+const H6Icon = makeIcon({set: 'tabler', icon: 'h-6'});
+const LayoutIcon = makeIcon({set: 'tabler', icon: 'layout'});
+const TableIcon = makeIcon({set: 'tabler', icon: 'table'});
+const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns'});
+const ImageInPictureIcon = makeIcon({set: 'tabler', icon: 'image-in-picture'});
+const PhotoScanIcon = makeIcon({set: 'tabler', icon: 'photo-scan'});
+const TablerFileIcon = makeIcon({set: 'tabler', icon: 'file'});
+const MathIcon = makeIcon({set: 'tabler', icon: 'math'});
+
+// Preloaded icons - Lucide set
+const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
+const BoldIcon = makeIcon({set: 'lucide', icon: 'bold'});
+const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
+const PaintBucketIcon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
+const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
+const TypeIcon = makeIcon({set: 'lucide', icon: 'type'});
+const VariableIcon = makeIcon({set: 'lucide', icon: 'variable'});
+const SquareChevronRightIcon = makeIcon({set: 'lucide', icon: 'square-chevron-right'});
+const SmilePlusIcon = makeIcon({set: 'lucide', icon: 'smile-plus'});
+const OmegaIcon = makeIcon({set: 'lucide', icon: 'omega'});
+const LinkIcon = makeIcon({set: 'lucide', icon: 'link'});
+const BetweenVerticalEndIcon = makeIcon({set: 'lucide', icon: 'between-vertical-end'});
+const TextIcon = makeIcon({set: 'lucide', icon: 'text'});
+const UndoIcon = makeIcon({set: 'lucide', icon: 'undo'});
+const RedoIcon = makeIcon({set: 'lucide', icon: 'redo'});
+const QuoteIcon = makeIcon({set: 'lucide', icon: 'quote'});
+const PilcrowIcon = makeIcon({set: 'lucide', icon: 'pilcrow'});
+const FootprintsIcon = makeIcon({set: 'lucide', icon: 'footprints'});
+
+// Preloaded icons - Simple set
+const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
+const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
+
+// Preloaded icons - IBM set
+const ListBulletedIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted'});
+const ListNumberedIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered'});
+const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
+
+// Preloaded icons - Bootstrap set
+const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
+
+// Preloaded icons - Lineicons set
+const CommentTextIcon = makeIcon({set: 'lineicons', icon: 'comment-1-text'});
+const FlagIcon = makeIcon({set: 'lineicons', icon: 'flag-2'});
 import {secondBrain} from './menus';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
@@ -212,8 +306,8 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Bold',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-bold" />,
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="bold" />,
+              icon: () => <FontBoldIcon width={15} height={15} />,
+              // icon: () => <BoldIcon width={16} height={16} />,
               right: () => <Sidetip small>⌘ B</Sidetip>,
               keys: ['⌘', 'b'],
               onSelect: () => {
@@ -222,9 +316,9 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'Italic',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-italic" />,
-              // icon: () => <Iconista width={16} height={16} set="lucide" icon="italic" />,
-              icon: () => <Iconista width={14} height={14} set="lucide" icon="italic" />,
+              // icon: () => <FontItalicIcon width={15} height={15} />,
+              // icon: () => <ItalicIcon width={16} height={16} />,
+              icon: () => <ItalicIcon width={14} height={14} />,
               right: () => <Sidetip small>⌘ I</Sidetip>,
               keys: ['⌘', 'i'],
               onSelect: () => {
@@ -233,7 +327,7 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'Underline',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="underline" />,
+              icon: () => <UnderlineIcon width={16} height={16} />,
               right: () => <Sidetip small>⌘ U</Sidetip>,
               keys: ['⌘', 'u'],
               onSelect: () => {
@@ -242,29 +336,29 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'Strikethrough',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="strikethrough" />,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="strikethrough" />,
+              // icon: () => <StrikethroughRadixIcon width={15} height={15} />,
+              icon: () => <StrikethroughIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.s);
               },
             },
             {
               name: 'Overline',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="overline" />,
+              icon: () => <OverlineIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.overline);
               },
             },
             {
               name: 'Highlight',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="highlight" />,
+              icon: () => <HighlightIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.mark);
               },
             },
             {
               name: 'Classified',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="lock-password" />,
+              icon: () => <LockPasswordIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.spoiler);
               },
@@ -281,49 +375,49 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Code',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+              icon: () => <CodeIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.code);
               },
             },
             {
               name: 'Math',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
+              icon: () => <MathIntegralXIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.math);
               },
             },
             {
               name: 'Superscript',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
+              icon: () => <SuperscriptIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.sup);
               },
             },
             {
               name: 'Subscript',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
+              icon: () => <SubscriptIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.sub);
               },
             },
             {
               name: 'Keyboard key',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
+              icon: () => <KeyboardIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.kbd);
               },
             },
             {
               name: 'Insertion',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
+              icon: () => <PencilPlusIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.ins);
               },
             },
             {
               name: 'Deletion',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
+              icon: () => <PencilMinusIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.del);
               },
@@ -341,12 +435,12 @@ export class ToolbarState implements UiLifeCycles {
             this.colorMenuItem(),
             {
               name: 'Background',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="paint-bucket" />,
+              icon: () => <PaintBucketIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Border',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="border-left" />,
+              icon: () => <BorderLeftIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -384,22 +478,22 @@ export class ToolbarState implements UiLifeCycles {
         this.linkMenuItem(),
         // {
         //   name: 'Comment',
-        //   icon: () => <Iconista width={16} height={16} set="lineicons" icon="comment-1-text" />,
+        //   icon: () => <CommentTextIcon width={16} height={16} />,
         //   onSelect: () => {},
         // },
         // {
         //   name: 'Bookmark',
-        //   icon: () => <Iconista width={16} height={16} set="lineicons" icon="flag-2" />,
+        //   icon: () => <FlagIcon width={16} height={16} />,
         //   onSelect: () => {},
         // },
         // {
         //   name: 'Footnote',
-        //   icon: () => <Iconista width={16} height={16} set="lucide" icon="footprints" />,
+        //   icon: () => <FootprintsIcon width={16} height={16} />,
         //   onSelect: () => {},
         // },
         {
           name: 'Aside',
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="box-align-right" />,
+          icon: () => <BoxAlignRightIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -421,13 +515,13 @@ export class ToolbarState implements UiLifeCycles {
             </Code>
           ),
           more: true,
-          icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
+          icon: () => <LayersIcon width={15} height={15} />,
           onSelect: () => {},
         },
         {
           name: 'Erase formatting',
           danger: true,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
+          icon: () => <EraserIcon width={16} height={16} />,
           onSelect: () => {
             et.format({action: 'erase'});
           },
@@ -436,7 +530,7 @@ export class ToolbarState implements UiLifeCycles {
           name: 'Delete all in range',
           danger: true,
           more: true,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
+          icon: () => <TrashIcon width={16} height={16} />,
           onSelect: () => {
             et.format({action: 'del'});
           },
@@ -448,12 +542,12 @@ export class ToolbarState implements UiLifeCycles {
   public readonly copyAsMenu = (action: 'copy' | 'cut', ctx: ClipboardMenuCtx = {}): MenuItem => {
     const icon =
       action === 'copy'
-        ? () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />
-        : () => <Iconista width={16} height={16} set="tabler" icon="scissors" />;
+        ? () => <ClipboardCopyIcon width={15} height={15} />
+        : () => <ScissorsIcon width={16} height={16} />;
     const et = this.surface.events.et;
-    const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
-    const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
-    const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
+    const iconMarkdown = () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />;
+    const iconHtml = () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />;
+    const iconJson = () => <JsonIcon width={16} height={16} style={{opacity: 0.5}} />;
     const markdownAction: MenuItem = {
       name: 'Markdown',
       text: action + ' markdown md',
@@ -512,7 +606,7 @@ export class ToolbarState implements UiLifeCycles {
       name: 'Fragment text',
       text: action + 'peritext fragment debug',
       icon,
-      right: () => <Iconista width={16} height={16} set="lucide" icon="text" style={{opacity: 0.5}} />,
+      right: () => <TextIcon width={16} height={16} style={{opacity: 0.5}} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(fragmentAction, action), action, format: 'fragment'});
       },
@@ -542,10 +636,10 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly pasteAsMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
-    const icon = () => <Iconista width={15} height={15} set="radix" icon="clipboard" />;
-    const iconMarkdown = () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />;
-    const iconHtml = () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />;
-    const iconJson = () => <Iconista width={16} height={16} set="tabler" icon="json" style={{opacity: 0.5}} />;
+    const icon = () => <ClipboardIcon width={15} height={15} />;
+    const iconMarkdown = () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />;
+    const iconHtml = () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />;
+    const iconJson = () => <JsonIcon width={16} height={16} style={{opacity: 0.5}} />;
     const et = this.surface.events.et;
     const markdownAction: MenuItem = {
       name: 'Markdown',
@@ -628,14 +722,14 @@ export class ToolbarState implements UiLifeCycles {
     const et = this.surface.events.et;
     const copyAction: MenuItem = {
       name: 'Copy',
-      icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+      icon: () => <ClipboardCopyIcon width={15} height={15} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(copyAction, 'copy'), action: 'copy'});
       },
     };
     const copyTextOnlyAction: MenuItem = {
       name: 'Copy text only',
-      icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+      icon: () => <ClipboardCopyIcon width={15} height={15} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(copyTextOnlyAction, 'copy'), action: 'copy', format: 'text'});
       },
@@ -644,7 +738,7 @@ export class ToolbarState implements UiLifeCycles {
     if (!ctx.hideStyleActions) {
       const copyStyleAction: MenuItem = {
         name: 'Copy style',
-        icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+        icon: () => <ClipboardCopyIcon width={15} height={15} />,
         onSelect: () => {
           et.buffer({...ctx.onBeforeAction?.(copyStyleAction, 'copy'), action: 'copy', format: 'style'});
         },
@@ -655,7 +749,7 @@ export class ToolbarState implements UiLifeCycles {
     return {
       id: 'copy-menu',
       name: 'Copy',
-      icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+      icon: () => <ClipboardCopyIcon width={15} height={15} />,
       expand: 5,
       children,
     };
@@ -666,7 +760,7 @@ export class ToolbarState implements UiLifeCycles {
     const cutAction: MenuItem = {
       name: 'Cut',
       danger: true,
-      icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+      icon: () => <ScissorsIcon width={16} height={16} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(cutAction, 'cut'), action: 'cut'});
       },
@@ -674,7 +768,7 @@ export class ToolbarState implements UiLifeCycles {
     const cutTextAction: MenuItem = {
       name: 'Cut text only',
       danger: true,
-      icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+      icon: () => <ScissorsIcon width={16} height={16} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(cutTextAction, 'cut'), action: 'cut', format: 'text'});
       },
@@ -682,7 +776,7 @@ export class ToolbarState implements UiLifeCycles {
     return {
       id: 'cut-menu',
       name: 'Cut',
-      icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+      icon: () => <ScissorsIcon width={16} height={16} />,
       expand: 5,
       children: [cutAction, cutTextAction, this.copyAsMenu('cut', ctx)],
     };
@@ -692,14 +786,14 @@ export class ToolbarState implements UiLifeCycles {
     const et = this.surface.events.et;
     const pasteAction: MenuItem = {
       name: 'Paste',
-      icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+      icon: () => <ClipboardIcon width={15} height={15} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(pasteAction, 'paste'), action: 'paste'});
       },
     };
     const pasteTextAction: MenuItem = {
       name: 'Paste text',
-      icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+      icon: () => <ClipboardIcon width={15} height={15} />,
       onSelect: () => {
         et.buffer({...ctx.onBeforeAction?.(pasteTextAction, 'paste'), action: 'paste', format: 'text'});
       },
@@ -708,7 +802,7 @@ export class ToolbarState implements UiLifeCycles {
     if (!ctx.hideStyleActions) {
       const pasteStyleAction: MenuItem = {
         name: 'Paste style',
-        icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+        icon: () => <ClipboardIcon width={15} height={15} />,
         onSelect: () => {
           et.buffer({...ctx.onBeforeAction?.(pasteStyleAction, 'paste'), action: 'paste', format: 'style'});
         },
@@ -719,7 +813,7 @@ export class ToolbarState implements UiLifeCycles {
     return {
       id: 'paste-menu',
       name: 'Paste',
-      icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+      icon: () => <ClipboardIcon width={15} height={15} />,
       expand: 5,
       children,
     };
@@ -733,7 +827,7 @@ export class ToolbarState implements UiLifeCycles {
     pasteMenu.sepBefore = true;
     return {
       name: 'Copy, cut, and paste',
-      icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+      icon: () => <CopyIcon width={16} height={16} />,
       expand: 0,
       sepBefore: true,
       children: [copyMenu, cutMenu, pasteMenu],
@@ -760,7 +854,7 @@ export class ToolbarState implements UiLifeCycles {
           name: 'Typesetting',
           expand: 4,
           openOnTitleHov: true,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
+          icon: () => <TypographyIcon width={16} height={16} />,
           onSelect: () => {},
           children: [
             {
@@ -791,27 +885,27 @@ export class ToolbarState implements UiLifeCycles {
             {
               name: 'Custom typeface',
               expand: 10,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
+              icon: () => <FontStyleIcon width={15} height={15} />,
               children: [
                 {
                   name: 'Typeface',
-                  // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
+                  // icon: () => <FontStyleIcon width={15} height={15} />,
+                  icon: () => <FontFamilyIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Text size',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
+                  icon: () => <FontSizeIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Letter spacing',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+                  icon: () => <LetterSpacingIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Word spacing',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+                  icon: () => <LetterSpacingIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
@@ -820,12 +914,12 @@ export class ToolbarState implements UiLifeCycles {
                 },
                 {
                   name: 'Large caps',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
+                  icon: () => <LetterCaseUppercaseIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Small caps',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
+                  icon: () => <LetterCaseLowercaseIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
               ],
@@ -840,34 +934,34 @@ export class ToolbarState implements UiLifeCycles {
         this.clipboardMenu(),
         {
           name: 'Insert',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="between-vertical-end" />,
+          icon: () => <BetweenVerticalEndIcon width={16} height={16} />,
           children: [
             {
               name: 'Smart chip',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="button" />,
+              icon: () => <ButtonIcon width={15} height={15} />,
               children: [
                 {
                   name: 'Date',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
+                  icon: () => <CalendarIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'AI chip',
-                  icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
+                  icon: () => <BrainIcon style={{color: 'purple'}} width={16} height={16} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Solana wallet',
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
+                  icon: () => <WalletIcon width={16} height={16} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Dropdown',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                  icon: () => <DropdownMenuIcon width={15} height={15} />,
                   children: [
                     {
                       name: 'Create new',
-                      icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
+                      icon: () => <PlusIcon width={15} height={15} />,
                       onSelect: () => {},
                     },
                     {
@@ -881,12 +975,12 @@ export class ToolbarState implements UiLifeCycles {
                       children: [
                         {
                           name: 'Configuration 1',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                         {
                           name: 'Configuration 2',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                       ],
@@ -902,12 +996,12 @@ export class ToolbarState implements UiLifeCycles {
                       children: [
                         {
                           name: 'Project status',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                         {
                           name: 'Review status',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                       ],
@@ -918,24 +1012,24 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'Link',
-              // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+              // icon: () => <LinkIcon width={15} height={15} />,
+              icon: () => <LinkRadixIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Reference',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
+              icon: () => <SewingPinIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'File',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
+              icon: () => <RadixFileIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Template',
               text: 'building blocks',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="template" />,
+              icon: () => <TemplateIcon width={16} height={16} />,
               children: [
                 {
                   name: 'Meeting notes',
@@ -965,22 +1059,22 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'On-screen keyboard',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
+              icon: () => <RadixKeyboardIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Emoji',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
+              icon: () => <SmilePlusIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Special characters',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
+              icon: () => <OmegaIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Variable',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
+              icon: () => <VariableIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -988,7 +1082,7 @@ export class ToolbarState implements UiLifeCycles {
         {
           name: 'Developer tools',
           danger: true,
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
+          icon: () => <SquareChevronRightIcon width={16} height={16} />,
           onSelect: () => {},
         },
       ],
@@ -1019,7 +1113,7 @@ export class ToolbarState implements UiLifeCycles {
           name: 'Typesetting',
           expand: 4,
           openOnTitleHov: true,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="typography" />,
+          icon: () => <TypographyIcon width={16} height={16} />,
           onSelect: () => {},
           children: [
             {
@@ -1050,27 +1144,27 @@ export class ToolbarState implements UiLifeCycles {
             {
               name: 'Custom typeface',
               expand: 10,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
+              icon: () => <FontStyleIcon width={15} height={15} />,
               children: [
                 {
                   name: 'Typeface',
-                  // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
+                  // icon: () => <FontStyleIcon width={15} height={15} />,
+                  icon: () => <FontFamilyIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Text size',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
+                  icon: () => <FontSizeIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Letter spacing',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+                  icon: () => <LetterSpacingIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Word spacing',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
+                  icon: () => <LetterSpacingIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
@@ -1079,12 +1173,12 @@ export class ToolbarState implements UiLifeCycles {
                 },
                 {
                   name: 'Large caps',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
+                  icon: () => <LetterCaseUppercaseIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Small caps',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
+                  icon: () => <LetterCaseLowercaseIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
               ],
@@ -1108,20 +1202,20 @@ export class ToolbarState implements UiLifeCycles {
                 </Code>
               ),
               more: true,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="layers" />,
+              icon: () => <LayersIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Erase formatting',
               danger: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="eraser" />,
+              icon: () => <EraserIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Delete all in range',
               danger: true,
               more: true,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="trash" />,
+              icon: () => <TrashIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -1132,37 +1226,37 @@ export class ToolbarState implements UiLifeCycles {
         },
         {
           name: 'Copy, cut, and paste',
-          // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="copy" />,
+          // icon: () => <CopyIcon width={15} height={15} />,
+          icon: () => <CopyIcon width={16} height={16} />,
           expand: 0,
           children: [
             {
               id: 'copy-menu',
               name: 'Copy',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+              // icon: () => <CopyIcon width={15} height={15} />,
+              icon: () => <ClipboardCopyIcon width={15} height={15} />,
               expand: 5,
               children: [
                 {
                   name: 'Copy',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Copy text only',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
+                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Copy as Markdown',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
+                  right: () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Copy as HTML',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard-copy" />,
-                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
+                  right: () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />,
                   onSelect: () => {},
                 },
               ],
@@ -1174,34 +1268,34 @@ export class ToolbarState implements UiLifeCycles {
             {
               id: 'cut-menu',
               name: 'Cut',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="copy" />,
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+              // icon: () => <CopyIcon width={15} height={15} />,
+              icon: () => <ScissorsIcon width={16} height={16} />,
               expand: 5,
               children: [
                 {
                   name: 'Cut',
                   danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+                  icon: () => <ScissorsIcon width={16} height={16} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Cut text only',
                   danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
+                  icon: () => <ScissorsIcon width={16} height={16} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Cut as Markdown',
                   danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  right: () => <Iconista width={16} height={16} set="simple" icon="markdown" style={{opacity: 0.5}} />,
+                  icon: () => <ScissorsIcon width={16} height={16} />,
+                  right: () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Cut as HTML',
                   danger: true,
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="scissors" />,
-                  right: () => <Iconista width={14} height={14} set="simple" icon="html5" style={{opacity: 0.5}} />,
+                  icon: () => <ScissorsIcon width={16} height={16} />,
+                  right: () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />,
                   onSelect: () => {},
                 },
               ],
@@ -1213,22 +1307,22 @@ export class ToolbarState implements UiLifeCycles {
             {
               id: 'paste-menu',
               name: 'Paste',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+              icon: () => <ClipboardIcon width={15} height={15} />,
               expand: 5,
               children: [
                 {
                   name: 'Paste',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+                  icon: () => <ClipboardIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Paste text only',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+                  icon: () => <ClipboardIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Paste formatting',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="clipboard" />,
+                  icon: () => <ClipboardIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
               ],
@@ -1237,34 +1331,34 @@ export class ToolbarState implements UiLifeCycles {
         },
         {
           name: 'Insert',
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="between-vertical-end" />,
+          icon: () => <BetweenVerticalEndIcon width={16} height={16} />,
           children: [
             {
               name: 'Smart chip',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="button" />,
+              icon: () => <ButtonIcon width={15} height={15} />,
               children: [
                 {
                   name: 'Date',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="calendar" />,
+                  icon: () => <CalendarIcon width={15} height={15} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'AI chip',
-                  icon: () => <Iconista style={{color: 'purple'}} width={16} height={16} set="tabler" icon="brain" />,
+                  icon: () => <BrainIcon style={{color: 'purple'}} width={16} height={16} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Solana wallet',
-                  icon: () => <Iconista width={16} height={16} set="tabler" icon="wallet" />,
+                  icon: () => <WalletIcon width={16} height={16} />,
                   onSelect: () => {},
                 },
                 {
                   name: 'Dropdown',
-                  icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                  icon: () => <DropdownMenuIcon width={15} height={15} />,
                   children: [
                     {
                       name: 'Create new',
-                      icon: () => <Iconista width={15} height={15} set="radix" icon="plus" />,
+                      icon: () => <PlusIcon width={15} height={15} />,
                       onSelect: () => {},
                     },
                     {
@@ -1278,12 +1372,12 @@ export class ToolbarState implements UiLifeCycles {
                       children: [
                         {
                           name: 'Configuration 1',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                         {
                           name: 'Configuration 2',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                       ],
@@ -1299,12 +1393,12 @@ export class ToolbarState implements UiLifeCycles {
                       children: [
                         {
                           name: 'Project status',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                         {
                           name: 'Review status',
-                          icon: () => <Iconista width={15} height={15} set="radix" icon="dropdown-menu" />,
+                          icon: () => <DropdownMenuIcon width={15} height={15} />,
                           onSelect: () => {},
                         },
                       ],
@@ -1315,24 +1409,24 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'Link',
-              // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-              icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+              // icon: () => <LinkIcon width={15} height={15} />,
+              icon: () => <LinkRadixIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Reference',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="sewing-pin" />,
+              icon: () => <SewingPinIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'File',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="file" />,
+              icon: () => <RadixFileIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Template',
               text: 'building blocks',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="template" />,
+              icon: () => <TemplateIcon width={16} height={16} />,
               children: [
                 {
                   name: 'Meeting notes',
@@ -1362,22 +1456,22 @@ export class ToolbarState implements UiLifeCycles {
             },
             {
               name: 'On-screen keyboard',
-              icon: () => <Iconista width={15} height={15} set="radix" icon="keyboard" />,
+              icon: () => <RadixKeyboardIcon width={15} height={15} />,
               onSelect: () => {},
             },
             {
               name: 'Emoji',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="smile-plus" />,
+              icon: () => <SmilePlusIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Special characters',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="omega" />,
+              icon: () => <OmegaIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Variable',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="variable" />,
+              icon: () => <VariableIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -1385,7 +1479,7 @@ export class ToolbarState implements UiLifeCycles {
         {
           name: 'Developer tools',
           danger: true,
-          icon: () => <Iconista width={16} height={16} set="lucide" icon="square-chevron-right" />,
+          icon: () => <SquareChevronRightIcon width={16} height={16} />,
           onSelect: () => {},
         },
         */
@@ -1406,35 +1500,35 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Paragraph',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="pilcrow" />,
+              icon: () => <PilcrowIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.p);
               },
             },
             {
               name: 'Code block',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="code" />,
+              icon: () => <CodeIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.codeblock);
               },
             },
             {
               name: 'Blockquote',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="quote" />,
+              icon: () => <QuoteIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', [SliceTypeName.blockquote, SliceTypeName.p]);
               },
             },
             {
               name: 'Math block',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="math" />,
+              icon: () => <MathIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.mathblock);
               },
             },
             {
               name: 'Pre-formatted',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              icon: () => <TypeIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.pre);
               },
@@ -1448,42 +1542,42 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Heading 1',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-1" />,
+              icon: () => <H1Icon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.h1);
               },
             },
             {
               name: 'Heading 2',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-2" />,
+              icon: () => <H2Icon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.h2);
               },
             },
             {
               name: 'Heading 3',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-3" />,
+              icon: () => <H3Icon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.h3);
               },
             },
             {
               name: 'Heading 4',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-4" />,
+              icon: () => <H4Icon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.h4);
               },
             },
             {
               name: 'Heading 5',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-5" />,
+              icon: () => <H5Icon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.h5);
               },
             },
             {
               name: 'Heading 6',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="h-6" />,
+              icon: () => <H6Icon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.h6);
               },
@@ -1491,14 +1585,14 @@ export class ToolbarState implements UiLifeCycles {
             {
               sepBefore: true,
               name: 'Title',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              icon: () => <TypeIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.title);
               },
             },
             {
               name: 'Sub-title',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="type" />,
+              icon: () => <TypeIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', SliceTypeName.subtitle);
               },
@@ -1512,21 +1606,21 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Bullet list',
-              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--bulleted" />,
+              icon: () => <ListBulletedIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', [SliceTypeName.ul, SliceTypeName.li, SliceTypeName.p]);
               },
             },
             {
               name: 'Numbered list',
-              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--numbered" />,
+              icon: () => <ListNumberedIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', [SliceTypeName.ol, SliceTypeName.li, SliceTypeName.p]);
               },
             },
             {
               name: 'Task list',
-              icon: () => <Iconista width={16} height={16} set="ibm_32" icon="list--checked" />,
+              icon: () => <ListCheckedIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', [SliceTypeName.tl, SliceTypeName.li, SliceTypeName.p]);
               },
@@ -1537,18 +1631,18 @@ export class ToolbarState implements UiLifeCycles {
           sepBefore: true,
           name: 'Layouts',
           expand: 0,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="layout" />,
+          icon: () => <LayoutIcon width={16} height={16} />,
           children: [
             {
               name: 'Table',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="table" />,
+              icon: () => <TableIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', [SliceTypeName.table, SliceTypeName.tr, SliceTypeName.p]);
               },
             },
             {
               name: 'Columns',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="columns" />,
+              icon: () => <ColumnsIcon width={16} height={16} />,
               onSelect: () => {
                 et.marker('upd', [SliceTypeName.column, SliceTypeName.p]);
               },
@@ -1559,16 +1653,16 @@ export class ToolbarState implements UiLifeCycles {
           sepBefore: true,
           name: 'Embed',
           expand: 0,
-          icon: () => <Iconista width={16} height={16} set="tabler" icon="image-in-picture" />,
+          icon: () => <ImageInPictureIcon width={16} height={16} />,
           children: [
             {
               name: 'Image',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="photo-scan" />,
+              icon: () => <PhotoScanIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'File',
-              icon: () => <Iconista width={16} height={16} set="tabler" icon="file" />,
+              icon: () => <TablerFileIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],
@@ -1595,7 +1689,7 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Select block',
-              icon: () => <Iconista width={16} height={16} set="bootstrap" icon="cursor-text" />,
+              icon: () => <CursorTextIcon width={16} height={16} />,
               onSelect: () => {
                 const start = block.start.clone();
                 if (!start.isAbsStart()) start.step(1);
@@ -1635,12 +1729,12 @@ export class ToolbarState implements UiLifeCycles {
           children: [
             {
               name: 'Undo',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="undo" />,
+              icon: () => <UndoIcon width={16} height={16} />,
               onSelect: () => {},
             },
             {
               name: 'Redo',
-              icon: () => <Iconista width={16} height={16} set="lucide" icon="redo" />,
+              icon: () => <RedoIcon width={16} height={16} />,
               onSelect: () => {},
             },
           ],

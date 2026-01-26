@@ -2,18 +2,20 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import type {Patch} from 'json-joy/lib/json-crdt';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {ContextItem, ContextSep, ContextPane, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {DownloadIcon} from '../icons/DownloadIcon';
 import {downloadBlob} from '../util/downloadBlob';
 import {encode as encodeCbor} from '@jsonjoy.com/json-pack/lib/cbor/shared';
 import {encode as encodeVerbose} from 'json-joy/lib/json-crdt-patch/codec/verbose/encode';
 import {encode as encodeCompact} from 'json-joy/lib/json-crdt-patch/codec/compact/encode';
+
+const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
 
 export interface DownloadButtonProps {
   patch: Patch;
@@ -149,7 +151,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({patch, filename =
             onClick={() => {
               window.open('https://jsonjoy.com/specs/json-crdt-patch/encoding', '_blank');
             }}
-            icon={<Iconista set="auth0" icon="external-link" width={16} height={16} />}
+            icon={<ExternalLinkIcon width={16} height={16} />}
           >
             {t('About encoding formats')}
             {' …'}

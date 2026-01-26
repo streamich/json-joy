@@ -5,13 +5,15 @@ import {ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextTitle'
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useT} from 'use-t';
 import {useSyncStoreOpt} from '../../../../PeritextWebUi/react/hooks';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
 import {Input} from '../../../components/Input';
 import type {EditableFormatting} from '../../../state/formattings';
 import type {CollaborativeStr} from 'collaborative-editor';
+
+const PlusIcon = makeIcon({set: 'lucide', icon: 'plus'});
 
 type Data = {href: string; title?: string};
 
@@ -58,7 +60,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
         />
       ) : !data.href ? null : (
         <Button
-          icon={<Iconista set={'lucide'} icon={'plus'} width={16} height={16} />}
+          icon={<PlusIcon width={16} height={16} />}
           size={-1}
           outline
           ghost

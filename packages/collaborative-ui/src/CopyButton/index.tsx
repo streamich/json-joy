@@ -1,11 +1,13 @@
 import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicTooltip, type BasicTooltipProps} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import useMountedState from 'react-use/lib/useMountedState';
 import {rule, theme} from 'nano-theme';
 const copy = require('clipboard-copy'); // eslint-disable-line
+
+const CopyIcon = makeIcon({set: 'atlaskit', icon: 'copy'});
 
 const css = {
   text: rule({
@@ -34,7 +36,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip}) => {
   return (
     <BasicTooltip show={copied} renderTooltip={() => <span className={css.text}>{t('Copied!')}</span>} {...tooltip}>
       <BasicButton compact onClick={handleCopyClick}>
-        <Iconista set="atlaskit" icon="copy" width={16} height={16} />
+        <CopyIcon width={16} height={16} />
       </BasicButton>
     </BasicTooltip>
   );

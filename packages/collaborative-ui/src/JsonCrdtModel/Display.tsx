@@ -8,11 +8,13 @@ import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {JsonCrdtModelState} from './JsonCrdtModelState';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
+
+const VectorIcon = makeIcon({set: 'elastic', icon: 'vector'});
 
 const css = {
   header: rule({
@@ -70,7 +72,7 @@ export const Display: React.FC<DisplayProps> = React.memo(({state, model, readon
               <>
                 <BasicTooltip nowrap renderTooltip={() => t('Outline')}>
                   <BasicButton onClick={() => state.showDisplayOutlines$.next(!state.showDisplayOutlines$.getValue())}>
-                    <Iconista set="elastic" icon="vector" width={16} height={16} />
+                    <VectorIcon width={16} height={16} />
                   </BasicButton>
                 </BasicTooltip>
                 <Space horizontal />

@@ -7,15 +7,17 @@ import {Encoder as CompactEncoder} from 'json-joy/lib/json-crdt/codec/structural
 import {Encoder as IndexedEncoder} from 'json-joy/lib/json-crdt/codec/indexed/binary/Encoder';
 import {Encoder as SidecarEncoder} from 'json-joy/lib/json-crdt/codec/sidecar/binary/Encoder';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {ContextItem, ContextSep, ContextPane, ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {DownloadIcon} from '../icons/DownloadIcon';
 import {downloadBlob} from '../util/downloadBlob';
+
+const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
 
 export interface DownloadButtonProps {
   model: Model<any>;
@@ -199,7 +201,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({model, filename =
             onClick={() => {
               window.open('https://jsonjoy.com/specs/json-crdt/encoding', '_blank');
             }}
-            icon={<Iconista set="auth0" icon="external-link" width={16} height={16} />}
+            icon={<ExternalLinkIcon width={16} height={16} />}
           >
             {t('About encoding formats')}
             {' …'}

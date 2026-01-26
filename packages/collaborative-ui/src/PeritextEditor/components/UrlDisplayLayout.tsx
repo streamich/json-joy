@@ -3,13 +3,15 @@ import {rule} from 'nano-theme';
 import {FixedColumn} from '@jsonjoy.com/ui/lib/3-list-item/FixedColumn';
 import {fonts} from '@jsonjoy.com/ui/lib/styles';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {Favicon} from './Favicon';
 import {parseUrl} from '../util';
 import {CopyButton} from './CopyButton';
+
+const ExternalLinkIcon = makeIcon({set: 'lucide', icon: 'external-link'});
 
 const iconColumn = 40;
 
@@ -101,7 +103,7 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
           <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
           <BasicTooltip nowrap renderTooltip={() => t('Open')}>
             <BasicButton width={48} height={48} round to={url} target="_blank" rel="noopener noreferrer">
-              <Iconista width={16} height={16} set={'lucide'} icon="external-link" />
+              <ExternalLinkIcon width={16} height={16} />
             </BasicButton>
           </BasicTooltip>
         </div>

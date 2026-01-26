@@ -4,8 +4,14 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {JsonBlockState} from '../JsonBlockState';
+
+const CodeIcon = makeIcon({set: 'auth0', icon: 'code'});
+const PaintBrushIcon = makeIcon({set: 'auth0', icon: 'paint-brush'});
+const PencilIcon = makeIcon({set: 'auth0', icon: 'pencil'});
+const MergeIcon = makeIcon({set: 'elastic', icon: 'merge'});
+const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
 
 export interface JsonBlockTabsProps {
   state: JsonBlockState;
@@ -19,26 +25,26 @@ export const JsonBlockTabs: React.FC<JsonBlockTabsProps> = ({state}) => {
     <>
       <BasicTooltip nowrap renderTooltip={() => t('Interactive')}>
         <BasicButton fill={view === 'interactive'} compact onClick={() => state.setView('interactive')}>
-          <Iconista set="auth0" icon="code" width={16} height={16} />
+          <CodeIcon width={16} height={16} />
         </BasicButton>
       </BasicTooltip>
       <Space horizontal size={-2} />
       <BasicTooltip nowrap renderTooltip={() => t('Colorful')}>
         <BasicButton fill={view === 'json'} compact onClick={() => state.setView('json')}>
-          <Iconista set="auth0" icon="paint-brush" width={16} height={16} />
-          {/* <Iconista set="ant_outline" icon="highlight" width={14} height={14} /> */}
+          <PaintBrushIcon width={16} height={16} />
+          {/* <HighlightIcon width={14} height={14} /> */}
         </BasicButton>
       </BasicTooltip>
       <Space horizontal size={-2} />
       <BasicTooltip nowrap renderTooltip={() => t('Plain text')}>
         <BasicButton fill={view === 'text'} compact onClick={() => state.setView('text')}>
-          <Iconista set="auth0" icon="pencil" width={16} height={16} />
+          <PencilIcon width={16} height={16} />
         </BasicButton>
       </BasicTooltip>
       <Space horizontal size={-2} />
       <BasicTooltip nowrap renderTooltip={() => t('Minified')}>
         <BasicButton fill={view === 'minified'} compact onClick={() => state.setView('minified')}>
-          <Iconista set="elastic" icon="merge" width={16} height={16} />
+          <MergeIcon width={16} height={16} />
         </BasicButton>
       </BasicTooltip>
     </>

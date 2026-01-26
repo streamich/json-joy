@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ContextItem, ContextSep, ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
@@ -7,6 +7,9 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtLogState} from './JsonCrdtLogState';
+
+const ChartBarsIcon = makeIcon({set: 'auth0', icon: 'chart-bars'});
+const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
 
 export interface ViewSelectProps {
   state: JsonCrdtLogState;
@@ -39,7 +42,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setView('timeline')}
             grey={view === 'timeline'}
-            icon={<Iconista set="auth0" icon="chart-bars" width={16} height={16} />}
+            icon={<ChartBarsIcon width={16} height={16} />}
           >
             {t('Timeline')}
           </ContextItem>
@@ -48,7 +51,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setView('model')}
             grey={view === 'model'}
-            icon={<Iconista set="auth0" icon="chart-bars" width={16} height={16} />}
+            icon={<ChartBarsIcon width={16} height={16} />}
           >
             {t('Timeline with model')}
           </ContextItem>
@@ -57,7 +60,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setView('text')}
             grey={view === 'text'}
-            icon={<Iconista set="elastic" icon="vis_text" width={16} height={16} />}
+            icon={<VisTextIcon width={16} height={16} />}
           >
             {t('Textual')}
           </ContextItem>

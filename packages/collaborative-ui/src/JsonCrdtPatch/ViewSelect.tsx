@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ContextItem, ContextSep, ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -9,6 +9,8 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtPatchState} from './JsonCrdtPatchState';
+
+const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
 
 export interface ViewSelectProps {
   state: JsonCrdtPatchState;
@@ -53,7 +55,7 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
             inset
             onClick={() => state.setView('text')}
             grey={view === 'text'}
-            icon={<Iconista set="elastic" icon="vis_text" width={16} height={16} />}
+            icon={<VisTextIcon width={16} height={16} />}
           >
             {t('Textual')}
           </ContextItem>

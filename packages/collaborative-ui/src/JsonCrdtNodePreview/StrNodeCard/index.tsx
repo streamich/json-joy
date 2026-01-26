@@ -2,7 +2,7 @@ import * as React from 'react';
 import type {StrNode} from 'json-joy/lib/json-crdt/nodes/str/StrNode';
 import {NodeCard, type NodeCardProps} from '../NodeCard';
 import {ContextItem, ContextSep, ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
@@ -11,6 +11,8 @@ import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {CopyText} from '../../CopyText';
 import {CollaborativeFlexibleInput} from '../../CollaborativeFlexibleInput';
+
+const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
 
 export interface StrNodeCardProps extends NodeCardProps {
   node: StrNode;
@@ -47,7 +49,7 @@ export const StrNodeCard: React.FC<StrNodeCardProps> = (props) => {
             inset
             onClick={() => setView('textual')}
             grey={view === 'textual'}
-            icon={<Iconista set="elastic" icon="vis_text" width={16} height={16} />}
+            icon={<VisTextIcon width={16} height={16} />}
           >
             {t('Textual')}
           </ContextItem>

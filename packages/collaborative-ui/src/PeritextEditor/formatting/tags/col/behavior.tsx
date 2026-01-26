@@ -1,11 +1,13 @@
 import * as React from 'react';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {ToolbarSliceBehaviorData} from '../../../types';
+
+const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
 
 export const behavior = {
   menu: {
     name: 'Color',
-    icon: () => <Iconista width={16} height={16} set="lucide" icon="paintbrush" />,
+    icon: () => <PaintbrushIcon width={16} height={16} />,
   },
   validate: (formatting) => {
     const obj = formatting.conf()?.view() as {color: string};

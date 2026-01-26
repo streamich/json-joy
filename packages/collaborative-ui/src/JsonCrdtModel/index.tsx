@@ -4,7 +4,7 @@ import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
@@ -31,6 +31,8 @@ import {JsonCrdtModelTextual} from './JsonCrdtModelTextual';
 import {Display} from './Display';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 import {ModelLogicalTimestamp} from '../LogicalTimestamp/ModelLogicalTimestamp';
+
+const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
 
 const css = {
   header: rule({
@@ -105,7 +107,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
             onClick={() => {
               window.open('https://jsonjoy.com/specs/json-crdt/model-document', '_blank');
             }}
-            icon={<Iconista set="auth0" icon="external-link" width={16} height={16} />}
+            icon={<ExternalLinkIcon width={16} height={16} />}
           >
             {t('About JSON CRDT model')}
             {' …'}
