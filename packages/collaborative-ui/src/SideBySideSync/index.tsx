@@ -32,10 +32,10 @@ export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> =
       </Paper>
       <Split>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel model={state.left.end} state={state.leftState} renderDisplay={renderDisplay}  />
+          <JsonCrdtModel model={state.left.end} state={state.leftState} renderDisplay={renderDisplay} order={['display', 'model', 'view']} />
         </div>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel model={state.right.end} state={state.rightState} renderDisplay={renderDisplay} />
+          <JsonCrdtModel model={state.right.end} state={state.rightState} renderDisplay={renderDisplay} order={['display', 'model', 'view']} />
         </div>
       </Split>
     </Paper>

@@ -54,7 +54,6 @@ export const JsonCrdtModelView: React.FC<JsonCrdtModelViewProps> = ({model, read
 
   return (
     <>
-      <Separator />
       <div className={css.header}>
         <Split>
           <Flex style={{alignItems: 'center'}}>

@@ -48,6 +48,7 @@ export interface JsonCrdtModelProps {
   readonly?: boolean;
   state?: JsonCrdtModelState;
   filename?: string;
+  order?: ('model' | 'view' | 'display')[];
   renderLeftToolbar?: () => React.ReactNode;
   renderDisplay?: (model: Model<any>, readonly: boolean) => React.ReactNode;
   renderContext?: () => React.ReactNode;
@@ -61,6 +62,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
   renderLeftToolbar,
   renderDisplay,
   renderContext,
+  order = ['model', 'view', 'display'],
 }) => {
   const [t] = useT();
   // biome-ignore lint: manual dependency list
@@ -198,17 +200,41 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
       break;
   }
 
-  return (
-    <Paper>
-      <div className={css.header}>{header}</div>
-      {showModel && (
-        <Scrollbox key={modelView} style={{maxHeight: 600}}>
-          <div className={css.content}>{content}</div>
-        </Scrollbox>
-      )}
-      <JsonCrdtModelView readonly={readonly} model={model} state={state} filename={filename} />
-      {!!renderDisplay && <Separator />}
-      {!!renderDisplay && <Display state={state} model={model} readonly={readonly} renderDisplay={renderDisplay} />}
-    </Paper>
-  );
+  const listItems: React.ReactNode[] = [];
+
+  for (const item of order) {
+    if (listItems.length > 0) listItems.push(<Separator key="sep-display" />);
+    if (item === 'model') {
+      listItems.push(<div key="header" className={css.header}>{header}</div>);
+      if (showModel) {
+        listItems.push(
+          <Scrollbox key="model" style={{maxHeight: 600}}>
+            <div className={css.content}>{content}</div>
+          </Scrollbox>
+        );
+      }
+    } else if (item === 'view') {
+      listItems.push(
+        <JsonCrdtModelView
+          key="view"
+          readonly={readonly}
+          model={model}
+          state={state}
+          filename={filename}
+        />
+      );
+    } else if (item === 'display' && !!renderDisplay) {
+      listItems.push(
+        <Display
+          key="display"
+          state={state}
+          model={model}
+          readonly={readonly}
+          renderDisplay={renderDisplay}
+        />
+      );
+    }
+  }
+
+  return React.createElement(Paper, null, listItems);
 };
