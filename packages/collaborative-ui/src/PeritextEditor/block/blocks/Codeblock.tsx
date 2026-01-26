@@ -17,7 +17,7 @@ export interface CodeblockProps extends BlockViewProps {
   children: React.ReactNode;
 }
 
-export const Codeblock: React.FC<CodeblockProps> = ({block, children}) => {
+export const Codeblock: React.FC<CodeblockProps> = ({children}) => {
   return (
     <pre className={blockClass}>
       <code>{children}</code>
