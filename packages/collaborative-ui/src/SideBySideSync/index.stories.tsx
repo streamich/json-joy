@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Model, s} from 'json-joy/lib/json-crdt';
 import {Codeblock} from '@jsonjoy.com/ui/lib/5-block/Codeblock';
 import {SideBySideSync} from '.';
+import {UseModel} from '../hooks/useModel';
 
 export default {
   component: SideBySideSync,
@@ -22,7 +23,9 @@ export const Default = {
     model={model}
     renderDisplay={model => (
       <div style={{fontSize: '14px', width: '100%'}}>
-        <Codeblock src={JSON.stringify(model.view())} />
+        <UseModel model={model} render={() =>
+          <Codeblock src={JSON.stringify(model.view())} />
+        } />
       </div>
     )}
   />,

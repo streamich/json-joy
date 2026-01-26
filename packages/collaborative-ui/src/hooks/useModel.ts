@@ -1,6 +1,6 @@
-import {useMemo} from 'react';
+import {useMemo, useCallback, useSyncExternalStore} from 'react';
 import {useModelTick} from './useModelTick';
-import type {Model} from 'json-joy/lib/json-crdt';
+import type {Model, JsonNode} from 'json-joy/lib/json-crdt';
 
 export const useModel = <M extends Model<any>, R>(model: M, selector: (api: M) => R): R | undefined => {
   const tick = useModelTick(model);
@@ -13,4 +13,15 @@ export const useModel = <M extends Model<any>, R>(model: M, selector: (api: M) =
     }
   }, [tick, model]);
   return result;
+};
+
+export interface UseModelProps<N extends JsonNode = JsonNode<any>> {
+  model: Model<N>;
+  render: () => React.ReactNode;
+}
+
+export const UseModel: React.FC<UseModelProps> = ({model, render}) => {
+  const get = useCallback(() => model.tick, [model]);
+  useSyncExternalStore(model.api.subscribe, get);
+  return render();
 };
