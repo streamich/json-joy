@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {Model, s} from 'json-joy/lib/json-crdt';
-import {Codeblock} from '@jsonjoy.com/ui/lib/5-block/Codeblock';
 import {SideBySideSync} from '@jsonjoy.com/collaborative-ui/lib/SideBySideSync';
-import {UseModel} from '@jsonjoy.com/collaborative-ui/lib/hooks/useModel';
 import {CollaborativeInput} from '../CollaborativeInput';
 
 export default {
