@@ -14,6 +14,11 @@ export interface SideBySideSyncProps {
 
 export const SideBySideSync: React.FC<SideBySideSyncProps> = ({model, ...rest}) => {
   const state = React.useMemo(() => new SideBySideSyncState(model), [model]);
+  React.useEffect(() => {
+    return () => {
+      state.dispose();
+    };
+  }, [state]);
 
   return (
     <context.Provider value={state}>

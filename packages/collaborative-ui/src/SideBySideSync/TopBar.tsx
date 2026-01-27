@@ -12,15 +12,24 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicButtonGroup} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButtonGroup';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
-import type {Model} from 'json-joy/lib/json-crdt';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 
-export interface TopBarProps {
-  model: Model<any>;
-  renderDisplay?: JsonCrdtModelProps['renderDisplay'];
-}
-
-export const TopBar: React.FC<Omit<TopBarProps, 'model'>> = ({renderDisplay}) => {
+export const TopBar: React.FC = () => {
   const state = useSideBySideSyncState();
+  const autoSync = useBehaviorSubject(state.autoSync$);
+  const autoSyncInterval = useBehaviorSubject(state.autoSyncInterval$);
+  const [seconds, setSeconds] = React.useState((Math.round(autoSyncInterval / 1000)).toString());
+
+  const commitSeconds = React.useCallback((e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    setSeconds((currentSeconds) => {
+      const parsed = Number(currentSeconds.trim());
+      if (!isNaN(parsed) && parsed > 0) {
+        state.setAutoSyncInterval(parsed);
+      }
+      (e?.target as HTMLInputElement)?.blur?.();
+      return (Math.round(state.autoSyncInterval$.getValue() / 1000)).toString();
+    });
+  }, [state]);
 
   return (
     <Paper contrast style={{margin: '-1px -1px 2px', padding: 16}}>
@@ -43,26 +52,28 @@ export const TopBar: React.FC<Omit<TopBarProps, 'model'>> = ({renderDisplay}) =>
             </BasicTooltip>
           </BasicButtonGroup>
         </Flex>
-        {/* <Text as='div'> */}
-          <Flex style={{flexDirection: 'row-reverse', alignItems: 'center'}}>
-            <Text size={-2} font="ui3" noselect>seconds</Text>
-            <Space horizontal />
-            <div style={{width: 36}}>
-              <Input
-                center
-                // value={state.autoSyncInterval}
-                value={'5'}
-                size={-3}
-              />
-            </div>
-            <Space horizontal />
-            <Text size={-2} font="ui3" noselect>every</Text>
-            <Space horizontal />
-            <Checkbox on={true} small />
-            <Space horizontal />
-            <Text size={-2} font="ui3" noselect>Auto-sync</Text>
-          </Flex>
-        {/* </Text> */}
+        <Flex style={{flexDirection: 'row-reverse', alignItems: 'center'}}>
+          <Text size={-2} font="ui3" noselect>seconds</Text>
+          <Space horizontal />
+          <div style={{width: 36}}>
+            <Input
+              center
+              value={seconds}
+              size={-3}
+              onChange={(value) => setSeconds(value)}
+              onBlur={commitSeconds}
+              onEnter={commitSeconds}
+            />
+          </div>
+          <Space horizontal />
+          <Text size={-2} font="ui3" noselect>every</Text>
+          <Space horizontal />
+          <BasicTooltip renderTooltip={() => 'Toggle auto-sync'} nowrap>
+            <Checkbox on={autoSync} small onChange={state.toggleAutoSync} />
+          </BasicTooltip>
+          <Space horizontal />
+          <Text size={-2} font="ui3" noselect>Auto-sync</Text>
+        </Flex>
       </Split>
     </Paper>
   );

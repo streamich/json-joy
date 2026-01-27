@@ -44,10 +44,11 @@ export interface InputProps {
   right?: React.ReactNode;
   inp?: (input: HTMLInputElement | null) => void;
   onChange?: (value: string) => void;
-  onBlur?: () => void;
-  onFocus?: () => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onPaste?: () => void;
   onEsc?: React.KeyboardEventHandler;
+  onEnter?: React.KeyboardEventHandler;
 }
 
 export const Input: React.FC<InputProps> = (props) => {
@@ -57,6 +58,7 @@ export const Input: React.FC<InputProps> = (props) => {
     placeholder,
     onPaste,
     onEsc,
+    onEnter,
     label,
     size,
     readOnly,
@@ -76,13 +78,13 @@ export const Input: React.FC<InputProps> = (props) => {
     if (props.select) ref.current.select();
   }, [ref.current]);
 
-  const onFocus = useCallback(() => {
+  const onFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setFocus(true);
-    (props.onFocus || noop)();
+    (props.onFocus || noop)(e);
   }, [props.onFocus]);
-  const onBlur = useCallback(() => {
+  const onBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setFocus(false);
-    (props.onBlur || noop)();
+    (props.onBlur || noop)(e);
   }, [props.onBlur]);
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -90,6 +92,7 @@ export const Input: React.FC<InputProps> = (props) => {
       if (props.isInForm && e.key === 'Enter') {
         ref.current.blur();
       } else if (e.key === 'Escape') onEsc?.(e);
+      else if (e.key === 'Enter') onEnter?.(e);
     },
     [ref.current],
   );
