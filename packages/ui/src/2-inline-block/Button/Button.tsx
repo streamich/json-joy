@@ -27,7 +27,7 @@ const buttonClass = drule({
   trs: 'background .2s, box-shadow .2s, color .2s',
   mar: 0,
   bd: 0,
-  pad: '0px 15px',
+  pd: '0px 15px',
   minWidth: '50px',
   whiteSpace: 'nowrap',
 });
@@ -57,6 +57,7 @@ export interface ButtonProps {
   className?: string;
   style?: React.CSSProperties;
   pointer?: boolean;
+  compact?: boolean;
   children?: React.ReactNode;
   dashed?: boolean;
   onClick?: React.MouseEventHandler<any>;
@@ -80,6 +81,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     outline,
     size = 0,
     radius = 0,
+    compact,
     onClick,
     submit,
   } = props;
@@ -163,6 +165,10 @@ export const Button: React.FC<ButtonProps> = (props) => {
 
   if (props.dashed) {
     buttonStyle.borderStyle = 'dashed';
+  }
+
+  if (props.compact) {
+    buttonStyle.padding = '0px 8px';
   }
 
   let left: React.ReactNode = null;

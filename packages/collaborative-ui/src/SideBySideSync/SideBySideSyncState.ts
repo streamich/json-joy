@@ -13,6 +13,8 @@ export class SideBySideSyncState {
     const rightModel = model.fork();
     this.left = new Log(() => leftModel.clone());
     this.right = new Log(() => rightModel.clone());
+    this.left.end.api.autoFlush();
+    this.right.end.api.autoFlush();
     this.leftState = new JsonCrdtModelState();
     this.rightState = new JsonCrdtModelState();
     this.leftState.showModel$.next(false);
@@ -22,4 +24,19 @@ export class SideBySideSyncState {
     this.rightState.showView$.next(false);
     this.rightState.showDisplay$.next(true);
   }
+
+  public readonly syncLeftToRight = () => {
+    const patchesLeft = [...this.left.patches.entries()].map(({v}) => v.clone());
+    this.right.end.applyBatch(patchesLeft);
+  };
+
+  public readonly syncRightToLeft = () => {
+    const patchesRight = [...this.right.patches.entries()].map(({v}) => v.clone());
+    this.left.end.applyBatch(patchesRight);
+  };
+
+  public readonly synchronize = () => {
+    this.syncLeftToRight();
+    this.syncRightToLeft();
+  };
 }

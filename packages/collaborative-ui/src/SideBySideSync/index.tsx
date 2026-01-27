@@ -4,7 +4,7 @@ import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {context, useSideBySideSyncState} from './context';
 import {SideBySideSyncState} from './SideBySideSyncState';
 import {JsonCrdtModel, JsonCrdtModelProps} from '../JsonCrdtModel';
-import {BasicButton} from '../PeritextWebUi/components/BasicButton';
+import {TopBar} from './TopBar';
 import type {Model} from 'json-joy/lib/json-crdt';
 
 export interface SideBySideSyncProps {
@@ -27,9 +27,7 @@ export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> =
 
   return (
     <Paper fill={2}>
-      <Paper contrast style={{margin: '-1px -1px 2px', padding: 16}}>
-        <BasicButton>Sync</BasicButton>
-      </Paper>
+      <TopBar />
       <Split>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
           <JsonCrdtModel model={state.left.end} state={state.leftState} renderDisplay={renderDisplay} order={['display', 'model', 'view']} />
