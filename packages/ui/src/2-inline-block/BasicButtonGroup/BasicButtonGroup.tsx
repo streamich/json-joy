@@ -7,7 +7,6 @@ const containerClass = rule({
   flexDirection: 'row',
   ai: 'stretch',
   pos: 'relative',
-  ov: 'hidden',
   '& > *': {
     bdrad: 0,
   },
