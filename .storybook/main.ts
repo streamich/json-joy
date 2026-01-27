@@ -66,6 +66,8 @@ const config: StorybookConfig = {
       '@jsonjoy.com/collaborative-quill': resolve(__dirname, '../packages/collaborative-quill/src'),
       '@jsonjoy.com/collaborative-monaco/lib': resolve(__dirname, '../packages/collaborative-monaco/src'),
       '@jsonjoy.com/collaborative-monaco': resolve(__dirname, '../packages/collaborative-monaco/src'),
+      '@jsonjoy.com/collaborative-ui/lib': resolve(__dirname, '../packages/collaborative-ui/src'),
+      '@jsonjoy.com/collaborative-ui': resolve(__dirname, '../packages/collaborative-ui'),
       '@jsonjoy.com/json-expression/lib': resolve(__dirname, '../packages/json-expression/src'),
       '@jsonjoy.com/json-pack/lib': resolve(__dirname, '../packages/json-pack/src'),
       '@jsonjoy.com/json-path/lib': resolve(__dirname, '../packages/json-path/src'),

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Model} from 'json-joy/lib/json-crdt';
-import {bind} from '.';
+import {bind} from '..';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const Demo: React.FC<{textarea: boolean}> = ({textarea}) => {

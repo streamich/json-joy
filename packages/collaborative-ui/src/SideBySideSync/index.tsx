@@ -27,7 +27,7 @@ export const SideBySideSync: React.FC<SideBySideSyncProps> = ({model, ...rest}) 
   );
 };
 
-const order = ['display', 'view', 'model'];
+const order: JsonCrdtModelProps['order'] = ['display', 'view', 'model'];
 
 export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> = ({renderDisplay}) => {
   const state = useSideBySideSyncState();

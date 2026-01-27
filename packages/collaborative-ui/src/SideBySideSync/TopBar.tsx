@@ -20,7 +20,7 @@ export const TopBar: React.FC = () => {
   const autoSyncInterval = useBehaviorSubject(state.autoSyncInterval$);
   const [seconds, setSeconds] = React.useState((Math.round(autoSyncInterval / 1000)).toString());
 
-  const commitSeconds = React.useCallback((e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+  const commitSeconds = React.useCallback((e: any) => {
     setSeconds((currentSeconds) => {
       const parsed = Number(currentSeconds.trim());
       if (!isNaN(parsed) && parsed > 0) {
