@@ -27,6 +27,8 @@ export const SideBySideSync: React.FC<SideBySideSyncProps> = ({model, ...rest}) 
   );
 };
 
+const order = ['display', 'view', 'model'];
+
 export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> = ({renderDisplay}) => {
   const state = useSideBySideSyncState();
 
@@ -35,10 +37,10 @@ export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> =
       <TopBar />
       <Split>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel model={state.left.end} state={state.leftState} renderDisplay={renderDisplay} order={['display', 'model', 'view']} />
+          <JsonCrdtModel model={state.left.end} state={state.leftState} renderDisplay={renderDisplay} order={order} />
         </div>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel model={state.right.end} state={state.rightState} renderDisplay={renderDisplay} order={['display', 'model', 'view']} />
+          <JsonCrdtModel model={state.right.end} state={state.rightState} renderDisplay={renderDisplay} order={order} />
         </div>
       </Split>
     </Paper>
