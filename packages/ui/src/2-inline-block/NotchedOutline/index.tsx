@@ -17,7 +17,7 @@ const legendClass = drule({
   fz: '12px',
 });
 
-export interface NotchedOutlineProps {
+export interface NotchedOutlineProps extends React.HTMLAttributes<HTMLDivElement & HTMLFieldSetElement> {
   className?: string;
   label: React.ReactNode;
   active?: boolean;
@@ -33,6 +33,7 @@ export const NotchedOutline: React.FC<NotchedOutlineProps> = ({
   active,
   disabled,
   children,
+  ...rest
 }) => {
   const styles = useStyles();
 
@@ -40,6 +41,7 @@ export const NotchedOutline: React.FC<NotchedOutlineProps> = ({
 
   return (
     <Comp
+      {...rest}
       className={
         className +
         blockClass({

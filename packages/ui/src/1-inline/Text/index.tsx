@@ -11,9 +11,10 @@ export interface Props extends AllHTMLAttributes<any> {
   size?: number;
   font?: keyof ThemeFontPalette;
   kind?: keyof ThemeFontPalette['sans'];
+  noselect?: boolean;
 }
 
-export const Text: React.FC<Props> = ({as = 'span', nowrap, children, style, size, font, kind = 'mid', ...rest}) => {
+export const Text: React.FC<Props> = ({as = 'span', nowrap, children, style, size, font, kind = 'mid', noselect, ...rest}) => {
   const theme = useTheme();
 
   const className = createClassName({
@@ -37,6 +38,10 @@ export const Text: React.FC<Props> = ({as = 'span', nowrap, children, style, siz
         style2.fontWeight = ff.fw;
       }
     }
+  }
+
+  if (noselect) {
+    style2.userSelect = 'none';
   }
 
   return h(as, {...rest, className: (rest.className || '') + className, style: style2}, children);

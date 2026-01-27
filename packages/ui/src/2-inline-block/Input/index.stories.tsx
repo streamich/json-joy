@@ -77,6 +77,12 @@ const DemoSizes: React.FC<InputProps> = (props) => {
       <br />
       <Component size={-2} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
+      <Component size={-3} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <br />
+      <Component size={-4} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <br />
+      <Component size={-5} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <br />
     </div>
   );
 };

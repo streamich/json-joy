@@ -40,6 +40,7 @@ export interface InputProps {
   isInForm?: boolean;
   style?: any;
   waiting?: boolean;
+  center?: boolean;
   right?: React.ReactNode;
   inp?: (input: HTMLInputElement | null) => void;
   onChange?: (value: string) => void;
@@ -61,6 +62,7 @@ export const Input: React.FC<InputProps> = (props) => {
     readOnly,
     type = 'text',
     waiting,
+    center,
     right,
   } = props;
   const [focus, setFocus] = useState(false);
@@ -104,6 +106,8 @@ export const Input: React.FC<InputProps> = (props) => {
     color: !value && !!placeholder ? styles.g(0.6) : styles.g(0.1),
   };
 
+  const outlineStyle: React.CSSProperties = {background: focus ? styles.col.map('bg') : 'transparent'};
+
   if (size) {
     const factor = size < 0 ? 1 : 2;
     style.fontSize = `${16 + size * factor}px`;
@@ -111,7 +115,15 @@ export const Input: React.FC<InputProps> = (props) => {
     style.paddingBottom = `${4 + size * factor}px`;
     if (size < 0) {
       style.fontWeight = fonts.get('ui', 'mid', 1).fw;
+      style.paddingTop = style.paddingBottom = Math.max(4 + size, 1) + 'px';
+      style.paddingLeft = style.paddingRight = Math.max(5 + size, 0) + 'px';
+      outlineStyle.paddingLeft = outlineStyle.paddingRight = Math.max(5 + size, 0) + 'px';
     }
+  }
+
+  if (center) {
+    style.textAlign = 'center';
+    outlineStyle.textAlign = 'center';
   }
 
   const inputAttr: any = {
@@ -137,7 +149,10 @@ export const Input: React.FC<InputProps> = (props) => {
       label={label}
       active={focus}
       disabled={disabled || readOnly}
-      style={{background: focus ? styles.col.map('bg') : 'transparent'}}
+      style={outlineStyle}
+      onClick={() => {
+        if (ref.current) ref.current.focus();
+      }}
     >
       <Split style={{alignItems: 'center'}}>
         <input {...inputAttr} onChange={(e) => (props.onChange || noop)(e.target.value)} />

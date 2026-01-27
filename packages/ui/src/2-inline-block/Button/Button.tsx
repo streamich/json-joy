@@ -30,6 +30,7 @@ const buttonClass = drule({
   pd: '0px 15px',
   minWidth: '50px',
   whiteSpace: 'nowrap',
+  us: 'none',
 });
 
 const iconClass = rule({
