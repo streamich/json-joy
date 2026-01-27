@@ -1,14 +1,18 @@
-import type * as misc from 'memfs/lib/node/types/misc';
+import type * as misc from '@jsonjoy.com/fs-node/lib/types/misc';
 import {Nfsv4FType} from '../constants';
 
 /**
  * Implements Node.js-like Dirent interface for NFS v4 directory entries.
  */
 export class NfsFsDirent implements misc.IDirent {
+  parentPath: string;
+
   constructor(
     public name: string,
     private type: Nfsv4FType,
-  ) {}
+  ) {
+    this.parentPath = '';
+  }
 
   isDirectory(): boolean {
     return this.type === Nfsv4FType.NF4DIR;

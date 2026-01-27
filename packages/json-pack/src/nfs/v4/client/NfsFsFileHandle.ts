@@ -4,8 +4,8 @@ import type * as msg from '../messages';
 import type * as structs from '../structs';
 import {nfs} from '../builder';
 import {Nfsv4Stat, Nfsv4StableHow} from '../constants';
-import type * as misc from 'memfs/lib/node/types/misc';
-import type * as opts from 'memfs/lib/node/types/options';
+import type * as misc from '@jsonjoy.com/fs-node/lib/types/misc';
+import type * as opts from '@jsonjoy.com/fs-node-utils/lib/types/options';
 import type {Nfsv4FsClient} from './Nfsv4FsClient';
 
 /**

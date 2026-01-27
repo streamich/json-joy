@@ -1,4 +1,4 @@
-import type {FsPromisesApi} from 'memfs/lib/node/types';
+import type {FsPromisesApi} from '@jsonjoy.com/fs-node-utils/lib/types';
 import type * as msg from '../messages';
 
 export interface Nfsv4Client {

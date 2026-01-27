@@ -86,6 +86,8 @@
     "@jsonjoy.com/base64": "workspace:*",
     "@jsonjoy.com/buffers": "workspace:*",
     "@jsonjoy.com/codegen": "workspace:*",
+    "@jsonjoy.com/fs-node": "^4.56.10",
+    "@jsonjoy.com/fs-node-utils": "^4.56.10",
     "@jsonjoy.com/json-pointer": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "hyperdyperid": "^1.2.0",

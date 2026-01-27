@@ -1,4 +1,4 @@
-import type * as misc from 'memfs/lib/node/types/misc';
+import type * as misc from '@jsonjoy.com/fs-node/lib/types/misc';
 import {Nfsv4FType} from '../constants';
 
 /**

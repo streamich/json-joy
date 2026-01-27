@@ -1,4 +1,4 @@
-import type * as misc from 'memfs/lib/node/types/misc';
+import type * as misc from '@jsonjoy.com/fs-node/lib/types/misc';
 import type {Nfsv4Client} from './types';
 import {NfsFsDirent} from './NfsFsDirent';
 import {nfs} from '../builder';
@@ -132,5 +132,13 @@ export class NfsFsDir implements misc.IDir {
     for (const entry of this.entries) {
       yield entry;
     }
+  }
+
+  [Symbol.dispose](): void {
+    this.closeSync();
+  }
+
+  [Symbol.asyncDispose](): Promise<void> {
+    return this.close();
   }
 }

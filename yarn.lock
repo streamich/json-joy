@@ -1905,7 +1905,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/fs-node-utils@npm:4.56.10":
+"@jsonjoy.com/fs-node-utils@npm:4.56.10, @jsonjoy.com/fs-node-utils@npm:^4.56.10":
   version: 4.56.10
   resolution: "@jsonjoy.com/fs-node-utils@npm:4.56.10"
   dependencies:
@@ -1916,7 +1916,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/fs-node@npm:4.56.10":
+"@jsonjoy.com/fs-node@npm:4.56.10, @jsonjoy.com/fs-node@npm:^4.56.10":
   version: 4.56.10
   resolution: "@jsonjoy.com/fs-node@npm:4.56.10"
   dependencies:
@@ -2007,6 +2007,8 @@ __metadata:
     "@jsonjoy.com/base64": "workspace:*"
     "@jsonjoy.com/buffers": "workspace:*"
     "@jsonjoy.com/codegen": "workspace:*"
+    "@jsonjoy.com/fs-node": "npm:^4.56.10"
+    "@jsonjoy.com/fs-node-utils": "npm:^4.56.10"
     "@jsonjoy.com/json-pointer": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     "@msgpack/msgpack": "npm:^3.0.0-beta2"
