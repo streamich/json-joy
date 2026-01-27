@@ -18,7 +18,7 @@ const Demo: React.FC<InputProps> = (props) => {
 
   return (
     <div>
-      <Component label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
       <Component value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
@@ -44,11 +44,11 @@ export const Primary: StoryObj<typeof meta> = {
 };
 
 export const Interactive: StoryObj<typeof meta> = {
-  render: (args) => <Demo {...args} />,
+  render: (args: any) => <Demo {...args} />,
 };
 
 export const WithBackground: StoryObj<typeof meta> = {
-  render: (args) => (
+  render: (args: any) => (
     <div style={{background: 'rgba(0,0,0,.04)', padding: 32, borderRadius: 16}}>
       <Demo {...args} />
     </div>
@@ -62,31 +62,31 @@ const DemoSizes: React.FC<InputProps> = (props) => {
     <div>
       <Component
         size={2}
-        label={'My label'}
+        label={'Label'}
         placeholder={'Enter something...'}
         value={value}
         onChange={(value) => setValue(value)}
         {...props}
       />
       <br />
-      <Component size={1} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={1} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component size={0} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={0} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component size={-1} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={-1} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component size={-2} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={-2} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component size={-3} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={-3} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component size={-4} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={-4} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
-      <Component size={-5} label={'My label'} value={value} onChange={(value) => setValue(value)} {...props} />
+      <Component size={-5} label={'Label'} value={value} onChange={(value) => setValue(value)} {...props} />
       <br />
     </div>
   );
 };
 
 export const SizeScale: StoryObj<typeof meta> = {
-  render: (args) => <DemoSizes {...args} />,
+  render: (args: any) => <DemoSizes {...args} />,
 };

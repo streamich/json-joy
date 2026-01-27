@@ -108,3 +108,5 @@ export interface ColorAdjustments {
   /** Shift in lightness hsl(,, +dL,); in dark mode it is reversed hsl(,, -dL,) */
   dL?: number;
 }
+
+export type ColorName = keyof ColorPalette;

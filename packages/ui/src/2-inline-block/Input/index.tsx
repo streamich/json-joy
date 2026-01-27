@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {SpinnerBars} from '../SpinnerBars';
-import {NotchedOutline} from '../NotchedOutline';
+import {Outline} from '../Outline';
 import {Split} from '../../3-list-item/Split';
 import {fonts} from '../../styles';
 import {useStyles} from '../../styles/context';
@@ -16,7 +16,7 @@ const inpClass = rule({
   bd: 0,
   bdrad: '4px',
   mr: 0,
-  pd: '4px 5px',
+  pd: 0,
   out: 0,
   bg: 'transparent',
   '&:disabled': {
@@ -109,24 +109,20 @@ export const Input: React.FC<InputProps> = (props) => {
     color: !value && !!placeholder ? styles.g(0.6) : styles.g(0.1),
   };
 
-  const outlineStyle: React.CSSProperties = {background: focus ? styles.col.map('bg') : 'transparent'};
-
   if (size) {
     const factor = size < 0 ? 1 : 2;
     style.fontSize = `${16 + size * factor}px`;
-    style.paddingTop = `${4 + size * factor}px`;
-    style.paddingBottom = `${4 + size * factor}px`;
+    // style.paddingTop = `${4 + size * factor}px`;
+    // style.paddingBottom = `${4 + size * factor}px`;
     if (size < 0) {
       style.fontWeight = fonts.get('ui', 'mid', 1).fw;
-      style.paddingTop = style.paddingBottom = Math.max(4 + size, 1) + 'px';
-      style.paddingLeft = style.paddingRight = Math.max(5 + size, 0) + 'px';
-      outlineStyle.paddingLeft = outlineStyle.paddingRight = Math.max(5 + size, 0) + 'px';
+      // style.paddingTop = style.paddingBottom = Math.max(4 + size, 1) + 'px';
+      // style.paddingLeft = style.paddingRight = Math.max(5 + size, 0) + 'px';
     }
   }
 
   if (center) {
     style.textAlign = 'center';
-    outlineStyle.textAlign = 'center';
   }
 
   const inputAttr: any = {
@@ -148,11 +144,12 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   return (
-    <NotchedOutline
+    <Outline
       label={label}
       active={focus}
       disabled={disabled || readOnly}
-      style={outlineStyle}
+      size={size}
+      center={center}
       onClick={() => {
         if (ref.current) ref.current.focus();
       }}
@@ -161,6 +158,6 @@ export const Input: React.FC<InputProps> = (props) => {
         <input {...inputAttr} onChange={(e) => (props.onChange || noop)(e.target.value)} />
         {rightElement}
       </Split>
-    </NotchedOutline>
+    </Outline>
   );
 };
