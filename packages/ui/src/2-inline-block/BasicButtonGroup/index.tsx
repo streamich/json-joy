@@ -1,115 +1,38 @@
 import * as React from 'react';
-import {rule, useRule} from 'nano-theme';
-import {useStyles} from '../../styles/context';
+import {rule} from 'nano-theme';
+import {Space} from '../../3-list-item/Space';
 
 const containerClass = rule({
   d: 'inline-flex',
   flexDirection: 'row',
-  ai: 'stretch',
-  pos: 'relative',
-  '& > *': {
-    bdrad: 0,
-  },
-  '& > *:first-child': {
-    borderTopLeftRadius: 'inherit',
-    borderBottomLeftRadius: 'inherit',
-  },
-  '& > *:last-child': {
-    borderTopRightRadius: 'inherit',
-    borderBottomRightRadius: 'inherit',
-  },
+  ai: 'center',
 });
 
 export interface BasicButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Border radius of the group */
-  radius?: number;
-  /** Whether buttons should be connected (no gap) */
-  connected?: boolean;
-  /** Gap between buttons when not connected */
+  /** Space between buttons (negative values bring them closer) */
   gap?: number;
-  /** Whether to show dividers between buttons */
-  dividers?: boolean;
-  /** Whether to stretch buttons to fill the container */
-  stretch?: boolean;
   children?: React.ReactNode;
 }
 
 export const BasicButtonGroup: React.FC<BasicButtonGroupProps> = ({
-  radius = 4,
-  connected = true,
-  gap = 0,
-  dividers = false,
-  stretch = false,
+  gap = -5,
   children,
   className = '',
   style,
   ...rest
 }) => {
-  const styles = useStyles();
+  const childArray = React.Children.toArray(children);
 
-  const dynamicContainerClass = useRule(() => ({
-    bdrad: radius + 'px',
-    gap: connected ? 0 : gap + 'px',
-  }));
-
-  const dividerClass = useRule(() => ({
-    bg: styles.g(0, 0.15),
-  }));
-
-  const containerStyle: React.CSSProperties = {
-    ...style,
-  };
-
-  if (stretch) {
-    containerStyle.display = 'flex';
-    containerStyle.width = '100%';
-  }
-
-  // Process children to add dividers if needed
-  let processedChildren: React.ReactNode[] = React.Children.toArray(children);
-
-  if (dividers && connected && processedChildren.length > 1) {
-    const childrenWithDividers: React.ReactNode[] = [];
-    processedChildren.forEach((child, index) => {
-      childrenWithDividers.push(child);
-      if (index < processedChildren.length - 1) {
-        childrenWithDividers.push(
-          <span
-            key={`divider-${index}`}
-            className={dividerClass}
-            style={{
-              width: 1,
-              alignSelf: 'stretch',
-            }}
-          />
-        );
-      }
-    });
-    processedChildren = childrenWithDividers;
-  }
-
-  // Apply flex-grow to children when stretch is true
-  if (stretch) {
-    processedChildren = processedChildren.map((child) => {
-      if (React.isValidElement(child) && !child.key?.toString().startsWith('divider')) {
-        const childProps = child.props as {style?: React.CSSProperties};
-        return React.cloneElement(child as React.ReactElement<{style?: React.CSSProperties}>, {
-          style: {
-            ...(childProps.style || {}),
-            flex: 1,
-          },
-        });
-      }
-      return child;
-    });
-  }
+  const processedChildren: React.ReactNode[] = [];
+  childArray.forEach((child, index) => {
+    processedChildren.push(child);
+    if (index < childArray.length - 1) {
+      processedChildren.push(<Space key={`space-${index}`} horizontal size={gap} />);
+    }
+  });
 
   return (
-    <div
-      {...rest}
-      className={className + containerClass + dynamicContainerClass}
-      style={containerStyle}
-    >
+    <div {...rest} className={className + containerClass} style={style}>
       {processedChildren}
     </div>
   );
