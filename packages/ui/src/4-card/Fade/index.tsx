@@ -19,28 +19,35 @@ const fadeClass = rule({
 });
 
 export interface FadeProps extends React.AllHTMLAttributes<any> {
-  /** Height of the fade effect in pixels. */
+  /** Height of the fully opaque (visible) area in pixels. */
   height: number;
+  /** Height of the gradient fade effect in pixels. */
+  fade?: number;
   /** Color of the fade effect. */
   color?: string;
+  /** If true, disables cropping and shows full content. */
+  full?: boolean;
   children: React.ReactNode;
 }
 
-export const Fade: React.FC<FadeProps> = ({height, children, color, style, ...rest}) => {
+export const Fade: React.FC<FadeProps> = ({height, fade = 0, children, color, full, style, ...rest}) => {
   const theme = useTheme();
 
   const fadeColor = color || theme.bg;
+  const totalHeight = full ? 'auto' : height + fade;
 
   return (
-    <div {...rest} className={wrapClass} style={{height, ...style}}>
+    <div {...rest} className={wrapClass} style={{height: totalHeight, overflow: full ? 'visible' : 'hidden', ...style}}>
       <div className={contentClass}>{children}</div>
-      <div
-        className={fadeClass}
-        style={{
-          height,
-          background: `linear-gradient(to bottom, transparent 0%, ${fadeColor} 100%)`,
-        }}
-      />
+      {!full && fade > 0 && (
+        <div
+          className={fadeClass}
+          style={{
+            height: fade,
+            background: `linear-gradient(to bottom, transparent 0%, ${fadeColor} 100%)`,
+          }}
+        />
+      )}
     </div>
   );
 };
