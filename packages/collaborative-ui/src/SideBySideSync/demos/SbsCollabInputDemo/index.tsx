@@ -4,6 +4,7 @@ import {CollaborativeInput} from '@jsonjoy.com/collaborative-input-react';
 import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
 import {SideBySideSync} from '../..';
 import {DemoCard} from '../../../DemoCard';
+import {DESCRIPTION} from './constants';
 
 export interface SbsCollabInputDemoProps {
   multiline?: boolean;
@@ -18,50 +19,28 @@ export const SbsCollabInputDemo: React.FC<SbsCollabInputDemoProps> = ({multiline
   }, []);
   const subtitleText = React.useMemo(() => {
     return 'Two-way synchronization of basic DOM `<' + (multiline ? 'textarea' : 'input') + '>` element rendered by `<CollaborativeInput>` React component';
-  }, [multiline]);  
-
-  const description = React.useMemo(() => {
-    return`
-This demo showcases synchronization of two text areas using
-the \`CollaborativeInput\` component from \`@jsonjoy.com/collaborative-input-react\` package.
-You can type in either text
-area, and the changes will be reflected in both areas after synchronization.
-Use the top bar buttons to manually synchronize or adjust auto-sync settings.
-
-The \`<CollaborativeInput>\` React component binds a JSON CRDT "str" node to
-either \`<input>\` or \`<textarea>\` DOM element. You provide the JSON "str" node
-via the \`str\` prop, and a render prop \`input\` that receives a \`ref\` to be
-attached to the desired DOM element:
-
-\`\`\`jsx
-<CollaborativeInput
-  str={() => model.api.str(['text'])}
-  input={(connect) => <textarea ref={connect} />}
-/>
-\`\`\`
-`;
-  }, [multiline]);  
+  }, [multiline]);
 
   return (
     <DemoCard
       title={<Markdown inline src={'`CollaborativeInput` Component'} />}
       subtitle={<Markdown inline src={subtitleText} />}
-      description={<Markdown src={description} />}
+      description={<Markdown src={DESCRIPTION} />}
     >
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(model: Model<any>) => (
-            <CollaborativeInput
-              str={() => model.api.str(['text'])}
-              multiline={multiline}
-              style={{
-                width: '100%',
-                height: multiline ? 200 : undefined,
-                fontSize: 16,
-                boxSizing: 'border-box',
-              }}
-            />
+        renderDisplay={(m: Model<any>) => (
+          <CollaborativeInput
+            str={() => m.api.str(['text'])}
+            multiline={multiline}
+            style={{
+              width: '100%',
+              height: multiline ? 200 : undefined,
+              fontSize: 16,
+              boxSizing: 'border-box',
+            }}
+          />
         )}
       />
     </DemoCard>

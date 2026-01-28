@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {StrAdapterNative} from '.';
 import {CollaborativeInput} from '../CollaborativeInput';
-import type {CollaborativeStr} from 'collaborative-editor';
 import {CollaborativeFlexibleInput} from '../CollaborativeFlexibleInput';
+import type {CollaborativeStr} from 'collaborative-editor';
 
 export default {
   component: StrAdapterNative,
