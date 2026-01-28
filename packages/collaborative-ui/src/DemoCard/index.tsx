@@ -6,6 +6,7 @@ import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import {Fade} from '@jsonjoy.com/ui/lib/4-card/Fade';
 
 const blockClass = rule({
   // pd: '16px',
@@ -79,6 +80,16 @@ export const DemoCard: React.FC<DemoCardProps> = ({title, subtitle, description,
           </Split>
         </div>
       )}
+      <Fade height={150}>
+        <div className={descriptionWrapClass}>
+          <Paper round>
+            <div className={descriptionClass}>
+              <Text as='div' font='sans' kind='mid' size={1} className={subtitleClass}>{description}</Text>
+              {/* {description} */}
+            </div>
+          </Paper>
+        </div>
+      </Fade>
       {!!showDescription ? (
         <div className={descriptionWrapClass}>
           <Paper round>

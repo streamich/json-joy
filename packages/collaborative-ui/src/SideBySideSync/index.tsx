@@ -33,7 +33,7 @@ export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> =
   const state = useSideBySideSyncState();
 
   return (
-    <Paper fill={2}>
+    <Paper fill={2} round>
       <TopBar />
       <Split>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
