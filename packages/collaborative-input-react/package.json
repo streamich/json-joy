@@ -1,19 +1,19 @@
 {
-  "name": "@jsonjoy.com/collaborative-ui",
+  "name": "@jsonjoy.com/collaborative-input-react",
   "publishConfig": {
     "access": "public"
   },
   "version": "17.65.0",
-  "description": "React component library for building real-time collaborative editing applications.",
+  "description": "CollaborativeInput React component, binds DOM input or textarea elements to a JSON CRDT str node",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-ui",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-input-react",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/collaborative-ui"
+    "directory": "packages/collaborative-input-react"
   },
   "license": "AGPL-3.0-only",
   "funding": {
@@ -22,54 +22,31 @@
   },
   "keywords": [
     "collaborative",
-    "ui",
-    "collaborative-ui",
     "multiplayer",
-    "realtime",
-    "presence",
-    "presence-ui",
-    "components",
-    "react",
+    "binding",
+    "collaborative-input-react",
+    "input",
+    "editor",
     "textarea",
+    "contenteditable",
     "json-crdt",
     "json",
     "crdt"
   ],
   "dependencies": {
-    "@jsonjoy.com/click-json": "workspace:*",
-    "@jsonjoy.com/collaborative-codemirror": "workspace:*",
-    "@jsonjoy.com/collaborative-input": "workspace:^",
-    "@jsonjoy.com/collaborative-monaco": "workspace:*",
-    "@jsonjoy.com/collaborative-quill": "workspace:*",
+    "@jsonjoy.com/collaborative-input": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",
-    "@jsonjoy.com/json-pack": "workspace:*",
-    "@jsonjoy.com/json-pointer": "workspace:*",
-    "@jsonjoy.com/ui": "workspace:*",
-    "@jsonjoy.com/util": "workspace:*",
-    "@material-ui/core": "^4.12.4",
-    "flexible-input": "^1.0.3",
-    "json-joy": "workspace:*",
-    "nano-theme": "^1.5.0",
-    "quill": "^2.0.3",
-    "quill-delta": "^5.1.0",
-    "react-use": "^17.6.0",
-    "sonic-forest": "^1.2.1",
-    "thingies": "^2.5.0",
-    "use-t": "^1.6.4"
+    "json-joy": "workspace:*"
   },
   "peerDependencies": {
-    "@monaco-editor/react": "*",
-    "monaco-editor": "*",
-    "react": "*",
-    "react-dom": "*",
-    "rxjs": "*",
-    "tslib": "2"
+    "tslib": "*"
   },
   "devDependencies": {
-    "@monaco-editor/react": "^4.7.0",
-    "codemirror": "^6.0.2",
-    "monaco-editor": "^0.55.1",
-    "rxjs": "^7.8.2"
+    "@storybook/react": "^10.2.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "engines": {
     "node": ">=10.0"
@@ -89,7 +66,12 @@
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
     "coverage": "yarn test --collectCoverage",
     "typedoc": "typedoc",
-    "typecheck": "tsc -p ."
+    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
+    "typecheck": "tsc -p .",
+    "demo:slate": "webpack serve --config src/__demos__/slate/webpack.config.js",
+    "demo:plate": "webpack serve --config src/__demos__/plate/webpack.config.js"
   },
   "jest": {
     "preset": "ts-jest",

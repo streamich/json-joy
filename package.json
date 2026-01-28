@@ -105,6 +105,7 @@
           "collaborative-codemirror",
           "collaborative-devtools",
           "collaborative-input",
+          "collaborative-input-react",
           "collaborative-lexical",
           "collaborative-monaco",
           "collaborative-monaco-react",

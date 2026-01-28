@@ -1677,7 +1677,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-input@workspace:*, @jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
+"@jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react"
+  dependencies:
+    "@jsonjoy.com/collaborative-input": "workspace:*"
+    "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@storybook/react": "npm:^10.2.0"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    json-joy: "workspace:*"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"@jsonjoy.com/collaborative-input@workspace:*, @jsonjoy.com/collaborative-input@workspace:^, @jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input"
   dependencies:
@@ -1824,7 +1841,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/click-json": "workspace:*"
     "@jsonjoy.com/collaborative-codemirror": "workspace:*"
-    "@jsonjoy.com/collaborative-input": "workspace:*"
+    "@jsonjoy.com/collaborative-input": "workspace:^"
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"

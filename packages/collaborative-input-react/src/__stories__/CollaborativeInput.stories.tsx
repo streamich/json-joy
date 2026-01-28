@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Model} from 'json-joy/lib/json-crdt';
-import {bind} from '.';
-import {CollaborativeInput} from './CollaborativeInput';
+import {bind} from '@jsonjoy.com/collaborative-input';
+import {CollaborativeInput} from '../CollaborativeInput';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const Demo: React.FC<{textarea: boolean}> = ({textarea}) => {
@@ -152,7 +152,7 @@ const Demo: React.FC<{textarea: boolean}> = ({textarea}) => {
 };
 
 const meta: Meta<typeof Text> = {
-  title: 'collaborative-input/<CollaborativeInput>',
+  title: '<CollaborativeInput>',
   component: Demo as any,
   argTypes: {},
 };

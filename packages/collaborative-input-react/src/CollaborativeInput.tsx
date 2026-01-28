@@ -1,5 +1,5 @@
 import {createElement, useMemo, useLayoutEffect} from 'react';
-import {bind} from './index';
+import {bind} from '@jsonjoy.com/collaborative-input';
 import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 
 export interface UiLifeCycles {

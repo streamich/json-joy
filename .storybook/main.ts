@@ -16,6 +16,7 @@ function getAbsolutePath(value: string) {
 // List of packages that contain stories
 const packages = [
   'click-json',
+  'collaborative-input-react',
   'collaborative-ace-react',
   'collaborative-codemirror',
   'collaborative-input',
@@ -60,6 +61,8 @@ const config: StorybookConfig = {
       '@jsonjoy.com/codegen/lib': resolve(__dirname, '../packages/codegen/src'),
       '@jsonjoy.com/collaborative-str/lib': resolve(__dirname, '../packages/collaborative-str/src'),
       '@jsonjoy.com/collaborative-str': resolve(__dirname, '../packages/collaborative-str/src'),
+      '@jsonjoy.com/collaborative-input-react/lib': resolve(__dirname, '../packages/collaborative-input-react/src'),
+      '@jsonjoy.com/collaborative-input-react': resolve(__dirname, '../packages/collaborative-input-react/src'),
       '@jsonjoy.com/collaborative-ace/lib': resolve(__dirname, '../packages/collaborative-ace/src'),
       '@jsonjoy.com/collaborative-ace': resolve(__dirname, '../packages/collaborative-ace/src'),
       '@jsonjoy.com/collaborative-quill/lib': resolve(__dirname, '../packages/collaborative-quill/src'),
