@@ -61,11 +61,17 @@
   },
   "peerDependencies": {
     "@monaco-editor/react": "*",
+    "codemirror": "6",
     "monaco-editor": "*",
     "react": "*",
     "react-dom": "*",
     "rxjs": "*",
     "tslib": "2"
+  },
+  "peerDependenciesMeta": {
+    "codemirror": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@monaco-editor/react": "^4.7.0",

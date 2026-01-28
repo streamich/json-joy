@@ -6,17 +6,18 @@ export class CodemirrorEditorFacade implements EditorFacade {
   public onselection?: () => void;
 
   private disposed = false;
-  private d0!: EditorView['dispatch'];
-  private d1 = (...specs: Parameters<EditorView['dispatch']>) => {
-    const res = this.d0!.apply(this.editor, specs);
-    if (this.disposed) return res;
-    this.onchange?.();
-    this.onselection?.();
-    return res;
-  };
+  private readonly d0: EditorView['dispatch'];
+  private readonly d1: EditorView['dispatch'];
 
   constructor(protected readonly editor: EditorView) {
     this.d0 = editor.dispatch;
+    this.d1 = (...specs: any) => {
+      const res = this.d0!.apply(this.editor, specs);
+      if (this.disposed) return res;
+      this.onchange?.();
+      this.onselection?.();
+      return res;
+    };
     Object.defineProperty(editor, 'dispatch', {
       ...Object.getOwnPropertyDescriptor(editor, 'dispatch'),
       value: this.d1,

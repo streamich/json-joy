@@ -1867,11 +1867,15 @@ __metadata:
     use-t: "npm:^1.6.4"
   peerDependencies:
     "@monaco-editor/react": "*"
+    codemirror: 6
     monaco-editor: "*"
     react: "*"
     react-dom: "*"
     rxjs: "*"
     tslib: 2
+  peerDependenciesMeta:
+    codemirror:
+      optional: true
   languageName: unknown
   linkType: soft
 
