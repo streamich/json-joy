@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Text} from '@jsonjoy.com/ui/lib/1-inline/Text';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {useSideBySideSyncState} from './context';
-import {JsonCrdtModelProps} from '../JsonCrdtModel';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
@@ -63,6 +62,9 @@ export const TopBar: React.FC = () => {
               onChange={(value) => setSeconds(value)}
               onBlur={commitSeconds}
               onEnter={commitSeconds}
+              onEsc={() => {
+                setSeconds((Math.round(state.autoSyncInterval$.getValue() / 1000)).toString());
+              }}
             />
           </div>
           <Space horizontal />

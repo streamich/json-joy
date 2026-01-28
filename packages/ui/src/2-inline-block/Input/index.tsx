@@ -112,12 +112,8 @@ export const Input: React.FC<InputProps> = (props) => {
   if (size) {
     const factor = size < 0 ? 1 : 2;
     style.fontSize = `${16 + size * factor}px`;
-    // style.paddingTop = `${4 + size * factor}px`;
-    // style.paddingBottom = `${4 + size * factor}px`;
     if (size < 0) {
       style.fontWeight = fonts.get('ui', 'mid', 1).fw;
-      // style.paddingTop = style.paddingBottom = Math.max(4 + size, 1) + 'px';
-      // style.paddingLeft = style.paddingRight = Math.max(5 + size, 0) + 'px';
     }
   }
 
