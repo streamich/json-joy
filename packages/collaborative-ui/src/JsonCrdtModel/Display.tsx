@@ -20,14 +20,14 @@ const css = {
   header: rule({
     d: 'flex',
     ai: 'center',
-    pad: '8px 8px 8px 16px',
+    pd: '8px 8px 8px 16px',
     minH: '24px',
   }),
   content: rule({
     d: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    pad: '4px 16px 16px',
+    pd: '4px 16px 16px',
   }),
   debug: rule({
     '& *': {
@@ -46,45 +46,48 @@ export interface DisplayProps {
   state: JsonCrdtModelState;
   model: Model<any>;
   readonly?: boolean;
+  noHeader?: boolean;
   renderDisplay: (model: Model<any>, readonly: boolean) => React.ReactNode;
 }
 
-export const Display: React.FC<DisplayProps> = React.memo(({state, model, readonly, renderDisplay}) => {
+export const Display: React.FC<DisplayProps> = React.memo(({state, model, readonly, noHeader, renderDisplay}) => {
   const [t] = useT();
   const show = useBehaviorSubject(state.showDisplay$);
   const showOutlines = useBehaviorSubject(state.showDisplayOutlines$);
 
   return (
     <>
-      <div className={css.header}>
-        <Split>
-          <div style={{marginTop: -1}}>
-            <MiniTitle>{'Display'}</MiniTitle>
-            {!!readonly && show && (
-              <>
-                <Space horizontal size={0} />
-                <LogReadonlyLabel />
-              </>
-            )}
-          </div>
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            {show && (
-              <>
-                <BasicTooltip nowrap renderTooltip={() => t('Outline')}>
-                  <BasicButton onClick={() => state.showDisplayOutlines$.next(!state.showDisplayOutlines$.getValue())}>
-                    <VectorIcon width={16} height={16} />
-                  </BasicButton>
-                </BasicTooltip>
-                <Space horizontal />
-              </>
-            )}
-            <Checkbox as={'span'} small on={show} onChange={state.toggleShowDisplay} />
-          </div>
-        </Split>
-      </div>
+      {!noHeader && (
+        <div className={css.header}>
+          <Split>
+            <div style={{marginTop: -1}}>
+              <MiniTitle>{'Display'}</MiniTitle>
+              {!!readonly && show && (
+                <>
+                  <Space horizontal size={0} />
+                  <LogReadonlyLabel />
+                </>
+              )}
+            </div>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              {show && (
+                <>
+                  <BasicTooltip nowrap renderTooltip={() => t('Outline')}>
+                    <BasicButton onClick={() => state.showDisplayOutlines$.next(!state.showDisplayOutlines$.getValue())}>
+                      <VectorIcon width={16} height={16} />
+                    </BasicButton>
+                  </BasicTooltip>
+                  <Space horizontal />
+                </>
+              )}
+              <Checkbox as={'span'} small on={show} onChange={state.toggleShowDisplay} />
+            </div>
+          </Split>
+        </div>
+      )}
       {show && (
         <Scrollbox style={{maxHeight: 500}}>
-          <div className={css.content + (showOutlines ? css.debug : '')}>{renderDisplay(model, !!readonly)}</div>
+          <div className={css.content + (showOutlines ? css.debug : '')} style={{paddingTop: noHeader ? 16 : 4}}>{renderDisplay(model, !!readonly)}</div>
         </Scrollbox>
       )}
     </>

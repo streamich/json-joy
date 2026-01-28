@@ -10,7 +10,7 @@ export default {
 };
 
 const schema0 = s.obj({
-  text: s.str('Hello world!'),
+  text: s.str('Hello, collaborative <textarea>!'),
 });
 
 const model = Model.create(schema0);
@@ -43,11 +43,12 @@ export const Default = {
     >
       <SideBySideSync
         model={model}
+        noDisplayHdr
         renderDisplay={(model: Model<any>) => (
             <CollaborativeInput
               str={() => model.api.str(['text'])}
               input={(connect) => (
-                <textarea ref={connect} />
+                <textarea ref={connect} style={{width: '100%', height: '200px'}} />
               )}
             />
         )}

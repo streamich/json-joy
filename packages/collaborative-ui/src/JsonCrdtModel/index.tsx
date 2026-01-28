@@ -49,6 +49,7 @@ export interface JsonCrdtModelProps {
   state?: JsonCrdtModelState;
   filename?: string;
   order?: ('model' | 'view' | 'display')[];
+  noDisplayHdr?: boolean;
   renderLeftToolbar?: () => React.ReactNode;
   renderDisplay?: (model: Model<any>, readonly: boolean) => React.ReactNode;
   renderContext?: () => React.ReactNode;
@@ -59,10 +60,11 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
   readonly,
   state: _state,
   filename,
+  order = ['model', 'view', 'display'],
+  noDisplayHdr,
   renderLeftToolbar,
   renderDisplay,
   renderContext,
-  order = ['model', 'view', 'display'],
 }) => {
   const [t] = useT();
   // biome-ignore lint: manual dependency list
@@ -229,6 +231,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
           key="display"
           state={state}
           model={model}
+          noHeader={noDisplayHdr}
           readonly={readonly}
           renderDisplay={renderDisplay}
         />

@@ -10,6 +10,7 @@ import type {Model} from 'json-joy/lib/json-crdt';
 export interface SideBySideSyncProps {
   model: Model<any>;
   renderDisplay?: JsonCrdtModelProps['renderDisplay'];
+  noDisplayHdr?: JsonCrdtModelProps['noDisplayHdr'];
 }
 
 export const SideBySideSync: React.FC<SideBySideSyncProps> = ({model, ...rest}) => {
@@ -29,7 +30,7 @@ export const SideBySideSync: React.FC<SideBySideSyncProps> = ({model, ...rest}) 
 
 const order: JsonCrdtModelProps['order'] = ['display', 'view', 'model'];
 
-export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> = ({renderDisplay}) => {
+export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> = (props) => {
   const state = useSideBySideSyncState();
 
   return (
@@ -37,10 +38,10 @@ export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> =
       <TopBar />
       <Split>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel model={state.left.end} state={state.leftState} renderDisplay={renderDisplay} order={order} />
+          <JsonCrdtModel {...props} model={state.left.end} state={state.leftState} order={order} />
         </div>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel model={state.right.end} state={state.rightState} renderDisplay={renderDisplay} order={order} />
+          <JsonCrdtModel {...props} model={state.right.end} state={state.rightState} order={order} />
         </div>
       </Split>
     </Paper>

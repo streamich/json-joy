@@ -62,7 +62,7 @@ export const DemoCard: React.FC<DemoCardProps> = ({title, subtitle, description,
     <Paper className={blockClass} fill={1} noOutline round>
       {(!!title || !!subtitle || !!description) && (
         <div className={headerClass}>
-          <Split style={{alignItems: 'center'}}>
+          <Split>
             <div>
               {!!title && <Text as='h3' font='sans' kind='bold' className={titleClass}>{title}</Text>}
               {!!subtitle && <Text as='h3' font='slab' kind='mid' className={subtitleClass}>{subtitle}</Text>}
@@ -83,7 +83,7 @@ export const DemoCard: React.FC<DemoCardProps> = ({title, subtitle, description,
         <div className={descriptionWrapClass}>
           <Paper round>
             <div className={descriptionClass}>
-              <Text as='div' font='sans' kind='mid' size={1} className={subtitleClass}>{description}</Text>
+              <Text as='div' font='sans' kind='mid' size={-1} className={subtitleClass}>{description}</Text>
               {/* {description} */}
             </div>
           </Paper>
