@@ -1677,7 +1677,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react":
+"@jsonjoy.com/collaborative-input-react@workspace:^, @jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react"
   dependencies:
@@ -1842,6 +1842,7 @@ __metadata:
     "@jsonjoy.com/click-json": "workspace:*"
     "@jsonjoy.com/collaborative-codemirror": "workspace:*"
     "@jsonjoy.com/collaborative-input": "workspace:^"
+    "@jsonjoy.com/collaborative-input-react": "workspace:^"
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
