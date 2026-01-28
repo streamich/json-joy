@@ -1626,7 +1626,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react":
+"@jsonjoy.com/collaborative-ace-react@workspace:*, @jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react"
   dependencies:
@@ -1677,7 +1677,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-input-react@workspace:^, @jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react":
+"@jsonjoy.com/collaborative-input-react@workspace:*, @jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-input-react@workspace:packages/collaborative-input-react"
   dependencies:
@@ -1694,7 +1694,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-input@workspace:*, @jsonjoy.com/collaborative-input@workspace:^, @jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
+"@jsonjoy.com/collaborative-input@workspace:*, @jsonjoy.com/collaborative-input@workspace:packages/collaborative-input":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input"
   dependencies:
@@ -1840,9 +1840,10 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui"
   dependencies:
     "@jsonjoy.com/click-json": "workspace:*"
+    "@jsonjoy.com/collaborative-ace-react": "workspace:*"
     "@jsonjoy.com/collaborative-codemirror": "workspace:*"
-    "@jsonjoy.com/collaborative-input": "workspace:^"
-    "@jsonjoy.com/collaborative-input-react": "workspace:^"
+    "@jsonjoy.com/collaborative-input": "workspace:*"
+    "@jsonjoy.com/collaborative-input-react": "workspace:*"
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"

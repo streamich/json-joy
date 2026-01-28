@@ -37,9 +37,10 @@
   ],
   "dependencies": {
     "@jsonjoy.com/click-json": "workspace:*",
+    "@jsonjoy.com/collaborative-ace-react": "workspace:*",
     "@jsonjoy.com/collaborative-codemirror": "workspace:*",
-    "@jsonjoy.com/collaborative-input": "workspace:^",
-    "@jsonjoy.com/collaborative-input-react": "workspace:^",
+    "@jsonjoy.com/collaborative-input": "workspace:*",
+    "@jsonjoy.com/collaborative-input-react": "workspace:*",
     "@jsonjoy.com/collaborative-monaco": "workspace:*",
     "@jsonjoy.com/collaborative-quill": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",

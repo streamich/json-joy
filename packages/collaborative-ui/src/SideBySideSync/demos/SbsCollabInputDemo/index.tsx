@@ -5,10 +5,6 @@ import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
 import {SideBySideSync} from '../..';
 import {DemoCard} from '../../../DemoCard';
 
-export default {
-  title: 'side-by-side',
-};
-
 export interface SbsCollabInputDemoProps {
   multiline?: boolean;
 }
@@ -27,7 +23,8 @@ export const SbsCollabInputDemo: React.FC<SbsCollabInputDemoProps> = ({multiline
   const description = React.useMemo(() => {
     return`
 This demo showcases synchronization of two text areas using
-the \`CollaborativeInput\` component. You can type in either text
+the \`CollaborativeInput\` component from \`@jsonjoy.com/collaborative-input-react\` package.
+You can type in either text
 area, and the changes will be reflected in both areas after synchronization.
 Use the top bar buttons to manually synchronize or adjust auto-sync settings.
 
