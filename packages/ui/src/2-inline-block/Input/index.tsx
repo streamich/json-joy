@@ -54,7 +54,7 @@ export interface InputProps {
 export const Input: React.FC<InputProps> = (props) => {
   const {
     disabled,
-    value = '',
+    value,
     placeholder,
     onPaste,
     onEsc,
@@ -66,6 +66,7 @@ export const Input: React.FC<InputProps> = (props) => {
     waiting,
     center,
     right,
+    onChange,
   } = props;
   const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
@@ -106,7 +107,7 @@ export const Input: React.FC<InputProps> = (props) => {
   }
 
   const style: React.CSSProperties = {
-    color: !value && !!placeholder ? styles.g(0.6) : styles.g(0.1),
+    color: value !== undefined && !value && !!placeholder ? styles.g(0.6) : styles.g(0.1),
   };
 
   if (size) {
@@ -151,7 +152,7 @@ export const Input: React.FC<InputProps> = (props) => {
       }}
     >
       <Split style={{alignItems: 'center'}}>
-        <input {...inputAttr} onChange={(e) => (props.onChange || noop)(e.target.value)} />
+        <input {...inputAttr} onChange={onChange ? (e) => onChange(e.target.value) : undefined} />
         {rightElement}
       </Split>
     </Outline>
