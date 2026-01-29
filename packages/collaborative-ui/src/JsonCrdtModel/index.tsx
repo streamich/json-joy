@@ -203,9 +203,9 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
   }
 
   const listItems: React.ReactNode[] = [];
-
+  let i = 0;
   for (const item of order) {
-    if (listItems.length > 0) listItems.push(<Separator key="sep-display" />);
+    if (listItems.length > 0) listItems.push(<Separator key={`sep-${i++}`} />);
     if (item === 'model') {
       listItems.push(<div key="header" className={css.header}>{header}</div>);
       if (showModel) {
