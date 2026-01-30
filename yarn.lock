@@ -1710,7 +1710,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react":
+"@jsonjoy.com/collaborative-monaco-react@workspace:*, @jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react"
   dependencies:
@@ -1845,6 +1845,7 @@ __metadata:
     "@jsonjoy.com/collaborative-input": "workspace:*"
     "@jsonjoy.com/collaborative-input-react": "workspace:*"
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco-react": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
