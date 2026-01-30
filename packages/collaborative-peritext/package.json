@@ -1,32 +1,53 @@
 {
-  "name": "@jsonjoy.com/util",
+  "name": "@jsonjoy.com/collaborative-peritext",
   "publishConfig": {
     "access": "public"
   },
   "version": "17.65.0",
-  "description": "Various helper utilities",
+  "description": "JSON CRDT peritext node bindings to any generic rich-text editor.",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/util",
-  "repository": "jsonjoy-com/util",
-  "license": "Apache-2.0",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-peritext",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/collaborative-peritext"
+  },
+  "license": "AGPL-3.0-only",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
   "keywords": [
-    "codegen",
-    "buffer",
-    "string",
-    "utf8",
+    "collaborative",
+    "multiplayer",
+    "binding",
+    "collaborative-peritext",
+    "str",
+    "peritext",
+    "editor",
+    "input",
+    "textarea",
+    "contenteditable",
+    "json-crdt",
     "json",
-    "json-equal",
-    "json-brand",
-    "json-random",
-    "fuzzer"
+    "crdt"
   ],
+  "dependencies": {
+    "json-joy": "workspace:*"
+  },
+  "peerDependencies": {
+    "tslib": "*"
+  },
+  "devDependencies": {
+    "@storybook/react": "^10.2.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
   "engines": {
     "node": ">=10.0"
   },
@@ -38,8 +59,8 @@
     "lib/"
   ],
   "scripts": {
-    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
-    "build": "npx tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
     "test": "jest --maxWorkers 7",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
@@ -48,7 +69,9 @@
     "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "demo:slate": "webpack serve --config src/__demos__/slate/webpack.config.js",
+    "demo:plate": "webpack serve --config src/__demos__/plate/webpack.config.js"
   },
   "jest": {
     "preset": "ts-jest",
@@ -69,12 +92,5 @@
     "testPathIgnorePatterns": [
       "node_modules"
     ]
-  },
-  "peerDependencies": {
-    "tslib": "2"
-  },
-  "dependencies": {
-    "@jsonjoy.com/buffers": "workspace:*",
-    "@jsonjoy.com/codegen": "workspace:*"
   }
 }
