@@ -1744,7 +1744,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react":
+"@jsonjoy.com/collaborative-quill-react@workspace:*, @jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"
   dependencies:
@@ -1847,6 +1847,7 @@ __metadata:
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
     "@jsonjoy.com/collaborative-monaco-react": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
+    "@jsonjoy.com/collaborative-quill-react": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
