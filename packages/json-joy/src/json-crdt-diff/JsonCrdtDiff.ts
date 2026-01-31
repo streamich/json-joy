@@ -72,6 +72,7 @@ export class JsonCrdtDiff {
       if (spans.length) this.builder.del(src.id, spans);
       return;
     }
+    // TODO: Add fast-path to first check if src == dst? Do it by checking hashes of elements (since they are computed anyways)?
     const srcLines: string[] = [];
     src.children((node) => srcLines.push(structHashCrdt(node)));
     const dstLines: string[] = [];

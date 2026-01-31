@@ -36,6 +36,8 @@
     "crdt"
   ],
   "dependencies": {
+    "@jsonjoy.com/json-equal": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
     "json-joy": "workspace:*"
   },
   "peerDependencies": {

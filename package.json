@@ -109,6 +109,7 @@
           "collaborative-lexical",
           "collaborative-monaco",
           "collaborative-monaco-react",
+          "collaborative-peritext",
           "collaborative-prosemirror",
           "collaborative-quill",
           "collaborative-quill-react",

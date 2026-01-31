@@ -1748,6 +1748,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext"
   dependencies:
+    "@jsonjoy.com/json-equal": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
     "@storybook/react": "npm:^10.2.0"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
