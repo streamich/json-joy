@@ -1,31 +1,42 @@
 {
-  "name": "@jsonjoy.com/util",
+  "name": "@jsonjoy.com/json-equal",
   "publishConfig": {
     "access": "public"
   },
   "version": "17.65.0",
-  "description": "Various helper utilities",
+  "description": "Deep equality check for JSON values",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/jsonjoy-com/util",
-  "repository": "jsonjoy-com/util",
-  "license": "Apache-2.0",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/json-equal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/json-equal"
+  },
+  "license": "AGPL-3.0-only",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
   "keywords": [
-    "codegen",
-    "buffer",
-    "string",
-    "utf8",
     "json",
-    "json-brand",
-    "json-random",
-    "fuzzer"
+    "deep-equal",
+    "deep-equality",
+    "json-equal",
+    "json-equality",
+    "fast-deep-equal",
+    "fast-equals",
+    "lodash.isEqual",
+    "underscore.isEqual",
+    "equal",
+    "is-equal",
+    "compare"
   ],
+  "peerDependencies": {
+    "tslib": "*"
+  },
   "engines": {
     "node": ">=10.0"
   },
@@ -44,9 +55,6 @@
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
     "coverage": "yarn test --collectCoverage",
     "typedoc": "typedoc",
-    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
-    "deploy:pages": "gh-pages -d gh-pages",
-    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "typecheck": "tsc -p ."
   },
   "jest": {
@@ -68,13 +76,5 @@
     "testPathIgnorePatterns": [
       "node_modules"
     ]
-  },
-  "peerDependencies": {
-    "tslib": "2"
-  },
-  "dependencies": {
-    "@jsonjoy.com/buffers": "workspace:*",
-    "@jsonjoy.com/codegen": "workspace:*",
-    "@jsonjoy.com/json-equal": "workspace:*"
   }
 }

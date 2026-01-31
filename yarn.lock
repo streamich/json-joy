@@ -1744,6 +1744,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext"
+  dependencies:
+    "@storybook/react": "npm:^10.2.0"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    json-joy: "workspace:*"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/collaborative-quill-react@workspace:*, @jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"
@@ -1996,6 +2011,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/json-equal@workspace:*, @jsonjoy.com/json-equal@workspace:packages/json-equal":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/json-equal@workspace:packages/json-equal"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/json-expression@workspace:*, @jsonjoy.com/json-expression@workspace:packages/json-expression":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-expression@workspace:packages/json-expression"
@@ -2233,6 +2256,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/buffers": "workspace:*"
     "@jsonjoy.com/codegen": "workspace:*"
+    "@jsonjoy.com/json-equal": "workspace:*"
   peerDependencies:
     tslib: 2
   languageName: unknown
