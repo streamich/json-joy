@@ -1,2 +1,3 @@
 export {usePeritext} from './context';
-export {PeritextWebUi, PeritextWebUiProps} from './PeritextWebUi';
+export {PeritextWebUi} from './PeritextWebUi';
+export type {PeritextWebUiProps} from './PeritextWebUi';

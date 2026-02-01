@@ -20,18 +20,10 @@ export class PeritextBinding {
 
   protected readonly race = invokeFirstOnly();
 
-  /**
-   * Latest cached model view.
-   * @readonly
-   */
-  public view: string;
-
   constructor(
     protected readonly txt: () => Peritext,
     protected readonly editor: RichtextEditorFacade,
-  ) {
-    this.view = txt().view()
-  }
+  ) {}
 
   // ---------------------------------------------------------------- Selection
 
