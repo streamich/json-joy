@@ -7,6 +7,7 @@ import {addListNodes} from 'prosemirror-schema-list';
 import {exampleSetup} from 'prosemirror-example-setup';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
+import {ProsemirrorFacade} from './ProsemirrorEditor';
 
 export default {
   title: 'Peritext/ProsemirrorEditor',
@@ -34,6 +35,7 @@ const Demo: React.FC = () => {
         plugins: exampleSetup({schema: mySchema}),
       }),
     });
+    const facade = new ProsemirrorFacade(view);
 
     viewRef.current = view;
 

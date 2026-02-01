@@ -37,6 +37,9 @@
   "peerDependencies": {
     "tslib": "*"
   },
+  "dependencies": {
+    "@jsonjoy.com/codegen": "workspace:*"
+  },
   "engines": {
     "node": ">=10.0"
   },

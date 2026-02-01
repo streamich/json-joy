@@ -2022,6 +2022,8 @@ __metadata:
 "@jsonjoy.com/json-equal@workspace:*, @jsonjoy.com/json-equal@workspace:packages/json-equal":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-equal@workspace:packages/json-equal"
+  dependencies:
+    "@jsonjoy.com/codegen": "workspace:*"
   peerDependencies:
     tslib: "*"
   languageName: unknown
