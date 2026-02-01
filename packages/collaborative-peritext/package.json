@@ -38,7 +38,10 @@
   "dependencies": {
     "@jsonjoy.com/json-equal": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
-    "json-joy": "workspace:*"
+    "json-joy": "workspace:*",
+    "prosemirror-model": "^1.25.4",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-view": "^1.41.5"
   },
   "peerDependencies": {
     "tslib": "*"
@@ -47,6 +50,9 @@
     "@storybook/react": "^10.2.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "prosemirror-example-setup": "^1.2.3",
+    "prosemirror-schema-basic": "^1.2.4",
+    "prosemirror-schema-list": "^1.5.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
