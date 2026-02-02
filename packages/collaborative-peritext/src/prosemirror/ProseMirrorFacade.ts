@@ -2,9 +2,11 @@ import {Plugin} from "prosemirror-state";
 import {EditorView} from 'prosemirror-view';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {RichtextEditorFacade} from '../types';
+import {FromPm} from "./FromPm";
 
-export class ProsemirrorFacade implements RichtextEditorFacade {
+export class ProseMirrorFacade implements RichtextEditorFacade {
   constructor(protected readonly view: EditorView) {
+    const self = this;
     const peritextPlugin = new Plugin({
       view() {
         return {
@@ -12,13 +14,16 @@ export class ProsemirrorFacade implements RichtextEditorFacade {
             console.log("update called");
             if (!view.state.doc.eq(prevState.doc)) {
               console.log("Document content has changed.");
+              self.onchange?.();
+            } else {
+              self.onselection?.();
             }
           },
           destroy() {
-            
+            console.log("Plugin view destroyed.");
           }
         };
-      }
+      },
     });
     const state = view.state;
     const updatedPlugins = state.plugins.concat([peritextPlugin]);
@@ -27,16 +32,16 @@ export class ProsemirrorFacade implements RichtextEditorFacade {
   }
 
   get(): ViewRange {
-    throw new Error("Method not implemented.");
+    const doc = this.view.state.doc;
+    return FromPm.convert(doc);
   }
 
   set(content: ViewRange): void {
     throw new Error("Method not implemented.");
   }
 
-  onselection?: () => void = () => {
-    throw new Error("Method not implemented.");
-  };
+  onchange?: () => void;
+  onselection?: () => void;
 
   dispose(): void {
     throw new Error("Method not implemented.");

@@ -37,7 +37,7 @@ export type ViewRange = [
 ];
 
 /**
- * Represents and exported view of a single rich-text formatting annotation or
+ * Represents an exported view of a single rich-text formatting annotation or
  * a block split in the document.
  */
 export type ViewSlice = [

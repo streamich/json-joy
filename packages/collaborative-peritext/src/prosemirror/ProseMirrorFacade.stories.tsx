@@ -7,10 +7,10 @@ import {addListNodes} from 'prosemirror-schema-list';
 import {exampleSetup} from 'prosemirror-example-setup';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
-import {ProsemirrorFacade} from './ProsemirrorEditor';
+import {ProseMirrorFacade} from './ProseMirrorFacade';
 
 export default {
-  title: 'Peritext/ProsemirrorEditor',
+  title: 'Peritext/ProseMirrorFacade',
 };
 
 // Mix the nodes from prosemirror-schema-list into the basic schema to
@@ -35,7 +35,7 @@ const Demo: React.FC = () => {
         plugins: exampleSetup({schema: mySchema}),
       }),
     });
-    const facade = new ProsemirrorFacade(view);
+    const facade = new ProseMirrorFacade(view);
 
     viewRef.current = view;
 

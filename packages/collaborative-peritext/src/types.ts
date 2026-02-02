@@ -54,17 +54,17 @@ export interface RichtextEditorFacade {
   //  */
   // del?(position: number, length: number): void;
 
-  // /**
-  //  * Emits a change event when content changes. The event is emitted with
-  //  * a `SimpleChange` tuple, which is a tuple of `[position, remove, insert]`,
-  //  * where `position` is the position of the change, `remove` is the number
-  //  * of characters removed, and `insert` is the string inserted.
-  //  *
-  //  * If a change happened, but it is too complex or impossible to represent by
-  //  * the `SimpleChange` tuple, the `void` value can be emitted instead. For the
-  //  * most basic implementation, one can always emit `null` on every change.
-  //  */
-  // onchange?: (change: SimpleChange[] | void, verify?: boolean) => void;
+  /**
+   * Emits a change event when content changes. The event is emitted with
+   * a `SimpleChange` tuple, which is a tuple of `[position, remove, insert]`,
+   * where `position` is the position of the change, `remove` is the number
+   * of characters removed, and `insert` is the string inserted.
+   *
+   * If a change happened, but it is too complex or impossible to represent by
+   * the `SimpleChange` tuple, the `void` value can be emitted instead. For the
+   * most basic implementation, one can always emit `null` on every change.
+   */
+  onchange?: (change: SimpleChange[] | void, verify?: boolean) => void;
 
   // /**
   //  * Length of text. Should return the same result as `.get().length`,
