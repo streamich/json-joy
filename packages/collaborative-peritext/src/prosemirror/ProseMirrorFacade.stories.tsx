@@ -8,6 +8,11 @@ import {exampleSetup} from 'prosemirror-example-setup';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
 import {ProseMirrorFacade} from './ProseMirrorFacade';
+import {PeritextBinding} from '../PeritextBinding';
+import {FromPm} from './FromPm';
+// import {Model} from 'json-joy/lib/json-crdt';
+import {ext, ModelWithExt, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
+import {Model} from 'json-joy/lib/json-crdt';
 
 export default {
   title: 'Peritext/ProseMirrorFacade',
@@ -24,6 +29,8 @@ const Demo: React.FC = () => {
   const editorRef = React.useRef<HTMLDivElement>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const viewRef = React.useRef<EditorView | null>(null);
+  const modelRef = React.useRef<Model<any> | null>(null);
+  const [cnt, setCnt] = React.useState(0);
 
   React.useEffect(() => {
     if (!editorRef.current || !contentRef.current) return;
@@ -36,6 +43,15 @@ const Demo: React.FC = () => {
       }),
     });
     const facade = new ProseMirrorFacade(view);
+
+    // const viewRange = FromPm.convert(view.state.doc);
+    const model = ModelWithExt.create(ext.peritext.new(''));
+    modelRef.current = model;
+    // const prosemirror = model.s.toExt();
+    // prosemirror.node.txt.editor.import(0, viewRange);
+    // prosemirror.node.txt.refresh();
+
+    PeritextBinding.bind(() => model.s.toExt(), facade);
 
     viewRef.current = view;
 
@@ -59,6 +75,10 @@ const Demo: React.FC = () => {
           minHeight: '200px',
         }}
       />
+      <button onClick={() => setCnt(cnt + 1)}>update</button>
+      <pre style={{fontSize: '10px'}}>
+        <code>{(modelRef.current as any)?.s.toExt().txt + ''}</code>
+      </pre>
     </div>
   );
 };

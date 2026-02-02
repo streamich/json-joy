@@ -1,18 +1,19 @@
 import {invokeFirstOnly} from '@jsonjoy.com/util/lib/invokeFirstOnly';
-import {applyChange} from './util';
-import {diff, diffEdit} from 'json-joy/lib/util/diff/str';
-import {Peritext} from 'json-joy/lib/json-crdt-extensions/peritext/Peritext';
-import type {CollaborativeStr, RichtextEditorFacade, SimpleChange} from './types';
+// import {applyChange} from './util';
+// import {diff, diffEdit} from 'json-joy/lib/util/diff/str';
+import {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
+import {deepEqual} from '@jsonjoy.com/json-equal';
+import type {RichtextEditorFacade, SimpleChange} from './types';
 
-const enum PATCH_OP_TYPE {
-  DEL = -1,
-  EQL = 0,
-  INS = 1,
-}
+// const enum PATCH_OP_TYPE {
+//   DEL = -1,
+//   EQL = 0,
+//   INS = 1,
+// }
 
 export class PeritextBinding {
-  public static bind = (txt: () => Peritext, editor: RichtextEditorFacade, polling?: boolean) => {
-    const binding = new PeritextBinding(txt, editor);
+  public static bind = (peritext: () => PeritextApi, editor: RichtextEditorFacade, polling?: boolean) => {
+    const binding = new PeritextBinding(peritext, editor);
     binding.syncFromModel();
     binding.bind(polling);
     return binding.unbind;
@@ -21,14 +22,15 @@ export class PeritextBinding {
   protected readonly race = invokeFirstOnly();
 
   constructor(
-    protected readonly txt: () => Peritext,
+    protected readonly peritext: () => PeritextApi,
     protected readonly editor: RichtextEditorFacade,
   ) {}
 
   // ---------------------------------------------------------------- Selection
 
   protected saveSelection() {
-    throw new Error('Not implemented yet.');
+    console.log('SAVE_SELECTION');
+    // throw new Error('Not implemented yet.');
     // const {editor, selection} = this;
     // const str = this.txt();
     // if (!str) return;
@@ -51,7 +53,9 @@ export class PeritextBinding {
   // ----------------------------------------------------- Model-to-Editor sync
 
   public syncFromModel() {
-    throw new Error('Not implemented yet.');
+    console.log('syncFromModel');
+    // throw new Error('syncFromModel: Not implemented yet.');
+
     // const editor = this.editor;
     // const str = this.txt();
     // if (!str) return;
@@ -100,49 +104,29 @@ export class PeritextBinding {
 
   // ----------------------------------------------------- Editor-to-Model sync
 
+  /**
+   * @todo 1. Check if view needs to be synced, or make diff high performance.
+   * @todo 2. Save selection, if needed.
+   * @todo 3. Optimize to use granular insert/delete if available.
+   * @todo 4. Optimize to use granular inline formatting if available.
+   */
   public syncFromEditor() {
-    throw new Error('Not implemented yet.');
-    // let view = this.view;
-    // const value = this.editor.get();
+    const viewRange = this.editor.get();
+    // if (value === view || deepEqual(view, value)) return;
     // if (value === view) return;
+    const peritext = this.peritext();
+    if (!peritext) return;
     // const selection = this.selection;
     // const caretPos: number | undefined = selection.start === selection.end ? (selection.start ?? undefined) : undefined;
-    // const changes = diffEdit(view, value, caretPos || 0);
-    // const changeLen = changes.length;
-    // const str = this.txt();
-    // if (!str) return;
-    // str.api.transaction(() => {
-    //   let pos: number = 0;
-    //   for (let i = 0; i < changeLen; i++) {
-    //     const change = changes[i];
-    //     const [type, text] = change;
-    //     switch (type as unknown as PATCH_OP_TYPE) {
-    //       case PATCH_OP_TYPE.DEL: {
-    //         view = applyChange(view, pos, text.length, '');
-    //         str.del(pos, text.length);
-    //         break;
-    //       }
-    //       case PATCH_OP_TYPE.EQL: {
-    //         pos += text.length;
-    //         break;
-    //       }
-    //       case PATCH_OP_TYPE.INS: {
-    //         view = applyChange(view, pos, 0, text);
-    //         str.ins(pos, text);
-    //         pos += text.length;
-    //         break;
-    //       }
-    //     }
-    //   }
-    // });
-    // this.view = view;
-    // this.saveSelection();
+    const txt = peritext.txt;
+    console.log('viewRange', viewRange);
+    txt.editor.merge(viewRange);
+    txt.refresh();
   }
 
   private readonly onchange = (changes: SimpleChange[] | void, verify?: boolean) => {
-    throw new Error('Not implemented yet.');
-    // this.race(() => {
-    //   // console.time('onchange');
+    this.race(() => {
+      console.log('ONCHANGE');
     //   if (changes instanceof Array && changes.length > 0) {
     //     const str = this.txt();
     //     if (!str) return;
@@ -178,9 +162,8 @@ export class PeritextBinding {
     //       } catch {}
     //     }
     //   }
-    //   this.syncFromEditor();
-    //   // console.timeEnd('onchange');
-    // });
+      this.syncFromEditor();
+    });
   };
 
   // ------------------------------------------------------------------ Polling
@@ -189,17 +172,18 @@ export class PeritextBinding {
   private _p: number | null | unknown = null;
 
   private readonly pollChanges = () => {
-    this._p = setTimeout(() => {
-      this.race(() => {
-        try {
-          const view = this.view;
-          const editor = this.editor;
-          const needsSync = view !== editor.get();
-          if (needsSync) this.syncFromEditor();
-        } catch {}
-        if (this._p) this.pollChanges();
-      });
-    }, this.pollingInterval);
+    throw new Error('Not implemented yet.');
+    // this._p = setTimeout(() => {
+    //   this.race(() => {
+    //     try {
+    //       const view = this.view;
+    //       const editor = this.editor;
+    //       const needsSync = view !== editor.get();
+    //       if (needsSync) this.syncFromEditor();
+    //     } catch {}
+    //     if (this._p) this.pollChanges();
+    //   });
+    // }, this.pollingInterval);
   };
 
   public stopPolling() {
@@ -217,7 +201,7 @@ export class PeritextBinding {
     editor.onchange = this.onchange;
     editor.onselection = () => this.saveSelection();
     if (polling) this.pollChanges();
-    this._s = this.txt().api.onChange.listen(this.onModelChange);
+    // this._s = this.txt().api.onChange.listen(this.onModelChange);
   };
 
   public readonly unbind = () => {
