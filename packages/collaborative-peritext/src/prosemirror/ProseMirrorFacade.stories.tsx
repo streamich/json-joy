@@ -42,17 +42,27 @@ const Demo: React.FC = () => {
     console.log('Initial doc:', doc.toJSON());
     const view = new EditorView(editorRef.current, {
       state: EditorState.create({
-        doc,
-        // doc: DOMParser.fromSchema(mySchema).parse(contentRef.current),
+        // doc,
+        doc: DOMParser.fromSchema(mySchema).parse(contentRef.current),
         plugins: exampleSetup({schema: mySchema}),
       }),
     });
     const facade = new ProseMirrorFacade(view);
 
     const viewRange = FromPm.convert(view.state.doc);
+
+
+
     console.log(viewRange);
     const model = ModelWithExt.create(ext.peritext.new(''));
     modelRef.current = model;
+
+    const txt = model.s.toExt().txt;
+    console.log('viewRange', viewRange);
+    txt.editor.merge(viewRange);
+    txt.refresh();
+
+
     // const prosemirror = model.s.toExt();
     // prosemirror.node.txt.editor.import(0, viewRange);
     // prosemirror.node.txt.refresh();
