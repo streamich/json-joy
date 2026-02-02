@@ -14,7 +14,6 @@ import type {RichtextEditorFacade, SimpleChange} from './types';
 export class PeritextBinding {
   public static bind = (peritext: () => PeritextApi, editor: RichtextEditorFacade, polling?: boolean) => {
     const binding = new PeritextBinding(peritext, editor);
-    binding.syncFromModel();
     binding.bind(polling);
     return binding.unbind;
   };
@@ -23,7 +22,7 @@ export class PeritextBinding {
 
   constructor(
     protected readonly peritext: () => PeritextApi,
-    protected readonly editor: RichtextEditorFacade,
+    protected readonly facade: RichtextEditorFacade,
   ) {}
 
   // ---------------------------------------------------------------- Selection
@@ -54,6 +53,25 @@ export class PeritextBinding {
 
   public syncFromModel() {
     console.log('syncFromModel');
+
+    // TODO: Check hash if model updated since last sync.
+      // const hash = txt.refresh();
+      // if (this._view && hash === this._viewHash) return this._view;
+      // const content: PmJsonNode[] = [];
+      // const node: PmJsonNode = {type: 'doc', content};
+      // const children = fragment.root.children;
+      // const length = children.length;
+      // for (let i = 0; i < length; i++) content.push(toPm(children[i]));
+      // this._viewHash = hash;
+      // this._view = node;
+
+    const txt = this.peritext().txt;
+    txt.refresh();
+    const fragment = txt.blocks;
+    console.log(fragment + '');
+    this.facade.set(fragment);
+    // const children = block.children;
+
     // throw new Error('syncFromModel: Not implemented yet.');
 
     // const editor = this.editor;
@@ -111,7 +129,7 @@ export class PeritextBinding {
    * @todo 4. Optimize to use granular inline formatting if available.
    */
   public syncFromEditor() {
-    const viewRange = this.editor.get();
+    const viewRange = this.facade.get();
     // if (value === view || deepEqual(view, value)) return;
     // if (value === view) return;
     const peritext = this.peritext();
@@ -197,7 +215,7 @@ export class PeritextBinding {
 
   public readonly bind = (polling?: boolean) => {
     this.syncFromModel();
-    const editor = this.editor;
+    const editor = this.facade;
     editor.onchange = this.onchange;
     editor.onselection = () => this.saveSelection();
     if (polling) this.pollChanges();
@@ -207,6 +225,6 @@ export class PeritextBinding {
   public readonly unbind = () => {
     this.stopPolling();
     this._s?.();
-    this.editor.dispose?.();
+    this.facade.dispose?.();
   };
 }

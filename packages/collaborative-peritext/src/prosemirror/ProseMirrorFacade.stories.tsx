@@ -36,15 +36,21 @@ const Demo: React.FC = () => {
     if (!editorRef.current || !contentRef.current) return;
     if (viewRef.current) return;
 
+    // console.log(mySchema);
+
+    const doc = mySchema.nodes.doc.createAndFill()!;
+    console.log('Initial doc:', doc.toJSON());
     const view = new EditorView(editorRef.current, {
       state: EditorState.create({
-        doc: DOMParser.fromSchema(mySchema).parse(contentRef.current),
+        doc,
+        // doc: DOMParser.fromSchema(mySchema).parse(contentRef.current),
         plugins: exampleSetup({schema: mySchema}),
       }),
     });
     const facade = new ProseMirrorFacade(view);
 
-    // const viewRange = FromPm.convert(view.state.doc);
+    const viewRange = FromPm.convert(view.state.doc);
+    console.log(viewRange);
     const model = ModelWithExt.create(ext.peritext.new(''));
     modelRef.current = model;
     // const prosemirror = model.s.toExt();

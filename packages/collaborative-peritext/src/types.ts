@@ -1,4 +1,5 @@
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
+import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 
 /**
  * Represents a single change in the editor. It is a 3-tuple of `[position,
@@ -36,7 +37,7 @@ export interface RichtextEditorFacade {
   /**
    * Overwrites the editor content with the given state.
    */
-  set(content: ViewRange): void;
+  set(fragment: Fragment<string>): void;
 
   // /**
   //  * Inserts text at the given position. When implemented, this method is used
