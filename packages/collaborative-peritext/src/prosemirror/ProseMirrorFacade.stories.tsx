@@ -37,19 +37,24 @@ const mySchema = new Schema({
 
 const Demo: React.FC = () => {
   const editorRef = React.useRef<HTMLDivElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
   const viewRef = React.useRef<EditorView | null>(null);
   const modelRef = React.useRef<Model<any> | null>(null);
   const [cnt, setCnt] = React.useState(0);
 
   React.useEffect(() => {
-    if (!editorRef.current || !contentRef.current) return;
+    if (!editorRef.current) return;
     if (viewRef.current) return;
 
     // Create ProseMirror editor
-    // const doc = mySchema.nodes.doc.createAndFill()!;
-    // const doc = DOMParser.fromSchema(mySchema).parse({})
-    // const doc = DOMParser.fromSchema(mySchema).parse(contentRef.current);
+    const doc = mySchema.nodes.doc.createAndFill()!;
+    const view = viewRef.current = new EditorView(editorRef.current, {
+      state: EditorState.create({
+        doc,
+        plugins: exampleSetup({schema: mySchema}),
+      }),
+    });
+
+    // Create Model
     const json = {"type":"doc","content":[
       {"type":"paragraph","content":[{"type":"text","text":"Hello, ProseMirror!"}]},
       {"type":"paragraph","content":[
@@ -58,24 +63,18 @@ const Demo: React.FC = () => {
         {"type":"text","text":" editor."},
       ]}
     ]};
-    const doc = mySchema.nodeFromJSON(json);
-    const view = viewRef.current = new EditorView(editorRef.current, {
-      state: EditorState.create({
-        doc,
-        plugins: exampleSetup({schema: mySchema}),
-      }),
-    });
-
-    // console.log(JSON.stringify(doc.toJSON()))
-    
-    // Connect ProseMirror with Peritext
-    const facade = new ProseMirrorFacade(view);
     const model = modelRef.current = ModelWithExt.create(ext.peritext.new(''));
+    const viewRange = FromPm.convert(mySchema.nodeFromJSON(json));
     const txt = model.s.toExt().txt;
-    const viewRange = FromPm.convert(view.state.doc);
     txt.editor.merge(viewRange);
     txt.refresh();
+
+    // Bind Model to ProseMirror
+    const facade = new ProseMirrorFacade(view);
     const unbind = PeritextBinding.bind(() => model.s.toExt(), facade);
+
+    // Re-render after setup
+    setCnt(x => x + 1);
     
     return () => {
       unbind();
@@ -86,10 +85,6 @@ const Demo: React.FC = () => {
 
   return (
     <div>
-      <div ref={contentRef} style={{display: 'none'}}>
-        <p>Hello, ProseMirror!</p>
-        <p>This is a basic rich text editor.</p>
-      </div>
       <div
         ref={editorRef}
         style={{
@@ -98,10 +93,13 @@ const Demo: React.FC = () => {
           minHeight: '200px',
         }}
       />
-      <button onClick={() => setCnt(cnt + 1)}>update</button>
-      <pre style={{fontSize: '10px'}}>
-        <code>{(modelRef.current as any)?.s.toExt().txt + ''}</code>
-      </pre>
+      {!!modelRef.current && (
+        <UseModel model={modelRef.current} render={() => (
+          <pre style={{fontSize: '10px'}}>
+            <code>{(modelRef.current as any)?.s.toExt().txt + ''}</code>
+          </pre>
+        )} />
+      )}
     </div>
   );
 };
