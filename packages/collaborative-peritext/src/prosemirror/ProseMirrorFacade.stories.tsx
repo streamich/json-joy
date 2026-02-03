@@ -93,6 +93,11 @@ const Demo: React.FC = () => {
           minHeight: '200px',
         }}
       />
+      <div>
+        <button onClick={() => {
+          (modelRef.current?.s as any).toExt().text().ins(0, '1. ');
+        }}>Prepend "1. "</button>
+      </div>
       {!!modelRef.current && (
         <UseModel model={modelRef.current} render={() => (
           <pre style={{fontSize: '10px'}}>
