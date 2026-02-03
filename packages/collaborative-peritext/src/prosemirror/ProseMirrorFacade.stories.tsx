@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {EditorState} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
-import {Schema, DOMParser} from 'prosemirror-model';
+import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-schema-basic';
 import {addListNodes} from 'prosemirror-schema-list';
 import {exampleSetup} from 'prosemirror-example-setup';
@@ -11,7 +11,18 @@ import {ProseMirrorFacade} from './ProseMirrorFacade';
 import {PeritextBinding} from '../PeritextBinding';
 import {FromPm} from './FromPm';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
-import {Model} from 'json-joy/lib/json-crdt';
+import type {Model, JsonNode} from 'json-joy/lib/json-crdt';
+
+export interface UseModelProps<N extends JsonNode = JsonNode<any>> {
+  model: Model<N>;
+  render: () => React.ReactNode;
+}
+
+export const UseModel: React.FC<UseModelProps> = ({model, render}) => {
+  const get = React.useCallback(() => model.tick, [model]);
+  React.useSyncExternalStore(model.api.subscribe, get);
+  return render();
+};
 
 export default {
   title: 'Peritext/ProseMirrorFacade',
@@ -38,7 +49,16 @@ const Demo: React.FC = () => {
     // Create ProseMirror editor
     // const doc = mySchema.nodes.doc.createAndFill()!;
     // const doc = DOMParser.fromSchema(mySchema).parse({})
-    const doc = DOMParser.fromSchema(mySchema).parse(contentRef.current);
+    // const doc = DOMParser.fromSchema(mySchema).parse(contentRef.current);
+    const json = {"type":"doc","content":[
+      {"type":"paragraph","content":[{"type":"text","text":"Hello, ProseMirror!"}]},
+      {"type":"paragraph","content":[
+        {"type":"text","text":"This is a basic "},
+        {"type":"text","text":"rich text","marks":[{"type":"strong"},{"type":"em"}]},
+        {"type":"text","text":" editor."},
+      ]}
+    ]};
+    const doc = mySchema.nodeFromJSON(json);
     const view = viewRef.current = new EditorView(editorRef.current, {
       state: EditorState.create({
         doc,
@@ -46,7 +66,7 @@ const Demo: React.FC = () => {
       }),
     });
 
-    // console.log(doc.toJSON())
+    // console.log(JSON.stringify(doc.toJSON()))
     
     // Connect ProseMirror with Peritext
     const facade = new ProseMirrorFacade(view);

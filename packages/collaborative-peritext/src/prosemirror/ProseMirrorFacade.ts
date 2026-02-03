@@ -24,6 +24,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
             const isModelChange = !view.state.doc.eq(prevState.doc);
             if (isModelChange) self.onchange?.();
             else self.onselection?.();
+            // console.log(view.state.doc.toJSON());
           },
           destroy() {
             self._disposed = true;
