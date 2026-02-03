@@ -1,10 +1,18 @@
-// @ts-nocheck
 /* @jsx h */
 /* @jsxFrag h */
 // biome-ignore lint: Import needed for JSX
 import {h} from '../jsx';
 import {SliceTypeCon} from '../../slice/constants';
 import {setup} from './setup';
+
+// JSX type declarations for this file
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: any;
+    }
+  }
+}
 
 test('can create basic JSX elements', () => {
   const jsx = (
