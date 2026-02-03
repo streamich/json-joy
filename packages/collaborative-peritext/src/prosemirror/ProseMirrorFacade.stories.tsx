@@ -10,8 +10,7 @@ import 'prosemirror-menu/style/menu.css';
 import {ProseMirrorFacade} from './ProseMirrorFacade';
 import {PeritextBinding} from '../PeritextBinding';
 import {FromPm} from './FromPm';
-// import {Model} from 'json-joy/lib/json-crdt';
-import {ext, ModelWithExt, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
+import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {Model} from 'json-joy/lib/json-crdt';
 
 export default {
@@ -36,42 +35,30 @@ const Demo: React.FC = () => {
     if (!editorRef.current || !contentRef.current) return;
     if (viewRef.current) return;
 
-    // console.log(mySchema);
-
-    const doc = mySchema.nodes.doc.createAndFill()!;
-    console.log('Initial doc:', doc.toJSON());
-    const view = new EditorView(editorRef.current, {
+    // Create ProseMirror editor
+    // const doc = mySchema.nodes.doc.createAndFill()!;
+    // const doc = DOMParser.fromSchema(mySchema).parse({})
+    const doc = DOMParser.fromSchema(mySchema).parse(contentRef.current);
+    const view = viewRef.current = new EditorView(editorRef.current, {
       state: EditorState.create({
-        // doc,
-        doc: DOMParser.fromSchema(mySchema).parse(contentRef.current),
+        doc,
         plugins: exampleSetup({schema: mySchema}),
       }),
     });
+
+    // console.log(doc.toJSON())
+    
+    // Connect ProseMirror with Peritext
     const facade = new ProseMirrorFacade(view);
-
-    const viewRange = FromPm.convert(view.state.doc);
-
-
-
-    console.log(viewRange);
-    const model = ModelWithExt.create(ext.peritext.new(''));
-    modelRef.current = model;
-
+    const model = modelRef.current = ModelWithExt.create(ext.peritext.new(''));
     const txt = model.s.toExt().txt;
-    console.log('viewRange', viewRange);
+    const viewRange = FromPm.convert(view.state.doc);
     txt.editor.merge(viewRange);
     txt.refresh();
-
-
-    // const prosemirror = model.s.toExt();
-    // prosemirror.node.txt.editor.import(0, viewRange);
-    // prosemirror.node.txt.refresh();
-
-    PeritextBinding.bind(() => model.s.toExt(), facade);
-
-    viewRef.current = view;
-
+    const unbind = PeritextBinding.bind(() => model.s.toExt(), facade);
+    
     return () => {
+      unbind();
       view.destroy();
       viewRef.current = null;
     };
