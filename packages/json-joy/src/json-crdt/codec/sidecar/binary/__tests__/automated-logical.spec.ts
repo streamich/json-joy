@@ -5,6 +5,7 @@ import {Decoder} from '../Decoder';
 import {documents} from '../../../../../__tests__/json-documents';
 import {binaryDocuments} from '../../../../../__tests__/binary-documents';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
+import {assertParents} from '../../../../model/__tests__/util';
 
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {
@@ -18,6 +19,8 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       const doc2 = decoder.decode(cborDecoder.read(view), sidecar);
       expect(doc1.view()).toEqual(json);
       expect(doc2.view()).toEqual(json);
+      assertParents(doc1);
+      assertParents(doc2);
     });
   });
 
@@ -33,6 +36,8 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       const doc2 = decoder.decode(cborDecoder.read(view), sidecar);
       expect(doc1.view()).toEqual(json);
       expect(doc2.view()).toEqual(json);
+      assertParents(doc1);
+      assertParents(doc2);
     });
   });
 }

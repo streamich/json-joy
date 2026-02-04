@@ -33,6 +33,7 @@ export class Decoder {
   protected cRoot(doc: Model, {value}: types.JsonCrdtVerboseVal): void {
     const val = value ? this.cNode(doc, value) : new nodes.ConNode(doc.clock.tick(0), null);
     const root = new nodes.RootNode(doc, val.id);
+    val.parent = root;
     doc.root = root;
   }
 
@@ -63,7 +64,9 @@ export class Decoder {
     const keys = Object.keys(map);
     for (const key of keys) {
       const keyNode = map[key];
-      obj.put(key, this.cNode(doc, keyNode).id);
+      const child = this.cNode(doc, keyNode);
+      child.parent = obj;
+      obj.put(key, child.id);
     }
     doc.index.set(id, obj);
     return obj;
@@ -78,7 +81,11 @@ export class Decoder {
     for (let i = 0; i < length; i++) {
       const component = map[i];
       if (!component) elements.push(undefined);
-      else elements.push(this.cNode(doc, component).id);
+      else {
+        const child = this.cNode(doc, component);
+        child.parent = obj;
+        elements.push(child.id);
+      }
     }
     doc.index.set(id, obj);
     return obj;
@@ -97,7 +104,11 @@ export class Decoder {
         if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
           return new nodes.ArrChunk(id, (c as types.JsonCrdtVerboseTombstone).span, undefined);
         else {
-          const ids = (c as types.JsonCrdtVerboseArrChunk).value.map((n) => this.cNode(doc, n).id);
+          const ids = (c as types.JsonCrdtVerboseArrChunk).value.map((n) => {
+            const child = this.cNode(doc, n);
+            child.parent = rga;
+            return child.id;
+          });
           return new nodes.ArrChunk(id, ids.length, ids);
         }
       });
@@ -153,8 +164,9 @@ export class Decoder {
 
   protected cVal(doc: Model, node: types.JsonCrdtVerboseVal): nodes.ValNode {
     const id = this.cTs(node.id);
-    const val = this.cNode(doc, node.value);
-    const obj = new nodes.ValNode(doc, id, val.id);
+    const child = this.cNode(doc, node.value);
+    const obj = new nodes.ValNode(doc, id, child.id);
+    child.parent = obj;
     doc.index.set(id, obj);
     return obj;
   }

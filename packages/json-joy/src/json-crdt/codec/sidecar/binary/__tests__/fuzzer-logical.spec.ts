@@ -2,6 +2,7 @@ import {JsonCrdtFuzzer} from '../../../../__tests__/fuzzer/JsonCrdtFuzzer';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
+import {assertParents} from '../../../../model/__tests__/util';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -25,6 +26,7 @@ test('serialization fuzzing tests', () => {
       const model2 = decoder.decode(cborDecoder.read(view), sidecar);
       expect(model.view()).toEqual(json);
       expect(model2.view()).toEqual(json);
+      assertParents(model2);
     }
   }
 });
