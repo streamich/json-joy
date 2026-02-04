@@ -10,6 +10,7 @@ import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import * as diff from '../../../json-crdt-diff';
+import {ChangeEvent} from './events';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
 import type {Path} from '@jsonjoy.com/json-pointer';
@@ -880,13 +881,12 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   /** Emitted after transaction completes. */
   public readonly onTransaction = new FanOut<void>();
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
-  public readonly onChange = new MergeFanOut<number | Patch | undefined>([
-    this.onReset,
-    this.onPatch,
-    this.onLocalChange,
-  ]);
+  public readonly onChange = new MergeFanOut<ChangeEvent>(
+    [this.onReset, this.onPatch, this.onLocalChange],
+    (raw: undefined | Patch | number) => new ChangeEvent(raw, this),
+  );
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
-  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | undefined>(this.onChange);
+  public readonly onChanges = new MicrotaskBufferFanOut<ChangeEvent>(this.onChange);
   /** Emitted when the `model.api` builder change buffer is flushed. */
   public readonly onFlush = new FanOut<Patch>();
 
