@@ -547,6 +547,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
+    this.linkParents();
     const api = this._api;
     if (api) {
       api.flush();

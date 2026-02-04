@@ -255,13 +255,77 @@ describe('JsonNode.parent', () => {
     });
   });
 
-  describe('fork and clone', () => {
+  describe('.fork() and .clone()', () => {
     test('forked model has parent links', () => {
       const model = Model.create(s.obj({key: s.str('value')}));
       model.api.flush();
       assertParents(model);
       const forked = model.fork();
       assertParents(forked);
+    });
+  });
+
+  describe('.reset()', () => {
+    test('reset model has correct parent links', () => {
+      const model1 = Model.create();
+      model1.api.set({foo: 'bar'});
+      assertParents(model1);
+      const model2 = Model.create();
+      model2.api.set({
+        nested: {
+          deep: [1, 2],
+        },
+      });
+      assertParents(model1);
+      assertParents(model2);
+      model2.reset(model1);
+      assertParents(model1);
+      assertParents(model2);
+      expect(model2.view()).toEqual({foo: 'bar'});
+    });
+
+    test('reset to more complex structure has correct parent links', () => {
+      const simple = Model.create();
+      simple.api.set('simple');
+      assertParents(simple);
+      const complex = Model.create();
+      complex.api.set({
+        a: {
+          b: {
+            c: 'deep',
+          },
+        },
+        arr: ['one', 'two'],
+        val: 42,
+      });
+      assertParents(simple);
+      assertParents(complex);
+      simple.reset(complex);
+      assertParents(simple);
+      assertParents(simple);
+      expect(simple.view()).toEqual(complex.view());
+    });
+
+    test('reset from fork', () => {
+      const model1 = Model.create();
+      model1.api.set({foo: 'bar'});
+      assertParents(model1);
+      const model2 = model1.fork();
+      assertParents(model2);
+      model2.api.obj([]).set({baz: {qux: 'quux'}});
+      assertParents(model1);
+      assertParents(model2);
+      model1.reset(model2);
+      assertParents(model1);
+      assertParents(model2);
+      expect(model1.view()).toEqual({
+        foo: 'bar',
+        baz: {qux: 'quux'},
+      });
+      expect(model2.view()).toEqual({
+        foo: 'bar',
+        baz: {qux: 'quux'},
+      });
     });
   });
 });
