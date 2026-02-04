@@ -35,7 +35,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     }
     this.doc = model;
     const rootValue = this.cRoot();
-    const root = model.root = new nodes.RootNode(this.doc, rootValue.id);
+    const root = (model.root = new nodes.RootNode(this.doc, rootValue.id));
     rootValue.parent = root;
     this.clockDecoder = undefined;
     return model;
@@ -181,18 +181,19 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
 
   protected cArr(id: ITimestampStruct, length: number): nodes.ArrNode {
     const obj = new nodes.ArrNode(this.doc, id);
-    if (length) obj.ingest(length, (): nodes.ArrChunk => {
-      const id = this.ts();
-      const [deleted, length] = this.reader.b1vu56();
-      if (deleted) return new nodes.ArrChunk(id, length, undefined);
-      const ids: ITimestampStruct[] = [];
-      for (let i = 0; i < length; i++) {
-        const child = this.cNode();
-        child.parent = obj;
-        ids.push(child.id);
-      }
-      return new nodes.ArrChunk(id, length, ids);
-    });
+    if (length)
+      obj.ingest(length, (): nodes.ArrChunk => {
+        const id = this.ts();
+        const [deleted, length] = this.reader.b1vu56();
+        if (deleted) return new nodes.ArrChunk(id, length, undefined);
+        const ids: ITimestampStruct[] = [];
+        for (let i = 0; i < length; i++) {
+          const child = this.cNode();
+          child.parent = obj;
+          ids.push(child.id);
+        }
+        return new nodes.ArrChunk(id, length, ids);
+      });
     this.doc.index.set(id, obj);
     return obj;
   }

@@ -100,7 +100,8 @@ describe('logical', () => {
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);
     expect(doc1.view()).toEqual(json);
-    expect(doc2.view()).toEqual(json);assertParents(doc1);
+    expect(doc2.view()).toEqual(json);
+    assertParents(doc1);
     assertParents(doc2);
   });
 

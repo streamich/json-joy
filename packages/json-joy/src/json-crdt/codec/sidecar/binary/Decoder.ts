@@ -20,9 +20,9 @@ export class Decoder {
     this.decoder.reader.reset(meta);
     this.decodeClockTable();
     const clock = this.clockDecoder!.clock;
-    const doc = this.doc = Model.create(void 0, clock);
+    const doc = (this.doc = Model.create(void 0, clock));
     const rootValue = this.cRoot(view);
-    const root = doc.root = new nodes.RootNode(this.doc, rootValue.id);
+    const root = (doc.root = new nodes.RootNode(this.doc, rootValue.id));
     rootValue.parent = root;
     this.clockDecoder = undefined;
     return this.doc;
