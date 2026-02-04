@@ -34,14 +34,29 @@ export class ChangeEvent {
           : ChangeEventOrigin.Local;
   }
 
+  public isLocal(): boolean {
+    return this.origin() === ChangeEventOrigin.Local;
+  }
+
   private _ids: Set<ITimestampStruct> | null = null;
 
   /** IDs of JSON CRDT nodes directly affected by this change event. */
   public ids(): Set<ITimestampStruct> {
     let ids = this._ids;
     if (!ids) {
-      ids = this._ids = new Set<ITimestampStruct>();
-      // ...
+      this._ids = ids = new Set<ITimestampStruct>();
+      const raw = this.raw;
+      if (typeof raw === 'number') {
+        const startIndex = raw;
+        const api = this.api;
+        const ops = api.builder.patch.ops;
+
+        for (let i = startIndex; i < ops.length; i++) {
+          console.log(ops[i]);
+        }
+
+        console.log('startIndex', startIndex, ops.length);
+      }
     }
     return ids;
   }
