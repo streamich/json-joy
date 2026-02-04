@@ -20,8 +20,10 @@ export class Decoder {
     this.decoder.reader.reset(meta);
     this.decodeClockTable();
     const clock = this.clockDecoder!.clock;
-    this.doc = Model.create(void 0, clock);
-    this.doc.root = new nodes.RootNode(this.doc, this.cRoot(view).id);
+    const doc = (this.doc = Model.create(void 0, clock));
+    const rootValue = this.cRoot(view);
+    const root = (doc.root = new nodes.RootNode(this.doc, rootValue.id));
+    rootValue.parent = root;
     this.clockDecoder = undefined;
     return this.doc;
   }
@@ -91,6 +93,7 @@ export class Decoder {
     const child = this.cNode(view);
     const doc = this.doc;
     const node = new nodes.ValNode(doc, id, child.id);
+    child.parent = node;
     doc.index.set(id, node);
     return node;
   }
@@ -103,8 +106,9 @@ export class Decoder {
     const objKeys = obj.keys;
     for (let i = 0; i < length; i++) {
       const key = keys[i];
-      const childNode = this.cNode((view as any)[key]);
-      objKeys.set(key, childNode.id);
+      const child = this.cNode((view as any)[key]);
+      child.parent = obj;
+      objKeys.set(key, child.id);
     }
     this.doc.index.set(id, obj);
     return obj;
@@ -118,7 +122,10 @@ export class Decoder {
       const child = this.cNode(view[i]);
       const childId = child.id;
       if (childId.sid === SESSION.SYSTEM) elements.push(undefined);
-      else elements.push(childId);
+      else {
+        child.parent = obj;
+        elements.push(childId);
+      }
     }
     this.doc.index.set(id, obj);
     return obj;
@@ -168,7 +175,11 @@ export class Decoder {
       const [deleted, span] = reader.b1vu56();
       if (deleted) return new nodes.ArrChunk(id, span, undefined);
       const ids: ITimestampStruct[] = [];
-      for (let j = 0; j < span; j++) ids.push(this.cNode(view[i++]).id);
+      for (let j = 0; j < span; j++) {
+        const child = this.cNode(view[i++]);
+        child.parent = obj;
+        ids.push(child.id);
+      }
       return new nodes.ArrChunk(id, span, ids);
     });
     this.doc.index.set(id, obj);

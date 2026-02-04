@@ -377,6 +377,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           const valueNode = index.get(tuple[1]);
           if (!valueNode) continue;
           if (node.id.time >= tuple[1].time) continue;
+          valueNode.parent = node;
           const old = node.put(tuple[0] + '', valueNode.id);
           if (old) this._gcTree(old);
         }
@@ -391,6 +392,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           const valueNode = index.get(tuple[1]);
           if (!valueNode) continue;
           if (node.id.time >= tuple[1].time) continue;
+          valueNode.parent = node;
           const old = node.put(Number(tuple[0]), valueNode.id);
           if (old) this._gcTree(old);
         }
@@ -401,6 +403,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       if (node instanceof ValNode) {
         const newValue = index.get(op.val);
         if (newValue) {
+          newValue.parent = node;
           const old = node.set(op.val);
           if (old) this._gcTree(old);
         }
@@ -417,6 +420,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
           if (!valueNode) continue;
           if (node.id.time >= stamp.time) continue;
           nodes.push(stamp);
+          valueNode.parent = node;
         }
         if (nodes.length) node.ins(op.ref, op.id, nodes);
       }
@@ -424,7 +428,9 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       const node = index.get(op.obj);
       if (node instanceof ArrNode) {
         const val = op.val;
-        if (index.get(val)) {
+        const valueNode = index.get(val);
+        if (valueNode) {
+          valueNode.parent = node;
           const old = node.upd(op.ref, val);
           if (old) this._gcTree(old);
         }
@@ -466,6 +472,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     if (isSystemNode) return;
     const node = this.index.get(value);
     if (!node) return;
+    node.parent = undefined;
     const api = node.api;
     if (api) (api as NodeApi).events.handleDelete();
     node.children((child) => this._gcTree(child.id));
@@ -506,6 +513,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     });
     copy.root = this.root.clone(copy) as RootNode<N>;
     copy.tick = this.tick;
+    copy.linkParents();
     return copy;
   }
 
@@ -539,6 +547,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
+    this.linkParents();
     const api = this._api;
     if (api) {
       api.flush();
@@ -567,6 +576,19 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    */
   public view(): Readonly<JsonNodeView<N>> {
     return this.root.view();
+  }
+
+  /**
+   * Rebuilds `.parent` links for all nodes in the document.
+   */
+  public linkParents(): void {
+    const setParent = (parent: JsonNode, child: JsonNode) => {
+      child.parent = parent;
+      child.children((grandchild) => setParent(child, grandchild));
+    };
+    const root = this.root;
+    root.parent = undefined;
+    root.children((child) => setParent(root, child));
   }
 
   /**

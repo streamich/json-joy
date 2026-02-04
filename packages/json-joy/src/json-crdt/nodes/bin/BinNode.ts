@@ -131,6 +131,9 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   // -------------------------------------------------------------- AbstractRga
 
   /** @ignore */

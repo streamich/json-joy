@@ -2,6 +2,7 @@ import {ClockVector} from '../../../../../json-crdt-patch/clock';
 import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
+import {assertParents} from '../../../../model/__tests__/util';
 
 test('decodes clock', () => {
   const doc1 = Model.create(void 0, new ClockVector(222, 0));
@@ -13,6 +14,8 @@ test('decodes clock', () => {
   expect(doc2.clock.sid).toBe(222);
   expect(doc2.clock.time).toBe(doc1.clock.time);
   expect(doc2.clock.peers.size).toBe(0);
+  assertParents(doc1);
+  assertParents(doc2);
 });
 
 const encoder = new Encoder();
@@ -33,6 +36,8 @@ test('decodes all types', () => {
   const doc2 = decoder.decode(encoded);
   expect(doc1.view()).toEqual(json);
   expect(doc2.view()).toEqual(json);
+  assertParents(doc1);
+  assertParents(doc2);
 });
 
 test('can edit documents after decoding', () => {
@@ -57,4 +62,6 @@ test('can edit documents after decoding', () => {
   expect((doc1.view() as any).arr).toEqual([1, 2, 3]);
   expect((doc2.view() as any).str).toBe('asdf');
   expect((doc1.view() as any).str).toBe('__tab__asdf');
+  assertParents(doc1);
+  assertParents(doc2);
 });

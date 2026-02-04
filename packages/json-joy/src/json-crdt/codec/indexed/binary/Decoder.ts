@@ -57,6 +57,7 @@ export class Decoder {
       const node = this.decodeNode(id);
       index.set(id, node);
     }
+    doc.linkParents();
     return doc;
   }
 

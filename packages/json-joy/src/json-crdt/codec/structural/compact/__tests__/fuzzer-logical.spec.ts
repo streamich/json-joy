@@ -1,6 +1,7 @@
 import {JsonCrdtFuzzer} from '../../../../__tests__/fuzzer/JsonCrdtFuzzer';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
+import {assertParents} from '../../../../model/__tests__/util';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -22,6 +23,8 @@ test('serialization fuzzing tests', () => {
       const doc3 = decoder.decode(encoded2);
       expect(doc2.view()).toEqual(json);
       expect(doc3.view()).toEqual(json);
+      assertParents(doc2);
+      assertParents(doc3);
     }
   }
 });

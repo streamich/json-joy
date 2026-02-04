@@ -170,6 +170,9 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   /**
    * @ignore
    *

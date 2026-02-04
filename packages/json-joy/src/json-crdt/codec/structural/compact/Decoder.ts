@@ -20,8 +20,10 @@ export class Decoder {
     const model = isServerTime
       ? Model.withServerClock(void 0, time as number)
       : Model.create(void 0, this.clockDecoder!.clock);
-    const val = root ? this.decNode(model, root) : UNDEFINED;
-    model.root = new nodes.RootNode(model, val.id);
+    const rootNodeValue = root ? this.decNode(model, root) : UNDEFINED;
+    const rootNode = new nodes.RootNode(model, rootNodeValue.id);
+    model.root = rootNode;
+    if (root) rootNodeValue.parent = rootNode;
     return model;
   }
 
@@ -75,6 +77,7 @@ export class Decoder {
     const id = this.ts(node[1]);
     const child = this.decNode(doc, node[2]);
     const obj = new nodes.ValNode(doc, id, child.id);
+    child.parent = obj;
     doc.index.set(id, obj);
     return obj;
   }
@@ -87,8 +90,9 @@ export class Decoder {
     const length = keys.length;
     for (let i = 0; i < length; i++) {
       const key = keys[i];
-      const val = this.decNode(model, map[key]);
-      obj.put(key, val.id);
+      const child = this.decNode(model, map[key]);
+      child.parent = obj;
+      obj.put(key, child.id);
     }
     model.index.set(id, obj);
     return obj;
@@ -105,6 +109,7 @@ export class Decoder {
       if (!item) elements.push(undefined);
       else {
         const child = this.decNode(model, item);
+        child.parent = obj;
         elements.push(child.id);
       }
     }
@@ -157,7 +162,11 @@ export class Decoder {
       const chunkId = this.ts(chunk[0]);
       const content = chunk[1];
       if (typeof content === 'number') return new nodes.ArrChunk(chunkId, content, undefined);
-      const ids = (content as t.JsonCrdtCompactNode[]).map((c) => this.decNode(doc, c).id);
+      const ids = (content as t.JsonCrdtCompactNode[]).map((c) => {
+        const child = this.decNode(doc, c);
+        child.parent = obj;
+        return child.id;
+      });
       return new nodes.ArrChunk(chunkId, content.length, ids);
     });
     doc.index.set(id, obj);

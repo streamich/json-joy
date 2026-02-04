@@ -4,6 +4,7 @@ import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {Timestamp} from '../../../../../json-crdt-patch/clock';
+import {assertParents} from '../../../../model/__tests__/util';
 
 test('con', () => {
   const model = Model.create();
@@ -18,6 +19,8 @@ test('con', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('con - timestamp', () => {
@@ -33,6 +36,8 @@ test('con - timestamp', () => {
   expect(viewDecoded).toEqual(null);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('val', () => {
@@ -48,6 +53,8 @@ test('val', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('obj', () => {
@@ -63,6 +70,8 @@ test('obj', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('obj - 2', () => {
@@ -82,6 +91,8 @@ test('obj - 2', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('obj - with deleted keys', () => {
@@ -101,6 +112,8 @@ test('obj - with deleted keys', () => {
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
   expect(decoded.view()).toEqual({a: 1, c: 3});
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('obj - supports "__proto__" key', () => {
@@ -120,6 +133,8 @@ test('obj - supports "__proto__" key', () => {
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);
   expect(decoded.view()).toEqual({a: 1, __proto__: 3});
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('vec', () => {
@@ -135,6 +150,8 @@ test('vec', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('vec - 2', () => {
@@ -150,6 +167,8 @@ test('vec - 2', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('vec - with gaps', () => {
@@ -166,6 +185,8 @@ test('vec - with gaps', () => {
   expect(decoded.view()).toStrictEqual([1, undefined, 3]);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('str', () => {
@@ -182,6 +203,8 @@ test('str', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('str - with deleted chunks', () => {
@@ -199,6 +222,8 @@ test('str - with deleted chunks', () => {
   const decoded = decoder.decode(viewDecoded, meta);
   decoded.applyPatch(model2.api.flush());
   expect(decoded.view()).toBe('He~o World');
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('bin', () => {
@@ -215,6 +240,8 @@ test('bin', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('bin - with deleted chunks', () => {
@@ -231,6 +258,8 @@ test('bin - with deleted chunks', () => {
   model2.api.bin([]).ins(2, new Uint8Array([6, 7]));
   decoded.applyPatch(model2.api.flush());
   expect(decoded.view()).toEqual(new Uint8Array([1, 6, 7, 4, 5]));
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('arr', () => {
@@ -247,6 +276,8 @@ test('arr', () => {
   expect(model.view()).toEqual(viewDecoded);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
+  assertParents(model);
+  assertParents(decoded);
 });
 
 test('arr - with deleted chunks', () => {
@@ -263,4 +294,6 @@ test('arr - with deleted chunks', () => {
   model2.api.arr([]).ins(2, [6, 7]);
   decoded.applyPatch(model2.api.flush());
   expect(decoded.view()).toEqual([1, 6, 7, 4, 5]);
+  assertParents(model);
+  assertParents(decoded);
 });
