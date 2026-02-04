@@ -1,19 +1,7 @@
 import {Model} from '../Model';
 import {s} from '../../../json-crdt-patch';
 import {ConNode, ValNode, ObjNode, VecNode, ArrNode, StrNode, BinNode} from '../../nodes';
-import type {JsonNode} from '../../nodes';
-
-/**
- * Recursively walks through all nodes starting from root and asserts that
- * each child node's parent reference points back to its actual parent.
- */
-const assertParents = (model: Model<any>): void => {
-  const assertNodeParent = (node: JsonNode, expectedParent: JsonNode | undefined): void => {
-    expect(node.parent).toBe(expectedParent);
-    node.children((child) => assertNodeParent(child, node));
-  };
-  assertNodeParent(model.root, undefined);
-};
+import {assertParents} from './util';
 
 describe('JsonNode.parent', () => {
   describe('root node', () => {
