@@ -81,6 +81,9 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
    */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   public name(): string {
     return 'val';
   }

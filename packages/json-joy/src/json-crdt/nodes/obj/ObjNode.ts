@@ -137,6 +137,9 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {

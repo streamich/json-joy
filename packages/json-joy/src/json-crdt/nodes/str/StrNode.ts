@@ -108,6 +108,9 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   public name(): string {
     return 'str';
   }

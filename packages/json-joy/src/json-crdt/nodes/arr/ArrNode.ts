@@ -245,6 +245,9 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   // ---------------------------------------------------------------- Printable
 
   /** @ignore */
