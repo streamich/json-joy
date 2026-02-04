@@ -886,7 +886,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
     (raw: undefined | Patch | number) => new ChangeEvent(raw, this),
   );
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
-  public readonly onChanges = new MicrotaskBufferFanOut<ChangeEvent>(this.onChange);
+  public readonly onChanges = new MicrotaskBufferFanOut<unknown>(this.onChange as FanOut<unknown>);
   /** Emitted when the `model.api` builder change buffer is flushed. */
   public readonly onFlush = new FanOut<Patch>();
 
