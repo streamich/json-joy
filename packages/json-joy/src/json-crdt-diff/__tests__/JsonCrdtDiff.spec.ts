@@ -3,7 +3,7 @@ import {type InsStrOp, s, ts} from '../../json-crdt-patch';
 import {Model} from '../../json-crdt/model';
 import {type JsonNode, ValNode} from '../../json-crdt/nodes';
 import {b} from '@jsonjoy.com/buffers/lib/b';
-import {cmpSchema} from '../../json-crdt/equal';
+import {cmpSchema} from '../../json-crdt/equal/cmpSchema';
 import {toSchema} from '../../json-crdt/schema/toSchema';
 
 const assertDiff = (model: Model<any>, src: JsonNode, dst: unknown) => {
