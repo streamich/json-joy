@@ -1,4 +1,5 @@
-import {type ITimestampStruct, Patch} from "../../../json-crdt-patch";
+import {Patch, InsValOp, InsObjOp, InsVecOp, InsStrOp, InsBinOp, InsArrOp, UpdArrOp, DelOp} from "../../../json-crdt-patch";
+import type {JsonNode} from '../../nodes';
 import type {ModelApi} from "./nodes";
 
 export const enum ChangeEventOrigin {
@@ -14,6 +15,18 @@ export type RawEventData =
   | number
   /** Emitted by `.applyPatch(patch: Patch)`. */
   | Patch;
+
+/** Operation targets specific node: the operation has `.obj` property. */
+const operationTargetsNode = (op: unknown): op is (InsValOp | InsObjOp | InsVecOp | InsStrOp | InsBinOp | InsArrOp | UpdArrOp | DelOp) => {
+  return op instanceof InsValOp ||
+    op instanceof InsObjOp ||
+    op instanceof InsVecOp ||
+    op instanceof InsStrOp ||
+    op instanceof InsBinOp ||
+    op instanceof InsArrOp ||
+    op instanceof UpdArrOp ||
+    op instanceof DelOp;
+};
 
 export class ChangeEvent {
   constructor(
@@ -38,26 +51,63 @@ export class ChangeEvent {
     return this.origin() === ChangeEventOrigin.Local;
   }
 
-  private _ids: Set<ITimestampStruct> | null = null;
+  private _direct: Set<JsonNode> | null = null;
 
-  /** IDs of JSON CRDT nodes directly affected by this change event. */
-  public ids(): Set<ITimestampStruct> {
-    let ids = this._ids;
-    if (!ids) {
-      this._ids = ids = new Set<ITimestampStruct>();
+  /**
+   * JSON CRDT nodes directly affected by this change event, i.e. nodes
+   * which are direct targets of operations in the change.
+   */
+  public direct(): Set<JsonNode> {
+    let direct = this._direct;
+    if (!direct) {
+      this._direct = direct = new Set<JsonNode>();
       const raw = this.raw;
+      const index = this.api.model.index;
       if (typeof raw === 'number') {
         const startIndex = raw;
         const api = this.api;
         const ops = api.builder.patch.ops;
-
         for (let i = startIndex; i < ops.length; i++) {
-          console.log(ops[i]);
+          const op = ops[i];
+          if (operationTargetsNode(op)) {
+            const node = index.get(op.obj);
+            if (node) direct.add(node);
+          }
         }
-
-        console.log('startIndex', startIndex, ops.length);
+      } else if (raw instanceof Patch) {
+        const ops = raw.ops;
+        const length = ops.length;
+        for (let i = 0; i < length; i++) {
+          const op = ops[i];
+          if (operationTargetsNode(op)) {
+            const node = index.get(op.obj);
+            if (node) direct.add(node);
+          }
+        }
       }
     }
-    return ids;
+    return direct;
+  }
+
+  private _parents: Set<JsonNode> | null = null;
+
+  /**
+   * JSON CRDT nodes which are parents of directly affected nodes in this
+   * change event.
+   */
+  public parents(): Set<JsonNode> {
+    let parents = this._parents;
+    if (!parents) {
+      this._parents = parents = new Set<JsonNode>();
+      const direct = this.direct();
+      for (const start of direct) {
+        let parent = start.parent;
+        while (parent && !parents.has(parent)) {
+          parents.add(parent);
+          parent = parent.parent;
+        }
+      }
+    }
+    return parents;
   }
 }

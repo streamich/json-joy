@@ -4,7 +4,7 @@ import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import {find} from './find';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
-import {FanOut} from 'thingies/lib/fanout';
+import {FanOut, type FanOutUnsubscribe} from 'thingies/lib/fanout';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
@@ -52,24 +52,6 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     public node: N,
     public readonly api: ModelApi<any>,
   ) {}
-
-  /** @ignore */
-  private ev: undefined | NodeEvents<N> = undefined;
-
-  /**
-   * Event target for listening to node changes. You can subscribe to `"view"`
-   * events, which are triggered every time the node's view changes.
-   *
-   * ```ts
-   * node.events.on('view', () => {
-   *   // do something...
-   * });
-   * ```
-   */
-  public get events(): NodeEvents<N> {
-    const et = this.ev;
-    return et || (this.ev = new NodeEvents<N>(this));
-  }
 
   /**
    * Find a child node at the given path starting from this node.
@@ -345,6 +327,99 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       }
     }, '$') as any;
   }
+
+  // ------------------------------------------------------------------- Events
+
+  /**
+   * @ignore
+   * @deprecated Use `onChange()` and other `on*()` methods.
+   */
+  private ev: undefined | NodeEvents<N> = undefined;
+
+  /**
+   * Event target for listening to node changes. You can subscribe to `"view"`
+   * events, which are triggered every time the node's view changes.
+   *
+   * ```ts
+   * node.events.on('view', () => {
+   *   // do something...
+   * });
+   * ```
+   *
+   * @ignore
+   * @deprecated Use `onNodeChange()` and other `on*()` methods.
+   */
+  public get events(): NodeEvents<N> {
+    const et = this.ev;
+    return et || (this.ev = new NodeEvents<N>(this));
+  }
+  
+  /**
+   * Attaches a listener which executes on every change that is executed
+   * directly on this node. For example, if this is a "str" string node and
+   * you insert or delete text, the listener will be executed. Or if
+   * this is an "obj" object node and keys of this object are changed, this
+   * listener will be executed.
+   * 
+   * It does not trigger when child nodes are edit, to include those changes,
+   * use `onSubtreeChange()` or `onChildChange()` methods.
+   * 
+   * @see onChildChange()
+   * @see onSubtreeChange()
+   * 
+   * @param listener Callback called on every change that is executed directly
+   *     on this node.
+   * @returns Returns an unsubscribe function to stop listening to the events.
+   */
+  public onSelfChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+    return this.api.onChange.listen((event) => {
+      if (event.direct().has(this.node)) listener(event);
+    });
+  }
+
+  /**
+   * Attaches a listener which executes on every change that is applied to this
+   * node's children. Hence, this listener will trigger only for *container*
+   * nodes - nodes that can have child nodes, such as "obj", "arr", "vec", and
+   * "val" nodes. It will not execute on changes made directly to this node.
+   * 
+   * If you want to listen to changes on this node as well as its children, use
+   * `onSubtreeChange()` method. If you want to listen to changes on this node
+   * only, use `onSelfChange()` method.
+   * 
+   * @see onSelfChange()
+   * @see onSubtreeChange()
+   * 
+   * @param listener Callback called on every change that is applied to
+   *     children of this node.
+   * @return Returns an unsubscribe function to stop listening to the events.
+   */
+  public onChildChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+    return this.api.onChange.listen((event) => {
+      if (event.parents().has(this.node)) listener(event);
+    });
+  }
+
+  /**
+   * Attaches a listener which executes on every change that is applied to this
+   * node or any of its child nodes (recursively). This is equivalent to
+   * combining both `onSelfChange()` and `onChildChange()` methods.
+   * 
+   * @see onSelfChange()
+   * @see onChildChange()
+   *
+   * @param listener Callback called on every change that is applied to this
+   *     node or any of its child nodes.
+   * @return Returns an unsubscribe function to stop listening to the events.
+   */
+  public onSubtreeChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+    return this.api.onChange.listen((event) => {
+      const node = this.node;
+      if (event.direct().has(node) || event.parents().has(node)) listener(event);
+    });
+  }
+
+  // -------------------------------------------------------------------- Debug
 
   public toString(tab: string = ''): string {
     const name = this.constructor === NodeApi ? '*' : this.node.name();

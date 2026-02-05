@@ -34,7 +34,6 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
 
   onChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
     const unsubscribe = this.api.api.onChange.listen((event) => {
-      console.log('ids', event.ids());
       listener(event);
     });
     return unsubscribe;
