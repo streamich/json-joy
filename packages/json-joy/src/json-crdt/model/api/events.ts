@@ -51,6 +51,10 @@ export class ChangeEvent {
     return this.origin() === ChangeEventOrigin.Local;
   }
 
+  public isReset(): boolean {
+    return this.raw === undefined;
+  }
+
   private _direct: Set<JsonNode> | null = null;
 
   /**

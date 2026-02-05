@@ -369,11 +369,13 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * 
    * @param listener Callback called on every change that is executed directly
    *     on this node.
+   * @param onReset Optional parameter, if set to `true`, the listener will also
+   *     be called when the model is reset using the `.reset()` method.
    * @returns Returns an unsubscribe function to stop listening to the events.
    */
-  public onSelfChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+  public onSelfChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
     return this.api.onChange.listen((event) => {
-      if (event.direct().has(this.node)) listener(event);
+      if (event.direct().has(this.node) || (onReset && event.isReset())) listener(event);
     });
   }
 
@@ -392,11 +394,13 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * 
    * @param listener Callback called on every change that is applied to
    *     children of this node.
+   * @param onReset Optional parameter, if set to `true`, the listener will also
+   *     be called when the model is reset using the `.reset()` method.
    * @return Returns an unsubscribe function to stop listening to the events.
    */
-  public onChildChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+  public onChildChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
     return this.api.onChange.listen((event) => {
-      if (event.parents().has(this.node)) listener(event);
+      if (event.parents().has(this.node) || (onReset && event.isReset())) listener(event);
     });
   }
 
@@ -410,12 +414,14 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    *
    * @param listener Callback called on every change that is applied to this
    *     node or any of its child nodes.
+   * @param onReset Optional parameter, if set to `true`, the listener will also
+   *     be called when the model is reset using the `.reset()` method.
    * @return Returns an unsubscribe function to stop listening to the events.
    */
-  public onSubtreeChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+  public onSubtreeChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
     return this.api.onChange.listen((event) => {
       const node = this.node;
-      if (event.direct().has(node) || event.parents().has(node)) listener(event);
+      if (event.direct().has(node) || event.parents().has(node) || (onReset && event.isReset())) listener(event);
     });
   }
 

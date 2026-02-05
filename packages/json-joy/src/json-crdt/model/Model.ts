@@ -527,7 +527,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
-   * Callback called before model isi reset using the `.reset()` method.
+   * Callback called before model is reset using the `.reset()` method.
    */
   public onbeforereset?: () => void = undefined;
 
@@ -541,7 +541,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    */
   public reset(to: Model<N>): void {
     this.onbeforereset?.();
-    const index = this.index;
+    const oldIndex = this.index;
     this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
     const blob = to.toBinary();
     decoder.decode(blob, <any>this);
@@ -554,16 +554,16 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       api.builder.clock = this.clock;
       api.node = this.root;
     }
-    index.forEach(({v: node}) => {
-      const api = node.api as NodeApi | undefined;
-      if (!api) return;
-      const newNode = this.index.get(node.id);
+    oldIndex.forEach(({v: oldNode}) => {
+      const nodeApi = oldNode.api as NodeApi | undefined;
+      if (!nodeApi) return;
+      const newNode = this.index.get(oldNode.id);
       if (!newNode) {
-        api.events.handleDelete();
+        nodeApi.events.handleDelete();
         return;
       }
-      api.node = newNode;
-      newNode.api = api;
+      nodeApi.node = newNode;
+      newNode.api = nodeApi;
     });
     this.tick++;
     this.onreset?.();
