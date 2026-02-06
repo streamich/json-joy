@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/12</span>
+                <span class='fraction'>12/15</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/5</span>
+                <span class='fraction'>5/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">76.92% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/10</span>
+                <span class='fraction'>10/13</span>
             </div>
         
             
@@ -113,13 +113,23 @@
 <a name='L48'></a><a href='#L48'>48</a>
 <a name='L49'></a><a href='#L49'>49</a>
 <a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">189x</span>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">190x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">189x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">190x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -144,6 +154,13 @@
 <span class="cline-any cline-yes">726x</span>
 <span class="cline-any cline-yes">726x</span>
 <span class="cline-any cline-yes">726x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -155,6 +172,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">716x</span>
 <span class="cline-any cline-yes">716x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -164,10 +182,11 @@
 <span class="cline-any cline-yes">726x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {MapFanOut, OnNewFanOut} from './fanout';
-import type {FanOut} from 'thingies/lib/fanout';
+import type {FanOut, FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type {SyncStore, SyncStoreUnsubscribe} from '../../../util/events/sync-store';
 import type {NodeApi} from './nodes';
+import type {ChangeEvent} from './events';
 &nbsp;
 export class NodeEvents&lt;N extends JsonNode = JsonNode&gt; implements SyncStore&lt;JsonNodeView&lt;N&gt;&gt; {
   /**
@@ -196,6 +215,13 @@ export class NodeEvents&lt;N extends JsonNode = JsonNode&gt; implements SyncStor
     this.onViewChanges = new OnNewFanOut(this.onChanges, this.api.view());
   }
 &nbsp;
+<span class="fstat-no" title="function not covered" >  onChange(</span>listener: (event: ChangeEvent) =&gt; void): FanOutUnsubscribe {
+    const unsubscribe = <span class="cstat-no" title="statement not covered" >this.api.api.onChange.listen(<span class="fstat-no" title="function not covered" >(e</span>vent) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      listener(event);</span>
+    });
+<span class="cstat-no" title="statement not covered" >    return unsubscribe;</span>
+  }
+&nbsp;
   /**
    * Called when this node is deleted.
    *
@@ -209,6 +235,7 @@ export class NodeEvents&lt;N extends JsonNode = JsonNode&gt; implements SyncStor
 &nbsp;
   // ---------------------------------------------------------------- SyncStore
 &nbsp;
+  // TODO: .subscribe should use targeted changes check.
   public readonly subscribe = (callback: () =&gt; void): SyncStoreUnsubscribe =&gt;
     this.onViewChanges.listen(() =&gt; callback());
   public readonly getSnapshot = () =&gt; this.api.view();
@@ -220,7 +247,7 @@ export class NodeEvents&lt;N extends JsonNode = JsonNode&gt; implements SyncStor
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-04T13:58:37.241Z
+                at 2026-02-06T11:35:19.743Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

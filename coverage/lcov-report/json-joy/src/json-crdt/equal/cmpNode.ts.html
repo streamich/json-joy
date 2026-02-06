@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-joy/src/json-crdt/equal/index.ts</title>
+    <title>Code coverage report for json-joy/src/json-crdt/equal/cmpNode.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../../prettify.css" />
     <link rel="stylesheet" href="../../../../base.css" />
@@ -19,20 +19,20 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../../index.html">All files</a> / <a href="index.html">json-joy/src/json-crdt/equal</a> index.ts</h1>
+        <h1><a href="../../../../index.html">All files</a> / <a href="index.html">json-joy/src/json-crdt/equal</a> cmpNode.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.48% </span>
+                <span class="strong">93.65% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>49/58</span>
+                <span class='fraction'>59/63</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.63% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>40/49</span>
+                <span class='fraction'>60/65</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.43% </span>
+                <span class="strong">95.74% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>38/39</span>
+                <span class='fraction'>45/47</span>
             </div>
         
             
@@ -117,9 +117,29 @@
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
 <a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -131,99 +151,118 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">4057x</span>
-<span class="cline-any cline-yes">4057x</span>
-<span class="cline-any cline-yes">3565x</span>
-<span class="cline-any cline-yes">3408x</span>
-<span class="cline-any cline-yes">1111x</span>
-<span class="cline-any cline-yes">2297x</span>
-<span class="cline-any cline-yes">1362x</span>
-<span class="cline-any cline-yes">1362x</span>
-<span class="cline-any cline-yes">1362x</span>
-<span class="cline-any cline-yes">1362x</span>
-<span class="cline-any cline-yes">1362x</span>
-<span class="cline-any cline-yes">1362x</span>
-<span class="cline-any cline-yes">1361x</span>
-<span class="cline-any cline-yes">3008x</span>
-<span class="cline-any cline-yes">3008x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1357x</span>
-<span class="cline-any cline-yes">935x</span>
-<span class="cline-any cline-yes">928x</span>
-<span class="cline-any cline-yes">928x</span>
-<span class="cline-any cline-yes">928x</span>
-<span class="cline-any cline-yes">928x</span>
-<span class="cline-any cline-yes">928x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">88x</span>
+<span class="cline-any cline-yes">78x</span>
+<span class="cline-any cline-yes">74x</span>
+<span class="cline-any cline-yes">64x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">45x</span>
+<span class="cline-any cline-yes">17x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
-import {ArrNode, BinNode, ConNode, type JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
-import {Model} from '../model';
-import type {NodeBuilder} from '../../json-crdt-patch';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {ArrNode, BinNode, ConNode, type JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
+import {equal} from '../../json-crdt-patch';
+import {last2} from 'sonic-forest/lib/util2';
+import type {AbstractRga} from '../nodes/rga';
+&nbsp;
+const cmpRga = (a: AbstractRga&lt;any&gt;, b: AbstractRga&lt;any&gt;): boolean =&gt; {
+  const maxIdChunkA = last2(a.ids);
+  const maxIdChunkB = last2(b.ids);
+  if (maxIdChunkA &amp;&amp; maxIdChunkB &amp;&amp; !equal(maxIdChunkA.id, maxIdChunkB.id)) return false;
+  return a.length() === b.length() &amp;&amp; a.size() === b.size();
+};
 &nbsp;
 /**
- * Deeply checks if two JSON nodes have the same schema and values. Does not
- * verify that the CRDT metadata (like timestamps) are the same, only that
- * the structure and values are equal.
+ * Performs type and metadata shallow check of two JSON CRDT nodes. Compares
+ * node type and their metadata (like timestamps). Does not compare the content
+ * of the nodes, however if the metadata matches the content is likely the same
+ * as well.
  *
  * @param a The first JSON CRDT node.
  * @param b The second JSON CRDT node.
- * @returns True if the schemas and values are equal, false otherwise.
+ * @returns True if they are equal, false otherwise.
  */
-export const cmp = &lt;A extends JsonNode&lt;any&gt;&gt;(a: A, b: unknown, compareContent: boolean): b is A =&gt; {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (a === b) <span class="cstat-no" title="statement not covered" >return true;</span>
-  if (a instanceof ConNode) return b instanceof ConNode &amp;&amp; (!compareContent || deepEqual(a.val, b.val));
-  else if (a instanceof ValNode) return b instanceof ValNode &amp;&amp; cmp(a.node(), b.node(), compareContent);
-  else if (a instanceof StrNode)
-    return b instanceof StrNode &amp;&amp; (!compareContent || (a.length() === b.length() &amp;&amp; a.view() === b.view()));
-  else if (a instanceof ObjNode) {
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!(b instanceof ObjNode)) <span class="cstat-no" title="statement not covered" >return false;</span>
+export const cmpNode = &lt;A extends JsonNode&lt;any&gt;&gt;(a: A, b: unknown): b is A =&gt; {
+  if (a === b) return true;
+  if (a instanceof ConNode) return b instanceof ConNode &amp;&amp; equal(a.id, b.id);
+  else if (a instanceof ValNode) return b instanceof ValNode &amp;&amp; equal(a.id, b.id) &amp;&amp; equal(a.val, b.val);
+  else if (a instanceof StrNode) {
+    if (!(b instanceof StrNode) || !equal(a.id, b.id)) return false;
+    return cmpRga(a, b);
+  } else if (a instanceof ObjNode) {
+    if (!(b instanceof ObjNode) || !equal(a.id, b.id)) return false;
     const keys1 = a.keys;
     const keys2 = b.keys;
     const length1 = keys1.size;
     const length2 = keys2.size;
     if (length1 !== length2) return false;
     for (const key of keys1.keys()) {
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (!keys2.has(key)) <span class="cstat-no" title="statement not covered" >return false;</span>
-      if (!cmp(a.get(key), b.get(key), compareContent)) return false;
+      const ts1 = keys1.get(key);
+      const ts2 = keys2.get(key);
+      if (!ts1 || !ts2 || !equal(ts1, ts2)) return false;
     }
     return true;
   } else if (a instanceof ArrNode) {
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!(b instanceof ArrNode)) <span class="cstat-no" title="statement not covered" >return false;</span>
-    const length = a.length();
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (length !== b.length()) <span class="cstat-no" title="statement not covered" >return false;</span>
-    for (let i = 0; i &lt; length; i++) <span class="missing-if-branch" title="if path not taken" >I</span>if (!cmp(a.getNode(i)!, b.getNode(i), compareContent)) <span class="cstat-no" title="statement not covered" >return false;</span>
-    return true;
+    if (!(b instanceof ArrNode) || !equal(a.id, b.id)) return false;
+    return cmpRga(a, b);
   } else if (a instanceof VecNode) {
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!(b instanceof VecNode)) <span class="cstat-no" title="statement not covered" >return false;</span>
-    const length = a.length();
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (length !== b.length()) <span class="cstat-no" title="statement not covered" >return false;</span>
-    for (let i = 0; i &lt; length; i++) if (!cmp(a.get(i), b.get(i), compareContent)) return false;
+    if (!(b instanceof VecNode) || !equal(a.id, b.id)) return false;
+    const elementsA = a.elements;
+    const elementsB = b.elements;
+    const length = elementsA.length;
+    if (length !== elementsB.length) return false;
+    for (let i = 0; i &lt; length; i++) {
+      const ts1 = elementsA[i];
+      const ts2 = elementsB[i];
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!ts1) {
+<span class="cstat-no" title="statement not covered" >        if (ts2) <span class="cstat-no" title="statement not covered" >return false;</span></span>
+      } else {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!ts2 || !equal(ts1, ts2)) <span class="cstat-no" title="statement not covered" >return false;</span>
+      }
+    }
     return true;
-  } else <span class="missing-if-branch" title="else path not taken" >E</span>if (a instanceof BinNode)
-    return b instanceof BinNode &amp;&amp; (!compareContent || (a.length() === b.length() &amp;&amp; deepEqual(a.view(), b.view())));
+  } else <span class="missing-if-branch" title="else path not taken" >E</span>if (a instanceof BinNode) {
+    if (!(b instanceof BinNode) || !equal(a.id, b.id)) return false;
+    return cmpRga(a, b);
+  }
 <span class="cstat-no" title="statement not covered" >  return false;</span>
-};
-&nbsp;
-export const cmpSchema = (a: NodeBuilder, b: NodeBuilder, compareContent: boolean): boolean =&gt; {
-  const model1 = Model.create(a);
-  const model2 = Model.create(b);
-  return cmp(model1.root, model2.root, compareContent);
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -232,7 +271,7 @@ export const cmpSchema = (a: NodeBuilder, b: NodeBuilder, compareContent: boolea
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-04T13:58:37.241Z
+                at 2026-02-06T11:35:19.743Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
