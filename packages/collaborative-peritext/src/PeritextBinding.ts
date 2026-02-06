@@ -219,7 +219,7 @@ export class PeritextBinding {
     editor.onchange = this.onchange;
     editor.onselection = () => this.saveSelection();
     if (polling) this.pollChanges();
-    // this._s = this.txt().api.onChange.listen(this.onModelChange);
+    this._s = this.peritext().onSubtreeChange(this.onModelChange);
   };
 
   public readonly unbind = () => {

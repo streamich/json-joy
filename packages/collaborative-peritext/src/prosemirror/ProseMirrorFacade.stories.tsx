@@ -97,6 +97,11 @@ const Demo: React.FC = () => {
         <button onClick={() => {
           (modelRef.current?.s as any).toExt().text().ins(0, '1. ');
         }}>Prepend "1. "</button>
+        <button onClick={() => {
+          setTimeout(() => {
+            (modelRef.current?.s as any).toExt().text().ins(0, '1. ');
+          }, 2000);
+        }}>Prepend "1. " as 2 sec</button>
       </div>
       {!!modelRef.current && (
         <UseModel model={modelRef.current} render={() => (
