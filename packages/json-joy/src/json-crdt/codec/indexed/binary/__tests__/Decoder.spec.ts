@@ -1,6 +1,7 @@
 import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
+import {assertParents} from '../../../../model/__tests__/util';
 
 test('can deserialize a model', () => {
   const encoder = new Encoder();
@@ -14,4 +15,6 @@ test('can deserialize a model', () => {
   expect(doc2.clock.time).toStrictEqual(doc.clock.time);
   expect(doc2.root.val.sid).toStrictEqual(doc.root.val.sid);
   expect(doc2.root.val.time).toStrictEqual(doc.root.val.time);
+  assertParents(doc);
+  assertParents(doc2);
 });

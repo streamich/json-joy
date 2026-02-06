@@ -1,5 +1,5 @@
 import {Model} from '../../model';
-import {cmp} from '..';
+import {cmp} from '../cmp';
 import {s} from '../../../json-crdt-patch';
 
 describe('equalSchema(), schema only', () => {

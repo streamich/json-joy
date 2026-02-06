@@ -44,6 +44,12 @@ export interface JsonNode<View = unknown> extends Identifiable {
    * A singleton cache, instance which provides public API for this node.
    */
   api: undefined | unknown; // JsonNodeApi<this>;
+
+  /**
+   * Reference to the parent node. The parent is the node that contains this
+   * node as a child. The root node has no parent.
+   */
+  parent: JsonNode | undefined;
 }
 
 export type JsonNodeView<N> = N extends JsonNode<infer V> ? V : {[K in keyof N]: JsonNodeView<N[K]>};

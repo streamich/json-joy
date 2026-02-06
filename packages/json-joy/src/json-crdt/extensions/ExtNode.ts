@@ -30,6 +30,9 @@ export abstract class ExtNode<N extends JsonNode, View = unknown> implements Jso
 
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string, parentId?: ITimestampStruct): string {

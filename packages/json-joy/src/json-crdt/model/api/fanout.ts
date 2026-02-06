@@ -7,12 +7,16 @@ import {FanOut, type FanOutUnsubscribe, type FanOutListener} from 'thingies/lib/
 export class MergeFanOut<D> extends FanOut<D> {
   private unsubs: FanOutUnsubscribe[] = [];
 
-  constructor(private readonly fanouts: FanOut<any>[]) {
+  constructor(
+    private readonly fanouts: FanOut<any>[],
+    private readonly mappper: (data: any) => D = (data) => data,
+  ) {
     super();
   }
 
   public listen(listener: FanOutListener<D>): FanOutUnsubscribe {
-    if (!this.listeners.size) this.unsubs = this.fanouts.map((fanout) => fanout.listen((data) => this.emit(data)));
+    if (!this.listeners.size)
+      this.unsubs = this.fanouts.map((fanout) => fanout.listen((data) => this.emit(this.mappper(data))));
     const unsub = super.listen(listener);
     return () => {
       unsub();

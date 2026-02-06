@@ -54,6 +54,9 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  /** @ignore */
+  public parent: JsonNode | undefined = undefined;
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string): string {

@@ -2,6 +2,7 @@ import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {ClockVector} from '../../../../../json-crdt-patch/clock';
+import {assertParents} from '../../../../model/__tests__/util';
 
 describe('server', () => {
   test('decodes clock', () => {
@@ -13,6 +14,8 @@ describe('server', () => {
     const doc2 = decoder.decode(encoded);
     expect(doc2.clock.sid).toBe(1);
     expect(doc2.clock.time).toBe(doc1.clock.time);
+    assertParents(doc1);
+    assertParents(doc2);
   });
 
   test('decodes all types', () => {
@@ -32,6 +35,8 @@ describe('server', () => {
     const doc2 = decoder.decode(encoded);
     expect(doc1.view()).toEqual(json);
     expect(doc2.view()).toEqual(json);
+    assertParents(doc1);
+    assertParents(doc2);
   });
 });
 
@@ -58,6 +63,8 @@ test('can edit documents after decoding', () => {
   expect((doc1.view() as any).arr).toEqual([1, 2, 3]);
   expect((doc2.view() as any).str).toBe('asdf');
   expect((doc1.view() as any).str).toBe('__tab__asdf');
+  assertParents(doc1);
+  assertParents(doc2);
 });
 
 describe('logical', () => {
@@ -71,6 +78,8 @@ describe('logical', () => {
     expect(doc2.clock.sid).toBe(222);
     expect(doc2.clock.time).toBe(doc1.clock.time);
     expect(doc2.clock.peers.size).toBe(0);
+    assertParents(doc1);
+    assertParents(doc2);
   });
 
   test('decodes all types', () => {
@@ -90,6 +99,8 @@ describe('logical', () => {
     const doc2 = decoder.decode(encoded);
     expect(doc1.view()).toEqual(json);
     expect(doc2.view()).toEqual(json);
+    assertParents(doc1);
+    assertParents(doc2);
   });
 
   test('can edit documents after decoding', () => {
@@ -115,5 +126,7 @@ describe('logical', () => {
     expect((doc1.view() as any).arr).toEqual([1, 2, 3]);
     expect((doc2.view() as any).str).toBe('asdf');
     expect((doc1.view() as any).str).toBe('__tab__asdf');
+    assertParents(doc1);
+    assertParents(doc2);
   });
 });

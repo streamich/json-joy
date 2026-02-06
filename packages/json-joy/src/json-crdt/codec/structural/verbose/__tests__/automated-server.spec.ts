@@ -3,6 +3,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {documents} from '../../../../../__tests__/json-documents';
 import {binaryDocuments} from '../../../../../__tests__/binary-documents';
+import {assertParents} from '../../../../model/__tests__/util';
 
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {
@@ -18,6 +19,9 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       expect(doc1.view()).toEqual(json);
       expect(doc2.view()).toEqual(json);
       expect(doc3.view()).toEqual(json);
+      assertParents(doc1);
+      assertParents(doc2);
+      assertParents(doc3);
     });
   });
 
@@ -35,6 +39,9 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       expect(doc1.view()).toEqual(json);
       expect(doc2.view()).toEqual(json);
       expect(doc3.view()).toEqual(json);
+      assertParents(doc1);
+      assertParents(doc2);
+      assertParents(doc3);
     });
   });
 }

@@ -1,8 +1,9 @@
-import type {FanOut} from 'thingies/lib/fanout';
 import {MapFanOut, OnNewFanOut} from './fanout';
+import type {FanOut, FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type {SyncStore, SyncStoreUnsubscribe} from '../../../util/events/sync-store';
 import type {NodeApi} from './nodes';
+import type {ChangeEvent} from './events';
 
 export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<N>> {
   /**
@@ -31,6 +32,13 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
     this.onViewChanges = new OnNewFanOut(this.onChanges, this.api.view());
   }
 
+  onChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+    const unsubscribe = this.api.api.onChange.listen((event) => {
+      listener(event);
+    });
+    return unsubscribe;
+  }
+
   /**
    * Called when this node is deleted.
    *
@@ -44,6 +52,7 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
 
   // ---------------------------------------------------------------- SyncStore
 
+  // TODO: .subscribe should use targeted changes check.
   public readonly subscribe = (callback: () => void): SyncStoreUnsubscribe =>
     this.onViewChanges.listen(() => callback());
   public readonly getSnapshot = () => this.api.view();
