@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.65.0",
+  "version": "17.67.0",
   "description": "CollaborativeInput React component, binds DOM input or textarea elements to a JSON CRDT str node",
   "author": {
     "name": "streamich",

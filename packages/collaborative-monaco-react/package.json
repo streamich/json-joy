@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.65.0",
+  "version": "17.67.0",
   "description": "React component for collaborative editing in Monaco Editor. Connects JSON CRDT str node to Monaco Editor.",
   "author": {
     "name": "streamich",
