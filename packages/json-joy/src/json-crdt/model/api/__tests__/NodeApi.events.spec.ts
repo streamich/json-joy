@@ -1,6 +1,6 @@
 import {Model} from '../..';
 import {s} from '../../../../json-crdt-patch';
-import {ChangeEvent, ChangeEventOrigin} from '../events';
+import {type ChangeEvent, ChangeEventOrigin} from '../events';
 
 test('does not fire events after node is deleted', async () => {
   const model = Model.create();
@@ -254,11 +254,8 @@ describe('remote changes', () => {
         side: '1',
         level1: {
           side: '2',
-          level2: [
-            s.val(s.con(123)),
-            5,
-          ]
-        }
+          level2: [s.val(s.con(123)), 5],
+        },
       });
       const fork = model.fork();
       fork.s.level1.level2[0].$.set(456);
@@ -296,11 +293,8 @@ describe('remote changes', () => {
         side: '1',
         level1: {
           side: '2',
-          level2: [
-            s.val(s.con(123)),
-            5,
-          ]
-        }
+          level2: [s.val(s.con(123)), 5],
+        },
       });
       const fork = model.fork();
       fork.s.level1.level2[0].$.set(456);
@@ -375,11 +369,8 @@ describe('reset changes', () => {
         side: '1',
         level1: {
           side: '2',
-          level2: [
-            s.val(s.con(123)),
-            5,
-          ]
-        }
+          level2: [s.val(s.con(123)), 5],
+        },
       });
       const fork = model.fork();
       fork.s.level1.level2[0].$.set(456);
@@ -416,11 +407,8 @@ describe('reset changes', () => {
         side: '1',
         level1: {
           side: '2',
-          level2: [
-            s.val(s.con(123)),
-            5,
-          ]
-        }
+          level2: [s.val(s.con(123)), 5],
+        },
       });
       const fork = model.fork();
       fork.s.level1.level2[0].$.set(456);

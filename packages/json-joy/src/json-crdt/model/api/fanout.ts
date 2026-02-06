@@ -15,9 +15,8 @@ export class MergeFanOut<D> extends FanOut<D> {
   }
 
   public listen(listener: FanOutListener<D>): FanOutUnsubscribe {
-    if (!this.listeners.size) this.unsubs = this.fanouts.map(
-      (fanout) => fanout.listen((data) => this.emit(this.mappper(data)))
-    );
+    if (!this.listeners.size)
+      this.unsubs = this.fanouts.map((fanout) => fanout.listen((data) => this.emit(this.mappper(data))));
     const unsub = super.listen(listener);
     return () => {
       unsub();

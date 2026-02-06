@@ -7,7 +7,7 @@ const cmpRga = (a: AbstractRga<any>, b: AbstractRga<any>): boolean => {
   const maxIdChunkA = last2(a.ids);
   const maxIdChunkB = last2(b.ids);
   if (maxIdChunkA && maxIdChunkB && !equal(maxIdChunkA.id, maxIdChunkB.id)) return false;
-  return (a.length() === b.length()) && (a.size() === b.size());
+  return a.length() === b.length() && a.size() === b.size();
 };
 
 /**

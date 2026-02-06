@@ -1,6 +1,16 @@
-import {Patch, InsValOp, InsObjOp, InsVecOp, InsStrOp, InsBinOp, InsArrOp, UpdArrOp, DelOp} from "../../../json-crdt-patch";
+import {
+  Patch,
+  InsValOp,
+  InsObjOp,
+  InsVecOp,
+  InsStrOp,
+  InsBinOp,
+  InsArrOp,
+  UpdArrOp,
+  DelOp,
+} from '../../../json-crdt-patch';
 import type {JsonNode} from '../../nodes';
-import type {ModelApi} from "./nodes";
+import type {ModelApi} from './nodes';
 
 export const enum ChangeEventOrigin {
   Local = 0,
@@ -17,15 +27,19 @@ export type RawEventData =
   | Patch;
 
 /** Operation targets specific node: the operation has `.obj` property. */
-const operationTargetsNode = (op: unknown): op is (InsValOp | InsObjOp | InsVecOp | InsStrOp | InsBinOp | InsArrOp | UpdArrOp | DelOp) => {
-  return op instanceof InsValOp ||
+const operationTargetsNode = (
+  op: unknown,
+): op is InsValOp | InsObjOp | InsVecOp | InsStrOp | InsBinOp | InsArrOp | UpdArrOp | DelOp => {
+  return (
+    op instanceof InsValOp ||
     op instanceof InsObjOp ||
     op instanceof InsVecOp ||
     op instanceof InsStrOp ||
     op instanceof InsBinOp ||
     op instanceof InsArrOp ||
     op instanceof UpdArrOp ||
-    op instanceof DelOp;
+    op instanceof DelOp
+  );
 };
 
 export class ChangeEvent {
