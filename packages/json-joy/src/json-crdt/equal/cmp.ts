@@ -1,11 +1,9 @@
 import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {ArrNode, BinNode, ConNode, type JsonNode, ObjNode, StrNode, ValNode, VecNode} from '../nodes';
-import {Model} from '../model';
-import type {NodeBuilder} from '../../json-crdt-patch';
 
 /**
- * Deeply checks if two JSON nodes have the same schema and values. Does not
- * verify that the CRDT metadata (like timestamps) are the same, only that
+ * Deeply checks if two JSON CRDT nodes have the same schema and values. Does
+ * not verify that the CRDT metadata (like timestamps) are the same, only that
  * the structure and values are equal.
  *
  * @param a The first JSON CRDT node.
@@ -45,10 +43,4 @@ export const cmp = <A extends JsonNode<any>>(a: A, b: unknown, compareContent: b
   } else if (a instanceof BinNode)
     return b instanceof BinNode && (!compareContent || (a.length() === b.length() && deepEqual(a.view(), b.view())));
   return false;
-};
-
-export const cmpSchema = (a: NodeBuilder, b: NodeBuilder, compareContent: boolean): boolean => {
-  const model1 = Model.create(a);
-  const model2 = Model.create(b);
-  return cmp(model1.root, model2.root, compareContent);
 };

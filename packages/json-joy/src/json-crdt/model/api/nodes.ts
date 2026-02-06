@@ -4,12 +4,13 @@ import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import {find} from './find';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
-import {FanOut} from 'thingies/lib/fanout';
+import {FanOut, type FanOutUnsubscribe} from 'thingies/lib/fanout';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import * as diff from '../../../json-crdt-diff';
+import {ChangeEvent} from './events';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
 import type {Path} from '@jsonjoy.com/json-pointer';
@@ -51,24 +52,6 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     public node: N,
     public readonly api: ModelApi<any>,
   ) {}
-
-  /** @ignore */
-  private ev: undefined | NodeEvents<N> = undefined;
-
-  /**
-   * Event target for listening to node changes. You can subscribe to `"view"`
-   * events, which are triggered every time the node's view changes.
-   *
-   * ```ts
-   * node.events.on('view', () => {
-   *   // do something...
-   * });
-   * ```
-   */
-  public get events(): NodeEvents<N> {
-    const et = this.ev;
-    return et || (this.ev = new NodeEvents<N>(this));
-  }
 
   /**
    * Find a child node at the given path starting from this node.
@@ -344,6 +327,105 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
       }
     }, '$') as any;
   }
+
+  // ------------------------------------------------------------------- Events
+
+  /**
+   * @ignore
+   * @deprecated Use `onChange()` and other `on*()` methods.
+   */
+  private ev: undefined | NodeEvents<N> = undefined;
+
+  /**
+   * Event target for listening to node changes. You can subscribe to `"view"`
+   * events, which are triggered every time the node's view changes.
+   *
+   * ```ts
+   * node.events.on('view', () => {
+   *   // do something...
+   * });
+   * ```
+   *
+   * @ignore
+   * @deprecated Use `onNodeChange()` and other `on*()` methods.
+   */
+  public get events(): NodeEvents<N> {
+    const et = this.ev;
+    return et || (this.ev = new NodeEvents<N>(this));
+  }
+
+  /**
+   * Attaches a listener which executes on every change that is executed
+   * directly on this node. For example, if this is a "str" string node and
+   * you insert or delete text, the listener will be executed. Or if
+   * this is an "obj" object node and keys of this object are changed, this
+   * listener will be executed.
+   *
+   * It does not trigger when child nodes are edit, to include those changes,
+   * use `onSubtreeChange()` or `onChildChange()` methods.
+   *
+   * @see onChildChange()
+   * @see onSubtreeChange()
+   *
+   * @param listener Callback called on every change that is executed directly
+   *     on this node.
+   * @param onReset Optional parameter, if set to `true`, the listener will also
+   *     be called when the model is reset using the `.reset()` method.
+   * @returns Returns an unsubscribe function to stop listening to the events.
+   */
+  public onSelfChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
+    return this.api.onChange.listen((event) => {
+      if (event.direct().has(this.node) || (onReset && event.isReset())) listener(event);
+    });
+  }
+
+  /**
+   * Attaches a listener which executes on every change that is applied to this
+   * node's children. Hence, this listener will trigger only for *container*
+   * nodes - nodes that can have child nodes, such as "obj", "arr", "vec", and
+   * "val" nodes. It will not execute on changes made directly to this node.
+   *
+   * If you want to listen to changes on this node as well as its children, use
+   * `onSubtreeChange()` method. If you want to listen to changes on this node
+   * only, use `onSelfChange()` method.
+   *
+   * @see onSelfChange()
+   * @see onSubtreeChange()
+   *
+   * @param listener Callback called on every change that is applied to
+   *     children of this node.
+   * @param onReset Optional parameter, if set to `true`, the listener will also
+   *     be called when the model is reset using the `.reset()` method.
+   * @return Returns an unsubscribe function to stop listening to the events.
+   */
+  public onChildChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
+    return this.api.onChange.listen((event) => {
+      if (event.parents().has(this.node) || (onReset && event.isReset())) listener(event);
+    });
+  }
+
+  /**
+   * Attaches a listener which executes on every change that is applied to this
+   * node or any of its child nodes (recursively). This is equivalent to
+   * combining both `onSelfChange()` and `onChildChange()` methods.
+   *
+   * @see onSelfChange()
+   * @see onChildChange()
+   *
+   * @param listener Callback called on every change that is applied to this
+   *     node or any of its child nodes.
+   * @param onReset Optional parameter, if set to `true`, the listener will also
+   *     be called when the model is reset using the `.reset()` method.
+   * @return Returns an unsubscribe function to stop listening to the events.
+   */
+  public onSubtreeChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
+    return this.api.onChange.listen((event) => {
+      const node = this.node;
+      if (event.direct().has(node) || event.parents().has(node) || (onReset && event.isReset())) listener(event);
+    });
+  }
+
+  // -------------------------------------------------------------------- Debug
 
   public toString(tab: string = ''): string {
     const name = this.constructor === NodeApi ? '*' : this.node.name();
@@ -861,7 +943,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   /** Emitted before the model is reset, using the `.reset()` method. */
   public readonly onBeforeReset = new FanOut<void>();
   /** Emitted after the model is reset, using the `.reset()` method. */
-  public readonly onReset = new FanOut<void>();
+  public readonly onReset = new FanOut<Set<JsonNode>>();
   /** Emitted before a patch is applied using `model.applyPatch()`. */
   public readonly onBeforePatch = new FanOut<Patch>();
   /** Emitted after a patch is applied using `model.applyPatch()`. */
@@ -880,13 +962,12 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   /** Emitted after transaction completes. */
   public readonly onTransaction = new FanOut<void>();
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
-  public readonly onChange = new MergeFanOut<number | Patch | undefined>([
-    this.onReset,
-    this.onPatch,
-    this.onLocalChange,
-  ]);
+  public readonly onChange = new MergeFanOut<ChangeEvent>(
+    [this.onReset, this.onPatch, this.onLocalChange],
+    (raw: Set<JsonNode> | Patch | number) => new ChangeEvent(raw, this),
+  );
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
-  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | undefined>(this.onChange);
+  public readonly onChanges = new MicrotaskBufferFanOut<unknown>(this.onChange as FanOut<unknown>);
   /** Emitted when the `model.api` builder change buffer is flushed. */
   public readonly onFlush = new FanOut<Patch>();
 
@@ -898,7 +979,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
     (this as any).api = this;
     this.builder = new PatchBuilder(model.clock);
     model.onbeforereset = () => this.onBeforeReset.emit();
-    model.onreset = () => this.onReset.emit();
+    model.onreset = (changed: Set<JsonNode>) => this.onReset.emit(changed);
     model.onbeforepatch = (patch) => this.onBeforePatch.emit(patch);
     model.onpatch = (patch) => this.onPatch.emit(patch);
   }

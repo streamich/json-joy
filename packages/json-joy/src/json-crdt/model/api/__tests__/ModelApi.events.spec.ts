@@ -125,9 +125,9 @@ describe('FanOut event API', () => {
     const model = Model.create();
     let cnt = 0;
     let set: any[] | undefined;
-    model.api.onChanges.listen((changes) => {
+    model.api.onChanges.listen((changes: any[]) => {
       cnt++;
-      set = changes;
+      set = changes.map((e) => e.raw);
     });
     await Promise.resolve();
     expect(cnt).toBe(0);

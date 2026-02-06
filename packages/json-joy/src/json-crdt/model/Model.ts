@@ -10,6 +10,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
+import {cmpNode} from '../equal/cmpNode';
 import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
@@ -527,21 +528,21 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
-   * Callback called before model isi reset using the `.reset()` method.
+   * Callback called before model is reset using the `.reset()` method.
    */
   public onbeforereset?: () => void = undefined;
 
   /**
    * Callback called after model has been reset using the `.reset()` method.
    */
-  public onreset?: () => void = undefined;
+  public onreset?: (changed: Set<JsonNode>) => void = undefined;
 
   /**
    * Resets the model to equivalent state of another model.
    */
   public reset(to: Model<N>): void {
     this.onbeforereset?.();
-    const index = this.index;
+    const oldIndex = this.index;
     this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
     const blob = to.toBinary();
     decoder.decode(blob, <any>this);
@@ -554,19 +555,23 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       api.builder.clock = this.clock;
       api.node = this.root;
     }
-    index.forEach(({v: node}) => {
-      const api = node.api as NodeApi | undefined;
-      if (!api) return;
-      const newNode = this.index.get(node.id);
+    const changed = new Set<JsonNode>();
+    oldIndex.forEach(({v: oldNode}) => {
+      const nodeApi = oldNode.api as NodeApi | undefined;
+      if (!nodeApi) return;
+      const newNode = this.index.get(oldNode.id);
       if (!newNode) {
-        api.events.handleDelete();
+        nodeApi.events.handleDelete();
         return;
       }
-      api.node = newNode;
-      newNode.api = api;
+      nodeApi.node = newNode;
+      newNode.api = nodeApi;
+      if (oldNode && newNode && !cmpNode(oldNode, newNode)) {
+        changed.add(newNode);
+      }
     });
     this.tick++;
-    this.onreset?.();
+    this.onreset?.(changed);
   }
 
   /**

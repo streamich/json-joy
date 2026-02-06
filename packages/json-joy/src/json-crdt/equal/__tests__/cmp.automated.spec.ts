@@ -1,5 +1,5 @@
 import {Model} from '../../model';
-import {cmp} from '..';
+import {cmp} from '../cmp';
 import {documents} from '../../../__tests__/json-documents';
 
 const assertSchemasEqual = (a: unknown, b: unknown): void => {
