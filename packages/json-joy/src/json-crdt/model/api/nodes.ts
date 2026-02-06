@@ -943,7 +943,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   /** Emitted before the model is reset, using the `.reset()` method. */
   public readonly onBeforeReset = new FanOut<void>();
   /** Emitted after the model is reset, using the `.reset()` method. */
-  public readonly onReset = new FanOut<void>();
+  public readonly onReset = new FanOut<Set<JsonNode>>();
   /** Emitted before a patch is applied using `model.applyPatch()`. */
   public readonly onBeforePatch = new FanOut<Patch>();
   /** Emitted after a patch is applied using `model.applyPatch()`. */
@@ -964,7 +964,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
   public readonly onChange = new MergeFanOut<ChangeEvent>(
     [this.onReset, this.onPatch, this.onLocalChange],
-    (raw: undefined | Patch | number) => new ChangeEvent(raw, this),
+    (raw: Set<JsonNode> | Patch | number) => new ChangeEvent(raw, this),
   );
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
   public readonly onChanges = new MicrotaskBufferFanOut<unknown>(this.onChange as FanOut<unknown>);
@@ -979,7 +979,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
     (this as any).api = this;
     this.builder = new PatchBuilder(model.clock);
     model.onbeforereset = () => this.onBeforeReset.emit();
-    model.onreset = () => this.onReset.emit();
+    model.onreset = (changed: Set<JsonNode>) => this.onReset.emit(changed);
     model.onbeforepatch = (patch) => this.onBeforePatch.emit(patch);
     model.onpatch = (patch) => this.onPatch.emit(patch);
   }

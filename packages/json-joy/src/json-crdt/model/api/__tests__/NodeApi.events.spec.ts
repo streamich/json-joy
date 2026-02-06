@@ -348,5 +348,106 @@ describe('reset changes', () => {
       model.reset(fork);
       expect(origin).toBe(ChangeEventOrigin.Reset);
     });
+
+    test('lists edited node in `.direct()` list', async () => {
+      const model = Model.create({
+        foo: s.val(s.con(123)),
+        bar: 'aga',
+      });
+      const fork = model.fork();
+      fork.s.foo.$.set(456);
+      let triggered = false;
+      model.s.foo.$.onSelfChange((event: ChangeEvent) => {
+        expect(event.direct().has(model.s.foo.$.node)).toBe(true);
+        triggered = true;
+      });
+      model.s.bar.$.onSelfChange((event: ChangeEvent) => {
+        throw new Error('Should not be triggered');
+      });
+      model.reset(fork);
+      expect(triggered).toBe(true);
+    });
+  });
+
+  describe('.onChildChange()', () => {
+    test('fires callback on children change', async () => {
+      const model = Model.create({
+        side: '1',
+        level1: {
+          side: '2',
+          level2: [
+            s.val(s.con(123)),
+            5,
+          ]
+        }
+      });
+      const fork = model.fork();
+      fork.s.level1.level2[0].$.set(456);
+      const triggered: string[] = [];
+      model.s.$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/');
+      });
+      model.s.side.$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/side');
+      });
+      model.s.level1.$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/level1');
+      });
+      model.s.level1.side.$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/level1/side');
+      });
+      model.s.level1.level2.$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/level1/level2');
+      });
+      model.s.level1.level2[0].$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/level1/level2/0');
+      });
+      model.s.level1.level2[1].$.onChildChange((event: ChangeEvent) => {
+        triggered.push('/level1/level2/1');
+      });
+      model.reset(fork);
+      expect(triggered).toEqual(['/', '/level1', '/level1/level2']);
+    });
+  });
+
+  describe('.onSubtreeChange()', () => {
+    test('fires callback on children and self change', async () => {
+      const model = Model.create({
+        side: '1',
+        level1: {
+          side: '2',
+          level2: [
+            s.val(s.con(123)),
+            5,
+          ]
+        }
+      });
+      const fork = model.fork();
+      fork.s.level1.level2[0].$.set(456);
+      const triggered: string[] = [];
+      model.s.$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/');
+      });
+      model.s.side.$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/side');
+      });
+      model.s.level1.$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/level1');
+      });
+      model.s.level1.side.$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/level1/side');
+      });
+      model.s.level1.level2.$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/level1/level2');
+      });
+      model.s.level1.level2[0].$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/level1/level2/0');
+      });
+      model.s.level1.level2[1].$.onSubtreeChange((event: ChangeEvent) => {
+        triggered.push('/level1/level2/1');
+      });
+      model.reset(fork);
+      expect(triggered).toEqual(['/', '/level1', '/level1/level2', '/level1/level2/0']);
+    });
   });
 });

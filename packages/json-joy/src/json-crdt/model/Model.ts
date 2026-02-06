@@ -10,6 +10,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {NodeBuilder, type nodes, s} from '../../json-crdt-patch';
+import {cmpNode} from '../equal/cmpNode';
 import type {SchemaToJsonNode} from '../schema/types';
 import type {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
@@ -534,7 +535,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
    * Callback called after model has been reset using the `.reset()` method.
    */
-  public onreset?: () => void = undefined;
+  public onreset?: (changed: Set<JsonNode>) => void = undefined;
 
   /**
    * Resets the model to equivalent state of another model.
@@ -554,6 +555,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       api.builder.clock = this.clock;
       api.node = this.root;
     }
+    const changed = new Set<JsonNode>();
     oldIndex.forEach(({v: oldNode}) => {
       const nodeApi = oldNode.api as NodeApi | undefined;
       if (!nodeApi) return;
@@ -564,9 +566,12 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
       }
       nodeApi.node = newNode;
       newNode.api = nodeApi;
+      if (oldNode && newNode && !cmpNode(oldNode, newNode)) {
+        changed.add(newNode);
+      }
     });
     this.tick++;
-    this.onreset?.();
+    this.onreset?.(changed);
   }
 
   /**

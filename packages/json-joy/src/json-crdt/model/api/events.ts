@@ -9,8 +9,8 @@ export const enum ChangeEventOrigin {
 }
 
 export type RawEventData =
-  /** Emitted by RESET event (no data). */
-  | undefined
+  /** Emitted by RESET event, set of nodes directly affected by the reset. */
+  | Set<JsonNode>
   /** Emitted by LOCAL event, the starting index in the un-flushed patch. */
   | number
   /** Emitted by `.applyPatch(patch: Patch)`. */
@@ -36,7 +36,7 @@ export class ChangeEvent {
 
   public origin(): ChangeEventOrigin {
     const {raw, api} = this;
-    return raw === undefined
+    return raw instanceof Set
       ? ChangeEventOrigin.Reset
       : typeof raw === 'number'
         ? ChangeEventOrigin.Local
@@ -52,7 +52,7 @@ export class ChangeEvent {
   }
 
   public isReset(): boolean {
-    return this.raw === undefined;
+    return this.raw instanceof Set;
   }
 
   private _direct: Set<JsonNode> | null = null;
@@ -63,9 +63,13 @@ export class ChangeEvent {
    */
   public direct(): Set<JsonNode> {
     let direct = this._direct;
-    if (!direct) {
-      this._direct = direct = new Set<JsonNode>();
+    DIRECT: if (!direct) {
       const raw = this.raw;
+      if (raw instanceof Set) {
+        this._direct = direct = raw;
+        break DIRECT;
+      }
+      this._direct = direct = new Set<JsonNode>();
       const index = this.api.model.index;
       if (typeof raw === 'number') {
         const startIndex = raw;
