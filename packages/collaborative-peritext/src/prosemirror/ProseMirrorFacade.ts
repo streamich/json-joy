@@ -59,11 +59,9 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     for (let i = 0; i < length; i++) content.push(toPm(children[i]));
     const view = this.view;
     const state = view.state;
-    const { tr, selection } = view.state;
+    const { tr } = view.state;
     const newDoc = state.schema.nodeFromJSON(newModelData);
     tr.replaceWith(0, view.state.doc.content.size, newDoc);
-    const newSelection = selection.map(tr.doc, tr.mapping);
-    view.dispatch(tr.setSelection(newSelection));
   }
 
   dispose(): void {
