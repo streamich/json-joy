@@ -21,6 +21,14 @@ const assertConversion = (json: PmJsonNode) => {
   const toPm = new ToPmNode(mySchema);
   const pmNode = toPm.convert(txt.blocks);
   expect(pmNode.toJSON()).toEqual(json);
+
+  // Check first level on nodes is cached
+  const pmNode2 = toPm.convert(txt.blocks);
+  for (let i = 0; i < pmNode.content.content.length; i++) {
+    const child1 = pmNode.content.child(i);
+    const child2 = pmNode2.content.child(i);
+    expect(child1).toBe(child2);
+  }
 };
 
 test('a simple single-paragraph document', () => {
