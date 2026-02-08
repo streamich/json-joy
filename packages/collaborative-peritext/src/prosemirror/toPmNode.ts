@@ -1,4 +1,4 @@
-/** Direct Peritext Fragment → ProseMirror Node converter with caching. */
+/** Direct Peritext Fragment to ProseMirror Node converter with caching. */
 
 import * as pmm from 'prosemirror-model';
 import {Block, LeafBlock, Inline, Slice} from 'json-joy/lib/json-crdt-extensions';
@@ -20,13 +20,12 @@ class PmNodeCache {
    * Automatically promotes a hit from `prev` into `curr`.
    */
   get(hash: number): pmm.Node | undefined {
-    let node = this.curr.get(hash);
+    const curr = this.curr;
+    let node = curr.get(hash);
     if (node !== undefined) return node;
     node = this.prev.get(hash);
-    if (node !== undefined) {
-      // Promote to current generation so it survives the next GC.
-      this.curr.set(hash, node);
-    }
+    // Promote to current generation so it survives the next GC.
+    if (node !== undefined) curr.set(hash, node);
     return node;
   }
 
@@ -44,6 +43,12 @@ class PmNodeCache {
     this.curr = new Map();
   }
 }
+
+const blockAttrs = (block: Block | LeafBlock): pmm.Attrs | null => {
+  const data = block.attr();
+  if (data && typeof data === 'object') for (const _ in data) return data as pmm.Attrs;
+  return null;
+};
 
 /**
  * Stateful converter that turns a Peritext `Fragment` into a ProseMirror `doc`
@@ -73,7 +78,7 @@ export class ToPmNode {
         pmChildren.push(cached);
         continue;
       }
-      const pmNode = this.convertBlock(block);
+      const pmNode = this.convBlock(block);
       cache.set(hash, pmNode);
       pmChildren.push(pmNode);
     }
@@ -82,43 +87,35 @@ export class ToPmNode {
     return docType.create(null, pmChildren);
   }
 
-  private convertBlock(block: Block | LeafBlock): pmm.Node {
+  private convBlock(block: Block | LeafBlock): pmm.Node {
     const schema = this.schema;
     const tag = block.tag();
     const typeName = tag ? tag + '' : 'paragraph';
     const nodeType = schema.nodes[typeName] ?? schema.nodes.paragraph;
-    const attrs = this.blockAttrs(block);
-    if (block instanceof LeafBlock) {
-      // Leaf block -> inline content (text nodes with marks).
-      const inlineNodes = this.convertInlines(block);
-      return nodeType.create(attrs, inlineNodes);
-    }
-    // Container block -> recurse into children.
+    const attrs = blockAttrs(block);
+    if (block instanceof LeafBlock)
+      return nodeType.create(attrs, this.convInlines(block));
     const children = block.children;
     const length = children.length;
     const pmChildren: pmm.Node[] = new Array(length);
-    for (let i = 0; i < length; i++) {
-      pmChildren[i] = this.convertBlock(children[i]);
-    }
+    for (let i = 0; i < length; i++)
+      pmChildren[i] = this.convBlock(children[i]);
     return nodeType.create(attrs, pmChildren);
   }
 
-  private convertInlines(leaf: LeafBlock): pmm.Node[] {
+  private convInlines(leaf: LeafBlock): pmm.Node[] {
     const schema = this.schema;
     const result: pmm.Node[] = [];
-    for (
-      let iterator = leaf.texts0(), inline: Inline<any> | undefined;
-      (inline = iterator());
-    ) {
+    for (let iterator = leaf.texts0(), inline: Inline<any> | undefined; inline = iterator();) {
       const text = inline.text();
       if (!text) continue;
-      const marks = this.convertMarks(inline);
+      const marks = this.convMarks(inline);
       result.push(schema.text(text, marks.length ? marks : undefined));
     }
     return result;
   }
 
-  private convertMarks(inline: Inline): readonly pmm.Mark[] {
+  private convMarks(inline: Inline): readonly pmm.Mark[] {
     const schema = this.schema;
     const layers = inline.p1.layers;
     const length = layers.length;
@@ -133,17 +130,9 @@ export class ToPmNode {
       const data = slice.data();
       const attrs: pmm.Attrs | null =
         data && typeof data === 'object' && !Array.isArray(data)
-          ? (data as pmm.Attrs)
-          : null;
+          ? (data as pmm.Attrs) : null;
       marks.push(markType.create(attrs));
     }
     return marks;
-  }
-
-  private blockAttrs(block: Block | LeafBlock): pmm.Attrs | null {
-    const data = block.attr();
-    if (data && typeof data === 'object')
-      for (const _ in data) return data as pmm.Attrs;
-    return null;
   }
 }
