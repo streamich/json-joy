@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.65.0",
+  "version": "17.67.0",
   "description": "Binding for collaborative editing support in CodeMirror Editor. Connects JSON CRDT str node to CodeMirror Editor.",
   "author": {
     "name": "streamich",

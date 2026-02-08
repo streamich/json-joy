@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.65.0",
+  "version": "17.67.0",
   "description": "Binding for collaborative editing support in Quill Editor. Connects JSON CRDT quill-delta node to Quill Editor.",
   "author": {
     "name": "streamich",

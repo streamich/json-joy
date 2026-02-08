@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.65.0",
+  "version": "17.67.0",
   "description": "JSON CRDT peritext node bindings to any generic rich-text editor.",
   "author": {
     "name": "streamich",

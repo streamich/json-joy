@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "17.65.0",
+  "version": "17.67.0",
   "description": "React component library for building real-time collaborative editing applications.",
   "author": {
     "name": "streamich",
