@@ -1,28 +1,36 @@
-import {Plugin} from "prosemirror-state";
+import {Plugin, PluginKey} from "prosemirror-state";
 import {EditorView} from 'prosemirror-view';
 import {FromPm} from "./FromPm";
-import {toPm} from './toPm';
 import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
-import {PmJsonNode} from './types';
+import {ToPmNode} from "./toPmNode";
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {RichtextEditorFacade} from '../types';
+
+const SYNC_PLUGIN_KEY = new PluginKey('jsonjoy.com/json-crdt/sync');
 
 export class ProseMirrorFacade implements RichtextEditorFacade {
   _disposed = false;
   _plugin: Plugin;
+  toPm: ToPmNode;
 
   onchange?: () => void;
   onselection?: () => void;
 
   constructor(protected readonly view: EditorView) {
     const self = this;
+    const state = view.state;
     const plugin = this._plugin = new Plugin({
+      key: SYNC_PLUGIN_KEY,
       view() {
         return {
+          /** ProseMirror local changes by the user. */
           update(view, prevState) {
             if (self._disposed) return;
-            const isModelChange = !view.state.doc.eq(prevState.doc);
-            if (isModelChange) self.onchange?.();
+            const isModelChange = state.doc.eq(prevState.doc);
+            if (isModelChange) {
+              // TODO: filter out `origin: 'remote'` changes to avoid infinite loop.
+              self.onchange?.();
+            }
             else self.onselection?.();
             // console.log(view.state.doc.toJSON());
           },
@@ -32,7 +40,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
         };
       },
     });
-    const state = view.state;
+    this.toPm = new ToPmNode(state.schema);
     const updatedPlugins = state.plugins.concat([plugin]);
     const newState = state.reconfigure({ plugins: updatedPlugins });
     view.updateState(newState);
@@ -44,24 +52,15 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     return FromPm.convert(doc);
   }
 
-  /**
-   * @todo Replacement strategies:
-   *   1. `tr.replaceWith(0, doc.content.size, newDoc)` - Replace entire document content.
-   *   2. Replace the entire "state" of ProseMirror (including selection).
-   *   3. Use `prosemirror-recreate-transform` package to diff and recreate the document with minimal changes.
-   */
   set(fragment: Fragment<string>): void {
     if (this._disposed) return;
-    const content: PmJsonNode[] = [];
-    const newModelData: PmJsonNode = {type: 'doc', content};
-    const children = fragment.root.children;
-    const length = children.length;
-    for (let i = 0; i < length; i++) content.push(toPm(children[i]));
+    console.log(fragment + '');
+    const pmNode = this.toPm.convert(fragment);
     const view = this.view;
     const state = view.state;
-    const { tr } = view.state;
-    const newDoc = state.schema.nodeFromJSON(newModelData);
-    tr.replaceWith(0, view.state.doc.content.size, newDoc);
+    const transaction = state.tr.replaceWith(0, state.doc.content.size, pmNode)
+    transaction.setMeta(SYNC_PLUGIN_KEY, {origin: 'remote'});
+    view.dispatch(transaction)
   }
 
   dispose(): void {
