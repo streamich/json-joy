@@ -6,12 +6,23 @@ import {ToPmNode} from "./toPmNode";
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {RichtextEditorFacade} from '../types';
 
-const SYNC_PLUGIN_KEY = new PluginKey('jsonjoy.com/json-crdt/sync');
+const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
+
+const enum TransactionOrigin {
+  UNKNOWN,
+  LOCAL,
+  REMOTE,
+}
+
+interface TransactionMeta {
+  orig?: TransactionOrigin;
+}
 
 export class ProseMirrorFacade implements RichtextEditorFacade {
   _disposed = false;
   _plugin: Plugin;
   toPm: ToPmNode;
+  txOrig: TransactionOrigin = TransactionOrigin.UNKNOWN;
 
   onchange?: () => void;
   onselection?: () => void;
@@ -21,18 +32,29 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const state = view.state;
     const plugin = this._plugin = new Plugin({
       key: SYNC_PLUGIN_KEY,
+      state: {
+        init() { return {}; },
+        apply(transaction, value) {
+          const meta = transaction.getMeta(SYNC_PLUGIN_KEY) as TransactionMeta | undefined;
+          self.txOrig = meta?.orig || TransactionOrigin.UNKNOWN;
+          return value;
+        },
+      },
       view() {
         return {
-          /** ProseMirror local changes by the user. */
           update(view, prevState) {
+            console.log(state);
             if (self._disposed) return;
-            const isModelChange = state.doc.eq(prevState.doc);
-            if (isModelChange) {
-              // TODO: filter out `origin: 'remote'` changes to avoid infinite loop.
+            const origin = self.txOrig;
+            self.txOrig = TransactionOrigin.UNKNOWN;
+            if (origin === TransactionOrigin.REMOTE) return;
+            const docChanged = !prevState.doc.eq(view.state.doc);
+            if (docChanged) {
               self.onchange?.();
+            } else {
+              const selectionChanged = !prevState.selection.eq(view.state.selection)
+              if (selectionChanged) self.onselection?.();
             }
-            else self.onselection?.();
-            // console.log(view.state.doc.toJSON());
           },
           destroy() {
             self._disposed = true;
@@ -54,12 +76,12 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
 
   set(fragment: Fragment<string>): void {
     if (this._disposed) return;
-    console.log(fragment + '');
     const pmNode = this.toPm.convert(fragment);
     const view = this.view;
     const state = view.state;
     const transaction = state.tr.replaceWith(0, state.doc.content.size, pmNode)
-    transaction.setMeta(SYNC_PLUGIN_KEY, {origin: 'remote'});
+    const meta: TransactionMeta = {orig: TransactionOrigin.REMOTE};
+    transaction.setMeta(SYNC_PLUGIN_KEY, meta);
     view.dispatch(transaction)
   }
 
