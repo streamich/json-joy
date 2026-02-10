@@ -1,10 +1,15 @@
-import {Plugin, PluginKey} from "prosemirror-state";
+import {Plugin, PluginKey, TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
-import {FromPm} from "./FromPm";
+import {FromPm} from './FromPm';
 import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
-import {ToPmNode} from "./toPmNode";
+import {ToPmNode} from './toPmNode';
+import {Block, LeafBlock} from 'json-joy/lib/json-crdt-extensions';
+import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
+import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
+import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade} from '../types';
+import type {Node as PmNode, ResolvedPos} from 'prosemirror-model';
 
 const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
 
@@ -17,6 +22,50 @@ const enum TransactionOrigin {
 interface TransactionMeta {
   orig?: TransactionOrigin;
 }
+
+const pmPosToPoint = (txt: Peritext, resolved: ResolvedPos): Point<string> => {
+  const leafDepth = resolved.depth;
+  let block: Block<string> | LeafBlock<string> = txt.blocks.root;
+  for (let d = 0; d < leafDepth && block; d++) block = block.children[resolved.index(d)];
+  if (!block) return txt.pointStart() ?? txt.pointAbsStart();
+  const textOffset = resolved.parentOffset;
+  const hasMarker = !!(block as LeafBlock<string>).marker;
+  const peritextGap = hasMarker ? block.start.viewPos() + 1 + textOffset : textOffset;
+  return txt.pointIn(peritextGap);
+};
+
+const pointToPmPos = (block: Block<string> | LeafBlock<string>, point: Point<string>, doc: PmNode): number => {
+  const viewPos = point.viewPos();
+  let pmNode: PmNode = doc;
+  let pmPos = 0;
+  while (!block.isLeaf()) {
+    const children = block.children;
+    const len = children.length;
+    let found = false;
+    for (let i = 0; i < len; i++) {
+      const child = children[i];
+      const childEndView = child.end.viewPos();
+      if (viewPos <= childEndView) {
+        for (let j = 0; j < i; j++) pmPos += pmNode.child(j).nodeSize;
+        pmPos += 1; // open tag
+        block = child;
+        pmNode = pmNode.child(i);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const lastIdx = len - 1;
+      for (let j = 0; j < lastIdx; j++) pmPos += pmNode.child(j).nodeSize;
+      pmPos += 1; // open tag
+      block = children[lastIdx];
+      pmNode = pmNode.child(lastIdx);
+    }
+  }
+  const hasMarker = !!(block as LeafBlock<string>).marker;
+  const textOffset = hasMarker ? viewPos - (block.start.viewPos() + 1) : viewPos;
+  return pmPos + Math.max(0, textOffset);
+};
 
 export class ProseMirrorFacade implements RichtextEditorFacade {
   _disposed = false;
@@ -96,6 +145,39 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const meta: TransactionMeta = {orig: TransactionOrigin.REMOTE};
     transaction.setMeta(SYNC_PLUGIN_KEY, meta);
     view.dispatch(transaction)
+  }
+
+  /** Convert current ProseMirror selection to Peritext selection in CRDT-space. */
+  getSelection(peritext: PeritextApi): [range: Range<string>, startIsAnchor: boolean] | undefined {
+    if (this._disposed) return;
+    const view = this.view;
+    const selection = view.state.selection;
+    if (!selection) return;
+    const txt = peritext.txt;
+    const p1 = pmPosToPoint(txt, selection.$anchor);
+    const p2 = pmPosToPoint(txt, selection.$head);
+    const range = txt.rangeFromPoints(p1, p2);
+    const startIsAnchor = selection.anchor <= selection.head;
+    return [range, startIsAnchor];
+  }
+
+  /** Set ProseMirror selection from Peritext CRDT-space selection. */
+  setSelection(peritext: PeritextApi, range: Range<string>, startIsAnchor: boolean): void {
+    if (this._disposed) return;
+    const view = this.view;
+    const state = view.state;
+    const doc = state.doc;
+    const txt = peritext.txt;
+    const rootBlock = txt.blocks.root;
+    const anchorPoint = startIsAnchor ? range.start : range.end;
+    const headPoint = startIsAnchor ? range.end : range.start;
+    const anchor = pointToPmPos(rootBlock, anchorPoint, doc);
+    const head = pointToPmPos(rootBlock, headPoint, doc);
+    const newSelection = TextSelection.create(doc, anchor, head);
+    const tr = state.tr.setSelection(newSelection);
+    const meta: TransactionMeta = {orig: TransactionOrigin.REMOTE};
+    tr.setMeta(SYNC_PLUGIN_KEY, meta);
+    view.dispatch(tr);
   }
 
   dispose(): void {

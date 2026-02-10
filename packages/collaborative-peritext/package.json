@@ -51,6 +51,7 @@
     "@storybook/react": "^10.2.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "jest-environment-jsdom": "^30.2.0",
     "prosemirror-example-setup": "^1.2.3",
     "prosemirror-schema-basic": "^1.2.4",
     "prosemirror-schema-list": "^1.5.1",
