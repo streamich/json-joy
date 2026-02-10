@@ -946,22 +946,30 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   public readonly onBeforeLocalChange = new FanOut<number>();
   /** Emitted after local changes through `model.api` are applied. */
   public readonly onLocalChange = new FanOut<number>();
-  /**
-   * Emitted after local changes through `model.api` are applied. Same as
-   * `.onLocalChange`, but this event buffered withing a microtask.
-   */
-  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
-  /** Emitted before a transaction is started. */
-  public readonly onBeforeTransaction = new FanOut<void>();
-  /** Emitted after transaction completes. */
-  public readonly onTransaction = new FanOut<void>();
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
   public readonly onChange = new MergeFanOut<ChangeEvent>(
     [this.onReset, this.onPatch, this.onLocalChange],
     (raw: Set<JsonNode> | Patch | number) => new ChangeEvent(raw, this),
   );
-  /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
+
+  /**
+   * Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask.
+   * 
+   * @deprecated
+   */
+  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
+  /**
+   * Emitted when the model changes. Same as `.onChange`, but this event is
+   * emitted once per microtask.
+   */
   public readonly onChanges = new MicrotaskBufferFanOut<unknown>(this.onChange as FanOut<unknown>);
+
+  /** Emitted before a transaction is started. */
+  public readonly onBeforeTransaction = new FanOut<void>();
+  /** Emitted after transaction completes. */
+  public readonly onTransaction = new FanOut<void>();
+
   /** Emitted when the `model.api` builder change buffer is flushed. */
   public readonly onFlush = new FanOut<Patch>();
 
