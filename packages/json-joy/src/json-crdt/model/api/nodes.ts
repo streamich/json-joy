@@ -946,7 +946,14 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   public readonly onBeforeLocalChange = new FanOut<number>();
   /** Emitted after local changes through `model.api` are applied. */
   public readonly onLocalChange = new FanOut<number>();
-  /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
+  /** Emitted before any change is applied to the model. Combines
+   * `onBeforeReset`, `onBeforePatch` and `onBeforeLocalChange`. */
+  public readonly onBeforeChange = new MergeFanOut<void>(
+    [this.onBeforeReset, this.onBeforePatch, this.onBeforeLocalChange],
+    () => void 0,
+  );
+  /** Emitted when the model changes. Combines `onReset`, `onPatch` and
+   * `onLocalChange`. */
   public readonly onChange = new MergeFanOut<ChangeEvent>(
     [this.onReset, this.onPatch, this.onLocalChange],
     (raw: Set<JsonNode> | Patch | number) => new ChangeEvent(raw, this),

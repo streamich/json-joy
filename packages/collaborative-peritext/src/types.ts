@@ -1,6 +1,7 @@
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
+import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 
 /**
  * Represents a single change in the editor. It is a 3-tuple of `[position,
@@ -20,6 +21,8 @@ export type SimpleChange = [position: number, remove: number, insert: string];
 // export type EditorSelection = [start: number, end: number, direction: -1 | 0 | 1];
 
 export type PeritextRef = () => PeritextApi;
+
+export type PeritextSelection = [range: Range<string>, startIsAnchor: boolean];
 
 /**
  * A facade for the rich-text editor, which is used by the binding to
@@ -84,15 +87,16 @@ export interface RichtextEditorFacade {
    */
   onselection?: () => void;
 
-  // /**
-  //  * Returns the current selection.
-  //  */
-  // getSelection?(): EditorSelection | null;
+  /**
+   * Convert current ProseMirror selection to a stable Peritext selection in
+   * CRDT-space.
+   */
+  getSelection?(peritext: PeritextApi): PeritextSelection | undefined;
 
-  // /**
-  //  * Sets the editor selection.
-  //  */
-  // setSelection?(start: number, end: number, direction: -1 | 0 | 1): void;
+  /**
+   * Set ProseMirror selection from a stable Peritext CRDT-space selection.
+   */
+  setSelection?(peritext: PeritextApi, range: PeritextSelection[0], startIsAnchor: PeritextSelection[1]): void;
 
   // ---------------------------------------------------------------- Lifecycle
 
