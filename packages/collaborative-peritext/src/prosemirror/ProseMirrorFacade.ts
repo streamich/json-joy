@@ -4,7 +4,7 @@ import {FromPm} from "./FromPm";
 import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import {ToPmNode} from "./toPmNode";
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
-import type {RichtextEditorFacade} from '../types';
+import type {PeritextRef, RichtextEditorFacade} from '../types';
 
 const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
 
@@ -24,7 +24,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
   toPm: ToPmNode;
   txOrig: TransactionOrigin = TransactionOrigin.UNKNOWN;
 
-  onchange?: () => void;
+  onchange?: () => (PeritextRef | void);
   onselection?: () => void;
 
   constructor(protected readonly view: EditorView) {
@@ -43,14 +43,27 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
       view() {
         return {
           update(view, prevState) {
-            console.log(state);
             if (self._disposed) return;
             const origin = self.txOrig;
             self.txOrig = TransactionOrigin.UNKNOWN;
             if (origin === TransactionOrigin.REMOTE) return;
             const docChanged = !prevState.doc.eq(view.state.doc);
             if (docChanged) {
-              self.onchange?.();
+              const ref = self.onchange?.();
+              KEEP_CACHE_WARM: {
+                const peritext = ref?.();
+                if (!peritext) break KEEP_CACHE_WARM;
+                const txt = peritext.txt;
+                const peritextChildren = txt.blocks.root.children;
+                const length = peritextChildren.length;
+                const pmDoc = view.state.doc;
+                if (pmDoc.childCount !== length) break KEEP_CACHE_WARM;
+                const cache = self.toPm.cache;
+                // TODO: PERF: sync up only changed blocks instead of the whole document
+                for (let i = 0; i < length; i++)
+                  cache.set(peritextChildren[i].hash, pmDoc.child(i));
+                cache.gc();
+              }
             } else {
               const selectionChanged = !prevState.selection.eq(view.state.selection)
               if (selectionChanged) self.onselection?.();

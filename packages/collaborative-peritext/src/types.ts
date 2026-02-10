@@ -1,3 +1,4 @@
+import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 
@@ -17,6 +18,8 @@ export type SimpleChange = [position: number, remove: number, insert: string];
 //  * selection is forwards, and `0` is used for all other cases.
 //  */
 // export type EditorSelection = [start: number, end: number, direction: -1 | 0 | 1];
+
+export type PeritextRef = () => PeritextApi;
 
 /**
  * A facade for the rich-text editor, which is used by the binding to
@@ -65,7 +68,7 @@ export interface RichtextEditorFacade {
    * the `SimpleChange` tuple, the `void` value can be emitted instead. For the
    * most basic implementation, one can always emit `null` on every change.
    */
-  onchange?: (change: SimpleChange[] | void, verify?: boolean) => void;
+  onchange?: (change: SimpleChange[] | void, verify?: boolean) => (PeritextRef | void);
 
   // /**
   //  * Length of text. Should return the same result as `.get().length`,

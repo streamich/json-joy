@@ -1,10 +1,10 @@
 export const invokeFirstOnly = () => {
   let invoked: boolean = false;
-  return (fn: () => void): void => {
+  return <T = void>(fn: () => T): T | undefined => {
     if (invoked) return;
     invoked = true;
     try {
-      fn();
+      return fn();
     } finally {
       invoked = false;
     }

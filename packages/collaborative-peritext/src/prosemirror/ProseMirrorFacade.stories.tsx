@@ -11,7 +11,7 @@ import {ProseMirrorFacade} from './ProseMirrorFacade';
 import {PeritextBinding} from '../PeritextBinding';
 import {FromPm} from './FromPm';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
-import type {Model, JsonNode} from 'json-joy/lib/json-crdt';
+import type {Model, JsonNode, StrApi} from 'json-joy/lib/json-crdt';
 
 export interface UseModelProps<N extends JsonNode = JsonNode<any>> {
   model: Model<N>;
@@ -94,12 +94,18 @@ const Demo: React.FC = () => {
         }}
       />
       <div>
+        <div style={{height: 8}} />
         <button onClick={() => {
-          (modelRef.current?.s as any).toExt().text().ins(0, '1. ');
+          const str = (modelRef.current?.s as any).toExt().text() as StrApi;
+          const pos = str.length();
+          str.ins(pos > 0 ? 1 : 0, '1. ');
         }}>Prepend "1. "</button>
+        {' '}
         <button onClick={() => {
           setTimeout(() => {
-            (modelRef.current?.s as any).toExt().text().ins(0, '1. ');
+            const str = (modelRef.current?.s as any).toExt().text() as StrApi;
+            const pos = str.length();
+            str.ins(pos > 0 ? 1 : 0, '1. ');
           }, 2000);
         }}>Prepend "1. " as 2 sec</button>
       </div>
