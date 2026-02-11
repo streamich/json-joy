@@ -1,72 +1,9 @@
 /** @jest-environment jsdom */
 
-import {EditorState, TextSelection} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
+import {TextSelection} from 'prosemirror-state';
 import {Node} from 'prosemirror-model';
 import {doc, p, blockquote, h1, h2, h3, ul, li, em, strong} from 'prosemirror-test-builder';
-import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
-import {FromPm} from '../FromPm';
-import {ProseMirrorFacade} from '../ProseMirrorFacade';
-import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
-
-/**
- * Helper: set PM selection to [anchor, head], then call getSelection().
- */
-const getSelectionAt = (
-  facade: ProseMirrorFacade,
-  editorView: EditorView,
-  peritextApi: PeritextApi,
-  anchor: number,
-  head: number,
-) => {
-  const {doc} = editorView.state;
-  const sel = TextSelection.create(doc, anchor, head);
-  const tr = editorView.state.tr.setSelection(sel);
-  editorView.dispatch(tr);
-  return facade.getSelection(peritextApi);
-};
-
-const setup = (pmDoc: Node) => {
-  // 1. Create Peritext model and import the PM doc
-  const model = ModelWithExt.create(ext.peritext.new(''));
-  const peritextApi = model.s.toExt();
-  const txt = peritextApi.txt;
-  const viewRange = FromPm.convert(pmDoc);
-  txt.editor.import(0, viewRange);
-  txt.refresh();
-
-  // 2. Create a real ProseMirror EditorView in jsdom
-  const place = document.createElement('div');
-  document.body.appendChild(place);
-  const state = EditorState.create({doc: pmDoc});
-  const view = new EditorView(place, {state});
-
-  // 3. Wrap with ProseMirrorFacade
-  const facade = new ProseMirrorFacade(view, () => peritextApi);
-
-  // 4. Sync Peritext to PM so the facade's toPm cache is warm and trees match
-  txt.refresh();
-  facade.set(txt.blocks);
-
-  const cleanup = () => {
-    facade.dispose();
-    view.destroy();
-    document.body.removeChild(place);
-  };
-
-  return {
-    facade,
-    view,
-    peritextApi,
-    txt,
-    cleanup,
-    getSelectionAt: (anchor: number, head: number) =>
-      getSelectionAt(facade, view, peritextApi, anchor, head),
-    [Symbol.dispose]() {
-      cleanup();
-    },
-  };
-};
+import {setup} from './setup';
 
 /**
  * Enumerate every valid cursor position in a PM doc (positions inside text
@@ -92,7 +29,7 @@ describe('ProseMirrorFacade selection', () => {
     test('returns undefined when disposed', () => {
       const pmDoc = doc(p('hello')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, peritextApi} = testbed;
+      const {facade, api: peritextApi} = testbed;
       facade.dispose();
       expect(facade.getSelection(peritextApi)).toBeUndefined();
     });
@@ -293,7 +230,7 @@ describe('ProseMirrorFacade selection', () => {
     test('no-op when disposed', () => {
       const pmDoc = doc(p('hello')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, peritextApi, txt} = testbed
+      const {facade, api: peritextApi, txt} = testbed
       facade.dispose();
       // Should not throw
       const range = txt.rangeFromPoints(txt.pointIn(1), txt.pointIn(3));
@@ -303,7 +240,7 @@ describe('ProseMirrorFacade selection', () => {
     test('sets collapsed caret in single paragraph', () => {
       const pmDoc = doc(p('Hello')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view, peritextApi, txt} = testbed;
+      const {facade, view, api: peritextApi, txt} = testbed;
 
       // Set caret at Peritext gap 3 -> PM pos 3 (after "He")
       const point = txt.pointIn(3);
@@ -316,7 +253,7 @@ describe('ProseMirrorFacade selection', () => {
     test('sets forward selection in single paragraph', () => {
       const pmDoc = doc(p('Hello')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view, peritextApi, txt} = testbed;
+      const {facade, view, api: peritextApi, txt} = testbed;
 
       // Select Peritext gap [2,5] -> PM [2,5]
       const range = txt.rangeFromPoints(txt.pointIn(2), txt.pointIn(5));
@@ -332,7 +269,7 @@ describe('ProseMirrorFacade selection', () => {
     test('sets backward selection in single paragraph', () => {
       const pmDoc = doc(p('Hello')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view, peritextApi, txt} = testbed;
+      const {facade, view, api: peritextApi, txt} = testbed;
 
       // Range [2,5] with startIsAnchor=false -> anchor=end, head=start
       const range = txt.rangeFromPoints(txt.pointIn(2), txt.pointIn(5));
@@ -346,7 +283,7 @@ describe('ProseMirrorFacade selection', () => {
       // PM: <doc><p>Hello</p><p>World</p></doc>
       const pmDoc = doc(p('Hello'), p('World')) as Node;
       const testbed = setup(pmDoc);
-      const {facade, view, peritextApi, txt} = testbed;
+      const {facade, view, api: peritextApi, txt} = testbed;
 
       // Peritext gap 7 (after \n of 2nd paragraph) -> PM 8 (start of 2nd p)
       const point = txt.pointIn(7);
@@ -364,7 +301,7 @@ describe('ProseMirrorFacade selection', () => {
     test('sets selection in nested blockquote', () => {
       const pmDoc = doc(blockquote(p('Hi'))) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view, peritextApi, txt} = testbed;
+      const {facade, view, api: peritextApi, txt} = testbed;
 
       // PT gap 2 (after 'H') -> PM 3
       const point = txt.pointIn(2);
@@ -378,7 +315,7 @@ describe('ProseMirrorFacade selection', () => {
     test('getSelection -> setSelection preserves PM selection (single paragraph)', () => {
       const pmDoc = doc(p('Hello World')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view: editorView, peritextApi} = testbed;
+      const {facade, view: editorView, api: peritextApi} = testbed;
       const sel = TextSelection.create(editorView.state.doc, 3, 8);
       editorView.dispatch(editorView.state.tr.setSelection(sel));
       const result = facade.getSelection(peritextApi)!;
@@ -392,7 +329,7 @@ describe('ProseMirrorFacade selection', () => {
     test('getSelection -> setSelection preserves backward selection', () => {
       const pmDoc = doc(p('Hello World')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view: editorView, peritextApi} = testbed;
+      const {facade, view: editorView, api: peritextApi} = testbed;
 
       // Backward: anchor=8, head=3
       const sel = TextSelection.create(editorView.state.doc, 8, 3);
@@ -408,7 +345,7 @@ describe('ProseMirrorFacade selection', () => {
     test('round-trip for all selection ranges in a small doc', () => {
       const pmDoc = doc(p('AB'), p('CD')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, view: editorView, peritextApi} = testbed;
+      const {facade, view: editorView, api: peritextApi} = testbed;
       const positions = allCursorPositions(pmDoc);
       for (const anchor of positions) {
         for (const head of positions) {
@@ -440,7 +377,7 @@ describe('ProseMirrorFacade selection', () => {
     for (const [name, pmDoc] of roundTripFixtures) {
       test(`round-trip for ${name}`, () => {
         using testbed = setup(pmDoc);
-        const {facade, view: editorView, peritextApi} = testbed;
+        const {facade, view: editorView, api: peritextApi} = testbed;
         const positions = allCursorPositions(pmDoc);
         for (const pos of positions) {
           // Set PM caret

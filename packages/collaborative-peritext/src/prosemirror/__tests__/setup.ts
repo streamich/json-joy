@@ -2,6 +2,10 @@ import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromPm} from '../FromPm';
 import {Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
+import {EditorState, TextSelection} from 'prosemirror-state';
+import {EditorView} from 'prosemirror-view';
+import {ProseMirrorFacade} from '../ProseMirrorFacade';
+import {PeritextBinding} from '../../PeritextBinding';
 
 export const assertCanConvert = (doc: Node) => {
   const viewRange = FromPm.convert(doc);
@@ -60,4 +64,52 @@ export const assertEmptyMerge = (doc: Node) => {
   prosemirror.node.txt.refresh();
   const patch3 = prosemirror.mergePmNode(doc);
   expect(patch3).not.toEqual([void 0, void 0, void 0]);
+};
+
+export const setup = (pmDoc: Node) => {
+  // 1. Create Peritext model
+  const model = Model.create(ext.peritext.new(''));
+  const api = model.s.toExt();
+  const txt = api.txt;
+
+  // 1.2 Set the PM doc as the initial content of the Peritext model.
+  const viewRange = FromPm.convert(pmDoc);
+  txt.editor.import(0, viewRange);
+  txt.refresh();
+
+  // 2. Create a real ProseMirror EditorView in jsdom
+  const place = document.createElement('div');
+  document.body.appendChild(place); 
+  const state = EditorState.create({doc: pmDoc});
+  const view = new EditorView(place, {state});
+
+  // 3. Wrap with ProseMirrorFacade and bind to the Peritext model
+  const facade = new ProseMirrorFacade(view, () => api);
+  const unbind = PeritextBinding.bind(() => api, facade);
+
+  const cleanup = () => {
+    unbind();
+    facade.dispose();
+    view.destroy();
+    document.body.removeChild(place);
+  };
+
+  return {
+    facade,
+    view,
+    api,
+    txt,
+    cleanup,
+    unbind,
+    getSelectionAt: (anchor: number, head: number) => {
+      const {doc} = view.state;
+      const sel = TextSelection.create(doc, anchor, head);
+      const tr = view.state.tr.setSelection(sel);
+      view.dispatch(tr);
+      return facade.getSelection(api);
+    },
+    [Symbol.dispose]() {
+      cleanup();
+    },
+  };
 };

@@ -26,7 +26,7 @@ export class PeritextBinding {
   };
 
   public syncFromModel(): void {
-    console.log('syncFromModel');
+    // console.log('syncFromModel');
     const peritext = this.peritext();
     const facade = this.facade;
     const txt = peritext.txt;
@@ -49,12 +49,12 @@ export class PeritextBinding {
     const peritext = this.peritext;
     const txt = peritext().txt;
     if (operation) {
-      console.log('syncFromEditor (fast)', operation);
+      // console.log('syncFromEditor (fast)', operation);
       const [pos, del, ins] = operation;
       if (del > 0) txt.delAt(pos, del);
       if (ins) txt.insAt(pos, ins);
     } else {
-      console.log('syncFromEditor (full merge)');
+      // console.log('syncFromEditor (full merge)');
       const viewRange = this.facade.get();
       txt.editor.merge(viewRange);
     }
