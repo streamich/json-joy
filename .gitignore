@@ -133,3 +133,5 @@ out.bin
 *storybook.log
 storybook-static
 debug-storybook.log
+
+/.docs/
