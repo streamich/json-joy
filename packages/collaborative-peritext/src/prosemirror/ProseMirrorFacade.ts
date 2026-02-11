@@ -1,5 +1,6 @@
 import {Plugin, PluginKey, TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
+import {ReplaceStep} from 'prosemirror-transform';
 import {FromPm} from './FromPm';
 import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import {ToPmNode} from './toPmNode';
@@ -8,8 +9,9 @@ import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
-import type {PeritextRef, RichtextEditorFacade} from '../types';
+import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
 import type {Node as PmNode, ResolvedPos} from 'prosemirror-model';
+import type {Transaction} from 'prosemirror-state';
 
 const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
 
@@ -22,6 +24,27 @@ const enum TransactionOrigin {
 interface TransactionMeta {
   orig?: TransactionOrigin;
 }
+
+/**
+ * Convert a flat ProseMirror position to a Peritext gap position (the integer
+ * coordinate system used by `Peritext.insAt` / `Peritext.delAt`).
+ *
+ * Returns `-1` if the position cannot be resolved (e.g. structural mismatch).
+ */
+const pmPosToGap = (txt: Peritext, doc: PmNode, pmPos: number): number => {
+  try {
+    const resolved = doc.resolve(pmPos);
+    const leafDepth = resolved.depth;
+    let block: Block<string> | LeafBlock<string> = txt.blocks.root;
+    for (let d = 0; d < leafDepth && block; d++) block = block.children[resolved.index(d)];
+    if (!block) return -1;
+    const textOffset = resolved.parentOffset;
+    const hasMarker = !!(block as LeafBlock<string>).marker;
+    return hasMarker ? block.start.viewPos() + 1 + textOffset : textOffset;
+  } catch {
+    return -1;
+  }
+};
 
 const pmPosToPoint = (txt: Peritext, resolved: ResolvedPos): Point<string> => {
   const leafDepth = resolved.depth;
@@ -67,16 +90,69 @@ const pointToPmPos = (block: Block<string> | LeafBlock<string>, point: Point<str
   return pmPos + Math.max(0, textOffset);
 };
 
+/**
+ * Attempt to extract a single `PeritextOperation` from a single 1-step
+ * ProseMirror transaction. Returns `undefined` when the transaction contains
+ * non-trivial steps (anything other than plain-text insert / delete), in which
+ * case the caller should fall back to the full document merge path. Also,
+ * returns `undefined` if the transaction has more than one step.
+ *
+ * A step is considered "simple" when it is a `ReplaceStep` whose `slice` is
+ * either empty (pure deletion) or contains exactly one flat text node with no
+ * open depth (pure text insertion / replacement). This covers:
+ *
+ *   - Typing a single character
+ *   - Backspace / Delete
+ *   - Pasting / replacing a selection with plain text
+ */
+const tryExtractPeritextOperation = (
+  tr: Transaction,
+  txt: Peritext,
+  doc: PmNode,
+): PeritextOperation | undefined => {
+  const steps = tr.steps;
+  if (steps.length !== 1) return;
+  const step = steps[0];
+  if (!(step instanceof ReplaceStep)) return;
+  const slice = step.slice;
+  if (!!slice.openStart || !!slice.openEnd) return;
+  const content = slice.content;
+  let insertedText = '';
+  if (content.childCount !== 1) return;
+  const child = content.firstChild!;
+  if (!child.isText || child.marks.length > 0) return;
+  insertedText = child.text ?? '';
+  const gap = pmPosToGap(txt, doc, step.from);
+  if (gap < 0) return;
+  const deleteLen = step.to - step.from;
+  return [gap, deleteLen, insertedText];
+};
+
 export class ProseMirrorFacade implements RichtextEditorFacade {
   _disposed = false;
   _plugin: Plugin;
   toPm: ToPmNode;
   txOrig: TransactionOrigin = TransactionOrigin.UNKNOWN;
 
-  onchange?: () => (PeritextRef | void);
+  /**
+   * The single pending doc-changing transaction from plugin `apply()`, consumed
+   * in `update()`.
+   */
+  _pendingTr:
+    /** Attempt to process as a single `PeritextOperation` transaction. */
+    | Transaction
+    /** Multiple transactions in the same batch, give up on the fast path. */
+    | null
+    /** No pending transaction. */
+    | undefined = undefined;
+
+  onchange?: (change: PeritextOperation | void) => (PeritextRef | void);
   onselection?: () => void;
 
-  constructor(protected readonly view: EditorView) {
+  constructor(
+    protected readonly view: EditorView,
+    protected readonly peritext: PeritextRef,
+  ) {
     const self = this;
     const state = view.state;
     const plugin = this._plugin = new Plugin({
@@ -86,6 +162,11 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
         apply(transaction, value) {
           const meta = transaction.getMeta(SYNC_PLUGIN_KEY) as TransactionMeta | undefined;
           self.txOrig = meta?.orig || TransactionOrigin.UNKNOWN;
+          if (transaction.docChanged) {
+            // If this is the first doc-changing transaction, stash it.
+            // If a second arrives in the same batch, give up on the fast path.
+            self._pendingTr = self._pendingTr === undefined ? transaction : null;
+          }
           return value;
         },
       },
@@ -98,7 +179,15 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
             if (origin === TransactionOrigin.REMOTE) return;
             const docChanged = !prevState.doc.eq(view.state.doc);
             if (docChanged) {
-              const ref = self.onchange?.();
+              let simpleOperation: PeritextOperation | undefined;
+              SIMPLE_OPERATION: {
+                const pendingTransaction = self._pendingTr;
+                self._pendingTr = undefined;
+                if (!pendingTransaction) break SIMPLE_OPERATION
+                const txt = self.peritext().txt;
+                simpleOperation = tryExtractPeritextOperation(pendingTransaction, txt, prevState.doc);
+              }
+              const ref = self.onchange?.(simpleOperation);
               KEEP_CACHE_WARM: {
                 const peritext = ref?.();
                 if (!peritext) break KEEP_CACHE_WARM;

@@ -70,8 +70,9 @@ const Demo: React.FC = () => {
     txt.refresh();
 
     // Bind Model to ProseMirror
-    const facade = new ProseMirrorFacade(view);
-    const unbind = PeritextBinding.bind(() => model.s.toExt(), facade);
+    const peritextRef = () => model.s.toExt();
+    const facade = new ProseMirrorFacade(view, peritextRef);
+    const unbind = PeritextBinding.bind(peritextRef, facade);
 
     // Re-render after setup
     setCnt(x => x + 1);

@@ -1,5 +1,5 @@
 import {invokeFirstOnly} from '@jsonjoy.com/util/lib/invokeFirstOnly';
-import type {PeritextRef, PeritextSelection, RichtextEditorFacade, SimpleChange} from './types';
+import type {PeritextRef, PeritextSelection, RichtextEditorFacade, PeritextOperation} from './types';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {ChangeEvent} from 'json-joy/lib/json-crdt/model/api/events';
 
@@ -39,18 +39,25 @@ export class PeritextBinding {
 
   // ----------------------------------------------------- Editor-to-Model sync
 
-  private readonly onEditorChange = (): (PeritextRef | void) => {
+  private readonly onEditorChange = (operation?: PeritextOperation | void): (PeritextRef | void) => {
     return this.race(() => {
-      return this.syncFromEditor();
+      return this.syncFromEditor(operation);
     });
   };
 
-  public syncFromEditor(): PeritextRef {
-    console.log('syncFromEditor');
-    const viewRange = this.facade.get();
+  public syncFromEditor(operation: PeritextOperation | void): PeritextRef {
     const peritext = this.peritext;
     const txt = peritext().txt;
-    txt.editor.merge(viewRange);
+    if (operation) {
+      console.log('syncFromEditor (fast)', operation);
+      const [pos, del, ins] = operation;
+      if (del > 0) txt.delAt(pos, del);
+      if (ins) txt.insAt(pos, ins);
+    } else {
+      console.log('syncFromEditor (full merge)');
+      const viewRange = this.facade.get();
+      txt.editor.merge(viewRange);
+    }
     txt.refresh();
     return peritext;
   }

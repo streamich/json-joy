@@ -3,26 +3,27 @@ import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 
+/** Reference to the Peritext JSON CRDT node which stores the rich-text document. */
+export type PeritextRef = () => PeritextApi;
+
+/**
+ * A stable selection in CRDT-space, represented as a tuple of `[range,
+ * startIsAnchor]`, where `range` is a `Range<string>` representing the selected
+ * range in the CRDT, and `startIsAnchor` is a boolean indicating whether the
+ * start of the range is the anchor (true) or the head (false).
+ * 
+ * The `Range` (start, end) ends are always ordered such that start <= end,
+ * regardless of the actual selection direction. To construct the
+ * range with start/end correctly ordered use `Peritext.rangeFromPoints()`.
+ */
+export type PeritextSelection = [range: Range<string>, startIsAnchor: boolean];
+
 /**
  * Represents a single change in the editor. It is a 3-tuple of `[position,
  * remove, insert]`, where `position` is the position of the change, `remove`
  * is the number of characters removed, and `insert` is the string inserted.
  */
-export type SimpleChange = [position: number, remove: number, insert: string];
-
-// TODO: This should be a Peritext range view.
-// /**
-//  * A 3-tuple of `[position, remove, insert]`, which represents a single range or
-//  * caret selection in the editor. Where `start` and `end` are character offsets
-//  * in the text, and `direction` is either `-1`, `0`, or `1`, where `-1`
-//  * indicates that the selection is backwards, `1` indicates that the
-//  * selection is forwards, and `0` is used for all other cases.
-//  */
-// export type EditorSelection = [start: number, end: number, direction: -1 | 0 | 1];
-
-export type PeritextRef = () => PeritextApi;
-
-export type PeritextSelection = [range: Range<string>, startIsAnchor: boolean];
+export type PeritextOperation = [position: number, remove: number, insert: string];
 
 /**
  * A facade for the rich-text editor, which is used by the binding to
@@ -45,47 +46,19 @@ export interface RichtextEditorFacade {
    */
   set(fragment: Fragment<string>): void;
 
-  // /**
-  //  * Inserts text at the given position. When implemented, this method is used
-  //  * for granular model-to-editor sync of remote changes.
-  //  * @param position Position to insert text at.
-  //  * @param text Raw text to insert.
-  //  */
-  // ins?(position: number, text: string): void;
-
-  // /**
-  //  * Deletes text at the given position. When implemented, this method is used
-  //  * for granular model-to-editor sync of remote changes.
-  //  * @param position Position to delete text at.
-  //  * @param length Number of characters to delete.
-  //  */
-  // del?(position: number, length: number): void;
-
   /**
    * Emits a change event when content changes. The event is emitted with
-   * a `SimpleChange` tuple, which is a tuple of `[position, remove, insert]`,
+   * a `PeritextOperation` tuple, which is a tuple of `[position, remove, insert]`,
    * where `position` is the position of the change, `remove` is the number
    * of characters removed, and `insert` is the string inserted.
    *
    * If a change happened, but it is too complex or impossible to represent by
-   * the `SimpleChange` tuple, the `void` value can be emitted instead. For the
+   * the `PeritextOperation` tuple, the `void` value can be emitted instead. For the
    * most basic implementation, one can always emit `null` on every change.
    */
-  onchange?: (change: SimpleChange[] | void, verify?: boolean) => (PeritextRef | void);
-
-  // /**
-  //  * Length of text. Should return the same result as `.get().length`,
-  //  * but it is possible to implement length retrieval in a more efficient way
-  //  * here.
-  //  */
-  // getLength?(): number;
+  onchange?: (change: PeritextOperation | void) => (PeritextRef | void);
 
   // ---------------------------------------------------------------- Selection
-
-  /**
-   * Called when the selection changes.
-   */
-  onselection?: () => void;
 
   /**
    * Convert current ProseMirror selection to a stable Peritext selection in
