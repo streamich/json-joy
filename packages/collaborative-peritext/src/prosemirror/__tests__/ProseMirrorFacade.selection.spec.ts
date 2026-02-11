@@ -42,7 +42,7 @@ const setup = (pmDoc: Node) => {
   const view = new EditorView(place, {state});
 
   // 3. Wrap with ProseMirrorFacade
-  const facade = new ProseMirrorFacade(view);
+  const facade = new ProseMirrorFacade(view, () => peritextApi);
 
   // 4. Sync Peritext to PM so the facade's toPm cache is warm and trees match
   txt.refresh();

@@ -118,13 +118,18 @@ const tryExtractPeritextOperation = (
   if (!!slice.openStart || !!slice.openEnd) return;
   const content = slice.content;
   let insertedText = '';
-  if (content.childCount !== 1) return;
-  const child = content.firstChild!;
-  if (!child.isText || child.marks.length > 0) return;
-  insertedText = child.text ?? '';
+  const deleteLen = step.to - step.from;
+  if (content.childCount === 0) {
+    // Pure deletion — no inserted text. For now, we don't interpret
+    // multi-character deletes, as these can result in a complex block join.
+    if (deleteLen > 1) return;
+  } else if (content.childCount === 1) {
+    const child = content.firstChild!;
+    if (!child.isText) return;
+    insertedText = child.text ?? '';
+  } else return;
   const gap = pmPosToGap(txt, doc, step.from);
   if (gap < 0) return;
-  const deleteLen = step.to - step.from;
   return [gap, deleteLen, insertedText];
 };
 
@@ -176,7 +181,10 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
             if (self._disposed) return;
             const origin = self.txOrig;
             self.txOrig = TransactionOrigin.UNKNOWN;
-            if (origin === TransactionOrigin.REMOTE) return;
+            if (origin === TransactionOrigin.REMOTE) {
+              self._pendingTr = undefined;
+              return;
+            }
             const docChanged = !prevState.doc.eq(view.state.doc);
             if (docChanged) {
               let simpleOperation: PeritextOperation | undefined;
