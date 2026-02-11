@@ -1,9 +1,9 @@
 import * as React from 'react';
-import type { Preview } from '@storybook/react-webpack5'
+import { definePreview } from '@storybook/react-webpack5';
 import { useGlobals } from 'storybook/preview-api';
 import { NiceUiProvider } from '../packages/ui/src/context';
 
-const preview: Preview = {
+const preview = definePreview({
   parameters: {
     controls: {
       matchers: {
@@ -34,6 +34,6 @@ const preview: Preview = {
   ],
 
   tags: ['autodocs'],
-};
+});
 
 export default preview;

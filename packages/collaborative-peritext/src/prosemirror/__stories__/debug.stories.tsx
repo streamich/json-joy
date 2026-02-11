@@ -1,9 +1,11 @@
+import preview from '../../../../../.storybook/preview';
+
 import {SingleEditorDebug} from './SingleEditorDebug';
 
-export default {
+const meta = preview.meta({
   title: 'Peritext/ProseMirrorFacade',
-};
+});
 
-export const Default = {
+export const Default = meta.story({
   render: SingleEditorDebug,
-};
+});
