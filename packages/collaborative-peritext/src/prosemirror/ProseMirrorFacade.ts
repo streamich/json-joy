@@ -141,7 +141,11 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const pmNode = this.toPm.convert(fragment);
     const view = this.view;
     const state = view.state;
-    const transaction = state.tr.replaceWith(0, state.doc.content.size, pmNode)
+    const { selection, tr } = state;
+    const transaction = tr.replaceWith(0, state.doc.content.size, pmNode);
+    const newAnchor = transaction.mapping.map(selection.anchor);
+    const newHead = transaction.mapping.map(selection.head);
+    transaction.setSelection(TextSelection.create(tr.doc, newAnchor, newHead));
     const meta: TransactionMeta = {orig: TransactionOrigin.REMOTE};
     transaction.setMeta(SYNC_PLUGIN_KEY, meta);
     view.dispatch(transaction)
