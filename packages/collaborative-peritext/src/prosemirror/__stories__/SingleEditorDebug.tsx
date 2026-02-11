@@ -7,25 +7,21 @@ import {addListNodes} from 'prosemirror-schema-list';
 import {exampleSetup} from 'prosemirror-example-setup';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
-import {ProseMirrorFacade} from './ProseMirrorFacade';
-import {PeritextBinding} from '../PeritextBinding';
-import {FromPm} from './FromPm';
+import {ProseMirrorFacade} from '../ProseMirrorFacade';
+import {PeritextBinding} from '../../PeritextBinding';
+import {FromPm} from '../FromPm';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import type {Model, JsonNode, StrApi} from 'json-joy/lib/json-crdt';
 
-export interface UseModelProps<N extends JsonNode = JsonNode<any>> {
+// TODO: Create React hooks package: @jsonjoy.com/collaborative-react
+interface UseModelProps<N extends JsonNode = JsonNode<any>> {
   model: Model<N>;
   render: () => React.ReactNode;
 }
-
-export const UseModel: React.FC<UseModelProps> = ({model, render}) => {
+const UseModel: React.FC<UseModelProps> = ({model, render}) => {
   const get = React.useCallback(() => model.tick, [model]);
   React.useSyncExternalStore(model.api.subscribe, get);
   return render();
-};
-
-export default {
-  title: 'Peritext/ProseMirrorFacade',
 };
 
 // Mix the nodes from prosemirror-schema-list into the basic schema to
@@ -35,7 +31,7 @@ const mySchema = new Schema({
   marks: schema.spec.marks,
 });
 
-const Demo: React.FC = () => {
+export const SingleEditorDebug: React.FC = () => {
   const editorRef = React.useRef<HTMLDivElement>(null);
   const viewRef = React.useRef<EditorView | null>(null);
   const modelRef = React.useRef<Model<any> | null>(null);
@@ -119,8 +115,4 @@ const Demo: React.FC = () => {
       )}
     </div>
   );
-};
-
-export const Default = {
-  render: Demo,
 };
