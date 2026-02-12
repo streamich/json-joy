@@ -20,9 +20,10 @@ const mySchema = new Schema({
 
 export interface ProseMirrorEditorProps {
   model: Model<any>;
+  onEditor?: (editor: EditorView) => void;
 }
 
-export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model}) => {
+export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, onEditor}) => {
   const editorRef = React.useRef<HTMLDivElement>(null);
   const viewRef = React.useRef<EditorView | null>(null);
   const [cnt, setCnt] = React.useState(0);
@@ -47,13 +48,16 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model}) => 
 
     // Re-render after setup
     setCnt(x => x + 1);
+    if (onEditor) {
+      onEditor(view);
+    }
     
     return () => {
       unbind();
       view.destroy();
       viewRef.current = null;
     };
-  }, [model]);
+  }, [model, onEditor]);
 
   return (
     <div

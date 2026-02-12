@@ -1,24 +1,20 @@
 import * as React from 'react';
-import {EditorState} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
 import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-schema-basic';
 import {addListNodes} from 'prosemirror-schema-list';
-import {exampleSetup} from 'prosemirror-example-setup';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
-import {ProseMirrorFacade} from '../ProseMirrorFacade';
-import {PeritextBinding} from '../../PeritextBinding';
 import {FromPm} from '../FromPm';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
-import type {Model, JsonNode, StrApi} from 'json-joy/lib/json-crdt';
+import {ProseMirrorEditor} from './ProseMirrorEditor';
+import type {Model, StrApi} from 'json-joy/lib/json-crdt';
 
 // TODO: Create React hooks package: @jsonjoy.com/collaborative-react
-interface UseModelProps<N extends JsonNode = JsonNode<any>> {
-  model: Model<N>;
+interface UseModelProps<M extends Model<any>> {
+  model: M;
   render: () => React.ReactNode;
 }
-const UseModel: React.FC<UseModelProps> = ({model, render}) => {
+const UseModel = <M extends Model<any>>({model, render}: UseModelProps<M>) => {
   const get = React.useCallback(() => model.tick, [model]);
   React.useSyncExternalStore(model.api.subscribe, get);
   return render();
@@ -32,25 +28,7 @@ const mySchema = new Schema({
 });
 
 export const SingleEditorDebug: React.FC = () => {
-  const editorRef = React.useRef<HTMLDivElement>(null);
-  const viewRef = React.useRef<EditorView | null>(null);
-  const modelRef = React.useRef<Model<any> | null>(null);
-  const [cnt, setCnt] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!editorRef.current) return;
-    if (viewRef.current) return;
-
-    // Create ProseMirror editor
-    const doc = mySchema.nodes.doc.createAndFill()!;
-    const view = viewRef.current = new EditorView(editorRef.current, {
-      state: EditorState.create({
-        doc,
-        plugins: exampleSetup({schema: mySchema}),
-      }),
-    });
-
-    // Create Model
+  const model = React.useMemo(() => {
     const json = {"type":"doc","content":[
       {"type":"paragraph","content":[{"type":"text","text":"Hello, ProseMirror!"}]},
       {"type":"paragraph","content":[
@@ -59,60 +37,38 @@ export const SingleEditorDebug: React.FC = () => {
         {"type":"text","text":" editor."},
       ]}
     ]};
-    const model = modelRef.current = ModelWithExt.create(ext.peritext.new(''));
+    const model = ModelWithExt.create(ext.peritext.new(''));
     const viewRange = FromPm.convert(mySchema.nodeFromJSON(json));
     const txt = model.s.toExt().txt;
     txt.editor.merge(viewRange);
     txt.refresh();
-
-    // Bind Model to ProseMirror
-    const peritextRef = () => model.s.toExt();
-    const facade = new ProseMirrorFacade(view, peritextRef);
-    const unbind = PeritextBinding.bind(peritextRef, facade);
-
-    // Re-render after setup
-    setCnt(x => x + 1);
-    
-    return () => {
-      unbind();
-      view.destroy();
-      viewRef.current = null;
-    };
+    return model;
   }, []);
 
   return (
     <div>
-      <div
-        ref={editorRef}
-        style={{
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          minHeight: '200px',
-        }}
-      />
+      <ProseMirrorEditor model={model} />
       <div>
         <div style={{height: 8}} />
         <button onClick={() => {
-          const str = (modelRef.current?.s as any).toExt().text() as StrApi;
+          const str = model.s.toExt().text() as StrApi;
           const pos = str.length();
           str.ins(pos > 0 ? 1 : 0, '1. ');
         }}>Prepend "1. "</button>
         {' '}
         <button onClick={() => {
           setTimeout(() => {
-            const str = (modelRef.current?.s as any).toExt().text() as StrApi;
+            const str = model.s.toExt().text() as StrApi;
             const pos = str.length();
             str.ins(pos > 0 ? 1 : 0, '1. ');
           }, 2000);
         }}>Prepend "1. " as 2 sec</button>
       </div>
-      {!!modelRef.current && (
-        <UseModel model={modelRef.current} render={() => (
-          <pre style={{fontSize: '10px'}}>
-            <code>{(modelRef.current as any)?.s.toExt().txt + ''}</code>
-          </pre>
-        )} />
-      )}
+      <UseModel model={model} render={() => (
+        <pre style={{fontSize: '10px'}}>
+          <code>{model.s.toExt().txt + ''}</code>
+        </pre>
+      )} />
     </div>
   );
 };
