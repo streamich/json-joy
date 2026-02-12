@@ -2,7 +2,7 @@
 
 import {renderHook, act} from '@testing-library/react';
 import {Model, s} from 'json-joy/lib/json-crdt';
-import {useModelTick, useModelView} from '../hooks';
+import {useModel, useModelSafe, useModelTick, useModelView} from '../hooks';
 
 describe('useModelTick()', () => {
   test('tick increases on model change (even if the view is the same)', async () => {
@@ -87,5 +87,82 @@ describe('useModelView()', () => {
       model.api.obj(['obj']).set({foo: 'bar'});
     });
     expect(renderCount).toBe(1);
+  });
+});
+
+describe('useModel()', () => {
+  test('can subscribe to model changes with selector', async () => {
+    const model = Model.create({obj: {foo: 'bar'}});
+    const foos: string[] = [];
+    renderHook(() => {
+      const foo = useModel(model, (m) => m.s.obj.foo.$.view());
+      foos.push(foo);
+    });
+    expect(foos).toEqual(['bar']);
+    await act(async () => {
+      model.s.obj.foo.$.ins(3, '!');
+    });
+    expect(foos).toEqual(['bar', 'bar!']);
+    await act(async () => {
+      model.s.obj.foo.$.ins(1, 'B');
+      model.s.obj.foo.$.del(0, 1);
+    });
+    expect(foos).toEqual(['bar', 'bar!', 'Bar!']);
+  });
+
+  test('works with schema-less model', async () => {
+    const model = Model.create();
+    model.api.set({obj: {foo: 'bar'}});
+    const foos: string[] = [];
+    renderHook(() => {
+      const foo = useModel(model, (m) => m.api.str('/obj/foo').view());
+      foos.push(foo);
+    });
+    expect(foos).toEqual(['bar']);
+    await act(async () => {
+      model.api.str('/obj/foo').ins(3, '!');
+    });
+    expect(foos).toEqual(['bar', 'bar!']);
+    await act(async () => {
+      model.api.str('/obj/foo').ins(1, 'B');
+      model.api.str('/obj/foo').del(0, 1);
+    });
+    expect(foos).toEqual(['bar', 'bar!', 'Bar!']);
+  });
+
+  test('throws on error in selector', async () => {
+    const model = Model.create({obj: {foo: 'bar'}});
+    expect(() => renderHook(() => {
+      const foo = useModel(model, (m) => { throw 'ERR'; });
+    })).toThrow('ERR');
+  });
+});
+
+describe('useModelSafe()', () => {
+  test('can subscribe to model changes with selector', async () => {
+    const model = Model.create({obj: {foo: 'bar'}});
+    const foos: string[] = [];
+    renderHook(() => {
+      const foo = useModelSafe(model, (m) => m.s.obj.foo.$.view())!;
+      foos.push(foo);
+    });
+    expect(foos).toEqual(['bar']);
+    await act(async () => {
+      model.s.obj.foo.$.ins(3, '!');
+    });
+    expect(foos).toEqual(['bar', 'bar!']);
+    await act(async () => {
+      model.s.obj.foo.$.ins(1, 'B');
+      model.s.obj.foo.$.del(0, 1);
+    });
+    expect(foos).toEqual(['bar', 'bar!', 'Bar!']);
+  });
+
+  test('returns `undefined` on error in selector', async () => {
+    const model = Model.create({obj: {foo: 'bar'}});
+    renderHook(() => {
+      const foo = useModelSafe(model, (m) => { throw 'ERR'; });
+      expect(foo).toBeUndefined();
+    });
   });
 });
