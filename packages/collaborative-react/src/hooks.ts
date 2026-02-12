@@ -1,6 +1,20 @@
 import {useMemo, useCallback, useSyncExternalStore} from 'react';
-import type {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
+import {useCtxModelStrict} from './context';
+import type {SyncStore} from 'json-joy/lib/util/events/sync-store';
 import type {Model, JsonNodeView} from 'json-joy/lib/json-crdt';
+
+// ------------------------------------------------------------------ SyncStore
+
+export const useStore = <T>(store: SyncStore<T>): T =>
+  useSyncExternalStore(store.subscribe, store.getSnapshot);
+
+const emptySyncStore: SyncStore<undefined> = {
+  getSnapshot: () => undefined,
+  subscribe: () => () => {},
+};
+
+export const useStoreOpt = <T>(store: SyncStore<T | undefined> = emptySyncStore): T | undefined =>
+  useSyncExternalStore(store.subscribe, store.getSnapshot);
 
 // ---------------------------------------------------------------- Model hooks
 
@@ -9,10 +23,11 @@ import type {Model, JsonNodeView} from 'json-joy/lib/json-crdt';
  * for re-rendering on every *tick* of the model, this will re-render on every
  * change of the model, even if the change results in not view-relevant updates.
  * 
- * @param model The JSON CRDT model.
+ * @param model The JSON CRDT model. If not provided, it will be retrieved from
+ *     the context using `useCtxModelStrict()`.
  * @returns The current tick value (volatile change counter) of the model.
  */
-export const useModelTick = <M extends Model<any>>(model: M): number => {
+export const useModelTick = <M extends Model<any>>(model: M = useCtxModelStrict<M>()): number => {
   const getSnapshot = useCallback(() => model.tick, [model]);
   return useSyncExternalStore(model.api.subscribe, getSnapshot);
 };
@@ -24,10 +39,11 @@ export const useModelTick = <M extends Model<any>>(model: M): number => {
  * changes to `{foo: 'bar'}`, the JSON CRDT model will preserve the same view
  * object, so this hook will not trigger a re-render.
  *
- * @param model The JSON CRDT model.
  * @returns The view of the model.
+ * @param model The JSON CRDT model. If not provided, it will be retrieved from
+ *     the context using `useCtxModelStrict()`.
  */
-export const useModelView = <M extends Model<any>>(model: M): JsonNodeView<M['root']> => {
+export const useModelView = <M extends Model<any>>(model: M = useCtxModelStrict<M>()): JsonNodeView<M['root']> => {
   const api = model.api;
   return useSyncExternalStore(api.subscribe, api.getSnapshot) as any;
 };
@@ -37,11 +53,12 @@ export const useModelView = <M extends Model<any>>(model: M): JsonNodeView<M['ro
  * selector function. Re-renders the component whenever the model changes, even
  * if the view does not change.
  *
- * @param model The JSON CRDT model.
  * @param selector A function that maps JSON CRDT `Model` to some value.
+ * @param model The JSON CRDT model. If not provided, it will be retrieved from
+ *     the context using `useCtxModelStrict()`.
  * @returns The value returned by the `selector` function.
  */
-export const useModel = <M extends Model<any>, R>(model: M, selector: (model: M) => R): R => {
+export const useModel = <M extends Model<any>, R>(selector: (model: M) => R, model: M = useCtxModelStrict<M>()): R => {
   const tick = useModelTick(model);
   // biome-ignore lint: manual dependency list
   return useMemo(() => selector(model), [tick, model]);
@@ -53,22 +70,20 @@ export const useModel = <M extends Model<any>, R>(model: M, selector: (model: M)
  * during the initial render, for example, if it tries to access a part of the
  * model that is not yet initialized.
  *
- * @param model The JSON CRDT model.
  * @param selector A function that maps JSON CRDT `Model` to some value.
+ * @param model The JSON CRDT model. If not provided, it will be retrieved from
+ *     the context using `useCtxModelStrict()`.
  * @returns The value returned by the `selector` function, or `undefined` if the selector throws an error.
  */
-export const useModelSafe = <M extends Model<any>, R>(model: M, selector: (model: M) => R): R | undefined => {
+export const useModelSafe = <M extends Model<any>, R>(selector: (model: M) => R, model?: M): R | undefined => {
   try {
-    return useModel(model, selector);
+    return useModel(selector, model);
   } catch {
     return;
   }
 };
 
 // ----------------------------------------------------------------- Node hooks
-
-export const useStore = <Store extends JsonPatchStore<any>>(store: Store) =>
-  useSyncExternalStore(store.subscribe, store.getSnapshot);
 
 export const useSelectNode = <M extends Model<any>, N>(
   model: M,

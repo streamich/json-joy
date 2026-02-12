@@ -95,7 +95,7 @@ describe('useModel()', () => {
     const model = Model.create({obj: {foo: 'bar'}});
     const foos: string[] = [];
     renderHook(() => {
-      const foo = useModel(model, (m) => m.s.obj.foo.$.view());
+      const foo = useModel((m) => m.s.obj.foo.$.view(), model);
       foos.push(foo);
     });
     expect(foos).toEqual(['bar']);
@@ -115,7 +115,7 @@ describe('useModel()', () => {
     model.api.set({obj: {foo: 'bar'}});
     const foos: string[] = [];
     renderHook(() => {
-      const foo = useModel(model, (m) => m.api.str('/obj/foo').view());
+      const foo = useModel((m) => m.api.str('/obj/foo').view(), model);
       foos.push(foo);
     });
     expect(foos).toEqual(['bar']);
@@ -133,7 +133,7 @@ describe('useModel()', () => {
   test('throws on error in selector', async () => {
     const model = Model.create({obj: {foo: 'bar'}});
     expect(() => renderHook(() => {
-      const foo = useModel(model, (m) => { throw 'ERR'; });
+      const foo = useModel((m) => { throw 'ERR'; }, model);
     })).toThrow('ERR');
   });
 });
@@ -143,7 +143,7 @@ describe('useModelSafe()', () => {
     const model = Model.create({obj: {foo: 'bar'}});
     const foos: string[] = [];
     renderHook(() => {
-      const foo = useModelSafe(model, (m) => m.s.obj.foo.$.view())!;
+      const foo = useModelSafe((m) => m.s.obj.foo.$.view(), model)!;
       foos.push(foo);
     });
     expect(foos).toEqual(['bar']);
@@ -161,7 +161,7 @@ describe('useModelSafe()', () => {
   test('returns `undefined` on error in selector', async () => {
     const model = Model.create({obj: {foo: 'bar'}});
     renderHook(() => {
-      const foo = useModelSafe(model, (m) => { throw 'ERR'; });
+      const foo = useModelSafe((m) => { throw 'ERR'; }, model);
       expect(foo).toBeUndefined();
     });
   });
