@@ -1,6 +1,6 @@
 import {useMemo, useCallback, useSyncExternalStore} from 'react';
 import type {JsonPatchStore} from 'json-joy/lib/json-crdt/json-patch/JsonPatchStore';
-import type {Model} from 'json-joy/lib/json-crdt';
+import type {Model, JsonNodeView} from 'json-joy/lib/json-crdt';
 
 // ---------------------------------------------------------------- Model hooks
 
@@ -14,9 +14,19 @@ export const useModelTick = <M extends Model<any>>(model: M): number => {
   return useSyncExternalStore(model.api.subscribe, getSnapshot);
 };
 
-export const useModelView = <M extends Model<any>>(model: M) => {
+/**
+ * Hook to subscribe to a model's view and get the current view value.
+ * Re-renders the component whenever the view changes. Does not re-render if the
+ * identity of the view object does not change, for example, if `{foo: 'bar'}`
+ * changes to `{foo: 'bar'}`, the JSON CRDT model will preserve the same view
+ * object, so this hook will not trigger a re-render.
+ * 
+ * @param model The JSON CRDT model.
+ * @returns The view of the model.
+ */
+export const useModelView = <M extends Model<any>>(model: M): JsonNodeView<M['root']> => {
   const api = model.api;
-  return useSyncExternalStore(api.subscribe, api.getSnapshot);
+  return useSyncExternalStore(api.subscribe, api.getSnapshot) as any;
 };
 
 export const useModel = <M extends Model<any>, R>(model: M, selector: (api: M) => R): R | undefined => {
