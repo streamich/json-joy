@@ -119,6 +119,8 @@ const tryExtractPeritextOperation = (
   const content = slice.content;
   let insertedText = '';
   const deleteLen = step.to - step.from;
+  // TODO: Do not interpret text insertions at the edge of marks, as one needs
+  //       to know the logic if the mark should or should not apply to the new text.
   if (content.childCount === 0) {
     // Pure deletion — no inserted text. For now, we don't interpret
     // multi-character deletes, as these can result in a complex block join.

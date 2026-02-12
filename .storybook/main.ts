@@ -64,6 +64,8 @@ const config: StorybookConfig = {
       '@jsonjoy.com/codegen/lib': resolve(__dirname, '../packages/codegen/src'),
       '@jsonjoy.com/collaborative-str/lib': resolve(__dirname, '../packages/collaborative-str/src'),
       '@jsonjoy.com/collaborative-str': resolve(__dirname, '../packages/collaborative-str/src'),
+      '@jsonjoy.com/collaborative-peritext/lib': resolve(__dirname, '../packages/collaborative-peritext/src'),
+      '@jsonjoy.com/collaborative-peritext': resolve(__dirname, '../packages/collaborative-peritext/src'),
       '@jsonjoy.com/collaborative-input-react/lib': resolve(__dirname, '../packages/collaborative-input-react/src'),
       '@jsonjoy.com/collaborative-input-react': resolve(__dirname, '../packages/collaborative-input-react/src'),
       '@jsonjoy.com/collaborative-input/lib': resolve(__dirname, '../packages/collaborative-input/src'),
