@@ -129,11 +129,13 @@ const tryExtractPeritextOperation = (
     if (!child.isText) return;
     insertedText = child.text ?? '';
   } else return;
-  // Bail out when inserting text at an inline-mark boundary. At mark edges
-  // ProseMirror decides whether to extend or not extend the mark to the new
-  // text, but the fast-path `PeritextOperation` tuple carries no mark info,
-  // so fall back to the full document merge to get correct annotations.
   if (insertedText) {
+    // Bail out when inserting text at an inline-mark boundary. At mark edges
+    // ProseMirror decides whether to extend or not extend the mark to the new
+    // text (this can be different for different marks and even different for
+    // the same mark type, depending on how cursor was positioned), but the
+    // fast-path `PeritextOperation` tuple carries no mark info, so fall back
+    // to the full document merge to get correct annotations.
     const $from = doc.resolve(step.from);
     const marksBefore = $from.nodeBefore?.marks ?? Mark.none;
     const marksAfter = $from.nodeAfter?.marks ?? Mark.none;
