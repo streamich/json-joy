@@ -11,6 +11,7 @@ import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
 import type {Node as PmNode, ResolvedPos} from 'prosemirror-model';
+import {Mark} from 'prosemirror-model';
 import type {Transaction} from 'prosemirror-state';
 
 const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
@@ -119,8 +120,6 @@ const tryExtractPeritextOperation = (
   const content = slice.content;
   let insertedText = '';
   const deleteLen = step.to - step.from;
-  // TODO: Do not interpret text insertions at the edge of marks, as one needs
-  //       to know the logic if the mark should or should not apply to the new text.
   if (content.childCount === 0) {
     // Pure deletion — no inserted text. For now, we don't interpret
     // multi-character deletes, as these can result in a complex block join.
@@ -130,6 +129,16 @@ const tryExtractPeritextOperation = (
     if (!child.isText) return;
     insertedText = child.text ?? '';
   } else return;
+  // Bail out when inserting text at an inline-mark boundary. At mark edges
+  // ProseMirror decides whether to extend or not extend the mark to the new
+  // text, but the fast-path `PeritextOperation` tuple carries no mark info,
+  // so fall back to the full document merge to get correct annotations.
+  if (insertedText) {
+    const $from = doc.resolve(step.from);
+    const marksBefore = $from.nodeBefore?.marks ?? Mark.none;
+    const marksAfter = $from.nodeAfter?.marks ?? Mark.none;
+    if (!Mark.sameSet(marksBefore, marksAfter)) return;
+  }
   const gap = pmPosToGap(txt, doc, step.from);
   if (gap < 0) return;
   return [gap, deleteLen, insertedText];
