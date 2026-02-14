@@ -1,8 +1,10 @@
 /** @jest-environment jsdom */
 
+import * as React from 'react';
 import {renderHook, act} from '@testing-library/react';
-import {Model, s} from 'json-joy/lib/json-crdt';
-import {usePath, usePathView} from '../hooks';
+import {ArrApi, Model, ObjApi, s, StrApi} from 'json-joy/lib/json-crdt';
+import {useArr, useObj, usePath, usePathView, useStr} from '../hooks';
+import {NodeCtx} from '../context';
 
 describe('usePath()', () => {
   test('scenario of a form editing', async () => {
@@ -71,5 +73,68 @@ describe('usePathView()', () => {
       model.s.obj.$.set({foo: s.con('aaa')} as any);
     });
     expect(views).toEqual(['bar', 'bar!', 'bar!', 'aaa']);
+  });
+});
+
+describe('useArr()', () => {
+  test('re-renders with the latest view', async () => {
+    const model = Model.create({obj: {foo: [1, 2, 3]}});
+    const node = model.s.$;
+    const views: unknown[] = [];
+    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
+    renderHook(() => {
+      const arr = useArr('/obj/foo');
+      expect(arr instanceof ArrApi).toBe(true);
+      React.useEffect(() => {
+        arr?.ins(3, [4]);
+      }, [arr]);
+      views.push(arr?.view());
+    }, {wrapper});
+    expect(views).toEqual([
+      [1, 2, 3],
+      [1, 2, 3, 4],
+    ]);
+  });
+});
+
+describe('useObj()', () => {
+  test('re-renders with the latest view', async () => {
+    const model = Model.create({obj: {foo: {bar: 'baz'}}});
+    const node = model.s.$;
+    const views: unknown[] = [];
+    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
+    renderHook(() => {
+      const obj = useObj('/obj/foo');
+      expect(obj instanceof ObjApi).toBe(true);
+      React.useEffect(() => {
+        obj?.set({x: 'y'} as any);
+      }, [obj]);
+      views.push(obj?.view());
+    }, {wrapper});
+    expect(views).toEqual([
+      {bar: 'baz'},
+      {bar: 'baz', x: 'y'},
+    ]);
+  });
+});
+
+describe('useStr()', () => {
+  test('re-renders with the latest view', async () => {
+    const model = Model.create({obj: {foo: {bar: 'baz'}}});
+    const node = model.s.$;
+    const views: unknown[] = [];
+    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
+    renderHook(() => {
+      const str = useStr('/obj/foo/bar');
+      expect(str instanceof StrApi).toBe(true);
+      React.useEffect(() => {
+        str?.ins(3, '!');
+      }, [str]);
+      views.push(str?.view());
+    }, {wrapper});
+    expect(views).toEqual([
+      'baz',
+      'baz!',
+    ]);
   });
 });
