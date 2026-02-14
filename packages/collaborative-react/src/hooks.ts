@@ -1,4 +1,4 @@
-import {useState, useMemo, useCallback, useSyncExternalStore, useEffect, use} from 'react';
+import {useState, useMemo, useCallback, useSyncExternalStore, useEffect} from 'react';
 import {useCtxModelStrict, useCtxNodeStrict} from './context';
 import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {SyncStore} from 'json-joy/lib/util/events/sync-store';
@@ -132,31 +132,21 @@ export const useNodeView = <N extends CrdtNodeApi = CrdtNodeApi>(
 
 // ----------------------------------------------------------------- Path hooks
 
-
-export const usePathView = <M extends Model<any>>(path: ApiPath, model?: M) => {
-
+export const usePath = <N extends CrdtNodeApi = CrdtNodeApi>(
+  path: ApiPath,
+  node: N = useCtxNodeStrict() as N,
+  event: 'self' | 'child' | 'subtree' = 'subtree',
+): CrdtNodeApi | undefined => {
+  useNode(node, event);
+  try {
+    return node.in(path);
+  } catch {
+    return;
+  }
 };
 
-
-// export const useSelectNode = <M extends Model<any>, N>(
-//   model: M,
-//   selector: (api: M['s']) => N,
-// ): N | null => {
-//   const tick = useModelTick(model);
-//   // biome-ignore lint: manual dependency list
-//   const node = useMemo(() => {
-//     try {
-//       return selector(model.s);
-//     } catch {
-//       return null;
-//     }
-//   }, [tick, model]);
-//   return node;
-// };
-
-// 2. useNode(nodeApi: NodeApi<N>, selector) → R
-
-
-
-// export const useNodeView;
-// export const useNodeEffect;
+export const usePathView = <N extends CrdtNodeApi = CrdtNodeApi>(
+  path: ApiPath,
+  node: N = useCtxNodeStrict() as N,
+  event: 'self' | 'child' | 'subtree' = 'subtree',
+) => usePath(path, node, event)?.view();
