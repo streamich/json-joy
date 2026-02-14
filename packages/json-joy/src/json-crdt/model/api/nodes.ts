@@ -88,43 +88,55 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param path Path to the child node to find.
    * @returns Local changes API for the child node at the given path.
    */
-  public in(path?: ApiPath) {
-    const node = this.find(path);
-    return this.api.wrap(node as any);
+  public in<B extends boolean = false>(path?: ApiPath, noThrow: B = false as B): B extends true ? NodeApi | undefined : NodeApi {
+    try {
+      const node = this.find(path);
+      return this.api.wrap(node as any) as any;
+    } catch (error) {
+      if (!noThrow) throw error;
+    }
+    return void 0 as any;
   }
 
-  public asVal(): ValApi {
+  public asVal<B extends boolean = false>(noThrow?: B): B extends true ? ValApi | undefined : ValApi {
     if (this.node instanceof ValNode) return this.api.wrap(this.node as ValNode);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_VAL');
   }
 
-  public asStr(): StrApi {
+  public asStr<B extends boolean = false>(noThrow?: B): B extends true ? StrApi | undefined : StrApi {
     if (this.node instanceof StrNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_STR');
   }
 
-  public asBin(): BinApi {
+  public asBin<B extends boolean = false>(noThrow?: B): B extends true ? BinApi | undefined : BinApi {
     if (this.node instanceof BinNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_BIN');
   }
 
-  public asArr(): ArrApi {
+  public asArr<B extends boolean = false>(noThrow?: B): B extends true ? ArrApi | undefined : ArrApi {
     if (this.node instanceof ArrNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_ARR');
   }
 
-  public asVec(): VecApi {
+  public asVec<B extends boolean = false>(noThrow?: B): B extends true ? VecApi | undefined : VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_VEC');
   }
 
-  public asObj(): ObjApi {
+  public asObj<B extends boolean = false>(noThrow?: B): B extends true ? ObjApi | undefined : ObjApi {
     if (this.node instanceof ObjNode) return this.api.wrap(this.node as ObjNode);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_OBJ');
   }
 
-  public asCon(): ConApi {
+  public asCon<B extends boolean = false>(noThrow?: B): B extends true ? ConApi | undefined : ConApi {
     if (this.node instanceof ConNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_CON');
   }
 
@@ -155,32 +167,32 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_EXT');
   }
 
-  public val(path?: ApiPath): ValApi {
-    return this.in(path).asVal();
+  public val<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ValApi | undefined : ValApi {
+    return this.in(path, noThrow)?.asVal(noThrow) as any;
   }
 
-  public str(path?: ApiPath): StrApi {
-    return this.in(path).asStr();
+  public str<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? StrApi | undefined : StrApi {
+    return this.in(path, noThrow)?.asStr(noThrow) as any;
   }
 
-  public bin(path?: ApiPath): BinApi {
-    return this.in(path).asBin();
+  public bin<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? BinApi | undefined : BinApi {
+    return this.in(path, noThrow)?.asBin(noThrow) as any;
   }
 
-  public arr(path?: ApiPath): ArrApi {
-    return this.in(path).asArr();
+  public arr<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ArrApi | undefined : ArrApi {
+    return this.in(path, noThrow)?.asArr(noThrow) as any;
   }
 
-  public vec(path?: ApiPath): VecApi {
-    return this.in(path).asVec();
+  public vec<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? VecApi | undefined : VecApi {
+    return this.in(path, noThrow)?.asVec(noThrow) as any;
   }
 
-  public obj(path?: ApiPath): ObjApi {
-    return this.in(path).asObj();
+  public obj<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ObjApi | undefined : ObjApi {
+    return this.in(path, noThrow)?.asObj(noThrow) as any;
   }
 
-  public con(path?: ApiPath): ConApi {
-    return this.in(path).asCon();
+  public con<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ConApi | undefined : ConApi {
+    return this.in(path, noThrow)?.asCon(noThrow) as any;
   }
 
   public view(): JsonNodeView<N> {

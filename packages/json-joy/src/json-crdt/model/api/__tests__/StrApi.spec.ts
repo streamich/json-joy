@@ -1,6 +1,6 @@
 import {s} from '../../../../json-crdt-patch';
-import type {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../Model';
+import type {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 
 test('can edit a simple string', () => {
   const doc = Model.create();
@@ -13,6 +13,17 @@ test('can edit a simple string', () => {
   str.del(9, 1);
   expect(str.view()).toEqual('0123-xxxxyyyyyyyy');
   expect(doc.view()).toEqual([0, '0123-xxxxyyyyyyyy', 2]);
+});
+
+test('can silently return `undefined` on missing node', () => {
+  const doc = Model.create({a: 'b', b: 123});
+  const api = doc.api;
+  api.str('/a');
+  api.str('/a', true);
+  expect(() => api.str('/b')).toThrow();
+  api.str('/b', true);
+  expect(() => api.str('/c')).toThrow();
+  api.str('/c', true);
 });
 
 test('can delete across two chunks', () => {
