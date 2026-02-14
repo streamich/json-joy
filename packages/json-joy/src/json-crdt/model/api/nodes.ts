@@ -295,8 +295,16 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return diff.diff(this, value);
   }
 
-  public merge(value: unknown): Patch | undefined {
-    return diff.merge(this, value);
+  public merge(value: unknown): Patch | undefined;
+  public merge(path: ApiPath, value: unknown): Patch | undefined;
+  public merge(...args: [value: unknown] | [path: ApiPath, value: unknown]): Patch | undefined {
+    const length = args.length;
+    if (length === 1) return diff.merge(this, args[0]);
+    else if (length === 2) {
+      const [path, value] = args;
+      return this.select(path, true)?.merge(value);
+    }
+    return;
   }
 
   public op(operation: ApiOperation): boolean {

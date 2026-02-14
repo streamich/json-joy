@@ -48,6 +48,31 @@ describe('.merge()', () => {
     });
   });
 
+  test('can merge at a deep path', () => {
+    const doc = Model.create({
+      nested: {
+        foo: 'bar',
+        x: 123,
+        address: {
+          city: 'Wonderland',
+          zip: '12345',
+        }
+      },
+    });
+    const node1 = doc.api;
+    expect(node1.read('/nested/address/zip')).toBe('12345');
+    const node2 = node1.in('/nested')!;
+    const patch = node2.merge('/address/zip', 'VD 1234');
+    const patchStr = patch + '';
+    expect(patchStr.includes('del')).toBe(true);
+    expect(patchStr.includes('ins_str')).toBe(true);
+    expect(node1.read('/nested/address/zip')).toBe('VD 1234');
+    expect(node2.read('/address/zip')).toBe('VD 1234');
+    node1.merge('/nested/address/zip', '...');
+    expect(node1.read('/nested/address/zip')).toBe('...');
+    expect(node2.read('/address/zip')).toBe('...');
+  });
+
   test('can merge changes into a string', () => {
     const doc = Model.create();
     doc.api.set({
