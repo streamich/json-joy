@@ -1,7 +1,11 @@
-import {useMemo, useCallback, useSyncExternalStore} from 'react';
-import {useCtxModelStrict} from './context';
+import {useState, useMemo, useCallback, useSyncExternalStore, useEffect, use} from 'react';
+import {useCtxModelStrict, useCtxNodeStrict} from './context';
+import type {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import type {SyncStore} from 'json-joy/lib/util/events/sync-store';
 import type {Model, JsonNodeView} from 'json-joy/lib/json-crdt';
+import type {ChangeEvent} from 'json-joy/lib/json-crdt/model/api/events';
+import type {ApiPath} from 'json-joy/lib/json-crdt/model/api/types';
+import type {CrdtNodeApi} from './types';
 
 // ------------------------------------------------------------------ SyncStore
 
@@ -27,7 +31,7 @@ export const useStoreOpt = <T>(store: SyncStore<T | undefined> = emptySyncStore)
  *     the context using `useCtxModelStrict()`.
  * @returns The current tick value (volatile change counter) of the model.
  */
-export const useModelTick = <M extends Model<any>>(model: M = useCtxModelStrict<M>()): number => {
+export const useModelTick = <M extends Model<any>>(model: M = useCtxModelStrict() as M): number => {
   const getSnapshot = useCallback(() => model.tick, [model]);
   return useSyncExternalStore(model.api.subscribe, getSnapshot);
 };
@@ -43,7 +47,7 @@ export const useModelTick = <M extends Model<any>>(model: M = useCtxModelStrict<
  * @param model The JSON CRDT model. If not provided, it will be retrieved from
  *     the context using `useCtxModelStrict()`.
  */
-export const useModelView = <M extends Model<any>>(model: M = useCtxModelStrict<M>()): JsonNodeView<M['root']> => {
+export const useModelView = <M extends Model<any>>(model: M = useCtxModelStrict() as M): JsonNodeView<M['root']> => {
   const api = model.api;
   return useSyncExternalStore(api.subscribe, api.getSnapshot) as any;
 };
@@ -58,7 +62,7 @@ export const useModelView = <M extends Model<any>>(model: M = useCtxModelStrict<
  *     the context using `useCtxModelStrict()`.
  * @returns The value returned by the `selector` function.
  */
-export const useModel = <M extends Model<any>, R>(selector: (model: M) => R, model: M = useCtxModelStrict<M>()): R => {
+export const useModel = <M extends Model<any>, R = unknown>(selector: (model: M) => R, model: M = useCtxModelStrict() as M): R => {
   const tick = useModelTick(model);
   // biome-ignore lint: manual dependency list
   return useMemo(() => selector(model), [tick, model]);
@@ -75,7 +79,7 @@ export const useModel = <M extends Model<any>, R>(selector: (model: M) => R, mod
  *     the context using `useCtxModelStrict()`.
  * @returns The value returned by the `selector` function, or `undefined` if the selector throws an error.
  */
-export const useModelSafe = <M extends Model<any>, R>(selector: (model: M) => R, model?: M): R | undefined => {
+export const useModelTry = <M extends Model<any>, R = unknown>(selector: (model: M) => R, model?: M): R | undefined => {
   try {
     return useModel(selector, model);
   } catch {
@@ -85,18 +89,74 @@ export const useModelSafe = <M extends Model<any>, R>(selector: (model: M) => R,
 
 // ----------------------------------------------------------------- Node hooks
 
-export const useSelectNode = <M extends Model<any>, N>(
-  model: M,
-  selector: (api: M['s']) => N,
-): N | null => {
-  const tick = useModelTick(model);
-  // biome-ignore lint: manual dependency list
-  const node = useMemo(() => {
-    try {
-      return selector(model.s);
-    } catch {
-      return null;
-    }
-  }, [tick, model]);
+export const useNodeEvents = <N extends CrdtNodeApi = CrdtNodeApi>(
+  event: 'self' | 'child' | 'subtree',
+  listener: (event: ChangeEvent) => void,
+  node: N = useCtxNodeStrict() as N,
+): FanOutUnsubscribe =>
+  useMemo(() => node.onNodeChange(event, listener), [node, event]);
+
+export const useNodeEffect = <N extends CrdtNodeApi = CrdtNodeApi>(
+  event: 'self' | 'child' | 'subtree',
+  listener: (event: ChangeEvent) => void,
+  node?: N,
+): void => {
+  const unsubscribe = useNodeEvents(event, listener, node);
+  useEffect(() => unsubscribe, [unsubscribe]);
+};
+
+export const useNodeChange = <N extends CrdtNodeApi = CrdtNodeApi>(
+  event: 'self' | 'child' | 'subtree',
+  node?: N,
+): ChangeEvent | undefined => {
+  const [change, setChange] = useState<ChangeEvent>();
+  useNodeEffect(event, setChange, node);
+  return change;
+};
+
+export const useNode = <N extends CrdtNodeApi = CrdtNodeApi>(
+  node: N = useCtxNodeStrict() as N,
+  event: 'self' | 'child' | 'subtree' = 'subtree',
+): N => {
+  useNodeChange(event, node);
   return node;
 };
+
+export const useNodeView = <N extends CrdtNodeApi = CrdtNodeApi>(
+  node: N = useCtxNodeStrict() as N,
+  event: 'self' | 'child' | 'subtree' = 'subtree',
+): ReturnType<N['view']> => {
+  useNodeChange(event, node);
+  return node.view() as ReturnType<N['view']>;
+};
+
+// ----------------------------------------------------------------- Path hooks
+
+
+export const usePathView = <M extends Model<any>>(path: ApiPath, model?: M) => {
+
+};
+
+
+// export const useSelectNode = <M extends Model<any>, N>(
+//   model: M,
+//   selector: (api: M['s']) => N,
+// ): N | null => {
+//   const tick = useModelTick(model);
+//   // biome-ignore lint: manual dependency list
+//   const node = useMemo(() => {
+//     try {
+//       return selector(model.s);
+//     } catch {
+//       return null;
+//     }
+//   }, [tick, model]);
+//   return node;
+// };
+
+// 2. useNode(nodeApi: NodeApi<N>, selector) → R
+
+
+
+// export const useNodeView;
+// export const useNodeEffect;

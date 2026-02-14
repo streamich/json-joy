@@ -419,6 +419,31 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     });
   }
 
+  /**
+   * Attaches a listener which executes on every change that is applied to this
+   * node or any of its child nodes (recursively). The `kind` parameter allows
+   * you to specify the type of changes to listen to: `"self"` for changes
+   * directly on this node, `"child"` for changes on child nodes, and `"subtree"`
+   * for both.
+   *
+   * @param kind The type of changes to listen to: `"self"`, `"child"`, or `"subtree"`.
+   * @param listener Callback called on every change that matches the specified type.
+   * @return Returns an unsubscribe function to stop listening to the events.
+   */
+  public onNodeChange(
+    kind: 'self' | 'child' | 'subtree',
+    listener: (event: ChangeEvent) => void,
+  ): FanOutUnsubscribe {
+    switch (kind) {
+      case 'self':
+        return this.onSelfChange(listener);
+      case 'child':
+        return this.onChildChange(listener);
+      case 'subtree':
+        return this.onSubtreeChange(listener);
+    }
+  }
+
   // -------------------------------------------------------------------- Debug
 
   public toString(tab: string = ''): string {

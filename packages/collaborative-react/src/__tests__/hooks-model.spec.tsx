@@ -2,7 +2,7 @@
 
 import {renderHook, act} from '@testing-library/react';
 import {Model, s} from 'json-joy/lib/json-crdt';
-import {useModel, useModelSafe, useModelTick, useModelView} from '../hooks';
+import {useModel, useModelTry, useModelTick, useModelView} from '../hooks';
 
 describe('useModelTick()', () => {
   test('tick increases on model change (even if the view is the same)', async () => {
@@ -138,12 +138,12 @@ describe('useModel()', () => {
   });
 });
 
-describe('useModelSafe()', () => {
+describe('useModelTry()', () => {
   test('can subscribe to model changes with selector', async () => {
     const model = Model.create({obj: {foo: 'bar'}});
     const foos: string[] = [];
     renderHook(() => {
-      const foo = useModelSafe((m) => m.s.obj.foo.$.view(), model)!;
+      const foo = useModelTry((m) => m.s.obj.foo.$.view(), model)!;
       foos.push(foo);
     });
     expect(foos).toEqual(['bar']);
@@ -161,7 +161,7 @@ describe('useModelSafe()', () => {
   test('returns `undefined` on error in selector', async () => {
     const model = Model.create({obj: {foo: 'bar'}});
     renderHook(() => {
-      const foo = useModelSafe((m) => { throw 'ERR'; }, model);
+      const foo = useModelTry((m) => { throw 'ERR'; }, model);
       expect(foo).toBeUndefined();
     });
   });
