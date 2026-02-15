@@ -40,8 +40,6 @@
   "peerDependencies": {
     "tslib": "*"
   },
-  "devDependencies": {
-  },
   "engines": {
     "node": ">=10.0"
   },

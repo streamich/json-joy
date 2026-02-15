@@ -1861,6 +1861,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence"
+  dependencies:
+    json-joy: "workspace:*"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/collaborative-quill-react@workspace:*, @jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"
