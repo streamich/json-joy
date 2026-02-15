@@ -1866,6 +1866,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence"
   dependencies:
     json-joy: "workspace:*"
+    thingies: "npm:^2.5.0"
   peerDependencies:
     tslib: "*"
   languageName: unknown

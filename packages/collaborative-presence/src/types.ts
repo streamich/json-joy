@@ -1,4 +1,4 @@
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
+import type {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
 
 /** A point-in-time snapshot of all user selections in a specific window (processId). */
 export type UserPresence<Meta extends object = object> = [

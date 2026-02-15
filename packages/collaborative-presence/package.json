@@ -35,7 +35,8 @@
     "crdt"
   ],
   "dependencies": {
-    "json-joy": "workspace:*"
+    "json-joy": "workspace:*",
+    "thingies": "^2.5.0"
   },
   "peerDependencies": {
     "tslib": "*"
