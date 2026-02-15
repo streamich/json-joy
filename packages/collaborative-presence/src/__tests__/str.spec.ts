@@ -1,7 +1,7 @@
 import {s} from 'json-joy/lib/json-crdt-patch';
 import {Model} from 'json-joy/lib/json-crdt';
 import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
-import {toDto, type StrSelection} from '../str';
+import {toDto, fromDto, type StrSelection} from '../str';
 
 const setup = (text: string = 'hello world') => {
   const doc = Model.create().setSchema(
@@ -235,6 +235,113 @@ describe('toDto', () => {
       const focusId = str.findId(7); // second 'b'
       expect(cursors[1][0][0][0]).toBe(anchorId.time);
       expect(cursors[1][1]![0][0]).toBe(focusId.time);
+    });
+  });
+});
+
+describe('fromDto', () => {
+  describe('caret selections', () => {
+    test('caret at position 0', () => {
+      const {str, doc} = setup('abc');
+      const dto = toDto(str, [0]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[0]]);
+    });
+
+    test('caret at position 1', () => {
+      const {str, doc} = setup('abc');
+      const dto = toDto(str, [1]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[1]]);
+    });
+
+    test('caret at end of string', () => {
+      const {str, doc} = setup('abc');
+      const dto = toDto(str, [3]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[3]]);
+    });
+
+    test('multiple carets', () => {
+      const {str, doc} = setup('hello world');
+      const dto = toDto(str, [0, 5, 11]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[0], [5], [11]]);
+    });
+  });
+
+  describe('range selections', () => {
+    test('forward selection [1, 3]', () => {
+      const {str, doc} = setup('abcde');
+      const dto = toDto(str, [[1, 3]]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[1, 3]]);
+    });
+
+    test('backward selection [4, 1]', () => {
+      const {str, doc} = setup('abcde');
+      const dto = toDto(str, [[4, 1]]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[4, 1]]);
+    });
+
+    test('select entire string [0, 5]', () => {
+      const {str, doc} = setup('abcde');
+      const dto = toDto(str, [[0, 5]]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[0, 5]]);
+    });
+  });
+
+  describe('mixed selections', () => {
+    test('carets and ranges together', () => {
+      const {str, doc} = setup('hello world');
+      const selections: StrSelection[] = [3, [0, 5], 11];
+      const dto = toDto(str, selections);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[3], [0, 5], [11]]);
+    });
+  });
+
+  describe('empty string', () => {
+    test('caret at position 0 in empty string', () => {
+      const {str, doc} = setup('');
+      const dto = toDto(str, [0]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[0]]);
+    });
+
+    test('empty selections array', () => {
+      const {str, doc} = setup('hello');
+      const dto = toDto(str, []);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('multi-chunk strings', () => {
+    test('works with multi-chunk string', () => {
+      const doc = Model.create();
+      doc.api.set('');
+      const str = doc.api.str([]);
+      str.ins(0, 'aaa');
+      str.ins(3, 'bbb');
+      str.ins(0, 'ccc');
+      expect(str.view()).toBe('cccaaabbb');
+      const dto = toDto(str, [3, [1, 8]]);
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([[3], [1, 8]]);
+    });
+  });
+
+  describe('edge cases', () => {
+    test('returns empty array for non-str type', () => {
+      const {str, doc} = setup('abc');
+      const dto = toDto(str, [1]);
+      // Mutate the type field to a non-str type
+      (dto as any)[5] = 0; // JsonCrdtDataType.con
+      const result = fromDto(doc, dto);
+      expect(result).toEqual([]);
     });
   });
 });

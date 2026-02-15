@@ -1,6 +1,6 @@
 import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
 import * as id from './id';
-import type {ITimestampStruct, Model, StrApi, StrNode} from 'json-joy/lib/json-crdt';
+import type {ITimestampStruct, StrApi, StrNode, Model} from 'json-joy/lib/json-crdt';
 import type {PresenceIdShorthand, PresencePoint, RgaSelection, PresenceCursor} from './types';
 
 export type StrSelectionStrict = [anchor: number, focus?: number];
@@ -52,24 +52,49 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
   return selection;
 };
 
-// export const fromDto = (model: Model, selection: RgaSelection): StrSelectionStrict[] => {
-//   const [_documentId, _uiLocationId, sid, _time, _meta, type, nodeIdDto, cursors] = selection;
-//   const selections: StrSelectionStrict[] = [];
-//   if (type !== JsonCrdtDataType.str) return selections;
-//   const nodeId = id.fromDto(sid, nodeIdDto);
-//   const str = model.index.get(nodeId) as StrNode | undefined;
-//   if (str?.name() !== 'str') return selections;
-//   for (const cursor of cursors) {
-//     const [anchorDto, focusDto] = cursor[0];
-//     const anchorId = id.fromDto(sid, anchorDto);
-//     const anchorOffset = str.findOffset(anchorId);
-//     let focusOffset: number | undefined;
-//     if (focusDto) {
-//       const focusId = id.fromDto(sid, focusDto);
-//       focusOffset = str.findOffset(focusId);
-//     }
-//     if (focusOffset === undefined) focusOffset = anchorOffset;
-//     selections.push([anchorOffset, focusOffset]);
-//   }
-//   return selections;
-// };
+/**
+ * Convert a CRDT ID to a view offset (the cursor position after that
+ * character). Returns 0 when the ID matches the node itself (i.e. before
+ * the first character).
+ */
+const findOffset = (str: StrNode, tsId: ITimestampStruct): number => {
+  const nodeId = str.id;
+  if (nodeId.sid === tsId.sid && nodeId.time === tsId.time) return 0;
+  const chunk = str.findById(tsId);
+  if (!chunk) return 0;
+  const pos = str.pos(chunk);
+  const charIndex = pos + (chunk.del ? 0 : tsId.time - chunk.id.time);
+  return charIndex + 1;
+};
+
+
+/**
+ * Converts a CRDT ID-based RGA selection back to offset-based string
+ * selections. This is the inverse of {@link toDto}.
+ *
+ * @param model The JSON CRDT model containing the "str" node.
+ * @param selection The RGA selection DTO to convert.
+ * @returns Collection of offset-based selections, or an empty array if the
+ *     node is not found or is not a "str" node.
+ */
+export const fromDto = (model: Model<any>, selection: RgaSelection): StrSelectionStrict[] => {
+  const [_documentId, _uiLocationId, sid, _time, _meta, type, nodeIdDto, cursors] = selection;
+  const result: StrSelectionStrict[] = [];
+  if (type !== JsonCrdtDataType.str) return result;
+  const nodeId = id.fromDto(sid, nodeIdDto);
+  const str = model.index.get(nodeId) as StrNode | undefined;
+  if (!str || str.name() !== 'str') return result;
+  for (const cursor of cursors) {
+    const [anchorPointDto, focusPointDto] = cursor;
+    const anchorId = id.fromDto(sid, anchorPointDto[0]);
+    const anchorOffset = findOffset(str, anchorId);
+    if (focusPointDto) {
+      const focusId = id.fromDto(sid, focusPointDto[0]);
+      const focusOffset = findOffset(str, focusId);
+      result.push([anchorOffset, focusOffset]);
+    } else {
+      result.push([anchorOffset]);
+    }
+  }
+  return result;
+};
