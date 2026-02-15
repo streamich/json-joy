@@ -32,18 +32,20 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
     if (typeof selection === 'number') anchor = selection;
     else [anchor, focus = anchor] = selection;
     if (focus === anchor) focus = -1;
-    let point: PresencePoint;
+    let cursor: PresenceCursor;
     try {
       const anchorId: ITimestampStruct = str.findId(anchor - 1);
-      point = [id.toDto(sid, anchorId)];
+      const anchorPoint: PresencePoint = [id.toDto(sid, anchorId)];
       if (focus >= 0) {
         const focusId: ITimestampStruct = str.findId(focus - 1);
-        point.push(id.toDto(sid, focusId));
+        const focusPoint: PresencePoint = [id.toDto(sid, focusId)];
+        cursor = [anchorPoint, focusPoint];
+      } else {
+        cursor = [anchorPoint];
       }
     } catch {
-      point = [id.toDto(sid, str.node.id)];
+      cursor = [[id.toDto(sid, str.node.id)]];
     }
-    const cursor: PresenceCursor = [point];
     cursors.push(cursor);
   }
   const selection: RgaSelection = ['', '', sid, clock.time, {}, JsonCrdtDataType.str, nodeId, cursors];
