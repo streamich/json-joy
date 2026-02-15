@@ -1,13 +1,21 @@
-import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants'
+import {JsonCrdtDataType} from 'json-joy/lib/json-crdt-patch/constants';
 
-/** Ephemeral data that is broadcasted about other peers in the editor. */
-export type PeerData = [
+/** A point-in-time snapshot of all user selections in a specific window (processId). */
+export type UserPresence<Meta extends object = object> = [
   /** Unique user ID, specific to the platform. */
-  peerId: string,
-  /** Selections made by the peer in various JSON CRDT documents, in various UI locations. */
+  userId: string,
+  /** Unique process ID, for the view of the user, e.g. each tab or window of
+   * the user can have a different process ID. */
+  processId: string,
+  /** Monotonically increasing sequence number for the user's selections. */
+  seq: number,
+  /** Timestamp in seconds when this selection entry was constructed on the user's device. */
+  ts: number,
+  /** Selections made by the user in various JSON CRDT documents, in various UI locations. */
   selections: JsonCrdtSelection[],
-  /** Timestamp in seconds when this selection entry was constructed. */
-  ts?: number,
+  /** Additional app-specific metadata associated with the user's presence
+   * (e.g. could hold username, avatar, active page path, etc.). */
+  meta: Meta,
 ];
 
 export type JsonCrdtSelection = RgaSelection | AnySelection | ObjSelection | VecSelection;
@@ -24,6 +32,9 @@ export type NodeSelection<Type extends JsonCrdtDataType> = [
    */
   uiLocationId: string,
 
+  /** JSON CRDT Model latest logical clock value. */
+  ...PresenceId,
+
   /** An object, of custom metadata associated with the selection. */
   meta: object,
 
@@ -35,11 +46,11 @@ export type NodeSelection<Type extends JsonCrdtDataType> = [
   type: Type,
 
   /** The ID of the node being selected. */
-  nodeId: JsonCrdtId,
+  nodeId: PresenceIdShorthand,
 ];
 
 /** Selection within an RGA node, such as a "str", "arr", or "bin" nodes. */
-export type RgaSelection = [...NodeSelection<JsonCrdtDataType.str | JsonCrdtDataType.bin | JsonCrdtDataType.arr>, ...JsonCrdtCursor];
+export type RgaSelection = [...NodeSelection<JsonCrdtDataType.str | JsonCrdtDataType.bin | JsonCrdtDataType.arr>, cursors: PresenceCursor[]];
 
 /** Selects a whole JSON CRDT node, any node. */
 export type AnySelection = [...NodeSelection<JsonCrdtDataType.con | JsonCrdtDataType.val>];
@@ -55,13 +66,14 @@ export type VecSelection = [...NodeSelection<JsonCrdtDataType.vec>, indexFrom?: 
  * and `focus` is the ending point of the selection. If `focus` is not provided,
  * the selection is a caret (a single point).
  */
-export type JsonCrdtCursor = [anchor: JsonCrdtRgaPoint, focus?: JsonCrdtRgaPoint];
+export type PresenceCursor = [anchor: PresencePoint, focus?: PresencePoint];
 
-export type JsonCrdtRgaPoint = [
-  id: JsonCrdtIdShorthand,
-  /** Zero means point is anchored to the left of the character, one means right. */
+export type PresencePoint = [
+  id: PresenceIdShorthand,
+  /** Zero means point is anchored to the left of the character, one means right.
+   * Useful for "peritext" nodes, for "str" nodes should be omitted. */
   anchor?: 0 | 1,
 ];
 
-export type JsonCrdtId = [time: number, sid: number];
-export type JsonCrdtIdShorthand = [time: number, sid?: number];
+export type PresenceId = [time: number, sid: number];
+export type PresenceIdShorthand = [time: number, sid?: number];
