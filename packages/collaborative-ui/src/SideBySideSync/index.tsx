@@ -38,10 +38,10 @@ export const SideBySideConnected: React.FC<Omit<SideBySideSyncProps, 'model'>> =
       <TopBar />
       <Split>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel {...props} model={state.left.end} state={state.leftState} order={order} />
+          <JsonCrdtModel {...props} model={state.left.end} presence={state.leftPresence} state={state.leftState} order={order} />
         </div>
         <div style={{width: '50%', padding: 16, boxSizing: 'border-box'}}>
-          <JsonCrdtModel {...props} model={state.right.end} state={state.rightState} order={order} />
+          <JsonCrdtModel {...props} model={state.right.end} presence={state.rightPresence} state={state.rightState} order={order} />
         </div>
       </Split>
     </Paper>

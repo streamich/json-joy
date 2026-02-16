@@ -1,13 +1,16 @@
 import {Model} from 'json-joy/lib/json-crdt';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
+import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import {JsonCrdtModelState} from '../JsonCrdtModel/JsonCrdtModelState';
 import {BehaviorSubject} from 'rxjs';
 
 export class SideBySideSyncState {
   public readonly left: Log;
   public readonly leftState: JsonCrdtModelState;
+  public readonly leftPresence: PresenceManager;
   public readonly right: Log;
   public readonly rightState: JsonCrdtModelState;
+  public readonly rightPresence: PresenceManager;
   public readonly autoSync$ = new BehaviorSubject<boolean>(false);
   public readonly autoSyncInterval$ = new BehaviorSubject<number>(5000);
   private autoSyncTimer: any = null;
@@ -20,6 +23,10 @@ export class SideBySideSyncState {
     this.left.end.api.autoFlush();
     this.right.end.api.autoFlush();
     this.leftState = new JsonCrdtModelState();
+    this.leftPresence = new PresenceManager();
+    this.leftPresence.setUserId('left-user-id');
+    this.leftPresence.setMeta({name: 'Left User'});
+
     this.rightState = new JsonCrdtModelState();
     this.leftState.showModel$.next(false);
     this.leftState.showView$.next(false);
@@ -27,6 +34,9 @@ export class SideBySideSyncState {
     this.rightState.showModel$.next(false);
     this.rightState.showView$.next(false);
     this.rightState.showDisplay$.next(true);
+    this.rightPresence = new PresenceManager();
+    this.rightPresence.setUserId('right-user-id');
+    this.rightPresence.setMeta({name: 'Right User'});
   }
 
   public dispose() {

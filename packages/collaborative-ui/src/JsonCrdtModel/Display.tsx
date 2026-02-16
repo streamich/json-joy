@@ -13,6 +13,7 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
+import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 
 const VectorIcon = makeIcon({set: 'elastic', icon: 'vector'});
 
@@ -45,12 +46,13 @@ const css = {
 export interface DisplayProps {
   state: JsonCrdtModelState;
   model: Model<any>;
+  presence?: PresenceManager;
   readonly?: boolean;
   noHeader?: boolean;
-  renderDisplay: (model: Model<any>, readonly: boolean) => React.ReactNode;
+  renderDisplay: (model: Model<any>, readonly: boolean, presence?: PresenceManager) => React.ReactNode;
 }
 
-export const Display: React.FC<DisplayProps> = React.memo(({state, model, readonly, noHeader, renderDisplay}) => {
+export const Display: React.FC<DisplayProps> = React.memo(({state, model, presence, readonly, noHeader, renderDisplay}) => {
   const [t] = useT();
   const show = useBehaviorSubject(state.showDisplay$);
   const showOutlines = useBehaviorSubject(state.showDisplayOutlines$);
@@ -87,7 +89,7 @@ export const Display: React.FC<DisplayProps> = React.memo(({state, model, readon
       )}
       {show && (
         <Scrollbox style={{maxHeight: 500}}>
-          <div className={css.content + (showOutlines ? css.debug : '')} style={{paddingTop: noHeader ? 16 : 4}}>{renderDisplay(model, !!readonly)}</div>
+          <div className={css.content + (showOutlines ? css.debug : '')} style={{paddingTop: noHeader ? 16 : 4}}>{renderDisplay(model, !!readonly, presence)}</div>
         </Scrollbox>
       )}
     </>

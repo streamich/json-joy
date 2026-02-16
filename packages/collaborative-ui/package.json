@@ -43,6 +43,7 @@
     "@jsonjoy.com/collaborative-input-react": "workspace:*",
     "@jsonjoy.com/collaborative-monaco": "workspace:*",
     "@jsonjoy.com/collaborative-monaco-react": "workspace:*",
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-quill": "workspace:*",
     "@jsonjoy.com/collaborative-quill-react": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",

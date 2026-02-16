@@ -1,6 +1,6 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {UserPresenceIdx} from './constants';
-import type {UserPresence} from './types';
+import type {JsonCrdtSelection, UserPresence} from './types';
 
 export class PresenceEvent {
   constructor(
@@ -22,9 +22,23 @@ export type PeerEntry<Meta extends object = object> = [
  */
 export class PresenceManager<Meta extends object = object> {
   public peers: Record<string, PeerEntry<Meta>> = {};
+  public local: UserPresence;
   public readonly onChange: FanOut<PresenceEvent> = new FanOut<PresenceEvent>();
 
-  constructor(public readonly timeout: number = 30_000) {}
+  constructor(
+    public readonly timeout: number = 30_000
+  ) {
+    this.local = [
+      '',
+      Math.random().toString(36).slice(2),
+      0,
+      Math.floor(Date.now() / 1000),
+      [],
+      {} as Meta,
+    ];
+  }
+
+  // ---------------------------------------------------------- remote presence
 
   /** LWW by `seq` per `processId` — stale updates are silently ignored. */
   receive(incoming: UserPresence<Meta>): void {
@@ -78,5 +92,25 @@ export class PresenceManager<Meta extends object = object> {
     const removed = Object.keys(this.peers);
     this.peers = {};
     if (removed.length) this.onChange.emit(new PresenceEvent([], [], removed));
+  }
+
+  // ----------------------------------------------------------- local presence
+
+  setUserId(userId: string): void {
+    this.local[UserPresenceIdx.UserId] = userId;
+  }
+
+  setProcessId(processId: string): void {
+    this.local[UserPresenceIdx.ProcessId] = processId;
+  }
+
+  setMeta(meta: Meta): void {
+    this.local[UserPresenceIdx.Meta] = meta;
+  }
+
+  setSelections(selections: JsonCrdtSelection[]): void {
+    this.local[UserPresenceIdx.Seq]++;
+    this.local[UserPresenceIdx.Ts] = Math.floor(Date.now() / 1000);
+    this.local[UserPresenceIdx.Selections] = selections;
   }
 }

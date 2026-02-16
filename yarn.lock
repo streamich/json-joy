@@ -1861,7 +1861,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence":
+"@jsonjoy.com/collaborative-presence@workspace:*, @jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-presence@workspace:packages/collaborative-presence"
   dependencies:
@@ -1992,6 +1992,7 @@ __metadata:
     "@jsonjoy.com/collaborative-input-react": "workspace:*"
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
     "@jsonjoy.com/collaborative-monaco-react": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@jsonjoy.com/collaborative-quill-react": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"

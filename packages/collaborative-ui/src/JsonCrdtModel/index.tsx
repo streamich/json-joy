@@ -31,6 +31,7 @@ import {JsonCrdtModelTextual} from './JsonCrdtModelTextual';
 import {Display} from './Display';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 import {ModelLogicalTimestamp} from '../LogicalTimestamp/ModelLogicalTimestamp';
+import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 
 const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
 
@@ -45,6 +46,7 @@ const css = {
 
 export interface JsonCrdtModelProps {
   model: Model<any>;
+  presence?: PresenceManager;
   readonly?: boolean;
   state?: JsonCrdtModelState;
   filename?: string;
@@ -57,6 +59,7 @@ export interface JsonCrdtModelProps {
 
 export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
   model,
+  presence,
   readonly,
   state: _state,
   filename,
@@ -231,6 +234,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
           key="display"
           state={state}
           model={model}
+          presence={presence}
           noHeader={noDisplayHdr}
           readonly={readonly}
           renderDisplay={renderDisplay}
