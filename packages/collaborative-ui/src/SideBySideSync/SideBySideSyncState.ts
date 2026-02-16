@@ -3,6 +3,7 @@ import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import {JsonCrdtModelState} from '../JsonCrdtModel/JsonCrdtModelState';
 import {BehaviorSubject} from 'rxjs';
+import type {UserPresence} from '@jsonjoy.com/collaborative-presence';
 
 export class SideBySideSyncState {
   public readonly left: Log;
@@ -69,11 +70,13 @@ export class SideBySideSyncState {
   public readonly syncLeftToRight = () => {
     const patchesLeft = [...this.left.patches.entries()].map(({v}) => v.clone());
     this.right.end.applyBatch(patchesLeft);
+    this.rightPresence.receive([...this.leftPresence.local] as UserPresence);
   };
 
   public readonly syncRightToLeft = () => {
     const patchesRight = [...this.right.patches.entries()].map(({v}) => v.clone());
     this.left.end.applyBatch(patchesRight);
+    this.leftPresence.receive([...this.rightPresence.local] as UserPresence);
   };
 
   public readonly synchronize = () => {

@@ -100,17 +100,37 @@ export class PresenceManager<Meta extends object = object> {
     this.local[UserPresenceIdx.UserId] = userId;
   }
 
+  getUserId(): string {
+    return this.local[UserPresenceIdx.UserId];
+  }
+
   setProcessId(processId: string): void {
     this.local[UserPresenceIdx.ProcessId] = processId;
+  }
+
+  getProcessId(): string {
+    return this.local[UserPresenceIdx.ProcessId];
   }
 
   setMeta(meta: Meta): void {
     this.local[UserPresenceIdx.Meta] = meta;
   }
 
+  getMeta(): Meta {
+    return this.local[UserPresenceIdx.Meta] as Meta;
+  }
+
   setSelections(selections: JsonCrdtSelection[]): void {
     this.local[UserPresenceIdx.Seq]++;
     this.local[UserPresenceIdx.Ts] = Math.floor(Date.now() / 1000);
     this.local[UserPresenceIdx.Selections] = selections;
+  }
+
+  getSelections(): JsonCrdtSelection[] {
+    return (this.local[UserPresenceIdx.Selections] as JsonCrdtSelection[]) || [];
+  }
+
+  clearSelections(): void {
+    this.setSelections([]);
   }
 }
