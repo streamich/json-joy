@@ -5,11 +5,13 @@ import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-schema-basic';
 import {addListNodes} from 'prosemirror-schema-list';
 import {exampleSetup} from 'prosemirror-example-setup';
-import 'prosemirror-view/style/prosemirror.css';
-import 'prosemirror-menu/style/menu.css';
 import {ProseMirrorFacade} from '../ProseMirrorFacade';
 import {PeritextBinding} from '../../PeritextBinding';
 import type {Model} from 'json-joy/lib/json-crdt';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+
+import 'prosemirror-view/style/prosemirror.css';
+import 'prosemirror-menu/style/menu.css';
 
 // Mix the nodes from prosemirror-schema-list into the basic schema to
 // create a schema with list support.
@@ -20,13 +22,15 @@ const mySchema = new Schema({
 
 export interface ProseMirrorEditorProps {
   model: Model<any>;
+  readonly?: boolean;
+  presence?: PresenceManager;
   onEditor?: (editor: EditorView) => void;
 }
 
-export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, onEditor}) => {
+export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, readonly, presence, onEditor}) => {
   const editorRef = React.useRef<HTMLDivElement>(null);
   const viewRef = React.useRef<EditorView | null>(null);
-  const [cnt, setCnt] = React.useState(0);
+  const [, setCnt] = React.useState(0);
 
   React.useEffect(() => {
     if (!editorRef.current) return;
@@ -43,7 +47,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, onEd
 
     // Bind Model to ProseMirror
     const peritextRef = () => (model as any).s.toExt();
-    const facade = new ProseMirrorFacade(view, peritextRef);
+    const facade = new ProseMirrorFacade(view, peritextRef, presence);
     const unbind = PeritextBinding.bind(peritextRef, facade);
 
     // Re-render after setup
@@ -57,7 +61,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, onEd
       view.destroy();
       viewRef.current = null;
     };
-  }, [model, onEditor]);
+  }, [model, presence, onEditor]);
 
   return (
     <div

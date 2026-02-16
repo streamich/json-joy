@@ -36,9 +36,11 @@
     "crdt"
   ],
   "dependencies": {
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/json-equal": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "json-joy": "workspace:*",
+    "nano-theme": "^1.5.0",
     "prosemirror-model": "^1.25.4",
     "prosemirror-state": "^1.4.4",
     "prosemirror-view": "^1.41.5"
@@ -70,8 +72,8 @@
     "lib/"
   ],
   "scripts": {
-    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
-    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "npx tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
     "test": "jest --maxWorkers 7",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",

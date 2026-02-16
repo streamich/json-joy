@@ -28,7 +28,7 @@ import {ViewSelect} from './ViewSelect';
 import {DownloadButton} from './DownloadButton';
 import {JsonCrdtModelIndex} from './JsonCrdtModelIndex';
 import {JsonCrdtModelTextual} from './JsonCrdtModelTextual';
-import {Display} from './Display';
+import {Display, type DisplayProps} from './Display';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 import {ModelLogicalTimestamp} from '../LogicalTimestamp/ModelLogicalTimestamp';
 import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
@@ -53,7 +53,7 @@ export interface JsonCrdtModelProps {
   order?: ('model' | 'view' | 'display')[];
   noDisplayHdr?: boolean;
   renderLeftToolbar?: () => React.ReactNode;
-  renderDisplay?: (model: Model<any>, readonly: boolean) => React.ReactNode;
+  renderDisplay?: DisplayProps['renderDisplay'];
   renderContext?: () => React.ReactNode;
 }
 

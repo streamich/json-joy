@@ -52,7 +52,7 @@ const Demo: React.FC<{}> = ({}) => {
         model={model}
         noDisplayHdr
         // renderDisplay={(model) => <Editor model={model} />}
-        renderDisplay={(model) => <ProseMirrorEditor model={model} />}
+        renderDisplay={(model, readonly, presence) => <ProseMirrorEditor model={model} readonly={readonly} presence={presence} />}
       />
     </DemoCard>
   );

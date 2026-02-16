@@ -2,7 +2,7 @@ import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {SliceHeaderShift, SliceStacking} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import type {ViewRange, ViewSlice} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {SliceTypeStep, SliceTypeSteps} from 'json-joy/lib/json-crdt-extensions/peritext';
-import type {PmFragment, PmNode, PmTextNode} from './types';
+import type {PmFragment, PmNode, PmTextNode} from '../types';
 
 /**
  * Converts ProseMirror raw nodes to a {@link ViewRange} flat string with

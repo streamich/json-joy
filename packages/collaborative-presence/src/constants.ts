@@ -1,5 +1,5 @@
 /** Indices into the {@link UserPresence} tuple. */
-export const enum UserPresenceIdx {
+export enum UserPresenceIdx {
   UserId = 0,
   ProcessId = 1,
   Seq = 2,

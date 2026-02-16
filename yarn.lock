@@ -1839,6 +1839,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-random": "workspace:^"
     "@jsonjoy.com/util": "workspace:*"
@@ -1847,6 +1848,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     jest-environment-jsdom: "npm:^30.2.0"
     json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
     prosemirror-example-setup: "npm:^1.2.3"
     prosemirror-model: "npm:^1.25.4"
     prosemirror-schema-basic: "npm:^1.2.4"

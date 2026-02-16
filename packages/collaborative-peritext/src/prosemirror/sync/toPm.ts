@@ -1,5 +1,5 @@
 import {Block, LeafBlock, Inline, Slice} from 'json-joy/lib/json-crdt-extensions';
-import type {PmJsonNode, PmJsonTextNode, PmJsonMark, PmAttrs} from './types';
+import type {PmJsonNode, PmJsonTextNode, PmJsonMark, PmAttrs} from '../types';
 
 export const toPm = (block: Block | LeafBlock): PmJsonNode => {
   const content: PmJsonNode['content'] = [];

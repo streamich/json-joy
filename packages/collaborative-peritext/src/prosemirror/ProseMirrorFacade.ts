@@ -1,4 +1,4 @@
-import {Plugin, PluginKey, TextSelection} from 'prosemirror-state';
+import {Plugin, TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {ReplaceStep} from 'prosemirror-transform';
 import {FromPm} from './sync/FromPm';
@@ -7,19 +7,14 @@ import {ToPmNode} from './sync/toPmNode';
 import {Mark} from 'prosemirror-model';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
+import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
+import {createPresencePlugin} from './presence/PeritextPresencePlugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
 import type {Node as PmNode} from 'prosemirror-model';
 import type {Transaction} from 'prosemirror-state';
-
-const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
-
-const enum TransactionOrigin {
-  UNKNOWN,
-  LOCAL,
-  REMOTE,
-}
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 
 interface TransactionMeta {
   orig?: TransactionOrigin;
@@ -104,6 +99,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
   constructor(
     protected readonly view: EditorView,
     protected readonly peritext: PeritextRef,
+    protected readonly presence?: PresenceManager,
   ) {
     const self = this;
     const state = view.state;
@@ -167,7 +163,15 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
       },
     });
     this.toPm = new ToPmNode(state.schema);
-    const updatedPlugins = state.plugins.concat([plugin]);
+    const presencePlugin = presence ? createPresencePlugin({
+      localProcessId: 'presence-id',
+      peritext,
+      manager: presence,
+    }) : undefined;
+    console.log('presencePlugin', presencePlugin);
+    const plugins: Plugin[] = [plugin];
+    if (presencePlugin) plugins.push(presencePlugin);
+    const updatedPlugins = state.plugins.concat(plugins);
     const newState = state.reconfigure({ plugins: updatedPlugins });
     view.updateState(newState);
   }
