@@ -1,17 +1,16 @@
 import {Plugin, PluginKey, TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {ReplaceStep} from 'prosemirror-transform';
-import {FromPm} from './FromPm';
+import {FromPm} from './sync/FromPm';
 import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
-import {ToPmNode} from './toPmNode';
-import {Block, LeafBlock} from 'json-joy/lib/json-crdt-extensions';
+import {ToPmNode} from './sync/toPmNode';
+import {Mark} from 'prosemirror-model';
+import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
-import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
-import type {Node as PmNode, ResolvedPos} from 'prosemirror-model';
-import {Mark} from 'prosemirror-model';
+import type {Node as PmNode} from 'prosemirror-model';
 import type {Transaction} from 'prosemirror-state';
 
 const SYNC_PLUGIN_KEY = new PluginKey<{}>('jsonjoy.com/json-crdt/sync');
@@ -25,71 +24,6 @@ const enum TransactionOrigin {
 interface TransactionMeta {
   orig?: TransactionOrigin;
 }
-
-/**
- * Convert a flat ProseMirror position to a Peritext gap position (the integer
- * coordinate system used by `Peritext.insAt` / `Peritext.delAt`).
- *
- * Returns `-1` if the position cannot be resolved (e.g. structural mismatch).
- */
-const pmPosToGap = (txt: Peritext, doc: PmNode, pmPos: number): number => {
-  try {
-    const resolved = doc.resolve(pmPos);
-    const leafDepth = resolved.depth;
-    let block: Block<string> | LeafBlock<string> = txt.blocks.root;
-    for (let d = 0; d < leafDepth && block; d++) block = block.children[resolved.index(d)];
-    if (!block) return -1;
-    const textOffset = resolved.parentOffset;
-    const hasMarker = !!(block as LeafBlock<string>).marker;
-    return hasMarker ? block.start.viewPos() + 1 + textOffset : textOffset;
-  } catch {
-    return -1;
-  }
-};
-
-const pmPosToPoint = (txt: Peritext, resolved: ResolvedPos): Point<string> => {
-  const leafDepth = resolved.depth;
-  let block: Block<string> | LeafBlock<string> = txt.blocks.root;
-  for (let d = 0; d < leafDepth && block; d++) block = block.children[resolved.index(d)];
-  if (!block) return txt.pointStart() ?? txt.pointAbsStart();
-  const textOffset = resolved.parentOffset;
-  const hasMarker = !!(block as LeafBlock<string>).marker;
-  const peritextGap = hasMarker ? block.start.viewPos() + 1 + textOffset : textOffset;
-  return txt.pointIn(peritextGap);
-};
-
-const pointToPmPos = (block: Block<string> | LeafBlock<string>, point: Point<string>, doc: PmNode): number => {
-  const viewPos = point.viewPos();
-  let pmNode: PmNode = doc;
-  let pmPos = 0;
-  while (!block.isLeaf()) {
-    const children = block.children;
-    const len = children.length;
-    let found = false;
-    for (let i = 0; i < len; i++) {
-      const child = children[i];
-      const childEndView = child.end.viewPos();
-      if (viewPos <= childEndView) {
-        for (let j = 0; j < i; j++) pmPos += pmNode.child(j).nodeSize;
-        pmPos += 1; // open tag
-        block = child;
-        pmNode = pmNode.child(i);
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      const lastIdx = len - 1;
-      for (let j = 0; j < lastIdx; j++) pmPos += pmNode.child(j).nodeSize;
-      pmPos += 1; // open tag
-      block = children[lastIdx];
-      pmNode = pmNode.child(lastIdx);
-    }
-  }
-  const hasMarker = !!(block as LeafBlock<string>).marker;
-  const textOffset = hasMarker ? viewPos - (block.start.viewPos() + 1) : viewPos;
-  return pmPos + Math.max(0, textOffset);
-};
 
 /**
  * Attempt to extract a single `PeritextOperation` from a single 1-step
@@ -218,9 +152,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
                 const pmDoc = view.state.doc;
                 if (pmDoc.childCount !== length) break KEEP_CACHE_WARM;
                 const cache = self.toPm.cache;
-                // TODO: PERF: sync up only changed blocks instead of the whole document
-                for (let i = 0; i < length; i++)
-                  cache.set(peritextChildren[i].hash, pmDoc.child(i));
+                for (let i = 0; i < length; i++) cache.set(peritextChildren[i].hash, pmDoc.child(i));
                 cache.gc();
               }
             } else {

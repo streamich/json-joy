@@ -4,7 +4,7 @@ import {schema} from 'prosemirror-schema-basic';
 import {addListNodes} from 'prosemirror-schema-list';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
-import {FromPm} from '../FromPm';
+import {FromPm} from '../sync/FromPm';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {ProseMirrorEditor} from './ProseMirrorEditor';
 import type {Model, StrApi} from 'json-joy/lib/json-crdt';

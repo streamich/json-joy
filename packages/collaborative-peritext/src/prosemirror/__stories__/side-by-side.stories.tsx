@@ -5,7 +5,7 @@ import {DemoCard} from '@jsonjoy.com/collaborative-ui/lib/DemoCard';
 import {SideBySideSync} from '@jsonjoy.com/collaborative-ui/lib/SideBySideSync';
 import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
 import {ProseMirrorEditor} from './ProseMirrorEditor';
-import {FromPm} from '../FromPm';
+import {FromPm} from '../sync/FromPm';
 import {addListNodes} from 'prosemirror-schema-list';
 import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-schema-basic';

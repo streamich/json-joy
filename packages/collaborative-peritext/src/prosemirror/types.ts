@@ -1,3 +1,5 @@
+// ----------------------------------------------------------------- Serialized
+
 export interface PmJsonNode {
   type: string;
   attrs?: Record<string, unknown>;
@@ -12,6 +14,8 @@ export interface PmJsonMark {
   type: string;
   attrs?: PmAttrs;
 }
+
+// ---------------------------------------------------------------------- Model
 
 export type PmAttrs = Record<string, unknown>;
 
