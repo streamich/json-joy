@@ -49,7 +49,7 @@ export type CursorBuilder<Meta extends object = object> = (peerId: string, user:
 export const createPlugin = <Meta extends object = object>(
   opts: PresencePluginOpts<Meta>,
 ): Plugin<DecorationSet> => {
-  const {manager, gcIntervalMs = 5_000} = opts;
+  const {manager, peritext, gcIntervalMs = 5_000} = opts;
   return new Plugin<DecorationSet>({
     key: PRESENCE_PLUGIN_KEY,
     state: {
@@ -80,6 +80,15 @@ export const createPlugin = <Meta extends object = object>(
       if (gcIntervalMs > 0)
         gcTimer = setInterval(() => manager.removeOutdated(opts.fadeAfterMs), gcIntervalMs);
       return {
+        update(view, prevState) {
+          const docChanged = !prevState.doc.eq(view.state.doc);
+          const selectionChanged = !prevState.selection.eq(view.state.selection)
+          const doSendPresence = docChanged || selectionChanged;
+          if (doSendPresence) {
+            const dto = buildLocalPresenceDto(view, peritext);
+            if (dto) manager.setSelections([dto]);
+          }
+        },
         destroy() {
           unsubscribe();
           clearInterval(gcTimer as any);
@@ -181,7 +190,7 @@ const isRgaSelection = (sel: unknown): sel is RgaSelection => {
  * broadcasting via the presence transport. Returns `null` when the view is
  * blurred or the Peritext ref is unavailable.
  */
-export const buildLocalPresenceDto = (view: EditorView, peritextRef: PeritextRef): RgaSelection | null => {
+const buildLocalPresenceDto = (view: EditorView, peritextRef: PeritextRef): RgaSelection | null => {
   if (!view.hasFocus()) return null;
   const api = peritextRef();
   if (!api) return null;

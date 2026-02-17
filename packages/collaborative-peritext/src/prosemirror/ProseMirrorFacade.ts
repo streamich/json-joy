@@ -8,7 +8,7 @@ import {Mark} from 'prosemirror-model';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
-import {createPlugin, buildLocalPresenceDto} from './presence/PeritextPresencePlugin';
+import {createPlugin} from './presence/PeritextPresencePlugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
@@ -148,13 +148,9 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
                 for (let i = 0; i < length; i++) cache.set(peritextChildren[i].hash, pmDoc.child(i));
                 cache.gc();
               }
-              self.publishPresence();
             } else {
               const selectionChanged = !prevState.selection.eq(view.state.selection)
-              if (selectionChanged) {
-                self.onselection?.();
-                self.publishPresence();
-              }
+              if (selectionChanged) self.onselection?.();
             }
           },
           destroy() {
@@ -236,15 +232,5 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const plugins = state.plugins.filter(p => p !== this._plugin);
     const newState = state.reconfigure({ plugins });
     this.view.updateState(newState);
-  }
-
-  // ----------------------------------------------------------------- presence
-
-  /** Publish local cursor/selection to the presence manager. */
-  private publishPresence(): void {
-    const presence = this.presence;
-    if (!presence || this._disposed) return;
-    const dto = buildLocalPresenceDto(this.view, this.peritext);
-    if (dto) presence.setSelections([dto]);
   }
 }
