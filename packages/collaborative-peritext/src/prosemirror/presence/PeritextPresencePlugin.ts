@@ -5,7 +5,7 @@ import {peritext as peritextPresence} from '@jsonjoy.com/collaborative-presence'
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from '../constants';
 import {pmPosToPoint, pointToPmPos} from '../util';
 import {UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
-import {defaultCursorBuilder, defaultSelectionBuilder} from './styles';
+import {defaultCursorBuilder, defaultSelectionBuilder, cursorDimmedClass} from './styles';
 import type {PresenceManager, PresenceEvent, PeerEntry} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
 import type {RgaSelection, UserPresence} from '@jsonjoy.com/collaborative-presence/lib/types';
 import type {StablePeritextSelection} from '@jsonjoy.com/collaborative-presence/lib/peritext';
@@ -130,7 +130,7 @@ const buildDecorations = <Meta extends object>(
         const caretEl = cursorBuilder
           ? cursorBuilder(processId, user)
           : defaultCursorBuilder(processId, user, fadeAfterMs);
-        if (dimmed) caretEl.classList.add('prtxt-cursor--dimmed');
+        if (dimmed) caretEl.classList.add(cursorDimmedClass);
         decorations.push(
           Decoration.widget(head, () => caretEl, {key: `presence-${processId}`, side: 10}),
         );

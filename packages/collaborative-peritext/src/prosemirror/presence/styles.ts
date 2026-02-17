@@ -1,3 +1,4 @@
+import {rule} from 'nano-theme';
 import type {DecorationAttrs} from 'prosemirror-view';
 
 // -------------------------------------------------------------------- Colors
@@ -12,69 +13,67 @@ export const generateColor = (peerId: string): string => {
   return `hsl(${h}, 70%, 45%)`;
 };
 
-// -------------------------------------------------------------- CSS injection
+// ----------------------------------------------------------------- CSS rules
 
-const STYLE_ID = 'prtxt-presence-styles';
+/** Class name for the floating name label inside a cursor widget. */
+export const cursorLabelClass = rule({
+  pos: 'absolute',
+  bottom: '100%',
+  left: '-1px',
+  whiteSpace: 'nowrap',
+  fz: '11px',
+  fontWeight: 600,
+  lineHeight: 1.2,
+  pd: '1px 4px',
+  bdrad: '3px 3px 3px 0',
+  col: '#fff',
+  pe: 'none',
+  us: 'none',
+  op: 1,
+  transform: 'translateY(0)',
+  transition: 'opacity 0.3s ease, transform 0.3s ease',
+  z: 10,
+}).trim();
 
-const CSS = /* css */ `
-.prtxt-cursor {
-  position: relative;
-  border-left: 2px solid;
-  margin-left: -1px;
-  margin-right: -1px;
-  pointer-events: none;
-  word-break: normal;
-}
+/** Toggled on the label after `fadeAfterMs` to auto-hide it. */
+export const labelFadedClass = rule({
+  op: 0,
+  transform: 'translateY(4px)',
+}).trim();
 
-.prtxt-cursor-label {
-  position: absolute;
-  bottom: 100%;
-  left: -1px;
-  white-space: nowrap;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.2;
-  padding: 1px 4px;
-  border-radius: 3px 3px 3px 0;
-  color: #fff;
-  pointer-events: none;
-  user-select: none;
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 10;
-}
+/** Class name for the cursor caret span. */
+export const cursorClass = rule({
+  pos: 'relative',
+  bdl: '2px solid',
+  ml: '-1px',
+  mr: '-1px',
+  pe: 'none',
+  wordBreak: 'normal',
+  [`&:hover .${cursorLabelClass}`]: {
+    op: 1,
+    transform: 'translateY(0)',
+    z: 20,
+  },
+}).trim();
 
-.prtxt-cursor-label--faded {
-  opacity: 0;
-  transform: translateY(4px);
-}
-
-.prtxt-cursor:hover .prtxt-cursor-label {
-  opacity: 1;
-  transform: translateY(0);
-  z-index: 20;
-}
-
-.prtxt-cursor--dimmed {
-  opacity: 0.35;
-}
-`;
-
-/**
- * Injects the default presence CSS into the document `<head>`. Safe to call
- * multiple times — subsequent calls are no-ops.
- */
-export const injectStyles = (): void => {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = CSS;
-  document.head.appendChild(style);
-};
+/** Toggled on the cursor span when the peer is inactive. */
+export const cursorDimmedClass = rule({
+  op: 0.35,
+}).trim();
 
 // ------------------------------------------------------------ DOM builders
+
+/**
+ * Convert a CSS color to one with a given alpha. Handles `hsl()` and hex
+ * formats; for anything else the color is returned unchanged.
+ */
+const withAlpha = (color: string, alpha: number): string => {
+  if (color.startsWith('hsl('))
+    return 'hsla(' + color.slice(4, -1) + ', ' + alpha + ')';
+  if (color.startsWith('#') && color.length === 7)
+    return color + Math.round(alpha * 255).toString(16).padStart(2, '0');
+  return color;
+};
 
 export interface PresenceUser {
   name?: string;
@@ -90,16 +89,15 @@ export const defaultCursorBuilder = (
   user?: PresenceUser,
   fadeAfterMs: number = 3_000,
 ): HTMLElement => {
-  injectStyles();
   const color = user?.color ?? generateColor(peerId);
   const name = user?.name ?? peerId.slice(0, 8);
 
   const el = document.createElement('span');
-  el.className = 'prtxt-cursor';
+  el.className = cursorClass;
   el.style.borderColor = color;
 
   const label = document.createElement('div');
-  label.className = 'prtxt-cursor-label';
+  label.className = cursorLabelClass;
   label.style.backgroundColor = color;
   label.textContent = name;
 
@@ -108,7 +106,7 @@ export const defaultCursorBuilder = (
 
   // Auto-fade label after timeout; re-show on hover is CSS-driven.
   if (fadeAfterMs > 0) {
-    setTimeout(() => label.classList.add('prtxt-cursor-label--faded'), fadeAfterMs);
+    setTimeout(() => label.classList.add(labelFadedClass), fadeAfterMs);
   }
 
   return el;
@@ -124,7 +122,6 @@ export const defaultSelectionBuilder = (
 ): DecorationAttrs => {
   const color = user?.color ?? generateColor(peerId);
   return {
-    class: 'prtxt-selection',
-    style: `background-color: ${color}50`,
+    style: `background-color: ${withAlpha(color, 0.3)}`,
   };
 };
