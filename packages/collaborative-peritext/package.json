@@ -38,6 +38,7 @@
   "dependencies": {
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/json-equal": "workspace:*",
+    "@jsonjoy.com/ui": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
     "json-joy": "workspace:*",
     "nano-theme": "^1.5.0",

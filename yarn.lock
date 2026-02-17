@@ -1842,6 +1842,7 @@ __metadata:
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-random": "workspace:^"
+    "@jsonjoy.com/ui": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"

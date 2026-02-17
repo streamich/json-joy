@@ -5,11 +5,10 @@ import {peritext as peritextPresence} from '@jsonjoy.com/collaborative-presence'
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from '../constants';
 import {pmPosToPoint, pointToPmPos} from '../util';
 import {UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
-import {defaultCursorBuilder, defaultSelectionBuilder, cursorDimmedClass} from './styles';
+import * as view from './view';
 import type {PresenceManager, PresenceEvent, PeerEntry} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
 import type {RgaSelection, UserPresence} from '@jsonjoy.com/collaborative-presence/lib/types';
 import type {StablePeritextSelection} from '@jsonjoy.com/collaborative-presence/lib/peritext';
-import type {PresenceUser} from './styles';
 import type {PeritextRef} from '../../types';
 import type {EditorView, DecorationAttrs} from 'prosemirror-view';
 import type {EditorState} from 'prosemirror-state';
@@ -25,13 +24,13 @@ export interface PresencePluginOpts<Meta extends object = object> {
   peritext: PeritextRef;
   /** Custom caret DOM factory. When omitted, the default label-style cursor
    * from `presence-styles.ts` is used. */
-  cursorBuilder?: CursorBuilder<Meta>;
+  renderCursor?: CursorRenderer<Meta>;
   /** Custom inline decoration attrs factory for selection highlights. When
    * omitted, a semi-transparent background is used. */
-  selectionBuilder?: (peerId: string, user?: PresenceUser) => DecorationAttrs;
+  renderSelection?: SelectionRenderer;
   /** Extracts a {@link PresenceUser} (name, color) from the `meta` payload of a
    * `UserPresence` tuple. When omitted, user info is not shown on carets. */
-  userFromMeta?: (meta: Meta) => PresenceUser | undefined;
+  userFromMeta?: (meta: Meta) => view.PresenceUser | undefined;
   /** Milliseconds after which the name label is faded (default 3000). */
   fadeAfterMs?: number;
   /** Milliseconds of inactivity after which the caret is dimmed (default 30000). */
@@ -44,7 +43,11 @@ export interface PresencePluginOpts<Meta extends object = object> {
   gcIntervalMs?: number;
 }
 
-export type CursorBuilder<Meta extends object = object> = (peerId: string, user: PresenceUser | undefined, opts: PresencePluginOpts<Meta>) => HTMLElement;
+export type CursorRenderer<Meta extends object = object> =
+  (peerId: string, user: view.PresenceUser | undefined, opts: PresencePluginOpts<Meta>) => HTMLElement;
+
+export type SelectionRenderer =
+  (peerId: string, user?: view.PresenceUser) => DecorationAttrs
 
 export const createPlugin = <Meta extends object = object>(
   opts: PresencePluginOpts<Meta>,
@@ -109,11 +112,9 @@ const buildDecorations = <Meta extends object>(
   const {
     manager,
     peritext: peritextRef,
-    cursorBuilder,
-    selectionBuilder,
+    renderCursor = view.renderCursor,
+    renderSelection = view.renderSelection,
     userFromMeta,
-    fadeAfterMs = 3_000,
-    dimAfterMs = 30_000,
     hideAfterMs = 60_000,
   } = opts;
   const localProcessId = manager.getProcessId();
@@ -137,8 +138,7 @@ const buildDecorations = <Meta extends object>(
     const selections: unknown[] = presence[UserPresenceIdx.Selections] as unknown[];
     if (!selections) continue;
     const meta = presence[UserPresenceIdx.Meta];
-    const user: PresenceUser | undefined = userFromMeta ? userFromMeta(meta) : undefined;
-    const dimmed = age >= dimAfterMs;
+    const user: view.PresenceUser | undefined = userFromMeta ? userFromMeta(meta) : undefined;
     for (const sel of selections) {
       if (!isRgaSelection(sel)) continue;
       let stableSelections: StablePeritextSelection[];
@@ -159,14 +159,13 @@ const buildDecorations = <Meta extends object>(
         } catch {
           continue;
         }
-        const caretElement = (cursorBuilder ?? defaultCursorBuilder)(processId, user, opts)
-        if (dimmed) caretElement.classList.add(cursorDimmedClass);
+        const caretElement = renderCursor(processId, user, opts);
         const caretDecoration = Decoration.widget(focus, () => caretElement, {key: `presence-${processId}`, side: 10});
         decorations.push(caretDecoration);
         if (anchor !== focus) {
           const from = Math.min(anchor, focus);
           const to = Math.max(anchor, focus);
-          const attrs = (selectionBuilder ?? defaultSelectionBuilder)(processId, user);
+          const attrs = renderSelection(processId, user);
           const rangeDecoration = Decoration.inline(from, to, attrs, {inclusiveEnd: true, inclusiveStart: false});
           decorations.push(rangeDecoration);
         }

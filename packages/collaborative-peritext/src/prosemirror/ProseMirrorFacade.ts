@@ -8,7 +8,7 @@ import {Mark} from 'prosemirror-model';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
-import {createPlugin} from './presence/PeritextPresencePlugin';
+import {createPlugin} from './presence/plugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
