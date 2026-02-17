@@ -14,61 +14,76 @@ import type {PeritextRef} from '../../types';
 import type {EditorView, DecorationAttrs} from 'prosemirror-view';
 import type {EditorState} from 'prosemirror-state';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
+import type {SyncPluginTransactionMeta} from '../sync/types';
 
-export const PRESENCE_KEY = new PluginKey<DecorationSet>('jsonjoy.com/presence');
+const PRESENCE_PLUGIN_KEY = new PluginKey<DecorationSet>('jsonjoy.com/json-crdt/presence');
 
-/**
- * Options for the ProseMirror presence plugin.
- */
 export interface PresencePluginOpts<Meta extends object = object> {
   /** The shared presence store. */
   manager: PresenceManager<Meta>;
-
   /** Accessor for the Peritext CRDT. */
   peritext: PeritextRef;
-
-  /** The local peer's process ID — used to skip self when rendering. */
-  localProcessId: string;
-
-  /**
-   * Custom caret DOM factory. When omitted, the default label-style cursor
-   * from `presence-styles.ts` is used.
-   */
+  /** Custom caret DOM factory. When omitted, the default label-style cursor
+   * from `presence-styles.ts` is used. */
   cursorBuilder?: (peerId: string, user?: PresenceUser) => HTMLElement;
-
-  /**
-   * Custom inline decoration attrs factory for selection highlights. When
-   * omitted, a semi-transparent background is used.
-   */
+  /** Custom inline decoration attrs factory for selection highlights. When
+   * omitted, a semi-transparent background is used. */
   selectionBuilder?: (peerId: string, user?: PresenceUser) => DecorationAttrs;
-
-  /**
-   * Extracts a {@link PresenceUser} (name, color) from the `meta` payload of a
-   * `UserPresence` tuple. When omitted, user info is not shown on carets.
-   */
+  /** Extracts a {@link PresenceUser} (name, color) from the `meta` payload of a
+   * `UserPresence` tuple. When omitted, user info is not shown on carets. */
   userFromMeta?: (meta: Meta) => PresenceUser | undefined;
-
-  /** Milliseconds after which the name label is faded (default 3 000). */
+  /** Milliseconds after which the name label is faded (default 3000). */
   fadeAfterMs?: number;
-
-  /**
-   * Milliseconds of inactivity after which the selection highlight is hidden
-   * and the caret is dimmed (default 60 000).
-   */
+  /** Milliseconds of inactivity after which the selection highlight is hidden
+   * and the caret is dimmed (default 60000). */
   hideAfterMs?: number;
-
-  /**
-   * Interval in milliseconds for running {@link PresenceManager.removeOutdated}.
-   * Pass `0` to disable internal GC. Default: 5 000.
-   */
+  /** Interval in milliseconds for running {@link PresenceManager.removeOutdated}.
+   * Pass `0` to disable internal GC. Default: 5000. */
   gcIntervalMs?: number;
 }
 
-// ------------------------------------------------------------------- helpers
-
-interface TransactionMeta {
-  orig?: TransactionOrigin;
-}
+export const createPlugin = <Meta extends object = object>(
+  opts: PresencePluginOpts<Meta>,
+): Plugin<DecorationSet> => {
+  const {manager, gcIntervalMs = 5_000} = opts;
+  return new Plugin<DecorationSet>({
+    key: PRESENCE_PLUGIN_KEY,
+    state: {
+      init(_, state) {
+        return buildDecorations(state, opts);
+      },
+      apply(tr, prevDecorations, _oldState, newState) {
+        const syncMeta = tr.getMeta(SYNC_PLUGIN_KEY) as SyncPluginTransactionMeta | undefined;
+        if (syncMeta?.orig === TransactionOrigin.REMOTE) return buildDecorations(newState, opts);
+        const presenceMeta = tr.getMeta(PRESENCE_PLUGIN_KEY);
+        if (presenceMeta?.presenceUpdated) return buildDecorations(newState, opts);
+        // Local edit — efficiently remap through the mapping.
+        return prevDecorations.map(tr.mapping, tr.doc);
+      },
+    },
+    props: {
+      decorations(state) {
+        return PRESENCE_PLUGIN_KEY.getState(state);
+      },
+    },
+    view(view: EditorView) {
+      const unsubscribe = manager.onChange.listen((_evt: PresenceEvent) => {
+        const tr = view.state.tr;
+        tr.setMeta(PRESENCE_PLUGIN_KEY, {presenceUpdated: true});
+        view.dispatch(tr);
+      });
+      let gcTimer: unknown;
+      if (gcIntervalMs > 0)
+        gcTimer = setInterval(() => manager.removeOutdated(opts.fadeAfterMs), gcIntervalMs);
+      return {
+        destroy() {
+          unsubscribe();
+          clearInterval(gcTimer as any);
+        },
+      };
+    },
+  });
+};
 
 /**
  * Build a `DecorationSet` with widget (caret) and inline (selection highlight)
@@ -78,7 +93,8 @@ const buildDecorations = <Meta extends object>(
   state: EditorState,
   opts: PresencePluginOpts<Meta>,
 ): DecorationSet => {
-  const {manager, peritext: peritextRef, localProcessId, cursorBuilder, selectionBuilder, userFromMeta, fadeAfterMs = 3_000, hideAfterMs = 60_000} = opts;
+  const {manager, peritext: peritextRef, cursorBuilder, selectionBuilder, userFromMeta, fadeAfterMs = 3_000, hideAfterMs = 60_000} = opts;
+  const localProcessId = manager.getProcessId();
   const decorations: Decoration[] = [];
   const api = peritextRef();
   if (!api) return DecorationSet.create(state.doc, []);
@@ -167,88 +183,6 @@ const isRgaSelection = (sel: unknown): sel is RgaSelection => {
   if (!Array.isArray(sel) || sel.length < 8) return false;
   const type = sel[5];
   return type === JsonCrdtDataType.str || type === JsonCrdtDataType.bin || type === JsonCrdtDataType.arr;
-};
-
-// -------------------------------------------------------------- Plugin factory
-
-/**
- * Creates a ProseMirror plugin that renders remote peers' caret and selection
- * decorations via `PresenceManager`.
- *
- * The plugin is **read-only** with respect to presence — it consumes remote
- * state and renders decorations. The app is responsible for publishing the
- * local user's selection via {@link buildLocalPresenceDto} and feeding it into
- * the transport layer.
- */
-export const createPresencePlugin = <Meta extends object = object>(
-  opts: PresencePluginOpts<Meta>,
-): Plugin<DecorationSet> => {
-  const {manager, gcIntervalMs = 5_000} = opts;
-
-  return new Plugin<DecorationSet>({
-    key: PRESENCE_KEY,
-
-    state: {
-      init(_, state) {
-        return buildDecorations(state, opts);
-      },
-
-      apply(tr, prevDecos, _oldState, newState) {
-        // Full rebuild on remote doc changes.
-        const syncMeta = tr.getMeta(SYNC_PLUGIN_KEY) as TransactionMeta | undefined;
-        if (syncMeta?.orig === TransactionOrigin.REMOTE) {
-          return buildDecorations(newState, opts);
-        }
-
-        // Full rebuild on presence changes.
-        const presenceMeta = tr.getMeta(PRESENCE_KEY);
-        if (presenceMeta?.presenceUpdated) {
-          return buildDecorations(newState, opts);
-        }
-
-        // Local edit — efficiently remap through the mapping.
-        return prevDecos.map(tr.mapping, tr.doc);
-      },
-    },
-
-    props: {
-      decorations(state) {
-        return PRESENCE_KEY.getState(state);
-      },
-    },
-
-    view(view: EditorView) {
-      // Subscribe to PresenceManager changes and dispatch a PM transaction.
-      const unsub = manager.onChange.listen((_evt: PresenceEvent) => {
-        setTimeout(() => {
-          if ((view as any).isDestroyed ?? false) return;
-          try {
-            const tr = view.state.tr;
-            tr.setMeta(PRESENCE_KEY, {presenceUpdated: true});
-            view.dispatch(tr);
-          } catch {
-            // View may have been destroyed between setTimeout and dispatch.
-          }
-        }, 0);
-      });
-
-      // Optional internal GC interval.
-      let gcTimer: ReturnType<typeof setInterval> | undefined;
-      if (gcIntervalMs > 0) {
-        gcTimer = setInterval(() => manager.removeOutdated(), gcIntervalMs);
-      }
-
-      return {
-        update() {
-          // Nothing — local selection publishing is the app's responsibility.
-        },
-        destroy() {
-          unsub();
-          if (gcTimer !== undefined) clearInterval(gcTimer);
-        },
-      };
-    },
-  });
 };
 
 // ------------------------------------------------ Local selection DTO helper

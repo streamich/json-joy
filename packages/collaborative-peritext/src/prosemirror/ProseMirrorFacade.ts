@@ -8,17 +8,14 @@ import {Mark} from 'prosemirror-model';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
-import {createPresencePlugin, buildLocalPresenceDto} from './presence/PeritextPresencePlugin';
+import {createPlugin, buildLocalPresenceDto} from './presence/PeritextPresencePlugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
 import type {Node as PmNode} from 'prosemirror-model';
 import type {Transaction} from 'prosemirror-state';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
-
-interface TransactionMeta {
-  orig?: TransactionOrigin;
-}
+import type {SyncPluginTransactionMeta} from './sync/types';
 
 /**
  * Attempt to extract a single `PeritextOperation` from a single 1-step
@@ -108,7 +105,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
       state: {
         init() { return {}; },
         apply(transaction, value) {
-          const meta = transaction.getMeta(SYNC_PLUGIN_KEY) as TransactionMeta | undefined;
+          const meta = transaction.getMeta(SYNC_PLUGIN_KEY) as SyncPluginTransactionMeta | undefined;
           self.txOrig = meta?.orig || TransactionOrigin.UNKNOWN;
           if (transaction.docChanged) {
             // If this is the first doc-changing transaction, stash it.
@@ -167,8 +164,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
       },
     });
     this.toPm = new ToPmNode(state.schema);
-    const presencePlugin = presence ? createPresencePlugin({
-      localProcessId: presence.getProcessId(),
+    const presencePlugin = presence ? createPlugin({
       peritext,
       manager: presence,
     }) : undefined;
@@ -195,7 +191,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const newAnchor = transaction.mapping.map(selection.anchor);
     const newHead = transaction.mapping.map(selection.head);
     transaction.setSelection(TextSelection.create(tr.doc, newAnchor, newHead));
-    const meta: TransactionMeta = {orig: TransactionOrigin.REMOTE};
+    const meta: SyncPluginTransactionMeta = {orig: TransactionOrigin.REMOTE};
     transaction.setMeta(SYNC_PLUGIN_KEY, meta);
     view.dispatch(transaction)
   }
@@ -228,7 +224,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const head = pointToPmPos(rootBlock, headPoint, doc);
     const newSelection = TextSelection.create(doc, anchor, head);
     const tr = state.tr.setSelection(newSelection);
-    const meta: TransactionMeta = {orig: TransactionOrigin.REMOTE};
+    const meta: SyncPluginTransactionMeta = {orig: TransactionOrigin.REMOTE};
     tr.setMeta(SYNC_PLUGIN_KEY, meta);
     view.dispatch(tr);
   }
