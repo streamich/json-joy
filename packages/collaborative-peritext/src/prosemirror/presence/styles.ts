@@ -1,5 +1,6 @@
 import {rule} from 'nano-theme';
 import type {DecorationAttrs} from 'prosemirror-view';
+import type {CursorBuilder, PresencePluginOpts} from './PeritextPresencePlugin';
 
 // -------------------------------------------------------------------- Colors
 
@@ -84,10 +85,10 @@ export interface PresenceUser {
  * Default cursor builder — a colored caret line with a floating name label
  * that auto-hides after `fadeAfterMs`.
  */
-export const defaultCursorBuilder = (
+export const defaultCursorBuilder: CursorBuilder<any> = (
   peerId: string,
   user?: PresenceUser,
-  fadeAfterMs: number = 3_000,
+  opts?: PresencePluginOpts<any>,
 ): HTMLElement => {
   const color = user?.color ?? generateColor(peerId);
   const name = user?.name ?? peerId.slice(0, 8);
@@ -105,8 +106,8 @@ export const defaultCursorBuilder = (
   el.append('\u2060', label, '\u2060');
 
   // Auto-fade label after timeout; re-show on hover is CSS-driven.
-  if (fadeAfterMs > 0) {
-    setTimeout(() => label.classList.add(labelFadedClass), fadeAfterMs);
+  if (opts?.fadeAfterMs ?? 3_000 > 0) {
+    setTimeout(() => label.classList.add(labelFadedClass), opts?.fadeAfterMs ?? 3_000);
   }
 
   return el;

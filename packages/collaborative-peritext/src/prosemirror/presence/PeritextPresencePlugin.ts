@@ -25,7 +25,7 @@ export interface PresencePluginOpts<Meta extends object = object> {
   peritext: PeritextRef;
   /** Custom caret DOM factory. When omitted, the default label-style cursor
    * from `presence-styles.ts` is used. */
-  cursorBuilder?: (peerId: string, user?: PresenceUser) => HTMLElement;
+  cursorBuilder?: CursorBuilder<Meta>;
   /** Custom inline decoration attrs factory for selection highlights. When
    * omitted, a semi-transparent background is used. */
   selectionBuilder?: (peerId: string, user?: PresenceUser) => DecorationAttrs;
@@ -34,6 +34,8 @@ export interface PresencePluginOpts<Meta extends object = object> {
   userFromMeta?: (meta: Meta) => PresenceUser | undefined;
   /** Milliseconds after which the name label is faded (default 3000). */
   fadeAfterMs?: number;
+  /** Milliseconds of inactivity after which the caret is dimmed (default 30000). */
+  dimAfterMs?: number;
   /** Milliseconds of inactivity after which the selection highlight is hidden
    * and the caret is dimmed (default 60000). */
   hideAfterMs?: number;
@@ -41,6 +43,8 @@ export interface PresencePluginOpts<Meta extends object = object> {
    * Pass `0` to disable internal GC. Default: 5000. */
   gcIntervalMs?: number;
 }
+
+export type CursorBuilder<Meta extends object = object> = (peerId: string, user: PresenceUser | undefined, opts: PresencePluginOpts<Meta>) => HTMLElement;
 
 export const createPlugin = <Meta extends object = object>(
   opts: PresencePluginOpts<Meta>,
@@ -93,7 +97,16 @@ const buildDecorations = <Meta extends object>(
   state: EditorState,
   opts: PresencePluginOpts<Meta>,
 ): DecorationSet => {
-  const {manager, peritext: peritextRef, cursorBuilder, selectionBuilder, userFromMeta, fadeAfterMs = 3_000, hideAfterMs = 60_000} = opts;
+  const {
+    manager,
+    peritext: peritextRef,
+    cursorBuilder,
+    selectionBuilder,
+    userFromMeta,
+    fadeAfterMs = 3_000,
+    dimAfterMs = 30_000,
+    hideAfterMs = 60_000,
+  } = opts;
   const localProcessId = manager.getProcessId();
   const decorations: Decoration[] = [];
   const api = peritextRef();
@@ -104,23 +117,21 @@ const buildDecorations = <Meta extends object>(
   const maxPos = Math.max(doc.content.size - 1, 0);
   const now = Date.now();
   const peers = manager.peers;
-
   for (const processId in peers) {
     if (processId === localProcessId) continue;
     const entry: PeerEntry<Meta> = peers[processId];
     const presence: UserPresence<Meta> = entry[0];
     const receivedAt: number = entry[1];
     const age = now - receivedAt;
+    const hide = age >= hideAfterMs;
+    if (hide) continue;
     const selections: unknown[] = presence[UserPresenceIdx.Selections] as unknown[];
     if (!selections) continue;
     const meta = presence[UserPresenceIdx.Meta];
     const user: PresenceUser | undefined = userFromMeta ? userFromMeta(meta) : undefined;
-    const dimmed = age >= hideAfterMs;
-
+    const dimmed = age >= dimAfterMs;
     for (const sel of selections) {
       if (!isRgaSelection(sel)) continue;
-
-      // Decode the RGA DTO into Peritext StablePeritextSelection[]
       let stableSelections: StablePeritextSelection[];
       try {
         stableSelections = peritextPresence.fromDto(txt, sel);
@@ -128,75 +139,49 @@ const buildDecorations = <Meta extends object>(
         continue;
       }
       if (!stableSelections.length) continue;
-
       for (const [range, startIsAnchor] of stableSelections) {
         const anchorPoint = startIsAnchor ? range.start : range.end;
-        const headPoint = startIsAnchor ? range.end : range.start;
-
+        const focusPoint = startIsAnchor ? range.end : range.start;
         let anchor: number;
-        let head: number;
+        let focus: number;
         try {
           anchor = clamp(pointToPmPos(rootBlock, anchorPoint, doc), 0, maxPos);
-          head = clamp(pointToPmPos(rootBlock, headPoint, doc), 0, maxPos);
+          focus = clamp(pointToPmPos(rootBlock, focusPoint, doc), 0, maxPos);
         } catch {
           continue;
         }
-
-        // --- Caret widget at head position ---
-        const caretEl = cursorBuilder
-          ? cursorBuilder(processId, user)
-          : defaultCursorBuilder(processId, user, fadeAfterMs);
-        if (dimmed) caretEl.classList.add(cursorDimmedClass);
-        decorations.push(
-          Decoration.widget(head, () => caretEl, {key: `presence-${processId}`, side: 10}),
-        );
-
-        // --- Selection highlight (if non-collapsed and not hidden) ---
-        if (anchor !== head && !dimmed) {
-          const from = Math.min(anchor, head);
-          const to = Math.max(anchor, head);
-          const attrs = selectionBuilder
-            ? selectionBuilder(processId, user)
-            : defaultSelectionBuilder(processId, user);
-          decorations.push(
-            Decoration.inline(from, to, attrs, {
-              inclusiveEnd: true,
-              inclusiveStart: false,
-            }),
-          );
+        const caretElement = (cursorBuilder ?? defaultCursorBuilder)(processId, user, opts)
+        if (dimmed) caretElement.classList.add(cursorDimmedClass);
+        const caretDecoration = Decoration.widget(focus, () => caretElement, {key: `presence-${processId}`, side: 10});
+        decorations.push(caretDecoration);
+        if (anchor !== focus) {
+          const from = Math.min(anchor, focus);
+          const to = Math.max(anchor, focus);
+          const attrs = (selectionBuilder ?? defaultSelectionBuilder)(processId, user);
+          const rangeDecoration = Decoration.inline(from, to, attrs, {inclusiveEnd: true, inclusiveStart: false});
+          decorations.push(rangeDecoration);
         }
       }
     }
   }
-
   return DecorationSet.create(state.doc, decorations);
 };
 
 const clamp = (v: number, min: number, max: number): number =>
   v < min ? min : v > max ? max : v;
 
-/**
- * Minimal runtime check: an `RgaSelection` is an array of length 8 whose
- * `type` element (index 5) is one of the RGA data types.
- */
 const isRgaSelection = (sel: unknown): sel is RgaSelection => {
   if (!Array.isArray(sel) || sel.length < 8) return false;
   const type = sel[5];
   return type === JsonCrdtDataType.str || type === JsonCrdtDataType.bin || type === JsonCrdtDataType.arr;
 };
 
-// ------------------------------------------------ Local selection DTO helper
-
 /**
- * Build an `RgaSelection` DTO from the current ProseMirror selection, suitable
- * for broadcasting via the presence transport.
- *
- * Returns `null` when the view is blurred or the Peritext ref is unavailable.
+ * Build an `RgaSelection` DTO from the current ProseMirror selection, for
+ * broadcasting via the presence transport. Returns `null` when the view is
+ * blurred or the Peritext ref is unavailable.
  */
-export const buildLocalPresenceDto = (
-  view: EditorView,
-  peritextRef: PeritextRef,
-): RgaSelection | null => {
+export const buildLocalPresenceDto = (view: EditorView, peritextRef: PeritextRef): RgaSelection | null => {
   if (!view.hasFocus()) return null;
   const api = peritextRef();
   if (!api) return null;
