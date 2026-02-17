@@ -80,7 +80,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       className: blockClass,
       style,
       role: 'checkbox',
-      'aria-checked': active,
+      'aria-checked': on,
       type: 'button',
       onMouseLeave,
       onMouseDown,

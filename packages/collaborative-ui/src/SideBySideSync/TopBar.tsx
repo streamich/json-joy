@@ -51,8 +51,14 @@ export const TopBar: React.FC = () => {
             </BasicTooltip>
           </BasicButtonGroup>
         </Flex>
-        <Flex style={{flexDirection: 'row-reverse', alignItems: 'center'}}>
-          <Text size={-2} font="ui3" noselect>seconds</Text>
+        <Flex style={{alignItems: 'center', justifyContent: 'flex-end'}}>
+          <Text size={-2} font="ui3" noselect>Auto-sync</Text>
+          <Space horizontal />
+          <BasicTooltip renderTooltip={() => 'Toggle auto-sync'} nowrap>
+            <Checkbox on={autoSync} small onChange={state.toggleAutoSync} />
+          </BasicTooltip>
+          <Space horizontal />
+          <Text size={-2} font="ui3" noselect>every</Text>
           <Space horizontal />
           <div style={{width: 36}}>
             <Input
@@ -68,13 +74,7 @@ export const TopBar: React.FC = () => {
             />
           </div>
           <Space horizontal />
-          <Text size={-2} font="ui3" noselect>every</Text>
-          <Space horizontal />
-          <BasicTooltip renderTooltip={() => 'Toggle auto-sync'} nowrap>
-            <Checkbox on={autoSync} small onChange={state.toggleAutoSync} />
-          </BasicTooltip>
-          <Space horizontal />
-          <Text size={-2} font="ui3" noselect>Auto-sync</Text>
+          <Text size={-2} font="ui3" noselect>seconds</Text>
         </Flex>
       </Split>
     </Paper>
