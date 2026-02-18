@@ -78,6 +78,8 @@ export class NodeToViewRangeFuzzer {
   createLeafBlockNode(): Node {
     const builder = this.fuzzer.pick([p, pre, h1, h2, h3]);
     this.nodeCount++;
+    // code_block (pre) disallows marks — use plain text only.
+    if (builder === pre) return pre(RandomJson.genString(8));
     return builder(...this.createInlineFragment());
   }
 

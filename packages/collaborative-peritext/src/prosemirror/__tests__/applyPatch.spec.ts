@@ -263,13 +263,11 @@ describe('applyPatch', () => {
     });
   });
 
-  describe('fuzz: random doc - random doc', () => {
+  test('fuzz: random doc - random doc', () => {
     for (let i = 0; i < 100; i++) {
-      test(`fuzz iteration ${i}`, () => {
-        const oldDoc = NodeToViewRangeFuzzer.doc() as Node;
-        const newDoc = NodeToViewRangeFuzzer.doc() as Node;
-        assertPatch(oldDoc, newDoc);
-      });
+      const oldDoc = NodeToViewRangeFuzzer.doc() as Node;
+      const newDoc = NodeToViewRangeFuzzer.doc() as Node;
+      assertPatch(oldDoc, newDoc);
     }
   });
 
