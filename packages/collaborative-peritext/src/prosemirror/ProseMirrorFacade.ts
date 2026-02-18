@@ -2,10 +2,11 @@ import {Plugin, TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {ReplaceStep} from 'prosemirror-transform';
 import {history} from 'prosemirror-history';
-import {Mark, Slice} from 'prosemirror-model';
+import {Mark} from 'prosemirror-model';
 import {FromPm} from './sync/FromPm';
 import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import {ToPmNode} from './sync/toPmNode';
+import {applyPatch} from './sync/applyPatch';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
@@ -71,98 +72,6 @@ const tryExtractPeritextOperation = (
   const gap = pmPosToGap(txt, doc, step.from);
   if (gap < 0) return;
   return [gap, deleteLen, insertedText];
-};
-
-/**
- * Recursively diff two ProseMirror nodes of the same type and append minimal
- * steps to `tr`, preserving position mappings for the history plugin. Callers
- * must process sibling nodes **right-to-left** so that earlier positions remain
- * valid after later modifications.
- */
-const applyDeepDiff = (
-  tr: Transaction,
-  oldNode: PmNode,
-  newNode: PmNode,
-  baseOffset: number,
-): void => {
-  const oldContent = oldNode.content;
-  const newContent = newNode.content;
-  if (oldContent.eq(newContent)) {
-    if (!oldNode.sameMarkup(newNode)) {
-      tr.setNodeMarkup(baseOffset, null, newNode.attrs, newNode.marks);
-    }
-    return;
-  }
-  if (oldNode.isTextblock) {
-    const start = oldContent.findDiffStart(newContent);
-    if (start !== null) {
-      let {a: endA, b: endB} = oldContent.findDiffEnd(newContent)!;
-      const overlap = start - Math.min(endA, endB);
-      if (overlap > 0) { endA += overlap; endB += overlap; }
-      const from = baseOffset + 1 + start;
-      const to = baseOffset + 1 + endA;
-      const slice = newContent.cut(start, endB);
-      if (from !== to || slice.size > 0) {
-        tr.replace(from, to, new Slice(slice, 0, 0));
-      }
-    }
-    if (!oldNode.sameMarkup(newNode)) {
-      tr.setNodeMarkup(baseOffset, null, newNode.attrs, newNode.marks);
-    }
-    return;
-  }
-  const oldCount = oldNode.childCount;
-  const newCount = newNode.childCount;
-  const minCount = Math.min(oldCount, newCount);
-  let pfx = 0;
-  while (pfx < minCount && oldNode.child(pfx).eq(newNode.child(pfx))) pfx++;
-  if (pfx === minCount && oldCount === newCount) {
-    if (!oldNode.sameMarkup(newNode)) {
-      tr.setNodeMarkup(baseOffset, null, newNode.attrs, newNode.marks);
-    }
-    return;
-  }
-  let sfx = 0;
-  while (
-    sfx < (minCount - pfx) &&
-    oldNode.child(oldCount - 1 - sfx).eq(newNode.child(newCount - 1 - sfx))
-  ) sfx++;
-  const oldEnd = oldCount - sfx;
-  const newEnd = newCount - sfx;
-  const oldChanged = oldEnd - pfx;
-  const newChanged = newEnd - pfx;
-  let childOffset = baseOffset + 1;
-  for (let i = 0; i < pfx; i++) childOffset += oldNode.child(i).nodeSize;
-  if (oldChanged === newChanged) {
-    const offsets: number[] = new Array(oldChanged);
-    let off = childOffset;
-    for (let i = 0; i < oldChanged; i++) {
-      offsets[i] = off;
-      off += oldNode.child(pfx + i).nodeSize;
-    }
-    for (let i = oldChanged - 1; i >= 0; i--) {
-      const oc = oldNode.child(pfx + i);
-      const nc = newNode.child(pfx + i);
-      if (oc.eq(nc)) continue;
-      if (oc.type === nc.type) {
-        applyDeepDiff(tr, oc, nc, offsets[i]);
-      } else {
-        tr.replaceWith(offsets[i], offsets[i] + oc.nodeSize, nc);
-      }
-    }
-  } else {
-    let to = childOffset;
-    for (let i = 0; i < oldChanged; i++) to += oldNode.child(pfx + i).nodeSize;
-    const children: PmNode[] = [];
-    for (let i = pfx; i < newEnd; i++) children.push(newNode.child(i));
-    if (children.length) {
-      tr.replaceWith(childOffset, to, children);
-    } else if (childOffset !== to) {
-      tr.delete(childOffset, to);
-    }
-  }
-  if (!oldNode.sameMarkup(newNode))
-    tr.setNodeMarkup(baseOffset, null, newNode.attrs, newNode.marks);
 };
 
 export class ProseMirrorFacade implements RichtextEditorFacade {
@@ -276,65 +185,9 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const pmNode = this.toPm.convert(fragment);
     const view = this.view;
     const state = view.state;
-    const oldDoc = state.doc;
-    const oldCount = oldDoc.childCount;
-    const newCount = pmNode.childCount;
-    const minCount = Math.min(oldCount, newCount);
-
-    // Find longest common prefix (children that are identical).
-    let prefix = 0;
-    while (prefix < minCount && oldDoc.child(prefix).eq(pmNode.child(prefix))) prefix++;
-
-    // All children match and counts are equal — nothing changed.
-    if (prefix === minCount && oldCount === newCount) return;
-
-    // Find longest common suffix.
-    let suffix = 0;
-    while (
-      suffix < (minCount - prefix) &&
-      oldDoc.child(oldCount - 1 - suffix).eq(pmNode.child(newCount - 1 - suffix))
-    ) suffix++;
-
     const {selection, tr} = state;
-    const oldEnd = oldCount - suffix;
-    const newEnd = newCount - suffix;
-    const oldChanged = oldEnd - prefix;
-    const newChanged = newEnd - prefix;
 
-    if (oldChanged === newChanged) {
-      // Same number of changed children — pairwise deep diff (right-to-left).
-      let childOffset = 0;
-      for (let i = 0; i < prefix; i++) childOffset += oldDoc.child(i).nodeSize;
-      const offsets: number[] = new Array(oldChanged);
-      let off = childOffset;
-      for (let i = 0; i < oldChanged; i++) {
-        offsets[i] = off;
-        off += oldDoc.child(prefix + i).nodeSize;
-      }
-      for (let i = oldChanged - 1; i >= 0; i--) {
-        const oc = oldDoc.child(prefix + i);
-        const nc = pmNode.child(prefix + i);
-        if (oc.eq(nc)) continue;
-        if (oc.type === nc.type) {
-          applyDeepDiff(tr, oc, nc, offsets[i]);
-        } else {
-          tr.replaceWith(offsets[i], offsets[i] + oc.nodeSize, nc);
-        }
-      }
-    } else {
-      // Different number of changed children — wholesale replace.
-      let from = 0;
-      for (let i = 0; i < prefix; i++) from += oldDoc.child(i).nodeSize;
-      let to = from;
-      for (let i = prefix; i < oldEnd; i++) to += oldDoc.child(i).nodeSize;
-      const newChildren: PmNode[] = [];
-      for (let i = prefix; i < newEnd; i++) newChildren.push(pmNode.child(i));
-      if (newChildren.length) {
-        tr.replaceWith(from, to, newChildren);
-      } else if (from !== to) {
-        tr.delete(from, to);
-      }
-    }
+    applyPatch(tr, state.doc, pmNode);
 
     if (!tr.docChanged) return;
 
