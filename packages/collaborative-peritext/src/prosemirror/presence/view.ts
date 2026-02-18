@@ -36,7 +36,7 @@ const lifecycleAnimation = keyframes({
 
 const cursorLabelClass = rule({
   pos: 'absolute',
-  bottom: '100%',
+  bottom: 'calc(100% + 1px)',
   left: '50%',
   transform: 'translateX(-50%) translateY(0)',
   whiteSpace: 'nowrap',
@@ -114,6 +114,7 @@ interface CursorEntry {
  * Manages cached cursor DOM elements keyed by remote peer id.
  *
  * By caching elements we ensure:
+ *
  * 1. CSS animations survive ProseMirror decoration rebuilds (the same
  *    `HTMLElement` is returned from the `toDOM` factory).
  * 2. When a remote cursor moves, the lifecycle animation is restarted so the
