@@ -1,5 +1,5 @@
 import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions';
-import {FromPm} from '../FromPm';
+import {FromPm} from '../sync/FromPm';
 import {Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
 import {EditorState, TextSelection} from 'prosemirror-state';
