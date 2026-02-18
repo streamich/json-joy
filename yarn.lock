@@ -1857,6 +1857,7 @@ __metadata:
     prosemirror-schema-list: "npm:^1.5.1"
     prosemirror-state: "npm:^1.4.4"
     prosemirror-test-builder: "npm:^1.1.1"
+    prosemirror-transform: "npm:^1.11.0"
     prosemirror-view: "npm:^1.41.5"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
@@ -11578,7 +11579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.10.2, prosemirror-transform@npm:^1.7.3":
+"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.10.2, prosemirror-transform@npm:^1.11.0, prosemirror-transform@npm:^1.7.3":
   version: 1.11.0
   resolution: "prosemirror-transform@npm:1.11.0"
   dependencies:

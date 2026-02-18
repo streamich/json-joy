@@ -10,14 +10,38 @@ import {applyPatch} from './sync/applyPatch';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
 import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
-import {createPlugin} from './presence/plugin';
+import {createPlugin as createPresencePlugin} from './presence/plugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
 import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
 import type {Node as PmNode} from 'prosemirror-model';
 import type {Transaction} from 'prosemirror-state';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+import type {PresencePluginOpts} from './presence/plugin';
 import type {SyncPluginTransactionMeta} from './sync/types';
+
+export interface ProseMirrorFacadeOpts {
+  /**
+   * Whether to install the `prosemirror-history` undo/redo plugin.
+   *
+   * - `true` — always install the history plugin (even if one is already
+   *   present in the editor state).
+   * - `false` — never install the history plugin.
+   * - `undefined` (default) — install the history plugin only when the editor
+   *   state does not already contain one.
+   */
+  history?: boolean;
+
+  /**
+   * Configuration for the collaborative presence plugin that renders remote
+   * cursors and selections. Pass an object with at least a manager field to
+   * enable the plugin, or `false` / `undefined` to disable it.
+   *
+   * When a {@link PresenceManager} instance is passed directly (not wrapped in
+   * an options object), it is used with default presence-plugin settings.
+   */
+  presence?: PresenceManager | PresencePluginOpts | false;
+}
 
 /**
  * Attempt to extract a single `PeritextOperation` from a single 1-step
@@ -98,7 +122,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
   constructor(
     protected readonly view: EditorView,
     protected readonly peritext: PeritextRef,
-    protected readonly presence?: PresenceManager,
+    protected readonly opts: ProseMirrorFacadeOpts = {},
   ) {
     const self = this;
     const state = view.state;
@@ -162,12 +186,19 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
       },
     });
     this.toPm = new ToPmNode(state.schema);
-    const presencePlugin = presence ? createPlugin({
-      peritext,
-      manager: presence,
-    }) : undefined;
+    const {presence: presenceOpt, history: historyOpt} = this.opts;
+    let presencePlugin: Plugin | undefined;
+    if (presenceOpt) {
+      const presencePluginOpts: PresencePluginOpts =
+        typeof (presenceOpt as PresencePluginOpts).manager === 'object'
+          ? {...(presenceOpt as PresencePluginOpts), peritext}
+          : {manager: presenceOpt as PresenceManager, peritext};
+      presencePlugin = createPresencePlugin(presencePluginOpts);
+    }
     const hasHistory = state.plugins.some(p => (p as any).key === 'history$');
-    const plugins: Plugin[] = hasHistory ? [plugin] : [plugin, history()];
+    const installHistory =
+      historyOpt === true ? true : historyOpt === false ? false : !hasHistory;
+    const plugins: Plugin[] = installHistory ? [plugin, history()] : [plugin];
     if (presencePlugin) plugins.push(presencePlugin);
     const updatedPlugins = state.plugins.concat(plugins);
     const newState = state.reconfigure({ plugins: updatedPlugins });

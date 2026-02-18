@@ -1,6 +1,6 @@
 import {s} from 'json-joy/lib/json-crdt';
 import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions//ModelWithExt';
-import {FromPm} from '../FromPm';
+import {FromPm} from '../sync/FromPm';
 import {Node} from 'prosemirror-model';
 import {schema, doc, blockquote, p, em, strong, eq, h2, h1} from 'prosemirror-test-builder';
 import {fuzzer1} from './fixtures';

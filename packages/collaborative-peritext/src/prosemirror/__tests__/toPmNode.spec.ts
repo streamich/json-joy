@@ -1,6 +1,6 @@
-import { ToPmNode } from '../toPmNode';
+import { ToPmNode } from '../sync/toPmNode';
 import { ModelWithExt, ext, CommonSliceType } from 'json-joy/lib/json-crdt-extensions';
-import { FromPm } from '../FromPm';
+import { FromPm } from '../sync/FromPm';
 import { PmJsonNode } from '../types';
 import { Schema } from 'prosemirror-model';
 import { schema } from 'prosemirror-test-builder';

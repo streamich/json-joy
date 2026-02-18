@@ -47,7 +47,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, read
 
     // Bind Model to ProseMirror
     const peritextRef = () => (model as any).s.toExt();
-    const facade = new ProseMirrorFacade(view, peritextRef, presence);
+    const facade = new ProseMirrorFacade(view, peritextRef, {presence});
     const unbind = PeritextBinding.bind(peritextRef, facade);
 
     // Re-render after setup
