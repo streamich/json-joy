@@ -6,6 +6,7 @@ import {SYNC_PLUGIN_KEY, TransactionOrigin} from '../constants';
 import {pmPosToPoint, pointToPmPos} from '../util';
 import {UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
 import * as view from './view';
+import {CursorManager} from './view';
 import type {PresenceManager, PresenceEvent, PeerEntry} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
 import type {RgaSelection, UserPresence} from '@jsonjoy.com/collaborative-presence/lib/types';
 import type {StablePeritextSelection} from '@jsonjoy.com/collaborative-presence/lib/peritext';
@@ -53,17 +54,22 @@ export const createPlugin = <Meta extends object = object>(
   opts: PresencePluginOpts<Meta>,
 ): Plugin<DecorationSet> => {
   const {manager, peritext, gcIntervalMs = 5_000} = opts;
+
+  // Shared cursor DOM cache — lives for the lifetime of the plugin so that
+  // CSS animations survive decoration rebuilds.
+  const cursorManager = new CursorManager<Meta>();
+
   return new Plugin<DecorationSet>({
     key: PRESENCE_PLUGIN_KEY,
     state: {
       init(_, state) {
-        return buildDecorations(state, opts);
+        return buildDecorations(state, opts, cursorManager);
       },
       apply(tr, prevDecorations, _oldState, newState) {
         const syncMeta = tr.getMeta(SYNC_PLUGIN_KEY) as SyncPluginTransactionMeta | undefined;
-        if (syncMeta?.orig === TransactionOrigin.REMOTE) return buildDecorations(newState, opts);
+        if (syncMeta?.orig === TransactionOrigin.REMOTE) return buildDecorations(newState, opts, cursorManager);
         const presenceMeta = tr.getMeta(PRESENCE_PLUGIN_KEY);
-        if (presenceMeta?.presenceUpdated) return buildDecorations(newState, opts);
+        if (presenceMeta?.presenceUpdated) return buildDecorations(newState, opts, cursorManager);
         // Local edit — efficiently remap through the mapping.
         return prevDecorations.map(tr.mapping, tr.doc);
       },
@@ -95,6 +101,7 @@ export const createPlugin = <Meta extends object = object>(
         destroy() {
           unsubscribe();
           clearInterval(gcTimer as any);
+          cursorManager.destroy();
         },
       };
     },
@@ -108,6 +115,7 @@ export const createPlugin = <Meta extends object = object>(
 const buildDecorations = <Meta extends object>(
   state: EditorState,
   opts: PresencePluginOpts<Meta>,
+  cursorMgr: CursorManager<Meta>,
 ): DecorationSet => {
   const {
     manager,
@@ -127,6 +135,7 @@ const buildDecorations = <Meta extends object>(
   const maxPos = Math.max(doc.content.size - 1, 0);
   const now = Date.now();
   const peers = manager.peers;
+  const activePeerIds = new Set<string>();
   for (const processId in peers) {
     if (processId === localProcessId) continue;
     const entry: PeerEntry<Meta> = peers[processId];
@@ -159,7 +168,8 @@ const buildDecorations = <Meta extends object>(
         } catch {
           continue;
         }
-        const caretElement = renderCursor(processId, user, opts);
+        activePeerIds.add(processId);
+        const caretElement = cursorMgr.getOrCreate(processId, focus, user, opts, receivedAt, renderCursor);
         const caretDecoration = Decoration.widget(focus, () => caretElement, {key: `presence-${processId}`, side: 10});
         decorations.push(caretDecoration);
         if (anchor !== focus) {
@@ -172,6 +182,8 @@ const buildDecorations = <Meta extends object>(
       }
     }
   }
+  // Remove cached DOM elements for peers that are no longer active.
+  cursorMgr.prune(activePeerIds);
   return DecorationSet.create(state.doc, decorations);
 };
 
