@@ -1877,6 +1877,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/collaborative-prosemirror@workspace:packages/collaborative-prosemirror":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/collaborative-prosemirror@workspace:packages/collaborative-prosemirror"
+  dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
+    "@jsonjoy.com/json-equal": "workspace:*"
+    "@jsonjoy.com/json-random": "workspace:^"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    "@storybook/react": "npm:^10.2.8"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    jest-environment-jsdom: "npm:^30.2.0"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
+    prosemirror-example-setup: "npm:^1.2.3"
+    prosemirror-history: "npm:^1.5.0"
+    prosemirror-model: "npm:^1.25.4"
+    prosemirror-schema-basic: "npm:^1.2.4"
+    prosemirror-schema-list: "npm:^1.5.1"
+    prosemirror-state: "npm:^1.4.4"
+    prosemirror-test-builder: "npm:^1.1.1"
+    prosemirror-transform: "npm:^1.11.0"
+    prosemirror-view: "npm:^1.41.5"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/collaborative-quill-react@workspace:*, @jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"

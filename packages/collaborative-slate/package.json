@@ -107,6 +107,7 @@
     }
   },
   "devDependencies": {
+    "@jsonjoy.com/collaborative-ui": "workspace:*",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@udecode/plate": "^49.0.0",

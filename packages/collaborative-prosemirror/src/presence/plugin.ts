@@ -10,7 +10,7 @@ import {CursorManager} from './view';
 import type {PresenceManager, PresenceEvent, PeerEntry} from '@jsonjoy.com/collaborative-presence/lib/PresenceManager';
 import type {RgaSelection, UserPresence} from '@jsonjoy.com/collaborative-presence/lib/types';
 import type {StablePeritextSelection} from '@jsonjoy.com/collaborative-presence/lib/peritext';
-import type {PeritextRef} from '../../types';
+import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {EditorView, DecorationAttrs} from 'prosemirror-view';
 import type {EditorState} from 'prosemirror-state';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';

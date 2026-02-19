@@ -13,7 +13,7 @@ import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
 import {createPlugin as createPresencePlugin} from './presence/plugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
-import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '../types';
+import type {PeritextRef, RichtextEditorFacade, PeritextOperation} from '@jsonjoy.com/collaborative-peritext';
 import type {Node as PmNode} from 'prosemirror-model';
 import type {Transaction} from 'prosemirror-state';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';

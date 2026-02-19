@@ -30,7 +30,7 @@ The package requires ProseMirror core libraries and `json-joy` to be installed
 in your project:
 
 ```bash
-npm install json-joy prosemirror-model prosemirror-state prosemirror-view prosemirror-history
+npm install json-joy @jsonjoy.com/collaborative-peritext prosemirror-model prosemirror-state prosemirror-view prosemirror-history
 ```
 
 For collaborative presence (remote cursors), also install:
