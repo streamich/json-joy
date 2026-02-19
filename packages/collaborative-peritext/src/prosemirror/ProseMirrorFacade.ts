@@ -20,29 +20,6 @@ import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {PresencePluginOpts} from './presence/plugin';
 import type {SyncPluginTransactionMeta} from './sync/types';
 
-export interface ProseMirrorFacadeOpts {
-  /**
-   * Whether to install the `prosemirror-history` undo/redo plugin.
-   *
-   * - `true` — always install the history plugin (even if one is already
-   *   present in the editor state).
-   * - `false` — never install the history plugin.
-   * - `undefined` (default) — install the history plugin only when the editor
-   *   state does not already contain one.
-   */
-  history?: boolean;
-
-  /**
-   * Configuration for the collaborative presence plugin that renders remote
-   * cursors and selections. Pass an object with at least a manager field to
-   * enable the plugin, or `false` / `undefined` to disable it.
-   *
-   * When a {@link PresenceManager} instance is passed directly (not wrapped in
-   * an options object), it is used with default presence-plugin settings.
-   */
-  presence?: PresenceManager | PresencePluginOpts | false;
-}
-
 /**
  * Attempt to extract a single `PeritextOperation` from a single 1-step
  * ProseMirror transaction. Returns `undefined` when the transaction contains
@@ -97,6 +74,29 @@ const tryExtractPeritextOperation = (
   if (gap < 0) return;
   return [gap, deleteLen, insertedText];
 };
+
+export interface ProseMirrorFacadeOpts {
+  /**
+   * Whether to install the `prosemirror-history` undo/redo plugin.
+   *
+   * - `true` — always install the history plugin (even if one is already
+   *   present in the editor state).
+   * - `false` — never install the history plugin.
+   * - `undefined` (default) — install the history plugin only when the editor
+   *   state does not already contain one.
+   */
+  history?: boolean;
+
+  /**
+   * Configuration for the collaborative presence plugin that renders remote
+   * cursors and selections. Pass an object with at least a manager field to
+   * enable the plugin, or `false` / `undefined` to disable it.
+   *
+   * When a {@link PresenceManager} instance is passed directly (not wrapped in
+   * an options object), it is used with default presence-plugin settings.
+   */
+  presence?: PresenceManager | PresencePluginOpts | false;
+}
 
 export class ProseMirrorFacade implements RichtextEditorFacade {
   _disposed = false;
@@ -217,11 +217,8 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     const view = this.view;
     const state = view.state;
     const {selection, tr} = state;
-
     applyPatch(tr, state.doc, pmNode);
-
     if (!tr.docChanged) return;
-
     const newAnchor = tr.mapping.map(selection.anchor);
     const newHead = tr.mapping.map(selection.head);
     tr.setSelection(TextSelection.create(tr.doc, newAnchor, newHead));

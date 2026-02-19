@@ -1835,7 +1835,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext":
+"@jsonjoy.com/collaborative-peritext@workspace:*, @jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-peritext@workspace:packages/collaborative-peritext"
   dependencies:
@@ -1932,6 +1932,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate"
   dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@udecode/plate": "npm:^49.0.0"
@@ -1942,6 +1944,7 @@ __metadata:
     "@udecode/plate-heading": "npm:^49.0.0"
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.6"
+    json-joy: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     slate: "npm:^0.123.0"

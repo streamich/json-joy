@@ -116,3 +116,7 @@ export interface SlatePoint {
 }
 
 export type SlatePath = number[];
+
+// --------------------------------------------------------------------- editor
+
+export type SlateEditorOnChange = (options?: { operation?: SlateOperation }) => void;

@@ -80,6 +80,11 @@
       "node_modules"
     ]
   },
+  "dependencies": {
+    "@jsonjoy.com/collaborative-peritext": "workspace:*",
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
+    "json-joy": "workspace:*"
+  },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",

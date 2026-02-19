@@ -2,7 +2,9 @@ import * as React from 'react';
 import {useCallback, useMemo, useState} from 'react';
 import {createEditor, Descendant, Editor, Transforms, Element as SlateElement, BaseEditor} from 'slate';
 import {Slate, Editable, withReact, RenderLeafProps, RenderElementProps, ReactEditor} from 'slate-react';
-import {slateInitialValue} from '../__demos__/shared/initialValue';
+import {SlateFacade} from '../SlateFacade';
+import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
+import type {Model} from 'json-joy/lib/json-crdt';
 
 // Custom types for the editor
 type CustomText = {
@@ -304,12 +306,32 @@ const ToolbarSeparator: React.FC = () => (
   <div style={{width: '1px', height: '24px', backgroundColor: '#e2e8f0', margin: '0 8px'}} />
 );
 
-export const SlateEditor: React.FC = () => {
+export interface SlateEditorProps {
+  model: Model<any>;
+  onEditor?: (editor: Editor) => void;
+}
+
+// Placeholder initial value used only during the brief window before the
+// binding performs its first sync (replaces children from the CRDT model).
+const placeholderValue: Descendant[] = [{type: 'paragraph', children: [{text: ''}]} as any];
+
+export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
   // Create editor instance (memoized to persist across renders)
   const editor = useMemo(() => withReact(createEditor()), []);
 
   // Force re-render for toolbar state
   const [, forceUpdate] = useState({});
+
+  // Bind Model to Slate editor
+  React.useEffect(() => {
+    const peritextRef = () => (model as any).s.toExt();
+    const facade = new SlateFacade(editor, peritextRef);
+    const unbind = PeritextBinding.bind(peritextRef, facade);
+    if (onEditor) onEditor(editor);
+    return () => {
+      unbind();
+    };
+  }, [model, editor, onEditor]);
 
   // Memoized render functions
   const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, []);
@@ -362,7 +384,7 @@ export const SlateEditor: React.FC = () => {
     >
       <Slate
         editor={editor}
-        initialValue={slateInitialValue as Descendant[]}
+        initialValue={placeholderValue}
         onSelectionChange={() => forceUpdate({})}
       >
         {/* Toolbar */}
@@ -380,7 +402,7 @@ export const SlateEditor: React.FC = () => {
           {/* Block buttons */}
           <BlockButton format="heading" level={1} label="Heading 1" editor={editor} icon="H1" />
           <BlockButton format="heading" level={2} label="Heading 2" editor={editor} icon="H2" />
-          <BlockButton format="blockquote" label="Quote" editor={editor} icon="❝" />
+          <BlockButton format="blockquote" label="Quote" editor={editor} icon="&#10077;" />
           <BlockButton format="code-block" label="Code Block" editor={editor} icon="{ }" />
 
           <ToolbarSeparator />
