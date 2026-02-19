@@ -6,7 +6,7 @@ import {schema} from 'prosemirror-schema-basic';
 import {addListNodes} from 'prosemirror-schema-list';
 import {exampleSetup} from 'prosemirror-example-setup';
 import {ProseMirrorFacade} from '../ProseMirrorFacade';
-import {PeritextBinding} from '../../PeritextBinding';
+import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext';
 import type {Model} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 

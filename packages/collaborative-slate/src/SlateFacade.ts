@@ -113,7 +113,7 @@ export class SlateFacade implements RichtextEditorFacade {
     if (!newChildren.length) return;
     this._isRemote = true;
     try {
-      const selection = editor.selection; // TODO: update selections
+      editor.children = newChildren as any;
       editor.onChange();
     } finally {
       this._isRemote = false;

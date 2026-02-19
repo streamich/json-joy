@@ -1,5 +1,5 @@
 import * as React from 'react';
-import preview from '../../../../../.storybook/preview';
+import preview from '../../../../.storybook/preview';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
 import {DemoCard} from '@jsonjoy.com/collaborative-ui/lib/DemoCard';
 import {SideBySideSync} from '@jsonjoy.com/collaborative-ui/lib/SideBySideSync';
