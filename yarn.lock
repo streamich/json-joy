@@ -1966,6 +1966,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/collaborative-peritext": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@udecode/plate": "npm:^49.0.0"
@@ -2021,7 +2022,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui":
+"@jsonjoy.com/collaborative-ui@workspace:*, @jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-ui@workspace:packages/collaborative-ui"
   dependencies:
