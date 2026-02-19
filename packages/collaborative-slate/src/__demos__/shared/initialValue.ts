@@ -127,10 +127,7 @@ export const slateInitialValue: SlateElement[] = [
   },
 ];
 
-// ============================================================================
 // Plate.js format (uses 'p', 'h1', 'h2', 'blockquote', 'code_block', 'code_line')
-// ============================================================================
-
 export const plateInitialValue = [
   {
     type: 'h1',

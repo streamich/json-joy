@@ -24,6 +24,7 @@ const packages = [
   'collaborative-quill-react',
   'collaborative-str',
   'collaborative-peritext',
+  'collaborative-slate',
   'collaborative-ui',
   'json-joy',
   'ui',
