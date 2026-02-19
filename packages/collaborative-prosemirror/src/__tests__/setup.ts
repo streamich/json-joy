@@ -5,7 +5,7 @@ import {schema} from 'prosemirror-test-builder';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {ProseMirrorFacade} from '../ProseMirrorFacade';
-import {PeritextBinding} from '../../PeritextBinding';
+import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext';
 
 export const assertCanConvert = (doc: Node) => {
   const viewRange = FromPm.convert(doc);

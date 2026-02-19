@@ -23,7 +23,7 @@ export class SlateTraceRecorder {
     initialValue: SlateDocument = [{type: 'paragraph', children: [{text: ''}]}],
   ): SlateTraceRecorder {
     const editor = createEditor();
-    editor.children = clone(initialValue);
+    (editor.children as unknown) = clone(initialValue);
     return new SlateTraceRecorder(editor);
   }
 
@@ -71,13 +71,13 @@ export class SlateTraceRunner {
   public static readonly from = (trace: SlateTrace): SlateTraceRunner => new SlateTraceRunner(trace);
 
   constructor(readonly trace: SlateTrace) {
-    this.editor.children = clone(trace.start);
+    (this.editor.children as unknown) = clone(trace.start);
   }
 
   public readonly next = (): SlateOperation | undefined => {
     const operation = this.trace.operations[this.nextOpIdx++];
     if (!operation) return;
-    Transforms.transform(this.editor, operation);
+    Transforms.transform(this.editor, operation as any);
     return operation;
   };
 

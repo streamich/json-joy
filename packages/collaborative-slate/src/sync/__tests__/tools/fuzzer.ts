@@ -96,7 +96,7 @@ export class SlateFuzzer {
       this.editor = editor;
     } else {
       this.editor = createEditor();
-      this.editor.children = createEmptyDocument();
+      (this.editor.children as unknown) = createEmptyDocument();
     }
   }
 
