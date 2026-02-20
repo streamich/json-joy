@@ -2,8 +2,8 @@ import {createEditor} from 'slate';
 import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '../sync/FromSlate';
 import {toSlate} from '../sync/toSlate';
-import {slatePointToGap, slatePointToPoint, pointToSlatePoint} from '../util';
-import {p, txt as textNode, h1, h2, blockquote, em, strong, ul, li} from '../sync/__tests__/tools/builder';
+import {slatePointToGap, slatePointToPoint, pointToSlatePoint} from '../positions';
+import {p, txt as textNode, h1, h2, blockquote, em, ul, li} from '../sync/__tests__/tools/builder';
 import type {SlateDocument, SlateRange} from '../types';
 import type {Editor} from 'slate';
 
