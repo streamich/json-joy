@@ -83,6 +83,7 @@
   "dependencies": {
     "@jsonjoy.com/collaborative-peritext": "workspace:*",
     "@jsonjoy.com/collaborative-presence": "workspace:*",
+    "@jsonjoy.com/json-equal": "workspace:*",
     "json-joy": "workspace:*"
   },
   "peerDependencies": {

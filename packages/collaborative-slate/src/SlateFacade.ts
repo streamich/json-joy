@@ -1,6 +1,7 @@
 import {FromSlate} from './sync/FromSlate';
-import {toSlate} from './sync/toSlate';
-import {slatePointToGap, slatePointToPoint, pointToSlatePoint} from './util';
+import {ToSlateNode} from './sync/toSlateNode';
+import {applyPatch} from './sync/applyPatch';
+import {slatePointToGap, slatePointToPoint, pointToSlatePoint} from './positions';
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {Editor, BaseOperation, Point as SlatePoint} from 'slate';
@@ -46,6 +47,7 @@ const tryExtractPeritextOperation = (
 
 export interface SlateFacadeOpts {}
 
+
 /**
  * Slate.js implementation of {@link RichtextEditorFacade}. Connects a Slate.js
  * `Editor` to a json-joy JSON CRDT "peritext" node.
@@ -64,6 +66,9 @@ export class SlateFacade implements RichtextEditorFacade {
    * be ignored. */
   private _isRemote = false;
   private _disposed = false;
+
+  /** Stateful converter that caches Slate nodes by Peritext `Block.hash`. */
+  private readonly _toSlate = new ToSlateNode();
 
   private readonly _origOnChange: SlateEditorOnChange | undefined;
   private readonly _slateOnChange: SlateEditorOnChange;
@@ -105,15 +110,12 @@ export class SlateFacade implements RichtextEditorFacade {
 
   set(fragment: Fragment<string>): void {
     if (this._disposed) return;
-    const editor = this.editor;
-    const txt = this.peritext().txt;
-    // TODO: Use the `fragment` parameter and add caching, similar to ProseMirror `const pmNode = this.toPm.convert(fragment);`
-    const newChildren = toSlate(txt);
-    // TODO: on `!newChildren.length`, shall we set the doc to empty?
+    const newChildren = this._toSlate.convert(fragment);
     if (!newChildren.length) return;
+    const editor = this.editor;
     this._isRemote = true;
     try {
-      editor.children = newChildren as any;
+      applyPatch(editor, newChildren);
       editor.onChange();
     } finally {
       this._isRemote = false;

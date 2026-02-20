@@ -1967,6 +1967,7 @@ __metadata:
     "@jsonjoy.com/collaborative-peritext": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/json-equal": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@udecode/plate": "npm:^49.0.0"
