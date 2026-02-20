@@ -3,8 +3,6 @@ import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
 import type {Editor} from 'slate';
 import type {SlatePoint} from './types';
 
-// TODO: Add tests for point conversion utils
-
 /**
  * Convert a Slate point (path + offset) to a Peritext gap position (the integer
  * coordinate system used by `Peritext.insAt` / `Peritext.delAt`). Returns `-1`
@@ -60,10 +58,9 @@ export const slatePointToPoint = (
 };
 
 /**
- * Convert a Peritext {@link Point} to a Slate point (path + offset).
- *
- * Walks the Peritext block tree to find the leaf block containing the point,
- * then maps back to the corresponding Slate path + offset.
+ * Convert a Peritext {@link Point} to a Slate point (path + offset). Walks the
+ * Peritext block tree to find the leaf block containing the point, then maps
+ * back to the corresponding Slate path + offset.
  */
 export const pointToSlatePoint = (
   block: Block<string> | LeafBlock<string>,
