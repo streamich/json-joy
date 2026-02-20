@@ -127,3 +127,16 @@ export const nestedInlinesWithAttributes2: SlateDocument = [
     txt('.'),
   ),
 ];
+
+export const documents = {
+  paragraph,
+  twoBlockquotes,
+  inlineStyles,
+  nestedInlines,
+  nestedInlinesWithAttributes,
+  nestedInlinesWithAttributes2,
+  blockquotes,
+  headings,
+  realisticDoc,
+  paragraphs,
+};

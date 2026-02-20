@@ -9,7 +9,6 @@ const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
       const text = inline.text();
       const attr = inline.attr();
       const attrKeys = Object.keys(attr);
-      // Skip only if there's no text AND no decorations
       if (!text && attrKeys.length === 0) continue;
       const textNode: SlateTextNode = {text: text || ''};
       const length = attrKeys.length;
