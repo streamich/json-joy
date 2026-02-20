@@ -380,6 +380,10 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
         borderRadius: '12px',
         overflow: 'hidden',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        width: '100%',
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box',
       }}
     >
       <Slate
@@ -418,7 +422,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
         <Editable
           style={{
             padding: '20px 24px',
-            minHeight: '400px',
+            minHeight: '340px',
             fontSize: '16px',
             lineHeight: 1.6,
             outline: 'none',
