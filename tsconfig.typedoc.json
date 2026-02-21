@@ -1,6 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "include": ["packages/*/src"],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/__demos__/**",
+    ".storybook/**"
+  ],
   "typedocOptions": {
     "entryPoints": [
       "packages/json-joy/src/json-crdt/index.ts",
@@ -12,14 +20,8 @@
       "packages/json-joy/src/json-crdt-patch/codec/verbose/index.ts",
       "packages/json-joy/src/json-crdt-patch/codec/compact/index.ts",
       "packages/json-joy/src/json-crdt-patch/codec/binary/index.ts",
-      "packages/json-joy/src/json-pack/index.ts",
       "packages/json-joy/src/json-patch/index.ts",
-      "packages/json-joy/src/json-patch-ot/index.ts",
-      "packages/json-joy/src/json-pointer/index.ts",
-      "packages/json-joy/src/json-rpc/index.ts",
-      "packages/json-joy/src/json-rx/index.ts",
-      "packages/json-joy/src/json-type/index.ts",
-      "packages/json-joy/src/json-random/index.ts"
+      "packages/json-joy/src/json-patch-ot/index.ts"
     ],
     "out": "typedocs"
   }
