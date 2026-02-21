@@ -1,3 +1,4 @@
+import {HistoryEditor, withHistory} from 'slate-history';
 import {FromSlate} from './sync/FromSlate';
 import {ToSlateNode} from './sync/toSlateNode';
 import {applyPatch} from './sync/applyPatch';
@@ -45,7 +46,23 @@ const tryExtractPeritextOperation = (
 };
 
 
-export interface SlateFacadeOpts {}
+export interface SlateFacadeOpts {
+  /**
+   * Whether to install the `slate-history` undo/redo plugin.
+   *
+   * - `true` — always install `withHistory` (even if one is already
+   *   present on the editor).
+   * - `false` — never install `withHistory`.
+   * - `undefined` (default) — install `withHistory` only when the editor
+   *   does not already have it.
+   *
+   * When history is enabled, remote changes are applied with
+   * `HistoryEditor.withoutSaving()` so they never appear on the undo
+   * stack. Undo / redo therefore only reverses local edits; remote
+   * changes are treated as if they were always present.
+   */
+  history?: boolean;
+}
 
 
 /**
@@ -90,6 +107,12 @@ export class SlateFacade implements RichtextEditorFacade {
     protected readonly peritext: PeritextRef,
     protected readonly opts: SlateFacadeOpts = {},
   ) {
+    // Optionally install slate-history plugin.
+    const {history: historyOpt} = opts;
+    const installHistory =
+      historyOpt === true ? true : historyOpt === false ? false : !HistoryEditor.isHistoryEditor(editor);
+    if (installHistory) withHistory(editor);
+
     // Override editor.onChange to intercept local edits.
     const self = this;
     this._origOnChange = (editor as any).onChange;
@@ -132,8 +155,17 @@ export class SlateFacade implements RichtextEditorFacade {
     const editor = this.editor;
     this._enterRemote();
     try {
-      applyPatch(editor, newChildren);
-      editor.onChange();
+      const doApply = () => {
+        applyPatch(editor, newChildren);
+        editor.onChange();
+      };
+      // Exclude remote changes from the undo stack so that undo/redo only
+      // reverses local edits.
+      if (HistoryEditor.isHistoryEditor(editor)) {
+        HistoryEditor.withoutSaving(editor, doApply);
+      } else {
+        doApply();
+      }
     } finally {
       this._exitRemote();
     }

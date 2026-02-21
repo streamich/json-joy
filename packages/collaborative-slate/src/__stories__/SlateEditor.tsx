@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useCallback, useMemo, useState} from 'react';
 import {createEditor, Descendant, Editor, Transforms, Element as SlateElement, BaseEditor} from 'slate';
 import {Slate, Editable, withReact, RenderLeafProps, RenderElementProps, ReactEditor} from 'slate-react';
+import {HistoryEditor} from 'slate-history';
 import {SlateFacade} from '../SlateFacade';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import {useSlatePresence} from '../presence/useSlatePresence';
@@ -381,6 +382,24 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor, presen
           forceUpdate({});
           break;
         }
+        case 'z': {
+          if (!HistoryEditor.isHistoryEditor(editor)) break;
+          event.preventDefault();
+          if (event.shiftKey) {
+            editor.redo();
+          } else {
+            editor.undo();
+          }
+          forceUpdate({});
+          break;
+        }
+        case 'y': {
+          if (!HistoryEditor.isHistoryEditor(editor)) break;
+          event.preventDefault();
+          editor.redo();
+          forceUpdate({});
+          break;
+        }
       }
     },
     [editor]
@@ -436,6 +455,64 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor, presen
           <MarkButton format="italic" label="Italic (Ctrl+I)" editor={editor} icon="I" />
           <MarkButton format="underline" label="Underline (Ctrl+U)" editor={editor} icon="U" />
           <MarkButton format="code" label="Code (Ctrl+`)" editor={editor} icon="<>" />
+
+          <ToolbarSeparator />
+
+          {/* Undo / Redo buttons */}
+          <button
+            title="Undo (Ctrl+Z)"
+            style={{
+              width: '32px',
+              height: '32px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              background: 'white',
+              color: HistoryEditor.isHistoryEditor(editor) && editor.history.undos.length > 0 ? '#374151' : '#cbd5e1',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+              transition: 'all 0.15s ease',
+            }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              if (HistoryEditor.isHistoryEditor(editor)) {
+                editor.undo();
+                forceUpdate({});
+              }
+            }}
+          >
+            ↩
+          </button>
+          <button
+            title="Redo (Ctrl+Shift+Z)"
+            style={{
+              width: '32px',
+              height: '32px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              background: 'white',
+              color: HistoryEditor.isHistoryEditor(editor) && editor.history.redos.length > 0 ? '#374151' : '#cbd5e1',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+              transition: 'all 0.15s ease',
+            }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              if (HistoryEditor.isHistoryEditor(editor)) {
+                editor.redo();
+                forceUpdate({});
+              }
+            }}
+          >
+            ↪
+          </button>
         </div>
 
         {/* Editable Area */}
