@@ -62,10 +62,19 @@ export interface SlateFacadeOpts {}
  * ```
  */
 export class SlateFacade implements RichtextEditorFacade {
-  /** When true, the next `onChange` call is from a remote CRDT sync and should
-   * be ignored. */
-  private _isRemote = false;
+  /** Pending remote operations counter. */
+  private _remoteCnt = 0;
   private _disposed = false;
+
+  private _enterRemote(): void {
+    this._remoteCnt++;
+  }
+
+  private _exitRemote(): void {
+    queueMicrotask(() => {
+      this._remoteCnt--;
+    });
+  }
 
   /** Stateful converter that caches Slate nodes by Peritext `Block.hash`. */
   private readonly _toSlate = new ToSlateNode();
@@ -85,8 +94,8 @@ export class SlateFacade implements RichtextEditorFacade {
     const self = this;
     this._origOnChange = (editor as any).onChange;
     (editor.onChange as SlateEditorOnChange) = this._slateOnChange = (options?: {operation?: SlateOperation}) => {
-      self._origOnChange?.call(this);
-      if (self._disposed || self._isRemote) return;
+      self._origOnChange?.call(editor);
+      if (self._disposed || !!self._remoteCnt) return;
       const operations = editor.operations;
       const hasDocChange = operations.some((op: BaseOperation) => op.type !== 'set_selection');
       if (hasDocChange) {
@@ -113,12 +122,12 @@ export class SlateFacade implements RichtextEditorFacade {
     const newChildren = this._toSlate.convert(fragment);
     if (!newChildren.length) return;
     const editor = this.editor;
-    this._isRemote = true;
+    this._enterRemote();
     try {
       applyPatch(editor, newChildren);
       editor.onChange();
     } finally {
-      this._isRemote = false;
+      this._exitRemote();
     }
   }
 
@@ -151,11 +160,11 @@ export class SlateFacade implements RichtextEditorFacade {
     } catch {
       return;
     }
-    this._isRemote = true;
+    this._enterRemote();
     try {
       editor.selection = {anchor, focus};
     } finally {
-      this._isRemote = false;
+      this._exitRemote();
     }
   }
 
