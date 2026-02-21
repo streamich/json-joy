@@ -94,8 +94,10 @@ export class SlateFacade implements RichtextEditorFacade {
     const self = this;
     this._origOnChange = (editor as any).onChange;
     (editor.onChange as SlateEditorOnChange) = this._slateOnChange = (options?: {operation?: SlateOperation}) => {
-      self._origOnChange?.call(editor);
-      if (self._disposed || !!self._remoteCnt) return;
+      if (self._disposed || !!self._remoteCnt) {
+        self._origOnChange?.call(editor);
+        return;
+      }
       const operations = editor.operations;
       const hasDocChange = operations.some((op: BaseOperation) => op.type !== 'set_selection');
       if (hasDocChange) {
@@ -108,6 +110,12 @@ export class SlateFacade implements RichtextEditorFacade {
       } else {
         self.onselection?.();
       }
+
+      // Call _origOnChange (Slate React's internal handler) AFTER syncing
+      // the Peritext model. This ensures that any callbacks triggered by
+      // Slate React (e.g. sendLocalPresence) see the up-to-date model
+      // when converting positions between Slate and CRDT coordinate spaces.
+      self._origOnChange?.call(editor);
     };
   }
 
