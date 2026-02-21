@@ -4,6 +4,7 @@ import type {Node} from 'prosemirror-model';
 import {doc, p, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
 import {create} from 'json-joy/lib/json-crdt-extensions/peritext/transfer/create';
+import {onlyNode24AndHigher} from './test-helpers';
 
 const typeAt = (view: ReturnType<typeof setup>['view'], pos: number, text: string) => {
   const {state} = view;
@@ -17,7 +18,7 @@ const deleteRange = (view: ReturnType<typeof setup>['view'], from: number, to: n
   view.dispatch(tr);
 };
 
-describe('ProseMirrorFacade — mark boundary handling', () => {
+onlyNode24AndHigher('ProseMirrorFacade — mark boundary handling', () => {
   describe('insert right after bold text extends the bold mark', () => {
     // Document: <p>normal <strong>bold</strong> tail</p>
     //

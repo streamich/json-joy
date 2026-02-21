@@ -5,6 +5,7 @@ import {doc, p} from 'prosemirror-test-builder';
 import {undo, redo, undoDepth, redoDepth} from 'prosemirror-history';
 import {setup} from './setup';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from '../constants';
+import {onlyNode24AndHigher} from './test-helpers';
 import type {SyncPluginTransactionMeta} from '../sync/types';
 
 const typeAt = (view: ReturnType<typeof setup>['view'], pos: number, text: string) => {
@@ -50,7 +51,7 @@ const execUndo = (view: ReturnType<typeof setup>['view']): boolean => undo(view.
 
 const execRedo = (view: ReturnType<typeof setup>['view']): boolean => redo(view.state, view.dispatch);
 
-describe('ProseMirrorFacade — undo/redo history', () => {
+onlyNode24AndHigher('ProseMirrorFacade — undo/redo history', () => {
   describe('local transactions are part of undo/redo history', () => {
     test('typing a character creates an undo entry', () => {
       const pmDoc = doc(p('hello')) as Node;

@@ -4,6 +4,7 @@ import {TextSelection} from 'prosemirror-state';
 import type {Node} from 'prosemirror-model';
 import {doc, p, blockquote, h1, h2, h3, ul, li, em, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
+import {onlyNode24AndHigher} from './test-helpers';
 
 /**
  * Enumerate every valid cursor position in a PM doc (positions inside text
@@ -24,7 +25,7 @@ const allCursorPositions = (pmDoc: Node): number[] => {
   return positions;
 };
 
-describe('ProseMirrorFacade selection', () => {
+onlyNode24AndHigher('ProseMirrorFacade selection', () => {
   describe('getSelection()', () => {
     test('returns undefined when disposed', () => {
       const pmDoc = doc(p('hello')) as Node;
