@@ -23,7 +23,7 @@ export const TopBar: React.FC = () => {
     (e: any) => {
       setSeconds((currentSeconds) => {
         const parsed = Number(currentSeconds.trim());
-        if (!isNaN(parsed) && parsed > 0) {
+        if (!Number.isNaN(parsed) && parsed > 0) {
           state.setAutoSyncInterval(parsed);
         }
         (e?.target as HTMLInputElement)?.blur?.();

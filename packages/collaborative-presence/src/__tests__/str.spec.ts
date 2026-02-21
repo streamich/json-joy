@@ -188,7 +188,7 @@ describe('toDto', () => {
 
   describe('ID stability across edits', () => {
     test('IDs remain valid after text is inserted before the selection', () => {
-      const {str, doc} = setup('abcde');
+      const {str} = setup('abcde');
       const result = toDto(str, [3]);
       const anchorTime = result[7][0][0][0][0];
       const cId = str.findId(2);

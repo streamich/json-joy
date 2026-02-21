@@ -20,7 +20,7 @@ export const AddKey: React.FC<AddKeyProps> = ({node}) => {
       const nodeApi = model.api.wrap(node.node);
       nodeApi.set({[key]: valueId});
     },
-    [node.node],
+    [node.node, model],
   );
 
   return <ObjectInsert withType visible={isFocused} onSubmit={handleSubmit} />;

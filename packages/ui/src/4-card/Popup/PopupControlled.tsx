@@ -83,6 +83,7 @@ export const PopupControlled: React.FC<PopupControlledProps> = (props) => {
   );
 
   const toggle = (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: popup toggle triggered via keyboard separately
     <span
       ref={refToggle}
       className={buttonClass + (round ? roundClass : '')}

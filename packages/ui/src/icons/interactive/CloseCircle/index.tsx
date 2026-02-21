@@ -18,6 +18,7 @@ export const CloseCircle: React.FC<Props> = ({small, onClick}) => {
   const size = small ? 36 : 64;
   return (
     <Ripple color={theme.g(0.94)} ms={small ? 5_000 : 2_000}>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler */}
       <div className={className} style={{width: size, height: size}} onClick={onClick}>
         <Close style={{width: size, height: size}} />
       </div>

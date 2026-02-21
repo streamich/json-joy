@@ -109,6 +109,7 @@ export const ContextPane: React.FC<ContextPaneProps> = ({
   }
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
     <div className={paneClass + (className || '')} style={blockStyle} onClick={onClick}>
       <div className={bodyClass} style={{overflow: canOverflow ? 'visible' : undefined}}>
         {children}

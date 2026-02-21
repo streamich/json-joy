@@ -11,6 +11,7 @@ interface EditorProps {
 const Editor: React.FC<EditorProps> = ({src = ''}) => {
   const divEl = React.useRef<HTMLDivElement>(null);
   const editorRef = React.useRef<EditorView>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: model is intentionally created once on mount
   const [model, clone] = React.useMemo(() => {
     const model = Model.create(s.str(src));
     return [model, model.clone()];
@@ -45,10 +46,13 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
     <div>
       <div className="Editor" ref={divEl} style={{width: 800, minHeight: 250, border: '1px solid #ddd'}} />
       <div>
-        <button onClick={() => insert('!')}>Append "!" to editor</button>
+        <button type="button" onClick={() => insert('!')}>
+          Append "!" to editor
+        </button>
       </div>
       <div>
         <button
+          type="button"
           onClick={() =>
             setTimeout(() => {
               const str = model.s.$;
@@ -61,6 +65,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
       </div>
       <div>
         <button
+          type="button"
           onClick={() =>
             setTimeout(() => {
               model.s.$.ins(0, '1. ');
@@ -72,6 +77,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
       </div>
       <div>
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               model.reset(clone);
@@ -83,6 +89,7 @@ const Editor: React.FC<EditorProps> = ({src = ''}) => {
       </div>
       <div>
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               model.s.$.del(0, 1);

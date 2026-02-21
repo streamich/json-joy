@@ -279,7 +279,7 @@ describe('ProseMirrorFacade — undo/redo history', () => {
     test('local edit in paragraph 1, remote sync changes paragraph 2 — undo still works', () => {
       const pmDoc = doc(p('aaa'), p('bbb')) as Node;
       using testbed = setup(pmDoc);
-      const {view, facade, api, txt} = testbed;
+      const {view, facade, api: _api, txt} = testbed;
 
       // Local edit: prepend '1' to first paragraph
       typeAt(view, 1, '1');

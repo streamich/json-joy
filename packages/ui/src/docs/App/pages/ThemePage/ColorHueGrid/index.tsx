@@ -28,6 +28,7 @@ export const ColorHueGrid: React.FC<ColorHueGridProps> = ({name, hues, scales}) 
       <Text as={'h3'}>{name}</Text>
       <div className={gridClass}>
         {hues.map((hue, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
           <ColorLine key={i} scales={scales} color={new Color(hue[0], hue[1], 50)} />
         ))}
       </div>

@@ -22,7 +22,7 @@ export const Portal: React.FC<PortalProps> = ({children, parent}) => {
     const state = new PortalState();
     state.parent = parentState;
     return state;
-  }, [parent, parentState]);
+  }, [parentState]);
   const [el] = React.useState(() => document.createElement('div'));
   React.useLayoutEffect(() => {
     const container = parent || document.body;
@@ -34,7 +34,7 @@ export const Portal: React.FC<PortalProps> = ({children, parent}) => {
         container.removeChild(el);
       } catch {}
     };
-  }, [parent]);
+  }, [parent, el, state.addRoot, state.delRoot]);
 
   return <context.Provider value={state}>{createPortal(children, el)}</context.Provider>;
 };

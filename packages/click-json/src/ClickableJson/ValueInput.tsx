@@ -25,7 +25,7 @@ export const ValueInput: React.FC<ValueInputProps> = (props) => {
           : typeof value === 'string'
             ? JSON.stringify(value)
             : String(value),
-    [value, theme],
+    [value],
   );
   const [proposed, setProposed] = React.useState(json);
   const [focused, setFocused] = React.useState(false);
@@ -36,7 +36,7 @@ export const ValueInput: React.FC<ValueInputProps> = (props) => {
   const onSubmit = (e: React.KeyboardEvent) => {
     if (e) e.preventDefault();
     if (e) e.stopPropagation();
-    let newValue;
+    let newValue: unknown;
     try {
       newValue = JSON.parse(proposed);
     } catch {

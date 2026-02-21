@@ -22,6 +22,7 @@ export interface AvatarStackProps {
 export const AvatarStack: React.FC<AvatarStackProps> = ({gap = 0, noHoverEffect: noHover, children}) => {
   const list = React.Children.map(children, (el, index) =>
     !el ? null : (
+      // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
       <div key={index} className={noHover ? undefined : itemClass} style={{marginLeft: gap}}>
         {el}
       </div>

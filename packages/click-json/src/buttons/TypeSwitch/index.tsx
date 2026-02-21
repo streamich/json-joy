@@ -26,6 +26,7 @@ export const TypeSwitch: React.FC<TypeSwitchProps> = React.memo(({value, onKeyDo
 
   return (
     <button
+      type="button"
       className={blockClass({
         bg: theme.g(0.96),
         '&:hover': {

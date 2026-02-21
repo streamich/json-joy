@@ -7,7 +7,6 @@ export class ConType<V = any> extends AbsType<schema.ConSchema<V>> {
   }
 
   public getOptions(): schema.Optional<schema.ConSchema<V>> {
-    // biome-ignore lint: unused variables are intentional
     const {kind, value, ...options} = this.schema;
     return options as any;
   }

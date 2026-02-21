@@ -20,7 +20,7 @@ export const PushElement: React.FC<PushElementProps> = ({node}) => {
       const nodeApi = model.api.wrap(node.node);
       nodeApi.set([[(nodeApi.view() as unknown[]).length, valueId]]);
     },
-    [node.node],
+    [node.node, model],
   );
 
   return <ArrayInsert withType visible={isFocused} onSubmit={handleSubmit} />;

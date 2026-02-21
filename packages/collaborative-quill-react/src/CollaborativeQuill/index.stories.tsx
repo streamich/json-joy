@@ -21,6 +21,7 @@ const Demo: React.FC = () => {
       <br />
       <div>
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               if (!editorRef.current) return;
@@ -33,6 +34,7 @@ const Demo: React.FC = () => {
       </div>
       <div>
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               api().apply([{insert: '1. '}]);
@@ -44,6 +46,7 @@ const Demo: React.FC = () => {
       </div>
       <div>
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               const delta = new Delta(api().view());
@@ -56,6 +59,7 @@ const Demo: React.FC = () => {
       </div>
       <div>
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               const model2 = ModelWithExt.create(ext.quill.new('abrakadabra'));

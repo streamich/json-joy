@@ -50,7 +50,6 @@ export abstract class AbsType<S extends schema.Schema> implements BaseType<S>, P
   }
 
   public options(options: schema.Optional<Omit<S, 'kind'>>): this {
-    // biome-ignore lint: unused variables are intentional
     const {kind, ...sanitizedOptions} = options as any;
     Object.assign(this.schema, sanitizedOptions);
     return this;
@@ -89,7 +88,6 @@ export abstract class AbsType<S extends schema.Schema> implements BaseType<S>, P
   }
 
   public getOptions(): schema.Optional<S> {
-    // biome-ignore lint: unused variables are intentional
     const {kind, ...options} = this.schema;
     return options as any;
   }

@@ -30,7 +30,6 @@ export const ToolbarMenuMore: React.FC<ToolbarMenuMoreProps> = ({item, disabled}
           height={28}
           disabled={disabled}
           selected={selected}
-          children={<Iconista width={16} height={16} set={'tabler'} icon={'dots-vertical'} style={{opacity: 0.5}} />}
           onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
           onMouseMove={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
           onMouseLeave={disabled ? void 0 : openPanel?.onMouseLeave}
@@ -38,7 +37,9 @@ export const ToolbarMenuMore: React.FC<ToolbarMenuMoreProps> = ({item, disabled}
           tooltip={{
             renderTooltip: item.name ? () => t(item.name) : void 0,
           }}
-        />
+        >
+          <Iconista width={16} height={16} set={'tabler'} icon={'dots-vertical'} style={{opacity: 0.5}} />
+        </ToolbarItem>
       </div>
     </ToolbarMenuPopup>
   );

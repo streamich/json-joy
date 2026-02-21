@@ -11,7 +11,7 @@ const CodeIcon = makeIcon({set: 'auth0', icon: 'code'});
 const PaintBrushIcon = makeIcon({set: 'auth0', icon: 'paint-brush'});
 const PencilIcon = makeIcon({set: 'auth0', icon: 'pencil'});
 const MergeIcon = makeIcon({set: 'elastic', icon: 'merge'});
-const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
+const _HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
 
 export interface JsonBlockTabsProps {
   state: JsonBlockState;

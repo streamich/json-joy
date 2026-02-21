@@ -16,9 +16,9 @@ after synchronization. Use the top bar buttons to manually synchronize or adjust
 auto-sync settings.
 `;
 
-export type SbsCollabCodemirrorDemoProps = {}
+export type SbsCollabCodemirrorDemoProps = {};
 
-export const SbsCollabCodemirrorDemo: React.FC<SbsCollabCodemirrorDemoProps> = ({}) => {
+export const SbsCollabCodemirrorDemo: React.FC<SbsCollabCodemirrorDemoProps> = () => {
   const model = React.useMemo(() => {
     const schema = s.str(`This is a collaborative CodeMirror Editor example.
 

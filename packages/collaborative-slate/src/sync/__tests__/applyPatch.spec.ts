@@ -3,7 +3,6 @@ import {applyPatch} from '../applyPatch';
 import {p, txt as textNode, h1, h2, blockquote, em, ul, li} from './tools/builder';
 import {SlateFuzzer} from './tools/fuzzer';
 import type {SlateDocument} from '../../types';
-import {SlateTraceRunner} from './tools/traces';
 
 const editorWith = (doc: SlateDocument) => {
   const editor = createEditor();

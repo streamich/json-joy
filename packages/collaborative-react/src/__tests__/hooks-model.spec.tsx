@@ -134,7 +134,7 @@ describe('useModel()', () => {
     const model = Model.create({obj: {foo: 'bar'}});
     expect(() =>
       renderHook(() => {
-        const foo = useModel((m) => {
+        const _foo = useModel((m) => {
           throw 'ERR';
         }, model);
       }),

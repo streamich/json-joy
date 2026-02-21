@@ -132,6 +132,7 @@ export const CommandPaletteItem: React.FC<CommandPaletteItemProps> = ({
   const isSmall = width < 700;
 
   let element = (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
     <span
       className={blockClass + (selected ? selectedBlockClass : '')}
       style={{opacity: disabled ? 0.5 : undefined, cursor: disabled ? 'default' : undefined}}

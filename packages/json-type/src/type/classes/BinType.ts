@@ -34,7 +34,6 @@ export class BinType<T extends Type = any> extends AbsType<schema.BinSchema> {
   }
 
   public getOptions(): schema.Optional<schema.ArrSchema<SchemaOf<T>>> {
-    // biome-ignore lint: unused variables are intentional
     const {kind, type, ...options} = this.schema;
     return options as any;
   }

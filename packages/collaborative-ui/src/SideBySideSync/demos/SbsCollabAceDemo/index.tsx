@@ -26,9 +26,9 @@ via the \`str\` prop, and can optionally specify editor options such as height v
 \`\`\`
 `;
 
-export type SbsCollabAceDemoProps = {}
+export type SbsCollabAceDemoProps = {};
 
-export const SbsCollabAceDemo: React.FC<SbsCollabAceDemoProps> = ({}) => {
+export const SbsCollabAceDemo: React.FC<SbsCollabAceDemoProps> = () => {
   const model = React.useMemo(() => {
     const schema = s.obj({
       text: s.str(`This is a collaborative Ace Editor example.

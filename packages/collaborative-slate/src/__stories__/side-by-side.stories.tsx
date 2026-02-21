@@ -11,7 +11,7 @@ const meta = preview.meta({
   title: 'Slate',
 });
 
-const Demo: React.FC<{}> = ({}) => {
+const Demo: React.FC = () => {
   const model = React.useMemo(() => {
     const slateDoc = [
       {type: 'paragraph', children: [{text: 'Hello, Slate!'}]},

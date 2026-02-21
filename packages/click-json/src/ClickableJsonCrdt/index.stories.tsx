@@ -22,6 +22,7 @@ const Demo: React.FC<{view?: unknown; withExtensions?: boolean} & Omit<Clickable
   withExtensions,
   ...rest
 }) => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: model is intentionally created once on mount
   const model = React.useMemo(() => {
     const model = (withExtensions ? ModelWithExt : Model).create();
     if (view !== undefined) model.api.root(view);
@@ -212,6 +213,7 @@ const ResetDemo: React.FC = () => {
   return (
     <div style={{padding: '32px 64px', boxSizing: 'border-box'}}>
       <button
+        type="button"
         onClick={() => {
           model1.reset(model2);
         }}

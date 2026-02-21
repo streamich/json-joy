@@ -38,7 +38,7 @@ const getDocText = (editor: ReturnType<typeof setup>['editor']): string => {
 };
 
 /** Text content of a single top-level block (paragraph) by index. */
-const getParaText = (editor: ReturnType<typeof setup>['editor'], idx: number): string => {
+const _getParaText = (editor: ReturnType<typeof setup>['editor'], idx: number): string => {
   const block = editor.children[idx] as any;
   if (!block) return '';
   let text = '';

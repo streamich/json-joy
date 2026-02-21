@@ -28,7 +28,7 @@ const JsonObject: React.FC<JsonObjectProps> = ({property, doc, pointer, parentCo
   const keys = React.useMemo(() => {
     const k = Object.keys(doc);
     return keepOrder ? k : k.sort();
-  }, [doc]);
+  }, [doc, keepOrder]);
   const [collapsed, setCollapsed] = React.useState(startsCollapsed);
 
   const handleBracketClick = () => {
@@ -99,6 +99,7 @@ const JsonArray: React.FC<JsonArrayProps> = ({property, doc, pointer, parentColl
   const entries = doc.map((value, index) => {
     const itemPointer = `${pointer}/${index}`;
     return (
+      // biome-ignore lint/suspicious/noArrayIndexKey: JSON arrays are ordered by index, using index as key is correct here
       <React.Fragment key={index}>
         <JsonArrayInsert pointer={`${pointer}/${index}`} visible={focused === pfx + pointer} />
         <span className={css.line}>

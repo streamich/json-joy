@@ -31,6 +31,7 @@ const DataTable: React.FC<DataTableProps> = ({data}) => {
             'tr',
             {},
             ...head.map((cell, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
               <td key={i}>
                 <Markdown inline src={cell} />
               </td>
@@ -45,6 +46,7 @@ const DataTable: React.FC<DataTableProps> = ({data}) => {
               'tr',
               {},
               ...row.map((cell, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
                 <td key={i}>
                   <Markdown inline src={cell} />
                 </td>

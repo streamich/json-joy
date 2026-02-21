@@ -37,6 +37,7 @@ export const DropArea: React.FC<DropAreaProps> = () => {
 
   return (
     <Paper className={css.block} round contrast>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: click triggers file input, keyboard accessible via the input itself */}
       <div
         {...bond}
         className={css.area({

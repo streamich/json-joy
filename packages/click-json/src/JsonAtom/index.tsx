@@ -66,6 +66,7 @@ export const JsonAtom: React.FC<JsonAtomProps> = (props) => {
   }
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: onClick is optional and used in visual-only contexts
     <span style={style} onClick={onClick}>
       {formatted}
     </span>

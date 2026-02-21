@@ -10,6 +10,7 @@ export const usePromise = <T>(promise: Promise<T>, deps: DependencyList): Promis
       (value) => setState([value, undefined, 1]),
       (error) => setState([undefined, error, 2]),
     );
+    // biome-ignore lint/correctness/useExhaustiveDependencies: deps forwarded from caller
   }, deps);
 
   return state;

@@ -27,6 +27,7 @@ export const BasicButtonGroup: React.FC<BasicButtonGroupProps> = ({
   childArray.forEach((child, index) => {
     processedChildren.push(child);
     if (index < childArray.length - 1) {
+      // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
       processedChildren.push(<Space key={`space-${index}`} horizontal size={gap} />);
     }
   });

@@ -40,7 +40,6 @@ export const ToolbarMenuItemTerminal: React.FC<ToolbarMenuItemTerminalProps> = (
       fill={fill}
       disabled={disabled}
       selected={active}
-      children={item.icon?.()}
       onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
       onMouseMove={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
       onMouseLeave={disabled ? void 0 : openPanel?.onMouseLeave}
@@ -56,6 +55,8 @@ export const ToolbarMenuItemTerminal: React.FC<ToolbarMenuItemTerminalProps> = (
         shortcut: item.keys?.join(''),
         renderTooltip: () => item.name ?? item.id ?? '',
       }}
-    />
+    >
+      {item.icon?.()}
+    </ToolbarItem>
   );
 };

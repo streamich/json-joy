@@ -57,6 +57,7 @@ export const SingleEditorDebug: React.FC = () => {
       <div>
         <div style={{height: 8}} />
         <button
+          type="button"
           onClick={() => {
             const str = model.s.toExt().text() as StrApi;
             const pos = str.length();
@@ -66,6 +67,7 @@ export const SingleEditorDebug: React.FC = () => {
           Prepend "1. "
         </button>{' '}
         <button
+          type="button"
           onClick={() => {
             setTimeout(() => {
               const str = model.s.toExt().text() as StrApi;

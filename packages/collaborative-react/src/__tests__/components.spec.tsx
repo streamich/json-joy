@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {render, act} from '@testing-library/react';
-import {Model, s} from 'json-joy/lib/json-crdt';
+import {Model} from 'json-joy/lib/json-crdt';
 import {UseModel, UseNode} from '../components';
 
 describe('UseModel', () => {

@@ -8,7 +8,7 @@ import {getDomain} from '../../../util';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 
 const LinkIcon = makeIcon({set: 'lucide', icon: 'link'});
-const LinkRadixIcon = makeIcon({set: 'radix', icon: 'link-2'});
+const _LinkRadixIcon = makeIcon({set: 'radix', icon: 'link-2'});
 
 export const behavior = {
   menu: {

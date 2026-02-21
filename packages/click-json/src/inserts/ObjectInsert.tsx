@@ -86,6 +86,7 @@ export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, on
   }
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: insert trigger is accessible via the nested button
     <span className={css.insArrBlock} style={{display: visible ? undefined : 'none'}} onClick={() => setEditing(true)}>
       <span className={css.insArrDot} />
       <span className={css.insArrLine} />

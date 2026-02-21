@@ -13,7 +13,7 @@ export const JsonArrayInsert: React.FC<JsonArrayInsertProps> = ({pointer, visibl
   if (!onChange) return null;
 
   const onSubmit = (value: string) => {
-    let newValue;
+    let newValue: unknown;
     try {
       newValue = JSON.parse(value);
     } catch {

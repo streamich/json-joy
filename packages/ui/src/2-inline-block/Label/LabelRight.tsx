@@ -88,6 +88,7 @@ export const LabelRight: React.FC<Props> = (props) => {
       }}
     >
       {!!name && !hideName && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
         <span
           className={nameClass + (grey || lightGrey ? specialFontClass : '')}
           style={{
@@ -105,6 +106,7 @@ export const LabelRight: React.FC<Props> = (props) => {
         </span>
       )}
       {subtext && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
         <span
           className={subtextClass + subtextDynamicClass}
           style={{

@@ -18,6 +18,7 @@ export const LabelLayout: React.FC<Props> = (props) => {
   const {className = '', icon, children, onClick} = props;
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
     <div className={className + blockClass} onClick={onClick}>
       {icon}
       {children}

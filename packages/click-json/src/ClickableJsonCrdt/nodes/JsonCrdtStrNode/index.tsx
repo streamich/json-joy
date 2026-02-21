@@ -47,6 +47,7 @@ export const JsonCrdtStrNode: React.FC<JsonCrdtStrNodeProps> = ({node}) => {
       {editing ? (
         <StrEdit node={node} onCancel={() => setEditing(false)} onDone={() => setEditing(false)} />
       ) : (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: interactive via focused region keyboard handling
         <span
           className={atomClass + (isFocused && !readonly ? atomFocusedClass : '')}
           onClick={isFocused && !readonly ? () => setEditing(true) : undefined}

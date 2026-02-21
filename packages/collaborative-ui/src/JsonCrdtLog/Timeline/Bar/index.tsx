@@ -167,7 +167,6 @@ export const Bar: React.FC<Bar> = ({log}) => {
     );
   }
   let i = 1;
-  // biome-ignore lint: .forEach is the way to iterate here
   log.patches.forEach(({v: patch}) => {
     const id = patch.getId();
     if (!id) return;

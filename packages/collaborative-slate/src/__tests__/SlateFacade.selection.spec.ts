@@ -134,7 +134,7 @@ describe('SlateFacade — selection synchronization', () => {
       using testbed = setup([p({}, textNode('plain '), em('italic'), textNode(' after'))]);
       const {editor, facade} = testbed;
       // Select from middle of "plain " to middle of " after"
-      const children = (editor.children[0] as any).children;
+      const _children = (editor.children[0] as any).children;
       editor.selection = {
         anchor: {path: [0, 0], offset: 2},
         focus: {path: [0, 2], offset: 3},
@@ -345,7 +345,7 @@ describe('SlateFacade — selection synchronization', () => {
 
     test('selection in mixed document with headings and paragraphs', () => {
       using testbed = setup([h1(textNode('Title')), h2(textNode('Sub')), p({}, textNode('body'))]);
-      const {editor, facade, api} = testbed;
+      const {editor, facade} = testbed;
       // Select from heading to paragraph
       editor.selection = {
         anchor: {path: [0, 0], offset: 2},
@@ -372,7 +372,7 @@ describe('SlateFacade — selection synchronization', () => {
 
     test('disposed facade ignores setSelection', () => {
       using testbed = setup([p({}, textNode('hello'))]);
-      const {editor, facade, api, txt} = testbed;
+      const {facade, api, txt} = testbed;
       facade.dispose();
       const point = txt.pointIn(0);
       const range = txt.rangeFromPoints(point, point);

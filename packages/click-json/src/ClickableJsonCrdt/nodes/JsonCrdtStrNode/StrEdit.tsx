@@ -22,6 +22,7 @@ export const StrEdit: React.FC<StrEditProps> = ({node, onCancel, onDone}) => {
   const [t] = useT();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {model} = useJsonCrdt();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: clone and api are intentionally created once on mount
   const [clone, api] = React.useMemo(() => {
     const clone = model.clone();
     clone.api.flush();
@@ -31,13 +32,14 @@ export const StrEdit: React.FC<StrEditProps> = ({node, onCancel, onDone}) => {
   }, []);
   const value = React.useSyncExternalStore(api.events.subscribe, api.events.getSnapshot);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: api is stable (from mount-only useMemo)
   React.useEffect(() => {
     if (!inputRef.current) return;
     const unbind = bind(() => api, inputRef.current);
     return () => {
       unbind();
     };
-  }, [model]);
+  }, []);
 
   const handleSubmit = () => {
     const hasPatches = !!clone.api.builder.patch.ops.length;

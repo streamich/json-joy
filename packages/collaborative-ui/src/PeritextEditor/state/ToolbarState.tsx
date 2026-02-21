@@ -5,8 +5,8 @@ import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 
 // Preloaded icons - Radix set
 const FontBoldIcon = makeIcon({set: 'radix', icon: 'font-bold'});
-const FontItalicIcon = makeIcon({set: 'radix', icon: 'font-italic'});
-const StrikethroughRadixIcon = makeIcon({set: 'radix', icon: 'strikethrough'});
+const _FontItalicIcon = makeIcon({set: 'radix', icon: 'font-italic'});
+const _StrikethroughRadixIcon = makeIcon({set: 'radix', icon: 'strikethrough'});
 const ClipboardCopyIcon = makeIcon({set: 'radix', icon: 'clipboard-copy'});
 const ClipboardIcon = makeIcon({set: 'radix', icon: 'clipboard'});
 const DropdownMenuIcon = makeIcon({set: 'radix', icon: 'dropdown-menu'});
@@ -63,7 +63,7 @@ const MathIcon = makeIcon({set: 'tabler', icon: 'math'});
 
 // Preloaded icons - Lucide set
 const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
-const BoldIcon = makeIcon({set: 'lucide', icon: 'bold'});
+const _BoldIcon = makeIcon({set: 'lucide', icon: 'bold'});
 const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
 const PaintBucketIcon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
 const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
@@ -72,14 +72,14 @@ const VariableIcon = makeIcon({set: 'lucide', icon: 'variable'});
 const SquareChevronRightIcon = makeIcon({set: 'lucide', icon: 'square-chevron-right'});
 const SmilePlusIcon = makeIcon({set: 'lucide', icon: 'smile-plus'});
 const OmegaIcon = makeIcon({set: 'lucide', icon: 'omega'});
-const LinkIcon = makeIcon({set: 'lucide', icon: 'link'});
+const _LinkIcon = makeIcon({set: 'lucide', icon: 'link'});
 const BetweenVerticalEndIcon = makeIcon({set: 'lucide', icon: 'between-vertical-end'});
 const TextIcon = makeIcon({set: 'lucide', icon: 'text'});
 const UndoIcon = makeIcon({set: 'lucide', icon: 'undo'});
 const RedoIcon = makeIcon({set: 'lucide', icon: 'redo'});
 const QuoteIcon = makeIcon({set: 'lucide', icon: 'quote'});
 const PilcrowIcon = makeIcon({set: 'lucide', icon: 'pilcrow'});
-const FootprintsIcon = makeIcon({set: 'lucide', icon: 'footprints'});
+const _FootprintsIcon = makeIcon({set: 'lucide', icon: 'footprints'});
 
 // Preloaded icons - Simple set
 const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
@@ -94,8 +94,8 @@ const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
 const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
 
 // Preloaded icons - Lineicons set
-const CommentTextIcon = makeIcon({set: 'lineicons', icon: 'comment-1-text'});
-const FlagIcon = makeIcon({set: 'lineicons', icon: 'flag-2'});
+const _CommentTextIcon = makeIcon({set: 'lineicons', icon: 'comment-1-text'});
+const _FlagIcon = makeIcon({set: 'lineicons', icon: 'flag-2'});
 import {secondBrain} from './menus';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
@@ -1716,7 +1716,7 @@ export class ToolbarState implements UiLifeCycles {
   };
 
   public readonly documentMenu = (): MenuItem => {
-    const et = this.surface.events.et;
+    const _et = this.surface.events.et;
     const menu: MenuItem = {
       name: 'Document menu',
       maxToolbarItems: 1,

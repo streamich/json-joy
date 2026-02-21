@@ -11,6 +11,7 @@ export interface SbsCollabInputDemoProps {
 }
 
 export const SbsCollabInputDemo: React.FC<SbsCollabInputDemoProps> = ({multiline}) => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: create-once pattern
   const model = React.useMemo(() => {
     const schema = s.obj({
       text: s.str(`Hello, collaborative <${multiline ? 'textarea' : 'input'}>!`),

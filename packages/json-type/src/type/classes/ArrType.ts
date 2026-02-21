@@ -62,7 +62,6 @@ export class ArrType<
   public getOptions(): schema.Optional<
     schema.ArrSchema<T extends void ? schema.Schema : SchemaOf<T extends Type ? T : never>>
   > {
-    // biome-ignore lint: unused variables are intentional
     const {kind, type, ...options} = this.schema;
     return options as any;
   }

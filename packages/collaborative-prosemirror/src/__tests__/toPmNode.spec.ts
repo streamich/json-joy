@@ -227,7 +227,7 @@ describe('cache behavior', () => {
     const {txt, toPm} = setup(twoParagraphDoc);
     const pm1 = toPm.convert(txt.blocks);
     txt.refresh();
-    const pm2 = toPm.convert(txt.blocks);
+    const _pm2 = toPm.convert(txt.blocks);
     txt.refresh();
     const pm3 = toPm.convert(txt.blocks);
     for (let i = 0; i < pm1.content.childCount; i++) {

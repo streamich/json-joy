@@ -83,6 +83,7 @@ export const useModel = <M extends Model<any>, R = unknown>(
  */
 export const useModelTry = <M extends Model<any>, R = unknown>(selector: (model: M) => R, model?: M): R | undefined => {
   try {
+    // biome-ignore lint/correctness/useHookAtTopLevel: intentional pattern to catch errors from useModel in a try-catch
     return useModel(selector, model);
   } catch {
     return;
@@ -113,6 +114,7 @@ export const useNodeEvents = <N extends CrdtNodeApi = CrdtNodeApi>(
   event: 'self' | 'child' | 'subtree',
   listener: (event: ChangeEvent) => void,
   node: N = useCtxNodeStrict() as N,
+  // biome-ignore lint/correctness/useExhaustiveDependencies: listener is intentionally excluded to avoid stale closure re-subscriptions
 ): FanOutUnsubscribe => useMemo(() => node.onNodeChange(event, listener), [node, event]);
 
 /**

@@ -106,8 +106,8 @@ export class Board extends React.Component<BoardProps, IBoardState> {
         const color = mapColor(line.color || 'green');
         const opacity = line.opacity || 0.8;
         const strokeWidth = body ? (body[0] === '=' ? 8 : 3) / body.length : 3;
-        let tipToId;
-        let tipFromId;
+        let tipToId: string | undefined;
+        let tipFromId: string | undefined;
 
         if (tipTo) {
           tipToId = 'board-marker-' + globalMarkerId++;

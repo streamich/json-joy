@@ -53,7 +53,11 @@ export const ClickableJsonCrdt: React.FC<ClickableJsonCrdtProps> = (props) => {
     const unsubscribe = model.api.onReset.listen(() => setReset((r) => r + 1));
     return () => unsubscribe();
   }, [model]);
-  const node = React.useMemo(() => nodeRef(showRoot ? model.root : model.root.node(), null, ''), [model, reset]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset is used intentionally to force recomputation on model reset
+  const node = React.useMemo(
+    () => nodeRef(showRoot ? model.root : model.root.node(), null, ''),
+    [model, reset, showRoot],
+  );
 
   return (
     <styles.Provider value={{compact, readonly}}>

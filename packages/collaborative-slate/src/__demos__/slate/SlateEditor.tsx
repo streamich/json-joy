@@ -205,7 +205,6 @@ const Element: React.FC<RenderElementProps> = ({attributes, children, element}) 
           </pre>
         </div>
       );
-    case 'paragraph':
     default:
       return (
         <p {...attributes} style={{margin: '0 0 0.5rem 0', lineHeight: 1.6}}>
@@ -229,6 +228,7 @@ const MarkButton: React.FC<MarkButtonProps> = ({format, label, editor, icon}) =>
 
   return (
     <button
+      type="button"
       title={label}
       style={{
         width: '32px',
@@ -274,6 +274,7 @@ const BlockButton: React.FC<BlockButtonProps> = ({format, label, editor, level, 
 
   return (
     <button
+      type="button"
       title={label}
       style={{
         width: '32px',

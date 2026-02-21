@@ -110,7 +110,7 @@ describe('ToSlateNode', () => {
       const doc1: SlateDocument = [p({}, textNode('a')), p({}, textNode('b'))];
       const doc2: SlateDocument = [p({}, textNode('c')), p({}, textNode('d'))];
       const {api: api1, fragment: frag1} = setup(doc1);
-      const {api: api2, fragment: frag2} = setup(doc2);
+      const {fragment: frag2} = setup(doc2);
 
       const converter = new ToSlateNode();
 

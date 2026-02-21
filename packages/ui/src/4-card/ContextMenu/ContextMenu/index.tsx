@@ -10,6 +10,7 @@ export {ContextMenuState};
 export interface ContextMenuProps extends ContextMenuPaneProps {}
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({...props}) => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: props spread creates new object each render
   const state = React.useMemo(() => ContextMenuState.create(props), [props]);
 
   state.props = props;

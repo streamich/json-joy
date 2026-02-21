@@ -12,6 +12,7 @@ export interface SbsCollabInputCustomDemoProps {
 }
 
 export const SbsCollabInputCustomDemo: React.FC<SbsCollabInputCustomDemoProps> = ({initialText = 'Hello...'}) => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: create-once pattern
   const model = React.useMemo(() => {
     const schema = s.obj({
       text: s.str(initialText),

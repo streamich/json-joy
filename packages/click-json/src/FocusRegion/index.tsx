@@ -106,6 +106,7 @@ export const FocusRegion: React.FC<FocusRegionProps> = (props) => {
     (focused ? (negative ? activeNegativeClass : activeClass) : '');
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handling is managed at the FocusProvider level
     <span
       className={className}
       style={{

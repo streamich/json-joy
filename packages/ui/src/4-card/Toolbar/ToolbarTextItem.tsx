@@ -39,18 +39,15 @@ export const ToolbarTextItem: React.FC<ToolbarTextItemProps> = ({
       onMouseMove={disabled ? void 0 : onMouseMove}
       onMouseLeave={disabled ? void 0 : onMouseLeave}
       onClick={disabled ? void 0 : onClick}
-      children={
-        children ? (
-          <FixedColumn right={16} style={{alignItems: 'center'}}>
-            <MiniTitle>{children}</MiniTitle>
-            <div style={{marginRight: -2, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-              {arrow}
-            </div>
-          </FixedColumn>
-        ) : (
-          arrow
-        )
-      }
-    />
+    >
+      {children ? (
+        <FixedColumn right={16} style={{alignItems: 'center'}}>
+          <MiniTitle>{children}</MiniTitle>
+          <div style={{marginRight: -2, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>{arrow}</div>
+        </FixedColumn>
+      ) : (
+        arrow
+      )}
+    </ToolbarItem>
   );
 };

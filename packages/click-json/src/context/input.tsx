@@ -23,7 +23,7 @@ export const InputProvider: React.FC<{children: React.ReactNode}> = ({children})
       document.removeEventListener('focus', onFocusIn);
       document.removeEventListener('blur', onFocusIn);
     };
-  }, []);
+  }, [parentContext]);
 
   if (parentContext) return children;
 

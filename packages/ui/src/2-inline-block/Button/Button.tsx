@@ -82,7 +82,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     outline,
     size = 0,
     radius = 0,
-    compact,
+    compact: _compact,
     onClick,
     submit,
   } = props;

@@ -21,7 +21,6 @@ export const JsonCrdtModelIndex: React.FC<JsonCrdtModelIndexProps> = ({model, re
 
   const list: React.ReactNode[] = [];
 
-  // biome-ignore lint: .forEach is the way to iterate here
   model.index.forEach(({v: node}) => {
     list.push(<NodeItem key={node.id.sid + '.' + node.id.time} model={model} node={node} readonly={readonly} />);
   });

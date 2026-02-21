@@ -41,7 +41,7 @@ export const FocusProvider: React.FC<FocusProviderProps> = ({children, onFocus})
     };
     document.addEventListener('keydown', listener, {capture: true, passive: true});
     return () => document.removeEventListener('keydown', listener);
-  }, []);
+  }, [focus]);
 
   return <context.Provider value={{focused, focus, pointed, point}}>{children}</context.Provider>;
 };

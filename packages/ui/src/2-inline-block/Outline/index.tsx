@@ -85,6 +85,7 @@ export const Outline: React.FC<OutlineProps> = ({
       style={style}
     >
       {!!label && (
+        // biome-ignore lint/a11y/noLabelWithoutControl: label is used as visual decoration
         <label
           className={labelClass({
             col: disabled ? styles.g(0.1) : active ? styles.g(0) : styles.g(0.4),

@@ -50,7 +50,9 @@ export const Action: React.FC<ActionProps> = ({
   const theme = useTheme();
 
   return (
+    // biome-ignore lint/a11y/useKeyWithMouseEvents: onMouseOver used for tooltip visibility, not primary interaction
     <button
+      type="button"
       className={
         blockClass({
           bg: theme.bg,

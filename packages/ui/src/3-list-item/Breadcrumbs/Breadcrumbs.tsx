@@ -25,10 +25,12 @@ export interface BreadcrumbsProps {
 
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({crumbs, compact, style}) => {
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: breadcrumb landmark pattern
     <div className={blockClass} style={{...style, fontSize: compact ? '12px' : void 0}} aria-label="breadcrumb">
       {crumbs.map((item, index) => {
         const isLast = index === crumbs.length - 1;
         return (
+          // biome-ignore lint/suspicious/noArrayIndexKey: index is positionally stable
           <React.Fragment key={index}>
             {item}
             {!isLast && (

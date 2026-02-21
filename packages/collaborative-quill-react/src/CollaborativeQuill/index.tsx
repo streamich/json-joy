@@ -33,6 +33,7 @@ export const CollaborativeQuill: React.FC<CollaborativeQuillProps> = ({
 
   options.readOnly = readonly;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: editor is intentionally recreated only when display options change
   React.useEffect(() => {
     const div = ref.current;
     if (!div) return;

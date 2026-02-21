@@ -15,7 +15,6 @@ const consoleClass = rule({
   lh: '1.3em',
 });
 
-// biome-ignore lint: empty interface
 export type ConsoleProps = {};
 
 export const Console: React.FC<ConsoleProps> = () => {

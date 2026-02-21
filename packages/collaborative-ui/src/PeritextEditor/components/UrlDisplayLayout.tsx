@@ -72,42 +72,40 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
   }, [url]);
 
   return (
-    <>
-      <Split style={{width: '100%', maxWidth: '100%'}}>
-        <div style={{maxWidth: 'calc(100% - 100px)'}}>
-          <FixedColumn left={iconColumn} style={{alignItems: 'center'}}>
-            <div>
-              <div className={iconClass}>
-                <Favicon domain={domain} url={url} />
-              </div>
-            </div>
-            <div className={domainClass}>
-              {title ? (
-                <>
-                  <strong>{title}</strong> • {domainTruncated}
-                </>
-              ) : (
-                domainTruncated
-              )}
-            </div>
-          </FixedColumn>
+    <Split style={{width: '100%', maxWidth: '100%'}}>
+      <div style={{maxWidth: 'calc(100% - 100px)'}}>
+        <FixedColumn left={iconColumn} style={{alignItems: 'center'}}>
           <div>
-            <div className={linkClass}>
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                {url}
-              </a>
+            <div className={iconClass}>
+              <Favicon domain={domain} url={url} />
             </div>
           </div>
+          <div className={domainClass}>
+            {title ? (
+              <>
+                <strong>{title}</strong> • {domainTruncated}
+              </>
+            ) : (
+              domainTruncated
+            )}
+          </div>
+        </FixedColumn>
+        <div>
+          <div className={linkClass}>
+            <a href={url} target="_blank" rel="noopener noreferrer">
+              {url}
+            </a>
+          </div>
         </div>
-        <div className={buttonGroupClass}>
-          <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
-          <BasicTooltip nowrap renderTooltip={() => t('Open')}>
-            <BasicButton width={48} height={48} round to={url} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkIcon width={16} height={16} />
-            </BasicButton>
-          </BasicTooltip>
-        </div>
-      </Split>
-    </>
+      </div>
+      <div className={buttonGroupClass}>
+        <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
+        <BasicTooltip nowrap renderTooltip={() => t('Open')}>
+          <BasicButton width={48} height={48} round to={url} target="_blank" rel="noopener noreferrer">
+            <ExternalLinkIcon width={16} height={16} />
+          </BasicButton>
+        </BasicTooltip>
+      </div>
+    </Split>
   );
 };

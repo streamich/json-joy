@@ -129,7 +129,6 @@ const pkg = {
     eslint: 'eslint src',
     clean: 'rimraf dist lib es6 es2019 es2020 esm typedocs storybook-static',
     build: 'tsc --project tsconfig.build.json',
-    test: 'jest',
     test: 'yarn jest --maxWorkers 7',
     'test:all': 'yarn lint && yarn test',
     'test:ci': 'yarn jest --maxWorkers 3 --no-cache',

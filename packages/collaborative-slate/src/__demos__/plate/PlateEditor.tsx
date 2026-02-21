@@ -185,6 +185,7 @@ interface ToolbarButtonProps {
 
 const ToolbarButton: React.FC<ToolbarButtonProps> = ({active, disabled, onClick, children, title}) => (
   <button
+    type="button"
     title={title}
     disabled={disabled}
     style={{
@@ -212,7 +213,17 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({active, disabled, onClick,
         e.currentTarget.style.backgroundColor = '#f1f5f9';
       }
     }}
+    onFocus={(e) => {
+      if (!active && !disabled) {
+        e.currentTarget.style.backgroundColor = '#f1f5f9';
+      }
+    }}
     onMouseOut={(e) => {
+      if (!active) {
+        e.currentTarget.style.backgroundColor = 'transparent';
+      }
+    }}
+    onBlur={(e) => {
       if (!active) {
         e.currentTarget.style.backgroundColor = 'transparent';
       }

@@ -47,7 +47,7 @@ const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
 };
 
 export const toSlate = (txt: Peritext): SlateDocument => {
-  const hash = txt.refresh();
+  txt.refresh();
   const block = txt.blocks.root;
   const node = blockToSlateNode(block);
   const content: SlateDocument = (node?.children ?? []) as SlateDocument;

@@ -46,6 +46,7 @@ export const ObjectLayout: React.FC<ObjectLayoutProps> = ({
   const bracketColor = theme.g(0.3);
 
   collapsedView = (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: collapsed view is a visual affordance, keyboard handled by parent
     <span className={css.collapsed} style={{display: !collapsed ? 'none' : undefined}} onClick={onCollapsedClick}>
       <span style={{color: css.blue}}>{brackets[0]}</span>
       {collapsedView}
@@ -56,6 +57,7 @@ export const ObjectLayout: React.FC<ObjectLayoutProps> = ({
   const bracket1 = (
     <span>
       {property}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: bracket click is a visual affordance, keyboard handled elsewhere */}
       <span
         className={css.bracket + (brackedHovered ? css.bracketHovered : '')}
         style={{display: collapsed ? 'none' : undefined, color: bracketColor}}
@@ -72,8 +74,10 @@ export const ObjectLayout: React.FC<ObjectLayoutProps> = ({
   );
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: object container handles keyboard via inner focusable elements
     <span className={css.object} onClick={onClick}>
       {!noCollapseToggles && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: collapser is visually-only
         <span className={css.collapser} style={{color: theme.g(0.6)}} onClick={onCollapserClick}>
           {collapsed ? '+' : '—'}
         </span>
@@ -83,6 +87,7 @@ export const ObjectLayout: React.FC<ObjectLayoutProps> = ({
       <span className={css.list} style={{display: collapsed ? 'none' : undefined}}>
         {children}
       </span>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: closing bracket click is a visual affordance */}
       <span
         className={css.bracket + (brackedHovered ? css.bracketHovered : '')}
         style={{display: collapsed ? 'none' : undefined, color: bracketColor}}

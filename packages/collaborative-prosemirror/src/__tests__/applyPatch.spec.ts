@@ -2,7 +2,7 @@
 
 import type {Node} from 'prosemirror-model';
 import {EditorState} from 'prosemirror-state';
-import {schema, doc, p, blockquote, ul, ol, li, h1, h2, h3, em, strong, a, pre} from 'prosemirror-test-builder';
+import {schema, doc, p, blockquote, ul, ol, li, h1, h2, h3, em, strong} from 'prosemirror-test-builder';
 import {applyPatch} from '../sync/applyPatch';
 import {NodeToViewRangeFuzzer} from './fuzzer';
 import * as fixtures from './fixtures';

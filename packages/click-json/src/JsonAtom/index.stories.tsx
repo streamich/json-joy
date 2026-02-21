@@ -13,13 +13,15 @@ const meta: Meta<typeof Text> = {
 
 export default meta;
 
-export const String: StoryObj<typeof meta> = {
+export const StringValue: StoryObj<typeof meta> = {
+  name: 'String',
   args: {
     value: 'Hello World',
   } as any,
 };
 
-export const Number: StoryObj<typeof meta> = {
+export const NumberValue: StoryObj<typeof meta> = {
+  name: 'Number',
   args: {
     value: 123,
   } as any,
@@ -73,13 +75,15 @@ export const False: StoryObj<typeof meta> = {
   } as any,
 };
 
-export const Array: StoryObj<typeof meta> = {
+export const ArrayValue: StoryObj<typeof meta> = {
+  name: 'Array',
   args: {
     value: [],
   } as any,
 };
 
-export const Object: StoryObj<typeof meta> = {
+export const ObjectValue: StoryObj<typeof meta> = {
+  name: 'Object',
   args: {
     value: {},
   } as any,

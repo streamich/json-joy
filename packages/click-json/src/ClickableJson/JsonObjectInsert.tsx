@@ -14,7 +14,7 @@ export const JsonObjectInsert: React.FC<JsonObjectInsertProps> = ({pointer, visi
   if (!onChange) return null;
 
   const onSubmit = (property: string, value: string) => {
-    let newValue;
+    let newValue: unknown;
     try {
       newValue = JSON.parse(value);
     } catch {

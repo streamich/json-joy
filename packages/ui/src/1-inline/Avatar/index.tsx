@@ -87,6 +87,7 @@ const renderImg = (width: number, src: string, onError: () => void) => {
     };
   }
 
+  // biome-ignore lint/a11y/useAltText: alt is spread from props
   return <img {...props} />;
 };
 

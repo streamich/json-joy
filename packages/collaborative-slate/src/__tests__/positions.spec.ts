@@ -79,7 +79,7 @@ describe('slatePointToGap()', () => {
   describe('multiple paragraphs', () => {
     test('second paragraph gap starts after first paragraph text + its own marker', () => {
       const {txt, editor} = setup([p({}, textNode('abc')), p({}, textNode('def'))]);
-      const g1Start = slatePointToGap(txt, editor, {path: [0, 0], offset: 0});
+      const _g1Start = slatePointToGap(txt, editor, {path: [0, 0], offset: 0});
       const g1End = slatePointToGap(txt, editor, {path: [0, 0], offset: 3});
       const g2Start = slatePointToGap(txt, editor, {path: [1, 0], offset: 0});
       expect(g2Start).toBe(g1End + 1);
@@ -101,7 +101,7 @@ describe('slatePointToGap()', () => {
       const doc: SlateDocument = [p({}, {text: 'foo'}, {text: 'bar', em: true}, {text: 'baz'})];
       const {txt, editor} = setup(doc);
       const children = (editor.children[0] as any).children as {text: string}[];
-      let cumulative = 0;
+      let _cumulative = 0;
       for (let nodeIdx = 0; nodeIdx < children.length; nodeIdx++) {
         const nodeLen = children[nodeIdx].text.length;
         const gStart = slatePointToGap(txt, editor, {path: [0, nodeIdx], offset: 0});
@@ -114,7 +114,7 @@ describe('slatePointToGap()', () => {
           });
           expect(gStart).toBe(prevEnd);
         }
-        cumulative += nodeLen;
+        _cumulative += nodeLen;
       }
     });
   });

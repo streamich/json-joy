@@ -13,7 +13,7 @@ export interface PeritextEditorProps extends PeritextWebUiProps {
 export const PeritextEditor: React.FC<PeritextEditorProps> = (props) => {
   const plugins = useMemo(() => {
     return [...(props.plugins0 || []), new CursorPlugin(), new ToolbarPlugin(), ...(props.plugins || [])];
-  }, [props.plugins]);
+  }, [props.plugins, props.plugins0]);
 
   return <PeritextWebUi {...props} plugins={plugins} />;
 };

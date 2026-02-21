@@ -17,7 +17,7 @@ export const StrAdapter: React.FC<StrAdapterProps> = ({store, path, children}) =
       const facade = new StoreStrFacade(substore);
       const str = new ReplicatedStr(facade);
       return () => str;
-    } catch (err) {
+    } catch {
       return null;
     }
   }, [store, path]);

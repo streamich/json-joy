@@ -1,4 +1,4 @@
-import {createEditor, Transforms, Node as SlateNode} from 'slate';
+import {createEditor, Node as SlateNode} from 'slate';
 import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '../sync/FromSlate';
 import {toSlate} from '../sync/toSlate';

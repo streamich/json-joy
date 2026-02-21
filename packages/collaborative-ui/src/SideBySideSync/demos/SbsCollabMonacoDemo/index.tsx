@@ -26,9 +26,9 @@ via the \`str\` prop, and can optionally specify editor options such as height v
 \`\`\`
 `;
 
-export type SbsCollabMonacoDemoProps = {}
+export type SbsCollabMonacoDemoProps = {};
 
-export const SbsCollabMonacoDemo: React.FC<SbsCollabMonacoDemoProps> = ({}) => {
+export const SbsCollabMonacoDemo: React.FC<SbsCollabMonacoDemoProps> = () => {
   const model = React.useMemo(() => {
     const schema = s.obj({
       text: s.str(`This is a collaborative Monaco Editor example.

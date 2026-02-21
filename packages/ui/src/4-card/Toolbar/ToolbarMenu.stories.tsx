@@ -48,6 +48,7 @@ const InlineTextFloatingMenuDemo: React.FC<Partial<CaretToolbarProps>> = (props)
   const [open, setOpen] = React.useState(true);
 
   const cursor = (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: demo interaction
     <span
       className={blockClass}
       onClick={() => {

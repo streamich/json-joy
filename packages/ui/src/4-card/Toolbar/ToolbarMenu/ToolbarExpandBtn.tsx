@@ -20,7 +20,6 @@ export const ToolbarExpandBtn: React.FC<ToolbarExpandBtnProps> = ({small, disabl
       onMouseEnter={() => openPanel?.onMouseMove('_expand')}
       onMouseMove={() => openPanel?.onMouseMove('_expand')}
       onMouseLeave={openPanel?.onMouseLeave}
-      children={small ? void 0 : t('More')}
       onClick={onClick}
       tooltip={
         small && !disabled
@@ -29,6 +28,8 @@ export const ToolbarExpandBtn: React.FC<ToolbarExpandBtnProps> = ({small, disabl
             }
           : void 0
       }
-    />
+    >
+      {small ? void 0 : t('More')}
+    </ToolbarTextItem>
   );
 };

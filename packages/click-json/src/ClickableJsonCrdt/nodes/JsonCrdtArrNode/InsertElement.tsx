@@ -21,7 +21,7 @@ export const InsertElement: React.FC<InsertElementProps> = ({node, index}) => {
       const nodeApi = model.api.wrap(node.node);
       nodeApi.ins(index, [valueId]);
     },
-    [node.node],
+    [node.node, model, index],
   );
 
   return <ArrayInsert withType visible={isFocused} onSubmit={handleSubmit} />;

@@ -27,9 +27,9 @@ const model = ModelWithExt.create(ext.quill.new('Hello World'));
 \`\`\`
 `;
 
-export type SbsCollabQuillDemoProps = {}
+export type SbsCollabQuillDemoProps = {};
 
-export const SbsCollabQuillDemo: React.FC<SbsCollabQuillDemoProps> = ({}) => {
+export const SbsCollabQuillDemo: React.FC<SbsCollabQuillDemoProps> = () => {
   const model = React.useMemo(() => {
     return ModelWithExt.create(
       ext.quill.new(`This is a collaborative Quill Editor example.

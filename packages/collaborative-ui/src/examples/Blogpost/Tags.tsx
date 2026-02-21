@@ -18,12 +18,7 @@ export const Tags: React.FC<TagsProps> = ({arr}) => {
     <Row title={'Tags'}>
       <Flex style={{alignItems: 'center', width: '100%', flexWrap: 'wrap'}}>
         {list.map((tag: any, i: number) => (
-          <span
-            key={i}
-            style={{cursor: 'not-allowed', paddingRight: '4px', whiteSpace: 'nowrap'}}
-            onClick={() => arr.del(i, 1)}
-            onKeyDown={() => {}}
-          >
+          <span key={String(tag)} onClick={() => arr.del(i, 1)} onKeyDown={() => {}}>
             <Label>{tag}</Label>
           </span>
         ))}

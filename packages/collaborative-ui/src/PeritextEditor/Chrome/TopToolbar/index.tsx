@@ -12,13 +12,13 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
   const {toolbar} = useToolbarPlugin()!;
   const peritext = ctx.peritext;
   const editor = peritext.editor;
-  const pending = useSyncStore(editor.pending);
-  const isDebugMode = useSyncStoreOpt(toolbar.opts.debug?.enabled);
+  const _pending = useSyncStore(editor.pending);
+  const _isDebugMode = useSyncStoreOpt(toolbar.opts.debug?.enabled);
 
   if (!ctx.dom) return null;
 
   const cursor = editor.mainCursor();
-  const [complete] = cursor ? peritext.overlay.stat(cursor) : [new Set()];
+  const [_complete] = cursor ? peritext.overlay.stat(cursor) : [new Set()];
 
   // const inlineGroupButton = (type: string | number, name: React.ReactNode) => (
   //   <Button

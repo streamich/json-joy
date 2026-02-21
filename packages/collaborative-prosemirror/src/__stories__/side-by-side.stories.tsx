@@ -24,7 +24,7 @@ const mySchema = new Schema({
   marks: schema.spec.marks,
 });
 
-const Demo: React.FC<{}> = ({}) => {
+const Demo: React.FC = () => {
   const model = React.useMemo(() => {
     const json = {
       type: 'doc',

@@ -29,6 +29,7 @@ export interface Props {
 
 export const CommandArg: React.FC<Props> = ({title, right, active, children, onClick}) => {
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
     <div className={blockClass} onClick={onClick}>
       <div>
         {!!title && (

@@ -126,6 +126,7 @@ const renderRightDefault = (props: AvatarBlockProps) => {
           ),
         )}
       {subtext && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
         <span
           className={subtextClass + subtextDynamicClass}
           style={{

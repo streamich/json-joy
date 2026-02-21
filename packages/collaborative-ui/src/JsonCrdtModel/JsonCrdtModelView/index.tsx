@@ -7,7 +7,6 @@ import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';

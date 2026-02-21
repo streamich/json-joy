@@ -45,6 +45,7 @@ const Demo: React.FC<{plugins?: () => PeritextPlugin[]}> = (props) => {
     };
   }, [model]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: create-once pattern
   const plugins = React.useMemo(() => {
     if (props.plugins) {
       return props.plugins();

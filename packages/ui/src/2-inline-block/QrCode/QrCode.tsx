@@ -60,6 +60,7 @@ const QrCode: React.FC<QrCodeProps> = ({data, type = 0, level = 'L', ...rest}) =
     setHtml(qr.createSvgTag({scalable: true}));
   }, [data, type, level]);
 
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: SVG QR code rendered safely
   return <span {...rest} dangerouslySetInnerHTML={{__html}} />;
 };
 

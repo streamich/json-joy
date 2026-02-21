@@ -14,7 +14,8 @@ export const CrdtTypeSwitch: React.FC<CrdtTypeSwitchProps> = ({
   onSubmit,
   onClick,
 }) => {
-  const [typeIndex, setTypeIndex] = React.useState(types.findIndex((t) => t === type.current));
+  const [typeIndex, setTypeIndex] = React.useState(types.indexOf(type.current));
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs only on mount to sync the ref
   React.useLayoutEffect(() => {
     (type as any).current = types[typeIndex];
   }, []);
