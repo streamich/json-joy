@@ -4,6 +4,9 @@ import {createEditor, Descendant, Editor, Transforms, Element as SlateElement, B
 import {Slate, Editable, withReact, RenderLeafProps, RenderElementProps, ReactEditor} from 'slate-react';
 import {SlateFacade} from '../SlateFacade';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
+import {useSlatePresence} from '../presence/useSlatePresence';
+import {withPresenceLeaf} from '../presence/PresenceLeaf';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {Model} from 'json-joy/lib/json-crdt';
 
 // Custom types for the editor
@@ -309,18 +312,22 @@ const ToolbarSeparator: React.FC = () => (
 export interface SlateEditorProps {
   model: Model<any>;
   onEditor?: (editor: Editor) => void;
+  presence?: PresenceManager;
 }
 
 // Placeholder initial value used only during the brief window before the
 // binding performs its first sync (replaces children from the CRDT model).
 const placeholderValue: Descendant[] = [{type: 'paragraph', children: [{text: ''}]} as any];
 
-export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
+export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor, presence}) => {
   // Create editor instance (memoized to persist across renders)
   const editor = useMemo(() => withReact(createEditor()), []);
 
   // Force re-render for toolbar state
   const [, forceUpdate] = useState({});
+
+  // Peritext ref for presence hook
+  const peritextRef = useCallback(() => (model as any).s.toExt(), [model]);
 
   // Bind Model to Slate editor
   React.useEffect(() => {
@@ -332,9 +339,16 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
       unbind();
     };
   }, [model, editor, onEditor]);
-
-  // Memoized render functions
-  const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, []);
+  const {decorate, sendLocalPresence} = useSlatePresence({
+    manager: presence,
+    peritext: peritextRef,
+    editor,
+    userFromMeta: (meta: any) => (meta ? {name: meta.name, color: meta.color} : undefined),
+  });
+  const renderLeaf = useMemo(() => {
+    const baseRenderLeaf = (props: RenderLeafProps) => <Leaf {...props} />;
+    return presence ? withPresenceLeaf(baseRenderLeaf) : baseRenderLeaf
+  }, [presence]);
   const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, []);
 
   // Handle keyboard shortcuts
@@ -389,7 +403,13 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
       <Slate
         editor={editor}
         initialValue={placeholderValue}
-        onSelectionChange={() => forceUpdate({})}
+        onSelectionChange={() => {
+          forceUpdate({});
+          sendLocalPresence();
+        }}
+        onChange={() => {
+          sendLocalPresence();
+        }}
       >
         {/* Toolbar */}
         <div
@@ -427,6 +447,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor}) => {
             lineHeight: 1.6,
             outline: 'none',
           }}
+          decorate={decorate}
           renderLeaf={renderLeaf}
           renderElement={renderElement}
           onKeyDown={handleKeyDown}

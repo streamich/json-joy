@@ -38,7 +38,7 @@ const Demo: React.FC<{}> = ({}) => {
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(model, readonly, presence) => <SlateEditor model={model} />}
+        renderDisplay={(model, readonly, presence) => <SlateEditor model={model} presence={presence} />}
       />
     </DemoCard>
   );
