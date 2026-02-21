@@ -5,6 +5,7 @@ import {applyPatch} from './sync/applyPatch';
 import {slatePointToGap, slatePointToPoint, pointToSlatePoint} from './positions';
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
+import {Transforms} from 'slate';
 import type {Editor, BaseOperation, Point as SlatePoint} from 'slate';
 import type {PeritextApi, Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {ViewRange} from 'json-joy/lib/json-crdt-extensions/peritext/editor/types';
@@ -202,7 +203,7 @@ export class SlateFacade implements RichtextEditorFacade {
     }
     this._enterRemote();
     try {
-      editor.selection = {anchor, focus};
+      Transforms.select(editor, {anchor, focus});
     } finally {
       this._exitRemote();
     }
