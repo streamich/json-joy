@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ObjectLayoutProps} from '../ObjectLayout';
+import type {ObjectLayoutProps} from '../ObjectLayout';
 import {JsonCrdtProperty} from './JsonCrdtProperty';
 import {ValueInput} from '../inserts/ValueInput';
 import {CancelAction} from '../buttons/Action/CancelAction';

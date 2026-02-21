@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-import {Node} from 'prosemirror-model';
+import type {Node} from 'prosemirror-model';
 import {doc, p} from 'prosemirror-test-builder';
 import {undo, redo, undoDepth, redoDepth} from 'prosemirror-history';
 import {setup} from './setup';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {context as json} from './context';
-import {StyleContextValue, context as styles} from '../context/style';
+import {type StyleContextValue, context as styles} from '../context/style';
 import {JsonDoc} from './JsonDoc';
 import {Root} from '../Root';
 import {FocusProvider} from '../context/focus';

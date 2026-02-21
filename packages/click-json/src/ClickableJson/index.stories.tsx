@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ClickableJson, ClickableJsonProps} from '.';
-import {applyPatch, Operation} from 'json-joy/lib/json-patch';
+import {ClickableJson, type ClickableJsonProps} from '.';
+import {applyPatch, type Operation} from 'json-joy/lib/json-patch';
 
 const meta: Meta<typeof Text> = {
   title: 'ClickableJson',

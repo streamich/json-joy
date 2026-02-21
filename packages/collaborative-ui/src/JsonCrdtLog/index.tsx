@@ -155,7 +155,7 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
     <context.Provider value={state}>
       <Paper contrast round={!!spacious} style={{minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}>
         {!!pinnedModel && <RunningBackground />}
-        <div className={css.header} style={{marginTop: spacious ? (!!pinnedModel ? 6 : 8) : 0}}>
+        <div className={css.header} style={{marginTop: spacious ? (pinnedModel ? 6 : 8) : 0}}>
           {header}
         </div>
         {(view === 'timeline' || view === 'model') && <Timeline log={log} />}

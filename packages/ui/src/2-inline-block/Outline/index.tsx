@@ -2,7 +2,7 @@ import * as React from 'react';
 import {drule} from 'nano-theme';
 import {fonts} from '../../styles';
 import {useStyles} from '../../styles/context';
-import {ColorName} from '../../styles/color/types';
+import type {ColorName} from '../../styles/color/types';
 
 const blockClass = drule({
   d: 'block',

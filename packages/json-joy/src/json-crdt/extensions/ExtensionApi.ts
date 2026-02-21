@@ -1,4 +1,4 @@
-import {ExtApi} from './types';
+import type {ExtApi} from './types';
 import {NodeApi} from '../model/api/nodes';
 import type {FanOutUnsubscribe} from 'thingies';
 import type {ChangeEvent} from '../model/api/events';

@@ -63,7 +63,7 @@ export const JsonBlockText: React.FC<JsonBlockTextProps> = ({value, path, plain,
     width: wrap ? '100%' : undefined,
   };
 
-  let element = !!plain ? <code style={style}>{json}</code> : <HighlightCode code={json} lang={'json'} />;
+  let element = plain ? <code style={style}>{json}</code> : <HighlightCode code={json} lang={'json'} />;
 
   if (wrap) {
     element = <div className={css.text}>{element}</div>;

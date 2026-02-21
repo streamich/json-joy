@@ -31,7 +31,7 @@ import {JsonCrdtModelTextual} from './JsonCrdtModelTextual';
 import {Display, type DisplayProps} from './Display';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 import {ModelLogicalTimestamp} from '../LogicalTimestamp/ModelLogicalTimestamp';
-import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 
 const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
 

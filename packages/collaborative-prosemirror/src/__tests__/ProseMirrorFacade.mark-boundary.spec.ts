@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-import {Node} from 'prosemirror-model';
+import type {Node} from 'prosemirror-model';
 import {doc, p, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
 import {create} from 'json-joy/lib/json-crdt-extensions/peritext/transfer/create';

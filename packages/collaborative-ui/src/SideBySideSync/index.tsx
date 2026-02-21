@@ -3,7 +3,7 @@ import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {context, useSideBySideSyncState} from './context';
 import {SideBySideSyncState} from './SideBySideSyncState';
-import {JsonCrdtModel, JsonCrdtModelProps} from '../JsonCrdtModel';
+import {JsonCrdtModel, type JsonCrdtModelProps} from '../JsonCrdtModel';
 import {TopBar} from './TopBar';
 import type {Model} from 'json-joy/lib/json-crdt';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {SideBySideSyncState} from './SideBySideSyncState';
+import type {SideBySideSyncState} from './SideBySideSyncState';
 
 export const context = React.createContext<SideBySideSyncState | null>(null);
 

@@ -1,9 +1,9 @@
-import {Block, LeafBlock, Inline, Slice} from 'json-joy/lib/json-crdt-extensions';
+import {type Block, LeafBlock, type Inline, Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {PmJsonNode, PmJsonTextNode, PmJsonMark, PmAttrs} from '../types';
 
 export const toPm = (block: Block | LeafBlock): PmJsonNode => {
   const content: PmJsonNode['content'] = [];
-  let tag = block.tag();
+  const tag = block.tag();
   const node: PmJsonNode = tag ? {type: tag + ''} : {type: 'paragraph'};
   if (block instanceof LeafBlock) {
     for (let iterator = block.texts0(), inline: Inline | undefined; (inline = iterator()); ) {

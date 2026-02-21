@@ -1,4 +1,4 @@
-import {Model} from 'json-joy/lib/json-crdt';
+import type {Model} from 'json-joy/lib/json-crdt';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import {JsonCrdtModelState} from '../JsonCrdtModel/JsonCrdtModelState';

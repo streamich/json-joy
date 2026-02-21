@@ -4,7 +4,7 @@ import {useFocus} from '../context/focus';
 import {useStyles} from '../context/style';
 import {useJsonCrdt} from './context';
 import {TypeAndId} from './TypeAndId';
-import {NodeRef} from './NodeRef';
+import type {NodeRef} from './NodeRef';
 import {id} from './utils';
 import {JsonCrdtRegionEdit} from './JsonCrdtRegionEdit';
 import type {ArrNode, ConNode, JsonNode, ObjNode, ValNode, VecNode} from 'json-joy/lib/json-crdt';

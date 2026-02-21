@@ -26,7 +26,7 @@ via the \`str\` prop, and can optionally specify editor options such as height v
 \`\`\`
 `;
 
-export interface SbsCollabAceDemoProps {}
+export type SbsCollabAceDemoProps = {}
 
 export const SbsCollabAceDemo: React.FC<SbsCollabAceDemoProps> = ({}) => {
   const model = React.useMemo(() => {

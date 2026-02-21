@@ -1,5 +1,5 @@
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
-import {type Block, type Inline, LeafBlock, Peritext} from 'json-joy/lib/json-crdt-extensions/peritext';
+import {type Block, type Inline, LeafBlock, type Peritext} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {SlateDocument, SlateElementNode, SlateTextNode} from '../types';
 
 const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {

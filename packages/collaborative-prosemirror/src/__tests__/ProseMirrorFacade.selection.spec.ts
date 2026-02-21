@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 
 import {TextSelection} from 'prosemirror-state';
-import {Node} from 'prosemirror-model';
+import type {Node} from 'prosemirror-model';
 import {doc, p, blockquote, h1, h2, h3, ul, li, em, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
 

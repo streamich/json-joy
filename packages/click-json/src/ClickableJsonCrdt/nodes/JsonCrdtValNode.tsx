@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as css from '../../css';
-import {NodeRef, nodeRef} from '../NodeRef';
+import {type NodeRef, nodeRef} from '../NodeRef';
 import {useJsonCrdt} from '../context';
 import {JsonCrdtRegion} from '../JsonCrdtRegion';
 import {JsonCrdtProperty} from '../JsonCrdtProperty';

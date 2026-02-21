@@ -1,8 +1,8 @@
 /** Direct Peritext Fragment to ProseMirror Node converter with caching. */
 
 import * as pmm from 'prosemirror-model';
-import {Block, LeafBlock, Inline, Slice} from 'json-joy/lib/json-crdt-extensions';
-import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
+import {type Block, LeafBlock, type Inline, Slice} from 'json-joy/lib/json-crdt-extensions';
+import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 
 /**
  * Double-buffered cache for ProseMirror nodes, keyed by Peritext Block hash.

@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-import {Node} from 'prosemirror-model';
+import type {Node} from 'prosemirror-model';
 import {doc, p, blockquote, h1, em, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
 

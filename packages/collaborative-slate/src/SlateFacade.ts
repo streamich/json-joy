@@ -111,13 +111,10 @@ export class SlateFacade implements RichtextEditorFacade {
     const installHistory =
       historyOpt === true ? true : historyOpt === false ? false : !HistoryEditor.isHistoryEditor(editor);
     if (installHistory) withHistory(editor);
-
-    // Override editor.onChange to intercept local edits.
-    const self = this;
     this._origOnChange = (editor as any).onChange;
     (editor.onChange as SlateEditorOnChange) = this._slateOnChange = (options?: {operation?: SlateOperation}) => {
-      if (self._disposed || !!self._remoteCnt) {
-        self._origOnChange?.call(editor);
+      if (this._disposed || !!this._remoteCnt) {
+        this._origOnChange?.call(editor);
         return;
       }
       const operations = editor.operations;
@@ -125,19 +122,19 @@ export class SlateFacade implements RichtextEditorFacade {
       if (hasDocChange) {
         let simpleOperation: PeritextOperation | undefined;
         try {
-          const txt = self.peritext().txt;
+          const txt = this.peritext().txt;
           simpleOperation = tryExtractPeritextOperation(operations, editor, txt);
         } catch {}
-        self.onchange?.(simpleOperation);
+        this.onchange?.(simpleOperation);
       } else {
-        self.onselection?.();
+        this.onselection?.();
       }
 
       // Call _origOnChange (Slate React's internal handler) AFTER syncing
       // the Peritext model. This ensures that any callbacks triggered by
       // Slate React (e.g. sendLocalPresence) see the up-to-date model
       // when converting positions between Slate and CRDT coordinate spaces.
-      self._origOnChange?.call(editor);
+      this._origOnChange?.call(editor);
     };
   }
 

@@ -1,4 +1,4 @@
-import {JsonNode} from 'json-joy/lib/json-crdt';
+import type {JsonNode} from 'json-joy/lib/json-crdt';
 
 export class NodeRef<N extends JsonNode = JsonNode> {
   constructor(

@@ -11,7 +11,7 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
-import {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {Model} from 'json-joy/lib/json-crdt';
 import type {JsonCrdtModelState} from './JsonCrdtModelState';
 

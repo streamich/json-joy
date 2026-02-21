@@ -87,7 +87,7 @@ export const DemoCard: React.FC<DemoCardProps> = ({title, subtitle, description,
           </Split>
         </div>
       )}
-      {!!showDescription ? (
+      {showDescription ? (
         <div className={descriptionWrapClass}>
           <Paper round>
             <div className={descriptionClass}>

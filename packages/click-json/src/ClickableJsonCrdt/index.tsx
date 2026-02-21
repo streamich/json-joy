@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {context as crdt} from './context';
-import {StyleContextValue, context as styles} from '../context/style';
-import {NodeRef, nodeRef} from './NodeRef';
+import {type StyleContextValue, context as styles} from '../context/style';
+import {type NodeRef, nodeRef} from './NodeRef';
 import {Root} from '../Root';
-import {FocusProvider, FocusProviderProps} from '../context/focus';
+import {FocusProvider, type FocusProviderProps} from '../context/focus';
 import {
   ConNode,
   ValNode,

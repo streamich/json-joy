@@ -7,7 +7,7 @@
  */
 
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
-import {Block, LeafBlock, Inline} from 'json-joy/lib/json-crdt-extensions/peritext';
+import {type Block, LeafBlock, type Inline} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import type {SlateDocument, SlateElementNode, SlateTextNode} from '../types';
 

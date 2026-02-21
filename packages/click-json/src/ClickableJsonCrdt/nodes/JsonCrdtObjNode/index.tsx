@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ConNode, type JsonNode, type ObjNode} from 'json-joy/lib/json-crdt';
 import * as css from '../../../css';
 import {useJsonCrdt} from '../../context';
-import {NodeRef, nodeRef} from '../../NodeRef';
+import {type NodeRef, nodeRef} from '../../NodeRef';
 import {JsonCrdtRegion} from '../../JsonCrdtRegion';
 import {JsonCrdtProperty} from '../../JsonCrdtProperty';
 import {JsonCrdtObjectLayout} from '../../JsonCrdtObjectLayout';

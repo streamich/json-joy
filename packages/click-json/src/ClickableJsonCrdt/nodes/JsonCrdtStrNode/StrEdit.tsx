@@ -3,7 +3,7 @@ import {theme} from 'nano-theme';
 import {bind} from 'collaborative-input';
 import {FlexibleInput} from 'flexible-input';
 import {useT} from 'use-t';
-import {NodeRef} from '../../NodeRef';
+import type {NodeRef} from '../../NodeRef';
 import * as css from '../../../css';
 import {selectOnFocus} from '../../../utils/selectOnFocus';
 import {inputStyle} from '../../../ClickableJson/utils';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule, theme} from 'nano-theme';
 import {useT} from 'use-t';
-import {NodeRef} from '../../NodeRef';
+import type {NodeRef} from '../../NodeRef';
 import {JsonCrdtRegion} from '../../JsonCrdtRegion';
 import {JsonCrdtProperty} from '../../JsonCrdtProperty';
 import {JsonAtom} from '../../../JsonAtom';

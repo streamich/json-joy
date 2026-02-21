@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule, theme, useTheme} from 'nano-theme';
-import {NodeRef} from './NodeRef';
+import type {NodeRef} from './NodeRef';
 import {VecNode, type JsonNode} from 'json-joy/lib/json-crdt';
 
 const blockClass = rule({

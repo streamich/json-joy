@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ObjectLayout, ObjectLayoutProps} from '../ObjectLayout';
+import {ObjectLayout, type ObjectLayoutProps} from '../ObjectLayout';
 import {useStyles} from '../context/style';
 import {useFocus} from '../context/focus';
 import type {NodeRef} from './NodeRef';

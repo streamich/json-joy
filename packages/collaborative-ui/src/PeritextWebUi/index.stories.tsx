@@ -6,7 +6,7 @@ import {CursorPlugin} from './plugins/cursor';
 import {defaultPlugin} from './plugins/minimal';
 import {BlocksPlugin} from './plugins/blocks';
 import {DebugPlugin} from './plugins/debug';
-import {PeritextPlugin} from './react/types';
+import type {PeritextPlugin} from './react/types';
 
 export default {
   component: PeritextWebUi,

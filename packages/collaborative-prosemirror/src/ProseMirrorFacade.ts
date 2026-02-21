@@ -1,14 +1,14 @@
 import {Plugin, TextSelection} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
+import type {EditorView} from 'prosemirror-view';
 import {ReplaceStep} from 'prosemirror-transform';
 import {history} from 'prosemirror-history';
 import {Mark} from 'prosemirror-model';
 import {FromPm} from './sync/FromPm';
-import {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
+import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import {ToPmNode} from './sync/toPmNode';
 import {applyPatch} from './sync/applyPatch';
 import {pmPosToGap, pmPosToPoint, pointToPmPos} from './util';
-import {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
+import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import {SYNC_PLUGIN_KEY, TransactionOrigin} from './constants';
 import {createPlugin as createPresencePlugin} from './presence/plugin';
 import type {Peritext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';

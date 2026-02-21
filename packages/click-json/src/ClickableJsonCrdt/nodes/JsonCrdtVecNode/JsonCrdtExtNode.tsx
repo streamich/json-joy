@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {NodeRef} from '../../NodeRef';
+import type {NodeRef} from '../../NodeRef';
 import {JsonCrdtRegion} from '../../JsonCrdtRegion';
 import {JsonCrdtProperty} from '../../JsonCrdtProperty';
 import {JsonCrdtObjectLayout} from '../../JsonCrdtObjectLayout';
 import {useRerenderModel} from '../../hooks';
 import {JsonCrdtConstant} from '../../JsonCrdtConstant';
 import {id} from '../../utils';
-import {VecNode} from 'json-joy/lib/json-crdt';
+import type {VecNode} from 'json-joy/lib/json-crdt';
 import {JsonAtom} from '../../../JsonAtom';
 import {SwitchAction} from '../../../buttons/Action/SwitchAction';
 

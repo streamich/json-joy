@@ -27,7 +27,7 @@ const model = ModelWithExt.create(ext.quill.new('Hello World'));
 \`\`\`
 `;
 
-export interface SbsCollabQuillDemoProps {}
+export type SbsCollabQuillDemoProps = {}
 
 export const SbsCollabQuillDemo: React.FC<SbsCollabQuillDemoProps> = ({}) => {
   const model = React.useMemo(() => {

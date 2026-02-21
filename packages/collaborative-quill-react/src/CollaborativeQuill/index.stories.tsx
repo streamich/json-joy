@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {CollaborativeQuill} from '.';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
-import Quill from 'quill';
+import type Quill from 'quill';
 import Delta from 'quill-delta';
 
 export default {

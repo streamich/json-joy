@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {NodeRef} from '../../NodeRef';
+import type {NodeRef} from '../../NodeRef';
 import {ObjectInsert} from '../../../inserts/ObjectInsert';
 import {useIsFocused} from '../../../context/focus';
 import {createValue, id} from '../../utils';

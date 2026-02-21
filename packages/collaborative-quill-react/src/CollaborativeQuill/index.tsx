@@ -2,7 +2,7 @@ import * as React from 'react';
 import Quill, {type QuillOptions} from 'quill';
 import {bind} from '@jsonjoy.com/collaborative-quill';
 import {loadCss} from './loadCss';
-import {QuillDeltaApi} from 'json-joy/lib/json-crdt-extensions/quill-delta/QuillDeltaApi';
+import type {QuillDeltaApi} from 'json-joy/lib/json-crdt-extensions/quill-delta/QuillDeltaApi';
 import {opts} from './constants';
 import type {OnEditorChange, OnSelectionChange, OnTextChange} from '@jsonjoy.com/collaborative-quill';
 

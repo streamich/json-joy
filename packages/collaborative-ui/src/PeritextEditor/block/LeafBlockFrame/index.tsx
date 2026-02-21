@@ -4,7 +4,7 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useToolbarPlugin} from '../../context';
 import {AutoExpandableToolbar} from './AutoExpandableToolbar';
 import {compare} from 'json-joy/lib/json-crdt-patch';
-import {EntangledPortal, EntangledPortalStateOpts} from '../../components/EntangledPortal';
+import {EntangledPortal, type EntangledPortalStateOpts} from '../../components/EntangledPortal';
 import type {RenderBlockProps} from '../RenderBlock';
 
 const blockClass = rule({

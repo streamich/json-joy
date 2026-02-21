@@ -27,7 +27,7 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
   const sid = clock.sid;
   const nodeId: PresenceIdShorthand = id.toDto(sid, str.node.id);
   const cursors: PresenceCursor[] = [];
-  for (let selection of selections) {
+  for (const selection of selections) {
     let anchor: number = 0,
       focus: number = -1;
     if (typeof selection === 'number') anchor = selection;

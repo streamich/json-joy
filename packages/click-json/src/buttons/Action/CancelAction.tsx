@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {drule, useTheme} from 'nano-theme';
 import * as css from '../../css';
-import {Action, ActionProps} from '.';
+import {Action, type ActionProps} from '.';
 
 const blockClass = drule({
   w: '20px',

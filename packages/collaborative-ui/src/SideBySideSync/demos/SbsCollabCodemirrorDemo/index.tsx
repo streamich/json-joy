@@ -16,7 +16,7 @@ after synchronization. Use the top bar buttons to manually synchronize or adjust
 auto-sync settings.
 `;
 
-export interface SbsCollabCodemirrorDemoProps {}
+export type SbsCollabCodemirrorDemoProps = {}
 
 export const SbsCollabCodemirrorDemo: React.FC<SbsCollabCodemirrorDemoProps> = ({}) => {
   const model = React.useMemo(() => {

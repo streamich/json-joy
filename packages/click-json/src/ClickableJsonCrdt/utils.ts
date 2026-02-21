@@ -1,4 +1,4 @@
-import {NodeRef} from './NodeRef';
+import type {NodeRef} from './NodeRef';
 import type {JsonNode, Model} from 'json-joy/lib/json-crdt';
 import type {ITimestampStruct} from 'json-joy/lib/json-crdt-patch/clock';
 

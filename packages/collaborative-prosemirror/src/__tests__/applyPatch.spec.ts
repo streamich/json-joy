@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-import {Node} from 'prosemirror-model';
+import type {Node} from 'prosemirror-model';
 import {EditorState} from 'prosemirror-state';
 import {schema, doc, p, blockquote, ul, ol, li, h1, h2, h3, em, strong, a, pre} from 'prosemirror-test-builder';
 import {applyPatch} from '../sync/applyPatch';

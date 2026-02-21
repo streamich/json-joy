@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useCallback, useMemo, useState} from 'react';
-import {createEditor, Descendant, Editor, Transforms, Element as SlateElement, BaseEditor} from 'slate';
-import {Slate, Editable, withReact, RenderLeafProps, RenderElementProps, ReactEditor} from 'slate-react';
+import {createEditor, type Descendant, Editor, Transforms, Element as SlateElement, type BaseEditor} from 'slate';
+import {Slate, Editable, withReact, type RenderLeafProps, type RenderElementProps, type ReactEditor} from 'slate-react';
 import {bind} from '../../index';
 import {slateInitialValue} from '../shared/initialValue';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
