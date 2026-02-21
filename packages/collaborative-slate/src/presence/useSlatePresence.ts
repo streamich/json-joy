@@ -221,9 +221,7 @@ export const useSlatePresence = <Meta extends object = object>(
       const stableSelection: StablePeritextSelection = [range, startIsAnchor];
       const dto = peritextPresence.toDto(txt, [stableSelection]);
       manager.setSelections([dto]);
-    } catch {
-      // Ignore errors — position conversion can fail during concurrent edits.
-    }
+    } catch {}
   }, [editor, peritextRef, manager]);
 
   return {decorate, sendLocalPresence} as const;
