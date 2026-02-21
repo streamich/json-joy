@@ -3,6 +3,7 @@
 import type {Node} from 'prosemirror-model';
 import {doc, p, blockquote, h1, em, strong} from 'prosemirror-test-builder';
 import {setup} from './setup';
+import {onlyNode24AndHigher} from './test-helpers';
 
 const typeAt = (view: ReturnType<typeof setup>['view'], pos: number, text: string) => {
   const {state} = view;
@@ -22,7 +23,7 @@ const replaceWithText = (view: ReturnType<typeof setup>['view'], from: number, t
   view.dispatch(tr);
 };
 
-describe('ProseMirrorFacade — PeritextOperation fast path', () => {
+onlyNode24AndHigher('ProseMirrorFacade — PeritextOperation fast path', () => {
   describe('character insertion', () => {
     test('typing a single character at start, middle, end of paragraph', () => {
       const pmDoc = doc(p('hello')) as Node;
