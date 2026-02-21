@@ -65,3 +65,13 @@ export const a = (href: string, text: string): SlateTextNode => ({
   text,
   href,
 });
+
+/**
+ * Create a void element (e.g., embed, image, horizontal rule).
+ * Void nodes have no user-editable content — just `children: [{text: ''}]`.
+ */
+export const voidNode = (type: string, attr: Record<string, any> = {}): SlateElementNode => ({
+  ...attr,
+  type,
+  children: [{text: ''}],
+});

@@ -322,20 +322,3 @@ are present on a leaf; otherwise it delegates to the original component unchange
 A standalone `renderLeaf` component that renders presence visuals (carets and highlights)
 without wrapping another component. Use it when your `renderLeaf` is trivial or when you want
 to compose manually.
-
-
-## Development
-
-```bash
-# Run Slate.js demo
-yarn demo:slate
-
-# Run Plate.js demo
-yarn demo:plate
-
-# Run tests
-yarn test
-
-# Type check
-yarn typecheck
-```
