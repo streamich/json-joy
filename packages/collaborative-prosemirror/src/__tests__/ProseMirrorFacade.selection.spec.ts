@@ -110,23 +110,23 @@ describe('ProseMirrorFacade selection', () => {
       const r1 = testbed.getSelectionAt(1, 1)!;
       expect(r1[0].start.viewPos()).toBe(1);
       expect(r1[0].start.rightChar()?.view()).toBe('H');
-      
+
       // End of first paragraph (PM 6 -> PT gap 6)
       const r2 = testbed.getSelectionAt(6, 6)!;
       expect(r2[0].start.viewPos()).toBe(6);
       expect(r2[0].start.leftChar()?.view()).toBe('o');
-      
+
       // Start of second paragraph (PM 8 -> PT gap 7)
       const r3 = testbed.getSelectionAt(8, 8)!;
       expect(r3[0].start.viewPos()).toBe(7);
       expect(r3[0].start.rightChar()?.view()).toBe('W');
-      
+
       // After 'W' in second paragraph (PM 9 -> PT gap 8)
       const r4 = testbed.getSelectionAt(9, 9)!;
       expect(r4[0].start.viewPos()).toBe(8);
       expect(r4[0].start.leftChar()?.view()).toBe('W');
       expect(r4[0].start.rightChar()?.view()).toBe('o');
-      
+
       // End of second paragraph (PM 13 -> PT gap 12)
       const r5 = testbed.getSelectionAt(13, 13)!;
       expect(r5[0].start.viewPos()).toBe(12);
@@ -230,7 +230,7 @@ describe('ProseMirrorFacade selection', () => {
     test('no-op when disposed', () => {
       const pmDoc = doc(p('hello')) as Node;
       using testbed = setup(pmDoc);
-      const {facade, api: peritextApi, txt} = testbed
+      const {facade, api: peritextApi, txt} = testbed;
       facade.dispose();
       // Should not throw
       const range = txt.rangeFromPoints(txt.pointIn(1), txt.pointIn(3));
@@ -259,7 +259,7 @@ describe('ProseMirrorFacade selection', () => {
       const range = txt.rangeFromPoints(txt.pointIn(2), txt.pointIn(5));
       expect(range.text()).toBe('ell');
       facade.setSelection(peritextApi, range, true); // start is anchor
-      const { selection } = view.state;
+      const {selection} = view.state;
       const text = view.state.doc.textBetween(selection.from, selection.to, '\n');
       expect(text).toBe('ell');
       expect(view.state.selection.anchor).toBe(2);

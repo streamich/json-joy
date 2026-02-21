@@ -3,11 +3,11 @@ import {bind} from '@jsonjoy.com/collaborative-input';
 import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 
 export interface UiLifeCycles {
-    /**
-     * Called when UI component is mounted. Returns a function to be called when
-     * the component is removed from the screen.
-     */
-    start(): () => void;
+  /**
+   * Called when UI component is mounted. Returns a function to be called when
+   * the component is removed from the screen.
+   */
+  start(): () => void;
 }
 
 class CollaborativeInputState implements UiLifeCycles {

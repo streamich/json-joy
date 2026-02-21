@@ -81,7 +81,12 @@ export const PeritextWebUi: React.FC<PeritextWebUiProps> = React.memo((props) =>
     <context.Provider value={state}>
       <div className={CssClass.Editor}>
         <PeritextViewInner div={ref} state={state} />
-        <div ref={(el) => { state.portalEl = el || void 0; }} className={CssClass.Overlays} />
+        <div
+          ref={(el) => {
+            state.portalEl = el || void 0;
+          }}
+          className={CssClass.Overlays}
+        />
       </div>
     </context.Provider>
   );

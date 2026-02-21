@@ -119,4 +119,4 @@ export type SlatePath = number[];
 
 // --------------------------------------------------------------------- editor
 
-export type SlateEditorOnChange = (options?: { operation?: SlateOperation }) => void;
+export type SlateEditorOnChange = (options?: {operation?: SlateOperation}) => void;

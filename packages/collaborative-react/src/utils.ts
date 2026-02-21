@@ -5,5 +5,7 @@ export type ModelSelector<Top extends NodeApi<any> = NodeApi<any>, Selected exte
   | ApiPath
   | ((model: Top) => Selected);
 
-export const selectNode = <Top extends NodeApi<any> = NodeApi<any>, Selected extends NodeApi<any> = NodeApi<any>>(model: Top, selector: ModelSelector<Top, Selected>): Selected =>
-  typeof selector === 'function' ? selector(model) : (model.find(selector) as unknown as Selected);
+export const selectNode = <Top extends NodeApi<any> = NodeApi<any>, Selected extends NodeApi<any> = NodeApi<any>>(
+  model: Top,
+  selector: ModelSelector<Top, Selected>,
+): Selected => (typeof selector === 'function' ? selector(model) : (model.find(selector) as unknown as Selected));

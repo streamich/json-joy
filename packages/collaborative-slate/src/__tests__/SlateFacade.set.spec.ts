@@ -78,57 +78,35 @@ describe('whole-document state transformation', () => {
     });
 
     test('adjacent text nodes with different marks', () => {
-      assertRoundtrip([
-        p({}, em('italic'), strong('bold'), textNode('plain')),
-      ]);
+      assertRoundtrip([p({}, em('italic'), strong('bold'), textNode('plain'))]);
     });
 
     test('overlapping marks: bold+italic', () => {
-      assertRoundtrip([
-        p(
-          {},
-          textNode('plain '),
-          {text: 'both', em: true, strong: true},
-          textNode(' plain'),
-        ),
-      ]);
+      assertRoundtrip([p({}, textNode('plain '), {text: 'both', em: true, strong: true}, textNode(' plain'))]);
     });
 
     test('link annotation with href attribute', () => {
-      assertRoundtrip([
-        p({}, textNode('Click '), a('https://example.com', 'here'), textNode(' please.')),
-      ]);
+      assertRoundtrip([p({}, textNode('Click '), a('https://example.com', 'here'), textNode(' please.'))]);
     });
 
     test('link with bold', () => {
-      assertRoundtrip([
-        p({}, {text: 'link', href: 'https://example.com', strong: true}),
-      ]);
+      assertRoundtrip([p({}, {text: 'link', href: 'https://example.com', strong: true})]);
     });
   });
 
   describe('block nesting', () => {
     test('blockquote containing multiple paragraphs', () => {
-      assertRoundtrip([
-        blockquote({}, p({}, textNode('first')), p({}, textNode('second'))),
-      ]);
+      assertRoundtrip([blockquote({}, p({}, textNode('first')), p({}, textNode('second')))]);
     });
 
     test('deeply nested list', () => {
       assertRoundtrip([
-        ul(
-          li(
-            p({}, textNode('top')),
-            ul(li(p({}, textNode('mid')), ul(li(p({}, textNode('deep')))))),
-          ),
-        ),
+        ul(li(p({}, textNode('top')), ul(li(p({}, textNode('mid')), ul(li(p({}, textNode('deep')))))))),
       ]);
     });
 
     test('ordered list with start index', () => {
-      assertRoundtrip([
-        ol(5, li(p({}, textNode('fifth'))), li(p({}, textNode('sixth')))),
-      ]);
+      assertRoundtrip([ol(5, li(p({}, textNode('fifth'))), li(p({}, textNode('sixth'))))]);
     });
   });
 

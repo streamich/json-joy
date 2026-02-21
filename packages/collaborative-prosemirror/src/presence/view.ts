@@ -8,8 +8,7 @@ export interface PresenceUser {
   color?: string;
 }
 
-const generateColor = (str: string, alpha?: number): string =>
-  new Colors().hash(str).setA(100 * (alpha ?? 1)) + '';
+const generateColor = (str: string, alpha?: number): string => new Colors().hash(str).setA(100 * (alpha ?? 1)) + '';
 
 // --------------------------------------------------------------------- Cursor
 
@@ -93,8 +92,7 @@ export const renderCursor: CursorRenderer<any> = (
   label.className = cursorLabelClass;
   label.style.backgroundColor = color;
   label.textContent = name;
-  if (fadeAfterMs > 0)
-    label.style.animation = `${labelFadeAnimation} 0.3s ease ${fadeAfterMs}ms forwards`;
+  if (fadeAfterMs > 0) label.style.animation = `${labelFadeAnimation} 0.3s ease ${fadeAfterMs}ms forwards`;
   el.append('\u2060', label, '\u2060');
   return el;
 };
@@ -156,8 +154,7 @@ export class CursorManager<Meta extends object = object> {
   }
 
   prune(activeIds: Set<string>): void {
-    for (const id of this.cache.keys())
-      if (!activeIds.has(id)) this.cache.delete(id);
+    for (const id of this.cache.keys()) if (!activeIds.has(id)) this.cache.delete(id);
   }
 
   destroy(): void {

@@ -2,5 +2,5 @@ export {
   /**
    * @deprecated Use deepEqualCodegen from '@jsonjoy.com/json-equal/lib/deepEqualCodegen' instead.
    */
-  deepEqualCodegen
+  deepEqualCodegen,
 } from '@jsonjoy.com/json-equal/lib/deepEqualCodegen';

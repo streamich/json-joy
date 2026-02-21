@@ -31,15 +31,19 @@ export interface SbsCollabQuillDemoProps {}
 
 export const SbsCollabQuillDemo: React.FC<SbsCollabQuillDemoProps> = ({}) => {
   const model = React.useMemo(() => {
-    return ModelWithExt.create(ext.quill.new(`This is a collaborative Quill Editor example.
+    return ModelWithExt.create(
+      ext.quill.new(`This is a collaborative Quill Editor example.
 
-You can edit the text here, and see changes synchronized in the other editor!`));
+You can edit the text here, and see changes synchronized in the other editor!`),
+    );
   }, []);
 
   return (
     <DemoCard
       title={<Markdown inline src={'Quill Editor'} />}
-      subtitle={<Markdown inline src={'Synchronization example using the `@jsonjoy.com/collaborative-quill-react` package'} />}
+      subtitle={
+        <Markdown inline src={'Synchronization example using the `@jsonjoy.com/collaborative-quill-react` package'} />
+      }
       description={<Markdown src={DESCRIPTION} />}
     >
       <SideBySideSync
@@ -48,10 +52,7 @@ You can edit the text here, and see changes synchronized in the other editor!`))
         renderDisplay={(model: Model<any>) => (
           <Paper style={{overflow: 'hidden', width: '100%'}} contrast>
             <div style={{width: '100%', height: 200}} onKeyDown={(e) => e.stopPropagation()}>
-              <CollaborativeQuill
-                style={{height: '200px'}}
-                api={() => (model as any).s.toExt()}
-              />
+              <CollaborativeQuill style={{height: '200px'}} api={() => (model as any).s.toExt()} />
             </div>
           </Paper>
         )}

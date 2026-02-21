@@ -17,9 +17,7 @@ export const PresenceLeaf = ({attributes, children, leaf}: LeafProps): React.JSX
   const highlight = leaf.presenceHighlight;
   const caret = leaf.presenceCaret;
 
-  const style: React.CSSProperties | undefined = highlight
-    ? {backgroundColor: highlight}
-    : undefined;
+  const style: React.CSSProperties | undefined = highlight ? {backgroundColor: highlight} : undefined;
 
   return (
     <span {...attributes} style={style}>
@@ -42,9 +40,7 @@ type RenderLeafFn = (props: RenderLeafProps) => React.JSX.Element;
  * <Editable renderLeaf={renderLeaf} />
  * ```
  */
-export const withPresenceLeaf = (
-  AppLeaf: RenderLeafFn,
-): RenderLeafFn => {
+export const withPresenceLeaf = (AppLeaf: RenderLeafFn): RenderLeafFn => {
   const Wrapped: RenderLeafFn = (props) => {
     const leaf = props.leaf as RenderLeafProps['leaf'] & PresenceDecoration;
     const highlight = leaf.presenceHighlight;
@@ -54,9 +50,7 @@ export const withPresenceLeaf = (
     if (!highlight && !caret) return <AppLeaf {...props} />;
 
     // Wrap the app's leaf output with presence visuals.
-    const style: React.CSSProperties | undefined = highlight
-      ? {backgroundColor: highlight}
-      : undefined;
+    const style: React.CSSProperties | undefined = highlight ? {backgroundColor: highlight} : undefined;
 
     return (
       <span {...props.attributes} style={style}>

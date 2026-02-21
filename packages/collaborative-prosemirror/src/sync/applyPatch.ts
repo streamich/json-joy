@@ -21,18 +21,12 @@ import type {Transaction} from 'prosemirror-state';
  * @param newNode   The desired (new) document / sub-tree root.
  * @param offset    Absolute position of this node's opening tag (-1 for doc).
  */
-export const applyPatch = (
-  tr: Transaction,
-  oldNode: PmNode,
-  newNode: PmNode,
-  offset: number = -1,
-): void => {
+export const applyPatch = (tr: Transaction, oldNode: PmNode, newNode: PmNode, offset: number = -1): void => {
   if (oldNode === newNode) return;
   const oldContent = oldNode.content;
   const newContent = newNode.content;
   if (oldContent.eq(newContent)) {
-    if (offset >= 0 && !oldNode.sameMarkup(newNode))
-      tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
+    if (offset >= 0 && !oldNode.sameMarkup(newNode)) tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
     return;
   }
   if (oldNode.isTextblock) {
@@ -47,11 +41,9 @@ export const applyPatch = (
       const from = offset + 1 + start;
       const to = offset + 1 + endA;
       const slice = newContent.cut(start, endB);
-      if (from !== to || slice.size > 0)
-        tr.replace(from, to, new Slice(slice, 0, 0));
+      if (from !== to || slice.size > 0) tr.replace(from, to, new Slice(slice, 0, 0));
     }
-    if (!oldNode.sameMarkup(newNode))
-      tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
+    if (!oldNode.sameMarkup(newNode)) tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
     return;
   }
   const oldCount = oldNode.childCount;
@@ -70,8 +62,7 @@ export const applyPatch = (
 
   // All children match and counts are equal — only markup may have changed.
   if (pfx === minCount && oldCount === newCount) {
-    if (offset >= 0 && !oldNode.sameMarkup(newNode))
-      tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
+    if (offset >= 0 && !oldNode.sameMarkup(newNode)) tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
     return;
   }
 
@@ -126,6 +117,5 @@ export const applyPatch = (
   }
 
   // After children have been reconciled, update wrapper markup if needed.
-  if (offset >= 0 && !oldNode.sameMarkup(newNode))
-    tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
+  if (offset >= 0 && !oldNode.sameMarkup(newNode)) tr.setNodeMarkup(offset, null, newNode.attrs, newNode.marks);
 };

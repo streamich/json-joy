@@ -101,7 +101,7 @@ const toggleBlock = (editor: Editor, format: BlockFormat, level?: number): void 
       type: isActive ? 'paragraph' : format,
       ...(format === 'heading' && level ? {level} : {}),
     } as Partial<CustomElement>,
-    {match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n)}
+    {match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n)},
   );
 };
 
@@ -348,7 +348,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor, presen
   });
   const renderLeaf = useMemo(() => {
     const baseRenderLeaf = (props: RenderLeafProps) => <Leaf {...props} />;
-    return presence ? withPresenceLeaf(baseRenderLeaf) : baseRenderLeaf
+    return presence ? withPresenceLeaf(baseRenderLeaf) : baseRenderLeaf;
   }, [presence]);
   const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, []);
 
@@ -402,7 +402,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({model, onEditor, presen
         }
       }
     },
-    [editor]
+    [editor],
   );
 
   return (

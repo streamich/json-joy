@@ -11,7 +11,7 @@ export type PeritextRef = () => PeritextApi;
  * startIsAnchor]`, where `range` is a `Range<string>` representing the selected
  * range in the CRDT, and `startIsAnchor` is a boolean indicating whether the
  * start of the range is the anchor (true) or the head (false).
- * 
+ *
  * The `Range` (start, end) ends are always ordered such that start <= end,
  * regardless of the actual selection direction. To construct the
  * range with start/end correctly ordered use `Peritext.rangeFromPoints()`.
@@ -29,7 +29,7 @@ export type PeritextOperation = [position: number, remove: number, insert: strin
  * A facade for the rich-text editor, which is used by the binding to
  * communicate with the editor. The editor can be any rich-text editor that
  * implements this interface.
- * 
+ *
  * The more methods are implemented, the more granular the binding can be when
  * syncing changes between the model and the editor.
  */
@@ -56,7 +56,7 @@ export interface RichtextEditorFacade {
    * the `PeritextOperation` tuple, the `void` value can be emitted instead. For the
    * most basic implementation, one can always emit `null` on every change.
    */
-  onchange?: (change: PeritextOperation | void) => (PeritextRef | void);
+  onchange?: (change: PeritextOperation | void) => PeritextRef | void;
 
   // ---------------------------------------------------------------- Selection
 

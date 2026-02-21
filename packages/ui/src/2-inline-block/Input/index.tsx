@@ -79,14 +79,20 @@ export const Input: React.FC<InputProps> = (props) => {
     if (props.select) ref.current.select();
   }, [ref.current]);
 
-  const onFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setFocus(true);
-    (props.onFocus || noop)(e);
-  }, [props.onFocus]);
-  const onBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setFocus(false);
-    (props.onBlur || noop)(e);
-  }, [props.onBlur]);
+  const onFocus = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      setFocus(true);
+      (props.onFocus || noop)(e);
+    },
+    [props.onFocus],
+  );
+  const onBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      setFocus(false);
+      (props.onBlur || noop)(e);
+    },
+    [props.onBlur],
+  );
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!ref.current) return;

@@ -81,9 +81,7 @@ export interface UseSlatePresenceOpts<Meta extends object = object> {
  * <Editable decorate={decorate} ... />
  * ```
  */
-export const useSlatePresence = <Meta extends object = object>(
-  opts: UseSlatePresenceOpts<Meta>,
-) => {
+export const useSlatePresence = <Meta extends object = object>(opts: UseSlatePresenceOpts<Meta>) => {
   const {
     manager,
     peritext: peritextRef,
@@ -101,8 +99,7 @@ export const useSlatePresence = <Meta extends object = object>(
       setTick((t) => t + 1);
     });
     let gcTimer: ReturnType<typeof setInterval> | undefined;
-    if (gcIntervalMs > 0)
-      gcTimer = setInterval(() => manager.removeOutdated(hideAfterMs), gcIntervalMs);
+    if (gcIntervalMs > 0) gcTimer = setInterval(() => manager.removeOutdated(hideAfterMs), gcIntervalMs);
     return () => {
       unsubscribe();
       clearInterval(gcTimer);

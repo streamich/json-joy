@@ -18,11 +18,10 @@ export const SingleEditorDebug: React.FC = () => {
   const model = React.useMemo(() => {
     const slateDoc = [
       {type: 'paragraph', children: [{text: 'Hello, Slate!'}]},
-      {type: 'paragraph', children: [
-        {text: 'This is a basic '},
-        {text: 'rich text', bold: true, italic: true},
-        {text: ' editor.'},
-      ]},
+      {
+        type: 'paragraph',
+        children: [{text: 'This is a basic '}, {text: 'rich text', bold: true, italic: true}, {text: ' editor.'}],
+      },
     ];
     const model = ModelWithExt.create(ext.peritext.new(''));
     const viewRange = FromSlate.convert(slateDoc as any);
@@ -37,25 +36,35 @@ export const SingleEditorDebug: React.FC = () => {
       <SlateEditor model={model} />
       <div>
         <div style={{height: 8}} />
-        <button onClick={() => {
-          const str = model.s.toExt().text() as StrApi;
-          const pos = str.length();
-          str.ins(pos > 0 ? 1 : 0, '1. ');
-        }}>Prepend "1. "</button>
-        {' '}
-        <button onClick={() => {
-          setTimeout(() => {
+        <button
+          onClick={() => {
             const str = model.s.toExt().text() as StrApi;
             const pos = str.length();
             str.ins(pos > 0 ? 1 : 0, '1. ');
-          }, 2000);
-        }}>Prepend "1. " in 2 sec</button>
+          }}
+        >
+          Prepend "1. "
+        </button>{' '}
+        <button
+          onClick={() => {
+            setTimeout(() => {
+              const str = model.s.toExt().text() as StrApi;
+              const pos = str.length();
+              str.ins(pos > 0 ? 1 : 0, '1. ');
+            }, 2000);
+          }}
+        >
+          Prepend "1. " in 2 sec
+        </button>
       </div>
-      <UseModel model={model} render={() => (
-        <pre style={{fontSize: '10px'}}>
-          <code>{model.s.toExt().txt + ''}</code>
-        </pre>
-      )} />
+      <UseModel
+        model={model}
+        render={() => (
+          <pre style={{fontSize: '10px'}}>
+            <code>{model.s.toExt().txt + ''}</code>
+          </pre>
+        )}
+      />
     </div>
   );
 };

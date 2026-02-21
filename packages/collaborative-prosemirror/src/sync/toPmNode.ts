@@ -93,20 +93,18 @@ export class ToPmNode {
     const typeName = tag ? tag + '' : 'paragraph';
     const nodeType = schema.nodes[typeName] ?? schema.nodes.paragraph;
     const attrs = blockAttrs(block);
-    if (block instanceof LeafBlock)
-      return nodeType.create(attrs, this.convInlines(block));
+    if (block instanceof LeafBlock) return nodeType.create(attrs, this.convInlines(block));
     const children = block.children;
     const length = children.length;
     const pmChildren: pmm.Node[] = new Array(length);
-    for (let i = 0; i < length; i++)
-      pmChildren[i] = this.convBlock(children[i]);
+    for (let i = 0; i < length; i++) pmChildren[i] = this.convBlock(children[i]);
     return nodeType.create(attrs, pmChildren);
   }
 
   private convInlines(leaf: LeafBlock): pmm.Node[] {
     const schema = this.schema;
     const result: pmm.Node[] = [];
-    for (let iterator = leaf.texts0(), inline: Inline<any> | undefined; inline = iterator();) {
+    for (let iterator = leaf.texts0(), inline: Inline<any> | undefined; (inline = iterator()); ) {
       const text = inline.text();
       if (!text) continue;
       const marks = this.convMarks(inline);
@@ -129,8 +127,7 @@ export class ToPmNode {
       if (!markType) continue;
       const data = slice.data();
       const attrs: pmm.Attrs | null =
-        data && typeof data === 'object' && !Array.isArray(data)
-          ? (data as pmm.Attrs) : null;
+        data && typeof data === 'object' && !Array.isArray(data) ? (data as pmm.Attrs) : null;
       marks.push(markType.create(attrs));
     }
     return marks;

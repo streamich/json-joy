@@ -28,7 +28,8 @@ export const toDto = (str: StrApi, selections: StrSelection[]): RgaSelection => 
   const nodeId: PresenceIdShorthand = id.toDto(sid, str.node.id);
   const cursors: PresenceCursor[] = [];
   for (let selection of selections) {
-    let anchor: number = 0, focus: number = -1;
+    let anchor: number = 0,
+      focus: number = -1;
     if (typeof selection === 'number') anchor = selection;
     else [anchor, focus = anchor] = selection;
     if (focus === anchor) focus = -1;
@@ -66,7 +67,6 @@ const findOffset = (str: StrNode, tsId: ITimestampStruct): number => {
   const charIndex = pos + (chunk.del ? 0 : tsId.time - chunk.id.time);
   return charIndex + 1;
 };
-
 
 /**
  * Converts a CRDT ID-based RGA selection back to offset-based string

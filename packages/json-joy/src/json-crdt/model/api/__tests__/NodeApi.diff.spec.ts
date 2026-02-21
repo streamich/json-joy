@@ -56,7 +56,7 @@ describe('.merge()', () => {
         address: {
           city: 'Wonderland',
           zip: '12345',
-        }
+        },
       },
     });
     const node1 = doc.api;

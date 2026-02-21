@@ -9,7 +9,6 @@ import {DebugState} from './state';
 import {CssClass} from '../../constants';
 import type {PeritextSurfaceState} from '../../state';
 
-
 const blockClass = rule({
   pos: 'relative',
 });

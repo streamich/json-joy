@@ -8,11 +8,7 @@ import type {SlatePoint} from './types';
  * coordinate system used by `Peritext.insAt` / `Peritext.delAt`). Returns `-1`
  * if the position cannot be resolved (e.g. structural mismatch).
  */
-export const slatePointToGap = (
-  txt: Peritext,
-  editor: Editor,
-  point: SlatePoint,
-): number => {
+export const slatePointToGap = (txt: Peritext, editor: Editor, point: SlatePoint): number => {
   try {
     const {path, offset} = point;
     const depth = path.length;
@@ -47,11 +43,7 @@ export const slatePointToGap = (
 };
 
 /** Convert a Slate point to a Peritext {@link Point} in CRDT-space. */
-export const slatePointToPoint = (
-  txt: Peritext,
-  editor: Editor,
-  slatePoint: SlatePoint,
-): Point<string> => {
+export const slatePointToPoint = (txt: Peritext, editor: Editor, slatePoint: SlatePoint): Point<string> => {
   const gap = slatePointToGap(txt, editor, slatePoint);
   if (gap < 0) return txt.pointStart() ?? txt.pointAbsStart();
   return txt.pointIn(gap);

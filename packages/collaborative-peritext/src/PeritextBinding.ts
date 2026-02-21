@@ -39,7 +39,7 @@ export class PeritextBinding {
 
   // ----------------------------------------------------- Editor-to-Model sync
 
-  private readonly onEditorChange = (operation?: PeritextOperation | void): (PeritextRef | void) => {
+  private readonly onEditorChange = (operation?: PeritextOperation | void): PeritextRef | void => {
     return this.race(() => {
       return this.syncFromEditor(operation);
     });

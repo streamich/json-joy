@@ -19,14 +19,14 @@ const schema0 = s.obj({
 const model = Model.create(schema0);
 
 export const Default = {
-  render: () => <SideBySideSync
-    model={model}
-    renderDisplay={model => (
-      <div style={{fontSize: '14px', width: '100%'}}>
-        <UseModel model={model} render={() =>
-          <Codeblock src={JSON.stringify(model.view())} />
-        } />
-      </div>
-    )}
-  />,
+  render: () => (
+    <SideBySideSync
+      model={model}
+      renderDisplay={(model) => (
+        <div style={{fontSize: '14px', width: '100%'}}>
+          <UseModel model={model} render={() => <Codeblock src={JSON.stringify(model.view())} />} />
+        </div>
+      )}
+    />
+  ),
 };

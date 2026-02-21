@@ -35,11 +35,7 @@ import type {SyncPluginTransactionMeta} from './sync/types';
  *   - Backspace / Delete
  *   - Pasting / replacing a selection with plain text
  */
-const tryExtractPeritextOperation = (
-  tr: Transaction,
-  txt: Peritext,
-  doc: PmNode,
-): PeritextOperation | undefined => {
+const tryExtractPeritextOperation = (tr: Transaction, txt: Peritext, doc: PmNode): PeritextOperation | undefined => {
   const steps = tr.steps;
   if (steps.length !== 1) return;
   const step = steps[0];
@@ -108,15 +104,14 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
    * The single pending doc-changing transaction from plugin `apply()`, consumed
    * in `update()`.
    */
-  _pendingTr:
-    /** Attempt to process as a single `PeritextOperation` transaction. */
+  _pendingTr: /** Attempt to process as a single `PeritextOperation` transaction. */
     | Transaction
     /** Multiple transactions in the same batch, give up on the fast path. */
     | null
     /** No pending transaction. */
     | undefined = undefined;
 
-  onchange?: (change: PeritextOperation | void) => (PeritextRef | void);
+  onchange?: (change: PeritextOperation | void) => PeritextRef | void;
   onselection?: () => void;
 
   constructor(
@@ -126,10 +121,12 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
   ) {
     const self = this;
     const state = view.state;
-    const plugin = this._plugin = new Plugin({
+    const plugin = (this._plugin = new Plugin({
       key: SYNC_PLUGIN_KEY,
       state: {
-        init() { return {}; },
+        init() {
+          return {};
+        },
         apply(transaction, value) {
           const meta = transaction.getMeta(SYNC_PLUGIN_KEY) as SyncPluginTransactionMeta | undefined;
           self.txOrig = meta?.orig || TransactionOrigin.UNKNOWN;
@@ -157,7 +154,7 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
               SIMPLE_OPERATION: {
                 const pendingTransaction = self._pendingTr;
                 self._pendingTr = undefined;
-                if (!pendingTransaction) break SIMPLE_OPERATION
+                if (!pendingTransaction) break SIMPLE_OPERATION;
                 const txt = self.peritext().txt;
                 simpleOperation = tryExtractPeritextOperation(pendingTransaction, txt, prevState.doc);
               }
@@ -175,16 +172,16 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
                 cache.gc();
               }
             } else {
-              const selectionChanged = !prevState.selection.eq(view.state.selection)
+              const selectionChanged = !prevState.selection.eq(view.state.selection);
               if (selectionChanged) self.onselection?.();
             }
           },
           destroy() {
             self._disposed = true;
-          }
+          },
         };
       },
-    });
+    }));
     this.toPm = new ToPmNode(state.schema);
     const {presence: presenceOpt, history: historyOpt} = this.opts;
     let presencePlugin: Plugin | undefined;
@@ -195,18 +192,17 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
           : {manager: presenceOpt as PresenceManager, peritext};
       presencePlugin = createPresencePlugin(presencePluginOpts);
     }
-    const hasHistory = state.plugins.some(p => (p as any).key === 'history$');
-    const installHistory =
-      historyOpt === true ? true : historyOpt === false ? false : !hasHistory;
+    const hasHistory = state.plugins.some((p) => (p as any).key === 'history$');
+    const installHistory = historyOpt === true ? true : historyOpt === false ? false : !hasHistory;
     const plugins: Plugin[] = installHistory ? [plugin, history()] : [plugin];
     if (presencePlugin) plugins.push(presencePlugin);
     const updatedPlugins = state.plugins.concat(plugins);
-    const newState = state.reconfigure({ plugins: updatedPlugins });
+    const newState = state.reconfigure({plugins: updatedPlugins});
     view.updateState(newState);
   }
 
   get(): ViewRange {
-    if (this._disposed) return ['', 0, []]
+    if (this._disposed) return ['', 0, []];
     const doc = this.view.state.doc;
     return FromPm.convert(doc);
   }
@@ -266,8 +262,8 @@ export class ProseMirrorFacade implements RichtextEditorFacade {
     if (this._disposed) return;
     this._disposed = true;
     const state = this.view.state;
-    const plugins = state.plugins.filter(p => p !== this._plugin);
-    const newState = state.reconfigure({ plugins });
+    const plugins = state.plugins.filter((p) => p !== this._plugin);
+    const newState = state.reconfigure({plugins});
     this.view.updateState(newState);
   }
 }

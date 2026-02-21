@@ -14,7 +14,17 @@ export interface Props extends AllHTMLAttributes<any> {
   noselect?: boolean;
 }
 
-export const Text: React.FC<Props> = ({as = 'span', nowrap, children, style, size, font, kind = 'mid', noselect, ...rest}) => {
+export const Text: React.FC<Props> = ({
+  as = 'span',
+  nowrap,
+  children,
+  style,
+  size,
+  font,
+  kind = 'mid',
+  noselect,
+  ...rest
+}) => {
   const theme = useTheme();
 
   const className = createClassName({

@@ -9,8 +9,7 @@ import type {CrdtNodeApi} from './types';
 
 // ------------------------------------------------------------------ SyncStore
 
-export const useStore = <T>(store: SyncStore<T>): T =>
-  useSyncExternalStore(store.subscribe, store.getSnapshot);
+export const useStore = <T>(store: SyncStore<T>): T => useSyncExternalStore(store.subscribe, store.getSnapshot);
 
 const emptySyncStore: SyncStore<undefined> = {
   getSnapshot: () => undefined,
@@ -26,7 +25,7 @@ export const useStoreOpt = <T>(store: SyncStore<T | undefined> = emptySyncStore)
  * Hook to subscribe to a model's *tick* and get the current tick value. Useful
  * for re-rendering on every *tick* of the model, this will re-render on every
  * change of the model, even if the change results in not view-relevant updates.
- * 
+ *
  * @param model The JSON CRDT model. If not provided, it will be retrieved from
  *     the context using `useCtxModelStrict()`.
  * @returns The current tick value (volatile change counter) of the model.
@@ -62,7 +61,10 @@ export const useModelView = <M extends Model<any>>(model: M = useCtxModelStrict(
  *     the context using `useCtxModelStrict()`.
  * @returns The value returned by the `selector` function.
  */
-export const useModel = <M extends Model<any>, R = unknown>(selector: (model: M) => R, model: M = useCtxModelStrict() as M): R => {
+export const useModel = <M extends Model<any>, R = unknown>(
+  selector: (model: M) => R,
+  model: M = useCtxModelStrict() as M,
+): R => {
   const tick = useModelTick(model);
   // biome-ignore lint: manual dependency list
   return useMemo(() => selector(model), [tick, model]);
@@ -94,7 +96,7 @@ export const useModelTry = <M extends Model<any>, R = unknown>(selector: (model:
  * to unsubscribe from the events. If the `node` parameter is
  * not provided, the node will be retrieved from the context using
  * `useCtxNodeStrict()`.
- * 
+ *
  * @see useNodeEffect for a more convenient hook that automatically handles un-subscription.
  *
  * @param event The type of change event to subscribe to.
@@ -111,13 +113,12 @@ export const useNodeEvents = <N extends CrdtNodeApi = CrdtNodeApi>(
   event: 'self' | 'child' | 'subtree',
   listener: (event: ChangeEvent) => void,
   node: N = useCtxNodeStrict() as N,
-): FanOutUnsubscribe =>
-  useMemo(() => node.onNodeChange(event, listener), [node, event]);
+): FanOutUnsubscribe => useMemo(() => node.onNodeChange(event, listener), [node, event]);
 
 /**
  * Same as `useNodeEvents`, but automatically unsubscribes when the component
  * unmounts.
- * 
+ *
  * @see useNodeEvents for a more low-level hook that returns the un-subscription
  *     function for manual control over subscription lifecycle.
  *
@@ -145,7 +146,7 @@ export const useNodeEffect = <N extends CrdtNodeApi = CrdtNodeApi>(
  * on the given node. Returns the latest change event object, or `undefined` if
  * no change has occurred yet. If the `node` parameter is not provided, the node
  * will be retrieved from the context using `useCtxNodeStrict()`.
- * 
+ *
  * @see useNodeEffect for a more low-level hook that listen for change events
  *     without causing re-renders.
  *
@@ -171,7 +172,7 @@ export const useNodeChange = <N extends CrdtNodeApi = CrdtNodeApi>(
  * Re-renders the component whenever the specified type of change event occurs
  * on the given node, and returns the node itself. If the `node` parameter is not
  * provided, the node will be retrieved from the context using `useCtxNodeStrict()`.
- * 
+ *
  * @see useNodeEvents
  * @see useNodeEffect
  * @see useNodeChange
@@ -197,7 +198,7 @@ export const useNode = <N extends CrdtNodeApi = CrdtNodeApi>(
  * Re-renders the component whenever the specified type of change event occurs
  * on the given node, and returns the node view. If the `node` parameter is not
  * provided, the node will be retrieved from the context using `useCtxNodeStrict()`.
- * 
+ *
  * @see useNodeEvents
  * @see useNodeEffect
  * @see useNodeChange

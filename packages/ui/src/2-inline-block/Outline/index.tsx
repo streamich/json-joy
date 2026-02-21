@@ -49,7 +49,7 @@ export const Outline: React.FC<OutlineProps> = ({
 }) => {
   const styles = useStyles();
 
-  const padding = !size ? 7 : Math.max(0, (7 + size));
+  const padding = !size ? 7 : Math.max(0, 7 + size);
 
   return (
     <div
@@ -90,7 +90,7 @@ export const Outline: React.FC<OutlineProps> = ({
             col: disabled ? styles.g(0.1) : active ? styles.g(0) : styles.g(0.4),
           })}
           style={{
-            fontSize: (11.5 + (.5 * (size ?? 0))) + 'px',
+            fontSize: 11.5 + 0.5 * (size ?? 0) + 'px',
           }}
         >
           {label || '\uFEFF'}

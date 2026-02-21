@@ -11,5 +11,5 @@ export default meta;
 export const Input: StoryObj<typeof meta> = {};
 
 export const Textarea: StoryObj<typeof meta> = {
-  args: { multiline: true}
+  args: {multiline: true},
 };

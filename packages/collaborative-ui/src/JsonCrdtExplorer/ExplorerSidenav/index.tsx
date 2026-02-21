@@ -46,7 +46,16 @@ export const ExplorerSidenav: React.FC<ExplorerSidenavProps> = () => {
         <div style={{width, paddingTop: expanded ? 64 : 0}}>
           <MiniTitle>{t('New')}</MiniTitle>
           <Space size={-1} />
-          <CreateButton radius={1} primary color={'accent'} colorStep={'el-1'} block fill size={expanded ? 1 : 0} onClick={() => state.createNew()}>
+          <CreateButton
+            radius={1}
+            primary
+            color={'accent'}
+            colorStep={'el-1'}
+            block
+            fill
+            size={expanded ? 1 : 0}
+            onClick={() => state.createNew()}
+          >
             Create
           </CreateButton>
         </div>

@@ -64,14 +64,22 @@ export const DemoCard: React.FC<DemoCardProps> = ({title, subtitle, description,
         <div className={headerClass}>
           <Split>
             <div>
-              {!!title && <Text as='h3' font='sans' kind='bold' className={titleClass}>{title}</Text>}
-              {!!subtitle && <Text as='h3' font='slab' kind='mid' className={subtitleClass}>{subtitle}</Text>}
+              {!!title && (
+                <Text as="h3" font="sans" kind="bold" className={titleClass}>
+                  {title}
+                </Text>
+              )}
+              {!!subtitle && (
+                <Text as="h3" font="slab" kind="mid" className={subtitleClass}>
+                  {subtitle}
+                </Text>
+              )}
             </div>
             <div>
               {!!description && (
                 <BasicTooltip renderTooltip={() => (showDescription ? 'Hide description' : 'Show description')} nowrap>
-                  <BasicButton fill={showDescription} rounder size={40} onClick={() => setShowDescription(x => !x)}>
-                    <Iconista set='tabler' icon='book' width={16} height={16} />
+                  <BasicButton fill={showDescription} rounder size={40} onClick={() => setShowDescription((x) => !x)}>
+                    <Iconista set="tabler" icon="book" width={16} height={16} />
                   </BasicButton>
                 </BasicTooltip>
               )}
@@ -83,7 +91,9 @@ export const DemoCard: React.FC<DemoCardProps> = ({title, subtitle, description,
         <div className={descriptionWrapClass}>
           <Paper round>
             <div className={descriptionClass}>
-              <Text as='div' font='sans' kind='mid' size={-1} className={subtitleClass}>{description}</Text>
+              <Text as="div" font="sans" kind="mid" size={-1} className={subtitleClass}>
+                {description}
+              </Text>
               {/* {description} */}
             </div>
           </Paper>

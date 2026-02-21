@@ -10,10 +10,7 @@ export class PresenceEvent {
   ) {}
 }
 
-export type PeerEntry<Meta extends object = object> = [
-  presence: UserPresence<Meta>,
-  receivedAt: number,
-];
+export type PeerEntry<Meta extends object = object> = [presence: UserPresence<Meta>, receivedAt: number];
 
 /**
  * Reactive in-memory presence store. Tracks remote peer states keyed by
@@ -25,17 +22,8 @@ export class PresenceManager<Meta extends object = object> {
   public local: UserPresence;
   public readonly onChange: FanOut<PresenceEvent> = new FanOut<PresenceEvent>();
 
-  constructor(
-    public readonly timeout: number = 30_000
-  ) {
-    this.local = [
-      '',
-      Math.random().toString(36).slice(2),
-      0,
-      Math.floor(Date.now() / 1000),
-      [],
-      {} as Meta,
-    ];
+  constructor(public readonly timeout: number = 30_000) {
+    this.local = ['', Math.random().toString(36).slice(2), 0, Math.floor(Date.now() / 1000), [], {} as Meta];
   }
 
   // ---------------------------------------------------------- remote presence
@@ -47,11 +35,7 @@ export class PresenceManager<Meta extends object = object> {
     const existing = this.peers[processId];
     if (existing && existing[0][UserPresenceIdx.Seq] >= incomingSeq) return;
     this.peers[processId] = [incoming, Date.now()];
-    this.onChange.emit(new PresenceEvent(
-      existing ? [] : [processId],
-      existing ? [processId] : [],
-      [],
-    ));
+    this.onChange.emit(new PresenceEvent(existing ? [] : [processId], existing ? [processId] : [], []));
   }
 
   get(processId: string): UserPresence<Meta> | undefined {

@@ -18,17 +18,10 @@ describe('useNodeView()', () => {
     await act(async () => {
       model.s.obj.foo.$.ins(3, '!');
     });
-    expect(views).toEqual([
-      {obj: {foo: 'bar'}},
-      {obj: {foo: 'bar!'}},
-    ]);
+    expect(views).toEqual([{obj: {foo: 'bar'}}, {obj: {foo: 'bar!'}}]);
     await act(async () => {
       model.s.obj.$.set({baz: 'qux'} as any);
     });
-    expect(views).toEqual([
-      {obj: {foo: 'bar'}},
-      {obj: {foo: 'bar!'}},
-      {obj: {foo: 'bar!', baz: 'qux'}},
-    ]);
+    expect(views).toEqual([{obj: {foo: 'bar'}}, {obj: {foo: 'bar!'}}, {obj: {foo: 'bar!', baz: 'qux'}}]);
   });
 });

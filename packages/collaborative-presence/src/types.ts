@@ -23,7 +23,6 @@ export type JsonCrdtSelection = RgaSelection | AnySelection | ObjSelection | Vec
 export type NodeSelection<Type extends JsonCrdtDataType> = [
   /** Document ID, which is a globally unique identifier for a document. */
   documentId: string,
-
   /**
    * Location ID within the UI, in case some JSON CRDT is bound to multiple
    * places in the UI. For example, if the same JSON CRDT document is bound to
@@ -31,26 +30,25 @@ export type NodeSelection<Type extends JsonCrdtDataType> = [
    * strings like "sidebar" and "main-editor" to differentiate the two locations.
    */
   uiLocationId: string,
-
   /** JSON CRDT Model latest logical clock value. */
   ...PresenceId,
-
   /** An object, of custom metadata associated with the selection. */
   meta: object,
-
   /**
    * The type of selection. Technically this is redundant as the selection type
    * can be inferred from the resolved node, but it is included in case we want
    * to infer the selection type without resolving the node.
    */
   type: Type,
-
   /** The ID of the node being selected. */
   nodeId: PresenceIdShorthand,
 ];
 
 /** Selection within an RGA node, such as a "str", "arr", or "bin" nodes. */
-export type RgaSelection = [...NodeSelection<JsonCrdtDataType.str | JsonCrdtDataType.bin | JsonCrdtDataType.arr>, cursors: PresenceCursor[]];
+export type RgaSelection = [
+  ...NodeSelection<JsonCrdtDataType.str | JsonCrdtDataType.bin | JsonCrdtDataType.arr>,
+  cursors: PresenceCursor[],
+];
 
 /** Selects a whole JSON CRDT node, any node. */
 export type AnySelection = [...NodeSelection<JsonCrdtDataType.con | JsonCrdtDataType.val>];

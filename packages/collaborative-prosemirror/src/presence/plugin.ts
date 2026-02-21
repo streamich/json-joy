@@ -44,15 +44,15 @@ export interface PresencePluginOpts<Meta extends object = object> {
   gcIntervalMs?: number;
 }
 
-export type CursorRenderer<Meta extends object = object> =
-  (peerId: string, user: view.PresenceUser | undefined, opts: PresencePluginOpts<Meta>) => HTMLElement;
-
-export type SelectionRenderer =
-  (peerId: string, user?: view.PresenceUser) => DecorationAttrs
-
-export const createPlugin = <Meta extends object = object>(
+export type CursorRenderer<Meta extends object = object> = (
+  peerId: string,
+  user: view.PresenceUser | undefined,
   opts: PresencePluginOpts<Meta>,
-): Plugin<DecorationSet> => {
+) => HTMLElement;
+
+export type SelectionRenderer = (peerId: string, user?: view.PresenceUser) => DecorationAttrs;
+
+export const createPlugin = <Meta extends object = object>(opts: PresencePluginOpts<Meta>): Plugin<DecorationSet> => {
   const {manager, peritext, gcIntervalMs = 5_000} = opts;
 
   // Shared cursor DOM cache — lives for the lifetime of the plugin so that
@@ -86,12 +86,11 @@ export const createPlugin = <Meta extends object = object>(
         view.dispatch(tr);
       });
       let gcTimer: unknown;
-      if (gcIntervalMs > 0)
-        gcTimer = setInterval(() => manager.removeOutdated(opts.fadeAfterMs), gcIntervalMs);
+      if (gcIntervalMs > 0) gcTimer = setInterval(() => manager.removeOutdated(opts.fadeAfterMs), gcIntervalMs);
       return {
         update(view, prevState) {
           const docChanged = !prevState.doc.eq(view.state.doc);
-          const selectionChanged = !prevState.selection.eq(view.state.selection)
+          const selectionChanged = !prevState.selection.eq(view.state.selection);
           const doSendPresence = docChanged || selectionChanged;
           if (doSendPresence) {
             const dto = buildLocalPresenceDto(view, peritext);
@@ -187,8 +186,7 @@ const buildDecorations = <Meta extends object>(
   return DecorationSet.create(state.doc, decorations);
 };
 
-const clamp = (v: number, min: number, max: number): number =>
-  v < min ? min : v > max ? max : v;
+const clamp = (v: number, min: number, max: number): number => (v < min ? min : v > max ? max : v);
 
 const isRgaSelection = (sel: unknown): sel is RgaSelection => {
   if (!Array.isArray(sel) || sel.length < 8) return false;

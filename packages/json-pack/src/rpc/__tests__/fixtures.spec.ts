@@ -180,21 +180,22 @@ describe('RPC Real-world Fixtures', () => {
   });
 
   describe('XDR padding validation', () => {
-    test.each([fixtures.CALL_WITH_PADDING_1BYTE, fixtures.CALL_WITH_PADDING_2BYTE, fixtures.CALL_WITH_PADDING_3BYTE])(
-      '$name - correctly handles padding',
-      (fixture) => {
-        const decoder = new RpcMessageDecoder();
-        const withRecordMarking = fixture.bytes;
-        const reader = new Reader(withRecordMarking);
-        const msg = decoder.decodeMessage(reader)!;
-        expect(msg).toBeDefined();
-        const call = msg as RpcCallMessage;
-        expect(call.cred.body.buf().length).toBe(fixture.expected.credBodyLength);
-        const encoder = new RpcMessageEncoder();
-        const encoded = encoder.encodeMessage(msg);
-        expect(encoded.length % 4).toBe(0);
-      },
-    );
+    test.each([
+      fixtures.CALL_WITH_PADDING_1BYTE,
+      fixtures.CALL_WITH_PADDING_2BYTE,
+      fixtures.CALL_WITH_PADDING_3BYTE,
+    ])('$name - correctly handles padding', (fixture) => {
+      const decoder = new RpcMessageDecoder();
+      const withRecordMarking = fixture.bytes;
+      const reader = new Reader(withRecordMarking);
+      const msg = decoder.decodeMessage(reader)!;
+      expect(msg).toBeDefined();
+      const call = msg as RpcCallMessage;
+      expect(call.cred.body.buf().length).toBe(fixture.expected.credBodyLength);
+      const encoder = new RpcMessageEncoder();
+      const encoded = encoder.encodeMessage(msg);
+      expect(encoded.length % 4).toBe(0);
+    });
   });
 
   describe('Error handling', () => {

@@ -49,11 +49,11 @@ const Demo: React.FC<{plugins?: () => PeritextPlugin[]}> = (props) => {
     if (props.plugins) {
       return props.plugins();
     }
-      const debugState = new DebugState();
-      const cursorPlugin = new CursorPlugin();
-      const blocksPlugin = new BlocksPlugin();
-      const debugPlugin = new DebugPlugin({state: debugState});
-      return [cursorPlugin, blocksPlugin, defaultPlugin, debugPlugin];
+    const debugState = new DebugState();
+    const cursorPlugin = new CursorPlugin();
+    const blocksPlugin = new BlocksPlugin();
+    const debugPlugin = new DebugPlugin({state: debugState});
+    return [cursorPlugin, blocksPlugin, defaultPlugin, debugPlugin];
   }, []);
 
   return (
@@ -80,14 +80,18 @@ export const Default = {
 };
 
 export const DebugOn = {
-  render: () => <Demo plugins={() => {
-    const debugState = new DebugState();
-    debugState.enabled.next(true);
-    const cursorPlugin = new CursorPlugin();
-    const blocksPlugin = new BlocksPlugin();
-    const debugPlugin = new DebugPlugin({state: debugState});
-    return [cursorPlugin, blocksPlugin, defaultPlugin, debugPlugin];
-  }} />,
+  render: () => (
+    <Demo
+      plugins={() => {
+        const debugState = new DebugState();
+        debugState.enabled.next(true);
+        const cursorPlugin = new CursorPlugin();
+        const blocksPlugin = new BlocksPlugin();
+        const debugPlugin = new DebugPlugin({state: debugState});
+        return [cursorPlugin, blocksPlugin, defaultPlugin, debugPlugin];
+      }}
+    />
+  ),
 };
 
 export const Empty = {
@@ -95,19 +99,27 @@ export const Empty = {
 };
 
 export const WithCursor = {
-  render: () => <Demo plugins={() => {
-    const cursorPlugin = new CursorPlugin();
-    const debugState = new DebugState();
-    const debugPlugin = new DebugPlugin({state: debugState});
-    return [cursorPlugin, debugPlugin];
-  }} />,
+  render: () => (
+    <Demo
+      plugins={() => {
+        const cursorPlugin = new CursorPlugin();
+        const debugState = new DebugState();
+        const debugPlugin = new DebugPlugin({state: debugState});
+        return [cursorPlugin, debugPlugin];
+      }}
+    />
+  ),
 };
 
 export const DebugOnly = {
-  render: () => <Demo plugins={() => {
-    const debugState = new DebugState();
-    debugState.enabled.next(true);
-    const debugPlugin = new DebugPlugin({state: debugState});
-    return [debugPlugin];
-  }} />,
+  render: () => (
+    <Demo
+      plugins={() => {
+        const debugState = new DebugState();
+        debugState.enabled.next(true);
+        const debugPlugin = new DebugPlugin({state: debugState});
+        return [debugPlugin];
+      }}
+    />
+  ),
 };

@@ -210,23 +210,21 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
   for (const item of order) {
     if (listItems.length > 0) listItems.push(<Separator key={`sep-${i++}`} />);
     if (item === 'model') {
-      listItems.push(<div key="header" className={css.header}>{header}</div>);
+      listItems.push(
+        <div key="header" className={css.header}>
+          {header}
+        </div>,
+      );
       if (showModel) {
         listItems.push(
           <Scrollbox key="model" style={{maxHeight: 600}}>
             <div className={css.content}>{content}</div>
-          </Scrollbox>
+          </Scrollbox>,
         );
       }
     } else if (item === 'view') {
       listItems.push(
-        <JsonCrdtModelView
-          key="view"
-          readonly={readonly}
-          model={model}
-          state={state}
-          filename={filename}
-        />
+        <JsonCrdtModelView key="view" readonly={readonly} model={model} state={state} filename={filename} />,
       );
     } else if (item === 'display' && !!renderDisplay) {
       listItems.push(
@@ -238,7 +236,7 @@ export const JsonCrdtModel: React.FC<JsonCrdtModelProps> = ({
           noHeader={noDisplayHdr}
           readonly={readonly}
           renderDisplay={renderDisplay}
-        />
+        />,
       );
     }
   }

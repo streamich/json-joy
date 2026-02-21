@@ -52,10 +52,12 @@ export interface CtxNodeProps<N extends CrdtNodeApi = CrdtNodeApi> {
 
 export const createNodeCtx = <N extends CrdtNodeApi = CrdtNodeApi>(node?: N) => {
   const ctx = createContext<N | undefined>(node);
-  const NodeCtx: React.FC<NodeProviderProps<N>> = ({children, node}) =>
-    <ctx.Provider value={node}>{children}</ctx.Provider>;
-  const ModelCtx: React.FC<ModelProviderProps> = ({children, model}) =>
-    <NodeCtx node={model.api as unknown as N}>{children}</NodeCtx>;
+  const NodeCtx: React.FC<NodeProviderProps<N>> = ({children, node}) => (
+    <ctx.Provider value={node}>{children}</ctx.Provider>
+  );
+  const ModelCtx: React.FC<ModelProviderProps> = ({children, model}) => (
+    <NodeCtx node={model.api as unknown as N}>{children}</NodeCtx>
+  );
   const useCtxNode = (): N | undefined => useContext(ctx) as unknown as N;
   const useCtxModel = (): Model<any> | undefined => useContext(ctx)?.api.model;
   const useCtxNodeStrict = (): N => {
@@ -75,30 +77,11 @@ export const createNodeCtx = <N extends CrdtNodeApi = CrdtNodeApi>(node?: N) => 
     useCtxNodeStrict,
     useCtxModelStrict,
     CtxNode,
-    CtxModel
+    CtxModel,
   };
 };
 
-const {
-  ctx,
-  NodeCtx,
-  ModelCtx,
-  useCtxNode,
-  useCtxModel,
-  useCtxNodeStrict,
-  useCtxModelStrict,
-  CtxNode,
-  CtxModel
-} = createNodeCtx();
+const {ctx, NodeCtx, ModelCtx, useCtxNode, useCtxModel, useCtxNodeStrict, useCtxModelStrict, CtxNode, CtxModel} =
+  createNodeCtx();
 
-export {
-  ctx,
-  NodeCtx,
-  ModelCtx,
-  useCtxNode,
-  useCtxModel,
-  useCtxNodeStrict,
-  useCtxModelStrict,
-  CtxNode,
-  CtxModel
-};
+export {ctx, NodeCtx, ModelCtx, useCtxNode, useCtxModel, useCtxNodeStrict, useCtxModelStrict, CtxNode, CtxModel};

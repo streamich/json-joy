@@ -88,7 +88,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param path Path to the child node to find.
    * @returns Local changes API for the child node at the given path.
    */
-  public in<B extends boolean = false>(path?: ApiPath, noThrow: B = false as B): B extends true ? NodeApi | undefined : NodeApi {
+  public in<B extends boolean = false>(
+    path?: ApiPath,
+    noThrow: B = false as B,
+  ): B extends true ? NodeApi | undefined : NodeApi {
     try {
       const node = this.find(path);
       return this.api.wrap(node as any) as any;
@@ -450,10 +453,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param listener Callback called on every change that matches the specified type.
    * @return Returns an unsubscribe function to stop listening to the events.
    */
-  public onNodeChange(
-    kind: 'self' | 'child' | 'subtree',
-    listener: (event: ChangeEvent) => void,
-  ): FanOutUnsubscribe {
+  public onNodeChange(kind: 'self' | 'child' | 'subtree', listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
     switch (kind) {
       case 'self':
         return this.onSelfChange(listener);
@@ -1007,7 +1007,7 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   /**
    * Emitted after local changes through `model.api` are applied. Same as
    * `.onLocalChange`, but this event buffered withing a microtask.
-   * 
+   *
    * @deprecated
    */
   public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);

@@ -72,16 +72,12 @@ export const Caret: React.FC<CaretProps> = React.memo(({info}) => {
     borderColor: color,
     ['--peritext-cursor-color' as any]: color,
     animation: `${lifecycleAnimation} ${hideAfterMs}ms linear forwards, ${blinkAnimation} 1s ease-in-out ${blinkIterations} forwards`,
-    animationDelay: age > 0
-      ? `-${age}ms, ${-(Date.now() % 1000)}ms`
-      : `0ms, ${-(Date.now() % 1000)}ms`,
+    animationDelay: age > 0 ? `-${age}ms, ${-(Date.now() % 1000)}ms` : `0ms, ${-(Date.now() % 1000)}ms`,
   };
 
   const labelStyle: React.CSSProperties = {
     backgroundColor: color,
-    ...(fadeAfterMs > 0
-      ? {animation: `${labelFadeAnimation} 0.3s ease ${fadeAfterMs}ms forwards`}
-      : {}),
+    ...(fadeAfterMs > 0 ? {animation: `${labelFadeAnimation} 0.3s ease ${fadeAfterMs}ms forwards`} : {}),
   };
 
   return (

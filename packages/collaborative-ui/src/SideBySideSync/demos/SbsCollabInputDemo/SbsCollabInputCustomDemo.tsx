@@ -16,7 +16,7 @@ export const SbsCollabInputCustomDemo: React.FC<SbsCollabInputCustomDemoProps> =
     const schema = s.obj({
       text: s.str(initialText),
     });
-    return Model.create(schema)
+    return Model.create(schema);
   }, []);
 
   return (

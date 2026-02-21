@@ -97,7 +97,7 @@ const toggleBlock = (editor: Editor, format: BlockFormat, level?: number): void 
       type: isActive ? 'paragraph' : format,
       ...(format === 'heading' && level ? {level} : {}),
     } as Partial<CustomElement>,
-    {match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n)}
+    {match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n)},
   );
 };
 
@@ -357,7 +357,7 @@ export const SlateEditor: React.FC = () => {
         }
       }
     },
-    [editor]
+    [editor],
   );
 
   return (
@@ -370,11 +370,7 @@ export const SlateEditor: React.FC = () => {
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
       }}
     >
-      <Slate
-        editor={editor}
-        initialValue={slateInitialValue as Descendant[]}
-        onSelectionChange={() => forceUpdate({})}
-      >
+      <Slate editor={editor} initialValue={slateInitialValue as Descendant[]} onSelectionChange={() => forceUpdate({})}>
         {/* Toolbar */}
         <div
           style={{

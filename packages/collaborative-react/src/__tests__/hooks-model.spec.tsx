@@ -132,9 +132,13 @@ describe('useModel()', () => {
 
   test('throws on error in selector', async () => {
     const model = Model.create({obj: {foo: 'bar'}});
-    expect(() => renderHook(() => {
-      const foo = useModel((m) => { throw 'ERR'; }, model);
-    })).toThrow('ERR');
+    expect(() =>
+      renderHook(() => {
+        const foo = useModel((m) => {
+          throw 'ERR';
+        }, model);
+      }),
+    ).toThrow('ERR');
   });
 });
 
@@ -161,7 +165,9 @@ describe('useModelTry()', () => {
   test('returns `undefined` on error in selector', async () => {
     const model = Model.create({obj: {foo: 'bar'}});
     renderHook(() => {
-      const foo = useModelTry((m) => { throw 'ERR'; }, model);
+      const foo = useModelTry((m) => {
+        throw 'ERR';
+      }, model);
       expect(foo).toBeUndefined();
     });
   });

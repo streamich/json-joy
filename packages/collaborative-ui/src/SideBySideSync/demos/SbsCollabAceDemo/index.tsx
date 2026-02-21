@@ -37,13 +37,20 @@ You can edit the text here, and see changes
 synchronized in real-time!
 `),
     });
-    return Model.create(schema)
+    return Model.create(schema);
   }, []);
 
   return (
     <DemoCard
       title={<Markdown inline src={'Ace Editor'} />}
-      subtitle={<Markdown inline src={'Collaborative Ace editor synchronization example, using the `@jsonjoy.com/collaborative-ace-react` package'} />}
+      subtitle={
+        <Markdown
+          inline
+          src={
+            'Collaborative Ace editor synchronization example, using the `@jsonjoy.com/collaborative-ace-react` package'
+          }
+        />
+      }
       description={<Markdown src={DESCRIPTION} />}
     >
       <SideBySideSync
@@ -51,7 +58,7 @@ synchronized in real-time!
         noDisplayHdr
         renderDisplay={(model: Model<any>) => (
           <Paper style={{overflow: 'hidden'}} contrast>
-            <CollaborativeAce str={() => model.api.str(['text'])} height='200px' />
+            <CollaborativeAce str={() => model.api.str(['text'])} height="200px" />
           </Paper>
         )}
       />

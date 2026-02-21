@@ -147,7 +147,5 @@ export const TextEditor: React.FC<Props> = (props) => {
     style.minHeight = minHeight + 'px';
   }
 
-  return (
-    <div className={(className || '') + blockClass + dynamicClass} style={style} ref={containerRef} />
-  );
+  return <div className={(className || '') + blockClass + dynamicClass} style={style} ref={containerRef} />;
 };

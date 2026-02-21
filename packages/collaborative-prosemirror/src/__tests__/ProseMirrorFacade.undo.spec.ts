@@ -46,11 +46,9 @@ const remoteDelete = (view: ReturnType<typeof setup>['view'], from: number, to: 
   view.dispatch(tr);
 };
 
-const execUndo = (view: ReturnType<typeof setup>['view']): boolean =>
-  undo(view.state, view.dispatch);
+const execUndo = (view: ReturnType<typeof setup>['view']): boolean => undo(view.state, view.dispatch);
 
-const execRedo = (view: ReturnType<typeof setup>['view']): boolean =>
-  redo(view.state, view.dispatch);
+const execRedo = (view: ReturnType<typeof setup>['view']): boolean => redo(view.state, view.dispatch);
 
 describe('ProseMirrorFacade — undo/redo history', () => {
   describe('local transactions are part of undo/redo history', () => {

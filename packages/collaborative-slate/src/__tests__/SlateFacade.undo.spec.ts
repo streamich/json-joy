@@ -48,22 +48,15 @@ const getParaText = (editor: ReturnType<typeof setup>['editor'], idx: number): s
   return text;
 };
 
-const undoDepth = (editor: ReturnType<typeof setup>['editor']): number =>
-  editor.history.undos.length;
+const undoDepth = (editor: ReturnType<typeof setup>['editor']): number => editor.history.undos.length;
 
-const redoDepth = (editor: ReturnType<typeof setup>['editor']): number =>
-  editor.history.redos.length;
+const redoDepth = (editor: ReturnType<typeof setup>['editor']): number => editor.history.redos.length;
 
 /**
  * Insert `text` at the given Slate path + offset via a Slate Transform.
  * This is a *local* operation and will be recorded in the undo history.
  */
-const typeAt = (
-  editor: ReturnType<typeof setup>['editor'],
-  path: number[],
-  offset: number,
-  text: string,
-): void => {
+const typeAt = (editor: ReturnType<typeof setup>['editor'], path: number[], offset: number, text: string): void => {
   Transforms.insertText(editor, text, {at: {path, offset}});
 };
 
@@ -71,12 +64,7 @@ const typeAt = (
  * Delete `length` characters at the given Slate path + offset via a Slate
  * Transform. This is a *local* operation and will be recorded in undo history.
  */
-const deleteAt = (
-  editor: ReturnType<typeof setup>['editor'],
-  path: number[],
-  offset: number,
-  length: number,
-): void => {
+const deleteAt = (editor: ReturnType<typeof setup>['editor'], path: number[], offset: number, length: number): void => {
   Transforms.delete(editor, {at: {path, offset}, distance: length, unit: 'character'});
 };
 
@@ -84,11 +72,7 @@ const deleteAt = (
  * Simulate a remote insert by directly updating the Peritext CRDT and then
  * pushing the new fragment into the Slate editor via `facade.set()`.
  */
-const remoteInsertAt = (
-  testbed: ReturnType<typeof setup>,
-  pos: number,
-  text: string,
-): void => {
+const remoteInsertAt = (testbed: ReturnType<typeof setup>, pos: number, text: string): void => {
   testbed.txt.insAt(pos, text);
   testbed.txt.refresh();
   testbed.facade.set(testbed.txt.blocks);

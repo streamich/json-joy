@@ -35,11 +35,7 @@ synchronized in real-time!
       subtitle={<Markdown inline src={'Collaborative CodeMirror v6 editor synchronization example'} />}
       description={<Markdown src={DESCRIPTION} />}
     >
-      <SideBySideSync
-        model={model}
-        noDisplayHdr
-        renderDisplay={(model) => <Editor model={model} />}
-      />
+      <SideBySideSync model={model} noDisplayHdr renderDisplay={(model) => <Editor model={model} />} />
     </DemoCard>
   );
 };

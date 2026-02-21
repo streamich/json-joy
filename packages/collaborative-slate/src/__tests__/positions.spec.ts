@@ -25,12 +25,7 @@ const setup = (doc: SlateDocument) => {
 };
 
 /** Convert Slate.js point to Peritext gap, then immediately back to Slate.js point. */
-const roundTrip = (
-  editor: Editor,
-  txt: ReturnType<typeof setup>['txt'],
-  path: number[],
-  offset: number,
-) => {
+const roundTrip = (editor: Editor, txt: ReturnType<typeof setup>['txt'], path: number[], offset: number) => {
   const slatePoint = {path, offset};
   const gap = slatePointToGap(txt, editor, slatePoint);
   const point = txt.pointIn(gap);
@@ -38,12 +33,7 @@ const roundTrip = (
   return pointToSlatePoint(txt.blocks.root, point, editor);
 };
 
-const assertRoundTrip = (
-  editor: Editor,
-  txt: ReturnType<typeof setup>['txt'],
-  path: number[],
-  offset: number,
-) => {
+const assertRoundTrip = (editor: Editor, txt: ReturnType<typeof setup>['txt'], path: number[], offset: number) => {
   const result = roundTrip(editor, txt, path, offset);
   expect(result).toEqual({path, offset});
 };
@@ -108,9 +98,7 @@ describe('slatePointToGap()', () => {
 
   describe('multiple inline text nodes in one paragraph', () => {
     test('gap accumulates lengths of preceding text nodes', () => {
-      const doc: SlateDocument = [
-        p({}, {text: 'foo'}, {text: 'bar', em: true}, {text: 'baz'}),
-      ];
+      const doc: SlateDocument = [p({}, {text: 'foo'}, {text: 'bar', em: true}, {text: 'baz'})];
       const {txt, editor} = setup(doc);
       const children = (editor.children[0] as any).children as {text: string}[];
       let cumulative = 0;
@@ -120,7 +108,10 @@ describe('slatePointToGap()', () => {
         const gEnd = slatePointToGap(txt, editor, {path: [0, nodeIdx], offset: nodeLen});
         expect(gEnd - gStart).toBe(nodeLen);
         if (nodeIdx > 0) {
-          const prevEnd = slatePointToGap(txt, editor, {path: [0, nodeIdx - 1], offset: children[nodeIdx - 1].text.length});
+          const prevEnd = slatePointToGap(txt, editor, {
+            path: [0, nodeIdx - 1],
+            offset: children[nodeIdx - 1].text.length,
+          });
           expect(gStart).toBe(prevEnd);
         }
         cumulative += nodeLen;
@@ -210,8 +201,7 @@ describe('round-trip: slatePoint > gap > Point > slatePoint', () => {
   test('single paragraph — all offsets', () => {
     const text = 'hello';
     const {txt, editor} = setup([p({}, textNode(text))]);
-    for (let offset = 0; offset <= text.length; offset++)
-      assertRoundTrip(editor, txt, [0, 0], offset);
+    for (let offset = 0; offset <= text.length; offset++) assertRoundTrip(editor, txt, [0, 0], offset);
   });
 
   test('extracted text equals', () => {
@@ -227,17 +217,14 @@ describe('round-trip: slatePoint > gap > Point > slatePoint', () => {
 
   test('two paragraphs — all offsets in each', () => {
     const {txt, editor} = setup([p({}, textNode('abc')), p({}, textNode('defg'))]);
-    for (let offset = 0; offset <= 3; offset++)
-      assertRoundTrip(editor, txt, [0, 0], offset);
-    for (let offset = 0; offset <= 4; offset++)
-      assertRoundTrip(editor, txt, [1, 0], offset);
+    for (let offset = 0; offset <= 3; offset++) assertRoundTrip(editor, txt, [0, 0], offset);
+    for (let offset = 0; offset <= 4; offset++) assertRoundTrip(editor, txt, [1, 0], offset);
   });
 
   test('heading — all offsets', () => {
     const title = 'My Title';
     const {txt, editor} = setup([h1(textNode(title))]);
-    for (let offset = 0; offset <= title.length; offset++)
-      assertRoundTrip(editor, txt, [0, 0], offset);
+    for (let offset = 0; offset <= title.length; offset++) assertRoundTrip(editor, txt, [0, 0], offset);
   });
 
   test('mixed document (heading + paragraphs)', () => {
@@ -248,10 +235,15 @@ describe('round-trip: slatePoint > gap > Point > slatePoint', () => {
       p({}, textNode('Second.')),
     ]);
     const checks: [number[], number][] = [
-      [[0, 0], 0], [[0, 0], 5],
-      [[1, 0], 0], [[1, 0], 3], [[1, 0], 6],
-      [[2, 0], 0], [[2, 0], 4],
-      [[3, 0], 0], [[3, 0], 7],
+      [[0, 0], 0],
+      [[0, 0], 5],
+      [[1, 0], 0],
+      [[1, 0], 3],
+      [[1, 0], 6],
+      [[2, 0], 0],
+      [[2, 0], 4],
+      [[3, 0], 0],
+      [[3, 0], 7],
     ];
     for (const [path, offset] of checks) {
       assertRoundTrip(editor, txt, path, offset);
@@ -260,8 +252,7 @@ describe('round-trip: slatePoint > gap > Point > slatePoint', () => {
 
   test('blockquote > paragraph round-trip', () => {
     const {txt, editor} = setup([blockquote({}, p({}, textNode('quote')))]);
-    for (let offset = 0; offset <= 5; offset++)
-      assertRoundTrip(editor, txt, [0, 0, 0], offset);
+    for (let offset = 0; offset <= 5; offset++) assertRoundTrip(editor, txt, [0, 0, 0], offset);
   });
 
   test('paragraph with inline formatting (em text node)', () => {
@@ -273,8 +264,7 @@ describe('round-trip: slatePoint > gap > Point > slatePoint', () => {
       const isLast = nodeIdx === para.length - 1;
       const minOffset = isFirst ? 0 : 1;
       const maxOffset = isLast ? nodeText.length : nodeText.length - 1;
-      for (let offset = minOffset; offset <= maxOffset; offset++)
-        assertRoundTrip(editor, txt, [0, nodeIdx], offset);
+      for (let offset = minOffset; offset <= maxOffset; offset++) assertRoundTrip(editor, txt, [0, nodeIdx], offset);
     }
   });
 
@@ -289,8 +279,7 @@ describe('round-trip: slatePoint > gap > Point > slatePoint', () => {
       const isLast = nodeIdx === para.length - 1;
       const minOffset = isFirst ? 0 : 1;
       const maxOffset = isLast ? nodeText.length : nodeText.length - 1;
-      for (let offset = minOffset; offset <= maxOffset; offset++)
-        assertRoundTrip(editor, txt, [0, nodeIdx], offset);
+      for (let offset = minOffset; offset <= maxOffset; offset++) assertRoundTrip(editor, txt, [0, nodeIdx], offset);
     }
   });
 

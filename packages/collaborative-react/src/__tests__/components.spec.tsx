@@ -8,12 +8,7 @@ import {UseModel, UseNode} from '../components';
 describe('UseModel', () => {
   test('renders the model view using the render prop', () => {
     const model = Model.create({greeting: 'hello'});
-    const {container} = render(
-      <UseModel
-        model={model}
-        render={(m) => <span>{JSON.stringify(m.api.view())}</span>}
-      />,
-    );
+    const {container} = render(<UseModel model={model} render={(m) => <span>{JSON.stringify(m.api.view())}</span>} />);
     expect(container.textContent).toContain('"greeting":"hello"');
   });
 
@@ -78,12 +73,7 @@ describe('UseNode', () => {
   test('renders the node view using the render prop', () => {
     const model = Model.create({foo: 'bar'});
     const node = model.s.$;
-    const {container} = render(
-      <UseNode
-        node={node}
-        render={(n) => <span>{JSON.stringify(n.view())}</span>}
-      />,
-    );
+    const {container} = render(<UseNode node={node} render={(n) => <span>{JSON.stringify(n.view())}</span>} />);
     expect(container.textContent).toContain('"foo":"bar"');
   });
 

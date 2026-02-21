@@ -15,10 +15,14 @@ export const SbsCollabInputDemo: React.FC<SbsCollabInputDemoProps> = ({multiline
     const schema = s.obj({
       text: s.str(`Hello, collaborative <${multiline ? 'textarea' : 'input'}>!`),
     });
-    return Model.create(schema)
+    return Model.create(schema);
   }, []);
   const subtitleText = React.useMemo(() => {
-    return 'Two-way synchronization of basic DOM `<' + (multiline ? 'textarea' : 'input') + '>` element rendered by `<CollaborativeInput>` React component';
+    return (
+      'Two-way synchronization of basic DOM `<' +
+      (multiline ? 'textarea' : 'input') +
+      '>` element rendered by `<CollaborativeInput>` React component'
+    );
   }, [multiline]);
 
   return (

@@ -63,8 +63,7 @@ export class SideBySideSyncState {
 
   public readonly setAutoSyncInterval = (seconds: number) => {
     const interval = Math.round(seconds * 1000);
-    if (interval > 0 && interval < 60000)
-      this.autoSyncInterval$.next(interval);
+    if (interval > 0 && interval < 60000) this.autoSyncInterval$.next(interval);
   };
 
   public readonly syncLeftToRight = () => {

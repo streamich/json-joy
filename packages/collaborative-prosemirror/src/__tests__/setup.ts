@@ -79,7 +79,7 @@ export const setup = (pmDoc: Node) => {
 
   // 2. Create a real ProseMirror EditorView in jsdom
   const place = document.createElement('div');
-  document.body.appendChild(place); 
+  document.body.appendChild(place);
   const state = EditorState.create({doc: pmDoc});
   const view = new EditorView(place, {state});
 

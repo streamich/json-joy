@@ -99,10 +99,10 @@ const meta: Meta<typeof Demo> = {
   component: Demo as any,
   argTypes: {
     textarea: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     Facade: {
-      control: { type: 'select' },
+      control: {type: 'select'},
       options: {
         Facade0: InputFacade0,
         Facade1: InputFacade1,

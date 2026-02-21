@@ -38,9 +38,7 @@ const assertApplyPatch = (src: SlateDocument, dst: SlateDocument) => {
 describe('void nodes', () => {
   describe('round-trip: Slate > Peritext > Slate', () => {
     test('single void node (image)', () => {
-      const doc: SlateDocument = [
-        voidNode('image', {src: 'https://example.com/photo.jpg', alt: 'A photo'}),
-      ];
+      const doc: SlateDocument = [voidNode('image', {src: 'https://example.com/photo.jpg', alt: 'A photo'})];
       assertRoundtrip(doc);
     });
 
@@ -59,11 +57,7 @@ describe('void nodes', () => {
     });
 
     test('multiple void nodes in sequence', () => {
-      const doc: SlateDocument = [
-        voidNode('hr'),
-        voidNode('image', {src: 'a.png'}),
-        voidNode('hr'),
-      ];
+      const doc: SlateDocument = [voidNode('hr'), voidNode('image', {src: 'a.png'}), voidNode('hr')];
       assertRoundtrip(doc);
     });
 
@@ -77,19 +71,12 @@ describe('void nodes', () => {
     });
 
     test('void node with no extra attributes', () => {
-      const doc: SlateDocument = [
-        p({}, textNode('before')),
-        voidNode('divider'),
-        p({}, textNode('after')),
-      ];
+      const doc: SlateDocument = [p({}, textNode('before')), voidNode('divider'), p({}, textNode('after'))];
       assertRoundtrip(doc);
     });
 
     test('document with only void nodes', () => {
-      const doc: SlateDocument = [
-        voidNode('image', {src: 'first.jpg'}),
-        voidNode('image', {src: 'second.jpg'}),
-      ];
+      const doc: SlateDocument = [voidNode('image', {src: 'first.jpg'}), voidNode('image', {src: 'second.jpg'})];
       assertRoundtrip(doc);
     });
   });
@@ -105,10 +92,7 @@ describe('void nodes', () => {
     });
 
     test('cached converter returns same reference for unchanged void node', () => {
-      const doc: SlateDocument = [
-        p({}, textNode('text')),
-        voidNode('hr'),
-      ];
+      const doc: SlateDocument = [p({}, textNode('text')), voidNode('hr')];
       const viewRange = FromSlate.convert(doc);
       const model = Model.create(ext.peritext.new(''));
       const api = model.s.toExt();
@@ -127,67 +111,37 @@ describe('void nodes', () => {
   describe('applyPatch with void nodes', () => {
     test('insert a void node into a document', () => {
       const src: SlateDocument = [p({}, textNode('hello'))];
-      const dst: SlateDocument = [
-        p({}, textNode('hello')),
-        voidNode('hr'),
-      ];
+      const dst: SlateDocument = [p({}, textNode('hello')), voidNode('hr')];
       assertApplyPatch(src, dst);
     });
 
     test('remove a void node from a document', () => {
-      const src: SlateDocument = [
-        p({}, textNode('hello')),
-        voidNode('hr'),
-        p({}, textNode('world')),
-      ];
-      const dst: SlateDocument = [
-        p({}, textNode('hello')),
-        p({}, textNode('world')),
-      ];
+      const src: SlateDocument = [p({}, textNode('hello')), voidNode('hr'), p({}, textNode('world'))];
+      const dst: SlateDocument = [p({}, textNode('hello')), p({}, textNode('world'))];
       assertApplyPatch(src, dst);
     });
 
     test('replace a paragraph with a void node', () => {
-      const src: SlateDocument = [
-        p({}, textNode('first')),
-        p({}, textNode('second')),
-      ];
-      const dst: SlateDocument = [
-        p({}, textNode('first')),
-        voidNode('image', {src: 'photo.jpg'}),
-      ];
+      const src: SlateDocument = [p({}, textNode('first')), p({}, textNode('second'))];
+      const dst: SlateDocument = [p({}, textNode('first')), voidNode('image', {src: 'photo.jpg'})];
       assertApplyPatch(src, dst);
     });
 
     test('replace a void node with a paragraph', () => {
-      const src: SlateDocument = [
-        voidNode('hr'),
-        p({}, textNode('after')),
-      ];
-      const dst: SlateDocument = [
-        p({}, textNode('replaced')),
-        p({}, textNode('after')),
-      ];
+      const src: SlateDocument = [voidNode('hr'), p({}, textNode('after'))];
+      const dst: SlateDocument = [p({}, textNode('replaced')), p({}, textNode('after'))];
       assertApplyPatch(src, dst);
     });
 
     test('change void node attributes', () => {
-      const src: SlateDocument = [
-        voidNode('image', {src: 'old.jpg'}),
-      ];
-      const dst: SlateDocument = [
-        voidNode('image', {src: 'new.jpg'}),
-      ];
+      const src: SlateDocument = [voidNode('image', {src: 'old.jpg'})];
+      const dst: SlateDocument = [voidNode('image', {src: 'new.jpg'})];
       assertApplyPatch(src, dst);
     });
 
     test('swap one void type for another', () => {
-      const src: SlateDocument = [
-        voidNode('hr'),
-      ];
-      const dst: SlateDocument = [
-        voidNode('image', {src: 'photo.jpg'}),
-      ];
+      const src: SlateDocument = [voidNode('hr')];
+      const dst: SlateDocument = [voidNode('image', {src: 'photo.jpg'})];
       assertApplyPatch(src, dst);
     });
   });
@@ -195,11 +149,7 @@ describe('void nodes', () => {
   describe('merge with void nodes', () => {
     test('merge void node document into paragraph document', () => {
       const doc1: SlateDocument = [p({}, textNode('hello'))];
-      const doc2: SlateDocument = [
-        p({}, textNode('hello')),
-        voidNode('hr'),
-        p({}, textNode('world')),
-      ];
+      const doc2: SlateDocument = [p({}, textNode('hello')), voidNode('hr'), p({}, textNode('world'))];
       const model = Model.create(ext.peritext.new(''));
       const api = model.s.toExt();
       api.txt.editor.merge(FromSlate.convert(doc1));
@@ -211,9 +161,7 @@ describe('void nodes', () => {
 
     test('merge from void-only document', () => {
       const doc1: SlateDocument = [voidNode('hr')];
-      const doc2: SlateDocument = [
-        p({}, textNode('replaced')),
-      ];
+      const doc2: SlateDocument = [p({}, textNode('replaced'))];
       const model = Model.create(ext.peritext.new(''));
       const api = model.s.toExt();
       api.txt.editor.merge(FromSlate.convert(doc1));

@@ -38,11 +38,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip, ...rest}
       {...tooltip}
     >
       <BasicButton {...rest} onClick={handleClick}>
-        {copied ? (
-          <CheckIcon key="check" width={16} height={16} />
-        ) : (
-          <CopyIcon key="copy" width={16} height={16} />
-        )}
+        {copied ? <CheckIcon key="check" width={16} height={16} /> : <CopyIcon key="copy" width={16} height={16} />}
       </BasicButton>
     </BasicTooltip>
   );

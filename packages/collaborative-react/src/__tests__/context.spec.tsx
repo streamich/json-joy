@@ -39,9 +39,7 @@ describe('context: provider and retrieval', () => {
     test('NodeCtx provides a node retrievable via useCtxNode()', () => {
       const model = Model.create({foo: 'bar'});
       const node = model.s.$;
-      const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
-        <NodeCtx node={node}>{children}</NodeCtx>
-      );
+      const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
       const {result} = renderHook(() => useCtxNode(), {wrapper});
       expect(result.current).toBe(node);
     });
@@ -49,9 +47,7 @@ describe('context: provider and retrieval', () => {
     test('NodeCtx provides a node retrievable via useCtxNodeStrict()', () => {
       const model = Model.create({foo: 'bar'});
       const node = model.s.$;
-      const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
-        <NodeCtx node={node}>{children}</NodeCtx>
-      );
+      const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
       const {result} = renderHook(() => useCtxNodeStrict(), {wrapper});
       expect(result.current).toBe(node);
     });
@@ -91,9 +87,7 @@ describe('context: useNode* hooks pull NodeApi from context', () => {
   test('useNode() retrieves the node from context and re-renders on changes', async () => {
     const model = Model.create({count: 0});
     const node = model.s.$;
-    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
-      <NodeCtx node={node}>{children}</NodeCtx>
-    );
+    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
     const views: unknown[] = [];
     renderHook(
       () => {
@@ -113,9 +107,7 @@ describe('context: useNode* hooks pull NodeApi from context', () => {
   test('useNodeView() retrieves the node from context and returns its view', async () => {
     const model = Model.create({msg: 'hello'});
     const node = model.s.$;
-    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
-      <NodeCtx node={node}>{children}</NodeCtx>
-    );
+    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
     const views: unknown[] = [];
     renderHook(
       () => {
@@ -134,9 +126,7 @@ describe('context: useNode* hooks pull NodeApi from context', () => {
   test('useNodeView() works with a sub-node from context', async () => {
     const model = Model.create({nested: {value: 'a'}});
     const subNode = model.s.nested.$;
-    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => (
-      <NodeCtx node={subNode}>{children}</NodeCtx>
-    );
+    const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={subNode}>{children}</NodeCtx>;
     const views: unknown[] = [];
     renderHook(
       () => {

@@ -45,8 +45,18 @@ export const createEditor = (options: CreateEditorOptions): EditorView => {
   if (onFocus || onBlur) {
     extensions.push(
       EditorView.domEventHandlers({
-        focus: onFocus ? () => { onFocus(); return false; } : undefined,
-        blur: onBlur ? () => { onBlur(); return false; } : undefined,
+        focus: onFocus
+          ? () => {
+              onFocus();
+              return false;
+            }
+          : undefined,
+        blur: onBlur
+          ? () => {
+              onBlur();
+              return false;
+            }
+          : undefined,
       }),
     );
   }
@@ -72,4 +82,3 @@ export const createEditor = (options: CreateEditorOptions): EditorView => {
 
   return view;
 };
-

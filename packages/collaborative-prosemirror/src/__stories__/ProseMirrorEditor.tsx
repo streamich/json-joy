@@ -38,12 +38,12 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, read
 
     // Create ProseMirror editor
     const doc = mySchema.nodes.doc.createAndFill()!;
-    const view = viewRef.current = new EditorView(editorRef.current, {
+    const view = (viewRef.current = new EditorView(editorRef.current, {
       state: EditorState.create({
         doc,
         plugins: exampleSetup({schema: mySchema}),
       }),
-    });
+    }));
 
     // Bind Model to ProseMirror
     const peritextRef = () => (model as any).s.toExt();
@@ -51,11 +51,11 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, read
     const unbind = PeritextBinding.bind(peritextRef, facade);
 
     // Re-render after setup
-    setCnt(x => x + 1);
+    setCnt((x) => x + 1);
     if (onEditor) {
       onEditor(view);
     }
-    
+
     return () => {
       unbind();
       view.destroy();

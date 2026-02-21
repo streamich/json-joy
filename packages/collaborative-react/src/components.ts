@@ -7,8 +7,7 @@ export interface UseModelProps<M extends Model<any>> {
   render: (model: M) => React.ReactNode;
 }
 
-export const UseModel = <M extends Model<any>>({model, render}: UseModelProps<M>) =>
-  render(useModel(m => m, model));
+export const UseModel = <M extends Model<any>>({model, render}: UseModelProps<M>) => render(useModel((m) => m, model));
 
 export interface UseNodeProps {
   node?: CrdtNodeApi;
@@ -16,5 +15,4 @@ export interface UseNodeProps {
   render: (node: CrdtNodeApi) => React.ReactNode;
 }
 
-export const UseNode: React.FC<UseNodeProps> = ({node, event, render}) =>
-  render(useNode(node, event));
+export const UseNode: React.FC<UseNodeProps> = ({node, event, render}) => render(useNode(node, event));

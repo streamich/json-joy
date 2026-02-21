@@ -6,48 +6,48 @@ import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButto
 import type {MenuItem} from '../types';
 
 // Second brain icons
-const SecondBrainIcon = makeIcon({set: "tabler", icon: "brain"});
-const MakeShorterIcon = makeIcon({set: "tabler", icon: "viewport-short"});
-const MakeLongerIcon = makeIcon({set: "tabler", icon: "viewport-tall"});
+const SecondBrainIcon = makeIcon({set: 'tabler', icon: 'brain'});
+const MakeShorterIcon = makeIcon({set: 'tabler', icon: 'viewport-short'});
+const MakeLongerIcon = makeIcon({set: 'tabler', icon: 'viewport-tall'});
 
 // Typesetting icons
-const TypographyIcon = makeIcon({set: "tabler", icon: "typography"});
-const FontStyleIcon = makeIcon({set: "radix", icon: "font-style"});
-const FontFamilyIcon = makeIcon({set: "radix", icon: "font-family"});
-const FontSizeIcon = makeIcon({set: "radix", icon: "font-size"});
-const LetterSpacingIcon = makeIcon({set: "radix", icon: "letter-spacing"});
-const LetterCaseUppercaseIcon = makeIcon({set: "radix", icon: "letter-case-uppercase"});
-const LetterCaseLowercaseIcon = makeIcon({set: "radix", icon: "letter-case-lowercase"});
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography'});
+const FontStyleIcon = makeIcon({set: 'radix', icon: 'font-style'});
+const FontFamilyIcon = makeIcon({set: 'radix', icon: 'font-family'});
+const FontSizeIcon = makeIcon({set: 'radix', icon: 'font-size'});
+const LetterSpacingIcon = makeIcon({set: 'radix', icon: 'letter-spacing'});
+const LetterCaseUppercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-uppercase'});
+const LetterCaseLowercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-lowercase'});
 
 // Modify icons
-const LayersIcon = makeIcon({set: "radix", icon: "layers"});
-const EraserIcon = makeIcon({set: "tabler", icon: "eraser"});
-const TrashIcon = makeIcon({set: "tabler", icon: "trash"});
+const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
+const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
+const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
 
 // Clipboard icons
-const CopyIcon = makeIcon({set: "lucide", icon: "copy"});
-const ClipboardCopyIcon = makeIcon({set: "radix", icon: "clipboard-copy"});
-const MarkdownIcon = makeIcon({set: "simple", icon: "markdown"});
-const Html5Icon = makeIcon({set: "simple", icon: "html5"});
-const ScissorsIcon = makeIcon({set: "tabler", icon: "scissors"});
-const ClipboardIcon = makeIcon({set: "radix", icon: "clipboard"});
+const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
+const ClipboardCopyIcon = makeIcon({set: 'radix', icon: 'clipboard-copy'});
+const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
+const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
+const ScissorsIcon = makeIcon({set: 'tabler', icon: 'scissors'});
+const ClipboardIcon = makeIcon({set: 'radix', icon: 'clipboard'});
 
 // Insert icons
-const BetweenVerticalEndIcon = makeIcon({set: "lucide", icon: "between-vertical-end"});
-const ButtonIcon = makeIcon({set: "radix", icon: "button"});
-const CalendarIcon = makeIcon({set: "radix", icon: "calendar"});
-const WalletIcon = makeIcon({set: "tabler", icon: "wallet"});
-const DropdownMenuIcon = makeIcon({set: "radix", icon: "dropdown-menu"});
-const PlusIcon = makeIcon({set: "radix", icon: "plus"});
-const LinkIcon = makeIcon({set: "radix", icon: "link-2"});
-const SewingPinIcon = makeIcon({set: "radix", icon: "sewing-pin"});
-const FileIcon = makeIcon({set: "radix", icon: "file"});
-const TemplateIcon = makeIcon({set: "tabler", icon: "template"});
-const RadixKeyboardIcon = makeIcon({set: "radix", icon: "keyboard"});
-const SmilePlusIcon = makeIcon({set: "lucide", icon: "smile-plus"});
-const OmegaIcon = makeIcon({set: "lucide", icon: "omega"});
-const VariableIcon = makeIcon({set: "lucide", icon: "variable"});
-const SquareChevronRightIcon = makeIcon({set: "lucide", icon: "square-chevron-right"});
+const BetweenVerticalEndIcon = makeIcon({set: 'lucide', icon: 'between-vertical-end'});
+const ButtonIcon = makeIcon({set: 'radix', icon: 'button'});
+const CalendarIcon = makeIcon({set: 'radix', icon: 'calendar'});
+const WalletIcon = makeIcon({set: 'tabler', icon: 'wallet'});
+const DropdownMenuIcon = makeIcon({set: 'radix', icon: 'dropdown-menu'});
+const PlusIcon = makeIcon({set: 'radix', icon: 'plus'});
+const LinkIcon = makeIcon({set: 'radix', icon: 'link-2'});
+const SewingPinIcon = makeIcon({set: 'radix', icon: 'sewing-pin'});
+const FileIcon = makeIcon({set: 'radix', icon: 'file'});
+const TemplateIcon = makeIcon({set: 'tabler', icon: 'template'});
+const RadixKeyboardIcon = makeIcon({set: 'radix', icon: 'keyboard'});
+const SmilePlusIcon = makeIcon({set: 'lucide', icon: 'smile-plus'});
+const OmegaIcon = makeIcon({set: 'lucide', icon: 'omega'});
+const VariableIcon = makeIcon({set: 'lucide', icon: 'variable'});
+const SquareChevronRightIcon = makeIcon({set: 'lucide', icon: 'square-chevron-right'});
 
 export const secondBrain = (): MenuItem => {
   return {

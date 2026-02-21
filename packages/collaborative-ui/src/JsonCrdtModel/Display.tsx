@@ -52,46 +52,52 @@ export interface DisplayProps {
   renderDisplay: (model: Model<any>, readonly: boolean, presence?: PresenceManager) => React.ReactNode;
 }
 
-export const Display: React.FC<DisplayProps> = React.memo(({state, model, presence, readonly, noHeader, renderDisplay}) => {
-  const [t] = useT();
-  const show = useBehaviorSubject(state.showDisplay$);
-  const showOutlines = useBehaviorSubject(state.showDisplayOutlines$);
+export const Display: React.FC<DisplayProps> = React.memo(
+  ({state, model, presence, readonly, noHeader, renderDisplay}) => {
+    const [t] = useT();
+    const show = useBehaviorSubject(state.showDisplay$);
+    const showOutlines = useBehaviorSubject(state.showDisplayOutlines$);
 
-  return (
-    <>
-      {!noHeader && (
-        <div className={css.header}>
-          <Split>
-            <div style={{marginTop: -1}}>
-              <MiniTitle>{'Display'}</MiniTitle>
-              {!!readonly && show && (
-                <>
-                  <Space horizontal size={0} />
-                  <LogReadonlyLabel />
-                </>
-              )}
+    return (
+      <>
+        {!noHeader && (
+          <div className={css.header}>
+            <Split>
+              <div style={{marginTop: -1}}>
+                <MiniTitle>{'Display'}</MiniTitle>
+                {!!readonly && show && (
+                  <>
+                    <Space horizontal size={0} />
+                    <LogReadonlyLabel />
+                  </>
+                )}
+              </div>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                {show && (
+                  <>
+                    <BasicTooltip nowrap renderTooltip={() => t('Outline')}>
+                      <BasicButton
+                        onClick={() => state.showDisplayOutlines$.next(!state.showDisplayOutlines$.getValue())}
+                      >
+                        <VectorIcon width={16} height={16} />
+                      </BasicButton>
+                    </BasicTooltip>
+                    <Space horizontal />
+                  </>
+                )}
+                <Checkbox as={'span'} small on={show} onChange={state.toggleShowDisplay} />
+              </div>
+            </Split>
+          </div>
+        )}
+        {show && (
+          <Scrollbox style={{maxHeight: 500}}>
+            <div className={css.content + (showOutlines ? css.debug : '')} style={{paddingTop: noHeader ? 16 : 4}}>
+              {renderDisplay(model, !!readonly, presence)}
             </div>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              {show && (
-                <>
-                  <BasicTooltip nowrap renderTooltip={() => t('Outline')}>
-                    <BasicButton onClick={() => state.showDisplayOutlines$.next(!state.showDisplayOutlines$.getValue())}>
-                      <VectorIcon width={16} height={16} />
-                    </BasicButton>
-                  </BasicTooltip>
-                  <Space horizontal />
-                </>
-              )}
-              <Checkbox as={'span'} small on={show} onChange={state.toggleShowDisplay} />
-            </div>
-          </Split>
-        </div>
-      )}
-      {show && (
-        <Scrollbox style={{maxHeight: 500}}>
-          <div className={css.content + (showOutlines ? css.debug : '')} style={{paddingTop: noHeader ? 16 : 4}}>{renderDisplay(model, !!readonly, presence)}</div>
-        </Scrollbox>
-      )}
-    </>
-  );
-});
+          </Scrollbox>
+        )}
+      </>
+    );
+  },
+);

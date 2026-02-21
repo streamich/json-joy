@@ -45,7 +45,7 @@ describe('usePath()', () => {
       [
         {name: 'Newsletter', active: false},
         {name: 'Promotions', active: false},
-      ]
+      ],
     ]);
   });
 });
@@ -82,14 +82,17 @@ describe('useArr()', () => {
     const node = model.s.$;
     const views: unknown[] = [];
     const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
-    renderHook(() => {
-      const arr = useArr('/obj/foo');
-      expect(arr instanceof ArrApi).toBe(true);
-      React.useEffect(() => {
-        arr?.ins(3, [4]);
-      }, [arr]);
-      views.push(arr?.view());
-    }, {wrapper});
+    renderHook(
+      () => {
+        const arr = useArr('/obj/foo');
+        expect(arr instanceof ArrApi).toBe(true);
+        React.useEffect(() => {
+          arr?.ins(3, [4]);
+        }, [arr]);
+        views.push(arr?.view());
+      },
+      {wrapper},
+    );
     expect(views).toEqual([
       [1, 2, 3],
       [1, 2, 3, 4],
@@ -103,18 +106,18 @@ describe('useObj()', () => {
     const node = model.s.$;
     const views: unknown[] = [];
     const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
-    renderHook(() => {
-      const obj = useObj('/obj/foo');
-      expect(obj instanceof ObjApi).toBe(true);
-      React.useEffect(() => {
-        obj?.set({x: 'y'} as any);
-      }, [obj]);
-      views.push(obj?.view());
-    }, {wrapper});
-    expect(views).toEqual([
-      {bar: 'baz'},
-      {bar: 'baz', x: 'y'},
-    ]);
+    renderHook(
+      () => {
+        const obj = useObj('/obj/foo');
+        expect(obj instanceof ObjApi).toBe(true);
+        React.useEffect(() => {
+          obj?.set({x: 'y'} as any);
+        }, [obj]);
+        views.push(obj?.view());
+      },
+      {wrapper},
+    );
+    expect(views).toEqual([{bar: 'baz'}, {bar: 'baz', x: 'y'}]);
   });
 });
 
@@ -124,17 +127,17 @@ describe('useStr()', () => {
     const node = model.s.$;
     const views: unknown[] = [];
     const wrapper: React.FC<{children: React.ReactNode}> = ({children}) => <NodeCtx node={node}>{children}</NodeCtx>;
-    renderHook(() => {
-      const str = useStr('/obj/foo/bar');
-      expect(str instanceof StrApi).toBe(true);
-      React.useEffect(() => {
-        str?.ins(3, '!');
-      }, [str]);
-      views.push(str?.view());
-    }, {wrapper});
-    expect(views).toEqual([
-      'baz',
-      'baz!',
-    ]);
+    renderHook(
+      () => {
+        const str = useStr('/obj/foo/bar');
+        expect(str instanceof StrApi).toBe(true);
+        React.useEffect(() => {
+          str?.ins(3, '!');
+        }, [str]);
+        views.push(str?.view());
+      },
+      {wrapper},
+    );
+    expect(views).toEqual(['baz', 'baz!']);
   });
 });

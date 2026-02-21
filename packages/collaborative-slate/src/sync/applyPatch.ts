@@ -33,10 +33,7 @@ const patchChildren = (
   while (pfx < minLen && deepEqual(src[pfx], dst[pfx])) pfx++;
   if (pfx === srcLen && pfx === dstLen) return;
   let sfx = 0;
-  while (
-    sfx < minLen - pfx &&
-    deepEqual(src[srcLen - 1 - sfx], dst[dstLen - 1 - sfx])
-  ) sfx++;
+  while (sfx < minLen - pfx && deepEqual(src[srcLen - 1 - sfx], dst[dstLen - 1 - sfx])) sfx++;
   const srcEnd = srcLen - sfx;
   const dstEnd = dstLen - sfx;
   const srcChanged = srcEnd - pfx;
@@ -53,8 +50,7 @@ const patchChildren = (
   } else {
     // Different counts in the changed window.
     // Delete old[pfx..oldEnd) in reverse order, then insert new[pfx..newEnd).
-    for (let i = srcEnd - 1; i >= pfx; i--)
-      Transforms.removeNodes(editor, {at: [...basePath, i]});
+    for (let i = srcEnd - 1; i >= pfx; i--) Transforms.removeNodes(editor, {at: [...basePath, i]});
     if (dstChanged > 0) {
       const toInsert = dst.slice(pfx, dstEnd) as any[];
       Transforms.insertNodes(editor, toInsert, {at: [...basePath, pfx]});
@@ -75,12 +71,7 @@ const attrsEqual = (a: SlateElementNode, b: SlateElementNode): boolean => {
   return true;
 };
 
-const patchNode = (
-  editor: Editor,
-  path: number[],
-  src: SlateDescendantNode,
-  dst: SlateDescendantNode,
-): void => {
+const patchNode = (editor: Editor, path: number[], src: SlateDescendantNode, dst: SlateDescendantNode): void => {
   const srcIsText = 'text' in src;
   const dstIsText = 'text' in dst;
   if (srcIsText && dstIsText) {
@@ -89,7 +80,7 @@ const patchNode = (
   }
 
   // Replace whole node.
-  if (srcIsText || dstIsText || (src.type !== dst.type)) {
+  if (srcIsText || dstIsText || src.type !== dst.type) {
     Transforms.removeNodes(editor, {at: path});
     Transforms.insertNodes(editor, dst as any, {at: path});
     return;
@@ -103,18 +94,12 @@ const patchNode = (
   patchChildren(editor, path, src.children, dst.children);
 };
 
-const patchTextNode = (
-  editor: Editor,
-  path: number[],
-  src: SlateTextNode,
-  dst: SlateTextNode,
-): void => {
+const patchTextNode = (editor: Editor, path: number[], src: SlateTextNode, dst: SlateTextNode): void => {
   // Check whether non-text mark properties changed.
   const oldKeys = Object.keys(src);
   const newKeys = Object.keys(dst);
   const markChanged =
-    oldKeys.length !== newKeys.length ||
-    oldKeys.some((k) => k !== 'text' && !deepEqual(src[k], dst[k]));
+    oldKeys.length !== newKeys.length || oldKeys.some((k) => k !== 'text' && !deepEqual(src[k], dst[k]));
   if (markChanged) {
     Transforms.removeNodes(editor, {at: path});
     Transforms.insertNodes(editor, dst as any, {at: path});
@@ -125,7 +110,9 @@ const patchTextNode = (
   const srcTxt = src.text;
   const dstTxt = dst.text;
   if (srcTxt === dstTxt) return;
-  str.apply(str.diff(srcTxt, dstTxt), srcTxt.length,
+  str.apply(
+    str.diff(srcTxt, dstTxt),
+    srcTxt.length,
     (pos, str) => Transforms.insertText(editor, str, {at: {path, offset: pos}}),
     (pos, len) => Transforms.delete(editor, {at: {path, offset: pos}, distance: len, unit: 'character'}),
   );

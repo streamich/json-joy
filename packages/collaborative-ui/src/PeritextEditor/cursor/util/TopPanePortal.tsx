@@ -2,7 +2,6 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {EntangledPortal, EntangledPortalStateOpts} from '../../components/EntangledPortal';
 
-
 const spanClass = rule({
   pe: 'none',
 });

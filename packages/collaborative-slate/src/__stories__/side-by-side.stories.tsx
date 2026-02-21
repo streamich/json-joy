@@ -15,11 +15,10 @@ const Demo: React.FC<{}> = ({}) => {
   const model = React.useMemo(() => {
     const slateDoc = [
       {type: 'paragraph', children: [{text: 'Hello, Slate!'}]},
-      {type: 'paragraph', children: [
-        {text: 'This is a basic '},
-        {text: 'rich text', bold: true, italic: true},
-        {text: ' editor.'},
-      ]},
+      {
+        type: 'paragraph',
+        children: [{text: 'This is a basic '}, {text: 'rich text', bold: true, italic: true}, {text: ' editor.'}],
+      },
     ];
     const model = ModelWithExt.create(ext.peritext.new(''));
     const viewRange = FromSlate.convert(slateDoc as any);

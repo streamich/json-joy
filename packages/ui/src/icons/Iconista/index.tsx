@@ -18,7 +18,9 @@ export const Iconista: React.FC<IconistaProps> = ({colorStroke, color, ...rest})
   return <Svg fill={iconColor} stroke={colorStroke ? iconColor : undefined} {...rest} />;
 };
 
-export const makeIcon = (icon: Partial<IconistaProps> & Icon): React.FC<Partial<Icon> & Omit<IconistaProps, keyof Icon>> => {
+export const makeIcon = (
+  icon: Partial<IconistaProps> & Icon,
+): React.FC<Partial<Icon> & Omit<IconistaProps, keyof Icon>> => {
   // Preload
   const url = getUrl(icon);
   fetch(url, {cache: 'force-cache'}).catch(() => {});

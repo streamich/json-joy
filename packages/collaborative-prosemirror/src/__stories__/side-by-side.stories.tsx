@@ -26,14 +26,20 @@ const mySchema = new Schema({
 
 const Demo: React.FC<{}> = ({}) => {
   const model = React.useMemo(() => {
-    const json = {"type":"doc","content":[
-      {"type":"paragraph","content":[{"type":"text","text":"Hello, ProseMirror!"}]},
-      {"type":"paragraph","content":[
-        {"type":"text","text":"This is a basic "},
-        {"type":"text","text":"rich text","marks":[{"type":"strong"},{"type":"em"}]},
-        {"type":"text","text":" editor."},
-      ]}
-    ]};
+    const json = {
+      type: 'doc',
+      content: [
+        {type: 'paragraph', content: [{type: 'text', text: 'Hello, ProseMirror!'}]},
+        {
+          type: 'paragraph',
+          content: [
+            {type: 'text', text: 'This is a basic '},
+            {type: 'text', text: 'rich text', marks: [{type: 'strong'}, {type: 'em'}]},
+            {type: 'text', text: ' editor.'},
+          ],
+        },
+      ],
+    };
     const model = ModelWithExt.create(ext.peritext.new(''));
     const viewRange = FromPm.convert(mySchema.nodeFromJSON(json));
     const txt = model.s.toExt().txt;
@@ -52,7 +58,9 @@ const Demo: React.FC<{}> = ({}) => {
         model={model}
         noDisplayHdr
         // renderDisplay={(model) => <Editor model={model} />}
-        renderDisplay={(model, readonly, presence) => <ProseMirrorEditor model={model} readonly={readonly} presence={presence} />}
+        renderDisplay={(model, readonly, presence) => (
+          <ProseMirrorEditor model={model} readonly={readonly} presence={presence} />
+        )}
       />
     </DemoCard>
   );

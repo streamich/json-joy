@@ -6,96 +6,96 @@ import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButto
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 
 // Annotations icons
-const LinkIcon = makeIcon({set: "radix", icon: "link-2"});
-const CommentIcon = makeIcon({set: "lineicons", icon: "comment-1-text"});
-const BookmarkIcon = makeIcon({set: "lineicons", icon: "flag-2"});
-const FootnoteIcon = makeIcon({set: "lucide", icon: "footprints"});
-const AsideIcon = makeIcon({set: "tabler", icon: "box-align-right"});
+const LinkIcon = makeIcon({set: 'radix', icon: 'link-2'});
+const CommentIcon = makeIcon({set: 'lineicons', icon: 'comment-1-text'});
+const BookmarkIcon = makeIcon({set: 'lineicons', icon: 'flag-2'});
+const FootnoteIcon = makeIcon({set: 'lucide', icon: 'footprints'});
+const AsideIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
 
 // Second brain icons
-const SecondBrainIcon = makeIcon({set: "tabler", icon: "brain"});
-const MakeShorterIcon = makeIcon({set: "tabler", icon: "viewport-short"});
-const MakeLongerIcon = makeIcon({set: "tabler", icon: "viewport-tall"});
+const SecondBrainIcon = makeIcon({set: 'tabler', icon: 'brain'});
+const MakeShorterIcon = makeIcon({set: 'tabler', icon: 'viewport-short'});
+const MakeLongerIcon = makeIcon({set: 'tabler', icon: 'viewport-tall'});
 
 // Formatting icons
-const BoldIcon = makeIcon({set: "radix", icon: "font-bold"});
-const ItalicIcon = makeIcon({set: "lucide", icon: "italic"});
-const UnderlineIcon = makeIcon({set: "tabler", icon: "underline"});
-const StrikethroughIcon = makeIcon({set: "tabler", icon: "strikethrough"});
-const OverlineIcon = makeIcon({set: "tabler", icon: "overline"});
-const HighlightIcon = makeIcon({set: "tabler", icon: "highlight"});
-const ClassifiedIcon = makeIcon({set: "tabler", icon: "lock-password"});
-const CodeIcon = makeIcon({set: "tabler", icon: "code"});
-const MathIcon = makeIcon({set: "tabler", icon: "math-integral-x"});
-const SuperscriptIcon = makeIcon({set: "tabler", icon: "superscript"});
-const SubscriptIcon = makeIcon({set: "tabler", icon: "subscript"});
-const KeyboardIcon = makeIcon({set: "lucide", icon: "keyboard"});
-const InsertionIcon = makeIcon({set: "tabler", icon: "pencil-plus"});
-const DeletionIcon = makeIcon({set: "tabler", icon: "pencil-minus"});
+const BoldIcon = makeIcon({set: 'radix', icon: 'font-bold'});
+const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
+const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline'});
+const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough'});
+const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline'});
+const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight'});
+const ClassifiedIcon = makeIcon({set: 'tabler', icon: 'lock-password'});
+const CodeIcon = makeIcon({set: 'tabler', icon: 'code'});
+const MathIcon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
+const SuperscriptIcon = makeIcon({set: 'tabler', icon: 'superscript'});
+const SubscriptIcon = makeIcon({set: 'tabler', icon: 'subscript'});
+const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
+const InsertionIcon = makeIcon({set: 'tabler', icon: 'pencil-plus'});
+const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus'});
 
 // Artistic icons
-const PaintbrushIcon = makeIcon({set: "lucide", icon: "paintbrush"});
-const PaintBucketIcon = makeIcon({set: "lucide", icon: "paint-bucket"});
-const BorderLeftIcon = makeIcon({set: "tabler", icon: "border-left"});
+const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
+const PaintBucketIcon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
+const BorderLeftIcon = makeIcon({set: 'tabler', icon: 'border-left'});
 
 // Typesetting icons
-const TypographyIcon = makeIcon({set: "tabler", icon: "typography"});
-const FontStyleIcon = makeIcon({set: "radix", icon: "font-style"});
-const FontFamilyIcon = makeIcon({set: "radix", icon: "font-family"});
-const FontSizeIcon = makeIcon({set: "radix", icon: "font-size"});
-const LetterSpacingIcon = makeIcon({set: "radix", icon: "letter-spacing"});
-const LetterCaseUppercaseIcon = makeIcon({set: "radix", icon: "letter-case-uppercase"});
-const LetterCaseLowercaseIcon = makeIcon({set: "radix", icon: "letter-case-lowercase"});
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography'});
+const FontStyleIcon = makeIcon({set: 'radix', icon: 'font-style'});
+const FontFamilyIcon = makeIcon({set: 'radix', icon: 'font-family'});
+const FontSizeIcon = makeIcon({set: 'radix', icon: 'font-size'});
+const LetterSpacingIcon = makeIcon({set: 'radix', icon: 'letter-spacing'});
+const LetterCaseUppercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-uppercase'});
+const LetterCaseLowercaseIcon = makeIcon({set: 'radix', icon: 'letter-case-lowercase'});
 
 // Modify icons
-const LayersIcon = makeIcon({set: "radix", icon: "layers"});
-const EraserIcon = makeIcon({set: "tabler", icon: "eraser"});
-const TrashIcon = makeIcon({set: "tabler", icon: "trash"});
+const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
+const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
+const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
 
 // Clipboard icons
-const CopyIcon = makeIcon({set: "lucide", icon: "copy"});
-const ClipboardCopyIcon = makeIcon({set: "radix", icon: "clipboard-copy"});
-const MarkdownIcon = makeIcon({set: "simple", icon: "markdown"});
-const Html5Icon = makeIcon({set: "simple", icon: "html5"});
-const ScissorsIcon = makeIcon({set: "tabler", icon: "scissors"});
-const ClipboardIcon = makeIcon({set: "radix", icon: "clipboard"});
+const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
+const ClipboardCopyIcon = makeIcon({set: 'radix', icon: 'clipboard-copy'});
+const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
+const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
+const ScissorsIcon = makeIcon({set: 'tabler', icon: 'scissors'});
+const ClipboardIcon = makeIcon({set: 'radix', icon: 'clipboard'});
 
 // Insert icons
-const BetweenVerticalEndIcon = makeIcon({set: "lucide", icon: "between-vertical-end"});
-const ButtonIcon = makeIcon({set: "radix", icon: "button"});
-const CalendarIcon = makeIcon({set: "radix", icon: "calendar"});
-const WalletIcon = makeIcon({set: "tabler", icon: "wallet"});
-const DropdownMenuIcon = makeIcon({set: "radix", icon: "dropdown-menu"});
-const PlusIcon = makeIcon({set: "radix", icon: "plus"});
-const SewingPinIcon = makeIcon({set: "radix", icon: "sewing-pin"});
-const FileIcon = makeIcon({set: "radix", icon: "file"});
-const TemplateIcon = makeIcon({set: "tabler", icon: "template"});
-const RadixKeyboardIcon = makeIcon({set: "radix", icon: "keyboard"});
-const SmilePlusIcon = makeIcon({set: "lucide", icon: "smile-plus"});
-const OmegaIcon = makeIcon({set: "lucide", icon: "omega"});
-const VariableIcon = makeIcon({set: "lucide", icon: "variable"});
-const SquareChevronRightIcon = makeIcon({set: "lucide", icon: "square-chevron-right"});
+const BetweenVerticalEndIcon = makeIcon({set: 'lucide', icon: 'between-vertical-end'});
+const ButtonIcon = makeIcon({set: 'radix', icon: 'button'});
+const CalendarIcon = makeIcon({set: 'radix', icon: 'calendar'});
+const WalletIcon = makeIcon({set: 'tabler', icon: 'wallet'});
+const DropdownMenuIcon = makeIcon({set: 'radix', icon: 'dropdown-menu'});
+const PlusIcon = makeIcon({set: 'radix', icon: 'plus'});
+const SewingPinIcon = makeIcon({set: 'radix', icon: 'sewing-pin'});
+const FileIcon = makeIcon({set: 'radix', icon: 'file'});
+const TemplateIcon = makeIcon({set: 'tabler', icon: 'template'});
+const RadixKeyboardIcon = makeIcon({set: 'radix', icon: 'keyboard'});
+const SmilePlusIcon = makeIcon({set: 'lucide', icon: 'smile-plus'});
+const OmegaIcon = makeIcon({set: 'lucide', icon: 'omega'});
+const VariableIcon = makeIcon({set: 'lucide', icon: 'variable'});
+const SquareChevronRightIcon = makeIcon({set: 'lucide', icon: 'square-chevron-right'});
 
 // Block element icons
-const PilcrowIcon = makeIcon({set: "lucide", icon: "pilcrow"});
-const QuoteIcon = makeIcon({set: "lucide", icon: "quote"});
-const MathBlockIcon = makeIcon({set: "tabler", icon: "math"});
-const TypeIcon = makeIcon({set: "lucide", icon: "type"});
-const H1Icon = makeIcon({set: "tabler", icon: "h-1"});
-const H2Icon = makeIcon({set: "tabler", icon: "h-2"});
-const H3Icon = makeIcon({set: "tabler", icon: "h-3"});
-const H4Icon = makeIcon({set: "tabler", icon: "h-4"});
-const H5Icon = makeIcon({set: "tabler", icon: "h-5"});
-const H6Icon = makeIcon({set: "tabler", icon: "h-6"});
-const ListBulletedIcon = makeIcon({set: "ibm_32", icon: "list--bulleted"});
-const ListNumberedIcon = makeIcon({set: "ibm_32", icon: "list--numbered"});
-const ListCheckedIcon = makeIcon({set: "ibm_32", icon: "list--checked"});
-const LayoutIcon = makeIcon({set: "tabler", icon: "layout"});
-const TableIcon = makeIcon({set: "tabler", icon: "table"});
-const ColumnsIcon = makeIcon({set: "tabler", icon: "columns"});
-const ImageInPictureIcon = makeIcon({set: "tabler", icon: "image-in-picture"});
-const PhotoScanIcon = makeIcon({set: "tabler", icon: "photo-scan"});
-const TablerFileIcon = makeIcon({set: "tabler", icon: "file"});
+const PilcrowIcon = makeIcon({set: 'lucide', icon: 'pilcrow'});
+const QuoteIcon = makeIcon({set: 'lucide', icon: 'quote'});
+const MathBlockIcon = makeIcon({set: 'tabler', icon: 'math'});
+const TypeIcon = makeIcon({set: 'lucide', icon: 'type'});
+const H1Icon = makeIcon({set: 'tabler', icon: 'h-1'});
+const H2Icon = makeIcon({set: 'tabler', icon: 'h-2'});
+const H3Icon = makeIcon({set: 'tabler', icon: 'h-3'});
+const H4Icon = makeIcon({set: 'tabler', icon: 'h-4'});
+const H5Icon = makeIcon({set: 'tabler', icon: 'h-5'});
+const H6Icon = makeIcon({set: 'tabler', icon: 'h-6'});
+const ListBulletedIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted'});
+const ListNumberedIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered'});
+const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
+const LayoutIcon = makeIcon({set: 'tabler', icon: 'layout'});
+const TableIcon = makeIcon({set: 'tabler', icon: 'table'});
+const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns'});
+const ImageInPictureIcon = makeIcon({set: 'tabler', icon: 'image-in-picture'});
+const PhotoScanIcon = makeIcon({set: 'tabler', icon: 'photo-scan'});
+const TablerFileIcon = makeIcon({set: 'tabler', icon: 'file'});
 export const annotations = (): MenuItem => {
   return {
     name: 'Annotations',

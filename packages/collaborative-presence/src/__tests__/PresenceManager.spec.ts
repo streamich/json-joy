@@ -231,10 +231,7 @@ describe('PresenceManager', () => {
       pm.receive(mkPresence('user2', 'tab-2', 1));
       const events: PresenceEvent[] = [];
       pm.onChange.listen((e) => events.push(e));
-      pm.merge([
-        mkPresence('user2', 'tab-2', 5),
-        mkPresence('user3', 'tab-3', 1),
-      ]);
+      pm.merge([mkPresence('user2', 'tab-2', 5), mkPresence('user3', 'tab-3', 1)]);
       expect(events).toHaveLength(2);
       expect(events[0].updated).toEqual(['tab-2']);
       expect(events[1].added).toEqual(['tab-3']);

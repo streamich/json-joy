@@ -46,7 +46,6 @@ const tryExtractPeritextOperation = (
   return;
 };
 
-
 export interface SlateFacadeOpts {
   /**
    * Whether to install the `slate-history` undo/redo plugin.
@@ -64,7 +63,6 @@ export interface SlateFacadeOpts {
    */
   history?: boolean;
 }
-
 
 /**
  * Slate.js implementation of {@link RichtextEditorFacade}. Connects a Slate.js
@@ -100,7 +98,7 @@ export class SlateFacade implements RichtextEditorFacade {
   private readonly _origOnChange: SlateEditorOnChange | undefined;
   private readonly _slateOnChange: SlateEditorOnChange;
 
-  onchange?: (change: PeritextOperation | void) => (PeritextRef | void);
+  onchange?: (change: PeritextOperation | void) => PeritextRef | void;
   onselection?: () => void;
 
   constructor(
@@ -213,7 +211,7 @@ export class SlateFacade implements RichtextEditorFacade {
     if (this._disposed) return;
     this._disposed = true;
     const e = this.editor as any;
-    if (this._origOnChange && (e.onChange === this._slateOnChange)) e.onChange = this._origOnChange;
+    if (this._origOnChange && e.onChange === this._slateOnChange) e.onChange = this._origOnChange;
   }
 }
 

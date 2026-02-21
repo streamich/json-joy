@@ -1,17 +1,7 @@
 import * as React from 'react';
 import {useEffect, useCallback} from 'react';
-import {
-  Plate,
-  PlateContent,
-  usePlateEditor,
-  ParagraphPlugin,
-} from '@udecode/plate/react';
-import {
-  BoldPlugin,
-  ItalicPlugin,
-  UnderlinePlugin,
-  CodePlugin,
-} from '@udecode/plate-basic-marks/react';
+import {Plate, PlateContent, usePlateEditor, ParagraphPlugin} from '@udecode/plate/react';
+import {BoldPlugin, ItalicPlugin, UnderlinePlugin, CodePlugin} from '@udecode/plate-basic-marks/react';
 import {HeadingPlugin} from '@udecode/plate-heading/react';
 import {BlockquotePlugin} from '@udecode/plate-block-quote/react';
 import {CodeBlockPlugin, CodeLinePlugin} from '@udecode/plate-code-block/react';
@@ -301,7 +291,7 @@ export const PlateEditor: React.FC = () => {
         return false;
       }
     },
-    [editor]
+    [editor],
   );
 
   // Toggle block type
@@ -322,10 +312,13 @@ export const PlateEditor: React.FC = () => {
           Transforms.setNodes(editor as any, {type: 'code_line'} as any, {
             match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor as any, n),
           });
-          Transforms.wrapNodes(editor as any, {
-            type: 'code_block',
-            children: [],
-          } as any);
+          Transforms.wrapNodes(
+            editor as any,
+            {
+              type: 'code_block',
+              children: [],
+            } as any,
+          );
         }
       } else {
         // Simple blocks (headings, blockquote, paragraph)
@@ -335,7 +328,7 @@ export const PlateEditor: React.FC = () => {
       }
       forceUpdate({});
     },
-    [editor, isBlockActive]
+    [editor, isBlockActive],
   );
 
   // Toggle mark helper
@@ -349,7 +342,7 @@ export const PlateEditor: React.FC = () => {
       }
       forceUpdate({});
     },
-    [editor]
+    [editor],
   );
 
   // Check if mark is active
@@ -358,7 +351,7 @@ export const PlateEditor: React.FC = () => {
       const marks = Editor.marks(editor as any);
       return marks ? !!(marks as any)[key] : false;
     },
-    [editor]
+    [editor],
   );
 
   // Handle keyboard shortcuts
@@ -373,7 +366,7 @@ export const PlateEditor: React.FC = () => {
         }
       }
     },
-    [toggleMark]
+    [toggleMark],
   );
 
   return (
@@ -399,18 +392,10 @@ export const PlateEditor: React.FC = () => {
           }}
         >
           {/* Block type buttons */}
-          <ToolbarButton
-            active={isBlockActive('h1')}
-            onClick={() => toggleBlock('h1')}
-            title="Heading 1"
-          >
+          <ToolbarButton active={isBlockActive('h1')} onClick={() => toggleBlock('h1')} title="Heading 1">
             H1
           </ToolbarButton>
-          <ToolbarButton
-            active={isBlockActive('h2')}
-            onClick={() => toggleBlock('h2')}
-            title="Heading 2"
-          >
+          <ToolbarButton active={isBlockActive('h2')} onClick={() => toggleBlock('h2')} title="Heading 2">
             H2
           </ToolbarButton>
 

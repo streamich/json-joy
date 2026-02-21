@@ -37,13 +37,15 @@ You can edit the text here, and see changes
 synchronized in the other editor!
 `),
     });
-    return Model.create(schema)
+    return Model.create(schema);
   }, []);
 
   return (
     <DemoCard
       title={<Markdown inline src={'Monaco Editor'} />}
-      subtitle={<Markdown inline src={'Synchronization example using the `@jsonjoy.com/collaborative-monaco-react` package'} />}
+      subtitle={
+        <Markdown inline src={'Synchronization example using the `@jsonjoy.com/collaborative-monaco-react` package'} />
+      }
       description={<Markdown src={DESCRIPTION} />}
     >
       <SideBySideSync

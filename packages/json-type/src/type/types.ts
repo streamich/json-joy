@@ -29,11 +29,12 @@ export type SchemaOfMap<M extends Record<string, Type>> = {
   [K in keyof M]: SchemaOf<M[K]>;
 };
 
-export type SchemaOfObjectFieldType<F> = F extends classes.KeyOptType<infer K, infer V>
-  ? schema.OptKeySchema<K, SchemaOf<V>>
-  : F extends classes.KeyType<infer K, infer V>
-    ? schema.KeySchema<K, SchemaOf<V>>
-    : never;
+export type SchemaOfObjectFieldType<F> =
+  F extends classes.KeyOptType<infer K, infer V>
+    ? schema.OptKeySchema<K, SchemaOf<V>>
+    : F extends classes.KeyType<infer K, infer V>
+      ? schema.KeySchema<K, SchemaOf<V>>
+      : never;
 
 export type SchemaOfObjectFields<F> = {
   [K in keyof F]: SchemaOfObjectFieldType<F[K]>;
@@ -53,12 +54,13 @@ export type FilterFunctions<T> = {
 
 export type TypeOfAlias<T> = T extends AliasType<any, infer T> ? T : T extends Type ? T : never;
 
-export type ResolveType<T> = T extends AliasType<any, infer T>
-  ? schema.TypeOf<SchemaOf<T>>
-  : T extends Type
+export type ResolveType<T> =
+  T extends AliasType<any, infer T>
     ? schema.TypeOf<SchemaOf<T>>
-    : T extends schema.Schema
-      ? schema.TypeOf<T>
-      : never;
+    : T extends Type
+      ? schema.TypeOf<SchemaOf<T>>
+      : T extends schema.Schema
+        ? schema.TypeOf<T>
+        : never;
 
 export type infer<T> = ResolveType<T>;

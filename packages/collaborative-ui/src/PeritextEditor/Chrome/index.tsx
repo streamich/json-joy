@@ -26,7 +26,7 @@ export const Chrome: React.FC<ChromeProps> = ({children}) => {
   const ctx = useToolbarPlugin();
 
   const style: React.CSSProperties = {
-    border: '1px solid ' + styles.g(.9),
+    border: '1px solid ' + styles.g(0.9),
   };
 
   return (
