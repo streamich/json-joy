@@ -1,5 +1,16 @@
 import {Model} from '../../Model';
 
+test('can silently return `undefined` on missing node', () => {
+  const doc = Model.create({a: {}, b: 123});
+  const api = doc.api;
+  api.obj('/a');
+  api.obj('/a', true);
+  expect(() => api.obj('/b')).toThrow();
+  api.obj('/b', true);
+  expect(() => api.obj('/c')).toThrow();
+  api.obj('/c', true);
+});
+
 describe('.merge()', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.create({

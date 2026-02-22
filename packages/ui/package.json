@@ -1,0 +1,114 @@
+{
+  "name": "@jsonjoy.com/ui",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "17.67.0",
+  "description": "React design system, components, and utilities",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/ui"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "ui",
+    "styles",
+    "system",
+    "react",
+    "components",
+    "design",
+    "json-crdt",
+    "json",
+    "crdt"
+  ],
+  "dependencies": {
+    "@codemirror/lang-markdown": "^6.3.2",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.36.5",
+    "clipboard-copy": "^4.0.1",
+    "code-colors-react": "^3.4.0",
+    "codemirror": "^6.0.1",
+    "emoji-js": "^3.9.0",
+    "iconista": "^2.23.0",
+    "libreact": "^2.13.3",
+    "load-script": "^2.0.0",
+    "mdast-flat": "^1.7.0",
+    "nano-theme": "^1.5.0",
+    "notistack": "^3.0.2",
+    "papaparse": "^5.5.3",
+    "qrcode-generator": "^2.0.4",
+    "react-colorful": "^5.6.1",
+    "react-embed": "^3.7.0",
+    "react-router-lite": "^1.6.0",
+    "react-sticky-box": "^2.0.5",
+    "react-use": "^17.6.0",
+    "rx-use": "^1.9.0",
+    "slugify": "^1.6.6",
+    "thingies": "^2.5.0",
+    "use-t": "^1.6.4",
+    "very-small-parser": "^1.14.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*",
+    "rxjs": "7",
+    "tslib": "2"
+  },
+  "devDependencies": {
+    "@types/emoji-js": "^3",
+    "@types/papaparse": "^5",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "rxjs": "^7.8.1"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "npx tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "test": "jest --maxWorkers 7",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "coverage": "yarn test --collectCoverage",
+    "typedoc": "typedoc",
+    "typecheck": "tsc -p ."
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
+  }
+}

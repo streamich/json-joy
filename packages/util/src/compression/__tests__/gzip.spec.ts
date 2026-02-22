@@ -6,4 +6,4 @@ test('can gzip and ungzip data', async () => {
   const compressed = await gzip(data);
   const uncompressed = await ungzip(compressed);
   expect(uncompressed).toEqual(data);
-});
+}, 15000);

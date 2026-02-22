@@ -14,6 +14,17 @@ test('can insert a value and delete all previous ones', () => {
   expect(arr.view()).toEqual([42, 69]);
 });
 
+test('can silently return `undefined` on missing node', () => {
+  const doc = Model.create({a: [], b: 123});
+  const api = doc.api;
+  api.arr('/a');
+  api.arr('/a', true);
+  expect(() => api.arr('/b')).toThrow();
+  api.arr('/b', true);
+  expect(() => api.arr('/c')).toThrow();
+  api.arr('/c', true);
+});
+
 describe('.length()', () => {
   test('returns "arr" length', () => {
     const doc = Model.create();

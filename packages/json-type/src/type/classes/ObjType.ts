@@ -22,7 +22,6 @@ export class KeyType<K extends string, V extends Type> extends AbsType<schema.Ke
   }
 
   public getOptions(): schema.Optional<schema.KeySchema<K, SchemaOf<V>>> {
-    // biome-ignore lint: unused variables are intentional
     const {kind, key, value, optional, ...options} = this.schema;
     return options as any;
   }

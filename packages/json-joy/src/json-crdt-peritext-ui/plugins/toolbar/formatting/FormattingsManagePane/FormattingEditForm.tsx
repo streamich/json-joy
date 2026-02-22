@@ -2,8 +2,8 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useT} from 'use-t';
 import {FormattingEdit} from '../views/edit/FormattingEdit';
-import {ContextSep} from 'nice-ui/lib/4-card/ContextMenu';
-import {Button} from 'nice-ui/lib/2-inline-block/Button';
+import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {useSyncStoreOpt} from '../../../../web/react/hooks';
 import type {SavedFormatting} from '../../state/formattings';
 

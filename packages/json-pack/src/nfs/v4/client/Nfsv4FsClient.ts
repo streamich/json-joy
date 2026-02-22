@@ -1,6 +1,6 @@
 import type {NfsFsClient, Nfsv4Client} from './types';
-import type * as misc from 'memfs/lib/node/types/misc';
-import type * as opts from 'memfs/lib/node/types/options';
+import type * as misc from '@jsonjoy.com/fs-node/lib/types/misc';
+import type * as opts from '@jsonjoy.com/fs-node-utils/lib/types/options';
 import {nfs} from '../builder';
 import type * as msg from '../messages';
 import * as structs from '../structs';
@@ -914,7 +914,8 @@ export class Nfsv4FsClient implements NfsFsClient {
     throw new Error('Not implemented.');
   };
 
-  public readonly glob = (pattern: string, options?: opts.IGlobOptions): Promise<string[]> => {
-    throw new Error('Not implemented.');
-  };
+  // glob is not supported in current memfs version
+  // public readonly glob = (pattern: string, options?: opts.IGlobOptions): Promise<string[]> => {
+  //   throw new Error('Not implemented.');
+  // };
 }

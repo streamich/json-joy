@@ -1,10 +1,4 @@
 {
   "editor.tabSize": 2,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#333",
-    "titleBar.activeForeground": "#ddd",
-    "titleBar.inactiveBackground": "#222",
-    "titleBar.inactiveForeground": "#aaa"
-  },
 }

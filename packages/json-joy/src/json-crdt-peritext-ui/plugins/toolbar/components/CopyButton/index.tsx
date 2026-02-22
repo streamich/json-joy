@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {BasicButton, type BasicButtonProps} from 'nice-ui/lib/2-inline-block/BasicButton';
-import {Iconista} from 'nice-ui/lib/icons/Iconista';
-import {BasicTooltip, type BasicTooltipProps} from 'nice-ui/lib/4-card/BasicTooltip';
+import {BasicButton, type BasicButtonProps} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {BasicTooltip, type BasicTooltipProps} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import useMountedState from 'react-use/lib/useMountedState';
 const copy = require('clipboard-copy'); // eslint-disable-line
 

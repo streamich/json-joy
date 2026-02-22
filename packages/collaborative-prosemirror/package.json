@@ -1,0 +1,114 @@
+{
+  "name": "@jsonjoy.com/collaborative-prosemirror",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "17.67.0",
+  "description": "ProseMirror bindings for JSON CRDT Peritext for collaborative rich-text editing",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-prosemirror",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/collaborative-prosemirror"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "collaborative",
+    "multiplayer",
+    "binding",
+    "collaborative-prosemirror",
+    "prosemirror",
+    "str",
+    "peritext",
+    "editor",
+    "input",
+    "textarea",
+    "contenteditable",
+    "json-crdt",
+    "json",
+    "crdt"
+  ],
+  "dependencies": {
+    "@jsonjoy.com/collaborative-peritext": "workspace:*",
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
+    "@jsonjoy.com/json-equal": "workspace:*",
+    "@jsonjoy.com/ui": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
+    "json-joy": "workspace:*",
+    "nano-theme": "^1.5.0",
+    "prosemirror-history": "^1.5.0",
+    "prosemirror-model": "^1.25.4",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-transform": "^1.11.0",
+    "prosemirror-view": "^1.41.5"
+  },
+  "peerDependencies": {
+    "tslib": "*"
+  },
+  "devDependencies": {
+    "@jsonjoy.com/json-random": "workspace:^",
+    "@storybook/react": "^10.2.8",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "jest-environment-jsdom": "^30.2.0",
+    "prosemirror-example-setup": "^1.2.3",
+    "prosemirror-schema-basic": "^1.2.4",
+    "prosemirror-schema-list": "^1.5.1",
+    "prosemirror-test-builder": "^1.1.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "npx tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "test": "jest --maxWorkers 7",
+    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
+    "coverage": "yarn test --collectCoverage",
+    "typedoc": "typedoc",
+    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
+    "typecheck": "tsc -p .",
+    "demo:slate": "webpack serve --config src/__demos__/slate/webpack.config.js",
+    "demo:plate": "webpack serve --config src/__demos__/plate/webpack.config.js"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules"
+    ]
+  }
+}

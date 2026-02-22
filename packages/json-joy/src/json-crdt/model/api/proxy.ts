@@ -28,27 +28,28 @@ export type ProxyNodeArr<N extends nodes.ArrNode<any>> = ProxyNode<N> &
   Record<number, JsonNodeToProxyNode<N extends nodes.ArrNode<infer E> ? E : never>>;
 
 // prettier-ignore
-export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
-  ? ProxyNodeCon<N>
-  : N extends nodes.RootNode<any>
-    ? ProxyNodeVal<N>
-    : N extends nodes.ValNode<any>
+export type JsonNodeToProxyNode<N> =
+  N extends nodes.ConNode<any>
+    ? ProxyNodeCon<N>
+    : N extends nodes.RootNode<any>
       ? ProxyNodeVal<N>
-      : N extends nodes.StrNode
-        ? ProxyNodeStr
-        : N extends nodes.BinNode
-          ? ProxyNodeBin
-          : N extends nodes.ArrNode<any>
-            ? ProxyNodeArr<N>
-            : N extends nodes.ObjNode<any>
-              ? ProxyNodeObj<N>
-              : N extends nodes.VecNode<any>
-                ? ProxyNodeVec<N>
-                : N extends PeritextNode
-                  ? ProxyNode<PeritextNode>
-                  : N extends QuillDeltaNode
-                    ? ProxyNode<QuillDeltaNode>
-                    : never;
+      : N extends nodes.ValNode<any>
+        ? ProxyNodeVal<N>
+        : N extends nodes.StrNode
+          ? ProxyNodeStr
+          : N extends nodes.BinNode
+            ? ProxyNodeBin
+            : N extends nodes.ArrNode<any>
+              ? ProxyNodeArr<N>
+              : N extends nodes.ObjNode<any>
+                ? ProxyNodeObj<N>
+                : N extends nodes.VecNode<any>
+                  ? ProxyNodeVec<N>
+                  : N extends PeritextNode
+                    ? ProxyNode<PeritextNode>
+                    : N extends QuillDeltaNode
+                      ? ProxyNode<QuillDeltaNode>
+                      : never;
 
 export type JsonNodeToProxyPathNodeEnd<N> = {$?: JsonNodeApi<N>};
 
@@ -68,12 +69,8 @@ export type JsonNodeToProxyPathNode<N> = 0 extends 1 & N
             : JsonNodeToProxyPathNodeEnd<N>;
 
 export type ProxyPathEndMethod<Args extends unknown[], Return> = (path: PathStep[], ...args: Args) => Return;
-export type ProxyPathUserEndMethod<M extends ProxyPathEndMethod<any[], any>> = M extends ProxyPathEndMethod<
-  infer Args,
-  infer Return
->
-  ? (...args: Args) => Return
-  : never;
+export type ProxyPathUserEndMethod<M extends ProxyPathEndMethod<any[], any>> =
+  M extends ProxyPathEndMethod<infer Args, infer Return> ? (...args: Args) => Return : never;
 export type ProxyPathNodeStep<Api, Next> = Api & Record<string | number, Next>;
 export type ProxyPathNode<Api> = ProxyPathNodeStep<
   Api,

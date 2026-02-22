@@ -1,13 +1,13 @@
 import * as React from 'react';
-import {ToolbarMenu} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu';
-import {ContextMenu, type ContextMenuProps} from 'nice-ui/lib/4-card/ContextMenu';
-import {PositionAtPoint} from 'nice-ui/lib/utils/popup/PositionAtPoint';
-import {context as popupContext} from 'nice-ui/lib/4-card/Popup/context';
-import {ClickAway} from 'nice-ui/lib/utils/ClickAway';
-import {ToolbarMenuProvider} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/ToolbarMenuProvider';
-import {MoveToViewport} from 'nice-ui/lib/utils/popup/MoveToViewport';
-import type {ToolbarMenuProps} from 'nice-ui/lib/4-card/Toolbar/ToolbarMenu/types';
-import type {AnchorPoint} from 'nice-ui/lib/utils/popup';
+import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
+import {ContextMenu, type ContextMenuProps} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
+import {context as popupContext} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
+import {ClickAway} from '@jsonjoy.com/ui/lib/utils/ClickAway';
+import {ToolbarMenuProvider} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/ToolbarMenuProvider';
+import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
+import type {ToolbarMenuProps} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/types';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 
 export type InlineMenuView = 'toolbar' | 'context';
 

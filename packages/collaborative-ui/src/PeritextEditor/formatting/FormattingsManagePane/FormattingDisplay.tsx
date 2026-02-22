@@ -1,0 +1,98 @@
+import * as React from 'react';
+import {useT} from 'use-t';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
+import {FormattingTitle} from '../FormattingTitle';
+import {FormattingView} from '../views/view/FormattingView';
+import {useToolbarPlugin} from '../../context';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {FormattingPane} from '../FormattingPane';
+import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {FormattingEditForm} from './FormattingEditForm';
+import {SoftLockedDeleteButton} from '../../components/SoftLockedDeleteButton';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {useFormattingPane} from './context';
+import {ContextPaneHeader} from '../../components/ContextPaneHeader';
+import {ButtonSeparator} from '../../../PeritextWebUi/components/ButtonSeparator';
+import {ContextPaneHeaderSep} from '../../components/ContextPaneHeaderSep';
+import type {SavedFormatting} from '../../state/formattings';
+
+const PencilOffIcon = makeIcon({set: 'lucide', icon: 'pencil-off'});
+const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
+
+export interface FormattingDisplayProps {
+  formatting: SavedFormatting;
+  onClose?: () => void;
+}
+
+export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting, onClose}) => {
+  const state = useFormattingPane();
+  const editFormatting = useBehaviorSubject(state.editing$);
+  const view = useBehaviorSubject(state.view$);
+  const {surface} = useToolbarPlugin();
+  const [t] = useT();
+
+  const doEdit = view === 'edit' && !!editFormatting;
+
+  return (
+    <FormattingPane>
+      <ContextPaneHeader
+        short
+        onBackClick={onClose}
+        right={
+          doEdit ? (
+            <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+              <div style={{fontSize: '13px', lineHeight: '1.3em'}}>
+                <Code spacious alt gray nowrap>
+                  {t('editing')}
+                </Code>
+              </div>
+              <Space horizontal />
+              <BasicTooltip renderTooltip={() => t('Stop editing')}>
+                <BasicButton size={32} rounder onClick={state.switchToViewPanel}>
+                  <PencilOffIcon width={16} height={16} />
+                </BasicButton>
+              </BasicTooltip>
+            </Flex>
+          ) : (
+            <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+              <SoftLockedDeleteButton
+                onDelete={() => {
+                  surface.events.et.format({
+                    at: formatting.range,
+                    action: 'del',
+                  });
+                  onClose?.();
+                }}
+              />
+              <Space horizontal size={-2} />
+              <ButtonSeparator />
+              <Space horizontal size={-2} />
+              <BasicTooltip renderTooltip={() => t('Edit')}>
+                <BasicButton size={32} rounder onClick={state.switchToEditPanel}>
+                  <PencilIcon width={16} height={16} />
+                </BasicButton>
+              </BasicTooltip>
+            </Flex>
+          )
+        }
+      >
+        <FormattingTitle formatting={formatting} />
+      </ContextPaneHeader>
+      <ContextPaneHeaderSep />
+      {doEdit ? (
+        <FormattingEditForm formatting={editFormatting} onSave={state.returnFromEditPanelAndSave} />
+      ) : (
+        <>
+          <ContextSep />
+          <div style={{padding: '4px 16px 16px'}}>
+            <FormattingView formatting={formatting} />
+          </div>
+        </>
+      )}
+    </FormattingPane>
+  );
+};

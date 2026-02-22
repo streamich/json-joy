@@ -338,7 +338,7 @@ describe('reset changes', () => {
         origin = event.origin();
         expect(event.origin()).toBe(ChangeEventOrigin.Reset);
         expect(event.isLocal()).toBe(false);
-      }, true);
+      });
       model.reset(fork);
       expect(origin).toBe(ChangeEventOrigin.Reset);
     });

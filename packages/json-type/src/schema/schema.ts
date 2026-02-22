@@ -467,13 +467,14 @@ export type Schema =
 
 export type NoT<T extends SchemaBase> = Omit<T, 'kind'>;
 
-export type TypeOf<T> = T extends OrSchema<any>
-  ? TypeOfValue<T['types'][number]>
-  : T extends RefSchema<infer U>
-    ? TypeOf<U>
-    : T extends AnySchema
-      ? unknown
-      : TypeOfValue<T>;
+export type TypeOf<T> =
+  T extends OrSchema<any>
+    ? TypeOfValue<T['types'][number]>
+    : T extends RefSchema<infer U>
+      ? TypeOf<U>
+      : T extends AnySchema
+        ? unknown
+        : TypeOfValue<T>;
 
 export type TypeOfValue<T> = T extends BoolSchema
   ? boolean

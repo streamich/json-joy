@@ -12,7 +12,6 @@ extensions.register(ext.mval);
 extensions.register(ext.peritext);
 extensions.register(ext.quill);
 extensions.register(ext.prosemirror);
-extensions.register(ext.slate);
 
 export {ext};
 

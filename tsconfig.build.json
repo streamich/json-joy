@@ -16,6 +16,9 @@
     "src/**/__tap__/**/*.*",
     "src/**/__tape__/**/*.*",
     "*.test.ts",
-    "*.spec.ts"
+    "*.spec.ts",
+    "src/**/__stories__/**/*.*",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
   ]
 }

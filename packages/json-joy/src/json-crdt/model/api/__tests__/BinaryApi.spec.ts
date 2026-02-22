@@ -15,6 +15,17 @@ test('can edit a simple binary', () => {
   expect(doc.view()).toStrictEqual([0, result, 2]);
 });
 
+test('can silently return `undefined` on missing node', () => {
+  const doc = Model.create({a: new Uint8Array([]), b: 123});
+  const api = doc.api;
+  api.bin('/a');
+  api.bin('/a', true);
+  expect(() => api.bin('/b')).toThrow();
+  api.bin('/b', true);
+  expect(() => api.bin('/c')).toThrow();
+  api.bin('/c', true);
+});
+
 test('can delete across two chunks', () => {
   const doc = Model.create();
   const api = doc.api;

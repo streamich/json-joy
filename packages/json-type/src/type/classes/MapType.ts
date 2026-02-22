@@ -22,7 +22,6 @@ export class MapType<T extends Type = any> extends AbsType<schema.MapSchema<Sche
   }
 
   public getOptions(): schema.Optional<schema.MapSchema<SchemaOf<T>>> {
-    // biome-ignore lint: unused variables are intentional
     const {kind, value, key, ...options} = this.schema;
     return options as any;
   }

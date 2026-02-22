@@ -88,43 +88,58 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param path Path to the child node to find.
    * @returns Local changes API for the child node at the given path.
    */
-  public in(path?: ApiPath) {
-    const node = this.find(path);
-    return this.api.wrap(node as any);
+  public in<B extends boolean = false>(
+    path?: ApiPath,
+    noThrow: B = false as B,
+  ): B extends true ? NodeApi | undefined : NodeApi {
+    try {
+      const node = this.find(path);
+      return this.api.wrap(node as any) as any;
+    } catch (error) {
+      if (!noThrow) throw error;
+    }
+    return void 0 as any;
   }
 
-  public asVal(): ValApi {
+  public asVal<B extends boolean = false>(noThrow?: B): B extends true ? ValApi | undefined : ValApi {
     if (this.node instanceof ValNode) return this.api.wrap(this.node as ValNode);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_VAL');
   }
 
-  public asStr(): StrApi {
+  public asStr<B extends boolean = false>(noThrow?: B): B extends true ? StrApi | undefined : StrApi {
     if (this.node instanceof StrNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_STR');
   }
 
-  public asBin(): BinApi {
+  public asBin<B extends boolean = false>(noThrow?: B): B extends true ? BinApi | undefined : BinApi {
     if (this.node instanceof BinNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_BIN');
   }
 
-  public asArr(): ArrApi {
+  public asArr<B extends boolean = false>(noThrow?: B): B extends true ? ArrApi | undefined : ArrApi {
     if (this.node instanceof ArrNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_ARR');
   }
 
-  public asVec(): VecApi {
+  public asVec<B extends boolean = false>(noThrow?: B): B extends true ? VecApi | undefined : VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_VEC');
   }
 
-  public asObj(): ObjApi {
+  public asObj<B extends boolean = false>(noThrow?: B): B extends true ? ObjApi | undefined : ObjApi {
     if (this.node instanceof ObjNode) return this.api.wrap(this.node as ObjNode);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_OBJ');
   }
 
-  public asCon(): ConApi {
+  public asCon<B extends boolean = false>(noThrow?: B): B extends true ? ConApi | undefined : ConApi {
     if (this.node instanceof ConNode) return this.api.wrap(this.node);
+    if (noThrow) return void 0 as any;
     throw new Error('NOT_CON');
   }
 
@@ -155,32 +170,32 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_EXT');
   }
 
-  public val(path?: ApiPath): ValApi {
-    return this.in(path).asVal();
+  public val<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ValApi | undefined : ValApi {
+    return this.in(path, noThrow)?.asVal(noThrow) as any;
   }
 
-  public str(path?: ApiPath): StrApi {
-    return this.in(path).asStr();
+  public str<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? StrApi | undefined : StrApi {
+    return this.in(path, noThrow)?.asStr(noThrow) as any;
   }
 
-  public bin(path?: ApiPath): BinApi {
-    return this.in(path).asBin();
+  public bin<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? BinApi | undefined : BinApi {
+    return this.in(path, noThrow)?.asBin(noThrow) as any;
   }
 
-  public arr(path?: ApiPath): ArrApi {
-    return this.in(path).asArr();
+  public arr<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ArrApi | undefined : ArrApi {
+    return this.in(path, noThrow)?.asArr(noThrow) as any;
   }
 
-  public vec(path?: ApiPath): VecApi {
-    return this.in(path).asVec();
+  public vec<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? VecApi | undefined : VecApi {
+    return this.in(path, noThrow)?.asVec(noThrow) as any;
   }
 
-  public obj(path?: ApiPath): ObjApi {
-    return this.in(path).asObj();
+  public obj<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ObjApi | undefined : ObjApi {
+    return this.in(path, noThrow)?.asObj(noThrow) as any;
   }
 
-  public con(path?: ApiPath): ConApi {
-    return this.in(path).asCon();
+  public con<B extends boolean = false>(path?: ApiPath, noThrow?: B): B extends true ? ConApi | undefined : ConApi {
+    return this.in(path, noThrow)?.asCon(noThrow) as any;
   }
 
   public view(): JsonNodeView<N> {
@@ -295,8 +310,16 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return diff.diff(this, value);
   }
 
-  public merge(value: unknown): Patch | undefined {
-    return diff.merge(this, value);
+  public merge(value: unknown): Patch | undefined;
+  public merge(path: ApiPath, value: unknown): Patch | undefined;
+  public merge(...args: [value: unknown] | [path: ApiPath, value: unknown]): Patch | undefined {
+    const length = args.length;
+    if (length === 1) return diff.merge(this, args[0]);
+    else if (length === 2) {
+      const [path, value] = args;
+      return this.select(path, true)?.merge(value);
+    }
+    return;
   }
 
   public op(operation: ApiOperation): boolean {
@@ -369,13 +392,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    *
    * @param listener Callback called on every change that is executed directly
    *     on this node.
-   * @param onReset Optional parameter, if set to `true`, the listener will also
-   *     be called when the model is reset using the `.reset()` method.
    * @returns Returns an unsubscribe function to stop listening to the events.
    */
-  public onSelfChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
+  public onSelfChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
     return this.api.onChange.listen((event) => {
-      if (event.direct().has(this.node) || (onReset && event.isReset())) listener(event);
+      if (event.direct().has(this.node)) listener(event);
     });
   }
 
@@ -394,13 +415,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    *
    * @param listener Callback called on every change that is applied to
    *     children of this node.
-   * @param onReset Optional parameter, if set to `true`, the listener will also
-   *     be called when the model is reset using the `.reset()` method.
    * @return Returns an unsubscribe function to stop listening to the events.
    */
-  public onChildChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
+  public onChildChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
     return this.api.onChange.listen((event) => {
-      if (event.parents().has(this.node) || (onReset && event.isReset())) listener(event);
+      if (event.parents().has(this.node)) listener(event);
     });
   }
 
@@ -414,15 +433,35 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    *
    * @param listener Callback called on every change that is applied to this
    *     node or any of its child nodes.
-   * @param onReset Optional parameter, if set to `true`, the listener will also
-   *     be called when the model is reset using the `.reset()` method.
    * @return Returns an unsubscribe function to stop listening to the events.
    */
-  public onSubtreeChange(listener: (event: ChangeEvent) => void, onReset?: boolean): FanOutUnsubscribe {
+  public onSubtreeChange(listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
     return this.api.onChange.listen((event) => {
       const node = this.node;
-      if (event.direct().has(node) || event.parents().has(node) || (onReset && event.isReset())) listener(event);
+      if (event.direct().has(node) || event.parents().has(node)) listener(event);
     });
+  }
+
+  /**
+   * Attaches a listener which executes on every change that is applied to this
+   * node or any of its child nodes (recursively). The `kind` parameter allows
+   * you to specify the type of changes to listen to: `"self"` for changes
+   * directly on this node, `"child"` for changes on child nodes, and `"subtree"`
+   * for both.
+   *
+   * @param kind The type of changes to listen to: `"self"`, `"child"`, or `"subtree"`.
+   * @param listener Callback called on every change that matches the specified type.
+   * @return Returns an unsubscribe function to stop listening to the events.
+   */
+  public onNodeChange(kind: 'self' | 'child' | 'subtree', listener: (event: ChangeEvent) => void): FanOutUnsubscribe {
+    switch (kind) {
+      case 'self':
+        return this.onSelfChange(listener);
+      case 'child':
+        return this.onChildChange(listener);
+      case 'subtree':
+        return this.onSubtreeChange(listener);
+    }
   }
 
   // -------------------------------------------------------------------- Debug
@@ -952,22 +991,37 @@ export class ModelApi<N extends JsonNode = JsonNode> extends ValApi<RootNode<N>>
   public readonly onBeforeLocalChange = new FanOut<number>();
   /** Emitted after local changes through `model.api` are applied. */
   public readonly onLocalChange = new FanOut<number>();
-  /**
-   * Emitted after local changes through `model.api` are applied. Same as
-   * `.onLocalChange`, but this event buffered withing a microtask.
-   */
-  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
-  /** Emitted before a transaction is started. */
-  public readonly onBeforeTransaction = new FanOut<void>();
-  /** Emitted after transaction completes. */
-  public readonly onTransaction = new FanOut<void>();
-  /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
+  /** Emitted before any change is applied to the model. Combines
+   * `onBeforeReset`, `onBeforePatch` and `onBeforeLocalChange`. */
+  public readonly onBeforeChange = new MergeFanOut<void>(
+    [this.onBeforeReset, this.onBeforePatch, this.onBeforeLocalChange],
+    () => void 0,
+  );
+  /** Emitted when the model changes. Combines `onReset`, `onPatch` and
+   * `onLocalChange`. */
   public readonly onChange = new MergeFanOut<ChangeEvent>(
     [this.onReset, this.onPatch, this.onLocalChange],
     (raw: Set<JsonNode> | Patch | number) => new ChangeEvent(raw, this),
   );
-  /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
+
+  /**
+   * Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask.
+   *
+   * @deprecated
+   */
+  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
+  /**
+   * Emitted when the model changes. Same as `.onChange`, but this event is
+   * emitted once per microtask.
+   */
   public readonly onChanges = new MicrotaskBufferFanOut<unknown>(this.onChange as FanOut<unknown>);
+
+  /** Emitted before a transaction is started. */
+  public readonly onBeforeTransaction = new FanOut<void>();
+  /** Emitted after transaction completes. */
+  public readonly onTransaction = new FanOut<void>();
+
   /** Emitted when the `model.api` builder change buffer is flushed. */
   public readonly onFlush = new FanOut<Patch>();
 
