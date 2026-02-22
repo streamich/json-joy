@@ -13,8 +13,17 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Get version bump type (default to minor)
-VERSION_BUMP=${1:-minor}
+# Parse arguments
+VERSION_BUMP="minor"
+SKIP_TESTS=false
+
+for arg in "$@"; do
+    if [ "$arg" = "--skip-tests" ]; then
+        SKIP_TESTS=true
+    else
+        VERSION_BUMP="$arg"
+    fi
+done
 
 echo -e "${GREEN}Starting release process with version bump: ${VERSION_BUMP}${NC}\n"
 
@@ -29,8 +38,12 @@ yarn format
 echo "Running typecheck..."
 yarn typecheck
 
-echo "Running tests..."
-yarn test
+if [ "$SKIP_TESTS" = true ]; then
+    echo "Skipping tests (--skip-tests flag set)..."
+else
+    echo "Running tests..."
+    yarn test
+fi
 
 echo "Generating typedoc..."
 yarn typedoc
