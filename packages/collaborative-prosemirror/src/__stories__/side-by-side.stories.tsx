@@ -13,6 +13,24 @@ import {schema} from 'prosemirror-schema-basic';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
 
+const DESCRIPTION = `
+\`@jsonjoy.com/collaborative-prosemirror\` integrates [json-joy](https://github.com/streamich/json-joy)
+JSON CRDT (Peritext) with [ProseMirror](https://prosemirror.net/), enabling real-time
+collaborative rich-text editing.
+
+Install the package and its peer dependencies:
+
+\`\`\`bash
+npm install @jsonjoy.com/collaborative-prosemirror prosemirror-model prosemirror-state prosemirror-view
+\`\`\`
+
+Use \`PeritextBinding.bind()\` to connect ProseMirror to a Peritext CRDT node — it returns an unbind cleanup function:
+
+\`\`\`ts
+const unbind = PeritextBinding.bind(peritextRef, facade);
+\`\`\`
+`;
+
 const meta = preview.meta({
   title: 'ProseMirror',
 });
@@ -29,15 +47,32 @@ const Demo: React.FC = () => {
     const json = {
       type: 'doc',
       content: [
-        {type: 'paragraph', content: [{type: 'text', text: 'Hello, ProseMirror!'}]},
         {
           type: 'paragraph',
           content: [
-            {type: 'text', text: 'This is a basic '},
-            {type: 'text', text: 'rich text', marks: [{type: 'strong'}, {type: 'em'}]},
-            {type: 'text', text: ' editor.'},
+            {type: 'text', text: '@jsonjoy.com/collaborative-prosemirror', marks: [{type: 'code'}]},
+            {type: 'text', text: ' integrates '},
+            {type: 'text', text: 'json-joy', marks: [{type: 'code'}]},
+            {type: 'text', text: ' '},
+            {type: 'text', text: 'JSON CRDT (Peritext)', marks: [{type: 'strong'}]},
+            {type: 'text', text: ' with '},
+            {type: 'text', text: 'ProseMirror', marks: [{type: 'strong'}]},
+            {type: 'text', text: ' for real-time collaborative rich-text editing.'},
           ],
         },
+        {type: 'paragraph', content: [{type: 'text', text: 'Installation:'}]},
+        {type: 'code_block', content: [{type: 'text', text: 'npm install @jsonjoy.com/collaborative-prosemirror'}]},
+        {
+          type: 'paragraph',
+          content: [
+            {type: 'text', text: 'Call '},
+            {type: 'text', text: 'PeritextBinding.bind(peritextRef, facade)', marks: [{type: 'code'}]},
+            {type: 'text', text: ' to sync ProseMirror to a CRDT node. It returns an '},
+            {type: 'text', text: 'unbind', marks: [{type: 'strong'}]},
+            {type: 'text', text: ' cleanup function:'},
+          ],
+        },
+        {type: 'code_block', content: [{type: 'text', text: "const unbind = bind(peritextRef, facade);"}]},
       ],
     };
     const model = ModelWithExt.create(ext.peritext.new(''));
@@ -52,7 +87,7 @@ const Demo: React.FC = () => {
     <DemoCard
       title={<Markdown inline src={'ProseMirror Editor'} />}
       subtitle={<Markdown inline src={'Collaborative ProseMirror editor synchronization example'} />}
-      description={<Markdown src={'description ...'} />}
+      description={<Markdown src={DESCRIPTION} />}
     >
       <SideBySideSync
         model={model}
