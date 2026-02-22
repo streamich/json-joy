@@ -16,8 +16,8 @@
   "scripts": {
     "clean": "rimraf lib coverage typedocs gh-pages && yarn workspaces foreach -Apt run clean",
     "build": "yarn workspaces foreach -Apt run build",
-    "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 7",
-    "test:coverage": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 7 --collectCoverage",
+    "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2",
+    "test:coverage": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2 --collectCoverage",
     "format": "biome format ./packages/*/src",
     "format:fix": "biome format --write ./packages/*/src",
     "lint": "biome lint ./packages/*/src",
