@@ -2,8 +2,12 @@
 
 # Quick Release Script
 # This script automates the release process for json-joy
-# Usage: ./scripts/quick-release.sh [major|minor|patch|pre*|{version}]
+# Usage: ./scripts/quick-release.sh [major|minor|patch|pre*|{version}] [--skip-tests]
 # Default: minor
+#
+# To skip interactive NPM login and 2FA prompts, provide a Granular Access Token
+# (with "Bypass 2FA" enabled, created at npmjs.com) via the NPM_TOKEN env var:
+#   NPM_TOKEN=npm_xxxx ./scripts/quick-release.sh [options]
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
@@ -24,6 +28,13 @@ for arg in "$@"; do
         VERSION_BUMP="$arg"
     fi
 done
+
+# If NPM_TOKEN is set, expose it as the env var Yarn Berry actually reads.
+# A Granular Access Token with "Bypass 2FA" enabled also skips all OTP prompts.
+if [ -n "${NPM_TOKEN:-}" ]; then
+    export YARN_NPM_AUTH_TOKEN="$NPM_TOKEN"
+    echo -e "${GREEN}NPM_TOKEN detected – will skip interactive login and 2FA${NC}\n"
+fi
 
 echo -e "${GREEN}Starting release process with version bump: ${VERSION_BUMP}${NC}\n"
 
@@ -79,12 +90,15 @@ yarn workspaces foreach -A --no-private npm publish --dry-run
 
 echo -e "${GREEN}✓ Dry run completed${NC}\n"
 
-# Step 6: Login with NPM (interactive)
-echo -e "${YELLOW}Step 6: NPM Login${NC}"
-echo "Please login to NPM if not already logged in:"
-yarn npm login
-
-echo -e "${GREEN}✓ NPM login completed${NC}\n"
+# Step 6: Login with NPM (interactive, skipped when NPM_TOKEN is set)
+if [ -n "${NPM_TOKEN:-}" ]; then
+    echo -e "${YELLOW}Step 6: Skipping NPM login (NPM_TOKEN is set)${NC}\n"
+else
+    echo -e "${YELLOW}Step 6: NPM Login${NC}"
+    echo "Please login to NPM if not already logged in:"
+    yarn npm login
+    echo -e "${GREEN}✓ NPM login completed${NC}\n"
+fi
 
 # Step 7: Publish to NPM (with confirmation)
 echo -e "${YELLOW}Step 7: Ready to publish v${NEW_VERSION} to NPM${NC}"
