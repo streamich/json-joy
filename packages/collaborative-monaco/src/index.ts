@@ -12,3 +12,6 @@ export const bind = (
   const facade = new MonacoEditorFacade(editor);
   return StrBinding.bind(str, facade, polling);
 };
+
+export * from './presence';
+

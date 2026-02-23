@@ -35,7 +35,8 @@
     "crdt"
   ],
   "dependencies": {
-    "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@jsonjoy.com/collaborative-monaco": "workspace:*",
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
   },
   "peerDependencies": {
     "@monaco-editor/react": "*",

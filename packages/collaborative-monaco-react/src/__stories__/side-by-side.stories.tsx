@@ -8,6 +8,7 @@ import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
 import * as monaco from 'monaco-editor';
 import {loader} from '@monaco-editor/react';
 import {CollaborativeMonaco} from '..';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 
 loader.config({monaco});
 
@@ -33,9 +34,10 @@ const model = Model.create(s.str('Hello World'));
 
 interface EditorProps {
   model: JsonCrdtModel<any>;
+  presence?: PresenceManager;
 }
 
-const Editor: React.FC<EditorProps> = ({model}) => {
+const Editor: React.FC<EditorProps> = ({model, presence}) => {
   return (
     <div
       style={{display: 'flex', flexDirection: 'column', width: '100%', height: '200px'}}
@@ -45,6 +47,8 @@ const Editor: React.FC<EditorProps> = ({model}) => {
         width={'100%'}
         height={'200px'}
         str={() => (model.s as any).$}
+        presence={presence}
+        userFromMeta={(m: any) => m}
       />
     </div>
   );
@@ -72,7 +76,7 @@ const Demo: React.FC = () => {
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(m: JsonCrdtModel<any>) => <Editor model={m} />}
+        renderDisplay={(m: JsonCrdtModel<any>, _readonly: boolean, presence?: PresenceManager) => <Editor model={m} presence={presence} />}
       />
     </DemoCard>
   );
