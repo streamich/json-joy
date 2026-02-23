@@ -119,8 +119,7 @@ export class MonacoPresence<Meta extends object = object> {
     });
     this.disposables.push(editor.onDidChangeCursorSelection(() => this.sendLocal()));
     this.disposables.push(editor.onDidChangeModelContent(() => this.updateRemote()));
-    if (gcIntervalMs > 0)
-      this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
+    if (gcIntervalMs > 0) this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
 
     // Initial render.
     this.updateRemote();

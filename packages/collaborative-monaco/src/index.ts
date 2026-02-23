@@ -14,4 +14,3 @@ export const bind = (
 };
 
 export * from './presence';
-

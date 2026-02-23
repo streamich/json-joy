@@ -31,7 +31,7 @@ export const CollaborativeMonaco: React.FC<CollaborativeMonacoProps> = ({str, pr
       presenceRef.current = new MonacoPresence({
         editor,
         manager: presence,
-        str: () => (str() as any),
+        str: () => str() as any,
         userFromMeta,
       });
     }

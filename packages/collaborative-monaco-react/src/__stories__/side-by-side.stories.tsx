@@ -76,7 +76,9 @@ const Demo: React.FC = () => {
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(m: JsonCrdtModel<any>, _readonly: boolean, presence?: PresenceManager) => <Editor model={m} presence={presence} />}
+        renderDisplay={(m: JsonCrdtModel<any>, _readonly: boolean, presence?: PresenceManager) => (
+          <Editor model={m} presence={presence} />
+        )}
       />
     </DemoCard>
   );

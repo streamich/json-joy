@@ -66,8 +66,7 @@ export class AcePresence<Meta extends object = object> {
     });
 
     const gcIntervalMs = opts.gcIntervalMs ?? 5_000;
-    if (gcIntervalMs > 0)
-      this.gcTimer = setInterval(() => opts.manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
+    if (gcIntervalMs > 0) this.gcTimer = setInterval(() => opts.manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
 
     // Re-render cursors when the editor scrolls or resizes so pixel positions
     // stay correct. `afterRender` fires after every paint cycle.
@@ -226,12 +225,15 @@ export class AcePresence<Meta extends object = object> {
     }
   };
 
-  private _RangeConstructor: (new (
-    startRow: number,
-    startColumn: number,
-    endRow: number,
-    endColumn: number,
-  ) => Ace.Range) | null | undefined = undefined;
+  private _RangeConstructor:
+    | (new (
+        startRow: number,
+        startColumn: number,
+        endRow: number,
+        endColumn: number,
+      ) => Ace.Range)
+    | null
+    | undefined = undefined;
 
   /** Lazily resolve the Ace `Range` constructor from the session. */
   private getRangeConstructor() {

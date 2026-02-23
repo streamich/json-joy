@@ -19,8 +19,7 @@ export interface CursorRenderOpts {
 /** Factory that produces a cursor DOM element for a given peer. */
 export type CursorRenderer = (peerId: string, user: PresenceUser | undefined, opts: CursorRenderOpts) => HTMLElement;
 
-const generateColor = (str: string, alpha?: number): string =>
-  new Colors().hash(str).setA(100 * (alpha ?? 1)) + '';
+const generateColor = (str: string, alpha?: number): string => new Colors().hash(str).setA(100 * (alpha ?? 1)) + '';
 
 // ---------------------------------------------------------------------- Caret
 
