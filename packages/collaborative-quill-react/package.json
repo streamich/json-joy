@@ -37,6 +37,7 @@
     "crdt"
   ],
   "dependencies": {
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-quill": "workspace:*"
   },
   "peerDependencies": {
@@ -50,6 +51,7 @@
     "@types/react-dom": "^19",
     "json-joy": "workspace:*",
     "quill": "^2.0.3",
+    "quill-cursors": "^4.0.4",
     "quill-delta": "^5.1.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"

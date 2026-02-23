@@ -1938,12 +1938,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
     quill: "npm:^2.0.3"
+    quill-cursors: "npm:^4.0.4"
     quill-delta: "npm:^5.1.0"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
@@ -1958,8 +1960,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     json-joy: "workspace:*"
     quill: "npm:^2.0.3"
+    quill-cursors: "npm:^4.0.4"
     quill-delta: "npm:^5.1.0"
   peerDependencies:
     quill: ">=2"
@@ -11544,6 +11548,13 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: 10c0/900a93d3cdae3acd7d16f642c29a642aea32c2026446151f0778c62ac089d4b8e6c986811076e1ae180a694cedf077d453a11b58ff0a865629a4f82ab558e102
+  languageName: node
+  linkType: hard
+
+"quill-cursors@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "quill-cursors@npm:4.0.4"
+  checksum: 10c0/8e96c9b9608f1945666da04f423aaf78c09bf9469f1574a0c95290d29bea486de2ceb32b453ac7744ef0f095552fab911070f3a3f7851a0e0ce9b948ec4983f2
   languageName: node
   linkType: hard
 
