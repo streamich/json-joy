@@ -86,6 +86,10 @@ export class QuillPresence<Meta extends object = object> {
     // Subscribe to local selection changes to broadcast presence.
     quill.on('selection-change', this.onSelectionChange);
 
+    // Re-map remote cursors after every local edit so that CRDT character IDs
+    // are re-resolved to up-to-date flat offsets (Option B: stable CRDT IDs).
+    quill.on('text-change', this.onTextChange);
+
     // Periodically GC outdated peers.
     if (gcIntervalMs > 0)
       this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
@@ -93,6 +97,11 @@ export class QuillPresence<Meta extends object = object> {
     // Initial render of any already-present remote cursors.
     this.updateRemoteCursors();
   }
+
+  /** Remap remote cursors after every local edit. */
+  private readonly onTextChange = () => {
+    if (!this.destroyed) this.updateRemoteCursors();
+  };
 
   /** Broadcast the local selection to the presence manager. */
   private readonly onSelectionChange = (range: Range | null) => {
@@ -185,6 +194,7 @@ export class QuillPresence<Meta extends object = object> {
     this.unsub();
     const {quill} = this.opts;
     quill.off('selection-change', this.onSelectionChange);
+    quill.off('text-change', this.onTextChange);
     clearInterval(this.gcTimer);
     this.cursorsModule.clearCursors();
   }
