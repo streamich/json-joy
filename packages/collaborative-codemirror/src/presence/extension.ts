@@ -1,4 +1,4 @@
-import {ViewPlugin, Decoration, DecorationSet} from '@codemirror/view';
+import {ViewPlugin, Decoration, type DecorationSet} from '@codemirror/view';
 import {Annotation, RangeSetBuilder} from '@codemirror/state';
 import {str as strPresence} from '@jsonjoy.com/collaborative-presence';
 import {UserPresenceIdx} from '@jsonjoy.com/collaborative-presence';
@@ -74,8 +74,7 @@ export const presenceExtension = <Meta extends object = object>(opts: PresenceEx
         this.unsubscribe = manager.onChange.listen((_evt: PresenceEvent) => {
           editorView.dispatch({annotations: [presenceAnnotation.of(true)]});
         });
-        if (gcIntervalMs > 0)
-          this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
+        if (gcIntervalMs > 0) this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
         sendLocalPresence(editorView, opts.str, manager);
       }
 
@@ -89,8 +88,7 @@ export const presenceExtension = <Meta extends object = object>(opts: PresenceEx
           // require it (will be triggered separately via onChange > dispatch).
           this.decorations = this.decorations.map(update.changes);
         }
-        if (update.selectionSet || update.docChanged)
-          sendLocalPresence(update.view, opts.str, manager);
+        if (update.selectionSet || update.docChanged) sendLocalPresence(update.view, opts.str, manager);
       }
 
       destroy(): void {
@@ -172,7 +170,16 @@ const buildDecorations = <Meta extends object>(
         const colPos = caretPos - line.from;
         const side: view.LabelSide = colPos < lineLen / 2 ? 'left' : 'right';
 
-        const el = cursorMgr.getOrCreate(processId, caretPos, isFirstLine, side, user, opts, receivedAt, renderCursorFn);
+        const el = cursorMgr.getOrCreate(
+          processId,
+          caretPos,
+          isFirstLine,
+          side,
+          user,
+          opts,
+          receivedAt,
+          renderCursorFn,
+        );
         pendingWidgets.push({pos: caretPos, widget: new CursorWidget(el)});
 
         if (anchorPos !== caretPos) {

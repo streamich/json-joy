@@ -91,8 +91,7 @@ export class QuillPresence<Meta extends object = object> {
     quill.on('text-change', this.onTextChange);
 
     // Periodically GC outdated peers.
-    if (gcIntervalMs > 0)
-      this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
+    if (gcIntervalMs > 0) this.gcTimer = setInterval(() => manager.removeOutdated(opts.hideAfterMs), gcIntervalMs);
 
     // Initial render of any already-present remote cursors.
     this.updateRemoteCursors();

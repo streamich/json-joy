@@ -65,7 +65,9 @@ const Demo: React.FC = () => {
       },
       {
         type: 'code-block',
-        children: [{text: "import {bind} from '@jsonjoy.com/collaborative-slate';\nconst unbind = bind(peritextRef, editor);"}],
+        children: [
+          {text: "import {bind} from '@jsonjoy.com/collaborative-slate';\nconst unbind = bind(peritextRef, editor);"},
+        ],
       },
     ];
     const model = ModelWithExt.create(ext.peritext.new(''));

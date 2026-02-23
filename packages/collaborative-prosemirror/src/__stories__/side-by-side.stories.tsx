@@ -72,7 +72,7 @@ const Demo: React.FC = () => {
             {type: 'text', text: ' cleanup function:'},
           ],
         },
-        {type: 'code_block', content: [{type: 'text', text: "const unbind = bind(peritextRef, facade);"}]},
+        {type: 'code_block', content: [{type: 'text', text: 'const unbind = bind(peritextRef, facade);'}]},
       ],
     };
     const model = ModelWithExt.create(ext.peritext.new(''));

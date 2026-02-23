@@ -76,10 +76,11 @@ const Demo: React.FC = () => {
     return Model.create(
       s.str(
         'Integration of json-joy JSON CRDT with CodeMirror 6.\n' +
-        '\n' +
-        'Enabling real-time collaborative plain-text editing.\n' +
-        '\n' +
-        'Type in either editor to see changes synchronized in real-time!\n'),
+          '\n' +
+          'Enabling real-time collaborative plain-text editing.\n' +
+          '\n' +
+          'Type in either editor to see changes synchronized in real-time!\n',
+      ),
     );
   }, []);
 

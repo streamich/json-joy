@@ -26,7 +26,10 @@ const customNodes = schema.spec.nodes.update('code_block', {
   ...schema.spec.nodes.get('code_block'),
   toDOM: () => [
     'pre',
-    {style: 'background:#1e293b;color:#e2e8f0;padding:0.875rem 1rem;border-radius:8px;font-family:monospace;font-size:0.875em;overflow-x:auto;'},
+    {
+      style:
+        'background:#1e293b;color:#e2e8f0;padding:0.875rem 1rem;border-radius:8px;font-family:monospace;font-size:0.875em;overflow-x:auto;',
+    },
     ['code', 0],
   ],
 });
