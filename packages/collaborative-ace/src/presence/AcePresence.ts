@@ -80,6 +80,7 @@ export class AcePresence<Meta extends object = object> {
     // Broadcast the local caret/selection whenever it changes.
     editor.selection.on('changeCursor', this.sendLocal);
     editor.selection.on('changeSelection', this.sendLocal);
+    editor.on('focus', this.sendLocal);
 
     // Initial render + broadcast.
     this.rebuild();
@@ -270,6 +271,7 @@ export class AcePresence<Meta extends object = object> {
     clearInterval(this.gcTimer);
     this.editor.renderer.off('afterRender', this.onAfterRender);
     this.editor.off('change', this.rebuild);
+    this.editor.off('focus', this.sendLocal);
     this.editor.selection.off('changeCursor', this.sendLocal);
     this.editor.selection.off('changeSelection', this.sendLocal);
     // Remove selection markers.
