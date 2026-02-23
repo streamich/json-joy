@@ -1742,6 +1742,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react"
   dependencies:
     "@jsonjoy.com/collaborative-ace": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
@@ -1762,8 +1763,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-ace@workspace:packages/collaborative-ace"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
     ace-builds: "npm:^1.43.6"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
   peerDependencies:
     ace-builds: "*"
     tslib: "*"
@@ -1831,6 +1836,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react"
   dependencies:
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@monaco-editor/react": "npm:^4.7.0"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
@@ -1851,9 +1857,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-monaco@workspace:packages/collaborative-monaco"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
     json-joy: "workspace:*"
     monaco-editor: "npm:^0.55.1"
+    nano-theme: "npm:^1.5.0"
   peerDependencies:
     monaco-editor: "*"
     tslib: "*"

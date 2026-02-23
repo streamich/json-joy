@@ -6,6 +6,7 @@ import {DemoCard} from '@jsonjoy.com/collaborative-ui/lib/DemoCard';
 import {SideBySideSync} from '@jsonjoy.com/collaborative-ui/lib/SideBySideSync';
 import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
 import {CollaborativeAce} from '..';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 
 const DESCRIPTION = `
 \`@jsonjoy.com/collaborative-ace-react\` integrates [json-joy](https://github.com/streamich/json-joy)
@@ -29,9 +30,10 @@ const model = Model.create(s.str('Hello World'));
 
 interface EditorProps {
   model: JsonCrdtModel<any>;
+  presence?: PresenceManager;
 }
 
-const Editor: React.FC<EditorProps> = ({model}) => {
+const Editor: React.FC<EditorProps> = ({model, presence}) => {
   return (
     <div
       style={{display: 'flex', flexDirection: 'column', width: '100%', height: '200px'}}
@@ -42,6 +44,8 @@ const Editor: React.FC<EditorProps> = ({model}) => {
         width={'100%'}
         height={'200px'}
         style={{border: '1px solid #bbb', borderRadius: '4px', boxSizing: 'border-box'}}
+        presence={presence}
+        userFromMeta={(m: any) => m}
       />
     </div>
   );
@@ -69,7 +73,7 @@ const Demo: React.FC = () => {
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(m: JsonCrdtModel<any>) => <Editor model={m} />}
+        renderDisplay={(model, _readonly, presence) => <Editor model={model} presence={presence} />}
       />
     </DemoCard>
   );
