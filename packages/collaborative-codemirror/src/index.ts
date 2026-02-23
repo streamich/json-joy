@@ -6,3 +6,6 @@ export const bind = (str: () => CollaborativeStr, editor: EditorView, polling?: 
   const facade = new CodemirrorEditorFacade(editor);
   return StrBinding.bind(str, facade, polling);
 };
+
+export * from './presence/extension';
+export * from './presence/view';

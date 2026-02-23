@@ -5,7 +5,9 @@ import {DemoCard} from '@jsonjoy.com/collaborative-ui/lib/DemoCard';
 import {SideBySideSync} from '@jsonjoy.com/collaborative-ui/lib/SideBySideSync';
 import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
 import {EditorView} from 'codemirror';
-import {bind} from '..';
+import {bind, presenceExtension} from '..';
+import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+import type {Model as JsonCrdtModel} from 'json-joy/lib/json-crdt';
 
 const DESCRIPTION = `
 \`@jsonjoy.com/collaborative-codemirror\` integrates [json-joy](https://github.com/streamich/json-joy)
@@ -23,24 +25,36 @@ Use \`bind()\` to connect a CodeMirror \`EditorView\` to a JSON CRDT string node
 \`\`\`ts
 const unbind = bind(() => model.s.$, editor);
 \`\`\`
+
+Pass a \`PresenceManager\` to \`createExtension()\` to render remote cursors and selections:
+
+\`\`\`ts
+const presenceExt = createExtension({ manager, str: () => model.s.$ });
+const editor = new EditorView({ extensions: [presenceExt, ...] });
+\`\`\`
 `;
 
 interface EditorProps {
-  model: Model<any>;
+  model: JsonCrdtModel<any>;
+  presence?: PresenceManager;
 }
 
-const Editor: React.FC<EditorProps> = ({model}) => {
+const Editor: React.FC<EditorProps> = ({model, presence}) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (!ref.current) return;
-    const editor = new EditorView({parent: ref.current});
-    const unbind = bind(() => (model.s as any).$, editor);
+    const strRef = () => (model.s as any).$;
+    const extensions = presence
+      ? [presenceExtension({manager: presence, str: strRef, userFromMeta: (m: any) => m})]
+      : [];
+    const editor = new EditorView({extensions, parent: ref.current});
+    const unbind = bind(strRef, editor);
     return () => {
       unbind();
       editor.destroy();
     };
-  }, [model]);
+  }, [model, presence]);
 
   return (
     <div
@@ -78,7 +92,7 @@ const Demo: React.FC = () => {
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(model) => <Editor model={model} />}
+        renderDisplay={(model, _readonly, presence) => <Editor model={model} presence={presence} />}
       />
     </DemoCard>
   );
