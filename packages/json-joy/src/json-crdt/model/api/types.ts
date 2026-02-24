@@ -3,8 +3,6 @@ import type {
   PeritextApi,
   QuillDeltaNode,
   QuillDeltaApi,
-  ProseMirrorNode,
-  ProseMirrorApi,
 } from '../../../json-crdt-extensions';
 import type * as types from '../../nodes';
 import type * as nodes from './nodes';
@@ -34,9 +32,7 @@ export type JsonNodeApi<N> =
                     ? PeritextApi
                     : N extends QuillDeltaNode
                       ? QuillDeltaApi
-                      : N extends ProseMirrorNode
-                        ? ProseMirrorApi
-                        : never;
+                      : never;
 
 export type ApiOperation = ApiOperationAdd | ApiOperationReplace | ApiOperationMerge | ApiOperationRemove;
 

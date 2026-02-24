@@ -1,5 +1,6 @@
 import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromPm} from '../sync/FromPm';
+import {ToPmNode} from '../sync/toPmNode';
 import {Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
 import {EditorState, TextSelection} from 'prosemirror-state';
@@ -9,61 +10,66 @@ import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext';
 
 export const assertCanConvert = (doc: Node) => {
   const viewRange = FromPm.convert(doc);
-  const model = Model.create(ext.prosemirror.new());
-  const prosemirror = model.s.toExt();
-  prosemirror.node.txt.editor.import(0, viewRange);
-  prosemirror.node.txt.refresh();
-  const view = prosemirror.view();
+  const model = Model.create(ext.peritext.new(''));
+  const api = model.s.toExt();
+  api.txt.editor.import(0, viewRange);
+  api.txt.refresh();
+  const toPm = new ToPmNode(schema);
+  const view = toPm.convert(api.txt.blocks).toJSON();
   // console.log(JSON.stringify(view, null, 2));
   // console.log(JSON.stringify(doc.toJSON(), null, 2));
   expect(view).toEqual(doc.toJSON());
 };
 
 export const assertCanMergeInto = (doc1: Node, doc2: Node) => {
-  const model = Model.create(ext.prosemirror.new());
-  const prosemirror = model.s.toExt();
-  prosemirror.mergePmNode(doc1);
-  prosemirror.node.txt.refresh();
-  const view = prosemirror.view();
+  const toPm = new ToPmNode(schema);
+  const model = Model.create(ext.peritext.new(''));
+  const api = model.s.toExt();
+  api.txt.editor.merge(FromPm.convert(doc1));
+  api.txt.refresh();
+  const view = toPm.convert(api.txt.blocks).toJSON();
   // logTree(view);
-  // logTree(prosemirror.node.txt.editor.export());
+  // logTree(api.txt.editor.export());
   expect(Node.fromJSON(schema, view).toJSON()).toEqual(doc1.toJSON());
-  prosemirror.mergePmNode(doc2);
-  const view2 = prosemirror.view();
+  api.txt.editor.merge(FromPm.convert(doc2));
+  api.txt.refresh();
+  const view2 = toPm.convert(api.txt.blocks).toJSON();
   // logTree(view2);
   // logTree(doc2.toJSON());
   expect(Node.fromJSON(schema, view2).toJSON()).toEqual(doc2.toJSON());
-  const model2 = Model.create(ext.prosemirror.new());
-  const prosemirror2 = model2.s.toExt();
+  const model2 = Model.create(ext.peritext.new(''));
+  const api2 = model2.s.toExt();
   const viewRange2 = FromPm.convert(doc2);
-  prosemirror2.node.txt.editor.merge(viewRange2);
-  prosemirror2.node.txt.refresh();
-  expect(prosemirror2.node.txt.editor.export()).toEqual(prosemirror.node.txt.editor.export());
+  api2.txt.editor.merge(viewRange2);
+  api2.txt.refresh();
+  expect(api2.txt.editor.export()).toEqual(api.txt.editor.export());
 };
 
 export const assertCanMergeTrain = (docs: Node[]) => {
-  const model = Model.create(ext.prosemirror.new());
-  const prosemirror = model.s.toExt();
+  const toPm = new ToPmNode(schema);
+  const model = Model.create(ext.peritext.new(''));
+  const api = model.s.toExt();
   for (const doc of docs) {
-    prosemirror.mergePmNode(doc);
-    const view = prosemirror.view();
+    api.txt.editor.merge(FromPm.convert(doc));
+    api.txt.refresh();
+    const view = toPm.convert(api.txt.blocks).toJSON();
     // logTree(view);
-    // logTree(prosemirror.node.txt.editor.export());
+    // logTree(api.txt.editor.export());
     expect(Node.fromJSON(schema, view).toJSON()).toEqual(doc.toJSON());
   }
 };
 
 export const assertEmptyMerge = (doc: Node) => {
-  const model = Model.create(ext.prosemirror.new());
-  const prosemirror = model.s.toExt();
-  const patch1 = prosemirror.mergePmNode(doc);
+  const model = Model.create(ext.peritext.new(''));
+  const api = model.s.toExt();
+  const patch1 = api.txt.editor.merge(FromPm.convert(doc));
   expect(patch1).not.toEqual([void 0, void 0, void 0]);
-  prosemirror.node.txt.refresh();
-  const patch2 = prosemirror.mergePmNode(doc);
-  expect(patch2).not.toEqual([void 0, void 0, void 0]);
-  prosemirror.node.txt.refresh();
-  const patch3 = prosemirror.mergePmNode(doc);
-  expect(patch3).not.toEqual([void 0, void 0, void 0]);
+  api.txt.refresh();
+  const patch2 = api.txt.editor.merge(FromPm.convert(doc));
+  expect(patch2).toEqual([void 0, void 0, void 0]);
+  api.txt.refresh();
+  const patch3 = api.txt.editor.merge(FromPm.convert(doc));
+  expect(patch3).toEqual([void 0, void 0, void 0]);
 };
 
 export const setup = (pmDoc: Node) => {
