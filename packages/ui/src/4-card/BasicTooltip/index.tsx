@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {drule, rule, theme} from 'nano-theme';
 import {useAnchorPointHandle, anchorContext} from '../../utils/popup';
-import type {AnchorPointComputeSpec} from '../../utils/popup/types';
 import {useStyles} from '../../styles/context';
 import {KeyLite} from '../../1-inline/KeyLite';
 import {PositionPopup} from '../../utils/popup/PositionPopup';
+import type {AnchorPointComputeSpec} from '../../utils/popup/types';
 
 const blockClass = drule({
   pos: 'relative',
