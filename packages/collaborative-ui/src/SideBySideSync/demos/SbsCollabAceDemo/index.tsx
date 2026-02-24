@@ -56,9 +56,14 @@ synchronized in real-time!
       <SideBySideSync
         model={model}
         noDisplayHdr
-        renderDisplay={(model: Model<any>) => (
+        renderDisplay={(model: Model<any>, _readonly: boolean, presence) => (
           <Paper style={{overflow: 'hidden'}} contrast>
-            <CollaborativeAce str={() => model.api.str(['text'])} height="200px" />
+            <CollaborativeAce
+              str={() => model.api.str(['text'])}
+              height="200px"
+              presence={presence}
+              userFromMeta={(m: any) => m}
+            />
           </Paper>
         )}
       />

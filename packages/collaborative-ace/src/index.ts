@@ -5,3 +5,5 @@ import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 
 export const bind = (str: () => CollaborativeStr, editor: Ace.Editor, polling?: boolean): (() => void) =>
   StrBinding.bind(str, new AceEditorFacade(editor), polling);
+
+export * from './presence';

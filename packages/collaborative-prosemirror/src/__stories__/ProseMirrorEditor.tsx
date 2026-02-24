@@ -13,11 +13,32 @@ import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import 'prosemirror-view/style/prosemirror.css';
 import 'prosemirror-menu/style/menu.css';
 
+// Customize inline code and code_block appearance.
+const customMarks = schema.spec.marks.update('code', {
+  ...schema.spec.marks.get('code'),
+  toDOM: () => [
+    'code',
+    {style: 'background:#f1f5f9;border-radius:4px;padding:1px 5px;font-size:0.85em;font-family:monospace;'},
+    0,
+  ],
+});
+const customNodes = schema.spec.nodes.update('code_block', {
+  ...schema.spec.nodes.get('code_block'),
+  toDOM: () => [
+    'pre',
+    {
+      style:
+        'background:#1e293b;color:#e2e8f0;padding:0.875rem 1rem;border-radius:8px;font-family:monospace;font-size:0.875em;overflow-x:auto;',
+    },
+    ['code', 0],
+  ],
+});
+
 // Mix the nodes from prosemirror-schema-list into the basic schema to
 // create a schema with list support.
 const mySchema = new Schema({
-  nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
-  marks: schema.spec.marks,
+  nodes: addListNodes(customNodes, 'paragraph block*', 'block'),
+  marks: customMarks,
 });
 
 export interface ProseMirrorEditorProps {
@@ -69,6 +90,7 @@ export const ProseMirrorEditor: React.FC<ProseMirrorEditorProps> = ({model, read
       style={{
         border: '1px solid #bbb',
         borderRadius: '4px',
+        padding: '0 16px',
         width: '100%',
         minHeight: '200px',
       }}

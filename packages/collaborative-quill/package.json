@@ -36,7 +36,9 @@
     "crdt"
   ],
   "dependencies": {
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
     "json-joy": "workspace:*",
+    "quill-cursors": "^4.0.4",
     "quill-delta": "^5.1.0"
   },
   "peerDependencies": {

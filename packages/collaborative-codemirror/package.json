@@ -37,10 +37,15 @@
     "crdt"
   ],
   "dependencies": {
+    "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-str": "workspace:*",
-    "json-joy": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*",
+    "json-joy": "workspace:*",
+    "nano-theme": "^1.5.0"
   },
   "peerDependencies": {
+    "@codemirror/state": "*",
+    "@codemirror/view": "*",
     "codemirror": "*",
     "tslib": "*"
   },

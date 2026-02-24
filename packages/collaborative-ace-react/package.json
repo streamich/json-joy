@@ -35,7 +35,8 @@
     "crdt"
   ],
   "dependencies": {
-    "@jsonjoy.com/collaborative-ace": "workspace:*"
+    "@jsonjoy.com/collaborative-ace": "workspace:*",
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
   },
   "peerDependencies": {
     "ace-builds": "*",

@@ -1630,6 +1630,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsonjoy.com/base64@npm:17.67.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/base64@npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/d9616ec1ac0ea6aa455968b1f96f2d48ce38a2b1835922a909a55147d7b8cff3d648d45e9efe6781c6926beb5f04dc41c75ce548b6b84141b14bc122893e16ee
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/base64@npm:^1.1.2":
   version: 1.1.2
   resolution: "@jsonjoy.com/base64@npm:1.1.2"
@@ -1650,6 +1659,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/buffers@npm:17.67.0, @jsonjoy.com/buffers@npm:^17.65.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/buffers@npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/ee46d3ea6c2dee4dd5dffd8b156745baeecfe796c7bb3f091f9fe64c402aca5e4d86ba3d736545682f919303fb15359c1f00d41ac91ea1b5d4edbbe74f540d35
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/buffers@npm:^1.0.0, @jsonjoy.com/buffers@npm:^1.2.0":
   version: 1.2.1
   resolution: "@jsonjoy.com/buffers@npm:1.2.1"
@@ -1659,7 +1677,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/buffers@npm:^17.65.0, @jsonjoy.com/buffers@workspace:*, @jsonjoy.com/buffers@workspace:packages/buffers":
+"@jsonjoy.com/buffers@workspace:*, @jsonjoy.com/buffers@workspace:packages/buffers":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/buffers@workspace:packages/buffers"
   dependencies:
@@ -1693,6 +1711,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/codegen@npm:17.67.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/codegen@npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/3cc529377cc315acf373dc52dbd39d56285b31ba8ca90a4447230e37e405372cc13bed7df638dc81f9071ff8f4eb8e825217987397d80182d08ded761e609a93
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/codegen@npm:^1.0.0":
   version: 1.0.0
   resolution: "@jsonjoy.com/codegen@npm:1.0.0"
@@ -1715,6 +1742,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-ace-react@workspace:packages/collaborative-ace-react"
   dependencies:
     "@jsonjoy.com/collaborative-ace": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
@@ -1735,8 +1763,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-ace@workspace:packages/collaborative-ace"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
     ace-builds: "npm:^1.43.6"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
   peerDependencies:
     ace-builds: "*"
     tslib: "*"
@@ -1747,15 +1779,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-codemirror@workspace:packages/collaborative-codemirror"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     codemirror: "npm:^6.0.2"
     json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
   peerDependencies:
+    "@codemirror/state": "*"
+    "@codemirror/view": "*"
     codemirror: "*"
     tslib: "*"
   languageName: unknown
@@ -1799,6 +1836,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-monaco-react@workspace:packages/collaborative-monaco-react"
   dependencies:
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@monaco-editor/react": "npm:^4.7.0"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
@@ -1819,9 +1857,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-monaco@workspace:packages/collaborative-monaco"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
     json-joy: "workspace:*"
     monaco-editor: "npm:^0.55.1"
+    nano-theme: "npm:^1.5.0"
   peerDependencies:
     monaco-editor: "*"
     tslib: "*"
@@ -1906,12 +1947,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill-react@workspace:packages/collaborative-quill-react"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
     "@storybook/react": "npm:^10.2.8"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
     quill: "npm:^2.0.3"
+    quill-cursors: "npm:^4.0.4"
     quill-delta: "npm:^5.1.0"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
@@ -1926,8 +1969,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-quill@workspace:packages/collaborative-quill"
   dependencies:
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
     json-joy: "workspace:*"
     quill: "npm:^2.0.3"
+    quill-cursors: "npm:^4.0.4"
     quill-delta: "npm:^5.1.0"
   peerDependencies:
     quill: ">=2"
@@ -2177,6 +2222,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-expression@npm:17.67.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/json-expression@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/json-pointer": "npm:17.67.0"
+    "@jsonjoy.com/util": "npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/dfb0be72f9e37d5808d41588856457ccc89153e341ab9e7582e73ecea82403e81845978d4ff4aec57b0383d8d4f56ef0baa742eb14b58270b6264631ee34a74d
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/json-expression@workspace:*, @jsonjoy.com/json-expression@workspace:packages/json-expression":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-expression@workspace:packages/json-expression"
@@ -2187,6 +2244,24 @@ __metadata:
     tslib: 2
   languageName: unknown
   linkType: soft
+
+"@jsonjoy.com/json-pack@npm:17.67.0, @jsonjoy.com/json-pack@npm:^17.65.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/json-pack@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/base64": "npm:17.67.0"
+    "@jsonjoy.com/buffers": "npm:17.67.0"
+    "@jsonjoy.com/codegen": "npm:17.67.0"
+    "@jsonjoy.com/json-pointer": "npm:17.67.0"
+    "@jsonjoy.com/util": "npm:17.67.0"
+    hyperdyperid: "npm:^1.2.0"
+    thingies: "npm:^2.5.0"
+    tree-dump: "npm:^1.1.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/fee56d024c84f031ef011a85ccca071c73b8a0739506083bd3dc7a17c720a498599f285e79082a9626314324ea938f189d18d47a03341cb76286ca2e7098bf53
+  languageName: node
+  linkType: hard
 
 "@jsonjoy.com/json-pack@npm:^1.11.0, @jsonjoy.com/json-pack@npm:^1.2.0":
   version: 1.21.0
@@ -2206,7 +2281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/json-pack@npm:^17.65.0, @jsonjoy.com/json-pack@workspace:*, @jsonjoy.com/json-pack@workspace:packages/json-pack":
+"@jsonjoy.com/json-pack@workspace:*, @jsonjoy.com/json-pack@workspace:packages/json-pack":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/json-pack@workspace:packages/json-pack"
   dependencies:
@@ -2267,6 +2342,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-pointer@npm:17.67.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/json-pointer@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/util": "npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/763e0b1bc274390a605073b49e5bf55bdf386e784f5940d456faca958d90915b7d9a47dd9d58a08e2113f40167b0640d313897811680eb91630726920618fe7d
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/json-pointer@npm:^1.0.0, @jsonjoy.com/json-pointer@npm:^1.0.2":
   version: 1.0.2
   resolution: "@jsonjoy.com/json-pointer@npm:1.0.2"
@@ -2289,6 +2375,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/json-random@npm:17.67.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/json-random@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/buffers": "npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/597042ac3ad4165318bbe75bd9bd62c13a97e3957eca963b32f5be9dec65399607ef78f9ecc3229255213339466abb2f780b22ae4a3ca833780f417b30cb8bda
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/json-random@npm:^1.2.0":
   version: 1.2.0
   resolution: "@jsonjoy.com/json-random@npm:1.2.0"
@@ -2309,6 +2406,26 @@ __metadata:
     tslib: 2
   languageName: unknown
   linkType: soft
+
+"@jsonjoy.com/json-type@npm:17.67.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/json-type@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/buffers": "npm:17.67.0"
+    "@jsonjoy.com/codegen": "npm:17.67.0"
+    "@jsonjoy.com/json-expression": "npm:17.67.0"
+    "@jsonjoy.com/json-pack": "npm:17.67.0"
+    "@jsonjoy.com/json-random": "npm:17.67.0"
+    "@jsonjoy.com/util": "npm:17.67.0"
+    sonic-forest: "npm:^1.2.1"
+    thingies: "npm:^2.5.0"
+    tree-dump: "npm:^1.1.0"
+  peerDependencies:
+    rxjs: "*"
+    tslib: 2
+  checksum: 10c0/046d6fd586449c6411678a708bf0bfc7b43439635d02f93bd45d0b1f9c4a2707d9863edd75da069e8da4dcaf3fd3ac3f76ba0c17519c63b310bb21c6eeb95b7f
+  languageName: node
+  linkType: hard
 
 "@jsonjoy.com/json-type@workspace:*, @jsonjoy.com/json-type@workspace:packages/json-type":
   version: 0.0.0-use.local
@@ -2396,6 +2513,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/util@npm:17.67.0, @jsonjoy.com/util@npm:^17.65.0":
+  version: 17.67.0
+  resolution: "@jsonjoy.com/util@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/buffers": "npm:17.67.0"
+    "@jsonjoy.com/codegen": "npm:17.67.0"
+  peerDependencies:
+    tslib: 2
+  checksum: 10c0/44be53d94c99ce74a0eff1bb111f0ff4392a1226e34637321c8bc45b569da3f9e12db8b225eef3694c44b9fd2e9b800d7baf5ea0d38e1d7767bfcbef4fbf91b0
+  languageName: node
+  linkType: hard
+
 "@jsonjoy.com/util@npm:^1.1.0, @jsonjoy.com/util@npm:^1.6.0, @jsonjoy.com/util@npm:^1.9.0":
   version: 1.9.0
   resolution: "@jsonjoy.com/util@npm:1.9.0"
@@ -2408,7 +2537,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsonjoy.com/util@npm:^17.65.0, @jsonjoy.com/util@workspace:*, @jsonjoy.com/util@workspace:packages/util":
+"@jsonjoy.com/util@workspace:*, @jsonjoy.com/util@workspace:packages/util":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/util@workspace:packages/util"
   dependencies:
@@ -9265,7 +9394,36 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"json-joy@npm:^17.42.0, json-joy@npm:^17.43.0, json-joy@workspace:*, json-joy@workspace:packages/json-joy":
+"json-joy@npm:^17.42.0, json-joy@npm:^17.43.0":
+  version: 17.67.0
+  resolution: "json-joy@npm:17.67.0"
+  dependencies:
+    "@jsonjoy.com/base64": "npm:17.67.0"
+    "@jsonjoy.com/buffers": "npm:17.67.0"
+    "@jsonjoy.com/json-expression": "npm:17.67.0"
+    "@jsonjoy.com/json-pack": "npm:17.67.0"
+    "@jsonjoy.com/json-pointer": "npm:17.67.0"
+    "@jsonjoy.com/json-type": "npm:17.67.0"
+    "@jsonjoy.com/util": "npm:17.67.0"
+    arg: "npm:^5.0.2"
+    hyperdyperid: "npm:^1.2.0"
+    nano-css: "npm:^5.6.2"
+    pojo-dump: "npm:^1.4.0"
+    sonic-forest: "npm:^1.2.1"
+    thingies: "npm:^2.5.0"
+    tree-dump: "npm:^1.1.0"
+    very-small-parser: "npm:^1.14.0"
+  peerDependencies:
+    rxjs: 7
+    tslib: 2
+  peerDependenciesMeta:
+    rxjs:
+      optional: true
+  checksum: 10c0/8b3a64a2109afb304de0387d14def9f48bcc2c1ec1826e66cc4bf8164c7bf95e928a5495bc6600d0c78568530957a5513b68279d76d607fe869ef258c9ce2dc7
+  languageName: node
+  linkType: hard
+
+"json-joy@workspace:*, json-joy@workspace:packages/json-joy":
   version: 0.0.0-use.local
   resolution: "json-joy@workspace:packages/json-joy"
   dependencies:
@@ -11399,6 +11557,13 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: 10c0/900a93d3cdae3acd7d16f642c29a642aea32c2026446151f0778c62ac089d4b8e6c986811076e1ae180a694cedf077d453a11b58ff0a865629a4f82ab558e102
+  languageName: node
+  linkType: hard
+
+"quill-cursors@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "quill-cursors@npm:4.0.4"
+  checksum: 10c0/8e96c9b9608f1945666da04f423aaf78c09bf9469f1574a0c95290d29bea486de2ceb32b453ac7744ef0f095552fab911070f3a3f7851a0e0ce9b948ec4983f2
   languageName: node
   linkType: hard
 
