@@ -27,7 +27,7 @@ export class FormattingManageState {
       if (!slices) return res;
       const registry = state.txt.editor.getRegistry();
       for (const slice of slices) {
-        const tag = slice.type;
+        const tag = slice.type();
         if (typeof tag !== 'number' && typeof tag !== 'string') continue;
         const behavior = registry.get(tag);
         if (!behavior) continue;
