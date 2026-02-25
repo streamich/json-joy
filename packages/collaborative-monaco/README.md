@@ -4,6 +4,8 @@ Makes a plain Monaco editor instance collaborative by binding it to a JSON CRDT
 document `str` node. This allows multiple users to edit the same document
 json-joy JSON CRDT document concurrently through the Monaco editor.
 
+![collab-monaco-demo](https://github.com/user-attachments/assets/5bd43d0a-6447-4649-b39a-560490c7c1ae)
+
 
 ## Usage
 

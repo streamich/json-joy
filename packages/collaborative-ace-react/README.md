@@ -4,6 +4,8 @@ React component for collaborative editing in Ace Editor. Connects JSON CRDT
 `str` node to Ace Editor, allowing multiple users to edit the same document
 concurrently.
 
+![collab-ace-demo](https://github.com/user-attachments/assets/7ad23fa1-0fad-4056-b7eb-fffade97cb74)
+
 
 ## Usage
 
