@@ -25,9 +25,7 @@ const Demo: React.FC = () => {
     <JsonCrdtModel
       model={model}
       noDisplayHdr
-      renderDisplay={(m, readonly, presence) => (
-        <Editor model={m} presence={presence} />
-      )}
+      renderDisplay={(m, readonly, presence) => <Editor model={m} presence={presence} />}
     />
   );
 };

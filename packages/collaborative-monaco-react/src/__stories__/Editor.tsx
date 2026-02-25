@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Model} from 'json-joy/lib/json-crdt';
+import type {Model} from 'json-joy/lib/json-crdt';
 import * as monaco from 'monaco-editor';
 import {loader} from '@monaco-editor/react';
 import {CollaborativeMonaco} from '..';

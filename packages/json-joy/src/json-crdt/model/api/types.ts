@@ -1,9 +1,4 @@
-import type {
-  PeritextNode,
-  PeritextApi,
-  QuillDeltaNode,
-  QuillDeltaApi,
-} from '../../../json-crdt-extensions';
+import type {PeritextNode, PeritextApi, QuillDeltaNode, QuillDeltaApi} from '../../../json-crdt-extensions';
 import type * as types from '../../nodes';
 import type * as nodes from './nodes';
 import type {Path} from '@jsonjoy.com/json-pointer';

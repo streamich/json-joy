@@ -29,9 +29,7 @@ const Demo: React.FC = () => {
     <JsonCrdtLog
       log={log}
       view={'model'}
-      renderDisplay={(m, readonly, presence) => (
-        <Editor model={m} presence={presence} />
-      )}
+      renderDisplay={(m, readonly, presence) => <Editor model={m} presence={presence} />}
     />
   );
 };

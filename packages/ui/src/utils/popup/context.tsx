@@ -9,7 +9,8 @@ export const useAnchorPointHandle = (spec?: AnchorPointComputeSpec) => {
   // Recreating the handle would reset `toggle` to null and cause a position:0,0
   // flash because style() can no longer read the anchor element's bounding rect.
   // Instead, mutate spec in place so the stable handle always has the latest spec.
-  const handle = React.useMemo(() => new AnchorPointHandle(spec), []); // eslint-disable-line react-hooks/exhaustive-deps
+  // biome-ignore lint: manually manage deps
+  const handle = React.useMemo(() => new AnchorPointHandle(spec), []);
   handle.spec = spec ?? {};
   React.useEffect(() => {
     const listener = () => handle.style();
