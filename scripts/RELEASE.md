@@ -26,6 +26,7 @@ yarn lint
 yarn format
 yarn typecheck
 yarn test
+yarn vitest
 yarn typedoc
 ```
 

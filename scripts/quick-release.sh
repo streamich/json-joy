@@ -53,6 +53,7 @@ if [ "$SKIP_TESTS" = true ]; then
     echo "Skipping tests (--skip-tests flag set)..."
 else
     echo "Running tests..."
+    yarn vitest
     yarn test
 fi
 
