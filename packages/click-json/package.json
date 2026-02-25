@@ -73,31 +73,7 @@
   "scripts": {
     "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
     "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
-    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
-    "test": "jest --maxWorkers 7",
-    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
-    "coverage": "yarn test --collectCoverage",
     "typedoc": "typedoc",
     "typecheck": "tsc -p ."
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "tsx"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "transformIgnorePatterns": [
-      ".*/node_modules/.*"
-    ],
-    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
-    "rootDir": ".",
-    "testPathIgnorePatterns": [
-      "node_modules"
-    ]
   }
 }

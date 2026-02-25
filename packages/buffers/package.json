@@ -42,15 +42,17 @@
   "scripts": {
     "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
     "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
-    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
-    "test": "jest --maxWorkers 7",
-    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
-    "coverage": "yarn test --collectCoverage",
     "typedoc": "typedoc",
     "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "typecheck": "tsc -p ."
+  },
+  "peerDependencies": {
+    "tslib": "2"
+  },
+  "devDependencies": {
+    "json-pack-napi": "^0.0.2"
   },
   "jest": {
     "preset": "ts-jest",
@@ -66,16 +68,11 @@
     "transformIgnorePatterns": [
       ".*/node_modules/.*"
     ],
-    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$",
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
     "rootDir": ".",
     "testPathIgnorePatterns": [
-      "node_modules"
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
     ]
-  },
-  "peerDependencies": {
-    "tslib": "2"
-  },
-  "devDependencies": {
-    "json-pack-napi": "^0.0.2"
   }
 }

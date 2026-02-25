@@ -93,6 +93,9 @@
   "jest": {
     "projects": [
       "packages/*/package.json"
+    ],
+    "testPathIgnorePatterns": [
+      "\\.vi\\.(test|spec)\\.tsx?$"
     ]
   },
   "config": {

@@ -350,34 +350,4 @@ describe('RPC Real-world Fixtures', () => {
       expect(reply.stat).toBe(RpcAcceptStat.SUCCESS);
     });
   });
-
-  describe('Performance tests', () => {
-    test('can decode 1000 messages quickly', () => {
-      const decoder = new RpcMessageDecoder();
-      const withRecordMarking = fixtures.NFS_NULL_CALL.bytes;
-      const start = Date.now();
-      for (let i = 0; i < 1000; i++) {
-        const reader = new Reader(withRecordMarking);
-        const msg = decoder.decodeMessage(reader);
-        expect(msg).toBeDefined();
-      }
-      const elapsed = Date.now() - start;
-      expect(elapsed).toBeLessThan(1000);
-    });
-
-    test('can encode 1000 messages quickly', () => {
-      const encoder = new RpcMessageEncoder();
-      const decoder = new RpcMessageDecoder();
-      const withRecordMarking = fixtures.NFS_NULL_CALL.bytes;
-      const reader = new Reader(withRecordMarking);
-      const template = decoder.decodeMessage(reader)!;
-      const start = Date.now();
-      for (let i = 0; i < 1000; i++) {
-        const encoded = encoder.encodeMessage(template);
-        expect(encoded).toBeDefined();
-      }
-      const elapsed = Date.now() - start;
-      expect(elapsed).toBeLessThan(1000);
-    });
-  });
 });

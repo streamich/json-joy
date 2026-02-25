@@ -1,3 +1,4 @@
+import {describe, test} from 'vitest';
 import {Reader} from '../Reader';
 import {StreamingReader} from '../StreamingReader';
 import {StreamingOctetReader} from '../StreamingOctetReader';

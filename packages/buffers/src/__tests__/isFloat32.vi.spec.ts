@@ -1,3 +1,4 @@
+import {test} from 'vitest';
 import {isFloat32} from '../isFloat32';
 
 test('returns true for a float32', () => {

@@ -192,7 +192,7 @@ const pkg = {
       ],
     },
     transformIgnorePatterns: [],
-    testRegex: '.*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.tsx?$',
+    testRegex: '.*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$',
     extensionsToTreatAsEsm: ['.ts'],
     moduleNameMapper: {
       '^(\\.{1,2}/.*)\\.js$': '$1',
