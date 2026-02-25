@@ -1,1 +1,0 @@
-export {ToolbarPlugin} from './ToolbarPlugin';

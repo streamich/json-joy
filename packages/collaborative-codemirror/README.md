@@ -4,6 +4,8 @@ Makes a plain CodeMirror editor instance collaborative by binding it to a JSON C
 document `str` node. This allows multiple users to edit the same document
 json-joy JSON CRDT document concurrently through the CodeMirror editor.
 
+![collab-codemirror-demo](https://github.com/user-attachments/assets/c0c511f5-17a7-4e4c-8c50-b5ef52e81b01)
+
 
 ## Usage
 

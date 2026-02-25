@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {copyStyles} from './util';
-import {bind} from 'collaborative-input';
-import type {CollaborativeStr} from 'collaborative-editor';
+import {bind} from '@jsonjoy.com/collaborative-input';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 
 const blockClass = rule({
   d: 'inline-block',

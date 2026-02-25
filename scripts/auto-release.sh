@@ -27,6 +27,7 @@ echo "Running typecheck..."
 yarn typecheck
 
 echo "Running tests..."
+yarn vitest
 yarn test
 
 echo "Generating typedoc..."

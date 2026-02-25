@@ -28,8 +28,36 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, children}) 
   const isMounted = useMountedState();
   const timer = React.useRef<unknown>(null);
   const ro = React.useRef<ResizeObserver | null>(null);
+  const elRef = React.useRef<HTMLDivElement | null>(null);
+
+  const applyStyle = React.useCallback(() => {
+    const el = elRef.current;
+    if (!el || !point) return;
+    const style = point.style();
+    const s = el.style as any;
+    for (const key in style) s[key as any] = (style as any)[key as any];
+  }, [point]);
+
+  /**
+   * Position the popup in a layout effect rather than inside the ref callback.
+   *
+   * React guarantees that ALL refs in a render batch are assigned before any
+   * useLayoutEffect fires. By the time this runs, the toggle element's ref
+   * (set by the ancestor BasicTooltip / PopupControlled) is already populated
+   * on the AnchorPointHandle, so point.style() can compute the correct position.
+   * This avoids the position:0,0 flash that would occur if we tried to
+   * position inside the ref callback, where sibling/ancestor refs are not yet set.
+   *
+   * useLayoutEffect runs synchronously before the browser paints, so there is
+   * no visible flash of mis-positioned content.
+   */
+  React.useLayoutEffect(() => {
+    applyStyle();
+  });
+
   const ref = React.useCallback(
     (el: HTMLDivElement | null) => {
+      elRef.current = el;
       if (!el) {
         ro.current?.disconnect();
         return;
@@ -41,20 +69,12 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, children}) 
         }
         timer.current = setTimeout(() => {
           if (!isMounted()) return;
-          const {width} = el.getBoundingClientRect();
-          if (!width) return;
-          const _point = point?.get();
-          if (!_point) return;
+          applyStyle();
         }, 50);
       });
-      if (point) {
-        const style = point.style();
-        const s = el.style as any;
-        for (const key in style) s[key as any] = (style as any)[key as any];
-      }
       ro.current.observe(el);
     },
-    [point, isMounted],
+    [applyStyle, isMounted],
   );
 
   return (

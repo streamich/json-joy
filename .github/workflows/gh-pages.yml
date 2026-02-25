@@ -23,6 +23,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - run: yarn typedoc
+      - run: yarn vitest
       - run: yarn test:coverage
       - run: yarn build:pages
       - name: Publish to gh-pages

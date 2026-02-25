@@ -11,7 +11,6 @@ extensions.register(ext.cnt);
 extensions.register(ext.mval);
 extensions.register(ext.peritext);
 extensions.register(ext.quill);
-extensions.register(ext.prosemirror);
 
 export {ext};
 

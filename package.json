@@ -18,6 +18,7 @@
     "build": "yarn workspaces foreach -Apt run build",
     "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2",
     "test:coverage": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2 --collectCoverage",
+    "vitest": "vitest run",
     "format": "biome format ./packages/*/src",
     "format:fix": "biome format --write ./packages/*/src",
     "lint": "biome lint ./packages/*/src",
@@ -83,6 +84,7 @@
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "use-t": "^1.6.3",
+    "vitest": "^4.0.18",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.1.0",
@@ -134,6 +136,7 @@
           "json-stable",
           "json-text",
           "json-walk",
+          "peritext",
           "ui",
           "util"
         ]

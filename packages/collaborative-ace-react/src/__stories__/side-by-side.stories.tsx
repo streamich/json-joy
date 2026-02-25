@@ -1,12 +1,10 @@
 import * as React from 'react';
 import preview from '../../../../.storybook/preview';
 import {Model, s} from 'json-joy/lib/json-crdt';
-import type {Model as JsonCrdtModel} from 'json-joy/lib/json-crdt';
 import {DemoCard} from '@jsonjoy.com/collaborative-ui/lib/DemoCard';
 import {SideBySideSync} from '@jsonjoy.com/collaborative-ui/lib/SideBySideSync';
 import {Markdown} from '@jsonjoy.com/ui/lib/markdown/Markdown';
-import {CollaborativeAce} from '..';
-import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+import {Editor} from './Editor';
 
 const DESCRIPTION = `
 \`@jsonjoy.com/collaborative-ace-react\` integrates [json-joy](https://github.com/streamich/json-joy)
@@ -27,29 +25,6 @@ const model = Model.create(s.str('Hello World'));
 <CollaborativeAce str={() => model.s.$} width="100%" height="200px" />
 \`\`\`
 `;
-
-interface EditorProps {
-  model: JsonCrdtModel<any>;
-  presence?: PresenceManager;
-}
-
-const Editor: React.FC<EditorProps> = ({model, presence}) => {
-  return (
-    <div
-      style={{display: 'flex', flexDirection: 'column', width: '100%', height: '200px'}}
-      onKeyDown={(e) => e.stopPropagation()}
-    >
-      <CollaborativeAce
-        str={() => (model.s as any).$}
-        width={'100%'}
-        height={'200px'}
-        style={{border: '1px solid #bbb', borderRadius: '4px', boxSizing: 'border-box'}}
-        presence={presence}
-        userFromMeta={(m: any) => m}
-      />
-    </div>
-  );
-};
 
 const Demo: React.FC = () => {
   const model = React.useMemo(() => {

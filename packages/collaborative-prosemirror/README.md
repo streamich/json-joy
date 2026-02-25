@@ -4,6 +4,8 @@ Real-time collaborative editing for [ProseMirror](https://prosemirror.net/),
 powered by [JSON CRDT](https://jsonjoy.com/specs/json-crdt) and
 [Peritext](https://www.inkandswitch.com/peritext/) rich-text CRDT.
 
+![collab-prosemirror-demo-2](https://github.com/user-attachments/assets/62afc220-8e1c-4042-9b0f-5c279000d43c)
+
 
 ## Features
 

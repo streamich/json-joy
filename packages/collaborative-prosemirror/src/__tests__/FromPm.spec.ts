@@ -1,6 +1,7 @@
 import {s} from 'json-joy/lib/json-crdt';
 import {ModelWithExt as Model, ext} from 'json-joy/lib/json-crdt-extensions//ModelWithExt';
 import {FromPm} from '../sync/FromPm';
+import {ToPmNode} from '../sync/toPmNode';
 import {Node} from 'prosemirror-model';
 import {schema, doc, blockquote, p, em, strong, eq, h2, h1} from 'prosemirror-test-builder';
 import {fuzzer1} from './fixtures';
@@ -12,45 +13,50 @@ describe('FromPm', () => {
       const viewRange = FromPm.convert(node);
       const model = Model.create(
         s.obj({
-          prose: ext.prosemirror.new(''),
+          prose: ext.peritext.new(''),
         }),
       );
-      const prosemirror = model.s.prose.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      const view = prosemirror.view();
+      const api = model.s.prose.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
     test('single text paragraph with a single inline formatting', () => {
       const node = doc(p('Text: ', strong('bold'), '!')) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
     test('single text paragraph wrapped in inline formatting', () => {
       const node = doc(p(strong('bold'))) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
     test('<strong> inside <em>', () => {
       const node = doc(p(em(strong('bold')))) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
       expect(view).toEqual(node2.toJSON());
@@ -59,11 +65,12 @@ describe('FromPm', () => {
     test('<em> inside <strong>', () => {
       const node = doc(p(strong(em('bold')))) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
       expect(view).toEqual(node2.toJSON());
@@ -72,44 +79,48 @@ describe('FromPm', () => {
     test('two <paragraph>', () => {
       const node = doc(p('paragraph 1'), p('paragraph 2')) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
     test('<paragraph> and <blockquote>', () => {
       const node = doc(p('paragraph 1'), blockquote('blockquote 2')) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
     test('two <paragraph> in <blockquote>', () => {
       const node = doc(blockquote(p('paragraph 1'), p('paragraph 2'))) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
     test('two <blockquote> with <paragraph> each', () => {
       const node = doc(blockquote(p('paragraph 1')), blockquote(p('paragraph 2'))) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
     });
 
@@ -120,11 +131,12 @@ describe('FromPm', () => {
         blockquote(p('paragraph 3')),
       ) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
       expect(eq(node, node2)).toBe(true);
@@ -133,11 +145,12 @@ describe('FromPm', () => {
     test('empty paragraphs', () => {
       const node = doc(p(), p()) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
       expect(eq(node, node2)).toBe(true);
@@ -148,11 +161,12 @@ describe('FromPm', () => {
       const viewRange = FromPm.convert(node);
       // console.log(JSON.stringify(node.toJSON(), null, 2));
       // console.log(JSON.stringify(viewRange, null, 2));
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       // console.log(JSON.stringify(view, null, 2));
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
@@ -168,12 +182,13 @@ describe('FromPm', () => {
       const viewRange = FromPm.convert(node);
       // console.log(JSON.stringify(node.toJSON(), null, 2));
       // console.log(JSON.stringify(viewRange, null, 2));
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      // console.log(prosemirror.node.txt + '');
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      // console.log(api.txt + '');
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       // console.log(JSON.stringify(view, null, 2));
       expect(view).toEqual(node.toJSON());
     });
@@ -184,11 +199,12 @@ describe('FromPm', () => {
         blockquote(p('This is a ', strong('Prose'), strong(em('Mirror')), ' editor example.')),
       ) as Node;
       const viewRange = FromPm.convert(node);
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);
       expect(eq(node, node2)).toBe(true);
@@ -198,12 +214,13 @@ describe('FromPm', () => {
       const node = fuzzer1;
       const viewRange = FromPm.convert(node);
       // console.log(JSON.stringify(viewRange, null, 2));
-      const model = Model.create(ext.prosemirror.new());
-      const prosemirror = model.s.toExt();
-      prosemirror.node.txt.editor.import(0, viewRange);
-      prosemirror.node.txt.refresh();
-      // console.log(prosemirror.node.txt + '');
-      const view = prosemirror.view();
+      const model = Model.create(ext.peritext.new(''));
+      const api = model.s.toExt();
+      api.txt.editor.import(0, viewRange);
+      api.txt.refresh();
+      // console.log(api.txt + '');
+      const toPm = new ToPmNode(schema);
+      const view = toPm.convert(api.txt.blocks).toJSON();
       // console.log(JSON.stringify(view, null, 2));
       expect(view).toEqual(node.toJSON());
       const node2 = Node.fromJSON(schema, view);

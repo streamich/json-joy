@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {bind} from 'collaborative-input';
-import type {CollaborativeStr} from 'collaborative-editor';
+import {bind} from '@jsonjoy.com/collaborative-input';
+import type {CollaborativeStr} from '@jsonjoy.com/collaborative-str';
 
 export interface CollaborativeInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Ref to the input element. */

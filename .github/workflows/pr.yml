@@ -61,5 +61,6 @@ jobs:
       - run: yarn format
       - run: yarn lint
       - run: yarn build
+      - run: yarn vitest
       - run: yarn typecheck
       - run: yarn typedoc

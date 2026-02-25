@@ -28,6 +28,7 @@ const packages = [
   'collaborative-slate',
   'collaborative-ui',
   'json-joy',
+  'peritext',
   'ui',
 ];
 

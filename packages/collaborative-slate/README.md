@@ -4,6 +4,8 @@ Integrates [json-joy](https://github.com/streamich/json-joy) JSON CRDT (Peritext
 [Slate.js](https://github.com/ianstormtaylor/slate) and [Plate.js](https://github.com/udecode/plate),
 enabling real-time collaborative rich-text editing.
 
+![collab-slate-demo-2](https://github.com/user-attachments/assets/a41e01d7-d960-46f0-aeaf-3f0b5de6cf25)
+
 
 ## Installation
 
