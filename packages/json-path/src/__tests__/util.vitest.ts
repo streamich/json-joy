@@ -2,6 +2,7 @@
  * JSONPath utility functions tests
  */
 
+import {describe, test, expect} from 'vitest';
 import {JsonPathParser} from '../index';
 import {jsonPathToString, jsonPathEquals, getAccessedProperties} from '../util';
 
