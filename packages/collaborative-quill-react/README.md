@@ -4,6 +4,8 @@ React component for collaborative editing in Quill Editor. Connects JSON CRDT
 `quill-delta` node to Quill Editor, allowing multiple users to edit the same
 rich-text document concurrently.
 
+![collab-quill-demo](https://github.com/user-attachments/assets/22bae7b3-d88b-428f-95b0-cc9ee757602b)
+
 
 ## Usage
 
