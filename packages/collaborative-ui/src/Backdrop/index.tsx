@@ -49,15 +49,31 @@ export interface BackdropProps {
 
 export const Backdrop: React.FC<BackdropProps> = (props) => {
   const {value, attr, inputRef, renderInput} = props;
+  const backdropRef = React.useRef<HTMLDivElement>(null);
+  const internalInputRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const resolvedInputRef = (inputRef || internalInputRef) as React.RefObject<HTMLInputElement | HTMLTextAreaElement>;
+
+  React.useEffect(() => {
+    const input = resolvedInputRef.current;
+    const backdrop = backdropRef.current;
+    if (!input || !backdrop) return;
+    const onScroll = () => {
+      backdrop.scrollLeft = input.scrollLeft;
+    };
+    input.addEventListener('scroll', onScroll);
+    return () => {
+      input.removeEventListener('scroll', onScroll);
+    };
+  }, []);
 
   const backdrop = (
-    <div className={backdropClass}>
+    <div ref={backdropRef} className={backdropClass}>
       {props.backdrop}
     </div>
   );
 
   const input = renderInput ? renderInput(inputClass, props) : (
-    <input ref={inputRef as React.RefObject<HTMLInputElement>} className={inputClass} value={value} />
+    <input ref={resolvedInputRef as React.RefObject<HTMLInputElement>} className={inputClass} value={value} />
   );
 
   return (
