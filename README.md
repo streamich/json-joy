@@ -21,16 +21,9 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - [**Website**](https://jsonjoy.com)
 - [**Documentation**](https://jsonjoy.com/libs/json-joy-js)
 - Integrations
-  - [React.js](./packages/collaborative-react/README.md)
-  - [`<input>` and `<textarea>`](./packages/collaborative-input/README.md)
-  - Plain text editors
-    - [Ace](./packages/collaborative-ace/README.md) ([React](./packages/collaborative-ace-react/README.md))
-    - [CodeMirror](./packages/collaborative-codemirror/README.md)
-    - [Monaco](./packages/collaborative-monaco/README.md)
-  - Rich-text editors
-    - [Slate](./packages/collaborative-slate/README.md)
-    - [ProseMirror](./packages/collaborative-prosemirror/README.md)
-    - [Quill](./packages/collaborative-quill/README.md) ([React](./packages/collaborative-quill-react/README.md))
+  - [React.js](./packages/collaborative-react/README.md) • [React.js `<CollaborativeInput>`](./packages/collaborative-input-react/README.md) • [DOM `<input>` and `<textarea>`](./packages/collaborative-input/README.md)
+  - __Plain text:__ [Ace](./packages/collaborative-ace/README.md) ([React](./packages/collaborative-ace-react/README.md)) • [CodeMirror](./packages/collaborative-codemirror/README.md) • [Monaco](./packages/collaborative-monaco/README.md)
+  - __Rich text:__ [Slate](./packages/collaborative-slate/README.md) • [ProseMirror](./packages/collaborative-prosemirror/README.md) • [Quill](./packages/collaborative-quill/README.md) ([React](./packages/collaborative-quill-react/README.md))
 - [**Blog posts**](https://jsonjoy.com/blog)
   - [_Collaborative Text Editors (Part 2): Plain Text Synchronization_](https://jsonjoy.com/blog/collaborative-text-sync-plain-text)
   - [_Collaborative Text Editors (Part 1): Prelude_](https://jsonjoy.com/blog/collaborative-text-sync-prelude)
