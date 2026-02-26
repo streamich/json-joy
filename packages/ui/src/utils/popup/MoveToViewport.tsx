@@ -48,20 +48,25 @@ class MovementState implements UiLifeCycles {
     const style = div.style;
     style.left = this.dx + 'px';
     if (this.vertical) style.top = this.dy + 'px';
+    // Reveal the element now that it has been correctly positioned.
+    style.visibility = '';
   };
 
   public readonly start = () => {
     window.addEventListener('resize', this.move);
-    const timer = setTimeout(this.move, 25);
+    const raf = requestAnimationFrame(this.move);
     return () => {
       window.removeEventListener('resize', this.move);
-      clearTimeout(timer);
+      cancelAnimationFrame(raf);
     };
   };
 
   public readonly ref = (div: HTMLSpanElement | null) => {
     this.div = div;
-    this.move();
+    // Hide immediately so the browser never paints the element at its
+    // uncorrected position. The element is revealed by move() once the
+    // viewport-adjusted offset has been applied.
+    if (div) div.style.visibility = 'hidden';
   };
 }
 
