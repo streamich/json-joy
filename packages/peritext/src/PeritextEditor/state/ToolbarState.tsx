@@ -357,7 +357,7 @@ export class ToolbarState implements UiLifeCycles {
               },
             },
             {
-              name: 'Classified',
+              name: 'Spoiler',
               icon: () => <LockPasswordIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.spoiler);

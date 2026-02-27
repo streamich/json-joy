@@ -1,11 +1,22 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {rule, drule, useTheme} from 'nano-theme';
 import type {InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 
-const blockClass = rule({
+const blockClass = drule({
   bg: '#222',
   col: 'transparent',
-  bdrad: 'calc(min(2px, 0.15em))',
+});
+
+const radius = 'calc(min(3px,.15em))';
+
+const startClass = rule({
+  borderTopLeftRadius: radius,
+  borderBottomLeftRadius: radius,
+});
+
+const endClass = rule({
+  borderTopRightRadius: radius,
+  borderBottomRightRadius: radius,
 });
 
 export interface SpoilerProps {
@@ -15,19 +26,27 @@ export interface SpoilerProps {
 
 export const Spoiler: React.FC<SpoilerProps> = (props) => {
   const {attr, children} = props;
+  const theme = useTheme();
+
   const slice = attr.slice;
   const editor = slice.txt.editor;
   const cursor = editor.cursorCount() === 1 ? editor.cursor : void 0;
   
   let isRevealed = false;
-  const style: React.CSSProperties = {};
   if (cursor) {
     isRevealed = slice.containsPoint(cursor.focus());
-    if (isRevealed) {
-      style.backgroundColor = 'rgba(127,127,127,.2)';
-      style.color = 'inherit';
-    }
   }
 
-  return <span className={blockClass} style={style}>{children}</span>;
+  const className =
+    blockClass({
+      bg: isRevealed ? theme.g(0.2, 0.1) : '#222',
+      col: isRevealed ? 'inherit' : 'transparent',
+      '& *': {
+        col: isRevealed ? 'inherit' : 'transparent',
+      },
+    }) +
+    (attr.isStart() ? startClass : '') +
+    (attr.isEnd() ? endClass : '');
+
+  return <span className={className}>{children}</span>;
 };

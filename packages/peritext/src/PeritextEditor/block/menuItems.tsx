@@ -426,10 +426,10 @@ export const inlineText: MenuItem = {
               },
             },
             {
-              name: 'Classified',
+              name: 'Spoiler',
               icon: () => <ClassifiedIcon width={16} height={16} />,
               onSelect: () => {
-                console.log('Classified');
+                console.log('Spoiler');
               },
             },
           ],
