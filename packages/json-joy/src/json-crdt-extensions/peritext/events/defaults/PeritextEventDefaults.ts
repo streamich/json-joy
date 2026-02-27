@@ -184,8 +184,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       this.moveSelSet(selection, detail);
 
       // Collapse cursors if there are no visible characters between edges.
-      // (Only for relative focus edge moves.)
-      if (move && move.length === 1 && move[0][0] === 'focus')
+      // (Only for relative focus edge moves, except 'point' moves which
+      // need to preserve exact anchor positioning.)
+      if (move && move.length === 1 && move[0][0] === 'focus' && move[0][1] !== 'point')
         for (const range of selection) if (range.length() === 0) range.collapseToStart();
 
       // Swap anchor and focus edges.
