@@ -87,7 +87,7 @@ export class Slice<T = string> extends Range<T> implements Stateful, Printable {
     /** The `Model` where the slice is stored. */
     protected readonly model: Model,
     /** The Peritext context. */
-    protected readonly txt: Peritext<T>,
+    public readonly txt: Peritext<T>,
     /** The "arr" node where the slice is stored. */
     protected readonly arr: ArrNode,
     /** The `arr` chunk of `arr` where the slice is stored. */

@@ -16,7 +16,7 @@ import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
-import type {OverlayPair, OverlayTuple} from './types';
+import type {OverlayPair, OverlayRangeStats, OverlayTuple} from './types';
 import type {Comparator, HeadlessNode} from 'sonic-forest/lib/types';
 import type {SliceType} from '../slice';
 import type {HeadlessNode2} from 'sonic-forest/lib/types2';
@@ -476,10 +476,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    *     slice types, which mark a part of the range, and have not been removed
    *     by "Erase" slice type.
    */
-  public stat(
-    range: Range<T>,
-    endOnMarker = 10,
-  ): [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number] {
+  public stat(range: Range<T>, endOnMarker = 10): OverlayRangeStats {
     const {start, end: end_} = range;
     let end = end_;
     const isSamePoint = start.cmp(end_) === 0;

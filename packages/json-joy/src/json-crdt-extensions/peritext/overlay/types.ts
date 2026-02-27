@@ -1,3 +1,4 @@
+import type {SliceType} from '../slice';
 import type {OverlayPoint} from './OverlayPoint';
 
 /**
@@ -15,3 +16,5 @@ export type OverlayPair<T> = [p1: OverlayPoint<T> | undefined, p2: OverlayPoint<
  * by virtual points.
  */
 export type OverlayTuple<T> = [p1: OverlayPoint<T>, p2: OverlayPoint<T>];
+
+export type OverlayRangeStats = [complete: Set<SliceType>, partial: Set<SliceType>, markerCount: number];

@@ -37,6 +37,9 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
     const attr = attrs[SliceTypeName.kbd][0];
     if (attr) element = <Kbd attr={attr}>{element}</Kbd>;
   }
-  if (attrs[SliceTypeName.spoiler]) element = <Spoiler>{element}</Spoiler>;
+  if (attrs[SliceTypeName.spoiler]) {
+    const attr = attrs[SliceTypeName.spoiler][0];
+    if (attr) element = <Spoiler attr={attr}>{element}</Spoiler>;
+  }
   return element;
 };
