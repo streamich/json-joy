@@ -20,7 +20,18 @@ export const Favicon: React.FC<FaviconProps> = (props) => {
     alt: domain + ' favicon',
     width: size,
     height: size,
-    src: 'https://www.google.com/s2/favicons?domain=' + domain,
+    /**
+     * Favicon services:
+     * - https://icons.duckduckgo.com/ip2/{hostname}.ico
+     * - https://www.google.com/s2/favicons?domain={domain}
+     * - https://www.google.com/s2/favicons?domain_url={hostname}
+     * - https://www.google.com/s2/favicons?sz=(16..32..64..128..256..512)&domain_url=...
+     * - http://favicon.yandex.net/favicon/{domain-1}/{domain-2}/{domain-3}/...
+     * - https://favicon.yandex.net/favicon/{hostname1}/{hostname2}/
+     * - https://f1.allesedv.com/16/{hostname}
+     * - https://besticon-demo.herokuapp.com/icon?url={hostname}&size=80..120..200
+     */
+    src: 'https://www.google.com/s2/favicons?sz=64&domain=' + domain,
     renderError: () =>
       h(Img, {
         ...rest,
