@@ -1232,4 +1232,20 @@ describe('.halfstep()', () => {
       expect(points[i * 2 + 1].anchor).toBe(Anchor.Before);
     }
   });
+
+  test('conformance test: 2x half-step should equal 1 step', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointStart()!;
+    const p2 = peritext.pointStart()!;
+    expect(p1.viewPos()).toBe(0);
+    expect(p2.viewPos()).toBe(0);
+    for (let i = 1; i <= 8; i++) {
+      p1.halfstep(2);
+      p2.step(1);
+      expect(p1.cmp(p2)).toBe(0);
+      expect(p1.cmpSpatial(p2)).toBe(0);
+      expect(p1.viewPos()).toBe(i);
+      expect(p2.viewPos()).toBe(i);
+    }
+  });
 });

@@ -35,6 +35,7 @@ import type {
 import type {ApiOperation} from '../../../json-crdt/model/api/types';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {OverlayPoint} from '../overlay/OverlayPoint';
+import {OverlayRefSliceEnd, OverlayRefSliceStart} from '../overlay/refs';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -305,6 +306,42 @@ export class Editor<T = string> implements Printable {
   }
 
   // ----------------------------------------------------------------- movement
+
+  /**
+   * Same as {@link Point#step}, but around inline formatting boundaries moves
+   * at half-step intervals, allowing the point to be attached to either side of
+   * the formatting boundary, i.e. express affinity to either the formatted or
+   * unformatted text when moving across a formatting boundary.
+   *
+   * @param length How many characters to move by. Positive number moves the
+   *     point to the right, negative number moves the point to the left.
+   * @returns Returns `true` if the absolute end of the string is reached.
+   */
+  public vstep(point: Point<T>, length: number): boolean {
+    const direction = length > 0 ? 1 : -1;
+    let iterations = Math.abs(length);
+    let end: boolean = false;
+    LOOP: while (iterations-- && !end) {
+      STEP: {
+        const isEdge1 = this.isSliceEdge(point);
+        end = point.halfstep(direction);
+        if (end) break LOOP;
+        if (isEdge1) break STEP;
+        const isEdge2 = this.isSliceEdge(point);
+        if (isEdge2) break STEP;
+        end = point.halfstep(direction);
+        if (end) break LOOP;
+      }
+    }
+    return end;
+  }
+  
+  private isSliceEdge(point: Point<T>): boolean {
+    const overlayPoint = this.txt.overlay.get(point);
+    const firstRef = overlayPoint?.refs[0]; // We only check the first one (heuristic), for performance.
+    if (!(firstRef instanceof OverlayRefSliceStart) && !(firstRef instanceof OverlayRefSliceEnd)) return false;
+    return firstRef.slice.isSaved();
+  }
 
   /**
    * Returns an iterator through visible text, one `step`, one character at a

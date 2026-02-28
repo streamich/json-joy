@@ -603,6 +603,91 @@ describe('.eob()', () => {
   });
 });
 
+const setupWithChunkedText = () => {
+  const model = Model.create(void 0, 123456);
+  model.api.set({
+    text: '',
+    slices: [],
+  });
+  const str = model.api.str(['text']).node;
+  const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+  model.api.str(['text']).ins(0, '789');
+  str.first()!;
+  model.api.str(['text']).ins(0, 'd');
+  str.first()!;
+  model.api.str(['text']).ins(0, '456');
+  str.first()!;
+  model.api.str(['text']).ins(0, 'd');
+  str.first()!;
+  model.api.str(['text']).ins(0, '123');
+  str.first()!;
+  model.api.str(['text']).del(3, 1);
+  model.api.str(['text']).del(6, 1);
+  return {
+    model,
+    str,
+    peritext,
+  };
+};
+
+describe('.vstep()', () => {
+  test('can move through bold mark (end anchored to next char)', () => {
+    const {peritext} = setupWithChunkedText();
+    const editor = peritext.editor;
+    editor.cursor.setRange(peritext.rangeAt(1, 3));
+    editor.toggleExclFmt('bold');
+    editor.delCursors();
+    peritext.refresh();
+    const point = peritext.pointAbsStart();
+    expect(point.viewPos()).toBe(0);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(1); // <- before slice start
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(1); // <- after slice start
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(2);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(3);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(4); // <- before slice end
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(4); // <- after slice end
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(5);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(6);
+    while(!editor.vstep(point, 1));
+    expect(point.isAbsEnd()).toBe(true);
+  });
+
+  test('can move through link mark (end anchored to last char)', () => {
+    const {peritext} = setupWithChunkedText();
+    peritext.savedSlices.insOne(peritext.rangeAt(1, 3), 'link', {href: 'example.com'});
+    peritext.refresh();
+    const editor = peritext.editor;
+    const point = peritext.pointAbsStart();
+    expect(point.viewPos()).toBe(0);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(1); // <- before slice start
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(1); // <- after slice start
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(2);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(3);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(4); // <- before slice end
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(4); // <- after slice end
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(5);
+    editor.vstep(point, 1);
+    expect(point.viewPos()).toBe(6);
+    while(!editor.vstep(point, 1));
+    expect(point.isAbsEnd()).toBe(true);
+  });
+});
+
 const runParagraphTests = (setup: () => Kit) => {
   const setupParagraphs = () => {
     const kit = setup();

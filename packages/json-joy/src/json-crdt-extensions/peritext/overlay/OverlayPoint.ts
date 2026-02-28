@@ -1,6 +1,6 @@
 import {Point} from '../rga/Point';
 import {compare} from '../../../json-crdt-patch/clock';
-import {type OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
+import {type OverlayRef, OverlayRefSliceStart, OverlayRefSliceEnd} from './refs';
 import {printTree} from 'tree-dump/lib/printTree';
 import {formatType} from '../slice/util';
 import type {SliceType} from '../slice/types';
