@@ -148,7 +148,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const isAbs = equal(this.rga.id, this.id);
     if (isAbs) return this.anchor === Anchor.After ? 0 : this.rga.length();
     const pos = this.pos();
-    return this.anchor === Anchor.Before ? pos : pos + 1;
+    const idDeleted = this.chunk()?.del;
+    return this.anchor === Anchor.Before ? pos : pos + (idDeleted ? 0 : 1);
   }
 
   /**
@@ -542,7 +543,10 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const id = printTs(this.id);
     let char: string | undefined = this.char()?.view() as string | undefined;
     char = typeof char === 'string' ? JSON.stringify(char) : '▢';
-    const anchor = this.anchor === Anchor.Before ? '.' + char : char + '.';
+    const isTombstone = this.chunk()?.del;
+    const anchor = this.anchor === Anchor.Before
+      ? ('.' + (isTombstone ? '♦ ' : '') + char)
+      : (char + (isTombstone ? ' ♦' : '') + '.');
     return `${name}{ ${pos === Position.AbsEnd ? '∞' : pos}, ${id}, ${anchor} }`;
   }
 }

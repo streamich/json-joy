@@ -382,19 +382,33 @@ describe('.viewPos()', () => {
     const p1Before = peritext.point(chunk1.id, Anchor.Before);
     const p1After = peritext.point(chunk1.id, Anchor.After);
     expect(p1Before.viewPos()).toBe(3);
-    expect(p1After.viewPos()).toBe(4);
+    expect(p1After.viewPos()).toBe(3);
     const p2Before = peritext.point(chunk2.id, Anchor.Before);
     const p2After = peritext.point(chunk2.id, Anchor.After);
     expect(p2Before.viewPos()).toBe(3);
-    expect(p2After.viewPos()).toBe(4);
+    expect(p2After.viewPos()).toBe(3);
     const p4Before = peritext.point(chunk4.id, Anchor.Before);
     const p4After = peritext.point(chunk4.id, Anchor.After);
     expect(p4Before.viewPos()).toBe(7);
-    expect(p4After.viewPos()).toBe(8);
+    expect(p4After.viewPos()).toBe(7);
     const p5Before = peritext.point(chunk5.id, Anchor.Before);
     const p5After = peritext.point(chunk5.id, Anchor.After);
     expect(p5Before.viewPos()).toBe(7);
-    expect(p5After.viewPos()).toBe(8);
+    expect(p5After.viewPos()).toBe(7);
+  });
+
+  test('resolves correctly on deleted characters', () => {
+    const {peritext} = setupWithText();
+    const twoThree = peritext.rangeAt(2, 2);
+    peritext.del(twoThree);
+    expect(peritext.rangeAt(1, 1).start.viewPos()).toBe(1);
+    expect(peritext.rangeAt(1, 1).end.viewPos()).toBe(2);
+    expect(twoThree.start.viewPos()).toBe(2);
+    twoThree.start.anchor = Anchor.After;
+    expect(twoThree.start.viewPos()).toBe(2);
+    expect(twoThree.end.viewPos()).toBe(2);
+    const end2 = twoThree.end.copy(p => p.anchor = Anchor.Before);
+    expect(end2.viewPos()).toBe(2);
   });
 });
 
