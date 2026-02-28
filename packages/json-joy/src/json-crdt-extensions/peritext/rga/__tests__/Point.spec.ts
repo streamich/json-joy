@@ -1020,6 +1020,76 @@ describe('.refAfter()', () => {
   });
 });
 
+describe('.refAfterRaw()', () => {
+  test('stays on same char when already anchored After on visible chunk', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(4, Anchor.After);
+    expect(p.leftChar()!.view()).toBe('5');
+    expect(p.anchor).toBe(Anchor.After);
+    const clone = p.clone();
+    p.refAfterRaw();
+    expect(p.leftChar()!.view()).toBe('5');
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.cmpSpatial(clone)).toBe(0);
+    expect(p.cmp(clone)).toBe(0);
+  });
+
+  test('stays on same char when already anchored After on deleted chunk', () => {
+    const {peritext, chunkD1} = setupWithChunkedText();
+    const p = peritext.point(chunkD1.id, Anchor.After);
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.chunk()!.del).toBe(true);
+    const clone = p.clone();
+    p.refAfterRaw();
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.cmpSpatial(clone)).toBe(0);
+    expect(p.cmp(clone)).toBe(0);
+  });
+
+  test('converts Before to After from deleted chunk', () => {
+    const {peritext, chunkD1, chunk1} = setupWithChunkedText();
+    const pBefore = peritext.point(chunkD1.id, Anchor.Before);
+    expect(pBefore.anchor).toBe(Anchor.Before);
+    pBefore.refAfterRaw();
+    expect(pBefore.anchor).toBe(Anchor.After);
+    // It should now reference the last char of chunk1 (the '3')
+    expect(pBefore.id.sid).toBe(chunk1.id.sid);
+    expect(pBefore.id.time).toBe(chunk1.id.time + chunk1.span - 1);
+    expect(pBefore.leftChar()!.view()).toBe('3');
+  });
+
+  test('converts Before to After without skipping deleted chars (unlike refAfter)', () => {
+    const {peritext, chunkD1, chunk1} = setupWithChunkedText();
+    // chunkD1 is the deleted 'd' between '123' and '456'
+    // Point Before on first char after chunkD1 (the '4')
+    const p1 = peritext.point(chunkD1.id, Anchor.After);
+    p1.refAfterRaw();
+    expect(p1.anchor).toBe(Anchor.After);
+    expect(p1.chunk()!.del).toBe(true);
+    const p2 = peritext.point(chunkD1.id, Anchor.After);
+    p2.refAfter();
+    expect(p2.chunk()!.del).toBe(false);
+  });
+
+  test('should handle absolute end', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAbsEnd();
+    expect(point.anchor).toBe(Anchor.Before);
+    point.refAfterRaw();
+    expect(point.anchor).toBe(Anchor.After);
+  });
+
+  test('handles point at start of string (Before on first chunk)', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(0, Anchor.Before);
+    expect(p.rightChar()!.view()).toBe('1');
+    expect(p.anchor).toBe(Anchor.Before);
+    p.refAfterRaw();
+    expect(p.anchor).toBe(Anchor.After);
+    expect(p.isAbsStart()).toBe(true);
+  });
+});
+
 describe('.refVisible()', () => {
   test('skips deleted chars, attaches to visible char', () => {
     const {peritext} = setupWithChunkedText();

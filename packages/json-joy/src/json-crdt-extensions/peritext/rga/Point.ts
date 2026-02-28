@@ -432,6 +432,25 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   /**
+   * Like {@link Point#refAfter}, but does not skip deleted characters. If the point
+   * already references a character (even a deleted one) and is anchored after
+   * it, it stays as-is. If anchored before, it finds the character to anchor
+   * after at the same spatial position, which may be a deleted character.
+   */
+  public refAfterRaw(): void {
+    const chunk = this.chunk();
+    if (!chunk) {
+      this.refAfter();
+      return;
+    }
+    if (this.anchor === Anchor.After) return;
+    this.anchor = Anchor.After;
+    const rga = this.rga;
+    const prevId = rga.prevId(this.id);
+    this.id = prevId || rga.id;
+  }
+
+  /**
    * Modifies the location of the point, such that the spatial location remains
    * the same and tries to preserve anchor location, but ensures that the point
    * references a visible (not deleted) character.
