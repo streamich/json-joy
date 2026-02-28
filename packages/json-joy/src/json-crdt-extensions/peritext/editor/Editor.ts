@@ -323,12 +323,24 @@ export class Editor<T = string> implements Printable {
     let end: boolean = false;
     LOOP: while (iterations-- && !end) {
       STEP: {
-        const isEdge1 = this.isSliceEdge(point);
+        const isEdge1 = !!this.isSliceEdge(point);
+        const isDeleted = point.deleted();
         end = point.halfstep(direction);
         if (end) break LOOP;
         if (isEdge1) break STEP;
-        const isEdge2 = this.isSliceEdge(point);
-        if (isEdge2) break STEP;
+        const ref2 = this.isSliceEdge(point);
+        if (ref2) {
+          POSITION_INSIDE_EMPTY_FORMATTING: {
+            if (isDeleted) break POSITION_INSIDE_EMPTY_FORMATTING;
+            if (iterations) break POSITION_INSIDE_EMPTY_FORMATTING;
+            if (point.anchor !== Anchor.Before) break POSITION_INSIDE_EMPTY_FORMATTING;
+            if (!(ref2 instanceof OverlayRefSliceEnd)) break POSITION_INSIDE_EMPTY_FORMATTING;
+            if (!ref2.slice.isCollapsed()) break POSITION_INSIDE_EMPTY_FORMATTING;
+            point.refAfterRaw();
+            return false;
+          }
+          break STEP;
+        }
         end = point.halfstep(direction);
         if (end) break LOOP;
       }
@@ -336,11 +348,12 @@ export class Editor<T = string> implements Printable {
     return end;
   }
   
-  private isSliceEdge(point: Point<T>): boolean {
+  private isSliceEdge(point: Point<T>): OverlayRefSliceStart<T> | OverlayRefSliceEnd<T> | undefined {
     const overlayPoint = this.txt.overlay.get(point);
     const firstRef = overlayPoint?.refs[0]; // We only check the first one (heuristic), for performance.
-    if (!(firstRef instanceof OverlayRefSliceStart) && !(firstRef instanceof OverlayRefSliceEnd)) return false;
-    return firstRef.slice.isSaved();
+    if (!(firstRef instanceof OverlayRefSliceStart) && !(firstRef instanceof OverlayRefSliceEnd)) return;
+    const slice = firstRef.slice;
+    return slice.isSaved() ? firstRef : void 0;
   }
 
   /**

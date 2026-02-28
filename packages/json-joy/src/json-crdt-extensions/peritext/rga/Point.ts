@@ -148,8 +148,12 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const isAbs = equal(this.rga.id, this.id);
     if (isAbs) return this.anchor === Anchor.After ? 0 : this.rga.length();
     const pos = this.pos();
-    const idDeleted = this.chunk()?.del;
-    return this.anchor === Anchor.Before ? pos : pos + (idDeleted ? 0 : 1);
+    return this.anchor === Anchor.Before ? pos : pos + (this.deleted() ? 0 : 1);
+  }
+
+  public deleted(): boolean {
+    const chunk = this.chunk();
+    return chunk ? !!chunk.del : false;
   }
 
   /**
