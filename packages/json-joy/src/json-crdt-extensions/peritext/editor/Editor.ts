@@ -11,7 +11,7 @@ import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
-import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s} from '../../../json-crdt-patch';
+import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s, ts} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import {ArrApi} from '../../../json-crdt/model';
 import * as schema from '../slice/schema';
@@ -237,11 +237,42 @@ export class Editor<T = string> implements Printable {
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
    * Then applies any pending inline formatting to the inserted text.
+   * 
+   * @returns Returns an array of timespan structs for the inserted text, one
+   *     per cursor.
    */
   public insert(text: string, ranges?: IterableIterator<Range<T>> | Range<T>[]): ITimespanStruct[] {
     const spans: ITimespanStruct[] = [];
     if (!ranges) {
-      if (!this.hasCursor()) this.addCursor();
+      const cardinality = this.cursorCard();
+      if (!cardinality) this.addCursor();
+      else {
+        if (cardinality === 1) {
+          // Exactly one cursor, try to preserve cursor expressed affinity in
+          // case when the cursor is anchored at character left side.
+          const cursor = this.cursor;
+          const point = cursor.start;
+          if (text && point.anchor === Anchor.Before && (point.cmp(cursor.end) === 0) && !point.isAbs()) {
+            const txt = this.txt;
+            const ref = txt.overlay.get(point)?.refs[0];
+            if (ref instanceof OverlayRefSliceStart && ref.slice.isSaved()) {
+              const api = txt.model.api;
+              const rightChar = point.rightChar()?.view();
+              if (rightChar) {
+                const insertedText = text + rightChar;
+                const builder = api.builder;
+                const strId = txt.str.id;
+                builder.del(strId, [tss(point.id.sid, point.id.time, 1)]);
+                const textId = builder.insStr(strId, point.id, insertedText);
+                api.apply();
+                const span = tss(textId.sid, textId.time, insertedText.length);
+                cursor.set(txt.point(ts(textId.sid, textId.time + insertedText.length - 2), Anchor.After));
+                return [span];
+              }
+            }
+          }
+        }
+      }
       ranges = this.cursors();
     }
     if (!ranges) return [];

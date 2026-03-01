@@ -147,8 +147,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
 
   public readonly insert = ({detail}: CustomEvent<events.InsertDetail>) => {
     const {move, text} = detail;
-    const set = [...this.getSelSet(detail)];
-    if (move) this.moveSelSet(set, detail);
+    let set: events.SelectionSet | undefined;
+    if (move) {
+      set = [...this.getSelSet(detail)];
+      this.moveSelSet(set, detail);
+    }
     this.txt.editor.insert(text, set);
     this.undo?.capture();
   };
