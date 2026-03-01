@@ -586,6 +586,10 @@ export class Editor<T = string> implements Printable {
         const p = point.clone();
         return p.step(steps), p;
       }
+      case 'vchar': {
+        const p = point.clone();
+        return this.vstep(p, steps), p;
+      }
       case 'word': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
         else for (let i = 0; i < -steps; i++) point = this.bow(point);

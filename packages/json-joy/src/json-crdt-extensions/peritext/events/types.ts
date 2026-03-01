@@ -72,6 +72,7 @@ export type SelectionMoveInstruction = [
    * @default 'focus'
    */
   edge: 'start' | 'end' | 'focus' | 'anchor',
+
   /**
    * Absolute position is specified using {@link Position} type. In which case
    * the next `len` field is ignored.
@@ -82,6 +83,10 @@ export type SelectionMoveInstruction = [
    * - `'point'`: Moves by one Peritext anchor point. Each character has two
    *   anchor points, one from each side of the character.
    * - `'char'`: Moves by one character. Skips one visible character.
+   * - `'vchar'`: Similar to 'char', moves by one character at a time, except
+   *   in presence of formatting. At edges of formatting moves 'point' (half-step)
+   *   to express affinity to formatted vs unformatted text. For empty formattings
+   *   also attaches to tombstone characters, which 'char' movement ignores.
    * - `'word'`: Moves by one word. Skips all visible characters until the end
    *   of a word.
    * - `'line'`: Moves to the beginning or end of line. If UI API is provided,
@@ -98,7 +103,8 @@ export type SelectionMoveInstruction = [
    *
    * @todo Introduce 'vline', "visual line" - soft line break.
    */
-  to: Position | 'point' | 'char' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
+  to: Position | 'point' | 'char' | 'vchar' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
+
   /**
    * Specify the length of the movement (the number of steps) in units
    * specified by the `to` field. If not specified, the default value is `0`,
@@ -108,6 +114,7 @@ export type SelectionMoveInstruction = [
    * @default 0
    */
   len?: number,
+
   /**
    * If `true`, the selection will be collapsed to a single point. The other
    * edge of the selection will be moved to the same position as the specified

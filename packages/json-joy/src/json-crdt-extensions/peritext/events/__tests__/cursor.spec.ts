@@ -1,5 +1,6 @@
 import {CursorAnchor} from '../../../../json-crdt-extensions';
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
+import {Anchor} from '../../rga/constants';
 import {PeritextEventDefaults} from '../defaults/PeritextEventDefaults';
 import {PeritextEventTarget} from '../PeritextEventTarget';
 
@@ -462,6 +463,80 @@ const testSuite = (getKit: () => Kit) => {
         });
         expect(kit.editor.cursor.text()).toBe('cd');
       });
+    });
+  });
+
+  describe('"vchar" unit moves', () => {
+    test('can move over (bounded, un-bounded) inline formatting edges left-to-right', () => {
+      //     4  4.1  8   8.1
+      //     |  |    |   |  
+      // abcd.  .efgh.   .ijklmnopqrstuvwxyz
+      //        |        |
+      //        .--bold--.
+      //        |        |
+      //        bound    |
+      //                 un-bound
+
+      const kit = setup();
+      kit.et.cursor({at: [4, 8]});
+      kit.peritext.refresh();
+      kit.et.format('ins', 'bold');
+      kit.peritext.refresh();
+      kit.et.cursor({at: [2]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+      expect(kit.editor.cursor.start.viewPos()).toBe(3);
+
+      // Bold formatting begins at position 4, after character 'd', so in the
+      // gap between 'd' and 'e' we spend two "vchar" steps - one to move the
+      // cursor into the formatting, and one to move it over 'e'.
+
+      // Before formatting, attachment = "d".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+      expect(kit.editor.cursor.start.viewPos()).toBe(4);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // Inside the formatting (but before 'e'), attachment = ."e":
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+      expect(kit.editor.cursor.start.viewPos()).toBe(4);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Past formatting, attachment = "e".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+      expect(kit.editor.cursor.start.viewPos()).toBe(5);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      kit.et.cursor({move: [['focus', 'vchar', 2, true]]});
+      kit.peritext.refresh();
+
+      // Before formatting end, attachment = "h".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('h');
+      expect(kit.editor.cursor.start.viewPos()).toBe(8);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // After formatting end, attachment = ."i":
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('h');
+      expect(kit.editor.cursor.start.viewPos()).toBe(8);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('i');
+      expect(kit.editor.cursor.start.viewPos()).toBe(9);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
     });
   });
 };

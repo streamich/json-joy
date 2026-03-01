@@ -195,7 +195,7 @@ export class CursorController implements UiLifeCycles, Printable {
         if (event.metaKey) et.move('focus', 'line', direction, !event.shiftKey);
         else if (event.altKey && event.ctrlKey) et.move('focus', 'point', direction, !event.shiftKey);
         else if (event.altKey || event.ctrlKey) et.move('focus', 'word', direction, !event.shiftKey);
-        else et.move('focus', unit(event) || 'char', direction, !event.shiftKey);
+        else et.move('focus', unit(event) || 'vchar', direction, !event.shiftKey);
         break;
       }
       case 'Home':

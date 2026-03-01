@@ -1,6 +1,9 @@
 import * as React from 'react';
-import {PeritextEditor} from '.';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
+import {PeritextEditor} from '.';
+import {DebugPlugin} from '../PeritextWebUi/plugins/debug';
+
+const plugins0 = [new DebugPlugin()];
 
 export default {
   component: PeritextEditor,
@@ -42,6 +45,7 @@ const Demo: React.FC = (props) => {
   return (
     <PeritextEditor
       peritext={peritext}
+      plugins0={plugins0}
       onStart={(state) => {
         state.events.et.buffer({
           action: 'paste',

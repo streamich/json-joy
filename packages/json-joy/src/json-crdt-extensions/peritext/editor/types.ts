@@ -11,7 +11,7 @@ export type CharPredicate<T> = (char: T) => boolean;
 export type EditorPosition<T = string> = Point<T> | number | [at: number, anchor: 0 | 1];
 export type EditorSelection<T = string> = Range<T> | [start: EditorPosition<T>, end?: EditorPosition<T>];
 
-export type TextRangeUnit = 'point' | 'char' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all';
+export type TextRangeUnit = 'point' | 'char' | 'vchar' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all';
 
 /**
  * Represents an exported view of any selected range (fragment) of the document.
