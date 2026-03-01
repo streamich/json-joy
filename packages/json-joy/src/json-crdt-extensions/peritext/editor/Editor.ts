@@ -312,6 +312,12 @@ export class Editor<T = string> implements Printable {
    * at half-step intervals, allowing the point to be attached to either side of
    * the formatting boundary, i.e. express affinity to either the formatted or
    * unformatted text when moving across a formatting boundary.
+   * 
+   * Also, vstep allows to move the point inside empty inline elements, which is
+   * not possible with step, as there are no visible characters to step on.
+   * 
+   * It also considers a move of a deleted character to a visible character as
+   * a distinct step, even though their spatial positions are the same.
    *
    * @param length How many characters to move by. Positive number moves the
    *     point to the right, negative number moves the point to the left.
@@ -323,19 +329,35 @@ export class Editor<T = string> implements Printable {
     let end: boolean = false;
     LOOP: while (iterations-- && !end) {
       STEP: {
-        const isEdge1 = !!this.isSliceEdge(point);
-        const isDeleted = point.deleted();
+        const ref1 = this.isSliceEdge(point);
+        // If anchored to deleted character, our step is to move off to a visible character.
+        if (point.deleted()) {
+          if (direction > 0) point.refBefore(); else point.refAfter();
+          end = point.isAbs();
+          break STEP;
+        }
+        const doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge =
+          iterations === 0 &&
+          (direction === -1 && (point.anchor === Anchor.Before)) &&
+          ref1 instanceof OverlayRefSliceEnd &&
+          (ref1.slice.start.cmp(ref1.slice.end) !== 0) &&
+          ref1.slice.isCollapsed();
+        if (doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge) {
+          point.refAfterRaw();
+          return false;
+        }
         end = point.halfstep(direction);
         if (end) break LOOP;
-        if (isEdge1) break STEP;
+        if (!!ref1) break STEP;
         const ref2 = this.isSliceEdge(point);
         if (ref2) {
-          POSITION_INSIDE_EMPTY_FORMATTING: {
-            if (isDeleted) break POSITION_INSIDE_EMPTY_FORMATTING;
-            if (iterations) break POSITION_INSIDE_EMPTY_FORMATTING;
-            if (point.anchor !== Anchor.Before) break POSITION_INSIDE_EMPTY_FORMATTING;
-            if (!(ref2 instanceof OverlayRefSliceEnd)) break POSITION_INSIDE_EMPTY_FORMATTING;
-            if (!ref2.slice.isCollapsed()) break POSITION_INSIDE_EMPTY_FORMATTING;
+          const doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge =
+            iterations === 0 &&
+            (direction === 1 && (point.anchor === Anchor.Before)) &&
+            ref2 instanceof OverlayRefSliceEnd &&
+            (ref2.slice.start.cmp(ref2.slice.end) !== 0) &&
+            ref2.slice.isCollapsed();
+          if (doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge) {
             point.refAfterRaw();
             return false;
           }

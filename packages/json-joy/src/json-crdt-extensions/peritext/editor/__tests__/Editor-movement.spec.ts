@@ -720,6 +720,40 @@ describe('.vstep()', () => {
     editor.vstep(point, 1);
     expect(point.viewPos()).toBe(4); // <- end of text reached
   });
+
+  test('enters inside empty <code> inline element (right-to-left)', () => {
+    const {peritext} = setupWithChunkedText();
+    const range = peritext.rangeAt(1, 5);
+    range.end.refBefore();
+    peritext.savedSlices.insOne(range, 'code', {});
+    peritext.refresh();
+    range.end.refAfter();
+    peritext.delStr(range);
+    peritext.refresh();
+    const editor = peritext.editor;
+    const point = peritext.pointAt(2);
+    expect(point.viewPos()).toBe(2);
+    editor.vstep(point, -1);
+    const p1 = point.clone();
+    expect(point.viewPos()).toBe(1); // <- <code></code> <cursor/> text
+    expect(point.deleted()).toBe(false);
+    expect(point.anchor).toBe(Anchor.Before);
+    editor.vstep(point, -1);
+    const p2 = point.clone();
+    expect(point.viewPos()).toBe(1);  // <- <code><cursor/></code> text
+    expect(point.deleted()).toBe(true);
+    expect(point.anchor).toBe(Anchor.After);
+    editor.vstep(point, -1);
+    const p3 = point.clone();
+    expect(point.viewPos()).toBe(1);  // <- <cursor/> <code></code> text
+    expect(point.deleted()).toBe(false);
+    expect(point.anchor).toBe(Anchor.After);
+    for (let i = 0; i < 5; i++) {
+      editor.vstep(point, -1);
+      expect(point.viewPos()).toBe(0);
+      expect(point.deleted()).toBe(false);
+    }
+  });
 });
 
 const runParagraphTests = (setup: () => Kit) => {
