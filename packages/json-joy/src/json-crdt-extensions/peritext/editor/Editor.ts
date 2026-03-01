@@ -329,13 +329,13 @@ export class Editor<T = string> implements Printable {
     let end: boolean = false;
     LOOP: while (iterations-- && !end) {
       STEP: {
-        const ref1 = this.isSliceEdge(point);
         // If anchored to deleted character, our step is to move off to a visible character.
         if (point.deleted()) {
           if (direction > 0) point.refBefore(); else point.refAfter();
           end = point.isAbs();
           break STEP;
         }
+        const ref1 = this.isSliceEdge(point);
         const doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge =
           iterations === 0 &&
           (direction === -1 && (point.anchor === Anchor.Before)) &&
@@ -348,7 +348,7 @@ export class Editor<T = string> implements Printable {
         }
         end = point.halfstep(direction);
         if (end) break LOOP;
-        if (!!ref1) break STEP;
+        if (ref1) break STEP;
         const ref2 = this.isSliceEdge(point);
         if (ref2) {
           const doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge =
@@ -365,6 +365,12 @@ export class Editor<T = string> implements Printable {
         }
         end = point.halfstep(direction);
         if (end) break LOOP;
+        const ref3 = this.isSliceEdge(point);
+        if (ref3) {
+          const pointIsLastAnchorInSliceBoundary = direction > 0
+            ? point.anchor === Anchor.Before : point.anchor === Anchor.After;
+          if (pointIsLastAnchorInSliceBoundary) point.halfstep(-direction);
+        }
       }
     }
     return end;

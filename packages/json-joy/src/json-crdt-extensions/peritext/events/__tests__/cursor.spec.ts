@@ -468,14 +468,14 @@ const testSuite = (getKit: () => Kit) => {
 
   describe('"vchar" unit moves', () => {
     test('can move over (bounded, un-bounded) inline formatting edges left-to-right', () => {
-      //     4  4.1  8   8.1
-      //     |  |    |   |  
-      // abcd.  .efgh.   .ijklmnopqrstuvwxyz
-      //        |        |
-      //        .--bold--.
-      //        |        |
-      //        bound    |
-      //                 un-bound
+      //       4   4.1    8   8.1
+      //       |   |      |   |  
+      // "abcd".   ."efgh".   ."ijklmnopqrstuvwxyz"
+      //           |          |
+      //           | - bold - |
+      //           |          |
+      //           bound      |
+      //                      un-bound
 
       const kit = setup();
       kit.et.cursor({at: [4, 8]});
@@ -537,6 +537,212 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.editor.cursor.start.leftChar()?.view()).toBe('i');
       expect(kit.editor.cursor.start.viewPos()).toBe(9);
       expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    });
+
+    test('can move over (bounded, un-bounded) inline formatting edges right-to-left', () => {
+      //        5   5.1     10  10.1
+      //        |   |       |   |  
+      // "abcde".   ."fghij".   ."klmnopqrstuvwxyz"
+      //            |           |
+      //            |           |
+      //            bound       |
+      //                        un-bound
+
+      const kit = setup();
+      kit.et.cursor({at: [5, 10]});
+      kit.peritext.refresh();
+      kit.et.format('ins', 'bold');
+      kit.peritext.refresh();
+      kit.et.cursor({at: [11]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('k');
+      expect(kit.editor.cursor.start.viewPos()).toBe(11);
+
+      // Before formatting, attachment = ."k":
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('j');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Inside the formatting, attachment = "j".:
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('j');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // Past formatting, attachment = "i".:
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('i');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      kit.et.cursor({move: [['focus', 'vchar', -3, true]]});
+      kit.peritext.refresh();
+
+      // Inside formatting, attachment = ."f":
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Before formatting, attachment = "e".:
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view() || '').toBe('');
+    });
+
+    test('can move over (un-bounded, bounded) inline formatting edges left-to-right', () => {
+      //      3    3.1   6    6.1
+      //      |    |     |    |  
+      // "abc".    ."def".    ."ghijklmnopqrstuvwxyz"
+      //      |          |
+      //      | - bold - |
+      //      |          |
+      //      un-bound   |
+      //                 bound
+
+      const kit = setup();
+      const range = kit.peritext.range(kit.peritext.pointAt(2, Anchor.After)!, kit.peritext.pointAt(5, Anchor.After)!);
+      kit.peritext.savedSlices.insOne(range, 'bold');
+      kit.peritext.refresh();
+      kit.et.cursor({at: [1]});
+      kit.peritext.refresh();
+
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+
+      // Before formatting, attachment = "c".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+      expect(kit.editor.cursor.start.viewPos()).toBe(3);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // Inside formatting, attachment = ."d":
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+      expect(kit.editor.cursor.start.viewPos()).toBe(3);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Step over 'd', inside bold:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+      expect(kit.editor.cursor.start.viewPos()).toBe(4);
+
+      // Step over 'e', inside bold:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+      expect(kit.editor.cursor.start.viewPos()).toBe(5);
+
+      // Step to the bounded end edge, attachment = "f".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('f');
+      expect(kit.editor.cursor.start.viewPos()).toBe(6);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // Step outside of formatting, attachment = ."g":
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('f');
+      expect(kit.editor.cursor.start.viewPos()).toBe(6);
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Past bold, normal stepping:
+      for (let i = 0; i < 10; i++) {
+        kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+        kit.peritext.refresh();
+        expect(kit.editor.cursor.start.viewPos()).toBe(i + 7);
+      }
+    });
+
+    test('can move over (un-bounded, bounded) inline formatting edges right-to-left', () => {
+      //      3    3.1   6    6.1
+      //      |    |     |    |  
+      // "abc".    ."def".    ."ghijklmnopqrstuvwxyz"
+      //      |          |
+      //      |<- bold ->|
+      //      |          |
+      //      un-bound   |
+      //                 bound
+
+      const kit = setup();
+      const range = kit.peritext.range(kit.peritext.pointAt(2, Anchor.After)!, kit.peritext.pointAt(5, Anchor.After)!);
+      kit.peritext.savedSlices.insOne(range, 'bold');
+      kit.peritext.refresh();
+      kit.et.cursor({at: [8]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('h');
+      expect(kit.editor.cursor.start.viewPos()).toBe(8);
+
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('g');
+
+      // Before formatting, attachment = ."g":
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('f');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Entering formatting, attachment = "f".:
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('f');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // Move inside bold
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+
+      // Step to un-bounded start edge, attachment = ."d":
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+
+      // Move outside of formatting, attachment = "c".:
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('c');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+
+      // Past bold, normal steps:
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
+      kit.et.cursor({move: [['focus', 'vchar', -1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view() || '').toBe('');
     });
   });
 };
