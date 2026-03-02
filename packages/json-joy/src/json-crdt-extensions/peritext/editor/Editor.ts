@@ -366,6 +366,7 @@ export class Editor<T = string> implements Printable {
           end = point.isAbs();
           break STEP;
         }
+        const layer1: Slice<T> | undefined = this.getFirstSavedLayer(point);
         const ref1 = this.isSliceEdge(point);
         const doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge =
           iterations === 0 &&
@@ -380,6 +381,8 @@ export class Editor<T = string> implements Printable {
         end = point.halfstep(direction);
         if (end) break LOOP;
         if (ref1) break STEP;
+        const layer2: Slice<T> | undefined = this.getFirstSavedLayer(point);
+        if (layer1 !== layer2) break STEP;
         const ref2 = this.isSliceEdge(point);
         if (ref2) {
           const doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge =
@@ -405,6 +408,18 @@ export class Editor<T = string> implements Printable {
       }
     }
     return end;
+  }
+
+  private getFirstSavedLayer(point: Point<T>): Slice<T> | undefined {
+    const overlayPoint = this.txt.overlay.getOrNextLower(point);
+    if (!overlayPoint) return;
+    const layers = overlayPoint.layers;
+    const length = layers.length;
+    for (let i = 0; i < length; i++) {
+      const slice = layers[i];
+      if (slice.isSaved()) return slice;
+    }
+    return;
   }
   
   private isSliceEdge(point: Point<T>): OverlayRefSliceStart<T> | OverlayRefSliceEnd<T> | undefined {

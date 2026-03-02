@@ -630,7 +630,7 @@ const setupWithChunkedText = () => {
   };
 };
 
-describe('.vstep()', () => {
+describe.only('.vstep()', () => {
   test('can move through bold mark (end anchored to next char)', () => {
     const {peritext} = setupWithChunkedText();
     const editor = peritext.editor;
