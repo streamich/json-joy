@@ -376,6 +376,8 @@ export class ToolbarState implements UiLifeCycles {
             {
               name: 'Code',
               icon: () => <CodeIcon width={16} height={16} />,
+              right: () => <Sidetip small>⌘ E</Sidetip>,
+              keys: ['⌘', 'e'],
               onSelect: () => {
                 et.format('tog', CommonSliceType.code);
               },

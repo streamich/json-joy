@@ -28,6 +28,10 @@ export class RichTextController implements UiLifeCycles {
             event.preventDefault();
             et.format('tog', CommonSliceType.u);
             return;
+          case 'e':
+            event.preventDefault();
+            et.format('tog', CommonSliceType.code);
+            return;
         }
       }
       if (event.metaKey && event.shiftKey) {
