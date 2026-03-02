@@ -252,10 +252,19 @@ export class Editor<T = string> implements Printable {
           // case when the cursor is anchored at character left side.
           const cursor = this.cursor;
           const point = cursor.start;
-          if (text && point.anchor === Anchor.Before && (point.cmp(cursor.end) === 0) && !point.isAbs()) {
+          if (text && (point.anchor === Anchor.Before) && (point.cmp(cursor.end) === 0) && !point.isAbs()) {
             const txt = this.txt;
             const ref = txt.overlay.get(point)?.refs[0];
+            let gravitateRightOnInsert = false;
             if (ref instanceof OverlayRefSliceStart && ref.slice.isSaved()) {
+              gravitateRightOnInsert = true;
+            } else {
+              const layer1 = this.getFirstSavedLayer(point);
+              const prevHalfPoint = point.copy(p => p.halfstep(-1));
+              const layer2 = this.getFirstSavedLayer(prevHalfPoint);
+              gravitateRightOnInsert = layer1 !== layer2;
+            }
+            if (gravitateRightOnInsert) {
               const api = txt.model.api;
               const rightChar = point.rightChar()?.view();
               if (rightChar) {
