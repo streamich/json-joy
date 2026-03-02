@@ -403,7 +403,16 @@ export class Editor<T = string> implements Printable {
         if (ref3) {
           const pointIsLastAnchorInSliceBoundary = direction > 0
             ? point.anchor === Anchor.Before : point.anchor === Anchor.After;
-          if (pointIsLastAnchorInSliceBoundary) point.halfstep(-direction);
+          if (pointIsLastAnchorInSliceBoundary) {
+            point.halfstep(-direction);
+            break STEP;
+          }
+        } else {
+          const layer3: Slice<T> | undefined = this.getFirstSavedLayer(point);
+          if (layer2 !== layer3) {
+            point.halfstep(-direction);
+            break STEP;
+          }
         }
       }
     }

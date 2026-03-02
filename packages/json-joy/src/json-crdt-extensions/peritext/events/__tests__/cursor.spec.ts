@@ -539,6 +539,59 @@ const testSuite = (getKit: () => Kit) => {
       expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
     });
 
+    test('can move over (bounded, un-bounded) inline formatting edges left-to-right with tombstones', () => {
+      //                4
+      //     2      2.1 |        4.1
+      //     |      |   |        |  
+      // "ab".   .⛼ ."d".     .⛼ ."fghijklmnopqrstuvwxyz"
+      //         |            |
+      //         |  - bold -  |
+      //         |            |
+      //         bound        |
+      //                      un-bound
+
+      const kit = setup();
+      kit.et.cursor({at: [2, 4]});
+      kit.peritext.refresh();
+      kit.et.format('ins', 'bold');
+      kit.peritext.refresh();
+      kit.et.cursor({at: [2, 3]});
+      kit.peritext.refresh();
+      kit.editor.delRange(kit.editor.cursor);
+      kit.peritext.refresh();
+      kit.et.cursor({at: [3, 4]});
+      kit.peritext.refresh();
+      kit.editor.delRange(kit.editor.cursor);
+      kit.editor.delCursors();
+      kit.peritext.refresh();
+      kit.et.cursor({at: [1]});
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
+      
+      // Before formatting, attachment = "b".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+      
+      // Inside the formatting (but before 'd'), attachment = ."d":
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+      
+      // Before formatting end, attachment = "d".:
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+      
+      // After formatting end, attachment = ."f":
+      kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+      kit.peritext.refresh();
+      expect(kit.editor.cursor.start.leftChar()?.view()).toBe('d');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+    });
+
     test('can move over (bounded, un-bounded) inline formatting edges right-to-left', () => {
       //        5   5.1     10  10.1
       //        |   |       |   |  
@@ -629,6 +682,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
       kit.peritext.refresh();
       expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+      expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
 
       // Before formatting, attachment = "c".:
       kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
