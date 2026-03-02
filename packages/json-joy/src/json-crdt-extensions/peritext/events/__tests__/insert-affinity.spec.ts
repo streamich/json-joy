@@ -1,5 +1,4 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
-import {view1} from '../../editor/__tests__/fixtures';
 import {Anchor} from '../../rga/constants';
 import {SliceTypeCon} from '../../slice/constants';
 import {PeritextEventDefaults} from '../defaults/PeritextEventDefaults';
@@ -90,6 +89,95 @@ const testSuite = (getKit: () => Kit) => {
     expect(slices2.size).toBe(1);
     const slice = slices2.values().next().value;
     expect(slice?.type()).toBe(SliceTypeCon.b);
+
+    // Cursor appears after the newly inserted text
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('y');
+  });
+
+  test('can insert with different affinity at bold end', async () => {
+    const kit = setup();
+    kit.et.cursor({at: [10, 13]}); // "klm"
+    kit.peritext.refresh();
+    kit.et.format('ins', 'BOLD');
+    kit.editor.delCursors();
+    kit.peritext.refresh();
+    kit.et.cursor({at: [12]});
+    kit.editor.cursor.collapseToStart();
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('l');
+    
+    // Insert "x" after "m", bold, gravitates to the left.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('m');
+    kit.et.insert('x');
+    kit.peritext.refresh();
+    const range = kit.peritext.rangeAt(13, 1);
+    expect(range.text()).toBe('x');
+    const slices = kit.peritext.overlay.findOverlapping(range);
+    expect(slices.size).toBe(1);
+    const slice = slices.values().next().value;
+    expect(slice?.type()).toBe('BOLD');
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
+    
+    // Insert "y" half-point to right, now bold, gravitates to the right.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
+    kit.et.insert('y');
+    kit.peritext.refresh();
+    const range2 = kit.peritext.rangeAt(14, 1);
+    expect(range2.text()).toBe('y');
+    const slices2 = kit.peritext.overlay.findOverlapping(range2);
+    expect(slices2.size).toBe(0);
+
+    // Cursor appears after the newly inserted text
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('y');
+  });
+
+  test('can insert with different affinity at bold end (tombstone)', async () => {
+    const kit = setup();
+    kit.et.cursor({at: [10, 13]}); // "klm"
+    kit.peritext.refresh();
+    kit.et.format('ins', 'BOLD');
+    kit.editor.delCursors();
+    kit.peritext.refresh();
+    kit.et.cursor({at: [13, 14]}); // Creates tombstone out of "n"
+    kit.editor.del();
+    kit.peritext.refresh();
+    kit.et.cursor({at: [12]});
+    kit.editor.cursor.collapseToStart();
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('l');
+    
+    // Insert "x" after "m", bold, gravitates to the left.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('m');
+    kit.et.insert('x');
+    kit.peritext.refresh();
+    const range = kit.peritext.rangeAt(13, 1);
+    expect(range.text()).toBe('x');
+    const slices = kit.peritext.overlay.findOverlapping(range);
+    expect(slices.size).toBe(1);
+    const slice = slices.values().next().value;
+    expect(slice?.type()).toBe('BOLD');
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
+    
+    // Insert "y" half-point to right, now bold, gravitates to the right.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
+    kit.et.insert('y');
+    kit.peritext.refresh();
+    const range2 = kit.peritext.rangeAt(14, 1);
+    expect(range2.text()).toBe('y');
+    const slices2 = kit.peritext.overlay.findOverlapping(range2);
+    expect(slices2.size).toBe(0);
 
     // Cursor appears after the newly inserted text
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('y');
