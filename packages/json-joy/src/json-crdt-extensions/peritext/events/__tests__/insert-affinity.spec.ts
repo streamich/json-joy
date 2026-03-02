@@ -182,6 +182,62 @@ const testSuite = (getKit: () => Kit) => {
     // Cursor appears after the newly inserted text
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('y');
   });
+
+  test('can insert at different affinities in empty <code>', async () => {
+    const kit = setup();
+    kit.et.cursor({at: [2, 1]}); // <code>"b"</code>
+    kit.peritext.refresh();
+    kit.et.format('ins', 'code');
+    kit.editor.delCursors();
+    kit.peritext.refresh();
+    kit.et.cursor({at: [2]}); // Delete "b", creating empty <code></code> slice.
+    kit.editor.del();
+    kit.peritext.refresh();
+    kit.editor.delCursors();
+    kit.et.cursor({at: [0]});
+    kit.editor.cursor.collapseToStart();
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.rightChar()?.view()).toBe('a');
+    
+    // Insert "x" before <code></code>, not code, gravitates to the left.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
+    kit.et.insert('x');
+    kit.peritext.refresh();
+    const range = kit.peritext.rangeAt(1, 1);
+    expect(range.text()).toBe('x');
+    const slices = kit.peritext.overlay.findOverlapping(range);
+    expect(slices.size).toBe(0);
+    
+    // Insert "y" inside <code></code>, gravitates to the inside.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
+    kit.et.insert('y');
+    kit.peritext.refresh();
+    const range2 = kit.peritext.rangeAt(2, 1);
+    expect(range2.text()).toBe('y');
+    const slices2 = kit.peritext.overlay.findOverlapping(range2);
+    expect(slices2.size).toBe(1);
+    const slice2 = slices2.values().next().value;
+    expect(slice2?.type()).toBe('code');
+    
+    // Insert "z" after <code></code>.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('y');
+    expect(kit.editor.cursor.start.rightChar()?.view()).toBe('c');
+    kit.et.insert('z');
+    kit.peritext.refresh();
+    const range3 = kit.peritext.rangeAt(3, 1);
+    expect(range3.text()).toBe('z');
+    const slices3 = kit.peritext.overlay.findOverlapping(range3);
+    expect(slices3.size).toBe(0);
+
+    // Cursor appears after the newly inserted text
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('z');
+  });
 };
 
 describe('"insert" event', () => {

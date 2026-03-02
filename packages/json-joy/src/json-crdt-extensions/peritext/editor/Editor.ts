@@ -247,38 +247,49 @@ export class Editor<T = string> implements Printable {
       const cardinality = this.cursorCard();
       if (!cardinality) this.addCursor();
       else {
-        if (cardinality === 1) {
-          // Exactly one cursor, try to preserve cursor expressed affinity in
-          // case when the cursor is anchored at character left side.
+        AFFINITY_BASED_INSERT: {
+          if (!text || cardinality !== 1) break AFFINITY_BASED_INSERT;
           const cursor = this.cursor;
           const point = cursor.start;
-          if (text && (point.anchor === Anchor.Before) && (point.cmp(cursor.end) === 0) && !point.isAbs()) {
-            const txt = this.txt;
+          if ((point.cmp(cursor.end) !== 0) || point.isAbs()) break AFFINITY_BASED_INSERT;
+          const txt = this.txt;
+          FORWARD_AFFINITY: {
+            if (point.anchor !== Anchor.Before) break FORWARD_AFFINITY;
             const ref = txt.overlay.get(point)?.refs[0];
-            let gravitateRightOnInsert = false;
+            let fwdAffinity = false;
             if (ref instanceof OverlayRefSliceStart && ref.slice.isSaved()) {
-              gravitateRightOnInsert = true;
+              fwdAffinity = true;
             } else {
               const layer1 = this.getFirstSavedLayer(point);
               const prevHalfPoint = point.copy(p => p.halfstep(-1));
               const layer2 = this.getFirstSavedLayer(prevHalfPoint);
-              gravitateRightOnInsert = layer1 !== layer2;
+              fwdAffinity = layer1 !== layer2;
             }
-            if (gravitateRightOnInsert) {
-              const api = txt.model.api;
-              const rightChar = point.rightChar()?.view();
-              if (rightChar) {
-                const insertedText = text + rightChar;
-                const builder = api.builder;
-                const strId = txt.str.id;
-                builder.del(strId, [tss(point.id.sid, point.id.time, 1)]);
-                const textId = builder.insStr(strId, point.id, insertedText);
-                api.apply();
-                const span = tss(textId.sid, textId.time, insertedText.length);
-                cursor.set(txt.point(ts(textId.sid, textId.time + insertedText.length - 2), Anchor.After));
-                return [span];
-              }
-            }
+            if (!fwdAffinity) break AFFINITY_BASED_INSERT;
+            const rightChar = point.rightChar()?.view();
+            if (!rightChar) break AFFINITY_BASED_INSERT;
+            const api = txt.model.api;
+            const insertedText = text + rightChar;
+            const builder = api.builder;
+            const strId = txt.str.id;
+            builder.del(strId, [tss(point.id.sid, point.id.time, 1)]);
+            const textId = builder.insStr(strId, point.id, insertedText);
+            api.apply();
+            const span = tss(textId.sid, textId.time, insertedText.length);
+            cursor.set(txt.point(ts(textId.sid, textId.time + insertedText.length - 2), Anchor.After));
+            return [span];
+          }
+          IN_THE_MIDDLE_AFFINITY: { // Inserting in the middle of empty <code></code>
+            if (point.anchor !== Anchor.After) break IN_THE_MIDDLE_AFFINITY;
+            const pointIsTombstone = point.chunk()?.del === true;
+            if (!pointIsTombstone) break IN_THE_MIDDLE_AFFINITY;
+            const api = txt.model.api;
+            const builder = api.builder;
+            const {sid, time} = builder.insStr(txt.str.id, point.id, text);
+            api.apply();
+            const span = tss(sid, time, text.length);
+            cursor.set(txt.point(ts(span.sid, span.time + span.span - 1), Anchor.After));
+            return [span];
           }
         }
       }
