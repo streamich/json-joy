@@ -58,6 +58,8 @@ const runFindContainedTests = (setup: () => Kit) => {
 
     test('returns a single contained slice', () => {
       const {peritext, editor} = setup();
+      editor.cursor.setAt(3, 6);
+      editor.saved.insStack('bold');
       editor.cursor.setAt(3, 2);
       editor.saved.insStack('em');
       editor.cursor.setAt(0);
@@ -134,6 +136,87 @@ const runFindContainedTests = (setup: () => Kit) => {
       expect([...slices1][0].type()).toBe('a1');
       expect([...slices1][1].type()).toBe('a2');
       expect([...slices2][0].type()).toBe('a2');
+    });
+  });
+
+  describe('.findFirstContained()', () => {
+    test('returns empty by default', () => {
+      const {peritext} = setup();
+      peritext.overlay.refresh();
+      const slice = peritext.overlay.findFirstContained(peritext.rangeAt(3, 4));
+      expect(slice).toBe(undefined);
+    });
+
+    test('returns a single contained slice', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(3, 6);
+      editor.saved.insStack('bold');
+      editor.cursor.setAt(3, 2);
+      editor.saved.insStack('em');
+      editor.cursor.setAt(0);
+      peritext.overlay.refresh();
+      const slice = peritext.overlay.findFirstContained(peritext.rangeAt(3, 4));
+      expect(slice?.type()).toBe('em');
+    });
+
+    test('returns the first slice', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(3, 1);
+      editor.saved.insStack('em');
+      editor.cursor.setAt(5, 2);
+      editor.saved.insStack('bold');
+      editor.cursor.setAt(0);
+      peritext.overlay.refresh();
+      const slice = peritext.overlay.findFirstContained(peritext.rangeAt(2, 8));
+      expect(slice?.type()).toBe('em');
+    });
+
+    test('does not return overlapping slice', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(3, 4);
+      editor.saved.insStack('em');
+      editor.cursor.setAt(5, 2);
+      editor.saved.insStack('bold');
+      editor.cursor.setAt(0);
+      peritext.overlay.refresh();
+      const slice = peritext.overlay.findFirstContained(peritext.rangeAt(4, 8));
+      expect(slice?.type()).toBe('bold');
+    });
+
+    test('returns split blocks', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(8);
+      editor.saved.insMarker('p');
+      editor.cursor.setAt(0);
+      peritext.overlay.refresh();
+      const slice = peritext.overlay.findFirstContained(peritext.rangeAt(4, 8));
+      expect(slice?.type()).toBe('p');
+    });
+
+    test('returns split blocks, can opt out of block splits', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(8);
+      editor.saved.insMarker('p');
+      editor.cursor.setAt(0);
+      peritext.overlay.refresh();
+      const slice = peritext.overlay.findFirstContained(peritext.rangeAt(4, 8), false, true);
+      expect(slice).toBe(undefined);
+    });
+
+    test('exclusive range', () => {
+      const {peritext, editor} = setup();
+      const range1 = peritext.range(peritext.pointAt(1, Anchor.After), peritext.pointAt(4, Anchor.Before));
+      const range2 = peritext.range(peritext.pointAt(2, Anchor.Before), peritext.pointAt(3, Anchor.After));
+      editor.cursor.setRange(range1);
+      editor.saved.insStack('a1');
+      editor.cursor.setRange(range2);
+      editor.saved.insStack('a2');
+      editor.delCursors();
+      peritext.overlay.refresh();
+      const slice1 = peritext.overlay.findFirstContained(range1);
+      const slice2 = peritext.overlay.findFirstContained(range1, true); // exclusive
+      expect(slice1?.type()).toBe('a1');
+      expect(slice2?.type()).toBe('a2');
     });
   });
 };

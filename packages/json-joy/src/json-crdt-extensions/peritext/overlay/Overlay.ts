@@ -10,6 +10,7 @@ import {CONST, updateNum} from '../../../json-hash/hash';
 import {Slice} from '../slice/Slice';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
 import {SliceStacking} from '../slice/constants';
+import {OverlayRefSliceStart} from './refs';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
@@ -418,26 +419,68 @@ export class Overlay<T = string> implements Printable, Stateful {
    * inclusive (uses {@link Range#contains} method to check containment).
    *
    * @param range The range to search for contained slices.
+   * @param exclusive If true, the range is considered exclusive, meaning that
+   *     points that are exactly at the start or end of the range are not
+   *     considered contained.
+   * @param skipMarkers If true, marker points are not included in the result.
    * @returns A set of slices that are contained within the given range.
    */
-  public findContained(range: Range<T>, exclusive?: boolean): Set<Slice<T>> {
+  public findContained(range: Range<T>, exclusive?: boolean, skipMarkers?: boolean): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
     let point = this.getOrNextLower(range.start) ?? this.first();
     if (!point) return result;
     do {
       if (!range.containsPoint(point, exclusive)) continue;
-      const slices = point.layers;
-      const length = slices.length;
-      for (let i = 0; i < length; i++) {
-        const slice = slices[i];
-        if (!result.has(slice) && range.contains(slice, exclusive)) result.add(slice);
-      }
-      if (point instanceof OverlayPoint && point.isMarker()) {
+      if (point.isMarker()) {
+        if (skipMarkers) continue;
         const marker = point.markers[0];
         if (marker && !result.has(marker) && range.contains(marker, exclusive)) result.add(marker);
+      } else {
+        const refs = point.refs;
+        const length = refs.length;
+        for (let i = 0; i < length; i++) {
+          const ref = refs[i];
+          if (ref instanceof OverlayRefSliceStart) {
+            const slice = ref.slice;
+            if (!result.has(slice) && range.containsPoint(slice.end, exclusive)) result.add(slice);
+          }
+        }
       }
     } while (point && (point = next(point)) && range.containsPoint(point, exclusive));
     return result;
+  }
+
+  /**
+   * @param range The range to search for contained slices.
+   * @param exclusive If true, the range is considered exclusive, meaning that
+   *     points that are exactly at the start or end of the range are not
+   *     considered contained.
+   * @param skipMarkers If true, marker points are not included in the result.
+   * @returns The first slice that is contained within the given range, or
+   *     undefined if no slice is found.
+   */
+  public findFirstContained(range: Range<T>, exclusive?: boolean, skipMarkers?: boolean): Slice<T> | undefined {
+    let point = this.getOrNextLower(range.start) ?? this.first();
+    if (!point) return;
+    do {
+      if (!range.containsPoint(point, exclusive)) continue;
+      if (point.isMarker()) {
+        if (skipMarkers) continue;
+        const marker = point.markers[0];
+        if (marker && range.contains(marker, exclusive)) return marker;
+      } else {
+        const refs = point.refs;
+        const length = refs.length;
+        for (let i = 0; i < length; i++) {
+          const ref = refs[i];
+          if (ref instanceof OverlayRefSliceStart) {
+            const slice = ref.slice;
+            if (range.containsPoint(slice.end, exclusive)) return slice;
+          }
+        }
+      }
+    } while (point && (point = next(point)) && range.containsPoint(point, exclusive));
+    return;
   }
 
   /**
