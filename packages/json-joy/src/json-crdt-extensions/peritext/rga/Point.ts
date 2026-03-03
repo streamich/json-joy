@@ -176,6 +176,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @param skip How many characters to move by.
    * @param deleted If `true`, the search will NOT skip deleted characters.
    * @returns Next visible ID in string.
+   * 
+   * @todo PERF: Make this also return the chunk.
    */
   public nextId(skip: number = 1, deleted?: boolean): ITimestampStruct | undefined {
     if (this.isAbsEnd()) return;
@@ -201,20 +203,20 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       }
       chunk = rga.next(chunk);
     }
-    let lastVisibleChunk: Chunk<T> | undefined;
+    let lastChunk: Chunk<T> | undefined;
     while (chunk && remaining >= 0) {
       if (chunk.del && !deleted) {
         chunk = rga.next(chunk);
         continue;
       }
-      lastVisibleChunk = chunk;
+      lastChunk = chunk;
       const span = chunk.span;
       if (remaining <= span) return remaining > 1 ? tick(chunk.id, remaining - 1) : chunk.id;
       remaining -= span;
       chunk = rga.next(chunk);
     }
     if (remaining > 0) return;
-    return lastVisibleChunk ? tick(lastVisibleChunk.id, lastVisibleChunk.span - 1) : undefined;
+    return lastChunk ? tick(lastChunk.id, lastChunk.span - 1) : undefined;
   }
 
   /**
@@ -223,6 +225,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns ID of the character that is `move` characters before the
    *          character referenced by the point, or `undefined` if there is no
    *          such character.
+   * 
+   * @todo PERF: Make this also return the chunk.
    */
   public prevId(skip: number = 1, deleted?: boolean): ITimestampStruct | undefined {
     if (this.isAbsStart()) return;
@@ -458,6 +462,46 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   public refVisible(): void {
     if (this.anchor === Anchor.Before) this.refBefore();
     else this.refAfter();
+  }
+
+  /**
+   * Modifies the location of the point, such that it references the next
+   * anchor point in the string.
+   * 
+   * @param deleted If `true`, the point will NOT skip deleted characters, and
+   *     will be anchored after the next character even if it is deleted.
+   */
+  public refNext(deleted?: boolean): void {
+    const anchor = this.anchor;
+    if (deleted) {
+      if (this.isAbs()) {
+        if (anchor === Anchor.Before) return;
+        const chunk = this.rga.first();
+        if (!chunk) return;
+        this.id = chunk.id;
+        this.anchor = Anchor.Before;
+        this._chunk = chunk;
+        return;
+      }
+      if (anchor === Anchor.Before) {
+        this.anchor = Anchor.After;
+        return;
+      }
+      const next = this.rga.nextId(this.id, this.chunk());
+      if (!next) {
+        this.refAbsEnd();
+        return;
+      }
+      this.id = next[0];
+      this.anchor = Anchor.Before;
+      this._chunk = next[1];
+      return;
+    }
+    if (anchor === Anchor.After) this.refBefore();
+    else {
+      if (!this.deleted()) this.anchor = Anchor.After;
+      else this.refBefore();
+    }
   }
 
   /**

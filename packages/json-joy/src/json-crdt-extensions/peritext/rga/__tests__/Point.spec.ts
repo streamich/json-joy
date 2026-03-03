@@ -1131,6 +1131,62 @@ describe('.refVisible()', () => {
   });
 });
 
+describe('.refNext()', () => {
+  test('goes to next anchor (visible)', () => {
+    const {peritext} = setupWithChunkedText();
+    const expected = [
+      peritext.pointAt(0, Anchor.Before),
+      peritext.pointAt(0, Anchor.After),
+      peritext.pointAt(1, Anchor.Before),
+      peritext.pointAt(1, Anchor.After),
+      peritext.pointAt(2, Anchor.Before),
+      peritext.pointAt(2, Anchor.After),
+      peritext.pointAt(3, Anchor.Before),
+      peritext.pointAt(3, Anchor.After),
+      peritext.pointAt(4, Anchor.Before),
+      peritext.pointAt(4, Anchor.After),
+      peritext.pointAt(5, Anchor.Before),
+      peritext.pointAt(5, Anchor.After),
+      peritext.pointAt(6, Anchor.Before),
+      peritext.pointAt(6, Anchor.After),
+      peritext.pointAt(7, Anchor.Before),
+      peritext.pointAt(7, Anchor.After),
+      peritext.pointAt(8, Anchor.Before),
+      peritext.pointAt(8, Anchor.After),
+    ];
+    const point = peritext.pointAbsStart();
+    for (let i = 0; i < expected.length; i++) {
+      point.refNext();
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refNext(true);
+    expect(point.cmp(peritext.pointAbsEnd())).toBe(0);
+  });
+  
+  test('goes to next anchor (deleted)', () => {
+    const {peritext} = setupWithChunkedText();
+    const rga = peritext.str;
+    let id = rga.first()!.id;
+    const expected: Point[] = [];
+    while (true) {
+      expected.push(
+        peritext.point(id, Anchor.Before),
+        peritext.point(id, Anchor.After),
+      );
+      const next = rga.nextId(id);
+      if (!next) break;
+      id = next[0];
+    }
+    const point = peritext.pointAbsStart();
+    for (let i = 0; i < expected.length; i++) {
+      point.refNext(true);
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refNext(true);
+    expect(point.cmp(peritext.pointAbsEnd())).toBe(0);
+  });
+});
+
 describe('.step()', () => {
   test('smoke test', () => {
     const {peritext} = setupWithChunkedText();
