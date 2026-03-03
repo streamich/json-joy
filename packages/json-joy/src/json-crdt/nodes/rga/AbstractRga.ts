@@ -816,10 +816,9 @@ export abstract class AbstractRga<T, C extends Chunk<T> = Chunk<T>> {
 
   /**
    * @param id ID of character to start the search from.
-   * @returns Previous ID in the RGA sequence.
+   * @returns Previous ID in the RGA sequence (including deleted).
    */
-  public prevId(id: ITimestampStruct): ITimestampStruct | undefined {
-    let chunk = this.findById(id);
+  public prevId(id: ITimestampStruct, chunk: Chunk<T> | undefined = this.findById(id)): ITimestampStruct | undefined {
     if (!chunk) return;
     const time = id.time;
     if (chunk.id.time < time) return new Timestamp(id.sid, time - 1);
@@ -828,6 +827,17 @@ export abstract class AbstractRga<T, C extends Chunk<T> = Chunk<T>> {
     const prevId = chunk.id;
     const span = chunk.span;
     return span > 1 ? new Timestamp(prevId.sid, prevId.time + chunk.span - 1) : prevId;
+  }
+
+  /**
+   * @param id ID of character to start the search from.
+   * @returns Next ID in the RGA sequence (including deleted).
+   */
+  public nextId(id: ITimestampStruct, chunk: Chunk<T> | undefined = this.findById(id)): ITimestampStruct | undefined {
+    if (!chunk) return;
+    const nextTime = id.time + 1;
+    if (chunk.id.time + chunk.span > nextTime) return new Timestamp(id.sid, nextTime);
+    return next(chunk)?.id;
   }
 
   public spanView(span: ITimespanStruct): T[] {

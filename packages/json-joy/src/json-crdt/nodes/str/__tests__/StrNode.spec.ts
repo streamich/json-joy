@@ -1360,37 +1360,59 @@ describe('StrNode', () => {
       type.ins(ts(1, 1), ts(1, 2), '123456789');
       type.ins(ts(1, 4), ts(2, 5), 'xxx');
       type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      const expected = [
+        ts(1, 10),
+        ts(1, 9),
+        ts(1, 8),
+        ts(3, 7),
+        ts(3, 6),
+        ts(3, 5),
+        ts(1, 7),
+        ts(1, 6),
+        ts(1, 5),
+        ts(2, 7),
+        ts(2, 6),
+        ts(2, 5),
+        ts(1, 4),
+        ts(1, 3),
+        ts(1, 2),
+      ]
       let id = ts(1, 10);
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 9));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 8));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(3, 7));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(3, 6));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(3, 5));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 7));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 6));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 5));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(2, 7));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(2, 6));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(2, 5));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 4));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 3));
-      id = type.prevId(id)!;
-      expect(id).toStrictEqual(ts(1, 2));
-      id = type.prevId(id)!;
-      expect(id).toBe(undefined);
+      for (let i = 1; i < expected.length; i++) {
+        id = type.prevId(id)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+    });
+  });
+
+  describe('.nextId()', () => {
+    test('can iterate through IDs forward', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      const expected = [
+        ts(1, 2),
+        ts(1, 3),
+        ts(1, 4),
+        ts(2, 5),
+        ts(2, 6),
+        ts(2, 7),
+        ts(1, 5),
+        ts(1, 6),
+        ts(1, 7),
+        ts(3, 5),
+        ts(3, 6),
+        ts(3, 7),
+        ts(1, 8),
+        ts(1, 9),
+        ts(1, 10),
+      ];
+      let id = expected[0];
+      for (let i = 1; i < expected.length; i++) {
+        id = type.nextId(id)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
     });
   });
 
