@@ -1034,14 +1034,14 @@ describe('.refAfter()', () => {
   });
 });
 
-describe('.refAfterRaw()', () => {
+describe('.refAfter(deleted = true)', () => {
   test('stays on same char when already anchored After on visible chunk', () => {
     const {peritext} = setupWithChunkedText();
     const p = peritext.pointAt(4, Anchor.After);
     expect(p.leftChar()!.view()).toBe('5');
     expect(p.anchor).toBe(Anchor.After);
     const clone = p.clone();
-    p.refAfterRaw();
+    p.refAfter(true);
     expect(p.leftChar()!.view()).toBe('5');
     expect(p.anchor).toBe(Anchor.After);
     expect(p.cmpSpatial(clone)).toBe(0);
@@ -1054,7 +1054,7 @@ describe('.refAfterRaw()', () => {
     expect(p.anchor).toBe(Anchor.After);
     expect(p.chunk()!.del).toBe(true);
     const clone = p.clone();
-    p.refAfterRaw();
+    p.refAfter(true);
     expect(p.anchor).toBe(Anchor.After);
     expect(p.cmpSpatial(clone)).toBe(0);
     expect(p.cmp(clone)).toBe(0);
@@ -1064,7 +1064,7 @@ describe('.refAfterRaw()', () => {
     const {peritext, chunkD1, chunk1} = setupWithChunkedText();
     const pBefore = peritext.point(chunkD1.id, Anchor.Before);
     expect(pBefore.anchor).toBe(Anchor.Before);
-    pBefore.refAfterRaw();
+    pBefore.refAfter(true);
     expect(pBefore.anchor).toBe(Anchor.After);
     // It should now reference the last char of chunk1 (the '3')
     expect(pBefore.id.sid).toBe(chunk1.id.sid);
@@ -1077,7 +1077,7 @@ describe('.refAfterRaw()', () => {
     // chunkD1 is the deleted 'd' between '123' and '456'
     // Point Before on first char after chunkD1 (the '4')
     const p1 = peritext.point(chunkD1.id, Anchor.After);
-    p1.refAfterRaw();
+    p1.refAfter(true);
     expect(p1.anchor).toBe(Anchor.After);
     expect(p1.chunk()!.del).toBe(true);
     const p2 = peritext.point(chunkD1.id, Anchor.After);
@@ -1089,7 +1089,7 @@ describe('.refAfterRaw()', () => {
     const {peritext} = setup();
     const point = peritext.pointAbsEnd();
     expect(point.anchor).toBe(Anchor.Before);
-    point.refAfterRaw();
+    point.refAfter(true);
     expect(point.anchor).toBe(Anchor.After);
   });
 
@@ -1098,7 +1098,7 @@ describe('.refAfterRaw()', () => {
     const p = peritext.pointAt(0, Anchor.Before);
     expect(p.rightChar()!.view()).toBe('1');
     expect(p.anchor).toBe(Anchor.Before);
-    p.refAfterRaw();
+    p.refAfter(true);
     expect(p.anchor).toBe(Anchor.After);
     expect(p.isAbsStart()).toBe(true);
   });

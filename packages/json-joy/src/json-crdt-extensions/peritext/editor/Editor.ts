@@ -395,7 +395,7 @@ export class Editor<T = string> implements Printable {
           (ref1.slice.start.cmp(ref1.slice.end) !== 0) &&
           ref1.slice.isCollapsed();
         if (doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge) {
-          point.refAfterRaw();
+          point.refAfter(true);
           return false;
         }
         end = point.halfstep(direction);
@@ -412,7 +412,7 @@ export class Editor<T = string> implements Printable {
             (ref2.slice.start.cmp(ref2.slice.end) !== 0) &&
             ref2.slice.isCollapsed();
           if (doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge) {
-            point.refAfterRaw();
+            point.refAfter(true);
             return false;
           }
           break STEP;
