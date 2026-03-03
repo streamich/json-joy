@@ -1,5 +1,6 @@
 import {type Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Cursor} from '../../editor/Cursor';
+import {Anchor} from '../../rga/constants';
 import {OverlayRefSliceEnd} from '../refs';
 
 const runFind = (setup: () => Kit) => {
@@ -114,6 +115,25 @@ const runFindContainedTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       const slices = peritext.overlay.findContained(peritext.rangeAt(4, 8));
       expect(slices.size).toBe(2);
+    });
+
+    test('exclusive range', () => {
+      const {peritext, editor} = setup();
+      const range1 = peritext.range(peritext.pointAt(1, Anchor.After), peritext.pointAt(4, Anchor.Before));
+      const range2 = peritext.range(peritext.pointAt(2, Anchor.Before), peritext.pointAt(3, Anchor.After));
+      editor.cursor.setRange(range1);
+      editor.saved.insStack('a1');
+      editor.cursor.setRange(range2);
+      editor.saved.insStack('a2');
+      editor.delCursors();
+      peritext.overlay.refresh();
+      const slices1 = peritext.overlay.findContained(range1);
+      const slices2 = peritext.overlay.findContained(range1, true); // exclusive
+      expect(slices1.size).toBe(2);
+      expect(slices2.size).toBe(1);
+      expect([...slices1][0].type()).toBe('a1');
+      expect([...slices1][1].type()).toBe('a2');
+      expect([...slices2][0].type()).toBe('a2');
     });
   });
 };

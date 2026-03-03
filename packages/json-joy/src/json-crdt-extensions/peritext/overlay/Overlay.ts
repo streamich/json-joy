@@ -420,23 +420,23 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @param range The range to search for contained slices.
    * @returns A set of slices that are contained within the given range.
    */
-  public findContained(range: Range<T>): Set<Slice<T>> {
+  public findContained(range: Range<T>, exclusive?: boolean): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
     let point = this.getOrNextLower(range.start) ?? this.first();
     if (!point) return result;
     do {
-      if (!range.containsPoint(point)) continue;
+      if (!range.containsPoint(point, exclusive)) continue;
       const slices = point.layers;
       const length = slices.length;
       for (let i = 0; i < length; i++) {
         const slice = slices[i];
-        if (!result.has(slice) && range.contains(slice)) result.add(slice);
+        if (!result.has(slice) && range.contains(slice, exclusive)) result.add(slice);
       }
       if (point instanceof OverlayPoint && point.isMarker()) {
         const marker = point.markers[0];
-        if (marker && !result.has(marker) && range.contains(marker)) result.add(marker);
+        if (marker && !result.has(marker) && range.contains(marker, exclusive)) result.add(marker);
       }
-    } while (point && (point = next(point)) && range.containsPoint(point));
+    } while (point && (point = next(point)) && range.containsPoint(point, exclusive));
     return result;
   }
 
