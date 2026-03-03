@@ -1187,6 +1187,63 @@ describe('.refNext()', () => {
   });
 });
 
+describe('.refPrev()', () => {
+  test('goes to previous anchor (visible)', () => {
+    const {peritext} = setupWithChunkedText();
+    const expected = [
+      peritext.pointAt(0, Anchor.Before),
+      peritext.pointAt(0, Anchor.After),
+      peritext.pointAt(1, Anchor.Before),
+      peritext.pointAt(1, Anchor.After),
+      peritext.pointAt(2, Anchor.Before),
+      peritext.pointAt(2, Anchor.After),
+      peritext.pointAt(3, Anchor.Before),
+      peritext.pointAt(3, Anchor.After),
+      peritext.pointAt(4, Anchor.Before),
+      peritext.pointAt(4, Anchor.After),
+      peritext.pointAt(5, Anchor.Before),
+      peritext.pointAt(5, Anchor.After),
+      peritext.pointAt(6, Anchor.Before),
+      peritext.pointAt(6, Anchor.After),
+      peritext.pointAt(7, Anchor.Before),
+      peritext.pointAt(7, Anchor.After),
+      peritext.pointAt(8, Anchor.Before),
+      peritext.pointAt(8, Anchor.After),
+    ];
+    expected.reverse();
+    const point = peritext.pointAbsEnd();
+    for (let i = 0; i < expected.length; i++) {
+      point.refPrev();
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refPrev(true);
+    expect(point.cmp(peritext.pointAbsStart())).toBe(0);
+  });
+  
+  test('goes to previous anchor (deleted)', () => {
+    const {peritext} = setupWithChunkedText();
+    const rga = peritext.str;
+    let id = rga.last()!.id;
+    const expected: Point[] = [];
+    while (true) {
+      expected.push(
+        peritext.point(id, Anchor.After),
+        peritext.point(id, Anchor.Before),
+      );
+      const next = rga.prevId(id);
+      if (!next) break;
+      id = next[0];
+    }
+    const point = peritext.pointAbsEnd();
+    for (let i = 0; i < expected.length; i++) {
+      point.refPrev(true);
+      expect(point.cmp(expected[i])).toBe(0);
+    }
+    point.refPrev(true);
+    expect(point.cmp(peritext.pointAbsStart())).toBe(0);
+  });
+});
+
 describe('.step()', () => {
   test('smoke test', () => {
     const {peritext} = setupWithChunkedText();

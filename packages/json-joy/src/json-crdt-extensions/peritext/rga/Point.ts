@@ -505,6 +505,46 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   /**
+   * Modifies the location of the point, such that it references the previous
+   * anchor point in the string.
+   * 
+   * @param deleted If `true`, the point will NOT skip deleted characters, and
+   *     will be anchored after the previous character even if it is deleted.
+   */
+  public refPrev(deleted?: boolean): void {
+    const anchor = this.anchor;
+    if (deleted) {
+      if (this.isAbs()) {
+        if (anchor === Anchor.After) return;
+        const chunk = this.rga.last();
+        if (!chunk) return;
+        this.id = chunk.id;
+        this.anchor = Anchor.After;
+        this._chunk = chunk;
+        return;
+      }
+      if (anchor === Anchor.After) {
+        this.anchor = Anchor.Before;
+        return;
+      }
+      const prev = this.rga.prevId(this.id, this.chunk());
+      if (!prev) {
+        this.refAbsStart();
+        return;
+      }
+      this.id = prev[0];
+      this.anchor = Anchor.After;
+      this._chunk = prev[1];
+      return;
+    }
+    if (anchor === Anchor.Before) this.refAfter();
+    else {
+      if (!this.deleted()) this.anchor = Anchor.Before;
+      else this.refAfter();
+    }
+  }
+
+  /**
    * Moves point past given number of visible characters. Accepts positive
    * and negative distances.
    *
