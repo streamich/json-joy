@@ -816,28 +816,54 @@ export abstract class AbstractRga<T, C extends Chunk<T> = Chunk<T>> {
 
   /**
    * @param id ID of character to start the search from.
-   * @returns Previous ID in the RGA sequence (including deleted).
+   * @param chunk Optional chunk containing the ID. If not provided, it will be
+   *     looked up.
+   * @param skipDeleted Whether to skip deleted chunks. If true, the returned ID
+   *     will be the closest visible ID.
+   * @returns Previous ID in the RGA sequence.
    */
-  public prevId(id: ITimestampStruct, chunk: Chunk<T> | undefined = this.findById(id)): ITimestampStruct | undefined {
+  public prevId(
+    id: ITimestampStruct,
+    chunk: Chunk<T> | undefined = this.findById(id),
+    skipDeleted: boolean = false,
+  ): [id: ITimestampStruct, chunk: Chunk<T>] | undefined {
     if (!chunk) return;
     const time = id.time;
-    if (chunk.id.time < time) return new Timestamp(id.sid, time - 1);
-    chunk = prev(chunk);
-    if (!chunk) return;
+    if ((!skipDeleted || !chunk.del) && chunk.id.time < time)
+      return [new Timestamp(id.sid, time - 1), chunk];
+    while (chunk) {
+      chunk = prev(chunk);
+      if (!chunk) return;
+      if (!chunk.del || !skipDeleted) break;
+    }
     const prevId = chunk.id;
     const span = chunk.span;
-    return span > 1 ? new Timestamp(prevId.sid, prevId.time + chunk.span - 1) : prevId;
+    return span > 1 ? [new Timestamp(prevId.sid, prevId.time + chunk.span - 1), chunk] : [prevId, chunk];
   }
 
   /**
    * @param id ID of character to start the search from.
-   * @returns Next ID in the RGA sequence (including deleted).
+   * @param chunk Optional chunk containing the ID. If not provided, it will be
+   *     looked up.
+   * @param skipDeleted Whether to skip deleted chunks. If true, the returned ID
+   *     will be the closest visible ID.
+   * @returns Next ID in the RGA sequence.
    */
-  public nextId(id: ITimestampStruct, chunk: Chunk<T> | undefined = this.findById(id)): ITimestampStruct | undefined {
+  public nextId(
+    id: ITimestampStruct,
+    chunk: Chunk<T> | undefined = this.findById(id),
+    skipDeleted: boolean = false,
+  ): [id: ITimestampStruct, chunk: Chunk<T>] | undefined {
     if (!chunk) return;
     const nextTime = id.time + 1;
-    if (chunk.id.time + chunk.span > nextTime) return new Timestamp(id.sid, nextTime);
-    return next(chunk)?.id;
+    if ((!skipDeleted || !chunk.del) && chunk.id.time + chunk.span > nextTime)
+      return [new Timestamp(id.sid, nextTime), chunk];
+    while (chunk) {
+      chunk = next(chunk);
+      if (!chunk) return;
+      if (!chunk.del || !skipDeleted) break;
+    }
+    return [chunk.id, chunk];
   }
 
   public spanView(span: ITimespanStruct): T[] {

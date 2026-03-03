@@ -1355,11 +1355,14 @@ describe('StrNode', () => {
   });
 
   describe('.prevId()', () => {
-    test('can iterate through IDs in reverse', () => {
+    test('can iterate through IDs in reverse (including deleted)', () => {
       const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456789');
       type.ins(ts(1, 4), ts(2, 5), 'xxx');
       type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      type.ins(ts(2, 6), ts(4, 10), 'z');
+      type.delete([tss(4, 10, 1)]);
+      type.delete([tss(3, 6, 2)]);
       const expected = [
         ts(1, 10),
         ts(1, 9),
@@ -1371,32 +1374,87 @@ describe('StrNode', () => {
         ts(1, 6),
         ts(1, 5),
         ts(2, 7),
+        ts(4, 10),
         ts(2, 6),
         ts(2, 5),
         ts(1, 4),
         ts(1, 3),
         ts(1, 2),
       ]
-      let id = ts(1, 10);
+      let id = expected[0];
       for (let i = 1; i < expected.length; i++) {
-        id = type.prevId(id)!;
+        [id] = type.prevId(id)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+      id = expected[0];
+      let chunk: any;
+      for (let i = 1; i < expected.length; i++) {
+        [id, chunk] = type.prevId(id, chunk)!;
         expect(id).toStrictEqual(expected[i]);
       }
     });
-  });
 
-  describe('.nextId()', () => {
-    test('can iterate through IDs forward', () => {
+    test('can iterate through IDs in reverse (skip deleted)', () => {
       const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456789');
       type.ins(ts(1, 4), ts(2, 5), 'xxx');
       type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      type.ins(ts(2, 6), ts(4, 10), 'z');
+      type.delete([tss(4, 10, 1)]);
+      type.delete([tss(3, 6, 2)]);
+      const expected = [
+        ts(1, 10),
+        ts(1, 9),
+        ts(1, 8),
+        ts(3, 5),
+        ts(1, 7),
+        ts(1, 6),
+        ts(1, 5),
+        ts(2, 7),
+        ts(2, 6),
+        ts(2, 5),
+        ts(1, 4),
+        ts(1, 3),
+        ts(1, 2),
+      ]
+      let id = expected[0];
+      for (let i = 1; i < expected.length; i++) {
+        [id] = type.prevId(id, void 0, true)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+      id = expected[0];
+      let chunk: any;
+      for (let i = 1; i < expected.length; i++) {
+        [id, chunk] = type.prevId(id, chunk, true)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+    });
+
+    test('can skip deleted when starting from deleted', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.delete([tss(1, 3, 3)]);
+      const [id] = type.prevId(ts(1, 4), void 0, true)!;
+      expect(id).toStrictEqual(ts(1, 2));
+    });
+  });
+
+  describe('.nextId()', () => {
+    test('can iterate through IDs forward (including deleted)', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      type.ins(ts(2, 6), ts(4, 10), 'z');
+      type.delete([tss(4, 10, 1)]);
+      type.delete([tss(3, 6, 2)]);
       const expected = [
         ts(1, 2),
         ts(1, 3),
         ts(1, 4),
         ts(2, 5),
         ts(2, 6),
+        ts(4, 10),
         ts(2, 7),
         ts(1, 5),
         ts(1, 6),
@@ -1410,9 +1468,59 @@ describe('StrNode', () => {
       ];
       let id = expected[0];
       for (let i = 1; i < expected.length; i++) {
-        id = type.nextId(id)!;
+        [id] = type.nextId(id)!;
         expect(id).toStrictEqual(expected[i]);
       }
+      id = expected[0];
+      let chunk: any;
+      for (let i = 1; i < expected.length; i++) {
+        [id, chunk] = type.nextId(id, chunk)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+    });
+
+    test('can iterate through IDs forward (skip deleted)', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.ins(ts(1, 4), ts(2, 5), 'xxx');
+      type.ins(ts(1, 7), ts(3, 5), 'yyy');
+      type.ins(ts(2, 6), ts(4, 10), 'z');
+      type.delete([tss(4, 10, 1)]);
+      type.delete([tss(3, 6, 2)]);
+      const expected = [
+        ts(1, 2),
+        ts(1, 3),
+        ts(1, 4),
+        ts(2, 5),
+        ts(2, 6),
+        ts(2, 7),
+        ts(1, 5),
+        ts(1, 6),
+        ts(1, 7),
+        ts(3, 5),
+        ts(1, 8),
+        ts(1, 9),
+        ts(1, 10),
+      ];
+      let id = expected[0];
+      for (let i = 1; i < expected.length; i++) {
+        [id] = type.nextId(id, void 0, true)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+      id = expected[0];
+      let chunk: any;
+      for (let i = 1; i < expected.length; i++) {
+        [id, chunk] = type.nextId(id, chunk, true)!;
+        expect(id).toStrictEqual(expected[i]);
+      }
+    });
+
+    test('can skip deleted when starting from deleted', () => {
+      const type = new StrNode(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 2), '123456789');
+      type.delete([tss(1, 3, 3)]);
+      const [id] = type.nextId(ts(1, 4), void 0, true)!;
+      expect(id).toStrictEqual(ts(1, 6));
     });
   });
 

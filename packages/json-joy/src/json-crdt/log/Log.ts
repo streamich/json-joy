@@ -345,7 +345,7 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
             const firstDelSpan = op.what[0];
             if (firstDelSpan) {
               const after2 = rga.prevId(firstDelSpan);
-              if (after2) after = after2;
+              if (after2) after = after2[0];
             }
             builder.insStr(op.obj, after, str);
           } else if (rga instanceof BinNode) {
@@ -355,7 +355,7 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
             const firstDelSpan = op.what[0];
             if (firstDelSpan) {
               const after2 = rga.prevId(firstDelSpan);
-              if (after2) after = after2;
+              if (after2) after = after2[0];
             }
             const blob = listToUint8(buffers);
             builder.insBin(op.obj, after, blob);
@@ -378,7 +378,7 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
             const firstDelSpan = op.what[0];
             if (firstDelSpan) {
               const after2 = rga.prevId(firstDelSpan);
-              if (after2) after = after2;
+              if (after2) after = after2[0];
             }
             builder.insArr(op.obj, after, copies);
           }
