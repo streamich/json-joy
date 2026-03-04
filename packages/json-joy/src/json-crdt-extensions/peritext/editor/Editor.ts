@@ -11,7 +11,7 @@ import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
-import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s, ts} from '../../../json-crdt-patch';
+import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s, ts, equal} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import {ArrApi} from '../../../json-crdt/model';
 import * as schema from '../slice/schema';
@@ -398,6 +398,7 @@ export class Editor<T = string> implements Printable {
           point.refAfter(true);
           return false;
         }
+        const p0 = point.clone();
         end = point.halfstep(direction);
         if (end) break LOOP;
         if (ref1) break STEP;
@@ -417,6 +418,21 @@ export class Editor<T = string> implements Printable {
           }
           break STEP;
         }
+        MOVE_INTO_DELETED_SLICE: {
+          if (!this.didSkipDeleted(point, direction)) break MOVE_INTO_DELETED_SLICE;
+          const txt = this.txt;
+          const range = txt.range(p0, point);
+          // TODO: Make sure points are sorted correctly
+          const slice = txt.overlay.findFirstContained(range, true, true);
+          if (!slice) break MOVE_INTO_DELETED_SLICE;
+          const {start, end} = slice;
+          if (!start.deleted() && !end.deleted()) break MOVE_INTO_DELETED_SLICE;
+          if (equal(start.id, end.id)) break MOVE_INTO_DELETED_SLICE;
+          end.refPrev(true);
+          point.set(end);
+          break STEP;
+        }
+
         end = point.halfstep(direction);
         if (end) break LOOP;
         const ref3 = this.isSliceEdge(point);
@@ -433,10 +449,22 @@ export class Editor<T = string> implements Printable {
             point.halfstep(-direction);
             break STEP;
           }
+          // console.log('check if skipped fully deleted slices (2)');
         }
       }
     }
     return end;
+  }
+
+  private didSkipDeleted(point: Point<T>, direction: number): boolean {
+    if (direction > 0 && point.anchor === Anchor.Before) {
+      const leftChar = point.copy(p => p.refAfter(true));
+      return !!leftChar.chunk()?.del;
+    } else if (direction < 0 && point.anchor === Anchor.After) {
+      const rightChar = point.copy(p => p.refBefore(true));
+      return !!rightChar.chunk()?.del;
+    }
+    return false;
   }
 
   private getFirstSavedLayer(point: Point<T>): Slice<T> | undefined {

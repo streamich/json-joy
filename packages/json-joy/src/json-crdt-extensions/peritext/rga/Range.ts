@@ -119,12 +119,18 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return start2.cmp(end2) === 0;
   }
 
-  public contains(range: Range<T>): boolean {
-    return this.start.cmpSpatial(range.start) <= 0 && this.end.cmpSpatial(range.end) >= 0;
+  public contains(range: Range<T>, exclusive: boolean = false): boolean {
+    const {start, end} = this;
+    return exclusive
+      ? start.cmpSpatial(range.start) < 0 && end.cmpSpatial(range.end) > 0
+      : start.cmpSpatial(range.start) <= 0 && end.cmpSpatial(range.end) >= 0;
   }
 
-  public containsPoint(point: Point<T>): boolean {
-    return this.start.cmpSpatial(point) <= 0 && this.end.cmpSpatial(point) >= 0;
+  public containsPoint(point: Point<T>, exclusive: boolean = false): boolean {
+    const {start, end} = this;
+    return exclusive
+      ? start.cmpSpatial(point) < 0 && end.cmpSpatial(point) > 0
+      : start.cmpSpatial(point) <= 0 && end.cmpSpatial(point) >= 0;
   }
 
   // ---------------------------------------------------------------- mutations

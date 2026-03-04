@@ -238,6 +238,60 @@ const testSuite = (getKit: () => Kit) => {
     // Cursor appears after the newly inserted text
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('z');
   });
+
+  test('can insert in <code>, whose all contents are deleted', async () => {
+    const kit = setup();
+    kit.et.cursor({at: [2, 3]}); // <code>"c"</code>
+    kit.peritext.refresh();
+    kit.et.format('ins', 'code');
+    kit.peritext.refresh();
+    kit.et.cursor({at: [4]});
+    kit.peritext.refresh();
+    kit.editor.del();
+    kit.peritext.refresh();
+    kit.editor.del();
+    kit.peritext.refresh();
+    kit.editor.delCursors();
+    kit.peritext.refresh();
+    
+    // Insert before the deleted <code></code> slice.
+    kit.et.cursor({at: [1]});
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
+    kit.et.insert('0');
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('0');
+
+    // Enter into deleted <code></code> slice.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('0');
+    kit.et.insert('1');
+    kit.peritext.refresh();
+    const range = kit.peritext.rangeAt(3, 1);
+    const [complete] = kit.peritext.overlay.stat(range);
+    expect([...complete]).toEqual(['code']);
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('1');
+    
+    // Insert right after the <code>0</code> slice.
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('1');
+    expect(kit.editor.cursor.start.rightChar()?.view()).toBe('e');
+    kit.et.insert('2');
+    kit.peritext.refresh();
+    const range2 = kit.peritext.rangeAt(4, 1);
+    const [complete2] = kit.peritext.overlay.stat(range2);
+    expect([...complete2]).toEqual([]);
+    
+    // Move after "e".
+    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
+    kit.peritext.refresh();
+    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+  });
 };
 
 describe('"insert" event', () => {
