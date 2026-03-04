@@ -1,11 +1,11 @@
 import {printTree, type Printable} from 'tree-dump';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {InputController} from './InputController';
-import {CursorController} from './CursorController';
-import {RichTextController} from './RichTextController';
-import {KeyController} from './KeyController';
-import {CompositionController} from './CompositionController';
-import {AnnalsController} from './annals/AnnalsController';
+import {InputController} from './controllers/InputController';
+import {CursorController} from './controllers/CursorController';
+import {RichTextController} from './controllers/RichTextController';
+import {KeyController} from './controllers/KeyController';
+import {CompositionController} from './controllers/CompositionController';
+import {AnnalsController} from './controllers/annals/AnnalsController';
 import {ElementAttr} from '../constants';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
@@ -18,6 +18,7 @@ import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions/peritext/events/PeritextEventTarget';
 import type {PeritextUiApi} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/ui/types';
 import type {PeritextEventDefaults} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';
+import type {DomFacade, DomFacadeElement} from './facade/types';
 
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly txt: Peritext;
@@ -72,10 +73,11 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   /**
    * Must be set before calling {@link start}.
    */
-  public el!: HTMLElement;
+  public facade!: DomFacade;
 
   public start() {
-    const {et, el} = this;
+    const {et, facade} = this;
+    const el = facade.el;
     (el as any).contentEditable = 'true';
     const style = el.style;
     style.setProperty('--jsonjoy-peritext-id', et.id + '');
@@ -100,19 +102,19 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   /** ------------------------------------------------- {@link PeritextUiApi} */
 
   public focus(): void {
-    this.el.focus();
+    this.facade.el.focus?.();
   }
 
   protected getSpans(blockInnerId?: Point) {
-    let el: Element | undefined;
+    let el: DomFacadeElement | undefined;
     if (blockInnerId) {
       const txt = this.txt;
       const marker = txt.overlay.getOrNextLowerMarker(blockInnerId);
       const markerId = marker?.id ?? txt.str.id;
       el = this.blocks.get(markerId);
     }
-    el ??= this.el;
-    return el.querySelectorAll('.jsonjoy-peritext-inline');
+    el ??= this.facade.el;
+    return el.querySelectorAll?.('.jsonjoy-peritext-inline');
   }
 
   protected findSpanContaining(char: Range): HTMLSpanElement | undefined {
@@ -129,13 +131,15 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
       }
     }
     const spans = this.getSpans(start);
-    const length = spans.length;
-    for (let i = 0; i < length; i++) {
-      const span = spans[i] as HTMLSpanElement;
-      const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
-      if (inline) {
-        const contains = inline.contains(char);
-        if (contains) return span;
+    if (spans) {
+      const length = spans.length;
+      for (let i = 0; i < length; i++) {
+        const span = spans[i] as HTMLSpanElement;
+        const inline = (span as any)[ElementAttr.InlineOffset] as Inline | undefined;
+        if (inline) {
+          const contains = inline.contains(char);
+          if (contains) return span;
+        }
       }
     }
     return;

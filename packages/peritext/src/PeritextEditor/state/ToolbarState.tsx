@@ -197,7 +197,7 @@ export class ToolbarState implements UiLifeCycles {
     const {dom, events} = surface;
     const {et} = events;
     const mouseDown = dom!.cursor.mouseDown;
-    const el = dom.el;
+    const el = dom.facade.el;
 
     const registry = this.txt.editor.getRegistry();
     Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);

@@ -1,6 +1,7 @@
-import {BehaviorSubject} from 'rxjs';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
+import {BehaviorSubject} from 'rxjs';
+import {WebFacade} from '../dom/facade/WebFacade';
 import type {PeritextPlugin} from '../react/types';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions/peritext/Peritext';
 import type {PeritextEventDefaults} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';
@@ -36,7 +37,7 @@ export class PeritextSurfaceState implements UiLifeCycles {
 
   public start() {
     const {dom, rerender, el} = this;
-    dom.el = el;
+    dom.facade = new WebFacade(el);
     const stopDom = dom.start();
     const et = dom.et;
     et.addEventListener('change', rerender);

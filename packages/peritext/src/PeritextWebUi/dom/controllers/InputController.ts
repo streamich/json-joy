@@ -1,10 +1,10 @@
-import {unit} from '../util';
+import {unit} from '../../util';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions/peritext/events/PeritextEventTarget';
 import type {TypedEventTarget} from 'json-joy/lib/util/events/TypedEventTarget';
-import type {UiLifeCycles} from '../types';
-import type {DomController} from './DomController';
+import type {UiLifeCycles} from '../../types';
+import type {DomController} from './../DomController';
 
 export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
@@ -226,7 +226,7 @@ export class InputController implements UiLifeCycles {
         }
         case 'Escape': {
           // TODO: Use rendering surface imperative UI API here.
-          const div = this.dom.el;
+          const div = this.dom.facade.el;
           if (div instanceof HTMLElement) {
             event.preventDefault();
             div.blur();
@@ -255,7 +255,7 @@ export class InputController implements UiLifeCycles {
         this.et.buffer({action: 'paste', data});
       }
     };
-    const el = this.dom.el;
+    const el = this.dom.facade.el;
     el.addEventListener('beforeinput', onBeforeInput);
     el.addEventListener('keydown', onKeyDown);
     el.addEventListener('copy', onCopy);

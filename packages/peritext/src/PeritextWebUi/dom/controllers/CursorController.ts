@@ -1,11 +1,11 @@
-import {getCursorPosition, unit} from '../util';
-import {ElementAttr} from '../constants';
+import {getCursorPosition, unit} from '../../util';
+import {ElementAttr} from '../../constants';
 import {throttle} from 'json-joy/lib/util/throttle';
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import type {Printable} from 'tree-dump';
-import type {UiLifeCycles} from '../types';
+import type {UiLifeCycles} from '../../types';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions/peritext/block/Inline';
-import type {DomController} from './DomController';
+import type {DomController} from '../DomController';
 import type {PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions/peritext/events/PeritextEventTarget';
 
 /**
@@ -47,20 +47,20 @@ export class CursorController implements UiLifeCycles, Printable {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start() {
-    const el = this.dom.el;
+    const {el, doc} = this.dom.facade;
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
     el.addEventListener('focus', this.onFocus);
     el.addEventListener('blur', this.onBlur);
-    document.addEventListener('mousemove', this.onMouseMove);
-    document.addEventListener('mouseup', this.onMouseUp);
+    doc?.addEventListener('mousemove', this.onMouseMove);
+    doc?.addEventListener('mouseup', this.onMouseUp);
     return () => {
       el.removeEventListener('mousedown', this.onMouseDown);
       el.removeEventListener('keydown', this.onKeyDown);
       el.removeEventListener('focus', this.onFocus);
       el.removeEventListener('blur', this.onBlur);
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseUp);
+      doc?.removeEventListener('mousemove', this.onMouseMove);
+      doc?.removeEventListener('mouseup', this.onMouseUp);
       this._cursor[1](); // Stop throttling loop.
     };
   }

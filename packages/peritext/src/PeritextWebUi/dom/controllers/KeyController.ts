@@ -1,7 +1,7 @@
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import type {Printable} from 'tree-dump';
-import type {UiLifeCycles} from '../types';
-import type {DomController} from './DomController';
+import type {UiLifeCycles} from '../../types';
+import type {DomController} from './../DomController';
 
 class KeyPress {
   public constructor(
@@ -48,19 +48,19 @@ export class KeyController implements UiLifeCycles, Printable {
     const onReset = (): void => {
       this.pressed.clear();
     };
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('focus', onReset);
-    document.addEventListener('compositionstart', onReset);
-    document.addEventListener('compositionend', onReset);
-    const el = this.dom.el;
+    const {el, doc} = this.dom.facade;
+    doc?.addEventListener('keydown', onKeyDown);
+    doc?.addEventListener('keyup', onKeyUp);
+    doc?.addEventListener('focus', onReset);
+    doc?.addEventListener('compositionstart', onReset);
+    doc?.addEventListener('compositionend', onReset);
     el.addEventListener('blur', onReset);
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.removeEventListener('keyup', onKeyUp);
-      document.removeEventListener('focus', onReset);
-      document.removeEventListener('compositionstart', onReset);
-      document.removeEventListener('compositionend', onReset);
+      doc?.removeEventListener('keydown', onKeyDown);
+      doc?.removeEventListener('keyup', onKeyUp);
+      doc?.removeEventListener('focus', onReset);
+      doc?.removeEventListener('compositionstart', onReset);
+      doc?.removeEventListener('compositionend', onReset);
       el.removeEventListener('blur', onReset);
     };
   }
@@ -68,6 +68,6 @@ export class KeyController implements UiLifeCycles, Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return `keys { hold: [ ${[...this.pressed].map((key) => JSON.stringify(key)).join(', ')}, hist: [ ${this.history.value.map((press) => JSON.stringify(press.key)).join(', ')} ] ] }`;
+    return `keys { hold: [ ${[...this.pressed].map((key) => JSON.stringify(key)).join(', ')} ], hist: [ ${this.history.value.map((press) => JSON.stringify(press.key)).join(', ')} ] ] }`;
   }
 }

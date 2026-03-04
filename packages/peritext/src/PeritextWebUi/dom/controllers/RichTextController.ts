@@ -1,6 +1,6 @@
 import {CommonSliceType} from 'json-joy/lib/json-crdt-extensions/peritext';
-import type {UiLifeCycles} from '../types';
-import type {DomController} from './DomController';
+import type {UiLifeCycles} from '../../types';
+import type {DomController} from './../DomController';
 
 export class RichTextController implements UiLifeCycles {
   public constructor(public readonly dom: DomController) {}
@@ -9,7 +9,7 @@ export class RichTextController implements UiLifeCycles {
 
   public start() {
     const dom = this.dom;
-    const el = dom.el;
+    const el = dom.facade.el;
     const onKeyDown = (event: KeyboardEvent): void => {
       const key = event.key;
       if (event.isComposing || key === 'Dead') return;

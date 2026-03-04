@@ -1,6 +1,6 @@
 import {saveSelection} from 'json-joy/lib/util/dom';
-import type {UndoManager, UndoItem} from '../../types';
-import type {UiLifeCycles} from '../../types';
+import type {UndoManager, UndoItem} from '../../../types';
+import type {UiLifeCycles} from '../../../types';
 
 /**
  * A DOM-based undo manager. Integrates with native undo/redo functionality of

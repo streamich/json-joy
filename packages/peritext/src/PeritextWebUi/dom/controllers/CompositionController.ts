@@ -1,6 +1,6 @@
 import type {Printable} from 'tree-dump';
-import type {UiLifeCycles} from '../types';
-import type {DomController} from './DomController';
+import type {UiLifeCycles} from '../../types';
+import type {DomController} from './../DomController';
 
 export class CompositionController implements UiLifeCycles, Printable {
   public composing = false;
@@ -25,7 +25,7 @@ export class CompositionController implements UiLifeCycles, Printable {
       const text = event.data;
       if (text) this.dom.et.insert(text);
     };
-    const el = this.dom.el;
+    const el = this.dom.facade.el;
     el.addEventListener('compositionstart', onStart);
     el.addEventListener('compositionupdate', onUpdate);
     el.addEventListener('compositionend', onEnd);
