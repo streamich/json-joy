@@ -10,7 +10,14 @@ const testSuite = (getKit: () => Kit) => {
     const et = new PeritextEventTarget();
     const defaults = new PeritextEventDefaults(kit.peritext, et);
     et.defaults = defaults;
-    return {...kit, et};
+    const cmd = defaults.cmd;
+    const exec: typeof cmd.exec = (...args: any[]): any => {
+      const result = (cmd as any).exec(...args);
+      kit.peritext.refresh();
+      return result;
+    };
+    const run = cmd.run;
+    return {...kit, et, cmd, exec, run};
   };
 
   test('can insert with different affinity at bold start', async () => {
@@ -245,8 +252,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     kit.et.format('ins', 'code');
     kit.peritext.refresh();
-    kit.et.cursor({at: [4]});
-    kit.peritext.refresh();
+    kit.exec('Caret', 4);
     kit.editor.del();
     kit.peritext.refresh();
     kit.editor.del();
@@ -255,42 +261,34 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     
     // Insert before the deleted <code></code> slice.
-    kit.et.cursor({at: [1]});
-    kit.peritext.refresh();
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
-    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
-    kit.peritext.refresh();
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('b');
-    kit.et.insert('0');
-    kit.peritext.refresh();
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('0');
+    kit.exec('Caret', 1);
+    expect(kit.exec('CharLeft')).toBe('a');
+    kit.exec('MoveRight');
+    expect(kit.exec('CharLeft')).toBe('b');
+    kit.exec('Insert', '0');
+    expect(kit.exec('CharLeft')).toBe('0');
 
     // Enter into deleted <code></code> slice.
-    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
-    kit.peritext.refresh();
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('0');
-    kit.et.insert('1');
-    kit.peritext.refresh();
+    kit.exec('MoveRight');
+    expect(kit.exec('CharLeft')).toBe('0');
+    kit.exec('Insert', '1');
     const range = kit.peritext.rangeAt(3, 1);
     const [complete] = kit.peritext.overlay.stat(range);
     expect([...complete]).toEqual(['code']);
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('1');
+    expect(kit.exec('CharLeft')).toBe('1');
     
     // Insert right after the <code>0</code> slice.
-    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
-    kit.peritext.refresh();
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('1');
-    expect(kit.editor.cursor.start.rightChar()?.view()).toBe('e');
-    kit.et.insert('2');
-    kit.peritext.refresh();
+    kit.exec('MoveRight');
+    expect(kit.exec('CharLeft')).toBe('1');
+    expect(kit.exec('CharRight')).toBe('e');
+    kit.exec('Insert', '2');
     const range2 = kit.peritext.rangeAt(4, 1);
     const [complete2] = kit.peritext.overlay.stat(range2);
     expect([...complete2]).toEqual([]);
     
     // Move after "e".
-    kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
-    kit.peritext.refresh();
-    expect(kit.editor.cursor.start.leftChar()?.view()).toBe('e');
+    kit.exec('MoveRight');
+    expect(kit.exec('CharLeft')).toBe('e');
   });
 
   // test('can navigate two zombie slices one after another', async () => {
