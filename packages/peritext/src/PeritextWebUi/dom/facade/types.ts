@@ -1,6 +1,7 @@
 export interface DomFacade {
   el: DomFacadeElement;
   doc?: DomFacadeDocument;
+  wnd?: Window;
 }
 
 export interface DomFacadeElement {
