@@ -54,6 +54,9 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
+      // Ensure a single copy of React across all packages
+      'react': resolve(__dirname, '../node_modules/react'),
+      'react-dom': resolve(__dirname, '../node_modules/react-dom'),
       // Alias nice-ui to @jsonjoy.com/ui (nice-ui was migrated to @jsonjoy.com/ui)
       'nice-ui/lib': resolve(__dirname, '../packages/ui/src'),
       'nice-ui': resolve(__dirname, '../packages/ui/src'),
@@ -89,6 +92,8 @@ const config: StorybookConfig = {
       '@jsonjoy.com/collaborative-monaco-react': resolve(__dirname, '../packages/collaborative-monaco-react/src'),
       '@jsonjoy.com/collaborative-ui/lib': resolve(__dirname, '../packages/collaborative-ui/src'),
       '@jsonjoy.com/collaborative-ui': resolve(__dirname, '../packages/collaborative-ui'),
+      '@jsonjoy.com/collaborative-react/lib': resolve(__dirname, '../packages/collaborative-react/src'),
+      '@jsonjoy.com/collaborative-react': resolve(__dirname, '../packages/collaborative-react/src'),
       '@jsonjoy.com/json-expression/lib': resolve(__dirname, '../packages/json-expression/src'),
       '@jsonjoy.com/json-pack/lib': resolve(__dirname, '../packages/json-pack/src'),
       '@jsonjoy.com/json-path/lib': resolve(__dirname, '../packages/json-path/src'),
