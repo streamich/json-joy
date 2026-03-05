@@ -97,7 +97,7 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
         <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
         <BasicTooltip nowrap renderTooltip={() => t('Open')}>
           <BasicButton width={48} height={48} round to={url} target="_blank" rel="noopener noreferrer">
-            <ExternalLinkIcon width={16} height={16} />
+            <ExternalLinkIcon width={16} height={16}  />
           </BasicButton>
         </BasicTooltip>
       </div>

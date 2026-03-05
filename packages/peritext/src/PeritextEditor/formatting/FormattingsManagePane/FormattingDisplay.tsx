@@ -10,18 +10,19 @@ import {FormattingView} from '../views/view/FormattingView';
 import {useToolbarPlugin} from '../../context';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {FormattingPane} from '../FormattingPane';
-import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {ContextMenu, ContextPane, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FormattingEditForm} from './FormattingEditForm';
-import {SoftLockedDeleteButton} from '../../components/SoftLockedDeleteButton';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useFormattingPane} from './context';
 import {ContextPaneHeader} from '../../components/ContextPaneHeader';
-import {ButtonSeparator} from '../../../PeritextWebUi/components/ButtonSeparator';
 import {ContextPaneHeaderSep} from '../../components/ContextPaneHeaderSep';
 import type {SavedFormatting} from '../../state/formattings';
 
 const PencilOffIcon = makeIcon({set: 'lucide', icon: 'pencil-off'});
 const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
+const TrashIcon = makeIcon({set: 'lucide', icon: 'trash'});
+const OptionsIcon = makeIcon({set: 'tabler', icon: 'dots-vertical'});
 
 export interface FormattingDisplayProps {
   formatting: SavedFormatting;
@@ -59,23 +60,38 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
             </Flex>
           ) : (
             <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-              <SoftLockedDeleteButton
-                onDelete={() => {
-                  surface.events.et.format({
-                    at: formatting.range,
-                    action: 'del',
-                  });
-                  onClose?.();
-                }}
-              />
-              <Space horizontal size={-2} />
-              <ButtonSeparator />
-              <Space horizontal size={-2} />
-              <BasicTooltip renderTooltip={() => t('Edit')}>
-                <BasicButton size={32} rounder onClick={state.switchToEditPanel}>
-                  <PencilIcon width={16} height={16} />
-                </BasicButton>
-              </BasicTooltip>
+              <Popup renderContext={() => (
+                <ContextMenu inset menu={{
+                  name: t('Options'),
+                  children: [
+                    {
+                      name: t('Edit'),
+                      icon: () => <PencilIcon width={16} height={16} />,
+                      onSelect: state.switchToEditPanel,
+                    },
+                    {
+                      name: t('Delete'),
+                      danger: true,
+                      icon: () => <TrashIcon width={16} height={16} />,
+                      onSelect: () => {
+                        surface.events.et.format({
+                          at: formatting.range,
+                          action: 'del',
+                        });
+                        onClose?.();
+                      },
+                    },
+                  ],
+                }} />
+              )}>
+                <BasicTooltip renderTooltip={() => t('Options')}>
+                  <BasicButton>
+                    <OptionsIcon width={16} height={16} />
+                  </BasicButton>
+                </BasicTooltip>
+              </Popup>
+
+              
             </Flex>
           )
         }
