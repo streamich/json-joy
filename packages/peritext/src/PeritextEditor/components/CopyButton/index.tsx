@@ -38,7 +38,26 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip, ...rest}
       {...tooltip}
     >
       <BasicButton {...rest} onClick={handleClick}>
-        {copied ? <CheckIcon key="check" width={16} height={16} /> : <CopyIcon key="copy" width={16} height={16} />}
+        <div style={{position: 'relative', width: 16, height: 16, overflow: 'hidden'}}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            transform: copied ? 'translateY(100%)' : 'translateY(0%)',
+            transition: 'transform 150ms ease-in-out',
+          }}>
+            <CopyIcon width={16} height={16} />
+          </div>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            transform: copied ? 'translateY(0%)' : 'translateY(-100%)',
+            transition: 'transform 150ms ease-in-out',
+          }}>
+            <CheckIcon width={16} height={16} />
+          </div>
+        </div>
       </BasicButton>
     </BasicTooltip>
   );
