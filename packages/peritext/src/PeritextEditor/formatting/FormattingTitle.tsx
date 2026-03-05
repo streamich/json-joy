@@ -12,8 +12,8 @@ const blockClass = rule({
 
 const iconClass = rule({
   fz: '15.7px',
-  w: '30px',
-  h: '30px',
+  w: '24px',
+  h: '24px',
   bdrad: '6px',
   pd: '0',
   mr: '1px 9px 1px 1px',
