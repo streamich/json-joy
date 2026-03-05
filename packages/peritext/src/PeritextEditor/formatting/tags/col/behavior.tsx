@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Edit} from './Edit';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
@@ -23,4 +24,5 @@ export const behavior = {
     if (!data || typeof data !== 'object') return '';
     return data.color || '';
   },
+  Edit,
 } satisfies ToolbarSliceBehaviorData;

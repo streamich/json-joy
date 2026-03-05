@@ -39,9 +39,13 @@
     "multiplayer-editor"
   ],
   "dependencies": {
+    "@jsonjoy.com/collaborative-react": "workspace:*",
+    "@jsonjoy.com/collaborative-ui": "workspace:*",
+    "@uiw/react-color-colorful": "^2.9.5",
     "json-joy": "workspace:*"
   },
   "peerDependencies": {
+    "react": "*",
     "tslib": "*"
   },
   "engines": {

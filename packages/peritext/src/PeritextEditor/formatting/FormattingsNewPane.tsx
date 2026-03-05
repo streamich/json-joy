@@ -3,16 +3,14 @@ import {useT} from 'use-t';
 import {useToolbarPlugin} from '../context';
 import {FormattingNew} from './views/new/FormattingNew';
 import {FormattingTitle} from './FormattingTitle';
-import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {rule} from 'nano-theme';
 import {FormattingPane} from './FormattingPane';
 import {ContextPaneHeader} from '../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../components/ContextPaneHeaderSep';
 import {useSyncStoreOpt} from '../../PeritextWebUi/react/hooks';
-import type {NewFormatting} from '../state/formattings';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import type {NewFormatting} from '../state/formattings';
 
 const blockClass = rule({
   maxW: '600px',
