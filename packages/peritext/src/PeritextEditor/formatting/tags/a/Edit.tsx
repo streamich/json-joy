@@ -32,6 +32,43 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
 
   const str = href as () => CollaborativeStr;
 
+  const url = (
+    <CollaborativeInput
+      str={str}
+      input={(ref) => (
+        <Input
+          focus
+          select
+          inp={(connect) => {
+            ref(connect);
+            inpRef.current = connect;
+          }}
+          type={'text'}
+          size={-1}
+          label='Link'
+          placeholder={'https://'}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              onSave();
+            }
+          }}
+          right={(
+            <div style={{visibility: data.href ? 'visible' : 'hidden'}}>
+              <BasicButtonClose
+                onClick={() => {
+                  const hrefApi = href();
+                  if (hrefApi) hrefApi.del(0, hrefApi.length());
+                  inpRef.current?.focus();
+                }}
+              />
+            </div>
+          )}
+        />
+      )}
+    />
+  );
+
   const title = (
     <div style={{padding: '8px 0 0'}}>
       {showTitle ? (
@@ -96,40 +133,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   return (
     <div style={{margin: -16}}>
       <div style={{padding: 16, boxSizing: 'border-box', width: 'calc(min(500px,100vw))'}}>
-        <CollaborativeInput
-          str={str}
-          input={(ref) => (
-            <Input
-              focus
-              select
-              inp={(connect) => {
-                ref(connect);
-                inpRef.current = connect;
-              }}
-              type={'text'}
-              size={-1}
-              label='Link'
-              placeholder={'https://'}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  onSave();
-                }
-              }}
-              right={(
-                <div style={{visibility: data.href ? 'visible' : 'hidden'}}>
-                  <BasicButtonClose
-                    onClick={() => {
-                      const hrefApi = href();
-                      if (hrefApi) hrefApi.del(0, hrefApi.length());
-                      inpRef.current?.focus();
-                    }}
-                  />
-                </div>
-              )}
-            />
-          )}
-        />
+        {url}
         {title}
       </div>
 
