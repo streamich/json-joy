@@ -25,11 +25,14 @@ export class PeritextCommands {
     return cmd(...args);
   };
 
-  public readonly run = (cmds: PeritextCommand[]): void => {
+  public readonly run = (cmds: PeritextCommand | PeritextCommand[]): unknown => {
+    if (!Array.isArray(cmds[0])) cmds = [cmds as PeritextCommand];
     const {txt} = this;
+    let result: unknown;
     for (const [name, ...args] of cmds) {
-      this.exec(name, ...args);
+      result = this.exec(name, ...args);
       txt.refresh();
     }
+    return result;
   };
 }
