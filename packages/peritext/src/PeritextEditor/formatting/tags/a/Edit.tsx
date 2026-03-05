@@ -1,20 +1,16 @@
 import * as React from 'react';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
-import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useT} from 'use-t';
 import {useSyncStoreOpt} from '../../../../PeritextWebUi/react/hooks';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import type {EditableFormatting} from '../../../state/formattings';
 import type {CollaborativeStr} from 'collaborative-editor';
-import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-
-const PlusIcon = makeIcon({set: 'lucide', icon: 'plus'});
 
 type Data = {href: string; title?: string};
 
@@ -59,8 +55,19 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
               onEsc={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                formatting.conf()!.replace('/title', '');
                 setShowTitle(false);
               }}
+              right={data.href && (
+                <div style={{margin: '-2px 0'}}>
+                  <BasicButtonClose
+                    onClick={() => {
+                      formatting.conf()!.replace('/title', '');
+                      setShowTitle(false);
+                    }}
+                  />
+                </div>
+              )}
             />
           )}
         />
@@ -109,19 +116,17 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
                   onSave();
                 }
               }}
-              right={
-                <div style={{paddingRight: 8, width: 24, height: 24}}>
-                  {!!data.href && (
-                    <BasicButtonClose
-                      onClick={() => {
-                        const hrefApi = href();
-                        if (hrefApi) hrefApi.del(0, hrefApi.length());
-                        inpRef.current?.focus();
-                      }}
-                    />
-                  )}
+              right={(
+                <div style={{visibility: data.href ? 'visible' : 'hidden'}}>
+                  <BasicButtonClose
+                    onClick={() => {
+                      const hrefApi = href();
+                      if (hrefApi) hrefApi.del(0, hrefApi.length());
+                      inpRef.current?.focus();
+                    }}
+                  />
                 </div>
-              }
+              )}
             />
           )}
         />
