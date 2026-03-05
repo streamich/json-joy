@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Edit} from './Edit';
+import {isValid} from './util';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
@@ -14,8 +15,7 @@ export const behavior = {
     const obj = formatting.conf()?.view() as {color: string};
     if (!obj || typeof obj !== 'object') return [{code: 'INVALID_CONFIG'}];
     const color = obj.color || '';
-    if (typeof color !== 'string') return [{code: 'INVALID_COLOR'}];
-    if (!/^#[0-9A-Fa-f]{6}$/.test(color)) return [{code: 'INVALID_COLOR'}];
+    if (typeof color !== 'string' || !isValid(color)) return [{code: 'INVALID_COLOR'}];
     if (color.length < 4) return 'empty';
     return 'good';
   },

@@ -45,7 +45,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
           }}
           type={'text'}
           size={-1}
-          label='Link'
+          label={t('Link')}
           placeholder={'https://'}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
