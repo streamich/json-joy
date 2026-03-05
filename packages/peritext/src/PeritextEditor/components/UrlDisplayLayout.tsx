@@ -4,7 +4,6 @@ import {FixedColumn} from '@jsonjoy.com/ui/lib/3-list-item/FixedColumn';
 import {fonts} from '@jsonjoy.com/ui/lib/styles';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {Favicon} from './Favicon';
@@ -13,14 +12,14 @@ import {CopyButton} from './CopyButton';
 
 const ExternalLinkIcon = makeIcon({set: 'lucide', icon: 'external-link'});
 
-const iconColumn = 40;
+const iconColumnWidth = 60;
 
 const iconClass = rule({
   d: 'flex',
   ai: 'center',
   jc: 'center',
-  w: '32px',
-  h: '32px',
+  w: '40px',
+  h: '40px',
   mr: '-4px 0',
   bg: 'rgba(250,250,250,.9)',
   bdrad: '15px',
@@ -30,7 +29,7 @@ const iconClass = rule({
 });
 
 const domainClass = rule({
-  ...fonts.get('ui', 'mid', 1),
+  ...fonts.get('ui', 'bold', 1),
   fz: '14px',
   maxW: '100%',
   whiteSpace: 'nowrap',
@@ -39,9 +38,10 @@ const domainClass = rule({
 });
 
 const linkClass = rule({
-  ...fonts.get('ui', 'bold', 1),
-  fz: '16px',
-  pd: `0 0 0 ${iconColumn}px`,
+  ...fonts.get('ui', 'mid', 1),
+  d: 'flex',
+  fz: '14px',
+  pd: `0`,
   maxW: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -72,31 +72,25 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
   }, [url]);
 
   return (
-    <Split style={{width: '100%', maxWidth: '100%'}}>
+    <FixedColumn right={60}>
       <div style={{maxWidth: 'calc(100% - 100px)'}}>
-        <FixedColumn left={iconColumn} style={{alignItems: 'center'}}>
-          <div>
+        <FixedColumn left={iconColumnWidth} style={{alignItems: 'center'}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
             <div className={iconClass}>
-              <Favicon domain={domain} url={url} />
+              <Favicon domain={domain} url={url} size={24} />
             </div>
           </div>
-          <div className={domainClass}>
-            {title ? (
-              <>
-                <strong>{title}</strong> • {domainTruncated}
-              </>
-            ) : (
-              domainTruncated
-            )}
+          <div>
+            <div className={domainClass}>
+              {domainTruncated}
+            </div>
+            <div className={linkClass}>
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                {title || url}
+              </a>
+            </div>
           </div>
         </FixedColumn>
-        <div>
-          <div className={linkClass}>
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              {url}
-            </a>
-          </div>
-        </div>
       </div>
       <div className={buttonGroupClass}>
         <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
@@ -106,6 +100,6 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
           </BasicButton>
         </BasicTooltip>
       </div>
-    </Split>
+    </FixedColumn>
   );
 };
