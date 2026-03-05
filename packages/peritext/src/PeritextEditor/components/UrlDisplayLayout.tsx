@@ -12,17 +12,17 @@ import {CopyButton} from './CopyButton';
 
 const ExternalLinkIcon = makeIcon({set: 'lucide', icon: 'external-link'});
 
-const iconColumnWidth = 60;
+const iconColumnWidth = 40;
 
 const iconClass = rule({
   d: 'flex',
   ai: 'center',
   jc: 'center',
-  w: '40px',
-  h: '40px',
+  w: '32px',
+  h: '32px',
   mr: '-4px 0',
   bg: 'rgba(250,250,250,.9)',
-  bdrad: '15px',
+  bdrad: '12px',
   '& img': {
     bdrad: '2px',
   },
@@ -39,9 +39,10 @@ const domainClass = rule({
 
 const linkClass = rule({
   ...fonts.get('ui', 'mid', 1),
-  d: 'flex',
+  d: 'block',
   fz: '14px',
   pd: `0`,
+  w: '100%',
   maxW: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -77,10 +78,10 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
         <FixedColumn left={iconColumnWidth} style={{alignItems: 'center'}}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <div className={iconClass}>
-              <Favicon domain={domain} url={url} size={24} />
+              <Favicon domain={domain} url={url} size={16} />
             </div>
           </div>
-          <div>
+          <div style={{overflow: 'hidden', width: 'calc(min(248px,100vw - 100px))'}}>
             <div className={domainClass}>
               {domainTruncated}
             </div>

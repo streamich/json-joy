@@ -21,7 +21,7 @@ export const FormattingPane: React.FC<FormattingPaneProps> = ({onEsc, children, 
           : void 0
       }
     >
-      <ContextPane {...rest} style={{width: 'calc(min(600px, max(65vw, 260px)))', ...rest.style}}>
+      <ContextPane {...rest} style={{maxWidth: 'calc(min(600px, max(65vw, 260px)))', ...rest.style}}>
         {children}
       </ContextPane>
     </div>
