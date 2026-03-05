@@ -49,6 +49,7 @@ export interface InputProps {
   onPaste?: () => void;
   onEsc?: React.KeyboardEventHandler;
   onEnter?: React.KeyboardEventHandler;
+  onKeyDown?: React.KeyboardEventHandler;
 }
 
 export const Input: React.FC<InputProps> = (props) => {
@@ -67,6 +68,7 @@ export const Input: React.FC<InputProps> = (props) => {
     center,
     right,
     onChange,
+    onKeyDown,
   } = props;
   const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
@@ -93,15 +95,16 @@ export const Input: React.FC<InputProps> = (props) => {
     },
     [props.onBlur],
   );
-  const onKeyDown = useCallback(
+  const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!ref.current) return;
       if (props.isInForm && e.key === 'Enter') {
         ref.current.blur();
       } else if (e.key === 'Escape') onEsc?.(e);
       else if (e.key === 'Enter') onEnter?.(e);
+      else onKeyDown?.(e);
     },
-    [ref.current],
+    [onEsc, onEnter, onKeyDown, props.isInForm],
   );
 
   let rightElement: React.ReactNode = null;
@@ -142,7 +145,7 @@ export const Input: React.FC<InputProps> = (props) => {
     readOnly,
     onFocus,
     onBlur,
-    onKeyDown,
+    onKeyDown: handleKeyDown,
     onPaste,
   };
 

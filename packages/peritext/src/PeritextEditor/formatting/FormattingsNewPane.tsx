@@ -11,6 +11,8 @@ import {ContextPaneHeader} from '../components/ContextPaneHeader';
 import {ContextPaneHeaderSep} from '../components/ContextPaneHeaderSep';
 import {useSyncStoreOpt} from '../../PeritextWebUi/react/hooks';
 import type {NewFormatting} from '../state/formattings';
+import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 
 const blockClass = rule({
   maxW: '600px',
@@ -37,29 +39,16 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
   return (
     <FormattingPane onEsc={() => toolbar.newSlice.next(void 0)}>
       <form className={blockClass} onSubmit={handleSave}>
-        <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)}>
+        <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)} right={(
+          <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+            <BasicButton fill width={'auto'} disabled={!valid} onClick={valid ? onSave : void 0}>{t('Save')}</BasicButton>
+          </Flex>
+        )}>
           <FormattingTitle formatting={formatting} />
         </ContextPaneHeader>
         <ContextPaneHeaderSep />
-
         <div style={{padding: '16px'}}>
           <FormattingNew formatting={formatting} onSave={handleSave} />
-        </div>
-
-        <ContextSep line />
-
-        <div style={{padding: '16px'}}>
-          <Button
-            small
-            lite={!valid}
-            // positive={validation === 'good'}
-            block
-            disabled={!valid}
-            submit
-            onClick={handleSave}
-          >
-            {t('Save')}
-          </Button>
         </div>
       </form>
     </FormattingPane>

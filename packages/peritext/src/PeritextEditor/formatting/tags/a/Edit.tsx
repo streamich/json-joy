@@ -9,9 +9,10 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useT} from 'use-t';
 import {useSyncStoreOpt} from '../../../../PeritextWebUi/react/hooks';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
-import {Input} from '../../../components/Input';
+import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import type {EditableFormatting} from '../../../state/formattings';
 import type {CollaborativeStr} from 'collaborative-editor';
+import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 
 const PlusIcon = makeIcon({set: 'lucide', icon: 'plus'});
 
@@ -54,18 +55,21 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
               }}
               type={'text'}
               size={-1}
-              placeholder={t('Title')}
+              label={t('Title')}
+              onEsc={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowTitle(false);
+              }}
             />
           )}
         />
       ) : !data.href ? null : (
-        <Button
-          icon={<PlusIcon width={16} height={16} />}
-          size={-1}
-          outline
-          ghost
-          radius={1}
-          style={{borderStyle: 'dashed'}}
+        <BasicButton
+          width={'auto'}
+          rounder
+          fill
+          compact
           onClick={() => {
             if (typeof formatting.conf()?.view()?.title !== 'string') {
               formatting.conf()!.set({title: ''});
@@ -76,15 +80,15 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
             }, 20);
           }}
         >
-          {t('Title')}
-        </Button>
+          {t('Add title')}
+        </BasicButton>
       )}
     </div>
   );
 
   return (
     <div style={{margin: -16}}>
-      <div style={{padding: 16}}>
+      <div style={{padding: 16, boxSizing: 'border-box', width: 'calc(min(500px,100vw))'}}>
         <CollaborativeInput
           str={str}
           input={(ref) => (
@@ -97,6 +101,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
               }}
               type={'text'}
               size={-1}
+              label='Link'
               placeholder={'https://'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

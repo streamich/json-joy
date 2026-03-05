@@ -40,7 +40,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
   const right = (
     doEdit ? (
       <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-        <BasicButton fill width={'auto'} onClick={state.returnFromEditPanelAndSave}>Save</BasicButton>
+        <BasicButton fill width={'auto'} onClick={state.returnFromEditPanelAndSave}>{t('Save')}</BasicButton>
         <Space horizontal />
         <BasicTooltip renderTooltip={() => t('Stop editing')}>
           <BasicButtonClose onClick={state.switchToViewPanel} />
