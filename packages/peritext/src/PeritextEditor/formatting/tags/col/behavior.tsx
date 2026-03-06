@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {View} from './View';
 import {Edit} from './Edit';
 import {isValid} from './util';
+import type {ColorSliceData} from './types';
 import type {ToolbarSliceBehaviorData} from '../../../types';
 
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
-
-export interface ColorSliceData {
-  col?: string;
-}
 
 export const behavior = {
   menu: {
@@ -28,5 +26,6 @@ export const behavior = {
     if (!data || typeof data !== 'object') return '';
     return data.col || '';
   },
+  View,
   Edit,
 } satisfies ToolbarSliceBehaviorData;

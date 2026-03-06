@@ -5,19 +5,13 @@ import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
 import {useT} from 'use-t';
-import {useSyncStoreOpt} from '../../../../PeritextWebUi/react/hooks';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import type {EditableFormatting} from '../../../state/formattings';
+import {EditProps} from '../../../types';
+import {useNodeView} from '@jsonjoy.com/collaborative-react';
+import type {UrlSliceData} from './types';
 import type {CollaborativeStr} from 'collaborative-editor';
-
-type Data = {href: string; title?: string};
-
-export interface EditProps {
-  formatting: EditableFormatting;
-  onSave: () => void;
-}
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const [t] = useT();
@@ -26,8 +20,10 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const [showTitle, setShowTitle] = React.useState(!!formatting.conf()?.view()?.title);
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const titleStr = React.useMemo(() => () => formatting.conf()?.str(['title']), [formatting]);
-  const data: Data = (useSyncStoreOpt(formatting.conf()!.events) as Data) || {url: ''};
+  const obj = formatting.conf()!;
+  const data = useNodeView(obj) as unknown as UrlSliceData;
 
+  if (!data || typeof data !== 'object') return null;
   if (!href()) return null;
 
   const str = href as () => CollaborativeStr;
