@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {RenderInline} from './inline/RenderInline';
 import {RenderPeritext, type RenderPeritextProps} from './RenderPeritext';
-import {text} from '../PeritextWebUi/plugins/minimal/text';
+import {text} from './inline/text';
 import {RenderBlock} from './block/RenderBlock';
 import {RenderCaret} from './cursor/caret/RenderCaret';
 import {RenderFocus} from './cursor/focus/RenderFocus';
