@@ -6,23 +6,27 @@ import type {ToolbarSliceBehaviorData} from '../../../types';
 
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
 
+export interface ColorSliceData {
+  col?: string;
+}
+
 export const behavior = {
   menu: {
     name: 'Color',
     icon: () => <PaintbrushIcon width={16} height={16} />,
   },
   validate: (formatting) => {
-    const obj = formatting.conf()?.view() as {color: string};
+    const obj = formatting.conf()?.view() as ColorSliceData;
     if (!obj || typeof obj !== 'object') return [{code: 'INVALID_CONFIG'}];
-    const color = obj.color || '';
+    const color = obj.col || '';
     if (typeof color !== 'string' || !isValid(color)) return [{code: 'INVALID_COLOR'}];
     if (color.length < 4) return 'empty';
     return 'good';
   },
   previewText: (formatting) => {
-    const data = formatting.conf()?.view() as {color: string};
+    const data = formatting.conf()?.view() as ColorSliceData;
     if (!data || typeof data !== 'object') return '';
-    return data.color || '';
+    return data.col || '';
   },
   Edit,
 } satisfies ToolbarSliceBehaviorData;
