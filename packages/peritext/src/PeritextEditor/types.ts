@@ -74,6 +74,8 @@ export interface EditProps {
 
   /**
    * The function to be called when the formatting is saved.
+   * 
+   * @todo Rename to `onDone`.
    */
   onSave: () => void;
 

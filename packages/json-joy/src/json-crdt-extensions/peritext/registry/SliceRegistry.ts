@@ -76,7 +76,7 @@ export class SliceRegistry implements Printable {
     const colSchema = s.obj(
       {},
       {
-        color: s.str<string>(''),
+        col: s.str<string>(''),
       },
     );
     registry.add(
@@ -84,7 +84,7 @@ export class SliceRegistry implements Printable {
         col: (jsonml) => {
           const attr = jsonml[1] || {};
           const data: JsonNodeView<SchemaToJsonNode<typeof colSchema>> = {
-            color: attr.color ?? '',
+            col: attr.col ?? '',
           };
           return [TAG.col, {data, inline: true}] as PeritextMlElement<TAG.col, any, true>;
         },
