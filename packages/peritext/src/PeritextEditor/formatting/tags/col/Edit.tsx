@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {useT} from 'use-t';
 import {useNodeView} from '@jsonjoy.com/collaborative-react';
-import ColorPicker from '@uiw/react-color-colorful';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {isValid} from './util';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import type {EditableFormatting} from '../../../state/formattings';
+import {ColorPicker} from '../../../components/ColorPicker';
 
 export interface EditProps {
   formatting: EditableFormatting;
@@ -38,7 +38,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
           setColorInput(String(obj.read('/color') || '#000000'));
         }}
         right={
-          <div style={{width: 32, height: 16, background: color, borderRadius: 2, border: '1px solid #fff', boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'}} />
+          <div style={{width: 32, height: 16, background: color, borderRadius: 2, border: '2px solid #fff', boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'}} />
         }
       />
       <Space />
