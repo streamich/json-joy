@@ -440,11 +440,11 @@ export class ToolbarState implements UiLifeCycles {
               icon: () => <PaintBucketIcon width={16} height={16} />,
               onSelect: () => {},
             },
-            {
-              name: 'Border',
-              icon: () => <BorderLeftIcon width={16} height={16} />,
-              onSelect: () => {},
-            },
+            // {
+            //   name: 'Border',
+            //   icon: () => <BorderLeftIcon width={16} height={16} />,
+            //   onSelect: () => {},
+            // },
           ],
         },
       ],
