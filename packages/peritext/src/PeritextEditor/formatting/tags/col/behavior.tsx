@@ -2,7 +2,7 @@ import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Edit} from './Edit';
 import {isValid} from './util';
-import type {ToolbarSliceBehaviorData} from '../../../types';
+import type {IconProps, ToolbarSliceBehaviorData} from '../../../types';
 
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
 
@@ -24,5 +24,10 @@ export const behavior = {
     if (!data || typeof data !== 'object') return '';
     return data.color || '';
   },
+  renderIcon: ({formatting}: IconProps) => {
+    const color = String(formatting.conf()?.read('/color') || void 0);
+    return <span style={{backgroundColor: color, display: 'inline-block', width: 16, height: 16, borderRadius: '50%'}} />;
+  },
+  View: () => null,
   Edit,
 } satisfies ToolbarSliceBehaviorData;
