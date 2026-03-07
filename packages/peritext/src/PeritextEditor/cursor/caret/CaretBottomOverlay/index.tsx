@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FormattingsManagePane} from '../../../formatting/FormattingsManagePane';
+import {FormattingsManagePane} from '../../../inline/FormattingsManagePane';
 import {BottomPanePortal} from '../../util/BottomPanePortal';
 import {useToolbarPlugin} from '../../../context';
 import type {PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';

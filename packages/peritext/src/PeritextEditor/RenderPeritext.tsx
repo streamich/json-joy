@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Chrome} from './Chrome';
+import {Chrome} from './components/Chrome';
 import {context, type ToolbarPluginContextValue} from './context';
 import {ToolbarState} from './state';
 import type {PeritextSurfaceState} from '../PeritextWebUi/state';

@@ -2,6 +2,24 @@ import * as React from 'react';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {secondBrain} from './menus';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
+import {CommonSliceType, type LeafBlock, type Peritext} from 'json-joy/lib/json-crdt-extensions';
+import {BehaviorSubject} from 'rxjs';
+import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
+import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
+import {NewFormatting} from './formattings';
+import type {PeritextSurfaceState} from '../../PeritextWebUi/state';
+import * as behavior from '../inline/tags';
+import type {MenuItem} from '../types';
+import type {ToolbarPluginOpts} from '../ToolbarPlugin';
+import type {
+  BufferDetail,
+  PeritextCursorEvent,
+  PeritextEventDetailMap,
+} from 'json-joy/lib/json-crdt-extensions/peritext/events';
+import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 // Preloaded icons - Radix set
 const FontBoldIcon = makeIcon({set: 'radix', icon: 'font-bold'});
@@ -96,24 +114,6 @@ const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
 // Preloaded icons - Lineicons set
 const _CommentTextIcon = makeIcon({set: 'lineicons', icon: 'comment-1-text'});
 const _FlagIcon = makeIcon({set: 'lineicons', icon: 'flag-2'});
-import {secondBrain} from './menus';
-import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
-import {CommonSliceType, type LeafBlock, type Peritext} from 'json-joy/lib/json-crdt-extensions';
-import {BehaviorSubject} from 'rxjs';
-import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
-import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import {NewFormatting} from './formattings';
-import type {PeritextSurfaceState} from '../../PeritextWebUi/state';
-import * as behavior from '../formatting/tags';
-import type {MenuItem} from '../types';
-import type {ToolbarPluginOpts} from '../ToolbarPlugin';
-import type {
-  BufferDetail,
-  PeritextCursorEvent,
-  PeritextEventDetailMap,
-} from 'json-joy/lib/json-crdt-extensions/peritext/events';
-import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 export class ToolbarState implements UiLifeCycles {
   public readonly txt: Peritext;

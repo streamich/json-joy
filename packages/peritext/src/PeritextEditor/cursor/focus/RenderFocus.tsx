@@ -2,7 +2,7 @@ import * as React from 'react';
 import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {useToolbarPlugin} from '../../context';
 import {CaretFrame} from '../util/CaretFrame';
-import {FormattingsNewPane} from '../../formatting/FormattingsNewPane';
+import {FormattingsNewPane} from '../../inline/FormattingsNewPane';
 import {BottomPanePortal} from '../util/BottomPanePortal';
 import {TopPanePortal} from '../util/TopPanePortal';
 import {useSyncStore, useSyncStoreOpt, useTimeout} from '../../../PeritextWebUi/react/hooks';

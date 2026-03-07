@@ -3,7 +3,7 @@ import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/B
 import {ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {UrlDisplayCard} from '../../../cards/UrlDisplayCard';
+import {UrlDisplayCard} from '../../../components/UrlDisplayCard';
 import {useT} from 'use-t';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
