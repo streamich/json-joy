@@ -42,9 +42,9 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
         style={{width: '100%'}}
         color={color}
         onChange={(newColor) => {
-          const hex = newColor.toRgb().hex();
+          const hex = newColor.toRgb().hex().toUpperCase();
           setColor(newColor);
-          setColorInput(hex.toUpperCase());
+          setColorInput(hex);
           obj.replace('/col', hex);
         }}
       />

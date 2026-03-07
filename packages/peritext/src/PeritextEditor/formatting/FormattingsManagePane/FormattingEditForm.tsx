@@ -17,7 +17,7 @@ export const FormattingEditForm: React.FC<FormattingEditFormProps> = ({formattin
   useSyncStoreOpt(formatting.conf()?.api);
   const validation = formatting.validate();
 
-  const valid = validation === 'good' || validation === 'fine';
+  // const valid = validation === 'good' || validation === 'fine';
 
   const handleSubmit = () => {
     onSave?.();
