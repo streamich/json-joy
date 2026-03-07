@@ -23,7 +23,18 @@ export const toRgb = (h: number, s: number, l: number, a: number): RgbColor => {
   return new RgbColor(r, g, b, a);
 };
 
+const clamp = (num: number) => Math.min(1, Math.max(0, num));
+
 export class HslColor {
+  public static from(source: string | RgbColor | HslColor): HslColor | undefined {
+    if (source instanceof HslColor) return source.copy();
+    if (source instanceof RgbColor) return HslColor.fromRgb(source);
+    if (typeof source !== 'string') return;
+    if (source[0] === 'h') return HslColor.fromString(source);
+    const rgb = RgbColor.fromString(source);
+    return rgb ? HslColor.fromRgb(rgb) : rgb;
+  }
+
   public static fromString(hsl: string): HslColor | undefined {
     const match = HSL_REGEX.exec(hsl);
     if (!match) return;
@@ -60,21 +71,42 @@ export class HslColor {
 
   constructor(
     /** Float in range 0 to 1. */
-    public readonly h: number,
+    public h: number,
     /** Float in range 0 to 1. */
-    public readonly s: number,
+    public s: number,
     /** Float in range 0 to 1. */
-    public readonly l: number,
+    public l: number,
     /** Float in range 0 to 1. */
-    public readonly a: number = 1,
+    public a: number = 1,
   ) {}
+
+  public bump(dh: number = 0, ds: number = 0, dl: number = 0, da: number = 0): HslColor {
+    if (dh !== 0) this.h = clamp(this.h + dh);
+    if (ds !== 0) this.s = clamp(this.s + ds);
+    if (dl !== 0) this.l = clamp(this.l + dl);
+    if (da !== 0) this.a = clamp(this.a + da);
+    return this;
+  }
+
+  public copy(dh: number = 0, ds: number = 0, dl: number = 0, da: number = 0): HslColor {
+    return new HslColor(
+      clamp(this.h + dh),
+      clamp(this.s + ds),
+      clamp(this.l + dl),
+      clamp(this.a + da),
+    );
+  }
 
   public toRgb(): RgbColor {
     return toRgb(this.h, this.s, this.l, this.a);
   }
 
+  public eq(other: HslColor): boolean {
+    return this.h === other.h && this.s === other.s && this.l === other.l && this.a === other.a;
+  }
+
   public toString(): string {
     const {h, s, l, a} = this;
-    return `hsl(${h * 360}deg ${s * 100}% ${l * 100}% / ${a * 100}%)`;
+    return `hsl(${+(h * 360).toFixed(3)}deg ${+(s * 100).toFixed(3)}% ${+(l * 100).toFixed(3)}% / ${+(a * 100).toFixed(3)}%)`;
   }
 }

@@ -45,3 +45,33 @@ describe('.fromRgb()', () => {
     assertRoundtrip(11, 21, 31, 41);
   });
 });
+
+describe('.from()', () => {
+  const assertRoundtrip = (r: number, g: number, b: number, a: number) => {
+    const rgb = new RgbColor(r / 255, g / 255, b / 255, a / 255);
+    const hsl = HslColor.from(rgb)!;
+    const str1 = rgb.hex();
+    const str2 = rgb.rgb();
+    const str3 = rgb.rgba();
+    const str4 = hsl.toString();
+    const rgb2 = hsl.toRgb();
+    const str5 = rgb2.hex();
+    expect(HslColor.from(rgb)!.eq(hsl)).toBe(true);
+    expect(HslColor.from(str1)!.eq(hsl)).toBe(true);
+    expect(HslColor.from(str3)!.eq(hsl)).toBe(true);
+    expect(HslColor.from(str4)!.toString()).toBe(hsl.toString());
+    expect(HslColor.from(str5)!.eq(hsl)).toBe(true);
+    expect(HslColor.from(rgb2)!.toString()).toBe(hsl.toString());
+  };
+  
+  test('roundtrip', () => {
+    assertRoundtrip(0, 0, 0, 255);
+    assertRoundtrip(255, 255, 255, 255);
+    assertRoundtrip(128, 128, 128, 128);
+    assertRoundtrip(255, 0, 0, 255);
+    assertRoundtrip(0, 255, 0, 255);
+    assertRoundtrip(0, 0, 255, 255);
+    assertRoundtrip(1, 2, 3, 4);
+    assertRoundtrip(11, 21, 31, 41);
+  });
+});
