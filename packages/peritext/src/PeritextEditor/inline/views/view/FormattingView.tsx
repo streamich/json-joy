@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {ViewProps} from '../../../types';
+import type {ViewProps} from '../../types';
 
 export interface FormattingViewProps extends ViewProps {}
 

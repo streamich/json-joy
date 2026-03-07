@@ -3,7 +3,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './View';
 import {Edit} from './Edit';
 import {isValid} from './util';
-import type {IconProps, ToolbarSliceBehaviorData} from '../../../types';
+import type {IconProps, EditorInlineSliceBehaviorData} from '../../types';
 import type {ColorSliceData} from './types';
 
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
@@ -32,4 +32,4 @@ export const behavior = {
   },
   View,
   Edit,
-} satisfies ToolbarSliceBehaviorData;
+} satisfies EditorInlineSliceBehaviorData;

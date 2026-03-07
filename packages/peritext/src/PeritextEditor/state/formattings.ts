@@ -2,7 +2,7 @@ import {s} from 'json-joy/lib/json-crdt-patch';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
-import type {ToolbarSliceBehavior, ValidationResult} from '../types';
+import type {EditorInlineSliceBehavior, ValidationResult} from '../types';
 import type {SliceBehavior} from 'json-joy/lib/json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {ToolbarState} from '.';
@@ -17,14 +17,14 @@ export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {
 }
 
 export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
-  extends FormattingBase<ToolbarSliceBehavior, R>,
+  extends FormattingBase<EditorInlineSliceBehavior, R>,
     FormattingWithConfig<Node> {}
 
 export abstract class EditableFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
   implements ToolbarFormatting<R, Node>
 {
   public constructor(
-    public readonly behavior: ToolbarSliceBehavior,
+    public readonly behavior: EditorInlineSliceBehavior,
     public readonly range: R,
     public readonly state: ToolbarState,
   ) {}
@@ -41,7 +41,7 @@ export abstract class EditableFormatting<R extends Range<string> = Range<string>
 /**
  * Formatting is a specific application of known formatting option to a range of
  * text. Formatting is composed of a specific {@link Slice} which stores the
- * state (location, data) of the formatting and a {@link ToolbarSliceBehavior}
+ * state (location, data) of the formatting and a {@link EditorInlineSliceBehavior}
  * which defines the formatting behavior.
  */
 export class SavedFormatting<Node extends ObjNode = ObjNode> extends EditableFormatting<Slice<string>, Node> {
@@ -67,7 +67,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableForma
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
-    public readonly behavior: ToolbarSliceBehavior,
+    public readonly behavior: EditorInlineSliceBehavior,
     public readonly range: Range<string>,
     public readonly state: ToolbarState,
   ) {

@@ -5,7 +5,7 @@ import {renderIcon} from './renderIcon';
 import {View} from './View';
 import {Edit} from './Edit';
 import {getDomain} from '../../../util';
-import type {ToolbarSliceBehaviorData} from '../../../types';
+import type {EditorInlineSliceBehaviorData} from '../../types';
 
 const LinkIcon = makeIcon({set: 'lucide', icon: 'link'});
 
@@ -34,4 +34,4 @@ export const behavior = {
   renderIcon,
   Edit,
   View,
-} satisfies ToolbarSliceBehaviorData;
+} satisfies EditorInlineSliceBehaviorData;

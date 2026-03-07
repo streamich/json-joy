@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Favicon} from '../../../components/Favicon';
-import type {IconProps} from '../../../types';
+import type {IconProps} from '../../types';
 
 export const renderIcon = ({formatting}: IconProps) => {
   const data = formatting.conf()?.view() as {href: string};
