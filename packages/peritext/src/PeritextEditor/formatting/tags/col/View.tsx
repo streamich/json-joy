@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ColorDisplayLayout} from '../../../components/ColorDisplayLayout';
+import {ColorDisplayLayout} from '../../../components/color-display/ColorDisplayLayout';
 import type {ColorSliceData} from './types';
 import type {ViewProps} from '../../../types';
 

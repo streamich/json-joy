@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ColorPicker} from '.';
-import type {ColorResult} from '@uiw/color-convert';
+import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
 
 export default {
   component: ColorPicker,
@@ -16,17 +16,16 @@ export const NoAlpha = {
 };
 
 const Controlled: React.FC = () => {
-  const [color, setColor] = React.useState('#f97316');
-  const handleChange = (result: ColorResult) => setColor(result.hex);
+  const [color, setColor] = React.useState(() => HslColor.from('#f97316')!);
   return (
     <div style={{display: 'flex', gap: 24, alignItems: 'flex-start'}}>
-      <ColorPicker color={color} onChange={handleChange} />
+      <ColorPicker color={color} onChange={(result: HslColor) => setColor(result)} />
       <div
         style={{
           width: 80,
           height: 80,
           borderRadius: 8,
-          background: color,
+          background: color.toString(),
           border: '1px solid rgba(0,0,0,.12)',
           flexShrink: 0,
         }}
@@ -40,21 +39,21 @@ export const ControlledWithPreview = {
 };
 
 const MultiPicker: React.FC = () => {
-  const [fg, setFg] = React.useState('#1e293b');
-  const [bg, setBg] = React.useState('#f1f5f9');
+  const [fg, setFg] = React.useState(() => HslColor.from('#1e293b')!);
+  const [bg, setBg] = React.useState(() => HslColor.from('#f1f5f9')!);
   return (
     <div style={{display: 'flex', gap: 32, flexWrap: 'wrap'}}>
       <div>
         <div style={{marginBottom: 8, fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
           Foreground
         </div>
-        <ColorPicker color={fg} onChange={(r) => setFg(r.hex)} />
+        <ColorPicker color={fg} onChange={(r) => setFg(r)} />
       </div>
       <div>
         <div style={{marginBottom: 8, fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
           Background
         </div>
-        <ColorPicker color={bg} onChange={(r) => setBg(r.hex)} />
+        <ColorPicker color={bg} onChange={(r) => setBg(r)} />
       </div>
       <div
         style={{
