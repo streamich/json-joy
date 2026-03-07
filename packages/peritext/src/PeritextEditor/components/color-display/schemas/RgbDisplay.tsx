@@ -13,13 +13,13 @@ export const RgbDisplay: React.FC<RgbDisplayProps> = ({hsl, ...rest}) => {
     <TextDisplay {...rest}>
       <Muted>{a !== 255 ? 'rgba(' : 'rgb('}</Muted>
       {r}
-      <Muted>{', '}</Muted>
+      <Muted>{','}</Muted>
       {g}
-      <Muted>{', '}</Muted>
+      <Muted>{','}</Muted>
       {b}
       {a !== 255 && (
         <>
-          <Muted>{', '}</Muted>
+          <Muted>{','}</Muted>
           {String(+(hsl.a).toFixed(2)).replace(/^0\./, '.')}
         </>
       )}

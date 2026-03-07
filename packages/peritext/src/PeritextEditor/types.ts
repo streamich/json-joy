@@ -64,6 +64,9 @@ export interface IconProps {
 
 export interface ViewProps {
   formatting: SavedFormatting;
+
+  /** Call when user wants to enter "edit" mode for this formatting. */
+  onEdit: () => void;
 }
 
 export interface EditProps {
@@ -73,7 +76,7 @@ export interface EditProps {
   formatting: EditableFormatting;
 
   /**
-   * The function to be called when the formatting is saved.
+   * The function to be called when the formatting is ready to be saved.
    * 
    * @todo Rename to `onDone`.
    */

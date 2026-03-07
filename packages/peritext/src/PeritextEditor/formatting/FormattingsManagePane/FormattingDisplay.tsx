@@ -98,7 +98,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         <>
           <ContextSep />
           <div style={{padding: '4px 16px 16px'}}>
-            <FormattingView formatting={formatting} />
+            <FormattingView formatting={formatting} onEdit={() => state.switchToEditPanel()} />
           </div>
         </>
       ) : (

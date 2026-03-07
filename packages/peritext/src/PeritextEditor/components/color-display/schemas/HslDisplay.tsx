@@ -16,18 +16,17 @@ export const HslDisplay: React.FC<HslDisplayProps> = ({hsl, ...rest}) => {
     <TextDisplay {...rest}>
       <Muted>hsl(</Muted>
       {H}
-      <Muted inert>{'deg'}</Muted>
+      {a !== 1 ? null : <Muted inert>{'deg'}</Muted>}
       <Muted>{' '}</Muted>
       {S}
-      <Muted inert>{'%'}</Muted>
+      {a !== 1 ? null : <Muted inert>{'%'}</Muted>}
       <Muted>{' '}</Muted>
       {L}
-      <Muted inert>{'%'}</Muted>
+      {a !== 1 ? null : <Muted inert>{'%'}</Muted>}
       {a !== 1 && (
         <>
           <Muted>{' / '}</Muted>
           {+(a * 100).toFixed(1)}
-          <Muted inert>{'%'}</Muted>
         </>
       )}
       <Muted>)</Muted>
