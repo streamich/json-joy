@@ -89,7 +89,9 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
         onBackClick={onClose}
         right={right}
       >
-        <FormattingTitle formatting={formatting} />
+        <FormattingTitle formatting={formatting} onClick={() => {
+          if (state.view$.value === 'view') state.switchToEditPanel();
+        }} />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {doEdit ? (

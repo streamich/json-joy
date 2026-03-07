@@ -33,9 +33,10 @@ const iconClass = rule({
 
 export interface FormattingTitleProps {
   formatting: ToolbarFormatting;
+  onClick?: React.MouseEventHandler;
 }
 
-export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting}) => {
+export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting, onClick}) => {
   const behavior = formatting.behavior;
   const menu = behavior.data().menu;
 
@@ -43,7 +44,7 @@ export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting}) =>
   const name = menu?.name ?? behavior.name;
 
   return (
-    <div className={blockClass}>
+    <div className={blockClass} onClick={onClick}>
       {icon ? (
         <Flex style={{alignItems: 'center'}}>
           <div className={iconClass}>
