@@ -9,7 +9,7 @@ import {FormattingTitle} from '../FormattingTitle';
 import {FormattingView} from '../views/view/FormattingView';
 import {useToolbarPlugin} from '../../context';
 import {FormattingPane} from '../FormattingPane';
-import {ContextMenu, ContextPane, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {ContextMenu, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FormattingEditForm} from './FormattingEditForm';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
@@ -63,7 +63,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
                 icon: () => <TrashIcon width={16} height={16} />,
                 onSelect: () => {
                   surface.events.et.format({
-                    at: formatting.range,
+                    slice: formatting.range,
                     action: 'del',
                   });
                   onClose?.();
@@ -83,7 +83,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
   );
 
   return (
-    <FormattingPane onEsc={() => onClose()}>
+    <FormattingPane onEsc={() => onClose?.()}>
       <ContextPaneHeader
         short
         onBackClick={onClose}
