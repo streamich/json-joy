@@ -31,7 +31,7 @@ export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSe
             onClick={() => onSelect(formatting)}
           >
             {menu?.name ?? behavior.name}
-            {!!previewTextFormatted && <span style={{opacity: 0.5}}>{previewTextFormatted}</span>}
+            {!!previewTextFormatted && <span style={{opacity: 0.5, fontSize: '.96em'}}>{previewTextFormatted}</span>}
           </ContextItem>
         );
       })}

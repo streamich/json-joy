@@ -83,7 +83,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
   );
 
   return (
-    <FormattingPane>
+    <FormattingPane onEsc={() => onClose()}>
       <ContextPaneHeader
         short
         onBackClick={onClose}

@@ -27,8 +27,8 @@ export const behavior = {
     return data.col || '';
   },
   renderIcon: ({formatting}: IconProps) => {
-    const color = String(formatting.conf()?.read('/color') || void 0);
-    return <span style={{backgroundColor: color, display: 'inline-block', width: 16, height: 16, borderRadius: '50%'}} />;
+    const color = String(formatting.conf()?.read('/col') || void 0);
+    return <span style={{backgroundColor: color, display: 'inline-block', width: 16, height: 16, borderRadius: 3}} />;
   },
   View,
   Edit,
