@@ -1,3 +1,4 @@
+import {HsvColor} from './HsvColor';
 import {RgbColor} from "./RgbColor";
 
 const HSL_REGEX = /hsla?\(?\s*(-?\d*\.?\d+)(deg|rad|grad|turn)?[,\s]+(-?\d*\.?\d+)%?[,\s]+(-?\d*\.?\d+)%?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
@@ -26,9 +27,10 @@ export const toRgb = (h: number, s: number, l: number, a: number): RgbColor => {
 const clamp = (num: number) => Math.min(1, Math.max(0, num));
 
 export class HslColor {
-  public static from(source: string | RgbColor | HslColor): HslColor | undefined {
+  public static from(source: string | RgbColor | HsvColor | HslColor): HslColor | undefined {
     if (source instanceof HslColor) return source.copy();
     if (source instanceof RgbColor) return HslColor.fromRgb(source);
+    if (source instanceof HsvColor) return HslColor.fromHsv(source);
     if (typeof source !== 'string') return;
     if (source[0] === 'h') return HslColor.fromString(source);
     const rgb = RgbColor.fromString(source);
@@ -69,6 +71,13 @@ export class HslColor {
     return new HslColor(h, s, l, a);
   }
 
+  public static fromHsv(hsv: HsvColor): HslColor {
+    const { h, s, v, a } = hsv;
+    const l = v * (1 - s / 2);
+    const sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
+    return new HslColor(h, sl, l, a);
+  }
+
   constructor(
     /** Float in range 0 to 1. */
     public h: number,
@@ -99,6 +108,13 @@ export class HslColor {
 
   public toRgb(): RgbColor {
     return toRgb(this.h, this.s, this.l, this.a);
+  }
+
+  public toHsv(): HsvColor {
+    const { h, s, l, a } = this;
+    const v = l + s * Math.min(l, 1 - l);
+    const sv = v === 0 ? 0 : 2 * (1 - l / v);
+    return new HsvColor(h, sv, v, a);
   }
 
   public eq(other: HslColor): boolean {

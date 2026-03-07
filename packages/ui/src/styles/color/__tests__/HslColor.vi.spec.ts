@@ -50,8 +50,8 @@ describe('.from()', () => {
   const assertRoundtrip = (r: number, g: number, b: number, a: number) => {
     const rgb = new RgbColor(r / 255, g / 255, b / 255, a / 255);
     const hsl = HslColor.from(rgb)!;
+    const hsv = hsl.toHsv();
     const str1 = rgb.hex();
-    const str2 = rgb.rgb();
     const str3 = rgb.rgba();
     const str4 = hsl.toString();
     const rgb2 = hsl.toRgb();
@@ -62,6 +62,7 @@ describe('.from()', () => {
     expect(HslColor.from(str4)!.toString()).toBe(hsl.toString());
     expect(HslColor.from(str5)!.eq(hsl)).toBe(true);
     expect(HslColor.from(rgb2)!.toString()).toBe(hsl.toString());
+    expect(HslColor.from(hsv)!.toString()).toBe(hsl.toString());
   };
   
   test('roundtrip', () => {
