@@ -20,7 +20,7 @@ export const RgbDisplay: React.FC<RgbDisplayProps> = ({hsl, ...rest}) => {
       {a !== 255 && (
         <>
           <Muted>{','}</Muted>
-          {String(+(hsl.a).toFixed(2)).replace(/^0\./, '.')}
+          {String(+hsl.a.toFixed(2)).replace(/^0\./, '.')}
         </>
       )}
       <Muted>)</Muted>

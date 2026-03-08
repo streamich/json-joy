@@ -11,7 +11,7 @@ describe('.fromHsl()', () => {
     expect(parsed!.l).toBeCloseTo(color.l);
     expect(parsed!.a).toBeCloseTo(color.a);
   };
-  
+
   test('roundtrip', () => {
     assertRoundtrip(new HslColor(0, 0, 0));
     assertRoundtrip(new HslColor(360, 100, 100));
@@ -33,7 +33,7 @@ describe('.fromRgb()', () => {
     expect(b2).toBe(b);
     expect(a2).toBe(a);
   };
-  
+
   test('roundtrip', () => {
     assertRoundtrip(0, 0, 0, 255);
     assertRoundtrip(255, 255, 255, 255);
@@ -64,7 +64,7 @@ describe('.from()', () => {
     expect(HslColor.from(rgb2)!.toString()).toBe(hsl.toString());
     expect(HslColor.from(hsv)!.toString()).toBe(hsl.toString());
   };
-  
+
   test('roundtrip', () => {
     assertRoundtrip(0, 0, 0, 255);
     assertRoundtrip(255, 255, 255, 255);

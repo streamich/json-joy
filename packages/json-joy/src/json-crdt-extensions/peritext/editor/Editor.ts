@@ -11,7 +11,17 @@ import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep
 import {isLetter, isPunctuation, isWhitespace, stepsEqual} from './util';
 import {ValueSyncStore} from '../../../util/events/sync-store';
 import {UndEndIterator, type UndEndNext} from '../../../util/iterator';
-import {type Patch, tick, Timespan, type ITimespanStruct, tss, PatchBuilder, s, ts, equal} from '../../../json-crdt-patch';
+import {
+  type Patch,
+  tick,
+  Timespan,
+  type ITimespanStruct,
+  tss,
+  PatchBuilder,
+  s,
+  ts,
+  equal,
+} from '../../../json-crdt-patch';
 import {CursorAnchor, SliceStacking, SliceHeaderMask, SliceHeaderShift, SliceTypeCon} from '../slice/constants';
 import {ArrApi} from '../../../json-crdt/model';
 import * as schema from '../slice/schema';
@@ -237,7 +247,7 @@ export class Editor<T = string> implements Printable {
   /**
    * Inserts text at the cursor positions and collapses cursors, if necessary.
    * Then applies any pending inline formatting to the inserted text.
-   * 
+   *
    * @returns Returns an array of timespan structs for the inserted text, one
    *     per cursor.
    */
@@ -251,7 +261,7 @@ export class Editor<T = string> implements Printable {
           if (!text || cardinality !== 1) break AFFINITY_BASED_INSERT;
           const cursor = this.cursor;
           const point = cursor.start;
-          if ((point.cmp(cursor.end) !== 0) || point.isAbs()) break AFFINITY_BASED_INSERT;
+          if (point.cmp(cursor.end) !== 0 || point.isAbs()) break AFFINITY_BASED_INSERT;
           const txt = this.txt;
           FORWARD_AFFINITY: {
             if (point.anchor !== Anchor.Before) break FORWARD_AFFINITY;
@@ -261,7 +271,7 @@ export class Editor<T = string> implements Printable {
               fwdAffinity = true;
             } else {
               const layer1 = this.getFirstSavedLayer(point);
-              const prevHalfPoint = point.copy(p => p.halfstep(-1));
+              const prevHalfPoint = point.copy((p) => p.halfstep(-1));
               const layer2 = this.getFirstSavedLayer(prevHalfPoint);
               fwdAffinity = layer1 !== layer2;
             }
@@ -279,7 +289,8 @@ export class Editor<T = string> implements Printable {
             cursor.set(txt.point(ts(textId.sid, textId.time + insertedText.length - 2), Anchor.After));
             return [span];
           }
-          IN_THE_MIDDLE_AFFINITY: { // Inserting in the middle of empty <code></code>
+          IN_THE_MIDDLE_AFFINITY: {
+            // Inserting in the middle of empty <code></code>
             if (point.anchor !== Anchor.After) break IN_THE_MIDDLE_AFFINITY;
             const pointIsTombstone = point.chunk()?.del === true;
             if (!pointIsTombstone) break IN_THE_MIDDLE_AFFINITY;
@@ -363,10 +374,10 @@ export class Editor<T = string> implements Printable {
    * at half-step intervals, allowing the point to be attached to either side of
    * the formatting boundary, i.e. express affinity to either the formatted or
    * unformatted text when moving across a formatting boundary.
-   * 
+   *
    * Also, vstep allows to move the point inside empty inline elements, which is
    * not possible with step, as there are no visible characters to step on.
-   * 
+   *
    * It also considers a move of a deleted character to a visible character as
    * a distinct step, even though their spatial positions are the same.
    *
@@ -382,7 +393,8 @@ export class Editor<T = string> implements Printable {
       STEP: {
         // If anchored to deleted character, our step is to move off to a visible character.
         if (point.deleted()) {
-          if (direction > 0) point.refBefore(); else point.refAfter();
+          if (direction > 0) point.refBefore();
+          else point.refAfter();
           end = point.isAbs();
           break STEP;
         }
@@ -390,9 +402,10 @@ export class Editor<T = string> implements Printable {
         const ref1 = this.isSliceEdge(point);
         const doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge =
           iterations === 0 &&
-          (direction === -1 && (point.anchor === Anchor.Before)) &&
+          direction === -1 &&
+          point.anchor === Anchor.Before &&
           ref1 instanceof OverlayRefSliceEnd &&
-          (ref1.slice.start.cmp(ref1.slice.end) !== 0) &&
+          ref1.slice.start.cmp(ref1.slice.end) !== 0 &&
           ref1.slice.isCollapsed();
         if (doEnterEmptyFormattingOnRightToLeftMoveAtEndEdge) {
           point.refAfter(true);
@@ -408,9 +421,10 @@ export class Editor<T = string> implements Printable {
         if (ref2) {
           const doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge =
             iterations === 0 &&
-            (direction === 1 && (point.anchor === Anchor.Before)) &&
+            direction === 1 &&
+            point.anchor === Anchor.Before &&
             ref2 instanceof OverlayRefSliceEnd &&
-            (ref2.slice.start.cmp(ref2.slice.end) !== 0) &&
+            ref2.slice.start.cmp(ref2.slice.end) !== 0 &&
             ref2.slice.isCollapsed();
           if (doEnterEmptyFormattingOnLeftToRightMoveAtEndEdge) {
             point.refAfter(true);
@@ -437,8 +451,8 @@ export class Editor<T = string> implements Printable {
         if (end) break LOOP;
         const ref3 = this.isSliceEdge(point);
         if (ref3) {
-          const pointIsLastAnchorInSliceBoundary = direction > 0
-            ? point.anchor === Anchor.Before : point.anchor === Anchor.After;
+          const pointIsLastAnchorInSliceBoundary =
+            direction > 0 ? point.anchor === Anchor.Before : point.anchor === Anchor.After;
           if (pointIsLastAnchorInSliceBoundary) {
             point.halfstep(-direction);
             break STEP;
@@ -458,10 +472,10 @@ export class Editor<T = string> implements Printable {
 
   private didSkipDeleted(point: Point<T>, direction: number): boolean {
     if (direction > 0 && point.anchor === Anchor.Before) {
-      const leftChar = point.copy(p => p.refAfter(true));
+      const leftChar = point.copy((p) => p.refAfter(true));
       return !!leftChar.chunk()?.del;
     } else if (direction < 0 && point.anchor === Anchor.After) {
-      const rightChar = point.copy(p => p.refBefore(true));
+      const rightChar = point.copy((p) => p.refBefore(true));
       return !!rightChar.chunk()?.del;
     }
     return false;
@@ -478,7 +492,7 @@ export class Editor<T = string> implements Printable {
     }
     return;
   }
-  
+
   private isSliceEdge(point: Point<T>): OverlayRefSliceStart<T> | OverlayRefSliceEnd<T> | undefined {
     const overlayPoint = this.txt.overlay.get(point);
     const firstRef = overlayPoint?.refs[0]; // We only check the first one (heuristic), for performance.

@@ -72,7 +72,6 @@ export type SelectionMoveInstruction = [
    * @default 'focus'
    */
   edge: 'start' | 'end' | 'focus' | 'anchor',
-
   /**
    * Absolute position is specified using {@link Position} type. In which case
    * the next `len` field is ignored.
@@ -104,7 +103,6 @@ export type SelectionMoveInstruction = [
    * @todo Introduce 'vline', "visual line" - soft line break.
    */
   to: Position | 'point' | 'char' | 'vchar' | 'word' | 'line' | 'vline' | 'vert' | 'block' | 'all',
-
   /**
    * Specify the length of the movement (the number of steps) in units
    * specified by the `to` field. If not specified, the default value is `0`,
@@ -114,7 +112,6 @@ export type SelectionMoveInstruction = [
    * @default 0
    */
   len?: number,
-
   /**
    * If `true`, the selection will be collapsed to a single point. The other
    * edge of the selection will be moved to the same position as the specified

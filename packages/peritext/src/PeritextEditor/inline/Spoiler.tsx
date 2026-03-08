@@ -31,7 +31,7 @@ export const Spoiler: React.FC<SpoilerProps> = (props) => {
   const slice = attr.slice;
   const editor = slice.txt.editor;
   const cursor = editor.cursorCount() === 1 ? editor.cursor : void 0;
-  
+
   let isRevealed = false;
   if (cursor) {
     isRevealed = slice.containsPoint(cursor.focus());

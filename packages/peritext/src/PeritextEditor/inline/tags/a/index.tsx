@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {JsonNodeView, s, SchemaToJsonNode} from "json-joy/lib/json-crdt";
-import {SliceStacking, SliceTypeCon, PeritextMlElement, FromHtmlBehavior} from "json-joy/lib/json-crdt-extensions";
+import {JsonNodeView, s, SchemaToJsonNode} from 'json-joy/lib/json-crdt';
+import {SliceStacking, SliceTypeCon, PeritextMlElement, FromHtmlBehavior} from 'json-joy/lib/json-crdt-extensions';
 import {InlineSliceBehavior} from '../../InlineSliceBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -36,7 +36,11 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.a, typeof sche
 };
 
 /** Inline URL, like `<a>` tag in HTML. */
-export const behavior = new class ABehavior extends InlineSliceBehavior<SliceStacking.Many, SliceTypeCon.a, typeof schema> {
+export const behavior = new (class ABehavior extends InlineSliceBehavior<
+  SliceStacking.Many,
+  SliceTypeCon.a,
+  typeof schema
+> {
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.a, 'Link', schema, false, void 0, fromHtml);
   }
@@ -74,4 +78,4 @@ export const behavior = new class ABehavior extends InlineSliceBehavior<SliceSta
 
   public readonly Edit = Edit;
   public readonly View = View;
-};
+})();

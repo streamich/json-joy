@@ -51,8 +51,20 @@ const FollowMouseDemo: React.FC = () => {
   const pointThrottled = useThrottle(point, 100);
 
   return (
-    <div style={{margin: 32, padding: 32, background: '#eaeaea', borderRadius: 16, width: 300, textAlign: 'center', lineHeight: '200px'}}>
-      <pre>x: {point[0]}, y: {point[1]}</pre>
+    <div
+      style={{
+        margin: 32,
+        padding: 32,
+        background: '#eaeaea',
+        borderRadius: 16,
+        width: 300,
+        textAlign: 'center',
+        lineHeight: '200px',
+      }}
+    >
+      <pre>
+        x: {point[0]}, y: {point[1]}
+      </pre>
       <Cursor point={[pointThrottled[0] + 20, pointThrottled[1] + 20]} />
     </div>
   );
@@ -62,11 +74,8 @@ export const FollowMouse = {
   args: {
     point: [0, 0],
   },
-  decorators: [
-    () => <FollowMouseDemo />,
-  ],
+  decorators: [() => <FollowMouseDemo />],
 };
-
 
 export const Color = {
   args: {

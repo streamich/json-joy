@@ -31,7 +31,5 @@ export const AnnotatedInput: React.FC<AnnotatedInputProps> = (props) => {
 
   const backdrop = h('span', {}, ...annotationNodes);
 
-  return (
-    <Backdrop value={value} backdrop={backdrop} attr={attr} inputRef={inputRef} />
-  );
+  return <Backdrop value={value} backdrop={backdrop} attr={attr} inputRef={inputRef} />;
 };

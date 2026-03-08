@@ -8,7 +8,7 @@ import type {ToolbarState} from '.';
 
 export interface FormattingBase<B extends InlineSliceBehavior<any, any, any>, R extends Range<string>> {
   behavior: B;
-  range: R
+  range: R;
 }
 
 export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {

@@ -44,13 +44,31 @@ const MultiPicker: React.FC = () => {
   return (
     <div style={{display: 'flex', gap: 32, flexWrap: 'wrap'}}>
       <div>
-        <div style={{marginBottom: 8, fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
+        <div
+          style={{
+            marginBottom: 8,
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#64748b',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
           Foreground
         </div>
         <ColorPicker color={fg} onChange={(r) => setFg(r)} />
       </div>
       <div>
-        <div style={{marginBottom: 8, fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
+        <div
+          style={{
+            marginBottom: 8,
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#64748b',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
           Background
         </div>
         <ColorPicker color={bg} onChange={(r) => setBg(r)} />

@@ -57,8 +57,7 @@ export const Backdrop: React.FC<BackdropProps> = (props) => {
     const input = resolvedInputRef.current;
     if (!input) return;
     const onScroll = () => {
-      if (backdropInnerRef.current)
-        backdropInnerRef.current.style.transform = `translateX(-${input.scrollLeft}px)`;
+      if (backdropInnerRef.current) backdropInnerRef.current.style.transform = `translateX(-${input.scrollLeft}px)`;
     };
     input.addEventListener('scroll', onScroll);
     return () => {
@@ -68,13 +67,13 @@ export const Backdrop: React.FC<BackdropProps> = (props) => {
 
   const backdrop = (
     <div className={backdropClass}>
-      <div ref={backdropInnerRef}>
-        {props.backdrop}
-      </div>
+      <div ref={backdropInnerRef}>{props.backdrop}</div>
     </div>
   );
 
-  const input = renderInput ? renderInput(inputClass, props) : (
+  const input = renderInput ? (
+    renderInput(inputClass, props)
+  ) : (
     <input ref={resolvedInputRef as React.RefObject<HTMLInputElement>} className={inputClass} value={value} />
   );
 

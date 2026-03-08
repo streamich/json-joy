@@ -1,25 +1,28 @@
 import {HsvColor} from './HsvColor';
-import {RgbColor} from "./RgbColor";
+import {RgbColor} from './RgbColor';
 
-const HSL_REGEX = /hsla?\(?\s*(-?\d*\.?\d+)(deg|rad|grad|turn)?[,\s]+(-?\d*\.?\d+)%?[,\s]+(-?\d*\.?\d+)%?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
+const HSL_REGEX =
+  /hsla?\(?\s*(-?\d*\.?\d+)(deg|rad|grad|turn)?[,\s]+(-?\d*\.?\d+)%?[,\s]+(-?\d*\.?\d+)%?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
 
 const hueToRgb = (p: number, q: number, t: number): number => {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
-  if (t < 1/6) return p + (q - p) * 6 * t;
-  if (t < 1/2) return q;
-  if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+  if (t < 1 / 6) return p + (q - p) * 6 * t;
+  if (t < 1 / 2) return q;
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
   return p;
 };
 
 export const toRgb = (h: number, s: number, l: number, a: number): RgbColor => {
-  let r = l, g = l, b = l;
+  let r = l,
+    g = l,
+    b = l;
   if (s !== 0) {
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
-    r = hueToRgb(p, q, h + 1/3);
+    r = hueToRgb(p, q, h + 1 / 3);
     g = hueToRgb(p, q, h);
-    b = hueToRgb(p, q, h - 1/3);
+    b = hueToRgb(p, q, h - 1 / 3);
   }
   return new RgbColor(r, g, b, a);
 };
@@ -41,15 +44,16 @@ export class HslColor {
     const match = HSL_REGEX.exec(hsl);
     if (!match) return;
     const parsedUnits = match[2];
-    const unitAdjustment = parsedUnits === 'deg'
-      ? 1 / 360
-      : parsedUnits === 'rad'
-        ? (1 / (Math.PI * 2))
-        : parsedUnits === 'grad'
-          ? (1 / 400)
-          : parsedUnits === 'turn'
-            ? 1
-            : 1 / 360;
+    const unitAdjustment =
+      parsedUnits === 'deg'
+        ? 1 / 360
+        : parsedUnits === 'rad'
+          ? 1 / (Math.PI * 2)
+          : parsedUnits === 'grad'
+            ? 1 / 400
+            : parsedUnits === 'turn'
+              ? 1
+              : 1 / 360;
     const h = parseFloat(match[1]) * unitAdjustment;
     const s = parseFloat(match[3]);
     const l = parseFloat(match[4]);
@@ -59,8 +63,11 @@ export class HslColor {
 
   public static fromRgb(rgb: RgbColor): HslColor {
     const {r, g, b, a} = rgb;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h: number = 0, s: number = 0, l: number = (max + min) / 2;
+    const max = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+    let h: number = 0,
+      s: number = 0,
+      l: number = (max + min) / 2;
     if (max === min) return new HslColor(0, 0, l, a); // achromatic
     const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -72,7 +79,7 @@ export class HslColor {
   }
 
   public static fromHsv(hsv: HsvColor): HslColor {
-    const { h, s, v, a } = hsv;
+    const {h, s, v, a} = hsv;
     const l = v * (1 - s / 2);
     const sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
     return new HslColor(h, sl, l, a);
@@ -98,12 +105,7 @@ export class HslColor {
   }
 
   public copy(dh: number = 0, ds: number = 0, dl: number = 0, da: number = 0): HslColor {
-    return new HslColor(
-      clamp(this.h + dh),
-      clamp(this.s + ds),
-      clamp(this.l + dl),
-      clamp(this.a + da),
-    );
+    return new HslColor(clamp(this.h + dh), clamp(this.s + ds), clamp(this.l + dl), clamp(this.a + da));
   }
 
   public toRgb(): RgbColor {
@@ -111,7 +113,7 @@ export class HslColor {
   }
 
   public toHsv(): HsvColor {
-    const { h, s, l, a } = this;
+    const {h, s, l, a} = this;
     const v = l + s * Math.min(l, 1 - l);
     const sv = v === 0 ? 0 : 2 * (1 - l / v);
     return new HsvColor(h, sv, v, a);

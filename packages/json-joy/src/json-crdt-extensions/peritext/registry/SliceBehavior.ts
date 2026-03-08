@@ -13,11 +13,7 @@ export type ToHtmlBehavior<
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
 > = ToHtmlConverter<
-  PeritextMlElement<
-    Tag,
-    JsonNodeView<SchemaToJsonNode<Schema>>,
-    Stacking extends SliceStacking.Marker ? false : true
-  >
+  PeritextMlElement<Tag, JsonNodeView<SchemaToJsonNode<Schema>>, Stacking extends SliceStacking.Marker ? false : true>
 >;
 
 export type FromHtmlBehavior<
@@ -26,11 +22,7 @@ export type FromHtmlBehavior<
   Schema extends NodeBuilder = NodeBuilder,
 > = {
   [htmlTag: string]: FromHtmlConverter<
-    PeritextMlElement<
-      Tag,
-      JsonNodeView<SchemaToJsonNode<Schema>>,
-      Stacking extends SliceStacking.Marker ? false : true
-    >
+    PeritextMlElement<Tag, JsonNodeView<SchemaToJsonNode<Schema>>, Stacking extends SliceStacking.Marker ? false : true>
   >;
 };
 

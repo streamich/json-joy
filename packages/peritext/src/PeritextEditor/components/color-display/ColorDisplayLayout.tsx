@@ -32,7 +32,10 @@ export const ColorDisplayLayout: React.FC<ColorDisplayLayoutProps> = ({color, on
         {!!hsl && (
           <>
             <TextCopy text={<HexDisplay select hsl={hsl} />} copy={() => hsl.toRgb().hex()} />
-            <TextCopy text={<RgbDisplay select hsl={hsl} />} copy={() => hsl.a !== 1 ? hsl.toRgb().rgba() : hsl.toRgb().rgb()} />
+            <TextCopy
+              text={<RgbDisplay select hsl={hsl} />}
+              copy={() => (hsl.a !== 1 ? hsl.toRgb().rgba() : hsl.toRgb().rgb())}
+            />
             <TextCopy text={<HslDisplay select hsl={hsl} />} copy={() => hsl.toString()} />
           </>
         )}
@@ -43,9 +46,9 @@ export const ColorDisplayLayout: React.FC<ColorDisplayLayoutProps> = ({color, on
         style={{background: color}}
         className={colorClass({
           '&:hover': {
-              bd: `1px solid ${styles.col.get('neutral', 10)}`,
-              out: `1px solid ${styles.col.get('neutral', 10)}`,
-          }
+            bd: `1px solid ${styles.col.get('neutral', 10)}`,
+            out: `1px solid ${styles.col.get('neutral', 10)}`,
+          },
         })}
       />
     </FixedColumn>

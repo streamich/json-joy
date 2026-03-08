@@ -37,61 +37,65 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
 
   const doEdit = view === 'edit' && !!editFormatting;
 
-  const right = (
-    doEdit ? (
-      <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-        <BasicButton fill width={'auto'} onClick={state.returnFromEditPanelAndSave}>{t('Save')}</BasicButton>
-        <Space horizontal />
-        <BasicTooltip renderTooltip={() => t('Stop editing')}>
-          <BasicButtonClose onClick={state.switchToViewPanel} />
-        </BasicTooltip>
-      </Flex>
-    ) : (
-      <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-        <Popup renderContext={() => (
-          <ContextMenu inset menu={{
-            name: t('Options'),
-            children: [
-              {
-                name: t('Edit'),
-                icon: () => <PencilIcon width={16} height={16} />,
-                onSelect: state.switchToEditPanel,
-              },
-              {
-                name: t('Delete'),
-                danger: true,
-                icon: () => <TrashIcon width={16} height={16} />,
-                onSelect: () => {
-                  surface.events.et.format({
-                    slice: formatting.range,
-                    action: 'del',
-                  });
-                  onClose?.();
+  const right = doEdit ? (
+    <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+      <BasicButton fill width={'auto'} onClick={state.returnFromEditPanelAndSave}>
+        {t('Save')}
+      </BasicButton>
+      <Space horizontal />
+      <BasicTooltip renderTooltip={() => t('Stop editing')}>
+        <BasicButtonClose onClick={state.switchToViewPanel} />
+      </BasicTooltip>
+    </Flex>
+  ) : (
+    <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+      <Popup
+        renderContext={() => (
+          <ContextMenu
+            inset
+            menu={{
+              name: t('Options'),
+              children: [
+                {
+                  name: t('Edit'),
+                  icon: () => <PencilIcon width={16} height={16} />,
+                  onSelect: state.switchToEditPanel,
                 },
-              },
-            ],
-          }} />
-        )}>
-          <BasicTooltip renderTooltip={() => t('Options')}>
-            <BasicButton>
-              <OptionsIcon width={16} height={16} />
-            </BasicButton>
-          </BasicTooltip>
-        </Popup>        
-      </Flex>
-    )
+                {
+                  name: t('Delete'),
+                  danger: true,
+                  icon: () => <TrashIcon width={16} height={16} />,
+                  onSelect: () => {
+                    surface.events.et.format({
+                      slice: formatting.range,
+                      action: 'del',
+                    });
+                    onClose?.();
+                  },
+                },
+              ],
+            }}
+          />
+        )}
+      >
+        <BasicTooltip renderTooltip={() => t('Options')}>
+          <BasicButton>
+            <OptionsIcon width={16} height={16} />
+          </BasicButton>
+        </BasicTooltip>
+      </Popup>
+    </Flex>
   );
 
   return (
     <FormattingPane onEsc={() => onClose?.()}>
-      <ContextPaneHeader
-        short
-        onBackClick={onClose}
-        right={right}
-      >
-        <FormattingTitle formatting={formatting} onClick={() => {
-          if (state.view$.value === 'view') state.switchToEditPanel();
-        }} />
+      <ContextPaneHeader short onBackClick={onClose} right={right}>
+        <FormattingTitle
+          formatting={formatting}
+          onClick={() => {
+            if (state.view$.value === 'view') state.switchToEditPanel();
+          }}
+        />
       </ContextPaneHeader>
       <ContextPaneHeaderSep />
       {doEdit ? (

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {JsonNodeView, s, SchemaToJsonNode} from "json-joy/lib/json-crdt";
-import {SliceStacking, SliceTypeCon, FromHtmlBehavior, PeritextMlElement} from "json-joy/lib/json-crdt-extensions";
+import {JsonNodeView, s, SchemaToJsonNode} from 'json-joy/lib/json-crdt';
+import {SliceStacking, SliceTypeCon, FromHtmlBehavior, PeritextMlElement} from 'json-joy/lib/json-crdt-extensions';
 import {InlineSliceBehavior} from '../../InlineSliceBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {View} from './components/View';
@@ -11,11 +11,9 @@ import {isValid} from './util';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'paintbrush'});
 
-export const schema = s.obj(
-  {
-    col: s.str<string>(''),
-  }
-);
+export const schema = s.obj({
+  col: s.str<string>(''),
+});
 
 export type Data = JsonNodeView<SchemaToJsonNode<typeof schema>>;
 
@@ -29,7 +27,11 @@ const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.col, typeof sc
   },
 };
 
-export const behavior = new class ColBehavior extends InlineSliceBehavior<SliceStacking.Many, SliceTypeCon.col, typeof schema> {
+export const behavior = new (class ColBehavior extends InlineSliceBehavior<
+  SliceStacking.Many,
+  SliceTypeCon.col,
+  typeof schema
+> {
   constructor() {
     super(SliceStacking.Many, SliceTypeCon.col, 'Color', schema, false, void 0, fromHtml);
   }
@@ -61,4 +63,4 @@ export const behavior = new class ColBehavior extends InlineSliceBehavior<SliceS
 
   public readonly Edit = Edit;
   public readonly View = View;
-}
+})();

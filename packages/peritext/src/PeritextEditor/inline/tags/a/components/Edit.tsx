@@ -49,7 +49,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
               onSave();
             }
           }}
-          right={(
+          right={
             <div style={{visibility: data.href ? 'visible' : 'hidden'}}>
               <BasicButtonClose
                 onClick={() => {
@@ -59,7 +59,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
                 }}
               />
             </div>
-          )}
+          }
         />
       )}
     />
@@ -91,16 +91,18 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
                 formatting.conf()!.replace('/title', '');
                 setShowTitle(false);
               }}
-              right={data.href && (
-                <div style={{margin: '-2px 0'}}>
-                  <BasicButtonClose
-                    onClick={() => {
-                      formatting.conf()!.replace('/title', '');
-                      setShowTitle(false);
-                    }}
-                  />
-                </div>
-              )}
+              right={
+                data.href && (
+                  <div style={{margin: '-2px 0'}}>
+                    <BasicButtonClose
+                      onClick={() => {
+                        formatting.conf()!.replace('/title', '');
+                        setShowTitle(false);
+                      }}
+                    />
+                  </div>
+                )
+              }
             />
           )}
         />

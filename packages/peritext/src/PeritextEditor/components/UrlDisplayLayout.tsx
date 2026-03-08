@@ -82,9 +82,7 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
             </div>
           </div>
           <div style={{overflow: 'hidden', width: 'calc(min(248px,100vw - 100px))'}}>
-            <div className={domainClass}>
-              {domainTruncated}
-            </div>
+            <div className={domainClass}>{domainTruncated}</div>
             <div className={linkClass}>
               <a href={url} target="_blank" rel="noopener noreferrer">
                 {title || url}
@@ -97,7 +95,7 @@ export const UrlDisplayLayout: React.FC<UrlDisplayLayoutProps> = ({url, title}) 
         <CopyButton width={48} height={48} round onCopy={() => url} tooltip={{anchor: {}}} />
         <BasicTooltip nowrap renderTooltip={() => t('Open')}>
           <BasicButton width={48} height={48} round to={url} target="_blank" rel="noopener noreferrer">
-            <ExternalLinkIcon width={16} height={16}  />
+            <ExternalLinkIcon width={16} height={16} />
           </BasicButton>
         </BasicTooltip>
       </div>

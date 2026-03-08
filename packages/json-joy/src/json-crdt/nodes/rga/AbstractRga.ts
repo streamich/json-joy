@@ -829,8 +829,7 @@ export abstract class AbstractRga<T, C extends Chunk<T> = Chunk<T>> {
   ): [id: ITimestampStruct, chunk: Chunk<T>] | undefined {
     if (!chunk) return;
     const time = id.time;
-    if ((!skipDeleted || !chunk.del) && chunk.id.time < time)
-      return [new Timestamp(id.sid, time - 1), chunk];
+    if ((!skipDeleted || !chunk.del) && chunk.id.time < time) return [new Timestamp(id.sid, time - 1), chunk];
     while (chunk) {
       chunk = prev(chunk);
       if (!chunk) return;

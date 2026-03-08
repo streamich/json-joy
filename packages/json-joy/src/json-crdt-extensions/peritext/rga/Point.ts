@@ -176,7 +176,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @param skip How many characters to move by.
    * @param deleted If `true`, the search will NOT skip deleted characters.
    * @returns Next visible ID in string.
-   * 
+   *
    * @todo PERF: Make this also return the chunk.
    */
   public nextId(skip: number = 1, deleted?: boolean): ITimestampStruct | undefined {
@@ -225,7 +225,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns ID of the character that is `move` characters before the
    *          character referenced by the point, or `undefined` if there is no
    *          such character.
-   * 
+   *
    * @todo PERF: Make this also return the chunk.
    */
   public prevId(skip: number = 1, deleted?: boolean): ITimestampStruct | undefined {
@@ -399,7 +399,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * the same, but ensures that it is anchored before a character. Skips any
    * deleted characters (chunks), attaching the point to the next visible
    * character.
-   * 
+   *
    * @param deleted If `true`, the point will NOT skip deleted characters, and
    *     will be anchored after the next character even if it is deleted.
    */
@@ -427,7 +427,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * the same, but ensures that it is anchored after a character. Skips any
    * deleted characters (chunks), attaching the point to the next visible
    * character.
-   * 
+   *
    * @param deleted If `true`, the point will NOT skip deleted characters, and
    *     will be anchored after the next character even if it is deleted.
    */
@@ -467,7 +467,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Modifies the location of the point, such that it references the next
    * anchor point in the string.
-   * 
+   *
    * @param deleted If `true`, the point will NOT skip deleted characters, and
    *     will be anchored after the next character even if it is deleted.
    */
@@ -507,7 +507,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Modifies the location of the point, such that it references the previous
    * anchor point in the string.
-   * 
+   *
    * @param deleted If `true`, the point will NOT skip deleted characters, and
    *     will be anchored after the previous character even if it is deleted.
    */
@@ -627,9 +627,8 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     let char: string | undefined = this.char()?.view() as string | undefined;
     char = typeof char === 'string' ? JSON.stringify(char) : '▢';
     const isTombstone = this.chunk()?.del;
-    const anchor = this.anchor === Anchor.Before
-      ? ('.' + (isTombstone ? '♦ ' : '') + char)
-      : (char + (isTombstone ? ' ♦' : '') + '.');
+    const anchor =
+      this.anchor === Anchor.Before ? '.' + (isTombstone ? '♦ ' : '') + char : char + (isTombstone ? ' ♦' : '') + '.';
     return `${name}{ ${pos === Position.AbsEnd ? '∞' : pos}, ${id}, ${anchor} }`;
   }
 }

@@ -18,9 +18,7 @@ export const RedChar = {
     value: '123',
     backdrop: (
       <>
-        1
-        <span style={{background: 'red'}}>2</span>
-        3
+        1<span style={{background: 'red'}}>2</span>3
       </>
     ),
   },

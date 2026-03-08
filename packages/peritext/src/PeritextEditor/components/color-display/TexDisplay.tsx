@@ -22,17 +22,23 @@ export const TextDisplay: React.FC<TextDisplayProps> = ({select, children}) => {
   return (
     <span
       className={textClass}
-      onClick={select ? (e) => {
-        const range = document.createRange();
-        range.selectNodeContents(e.currentTarget);
-        const sel = window.getSelection();
-        if (!sel) return;
-        sel.removeAllRanges();
-        sel.addRange(range);
-        e.preventDefault();
-        e.stopPropagation();
-      } : undefined}
-    >{children}</span>
+      onClick={
+        select
+          ? (e) => {
+              const range = document.createRange();
+              range.selectNodeContents(e.currentTarget);
+              const sel = window.getSelection();
+              if (!sel) return;
+              sel.removeAllRanges();
+              sel.addRange(range);
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          : undefined
+      }
+    >
+      {children}
+    </span>
   );
 };
 
@@ -43,12 +49,10 @@ export interface MutedProps {
 
 export const Muted: React.FC<MutedProps> = ({inert, children}) => {
   const style: React.CSSProperties = {
-    opacity: .6
+    opacity: 0.6,
   };
 
   if (inert) style.userSelect = 'none';
 
-  return (
-    <span style={style}>{children}</span>
-  );
+  return <span style={style}>{children}</span>;
 };

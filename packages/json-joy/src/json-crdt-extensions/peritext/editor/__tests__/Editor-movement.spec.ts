@@ -656,7 +656,7 @@ describe.only('.vstep()', () => {
     expect(point.viewPos()).toBe(5);
     editor.vstep(point, 1);
     expect(point.viewPos()).toBe(6);
-    while(!editor.vstep(point, 1));
+    while (!editor.vstep(point, 1));
     expect(point.isAbsEnd()).toBe(true);
   });
 
@@ -683,7 +683,7 @@ describe.only('.vstep()', () => {
     expect(point.viewPos()).toBe(5);
     editor.vstep(point, 1);
     expect(point.viewPos()).toBe(6);
-    while(!editor.vstep(point, 1));
+    while (!editor.vstep(point, 1));
     expect(point.isAbsEnd()).toBe(true);
   });
 
@@ -740,12 +740,12 @@ describe.only('.vstep()', () => {
     expect(point.anchor).toBe(Anchor.Before);
     editor.vstep(point, -1);
     const p2 = point.clone();
-    expect(point.viewPos()).toBe(1);  // <- <code><cursor/></code> text
+    expect(point.viewPos()).toBe(1); // <- <code><cursor/></code> text
     expect(point.deleted()).toBe(true);
     expect(point.anchor).toBe(Anchor.After);
     editor.vstep(point, -1);
     const p3 = point.clone();
-    expect(point.viewPos()).toBe(1);  // <- <cursor/> <code></code> text
+    expect(point.viewPos()).toBe(1); // <- <cursor/> <code></code> text
     expect(point.deleted()).toBe(false);
     expect(point.anchor).toBe(Anchor.After);
     for (let i = 0; i < 5; i++) {

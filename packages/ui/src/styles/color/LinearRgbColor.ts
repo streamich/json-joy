@@ -5,7 +5,13 @@ const enum GAMMA_PIVOT {
   IEC = 0.04045,
 }
 
-export const fromRgb = (r: number, g: number, b: number, a: number, pivot: GAMMA_PIVOT = GAMMA_PIVOT.WCAG): LinearRgbColor => {
+export const fromRgb = (
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+  pivot: GAMMA_PIVOT = GAMMA_PIVOT.WCAG,
+): LinearRgbColor => {
   const lr = r <= pivot ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
   const lg = g <= pivot ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
   const lb = b <= pivot ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);

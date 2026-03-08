@@ -37,11 +37,17 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
   return (
     <FormattingPane onEsc={() => toolbar.newSlice.next(void 0)}>
       <form className={blockClass} onSubmit={handleSave}>
-        <ContextPaneHeader short onCloseClick={() => toolbar.newSlice.next(void 0)} right={(
-          <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
-            <BasicButton fill width={'auto'} disabled={!valid} onClick={valid ? onSave : void 0}>{t('Save')}</BasicButton>
-          </Flex>
-        )}>
+        <ContextPaneHeader
+          short
+          onCloseClick={() => toolbar.newSlice.next(void 0)}
+          right={
+            <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
+              <BasicButton fill width={'auto'} disabled={!valid} onClick={valid ? onSave : void 0}>
+                {t('Save')}
+              </BasicButton>
+            </Flex>
+          }
+        >
           <FormattingTitle formatting={formatting} />
         </ContextPaneHeader>
         <ContextPaneHeaderSep />

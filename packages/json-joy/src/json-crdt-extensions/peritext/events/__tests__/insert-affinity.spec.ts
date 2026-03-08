@@ -39,7 +39,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(range.text()).toBe('x');
     const slices = kit.peritext.overlay.findOverlapping(range);
     expect(slices.size).toBe(0);
-    
+
     // Insert "y" half-point to right, now bold, gravitates to the right.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
@@ -71,7 +71,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('a');
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
-    
+
     // Insert "x" after "b", not bold, gravitates to the left.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     kit.peritext.refresh();
@@ -83,7 +83,7 @@ const testSuite = (getKit: () => Kit) => {
     const slices = kit.peritext.overlay.findOverlapping(range);
     expect(slices.size).toBe(0); // not bold
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
-    
+
     // Insert "y" after "x", now bold, gravitates to the right.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
@@ -113,7 +113,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('l');
-    
+
     // Insert "x" after "m", bold, gravitates to the left.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
@@ -128,7 +128,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(slice?.type()).toBe('BOLD');
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
-    
+
     // Insert "y" half-point to right, now bold, gravitates to the right.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
@@ -159,7 +159,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('l');
-    
+
     // Insert "x" after "m", bold, gravitates to the left.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
@@ -174,7 +174,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(slice?.type()).toBe('BOLD');
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
     expect(kit.editor.cursor.start.leftChar()?.view()).toBe('x');
-    
+
     // Insert "y" half-point to right, now bold, gravitates to the right.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
@@ -205,7 +205,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.editor.cursor.collapseToStart();
     kit.peritext.refresh();
     expect(kit.editor.cursor.start.rightChar()?.view()).toBe('a');
-    
+
     // Insert "x" before <code></code>, not code, gravitates to the left.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
@@ -216,7 +216,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(range.text()).toBe('x');
     const slices = kit.peritext.overlay.findOverlapping(range);
     expect(slices.size).toBe(0);
-    
+
     // Insert "y" inside <code></code>, gravitates to the inside.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.After);
@@ -229,7 +229,7 @@ const testSuite = (getKit: () => Kit) => {
     expect(slices2.size).toBe(1);
     const slice2 = slices2.values().next().value;
     expect(slice2?.type()).toBe('code');
-    
+
     // Insert "z" after <code></code>.
     kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
     expect(kit.editor.cursor.start.anchor).toBe(Anchor.Before);
@@ -259,7 +259,7 @@ const testSuite = (getKit: () => Kit) => {
     kit.peritext.refresh();
     kit.editor.delCursors();
     kit.peritext.refresh();
-    
+
     // Insert before the deleted <code></code> slice.
     kit.exec('Caret', 1);
     expect(kit.exec('CharLeft')).toBe('a');
@@ -276,7 +276,7 @@ const testSuite = (getKit: () => Kit) => {
     const [complete] = kit.peritext.overlay.stat(range);
     expect([...complete]).toEqual(['code']);
     expect(kit.exec('CharLeft')).toBe('1');
-    
+
     // Insert right after the <code>0</code> slice.
     kit.exec('MoveRight');
     expect(kit.exec('CharLeft')).toBe('1');
@@ -285,7 +285,7 @@ const testSuite = (getKit: () => Kit) => {
     const range2 = kit.peritext.rangeAt(4, 1);
     const [complete2] = kit.peritext.overlay.stat(range2);
     expect([...complete2]).toEqual([]);
-    
+
     // Move after "e".
     kit.exec('MoveRight');
     expect(kit.exec('CharLeft')).toBe('e');
@@ -317,7 +317,7 @@ const testSuite = (getKit: () => Kit) => {
   //   kit.editor.del(); // delete "e"
   //   kit.peritext.refresh();
   //   console.log(kit.peritext + '');
-    
+
   //   // Insert before the deleted <code></code> slice.
   //   kit.et.cursor({at: [1]});
   //   kit.peritext.refresh();
@@ -328,7 +328,7 @@ const testSuite = (getKit: () => Kit) => {
   //   kit.et.insert('0');
   //   kit.peritext.refresh();
   //   expect(kit.editor.cursor.start.leftChar()?.view()).toBe('0');
-    
+
   //   // Enter into deleted <code></code> slice.
   //   kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
   //   kit.peritext.refresh();
@@ -339,9 +339,9 @@ const testSuite = (getKit: () => Kit) => {
   //   const [complete] = kit.peritext.overlay.stat(range);
   //   // expect([...complete]).toEqual(['code']);
   //   // expect(kit.editor.cursor.start.leftChar()?.view()).toBe('1');
-    
+
   //   console.log(kit.peritext + '');
-    
+
   //   // // Insert right after the <code>0</code> slice.
   //   // kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
   //   // kit.peritext.refresh();
@@ -352,7 +352,7 @@ const testSuite = (getKit: () => Kit) => {
   //   // const range2 = kit.peritext.rangeAt(4, 1);
   //   // const [complete2] = kit.peritext.overlay.stat(range2);
   //   // expect([...complete2]).toEqual([]);
-    
+
   //   // // Move after "e".
   //   // kit.et.cursor({move: [['focus', 'vchar', 1, true]]});
   //   // kit.peritext.refresh();

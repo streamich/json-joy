@@ -7,7 +7,7 @@ import type {EditableFormatting, SavedFormatting, ToolbarFormatting} from '../st
 export class InlineSliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
-  Schema extends NodeBuilder = NodeBuilder
+  Schema extends NodeBuilder = NodeBuilder,
 > extends SliceBehavior<Stacking, Tag, Schema> {
   /**
    * Defines how this formatting should be displayed in the toolbar and context
@@ -71,7 +71,7 @@ export interface EditProps {
 
   /**
    * The function to be called when the formatting is ready to be saved.
-   * 
+   *
    * @todo Rename to `onDone`.
    */
   onSave: () => void;

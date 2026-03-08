@@ -407,7 +407,7 @@ describe('.viewPos()', () => {
     twoThree.start.anchor = Anchor.After;
     expect(twoThree.start.viewPos()).toBe(2);
     expect(twoThree.end.viewPos()).toBe(2);
-    const end2 = twoThree.end.copy(p => p.anchor = Anchor.Before);
+    const end2 = twoThree.end.copy((p) => (p.anchor = Anchor.Before));
     expect(end2.viewPos()).toBe(2);
   });
 });
@@ -1162,17 +1162,14 @@ describe('.refNext()', () => {
     point.refNext(true);
     expect(point.cmp(peritext.pointAbsEnd())).toBe(0);
   });
-  
+
   test('goes to next anchor (deleted)', () => {
     const {peritext} = setupWithChunkedText();
     const rga = peritext.str;
     let id = rga.first()!.id;
     const expected: Point[] = [];
     while (true) {
-      expected.push(
-        peritext.point(id, Anchor.Before),
-        peritext.point(id, Anchor.After),
-      );
+      expected.push(peritext.point(id, Anchor.Before), peritext.point(id, Anchor.After));
       const next = rga.nextId(id);
       if (!next) break;
       id = next[0];
@@ -1219,17 +1216,14 @@ describe('.refPrev()', () => {
     point.refPrev(true);
     expect(point.cmp(peritext.pointAbsStart())).toBe(0);
   });
-  
+
   test('goes to previous anchor (deleted)', () => {
     const {peritext} = setupWithChunkedText();
     const rga = peritext.str;
     let id = rga.last()!.id;
     const expected: Point[] = [];
     while (true) {
-      expected.push(
-        peritext.point(id, Anchor.After),
-        peritext.point(id, Anchor.Before),
-      );
+      expected.push(peritext.point(id, Anchor.After), peritext.point(id, Anchor.Before));
       const next = rga.prevId(id);
       if (!next) break;
       id = next[0];

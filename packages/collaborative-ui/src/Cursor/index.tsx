@@ -13,10 +13,10 @@ const blockClass = rule({
 });
 
 export interface CursorProps {
-  point: [x: number, y: number],
+  point: [x: number, y: number];
   rel?: 'page' | 'element';
   icon?: React.ReactNode;
-  offset?: [x: number, y: number],
+  offset?: [x: number, y: number];
 }
 
 export const Cursor: React.FC<CursorProps> = ({point, rel, icon, offset = [3, 4]}) => {

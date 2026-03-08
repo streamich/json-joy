@@ -20,7 +20,7 @@ export interface ColorfulProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   noAlpha?: boolean;
 }
 
-const Pointer = ({ style, color, ...props }: React.HTMLAttributes<HTMLDivElement> & { color: string }) => {
+const Pointer = ({style, color, ...props}: React.HTMLAttributes<HTMLDivElement> & {color: string}) => {
   const stylePointer: React.CSSProperties = {
     height: 20,
     width: 20,
@@ -47,7 +47,7 @@ const Pointer = ({ style, color, ...props }: React.HTMLAttributes<HTMLDivElement
 };
 
 export const ColorPicker = React.forwardRef<HTMLDivElement, ColorfulProps>((props, ref) => {
-  const { prefixCls = 'jsonjoy-color-picker', className, onChange, color, style, noAlpha, ...other } = props;
+  const {prefixCls = 'jsonjoy-color-picker', className, onChange, color, style, noAlpha, ...other} = props;
   const hsl = HslColor.from(color ?? '') ?? new HslColor(0, 0, 0);
   const hsv = hsl.toHsv();
   const hsva = {h: hsv.h * 360, s: hsv.s * 100, v: hsv.v * 100, a: hsv.a};
@@ -66,8 +66,8 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorfulProps>((prop
         hsva={hsva}
         className={prefixCls}
         radius="8px"
-        style={{ width: 'auto', height: 150, minWidth: 120, borderBottom: '12px solid #000' }}
-        pointer={({ left, top }) => <Pointer style={{ left, top }} color={hsl.toString()} />}
+        style={{width: 'auto', height: 150, minWidth: 120, borderBottom: '12px solid #000'}}
+        pointer={({left, top}) => <Pointer style={{left, top}} color={hsl.toString()} />}
         onChange={({h, s, v, a}: HsvaColor) => {
           const hsv = new HsvColor(h / 360, s / 100, v / 100, a);
           const hsl = HslColor.from(hsv)!;
@@ -85,9 +85,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorfulProps>((prop
           copy.h = h / 360;
           onChange?.(copy);
         }}
-        pointer={({ left }) => (
-          <Pointer style={{ left }} color={`hsl(${hsva.h || 0}deg 100% 50%)`} />
-        )}
+        pointer={({left}) => <Pointer style={{left}} color={`hsl(${hsva.h || 0}deg 100% 50%)`} />}
       />
       {!noAlpha && (
         <>
@@ -97,7 +95,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorfulProps>((prop
             height={24}
             className={prefixCls}
             radius="8px"
-            pointer={({ left }) => <Pointer style={{ left }} color={hsl.toString()} />}
+            pointer={({left}) => <Pointer style={{left}} color={hsl.toString()} />}
             onChange={(newAlpha) => {
               const newHsl = hsl.copy();
               newHsl.a = newAlpha.a;

@@ -13,7 +13,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const obj = formatting.conf()!;
   const view = useNodeView(obj);
   const [color, setColor] = React.useState(HslColor.from(String(view?.col || '#000000')) as HslColor);
-  const [colorInput, setColorInput] = React.useState(color.toRgb().hex()); 
+  const [colorInput, setColorInput] = React.useState(color.toRgb().hex());
 
   return (
     <div style={{width: 'calc(min(240px, 100vw))'}}>
@@ -34,7 +34,16 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
           onSave();
         }}
         right={
-          <div style={{width: 32, height: 16, background: color.toString(), borderRadius: 2, border: '2px solid #fff', boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)'}} />
+          <div
+            style={{
+              width: 32,
+              height: 16,
+              background: color.toString(),
+              borderRadius: 2,
+              border: '2px solid #fff',
+              boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
+            }}
+          />
         }
       />
       <Space />

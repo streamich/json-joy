@@ -12,9 +12,9 @@ export interface PeritextDefaultCommands {
 }
 
 export class CommandsImpl implements PeritextDefaultCommands {
-  constructor (
+  constructor(
     public readonly txt: Peritext,
-    public readonly et: PeritextEventTarget
+    public readonly et: PeritextEventTarget,
   ) {}
 
   public Caret(gap: number): void {

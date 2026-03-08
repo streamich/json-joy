@@ -1380,7 +1380,7 @@ describe('StrNode', () => {
         ts(1, 4),
         ts(1, 3),
         ts(1, 2),
-      ]
+      ];
       let id = expected[0];
       for (let i = 1; i < expected.length; i++) {
         [id] = type.prevId(id)!;
@@ -1416,7 +1416,7 @@ describe('StrNode', () => {
         ts(1, 4),
         ts(1, 3),
         ts(1, 2),
-      ]
+      ];
       let id = expected[0];
       for (let i = 1; i < expected.length; i++) {
         [id] = type.prevId(id, void 0, true)!;

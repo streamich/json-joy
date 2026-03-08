@@ -25,10 +25,8 @@ export const TextCopy: React.FC<TextCopyProps> = ({text, copy}) => {
   const [t] = useT();
 
   return (
-    <Flex style = {{gap: '4px', alignItems: 'center'}}>
-      <div className={textClass}>
-        {text}
-      </div>
+    <Flex style={{gap: '4px', alignItems: 'center'}}>
+      <div className={textClass}>{text}</div>
       <CopyButton onCopy={copy} />
     </Flex>
   );
