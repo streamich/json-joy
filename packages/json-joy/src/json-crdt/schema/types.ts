@@ -5,9 +5,11 @@ import type {nodes as builder} from '../../json-crdt-patch';
 import type {ExtNode} from '../extensions/ExtNode';
 import type * as nodes from '../nodes';
 
-type ObjSchemaNodes<T, O> = {
-  [K in keyof T | keyof O]: K extends keyof T ? SchemaToJsonNode<T[K]> : K extends keyof O ? SchemaToJsonNode<O[K]> : never;
-};
+type ObjSchemaNodes<T, O> = {[K in keyof (
+  {[K in keyof T]: SchemaToJsonNode<T[K]>} & {[K in keyof O]?: SchemaToJsonNode<O[K]>}
+)]: (
+  {[K in keyof T]: SchemaToJsonNode<T[K]>} & {[K in keyof O]?: SchemaToJsonNode<O[K]>}
+)[K]};
 
 // prettier-ignore
 export type SchemaToJsonNode<S> =
