@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
-import {TextDisplay, Muted, TextDisplayProps} from '../TexDisplay';
+import type {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
+import {TextDisplay, Muted, type TextDisplayProps} from '../TexDisplay';
 
 export interface RgbDisplayProps extends Omit<TextDisplayProps, 'children'> {
   hsl: HslColor;

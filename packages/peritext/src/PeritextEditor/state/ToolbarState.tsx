@@ -14,7 +14,6 @@ import {inlines} from '../inline/tags';
 import * as a from '../inline/tags/a';
 import * as col from '../inline/tags/col';
 import type {PeritextSurfaceState} from '../../PeritextWebUi/state';
-import * as behavior from '../inline/tags';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
 import type {
@@ -58,7 +57,7 @@ const SuperscriptIcon = makeIcon({set: 'tabler', icon: 'superscript'});
 const SubscriptIcon = makeIcon({set: 'tabler', icon: 'subscript'});
 const PencilPlusIcon = makeIcon({set: 'tabler', icon: 'pencil-plus'});
 const PencilMinusIcon = makeIcon({set: 'tabler', icon: 'pencil-minus'});
-const BorderLeftIcon = makeIcon({set: 'tabler', icon: 'border-left'});
+const _BorderLeftIcon = makeIcon({set: 'tabler', icon: 'border-left'});
 const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
 const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
 const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});

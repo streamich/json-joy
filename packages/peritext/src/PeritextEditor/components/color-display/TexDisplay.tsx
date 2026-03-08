@@ -20,6 +20,7 @@ export interface TextDisplayProps {
 
 export const TextDisplay: React.FC<TextDisplayProps> = ({select, children}) => {
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Non-a11y onClick is fine here
     <span
       className={textClass}
       onClick={

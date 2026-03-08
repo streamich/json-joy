@@ -1073,7 +1073,7 @@ describe('.refAfter(deleted = true)', () => {
   });
 
   test('converts Before to After without skipping deleted chars (unlike refAfter)', () => {
-    const {peritext, chunkD1, chunk1} = setupWithChunkedText();
+    const {peritext, chunkD1} = setupWithChunkedText();
     // chunkD1 is the deleted 'd' between '123' and '456'
     // Point Before on first char after chunkD1 (the '4')
     const p1 = peritext.point(chunkD1.id, Anchor.After);

@@ -8,7 +8,7 @@ import {useT} from 'use-t';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {EditProps} from '../../../InlineSliceBehavior';
+import type {EditProps} from '../../../InlineSliceBehavior';
 import {useNodeView} from '@jsonjoy.com/collaborative-react';
 import type {Data} from '../index';
 import type {CollaborativeStr} from 'collaborative-editor';

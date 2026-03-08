@@ -41,6 +41,7 @@ export const ColorDisplayLayout: React.FC<ColorDisplayLayoutProps> = ({color, on
         )}
       </div>
       <button
+        type={'button'}
         onClick={onPreviewClick}
         aria-label={t('Edit color')}
         style={{background: color}}

@@ -44,6 +44,7 @@ export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting, onC
   const name = menu?.name ?? behavior.name;
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Non-a11y onClick is fine here
     <div className={blockClass} onClick={onClick}>
       {icon ? (
         <Flex style={{alignItems: 'center'}}>

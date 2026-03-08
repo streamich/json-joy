@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {SliceBehavior, SliceStacking, TypeTag} from 'json-joy/lib/json-crdt-extensions';
+import {SliceBehavior, type SliceStacking, type TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
 import type {MenuItem} from '../types';
 import type {EditableFormatting, SavedFormatting, ToolbarFormatting} from '../state/formattings';

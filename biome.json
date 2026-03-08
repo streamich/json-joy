@@ -25,7 +25,8 @@
 				"noParameterAssign": "off",
 				"useSingleVarDeclarator": "off",
 				"noUnusedTemplateLiteral": "off",
-				"useLiteralEnumMembers": "off"
+				"useLiteralEnumMembers": "off",
+				"useExponentiationOperator": "off"
 			},
 			"suspicious": {
 				"noExplicitAny": "off",
@@ -57,7 +58,8 @@
 			},
 			"correctness": {
 				"noUnusedFunctionParameters": "off",
-				"noVoidTypeReturn": "off"
+				"noVoidTypeReturn": "off",
+				"useParseIntRadix": "off"
 			},
 			"performance": {
 				"noDelete": "off"

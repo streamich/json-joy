@@ -1,6 +1,11 @@
 import * as React from 'react';
-import {JsonNodeView, s, SchemaToJsonNode} from 'json-joy/lib/json-crdt';
-import {SliceStacking, SliceTypeCon, PeritextMlElement, FromHtmlBehavior} from 'json-joy/lib/json-crdt-extensions';
+import {type JsonNodeView, s, type SchemaToJsonNode} from 'json-joy/lib/json-crdt';
+import {
+  SliceStacking,
+  SliceTypeCon,
+  type PeritextMlElement,
+  type FromHtmlBehavior,
+} from 'json-joy/lib/json-crdt-extensions';
 import {InlineSliceBehavior} from '../../InlineSliceBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';

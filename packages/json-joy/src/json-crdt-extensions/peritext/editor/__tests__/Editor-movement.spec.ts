@@ -630,7 +630,7 @@ const setupWithChunkedText = () => {
   };
 };
 
-describe.only('.vstep()', () => {
+describe('.vstep()', () => {
   test('can move through bold mark (end anchored to next char)', () => {
     const {peritext} = setupWithChunkedText();
     const editor = peritext.editor;
@@ -734,17 +734,17 @@ describe.only('.vstep()', () => {
     const point = peritext.pointAt(2);
     expect(point.viewPos()).toBe(2);
     editor.vstep(point, -1);
-    const p1 = point.clone();
+    const _p1 = point.clone();
     expect(point.viewPos()).toBe(1); // <- <code></code> <cursor/> text
     expect(point.deleted()).toBe(false);
     expect(point.anchor).toBe(Anchor.Before);
     editor.vstep(point, -1);
-    const p2 = point.clone();
+    const _p2 = point.clone();
     expect(point.viewPos()).toBe(1); // <- <code><cursor/></code> text
     expect(point.deleted()).toBe(true);
     expect(point.anchor).toBe(Anchor.After);
     editor.vstep(point, -1);
-    const p3 = point.clone();
+    const _p3 = point.clone();
     expect(point.viewPos()).toBe(1); // <- <cursor/> <code></code> text
     expect(point.deleted()).toBe(false);
     expect(point.anchor).toBe(Anchor.After);

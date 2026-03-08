@@ -1,6 +1,6 @@
 import type * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import {PeritextPlugin} from '../../PeritextWebUi/react/types';
+import type {PeritextPlugin} from '../../PeritextWebUi/react/types';
 import type {InlineAttrStack} from 'json-joy/lib/json-crdt-extensions/peritext/block/Inline';
 
 export const text: PeritextPlugin['text'] = (props, inline) => {

@@ -36,7 +36,7 @@ const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus'});
 // Artistic icons
 const PaintbrushIcon = makeIcon({set: 'lucide', icon: 'paintbrush'});
 const PaintBucketIcon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
-const BorderLeftIcon = makeIcon({set: 'tabler', icon: 'border-left'});
+// const BorderLeftIcon = makeIcon({set: 'tabler', icon: 'border-left'});
 
 // Typesetting icons
 const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography'});

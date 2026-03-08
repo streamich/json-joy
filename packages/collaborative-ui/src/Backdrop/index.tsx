@@ -63,7 +63,7 @@ export const Backdrop: React.FC<BackdropProps> = (props) => {
     return () => {
       input.removeEventListener('scroll', onScroll);
     };
-  }, []);
+  }, [resolvedInputRef.current]);
 
   const backdrop = (
     <div className={backdropClass}>

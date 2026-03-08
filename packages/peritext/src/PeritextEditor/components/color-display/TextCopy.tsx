@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {fonts} from '@jsonjoy.com/ui/lib/styles';
-import {useT} from 'use-t';
 import {CopyButton} from '../CopyButton';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 
@@ -22,8 +21,6 @@ export interface TextCopyProps {
 }
 
 export const TextCopy: React.FC<TextCopyProps> = ({text, copy}) => {
-  const [t] = useT();
-
   return (
     <Flex style={{gap: '4px', alignItems: 'center'}}>
       <div className={textClass}>{text}</div>

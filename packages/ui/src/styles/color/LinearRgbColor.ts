@@ -1,4 +1,4 @@
-import {RgbColor} from './RgbColor';
+import type {RgbColor} from './RgbColor';
 
 const enum GAMMA_PIVOT {
   WCAG = 0.03928,

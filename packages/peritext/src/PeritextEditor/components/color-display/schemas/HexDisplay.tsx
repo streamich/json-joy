@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
-import {TextDisplay, Muted, TextDisplayProps} from '../TexDisplay';
+import {TextDisplay, Muted, type TextDisplayProps} from '../TexDisplay';
+import type {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
 
 const toHex2 = (n: number) => n.toString(16).padStart(2, '0').toUpperCase();
 

@@ -47,7 +47,7 @@ const FollowMouseDemo: React.FC = () => {
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
     };
-  }, [document]);
+  }, []);
   const pointThrottled = useThrottle(point, 100);
 
   return (
