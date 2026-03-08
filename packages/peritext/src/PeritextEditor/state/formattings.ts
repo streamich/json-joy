@@ -2,12 +2,11 @@ import {s} from 'json-joy/lib/json-crdt-patch';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
-import type {EditorInlineSliceBehavior, ValidationResult} from '../inline/types';
-import type {SliceBehavior} from 'json-joy/lib/json-crdt-extensions/peritext/registry/SliceBehavior';
+import type {InlineSliceBehavior, ValidationResult} from '../inline/InlineSliceBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {ToolbarState} from '.';
 
-export interface FormattingBase<B extends SliceBehavior<any, any, any, any>, R extends Range<string>> {
+export interface FormattingBase<B extends InlineSliceBehavior<any, any, any>, R extends Range<string>> {
   behavior: B;
   range: R
 }
@@ -17,14 +16,14 @@ export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {
 }
 
 export interface ToolbarFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
-  extends FormattingBase<EditorInlineSliceBehavior, R>,
+  extends FormattingBase<InlineSliceBehavior<any, any, any>, R>,
     FormattingWithConfig<Node> {}
 
 export abstract class EditableFormatting<R extends Range<string> = Range<string>, Node extends ObjNode = ObjNode>
   implements ToolbarFormatting<R, Node>
 {
   public constructor(
-    public readonly behavior: EditorInlineSliceBehavior,
+    public readonly behavior: InlineSliceBehavior<any, any, any>,
     public readonly range: R,
     public readonly state: ToolbarState,
   ) {}
@@ -34,7 +33,7 @@ export abstract class EditableFormatting<R extends Range<string> = Range<string>
   }
 
   public validate(): ValidationResult {
-    return this.behavior.data()?.validate?.(this) ?? 'fine';
+    return this.behavior.validate?.(this) ?? 'fine';
   }
 }
 
@@ -67,7 +66,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableForma
   public readonly model: Model<ObjNode<{conf: any}>>;
 
   constructor(
-    public readonly behavior: EditorInlineSliceBehavior,
+    public readonly behavior: InlineSliceBehavior<any, any, any>,
     public readonly range: Range<string>,
     public readonly state: ToolbarState,
   ) {

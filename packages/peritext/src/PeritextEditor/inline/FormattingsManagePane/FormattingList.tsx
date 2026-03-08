@@ -17,9 +17,8 @@ export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSe
       <ContextSep />
       {formattings.map((formatting) => {
         const {behavior} = formatting;
-        const data = behavior.data();
-        const menu = data.menu;
-        const previewText = data.previewText?.(formatting) || '';
+        const menu = behavior.menu;
+        const previewText = behavior.previewText?.(formatting) || '';
         const previewTextFormatted =
           previewText.length < 20 ? previewText : `${previewText.slice(0, 20)}${SYMBOL.ELLIPSIS}`;
         return (

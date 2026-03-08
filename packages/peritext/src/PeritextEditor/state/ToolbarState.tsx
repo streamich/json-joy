@@ -10,6 +10,9 @@ import {BehaviorSubject} from 'rxjs';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {NewFormatting} from './formattings';
+import {inlines} from '../inline/tags';
+import * as a from '../inline/tags/a';
+import * as col from '../inline/tags/col';
 import type {PeritextSurfaceState} from '../../PeritextWebUi/state';
 import * as behavior from '../inline/tags';
 import type {MenuItem} from '../types';
@@ -200,9 +203,12 @@ export class ToolbarState implements UiLifeCycles {
     const el = dom.facade.el;
 
     const registry = this.txt.editor.getRegistry();
-    Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);
-    // registry.add({});
-    Object.assign(registry.get(SliceTypeName.col)?.data() || {}, behavior.col);
+    for (const behavior of inlines) {
+      registry.add(behavior);
+    }
+    // Object.assign(registry.get(SliceTypeName.a)?.data() || {}, behavior.a);
+    // // registry.add({});
+    // Object.assign(registry.get(SliceTypeName.col)?.data() || {}, behavior.col);
 
     const changeUnsubscribe = et.subscribe('change', (ev) => {
       const lastEvent = ev.detail.ev;
@@ -453,7 +459,7 @@ export class ToolbarState implements UiLifeCycles {
 
   public readonly colorMenuItem = (): MenuItem => {
     const colorItem: MenuItem = {
-      ...behavior.col.menu,
+      ...col.behavior.menu,
       onSelect: () => {
         this.startSliceConfig(CommonSliceType.col, colorItem);
       },
@@ -463,7 +469,7 @@ export class ToolbarState implements UiLifeCycles {
 
   public readonly linkMenuItem = (): MenuItem => {
     const linkAction: MenuItem = {
-      ...behavior.a.menu,
+      ...a.behavior.menu,
       onSelect: () => {
         this.startSliceConfig(CommonSliceType.a, linkAction);
       },

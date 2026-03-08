@@ -2,10 +2,10 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {useNodeView} from '@jsonjoy.com/collaborative-react';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
-import {isValid} from './util';
+import {isValid} from '../util';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {ColorPicker} from '../../../components/ColorPicker';
-import {EditProps} from '../../types';
+import {ColorPicker} from '../../../../components/ColorPicker';
+import {EditProps} from '../../../InlineSliceBehavior';
 import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {

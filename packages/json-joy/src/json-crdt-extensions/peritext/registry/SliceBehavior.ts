@@ -8,39 +8,40 @@ import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {Printable} from 'tree-dump';
 import type {TypeTag} from '../slice';
 
+export type ToHtmlBehavior<
+  Stacking extends SliceStacking = SliceStacking,
+  Tag extends TypeTag = TypeTag,
+  Schema extends NodeBuilder = NodeBuilder,
+> = ToHtmlConverter<
+  PeritextMlElement<
+    Tag,
+    JsonNodeView<SchemaToJsonNode<Schema>>,
+    Stacking extends SliceStacking.Marker ? false : true
+  >
+>;
+
+export type FromHtmlBehavior<
+  Stacking extends SliceStacking = SliceStacking,
+  Tag extends TypeTag = TypeTag,
+  Schema extends NodeBuilder = NodeBuilder,
+> = {
+  [htmlTag: string]: FromHtmlConverter<
+    PeritextMlElement<
+      Tag,
+      JsonNodeView<SchemaToJsonNode<Schema>>,
+      Stacking extends SliceStacking.Marker ? false : true
+    >
+  >;
+};
+
 export class SliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
   Schema extends NodeBuilder = NodeBuilder,
-  Data extends Record<string, unknown> = Record<string, unknown>,
 > implements Printable
 {
   public isInline(): boolean {
     return this.stacking !== SliceStacking.Marker;
-  }
-
-  private _data?: Data;
-
-  /**
-   * An opaque object which can be mutated in-place by the rendering layer
-   * to store custom rendering-specific data. This is useful for storing, for
-   * example, React component references, which is specific to the rendering
-   * layer.
-   *
-   * Usage:
-   *
-   * ```ts
-   * registry.get(SliceTypeCon.a)?.data().ReactConfig = ReactConfigCompForLink;
-   * ```
-   *
-   * @returns The custom data of the slice.
-   */
-  public data(): Data {
-    const _data = this._data;
-    if (_data) return _data;
-    const newData = {} as Data;
-    this._data = newData;
-    return newData;
   }
 
   constructor(
@@ -97,15 +98,7 @@ export class SliceBehavior<
      * argument, which is a tuple of internal HTML-like representation of the
      * node.
      */
-    public readonly toHtml:
-      | ToHtmlConverter<
-          PeritextMlElement<
-            Tag,
-            JsonNodeView<SchemaToJsonNode<Schema>>,
-            Stacking extends SliceStacking.Marker ? false : true
-          >
-        >
-      | undefined = void 0,
+    public readonly toHtml: ToHtmlBehavior<Stacking, Tag, Schema> | undefined = void 0,
 
     /**
      * Specifies a mapping of converters from HTML {@link JsonMlElement} to
@@ -115,20 +108,12 @@ export class SliceBehavior<
      * For example, both, `<b>` and `<strong>` tags can be converted to the
      * {@link SliceTypeCon.b} slice type.
      */
-    public readonly fromHtml?: {
-      [htmlTag: string]: FromHtmlConverter<
-        PeritextMlElement<
-          Tag,
-          JsonNodeView<SchemaToJsonNode<Schema>>,
-          Stacking extends SliceStacking.Marker ? false : true
-        >
-      >;
-    },
+    public readonly fromHtml: FromHtmlBehavior<Stacking, Tag, Schema> | undefined = void 0,
   ) {}
 
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab: string = ''): string {
-    return `${formatStep(this.tag)} (${this.stacking}) ${JSON.stringify(Object.keys(this.data))}`;
+    return `${formatStep(this.tag)} (${this.stacking})`;
   }
 }

@@ -96,7 +96,7 @@ export const FormattingDisplay: React.FC<FormattingDisplayProps> = ({formatting,
       <ContextPaneHeaderSep />
       {doEdit ? (
         <FormattingEditForm formatting={editFormatting} onSave={state.returnFromEditPanelAndSave} />
-      ) : formatting.behavior.data().View ? (
+      ) : formatting.behavior.View ? (
         <>
           <ContextSep />
           <div style={{padding: '4px 16px 16px'}}>

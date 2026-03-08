@@ -1,17 +1,19 @@
-import type * as React from 'react';
-import type {SliceBehavior} from 'json-joy/lib/json-crdt-extensions/peritext/registry/SliceBehavior';
-import type {SliceStacking} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
-import type {TypeTag} from 'json-joy/lib/json-crdt-extensions';
+import * as React from 'react';
+import {SliceBehavior, SliceStacking, TypeTag} from 'json-joy/lib/json-crdt-extensions';
 import type {NodeBuilder} from 'json-joy/lib/json-crdt-patch';
-import type {EditableFormatting, SavedFormatting, ToolbarFormatting} from '../state/formattings';
 import type {MenuItem} from '../types';
+import type {EditableFormatting, SavedFormatting, ToolbarFormatting} from '../state/formattings';
 
-export interface EditorInlineSliceBehaviorData extends Record<string, unknown> {
+export class InlineSliceBehavior<
+  Stacking extends SliceStacking = SliceStacking,
+  Tag extends TypeTag = TypeTag,
+  Schema extends NodeBuilder = NodeBuilder
+> extends SliceBehavior<Stacking, Tag, Schema> {
   /**
    * Defines how this formatting should be displayed in the toolbar and context
    * menus.
    */
-  menu?: MenuItem;
+  menu?: MenuItem = void 0;
 
   /**
    * @param formatting The formatting slice.
@@ -19,7 +21,7 @@ export interface EditorInlineSliceBehaviorData extends Record<string, unknown> {
    *     or 'fine'. If the formatting is invalid, return an array of validation
    *     errors.
    */
-  validate?: (formatting: ToolbarFormatting<any, any>) => ValidationResult;
+  validate?: (formatting: ToolbarFormatting<any, any>) => ValidationResult = void 0;
 
   /**
    * Returns a short description of the formatting, for the user to easily
@@ -29,25 +31,25 @@ export interface EditorInlineSliceBehaviorData extends Record<string, unknown> {
    * @returns A short description of the formatting. For example, if the
    * formatting is text color, this would be the color name.
    */
-  previewText?: (formatting: ToolbarFormatting) => string;
+  previewText?: (formatting: ToolbarFormatting) => string = void 0;
 
   /**
    * A function that returns a React node to be used as an icon for the
    * formatting.
    */
-  renderIcon?: (props: IconProps) => React.ReactNode;
+  renderIcon?: (props: IconProps) => React.ReactNode = void 0;
 
   /**
    * Render a small card-sized view, which can be placed in a popup, to
    * preview the formatting.
    */
-  View?: React.FC<ViewProps>;
+  View?: React.FC<ViewProps> = void 0;
 
   /**
    * Render a small card-sized form which configures the state of the
    * formatting.
    */
-  Edit?: React.FC<EditProps>;
+  Edit?: React.FC<EditProps> = void 0;
 }
 
 export interface IconProps {
@@ -87,15 +89,8 @@ export interface EditProps {
  * that not enough data was provided to validate the formatting.
  */
 export type ValidationResult = 'good' | 'fine' | 'empty' | ValidationErrorResult[];
-
 export interface ValidationErrorResult {
   code: string;
   message?: string;
   field?: string;
 }
-
-export type EditorInlineSliceBehavior<
-  Stacking extends SliceStacking = SliceStacking,
-  Tag extends TypeTag = TypeTag,
-  Schema extends NodeBuilder = NodeBuilder,
-> = SliceBehavior<Stacking, Tag, Schema, EditorInlineSliceBehaviorData>;

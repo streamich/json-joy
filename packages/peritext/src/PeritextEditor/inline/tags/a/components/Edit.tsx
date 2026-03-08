@@ -3,14 +3,14 @@ import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/B
 import {ContextTitle} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextTitle';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {UrlDisplayCard} from '../../../components/UrlDisplayCard';
+import {UrlDisplayCard} from '../../../../components/UrlDisplayCard';
 import {useT} from 'use-t';
 import {CollaborativeInput} from 'collaborative-input/lib/CollaborativeInput';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {EditProps} from '../../types';
+import {EditProps} from '../../../InlineSliceBehavior';
 import {useNodeView} from '@jsonjoy.com/collaborative-react';
-import type {UrlSliceData} from './types';
+import type {Data} from '../index';
 import type {CollaborativeStr} from 'collaborative-editor';
 
 export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
@@ -21,7 +21,7 @@ export const Edit: React.FC<EditProps> = ({formatting, onSave}) => {
   const href = React.useMemo(() => () => formatting.conf()?.str(['href']), [formatting]);
   const titleStr = React.useMemo(() => () => formatting.conf()?.str(['title']), [formatting]);
   const obj = formatting.conf()!;
-  const data = useNodeView(obj) as unknown as UrlSliceData;
+  const data = useNodeView(obj) as unknown as Data;
 
   if (!data || typeof data !== 'object') return null;
   if (!href()) return null;

@@ -1,4 +1,7 @@
-import {behavior as a} from './a/behavior';
-import {behavior as col} from './col/behavior';
+import {behavior as a} from './a';
+import {behavior as col} from './col';
 
-export {a, col};
+export const inlines = [
+  a,
+  col,
+];

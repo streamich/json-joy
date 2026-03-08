@@ -74,7 +74,6 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({state: state_, ct
       <div
         className={blockClass + (enabled ? blockClassEnabled : '')}
         onKeyDown={(event) => {
-          console.log('here', event);
           switch (event.key) {
             case 'd': {
               if (event.ctrlKey) {

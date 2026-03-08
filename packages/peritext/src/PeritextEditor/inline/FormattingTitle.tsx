@@ -38,7 +38,7 @@ export interface FormattingTitleProps {
 
 export const FormattingTitle: React.FC<FormattingTitleProps> = ({formatting, onClick}) => {
   const behavior = formatting.behavior;
-  const menu = behavior.data().menu;
+  const menu = behavior.menu;
 
   const icon = menu?.icon?.();
   const name = menu?.name ?? behavior.name;
