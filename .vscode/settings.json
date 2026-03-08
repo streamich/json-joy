@@ -1,5 +1,17 @@
 {
   "editor.tabSize": 2,
-  "typescript.tsdk": "node_modules/typescript/lib",
   "js/ts.tsdk.path": "node_modules/typescript/lib",
+
+  // Hide generated files from explorer/search
+  "files.exclude": {
+    "**/lib": true,
+    "**/esm": true,
+    "**/es2020": true
+  },
+  "search.exclude": {
+    "**/lib": true,
+    "**/esm": true,
+    "**/es2020": true,
+    "**/node_modules": true
+  }
 }
