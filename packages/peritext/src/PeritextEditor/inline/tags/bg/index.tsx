@@ -14,7 +14,7 @@ import {isValid} from '../../../util/color';
 import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
 import type {ToolbarFormatting} from '../../../state/formattings';
 
-export const Icon = makeIcon({set: 'lucide', icon: 'paintbrush'});
+export const Icon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
 
 export const schema = s.obj({
   col: s.str<string>(''),
@@ -22,29 +22,31 @@ export const schema = s.obj({
 
 export type Data = JsonNodeView<SchemaToJsonNode<typeof schema>>;
 
-const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.col, typeof schema> = {
-  col: (jsonml) => {
+const fromHtml: FromHtmlBehavior<SliceStacking.Many, SliceTypeCon.bg, typeof schema> = {
+  bg: (jsonml) => {
     const attr = jsonml[1] || {};
     const data: Data = {
       col: attr.col ?? '',
     };
-    return [SliceTypeCon.col, {data, inline: true}] as PeritextMlElement<SliceTypeCon.col, any, true>;
+    return [SliceTypeCon.bg, {data, inline: true}] as PeritextMlElement<SliceTypeCon.bg, any, true>;
   },
 };
 
-export const behavior = new (class ColBehavior extends InlineSliceBehavior<
+export const behavior = new (class BgBehavior extends InlineSliceBehavior<
   SliceStacking.Many,
-  SliceTypeCon.col,
+  SliceTypeCon.bg,
   typeof schema
 > {
   constructor() {
-    super(SliceStacking.Many, SliceTypeCon.col, 'Color', schema, false, void 0, fromHtml);
+    super(SliceStacking.Many, SliceTypeCon.bg, 'Background', schema, false, void 0, fromHtml);
   }
 
   public readonly menu = {
-    name: 'Color',
+    name: 'Background',
     icon: () => <Icon width={16} height={16} />,
   };
+
+  // TODO: Reuse all these...
 
   public readonly validate = (formatting: ToolbarFormatting<any, any>): ValidationResult => {
     const obj = formatting.conf()?.view() as Data;

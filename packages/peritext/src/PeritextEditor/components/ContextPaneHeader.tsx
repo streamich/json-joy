@@ -5,6 +5,8 @@ import {BasicButtonBack} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/Ba
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import {useT} from 'use-t';
 
 export interface ContextPaneHeaderProps {
   short?: boolean;
@@ -21,11 +23,15 @@ export const ContextPaneHeader: React.FC<ContextPaneHeaderProps> = ({
   onBackClick,
   onCloseClick,
 }) => {
+  const [t] = useT();
+
   let element = (
     <Flex style={{alignItems: 'center'}}>
       {!!onBackClick && (
         <>
-          <BasicButtonBack onClick={onBackClick} />
+          <BasicTooltip renderTooltip={() => t('Back')}>
+            <BasicButtonBack onClick={onBackClick} />
+          </BasicTooltip>
           <Space horizontal />
           {/* <Space horizontal size={-1} /> */}
         </>

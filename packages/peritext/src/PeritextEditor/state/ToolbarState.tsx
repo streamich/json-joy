@@ -13,6 +13,7 @@ import {NewFormatting} from './formattings';
 import {inlines} from '../inline/tags';
 import * as a from '../inline/tags/a';
 import * as col from '../inline/tags/col';
+import * as bg from '../inline/tags/bg';
 import type {PeritextSurfaceState} from '../../PeritextWebUi/state';
 import type {MenuItem} from '../types';
 import type {ToolbarPluginOpts} from '../ToolbarPlugin';
@@ -440,11 +441,7 @@ export class ToolbarState implements UiLifeCycles {
           expand: 8,
           children: [
             this.colorMenuItem(),
-            {
-              name: 'Background',
-              icon: () => <PaintBucketIcon width={16} height={16} />,
-              onSelect: () => {},
-            },
+            this.bgMenuItem(),
             // {
             //   name: 'Border',
             //   icon: () => <BorderLeftIcon width={16} height={16} />,
@@ -464,6 +461,16 @@ export class ToolbarState implements UiLifeCycles {
       },
     };
     return colorItem;
+  };
+
+  public readonly bgMenuItem = (): MenuItem => {
+    const bgItem: MenuItem = {
+      ...bg.behavior.menu,
+      onSelect: () => {
+        this.startSliceConfig(CommonSliceType.bg, bgItem);
+      },
+    };
+    return bgItem;
   };
 
   public readonly linkMenuItem = (): MenuItem => {

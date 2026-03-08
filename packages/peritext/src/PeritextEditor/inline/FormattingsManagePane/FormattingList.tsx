@@ -28,6 +28,7 @@ export const FormattingList: React.FC<FormattingListProps> = ({formattings, onSe
             icon={menu?.icon?.()}
             right={<FormattingIcon formatting={formatting} />}
             onClick={() => onSelect(formatting)}
+            style={{justifyContent: 'space-between'}}
           >
             {menu?.name ?? behavior.name}
             {!!previewTextFormatted && <span style={{opacity: 0.5, fontSize: '.96em'}}>{previewTextFormatted}</span>}

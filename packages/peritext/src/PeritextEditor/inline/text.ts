@@ -16,9 +16,14 @@ export const text: PeritextPlugin['text'] = (props, inline) => {
   if (attrs[SliceTypeCon.overline]) textDecoration = textDecoration ? textDecoration + ' overline' : 'overline';
   if (attrs[SliceTypeCon.s]) textDecoration = textDecoration ? textDecoration + ' line-through' : 'line-through';
   if ((attr = attrs[SliceTypeCon.col])) {
-    const data = attr[0].slice.data();
+    const data = attr[attr.length - 1].slice.data();
     const color: string | undefined = typeof data === 'object' && data ? String((data as any).col) : void 0;
     if (color) style.color = color;
+  }
+  if ((attr = attrs[SliceTypeCon.bg])) {
+    const data = attr[attr.length - 1].slice.data();
+    const color: string | undefined = typeof data === 'object' && data ? String((data as any).col) : void 0;
+    if (color) style.backgroundColor = color;
   }
 
   style.textDecoration = textDecoration;

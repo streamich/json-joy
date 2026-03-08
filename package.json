@@ -31,7 +31,7 @@
     "publish-coverage-and-typedocs": "yarn typedoc && yarn test:coverage && yarn build:pages && yarn deploy:pages",
     "upgrade:check": "npx npm-check-updates@16.14",
     "upgrade:interactive": "npx npm-check-updates@16.14 --interactive",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006 --host 0.0.0.0",
     "storybook:build": "storybook build"
   },
   "private": true,
