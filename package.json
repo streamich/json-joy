@@ -14,7 +14,7 @@
     "url": "https://github.com/sponsors/streamich"
   },
   "scripts": {
-    "clean": "rimraf lib coverage typedocs gh-pages && rimraf \"packages/*/lib\" \"packages/*/esm\" \"packages/*/es2020\" \"packages/*/typedocs\" \"packages/*/coverage\"",
+    "clean": "rimraf lib coverage typedocs gh-pages && yarn workspaces foreach -Ap run build",
     "build": "tsc -b --verbose tsconfig.solution.json",
     "build:workspaces": "yarn workspaces foreach -Apt run build",
     "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2",

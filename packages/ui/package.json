@@ -82,7 +82,7 @@
     "lib/"
   ],
   "scripts": {
-    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
     "build": "tsc -b tsconfig.build.json",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
     "test": "jest --maxWorkers 7",

@@ -4,7 +4,7 @@
 
   // Hide generated files from explorer/search
   "files.exclude": {
-    "**/lib": true,
+    // "**/lib": true,
     "**/esm": true,
     "**/es2020": true
   },
