@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
   },
   "exclude": [
     "src/demo",
@@ -19,4 +22,9 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
+  "references": [
+    {
+      "path": "../codegen/tsconfig.build.json"
+    }
+  ]
 }

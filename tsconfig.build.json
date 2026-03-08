@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "sourceMap": false
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
   },
   "exclude": [
     "src/demo",

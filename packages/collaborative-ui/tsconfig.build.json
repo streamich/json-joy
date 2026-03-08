@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
   },
   "exclude": [
     "src/demo",
@@ -19,4 +22,54 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
+  "references": [
+    {
+      "path": "../click-json/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-ace-react/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-codemirror/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-input/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-input-react/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-monaco/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-monaco-react/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-presence/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-quill/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-quill-react/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-str/tsconfig.build.json"
+    },
+    {
+      "path": "../json-pack/tsconfig.build.json"
+    },
+    {
+      "path": "../json-pointer/tsconfig.build.json"
+    },
+    {
+      "path": "../ui/tsconfig.build.json"
+    },
+    {
+      "path": "../util/tsconfig.build.json"
+    },
+    {
+      "path": "../json-joy/tsconfig.build.json"
+    }
+  ]
 }

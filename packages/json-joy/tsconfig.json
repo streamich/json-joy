@@ -1,6 +1,33 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib"
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "../base64"
+    },
+    {
+      "path": "../buffers"
+    },
+    {
+      "path": "../json-expression"
+    },
+    {
+      "path": "../json-pack"
+    },
+    {
+      "path": "../json-pointer"
+    },
+    {
+      "path": "../json-type"
+    },
+    {
+      "path": "../util"
+    }
+  ]
 }

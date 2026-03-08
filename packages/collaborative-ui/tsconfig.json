@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib"
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "exclude": [
     "src/demo",
     "src/__tests__",
@@ -19,4 +23,54 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
+  "references": [
+    {
+      "path": "../click-json"
+    },
+    {
+      "path": "../collaborative-ace-react"
+    },
+    {
+      "path": "../collaborative-codemirror"
+    },
+    {
+      "path": "../collaborative-input"
+    },
+    {
+      "path": "../collaborative-input-react"
+    },
+    {
+      "path": "../collaborative-monaco"
+    },
+    {
+      "path": "../collaborative-monaco-react"
+    },
+    {
+      "path": "../collaborative-presence"
+    },
+    {
+      "path": "../collaborative-quill"
+    },
+    {
+      "path": "../collaborative-quill-react"
+    },
+    {
+      "path": "../collaborative-str"
+    },
+    {
+      "path": "../json-pack"
+    },
+    {
+      "path": "../json-pointer"
+    },
+    {
+      "path": "../ui"
+    },
+    {
+      "path": "../util"
+    },
+    {
+      "path": "../json-joy"
+    }
+  ]
 }

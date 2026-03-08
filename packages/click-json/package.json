@@ -72,8 +72,8 @@
   ],
   "scripts": {
     "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log",
-    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "build": "tsc -b tsconfig.build.json",
     "typedoc": "typedoc",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -b --noEmit"
   }
 }

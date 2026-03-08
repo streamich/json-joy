@@ -31,8 +31,8 @@
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --write ./src",
     "clean": "npx rimraf lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log",
-    "build:es2020": "npx rimraf lib && tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
-    "build:esm": "npx rimraf esm && tsc --project tsconfig.build.json --module ESNext --target ESNEXT --outDir esm",
+    "build:es2020": "tsc -b tsconfig.build.json",
+    "build:esm": "tsc -b tsconfig.build.esm.json",
     "build:all": "yarn build:es2020 && yarn build:esm",
     "build": "yarn build:all",
     "jest": "jest",
@@ -63,7 +63,7 @@
     "jj": "npx ts-node src/json-cli/jj.ts",
     "upgrade:check": "npx npm-check-updates@16.14",
     "upgrade:interactive": "npx npm-check-updates@16.14 --interactive",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -b --noEmit"
   },
   "peerDependencies": {
     "rxjs": "7",

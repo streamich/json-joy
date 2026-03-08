@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib"
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "exclude": [
     "src/demo",
     "src/__tests__",
@@ -19,4 +23,9 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
+  "references": [
+    {
+      "path": "../util"
+    }
+  ]
 }

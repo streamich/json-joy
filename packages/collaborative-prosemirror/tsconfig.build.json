@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
   },
   "exclude": [
     "src/demo",
@@ -19,4 +22,24 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
+  "references": [
+    {
+      "path": "../collaborative-peritext/tsconfig.build.json"
+    },
+    {
+      "path": "../collaborative-presence/tsconfig.build.json"
+    },
+    {
+      "path": "../json-equal/tsconfig.build.json"
+    },
+    {
+      "path": "../ui/tsconfig.build.json"
+    },
+    {
+      "path": "../util/tsconfig.build.json"
+    },
+    {
+      "path": "../json-joy/tsconfig.build.json"
+    }
+  ]
 }

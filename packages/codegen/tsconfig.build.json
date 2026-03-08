@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
   },
   "exclude": [
     "src/demo",
@@ -15,5 +18,5 @@
     "src/**/__tape__/**/*.*",
     "*.test.ts",
     "*.spec.ts"
-  ],
+  ]
 }

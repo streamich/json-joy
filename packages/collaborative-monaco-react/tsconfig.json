@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib"
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "exclude": [
     "src/demo",
     "src/__tests__",
@@ -18,4 +22,12 @@
     "*.spec.ts",
     "src/**/*.stories.tsx"
   ],
+  "references": [
+    {
+      "path": "../collaborative-monaco"
+    },
+    {
+      "path": "../collaborative-presence"
+    }
+  ]
 }

@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "rootDir": "./src"
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
   },
   "exclude": [
     "src/demo",
@@ -17,4 +19,27 @@
     "*.test.ts",
     "*.spec.ts"
   ],
+  "references": [
+    {
+      "path": "../base64/tsconfig.build.json"
+    },
+    {
+      "path": "../buffers/tsconfig.build.json"
+    },
+    {
+      "path": "../json-expression/tsconfig.build.json"
+    },
+    {
+      "path": "../json-pack/tsconfig.build.json"
+    },
+    {
+      "path": "../json-pointer/tsconfig.build.json"
+    },
+    {
+      "path": "../json-type/tsconfig.build.json"
+    },
+    {
+      "path": "../util/tsconfig.build.json"
+    }
+  ]
 }
