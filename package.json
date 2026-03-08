@@ -14,8 +14,8 @@
     "url": "https://github.com/sponsors/streamich"
   },
   "scripts": {
-    "clean": "rimraf lib coverage typedocs gh-pages && yarn workspaces foreach -Apt run clean",
-    "build": "tsc -b tsconfig.solution.json",
+    "clean": "rimraf lib coverage typedocs gh-pages && rimraf \"packages/*/lib\" \"packages/*/esm\" \"packages/*/es2020\" \"packages/*/typedocs\" \"packages/*/coverage\"",
+    "build": "tsc -b --verbose tsconfig.solution.json",
     "build:workspaces": "yarn workspaces foreach -Apt run build",
     "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2",
     "test:coverage": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2 --collectCoverage",
@@ -24,7 +24,7 @@
     "format:fix": "biome format --write ./packages/*/src",
     "lint": "biome lint ./packages/*/src",
     "lint:fix": "biome lint --write ./packages/*/src",
-    "typecheck": "tsc -b tsconfig.solution.json --noEmit",
+    "typecheck": "tsc -b --verbose tsconfig.solution.json --noEmit",
     "typedoc": "npx typedoc@0.28.5 --tsconfig tsconfig.typedoc.json",
     "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
