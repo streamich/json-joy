@@ -17,3 +17,7 @@ export const peritext = new Extension<
   PeritextApi,
   [text: string]
 >(ExtensionId.peritext, MNEMONIC, PeritextNode, PeritextApi, (text: string) => SCHEMA(text));
+
+export * from './block/types';
+export * from './registry/SliceBehavior';
+export * from './slice/constants';

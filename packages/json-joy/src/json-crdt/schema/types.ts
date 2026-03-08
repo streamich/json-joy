@@ -5,6 +5,10 @@ import type {nodes as builder} from '../../json-crdt-patch';
 import type {ExtNode} from '../extensions/ExtNode';
 import type * as nodes from '../nodes';
 
+type ObjSchemaNodes<T, O> = {
+  [K in keyof T | keyof O]: K extends keyof T ? SchemaToJsonNode<T[K]> : K extends keyof O ? SchemaToJsonNode<O[K]> : never;
+};
+
 // prettier-ignore
 export type SchemaToJsonNode<S> =
   S extends builder.str<infer T>
@@ -17,8 +21,8 @@ export type SchemaToJsonNode<S> =
           ? nodes.ValNode<SchemaToJsonNode<T>>
           : S extends builder.vec<infer T>
             ? nodes.VecNode<{[K in keyof T]: SchemaToJsonNode<T[K]>}>
-            : S extends builder.obj<infer T>
-              ? nodes.ObjNode<{[K in keyof T]: SchemaToJsonNode<T[K]>}>
+            : S extends builder.obj<infer T, infer O>
+              ? nodes.ObjNode<ObjSchemaNodes<T, O>>
               : S extends builder.arr<infer T>
                 ? nodes.ArrNode<SchemaToJsonNode<T>>
                 : S extends builder.ext<ExtensionId.peritext, any>

@@ -2,14 +2,14 @@ import {s} from 'json-joy/lib/json-crdt-patch';
 import {Model, ObjApi} from 'json-joy/lib/json-crdt/model';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
-import type {EditorInlineSliceBehavior, ValidationResult} from '../types';
+import type {EditorInlineSliceBehavior, ValidationResult} from '../inline/types';
 import type {SliceBehavior} from 'json-joy/lib/json-crdt-extensions/peritext/registry/SliceBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {ToolbarState} from '.';
 
 export interface FormattingBase<B extends SliceBehavior<any, any, any, any>, R extends Range<string>> {
   behavior: B;
-  range: R;
+  range: R
 }
 
 export interface FormattingWithConfig<Node extends ObjNode = ObjNode> {

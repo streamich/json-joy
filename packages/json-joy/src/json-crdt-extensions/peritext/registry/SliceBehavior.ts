@@ -8,8 +8,6 @@ import type {SchemaToJsonNode} from '../../../json-crdt/schema/types';
 import type {Printable} from 'tree-dump';
 import type {TypeTag} from '../slice';
 
-const sliceCustomData = new WeakMap<SliceBehavior<any, any, any>, Record<string, unknown>>();
-
 export class SliceBehavior<
   Stacking extends SliceStacking = SliceStacking,
   Tag extends TypeTag = TypeTag,
@@ -20,6 +18,8 @@ export class SliceBehavior<
   public isInline(): boolean {
     return this.stacking !== SliceStacking.Marker;
   }
+
+  private _data?: Data;
 
   /**
    * An opaque object which can be mutated in-place by the rendering layer
@@ -36,10 +36,10 @@ export class SliceBehavior<
    * @returns The custom data of the slice.
    */
   public data(): Data {
-    const data = sliceCustomData.get(this) as Data | undefined;
-    if (data) return data;
+    const _data = this._data;
+    if (_data) return _data;
     const newData = {} as Data;
-    sliceCustomData.set(this, newData);
+    this._data = newData;
     return newData;
   }
 
@@ -70,7 +70,7 @@ export class SliceBehavior<
     public readonly name: string,
 
     /**
-     * Default expected schema of the slice data.
+     * Default expected schema of the slice stored data.
      */
     public readonly schema: Schema | undefined = void 0,
 

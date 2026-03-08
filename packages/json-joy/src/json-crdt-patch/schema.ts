@@ -484,7 +484,7 @@ export const schema = {
    * @param obj Default value, required object keys.
    * @param opt Default value of optional object keys.
    */
-  obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
+  obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder> = {}>(obj: T, opt?: O) =>
     new nodes.obj<T, O>(obj, opt),
 
   /**
