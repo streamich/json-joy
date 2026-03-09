@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
 import {PeritextEditor} from '.';
-import {DebugPlugin} from '../web/plugins/debug';
+import {DebugPlugin} from '../plugins/debug';
 
 const plugins0 = [new DebugPlugin()];
 

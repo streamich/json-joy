@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {CursorPlugin} from '../web/plugins/cursor';
+import {CursorPlugin} from '../plugins/cursor';
 import {PeritextWebUi, type PeritextWebUiProps} from '../web';
 import {ToolbarPlugin} from './ToolbarPlugin';
 

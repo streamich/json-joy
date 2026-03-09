@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {PeritextWebUi} from '.';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
-import {DebugState} from './plugins/debug/state';
-import {CursorPlugin} from './plugins/cursor';
-import {defaultPlugin} from './plugins/minimal';
-import {BlocksPlugin} from './plugins/blocks';
-import {DebugPlugin} from './plugins/debug';
+import {DebugState} from '../plugins/debug/state';
+import {CursorPlugin} from '../plugins/cursor';
+import {defaultPlugin} from '../plugins/minimal';
+import {BlocksPlugin} from '../plugins/blocks';
+import {DebugPlugin} from '../plugins/debug';
 import type {PeritextPlugin} from './react/types';
 
 export default {
