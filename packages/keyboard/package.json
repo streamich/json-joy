@@ -1,0 +1,49 @@
+{
+  "name": "@jsonjoy.com/keyboard",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.0.0",
+  "description": "Keyboard input tracking.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/keyboard",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/keyboard"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "keyboard",
+    "shortcuts",
+    "hotkeys",
+    "keys",
+    "key",
+    "binding"
+  ],
+  "peerDependencies": {
+    "tslib": "*"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -b --noEmit"
+  }
+}
