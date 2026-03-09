@@ -7,7 +7,7 @@ const plugins0 = [new DebugPlugin()];
 
 export default {
   component: PeritextEditor,
-  title: '<PeritextEditor>',
+  title: 'editor/<PeritextEditor>',
 };
 
 const markdown =

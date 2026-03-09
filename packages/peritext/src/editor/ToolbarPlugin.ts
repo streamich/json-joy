@@ -5,7 +5,7 @@ import {text} from './inline/text';
 import {RenderBlock} from './block/RenderBlock';
 import {RenderCaret} from './cursor/caret/RenderCaret';
 import {RenderFocus} from './cursor/focus/RenderFocus';
-import type {DebugState} from '../web/plugins/debug/state';
+import type {DebugState} from '../plugins/debug/state';
 import type {PeritextPlugin} from '../web/react/types';
 
 const h = React.createElement;

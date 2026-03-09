@@ -446,7 +446,6 @@ export class Editor<T = string> implements Printable {
           point.set(end);
           break STEP;
         }
-
         end = point.halfstep(direction);
         if (end) break LOOP;
         const ref3 = this.isSliceEdge(point);

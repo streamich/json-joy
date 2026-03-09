@@ -2628,6 +2628,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/keyboard@workspace:packages/keyboard":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/keyboard@workspace:packages/keyboard"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/peritext@workspace:packages/peritext":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/peritext@workspace:packages/peritext"

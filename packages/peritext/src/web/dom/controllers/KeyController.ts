@@ -3,6 +3,10 @@ import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from '../../types';
 import type {DomController} from './../DomController';
 
+const enum KeyControllerConstants {
+  HistoryLimit = 25,
+}
+
 class KeyPress {
   public constructor(
     public readonly key: string,
@@ -20,7 +24,7 @@ export class KeyController implements UiLifeCycles, Printable {
   public readonly pressed = new Set<string>();
 
   /**
-   * History of last 5 pressed keys.
+   * History of last N pressed keys.
    */
   public readonly history = new ValueSyncStore<KeyPress[]>([]);
 
@@ -37,7 +41,7 @@ export class KeyController implements UiLifeCycles, Printable {
       const press = new KeyPress(key, Date.now());
       const historyList = history.value;
       historyList.push(press);
-      if (historyList.length > 5) historyList.shift();
+      if (historyList.length > KeyControllerConstants.HistoryLimit) historyList.shift();
       history.next(historyList, true);
     };
     const onKeyUp = (event: KeyboardEvent): void => {

@@ -63,6 +63,7 @@ const config: StorybookConfig = {
       '@jsonjoy.com/ui/lib': resolve(__dirname, '../packages/ui/src'),
       '@jsonjoy.com/ui': resolve(__dirname, '../packages/ui/src'),
       'json-joy/lib': resolve(__dirname, '../packages/json-joy/src'),
+      'json-joy': resolve(__dirname, '../packages/json-joy/src'),
       '@jsonjoy.com/base64/lib': resolve(__dirname, '../packages/base64/src'),
       '@jsonjoy.com/buffers/lib': resolve(__dirname, '../packages/buffers/src'),
       '@jsonjoy.com/click-json/lib': resolve(__dirname, '../packages/click-json/src'),

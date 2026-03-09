@@ -1,7 +1,7 @@
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import type {ChangeDetail} from 'json-joy/lib/json-crdt-extensions/peritext/events';
-import type {UiLifeCycles} from '../../types';
-import type {PeritextSurfaceState} from '../../state';
+import type {UiLifeCycles} from '../../web/types';
+import type {PeritextSurfaceState} from '../../web/state';
 
 export class CursorState implements UiLifeCycles {
   /** Current score. */
