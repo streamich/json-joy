@@ -1,5 +1,5 @@
 const rbgRound = (value: number) => Math.min(Math.floor(value * 256), 255);
-const toHex2 = (n: number) => n.toString(16).padStart(2, '0');
+const hex2 = (n: number) => n.toString(16).padStart(2, '0');
 
 const HEX_REGEX = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 const RGB_REGEX = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(\d*\.?\d+)\s*)?\)$/i;
@@ -52,8 +52,8 @@ export class RgbColor {
 
   public hex(): string {
     const [r, g, b, a] = this.u8();
-    const base = '#' + toHex2(r) + toHex2(g) + toHex2(b);
-    return a === 255 ? base : base + toHex2(a);
+    const base = '#' + hex2(r) + hex2(g) + hex2(b);
+    return a === 255 ? base : base + hex2(a);
   }
 
   public rgb(): string {
@@ -62,8 +62,8 @@ export class RgbColor {
   }
 
   public rgba(): string {
-    const [r, g, b, a] = this.u8();
-    return 'rgba(' + r + ',' + g + ',' + b + ',' + a / 255 + ')';
+    const [r, g, b] = this.u8();
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + +this.a.toFixed(5) + ')';
   }
 
   public toString(): string {

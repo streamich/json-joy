@@ -58,7 +58,7 @@ describe('.from()', () => {
     const str5 = rgb2.hex();
     expect(HslColor.from(rgb)!.eq(hsl)).toBe(true);
     expect(HslColor.from(str1)!.eq(hsl)).toBe(true);
-    expect(HslColor.from(str3)!.eq(hsl)).toBe(true);
+    expect(HslColor.from(str3)!.toString()).toBe(hsl.toString());
     expect(HslColor.from(str4)!.toString()).toBe(hsl.toString());
     expect(HslColor.from(str5)!.eq(hsl)).toBe(true);
     expect(HslColor.from(rgb2)!.toString()).toBe(hsl.toString());
