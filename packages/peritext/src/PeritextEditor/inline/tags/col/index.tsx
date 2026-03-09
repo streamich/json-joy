@@ -58,7 +58,9 @@ export const behavior = new (class ColBehavior extends InlineSliceBehavior<
   public readonly previewText = (formatting: ToolbarFormatting<any, any>): string => {
     const data = formatting.conf()?.view() as Data;
     if (!data || typeof data !== 'object') return '';
-    return data.col || '';
+    let color = data.col || '';
+    if (color[0] === '#' && color.length === 9) color = color.slice(0, 7) + '.' + color.slice(-2);
+    return color;
   };
 
   public readonly renderIcon = ({formatting}: IconProps) => {
