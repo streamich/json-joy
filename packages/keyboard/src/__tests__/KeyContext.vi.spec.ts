@@ -309,6 +309,55 @@ describe('KeyContext.bind()', () => {
     kit.src.release('a');
     expect(hits).toBe(1);
   });
+
+  test('chord shorthand [sig, action] fires when both keys are pressed', async () => {
+    await using kit = await setup();
+    let hits = 0;
+    kit.ctx.bind([['a+b', () => { hits++; }]]);
+    kit.src.press('a');
+    expect(hits).toBe(0);
+    kit.src.press('b');
+    expect(hits).toBe(1);
+  });
+
+  test('chord shorthand unbind removes the chord handler', async () => {
+    await using kit = await setup();
+    let hits = 0;
+    const unbind = kit.ctx.bind([['a+b', () => { hits++; }]]);
+    kit.src.press('a');
+    kit.src.press('b');
+    expect(hits).toBe(1);
+    unbind();
+    kit.src.release('a');
+    kit.src.release('b');
+    kit.src.press('a');
+    kit.src.press('b');
+    expect(hits).toBe(1);
+  });
+
+  test('chord object form { sig, action } fires correctly', async () => {
+    await using kit = await setup();
+    let hits = 0;
+    kit.ctx.bind([{sig: 'j+k', action: () => { hits++; }}]);
+    kit.src.press('j');
+    kit.src.press('k');
+    expect(hits).toBe(1);
+  });
+
+  test('chord and single-key binding can coexist in one bind() call', async () => {
+    await using kit = await setup();
+    let single = 0, chord = 0;
+    kit.ctx.bind([
+      ['a', () => { single++; }],
+      ['a+b', () => { chord++; }],
+    ]);
+    kit.src.press('a'); // single fires; chord not yet complete
+    expect(single).toBe(1);
+    expect(chord).toBe(0);
+    kit.src.press('b'); // chord completes, suppresses single for 'b'
+    expect(chord).toBe(1);
+    expect(single).toBe(1); // no extra single increment
+  });
 });
 
 describe("'' catch-all wildcard", () => {

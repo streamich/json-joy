@@ -6,7 +6,7 @@ import {KeyMap} from './KeyMap';
 import {KeySet} from './KeySet';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
-import type {ChordAction, ChordBindingOptions, ChordSignature, KeyBinding, KeyBindingShorthand, KeySink, KeySource} from './types';
+import type {ChordAction, ChordBinding, ChordBindingOptions, ChordBindingShorthand, ChordSignature, KeyBinding, KeyBindingShorthand, KeySink, KeySource} from './types';
 
 const enum KeyControllerConstants {
   HistoryLimit = 25,
@@ -69,7 +69,7 @@ export class KeyContext implements KeySink, Printable {
     return child;
   }
 
-  public bind(definitions: (KeyBinding | KeyBindingShorthand)[]): (() => void) {
+  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): (() => void) {
     return this.map.bind(definitions);
   }
 

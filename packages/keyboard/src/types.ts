@@ -93,3 +93,16 @@ export interface ChordBinding extends ChordBindingOptions {
  * currently-pressed keys.
  */
 export type ChordAction = (pressed: KeySet) => void;
+
+/**
+ * Shorthand for a chord binding inside `KeyContext.bind()` / `KeyMap.bind()`:
+ * `[chordSignature, action, options?]`.
+ *
+ * The chord is detected automatically from the signature (two or more
+ * plain-key segments separated by `+`, e.g. `'a+b'` or `'C+a+b'`).
+ */
+export type ChordBindingShorthand = [
+  signature: ChordSignature,
+  action: ChordAction,
+  options?: ChordBindingOptions,
+];

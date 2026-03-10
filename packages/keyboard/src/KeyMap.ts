@@ -1,6 +1,18 @@
+import {isChordSig} from './util';
 import type {Key} from './Key';
 import type {KeySet} from './KeySet';
-import type {ChordBinding, ChordBindingOptions, ChordSignature, KeyBinding, KeyBindingShorthand, Signature} from './types';
+import type {
+  ChordAction,
+  ChordBinding,
+  ChordBindingOptions,
+  ChordBindingShorthand,
+  ChordSignature,
+  KeyAction,
+  KeyBinding,
+  KeyBindingOptions,
+  KeyBindingShorthand,
+  Signature,
+} from './types';
 
 export class KeyMap {
   protected pressMap: Map<string, KeyBinding[]> = new Map();
@@ -23,21 +35,34 @@ export class KeyMap {
     }
   }
 
-  public bind(definitions: (KeyBinding | KeyBindingShorthand)[]): (() => void) {
+  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): (() => void) {
     const pressDefs: KeyBinding[] = [];
     const releaseDefs: KeyBinding[] = [];
+    const chordDefs: ChordBinding[] = [];
     for (const def of definitions) {
-      const binding: KeyBinding = Array.isArray(def)
-        ? ({...def[2], sig: def[0], action: def[1]} as KeyBinding)
-        : def;
-      if (binding.release) releaseDefs.push(binding);
-      else pressDefs.push(binding);
+      if (Array.isArray(def)) {
+        const [sig, action, options] = def as [string, Function, (KeyBindingOptions | ChordBindingOptions)?];
+        if (isChordSig(sig))
+          chordDefs.push({...options, sig, action: action as ChordAction});
+        else {
+          const b = {...options, sig: sig as Signature, action: action as KeyAction};
+          if ((b as KeyBinding).release) releaseDefs.push(b as KeyBinding);
+          else pressDefs.push(b as KeyBinding);
+        }
+      } else {
+        const b = def as KeyBinding | ChordBinding;
+        if (isChordSig(b.sig)) chordDefs.push(b as ChordBinding);
+        else if ((b as KeyBinding).release) releaseDefs.push(b as KeyBinding);
+        else pressDefs.push(b as KeyBinding);
+      }
     }
     for (const b of pressDefs) this._set(this.pressMap, b);
     for (const b of releaseDefs) this._set(this.releaseMap, b);
+    for (const b of chordDefs) this.setChord(b.sig, b.action, b);
     return (): void => {
       for (const b of pressDefs) this._del(this.pressMap, b.sig, b.action);
       for (const b of releaseDefs) this._del(this.releaseMap, b.sig, b.action);
+      for (const b of chordDefs) this.delChord(b.sig, b.action);
     };
   }
 
