@@ -13,8 +13,14 @@ const enum KeyControllerConstants {
 }
 
 export class KeyContext implements KeySink, Printable {
-  public static global(): [context: KeyContext, unbind: () => void] {
-    const ctx = new KeyContext(void 0);
+  /**
+   * Creates a root `KeyContext` which binds to `window` and `document` key
+   * events.
+   * 
+   * @param name Provide for debugging, used in `.toString()`.
+   */
+  public static global(name?: string): [context: KeyContext, unbind: () => void] {
+    const ctx = new KeyContext(void 0, name);
     const source = new KeySourceDoc();
     const unbind = source.bind(ctx);
     return [ctx, unbind];
@@ -79,7 +85,6 @@ export class KeyContext implements KeySink, Printable {
 
   public onPress(press: Key): void {
     // Descend down in context chain on press.
-    if (this.paused) return;
     const child = this._child;
     if (child) {
       if (this._feedChild) {
@@ -92,6 +97,13 @@ export class KeyContext implements KeySink, Printable {
 
   /** Propagate up on press. */
   protected onPress_(press: Key): void {
+    if (this.paused) return;
+    const {key, event} = press;
+    if (event?.isComposing || key === 'Dead') return;
+    const {pressed, history} = this;
+    pressed.add(press);
+    history.push(press);
+    while (history.length > this.historyLimit) history.shift();
     const matches = this.map.matchPress(press);
     if (matches) {
       press.propagate = false;
@@ -100,17 +112,7 @@ export class KeyContext implements KeySink, Printable {
         if (match.propagate) press.propagate = true;
       }
     }
-
-    const {key, event} = press;
-    if (event?.isComposing || key === 'Dead') return;
-
-    const {pressed, history} = this;
-    pressed.add(press);
-    history.push(press);
-    while (history.length > this.historyLimit) history.shift();
-
     this.onChange.emit();
-
     if (press.propagate) {
       const parent = this.parent;
       if (parent) parent.onPress_(press);
@@ -135,7 +137,6 @@ export class KeyContext implements KeySink, Printable {
     if (this.paused) return;
     const {key, event} = release;
     if (event?.isComposing || key === 'Dead') return;
-
     const matches = this.map.matchRelease(release);
     if (matches) {
       release.propagate = false;
@@ -144,9 +145,7 @@ export class KeyContext implements KeySink, Printable {
         if (match.propagate) release.propagate = true;
       }
     }
-
     this.onChange.emit();
-
     if (release.propagate) {
       const parent = this.parent;
       if (parent) parent.onRelease_(release);

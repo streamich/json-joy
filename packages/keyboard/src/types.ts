@@ -32,17 +32,28 @@ export type SigKey =
 export type SigRepeat = 'R';
 export type Signature = `${(`${SigMod}+`) | ''}${SigKey}${(`:${SigRepeat}`) | ''}`;
 
-export interface KeyBindingMap {
-  single: SingleKeyBinding[];
+export interface KeyBindingDefinition {
+  keys: (KeyBinding | KeyBindingShorthand)[];
 }
 
-export type SingleKeyBinding = [
-  signature: Signature, action: () => void
-];
-
-export interface KeyBinding {
-  sig: Signature;
-  action: (key: Key) => void;
+export interface KeyBindingOptions {
   /** Whether to propagate the event to parent contexts, defaults to `false`. */
   propagate?: boolean;
+  /** Whether this binding is for key release events, defaults to `false`. */
+  release?: boolean;
 }
+
+export interface KeyBinding extends KeyBindingOptions {
+  /** Key press/release signature to test for. */
+  sig: Signature;
+  /** Callback to execute when the key is pressed. */
+  action: KeyAction;
+}
+
+export type KeyBindingShorthand = [
+  signature: Signature,
+  action: KeyAction,
+  options?: KeyBindingOptions,
+];
+
+export type KeyAction = (key: Key) => void;

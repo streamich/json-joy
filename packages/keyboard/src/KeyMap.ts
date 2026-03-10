@@ -1,5 +1,5 @@
 import type {Key} from './Key';
-import type {KeyBinding, Signature} from './types';
+import type {KeyBinding, KeyBindingShorthand, Signature} from './types';
 
 export class KeyMap {
   protected pressMap: Map<string, KeyBinding[]> = new Map();
@@ -29,6 +29,28 @@ export class KeyMap {
     const sig = key.sig();
     const matches = map.get(sig);
     return matches;
+  }
+
+  public bind(definitions: (KeyBinding | KeyBindingShorthand)[]): (() => void) {
+    const defs: KeyBinding[] = [];
+    for (const def of definitions) {
+      if (Array.isArray(def)) {
+        const [sig, action, options] = def;
+        defs.push({...options, sig, action});
+      } else defs.push(def);
+    }
+    const length = defs.length;
+    for (let i = 0; i < length; i++) {
+      const {sig, action} = defs[i];
+      this.setPress(sig, action);
+    }
+    const unbind = (): void => {
+      for (let i = 0; i < length; i++) {
+        const {sig, action} = defs[i];
+        this.delPress(sig, action);
+      }
+    };
+    return unbind;
   }
 
   public setPress(sig: Signature, action: (key: Key) => void): void {
