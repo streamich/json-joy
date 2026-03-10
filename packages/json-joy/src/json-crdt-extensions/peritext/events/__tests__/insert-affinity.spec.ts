@@ -1,4 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
+import {PeritextCommands} from '../../commands/PeritextCommands';
 import {Anchor} from '../../rga/constants';
 import {SliceTypeCon} from '../../slice/constants';
 import {PeritextEventDefaults} from '../defaults/PeritextEventDefaults';
@@ -10,7 +11,7 @@ const testSuite = (getKit: () => Kit) => {
     const et = new PeritextEventTarget();
     const defaults = new PeritextEventDefaults(kit.peritext, et);
     et.defaults = defaults;
-    const cmd = defaults.cmd;
+    const cmd = new PeritextCommands(kit.peritext, et);
     const exec: typeof cmd.exec = (...args: any[]): any => {
       const result = (cmd as any).exec(...args);
       kit.peritext.refresh();

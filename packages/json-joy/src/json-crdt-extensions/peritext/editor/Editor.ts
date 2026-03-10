@@ -46,6 +46,7 @@ import type {ApiOperation} from '../../../json-crdt/model/api/types';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import {OverlayPoint} from '../overlay/OverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from '../overlay/refs';
+import {createDefaultRegistry} from '../registry/createDefaultRegistry';
 
 /**
  * For inline boolean ("Overwrite") slices, both range endpoints should be
@@ -92,7 +93,7 @@ export class Editor<T = string> implements Printable {
 
   public getRegistry(): SliceRegistry {
     let registry = this.registry;
-    if (!registry) this.registry = registry = SliceRegistry.withCommon();
+    if (!registry) this.registry = registry = createDefaultRegistry();
     return registry;
   }
 

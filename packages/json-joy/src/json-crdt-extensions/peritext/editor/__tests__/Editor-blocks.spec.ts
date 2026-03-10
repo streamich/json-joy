@@ -1,4 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 import {SliceTypeCon} from '../../slice/constants';
 import {create} from '../../transfer/create';
 
@@ -10,7 +11,7 @@ const runTests = (setup: () => Kit) => {
     editor.cursor.setAt(7);
     editor.saved.insMarker([[SliceTypeCon.blockquote, 1], SliceTypeCon.p]);
     peritext.refresh();
-    const transfer = create(peritext);
+    const transfer = create(peritext, createDefaultRegistry());
     const html1 = transfer.toHtml(peritext.rangeAll()!);
     expect(html1).toBe(
       '<p>abc</p><blockquote><p>def</p></blockquote><blockquote><p>ghijklmnopqrstuvwxyz</p></blockquote>',
@@ -29,7 +30,7 @@ const runTests = (setup: () => Kit) => {
     editor.cursor.setAt(7);
     editor.saved.insMarker([SliceTypeCon.blockquote, SliceTypeCon.p]);
     peritext.refresh();
-    const transfer = create(peritext);
+    const transfer = create(peritext, createDefaultRegistry());
     const html1 = transfer.toHtml(peritext.rangeAll()!);
     expect(html1).toBe('<p>abc</p><blockquote><p>def</p><p>ghijklmnopqrstuvwxyz</p></blockquote>');
     const point = peritext.pointAt(10);

@@ -5,6 +5,7 @@ import * as mdExport from '../export-markdown';
 import * as mdImport from '../import-markdown';
 import {PeritextDataTransfer} from '../PeritextDataTransfer';
 import {SliceTypeCon} from '../../slice/constants';
+import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 
 const testSuite = (setupKit: () => Kit) => {
   const setup = () => {
@@ -14,7 +15,7 @@ const testSuite = (setupKit: () => Kit) => {
       htmlImport,
       mdExport,
       mdImport,
-    });
+    }, createDefaultRegistry());
     const toHtml = () => {
       kit.peritext.refresh();
       return transfer.toHtml(kit.peritext.rangeAll()!);

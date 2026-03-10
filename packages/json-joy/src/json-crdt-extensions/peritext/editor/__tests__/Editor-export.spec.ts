@@ -1,4 +1,5 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../__tests__/setup';
+import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 import {Anchor} from '../../rga/constants';
 import {CommonSliceType} from '../../slice';
 import {SliceStacking, SliceHeaderShift} from '../../slice/constants';
@@ -364,7 +365,7 @@ const testSuite = (setup: () => Kit) => {
       editor.cursor.setAt(10, 3);
       editor.importStyle(editor.cursor, json);
       peritext.refresh();
-      const transfer = create(peritext);
+      const transfer = create(peritext, createDefaultRegistry());
       const html = transfer.toHtml(peritext.rangeAll()!);
       expect(html).toBe('<p>ab<b>c</b><i><b>d</b></i><i>e</i>fghij<i><b>klm</b></i>nopqrstuvwxyz</p>');
     });

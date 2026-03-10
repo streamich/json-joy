@@ -1,6 +1,7 @@
 import {Peritext} from './Peritext';
 import {printTree} from 'tree-dump/lib/printTree';
 import {ExtensionApi} from '../../json-crdt/extensions/ExtensionApi';
+import {PeritextHeadless} from './PeritextHeadless';
 import type {PeritextNode} from './PeritextNode';
 import type {StrApi, ArrApi, ArrNode, ModelApi} from '../../json-crdt';
 import type {SliceNode} from './slice/types';
@@ -27,6 +28,12 @@ export class PeritextApi extends ExtensionApi<PeritextNode> {
 
   public peritext(): Peritext {
     return new Peritext(this.api.model, this.node.text(), this.node.slices());
+  }
+  
+  public headless(): PeritextHeadless {
+    const txt = this.peritext();
+    const headless = new PeritextHeadless(txt);
+    return headless;
   }
 
   public text(): StrApi {

@@ -40,6 +40,7 @@ export class PeritextDataTransfer<T = string> {
   constructor(
     public readonly txt: Peritext<T>,
     public readonly opts: PeritextDataTransferOpts,
+    public readonly registry: SliceRegistry,
   ) {}
 
   // ------------------------------------------------------------------ exports

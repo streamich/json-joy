@@ -33,3 +33,5 @@ export interface PeritextClipboard {
 export interface PeritextClipboardData<Value> {
   [mime: string]: Value;
 }
+
+export type PlatformClipboard = Pick<Clipboard, 'writeText' | 'write' | 'read'>;

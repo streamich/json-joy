@@ -1,6 +1,7 @@
 import {type Kit, runAlphabetKitTestSuite} from '../../../../json-crdt-extensions/peritext/__tests__/setup';
 import {SliceTypeCon} from '../../../../json-crdt-extensions/peritext/slice/constants';
 import {create as createTransfer} from '../../../../json-crdt-extensions/peritext/transfer/create';
+import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 import {getEventsKit} from './setup';
 
 const testSuite = (getKit: () => Kit) => {
@@ -247,7 +248,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [5]});
       kit.et.marker({action: 'ins', type: [SliceTypeCon.blockquote, SliceTypeCon.p]});
       kit.peritext.refresh();
-      const transfer = createTransfer(kit.peritext);
+      const transfer = createTransfer(kit.peritext, createDefaultRegistry());
       const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
       expect(html1).toBe('<p>abcde</p><blockquote><p>fghijklmnopqrstuvwxyz</p></blockquote>');
       expect(kit.peritext.blocks.root.children.length).toBe(2);
@@ -267,7 +268,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [5]});
       kit.et.marker({action: 'ins', type: [SliceTypeCon.blockquote, SliceTypeCon.p]});
       kit.peritext.refresh();
-      const transfer = createTransfer(kit.peritext);
+      const transfer = createTransfer(kit.peritext, createDefaultRegistry());
       const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
       expect(html1).toBe('<p>abcde</p><blockquote><p>fghijklmnopqrstuvwxyz</p></blockquote>');
       kit.et.cursor({at: [10]});
@@ -288,7 +289,7 @@ const testSuite = (getKit: () => Kit) => {
       kit.et.cursor({at: [3]});
       kit.et.marker({action: 'ins', type: [SliceTypeCon.ul, SliceTypeCon.li, SliceTypeCon.p]});
       kit.peritext.refresh();
-      const transfer = createTransfer(kit.peritext);
+      const transfer = createTransfer(kit.peritext, createDefaultRegistry());
       const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
       expect(html1).toBe('<p>abc</p><ul><li><p>defghijklmnopqrstuvwxyz</p></li></ul>');
       kit.et.cursor({at: [12]});
@@ -321,7 +322,7 @@ const testSuite = (getKit: () => Kit) => {
         ],
       });
       kit.peritext.refresh();
-      const transfer = createTransfer(kit.peritext);
+      const transfer = createTransfer(kit.peritext, createDefaultRegistry());
       const html1 = transfer.toHtml(kit.peritext.rangeAll()!);
       expect(html1).toBe(
         '<p>abcdefg</p><ul><li><ul><li><blockquote><p>hijklmnopqrstuvwxyz</p></blockquote></li></ul></li></ul>',

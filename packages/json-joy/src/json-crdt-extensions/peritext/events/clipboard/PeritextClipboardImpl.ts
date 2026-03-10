@@ -1,5 +1,10 @@
-import {saveSelection} from '../../../../util/dom';
-import type {PeritextClipboard, PeritextClipboardData} from './types';
+import { saveSelection } from '../../../../util/dom';
+import { MemPlatformClipboard } from './MemPlatformClipboard';
+import type {
+  PeritextClipboard,
+  PeritextClipboardData,
+  PlatformClipboard,
+} from './types';
 
 const toText = (buf: Uint8Array) => new TextDecoder().decode(buf);
 
@@ -71,13 +76,21 @@ const writeSync = (data: PeritextClipboardData<string>): boolean => {
   }
 };
 
-export class DomClipboard implements PeritextClipboard {
-  constructor(protected readonly clipboard: Clipboard) {}
+export class PeritextClipboardImpl implements PeritextClipboard {
+  public readonly pc: PlatformClipboard;
+
+  constructor(
+    clipboard: PlatformClipboard = (typeof navigator === 'object' && navigator
+      ? navigator.clipboard
+      : void 0) ?? new MemPlatformClipboard(),
+  ) {
+    this.pc = clipboard;
+  }
 
   public writeText(text: string): undefined | Promise<void> {
-    const success = writeSync({'text/plain': text});
+    const success = writeSync({ 'text/plain': text });
     if (success) return;
-    return this.clipboard.writeText(text);
+    return this.pc.writeText(text);
   }
 
   public write(
@@ -97,23 +110,27 @@ export class DomClipboard implements PeritextClipboard {
         case 'text/plain':
         case 'text/html':
         case 'image/png': {
-          clipboardData[type] = new Blob([data[type] as BlobPart], {type});
+          clipboardData[type] = new Blob([data[type] as BlobPart], { type });
           break;
         }
         default: {
-          clipboardData['web ' + type] = new Blob([data[type] as BlobPart], {type});
+          clipboardData['web ' + type] = new Blob([data[type] as BlobPart], {
+            type,
+          });
         }
       }
     }
     const item = new ClipboardItem(clipboardData);
     const items: ClipboardItem[] = [item];
-    return this.clipboard.write(items);
+    return this.pc.write(items);
   }
 
-  public async read<T extends string>(types: T[]): Promise<{[mime in T]: Uint8Array}> {
-    const clipboard = this.clipboard;
+  public async read<T extends string>(
+    types: T[],
+  ): Promise<{ [mime in T]: Uint8Array }> {
+    const clipboard = this.pc;
     const items = await clipboard.read();
-    const data = {} as {[mime in T]: Uint8Array};
+    const data = {} as { [mime in T]: Uint8Array };
     const promises: Promise<[type: T, value: Uint8Array]>[] = [];
     const item = items[0];
     for (const type of types) {
@@ -130,9 +147,12 @@ export class DomClipboard implements PeritextClipboard {
     return data;
   }
 
-  public async readData(): Promise<{text?: string; html?: string}> {
-    const data: {text?: string; html?: string} = {};
-    const {'text/plain': text, 'text/html': html} = await this.read(['text/plain', 'text/html']);
+  public async readData(): Promise<{ text?: string; html?: string }> {
+    const data: { text?: string; html?: string } = {};
+    const { 'text/plain': text, 'text/html': html } = await this.read([
+      'text/plain',
+      'text/html',
+    ]);
     if (!text && !html) return data;
     if (text) data.text = toText(text);
     if (html) data.html = toText(html);

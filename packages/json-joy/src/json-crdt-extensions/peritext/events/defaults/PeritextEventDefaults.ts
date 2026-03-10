@@ -3,7 +3,6 @@ import {placeCursor} from './annals';
 import {Cursor} from '../../../../json-crdt-extensions/peritext/editor/Cursor';
 import {CursorAnchor, type Peritext} from '../../../../json-crdt-extensions/peritext';
 import {Slice} from '../../../../json-crdt-extensions/peritext/slice/Slice';
-import {PeritextCommands} from '../../commands/PeritextCommands';
 import type {Range} from '../../../../json-crdt-extensions/peritext/rga/Range';
 import type {PeritextDataTransfer} from '../../../../json-crdt-extensions/peritext/transfer/PeritextDataTransfer';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from '../PeritextEventTarget';
@@ -55,7 +54,6 @@ export interface PeritextEventDefaultsOpts {
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public undo?: UndoCollector;
   public ui?: UiHandle;
-  public readonly cmd: PeritextCommands;
 
   protected editorUi: EditorUi = {
     eol: (point: Point, steps: number): Point | undefined => {
@@ -90,9 +88,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     public readonly txt: Peritext,
     public readonly et: PeritextEventTarget,
     public readonly opts: PeritextEventDefaultsOpts = {},
-  ) {
-    this.cmd = new PeritextCommands(txt, et);
-  }
+  ) {}
 
   protected getSelSet({at}: events.SelectionDetailPart): events.SelectionSet {
     const {editor} = this.txt;
