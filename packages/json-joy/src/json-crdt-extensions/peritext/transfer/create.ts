@@ -7,11 +7,15 @@ import type {Peritext} from '../Peritext';
 import type {SliceRegistry} from '../registry/SliceRegistry';
 
 export const create = (txt: Peritext, registry: SliceRegistry) => {
-  const transfer = new PeritextDataTransfer(txt, {
-    htmlExport,
-    htmlImport,
-    mdExport,
-    mdImport,
-  }, registry);
+  const transfer = new PeritextDataTransfer(
+    txt,
+    {
+      htmlExport,
+      htmlImport,
+      mdExport,
+      mdImport,
+    },
+    registry,
+  );
   return transfer;
 };

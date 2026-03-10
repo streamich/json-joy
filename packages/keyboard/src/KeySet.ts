@@ -12,7 +12,7 @@ export class KeySet implements Printable {
 
   public remove(key: Key): void {
     const keys = this.keys;
-    const index = keys.findIndex(k => k.key === key.key);
+    const index = keys.findIndex((k) => k.key === key.key);
     if (index !== -1) keys.splice(index, 1);
   }
 
@@ -23,13 +23,13 @@ export class KeySet implements Printable {
   public start(): number {
     const keys = this.keys;
     if (keys.length === 0) return 0;
-    return Math.min(...keys.map(k => k.ts));
+    return Math.min(...keys.map((k) => k.ts));
   }
 
   public end(): number {
     const keys = this.keys;
     if (keys.length === 0) return 0;
-    return Math.max(...keys.map(k => k.ts));
+    return Math.max(...keys.map((k) => k.ts));
   }
 
   /**
@@ -43,7 +43,7 @@ export class KeySet implements Printable {
    */
   public chordSig(): string {
     const normalized = this.keys
-      .map(k => k.key === ' ' ? 'Space' : k.key.length === 1 ? k.key.toLowerCase() : k.key)
+      .map((k) => (k.key === ' ' ? 'Space' : k.key.length === 1 ? k.key.toLowerCase() : k.key))
       .sort();
     const mod = this.keys[0]?.mod ?? '';
     return mod ? `${mod}+${normalized.join('+')}` : normalized.join('+');
@@ -52,6 +52,6 @@ export class KeySet implements Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return `pressed { ${this.keys.map(k => k.sig()).join(', ')} }`;
+    return `pressed { ${this.keys.map((k) => k.sig()).join(', ')} }`;
   }
 }

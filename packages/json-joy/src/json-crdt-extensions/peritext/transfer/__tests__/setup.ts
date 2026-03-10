@@ -8,11 +8,15 @@ import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 
 export const setup = () => {
   const kit = setupKit();
-  const transfer = new PeritextDataTransfer(kit.peritext, {
-    htmlExport,
-    htmlImport,
-    mdExport,
-    mdImport,
-  }, createDefaultRegistry());
+  const transfer = new PeritextDataTransfer(
+    kit.peritext,
+    {
+      htmlExport,
+      htmlImport,
+      mdExport,
+      mdImport,
+    },
+    createDefaultRegistry(),
+  );
   return {...kit, transfer};
 };

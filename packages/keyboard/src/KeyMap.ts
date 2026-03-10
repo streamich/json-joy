@@ -28,22 +28,21 @@ export class KeyMap {
   private _del(map: Map<string, KeyBinding[]>, sig: Signature, action: (key: Key) => void): void {
     const list = map.get(sig);
     if (!list) return;
-    const index = list.findIndex(b => b.action === action);
+    const index = list.findIndex((b) => b.action === action);
     if (index !== -1) {
       list.splice(index, 1);
       if (list.length === 0) map.delete(sig);
     }
   }
 
-  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): (() => void) {
+  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): () => void {
     const pressDefs: KeyBinding[] = [];
     const releaseDefs: KeyBinding[] = [];
     const chordDefs: ChordBinding[] = [];
     for (const def of definitions) {
       if (Array.isArray(def)) {
         const [sig, action, options] = def as [string, Function, (KeyBindingOptions | ChordBindingOptions)?];
-        if (isChordSig(sig))
-          chordDefs.push({...options, sig, action: action as ChordAction});
+        if (isChordSig(sig)) chordDefs.push({...options, sig, action: action as ChordAction});
         else {
           const b = {...options, sig: sig as Signature, action: action as KeyAction};
           if ((b as KeyBinding).release) releaseDefs.push(b as KeyBinding);
@@ -69,7 +68,7 @@ export class KeyMap {
   public setPress(sig: Signature, action: (key: Key) => void): void {
     this._set(this.pressMap, {sig, action});
   }
-  
+
   public delPress(sig: Signature, action: (key: Key) => void): void {
     this._del(this.pressMap, sig, action);
   }
@@ -109,7 +108,7 @@ export class KeyMap {
   public delChord(sig: ChordSignature, action: ChordBinding['action']): void {
     const list = this.chordMap.get(sig);
     if (!list) return;
-    const index = list.findIndex(b => b.action === action);
+    const index = list.findIndex((b) => b.action === action);
     if (index !== -1) {
       list.splice(index, 1);
       if (list.length === 0) this.chordMap.delete(sig);

@@ -2,7 +2,7 @@ import {Key} from './Key';
 import type {KeySource, KeySink, KeyEvent} from './types';
 
 export class KeySourceEl implements KeySource {
-  constructor (public readonly el: HTMLElement) {}
+  constructor(public readonly el: HTMLElement) {}
 
   public bind(sink: KeySink): () => void {
     const onKeyDown = (event: KeyEvent): void => {

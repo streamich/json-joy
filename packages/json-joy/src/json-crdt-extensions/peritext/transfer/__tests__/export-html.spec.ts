@@ -10,12 +10,16 @@ import {createDefaultRegistry} from '../../registry/createDefaultRegistry';
 const testSuite = (setupKit: () => Kit) => {
   const setup = () => {
     const kit = setupKit();
-    const transfer = new PeritextDataTransfer(kit.peritext, {
-      htmlExport,
-      htmlImport,
-      mdExport,
-      mdImport,
-    }, createDefaultRegistry());
+    const transfer = new PeritextDataTransfer(
+      kit.peritext,
+      {
+        htmlExport,
+        htmlImport,
+        mdExport,
+        mdImport,
+      },
+      createDefaultRegistry(),
+    );
     const toHtml = () => {
       kit.peritext.refresh();
       return transfer.toHtml(kit.peritext.rangeAll()!);

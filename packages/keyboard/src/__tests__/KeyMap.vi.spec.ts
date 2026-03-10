@@ -9,7 +9,9 @@ describe('KeyMap', () => {
     test('setPress then matchPress returns binding', () => {
       const map = new KeyMap();
       let called = 0;
-      const action = () => { called++; };
+      const action = () => {
+        called++;
+      };
       map.setPress('a', action);
       const matches = map.matchPress(mkKey('a'));
       expect(matches).toBeDefined();
@@ -20,7 +22,9 @@ describe('KeyMap', () => {
     test('action receives the Key', () => {
       const map = new KeyMap();
       let received: Key | undefined;
-      map.setPress('a', (key) => { received = key; });
+      map.setPress('a', (key) => {
+        received = key;
+      });
       const k = mkKey('a');
       const matches = map.matchPress(k);
       matches![0].action(k);
@@ -34,18 +38,28 @@ describe('KeyMap', () => {
 
     test('multiple handlers for same signature are all returned', () => {
       const map = new KeyMap();
-      let a = 0, b = 0;
-      map.setPress('a', () => { a++; });
-      map.setPress('a', () => { b++; });
+      let a = 0,
+        b = 0;
+      map.setPress('a', () => {
+        a++;
+      });
+      map.setPress('a', () => {
+        b++;
+      });
       const matches = map.matchPress(mkKey('a'));
       expect(matches!.length).toBe(2);
     });
 
     test('delPress removes specific handler', () => {
       const map = new KeyMap();
-      let a = 0, b = 0;
-      const actionA = () => { a++; };
-      const actionB = () => { b++; };
+      let a = 0,
+        b = 0;
+      const actionA = () => {
+        a++;
+      };
+      const actionB = () => {
+        b++;
+      };
       map.setPress('a', actionA);
       map.setPress('a', actionB);
       map.delPress('a', actionA);

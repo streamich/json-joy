@@ -16,7 +16,7 @@ export class PeritextHeadless {
   public readonly defaults: PeritextEventDefaults;
   public readonly cmd: PeritextCommands;
 
-  constructor (public readonly txt: Peritext) {
+  constructor(public readonly txt: Peritext) {
     const registry = new SliceRegistry();
     const transfer = createDataTransfer(txt, registry);
     const et = new PeritextEventTarget();

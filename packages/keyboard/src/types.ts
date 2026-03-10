@@ -23,17 +23,100 @@ export interface KeySource {
   bind(sink: KeySink): () => void;
 }
 
-export type SigMod = '' | 'A' | 'C' | 'M' | 'S' | 'AC' | 'AM' | 'AS' | 'CM' | 'CS' | 'MS' | 'ACM' | 'ACS' | 'AMS' | 'CMS' | 'ACMS';
+export type SigMod =
+  | ''
+  | 'A'
+  | 'C'
+  | 'M'
+  | 'S'
+  | 'AC'
+  | 'AM'
+  | 'AS'
+  | 'CM'
+  | 'CS'
+  | 'MS'
+  | 'ACM'
+  | 'ACS'
+  | 'AMS'
+  | 'CMS'
+  | 'ACMS';
 export type SigKey =
-  | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
-  | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-  | 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8' | 'F9' | 'F10' | 'F11' | 'F12'
-  | ',' | '.' | '/' | ';' | '\'' | '[' | ']' | '\\' | '-' | '='
-  | 'ArrowUp' | 'ArrowRight' | 'ArrowDown' | 'ArrowLeft' | 'Enter' | 'Escape' | 'Tab' | 'Backspace' | 'Delete' | 'Home' | 'End' | 'PageUp' | 'PageDown' | 'Space';
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h'
+  | 'i'
+  | 'j'
+  | 'k'
+  | 'l'
+  | 'm'
+  | 'n'
+  | 'o'
+  | 'p'
+  | 'q'
+  | 'r'
+  | 's'
+  | 't'
+  | 'u'
+  | 'v'
+  | 'w'
+  | 'x'
+  | 'y'
+  | 'z'
+  | '0'
+  | '1'
+  | '2'
+  | '3'
+  | '4'
+  | '5'
+  | '6'
+  | '7'
+  | '8'
+  | '9'
+  | 'F1'
+  | 'F2'
+  | 'F3'
+  | 'F4'
+  | 'F5'
+  | 'F6'
+  | 'F7'
+  | 'F8'
+  | 'F9'
+  | 'F10'
+  | 'F11'
+  | 'F12'
+  | ','
+  | '.'
+  | '/'
+  | ';'
+  | "'"
+  | '['
+  | ']'
+  | '\\'
+  | '-'
+  | '='
+  | 'ArrowUp'
+  | 'ArrowRight'
+  | 'ArrowDown'
+  | 'ArrowLeft'
+  | 'Enter'
+  | 'Escape'
+  | 'Tab'
+  | 'Backspace'
+  | 'Delete'
+  | 'Home'
+  | 'End'
+  | 'PageUp'
+  | 'PageDown'
+  | 'Space';
 export type SigRepeat = 'R';
 
 /** Normal key signature, e.g. `'a'`, `'C+s'`, `'S+F5:R'`. */
-export type SigNormal = `${(`${SigMod}+`) | ''}${SigKey}${(`:${SigRepeat}`) | ''}`;
+export type SigNormal = `${`${SigMod}+` | ''}${SigKey}${`:${SigRepeat}` | ''}`;
 
 /**
  * - `''` — matches **every** key (catch-all / logging).
@@ -61,11 +144,7 @@ export interface KeyBinding extends KeyBindingOptions {
   action: KeyAction;
 }
 
-export type KeyBindingShorthand = [
-  signature: Signature,
-  action: KeyAction,
-  options?: KeyBindingOptions,
-];
+export type KeyBindingShorthand = [signature: Signature, action: KeyAction, options?: KeyBindingOptions];
 
 export type KeyAction = (key: Key) => void;
 
@@ -101,8 +180,4 @@ export type ChordAction = (pressed: KeySet) => void;
  * The chord is detected automatically from the signature (two or more
  * plain-key segments separated by `+`, e.g. `'a+b'` or `'C+a+b'`).
  */
-export type ChordBindingShorthand = [
-  signature: ChordSignature,
-  action: ChordAction,
-  options?: ChordBindingOptions,
-];
+export type ChordBindingShorthand = [signature: ChordSignature, action: ChordAction, options?: ChordBindingOptions];

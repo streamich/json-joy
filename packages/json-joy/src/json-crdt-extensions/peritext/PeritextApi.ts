@@ -29,7 +29,7 @@ export class PeritextApi extends ExtensionApi<PeritextNode> {
   public peritext(): Peritext {
     return new Peritext(this.api.model, this.node.text(), this.node.slices());
   }
-  
+
   public headless(): PeritextHeadless {
     const txt = this.peritext();
     const headless = new PeritextHeadless(txt);

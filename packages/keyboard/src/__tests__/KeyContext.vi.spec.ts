@@ -23,7 +23,7 @@ test('can create KeyContext', async () => {
 test('triggers "press" event', async () => {
   await using kit = await setup();
   let text = '';
-  kit.ctx.map.setPress('a', () => text += 'hello');
+  kit.ctx.map.setPress('a', () => (text += 'hello'));
   kit.src.press('a');
   expect(text).toBe('hello');
   expect(kit.ctx.pressed.keys.length).toBe(1);
@@ -37,7 +37,7 @@ describe('.child() context', () => {
     await using kit = await setup();
     let text = '';
     const ctx = kit.ctx.child();
-    ctx.map.setPress('a', () => text += 'hello');
+    ctx.map.setPress('a', () => (text += 'hello'));
     kit.src.press('a');
     expect(text).toBe('hello');
     expect(ctx.pressed.keys.length).toBe(1);
@@ -55,7 +55,7 @@ describe('history', () => {
     kit.src.press('a');
     kit.src.press('b');
     kit.src.press('c');
-    const sigs = kit.ctx.history.map(k => k.key);
+    const sigs = kit.ctx.history.map((k) => k.key);
     expect(sigs).toEqual(['a', 'b', 'c']);
   });
 
@@ -67,7 +67,7 @@ describe('history', () => {
     kit.src.press('c');
     kit.src.press('d');
     expect(kit.ctx.history.length).toBe(3);
-    expect(kit.ctx.history.map(k => k.key)).toEqual(['b', 'c', 'd']);
+    expect(kit.ctx.history.map((k) => k.key)).toEqual(['b', 'c', 'd']);
   });
 });
 
@@ -75,7 +75,9 @@ describe('pause / resume', () => {
   test('paused context ignores key presses', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.map.setPress('a', () => { hits++; });
+    kit.ctx.map.setPress('a', () => {
+      hits++;
+    });
     kit.ctx.pause();
     kit.src.press('a');
     expect(hits).toBe(0);
@@ -85,7 +87,9 @@ describe('pause / resume', () => {
   test('resumed context receives key presses again', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.map.setPress('a', () => { hits++; });
+    kit.ctx.map.setPress('a', () => {
+      hits++;
+    });
     kit.ctx.pause();
     kit.src.press('a');
     kit.src.release('a');
@@ -99,7 +103,9 @@ describe('onChange', () => {
   test('fires after a key press', async () => {
     await using kit = await setup();
     let fires = 0;
-    kit.ctx.onChange.listen(() => { fires++; });
+    kit.ctx.onChange.listen(() => {
+      fires++;
+    });
     kit.src.press('a');
     expect(fires).toBe(1);
   });
@@ -108,7 +114,9 @@ describe('onChange', () => {
     await using kit = await setup();
     let fires = 0;
     kit.src.press('a');
-    kit.ctx.onChange.listen(() => { fires++; });
+    kit.ctx.onChange.listen(() => {
+      fires++;
+    });
     kit.src.release('a');
     expect(fires).toBe(1);
   });
@@ -116,7 +124,9 @@ describe('onChange', () => {
   test('fires after reset', async () => {
     await using kit = await setup();
     let fires = 0;
-    kit.ctx.onChange.listen(() => { fires++; });
+    kit.ctx.onChange.listen(() => {
+      fires++;
+    });
     kit.src.reset();
     expect(fires).toBe(1);
   });
@@ -126,7 +136,9 @@ describe('propagation to parent', () => {
   test('unmatched child key propagates to parent', async () => {
     await using kit = await setup();
     let parentHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
     kit.src.press('a');
     expect(parentHits).toBe(1);
@@ -136,9 +148,13 @@ describe('propagation to parent', () => {
     await using kit = await setup();
     let parentHits = 0;
     let childHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
-    child.map.setPress('a', () => { childHits++; });
+    child.map.setPress('a', () => {
+      childHits++;
+    });
     kit.src.press('a');
     expect(childHits).toBe(1);
     expect(parentHits).toBe(0);
@@ -151,7 +167,9 @@ describe('.child() with custom source', () => {
     const childSrc = new KeySourceManual();
     let childHits = 0;
     const child = kit.ctx.child('child', childSrc as any);
-    child.map.setPress('a', () => { childHits++; });
+    child.map.setPress('a', () => {
+      childHits++;
+    });
     kit.src.press('a');
     expect(childHits).toBe(0);
     // child's own source does reach child
@@ -163,7 +181,9 @@ describe('.child() with custom source', () => {
   test('detaching child restores parent routing', async () => {
     await using kit = await setup();
     let parentHits = 0;
-    kit.ctx.map.setPress('z', () => { parentHits++; });
+    kit.ctx.map.setPress('z', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child();
     // With child active, parent onPress_ is not called directly
     kit.src.press('z');
@@ -197,7 +217,14 @@ describe('KeyContext.bind()', () => {
   test('shorthand [sig, action] registers a press handler', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.bind([['a', () => { hits++; }]]);
+    kit.ctx.bind([
+      [
+        'a',
+        () => {
+          hits++;
+        },
+      ],
+    ]);
     kit.src.press('a');
     expect(hits).toBe(1);
   });
@@ -205,7 +232,14 @@ describe('KeyContext.bind()', () => {
   test('shorthand [sig, action] action receives the Key', async () => {
     await using kit = await setup();
     let received: import('../Key').Key | undefined;
-    kit.ctx.bind([['a', (k) => { received = k; }]]);
+    kit.ctx.bind([
+      [
+        'a',
+        (k) => {
+          received = k;
+        },
+      ],
+    ]);
     kit.src.press('a');
     expect(received).toBeDefined();
     expect(received!.key).toBe('a');
@@ -214,17 +248,35 @@ describe('KeyContext.bind()', () => {
   test('object form { sig, action } registers a press handler', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.bind([{sig: 'b', action: () => { hits++; }}]);
+    kit.ctx.bind([
+      {
+        sig: 'b',
+        action: () => {
+          hits++;
+        },
+      },
+    ]);
     kit.src.press('b');
     expect(hits).toBe(1);
   });
 
   test('multiple bindings in one call all register', async () => {
     await using kit = await setup();
-    let a = 0, b = 0;
+    let a = 0,
+      b = 0;
     kit.ctx.bind([
-      ['a', () => { a++; }],
-      ['b', () => { b++; }],
+      [
+        'a',
+        () => {
+          a++;
+        },
+      ],
+      [
+        'b',
+        () => {
+          b++;
+        },
+      ],
     ]);
     kit.src.press('a');
     kit.src.press('b');
@@ -235,7 +287,14 @@ describe('KeyContext.bind()', () => {
   test('unbind function removes all registered handlers', async () => {
     await using kit = await setup();
     let hits = 0;
-    const unbind = kit.ctx.bind([['a', () => { hits++; }]]);
+    const unbind = kit.ctx.bind([
+      [
+        'a',
+        () => {
+          hits++;
+        },
+      ],
+    ]);
     kit.src.press('a');
     expect(hits).toBe(1);
     unbind();
@@ -247,9 +306,19 @@ describe('KeyContext.bind()', () => {
     await using kit = await setup();
     let parentHits = 0;
     let childHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
-    child.bind([['a', () => { childHits++; }, {propagate: true}]]);
+    child.bind([
+      [
+        'a',
+        () => {
+          childHits++;
+        },
+        {propagate: true},
+      ],
+    ]);
     kit.src.press('a');
     expect(childHits).toBe(1);
     expect(parentHits).toBe(1); // propagated
@@ -259,9 +328,19 @@ describe('KeyContext.bind()', () => {
     await using kit = await setup();
     let parentHits = 0;
     let childHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
-    child.bind([{sig: 'a', action: () => { childHits++; }, propagate: true}]);
+    child.bind([
+      {
+        sig: 'a',
+        action: () => {
+          childHits++;
+        },
+        propagate: true,
+      },
+    ]);
     kit.src.press('a');
     expect(childHits).toBe(1);
     expect(parentHits).toBe(1);
@@ -270,7 +349,9 @@ describe('KeyContext.bind()', () => {
   test('default (no propagate) does NOT bubble to parent', async () => {
     await using kit = await setup();
     let parentHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
     child.bind([['a', () => {}]]);
     kit.src.press('a');
@@ -280,7 +361,15 @@ describe('KeyContext.bind()', () => {
   test('shorthand with { release: true } registers a release handler', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.bind([['a', () => { hits++; }, {release: true}]]);
+    kit.ctx.bind([
+      [
+        'a',
+        () => {
+          hits++;
+        },
+        {release: true},
+      ],
+    ]);
     kit.src.press('a');
     expect(hits).toBe(0); // not on press
     kit.src.release('a');
@@ -290,7 +379,15 @@ describe('KeyContext.bind()', () => {
   test('object form with release: true registers a release handler', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.bind([{sig: 'Enter', action: () => { hits++; }, release: true}]);
+    kit.ctx.bind([
+      {
+        sig: 'Enter',
+        action: () => {
+          hits++;
+        },
+        release: true,
+      },
+    ]);
     kit.src.press('Enter');
     expect(hits).toBe(0);
     kit.src.release('Enter');
@@ -300,7 +397,15 @@ describe('KeyContext.bind()', () => {
   test('unbind removes release handler too', async () => {
     await using kit = await setup();
     let hits = 0;
-    const unbind = kit.ctx.bind([['a', () => { hits++; }, {release: true}]]);
+    const unbind = kit.ctx.bind([
+      [
+        'a',
+        () => {
+          hits++;
+        },
+        {release: true},
+      ],
+    ]);
     kit.src.press('a');
     kit.src.release('a');
     expect(hits).toBe(1);
@@ -313,7 +418,14 @@ describe('KeyContext.bind()', () => {
   test('chord shorthand [sig, action] fires when both keys are pressed', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.bind([['a+b', () => { hits++; }]]);
+    kit.ctx.bind([
+      [
+        'a+b',
+        () => {
+          hits++;
+        },
+      ],
+    ]);
     kit.src.press('a');
     expect(hits).toBe(0);
     kit.src.press('b');
@@ -323,7 +435,14 @@ describe('KeyContext.bind()', () => {
   test('chord shorthand unbind removes the chord handler', async () => {
     await using kit = await setup();
     let hits = 0;
-    const unbind = kit.ctx.bind([['a+b', () => { hits++; }]]);
+    const unbind = kit.ctx.bind([
+      [
+        'a+b',
+        () => {
+          hits++;
+        },
+      ],
+    ]);
     kit.src.press('a');
     kit.src.press('b');
     expect(hits).toBe(1);
@@ -338,7 +457,14 @@ describe('KeyContext.bind()', () => {
   test('chord object form { sig, action } fires correctly', async () => {
     await using kit = await setup();
     let hits = 0;
-    kit.ctx.bind([{sig: 'j+k', action: () => { hits++; }}]);
+    kit.ctx.bind([
+      {
+        sig: 'j+k',
+        action: () => {
+          hits++;
+        },
+      },
+    ]);
     kit.src.press('j');
     kit.src.press('k');
     expect(hits).toBe(1);
@@ -346,10 +472,21 @@ describe('KeyContext.bind()', () => {
 
   test('chord and single-key binding can coexist in one bind() call', async () => {
     await using kit = await setup();
-    let single = 0, chord = 0;
+    let single = 0,
+      chord = 0;
     kit.ctx.bind([
-      ['a', () => { single++; }],
-      ['a+b', () => { chord++; }],
+      [
+        'a',
+        () => {
+          single++;
+        },
+      ],
+      [
+        'a+b',
+        () => {
+          chord++;
+        },
+      ],
     ]);
     kit.src.press('a'); // single fires; chord not yet complete
     expect(single).toBe(1);
@@ -364,7 +501,9 @@ describe("'' catch-all wildcard", () => {
   test("'' handler fires for every key press", async () => {
     await using kit = await setup();
     const seen: string[] = [];
-    kit.ctx.map.setPress('', (k) => { seen.push(k.key); });
+    kit.ctx.map.setPress('', (k) => {
+      seen.push(k.key);
+    });
     kit.src.press('a');
     kit.src.press('b');
     kit.src.press('Enter');
@@ -373,9 +512,14 @@ describe("'' catch-all wildcard", () => {
 
   test("'' handler fires alongside an exact match", async () => {
     await using kit = await setup();
-    let exact = 0, any = 0;
-    kit.ctx.map.setPress('a', () => { exact++; });
-    kit.ctx.map.setPress('', () => { any++; });
+    let exact = 0,
+      any = 0;
+    kit.ctx.map.setPress('a', () => {
+      exact++;
+    });
+    kit.ctx.map.setPress('', () => {
+      any++;
+    });
     kit.src.press('a');
     expect(exact).toBe(1);
     expect(any).toBe(1);
@@ -384,7 +528,9 @@ describe("'' catch-all wildcard", () => {
   test("'' handler fires even when no exact match exists", async () => {
     await using kit = await setup();
     let any = 0;
-    kit.ctx.map.setPress('', () => { any++; });
+    kit.ctx.map.setPress('', () => {
+      any++;
+    });
     kit.src.press('z');
     expect(any).toBe(1);
   });
@@ -392,7 +538,14 @@ describe("'' catch-all wildcard", () => {
   test("'' can be registered via bind() shorthand", async () => {
     await using kit = await setup();
     let any = 0;
-    const unbind = kit.ctx.bind([['', () => { any++; }]]);
+    const unbind = kit.ctx.bind([
+      [
+        '',
+        () => {
+          any++;
+        },
+      ],
+    ]);
     kit.src.press('x');
     expect(any).toBe(1);
     unbind();
@@ -403,7 +556,9 @@ describe("'' catch-all wildcard", () => {
   test("'' suppresses propagation by default (like any binding)", async () => {
     await using kit = await setup();
     let parentHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
     child.map.setPress('', () => {}); // catch-all, no propagate
     kit.src.press('a');
@@ -413,7 +568,9 @@ describe("'' catch-all wildcard", () => {
   test("'' with propagate: true still bubbles to parent", async () => {
     await using kit = await setup();
     let parentHits = 0;
-    kit.ctx.map.setPress('a', () => { parentHits++; });
+    kit.ctx.map.setPress('a', () => {
+      parentHits++;
+    });
     const child = kit.ctx.child('sub');
     child.bind([['', () => {}, {propagate: true}]]);
     kit.src.press('a');
@@ -425,16 +582,23 @@ describe("'?' fallback wildcard", () => {
   test("'?' fires for an unmatched key", async () => {
     await using kit = await setup();
     let fallback = 0;
-    kit.ctx.map.setPress('?', () => { fallback++; });
+    kit.ctx.map.setPress('?', () => {
+      fallback++;
+    });
     kit.src.press('z');
     expect(fallback).toBe(1);
   });
 
   test("'?' does NOT fire when an exact binding matches", async () => {
     await using kit = await setup();
-    let exact = 0, fallback = 0;
-    kit.ctx.map.setPress('a', () => { exact++; });
-    kit.ctx.map.setPress('?', () => { fallback++; });
+    let exact = 0,
+      fallback = 0;
+    kit.ctx.map.setPress('a', () => {
+      exact++;
+    });
+    kit.ctx.map.setPress('?', () => {
+      fallback++;
+    });
     kit.src.press('a');
     expect(exact).toBe(1);
     expect(fallback).toBe(0);
@@ -442,9 +606,14 @@ describe("'?' fallback wildcard", () => {
 
   test("'?' and '' both fire for an unmatched key", async () => {
     await using kit = await setup();
-    let any = 0, fallback = 0;
-    kit.ctx.map.setPress('', () => { any++; });
-    kit.ctx.map.setPress('?', () => { fallback++; });
+    let any = 0,
+      fallback = 0;
+    kit.ctx.map.setPress('', () => {
+      any++;
+    });
+    kit.ctx.map.setPress('?', () => {
+      fallback++;
+    });
     kit.src.press('z');
     expect(any).toBe(1);
     expect(fallback).toBe(1);
@@ -453,7 +622,9 @@ describe("'?' fallback wildcard", () => {
   test("'?' fires but '' does not when only '?' is registered (no any at all)", async () => {
     await using kit = await setup();
     let fallback = 0;
-    kit.ctx.map.setPress('?', () => { fallback++; });
+    kit.ctx.map.setPress('?', () => {
+      fallback++;
+    });
     kit.src.press('x');
     expect(fallback).toBe(1);
   });
@@ -461,7 +632,9 @@ describe("'?' fallback wildcard", () => {
   test("'?' receives matched key via action argument", async () => {
     await using kit = await setup();
     let received: import('../Key').Key | undefined;
-    kit.ctx.map.setPress('?', (k) => { received = k; });
+    kit.ctx.map.setPress('?', (k) => {
+      received = k;
+    });
     kit.src.press('q');
     expect(received!.key).toBe('q');
   });
@@ -469,7 +642,14 @@ describe("'?' fallback wildcard", () => {
   test("'?' can be registered via bind() shorthand", async () => {
     await using kit = await setup();
     let fallback = 0;
-    const unbind = kit.ctx.bind([['?', () => { fallback++; }]]);
+    const unbind = kit.ctx.bind([
+      [
+        '?',
+        () => {
+          fallback++;
+        },
+      ],
+    ]);
     kit.src.press('w');
     expect(fallback).toBe(1);
     unbind();

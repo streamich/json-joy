@@ -22,7 +22,9 @@ describe('KeySourceManual', () => {
     const ctx = new KeyContext();
     const src = new KeySourceManual();
     let pressed = 0;
-    ctx.map.setPress('a', () => { pressed++; });
+    ctx.map.setPress('a', () => {
+      pressed++;
+    });
     src.bind(ctx);
     src.press('a');
     expect(pressed).toBe(1);
@@ -32,7 +34,9 @@ describe('KeySourceManual', () => {
     const ctx = new KeyContext();
     const src = new KeySourceManual();
     let pressed = 0;
-    ctx.map.setPress('a', () => { pressed++; });
+    ctx.map.setPress('a', () => {
+      pressed++;
+    });
     const unbind = src.bind(ctx);
     unbind();
     src.press('a');
@@ -62,7 +66,9 @@ describe('KeySourceManual', () => {
     const src = new KeySourceManual();
     src.bind(ctx);
     let received: Key | undefined;
-    ctx.map.setPress('C+a', (k) => { received = k; });
+    ctx.map.setPress('C+a', (k) => {
+      received = k;
+    });
     src.press('a', 'C');
     expect(received).toBeDefined();
     expect(received!.mod).toBe('C');
@@ -103,7 +109,9 @@ describe('KeySourceManual', () => {
     const src = new KeySourceManual();
     src.bind(ctx);
     let hits = 0;
-    ctx.map.setPress('M+s', () => { hits++; });
+    ctx.map.setPress('M+s', () => {
+      hits++;
+    });
     await src.send('s', 'M');
     expect(hits).toBe(1);
   });

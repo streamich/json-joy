@@ -6,7 +6,17 @@ import {KeyMap} from './KeyMap';
 import {KeySet} from './KeySet';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
-import type {ChordAction, ChordBinding, ChordBindingOptions, ChordBindingShorthand, ChordSignature, KeyBinding, KeyBindingShorthand, KeySink, KeySource} from './types';
+import type {
+  ChordAction,
+  ChordBinding,
+  ChordBindingOptions,
+  ChordBindingShorthand,
+  ChordSignature,
+  KeyBinding,
+  KeyBindingShorthand,
+  KeySink,
+  KeySource,
+} from './types';
 
 const enum KeyControllerConstants {
   HistoryLimit = 25,
@@ -16,7 +26,7 @@ export class KeyContext implements KeySink, Printable {
   /**
    * Creates a root `KeyContext` which binds to `window` and `document` key
    * events.
-   * 
+   *
    * @param name Provide for debugging, used in `.toString()`.
    */
   public static global(name?: string): [context: KeyContext, unbind: () => void] {
@@ -39,7 +49,7 @@ export class KeyContext implements KeySink, Printable {
   public historyLimit: number = KeyControllerConstants.HistoryLimit;
 
   public _child: KeyContext | undefined = void 0;
-  public _feedChild: boolean = false; 
+  public _feedChild: boolean = false;
   public _childUnbind?: () => void = void 0;
 
   public constructor(
@@ -61,15 +71,18 @@ export class KeyContext implements KeySink, Printable {
     if (this._child) this.detachChild();
     const child = new KeyContext(this, name);
     this._child = child;
-    const keySource: KeySource | undefined = (typeof HTMLElement !== 'undefined' && source instanceof HTMLElement)
-      ? new KeySourceEl(source)
-      : (typeof source === 'object' && 'bind' in source) ? source : void 0;
+    const keySource: KeySource | undefined =
+      typeof HTMLElement !== 'undefined' && source instanceof HTMLElement
+        ? new KeySourceEl(source)
+        : typeof source === 'object' && 'bind' in source
+          ? source
+          : void 0;
     this._feedChild = !keySource;
     this._childUnbind = keySource?.bind(child);
     return child;
   }
 
-  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): (() => void) {
+  public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): () => void {
     return this.map.bind(definitions);
   }
 
@@ -80,7 +93,6 @@ export class KeyContext implements KeySink, Printable {
   public delChord(sig: ChordSignature, action: ChordAction): void {
     this.map.delChord(sig, action);
   }
-
 
   // ------------------------------------------------------- pausing / resuming
 
@@ -103,7 +115,7 @@ export class KeyContext implements KeySink, Printable {
       if (this._feedChild) {
         let leaf = child;
         while (leaf._child) leaf = leaf._child;
-        leaf.onPress_(press);;
+        leaf.onPress_(press);
       }
     } else this.onPress_(press);
   }
@@ -194,10 +206,15 @@ export class KeyContext implements KeySink, Printable {
 
   public toString(tab?: string): string {
     const child = this._child;
-    return 'ctx (' + this.name + ')' + printTree(tab, [
-      () => 'history: ' + this.history.map(k => k.sig()).join(', '),
-      (tab) => this.pressed.toString(tab),
-      child ? ((tab) => child.toString(tab)) : null,
-    ]);
+    return (
+      'ctx (' +
+      this.name +
+      ')' +
+      printTree(tab, [
+        () => 'history: ' + this.history.map((k) => k.sig()).join(', '),
+        (tab) => this.pressed.toString(tab),
+        child ? (tab) => child.toString(tab) : null,
+      ])
+    );
   }
 }

@@ -2,7 +2,7 @@ import {Key} from './Key';
 import type {KeySource, KeySink, SigMod} from './types';
 
 export class KeySourceManual implements KeySource {
-  constructor () {}
+  constructor() {}
 
   private sink: KeySink | null = null;
 
