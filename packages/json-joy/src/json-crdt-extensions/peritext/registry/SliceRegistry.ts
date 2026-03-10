@@ -53,25 +53,25 @@ export class SliceRegistry implements Printable {
     i0(TAG.math, 'Math');
 
     // --------------------------- Inline elements with "Many" stacking behavior
-    // const aSchema = s.obj(
-    //   {},
-    //   {
-    //     href: s.str<string>(''),
-    //     title: s.str<string>(''),
-    //   },
-    // );
-    // registry.add(
-    //   new SliceBehavior(SliceStacking.Many, TAG.a, 'Link', aSchema, false, void 0, {
-    //     a: (jsonml) => {
-    //       const attr = jsonml[1] || {};
-    //       const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
-    //         href: attr.href ?? '',
-    //         title: attr.title ?? '',
-    //       };
-    //       return [TAG.a, {data, inline: true}] as PeritextMlElement<TAG.a, any, true>;
-    //     },
-    //   }),
-    // );
+    const aSchema = s.obj(
+      {},
+      {
+        href: s.str<string>(''),
+        title: s.str<string>(''),
+      },
+    );
+    registry.add(
+      new SliceBehavior(SliceStacking.Many, TAG.a, 'Link', aSchema, false, void 0, {
+        a: (jsonml) => {
+          const attr = jsonml[1] || {};
+          const data: JsonNodeView<SchemaToJsonNode<typeof aSchema>> = {
+            href: attr.href ?? '',
+            title: attr.title ?? '',
+          };
+          return [TAG.a, {data, inline: true}] as PeritextMlElement<TAG.a, any, true>;
+        },
+      }),
+    );
 
     // const colSchema = s.obj(
     //   {},

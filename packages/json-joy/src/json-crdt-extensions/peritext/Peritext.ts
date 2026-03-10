@@ -56,13 +56,13 @@ export class Peritext<T = string> implements Printable, Stateful {
     public readonly model: Model,
     // TODO: Rename `str` to `rga`.
     public readonly str: AbstractRga<T>,
-    slices: ArrNode,
+    slices: ArrNode | Slices<T>,
     // TODO: Add test that verifies that SIDs are different across all three models.
     extraSlicesModel: ExtraSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
     localSlicesModel: LocalModel = Model.create(LOCAL_DATA_SCHEMA, SESSION.LOCAL),
   ) {
     this.overlay = new Overlay<T>(this);
-    this.savedSlices = new Slices(this, slices);
+    this.savedSlices = slices instanceof Slices ? slices : new Slices<T>(this, slices);
     this.extraSlices = new ExtraSlices(this, extraSlicesModel.root.node().get(0)!);
     const localApi = localSlicesModel.api;
     localApi.onLocalChange.listen(() => {

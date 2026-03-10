@@ -21,7 +21,7 @@ export const setupKit = (
   const api = model.api;
   const peritextApi = model.s.text.toExt();
   const peritext = peritextApi.txt;
-  const editor = peritextApi.editor;
+  const editor = peritext.editor;
   return {
     schema,
     model,

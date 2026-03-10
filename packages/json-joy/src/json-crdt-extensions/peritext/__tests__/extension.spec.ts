@@ -107,16 +107,18 @@ describe('typed access', () => {
   test('can access Peritext context and Editor', () => {
     const model = ModelWithExt.create(schema);
     const api = model.s.nested.obj.text.toExt();
-    expect(api.txt).toBeInstanceOf(Peritext);
-    expect(api.editor).toBeInstanceOf(Editor);
+    const txt = api.peritext();
+    expect(txt).toBeInstanceOf(Peritext);
+    expect(txt.editor).toBeInstanceOf(Editor);
   });
 
   test('can modify Peritext document', () => {
     const model = ModelWithExt.create(schema);
     const api = model.s.nested.obj.text.toExt();
     expect(api.view()).toBe('Hello, world\n');
-    api.editor.cursor.setAt(12);
-    api.editor.insert('!');
+    const txt = api.peritext();
+    txt.editor.cursor.setAt(12);
+    txt.editor.insert('!');
     expect(api.view()).toBe('Hello, world!\n');
   });
 });
