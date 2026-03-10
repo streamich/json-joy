@@ -1,4 +1,5 @@
 import type {Key} from './Key';
+import type {KeySet} from './KeySet';
 
 export interface KeyEvent {
   stopPropagation(): void;
@@ -30,7 +31,17 @@ export type SigKey =
   | ',' | '.' | '/' | ';' | '\'' | '[' | ']' | '\\' | '-' | '='
   | 'ArrowUp' | 'ArrowRight' | 'ArrowDown' | 'ArrowLeft' | 'Enter' | 'Escape' | 'Tab' | 'Backspace' | 'Delete' | 'Home' | 'End' | 'PageUp' | 'PageDown' | 'Space';
 export type SigRepeat = 'R';
-export type Signature = `${(`${SigMod}+`) | ''}${SigKey}${(`:${SigRepeat}`) | ''}`;
+
+/** Normal key signature, e.g. `'a'`, `'C+s'`, `'S+F5:R'`. */
+export type SigNormal = `${(`${SigMod}+`) | ''}${SigKey}${(`:${SigRepeat}`) | ''}`;
+
+/**
+ * - `''` — matches **every** key (catch-all / logging).
+ * - `'?'` — matches only **unhandled** keys (fallback).
+ */
+export type SigWildcard = '' | '?';
+
+export type Signature = SigNormal | SigWildcard;
 
 export interface KeyBindingDefinition {
   keys: (KeyBinding | KeyBindingShorthand)[];
@@ -57,3 +68,28 @@ export type KeyBindingShorthand = [
 ];
 
 export type KeyAction = (key: Key) => void;
+
+/**
+ * Canonical signature for a chord, e.g. `'a+b'`, `'C+j+k'`. Keys are sorted
+ * alphabetically after normalization; the shared modifier prefix (if any)
+ * precedes them, e.g. `'C+a+b'`.
+ */
+export type ChordSignature = string;
+
+/** Options for a chord binding. */
+export interface ChordBindingOptions {
+  /** Whether to propagate the event to parent contexts, defaults to `false`. */
+  propagate?: boolean;
+}
+
+/** A registered chord handler. */
+export interface ChordBinding extends ChordBindingOptions {
+  sig: ChordSignature;
+  action: ChordAction;
+}
+
+/**
+ * Callback invoked when a chord is matched. Receives the full set of
+ * currently-pressed keys.
+ */
+export type ChordAction = (pressed: KeySet) => void;

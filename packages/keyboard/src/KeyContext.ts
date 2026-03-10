@@ -6,7 +6,7 @@ import {KeyMap} from './KeyMap';
 import {KeySet} from './KeySet';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
-import type {KeySink, KeySource} from './types';
+import type {ChordAction, ChordBindingOptions, ChordSignature, KeyBinding, KeyBindingShorthand, KeySink, KeySource} from './types';
 
 const enum KeyControllerConstants {
   HistoryLimit = 25,
@@ -69,6 +69,19 @@ export class KeyContext implements KeySink, Printable {
     return child;
   }
 
+  public bind(definitions: (KeyBinding | KeyBindingShorthand)[]): (() => void) {
+    return this.map.bind(definitions);
+  }
+
+  public setChord(sig: ChordSignature, action: ChordAction, options?: ChordBindingOptions): void {
+    this.map.setChord(sig, action, options);
+  }
+
+  public delChord(sig: ChordSignature, action: ChordAction): void {
+    this.map.delChord(sig, action);
+  }
+
+
   // ------------------------------------------------------- pausing / resuming
 
   public paused: boolean = false;
@@ -104,14 +117,27 @@ export class KeyContext implements KeySink, Printable {
     pressed.add(press);
     history.push(press);
     while (history.length > this.historyLimit) history.shift();
-    const matches = this.map.matchPress(press);
-    if (matches) {
+
+    // Chord check runs first. If a chord is matched the key that completed
+    // it does NOT fire its single-key binding (eager chord, silent single).
+    const chordMatches = this.map.matchChord(pressed);
+    if (chordMatches) {
       press.propagate = false;
-      for (const match of matches) {
-        match.action(press);
+      for (const match of chordMatches) {
+        match.action(pressed);
         if (match.propagate) press.propagate = true;
       }
+    } else {
+      const matches = this.map.matchPress(press);
+      if (matches) {
+        press.propagate = false;
+        for (const match of matches) {
+          match.action(press);
+          if (match.propagate) press.propagate = true;
+        }
+      }
     }
+
     this.onChange.emit();
     if (press.propagate) {
       const parent = this.parent;

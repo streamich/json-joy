@@ -32,6 +32,23 @@ export class KeySet implements Printable {
     return Math.max(...keys.map(k => k.ts));
   }
 
+  /**
+   * Builds the canonical chord signature for the current pressed set,
+   * e.g. `'C+a+b'` when Ctrl+A and Ctrl+B are both held.
+   *
+   * - Key names are normalized the same way `Key.sig()` does it and then
+   *   sorted alphabetically.
+   * - The shared modifier prefix is taken from the first key in insertion order.
+   *   All chord keys are expected to share the same modifier state.
+   */
+  public chordSig(): string {
+    const normalized = this.keys
+      .map(k => k.key === ' ' ? 'Space' : k.key.length === 1 ? k.key.toLowerCase() : k.key)
+      .sort();
+    const mod = this.keys[0]?.mod ?? '';
+    return mod ? `${mod}+${normalized.join('+')}` : normalized.join('+');
+  }
+
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
