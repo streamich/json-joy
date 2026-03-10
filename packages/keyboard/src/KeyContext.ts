@@ -2,6 +2,7 @@ import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
 import {Key} from './Key';
 import {KeySourceDoc} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
+import {KeyMap} from './KeyMap';
 import type {Printable} from 'tree-dump';
 import type {KeySink, KeySource} from './types';
 
@@ -17,6 +18,9 @@ export class KeyContext implements KeySink, Printable {
     return [ctx, unbind];
   }
 
+  /** Shortcut/hotkey definition map. */
+  public readonly map: KeyMap;
+
   /** All currently pressed keys. */
   public pressed: Key[] = [];
 
@@ -29,7 +33,9 @@ export class KeyContext implements KeySink, Printable {
 
   public constructor(
     public readonly parent: KeyContext | undefined = void 0,
-  ) {}
+  ) {
+    this.map = new KeyMap();
+  }
 
   public detach(): void {
     const child = this._child;
@@ -62,14 +68,17 @@ export class KeyContext implements KeySink, Printable {
   }
 
   protected onDownRun(press: Key): void {
-    const {key, event} = press;
-    if (event?.isComposing || key === 'Dead') return;
-    const {pressed, history} = this;
-    pressed.push(press);
-    const list = history.value;
-    list.push(press);
-    if (list.length > KeyControllerConstants.HistoryLimit) list.shift();
-    history.next(list, true);
+    const match = this.map.match(press);
+    if (match) match();
+
+    // const {key, event} = press;
+    // if (event?.isComposing || key === 'Dead') return;
+    // const {pressed, history} = this;
+    // pressed.push(press);
+    // const list = history.value;
+    // list.push(press);
+    // if (list.length > KeyControllerConstants.HistoryLimit) list.shift();
+    // history.next(list, true);
 
     // this.parent?.onDownRun(press);
   }
@@ -88,11 +97,11 @@ export class KeyContext implements KeySink, Printable {
     if (index !== -1) this.pressed.splice(index, 1);
   }
 
-  public onReset(press: Key): void {
+  public onReset(): void {
     const child = this._child;
     if (child) {
-      if (this._feedChild) child.onReset(press);
-    } else this.onReset(press);
+      if (this._feedChild) child.onReset();
+    } else this.onResetRun();
   }
 
   protected onResetRun(): void {
