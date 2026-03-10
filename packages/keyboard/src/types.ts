@@ -1,4 +1,4 @@
-import {Key} from './Key';
+import type {Key} from './Key';
 
 export interface KeyEvent {
   stopPropagation(): void;
@@ -42,7 +42,7 @@ export type SingleKeyBinding = [
 
 export interface KeyBinding {
   sig: Signature;
-  action: () => void;
+  action: (key: Key) => void;
   /** Whether to propagate the event to parent contexts, defaults to `false`. */
   propagate?: boolean;
 }

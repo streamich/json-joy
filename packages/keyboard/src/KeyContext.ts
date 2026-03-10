@@ -38,26 +38,26 @@ export class KeyContext implements KeySink, Printable {
 
   public constructor(
     public readonly parent: KeyContext | undefined = void 0,
+    public readonly name: string = parent ? 'child' : 'root',
   ) {
     this.map = new KeyMap();
   }
 
-  public detach(): void {
+  protected detachChild(): void {
     const child = this._child;
-    child?.detach();
+    child?.detachChild();
     this._child = void 0;
+    this._childUnbind?.();
+    this._childUnbind = void 0;
   }
 
-  public child(source?: KeySource | HTMLElement): KeyContext {
-    if (this._child) {
-      this._child.detach();
-      this._child = void 0;
-      this._childUnbind?.();
-      this._childUnbind = void 0;
-    }
-    const child = new KeyContext(this);
+  public child(name?: string, source?: KeySource | HTMLElement): KeyContext {
+    if (this._child) this.detachChild();
+    const child = new KeyContext(this, name);
     this._child = child;
-    const keySource = source instanceof HTMLElement ? new KeySourceEl(source) : source;
+    const keySource: KeySource | undefined = (typeof HTMLElement !== 'undefined' && source instanceof HTMLElement)
+      ? new KeySourceEl(source)
+      : (typeof source === 'object' && 'bind' in source) ? source : void 0;
     this._feedChild = !keySource;
     this._childUnbind = keySource?.bind(child);
     return child;
@@ -86,10 +86,13 @@ export class KeyContext implements KeySink, Printable {
   }
 
   protected onPress_(press: Key): void {
-    const match = this.map.match(press);
-    if (match) {
-      // press.propagate = false;
-      match();
+    const matches = this.map.matchPress(press);
+    if (matches) {
+      press.propagate = false;
+      for (const match of matches) {
+        match.action(press);
+        if (match.propagate) press.propagate = true;
+      }
     }
 
     const {key, event} = press;
@@ -101,6 +104,11 @@ export class KeyContext implements KeySink, Printable {
     while (history.length > this.historyLimit) history.shift();
 
     this.onChange.emit();
+
+    if (press.propagate) {
+      const parent = this.parent;
+      if (parent) parent.onPress_(press);
+    }
   }
 
   public onRelease(release: Key): void {
@@ -112,10 +120,25 @@ export class KeyContext implements KeySink, Printable {
     } else this.onRelease_(release);
   }
 
-  protected onRelease_(press: Key): void {
-    const {key, event} = press;
-
+  protected onRelease_(release: Key): void {
+    const {key, event} = release;
     if (event?.isComposing || key === 'Dead') return;
+
+    const matches = this.map.matchRelease(release);
+    if (matches) {
+      release.propagate = false;
+      for (const match of matches) {
+        match.action(release);
+        if (match.propagate) release.propagate = true;
+      }
+    }
+
+    this.onChange.emit();
+
+    if (release.propagate) {
+      const parent = this.parent;
+      if (parent) parent.onRelease_(release);
+    }
   }
 
   public onReset(): void {
@@ -131,8 +154,11 @@ export class KeyContext implements KeySink, Printable {
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return 'keys' + printTree(tab, [
+    const child = this._child;
+    return 'ctx (' + this.name + ')' + printTree(tab, [
+      () => 'history: ' + this.history.map(k => k.sig()).join(', '),
       (tab) => this.pressed.toString(tab),
+      child ? ((tab) => child.toString(tab)) : null,
     ]);
   }
 }
