@@ -21,11 +21,15 @@ export class KeySet implements Printable {
   }
 
   public start(): number {
-    return Math.min(0, ...this.keys.map(k => k.ts));
+    const keys = this.keys;
+    if (keys.length === 0) return 0;
+    return Math.min(...keys.map(k => k.ts));
   }
 
   public end(): number {
-    return Math.max(0, ...this.keys.map(k => k.ts));
+    const keys = this.keys;
+    if (keys.length === 0) return 0;
+    return Math.max(...keys.map(k => k.ts));
   }
 
   /** ----------------------------------------------------- {@link Printable} */

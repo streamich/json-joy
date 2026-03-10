@@ -23,7 +23,8 @@ export class Key {
     let mod = this.mod;
     if (mod) mod += '+';
     let key = this.key;
-    if (key.length === 1) key = key.toLowerCase();
+    if (key === ' ') key = 'Space';
+    else if (key.length === 1) key = key.toLowerCase();
     const repeat = this.event?.repeat ? ':R' : '';
     const signature: Signature = (mod + key + repeat) as Signature;
     return signature;

@@ -78,13 +78,19 @@ export class KeyContext implements KeySink, Printable {
   /** ------------------------------------------------------- {@link KeySink} */
 
   public onPress(press: Key): void {
+    // Descend down in context chain on press.
     if (this.paused) return;
     const child = this._child;
     if (child) {
-      if (this._feedChild) child.onPress(press);
+      if (this._feedChild) {
+        let leaf = child;
+        while (leaf._child) leaf = leaf._child;
+        leaf.onPress_(press);;
+      }
     } else this.onPress_(press);
   }
 
+  /** Propagate up on press. */
   protected onPress_(press: Key): void {
     const matches = this.map.matchPress(press);
     if (matches) {
@@ -112,15 +118,21 @@ export class KeyContext implements KeySink, Printable {
   }
 
   public onRelease(release: Key): void {
-    this.pressed.remove(release);
-    if (this.paused) return;
+    // Descend down in context chain on release.
     const child = this._child;
     if (child) {
-      if (this._feedChild) child.onRelease(release);
+      if (this._feedChild) {
+        let leaf = child;
+        while (leaf._child) leaf = leaf._child;
+        leaf.onRelease_(release);
+      }
     } else this.onRelease_(release);
   }
 
+  /** Propagate up on release. */
   protected onRelease_(release: Key): void {
+    this.pressed.remove(release);
+    if (this.paused) return;
     const {key, event} = release;
     if (event?.isComposing || key === 'Dead') return;
 
@@ -149,7 +161,9 @@ export class KeyContext implements KeySink, Printable {
     } else this.onReset_();
   }
 
-  protected onReset_(): void {}
+  protected onReset_(): void {
+    this.onChange.emit();
+  }
 
   /** ----------------------------------------------------- {@link Printable} */
 

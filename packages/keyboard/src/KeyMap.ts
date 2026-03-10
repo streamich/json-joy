@@ -5,7 +5,7 @@ export class KeyMap {
   protected pressMap: Map<string, KeyBinding[]> = new Map();
   protected releaseMap: Map<string, KeyBinding[]> = new Map();
 
-  private _set(map: Map<string, KeyBinding[]>, sig: Signature, action: () => void): void {
+  private _set(map: Map<string, KeyBinding[]>, sig: Signature, action: (key: Key) => void): void {
     const list: KeyBinding[] = map.get(sig) ?? [];
     const binding: KeyBinding = {
       sig,
@@ -15,7 +15,7 @@ export class KeyMap {
     map.set(sig, list);
   }
 
-  private _del(map: Map<string, KeyBinding[]>, sig: Signature, action: () => void): void {
+  private _del(map: Map<string, KeyBinding[]>, sig: Signature, action: (key: Key) => void): void {
     const list = map.get(sig);
     if (!list) return;
     const index = list.findIndex(b => b.action === action);
@@ -31,11 +31,11 @@ export class KeyMap {
     return matches;
   }
 
-  public setPress(sig: Signature, action: () => void): void {
+  public setPress(sig: Signature, action: (key: Key) => void): void {
     this._set(this.pressMap, sig, action);
   }
   
-  public delPress(sig: Signature, action: () => void): void {
+  public delPress(sig: Signature, action: (key: Key) => void): void {
     this._del(this.pressMap, sig, action);
   }
 
@@ -43,11 +43,11 @@ export class KeyMap {
     return this._match(this.pressMap, press);
   }
 
-  public setRelease(sig: Signature, action: () => void): void {
+  public setRelease(sig: Signature, action: (key: Key) => void): void {
     this._set(this.releaseMap, sig, action);
   }
 
-  public delRelease(sig: Signature, action: () => void): void {
+  public delRelease(sig: Signature, action: (key: Key) => void): void {
     this._del(this.releaseMap, sig, action);
   }
 
