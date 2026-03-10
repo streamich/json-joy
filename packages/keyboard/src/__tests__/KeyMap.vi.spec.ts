@@ -8,9 +8,9 @@ describe('KeyMap', () => {
   describe('press bindings', () => {
     test('setPress then matchPress returns binding', () => {
       const map = new KeyMap();
-      let called = 0;
+      let _called = 0;
       const action = () => {
-        called++;
+        _called++;
       };
       map.setPress('a', action);
       const matches = map.matchPress(mkKey('a'));
@@ -38,13 +38,13 @@ describe('KeyMap', () => {
 
     test('multiple handlers for same signature are all returned', () => {
       const map = new KeyMap();
-      let a = 0,
-        b = 0;
+      let _a = 0,
+        _b = 0;
       map.setPress('a', () => {
-        a++;
+        _a++;
       });
       map.setPress('a', () => {
-        b++;
+        _b++;
       });
       const matches = map.matchPress(mkKey('a'));
       expect(matches!.length).toBe(2);

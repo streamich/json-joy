@@ -2,8 +2,6 @@ import {Key} from './Key';
 import type {KeySource, KeySink, SigMod} from './types';
 
 export class KeySourceManual implements KeySource {
-  constructor() {}
-
   private sink: KeySink | null = null;
 
   public bind(sink: KeySink): () => void {

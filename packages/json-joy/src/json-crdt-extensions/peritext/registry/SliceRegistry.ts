@@ -1,6 +1,6 @@
 import {SliceStacking} from '../slice/constants';
 import {CommonSliceType, type TypeTag} from '../slice';
-import {SliceBehavior} from './SliceBehavior';
+import type {SliceBehavior} from './SliceBehavior';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {PeritextMlElement} from '../block/types';
 import type {JsonMlElement} from 'very-small-parser/lib/html/json-ml/types';

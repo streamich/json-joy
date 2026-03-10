@@ -1,5 +1,5 @@
 import {FanOut} from 'thingies/lib/fanout';
-import {Key} from './Key';
+import type {Key} from './Key';
 import {KeySourceDoc} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
 import {KeyMap} from './KeyMap';

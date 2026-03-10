@@ -4,7 +4,7 @@ import {formatStep} from '../slice/util';
 import {EditorSlices} from './EditorSlices';
 import {next, prev} from 'sonic-forest/lib/util';
 import {printTree} from 'tree-dump/lib/printTree';
-import {SliceRegistry} from '../registry/SliceRegistry';
+import type {SliceRegistry} from '../registry/SliceRegistry';
 import {Slice} from '../slice/Slice';
 import {toLine} from 'pojo-dump/lib/toLine';
 import {CommonSliceType, type SliceTypeSteps, type SliceType, type SliceTypeStep} from '../slice';

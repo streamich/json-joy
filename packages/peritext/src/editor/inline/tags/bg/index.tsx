@@ -9,8 +9,6 @@ import {
 import {InlineSliceBehavior} from '../../InlineSliceBehavior';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {behavior as col} from '../col';
-import type {IconProps, ValidationResult} from '../../InlineSliceBehavior';
-import type {ToolbarFormatting} from '../../../state/formattings';
 
 export const Icon = makeIcon({set: 'lucide', icon: 'paint-bucket'});
 

@@ -1,4 +1,4 @@
-import {Key} from './Key';
+import type {Key} from './Key';
 import type {Printable} from 'tree-dump';
 
 /** Tracks a set of actively pressed keys. */

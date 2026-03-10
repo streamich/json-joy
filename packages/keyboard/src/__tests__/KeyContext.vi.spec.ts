@@ -139,7 +139,7 @@ describe('propagation to parent', () => {
     kit.ctx.map.setPress('a', () => {
       parentHits++;
     });
-    const child = kit.ctx.child('sub');
+    const _child = kit.ctx.child('sub');
     kit.src.press('a');
     expect(parentHits).toBe(1);
   });
@@ -184,7 +184,7 @@ describe('.child() with custom source', () => {
     kit.ctx.map.setPress('z', () => {
       parentHits++;
     });
-    const child = kit.ctx.child();
+    const _child = kit.ctx.child();
     // With child active, parent onPress_ is not called directly
     kit.src.press('z');
     expect(parentHits).toBe(1);
@@ -192,7 +192,7 @@ describe('.child() with custom source', () => {
 
   test('creating a second child detaches the first', async () => {
     await using kit = await setup();
-    const child1 = kit.ctx.child('first');
+    const _child1 = kit.ctx.child('first');
     const child2 = kit.ctx.child('second');
     expect(kit.ctx._child).toBe(child2);
   });

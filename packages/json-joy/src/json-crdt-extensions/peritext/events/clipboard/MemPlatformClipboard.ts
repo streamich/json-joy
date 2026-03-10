@@ -1,4 +1,4 @@
-import {PlatformClipboard} from './types';
+import type {PlatformClipboard} from './types';
 
 class MemBlob {
   private readonly buf: Uint8Array;
