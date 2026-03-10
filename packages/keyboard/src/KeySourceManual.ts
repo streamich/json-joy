@@ -13,28 +13,28 @@ export class KeySourceManual implements KeySource {
     };
   }
 
-  public onDown(press: Key | string): void {
+  public press(press: Key | string, mod: SigMod = ''): void {
     if (!this.sink) return;
-    if (!(press instanceof Key)) press = new Key(press, Date.now());
-    this.sink.onDown(press);
+    if (!(press instanceof Key)) press = new Key(press, Date.now(), mod);
+    this.sink.onPress(press);
   }
 
-  public onUp(press: Key | string): void {
+  public release(press: Key | string, mod: SigMod = ''): void {
     if (!this.sink) return;
-    if (!(press instanceof Key)) press = new Key(press, Date.now());
-    this.sink.onUp(press);
+    if (!(press instanceof Key)) press = new Key(press, Date.now(), mod);
+    this.sink.onRelease(press);
   }
 
-  public onReset(): void {
+  public reset(): void {
     if (!this.sink) return;
     this.sink.onReset();
   }
 
   public async send(key: string, mod: SigMod = ''): Promise<void> {
     const pressDown = new Key(key, Date.now(), mod);
-    this.onDown(pressDown);
+    this.press(pressDown);
     await Promise.resolve();
     const pressUp = new Key(key, Date.now(), mod);
-    this.onUp(pressUp);
+    this.release(pressUp);
   }
 }

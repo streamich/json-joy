@@ -28,6 +28,10 @@
     "key",
     "binding"
   ],
+  "dependencies": {
+    "thingies": "^2.5.0",
+    "tree-dump": "^1.1.0"
+  },
   "peerDependencies": {
     "tslib": "*"
   },

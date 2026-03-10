@@ -13,8 +13,8 @@ export interface KeyEvent {
 }
 
 export interface KeySink {
-  onDown(key: Key): void;
-  onUp(key: Key): void;
+  onPress(key: Key): void;
+  onRelease(key: Key): void;
   onReset(): void;
 }
 
@@ -39,3 +39,10 @@ export interface KeyBindingMap {
 export type SingleKeyBinding = [
   signature: Signature, action: () => void
 ];
+
+export interface KeyBinding {
+  sig: Signature;
+  action: () => void;
+  /** Whether to propagate the event to parent contexts, defaults to `false`. */
+  propagate?: boolean;
+}

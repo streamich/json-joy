@@ -2,6 +2,7 @@ import {Key} from './Key';
 import {Signature} from './types';
 
 export class KeyMap {
+  // KeyBinding
   protected downSingle: Map<string, () => void> = new Map();
   protected upSingle: Map<string, () => void> = new Map();
 

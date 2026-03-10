@@ -24,6 +24,6 @@ test('can create KeyContext', async () => {
   await using kit = await setup();
   let text = '';
   kit.ctx.map.onDown('a', () => text = 'hello');
-  kit.src.onDown('a');
+  kit.src.press('a');
   expect(text).toBe('hello');
 });

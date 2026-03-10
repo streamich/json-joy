@@ -7,11 +7,11 @@ export class KeySourceEl implements KeySource {
   public bind(sink: KeySink): () => void {
     const onKeyDown = (event: KeyEvent): void => {
       const key = Key.fromEvent(event);
-      sink.onDown(key);
+      sink.onPress(key);
     };
     const onKeyUp = (event: KeyEvent): void => {
       const key = Key.fromEvent(event);
-      sink.onUp(key);
+      sink.onRelease(key);
     };
     const onReset = (): void => {
       sink.onReset();

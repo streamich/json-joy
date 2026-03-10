@@ -2631,6 +2631,9 @@ __metadata:
 "@jsonjoy.com/keyboard@workspace:packages/keyboard":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/keyboard@workspace:packages/keyboard"
+  dependencies:
+    thingies: "npm:^2.5.0"
+    tree-dump: "npm:^1.1.0"
   peerDependencies:
     tslib: "*"
   languageName: unknown

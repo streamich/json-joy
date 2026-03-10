@@ -10,6 +10,8 @@ export class Key {
     return new Key(event.key ?? '', Date.now(), mod as SigMod, event);
   }
 
+  public propagate: boolean = true;
+
   public constructor(
     public readonly key: string,
     public readonly ts: number,

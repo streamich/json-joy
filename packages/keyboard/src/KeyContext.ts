@@ -1,8 +1,10 @@
-import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {FanOut} from 'thingies/lib/fanout';
 import {Key} from './Key';
 import {KeySourceDoc} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
 import {KeyMap} from './KeyMap';
+import {KeySet} from './KeySet';
+import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
 import type {KeySink, KeySource} from './types';
 
@@ -18,14 +20,17 @@ export class KeyContext implements KeySink, Printable {
     return [ctx, unbind];
   }
 
+  public readonly onChange = new FanOut<void>();
+
   /** Shortcut/hotkey definition map. */
   public readonly map: KeyMap;
 
   /** All currently pressed keys. */
-  public pressed: Key[] = [];
+  public readonly pressed: KeySet = new KeySet();
 
   /** History of last N pressed keys. */
-  public readonly history = new ValueSyncStore<Key[]>([]);
+  public readonly history: Key[] = [];
+  public historyLimit: number = KeyControllerConstants.HistoryLimit;
 
   public _child: KeyContext | undefined = void 0;
   public _feedChild: boolean = false; 
@@ -58,59 +63,76 @@ export class KeyContext implements KeySink, Printable {
     return child;
   }
 
+  // ------------------------------------------------------- pausing / resuming
+
+  public paused: boolean = false;
+
+  public pause(): void {
+    this.paused = true;
+  }
+
+  public resume(): void {
+    this.paused = false;
+  }
+
   /** ------------------------------------------------------- {@link KeySink} */
 
-  public onDown(press: Key): void {
+  public onPress(press: Key): void {
+    if (this.paused) return;
     const child = this._child;
     if (child) {
-      if (this._feedChild) child.onDown(press);
-    } else this.onDownRun(press);
+      if (this._feedChild) child.onPress(press);
+    } else this.onPress_(press);
   }
 
-  protected onDownRun(press: Key): void {
+  protected onPress_(press: Key): void {
     const match = this.map.match(press);
-    if (match) match();
+    if (match) {
+      // press.propagate = false;
+      match();
+    }
 
-    // const {key, event} = press;
-    // if (event?.isComposing || key === 'Dead') return;
-    // const {pressed, history} = this;
-    // pressed.push(press);
-    // const list = history.value;
-    // list.push(press);
-    // if (list.length > KeyControllerConstants.HistoryLimit) list.shift();
-    // history.next(list, true);
-
-    // this.parent?.onDownRun(press);
-  }
-
-  public onUp(press: Key): void {
-    const child = this._child;
-    if (child) {
-      if (this._feedChild) child.onUp(press);
-    } else this.onUpRun(press);
-  }
-
-  protected onUpRun(press: Key): void {
     const {key, event} = press;
     if (event?.isComposing || key === 'Dead') return;
-    const index = this.pressed.indexOf(press);
-    if (index !== -1) this.pressed.splice(index, 1);
+
+    const {pressed, history} = this;
+    pressed.add(press);
+    history.push(press);
+    while (history.length > this.historyLimit) history.shift();
+
+    this.onChange.emit();
+  }
+
+  public onRelease(release: Key): void {
+    this.pressed.remove(release);
+    if (this.paused) return;
+    const child = this._child;
+    if (child) {
+      if (this._feedChild) child.onRelease(release);
+    } else this.onRelease_(release);
+  }
+
+  protected onRelease_(press: Key): void {
+    const {key, event} = press;
+
+    if (event?.isComposing || key === 'Dead') return;
   }
 
   public onReset(): void {
+    this.pressed.reset();
     const child = this._child;
     if (child) {
       if (this._feedChild) child.onReset();
-    } else this.onResetRun();
+    } else this.onReset_();
   }
 
-  protected onResetRun(): void {
-    this.pressed = [];
-  }
+  protected onReset_(): void {}
 
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    return `keys { hold: [ ${[...this.pressed].map((key) => JSON.stringify(key)).join(', ')} ], hist: [ ${this.history.value.map((press) => JSON.stringify(press.key)).join(', ')} ] ] }`;
+    return 'keys' + printTree(tab, [
+      (tab) => this.pressed.toString(tab),
+    ]);
   }
 }
