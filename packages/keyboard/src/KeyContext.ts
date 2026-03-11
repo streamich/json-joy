@@ -172,6 +172,7 @@ export class KeyContext implements KeySink, Printable {
   /** Propagate up on release. */
   protected onRelease_(release: Key): void {
     this.pressed.remove(release);
+    if (release.key === 'Meta') this.pressed.clearNonMods();
     if (this.paused) return;
     const {key, event} = release;
     if (event?.isComposing || key === 'Dead') return;
