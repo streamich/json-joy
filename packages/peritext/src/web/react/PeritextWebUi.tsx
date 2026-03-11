@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
+import {KeyContext} from '@jsonjoy.com/keyboard';
 import {CssClass} from '../constants';
 import {CursorPlugin} from '../../plugins/cursor';
 import {defaultPlugin} from '../../plugins/minimal';
@@ -36,6 +37,12 @@ export interface PeritextWebUiProps {
   node: PeritextApi;
 
   /**
+   * Parent keyboard context to use for the editor. Will spawn a `.child()`
+   * context if provided, or use a global context if not provided.
+   */
+  kbd?: KeyContext;
+
+  /**
    * Array of plugins use to render editor content and provide additional
    * functionality. The plugin list must be memorized and not recreated on
    * every render. If omitted, a default set of plugins will be used.
@@ -53,7 +60,7 @@ export interface PeritextWebUiProps {
 }
 
 export const PeritextWebUi: React.FC<PeritextWebUiProps> = React.memo((props) => {
-  const {node, plugins: plugins_, onStart: onState} = props;
+  const {node, kbd, plugins: plugins_, onStart: onState} = props;
 
   // The `.stop()` is called when the editor unmounts.
   const stop = React.useRef<undefined | (() => void)>(void 0);
@@ -63,7 +70,7 @@ export const PeritextWebUi: React.FC<PeritextWebUiProps> = React.memo((props) =>
 
   /** Create the {@link PeritextSurfaceState} state management instance. */
   const state = React.useMemo(() => {
-    const headless = node.headless();
+    const headless = node.headless({kbd});
     const state = new PeritextSurfaceState(headless, plugins);
     return state;
   }, [node, plugins]);

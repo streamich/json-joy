@@ -1,5 +1,6 @@
 import {printTree, type Printable} from 'tree-dump';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
+import {KeyContext} from '@jsonjoy.com/keyboard';
 import {InputController} from './controllers/InputController';
 import {CursorController} from './controllers/CursorController';
 import {RichTextController} from './controllers/RichTextController';
@@ -26,6 +27,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly input: InputController;
   public readonly cursor: CursorController;
   public readonly richText: RichTextController;
+  public kbd?: KeyContext;
 
   /**
    * Index of block HTML <div> elements keyed by the ID (timestamp) of the split
@@ -73,6 +75,8 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public start() {
     const {et, facade} = this;
     const el = facade.el;
+    const headless = this.headless;
+    this.kbd = headless.kbd.child('peritext-input', el as HTMLElement);
     (el as any).contentEditable = 'true';
     const style = el.style;
     style.setProperty('--jsonjoy-peritext-id', et.id + '');
@@ -172,10 +176,10 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return (
       'web' +
       printTree(tab, [
-        (tab) => 'blocks: ' + this.blocks.size(),
-        (tab) => 'inlines: ' + this.inlines.size(),
+        () => 'blocks: ' + this.blocks.size() + ', inlines: ' + this.inlines.size(),
         (tab) => this.cursor.toString(tab),
         (tab) => this.keys.toString(tab),
+        this.kbd ? (tab) => this.kbd!.toString(tab) : null,
         (tab) => this.comp.toString(tab),
         (tab) => this.headless.toString(tab),
       ])

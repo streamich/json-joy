@@ -41,6 +41,7 @@
   "dependencies": {
     "@jsonjoy.com/collaborative-react": "workspace:*",
     "@jsonjoy.com/collaborative-ui": "workspace:*",
+    "@jsonjoy.com/keyboard": "workspace:*",
     "@uiw/color-convert": "^2.9.5",
     "@uiw/react-color-alpha": "^2.9.5",
     "@uiw/react-color-hue": "^2.9.5",
