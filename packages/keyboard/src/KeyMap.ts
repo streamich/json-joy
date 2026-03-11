@@ -1,4 +1,4 @@
-import {isChordSig, expandMod} from './util';
+import {isChordSig, expandMod, normalize} from './util';
 import type {Key} from './Key';
 import type {KeySet} from './KeySet';
 import type {
@@ -42,7 +42,7 @@ export class KeyMap {
     for (const def of definitions) {
       if (Array.isArray(def)) {
         const [rawSig, action, options] = def as [string, Function, (KeyBindingOptions | ChordBindingOptions)?];
-        const sig = expandMod(rawSig);
+        const sig = expandMod(normalize(rawSig));
         if (isChordSig(sig)) chordDefs.push({...options, sig, action: action as ChordAction});
         else {
           const b = {...options, sig: sig as Signature, action: action as KeyAction};
@@ -51,7 +51,7 @@ export class KeyMap {
         }
       } else {
         const rawB = def as KeyBinding | ChordBinding;
-        const b = {...rawB, sig: expandMod(rawB.sig)};
+        const b = {...rawB, sig: expandMod(normalize(rawB.sig))};
         if (isChordSig(b.sig)) chordDefs.push(b as ChordBinding);
         else if ((b as KeyBinding).release) releaseDefs.push(b as KeyBinding);
         else pressDefs.push(b as KeyBinding);

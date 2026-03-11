@@ -51,3 +51,26 @@ export function isChordSig(sig: string): boolean {
   const withoutMod = sig.replace(/^[ACMSP]+\+/, '');
   return withoutMod.includes('+');
 }
+
+const MOD_ALIASES: Record<string, string> = {
+  ctrl: 'C', control: 'C',
+  alt: 'A', option: 'A',
+  meta: 'M', command: 'M', cmd: 'M',
+  shift: 'S',
+  $mod: 'P', p: 'P', primary: 'P',
+};
+
+export const normalize = (input: string): string => {
+  // Already compact (e.g. 'C+s', 'CS+a', '@KeyW', 'Escape') — pass through.
+  if (/^[ACMSP]*(\+|$)/.test(input)) return input;
+  const mods: string[] = [];
+  let key = '';
+  for (const part of input.split('+')) {
+    const alias = MOD_ALIASES[part.toLowerCase()];
+    if (alias) mods.push(alias);
+    else key = part;
+  }
+  const expanded = [...new Set(mods.map((m) => (m === 'P' ? mod : m)))].sort();
+  const k = key.length === 1 ? key.toLowerCase() : key;
+  return expanded.length ? `${expanded.join('')}+${k}` : k;
+};

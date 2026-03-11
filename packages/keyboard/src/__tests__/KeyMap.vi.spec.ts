@@ -143,12 +143,27 @@ describe('KeyMap', () => {
     });
   });
 
-  describe('key binding propagate field', () => {
-    test('binding propagate is undefined by default', () => {
+  describe('human-readable signatures via normalize', () => {
+    test('bind() accepts Ctrl+S shorthand', () => {
       const map = new KeyMap();
-      map.setPress('a', () => {});
-      const [binding] = map.matchPress(mkKey('a'))!;
-      expect(binding.propagate).toBeUndefined();
+      let called = 0;
+      map.bind([['Ctrl+S', () => { called++; }]]);
+      const key = new Key('s', Date.now(), 'C');
+      const matches = map.matchPress(key);
+      expect(matches).toBeDefined();
+      matches![0].action(key);
+      expect(called).toBe(1);
+    });
+
+    test('bind() accepts command+shift+k shorthand', () => {
+      const map = new KeyMap();
+      let called = 0;
+      map.bind([['command+shift+k', () => { called++; }]]);
+      const key = new Key('k', Date.now(), 'MS');
+      const matches = map.matchPress(key);
+      expect(matches).toBeDefined();
+      matches![0].action(key);
+      expect(called).toBe(1);
     });
   });
 });

@@ -24,39 +24,7 @@ export interface KeySource {
   bind(sink: KeySink): () => void;
 }
 
-export type SigMod =
-  | ''
-  | 'A'
-  | 'C'
-  | 'M'
-  | 'P'
-  | 'S'
-  | 'AC'
-  | 'AM'
-  | 'AP'
-  | 'AS'
-  | 'CM'
-  | 'CP'
-  | 'CS'
-  | 'MP'
-  | 'MS'
-  | 'PS'
-  | 'ACM'
-  | 'ACP'
-  | 'ACS'
-  | 'AMP'
-  | 'AMS'
-  | 'APS'
-  | 'CMP'
-  | 'CMS'
-  | 'CPS'
-  | 'MPS'
-  | 'ACMP'
-  | 'ACMS'
-  | 'ACPS'
-  | 'AMPS'
-  | 'CMPS'
-  | 'ACMPS';
+export type SigMod = string;
 export type SigKey =
   | 'a'
   | 'b'
