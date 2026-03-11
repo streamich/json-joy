@@ -1,5 +1,5 @@
 import {FanOut} from 'thingies/lib/fanout';
-import type {Key} from './Key';
+import {Key} from './Key';
 import {KeySourceDoc} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
 import {KeyMap} from './KeyMap';
@@ -53,6 +53,9 @@ export class KeyContext implements KeySink, Printable {
   public _feedChild: boolean = false;
   public _childUnbind?: () => void = void 0;
 
+  /** Optional remap of raw `event.key` values to canonical key names. */
+  public remap: Map<string, string> | undefined = undefined;
+
   /** Timeout (ms) between consecutive sequence steps. Default: 1000. */
   public seqTimeout: number = 1000;
 
@@ -104,6 +107,15 @@ export class KeyContext implements KeySink, Printable {
     this.map.delChord(sig, action);
   }
 
+  public setRemap(from: string, to: string): void {
+    (this.remap ??= new Map()).set(from, to);
+  }
+
+  public delRemap(from: string): void {
+    this.remap?.delete(from);
+    if (this.remap?.size === 0) this.remap = undefined;
+  }
+
   // ------------------------------------------------------- pausing / resuming
 
   public paused: boolean = false;
@@ -133,8 +145,10 @@ export class KeyContext implements KeySink, Printable {
   /** Propagate up on press. */
   protected onPress_(press: Key): void {
     if (this.paused) return;
-    const {key, event} = press;
-    if (event?.isComposing || key === 'Dead') return;
+    if (press.event?.isComposing || press.key === 'Dead') return;
+    const original = press;
+    const remapTo = this.remap?.get(press.key);
+    if (remapTo) press = new Key(remapTo, press.ts, press.mod, press.event, press.code);
     const {pressed, history} = this;
     pressed.add(press);
     history.push(press);
@@ -175,7 +189,10 @@ export class KeyContext implements KeySink, Printable {
     this.onChange.emit();
     if (press.propagate) {
       const parent = this.parent;
-      if (parent) parent.onPress_(press);
+      if (parent) {
+        original.propagate = press.propagate;
+        parent.onPress_(original);
+      }
     }
   }
 
@@ -193,11 +210,13 @@ export class KeyContext implements KeySink, Printable {
 
   /** Propagate up on release. */
   protected onRelease_(release: Key): void {
+    const original = release;
+    const remapTo = this.remap?.get(release.key);
+    if (remapTo) release = new Key(remapTo, release.ts, release.mod, release.event, release.code);
     this.pressed.remove(release);
     if (release.key === 'Meta') this.pressed.clearNonMods();
     if (this.paused) return;
-    const {key, event} = release;
-    if (event?.isComposing || key === 'Dead') return;
+    if (release.event?.isComposing || release.key === 'Dead') return;
     const matches = this.map.matchRelease(release);
     if (matches) {
       release.propagate = false;
@@ -209,7 +228,10 @@ export class KeyContext implements KeySink, Printable {
     this.onChange.emit();
     if (release.propagate) {
       const parent = this.parent;
-      if (parent) parent.onRelease_(release);
+      if (parent) {
+        original.propagate = release.propagate;
+        parent.onRelease_(original);
+      }
     }
   }
 

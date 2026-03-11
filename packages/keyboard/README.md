@@ -14,9 +14,10 @@ npm install @jsonjoy.com/keyboard
 |---|---|
 | **KeySource** | Produces raw key events (DOM `document`, an `HTMLElement`, or a manual test source). |
 | **KeyContext** | Consumes key events, holds a binding map, tracks pressed keys, and propagates unhandled events to a parent context. |
-| **KeyMap** | Stores press / release / chord bindings for a context. |
+| **KeyMap** | Stores press / release / chord / sequence bindings for a context. |
 | **Signature** | A string that identifies a single key press, e.g. `'a'`, `'C+s'`, `'S+F5:R'`. |
 | **Chord** | Two or more keys held simultaneously, e.g. `'a+b'` or `'C+j+k'`. |
+| **Sequence** | Two or more key presses in order within a timeout, e.g. `'g g'` or `'C+k C+d'`. |
 | **KeySet** | The live set of currently-pressed keys. |
 
 ---
@@ -109,6 +110,10 @@ const unbind = ctx.bind([
   ['C+s', () => save()],
   ['C+z', () => undo(), { propagate: true }],
 
+  // sequence (space-separated steps)
+  ['g g',     () => goToTop()],
+  ['C+k C+d', () => formatDocument()],
+
   // object form
   { sig: 'Escape', action: () => cancel() },
   { sig: 'Enter',  action: () => confirm(), release: true },
@@ -150,6 +155,12 @@ ctx.pause();   // stop dispatching (events are still tracked for `pressed`)
 ctx.resume();
 ```
 
+### Sequence timeout
+
+```ts
+ctx.seqTimeout = 800; // ms between consecutive steps (default: 1000)
+```
+
 ### Change notifications
 
 ```ts
@@ -157,6 +168,46 @@ ctx.onChange.listen(() => {
   console.log('pressed:', ctx.pressed.keys.map(k => k.sig()));
 });
 ```
+
+---
+
+## Key sequences
+
+A sequence fires when key steps are pressed **in order** within a configurable
+timeout. Steps are space-separated `Signature` values.
+
+```ts
+// g then g
+ctx.map.setSequence('g g', () => goToTop());
+
+// Ctrl+K then Ctrl+D
+ctx.map.setSequence('C+k C+d', () => formatDocument());
+
+// Three steps
+ctx.map.setSequence('Escape g i', () => goToInbox());
+
+// Remove
+ctx.map.delSequence('g g', handler);
+```
+
+Or via `ctx.bind()` — any signature containing a space is treated as a sequence:
+
+```ts
+ctx.bind([
+  ['g g',     () => goToTop()],
+  ['C+k C+d', () => formatDocument()],
+]);
+```
+
+### Sequence behaviour
+
+- **Default timeout**: 1 000 ms between steps (configurable via `ctx.seqTimeout`).
+- **Fire-and-track**: if a key also has a single-key binding, that binding fires
+  immediately; the sequence continues tracking regardless.
+- **Eager match**: when `g i` and `g i x` are both registered, `g i` fires as
+  soon as `i` is pressed and the matcher stays alive for `x`.
+- **Reset triggers**: timeout expiry, `window.blur`, focus change, composition
+  start, or a non-matching key.
 
 ---
 
@@ -249,6 +300,41 @@ key.sig()      // full Signature string, e.g. 'C+s', 'Space'
 key.event      // original KeyboardEvent (if available)
 key.propagate  // mutable — set to true inside a handler to bubble to parent
 ```
+
+---
+
+## Key remapping
+
+`KeyContext` supports an optional remap table (`ctx.remap`) that translates raw
+`event.key` values to canonical key names **before** any binding lookup or
+history recording. This is useful for environments that emit non-standard key
+names such as `'Esc'` instead of `'Escape'`, or `'Return'` instead of `'Enter'`.
+
+```ts
+// Register remappings
+ctx.setRemap(' ',      'Space');
+ctx.setRemap('Esc',    'Escape');
+ctx.setRemap('Return', 'Enter');
+
+// Now a binding for 'Escape' fires when 'Esc' (or 'Escape') is received
+ctx.map.setPress('Escape', () => cancel());
+
+// Modifiers are preserved: Ctrl+Esc → matches 'C+Escape'
+ctx.map.setPress('C+Escape', () => closeAll());
+
+// Remove a remapping
+ctx.delRemap('Esc');
+```
+
+Remapping is **per-context**. When an event propagates to a parent, the parent
+receives the original (pre-remap) key and applies its own `remap` independently.
+
+Remapping applies to:
+- Single-key press and release bindings.
+- Sequence steps (`g Escape`, `C+k Escape`, …).
+- The `key.key` value seen in action callbacks and `ctx.history`.
+
+Chords use physical key names from `event.code` and are unaffected.
 
 ---
 
