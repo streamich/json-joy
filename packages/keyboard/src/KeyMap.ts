@@ -1,4 +1,4 @@
-import {isChordSig} from './util';
+import {isChordSig, expandMod} from './util';
 import type {Key} from './Key';
 import type {KeySet} from './KeySet';
 import type {
@@ -41,7 +41,8 @@ export class KeyMap {
     const chordDefs: ChordBinding[] = [];
     for (const def of definitions) {
       if (Array.isArray(def)) {
-        const [sig, action, options] = def as [string, Function, (KeyBindingOptions | ChordBindingOptions)?];
+        const [rawSig, action, options] = def as [string, Function, (KeyBindingOptions | ChordBindingOptions)?];
+        const sig = expandMod(rawSig);
         if (isChordSig(sig)) chordDefs.push({...options, sig, action: action as ChordAction});
         else {
           const b = {...options, sig: sig as Signature, action: action as KeyAction};
@@ -49,7 +50,8 @@ export class KeyMap {
           else pressDefs.push(b as KeyBinding);
         }
       } else {
-        const b = def as KeyBinding | ChordBinding;
+        const rawB = def as KeyBinding | ChordBinding;
+        const b = {...rawB, sig: expandMod(rawB.sig)};
         if (isChordSig(b.sig)) chordDefs.push(b as ChordBinding);
         else if ((b as KeyBinding).release) releaseDefs.push(b as KeyBinding);
         else pressDefs.push(b as KeyBinding);
@@ -66,11 +68,11 @@ export class KeyMap {
   }
 
   public setPress(sig: Signature, action: (key: Key) => void): void {
-    this._set(this.pressMap, {sig, action});
+    this._set(this.pressMap, {sig: expandMod(sig) as Signature, action});
   }
 
   public delPress(sig: Signature, action: (key: Key) => void): void {
-    this._del(this.pressMap, sig, action);
+    this._del(this.pressMap, expandMod(sig) as Signature, action);
   }
 
   public matchPress(press: Key): KeyBinding[] | undefined {
@@ -83,11 +85,11 @@ export class KeyMap {
   }
 
   public setRelease(sig: Signature, action: (key: Key) => void): void {
-    this._set(this.releaseMap, {sig, action});
+    this._set(this.releaseMap, {sig: expandMod(sig) as Signature, action});
   }
 
   public delRelease(sig: Signature, action: (key: Key) => void): void {
-    this._del(this.releaseMap, sig, action);
+    this._del(this.releaseMap, expandMod(sig) as Signature, action);
   }
 
   public matchRelease(release: Key): KeyBinding[] | undefined {
@@ -100,13 +102,15 @@ export class KeyMap {
   }
 
   public setChord(sig: ChordSignature, action: ChordBinding['action'], options?: ChordBindingOptions): void {
-    const list = this.chordMap.get(sig) ?? [];
-    list.push({...options, sig, action});
-    this.chordMap.set(sig, list);
+    const expanded = expandMod(sig);
+    const list = this.chordMap.get(expanded) ?? [];
+    list.push({...options, sig: expanded, action});
+    this.chordMap.set(expanded, list);
   }
 
   public delChord(sig: ChordSignature, action: ChordBinding['action']): void {
-    const list = this.chordMap.get(sig);
+    const expanded = expandMod(sig);
+    const list = this.chordMap.get(expanded);
     if (!list) return;
     const index = list.findIndex((b) => b.action === action);
     if (index !== -1) {
