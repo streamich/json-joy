@@ -2,6 +2,7 @@ import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {DomController} from '../dom/DomController';
 import {BehaviorSubject} from 'rxjs';
 import {WebFacade} from '../dom/facade/WebFacade';
+import type {PeritextHeadless} from 'json-joy/src/json-crdt-extensions/peritext';
 import type {PeritextPlugin} from '../react/types';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions/peritext/Peritext';
 import type {PeritextEventDefaults} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';
@@ -12,6 +13,7 @@ export class PeritextSurfaceState implements UiLifeCycles {
   public readonly dom: DomController;
   public readonly log: Log;
   public readonly render$ = new BehaviorSubject<number>(0);
+  public readonly events: PeritextEventDefaults;
 
   /** Overlay portal container element. */
   public portalEl: HTMLDivElement | undefined = void 0;
@@ -23,12 +25,13 @@ export class PeritextSurfaceState implements UiLifeCycles {
   };
 
   constructor(
-    public readonly events: PeritextEventDefaults,
+    public readonly headless: PeritextHeadless,
     public readonly plugins: PeritextPlugin[],
   ) {
-    const peritext = (this.peritext = events.txt);
-    const log = (this.log = Log.from(peritext.model));
-    this.dom = new DomController(events, log);
+    this.events = headless.defaults;
+    this.peritext = headless.txt;
+    this.log = headless.log;
+    this.dom = new DomController(headless);
   }
 
   /** -------------------------------------------------- {@link UiLifeCycles} */

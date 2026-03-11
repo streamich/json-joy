@@ -5,19 +5,17 @@ import {CursorController} from './controllers/CursorController';
 import {RichTextController} from './controllers/RichTextController';
 import {KeyController} from './controllers/KeyController';
 import {CompositionController} from './controllers/CompositionController';
-import {AnnalsController} from './controllers/annals/AnnalsController';
 import {ElementAttr} from '../constants';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {compare, type ITimestampStruct} from 'json-joy/lib/json-crdt-patch';
 import {UiHandle} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/ui/UiHandle';
+import type {PeritextHeadless} from 'json-joy/src/json-crdt-extensions/peritext';
 import type {Point} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Point';
-import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {Rect, UiLifeCycles} from '../types';
 import type {Inline, Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions/peritext/events/PeritextEventTarget';
 import type {PeritextUiApi} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/ui/types';
-import type {PeritextEventDefaults} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/PeritextEventDefaults';
 import type {DomFacade, DomFacadeElement} from './facade/types';
 
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
@@ -28,7 +26,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly input: InputController;
   public readonly cursor: CursorController;
   public readonly richText: RichTextController;
-  public readonly annals: AnnalsController;
 
   /**
    * Index of block HTML <div> elements keyed by the ID (timestamp) of the split
@@ -42,9 +39,9 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly inlines = new AvlMap<Point, HTMLSpanElement>((a, b) => a.cmpSpatial(b));
 
   constructor(
-    public readonly events: PeritextEventDefaults,
-    public readonly log: Log,
+    public readonly headless: PeritextHeadless,
   ) {
+    const events = headless.defaults;
     const {txt} = events;
     this.txt = txt;
     this.et = events.et;
@@ -53,10 +50,8 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     this.input = new InputController(this);
     this.cursor = new CursorController(this);
     this.richText = new RichTextController(this);
-    this.annals = new AnnalsController(this);
     const uiHandle = new UiHandle(txt, <PeritextUiApi>this);
     events.ui = uiHandle;
-    events.undo = this.annals;
   }
 
   public isEditable(el: Element): boolean {
@@ -82,20 +77,20 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const style = el.style;
     style.setProperty('--jsonjoy-peritext-id', et.id + '');
     style.setProperty('--jsonjoy-peritext-editable', 'yes');
+    const stopHeadless = this.headless.start();
     const stopKeys = this.keys.start();
     const stopComp = this.comp.start();
     const stopInput = this.input.start();
     const stopCursor = this.cursor.start();
     const stopRichText = this.richText.start();
-    const stopAnnals = this.annals.start();
     return () => {
       (el as any).contentEditable = 'false';
+      stopHeadless();
       stopKeys();
       stopComp();
       stopInput();
       stopCursor();
       stopRichText();
-      stopAnnals();
     };
   }
 
@@ -146,7 +141,7 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   }
 
   public getCharRect(char: number | ITimestampStruct): Rect | undefined {
-    const txt = this.events.txt;
+    const txt = this.headless.txt;
     const id = typeof char === 'number' ? txt.str.find(char) : char;
     if (!id) return;
     const start = txt.point(id, Anchor.Before);
@@ -175,14 +170,14 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
 
   public toString(tab?: string): string {
     return (
-      'DOM' +
+      'web' +
       printTree(tab, [
         (tab) => 'blocks: ' + this.blocks.size(),
         (tab) => 'inlines: ' + this.inlines.size(),
         (tab) => this.cursor.toString(tab),
         (tab) => this.keys.toString(tab),
         (tab) => this.comp.toString(tab),
-        (tab) => this.annals.toString(tab),
+        (tab) => this.headless.toString(tab),
       ])
     );
   }

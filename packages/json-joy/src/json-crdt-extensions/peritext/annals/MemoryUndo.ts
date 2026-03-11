@@ -1,5 +1,5 @@
-import type {UndoManager, UndoItem} from '../../../types';
-import type {UiLifeCycles} from '../../../types';
+import type {UndoManager, UndoItem} from './types';
+import type {UiLifeCycles} from '../types';
 
 /**
  * A Memory-based undo manager.
@@ -10,7 +10,7 @@ export class MemoryUndo implements UndoManager, UiLifeCycles {
   /** Redo stack. */
   public rStack: UndoItem[] = [];
 
-  // /** ------------------------------------------------------ {@link UndoRedo} */
+  /** --------------------------------------------------- {@link UndoManager} */
 
   public push<U, R>(undo: UndoItem<U, R>): void {
     this.rStack = [];

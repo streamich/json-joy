@@ -22,3 +22,5 @@ export * from './block/types';
 export * from './registry/SliceBehavior';
 export * from './registry/SliceRegistry';
 export * from './slice/constants';
+
+export * from './PeritextHeadless';

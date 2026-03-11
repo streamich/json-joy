@@ -1,30 +1,29 @@
 import {WebUndo} from './WebUndo';
+import {MemoryUndo} from './MemoryUndo';
 import {printTree, type Printable} from 'tree-dump';
-import type {Patch} from 'json-joy/lib/json-crdt-patch';
-import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
-import type {UiLifeCycles} from '../../../types';
-import type {RedoCallback, RedoItem, UndoCallback, UndoItem} from '../../../types';
-import type {Log} from 'json-joy/lib/json-crdt/log/Log';
-import type {UndoCollector} from 'json-joy/lib/json-crdt-extensions/peritext/events/defaults/types';
-import type {PeritextEventTarget} from 'json-joy/lib/json-crdt-extensions/peritext/events/PeritextEventTarget';
+import type {Patch} from '../../../json-crdt-patch';
+import type {Peritext} from '../../../json-crdt-extensions';
+import type {RedoCallback, RedoItem, UndoCallback, UndoItem} from './types';
+import type {UiLifeCycles} from '../types';
+import type {Log} from '../../../json-crdt/log/Log';
+import type {UndoCollector} from '../../../json-crdt-extensions/peritext/events/defaults/types';
+import type {PeritextEventTarget} from '../../../json-crdt-extensions/peritext/events/PeritextEventTarget';
 
-export interface UndoRedoControllerOpts {
-  log: Log;
-  txt: Peritext;
-  et: PeritextEventTarget;
-}
+export class Annals implements UndoCollector, UiLifeCycles, Printable {
+  protected manager = typeof document === 'undefined' ? new MemoryUndo() : new WebUndo();
 
-export class AnnalsController implements UndoCollector, UiLifeCycles, Printable {
-  protected manager = new WebUndo();
-
-  constructor(public readonly opts: UndoRedoControllerOpts) {}
+  constructor(
+    public readonly log: Log,
+    public readonly txt: Peritext,
+    public readonly et: PeritextEventTarget,
+  ) {}
 
   protected captured = new WeakSet<Patch>();
 
   /** ------------------------------------------------- {@link UndoCollector} */
 
   public capture(): void {
-    const currentPatch = this.opts.txt.model.api.builder.patch;
+    const currentPatch = this.txt.model.api.builder.patch;
     this.captured.add(currentPatch);
   }
 
@@ -40,8 +39,7 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
 
   public start() {
     const stopManager = this.manager.start();
-    const {opts, captured} = this;
-    const {txt} = opts;
+    const {captured, txt} = this;
     txt.model.api.onFlush.listen((patch) => {
       const isCaptured = captured.has(patch);
       if (isCaptured) {
@@ -56,7 +54,7 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
   }
 
   public readonly _undo: UndoCallback<Patch, Patch> = (doPatch: Patch) => {
-    const {log, et} = this.opts;
+    const {log, et} = this;
     const patch = log.undo(doPatch);
     et.dispatch('annals', {
       action: 'undo',
@@ -68,7 +66,7 @@ export class AnnalsController implements UndoCollector, UiLifeCycles, Printable 
   };
 
   public readonly _redo: RedoCallback<Patch, Patch> = (doPatch: Patch) => {
-    const {log, et} = this.opts;
+    const {log, et} = this;
     const redoPatch = doPatch.rebase(log.end.clock.time);
     et.dispatch('annals', {
       action: 'redo',

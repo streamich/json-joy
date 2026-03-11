@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
-import {createEvents} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import {CssClass} from '../constants';
 import {CursorPlugin} from '../../plugins/cursor';
 import {defaultPlugin} from '../../plugins/minimal';
@@ -9,7 +8,7 @@ import {context} from './context';
 import {BlockView} from './BlockView';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {PeritextPlugin} from './types';
-import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
+import type {PeritextApi} from 'json-joy/src/json-crdt-extensions/peritext';
 
 put('.' + CssClass.Editable, {
   pos: 'relative',
@@ -34,7 +33,7 @@ put('.' + CssClass.Inline, {
 });
 
 export interface PeritextWebUiProps {
-  peritext: Peritext;
+  node: PeritextApi;
 
   /**
    * Array of plugins use to render editor content and provide additional
@@ -54,7 +53,7 @@ export interface PeritextWebUiProps {
 }
 
 export const PeritextWebUi: React.FC<PeritextWebUiProps> = React.memo((props) => {
-  const {peritext, plugins: plugins_, onStart: onState} = props;
+  const {node, plugins: plugins_, onStart: onState} = props;
 
   // The `.stop()` is called when the editor unmounts.
   const stop = React.useRef<undefined | (() => void)>(void 0);
@@ -63,7 +62,11 @@ export const PeritextWebUi: React.FC<PeritextWebUiProps> = React.memo((props) =>
   const plugins = React.useMemo(() => plugins_ ?? [new CursorPlugin(), defaultPlugin], [plugins_]);
 
   /** Create the {@link PeritextSurfaceState} state management instance. */
-  const state = React.useMemo(() => new PeritextSurfaceState(createEvents(peritext), plugins), [peritext, plugins]);
+  const state = React.useMemo(() => {
+    const headless = node.headless();
+    const state = new PeritextSurfaceState(headless, plugins);
+    return state;
+  }, [node, plugins]);
 
   /** Call `.start()` of {@link PeritextSurfaceState} and setup HTML element. */
   const ref = (el: HTMLDivElement | null) => {
