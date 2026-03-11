@@ -229,7 +229,6 @@ describe('Meta key stuck workaround', () => {
   });
 });
 
-
 describe('toString()', () => {
   test('returns a string without throwing', async () => {
     await using kit = await setup();

@@ -2,9 +2,9 @@ import {expandMod} from './util';
 import type {SequenceBinding, SequenceAction, SequenceBindingOptions} from './types';
 
 export class SeqTrieNode {
-  constructor (
+  constructor(
     public children: Map<string, SeqTrieNode>,
-    public bindings?: SequenceBinding[]
+    public bindings?: SequenceBinding[],
   ) {}
 }
 

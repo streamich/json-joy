@@ -1,6 +1,6 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {Key} from './Key';
-import {KeySourceDoc, KeySourceDocOpts} from './KeySourceDoc';
+import {KeySourceDoc, type KeySourceDocOpts} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
 import {KeyMap} from './KeyMap';
 import {KeySet} from './KeySet';
@@ -66,10 +66,7 @@ export class KeyContext implements KeySink, Printable {
     public readonly name: string = parent ? 'child' : 'root',
   ) {
     this.map = new KeyMap();
-    this.seqMatcher = new KeySequenceMatcher(
-      this.map.sequenceMap.root,
-      this.seqTimeout,
-    );
+    this.seqMatcher = new KeySequenceMatcher(this.map.sequenceMap.root, this.seqTimeout);
   }
 
   protected detachChild(): void {

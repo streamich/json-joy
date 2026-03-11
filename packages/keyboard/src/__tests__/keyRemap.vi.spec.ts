@@ -131,7 +131,7 @@ describe('key remapping', () => {
 
     let parentHit = 0;
     child.setRemap('Esc', 'Escape');
-    child.map.setPress('Escape', () => {}, /* no propagate */ );
+    child.map.setPress('Escape', () => {} /* no propagate */);
     ctx.setRemap('Esc', 'Enter');
     ctx.map.setPress('Enter', () => parentHit++);
 

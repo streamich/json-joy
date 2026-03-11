@@ -53,11 +53,17 @@ export function isChordSig(sig: string): boolean {
 }
 
 const MOD_ALIASES: Record<string, string> = {
-  ctrl: 'C', control: 'C',
-  alt: 'A', option: 'A',
-  meta: 'M', command: 'M', cmd: 'M',
+  ctrl: 'C',
+  control: 'C',
+  alt: 'A',
+  option: 'A',
+  meta: 'M',
+  command: 'M',
+  cmd: 'M',
   shift: 'S',
-  $mod: 'P', p: 'P', primary: 'P',
+  $mod: 'P',
+  p: 'P',
+  primary: 'P',
 };
 
 /**
@@ -82,9 +88,7 @@ const isInputTarget = (event: KeyboardEvent): boolean => {
   return !!el.isContentEditable;
 };
 
-export const resolveFilter = (
-  filter: KeySourceFilter | undefined,
-): ((event: KeyboardEvent) => boolean) | undefined => {
+export const resolveFilter = (filter: KeySourceFilter | undefined): ((event: KeyboardEvent) => boolean) | undefined => {
   if (!filter) return;
   if (filter === 'no-inputs') return (e) => !isInputTarget(e);
   if (filter === 'inputs') return (e) => isInputTarget(e);

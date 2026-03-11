@@ -61,8 +61,9 @@ describe('KeyMap with code-based bindings', () => {
   test('matches @-prefixed binding via codeSig', () => {
     const map = new KeyMap();
     let called = 0;
-    map.setPress('@KeyW' as any, () => { called++; });
-
+    map.setPress('@KeyW' as any, () => {
+      called++;
+    });
     // Key with code=KeyW, key=z (AZERTY)
     const key = new Key('z', Date.now(), '', undefined, 'KeyW');
     const matches = map.matchPress(key);
@@ -75,8 +76,9 @@ describe('KeyMap with code-based bindings', () => {
   test('matches C+@KeyS binding', () => {
     const map = new KeyMap();
     let called = 0;
-    map.setPress('C+@KeyS' as any, () => { called++; });
-
+    map.setPress('C+@KeyS' as any, () => {
+      called++;
+    });
     const key = new Key('s', Date.now(), 'C', undefined, 'KeyS');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
@@ -87,7 +89,6 @@ describe('KeyMap with code-based bindings', () => {
   test('does not match code binding against wrong code', () => {
     const map = new KeyMap();
     map.setPress('@KeyW' as any, () => {});
-
     const key = new Key('w', Date.now(), '', undefined, 'KeyQ');
     expect(map.matchPress(key)).toBeUndefined();
   });
@@ -95,8 +96,14 @@ describe('KeyMap with code-based bindings', () => {
   test('bind() shorthand with @ prefix', () => {
     const map = new KeyMap();
     let called = 0;
-    map.bind([['@KeyW' as any, () => { called++; }]]);
-
+    map.bind([
+      [
+        '@KeyW' as any,
+        () => {
+          called++;
+        },
+      ],
+    ]);
     const key = new Key('z', Date.now(), '', undefined, 'KeyW');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
@@ -107,8 +114,14 @@ describe('KeyMap with code-based bindings', () => {
   test('bind() shorthand with modifier + @ prefix', () => {
     const map = new KeyMap();
     let called = 0;
-    map.bind([['C+@KeyS' as any, () => { called++; }]]);
-
+    map.bind([
+      [
+        'C+@KeyS' as any,
+        () => {
+          called++;
+        },
+      ],
+    ]);
     const key = new Key('s', Date.now(), 'C', undefined, 'KeyS');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
@@ -118,17 +131,13 @@ describe('KeyMap with code-based bindings', () => {
 
   test('code and key bindings coexist for same physical key', () => {
     const map = new KeyMap();
-    let codeCalled = 0;
-    let keyCalled = 0;
-    map.setPress('@KeyW' as any, () => { codeCalled++; });
-    map.setPress('w' as any, () => { keyCalled++; });
-
+    map.setPress('@KeyW' as any, () => {});
+    map.setPress('w' as any, () => {});
     // QWERTY: key=w, code=KeyW -- both should match
     const qwerty = new Key('w', Date.now(), '', undefined, 'KeyW');
     const matches = map.matchPress(qwerty);
     expect(matches).toBeDefined();
     expect(matches!.length).toBe(2);
-
     // AZERTY: key=z, code=KeyW -- only @KeyW matches
     const azerty = new Key('z', Date.now(), '', undefined, 'KeyW');
     const azertyMatches = map.matchPress(azerty);
@@ -141,7 +150,6 @@ describe('KeyMap with code-based bindings', () => {
     const action = () => {};
     map.setPress('@KeyW' as any, action);
     map.delPress('@KeyW' as any, action);
-
     const key = new Key('z', Date.now(), '', undefined, 'KeyW');
     expect(map.matchPress(key)).toBeUndefined();
   });
@@ -149,8 +157,9 @@ describe('KeyMap with code-based bindings', () => {
   test('release matching works with code-based bindings', () => {
     const map = new KeyMap();
     let called = 0;
-    map.setRelease('@KeyW' as any, () => { called++; });
-
+    map.setRelease('@KeyW' as any, () => {
+      called++;
+    });
     const key = new Key('z', Date.now(), '', undefined, 'KeyW');
     const matches = map.matchRelease(key);
     expect(matches).toBeDefined();
@@ -161,8 +170,9 @@ describe('KeyMap with code-based bindings', () => {
   test('fallback ? still works when no code binding matches', () => {
     const map = new KeyMap();
     let called = 0;
-    map.setPress('?' as any, () => { called++; });
-
+    map.setPress('?' as any, () => {
+      called++;
+    });
     const key = new Key('z', Date.now(), '', undefined, 'KeyW');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
@@ -172,11 +182,8 @@ describe('KeyMap with code-based bindings', () => {
 
   test('fallback ? suppressed when code binding matches', () => {
     const map = new KeyMap();
-    let fallbackCalled = 0;
-    let codeCalled = 0;
-    map.setPress('?' as any, () => { fallbackCalled++; });
-    map.setPress('@KeyW' as any, () => { codeCalled++; });
-
+    map.setPress('?' as any, () => {});
+    map.setPress('@KeyW' as any, () => {});
     const key = new Key('z', Date.now(), '', undefined, 'KeyW');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
@@ -188,8 +195,14 @@ describe('KeyMap with code-based bindings', () => {
   test('P modifier works with @ prefix', () => {
     const map = new KeyMap();
     let called = 0;
-    map.bind([['P+@KeyS' as any, () => { called++; }]]);
-
+    map.bind([
+      [
+        'P+@KeyS' as any,
+        () => {
+          called++;
+        },
+      ],
+    ]);
     const key = new Key('s', Date.now(), mod, undefined, 'KeyS');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();

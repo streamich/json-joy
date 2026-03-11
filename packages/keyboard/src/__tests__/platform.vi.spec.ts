@@ -54,7 +54,9 @@ describe('KeyMap with P modifier', () => {
   test('bind() with P-shorthand stores under concrete modifier key', () => {
     const map = new KeyMap();
     let called = 0;
-    const action = () => { called++; };
+    const action = () => {
+      called++;
+    };
     map.bind([['P+s' as any, action]]);
 
     // Must NOT match under the raw 'P+s' key
@@ -73,7 +75,9 @@ describe('KeyMap with P modifier', () => {
   test('setPress with P modifier stores under concrete modifier key', () => {
     const map = new KeyMap();
     let called = 0;
-    const action = () => { called++; };
+    const action = () => {
+      called++;
+    };
     map.setPress(`P+s` as any, action);
 
     const concreteKey = new Key('s', Date.now(), primary as any);
@@ -96,7 +100,9 @@ describe('KeyMap with P modifier', () => {
   test('setRelease with P modifier stores under concrete modifier key', () => {
     const map = new KeyMap();
     let called = 0;
-    const action = () => { called++; };
+    const action = () => {
+      called++;
+    };
     map.setRelease(`P+s` as any, action);
 
     const concreteKey = new Key('s', Date.now(), primary as any);

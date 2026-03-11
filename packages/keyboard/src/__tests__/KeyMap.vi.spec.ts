@@ -147,7 +147,14 @@ describe('KeyMap', () => {
     test('bind() accepts Ctrl+S shorthand', () => {
       const map = new KeyMap();
       let called = 0;
-      map.bind([['Ctrl+S', () => { called++; }]]);
+      map.bind([
+        [
+          'Ctrl+S',
+          () => {
+            called++;
+          },
+        ],
+      ]);
       const key = new Key('s', Date.now(), 'C');
       const matches = map.matchPress(key);
       expect(matches).toBeDefined();
@@ -158,7 +165,14 @@ describe('KeyMap', () => {
     test('bind() accepts command+shift+k shorthand', () => {
       const map = new KeyMap();
       let called = 0;
-      map.bind([['command+shift+k', () => { called++; }]]);
+      map.bind([
+        [
+          'command+shift+k',
+          () => {
+            called++;
+          },
+        ],
+      ]);
       const key = new Key('k', Date.now(), 'MS');
       const matches = map.matchPress(key);
       expect(matches).toBeDefined();

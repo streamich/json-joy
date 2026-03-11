@@ -38,7 +38,10 @@ describe('key sequences', () => {
     const {ctx, src} = setup();
     let hit = 0;
     ctx.map.setSequence('C+k C+d', () => hit++);
-    await src.sendSequence([['k', 'C'], ['d', 'C']]);
+    await src.sendSequence([
+      ['k', 'C'],
+      ['d', 'C'],
+    ]);
     expect(hit).toBe(1);
   });
 
@@ -66,7 +69,7 @@ describe('key sequences', () => {
     ctx.map.setSequence('g g', () => seqHit++);
     await src.sendSequence([['g'], ['g']]);
     expect(singleHit).toBe(2); // single fires on both presses
-    expect(seqHit).toBe(1);    // sequence fires once
+    expect(seqHit).toBe(1); // sequence fires once
   });
 
   test('sequence times out after sequenceTimeoutMs', async () => {

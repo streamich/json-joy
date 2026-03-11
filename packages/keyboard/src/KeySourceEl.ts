@@ -9,7 +9,10 @@ export interface KeySourceElOpts {
 export class KeySourceEl implements KeySource {
   private readonly filter: ((event: KeyboardEvent) => boolean) | undefined;
 
-  constructor(public readonly el: HTMLElement, opts?: KeySourceElOpts) {
+  constructor(
+    public readonly el: HTMLElement,
+    opts?: KeySourceElOpts,
+  ) {
     this.filter = resolveFilter(opts?.filter);
   }
 

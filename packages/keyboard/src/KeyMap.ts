@@ -43,7 +43,14 @@ export class KeyMap {
   }
 
   public bind(
-    definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand | SequenceBinding | SequenceBindingShorthand)[],
+    definitions: (
+      | KeyBinding
+      | KeyBindingShorthand
+      | ChordBinding
+      | ChordBindingShorthand
+      | SequenceBinding
+      | SequenceBindingShorthand
+    )[],
   ): () => void {
     const pressDefs: KeyBinding[] = [];
     const releaseDefs: KeyBinding[] = [];
@@ -51,7 +58,11 @@ export class KeyMap {
     const seqDefs: SequenceBinding[] = [];
     for (const def of definitions) {
       if (Array.isArray(def)) {
-        const [rawSig, action, options] = def as [string, Function, (KeyBindingOptions | ChordBindingOptions | SequenceBindingOptions)?];
+        const [rawSig, action, options] = def as [
+          string,
+          Function,
+          (KeyBindingOptions | ChordBindingOptions | SequenceBindingOptions)?,
+        ];
         if (isSequenceSig(rawSig)) {
           seqDefs.push({...options, sig: rawSig, action: action as SequenceAction});
         } else {

@@ -22,7 +22,9 @@ export class KeySet implements Printable {
 
   /** Removes all non-modifier keys, keeping Meta, Control, Alt, Shift. */
   public clearNonMods(): void {
-    this.keys = this.keys.filter((k) => k.key === 'Meta' || k.key === 'Control' || k.key === 'Alt' || k.key === 'Shift');
+    this.keys = this.keys.filter(
+      (k) => k.key === 'Meta' || k.key === 'Control' || k.key === 'Alt' || k.key === 'Shift',
+    );
   }
 
   public start(): number {
