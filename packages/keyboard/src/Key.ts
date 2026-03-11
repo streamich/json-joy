@@ -7,7 +7,7 @@ export class Key {
     if (event.ctrlKey) mod += 'C';
     if (event.metaKey) mod += 'M';
     if (event.shiftKey) mod += 'S';
-    return new Key(event.key ?? '', Date.now(), mod as SigMod, event);
+    return new Key(event.key ?? '', Date.now(), mod as SigMod, event, event.code);
   }
 
   public propagate: boolean = true;
@@ -17,6 +17,7 @@ export class Key {
     public readonly ts: number,
     public readonly mod: SigMod = '',
     public readonly event?: KeyEvent,
+    public readonly code?: string,
   ) {}
 
   public sig(): Signature {
@@ -28,5 +29,15 @@ export class Key {
     const repeat = this.event?.repeat ? ':R' : '';
     const signature: Signature = (mod + key + repeat) as Signature;
     return signature;
+  }
+
+  /** Builds a signature from `event.code` (physical key position). */
+  public codeSig(): string {
+    const code = this.code;
+    if (!code) return this.sig();
+    let mod = this.mod;
+    if (mod) mod += '+';
+    const repeat = this.event?.repeat ? ':R' : '';
+    return mod + '@' + code + repeat;
   }
 }

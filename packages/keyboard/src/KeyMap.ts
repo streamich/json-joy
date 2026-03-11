@@ -77,10 +77,12 @@ export class KeyMap {
 
   public matchPress(press: Key): KeyBinding[] | undefined {
     const sig = press.sig();
+    const codeSig = press.codeSig();
     const exact = this.pressMap.get(sig);
+    const code = sig !== codeSig ? this.pressMap.get(codeSig) : undefined;
     const any = this.pressMap.get('');
-    const fallback = exact ? undefined : this.pressMap.get('?');
-    const combined = [...(exact ?? []), ...(any ?? []), ...(fallback ?? [])];
+    const fallback = exact || code ? undefined : this.pressMap.get('?');
+    const combined = [...(exact ?? []), ...(code ?? []), ...(any ?? []), ...(fallback ?? [])];
     return combined.length ? combined : undefined;
   }
 
@@ -94,10 +96,12 @@ export class KeyMap {
 
   public matchRelease(release: Key): KeyBinding[] | undefined {
     const sig = release.sig();
+    const codeSig = release.codeSig();
     const exact = this.releaseMap.get(sig);
+    const code = sig !== codeSig ? this.releaseMap.get(codeSig) : undefined;
     const any = this.releaseMap.get('');
-    const fallback = exact ? undefined : this.releaseMap.get('?');
-    const combined = [...(exact ?? []), ...(any ?? []), ...(fallback ?? [])];
+    const fallback = exact || code ? undefined : this.releaseMap.get('?');
+    const combined = [...(exact ?? []), ...(code ?? []), ...(any ?? []), ...(fallback ?? [])];
     return combined.length ? combined : undefined;
   }
 

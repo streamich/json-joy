@@ -10,6 +10,7 @@ export interface KeyEvent {
   shiftKey?: boolean;
   isComposing?: boolean;
   key?: string;
+  code?: string;
   repeat?: boolean;
 }
 

@@ -11,15 +11,15 @@ export class KeySourceManual implements KeySource {
     };
   }
 
-  public press(press: Key | string, mod: SigMod = ''): void {
+  public press(press: Key | string, mod: SigMod = '', code?: string): void {
     if (!this.sink) return;
-    if (!(press instanceof Key)) press = new Key(press, Date.now(), mod);
+    if (!(press instanceof Key)) press = new Key(press, Date.now(), mod, undefined, code);
     this.sink.onPress(press);
   }
 
-  public release(press: Key | string, mod: SigMod = ''): void {
+  public release(press: Key | string, mod: SigMod = '', code?: string): void {
     if (!this.sink) return;
-    if (!(press instanceof Key)) press = new Key(press, Date.now(), mod);
+    if (!(press instanceof Key)) press = new Key(press, Date.now(), mod, undefined, code);
     this.sink.onRelease(press);
   }
 
@@ -28,11 +28,11 @@ export class KeySourceManual implements KeySource {
     this.sink.onReset();
   }
 
-  public async send(key: string, mod: SigMod = ''): Promise<void> {
-    const pressDown = new Key(key, Date.now(), mod);
+  public async send(key: string, mod: SigMod = '', code?: string): Promise<void> {
+    const pressDown = new Key(key, Date.now(), mod, undefined, code);
     this.press(pressDown);
     await Promise.resolve();
-    const pressUp = new Key(key, Date.now(), mod);
+    const pressUp = new Key(key, Date.now(), mod, undefined, code);
     this.release(pressUp);
   }
 }
