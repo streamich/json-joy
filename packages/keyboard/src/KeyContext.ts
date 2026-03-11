@@ -49,9 +49,17 @@ export class KeyContext implements KeySink, Printable {
   public readonly history: Key[] = [];
   public historyLimit: number = KeyControllerConstants.HistoryLimit;
 
-  public _child: KeyContext | undefined = void 0;
-  public _feedChild: boolean = false;
-  public _childUnbind?: () => void = void 0;
+  /** All live child contexts. */
+  public readonly children: Set<KeyContext> = new Set();
+
+  /** The child currently receiving fed events (focus target). */
+  public active: KeyContext | undefined = undefined;
+
+  /** True when this context has no own source and relies on parent to feed it. */
+  public _fed: boolean = true;
+
+  /** Unbind callback for this context's own KeySource, if any. */
+  public _sourceUnbind: (() => void) | undefined = undefined;
 
   /** Optional remap of raw `event.key` values to canonical key names. */
   public remap: Map<string, string> | undefined = undefined;
@@ -69,27 +77,50 @@ export class KeyContext implements KeySink, Printable {
     this.seqMatcher = new KeySequenceMatcher(this.map.sequenceMap.root, this.seqTimeout);
   }
 
-  protected detachChild(): void {
-    const child = this._child;
-    child?.detachChild();
-    this._child = void 0;
-    this._childUnbind?.();
-    this._childUnbind = void 0;
-  }
-
   public child(name?: string, source?: KeySource | HTMLElement): KeyContext {
-    if (this._child) this.detachChild();
     const child = new KeyContext(this, name);
-    this._child = child;
+    this.children.add(child);
     const keySource: KeySource | undefined =
       typeof HTMLElement !== 'undefined' && source instanceof HTMLElement
         ? new KeySourceEl(source)
-        : typeof source === 'object' && 'bind' in source
-          ? source
-          : void 0;
-    this._feedChild = !keySource;
-    this._childUnbind = keySource?.bind(child);
+        : source != null && typeof source === 'object' && 'bind' in source
+          ? (source as KeySource)
+          : undefined;
+    child._fed = !keySource;
+    child._sourceUnbind = keySource?.bind(child);
+    // Auto-activate first fed child so parent events reach it without explicit focus()
+    if (child._fed && !this.active) this.active = child;
     return child;
+  }
+
+  /** Mark this context as the active child up the ancestor chain. */
+  public focus(): void {
+    const parent = this.parent;
+    if (parent) {
+      parent.active = this;
+      parent.focus();
+    }
+  }
+
+  public dispose(): void {
+    // 1. Take snapshot and clear children first (prevents re-entrant removal)
+    const children = [...this.children];
+    this.children.clear();
+    this.active = undefined;
+
+    // 2. Recursively dispose children
+    for (const child of children) child.dispose();
+
+    // 3. Unbind own source
+    this._sourceUnbind?.();
+    this._sourceUnbind = undefined;
+
+    // 4. Remove self from parent
+    const parent = this.parent;
+    if (parent) {
+      parent.children.delete(this);
+      if (parent.active === this) parent.active = undefined;
+    }
   }
 
   public bind(definitions: (KeyBinding | KeyBindingShorthand | ChordBinding | ChordBindingShorthand)[]): () => void {
@@ -128,15 +159,16 @@ export class KeyContext implements KeySink, Printable {
   /** ------------------------------------------------------- {@link KeySink} */
 
   public onPress(press: Key): void {
-    // Descend down in context chain on press.
-    const child = this._child;
+    const child = this.active;
     if (child) {
-      if (this._feedChild) {
-        let leaf = child;
-        while (leaf._child) leaf = leaf._child;
+      if (child._fed) {
+        let leaf: KeyContext = child;
+        while (leaf.active && leaf.active._fed) leaf = leaf.active;
         leaf.onPress_(press);
       }
-    } else this.onPress_(press);
+    } else {
+      this.onPress_(press);
+    }
   }
 
   /** Propagate up on press. */
@@ -194,15 +226,16 @@ export class KeyContext implements KeySink, Printable {
   }
 
   public onRelease(release: Key): void {
-    // Descend down in context chain on release.
-    const child = this._child;
+    const child = this.active;
     if (child) {
-      if (this._feedChild) {
-        let leaf = child;
-        while (leaf._child) leaf = leaf._child;
+      if (child._fed) {
+        let leaf: KeyContext = child;
+        while (leaf.active && leaf.active._fed) leaf = leaf.active;
         leaf.onRelease_(release);
       }
-    } else this.onRelease_(release);
+    } else {
+      this.onRelease_(release);
+    }
   }
 
   /** Propagate up on release. */
@@ -234,10 +267,12 @@ export class KeyContext implements KeySink, Printable {
 
   public onReset(): void {
     this.pressed.reset();
-    const child = this._child;
+    const child = this.active;
     if (child) {
-      if (this._feedChild) child.onReset();
-    } else this.onReset_();
+      if (child._fed) child.onReset();
+    } else {
+      this.onReset_();
+    }
   }
 
   protected onReset_(): void {
@@ -245,18 +280,21 @@ export class KeyContext implements KeySink, Printable {
     this.onChange.emit();
   }
 
+  /** Called when underlying DOM element gains focus. */
+  public onFocus(): void {
+    this.onReset();
+    this.focus();
+  }
+
   /** ----------------------------------------------------- {@link Printable} */
 
   public toString(tab?: string): string {
-    const child = this._child;
     return (
-      'ctx (' +
-      this.name +
-      ')' +
+      'ctx (' + this.name + (this.active ? ' → ' + this.active.name : '') + ')' +
       printTree(tab, [
         () => 'history: ' + this.history.map((k) => k.sig()).join(', '),
         (tab) => this.pressed.toString(tab),
-        child ? (tab) => child.toString(tab) : null,
+        ...[...this.children].map((child) => (tab: string | undefined) => child.toString(tab)),
       ])
     );
   }

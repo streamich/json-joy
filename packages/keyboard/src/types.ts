@@ -18,6 +18,7 @@ export interface KeySink {
   onPress(key: Key): void;
   onRelease(key: Key): void;
   onReset(): void;
+  onFocus(): void;
 }
 
 export interface KeySource {
