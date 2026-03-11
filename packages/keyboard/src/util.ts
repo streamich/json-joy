@@ -60,6 +60,18 @@ const MOD_ALIASES: Record<string, string> = {
   $mod: 'P', p: 'P', primary: 'P',
 };
 
+/**
+ * Returns `true` when `sig` is a multi-step sequence signature — i.e. it
+ * contains a space character. Spaces never appear inside a single `Signature`
+ * (key names are tokens like `Space`, `ArrowUp`, etc.).
+ *
+ * @example
+ * isSequenceSig('g g')     // true
+ * isSequenceSig('C+k C+d') // true
+ * isSequenceSig('C+s')     // false
+ */
+export const isSequenceSig = (sig: string): boolean => sig.includes(' ');
+
 export const normalize = (input: string): string => {
   // Already compact (e.g. 'C+s', 'CS+a', '@KeyW', 'Escape') — pass through.
   if (/^[ACMSP]*(\+|$)/.test(input)) return input;

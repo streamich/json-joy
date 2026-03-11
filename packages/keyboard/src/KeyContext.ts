@@ -4,6 +4,7 @@ import {KeySourceDoc} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
 import {KeyMap} from './KeyMap';
 import {KeySet} from './KeySet';
+import {KeySequenceMatcher} from './KeySequenceMatcher';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {Printable} from 'tree-dump';
 import type {
@@ -52,11 +53,20 @@ export class KeyContext implements KeySink, Printable {
   public _feedChild: boolean = false;
   public _childUnbind?: () => void = void 0;
 
+  /** Timeout (ms) between consecutive sequence steps. Default: 1000. */
+  public seqTimeout: number = 1000;
+
+  public readonly seqMatcher: KeySequenceMatcher;
+
   public constructor(
     public readonly parent: KeyContext | undefined = void 0,
     public readonly name: string = parent ? 'child' : 'root',
   ) {
     this.map = new KeyMap();
+    this.seqMatcher = new KeySequenceMatcher(
+      this.map.sequenceMap.root,
+      this.seqTimeout,
+    );
   }
 
   protected detachChild(): void {
@@ -150,6 +160,18 @@ export class KeyContext implements KeySink, Printable {
       }
     }
 
+    // Sequence matching.
+    if (!this.map.sequenceMap.isEmpty()) {
+      const seqMatches = this.seqMatcher.advance(press.sig(), press.ts);
+      if (seqMatches) {
+        press.propagate = false;
+        for (const match of seqMatches) {
+          match.action();
+          if (match.propagate) press.propagate = true;
+        }
+      }
+    }
+
     this.onChange.emit();
     if (press.propagate) {
       const parent = this.parent;
@@ -200,6 +222,7 @@ export class KeyContext implements KeySink, Printable {
   }
 
   protected onReset_(): void {
+    this.seqMatcher.reset();
     this.onChange.emit();
   }
 

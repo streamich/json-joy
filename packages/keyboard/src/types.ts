@@ -166,3 +166,31 @@ export type ChordAction = (pressed: KeySet) => void;
  * plain-key segments separated by `+`, e.g. `'a+b'` or `'C+a+b'`).
  */
 export type ChordBindingShorthand = [signature: ChordSignature, action: ChordAction, options?: ChordBindingOptions];
+
+/** Space-separated list of Signature steps, e.g. `"g g"` or `"C+k C+d"`. */
+export type SequenceSignature = string;
+
+export interface SequenceBindingOptions {
+  /** Whether to propagate the completing key to parent contexts. Default: false. */
+  propagate?: boolean;
+  /**
+   * If true, pressing a key that is a known sequence prefix suppresses
+   * single-key bindings for that key. Default: false (fire-and-track).
+   */
+  exclusive?: boolean;
+  /** Max ms between consecutive steps. Default: 1000. Overrides the global default. */
+  timeoutMs?: number;
+}
+
+export interface SequenceBinding extends SequenceBindingOptions {
+  sig: SequenceSignature;
+  action: SequenceAction;
+}
+
+export type SequenceAction = () => void;
+
+export type SequenceBindingShorthand = [
+  signature: SequenceSignature,
+  action: SequenceAction,
+  options?: SequenceBindingOptions,
+];

@@ -35,4 +35,10 @@ export class KeySourceManual implements KeySource {
     const pressUp = new Key(key, Date.now(), mod, undefined, code);
     this.release(pressUp);
   }
+
+  public async sendSequence(keys: [key: string, mod?: SigMod][]): Promise<void> {
+    for (const [key, mod] of keys) {
+      await this.send(key, mod ?? '');
+    }
+  }
 }
