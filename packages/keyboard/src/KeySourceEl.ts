@@ -1,15 +1,27 @@
 import {Key} from './Key';
-import type {KeySource, KeySink, KeyEvent} from './types';
+import {resolveFilter} from './util';
+import type {KeySource, KeySink, KeyEvent, KeySourceFilter} from './types';
+
+export interface KeySourceElOpts {
+  filter?: KeySourceFilter;
+}
 
 export class KeySourceEl implements KeySource {
-  constructor(public readonly el: HTMLElement) {}
+  private readonly filter: ((event: KeyboardEvent) => boolean) | undefined;
+
+  constructor(public readonly el: HTMLElement, opts?: KeySourceElOpts) {
+    this.filter = resolveFilter(opts?.filter);
+  }
 
   public bind(sink: KeySink): () => void {
+    const filter = this.filter;
     const onKeyDown = (event: KeyEvent): void => {
+      if (filter && !filter(event as KeyboardEvent)) return;
       const key = Key.fromEvent(event);
       sink.onPress(key);
     };
     const onKeyUp = (event: KeyEvent): void => {
+      if (filter && !filter(event as KeyboardEvent)) return;
       const key = Key.fromEvent(event);
       sink.onRelease(key);
     };

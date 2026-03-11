@@ -1,6 +1,6 @@
 import {FanOut} from 'thingies/lib/fanout';
 import {Key} from './Key';
-import {KeySourceDoc} from './KeySourceDoc';
+import {KeySourceDoc, KeySourceDocOpts} from './KeySourceDoc';
 import {KeySourceEl} from './KeySourceEl';
 import {KeyMap} from './KeyMap';
 import {KeySet} from './KeySet';
@@ -30,9 +30,9 @@ export class KeyContext implements KeySink, Printable {
    *
    * @param name Provide for debugging, used in `.toString()`.
    */
-  public static global(name?: string): [context: KeyContext, unbind: () => void] {
+  public static global(name?: string, opts?: KeySourceDocOpts): [context: KeyContext, unbind: () => void] {
     const ctx = new KeyContext(void 0, name);
-    const source = new KeySourceDoc();
+    const source = new KeySourceDoc(opts);
     const unbind = source.bind(ctx);
     return [ctx, unbind];
   }

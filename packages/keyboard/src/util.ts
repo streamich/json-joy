@@ -72,6 +72,25 @@ const MOD_ALIASES: Record<string, string> = {
  */
 export const isSequenceSig = (sig: string): boolean => sig.includes(' ');
 
+import type {KeySourceFilter} from './types';
+
+const isInputTarget = (event: KeyboardEvent): boolean => {
+  const el = event.target as HTMLElement | null;
+  if (!el) return false;
+  const tag = el.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  return !!el.isContentEditable;
+};
+
+export const resolveFilter = (
+  filter: KeySourceFilter | undefined,
+): ((event: KeyboardEvent) => boolean) | undefined => {
+  if (!filter) return;
+  if (filter === 'no-inputs') return (e) => !isInputTarget(e);
+  if (filter === 'inputs') return (e) => isInputTarget(e);
+  return filter;
+};
+
 export const normalize = (input: string): string => {
   // Already compact (e.g. 'C+s', 'CS+a', '@KeyW', 'Escape') — pass through.
   if (/^[ACMSP]*(\+|$)/.test(input)) return input;

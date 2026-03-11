@@ -24,6 +24,9 @@ export interface KeySource {
   bind(sink: KeySink): () => void;
 }
 
+export type KeySourceFilterFn = (event: KeyboardEvent) => boolean;
+export type KeySourceFilter = 'no-inputs' | 'inputs' | KeySourceFilterFn;
+
 export type SigMod = string;
 export type SigKey =
   | 'a'
