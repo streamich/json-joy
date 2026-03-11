@@ -10,8 +10,6 @@ export class SeqTrieNode {
 
 export class SequenceMap {
   public readonly root: SeqTrieNode = new SeqTrieNode(new Map());
-  /** All proper prefixes of registered sequences, for O(1) prefix checking. */
-  private readonly prefixes = new Set<string>();
   /** Length of the longest registered sequence (number of steps). */
   public maxDepth: number = 0;
 
@@ -28,10 +26,6 @@ export class SequenceMap {
     }
     const binding: SequenceBinding = {...options, sig, action};
     (node.bindings ??= []).push(binding);
-    // Register proper prefixes (all but the full sequence).
-    for (let i = 1; i < steps.length; i++) {
-      this.prefixes.add(steps.slice(0, i).join(' '));
-    }
     if (steps.length > this.maxDepth) this.maxDepth = steps.length;
   }
 
@@ -48,10 +42,6 @@ export class SequenceMap {
     if (idx !== -1) node.bindings.splice(idx, 1);
     // Note: prefix set rebuild on delete is omitted for simplicity;
     // prefixes are conservative (may contain stale entries — harmless).
-  }
-
-  public isPrefix(buffer: string): boolean {
-    return this.prefixes.has(buffer);
   }
 
   public isEmpty(): boolean {

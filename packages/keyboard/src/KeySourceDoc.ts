@@ -20,6 +20,7 @@ export class KeySourceDoc implements KeySource {
     doc?.addEventListener('keyup', onKeyUp);
     doc?.addEventListener('compositionstart', onReset);
     doc?.addEventListener('compositionend', onReset);
+    doc?.addEventListener('fullscreenchange', onReset);
     wnd?.addEventListener('focus', onReset);
     wnd?.addEventListener('blur', onReset);
     return () => {
@@ -27,6 +28,7 @@ export class KeySourceDoc implements KeySource {
       doc?.removeEventListener('keyup', onKeyUp);
       doc?.removeEventListener('compositionstart', onReset);
       doc?.removeEventListener('compositionend', onReset);
+      doc?.removeEventListener('fullscreenchange', onReset);
       wnd?.removeEventListener('focus', onReset);
       wnd?.removeEventListener('blur', onReset);
     };

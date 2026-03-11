@@ -17,12 +17,14 @@ export class KeySourceEl implements KeySource {
       sink.onReset();
     };
     const el = this.el;
+    const doc = typeof document !== 'undefined' ? document : void 0;
     el?.addEventListener('keydown', onKeyDown);
     el?.addEventListener('keyup', onKeyUp);
     el?.addEventListener('focus', onReset);
     el?.addEventListener('blur', onReset);
     el?.addEventListener('compositionstart', onReset);
     el?.addEventListener('compositionend', onReset);
+    doc?.addEventListener('fullscreenchange', onReset);
     return () => {
       el?.removeEventListener('keydown', onKeyDown);
       el?.removeEventListener('keyup', onKeyUp);
@@ -30,6 +32,7 @@ export class KeySourceEl implements KeySource {
       el?.removeEventListener('blur', onReset);
       el?.removeEventListener('compositionstart', onReset);
       el?.removeEventListener('compositionend', onReset);
+      doc?.removeEventListener('fullscreenchange', onReset);
     };
   }
 }
