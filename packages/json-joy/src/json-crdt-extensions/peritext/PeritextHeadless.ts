@@ -1,3 +1,4 @@
+import {KeyContext} from '@jsonjoy.com/keyboard';
 import {PeritextEventDefaults} from './events/defaults/PeritextEventDefaults';
 import {SliceRegistry} from './registry/SliceRegistry';
 import {PeritextEventTarget} from './events/PeritextEventTarget';
@@ -12,6 +13,11 @@ import type {PeritextDataTransfer} from './transfer/PeritextDataTransfer';
 import type {Peritext} from './Peritext';
 import type {PeritextClipboard} from './events/clipboard/types';
 
+export interface PeritextHeadlessOpts {
+  log?: Log;
+  kbd?: KeyContext;
+}
+
 export class PeritextHeadless implements UiLifeCycles {
   public readonly registry: SliceRegistry;
   public readonly log: Log;
@@ -21,8 +27,14 @@ export class PeritextHeadless implements UiLifeCycles {
   public readonly defaults: PeritextEventDefaults;
   public readonly cmd: PeritextCommands;
   public readonly annals: Annals;
+  public readonly kbd: KeyContext;
 
-  constructor(public readonly txt: Peritext, log: Log = Log.from(txt.model)) {
+  private _kbdUnbind?: () => void = void 0;
+
+  constructor(public readonly txt: Peritext, opts: PeritextHeadlessOpts = {}) {
+    const {
+      log = Log.from(txt.model),
+    } = opts;
     const registry = new SliceRegistry();
     const transfer = createDataTransfer(txt, registry);
     const et = new PeritextEventTarget();
@@ -32,6 +44,20 @@ export class PeritextHeadless implements UiLifeCycles {
     const cmd = new PeritextCommands(txt, et);
     const annals = new Annals(log, txt, et);
     defaults.undo = annals;
+    let {kbd} = opts;
+    if (kbd) {
+      kbd = kbd.child('peritext-headless');
+      this._kbdUnbind = () => kbd!.dispose();
+    } else {
+      const [kbd0, unbindSource] = KeyContext.global('peritext-headless', {filter: 'no-inputs'});
+      kbd = kbd0;
+      this._kbdUnbind = () => {
+        unbindSource();
+        kbd0.dispose();
+      };
+    }
+    kbd!.focus();
+    this.kbd = kbd;
     
     this.log = log;
     this.registry = registry;
@@ -49,6 +75,7 @@ export class PeritextHeadless implements UiLifeCycles {
     const stopAnnals = this.annals.start();
     return () => {
       stopAnnals();
+      this._kbdUnbind?.();
     };
   }
 
@@ -58,6 +85,7 @@ export class PeritextHeadless implements UiLifeCycles {
     return 'headless' + printTree(tab, [
       (tab: string) => this.registry.toString(tab),
       (tab: string) => this.annals.toString(tab),
+      (tab: string) => this.kbd.toString(tab),
       (tab: string) => this.txt.toString(tab),
     ]);
   }

@@ -27,6 +27,9 @@
       "path": "../json-type"
     },
     {
+      "path": "../keyboard"
+    },
+    {
       "path": "../util"
     }
   ]
