@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {TopToolbar} from './TopToolbar';
-import {useToolbarPlugin} from '../../context';
+import {useEditor} from '../../context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const blockClass = rule({
@@ -23,7 +23,7 @@ export interface ChromeProps {
 
 export const Chrome: React.FC<ChromeProps> = ({children}) => {
   const styles = useStyles();
-  const ctx = useToolbarPlugin();
+  const state = useEditor();
 
   const style: React.CSSProperties = {
     border: '1px solid ' + styles.g(0.9),
@@ -31,7 +31,7 @@ export const Chrome: React.FC<ChromeProps> = ({children}) => {
 
   return (
     <div className={blockClass} style={style}>
-      {!!ctx && <TopToolbar ctx={ctx.surface} />}
+      {!!state && <TopToolbar ctx={state.surface} />}
       {children}
     </div>
   );

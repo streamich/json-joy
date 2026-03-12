@@ -3,7 +3,7 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {FormattingManageState} from './state';
 import {FormattingList} from './FormattingList';
 import {FormattingDisplay} from './FormattingDisplay';
-import {useToolbarPlugin} from '../../context';
+import {useEditor} from '../../context';
 import {context} from './context';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
 
@@ -12,9 +12,9 @@ export interface FormattingsManagePaneProps {
 }
 
 export const FormattingsManagePane: React.FC<FormattingsManagePaneProps> = ({inline}) => {
-  const {toolbar} = useToolbarPlugin();
+  const editorState = useEditor();
   // biome-ignore lint: too many dependencies
-  const state = React.useMemo(() => new FormattingManageState(toolbar, inline), [toolbar, inline?.key()]);
+  const state = React.useMemo(() => new FormattingManageState(editorState, inline), [editorState, inline?.key()]);
   const formattings = useBehaviorSubject(React.useMemo(() => state.getFormattings$(), [state]));
   // biome-ignore lint: manually manage dependencies
   React.useLayoutEffect(() => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {FormattingsManagePane} from '../../../inline/FormattingsManagePane';
 import {BottomPanePortal} from '../../util/BottomPanePortal';
-import {useToolbarPlugin} from '../../../context';
+import {useEditor} from '../../../context';
 import type {PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {CaretViewProps} from '../../../../web/react/cursor/CaretView';
 
@@ -28,10 +28,10 @@ export interface CaretBottomOverlayProps extends CaretViewProps {}
 export const CaretBottomOverlay: React.FC<CaretBottomOverlayProps> = (props) => {
   const {fwd, bwd} = props;
   const inline = fwd || bwd;
-  const {toolbar} = useToolbarPlugin()!;
+  const state = useEditor()!;
 
   if (!inline) return;
-  if (!isDirectCaretPlacement(toolbar.lastEvent)) return;
+  if (!isDirectCaretPlacement(state.lastEvent)) return;
 
   return (
     <BottomPanePortal>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useToolbarPlugin} from '../../../context';
+import {useEditor} from '../../../context';
 import {useSyncStore, useSyncStoreOpt} from '../../../../web/react/hooks';
 import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import type {PeritextSurfaceState} from '../../../../web/state';
@@ -9,11 +9,11 @@ export interface TopToolbarProps {
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
-  const {toolbar} = useToolbarPlugin()!;
+  const state = useEditor()!;
   const peritext = ctx.peritext;
   const editor = peritext.editor;
   const _pending = useSyncStore(editor.pending);
-  const _isDebugMode = useSyncStoreOpt(toolbar.opts.debug?.enabled);
+  const _isDebugMode = useSyncStoreOpt(state.opts.debug?.enabled);
 
   if (!ctx.dom) return null;
 
@@ -106,7 +106,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   return (
     <div>
-      <ToolbarMenu menu={toolbar.menu.doc.build()} pane={false} />
+      <ToolbarMenu menu={state.menu.doc.build()} pane={false} />
     </div>
   );
 };

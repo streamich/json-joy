@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {useToolbarPlugin} from '../context';
+import {useEditor} from '../context';
 import {FormattingNew} from './views/new/FormattingNew';
 import {FormattingTitle} from './FormattingTitle';
 import {rule} from 'nano-theme';
@@ -23,7 +23,7 @@ export interface FormattingsNewPaneProps {
 
 export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formatting, onSave}) => {
   const [t] = useT();
-  const {toolbar} = useToolbarPlugin();
+  const state = useEditor();
   useSyncStoreOpt(formatting.conf()?.api);
   const validation = formatting.validate();
 
@@ -35,11 +35,11 @@ export const FormattingsNewPane: React.FC<FormattingsNewPaneProps> = ({formattin
   };
 
   return (
-    <FormattingPane onEsc={() => toolbar.newSlice.next(void 0)}>
+    <FormattingPane onEsc={() => state.newSlice.next(void 0)}>
       <form className={blockClass} onSubmit={handleSave}>
         <ContextPaneHeader
           short
-          onCloseClick={() => toolbar.newSlice.next(void 0)}
+          onCloseClick={() => state.newSlice.next(void 0)}
           right={
             <Flex style={{justifyContent: 'flex-end', alignItems: 'center'}}>
               <BasicButton fill width={'auto'} disabled={!valid} onClick={valid ? onSave : void 0}>

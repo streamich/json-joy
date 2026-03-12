@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {useToolbarPlugin} from '../../context';
+import {useEditor} from '../../context';
 import {AutoExpandableToolbar} from './AutoExpandableToolbar';
 import {compare} from 'json-joy/lib/json-crdt-patch';
 import {EntangledPortal, type EntangledPortalStateOpts} from '../../components/EntangledPortal';
@@ -50,9 +50,9 @@ const position: EntangledPortalStateOpts['position'] = (base, dest) => {
 export interface LeafBlockFrameProps extends RenderBlockProps {}
 
 export const LeafBlockFrame: React.FC<LeafBlockFrameProps> = ({block, children}) => {
-  const {toolbar} = useToolbarPlugin();
-  const activeLeafBlockId = useBehaviorSubject(toolbar.activeLeafBlockId$);
-  const menu = React.useMemo(() => toolbar.menu.block.leafBlockSmallMenu({block}), [toolbar, block]);
+  const state = useEditor();
+  const activeLeafBlockId = useBehaviorSubject(state.activeLeafBlockId$);
+  const menu = React.useMemo(() => state.menu.block.leafBlockSmallMenu({block}), [state, block]);
 
   const isBlockActive = !!activeLeafBlockId && compare(activeLeafBlockId, block.marker?.id ?? block.txt.str.id) === 0;
 

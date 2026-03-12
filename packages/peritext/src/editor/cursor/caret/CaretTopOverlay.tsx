@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
-import {useToolbarPlugin} from '../../context';
+import {useEditor} from '../../context';
 import {useSyncStore, useTimeout} from '../../../web/react/hooks';
 import {AfterTimeout} from '../../../web/react/util/AfterTimeout';
 import type {CaretViewProps} from '../../../web/react/cursor/CaretView';
@@ -10,8 +10,8 @@ export interface CaretTopOverlayProps extends CaretViewProps {
 }
 
 export const CaretTopOverlay: React.FC<CaretTopOverlayProps> = () => {
-  const {toolbar} = useToolbarPlugin()!;
-  const showInlineToolbar = toolbar.showInlineToolbar;
+  const state = useEditor()!;
+  const showInlineToolbar = state.showInlineToolbar;
   const [, toolbarVisibilityChangeTime] = useSyncStore(showInlineToolbar);
   const doHideForCoolDown = toolbarVisibilityChangeTime + 500 > Date.now();
   const enableAfterCoolDown = useTimeout(500, [doHideForCoolDown]);
@@ -24,7 +24,7 @@ export const CaretTopOverlay: React.FC<CaretTopOverlayProps> = () => {
   }, []);
 
   let element: React.ReactNode | undefined = (
-    <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.menu.caret.build()} onPopupClose={handleClose} />
+    <CaretToolbar disabled={!enableAfterCoolDown} menu={state.menu.caret.build()} onPopupClose={handleClose} />
   );
 
   if (doHideForCoolDown) {
