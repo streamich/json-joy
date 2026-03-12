@@ -130,150 +130,6 @@ export class RangeMenu {
           ],
         },
         {
-          name: 'Modify separator',
-          sep: true,
-        },
-        {
-          name: 'Modify',
-          expand: 3,
-          onSelect: () => {},
-          children: [
-            {
-              name: 'Pick layer',
-              right: () => (
-                <Code size={-1} gray>
-                  9+
-                </Code>
-              ),
-              more: true,
-              icon: () => <LayersIcon width={15} height={15} />,
-              onSelect: () => {},
-            },
-            {
-              name: 'Erase formatting',
-              danger: true,
-              icon: () => <EraserIcon width={16} height={16} />,
-              onSelect: () => {},
-            },
-            {
-              name: 'Delete all in range',
-              danger: true,
-              more: true,
-              icon: () => <TrashIcon width={16} height={16} />,
-              onSelect: () => {},
-            },
-          ],
-        },
-        {
-          name: 'Clipboard separator',
-          sep: true,
-        },
-        {
-          name: 'Copy, cut, and paste',
-          // icon: () => <CopyIcon width={15} height={15} />,
-          icon: () => <CopyIcon width={16} height={16} />,
-          expand: 0,
-          children: [
-            {
-              id: 'copy-menu',
-              name: 'Copy',
-              // icon: () => <CopyIcon width={15} height={15} />,
-              icon: () => <ClipboardCopyIcon width={15} height={15} />,
-              expand: 5,
-              children: [
-                {
-                  name: 'Copy',
-                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Copy text only',
-                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Copy as Markdown',
-                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
-                  right: () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Copy as HTML',
-                  icon: () => <ClipboardCopyIcon width={15} height={15} />,
-                  right: () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-              ],
-            },
-            {
-              name: 'Cut separator',
-              sep: true,
-            },
-            {
-              id: 'cut-menu',
-              name: 'Cut',
-              // icon: () => <CopyIcon width={15} height={15} />,
-              icon: () => <ScissorsIcon width={16} height={16} />,
-              expand: 5,
-              children: [
-                {
-                  name: 'Cut',
-                  danger: true,
-                  icon: () => <ScissorsIcon width={16} height={16} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Cut text only',
-                  danger: true,
-                  icon: () => <ScissorsIcon width={16} height={16} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Cut as Markdown',
-                  danger: true,
-                  icon: () => <ScissorsIcon width={16} height={16} />,
-                  right: () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Cut as HTML',
-                  danger: true,
-                  icon: () => <ScissorsIcon width={16} height={16} />,
-                  right: () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />,
-                  onSelect: () => {},
-                },
-              ],
-            },
-            {
-              name: 'Paste separator',
-              sep: true,
-            },
-            {
-              id: 'paste-menu',
-              name: 'Paste',
-              icon: () => <ClipboardIcon width={15} height={15} />,
-              expand: 5,
-              children: [
-                {
-                  name: 'Paste',
-                  icon: () => <ClipboardIcon width={15} height={15} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Paste text only',
-                  icon: () => <ClipboardIcon width={15} height={15} />,
-                  onSelect: () => {},
-                },
-                {
-                  name: 'Paste formatting',
-                  icon: () => <ClipboardIcon width={15} height={15} />,
-                  onSelect: () => {},
-                },
-              ],
-            },
-          ],
-        },
-        {
           name: 'Insert',
           icon: () => <BetweenVerticalEndIcon width={16} height={16} />,
           children: [
@@ -431,82 +287,112 @@ export class RangeMenu {
     };
   }
 
+  private et() {
+    return this.state.surface.events.et;
+  }
+
+  public readonly bold: MenuItem = {
+    name: 'Bold',
+    icon: () => <FontBoldIcon width={15} height={15} />,
+    right: () => <Sidetip small>⌘ B</Sidetip>,
+    keys: ['⌘', 'b'],
+    onSelect: () => {
+      this.trackRecent(this.bold);
+      this.et().format('tog', CommonSliceType.b);
+    },
+  };
+
+  public readonly italic: MenuItem = {
+    name: 'Italic',
+    icon: () => <ItalicIcon width={14} height={14} />,
+    right: () => <Sidetip small>⌘ I</Sidetip>,
+    keys: ['⌘', 'i'],
+    onSelect: () => {
+      this.trackRecent(this.italic);
+      this.et().format('tog', CommonSliceType.i);
+    },
+  };
+
+  public readonly underline: MenuItem = {
+    name: 'Underline',
+    icon: () => <UnderlineIcon width={16} height={16} />,
+    right: () => <Sidetip small>⌘ U</Sidetip>,
+    keys: ['⌘', 'u'],
+    onSelect: () => {
+      this.trackRecent(this.underline);
+      this.et().format('tog', CommonSliceType.u);
+    },
+  };
+
+  public readonly inlineCode: MenuItem = {
+    name: 'Code',
+    icon: () => <CodeIcon width={16} height={16} />,
+    right: () => <Sidetip small>⌘ E</Sidetip>,
+    keys: ['⌘', 'e'],
+    onSelect: () => {
+      this.trackRecent(this.inlineCode);
+      this.et().format('tog', CommonSliceType.code);
+    },
+  };
+
+  public recent: MenuItem[] = [this.bold, this.italic, this.underline, this.inlineCode];
+
+  private trackRecent(item: MenuItem): void {
+    const recent = this.recent;
+    const idx = recent.findIndex((r) => r.name === item.name);
+    if (idx !== -1) recent.splice(idx, 1);
+    recent.unshift(item);
+    if (recent.length > 4) recent.length = 4;
+  }
+
   public formattingMenu(): MenuItem {
     const et = this.state.surface.events.et;
+    const track = (item: MenuItem): MenuItem => {
+      const orig = item.onSelect;
+      return orig
+        ? {...item, onSelect: (e) => { this.trackRecent(item); orig(e); }}
+        : item;
+    };
     return {
       name: 'Formatting',
       expandChild: 0,
-      preview: [
-        {
-          name: 'Bold',
-          icon: () => <FontBoldIcon width={15} height={15} />,
-          right: () => <Sidetip small>⌘ B</Sidetip>,
-          keys: ['⌘', 'b'],
-          onSelect: () => {
-            et.format('tog', CommonSliceType.b);
-          },
-        },
-      ],
+      preview: this.recent,
       children: [
         {
           name: 'Common',
           expand: 8,
           children: [
-            {
-              name: 'Bold',
-              icon: () => <FontBoldIcon width={15} height={15} />,
-              right: () => <Sidetip small>⌘ B</Sidetip>,
-              keys: ['⌘', 'b'],
-              onSelect: () => {
-                et.format('tog', CommonSliceType.b);
-              },
-            },
-            {
-              name: 'Italic',
-              icon: () => <ItalicIcon width={14} height={14} />,
-              right: () => <Sidetip small>⌘ I</Sidetip>,
-              keys: ['⌘', 'i'],
-              onSelect: () => {
-                et.format('tog', CommonSliceType.i);
-              },
-            },
-            {
-              name: 'Underline',
-              icon: () => <UnderlineIcon width={16} height={16} />,
-              right: () => <Sidetip small>⌘ U</Sidetip>,
-              keys: ['⌘', 'u'],
-              onSelect: () => {
-                et.format('tog', CommonSliceType.u);
-              },
-            },
-            {
+            this.bold,
+            this.italic,
+            this.underline,
+            track({
               name: 'Strikethrough',
               icon: () => <StrikethroughIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.s);
               },
-            },
-            {
+            }),
+            track({
               name: 'Overline',
               icon: () => <OverlineIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.overline);
               },
-            },
-            {
+            }),
+            track({
               name: 'Highlight',
               icon: () => <HighlightIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.mark);
               },
-            },
-            {
+            }),
+            track({
               name: 'Spoiler',
               icon: () => <LockPasswordIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.spoiler);
               },
-            },
+            }),
           ],
         },
         {
@@ -517,57 +403,49 @@ export class RangeMenu {
           name: 'Technical',
           expand: 8,
           children: [
-            {
-              name: 'Code',
-              icon: () => <CodeIcon width={16} height={16} />,
-              right: () => <Sidetip small>⌘ E</Sidetip>,
-              keys: ['⌘', 'e'],
-              onSelect: () => {
-                et.format('tog', CommonSliceType.code);
-              },
-            },
-            {
+            this.inlineCode,
+            track({
               name: 'Math',
               icon: () => <MathIntegralXIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.math);
               },
-            },
-            {
+            }),
+            track({
               name: 'Superscript',
               icon: () => <SuperscriptIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.sup);
               },
-            },
-            {
+            }),
+            track({
               name: 'Subscript',
               icon: () => <SubscriptIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.sub);
               },
-            },
-            {
+            }),
+            track({
               name: 'Keyboard key',
               icon: () => <KeyboardIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.kbd);
               },
-            },
-            {
+            }),
+            track({
               name: 'Insertion',
               icon: () => <PencilPlusIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.ins);
               },
-            },
-            {
+            }),
+            track({
               name: 'Deletion',
               icon: () => <PencilMinusIcon width={16} height={16} />,
               onSelect: () => {
                 et.format('tog', CommonSliceType.del);
               },
-            },
+            }),
           ],
         },
         {
@@ -578,8 +456,8 @@ export class RangeMenu {
           name: 'Artistic',
           expand: 8,
           children: [
-            this.colorMenuItem(),
-            this.bgMenuItem(),
+            track(this.colorMenuItem()),
+            track(this.bgMenuItem()),
             // {
             //   name: 'Border',
             //   icon: () => <BorderLeftIcon width={16} height={16} />,
