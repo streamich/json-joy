@@ -7,7 +7,7 @@ import {subject} from '../../../web/util/rx';
 import {Model, type ObjApi} from 'json-joy/lib/json-crdt/model';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions';
-import type {ToolbarState} from '../../state';
+import type {EditorState} from '../../state';
 
 export class FormattingManageState {
   public readonly selected$ = new BehaviorSubject<SavedFormatting | null>(null);
@@ -15,7 +15,7 @@ export class FormattingManageState {
   public readonly editing$ = new BehaviorSubject<SavedShadowFormatting | undefined>(undefined);
 
   public constructor(
-    public readonly state: ToolbarState,
+    public readonly state: EditorState,
     public readonly inline: Inline | undefined,
   ) {}
 

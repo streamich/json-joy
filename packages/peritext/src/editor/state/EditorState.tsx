@@ -24,7 +24,6 @@ import type {
 } from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
-// Preloaded icons - Radix set
 const FontBoldIcon = makeIcon({set: 'radix', icon: 'font-bold'});
 const _FontItalicIcon = makeIcon({set: 'radix', icon: 'font-italic'});
 const _StrikethroughRadixIcon = makeIcon({set: 'radix', icon: 'strikethrough'});
@@ -45,8 +44,6 @@ const ButtonIcon = makeIcon({set: 'radix', icon: 'button'});
 const SewingPinIcon = makeIcon({set: 'radix', icon: 'sewing-pin'});
 const PlusIcon = makeIcon({set: 'radix', icon: 'plus'});
 const LinkRadixIcon = makeIcon({set: 'radix', icon: 'link-2'});
-
-// Preloaded icons - Tabler set
 const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline'});
 const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough'});
 const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline'});
@@ -81,8 +78,6 @@ const ImageInPictureIcon = makeIcon({set: 'tabler', icon: 'image-in-picture'});
 const PhotoScanIcon = makeIcon({set: 'tabler', icon: 'photo-scan'});
 const TablerFileIcon = makeIcon({set: 'tabler', icon: 'file'});
 const MathIcon = makeIcon({set: 'tabler', icon: 'math'});
-
-// Preloaded icons - Lucide set
 const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
 const _BoldIcon = makeIcon({set: 'lucide', icon: 'bold'});
 const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
@@ -101,24 +96,16 @@ const RedoIcon = makeIcon({set: 'lucide', icon: 'redo'});
 const QuoteIcon = makeIcon({set: 'lucide', icon: 'quote'});
 const PilcrowIcon = makeIcon({set: 'lucide', icon: 'pilcrow'});
 const _FootprintsIcon = makeIcon({set: 'lucide', icon: 'footprints'});
-
-// Preloaded icons - Simple set
 const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
 const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
-
-// Preloaded icons - IBM set
 const ListBulletedIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted'});
 const ListNumberedIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered'});
 const ListCheckedIcon = makeIcon({set: 'ibm_32', icon: 'list--checked'});
-
-// Preloaded icons - Bootstrap set
 const CursorTextIcon = makeIcon({set: 'bootstrap', icon: 'cursor-text'});
-
-// Preloaded icons - Lineicons set
 const _CommentTextIcon = makeIcon({set: 'lineicons', icon: 'comment-1-text'});
 const _FlagIcon = makeIcon({set: 'lineicons', icon: 'flag-2'});
 
-export class ToolbarState implements UiLifeCycles {
+export class EditorState implements UiLifeCycles {
   public readonly txt: Peritext;
   public lastEvent: PeritextEventDetailMap['change']['ev'] | undefined = void 0;
   public lastEventTs: number = 0;
