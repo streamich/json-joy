@@ -1869,6 +1869,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/channel@workspace:packages/channel":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/channel@workspace:packages/channel"
+  dependencies:
+    "@jsonjoy.com/buffers": "workspace:*"
+    rxjs: "npm:^7.8.2"
+  peerDependencies:
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/click-json@workspace:*, @jsonjoy.com/click-json@workspace:packages/click-json":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/click-json@workspace:packages/click-json"
