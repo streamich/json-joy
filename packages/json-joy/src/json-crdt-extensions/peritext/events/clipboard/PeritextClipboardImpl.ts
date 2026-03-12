@@ -115,6 +115,7 @@ export class PeritextClipboardImpl implements PeritextClipboard {
         }
       }
     }
+    if (typeof ClipboardItem === 'undefined') return;
     const item = new ClipboardItem(clipboardData);
     const items: ClipboardItem[] = [item];
     return this.pc.write(items);
