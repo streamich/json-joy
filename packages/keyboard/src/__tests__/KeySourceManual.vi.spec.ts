@@ -66,12 +66,12 @@ describe('KeySourceManual', () => {
     const src = new KeySourceManual();
     src.bind(ctx);
     let received: Key | undefined;
-    ctx.map.setPress('C+a', (k) => {
+    ctx.map.setPress('Control+a', (k) => {
       received = k;
     });
-    src.press('a', 'C');
+    src.press('a', 'Control');
     expect(received).toBeDefined();
-    expect(received!.mod).toBe('C');
+    expect(received!.mod).toBe('Control');
   });
 
   test('release() removes key from pressed set', () => {
@@ -109,10 +109,10 @@ describe('KeySourceManual', () => {
     const src = new KeySourceManual();
     src.bind(ctx);
     let hits = 0;
-    ctx.map.setPress('M+s', () => {
+    ctx.map.setPress('Meta+s', () => {
       hits++;
     });
-    await src.send('s', 'M');
+    await src.send('s', 'Meta');
     expect(hits).toBe(1);
   });
 });

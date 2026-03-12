@@ -202,21 +202,21 @@ describe('.child() with custom source', () => {
 describe('Meta key stuck workaround', () => {
   test('releasing Meta clears non-modifier keys from pressed', async () => {
     await using kit = await setup();
-    kit.src.press('Meta', 'M');
-    kit.src.press('c', 'M');
+    kit.src.press('Meta', 'Meta');
+    kit.src.press('c', 'Meta');
     expect(kit.ctx.pressed.keys.map((k) => k.key)).toEqual(['Meta', 'c']);
     // Browser does not fire keyup for 'c' on macOS — only Meta keyup fires
-    kit.src.release('Meta', 'M');
+    kit.src.release('Meta', 'Meta');
     expect(kit.ctx.pressed.keys.map((k) => k.key)).toEqual([]);
   });
 
   test('releasing Meta keeps other modifier keys in pressed', async () => {
     await using kit = await setup();
-    kit.src.press('Control', 'C');
-    kit.src.press('Meta', 'CM');
-    kit.src.press('s', 'CM');
+    kit.src.press('Control', 'Control');
+    kit.src.press('Meta', 'Control+Meta');
+    kit.src.press('s', 'Control+Meta');
     // simulate macOS: no keyup for 's', only Meta keyup
-    kit.src.release('Meta', 'CM');
+    kit.src.release('Meta', 'Control+Meta');
     // Control should still be in pressed; 's' should be gone
     expect(kit.ctx.pressed.keys.map((k) => k.key)).toEqual(['Control']);
   });

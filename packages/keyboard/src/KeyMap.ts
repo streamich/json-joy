@@ -168,7 +168,7 @@ export class KeyMap {
    */
   public matchChord(pressed: KeySet): ChordBinding[] | undefined {
     if (pressed.keys.length < 2) return undefined;
-    const sig = pressed.chordSig();
+    const sig = pressed.sig();
     const matches = this.chordMap.get(sig);
     return matches?.length ? matches : undefined;
   }

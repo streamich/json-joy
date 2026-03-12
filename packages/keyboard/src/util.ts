@@ -1,36 +1,46 @@
+import type {KeySourceFilter} from './types';
+
 /**
- * The platform-specific primary modifier key: `'M'` (Meta / ⌘) on macOS,
- * `'C'` (Control) on Windows / Linux / etc.
+ * The platform-specific primary modifier key: `'Meta'` (⌘) on macOS,
+ * `'Control'` (Ctrl) on Windows / Linux / etc.
  */
-export const mod: 'C' | 'M' = ((): 'C' | 'M' => {
+export const mod: 'Control' | 'Meta' = ((): 'Control' | 'Meta' => {
   if (typeof navigator !== 'undefined') {
-    if (/mac/i.test(navigator.platform) || /macintosh/i.test(navigator.userAgent)) return 'M';
+    if (/mac/i.test(navigator.platform) || /macintosh/i.test(navigator.userAgent)) return 'Meta';
   }
   if (typeof process !== 'undefined' && process.platform) {
-    if (process.platform === 'darwin') return 'M';
+    if (process.platform === 'darwin') return 'Meta';
   }
-  return 'C';
+  return 'Control';
 })();
 
 /**
- * Expands the `P` (Primary) modifier alias in `sig` to the platform-specific
- * concrete modifier: `M` (Meta / ⌘) on macOS, `C` (Control) elsewhere.
- * The expanded modifiers are always emitted in canonical order (A < C < M < S).
- * Signatures that contain no `P` are returned unchanged.
+ * Regex that matches a canonical modifier prefix: one or more modifier names
+ * (`Alt`, `Control`, `Meta`, `Shift`, `Primary`) joined by `+`, followed by a
+ * trailing `+` that separates the prefix from the key portion.
+ */
+const MODS_RE = /^((?:Alt|Control|Meta|Shift|Primary)(?:\+(?:Alt|Control|Meta|Shift|Primary))*)\+/;
+
+/**
+ * Expands the `Primary` modifier alias in `sig` to the platform-specific
+ * concrete modifier: `Meta` (⌘) on macOS, `Control` elsewhere.
+ * The expanded modifiers are always emitted in canonical order (Alt < Control < Meta < Shift).
+ * Signatures that contain no `Primary` are returned unchanged.
  *
  * @example
  * // macOS
- * expandPlatformMod('P+s')   // 'M+s'
- * expandPlatformMod('AP+s')  // 'AM+s'
+ * expandMod('Primary+s')       // 'Meta+s'
+ * expandMod('Alt+Primary+s')   // 'Alt+Meta+s'
  * // Windows / Linux
- * expandPlatformMod('P+s')   // 'C+s'
- * expandPlatformMod('AP+s')  // 'AC+s'
+ * expandMod('Primary+s')       // 'Control+s'
+ * expandMod('Alt+Primary+s')   // 'Alt+Control+s'
  */
 export const expandMod = (sig: string): string => {
-  if (!sig.includes('P')) return sig;
-  return sig.replace(/^([ACMPS]+)\+/, (_, mods: string) => {
-    const expanded = mods.replace('P', mod);
-    return [...new Set(expanded.split(''))].sort().join('') + '+';
+  if (!sig.includes('Primary')) return sig;
+  return sig.replace(MODS_RE, (_, mods: string) => {
+    const parts = mods.split('+').map((m: string) => (m === 'Primary' ? mod : m));
+    const deduped = [...new Set(parts)].sort();
+    return deduped.join('+') + '+';
   });
 };
 
@@ -39,32 +49,35 @@ export const expandMod = (sig: string): string => {
  * plain-key segments after stripping the optional modifier prefix.
  *
  * Examples:
- * - `isChordSig('a+b')`    : `true`
- * - `isChordSig('C+a+b')`  : `true`
- * - `isChordSig('C+s')`    : `false`
- * - `isChordSig('Escape')` : `false`
- * - `isChordSig('')`       : `false`
- * - `isChordSig('?')`      : `false`
+ * - `isChordSig('a+b')`          : `true`
+ * - `isChordSig('Control+a+b')`  : `true`
+ * - `isChordSig('Control+s')`    : `false`
+ * - `isChordSig('Escape')`       : `false`
+ * - `isChordSig('')`             : `false`
+ * - `isChordSig('?')`            : `false`
  */
 export function isChordSig(sig: string): boolean {
   if (!sig || sig === '?') return false;
-  const withoutMod = sig.replace(/^[ACMSP]+\+/, '');
+  const withoutMod = sig.replace(MODS_RE, '');
   return withoutMod.includes('+');
 }
 
 const MOD_ALIASES: Record<string, string> = {
-  ctrl: 'C',
-  control: 'C',
-  alt: 'A',
-  option: 'A',
-  meta: 'M',
-  command: 'M',
-  cmd: 'M',
-  shift: 'S',
-  $mod: 'P',
-  p: 'P',
-  primary: 'P',
+  ctrl: 'Control',
+  control: 'Control',
+  alt: 'Alt',
+  option: 'Alt',
+  meta: 'Meta',
+  command: 'Meta',
+  cmd: 'Meta',
+  shift: 'Shift',
+  $mod: 'Primary',
+  p: 'Primary',
+  primary: 'Primary',
 };
+
+export const isMod = (key: string): boolean =>
+  key === 'Alt' || key === 'Control' || key === 'Meta' || key === 'Shift';
 
 /**
  * Returns `true` when `sig` is a multi-step sequence signature — i.e. it
@@ -72,13 +85,11 @@ const MOD_ALIASES: Record<string, string> = {
  * (key names are tokens like `Space`, `ArrowUp`, etc.).
  *
  * @example
- * isSequenceSig('g g')     // true
- * isSequenceSig('C+k C+d') // true
- * isSequenceSig('C+s')     // false
+ * isSequenceSig('g g')             // true
+ * isSequenceSig('Control+k Control+d') // true
+ * isSequenceSig('Control+s')       // false
  */
 export const isSequenceSig = (sig: string): boolean => sig.includes(' ');
-
-import type {KeySourceFilter} from './types';
 
 const isInputTarget = (event: KeyboardEvent): boolean => {
   const el = event.target as HTMLElement | null;
@@ -96,16 +107,18 @@ export const resolveFilter = (filter: KeySourceFilter | undefined): ((event: Key
 };
 
 export const normalize = (input: string): string => {
-  // Already compact (e.g. 'C+s', 'CS+a', '@KeyW', 'Escape') — pass through.
-  if (/^[ACMSP]*(\+|$)/.test(input)) return input;
+  if (!input || input === '?') return input;
+  if (input[0] === '@') return input;
   const mods: string[] = [];
-  let key = '';
+  const keyParts: string[] = [];
   for (const part of input.split('+')) {
     const alias = MOD_ALIASES[part.toLowerCase()];
     if (alias) mods.push(alias);
-    else key = part;
+    else keyParts.push(part);
   }
-  const expanded = [...new Set(mods.map((m) => (m === 'P' ? mod : m)))].sort();
-  const k = key.length === 1 ? key.toLowerCase() : key;
-  return expanded.length ? `${expanded.join('')}+${k}` : k;
+  const normalizedKeys = keyParts.map((p) => (p.length === 1 ? p.toLowerCase() : p));
+  const keyStr = normalizedKeys.join('+');
+  if (!mods.length) return keyStr;
+  const expanded = [...new Set(mods.map((m) => (m === 'Primary' ? mod : m)))].sort();
+  return keyStr ? `${expanded.join('+')}+${keyStr}` : expanded.join('+');
 };

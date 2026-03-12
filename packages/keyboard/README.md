@@ -15,9 +15,9 @@ npm install @jsonjoy.com/keyboard
 | **KeySource** | Produces raw key events (DOM `document`, an `HTMLElement`, or a manual test source). |
 | **KeyContext** | Consumes key events, holds a binding map, tracks pressed keys, and propagates unhandled events to a parent context. |
 | **KeyMap** | Stores press / release / chord / sequence bindings for a context. |
-| **Signature** | A string that identifies a single key press, e.g. `'a'`, `'C+s'`, `'S+F5:R'`. |
-| **Chord** | Two or more keys held simultaneously, e.g. `'a+b'` or `'C+j+k'`. |
-| **Sequence** | Two or more key presses in order within a timeout, e.g. `'g g'` or `'C+k C+d'`. |
+| **Signature** | A string that identifies a single key press, e.g. `'a'`, `'Control+s'`, `'Shift+F5:R'`. |
+| **Chord** | Two or more keys held simultaneously, e.g. `'a+b'` or `'Control+j+k'`. |
+| **Sequence** | Two or more key presses in order within a timeout, e.g. `'g g'` or `'Control+k Control+d'`. |
 | **KeySet** | The live set of currently-pressed keys. |
 
 ---
@@ -31,7 +31,7 @@ import { KeyContext } from '@jsonjoy.com/keyboard';
 const [ctx, unbind] = KeyContext.global();
 
 // Register a key binding
-ctx.map.setPress('C+s', () => save());
+ctx.map.setPress('Control+s', () => save());
 ctx.map.setPress('Escape', () => cancel());
 
 // Clean up
@@ -50,7 +50,7 @@ A `Signature` is a compact string that uniquely identifies a key gesture.
 
 | Part | Values | Meaning |
 |---|---|---|
-| `ModPrefix` | `A` `C` `M` `S` and combinations | Alt, Ctrl, Meta, Shift |
+| `ModPrefix` | `Alt` `Control` `Meta` `Shift` and `+`-separated combinations | Alt, Ctrl, Meta/Cmd, Shift |
 | `Key` | Letter, digit, symbol, or named key | The physical key |
 | `:R` | optional suffix | Key is auto-repeating |
 
@@ -59,13 +59,15 @@ A `Signature` is a compact string that uniquely identifies a key gesture.
 | Signature | Gesture |
 |---|---|
 | `'a'` | Press A |
-| `'C+s'` | Ctrl + S |
-| `'M+z'` | Meta/Cmd + Z |
-| `'CS+k'` | Ctrl + Shift + K |
+| `'Control+s'` | Ctrl + S |
+| `'Meta+z'` | Meta/Cmd + Z |
+| `'Control+Shift+k'` | Ctrl + Shift + K |
 | `'F5'` | Function key 5 |
-| `'S+F5:R'` | Shift + F5 held (repeating) |
+| `'Shift+F5:R'` | Shift + F5 held (repeating) |
 | `'ArrowUp'` | Up arrow |
 | `'Space'` | Spacebar |
+| `'Alt'` | Alt pressed alone |
+| `'Shift'` | Shift pressed alone |
 
 ### Named keys
 
@@ -107,12 +109,12 @@ returns an `unbind` function.
 ```ts
 const unbind = ctx.bind([
   // shorthand: [signature, action, options?]
-  ['C+s', () => save()],
-  ['C+z', () => undo(), { propagate: true }],
+  ['Control+s', () => save()],
+  ['Control+z', () => undo(), { propagate: true }],
 
   // sequence (space-separated steps)
-  ['g g',     () => goToTop()],
-  ['C+k C+d', () => formatDocument()],
+  ['g g',                   () => goToTop()],
+  ['Control+k Control+d',   () => formatDocument()],
 
   // object form
   { sig: 'Escape', action: () => cancel() },
@@ -181,7 +183,7 @@ timeout. Steps are space-separated `Signature` values.
 ctx.map.setSequence('g g', () => goToTop());
 
 // Ctrl+K then Ctrl+D
-ctx.map.setSequence('C+k C+d', () => formatDocument());
+ctx.map.setSequence('Control+k Control+d', () => formatDocument());
 
 // Three steps
 ctx.map.setSequence('Escape g i', () => goToInbox());
@@ -194,8 +196,8 @@ Or via `ctx.bind()` — any signature containing a space is treated as a sequenc
 
 ```ts
 ctx.bind([
-  ['g g',     () => goToTop()],
-  ['C+k C+d', () => formatDocument()],
+  ['g g',               () => goToTop()],
+  ['Control+k Control+d', () => formatDocument()],
 ]);
 ```
 
@@ -228,7 +230,7 @@ ctx.setChord('a+b', (pressed) => {
 });
 
 // Modifier chord
-ctx.setChord('C+j+k', () => {
+ctx.setChord('Control+j+k', () => {
   console.log('Ctrl+J+K');
 });
 
@@ -294,9 +296,9 @@ A `Key` object is passed to every action callback.
 
 ```ts
 key.key        // raw DOM key name, e.g. 'a', 'Enter', ' '
-key.mod        // modifier string, e.g. 'C', 'CS', 'ACMS'
+key.mod        // modifier string, e.g. 'Control', 'Control+Shift', 'Alt+Control+Meta+Shift'
 key.ts         // Date.now() timestamp
-key.sig()      // full Signature string, e.g. 'C+s', 'Space'
+key.sig()      // full Signature string, e.g. 'Control+s', 'Space'
 key.event      // original KeyboardEvent (if available)
 key.propagate  // mutable — set to true inside a handler to bubble to parent
 ```
@@ -319,8 +321,8 @@ ctx.setRemap('Return', 'Enter');
 // Now a binding for 'Escape' fires when 'Esc' (or 'Escape') is received
 ctx.map.setPress('Escape', () => cancel());
 
-// Modifiers are preserved: Ctrl+Esc → matches 'C+Escape'
-ctx.map.setPress('C+Escape', () => closeAll());
+// Modifiers are preserved: Ctrl+Esc → matches 'Control+Escape'
+ctx.map.setPress('Control+Escape', () => closeAll());
 
 // Remove a remapping
 ctx.delRemap('Esc');

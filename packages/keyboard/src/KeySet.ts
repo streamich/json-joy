@@ -1,3 +1,4 @@
+import {isMod} from './util';
 import type {Key} from './Key';
 import type {Printable} from 'tree-dump';
 
@@ -22,9 +23,7 @@ export class KeySet implements Printable {
 
   /** Removes all non-modifier keys, keeping Meta, Control, Alt, Shift. */
   public clearNonMods(): void {
-    this.keys = this.keys.filter(
-      (k) => k.key === 'Meta' || k.key === 'Control' || k.key === 'Alt' || k.key === 'Shift',
-    );
+    this.keys = this.keys.filter((k) => isMod(k.key));
   }
 
   public start(): number {
@@ -41,18 +40,22 @@ export class KeySet implements Printable {
 
   /**
    * Builds the canonical chord signature for the current pressed set,
-   * e.g. `'C+a+b'` when Ctrl+A and Ctrl+B are both held.
+   * e.g. `'Control+a+b'` when Ctrl+A and Ctrl+B are both held.
    *
    * - Key names are normalized the same way `Key.sig()` does it and then
    *   sorted alphabetically.
+   * - Modifier keys (Alt, Control, Meta, Shift) are excluded from the
+   *   chord key list since they're already represented in the mod prefix.
    * - The shared modifier prefix is taken from the first key in insertion order.
    *   All chord keys are expected to share the same modifier state.
    */
-  public chordSig(): string {
+  public sig(): string {
     const normalized = this.keys
+      .filter((k) => !isMod(k.key))
       .map((k) => (k.key === ' ' ? 'Space' : k.key.length === 1 ? k.key.toLowerCase() : k.key))
       .sort();
     const mod = this.keys[0]?.mod ?? '';
+    if (!normalized.length) return mod;
     return mod ? `${mod}+${normalized.join('+')}` : normalized.join('+');
   }
 

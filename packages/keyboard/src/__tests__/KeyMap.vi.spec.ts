@@ -138,7 +138,7 @@ describe('KeyMap', () => {
     test('plain a does not match ctrl-a', () => {
       const map = new KeyMap();
       map.setPress('a', () => {});
-      const ctrlA = new Key('a', Date.now(), 'C');
+      const ctrlA = new Key('a', Date.now(), 'Control');
       expect(map.matchPress(ctrlA)).toBeUndefined();
     });
   });
@@ -155,7 +155,7 @@ describe('KeyMap', () => {
           },
         ],
       ]);
-      const key = new Key('s', Date.now(), 'C');
+      const key = new Key('s', Date.now(), 'Control');
       const matches = map.matchPress(key);
       expect(matches).toBeDefined();
       matches![0].action(key);
@@ -173,7 +173,7 @@ describe('KeyMap', () => {
           },
         ],
       ]);
-      const key = new Key('k', Date.now(), 'MS');
+      const key = new Key('k', Date.now(), 'Meta+Shift');
       const matches = map.matchPress(key);
       expect(matches).toBeDefined();
       matches![0].action(key);

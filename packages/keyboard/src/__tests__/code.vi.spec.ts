@@ -36,17 +36,17 @@ describe('Key.codeSig()', () => {
   });
 
   test('includes modifier prefix', () => {
-    const key = new Key('z', 0, 'C', undefined, 'KeyW');
-    expect(key.codeSig()).toBe('C+@KeyW');
+    const key = new Key('z', 0, 'Control', undefined, 'KeyW');
+    expect(key.codeSig()).toBe('Control+@KeyW');
   });
 
   test('includes multiple modifiers', () => {
-    const key = new Key('z', 0, 'CS', undefined, 'KeyW');
-    expect(key.codeSig()).toBe('CS+@KeyW');
+    const key = new Key('z', 0, 'Control+Shift', undefined, 'KeyW');
+    expect(key.codeSig()).toBe('Control+Shift+@KeyW');
   });
 
   test('falls back to sig() when code is undefined', () => {
-    const key = new Key('a', 0, 'C');
+    const key = new Key('a', 0, 'Control');
     expect(key.codeSig()).toBe(key.sig());
   });
 
@@ -76,10 +76,10 @@ describe('KeyMap with code-based bindings', () => {
   test('matches C+@KeyS binding', () => {
     const map = new KeyMap();
     let called = 0;
-    map.setPress('C+@KeyS' as any, () => {
+    map.setPress('Control+@KeyS' as any, () => {
       called++;
     });
-    const key = new Key('s', Date.now(), 'C', undefined, 'KeyS');
+    const key = new Key('s', Date.now(), 'Control', undefined, 'KeyS');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
     matches![0].action(key);
@@ -116,13 +116,13 @@ describe('KeyMap with code-based bindings', () => {
     let called = 0;
     map.bind([
       [
-        'C+@KeyS' as any,
+        'Control+@KeyS' as any,
         () => {
           called++;
         },
       ],
     ]);
-    const key = new Key('s', Date.now(), 'C', undefined, 'KeyS');
+    const key = new Key('s', Date.now(), 'Control', undefined, 'KeyS');
     const matches = map.matchPress(key);
     expect(matches).toBeDefined();
     matches![0].action(key);
@@ -197,7 +197,7 @@ describe('KeyMap with code-based bindings', () => {
     let called = 0;
     map.bind([
       [
-        'P+@KeyS' as any,
+        'Primary+@KeyS' as any,
         () => {
           called++;
         },
