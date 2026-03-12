@@ -4,7 +4,6 @@ import {KeyContext} from '@jsonjoy.com/keyboard';
 import {InputController} from './controllers/InputController';
 import {CursorController} from './controllers/CursorController';
 import {RichTextController} from './controllers/RichTextController';
-import {KeyController} from './controllers/KeyController';
 import {CompositionController} from './controllers/CompositionController';
 import {ElementAttr} from '../constants';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
@@ -22,7 +21,6 @@ import type {DomFacade, DomFacadeElement} from './facade/types';
 export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
   public readonly txt: Peritext;
   public readonly et: PeritextEventTarget;
-  public readonly keys: KeyController;
   public readonly comp: CompositionController;
   public readonly input: InputController;
   public readonly cursor: CursorController;
@@ -47,7 +45,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     const {txt} = events;
     this.txt = txt;
     this.et = events.et;
-    this.keys = new KeyController(this);
     this.comp = new CompositionController(this);
     this.input = new InputController(this);
     this.cursor = new CursorController(this);
@@ -82,7 +79,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     style.setProperty('--jsonjoy-peritext-id', et.id + '');
     style.setProperty('--jsonjoy-peritext-editable', 'yes');
     const stopHeadless = this.headless.start();
-    const stopKeys = this.keys.start();
     const stopComp = this.comp.start();
     const stopInput = this.input.start();
     const stopCursor = this.cursor.start();
@@ -90,7 +86,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
     return () => {
       (el as any).contentEditable = 'false';
       stopHeadless();
-      stopKeys();
       stopComp();
       stopInput();
       stopCursor();
@@ -178,7 +173,6 @@ export class DomController implements UiLifeCycles, Printable, PeritextUiApi {
       printTree(tab, [
         () => 'blocks: ' + this.blocks.size() + ', inlines: ' + this.inlines.size(),
         (tab) => this.cursor.toString(tab),
-        (tab) => this.keys.toString(tab),
         this.kbd ? (tab) => this.kbd!.toString(tab) : null,
         (tab) => this.comp.toString(tab),
         (tab) => this.headless.toString(tab),

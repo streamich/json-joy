@@ -1,7 +1,7 @@
-import {getCursorPosition, unit} from '../../util';
-import {ElementAttr} from '../../constants';
 import {throttle} from 'json-joy/lib/util/throttle';
 import {ValueSyncStore} from 'json-joy/lib/util/events/sync-store';
+import {getCursorPosition, unit} from '../../util';
+import {ElementAttr} from '../../constants';
 import type {Printable} from 'tree-dump';
 import type {UiLifeCycles} from '../../types';
 import type {Inline} from 'json-joy/lib/json-crdt-extensions/peritext/block/Inline';
@@ -94,8 +94,8 @@ export class CursorController implements UiLifeCycles, Printable {
         const at = this.posAtPoint(clientX, clientY);
         if (at === -1) return;
         this.selAnchor = at;
-        const pressed = this.dom.keys.pressed;
-        if (pressed.has('Shift')) {
+        const pressed = this.dom.kbd?.pressed;
+        if (pressed?.sig() === 'Shift') {
           ev.preventDefault();
           et.move(
             [
@@ -104,7 +104,7 @@ export class CursorController implements UiLifeCycles, Printable {
             ],
             [at],
           );
-        } else if (pressed.has('Alt')) {
+        } else if (pressed?.sig() === 'Alt') {
           ev.preventDefault();
           et.cursor({at: [at], add: true});
         } else {

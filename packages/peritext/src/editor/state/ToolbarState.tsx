@@ -277,14 +277,11 @@ export class ToolbarState implements UiLifeCycles {
     document.addEventListener('keydown', onKeyDownDocument);
     et.addEventListener('cursor', onCursor);
 
-    const unsubscribeKeyHistory = dom.keys.history.subscribe(() => {
-      // Flip selection anchor and focus edges on quick [Meta, Meta] key sequence.
-      const keys = dom.keys.history.value;
-      const last = keys[keys.length - 1];
-      const beforeLast = keys[keys.length - 2];
-      if (last?.key === 'Meta' && beforeLast?.key === 'Meta')
-        if (last.ts - beforeLast.ts < 500) et.cursor({flip: true});
-    });
+    const unsubscribeKeyBind = dom.kbd?.bind([
+      ['Meta Meta', () => {
+        et.cursor({flip: true});
+      }],
+    ]);
 
     return () => {
       changeUnsubscribe();
@@ -294,7 +291,7 @@ export class ToolbarState implements UiLifeCycles {
       el.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('keydown', onKeyDownDocument);
       et.removeEventListener('cursor', onCursor);
-      unsubscribeKeyHistory();
+      unsubscribeKeyBind?.();
     };
   }
 
