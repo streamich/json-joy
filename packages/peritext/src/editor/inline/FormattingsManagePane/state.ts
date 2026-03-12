@@ -64,6 +64,13 @@ export class FormattingManageState {
     const formatting = shadowFormatting.saved;
     const data = formatting.conf();
     if (!data) return;
+    // if (!data) {
+    //   // Slice has no stored data node (e.g. plain-toggle marks like math).
+    //   // The Edit component is responsible for its own save; just close the panel.
+    //   this.switchToViewPanel();
+    //   this.state.surface.rerender();
+    //   return;
+    // }
     const model = data.api.model;
     const patch = new JsonCrdtDiff(model).diff(data.node, view);
     if (patch.ops.length) model.applyPatch(patch);
@@ -78,11 +85,11 @@ export class SavedShadowFormatting<Node extends ObjNode = ObjNode> extends Saved
   constructor(public readonly saved: SavedFormatting<Node>) {
     super(saved.behavior, saved.range, saved.state);
     const nodeApi = saved.conf();
-    const schema = nodeApi ? toSchema(nodeApi.node) : void 0;
-    this._model = Model.create(schema);
+    const schema = nodeApi ? toSchema(nodeApi.node) : saved.behavior.schema;
+    this._model = Model.create(schema as any);
   }
 
   public conf(): ObjApi<Node> | undefined {
-    return this._model.api.obj([]) as ObjApi<Node>;
+    return this._model.api.obj([]) as unknown as ObjApi<Node>;
   }
 }

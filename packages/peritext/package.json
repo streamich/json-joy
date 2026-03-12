@@ -46,7 +46,8 @@
     "@uiw/react-color-alpha": "^2.9.5",
     "@uiw/react-color-hue": "^2.9.5",
     "@uiw/react-color-saturation": "^2.9.5",
-    "json-joy": "workspace:*"
+    "json-joy": "workspace:*",
+    "mathlive": "^0.109.0"
   },
   "peerDependencies": {
     "react": "*",

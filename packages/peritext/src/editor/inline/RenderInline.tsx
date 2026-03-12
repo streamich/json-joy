@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Spoiler} from './Spoiler';
 import {Code} from './Code';
+import {InlineMath} from './InlineMath';
 import {Kbd} from './Kbd';
 import {Ins} from './Ins';
 import {Del} from './Del';
@@ -26,19 +27,29 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   if (attrs[SliceTypeCon.mark]) element = <mark>{element}</mark>;
   if (attrs[SliceTypeCon.sup]) element = <sup>{element}</sup>;
   if (attrs[SliceTypeCon.sub]) element = <sub>{element}</sub>;
-  if (attrs[SliceTypeCon.math]) element = <code>{element}</code>;
   if (attrs[SliceTypeCon.ins]) element = <Ins>{element}</Ins>;
   if (attrs[SliceTypeCon.del]) element = <Del>{element}</Del>;
-  if (attrs[SliceTypeCon.code]) {
-    const attr = attrs[SliceTypeCon.code][0];
+
+  // TODO: for exclusive layers, only render one decoration.
+
+  let layers = attrs[SliceTypeCon.code];
+  if (layers) {
+    const attr = layers[layers.length - 1];
     if (attr) element = <Code attr={attr}>{element}</Code>;
   }
-  if (attrs[SliceTypeCon.kbd]) {
-    const attr = attrs[SliceTypeCon.kbd][0];
+  layers = attrs[SliceTypeCon.math];
+  if (layers) {
+    const attr = layers[layers.length - 1];
+    if (attr) element = <InlineMath attr={attr}>{element}</InlineMath>;
+  }
+  layers = attrs[SliceTypeCon.kbd];
+  if (layers) {
+    const attr = layers[layers.length - 1];
     if (attr) element = <Kbd attr={attr}>{element}</Kbd>;
   }
-  if (attrs[SliceTypeCon.spoiler]) {
-    const attr = attrs[SliceTypeCon.spoiler][0];
+  layers = attrs[SliceTypeCon.spoiler];
+  if (layers) {
+    const attr = layers[layers.length - 1];
     if (attr) element = <Spoiler attr={attr}>{element}</Spoiler>;
   }
   return element;

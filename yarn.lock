@@ -693,6 +693,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cortex-js/compute-engine@npm:0.30.2":
+  version: 0.30.2
+  resolution: "@cortex-js/compute-engine@npm:0.30.2"
+  dependencies:
+    complex-esm: "npm:^2.1.1-esm1"
+    decimal.js: "npm:^10.6.0"
+  checksum: 10c0/9f6d8d251a3a3dec0cc71bbdd5b561965db82a1719cee72fa9154b4fd3d726dcbda9502358b20ea20107f442b75de0833eeaa09a8fed6a331cea90b4899b912f
+  languageName: node
+  linkType: hard
+
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -2651,6 +2661,7 @@ __metadata:
     "@uiw/react-color-hue": "npm:^2.9.5"
     "@uiw/react-color-saturation": "npm:^2.9.5"
     json-joy: "workspace:*"
+    mathlive: "npm:^0.109.0"
   peerDependencies:
     react: "*"
     tslib: "*"
@@ -6328,6 +6339,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"complex-esm@npm:^2.1.1-esm1":
+  version: 2.1.1-esm1
+  resolution: "complex-esm@npm:2.1.1-esm1"
+  checksum: 10c0/65725286ea8513785333a9d710ee5fafb6e32a24bc12648ba6ba62ab3c8cc380d79d7a8f542159c7fb5134364eb294e5446dd5e6b83aaffdb4dfeb27a227bc89
+  languageName: node
+  linkType: hard
+
 "compressible@npm:~2.0.18":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -6663,7 +6681,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decimal.js@npm:^10.5.0":
+"decimal.js@npm:^10.5.0, decimal.js@npm:^10.6.0":
   version: 10.6.0
   resolution: "decimal.js@npm:10.6.0"
   checksum: 10c0/07d69fbcc54167a340d2d97de95f546f9ff1f69d2b45a02fd7a5292412df3cd9eb7e23065e532a318f5474a2e1bccf8392fdf0443ef467f97f3bf8cb0477e5aa
@@ -10653,6 +10671,15 @@ __metadata:
   version: 1.1.0
   resolution: "math-intrinsics@npm:1.1.0"
   checksum: 10c0/7579ff94e899e2f76ab64491d76cf606274c874d8f2af4a442c016bd85688927fcfca157ba6bf74b08e9439dc010b248ce05b96cc7c126a354c3bae7fcb48b7f
+  languageName: node
+  linkType: hard
+
+"mathlive@npm:^0.109.0":
+  version: 0.109.0
+  resolution: "mathlive@npm:0.109.0"
+  dependencies:
+    "@cortex-js/compute-engine": "npm:0.30.2"
+  checksum: 10c0/2bcdf3b81a9631834d021afc42fd04a396cc14a5b3aca7f723c0f87ed68d273156beeb298eff270b2d2812e343606c93957fc36a3f02fd7546cbb8086a9f8744
   languageName: node
   linkType: hard
 
