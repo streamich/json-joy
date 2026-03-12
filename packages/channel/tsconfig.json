@@ -1,0 +1,31 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/demo",
+    "src/__tests__",
+    "src/**/__demos__/**/*.*",
+    "src/**/__tests__/**/*.*",
+    "src/**/__bench__/**/*.*",
+    "src/**/__mocks__/**/*.*",
+    "src/**/__jest__/**/*.*",
+    "src/**/__mocha__/**/*.*",
+    "src/**/__tap__/**/*.*",
+    "src/**/__tape__/**/*.*",
+    "*.test.ts",
+    "*.spec.ts",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
+  ],
+  "references": [
+    {
+      "path": "../json-joy"
+    }
+  ]
+}
