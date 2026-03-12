@@ -11,7 +11,7 @@ export interface ExpandSubChildrenProps {
 
 export const ExpandSubChildren: React.FC<ExpandSubChildrenProps> = ({item, parent, disabled}) => {
   const nodes: React.ReactNode[] = [];
-  const children = item.children;
+  const children = parent.preview ?? item.preview ?? item.children;
   const length = children?.length ?? 0;
   const max = Math.min(item.expand ?? 4, 4);
 

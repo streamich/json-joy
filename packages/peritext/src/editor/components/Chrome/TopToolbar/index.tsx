@@ -106,7 +106,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({ctx}) => {
 
   return (
     <div>
-      <ToolbarMenu menu={toolbar.documentMenu()} pane={false} />
+      <ToolbarMenu menu={toolbar.menu.doc.build()} pane={false} />
     </div>
   );
 };

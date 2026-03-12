@@ -2,6 +2,7 @@ import * as React from 'react';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
 import {PeritextEditor} from '.';
 import {DebugPlugin} from '../plugins/debug';
+import type {PeritextApi} from 'json-joy/src/json-crdt-extensions/peritext';
 
 const plugins0 = [new DebugPlugin()];
 
@@ -28,11 +29,10 @@ const markdown =
   'is used by the Clipboard Events API to hold multiple representations of data.';
 
 const Demo: React.FC = (props) => {
-  const [[model, peritext]] = React.useState(() => {
+  const [[model, node]] = React.useState(() => {
     const model = ModelWithExt.create(ext.peritext.new(''));
-    const peritext = model.s.toExt().txt;
-    peritext.refresh();
-    return [model, peritext] as const;
+    const node = model.s.toExt();
+    return [model, node as unknown as PeritextApi] as const;
   });
 
   React.useEffect(() => {
@@ -44,7 +44,7 @@ const Demo: React.FC = (props) => {
 
   return (
     <PeritextEditor
-      peritext={peritext}
+      node={node}
       plugins0={plugins0}
       onStart={(state) => {
         state.events.et.buffer({

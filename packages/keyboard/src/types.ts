@@ -18,6 +18,7 @@ export interface KeySink {
   onPress(key: Key): void;
   onRelease(key: Key): void;
   onReset(): void;
+  onFocus(): void;
 }
 
 export interface KeySource {
@@ -103,7 +104,7 @@ export type SigKey =
   | 'Space';
 export type SigRepeat = 'R';
 
-/** Normal key signature, e.g. `'a'`, `'C+s'`, `'S+F5:R'`. */
+/** Normal key signature, e.g. `'a'`, `'Control+s'`, `'Shift+F5:R'`. */
 export type SigNormal = `${`${SigMod}+` | ''}${SigKey}${`:${SigRepeat}` | ''}`;
 
 /**
@@ -137,9 +138,9 @@ export type KeyBindingShorthand = [signature: Signature, action: KeyAction, opti
 export type KeyAction = (key: Key) => void;
 
 /**
- * Canonical signature for a chord, e.g. `'a+b'`, `'C+j+k'`. Keys are sorted
+ * Canonical signature for a chord, e.g. `'a+b'`, `'Control+j+k'`. Keys are sorted
  * alphabetically after normalization; the shared modifier prefix (if any)
- * precedes them, e.g. `'C+a+b'`.
+ * precedes them, e.g. `'Control+a+b'`.
  */
 export type ChordSignature = string;
 
@@ -170,7 +171,7 @@ export type ChordAction = (pressed: KeySet) => void;
  */
 export type ChordBindingShorthand = [signature: ChordSignature, action: ChordAction, options?: ChordBindingOptions];
 
-/** Space-separated list of Signature steps, e.g. `"g g"` or `"C+k C+d"`. */
+/** Space-separated list of Signature steps, e.g. `"g g"` or `"Control+k Control+d"`. */
 export type SequenceSignature = string;
 
 export interface SequenceBindingOptions {

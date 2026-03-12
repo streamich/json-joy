@@ -1,10 +1,10 @@
 import * as React from 'react';
-import type {ToolbarState} from './state';
+import type {EditorState} from './state';
 import type {PeritextSurfaceState} from '../web/state';
 
 export interface ToolbarPluginContextValue {
   surface: PeritextSurfaceState;
-  toolbar: ToolbarState;
+  toolbar: EditorState;
 }
 
 export const context = React.createContext<ToolbarPluginContextValue>(null!);

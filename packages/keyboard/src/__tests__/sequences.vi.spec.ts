@@ -37,10 +37,10 @@ describe('key sequences', () => {
   test('Ctrl+K Ctrl+D sequence', async () => {
     const {ctx, src} = setup();
     let hit = 0;
-    ctx.map.setSequence('C+k C+d', () => hit++);
+    ctx.map.setSequence('Control+k Control+d', () => hit++);
     await src.sendSequence([
-      ['k', 'C'],
-      ['d', 'C'],
+      ['k', 'Control'],
+      ['d', 'Control'],
     ]);
     expect(hit).toBe(1);
   });

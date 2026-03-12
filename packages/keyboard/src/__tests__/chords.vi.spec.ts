@@ -15,47 +15,47 @@ describe('KeySet.chordSig()', () => {
 
   test('two keys, no modifier', () => {
     const set = new KeySet([mk('a'), mk('b')]);
-    expect(set.chordSig()).toBe('a+b');
+    expect(set.sig()).toBe('a+b');
   });
 
   test('keys are sorted alphabetically', () => {
     const set = new KeySet([mk('b'), mk('a')]);
-    expect(set.chordSig()).toBe('a+b');
+    expect(set.sig()).toBe('a+b');
   });
 
   test('shared modifier prefix is included', () => {
-    const set = new KeySet([mk('a', 'C'), mk('b', 'C')]);
-    expect(set.chordSig()).toBe('C+a+b');
+    const set = new KeySet([mk('a', 'Control'), mk('b', 'Control')]);
+    expect(set.sig()).toBe('Control+a+b');
   });
 
   test('three keys sorted', () => {
     const set = new KeySet([mk('c'), mk('a'), mk('b')]);
-    expect(set.chordSig()).toBe('a+b+c');
+    expect(set.sig()).toBe('a+b+c');
   });
 
   test('space is normalised to Space', () => {
     const set = new KeySet([mk(' '), mk('a')]);
-    expect(set.chordSig()).toBe('Space+a');
+    expect(set.sig()).toBe('Space+a');
   });
 
   test('uppercase single char keys are lowercased', () => {
     const set = new KeySet([mk('A'), mk('B')]);
-    expect(set.chordSig()).toBe('a+b');
+    expect(set.sig()).toBe('a+b');
   });
 
   test('multi-char key names preserved as-is', () => {
     const set = new KeySet([mk('Enter'), mk('a')]);
-    expect(set.chordSig()).toBe('Enter+a');
+    expect(set.sig()).toBe('Enter+a');
   });
 
   test('single key returns just that key name', () => {
     const set = new KeySet([mk('a')]);
-    expect(set.chordSig()).toBe('a');
+    expect(set.sig()).toBe('a');
   });
 
   test('empty set returns empty string', () => {
     const set = new KeySet();
-    expect(set.chordSig()).toBe('');
+    expect(set.sig()).toBe('');
   });
 });
 
@@ -133,18 +133,18 @@ describe('basic chord dispatch', () => {
   test('modifier-qualified chord', () => {
     const {ctx, src} = setup();
     let hits = 0;
-    ctx.setChord('C+a+b', () => {
+    ctx.setChord('Control+a+b', () => {
       hits++;
     });
-    src.press('a', 'C');
-    src.press('b', 'C');
+    src.press('a', 'Control');
+    src.press('b', 'Control');
     expect(hits).toBe(1);
   });
 
   test('modifier-qualified chord does not fire for unmodified keys', () => {
     const {ctx, src} = setup();
     let hits = 0;
-    ctx.setChord('C+a+b', () => {
+    ctx.setChord('Control+a+b', () => {
       hits++;
     });
     src.press('a');

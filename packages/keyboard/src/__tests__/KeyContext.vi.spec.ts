@@ -190,32 +190,33 @@ describe('.child() with custom source', () => {
     expect(parentHits).toBe(1);
   });
 
-  test('creating a second child detaches the first', async () => {
+  test('creating multiple children adds all to the children set', async () => {
     await using kit = await setup();
-    const _child1 = kit.ctx.child('first');
+    const child1 = kit.ctx.child('first');
     const child2 = kit.ctx.child('second');
-    expect(kit.ctx._child).toBe(child2);
+    expect(kit.ctx.children.has(child1)).toBe(true);
+    expect(kit.ctx.children.has(child2)).toBe(true);
   });
 });
 
 describe('Meta key stuck workaround', () => {
   test('releasing Meta clears non-modifier keys from pressed', async () => {
     await using kit = await setup();
-    kit.src.press('Meta', 'M');
-    kit.src.press('c', 'M');
+    kit.src.press('Meta', 'Meta');
+    kit.src.press('c', 'Meta');
     expect(kit.ctx.pressed.keys.map((k) => k.key)).toEqual(['Meta', 'c']);
     // Browser does not fire keyup for 'c' on macOS — only Meta keyup fires
-    kit.src.release('Meta', 'M');
+    kit.src.release('Meta', 'Meta');
     expect(kit.ctx.pressed.keys.map((k) => k.key)).toEqual([]);
   });
 
   test('releasing Meta keeps other modifier keys in pressed', async () => {
     await using kit = await setup();
-    kit.src.press('Control', 'C');
-    kit.src.press('Meta', 'CM');
-    kit.src.press('s', 'CM');
+    kit.src.press('Control', 'Control');
+    kit.src.press('Meta', 'Control+Meta');
+    kit.src.press('s', 'Control+Meta');
     // simulate macOS: no keyup for 's', only Meta keyup
-    kit.src.release('Meta', 'CM');
+    kit.src.release('Meta', 'Control+Meta');
     // Control should still be in pressed; 's' should be gone
     expect(kit.ctx.pressed.keys.map((k) => k.key)).toEqual(['Control']);
   });
@@ -686,5 +687,130 @@ describe("'?' fallback wildcard", () => {
     unbind();
     kit.src.press('w');
     expect(fallback).toBe(1);
+  });
+});
+
+describe('multi-child', () => {
+  test('two sibling children, active receives fed events', async () => {
+    await using kit = await setup();
+    let hits1 = 0;
+    let hits2 = 0;
+    const child1 = kit.ctx.child('c1');
+    const child2 = kit.ctx.child('c2');
+    child1.map.setPress('a', () => { hits1++; });
+    child2.map.setPress('a', () => { hits2++; });
+    // child1 is auto-active (first fed child); child2 is not active yet
+    kit.src.press('a');
+    expect(hits1).toBe(1);
+    expect(hits2).toBe(0);
+    // switch to child2
+    child2.focus();
+    kit.src.press('a');
+    expect(hits1).toBe(1);
+    expect(hits2).toBe(1);
+  });
+
+  test('calling .focus() sets active up the chain', async () => {
+    await using kit = await setup();
+    const [global] = KeyContext.global('g');
+    const view = global.child('view');
+    const editor1 = view.child('editor1');
+    const editor2 = view.child('editor2');
+    expect(view.active).toBe(editor1); // auto-activated first child
+    editor2.focus();
+    expect(view.active).toBe(editor2);
+    expect(global.active).toBe(view);
+  });
+
+  test('auto-focus via onFocus() propagates up', async () => {
+    await using kit = await setup();
+    const [global] = KeyContext.global('g');
+    const view = global.child('view');
+    const editor1 = view.child('editor1');
+    const editor2 = view.child('editor2');
+    // editor1 is auto-active; simulate focus on editor2
+    editor2.onFocus();
+    expect(view.active).toBe(editor2);
+    expect(global.active).toBe(view);
+    void editor1;
+  });
+
+  test('only active fed child receives onPress_', async () => {
+    await using kit = await setup();
+    let hits1 = 0;
+    let hits2 = 0;
+    const child1 = kit.ctx.child('c1');
+    const child2 = kit.ctx.child('c2');
+    child1.map.setPress('x', () => { hits1++; });
+    child2.map.setPress('x', () => { hits2++; });
+    // child1 is auto-active
+    kit.src.press('x');
+    expect(hits1).toBe(1);
+    expect(hits2).toBe(0);
+    child2.focus();
+    kit.src.press('x');
+    expect(hits1).toBe(1);
+    expect(hits2).toBe(1);
+  });
+
+  test('child with own source: parent drops its source event', async () => {
+    await using kit = await setup();
+    let parentHits = 0;
+    let childHits = 0;
+    kit.ctx.map.setPress('a', () => { parentHits++; });
+    const ownSrc = new KeySourceManual();
+    const child = kit.ctx.child('ownSrc', ownSrc as any);
+    child.map.setPress('a', () => { childHits++; });
+    // child._fed is false → ctx.active is not set → parent handles its own event
+    kit.src.press('a');
+    expect(parentHits).toBe(1); // parent handles its own source directly
+    expect(childHits).toBe(0);
+    // child's own source fires separately
+    ownSrc.press('a');
+    expect(childHits).toBe(1);
+  });
+
+  test('dispose() removes child from parent.children', async () => {
+    await using kit = await setup();
+    const child = kit.ctx.child('toRemove');
+    expect(kit.ctx.children.has(child)).toBe(true);
+    child.dispose();
+    expect(kit.ctx.children.has(child)).toBe(false);
+  });
+
+  test('dispose() clears parent.active when disposed child was active', async () => {
+    await using kit = await setup();
+    const child = kit.ctx.child('active');
+    expect(kit.ctx.active).toBe(child);
+    child.dispose();
+    expect(kit.ctx.active).toBeUndefined();
+  });
+
+  test('dispose() recursively disposes grandchildren', async () => {
+    await using kit = await setup();
+    const child = kit.ctx.child('child');
+    const grandchild = child.child('grandchild');
+    expect(child.children.has(grandchild)).toBe(true);
+    child.dispose();
+    expect(child.children.size).toBe(0);
+    expect(kit.ctx.children.has(child)).toBe(false);
+    void grandchild;
+  });
+
+  test('keys bubble from active leaf up through all ancestors', async () => {
+    await using kit = await setup();
+    let rootHits = 0;
+    let childHits = 0;
+    let grandchildHits = 0;
+    kit.ctx.bind([['b', () => { rootHits++; }, {propagate: true}]]);
+    const child = kit.ctx.child('child');
+    child.bind([['b', () => { childHits++; }, {propagate: true}]]);
+    const grandchild = child.child('grandchild');
+    grandchild.bind([['b', () => { grandchildHits++; }, {propagate: true}]]);
+    // grandchild is auto-active in child; child is auto-active in ctx
+    kit.src.press('b');
+    expect(grandchildHits).toBe(1);
+    expect(childHits).toBe(1);
+    expect(rootHits).toBe(1);
   });
 });

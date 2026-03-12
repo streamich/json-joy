@@ -50,6 +50,9 @@ export interface MenuItem {
   /** Keyboard shortcut key combination. */
   keys?: string[];
 
+  /** Subset of children to show in the toolbar preview before expanding the item. */
+  preview?: MenuItem[];
+
   /** Children of this item. */
   children?: MenuItem[];
 

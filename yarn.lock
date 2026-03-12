@@ -693,6 +693,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cortex-js/compute-engine@npm:0.30.2":
+  version: 0.30.2
+  resolution: "@cortex-js/compute-engine@npm:0.30.2"
+  dependencies:
+    complex-esm: "npm:^2.1.1-esm1"
+    decimal.js: "npm:^10.6.0"
+  checksum: 10c0/9f6d8d251a3a3dec0cc71bbdd5b561965db82a1719cee72fa9154b4fd3d726dcbda9502358b20ea20107f442b75de0833eeaa09a8fed6a331cea90b4899b912f
+  languageName: node
+  linkType: hard
+
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -1936,7 +1946,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/collaborative-ace": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     ace-builds: "npm:^1.43.6"
@@ -1975,7 +1985,7 @@ __metadata:
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     codemirror: "npm:^6.0.2"
@@ -1997,7 +2007,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/collaborative-input": "workspace:*"
     "@jsonjoy.com/collaborative-str": "workspace:*"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2013,7 +2023,7 @@ __metadata:
   resolution: "@jsonjoy.com/collaborative-input@workspace:packages/collaborative-input"
   dependencies:
     "@jsonjoy.com/collaborative-str": "workspace:*"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2031,7 +2041,7 @@ __metadata:
     "@jsonjoy.com/collaborative-monaco": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@monaco-editor/react": "npm:^4.7.0"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2114,7 +2124,7 @@ __metadata:
     "@jsonjoy.com/json-random": "workspace:^"
     "@jsonjoy.com/ui": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     jest-environment-jsdom: "npm:^30.2.0"
@@ -2142,7 +2152,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-quill": "workspace:*"
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2232,7 +2242,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-str@workspace:packages/collaborative-str"
   dependencies:
-    "@storybook/react": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     json-joy: "workspace:*"
@@ -2639,7 +2649,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/keyboard@workspace:packages/keyboard":
+"@jsonjoy.com/keyboard@workspace:*, @jsonjoy.com/keyboard@workspace:packages/keyboard":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/keyboard@workspace:packages/keyboard"
   dependencies:
@@ -2656,11 +2666,13 @@ __metadata:
   dependencies:
     "@jsonjoy.com/collaborative-react": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/keyboard": "workspace:*"
     "@uiw/color-convert": "npm:^2.9.5"
     "@uiw/react-color-alpha": "npm:^2.9.5"
     "@uiw/react-color-hue": "npm:^2.9.5"
     "@uiw/react-color-saturation": "npm:^2.9.5"
     json-joy: "workspace:*"
+    mathlive: "npm:^0.109.0"
   peerDependencies:
     react: "*"
     tslib: "*"
@@ -3482,15 +3494,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-a11y@npm:^10.2.8":
-  version: 10.2.8
-  resolution: "@storybook/addon-a11y@npm:10.2.8"
+"@storybook/addon-a11y@npm:^10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/addon-a11y@npm:10.2.17"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     axe-core: "npm:^4.2.0"
   peerDependencies:
-    storybook: ^10.2.8
-  checksum: 10c0/1673f5829d80dc60a43e7f76598679c4c4e9af987151e9850ae000abf033706f3ccb5b6143319ee33c7d0628c6317d90cff06947cc8e499f75cc498745f085c4
+    storybook: ^10.2.17
+  checksum: 10c0/5551c14546aea26ffd0dd964122e4e5684da1d97c59a3b27779e46c2c560db4808f9bcf9a1406a249f703e2b3aa94d934e5cc4d8d070c3be0ede5dd2844c92cd
   languageName: node
   linkType: hard
 
@@ -3506,11 +3518,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/builder-webpack5@npm:10.2.8":
-  version: 10.2.8
-  resolution: "@storybook/builder-webpack5@npm:10.2.8"
+"@storybook/builder-webpack5@npm:10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/builder-webpack5@npm:10.2.17"
   dependencies:
-    "@storybook/core-webpack": "npm:10.2.8"
+    "@storybook/core-webpack": "npm:10.2.17"
     case-sensitive-paths-webpack-plugin: "npm:^2.4.0"
     cjs-module-lexer: "npm:^1.2.3"
     css-loader: "npm:^7.1.2"
@@ -3526,22 +3538,22 @@ __metadata:
     webpack-hot-middleware: "npm:^2.25.1"
     webpack-virtual-modules: "npm:^0.6.0"
   peerDependencies:
-    storybook: ^10.2.8
+    storybook: ^10.2.17
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/f93720f03c12eb20be73a96d02b51b5c7d37942172e4e0af463132801cd850d382ce82887fd362763be7f69d71a4c99f4f1677b3b7a5d35fd5a418e3d9c834ef
+  checksum: 10c0/42fa0bd201263ddb04d4727d043d9ad0e1f16aa99d0514ba12c55f837fbf2ab2d4e767e64083e4d43772b227ebb2a5409e8b613b7315fc8ebf984824f4b5ee4c
   languageName: node
   linkType: hard
 
-"@storybook/core-webpack@npm:10.2.8":
-  version: 10.2.8
-  resolution: "@storybook/core-webpack@npm:10.2.8"
+"@storybook/core-webpack@npm:10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/core-webpack@npm:10.2.17"
   dependencies:
     ts-dedent: "npm:^2.0.0"
   peerDependencies:
-    storybook: ^10.2.8
-  checksum: 10c0/93a9bfd3caf51ff58625b102756b5b40a6989bef28aa5636f32da0979ae21ebd1b42bb39bfb125781304c914a4d3fa6ff0cceae51951aedd2a844d1a53047ef2
+    storybook: ^10.2.17
+  checksum: 10c0/91c3b7ec3817534deca9abbc927c606f95877b94989f79051784c7ef57ae31adce55e204de2865b6f815977bb5a561cd3c17e0846e589001e27739c9e088b0b8
   languageName: node
   linkType: hard
 
@@ -3562,11 +3574,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/preset-react-webpack@npm:10.2.8":
-  version: 10.2.8
-  resolution: "@storybook/preset-react-webpack@npm:10.2.8"
+"@storybook/preset-react-webpack@npm:10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/preset-react-webpack@npm:10.2.17"
   dependencies:
-    "@storybook/core-webpack": "npm:10.2.8"
+    "@storybook/core-webpack": "npm:10.2.17"
     "@storybook/react-docgen-typescript-plugin": "npm:1.0.6--canary.9.0c3f3b7.0"
     "@types/semver": "npm:^7.7.1"
     magic-string: "npm:^0.30.5"
@@ -3578,11 +3590,11 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    storybook: ^10.2.8
+    storybook: ^10.2.17
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/8f795e348ab108449ce2e276c33f42ba269eef134e0867f803e2160adc160fad529857600fec832d35583eed0b37689e3bbd2be7fc4f13b309f6e142800ecaf7
+  checksum: 10c0/efaece8adecf3393e90d98c229b78ee0e1c860469bba6c0c0f1bdef38f79d2ef96856d260d0652b6ba751d8af0563c6418f43ac3fb0a1ddd8bfe6952c60bf12c
   languageName: node
   linkType: hard
 
@@ -3604,6 +3616,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/react-dom-shim@npm:10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/react-dom-shim@npm:10.2.17"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^10.2.17
+  checksum: 10c0/b07987b1b48a65956e418ff6ded307695acc7ed07d002572270622a921494f05a733177f1fdcae14cc8e86c31c70532030ce6feec7e16294ece570446f445f9b
+  languageName: node
+  linkType: hard
+
 "@storybook/react-dom-shim@npm:10.2.8":
   version: 10.2.8
   resolution: "@storybook/react-dom-shim@npm:10.2.8"
@@ -3615,26 +3638,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react-webpack5@npm:^10.2.8":
-  version: 10.2.8
-  resolution: "@storybook/react-webpack5@npm:10.2.8"
+"@storybook/react-webpack5@npm:^10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/react-webpack5@npm:10.2.17"
   dependencies:
-    "@storybook/builder-webpack5": "npm:10.2.8"
-    "@storybook/preset-react-webpack": "npm:10.2.8"
-    "@storybook/react": "npm:10.2.8"
+    "@storybook/builder-webpack5": "npm:10.2.17"
+    "@storybook/preset-react-webpack": "npm:10.2.17"
+    "@storybook/react": "npm:10.2.17"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    storybook: ^10.2.8
+    storybook: ^10.2.17
     typescript: ">= 4.9.x"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/2cb127484202784fae63c152423168ee98cb450fa0030d8a8fe302948abe161c5e5db03ab6480c4919da8edc22cef9e98fc82e9b77993941b918024460990d17
+  checksum: 10c0/82ef1d86553622df304fe6341f1486727a742cd28daaae4e64c67377f742ae4ae8d5c7154d7780386c925325dbc62a8b53b189a9fbcca86a53724efc0c7577bb
   languageName: node
   linkType: hard
 
-"@storybook/react@npm:10.2.8, @storybook/react@npm:^10.2.8":
+"@storybook/react@npm:10.2.17, @storybook/react@npm:^10.2.17":
+  version: 10.2.17
+  resolution: "@storybook/react@npm:10.2.17"
+  dependencies:
+    "@storybook/global": "npm:^5.0.0"
+    "@storybook/react-dom-shim": "npm:10.2.17"
+    react-docgen: "npm:^8.0.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^10.2.17
+    typescript: ">= 4.9.x"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/8a50637062ddc9ce0da92b79aa1ecba3ce37bf9e7c45779ca7b5424a1268c2533943b9a711bde243a5fae0b82d102361f6f50a36cd1027e2c3e1068bc9468fb1
+  languageName: node
+  linkType: hard
+
+"@storybook/react@npm:^10.2.8":
   version: 10.2.8
   resolution: "@storybook/react@npm:10.2.8"
   dependencies:
@@ -6308,6 +6350,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"complex-esm@npm:^2.1.1-esm1":
+  version: 2.1.1-esm1
+  resolution: "complex-esm@npm:2.1.1-esm1"
+  checksum: 10c0/65725286ea8513785333a9d710ee5fafb6e32a24bc12648ba6ba62ab3c8cc380d79d7a8f542159c7fb5134364eb294e5446dd5e6b83aaffdb4dfeb27a227bc89
+  languageName: node
+  linkType: hard
+
 "compressible@npm:~2.0.18":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -6643,7 +6692,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decimal.js@npm:^10.5.0":
+"decimal.js@npm:^10.5.0, decimal.js@npm:^10.6.0":
   version: 10.6.0
   resolution: "decimal.js@npm:10.6.0"
   checksum: 10c0/07d69fbcc54167a340d2d97de95f546f9ff1f69d2b45a02fd7a5292412df3cd9eb7e23065e532a318f5474a2e1bccf8392fdf0443ef467f97f3bf8cb0477e5aa
@@ -10007,10 +10056,10 @@ __metadata:
     "@biomejs/biome": "npm:^2.2.6"
     "@monaco-editor/react": "npm:^4.7.0"
     "@radix-ui/react-icons": "npm:^1.3.1"
-    "@storybook/addon-a11y": "npm:^10.2.8"
+    "@storybook/addon-a11y": "npm:^10.2.17"
     "@storybook/addon-webpack5-compiler-swc": "npm:^4.0.2"
-    "@storybook/react": "npm:^10.2.8"
-    "@storybook/react-webpack5": "npm:^10.2.8"
+    "@storybook/react": "npm:^10.2.17"
+    "@storybook/react-webpack5": "npm:^10.2.17"
     "@types/benchmark": "npm:^2.1.5"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.8.1"
@@ -10031,7 +10080,7 @@ __metadata:
     react-dom: "npm:^19.2.3"
     rimraf: "npm:^6.1.2"
     rxjs: "npm:^7.8.2"
-    storybook: "npm:^10.2.8"
+    storybook: "npm:^10.2.17"
     ts-jest: "npm:^29.4.5"
     ts-loader: "npm:^9.5.4"
     ts-node: "npm:^10.9.2"
@@ -10092,6 +10141,7 @@ __metadata:
     "@jsonjoy.com/json-pointer": "workspace:*"
     "@jsonjoy.com/json-random": "workspace:*"
     "@jsonjoy.com/json-type": "workspace:*"
+    "@jsonjoy.com/keyboard": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
     "@jsonjoy.com/util": "workspace:*"
     "@radix-ui/react-icons": "npm:^1.3.1"
@@ -10632,6 +10682,15 @@ __metadata:
   version: 1.1.0
   resolution: "math-intrinsics@npm:1.1.0"
   checksum: 10c0/7579ff94e899e2f76ab64491d76cf606274c874d8f2af4a442c016bd85688927fcfca157ba6bf74b08e9439dc010b248ce05b96cc7c126a354c3bae7fcb48b7f
+  languageName: node
+  linkType: hard
+
+"mathlive@npm:^0.109.0":
+  version: 0.109.0
+  resolution: "mathlive@npm:0.109.0"
+  dependencies:
+    "@cortex-js/compute-engine": "npm:0.30.2"
+  checksum: 10c0/2bcdf3b81a9631834d021afc42fd04a396cc14a5b3aca7f723c0f87ed68d273156beeb298eff270b2d2812e343606c93957fc36a3f02fd7546cbb8086a9f8744
   languageName: node
   linkType: hard
 
@@ -13646,9 +13705,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^10.2.8":
-  version: 10.2.8
-  resolution: "storybook@npm:10.2.8"
+"storybook@npm:^10.2.17":
+  version: 10.2.17
+  resolution: "storybook@npm:10.2.17"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@storybook/icons": "npm:^2.0.1"
@@ -13669,7 +13728,7 @@ __metadata:
       optional: true
   bin:
     storybook: ./dist/bin/dispatcher.js
-  checksum: 10c0/b3ed541f233470d80d3fbef48083e8dcda50fc789ae16853b7a33bc003fdb9dfc5aeaa6d61fac5e2e1f78a9ee3bd13d6ff777a6cf6657b3d6f91c2bd9ab2f0da
+  checksum: 10c0/2dda91bd04171d1e6c5c84640952a46ccbe372fda0edfdeaa56d27afe660954fbfb7246cf27ac2aa09e6cd4e72df03d81edc3402b8b536e047423f3050f10110
   languageName: node
   linkType: hard
 

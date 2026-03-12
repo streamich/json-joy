@@ -58,8 +58,8 @@ describe('key remapping', () => {
     const {ctx, src} = setup();
     let hit = 0;
     ctx.setRemap('Esc', 'Escape');
-    ctx.map.setPress('C+Escape', () => hit++);
-    await src.send('Esc', 'C');
+    ctx.map.setPress('Control+Escape', () => hit++);
+    await src.send('Esc', 'Control');
     expect(hit).toBe(1);
   });
 

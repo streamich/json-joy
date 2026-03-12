@@ -1,6 +1,6 @@
-import {saveSelection} from 'json-joy/lib/util/dom';
-import type {UndoManager, UndoItem} from '../../../types';
-import type {UiLifeCycles} from '../../../types';
+import {saveSelection} from '../../../util/dom';
+import type {UndoManager, UndoItem} from './types';
+import type {UiLifeCycles} from '../types';
 
 /**
  * A DOM-based undo manager. Integrates with native undo/redo functionality of
@@ -33,7 +33,7 @@ export class WebUndo implements UndoManager, UiLifeCycles {
     }
   }
 
-  // /** ------------------------------------------------------ {@link UndoRedo} */
+  /** ------------------------------------------------------ {@link UndoRedo} */
 
   public push<U, R>(undo: UndoItem<U, R>): void {
     const el = this.el;

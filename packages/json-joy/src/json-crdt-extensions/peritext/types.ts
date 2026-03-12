@@ -21,3 +21,11 @@ export interface Stateful {
 
 export type PeritextDataNodeSchema = ReturnType<typeof SCHEMA>;
 export type PeritextDataNode = SchemaToJsonNode<PeritextDataNodeSchema>;
+
+export interface UiLifeCycles {
+  /**
+   * Called when UI component is mounted. Returns a function to be called when
+   * the component is removed from the screen.
+   */
+  start(): () => void;
+}

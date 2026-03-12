@@ -21,34 +21,34 @@ describe('Key.fromEvent()', () => {
     expect(key.mod).toBe('');
   });
 
-  test('sets mod=A for Alt', () => {
+  test('sets mod=Alt for Alt', () => {
     const key = Key.fromEvent(mkEvent({altKey: true}));
-    expect(key.mod).toBe('A');
+    expect(key.mod).toBe('Alt');
   });
 
-  test('sets mod=C for Ctrl', () => {
+  test('sets mod=Control for Ctrl', () => {
     const key = Key.fromEvent(mkEvent({ctrlKey: true}));
-    expect(key.mod).toBe('C');
+    expect(key.mod).toBe('Control');
   });
 
-  test('sets mod=M for Meta', () => {
+  test('sets mod=Meta for Meta', () => {
     const key = Key.fromEvent(mkEvent({metaKey: true}));
-    expect(key.mod).toBe('M');
+    expect(key.mod).toBe('Meta');
   });
 
-  test('sets mod=S for Shift', () => {
+  test('sets mod=Shift for Shift', () => {
     const key = Key.fromEvent(mkEvent({shiftKey: true}));
-    expect(key.mod).toBe('S');
+    expect(key.mod).toBe('Shift');
   });
 
-  test('combines modifiers in ACMS order', () => {
+  test('combines modifiers in Alt+Control+Meta+Shift order', () => {
     const key = Key.fromEvent(mkEvent({altKey: true, ctrlKey: true, metaKey: true, shiftKey: true}));
-    expect(key.mod).toBe('ACMS');
+    expect(key.mod).toBe('Alt+Control+Meta+Shift');
   });
 
-  test('sets mod=CS for Ctrl+Shift', () => {
+  test('sets mod=Control+Shift for Ctrl+Shift', () => {
     const key = Key.fromEvent(mkEvent({ctrlKey: true, shiftKey: true}));
-    expect(key.mod).toBe('CS');
+    expect(key.mod).toBe('Control+Shift');
   });
 
   test('uses empty string when key is undefined', () => {
@@ -83,13 +83,13 @@ describe('Key.sig()', () => {
   });
 
   test('includes modifier prefix', () => {
-    const key = new Key('a', 0, 'C');
-    expect(key.sig()).toBe('C+a');
+    const key = new Key('a', 0, 'Control');
+    expect(key.sig()).toBe('Control+a');
   });
 
   test('includes multiple modifiers', () => {
-    const key = new Key('a', 0, 'CS');
-    expect(key.sig()).toBe('CS+a');
+    const key = new Key('a', 0, 'Control+Shift');
+    expect(key.sig()).toBe('Control+Shift+a');
   });
 
   test('passes through function keys unchanged', () => {
@@ -113,8 +113,8 @@ describe('Key.sig()', () => {
   });
 
   test('normalises space with modifier', () => {
-    const key = new Key(' ', 0, 'C');
-    expect(key.sig()).toBe('C+Space');
+    const key = new Key(' ', 0, 'Control');
+    expect(key.sig()).toBe('Control+Space');
   });
 
   test('appends :R for repeat events', () => {
@@ -126,7 +126,7 @@ describe('Key.sig()', () => {
   test('appends :R after modifier+key', () => {
     const event = mkEvent({key: 'a', ctrlKey: true, repeat: true});
     const key = Key.fromEvent(event);
-    expect(key.sig()).toBe('C+a:R');
+    expect(key.sig()).toBe('Control+a:R');
   });
 
   test('no :R suffix for non-repeat', () => {

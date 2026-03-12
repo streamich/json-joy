@@ -4,7 +4,7 @@ import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 import type {Range} from 'json-joy/lib/json-crdt-extensions/peritext/rga/Range';
 import type {InlineSliceBehavior, ValidationResult} from '../inline/InlineSliceBehavior';
 import type {ObjNode} from 'json-joy/lib/json-crdt/nodes';
-import type {ToolbarState} from '.';
+import type {EditorState} from '.';
 
 export interface FormattingBase<B extends InlineSliceBehavior<any, any, any>, R extends Range<string>> {
   behavior: B;
@@ -25,7 +25,7 @@ export abstract class EditableFormatting<R extends Range<string> = Range<string>
   public constructor(
     public readonly behavior: InlineSliceBehavior<any, any, any>,
     public readonly range: R,
-    public readonly state: ToolbarState,
+    public readonly state: EditorState,
   ) {}
 
   public conf(): ObjApi<Node> | undefined {
@@ -68,7 +68,7 @@ export class NewFormatting<Node extends ObjNode = ObjNode> extends EditableForma
   constructor(
     public readonly behavior: InlineSliceBehavior<any, any, any>,
     public readonly range: Range<string>,
-    public readonly state: ToolbarState,
+    public readonly state: EditorState,
   ) {
     super(behavior, range, state);
     const schema = s.obj({conf: behavior.schema || s.con(void 0)});

@@ -90,6 +90,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
     const id = item.id ?? item.name;
     return (
       <ContextMenuItem
+        key={id}
         item={item}
         path={[...path, menu]}
         parent={menu}

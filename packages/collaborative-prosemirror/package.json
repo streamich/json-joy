@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@jsonjoy.com/json-random": "workspace:^",
-    "@storybook/react": "^10.2.8",
+    "@storybook/react": "^10.2.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "jest-environment-jsdom": "^30.2.0",
