@@ -1,6 +1,6 @@
 import {WebSocketMock} from './WebSocketMock';
 import {firstValueFrom} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {take, toArray} from 'rxjs/operators';
 import {of} from './of';
 import {PersistentChannel, PersistentChannelParams} from '../PersistentChannel';
 import {WebSocketChannel} from '../WebSocketChannel';
@@ -171,5 +171,167 @@ describe('.send$() method', () => {
     await new Promise((r) => setTimeout(r, 1));
     expect(onSend).toHaveBeenCalledTimes(2);
     expect(channel).toBe(undefined);
+  });
+});
+
+describe('.start() idempotency', () => {
+  test('calling .start() twice does not create two channels', () => {
+    const {persistent} = setup();
+    const channels: (PhysicalChannel<string | Uint8Array> | undefined)[] = [];
+    persistent.channel$.subscribe((ch) => channels.push(ch));
+    persistent.start();
+    persistent.start();
+    // Initial undefined + one channel creation
+    expect(channels.length).toBe(2);
+    expect(channels[0]).toBe(undefined);
+    expect(channels[1]).toBeInstanceOf(WebSocketChannel);
+  });
+});
+
+describe('.stop() edge cases', () => {
+  test('calling .stop() before .start() is a no-op', () => {
+    const {persistent} = setup();
+    expect(persistent.active$.getValue()).toBe(false);
+    persistent.stop();
+    expect(persistent.active$.getValue()).toBe(false);
+  });
+
+  test('completes all subjects on stop', async () => {
+    const {ws, persistent} = setup();
+    persistent.start();
+    ws().controller.open();
+    await new Promise((r) => setTimeout(r, 1));
+    const completions: string[] = [];
+    persistent.active$.subscribe({complete: () => completions.push('active$')});
+    persistent.channel$.subscribe({complete: () => completions.push('channel$')});
+    persistent.open$.subscribe({complete: () => completions.push('open$')});
+    persistent.error$.subscribe({complete: () => completions.push('error$')});
+    persistent.stop();
+    expect(completions).toEqual(
+      expect.arrayContaining(['active$', 'channel$', 'open$', 'error$']),
+    );
+  });
+});
+
+describe('active$', () => {
+  test('is false initially', () => {
+    const {persistent} = setup();
+    expect(persistent.active$.getValue()).toBe(false);
+  });
+
+  test('becomes true after .start(), false after .stop()', async () => {
+    const {ws, persistent} = setup();
+    const states: boolean[] = [];
+    persistent.active$.subscribe((v) => states.push(v));
+    persistent.start();
+    ws().controller.open();
+    await new Promise((r) => setTimeout(r, 1));
+    persistent.stop();
+    expect(states).toEqual([false, true, false]);
+  });
+});
+
+describe('message$', () => {
+  test('forwards messages from the underlying channel', async () => {
+    const {ws, persistent} = setup();
+    const messages: unknown[] = [];
+    persistent.message$.subscribe((msg) => messages.push(msg));
+    persistent.start();
+    ws().controller.open();
+    await new Promise((r) => setTimeout(r, 1));
+    ws().controller.message('hello');
+    ws().controller.message('world');
+    expect(messages).toEqual(['hello', 'world']);
+  });
+});
+
+describe('.reconnectDelay()', () => {
+  test('returns 0 on first attempt', () => {
+    const {persistent} = setup({minReconnectionDelay: 1000});
+    expect(persistent.reconnectDelay()).toBe(0);
+  });
+
+  test('returns minReconnectionDelay on second attempt (retries = 1)', () => {
+    const {persistent} = setup({minReconnectionDelay: 500});
+    (persistent as any).retries = 1;
+    expect(persistent.reconnectDelay()).toBe(500);
+  });
+
+  test('grows delay with each retry', () => {
+    const {persistent} = setup({
+      minReconnectionDelay: 100,
+      reconnectionDelayGrowFactor: 2,
+    });
+    (persistent as any).retries = 1;
+    const d1 = persistent.reconnectDelay();
+    (persistent as any).retries = 2;
+    const d2 = persistent.reconnectDelay();
+    (persistent as any).retries = 3;
+    const d3 = persistent.reconnectDelay();
+    expect(d1).toBe(100);
+    expect(d2).toBe(200);
+    expect(d3).toBe(400);
+  });
+
+  test('caps at maxReconnectionDelay', () => {
+    const {persistent} = setup({
+      minReconnectionDelay: 1000,
+      maxReconnectionDelay: 2000,
+      reconnectionDelayGrowFactor: 10,
+    });
+    (persistent as any).retries = 5;
+    expect(persistent.reconnectDelay()).toBe(2000);
+  });
+});
+
+describe('reconnection', () => {
+  test('creates a new channel after the current one closes', async () => {
+    const {ws, persistent} = setup({minReconnectionDelay: 10});
+    const channels: (PhysicalChannel<string | Uint8Array> | undefined)[] = [];
+    persistent.channel$.subscribe((ch) => channels.push(ch));
+    persistent.start();
+    const firstChannel = channels[channels.length - 1];
+    ws().controller.open();
+    await new Promise((r) => setTimeout(r, 1));
+    // Close the first channel
+    ws().controller.close(1000, 'test', true);
+    // Wait for reconnect delay
+    await new Promise((r) => setTimeout(r, 50));
+    const secondChannel = channels[channels.length - 1];
+    expect(secondChannel).toBeInstanceOf(WebSocketChannel);
+    expect(secondChannel).not.toBe(firstChannel);
+    persistent.stop();
+  });
+});
+
+describe('error$', () => {
+  test('emits when newChannel() throws on start', () => {
+    let callCount = 0;
+    const errors: Error[] = [];
+    const persistent = new PersistentChannel({
+      newChannel: () => {
+        callCount++;
+        throw new Error('factory failed');
+      },
+    });
+    persistent.error$.subscribe((e) => errors.push(e));
+    persistent.start();
+    expect(callCount).toBe(1);
+    expect(errors.length).toBe(1);
+    expect(errors[0].message).toBe('factory failed');
+  });
+
+  test('wraps non-Error throws into Error', () => {
+    const errors: Error[] = [];
+    const persistent = new PersistentChannel({
+      newChannel: () => {
+        throw 'string error';
+      },
+    });
+    persistent.error$.subscribe((e) => errors.push(e));
+    persistent.start();
+    expect(errors.length).toBe(1);
+    expect(errors[0]).toBeInstanceOf(Error);
+    expect(errors[0].message).toBe('string error');
   });
 });

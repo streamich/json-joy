@@ -1,4 +1,4 @@
-import {Subject, BehaviorSubject, type Observable, from} from 'rxjs';
+import {Subject, BehaviorSubject, type Observable, type Subscription, from} from 'rxjs';
 import {delay, filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {ChannelState} from './constants';
 import type {PhysicalChannel} from './types';
@@ -36,7 +36,8 @@ export interface PersistentChannelParams<T extends string | Uint8Array = string 
 }
 
 /**
- * Channel which automatically reconnects if disconnected.
+ * Channel which automatically reconnects if disconnected. Once stopped via
+ * `.stop()`, the instance is fully disposed and cannot be restarted.
  */
 export class PersistentChannel<T extends string | Uint8Array = string | Uint8Array> {
   /**
@@ -65,80 +66,107 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     switchMap((channel) => channel!.message$),
   );
 
+  /** Emits errors from channel factory or underlying channels. */
+  public readonly error$ = new Subject<Error>();
+
   /** Number of times we have attempted to reconnect. */
   protected retries = 0;
 
+  private readonly subs: Subscription[] = [];
+  private readonly stop$ = new Subject<void>();
+
   constructor(public readonly params: PersistentChannelParams<T>) {
-    const start$ = new Subject();
-    const stop$ = new Subject();
+    const start$ = new Subject<void>();
 
-    this.active$
-      .pipe(
-        skip(1),
-        filter((active) => active),
-      )
-      .subscribe(() => {
-        start$.next(undefined);
-      });
+    this.subs.push(
+      this.active$
+        .pipe(
+          skip(1),
+          filter((active) => active),
+        )
+        .subscribe(() => {
+          start$.next(undefined);
+        }),
+    );
 
-    this.active$
-      .pipe(
-        skip(1),
-        filter((active) => !active),
-      )
-      .subscribe(() => {
-        stop$.next(undefined);
-      });
+    this.subs.push(
+      this.active$
+        .pipe(
+          skip(1),
+          filter((active) => !active),
+        )
+        .subscribe(() => {
+          this.stop$.next(undefined);
+        }),
+    );
 
     // Create new channel when service starts.
-    start$.subscribe(() => this.channel$.next(params.newChannel()));
+    this.subs.push(
+      start$.subscribe(() => {
+        this.createChannel();
+      }),
+    );
 
     // Re-connect, when channel closes.
-    start$
-      .pipe(
-        switchMap(() => this.channel$),
-        filter((channel) => !!channel),
-        takeUntil(stop$),
-        switchMap((channel) => channel!.close$),
-        takeUntil(stop$),
-        switchMap(() =>
-          from(
-            (async () => {
-              const timeout = this.reconnectDelay();
-              this.retries++;
-              await new Promise((resolve) => setTimeout(resolve, timeout));
-            })(),
+    this.subs.push(
+      start$
+        .pipe(
+          switchMap(() => this.channel$),
+          filter((channel) => !!channel),
+          takeUntil(this.stop$),
+          switchMap((channel) => channel!.close$),
+          takeUntil(this.stop$),
+          switchMap(() =>
+            from(
+              (async () => {
+                const timeout = this.reconnectDelay();
+                this.retries++;
+                await new Promise((resolve) => setTimeout(resolve, timeout));
+              })(),
+            ),
           ),
-        ),
-        takeUntil(stop$),
-        tap(() => this.channel$.next(params.newChannel())),
-        delay(params.minUptime || 5_000),
-        takeUntil(stop$),
-        tap(() => {
-          const isOpen = this.channel$.getValue()?.isOpen();
-          if (isOpen) {
-            this.retries = 0;
-          }
-        }),
-      )
-      .subscribe();
+          takeUntil(this.stop$),
+          tap(() => this.createChannel()),
+          delay(params.minUptime || 5_000),
+          takeUntil(this.stop$),
+          tap(() => {
+            const isOpen = this.channel$.getValue()?.isOpen();
+            if (isOpen) {
+              this.retries = 0;
+            }
+          }),
+        )
+        .subscribe(),
+    );
 
     // Track if channel is connected.
-    start$
-      .pipe(
-        switchMap(() => this.channel$),
-        filter((channel) => !!channel),
-        switchMap((channel) => channel!.state$),
-        map((state) => state === ChannelState.OPEN),
-      )
-      .subscribe((open) => {
-        if (open !== this.open$.getValue()) this.open$.next(open);
-      });
+    this.subs.push(
+      start$
+        .pipe(
+          switchMap(() => this.channel$),
+          filter((channel) => !!channel),
+          switchMap((channel) => channel!.state$),
+          map((state) => state === ChannelState.OPEN),
+        )
+        .subscribe((open) => {
+          if (open !== this.open$.getValue()) this.open$.next(open);
+        }),
+    );
 
     // Reset re-try counter when service stops.
-    stop$.subscribe(() => {
-      this.retries = 0;
-    });
+    this.subs.push(
+      this.stop$.subscribe(() => {
+        this.retries = 0;
+      }),
+    );
+  }
+
+  private createChannel(): void {
+    try {
+      this.channel$.next(this.params.newChannel());
+    } catch (error) {
+      this.error$.next(error instanceof Error ? error : new Error(String(error)));
+    }
   }
 
   public start(): void {
@@ -155,6 +183,13 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
       this.channel$.next(undefined);
     }
     this.open$.next(false);
+    for (const sub of this.subs) sub.unsubscribe();
+    this.subs.length = 0;
+    this.stop$.complete();
+    this.error$.complete();
+    this.active$.complete();
+    this.channel$.complete();
+    this.open$.complete();
   }
 
   public reconnectDelay(): number {
