@@ -436,6 +436,17 @@ export class RangeMenu {
     return {
       name: 'Formatting',
       expandChild: 0,
+      preview: [
+        {
+          name: 'Bold',
+          icon: () => <FontBoldIcon width={15} height={15} />,
+          right: () => <Sidetip small>⌘ B</Sidetip>,
+          keys: ['⌘', 'b'],
+          onSelect: () => {
+            et.format('tog', CommonSliceType.b);
+          },
+        },
+      ],
       children: [
         {
           name: 'Common',
