@@ -56,13 +56,21 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "transformIgnorePatterns": [".*/node_modules/.*"],
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
     "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
     "rootDir": ".",
-    "testPathIgnorePatterns": ["node_modules", "\\.vi\\.(test|spec)\\.tsx?$"]
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
   }
 }

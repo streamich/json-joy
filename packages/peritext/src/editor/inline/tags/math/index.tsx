@@ -17,15 +17,10 @@ import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
 export const Icon = makeIcon({set: 'tabler', icon: 'math-integral-x'});
 
-/**
- * Minimal schema — no required data fields. The formula lives in the marked
- * document text. Optional `size` field for future display-size hints.
- */
 export const schema = s.obj(
   {},
   {
-    // TODO: rename to "sz"
-    size: s.str<'d' | 'T' | 'S' | 'SS'>('d'),
+    sz: s.str<'d' | 'T' | 'S' | 'SS'>('d'),
   },
 );
 
