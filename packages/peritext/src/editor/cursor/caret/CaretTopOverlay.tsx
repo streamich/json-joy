@@ -24,7 +24,7 @@ export const CaretTopOverlay: React.FC<CaretTopOverlayProps> = () => {
   }, []);
 
   let element: React.ReactNode | undefined = (
-    <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.getCaretMenu()} onPopupClose={handleClose} />
+    <CaretToolbar disabled={!enableAfterCoolDown} menu={toolbar.menu.caret.build()} onPopupClose={handleClose} />
   );
 
   if (doHideForCoolDown) {

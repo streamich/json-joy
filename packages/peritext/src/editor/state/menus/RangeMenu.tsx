@@ -28,7 +28,7 @@ const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
 const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic'});
 const KeyboardIcon = makeIcon({set: 'lucide', icon: 'keyboard'});
 
-export class SelectionMenu {
+export class RangeMenu {
   constructor(
     public readonly state: EditorState,
   ) {}
@@ -42,7 +42,7 @@ export class SelectionMenu {
         this.formattingMenu(),
         this.annotationsMenu(),
         this.modifyMenu(),
-        this.state.clipboardMenu.clipboardMenu(),
+        this.state.menu.buffer.clipboardMenu(),
         /*
         secondBrain(),
         {

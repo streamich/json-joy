@@ -13,17 +13,18 @@ const TextIcon = makeIcon({set: 'lucide', icon: 'text'});
 const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
 const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
 
-export interface ClipboardMenuCtx {
+export interface BufferMenuCtx {
   hideStyleActions?: boolean;
   onBeforeAction?: (item: MenuItem, action: 'cut' | 'copy' | 'paste') => void | Partial<BufferDetail>;
 }
 
-export class ClipboardMenu {
+/** Clipboard (buffer) menu. */
+export class BufferMenu {
   constructor(
     public readonly state: EditorState,
   ) {}
 
-  public readonly copyAsMenu = (action: 'copy' | 'cut', ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly copyAsMenu = (action: 'copy' | 'cut', ctx: BufferMenuCtx = {}): MenuItem => {
     const icon =
       action === 'copy'
         ? () => <ClipboardCopyIcon width={15} height={15} />
@@ -119,7 +120,7 @@ export class ClipboardMenu {
     };
   };
 
-  public readonly pasteAsMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly pasteAsMenu = (ctx: BufferMenuCtx = {}): MenuItem => {
     const icon = () => <ClipboardIcon width={15} height={15} />;
     const iconMarkdown = () => <MarkdownIcon width={16} height={16} style={{opacity: 0.5}} />;
     const iconHtml = () => <Html5Icon width={14} height={14} style={{opacity: 0.5}} />;
@@ -202,7 +203,7 @@ export class ClipboardMenu {
     };
   };
 
-  public readonly copyMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly copyMenu = (ctx: BufferMenuCtx = {}): MenuItem => {
     const et = this.state.surface.events.et;
     const copyAction: MenuItem = {
       name: 'Copy',
@@ -239,7 +240,7 @@ export class ClipboardMenu {
     };
   };
 
-  public readonly cutMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly cutMenu = (ctx: BufferMenuCtx = {}): MenuItem => {
     const et = this.state.surface.events.et;
     const cutAction: MenuItem = {
       name: 'Cut',
@@ -266,7 +267,7 @@ export class ClipboardMenu {
     };
   };
 
-  public readonly pasteMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly pasteMenu = (ctx: BufferMenuCtx = {}): MenuItem => {
     const et = this.state.surface.events.et;
     const pasteAction: MenuItem = {
       name: 'Paste',
@@ -303,7 +304,7 @@ export class ClipboardMenu {
     };
   };
 
-  public readonly clipboardMenu = (ctx: ClipboardMenuCtx = {}): MenuItem => {
+  public readonly clipboardMenu = (ctx: BufferMenuCtx = {}): MenuItem => {
     const copyMenu = this.copyMenu(ctx);
     const cutMenu = this.cutMenu(ctx);
     const pasteMenu = this.pasteMenu(ctx);
