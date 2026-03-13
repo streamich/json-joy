@@ -40,6 +40,12 @@ export const createDefaultRegistry = (): SliceRegistry => {
   i0(TAG.sub, 'Subscript');
   i0(TAG.math, 'Math');
 
+  // -------------------------- Inline elements with "Atomic" stacking behavior
+  const a0 = <Tag extends TypeTag = TypeTag>(tag: Tag, name: string): void => {
+    registry.add(new SliceBehavior(SliceStacking.Atomic, tag, name));
+  };
+  a0(TAG.iembed, 'Inline Embed');
+
   // --------------------------- Inline elements with "Many" stacking behavior
   const aSchema = s.obj(
     {},

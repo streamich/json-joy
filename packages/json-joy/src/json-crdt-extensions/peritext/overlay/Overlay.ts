@@ -550,6 +550,7 @@ export class Overlay<T = string> implements Printable, Stateful {
         const stacking = slice.stacking;
         STACKING: switch (stacking) {
           case SliceStacking.One:
+          case SliceStacking.Atomic:
             current.add(type);
             break STACKING;
           case SliceStacking.Erase:

@@ -246,10 +246,17 @@ export enum SliceStacking {
 
   /**
    * Used to mark the user's cursor position in the document.
-   *
-   * @todo Consider removing this.
    */
   Cursor = 0b100,
+
+  /**
+   * Used for inline indivisible non-editable islands, like an inline math
+   * equation. The contents of the slice text can still be used for storing the
+   * formula source, however, the editor navigation treats it as an atomic unit.
+   * A single ArrowLeft or ArrowRight movement jumps over the whole slice, and
+   * the cursor can not be placed in the middle of the slice.
+   */
+  Atomic = 0b101,
 }
 
 export enum SliceStackingName {
@@ -258,6 +265,7 @@ export enum SliceStackingName {
   One = SliceStacking.One,
   Erase = SliceStacking.Erase,
   Cursor = SliceStacking.Cursor,
+  Atomic = SliceStacking.Atomic,
 }
 
 /**

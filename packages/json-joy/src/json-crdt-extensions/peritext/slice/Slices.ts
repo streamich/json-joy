@@ -109,6 +109,10 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.ins(range, SliceStacking.Erase, type, data);
   }
 
+  public insAtomic(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
+    return this.ins(range, SliceStacking.Atomic, type, data);
+  }
+
   protected unpack(arr: ArrNode, chunk: ArrChunk): Slice<T> {
     const txt = this.txt;
     const model = this.set.doc;

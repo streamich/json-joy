@@ -203,9 +203,12 @@ export class Editor<T = string> implements Printable {
    * the contents is removed and the cursor is set at the start of the range
    * as caret.
    */
-  public collapseCursor(cursor: Range<T>): void {
-    this.delRange(cursor);
-    cursor.collapseToStart();
+  public collapseCursor(range: Range<T>): void {
+    const start = this.expandToAtomEdge(range.start, -1);
+    const end = this.expandToAtomEdge(range.end, 1);
+    const effectiveRange = this.txt.range(start, end);
+    this.delRange(effectiveRange);
+    range.collapseToStart();
   }
 
   public collapseCursors(): void {
@@ -361,10 +364,30 @@ export class Editor<T = string> implements Printable {
         point1 = this.skip(point1, -1, unit);
         point2 = this.skip(point2, 1, unit);
       }
+      point1 = this.expandToAtomEdge(point1, -1);
+      point2 = this.expandToAtomEdge(point2, 1);
       const range = txt.range(point1, point2);
       this.delRange(range);
       point1.refAfter();
       cursor.set(point1);
+    }
+  }
+
+  /**
+   * If the point is inside an atomic slice, expand it to the atom's edge in the
+   * given direction.
+   */
+  private expandToAtomEdge(point: Point<T>, direction: 0 | -1 | 1): Point<T> {
+    const atom = this.atomAt(point);
+    if (!atom) return point;
+    if (direction <= 0) {
+      const p = atom.start.clone();
+      p.refAfter();
+      return p;
+    } else {
+      const p = atom.end.clone();
+      p.refBefore();
+      return p;
     }
   }
 
@@ -466,6 +489,9 @@ export class Editor<T = string> implements Printable {
           // console.log('check if skipped fully deleted slices (2)');
         }
       }
+      // If after the step we landed inside an atomic slice, jump to its edge.
+      const skippedTo = this.skipAtom(point, direction);
+      if (skippedTo !== point) point.set(skippedTo);
     }
     return end;
   }
@@ -499,6 +525,47 @@ export class Editor<T = string> implements Printable {
     if (!(firstRef instanceof OverlayRefSliceStart) && !(firstRef instanceof OverlayRefSliceEnd)) return;
     const slice = firstRef.slice;
     return slice.isSaved() ? firstRef : void 0;
+  }
+
+  /**
+   * Returns the {@link SliceStacking.Atomic} slice that contains the given
+   * point, or `undefined` if the point is not inside an atomic slice.
+   *
+   * @param point The point to check.
+   * @returns The atomic slice containing the point, or `undefined`.
+   */
+  public atomAt(point: Point<T>): Slice<T> | undefined {
+    const overlayPoint = this.txt.overlay.getOrNextLower(point);
+    if (!overlayPoint) return;
+    const layers = overlayPoint.layers;
+    const length = layers.length;
+    for (let i = 0; i < length; i++) {
+      const slice = layers[i];
+      if (slice.stacking === SliceStacking.Atomic) return slice;
+    }
+    return;
+  }
+
+  /**
+   * If the point is inside an atomic slice, moves it to the appropriate edge
+   * of the atom in the given direction.
+   *
+   * @param point The point to adjust.
+   * @param direction Positive for forward, negative for backward.
+   * @returns The adjusted point (same reference if no atom, new point if inside atom).
+   */
+  private skipAtom(point: Point<T>, direction: number): Point<T> {
+    const atom = this.atomAt(point);
+    if (!atom) return point;
+    if (direction > 0) {
+      const p = atom.end.clone();
+      p.refBefore();
+      return p;
+    } else {
+      const p = atom.start.clone();
+      p.refAfter();
+      return p;
+    }
   }
 
   /**
@@ -700,18 +767,22 @@ export class Editor<T = string> implements Printable {
    */
   public skip(point: Point<T>, steps: number, unit: TextRangeUnit, ui?: EditorUi<T>): Point<T> {
     if (!steps) return point;
+    const direction = steps > 0 ? 1 : -1;
     switch (unit) {
       case 'point': {
         const p = point.clone();
-        return p.halfstep(steps), p;
+        p.halfstep(steps);
+        return this.skipAtom(p, direction);
       }
       case 'char': {
         const p = point.clone();
-        return p.step(steps), p;
+        p.step(steps);
+        return this.skipAtom(p, direction);
       }
       case 'vchar': {
         const p = point.clone();
-        return this.vstep(p, steps), p;
+        this.vstep(p, steps);
+        return p;
       }
       case 'word': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
@@ -881,7 +952,11 @@ export class Editor<T = string> implements Printable {
     overlay.refresh();
     for (const range of selection) {
       const overlapping = overlay.findOverlapping(range);
-      for (const slice of overlapping) store.del(slice.id);
+      for (const slice of overlapping) {
+        // Atomic slices are content, not formatting — do not clear them.
+        if (slice.stacking === SliceStacking.Atomic) continue;
+        store.del(slice.id);
+      }
     }
   }
 
@@ -1227,7 +1302,8 @@ export class Editor<T = string> implements Printable {
         case SliceStacking.One:
         case SliceStacking.Many:
         case SliceStacking.Erase:
-        case SliceStacking.Marker: {
+        case SliceStacking.Marker:
+        case SliceStacking.Atomic: {
           const viewSlice = this.exportSlice(slice);
           viewSlices.push(viewSlice);
         }
@@ -1258,7 +1334,8 @@ export class Editor<T = string> implements Printable {
       switch (stacking) {
         case SliceStacking.One:
         case SliceStacking.Many:
-        case SliceStacking.Erase: {
+        case SliceStacking.Erase:
+        case SliceStacking.Atomic: {
           const sliceFormatting: ViewStyle = [stacking, slice.type()];
           const data = slice.data();
           if (data !== void 0) sliceFormatting.push(data);
