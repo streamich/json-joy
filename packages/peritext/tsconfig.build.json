@@ -27,6 +27,9 @@
       "path": "../collaborative-react/tsconfig.build.json"
     },
     {
+      "path": "../keyboard/tsconfig.build.json"
+    },
+    {
       "path": "../collaborative-ui/tsconfig.build.json"
     },
     {

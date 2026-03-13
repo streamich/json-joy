@@ -24,6 +24,9 @@
       "path": "../base64/tsconfig.build.json"
     },
     {
+      "path": "../keyboard/tsconfig.build.json"
+    },
+    {
       "path": "../buffers/tsconfig.build.json"
     },
     {

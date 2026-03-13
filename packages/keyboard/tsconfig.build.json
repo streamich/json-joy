@@ -22,9 +22,5 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
-  "references": [
-    {
-      "path": "../json-joy/tsconfig.build.json"
-    }
-  ]
+  "references": []
 }
