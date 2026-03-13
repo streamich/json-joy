@@ -118,11 +118,11 @@ export class Slices<T = string> implements Stateful, Printable {
   }
 
   public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct, padded?: boolean): Slice<T> {
-    return this.ins(range, SliceStacking.Many, type, data);
+    return this.ins(range, SliceStacking.Many, type, data, void 0, padded);
   }
 
   public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct, padded?: boolean): Slice<T> {
-    return this.ins(range, SliceStacking.One, type, data);
+    return this.ins(range, SliceStacking.One, type, data, void 0, padded);
   }
 
   public insErase(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
