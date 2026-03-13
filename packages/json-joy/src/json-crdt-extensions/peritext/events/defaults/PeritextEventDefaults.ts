@@ -221,7 +221,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   public readonly format = ({detail}: CustomEvent<events.FormatDetail>) => {
     const selection = [...this.getSelSet(detail)];
     this.moveSelSet(selection, detail);
-    const {action, type: tag, store = 'saved'} = detail;
+    const {action, type: tag, store = 'saved', padded} = detail;
     const editor = this.txt.editor;
     const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
     switch (action) {
@@ -231,16 +231,20 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (tag === undefined) throw new Error('TYPE_REQUIRED');
         switch (stack) {
           case 'many': {
-            slices.insStack(tag, data, selection);
+            slices.insStack(tag, data, selection, padded);
             break;
           }
           case 'one': {
-            if (action === 'ins') slices.insOne(tag, data, selection);
-            else editor.toggleExclFmt(tag, data, slices, selection);
+            if (action === 'ins') slices.insOne(tag, data, selection, padded);
+            else editor.toggleExclFmt(tag, data, slices, selection, padded);
+            break;
+          }
+          case 'atomic': {
+            slices.insAtomic(tag, data, selection, padded);
             break;
           }
           case 'erase': {
-            slices.insOne(tag, data, selection);
+            slices.insErase(tag, data, selection);
             break;
           }
         }

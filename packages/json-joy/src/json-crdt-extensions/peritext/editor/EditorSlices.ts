@@ -30,20 +30,22 @@ export class EditorSlices<T = string> {
     type: SliceType,
     data?: unknown | ITimestampStruct,
     selection?: Range<T>[] | IterableIterator<Range<T>>,
+    padded?: boolean,
   ): Slice<T>[] {
     const {slices, txt} = this;
     selection ||= txt.editor.cursors();
-    return forEachRange(selection, (range) => slices.insStack(range.range(), type, data));
+    return forEachRange(selection, (range) => slices.insStack(range.range(), type, data, padded));
   }
 
   public insOne(
     type: SliceType,
     data?: unknown | ITimestampStruct,
     selection?: Range<T>[] | IterableIterator<Range<T>>,
+    padded?: boolean,
   ): Slice<T>[] {
     const {slices, txt} = this;
     selection ||= txt.editor.cursors();
-    return forEachRange(selection, (range) => slices.insOne(range.range(), type, data));
+    return forEachRange(selection, (range) => slices.insOne(range.range(), type, data, padded));
   }
 
   public insErase(

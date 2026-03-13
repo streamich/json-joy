@@ -967,6 +967,7 @@ export class Editor<T = string> implements Printable {
     type: CommonSliceType | string | number,
     data?: unknown,
     store: EditorSlices<T> = this.saved,
+    padded?: boolean,
   ): void {
     if (range.isCollapsed()) throw new Error('Range is collapsed');
     const txt = this.txt;
@@ -994,7 +995,7 @@ export class Editor<T = string> implements Printable {
         if (end.cmpSpatial(range.start) <= 0) return;
         range.end = end;
       }
-      store.slices.insOne(range, type, data);
+      store.slices.insOne(range, type, data, padded);
     }
   }
 
@@ -1003,6 +1004,7 @@ export class Editor<T = string> implements Printable {
     data?: unknown,
     store: EditorSlices<T> = this.saved,
     selection: Range<T>[] | IterableIterator<Range<T>> = this.cursors(),
+    padded?: boolean,
   ): void {
     // TODO: handle mutually exclusive slices (<sub>, <sub>)
     this.txt.overlay.refresh();
@@ -1014,7 +1016,7 @@ export class Editor<T = string> implements Printable {
         this.pending.next(pending);
         continue SELECTION;
       }
-      this.toggleRangeExclFmt(range, type, data, store);
+      this.toggleRangeExclFmt(range, type, data, store, padded);
     }
   }
 
