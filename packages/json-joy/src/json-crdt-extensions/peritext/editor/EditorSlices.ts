@@ -66,6 +66,16 @@ export class EditorSlices<T = string> {
     return forEachRange(selection, (range) => slices.insAtomic(range.range(), type, data));
   }
 
+  public insAtomicPadded(
+    type: SliceType,
+    data?: unknown | ITimestampStruct,
+    selection?: Range<T>[] | IterableIterator<Range<T>>,
+  ): Slice<T>[] {
+    const {slices, txt} = this;
+    selection ||= txt.editor.cursors();
+    return forEachRange(selection, (range) => slices.insAtomicPadded(range.range(), type, data));
+  }
+
   public insMarker(type: SliceType, data?: unknown, selection?: Range<T>[] | IterableIterator<Range<T>>): Slice<T>[] {
     const {slices, txt} = this;
     const editor = txt.editor;
