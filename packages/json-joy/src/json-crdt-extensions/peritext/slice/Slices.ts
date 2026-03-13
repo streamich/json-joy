@@ -38,14 +38,31 @@ export class Slices<T = string> implements Stateful, Printable {
     type: SliceType,
     data?: unknown,
     Klass: K = <any>Slice,
+    padded: boolean = false,
   ): S {
     const slicesModel = this.set.doc;
     const arr = this.set;
     const api = slicesModel.api;
+    const txt = this.txt;
+    const rga = txt.str;
     const builder = api.builder;
     const stepId = builder.vec();
     const start = range.start.clone();
     const end = range.end.clone();
+    if (padded) {
+      start.refAfter();
+      end.refAfter();
+      const afterIdForLeadPad = start.id;
+      const afterIdForTrailPad = end.id;
+      builder.nop(1);
+      const leadPadId = builder.insStr(rga.id, afterIdForLeadPad, ' ');
+      builder.nop(1);
+      const trailPadId = builder.insStr(rga.id, afterIdForTrailPad, ' ');
+      start.id = leadPadId;
+      start.anchor = Anchor.Before;
+      end.id = trailPadId;
+      end.anchor = Anchor.After;
+    }
     stacking = stacking & 0b111;
     const header =
       (stacking << SliceHeaderShift.Stacking) +
@@ -65,7 +82,10 @@ export class Slices<T = string> implements Stateful, Printable {
     if (data !== undefined) tupleKeysUpdate.push([SliceTupleIndex.Data, builder.json(data)]);
     builder.insVec(stepId, tupleKeysUpdate);
     const chunkId = builder.insArr(arr.id, arr.id, [stepId]);
-    // TODO: Consider using `s` schema here.
+    if (padded) {
+      builder.del(rga.id, [tss(start.id.sid, start.id.time, 1)]);
+      builder.del(rga.id, [tss(end.id.sid, end.id.time, 1)]);
+    }
     api.apply();
     const tuple = slicesModel.index.get(stepId) as VecNode;
     const chunk = arr.findById(chunkId)!;
@@ -97,11 +117,11 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.insMarker(range, type, data);
   }
 
-  public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
+  public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct, padded?: boolean): Slice<T> {
     return this.ins(range, SliceStacking.Many, type, data);
   }
 
-  public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
+  public insOne(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct, padded?: boolean): Slice<T> {
     return this.ins(range, SliceStacking.One, type, data);
   }
 
@@ -109,45 +129,8 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.ins(range, SliceStacking.Erase, type, data);
   }
 
-  public insAtomic(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
-    return this.ins(range, SliceStacking.Atomic, type, data);
-  }
-
-  /**
-   * Creates an {@link SliceStacking.Atomic} slice whose endpoints are anchored
-   * to dedicated padding characters rather than to the content characters inside
-   * the range. Two single-character padding strings are inserted — one just
-   * before the range start and one just after the range end. After insertion
-   * the padding characters are immediately deleted, leaving them as tombstones
-   * in the RGA. This guarantees the slice boundary IDs never collide with
-   * content IDs.
-   * 
-   * @todo Move padding into `.ins()` implementation.
-   */
-  public insAtomicPadded(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): Slice<T> {
-    const txt = this.txt;
-    const rga = txt.str;
-    const api = txt.model.api;
-    const builder = api.builder;
-    const start = range.start.clone();
-    const end = range.end.clone();
-    start.refAfter();
-    end.refAfter();
-    const afterIdForLeadPad = start.id;
-    const afterIdForTrailPad = end.id;
-    builder.nop(1);
-    const leadPadId = builder.insStr(rga.id, afterIdForLeadPad, ' ');
-    builder.nop(1);
-    const trailPadId = builder.insStr(rga.id, afterIdForTrailPad, ' ');
-    api.apply();
-    const padStart = txt.point(leadPadId, Anchor.Before);
-    const padEnd = txt.point(trailPadId, Anchor.After);
-    const padRange = txt.range(padStart, padEnd);
-    const slice = this.insAtomic(padRange, type, data);
-    builder.del(rga.id, [tss(leadPadId.sid, leadPadId.time, 1)]);
-    builder.del(rga.id, [tss(trailPadId.sid, trailPadId.time, 1)]);
-    api.apply();
-    return slice;
+  public insAtomic(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct, padded?: boolean): Slice<T> {
+    return this.ins(range, SliceStacking.Atomic, type, data, void 0, padded);
   }
 
   protected unpack(arr: ArrNode, chunk: ArrChunk): Slice<T> {

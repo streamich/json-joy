@@ -16,9 +16,7 @@ const testSuite = (setup: () => Kit): void => {
       const kit = setup();
       const {peritext} = kit;
       const range = peritext.rangeAt(3, 3); // covers "345"
-      const atom = padded
-        ? peritext.savedSlices.insAtomicPadded(range, 'math', {tex: 'x^2'})
-        : peritext.savedSlices.insAtomic(range, 'math', {tex: 'x^2'});
+      const atom = peritext.savedSlices.insAtomic(range, 'math', {tex: 'x^2'}, padded);
       peritext.overlay.refresh();
       return {...kit, atom};
     };
