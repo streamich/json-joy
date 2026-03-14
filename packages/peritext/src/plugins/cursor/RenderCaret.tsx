@@ -5,7 +5,7 @@ import {CommonSliceType} from 'json-joy/lib/json-crdt-extensions';
 import {Anchor} from 'json-joy/lib/json-crdt-extensions/peritext/rga/constants';
 import {usePeritext} from '../../web/react/context';
 import {useSyncStore, useSyncStoreOpt} from '../../web/react/hooks';
-import {DefaultRendererColors} from './constants';
+import {CursorConstants} from './constants';
 import {useCursorPlugin} from './context';
 import {CaretScore} from '../../web/components/CaretScore';
 import type {CaretViewProps} from '../../web/react/cursor/CaretView';
@@ -38,8 +38,8 @@ const innerClass = rule({
   l: '-.065em',
   w: 'calc(max(.2em, 2px))',
   h: `${height}em`,
-  bg: DefaultRendererColors.ActiveCursor,
-  bdl: `1px dotted ${DefaultRendererColors.InactiveCursor}`,
+  bg: 'var(--caret-color)',
+  bdl: `1px dotted var(--${CursorConstants.CaretColorBlurred})`,
   bdrad: '0.0625em',
   'mix-blend-mode': 'multiply',
   an: moveAnimation + ' .25s ease-out forwards',
@@ -94,9 +94,9 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
 
   const style: React.CSSProperties = {
     background: !focus
-      ? DefaultRendererColors.InactiveCursor
+      ? `var(--${CursorConstants.CaretColorBlurred})`
       : show
-        ? DefaultRendererColors.ActiveCursor
+        ? `var(--${CursorConstants.CaretColor})`
         : 'transparent',
   };
 
@@ -106,7 +106,7 @@ export const RenderCaret: React.FC<RenderCaretProps> = ({italic, point, children
 
   if (anchorForward) {
     style.borderLeft = 0;
-    style.borderRight = `1px dotted ${DefaultRendererColors.InactiveCursor}`;
+    style.borderRight = `1px dotted var(--${CursorConstants.CaretColorBlurred})`;
   }
 
   return (

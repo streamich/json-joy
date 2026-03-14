@@ -8,6 +8,13 @@ import type {BlockViewProps} from './BlockView';
 import type {PeritextSurfaceState} from '../state';
 
 export interface PeritextPlugin {
+  // ------------------------------------------------------------------ General
+
+  /**
+   * CSS variables that will be injected into the editor's root element.
+   */
+  vars: Record<string, string>;
+
   // --------------------------------------------------- Block-level formatting
 
   /**

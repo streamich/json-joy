@@ -44,6 +44,17 @@ export class PeritextSurfaceState implements UiLifeCycles {
     const stopDom = dom.start();
     const et = dom.et;
     et.addEventListener('change', rerender);
+
+    const style = el.style;
+    for (const plugin of this.plugins) {
+      if (plugin.vars) {
+        for (const [key, value] of Object.entries(plugin.vars)) {
+          const varName = '--' + key;
+          if (style.getPropertyValue(varName) === '') style.setProperty(varName, value);
+        }
+      }
+    }
+
     return () => {
       this.log.destroy();
       stopDom();

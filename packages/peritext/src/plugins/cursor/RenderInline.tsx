@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {usePeritext} from '../../web/react';
 import {useSyncStoreOpt} from '../../web/react/hooks';
-import {DefaultRendererColors} from './constants';
+import {CursorConstants} from './constants';
 import type {InlineViewProps} from '../../web/react/InlineView';
 
 interface RenderInlineSelectionProps extends RenderInlineProps {
@@ -15,7 +15,7 @@ const RenderInlineSelection: React.FC<RenderInlineSelectionProps> = (props) => {
 
   const [left, right] = selection;
   const style: React.CSSProperties = {
-    backgroundColor: focus ? DefaultRendererColors.ActiveSelection : DefaultRendererColors.InactiveSelection,
+    backgroundColor: focus ? `var(--${CursorConstants.SelectionColor})` : `var(--${CursorConstants.SelectionColorBlurred})`,
     borderRadius: left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px',
   };
 
