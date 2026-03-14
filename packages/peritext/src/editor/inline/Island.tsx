@@ -1,5 +1,15 @@
 import {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
+import {keyframes} from 'nano-theme';
 import * as React from 'react';
+
+const outlineAnimation = keyframes({
+  from: {
+    outlineOffset: '-1px',
+  },
+  to: {
+    outlineOffset: '2px',
+  },
+});
 
 export interface IslandProps extends React.HTMLAttributes<HTMLSpanElement> {
   inline?: Inline;
@@ -17,11 +27,15 @@ export const Island: React.FC<IslandProps> = ({children, inline, attr, ...rest})
   };
 
   if (inline?.isSelected()) {
-    // style.outline = '2px solid rgba(0, 0, 255, 0.2)';
-    style.outline = '2px solid blue';
-    style.outlineOffset = '-1px';
-    style.borderRadius = '2px';
-    style.background = 'rgba(0, 0, 255, 0.1)';
+    const selection = inline.selection();
+    const isExactSelection = !!selection?.[0] && !!selection?.[1];
+    if (isExactSelection) {
+      style.outline = '2px solid var(--caret-color)';
+      style.animation = outlineAnimation + ' .1s ease-out',
+      style.animationFillMode = 'forwards';
+      style.borderRadius = '2px';
+    }
+    style.background = 'var(--selection-color)';
   }
 
   return (

@@ -54,11 +54,11 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
                     bwd={prevInline}
                   />
                 );
-              } else {
+              } else if (!inline.atomic()) {
                 const isItalic = italic instanceof InlineAttrEnd || italic instanceof InlineAttrPassing;
                 element = <FocusView key={key} italic={isItalic} cursor={cursorStart} />;
               }
-            } else element = <AnchorView key={key} />;
+            } else if (!inline.atomic()) element = <AnchorView key={key} />;
             elements.push(element);
           }
         }
@@ -80,7 +80,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
                 element = (
                   <CaretView key={key} italic={!!italic} point={cursorEnd.start} cursor={cursorEnd} bwd={inline} />
                 );
-              } else
+              } else if (!inline.atomic())
                 element = (
                   <FocusView
                     key={key}
@@ -89,7 +89,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
                     cursor={cursorEnd}
                   />
                 );
-            } else element = <AnchorView key={key} />;
+            } else if (!inline.atomic()) element = <AnchorView key={key} />;
             elements.push(element);
           }
         }

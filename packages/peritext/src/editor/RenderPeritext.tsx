@@ -3,12 +3,12 @@ import {Chrome} from './components/Chrome';
 import {context} from './context';
 import {EditorState} from './state';
 import type {PeritextSurfaceState} from '../web/state';
-import type {ToolbarPluginOpts} from './ToolbarPlugin';
+import type {EditorPluginOpts} from './EditorPlugin';
 
 export interface RenderPeritextProps {
   surface: PeritextSurfaceState;
   children: React.ReactNode;
-  opts: ToolbarPluginOpts;
+  opts: EditorPluginOpts;
 }
 
 export const RenderPeritext: React.FC<RenderPeritextProps> = ({surface, opts, children}) => {

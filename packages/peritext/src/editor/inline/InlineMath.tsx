@@ -2,7 +2,7 @@ import 'mathlive';
 import * as React from 'react';
 import {Char} from '../../web/constants';
 import {useEditor} from '../context';
-import {Island} from '../components/Island';
+import {Island} from './Island';
 import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
