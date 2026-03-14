@@ -81,7 +81,7 @@ export class Annals implements UndoCollector, UiLifeCycles, Printable {
 
   public toString(tab?: string): string {
     return (
-      'annals' +
+      'Annals' +
       printTree(tab, [(tab) => 'undo: ' + this.manager.uStack.length, (tab) => 'redo: ' + this.manager.rStack.length])
     );
   }

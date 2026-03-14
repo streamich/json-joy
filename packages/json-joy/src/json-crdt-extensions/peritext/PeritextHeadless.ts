@@ -82,7 +82,7 @@ export class PeritextHeadless implements UiLifeCycles {
   /** ----------------------------------------------------- {@link Printable} */
   
   public toString(tab?: string): string {
-    return 'headless' + printTree(tab, [
+    return 'Headless' + printTree(tab, [
       (tab: string) => this.registry.toString(tab),
       (tab: string) => this.annals.toString(tab),
       (tab: string) => this.kbd.toString(tab),

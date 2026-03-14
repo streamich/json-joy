@@ -78,7 +78,7 @@ export class SliceRegistry implements Printable {
 
   public toString(tab: string = ''): string {
     return (
-      'registry' +
+      'Registry' +
       printTree(
         tab,
         [...this.map.values()].map((entry) => (tab) => entry.toString(tab)),

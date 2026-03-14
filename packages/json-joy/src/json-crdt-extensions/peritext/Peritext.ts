@@ -347,6 +347,8 @@ export class Peritext<T = string> implements Printable, Stateful {
         nl,
         (tab) => this.overlay.toString(tab),
         nl,
+        (tab) => this.editor.toString(tab),
+        nl,
         (tab) => this.blocks.toString(tab),
       ])
     );

@@ -37,11 +37,14 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
     const attr = layers[layers.length - 1];
     if (attr) element = <Code attr={attr}>{element}</Code>;
   }
+
+  // TODO: Make atomic slice annotations exclusive.
   layers = attrs[SliceTypeCon.math];
   if (layers) {
     const attr = layers[layers.length - 1];
-    if (attr) element = <InlineMath attr={attr}>{element}</InlineMath>;
+    if (attr) element = <InlineMath inline={inline} attr={attr} />;
   }
+  
   layers = attrs[SliceTypeCon.kbd];
   if (layers) {
     const attr = layers[layers.length - 1];
