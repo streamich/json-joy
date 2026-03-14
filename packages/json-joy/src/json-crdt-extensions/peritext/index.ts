@@ -7,8 +7,22 @@ import {Extension} from '../../json-crdt/extensions/Extension';
 import type {PeritextDataNode} from './types';
 
 export {PeritextNode, PeritextApi, Peritext};
+
 export * from './slice';
+
+export type * from './block/types';
 export * from './block';
+
+export * from './registry/SliceBehavior';
+export * from './registry/SliceRegistry';
+
+export * from './slice/constants';
+
+export type * from './events/types';
+export * from './events/PeritextEventTarget';
+export * from './events/defaults/PeritextEventDefaults';
+
+export * from './PeritextHeadless';
 
 export const peritext = new Extension<
   ExtensionId.peritext,
@@ -17,10 +31,3 @@ export const peritext = new Extension<
   PeritextApi,
   [text: string]
 >(ExtensionId.peritext, MNEMONIC, PeritextNode, PeritextApi, (text: string) => SCHEMA(text));
-
-export * from './block/types';
-export * from './registry/SliceBehavior';
-export * from './registry/SliceRegistry';
-export * from './slice/constants';
-
-export * from './PeritextHeadless';

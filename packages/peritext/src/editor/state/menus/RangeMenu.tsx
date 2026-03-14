@@ -346,7 +346,7 @@ export class RangeMenu {
   }
 
   public formattingMenu(): MenuItem {
-    const et = this.state.surface.events.et;
+    const et = this.state.et;
     const track = (item: MenuItem): MenuItem => {
       const orig = item.onSelect;
       return orig
@@ -408,7 +408,12 @@ export class RangeMenu {
               name: 'Math',
               icon: () => <MathIntegralXIcon width={16} height={16} />,
               onSelect: () => {
-                et.format('tog', CommonSliceType.math);
+                et.format({
+                  action: 'tog',
+                  type: CommonSliceType.math,
+                  stack: 'atomic',
+                  padded: true,
+                });
               },
             }),
             track({

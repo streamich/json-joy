@@ -13,7 +13,7 @@ export interface PeritextPlugin {
   /**
    * CSS variables that will be injected into the editor's root element.
    */
-  vars: Record<string, string>;
+  vars?: Record<string, string>;
 
   // --------------------------------------------------- Block-level formatting
 
