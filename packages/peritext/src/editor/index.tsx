@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {CursorPlugin} from '../plugins/cursor';
 import {PeritextWebUi, type PeritextWebUiProps} from '../web';
-import {ToolbarPlugin} from './ToolbarPlugin';
+import {EditorPlugin} from './EditorPlugin';
 
 export interface PeritextEditorProps extends PeritextWebUiProps {
   /**
@@ -12,7 +12,7 @@ export interface PeritextEditorProps extends PeritextWebUiProps {
 
 export const PeritextEditor: React.FC<PeritextEditorProps> = (props) => {
   const plugins = useMemo(() => {
-    return [...(props.plugins0 || []), new CursorPlugin(), new ToolbarPlugin(), ...(props.plugins || [])];
+    return [...(props.plugins0 || []), new CursorPlugin(), new EditorPlugin(), ...(props.plugins || [])];
   }, [props.plugins, props.plugins0]);
 
   return <PeritextWebUi {...props} plugins={plugins} />;

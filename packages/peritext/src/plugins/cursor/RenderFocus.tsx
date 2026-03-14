@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule, drule, keyframes} from 'nano-theme';
-import {DefaultRendererColors} from './constants';
+import {CursorConstants} from './constants';
 import {usePeritext} from '../../web/react';
 import {useSyncStoreOpt} from '../../web/react/hooks';
 import type {FocusViewProps} from '../../web/react/cursor/FocusView';
@@ -10,7 +10,7 @@ const animationTime = '1s';
 
 const animation = keyframes({
   'from,to': {
-    bg: DefaultRendererColors.ActiveCursor,
+    bg: 'var(--caret-color)',
   },
   '50%': {
     bg: 'transparent',
@@ -29,10 +29,10 @@ const blockClass = rule({
 const innerClass = drule({
   an: `${animationTime} ${animation} step-end infinite`,
   pos: 'absolute',
+  bg: 'var(--caret-color)',
   w: `calc(max(${width}em, 2px))`,
   t: '-.175em',
   h: '1.45em',
-  bg: DefaultRendererColors.ActiveCursor,
   'mix-blend-mode': 'multiply',
 });
 
@@ -44,7 +44,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({left, italic, children}
   const {dom} = usePeritext();
   const focus = useSyncStoreOpt(dom?.cursor.focus) || false;
 
-  const style: React.CSSProperties = focus ? {} : {background: DefaultRendererColors.InactiveCursor, animation: 'none'};
+  const style: React.CSSProperties = focus ? {} : {background: `var(--${CursorConstants.CaretColorBlurred})`, animation: 'none'};
 
   if (italic) {
     style.rotate = '11deg';

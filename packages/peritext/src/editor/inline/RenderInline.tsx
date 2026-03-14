@@ -42,7 +42,7 @@ export const RenderInline: React.FC<RenderInlineProps> = (props) => {
   layers = attrs[SliceTypeCon.math];
   if (layers) {
     const attr = layers[layers.length - 1];
-    if (attr) element = <InlineMath inline={inline} attr={attr} />;
+    if (attr) element = <InlineMath inline={inline} attr={attr}>{element}</InlineMath>;
   }
   
   layers = attrs[SliceTypeCon.kbd];

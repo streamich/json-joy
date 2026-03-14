@@ -5,10 +5,11 @@ import {SliceTypeName} from 'json-joy/lib/json-crdt-extensions/peritext/slice/co
 import {NewFormatting} from './formattings';
 import {inlines} from '../inline/tags';
 import {Menu} from './menus/Menu';
+import type {PeritextEventTarget} from 'json-joy/src/json-crdt-extensions';
 import type {Peritext} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextSurfaceState} from '../../web/state';
 import type {MenuItem} from '../types';
-import type {ToolbarPluginOpts} from '../ToolbarPlugin';
+import type {EditorPluginOpts} from '../EditorPlugin';
 import type {PeritextCursorEvent, PeritextEventDetailMap} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
@@ -31,11 +32,14 @@ export class EditorState implements UiLifeCycles {
    */
   public readonly activeLeafBlockId$ = new BehaviorSubject<ITimestampStruct | null>(null);
 
+  public readonly et: PeritextEventTarget;
+
   constructor(
     public readonly surface: PeritextSurfaceState,
-    public readonly opts: ToolbarPluginOpts,
+    public readonly opts: EditorPluginOpts,
   ) {
     this.txt = this.surface.dom.txt;
+    this.et = surface.headless.et;
   }
 
   private _setActiveLeafBlockId = () => {

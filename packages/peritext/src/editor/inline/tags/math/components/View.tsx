@@ -8,8 +8,8 @@ import {useT} from 'use-t';
 import type {ViewProps} from '../../../InlineSliceBehavior';
 
 // TODO: load these once?
-import 'mathlive/fonts.css';
-import 'mathlive/static.css';
+// import 'mathlive/fonts.css';
+// import 'mathlive/static.css';
 
 const EditIcon = makeIcon({set: 'lucide', icon: 'pencil'});
 
