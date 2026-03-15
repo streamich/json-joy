@@ -12,6 +12,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@arnog/colors@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@arnog/colors@npm:0.3.0"
+  checksum: 10c0/bb8feb2436d6f8f497f6dc5916d936171bad1c26a91ff042a01c16db3338e85999044214bc0bd4b9a738d963d4e44b87819f9fe196c56223db9799b726beea0a
+  languageName: node
+  linkType: hard
+
 "@asamuzakjp/css-color@npm:^3.2.0":
   version: 3.2.0
   resolution: "@asamuzakjp/css-color@npm:3.2.0"
@@ -700,6 +707,17 @@ __metadata:
     complex-esm: "npm:^2.1.1-esm1"
     decimal.js: "npm:^10.6.0"
   checksum: 10c0/9f6d8d251a3a3dec0cc71bbdd5b561965db82a1719cee72fa9154b4fd3d726dcbda9502358b20ea20107f442b75de0833eeaa09a8fed6a331cea90b4899b912f
+  languageName: node
+  linkType: hard
+
+"@cortex-js/compute-engine@npm:^0.55.6":
+  version: 0.55.6
+  resolution: "@cortex-js/compute-engine@npm:0.55.6"
+  dependencies:
+    "@arnog/colors": "npm:^0.3.0"
+    complex-esm: "npm:^2.1.1-esm1"
+    decimal.js: "npm:^10.6.0"
+  checksum: 10c0/8488783520289f42eb5f37cf54e7c20f39735de2222062cd2df507a7281b66253b93b81335c4193217a0682ff6dee54fd56c4dff530666fdf5bfbe11f937457c
   languageName: node
   linkType: hard
 
@@ -2664,6 +2682,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/peritext@workspace:packages/peritext"
   dependencies:
+    "@cortex-js/compute-engine": "npm:^0.55.6"
     "@jsonjoy.com/collaborative-react": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@jsonjoy.com/keyboard": "workspace:*"

@@ -12,11 +12,16 @@ const blockClass = rule({
 
 export interface Props {
   component?: string;
+  literal?: boolean;
   style?: React.CSSProperties;
   children?: React.ReactNode;
   onClick?: React.MouseEventHandler;
 }
 
-export const MiniTitle: React.FC<Props> = ({component = 'span', style, onClick, children}) => {
+export const MiniTitle: React.FC<Props> = ({component = 'span', literal, style = {}, onClick, children}) => {
+  if (literal) {
+    style.textTransform = 'none';
+    style.fontSize = '11px';
+  }
   return React.createElement(component, {className: blockClass, style, onClick, children});
 };

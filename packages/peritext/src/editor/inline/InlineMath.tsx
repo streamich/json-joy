@@ -9,6 +9,16 @@ import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
 
 const equationClass = rule({
+  cur: 'pointer',
+  '& *': {
+    cur: 'pointer',
+  },
+  '&::part(content)': {
+    cur: 'pointer',
+  },
+});
+
+const equationSelectedClass = rule({
   '&::part(render)': {
     bg: 'var(--selection-color)',
     bdrad: '2px',
@@ -40,11 +50,12 @@ export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
       onMouseDown={() => {
         editor.et.cursor({at: attr.slice, flip: true});
       }}
+      className={equationClass}
       under={(
         <span>aha</span>
       )}
     >
-      {React.createElement('math-span', {mode: "textstyle", className: inline.isSelected() ? equationClass : void 0}, tex)}
+      {React.createElement('math-span', {mode: "textstyle", className: equationClass + (inline.isSelected() ? equationSelectedClass : '')}, tex)}
     </Island>
   );
 };

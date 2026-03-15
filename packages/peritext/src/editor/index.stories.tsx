@@ -14,7 +14,7 @@ export default {
 const markdown =
   'The German __automotive sector__ is in the process of *cutting ' +
   'thousands of jobs* as, [Google Docs](https://developers.google.com/workspace/docs), it grapples with a global shift toward electric vehicles ' +
-  '— a transformation Musk himself has been at the forefront of.' +
+  '— a transformation Musk $$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$$ himself has been at the forefront of.' +
   '\n\n' +
   '> To be, or not to be: that is the question.' +
   '\n\n' +
