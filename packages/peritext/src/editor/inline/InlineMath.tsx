@@ -3,9 +3,17 @@ import * as React from 'react';
 import {Char} from '../../web/constants';
 import {useEditor} from '../context';
 import {Island} from '../cursor/island/Island';
+import {IslandFrameProps} from '../cursor/island/IslandFrame';
+import {rule} from 'nano-theme';
 import type {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import type {Slice} from 'json-joy/lib/json-crdt-extensions';
-import {IslandFrameProps} from '../cursor/island/IslandFrame';
+
+const equationClass = rule({
+  '&::part(render)': {
+    bg: 'var(--selection-color)',
+    bdrad: '2px',
+  },
+});
 
 // TODO: load these once?
 // or: https://cdn.jsdelivr.net/npm/mathlive@0.109.0/mathlive-static.css
@@ -24,7 +32,6 @@ export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
   if (!attr.isStart()) return Char.ZeroLengthSpace;
 
   const tex = (attr.slice as unknown as Slice<string>).text?.() ?? '';
-  const content = tex || '\\placeholder{}';
 
   return (
     <Island
@@ -37,7 +44,7 @@ export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
         <span>aha</span>
       )}
     >
-      {React.createElement('math-span', {mode: "textstyle"}, content)}
+      {React.createElement('math-span', {mode: "textstyle", className: inline.isSelected() ? equationClass : void 0}, tex)}
     </Island>
   );
 };
