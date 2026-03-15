@@ -13,7 +13,6 @@ const outlineAnimation = keyframes({
 const blockClass = rule({
   pos: 'relative',
   z: 100,
-  // w: '0px',
   // h: '100%',
   // va: 'bottom',
 });
@@ -22,9 +21,9 @@ const underClass = rule({
   pos: 'absolute',
   z: 102,
   t: `1.8em`,
-  l: 0,
+  l: '50%',
+  transform: 'translateX(-50%)',
   isolation: 'isolate',
-  // transform: 'translateX(calc(-50% + 0px))',
 });
 
 export interface IslandFrameProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -36,7 +35,6 @@ export interface IslandFrameProps extends React.HTMLAttributes<HTMLSpanElement> 
 
 export const IslandFrame: React.FC<IslandFrameProps> = ({selected, outline, under, children, ...rest}) => {
   const style: React.CSSProperties = {
-    ...{'--jsonjoy-peritext-editable': 'no'},
     cursor: 'pointer',
     ...rest.style,
   };
@@ -52,8 +50,8 @@ export const IslandFrame: React.FC<IslandFrameProps> = ({selected, outline, unde
   }
 
   return (
-    <span className={blockClass}>
-      <span {...rest} style={style} contentEditable={false}>
+    <span className={blockClass} contentEditable={false} style={{'--jsonjoy-peritext-editable': 'no'} as any}>
+      <span {...rest} style={style}>
         {children}
       </span>
       {!!under && (

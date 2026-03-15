@@ -39,7 +39,7 @@ export const Favicon: React.FC<FaviconProps> = (props) => {
         width: size,
         height: size,
         src: 'https://' + domain + '/favicon.ico',
-        renderError: () => h(Avatar, {name: domain, width: size, height: size, letters: 1}),
+        renderError: () => h(Avatar, {name: domain.toUpperCase(), width: size, height: size, letters: 1}),
       }),
   });
 };
