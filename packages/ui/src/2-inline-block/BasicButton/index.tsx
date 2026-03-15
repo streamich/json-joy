@@ -38,7 +38,7 @@ export interface BasicButtonProps extends React.AllHTMLAttributes<any> {
   fill?: boolean;
   size?: number;
   width?: 'auto' | number | string;
-  height?: number | string;
+  height?: 'auto' | number | string;
   round?: boolean;
   rounder?: boolean;
   roundest?: boolean;
@@ -48,6 +48,11 @@ export interface BasicButtonProps extends React.AllHTMLAttributes<any> {
   transparent?: boolean;
   compact?: boolean;
   spacious?: boolean;
+
+  /** Large button which stretches in both dimensions, used for display purposes
+   * such as encapsulating a math formula. */
+  display?: boolean;
+
   disabled?: boolean;
   selected?: boolean;
   onClick?: React.MouseEventHandler;
@@ -74,12 +79,19 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   spacious,
   disabled,
   selected,
+  display,
   className = '',
   ...rest
 }) => {
   const styles = useStyles();
   const g = styles.g;
   const bgFactor = styles.light ? 1 : 1.1;
+
+  if (display) {
+    width = 'auto';
+    height = 'auto';
+    spacious = true;
+  }
 
   const dynamicBlockClass = useRule(() => ({
     col: g(0.2),
@@ -109,9 +121,13 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
 
   style.width = width;
 
+  if (display) {
+    style.font = 'inherit';
+  }
+
   if (typeof width !== 'number') {
     if (spacious) {
-      style.padding = '8px 16px';
+      style.padding = display ? 16 : '8px 16px';
     } else {
       style.paddingLeft = compact ? 8 : 16;
       style.paddingRight = compact ? 8 : 16;

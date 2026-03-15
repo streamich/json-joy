@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {TextBlock} from '@jsonjoy.com/ui/lib/5-block/TextBlock';
+import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {useT} from 'use-t';
 import type {ViewProps} from '../../../InlineSliceBehavior';
 
@@ -56,8 +57,10 @@ export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
 
   return (
     <div className={blockClass}>
-      <div style={{textAlign: 'center'}}>
-        {React.createElement('math-span', {mode: "textstyle"}, tex)}
+      <div style={{textAlign: 'center', margin: '-16px 0'}}>
+        <BasicButton display rounder onClick={onEdit}>
+          {React.createElement('math-span', {mode: "textstyle"}, tex)}
+        </BasicButton>
       </div>
       {/* {React.createElement('math-field', {readonly: true, style: {width: '100%'}}, tex)} */}
       {tex && (
