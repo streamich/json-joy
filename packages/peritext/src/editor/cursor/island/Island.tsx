@@ -2,6 +2,7 @@ import {Inline, InlineAttr} from 'json-joy/lib/json-crdt-extensions';
 import * as React from 'react';
 import {IslandFrame, IslandFrameProps} from './IslandFrame';
 import {IslandUnder} from './IslandUnder';
+import {Char} from '../../../web/constants';
 
 export interface IslandProps extends IslandFrameProps {
   inline?: Inline;
@@ -16,15 +17,19 @@ export const Island: React.FC<IslandProps> = (props) => {
   const {children, inline, attr, ...rest} = props;
 
   const selected = inline?.isSelected();
-  let outline = false;
+  let isExactSelection = false;
   if (selected) {
     const selection = inline?.selection();
-    outline = !!selection?.[0] && !!selection?.[1];
+    isExactSelection = !!selection?.[0] && !!selection?.[1];
   }
 
   return (
-    <IslandFrame {...rest} selected={selected} outline={outline} under={<IslandUnder {...props} selected={selected} />}>
-      {children}
-    </IslandFrame>
+    <>
+      {Char.ZeroLengthSpace}
+      <IslandFrame {...rest} selected={selected} outline={isExactSelection} under={<IslandUnder {...props} selected={selected && isExactSelection} />}>
+        {children}
+      </IslandFrame>
+      {Char.ZeroLengthSpace}
+    </>
   );
 };

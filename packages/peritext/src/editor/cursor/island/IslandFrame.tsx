@@ -20,7 +20,7 @@ const blockClass = rule({
 const underClass = rule({
   pos: 'absolute',
   z: 102,
-  t: `1.8em`,
+  b: '-16px',
   l: '50%',
   transform: 'translateX(-50%)',
   isolation: 'isolate',
