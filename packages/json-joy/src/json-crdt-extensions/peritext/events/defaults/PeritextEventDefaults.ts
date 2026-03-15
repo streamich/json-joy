@@ -240,7 +240,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             break;
           }
           case 'atomic': {
-            slices.insAtomic(tag, data, selection, padded);
+            const newSlices = slices.insAtomic(tag, data, selection, padded);
+            if (newSlices.length === 1) editor.cursor.setRange(newSlices[0]);
             break;
           }
           case 'erase': {

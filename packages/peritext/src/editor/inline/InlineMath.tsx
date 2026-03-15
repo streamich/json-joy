@@ -31,7 +31,7 @@ export const InlineMath: React.FC<InlineMathProps> = ({inline, attr}) => {
       inline={inline}
       attr={attr}
       onMouseDown={() => {
-        editor.surface.headless.et.cursor({at: attr.slice, flip: true});
+        editor.et.cursor({at: attr.slice, flip: true});
       }}
       under={(
         <span>aha</span>

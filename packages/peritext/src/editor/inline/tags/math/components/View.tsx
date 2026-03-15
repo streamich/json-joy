@@ -8,13 +8,16 @@ import {useT} from 'use-t';
 import type {ViewProps} from '../../../InlineSliceBehavior';
 
 // TODO: load these once?
-// import 'mathlive/fonts.css';
-// import 'mathlive/static.css';
+import 'mathlive/fonts.css';
+import 'mathlive/static.css';
 
 const EditIcon = makeIcon({set: 'lucide', icon: 'pencil'});
 
-const wrapClass = rule({
-  pd: '4px 0',
+const blockClass = rule({
+  w: '100%',
+  minW: '220px',
+  bxz: 'border-box',
+  pd: '16px',
 });
 
 const renderedClass = drule({
@@ -47,15 +50,9 @@ export const View: React.FC<ViewProps> = ({formatting, onEdit}) => {
   const [t] = useT();
   const tex = (formatting.range as unknown as {text(): string}).text?.() ?? '';
 
-  const html = React.useMemo(() => convertLatexToMarkup(tex || '\\placeholder{}'), [tex]);
-
   return (
-    <div className={wrapClass}>
-      <div
-        className={renderedClass({})}
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: mathlive produces safe sanitized HTML
-        dangerouslySetInnerHTML={{__html: html}}
-      />
+    <div className={blockClass}>
+      {React.createElement('math-span', {mode: "textstyle"}, tex)}
       {tex && (
         <div className={sourceClass({})}>
           {tex}
