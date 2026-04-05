@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.41% </span>
+                <span class="strong">87.27% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>41/48</span>
+                <span class='fraction'>48/55</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.81% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>9/11</span>
+                <span class='fraction'>10/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.18% </span>
+                <span class="strong">94.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>41/44</span>
+                <span class='fraction'>48/51</span>
             </div>
         
             
@@ -161,7 +161,20 @@
 <a name='L96'></a><a href='#L96'>96</a>
 <a name='L97'></a><a href='#L97'>97</a>
 <a name='L98'></a><a href='#L98'>98</a>
-<a name='L99'></a><a href='#L99'>99</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -189,11 +202,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">36x</span>
@@ -203,8 +222,10 @@
 <span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-yes">17x</span>
+<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">15x</span>
@@ -220,6 +241,11 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -278,9 +304,11 @@ export interface WebSocketChannelParams {
 }
 &nbsp;
 /**
- * A `Channel` interface using WebSocket implementation.
+ * A client WebSocket wrapper.
  */
-export class WebSocketChannel&lt;T extends string | Uint8Array = string | Uint8Array&gt; implements PhysicalChannel&lt;T&gt; {
+export class WebSocketChannel&lt;T extends string | Uint8Array&lt;any&gt; = string | Uint8Array&lt;any&gt;&gt;
+  implements PhysicalChannel&lt;T&gt;
+{
   /**
    * Native WebSocket reference, or `undefined` if construction of WebSocket
    * failed.
@@ -288,10 +316,14 @@ export class WebSocketChannel&lt;T extends string | Uint8Array = string | Uint8A
   public readonly ws: WebSocketBase | undefined;
 &nbsp;
   public readonly state$ = new BehaviorSubject&lt;ChannelState&gt;(ChannelState.CONNECTING);
-  public readonly open$ = new ReplaySubject&lt;PhysicalChannel&gt;(1);
-  public readonly close$ = new ReplaySubject&lt;[self: PhysicalChannel, event: CloseEventBase]&gt;(1);
+  public readonly open$ = new ReplaySubject&lt;PhysicalChannel&lt;T&gt;&gt;(1);
+  public readonly close$ = new ReplaySubject&lt;[self: PhysicalChannel&lt;T&gt;, event: CloseEventBase]&gt;(1);
   public readonly error$ = new Subject&lt;Error&gt;();
   public readonly message$ = new Subject&lt;T&gt;();
+&nbsp;
+  public closed: boolean = true;
+  public onmessage?: (data: T, isUtf8: boolean) =&gt; void;
+  public onclose?: (code: number, reason: string, wasClean: boolean) =&gt; void;
 &nbsp;
   constructor({newSocket}: WebSocketChannelParams) {
     try {
@@ -299,11 +331,13 @@ export class WebSocketChannel&lt;T extends string | Uint8Array = string | Uint8A
       ws.binaryType = 'arraybuffer';
       ws.onopen = () =&gt; {
         this.state$.next(ChannelState.OPEN);
+        this.closed = false;
         this.open$.next(this);
         this.open$.complete();
       };
       ws.onclose = (event) =&gt; {
         this.state$.next(ChannelState.CLOSED);
+        this.closed = true;
         this.close$.next([this, event]);
         this.close$.complete();
         this.message$.complete();
@@ -318,7 +352,12 @@ export class WebSocketChannel&lt;T extends string | Uint8Array = string | Uint8A
         const data = event.data;
         const message: T = (typeof data === 'string' ? data : toUint8Array(data)) as unknown as T;
         this.message$.next(message);
+        this.onmessage?.(message, typeof data === 'string');
       };
+      this.close$.subscribe(([, {code, reason, wasClean}]) =&gt; {
+        this.closed = true;
+        this.onclose?.(code, reason, wasClean);
+      });
     } catch (error) {
       this.state$.next(ChannelState.CLOSED);
       this.error$.next(error as Error);
@@ -364,7 +403,7 @@ export class WebSocketChannel&lt;T extends string | Uint8Array = string | Uint8A
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-04T17:48:55.237Z
+                at 2026-04-05T22:09:13.668Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
