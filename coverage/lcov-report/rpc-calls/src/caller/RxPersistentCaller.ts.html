@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.29% </span>
+                <span class="strong">86.48% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>29/34</span>
+                <span class='fraction'>32/37</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.85% </span>
+                <span class="strong">93.54% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>26/28</span>
+                <span class='fraction'>29/31</span>
             </div>
         
             
@@ -163,14 +163,17 @@
 <a name='L98'></a><a href='#L98'>98</a>
 <a name='L99'></a><a href='#L99'>99</a>
 <a name='L100'></a><a href='#L100'>100</a>
-<a name='L101'></a><a href='#L101'>101</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -207,6 +210,7 @@
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-yes">120x</span>
@@ -214,9 +218,7 @@
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-yes">30x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -269,12 +271,14 @@ import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
 import {RxLogicalChannelCaller} from './RxLogicalChannelCaller';
 import {PersistentPhysicalChannel, type PersistentPhysicalChannelOptions} from '@jsonjoy.com/channel';
 import {RxBatchCodecLogicalChannel} from '../channel/RxBatchCodecLogicalChannel';
-import type {BatchCodec} from '@jsonjoy.com/rpc-codec-base';
+import {MessageLogicalChannel} from '../channel/MessageLogicalChannel';
 import type {Caller, CallerMethods} from './types';
+import type {RpcCodec} from '@jsonjoy.com/rpc-codec';
+import {BufferedLogicalChannel} from '../channel';
 &nbsp;
 export interface RxPersistentCallerOptions {
-  physical: PersistentPhysicalChannelOptions;
-  codec: BatchCodec&lt;string | Uint8Array, msg.RxMessage&gt;;
+  physical: PersistentPhysicalChannelOptions&lt;Uint8Array&gt;;
+  codec: RpcCodec&lt;msg.RxMessage&gt;;
 &nbsp;
   /**
    * Number of milliseconds to periodically send keep-alive ".ping" notification
@@ -302,23 +306,22 @@ export interface RxPersistentCallerOptions {
  * on top of it.
  */
 export class RxPersistentCaller&lt;Methods extends CallerMethods&lt;any&gt; = CallerMethods&gt; implements Caller&lt;Methods&gt; {
-  public channel: PersistentPhysicalChannel;
+  public channel: PersistentPhysicalChannel&lt;Uint8Array&gt;;
   public rpc?: RxLogicalChannelCaller&lt;Methods&gt;;
   public readonly rpc$ = new ReplaySubject&lt;RxLogicalChannelCaller&lt;Methods&gt;&gt;(1);
 &nbsp;
   constructor(params: RxPersistentCallerOptions) {
     const ping = params.ping ?? <span class="branch-1 cbranch-no" title="branch not covered" >15000;</span>
     this.channel = new PersistentPhysicalChannel(params.physical);
+    const codec = params.codec;
     this.channel.open$.pipe(filter((open) =&gt; open)).subscribe(() =&gt; {
       const close$ = this.channel.open$.pipe(filter(<span class="fstat-no" title="function not covered" >(o</span>pen) =&gt; <span class="cstat-no" title="statement not covered" >!open)</span>);
       const physicalChannel = this.channel.channel$.value;
       <span class="missing-if-branch" title="if path not taken" >I</span>if (!physicalChannel) <span class="cstat-no" title="statement not covered" >return;</span>
-      const channel = new RxBatchCodecLogicalChannel({
-        codec: params.codec,
-        channel: physicalChannel,
-      });
+      const channel = new MessageLogicalChannel&lt;msg.RxMessage&gt;(physicalChannel, codec);
+      const channelBuffered = new BufferedLogicalChannel({channel});
       const caller = new RxLogicalChannelCaller&lt;Methods&gt;({
-        channel: channel as any,
+        channel: channelBuffered as any,
       });
       // Send ping notifications to keep the connection alive.
       <span class="missing-if-branch" title="if path not taken" >I</span>if (ping) {
@@ -370,7 +373,7 @@ export class RxPersistentCaller&lt;Methods extends CallerMethods&lt;any&gt; = Ca
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-05T22:09:13.668Z
+                at 2026-04-07T16:11:02.705Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
