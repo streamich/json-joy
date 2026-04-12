@@ -38,7 +38,7 @@ const MIN_PANES = 2;
  * </SplitPane>
  * ```
  */
-export function SplitPane(props: SplitPaneProps) {
+export const SplitPane: React.FC<SplitPaneProps> = (props) => {
   const {
     direction = 'horizontal',
     resizable = true,
@@ -383,4 +383,4 @@ export function SplitPane(props: SplitPaneProps) {
       {containerSize > 0 && renderChildren()}
     </div>
   );
-}
+};
