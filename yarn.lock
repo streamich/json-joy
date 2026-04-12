@@ -3045,6 +3045,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@jsonjoy.com/site@workspace:packages/site":
+  version: 0.0.0-use.local
+  resolution: "@jsonjoy.com/site@workspace:packages/site"
+  dependencies:
+    "@jsonjoy.com/ui": "workspace:*"
+    "@types/node": "npm:^22.14.1"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    css-loader: "npm:^7.1.2"
+    html-webpack-plugin: "npm:^5.6.3"
+    mini-css-extract-plugin: "npm:^2.9.2"
+    nano-theme: "npm:^1.5.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+    react-router-lite: "npm:^1.6.0"
+    rx-use: "npm:^1.9.0"
+    rxjs: "npm:7"
+    style-loader: "npm:^4.0.0"
+    ts-loader: "npm:^9.5.2"
+    ts-node: "npm:*"
+    webpack: "npm:^5.99.5"
+    webpack-cli: "npm:^6.0.1"
+    webpack-dev-server: "npm:^5.2.1"
+    wrangler: "npm:^4.81.1"
+  languageName: unknown
+  linkType: soft
+
 "@jsonjoy.com/ui@workspace:*, @jsonjoy.com/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/ui@workspace:packages/ui"
@@ -13482,7 +13509,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.8.1, rxjs@npm:^7.8.2":
+"rxjs@npm:7, rxjs@npm:^7.8.1, rxjs@npm:^7.8.2":
   version: 7.8.2
   resolution: "rxjs@npm:7.8.2"
   dependencies:
@@ -14802,7 +14829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.9.2":
+"ts-node@npm:*, ts-node@npm:^10.9.2":
   version: 10.9.2
   resolution: "ts-node@npm:10.9.2"
   dependencies:
