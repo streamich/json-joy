@@ -16,6 +16,7 @@ const blockClass = rule({
   w: 'auto',
   ov: 'hidden',
   animation: 'fadeInScaleOut .3s',
+  bxsh: '0 1px 2px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.1)',
 });
 
 const mainClass = rule({
@@ -100,7 +101,7 @@ export const ToastCard: React.FC<ToastCardProps> = ({
         <span className={titleClass}>{title}</span>
       </Flex>
       <div style={{margin: '-7px -7px -11px 16px'}}>
-        {!!onClose && <BasicButtonClose size={32} onClick={() => onClose()} />}
+        {!!onClose && <BasicButtonClose size={24} onClick={() => onClose()} />}
       </div>
     </Split>
   );
@@ -108,7 +109,7 @@ export const ToastCard: React.FC<ToastCardProps> = ({
   const style: React.CSSProperties = {};
 
   return (
-    <Paper fill={0} contrast className={blockClass}>
+    <Paper fill={0} round contrast className={blockClass}>
       {typeof progress === 'number' && (
         <div style={{position: 'relative', marginBottom: '-2px'}}>
           <RunningBackground />
