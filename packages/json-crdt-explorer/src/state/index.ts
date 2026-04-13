@@ -10,7 +10,7 @@ import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/Js
 import type {TraceDefinition} from '../components/TraceSelector/traces';
 import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 
-export interface OpenFile {
+export interface IOpenFile {
   id: string;
   openTime: number;
   log: Log<any>;
@@ -20,9 +20,9 @@ export interface OpenFile {
 }
 
 export class JsonCrdtExplorerState {
-  public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
+  public readonly files$ = new BehaviorSubject<IOpenFile[]>([]);
   public readonly selected$ = new BehaviorSubject<string>('');
-  public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
+  public readonly file$ = new BehaviorSubject<IOpenFile | null>(null);
   public readonly sid = Model.sid();
 
   constructor() {
@@ -48,7 +48,7 @@ export class JsonCrdtExplorerState {
   ) => {
     const now = Date.now();
     const logState = new JsonCrdtLogState(log, {view: 'model'});
-    const file: OpenFile = {
+    const file: IOpenFile = {
       id: Math.random().toString(36).slice(2) + '.' + now,
       openTime: now,
       log,

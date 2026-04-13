@@ -24,7 +24,9 @@
   ],
   "references": [
     {"path": "../json-joy/tsconfig.build.json"},
+    {"path": "../json-pack/tsconfig.build.json"},
     {"path": "../ui/tsconfig.build.json"},
+    {"path": "../util/tsconfig.build.json"},
     {"path": "../collaborative-ui/tsconfig.build.json"}
   ]
 }

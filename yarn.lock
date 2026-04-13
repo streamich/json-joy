@@ -2548,7 +2548,9 @@ __metadata:
   resolution: "@jsonjoy.com/json-crdt-explorer@workspace:packages/json-crdt-explorer"
   dependencies:
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
     "@types/node": "npm:^22.14.1"
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.3"
