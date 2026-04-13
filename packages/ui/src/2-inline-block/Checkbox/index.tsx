@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {lightTheme as theme, rule} from 'nano-theme';
+import {Iconista} from '../../icons/Iconista';
 
 const h = React.createElement;
 
@@ -83,14 +84,14 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
     left: small ? 6 : 6,
     width: small ? 11 : 16,
     fontSize: small ? 9 : 12,
-    color: 'rgba(255,255,255,.6)',
+    color: 'rgba(255,255,255,.7)',
   };
 
   const styleLabelOff: any = {
     right: small ? 5 : 6,
     width: small ? 11 : 16,
     fontSize: small ? 9 : 12,
-    color: 'rgba(255,255,255,.4)',
+    color: 'rgba(255,255,255,.5)',
   };
 
   if (small) {
@@ -116,8 +117,12 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       onMouseDown,
       onMouseUp,
     },
-    h('span', {className: labelClass, style: styleLabelOn, fontFamily: 'monospace', 'aria-hidden': true}, 'I'),
-    h('span', {className: labelClass, style: styleLabelOff, fontFamily: 'monospace', 'aria-hidden': true}, 'O'),
+    h('span', {className: labelClass, style: styleLabelOn, 'aria-hidden': true},
+      h(Iconista, {set: 'bootstrap', icon: 'check', width: small ? 10 : 12, height: small ? 9 : 12}),
+    ),
+    h('span', {className: labelClass, style: styleLabelOff, 'aria-hidden': true},
+      h(Iconista, {set: 'bootstrap', icon: 'x', width: small ? 10 : 12, height: small ? 9 : 12}),
+    ),
     h('span', {className: thumbClass, style: styleSpan}, ' '),
   );
 };
