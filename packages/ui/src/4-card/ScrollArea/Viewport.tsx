@@ -22,7 +22,8 @@ const viewportClass = rule({
 
 const contentClass = rule({
   minW: '100%',
-  d: 'table',
+  minH: '100%',
+  d: 'flex',
 });
 
 export const Viewport: React.FC<ScrollAreaViewportProps> = ({children, className, style, ...rest}) => {

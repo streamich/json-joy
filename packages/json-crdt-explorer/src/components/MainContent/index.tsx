@@ -9,10 +9,9 @@ const blockClass = rule({
   bgi: 'radial-gradient(circle, rgba(127,127,127,.1) 1px, transparent 1px)',
   bgs: '16px 16px',
   w: '100%',
-  h: '100%',
+  minH: '100%',
   d: 'flex',
   flex: '1 1 auto',
-  bd: '1px solid red',
 });
 
 export const MainContent: React.FC = () => {
