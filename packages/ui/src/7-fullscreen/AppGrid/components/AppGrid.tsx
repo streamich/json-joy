@@ -8,7 +8,6 @@ import {Iconista} from '../../../icons/Iconista';
 import BasicButton from '../../../2-inline-block/BasicButton';
 import {useT} from 'use-t';
 import {BasicTooltip} from '../../../4-card/BasicTooltip';
-import {AppGridFooter} from './AppGridFooter';
 import {AppGridColumn} from './AppGridColumn';
 
 const outerClass = rule({
@@ -18,7 +17,6 @@ const outerClass = rule({
 });
 
 const sidebarClass = rule({
-  bg: 'rgba(0,0,0,0.01)',
   h: '100vh',
   ov: 'hidden',
 });
@@ -62,18 +60,14 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
       header={(
         <>
           <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
-            <BasicButton onClick={state.toggleLeft}>
-              <Iconista set="bootstrap" icon="layout-sidebar" width={16} height={16} />
+            <BasicButton rounder size={32} onClick={state.toggleLeft}>
+              <Iconista set="bootstrap" icon={state.leftVisible() ? 'layout-sidebar' : 'layout-sidebar-inset'} width={16} height={16} style={{opacity: .7}} />
             </BasicButton>
           </BasicTooltip>
           {header}
         </>
       )}
-      footer={!!footer && (
-        <AppGridFooter>
-          {footer}
-        </AppGridFooter>
-      )}
+      footer={footer}
     >
       {children}
     </AppGridColumn>

@@ -2,10 +2,10 @@ import * as React from 'react';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
-import {TopNav} from '@jsonjoy.com/ui/lib/5-block/TopNav';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import JsonJoyLogo from '@jsonjoy.com/ui/lib/icons/svg/JsonJoyLogo';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 
 const linkStyle: React.CSSProperties = {
   color: 'inherit',
@@ -32,7 +32,7 @@ export const Menu: React.FC = () => {
   );
 
   const left = (
-    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
+    <div style={{display: 'flex', alignItems: 'center', gap: '16px', paddingLeft: '24px'}}>
       <a href="https://explorer.jsoncrdt.org" style={{...linkStyle, opacity: 1, marginLeft: '-8px'}}>
         <span style={{fontSize: '10.5px'}}>JSON CRDT</span>
         <br />
@@ -90,10 +90,10 @@ export const Menu: React.FC = () => {
   );
 
   return (
-    <TopNav>
+    <Split>
       {left}
       {/* {middle} */}
       {right}
-    </TopNav>
+    </Split>
   );
 };
