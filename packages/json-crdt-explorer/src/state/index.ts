@@ -7,7 +7,7 @@ import {BehaviorSubject, map, switchMap} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {stripExtensions} from './util';
 import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
-import type {TraceDefinition} from './TraceSelector/traces';
+import type {TraceDefinition} from '../components/JsonCrdtExplorer/TraceSelector/traces';
 import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 
 export interface OpenFile {

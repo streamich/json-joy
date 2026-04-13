@@ -82,7 +82,12 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
         dividerSize={12}
       >
         {leftElement}
-        <Pane minSize={200}>{content}</Pane>
+        <Pane minSize={200}>
+          {/* <div style={{paddingRight: 2}}>
+            {content}
+          </div> */}
+          {content}
+        </Pane>
         {rightElement}
       </SplitPane>
     );

@@ -38,8 +38,12 @@ export const AppGridColumn: React.FC<AppGridColumnProps> = ({header, footer, scr
     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
       {headerElement}
       <ScrollArea.ScrollArea style={{flex: 1}} railWidth={scrollRailWidth ?? 8}>
+        {/* <ScrollArea.Viewport style={{padding: '8px 8px 8px 16px'}}> */}
         <ScrollArea.Viewport>
-          {children}
+            {children}
+          {/* <div style={{width: 'calc(100% + 8px)'}}>
+            {children}
+          </div> */}
         </ScrollArea.Viewport>
         <ScrollArea.ScrollRail style={{top: 2, bottom: 2, borderRadius: 3}}>
           <ScrollArea.Thumb />

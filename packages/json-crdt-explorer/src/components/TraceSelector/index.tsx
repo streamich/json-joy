@@ -5,7 +5,7 @@ import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
 import {useT} from 'use-t';
-import {useExplorer} from '../context';
+import {useExplorer} from '../../context';
 
 const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment'});
 const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});

@@ -24,7 +24,7 @@ const handleClass = drule({
   w: '1px',
   h: '100%',
   bxz: 'border-box',
-  trs: 'background .3s, width .1s, height .1s',
+  trs: 'background .3s, width .06s, height .06s',
   bdrad: '2px',
   [`.${blockClass.trim()}:hover &`]: {
     w: '5px',
