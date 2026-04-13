@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Pane, SplitPane} from '../../../5-block/SplitPane';
 import {rule} from 'nano-theme';
-import {AppGridHeader} from './AppGirdHeader';
 import {SlimDivider} from '../../../5-block/SplitPane/components/SlimDivider';
 import {AppGridState} from '../state';
 import {ctx} from '../context';

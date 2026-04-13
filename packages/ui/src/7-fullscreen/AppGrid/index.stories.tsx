@@ -110,7 +110,7 @@ export const ScrollOverflow: StoryObj<typeof meta> = {
   render: (args) => <AppGrid {...args} />,
   args: {
     left: (
-      <AppGridColumn header={<HeaderContent />} footer={<FooterContent />}>
+      <AppGridColumn header={<HeaderContent />} footer={<FooterContent />} scrollRailWidth={4}>
         <LongSidebarContent />
       </AppGridColumn>
     ),

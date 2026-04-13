@@ -29,6 +29,7 @@ const handleClass = drule({
   [`.${blockClass.trim()}:hover &`]: {
     w: '5px',
     bg: 'rgba(127,127,127,.16)',
+    h: 'calc(100% - 4px)',
   },
   [`.${blockClass.trim()}:focus &`]: {
     w: '3px',

@@ -13,6 +13,7 @@ const thumbClass = drule({
   bdrad: '4px',
   trs: 'background 0.1s ease',
   us: 'none',
+  cur: 'ns-resize',
 });
 
 export interface ThumbProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
