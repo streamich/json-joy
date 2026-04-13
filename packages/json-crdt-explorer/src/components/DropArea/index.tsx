@@ -21,9 +21,11 @@ const css = {
   }),
 };
 
-export type DropAreaProps = Record<string, never>;
+export interface DropAreaProps {
+  compact?: boolean;
+}
 
-export const DropArea: React.FC<DropAreaProps> = () => {
+export const DropArea: React.FC<DropAreaProps> = ({compact}) => {
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
   const theme = useTheme();
@@ -36,12 +38,12 @@ export const DropArea: React.FC<DropAreaProps> = () => {
   });
 
   return (
-    <Paper className={css.block} round contrast>
+    <Paper className={css.block} round contrast style={{padding: compact ? 4 : void 0}}>
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: click triggers file input, keyboard accessible via the input itself */}
       <div
         {...bond}
         className={css.area({
-          pd: `${files.length ? 16 : 110}px 8px`,
+          pd: `${files.length ? 16 : 110}px 4px`,
           bd: area.over ? `1px dashed ${theme.color.sem.blue[0]}` : `1px dashed ${theme.g(0.94)}`,
           bg: area.over ? 'rgba(0,128,255,.04)' : theme.g(1),
           '&:hover': {

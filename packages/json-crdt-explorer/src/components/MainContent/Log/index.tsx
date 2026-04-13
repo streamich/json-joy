@@ -17,7 +17,7 @@ export const Log: React.FC<LogProps> = () => {
   }
 
   return (
-    <div style={{maxWidth: 1300, minWidth: 500, margin: '0 auto', padding: '16px'}}>
+    <div style={{maxWidth: 1300, minWidth: 500, width: '100%', margin: '0 auto', padding: '16px'}}>
       <JsonCrdtLog
         key={file.id}
         spacious

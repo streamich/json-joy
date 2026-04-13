@@ -27,10 +27,12 @@ export interface AppGridProps {
   right?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  maxLeftSize?: number;
+  minLeftSize?: number;
   children?: React.ReactNode;
 }
 
-export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, header, footer, children }) => {
+export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, header, footer, maxLeftSize, minLeftSize, children }) => {
   const [t] = useT();
   const hasLeft = !!left;
   const hasRight = !!right;
@@ -44,7 +46,7 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
   const rightState = state.rightState.use();
 
   const leftElement = (leftState === 'open' && (
-    <Pane className={sidebarClass} size={leftSize} minSize={200}>
+    <Pane className={sidebarClass} size={leftSize} minSize={minLeftSize ?? 200} maxSize={maxLeftSize}>
       {left}
     </Pane>
   ));

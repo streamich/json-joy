@@ -1,24 +1,23 @@
 import * as React from 'react';
-import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 import {AppGrid, AppGridColumn} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
 import {Menu} from './components/Menu';
 import {MainContent} from './components/MainContent';
 import {JsonCrdtExplorerState} from './state';
 import {ctx} from './context';
 import {ExplorerSidenav} from './components/ExplorerSidenav';
+import {useT} from 'use-t';
 
 export const App: React.FC = () => {
+  const [t] = useT();
   const state = React.useMemo(() => new JsonCrdtExplorerState(), []);
     
   return (
     <ctx.Provider value={state}>
-      {/* <Menu />
-      <div style={{width: 'calc(100vw - 64px)', maxWidth: 1300, margin: '0 auto', padding: '16px 0'}}>
-      </div> */}
-
       <AppGrid
+        maxLeftSize={500}
+        // minLeftSize={250}
         left={(
-          <AppGridColumn header={<div>header</div>} footer={<div>footer</div>} scrollRailWidth={4}>
+          <AppGridColumn header={<h5>{t('Files')}</h5>} footer={<div>{' '}</div>} scrollRailWidth={4}>
             <ExplorerSidenav />
           </AppGridColumn>
         )}

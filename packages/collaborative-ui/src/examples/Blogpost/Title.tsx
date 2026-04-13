@@ -13,7 +13,7 @@ export const Title: React.FC<TitleProps> = ({str}) => {
   return (
     <Row title={'Title'}>
       <h1 style={{margin: 0, padding: 0, maxWidth: '100%', overflowX: 'auto'}}>
-        <CollaborativeFlexibleInput focus str={() => str} typeahead={view ? '' : 'Title'} fullWidth />
+        <CollaborativeFlexibleInput str={() => str} typeahead={view ? '' : 'Title'} fullWidth />
       </h1>
     </Row>
   );

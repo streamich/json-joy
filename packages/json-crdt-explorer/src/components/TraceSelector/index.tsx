@@ -92,7 +92,7 @@ export const TraceSelector: React.FC<TraceSelectorProps> = ({width = 240, expand
         icon={<ShopIcon width={16} height={16} />}
         loading={loading}
         disabled={loading}
-        size={expanded ? 1 : 0}
+        size={expanded ? 1 : -1}
       >
         Load
       </Button>
