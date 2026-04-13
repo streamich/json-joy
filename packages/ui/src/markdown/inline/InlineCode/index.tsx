@@ -16,8 +16,6 @@ const getBlockquoteClass = drule({
   ...theme.font.mono.mid,
 });
 
-const copy = require('clipboard-copy'); // eslint-disable-line
-
 const {useContext} = React;
 
 interface Props {
@@ -53,8 +51,8 @@ const InlineCode: React.FC<Props> = ({idx}) => {
     return <Key>{value}</Key>;
   }
 
-  const handleClick = () => {
-    copy(value);
+  const handleClick = async () => {
+    await navigator.clipboard.writeText(value);
     toasts.add({
       title: t('Copied to clipboard!'),
       message: <blockquote className={blockquoteClass}>{value}</blockquote>,

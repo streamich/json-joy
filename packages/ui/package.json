@@ -39,7 +39,6 @@
     "@uiw/react-color-alpha": "^2.9.6",
     "@uiw/react-color-hue": "^2.9.6",
     "@uiw/react-color-saturation": "^2.9.6",
-    "clipboard-copy": "^4.0.1",
     "code-colors-react": "^3.4.0",
     "codemirror": "^6.0.1",
     "emoji-js": "^3.9.0",

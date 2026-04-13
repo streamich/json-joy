@@ -5,8 +5,6 @@ import {makeIcon} from '../../icons/Iconista';
 import {BasicTooltip, type BasicTooltipProps} from '../../4-card/BasicTooltip';
 import useMountedState from 'react-use/lib/useMountedState';
 
-const copy = require('clipboard-copy'); // eslint-disable-line
-
 const CheckIcon = makeIcon({set: 'atlaskit', icon: 'check'});
 const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
 
@@ -22,9 +20,9 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip, ...rest}
   const isMounted = useMountedState();
   const [copied, setCopied] = React.useState(false);
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = async (e: React.MouseEvent) => {
     setCopied(true);
-    copy(onCopy());
+    await navigator.clipboard.writeText(onCopy());
     setTimeout(() => {
       if (isMounted()) setCopied(false);
     }, 2000);
