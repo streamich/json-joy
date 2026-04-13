@@ -16,7 +16,8 @@ const railClass = rule({
   flex: 1,
   h: '7px',
   bdrad: '7px',
-  cur: 'pointer',
+  // cur: 'pointer',
+  cur: 'text',
 });
 
 const rangeClass = rule({
@@ -37,10 +38,15 @@ const handleClass = rule({
   bdrad: '20px',
   bd: 0,
   pad: 0,
-  cur: 'grab',
+  // cur: 'grab',
+  cur: 'ew-resize',
   out: 'none',
   transform: 'translateX(-50%)',
+  trs: 'background-color .1s, box-shadow .1s, width .1s, height .1s, outline .1s, top .1s',
   zIndex: 2,
+  '&:hover': {
+    out: '6px solid rgba(127,127,127,.12)',
+  },
   '&:active': {
     cur: 'grabbing',
   },
@@ -54,6 +60,13 @@ const handleClass = rule({
     bdrad: '12px',
     bg: 'radial-gradient(rgba(255,255,255,1.0), rgba(255,255,255,0.05), rgba(255,255,255,0.0))',
   },
+});
+
+const handleDraggingClass = rule({
+  out: '6px solid rgba(127,127,127,.12)',
+  h: '24px',
+  w: '8px',
+  t: '-9px',
 });
 
 const valueClass = rule({
@@ -217,7 +230,7 @@ export const Slider: React.FC<SliderProps> = (props) => {
         <div className={rangeClass} style={rangeStyle} />
         <button
           type="button"
-          className={handleClass}
+          className={handleClass + (dragging ? handleDraggingClass : '')}
           style={handleStyle}
           onKeyDown={onKeyDown}
           tabIndex={disabled ? -1 : 0}
