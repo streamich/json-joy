@@ -5,7 +5,7 @@ import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {DropArea} from '../DropArea';
 import {useExplorer} from '../context';
-import {CreateButton} from '../../molecules/CreateButton';
+import {CreateButton} from '@jsonjoy.com/collaborative-ui/lib//molecules/CreateButton';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 import {TraceSelector} from '../TraceSelector';

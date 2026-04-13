@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {JsonCrdtExplorerState} from './JsonCrdtExplorerState';
+import type {JsonCrdtExplorerState} from './state';
 
 export const context = React.createContext<JsonCrdtExplorerState>(null!);
 

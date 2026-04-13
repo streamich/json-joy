@@ -6,9 +6,9 @@ import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {BehaviorSubject, map, switchMap} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {stripExtensions} from './util';
-import {JsonCrdtLogState} from '../JsonCrdtLog/JsonCrdtLogState';
+import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
 import type {TraceDefinition} from './TraceSelector/traces';
-import type {DemoComp} from '../DemoDisplay';
+import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 
 export interface OpenFile {
   id: string;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {JsonCrdtExplorerState} from './JsonCrdtExplorerState';
+import {JsonCrdtExplorerState} from './state';
 import {ExplorerSidenav} from './ExplorerSidenav';
 import {context} from './context';
 import TwoColumnLayout from '@jsonjoy.com/ui/lib/6-page/TwoColumnLayout';

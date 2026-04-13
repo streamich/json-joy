@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {JsonCrdtExplorer} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtExplorer';
 import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 import {AppGrid, AppGridColumn} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
-import {Menu} from './Menu';
+import {Menu} from './components/Menu';
+import {JsonCrdtExplorer} from './components/JsonCrdtExplorer';
 
 export const App: React.FC = () => {
   return (
