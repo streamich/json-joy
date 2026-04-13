@@ -9,20 +9,21 @@ import {stripExtensions} from './util';
 import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
 import type {TraceDefinition} from '../components/TraceSelector/traces';
 import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
+import {FileMetadataDto, OpenFile} from './file';
 
-export interface IOpenFile {
-  id: string;
-  openTime: number;
-  log: Log<any>;
-  name: string;
-  logState: JsonCrdtLogState;
-  display?: DemoComp;
-}
+// export interface IOpenFile {
+//   id: string;
+//   openTime: number;
+//   log: Log<any>;
+//   name: string;
+//   logState: JsonCrdtLogState;
+//   display?: DemoComp;
+// }
 
 export class JsonCrdtExplorerState {
-  public readonly files$ = new BehaviorSubject<IOpenFile[]>([]);
+  public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
   public readonly selected$ = new BehaviorSubject<string>('');
-  public readonly file$ = new BehaviorSubject<IOpenFile | null>(null);
+  public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
   public readonly sid = Model.sid();
 
   constructor() {
@@ -47,16 +48,15 @@ export class JsonCrdtExplorerState {
     name: string = 'JSON CRDT document' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
   ) => {
     const now = Date.now();
-    const logState = new JsonCrdtLogState(log, {view: 'model'});
-    const file: IOpenFile = {
-      id: Math.random().toString(36).slice(2) + '.' + now,
-      openTime: now,
-      log,
+    const meta: FileMetadataDto = {
+      id: Math.random().toString(36).slice(2) + '.' + now.toString(36),
       name,
-      logState,
+      createdAt: now,
+      updatedAt: now,
     };
+    const file = new OpenFile(meta, log);
     this.files$.next([...this.files$.getValue(), file]);
-    this.select(file.id);
+    this.select(file.meta.id);
     return file;
   };
 
@@ -71,7 +71,7 @@ export class JsonCrdtExplorerState {
     const files = this.files$.getValue();
     const file = files.find((m) => m.id === id);
     if (!file) return;
-    file.name = name;
+    file.name.next(name);
     this.files$.next([...files]);
   };
 

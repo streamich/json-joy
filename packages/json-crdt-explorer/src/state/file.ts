@@ -1,9 +1,9 @@
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
 import {rsync} from '@jsonjoy.com/ui';
-import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 
 export interface FileMetadataDto {
   /** Unique constant identifier for the file. */
@@ -22,15 +22,17 @@ export interface FileDto extends FileMetadataDto {
 }
 
 export class OpenFile {
+  public readonly id: string;
   public readonly openTime: number = Date.now();
   public readonly name: rsync.ReactValue<string>;
   public readonly logState: JsonCrdtLogState;
-  public readonly display?: DemoComp = void 0;
+  public display?: DemoComp = void 0;
 
   constructor (
     public readonly meta: FileMetadataDto,
     public readonly log: Log<any>,
   ) {
+    this.id = meta.id;
     this.name = rsync.val(meta.name);
     this.logState = new JsonCrdtLogState(log, {view: 'model'});
   }

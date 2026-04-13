@@ -24,7 +24,7 @@ export const Log: React.FC<LogProps> = () => {
         state={file.logState}
         log={file.log}
         view={'model'}
-        filename={file.name}
+        filename={file.name.value}
         renderDisplay={
           !file.display
             ? undefined
@@ -32,7 +32,7 @@ export const Log: React.FC<LogProps> = () => {
         }
         renderLeftToolbar={() => (
           <Code gray spacious size={-1}>
-            <FlexibleInput value={file.name} onChange={(e) => state.rename(file.id, e.target.value)} />
+            <FlexibleInput value={file.name.value} onChange={(e) => state.rename(file.id, e.target.value)} />
           </Code>
         )}
       />

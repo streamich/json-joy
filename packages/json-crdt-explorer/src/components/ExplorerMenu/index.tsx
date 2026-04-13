@@ -11,6 +11,7 @@ export const ExplorerMenu: React.FC<ExplorerMenuProps> = () => {
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
   const selected = useBehaviorSubject(state.selected$);
+  // const name = files.name.use();
 
   if (!files.length) return null;
 
@@ -20,7 +21,7 @@ export const ExplorerMenu: React.FC<ExplorerMenuProps> = () => {
         key: file.id,
         menuItem: (
           <Split>
-            <div>{file.name}</div>
+            <div>{file.name.value}</div>
             <div>
               <div
                 onMouseDown={(e) => {
