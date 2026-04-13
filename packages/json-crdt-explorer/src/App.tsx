@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {AppGrid, AppGridColumn} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
+import {AppGrid} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
 import {Menu} from './components/Menu';
 import {MainContent} from './components/MainContent';
 import {JsonCrdtExplorerState} from './state';
 import {ctx} from './context';
-import {ExplorerSidenav} from './components/ExplorerSidenav';
+import {LeftSidebar} from './components/LeftSidebar';
 import {useT} from 'use-t';
 
 export const App: React.FC = () => {
@@ -15,14 +15,9 @@ export const App: React.FC = () => {
     <ctx.Provider value={state}>
       <AppGrid
         maxLeftSize={500}
-        // minLeftSize={250}
-        left={(
-          <AppGridColumn header={<h5>{t('Files')}</h5>} footer={<div>{' '}</div>} scrollRailWidth={4}>
-            <ExplorerSidenav />
-          </AppGridColumn>
-        )}
+        left={<LeftSidebar />}
         header={<Menu />}
-        footer={<div>footer...</div>}
+        footer={<div>{' '}</div>}
       >
         <MainContent />
       </AppGrid>
