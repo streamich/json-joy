@@ -2,6 +2,7 @@ import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {AppGrid} from '.';
 import {Placeholder} from '../../3-list-item/Placeholder';
+import {AppGridColumn} from './components/AppGridColumn';
 
 const meta: Meta<typeof AppGrid> = {
   title: '7. Fullscreen/AppGrid',
@@ -108,7 +109,11 @@ const LongMainContent = () => (
 export const ScrollOverflow: StoryObj<typeof meta> = {
   render: (args) => <AppGrid {...args} />,
   args: {
-    left: <LongSidebarContent />,
+    left: (
+      <AppGridColumn header={<HeaderContent />} footer={<FooterContent />}>
+        <LongSidebarContent />
+      </AppGridColumn>
+    ),
     right: <LongSidebarContent />,
     header: <HeaderContent />,
     footer: <FooterContent />,

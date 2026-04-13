@@ -10,15 +10,18 @@ import BasicButton from '../../../2-inline-block/BasicButton';
 import {useT} from 'use-t';
 import {BasicTooltip} from '../../../4-card/BasicTooltip';
 import {AppGridFooter} from './AppGridFooter';
+import {AppGridColumn} from './AppGridColumn';
 
-const blockClass = rule({
+const outerClass = rule({
   w: '100vw',
   h: '100vh',
+  ov: 'hidden',
 });
 
 const sidebarClass = rule({
   bg: 'rgba(0,0,0,0.01)',
   h: '100vh',
+  ov: 'hidden',
 });
 
 export interface AppGridProps {
@@ -40,56 +43,61 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
   }, [_state, hasLeft, hasRight]);
   const leftSize = state.leftSize.use();
   const rightSize = state.rightSize.use();
-  const leftPanel = state.leftState.use();
+  const leftState = state.leftState.use();
+  const rightState = state.rightState.use();
 
-  const leftElement = (leftPanel === 'open' && (
+  const leftElement = (leftState === 'open' && (
     <Pane className={sidebarClass} size={leftSize} minSize={200}>
       {left}
     </Pane>
   ));
 
-  const rightElement = (rightSize > 0 && (
+  const rightElement = (rightState === 'open' && (
     <Pane className={sidebarClass} size={rightSize} minSize={200}>
       {right}
     </Pane>
   ));
 
   let content = (
-    <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-      <AppGridHeader>
-        <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
-          <BasicButton onClick={state.toggleLeft}>
-            <Iconista set="bootstrap" icon="layout-sidebar" width={16} height={16} />
-          </BasicButton>
-        </BasicTooltip>
-        {header}
-      </AppGridHeader>
-      <div style={{flex: 1, overflow: 'auto'}}>{children}</div>
-      {!!footer && (
+    <AppGridColumn
+      header={(
+        <>
+          <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
+            <BasicButton onClick={state.toggleLeft}>
+              <Iconista set="bootstrap" icon="layout-sidebar" width={16} height={16} />
+            </BasicButton>
+          </BasicTooltip>
+          {header}
+        </>
+      )}
+      footer={!!footer && (
         <AppGridFooter>
           {footer}
         </AppGridFooter>
       )}
-    </div>
-  );
-
-  content = (
-    <SplitPane
-      className={blockClass}
-      onResize={state.setSizes}
-      snapTolerance={15}
-      divider={SlimDivider}
-      dividerSize={1}
     >
-      {leftElement}
-      <Pane minSize={200}>{content}</Pane>
-      {rightElement}
-    </SplitPane>
+      {children}
+    </AppGridColumn>
   );
 
+  if (!!leftElement || !!rightElement) {
+    content = (
+      <SplitPane
+        className={outerClass}
+        onResize={state.setSizes}
+        divider={SlimDivider}
+        dividerSize={12}
+      >
+        {leftElement}
+        <Pane minSize={200}>{content}</Pane>
+        {rightElement}
+      </SplitPane>
+    );
+  }
+  
   return (
     <ctx.Provider value={state}>
-      <div className={blockClass}>
+      <div className={outerClass}>
         {content}
       </div>
     </ctx.Provider>

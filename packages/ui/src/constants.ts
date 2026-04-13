@@ -4,7 +4,7 @@ export enum NiceUiSizes {
   MinSiteWidth = 320,
   SitePadding = 32,
   TopNavHeight = 64,
-  NavHeight = 48,
+  NavHeight = 54,
   SidebarWidth = 300,
   FooterHeight = 290,
 }
