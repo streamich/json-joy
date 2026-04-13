@@ -17,10 +17,10 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
 
-  if (!files.length) return null;
+  let content: React.ReactNode | undefined;
 
-  return (
-    <AppGridColumn header={<Header />} footer={<div>{' '}</div>} scrollRailWidth={4}>
+  if (files.length) {
+    content = (
       <div style={{maxWidth: 320, width: '100%', margin: '0 auto'}}>
         {/* <div onClick={(e) => e.stopPropagation()} onKeyDown={() => {}}> */}
         <div style={{padding: '16px 12px 0 16px'}}>
@@ -28,9 +28,20 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
           <Space size={-1} />
           <ExplorerMenu />
         </div>
-          <Space size={6} />
-          <Separator />
-          <Space size={4} />
+
+        <Space size={6} />
+        <Separator />
+        <Space size={4} />
+
+        <div style={{padding: '0 12px 0 16px'}}>
+          <MiniTitle>{t('Saved')}</MiniTitle>
+          <Space size={-1} />
+          {/* <ExplorerMenu /> */}
+        </div>
+
+        <Space size={6} />
+        <Separator />
+        <Space size={4} />
           
           
           <div style={{padding: '0 12px 16px 16px'}}>
@@ -38,6 +49,12 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
           </div>
         {/* </div> */}
       </div>
+    );
+  }
+
+  return (
+    <AppGridColumn header={<Header />} footer={<div>{' '}</div>} scrollRailWidth={4}>
+      {content}
     </AppGridColumn>
   );
 };

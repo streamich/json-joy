@@ -36,9 +36,7 @@ export const CopyText: React.FC<CopyTextProps> = ({src, children = src()}) => {
   return (
     <div className={css.block}>
       <div className={css.copy}>
-        <BasicTooltip renderTooltip={() => t('Copy')}>
-          <CopyButton onCopy={src} />
-        </BasicTooltip>
+        <CopyButton onCopy={src} />
       </div>
       <div className={css.content}>{children}</div>
     </div>

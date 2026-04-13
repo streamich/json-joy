@@ -87,9 +87,7 @@ export const JsonBlockToolbarRight: React.FC<JsonBlockToolbarRightProps> = ({
       <Flex>
         {!compact && (
           <>
-            <BasicTooltip renderTooltip={() => t('Copy')}>
-              <CopyButton onCopy={handleCopy} />
-            </BasicTooltip>
+            <CopyButton onCopy={handleCopy} />
             <Space horizontal size={-2} />
           </>
         )}
