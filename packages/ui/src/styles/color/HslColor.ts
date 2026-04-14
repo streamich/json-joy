@@ -1,4 +1,5 @@
 import {HsvColor} from './HsvColor';
+import {LinearRgbColor} from './LinearRgbColor';
 import {RgbColor} from './RgbColor';
 
 const HSL_REGEX =
@@ -112,6 +113,10 @@ export class HslColor {
     return toRgb(this.h, this.s, this.l, this.a);
   }
 
+  public toLinearRgb(): LinearRgbColor {
+    return LinearRgbColor.fromRgb(this.toRgb());
+  }
+
   public toHsv(): HsvColor {
     const {h, s, l, a} = this;
     const v = l + s * Math.min(l, 1 - l);
@@ -121,6 +126,41 @@ export class HslColor {
 
   public eq(other: HslColor): boolean {
     return this.h === other.h && this.s === other.s && this.l === other.l && this.a === other.a;
+  }
+
+  /**
+   * Returns the complementary color (hue rotated 180deg).
+   */
+  public complement(): HslColor {
+    return new HslColor((this.h + 0.5) % 1, this.s, this.l, this.a);
+  }
+
+  /**
+   * Returns an analogous color shifted by `angle` (in 0–1 hue fraction, default ~30deg).
+   */
+  public analogous(angle: number = 1 / 12): HslColor {
+    return new HslColor((this.h + angle + 1) % 1, this.s, this.l, this.a);
+  }
+
+  /**
+   * Returns a perceptually pleasing second color suitable as the end-stop of
+   * a gradient. The hue is slightly shifted (~25deg) and the lightness is nudged
+   * so the pair creates visible depth without clashing.
+   */
+  public gradientPair(): HslColor {
+    const hShift = 1 / 14; // ~25.7deg
+    const h2 = (this.h + hShift) % 1;
+    const l2 = clamp(this.l + (this.l < 0.5 ? 0.1 : -0.1));
+    return new HslColor(h2, clamp(this.s + 0.06), l2, this.a);
+  }
+
+  /**
+   * Returns a vivid accent color derived from this color.
+   * Uses a triadic offset (~120deg) and boosts saturation for contrast.
+   */
+  public accentColor(): HslColor {
+    const h2 = (this.h + 1 / 3) % 1;
+    return new HslColor(h2, clamp(this.s + 0.15), clamp(this.l + 0.08), this.a);
   }
 
   /**

@@ -46,4 +46,17 @@ export class LinearRgbColor {
     if (L1 < L2) [L1, L2] = [L2, L1];
     return (L1 + 0.05) / (L2 + 0.05);
   }
+
+  public highestContrast(colors: LinearRgbColor[]): LinearRgbColor {
+    let bestContrast = -1;
+    let bestColor = colors[0];
+    for (const color of colors) {
+      const contrast = this.contrast(color);
+      if (contrast > bestContrast) {
+        bestContrast = contrast;
+        bestColor = color;
+      }
+    }
+    return bestColor;
+  }
 }
