@@ -1,3 +1,4 @@
+import {hash} from '../util';
 import {HsvColor} from './HsvColor';
 import {LinearRgbColor} from './LinearRgbColor';
 import {RgbColor} from './RgbColor';
@@ -84,6 +85,10 @@ export class HslColor {
     const l = v * (1 - s / 2);
     const sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
     return new HslColor(h, sl, l, a);
+  }
+
+  public static fromHash(id: string): HslColor {
+    return new HslColor((hash(id) % 360) / 360, .8, .4).norm();
   }
 
   constructor(

@@ -5,9 +5,6 @@ import {type CommonLabel, getColor} from './colors';
 import {useStyles} from '../../styles/context';
 import {LinearRgbColor} from '../../styles/color';
 
-const hslFromId = (id: string): HslColor =>
-  new HslColor((hash(id) % 360) / 360, .8, .4).norm();
-
 const LITE_TEXT = new LinearRgbColor(1, 1, 1, .7);
 const DARK_TEXT = new LinearRgbColor(0, 0, 0, .7);
 
@@ -64,8 +61,8 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
   const styles = useStyles();
   const effectiveId = id ?? label;
   const primaryColor: HslColor = color
-    ? HslColor.from(color) ?? hslFromId(effectiveId)
-    : hslFromId(effectiveId);
+    ? HslColor.from(color) ?? HslColor.fromHash(effectiveId)
+    : HslColor.fromHash(effectiveId);
   const gradientColor: HslColor | null = gradient === true
     ? primaryColor.gradientPair()
     : typeof gradient === 'string'
@@ -148,7 +145,7 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
           y={viewH * 0.56}
           textAnchor="middle"
           dominantBaseline="middle"
-          fill={primaryColor.toLinearRgb().highestContrast([LITE_TEXT, DARK_TEXT]) + ''}
+          fill={primaryColor.toLinearRgb().pickFirstAboveOrMax(2, [LITE_TEXT, DARK_TEXT]) + ''}
           fontSize={displayLabel.length * -2 + 40}
           fontFamily={styles.txt.get('mono', 'bold', 0).ff + ",'SF Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace"}
           fontWeight="700"
