@@ -56,9 +56,10 @@ const mainClass = rule({
   z: 1,
 });
 
-const mainNonSelectedClass = rule({
+const mainPillClass = rule({
   h: 'calc(100% - 6px)',
   mr: '0 0 6px',
+  pd: '0 4px 0 8px',
   bdrad: '10px',
   z: 2,
   // pd: '0 4px',
@@ -72,12 +73,12 @@ const outerHoveredClass = rule({
   
 });
 
-const mainSelectedClass = rule({
+const mainTabClass = rule({
   col: 'var(--filetabs-fg-txt)',
   bg: 'var(--filetabs-fg)',
   bdrad: '10px 10px 0 0',
   z: 3,
-  pd: '0 4px',
+  pd: '0 4px 0 8px',
 });
 
 const innerClass = rule({
@@ -135,7 +136,7 @@ const titleClass = rule({
     bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
     pointerEvents: 'none',
   },
-  [`.${mainSelectedClass.trim()} &::after`]: {
+  [`.${mainTabClass.trim()} &::after`]: {
     bg: 'linear-gradient(to right, transparent, var(--filetabs-fg))',
   },
 });
@@ -234,7 +235,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, state, item, disabled = fal
       // onMouseLeave={onMouseLeave}
     >
       <span style={{width: 4, display: 'flex', flex: '0 0 auto'}} />
-      <span className={mainClass + (selected ? mainSelectedClass : mainNonSelectedClass)}>
+      <span className={mainClass + (selected ? mainTabClass : mainPillClass)}>
         <span className={innerClass + (selected ? innerSelectedClass : '')}>
           {inner}
         </span>

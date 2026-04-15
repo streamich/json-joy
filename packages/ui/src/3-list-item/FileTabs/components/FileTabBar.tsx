@@ -25,7 +25,7 @@ export interface FileTabBarProps {
 }
 
 export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, children}) => {
-  const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.1 : 0.1);
+  const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
   const style: React.CSSProperties = {
     backgroundColor: bg.toString(),
     '--filetabs-bg': bg.toString(),
