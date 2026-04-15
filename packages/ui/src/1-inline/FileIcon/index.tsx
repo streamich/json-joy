@@ -153,7 +153,7 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
           dominantBaseline="middle"
           fill={primaryColor.toLinearRgb().pickFirstAboveOrMax(2, [LITE_TEXT, DARK_TEXT]) + ''}
           // fontSize={displayLabel.length * -2 + 40 + (size < 24 && displayLabel.length < 3 ? 4 : 0)}
-          fontSize={displayLabel.length * -2 + 40 + (size < 25 ? (16 - displayLabel.length * 2) : 0)}
+          fontSize={displayLabel.length * -2 + 40 + (size < 25 ? (26 - displayLabel.length * 4) : 0)}
           fontFamily={styles.txt.get('mono', 'bold', 0).ff + ",'SF Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace"}
           fontWeight="700"
           letterSpacing={displayLabel.length >= 4 ? '-1' : '0'}

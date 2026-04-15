@@ -12,15 +12,9 @@ const buttonClass = rule({
   mr: 0,
   out: 0,
   bd: 0,
-  // bd: '1px solid red',
   d: 'flex',
   ai: 'center',
   fz: '13.8px',
-  // fld: 'row',
-  // fls: '0 0 auto',
-  // gap: '4px',
-  // col: 'var(--filetabs-bg-txt)',
-  // bg: 'var(--filetabs-fg)',
   us: 'none',
   bg: 'transparent',
   trs: 'width .22s cubic-bezier(.4,0,.2,1)',
@@ -116,6 +110,7 @@ const closeButtonLayoutClass = rule({
   w: '100%',
   h: '100%',
   d: 'flex',
+  pos: 'relative',
   fld: 'row',
   fls: '0 0 auto',
   justifyContent: 'space-between',
@@ -150,6 +145,33 @@ const mainSmallClass = rule({
   [`& .${iconLayoutClass.trim()}`]: {
     gap: '4px',
   },
+  [`& .${titleClass.trim()}`]: {
+    maskImage: 'linear-gradient(to left, transparent, white 12px)',
+  },
+  [`& .${separatorClass.trim()}`]: {
+    bdr: '1px solid var(--filetabs-hover)',
+  },
+});
+
+const buttonSmallClass = rule({
+  [`& .${separatorClass.trim()}`]: {
+    w: 3,
+  },
+});
+
+const buttonXSmallClass = rule({
+  [`& .${separatorClass.trim()}`]: {
+    w: 2,
+    h: '77%',
+    bdr: '1px solid var(--filetabs-hover)',
+  },
+});
+
+const buttonXXSmallClass = rule({
+  [`& .${separatorClass.trim()}`]: {
+    bdr: 0,
+    w: 0,
+  },
 });
 
 const mainXSmallClass = rule({
@@ -158,6 +180,24 @@ const mainXSmallClass = rule({
   [`& .${iconLayoutClass.trim()}`]: {
     gap: '2px',
   },
+  [`& .${titleClass.trim()}`]: {
+    maskImage: 'linear-gradient(to left, transparent, white 8px)',
+  },
+});
+
+const detachedCloseButtonClass = rule({
+  pos: 'absolute',
+  t: '-5px',
+  r: '-6px',
+  w: '18px',
+  h: '18px',
+  bxz: 'border-box',
+  pd: '1px',
+  bdrad: '50%',
+  bg: 'var(--filetabs-fg)',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
 });
 
 
@@ -242,26 +282,36 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   let inner: React.ReactNode = label;
 
   if (showCloseButton) {
+    let button = (
+      <BasicButtonClose
+        comp="span"
+        role="button"
+        rounder={width > 50}
+        round={width <= 50}
+        size={width > 84 ? 24 : width > 50 ? 20 : 16}
+        tabIndex={-1}
+        aria-label={t('Close tab')}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          state.delete(index);
+        }}
+      />
+    );
+    if (width < 40) {
+      button = (
+        <span className={detachedCloseButtonClass}>
+          {button}
+        </span>
+      );
+    }
     inner = (
       <span className={closeButtonLayoutClass}>
         {label}
-        <BasicButtonClose
-          comp="span"
-          role="button"
-          rounder={width > 50}
-          round={width <= 50}
-          size={width > 84 ? 24 : width > 50 ? 20 : 16}
-          tabIndex={-1}
-          aria-label={t('Close tab')}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            state.delete(index);
-          }}
-        />
+        {button}
       </span>
     );
   }
@@ -280,7 +330,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       aria-selected={selected}
       aria-disabled={disabled}
       tabIndex={selected ? 0 : -1}
-      className={buttonClass}
+      className={buttonClass + (width <= 20 ? buttonXXSmallClass : width <= 40 ? buttonXSmallClass : width <= 60 ? buttonSmallClass : '')}
       style={style}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
@@ -296,12 +346,12 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       }}
     >
       <span style={{width: width > 60 ? 4 : width > 40 ? 2 : 0, display: 'flex', flex: '0 0 auto'}} />
-      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '') + (width <= 40 ? mainXSmallClass : width <= 60 ? mainSmallClass : '')}>
+      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '') + (width <= 30 ? mainXSmallClass : width <= 60 ? mainSmallClass : '')}>
         <span className={innerClass}>
           {inner}
         </span>
       </span>
-      <span className={separatorClass} style={{opacity: showRightBorder && width > 40 ? 1 : 0, width: width > 60 ? 4 : width > 40 ? 2 : 0}} />
+      <span className={separatorClass} style={{opacity: showRightBorder ? 1 : 0}} />
     </button>
   );
 };

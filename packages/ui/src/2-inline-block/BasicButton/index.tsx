@@ -125,6 +125,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   }));
 
   const style: React.CSSProperties = {
+    ...rest.style,
     height,
   };
 
