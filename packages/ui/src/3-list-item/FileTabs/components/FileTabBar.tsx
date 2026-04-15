@@ -21,13 +21,13 @@ const blockClass = rule({
 });
 
 const addButtonClass = rule({
-  w: '40px',
+  // w: '32px',
   h: '100%',
   d: 'flex',
   ai: 'center',
   jc: 'center',
   bdz: 'border-box',
-  pd: '0 0 3px',
+  pd: '0 0 3px 8px',
 });
 
 export interface FileTabBarProps {

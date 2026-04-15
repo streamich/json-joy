@@ -39,7 +39,7 @@ const tabs1 = [
   },
 ];
 
-let cnt = 4;
+let cnt = 5;
 
 export const Primary: StoryObj<typeof meta> = {
   args: {
@@ -48,10 +48,11 @@ export const Primary: StoryObj<typeof meta> = {
     render: (tab) => <div style={{height: 8}} />,
     tabs: tabs1,
     addNewTab: () => {
-      cnt += 1;
+      const num = cnt++;
       return {
-        id: `file${cnt}`,
-        name: `New File ${cnt}`,
+        id: `file${num}`,
+        name: `New File ${num}`,
+        icon: () => <FileIcon label={'f' + num} size={16} />,
       };
     },
   },

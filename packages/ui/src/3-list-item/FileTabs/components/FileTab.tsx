@@ -195,11 +195,10 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
 
   if (offsetPx) {
     style.transform = `translateX(${offsetPx}px)`;
-    if (!isDragging) style.transition = 'transform .2s cubic-bezier(.4,0,.2,1), width .22s cubic-bezier(.4,0,.2,1)';
+    if (!isDragging) style.transition = 'transform .2s cubic-bezier(.4,0,.2,1), width .2s cubic-bezier(.4,0,.2,1)';
   }
   if (isDragging) {
     style.zIndex = 100;
-    // style.boxShadow = '0 4px 14px rgba(0,0,0,.28), 0 1px 4px rgba(0,0,0,.18)';
     style.cursor = 'grabbing';
   }
 
@@ -225,7 +224,8 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   );
 
   const showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index) && (selectedItem ? selectedItem[1] !== index + 1 : true);
-  const showCloseButton = deletable;
+  let showCloseButton = deletable;
+  if (!selected && width < 50) showCloseButton = false;
 
   let inner: React.ReactNode = label;
 
@@ -236,8 +236,9 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
         <BasicButtonClose
           comp="span"
           role="button"
-          rounder
-          // size={20}
+          rounder={width > 50}
+          round={width <= 50}
+          size={width > 84 ? 24 : width > 50 ? 20 : 16}
           tabIndex={-1}
           aria-label={t('Close tab')}
           onPointerDown={(e) => {
