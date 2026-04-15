@@ -29,4 +29,13 @@ export class FileTabsState {
   public dispose() {
     this.box.dispose();
   }
+
+  public select(index: number) {
+    const tab = this.tabs.value[index];
+    const id = tab.id ?? tab.name;
+    const selected = this.selected.value;
+    if ((selected?.[0].id ?? selected?.[0].name) === id) return;
+    this.selected.set([tab, index]);
+    this.hovered.set(null);
+  }
 }

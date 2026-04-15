@@ -144,6 +144,17 @@ const titleClass = rule({
   maskImage: 'linear-gradient(to left, transparent, white 24px)',
 });
 
+const separatorClass = rule({
+  w: 4,
+  mrb: 6,
+  bxz: 'border-box',
+  h: '50%',
+  d: 'flex',
+  fl: '0 0 auto',
+  bdr: '2px solid var(--filetabs-hover)',
+  trs: 'opacity 0.2s',
+});
+
 
 export interface FileTabProps {
   id: string;
@@ -241,11 +252,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       tabIndex={selected ? 0 : -1}
       className={buttonClass}
       style={style}
-      onMouseDown={() => {
-        if (!selected) {
-          state.selected.set([item, index]);
-        }
-      }}
+      onMouseDown={() => state.select(index)}
       // onClick={handleClick}
       // onPointerDown={handlePointerDown}
       onMouseEnter={() => state.hovered.set([id, index])}
@@ -259,7 +266,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
           {inner}
         </span>
       </span>
-      <span style={{width: 4, marginBottom: 6, boxSizing: 'border-box', height: '50%', display: 'flex', flex: '0 0 auto', borderRight: showRightBorder ? '2px solid var(--filetabs-hover)' : void 0}} />
+      <span className={separatorClass} style={{opacity: showRightBorder ? 1 : 0}} />
     </button>
   );
 };
