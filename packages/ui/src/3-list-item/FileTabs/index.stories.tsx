@@ -36,7 +36,11 @@ export const Primary: StoryObj<typeof meta> = {
         id: 'file3',
         name: 'File 3',
       },
+      {
+        id: 'file4',
+        name: 'File 4',
+      },
     ],
   },
-  decorators: [wrap(400)],
+  decorators: [wrap(700)],
 };

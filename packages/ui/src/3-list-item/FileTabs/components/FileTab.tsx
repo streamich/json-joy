@@ -15,6 +15,7 @@ const buttonClass = rule({
   // bd: '1px solid red',
   d: 'flex',
   ai: 'center',
+  fz: '14.5px',
   // fld: 'row',
   // fls: '0 0 auto',
   // gap: '4px',
@@ -51,7 +52,7 @@ const mainClass = rule({
   // bg: 'var(--filetabs-fg)',
   // us: 'none',
   bg: 'transparent',
-  trs: 'background .12s ease,color .12s ease',
+  // trs: 'background .12s ease,color .12s ease',
   ov: 'visible',
   z: 1,
 });
@@ -62,15 +63,13 @@ const mainPillClass = rule({
   pd: '0 4px 0 8px',
   bdrad: '10px',
   z: 2,
+  trs: 'background .2s ease,color .2s ease',
   // pd: '0 4px',
-  '&:hover': {
-    col: 'var(--filetabs-hover-txt)',
-    bg: 'var(--filetabs-hover)',
-  },
 });
 
 const outerHoveredClass = rule({
-  
+  col: 'var(--filetabs-hover-txt)',
+  bg: 'var(--filetabs-hover)',
 });
 
 const mainTabClass = rule({
@@ -102,7 +101,7 @@ const iconLayoutClass = rule({
   fld: 'row',
   fls: '0 0 auto',
   ai: 'center',
-  gap: '4px',
+  gap: '8px',
   '& svg': {
     display: 'flex',
   }
@@ -119,6 +118,34 @@ const closeButtonLayoutClass = rule({
   ai: 'center',
 });
 
+const textClass = rule({
+  // backgroundClip: 'text',
+  // bg: 'linear-gradient(to bottom, white, transparent)',
+    // bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
+  // d: 'inline-block',
+  // background: linear-gradient(to bottom, white, transparent);
+  // col: 'transparent',
+  // maskImage: 'linear-gradient(to right, white 50%, transparent 80%)',
+  // bg: 'linear-gradient(to right, red 50%, transparent 80%)',
+  // '&::after': {
+  //   content: '""',
+  //   pos: 'absolute',
+  //   top: 0,
+  //   right: 0,
+  //   bottom: 0,
+  //   w: '24px',
+  //   bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
+  //   // trs: 'background .12s ease',
+  //   pointerEvents: 'none',
+  //   [`.${mainTabClass.trim()} &`]: {
+  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-fg))',
+  //   },
+  //   [`.${outerHoveredClass.trim()} &`]: {
+  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-hover))',
+  //   },
+  // },
+});
+
 const titleClass = rule({
   pos: 'relative',
   ov: 'hidden',
@@ -126,24 +153,38 @@ const titleClass = rule({
   flex: '1 1 0',
   minWidth: 0,
   ta: 'left',
-  '&::after': {
-    content: '""',
-    pos: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    w: '24px',
-    bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
-    pointerEvents: 'none',
-  },
-  [`.${mainTabClass.trim()} &::after`]: {
-    bg: 'linear-gradient(to right, transparent, var(--filetabs-fg))',
-  },
+  // backgroundClip: 'text',
+  // bg: 'linear-gradient(to bottom, white, transparent)',
+    // bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
+  // display: 'block',
+  // bd: '1px solid red',
+  maskImage: 'linear-gradient(to left, transparent, white 24px)',
+  // bg: 'linear-gradient(to right, red 50%, transparent 80%)',
+  // background: linear-gradient(to bottom, white, transparent);
+  // col: 'transparent',
+  // '&::after': {
+  //   content: '""',
+  //   pos: 'absolute',
+  //   top: 0,
+  //   right: 0,
+  //   bottom: 0,
+  //   w: '24px',
+  //   bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
+  //   // trs: 'background .12s ease',
+  //   pointerEvents: 'none',
+  //   [`.${mainTabClass.trim()} &`]: {
+  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-fg))',
+  //   },
+  //   [`.${outerHoveredClass.trim()} &`]: {
+  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-hover))',
+  //   },
+  // },
 });
 
 
 export interface FileTabProps {
   id: string;
+  index: number;
   state: FileTabsState;
   item: TabItem;
   disabled?: boolean;
@@ -158,19 +199,27 @@ export interface FileTabProps {
   onClose?: (id: string) => void;
 }
 
-export const FileTab: React.FC<FileTabProps> = ({id, state, item, disabled = false, offsetPx = 0}) => {
+export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, offsetPx = 0}) => {
   const [t] = useT();
   const width = state.tabWidth.use();
   const selected = state.selected.use() === id;
+  const hoverState = state.hovered.use();
+  const hovered = hoverState?.[0] === id;
   const style: React.CSSProperties = {
     width,
   };
+
+  const isHovered = (hoverState?.[0] === id) && !selected;
 
   if (offsetPx) style.transform = `translateX(${offsetPx}px)`;
 
   const iconElement = !!item.icon && <span>{item.icon()}</span>;
 
-  let label: React.ReactNode = item.display?.() ?? item.name ?? item.id;
+  let label: React.ReactNode = (
+    <span className={textClass}>
+      {item.display?.() ?? item.name ?? item.id}
+    </span>
+  );
 
   if (item.icon) {
     label = (
@@ -187,6 +236,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, state, item, disabled = fal
     </span>
   );
 
+  const showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index);
   const showCloseButton = true;
 
   let inner: React.ReactNode = label;
@@ -231,16 +281,18 @@ export const FileTab: React.FC<FileTabProps> = ({id, state, item, disabled = fal
       style={style}
       // onClick={handleClick}
       // onPointerDown={handlePointerDown}
-      // onMouseEnter={handleMouseEnter}
-      // onMouseLeave={onMouseLeave}
+      onMouseEnter={() => state.hovered.set([id, index])}
+      onMouseLeave={() => {
+        if (state.hovered.value?.[0] === id) state.hovered.set(null);
+      }}
     >
       <span style={{width: 4, display: 'flex', flex: '0 0 auto'}} />
-      <span className={mainClass + (selected ? mainTabClass : mainPillClass)}>
+      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '')}>
         <span className={innerClass + (selected ? innerSelectedClass : '')}>
           {inner}
         </span>
       </span>
-      <span style={{width: 4, height: '50%', display: 'flex', flex: '0 0 auto', borderRight: '2px solid var(--filetabs-hover)'}} />
+      <span style={{width: 4, marginBottom: 6, boxSizing: 'border-box', height: '50%', display: 'flex', flex: '0 0 auto', borderRight: showRightBorder ? '2px solid var(--filetabs-hover)' : void 0}} />
     </button>
   );
 };

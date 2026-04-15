@@ -10,6 +10,7 @@ export class FileTabsState {
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabWidth: rsync.ReactComputed<number>;
   public readonly selected: rsync.ReactValue<string>;
+  public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
   
   constructor(
     public readonly tabs: rsync.ReactValue<TabItem[]>

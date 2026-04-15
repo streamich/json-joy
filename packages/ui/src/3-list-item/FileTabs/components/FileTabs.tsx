@@ -24,9 +24,9 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
 
   return (
     <FileTabBar state={state} bg={bg} fg={fg}>
-      {tabs.map((item) => {
+      {tabs.map((item, index) => {
         const id = item.id ?? item.name;
-        return <FileTab state={state} key={id} id={id} item={item} />;
+        return <FileTab state={state} key={id} id={id} index={index} item={item} />;
       })}
     </FileTabBar>
   );
