@@ -15,6 +15,7 @@ const blockClass = rule({
   w: '100%',
   h: '40px',
   ov: 'visible',
+  bdrad: '4px',
 });
 
 export interface FileTabBarProps {
@@ -27,7 +28,7 @@ export interface FileTabBarProps {
 export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, children}) => {
   const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
   const style: React.CSSProperties = {
-    backgroundColor: bg.toString(),
+    background: bg.toString(),
     '--filetabs-bg': bg.toString(),
     '--filetabs-bg-txt': bg.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
     '--filetabs-fg': fg.toString(),
