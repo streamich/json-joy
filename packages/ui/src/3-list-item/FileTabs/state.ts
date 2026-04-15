@@ -21,7 +21,7 @@ export class FileTabsState {
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabWidth: rsync.ReactComputed<number>;
   public readonly selected: rsync.ReactValue<[id: TabItem, index: number] | null>;
-  public readonly hovered: rsync.ReactValue<[id: string, index: number, cx: number, bottom: number] | null> = rsync.val(null);
+  public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
   public readonly drag: rsync.ReactValue<DragState | null> = rsync.val(null);
   public readonly frozenTabWidth: rsync.ReactValue<number | null> = rsync.val(null);
   public addNewTab: (() => TabItem | undefined) | undefined = void 0;

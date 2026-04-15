@@ -50,6 +50,12 @@ export interface MenuItem {
   /** Extra small description or UI element, displayed next to the name. */
   note?: () => React.ReactNode;
 
+  /**
+   * Optional rich content rendered inside the tooltip below the
+   * name/description, separated by an edge-to-edge horizontal rule.
+   */
+  card?: () => React.ReactNode;
+
   /** Text by which to search for this item, defaults to `name`. */
   text?: string;
 

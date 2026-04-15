@@ -5,6 +5,7 @@ import {HslColor} from '../../../styles/color';
 import {FileTabsState} from '../state';
 import * as rsync from '../../../utils/rsync';
 import {FileTabContent, FileTabContentProps} from './FileTabContent';
+import {FileTabTooltip} from './FileTabTooltip';
 import type {TabItem} from '../types';
 
 export interface FileTabsProps {
@@ -37,6 +38,7 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
           const id = item.id ?? item.name;
           return <FileTab key={id} state={state} id={id} index={index} item={item} />;
         })}
+        <FileTabTooltip state={state} />
       </FileTabBar>
       {!!render && <FileTabContent state={state} bg={fg} render={render} />}
     </>

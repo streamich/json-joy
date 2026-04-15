@@ -129,3 +129,88 @@ export const ManyItems: StoryObj<typeof meta> = {
   },
   decorators: [wrap(400)],
 };
+
+const tabsWithTooltips = [
+  {
+    id: 'main',
+    name: 'main.ts',
+    icon: () => <FileIcon label="ts" size={16} />,
+    description: 'Application entry point. Bootstraps the React tree and global providers.',
+  },
+  {
+    id: 'store',
+    name: 'store.ts',
+    icon: () => <FileIcon label="ts" size={16} />,
+    description: 'Global Zustand store.',
+  },
+  {
+    id: 'readme',
+    name: 'README.md',
+    icon: () => <FileIcon label="md" size={16} />,
+    description: 'Project documentation.',
+    card: () => (
+      <div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
+        <div style={{fontWeight: 600, marginBottom: 2}}>Quick facts</div>
+        <div style={{display: 'flex', justifyContent: 'space-between', opacity: 0.8}}>
+          <span>Size</span><span>4.2 KB</span>
+        </div>
+        <div style={{display: 'flex', justifyContent: 'space-between', opacity: 0.8}}>
+          <span>Last modified</span><span>2 days ago</span>
+        </div>
+        <div style={{display: 'flex', justifyContent: 'space-between', opacity: 0.8}}>
+          <span>Author</span><span>streamich</span>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'config',
+    name: 'tsconfig.json',
+    icon: () => <FileIcon label="json" size={16} />,
+    card: () => (
+      <div>
+        <pre style={{margin: 0, fontSize: 11, opacity: 0.85, whiteSpace: 'pre-wrap'}}>
+          {`{\n  "extends": "./tsconfig.base.json",\n  "compilerOptions": {\n    "outDir": "lib"\n  }\n}`}
+        </pre>
+      </div>
+    ),
+  },
+  {
+    id: 'plain',
+    name: 'No tooltip',
+    deletable: false,
+  },
+];
+
+export const TooltipWithDescription: StoryObj<typeof meta> = {
+  name: 'Tooltip - description',
+  args: {
+    bg: '#ffd9df',
+    render: () => <div style={{height: 8}} />,
+    tabs: tabsWithTooltips.slice(0, 2),
+    addNewTab,
+  },
+  decorators: [wrap(600)],
+};
+
+export const TooltipWithCard: StoryObj<typeof meta> = {
+  name: 'Tooltip - card slot',
+  args: {
+    bg: '#d6f0e0',
+    render: () => <div style={{height: 8}} />,
+    tabs: tabsWithTooltips,
+    addNewTab,
+  },
+  decorators: [wrap(700)],
+};
+
+export const TooltipDark: StoryObj<typeof meta> = {
+  name: 'Tooltip - dark',
+  args: {
+    bg: '#1a1f2e',
+    render: () => <div style={{height: 8}} />,
+    tabs: tabsWithTooltips,
+    addNewTab,
+  },
+  decorators: [wrap(700)],
+};
