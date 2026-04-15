@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {drule, lightTheme as theme} from 'nano-theme';
+import {drule} from 'nano-theme';
 
 const h = React.createElement;
 const style = drule({
   trs: 'transform .3s',
   path: {
     fill: 'none',
-    stroke: theme.g(0.4),
+    stroke: 'rgba(128,128,128,0.75)',
     strokeWidth: '2px',
     strokeLinecap: 'round',
   },

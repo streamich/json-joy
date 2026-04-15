@@ -16,6 +16,7 @@ export default meta;
 
 export const Primary: StoryObj<typeof meta> = {
   args: {
+    ms: 2000,
     children: (
       <div
         style={{

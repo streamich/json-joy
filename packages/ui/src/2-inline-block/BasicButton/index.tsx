@@ -114,7 +114,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     '&:active': {
       // bg: disabled ? void 0 : g(0, 0.16 * bgFactor),
       bg: disabled ? void 0 : 'rgba(128,128,128,0.22)',
-      bdfl: disabled ? void 0 : 'saturate(150%) blur(4px)',
+      bdfl: disabled ? void 0 : 'saturate(150%)',
     },
   }));
 
