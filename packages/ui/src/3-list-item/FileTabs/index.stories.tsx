@@ -39,12 +39,21 @@ const tabs1 = [
   },
 ];
 
+let cnt = 4;
+
 export const Primary: StoryObj<typeof meta> = {
   args: {
     // bg: '#30191e',
     bg: '#ffd9df',
     render: (tab) => <div style={{height: 8}} />,
     tabs: tabs1,
+    addNewTab: () => {
+      cnt += 1;
+      return {
+        id: `file${cnt}`,
+        name: `New File ${cnt}`,
+      };
+    },
   },
   decorators: [wrap(700)],
 };

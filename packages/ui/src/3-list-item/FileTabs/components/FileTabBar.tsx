@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {HslColor, LinearRgbColor} from '../../../styles/color';
 import {rule} from 'nano-theme';
+import {BasicButtonAdd} from '../../../2-inline-block/BasicButton/BasicButtonAdd';
 import type {FileTabsState} from '../state';
 
 const LITE_TEXT = new LinearRgbColor(1, 1, 1, .7);
@@ -17,6 +18,16 @@ const blockClass = rule({
   w: '100%',
   h: '48px',
   ov: 'visible',
+});
+
+const addButtonClass = rule({
+  w: '40px',
+  h: '100%',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
+  bdz: 'border-box',
+  pd: '0 0 3px',
 });
 
 export interface FileTabBarProps {
@@ -41,6 +52,9 @@ export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state,
   return (
     <div ref={state.box.setEl} className={blockClass} style={style}>
       {children}
+      <div className={addButtonClass}>
+        <BasicButtonAdd rounder onClick={state.addNew} />
+      </div>
     </div>
   );
 });

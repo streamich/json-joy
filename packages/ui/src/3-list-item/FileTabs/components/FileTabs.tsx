@@ -13,11 +13,16 @@ export interface FileTabsProps {
   state?: FileTabsState;
   bg?: HslColor | string;
   fg?: HslColor | string;
+  addNewTab?: (() => TabItem | undefined) | undefined;
 }
 
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
-  const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render} = props;
-  const state = React.useMemo(() => _state ?? new FileTabsState(rsync.val(_tabs)), [_state]);
+  const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render, addNewTab } = props;
+  const state = React.useMemo(() => {
+    const state = _state ?? new FileTabsState(rsync.val(_tabs));
+    state.addNewTab = addNewTab;
+    return state;
+  }, [_state]);
   const tabs = state.tabs.use();
   const bg: HslColor = React.useMemo(() => HslColor.from(_bg || '#3af')!, [_bg]);
   const fg: HslColor = React.useMemo(() => _fg

@@ -11,6 +11,7 @@ export class FileTabsState {
   public readonly tabWidth: rsync.ReactComputed<number>;
   public readonly selected: rsync.ReactValue<[id: TabItem, index: number] | null>;
   public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
+  public addNewTab: (() => TabItem | undefined) | undefined = void 0;
   
   constructor(
     public readonly tabs: rsync.ReactValue<TabItem[]>
@@ -53,4 +54,17 @@ export class FileTabsState {
     }
     this.tabs.next(newTabs);
   }
+
+  public add(tab: TabItem) {
+    const tabs = this.tabs.value;
+    const newTabs = [...tabs, tab];
+    this.tabs.next(newTabs);
+    this.select(newTabs.length - 1);
+  }
+
+  public readonly addNew = () => {
+    const item = this.addNewTab?.();
+    if (!item) return;
+    this.add(item);
+  };
 }

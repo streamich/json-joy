@@ -147,7 +147,7 @@ const titleClass = rule({
 
 const separatorClass = rule({
   w: 4,
-  mrb: 6,
+  mrb: '6px',
   bxz: 'border-box',
   h: '50%',
   d: 'flex',
