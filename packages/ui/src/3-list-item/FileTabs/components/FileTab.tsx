@@ -38,21 +38,9 @@ const mainClass = rule({
   flex: '1 1 0',
   minWidth: 0,
   pos: 'relative',
-  // pd: 0,
-  // mr: 0,
-  // out: 0,
-  // bd: 0,
-  // bd: '1px solid red',
   d: 'flex',
-  // ai: 'center',
-  // fld: 'row',
-  // fls: '0 0 auto',
-  // gap: '4px',
   col: 'var(--filetabs-bg-txt)',
-  // bg: 'var(--filetabs-fg)',
-  // us: 'none',
   bg: 'transparent',
-  // trs: 'background .12s ease,color .12s ease',
   ov: 'visible',
   z: 1,
 });
@@ -223,7 +211,16 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     </span>
   );
 
-  const showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index) && (selectedItem ? selectedItem[1] !== index + 1 : true);
+  let showRightBorder: boolean;
+  if (dragState) {
+    const {startIndex: si, currentIndex: ci} = dragState;
+    const isGhost = index === si;
+    const leftNeighborDom = si < ci ? ci : ci - 1;
+    const isGhostLeftNeighbor = index === leftNeighborDom;
+    showRightBorder = !selected && !isGhost && !isGhostLeftNeighbor;
+  } else {
+    showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index) && (selectedItem ? selectedItem[1] !== index + 1 : true);
+  }
   let showCloseButton = deletable;
   if (!selected && width < 50) showCloseButton = false;
 
@@ -283,13 +280,13 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
         if (state.hovered.value?.[0] === id) state.hovered.set(null);
       }}
     >
-      <span style={{width: 4, display: 'flex', flex: '0 0 auto'}} />
+      <span style={{width: width > 60 ? 4 : width > 40 ? 2 : 0, display: 'flex', flex: '0 0 auto'}} />
       <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '')}>
         <span className={innerClass}>
           {inner}
         </span>
       </span>
-      <span className={separatorClass} style={{opacity: showRightBorder ? 1 : 0}} />
+      <span className={separatorClass} style={{opacity: showRightBorder && width > 40 ? 1 : 0, width: width > 60 ? 4 : width > 40 ? 2 : 0}} />
     </button>
   );
 };
