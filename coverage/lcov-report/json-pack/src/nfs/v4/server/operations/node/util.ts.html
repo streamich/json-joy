@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.3% </span>
+                <span class="strong">48.48% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/13</span>
+                <span class='fraction'>16/33</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.88% </span>
+                <span class="strong">44.82% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>8/9</span>
+                <span class='fraction'>13/29</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>10/18</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -76,18 +76,38 @@
 <a name='L11'></a><a href='#L11'>11</a>
 <a name='L12'></a><a href='#L12'>12</a>
 <a name='L13'></a><a href='#L13'>13</a>
-<a name='L14'></a><a href='#L14'>14</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">26x</span>
-<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">47x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">26x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Nfsv4Stat} from '../../..';
 import type {Logger} from '../../types';
@@ -99,8 +119,18 @@ export const normalizeNodeFsError = (err: unknown, logger: Logger): Nfsv4Stat =&
   if (isErrCode('ENOENT', err)) return Nfsv4Stat.NFS4ERR_NOENT;
   <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode('EACCES', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_ACCESS;</span>
   if (isErrCode('EEXIST', err)) return Nfsv4Stat.NFS4ERR_EXIST;
-  logger.error('UNEXPECTED_FS_ERROR', err);
-  return Nfsv4Stat.NFS4ERR_IO;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode('ENOTDIR', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_NOTDIR;</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (isErrCode('EISDIR', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_ISDIR;</span>
+  if (isErrCode('EINVAL', err)) return Nfsv4Stat.NFS4ERR_INVAL;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (isErrCode('ENOTEMPTY', err)) return Nfsv4Stat.NFS4ERR_NOTEMPTY;
+<span class="cstat-no" title="statement not covered" >  if (isErrCode('ENOSPC', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_NOSPC;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (isErrCode('EROFS', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_ROFS;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (isErrCode('EXDEV', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_XDEV;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (isErrCode('EFBIG', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_FBIG;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (isErrCode('EMLINK', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_MLINK;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (isErrCode('ENAMETOOLONG', err)) <span class="cstat-no" title="statement not covered" >return Nfsv4Stat.NFS4ERR_NAMETOOLONG;</span></span>
+<span class="cstat-no" title="statement not covered" >  logger.error('UNEXPECTED_FS_ERROR', err);</span>
+<span class="cstat-no" title="statement not covered" >  return Nfsv4Stat.NFS4ERR_IO;</span>
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -109,7 +139,7 @@ export const normalizeNodeFsError = (err: unknown, logger: Logger): Nfsv4Stat =&
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-12T15:59:38.157Z
+                at 2026-04-15T18:34:00.440Z
             </div>
         <script src="../../../../../../../prettify.js"></script>
         <script>

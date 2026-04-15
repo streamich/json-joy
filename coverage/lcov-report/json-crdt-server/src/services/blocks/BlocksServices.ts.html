@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.87% </span>
+                <span class="strong">87.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>139/160</span>
+                <span class='fraction'>142/163</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.65% </span>
+                <span class="strong">71.27% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>65/92</span>
+                <span class='fraction'>67/94</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.76% </span>
+                <span class="strong">81.48% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>21/26</span>
+                <span class='fraction'>22/27</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.48% </span>
+                <span class="strong">92.59% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>123/133</span>
+                <span class='fraction'>125/135</span>
             </div>
         
             
@@ -330,7 +330,12 @@
 <a name='L265'></a><a href='#L265'>265</a>
 <a name='L266'></a><a href='#L266'>266</a>
 <a name='L267'></a><a href='#L267'>267</a>
-<a name='L268'></a><a href='#L268'>268</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
@@ -398,8 +403,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">31x</span>
-<span class="cline-any cline-yes">31x</span>
-<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">76x</span>
 <span class="cline-any cline-yes">76x</span>
@@ -424,8 +430,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">107x</span>
-<span class="cline-any cline-yes">107x</span>
+<span class="cline-any cline-yes">104x</span>
+<span class="cline-any cline-yes">104x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -434,6 +440,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1310x</span>
 <span class="cline-any cline-yes">1310x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -457,10 +471,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -588,8 +598,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1341x</span>
-<span class="cline-any cline-yes">1341x</span>
+<span class="cline-any cline-yes">1338x</span>
+<span class="cline-any cline-yes">1338x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -664,9 +674,10 @@ export class BlocksServices {
         blob: model.toBinary(),
         ts: now,
       };
+      const res = await this.store.create(snapshot, snapshot);
       this.__emitNew(id);
       go(() =&gt; this.gc());
-      return await this.store.create(snapshot, snapshot);
+      return res;
     }
     validateBatch(batch);
     const model = Model.create(void 0, 2 /* SESSION.GLOBAL */);
@@ -690,7 +701,7 @@ export class BlocksServices {
     return res;
   }
 &nbsp;
-  private __emitNew(id: string) {
+  private __emitNew(id: string): void {
     const msg: TBlockCreateEvent = ['new'];
     this.services.pubsub.publish(`__block:${id}`, msg).catch(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; {
       // tslint:disable-next-line:no-console
@@ -698,11 +709,19 @@ export class BlocksServices {
     });
   }
 &nbsp;
-  private __emitUpd(id: string, batch: StoreBatch, clientId: number) {
+  private __emitUpd(id: string, batch: StoreBatch, clientId: number): void {
     const msg: TBlockUpdateEvent = ['upd', {batch}, clientId];
     this.services.pubsub.publish(`__block:${id}`, msg).catch(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; {
       // tslint:disable-next-line:no-console
 <span class="cstat-no" title="statement not covered" >      console.error('Error publishing block patches', error);</span>
+    });
+  }
+&nbsp;
+  private __emitDel(id: string): void {
+    const msg: TBlockDeleteEvent = ['del'];
+    this.services.pubsub.publish(`__block:${id}`, msg).catch(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; {
+      // tslint:disable-next-line:no-console
+<span class="cstat-no" title="statement not covered" >      console.error('Error publishing block deletion', error);</span>
     });
   }
 &nbsp;
@@ -723,11 +742,7 @@ export class BlocksServices {
 &nbsp;
   public async remove(id: string) {
     const deleted = await this.store.remove(id);
-    const msg: TBlockDeleteEvent = ['del'];
-    this.services.pubsub.publish(`__block:${id}`, msg).catch(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; {
-      // tslint:disable-next-line:no-console
-<span class="cstat-no" title="statement not covered" >      console.error('Error publishing block deletion', error);</span>
-    });
+    if (deleted) this.__emitDel(id);
     return deleted;
   }
 &nbsp;
@@ -871,7 +886,7 @@ export class BlocksServices {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-12T15:59:38.157Z
+                at 2026-04-15T18:34:00.440Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
