@@ -24,12 +24,15 @@ export class FileTabsState {
   public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
   public readonly drag: rsync.ReactValue<DragState | null> = rsync.val(null);
   public readonly frozenTabWidth: rsync.ReactValue<number | null> = rsync.val(null);
+  public readonly exitingTabs: rsync.ReactValue<Array<{tab: TabItem; insertAt: number}>> = rsync.val([]);
+  public readonly initialIds: ReadonlySet<string>;
   public addNewTab: (() => TabItem | undefined) | undefined = void 0;
   
   constructor(
     public readonly tabs: rsync.ReactValue<TabItem[]>
   ) {
     const rawTabs = tabs.value;
+    this.initialIds = new Set(rawTabs.map((t) => t.id ?? t.name));
     this.selected = rsync.val(rawTabs.length > 0 ? [rawTabs[0], 0] : null);
     this.box = new rsync.ElBox<HTMLElement>();
     this.tabWidth = rsync.comp([tabs, this.box, this.frozenTabWidth], ([tabs, [, , width], frozen]) => {
@@ -63,13 +66,18 @@ export class FileTabsState {
     const id = tab.id ?? tab.name;
     this.hovered.set(null);
     this.frozenTabWidth.next(this.tabWidth.value);
-    const newTabs = [...tabs.slice(0, index), ...tabs.slice(index + 1)];
     const selected = this.selected.value;
     if ((selected?.[0].id ?? selected?.[0].name) === id) {
       const nextSelected = tabs[index + 1] ?? tabs[index - 1] ?? null;
       this.selected.set(nextSelected ? [nextSelected, index] : null);
     }
-    this.tabs.next(newTabs);
+    this.tabs.next([...tabs.slice(0, index), ...tabs.slice(index + 1)]);
+    const exiting = [...this.exitingTabs.value, {tab, insertAt: index}];
+    exiting.sort((a, b) => a.insertAt - b.insertAt);
+    this.exitingTabs.next(exiting);
+    setTimeout(() => {
+      this.exitingTabs.next(this.exitingTabs.value.filter((e) => (e.tab.id ?? e.tab.name) !== id));
+    }, 250);
   }
 
   public add(tab: TabItem) {

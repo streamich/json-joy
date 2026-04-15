@@ -207,6 +207,7 @@ export interface FileTabProps {
   state: FileTabsState;
   item: TabItem;
   disabled?: boolean;
+  isExiting?: boolean;
   dragging?: boolean;
   offsetPx?: number;
   // dragDelta?: number;
@@ -218,9 +219,23 @@ export interface FileTabProps {
   onClose?: (id: string) => void;
 }
 
-export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false}) => {
+export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, isExiting = false}) => {
   const [t] = useT();
   const width = state.tabWidth.use();
+
+  // Enter animation: skip for tabs that existed on the initial render
+  const skipEnter = state.initialIds.has(id);
+  const [entered, setEntered] = React.useState(skipEnter);
+  React.useLayoutEffect(() => {
+    if (skipEnter) return;
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setEntered(true));
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const isAnimating = !entered || isExiting;
+  const effectiveWidth = isExiting ? 0 : (entered ? width : 0);
+
   const selectedItem = state.selected.use();
   const selected = selectedItem ? ((selectedItem[0].id ?? selectedItem[0].name) === id) : false;
   const hoverState = state.hovered.use();
@@ -230,7 +245,9 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   const dragDeltaX = isDragging ? dragState!.currentX - dragState!.startX : 0;
   const offsetPx = isDragging ? dragDeltaX : state.dragOffset(index);
   const style: React.CSSProperties = {
-    width,
+    width: effectiveWidth,
+    overflow: isAnimating ? 'hidden' : undefined,
+    pointerEvents: isExiting ? 'none' : undefined,
   };
 
   const isHovered = (hoverState?.[0] === id) && !selected;
