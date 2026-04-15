@@ -4,6 +4,17 @@ import {TabItem} from './types';
 const enum Constants {
   MaxTabWidth = 200,
   MinTabWidth = 32,
+  HorizontalPadding = 16,
+  AddButtonWidth = 32,
+}
+
+export interface DragState {
+  key: string;
+  startIndex: number;
+  startX: number;
+  currentX: number;
+  currentIndex: number;
+  pointerId: number;
 }
 
 export class FileTabsState {
@@ -11,6 +22,7 @@ export class FileTabsState {
   public readonly tabWidth: rsync.ReactComputed<number>;
   public readonly selected: rsync.ReactValue<[id: TabItem, index: number] | null>;
   public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
+  public readonly drag: rsync.ReactValue<DragState | null> = rsync.val(null);
   public addNewTab: (() => TabItem | undefined) | undefined = void 0;
   
   constructor(
@@ -22,13 +34,15 @@ export class FileTabsState {
     this.tabWidth = rsync.comp([tabs, this.box], ([tabs, [, , width]]) => {
       if (!width) return Constants.MaxTabWidth;
       const tabCount = tabs.length;
-      const tabWidth = width / tabCount;
+      const available = width - Constants.HorizontalPadding - Constants.AddButtonWidth;
+      const tabWidth = available / tabCount;
       return Math.max(Constants.MinTabWidth, Math.min(Constants.MaxTabWidth, tabWidth));
     });
   }
 
   public dispose() {
     this.box.dispose();
+    this.dragEnd();
   }
 
   public select(index: number) {
@@ -67,4 +81,64 @@ export class FileTabsState {
     if (!item) return;
     this.add(item);
   };
+
+  // ----------------------------------------------------------- dragging logic
+
+  public readonly dragStart = (key: string, index: number, clientX: number, pointerId: number) => {
+    this.drag.next({key, startIndex: index, startX: clientX, currentX: clientX, currentIndex: index, pointerId});
+    window.addEventListener('pointermove', this._onDragMove);
+    window.addEventListener('pointerup', this._onDragEnd);
+  };
+
+  private readonly _onDragMove = (e: PointerEvent) => {
+    const d = this.drag.value;
+    if (!d || e.pointerId !== d.pointerId) return;
+    const tabWidth = this.tabWidth.value;
+    const maxIndex = this.tabs.value.length - 1;
+    // Clamp clientX so the ghost cannot travel beyond the first or last tab position.
+    const minX = d.startX - d.startIndex * tabWidth;
+    const maxX = d.startX + (maxIndex - d.startIndex) * tabWidth;
+    const clampedX = Math.max(minX, Math.min(maxX, e.clientX));
+    const delta = clampedX - d.startX;
+    const newIndex = Math.max(0, Math.min(maxIndex, d.startIndex + Math.round(delta / tabWidth)));
+    this.drag.next({...d, currentX: clampedX, currentIndex: newIndex});
+  };
+
+  private readonly _onDragEnd = (e: PointerEvent) => {
+    const d = this.drag.value;
+    if (!d || e.pointerId !== d.pointerId) return;
+    window.removeEventListener('pointermove', this._onDragMove);
+    window.removeEventListener('pointerup', this._onDragEnd);
+    if (d.currentIndex !== d.startIndex) {
+      const tabs = [...this.tabs.value];
+      const [removed] = tabs.splice(d.startIndex, 1);
+      tabs.splice(d.currentIndex, 0, removed);
+      this.tabs.next(tabs);
+      // Fix selected index after reorder
+      const sel = this.selected.value;
+      if (sel) {
+        const selId = sel[0].id ?? sel[0].name;
+        const newIdx = tabs.findIndex((t) => (t.id ?? t.name) === selId);
+        if (newIdx >= 0) this.selected.next([sel[0], newIdx]);
+      }
+    }
+    this.drag.next(null);
+  };
+
+  public dragEnd() {
+    window.removeEventListener('pointermove', this._onDragMove);
+    window.removeEventListener('pointerup', this._onDragEnd);
+    this.drag.next(null);
+  }
+
+  public dragOffset(index: number): number {
+    const d = this.drag.value;
+    if (!d) return 0;
+    const {startIndex, currentIndex} = d;
+    if (index === startIndex) return 0;
+    const tabWidth = this.tabWidth.value;
+    if (startIndex < currentIndex && index > startIndex && index <= currentIndex) return -tabWidth;
+    if (startIndex > currentIndex && index < startIndex && index >= currentIndex) return tabWidth;
+    return 0;
+  }
 }

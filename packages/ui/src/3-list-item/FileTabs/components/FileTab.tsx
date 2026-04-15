@@ -142,6 +142,7 @@ const titleClass = rule({
   flex: '1 1 0',
   minWidth: 0,
   ta: 'left',
+  pd: '1px 0 0',
   maskImage: 'linear-gradient(to left, transparent, white 24px)',
 });
 
@@ -174,13 +175,17 @@ export interface FileTabProps {
   onClose?: (id: string) => void;
 }
 
-export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, offsetPx = 0}) => {
+export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false}) => {
   const [t] = useT();
   const width = state.tabWidth.use();
   const selectedItem = state.selected.use();
   const selected = selectedItem ? ((selectedItem[0].id ?? selectedItem[0].name) === id) : false;
   const hoverState = state.hovered.use();
   const hovered = hoverState?.[0] === id;
+  const dragState = state.drag.use();
+  const isDragging = dragState?.key === id;
+  const dragDeltaX = isDragging ? dragState!.currentX - dragState!.startX : 0;
+  const offsetPx = isDragging ? dragDeltaX : state.dragOffset(index);
   const style: React.CSSProperties = {
     width,
   };
@@ -188,7 +193,15 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   const isHovered = (hoverState?.[0] === id) && !selected;
   const deletable = item.deletable ?? true;
 
-  if (offsetPx) style.transform = `translateX(${offsetPx}px)`;
+  if (offsetPx) {
+    style.transform = `translateX(${offsetPx}px)`;
+    if (!isDragging) style.transition = 'transform .2s cubic-bezier(.4,0,.2,1), width .22s cubic-bezier(.4,0,.2,1)';
+  }
+  if (isDragging) {
+    style.zIndex = 100;
+    // style.boxShadow = '0 4px 14px rgba(0,0,0,.28), 0 1px 4px rgba(0,0,0,.18)';
+    style.cursor = 'grabbing';
+  }
 
   const iconElement = !!item.icon && <span>{item.icon()}</span>;
 
@@ -256,7 +269,12 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       tabIndex={selected ? 0 : -1}
       className={buttonClass}
       style={style}
-      onMouseDown={() => state.select(index)}
+      onPointerDown={(e) => {
+        if (e.button !== 0) return;
+        state.select(index);
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        state.dragStart(id, index, e.clientX, e.pointerId);
+      }}
       // onClick={handleClick}
       // onPointerDown={handlePointerDown}
       onMouseEnter={() => state.hovered.set([id, index])}
