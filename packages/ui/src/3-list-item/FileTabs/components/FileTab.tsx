@@ -32,7 +32,6 @@ const buttonClass = rule({
   },
 });
 
-
 const mainClass = rule({
   h: '100%',
   flex: '1 1 0',
@@ -143,6 +142,22 @@ const separatorClass = rule({
   fl: '0 0 auto',
   bdr: '2px solid var(--filetabs-hover)',
   trs: 'opacity 0.2s',
+});
+
+const mainSmallClass = rule({
+  pdl: '4px',
+  pdr: '2px',
+  [`& .${iconLayoutClass.trim()}`]: {
+    gap: '4px',
+  },
+});
+
+const mainXSmallClass = rule({
+  pdl: '2px',
+  pdr: '1px',
+  [`& .${iconLayoutClass.trim()}`]: {
+    gap: '2px',
+  },
 });
 
 
@@ -281,7 +296,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       }}
     >
       <span style={{width: width > 60 ? 4 : width > 40 ? 2 : 0, display: 'flex', flex: '0 0 auto'}} />
-      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '')}>
+      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '') + (width <= 40 ? mainXSmallClass : width <= 60 ? mainSmallClass : '')}>
         <span className={innerClass}>
           {inner}
         </span>
