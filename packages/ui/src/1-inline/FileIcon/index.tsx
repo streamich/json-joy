@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {HslColor} from '../../styles/color/HslColor';
-import {hash} from '../../styles/util';
-import {type CommonLabel, getColor} from './colors';
 import {useStyles} from '../../styles/context';
 import {LinearRgbColor} from '../../styles/color';
+import {type CommonLabel, getColor} from './colors';
 
 const LITE_TEXT = new LinearRgbColor(1, 1, 1, .7);
 const DARK_TEXT = new LinearRgbColor(0, 0, 0, .7);

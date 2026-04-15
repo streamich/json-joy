@@ -15,7 +15,7 @@ const buttonClass = rule({
   // bd: '1px solid red',
   d: 'flex',
   ai: 'center',
-  fz: '14.5px',
+  fz: '13.8px',
   // fld: 'row',
   // fls: '0 0 auto',
   // gap: '4px',
@@ -78,6 +78,27 @@ const mainTabClass = rule({
   bdrad: '10px 10px 0 0',
   z: 3,
   pd: '0 4px 0 8px',
+  '&::before': {
+    content: '""',
+    pos: 'absolute',
+    bottom: 0,
+    left: '-10px',
+    w: '10px',
+    h: '10px',
+    bg: 'radial-gradient(circle at top left, transparent 10px, var(--filetabs-fg) 10px)',
+    pointerEvents: 'none',
+  },
+  // Right outer inverted corner: mirrored.
+  '&::after': {
+    content: '""',
+    pos: 'absolute',
+    bottom: 0,
+    right: '-10px',
+    w: '10px',
+    h: '10px',
+    bg: 'radial-gradient(circle at top right, transparent 10px, var(--filetabs-fg) 10px)',
+    pointerEvents: 'none',
+  },
 });
 
 const innerClass = rule({
