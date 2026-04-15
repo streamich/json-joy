@@ -31,6 +31,7 @@ const tabs1 = [
   {
     id: 'file3',
     name: 'File 3',
+    deletable: false,
   },
   {
     id: 'file4',

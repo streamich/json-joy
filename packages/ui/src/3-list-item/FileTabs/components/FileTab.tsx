@@ -63,13 +63,13 @@ const mainPillClass = rule({
   pd: '0 4px 0 8px',
   bdrad: '10px',
   z: 2,
-  trs: 'background .2s ease,color .2s ease',
   // pd: '0 4px',
 });
 
 const outerHoveredClass = rule({
   col: 'var(--filetabs-hover-txt)',
   bg: 'var(--filetabs-hover)',
+  trs: 'background .2s ease,color .2s ease',
 });
 
 const mainTabClass = rule({
@@ -79,6 +79,7 @@ const mainTabClass = rule({
   z: 3,
   bxz: 'border-box',
   pd: '0 4px 6px 8px',
+  trs: 'background .01s ease',
   '&::before': {
     content: '""',
     pos: 'absolute',
@@ -185,6 +186,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   };
 
   const isHovered = (hoverState?.[0] === id) && !selected;
+  const deletable = item.deletable ?? true;
 
   if (offsetPx) style.transform = `translateX(${offsetPx}px)`;
 
@@ -210,7 +212,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   );
 
   const showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index) && (selectedItem ? selectedItem[1] !== index + 1 : true);
-  const showCloseButton = true;
+  const showCloseButton = deletable;
 
   let inner: React.ReactNode = label;
 
