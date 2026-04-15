@@ -9,14 +9,14 @@ const enum Constants {
 export class FileTabsState {
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabWidth: rsync.ReactComputed<number>;
-  public readonly selected: rsync.ReactValue<string>;
+  public readonly selected: rsync.ReactValue<[id: TabItem, index: number] | null>;
   public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
   
   constructor(
     public readonly tabs: rsync.ReactValue<TabItem[]>
   ) {
     const rawTabs = tabs.value;
-    this.selected = rsync.val(rawTabs[0].id ?? rawTabs[0].name ?? '');
+    this.selected = rsync.val(rawTabs.length > 0 ? [rawTabs[0], 0] : null);
     this.box = new rsync.ElBox<HTMLElement>();
     this.tabWidth = rsync.comp([tabs, this.box], ([tabs, [, , width]]) => {
       if (!width) return Constants.MaxTabWidth;

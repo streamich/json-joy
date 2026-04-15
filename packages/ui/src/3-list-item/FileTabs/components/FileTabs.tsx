@@ -4,17 +4,19 @@ import {FileTab} from './FileTab';
 import {HslColor} from '../../../styles/color';
 import {FileTabsState} from '../state';
 import * as rsync from '../../../utils/rsync';
+import {FileTabContent, FileTabContentProps} from './FileTabContent';
 import type {TabItem} from '../types';
 
 export interface FileTabsProps {
   tabs: TabItem[];
+  render?: FileTabContentProps['render'];
   state?: FileTabsState;
   bg?: HslColor | string;
   fg?: HslColor | string;
 }
 
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
-  const { tabs, state: _state, bg: _bg, fg: _fg} = props;
+  const { tabs, state: _state, bg: _bg, fg: _fg, render} = props;
   const state = React.useMemo(() => _state ?? new FileTabsState(rsync.val(tabs)), [_state]);
   state.tabs.set(tabs);
   const bg: HslColor = React.useMemo(() => HslColor.from(_bg || '#3af')!, [_bg]);
@@ -23,11 +25,14 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
     : bg.copy(0, bg.s * .1, (1 - bg.l) * .9), [_fg, bg]);
 
   return (
-    <FileTabBar state={state} bg={bg} fg={fg}>
-      {tabs.map((item, index) => {
-        const id = item.id ?? item.name;
-        return <FileTab state={state} key={id} id={id} index={index} item={item} />;
-      })}
-    </FileTabBar>
+    <>
+      <FileTabBar state={state} bg={bg} fg={fg}>
+        {tabs.map((item, index) => {
+          const id = item.id ?? item.name;
+          return <FileTab state={state} key={id} id={id} index={index} item={item} />;
+        })}
+      </FileTabBar>
+      {!!render && <FileTabContent state={state} bg={fg} render={render} />}
+    </>
   );
 };

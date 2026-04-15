@@ -77,7 +77,8 @@ const mainTabClass = rule({
   bg: 'var(--filetabs-fg)',
   bdrad: '10px 10px 0 0',
   z: 3,
-  pd: '0 4px 0 8px',
+  bxz: 'border-box',
+  pd: '0 4px 6px 8px',
   '&::before': {
     content: '""',
     pos: 'absolute',
@@ -86,9 +87,8 @@ const mainTabClass = rule({
     w: '10px',
     h: '10px',
     bg: 'radial-gradient(circle at top left, transparent 10px, var(--filetabs-fg) 10px)',
-    pointerEvents: 'none',
+    pe: 'none',
   },
-  // Right outer inverted corner: mirrored.
   '&::after': {
     content: '""',
     pos: 'absolute',
@@ -97,7 +97,7 @@ const mainTabClass = rule({
     w: '10px',
     h: '10px',
     bg: 'radial-gradient(circle at top right, transparent 10px, var(--filetabs-fg) 10px)',
-    pointerEvents: 'none',
+    pe: 'none',
   },
 });
 
@@ -112,24 +112,19 @@ const innerClass = rule({
   minWidth: 0,
 });
 
-const innerSelectedClass = rule({
-
-});
-
 const iconLayoutClass = rule({
   d: 'flex',
   h: '100%',
   fld: 'row',
   fls: '0 0 auto',
   ai: 'center',
-  gap: '8px',
+  gap: '7px',
   '& svg': {
     display: 'flex',
   }
 });
 
 const closeButtonLayoutClass = rule({
-  // bd: '1px solid red',
   w: '100%',
   h: '100%',
   d: 'flex',
@@ -139,34 +134,6 @@ const closeButtonLayoutClass = rule({
   ai: 'center',
 });
 
-const textClass = rule({
-  // backgroundClip: 'text',
-  // bg: 'linear-gradient(to bottom, white, transparent)',
-    // bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
-  // d: 'inline-block',
-  // background: linear-gradient(to bottom, white, transparent);
-  // col: 'transparent',
-  // maskImage: 'linear-gradient(to right, white 50%, transparent 80%)',
-  // bg: 'linear-gradient(to right, red 50%, transparent 80%)',
-  // '&::after': {
-  //   content: '""',
-  //   pos: 'absolute',
-  //   top: 0,
-  //   right: 0,
-  //   bottom: 0,
-  //   w: '24px',
-  //   bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
-  //   // trs: 'background .12s ease',
-  //   pointerEvents: 'none',
-  //   [`.${mainTabClass.trim()} &`]: {
-  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-fg))',
-  //   },
-  //   [`.${outerHoveredClass.trim()} &`]: {
-  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-hover))',
-  //   },
-  // },
-});
-
 const titleClass = rule({
   pos: 'relative',
   ov: 'hidden',
@@ -174,32 +141,7 @@ const titleClass = rule({
   flex: '1 1 0',
   minWidth: 0,
   ta: 'left',
-  // backgroundClip: 'text',
-  // bg: 'linear-gradient(to bottom, white, transparent)',
-    // bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
-  // display: 'block',
-  // bd: '1px solid red',
   maskImage: 'linear-gradient(to left, transparent, white 24px)',
-  // bg: 'linear-gradient(to right, red 50%, transparent 80%)',
-  // background: linear-gradient(to bottom, white, transparent);
-  // col: 'transparent',
-  // '&::after': {
-  //   content: '""',
-  //   pos: 'absolute',
-  //   top: 0,
-  //   right: 0,
-  //   bottom: 0,
-  //   w: '24px',
-  //   bg: 'linear-gradient(to right, transparent, var(--filetabs-bg))',
-  //   // trs: 'background .12s ease',
-  //   pointerEvents: 'none',
-  //   [`.${mainTabClass.trim()} &`]: {
-  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-fg))',
-  //   },
-  //   [`.${outerHoveredClass.trim()} &`]: {
-  //     bg: 'linear-gradient(to right, transparent, var(--filetabs-hover))',
-  //   },
-  // },
 });
 
 
@@ -223,7 +165,8 @@ export interface FileTabProps {
 export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, offsetPx = 0}) => {
   const [t] = useT();
   const width = state.tabWidth.use();
-  const selected = state.selected.use() === id;
+  const selectedItem = state.selected.use();
+  const selected = selectedItem ? ((selectedItem[0].id ?? selectedItem[0].name) === id) : false;
   const hoverState = state.hovered.use();
   const hovered = hoverState?.[0] === id;
   const style: React.CSSProperties = {
@@ -237,9 +180,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   const iconElement = !!item.icon && <span>{item.icon()}</span>;
 
   let label: React.ReactNode = (
-    <span className={textClass}>
-      {item.display?.() ?? item.name ?? item.id}
-    </span>
+    item.display?.() ?? item.name ?? item.id
   );
 
   if (item.icon) {
@@ -257,7 +198,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     </span>
   );
 
-  const showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index);
+  const showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index) && (selectedItem ? selectedItem[1] !== index + 1 : true);
   const showCloseButton = true;
 
   let inner: React.ReactNode = label;
@@ -300,6 +241,11 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       tabIndex={selected ? 0 : -1}
       className={buttonClass}
       style={style}
+      onMouseDown={() => {
+        if (!selected) {
+          state.selected.set([item, index]);
+        }
+      }}
       // onClick={handleClick}
       // onPointerDown={handlePointerDown}
       onMouseEnter={() => state.hovered.set([id, index])}
@@ -309,7 +255,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     >
       <span style={{width: 4, display: 'flex', flex: '0 0 auto'}} />
       <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '')}>
-        <span className={innerClass + (selected ? innerSelectedClass : '')}>
+        <span className={innerClass}>
           {inner}
         </span>
       </span>

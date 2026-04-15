@@ -8,14 +8,15 @@ const DARK_TEXT = new LinearRgbColor(0, 0, 0, .7);
 
 const blockClass = rule({
   pd: '6px 8px 0',
+  bdrad: '4px',
   pos: 'relative',
   d: 'flex',
+  bxz: 'border-box',
   fld: 'row',
   ai: 'flex-end',
   w: '100%',
-  h: '40px',
+  h: '48px',
   ov: 'visible',
-  bdrad: '4px',
 });
 
 export interface FileTabBarProps {
