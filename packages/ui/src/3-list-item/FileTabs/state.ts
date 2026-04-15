@@ -21,8 +21,9 @@ export class FileTabsState {
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabWidth: rsync.ReactComputed<number>;
   public readonly selected: rsync.ReactValue<[id: TabItem, index: number] | null>;
-  public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
+  public readonly hovered: rsync.ReactValue<[id: string, index: number, cx: number, bottom: number] | null> = rsync.val(null);
   public readonly drag: rsync.ReactValue<DragState | null> = rsync.val(null);
+  public readonly frozenTabWidth: rsync.ReactValue<number | null> = rsync.val(null);
   public addNewTab: (() => TabItem | undefined) | undefined = void 0;
   
   constructor(
@@ -31,7 +32,8 @@ export class FileTabsState {
     const rawTabs = tabs.value;
     this.selected = rsync.val(rawTabs.length > 0 ? [rawTabs[0], 0] : null);
     this.box = new rsync.ElBox<HTMLElement>();
-    this.tabWidth = rsync.comp([tabs, this.box], ([tabs, [, , width]]) => {
+    this.tabWidth = rsync.comp([tabs, this.box, this.frozenTabWidth], ([tabs, [, , width], frozen]) => {
+      if (frozen !== null) return frozen;
       if (!width) return Constants.MaxTabWidth;
       const tabCount = tabs.length;
       const available = width - Constants.HorizontalPadding - Constants.AddButtonWidth;
@@ -60,6 +62,7 @@ export class FileTabsState {
     if (!tab) return;
     const id = tab.id ?? tab.name;
     this.hovered.set(null);
+    this.frozenTabWidth.next(this.tabWidth.value);
     const newTabs = [...tabs.slice(0, index), ...tabs.slice(index + 1)];
     const selected = this.selected.value;
     if ((selected?.[0].id ?? selected?.[0].name) === id) {
@@ -70,11 +73,16 @@ export class FileTabsState {
   }
 
   public add(tab: TabItem) {
+    this.frozenTabWidth.next(null);
     const tabs = this.tabs.value;
     const newTabs = [...tabs, tab];
     this.tabs.next(newTabs);
     this.select(newTabs.length - 1);
   }
+
+  public readonly unfreeze = () => {
+    this.frozenTabWidth.next(null);
+  };
 
   public readonly addNew = () => {
     const item = this.addNewTab?.();

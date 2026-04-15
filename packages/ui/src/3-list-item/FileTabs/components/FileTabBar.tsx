@@ -50,7 +50,7 @@ export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state,
   } as any;
 
   return (
-    <div ref={state.box.setEl} className={blockClass} style={style}>
+    <div ref={state.box.setEl} className={blockClass} style={style} onMouseLeave={state.unfreeze}>
       {children}
       <div className={addButtonClass}>
         <BasicButtonAdd rounder onClick={state.addNew} />
