@@ -228,10 +228,12 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
           tabIndex={-1}
           aria-label={t('Close tab')}
           onPointerDown={(e) => {
-            // e.stopPropagation();
+            e.stopPropagation();
+            e.preventDefault();
           }}
           onClick={(e) => {
-            // e.stopPropagation();
+            e.stopPropagation();
+            state.delete(index);
           }}
         />
       </span>

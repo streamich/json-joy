@@ -38,4 +38,19 @@ export class FileTabsState {
     this.selected.set([tab, index]);
     this.hovered.set(null);
   }
+
+  public delete (index: number) {
+    const tabs = this.tabs.value;
+    const tab = tabs[index];
+    if (!tab) return;
+    const id = tab.id ?? tab.name;
+    this.hovered.set(null);
+    const newTabs = [...tabs.slice(0, index), ...tabs.slice(index + 1)];
+    const selected = this.selected.value;
+    if ((selected?.[0].id ?? selected?.[0].name) === id) {
+      const nextSelected = tabs[index + 1] ?? tabs[index - 1] ?? null;
+      this.selected.set(nextSelected ? [nextSelected, index] : null);
+    }
+    this.tabs.next(newTabs);
+  }
 }

@@ -14,17 +14,15 @@ const blockClass = rule({
 export interface FileTabContentProps {
   state: FileTabsState;
   bg: HslColor;
-  render: (tab: TabItem, state: FileTabsState, index: number) => React.ReactNode;
+  render: (tab: TabItem | undefined, state: FileTabsState, index: number) => React.ReactNode;
 }
 
 export const FileTabContent: React.FC<FileTabContentProps> = React.memo(({bg, state, render}) => {
   const selected = state.selected.use();
 
-  if (!selected) return null;
-
   return (
     <div className={blockClass} style={{background: bg + ''}}>
-      {render(selected[0], state, selected[1])}
+      {render(selected ? selected[0] : undefined, state, selected ? selected[1] : -1)}
     </div>
   );
 });

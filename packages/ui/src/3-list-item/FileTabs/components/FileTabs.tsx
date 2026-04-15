@@ -16,20 +16,21 @@ export interface FileTabsProps {
 }
 
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
-  const { tabs, state: _state, bg: _bg, fg: _fg, render} = props;
-  const state = React.useMemo(() => _state ?? new FileTabsState(rsync.val(tabs)), [_state]);
-  state.tabs.set(tabs);
+  const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render} = props;
+  const state = React.useMemo(() => _state ?? new FileTabsState(rsync.val(_tabs)), [_state]);
+  const tabs = state.tabs.use();
   const bg: HslColor = React.useMemo(() => HslColor.from(_bg || '#3af')!, [_bg]);
   const fg: HslColor = React.useMemo(() => _fg
     ? HslColor.from(_fg || '#fff')!
     : bg.copy(0, bg.s * .1, (1 - bg.l) * .9), [_fg, bg]);
+
 
   return (
     <>
       <FileTabBar state={state} bg={bg} fg={fg}>
         {tabs.map((item, index) => {
           const id = item.id ?? item.name;
-          return <FileTab state={state} key={id} id={id} index={index} item={item} />;
+          return <FileTab key={id} state={state} id={id} index={index} item={item} />;
         })}
       </FileTabBar>
       {!!render && <FileTabContent state={state} bg={fg} render={render} />}
