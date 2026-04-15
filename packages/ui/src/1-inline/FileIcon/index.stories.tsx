@@ -73,11 +73,19 @@ export const SmallIcon: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{display: 'flex', alignItems: 'flex-end', gap: 16}}>
-      {[16, 24, 32, 40, 48, 64, 80, 96].map((s) => (
-        <FileIcon key={s} label="ts" size={s} gradient />
-      ))}
-    </div>
+    <>
+      <div style={{display: 'flex', alignItems: 'flex-end', gap: 16}}>
+        {[16, 24, 32, 40, 48, 64, 80, 96].map((s) => (
+          <FileIcon key={s} label="ts" size={s} gradient />
+        ))}
+      </div>
+      <br />
+      <div style={{display: 'flex', alignItems: 'flex-end', gap: 16}}>
+        {[16, 24, 32, 40, 48, 64, 80, 96].map((s) => (
+          <FileIcon key={s} label="coffee" size={s} gradient />
+        ))}
+      </div>
+    </>
   ),
 };
 

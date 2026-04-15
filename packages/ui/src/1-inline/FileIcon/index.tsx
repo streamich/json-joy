@@ -84,14 +84,14 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
   const clipId = `fi-c-${label ?? id ?? 'x'}-${ID_COUNTER++}`;
   const primaryStr = primaryColor.toString();
   const gradientStr = gradientColor?.toString() ?? primaryStr;
-  const displayLabel = (label || '').slice(0, 4).toUpperCase();
+  const displayLabel = (label || '').slice(0, (size < 21 ? 2 : size < 25 ? 3 : 4)).toUpperCase();
 
   return (
     <svg
       width={w}
       height={h}
       viewBox={`0 0 ${viewW} ${viewH}`}
-      xmlns="http://www.w3.org/2000/svg"
+      // xmlns="http://www.w3.org/2000/svg"
       {...rest}
       aria-label={label ? `${label} file` : 'file'}
       role="img"
@@ -106,28 +106,35 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
         </clipPath>
       </defs>
 
-      {/* ── main body ── */}
+      {/* main body */}
       <path d={bodyPath} fill={`url(#${gradId})`} />
 
-      {/* ── subtle inner highlight (top strip) ── */}
+      {/* subtle inner highlight (bottom strip) */}
       <rect
         x="0"
         y={viewH - Math.round(viewH * 0.18)}
-        rx={5}
         width={viewW}
-        height={Math.round(viewH * 0.18)}
+        height={Math.round(viewH * 0.09)}
         fill="rgba(255,255,255,0.18)"
         clipPath={`url(#${clipId})`}
       />
+      <rect
+        x="0"
+        y={viewH - Math.round(viewH * 0.09)}
+        width={viewW}
+        height={Math.round(viewH * 0.09)}
+        fill="rgba(0,0,0,0.18)"
+        clipPath={`url(#${clipId})`}
+      />
 
-      {/* ── fold triangle shadow ── */}
+      {/* fold triangle shadow */}
       <polygon
         points={`${viewW - f},0 ${viewW},${f} ${viewW - f},${f}`}
         fill={accentColor.toString()}
         opacity="0.72"
       />
 
-      {/* ── fold crease line ── */}
+      {/* fold crease line */}
       <line
         x1={viewW - f}
         y1={0}
@@ -137,7 +144,7 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
         strokeWidth="1.5"
       />
 
-      {/* ── label text ── */}
+      {/* label text */}
       {displayLabel && (
         <text
           x={viewW / 2}
@@ -145,7 +152,8 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
           textAnchor="middle"
           dominantBaseline="middle"
           fill={primaryColor.toLinearRgb().pickFirstAboveOrMax(2, [LITE_TEXT, DARK_TEXT]) + ''}
-          fontSize={displayLabel.length * -2 + 40}
+          // fontSize={displayLabel.length * -2 + 40 + (size < 24 && displayLabel.length < 3 ? 4 : 0)}
+          fontSize={displayLabel.length * -2 + 40 + (size < 25 ? (16 - displayLabel.length * 2) : 0)}
           fontFamily={styles.txt.get('mono', 'bold', 0).ff + ",'SF Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace"}
           fontWeight="700"
           letterSpacing={displayLabel.length >= 4 ? '-1' : '0'}
