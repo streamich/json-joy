@@ -30,10 +30,11 @@ export const ValueInput: React.FC<ValueInputProps> = ({
   onCancel,
 }) => {
   const [value, setValue] = React.useState(initialValue);
+  const [focused, setFocused] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const type = React.useRef<string>(initialType ?? (types && types.length ? types[0] : ''));
-
+  
   const handleSubmit = () => {
     if (inputRef.current) inputRef.current.blur();
     setValue('');
@@ -44,7 +45,8 @@ export const ValueInput: React.FC<ValueInputProps> = ({
   style.display = visible ? undefined : 'none';
   style.margin = '-1px 0 -1px -2px';
   style.padding = '3px 4px 3px 5px';
-  style.border = `1px solid ${theme.g(0.85)}`;
+  style.border = `1px solid ${theme.g(focused ? 0.3 : 0.85)}`;
+  if (focused) style.outline = `1px solid ${theme.g(0.3)}`;
 
   let afterValue: React.ReactNode = null;
 
@@ -72,7 +74,11 @@ export const ValueInput: React.FC<ValueInputProps> = ({
         typeahead={typeahead(value)}
         onChange={(e) => setValue(e.target.value)}
         onSubmit={handleSubmit}
-        onFocus={(e) => selectOnFocus(e.target)}
+        onFocus={(e) => {
+          selectOnFocus(e.target);
+          setFocused(true);
+        }}
+        onBlur={() => setFocused(false)}
         onCancel={(e) => {
           setValue('');
           if (onCancel) onCancel(e as any);
