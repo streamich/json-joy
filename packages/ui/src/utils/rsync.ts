@@ -11,6 +11,10 @@ export class ReactValue<T> extends Value<T> {
     const oldValue = this.value;
     if (!deepEqual(oldValue, value)) this.next(value);
   }
+
+  public toString(): string {
+    return this.value + '';
+  }
 }
 
 export const val = <T>(value: T) => new ReactValue(value);
@@ -18,6 +22,10 @@ export const val = <T>(value: T) => new ReactValue(value);
 export class ReactComputed<N, V extends unknown[] = any> extends Computed<N, V> {
   public use(): N {
     return useSyncExternalStore(this.subscribe, this.getSnapshot);
+  }
+
+  public toString(): string {
+    return this.value + '';
   }
 }
 

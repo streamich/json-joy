@@ -3,30 +3,27 @@ import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {LogDecoder} from 'json-joy/lib/json-crdt/log/codec/LogDecoder';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
+import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {stripExtensions} from './util';
-import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
-import type {TraceDefinition} from '../components/TraceSelector/traces';
-import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 import {FileMetadataDto, OpenFile} from './file';
-
-// export interface IOpenFile {
-//   id: string;
-//   openTime: number;
-//   log: Log<any>;
-//   name: string;
-//   logState: JsonCrdtLogState;
-//   display?: DemoComp;
-// }
+import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
+import type {TraceDefinition} from '../components/TraceSelector/traces';
 
 export class JsonCrdtExplorerState {
+  public readonly tabs: FileTabsState;
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
   public readonly selected$ = new BehaviorSubject<string>('');
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
   public readonly sid = Model.sid();
-
+  
   constructor() {
+    this.tabs = new FileTabsState(rsync.val([]));
+    this.tabs.onNewTab = () => {
+      this.createNew();
+      return void 0;
+    };
     this.files$
       .pipe(
         switchMap(() => this.selected$),
@@ -56,6 +53,7 @@ export class JsonCrdtExplorerState {
     };
     const file = new OpenFile(meta, log);
     this.files$.next([...this.files$.getValue(), file]);
+    this.tabs.add(file.toTab());
     this.select(file.meta.id);
     return file;
   };

@@ -1,9 +1,17 @@
+import * as React from 'react';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
 import {rsync} from '@jsonjoy.com/ui';
 import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
+import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
+
+const RenderName: React.FC<{file: OpenFile}> = ({file}) => {
+  const name = file.name.use();
+  return <>{name}</>;
+};
 
 export interface FileMetadataDto {
   /** Unique constant identifier for the file. */
@@ -54,5 +62,14 @@ export class OpenFile {
       data: encoded,
     };
     return dto;
+  }
+
+  public toTab(): TabItem {
+    return {
+      id: this.id,
+      name: this.name.value,
+      display: () => <RenderName file={this} />,
+      icon: () => <FileIcon id={this.id} label='crdt' size={16} />
+    };
   }
 }

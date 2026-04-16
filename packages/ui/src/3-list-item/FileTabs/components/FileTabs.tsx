@@ -9,9 +9,11 @@ import {FileTabTooltip} from './FileTabTooltip';
 import type {TabItem} from '../types';
 
 export interface FileTabsProps {
-  tabs: TabItem[];
+  /** Initial tabs to display, if `state` not provided. */
+  tabs?: TabItem[];
   render?: FileTabContentProps['render'];
   state?: FileTabsState;
+  onState?: (state: FileTabsState) => void;
   bg?: HslColor | string;
   fg?: HslColor | string;
   before?: React.ReactNode;
@@ -23,18 +25,18 @@ export interface FileTabsProps {
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
   const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render, addNewTab, before, after, right } = props;
   const state = React.useMemo(() => {
-    return _state ?? new FileTabsState(rsync.val(_tabs));
+    if (_state) return _state;
+    const state = new FileTabsState(rsync.val(_tabs ?? []));
+    state.onNewTab = addNewTab;
+    return state;
   }, [_state]);
   React.useEffect(() => {
-    state.addNewTab = addNewTab;
-    return () => {
-      if (state.addNewTab === addNewTab) state.addNewTab = void 0;
-    };
-  }, [state, addNewTab]);
-  React.useEffect(() => {
-    if (_state) return;
+    if (!state) return;
     return () => state.dispose();
-  }, [state, _state]);
+  }, [state]);
+  React.useEffect(() => {
+    if (props.onState) props.onState(state);
+  }, [state, props.onState]);
   const tabs = state.tabs.use();
   const exitingTabs = state.exitingTabs.use();
 

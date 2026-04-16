@@ -7,7 +7,7 @@ const enum Constants {
   MinTabWidth = 4,
 }
 
-const getTabId = (tab: TabItem) => tab.id ?? tab.name;
+const getTabId = (tab: TabItem) => tab.id ?? (tab.name + '');
 
 const isTabDisabled = (tab: TabItem) => !!tab.disabled?.getSnapshot();
 
@@ -31,7 +31,7 @@ export class FileTabsState {
   public readonly frozenTabWidth: rsync.ReactValue<number | null> = rsync.val(null);
   public readonly exitingTabs: rsync.ReactValue<Array<{tab: TabItem; insertAt: number}>> = rsync.val([]);
   public readonly initialIds: ReadonlySet<string>;
-  public addNewTab: (() => TabItem | undefined) | undefined = void 0;
+  public onNewTab: (() => (TabItem | undefined)) | undefined = void 0;
   private readonly tabEls = new Map<string, HTMLElement>();
   private readonly tabRefCallbacks = new Map<string, (el: HTMLElement | null) => void>();
   private focusRaf = 0;
@@ -162,7 +162,7 @@ export class FileTabsState {
   }
 
   public add(tab: TabItem) {
-    this.frozenTabWidth.next(null);
+    this.unfreeze();
     const tabs = this.tabs.value;
     const newTabs = [...tabs, tab];
     this.tabs.next(newTabs);
@@ -190,7 +190,7 @@ export class FileTabsState {
   };
 
   public readonly addNew = () => {
-    const item = this.addNewTab?.();
+    const item = this.onNewTab?.();
     if (!item) return;
     this.add(item);
   };

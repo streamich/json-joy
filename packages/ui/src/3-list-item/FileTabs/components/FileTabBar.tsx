@@ -153,9 +153,11 @@ export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state,
               </div>
             </div>
             <div ref={state.trailingBox.setEl} className={trailingClass}>
-              <div className={addButtonClass}>
-                <BasicButtonAdd rounder onClick={state.addNew} />
-              </div>
+              {!!state.onNewTab && (
+                <div className={addButtonClass}>
+                  <BasicButtonAdd rounder onClick={state.addNew} />
+                </div>
+              )}
               {after ? <div className={afterClass}>{after}</div> : null}
             </div>
           </div>
