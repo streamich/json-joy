@@ -14,11 +14,14 @@ export interface FileTabsProps {
   state?: FileTabsState;
   bg?: HslColor | string;
   fg?: HslColor | string;
+  before?: React.ReactNode;
+  after?: React.ReactNode;
+  right?: React.ReactNode;
   addNewTab?: (() => TabItem | undefined) | undefined;
 }
 
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
-  const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render, addNewTab } = props;
+  const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render, addNewTab, before, after, right } = props;
   const state = React.useMemo(() => {
     return _state ?? new FileTabsState(rsync.val(_tabs));
   }, [_state]);
@@ -64,7 +67,16 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
 
   return (
     <>
-      <FileTabBar state={state} bg={bg} fg={fg} tabs={tabElements} overlay={<FileTabTooltip state={state} />} />
+      <FileTabBar
+        state={state}
+        bg={bg}
+        fg={fg}
+        tabs={tabElements}
+        before={before}
+        after={after}
+        right={right}
+        overlay={<FileTabTooltip state={state} />}
+      />
       {!!render && <FileTabContent state={state} bg={fg} render={render} />}
     </>
   );

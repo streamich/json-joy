@@ -5,8 +5,6 @@ import {TabItem} from './types';
 const enum Constants {
   MaxTabWidth = 200,
   MinTabWidth = 4,
-  HorizontalPadding = 16,
-  AddButtonWidth = 32,
 }
 
 const getTabId = (tab: TabItem) => tab.id ?? tab.name;
@@ -24,6 +22,8 @@ export interface DragState {
 
 export class FileTabsState {
   public readonly box: rsync.ElBox<HTMLElement>;
+  public readonly tabsBox: rsync.ElBox<HTMLElement>;
+  public readonly trailingBox: rsync.ElBox<HTMLElement>;
   public readonly tabWidth: rsync.ReactComputed<number>;
   public readonly selected: rsync.ReactValue<[id: TabItem, index: number] | null>;
   public readonly hovered: rsync.ReactValue<[id: string, index: number] | null> = rsync.val(null);
@@ -43,11 +43,13 @@ export class FileTabsState {
     this.initialIds = new Set(rawTabs.map((t) => getTabId(t)));
     this.selected = rsync.val(rawTabs.length > 0 ? [rawTabs[0], 0] : null);
     this.box = new rsync.ElBox<HTMLElement>();
-    this.tabWidth = rsync.comp([tabs, this.box, this.frozenTabWidth], ([tabs, [, , width], frozen]) => {
+    this.tabsBox = new rsync.ElBox<HTMLElement>();
+    this.trailingBox = new rsync.ElBox<HTMLElement>();
+    this.tabWidth = rsync.comp([tabs, this.tabsBox, this.trailingBox, this.frozenTabWidth], ([tabs, [, , width], [, , trailingWidth], frozen]) => {
       if (frozen !== null) return frozen;
-      if (!width) return Constants.MaxTabWidth;
       const tabCount = tabs.length;
-      const available = width - Constants.HorizontalPadding - Constants.AddButtonWidth;
+      if (!width || !tabCount) return Constants.MaxTabWidth;
+      const available = Math.max(0, width - trailingWidth);
       const tabWidth = available / tabCount;
       return Math.max(Constants.MinTabWidth, Math.min(Constants.MaxTabWidth, tabWidth));
     });
@@ -55,6 +57,8 @@ export class FileTabsState {
 
   public dispose() {
     this.box.dispose();
+    this.tabsBox.dispose();
+    this.trailingBox.dispose();
     this.dragEnd();
     this.cancelScheduledFocus();
     this.tabEls.clear();

@@ -20,21 +20,99 @@ const blockClass = rule({
   ov: 'visible',
 });
 
+const mainClass = rule({
+  d: 'flex',
+  fld: 'row',
+  ai: 'flex-end',
+  fl: '1 1 auto',
+  minWidth: 0,
+  h: '100%',
+  ov: 'visible',
+});
+
+const clusterClass = rule({
+  d: 'flex',
+  fld: 'row',
+  ai: 'flex-end',
+  fl: '0 1 auto',
+  w: 'fit-content',
+  minWidth: 0,
+  maxWidth: '100%',
+  h: '100%',
+  ov: 'visible',
+});
+
+const tabsViewportClass = rule({
+  d: 'flex',
+  fld: 'row',
+  ai: 'flex-end',
+  fl: '1 1 auto',
+  minWidth: 0,
+  h: '100%',
+  ov: 'visible',
+});
+
+const tabsMeasureClass = rule({
+  d: 'flex',
+  fld: 'row',
+  ai: 'flex-end',
+  minWidth: 0,
+  h: '100%',
+  ov: 'visible',
+});
+
 const addButtonClass = rule({
-  // w: '32px',
   h: '100%',
   d: 'flex',
   ai: 'center',
   jc: 'center',
+  fl: '0 0 auto',
+  bdz: 'border-box',
+  pd: '0 0 0 8px',
+});
+
+const beforeClass = rule({
+  h: '100%',
+  d: 'flex',
+  ai: 'center',
+  fl: '0 0 auto',
+  bdz: 'border-box',
+  pd: '0 8px 3px 0',
+});
+
+const afterClass = rule({
+  h: '100%',
+  d: 'flex',
+  ai: 'center',
   bdz: 'border-box',
   pd: '0 0 3px 8px',
+});
+
+const trailingClass = rule({
+  h: '100%',
+  d: 'flex',
+  fld: 'row',
+  ai: 'center',
+  fl: '0 0 auto',
+  minWidth: 0,
+  ov: 'visible',
+  pd: '0 0 3px',
+});
+
+const rightClass = rule({
+  h: '100%',
+  d: 'flex',
+  ai: 'center',
+  jc: 'flex-end',
+  fl: '0 0 auto',
+  bdz: 'border-box',
+  pd: '0 0 3px 12px',
 });
 
 const tabListClass = rule({
   d: 'flex',
   fld: 'row',
   ai: 'flex-end',
-  flex: '1 1 auto',
   minWidth: 0,
   h: '100%',
   ov: 'visible',
@@ -45,10 +123,13 @@ export interface FileTabBarProps {
   fg: HslColor;
   state: FileTabsState;
   tabs: React.ReactNode;
+  before?: React.ReactNode;
+  after?: React.ReactNode;
+  right?: React.ReactNode;
   overlay?: React.ReactNode;
 }
 
-export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, tabs, overlay}) => {
+export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, tabs, before, after, right, overlay}) => {
   const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
   const style: React.CSSProperties = {
     background: bg.toString(),
@@ -62,12 +143,25 @@ export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state,
 
   return (
     <div ref={state.box.setEl} className={blockClass} style={style} onMouseLeave={state.unfreeze}>
-      <div role="tablist" aria-orientation="horizontal" aria-label="File tabs" className={tabListClass} onKeyDown={state.onKeyDown}>
-        {tabs}
+      <div className={mainClass}>
+        {before ? <div className={beforeClass}>{before}</div> : null}
+        <div ref={state.tabsBox.setEl} className={tabsViewportClass}>
+          <div className={clusterClass}>
+            <div className={tabsMeasureClass}>
+              <div role="tablist" aria-orientation="horizontal" aria-label="File tabs" className={tabListClass} onKeyDown={state.onKeyDown}>
+                {tabs}
+              </div>
+            </div>
+            <div ref={state.trailingBox.setEl} className={trailingClass}>
+              <div className={addButtonClass}>
+                <BasicButtonAdd rounder onClick={state.addNew} />
+              </div>
+              {after ? <div className={afterClass}>{after}</div> : null}
+            </div>
+          </div>
+        </div>
       </div>
-      <div className={addButtonClass}>
-        <BasicButtonAdd rounder onClick={state.addNew} />
-      </div>
+      {right ? <div className={rightClass}>{right}</div> : null}
       {overlay}
     </div>
   );

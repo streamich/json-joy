@@ -143,6 +143,56 @@ export const ManyItems: StoryObj<typeof meta> = {
   decorators: [wrap(400)],
 };
 
+export const WithAfterAndRight: StoryObj<typeof meta> = {
+  args: {
+    bg: '#ffd9df',
+    render: () => <div style={{height: 8}} />,
+    tabs: tabs1,
+    addNewTab,
+    before: (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          height: 24,
+          padding: '0 10px',
+          borderRadius: 999,
+          background: 'rgba(255,255,255,.4)',
+          fontSize: 12,
+          color: 'rgba(0,0,0,.65)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        project
+      </div>
+    ),
+    after: (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          height: 24,
+          padding: '0 10px',
+          borderRadius: 999,
+          background: 'rgba(255,255,255,.55)',
+          fontSize: 12,
+          color: 'rgba(0,0,0,.65)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        2 unsaved
+      </div>
+    ),
+    right: (
+      <div style={{display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap'}}>
+        <span style={{fontSize: 12, color: 'rgba(0,0,0,.6)'}}>workspace</span>
+        <Avatar width={20} name={'ws'} />
+      </div>
+    ),
+  },
+  decorators: [wrap(700)],
+};
+
 const tabsWithTooltips = [
   {
     id: 'main',
