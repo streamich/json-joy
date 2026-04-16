@@ -128,6 +128,12 @@ const titleClass = rule({
   maskImage: 'linear-gradient(to left, transparent, white 24px)',
 });
 
+const initialMarginClass = rule({
+  w: '4px',
+  d: 'flex',
+  fl: '0 0 auto',
+});
+
 const separatorClass = rule({
   w: 4,
   mrb: '6px',
@@ -154,20 +160,42 @@ const mainSmallClass = rule({
 });
 
 const buttonSmallClass = rule({
+  [`& .${initialMarginClass.trim()}`]: {
+    w: 2,
+  },
+  [`& .${mainPillClass.trim()}`]: {
+    pd: '0 2px 0 6px',
+  },
   [`& .${separatorClass.trim()}`]: {
     w: 3,
   },
 });
 
 const buttonXSmallClass = rule({
+  [`& .${initialMarginClass.trim()}`]: {
+    w: 1,
+  },
+  [`& .${mainPillClass.trim()}`]: {
+    pd: '0 0 0 4px',
+  },
   [`& .${separatorClass.trim()}`]: {
     w: 2,
     h: '77%',
     bdr: '1px solid var(--filetabs-hover)',
   },
+  [`& .${titleClass.trim()}`]: {
+    maskImage: 'linear-gradient(to left, transparent, white 8px)',
+  },
 });
 
 const buttonXXSmallClass = rule({
+  [`& .${initialMarginClass.trim()}`]: {
+    w: 0,
+    d: 'none',
+  },
+  [`& .${mainPillClass.trim()}`]: {
+    pd: '0 1px',
+  },
   [`& .${separatorClass.trim()}`]: {
     bdr: 0,
     w: 0,
@@ -179,9 +207,6 @@ const mainXSmallClass = rule({
   pdr: '1px',
   [`& .${iconLayoutClass.trim()}`]: {
     gap: '2px',
-  },
-  [`& .${titleClass.trim()}`]: {
-    maskImage: 'linear-gradient(to left, transparent, white 8px)',
   },
 });
 
@@ -354,7 +379,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
         if (state.hovered.value?.[0] === id) state.hovered.set(null);
       }}
     >
-      <span style={{width: width > 60 ? 4 : width > 40 ? 2 : 0, display: 'flex', flex: '0 0 auto'}} />
+      <span className={initialMarginClass} />
       <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '') + (width <= 30 ? mainXSmallClass : width <= 60 ? mainSmallClass : '')}>
         <span className={innerClass}>
           {inner}

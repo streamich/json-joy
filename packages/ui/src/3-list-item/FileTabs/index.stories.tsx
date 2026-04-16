@@ -2,6 +2,7 @@ import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {FileTabs} from '.';
 import {FileIcon} from '../../1-inline/FileIcon';
+import {Avatar} from '../../1-inline/Avatar';
 
 const meta: Meta<typeof FileTabs> = {
   title: '3. List Item/FileTabs',
@@ -55,6 +56,16 @@ const tabs2 = [
     id: 'file3',
     name: 'File 3',
     deletable: false,
+  },
+  {
+    id: 'user1',
+    name: 'user1.json',
+    icon: () => <Avatar width={16} name={'u1'} />,
+  },
+  {
+    id: 'user2',
+    name: 'user2.json',
+    icon: () => <Avatar width={16} name={'u2'} />,
   },
   {
     id: 'file4',
