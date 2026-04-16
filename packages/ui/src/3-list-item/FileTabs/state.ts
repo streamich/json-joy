@@ -1,3 +1,4 @@
+import type * as React from 'react';
 import * as rsync from '../../utils/rsync';
 import {TabItem} from './types';
 
@@ -7,6 +8,10 @@ const enum Constants {
   HorizontalPadding = 16,
   AddButtonWidth = 32,
 }
+
+const getTabId = (tab: TabItem) => tab.id ?? tab.name;
+
+const isTabDisabled = (tab: TabItem) => !!tab.disabled?.getSnapshot();
 
 export interface DragState {
   key: string;
@@ -27,12 +32,15 @@ export class FileTabsState {
   public readonly exitingTabs: rsync.ReactValue<Array<{tab: TabItem; insertAt: number}>> = rsync.val([]);
   public readonly initialIds: ReadonlySet<string>;
   public addNewTab: (() => TabItem | undefined) | undefined = void 0;
+  private readonly tabEls = new Map<string, HTMLElement>();
+  private readonly tabRefCallbacks = new Map<string, (el: HTMLElement | null) => void>();
+  private focusRaf = 0;
   
   constructor(
     public readonly tabs: rsync.ReactValue<TabItem[]>
   ) {
     const rawTabs = tabs.value;
-    this.initialIds = new Set(rawTabs.map((t) => t.id ?? t.name));
+    this.initialIds = new Set(rawTabs.map((t) => getTabId(t)));
     this.selected = rsync.val(rawTabs.length > 0 ? [rawTabs[0], 0] : null);
     this.box = new rsync.ElBox<HTMLElement>();
     this.tabWidth = rsync.comp([tabs, this.box, this.frozenTabWidth], ([tabs, [, , width], frozen]) => {
@@ -48,13 +56,78 @@ export class FileTabsState {
   public dispose() {
     this.box.dispose();
     this.dragEnd();
+    this.cancelScheduledFocus();
+    this.tabEls.clear();
+    this.tabRefCallbacks.clear();
+  }
+
+  private selectedId(): string | null {
+    const selected = this.selected.value;
+    return selected ? getTabId(selected[0]) : null;
+  }
+
+  private selectedIndex(): number {
+    const selectedId = this.selectedId();
+    return selectedId ? this.tabs.value.findIndex((tab) => getTabId(tab) === selectedId) : -1;
+  }
+
+  private syncSelected(id: string | null) {
+    if (!id) {
+      this.selected.set(null);
+      return;
+    }
+    const index = this.tabs.value.findIndex((tab) => getTabId(tab) === id);
+    if (index < 0) {
+      this.selected.set(null);
+      return;
+    }
+    this.selected.set([this.tabs.value[index], index]);
+  }
+
+  private cancelScheduledFocus() {
+    if (!this.focusRaf || typeof window === 'undefined') return;
+    window.cancelAnimationFrame(this.focusRaf);
+    this.focusRaf = 0;
+  }
+
+  public focusSelected() {
+    const selectedId = this.selectedId();
+    if (!selectedId) return;
+    this.tabEls.get(selectedId)?.focus();
+  }
+
+  public scheduleFocusSelected() {
+    if (typeof window === 'undefined' || typeof window.requestAnimationFrame !== 'function') {
+      this.focusSelected();
+      return;
+    }
+    this.cancelScheduledFocus();
+    this.focusRaf = window.requestAnimationFrame(() => {
+      this.focusRaf = 0;
+      this.focusSelected();
+    });
+  }
+
+  public tabRef(id: string) {
+    const existing = this.tabRefCallbacks.get(id);
+    if (existing) return existing;
+    const callback = (el: HTMLElement | null) => {
+      if (el) this.tabEls.set(id, el);
+      else {
+        this.tabEls.delete(id);
+        this.tabRefCallbacks.delete(id);
+      }
+    };
+    this.tabRefCallbacks.set(id, callback);
+    return callback;
   }
 
   public select(index: number) {
     const tab = this.tabs.value[index];
+    if (!tab) return;
     const id = tab.id ?? tab.name;
     const selected = this.selected.value;
-    if ((selected?.[0].id ?? selected?.[0].name) === id) return;
+    if ((selected?.[0].id ?? selected?.[0].name) === id && selected?.[1] === index) return;
     this.selected.set([tab, index]);
     this.hovered.set(null);
   }
@@ -66,12 +139,16 @@ export class FileTabsState {
     const id = tab.id ?? tab.name;
     this.hovered.set(null);
     this.frozenTabWidth.next(this.tabWidth.value);
-    const selected = this.selected.value;
-    if ((selected?.[0].id ?? selected?.[0].name) === id) {
+    const selectedId = this.selectedId();
+    const shouldRefocus = selectedId === id;
+    let nextSelectedId = selectedId;
+    if (shouldRefocus) {
       const nextSelected = tabs[index + 1] ?? tabs[index - 1] ?? null;
-      this.selected.set(nextSelected ? [nextSelected, index] : null);
+      nextSelectedId = nextSelected ? getTabId(nextSelected) : null;
     }
     this.tabs.next([...tabs.slice(0, index), ...tabs.slice(index + 1)]);
+    this.syncSelected(nextSelectedId);
+    if (shouldRefocus && nextSelectedId) this.scheduleFocusSelected();
     const exiting = [...this.exitingTabs.value, {tab, insertAt: index}];
     exiting.sort((a, b) => a.insertAt - b.insertAt);
     this.exitingTabs.next(exiting);
@@ -86,6 +163,22 @@ export class FileTabsState {
     const newTabs = [...tabs, tab];
     this.tabs.next(newTabs);
     this.select(newTabs.length - 1);
+    this.scheduleFocusSelected();
+  }
+
+  public reorder(startIndex: number, currentIndex: number): boolean {
+    const tabs = this.tabs.value;
+    const maxIndex = tabs.length - 1;
+    if (startIndex < 0 || currentIndex < 0 || startIndex > maxIndex || currentIndex > maxIndex) return false;
+    if (startIndex === currentIndex) return false;
+    const nextTabs = [...tabs];
+    const [removed] = nextTabs.splice(startIndex, 1);
+    if (!removed) return false;
+    nextTabs.splice(currentIndex, 0, removed);
+    const selectedId = this.selectedId();
+    this.tabs.next(nextTabs);
+    this.syncSelected(selectedId);
+    return true;
   }
 
   public readonly unfreeze = () => {
@@ -96,6 +189,96 @@ export class FileTabsState {
     const item = this.addNewTab?.();
     if (!item) return;
     this.add(item);
+  };
+
+  private nextEnabledIndex(startIndex: number, direction: -1 | 1): number {
+    const tabs = this.tabs.value;
+    for (let index = startIndex + direction; index >= 0 && index < tabs.length; index += direction) {
+      if (!isTabDisabled(tabs[index])) return index;
+    }
+    return -1;
+  }
+
+  private edgeEnabledIndex(direction: -1 | 1): number {
+    const tabs = this.tabs.value;
+    const startIndex = direction > 0 ? 0 : tabs.length - 1;
+    for (let index = startIndex; index >= 0 && index < tabs.length; index += direction) {
+      if (!isTabDisabled(tabs[index])) return index;
+    }
+    return -1;
+  }
+
+  public selectRelative(direction: -1 | 1): boolean {
+    const currentIndex = this.selectedIndex();
+    const startIndex = currentIndex >= 0 ? currentIndex : direction > 0 ? -1 : this.tabs.value.length;
+    const nextIndex = this.nextEnabledIndex(startIndex, direction);
+    if (nextIndex < 0) return false;
+    this.select(nextIndex);
+    this.scheduleFocusSelected();
+    return true;
+  }
+
+  public selectEdge(direction: -1 | 1): boolean {
+    const nextIndex = this.edgeEnabledIndex(direction);
+    if (nextIndex < 0) return false;
+    this.select(nextIndex);
+    this.scheduleFocusSelected();
+    return true;
+  }
+
+  public deleteSelected(): boolean {
+    const index = this.selectedIndex();
+    if (index < 0) return false;
+    const item = this.tabs.value[index];
+    if (!item || item.deletable === false) return false;
+    this.delete(index);
+    return true;
+  }
+
+  public reorderSelected(direction: -1 | 1): boolean {
+    const currentIndex = this.selectedIndex();
+    if (currentIndex < 0) return false;
+    const nextIndex = Math.max(0, Math.min(this.tabs.value.length - 1, currentIndex + direction));
+    if (nextIndex === currentIndex) return false;
+    const reordered = this.reorder(currentIndex, nextIndex);
+    if (reordered) this.scheduleFocusSelected();
+    return reordered;
+  }
+
+  public readonly onKeyDown = (event: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
+    if (event.defaultPrevented) return;
+    const {key} = event;
+    if (event.shiftKey && (key === 'ArrowLeft' || key === 'ArrowRight')) {
+      event.preventDefault();
+      this.reorderSelected(key === 'ArrowRight' ? 1 : -1);
+      return;
+    }
+    if ((key === 'Delete' || key === 'Backspace') && event.shiftKey) return;
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    switch (key) {
+      case 'ArrowLeft':
+        event.preventDefault();
+        this.selectRelative(-1);
+        return;
+      case 'ArrowRight':
+        event.preventDefault();
+        this.selectRelative(1);
+        return;
+      case 'Home':
+        event.preventDefault();
+        this.selectEdge(1);
+        return;
+      case 'End':
+        event.preventDefault();
+        this.selectEdge(-1);
+        return;
+      case 'Delete':
+      case 'Backspace':
+        event.preventDefault();
+        this.deleteSelected();
+        this.unfreeze();
+        return;
+    }
   };
 
   // ----------------------------------------------------------- dragging logic
@@ -125,19 +308,7 @@ export class FileTabsState {
     if (!d || e.pointerId !== d.pointerId) return;
     window.removeEventListener('pointermove', this._onDragMove);
     window.removeEventListener('pointerup', this._onDragEnd);
-    if (d.currentIndex !== d.startIndex) {
-      const tabs = [...this.tabs.value];
-      const [removed] = tabs.splice(d.startIndex, 1);
-      tabs.splice(d.currentIndex, 0, removed);
-      this.tabs.next(tabs);
-      // Fix selected index after reorder
-      const sel = this.selected.value;
-      if (sel) {
-        const selId = sel[0].id ?? sel[0].name;
-        const newIdx = tabs.findIndex((t) => (t.id ?? t.name) === selId);
-        if (newIdx >= 0) this.selected.next([sel[0], newIdx]);
-      }
-    }
+    this.reorder(d.startIndex, d.currentIndex);
     this.drag.next(null);
   };
 

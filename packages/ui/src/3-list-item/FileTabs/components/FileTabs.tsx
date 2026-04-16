@@ -20,10 +20,18 @@ export interface FileTabsProps {
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
   const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, render, addNewTab } = props;
   const state = React.useMemo(() => {
-    const state = _state ?? new FileTabsState(rsync.val(_tabs));
-    state.addNewTab = addNewTab;
-    return state;
+    return _state ?? new FileTabsState(rsync.val(_tabs));
   }, [_state]);
+  React.useEffect(() => {
+    state.addNewTab = addNewTab;
+    return () => {
+      if (state.addNewTab === addNewTab) state.addNewTab = void 0;
+    };
+  }, [state, addNewTab]);
+  React.useEffect(() => {
+    if (_state) return;
+    return () => state.dispose();
+  }, [state, _state]);
   const tabs = state.tabs.use();
   const exitingTabs = state.exitingTabs.use();
 
@@ -56,10 +64,7 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
 
   return (
     <>
-      <FileTabBar state={state} bg={bg} fg={fg}>
-        {tabElements}
-        <FileTabTooltip state={state} />
-      </FileTabBar>
+      <FileTabBar state={state} bg={bg} fg={fg} tabs={tabElements} overlay={<FileTabTooltip state={state} />} />
       {!!render && <FileTabContent state={state} bg={fg} render={render} />}
     </>
   );

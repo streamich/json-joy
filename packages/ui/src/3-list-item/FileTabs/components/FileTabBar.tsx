@@ -30,14 +30,25 @@ const addButtonClass = rule({
   pd: '0 0 3px 8px',
 });
 
+const tabListClass = rule({
+  d: 'flex',
+  fld: 'row',
+  ai: 'flex-end',
+  flex: '1 1 auto',
+  minWidth: 0,
+  h: '100%',
+  ov: 'visible',
+});
+
 export interface FileTabBarProps {
   bg: HslColor;
   fg: HslColor;
   state: FileTabsState;
-  children: React.ReactNode;
+  tabs: React.ReactNode;
+  overlay?: React.ReactNode;
 }
 
-export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, children}) => {
+export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, tabs, overlay}) => {
   const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
   const style: React.CSSProperties = {
     background: bg.toString(),
@@ -51,10 +62,13 @@ export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state,
 
   return (
     <div ref={state.box.setEl} className={blockClass} style={style} onMouseLeave={state.unfreeze}>
-      {children}
+      <div role="tablist" aria-orientation="horizontal" aria-label="File tabs" className={tabListClass} onKeyDown={state.onKeyDown}>
+        {tabs}
+      </div>
       <div className={addButtonClass}>
         <BasicButtonAdd rounder onClick={state.addNew} />
       </div>
+      {overlay}
     </div>
   );
 });

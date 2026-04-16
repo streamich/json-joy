@@ -2,6 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {BasicButtonClose} from '../../../2-inline-block/BasicButton/BasicButtonClose';
 import {useT} from 'use-t';
+import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
 import type {FileTabsState} from '../state';
 import type {TabItem} from '../types';
 
@@ -255,6 +256,8 @@ export interface FileTabProps {
 export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, isExiting = false}) => {
   const [t] = useT();
   const width = state.tabWidth.use();
+  const disabledState = !!useSyncStoreOpt(item.disabled);
+  disabled = disabled || disabledState;
 
   // Enter animation: skip for tabs that existed on the initial render
   const skipEnter = state.initialIds.has(id);
@@ -297,6 +300,9 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
   if (isDragging) {
     style.zIndex = 100;
     style.cursor = 'grabbing';
+  } else if (disabled) {
+    style.cursor = 'default';
+    style.opacity = .55;
   }
 
   const iconElement = !!item.icon && <span>{item.icon()}</span>;
@@ -372,7 +378,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
 
   return (
     <button
-      ref={() => {}}
+      ref={isExiting ? void 0 : state.tabRef(id)}
       role="tab"
       type="button"
       aria-selected={selected}
@@ -381,6 +387,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       className={buttonClass + (width <= 16 ? buttonXXSmallClass : width <= 36 ? buttonXSmallClass : width <= 60 ? buttonSmallClass : '')}
       style={style}
       onPointerDown={(e) => {
+        if (disabled || isExiting) return;
         if (e.button !== 0) return;
         state.select(index);
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);

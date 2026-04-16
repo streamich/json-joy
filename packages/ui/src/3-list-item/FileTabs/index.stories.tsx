@@ -3,6 +3,7 @@ import type {Meta, StoryObj} from '@storybook/react-webpack5';
 import {FileTabs} from '.';
 import {FileIcon} from '../../1-inline/FileIcon';
 import {Avatar} from '../../1-inline/Avatar';
+import {val} from '../../utils/rsync';
 
 const meta: Meta<typeof FileTabs> = {
   title: '3. List Item/FileTabs',
@@ -28,6 +29,7 @@ const tabs1 = [
     id: 'file2',
     name: 'a-very-long-file-name.js',
     icon: () => <FileIcon label="js" size={16} />,
+    disabled: val(true),
   },
   {
     id: 'file3',
