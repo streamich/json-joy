@@ -17,7 +17,7 @@ export class ReactValue<T> extends Value<T> {
   }
 }
 
-export const val = <T>(value: T) => new ReactValue(value);
+export const val = <T>(value: T) => new ReactValue<T>(value);
 
 export class ReactComputed<N, V extends unknown[] = any> extends Computed<N, V> {
   public use(): N {
@@ -30,7 +30,7 @@ export class ReactComputed<N, V extends unknown[] = any> extends Computed<N, V> 
 }
 
 export const comp = <N, V extends unknown[] = any>(deps: WrapListInSyncDep<V>, compute: (args: V) => N) =>
-  new ReactComputed(deps, compute);
+  new ReactComputed<N, V>(deps, compute);
 
 export type ElBoxValue = [x: number, y: number, width: number, height: number];
 

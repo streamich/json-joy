@@ -21,6 +21,10 @@ export interface DragState {
 }
 
 export class FileTabsState {
+  // ---------------------------------------------------- to be set by consumer
+  public onNewTab: (() => (TabItem | undefined)) | undefined = void 0;
+  public onDeleteTab: ((tab: TabItem, index: number) => void) | undefined = void 0;
+
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabsBox: rsync.ElBox<HTMLElement>;
   public readonly trailingBox: rsync.ElBox<HTMLElement>;
@@ -31,7 +35,6 @@ export class FileTabsState {
   public readonly frozenTabWidth: rsync.ReactValue<number | null> = rsync.val(null);
   public readonly exitingTabs: rsync.ReactValue<Array<{tab: TabItem; insertAt: number}>> = rsync.val([]);
   public readonly initialIds: ReadonlySet<string>;
-  public onNewTab: (() => (TabItem | undefined)) | undefined = void 0;
   private readonly tabEls = new Map<string, HTMLElement>();
   private readonly tabRefCallbacks = new Map<string, (el: HTMLElement | null) => void>();
   private focusRaf = 0;
@@ -75,7 +78,7 @@ export class FileTabsState {
     return selectedId ? this.tabs.value.findIndex((tab) => getTabId(tab) === selectedId) : -1;
   }
 
-  private syncSelected(id: string | null) {
+  public selectById(id: string | null) {
     if (!id) {
       this.selected.set(null);
       return;
@@ -151,7 +154,7 @@ export class FileTabsState {
       nextSelectedId = nextSelected ? getTabId(nextSelected) : null;
     }
     this.tabs.next([...tabs.slice(0, index), ...tabs.slice(index + 1)]);
-    this.syncSelected(nextSelectedId);
+    this.selectById(nextSelectedId);
     if (shouldRefocus && nextSelectedId) this.scheduleFocusSelected();
     const exiting = [...this.exitingTabs.value, {tab, insertAt: index}];
     exiting.sort((a, b) => a.insertAt - b.insertAt);
@@ -159,6 +162,7 @@ export class FileTabsState {
     setTimeout(() => {
       this.exitingTabs.next(this.exitingTabs.value.filter((e) => (e.tab.id ?? e.tab.name) !== id));
     }, 250);
+    this.onDeleteTab?.(tab, index);
   }
 
   public add(tab: TabItem) {
@@ -181,7 +185,7 @@ export class FileTabsState {
     nextTabs.splice(currentIndex, 0, removed);
     const selectedId = this.selectedId();
     this.tabs.next(nextTabs);
-    this.syncSelected(selectedId);
+    this.selectById(selectedId);
     return true;
   }
 

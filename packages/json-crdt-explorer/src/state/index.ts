@@ -11,6 +11,12 @@ import {FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
 import type {TraceDefinition} from '../components/TraceSelector/traces';
 
+const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
+  const observable = new BehaviorSubject<T>(val.value);
+  val.subscribe(() => observable.next(val.value));
+  return observable;
+};
+
 export class JsonCrdtExplorerState {
   public readonly tabs: FileTabsState;
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
@@ -19,26 +25,25 @@ export class JsonCrdtExplorerState {
   public readonly sid = Model.sid();
   
   constructor() {
-    this.tabs = new FileTabsState(rsync.val([]));
+    this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
       this.createNew();
       return void 0;
     };
+    this.tabs.onDeleteTab = (tab) => {
+      this.close(tab.id!);
+    };
     this.files$
       .pipe(
-        switchMap(() => this.selected$),
+        switchMap(() => toObservable(this.tabs.selected)),
         map((selected) => {
           if (!selected) return null;
           const files = this.files$.getValue();
-          return files.find((file) => file.id === selected) ?? null;
+          return files.find((file) => file.id === selected[0].id) ?? null;
         }),
       )
       .subscribe(this.file$);
   }
-
-  public readonly select = (id: string) => {
-    this.selected$.next(id);
-  };
 
   public readonly openFile = (
     log: Log<any>,
@@ -54,15 +59,19 @@ export class JsonCrdtExplorerState {
     const file = new OpenFile(meta, log);
     this.files$.next([...this.files$.getValue(), file]);
     this.tabs.add(file.toTab());
-    this.select(file.meta.id);
+    this.tabs.selectById(file.meta.id);
     return file;
   };
+
+  public select(id: string) {
+    this.tabs.selectById(id);
+  }
 
   public readonly close = (id: string) => {
     const list = this.files$.getValue().filter((m) => m.id !== id);
     this.files$.next(list);
     const files = this.files$.getValue();
-    if (files.length && !this.file$.getValue()) this.select(files[0].id);
+    if (files.length && !this.file$.getValue()) this.tabs.selectById(files[0].id);
   };
 
   public readonly rename = (id: string, name: string) => {
