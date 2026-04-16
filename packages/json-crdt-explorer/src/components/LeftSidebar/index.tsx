@@ -24,19 +24,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
       <div style={{maxWidth: 320, width: '100%', margin: '0 auto'}}>
         {/* <div onClick={(e) => e.stopPropagation()} onKeyDown={() => {}}> */}
         <div style={{padding: '16px 12px 0 16px'}}>
-          <MiniTitle>{t('Open')}</MiniTitle>
-          <Space size={-1} />
-          <ExplorerMenu />
-        </div>
-
-        <Space size={6} />
-        <Separator />
-        <Space size={4} />
-
-        <div style={{padding: '0 12px 0 16px'}}>
           <MiniTitle>{t('Saved')}</MiniTitle>
           <Space size={-1} />
-          {/* <ExplorerMenu /> */}
+          <ExplorerMenu />
         </div>
 
         <Space size={6} />

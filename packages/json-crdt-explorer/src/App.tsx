@@ -10,6 +10,12 @@ import {useT} from 'use-t';
 export const App: React.FC = () => {
   const [t] = useT();
   const state = React.useMemo(() => new JsonCrdtExplorerState(), []);
+  React.useEffect(() => {
+    state.start().catch(() => {});
+    return () => {
+      state.stop().catch(() => {});
+    };
+  }, [state]);
     
   return (
     <ctx.Provider value={state}>

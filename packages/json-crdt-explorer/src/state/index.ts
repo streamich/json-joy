@@ -9,6 +9,7 @@ import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {stripExtensions} from './util';
 import {FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
+import {FileStorage, IFileStorage} from './file-storage';
 import type {TraceDefinition} from '../components/TraceSelector/traces';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
@@ -23,8 +24,11 @@ export class JsonCrdtExplorerState {
   public readonly selected$ = new BehaviorSubject<string>('');
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
   public readonly sid = Model.sid();
+  public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
+  protected readonly storage: IFileStorage;
   
   constructor() {
+    this.storage = new FileStorage();
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
       this.createNew();
@@ -45,12 +49,30 @@ export class JsonCrdtExplorerState {
       .subscribe(this.file$);
   }
 
+  private stopped = false;
+
+  async start() {
+    const saved = await this.storage.list();
+    if (this.stopped) return;
+    saved.sort((a, b) => b.createdAt - a.createdAt);
+    this.saved.next(saved);
+    const first = saved[0].id;
+    const dto = await this.storage.load(first);
+    if (this.stopped) return;
+    await this.addLog(dto.data, dto.name, dto.display, dto);
+  }
+
+  async stop() {
+    this.stopped = true;
+  }
+
   public readonly openFile = (
     log: Log<any>,
     name: string = 'JSON CRDT document' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
+    dto?: FileMetadataDto,
   ) => {
     const now = Date.now();
-    const meta: FileMetadataDto = {
+    const meta: FileMetadataDto = dto ?? {
       id: Math.random().toString(36).slice(2) + '.' + now.toString(36),
       name,
       createdAt: now,
@@ -60,6 +82,11 @@ export class JsonCrdtExplorerState {
     this.files$.next([...this.files$.getValue(), file]);
     this.tabs.add(file.toTab());
     this.tabs.selectById(file.meta.id);
+    if (!dto) {
+      this.storage.save(file).then(() => {
+        this.saved.next([file.toMeta(), ...this.saved.value]);
+      }).catch(() => {});
+    }
     return file;
   };
 
@@ -120,7 +147,7 @@ export class JsonCrdtExplorerState {
     }
   };
 
-  public readonly addLog = async (uint8: Uint8Array, name?: string, display?: TraceDefinition['display']) => {
+  public readonly addLog = async (uint8: Uint8Array, name?: string, display?: TraceDefinition['display'], dto?: FileMetadataDto) => {
     try {
       uint8 = await ungzip(uint8);
     } catch {}
@@ -137,7 +164,7 @@ export class JsonCrdtExplorerState {
     log.end.ext.register(ext.quill);
     log.end.api.autoFlush();
     log.end.setSid(this.sid);
-    const file = this.openFile(log, name);
+    const file = this.openFile(log, name, dto);
     file.display = display;
     if (file.display === 'text') {
       const logState = file.logState;

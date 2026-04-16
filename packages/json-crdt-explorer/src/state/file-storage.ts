@@ -1,5 +1,6 @@
 import {gzip, ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
-import type {FileMetadataDto, FileDto, OpenFile} from "./file";
+import {FileMetadataDto, FileDto, OpenFile} from "./file";
+import {Log} from '../components/MainContent/Log';
 
 export interface IFileStorage {
   save(file: OpenFile): Promise<void>;
@@ -52,6 +53,11 @@ export class FileStorage implements IFileStorage {
 
     return meta;
   }
+
+  // async open(id: string): Promise<OpenFile> {
+  //   const dto = await this.load(id);
+  //   return OpenFile.fromDto(dto);
+  // }
 
   async list(): Promise<FileMetadataDto[]> {
     const filesDir = await getFilesDir();

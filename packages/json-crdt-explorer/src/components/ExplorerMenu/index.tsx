@@ -9,7 +9,7 @@ export type ExplorerMenuProps = Record<string, never>;
 
 export const ExplorerMenu: React.FC<ExplorerMenuProps> = () => {
   const state = useExplorer();
-  const files = useBehaviorSubject(state.files$);
+  const files = state.saved.use();
   const selected = state.tabs.selected.use();
   // const name = files.name.use();
 
@@ -21,7 +21,7 @@ export const ExplorerMenu: React.FC<ExplorerMenuProps> = () => {
         key: file.id,
         menuItem: (
           <Split>
-            <div>{file.name.value}</div>
+            <div>{file.name}</div>
             <div>
               <div
                 onMouseDown={(e) => {

@@ -5,6 +5,7 @@ import {rsync} from '@jsonjoy.com/ui';
 import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
+import type {TraceDefinition} from '../components/TraceSelector/traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {DemoComp} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
 
@@ -23,6 +24,7 @@ export interface FileMetadataDto {
   /** Timestamp when file was last updated or saved. */
   updatedAt: number;
   // format: 'model' | 'log';
+  display?: TraceDefinition['display'];
 }
 
 export interface FileDto extends FileMetadataDto {
@@ -45,6 +47,15 @@ export class OpenFile {
     this.logState = new JsonCrdtLogState(log, {view: 'model'});
   }
 
+  public toMeta(): FileMetadataDto {
+    return {
+      id: this.meta.id,
+      name: this.name.value,
+      createdAt: this.openTime,
+      updatedAt: Date.now(),
+    };
+  }
+
   public toDto(): FileDto {
     const cborEncoder = new CborEncoder();
     const encoder = new LogEncoder({cborEncoder});
@@ -54,13 +65,8 @@ export class OpenFile {
       model: 'none',
       noView: true,
     });
-    const dto: FileDto = {
-      id: this.meta.id,
-      name: this.name.value,
-      createdAt: this.openTime,
-      updatedAt: Date.now(),
-      data: encoded,
-    };
+    const dto: FileDto = this.toMeta() as FileDto;
+    dto.data = encoded;
     return dto;
   }
 

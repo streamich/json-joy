@@ -118,10 +118,10 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       onMouseUp,
     },
     h('span', {className: labelClass, style: styleLabelOn, 'aria-hidden': true},
-      h(Iconista, {set: 'bootstrap', icon: 'check', width: small ? 10 : 12, height: small ? 9 : 12}),
+      h(Iconista, {set: 'bootstrap', icon: 'check', width: small ? 12 : 14, height: small ? 12 : 14}),
     ),
     h('span', {className: labelClass, style: styleLabelOff, 'aria-hidden': true},
-      h(Iconista, {set: 'bootstrap', icon: 'x', width: small ? 10 : 12, height: small ? 9 : 12}),
+      h(Iconista, {set: 'bootstrap', icon: 'x', width: small ? 12 : 14, height: small ? 12 : 14}),
     ),
     h('span', {className: thumbClass, style: styleSpan}, ' '),
   );
