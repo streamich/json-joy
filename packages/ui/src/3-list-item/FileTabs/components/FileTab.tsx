@@ -8,6 +8,7 @@ import type {TabItem} from '../types';
 const buttonClass = rule({
   h: '100%',
   pos: 'relative',
+  z: 1,
   pd: 0,
   mr: 0,
   out: 0,
@@ -21,7 +22,6 @@ const buttonClass = rule({
   trs: 'width .22s cubic-bezier(.4,0,.2,1)',
   ov: 'visible',
   minWidth: 0,
-  z: 1,
   '&:focus': {
     out: 0,
   },
@@ -146,42 +146,46 @@ const separatorClass = rule({
   trs: 'opacity 0.2s',
 });
 
-const mainSmallClass = rule({
-  pdl: '4px',
-  pdr: '2px',
+const buttonSmallClass = rule({
+  [`& .${mainClass.trim()}`]: {
+    pdl: '4px',
+    pdr: '2px',
+  },
+  [`& .${initialMarginClass.trim()}`]: {
+    w: 2,
+  },
+  // [`& .${mainPillClass.trim()}`]: {
+  //   pd: '0 2px 0 6px',
+  // },
+  [`& .${separatorClass.trim()}`]: {
+    w: 3,
+    bdr: '1px solid var(--filetabs-hover)',
+  },
   [`& .${iconLayoutClass.trim()}`]: {
     gap: '4px',
   },
   [`& .${titleClass.trim()}`]: {
     maskImage: 'linear-gradient(to left, transparent, white 12px)',
   },
-  [`& .${separatorClass.trim()}`]: {
-    bdr: '1px solid var(--filetabs-hover)',
-  },
-});
-
-const buttonSmallClass = rule({
-  [`& .${initialMarginClass.trim()}`]: {
-    w: 2,
-  },
-  [`& .${mainPillClass.trim()}`]: {
-    pd: '0 2px 0 6px',
-  },
-  [`& .${separatorClass.trim()}`]: {
-    w: 3,
-  },
 });
 
 const buttonXSmallClass = rule({
+  [`& .${mainClass.trim()}`]: {
+    pdl: '2px',
+    pdr: '1px',
+  },
+  // [`& .${mainPillClass.trim()}`]: {
+  //   pd: '0 0 0 4px',
+  // },
+  [`& .${iconLayoutClass.trim()}`]: {
+    gap: '2px',
+  },
   [`& .${initialMarginClass.trim()}`]: {
     w: 1,
   },
-  [`& .${mainPillClass.trim()}`]: {
-    pd: '0 0 0 4px',
-  },
   [`& .${separatorClass.trim()}`]: {
     w: 2,
-    h: '77%',
+    h: '69%',
     bdr: '1px solid var(--filetabs-hover)',
   },
   [`& .${titleClass.trim()}`]: {
@@ -190,6 +194,10 @@ const buttonXSmallClass = rule({
 });
 
 const buttonXXSmallClass = rule({
+  [`& .${mainClass.trim()}`]: {
+    pdl: '1px',
+    pdr: '0px',
+  },
   [`& .${initialMarginClass.trim()}`]: {
     w: 0,
     d: 'none',
@@ -198,32 +206,31 @@ const buttonXXSmallClass = rule({
     pd: '0 1px',
   },
   [`& .${separatorClass.trim()}`]: {
-    bdr: 0,
-    w: 0,
+    w: 1,
+    h: '77%',
+    bdr: '1px solid var(--filetabs-hover)',
   },
-});
-
-const mainXSmallClass = rule({
-  pdl: '2px',
-  pdr: '1px',
-  [`& .${iconLayoutClass.trim()}`]: {
-    gap: '2px',
+  [`& .${titleClass.trim()}`]: {
+    maskImage: 'linear-gradient(to left, transparent, white 4px)',
   },
 });
 
 const detachedCloseButtonClass = rule({
   pos: 'absolute',
-  t: '-5px',
+  t: '-10px',
   r: '-6px',
   w: '18px',
   h: '18px',
   bxz: 'border-box',
+  o: 0,
+  trs: 'opacity .3s ease',
   pd: '1px',
   bdrad: '50%',
   bg: 'var(--filetabs-fg)',
   d: 'flex',
   ai: 'center',
   jc: 'center',
+  bxsh: 'rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;',
 });
 
 
@@ -275,6 +282,10 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     overflow: isAnimating ? 'hidden' : undefined,
     pointerEvents: isExiting ? 'none' : undefined,
   };
+
+  if (selected) {
+    style.zIndex = 10;
+  }
 
   const isHovered = (hoverState?.[0] === id) && !selected;
   const deletable = item.deletable ?? true;
@@ -346,7 +357,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     );
     if (width < 40) {
       button = (
-        <span className={detachedCloseButtonClass}>
+        <span className={detachedCloseButtonClass} style={{opacity: isAnimating ? 0 : 1}}>
           {button}
         </span>
       );
@@ -367,7 +378,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       aria-selected={selected}
       aria-disabled={disabled}
       tabIndex={selected ? 0 : -1}
-      className={buttonClass + (width <= 20 ? buttonXXSmallClass : width <= 40 ? buttonXSmallClass : width <= 60 ? buttonSmallClass : '')}
+      className={buttonClass + (width <= 16 ? buttonXXSmallClass : width <= 36 ? buttonXSmallClass : width <= 60 ? buttonSmallClass : '')}
       style={style}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
@@ -381,7 +392,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       }}
     >
       <span className={initialMarginClass} />
-      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '') + (width <= 30 ? mainXSmallClass : width <= 60 ? mainSmallClass : '')}>
+      <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '')}>
         <span className={innerClass}>
           {inner}
         </span>
