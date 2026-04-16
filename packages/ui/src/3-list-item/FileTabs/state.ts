@@ -3,7 +3,7 @@ import {TabItem} from './types';
 
 const enum Constants {
   MaxTabWidth = 200,
-  MinTabWidth = 32,
+  MinTabWidth = 4,
   HorizontalPadding = 16,
   AddButtonWidth = 32,
 }

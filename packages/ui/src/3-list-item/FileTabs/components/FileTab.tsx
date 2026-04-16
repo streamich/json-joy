@@ -17,6 +17,7 @@ const buttonClass = rule({
   fz: '13.8px',
   us: 'none',
   bg: 'transparent',
+  fls: '0 0 auto',
   trs: 'width .22s cubic-bezier(.4,0,.2,1)',
   ov: 'visible',
   minWidth: 0,
