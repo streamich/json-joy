@@ -21,6 +21,7 @@ const contentClass = rule({
   minH: '100%',
   d: 'flex',
   flex: '1 1 auto',
+  mr: '-32px 0 0',
 });
 
 export const MainContent: React.FC = () => {
@@ -32,7 +33,7 @@ export const MainContent: React.FC = () => {
   return (
     <div className={blockClass}>
       <div style={{padding: '2px 0 0'}}>
-        <FileTabs bg={'#d6f0e0'} state={state.tabs} render={() => <div style={{height: '8px'}} />} />
+        <FileTabs bg={'#d6f0e0'} fade={'transparent'} state={state.tabs} render={() => <div style={{height: '32px'}} />} />
       </div>
       <div className={contentClass}>{content}</div>
     </div>
