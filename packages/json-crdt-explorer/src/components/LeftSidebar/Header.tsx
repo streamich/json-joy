@@ -12,7 +12,8 @@ export const Header: React.FC<HeaderProps> = () => {
   return (
     <Split style={{alignItems: 'center', padding: '0 0 0 8px'}}>
       <MiniTitle contrast>{t('Files')}</MiniTitle>
-      <BasicButtonMore size={32} rounder></BasicButtonMore>
+      {/* <BasicButtonMore size={32} rounder></BasicButtonMore> */}
+      <div />
     </Split>
   );
 };

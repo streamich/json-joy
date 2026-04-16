@@ -23,7 +23,7 @@ export const Menu: React.FC = () => {
 
   const logo = (
     <BasicTooltip nowrap renderTooltip={() => 'jsonjoy.com'}>
-      <BasicButton to="https://jsonjoy.com" round target="_blank" rel="noreferrer" style={linkStyle} size={40}>
+      <BasicButton to="https://jsonjoy.com" round target="_blank" rel="noreferrer" size={40}>
         <span style={{margin: '0 1px 0 -1px', display: 'flex'}}>
           <JsonJoyLogo color size={24} />
         </span>
@@ -80,7 +80,6 @@ export const Menu: React.FC = () => {
           round
           target="_blank"
           rel="noreferrer"
-          style={linkStyle}
           size={40}
         >
           <Iconista set="fontawesome_brands" icon="github" width={24} height={24} />
