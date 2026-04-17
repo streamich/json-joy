@@ -1,10 +1,7 @@
 import * as React from 'react';
-import {ExplorerMenu} from '../ExplorerMenu';
-import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
+import {SavedFileList} from '../SavedFileList';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
-import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {useT} from 'use-t';
 import {NewFileForm} from '../NewFileForm';
 import {AppGridColumn} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
@@ -22,18 +19,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
   if (files.length) {
     content = (
       <div style={{maxWidth: 320, width: '100%', margin: '0 auto'}}>
-        {/* <div onClick={(e) => e.stopPropagation()} onKeyDown={() => {}}> */}
-        <div style={{padding: '16px 12px 0 16px'}}>
-          <MiniTitle>{t('Saved')}</MiniTitle>
-          <Space size={-1} />
-          <ExplorerMenu />
+        <div style={{padding: '16px 8px 16px 12px'}}>
+          <SavedFileList />
         </div>
-
-        <Space size={6} />
-        <Separator />
-        <Space size={4} />
-        
-        {/* </div> */}
       </div>
     );
   }

@@ -61,12 +61,13 @@ const className = rule(
 export interface Props extends React.HtmlHTMLAttributes<any> {}
 
 export const Close: React.FC<Props> = (props) => {
-  const dynamicClass = useRule(({g}) => ({
+  const dynamicClass = useRule(({g, color}) => ({
     '.line-1': {
       stroke: g(0, .6),
     },
     '.line-2': {
-      stroke: g(0, .6),
+      // stroke: g(0, 1),
+      stroke: g(0),
     },
     '&:active': {
       '.line-2': {
