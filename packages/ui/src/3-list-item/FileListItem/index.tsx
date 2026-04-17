@@ -8,7 +8,7 @@ import {Ripple} from '../../misc/Ripple';
 const rowClass = rule({
   d: 'flex',
   ai: 'center',
-  gap: '8px',
+  gap: '0px',
   w: '100%',
   minWidth: 0,
   bxz: 'border-box',
@@ -26,7 +26,7 @@ const surfaceClass = rule({
   flex: '1 1 auto',
   minWidth: 0,
   bxz: 'border-box',
-  pad: '10px 12px',
+  pd: '10px 6px 10px 12px',
   mar: 0,
   bd: 0,
   bg: 'none',
@@ -81,7 +81,7 @@ const metadataClass = rule({
   whiteSpace: 'nowrap',
   fz: '12px',
   lh: '16px',
-  mart: '2px',
+  mrt: '2px',
 });
 
 const actionsClass = rule({
@@ -89,7 +89,7 @@ const actionsClass = rule({
   ai: 'center',
   gap: '4px',
   flex: '0 0 auto',
-  pdr: '4px',
+  pd: '0 4px 0 0',
   op: 0,
   trs: 'opacity .16s ease',
   [`.${rowClass.trim()}:hover &`]: {
