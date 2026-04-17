@@ -197,9 +197,9 @@ export class JsonCrdtExplorerState {
 
   private newCnt = 0;
 
-  public readonly createNew = () => {
-    const schema = s.obj({});
-    const model = Model.create<any>(schema, this.sid);
+  public readonly createNew = (data: unknown = void 0) => {
+    // const schema = s.obj(data);
+    const model = Model.create<any>(data, this.sid);
     this.createFromModel(model);
   };
 

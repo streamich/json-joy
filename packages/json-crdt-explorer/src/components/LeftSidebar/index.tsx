@@ -43,7 +43,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
   }
 
   return (
-    <AppGridColumn header={<Header />} footer={<div>{' '}</div>} scrollRailWidth={4}>
+    <AppGridColumn header={<Header />} footer={<NewFileForm />} scrollRailWidth={4}>
       {content}
     </AppGridColumn>
   );

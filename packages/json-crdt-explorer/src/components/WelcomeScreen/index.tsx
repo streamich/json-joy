@@ -4,6 +4,9 @@ import {useT} from 'use-t';
 import {NewFileForm} from '../NewFileForm';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {ResponsiveFlex} from '@jsonjoy.com/ui/lib/misc/ResponsiveFlex';
+import {HelpText} from '../HelpText';
+import {Typesetting} from '../Typesetting';
+import {Link} from '@jsonjoy.com/ui/lib/misc/router';
 
 
 export type WelcomeScreenProps = Record<string, never>;
@@ -12,25 +15,31 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
   const [t] = useT();
 
   return (
-    <div style={{display: 'flex', width: '100%', alignItems: 'center', flexDirection: 'column', padding: 16}}>
+    <div style={{display: 'flex', width: '100%', height: '100%', alignItems: 'center', flexDirection: 'column', padding: 16}}>
       <Paper round style={{maxWidth: '900px', width: '100%'}} contrast hoverElevate>
         <ResponsiveFlex breakpoint={700} style={{minWidth: 366, width: '100%'}} render={(wide) => (
           <>
-            <div style={{
-              maxWidth: 600, width: wide ? '50%' : '100%', padding: '32px', flex: 1, display: 'flex', flexDirection: 'column',
-              backgroundImage: 'radial-gradient(circle, rgba(127,127,127,.1) 1px, transparent 1px)',
-              backgroundSize: '8px 8px',
-            }}>
-              <div>
-                <h4 style={{margin: '0 0 12px', opacity: 0.88, fontSize: '16px', fontWeight: 700, lineHeight: '1.4em'}}>
-                  JSON CRDT Playground
-                </h4>
-                <ul style={{margin: 0, paddingLeft: '18px', opacity: 0.65, fontSize: '14.5px', lineHeight: '1.5em'}}>
-                  <li style={{padding: 4}}>Explore JSON CRDT document state and history</li>
-                  <li style={{padding: 4}}>Save &amp; load documents in various formats</li>
-                  <li style={{padding: 4}}>Time travel and debug document internal state</li>
-                </ul>
-              </div>
+            <div style={{maxWidth: 600, width: wide ? '50%' : '100%', flex: 1}}>
+              <Typesetting>
+                <div style={{padding: '16px 32px'}}>
+                  <h2>
+                    JSON CRDT Playground
+                  </h2>
+                  <ul>
+                    <li>
+                      Explore <a href={'https://jsonjoy.com/specs/json-crdt'} title="JSON CRDT specification" rel='noopener noreferrer' target='_blank'>JSON CRDT models</a> and <a href={'https://jsonjoy.com/specs/json-crdt-patch'} title="JSON CRDT Patch specification" rel='noopener noreferrer' target='_blank'>patch history</a>
+                    </li>
+                    <li>Save & load documents in <a href={'https://jsonjoy.com/specs/json-crdt/encoding'} title="JSON CRDT Encoding specification" rel='noopener noreferrer' target='_blank'>various formats</a></li>
+                    <li>Time travel and debug document internal state</li>
+                  </ul>
+                </div>
+                {/* <Space size={2} /> */}
+                <Separator />
+                {/* <Space size={2} /> */}
+                <div style={{padding: '8px 32px 24px'}}>
+                  <HelpText />
+                </div>
+              </Typesetting>
               <div />
             </div>
             <Separator style={wide ? {width: '1px', height: 'auto'} : {}} />

@@ -5,7 +5,7 @@ import {NiceUiSizes} from '../../../constants';
 
 const marginalsClass = drule({
   d: 'flex',
-  h: NiceUiSizes.NavHeight + 'px',
+  minH: NiceUiSizes.NavHeight + 'px',
   ai: 'center',
   flexShrink: 0,
   bxz: 'border-box',

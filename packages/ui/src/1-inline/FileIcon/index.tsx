@@ -52,7 +52,7 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(({
   label,
   id,
   color = label ? getColor(label as CommonLabel) : undefined,
-  size = 40,
+  size = 16,
   gradient,
   accent,
   ...rest
