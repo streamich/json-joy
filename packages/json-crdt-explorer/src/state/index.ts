@@ -1,7 +1,5 @@
 import {Model, Patch, s} from 'json-joy/lib/json-crdt';
-import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
-import {LogDecoder} from 'json-joy/lib/json-crdt/log/codec/LogDecoder';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap} from 'rxjs';
@@ -18,6 +16,11 @@ const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
   return observable;
 };
 
+const SAVED_REFRESH_INTERVAL_MS = 5_000;
+
+const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
+  [...saved].sort((a, b) => b.updatedAt - a.updatedAt || b.createdAt - a.createdAt);
+
 export class JsonCrdtExplorerState {
   public readonly tabs: FileTabsState;
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
@@ -26,9 +29,10 @@ export class JsonCrdtExplorerState {
   public readonly sid = Model.sid();
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   protected readonly storage: IFileStorage;
+  private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
   
-  constructor() {
-    this.storage = new FileStorage();
+  constructor(storage: IFileStorage = new FileStorage()) {
+    this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
       this.createNew({});
@@ -51,16 +55,40 @@ export class JsonCrdtExplorerState {
 
   private stopped = false;
 
+  private readonly stopSavedRefresh = () => {
+    if (this.savedRefreshTimer) {
+      clearInterval(this.savedRefreshTimer);
+      this.savedRefreshTimer = null;
+    }
+  };
+
+  private readonly refreshSaved = async () => {
+    try {
+      const saved = await this.storage.list();
+      if (this.stopped) return;
+      this.saved.next(sortSavedFiles(saved));
+    } catch {}
+  };
+
+  private readonly handleFilePersisted = async () => {
+    await this.refreshSaved();
+  };
+
   async start() {
-    const saved = await this.storage.list();
+    this.stopped = false;
+    this.stopSavedRefresh();
+    await this.refreshSaved();
     if (this.stopped) return;
-    saved.sort((a, b) => b.createdAt - a.createdAt);
-    this.saved.next(saved);
+    this.savedRefreshTimer = setInterval(() => {
+      void this.refreshSaved();
+    }, SAVED_REFRESH_INTERVAL_MS);
     // if (saved.length) await this.openSaved(saved[0].id);
   }
 
   async stop() {
     this.stopped = true;
+    this.stopSavedRefresh();
+    await Promise.all(this.files$.getValue().map((file) => file.destroy(true)));
   }
 
   public isOpen(id: string) {
@@ -89,15 +117,14 @@ export class JsonCrdtExplorerState {
       createdAt: now,
       updatedAt: now,
     };
-    const file = new OpenFile(meta, log);
+    const file = new OpenFile(meta, log, {
+      storage: this.storage,
+      onPersisted: this.handleFilePersisted,
+    });
     this.files$.next([...this.files$.getValue(), file]);
     this.tabs.add(file.toTab());
     this.tabs.selectById(file.meta.id);
-    if (!dto) {
-      this.storage.save(file).then(() => {
-        this.saved.next([file.toMeta(), ...this.saved.value]);
-      }).catch(() => {});
-    }
+    if (!dto) file.scheduleFlush();
     return file;
   };
 
@@ -106,6 +133,8 @@ export class JsonCrdtExplorerState {
   }
 
   public readonly close = (id: string) => {
+    const file = this.files$.getValue().find((openFile) => openFile.id === id);
+    void file?.destroy(true);
     const list = this.files$.getValue().filter((m) => m.id !== id);
     this.files$.next(list);
     const files = this.files$.getValue();
@@ -115,8 +144,8 @@ export class JsonCrdtExplorerState {
   public readonly rename = (id: string, name: string) => {
     const files = this.files$.getValue();
     const file = files.find((m) => m.id === id);
-    if (!file) return;
-    file.name.next(name);
+    if (!file || file.name.value === name) return;
+    file.name.set(name);
     this.files$.next([...files]);
   };
 
@@ -159,43 +188,10 @@ export class JsonCrdtExplorerState {
   };
 
   public readonly addLog = async (uint8: Uint8Array, name?: string, display?: TraceDefinition['display'], dto?: FileMetadataDto) => {
-    try {
-      uint8 = await ungzip(uint8);
-    } catch {}
-    const cborDecoder = new CborDecoder();
-    const decoder = new LogDecoder({cborDecoder});
-    const {history: log} = decoder.decode(uint8, {history: true, frontier: true, format: 'seq.cbor'});
-    if (!log) throw new Error('Incompatible JSON CRDT log file.');
-    const start = log.start;
-    log.start = () => {
-      const model = start();
-      model.ext.register(ext.quill);
-      return model;
-    };
-    log.end.ext.register(ext.quill);
-    log.end.api.autoFlush();
-    log.end.setSid(this.sid);
+    const log = await OpenFile.decodeLog(uint8, this.sid);
+    if (this.stopped) return;
     const file = this.openFile(log, name, dto);
-    file.display = display;
-    if (file.display === 'text') {
-      const logState = file.logState;
-      logState.patchState.show$.next(false);
-      logState.modelState.showModel$.next(false);
-      logState.modelState.showView$.next(false);
-      logState.modelState.showDisplay$.next(true);
-    } else if (file.display === 'blogpost' || file.display === 'todo') {
-      const logState = file.logState;
-      logState.patchState.show$.next(false);
-      logState.modelState.showModel$.next(false);
-      logState.modelState.showView$.next(true);
-      logState.modelState.showDisplay$.next(true);
-    } else if (file.display === 'quill') {
-      const logState = file.logState;
-      logState.patchState.show$.next(false);
-      logState.modelState.showModel$.next(false);
-      logState.modelState.showView$.next(true);
-      logState.modelState.showDisplay$.next(true);
-    }
+    file.setDisplay(display);
   };
 
   public readonly addTrace = async (uint8: Uint8Array, trace: TraceDefinition) => {
