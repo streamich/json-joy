@@ -11,6 +11,15 @@ const blockClass = rule({
     mr: 0,
     pd: '4px 0',
   },
+  a: {
+    textDecoration: 'underline',
+    textDecorationThickness: '1px',
+    textUnderlineOffset: '4px',
+    textDecorationColor: 'rgb(from currentColor r g b / 0.2)',
+    '&:hover': {
+      textDecorationColor: 'currentColor',
+    },
+  },
   code: {
     lh: '1.3em',
   },
