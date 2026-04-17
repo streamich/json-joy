@@ -1,9 +1,7 @@
 import * as React from 'react';
-import {rule, useRule} from 'nano-theme';
+import {rule} from 'nano-theme';
 
-const faceClassName = 'flip-horizontal-face';
-
-const wrapperClass = rule({
+const blockClass = rule({
   pos: 'relative',
   d: 'inline-flex',
   justifyContent: 'center',
@@ -19,15 +17,9 @@ const wrapperClass = rule({
   perspective: '800px',
   transformStyle: 'preserve-3d',
   verticalAlign: 'middle',
-  trs: 'all .2s',
-  [`.${faceClassName}`]: {
-    trs: 'transform var(--flip-horizontal-duration, 180ms) cubic-bezier(.22,.61,.36,1)',
-  },
-  '&:active': {
-    transform: 'scale(.88)',
-    [`.${faceClassName}`]: {
-      transform: 'rotateY(180deg)',
-    },
+  trs: 'transform .3s',
+  'button:active &, a:active &': {
+    transform: 'rotateY(180deg)',
   },
   '&:focus-visible': {
     out: 0,
@@ -51,43 +43,26 @@ export interface FlipHorizontalProps extends React.HTMLAttributes<any> {
 
 export const FlipHorizontal: React.FC<FlipHorizontalProps> = ({
   children,
-  duration = 180,
+  duration = 280,
   disabled,
   className = '',
   style,
   onClick,
   ...rest
 }) => {
-  const dynamicClass = useRule(({g}) => ({
-    cur: disabled ? 'default' : 'pointer',
-    op: disabled ? 0.5 : 1,
-    pointerEvents: disabled ? 'none' : undefined,
-    '&:focus-visible':
-      onClick && !disabled
-        ? {
-            bxsh: `0 0 0 2px ${g(0, 0.14)}`,
-            bdrad: '6px',
-          }
-        : undefined,
-  }));
-
   const Component: any = onClick ? 'button' : 'span';
-  const componentStyle: React.CSSProperties = {
-    ...style,
-    ['--flip-horizontal-duration' as string]: `${duration}ms`,
-  };
 
   return (
     <Component
       {...rest}
-      className={className + wrapperClass + dynamicClass}
-      style={componentStyle}
+      className={className + blockClass}
+      style={style}
       onClick={disabled ? undefined : onClick}
       type={onClick ? 'button' : undefined}
       disabled={onClick ? disabled : undefined}
       aria-disabled={!onClick && disabled ? true : undefined}
     >
-      <span className={faceClass + ' ' + faceClassName}>
+      <span className={faceClass}>
         {children}
       </span>
     </Component>

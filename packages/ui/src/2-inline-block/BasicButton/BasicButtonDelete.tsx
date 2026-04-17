@@ -1,20 +1,28 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {More as MoreIcon} from '../../icons/interactive/More';
 import BasicButton, {type BasicButtonProps} from '../BasicButton';
 import {BasicTooltip} from '../../4-card/BasicTooltip';
+import FlipHorizontal from '../../icons/interactive/FlipHorizontal';
+import {Iconista} from '../../icons/Iconista';
 
-export interface BasicButtonMoreProps extends BasicButtonProps {
+const trashIcon = <Iconista set="bootstrap" icon="trash2" width={16} height={16} />
+const trashIconAnimated = (
+  <FlipHorizontal>
+    {trashIcon}
+  </FlipHorizontal>
+);
+
+export interface BasicButtonDeleteProps extends BasicButtonProps {
   tooltip?: boolean | React.ReactNode;
 }
 
-export const BasicButtonMore: React.FC<BasicButtonMoreProps> = (props) => {
+export const BasicButtonDelete: React.FC<BasicButtonDeleteProps> = (props) => {
   const [t] = useT();
-  const title = t('More');
+  const title = t('Delete');
 
   let element = (
     <BasicButton title={title} {...props}>
-      <MoreIcon />
+      {trashIconAnimated}
     </BasicButton>
   );
 

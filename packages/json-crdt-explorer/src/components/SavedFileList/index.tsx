@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {useExplorer} from '../../context';
-import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
+import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 
 const icon = <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} />;
@@ -57,8 +57,8 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
             iconHover={activeIcon}
             actions={(
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <BasicButtonClose size={28} rounder noOutline title="Close" />
-                <BasicButtonMore size={28} rounder noOutline title="More actions" />
+                <BasicButtonDelete tooltip size={28} rounder noOutline />
+                <BasicButtonMore tooltip size={28} rounder noOutline />
               </div>
             )}
             onClick={() => state.openSaved(file.id).catch(() => {})}
