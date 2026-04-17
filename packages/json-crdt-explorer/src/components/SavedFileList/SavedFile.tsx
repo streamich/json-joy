@@ -5,7 +5,10 @@ import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
+import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import type {FileMetadataDto} from '../../state/file';
+import {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 
 const icon = <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} />;
 
@@ -40,6 +43,7 @@ export const SavedFile: React.FC<SavedFileProps> = ({ file }) => {
   const selected = state.tabs.selected.use();
 
   const activeIcon = <FileIcon id={file.id} label={'crdt'} size={20} />;
+  const isOpen = state.isOpen(file.id);
 
   return (
     <FileListItem
@@ -51,12 +55,36 @@ export const SavedFile: React.FC<SavedFileProps> = ({ file }) => {
         {formatDate(file.updatedAt)} · {file.id}
         </>
       )}
-      icon={state.isOpen(file.id) ? activeIcon : icon}
+      icon={isOpen ? activeIcon : icon}
       iconHover={activeIcon}
       actions={(
         <div style={{display: 'flex', alignItems: 'center'}}>
           <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} />
-          <BasicButtonMore tooltip size={28} rounder noOutline />
+          <Popup renderContext={() => (
+            <ContextMenu inset menu={{
+              id: file.id,
+              name: `file-${file.id}`,
+              children: [
+                isOpen ? ({
+                  name: 'Close',
+                  icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
+                  onSelect: () => state.close(file.id)
+                } as MenuItem) : ({
+                  name: 'Open',
+                  icon: () => <Iconista set="vscode" icon="eye" width={16} height={16} />,
+                  onSelect: () => state.openSaved(file.id).catch(() => {}),
+                } as MenuItem),
+                {
+                  name: 'Download',
+                  onSelect: () => {
+                    // state.storage.download(file.id).catch(() => {});
+                  }
+                },
+              ],
+            }} />
+          )}>
+            <BasicButtonMore tooltip size={28} rounder noOutline />
+          </Popup>
         </div>
       )}
       onClick={() => state.openSaved(file.id).catch(() => {})}

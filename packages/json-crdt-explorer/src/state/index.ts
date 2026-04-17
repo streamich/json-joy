@@ -133,12 +133,13 @@ export class JsonCrdtExplorerState {
   }
 
   public readonly close = (id: string) => {
+    this.tabs.deleteById(id);
     const file = this.files$.getValue().find((openFile) => openFile.id === id);
     void file?.destroy(true);
     const list = this.files$.getValue().filter((m) => m.id !== id);
     this.files$.next(list);
-    const files = this.files$.getValue();
-    if (files.length && !this.file$.getValue()) this.tabs.selectById(files[0].id);
+    // const files = this.files$.getValue();
+    // if (files.length && !this.file$.getValue()) this.tabs.selectById(files[0].id);
   };
 
   public readonly rename = (id: string, name: string) => {
