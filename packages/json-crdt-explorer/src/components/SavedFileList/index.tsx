@@ -1,70 +1,18 @@
 import * as React from 'react';
 import {useExplorer} from '../../context';
-import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
-import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
-import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
-
-const icon = <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} />;
-
-export function formatDate(timestamp: number): string {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  if (diff < 60000) {
-    return 'Just now';
-  }
-  if (diff < 3600000) {
-    const mins = Math.floor(diff / 60000);
-    return `${mins} min${mins > 1 ? 's' : ''} ago`;
-  }
-  if (diff < 86400000) {
-    const hours = Math.floor(diff / 3600000);
-    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  }
-  if (diff < 604800000) {
-    const days = Math.floor(diff / 86400000);
-    return `${days} day${days > 1 ? 's' : ''} ago`;
-  }
-  return date.toLocaleDateString();
-}
+import {SavedFile} from './SavedFile';
 
 export type SavedFileListProps = Record<string, never>;
 
 export const SavedFileList: React.FC<SavedFileListProps> = () => {
   const state = useExplorer();
   const files = state.saved.use();
-  const selected = state.tabs.selected.use();
 
   if (!files.length) return null;
 
   return (
     <>
-      {files.map((file) => {
-        const activeIcon = <FileIcon id={file.id} label={'crdt'} size={20} />;
-        return (
-          <FileListItem
-            key={file.id}
-            title={file.name}
-            selected={selected?.[0].id === file.id}
-            metadata={(
-              <>
-              {formatDate(file.updatedAt)} · {file.id}
-              </>
-            )}
-            icon={state.isOpen(file.id) ? activeIcon : icon}
-            iconHover={activeIcon}
-            actions={(
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} />
-                <BasicButtonMore tooltip size={28} rounder noOutline />
-              </div>
-            )}
-            onClick={() => state.openSaved(file.id).catch(() => {})}
-          />
-        );
-      })}
+      {files.map((file) => <SavedFile key={file.id} file={file} />)}
     </>
   );
 };

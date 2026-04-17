@@ -6,6 +6,7 @@ import FlipHorizontal from '../../icons/interactive/FlipHorizontal';
 import {Iconista} from '../../icons/Iconista';
 import {Popup} from '../../4-card/Popup';
 import {ContextMenu} from '../../4-card/ContextMenu';
+import {Sidetip} from '../../1-inline/Sidetip';
 
 const trashIcon = <Iconista set="bootstrap" icon="trash2" width={16} height={16} />
 const trashIconAnimated = (
@@ -42,6 +43,7 @@ export const BasicButtonDelete: React.FC<BasicButtonDeleteProps> = ({tooltip, on
       <Popup renderContext={({onEsc}) => (
         <ContextMenu inset onEsc={onEsc} menu={{
           name: 'Confirm delete',
+          minWidth: 240,
           children: [
             {
               name: 'Cancel',
@@ -51,6 +53,7 @@ export const BasicButtonDelete: React.FC<BasicButtonDeleteProps> = ({tooltip, on
               name: 'Delete',
               onSelect: onConfirm,
               danger: true,
+              right: () => <Sidetip small>{t('Are you sure?')}</Sidetip>,
               icon: () => <Iconista set="bootstrap" icon="lightning" width={16} height={16} />,
             },
           ],
