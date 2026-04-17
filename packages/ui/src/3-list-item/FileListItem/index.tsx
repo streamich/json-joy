@@ -90,6 +90,11 @@ const actionsClass = rule({
   gap: '4px',
   flex: '0 0 auto',
   pdr: '4px',
+  op: 0,
+  trs: 'opacity .16s ease',
+  [`.${rowClass.trim()}:hover &`]: {
+    op: 1,
+  },
 });
 
 export interface FileListItemProps extends Omit<React.AllHTMLAttributes<any>, 'children' | 'title'> {
