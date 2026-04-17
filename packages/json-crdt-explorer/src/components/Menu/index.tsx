@@ -58,11 +58,12 @@ export const Menu: React.FC = () => {
   const right = (
     <div style={{display: 'flex', alignItems: 'center'}}>
       {width > 600 && (
-        <BasicTooltip renderTooltip={() => 'Specification of JSON CRDT format'}>
+        
           <BasicButton
             to="https://jsonjoy.com/specs/json-crdt"
             target="_blank"
             rel="noreferrer"
+            title='Specification of JSON CRDT format'
             width="auto"
             height={32}
             rounder
@@ -72,24 +73,23 @@ export const Menu: React.FC = () => {
               JSON CRDT <Label>Spec</Label>
             </span>
           </BasicButton>
-        </BasicTooltip>
+        
       )}
       {width > 600 && (
-        <BasicTooltip renderTooltip={() => 'Specification of JSON CRDT Patch format'}>
-          <BasicButton
-            to="https://jsonjoy.com/specs/json-crdt-patch"
-            target="_blank"
-            rel="noreferrer"
-            width="auto"
-            height={32}
-            rounder
-            compact
-          >
-            <span style={linkStyle}>
-              JSON CRDT Patch <Label>Spec</Label>
-            </span>
-          </BasicButton>
-        </BasicTooltip>
+        <BasicButton
+          to="https://jsonjoy.com/specs/json-crdt-patch"
+          title='Specification of JSON CRDT Patch format'
+          target="_blank"
+          rel="noreferrer"
+          width="auto"
+          height={32}
+          rounder
+          compact
+        >
+          <span style={linkStyle}>
+            JSON CRDT Patch <Label>Spec</Label>
+          </span>
+        </BasicButton>
       )}
       <BasicTooltip nowrap renderTooltip={() => 'GitHub repository'}>
         <BasicButton

@@ -16,16 +16,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
 
   let content: React.ReactNode | undefined;
 
-  if (files.length) {
-    content = (
-      <div style={{maxWidth: 320, width: '100%', margin: '0 auto'}}>
-        <div style={{padding: '16px 8px 16px 12px'}}>
-          <SavedFileList />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <AppGridColumn
       header={<Header />}
@@ -35,7 +25,11 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
         </div>
       )}
     scrollRailWidth={4}>
-      {content}
+      <div style={{maxWidth: 320, width: '100%', margin: '0 auto'}}>
+        <div style={{padding: '16px 8px 16px 12px'}}>
+          <SavedFileList />
+        </div>
+      </div>
     </AppGridColumn>
   );
 };

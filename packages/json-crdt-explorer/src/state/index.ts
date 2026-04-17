@@ -56,14 +56,22 @@ export class JsonCrdtExplorerState {
     if (this.stopped) return;
     saved.sort((a, b) => b.createdAt - a.createdAt);
     this.saved.next(saved);
-    const first = saved[0].id;
-    const dto = await this.storage.load(first);
-    if (this.stopped) return;
-    await this.addLog(dto.data, dto.name, dto.display, dto);
+    // if (saved.length) await this.openSaved(saved[0].id);
   }
 
   async stop() {
     this.stopped = true;
+  }
+
+  public isOpen(id: string) {
+    return !!this.files$.value.find((file) => file.id === id);
+  }
+
+  public async openSaved(id: string) {
+    if (this.isOpen(id)) return;
+    const dto = await this.storage.load(id);
+    if (this.stopped) return;
+    await this.addLog(dto.data, dto.name, dto.display, dto);
   }
 
   public readonly openFile = (

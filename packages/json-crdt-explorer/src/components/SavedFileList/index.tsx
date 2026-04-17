@@ -57,6 +57,7 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
               <BasicButtonMore size={28} rounder noOutline title="More actions" />
             </div>
           )}
+          onClick={() => state.openSaved(file.id).catch(() => {})}
         />
       ))}
     </>
