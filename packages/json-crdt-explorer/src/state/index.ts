@@ -68,7 +68,10 @@ export class JsonCrdtExplorerState {
   }
 
   public async openSaved(id: string) {
-    if (this.isOpen(id)) return;
+    if (this.isOpen(id)) {
+      this.tabs.selectById(id);
+      return;
+    }
     const dto = await this.storage.load(id);
     if (this.stopped) return;
     await this.addLog(dto.data, dto.name, dto.display, dto);

@@ -42,7 +42,7 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
   return (
     <>
       {files.map((file) => {
-        const activeIcon = <FileIcon id={file.id} label={'crdt'} size={16} />;
+        const activeIcon = <FileIcon id={file.id} label={'crdt'} size={20} />;
         return (
           <FileListItem
             key={file.id}
