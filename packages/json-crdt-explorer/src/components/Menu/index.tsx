@@ -6,6 +6,7 @@ import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import JsonJoyLogo from '@jsonjoy.com/ui/lib/icons/svg/JsonJoyLogo';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {PwaInstallButton} from './PwaInstallButton';
 
 const linkStyle: React.CSSProperties = {
   color: 'inherit',
@@ -74,9 +75,7 @@ export const Menu: React.FC<MenuProps> = ({ toggle }) => {
             rounder
             compact
           >
-            <span style={linkStyle}>
-              JSON CRDT <Label>Spec</Label>
-            </span>
+            JSON CRDT <Label>Spec</Label>
           </BasicButton>
         
       )}
@@ -91,11 +90,10 @@ export const Menu: React.FC<MenuProps> = ({ toggle }) => {
           rounder
           compact
         >
-          <span style={linkStyle}>
-            JSON CRDT Patch <Label>Spec</Label>
-          </span>
+          JSON CRDT Patch <Label>Spec</Label>
         </BasicButton>
       )}
+      <PwaInstallButton />
       <BasicTooltip nowrap renderTooltip={() => 'GitHub repository'}>
         <BasicButton
           to="https://github.com/streamich/json-joy"
