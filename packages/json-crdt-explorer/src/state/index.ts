@@ -31,7 +31,7 @@ export class JsonCrdtExplorerState {
     this.storage = new FileStorage();
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
-      this.createNew();
+      this.createNew({});
       return void 0;
     };
     this.tabs.onDeleteTab = (tab) => {
