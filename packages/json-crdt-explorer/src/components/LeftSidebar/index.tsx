@@ -32,18 +32,21 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
         <Space size={6} />
         <Separator />
         <Space size={4} />
-          
-          
-          <div style={{padding: '0 12px 16px 16px'}}>
-            <NewFileForm />
-          </div>
+        
         {/* </div> */}
       </div>
     );
   }
 
   return (
-    <AppGridColumn header={<Header />} footer={<NewFileForm />} scrollRailWidth={4}>
+    <AppGridColumn
+      header={<Header />}
+      footer={!!files.length && (
+        <div style={{padding: 16, margin: '0 auto'}}>
+          <NewFileForm />
+        </div>
+      )}
+    scrollRailWidth={4}>
       {content}
     </AppGridColumn>
   );
