@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
-import {useT} from 'use-t';
+import {useTheme} from 'nano-theme';
 import {NewFileForm} from '../NewFileForm';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {ResponsiveFlex} from '@jsonjoy.com/ui/lib/misc/ResponsiveFlex';
@@ -8,58 +8,17 @@ import {HelpText} from '../HelpText';
 import {Typesetting} from '../Typesetting';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 
-
 export type WelcomeScreenProps = Record<string, never>;
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
-  const [t] = useT();
-
-  const circle = (
-    <div
-      style={{
-        background: '#fff',
-        width: 406,
-        height: 406,
-        borderRadius: '50%',
-        overflow: 'hidden',
-        position: 'relative',
-        boxSizing: 'border-box',
-        zIndex: 1,
-        margin: '-64px auto 0',
-      }}
-    >
-      <div style={{width: 600, margin: '16px 0 0 -80px'}}>
-        <video
-          src={'https://appsets.jsonjoy.com/ui/elements/clickable-json-editing-720x486.mp4'}
-          width={'100%'}
-          autoPlay
-          muted
-          loop
-          controls={false}
-          style={{display: 'block'}}
-        />
-      </div>
-      <div
-        style={{
-          width: 400,
-          height: 400,
-          borderRadius: '50%',
-          border: '3px solid #555',
-          position: 'absolute',
-          top: 3,
-          left: 3,
-          boxSizing: 'border-box',
-        }}
-      ></div>
-    </div>
-  );
+  const theme = useTheme();
 
   return (
     <div style={{display: 'flex', width: '100%', height: '100%', alignItems: 'center', flexDirection: 'column', padding: 16}}>
       <Paper round style={{maxWidth: '900px', width: '100%'}} contrast hoverElevate>
         <ResponsiveFlex breakpoint={700} style={{minWidth: 366, width: '100%'}} render={(wide) => (
           <>
-            <div style={{maxWidth: 600, width: wide ? '50%' : '100%', flex: 1}}>
+            <div style={{width: wide ? '50%' : '100%', flex: 1}}>
               <Typesetting>
                 <div style={{padding: '16px 32px'}}>
                   <h2>
@@ -83,12 +42,51 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
               <div />
             </div>
             <Separator style={wide ? {width: '1px', height: 'auto'} : {}} />
-            <div style={{width: wide ? '50%' : '100%', boxSizing: 'border-box', padding: wide ? 32 : 16, flex: wide ? 1 : undefined}}>
-              {circle}
-              <div style={{background: 'white', position: 'relative', zIndex: 2, margin: '-100px 0 0'}}>
+            <div style={{width: wide ? '50%' : '100%', flex: wide ? 1 : undefined}}>
+
+              <div
+                style={{
+                  background: '#fff',
+                  width: 406,
+                  height: 406,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  zIndex: 1,
+                  margin: `-${wide ? 48 : 32}px auto 0`,
+                }}
+              >
+                <div style={{width: 600, margin: '16px 0 0 -80px'}}>
+                  <video
+                    src={'https://appsets.jsonjoy.com/ui/elements/clickable-json-editing-720x486.mp4'}
+                    width={'100%'}
+                    autoPlay
+                    muted
+                    loop
+                    controls={false}
+                    style={{display: 'block'}}
+                  />
+                </div>
+                <div
+                  style={{
+                    width: 400,
+                    height: 400,
+                    borderRadius: '50%',
+                    border: '3px solid #555',
+                    position: 'absolute',
+                    top: 3,
+                    left: 3,
+                    boxSizing: 'border-box',
+                  }}
+                ></div>
+              </div>
+
+              <div style={{position: 'relative', zIndex: 2, margin: '-100px 0 0'}}>
                 <Separator />
-                <Space size={2} />
-                <NewFileForm expanded />
+                <div style={{background: `linear-gradient(to bottom, ${theme.bg} 100px, transparent)`, boxSizing: 'border-box', padding: wide ? 32 : 16}}>
+                  <NewFileForm expanded />
+                </div>
               </div>
             </div>
           </>
