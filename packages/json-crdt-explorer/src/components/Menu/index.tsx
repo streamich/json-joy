@@ -23,7 +23,7 @@ export interface MenuProps {
   toggle: React.ReactNode;
 }
 
-export const Menu: React.FC<MenuProps> = ({ toggle }) => {
+export const Menu: React.FC<MenuProps> = ({toggle}) => {
   const {width} = useWindowSize();
 
   const logo = (
@@ -64,25 +64,23 @@ export const Menu: React.FC<MenuProps> = ({ toggle }) => {
   const right = (
     <div style={{display: 'flex', alignItems: 'center'}}>
       {width > 600 && (
-        
-          <BasicButton
-            to="https://jsonjoy.com/specs/json-crdt"
-            target="_blank"
-            rel="noreferrer"
-            title='Specification of JSON CRDT format'
-            width="auto"
-            height={32}
-            rounder
-            compact
-          >
-            JSON CRDT&nbsp;<Label>Spec</Label>
-          </BasicButton>
-        
+        <BasicButton
+          to="https://jsonjoy.com/specs/json-crdt"
+          target="_blank"
+          rel="noreferrer"
+          title="Specification of JSON CRDT format"
+          width="auto"
+          height={32}
+          rounder
+          compact
+        >
+          JSON CRDT&nbsp;<Label>Spec</Label>
+        </BasicButton>
       )}
       {width > 600 && (
         <BasicButton
           to="https://jsonjoy.com/specs/json-crdt-patch"
-          title='Specification of JSON CRDT Patch format'
+          title="Specification of JSON CRDT Patch format"
           target="_blank"
           rel="noreferrer"
           width="auto"
@@ -95,13 +93,7 @@ export const Menu: React.FC<MenuProps> = ({ toggle }) => {
       )}
       <PwaInstallButton />
       <BasicTooltip nowrap renderTooltip={() => 'GitHub repository'}>
-        <BasicButton
-          to="https://github.com/streamich/json-joy"
-          round
-          target="_blank"
-          rel="noreferrer"
-          size={40}
-        >
+        <BasicButton to="https://github.com/streamich/json-joy" round target="_blank" rel="noreferrer" size={40}>
           <Iconista set="fontawesome_brands" icon="github" width={24} height={24} />
         </BasicButton>
       </BasicTooltip>

@@ -62,9 +62,7 @@ export const FlipHorizontal: React.FC<FlipHorizontalProps> = ({
       disabled={onClick ? disabled : undefined}
       aria-disabled={!onClick && disabled ? true : undefined}
     >
-      <span className={faceClass}>
-        {children}
-      </span>
+      <span className={faceClass}>{children}</span>
     </Component>
   );
 };

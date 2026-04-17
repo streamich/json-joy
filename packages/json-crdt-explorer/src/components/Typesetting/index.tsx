@@ -49,7 +49,7 @@ const blockClass = rule({
     fz: '1.3em',
     fw: 700,
     mr: '16px 0 4px',
-    o: .88,
+    o: 0.88,
     lh: '1.4em',
   },
   h2: {

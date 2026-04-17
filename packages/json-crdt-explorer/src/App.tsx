@@ -19,20 +19,25 @@ export const App: React.FC = () => {
       state.stop().catch(() => {});
     };
   }, [state]);
-    
+
   return (
     <ctx.Provider value={state}>
       <AppGrid
         maxLeftSize={500}
         left={(toggle) => <LeftSidebar toggle={toggle} />}
         header={(toggle) => <Menu toggle={toggle} />}
-        scrollHeader={(
+        scrollHeader={
           <div style={{padding: '2px 0 0', height: 48}}>
             {/* <FileTabs bg={'#d6f0e0'} state={state.tabs} render={() => <div style={{height: '8px'}} />} /> */}
-            <FileTabs bg={styles.g(.95)} fade="transparent" state={state.tabs} render={() => <div style={{height: '16px'}} />} />
+            <FileTabs
+              bg={styles.g(0.95)}
+              fade="transparent"
+              state={state.tabs}
+              render={() => <div style={{height: '16px'}} />}
+            />
           </div>
-        )}
-        footer={<div>{' '}</div>}
+        }
+        footer={<div> </div>}
       >
         <MainContent />
       </AppGrid>

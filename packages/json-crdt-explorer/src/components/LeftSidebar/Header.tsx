@@ -14,7 +14,7 @@ export interface HeaderProps {
   toggle: React.ReactNode;
 }
 
-export const Header: React.FC<HeaderProps> = ({ toggle }) => {
+export const Header: React.FC<HeaderProps> = ({toggle}) => {
   const [t] = useT();
   const state = useExplorer();
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -24,12 +24,14 @@ export const Header: React.FC<HeaderProps> = ({ toggle }) => {
       name: 'File Actions',
       minWidth: 240,
       children: [
-        {name: 'New File', minWidth: 300,
+        {
+          name: 'New File',
+          minWidth: 300,
           icon: () => <Iconista set="ibm_16" icon="new-tab" width={16} height={16} />,
           children: [
             newMenu,
             {name: 'after-new', sep: true},
-            ...state.menus.tracesMenu(300, async (wait) => {}).children!
+            ...state.menus.tracesMenu(300, async (wait) => {}).children!,
           ],
         },
         {
@@ -52,9 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ toggle }) => {
     <Split style={{alignItems: 'center', padding: '0 0 0 8px'}}>
       <Flex style={{alignItems: 'center', gap: 8}}>
         <MiniTitle>{t('Files')}</MiniTitle>
-        <Popup renderContext={() => (
-          <ContextMenu inset menu={menu} />
-        )}>
+        <Popup renderContext={() => <ContextMenu inset menu={menu} />}>
           <BasicButtonMore tooltip size={28} rounder />
         </Popup>
         <input

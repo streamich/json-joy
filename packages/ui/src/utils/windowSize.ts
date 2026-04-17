@@ -23,5 +23,4 @@ class WindowSizeValue extends rsync.ReactValue<WindowSizeState> {
   }
 }
 
-export const windowSize = (def: WindowSizeState = [0, 0]) =>
-  new WindowSizeValue(def);
+export const windowSize = (def: WindowSizeState = [0, 0]) => new WindowSizeValue(def);

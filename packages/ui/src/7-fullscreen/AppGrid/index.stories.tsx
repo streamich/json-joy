@@ -84,7 +84,7 @@ const LongSidebarContent = () => (
   <div style={{padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
     {Array.from({length: 6}, (_, s) => (
       <React.Fragment key={s}>
-        <Placeholder variant="text" width={`${45 + (s * 7) % 25}%`} />
+        <Placeholder variant="text" width={`${45 + ((s * 7) % 25)}%`} />
         {Array.from({length: 4 + (s % 3)}, (_, i) => (
           <Placeholder key={i} variant="block" />
         ))}
@@ -98,7 +98,7 @@ const LongMainContent = () => (
     {Array.from({length: 8}, (_, i) => (
       <div key={i} style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
         <Placeholder variant="image" height={`${160 + (i % 3) * 60}px`} />
-        <Placeholder variant="text" width={`${30 + (i * 9) % 40}%`} />
+        <Placeholder variant="text" width={`${30 + ((i * 9) % 40)}%`} />
         <Placeholder variant="paragraph" lines={2 + (i % 3)} />
         {i % 2 === 0 && <Placeholder variant="button" width="160px" />}
       </div>

@@ -110,16 +110,19 @@ export const SlimDivider: React.FC<DividerProps> = (props: DividerProps) => {
       onKeyDown={disabled ? undefined : onKeyDown}
       data-divider-index={index}
     >
-      <div className={handleClass({
-        bg: styles.g(0, 0.08),
-        [`.${blockClass.trim()}:focus &`]: {
-          bg: styles.g(0, 0.16),
-        },
-        [`.${blockClass.trim()}:active &`]: {
-          // bg: styles.g(0, 0.24),
-          bg: styles.col.accent(0, 5),
-        },
-      })} contentEditable={false} />
+      <div
+        className={handleClass({
+          bg: styles.g(0, 0.08),
+          [`.${blockClass.trim()}:focus &`]: {
+            bg: styles.g(0, 0.16),
+          },
+          [`.${blockClass.trim()}:active &`]: {
+            // bg: styles.g(0, 0.24),
+            bg: styles.col.accent(0, 5),
+          },
+        })}
+        contentEditable={false}
+      />
     </div>
   );
 };

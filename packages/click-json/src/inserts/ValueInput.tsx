@@ -34,7 +34,7 @@ export const ValueInput: React.FC<ValueInputProps> = ({
   const inputRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const type = React.useRef<string>(initialType ?? (types && types.length ? types[0] : ''));
-  
+
   const handleSubmit = () => {
     if (inputRef.current) inputRef.current.blur();
     setValue('');

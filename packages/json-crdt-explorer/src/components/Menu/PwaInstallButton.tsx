@@ -10,11 +10,13 @@ interface BeforeInstallPromptEvent extends Event {
 
 const isStandaloneDisplay = (): boolean => {
   if (typeof window === 'undefined') return false;
-  return window.matchMedia('(display-mode: standalone)').matches || !!(navigator as Navigator & {standalone?: boolean}).standalone;
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    !!(navigator as Navigator & {standalone?: boolean}).standalone
+  );
 };
 
-export interface PwaInstallButtonProps {
-}
+export type PwaInstallButtonProps = {}
 
 export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({}) => {
   const [deferredPrompt, setDeferredPrompt] = React.useState<BeforeInstallPromptEvent | null>(null);
@@ -61,7 +63,14 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({}) => {
   };
 
   return (
-    <BasicButton title="Install JSON CRDT Explorer as an app" width="auto" height={32} rounder compact onClick={() => void handleInstallClick()}>
+    <BasicButton
+      title="Install JSON CRDT Explorer as an app"
+      width="auto"
+      height={32}
+      rounder
+      compact
+      onClick={() => void handleInstallClick()}
+    >
       Install&nbsp;<Label>App</Label>
     </BasicButton>
   );

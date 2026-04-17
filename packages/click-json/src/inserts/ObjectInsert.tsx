@@ -42,7 +42,7 @@ export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, on
           display: visible ? undefined : 'none',
           margin: '-1px 0 -1px -2px',
           padding: '3px 4px',
-          border: `1px solid ${theme.g(focused ? .3 : 0.85)}`,
+          border: `1px solid ${theme.g(focused ? 0.3 : 0.85)}`,
           outline: focused ? `1px solid ${theme.g(0.3)}` : void 0,
           fontWeight: 'bold',
         }}

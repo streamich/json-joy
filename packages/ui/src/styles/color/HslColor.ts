@@ -88,7 +88,7 @@ export class HslColor {
   }
 
   public static fromHash(id: string): HslColor {
-    return new HslColor((hash(id) % 360) / 360, .8, .4).norm();
+    return new HslColor((hash(id) % 360) / 360, 0.8, 0.4).norm();
   }
 
   constructor(

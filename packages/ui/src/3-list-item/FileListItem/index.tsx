@@ -129,7 +129,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   const styles = useStyles();
   const isDisabled = !!disabled || !!loading;
   const [hovered, setHovered] = React.useState(false);
-  const iconNode = loading ? <SpinnerCircle color={styles.g(0.45)} /> : (hovered ? iconHover :icon);
+  const iconNode = loading ? <SpinnerCircle color={styles.g(0.45)} /> : hovered ? iconHover : icon;
 
   const selectedBg = selected ? styles.col.accent(0, 'bg-2') : 'transparent';
   const hoverBg = selected ? styles.col.accent(0, 'el-1') : styles.light ? styles.g(0, 0.04) : styles.g(0, 0.08);
@@ -192,11 +192,18 @@ export const FileListItem: React.FC<FileListItemProps> = ({
 
   return (
     <Ripple>
-      <div className={className + rowClass + dynamicRowClass} style={{...style, opacity: isDisabled ? 0.68 : undefined}}
+      <div
+        className={className + rowClass + dynamicRowClass}
+        style={{...style, opacity: isDisabled ? 0.68 : undefined}}
         onMouseEnter={iconHover ? () => setHovered(true) : void 0}
-        onMouseLeave={iconHover ? () => setHovered(false) : void 0}>
+        onMouseLeave={iconHover ? () => setHovered(false) : void 0}
+      >
         {surface}
-        {!!actions && <span className={actionsClass} style={isDisabled ? {pointerEvents: 'none'} : undefined}>{actions}</span>}
+        {!!actions && (
+          <span className={actionsClass} style={isDisabled ? {pointerEvents: 'none'} : undefined}>
+            {actions}
+          </span>
+        )}
       </div>
     </Ripple>
   );

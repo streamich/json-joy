@@ -24,7 +24,6 @@ interface MenuProps {
 }
 
 export const Menu: React.FC<MenuProps> = ({nav}) => {
-
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (!e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
       e.preventDefault();

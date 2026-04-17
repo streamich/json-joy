@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {HslColor, LinearRgbColor} from '../../../styles/color';
+import {type HslColor, LinearRgbColor} from '../../../styles/color';
 import {rule} from 'nano-theme';
 import {BasicButtonAdd} from '../../../2-inline-block/BasicButton/BasicButtonAdd';
 import type {FileTabsState} from '../state';
 
-const LITE_TEXT = new LinearRgbColor(1, 1, 1, .7);
-const DARK_TEXT = new LinearRgbColor(0, 0, 0, .7);
+const LITE_TEXT = new LinearRgbColor(1, 1, 1, 0.7);
+const DARK_TEXT = new LinearRgbColor(0, 0, 0, 0.7);
 
 const blockClass = rule({
   pd: '6px 8px 0',
@@ -129,42 +129,50 @@ export interface FileTabBarProps {
   overlay?: React.ReactNode;
 }
 
-export const FileTabBar: React.FC<FileTabBarProps> = React.memo(({bg, fg, state, tabs, before, after, right, overlay}) => {
-  const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
-  const style: React.CSSProperties = {
-    background: bg.toString(),
-    '--filetabs-bg': bg.toString(),
-    '--filetabs-bg-txt': bg.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
-    '--filetabs-fg': fg.toString(),
-    '--filetabs-fg-txt': fg.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
-    '--filetabs-hover': hover.toString(),
-    '--filetabs-hover-txt': hover.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
-  } as any;
+export const FileTabBar: React.FC<FileTabBarProps> = React.memo(
+  ({bg, fg, state, tabs, before, after, right, overlay}) => {
+    const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
+    const style: React.CSSProperties = {
+      background: bg.toString(),
+      '--filetabs-bg': bg.toString(),
+      '--filetabs-bg-txt': bg.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
+      '--filetabs-fg': fg.toString(),
+      '--filetabs-fg-txt': fg.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
+      '--filetabs-hover': hover.toString(),
+      '--filetabs-hover-txt': hover.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),
+    } as any;
 
-  return (
-    <div ref={state.box.setEl} className={blockClass} style={style} onMouseLeave={state.unfreeze}>
-      <div className={mainClass}>
-        {before ? <div className={beforeClass}>{before}</div> : null}
-        <div ref={state.tabsBox.setEl} className={tabsViewportClass}>
-          <div className={clusterClass}>
-            <div className={tabsMeasureClass}>
-              <div role="tablist" aria-orientation="horizontal" aria-label="File tabs" className={tabListClass} onKeyDown={state.onKeyDown}>
-                {tabs}
-              </div>
-            </div>
-            <div ref={state.trailingBox.setEl} className={trailingClass}>
-              {!!state.onNewTab && (
-                <div className={addButtonClass}>
-                  <BasicButtonAdd rounder onClick={state.addNew} />
+    return (
+      <div ref={state.box.setEl} className={blockClass} style={style} onMouseLeave={state.unfreeze}>
+        <div className={mainClass}>
+          {before ? <div className={beforeClass}>{before}</div> : null}
+          <div ref={state.tabsBox.setEl} className={tabsViewportClass}>
+            <div className={clusterClass}>
+              <div className={tabsMeasureClass}>
+                <div
+                  role="tablist"
+                  aria-orientation="horizontal"
+                  aria-label="File tabs"
+                  className={tabListClass}
+                  onKeyDown={state.onKeyDown}
+                >
+                  {tabs}
                 </div>
-              )}
-              {after ? <div className={afterClass}>{after}</div> : null}
+              </div>
+              <div ref={state.trailingBox.setEl} className={trailingClass}>
+                {!!state.onNewTab && (
+                  <div className={addButtonClass}>
+                    <BasicButtonAdd rounder onClick={state.addNew} />
+                  </div>
+                )}
+                {after ? <div className={afterClass}>{after}</div> : null}
+              </div>
             </div>
           </div>
         </div>
+        {right ? <div className={rightClass}>{right}</div> : null}
+        {overlay}
       </div>
-      {right ? <div className={rightClass}>{right}</div> : null}
-      {overlay}
-    </div>
-  );
-});
+    );
+  },
+);

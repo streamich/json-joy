@@ -11,7 +11,7 @@ export interface LeftSidebarProps {
   toggle: React.ReactNode;
 }
 
-export const LeftSidebar: React.FC<LeftSidebarProps> = ({ toggle }) => {
+export const LeftSidebar: React.FC<LeftSidebarProps> = ({toggle}) => {
   const [t] = useT();
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
@@ -21,12 +21,15 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ toggle }) => {
   return (
     <AppGridColumn
       header={<Header toggle={toggle} />}
-      footer={!!files.length && (
-        <div style={{padding: 16, margin: '0 auto'}}>
-          <NewFileForm />
-        </div>
-      )}
-    scrollRailWidth={4}>
+      footer={
+        !!files.length && (
+          <div style={{padding: 16, margin: '0 auto'}}>
+            <NewFileForm />
+          </div>
+        )
+      }
+      scrollRailWidth={4}
+    >
       <div style={{maxWidth: 320, width: '100%', margin: '0 auto'}}>
         <div style={{padding: '16px 8px 16px 12px'}}>
           <SavedFileList />

@@ -105,7 +105,7 @@ const iconLayoutClass = rule({
   gap: '7px',
   '& svg': {
     display: 'flex',
-  }
+  },
 });
 
 const closeButtonLayoutClass = rule({
@@ -234,7 +234,6 @@ const detachedCloseButtonClass = rule({
   bxsh: 'rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;',
 });
 
-
 export interface FileTabProps {
   id: string;
   index: number;
@@ -270,10 +269,10 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     return () => cancelAnimationFrame(raf);
   }, []);
   const isAnimating = !entered || isExiting;
-  const effectiveWidth = isExiting ? 0 : (entered ? width : 0);
+  const effectiveWidth = isExiting ? 0 : entered ? width : 0;
 
   const selectedItem = state.selected.use();
-  const selected = selectedItem ? ((selectedItem[0].id ?? selectedItem[0].name) === id) : false;
+  const selected = selectedItem ? (selectedItem[0].id ?? selectedItem[0].name) === id : false;
   const hoverState = state.hovered.use();
   const hovered = hoverState?.[0] === id;
   const dragState = state.drag.use();
@@ -290,7 +289,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     style.zIndex = 10;
   }
 
-  const isHovered = (hoverState?.[0] === id) && !selected;
+  const isHovered = hoverState?.[0] === id && !selected;
   const deletable = item.deletable ?? true;
 
   if (offsetPx) {
@@ -302,14 +301,12 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     style.cursor = 'grabbing';
   } else if (disabled) {
     style.cursor = 'default';
-    style.opacity = .55;
+    style.opacity = 0.55;
   }
 
   const iconElement = !!item.icon && <span>{item.icon()}</span>;
 
-  let label: React.ReactNode = (
-    item.display?.() ?? item.name ?? item.id
-  );
+  let label: React.ReactNode = item.display?.() ?? item.name ?? item.id;
 
   if (item.icon) {
     label = (
@@ -320,11 +317,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     );
   }
 
-  label = (
-    <span className={titleClass}>
-      {label}
-    </span>
-  );
+  label = <span className={titleClass}>{label}</span>;
 
   let showRightBorder: boolean;
   if (dragState) {
@@ -334,7 +327,11 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     const isGhostLeftNeighbor = index === leftNeighborDom;
     showRightBorder = !selected && !isGhost && !isGhostLeftNeighbor;
   } else {
-    showRightBorder = !selected && !hovered && ((hoverState?.[1] ?? 0) - 1 !== index) && (selectedItem ? selectedItem[1] !== index + 1 : true);
+    showRightBorder =
+      !selected &&
+      !hovered &&
+      (hoverState?.[1] ?? 0) - 1 !== index &&
+      (selectedItem ? selectedItem[1] !== index + 1 : true);
   }
   let showCloseButton = deletable;
   if (!selected && width < 50) showCloseButton = false;
@@ -384,7 +381,10 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       aria-selected={selected}
       aria-disabled={disabled}
       tabIndex={selected ? 0 : -1}
-      className={buttonClass + (width <= 16 ? buttonXXSmallClass : width <= 36 ? buttonXSmallClass : width <= 60 ? buttonSmallClass : '')}
+      className={
+        buttonClass +
+        (width <= 16 ? buttonXXSmallClass : width <= 36 ? buttonXSmallClass : width <= 60 ? buttonSmallClass : '')
+      }
       style={style}
       onPointerDown={(e) => {
         if (disabled || isExiting) return;
@@ -400,9 +400,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     >
       <span className={initialMarginClass} />
       <span className={mainClass + (selected ? mainTabClass : mainPillClass) + (isHovered ? outerHoveredClass : '')}>
-        <span className={innerClass}>
-          {inner}
-        </span>
+        <span className={innerClass}>{inner}</span>
       </span>
       <span className={separatorClass} style={{opacity: showRightBorder ? 1 : 0}} />
     </button>

@@ -6,7 +6,7 @@ import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/Ba
 import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import type {FileMetadataDto} from '../../state/file';
 
@@ -36,12 +36,11 @@ const formatDate = (timestamp: number): string => {
   return date.toLocaleDateString();
 };
 
-
 export interface SavedFileProps {
   file: FileMetadataDto;
 }
 
-export const SavedFile: React.FC<SavedFileProps> = ({ file }) => {
+export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
   const state = useExplorer();
   const selected = state.tabs.selected.use();
   const activeIcon = <FileIcon id={file.id} label={'crdt'} size={20} />;
@@ -52,44 +51,51 @@ export const SavedFile: React.FC<SavedFileProps> = ({ file }) => {
       key={file.id}
       title={file.name}
       selected={selected?.[0].id === file.id}
-      metadata={(
+      metadata={
         <>
-        {formatDate(file.updatedAt)} · {file.id}
+          {formatDate(file.updatedAt)} · {file.id}
         </>
-      )}
+      }
       icon={isOpen ? activeIcon : icon}
       iconHover={activeIcon}
-      actions={(
+      actions={
         <div style={{display: 'flex', alignItems: 'center'}}>
           <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} />
-          <Popup renderContext={() => (
-            <ContextMenu inset menu={{
-              id: file.id,
-              name: `file-${file.id}`,
-              children: [
-                isOpen ? ({
-                  name: 'Close',
-                  icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
-                  onSelect: () => state.close(file.id)
-                } as MenuItem) : ({
-                  name: 'Open',
-                  icon: () => <Iconista set="vscode" icon="eye" width={16} height={16} />,
-                  onSelect: () => state.openSaved(file.id).catch(() => {}),
-                } as MenuItem),
-                {
-                  name: 'Download',
-                  icon: () => <DownloadIcon />,
-                  onSelect: async () => {
-                    state.download(file.id).catch(() => {});
-                  }
-                },
-              ],
-            }} />
-          )}>
+          <Popup
+            renderContext={() => (
+              <ContextMenu
+                inset
+                menu={{
+                  id: file.id,
+                  name: `file-${file.id}`,
+                  children: [
+                    isOpen
+                      ? ({
+                          name: 'Close',
+                          icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
+                          onSelect: () => state.close(file.id),
+                        } as MenuItem)
+                      : ({
+                          name: 'Open',
+                          icon: () => <Iconista set="vscode" icon="eye" width={16} height={16} />,
+                          onSelect: () => state.openSaved(file.id).catch(() => {}),
+                        } as MenuItem),
+                    {
+                      name: 'Download',
+                      icon: () => <DownloadIcon />,
+                      onSelect: async () => {
+                        state.download(file.id).catch(() => {});
+                      },
+                    },
+                  ],
+                }}
+              />
+            )}
+          >
             <BasicButtonMore tooltip size={28} rounder noOutline />
           </Popup>
         </div>
-      )}
+      }
       onClick={() => state.openSaved(file.id).catch(() => {})}
     />
   );

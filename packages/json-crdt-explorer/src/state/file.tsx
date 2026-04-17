@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
-import {Log} from 'json-joy/lib/json-crdt/log/Log';
+import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {LogDecoder} from 'json-joy/lib/json-crdt/log/codec/LogDecoder';
 import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
 import {rsync} from '@jsonjoy.com/ui';
@@ -59,7 +59,7 @@ export class OpenFile {
   private disposeAfterSave = false;
   private readonly unsubscribers: Array<() => void> = [];
 
-  constructor (
+  constructor(
     public readonly meta: FileMetadataDto,
     public readonly log: Log<any>,
     options: OpenFileOptions = {},
@@ -127,7 +127,7 @@ export class OpenFile {
       this.logState.modelState.showView$.next(true);
       this.logState.modelState.showDisplay$.next(true);
     }
-  }
+  };
 
   public toMeta(): FileMetadataDto {
     return {
@@ -179,7 +179,8 @@ export class OpenFile {
       this.meta.display = dto.display;
       const onPersisted = this.onPersisted;
       if (onPersisted) await onPersisted(dto);
-    } catch {} finally {
+    } catch {
+    } finally {
       this.saving = false;
       if (this.disposeAfterSave && !this.pendingFlush) {
         this.finalizeDisposal();
@@ -214,7 +215,7 @@ export class OpenFile {
       id: this.id,
       name: this.name.value,
       display: () => <RenderName file={this} />,
-      icon: () => <FileIcon id={this.id} label='crdt' size={16} />
+      icon: () => <FileIcon id={this.id} label="crdt" size={16} />,
     };
   }
 }

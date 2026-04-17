@@ -90,7 +90,7 @@ export const FileTabTooltip: React.FC<FileTabTooltipProps> = ({state}) => {
   if (!visible || !hovered || drag) return null;
 
   const [id] = hovered;
-  const item = tabs.find(t => (t.id ?? t.name) === id);
+  const item = tabs.find((t) => (t.id ?? t.name) === id);
   if (!item) return null;
 
   const bottom = box[1] + box[3];
@@ -114,7 +114,9 @@ export const FileTabTooltip: React.FC<FileTabTooltipProps> = ({state}) => {
       {!!description && <div className={descClass}>{description}</div>}
       {hasCard && (
         <>
-          <div className={sepClass}><Separator /></div>
+          <div className={sepClass}>
+            <Separator />
+          </div>
           <div className={cardClass}>{item.card!()}</div>
         </>
       )}

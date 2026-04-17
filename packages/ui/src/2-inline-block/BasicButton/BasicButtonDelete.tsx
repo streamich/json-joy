@@ -8,12 +8,8 @@ import {Popup} from '../../4-card/Popup';
 import {ContextMenu} from '../../4-card/ContextMenu';
 import {Sidetip} from '../../1-inline/Sidetip';
 
-const trashIcon = <Iconista set="bootstrap" icon="trash2" width={16} height={16} />
-const trashIconAnimated = (
-  <FlipHorizontal>
-    {trashIcon}
-  </FlipHorizontal>
-);
+const trashIcon = <Iconista set="bootstrap" icon="trash2" width={16} height={16} />;
+const trashIconAnimated = <FlipHorizontal>{trashIcon}</FlipHorizontal>;
 
 export interface BasicButtonDeleteProps extends BasicButtonProps {
   tooltip?: boolean | React.ReactNode;
@@ -32,7 +28,10 @@ export const BasicButtonDelete: React.FC<BasicButtonDeleteProps> = ({tooltip, on
 
   if (tooltip) {
     element = (
-      <BasicTooltip renderTooltip={() => tooltip === true ? title : tooltip} onClick={!!onConfirm ? () => {} : rest.onClick}>
+      <BasicTooltip
+        renderTooltip={() => (tooltip === true ? title : tooltip)}
+        onClick={onConfirm ? () => {} : rest.onClick}
+      >
         {element}
       </BasicTooltip>
     );
@@ -40,25 +39,31 @@ export const BasicButtonDelete: React.FC<BasicButtonDeleteProps> = ({tooltip, on
 
   if (onConfirm) {
     element = (
-      <Popup renderContext={({onEsc}) => (
-        <ContextMenu inset onEsc={onEsc} menu={{
-          name: 'Confirm delete',
-          minWidth: 240,
-          children: [
-            {
-              name: 'Cancel',
-              onSelect: () => {},
-            },
-            {
-              name: 'Delete',
-              onSelect: onConfirm,
-              danger: true,
-              right: () => <Sidetip small>{t('Are you sure?')}</Sidetip>,
-              icon: () => <Iconista set="bootstrap" icon="lightning" width={16} height={16} />,
-            },
-          ],
-        }} />
-      )}>
+      <Popup
+        renderContext={({onEsc}) => (
+          <ContextMenu
+            inset
+            onEsc={onEsc}
+            menu={{
+              name: 'Confirm delete',
+              minWidth: 240,
+              children: [
+                {
+                  name: 'Cancel',
+                  onSelect: () => {},
+                },
+                {
+                  name: 'Delete',
+                  onSelect: onConfirm,
+                  danger: true,
+                  right: () => <Sidetip small>{t('Are you sure?')}</Sidetip>,
+                  icon: () => <Iconista set="bootstrap" icon="lightning" width={16} height={16} />,
+                },
+              ],
+            }}
+          />
+        )}
+      >
         {element}
       </Popup>
     );

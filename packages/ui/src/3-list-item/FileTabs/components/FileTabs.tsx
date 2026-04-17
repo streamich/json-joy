@@ -4,7 +4,7 @@ import {FileTab} from './FileTab';
 import {HslColor} from '../../../styles/color';
 import {FileTabsState} from '../state';
 import * as rsync from '../../../utils/rsync';
-import {FileTabContent, FileTabContentProps} from './FileTabContent';
+import {FileTabContent, type FileTabContentProps} from './FileTabContent';
 import {FileTabTooltip} from './FileTabTooltip';
 import type {TabItem} from '../types';
 
@@ -24,7 +24,7 @@ export interface FileTabsProps {
 }
 
 export const FileTabs: React.FC<FileTabsProps> = (props) => {
-  const { tabs: _tabs, state: _state, bg: _bg, fg: _fg, fade, render, addNewTab, before, after, right } = props;
+  const {tabs: _tabs, state: _state, bg: _bg, fg: _fg, fade, render, addNewTab, before, after, right} = props;
   const state = React.useMemo(() => {
     if (_state) return _state;
     const state = new FileTabsState(rsync.val(_tabs ?? []));
@@ -63,10 +63,10 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
     }
   }
   const bg: HslColor = React.useMemo(() => HslColor.from(_bg || '#3af')!, [_bg]);
-  const fg: HslColor = React.useMemo(() => _fg
-    ? HslColor.from(_fg || '#fff')!
-    : bg.copy(0, bg.s * .1, (1 - bg.l) * .9), [_fg, bg]);
-
+  const fg: HslColor = React.useMemo(
+    () => (_fg ? HslColor.from(_fg || '#fff')! : bg.copy(0, bg.s * 0.1, (1 - bg.l) * 0.9)),
+    [_fg, bg],
+  );
 
   return (
     <>

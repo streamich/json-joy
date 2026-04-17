@@ -27,15 +27,7 @@ export const TraceSelector: React.FC<TraceSelectorProps> = ({expanded}) => {
   const menu: MenuItem = React.useMemo(() => state.menus.tracesMenu(300, load), []);
 
   return (
-    <Popup
-      block
-      renderContext={() => (
-        <ContextMenu
-          inset
-          menu={menu}
-        />
-      )}
-    >
+    <Popup block renderContext={() => <ContextMenu inset menu={menu} />}>
       <Button
         block
         ghost
@@ -50,4 +42,3 @@ export const TraceSelector: React.FC<TraceSelectorProps> = ({expanded}) => {
     </Popup>
   );
 };
-

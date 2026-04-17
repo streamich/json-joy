@@ -215,13 +215,16 @@ const tabsWithTooltips = [
       <div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
         <div style={{fontWeight: 600, marginBottom: 2}}>Quick facts</div>
         <div style={{display: 'flex', justifyContent: 'space-between', opacity: 0.8}}>
-          <span>Size</span><span>4.2 KB</span>
+          <span>Size</span>
+          <span>4.2 KB</span>
         </div>
         <div style={{display: 'flex', justifyContent: 'space-between', opacity: 0.8}}>
-          <span>Last modified</span><span>2 days ago</span>
+          <span>Last modified</span>
+          <span>2 days ago</span>
         </div>
         <div style={{display: 'flex', justifyContent: 'space-between', opacity: 0.8}}>
-          <span>Author</span><span>streamich</span>
+          <span>Author</span>
+          <span>streamich</span>
         </div>
       </div>
     ),

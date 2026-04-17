@@ -12,7 +12,9 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
 
   return (
     <>
-      {files.map((file) => <SavedFile key={file.id} file={file} />)}
+      {files.map((file) => (
+        <SavedFile key={file.id} file={file} />
+      ))}
     </>
   );
 };

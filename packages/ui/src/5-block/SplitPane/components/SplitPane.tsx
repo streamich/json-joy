@@ -89,7 +89,10 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
     [paneConfigs],
   );
   const visiblePaneCount = visiblePaneIndexes.length;
-  const visiblePaneConfigs = useMemo(() => visiblePaneIndexes.map((index) => paneConfigs[index]), [paneConfigs, visiblePaneIndexes]);
+  const visiblePaneConfigs = useMemo(
+    () => visiblePaneIndexes.map((index) => paneConfigs[index]),
+    [paneConfigs, visiblePaneIndexes],
+  );
   const visiblePaneSignature = useMemo(() => visiblePaneIndexes.join(','), [visiblePaneIndexes]);
   const paneIndexToVisibleIndex = useMemo(() => {
     const indexMap = new Map<number, number>();
@@ -168,7 +171,8 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
     signature: visiblePaneSignature,
     sizes: calculateInitialSizes(containerSize),
   }));
-  const paneSizes = paneLayout.signature === visiblePaneSignature ? paneLayout.sizes : calculateInitialSizes(containerSize);
+  const paneSizes =
+    paneLayout.signature === visiblePaneSignature ? paneLayout.sizes : calculateInitialSizes(containerSize);
 
   // Sync paneSizes with controlled size props when they change
   // This handles the case where parent state is reset (e.g., clicking a "Reset" button)
@@ -399,7 +403,7 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
 
     paneConfigs.forEach((config, index) => {
       const visibleIndex = paneIndexToVisibleIndex.get(index);
-      const paneSize = visibleIndex === undefined ? 0 : renderedSizes[visibleIndex] ?? 0;
+      const paneSize = visibleIndex === undefined ? 0 : (renderedSizes[visibleIndex] ?? 0);
 
       const paneStyle: CSSProperties = {
         ...(direction === 'horizontal'

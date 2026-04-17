@@ -71,8 +71,7 @@ export type CommonLabel =
   | 'yaml'
   | 'yml'
   | 'zip'
-  | 'zsh'
-  ;
+  | 'zsh';
 
 const ALIASES = 'c++:cpp,c#:cs,cjs:js,mjs:js,graphql:gql';
 const COLORS =

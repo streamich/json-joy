@@ -5,9 +5,7 @@ import {FileListItem as Component} from '.';
 import {Iconista} from '../../icons/Iconista';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
 
-const FileIcon: React.FC = () => (
-  <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} />
-);
+const FileIcon: React.FC = () => <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} />;
 
 const ActionButtons: React.FC = () => (
   <div style={{display: 'flex', alignItems: 'center', gap: 4}}>
@@ -100,12 +98,7 @@ export const States: StoryObj<typeof meta> = {
         icon={<FileIcon />}
         actions={<ActionButtons />}
       />
-      <Component
-        title="pending-export.json"
-        metadata="Preparing download..."
-        loading
-        actions={<ActionButtons />}
-      />
+      <Component title="pending-export.json" metadata="Preparing download..." loading actions={<ActionButtons />} />
     </div>
   ),
 };

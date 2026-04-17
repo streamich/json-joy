@@ -21,19 +21,23 @@ export interface AppGridColumnProps extends React.HTMLAttributes<HTMLDivElement>
   children?: React.ReactNode;
 }
 
-export const AppGridColumn: React.FC<AppGridColumnProps> = ({header, footer, scrollHeader, scrollFooter, scrollRailWidth, children, ...rest}) => {
+export const AppGridColumn: React.FC<AppGridColumnProps> = ({
+  header,
+  footer,
+  scrollHeader,
+  scrollFooter,
+  scrollRailWidth,
+  children,
+  ...rest
+}) => {
   const theme = useTheme();
 
   const headerElement = !!header && (
-    <div className={marginalsClass({bdb: `1px solid ${theme.g(0, 0.08)}`})}>
-      {header}
-    </div>
+    <div className={marginalsClass({bdb: `1px solid ${theme.g(0, 0.08)}`})}>{header}</div>
   );
 
   const footerElement = !!footer && (
-    <div className={marginalsClass({bdt: `1px solid ${theme.g(0, 0.08)}`})}>
-      {footer}
-    </div>
+    <div className={marginalsClass({bdt: `1px solid ${theme.g(0, 0.08)}`})}>{footer}</div>
   );
 
   return (
@@ -42,7 +46,7 @@ export const AppGridColumn: React.FC<AppGridColumnProps> = ({header, footer, scr
       <ScrollArea.ScrollArea style={{flex: 1}} railWidth={scrollRailWidth ?? 8}>
         {scrollHeader && <ScrollArea.Header>{scrollHeader}</ScrollArea.Header>}
         <ScrollArea.Viewport>{children}</ScrollArea.Viewport>
-        {scrollFooter && <ScrollArea.Footer>{scrollFooter}</ScrollArea.Footer>} 
+        {scrollFooter && <ScrollArea.Footer>{scrollFooter}</ScrollArea.Footer>}
         <ScrollArea.ScrollRail style={{top: 2, bottom: 2, borderRadius: 3}}>
           <ScrollArea.Thumb />
         </ScrollArea.ScrollRail>

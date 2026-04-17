@@ -38,13 +38,10 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
             {t('Create JSON object')}
           </CreateButton>
           <Space horizontal />
-          <Popup renderContext={() => (
-            <ContextMenu inset menu={state.menus.newFileMenu()} />
-          )}>
+          <Popup renderContext={() => <ContextMenu inset menu={state.menus.newFileMenu()} />}>
             <BasicButtonMore size={32} rounder fill />
           </Popup>
         </Flex>
-        
       </div>
 
       <Space size={expanded ? 4 : 1} />

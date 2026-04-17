@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {MenuItem} from "@jsonjoy.com/ui/lib/4-card/StructuralMenu/types";
+import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
-import type {JsonCrdtExplorerState} from ".";
+import type {JsonCrdtExplorerState} from '.';
 
 const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment'});
 const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
@@ -24,9 +24,7 @@ const traceIcon = (trace: traces.TraceDefinition) => {
 };
 
 export class Menus {
-  constructor (
-    public readonly state: JsonCrdtExplorerState,
-  ) {}
+  constructor(public readonly state: JsonCrdtExplorerState) {}
 
   public newFileMenu(): MenuItem {
     const {state} = this;
@@ -37,31 +35,56 @@ export class Menus {
       children: [
         {
           name: 'Empty document',
-          right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'()'}</span></Code></Sidetip>,
+          right: () => (
+            <Sidetip>
+              <Code>
+                <span style={{fontSize: '11.5px'}}>{'()'}</span>
+              </Code>
+            </Sidetip>
+          ),
           onSelect: () => state.createNew(),
         },
         {
           name: 'Empty object',
-          right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'{}'}</span></Code></Sidetip>,
+          right: () => (
+            <Sidetip>
+              <Code>
+                <span style={{fontSize: '11.5px'}}>{'{}'}</span>
+              </Code>
+            </Sidetip>
+          ),
           onSelect: () => state.createNew({}),
         },
         {
           name: 'Empty array',
-          right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'[]'}</span></Code></Sidetip>,
+          right: () => (
+            <Sidetip>
+              <Code>
+                <span style={{fontSize: '11.5px'}}>{'[]'}</span>
+              </Code>
+            </Sidetip>
+          ),
           onSelect: () => state.createNew([]),
         },
         {
           name: 'Sample document',
-          right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'{"foo": ...'}</span></Code></Sidetip>,
-          onSelect: () => state.createNew({
-            name: 'Alice',
-            age: 30,
-            hobbies: ['reading', 'hiking'],
-            address: {
-              city: 'Wonderland',
-              zip: '12345',
-            },
-          }),
+          right: () => (
+            <Sidetip>
+              <Code>
+                <span style={{fontSize: '11.5px'}}>{'{"foo": ...'}</span>
+              </Code>
+            </Sidetip>
+          ),
+          onSelect: () =>
+            state.createNew({
+              name: 'Alice',
+              age: 30,
+              hobbies: ['reading', 'hiking'],
+              address: {
+                city: 'Wonderland',
+                zip: '12345',
+              },
+            }),
         },
       ],
     };

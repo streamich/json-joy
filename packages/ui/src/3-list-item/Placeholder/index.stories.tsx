@@ -19,9 +19,7 @@ const meta: Meta<typeof Component> = {
 
 export default meta;
 
-const wrap = (children: React.ReactNode) => (
-  <div style={{width: '320px', padding: '16px'}}>{children}</div>
-);
+const wrap = (children: React.ReactNode) => <div style={{width: '320px', padding: '16px'}}>{children}</div>;
 
 export const TextLine: StoryObj<typeof meta> = {
   render: () => wrap(<Component variant="text" />),

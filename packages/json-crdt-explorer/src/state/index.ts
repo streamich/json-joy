@@ -5,9 +5,9 @@ import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
-import {FileMetadataDto, OpenFile} from './file';
+import {type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
-import {FileStorage, IFileStorage} from './file-storage';
+import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import type {TraceDefinition} from './traces';
 
@@ -32,7 +32,7 @@ export class JsonCrdtExplorerState {
   public readonly menus: Menus;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
-  
+
   constructor(storage: IFileStorage = new FileStorage()) {
     this.menus = new Menus(this);
     this.storage = storage;
@@ -204,7 +204,12 @@ export class JsonCrdtExplorerState {
     }
   };
 
-  public readonly addLog = async (uint8: Uint8Array, name?: string, display?: TraceDefinition['display'], dto?: FileMetadataDto) => {
+  public readonly addLog = async (
+    uint8: Uint8Array,
+    name?: string,
+    display?: TraceDefinition['display'],
+    dto?: FileMetadataDto,
+  ) => {
     const log = await OpenFile.decodeLog(uint8, this.sid);
     if (this.stopped) return;
     const file = this.openFile(log, name, dto);

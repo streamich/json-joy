@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {TabItem} from '../types';
+import type {TabItem} from '../types';
 import type {HslColor} from '../../../styles/color';
 import type {FileTabsState} from '../state';
 

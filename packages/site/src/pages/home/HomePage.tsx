@@ -7,8 +7,4 @@ const blockClass = rule({
   px: '32px',
 });
 
-export const HomePage: React.FC = () => (
-  <div className={blockClass}>
-    home
-  </div>
-);
+export const HomePage: React.FC = () => <div className={blockClass}>home</div>;

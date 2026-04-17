@@ -8,7 +8,7 @@ export const BasicButtonAdd: React.FC<Props> = (props) => {
   return (
     <BasicButton {...props}>
       <span style={{transform: `rotate(45deg)`}}>
-        <CloseIcon  />
+        <CloseIcon />
       </span>
     </BasicButton>
   );

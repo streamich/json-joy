@@ -19,7 +19,10 @@ export class PagesService {
     this.page$ = new BehaviorSubject<RouteComponent>(this.match(nav.steps$.getValue()));
 
     nav.steps$
-      .pipe(map((steps) => this.match(steps)), distinctUntilChanged())
+      .pipe(
+        map((steps) => this.match(steps)),
+        distinctUntilChanged(),
+      )
       .subscribe(this.page$);
   }
 

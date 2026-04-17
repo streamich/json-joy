@@ -34,7 +34,18 @@ export interface AppGridProps {
   children?: React.ReactNode;
 }
 
-export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, header, footer, scrollHeader, scrollFooter, maxLeftSize, minLeftSize, children }) => {
+export const AppGrid: React.FC<AppGridProps> = ({
+  state: _state,
+  left,
+  right,
+  header,
+  footer,
+  scrollHeader,
+  scrollFooter,
+  maxLeftSize,
+  minLeftSize,
+  children,
+}) => {
   const [t] = useT();
   const hasLeft = !!left;
   const hasRight = !!right;
@@ -51,31 +62,51 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
   const toggle = (
     <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
       <BasicButton rounder size={32} onClick={state.toggleLeft}>
-        <Iconista set="bootstrap" icon={leftVisible ? 'layout-sidebar' : 'layout-sidebar-inset'} width={16} height={16} style={{opacity: .7}} />
+        <Iconista
+          set="bootstrap"
+          icon={leftVisible ? 'layout-sidebar' : 'layout-sidebar-inset'}
+          width={16}
+          height={16}
+          style={{opacity: 0.7}}
+        />
       </BasicButton>
     </BasicTooltip>
   );
 
-  const leftElement = (hasLeft && (
-    <Pane hidden={!leftVisible} className={sidebarClass} size={leftSize} minSize={minLeftSize ?? 200} maxSize={maxLeftSize}>
+  const leftElement = hasLeft && (
+    <Pane
+      hidden={!leftVisible}
+      className={sidebarClass}
+      size={leftSize}
+      minSize={minLeftSize ?? 200}
+      maxSize={maxLeftSize}
+    >
       {typeof left === 'function' ? left(toggle) : left}
     </Pane>
-  ));
+  );
 
-  const rightElement = (hasRight && (
+  const rightElement = hasRight && (
     <Pane hidden={!rightVisible} className={sidebarClass} size={rightSize} minSize={200}>
       {right}
     </Pane>
-  ));
+  );
 
   let content = (
     <AppGridColumn
-      header={((typeof left === 'function') && (leftState === 'open')) ? (typeof header === 'function' ? header(null) : header) : (
-        <>
-          {typeof header === 'function' ? null : toggle}
-          {typeof header === 'function' ? header(toggle) : header}
-        </>
-      )}
+      header={
+        typeof left === 'function' && leftState === 'open' ? (
+          typeof header === 'function' ? (
+            header(null)
+          ) : (
+            header
+          )
+        ) : (
+          <>
+            {typeof header === 'function' ? null : toggle}
+            {typeof header === 'function' ? header(toggle) : header}
+          </>
+        )
+      }
       footer={footer}
       scrollHeader={scrollHeader}
       scrollFooter={scrollFooter}
@@ -86,26 +117,17 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
 
   if (hasLeft || hasRight) {
     content = (
-      <SplitPane
-        className={outerClass}
-        onResize={state.setSizes}
-        divider={SlimDivider}
-        dividerSize={12}
-      >
+      <SplitPane className={outerClass} onResize={state.setSizes} divider={SlimDivider} dividerSize={12}>
         {leftElement}
-        <Pane minSize={200}>
-          {content}
-        </Pane>
+        <Pane minSize={200}>{content}</Pane>
         {rightElement}
       </SplitPane>
     );
   }
-  
+
   return (
     <ctx.Provider value={state}>
-      <div className={outerClass}>
-        {content}
-      </div>
+      <div className={outerClass}>{content}</div>
     </ctx.Provider>
   );
 };

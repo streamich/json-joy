@@ -20,9 +20,7 @@ export const BasicButtonMore: React.FC<BasicButtonMoreProps> = (props) => {
 
   if (props.tooltip) {
     element = (
-      <BasicTooltip renderTooltip={() => props.tooltip === true ? title : props.tooltip}>
-        {element}
-      </BasicTooltip>
+      <BasicTooltip renderTooltip={() => (props.tooltip === true ? title : props.tooltip)}>{element}</BasicTooltip>
     );
   }
 

@@ -1,13 +1,13 @@
 import type * as React from 'react';
 import * as rsync from '../../utils/rsync';
-import {TabItem} from './types';
+import type {TabItem} from './types';
 
 const enum Constants {
   MaxTabWidth = 200,
   MinTabWidth = 4,
 }
 
-const getTabId = (tab: TabItem) => tab.id ?? (tab.name + '');
+const getTabId = (tab: TabItem) => tab.id ?? tab.name + '';
 
 const isTabDisabled = (tab: TabItem) => !!tab.disabled?.getSnapshot();
 
@@ -22,7 +22,7 @@ export interface DragState {
 
 export class FileTabsState {
   // ---------------------------------------------------- to be set by consumer
-  public onNewTab: (() => (TabItem | undefined)) | undefined = void 0;
+  public onNewTab: (() => TabItem | undefined) | undefined = void 0;
   public onDeleteTab: ((tab: TabItem, index: number) => void) | undefined = void 0;
 
   public readonly box: rsync.ElBox<HTMLElement>;
@@ -38,24 +38,25 @@ export class FileTabsState {
   private readonly tabEls = new Map<string, HTMLElement>();
   private readonly tabRefCallbacks = new Map<string, (el: HTMLElement | null) => void>();
   private focusRaf = 0;
-  
-  constructor(
-    public readonly tabs: rsync.ReactValue<TabItem[]>
-  ) {
+
+  constructor(public readonly tabs: rsync.ReactValue<TabItem[]>) {
     const rawTabs = tabs.value;
     this.initialIds = new Set(rawTabs.map((t) => getTabId(t)));
     this.selected = rsync.val(rawTabs.length > 0 ? [rawTabs[0], 0] : null);
     this.box = new rsync.ElBox<HTMLElement>();
     this.tabsBox = new rsync.ElBox<HTMLElement>();
     this.trailingBox = new rsync.ElBox<HTMLElement>();
-    this.tabWidth = rsync.comp([tabs, this.tabsBox, this.trailingBox, this.frozenTabWidth], ([tabs, [, , width], [, , trailingWidth], frozen]) => {
-      if (frozen !== null) return frozen;
-      const tabCount = tabs.length;
-      if (!width || !tabCount) return Constants.MaxTabWidth;
-      const available = Math.max(0, width - trailingWidth);
-      const tabWidth = available / tabCount;
-      return Math.max(Constants.MinTabWidth, Math.min(Constants.MaxTabWidth, tabWidth));
-    });
+    this.tabWidth = rsync.comp(
+      [tabs, this.tabsBox, this.trailingBox, this.frozenTabWidth],
+      ([tabs, [, , width], [, , trailingWidth], frozen]) => {
+        if (frozen !== null) return frozen;
+        const tabCount = tabs.length;
+        if (!width || !tabCount) return Constants.MaxTabWidth;
+        const available = Math.max(0, width - trailingWidth);
+        const tabWidth = available / tabCount;
+        return Math.max(Constants.MinTabWidth, Math.min(Constants.MaxTabWidth, tabWidth));
+      },
+    );
   }
 
   public dispose() {
@@ -139,7 +140,7 @@ export class FileTabsState {
     this.hovered.set(null);
   }
 
-  public delete (index: number) {
+  public delete(index: number) {
     const tabs = this.tabs.value;
     const tab = tabs[index];
     if (!tab) return;
