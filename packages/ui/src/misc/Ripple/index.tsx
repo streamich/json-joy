@@ -37,6 +37,8 @@ export class Ripple extends Component<RippleProps, IRippleState> {
 
   el: HTMLElement | null = null;
   elRipple: HTMLDivElement | null = null;
+  startAnimationTimer: ReturnType<typeof setTimeout> | null = null;
+  clearAnimationTimer: ReturnType<typeof setTimeout> | null = null;
 
   ref = (originalRef: (el: HTMLDivElement) => void) => (el: HTMLDivElement) => {
     this.el = el;
@@ -47,6 +49,28 @@ export class Ripple extends Component<RippleProps, IRippleState> {
     this.elRipple = el;
   };
 
+  clearTimers = () => {
+    if (this.startAnimationTimer) {
+      clearTimeout(this.startAnimationTimer);
+      this.startAnimationTimer = null;
+    }
+    if (this.clearAnimationTimer) {
+      clearTimeout(this.clearAnimationTimer);
+      this.clearAnimationTimer = null;
+    }
+  };
+
+  clearAnimation = () => {
+    if (!this.elRipple) return;
+    this.elRipple.style.removeProperty('animation');
+    this.clearAnimationTimer = null;
+  };
+
+  componentWillUnmount(): void {
+    this.clearTimers();
+    this.clearAnimation();
+  }
+
   onMouseDown = (originalMouseDown: (ev: MouseEvent) => void) => (event: MouseEvent) => {
     if (this.props.disabled) return;
     if (!this.elRipple || !this.el) return;
@@ -56,11 +80,14 @@ export class Ripple extends Component<RippleProps, IRippleState> {
     const elX = event.pageX - posX;
     const elY = event.pageY - posY;
     const style = this.elRipple.style;
+    this.clearTimers();
     style.removeProperty('animation');
     style.top = elY - 50 + 'px';
     style.left = elX - 50 + 'px';
-    setTimeout(() => {
+    this.startAnimationTimer = setTimeout(() => {
       style.setProperty('animation', `decor-ripple ${this.props.ms}ms linear`);
+      this.startAnimationTimer = null;
+      this.clearAnimationTimer = setTimeout(this.clearAnimation, this.props.ms);
     }, 35);
     (originalMouseDown || noop)(event);
   };
@@ -74,6 +101,7 @@ export class Ripple extends Component<RippleProps, IRippleState> {
         background: color,
       },
       ref: this.refRipple,
+      onAnimationEnd: this.clearAnimation,
     });
     const p: any = typeof element.props === 'object' ? (element.props ?? {}) : {};
 
