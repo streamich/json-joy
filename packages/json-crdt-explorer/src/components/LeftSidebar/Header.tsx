@@ -4,16 +4,17 @@ import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 
-export type HeaderProps = Record<string, never>;
+export interface HeaderProps {
+  toggle: React.ReactNode;
+}
 
-export const Header: React.FC<HeaderProps> = () => {
+export const Header: React.FC<HeaderProps> = ({ toggle }) => {
   const [t] = useT();
 
   return (
     <Split style={{alignItems: 'center', padding: '0 0 0 8px'}}>
-      <MiniTitle contrast>{t('Files')}</MiniTitle>
-      {/* <BasicButtonMore size={32} rounder></BasicButtonMore> */}
-      <div />
+      <MiniTitle>{t('Files')}</MiniTitle>
+      {toggle}
     </Split>
   );
 };

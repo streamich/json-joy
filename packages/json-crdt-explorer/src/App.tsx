@@ -24,8 +24,8 @@ export const App: React.FC = () => {
     <ctx.Provider value={state}>
       <AppGrid
         maxLeftSize={500}
-        left={<LeftSidebar />}
-        header={<Menu />}
+        left={(toggle) => <LeftSidebar toggle={toggle} />}
+        header={(toggle) => <Menu toggle={toggle} />}
         scrollHeader={(
           <div style={{padding: '2px 0 0', height: 48}}>
             {/* <FileTabs bg={'#d6f0e0'} state={state.tabs} render={() => <div style={{height: '8px'}} />} /> */}

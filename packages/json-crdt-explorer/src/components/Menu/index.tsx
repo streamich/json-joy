@@ -18,7 +18,11 @@ const linkStyle: React.CSSProperties = {
   transition: 'opacity 0.15s',
 };
 
-export const Menu: React.FC = () => {
+export interface MenuProps {
+  toggle: React.ReactNode;
+}
+
+export const Menu: React.FC<MenuProps> = ({ toggle }) => {
   const {width} = useWindowSize();
 
   const logo = (
@@ -32,8 +36,9 @@ export const Menu: React.FC = () => {
   );
 
   const left = (
-    <div style={{display: 'flex', alignItems: 'center', gap: '16px', paddingLeft: '24px'}}>
-      <a href="https://explorer.jsoncrdt.org" style={{...linkStyle, opacity: 1, marginLeft: '-8px'}}>
+    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
+      {toggle}
+      <a href="https://explorer.jsoncrdt.org" style={{...linkStyle, opacity: 1}}>
         <span style={{fontSize: '10.5px'}}>JSON CRDT</span>
         <br />
         <span style={{fontWeight: 700, fontSize: '16px'}}>Explorer</span>

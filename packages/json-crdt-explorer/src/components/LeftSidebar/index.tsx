@@ -7,9 +7,11 @@ import {NewFileForm} from '../NewFileForm';
 import {AppGridColumn} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
 import {Header} from './Header';
 
-export type LeftSidebarProps = Record<string, never>;
+export interface LeftSidebarProps {
+  toggle: React.ReactNode;
+}
 
-export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
+export const LeftSidebar: React.FC<LeftSidebarProps> = ({ toggle }) => {
   const [t] = useT();
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
@@ -18,7 +20,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = () => {
 
   return (
     <AppGridColumn
-      header={<Header />}
+      header={<Header toggle={toggle} />}
       footer={!!files.length && (
         <div style={{padding: 16, margin: '0 auto'}}>
           <NewFileForm />

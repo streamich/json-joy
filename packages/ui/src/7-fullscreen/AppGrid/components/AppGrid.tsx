@@ -23,9 +23,9 @@ const sidebarClass = rule({
 
 export interface AppGridProps {
   state?: AppGridState;
-  left?: React.ReactNode;
+  left?: React.ReactNode | ((toggle: React.ReactNode) => React.ReactNode);
   right?: React.ReactNode;
-  header?: React.ReactNode;
+  header?: React.ReactNode | ((toggle: React.ReactNode) => React.ReactNode);
   footer?: React.ReactNode;
   scrollHeader?: React.ReactNode;
   scrollFooter?: React.ReactNode;
@@ -47,9 +47,17 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
   const leftState = state.leftState.use();
   const rightState = state.rightState.use();
 
+  const toggle = (
+    <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
+      <BasicButton rounder size={32} onClick={state.toggleLeft}>
+        <Iconista set="bootstrap" icon={state.leftVisible() ? 'layout-sidebar' : 'layout-sidebar-inset'} width={16} height={16} style={{opacity: .7}} />
+      </BasicButton>
+    </BasicTooltip>
+  );
+
   const leftElement = (leftState === 'open' && (
     <Pane className={sidebarClass} size={leftSize} minSize={minLeftSize ?? 200} maxSize={maxLeftSize}>
-      {left}
+      {typeof left === 'function' ? left(toggle) : left}
     </Pane>
   ));
 
@@ -61,14 +69,10 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
 
   let content = (
     <AppGridColumn
-      header={(
+      header={((typeof left === 'function') && (leftState === 'open')) ? (typeof header === 'function' ? header(null) : header) : (
         <>
-          <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
-            <BasicButton rounder size={32} onClick={state.toggleLeft}>
-              <Iconista set="bootstrap" icon={state.leftVisible() ? 'layout-sidebar' : 'layout-sidebar-inset'} width={16} height={16} style={{opacity: .7}} />
-            </BasicButton>
-          </BasicTooltip>
-          {header}
+          {typeof header === 'function' ? null : toggle}
+          {typeof header === 'function' ? header(toggle) : header}
         </>
       )}
       footer={footer}
@@ -89,9 +93,6 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
       >
         {leftElement}
         <Pane minSize={200}>
-          {/* <div style={{paddingRight: 2}}>
-            {content}
-          </div> */}
           {content}
         </Pane>
         {rightElement}
