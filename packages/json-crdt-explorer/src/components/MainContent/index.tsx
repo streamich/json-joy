@@ -5,6 +5,7 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import {useExplorer} from '../../context';
 import {WelcomeScreen} from '../WelcomeScreen';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const blockClass = rule({
   w: '100%',
@@ -26,6 +27,7 @@ const contentClass = rule({
 
 export const MainContent: React.FC = () => {
   const state = useExplorer();
+  const styles = useStyles();
   const files = useBehaviorSubject(state.files$);
 
   const content = !files.length ? <WelcomeScreen /> : <Log />;
@@ -33,7 +35,8 @@ export const MainContent: React.FC = () => {
   return (
     <div className={blockClass}>
       <div style={{padding: '2px 0 0'}}>
-        <FileTabs bg={'#d6f0e0'} state={state.tabs} render={() => <div style={{height: '8px'}} />} />
+        {/* <FileTabs bg={'#d6f0e0'} state={state.tabs} render={() => <div style={{height: '8px'}} />} /> */}
+        <FileTabs bg={styles.g(.95)} state={state.tabs} render={() => <div style={{height: '8px'}} />} />
       </div>
       <div className={contentClass}>{content}</div>
     </div>

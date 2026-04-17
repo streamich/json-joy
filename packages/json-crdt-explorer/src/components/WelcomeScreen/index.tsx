@@ -63,7 +63,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
               <Typesetting>
                 <div style={{padding: '16px 32px'}}>
                   <h2>
-                    JSON CRDT Playground
+                    JSON (CRDT) Playground
                   </h2>
                   <ul>
                     <li>
