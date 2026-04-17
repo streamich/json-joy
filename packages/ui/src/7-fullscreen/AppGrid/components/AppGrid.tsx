@@ -45,24 +45,25 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
   const leftSize = state.leftSize.use();
   const rightSize = state.rightSize.use();
   const leftState = state.leftState.use();
-  const rightState = state.rightState.use();
+  const leftVisible = state.leftVisible();
+  const rightVisible = state.rightVisible();
 
   const toggle = (
     <BasicTooltip renderTooltip={() => t('Toggle sidebar')}>
       <BasicButton rounder size={32} onClick={state.toggleLeft}>
-        <Iconista set="bootstrap" icon={state.leftVisible() ? 'layout-sidebar' : 'layout-sidebar-inset'} width={16} height={16} style={{opacity: .7}} />
+        <Iconista set="bootstrap" icon={leftVisible ? 'layout-sidebar' : 'layout-sidebar-inset'} width={16} height={16} style={{opacity: .7}} />
       </BasicButton>
     </BasicTooltip>
   );
 
-  const leftElement = (leftState === 'open' && (
-    <Pane className={sidebarClass} size={leftSize} minSize={minLeftSize ?? 200} maxSize={maxLeftSize}>
+  const leftElement = (hasLeft && (
+    <Pane hidden={!leftVisible} className={sidebarClass} size={leftSize} minSize={minLeftSize ?? 200} maxSize={maxLeftSize}>
       {typeof left === 'function' ? left(toggle) : left}
     </Pane>
   ));
 
-  const rightElement = (rightState === 'open' && (
-    <Pane className={sidebarClass} size={rightSize} minSize={200}>
+  const rightElement = (hasRight && (
+    <Pane hidden={!rightVisible} className={sidebarClass} size={rightSize} minSize={200}>
       {right}
     </Pane>
   ));
@@ -83,7 +84,7 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
     </AppGridColumn>
   );
 
-  if (!!leftElement || !!rightElement) {
+  if (hasLeft || hasRight) {
     content = (
       <SplitPane
         className={outerClass}
