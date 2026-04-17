@@ -9,7 +9,6 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const isStandaloneDisplay = (): boolean => {
-  return true;
   if (typeof window === 'undefined') return false;
   return window.matchMedia('(display-mode: standalone)').matches || !!(navigator as Navigator & {standalone?: boolean}).standalone;
 };

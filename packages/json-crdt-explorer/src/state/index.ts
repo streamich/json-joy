@@ -8,7 +8,8 @@ import {stripExtensions} from './util';
 import {FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
 import {FileStorage, IFileStorage} from './file-storage';
-import type {TraceDefinition} from '../components/TraceSelector/traces';
+import {Menus} from './menus';
+import type {TraceDefinition} from './traces';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
   const observable = new BehaviorSubject<T>(val.value);
@@ -28,10 +29,12 @@ export class JsonCrdtExplorerState {
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
   public readonly sid = Model.sid();
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
+  public readonly menus: Menus;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
   
   constructor(storage: IFileStorage = new FileStorage()) {
+    this.menus = new Menus(this);
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
@@ -140,6 +143,11 @@ export class JsonCrdtExplorerState {
     this.files$.next(list);
     // const files = this.files$.getValue();
     // if (files.length && !this.file$.getValue()) this.tabs.selectById(files[0].id);
+  };
+
+  public readonly closeAll = () => {
+    const files = this.files$.getValue();
+    for (const file of files) this.close(file.id);
   };
 
   public readonly rename = (id: string, name: string) => {

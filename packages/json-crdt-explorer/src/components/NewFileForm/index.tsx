@@ -40,54 +40,8 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
             {t('Create JSON object')}
           </CreateButton>
           <Space horizontal />
-          {/* <CreateButton
-            radius={1}
-            // primary
-            colorStep={'el-1'}
-            block
-            // fill
-            size={expanded ? 1 : -1}
-            onClick={() => state.createNew()}
-          >
-            {t('Object')}
-          </CreateButton>
-          <Space horizontal size={2} /> */}
-
           <Popup renderContext={() => (
-            <ContextMenu inset menu={{
-              name: 'Create new',
-              minWidth: 300,
-              children: [
-                {
-                  name: 'Empty document',
-                  right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'()'}</span></Code></Sidetip>,
-                  onSelect: () => state.createNew(),
-                },
-                {
-                  name: 'Empty object',
-                  right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'{}'}</span></Code></Sidetip>,
-                  onSelect: () => state.createNew({}),
-                },
-                {
-                  name: 'Empty array',
-                  right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'[]'}</span></Code></Sidetip>,
-                  onSelect: () => state.createNew([]),
-                },
-                {
-                  name: 'Sample document',
-                  right: () => <Sidetip><Code><span style={{fontSize: '11.5px'}}>{'{"foo": ...'}</span></Code></Sidetip>,
-                  onSelect: () => state.createNew({
-                    name: 'Alice',
-                    age: 30,
-                    hobbies: ['reading', 'hiking'],
-                    address: {
-                      city: 'Wonderland',
-                      zip: '12345',
-                    },
-                  }),
-                },
-              ],
-            }} />
+            <ContextMenu inset menu={state.menus.newFileMenu()} />
           )}>
             <BasicButtonMore size={32} rounder fill />
           </Popup>

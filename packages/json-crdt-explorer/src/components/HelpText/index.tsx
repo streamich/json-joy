@@ -38,9 +38,9 @@ export const HelpText: React.FC<HelpTextProps> = () => {
       
       <h3>{t('Keyboard Shortcuts')}</h3>
       <ul>
-        <li><Key>Enter</Key> - {t('Confirm edit')}</li>
-        <li><Key>Escape</Key> - {t('Cancel edit')}</li>
-        <li><Key>Tab</Key> - {t('Auto-complete value type')}</li>
+        <li><Key>Enter</Key> &mdash; {t('Confirm edit')}</li>
+        <li><Key>Escape</Key> &mdash; {t('Cancel edit')}</li>
+        <li><Key>Tab</Key> &mdash; {t('Auto-complete value type')}</li>
       </ul>
     </div>
   );

@@ -41,7 +41,6 @@ export interface SavedFileProps {
 export const SavedFile: React.FC<SavedFileProps> = ({ file }) => {
   const state = useExplorer();
   const selected = state.tabs.selected.use();
-
   const activeIcon = <FileIcon id={file.id} label={'crdt'} size={20} />;
   const isOpen = state.isOpen(file.id);
 

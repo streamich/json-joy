@@ -75,7 +75,7 @@ export const Menu: React.FC<MenuProps> = ({ toggle }) => {
             rounder
             compact
           >
-            JSON CRDT <Label>Spec</Label>
+            JSON CRDT&nbsp;<Label>Spec</Label>
           </BasicButton>
         
       )}
@@ -90,7 +90,7 @@ export const Menu: React.FC<MenuProps> = ({ toggle }) => {
           rounder
           compact
         >
-          JSON CRDT Patch <Label>Spec</Label>
+          JSON CRDT Patch&nbsp;<Label>Spec</Label>
         </BasicButton>
       )}
       <PwaInstallButton />
