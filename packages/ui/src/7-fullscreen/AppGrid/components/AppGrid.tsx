@@ -27,12 +27,14 @@ export interface AppGridProps {
   right?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  scrollHeader?: React.ReactNode;
+  scrollFooter?: React.ReactNode;
   maxLeftSize?: number;
   minLeftSize?: number;
   children?: React.ReactNode;
 }
 
-export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, header, footer, maxLeftSize, minLeftSize, children }) => {
+export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, header, footer, scrollHeader, scrollFooter, maxLeftSize, minLeftSize, children }) => {
   const [t] = useT();
   const hasLeft = !!left;
   const hasRight = !!right;
@@ -70,6 +72,8 @@ export const AppGrid: React.FC<AppGridProps> = ({ state: _state, left, right, he
         </>
       )}
       footer={footer}
+      scrollHeader={scrollHeader}
+      scrollFooter={scrollFooter}
     >
       {children}
     </AppGridColumn>

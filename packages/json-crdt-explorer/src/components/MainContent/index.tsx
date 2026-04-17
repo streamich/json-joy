@@ -12,7 +12,6 @@ const blockClass = rule({
   minH: '100%',
   d: 'flex',
   fld: 'column',
-  // flex: '1 1 auto',
 });
 
 const contentClass = rule({
@@ -34,10 +33,6 @@ export const MainContent: React.FC = () => {
 
   return (
     <div className={blockClass}>
-      <div style={{padding: '2px 0 0'}}>
-        {/* <FileTabs bg={'#d6f0e0'} state={state.tabs} render={() => <div style={{height: '8px'}} />} /> */}
-        <FileTabs bg={styles.g(.95)} state={state.tabs} render={() => <div style={{height: '8px'}} />} />
-      </div>
       <div className={contentClass}>{content}</div>
     </div>
   );
