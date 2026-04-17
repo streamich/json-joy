@@ -16,9 +16,9 @@ const isStandaloneDisplay = (): boolean => {
   );
 };
 
-export type PwaInstallButtonProps = {}
+export type PwaInstallButtonProps = {};
 
-export const PwaInstallButton: React.FC<PwaInstallButtonProps> = ({}) => {
+export const PwaInstallButton: React.FC<PwaInstallButtonProps> = () => {
   const [deferredPrompt, setDeferredPrompt] = React.useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = React.useState<boolean>(() => isStandaloneDisplay());
 

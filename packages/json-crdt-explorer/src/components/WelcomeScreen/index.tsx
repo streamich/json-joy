@@ -6,7 +6,6 @@ import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {ResponsiveFlex} from '@jsonjoy.com/ui/lib/misc/ResponsiveFlex';
 import {HelpText} from '../HelpText';
 import {Typesetting} from '../Typesetting';
-import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 
 export type WelcomeScreenProps = Record<string, never>;
 

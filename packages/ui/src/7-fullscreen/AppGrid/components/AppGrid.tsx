@@ -52,7 +52,7 @@ export const AppGrid: React.FC<AppGridProps> = ({
   const state = React.useMemo(() => {
     const s = _state || new AppGridState();
     return s;
-  }, [_state, hasLeft, hasRight]);
+  }, [_state]);
   const leftSize = state.leftSize.use();
   const rightSize = state.rightSize.use();
   const leftState = state.leftState.use();

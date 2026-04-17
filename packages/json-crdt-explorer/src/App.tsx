@@ -11,7 +11,7 @@ import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 
 export const App: React.FC = () => {
   const styles = useStyles();
-  const [t] = useT();
+  const [_t] = useT();
   const state = React.useMemo(() => new JsonCrdtExplorerState(), []);
   React.useEffect(() => {
     state.start().catch(() => {});

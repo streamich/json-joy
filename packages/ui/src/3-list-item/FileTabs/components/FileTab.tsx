@@ -267,7 +267,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       requestAnimationFrame(() => setEntered(true));
     });
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [skipEnter]);
   const isAnimating = !entered || isExiting;
   const effectiveWidth = isExiting ? 0 : entered ? width : 0;
 

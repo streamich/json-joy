@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 
 const blockClass = rule({
   d: 'flex',

@@ -73,7 +73,7 @@ export const FileTabTooltip: React.FC<FileTabTooltipProps> = ({state}) => {
     const onMove = (e: MouseEvent) => setCx(e.clientX);
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
-  }, [!!hovered]);
+  }, [hovered]);
 
   // Delayed visibility so tooltip only appears after hovering for a moment
   const [visible, setVisible] = React.useState(false);

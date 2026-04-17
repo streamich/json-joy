@@ -12,11 +12,11 @@ export interface LeftSidebarProps {
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({toggle}) => {
-  const [t] = useT();
+  const [_t] = useT();
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
 
-  let content: React.ReactNode | undefined;
+  let _content: React.ReactNode | undefined;
 
   return (
     <AppGridColumn

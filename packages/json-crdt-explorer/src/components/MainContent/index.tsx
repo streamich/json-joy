@@ -2,7 +2,6 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Log} from './Log';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import {useExplorer} from '../../context';
 import {WelcomeScreen} from '../WelcomeScreen';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
@@ -26,7 +25,7 @@ const contentClass = rule({
 
 export const MainContent: React.FC = () => {
   const state = useExplorer();
-  const styles = useStyles();
+  const _styles = useStyles();
   const files = useBehaviorSubject(state.files$);
 
   const content = !files.length ? <WelcomeScreen /> : <Log />;

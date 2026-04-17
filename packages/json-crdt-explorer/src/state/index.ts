@@ -1,4 +1,4 @@
-import {Model, Patch, s} from 'json-joy/lib/json-crdt';
+import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {rsync} from '@jsonjoy.com/ui';

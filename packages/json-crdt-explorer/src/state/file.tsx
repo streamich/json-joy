@@ -182,12 +182,12 @@ export class OpenFile {
     } catch {
     } finally {
       this.saving = false;
-      if (this.disposeAfterSave && !this.pendingFlush) {
-        this.finalizeDisposal();
-        return;
-      }
-      if (this.pendingFlush) this.scheduleFlush();
     }
+    if (this.disposeAfterSave && !this.pendingFlush) {
+      this.finalizeDisposal();
+      return;
+    }
+    if (this.pendingFlush) this.scheduleFlush();
   };
 
   public readonly destroy = async (flushPending = false) => {

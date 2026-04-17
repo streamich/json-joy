@@ -30,7 +30,7 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
     const state = new FileTabsState(rsync.val(_tabs ?? []));
     state.onNewTab = addNewTab;
     return state;
-  }, [_state]);
+  }, [_state, _tabs, addNewTab]);
   React.useEffect(() => {
     if (!state) return;
     return () => state.dispose();

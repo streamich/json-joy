@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {CopyButton} from '../CopyButton';
 import {useT} from 'use-t';
 
@@ -31,7 +30,7 @@ export interface CopyTextProps {
 }
 
 export const CopyText: React.FC<CopyTextProps> = ({src, children = src()}) => {
-  const [t] = useT();
+  const [_t] = useT();
 
   return (
     <div className={css.block}>

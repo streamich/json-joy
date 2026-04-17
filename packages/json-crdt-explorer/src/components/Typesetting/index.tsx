@@ -69,7 +69,7 @@ export interface TypesettingProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Typesetting: React.FC<TypesettingProps> = ({children, ...props}) => {
-  const [t] = useT();
+  const [_t] = useT();
 
   return (
     <div {...props} className={blockClass + ' ' + (props.className || '')}>
