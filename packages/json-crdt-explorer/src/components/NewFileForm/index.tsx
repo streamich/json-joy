@@ -11,8 +11,6 @@ import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
-import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
-import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 
 export interface NewFileFormProps {
   expanded?: boolean;

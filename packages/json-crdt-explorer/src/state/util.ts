@@ -7,3 +7,13 @@ export const stripExtensions = (filename: string): string => {
   if (filename.endsWith('.seq')) filename = filename.slice(0, -4);
   return filename;
 };
+
+export const downloadFile = (uint8: Uint8Array, filename: string = 'file.bin') => {
+  const blob = new Blob([uint8 as BlobPart], {type: 'application/octet-stream'});
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+};

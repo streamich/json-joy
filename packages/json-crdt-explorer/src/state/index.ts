@@ -4,7 +4,7 @@ import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
-import {stripExtensions} from './util';
+import {downloadFile, stripExtensions} from './util';
 import {FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
 import {FileStorage, IFileStorage} from './file-storage';
@@ -233,4 +233,9 @@ export class JsonCrdtExplorerState {
     log.end.api.autoFlush();
     this.openFile(log);
   };
+
+  public async download(id: string) {
+    const {name, data} = await this.storage.load(id);
+    downloadFile(data, `${name}.seq.cbor.gz`);
+  }
 }

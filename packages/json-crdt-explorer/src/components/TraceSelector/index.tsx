@@ -10,11 +10,10 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 const ShopIcon = makeIcon({set: 'ant_outline', icon: 'shop'});
 
 export interface TraceSelectorProps {
-  width?: number;
   expanded?: boolean;
 }
 
-export const TraceSelector: React.FC<TraceSelectorProps> = ({width = 240, expanded}) => {
+export const TraceSelector: React.FC<TraceSelectorProps> = ({expanded}) => {
   const [t] = useT();
   const state = useExplorer();
   const [loading, setLoading] = React.useState(false);
@@ -25,7 +24,7 @@ export const TraceSelector: React.FC<TraceSelectorProps> = ({width = 240, expand
     setLoading(false);
   };
 
-  const menu: MenuItem = React.useMemo(() => state.menus.tracesMenu(width, load), [width, t]);
+  const menu: MenuItem = React.useMemo(() => state.menus.tracesMenu(300, load), []);
 
   return (
     <Popup
@@ -34,7 +33,6 @@ export const TraceSelector: React.FC<TraceSelectorProps> = ({width = 240, expand
         <ContextMenu
           inset
           menu={menu}
-          pane={{style: {width}}}
         />
       )}
     >
