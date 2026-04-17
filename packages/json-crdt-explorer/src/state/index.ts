@@ -149,6 +149,14 @@ export class JsonCrdtExplorerState {
     this.files$.next([...files]);
   };
 
+  public async deleteSaved(id: string) {
+    this.tabs.deleteById(id);
+    const file = this.files$.getValue().find((m) => m.id === id);
+    if (file) await file.destroy();
+    await this.storage.delete(id);
+    await this.refreshSaved();
+  }
+
   public readonly addFile = async (file: File) => {
     if (!file) return;
     let uint8 = new Uint8Array(await file.arrayBuffer());

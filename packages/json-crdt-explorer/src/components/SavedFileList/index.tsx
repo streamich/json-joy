@@ -57,7 +57,7 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
             iconHover={activeIcon}
             actions={(
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <BasicButtonDelete tooltip size={28} rounder noOutline />
+                <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} />
                 <BasicButtonMore tooltip size={28} rounder noOutline />
               </div>
             )}

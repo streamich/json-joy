@@ -16,3 +16,9 @@ export default meta;
 export const Primary: StoryObj<typeof meta> = {
   args: {},
 };
+
+export const WithConfirm: StoryObj<typeof meta> = {
+  args: {
+    onConfirm: () => alert('Deleted!'),
+  },
+};

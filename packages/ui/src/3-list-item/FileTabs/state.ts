@@ -165,6 +165,12 @@ export class FileTabsState {
     this.onDeleteTab?.(tab, index);
   }
 
+  public deleteById(id: string) {
+    const index = this.tabs.value.findIndex((tab) => getTabId(tab) === id);
+    if (index < 0) return;
+    this.delete(index);
+  }
+
   public add(tab: TabItem) {
     this.unfreeze();
     const tabs = this.tabs.value;
