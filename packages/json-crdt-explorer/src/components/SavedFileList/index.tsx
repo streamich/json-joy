@@ -4,6 +4,7 @@ import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/B
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
+import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 
 const icon = <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} />;
 
@@ -40,26 +41,30 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
 
   return (
     <>
-      {files.map((file) => (
-        <FileListItem
-          key={file.id}
-          title={file.name}
-          selected={selected?.[0].id === file.id}
-          metadata={(
-            <>
-            {formatDate(file.updatedAt)} · {file.id}
-            </>
-          )}
-          icon={icon}
-          actions={(
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <BasicButtonClose size={28} rounder noOutline title="Close" />
-              <BasicButtonMore size={28} rounder noOutline title="More actions" />
-            </div>
-          )}
-          onClick={() => state.openSaved(file.id).catch(() => {})}
-        />
-      ))}
+      {files.map((file) => {
+        const activeIcon = <FileIcon id={file.id} label={'crdt'} size={16} />;
+        return (
+          <FileListItem
+            key={file.id}
+            title={file.name}
+            selected={selected?.[0].id === file.id}
+            metadata={(
+              <>
+              {formatDate(file.updatedAt)} · {file.id}
+              </>
+            )}
+            icon={state.isOpen(file.id) ? activeIcon : icon}
+            iconHover={activeIcon}
+            actions={(
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <BasicButtonClose size={28} rounder noOutline title="Close" />
+                <BasicButtonMore size={28} rounder noOutline title="More actions" />
+              </div>
+            )}
+            onClick={() => state.openSaved(file.id).catch(() => {})}
+          />
+        );
+      })}
     </>
   );
 };
