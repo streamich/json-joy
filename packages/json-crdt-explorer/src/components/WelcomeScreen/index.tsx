@@ -48,6 +48,18 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
           boxSizing: 'border-box',
         }}
       ></div>
+      <div
+        style={{
+          width: 408,
+          height: 408,
+          borderRadius: '50%',
+          border: '1px dashed #07f',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          boxSizing: 'border-box',
+        }}
+      ></div>
     </div>
   );
 
