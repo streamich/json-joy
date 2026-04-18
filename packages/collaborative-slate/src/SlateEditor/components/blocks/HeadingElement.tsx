@@ -21,7 +21,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
   };
 
   switch (element.type) {
-    case 'heading-one':
+    case 'h1':
       return (
         <h1
           {...attributes}
@@ -37,7 +37,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           {children}
         </h1>
       );
-    case 'heading-two':
+    case 'h2':
       return (
         <h2
           {...attributes}

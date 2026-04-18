@@ -4,7 +4,7 @@ import type {Model} from 'json-joy/lib/json-crdt';
 import {FromSlate} from '../sync/FromSlate';
 import type {CustomElement, SlateEditorDocument} from './types';
 
-export const EMPTY_DOCUMENT: SlateEditorDocument = [{type: 'paragraph', children: [{text: ''}]} as CustomElement];
+export const EMPTY_DOCUMENT: SlateEditorDocument = [{type: 'p', children: [{text: ''}]} as CustomElement];
 
 export const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => (value && value.length ? value : EMPTY_DOCUMENT);
 
@@ -42,21 +42,21 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
   if (!match) return 'Paragraph';
   const [element] = match as [CustomElement, number[]];
   switch (element.type) {
-    case 'heading-one':
+    case 'h1':
       return 'Heading 1';
-    case 'heading-two':
+    case 'h2':
       return 'Heading 2';
-    case 'heading-three':
+    case 'h3':
       return 'Heading 3';
     case 'blockquote':
       return 'Quote';
     case 'code-block':
       return 'Code block';
-    case 'bulleted-list':
+    case 'ul':
       return 'Bulleted list';
-    case 'numbered-list':
+    case 'ol':
       return 'Numbered list';
-    case 'list-item':
+    case 'li':
       return 'List item';
     default:
       return 'Paragraph';

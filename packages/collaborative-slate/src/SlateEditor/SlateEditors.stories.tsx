@@ -5,11 +5,11 @@ import type {SlateEditorDocument} from './types';
 
 const initialValue: SlateEditorDocument = [
   {
-    type: 'heading-one',
+    type: 'h1',
     children: [{text: 'Drop-in Slate editor'}],
   },
   {
-    type: 'paragraph',
+    type: 'p',
     children: [
       {text: 'This story renders the new '},
       {text: 'SlateEditor', bold: true},
@@ -21,23 +21,23 @@ const initialValue: SlateEditorDocument = [
     ],
   },
   {
-    type: 'paragraph',
+    type: 'p',
     align: 'center',
     children: [{text: 'Centered copy looks intentional instead of drifting out of rhythm.'}],
   },
   {
-    type: 'bulleted-list',
+    type: 'ul',
     children: [
       {
-        type: 'list-item',
+        type: 'li',
         children: [{text: 'Formatting controls use the shared UI component library.'}],
       },
       {
-        type: 'list-item',
+        type: 'li',
         children: [{text: 'The editor can run standalone or bind to a json-joy model.'}],
       },
       {
-        type: 'list-item',
+        type: 'li',
         children: [{text: 'The folder structure is split by blocks, inline, toolbar, and chrome.'}],
       },
     ],

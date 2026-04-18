@@ -3,10 +3,10 @@ import type {ReactEditor} from 'slate-react';
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat = 'bold' | 'italic' | 'underline' | 'code';
-export type HeadingElementType = 'heading-one' | 'heading-two' | 'heading-three';
-export type ListElementType = 'bulleted-list' | 'numbered-list';
-export type BlockFormat = 'paragraph' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
-export type BlockElementType = BlockFormat | 'list-item';
+export type HeadingElementType = 'h1' | 'h2' | 'h3';
+export type ListElementType = 'ul' | 'ol';
+export type BlockFormat = 'p' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
+export type BlockElementType = BlockFormat | 'li';
 
 export interface CustomText {
   text: string;
@@ -21,7 +21,7 @@ export interface BlockAttributes {
 }
 
 export interface ParagraphElement extends BlockAttributes {
-  type: 'paragraph';
+  type: 'p';
   children: CustomText[];
 }
 
@@ -42,17 +42,17 @@ export interface CodeBlockElement extends BlockAttributes {
 }
 
 export interface ListItemElement extends BlockAttributes {
-  type: 'list-item';
+  type: 'li';
   children: CustomText[];
 }
 
 export interface BulletedListElement extends BlockAttributes {
-  type: 'bulleted-list';
+  type: 'ul';
   children: ListItemElement[];
 }
 
 export interface NumberedListElement extends BlockAttributes {
-  type: 'numbered-list';
+  type: 'ol';
   children: ListItemElement[];
 }
 

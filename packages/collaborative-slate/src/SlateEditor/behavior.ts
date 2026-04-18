@@ -10,7 +10,7 @@ import type {
   ToolbarButtonDefinition,
 } from './types';
 
-export const LIST_TYPES: ListElementType[] = ['bulleted-list', 'numbered-list'];
+export const LIST_TYPES: ListElementType[] = ['ul', 'ol'];
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
 export const MARKS: MarkFormat[] = ['bold', 'italic', 'underline', 'code'];
 
@@ -53,7 +53,7 @@ export const getActiveAlignment = (editor: Editor): SlateTextAlign => {
   if (!selection) return 'left';
   const [match] = Editor.nodes(editor, {
     at: Editor.unhangRange(editor, selection),
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'bulleted-list' && node.type !== 'numbered-list',
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'ul' && node.type !== 'ol',
   });
   if (!match) return 'left';
   const [element] = match as [CustomElement, number[]];
@@ -76,7 +76,7 @@ export const toggleBlock = (editor: Editor, format: BlockFormat): void => {
 
   unwrapLists(editor);
 
-  const nextType = isActive ? 'paragraph' : isList ? 'list-item' : format;
+  const nextType = isActive ? 'p' : isList ? 'li' : format;
 
   Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>, {
     match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
@@ -84,7 +84,7 @@ export const toggleBlock = (editor: Editor, format: BlockFormat): void => {
 
   if (!isActive && isList) {
     Transforms.wrapNodes(editor, {type: format, children: []} as CustomElement, {
-      match: (node) => isElement(node) && node.type === 'list-item',
+      match: (node) => isElement(node) && node.type === 'li',
     });
   }
 };
@@ -95,13 +95,13 @@ export const setAlignment = (editor: Editor, alignment: SlateTextAlign): void =>
 
   if (shouldUnset) {
     Transforms.unsetNodes(editor, 'align', {
-      match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'bulleted-list' && node.type !== 'numbered-list',
+      match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'ul' && node.type !== 'ol',
     });
     return;
   }
 
   Transforms.setNodes(editor, {align: alignment} as Partial<CustomElement>, {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'bulleted-list' && node.type !== 'numbered-list',
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'ul' && node.type !== 'ol',
   });
 };
 
@@ -111,7 +111,7 @@ export const clearFormatting = (editor: Editor): void => {
   Transforms.unsetNodes(editor, 'align', {
     match: (node) => isElement(node) && Editor.isBlock(editor, node),
   });
-  Transforms.setNodes(editor, {type: 'paragraph'} as Partial<CustomElement>, {
+  Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
     match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
   });
 };
@@ -170,27 +170,27 @@ export const handleKeyboardShortcuts = (editor: Editor, event: KeyboardEvent<HTM
     switch (key) {
       case '0':
         event.preventDefault();
-        toggleBlock(editor, 'paragraph');
+        toggleBlock(editor, 'p');
         return true;
       case '1':
         event.preventDefault();
-        toggleBlock(editor, 'heading-one');
+        toggleBlock(editor, 'h1');
         return true;
       case '2':
         event.preventDefault();
-        toggleBlock(editor, 'heading-two');
+        toggleBlock(editor, 'h2');
         return true;
       case '3':
         event.preventDefault();
-        toggleBlock(editor, 'heading-three');
+        toggleBlock(editor, 'h3');
         return true;
       case '7':
         event.preventDefault();
-        toggleBlock(editor, 'numbered-list');
+        toggleBlock(editor, 'ol');
         return true;
       case '8':
         event.preventDefault();
-        toggleBlock(editor, 'bulleted-list');
+        toggleBlock(editor, 'ul');
         return true;
     }
   }
@@ -235,17 +235,17 @@ export const MARK_BUTTONS: ToolbarButtonDefinition<MarkFormat>[] = [
 ];
 
 export const BLOCK_BUTTONS: ToolbarButtonDefinition<Exclude<BlockFormat, ListElementType>>[] = [
-  {key: 'paragraph', title: 'Paragraph', iconSet: 'tabler', icon: 'pilcrow', shortcut: 'Cmd+Alt+0', format: 'paragraph'},
-  {key: 'heading-one', title: 'Heading 1', iconSet: 'tabler', icon: 'h-1', shortcut: 'Cmd+Alt+1', format: 'heading-one'},
-  {key: 'heading-two', title: 'Heading 2', iconSet: 'tabler', icon: 'h-2', shortcut: 'Cmd+Alt+2', format: 'heading-two'},
-  {key: 'heading-three', title: 'Heading 3', iconSet: 'tabler', icon: 'h-3', shortcut: 'Cmd+Alt+3', format: 'heading-three'},
+  {key: 'p', title: 'Paragraph', iconSet: 'tabler', icon: 'pilcrow', shortcut: 'Cmd+Alt+0', format: 'p'},
+  {key: 'h1', title: 'Heading 1', iconSet: 'tabler', icon: 'h-1', shortcut: 'Cmd+Alt+1', format: 'h1'},
+  {key: 'h2', title: 'Heading 2', iconSet: 'tabler', icon: 'h-2', shortcut: 'Cmd+Alt+2', format: 'h2'},
+  {key: 'h3', title: 'Heading 3', iconSet: 'tabler', icon: 'h-3', shortcut: 'Cmd+Alt+3', format: 'h3'},
   {key: 'blockquote', title: 'Blockquote', iconSet: 'lucide', icon: 'quote', shortcut: 'Cmd+Shift+Q', format: 'blockquote'},
   {key: 'code-block', title: 'Code block', iconSet: 'tabler', icon: 'code', shortcut: 'Cmd+Shift+C', format: 'code-block'},
 ];
 
 export const LIST_BUTTONS: ToolbarButtonDefinition<ListElementType>[] = [
-  {key: 'bulleted-list', title: 'Bulleted list', iconSet: 'ibm_32', icon: 'list--bulleted', shortcut: 'Cmd+Alt+8', format: 'bulleted-list'},
-  {key: 'numbered-list', title: 'Numbered list', iconSet: 'ibm_32', icon: 'list--numbered', shortcut: 'Cmd+Alt+7', format: 'numbered-list'},
+  {key: 'ul', title: 'Bulleted list', iconSet: 'ibm_32', icon: 'list--bulleted', shortcut: 'Cmd+Alt+8', format: 'ul'},
+  {key: 'ol', title: 'Numbered list', iconSet: 'ibm_32', icon: 'list--numbered', shortcut: 'Cmd+Alt+7', format: 'ol'},
 ];
 
 export const ALIGNMENT_BUTTONS: ToolbarButtonDefinition<SlateTextAlign>[] = [

@@ -13,18 +13,18 @@ export interface BlockElementProps extends RenderElementProps {
 
 export const BlockElement: React.FC<BlockElementProps> = (props) => {
   switch (props.element.type) {
-    case 'heading-one':
-    case 'heading-two':
-    case 'heading-three':
+    case 'h1':
+    case 'h2':
+    case 'h3':
       return <HeadingElement {...(props as RenderElementProps & {element: any})} />;
     case 'blockquote':
       return <BlockquoteElement {...(props as RenderElementProps & {element: any})} />;
     case 'code-block':
       return <CodeBlockElement {...(props as RenderElementProps & {element: any})} />;
-    case 'bulleted-list':
-    case 'numbered-list':
+    case 'ul':
+    case 'ol':
       return <ListContainerElement {...(props as RenderElementProps & {element: any})} />;
-    case 'list-item':
+    case 'li':
       return <ListItemElement {...(props as RenderElementProps & {element: any})} />;
     default:
       return <ParagraphElement {...(props as RenderElementProps & {element: any})} />;
