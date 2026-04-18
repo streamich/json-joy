@@ -157,7 +157,8 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
     <context.Provider value={state}>
       <Paper
         round={!!spacious}
-        style={{background: styles.g(0, 0.05), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
+        style={{background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
+        hoverElevate
       >
         {!!pinnedModel && <RunningBackground />}
         <div className={css.header} style={{marginTop: spacious ? (pinnedModel ? 6 : 8) : 0}}>

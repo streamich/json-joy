@@ -47,7 +47,13 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
    * @returns The latest value of the node.
    */
   public node(): Value {
-    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : this.child();
+    // `UNDEFINED` is a shared singleton marker. Return a fresh wrapper so
+    // per-node UI state and cached APIs cannot leak across independent models.
+    // If two models share nodes, such as `UNDEFINED`, the UI, which renders
+    // the models, might cache the `UNDEFINED` node, but then it does not know
+    // **to which model** the cached `UNDEFINED` belongs. Or the caching layer
+    // would need to cache tuples (model, node), instead of just nodes.
+    return this.val.sid === SESSION.SYSTEM ? (UNDEFINED as any).clone() : this.child();
   }
 
   // ----------------------------------------------------------------- JsonNode

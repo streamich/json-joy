@@ -35,6 +35,7 @@
     "@codemirror/lang-markdown": "^6.3.2",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.5",
+    "@jsonjoy.com/json-equal": "workspace:*",
     "@jsonjoy.com/keyboard": "workspace:*",
     "@uiw/react-color-alpha": "^2.9.6",
     "@uiw/react-color-hue": "^2.9.6",

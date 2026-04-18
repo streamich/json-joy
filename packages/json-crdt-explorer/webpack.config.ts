@@ -1,11 +1,36 @@
+import fs from 'fs/promises';
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import type {Configuration} from 'webpack';
+import {Compilation, sources, type Compiler, type Configuration} from 'webpack';
 import type {Configuration as DevServerConfiguration} from 'webpack-dev-server';
 
 const root = path.resolve(__dirname, '..');
 const isDev = process.env.NODE_ENV !== 'production';
+
+class CopyPublicAssetsPlugin {
+  constructor(private readonly assets: Array<{from: string; to?: string}>) {}
+
+  public apply(compiler: Compiler): void {
+    compiler.hooks.thisCompilation.tap('CopyPublicAssetsPlugin', (compilation) => {
+      compilation.hooks.processAssets.tapPromise(
+        {
+          name: 'CopyPublicAssetsPlugin',
+          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+        },
+        async () => {
+          await Promise.all(
+            this.assets.map(async ({from, to = from}) => {
+              const assetPath = path.resolve(__dirname, 'public', from);
+              const source = await fs.readFile(assetPath);
+              compilation.emitAsset(to, new sources.RawSource(source));
+            }),
+          );
+        },
+      );
+    });
+  }
+}
 
 const config: Configuration & {devServer?: DevServerConfiguration} = {
   entry: './src/main.tsx',
@@ -89,6 +114,12 @@ const config: Configuration & {devServer?: DevServerConfiguration} = {
   },
   plugins: [
     new HtmlWebpackPlugin({template: './public/index.html'}),
+    new CopyPublicAssetsPlugin([
+      {from: 'manifest.webmanifest'},
+      {from: 'icon.svg'},
+      {from: 'icons/icon-192.png'},
+      {from: 'icons/icon-512.png'},
+    ]),
     ...(isDev ? [] : [new MiniCssExtractPlugin({filename: 'assets/[name].[contenthash:8].css'})]),
   ],
   devServer: {

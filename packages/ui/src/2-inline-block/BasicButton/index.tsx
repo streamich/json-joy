@@ -98,17 +98,23 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
 
   const dynamicBlockClass = useRule(() => ({
     col: g(0.2),
-    bg: selected ? styles.col.accent(0, 'bg-2') : transparent || !fill ? 'transparent' : g(0, 0.04 * bgFactor),
+
+    // bg: selected ? styles.col.accent(0, 'bg-2') : transparent || !fill ? 'transparent' : g(0, 0.04 * bgFactor),
+    bg: selected ? styles.col.accent(0, 'bg-2') : transparent || !fill ? 'transparent' : 'rgba(128,128,128,0.07)',
     // svg: {
     //   fill: g(0.5),
     //   col: g(0.5),
     // },
     '&:hover': {
       col: disabled ? void 0 : g(0.2),
-      bg: disabled ? void 0 : g(0, 0.08 * bgFactor),
+      // bg: disabled ? void 0 : g(0, 0.08 * bgFactor),
+      bg: disabled ? void 0 : 'rgba(128,128,128,0.13)',
+      bdfl: disabled ? void 0 : 'saturate(150%) blur(4px)',
     },
     '&:active': {
-      bg: disabled ? void 0 : g(0, 0.16 * bgFactor),
+      // bg: disabled ? void 0 : g(0, 0.16 * bgFactor),
+      bg: disabled ? void 0 : 'rgba(128,128,128,0.22)',
+      bdfl: disabled ? void 0 : 'saturate(150%)',
     },
   }));
 
@@ -119,6 +125,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   }));
 
   const style: React.CSSProperties = {
+    ...rest.style,
     height,
   };
 

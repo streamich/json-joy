@@ -23,8 +23,7 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {
-      "path": "../keyboard/tsconfig.build.json"
-    }
+    {"path": "../keyboard/tsconfig.build.json"},
+    {"path": "../json-equal/tsconfig.build.json"}
   ]
 }

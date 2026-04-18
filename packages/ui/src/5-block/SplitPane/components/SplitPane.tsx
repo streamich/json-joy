@@ -38,7 +38,7 @@ const MIN_PANES = 2;
  * </SplitPane>
  * ```
  */
-export function SplitPane(props: SplitPaneProps) {
+export const SplitPane: React.FC<SplitPaneProps> = (props) => {
   const {
     direction = 'horizontal',
     resizable = true,
@@ -73,10 +73,36 @@ export function SplitPane(props: SplitPaneProps) {
       defaultSize: pane.props.defaultSize,
       minSize: pane.props.minSize ?? 0,
       maxSize: pane.props.maxSize ?? Infinity,
+      hidden: !!pane.props.hidden,
     }));
   }, [children]);
 
   const paneCount = paneConfigs.length;
+  const visiblePaneIndexes = useMemo(
+    () =>
+      paneConfigs.reduce<number[]>((indexes, config, index) => {
+        if (!config.hidden) {
+          indexes.push(index);
+        }
+        return indexes;
+      }, []),
+    [paneConfigs],
+  );
+  const visiblePaneCount = visiblePaneIndexes.length;
+  const visiblePaneConfigs = useMemo(
+    () => visiblePaneIndexes.map((index) => paneConfigs[index]),
+    [paneConfigs, visiblePaneIndexes],
+  );
+  const visiblePaneSignature = useMemo(() => visiblePaneIndexes.join(','), [visiblePaneIndexes]);
+  const paneIndexToVisibleIndex = useMemo(() => {
+    const indexMap = new Map<number, number>();
+
+    visiblePaneIndexes.forEach((paneIndex, visibleIndex) => {
+      indexMap.set(paneIndex, visibleIndex);
+    });
+
+    return indexMap;
+  }, [visiblePaneIndexes]);
   const warnedRef = useRef(false);
 
   // Warn once if fewer than 2 panes
@@ -89,35 +115,39 @@ export function SplitPane(props: SplitPaneProps) {
   const {minSizes, maxSizes} = useMemo(() => {
     if (containerSize === 0) {
       return {
-        minSizes: new Array(paneCount).fill(0),
-        maxSizes: new Array(paneCount).fill(Infinity),
+        minSizes: new Array(visiblePaneCount).fill(0),
+        maxSizes: new Array(visiblePaneCount).fill(Infinity),
       };
     }
 
     const mins: number[] = [];
     const maxs: number[] = [];
 
-    paneConfigs.forEach((config) => {
+    visiblePaneConfigs.forEach((config) => {
       mins.push(convertToPixels(config.minSize, containerSize));
       maxs.push(config.maxSize === Infinity ? Infinity : convertToPixels(config.maxSize, containerSize));
     });
 
     return {minSizes: mins, maxSizes: maxs};
-  }, [containerSize, paneCount, paneConfigs]);
+  }, [containerSize, visiblePaneCount, visiblePaneConfigs]);
 
   // Calculate initial sizes from pane configs
   const calculateInitialSizes = useCallback(
     (containerSz: number): number[] => {
+      if (visiblePaneCount === 0) {
+        return [];
+      }
+
       if (containerSz === 0) {
-        return new Array(paneCount).fill(0);
+        return new Array(visiblePaneCount).fill(0);
       }
 
       // Account for divider widths when calculating available space
-      const totalDividerWidth = dividerSize * (paneCount - 1);
-      const availableSpace = containerSz - totalDividerWidth;
+      const totalDividerWidth = dividerSize * Math.max(visiblePaneCount - 1, 0);
+      const availableSpace = Math.max(containerSz - totalDividerWidth, 0);
 
       // First pass: calculate sizes for panes with explicit sizes
-      const sizes: (number | null)[] = paneConfigs.map((config) => {
+      const sizes: (number | null)[] = visiblePaneConfigs.map((config) => {
         const paneSize = config.size ?? config.defaultSize;
         if (paneSize !== undefined) {
           return convertToPixels(paneSize, availableSpace);
@@ -134,10 +164,15 @@ export function SplitPane(props: SplitPaneProps) {
       // Second pass: fill in auto-sized panes
       return sizes.map((size) => (size === null ? autoSize : size));
     },
-    [paneCount, paneConfigs, dividerSize],
+    [visiblePaneCount, visiblePaneConfigs, dividerSize],
   );
 
-  const [paneSizes, setPaneSizes] = useState<number[]>(() => calculateInitialSizes(containerSize));
+  const [paneLayout, setPaneLayout] = useState<{signature: string; sizes: number[]}>(() => ({
+    signature: visiblePaneSignature,
+    sizes: calculateInitialSizes(containerSize),
+  }));
+  const paneSizes =
+    paneLayout.signature === visiblePaneSignature ? paneLayout.sizes : calculateInitialSizes(containerSize);
 
   // Sync paneSizes with controlled size props when they change
   // This handles the case where parent state is reset (e.g., clicking a "Reset" button)
@@ -145,20 +180,37 @@ export function SplitPane(props: SplitPaneProps) {
     if (containerSize === 0) return;
 
     // Check if any pane has a controlled size prop
-    const hasControlledSizes = paneConfigs.some((config) => config.size !== undefined);
-    if (!hasControlledSizes) return;
-
     // Calculate what sizes should be based on current props
     const expectedSizes = calculateInitialSizes(containerSize);
+    const hasControlledSizes = visiblePaneConfigs.some((config) => config.size !== undefined);
 
-    // Only update if sizes actually differ (avoid unnecessary re-renders)
-    setPaneSizes((currentSizes) => {
+    setPaneLayout((currentLayout) => {
+      const paneStructureChanged =
+        currentLayout.signature !== visiblePaneSignature || currentLayout.sizes.length !== expectedSizes.length;
+
+      if (paneStructureChanged) {
+        return {
+          signature: visiblePaneSignature,
+          sizes: expectedSizes,
+        };
+      }
+
+      if (!hasControlledSizes) {
+        return currentLayout;
+      }
+
       const sizesMatch =
-        currentSizes.length === expectedSizes.length && currentSizes.every((size, i) => size === expectedSizes[i]);
+        currentLayout.sizes.length === expectedSizes.length &&
+        currentLayout.sizes.every((size, i) => size === expectedSizes[i]);
 
-      return sizesMatch ? currentSizes : expectedSizes;
+      return sizesMatch
+        ? currentLayout
+        : {
+            signature: visiblePaneSignature,
+            sizes: expectedSizes,
+          };
     });
-  }, [containerSize, paneConfigs, calculateInitialSizes]);
+  }, [containerSize, visiblePaneConfigs, visiblePaneSignature, calculateInitialSizes]);
 
   // Handle container size changes
   // For controlled panes: maintain fixed pixel sizes from props
@@ -171,37 +223,54 @@ export function SplitPane(props: SplitPaneProps) {
       if (newContainerSize === 0) return;
 
       // Check if any pane has a controlled size prop
-      const hasControlledSizes = paneConfigs.some((config) => config.size !== undefined);
+      const hasControlledSizes = visiblePaneConfigs.some((config) => config.size !== undefined);
 
       // Calculate available space after accounting for dividers
-      const totalDividerWidth = dividerSize * (paneCount - 1);
-      const availableSpace = newContainerSize - totalDividerWidth;
+      const totalDividerWidth = dividerSize * Math.max(visiblePaneCount - 1, 0);
+      const availableSpace = Math.max(newContainerSize - totalDividerWidth, 0);
 
-      setPaneSizes((currentSizes) => {
+      setPaneLayout((currentLayout) => {
+        const currentSizes =
+          currentLayout.signature === visiblePaneSignature
+            ? currentLayout.sizes
+            : calculateInitialSizes(newContainerSize);
+
         // If sizes are uninitialized or pane count changed
-        if (currentSizes.every((s) => s === 0) || currentSizes.length !== paneCount) {
-          return calculateInitialSizes(newContainerSize);
+        if (currentSizes.every((s) => s === 0) || currentSizes.length !== visiblePaneCount) {
+          return {
+            signature: visiblePaneSignature,
+            sizes: calculateInitialSizes(newContainerSize),
+          };
         }
 
         // If container size changed
         if (prevSize > 0 && prevSize !== newContainerSize) {
           // For controlled panes, recalculate from props to maintain fixed sizes
           if (hasControlledSizes) {
-            return calculateInitialSizes(newContainerSize);
+            return {
+              signature: visiblePaneSignature,
+              sizes: calculateInitialSizes(newContainerSize),
+            };
           }
           // For uncontrolled panes, distribute proportionally using available space
-          return distributeSizes(currentSizes, availableSpace);
+          return {
+            signature: visiblePaneSignature,
+            sizes: distributeSizes(currentSizes, availableSpace),
+          };
         }
 
         // First measurement - use initial sizes
         if (prevSize === 0) {
-          return calculateInitialSizes(newContainerSize);
+          return {
+            signature: visiblePaneSignature,
+            sizes: calculateInitialSizes(newContainerSize),
+          };
         }
 
-        return currentSizes;
+        return currentLayout;
       });
     },
-    [paneCount, paneConfigs, calculateInitialSizes, dividerSize],
+    [visiblePaneConfigs, visiblePaneCount, visiblePaneSignature, calculateInitialSizes, dividerSize],
   );
 
   // Track the last observed container size to detect meaningful changes
@@ -240,10 +309,10 @@ export function SplitPane(props: SplitPaneProps) {
   // Handle resize callback
   const handleResize = useCallback(
     (newSizes: number[], event: ResizeEvent) => {
-      setPaneSizes(newSizes);
+      setPaneLayout({signature: visiblePaneSignature, sizes: newSizes});
       onResize?.(newSizes, event);
     },
-    [onResize],
+    [onResize, visiblePaneSignature],
   );
 
   // Resizer hook
@@ -259,6 +328,8 @@ export function SplitPane(props: SplitPaneProps) {
     onResize: handleResize,
     onResizeEnd,
   });
+
+  const renderedSizes = isDragging ? currentSizes : paneSizes;
 
   // Keyboard resize hook
   const {handleKeyDown} = useKeyboardResize({
@@ -324,20 +395,22 @@ export function SplitPane(props: SplitPaneProps) {
 
   // Render panes and dividers
   const renderChildren = () => {
-    if (paneCount < MIN_PANES) {
+    if (visiblePaneCount === 0) {
       return null;
     }
 
     const elements: React.ReactElement[] = [];
 
     paneConfigs.forEach((config, index) => {
-      const paneSize = currentSizes[index] ?? 0;
+      const visibleIndex = paneIndexToVisibleIndex.get(index);
+      const paneSize = visibleIndex === undefined ? 0 : (renderedSizes[visibleIndex] ?? 0);
 
       const paneStyle: CSSProperties = {
         ...(direction === 'horizontal'
           ? {width: `${paneSize}px`, height: '100%'}
           : {height: `${paneSize}px`, width: '100%'}),
         ...config.props.style,
+        ...(config.hidden ? {display: 'none'} : undefined),
       };
 
       // Render pane
@@ -347,24 +420,24 @@ export function SplitPane(props: SplitPaneProps) {
         </Pane>,
       );
 
-      // Render divider (except after last pane)
-      if (index < paneCount - 1) {
+      // Render dividers between visible panes only.
+      if (visibleIndex !== undefined && visibleIndex < visiblePaneCount - 1) {
         const DividerComponent = CustomDivider ?? Divider;
-        const dividerMinSize = minSizes[index];
-        const dividerMaxSize = maxSizes[index];
+        const dividerMinSize = minSizes[visibleIndex];
+        const dividerMaxSize = maxSizes[visibleIndex];
 
         elements.push(
           <DividerComponent
             key={`divider-${index}`}
             direction={direction}
-            index={index}
+            index={visibleIndex}
             isDragging={isDragging}
             disabled={!resizable}
-            onPointerDown={handlePointerDown(index)}
-            onMouseDown={createMouseDownHandler(index)}
-            onTouchStart={createTouchStartHandler(index)}
+            onPointerDown={handlePointerDown(visibleIndex)}
+            onMouseDown={createMouseDownHandler(visibleIndex)}
+            onTouchStart={createTouchStartHandler(visibleIndex)}
             onTouchEnd={handleTouchEnd}
-            onKeyDown={handleKeyDown(index)}
+            onKeyDown={handleKeyDown(visibleIndex)}
             className={dividerClassName}
             style={dividerStyle}
             currentSize={paneSize}
@@ -383,4 +456,4 @@ export function SplitPane(props: SplitPaneProps) {
       {containerSize > 0 && renderChildren()}
     </div>
   );
-}
+};

@@ -16,6 +16,7 @@ export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, on
   const [t] = useT();
   const [editing, setEditing] = React.useState(false);
   const [property, setProperty] = React.useState('');
+  const [focused, setFocused] = React.useState(false);
   const [value, setValue] = React.useState('');
   const inputPropertyRef = React.useRef<HTMLInputElement>(null);
   const inputValueRef = React.useRef<HTMLInputElement>(null);
@@ -41,7 +42,8 @@ export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, on
           display: visible ? undefined : 'none',
           margin: '-1px 0 -1px -2px',
           padding: '3px 4px',
-          border: `1px solid ${theme.g(0.85)}`,
+          border: `1px solid ${theme.g(focused ? 0.3 : 0.85)}`,
+          outline: focused ? `1px solid ${theme.g(0.3)}` : void 0,
           fontWeight: 'bold',
         }}
       >
@@ -58,6 +60,8 @@ export const ObjectInsert: React.FC<ObjectInsertProps> = ({visible, withType, on
             else if (value) setValue('');
             else setEditing(false);
           }}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
       </span>
     );

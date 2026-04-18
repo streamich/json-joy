@@ -41,7 +41,9 @@
   },
   "dependencies": {
     "@jsonjoy.com/collaborative-ui": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
     "json-joy": "workspace:*"
   },
   "engines": {

@@ -46,4 +46,36 @@ export class LinearRgbColor {
     if (L1 < L2) [L1, L2] = [L2, L1];
     return (L1 + 0.05) / (L2 + 0.05);
   }
+
+  public highestContrast(colors: [first: LinearRgbColor, ...rest: LinearRgbColor[]]): LinearRgbColor {
+    return this.pickFirstAboveOrMax(100, colors);
+  }
+
+  public pickFirstAboveOrMax(
+    threshold: number,
+    colors: [first: LinearRgbColor, ...rest: LinearRgbColor[]],
+  ): LinearRgbColor {
+    let bestContrast = -1;
+    let bestColor = colors[0];
+    for (const color of colors) {
+      const contrast = this.contrast(color);
+      if (contrast > bestContrast) {
+        bestContrast = contrast;
+        bestColor = color;
+      }
+      if (contrast >= threshold) return color;
+    }
+    return bestColor;
+  }
+
+  private toSrgbChannel(c: number): number {
+    return c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  }
+
+  public toString(): string {
+    const r = Math.round(this.toSrgbChannel(this.r) * 255);
+    const g = Math.round(this.toSrgbChannel(this.g) * 255);
+    const b = Math.round(this.toSrgbChannel(this.b) * 255);
+    return this.a === 1 ? `rgb(${r},${g},${b})` : `rgba(${r},${g},${b},${this.a})`;
+  }
 }

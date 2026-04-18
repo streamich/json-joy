@@ -27,6 +27,7 @@ const roundClass = rule({
 
 export interface State {
   open: boolean;
+  onEsc?: () => void;
 }
 
 export interface PopupControlledProps extends React.HTMLAttributes<any> {
@@ -77,7 +78,7 @@ export const PopupControlled: React.FC<PopupControlledProps> = (props) => {
           visibility: open ? 'visible' : 'hidden',
         }}
       >
-        {renderContext({open})}
+        {renderContext({open, onEsc})}
       </span>
     </PositionPopup>
   );

@@ -148,7 +148,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const scrollHandleRatio = slotListViewportWidth / slotBedWidth;
   const scrollHandleWidth = scrollHandleRatio * scrollBedWidth;
   const scrollRunway = scrollBedWidth - scrollHandleWidth;
-  const slotsFitInViewport = totalPatches <= slotsPerViewport;
+  const slotsFitInViewport = !width || totalPatches <= slotsPerViewport;
   const slotIndexOffset = slotsFitInViewport ? 0 : Math.floor(scroll * (totalPatches - slotsPerViewport));
 
   const items: React.ReactNode[] = [];

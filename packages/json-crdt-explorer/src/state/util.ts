@@ -1,0 +1,19 @@
+export const stripExtensions = (filename: string): string => {
+  if (filename.endsWith('.gz')) filename = filename.slice(0, -3);
+  if (filename.endsWith('.json')) filename = filename.slice(0, -5);
+  if (filename.endsWith('.njson')) filename = filename.slice(0, -6);
+  if (filename.endsWith('.cbor')) filename = filename.slice(0, -5);
+  if (filename.endsWith('.crdt')) filename = filename.slice(0, -5);
+  if (filename.endsWith('.seq')) filename = filename.slice(0, -4);
+  return filename;
+};
+
+export const downloadFile = (uint8: Uint8Array, filename: string = 'file.bin') => {
+  const blob = new Blob([uint8 as BlobPart], {type: 'application/octet-stream'});
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+};

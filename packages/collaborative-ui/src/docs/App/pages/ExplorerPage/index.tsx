@@ -3,10 +3,8 @@ import {pageutils} from '@jsonjoy.com/ui/lib/6-page/DocsPages/util';
 import {content} from '../../../content';
 import {ConnectedSubNav} from '@jsonjoy.com/ui/lib/5-block/SubNav/ConnectedSubNav';
 import {DocsFooter} from '../../components/DocsFooter';
-import {JsonCrdtExplorer} from '../../../../JsonCrdtExplorer';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {Page} from '@jsonjoy.com/ui/lib/6-page/Page';
-import {NiceUiSizes} from '@jsonjoy.com/ui/lib/constants';
 
 const page = pageutils.find(content, ['guidelines'])!;
 
@@ -20,7 +18,6 @@ export const ExplorerPage: React.FC<Props> = () => {
       <ConnectedSubNav />
       <Page hackFooterLocation>
         <Space size={3} />
-        <JsonCrdtExplorer top={NiceUiSizes.TopNavHeight + NiceUiSizes.TopNavHeight + 24} />
       </Page>
       <DocsFooter />
     </>

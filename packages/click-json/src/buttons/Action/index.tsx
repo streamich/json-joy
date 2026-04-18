@@ -4,7 +4,7 @@ import * as css from '../../css';
 
 const blockClass = drule({
   pos: 'relative',
-  d: 'flex',
+  d: 'inline-flex',
   jc: 'center',
   ai: 'center',
   w: '17px',

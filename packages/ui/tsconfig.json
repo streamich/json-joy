@@ -24,8 +24,7 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {
-      "path": "../keyboard"
-    }
+    {"path": "../keyboard"},
+    {"path": "../json-equal"}
   ]
 }

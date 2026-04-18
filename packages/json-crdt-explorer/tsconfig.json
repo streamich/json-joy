@@ -25,7 +25,9 @@
   ],
   "references": [
     {"path": "../json-joy"},
+    {"path": "../json-pack"},
     {"path": "../ui"},
+    {"path": "../util"},
     {"path": "../collaborative-ui"}
   ]
 }

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {rule, lightTheme as theme} from 'nano-theme';
+import {rule} from 'nano-theme';
 
 export const moreIconClass = rule({
   d: 'block',
-  fill: theme.g(0.4),
+  fill: 'rgba(128,128,128,0.75)',
   flexShrink: 0,
   backfaceVisibility: 'hidden',
 });

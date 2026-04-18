@@ -33,7 +33,7 @@ export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, cla
       {...rest}
       ref={state.setRail}
       className={
-        blockClass({bg: theme.g(0, 0.04), '&:hover': {bg: theme.g(0, 0.06)}}) + (className ? ' ' + className : '')
+        blockClass({bg: theme.g(0, 0.04), '&:hover': {bg: theme.g(0, 0.08)}}) + (className ? ' ' + className : '')
       }
       data-state={isVisible ? 'visible' : 'hidden'}
       style={{

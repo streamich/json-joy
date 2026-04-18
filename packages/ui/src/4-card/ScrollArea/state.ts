@@ -1,8 +1,13 @@
 import * as React from 'react';
 import * as sync from 'thingies/lib/sync';
-import {DEFAULT_RAIL_WIDTH, DEFAULT_MIN_THUMB_SIZE, DEFAULT_HIDE_DELAY} from './constants';
 import type {ScrollStateOpts} from './types';
 import type {UiLifeCycles} from '../../types';
+
+const enum SCROLL_AREA {
+  WIDTH = 8,
+  MIN_THUMB_SIZE = 24,
+  HIDE_DELAY = 2000,
+}
 
 export class ScrollState implements UiLifeCycles {
   public readonly scrollTop$ = sync.val<number>(0);
@@ -32,9 +37,9 @@ export class ScrollState implements UiLifeCycles {
   private _rafId = 0;
 
   constructor(opts?: ScrollStateOpts) {
-    this.railWidth$ = sync.val<number>(opts?.railWidth ?? DEFAULT_RAIL_WIDTH);
-    this.minThumbSize = opts?.minThumbSize ?? DEFAULT_MIN_THUMB_SIZE;
-    this.hideDelay = opts?.hideDelay ?? DEFAULT_HIDE_DELAY;
+    this.railWidth$ = sync.val<number>(opts?.railWidth ?? SCROLL_AREA.WIDTH);
+    this.minThumbSize = opts?.minThumbSize ?? SCROLL_AREA.MIN_THUMB_SIZE;
+    this.hideDelay = opts?.hideDelay ?? SCROLL_AREA.HIDE_DELAY;
     this.alwaysVisible$ = sync.val<boolean>(opts?.alwaysVisible ?? false);
     const {scrollTop$, scrollHeight$, clientHeight$} = this;
     this.maxScrollTop$ = sync.comp([scrollHeight$, clientHeight$], ([scrollHeight, clientHeight]) =>
