@@ -9,7 +9,7 @@ const footerClass = rule({
   l: 0,
   r: 0,
   b: 0,
-  z: 2,
+  z: 20,
 });
 
 export const Footer: React.FC<ScrollAreaFooterProps> = ({children, className, style, ...rest}) => {

@@ -9,7 +9,7 @@ const headerClass = rule({
   top: 0,
   l: 0,
   r: 0,
-  z: 2,
+  z: 20,
 });
 
 export const Header: React.FC<ScrollAreaHeaderProps> = ({children, className, style, ...rest}) => {

@@ -8,6 +8,7 @@ const rootClass = rule({
   d: 'flex',
   flexDirection: 'column',
   ov: 'hidden',
+  z: 10,
 });
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {

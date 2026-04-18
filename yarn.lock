@@ -2553,6 +2553,7 @@ __metadata:
     "@jsonjoy.com/util": "workspace:*"
     "@types/node": "npm:^22.14.1"
     css-loader: "npm:^7.1.2"
+    flexible-input: "npm:^1.0.3"
     html-webpack-plugin: "npm:^5.6.3"
     json-joy: "workspace:*"
     mini-css-extract-plugin: "npm:^2.9.2"
