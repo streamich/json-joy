@@ -47,11 +47,14 @@ export class LinearRgbColor {
     return (L1 + 0.05) / (L2 + 0.05);
   }
 
-  public highestContrast(colors: LinearRgbColor[]): LinearRgbColor {
+  public highestContrast(colors: [first: LinearRgbColor, ...rest: LinearRgbColor[]]): LinearRgbColor {
     return this.pickFirstAboveOrMax(100, colors);
   }
 
-  public pickFirstAboveOrMax(threshold: number, colors: LinearRgbColor[]): LinearRgbColor {
+  public pickFirstAboveOrMax(
+    threshold: number,
+    colors: [first: LinearRgbColor, ...rest: LinearRgbColor[]],
+  ): LinearRgbColor {
     let bestContrast = -1;
     let bestColor = colors[0];
     for (const color of colors) {

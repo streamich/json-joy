@@ -41,24 +41,24 @@ const getSize = (el: HTMLElement): ElBoxValue => {
 
 export class ElBox<El extends HTMLElement> extends ReactValue<ElBoxValue> {
   private el?: El;
-  private _observer: ResizeObserver;
+  private _observer?: ResizeObserver;
 
   constructor(el?: El, size?: ElBoxValue) {
     super(el ? getSize(el) : (size ?? [0, 0, 0, 0]));
-    this._observer = new ResizeObserver(() => {
-      const el = this.el;
-      if (el) {
-        this.set(getSize(el));
-      }
-    });
     if (el) this.setEl(el);
   }
 
   public readonly setEl = (el: El | null | undefined = void 0) => {
     const oldEl = this.el;
-    if (oldEl) this._observer.unobserve(oldEl);
+    if (oldEl) this._observer?.unobserve(oldEl);
+    if (!this._observer) {
+      this._observer = new ResizeObserver(() => {
+        const el = this.el;
+        if (el) this.set(getSize(el));
+      });
+    }
     if (el) {
-      this._observer.observe(el);
+      this._observer?.observe(el);
       this.set(getSize(el));
     }
     this.el = el ?? void 0;
@@ -66,6 +66,6 @@ export class ElBox<El extends HTMLElement> extends ReactValue<ElBoxValue> {
 
   public dispose(): void {
     this.setEl(void 0);
-    this._observer.disconnect();
+    this._observer?.disconnect();
   }
 }

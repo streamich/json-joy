@@ -9,7 +9,7 @@ import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
-import type {TraceDefinition} from '../components/TraceSelector/traces';
+import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {IFileStorage} from './file-storage';
 

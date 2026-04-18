@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useExplorer} from '../../../context';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {JsonCrdtLog} from '@jsonjoy.com/collaborative-ui/lib//JsonCrdtLog';
+import {JsonCrdtLog} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {FlexibleInput} from 'flexible-input';
-import {DemoDisplay} from '@jsonjoy.com/collaborative-ui/lib//DemoDisplay';
+import {DemoDisplay} from '@jsonjoy.com/collaborative-ui/lib/DemoDisplay';
 
 export type LogProps = Record<string, never>;
 

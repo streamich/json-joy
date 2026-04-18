@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {DropArea} from '../DropArea';
 import {useExplorer} from '../../context';
-import {CreateButton} from '@jsonjoy.com/collaborative-ui/lib//molecules/CreateButton';
+import {CreateButton} from '@jsonjoy.com/collaborative-ui/lib/molecules/CreateButton';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {TraceSelector} from '../TraceSelector';
 import {Text} from '@jsonjoy.com/ui/lib/1-inline/Text';

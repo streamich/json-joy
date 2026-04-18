@@ -7,8 +7,6 @@ import {type CommonLabel, getColor} from './colors';
 const LITE_TEXT = new LinearRgbColor(1, 1, 1, 0.7);
 const DARK_TEXT = new LinearRgbColor(0, 0, 0, 0.7);
 
-let ID_COUNTER = 0;
-
 export interface FileIconProps extends React.SVGProps<SVGSVGElement> {
   /**
    * Label shown inside the icon. May be one of the predefined {@link CommonLabel}
@@ -50,6 +48,8 @@ export interface FileIconProps extends React.SVGProps<SVGSVGElement> {
 
 export const FileIcon: React.FC<FileIconProps> = React.memo(
   ({label, id, color = label ? getColor(label as CommonLabel) : undefined, size = 16, gradient, accent, ...rest}) => {
+    const id1 = React.useId();
+    const id2 = React.useId();
     const styles = useStyles();
     const effectiveId = id ?? label;
     const primaryColor: HslColor = color
@@ -75,8 +75,8 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(
     const f = 28; // fold size
     const r = 7; // corner radius
     const bodyPath = `M ${r},0 L ${viewW - f},0 L ${viewW},${f} L ${viewW},${viewH - r} Q ${viewW},${viewH} ${viewW - r},${viewH} L ${r},${viewH} Q 0,${viewH} 0,${viewH - r} L 0,${r} Q 0,0 ${r},0 Z`;
-    const gradId = `fi-g-${label ?? id ?? 'x'}-${ID_COUNTER++}`;
-    const clipId = `fi-c-${label ?? id ?? 'x'}-${ID_COUNTER++}`;
+    const gradId = `fi-g-${label ?? id ?? 'x'}-${id1}`;
+    const clipId = `fi-c-${label ?? id ?? 'x'}-${id2}`;
     const primaryStr = primaryColor.toString();
     const gradientStr = gradientColor?.toString() ?? primaryStr;
     const displayLabel = (label || '').slice(0, size < 21 ? 2 : size < 25 ? 3 : 4).toUpperCase();

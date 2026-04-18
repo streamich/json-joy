@@ -10,6 +10,7 @@ import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
 import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import type {TraceDefinition} from './traces';
+import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
   const observable = new BehaviorSubject<T>(val.value);
@@ -25,7 +26,7 @@ const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
 export class JsonCrdtExplorerState {
   public readonly tabs: FileTabsState;
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
-  public readonly selected$ = new BehaviorSubject<string>('');
+  public readonly selected$: BehaviorSubject<[id: TabItem, index: number] | null>;
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
   public readonly sid = Model.sid();
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
@@ -44,9 +45,10 @@ export class JsonCrdtExplorerState {
     this.tabs.onDeleteTab = (tab) => {
       this.close(tab.id!);
     };
+    this.selected$ = toObservable(this.tabs.selected);
     this.files$
       .pipe(
-        switchMap(() => toObservable(this.tabs.selected)),
+        switchMap(() => this.selected$),
         map((selected) => {
           if (!selected) return null;
           const files = this.files$.getValue();

@@ -9,6 +9,7 @@ import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useExplorer} from '../../context';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 
 export interface HeaderProps {
   toggle: React.ReactNode;
@@ -17,8 +18,10 @@ export interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({toggle}) => {
   const [t] = useT();
   const state = useExplorer();
+  const files = useBehaviorSubject(state.files$);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const newMenu = state.menus.newFileMenu();
+  const hasOpenFiles = files.length > 0;
   const menu = React.useMemo(() => {
     const menu: MenuItem = {
       name: 'File Actions',
@@ -39,16 +42,20 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
           icon: () => <Iconista set="ant_outline" icon="import" width={16} height={16} />,
           onSelect: () => inputRef.current?.click(),
         },
-        {name: 'close-sep', sep: true},
-        {
-          name: 'Close all',
-          icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
-          onSelect: () => state.closeAll(),
-        },
+        ...(hasOpenFiles
+          ? [
+              {name: 'close-sep', sep: true},
+              {
+                name: 'Close all',
+                icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
+                onSelect: () => state.closeAll(),
+              },
+            ]
+          : []),
       ],
     };
     return menu;
-  }, [t]);
+  }, [t, hasOpenFiles]);
 
   return (
     <Split style={{alignItems: 'center', padding: '0 0 0 8px'}}>
