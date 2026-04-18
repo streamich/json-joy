@@ -25,6 +25,7 @@ import {
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {LinkToolbarButton} from './LinkToolbarButton';
 
 const blockClass = rule({
   pd: '8px 32px',
@@ -62,15 +63,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
     [onVisualChange, readOnly],
   );
 
-  const getIconColor = React.useCallback(
-    (active?: boolean, disabled?: boolean): string => {
-      if (disabled) return styles.light ? styles.g(0.55) : styles.g(0.5);
-      if (active) return '#fff';
-      return styles.light ? styles.g(0.18) : styles.g(0.9);
-    },
-    [styles],
-  );
-
   const renderItem = React.useCallback(
     ({
       key,
@@ -105,7 +97,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         <Iconista set={iconSet as any} icon={icon as any} width={16} height={16} />
       </ToolbarItem>
     ),
-    [getIconColor],
+    [],
   );
 
   return (
@@ -125,6 +117,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => toggleMark(editor, button.format!)),
           })
         ))}
+        <LinkToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />
         <ToolbarSep />
         <ToolbarSep line />

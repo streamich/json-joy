@@ -1,8 +1,17 @@
 import {Editor} from 'slate';
 import {redo, setAlignment, toggleBlock, toggleMark, undo} from './behavior';
+import {getActiveLink, hasRangeSelection} from './behavior/link';
 import type {KeyboardEvent} from 'react';
 
-export const handleKeyboardShortcuts = (editor: Editor, event: KeyboardEvent<HTMLDivElement>): boolean => {
+export interface KeyboardShortcutHandlers {
+  requestLinkMenu?: () => void;
+}
+
+export const handleKeyboardShortcuts = (
+  editor: Editor,
+  event: KeyboardEvent<HTMLDivElement>,
+  handlers: KeyboardShortcutHandlers = {},
+): boolean => {
   const primary = event.metaKey || event.ctrlKey;
   if (!primary) return false;
 
@@ -25,6 +34,11 @@ export const handleKeyboardShortcuts = (editor: Editor, event: KeyboardEvent<HTM
       case 'e':
         event.preventDefault();
         toggleMark(editor, 'code');
+        return true;
+      case 'k':
+        if (!hasRangeSelection(editor) && !getActiveLink(editor)) return false;
+        event.preventDefault();
+        handlers.requestLinkMenu?.();
         return true;
       case 'y':
         event.preventDefault();

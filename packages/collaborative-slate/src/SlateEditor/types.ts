@@ -8,12 +8,18 @@ export type ListElementType = 'ul' | 'ol';
 export type BlockFormat = 'p' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
 export type BlockElementType = BlockFormat | 'li';
 
+export interface LinkAttributes {
+  href: string;
+  title?: string;
+}
+
 export interface CustomText {
   text: string;
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
   code?: boolean;
+  a?: LinkAttributes;
 }
 
 export interface BlockAttributes {

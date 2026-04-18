@@ -24,7 +24,7 @@ export interface ListItemElementProps extends RenderElementProps {
 
 export const ListContainerElement: React.FC<ListContainerElementProps> = ({attributes, children, element}) => {
   const styles = useStyles();
-  if (element.type === 'numbered-list') {
+  if (element.type === 'ol') {
     return (
       <ol
         {...attributes}

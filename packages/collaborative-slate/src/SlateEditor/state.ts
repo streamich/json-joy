@@ -1,6 +1,6 @@
 import {rsync} from '@jsonjoy.com/ui';
 import {getActiveAlignment} from './behavior';
-import {getCharacterCount, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from './util';
+import {getCaretPathInfo, getCharacterCount, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from './util';
 import type {Editor} from 'slate';
 import type {SlateTextAlign} from './types';
 
@@ -8,7 +8,10 @@ export class SlateEditorState {
   public readonly focused = rsync.val(false);
   public readonly collaborative = rsync.val(false);
   public readonly readOnly = rsync.val(false);
+  public readonly linkMenuRequest = rsync.val(0);
   public readonly currentBlock = rsync.val('Paragraph');
+  public readonly caretPath = rsync.val<string[]>([]);
+  public readonly caretLinkHref = rsync.val('');
   public readonly alignment = rsync.val<SlateTextAlign>('left');
   public readonly wordCount = rsync.val(0);
   public readonly characterCount = rsync.val(0);
@@ -31,11 +34,18 @@ export class SlateEditorState {
     this.readOnly.set(readOnly);
   };
 
+  public readonly requestLinkMenu = (): void => {
+    this.linkMenuRequest.next(this.linkMenuRequest.value + 1);
+  };
+
   public readonly sync = (editor: Editor): void => {
     const text = getEditorPlainText(editor);
+    const caret = getCaretPathInfo(editor);
     this.wordCount.set(getWordCount(text));
     this.characterCount.set(getCharacterCount(text));
     this.currentBlock.set(getCurrentBlockLabel(editor));
+    this.caretPath.set(caret.path);
+    this.caretLinkHref.set(caret.linkHref ?? '');
     this.alignment.set(getActiveAlignment(editor));
     this.selectionText.set(getSelectedText(editor));
   };

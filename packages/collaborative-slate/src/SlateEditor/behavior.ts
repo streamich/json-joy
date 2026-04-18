@@ -1,4 +1,3 @@
-import type {KeyboardEvent} from 'react';
 import {Editor, Element as SlateElement, Transforms} from 'slate';
 import {HistoryEditor} from 'slate-history';
 import type {
@@ -9,6 +8,7 @@ import type {
   SlateTextAlign,
   ToolbarButtonDefinition,
 } from './types';
+import {removeLink} from './behavior/link';
 
 export const LIST_TYPES: ListElementType[] = ['ul', 'ol'];
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
@@ -106,6 +106,7 @@ export const setAlignment = (editor: Editor, alignment: SlateTextAlign): void =>
 };
 
 export const clearFormatting = (editor: Editor): void => {
+  removeLink(editor);
   for (const mark of MARKS) Editor.removeMark(editor, mark);
   unwrapLists(editor);
   Transforms.unsetNodes(editor, 'align', {

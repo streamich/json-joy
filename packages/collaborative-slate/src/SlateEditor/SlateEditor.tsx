@@ -158,7 +158,9 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
               onFocus={() => state.setFocused(true)}
               onBlur={() => state.setFocused(false)}
               onKeyDown={(event) => {
-                const handled = handleKeyboardShortcuts(editor, event);
+                const handled = handleKeyboardShortcuts(editor, event, {
+                  requestLinkMenu: state.requestLinkMenu,
+                });
                 if (handled) refreshAfterEditorChange();
               }}
             />

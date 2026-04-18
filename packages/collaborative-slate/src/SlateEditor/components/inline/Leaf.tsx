@@ -1,7 +1,18 @@
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
+
+const linkClass = rule({
+  textDecoration: 'underline',
+  textDecorationThickness: '1px',
+  textUnderlineOffset: '4px',
+  textDecorationColor: 'rgb(from currentColor r g b / 0.2)',
+  '&:hover': {
+    textDecorationColor: 'currentColor',
+  },
+});
 
 export interface LeafProps extends RenderLeafProps {
   leaf: CustomText;
@@ -28,6 +39,25 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
       >
         {content}
       </code>
+    );
+  }
+
+  if (leaf.a?.href) {
+    // const linkColor = styles.light ? '#07f' : '#07f';
+    return (
+      <a
+        {...attributes}
+        className={linkClass}
+        href={leaf.a.href}
+        target="_blank"
+        rel="noreferrer noopener"
+        title={leaf.a.title || leaf.a.href}
+        onClick={(event) => {
+          if (!(event.metaKey || event.ctrlKey)) event.preventDefault();
+        }}
+      >
+        {content}
+      </a>
     );
   }
 
