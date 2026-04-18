@@ -71,7 +71,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
         height: '100%',
         alignItems: 'center',
         flexDirection: 'column',
-        padding: '32px 16px 16px',
+        padding: '16px',
       }}
     >
       <Paper round style={{maxWidth: '900px', width: '100%'}} contrast hoverElevate>
