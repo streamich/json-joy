@@ -17,12 +17,10 @@ const useBlockClass = makeRule((theme) => ({
 const useHoverBlockClass = makeRule((theme) => ({
   bd: `1px solid ${theme.g(0, 0.1)}`,
   '&:hover': {
-    bd: `1px solid ${theme.color.sem.blue[0]}`,
-    bg: theme.blue(0.04),
+    bd: `1px solid ${theme.g(0, 0.2)}`,
   },
   '&:active': {
-    bd: `1px solid ${theme.color.sem.blue[1]}`,
-    bg: theme.blue(0.08),
+    bd: `1px solid ${theme.g(0, 0.3)}`,
   },
 }));
 
@@ -35,13 +33,14 @@ export interface PaperProps extends React.AllHTMLAttributes<any> {
   fill?: number;
   round?: boolean;
   hover?: boolean;
+  hoverLite?: boolean;
   hoverElevate?: boolean;
   contrast?: boolean;
   noOutline?: boolean;
 }
 
 export const Paper: React.FC<PaperProps> = (props) => {
-  const {level = 0, fill = 0, round, hover, hoverElevate, contrast, noOutline, ...rest} = props;
+  const {level = 0, fill = 0, round, hover, hoverLite, hoverElevate, contrast, noOutline, ...rest} = props;
   const theme = useTheme();
   const dynamicBlockClass = useBlockClass();
   const dynamicHoverBlockClass = useHoverBlockClass();

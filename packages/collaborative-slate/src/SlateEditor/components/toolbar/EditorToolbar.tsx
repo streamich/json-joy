@@ -3,7 +3,6 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
-import {ToolbarPane} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarPane';
 import {ToolbarSep} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarSep';
 import type {Editor} from 'slate';
 import {
@@ -25,15 +24,11 @@ import {
   toggleMark,
   undo,
 } from '../../behavior';
+import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 
-const toolbarClass = rule({
-  // pd: '8px',
-});
-
-const iconWrapClass = rule({
-  // d: 'inline-flex',
-  // ai: 'center',
-  // jc: 'center',
+const blockClass = rule({
+  pd: '8px 32px',
+  bxz: 'border-box',
 });
 
 const toolbarContainerClass = rule({
@@ -43,7 +38,7 @@ const toolbarContainerClass = rule({
   // pd: '16px',
   // pd: '10px 16px 8px',
   // pd: '8px 24px',
-  pd: '8px 32px',
+  // pd: '8px 32px',
   h: '32px',
 });
 
@@ -101,7 +96,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         type="button"
         // fill
         // outline
-        title={title}
+        // title={title}
         selected={active}
         disabled={disabled}
         onMouseDown={onMouseDown}
@@ -113,13 +108,11 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
     [getIconColor],
   );
 
-  const style: React.CSSProperties = {
-    borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
-  };
-
   return (
-    <div className={toolbarClass}>
-      <div className={toolbarContainerClass} style={style}>
+    <Split className={blockClass} style={{
+      borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
+    }}>
+      <div className={toolbarContainerClass}>
         {MARK_BUTTONS.map((button) => (
           renderItem({
             key: button.key,
@@ -179,11 +172,17 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => setAlignment(editor, button.format!)),
           })
         ))}
-        <ToolbarSep />
-        <ToolbarSep />
+      </div>
+      <div className={toolbarContainerClass}>
+        {renderItem({
+          key: ACTION_BUTTONS[2].key,
+          title: ACTION_BUTTONS[2].title,
+          iconSet: ACTION_BUTTONS[2].iconSet,
+          icon: ACTION_BUTTONS[2].icon,
+          disabled: readOnly,
+          onMouseDown: execute(() => clearFormatting(editor)),
+        })}
         <ToolbarSep line />
-        <ToolbarSep />
-        <ToolbarSep />
         {renderItem({
           key: ACTION_BUTTONS[0].key,
           title: ACTION_BUTTONS[0].title,
@@ -202,16 +201,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
           disabled: readOnly || !canRedo(editor),
           onMouseDown: execute(() => redo(editor)),
         })}
-        <ToolbarSep line />
-        {renderItem({
-          key: ACTION_BUTTONS[2].key,
-          title: ACTION_BUTTONS[2].title,
-          iconSet: ACTION_BUTTONS[2].iconSet,
-          icon: ACTION_BUTTONS[2].icon,
-          disabled: readOnly,
-          onMouseDown: execute(() => clearFormatting(editor)),
-        })}
       </div>
-    </div>
+    </Split>
   );
 };

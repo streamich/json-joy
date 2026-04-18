@@ -235,7 +235,7 @@ export const MARK_BUTTONS: ToolbarButtonDefinition<MarkFormat>[] = [
 ];
 
 export const BLOCK_BUTTONS: ToolbarButtonDefinition<Exclude<BlockFormat, ListElementType>>[] = [
-  {key: 'paragraph', title: 'Paragraph', iconSet: 'lineicons', icon: 'pilcrow', shortcut: 'Cmd+Alt+0', format: 'paragraph'},
+  {key: 'paragraph', title: 'Paragraph', iconSet: 'tabler', icon: 'pilcrow', shortcut: 'Cmd+Alt+0', format: 'paragraph'},
   {key: 'heading-one', title: 'Heading 1', iconSet: 'tabler', icon: 'h-1', shortcut: 'Cmd+Alt+1', format: 'heading-one'},
   {key: 'heading-two', title: 'Heading 2', iconSet: 'tabler', icon: 'h-2', shortcut: 'Cmd+Alt+2', format: 'heading-two'},
   {key: 'heading-three', title: 'Heading 3', iconSet: 'tabler', icon: 'h-3', shortcut: 'Cmd+Alt+3', format: 'heading-three'},

@@ -130,9 +130,6 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     outline: 'none',
     color: styles.light ? styles.g(0.15) : styles.g(0.92),
     caretColor: styles.light ? styles.g(0.08) : styles.g(0.96),
-    // background: styles.light
-    //   ? 'linear-gradient(180deg, rgba(255,255,255,0.76) 0%, rgba(248,250,252,0.98) 100%)'
-    //   : 'linear-gradient(180deg, rgba(18,24,33,0.96) 0%, rgba(14,18,24,0.98) 100%)',
   };
 
   void tick;
@@ -142,6 +139,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
       <Paper
         round
         contrast
+        hover
         className={[className, shellClass].filter(Boolean).join(' ')}
       >
         <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={refreshAfterEditorChange} />

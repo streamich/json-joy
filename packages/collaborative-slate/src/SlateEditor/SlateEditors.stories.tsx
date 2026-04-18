@@ -54,7 +54,7 @@ const initialValue: SlateEditorDocument = [
 ];
 
 const meta = preview.meta({
-  title: 'Slate/Editor',
+  title: 'SlateEditor',
 });
 
 const Story: React.FC = () => {
@@ -75,6 +75,6 @@ const Story: React.FC = () => {
   );
 };
 
-export const Editor = meta.story({
+export const Primary = meta.story({
   render: () => <Story />,
 });
