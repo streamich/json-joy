@@ -76,7 +76,7 @@ export const WithHeaderFooter: StoryObj = {
   render: () => (
     <ScrollArea alwaysVisible railWidth={14} style={{width: 400, height: 350, border: '1px solid #ccc'}}>
       <Header>
-        <div style={{padding: '8px 16px', background: '#f0f0f0', borderBottom: '1px solid #ddd'}}>Sticky Header</div>
+        <div style={{padding: '8px 16px', background: 'rgba(0,0,0,0.1)', borderBottom: '1px solid #ddd'}}>Sticky Header</div>
       </Header>
       <Viewport>
         <div style={{padding: 16}}>
@@ -91,7 +91,7 @@ export const WithHeaderFooter: StoryObj = {
         <Thumb />
       </ScrollRail>
       <Footer>
-        <div style={{padding: '8px 16px', background: '#f0f0f0', borderTop: '1px solid #ddd'}}>Line 1 / 100</div>
+        <div style={{padding: '8px 16px', background: 'rgba(0,0,0,0.1)', borderTop: '1px solid #ddd'}}>Line 1 / 100</div>
       </Footer>
     </ScrollArea>
   ),

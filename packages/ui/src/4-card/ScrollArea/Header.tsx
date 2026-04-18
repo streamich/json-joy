@@ -5,8 +5,11 @@ import type {ScrollAreaHeaderProps} from './types';
 
 const headerClass = rule({
   fls: '0',
-  pos: 'relative',
-  z: 1,
+  pos: 'absolute',
+  top: 0,
+  l: 0,
+  r: 0,
+  z: 2,
 });
 
 export const Header: React.FC<ScrollAreaHeaderProps> = ({children, className, style, ...rest}) => {
@@ -22,7 +25,10 @@ export const Header: React.FC<ScrollAreaHeaderProps> = ({children, className, st
     });
     observer.observe(el);
     state.headerHeight$.next(el.offsetHeight);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      state.headerHeight$.next(0);
+    };
   }, [state]);
 
   return (

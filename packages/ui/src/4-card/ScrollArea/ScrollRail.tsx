@@ -17,6 +17,13 @@ export interface ScrollRailProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
+const addCssLength = (base: number, inset: React.CSSProperties['top']): React.CSSProperties['top'] => {
+  if (inset === undefined) return base || undefined;
+  if (typeof inset === 'number') return base + inset;
+  if (!base) return inset;
+  return `calc(${base}px + ${inset})`;
+};
+
 export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, className, style, ...rest}) => {
   const state = useScrollArea();
   const theme = useTheme();
@@ -24,7 +31,10 @@ export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, cla
   const alwaysVisible = useSyncStore(state.alwaysVisible$);
   const railWidth = useSyncStore(state.railWidth$);
   const canScroll = useSyncStore(state.canScroll$);
+  const headerHeight = useSyncStore(state.headerHeight$);
+  const footerHeight = useSyncStore(state.footerHeight$);
   const isVisible = alwaysVisible || visible;
+  const {top, bottom, ...restStyle} = style ?? {};
 
   if (!canScroll && !alwaysVisible) return null;
 
@@ -38,9 +48,11 @@ export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, cla
       data-state={isVisible ? 'visible' : 'hidden'}
       style={{
         width: railWidth,
+        top: addCssLength(headerHeight, top),
+        bottom: addCssLength(footerHeight, bottom),
         opacity: isVisible ? 1 : 0,
         pointerEvents: isVisible ? 'auto' : 'none',
-        ...style,
+        ...restStyle,
       }}
       onPointerDown={state.onScrollbarPointerDown}
       onPointerMove={state.onScrollbarPointerMove}

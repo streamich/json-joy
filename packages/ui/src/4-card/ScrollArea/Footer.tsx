@@ -5,8 +5,11 @@ import type {ScrollAreaFooterProps} from './types';
 
 const footerClass = rule({
   fls: '0',
-  pos: 'relative',
-  z: 1,
+  pos: 'absolute',
+  l: 0,
+  r: 0,
+  b: 0,
+  z: 2,
 });
 
 export const Footer: React.FC<ScrollAreaFooterProps> = ({children, className, style, ...rest}) => {
@@ -22,7 +25,10 @@ export const Footer: React.FC<ScrollAreaFooterProps> = ({children, className, st
     });
     observer.observe(el);
     state.footerHeight$.next(el.offsetHeight);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      state.footerHeight$.next(0);
+    };
   }, [state]);
 
   return (
