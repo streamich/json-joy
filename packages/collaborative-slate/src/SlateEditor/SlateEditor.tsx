@@ -9,7 +9,7 @@ import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextB
 import {SlateFacade} from '../SlateFacade';
 import {withPresenceLeaf} from '../presence/PresenceLeaf';
 import {useSlatePresence} from '../presence/useSlatePresence';
-import {handleKeyboardShortcuts} from './behavior';
+import {handleKeyboardShortcuts} from './keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
 import {Leaf} from './components/inline/Leaf';
