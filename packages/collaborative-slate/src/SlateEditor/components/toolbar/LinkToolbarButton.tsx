@@ -2,6 +2,7 @@ import * as React from 'react';
 import {flushSync} from 'react-dom';
 import {rule} from 'nano-theme';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {PopupControlled} from '@jsonjoy.com/ui/lib/4-card/Popup/PopupControlled';
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
@@ -103,8 +104,8 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
   }, [draft, editor, onVisualChange]);
 
   const handleRemove = React.useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
+    () => {
+      // event.preventDefault();
       if (!removeLink(editor)) return;
       setOpen(false);
       onVisualChange();
@@ -140,16 +141,14 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
           </BasicButton>
         </BasicTooltip>
         <BasicTooltip nowrap renderTooltip={() => 'Remove link'}>
-          <BasicButton
+          <BasicButtonDelete
             type="button"
             width={32}
             height={32}
             rounder
             onMouseDown={preventMouseDown}
-            onClick={handleRemove}
-          >
-            <Iconista set={'lucide' as any} icon={'trash' as any} width={16} height={16} />
-          </BasicButton>
+            onConfirm={handleRemove}
+          />
         </BasicTooltip>
       </div>
     </div>

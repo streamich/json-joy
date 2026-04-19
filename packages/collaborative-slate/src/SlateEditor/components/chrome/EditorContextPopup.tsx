@@ -9,7 +9,7 @@ const bodyClass = rule({
   d: 'flex',
   fld: 'column',
   gap: '12px',
-  pd: '12px',
+  // pd: '12px',
 });
 
 const titleClass = rule({
@@ -18,6 +18,7 @@ const titleClass = rule({
   // ai: 'center',
   fz: '12px',
   lh: '1.45',
+  pd: '16px',
 });
 
 const titleGroupClass = rule({
@@ -29,6 +30,14 @@ const actionsClass = rule({
   d: 'flex',
   jc: 'flex-end',
   gap: '8px',
+  pd: '16px',
+});
+
+const contentClass = rule({
+  d: 'flex',
+  fld: 'column',
+  gap: '12px',
+  pd: '0 16px',
 });
 
 export interface EditorContextPopupProps {
@@ -82,7 +91,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
     <MoveToViewport vertical>
       <ContextPane minWidth={minWidth}>
         <div className={bodyClass}>
-          <div className={titleClass} style={{color: styles.light ? styles.g(0.34) : styles.g(0.7)}}>
+          <div className={titleClass} style={{borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
             <div className={titleGroupClass}>
               <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
                 {title}
@@ -95,8 +104,10 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
               </div>
             )}
           </div>
-          {children}
-          <div className={actionsClass}>
+          <div className={contentClass}>
+            {children}
+          </div>
+          <div className={actionsClass} style={{borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
             <BasicButton
               type="button"
               width={'auto'}
