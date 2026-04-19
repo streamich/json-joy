@@ -41,12 +41,13 @@ const contentClass = rule({
 });
 
 export interface EditorContextPopupProps {
-  title: React.ReactNode;
+  title?: React.ReactNode;
   subtitle?: React.ReactNode;
   headerRight?: React.ReactNode;
+  noMargin?: boolean;
   children: React.ReactNode;
-  onCancel: () => void;
-  onApply: () => void;
+  onCancel?: () => void;
+  onApply?: () => void;
   applyDisabled?: boolean;
   cancelLabel?: string;
   applyLabel?: string;
@@ -57,6 +58,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   title,
   subtitle,
   headerRight,
+  noMargin,
   children,
   onCancel,
   onApply,
@@ -74,7 +76,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   const handleCancel = React.useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
-      onCancel();
+      onCancel?.();
     },
     [onCancel],
   );
@@ -82,56 +84,64 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   const handleApply = React.useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
-      onApply();
+      onApply?.();
     },
     [onApply],
+  );
+
+  const header = (!!title || !!subtitle || !!headerRight) && (
+    <div className={titleClass} style={{borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
+      <div className={titleGroupClass}>
+        <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
+          {title}
+        </strong>
+        {subtitle}
+      </div>
+      {!!headerRight && (
+        <div className={titleGroupClass}>
+          {headerRight}
+        </div>
+      )}
+    </div>
+  );
+
+  const footer = (!!onApply || !!onCancel) && (
+    <div className={actionsClass} style={{borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
+      <BasicButton
+        type="button"
+        width={'auto'}
+        height={32}
+        compact
+        border
+        onMouseDown={preventMouseDown}
+        onClick={handleCancel}
+      >
+        {cancelLabel}
+      </BasicButton>
+      <BasicButton
+        type="button"
+        width={'auto'}
+        height={32}
+        compact
+        border
+        disabled={applyDisabled}
+        onMouseDown={preventMouseDown}
+        onClick={handleApply}
+      >
+        {applyLabel}
+      </BasicButton>
+    </div>
   );
 
   return (
     <MoveToViewport vertical>
       <ContextPane minWidth={minWidth}>
-        <div className={bodyClass}>
-          <div className={titleClass} style={{borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
-            <div className={titleGroupClass}>
-              <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
-                {title}
-              </strong>
-              {subtitle}
-            </div>
-            {!!headerRight && (
-              <div className={titleGroupClass}>
-                {headerRight}
-              </div>
-            )}
-          </div>
-          <div className={contentClass}>
+        <div className={bodyClass} style={noMargin ? {gap: 0} : undefined}>
+          {header}
+          <div className={contentClass} style={noMargin ? {padding: 0} : undefined}>
             {children}
           </div>
-          <div className={actionsClass} style={{borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
-            <BasicButton
-              type="button"
-              width={'auto'}
-              height={32}
-              compact
-              border
-              onMouseDown={preventMouseDown}
-              onClick={handleCancel}
-            >
-              {cancelLabel}
-            </BasicButton>
-            <BasicButton
-              type="button"
-              width={'auto'}
-              height={32}
-              compact
-              border
-              disabled={applyDisabled}
-              onMouseDown={preventMouseDown}
-              onClick={handleApply}
-            >
-              {applyLabel}
-            </BasicButton>
-          </div>
+          {footer}
         </div>
       </ContextPane>
     </MoveToViewport>

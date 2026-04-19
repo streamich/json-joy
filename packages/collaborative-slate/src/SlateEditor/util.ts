@@ -1,9 +1,9 @@
-import {Editor, Element as SlateElement, Node, Range, Text} from 'slate';
+import {Editor, Element as SlateElement, Node, Range, Text, type Descendant} from 'slate';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import type {Model} from 'json-joy/lib/json-crdt';
 import {FromSlate} from '../sync/FromSlate';
 import {getLinkAttributes} from './behavior/link';
-import type {CustomElement, CustomText, SlateEditorDocument} from './types';
+import type {CustomElement, CustomText, HeadingElementType, SlateEditorDocument} from './types';
 
 const CARET_MARK_ORDER: Array<[keyof Pick<CustomText, 'bold' | 'italic' | 'underline' | 'code'>, string]> = [
   ['bold', 'bold'],
@@ -16,6 +16,23 @@ export interface CaretPathInfo {
   path: string[];
   linkHref?: string;
 }
+
+export interface DocumentOutlineItem {
+  key: string;
+  path: number[];
+  type: HeadingElementType;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  title: string;
+}
+
+const HEADING_LEVELS: Record<HeadingElementType, 1 | 2 | 3 | 4 | 5 | 6> = {
+  h1: 1,
+  h2: 2,
+  h3: 3,
+  h4: 4,
+  h5: 5,
+  h6: 6,
+};
 
 export const EMPTY_DOCUMENT: SlateEditorDocument = [{type: 'p', children: [{text: ''}]} as CustomElement];
 
@@ -35,6 +52,35 @@ export const getEditorPlainText = (editor: Editor): string => Node.string(editor
 export const getWordCount = (text: string): number => {
   const words = text.trim().match(/\S+/g);
   return words ? words.length : 0;
+};
+
+const isHeadingType = (type: CustomElement['type']): type is HeadingElementType =>
+  type === 'h1' || type === 'h2' || type === 'h3' || type === 'h4' || type === 'h5' || type === 'h6';
+
+const collectDocumentOutline = (nodes: Descendant[], path: number[], outline: DocumentOutlineItem[]): void => {
+  nodes.forEach((node, index) => {
+    if (Text.isText(node)) return;
+    const nodePath = [...path, index];
+    if (SlateElement.isElement(node) && isHeadingType(node.type)) {
+      const title = Node.string(node).trim();
+      if (title) {
+        outline.push({
+          key: nodePath.join('.'),
+          path: nodePath,
+          type: node.type,
+          level: HEADING_LEVELS[node.type],
+          title,
+        });
+      }
+    }
+    collectDocumentOutline(node.children as Descendant[], nodePath, outline);
+  });
+};
+
+export const getDocumentOutline = (value: SlateEditorDocument): DocumentOutlineItem[] => {
+  const outline: DocumentOutlineItem[] = [];
+  collectDocumentOutline(value, [], outline);
+  return outline;
 };
 
 export const getSelectedText = (editor: Editor): string => {

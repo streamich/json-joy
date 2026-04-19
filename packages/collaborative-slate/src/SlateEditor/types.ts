@@ -3,9 +3,9 @@ import type {ReactEditor} from 'slate-react';
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat = 'bold' | 'italic' | 'underline' | 'code';
-export type HeadingElementType = 'h1' | 'h2' | 'h3';
+export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type ListElementType = 'ul' | 'ol';
-export type BlockFormat = 'p' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
+export type BlockFormat = 'p' | 'two-columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
 export type BlockElementType = BlockFormat | 'li';
 
 export interface LinkAttributes {
@@ -28,6 +28,11 @@ export interface BlockAttributes {
 
 export interface ParagraphElement extends BlockAttributes {
   type: 'p';
+  children: CustomText[];
+}
+
+export interface TwoColumnsElement extends BlockAttributes {
+  type: 'two-columns';
   children: CustomText[];
 }
 
@@ -65,6 +70,7 @@ export interface NumberedListElement extends BlockAttributes {
 
 export type CustomElement =
   | ParagraphElement
+  | TwoColumnsElement
   | HeadingElement
   | BlockquoteElement
   | CodeBlockElement
@@ -72,7 +78,7 @@ export type CustomElement =
   | BulletedListElement
   | NumberedListElement;
 
-export type SlateEditorDocument = Descendant[];
+export type SlateEditorDocument = CustomElement[];
 
 export interface ToolbarButtonDefinition<Format extends string = string> {
   key: string;

@@ -1,6 +1,6 @@
 import {rsync} from '@jsonjoy.com/ui';
 import {getActiveAlignment} from './behavior';
-import {getCaretPathInfo, getCharacterCount, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from './util';
+import {getCaretPathInfo, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from './util';
 import type {Editor} from 'slate';
 import type {SlateTextAlign} from './types';
 

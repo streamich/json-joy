@@ -26,8 +26,10 @@ import {
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {LinkToolbarButton} from './LinkToolbarButton';
+import {DocumentOutlineButton} from '../chrome/DocumentOutlineButton';
 
 const blockClass = rule({
+  pos: 'relative',
   pd: '8px 32px',
   bxz: 'border-box',
   ovx: 'auto',
@@ -162,8 +164,11 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => setAlignment(editor, button.format!)),
           })
         ))}
+        
       </div>
       <div className={toolbarContainerClass}>
+        <DocumentOutlineButton editor={editor} contentWidth={300} />
+        <ToolbarSep line />
         {renderItem({
           key: ACTION_BUTTONS[2].key,
           title: ACTION_BUTTONS[2].title,
