@@ -10,10 +10,10 @@ import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
-import type {Editor} from 'slate';
 import {getActiveLink, hasRangeSelection, normalizeLinkHref, removeLink, upsertLink} from '../../behavior/link';
 import {EditorContextPopup} from '../chrome/EditorContextPopup';
 import {useSlateEditorState} from '../../context';
+import type {Editor} from 'slate';
 
 const popupAnchor = {center: true, gap: 12, topIf: 180};
 
@@ -112,31 +112,16 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
     [editor, onVisualChange],
   );
 
-  const handleGoto = React.useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      const href = activeLink?.href ?? normalizeLinkHref(draft);
-      if (!href) return;
-      window.open(href, '_blank', 'noopener,noreferrer');
-      setOpen(false);
-    },
-    [activeLink?.href, draft],
-  );
-
   const popupTitle = activeLink ? 'Edit link' : 'Add link';
   const normalizedDraft = normalizeLinkHref(draft);
 
   const actionRow = !!activeLink && (
     <div className={actionRowClass}>
-      <div className={linkMetaClass} style={{color: styles.light ? styles.g(0.34) : styles.g(0.64)}} title={activeLink.href}>
-        {activeLink.href}
-      </div>
       <div className={actionButtonsClass}>
         <CopyButton
           type="button"
           width={32}
           height={32}
-          border
           rounder
           onMouseDown={preventMouseDown}
           onCopy={() => activeLink.href}
@@ -147,10 +132,9 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
             type="button"
             width={32}
             height={32}
-            border
             rounder
             onMouseDown={preventMouseDown}
-            onClick={handleGoto}
+            to={activeLink?.href ?? normalizeLinkHref(draft)}
           >
             <Iconista set={'lucide' as any} icon={'external-link' as any} width={16} height={16} />
           </BasicButton>
@@ -160,7 +144,6 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
             type="button"
             width={32}
             height={32}
-            border
             rounder
             onMouseDown={preventMouseDown}
             onClick={handleRemove}
@@ -184,6 +167,7 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
           <EditorContextPopup
             title={popupTitle}
             subtitle={activeLink ? 'Update the current link target, copy it, open it, or remove it.' : 'Enter a URL to wrap the current selection.'}
+            headerRight={actionRow}
             minWidth={Math.max(Math.min(560, window.innerWidth * 0.4), 320)}
             applyDisabled={!normalizedDraft}
             onCancel={() => setOpen(false)}
@@ -192,6 +176,7 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
             <div className={inputRowClass}>
               <Input
                 type="text"
+                label='Link'
                 value={draft}
                 placeholder="https://example.com"
                 focus={open}
@@ -206,8 +191,6 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
                   setOpen(false);
                 }}
               />
-
-              {actionRow}
             </div>
           </EditorContextPopup>
         )}
