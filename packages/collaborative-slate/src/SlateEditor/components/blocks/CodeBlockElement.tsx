@@ -18,6 +18,7 @@ import type {CodeBlockElement as CodeBlockElementType} from '../../types';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {css} from 'code-colors-react/lib/style';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 
 const LANGUAGE_OPTIONS = [
   'bash',
@@ -303,14 +304,14 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
     <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
       {readOnly ? (
         <div className={metaInputsClass}>
-          {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: lineCount > 10 ? 34 : 26}}>{fileNameValue || 'Code block'}</span>}
+          {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : lineCount > 10 ? 34 : 26}}>{fileNameValue || 'Code block'}</span>}
           <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
         </div>
       ) : (
         <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
           <div className={metaPreviewClass}>
-            <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: lineCount > 10 ? 34 : 26}}>
-              {fileNameValue || 'Code block'}
+            <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : lineCount > 10 ? 34 : 26}}>
+              {fileNameValue || <Iconista set="bootstrap" icon="file-earmark-code" width={16} height={16} />}
             </span>
           </div>
 
