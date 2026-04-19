@@ -10,6 +10,7 @@ import {SlateFacade} from '../SlateFacade';
 import {withPresenceLeaf} from '../presence/PresenceLeaf';
 import {useSlatePresence} from '../presence/useSlatePresence';
 import {withCodeBlockBreaks} from './behavior';
+import {useCodeSyntaxDecorations} from './codeHighlighting';
 import {handleKeyboardShortcuts} from './keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
@@ -69,6 +70,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   const styles = useStyles();
   const editor = React.useMemo(() => withCodeBlockBreaks(withHistory(withReact(createEditor()))), []);
   const [tick, setTick] = React.useState(0);
+  const [contentVersion, setContentVersion] = React.useState(0);
   const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue), []);
   const resolvedModel = model ?? standaloneModel;
@@ -98,16 +100,23 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     editor,
     userFromMeta: (meta: any) => (meta ? {name: meta.name, color: meta.color} : undefined),
   });
+  const decorateCodeSyntax = useCodeSyntaxDecorations(editor, contentVersion);
 
-  const syncVisualState = React.useCallback(() => {
+  const syncVisualState = React.useCallback((contentChanged = false) => {
     setTick((value) => value + 1);
+    if (contentChanged) setContentVersion((value) => value + 1);
     state.sync(editor);
   }, [editor, state]);
 
-  const refreshAfterEditorChange = React.useCallback(() => {
-    syncVisualState();
+  const refreshAfterEditorChange = React.useCallback((contentChanged = false) => {
+    syncVisualState(contentChanged);
     sendLocalPresence();
   }, [sendLocalPresence, syncVisualState]);
+
+  const handleSlateChange = React.useCallback(() => {
+    const contentChanged = editor.operations.some((operation) => operation.type !== 'set_selection');
+    refreshAfterEditorChange(contentChanged);
+  }, [editor, refreshAfterEditorChange]);
 
   const renderElement = React.useCallback((props: RenderElementProps) => <BlockElement {...(props as any)} />, []);
 
@@ -119,6 +128,17 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   const renderPlaceholder = React.useCallback(
     (props: RenderPlaceholderProps) => <Placeholder {...props}>{placeholder}</Placeholder>,
     [placeholder],
+  );
+
+  const decorateLeaf = React.useCallback(
+    (entry: Parameters<typeof decorate>[0]) => {
+      const presenceRanges = decorate(entry);
+      const syntaxRanges = decorateCodeSyntax(entry);
+      if (!syntaxRanges.length) return presenceRanges;
+      if (!presenceRanges.length) return syntaxRanges;
+      return [...presenceRanges, ...syntaxRanges];
+    },
+    [decorate, decorateCodeSyntax],
   );
 
   const editableStyle: React.CSSProperties = {
@@ -143,11 +163,11 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
         hover
         className={[className, shellClass].filter(Boolean).join(' ')}
       >
-        <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={refreshAfterEditorChange} />
+        <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />
         <div className={editorBodyClass}>
-          <Slate editor={editor} initialValue={placeholderValue} onChange={refreshAfterEditorChange} onSelectionChange={refreshAfterEditorChange}>
+          <Slate editor={editor} initialValue={placeholderValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
             <Editable
-              decorate={decorate}
+              decorate={decorateLeaf}
               renderElement={renderElement}
               renderLeaf={renderLeaf}
               renderPlaceholder={renderPlaceholder}
@@ -162,7 +182,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
                 const handled = handleKeyboardShortcuts(editor, event, {
                   requestLinkMenu: state.requestLinkMenu,
                 });
-                if (handled) refreshAfterEditorChange();
+                if (handled) refreshAfterEditorChange(true);
               }}
             />
           </Slate>

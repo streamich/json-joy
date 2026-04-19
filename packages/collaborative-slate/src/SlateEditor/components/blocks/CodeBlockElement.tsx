@@ -303,7 +303,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
                       renderContext={() => (
                         <EditorContextPopup
                           title="Code block details"
-                          subtitle="Add a file name and set a language manually or from the shared menu."
+                          subtitle="Set a custom file name and a language for syntax highlighting"
                           minWidth={Math.max(Math.min(560, window.innerWidth * 0.38), 320)}
                           onCancel={closePopup}
                           onApply={handleApply}

@@ -10,7 +10,7 @@ const copy = require('clipboard-copy'); // eslint-disable-line
 const CheckIcon = makeIcon({set: 'atlaskit', icon: 'check'});
 const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
 
-const anchor = {horizontal: true, center: true};
+// const anchor = {horizontal: true, center: true};
 
 export interface CopyButtonProps extends BasicButtonProps {
   onCopy: () => string;
@@ -33,7 +33,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({onCopy, tooltip, ...rest}
 
   return (
     <BasicTooltip
-      anchor={anchor}
+      // anchor={anchor}
       show={copied || void 0}
       renderTooltip={copied ? () => t('Copied!') : () => t('Copy')}
       {...tooltip}
