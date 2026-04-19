@@ -16,33 +16,35 @@ import {EditorContextPopup} from '../chrome/EditorContextPopup';
 import type {CodeBlockElement as CodeBlockElementType} from '../../types';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {css} from 'code-colors-react/lib/style';
+import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 
 const LANGUAGE_OPTIONS = [
-  'text',
   'bash',
-  'sh',
-  'zsh',
-  'json',
-  'yaml',
-  'toml',
-  'js',
-  'jsx',
-  'ts',
-  'tsx',
-  'html',
-  'css',
-  'sql',
-  'py',
-  'go',
-  'rust',
-  'java',
   'c',
   'cpp',
+  'css',
+  'go',
+  'html',
+  'java',
+  'js',
+  'json',
+  'jsx',
+  'py',
+  'rust',
+  'sh',
+  'sql',
+  'text',
+  'toml',
+  'ts',
+  'tsx',
+  'yaml',
+  'zsh',
 ];
 
 const codeWrapClass = rule({
   pos: 'relative',
   m: '20px 0',
+  ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
 });
 
 const popupAnchor = {center: true, gap: 12, topIf: 180};
@@ -88,27 +90,50 @@ const metaLabelClass = rule({
 });
 
 const metaChipClass = rule({
-  d: 'inline-flex',
-  ai: 'center',
-  gap: '8px',
-  pd: '5px 9px',
-  bdrad: '999px',
-  tt: 'uppercase',
-  ls: '0.06em',
-  fz: '11px',
+  fz: '12px',
 });
 
 const codePreClass = rule({
   m: '0',
   ovx: 'auto',
-  pd: '16px 18px 18px',
+  d: 'flex',
+  ai: 'stretch',
   ...css(),
+});
+
+const gutterClass = rule({
+  flexShrink: 0,
+  pd: '16px 12px 18px 18px',
+  us: 'none',
+  pe: 'none',
+  ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
+  fz: '0.9rem',
+  lh: '1.7',
+  op: 0.3,
+  whiteSpace: 'pre',
+  ta: 'right',
+  bdr: '1px solid rgba(127,127,127,0.1)',
 });
 
 const codeClass = rule({
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
   fz: '0.9rem',
   lh: '1.7',
+  d: 'block',
+  pos: 'relative',
+  flex: '1',
+  minW: '0',
+  pd: '16px 18px 18px 14px',
+  '&::before': {
+    content: '""',
+    pos: 'absolute',
+    t: '0',
+    h: '100%',
+    l: '80ch',
+    w: '1px',
+    bg: 'rgba(127,127,127,0.12)',
+    pointerEvents: 'none',
+  },
 });
 
 const popupFieldRowClass = rule({
@@ -221,9 +246,17 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
 
   const metaBarStyle: React.CSSProperties = {
     borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
-    // background: styles.light ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.78)',
-    // color: '#475569',
   };
+
+  const lineCount = React.useMemo(() => {
+    const text = element.children.map((c) => c.text).join('');
+    return (text.match(/\n/g)?.length ?? 0) + 1;
+  }, [element.children]);
+
+  const lineNumbers = React.useMemo(
+    () => Array.from({length: lineCount}, (_, i) => String(i + 1)).join('\n'),
+    [lineCount],
+  );
 
   const languageValue = element.language?.trim() || '';
   const fileNameValue = element.fileName?.trim() || '';
@@ -255,114 +288,114 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
     [languageDraft],
   );
 
+  const header = (!readOnly || showReadOnlyMeta) && (
+    <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
+      {readOnly ? (
+        <div className={metaInputsClass}>
+          {!!fileNameValue && <span className={metaLabelClass}>{fileNameValue || 'Code block'}</span>}
+          {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
+        </div>
+      ) : (
+        <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
+          <div className={metaPreviewClass}>
+            <span className={metaLabelClass} style={!fileNameValue ? {opacity: 0.68} : undefined}>
+              {fileNameValue || 'Code block'}
+            </span>
+          </div>
+
+          <div className={metaActionsClass}>
+            {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
+            <anchorContext.Provider value={handle}>
+              <PopupControlled
+                refToggle={handle.ref}
+                open={open}
+                onEsc={closePopup}
+                onClickAway={closePopup}
+                onHeadClick={handleToggle}
+                renderContext={() => (
+                  <EditorContextPopup
+                    title="Code block details"
+                    subtitle="Set a custom file name and a language for syntax highlighting"
+                    minWidth={Math.max(Math.min(333, window.innerWidth * 0.38), 320)}
+                    onCancel={closePopup}
+                    onApply={handleApply}
+                  >
+                    <Input
+                      type="text"
+                      value={fileNameDraft}
+                      label="File name"
+                      placeholder="file.txt"
+                      onChange={setFileNameDraft}
+                      onKeyDown={handleInputKeyDown}
+                      onEnter={handleInputEnter}
+                      onEsc={handleInputEscape}
+                      onBlur={() => {
+                        if (languageDraft.trim() === '') {
+                          // Get extension from file name
+                          const extension = fileNameDraft.split('.').pop()?.trim() || '';
+                          if (extension && extension !== languageDraft.trim()) {
+                            setLanguageDraft(extension);
+                          }
+                        }
+                      }}
+                    />
+
+                    <div className={popupFieldRowClass}>
+                      <Input
+                        type="text"
+                        value={languageDraft}
+                        label="Language"
+                        placeholder="txt"
+                        onChange={setLanguageDraft}
+                        onKeyDown={handleInputKeyDown}
+                        onEnter={handleInputEnter}
+                        onEsc={handleInputEscape}
+                      />
+
+                      <Popup
+                        renderContext={() => (
+                          <MoveToViewport vertical>
+                            <ContextMenu inset menu={languageMenu} />
+                          </MoveToViewport>
+                        )}
+                      >
+                        <BasicButton
+                          type="button"
+                          width={'auto'}
+                          height={32}
+                          compact
+                          border
+                          onMouseDown={preventMouseDown}
+                        >
+                          Common
+                        </BasicButton>
+                      </Popup>
+                    </div>
+                  </EditorContextPopup>
+                )}
+              >
+                <BasicButtonMore
+                  type="button"
+                  width={28}
+                  height={28}
+                  rounder
+                  tooltip="Code block options"
+                  onMouseDown={preventMouseDown}
+                />
+              </PopupControlled>
+            </anchorContext.Provider>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div {...attributes} className={codeWrapClass} style={{textAlign: element.align}}>
       <Paper round hover>
-        {(!readOnly || showReadOnlyMeta) && (
-          <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
-            {readOnly ? (
-              <div className={metaInputsClass}>
-                {!!fileNameValue && <span className={metaLabelClass}>{fileNameValue}</span>}
-                {!!languageValue && (
-                  <span
-                    className={metaChipClass}
-                    style={{background: styles.g(0, 0.05), color: '#475569', marginLeft: 'auto'}}
-                  >
-                    {languageValue}
-                  </span>
-                )}
-              </div>
-            ) : (
-              <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
-                <div className={metaPreviewClass}>
-                  <span className={metaLabelClass} style={!fileNameValue ? {opacity: 0.68} : undefined}>
-                    {fileNameValue || 'Code block'}
-                  </span>
-                  {!!languageValue && (
-                    <span className={metaChipClass} style={{background: styles.g(0, 0.05), color: '#475569'}}>
-                      {languageValue}
-                    </span>
-                  )}
-                </div>
-
-                <div className={metaActionsClass}>
-                  <anchorContext.Provider value={handle}>
-                    <PopupControlled
-                      refToggle={handle.ref}
-                      open={open}
-                      onEsc={closePopup}
-                      onClickAway={closePopup}
-                      onHeadClick={handleToggle}
-                      renderContext={() => (
-                        <EditorContextPopup
-                          title="Code block details"
-                          subtitle="Set a custom file name and a language for syntax highlighting"
-                          minWidth={Math.max(Math.min(560, window.innerWidth * 0.38), 320)}
-                          onCancel={closePopup}
-                          onApply={handleApply}
-                        >
-                          <Input
-                            type="text"
-                            value={fileNameDraft}
-                            label="File name"
-                            placeholder="snippet.ts"
-                            focus={open}
-                            onChange={setFileNameDraft}
-                            onKeyDown={handleInputKeyDown}
-                            onEnter={handleInputEnter}
-                            onEsc={handleInputEscape}
-                          />
-
-                          <div className={popupFieldRowClass}>
-                            <Input
-                              type="text"
-                              value={languageDraft}
-                              label="Language"
-                              placeholder="tsx"
-                              onChange={setLanguageDraft}
-                              onKeyDown={handleInputKeyDown}
-                              onEnter={handleInputEnter}
-                              onEsc={handleInputEscape}
-                            />
-
-                            <Popup
-                              renderContext={() => (
-                                <MoveToViewport vertical>
-                                  <ContextMenu inset menu={languageMenu} />
-                                </MoveToViewport>
-                              )}
-                            >
-                              <BasicButton
-                                type="button"
-                                width={'auto'}
-                                height={32}
-                                compact
-                                border
-                                onMouseDown={preventMouseDown}
-                              >
-                                Common
-                              </BasicButton>
-                            </Popup>
-                          </div>
-                        </EditorContextPopup>
-                      )}
-                    >
-                      <BasicButtonMore
-                        type="button"
-                        width={28}
-                        height={28}
-                        rounder
-                        tooltip="Code block options"
-                        onMouseDown={preventMouseDown}
-                      />
-                    </PopupControlled>
-                  </anchorContext.Provider>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {header}
         <pre className={codePreClass}>
+          <div contentEditable={false} className={gutterClass} aria-hidden="true">{lineNumbers}</div>
           <code className={codeClass}>{children}</code>
         </pre>
       </Paper>

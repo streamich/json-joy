@@ -29,11 +29,12 @@ const useBlockClass = makeRule((theme) => ({
 }));
 
 export interface LabelProps {
+  className?: string;
   children: React.ReactNode;
 }
 
-export const Label: React.FC<LabelProps> = ({children}) => {
+export const Label: React.FC<LabelProps> = ({className, children}) => {
   const dynamicBlockClass = useBlockClass();
 
-  return <span className={blockClass + dynamicBlockClass}>{children}</span>;
+  return <span className={blockClass + dynamicBlockClass + (className ? ` ${className}` : '')}>{children}</span>;
 };

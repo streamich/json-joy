@@ -52,7 +52,7 @@ const initialValue: SlateEditorDocument = [
     type: 'code-block',
     language: 'js',
     fileName: 'editor-demo.js',
-    children: [{text: 'import {SlateEditor} from "@jsonjoy.com/collaborative-slate";\n\n<SlateEditor autoFocus={false} initialValue={document} />'}],
+    children: [{text: '//Import the editor React component\nimport {SlateEditor} from "@jsonjoy.com/collaborative-slate";\n\n//Use the editor component\n<SlateEditor autoFocus={false} initialValue={document} />'}],
   },
 ];
 
