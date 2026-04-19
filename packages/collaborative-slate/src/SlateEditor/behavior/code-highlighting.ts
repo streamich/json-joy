@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {tokenize, type Token, type TokenNode} from 'code-colors';
+import {tokenize, tokenizeAsync, type Token, type TokenNode} from 'code-colors';
 import {BaseRange, Editor, Element as SlateElement, Node, Path} from 'slate';
-import type {CodeBlockElement} from './types';
+import {CodeBlockElement} from '../types';
 
 const PLAIN_TEXT_LANGUAGES = new Set(['', 'plain', 'plaintext', 'text', 'txt']);
 
@@ -21,9 +21,7 @@ const EMPTY: SyntaxRange[] = [];
 const normalizeLanguage = (language?: string): string | undefined => {
   const normalized = language?.trim().toLowerCase() ?? '';
   if (language === 'jsonc') return 'json';
-  if (language === 'ts') return 'js';
-  if (language === 'typescript') return 'js';
-  if (language === 'jsx') return 'js';
+  if (language === 'typescript') return 'ts';
   return PLAIN_TEXT_LANGUAGES.has(normalized) ? undefined : normalized;
 };
 
@@ -124,6 +122,9 @@ interface CacheEntry {
 
 export const useCodeSyntaxDecorations = (_editor: Editor, _version: number) => {
   const cacheRef = React.useRef<Map<string, CacheEntry>>(new Map());
+  const loadedLangsRef = React.useRef<Set<string>>(new Set());
+  const pendingLangsRef = React.useRef<Set<string>>(new Set());
+  const [asyncTick, setAsyncTick] = React.useState(0);
 
   return React.useCallback(
     (entry: [node: unknown, path: Path]): SyntaxRange[] => {
@@ -149,14 +150,28 @@ export const useCodeSyntaxDecorations = (_editor: Editor, _version: number) => {
 
       try {
         const tree = tokenize(code, language);
+        if (tree[0][0] !== 'language-' + language) throw new Error('grammar-not-loaded');
         const segments = flattenTokenTree(tree);
         const decorations = buildDecorationsForBlock(texts, segments);
         cacheRef.current.set(blockId, {codeKey, decorations});
         return decorations;
       } catch {
+        if (!loadedLangsRef.current.has(language) && !pendingLangsRef.current.has(language)) {
+          pendingLangsRef.current.add(language);
+          tokenizeAsync('', language)
+            .then(() => {
+              pendingLangsRef.current.delete(language);
+              loadedLangsRef.current.add(language);
+              cacheRef.current.clear();
+              setAsyncTick((t) => t + 1);
+            })
+            .catch(() => {
+              pendingLangsRef.current.delete(language);
+            });
+        }
         return EMPTY;
       }
     },
-    [],
+    [asyncTick],
   );
 };
