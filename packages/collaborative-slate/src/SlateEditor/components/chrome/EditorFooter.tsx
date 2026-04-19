@@ -62,7 +62,7 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
 
   const infoColor = styles.light ? styles.g(0.34) : styles.g(0.68);
   const selectionSummary = selectionText
-    ? `${pluralize(getWordCount(selectionText), 'word')} selected`
+    ? `${pluralize(getWordCount(selectionText), 'word')} (${pluralize(selectionText.length, 'char')}) selected`
     : '';
   const statusText = readOnly ? 'Read-only' : focused ? 'Editing' : '';
 

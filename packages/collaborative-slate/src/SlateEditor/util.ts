@@ -37,8 +37,6 @@ export const getWordCount = (text: string): number => {
   return words ? words.length : 0;
 };
 
-export const getCharacterCount = (text: string): number => text.length;
-
 export const getSelectedText = (editor: Editor): string => {
   const {selection} = editor;
   if (!selection || Range.isCollapsed(selection)) return '';
@@ -116,4 +114,4 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
 };
 
 export const pluralize = (count: number, singular: string, plural = singular + 's'): string =>
-  `${count} ${count === 1 ? singular : plural}`;
+  `${Intl.NumberFormat().format(count)} ${count === 1 ? singular : plural}`;

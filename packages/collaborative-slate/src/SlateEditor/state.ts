@@ -42,7 +42,7 @@ export class SlateEditorState {
     const text = getEditorPlainText(editor);
     const caret = getCaretPathInfo(editor);
     this.wordCount.set(getWordCount(text));
-    this.characterCount.set(getCharacterCount(text));
+    this.characterCount.set(text.length);
     this.currentBlock.set(getCurrentBlockLabel(editor));
     this.caretPath.set(caret.path);
     this.caretLinkHref.set(caret.linkHref ?? '');
