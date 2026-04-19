@@ -22,7 +22,9 @@ export interface LeafProps extends RenderLeafProps {
 export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
   const styles = useStyles();
   const tokenStyle = getCodeTokenStyle(leaf.codeTokenTypes);
+  const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
   let content = children;
+
 
   if (leaf.bold) content = <strong style={{fontWeight: 700}}>{content}</strong>;
   if (leaf.italic) content = <em>{content}</em>;
@@ -49,7 +51,6 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
       <a
         {...attributes}
         className={linkClass}
-        style={tokenStyle}
         href={leaf.a.href}
         target="_blank"
         rel="noreferrer noopener"
@@ -63,5 +64,5 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
     );
   }
 
-  return <span {...attributes} style={tokenStyle}>{content}</span>;
+  return <span {...attributes} className={tokenClassName} style={tokenStyle}>{content}</span>;
 };
