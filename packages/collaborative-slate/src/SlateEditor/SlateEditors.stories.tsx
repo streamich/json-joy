@@ -51,6 +51,7 @@ const initialValue: SlateEditorDocument = [
   {
     type: 'code-block',
     language: 'tsx',
+    fileName: 'editor-demo.tsx',
     children: [{text: '<SlateEditor autoFocus={false} initialValue={document} />'}],
   },
 ];

@@ -38,6 +38,13 @@ const pathLinkClass = rule({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   verticalAlign: 'bottom',
+  textDecoration: 'underline',
+  textDecorationThickness: '1px',
+  textUnderlineOffset: '4px',
+  textDecorationColor: 'rgb(from currentColor r g b / 0.2)',
+  '&:hover': {
+    textDecorationColor: 'currentColor',
+  },
 });
 
 export interface EditorFooterProps {}
@@ -58,7 +65,6 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
     ? `${pluralize(getWordCount(selectionText), 'word')} selected`
     : '';
   const statusText = readOnly ? 'Read-only' : focused ? 'Editing' : '';
-  const linkColor = styles.light ? '#0b63ce' : '#76b6ff';
 
   return (
     <div className={footerClass} style={{color: infoColor}}>
@@ -81,7 +87,6 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
                   target="_blank"
                   rel="noreferrer noopener"
                   title={caretLinkHref}
-                  style={{color: linkColor}}
                   onMouseDown={(event) => {
                     event.preventDefault();
                   }}

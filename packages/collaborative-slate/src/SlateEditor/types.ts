@@ -44,6 +44,7 @@ export interface BlockquoteElement extends BlockAttributes {
 export interface CodeBlockElement extends BlockAttributes {
   type: 'code-block';
   language?: string;
+  fileName?: string;
   children: CustomText[];
 }
 

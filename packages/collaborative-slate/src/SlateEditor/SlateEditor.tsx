@@ -9,6 +9,7 @@ import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextB
 import {SlateFacade} from '../SlateFacade';
 import {withPresenceLeaf} from '../presence/PresenceLeaf';
 import {useSlatePresence} from '../presence/useSlatePresence';
+import {withCodeBlockBreaks} from './behavior';
 import {handleKeyboardShortcuts} from './keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
@@ -66,7 +67,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   state: providedState,
 }) => {
   const styles = useStyles();
-  const editor = React.useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = React.useMemo(() => withCodeBlockBreaks(withHistory(withReact(createEditor()))), []);
   const [tick, setTick] = React.useState(0);
   const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue), []);

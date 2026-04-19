@@ -117,6 +117,23 @@ export const clearFormatting = (editor: Editor): void => {
   });
 };
 
+export const insertCodeBlockBreak = (editor: Editor): boolean => {
+  if (!isBlockActive(editor, 'code-block')) return false;
+  Editor.insertText(editor, '\n');
+  return true;
+};
+
+export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
+  const {insertBreak} = editor;
+
+  editor.insertBreak = () => {
+    if (insertCodeBlockBreak(editor)) return;
+    insertBreak();
+  };
+
+  return editor;
+};
+
 export const canUndo = (editor: Editor): boolean => HistoryEditor.isHistoryEditor(editor) && editor.history.undos.length > 0;
 
 export const canRedo = (editor: Editor): boolean => HistoryEditor.isHistoryEditor(editor) && editor.history.redos.length > 0;

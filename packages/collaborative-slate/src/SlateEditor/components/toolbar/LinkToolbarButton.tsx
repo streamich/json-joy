@@ -3,7 +3,6 @@ import {flushSync} from 'react-dom';
 import {rule} from 'nano-theme';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
-import {ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {PopupControlled} from '@jsonjoy.com/ui/lib/4-card/Popup/PopupControlled';
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
@@ -13,27 +12,15 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
 import type {Editor} from 'slate';
 import {getActiveLink, hasRangeSelection, normalizeLinkHref, removeLink, upsertLink} from '../../behavior/link';
+import {EditorContextPopup} from '../chrome/EditorContextPopup';
 import {useSlateEditorState} from '../../context';
 
 const popupAnchor = {center: true, gap: 12, topIf: 180};
 
-const popupBodyClass = rule({
+const inputRowClass = rule({
   d: 'flex',
   fld: 'column',
   gap: '10px',
-  pd: '12px',
-});
-
-const titleClass = rule({
-  fz: '12px',
-  lh: '1.45',
-});
-
-const inputRowClass = rule({
-  d: 'grid',
-  gridTemplateColumns: '1fr auto',
-  gap: '8px',
-  ai: 'center',
 });
 
 const linkMetaClass = rule({
@@ -194,52 +181,35 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
         onClickAway={() => setOpen(false)}
         onHeadClick={handleToggle}
         renderContext={() => (
-          <ContextPane minWidth={Math.max(Math.min(560, window.innerWidth * 0.4), 320)}>
-            <div className={popupBodyClass}>
-              <div className={titleClass} style={{color: styles.light ? styles.g(0.34) : styles.g(0.7)}}>
-                <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
-                  {popupTitle}
-                </strong>
-                {activeLink ? 'Update the current link target, copy it, open it, or remove it.' : 'Enter a URL to wrap the current selection.'}
-              </div>
-
-              <div className={inputRowClass}>
-                <Input
-                  type="text"
-                  value={draft}
-                  placeholder="https://example.com"
-                  focus={open}
-                  select={open}
-                  onChange={setDraft}
-                  onEnter={(event) => {
-                    event.preventDefault();
-                    handleApply();
-                  }}
-                  onEsc={(event) => {
-                    event.preventDefault();
-                    setOpen(false);
-                  }}
-                />
-                <BasicButton
-                  type="button"
-                  width={'auto'}
-                  height={32}
-                  compact
-                  border
-                  disabled={!normalizedDraft}
-                  onMouseDown={preventMouseDown}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleApply();
-                  }}
-                >
-                  Apply
-                </BasicButton>
-              </div>
+          <EditorContextPopup
+            title={popupTitle}
+            subtitle={activeLink ? 'Update the current link target, copy it, open it, or remove it.' : 'Enter a URL to wrap the current selection.'}
+            minWidth={Math.max(Math.min(560, window.innerWidth * 0.4), 320)}
+            applyDisabled={!normalizedDraft}
+            onCancel={() => setOpen(false)}
+            onApply={handleApply}
+          >
+            <div className={inputRowClass}>
+              <Input
+                type="text"
+                value={draft}
+                placeholder="https://example.com"
+                focus={open}
+                select={open}
+                onChange={setDraft}
+                onEnter={(event) => {
+                  event.preventDefault();
+                  handleApply();
+                }}
+                onEsc={(event) => {
+                  event.preventDefault();
+                  setOpen(false);
+                }}
+              />
 
               {actionRow}
             </div>
-          </ContextPane>
+          </EditorContextPopup>
         )}
       >
         <ToolbarItem
