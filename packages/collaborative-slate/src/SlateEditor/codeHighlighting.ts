@@ -20,6 +20,10 @@ const EMPTY: SyntaxRange[] = [];
 
 const normalizeLanguage = (language?: string): string | undefined => {
   const normalized = language?.trim().toLowerCase() ?? '';
+  if (language === 'jsonc') return 'json';
+  if (language === 'ts') return 'js';
+  if (language === 'typescript') return 'js';
+  if (language === 'jsx') return 'js';
   return PLAIN_TEXT_LANGUAGES.has(normalized) ? undefined : normalized;
 };
 
