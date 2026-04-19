@@ -1,5 +1,5 @@
 import {Editor} from 'slate';
-import {insertCodeBlockBreak, redo, setAlignment, toggleBlock, toggleMark, undo} from './behavior';
+import {insertCodeBlockBreak, insertCodeBlockExit, redo, setAlignment, toggleBlock, toggleMark, undo} from './behavior';
 import {getActiveLink, hasRangeSelection} from './behavior/link';
 import type {KeyboardEvent} from 'react';
 
@@ -17,6 +17,12 @@ export const handleKeyboardShortcuts = (
 
   if (key === 'enter' && primary) {
     if (!insertCodeBlockBreak(editor)) return false;
+    event.preventDefault();
+    return true;
+  }
+
+  if (key === 'enter' && event.shiftKey && !primary) {
+    if (!insertCodeBlockExit(editor)) return false;
     event.preventDefault();
     return true;
   }

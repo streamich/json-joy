@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement, Transforms} from 'slate';
+import {Editor, Element as SlateElement, Path, Transforms} from 'slate';
 import {HistoryEditor} from 'slate-history';
 import type {
   BlockFormat,
@@ -123,12 +123,31 @@ export const insertCodeBlockBreak = (editor: Editor): boolean => {
   return true;
 };
 
+export const insertCodeBlockExit = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection) return false;
+  const [match] = Editor.nodes(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && node.type === 'code-block',
+  });
+  if (!match) return false;
+  const [, path] = match;
+  const afterPath = Path.next(path);
+  Transforms.insertNodes(editor, {type: 'p', children: [{text: ''}]} as CustomElement, {at: afterPath});
+  Transforms.select(editor, afterPath);
+  return true;
+};
+
 export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
   const {insertBreak} = editor;
 
   editor.insertBreak = () => {
     if (insertCodeBlockBreak(editor)) return;
+    const inHeading = isBlockActive(editor, 'h1') || isBlockActive(editor, 'h2') || isBlockActive(editor, 'h3') || isBlockActive(editor, 'blockquote');
     insertBreak();
+    if (inHeading) {
+      Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>);
+    }
   };
 
   return editor;
