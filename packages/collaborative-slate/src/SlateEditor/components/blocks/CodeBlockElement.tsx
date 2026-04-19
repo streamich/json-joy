@@ -15,6 +15,7 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {EditorContextPopup} from '../chrome/EditorContextPopup';
 import type {CodeBlockElement as CodeBlockElementType} from '../../types';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
+import {css} from 'code-colors-react/lib/style';
 
 const LANGUAGE_OPTIONS = [
   'text',
@@ -45,11 +46,6 @@ const codeWrapClass = rule({
 });
 
 const popupAnchor = {center: true, gap: 12, topIf: 180};
-
-const panelClass = rule({
-  ov: 'hidden',
-  bdrad: '18px',
-});
 
 const metaBarClass = rule({
   d: 'flex',
@@ -106,6 +102,7 @@ const codePreClass = rule({
   m: '0',
   ovx: 'auto',
   pd: '16px 18px 18px',
+  ...css(),
 });
 
 const codeClass = rule({
@@ -224,12 +221,8 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
 
   const metaBarStyle: React.CSSProperties = {
     borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
-    background: styles.light ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.78)',
-    color: '#475569',
-  };
-
-  const codeStyle: React.CSSProperties = {
-    color: '#162132',
+    // background: styles.light ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.78)',
+    // color: '#475569',
   };
 
   const languageValue = element.language?.trim() || '';
@@ -369,7 +362,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
             )}
           </div>
         )}
-        <pre className={codePreClass} style={codeStyle}>
+        <pre className={codePreClass}>
           <code className={codeClass}>{children}</code>
         </pre>
       </Paper>

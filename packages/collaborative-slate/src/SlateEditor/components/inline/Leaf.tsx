@@ -2,7 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import type {RenderLeafProps} from 'slate-react';
-import {getCodeTokenStyle, type CodeSyntaxDecoration} from '../../codeHighlighting';
+import {type CodeSyntaxDecoration} from '../../codeHighlighting';
 import type {CustomText} from '../../types';
 
 const linkClass = rule({
@@ -21,7 +21,6 @@ export interface LeafProps extends RenderLeafProps {
 
 export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
   const styles = useStyles();
-  const tokenStyle = getCodeTokenStyle(leaf.codeTokenTypes);
   const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
   let content = children;
 
@@ -64,5 +63,5 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
     );
   }
 
-  return <span {...attributes} className={tokenClassName} style={tokenStyle}>{content}</span>;
+  return <span {...attributes} className={tokenClassName}>{content}</span>;
 };

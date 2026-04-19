@@ -5,15 +5,6 @@ import type {CodeBlockElement} from './types';
 
 const PLAIN_TEXT_LANGUAGES = new Set(['', 'plain', 'plaintext', 'text', 'txt']);
 
-const COMMENT_TYPES = new Set(['comment', 'prolog', 'doctype', 'cdata']);
-const PUNCTUATION_TYPES = new Set(['punctuation']);
-const PROPERTY_TYPES = new Set(['property', 'tag', 'boolean', 'number', 'constant', 'symbol', 'deleted']);
-const STRING_TYPES = new Set(['selector', 'attr-name', 'string', 'char', 'builtin', 'inserted']);
-const OPERATOR_TYPES = new Set(['operator', 'entity', 'url']);
-const KEYWORD_TYPES = new Set(['atrule', 'attr-value', 'keyword']);
-const FUNCTION_TYPES = new Set(['function', 'class-name']);
-const VARIABLE_TYPES = new Set(['regex', 'important', 'variable']);
-
 export interface CodeSyntaxDecoration {
   codeTokenTypes?: string[];
 }
@@ -120,34 +111,6 @@ const buildDecorationsForBlock = (
   }
 
   return decorations;
-};
-
-const hasAnyType = (tokenTypes: string[], candidates: Set<string>): boolean => {
-  for (const type of tokenTypes) if (candidates.has(type)) return true;
-  return false;
-};
-
-export const getCodeTokenStyle = (tokenTypes?: string[]): React.CSSProperties | undefined => {
-  if (!tokenTypes?.length) return undefined;
-
-  const style: React.CSSProperties = {};
-
-  if (hasAnyType(tokenTypes, COMMENT_TYPES)) style.color = 'slategray';
-  else if (hasAnyType(tokenTypes, PUNCTUATION_TYPES)) style.color = '#999';
-  else if (hasAnyType(tokenTypes, PROPERTY_TYPES)) style.color = '#905';
-  else if (hasAnyType(tokenTypes, STRING_TYPES)) style.color = '#690';
-  else if (hasAnyType(tokenTypes, OPERATOR_TYPES)) {
-    style.color = '#9a6e3a';
-    style.background = 'hsla(0, 0%, 100%, 0.5)';
-  } else if (hasAnyType(tokenTypes, KEYWORD_TYPES)) style.color = '#07a';
-  else if (hasAnyType(tokenTypes, FUNCTION_TYPES)) style.color = '#dd4a68';
-  else if (hasAnyType(tokenTypes, VARIABLE_TYPES)) style.color = '#e90';
-
-  if (tokenTypes.includes('bold') || tokenTypes.includes('important')) style.fontWeight = 700;
-  if (tokenTypes.includes('italic')) style.fontStyle = 'italic';
-  if (tokenTypes.includes('namespace')) style.opacity = 0.7;
-
-  return Object.keys(style).length ? style : undefined;
 };
 
 interface CacheEntry {

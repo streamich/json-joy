@@ -30,16 +30,13 @@ import {LinkToolbarButton} from './LinkToolbarButton';
 const blockClass = rule({
   pd: '8px 32px',
   bxz: 'border-box',
+  ovx: 'auto',
 });
 
 const toolbarContainerClass = rule({
   d: 'flex',
   fld: 'row',
   ai: 'center',
-  // pd: '16px',
-  // pd: '10px 16px 8px',
-  // pd: '8px 24px',
-  // pd: '8px 32px',
   h: '32px',
 });
 
