@@ -84,6 +84,7 @@
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/json-equal": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
+    "code-colors": "^2.4.0",
     "json-joy": "workspace:*",
     "nano-theme": "^1.5.0"
   },

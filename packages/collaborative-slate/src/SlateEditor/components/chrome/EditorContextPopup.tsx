@@ -13,8 +13,16 @@ const bodyClass = rule({
 });
 
 const titleClass = rule({
+  d: 'flex',
+  jc: 'space-between',
+  // ai: 'center',
   fz: '12px',
   lh: '1.45',
+});
+
+const titleGroupClass = rule({
+  d: 'flex',
+  fld: 'column',
 });
 
 const actionsClass = rule({
@@ -26,6 +34,7 @@ const actionsClass = rule({
 export interface EditorContextPopupProps {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
+  headerRight?: React.ReactNode;
   children: React.ReactNode;
   onCancel: () => void;
   onApply: () => void;
@@ -38,6 +47,7 @@ export interface EditorContextPopupProps {
 export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   title,
   subtitle,
+  headerRight,
   children,
   onCancel,
   onApply,
@@ -73,14 +83,19 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       <ContextPane minWidth={minWidth}>
         <div className={bodyClass}>
           <div className={titleClass} style={{color: styles.light ? styles.g(0.34) : styles.g(0.7)}}>
-            <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
-              {title}
-            </strong>
-            {subtitle}
+            <div className={titleGroupClass}>
+              <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
+                {title}
+              </strong>
+              {subtitle}
+            </div>
+            {!!headerRight && (
+              <div className={titleGroupClass}>
+                {headerRight}
+              </div>
+            )}
           </div>
-
           {children}
-
           <div className={actionsClass}>
             <BasicButton
               type="button"

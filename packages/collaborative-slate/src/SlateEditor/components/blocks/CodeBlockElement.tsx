@@ -14,6 +14,7 @@ import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {EditorContextPopup} from '../chrome/EditorContextPopup';
 import type {CodeBlockElement as CodeBlockElementType} from '../../types';
+import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 
 const LANGUAGE_OPTIONS = [
   'text',
@@ -221,12 +222,6 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
     event.stopPropagation();
   }, []);
 
-  const panelStyle: React.CSSProperties = {
-    border: `1px solid ${styles.g(0, styles.light ? 0.1 : 0.14)}`,
-    background: styles.light ? '#f8fafc' : '#f4f7fb',
-    boxShadow: `inset 0 1px 0 ${styles.g(1, 0.22)}`,
-  };
-
   const metaBarStyle: React.CSSProperties = {
     borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
     background: styles.light ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.78)',
@@ -269,7 +264,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
 
   return (
     <div {...attributes} className={codeWrapClass} style={{textAlign: element.align}}>
-      <div className={panelClass} style={panelStyle}>
+      <Paper round hover>
         {(!readOnly || showReadOnlyMeta) && (
           <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
             {readOnly ? (
@@ -377,7 +372,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
         <pre className={codePreClass} style={codeStyle}>
           <code className={codeClass}>{children}</code>
         </pre>
-      </div>
+      </Paper>
     </div>
   );
 };

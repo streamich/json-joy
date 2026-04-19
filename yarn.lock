@@ -2329,6 +2329,7 @@ __metadata:
     "@jsonjoy.com/ui": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    code-colors: "npm:^2.4.0"
     json-joy: "workspace:*"
     nano-theme: "npm:^1.5.0"
     react: "npm:^19.2.3"
