@@ -9,7 +9,6 @@ import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
 import {getActiveLink, hasRangeSelection, normalizeLinkHref, removeLink, upsertLink} from '../../behavior/link';
 import {EditorContextPopup} from '../chrome/EditorContextPopup';
@@ -51,7 +50,6 @@ export interface LinkToolbarButtonProps {
 }
 
 export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, readOnly, onVisualChange}) => {
-  const styles = useStyles();
   const state = useSlateEditorState();
   const handle = useAnchorPointHandle(popupAnchor);
   const activeLink = getActiveLink(editor);
@@ -196,7 +194,7 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
       >
         <ToolbarItem
           type="button"
-          selected={!readOnly && (open || hasSelection || !!activeLink)}
+          selected={!readOnly && (open || !!activeLink)}
           disabled={!canOpen}
           onMouseDown={preventMouseDown}
           tooltip={{nowrap: true, renderTooltip: () => popupTitle, shortcut: 'Cmd+K'}}

@@ -44,7 +44,7 @@ const LANGUAGE_OPTIONS = [
 
 const codeWrapClass = rule({
   pos: 'relative',
-  m: '28px 0',
+  mr: '12px 0',
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
 });
 
