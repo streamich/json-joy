@@ -342,7 +342,6 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
                       onEsc={handleInputEscape}
                       onBlur={() => {
                         if (languageDraft.trim() === '') {
-                          // Get extension from file name
                           const extension = fileNameDraft.split('.').pop()?.trim() || '';
                           if (extension && extension !== languageDraft.trim()) {
                             setLanguageDraft(extension);

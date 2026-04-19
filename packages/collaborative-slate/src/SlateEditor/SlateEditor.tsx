@@ -10,7 +10,7 @@ import {SlateFacade} from '../SlateFacade';
 import {withPresenceLeaf} from '../presence/PresenceLeaf';
 import {useSlatePresence} from '../presence/useSlatePresence';
 import {withCodeBlockBreaks} from './behavior';
-import {useCodeSyntaxDecorations} from './codeHighlighting';
+import {useCodeSyntaxDecorations} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
