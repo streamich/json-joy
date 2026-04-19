@@ -57,6 +57,7 @@ const metaBarClass = rule({
   gap: '12px',
   pd: '10px 14px',
   fw: 'wrap',
+  us: 'none',
 });
 
 const metaInputsClass = rule({
