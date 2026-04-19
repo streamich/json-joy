@@ -4,7 +4,7 @@ import type {ReactEditor} from 'slate-react';
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat = 'bold' | 'italic' | 'underline' | 'code';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-export type ListElementType = 'ul' | 'ol';
+export type ListElementType = 'ul' | 'ol' | 'checklist';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
 export type BlockElementType = BlockFormat | 'li';
 
@@ -55,6 +55,7 @@ export interface CodeBlockElement extends BlockAttributes {
 
 export interface ListItemElement extends BlockAttributes {
   type: 'li';
+  checked?: boolean;
   children: CustomText[];
 }
 
@@ -68,6 +69,11 @@ export interface NumberedListElement extends BlockAttributes {
   children: ListItemElement[];
 }
 
+export interface ChecklistListElement extends BlockAttributes {
+  type: 'checklist';
+  children: ListItemElement[];
+}
+
 export type CustomElement =
   | ParagraphElement
   | TwoColumnsElement
@@ -76,7 +82,8 @@ export type CustomElement =
   | CodeBlockElement
   | ListItemElement
   | BulletedListElement
-  | NumberedListElement;
+  | NumberedListElement
+  | ChecklistListElement;
 
 export type SlateEditorDocument = CustomElement[];
 

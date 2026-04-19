@@ -130,6 +130,8 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
       return 'Quote';
     case 'code-block':
       return 'Code block';
+    case 'checklist':
+      return 'Checklist';
     case 'ul':
       return 'Bulleted list';
     case 'ol':

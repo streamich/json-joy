@@ -10,7 +10,7 @@ import type {
 } from './types';
 import {removeLink} from './behavior/link';
 
-export const LIST_TYPES: ListElementType[] = ['ul', 'ol'];
+export const LIST_TYPES: ListElementType[] = ['ul', 'ol', 'checklist'];
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
 export const MARKS: MarkFormat[] = ['bold', 'italic', 'underline', 'code'];
 
@@ -53,7 +53,7 @@ export const getActiveAlignment = (editor: Editor): SlateTextAlign => {
   if (!selection) return 'left';
   const [match] = Editor.nodes(editor, {
     at: Editor.unhangRange(editor, selection),
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'ul' && node.type !== 'ol',
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
   });
   if (!match) return 'left';
   const [element] = match as [CustomElement, number[]];
@@ -95,18 +95,23 @@ const getCurrentListType = (editor: Editor): ListElementType | null => {
 export const toggleBlock = (editor: Editor, format: BlockFormat): void => {
   const isList = isListType(format);
   const isActive = isList ? isListActive(editor, format) : isBlockActive(editor, format);
-
   unwrapLists(editor);
-
   const nextType = isActive ? 'p' : isList ? 'li' : format;
-
   Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>, {
     match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
   });
-
   if (!isActive && isList) {
     Transforms.wrapNodes(editor, {type: format, children: []} as CustomElement, {
       match: (node) => isElement(node) && node.type === 'li',
+    });
+  }
+  if (format === 'checklist' && !isActive) {
+    Transforms.setNodes(editor, {checked: false} as Partial<CustomElement>, {
+      match: (node) => isElement(node) && node.type === 'li',
+    });
+  } else {
+    Transforms.unsetNodes(editor, 'checked', {
+      match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
     });
   }
 };
@@ -117,13 +122,13 @@ export const setAlignment = (editor: Editor, alignment: SlateTextAlign): void =>
 
   if (shouldUnset) {
     Transforms.unsetNodes(editor, 'align', {
-      match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'ul' && node.type !== 'ol',
+      match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
     });
     return;
   }
 
   Transforms.setNodes(editor, {align: alignment} as Partial<CustomElement>, {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type !== 'ul' && node.type !== 'ol',
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
   });
 };
 
@@ -136,6 +141,16 @@ export const clearFormatting = (editor: Editor): void => {
   });
   Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
     match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
+  });
+  Transforms.unsetNodes(editor, 'checked', {
+    match: (node) => isElement(node) && Editor.isBlock(editor, node),
+  });
+};
+
+export const setChecklistItemChecked = (editor: Editor, path: Path, checked: boolean): void => {
+  Transforms.setNodes(editor, {checked} as Partial<CustomElement>, {
+    at: path,
+    match: (node) => isElement(node) && node.type === 'li',
   });
 };
 
@@ -185,7 +200,6 @@ export const insertCodeBlockExit = (editor: Editor): boolean => {
 
 export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
   const {insertBreak} = editor;
-
   editor.insertBreak = () => {
     if (insertCodeBlockBreak(editor)) return;
     const inHeading = isBlockActive(editor, 'h1') || isBlockActive(editor, 'h2') || isBlockActive(editor, 'h3') || isBlockActive(editor, 'blockquote');
@@ -194,7 +208,6 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
       Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>);
     }
   };
-
   return editor;
 };
 
@@ -233,6 +246,7 @@ export const LAYOUT_BUTTONS: ToolbarButtonDefinition<'columns'>[] = [
 export const LIST_BUTTONS: ToolbarButtonDefinition<ListElementType>[] = [
   {key: 'ul', title: 'Bulleted list', iconSet: 'ibm_32', icon: 'list--bulleted', shortcut: 'Cmd+Alt+8', format: 'ul'},
   {key: 'ol', title: 'Numbered list', iconSet: 'ibm_32', icon: 'list--numbered', shortcut: 'Cmd+Alt+7', format: 'ol'},
+  {key: 'checklist', title: 'Checklist', iconSet: 'lucide', icon: 'list-todo', format: 'checklist'},
 ];
 
 export const ALIGNMENT_BUTTONS: ToolbarButtonDefinition<SlateTextAlign>[] = [

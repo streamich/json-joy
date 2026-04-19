@@ -26,6 +26,7 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
       return <CodeBlockElement {...(props as RenderElementProps & {element: any})} />;
     case 'ul':
     case 'ol':
+    case 'checklist':
       return <ListContainerElement {...(props as RenderElementProps & {element: any})} />;
     case 'li':
       return <ListItemElement {...(props as RenderElementProps & {element: any})} />;

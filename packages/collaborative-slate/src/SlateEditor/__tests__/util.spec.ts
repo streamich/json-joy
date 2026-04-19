@@ -43,6 +43,15 @@ describe('SlateEditor util', () => {
     expect(getCurrentBlockLabel(editor)).toBe('Two columns');
   });
 
+  test('returns a checklist label for checklist blocks', () => {
+    const editor = createTestEditor([{type: 'checklist', children: [{type: 'li', checked: false, children: [{text: 'Task'}]}]}]);
+    editor.selection = {
+      anchor: {path: [0, 0, 0], offset: 2},
+      focus: {path: [0, 0, 0], offset: 2},
+    };
+    expect(getCurrentBlockLabel(editor)).toBe('Checklist');
+  });
+
   test('shows placeholder when the current block is a plain paragraph', () => {
     const editor = createTestEditor([{type: 'p', children: [{text: ''}]}]);
     expect(shouldShowPlaceholder(editor)).toBe(true);

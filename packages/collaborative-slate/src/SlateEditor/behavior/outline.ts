@@ -44,6 +44,5 @@ const collectDocumentOutline = (nodes: Descendant[], path: number[], outline: Do
 export const getDocumentOutline = (value: SlateEditorDocument): DocumentOutlineItem[] => {
   const outline: DocumentOutlineItem[] = [];
   collectDocumentOutline(value, [], outline);
-  console.log(outline);
   return outline;
 };

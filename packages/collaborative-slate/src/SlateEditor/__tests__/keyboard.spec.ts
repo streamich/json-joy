@@ -45,6 +45,19 @@ describe('handleKeyboardShortcuts()', () => {
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
 
+  test('turns an empty checklist item into a paragraph on Delete', () => {
+    const editor = createTestEditor([{type: 'checklist', children: [{type: 'li', checked: true, children: [{text: ''}]}]}]);
+    editor.selection = {
+      anchor: {path: [0, 0, 0], offset: 0},
+      focus: {path: [0, 0, 0], offset: 0},
+    };
+    const event = createEvent('Delete');
+    const handled = handleKeyboardShortcuts(editor, event);
+    expect(handled).toBe(true);
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
+  });
+
   test('does not change a non-empty formatted block', () => {
     const editor = createTestEditor([{type: 'blockquote', children: [{text: 'quote'}]}]);
     editor.selection = {
