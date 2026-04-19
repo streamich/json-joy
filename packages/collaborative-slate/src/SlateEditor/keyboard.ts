@@ -1,5 +1,5 @@
 import {Editor} from 'slate';
-import {insertCodeBlockBreak, insertCodeBlockExit, redo, setAlignment, toggleBlock, toggleMark, undo} from './behavior';
+import {insertCodeBlockBreak, insertCodeBlockExit, redo, resetEmptyBlockToParagraph, setAlignment, toggleBlock, toggleMark, undo} from './behavior';
 import {getActiveLink, hasRangeSelection} from './behavior/link';
 import type {KeyboardEvent} from 'react';
 
@@ -14,6 +14,12 @@ export const handleKeyboardShortcuts = (
 ): boolean => {
   const primary = event.metaKey || event.ctrlKey;
   const key = event.key.toLowerCase();
+
+  if ((key === 'backspace' || key === 'delete') && !primary && !event.altKey) {
+    if (!resetEmptyBlockToParagraph(editor)) return false;
+    event.preventDefault();
+    return true;
+  }
 
   if (key === 'enter' && primary) {
     if (!insertCodeBlockBreak(editor)) return false;

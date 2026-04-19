@@ -53,7 +53,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           {children}
         </h2>
       );
-    default:
+    case 'h3':
       return (
         <h3
           {...attributes}
@@ -70,5 +70,58 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           {children}
         </h3>
       );
+    case 'h4':
+      return (
+        <h4
+          {...attributes}
+          className={headingClass}
+          style={{
+            ...shared,
+            fontSize: '1.15rem',
+            fontWeight: 700,
+            margin: '22px 0 10px',
+            lineHeight: 1.4,
+            color: styles.light ? styles.g(0.24) : styles.g(0.8),
+          }}
+        >
+          {children}
+        </h4>
+      );
+    case 'h5':
+      return (
+        <h5
+          {...attributes}
+          className={headingClass}
+          style={{
+            ...shared,
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            margin: '18px 0 8px',
+            lineHeight: 1.5,
+            color: styles.light ? styles.g(0.32) : styles.g(0.72),
+          }}
+        >
+          {children}
+        </h5>
+      );
+    case 'h6':
+      return (
+        <h6
+          {...attributes}
+          className={headingClass}
+          style={{
+            ...shared,
+            fontSize: '1rem',
+            fontWeight: 700,
+            margin: '14px 0 6px',
+            lineHeight: 1.6,
+            color: styles.light ? styles.g(0.4) : styles.g(0.64),
+          }}
+        >
+          {children}
+        </h6>
+      );
+    default:
+      return <div {...attributes}>{children}</div>;
   }
 };

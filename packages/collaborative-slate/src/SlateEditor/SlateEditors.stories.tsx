@@ -1,7 +1,7 @@
 import * as React from 'react';
 import preview from '../../../../.storybook/preview';
 import {SlateEditor} from './SlateEditor';
-import type {SlateEditorDocument} from './types';
+import type {SlateEditorDocument, TwoColumnsElement} from './types';
 
 const Wrap: React.FC<{children: React.ReactNode; scroll?: boolean}> = ({children, scroll}) => (
   <div
@@ -183,6 +183,69 @@ const kitchenSinkValue: SlateEditorDocument = [
     children: [{text: 'Built with care by streamich and contributors. MIT / AGPL-3.0.'}],
   },
 ];
+
+const twoColumnsBlock: TwoColumnsElement = {
+  type: 'two-columns',
+  children: [
+    {text: 'json-joy ships a collaborative Slate editor on top of Peritext, which means structure and inline annotations are preserved as CRDT operations instead of lossy HTML patches. That makes richer layouts possible without introducing a separate document model just for presentation. '},
+    {text: 'This block uses CSS multi-column flow', italic: true},
+    {text: ' so a single block of prose can be read like a compact editorial layout. The content remains regular Slate text, so marks, links, selections, and collaboration metadata still behave the same way they do in a paragraph. '},
+    {text: 'Use it for release notes, dense summaries, or side-by-side style reading experiences where a long paragraph would otherwise feel visually heavy. The layout is attached to the block itself, which keeps the feature predictable when toggling formats from the toolbar.'},
+  ],
+};
+
+const twoColumnsValue: SlateEditorDocument = [
+  {type: 'h1', children: [{text: 'Magazine-style two-column block'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'The toolbar now includes a '},
+      {text: 'Two columns', bold: true},
+      {text: ' block toggle next to the alignment controls. This story starts with the layout already applied so the multi-column rendering is visible immediately.'},
+    ],
+  },
+  twoColumnsBlock,
+  {
+    type: 'p',
+    children: [
+      {text: 'Switch the block back to a paragraph at any time and the content stays intact.'},
+    ],
+  },
+];
+
+const manyHeadingsValue: SlateEditorDocument = [
+  {type: 'h1', children: [{text: 'The Ultimate Guide to json-joy'}]},
+  {type: 'h2', children: [{text: 'Introduction'}]},
+  {type: 'h2', children: [{text: 'Getting Started'}]},
+  {type: 'h3', children: [{text: 'Installation'}]},
+  {type: 'h3', children: [{text: 'Basic Usage'}]},
+  {type: 'h2', children: [{text: 'Advanced Topics'}]},
+  {type: 'h3', children: [{text: 'CRDT Internals'}]},
+  {type: 'h3', children: [{text: 'Performance Tuning'}]},
+  {type: 'h2', children: [{text: 'API Reference'}]},
+  {type: 'h3', children: [{text: 'Model API'}]},
+  {type: 'h3', children: [{text: 'Editor Bindings'}]},
+  {type: 'h2', children: [{text: 'Troubleshooting and FAQs'}]},
+  {type: 'h3', children: [{text: 'Common Issues'}]},
+  {type: 'h3', children: [{text: 'Debugging Tips'}]},
+  {type: 'h2', children: [{text: 'Contributing to json-joy'}]},
+  {type: 'h3', children: [{text: 'How to Contribute'}]},
+  {type: 'h3', children: [{text: 'Code of Conduct'}]},
+  {type: 'h2', children: [{text: 'Release Notes'}]},
+  {type: 'h3', children: [{text: 'Version 1.0.0'}]},
+  {type: 'h3', children: [{text: 'Version 1.1.0'}]},
+  {type: 'h3', children: [{text: 'Version 2.0.0'}]},
+  {type: 'h1', children: [{text: 'Appendix'}]},
+  {type: 'h2', children: [{text: 'Data Model Details'}]},
+  {type: 'h3', children: [{text: 'CRDT Structure'}]},
+  {type: 'h3', children: [{text: 'Serialization Format'}]},
+  {type: 'h2', children: [{text: 'Performance Benchmarks'}]},
+  {type: 'h3', children: [{text: 'Microbenchmarks'}]},
+  {type: 'h3', children: [{text: 'Real-World Scenarios'}]},
+  {type: 'h2', children: [{text: 'Further Reading'}]},
+  {type: 'h3', children: [{text: 'Academic Papers'}]},
+  {type: 'h3', children: [{text: 'Related Projects'}]},
+]
 
 const longValue: SlateEditorDocument = [
   {type: 'h1', children: [{text: 'Building Local-First Apps with json-joy'}]},
@@ -425,6 +488,22 @@ export const KitchenSink = meta.story({
   render: () => (
     <Wrap>
       <SlateEditor autoFocus={false} initialValue={kitchenSinkValue} minHeight={440} height={500} />
+    </Wrap>
+  ),
+});
+
+export const ManyHeadings = meta.story({
+  render: () => (
+    <Wrap>
+      <SlateEditor autoFocus={false} initialValue={manyHeadingsValue} minHeight={440} contentWidth={920} />
+    </Wrap>
+  ),
+});
+
+export const TwoColumns = meta.story({
+  render: () => (
+    <Wrap>
+      <SlateEditor autoFocus={false} initialValue={twoColumnsValue} minHeight={440} contentWidth={920} />
     </Wrap>
   ),
 });

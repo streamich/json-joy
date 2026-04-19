@@ -1,9 +1,9 @@
-import {Editor, Element as SlateElement, Node, Range, Text, type Descendant} from 'slate';
+import {Editor, Element as SlateElement, Node, Range, Text} from 'slate';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import type {Model} from 'json-joy/lib/json-crdt';
 import {FromSlate} from '../sync/FromSlate';
 import {getLinkAttributes} from './behavior/link';
-import type {CustomElement, CustomText, HeadingElementType, SlateEditorDocument} from './types';
+import type {CustomElement, CustomText, SlateEditorDocument} from './types';
 
 const CARET_MARK_ORDER: Array<[keyof Pick<CustomText, 'bold' | 'italic' | 'underline' | 'code'>, string]> = [
   ['bold', 'bold'],
@@ -12,27 +12,17 @@ const CARET_MARK_ORDER: Array<[keyof Pick<CustomText, 'bold' | 'italic' | 'under
   ['code', 'code'],
 ];
 
+const INLINE_FORMAT_KEYS: Array<keyof Pick<CustomText, 'bold' | 'italic' | 'underline' | 'code'>> = [
+  'bold',
+  'italic',
+  'underline',
+  'code',
+];
+
 export interface CaretPathInfo {
   path: string[];
   linkHref?: string;
 }
-
-export interface DocumentOutlineItem {
-  key: string;
-  path: number[];
-  type: HeadingElementType;
-  level: 1 | 2 | 3 | 4 | 5 | 6;
-  title: string;
-}
-
-const HEADING_LEVELS: Record<HeadingElementType, 1 | 2 | 3 | 4 | 5 | 6> = {
-  h1: 1,
-  h2: 2,
-  h3: 3,
-  h4: 4,
-  h5: 5,
-  h6: 6,
-};
 
 export const EMPTY_DOCUMENT: SlateEditorDocument = [{type: 'p', children: [{text: ''}]} as CustomElement];
 
@@ -54,39 +44,35 @@ export const getWordCount = (text: string): number => {
   return words ? words.length : 0;
 };
 
-const isHeadingType = (type: CustomElement['type']): type is HeadingElementType =>
-  type === 'h1' || type === 'h2' || type === 'h3' || type === 'h4' || type === 'h5' || type === 'h6';
-
-const collectDocumentOutline = (nodes: Descendant[], path: number[], outline: DocumentOutlineItem[]): void => {
-  nodes.forEach((node, index) => {
-    if (Text.isText(node)) return;
-    const nodePath = [...path, index];
-    if (SlateElement.isElement(node) && isHeadingType(node.type)) {
-      const title = Node.string(node).trim();
-      if (title) {
-        outline.push({
-          key: nodePath.join('.'),
-          path: nodePath,
-          type: node.type,
-          level: HEADING_LEVELS[node.type],
-          title,
-        });
-      }
-    }
-    collectDocumentOutline(node.children as Descendant[], nodePath, outline);
-  });
-};
-
-export const getDocumentOutline = (value: SlateEditorDocument): DocumentOutlineItem[] => {
-  const outline: DocumentOutlineItem[] = [];
-  collectDocumentOutline(value, [], outline);
-  return outline;
-};
-
 export const getSelectedText = (editor: Editor): string => {
   const {selection} = editor;
   if (!selection || Range.isCollapsed(selection)) return '';
   return Editor.string(editor, selection).trim();
+};
+
+const getCurrentBlock = (editor: Editor): CustomElement | null => {
+  const {selection} = editor;
+  if (selection) {
+    const [match] = Editor.nodes(editor, {
+      at: Editor.unhangRange(editor, selection),
+      match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
+    });
+    if (match) return match[0] as CustomElement;
+  }
+  const firstChild = editor.children[0];
+  return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
+};
+
+export const hasPendingInlineFormatting = (editor: Editor): boolean => {
+  const marks = (Editor.marks(editor) ?? {}) as Partial<CustomText>;
+  if (INLINE_FORMAT_KEYS.some((key) => !!marks[key])) return true;
+  return !!getLinkAttributes(marks);
+};
+
+export const shouldShowPlaceholder = (editor: Editor): boolean => {
+  const block = getCurrentBlock(editor);
+  if (block && block.type !== 'p') return false;
+  return !hasPendingInlineFormatting(editor);
 };
 
 export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
@@ -129,14 +115,8 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
 };
 
 export const getCurrentBlockLabel = (editor: Editor): string => {
-  const {selection} = editor;
-  if (!selection) return 'Paragraph';
-  const [match] = Editor.nodes(editor, {
-    at: Editor.unhangRange(editor, selection),
-    match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-  });
-  if (!match) return 'Paragraph';
-  const [element] = match as [CustomElement, number[]];
+  const element = getCurrentBlock(editor);
+  if (!element) return 'Paragraph';
   switch (element.type) {
     case 'h1':
       return 'Heading 1';
@@ -144,6 +124,8 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
       return 'Heading 2';
     case 'h3':
       return 'Heading 3';
+    case 'two-columns':
+      return 'Two columns';
     case 'blockquote':
       return 'Quote';
     case 'code-block':

@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement, Path, Transforms} from 'slate';
+import {Editor, Element as SlateElement, Node, Path, Range, Transforms} from 'slate';
 import {HistoryEditor} from 'slate-history';
 import type {
   BlockFormat,
@@ -70,6 +70,28 @@ const unwrapLists = (editor: Editor): void => {
   });
 };
 
+const getCurrentBlockEntry = (editor: Editor): [CustomElement, Path] | null => {
+  const {selection} = editor;
+  if (!selection) return null;
+  const match = Editor.above(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && Editor.isBlock(editor, node),
+    mode: 'lowest',
+  });
+  return (match as [CustomElement, Path] | undefined) ?? null;
+};
+
+const getCurrentListType = (editor: Editor): ListElementType | null => {
+  const {selection} = editor;
+  if (!selection) return null;
+  const match = Editor.above(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && isListType(node.type),
+    mode: 'lowest',
+  });
+  return match ? ((match[0] as CustomElement).type as ListElementType) : null;
+};
+
 export const toggleBlock = (editor: Editor, format: BlockFormat): void => {
   const isList = isListType(format);
   const isActive = isList ? isListActive(editor, format) : isBlockActive(editor, format);
@@ -115,6 +137,29 @@ export const clearFormatting = (editor: Editor): void => {
   Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
     match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
   });
+};
+
+export const resetEmptyBlockToParagraph = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection || !Range.isCollapsed(selection)) return false;
+  const entry = getCurrentBlockEntry(editor);
+  if (!entry) return false;
+  const [block] = entry;
+  if (Node.string(block) !== '') return false;
+  if (block.type === 'p') return false;
+  if (block.type === 'li') {
+    const listType = getCurrentListType(editor);
+    if (!listType) {
+      Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
+        match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type === 'li',
+      });
+      return true;
+    }
+    toggleBlock(editor, listType);
+    return true;
+  }
+  toggleBlock(editor, block.type as Exclude<BlockFormat, ListElementType>);
+  return true;
 };
 
 export const insertCodeBlockBreak = (editor: Editor): boolean => {
@@ -179,6 +224,10 @@ export const BLOCK_BUTTONS: ToolbarButtonDefinition<Exclude<BlockFormat, ListEle
   {key: 'h3', title: 'Heading 3', iconSet: 'tabler', icon: 'h-3', shortcut: 'Cmd+Alt+3', format: 'h3'},
   {key: 'blockquote', title: 'Blockquote', iconSet: 'lucide', icon: 'quote', shortcut: 'Cmd+Shift+Q', format: 'blockquote'},
   {key: 'code-block', title: 'Code block', iconSet: 'tabler', icon: 'code', shortcut: 'Cmd+Shift+C', format: 'code-block'},
+];
+
+export const LAYOUT_BUTTONS: ToolbarButtonDefinition<'two-columns'>[] = [
+  {key: 'two-columns', title: 'Two columns', iconSet: 'tabler', icon: 'columns', format: 'two-columns'},
 ];
 
 export const LIST_BUTTONS: ToolbarButtonDefinition<ListElementType>[] = [
