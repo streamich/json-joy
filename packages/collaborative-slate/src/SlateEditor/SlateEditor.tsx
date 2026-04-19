@@ -4,6 +4,7 @@ import {createEditor, type Descendant, type Editor} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps, type RenderPlaceholderProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
+import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import {SlateFacade} from '../SlateFacade';
@@ -31,15 +32,6 @@ const shellClass = rule({
   ov: 'hidden',
 });
 
-const accentBarClass = rule({
-  h: '4px',
-  w: '100%',
-});
-
-const editorBodyClass = rule({
-  pos: 'relative',
-});
-
 export interface SlateEditorProps {
   model?: Model<any>;
   initialValue?: SlateEditorDocument;
@@ -47,6 +39,8 @@ export interface SlateEditorProps {
   onEditor?: (editor: Editor) => void;
   placeholder?: string;
   minHeight?: number;
+  maxHeight?: number;
+  height?: number;
   autoFocus?: boolean;
   readOnly?: boolean;
   className?: string;
@@ -62,6 +56,8 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   onEditor,
   placeholder = 'Start with a heading, a note, or a quick thought.',
   minHeight = 360,
+  maxHeight,
+  height,
   autoFocus,
   readOnly,
   className = '',
@@ -155,6 +151,41 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
 
   void tick;
 
+  let content: React.ReactNode = (
+    <Slate editor={editor} initialValue={placeholderValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
+      <Editable
+        decorate={decorateLeaf}
+        renderElement={renderElement}
+        renderLeaf={renderLeaf}
+        renderPlaceholder={renderPlaceholder}
+        placeholder={placeholder}
+        spellCheck
+        autoFocus={autoFocus}
+        readOnly={readOnly}
+        style={editableStyle}
+        onFocus={() => state.setFocused(true)}
+        onBlur={() => state.setFocused(false)}
+        onKeyDown={(event) => {
+          const handled = handleKeyboardShortcuts(editor, event, {
+            requestLinkMenu: state.requestLinkMenu,
+          });
+          if (handled) refreshAfterEditorChange(true);
+        }}
+      />
+    </Slate>
+  );
+
+  if (height || maxHeight) {
+    content = (
+      <ScrollArea.ScrollArea style={{ height, maxHeight }}>
+        <ScrollArea.Viewport>
+          {content}
+        </ScrollArea.Viewport>
+        <ScrollArea.ScrollRail />
+      </ScrollArea.ScrollArea>
+    );
+  }
+
   return (
     <SlateEditorContextProvider state={state}>
       <Paper
@@ -164,30 +195,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
         className={[className, shellClass].filter(Boolean).join(' ')}
       >
         <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />
-        <div className={editorBodyClass}>
-          <Slate editor={editor} initialValue={placeholderValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
-            <Editable
-              decorate={decorateLeaf}
-              renderElement={renderElement}
-              renderLeaf={renderLeaf}
-              renderPlaceholder={renderPlaceholder}
-              placeholder={placeholder}
-              spellCheck
-              autoFocus={autoFocus}
-              readOnly={readOnly}
-              style={editableStyle}
-              onFocus={() => state.setFocused(true)}
-              onBlur={() => state.setFocused(false)}
-              onKeyDown={(event) => {
-                const handled = handleKeyboardShortcuts(editor, event, {
-                  requestLinkMenu: state.requestLinkMenu,
-                });
-                if (handled) refreshAfterEditorChange(true);
-              }}
-            />
-          </Slate>
-        </div>
-
+        {content}
         <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
           <EditorFooter />
         </div>

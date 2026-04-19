@@ -394,7 +394,7 @@ export const Primary = meta.story({
 export const KitchenSink = meta.story({
   render: () => (
     <Wrap>
-      <SlateEditor autoFocus={false} initialValue={kitchenSinkValue} minHeight={440} />
+      <SlateEditor autoFocus={false} initialValue={kitchenSinkValue} minHeight={440} height={500} />
     </Wrap>
   ),
 });
