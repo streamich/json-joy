@@ -60,6 +60,7 @@ export const Paper: React.FC<PaperProps> = (props) => {
     className:
       props.className +
       blockClass({
+        bg: theme.bg,
         'a &': {
           col: theme.g(0.25),
         },
