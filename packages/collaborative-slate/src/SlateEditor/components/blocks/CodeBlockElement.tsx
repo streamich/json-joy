@@ -303,7 +303,6 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
       {readOnly ? (
         <div className={metaInputsClass}>
           {!!fileNameValue && <span className={metaLabelClass}>{fileNameValue || 'Code block'}</span>}
-          {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
           <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
         </div>
       ) : (
@@ -371,16 +370,13 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
                           </MoveToViewport>
                         )}
                       >
-                        <BasicButton
+                        <BasicButtonMore
                           type="button"
-                          width={'auto'}
-                          height={32}
+                          size={32}
                           compact
-                          border
+                          rounder
                           onMouseDown={preventMouseDown}
-                        >
-                          Common
-                        </BasicButton>
+                        />
                       </Popup>
                     </div>
                   </EditorContextPopup>
