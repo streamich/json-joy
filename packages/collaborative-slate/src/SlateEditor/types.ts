@@ -5,7 +5,7 @@ export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat = 'bold' | 'italic' | 'underline' | 'code';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type ListElementType = 'ul' | 'ol';
-export type BlockFormat = 'p' | 'two-columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
+export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
 export type BlockElementType = BlockFormat | 'li';
 
 export interface LinkAttributes {
@@ -32,7 +32,7 @@ export interface ParagraphElement extends BlockAttributes {
 }
 
 export interface TwoColumnsElement extends BlockAttributes {
-  type: 'two-columns';
+  type: 'columns';
   children: CustomText[];
 }
 

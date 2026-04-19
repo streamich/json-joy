@@ -226,8 +226,8 @@ export const BLOCK_BUTTONS: ToolbarButtonDefinition<Exclude<BlockFormat, ListEle
   {key: 'code-block', title: 'Code block', iconSet: 'tabler', icon: 'code', shortcut: 'Cmd+Shift+C', format: 'code-block'},
 ];
 
-export const LAYOUT_BUTTONS: ToolbarButtonDefinition<'two-columns'>[] = [
-  {key: 'two-columns', title: 'Two columns', iconSet: 'tabler', icon: 'columns', format: 'two-columns'},
+export const LAYOUT_BUTTONS: ToolbarButtonDefinition<'columns'>[] = [
+  {key: 'columns', title: 'Two columns', iconSet: 'tabler', icon: 'columns', format: 'columns'},
 ];
 
 export const LIST_BUTTONS: ToolbarButtonDefinition<ListElementType>[] = [

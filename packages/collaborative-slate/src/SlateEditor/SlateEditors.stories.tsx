@@ -185,7 +185,7 @@ const kitchenSinkValue: SlateEditorDocument = [
 ];
 
 const twoColumnsBlock: TwoColumnsElement = {
-  type: 'two-columns',
+  type: 'columns',
   children: [
     {text: 'json-joy ships a collaborative Slate editor on top of Peritext, which means structure and inline annotations are preserved as CRDT operations instead of lossy HTML patches. That makes richer layouts possible without introducing a separate document model just for presentation. '},
     {text: 'This block uses CSS multi-column flow', italic: true},

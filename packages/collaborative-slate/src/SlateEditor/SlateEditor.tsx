@@ -20,7 +20,7 @@ import {Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
 import {SlateEditorContextProvider} from './context';
 import {SlateEditorState} from './state';
-import {createSlateEditorModel, EMPTY_DOCUMENT} from './util';
+import {createSlateEditorModel, EMPTY_DOCUMENT, shouldShowPlaceholder} from './util';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {Model} from 'json-joy/lib/json-crdt';
 import type {SlateEditorDocument} from './types';
@@ -84,7 +84,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   const [tick, setTick] = React.useState(0);
   const [contentVersion, setContentVersion] = React.useState(0);
   const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
-  const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue), []);
+  const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
   const resolvedModel = model ?? standaloneModel;
   const peritextRef = React.useCallback(() => (resolvedModel as any).s.toExt(), [resolvedModel]);
 
@@ -137,9 +137,11 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     return presence ? withPresenceLeaf(base) : base;
   }, [presence]);
 
+  const showPlaceholder = shouldShowPlaceholder(editor);
+
   const renderPlaceholder = React.useCallback(
-    (props: RenderPlaceholderProps) => <Placeholder {...props}>{placeholder}</Placeholder>,
-    [placeholder],
+    (props: RenderPlaceholderProps) => <Placeholder {...props}>{showPlaceholder ? placeholder : ''}</Placeholder>,
+    [placeholder, showPlaceholder],
   );
 
   const decorateLeaf = React.useCallback(
@@ -174,7 +176,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         renderPlaceholder={renderPlaceholder}
-        placeholder={placeholder}
+        placeholder={showPlaceholder ? placeholder : ''}
         spellCheck
         autoFocus={autoFocus}
         readOnly={readOnly}

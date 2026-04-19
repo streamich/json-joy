@@ -6,6 +6,7 @@ import {HeadingElement} from './HeadingElement';
 import {BlockquoteElement} from './BlockquoteElement';
 import {CodeBlockElement} from './CodeBlockElement';
 import {ListContainerElement, ListItemElement} from './ListElement';
+import {TwoColumnsElement} from './TwoColumnsElement';
 
 export interface BlockElementProps extends RenderElementProps {
   element: CustomElement;
@@ -13,6 +14,8 @@ export interface BlockElementProps extends RenderElementProps {
 
 export const BlockElement: React.FC<BlockElementProps> = (props) => {
   switch (props.element.type) {
+    case 'columns':
+      return <TwoColumnsElement {...(props as RenderElementProps & {element: any})} />;
     case 'h1':
     case 'h2':
     case 'h3':

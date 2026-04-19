@@ -9,6 +9,7 @@ import {
   ACTION_BUTTONS,
   ALIGNMENT_BUTTONS,
   BLOCK_BUTTONS,
+  LAYOUT_BUTTONS,
   LIST_BUTTONS,
   MARK_BUTTONS,
   canRedo,
@@ -147,6 +148,19 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => toggleBlock(editor, button.format!)),
           })
         ))}
+        <ToolbarSep line />
+        {LAYOUT_BUTTONS.map((button) => (
+          renderItem({
+            key: button.key,
+            title: button.title,
+            iconSet: button.iconSet,
+            icon: button.icon,
+            shortcut: button.shortcut,
+            active: isBlockActive(editor, button.format!),
+            disabled: readOnly,
+            onMouseDown: execute(() => toggleBlock(editor, button.format!)),
+          })
+        ))}
         <ToolbarSep />
         <ToolbarSep />
         <ToolbarSep line />
@@ -164,7 +178,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => setAlignment(editor, button.format!)),
           })
         ))}
-        
       </div>
       <div className={toolbarContainerClass}>
         <DocumentOutlineButton editor={editor} contentWidth={300} />

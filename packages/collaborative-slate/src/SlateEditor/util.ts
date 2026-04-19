@@ -124,7 +124,7 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
       return 'Heading 2';
     case 'h3':
       return 'Heading 3';
-    case 'two-columns':
+    case 'columns':
       return 'Two columns';
     case 'blockquote':
       return 'Quote';
