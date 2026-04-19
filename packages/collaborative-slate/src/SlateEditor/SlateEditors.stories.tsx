@@ -413,6 +413,14 @@ export const Fit = meta.story({
   ),
 });
 
+export const Borderless = meta.story({
+  render: () => (
+    <div style={{height: 600, border: '1px solid rgb(0, 0, 0, 0.2)'}}>
+      <SlateEditor autoFocus={false} initialValue={primaryValue} heightFit borderless style={{maxWidth: '100%'}} />
+    </div>
+  ),
+});
+
 export const KitchenSink = meta.story({
   render: () => (
     <Wrap>

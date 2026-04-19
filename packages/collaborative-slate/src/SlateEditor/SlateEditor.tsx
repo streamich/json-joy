@@ -44,14 +44,17 @@ export interface SlateEditorProps {
   presence?: PresenceManager;
   onEditor?: (editor: Editor) => void;
   placeholder?: string;
+  maxWidth?: number;
+  contentWidth?: number;
   minHeight?: number;
   maxHeight?: number;
   height?: number;
   heightFit?: boolean;
-  contentWidth?: number;
+  borderless?: boolean;
   autoFocus?: boolean;
   readOnly?: boolean;
   className?: string;
+  style?: React.CSSProperties;
   state?: SlateEditorState;
 }
 
@@ -63,14 +66,17 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   presence,
   onEditor,
   placeholder = 'Start with a heading, a note, or a quick thought.',
+  // maxWidth = 1200,
+  contentWidth,
   minHeight,
   maxHeight,
   height,
   heightFit,
-  contentWidth,
+  borderless,
   autoFocus,
   readOnly,
   className = '',
+  style,
   state: providedState,
 }) => {
   const styles = useStyles();
@@ -205,20 +211,25 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     );
   }
 
+  content = [
+    <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />,
+    content,
+    <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
+      <EditorFooter />
+    </div>
+  ];
+
+  const contentClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
+
+  if (borderless) {
+    content = React.createElement('div', {style, className: contentClass}, content);
+  } else {
+    content = React.createElement(Paper, {round: true, contrast: true, hover: true, style, className: contentClass}, content);
+  }
+
   return (
     <SlateEditorContextProvider state={state}>
-      <Paper
-        round
-        contrast
-        hover
-        className={[className, shellClass, heightFit && fitShellClass].filter(Boolean).join(' ')}
-      >
-        <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />
-        {content}
-        <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
-          <EditorFooter />
-        </div>
-      </Paper>
+      {content}
     </SlateEditorContextProvider>
   );
 };
