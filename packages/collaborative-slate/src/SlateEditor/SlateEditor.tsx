@@ -32,6 +32,12 @@ const shellClass = rule({
   ov: 'hidden',
 });
 
+const fitShellClass = rule({
+  h: '100%',
+  d: 'flex',
+  fld: 'column',
+});
+
 export interface SlateEditorProps {
   model?: Model<any>;
   initialValue?: SlateEditorDocument;
@@ -41,6 +47,8 @@ export interface SlateEditorProps {
   minHeight?: number;
   maxHeight?: number;
   height?: number;
+  heightFit?: boolean;
+  contentWidth?: number;
   autoFocus?: boolean;
   readOnly?: boolean;
   className?: string;
@@ -55,9 +63,11 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   presence,
   onEditor,
   placeholder = 'Start with a heading, a note, or a quick thought.',
-  minHeight = 360,
+  minHeight,
   maxHeight,
   height,
+  heightFit,
+  contentWidth,
   autoFocus,
   readOnly,
   className = '',
@@ -139,7 +149,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
 
   const editableStyle: React.CSSProperties = {
     minHeight,
-    maxWidth: 800,
+    maxWidth: contentWidth ?? 800,
     margin: '0 auto',
     padding: '22px 24px',
     fontSize: '16px',
@@ -175,7 +185,16 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     </Slate>
   );
 
-  if (height || maxHeight) {
+  if (heightFit) {
+    content = (
+      <ScrollArea.ScrollArea style={{flex: '1 1 0%', overflow: 'auto', minHeight: 0}}>
+        <ScrollArea.Viewport>
+          {content}
+        </ScrollArea.Viewport>
+        <ScrollArea.ScrollRail />
+      </ScrollArea.ScrollArea>
+    );
+  } else if (height || maxHeight) {
     content = (
       <ScrollArea.ScrollArea style={{ height, maxHeight }}>
         <ScrollArea.Viewport>
@@ -192,7 +211,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
         round
         contrast
         hover
-        className={[className, shellClass].filter(Boolean).join(' ')}
+        className={[className, shellClass, heightFit && fitShellClass].filter(Boolean).join(' ')}
       >
         <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />
         {content}

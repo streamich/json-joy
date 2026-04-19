@@ -24,7 +24,7 @@ const primaryValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: '@jsonjoy.com/collaborative-slate'},
+      {text: '@jsonjoy.com/collaborative-slate', code: true},
       {text: ' binds a '},
       {text: 'Slate.js', bold: true},
       {text: ' editor to a '},
@@ -90,6 +90,12 @@ const kitchenSinkValue: SlateEditorDocument = [
     children: [
       {text: 'A CRDT is a data structure that can be updated concurrently by different replicas and always converges to the same state — without any coordination. '},
       {text: '— Shapiro et al., 2011', italic: true},
+    ],
+  },
+  {
+    type: 'code-block',
+    children: [
+      {text: 'A typical RGA string sequence with character IDs:\n\n    H    e   l    l     o      W    o    r    l    d\n    a.1  a.2  a.3  a.4  a.5    b.1  b.2  b.3  b.4  b.5'},
     ],
   },
   {
@@ -388,6 +394,22 @@ export const Primary = meta.story({
     <Wrap>
       <SlateEditor autoFocus={false} initialValue={primaryValue} minHeight={440} />
     </Wrap>
+  ),
+});
+
+export const Empty = meta.story({
+  render: () => (
+    <Wrap>
+      <SlateEditor autoFocus={false} initialValue={[]} />
+    </Wrap>
+  ),
+});
+
+export const Fit = meta.story({
+  render: () => (
+    <div style={{height: 600, border: '1px dashed red'}}>
+      <SlateEditor autoFocus={false} initialValue={primaryValue} heightFit />
+    </div>
   ),
 });
 
