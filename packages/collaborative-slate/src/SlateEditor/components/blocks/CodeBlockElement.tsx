@@ -4,6 +4,7 @@ import {Transforms} from 'slate';
 import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 'slate-react';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
+import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
@@ -43,7 +44,7 @@ const LANGUAGE_OPTIONS = [
 
 const codeWrapClass = rule({
   pos: 'relative',
-  m: '20px 0',
+  m: '28px 0',
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
 });
 
@@ -94,10 +95,14 @@ const metaChipClass = rule({
 });
 
 const codePreClass = rule({
-  m: '0',
+  mr: '0',
   ovx: 'auto',
   d: 'flex',
   ai: 'stretch',
+  trs: 'background .3s',
+  [`.${codeWrapClass.trim()}:hover &`]: {
+    bg: 'var(--code-hover-bg)',
+  },
   ...css(),
 });
 
@@ -112,7 +117,7 @@ const gutterClass = rule({
   op: 0.3,
   whiteSpace: 'pre',
   ta: 'right',
-  bdr: '1px solid rgba(127,127,127,0.1)',
+  bdr: '1px solid rgba(127,127,127,0.22)',
 });
 
 const codeClass = rule({
@@ -131,7 +136,7 @@ const codeClass = rule({
     h: '100%',
     l: '80ch',
     w: '1px',
-    bg: 'rgba(127,127,127,0.12)',
+    bg: 'rgba(127,127,127,0.06)',
     pointerEvents: 'none',
   },
 });
@@ -244,6 +249,11 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
     event.stopPropagation();
   }, []);
 
+  const getCodeText = React.useCallback(
+    () => element.children.map((c) => c.text).join(''),
+    [element.children],
+  );
+
   const metaBarStyle: React.CSSProperties = {
     borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
   };
@@ -294,6 +304,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
         <div className={metaInputsClass}>
           {!!fileNameValue && <span className={metaLabelClass}>{fileNameValue || 'Code block'}</span>}
           {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
+          <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
         </div>
       ) : (
         <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
@@ -305,6 +316,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
 
           <div className={metaActionsClass}>
             {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
+            <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
             <anchorContext.Provider value={handle}>
               <PopupControlled
                 refToggle={handle.ref}
@@ -391,7 +403,7 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
   );
 
   return (
-    <div {...attributes} className={codeWrapClass} style={{textAlign: element.align}}>
+    <div {...attributes} className={codeWrapClass} style={{'--code-hover-bg': styles.g(0, 0.02), textAlign: element.align} as React.CSSProperties}>
       <Paper round hover>
         {header}
         <pre className={codePreClass}>

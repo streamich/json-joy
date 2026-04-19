@@ -30,7 +30,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             ...shared,
             fontSize: '2.1rem',
             fontWeight: 800,
-            margin: '0 0 18px',
+            margin: '40px 0 18px',
             lineHeight: 1.1,
           }}
         >
@@ -46,7 +46,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             ...shared,
             fontSize: '1.55rem',
             fontWeight: 700,
-            margin: '10px 0 14px',
+            margin: '34px 0 14px',
             lineHeight: 1.2,
           }}
         >
@@ -62,7 +62,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             ...shared,
             fontSize: '1.22rem',
             fontWeight: 700,
-            margin: '8px 0 12px',
+            margin: '26px 0 12px',
             lineHeight: 1.3,
             color: styles.light ? styles.g(0.16) : styles.g(0.88),
           }}

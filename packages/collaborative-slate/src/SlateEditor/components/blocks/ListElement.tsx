@@ -10,7 +10,7 @@ const listClass = rule({
 });
 
 const itemClass = rule({
-  m: '0 0 8px',
+  m: '0 0 11px',
   lh: '1.7',
 });
 
