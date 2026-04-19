@@ -55,7 +55,7 @@ const metaBarClass = rule({
   ai: 'center',
   jc: 'space-between',
   gap: '12px',
-  pd: '10px 14px',
+  pd: '8px 14px',
   fw: 'wrap',
   us: 'none',
 });
@@ -303,13 +303,13 @@ export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, c
     <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
       {readOnly ? (
         <div className={metaInputsClass}>
-          {!!fileNameValue && <span className={metaLabelClass}>{fileNameValue || 'Code block'}</span>}
+          {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: lineCount > 10 ? 34 : 26}}>{fileNameValue || 'Code block'}</span>}
           <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
         </div>
       ) : (
         <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
           <div className={metaPreviewClass}>
-            <span className={metaLabelClass} style={!fileNameValue ? {opacity: 0.68} : undefined}>
+            <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: lineCount > 10 ? 34 : 26}}>
               {fileNameValue || 'Code block'}
             </span>
           </div>
