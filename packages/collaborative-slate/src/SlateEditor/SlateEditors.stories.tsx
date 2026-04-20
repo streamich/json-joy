@@ -506,6 +506,304 @@ const longValue: SlateEditorDocument = [
   },
 ];
 
+const codeBlocksValue: SlateEditorDocument = [
+  {type: 'h1', children: [{text: 'json-joy Code Examples'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Explore the json-joy ecosystem through practical code examples covering JSON CRDT, Peritext, binary codecs, presence management, and collaborative editing across multiple frameworks.'},
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'JSON CRDT Basics'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Start with the core JSON CRDT model — create a '},
+      {text: 'Model', code: true},
+      {text: ', make edits through its '},
+      {text: 'api', code: true},
+      {text: ', and observe deterministic merges when patches from different replicas are combined.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'basic-model.ts',
+    children: [
+      {
+        text: "import {Model} from 'json-joy/lib/json-crdt';\n\n// Create a new model with a simple JSON structure\nconst model = Model.create();\nmodel.api.obj().set('title', 'Hello CRDT');\nmodel.api.obj().set('count', 42);\n\n// Log the current state\nconsole.log(model.view());\n// => { title: 'Hello CRDT', count: 42 }",
+      },
+    ],
+  },
+  {
+    type: 'p',
+    children: [
+      {text: 'Models can be forked into independent replicas that make concurrent changes without coordination, then merged back together deterministically.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'fork-and-merge.ts',
+    children: [
+      {
+        text: "import {Model} from 'json-joy/lib/json-crdt';\n\nconst original = Model.create();\noriginal.api.str(['text']).ins(0, 'Sync');\n\n// Create two independent replicas\nconst alice = original.clone();\nconst bob = original.clone();\n\n// Both make concurrent edits\nalice.api.str(['text']).ins(4, ' point');\nbob.api.str(['text']).ins(4, ' target');\n\n// Merge Bob's changes into Alice — both edits survive\nalice.applyPatch(bob.api.flush());\nconsole.log(alice.view()); // { text: 'Sync point target' } or 'Sync target point'",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Peritext Rich-Text CRDT'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Peritext extends JSON CRDT to handle rich text with inline annotations. Use '},
+      {text: 'anchor', italic: true},
+      {text: ' semantics to ensure formatting remains stable when concurrent edits happen.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'peritext-formatting.ts',
+    children: [
+      {
+        text: "import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';\n\n// Create a Peritext document\nconst model = ModelWithExt.create(ext.peritext.new('Hello, world!'));\nconst api = model.s.toExt();\n\n// Bold the word 'world'\napi.editor.cursor.setAt(7, 5);\napi.editor.toggleMark('bold');\napi.refresh();\n\nconsole.log(model.view());\n// => { text: 'Hello, world!', slices: [{ type: 'bold', start: 7, end: 12 }] }",
+      },
+    ],
+  },
+  {
+    type: 'p',
+    children: [
+      {text: 'Create multiple formatting layers and watch them compose naturally across concurrent insertions and deletions.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'peritext-multiple-marks.ts',
+    children: [
+      {
+        text: "import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';\n\nconst model = ModelWithExt.create(ext.peritext.new('Important Info'));\nconst api = model.s.toExt();\n\n// Apply bold to entire text\napi.editor.cursor.setAt(0, 13);\napi.editor.toggleMark('bold');\n\n// Italicize just 'Important'\napi.editor.cursor.setAt(0, 9);\napi.editor.toggleMark('italic');\n\napi.refresh();\n\nconst state = model.view();\nconsole.log(state.text); // 'Important Info'\nconsole.log(state.slices);\n// => [\n//   { type: 'italic', start: 0, end: 9 },\n//   { type: 'bold', start: 0, end: 13 }\n// ]",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Binary Encoding & Codecs'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Use CBOR encoding for efficient patch serialization. json-joy ships the fastest CBOR codec in the JavaScript ecosystem.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'cbor-encoding.ts',
+    children: [
+      {
+        text: "import {CborEncoder, CborDecoder} from 'json-joy/lib/json-pack/cbor';\n\nconst encoder = new CborEncoder();\nconst decoder = new CborDecoder();\n\n// Encode various types\nconst data = {\n  name: 'Alice',\n  age: 30,\n  scores: [95, 87, 92],\n  active: true,\n  balance: 1250.50,\n};\n\nconst bytes = encoder.encode(data);\nconsole.log(bytes); // Uint8Array\n\nconst decoded = decoder.decode(bytes);\nconsole.log(decoded); // { name: 'Alice', age: 30, ... }",
+      },
+    ],
+  },
+  {
+    type: 'p',
+    children: [
+      {text: 'json-joy also supports MessagePack and other binary formats. Choose the best codec for your use case.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'msgpack-encoding.ts',
+    children: [
+      {
+        text: "import {MessagePackEncoder, MessagePackDecoder} from 'json-joy/lib/json-pack/msgpack';\n\nconst encoder = new MessagePackEncoder();\nconst decoder = new MessagePackDecoder();\n\nconst patch = {\n  type: 'set',\n  path: ['user', 'status'],\n  value: 'online',\n};\n\nconst bytes = encoder.encode(patch);\nconst restored = decoder.decode(bytes);\n\nconsole.log(restored); // { type: 'set', path: [...], value: 'online' }",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'RPC Calls & Server Communication'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'The RPC layer provides type-safe request/response patterns for client-server communication.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'rpc-server.ts',
+    children: [
+      {
+        text: "import {RpcServer} from '@jsonjoy.com/rpc-server';\nimport {RpcHandler} from '@jsonjoy.com/rpc-calls';\n\nconst server = new RpcServer();\n\n// Register an RPC method\nserver.add('greet', (name: string) => {\n  return `Hello, ${name}!`;\n});\n\nserver.add('calculate', (a: number, b: number) => {\n  return {\n    sum: a + b,\n    product: a * b,\n    difference: a - b,\n  };\n});\n\n// Server is ready to handle RPC calls\nexport default server;",
+      },
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'rpc-client.ts',
+    children: [
+      {
+        text: "import {RpcClient} from '@jsonjoy.com/rpc-client';\n\nconst client = new RpcClient(url);\n\n// Make RPC calls\nconst greeting = await client.call('greet', ['Alice']);\nconsole.log(greeting); // 'Hello, Alice!'\n\nconst result = await client.call('calculate', [10, 5]);\nconsole.log(result);\n// => { sum: 15, product: 50, difference: 5 }",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Collaborative Presence'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Track live cursors, selections, and user awareness with the collaborative presence layer.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'tsx',
+    fileName: 'presence-setup.tsx',
+    children: [
+      {
+        text: "import {PresenceManager} from '@jsonjoy.com/collaborative-presence';\n\nconst presence = new PresenceManager({\n  sessionId: 'alice-12345',\n  displayName: 'Alice',\n  color: '#FF6B6B',\n  autoGossip: true,\n  gossipIntervalMs: 200,\n});\n\n// Update cursor position\npresence.setState({\n  cursor: {\n    line: 5,\n    column: 12,\n  },\n  selection: {\n    start: {line: 5, column: 5},\n    end: {line: 5, column: 12},\n  },\n});\n\n// Subscribe to other users' presence\npresence.onUpdate((update) => {\n  console.log(`${update.displayName} is at line ${update.cursor?.line}`);\n});",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Slate.js Integration'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Bind a Peritext CRDT to Slate using a single '},
+      {text: 'bind()', code: true},
+      {text: ' call in a React effect.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'tsx',
+    fileName: 'slate-bind.tsx',
+    children: [
+      {
+        text: "import React, {useEffect, useMemo} from 'react';\nimport {createEditor} from 'slate';\nimport {Slate, Editable, withReact} from 'slate-react';\nimport {bind} from '@jsonjoy.com/collaborative-slate';\n\nexport function CollaborativeEditor({peritextRef}) {\n  const editor = useMemo(() => withReact(createEditor()), []);\n\n  useEffect(() => {\n    const unbind = bind(peritextRef, editor);\n    return unbind;\n  }, [editor, peritextRef]);\n\n  return (\n    <Slate editor={editor} initialValue={[{type: 'p', children: [{text: ''}]}]}>\n      <Editable />\n    </Slate>\n  );\n}",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'ProseMirror Integration'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'json-joy also provides bindings for ProseMirror with the same simplicity.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'prosemirror-bind.ts',
+    children: [
+      {
+        text: "import {EditorState} from 'prosemirror-state';\nimport {EditorView} from 'prosemirror-view';\nimport {schema} from 'prosemirror-schema-basic';\nimport {bind} from '@jsonjoy.com/collaborative-prosemirror';\n\nconst state = EditorState.create({schema});\nconst view = new EditorView(document.querySelector('#editor'), {state});\n\n// Bind the Peritext model to ProseMirror\nconst unbind = bind(peritextRef, view);\n\n// Cleanup when done\nreturn () => unbind();",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'JSON Paths & Pointers'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Navigate JSON structures using path expressions and JSON Pointer syntax.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'json-path.ts',
+    children: [
+      {
+        text: "import {JsonPath} from '@jsonjoy.com/json-path';\nimport {JsonPointer} from '@jsonjoy.com/json-pointer';\n\nconst data = {\n  users: [\n    {id: 1, name: 'Alice', email: 'alice@example.com'},\n    {id: 2, name: 'Bob', email: 'bob@example.com'},\n  ],\n};\n\n// Using JSON Pointer\nconst ptr = new JsonPointer('/users/0/name');\nconst name = ptr.evaluate(data);\nconsole.log(name); // 'Alice'\n\n// Using JSON Path\nconst path = new JsonPath('$.users[*].email');\nconst emails = path.evaluate(data);\nconsole.log(emails); // ['alice@example.com', 'bob@example.com']",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Data Type Inspection'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Inspect and validate JSON data types with type guards and predicates.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'json-type.ts',
+    children: [
+      {
+        text: "import {isObject, isArray, isString, isNumber} from '@jsonjoy.com/json-type';\n\nconst value1 = {key: 'value'};\nconst value2 = [1, 2, 3];\nconst value3 = 'hello';\n\nconsole.log(isObject(value1)); // true\nconsole.log(isArray(value2)); // true\nconsole.log(isString(value3)); // true\nconsole.log(isNumber(value3)); // false",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Base64 Encoding'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Convert binary data to and from Base64 for transport and storage.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'base64-encoding.ts',
+    children: [
+      {
+        text: "import {encodeBase64, decodeBase64} from '@jsonjoy.com/base64';\n\nconst text = 'Hello, json-joy!';\nconst encoded = encodeBase64(text);\nconsole.log(encoded); // 'SGVsbG8sIGpzb24tam95IQ=='\n\nconst decoded = decodeBase64(encoded);\nconsole.log(decoded); // 'Hello, json-joy!'",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Channel Communications'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Use channels for structured message passing between components and services.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'channel-messaging.ts',
+    children: [
+      {
+        text: "import {Channel} from '@jsonjoy.com/channel';\n\nconst channel = new Channel();\n\n// Subscribe to messages\nchannel.subscribe((message) => {\n  console.log('Received:', message);\n});\n\n// Send messages\nchannel.send({type: 'update', payload: {id: 42}});\nchannel.send({type: 'delete', id: 5});\n\n// Cleanup\nconst unsubscribe = channel.subscribe((msg) => console.log(msg));\nunsubscribe();",
+      },
+    ],
+  },
+
+  {type: 'h2', children: [{text: 'Full Example: Collaborative Document'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Combine CRDT, Slate binding, and presence for a complete collaborative editing experience.'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'tsx',
+    fileName: 'CollaborativeDoc.tsx',
+    children: [
+      {
+        text: "import React, {useEffect, useMemo, useRef, useState} from 'react';\nimport {Model} from 'json-joy/lib/json-crdt';\nimport {PresenceManager} from '@jsonjoy.com/collaborative-presence';\nimport {SlateEditor} from '@jsonjoy.com/collaborative-slate';\n\nexport function CollaborativeDocument({docId, userId}) {\n  const modelRef = useRef<Model | null>(null);\n  const presenceRef = useRef<PresenceManager | null>(null);\n\n  useEffect(() => {\n    // Initialize CRDT model\n    modelRef.current = Model.create();\n\n    // Initialize presence\n    presenceRef.current = new PresenceManager({\n      sessionId: userId,\n      displayName: `User ${userId}`,\n    });\n\n    return () => {\n      presenceRef.current?.close();\n    };\n  }, [userId]);\n\n  return (\n    <SlateEditor\n      peritextRef={modelRef.current?.s}\n      presenceManager={presenceRef.current}\n      minHeight={600}\n    />\n  );\n}",
+      },
+    ],
+  },
+
+  {
+    type: 'p',
+    align: 'center',
+    children: [{text: '— Explore the full documentation at jsonjoy.com —'}],
+  },
+];
+
 const meta = preview.meta({
   title: 'SlateEditor',
 });
@@ -586,6 +884,17 @@ export const ReadOnly = meta.story({
   render: () => (
     <Wrap>
       <SlateEditor autoFocus={false} initialValue={kitchenSinkValue} minHeight={440} readOnly />
+    </Wrap>
+  ),
+});
+
+export const CodeBlocks = meta.story({
+  parameters: {
+    layout: 'fullscreen',
+  },
+  render: () => (
+    <Wrap scroll>
+      <SlateEditor autoFocus={false} initialValue={codeBlocksValue} minHeight={440} height={window.innerHeight - 200} contentWidth={920} />
     </Wrap>
   ),
 });

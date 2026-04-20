@@ -50,6 +50,8 @@ export interface CodeBlockElement extends BlockAttributes {
   type: 'code-block';
   language?: string;
   fileName?: string;
+  wrap?: number;
+  showLineNumbers?: boolean;
   children: CustomText[];
 }
 

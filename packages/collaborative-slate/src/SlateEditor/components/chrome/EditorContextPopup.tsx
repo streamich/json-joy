@@ -4,21 +4,42 @@ import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
+import {useAnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/context';
+import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
-const bodyClass = rule({
-  d: 'flex',
-  fld: 'column',
-  gap: '12px',
-  // pd: '12px',
-});
+const VIEWPORT_MARGIN = 16;
+const CONTEXT_PANE_BORDER = 2;
+
+const useElementHeight = (element: HTMLDivElement | null): number | null => {
+  const [height, setHeight] = React.useState<number | null>(null);
+  React.useLayoutEffect(() => {
+    if (!element) {
+      setHeight(null);
+      return;
+    }
+    const updateHeight = () => {
+      const nextHeight = Math.ceil(element.getBoundingClientRect().height);
+      setHeight((currentHeight) => (currentHeight === nextHeight ? currentHeight : nextHeight));
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, [element]);
+  return height;
+};
 
 const titleClass = rule({
   d: 'flex',
   jc: 'space-between',
-  // ai: 'center',
   fz: '12px',
   lh: '1.45',
   pd: '16px',
+  fls: '0 0 auto',
+  bdrad: '8px 8px 0 0',
+  backdropFilter: 'blur(10px)',
 });
 
 const titleGroupClass = rule({
@@ -26,18 +47,24 @@ const titleGroupClass = rule({
   fld: 'column',
 });
 
-const actionsClass = rule({
+const footerClass = rule({
   d: 'flex',
   jc: 'flex-end',
   gap: '8px',
   pd: '16px',
+  fls: '0 0 auto',
+  bdrad: '0 0 8px 8px',
+  backdropFilter: 'blur(10px)',
 });
 
 const contentClass = rule({
+  alignSelf: 'flex-start',
+  w: '100%',
+  bxz: 'border-box',
   d: 'flex',
   fld: 'column',
   gap: '12px',
-  pd: '0 16px',
+  pd: '16px',
 });
 
 export interface EditorContextPopupProps {
@@ -68,6 +95,22 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   minWidth,
 }) => {
   const styles = useStyles();
+  const anchor = useAnchorPoint();
+  const [headerElement, setHeaderElement] = React.useState<HTMLDivElement | null>(null);
+  const [footerElement, setFooterElement] = React.useState<HTMLDivElement | null>(null);
+  const [contentElement, setContentElement] = React.useState<HTMLDivElement | null>(null);
+  const headerHeight = useElementHeight(headerElement);
+  const footerHeight = useElementHeight(footerElement);
+  const viewportWidth = typeof window === 'object' ? window.innerWidth : 0;
+  const viewportHeight = typeof window === 'object' ? window.innerHeight : 0;
+  const safeMinWidth =
+    minWidth !== undefined && viewportWidth
+      ? Math.min(minWidth, Math.max(0, viewportWidth - VIEWPORT_MARGIN))
+      : minWidth;
+  const hasHeader = !!title || !!subtitle || !!headerRight;
+  const hasFooter = !!onApply || !!onCancel;
+
+  const contentHeight = useElementHeight(contentElement);
 
   const preventMouseDown = React.useCallback((event: React.MouseEvent) => {
     event.preventDefault();
@@ -89,8 +132,15 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
     [onApply],
   );
 
-  const header = (!!title || !!subtitle || !!headerRight) && (
-    <div className={titleClass} style={{borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
+  const header = hasHeader && (
+    <div
+      ref={setHeaderElement}
+      className={titleClass}
+      style={{
+        borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
+        background: styles.g(1, .7),
+      }}
+    >
       <div className={titleGroupClass}>
         <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
           {title}
@@ -105,13 +155,20 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
     </div>
   );
 
-  const footer = (!!onApply || !!onCancel) && (
-    <div className={actionsClass} style={{borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`}}>
+  const footer = hasFooter && (
+    <div
+      ref={setFooterElement}
+      className={footerClass}
+      style={{
+        borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
+        background: styles.g(1, .7),
+      }}
+    >
       <BasicButton
         type="button"
         width={'auto'}
         height={32}
-        compact
+        // compact
         border
         onMouseDown={preventMouseDown}
         onClick={handleCancel}
@@ -122,7 +179,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
         type="button"
         width={'auto'}
         height={32}
-        compact
+        // compact
         border
         disabled={applyDisabled}
         onMouseDown={preventMouseDown}
@@ -133,16 +190,40 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
     </div>
   );
 
+  const measuredHeaderHeight = headerHeight ?? 0;
+  const measuredFooterHeight = footerHeight ?? 0;
+  const safeHeight = Math.max(0, (anchor?.maxHeight() ?? Math.max(0, viewportHeight - 8)) - CONTEXT_PANE_BORDER);
+  const availableContentHeight = Math.max(0, safeHeight - measuredHeaderHeight - measuredFooterHeight);
+  const contentViewportHeight = contentHeight === null ? availableContentHeight : Math.min(contentHeight, availableContentHeight);
+  const scrollHeight =
+    contentHeight === null
+      ? safeHeight
+      : Math.min(safeHeight, contentViewportHeight + measuredHeaderHeight + measuredFooterHeight);
+
   return (
     <MoveToViewport vertical>
-      <ContextPane minWidth={minWidth}>
-        <div className={bodyClass} style={noMargin ? {gap: 0} : undefined}>
-          {header}
-          <div className={contentClass} style={noMargin ? {padding: 0} : undefined}>
-            {children}
-          </div>
-          {footer}
-        </div>
+      <ContextPane
+        minWidth={safeMinWidth}
+        style={{
+          maxWidth: viewportWidth ? viewportWidth - VIEWPORT_MARGIN : undefined,
+        }}
+      >
+        <ScrollArea.ScrollArea shadow railWidth={4} style={{height: scrollHeight}}>
+          {header ? <ScrollArea.Header>{header}</ScrollArea.Header> : null}
+          <ScrollArea.Viewport>
+            <div
+              ref={setContentElement}
+              className={contentClass}
+              style={{
+                ...(noMargin ? {padding: 0} : undefined),
+              }}
+            >
+              {children}
+            </div>
+          </ScrollArea.Viewport>
+          <ScrollArea.ScrollRail />
+          {footer ? <ScrollArea.Footer>{footer}</ScrollArea.Footer> : null}
+        </ScrollArea.ScrollArea>
       </ContextPane>
     </MoveToViewport>
   );

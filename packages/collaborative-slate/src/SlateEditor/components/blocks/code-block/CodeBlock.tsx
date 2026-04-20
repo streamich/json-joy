@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {drule, rule} from 'nano-theme';
 import {type RenderElementProps, useReadOnly} from 'slate-react';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
@@ -11,6 +11,9 @@ import {css} from 'code-colors-react/lib/style';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {CodeBlockOptionsPopup} from './CodeBlockOptionsPopup';
+import * as settings from './settings';
+
+const CODE_LINE_HEIGHT = 1.7;
 
 const codeWrapClass = rule({
   pos: 'relative',
@@ -65,7 +68,9 @@ const metaChipClass = rule({
 
 const codePreClass = rule({
   mr: '0',
+  w: '100%',
   ovx: 'auto',
+  lh: `${CODE_LINE_HEIGHT}em`,
   d: 'flex',
   ai: 'stretch',
   trs: 'background .3s',
@@ -89,10 +94,10 @@ const gutterClass = rule({
   bdr: '1px solid rgba(127,127,127,0.22)',
 });
 
-const codeClass = rule({
+const codeClass = drule({
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
   fz: '0.9rem',
-  lh: '1.7',
+  lh: `${CODE_LINE_HEIGHT}em`,
   d: 'block',
   pos: 'relative',
   flex: '1',
@@ -103,7 +108,6 @@ const codeClass = rule({
     pos: 'absolute',
     t: '0',
     h: '100%',
-    l: '80ch',
     w: '1px',
     bg: 'rgba(127,127,127,0.06)',
     pointerEvents: 'none',
@@ -127,19 +131,17 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
     event.stopPropagation();
   }, []);
 
-  const getCodeText = React.useCallback(
-    () => element.children.map((c) => c.text).join(''),
-    [element.children],
-  );
+  const codeText = React.useMemo(() => element.children.map(({text}) => text).join(''), [element.children]);
+
+  const getCodeText = React.useCallback(() => codeText, [codeText]);
 
   const metaBarStyle: React.CSSProperties = {
     borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
   };
 
   const lineCount = React.useMemo(() => {
-    const text = element.children.map((c) => c.text).join('');
-    return (text.match(/\n/g)?.length ?? 0) + 1;
-  }, [element.children]);
+    return (codeText.match(/\n/g)?.length ?? 0) + 1;
+  }, [codeText]);
 
   const lineNumbers = React.useMemo(
     () => Array.from({length: lineCount}, (_, i) => String(i + 1)).join('\n'),
@@ -149,18 +151,38 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   const languageValue = element.language?.trim() || '';
   const fileNameValue = element.fileName?.trim() || '';
   const showReadOnlyMeta = !!fileNameValue || !!languageValue;
+  const wrapColumn = settings.getCodeBlockWrapColumn(element.wrap);
+  const showLineNumbers = settings.getCodeBlockShowLineNumbers(element.showLineNumbers);
+  const metaLabelMarginLeft = showLineNumbers ? (lineCount > 10 ? 34 : 26) : 0;
+  const codeClassName = codeClass({
+    pdl: showLineNumbers ? '14px' : '18px',
+    '&::before': {
+      l: `${wrapColumn}ch`,
+    },
+  });
+
+  const codeContent = (
+    <pre className={codePreClass}>
+      {showLineNumbers ? (
+        <div contentEditable={false} className={gutterClass} aria-hidden="true">
+          {lineNumbers}
+        </div>
+      ) : null}
+      <code className={codeClassName}>{children}</code>
+    </pre>
+  );
 
   const header = (!readOnly || showReadOnlyMeta) && (
     <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
       {readOnly ? (
         <div className={metaInputsClass}>
-          {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : lineCount > 10 ? 34 : 26}}>{fileNameValue || 'Code block'}</span>}
+          {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>{fileNameValue || 'Code block'}</span>}
           <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
         </div>
       ) : (
         <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
           <div className={metaPreviewClass}>
-            <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : lineCount > 10 ? 34 : 26}}>
+            <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>
               {fileNameValue || <Iconista set="bootstrap" icon="file-earmark-code" width={16} height={16} />}
             </span>
           </div>
@@ -188,10 +210,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
     <div {...attributes} className={codeWrapClass} style={{'--code-hover-bg': styles.g(0, 0.02), textAlign: element.align} as React.CSSProperties}>
       <Paper round hover>
         {header}
-        <pre className={codePreClass}>
-          <div contentEditable={false} className={gutterClass} aria-hidden="true">{lineNumbers}</div>
-          <code className={codeClass}>{children}</code>
-        </pre>
+        {codeContent}
       </Paper>
     </div>
   );
