@@ -11,6 +11,7 @@ import {SlateFacade} from '../SlateFacade';
 import {withPresenceLeaf} from '../presence/PresenceLeaf';
 import {useSlatePresence} from '../presence/useSlatePresence';
 import {withCodeBlockBreaks} from './behavior';
+import {withEmbeds} from './behavior/embed';
 import {useCodeSyntaxDecorations} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
@@ -41,19 +42,18 @@ const fitShellClass = rule({
 
 interface EditorScrollAreaProps {
   children: React.ReactNode;
-  contentVersion: number;
   editor: Editor;
   style: React.CSSProperties;
 }
 
-const EditorScrollArea: React.FC<EditorScrollAreaProps> = ({children, contentVersion, editor, style}) => (
-  <ScrollArea.ScrollArea railWidth={12} style={style}>
+const EditorScrollArea: React.FC<EditorScrollAreaProps> = ({children, editor, style}) => (
+  <ScrollArea.ScrollArea railWidth={12} style={style} hideDelay={5000}>
     <ScrollArea.Viewport>
       {children}
     </ScrollArea.Viewport>
     <ScrollArea.ScrollRail>
       <ScrollArea.Thumb />
-      <EditorScrollMap editor={editor} contentVersion={contentVersion} />
+      <EditorScrollMap editor={editor} />
     </ScrollArea.ScrollRail>
   </ScrollArea.ScrollArea>
 );
@@ -100,8 +100,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   state: providedState,
 }) => {
   const styles = useStyles();
-  const editor = React.useMemo(() => withCodeBlockBreaks(withHistory(withReact(createEditor()))), []);
-  const [tick, setTick] = React.useState(0);
+  const editor = React.useMemo(() => withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))), []);
   const [contentVersion, setContentVersion] = React.useState(0);
   const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
@@ -126,6 +125,11 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     };
   }, [editor, onEditor, peritextRef, state]);
 
+  React.useEffect(() => {
+    if (providedState) return;
+    return () => state.dispose();
+  }, [providedState, state]);
+
   const {decorate, sendLocalPresence} = useSlatePresence({
     manager: presence,
     peritext: peritextRef,
@@ -135,7 +139,7 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   const decorateCodeSyntax = useCodeSyntaxDecorations(editor, contentVersion);
 
   const syncVisualState = React.useCallback((contentChanged = false) => {
-    setTick((value) => value + 1);
+    state.requestScrollMapRefresh();
     if (contentChanged) setContentVersion((value) => value + 1);
     state.sync(editor);
   }, [editor, state]);
@@ -187,8 +191,6 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
     caretColor: styles.light ? styles.g(0.08) : styles.g(0.96),
   };
 
-  void tick;
-
   let content: React.ReactNode = (
     <Slate editor={editor} initialValue={placeholderValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
       <Editable
@@ -215,25 +217,27 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
 
   if (heightFit) {
     content = (
-      <EditorScrollArea editor={editor} contentVersion={contentVersion} style={{flex: '1 1 0%', overflow: 'auto', minHeight: 0}}>
+      <EditorScrollArea editor={editor} style={{flex: '1 1 0%', overflow: 'auto', minHeight: 0}}>
         {content}
       </EditorScrollArea>
     );
   } else if (height || maxHeight) {
     content = (
-      <EditorScrollArea editor={editor} contentVersion={contentVersion} style={{height, maxHeight}}>
+      <EditorScrollArea editor={editor} style={{height, maxHeight}}>
         {content}
       </EditorScrollArea>
     );
   }
 
-  content = [
-    <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />,
-    content,
-    <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
-      <EditorFooter />
-    </div>
-  ];
+  content = (
+    <>
+      <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />
+      {content}
+      <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
+        <EditorFooter />
+      </div>
+    </>
+  );
 
   const contentClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
 

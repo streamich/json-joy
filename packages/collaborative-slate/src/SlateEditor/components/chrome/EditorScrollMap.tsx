@@ -1,20 +1,38 @@
 import * as React from 'react';
+import {keyframes, rule} from 'nano-theme';
 import {Marker, useScrollArea} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {measureScrollMapMarkers} from '../../behavior/scroll-map';
+import {useSlateEditorState} from '../../context';
 import type {Editor} from 'slate';
+
+const selectionMarkerBlink = keyframes({
+  '0%': {opacity: 1},
+  '50%': {opacity: 0.22},
+  '100%': {opacity: 1},
+});
+
+const selectionMarkerClass = rule({
+  bd: '1px dashed currentColor',
+  bxz: 'border-box',
+  minH: '2px',
+  trs: 'height .1s ease-out, top .1s ease-out, bottom .1s ease-out',
+  animation: `${selectionMarkerBlink} .5s step-start infinite`,
+  zIndex: 1,
+});
 
 export interface EditorScrollMapProps {
   editor: Editor;
-  contentVersion: number;
 }
 
-export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor, contentVersion}) => {
+export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
+  const state = useSlateEditorState();
   const styles = useStyles();
   const scrollArea = useScrollArea();
   const scrollHeight = useSyncStore(scrollArea.scrollHeight$);
   const clientHeight = useSyncStore(scrollArea.clientHeight$);
+  const version = state.scrollMapVersion.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
 
   React.useLayoutEffect(() => {
@@ -30,25 +48,30 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor, content
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [clientHeight, contentVersion, editor, scrollArea, scrollHeight, styles.light]);
+  }, [clientHeight, editor, scrollArea, scrollHeight, styles.light, version]);
 
   if (!markers.length) return null;
 
   return (
     <>
-      {markers.map((marker) => (
-        <Marker
-          key={marker.key}
-          position={marker.position}
-          color={marker.color}
-          height={marker.height}
-          style={{
-            borderRadius: 1,
-            left: marker.left ?? 1,
-            right: marker.right ?? 1,
-          }}
-        />
-      ))}
+      {markers.map((marker) => {
+        const {variant = 'left'} = marker;
+        return (
+          <Marker
+            key={marker.key}
+            position={marker.position}
+            color={marker.color}
+            height={marker.height}
+            className={variant === 'selection' ? selectionMarkerClass : undefined}
+            style={{
+              left: variant === 'right' ? 6 : 1,
+              right: variant === 'left' ? 6 : 1,
+              background: marker.color,
+              borderRadius: variant === 'selection' ? 0 : 1,
+            }}
+          />
+        );
+      })}
     </>
   );
 };
