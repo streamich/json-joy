@@ -2,8 +2,9 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
 import {useSlateEditorState} from '../../context';
-import {getWordCount, pluralize} from '../../util';
+import {getWordCount, pluralize, typeToLabel} from '../../util';
 
 const footerClass = rule({
   d: 'flex',
@@ -59,12 +60,14 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
   const selectionText = state.selectionText.use();
   const caretPath = state.caretPath.use();
   const caretLinkHref = state.caretLinkHref.use();
+  const caretEmbedUrl = state.caretEmbedUrl.use();
 
   const infoColor = styles.light ? styles.g(0.34) : styles.g(0.68);
   const selectionSummary = selectionText
     ? `${pluralize(getWordCount(selectionText), 'word')} (${pluralize(selectionText.length, 'char')}) selected`
     : '';
   const statusText = readOnly ? 'Read-only' : focused ? 'Editing' : '';
+  const footerUrl = caretEmbedUrl || caretLinkHref;
 
   return (
     <div className={footerClass} style={{color: infoColor}}>
@@ -73,25 +76,26 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
         {!readOnly && focused && !!caretPath && (
           <span className={statusPathClass}>
             {caretPath.map((segment, index) => (
-              <>
-                <span>{segment}</span>
+              <React.Fragment key={`${index}:${segment}`}>
+                <span>{typeToLabel(segment) || segment}</span>
                 {index < caretPath.length - 1 && <span style={{opacity:.25}}>{'→'}</span>}
-              </>
+              </React.Fragment>
             ))}
-            {!!caretLinkHref && (
+            {!!footerUrl && (
               <>
                 <span style={{opacity:.25}}>{'→'}</span>
+                <Favicon url={footerUrl} size={16} />
                 <a
                   className={pathLinkClass}
-                  href={caretLinkHref}
+                  href={footerUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  title={caretLinkHref}
+                  title={footerUrl}
                   onMouseDown={(event) => {
                     event.preventDefault();
                   }}
                 >
-                  {caretLinkHref}
+                  {footerUrl}
                 </a>
               </>
             )}
