@@ -64,8 +64,8 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
             height={marker.height}
             className={variant === 'selection' ? selectionMarkerClass : undefined}
             style={{
-              left: variant === 'right' ? 6 : 1,
-              right: variant === 'left' ? 6 : 1,
+              left: variant === 'selection' ? 0 : variant === 'right' ? 6 : 1,
+              right: variant === 'selection' ? 0 : variant === 'left' ? 6 : 1,
               background: marker.color,
               borderRadius: variant === 'selection' ? 0 : 1,
             }}
