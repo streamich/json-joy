@@ -2318,7 +2318,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate":
+"@jsonjoy.com/collaborative-slate@workspace:*, @jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate"
   dependencies:
@@ -2330,10 +2330,12 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     code-colors: "npm:^2.4.0"
+    code-colors-react: "npm:^3.4.0"
     json-joy: "workspace:*"
     nano-theme: "npm:^1.5.0"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
+    react-embed: "npm:^3.7.0"
     slate: "npm:^0.123.0"
     slate-dom: "npm:^0.123.0"
     slate-history: "npm:^0.113.1"
@@ -11581,6 +11583,84 @@ __metadata:
   checksum: 10c0/5120171d4bdb1577764c5afa96e413353bff530d1b37081cb29cccc747f989eb1baf40574fe8e27060fc1aef72b59c042f72b9b208413de33bcf411343c69057
   languageName: node
   linkType: hard
+
+"mutxt-react@workspace:packages/mutxt-react":
+  version: 0.0.0-use.local
+  resolution: "mutxt-react@workspace:packages/mutxt-react"
+  dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    code-colors: "npm:^2.4.0"
+    code-colors-react: "npm:^3.4.0"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+    slate: "npm:^0.123.0"
+    slate-dom: "npm:^0.123.0"
+    slate-history: "npm:^0.113.1"
+    slate-react: "npm:^0.123.0"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+    slate: ">=0.100.0"
+    slate-react: ">=0.100.0"
+    tslib: 2
+  peerDependenciesMeta:
+    react:
+      optional: false
+    react-dom:
+      optional: false
+    slate:
+      optional: false
+    slate-react:
+      optional: false
+  languageName: unknown
+  linkType: soft
+
+"mutxt@workspace:packages/mutxt":
+  version: 0.0.0-use.local
+  resolution: "mutxt@workspace:packages/mutxt"
+  dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    code-colors: "npm:^2.4.0"
+    code-colors-react: "npm:^3.4.0"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+    slate: "npm:^0.123.0"
+    slate-dom: "npm:^0.123.0"
+    slate-history: "npm:^0.113.1"
+    slate-react: "npm:^0.123.0"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+    slate: ">=0.100.0"
+    slate-react: ">=0.100.0"
+    tslib: 2
+  peerDependenciesMeta:
+    react:
+      optional: false
+    react-dom:
+      optional: false
+    slate:
+      optional: false
+    slate-react:
+      optional: false
+  languageName: unknown
+  linkType: soft
 
 "nano-css@npm:^1.13.0":
   version: 1.17.2
