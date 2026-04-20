@@ -44,16 +44,16 @@ export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   hideDelay?: number;
   minThumbSize?: number;
   shadow?: boolean;
+  shadowFlat?: boolean;
   children: React.ReactNode;
 }
 
-const ScrollAreaShadows: React.FC<{state: ScrollState}> = ({state}) => {
-  const theme = useTheme();
+const ScrollAreaShadows: React.FC<{state: ScrollState, flat?: boolean}> = ({state, flat}) => {
   const scrollTop = useSyncStore(state.scrollTop$);
   const maxScrollTop = useSyncStore(state.maxScrollTop$);
   const headerHeight = useSyncStore(state.headerHeight$);
   const footerHeight = useSyncStore(state.footerHeight$);
-  const background = theme.isLight ? undefined : 'rgba(255,255,255,.1)';
+  const background = flat ? 'rgba(0,0,0,.1)' : void 0;
   const [showTopShadow, showBottomShadow] = getScrollShadowVisibility(scrollTop, maxScrollTop);
 
   return (
@@ -64,6 +64,7 @@ const ScrollAreaShadows: React.FC<{state: ScrollState}> = ({state}) => {
           top: headerHeight,
           opacity: showTopShadow ? 1 : 0,
           background,
+          height: flat ? 3 : void 0,
         }}
       />
       <div
@@ -72,6 +73,7 @@ const ScrollAreaShadows: React.FC<{state: ScrollState}> = ({state}) => {
           bottom: footerHeight,
           opacity: showBottomShadow ? 1 : 0,
           background,
+          height: flat ? 3 : void 0,
         }}
       />
     </>
@@ -85,6 +87,7 @@ export const ScrollArea: React.FC<ScrollAreaProps> = ({
   hideDelay,
   minThumbSize,
   shadow,
+  shadowFlat,
   children,
   className,
   ...rest
@@ -108,7 +111,7 @@ export const ScrollArea: React.FC<ScrollAreaProps> = ({
     <ctx.Provider value={state}>
       <div {...rest} className={rootClass + (className ? ' ' + className : '')}>
         {children}
-        {shadow ? <ScrollAreaShadows state={state} /> : null}
+        {shadow || shadowFlat ? <ScrollAreaShadows state={state} flat={shadowFlat} /> : null}
       </div>
     </ctx.Provider>
   );
