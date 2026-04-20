@@ -1,0 +1,39 @@
+import * as React from 'react';
+import type {RenderElementProps} from 'slate-react';
+import type {CustomElement} from '../../types';
+import {ParagraphElement} from './ParagraphElement';
+import {HeadingElement} from './HeadingElement';
+import {BlockquoteElement} from './BlockquoteElement';
+import {CodeBlock} from './code-block/CodeBlock';
+import {EmbedElement} from './EmbedElement';
+import {ListContainerElement, ListItemElement} from './ListElement';
+import {TwoColumnsElement} from './TwoColumnsElement';
+
+export interface BlockElementProps extends RenderElementProps {
+  element: CustomElement;
+}
+
+export const BlockElement: React.FC<BlockElementProps> = (props) => {
+  switch (props.element.type) {
+    case 'columns':
+      return <TwoColumnsElement {...(props as RenderElementProps & {element: any})} />;
+    case 'h1':
+    case 'h2':
+    case 'h3':
+      return <HeadingElement {...(props as RenderElementProps & {element: any})} />;
+    case 'blockquote':
+      return <BlockquoteElement {...(props as RenderElementProps & {element: any})} />;
+    case 'code-block':
+      return <CodeBlock {...(props as RenderElementProps & {element: any})} />;
+    case 'embed':
+      return <EmbedElement {...(props as RenderElementProps & {element: any})} />;
+    case 'ul':
+    case 'ol':
+    case 'checklist':
+      return <ListContainerElement {...(props as RenderElementProps & {element: any})} />;
+    case 'li':
+      return <ListItemElement {...(props as RenderElementProps & {element: any})} />;
+    default:
+      return <ParagraphElement {...(props as RenderElementProps & {element: any})} />;
+  }
+};
