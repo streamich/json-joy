@@ -72,17 +72,17 @@ export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({edi
     );
 
   return (
-    <Popup renderContext={renderContext} tooltip={{renderTooltip: () => 'Document contents', nowrap: true}}>
+    <Popup renderContext={renderContext} tooltip={{renderTooltip: () => 'Table of contents', nowrap: true}}>
       <BasicButton
         width={'auto'}
         height={32}
         compact
         rounder
-        aria-label={'Open document contents'}
+        aria-label={'Open document table of contents'}
       >
         <span className={buttonLabelClass}>
           <Icon />
-          <span>Contents</span>
+          <span>Go to</span>
         </span>
       </BasicButton>
     </Popup>

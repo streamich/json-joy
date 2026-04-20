@@ -15,6 +15,7 @@ import {useCodeSyntaxDecorations} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
+import {EditorScrollMap} from './components/chrome/EditorScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
@@ -37,6 +38,25 @@ const fitShellClass = rule({
   d: 'flex',
   fld: 'column',
 });
+
+interface EditorScrollAreaProps {
+  children: React.ReactNode;
+  contentVersion: number;
+  editor: Editor;
+  style: React.CSSProperties;
+}
+
+const EditorScrollArea: React.FC<EditorScrollAreaProps> = ({children, contentVersion, editor, style}) => (
+  <ScrollArea.ScrollArea railWidth={12} style={style}>
+    <ScrollArea.Viewport>
+      {children}
+    </ScrollArea.Viewport>
+    <ScrollArea.ScrollRail>
+      <ScrollArea.Thumb />
+      <EditorScrollMap editor={editor} contentVersion={contentVersion} />
+    </ScrollArea.ScrollRail>
+  </ScrollArea.ScrollArea>
+);
 
 export interface SlateEditorProps {
   model?: Model<any>;
@@ -195,21 +215,15 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
 
   if (heightFit) {
     content = (
-      <ScrollArea.ScrollArea style={{flex: '1 1 0%', overflow: 'auto', minHeight: 0}}>
-        <ScrollArea.Viewport>
-          {content}
-        </ScrollArea.Viewport>
-        <ScrollArea.ScrollRail />
-      </ScrollArea.ScrollArea>
+      <EditorScrollArea editor={editor} contentVersion={contentVersion} style={{flex: '1 1 0%', overflow: 'auto', minHeight: 0}}>
+        {content}
+      </EditorScrollArea>
     );
   } else if (height || maxHeight) {
     content = (
-      <ScrollArea.ScrollArea style={{ height, maxHeight }}>
-        <ScrollArea.Viewport>
-          {content}
-        </ScrollArea.Viewport>
-        <ScrollArea.ScrollRail />
-      </ScrollArea.ScrollArea>
+      <EditorScrollArea editor={editor} contentVersion={contentVersion} style={{height, maxHeight}}>
+        {content}
+      </EditorScrollArea>
     );
   }
 
