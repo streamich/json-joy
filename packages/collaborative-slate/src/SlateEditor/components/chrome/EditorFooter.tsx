@@ -29,7 +29,6 @@ const statusPathClass = rule({
   ai: 'center',
   gap: '12px',
   fw: 'wrap',
-  minW: '0',
 });
 
 const pathLinkClass = rule({

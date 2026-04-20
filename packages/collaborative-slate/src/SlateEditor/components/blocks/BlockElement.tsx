@@ -4,7 +4,8 @@ import type {CustomElement} from '../../types';
 import {ParagraphElement} from './ParagraphElement';
 import {HeadingElement} from './HeadingElement';
 import {BlockquoteElement} from './BlockquoteElement';
-import {CodeBlockElement} from './CodeBlockElement';
+import {CodeBlock} from './code-block/CodeBlock';
+import {EmbedElement} from './EmbedElement';
 import {ListContainerElement, ListItemElement} from './ListElement';
 import {TwoColumnsElement} from './TwoColumnsElement';
 
@@ -23,7 +24,9 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
     case 'blockquote':
       return <BlockquoteElement {...(props as RenderElementProps & {element: any})} />;
     case 'code-block':
-      return <CodeBlockElement {...(props as RenderElementProps & {element: any})} />;
+      return <CodeBlock {...(props as RenderElementProps & {element: any})} />;
+    case 'embed':
+      return <EmbedElement {...(props as RenderElementProps & {element: any})} />;
     case 'ul':
     case 'ol':
     case 'checklist':

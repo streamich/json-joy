@@ -47,7 +47,7 @@ interface EditorScrollAreaProps {
 }
 
 const EditorScrollArea: React.FC<EditorScrollAreaProps> = ({children, editor, style}) => (
-  <ScrollArea.ScrollArea railWidth={12} style={style} hideDelay={5000}>
+  <ScrollArea.ScrollArea shadow railWidth={12} style={style} hideDelay={5000}>
     <ScrollArea.Viewport>
       {children}
     </ScrollArea.Viewport>
@@ -86,7 +86,6 @@ export const SlateEditor: React.FC<SlateEditorProps> = ({
   presence,
   onEditor,
   placeholder = 'Start with a heading, a note, or a quick thought.',
-  // maxWidth = 1200,
   contentWidth,
   minHeight,
   maxHeight,

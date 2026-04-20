@@ -26,8 +26,10 @@ import {
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
+import {EmbedToolbarButton} from './EmbedToolbarButton';
 import {LinkToolbarButton} from './LinkToolbarButton';
 import {DocumentOutlineButton} from '../chrome/DocumentOutlineButton';
+import {useSlateEditorState} from '../../context';
 
 const blockClass = rule({
   pos: 'relative',
@@ -50,7 +52,11 @@ export interface EditorToolbarProps {
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, onVisualChange}) => {
+  const state = useSlateEditorState();
   const styles = useStyles();
+  const toolbarVersion = state.toolbarVersion.use();
+
+  void toolbarVersion;
 
   const execute = React.useCallback(
     (callback: () => void): React.MouseEventHandler =>
@@ -107,17 +113,14 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
       <div className={toolbarContainerClass}>
         {MARK_BUTTONS.map((button) => (
           renderItem({
-            key: button.key,
-            title: button.title,
-            iconSet: button.iconSet,
-            icon: button.icon,
-            shortcut: button.shortcut,
+            ...button,
             active: isMarkActive(editor, button.format!),
             disabled: readOnly,
             onMouseDown: execute(() => toggleMark(editor, button.format!)),
           })
         ))}
         <LinkToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
+        <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />
         <ToolbarSep />
         <ToolbarSep line />
@@ -125,11 +128,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         <ToolbarSep />
         {BLOCK_BUTTONS.map((button) => (
           renderItem({
-            key: button.key,
-            title: button.title,
-            iconSet: button.iconSet,
-            icon: button.icon,
-            shortcut: button.shortcut,
+            ...button,
             active: isBlockActive(editor, button.format!),
             disabled: readOnly,
             onMouseDown: execute(() => toggleBlock(editor, button.format!)),
@@ -138,11 +137,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         <ToolbarSep line />
         {LIST_BUTTONS.map((button) => (
           renderItem({
-            key: button.key,
-            title: button.title,
-            iconSet: button.iconSet,
-            icon: button.icon,
-            shortcut: button.shortcut,
+            ...button,
             active: isListActive(editor, button.format!),
             disabled: readOnly,
             onMouseDown: execute(() => toggleBlock(editor, button.format!)),
@@ -151,11 +146,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         <ToolbarSep line />
         {LAYOUT_BUTTONS.map((button) => (
           renderItem({
-            key: button.key,
-            title: button.title,
-            iconSet: button.iconSet,
-            icon: button.icon,
-            shortcut: button.shortcut,
+            ...button,
             active: isBlockActive(editor, button.format!),
             disabled: readOnly,
             onMouseDown: execute(() => toggleBlock(editor, button.format!)),
@@ -168,11 +159,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         <ToolbarSep />
         {ALIGNMENT_BUTTONS.map((button) => (
           renderItem({
-            key: button.key,
-            title: button.title,
-            iconSet: button.iconSet,
-            icon: button.icon,
-            shortcut: button.shortcut,
+            ...button,
             active: isAlignmentActive(editor, button.format!),
             disabled: readOnly,
             onMouseDown: execute(() => setAlignment(editor, button.format!)),
@@ -183,29 +170,18 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
         <DocumentOutlineButton editor={editor} contentWidth={300} />
         <ToolbarSep line />
         {renderItem({
-          key: ACTION_BUTTONS[2].key,
-          title: ACTION_BUTTONS[2].title,
-          iconSet: ACTION_BUTTONS[2].iconSet,
-          icon: ACTION_BUTTONS[2].icon,
+          ...ACTION_BUTTONS[2],
           disabled: readOnly,
           onMouseDown: execute(() => clearFormatting(editor)),
         })}
         <ToolbarSep line />
         {renderItem({
-          key: ACTION_BUTTONS[0].key,
-          title: ACTION_BUTTONS[0].title,
-          iconSet: ACTION_BUTTONS[0].iconSet,
-          icon: ACTION_BUTTONS[0].icon,
-          shortcut: ACTION_BUTTONS[0].shortcut,
+          ...ACTION_BUTTONS[0],
           disabled: readOnly || !canUndo(editor),
           onMouseDown: execute(() => undo(editor)),
         })}
         {renderItem({
-          key: ACTION_BUTTONS[1].key,
-          title: ACTION_BUTTONS[1].title,
-          iconSet: ACTION_BUTTONS[1].iconSet,
-          icon: ACTION_BUTTONS[1].icon,
-          shortcut: ACTION_BUTTONS[1].shortcut,
+          ...ACTION_BUTTONS[1],
           disabled: readOnly || !canRedo(editor),
           onMouseDown: execute(() => redo(editor)),
         })}

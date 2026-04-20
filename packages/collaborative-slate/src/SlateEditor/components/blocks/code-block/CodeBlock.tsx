@@ -2,7 +2,6 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Transforms} from 'slate';
 import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 'slate-react';
-import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
@@ -13,7 +12,7 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import {EditorContextPopup} from '../chrome/EditorContextPopup';
+import {EditorContextPopup} from '../../chrome/EditorContextPopup';
 import type {CodeBlockElement as CodeBlockElementType} from '../../types';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {css} from 'code-colors-react/lib/style';
@@ -150,11 +149,11 @@ const popupFieldRowClass = rule({
   ai: 'center',
 });
 
-export interface CodeBlockElementProps extends RenderElementProps {
+export interface CodeBlockProps extends RenderElementProps {
   element: CodeBlockElementType;
 }
 
-export const CodeBlockElement: React.FC<CodeBlockElementProps> = ({attributes, children, element}) => {
+export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, element}) => {
   const styles = useStyles();
   const editor = useSlateStatic();
   const readOnly = useReadOnly();

@@ -15,6 +15,7 @@ export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify
 export const MARKS: MarkFormat[] = ['bold', 'italic', 'underline', 'code'];
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
+const isFormattableBlock = (node: CustomElement): boolean => !isListType(node.type) && node.type !== 'embed';
 
 export const isListType = (format: string): format is ListElementType => LIST_TYPES.includes(format as ListElementType);
 
@@ -53,7 +54,7 @@ export const getActiveAlignment = (editor: Editor): SlateTextAlign => {
   if (!selection) return 'left';
   const [match] = Editor.nodes(editor, {
     at: Editor.unhangRange(editor, selection),
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && isFormattableBlock(node),
   });
   if (!match) return 'left';
   const [element] = match as [CustomElement, number[]];
@@ -98,7 +99,7 @@ export const toggleBlock = (editor: Editor, format: BlockFormat): void => {
   unwrapLists(editor);
   const nextType = isActive ? 'p' : isList ? 'li' : format;
   Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>, {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && isFormattableBlock(node),
   });
   if (!isActive && isList) {
     Transforms.wrapNodes(editor, {type: format, children: []} as CustomElement, {
@@ -122,13 +123,13 @@ export const setAlignment = (editor: Editor, alignment: SlateTextAlign): void =>
 
   if (shouldUnset) {
     Transforms.unsetNodes(editor, 'align', {
-      match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
+      match: (node) => isElement(node) && Editor.isBlock(editor, node) && isFormattableBlock(node),
     });
     return;
   }
 
   Transforms.setNodes(editor, {align: alignment} as Partial<CustomElement>, {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && isFormattableBlock(node),
   });
 };
 
@@ -140,7 +141,7 @@ export const clearFormatting = (editor: Editor): void => {
     match: (node) => isElement(node) && Editor.isBlock(editor, node),
   });
   Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && !isListType(node.type),
+    match: (node) => isElement(node) && Editor.isBlock(editor, node) && isFormattableBlock(node),
   });
   Transforms.unsetNodes(editor, 'checked', {
     match: (node) => isElement(node) && Editor.isBlock(editor, node),
@@ -160,6 +161,7 @@ export const resetEmptyBlockToParagraph = (editor: Editor): boolean => {
   const entry = getCurrentBlockEntry(editor);
   if (!entry) return false;
   const [block] = entry;
+  if (block.type === 'embed') return false;
   if (Node.string(block) !== '') return false;
   if (block.type === 'p') return false;
   if (block.type === 'li') {
@@ -245,8 +247,12 @@ export const LAYOUT_BUTTONS: ToolbarButtonDefinition<'columns'>[] = [
 
 export const LIST_BUTTONS: ToolbarButtonDefinition<ListElementType>[] = [
   {key: 'ul', title: 'Bulleted list', iconSet: 'ibm_32', icon: 'list--bulleted', shortcut: 'Cmd+Alt+8', format: 'ul'},
+  // {key: 'ul', title: 'Bulleted list', iconSet: 'bootstrap', icon: 'list-ul', shortcut: 'Cmd+Alt+8', format: 'ul'},
   {key: 'ol', title: 'Numbered list', iconSet: 'ibm_32', icon: 'list--numbered', shortcut: 'Cmd+Alt+7', format: 'ol'},
-  {key: 'checklist', title: 'Checklist', iconSet: 'lucide', icon: 'list-todo', format: 'checklist'},
+  // {key: 'ol', title: 'Numbered list', iconSet: 'bootstrap', icon: 'list-ol', shortcut: 'Cmd+Alt+7', format: 'ol'},
+  // {key: 'checklist', title: 'Checklist', iconSet: 'lucide', icon: 'list-todo', format: 'checklist'},
+  // {key: 'checklist', title: 'Checklist', iconSet: 'bootstrap', icon: 'list-check', format: 'checklist'},
+  {key: 'checklist', title: 'Checklist', iconSet: 'ibm_32', icon: 'list--checked', format: 'checklist'},
 ];
 
 export const ALIGNMENT_BUTTONS: ToolbarButtonDefinition<SlateTextAlign>[] = [

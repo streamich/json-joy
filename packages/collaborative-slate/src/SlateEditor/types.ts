@@ -6,7 +6,7 @@ export type MarkFormat = 'bold' | 'italic' | 'underline' | 'code';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type ListElementType = 'ul' | 'ol' | 'checklist';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
-export type BlockElementType = BlockFormat | 'li';
+export type BlockElementType = BlockFormat | 'li' | 'embed';
 
 export interface LinkAttributes {
   href: string;
@@ -74,6 +74,14 @@ export interface ChecklistListElement extends BlockAttributes {
   children: ListItemElement[];
 }
 
+export interface EmbedElement extends BlockAttributes {
+  type: 'embed';
+  url: string;
+  caption?: string;
+  width?: number;
+  children: CustomText[];
+}
+
 export type CustomElement =
   | ParagraphElement
   | TwoColumnsElement
@@ -83,7 +91,8 @@ export type CustomElement =
   | ListItemElement
   | BulletedListElement
   | NumberedListElement
-  | ChecklistListElement;
+  | ChecklistListElement
+  | EmbedElement;
 
 export type SlateEditorDocument = CustomElement[];
 

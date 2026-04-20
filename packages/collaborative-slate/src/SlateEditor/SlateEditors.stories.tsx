@@ -66,6 +66,12 @@ const primaryValue: SlateEditorDocument = [
       {text: ' component. Cursor colours and user names are derived from the metadata you attach to each presence session.'},
     ],
   },
+  {
+    type: 'embed',
+    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    caption: 'A live embed block rendered directly from a video URL.',
+    children: [{text: ''}],
+  },
 ];
 
 const kitchenSinkValue: SlateEditorDocument = [
@@ -163,6 +169,12 @@ const kitchenSinkValue: SlateEditorDocument = [
       {type: 'li', children: [{text: 'Monaco Editor — '}, {text: '@jsonjoy.com/collaborative-monaco', code: true}]},
     ],
   },
+  {
+    type: 'embed',
+    url: 'https://www.w3schools.com/html/horse.mp3',
+    caption: 'Embeds can be mixed freely with regular rich-text content.',
+    children: [{text: ''}],
+  },
 
   {type: 'h2', children: [{text: 'Further Reading'}]},
   {
@@ -209,6 +221,52 @@ const twoColumnsValue: SlateEditorDocument = [
     type: 'p',
     children: [
       {text: 'Switch the block back to a paragraph at any time and the content stays intact.'},
+    ],
+  },
+];
+
+const embedsValue: SlateEditorDocument = [
+  {type: 'h1', children: [{text: 'Embed blocks'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Embed blocks are void Slate nodes backed by a single URL. They render provider widgets through '},
+      {text: 'react-embed', code: true},
+      {text: ' and fall back to a simple external link card when a provider is unsupported.'},
+    ],
+  },
+  {
+    type: 'embed',
+    url: 'https://www.npmjs.com/package/react-twitter-embed',
+    children: [{text: ''}],
+  },
+  {
+    type: 'embed',
+    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    caption: 'Direct MP4 video embed',
+    children: [{text: ''}],
+  },
+  {
+    type: 'embed',
+    url: 'https://www.youtube.com/watch?v=cWBVMEHPgQU',
+    children: [{text: ''}],
+  },
+  {
+    type: 'embed',
+    url: 'https://www.w3schools.com/html/horse.mp3',
+    caption: 'Direct audio embed',
+    children: [{text: ''}],
+  },
+  {
+    type: 'embed',
+    url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    caption: 'PDF document embed',
+    children: [{text: ''}],
+  },
+  {
+    type: 'p',
+    children: [
+      {text: 'Selecting any embed shows its source URL in the footer, and the scroll map marks embed positions alongside headings, code blocks, and lists.'},
     ],
   },
 ];
@@ -504,6 +562,14 @@ export const TwoColumns = meta.story({
   render: () => (
     <Wrap>
       <SlateEditor autoFocus={false} initialValue={twoColumnsValue} minHeight={440} contentWidth={920} />
+    </Wrap>
+  ),
+});
+
+export const Embeds = meta.story({
+  render: () => (
+    <Wrap>
+      <SlateEditor autoFocus={false} initialValue={embedsValue} minHeight={720} />
     </Wrap>
   ),
 });

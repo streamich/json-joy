@@ -87,7 +87,8 @@
     "code-colors": "^2.4.0",
     "code-colors-react": "^3.4.0",
     "json-joy": "workspace:*",
-    "nano-theme": "^1.5.0"
+    "nano-theme": "^1.5.0",
+    "react-embed": "^3.7.0"
   },
   "peerDependencies": {
     "react": ">=18",

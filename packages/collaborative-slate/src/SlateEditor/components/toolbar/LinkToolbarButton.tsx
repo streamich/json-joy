@@ -176,7 +176,7 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
                 label='Link'
                 value={draft}
                 placeholder="https://example.com"
-                focus={open}
+                focus
                 select={open}
                 onChange={setDraft}
                 onEnter={(event) => {
@@ -199,7 +199,9 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({editor, rea
           onMouseDown={preventMouseDown}
           tooltip={{nowrap: true, renderTooltip: () => popupTitle, shortcut: 'Cmd+K'}}
         >
-          <Iconista set={'lucide' as any} icon={'link' as any} width={16} height={16} />
+          {/* <Iconista set={'lucide' as any} icon={'link' as any} width={16} height={16} /> */}
+          {/* <Iconista set={'bootstrap'} icon={'link-45deg'} width={16} height={16} /> */}
+          <Iconista set="tabler" icon="link" width={16} height={16} />
         </ToolbarItem>
       </PopupControlled>
     </anchorContext.Provider>

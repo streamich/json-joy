@@ -2,6 +2,7 @@ import {Editor, Element as SlateElement, Node, Range, Text} from 'slate';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import type {Model} from 'json-joy/lib/json-crdt';
 import {FromSlate} from '../sync/FromSlate';
+import {getActiveEmbed} from './behavior/embed';
 import {getLinkAttributes} from './behavior/link';
 import type {CustomElement, CustomText, SlateEditorDocument} from './types';
 
@@ -22,6 +23,7 @@ const INLINE_FORMAT_KEYS: Array<keyof Pick<CustomText, 'bold' | 'italic' | 'unde
 export interface CaretPathInfo {
   path: string[];
   linkHref?: string;
+  embedUrl?: string;
 }
 
 export const EMPTY_DOCUMENT: SlateEditorDocument = [{type: 'p', children: [{text: ''}]} as CustomElement];
@@ -79,6 +81,14 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
   const {selection} = editor;
   if (!selection) return {path: []};
 
+  const activeEmbed = getActiveEmbed(editor);
+  if (activeEmbed) {
+    return {
+      path: ['embed'],
+      embedUrl: activeEmbed.url,
+    };
+  }
+
   const point = selection.focus;
   const segments: string[] = [];
 
@@ -111,13 +121,14 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
   return {
     path: segments,
     linkHref: link?.href,
+    embedUrl: undefined,
   };
 };
 
-export const getCurrentBlockLabel = (editor: Editor): string => {
-  const element = getCurrentBlock(editor);
-  if (!element) return 'Paragraph';
-  switch (element.type) {
+export const typeToLabel = (type: string): string => {
+  switch (type) {
+    case 'p':
+      return 'Paragraph';
     case 'h1':
       return 'Heading 1';
     case 'h2':
@@ -130,6 +141,8 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
       return 'Quote';
     case 'code-block':
       return 'Code block';
+    case 'embed':
+      return 'Embed';
     case 'checklist':
       return 'Checklist';
     case 'ul':
@@ -139,8 +152,14 @@ export const getCurrentBlockLabel = (editor: Editor): string => {
     case 'li':
       return 'List item';
     default:
-      return 'Paragraph';
+      return '';
   }
+};
+
+export const getCurrentBlockLabel = (editor: Editor): string => {
+  const element = getCurrentBlock(editor);
+  if (!element) return 'Paragraph';
+  return typeToLabel(element.type) || 'Paragraph';
 };
 
 export const pluralize = (count: number, singular: string, plural = singular + 's'): string =>

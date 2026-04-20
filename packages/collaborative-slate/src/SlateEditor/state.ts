@@ -11,6 +11,7 @@ export class SlateEditorState {
   public readonly focused = rsync.val(false);
   public readonly collaborative = rsync.val(false);
   public readonly readOnly = rsync.val(false);
+  public readonly toolbarVersion = rsync.val(0);
   public readonly linkMenuRequest = rsync.val(0);
   public readonly currentBlock = rsync.val('Paragraph');
   public readonly caretPath = rsync.val<string[]>([]);
@@ -56,6 +57,7 @@ export class SlateEditorState {
   public readonly sync = (editor: Editor): void => {
     const text = getEditorPlainText(editor);
     const caret = getCaretPathInfo(editor);
+    this.toolbarVersion.next(this.toolbarVersion.value + 1);
     this.wordCount.set(getWordCount(text));
     this.characterCount.set(text.length);
     this.currentBlock.set(getCurrentBlockLabel(editor));

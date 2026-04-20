@@ -1,5 +1,6 @@
 import {Range, type Editor} from 'slate';
 import {ReactEditor} from 'slate-react';
+import {getActiveEmbedEntry} from './embed';
 import type {ChecklistListElement, CustomElement, ListItemElement} from '../types';
 
 export interface ScrollMapElementDescriptor {
@@ -97,11 +98,11 @@ const describeScrollMapElement = (element: CustomElement, light: boolean): Scrol
           ? light ? '#2f8f35' : '#7be08f'
           : started
             ? light
-              ? 'rgba(234, 179, 8, 0.86)'
-              : 'rgba(250, 204, 21, 0.9)'
+              ? 'rgba(200,150,40,.6)'
+              : 'rgba(250,204,21,.5)'
             : light
-              ? 'rgba(220, 38, 38, 0.8)'
-              : 'rgba(248, 113, 113, 0.86)',
+              ? 'rgba(220,38,38,.6)'
+              : 'rgba(248,113,113,.5)',
         height: 3,
         proportional: true,
       };
@@ -127,6 +128,41 @@ const getDomRangeRect = (range: globalThis.Range): DOMRect | null => {
   return range.getClientRects()[0] ?? null;
 };
 
+const getScrollMapSelectionRect = (
+  reactEditor: Editor & ReactEditor,
+  light: boolean,
+): {rect: DOMRect; proportional: boolean} | null => {
+  const activeEmbedEntry = getActiveEmbedEntry(reactEditor);
+  if (activeEmbedEntry) {
+    const [element] = activeEmbedEntry;
+    const descriptor = describeScrollMapElement(element, light);
+    try {
+      const domNode = ReactEditor.toDOMNode(reactEditor, element);
+      if (domNode instanceof HTMLElement) {
+        return {
+          rect: domNode.getBoundingClientRect(),
+          proportional: descriptor?.proportional ?? true,
+        };
+      }
+    } catch {
+      // Slate may briefly invalidate the selected void node while reconciling changes.
+    }
+  }
+  const selection = reactEditor.selection;
+  if (!selection) return null;
+  try {
+    const domRange = ReactEditor.toDOMRange(reactEditor, selection);
+    const rect = getDomRangeRect(domRange);
+    if (!rect) return null;
+    return {
+      rect,
+      proportional: !Range.isCollapsed(selection),
+    };
+  } catch {
+    return null;
+  }
+};
+
 const measureScrollMapSelectionMarker = (
   reactEditor: Editor & ReactEditor,
   viewportEl: HTMLDivElement,
@@ -137,28 +173,22 @@ const measureScrollMapSelectionMarker = (
 ): ScrollMapMarker | null => {
   const selection = reactEditor.selection;
   if (!selection) return null;
+  const selectionRect = getScrollMapSelectionRect(reactEditor, light);
+  if (!selectionRect) return null;
   const descriptor: ScrollMapElementDescriptor = {
     color: light ? 'rgba(15, 23, 42, 0.88)' : 'rgba(241, 245, 249, 0.94)',
     height: 4,
-    proportional: !Range.isCollapsed(selection),
+    proportional: selectionRect.proportional,
     variant: 'selection',
   };
-  try {
-    const domRange = ReactEditor.toDOMRange(reactEditor, selection);
-    const rect = getDomRangeRect(domRange);
-    if (!rect) return null;
-    const top = rect.top - viewportRect.top + viewportEl.scrollTop;
-    return {
-      ...descriptor,
-      key: 'selection',
-      color: 'transparent',
-      position: clamp(top / scrollHeight, 0, 1),
-      height: getMarkerHeight(descriptor, rect.height, scrollHeight, railHeight),
-    };
-  } catch {
-    // Slate may briefly invalidate the DOM range while reconciling selection changes.
-    return null;
-  }
+  const top = selectionRect.rect.top - viewportRect.top + viewportEl.scrollTop;
+  return {
+    ...descriptor,
+    key: 'selection',
+    color: 'transparent',
+    position: clamp(top / scrollHeight, 0, 1),
+    height: getMarkerHeight(descriptor, selectionRect.rect.height, scrollHeight, railHeight),
+  };
 };
 
 export const measureScrollMapMarkers = (
