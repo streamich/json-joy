@@ -14,7 +14,9 @@ const selectionMarkerBlink = keyframes({
 });
 
 const selectionMarkerClass = rule({
-  bd: '1px dashed currentColor',
+  // bd: '1px dashed #000',
+  bd: '1px dashed #07f',
+  bg: 'rgba(7,122,255,.22)',
   bxz: 'border-box',
   minH: '2px',
   trs: 'height .1s ease-out, top .1s ease-out, bottom .1s ease-out',
@@ -66,7 +68,7 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
             style={{
               left: variant === 'selection' ? 0 : variant === 'right' ? 6 : 1,
               right: variant === 'selection' ? 0 : variant === 'left' ? 6 : 1,
-              background: marker.color,
+              background: variant === 'selection' ? void 0 : marker.color,
               borderRadius: variant === 'selection' ? 0 : 1,
             }}
           />

@@ -176,7 +176,7 @@ const measureScrollMapSelectionMarker = (
   const selectionRect = getScrollMapSelectionRect(reactEditor, light);
   if (!selectionRect) return null;
   const descriptor: ScrollMapElementDescriptor = {
-    color: light ? 'rgba(15, 23, 42, 0.88)' : 'rgba(241, 245, 249, 0.94)',
+    color: '#07f',
     height: 4,
     proportional: selectionRect.proportional,
     variant: 'selection',
