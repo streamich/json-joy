@@ -82,9 +82,16 @@ export const Input: React.FC<InputProps> = (props) => {
 
   useEffect(() => {
     if (!ref.current) return;
-    if (!props.focus) return;
-    if (props.focus) ref.current.focus();
-    if (props.select) ref.current.select();
+    if (props.focus || props.select) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (ref.current) {
+            if (props.focus) ref.current.focus();
+            if (props.select) ref.current.select();
+          }
+        });
+      });
+    }
   }, [ref.current]);
 
   const onFocus = useCallback(
