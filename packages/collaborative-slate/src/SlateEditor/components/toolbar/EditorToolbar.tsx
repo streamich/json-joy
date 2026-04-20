@@ -27,7 +27,7 @@ import {
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {EmbedToolbarButton} from './EmbedToolbarButton';
-import {LinkToolbarButton} from './LinkToolbarButton';
+import {LinkToolbarButton} from './link/LinkToolbarButton';
 import {DocumentOutlineButton} from '../chrome/DocumentOutlineButton';
 import {useSlateEditorState} from '../../context';
 
