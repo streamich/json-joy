@@ -1,5 +1,3 @@
-
-
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
@@ -27,7 +25,7 @@ const contentClass = rule({
   gap: '12px',
   flex: '1 1 auto',
   bxz: 'border-box',
-  pd: '32px 0 0',
+  pd: '40px 0 0',
 });
 
 export const MainContent: React.FC = () => {
