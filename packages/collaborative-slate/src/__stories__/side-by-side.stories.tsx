@@ -94,5 +94,5 @@ const Demo: React.FC = () => {
 };
 
 export const SideBySide = meta.story({
-  render: Demo,
+  render: () => <Demo />,
 });

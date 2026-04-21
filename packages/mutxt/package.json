@@ -40,6 +40,7 @@
     "tslib": "*"
   },
   "dependencies": {
+    "@jsonjoy.com/collaborative-peritext": "workspace:*",
     "@jsonjoy.com/collaborative-ui": "workspace:*",
     "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",

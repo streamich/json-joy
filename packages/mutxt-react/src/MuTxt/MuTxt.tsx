@@ -22,8 +22,8 @@ import {SlateEditorContextProvider} from './context';
 import {SlateEditorState} from './state';
 import {createSlateEditorModel, EMPTY_DOCUMENT, shouldShowPlaceholder} from './util';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
-import type {Model} from 'json-joy/lib/json-crdt';
 import type {SlateEditorDocument} from './types';
+import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 
 const shellClass = rule({
   w: '100%',
@@ -57,9 +57,9 @@ const EditorScrollArea: React.FC<EditorScrollAreaProps> = ({children, editor, st
 );
 
 export interface MuTxtProps {
-  model?: Model<any>;
-  initialValue?: SlateEditorDocument;
+  peritext?: PeritextRef;
   presence?: PresenceManager;
+  initialValue?: SlateEditorDocument;
   onEditor?: (editor: Editor) => void;
   placeholder?: string;
   maxWidth?: number;
@@ -80,7 +80,7 @@ export interface MuTxtProps {
 const placeholderValue: Descendant[] = EMPTY_DOCUMENT as Descendant[];
 
 export const MuTxt: React.FC<MuTxtProps> = ({
-  model,
+  peritext,
   initialValue,
   presence,
   onEditor,
@@ -103,8 +103,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const [contentVersion, setContentVersion] = React.useState(0);
   const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
-  const resolvedModel = model ?? standaloneModel;
-  const peritextRef = React.useCallback(() => (resolvedModel as any).s.toExt(), [resolvedModel]);
+  const peritextRef = React.useCallback(peritext ?? (() => (standaloneModel as any).s.toExt()), [peritext, standaloneModel]);
 
   React.useEffect(() => {
     state.setCollaborative(!!presence);
