@@ -11,12 +11,12 @@ const rootClass = rule({
 
 const muClass = rule({
   ...theme.font.serif.mid,
-  fz: '19.5px',
+  fz: '20.5px',
 });
 
 const txtClass = rule({
   ...theme.font.slab.bold,
-  fz: '23.5px',
+  fz: '22.5px',
 });
 
 export interface BrandLogoProps {}
@@ -28,7 +28,11 @@ export const BrandLogo: React.FC<BrandLogoProps> = () => {
     <BasicTooltip nowrap renderTooltip={() => label}>
       <span className={rootClass} role="img" aria-label={label}>
         <span className={muClass}><sub>μ</sub></span>
-        <span className={txtClass}>txt</span>
+        <span className={txtClass}>
+          <span style={{letterSpacing: '.03em'}}>t</span>
+          <span style={{letterSpacing: '.01em'}}>x</span>
+          <span>t</span>
+        </span>
       </span>
     </BasicTooltip>
   );

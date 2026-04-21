@@ -64,14 +64,14 @@ export const PwaInstallButton: React.FC<PwaInstallButtonProps> = () => {
 
   return (
     <BasicButton
-      title="Install JSON CRDT Explorer as an app"
+      title="Install \mu txt as an app on your device for a better experience"
       width="auto"
       height={32}
       rounder
       compact
       onClick={() => void handleInstallClick()}
     >
-      Install&nbsp;<Label>App</Label>
+      Install as&nbsp;<Label>App</Label>
     </BasicButton>
   );
 };
