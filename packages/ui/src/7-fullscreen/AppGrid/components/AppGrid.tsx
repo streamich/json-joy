@@ -32,6 +32,9 @@ export interface AppGridProps {
   maxLeftSize?: number;
   minLeftSize?: number;
   children?: React.ReactNode;
+
+  /** Render the column yourself. */
+  column?: (toggle: React.ReactNode) => React.ReactNode;
 }
 
 export const AppGrid: React.FC<AppGridProps> = ({
@@ -45,6 +48,7 @@ export const AppGrid: React.FC<AppGridProps> = ({
   maxLeftSize,
   minLeftSize,
   children,
+  column,
 }) => {
   const [t] = useT();
   const hasLeft = !!left;
@@ -91,7 +95,7 @@ export const AppGrid: React.FC<AppGridProps> = ({
     </Pane>
   );
 
-  let content = (
+  let content = column ? column(leftVisible ? null : toggle) : (
     <AppGridColumn
       header={
         typeof left === 'function' && leftState === 'open' ? (

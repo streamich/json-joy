@@ -2,7 +2,8 @@ import {Button, type ButtonProps} from '@jsonjoy.com/ui/lib/2-inline-block/Butto
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as React from 'react';
 
-const PlusIcon = makeIcon({set: 'auth0', icon: 'plus'});
+// const PlusIcon = makeIcon({set: 'auth0', icon: 'plus'});
+const PlusIcon = makeIcon({set: 'bootstrap', icon: 'plus-square-dotted'});
 
 export interface CreateButtonProps extends ButtonProps {
   primary?: boolean;

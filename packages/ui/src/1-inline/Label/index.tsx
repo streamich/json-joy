@@ -19,7 +19,7 @@ const blockClass = rule({
 
 const useBlockClass = makeRule((theme) => ({
   col: theme.g(0.25),
-  bg: theme.g(0.96),
+  bg: theme.g(0, 0.06),
   boxShadow: theme.isLight ? 'none' : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
   '&:hover': {
     col: theme.g(0.25),

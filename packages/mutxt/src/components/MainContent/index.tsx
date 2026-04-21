@@ -4,6 +4,7 @@ import {Log} from './Log';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import {WelcomeScreen} from '../WelcomeScreen';
+import {MuTxt} from 'mutxt-react';
 
 const blockClass = rule({
   w: '100%',
@@ -18,6 +19,8 @@ const contentClass = rule({
   w: '100%',
   minH: '100%',
   d: 'flex',
+  fld: 'column',
+  gap: '12px',
   flex: '1 1 auto',
   bxz: 'border-box',
   pd: '32px 0 0',
@@ -25,13 +28,34 @@ const contentClass = rule({
 
 export const MainContent: React.FC = () => {
   const state = useExplorer();
-  const files = useBehaviorSubject(state.files$);
+  const file = useBehaviorSubject(state.file$);
 
-  const content = !files.length ? <WelcomeScreen /> : <Log />;
+  if (!file) {
+    return (
+      <div className={blockClass}>
+        <div className={contentClass}>
+          <WelcomeScreen />
+        </div>
+      </div>
+    );
+  }
+
+  let editor: React.ReactNode = null;
+
+  if (file.log.end.api.read('/@type') === 'mutxt') {
+    editor = (
+      <div style={{height: 600}}>
+        <MuTxt heightFit />
+      </div>
+    );
+  }
 
   return (
     <div className={blockClass}>
-      <div className={contentClass}>{content}</div>
+      <div className={contentClass}>
+        {editor}
+        {/* <Log /> */}
+      </div>
     </div>
   );
 };

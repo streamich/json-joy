@@ -1,4 +1,6 @@
-import {Model, Patch} from 'json-joy/lib/json-crdt';
+import {Patch} from 'json-joy/lib/json-crdt';
+import {Model} from 'json-joy/lib/json-crdt';
+import {ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {rsync} from '@jsonjoy.com/ui';
@@ -9,6 +11,8 @@ import {type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
 import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
+import {s} from 'json-joy/lib/json-crdt';
+import {ext} from 'json-joy/lib/json-crdt-extensions';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 
@@ -28,6 +32,7 @@ export class JsonCrdtExplorerState {
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
   public readonly selected$: BehaviorSubject<[id: TabItem, index: number] | null>;
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
+  // TODO: persist this in local storage
   public readonly sid = Model.sid();
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   public readonly menus: Menus;
@@ -39,7 +44,7 @@ export class JsonCrdtExplorerState {
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
-      this.createNew({});
+      this.createNewMuTxt();
       return void 0;
     };
     this.tabs.onDeleteTab = (tab) => {
@@ -186,7 +191,7 @@ export class JsonCrdtExplorerState {
       if (!lastPatch) throw new Error('Incompatible JSON CRDT log file.');
       const id = lastPatch.getId();
       if (!id) throw new Error('Incompatible JSON CRDT log file.');
-      const model = Model.create(undefined, id.sid);
+      const model = ModelWithExt.create(undefined, id.sid);
       const log = new Log(() => model.clone());
       log.end.applyBatch(patches);
       log.end.api.autoFlush();
@@ -197,7 +202,7 @@ export class JsonCrdtExplorerState {
       try {
         uint8 = (await ungzip(uint8)) as Uint8Array<ArrayBuffer>;
       } catch {}
-      const model = Model.load(uint8, this.sid);
+      const model = ModelWithExt.load(uint8, this.sid);
       const log = new Log(() => model);
       log.end.api.autoFlush();
       log.end.setSid(this.sid);
@@ -235,8 +240,12 @@ export class JsonCrdtExplorerState {
 
   public readonly createNew = (data: unknown = void 0) => {
     // const schema = s.obj(data);
-    const model = Model.create<any>(data, this.sid);
+    const model = ModelWithExt.create<any>(data, this.sid);
     this.createFromModel(model);
+  };
+
+  public readonly createNewMuTxt = (data: unknown = void 0) => {
+    this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}));
   };
 
   public readonly createFromModel = (model: Model<any>) => {

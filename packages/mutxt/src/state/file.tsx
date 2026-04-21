@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
-import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {LogDecoder} from 'json-joy/lib/json-crdt/log/codec/LogDecoder';
 import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/JsonCrdtLogState';
 import {rsync} from '@jsonjoy.com/ui';
@@ -9,6 +8,7 @@ import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
+import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {IFileStorage} from './file-storage';
@@ -84,9 +84,11 @@ export class OpenFile {
     const start = log.start;
     log.start = () => {
       const model = start();
+      model.ext.register(ext.peritext);
       model.ext.register(ext.quill);
       return model;
     };
+    log.end.ext.register(ext.peritext);
     log.end.ext.register(ext.quill);
     log.end.api.autoFlush();
     log.end.setSid(sid);

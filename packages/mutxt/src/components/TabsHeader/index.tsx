@@ -7,6 +7,7 @@ import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {FlexibleInput} from 'flexible-input';
 import type {OpenFile} from '../../state/file';
+import {PwaInstallButton} from './PwaInstallButton';
 
 const enum Sizes {
   TabsHeight = 48,
@@ -46,7 +47,11 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
   );
 };
 
-export const ScrollHeader: React.FC = () => {
+export interface TabsHeaderProps {
+  toggle: React.ReactNode;
+}
+
+export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
   const state = useExplorer();
   const styles = useStyles();
   const theme = useTheme();
@@ -55,11 +60,13 @@ export const ScrollHeader: React.FC = () => {
   const fileHeader = file ? <FileNameHeader file={file} /> : null;
 
   return (
-    <div className={blockClass} style={{borderTop: '1px solid ' + theme.bg}}>
+    <div className={blockClass} style={{borderTop: '4px solid ' + theme.bg, borderRight: '4px solid ' + theme.bg}}>
       <FileTabs
         bg={styles.g(0.95)}
         fade="transparent"
         state={state.tabs}
+        before={toggle}
+        right={<PwaInstallButton />}
         render={() => <div style={{height: Sizes.TabsFadeHeight}} />}
       />
       {fileHeader}
