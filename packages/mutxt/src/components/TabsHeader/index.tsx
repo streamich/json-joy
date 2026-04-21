@@ -60,7 +60,11 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
   const fileHeader = file ? <FileNameHeader file={file} /> : null;
 
   return (
-    <div className={blockClass} style={{borderTop: '4px solid ' + theme.bg, borderRight: '4px solid ' + theme.bg}}>
+    <div className={blockClass} style={{
+      borderTop: '4px solid ' + theme.bg,
+      borderRight: '4px solid ' + theme.bg,
+      borderLeft: toggle ? ('4px solid ' + theme.bg) : void 0,
+    }}>
       <FileTabs
         bg={styles.g(0.95)}
         fade="transparent"

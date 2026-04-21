@@ -1,11 +1,8 @@
 import {rsync} from '@jsonjoy.com/ui';
-import {createDebouncedRsyncValue} from './debounce-rsync';
 import {getActiveAlignment} from './behavior';
 import {getCaretPathInfo, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from './util';
 import type {Editor} from 'slate';
 import type {SlateTextAlign} from './types';
-
-const SCROLL_MAP_DEBOUNCE_MS = 150;
 
 export class SlateEditorState {
   public readonly focused = rsync.val(false);
@@ -22,8 +19,7 @@ export class SlateEditorState {
   public readonly characterCount = rsync.val(0);
   public readonly selectionText = rsync.val('');
   private readonly scrollMapVersionTrigger = rsync.val(0);
-  private readonly debouncedScrollMapVersion = createDebouncedRsyncValue(this.scrollMapVersionTrigger, SCROLL_MAP_DEBOUNCE_MS);
-  public readonly scrollMapVersion = this.debouncedScrollMapVersion.value;
+  public readonly scrollMapVersion = this.scrollMapVersionTrigger;
 
   constructor(opts?: {collaborative?: boolean; readOnly?: boolean}) {
     this.collaborative.next(!!opts?.collaborative);
@@ -51,7 +47,7 @@ export class SlateEditorState {
   };
 
   public readonly dispose = (): void => {
-    this.debouncedScrollMapVersion.dispose();
+    // No-op. State currently owns only synchronous rsync values.
   };
 
   public readonly sync = (editor: Editor): void => {

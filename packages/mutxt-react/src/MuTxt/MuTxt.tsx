@@ -70,6 +70,7 @@ export interface MuTxtProps {
   heightFit?: boolean;
   borderless?: boolean;
   autoFocus?: boolean;
+  hoverElevate?: boolean;
   readOnly?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -91,6 +92,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   heightFit,
   borderless,
   autoFocus,
+  hoverElevate,
   readOnly,
   className = '',
   style,
@@ -178,9 +180,11 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   const editableStyle: React.CSSProperties = {
     minHeight,
+    width: '100%',
     maxWidth: contentWidth ?? 800,
     margin: '0 auto',
     padding: '22px 24px',
+    boxSizing: 'border-box',
     fontSize: '16px',
     lineHeight: 1.8,
     outline: 'none',
@@ -241,7 +245,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   if (borderless) {
     content = React.createElement('div', {style, className: contentClass}, content);
   } else {
-    content = React.createElement(Paper, {round: true, contrast: true, hover: true, style, className: contentClass}, content);
+    content = React.createElement(Paper, {round: true, contrast: true, hover: true, hoverElevate, style, className: contentClass}, content);
   }
 
   return (

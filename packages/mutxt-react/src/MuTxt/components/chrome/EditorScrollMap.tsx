@@ -34,8 +34,29 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
   const scrollArea = useScrollArea();
   const scrollHeight = useSyncStore(scrollArea.scrollHeight$);
   const clientHeight = useSyncStore(scrollArea.clientHeight$);
+  const focused = state.focused.use();
   const version = state.scrollMapVersion.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
+
+  React.useEffect(() => {
+    let frame = 0;
+    const requestRefresh = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        state.requestScrollMapRefresh();
+      });
+    };
+
+    document.addEventListener('selectionchange', requestRefresh);
+    window.addEventListener('resize', requestRefresh);
+
+    return () => {
+      document.removeEventListener('selectionchange', requestRefresh);
+      window.removeEventListener('resize', requestRefresh);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [state]);
 
   React.useLayoutEffect(() => {
     if (!scrollArea.viewportEl || scrollHeight <= clientHeight || scrollHeight <= 0) {
@@ -50,7 +71,7 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [clientHeight, editor, scrollArea, scrollHeight, styles.light, version]);
+  }, [clientHeight, editor, focused, scrollArea, scrollHeight, styles.light, version]);
 
   if (!markers.length) return null;
 
@@ -58,18 +79,35 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
     <>
       {markers.map((marker) => {
         const {variant = 'left'} = marker;
+        if (variant === 'selection') {
+          return (
+            <Marker key={marker.key} position={marker.position} height={marker.height}>
+              {(markerStyle) => (
+                <div
+                  className={selectionMarkerClass}
+                  style={{
+                    // position: 'absolute',
+                    ...markerStyle,
+                    left: 0,
+                    right: 0,
+                    borderRadius: 0,
+                  }}
+                />
+              )}
+            </Marker>
+          );
+        }
+
         return (
           <Marker
             key={marker.key}
             position={marker.position}
             color={marker.color}
             height={marker.height}
-            className={variant === 'selection' ? selectionMarkerClass : undefined}
             style={{
-              left: variant === 'selection' ? 0 : variant === 'right' ? 6 : 1,
-              right: variant === 'selection' ? 0 : variant === 'left' ? 6 : 1,
-              background: variant === 'selection' ? void 0 : marker.color,
-              borderRadius: variant === 'selection' ? 0 : 1,
+              left: variant === 'right' ? 6 : 1,
+              right: variant === 'left' ? 6 : 1,
+              borderRadius: 1,
             }}
           />
         );

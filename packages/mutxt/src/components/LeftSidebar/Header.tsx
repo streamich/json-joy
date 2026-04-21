@@ -1,8 +1,6 @@
 import * as React from 'react';
-import {useT} from 'use-t';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
-import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
@@ -10,13 +8,13 @@ import {useExplorer} from '../../context';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {BrandLogo} from './BrandLogo';
 
 export interface HeaderProps {
   toggle: React.ReactNode;
 }
 
 export const Header: React.FC<HeaderProps> = ({toggle}) => {
-  const [t] = useT();
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -55,12 +53,12 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
       ],
     };
     return menu;
-  }, [t, hasOpenFiles]);
+  }, [hasOpenFiles]);
 
   return (
     <Split style={{alignItems: 'center', padding: '0 0 0 8px'}}>
-      <Flex style={{alignItems: 'center', gap: 8}}>
-        <MiniTitle>{t('Files')}</MiniTitle>
+      <Flex style={{alignItems: 'center', gap: 10}}>
+        <BrandLogo />
         <Popup renderContext={() => <ContextMenu inset menu={menu} />}>
           <BasicButtonMore tooltip size={28} rounder />
         </Popup>

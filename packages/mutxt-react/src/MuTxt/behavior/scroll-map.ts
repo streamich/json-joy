@@ -128,12 +128,24 @@ const getDomRangeRect = (range: globalThis.Range): DOMRect | null => {
   return range.getClientRects()[0] ?? null;
 };
 
+const getFocusedDomSelectionRange = (reactEditor: Editor & ReactEditor): globalThis.Range | null => {
+  if (!ReactEditor.isFocused(reactEditor)) return null;
+  const domSelection = ReactEditor.getWindow(reactEditor).getSelection();
+  if (!domSelection || domSelection.rangeCount <= 0) return null;
+  const anchorNode = domSelection.anchorNode;
+  const focusNode = domSelection.focusNode;
+  if (!anchorNode || !focusNode) return null;
+  if (!ReactEditor.hasDOMNode(reactEditor, anchorNode) || !ReactEditor.hasDOMNode(reactEditor, focusNode)) return null;
+  return domSelection.getRangeAt(0);
+};
+
 const getScrollMapSelectionRect = (
   reactEditor: Editor & ReactEditor,
   light: boolean,
 ): {rect: DOMRect; proportional: boolean} | null => {
+  const domSelectionRange = getFocusedDomSelectionRange(reactEditor);
   const activeEmbedEntry = getActiveEmbedEntry(reactEditor);
-  if (activeEmbedEntry) {
+  if (activeEmbedEntry && domSelectionRange) {
     const [element] = activeEmbedEntry;
     const descriptor = describeScrollMapElement(element, light);
     try {
@@ -148,8 +160,17 @@ const getScrollMapSelectionRect = (
       // Slate may briefly invalidate the selected void node while reconciling changes.
     }
   }
+  if (domSelectionRange) {
+    const rect = getDomRangeRect(domSelectionRange);
+    if (!rect) return null;
+    return {
+      rect,
+      proportional: !domSelectionRange.collapsed,
+    };
+  }
   const selection = reactEditor.selection;
   if (!selection) return null;
+  if (!ReactEditor.isFocused(reactEditor) || !ReactEditor.hasRange(reactEditor, selection)) return null;
   try {
     const domRange = ReactEditor.toDOMRange(reactEditor, selection);
     const rect = getDomRangeRect(domRange);

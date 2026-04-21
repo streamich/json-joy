@@ -40,12 +40,14 @@ export const MainContent: React.FC = () => {
     );
   }
 
-  let editor: React.ReactNode = null;
-
   if (file.log.end.api.read('/@type') === 'mutxt') {
-    editor = (
-      <div style={{height: 600}}>
-        <MuTxt heightFit />
+    return (
+      <div className={blockClass}>
+        <div className={contentClass}>
+          <div style={{height: window.innerHeight - 100}}>
+            <MuTxt heightFit hoverElevate />
+          </div>
+        </div>
       </div>
     );
   }
@@ -53,8 +55,7 @@ export const MainContent: React.FC = () => {
   return (
     <div className={blockClass}>
       <div className={contentClass}>
-        {editor}
-        {/* <Log /> */}
+        <Log />
       </div>
     </div>
   );
