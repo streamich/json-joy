@@ -1,14 +1,14 @@
 {
   "id": "/",
-  "name": "Mutxt",
-  "short_name": "Mutxt",
-  "description": "A multi-file rich-text workspace powered by mutxt-react and json-joy.",
+  "name": "mutxt • μtxt • Micro Rich-Text Workspace",
+  "short_name": "mutxt",
+  "description": "Rich-text editor and workspace for creating and organizing multiple documents with a fast editor powered by mutxt and json-joy.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "launch_handler": {
     "client_mode": "navigate-new"
   },
