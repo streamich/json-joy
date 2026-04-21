@@ -7,7 +7,7 @@ export interface Props extends React.SVGProps<SVGSVGElement> {
   size?: number;
 }
 
-const MuTxtLogo: React.FC<Props> = ({size = 36, ...props}) => {
+export const MuTxtLogo: React.FC<Props> = ({size = 36, ...props}) => {
   return (
     <svg
       width={size}

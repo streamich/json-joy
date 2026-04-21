@@ -48,7 +48,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
                         >
                           JSON CRDT
                         </a>
-                        {' '}— local-first, works offline, sync-ready document format
+                        {' '}— local-first, works offline, with sync-ready document format
                       </li>
                     </ul>
                   </div>

@@ -7,6 +7,7 @@ import {ctx} from './context';
 import {LeftSidebar} from './components/LeftSidebar';
 import {useT} from 'use-t';
 import {TabsHeader} from './components/TabsHeader';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 
 const columnClass = rule({
   d: 'flex',
@@ -24,6 +25,7 @@ export const App: React.FC = () => {
       state.stop().catch(() => {});
     };
   }, [state]);
+  const files = useBehaviorSubject(state.files$);
 
   return (
     <ctx.Provider value={state}>
@@ -32,10 +34,14 @@ export const App: React.FC = () => {
         left={(toggle) => <LeftSidebar toggle={toggle} />}
         // footer={<div> </div>}
         column={(toggle) => (
-          <div className={columnClass}>
-            <TabsHeader toggle={toggle} />
+          files.length === 0 ? (
             <MainContent />
-          </div>
+          ) : (
+            <div className={columnClass}>
+              <TabsHeader toggle={toggle} />
+              <MainContent />
+            </div>
+          )
         )}
       />
     </ctx.Provider>

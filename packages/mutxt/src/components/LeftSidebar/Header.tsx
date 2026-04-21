@@ -56,8 +56,9 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
   }, [hasOpenFiles]);
 
   return (
-    <Split style={{alignItems: 'center', padding: '0 0 0 8px'}}>
+    <Split style={{alignItems: 'center', padding: '0 0 0'}}>
       <Flex style={{alignItems: 'center', gap: 10}}>
+        <div style={{width: 'env(titlebar-area-x)'}} />
         <BrandLogo />
         <Popup renderContext={() => <ContextMenu inset menu={menu} />}>
           <BasicButtonMore tooltip size={28} rounder />

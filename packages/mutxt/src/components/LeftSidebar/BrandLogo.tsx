@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {rule, theme} from 'nano-theme';
-import {BasicTooltip} from '@jsonjoy.com/ui/src/4-card/BasicTooltip';
+import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const rootClass = rule({
   d: 'inline-flex',
@@ -63,11 +64,12 @@ const txt3Class = rule({
 export interface BrandLogoProps {}
 
 export const BrandLogo: React.FC<BrandLogoProps> = () => {
+  const styles = useStyles();
   const label = '\\mu txt — Micro rich-text editor';
 
   return (
     <BasicTooltip nowrap renderTooltip={() => label}>
-      <span className={rootClass} role="img" aria-label={label}>
+      <span className={rootClass} role="img" aria-label={label} style={{color: styles.col.get('neutral', 'txt-1')}}>
         <span className={muClass}><sub>μ</sub></span>
         <span className={txtClass}>
           <span className={txt1Class}>t</span>
