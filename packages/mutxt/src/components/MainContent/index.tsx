@@ -6,6 +6,7 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import {WelcomeScreen} from '../WelcomeScreen';
 import {Document} from './Document';
+import {AppGridColumn} from '@jsonjoy.com/ui/src/7-fullscreen/AppGrid';
 
 const blockClass = rule({
   w: '100%',
@@ -35,11 +36,13 @@ export const MainContent: React.FC = () => {
 
   if (!file) {
     return (
-      <div className={blockClass}>
-        <div className={contentClass}>
-          <WelcomeScreen />
+      <AppGridColumn>
+        <div className={blockClass}>
+          <div className={contentClass}>
+            <WelcomeScreen />
+          </div>
         </div>
-      </div>
+      </AppGridColumn>
     );
   }
 
