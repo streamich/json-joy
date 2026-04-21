@@ -7,9 +7,6 @@ export type * from './types';
 export {FromSlate} from './sync/FromSlate';
 export {SlateFacade} from './SlateFacade';
 export type {SlateFacadeOpts} from './SlateFacade';
-export {SlateEditor} from './SlateEditor';
-export type {SlateEditorProps} from './SlateEditor';
-export {SlateEditorState, SlateEditorContext, SlateEditorContextProvider, useSlateEditorState} from './SlateEditor';
 
 export {PresenceLeaf, withPresenceLeaf} from './presence/PresenceLeaf';
 export {useSlatePresence, type UseSlatePresenceOpts} from './presence/useSlatePresence';

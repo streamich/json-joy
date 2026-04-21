@@ -1,4 +1,40 @@
-# μ-txt (mutxt.com)
+# `mutxt`
 
-μ-txt at [mutxt.com](https://mutxt.com) (Micro TXT) &mdash; a tiny batteries-included
-rich-text editor, with a focus on real-time collaboration and extensibility.
+This package contains the `mutxt.com` web app. 
+
+## Development
+
+From the monorepo root:
+
+```sh
+yarn workspace mutxt dev
+```
+
+Other useful commands:
+
+```sh
+yarn workspace mutxt build
+yarn workspace mutxt typecheck
+yarn workspace mutxt clean
+```
+
+## Deployment
+
+### Wrangler / Cloudflare Pages
+
+```sh
+yarn workspace mutxt deploy
+yarn workspace mutxt deploy:preview
+```
+
+Wrangler publishes the generated `dist/` folder.
+
+Common commands:
+
+| Command | Purpose |
+|---|---|
+| `npx wrangler login` | Authenticate once |
+| `npx wrangler pages project create` | Create the Pages project once |
+| `npx wrangler pages deploy dist` | Deploy to production |
+| `npx wrangler pages deploy dist --branch=preview` | Deploy a preview build |
+| `npx wrangler pages deployment list` | Inspect recent deployments |

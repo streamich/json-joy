@@ -24,20 +24,11 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {
-      "path": "../collaborative-peritext"
-    },
-    {
-      "path": "../collaborative-presence"
-    },
-    {
-      "path": "../json-equal"
-    },
-    {
-      "path": "../ui"
-    },
-    {
-      "path": "../json-joy"
-    }
+    {"path": "../mutxt-react"},
+    {"path": "../json-joy"},
+    {"path": "../json-pack"},
+    {"path": "../ui"},
+    {"path": "../util"},
+    {"path": "../collaborative-ui"}
   ]
 }
