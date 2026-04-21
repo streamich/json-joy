@@ -18,7 +18,9 @@ const columnClass = rule({
 
 export const App: React.FC = () => {
   const [_t] = useT();
-  const state = React.useMemo(() => new JsonCrdtExplorerState(), []);
+  const state = React.useMemo(() => {
+    return new JsonCrdtExplorerState();
+  }, []);
   React.useEffect(() => {
     state.start().catch(() => {});
     return () => {

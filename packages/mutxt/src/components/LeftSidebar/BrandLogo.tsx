@@ -24,7 +24,7 @@ const muClass = rule({
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
     letterSpacing: '-0.065em',
-    tr: 'translateY(4px)',
+    tr: 'translateY(1px)',
   },
 });
 
@@ -39,7 +39,7 @@ const txt1Class = rule({
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
     letterSpacing: '-0.03em',
-    tr: 'translateY(-2px)',
+    tr: 'translateY(-5px)',
   },
 });
 
@@ -49,7 +49,7 @@ const txt2Class = rule({
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
     letterSpacing: '0em',
-    tr: 'translateY(3px)',
+    // tr: 'translateY(1px)',
   },
 });
 
@@ -58,7 +58,7 @@ const txt3Class = rule({
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
     letterSpacing: '.01em',
-    tr: 'translateY(8px)',
+    tr: 'translateY(5px)',
   },
 });
 export interface BrandLogoProps {}

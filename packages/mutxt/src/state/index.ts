@@ -84,7 +84,6 @@ export class JsonCrdtExplorerState {
   private readonly handleFilePersisted = async () => {
     await this.refreshSaved();
   };
-
   async start() {
     this.stopped = false;
     this.stopSavedRefresh();
@@ -93,7 +92,8 @@ export class JsonCrdtExplorerState {
     this.savedRefreshTimer = setInterval(() => {
       void this.refreshSaved();
     }, SAVED_REFRESH_INTERVAL_MS);
-    // if (saved.length) await this.openSaved(saved[0].id);
+    const saved = this.saved.value;
+    if (saved.length) await this.openSaved(saved[0].id);
   }
 
   async stop() {
@@ -118,7 +118,7 @@ export class JsonCrdtExplorerState {
 
   public readonly openFile = (
     log: Log<any>,
-    name: string = 'JSON CRDT document' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
+    name: string = 'Untitled' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
     dto?: FileMetadataDto,
   ) => {
     const now = Date.now();
