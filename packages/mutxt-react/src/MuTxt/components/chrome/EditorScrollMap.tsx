@@ -86,7 +86,7 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
                 <div
                   className={selectionMarkerClass}
                   style={{
-                    // position: 'absolute',
+                    position: 'absolute',
                     ...markerStyle,
                     left: 0,
                     right: 0,
