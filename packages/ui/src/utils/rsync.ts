@@ -42,6 +42,21 @@ const getSize = (el: HTMLElement): ElBoxValue => {
 export class ElBox<El extends HTMLElement> extends ReactValue<ElBoxValue> {
   private el?: El;
   private _observer?: ResizeObserver;
+  private _rafId = 0;
+
+  private readonly _flushSize = () => {
+    this._rafId = 0;
+    const el = this.el;
+    if (el) this.set(getSize(el));
+  };
+
+  private readonly _scheduleMeasure = () => {
+    if (this._rafId || typeof window === 'undefined') {
+      if (!this._rafId) this._flushSize();
+      return;
+    }
+    this._rafId = window.requestAnimationFrame(this._flushSize);
+  };
 
   constructor(el?: El, size?: ElBoxValue) {
     super(el ? getSize(el) : (size ?? [0, 0, 0, 0]));
@@ -53,19 +68,26 @@ export class ElBox<El extends HTMLElement> extends ReactValue<ElBoxValue> {
     if (oldEl) this._observer?.unobserve(oldEl);
     if (!this._observer) {
       this._observer = new ResizeObserver(() => {
-        const el = this.el;
-        if (el) this.set(getSize(el));
+        this._scheduleMeasure();
       });
     }
+    if (this._rafId && typeof window !== 'undefined') {
+      window.cancelAnimationFrame(this._rafId);
+      this._rafId = 0;
+    }
+    this.el = el ?? void 0;
     if (el) {
       this._observer?.observe(el);
       this.set(getSize(el));
     }
-    this.el = el ?? void 0;
   };
 
   public dispose(): void {
     this.setEl(void 0);
+    if (this._rafId && typeof window !== 'undefined') {
+      window.cancelAnimationFrame(this._rafId);
+      this._rafId = 0;
+    }
     this._observer?.disconnect();
   }
 }
