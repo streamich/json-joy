@@ -60,22 +60,6 @@ const txt3Class = rule({
     tr: 'translateY(8px)',
   },
 });
-
-const buttonHoverClass = rule({
-  // ['&:hover .' + muClass.trim()]: {
-  //   letterSpacing: '0.05em',
-  // },
-  
-  // ['&:hover .' + txt2Class.trim()]: {
-  //   letterSpacing: '.01em',
-  //   // tr: 'translateY(3px)',
-  // },
-  // ['&:hover .' + txt3Class.trim()]: {
-  //   letterSpacing: '.01em',
-  //   // tr: 'translateY(8px)',
-  // },
-});
-
 export interface BrandLogoProps {}
 
 export const BrandLogo: React.FC<BrandLogoProps> = () => {
@@ -83,9 +67,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = () => {
 
   return (
     <BasicTooltip nowrap renderTooltip={() => label}>
-      <span className={rootClass + buttonHoverClass} role="img" aria-label={label}>
+      <span className={rootClass} role="img" aria-label={label}>
         <span className={muClass}><sub>μ</sub></span>
-        {/* <span className={mu2Class}>mu</span> */}
         <span className={txtClass}>
           <span className={txt1Class}>t</span>
           <span className={txt2Class}>x</span>
