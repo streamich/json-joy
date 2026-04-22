@@ -3,6 +3,8 @@ import {Log} from './Log';
 import {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import {ext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import {DocumentMuTxt} from './DocumentMuTxt';
+import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {useExplorer} from '../../context';
 import type {OpenFile} from '../../state/file';
 
 export interface DocumentProps {
@@ -15,10 +17,13 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
     const api = file.log.end.api.in(['text']).asExt(ext.peritext) as PeritextApi;
     return () => api;
   }, [file]);
+  const state = useExplorer();
+  const selected = useBehaviorSubject(state.file$);
+
 
   if (peritext) {
-    return <DocumentMuTxt file={file} peritext={peritext} />;
+    return <DocumentMuTxt file={file} peritext={peritext} visible={selected === file} />;
   }
 
-  return <Log />;
+  return <Log visible={selected === file} />;
 };

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {MuTxt} from 'mutxt-react';
-import type {OpenFile} from '../../state/file';
 import {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
+import type {OpenFile} from '../../state/file';
 
 const editorShellClass = rule({
   d: 'flex',
@@ -16,11 +16,12 @@ const editorShellClass = rule({
 export interface DocumentMuTxtProps {
   file: OpenFile;
   peritext: PeritextRef;
+  visible?: boolean;
 }
 
-export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext }) => {
+export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext, visible }) => {
   return (
-    <div className={editorShellClass}>
+    <div className={editorShellClass} style={{display: visible ? 'block' : 'none'}}>
       <MuTxt heightFit hoverElevate peritext={peritext} />
     </div>
   );

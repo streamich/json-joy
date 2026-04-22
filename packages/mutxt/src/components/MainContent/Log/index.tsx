@@ -4,13 +4,15 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonCrdtLog} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog';
 import {DemoDisplay} from '@jsonjoy.com/collaborative-ui/lib/DemoDisplay';
 
-export type LogProps = Record<string, never>;
+export interface LogProps {
+  visible?: boolean;
+}
 
-export const Log: React.FC<LogProps> = () => {
+export const Log: React.FC<LogProps> = ({ visible }) => {
   const state = useExplorer();
   const file = useBehaviorSubject(state.file$);
 
-  if (!file) {
+  if (!file || !visible) {
     return null;
   }
 

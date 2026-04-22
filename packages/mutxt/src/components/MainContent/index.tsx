@@ -30,9 +30,9 @@ const contentClass = rule({
 
 export const MainContent: React.FC = () => {
   const state = useExplorer();
-  const file = useBehaviorSubject(state.file$);
+  const files = useBehaviorSubject(state.files$);
 
-  if (!file) {
+  if (!files.length) {
     return (
       <AppGridColumn>
         <div className={blockClass}>
@@ -47,7 +47,9 @@ export const MainContent: React.FC = () => {
   return (
     <div className={blockClass}>
       <div className={contentClass}>
-        <Document key={file.id} file={file} />
+        {files.map(f => (
+          <Document key={f.id} file={f} />
+        ))}
       </div>
     </div>
   );
