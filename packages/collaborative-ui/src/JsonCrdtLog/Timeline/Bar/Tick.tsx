@@ -1,22 +1,23 @@
 import * as React from 'react';
-import {rule, drule} from 'nano-theme';
+import {rule} from 'nano-theme';
 import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
-import type {ITimestampStruct, Patch} from 'json-joy/lib/json-crdt';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
+import type {ITimestampStruct, Patch} from 'json-joy/lib/json-crdt';
 
 const blockClass = rule({
   pos: 'relative',
 });
 
 const css = {
+  block: blockClass,
   wrap: rule({
     pos: 'relative',
   }),
-  block: blockClass,
-  item: drule({
+  item: rule({
     pos: 'relative',
     z: 1,
     h: TIMELINE_HEIGHT + 'px',
+    w: 'var(--json-crdt-tick-width)',
     bxz: 'border-box',
     op: 0.6,
     marr: TICK_MARGIN + 'px',
@@ -25,15 +26,25 @@ const css = {
       op: 1,
     },
   }),
+  hoverable: rule({
+    '&:hover': {
+      w: 'calc(var(--json-crdt-tick-width) + 2px)',
+      bdrad: '2px',
+      op: 0.8,
+      mar: '-5px 0 -5px -1px',
+      h: TIMELINE_HEIGHT + 10 + 'px',
+    },
+  }),
   selected: rule({
     z: 2,
+    w: 'calc(var(--json-crdt-tick-width) + 2px)',
     bdrad: '2px',
     op: 0.9,
     mar: '-4px 0 -4px -1px',
     h: TIMELINE_HEIGHT + 8 + 'px',
     out: '1px solid rgba(0,0,0,.8)',
   }),
-  id: drule({
+  id: rule({
     pos: 'absolute',
     t: '-24px',
     l: '-4px',
@@ -62,7 +73,6 @@ export interface TickProps {
   patch?: Patch;
   selected?: boolean;
   marker?: string;
-  tickWidth: number;
   color: string;
   noHover?: boolean;
   scrubbing?: boolean;
@@ -75,7 +85,6 @@ export const Tick: React.FC<TickProps> = ({
   patch,
   selected,
   marker,
-  tickWidth,
   color,
   noHover,
   scrubbing,
@@ -95,25 +104,12 @@ export const Tick: React.FC<TickProps> = ({
     >
       <div className={css.block}>
         <div
-          className={
-            css.item({
-              w: tickWidth + (selected ? 2 : 0) + 'px',
-              '&:hover': noHover
-                ? {}
-                : {
-                    w: tickWidth + 2 + 'px',
-                    bdrad: '2px',
-                    op: 0.8,
-                    mar: '-5px 0 -5px -1px',
-                    h: TIMELINE_HEIGHT + 10 + 'px',
-                  },
-            }) + (selected ? css.selected : '')
-          }
+          className={css.item + (!noHover && !selected ? css.hoverable : '') + (selected ? css.selected : '')}
           style={{
             background: color,
           }}
         />
-        <div className={css.id()} style={{display: selected ? 'block' : undefined}}>
+        <div className={css.id} style={{display: selected ? 'block' : undefined}}>
           <Code noBg size={-2}>
             {id.sid > 1000 ? '…' + (id.sid + '').slice(-4) : id.sid}.{id.time}
           </Code>

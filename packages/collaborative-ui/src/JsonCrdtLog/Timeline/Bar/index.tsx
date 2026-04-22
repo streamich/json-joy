@@ -222,7 +222,6 @@ export const Bar: React.FC<Bar> = ({log}) => {
         id={startId}
         selected={pinned === 'start'}
         marker={'.' + startTime}
-        tickWidth={tickWidth}
         color={sidColor(0)}
         noHover={isScrolling}
         scrubbing={isScrubbing.current}
@@ -248,7 +247,6 @@ export const Bar: React.FC<Bar> = ({log}) => {
           patch={patch}
           selected={pinned === patch}
           marker={tenth ? '.' + id.time : undefined}
-          tickWidth={tickWidth}
           color={color}
           noHover={isScrolling}
           scrubbing={isScrubbing.current}
@@ -332,7 +330,10 @@ export const Bar: React.FC<Bar> = ({log}) => {
             bd: `1px solid ${theme.g(0.7)}`,
           },
         })}
-        style={{'--json-crdt-tick-id-bg': tickIdBg} as React.CSSProperties}
+        style={{
+          '--json-crdt-tick-id-bg': tickIdBg,
+          '--json-crdt-tick-width': tickWidth + 'px',
+        } as React.CSSProperties}
       >
         {width ? items : null}
       </div>
