@@ -1,10 +1,8 @@
 import * as React from 'react';
-import {rule, drule, useTheme} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
 import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
 import type {ITimestampStruct, Patch} from 'json-joy/lib/json-crdt';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {useLogState} from '../../context';
-import {sidColor} from '../../../util/sidColor';
 
 const blockClass = rule({
   pos: 'relative',
@@ -47,6 +45,7 @@ const css = {
       d: 'block',
       z: 111,
     },
+    bg: 'var(--json-crdt-tick-id-bg)',
   }),
   marker: rule({
     pos: 'absolute',
@@ -64,16 +63,25 @@ export interface TickProps {
   selected?: boolean;
   marker?: string;
   tickWidth: number;
+  color: string;
   noHover?: boolean;
   scrubbing?: boolean;
+  onMouseUp?: (patch: Patch | undefined) => void;
+  onMouseEnter?: (patch: Patch | undefined) => void;
 }
 
-export const Tick: React.FC<TickProps> = ({id, patch, selected, marker, tickWidth, noHover, scrubbing}) => {
-  const state = useLogState();
-  const theme = useTheme();
-
-  const color = sidColor(id.sid);
-
+export const Tick: React.FC<TickProps> = ({
+  id,
+  patch,
+  selected,
+  marker,
+  tickWidth,
+  color,
+  noHover,
+  scrubbing,
+  onMouseUp,
+  onMouseEnter,
+}) => {
   return (
     <div
       className={css.wrap}
@@ -82,36 +90,11 @@ export const Tick: React.FC<TickProps> = ({id, patch, selected, marker, tickWidt
         padding: scrubbing ? '150px 0' : undefined,
         zIndex: scrubbing ? 99999999 : undefined,
       }}
-      onMouseUp={
-        noHover || scrubbing
-          ? undefined
-          : () => {
-              state.pin(
-                patch
-                  ? state.pinned$.getValue() === patch
-                    ? null
-                    : patch
-                  : state.pinned$.getValue() === 'start'
-                    ? null
-                    : 'start',
-              );
-            }
-      }
-      onMouseEnter={
-        scrubbing
-          ? () => {
-              if (!patch) {
-                if (state.pinned$.getValue() !== 'start') state.pin('start');
-              } else {
-                if (state.pinned$.getValue() !== patch) state.pin(patch);
-              }
-            }
-          : undefined
-      }
+      onMouseUp={noHover || scrubbing || !onMouseUp ? undefined : () => onMouseUp(patch)}
+      onMouseEnter={scrubbing && onMouseEnter ? () => onMouseEnter(patch) : undefined}
     >
       <div className={css.block}>
         <div
-          key={id.sid + '.' + id.time}
           className={
             css.item({
               w: tickWidth + (selected ? 2 : 0) + 'px',
@@ -130,12 +113,7 @@ export const Tick: React.FC<TickProps> = ({id, patch, selected, marker, tickWidt
             background: color,
           }}
         />
-        <div
-          className={css.id({
-            bg: theme.g(1, 0.9),
-          })}
-          style={{display: selected ? 'block' : undefined}}
-        >
+        <div className={css.id()} style={{display: selected ? 'block' : undefined}}>
           <Code noBg size={-2}>
             {id.sid > 1000 ? '…' + (id.sid + '').slice(-4) : id.sid}.{id.time}
           </Code>
