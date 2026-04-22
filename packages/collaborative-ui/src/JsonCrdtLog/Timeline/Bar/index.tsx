@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {drule, useTheme} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
-import {Tick} from './Tick';
 import {useLogState} from '../../context';
 import {useModelTick} from '../../../hooks/useModelTick';
 import useMeasure from 'react-use/lib/useMeasure';
@@ -10,12 +10,13 @@ import useScratch from 'react-use/lib/useScratch';
 import {Timestamp, type ITimestampStruct, type Patch} from 'json-joy/lib/json-crdt';
 import {sidColor} from '../../../util/sidColor';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
+import {css as tickCss} from './tick-css';
 
 const startingTickWidth = 42;
 const timelinePadding = 4;
 const scrollHeight = 12;
 
-const css = {
+const barCss = {
   block: drule({
     pd: '24px 8px 8px',
     mr: '-8px 0 0',
@@ -50,6 +51,12 @@ const css = {
     bdrad: '4px',
     cur: 'ew-resize',
   }),
+};
+
+const scrubbingTickStyle: React.CSSProperties = {
+  margin: '-150px 0',
+  padding: '150px 0',
+  zIndex: 99999999,
 };
 
 export interface Bar {
@@ -212,55 +219,67 @@ export const Bar: React.FC<Bar> = ({log}) => {
   );
 
   const isScrolling = !!wheelTimeout.current || isScratching;
+  const tickWrapStyle = isScrubbing.current ? scrubbingTickStyle : undefined;
+  const tickItemClassName = isScrolling ? tickCss.item : tickCss.item + ' ' + tickCss.hoverable;
+  const selectedTickItemClassName = tickCss.item + ' ' + tickCss.selected;
+  const canHandleTickMouseUp = !isScrolling && !isScrubbing.current;
+  const canHandleTickMouseEnter = isScrubbing.current;
 
   const items: React.ReactNode[] = [];
+  const renderTick = (
+    id: ITimestampStruct,
+    color: string,
+    selected: boolean,
+    marker?: string,
+    patch?: Patch,
+  ): React.ReactNode => (
+    <div
+      key={items.length}
+      className={tickCss.wrap}
+      style={tickWrapStyle}
+      onMouseUp={canHandleTickMouseUp ? () => handleTickMouseUp(patch) : undefined}
+      onMouseEnter={canHandleTickMouseEnter ? () => handleTickMouseEnter(patch) : undefined}
+    >
+      <div className={tickCss.block}>
+        <div
+          className={selected ? selectedTickItemClassName : tickItemClassName}
+          style={{background: color}}
+        />
+        <div className={tickCss.id} style={{display: selected ? 'block' : undefined}}>
+          <Code noBg size={-2}>
+            {id.sid > 1000 ? '…' + (id.sid + '').slice(-4) : id.sid}.{id.time}
+          </Code>
+        </div>
+        {!!marker && (
+          <div className={tickCss.marker}>
+            <Code noBg size={-3} gray>
+              {marker}
+            </Code>
+          </div>
+        )}
+      </div>
+    </div>
+  );
   const rulerInterval = totalPatches > 1000 || log.end.clock.time > 9999 ? 25 : 10;
   if (slotIndexOffset <= 0) {
-    items.push(
-      <Tick
-        key={items.length}
-        id={startId}
-        selected={pinned === 'start'}
-        marker={'.' + startTime}
-        color={sidColor(0)}
-        noHover={isScrolling}
-        scrubbing={isScrubbing.current}
-        onMouseUp={handleTickMouseUp}
-        onMouseEnter={handleTickMouseEnter}
-      />,
-    );
+    items.push(renderTick(startId, sidColor(0), pinned === 'start', '.' + startTime));
   }
 
   if (slotsPerViewport) {
     const start = Math.max(0, slotIndexOffset - 1);
     const end = Math.min(patchEntries.length, slotIndexOffset + slotsPerViewport - 1);
-    let index = 0;
     for (let i = start; i < end; i++) {
       const entry = patchEntries[i];
       const patchIndex = i + 1;
       const tenth = patchIndex % rulerInterval === 0;
       const {id, patch, color} = entry;
-      items.push(
-        <Tick
-          key={index}
-          id={id}
-          patch={patch}
-          selected={pinned === patch}
-          marker={tenth ? '.' + id.time : undefined}
-          color={color}
-          noHover={isScrolling}
-          scrubbing={isScrubbing.current}
-          onMouseUp={handleTickMouseUp}
-          onMouseEnter={handleTickMouseEnter}
-        />,
-      );
-      index++;
+      items.push(renderTick(id, color, pinned === patch, tenth ? '.' + id.time : undefined, patch));
     }
   }
 
   const scrollBed = (
     <div
-      className={css.scrollBed({
+      className={barCss.scrollBed({
         display: slotsFitInViewport ? 'none' : 'block',
         bg: theme.g(0.98),
         '&:hover': {
@@ -271,7 +290,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
       {scrollHandleRatio < 1 && (
         <div
           ref={scratchRef}
-          className={css.scrollHandle({
+          className={barCss.scrollHandle({
             bg: theme.g(0.92),
             '&:hover': {
               bg: theme.g(0.88),
@@ -294,7 +313,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
       ref={ref}
       // biome-ignore lint: allow tabIndex
       tabIndex={0}
-      className={css.block()}
+      className={barCss.block()}
       style={{
         overflow: isScrubbing.current ? undefined : 'hidden',
       }}
@@ -323,7 +342,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     >
       <div
         ref={scratchSlotsRef}
-        className={css.slots({
+        className={barCss.slots({
           bd: `1px solid ${theme.g(0.9)}`,
           bg: theme.g(0.99),
           '&:hover': {
