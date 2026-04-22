@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {rule, useTheme} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
@@ -16,40 +16,55 @@ const startingTickWidth = 42;
 const timelinePadding = 4;
 const scrollHeight = 12;
 
+const blockClass = rule({
+  pd: '24px 8px 8px',
+  mr: '-8px 0 0',
+  us: 'none',
+  bdrad: '4px',
+  '&:focus': {
+    out: 0,
+  },
+});
+
 const barCss = {
-  block: drule({
-    pd: '24px 8px 8px',
-    mr: '-8px 0 0',
-    us: 'none',
-    bdrad: '4px',
-    '&:focus': {
-      out: 0,
-    },
-  }),
-  slots: drule({
+  slots: rule({
     h: TIMELINE_HEIGHT + 'px',
     d: 'flex',
     bdrad: '3px',
     pad: '1px 0 1px 1px',
+    bd: '1px solid var(--json-crdt-timeline-slots-border)',
+    bg: 'var(--json-crdt-timeline-slots-bg)',
+    '&:hover': {
+      bd: '1px solid var(--json-crdt-timeline-slots-border-hover)',
+    },
   }),
-  scrollBed: drule({
+  scrollBed: rule({
     pos: 'relative',
     bxz: 'border-box',
     h: scrollHeight + 'px',
     w: '100%',
     mr: '1px 0 0',
     bdrad: '3px',
+    bg: 'var(--json-crdt-timeline-scroll-bed-bg)',
+    '&:hover': {
+      bg: 'var(--json-crdt-timeline-scroll-bed-bg-hover)',
+    },
   }),
-  scrollHandle: drule({
+  scrollHandle: rule({
     d: 'block',
     pos: 'absolute',
     bxz: 'border-box',
     h: scrollHeight + 'px',
-    w: '111px',
     t: '0px',
-    l: '0pxd',
     bdrad: '4px',
     cur: 'ew-resize',
+    bg: 'var(--json-crdt-timeline-scroll-handle-bg)',
+    '&:hover': {
+      bg: 'var(--json-crdt-timeline-scroll-handle-bg-hover)',
+    },
+    '&:active': {
+      bg: 'var(--json-crdt-timeline-scroll-handle-bg-active)',
+    },
   }),
 };
 
@@ -125,6 +140,14 @@ export const Bar: React.FC<Bar> = ({log}) => {
     return entries;
   }, [log, patchCount]);
   const tickIdBg = theme.g(1, 0.9);
+  const slotsBorderColor = theme.g(0.9);
+  const slotsBorderHoverColor = theme.g(0.7);
+  const slotsBg = theme.g(0.99);
+  const scrollBedBg = theme.g(0.98);
+  const scrollBedHoverBg = theme.g(0.97);
+  const scrollHandleBg = theme.g(0.92);
+  const scrollHandleHoverBg = theme.g(0.88);
+  const scrollHandleActiveBg = theme.g(0.82);
 
   const moveScrollByPx = React.useCallback(
     (dx: unknown): number => {
@@ -224,6 +247,19 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const selectedTickItemClassName = tickCss.item + ' ' + tickCss.selected;
   const canHandleTickMouseUp = !isScrolling && !isScrubbing.current;
   const canHandleTickMouseEnter = isScrubbing.current;
+  const barStyle = {
+    overflow: isScrubbing.current ? undefined : 'hidden',
+    '--json-crdt-tick-id-bg': tickIdBg,
+    '--json-crdt-tick-width': tickWidth + 'px',
+    '--json-crdt-timeline-slots-border': slotsBorderColor,
+    '--json-crdt-timeline-slots-border-hover': slotsBorderHoverColor,
+    '--json-crdt-timeline-slots-bg': slotsBg,
+    '--json-crdt-timeline-scroll-bed-bg': scrollBedBg,
+    '--json-crdt-timeline-scroll-bed-bg-hover': scrollBedHoverBg,
+    '--json-crdt-timeline-scroll-handle-bg': scrollHandleBg,
+    '--json-crdt-timeline-scroll-handle-bg-hover': scrollHandleHoverBg,
+    '--json-crdt-timeline-scroll-handle-bg-active': scrollHandleActiveBg,
+  } as React.CSSProperties;
 
   const items: React.ReactNode[] = [];
   const renderTick = (
@@ -277,28 +313,12 @@ export const Bar: React.FC<Bar> = ({log}) => {
     }
   }
 
-  const scrollBed = (
-    <div
-      className={barCss.scrollBed({
-        display: slotsFitInViewport ? 'none' : 'block',
-        bg: theme.g(0.98),
-        '&:hover': {
-          bg: theme.g(0.97),
-        },
-      })}
-    >
+  const scrollBed = slotsFitInViewport ? null : (
+    <div className={barCss.scrollBed}>
       {scrollHandleRatio < 1 && (
         <div
           ref={scratchRef}
-          className={barCss.scrollHandle({
-            bg: theme.g(0.92),
-            '&:hover': {
-              bg: theme.g(0.88),
-            },
-            '&:active': {
-              bg: theme.g(0.82),
-            },
-          })}
+          className={barCss.scrollHandle}
           style={{
             left: scrollRunway * scroll,
             width: scrollHandleWidth,
@@ -313,10 +333,8 @@ export const Bar: React.FC<Bar> = ({log}) => {
       ref={ref}
       // biome-ignore lint: allow tabIndex
       tabIndex={0}
-      className={barCss.block()}
-      style={{
-        overflow: isScrubbing.current ? undefined : 'hidden',
-      }}
+      className={blockClass}
+      style={barStyle}
       onWheel={(e) => {
         const dx = e.deltaY || e.deltaX;
         if (dx) scheduleWheelScroll(dx);
@@ -342,17 +360,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     >
       <div
         ref={scratchSlotsRef}
-        className={barCss.slots({
-          bd: `1px solid ${theme.g(0.9)}`,
-          bg: theme.g(0.99),
-          '&:hover': {
-            bd: `1px solid ${theme.g(0.7)}`,
-          },
-        })}
-        style={{
-          '--json-crdt-tick-id-bg': tickIdBg,
-          '--json-crdt-tick-width': tickWidth + 'px',
-        } as React.CSSProperties}
+        className={barCss.slots}
       >
         {width ? items : null}
       </div>
