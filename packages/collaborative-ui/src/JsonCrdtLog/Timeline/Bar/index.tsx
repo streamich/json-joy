@@ -10,8 +10,8 @@ import useMeasure from 'react-use/lib/useMeasure';
 import useScratch from 'react-use/lib/useScratch';
 import {Timestamp, type ITimestampStruct, type Patch} from 'json-joy/lib/json-crdt';
 import {sidColor} from '../../../util/sidColor';
-import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {css as tickCss} from './tick-css';
+import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 
 const startingTickWidth = 42;
 const timelinePadding = 4;
@@ -161,7 +161,8 @@ export const Bar: React.FC<Bar> = ({log}) => {
   scrollRef.current = scroll;
   const pinnedRef = React.useRef(pinned);
   pinnedRef.current = pinned;
-  const [ref, {width}] = useMeasure<HTMLDivElement>();
+  const rootElementRef = React.useRef<HTMLDivElement | null>(null);
+  const [measureRef, {width}] = useMeasure<HTMLDivElement>();
   useModelTick(log.end);
   const theme = useTheme();
   const wheelTimeout = React.useRef<number | null>(null);
@@ -224,6 +225,24 @@ export const Bar: React.FC<Bar> = ({log}) => {
     },
     [moveScrollByPx],
   );
+  const handleWheel = useCallback(
+    (event: WheelEvent) => {
+      const absDeltaX = Math.abs(event.deltaX);
+      const absDeltaY = Math.abs(event.deltaY);
+      const dx = absDeltaX > absDeltaY ? event.deltaX : event.deltaY;
+      if (!dx) return;
+      event.preventDefault();
+      scheduleWheelScroll(dx);
+    },
+    [scheduleWheelScroll],
+  );
+  const setRootRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      rootElementRef.current = element;
+      if (element) measureRef(element);
+    },
+    [measureRef],
+  );
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
         switch (e.code) {
@@ -267,6 +286,15 @@ export const Bar: React.FC<Bar> = ({log}) => {
   }, []);
 
   React.useEffect(() => {
+    const rootElement = rootElementRef.current;
+    if (!rootElement) return;
+    rootElement.addEventListener('wheel', handleWheel, {passive: false});
+    return () => {
+      rootElement.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
+
+  React.useEffect(() => {
     return () => {
       if (wheelTimeout.current !== null) window.clearTimeout(wheelTimeout.current);
       if (wheelRaf.current !== null) cancelAnimationFrame(wheelRaf.current);
@@ -306,6 +334,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     () =>
       ({
         overflow: isScrubbing.current ? undefined : 'hidden',
+        overscrollBehaviorX: 'contain',
         '--json-crdt-tick-id-bg': theme.g(1, 0.9),
         '--json-crdt-tick-width': tickWidth + 'px',
         '--json-crdt-timeline-slots-border': theme.g(0.9),
@@ -388,15 +417,11 @@ export const Bar: React.FC<Bar> = ({log}) => {
 
   return (
     <div
-      ref={ref}
+      ref={setRootRef}
       // biome-ignore lint: allow tabIndex
       tabIndex={0}
       className={blockClass}
       style={barStyle}
-      onWheel={(e) => {
-        const dx = e.deltaY || e.deltaX;
-        if (dx) scheduleWheelScroll(dx);
-      }}
       onMouseDown={() => {
         isMouseDown.current = true;
         setForceUpdate((x) => x + 1);
