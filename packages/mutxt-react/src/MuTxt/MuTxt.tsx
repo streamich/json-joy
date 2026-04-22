@@ -47,18 +47,6 @@ interface EditorScrollAreaProps {
   style: React.CSSProperties;
 }
 
-const EditorScrollArea: React.FC<EditorScrollAreaProps> = ({children, editor, style}) => (
-  <ScrollArea.ScrollArea shadow railWidth={12} style={style} hideDelay={5000}>
-    <ScrollArea.Viewport>
-      {children}
-    </ScrollArea.Viewport>
-    <ScrollArea.ScrollRail>
-      <ScrollArea.Thumb />
-      <EditorScrollMap editor={editor} />
-    </ScrollArea.ScrollRail>
-  </ScrollArea.ScrollArea>
-);
-
 export interface MuTxtProps {
   peritext?: PeritextRef;
   presence?: PresenceManager;
@@ -213,7 +201,9 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   };
 
   let content: React.ReactNode = (
-    <Slate editor={editor} initialValue={initialEditorValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
+    <Slate
+      editor={editor} initialValue={initialEditorValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}
+    >
       <Editable
         decorate={decorateLeaf}
         renderElement={renderElement}
@@ -236,17 +226,36 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     </Slate>
   );
 
+  let scrollAreaStyle: React.CSSProperties | undefined;
   if (heightFit) {
-    content = (
-      <EditorScrollArea editor={editor} style={{flex: '1 1 0%', overflow: 'auto', minHeight: 0}}>
-        {content}
-      </EditorScrollArea>
-    );
+    scrollAreaStyle ={flex: '1 1 0%', overflow: 'auto', minHeight: 0};
   } else if (height || maxHeight) {
+    scrollAreaStyle = {height, maxHeight};
+  }
+  if (scrollAreaStyle) {
     content = (
-      <EditorScrollArea editor={editor} style={{height, maxHeight}}>
-        {content}
-      </EditorScrollArea>
+      <ScrollArea.ScrollArea shadow railWidth={12} style={scrollAreaStyle} hideDelay={5000}>
+        <ScrollArea.Viewport
+          onMouseDown={(e) => {
+            if (!state.api.focused()) {
+              e.preventDefault();
+              state.api.focus();
+            }
+          }}
+          onMouseUp={(e) => {
+            if (!state.api.focused()) {
+              e.preventDefault();
+              state.api.focus();
+            }
+          }}
+        >
+          {content}
+        </ScrollArea.Viewport>
+        <ScrollArea.ScrollRail>
+          <ScrollArea.Thumb />
+          <EditorScrollMap editor={editor} />
+        </ScrollArea.ScrollRail>
+      </ScrollArea.ScrollArea>
     );
   }
 

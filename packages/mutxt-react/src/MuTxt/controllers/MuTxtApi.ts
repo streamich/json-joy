@@ -5,11 +5,16 @@ import type {MuTxtState} from './MuTxtState';
 export class MuTxtApi {
   constructor(public readonly state: MuTxtState) {}
 
-  public focus() {
-    ReactEditor.focus(this.state.editor);
+  public focused(): boolean {
+    const editor = this.state.editor;
+    return ReactEditor.isFocused(editor);
   }
 
-  public blur() {
-    ReactEditor.blur(this.state.editor);
+  public focus(): void {
+    if (!this.focused()) ReactEditor.focus(this.state.editor);
+  }
+
+  public blur(): void {
+    if (this.focused()) ReactEditor.blur(this.state.editor);
   }
 }
