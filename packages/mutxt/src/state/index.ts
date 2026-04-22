@@ -13,6 +13,7 @@ import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
+import {getSyncStore, ISyncStore} from './sync-store';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 
@@ -32,14 +33,22 @@ export class JsonCrdtExplorerState {
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
   public readonly selected$: BehaviorSubject<[id: TabItem, index: number] | null>;
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
-  // TODO: persist this in local storage
-  public readonly sid = Model.sid();
+  public readonly sync: ISyncStore;
+  public readonly sid: number;
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   public readonly menus: Menus;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(storage: IFileStorage = new FileStorage()) {
+    const sync = this.sync = getSyncStore();
+    const sid = sync.getItem('json_joy_sid');
+    if (sid) {
+      this.sid = Number(sid);
+    } else {
+      this.sid = Model.sid();
+      sync.setItem('json_joy_sid', this.sid.toString());
+    }
     this.menus = new Menus(this);
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
