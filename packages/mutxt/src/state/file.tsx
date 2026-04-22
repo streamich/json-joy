@@ -68,7 +68,8 @@ export class OpenFile {
   ) {
     this.id = meta.id;
     this.name = rsync.val(meta.name);
-    this.logState = new JsonCrdtLogState(log, {view: 'model'});
+    this.logState = new JsonCrdtLogState(log, {view: 'timeline'});
+    this.logState.patchState.toggleShow(false);
     this.activeModel = rsync.val(log.end);
     this.storage = options.storage;
     this.flushDebounceMs = options.flushDebounceMs ?? DEFAULT_FLUSH_DEBOUNCE_MS;
