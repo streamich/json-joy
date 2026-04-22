@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {SavedFileList} from '../SavedFileList';
+import {SavedFileList} from './SavedFileList';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import {useT} from 'use-t';
