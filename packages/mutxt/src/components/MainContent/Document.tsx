@@ -22,7 +22,12 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
 
 
   if (peritext) {
-    return <DocumentMuTxt file={file} peritext={peritext} visible={selected === file} />;
+    return (
+      <>
+        <DocumentMuTxt file={file} peritext={peritext} visible={selected === file} />
+        <Log visible={selected === file} />
+      </>
+    );
   }
 
   return <Log visible={selected === file} />;
