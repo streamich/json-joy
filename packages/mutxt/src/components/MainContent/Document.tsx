@@ -22,15 +22,19 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
   const selected = useBehaviorSubject(state.file$);
   const readonly = activeModel !== file.log.end;
 
-
   if (peritext) {
     return (
       <>
-        <DocumentMuTxt file={file} peritext={peritext} readOnly={readonly} visible={selected === file} />
-        <Log visible={selected === file} onModel={(model) => file.activeModel.set(model)} />
+        <DocumentMuTxt
+          file={file}
+          peritext={peritext}
+          readOnly={readonly}
+          visible={selected === file}
+        />
+        <Log visible={selected === file} onModel={(model) => file.activeModel.next(model)} />
       </>
     );
   }
 
-  return <Log visible={selected === file} onModel={(model) => file.activeModel.set(model)} />;
+  return <Log visible={selected === file} onModel={(model) => file.activeModel.next(model)} />;
 };

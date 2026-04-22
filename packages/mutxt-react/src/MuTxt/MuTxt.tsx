@@ -8,6 +8,7 @@ import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import {SlateFacade, withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
+import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {useCodeSyntaxDecorations} from './behavior/code-highlighting';
@@ -20,7 +21,7 @@ import {Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
 import {SlateEditorContextProvider} from './context';
 import {SlateEditorState} from './state';
-import {createSlateEditorModel, EMPTY_DOCUMENT, shouldShowPlaceholder} from './util';
+import {createEmptyDocument, createSlateEditorModel, shouldShowPlaceholder} from './util';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
@@ -77,8 +78,6 @@ export interface MuTxtProps {
   state?: SlateEditorState;
 }
 
-const placeholderValue: Descendant[] = EMPTY_DOCUMENT as Descendant[];
-
 export const MuTxt: React.FC<MuTxtProps> = ({
   peritext,
   initialValue,
@@ -99,11 +98,23 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   state: providedState,
 }) => {
   const styles = useStyles();
-  const editor = React.useMemo(() => withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))), []);
   const [contentVersion, setContentVersion] = React.useState(0);
   const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
   const peritextRef = React.useCallback(peritext ?? (() => (standaloneModel as any).s.toExt()), [peritext, standaloneModel]);
+  const initialEditorValue = React.useMemo<Descendant[]>(() => {
+    try {
+      return toSlate(peritextRef().txt) as Descendant[];
+    } catch {
+      return createEmptyDocument() as Descendant[];
+    }
+  }, [peritextRef]);
+  const editor = React.useMemo(() => {
+    const editor = withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor()))));
+    editor.children = initialEditorValue as any;
+    editor.selection = null;
+    return editor;
+  }, [initialEditorValue]);
 
   React.useEffect(() => {
     state.setCollaborative(!!presence);
@@ -192,7 +203,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   };
 
   let content: React.ReactNode = (
-    <Slate editor={editor} initialValue={placeholderValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
+    <Slate editor={editor} initialValue={initialEditorValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}>
       <Editable
         decorate={decorateLeaf}
         renderElement={renderElement}

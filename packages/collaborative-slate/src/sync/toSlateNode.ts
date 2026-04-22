@@ -74,7 +74,6 @@ export class ToSlateNode {
       result.push(node);
     }
     cache.gc();
-    console.log(result);
     return result;
   }
 

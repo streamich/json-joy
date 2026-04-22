@@ -26,9 +26,11 @@ export interface CaretPathInfo {
   embedUrl?: string;
 }
 
-export const EMPTY_DOCUMENT: SlateEditorDocument = [{type: 'p', children: [{text: ''}]} as CustomElement];
+export const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
 
-export const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => (value && value.length ? value : EMPTY_DOCUMENT);
+export const EMPTY_DOCUMENT: SlateEditorDocument = createEmptyDocument();
+
+export const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => (value && value.length ? value : createEmptyDocument());
 
 export const createSlateEditorModel = (value?: SlateEditorDocument): Model<any> => {
   const model = ModelWithExt.create(ext.peritext.new('')) as unknown as Model<any>;
