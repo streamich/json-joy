@@ -14,6 +14,8 @@ const enum Sizes {
   TabsFadeHeight = 16,
 }
 
+const NEW_FILE_RENAME_WINDOW_MS = 5_000;
+
 const blockClass = rule({
   h: Sizes.TabsHeight + 'px',
 });
@@ -26,9 +28,6 @@ const filesHeaderClass = rule({
   ai: 'center',
   gap: '8px',
   fz: '13.5px',
-  // bd: '1px solid blue',
-  bgi: 'radial-gradient(circle, rgba(127,127,127,.1) 1px, transparent 1px)',
-  bgs: '16px 16px',
   op: .7,
   maskImage: 'linear-gradient(to right, black, transparent)',
   '&:hover': {
@@ -46,13 +45,40 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
   const state = useExplorer();
   const theme = useTheme();
   const fileName = file.name.use();
+  const inputWrapRef = React.useRef<HTMLDivElement | null>(null);
+  const autoFocusedFileIdsRef = React.useRef<Set<string>>(new Set());
+
+  // Focus an select new file
+  React.useLayoutEffect(() => {
+    if (autoFocusedFileIdsRef.current.has(file.id)) return;
+    if (Date.now() - file.meta.createdAt > NEW_FILE_RENAME_WINDOW_MS) return;
+    let frameId = 0;
+    let attempts = 0;
+    const focusInput = () => {
+      attempts++;
+      const input = inputWrapRef.current?.querySelector('input, textarea');
+      if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
+        autoFocusedFileIdsRef.current.add(file.id);
+        input.focus();
+        input.select();
+        return;
+      }
+      if (attempts < 5) frameId = requestAnimationFrame(focusInput);
+    };
+    frameId = requestAnimationFrame(focusInput);
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [file.id, file.meta.createdAt]);
 
   return (
     <div style={{marginTop: -Sizes.TabsFadeHeight}}>
       <div className={filesHeaderClass} style={{backgroundColor: theme.bg, boxShadow: '0 0 10px ' + theme.bg}}>
         {/* <FileIcon id={file.id} label="crdt" size={16} /> */}
         <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} style={{marginBottom: 1}} />
-        <FlexibleInput minWidth={24} value={fileName} onChange={(e) => state.renameFile(file, e.target.value)} />
+        <div ref={inputWrapRef}>
+          <FlexibleInput minWidth={24} value={fileName} onChange={(e) => state.renameFile(file, e.target.value)} />
+        </div>
       </div>
     </div>
   );
