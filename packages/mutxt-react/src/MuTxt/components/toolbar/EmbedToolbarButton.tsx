@@ -133,7 +133,7 @@ export const EmbedToolbarButton: React.FC<EmbedToolbarButtonProps> = ({editor, r
   const popupTitle = editingPath ? 'Edit embed' : 'Add embed';
   const popupSubtitle = editingPath
     ? 'Update the embed link or caption.'
-    : 'Paste a link to insert a video, audio, tweet, or another embedded block.';
+    : 'Paste a link to a video, audio, tweet, or anything else.';
 
   const actionRow = !!normalizedDraft && (
     <div className={actionRowClass}>
