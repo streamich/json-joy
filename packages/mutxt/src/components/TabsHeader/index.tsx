@@ -77,7 +77,11 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
         {/* <FileIcon id={file.id} label="crdt" size={16} /> */}
         <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} style={{marginBottom: 1}} />
         <div ref={inputWrapRef}>
-          <FlexibleInput minWidth={24} value={fileName} onChange={(e) => state.renameFile(file, e.target.value)} />
+          <FlexibleInput minWidth={24} value={fileName} onChange={(e) => state.renameFile(file, e.target.value)} onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            file.mutxt?.focus();
+          }} />
         </div>
       </div>
     </div>

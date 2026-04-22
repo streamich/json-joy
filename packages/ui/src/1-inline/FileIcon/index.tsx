@@ -52,7 +52,6 @@ export interface FileIconProps extends React.SVGProps<SVGSVGElement> {
 
 export const FileIcon: React.FC<FileIconProps> = React.memo(
   ({label, id, ext, color = ext ? getColor(ext as any) : undefined, size = 16, gradient, accent, ...rest}) => {
-    console.log(id, label);
     const id1 = React.useId();
     const id2 = React.useId();
     const styles = useStyles();

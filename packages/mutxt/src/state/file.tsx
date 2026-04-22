@@ -11,6 +11,7 @@ import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
+import type {MuTxtApi} from 'mutxt-react';
 import type {IFileStorage} from './file-storage';
 import type {Model} from 'json-joy/lib/json-crdt';
 
@@ -60,6 +61,7 @@ export class OpenFile {
   private active = true;
   private disposeAfterSave = false;
   private readonly unsubscribers: Array<() => void> = [];
+  public mutxt?: MuTxtApi;
 
   constructor(
     public readonly meta: FileMetadataDto,

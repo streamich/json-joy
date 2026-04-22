@@ -25,7 +25,9 @@ const minHeight = 400;
 export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext, readOnly, visible }) => {
   return (
     <div className={editorShellClass} style={{display: visible ? 'block' : 'none', minHeight}}>
-      <MuTxt heightFit hoverElevate peritext={peritext} minHeight={minHeight} readOnly={readOnly} />
+      <MuTxt heightFit hoverElevate peritext={peritext} minHeight={minHeight} readOnly={readOnly} onApi={(api) => {
+        file.mutxt = api;
+      }} />
     </div>
   );
 };

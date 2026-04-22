@@ -4,6 +4,7 @@ import {createEditor, type Descendant, type Editor} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps, type RenderPlaceholderProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
+import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
@@ -25,6 +26,7 @@ import {createEmptyDocument, createSlateEditorModel, shouldShowPlaceholder} from
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
+import type {MuTxtApi} from './controllers/MuTxtApi';
 
 const shellClass = rule({
   w: '100%',
@@ -76,6 +78,7 @@ export interface MuTxtProps {
   className?: string;
   style?: React.CSSProperties;
   state?: MuTxtState;
+  onApi?: (api: MuTxtApi) => void;
 }
 
 export const MuTxt: React.FC<MuTxtProps> = ({
@@ -96,6 +99,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   className = '',
   style,
   state: _state,
+  onApi,
 }) => {
   const styles = useStyles();
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
@@ -123,6 +127,9 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     return () => state.dispose();
   }, [_state, state]);
   const contentVersion = state.contentVersion.use();
+  useIsomorphicLayoutEffect(() => {
+    onApi?.(state.api);
+  }, []);
 
   // ---------------------------------------------------- Props synchronization
   React.useEffect(() => {
