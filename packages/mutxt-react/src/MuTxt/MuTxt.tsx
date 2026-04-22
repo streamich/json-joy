@@ -6,6 +6,7 @@ import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
+import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import {SlateFacade, withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
@@ -74,7 +75,11 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   initialValue,
   presence,
   onEditor,
-  placeholder = 'Start writing or type "/" for commands...',
+  placeholder = (
+    <span style={{display: 'inline-flex', alignItems: 'center'}}>
+      Start writing or type "/" for commands in your <MuTxtLogo style={{margin: '-8px 0'}} /> document...
+    </span>
+  ) as any,
   contentWidth,
   minHeight,
   maxHeight,
