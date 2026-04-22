@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useCallback} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
@@ -140,10 +140,10 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const state = useLogState();
   const scroll = useBehaviorSubject(state.timelineScroll$);
   const pinned = useBehaviorSubject(state.pinned$);
-  const [, setForceUpdate] = React.useState(0);
-  const isMouseDown = React.useRef(false);
-  const isScrubbing = React.useRef(false);
-  React.useEffect(() => {
+  const [, setForceUpdate] = useState(0);
+  const isMouseDown = useRef(false);
+  const isScrubbing = useRef(false);
+  useEffect(() => {
     const body = document.body;
     const listener = () => {
       if (isMouseDown.current) {
@@ -157,17 +157,17 @@ export const Bar: React.FC<Bar> = ({log}) => {
       body.removeEventListener('mouseup', listener);
     };
   }, []);
-  const scrollRef = React.useRef(scroll);
+  const scrollRef = useRef(scroll);
   scrollRef.current = scroll;
-  const pinnedRef = React.useRef(pinned);
+  const pinnedRef = useRef(pinned);
   pinnedRef.current = pinned;
-  const rootElementRef = React.useRef<HTMLDivElement | null>(null);
+  const rootElementRef = useRef<HTMLDivElement | null>(null);
   const [measureRef, {width}] = useMeasure<HTMLDivElement>();
   useModelTick(log.end);
   const theme = useTheme();
-  const wheelTimeout = React.useRef<number | null>(null);
-  const wheelRaf = React.useRef<number | null>(null);
-  const pendingWheelDx = React.useRef(0);
+  const wheelTimeout = useRef<number | null>(null);
+  const wheelRaf = useRef<number | null>(null);
+  const pendingWheelDx = useRef(0);
   const patchCount = log.patches.size();
   const totalPatches = patchCount + 1;
   const tickWidth = totalPatches > 5000 ? 2 : Math.max(3, startingTickWidth - totalPatches);
@@ -181,7 +181,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const scrollRunway = Math.max(0, scrollBedWidth - scrollHandleWidth);
   const slotsFitInViewport = !width || totalPatches <= slotsPerViewport;
   const slotIndexOffset = slotsFitInViewport ? 0 : Math.floor(scroll * (totalPatches - slotsPerViewport));
-  const patchEntries = React.useMemo<PatchEntry[]>(() => {
+  const patchEntries = useMemo<PatchEntry[]>(() => {
     const entries: PatchEntry[] = [];
     log.patches.forEach(({v: patch}) => {
       const id = patch.getId();
@@ -210,18 +210,19 @@ export const Bar: React.FC<Bar> = ({log}) => {
     (dx: number) => {
       pendingWheelDx.current += dx;
       if (wheelRaf.current !== null) return;
-      wheelRaf.current = requestAnimationFrame(() => {
+      // wheelRaf.current = requestAnimationFrame(() => {
         wheelRaf.current = null;
         const delta = pendingWheelDx.current;
         pendingWheelDx.current = 0;
-        const didMove = !!moveScrollByPx(delta);
-        if (!didMove) return;
-        if (wheelTimeout.current !== null) window.clearTimeout(wheelTimeout.current);
-        wheelTimeout.current = window.setTimeout(() => {
-          setForceUpdate((x) => x + 1);
-          wheelTimeout.current = null;
-        }, 120);
-      });
+        !!moveScrollByPx(delta);
+        // const didMove = !!moveScrollByPx(delta);
+        // if (!didMove) return;
+        // if (wheelTimeout.current !== null) window.clearTimeout(wheelTimeout.current);
+        // wheelTimeout.current = window.setTimeout(() => {
+        //   setForceUpdate((x) => x + 1);
+          // wheelTimeout.current = null;
+        // }, 40);
+      // });
     },
     [moveScrollByPx],
   );
@@ -278,14 +279,14 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const startId = React.useMemo(() => new Timestamp(0, startTime), [startTime]);
 
   // Block the body from scrolling (or any other element)
-  React.useEffect(() => {
+  useEffect(() => {
     const cancelWheel = (e: MouseEvent) => wheelTimeout.current && e.preventDefault();
     const body = document.body;
     body.addEventListener('wheel', cancelWheel, {passive: false});
     return () => body.removeEventListener('wheel', cancelWheel);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const rootElement = rootElementRef.current;
     if (!rootElement) return;
     rootElement.addEventListener('wheel', handleWheel, {passive: false});
@@ -294,14 +295,14 @@ export const Bar: React.FC<Bar> = ({log}) => {
     };
   }, [handleWheel]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (wheelTimeout.current !== null) window.clearTimeout(wheelTimeout.current);
       if (wheelRaf.current !== null) cancelAnimationFrame(wheelRaf.current);
     };
   }, []);
 
-  const handleTickMouseUp = React.useCallback(
+  const handleTickMouseUp = useCallback(
     (patch: Patch | undefined) => {
       const pinned = pinnedRef.current;
       if (!patch) {
@@ -313,7 +314,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     [state],
   );
 
-  const handleTickMouseEnter = React.useCallback(
+  const handleTickMouseEnter = useCallback(
     (patch: Patch | undefined) => {
       const pinned = pinnedRef.current;
       if (!patch) {
