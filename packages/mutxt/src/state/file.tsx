@@ -12,6 +12,7 @@ import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {IFileStorage} from './file-storage';
+import type {Model} from 'json-joy/lib/json-crdt';
 
 const RenderName: React.FC<{file: OpenFile}> = ({file}) => {
   const name = file.name.use();
@@ -48,6 +49,7 @@ export class OpenFile {
   public readonly openTime: number = Date.now();
   public readonly name: rsync.ReactValue<string>;
   public readonly logState: JsonCrdtLogState;
+  public readonly activeModel: rsync.ReactValue<Model<any>>;
   public display?: TraceDefinition['display'] = void 0;
   private readonly storage?: IFileStorage;
   private readonly flushDebounceMs: number;
@@ -67,6 +69,7 @@ export class OpenFile {
     this.id = meta.id;
     this.name = rsync.val(meta.name);
     this.logState = new JsonCrdtLogState(log, {view: 'model'});
+    this.activeModel = rsync.val(log.end);
     this.storage = options.storage;
     this.flushDebounceMs = options.flushDebounceMs ?? DEFAULT_FLUSH_DEBOUNCE_MS;
     this.onPersisted = options.onPersisted;
