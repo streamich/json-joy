@@ -3,12 +3,14 @@ import {useExplorer} from '../../../context';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonCrdtLog} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog';
 import {DemoDisplay} from '@jsonjoy.com/collaborative-ui/lib/DemoDisplay';
+import type {Model} from 'json-joy/lib/json-crdt';
 
 export interface LogProps {
   visible?: boolean;
+  onModel?: (model: Model<any>, readonly: boolean) => void;
 }
 
-export const Log: React.FC<LogProps> = ({ visible }) => {
+export const Log: React.FC<LogProps> = ({ visible, onModel }) => {
   const state = useExplorer();
   const file = useBehaviorSubject(state.file$);
 
@@ -25,6 +27,7 @@ export const Log: React.FC<LogProps> = ({ visible }) => {
         log={file.log}
         view={'model'}
         filename={file.name.value}
+        onModel={onModel}
         renderDisplay={
           !file.display
             ? undefined

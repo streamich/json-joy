@@ -16,13 +16,16 @@ const editorShellClass = rule({
 export interface DocumentMuTxtProps {
   file: OpenFile;
   peritext: PeritextRef;
+  readOnly?: boolean;
   visible?: boolean;
 }
 
-export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext, visible }) => {
+const minHeight = 400;
+
+export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext, readOnly, visible }) => {
   return (
-    <div className={editorShellClass} style={{display: visible ? 'block' : 'none'}}>
-      <MuTxt heightFit hoverElevate peritext={peritext} />
+    <div className={editorShellClass} style={{display: visible ? 'block' : 'none', minHeight}}>
+      <MuTxt heightFit hoverElevate peritext={peritext} minHeight={minHeight} readOnly={readOnly} />
     </div>
   );
 };

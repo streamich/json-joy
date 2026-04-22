@@ -31,6 +31,8 @@ export const SingleEditorDebug: React.FC = () => {
     return model;
   }, []);
 
+  const resetModel = React.useMemo(() => model.clone(), []);
+
   return (
     <div>
       <SlateEditor model={model} />
@@ -57,6 +59,14 @@ export const SingleEditorDebug: React.FC = () => {
           }}
         >
           Prepend "1. " in 2 sec
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            model.reset(resetModel);
+          }}
+        >
+          Reset
         </button>
       </div>
       <UseModel
