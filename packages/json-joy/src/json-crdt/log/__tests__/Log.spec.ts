@@ -49,8 +49,8 @@ describe('.replayTo()', () => {
     log.end.applyPatch(patch1);
     log.end.applyPatch(patch2);
     const model2 = log.replayToEnd();
-    const model3 = log.replayTo(patch1.getId()!);
-    const model4 = log.replayTo(patch2.getId()!);
+    const [model3] = log.replayTo(patch1.getId()!);
+    const [model4] = log.replayTo(patch2.getId()!);
     expect(model.view()).toEqual({foo: 'bar', x: 1, y: 2});
     expect(log.end.view()).toEqual({foo: 'bar', x: 1, y: 2});
     expect(log.start().view()).toEqual(undefined);
@@ -69,8 +69,8 @@ describe('.replayTo()', () => {
     log.end.applyPatch(patch1);
     log.end.applyPatch(patch2);
     const model2 = log.replayToEnd();
-    const model3 = log.replayTo(patch1.getId()!, false);
-    const model4 = log.replayTo(patch2.getId()!, false);
+    const [model3] = log.replayTo(patch1.getId()!, false);
+    const [model4] = log.replayTo(patch2.getId()!, false);
     expect(model.view()).toEqual({foo: 'bar', x: 1, y: 2});
     expect(log.end.view()).toEqual({foo: 'bar', x: 1, y: 2});
     expect(log.start().view()).toEqual(undefined);

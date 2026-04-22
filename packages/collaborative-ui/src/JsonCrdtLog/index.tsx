@@ -20,10 +20,11 @@ import {PlaybackToolbar} from './PlaybackToolbar';
 import {JsonCrdtLogTextual} from './JsonCrdtLogTextual';
 import {JsonCrdtLogPinnedPatch} from './JsonCrdtLogPinnedPatch';
 import {PlayIcon} from '../icons/PlayIcon';
-import type {ITimestampStruct, Model} from 'json-joy/lib/json-crdt';
 import {DownloadButton} from './DownloadButton';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {Progress} from '@jsonjoy.com/ui/lib/3-list-item/Progress';
+import type {ITimestampStruct, Model} from 'json-joy/lib/json-crdt';
 
 const css = {
   header: rule({
@@ -68,6 +69,7 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
     if (firstPatchId) firstId = firstPatchId;
   }
   const pinnedModel = useBehaviorSubject(state.pinnedModel$);
+  const pinnedIdx = useBehaviorSubject(state.pinnedPatchIdx$);
   const model = pinnedModel ?? log.end;
   const readonlyEnforcementCounter = useBehaviorSubject(state.readonlyEnforced$);
   // biome-ignore lint: manual dependency list
@@ -160,7 +162,15 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
         style={{background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
         hoverElevate
       >
-        {!!pinnedModel && <RunningBackground />}
+        {!!pinnedModel && (
+          <div style={{
+            // Hide left and right edges near to rounded corners, where the progress bar would look weird
+            maskImage: 'linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)',
+          }}>
+            <RunningBackground  />
+            <Progress glow value={pinnedIdx / state.log.patches.size()} style={{marginTop: -2}} />
+          </div>
+        )}
         <div className={css.header} style={{marginTop: spacious ? (pinnedModel ? 6 : 8) : 0}}>
           {header}
         </div>

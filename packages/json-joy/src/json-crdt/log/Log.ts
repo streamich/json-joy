@@ -153,15 +153,17 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
    *     otherwise replays up to the patch before the given timestamp. Default is `true`.
    * @returns A new model instance with patches replayed up to the given timestamp.
    */
-  public replayTo(ts: ITimestampStruct, inclusive: boolean = true): Model<N> {
+  public replayTo(ts: ITimestampStruct, inclusive: boolean = true): [model: Model<N>, patchCount: number] {
     // TODO: PERF: Make `.clone()` implicit in `.start()`.
     const clone = this.start().clone();
     let cmp: number = 0;
+    let patchCount = 0;
     for (let node = first(this.patches.root); node && (cmp = compare(ts, node.k)) >= 0; node = next(node)) {
       if (cmp === 0 && !inclusive) break;
       clone.applyPatch(node.v);
+      patchCount++;
     }
-    return clone;
+    return [clone, patchCount];
   }
 
   /**
@@ -309,7 +311,7 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
         builder.del(op.obj, [new Timespan(opId.sid, opId.time, op.span())]);
         continue;
       }
-      const model = __model || (__model = this.replayTo(id!, false));
+      const model = __model || (__model = this.replayTo(id!, false)[0]);
       // TODO: Do not overwrite already deleted values? Or needed for concurrency? Orphaned nodes.
       if (op instanceof InsValOp) {
         const nodeId = op.obj;
