@@ -31,6 +31,10 @@ const filesHeaderClass = rule({
   bgs: '16px 16px',
   op: .7,
   maskImage: 'linear-gradient(to right, black, transparent)',
+  '&:hover': {
+    op: 1,
+    maskImage: 'none',
+  },
   '&:focus-within': {
     op: 1,
     maskImage: 'none',

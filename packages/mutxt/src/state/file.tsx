@@ -217,7 +217,7 @@ export class OpenFile {
       id: this.id,
       name: this.name.value,
       display: () => <RenderName file={this} />,
-      icon: () => <FileIcon id={this.id} label="crdt" size={16} />,
+      icon: () => <FileIcon id={this.id} label={this.name.value} gradient accent size={16} />,
     };
   }
 }
