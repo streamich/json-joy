@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useCallback} from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
@@ -189,7 +190,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     return entries;
   }, [log, patchCount]);
 
-  const moveScrollByPx = React.useCallback(
+  const moveScrollByPx = useCallback(
     (dx: unknown): number => {
       if (!width || slotsFitInViewport || scrollRunway <= 0) return 0;
       if (typeof dx !== 'number') return 0;
@@ -204,7 +205,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     },
     [scrollRunway, slotsFitInViewport, state, width],
   );
-  const scheduleWheelScroll = React.useCallback(
+  const scheduleWheelScroll = useCallback(
     (dx: number) => {
       pendingWheelDx.current += dx;
       if (wheelRaf.current !== null) return;
@@ -223,6 +224,21 @@ export const Bar: React.FC<Bar> = ({log}) => {
     },
     [moveScrollByPx],
   );
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+        switch (e.code) {
+          case 'ArrowUp':
+          case 'ArrowRight': {
+            state.next();
+            break;
+          }
+          case 'ArrowDown':
+          case 'ArrowLeft': {
+            state.prev();
+            break;
+          }
+        }
+      }, [state]);
   const [scratchSlotsRef] = useScratch({
     onScratch: ({dx}) => {
       if (typeof dx === 'number' && Math.abs(dx) > 8 && isMouseDown.current && !isScrubbing.current) {
@@ -284,7 +300,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const isScrolling = !!wheelTimeout.current || isScratching;
   const tickWrapStyle = isScrubbing.current ? scrubbingTickStyle : undefined;
   const tickItemClassName = isScrolling ? tickItemClassNameStatic : tickItemClassNameHoverable;
-  const canHandleTickMouseUp = !isScrolling && !isScrubbing.current;
+  const canHandleTickMouseUp = !isScrubbing.current;
   const canHandleTickMouseEnter = isScrubbing.current;
   const barStyle = React.useMemo(
     () =>
@@ -385,20 +401,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
         isMouseDown.current = true;
         setForceUpdate((x) => x + 1);
       }}
-      onKeyDown={(e) => {
-        switch (e.code) {
-          case 'ArrowUp':
-          case 'ArrowRight': {
-            state.next();
-            break;
-          }
-          case 'ArrowDown':
-          case 'ArrowLeft': {
-            state.prev();
-            break;
-          }
-        }
-      }}
+      onKeyDown={handleKeyDown}
     >
       <div
         ref={scratchSlotsRef}
