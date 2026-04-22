@@ -93,7 +93,7 @@ export class SlateFacade implements RichtextEditorFacade {
   }
 
   /** Stateful converter that caches Slate nodes by Peritext `Block.hash`. */
-  private readonly _toSlate = new ToSlateNode();
+  private readonly _toSlate: ToSlateNode;
 
   private readonly _origOnChange: SlateEditorOnChange | undefined;
   private readonly _slateOnChange: SlateEditorOnChange;
@@ -105,7 +105,9 @@ export class SlateFacade implements RichtextEditorFacade {
     public readonly editor: Editor,
     protected readonly peritext: PeritextRef,
     protected readonly opts: SlateFacadeOpts = {},
+    defaultBlock = 'p',
   ) {
+    this._toSlate = new ToSlateNode(defaultBlock);
     // Optionally install slate-history plugin.
     const {history: historyOpt} = opts;
     const installHistory =

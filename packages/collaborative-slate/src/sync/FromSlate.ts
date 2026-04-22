@@ -82,6 +82,7 @@ export class FromSlate {
   public convert(node: SlateDocument): ViewRange {
     let length = 0;
     if (node && (length = node.length) > 0) this.cont([], node);
-    return [this.text, 0, this.slices] as ViewRange;
+    const viewRange = [this.text, 0, this.slices] as ViewRange;
+    return viewRange;
   }
 }
