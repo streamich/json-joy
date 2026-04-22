@@ -68,7 +68,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = () => {
   const label = '\\mu txt — Micro rich-text editor';
 
   return (
-    <BasicTooltip nowrap renderTooltip={() => label}>
+    <BasicTooltip nowrap renderTooltip={() => label} delay={555}>
       <span className={rootClass} role="img" aria-label={label} style={{color: styles.col.get('neutral', 'txt-1')}}>
         <span className={muClass}><sub>μ</sub></span>
         <span className={txtClass}>
