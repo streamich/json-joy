@@ -84,7 +84,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   initialValue,
   presence,
   onEditor,
-  placeholder = 'Start with a heading, a note, or a quick thought.',
+  placeholder = 'Start writing or type "/" for commands...',
   contentWidth,
   minHeight,
   maxHeight,
