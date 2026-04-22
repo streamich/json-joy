@@ -5,13 +5,13 @@ import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/Ba
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
-import type {CodeBlockElement as CodeBlockElementType} from '../../../types';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {css} from 'code-colors-react/lib/style';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {CodeBlockOptionsPopup} from './CodeBlockOptionsPopup';
 import * as settings from './settings';
+import type {CodeBlockElement as CodeBlockElementType} from '../../../types';
 
 const CODE_LINE_HEIGHT = 1.7;
 
@@ -66,6 +66,9 @@ const metaChipClass = rule({
   fz: '12px',
 });
 
+const tokenizerCss = css();
+delete tokenizerCss['::selection'];
+
 const codePreClass = rule({
   mr: '0',
   w: '100%',
@@ -77,7 +80,7 @@ const codePreClass = rule({
   [`.${codeWrapClass.trim()}:hover &`]: {
     bg: 'var(--code-hover-bg)',
   },
-  ...css(),
+  ...tokenizerCss,
 });
 
 const gutterClass = rule({

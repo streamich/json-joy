@@ -1,9 +1,9 @@
 import {Editor, Element as SlateElement, Node, Range, Text} from 'slate';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '@jsonjoy.com/collaborative-slate';
-import {getActiveEmbed} from './behavior/embed';
-import {getLinkAttributes} from './behavior/link';
-import type {CustomElement, CustomText, SlateEditorDocument} from './types';
+import {getActiveEmbed} from './../behavior/embed';
+import {getLinkAttributes} from './../behavior/link';
+import type {CustomElement, CustomText, SlateEditorDocument} from '../types';
 import type {Model} from 'json-joy/lib/json-crdt';
 
 const CARET_MARK_ORDER: Array<[keyof Pick<CustomText, 'bold' | 'italic' | 'underline' | 'code'>, string]> = [

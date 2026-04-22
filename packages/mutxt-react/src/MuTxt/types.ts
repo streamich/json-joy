@@ -1,4 +1,5 @@
 import type {BaseEditor} from 'slate';
+import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
@@ -109,7 +110,7 @@ export interface ToolbarButtonDefinition<Format extends string = string> {
 
 declare module 'slate' {
   interface CustomTypes {
-    Editor: BaseEditor & ReactEditor;
+    Editor: BaseEditor & ReactEditor & HistoryEditor;
     Element: CustomElement;
     Text: CustomText;
   }

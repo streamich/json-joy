@@ -1,10 +1,18 @@
 import {rsync} from '@jsonjoy.com/ui';
-import {getActiveAlignment} from './behavior';
-import {getCaretPathInfo, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from './util';
-import type {Editor} from 'slate';
-import type {SlateTextAlign} from './types';
+import {getActiveAlignment} from '../behavior';
+import {getCaretPathInfo, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
+import {MuTxtApi} from './MuTxtApi';
+import type {SlateTextAlign} from '../types';
+import type {BaseEditor, Editor} from 'slate';
+import type {HistoryEditor} from 'slate-history';
+import type {ReactEditor} from 'slate-react';
 
-export class SlateEditorState {
+export interface MuTxtStateOpts {
+  // editor: BaseEditor & ReactEditor & HistoryEditor; 
+}
+
+export class MuTxtState {
+  public readonly api = new MuTxtApi(this);
   public readonly focused = rsync.val(false);
   public readonly collaborative = rsync.val(false);
   public readonly readOnly = rsync.val(false);
@@ -20,8 +28,12 @@ export class SlateEditorState {
   public readonly selectionText = rsync.val('');
   private readonly scrollMapVersionTrigger = rsync.val(0);
   public readonly scrollMapVersion = this.scrollMapVersionTrigger;
+  public readonly contentVersion = rsync.val(0);
 
-  constructor(opts?: {collaborative?: boolean; readOnly?: boolean}) {
+  constructor(
+    public readonly editor: BaseEditor & ReactEditor & HistoryEditor,
+    opts?: {collaborative?: boolean; readOnly?: boolean},
+  ) {
     this.collaborative.next(!!opts?.collaborative);
     this.readOnly.next(!!opts?.readOnly);
   }

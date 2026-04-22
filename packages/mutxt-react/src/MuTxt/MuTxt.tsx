@@ -20,8 +20,8 @@ import {Leaf} from './components/inline/Leaf';
 import {Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
 import {SlateEditorContextProvider} from './context';
-import {SlateEditorState} from './state';
-import {createEmptyDocument, createSlateEditorModel, shouldShowPlaceholder} from './util';
+import {MuTxtState} from './controllers/MuTxtState';
+import {createEmptyDocument, createSlateEditorModel, shouldShowPlaceholder} from './util/index';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
@@ -75,7 +75,7 @@ export interface MuTxtProps {
   readOnly?: boolean;
   className?: string;
   style?: React.CSSProperties;
-  state?: SlateEditorState;
+  state?: MuTxtState;
 }
 
 export const MuTxt: React.FC<MuTxtProps> = ({
@@ -95,13 +95,13 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   readOnly,
   className = '',
   style,
-  state: providedState,
+  state: _state,
 }) => {
   const styles = useStyles();
-  const [contentVersion, setContentVersion] = React.useState(0);
-  const state = React.useMemo(() => providedState ?? new SlateEditorState({collaborative: !!presence, readOnly}), [providedState]);
   const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
   const peritextRef = React.useCallback(peritext ?? (() => (standaloneModel as any).s.toExt()), [peritext, standaloneModel]);
+
+  // ------------------------------------------------------------- Slate editor
   const initialEditorValue = React.useMemo<Descendant[]>(() => {
     try {
       return toSlate(peritextRef().txt) as Descendant[];
@@ -116,10 +116,18 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     return editor;
   }, [initialEditorValue]);
 
+  // ------------------------------------------------------------- mu-txt state
+  const state = React.useMemo(() => _state ?? new MuTxtState(editor, {collaborative: !!presence, readOnly}), [_state, editor]);
+  React.useEffect(() => {
+    if (_state) return;
+    return () => state.dispose();
+  }, [_state, state]);
+  const contentVersion = state.contentVersion.use();
+
+  // ---------------------------------------------------- Props synchronization
   React.useEffect(() => {
     state.setCollaborative(!!presence);
   }, [state, presence]);
-
   React.useEffect(() => {
     state.setReadOnly(!!readOnly);
   }, [state, readOnly]);
@@ -134,11 +142,6 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     };
   }, [editor, onEditor, peritextRef, state]);
 
-  React.useEffect(() => {
-    if (providedState) return;
-    return () => state.dispose();
-  }, [providedState, state]);
-
   const {decorate, sendLocalPresence} = useSlatePresence({
     manager: presence,
     peritext: peritextRef,
@@ -149,7 +152,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   const syncVisualState = React.useCallback((contentChanged = false) => {
     state.requestScrollMapRefresh();
-    if (contentChanged) setContentVersion((value) => value + 1);
+    if (contentChanged) state.contentVersion.next(state.contentVersion.value + 1);
     state.sync(editor);
   }, [editor, state]);
 

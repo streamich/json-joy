@@ -26,19 +26,16 @@ const getEntryIndex = (entries: [CustomText, Path][], path: Path): number =>
 const getExpandedLinkRange = (editor: Editor, entries: [CustomText, Path][], index: number, href: string): Range => {
   let left = index;
   let right = index;
-
   while (left > 0) {
     const link = getLinkAttributes(entries[left - 1][0]);
     if (!link || link.href !== href) break;
     left--;
   }
-
   while (right < entries.length - 1) {
     const link = getLinkAttributes(entries[right + 1][0]);
     if (!link || link.href !== href) break;
     right++;
   }
-
   return {
     anchor: Editor.start(editor, entries[left][1]),
     focus: Editor.end(editor, entries[right][1]),
@@ -69,7 +66,6 @@ export const normalizeLinkHref = (href: string): string => {
 export const getActiveLink = (editor: Editor): ActiveLink | null => {
   const {selection} = editor;
   if (!selection) return null;
-
   if (Range.isCollapsed(selection)) {
     const entries = getTextEntries(editor);
     const index = getEntryIndex(entries, selection.anchor.path);
@@ -84,11 +80,9 @@ export const getActiveLink = (editor: Editor): ActiveLink | null => {
       text: Editor.string(editor, range),
     };
   }
-
   const selectionRange = Editor.unhangRange(editor, selection);
   const selectedEntries = getTextEntries(editor, selectionRange);
   if (!selectedEntries.length) return null;
-
   let link: LinkAttributes | null = null;
   for (const [node] of selectedEntries) {
     const currentLink = getLinkAttributes(node);
@@ -99,9 +93,7 @@ export const getActiveLink = (editor: Editor): ActiveLink | null => {
     }
     if (link.href !== currentLink.href) return null;
   }
-
   if (!link) return null;
-
   const entries = getTextEntries(editor);
   const index = getEntryIndex(entries, selectedEntries[0][1]);
   if (index < 0) return null;
@@ -119,21 +111,16 @@ export const isLinkActive = (editor: Editor): boolean => !!getActiveLink(editor)
 export const upsertLink = (editor: Editor, href: string): ActiveLink | null => {
   const nextHref = normalizeLinkHref(href);
   if (!nextHref) return null;
-
   const activeLink = getActiveLink(editor);
   const targetRange = activeLink?.range ?? (hasRangeSelection(editor) ? Editor.unhangRange(editor, editor.selection!) : null);
   if (!targetRange) return null;
-
   const link: LinkAttributes = activeLink?.title ? {href: nextHref, title: activeLink.title} : {href: nextHref};
-
   Transforms.setNodes(editor, {a: link} as Partial<CustomText>, {
     at: targetRange,
     match: (node) => isText(node),
     split: true,
   });
-
   if (editor.selection && Range.isCollapsed(editor.selection)) Editor.addMark(editor, 'a', link);
-
   return getActiveLink(editor);
 };
 
@@ -148,7 +135,6 @@ export const removeLink = (editor: Editor): boolean => {
     if (editor.selection && Range.isCollapsed(editor.selection)) Editor.removeMark(editor, 'a');
     return true;
   }
-
   if (!hasRangeSelection(editor)) return false;
   Editor.removeMark(editor, 'a');
   return true;
