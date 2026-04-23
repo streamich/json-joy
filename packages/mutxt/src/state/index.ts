@@ -203,7 +203,6 @@ export class JsonCrdtExplorerState {
       const model = ModelWithExt.create(undefined, id.sid);
       const log = new Log(() => model.clone());
       log.end.applyBatch(patches);
-      log.end.api.autoFlush();
       log.end.setSid(this.sid);
       this.openFile(log, name);
     }
@@ -213,7 +212,6 @@ export class JsonCrdtExplorerState {
       } catch {}
       const model = ModelWithExt.load(uint8, this.sid);
       const log = new Log(() => model);
-      log.end.api.autoFlush();
       log.end.setSid(this.sid);
       this.openFile(log, name);
     } else if (
@@ -260,7 +258,6 @@ export class JsonCrdtExplorerState {
   public readonly createFromModel = (model: Model<any>) => {
     this.newCnt++;
     const log = Log.fromNewModel(model);
-    log.end.api.autoFlush();
     this.openFile(log);
   };
 

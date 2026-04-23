@@ -88,7 +88,6 @@ export class OpenFile {
       return model;
     };
     log.end.ext.register(ext.quill);
-    log.end.api.autoFlush();
     log.end.setSid(sid);
     return log;
   }

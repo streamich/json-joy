@@ -8,6 +8,7 @@ import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
+import {DebounceQueue} from '../util/DebounceQueue';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
@@ -43,7 +44,7 @@ export interface OpenFileOptions {
   onPersisted?: ((meta: FileMetadataDto) => void | Promise<void>) | undefined;
 }
 
-export const DEFAULT_FLUSH_DEBOUNCE_MS = 1_000;
+export const DEFAULT_FLUSH_DEBOUNCE_MS = 250;
 
 export class OpenFile {
   public readonly id: string;
@@ -77,6 +78,15 @@ export class OpenFile {
     this.flushDebounceMs = options.flushDebounceMs ?? DEFAULT_FLUSH_DEBOUNCE_MS;
     this.onPersisted = options.onPersisted;
     this.attachPersistenceListeners();
+
+    // Schedule CRDT operation flushing.
+    const queue = new DebounceQueue<null>(100, 500);
+    queue.onflush = () => api.builder.patch.ops.length && api.flush();
+    const api = log.end.api;
+    const enqueue = () => queue.push(null);
+    api.onLocalChanges.listen(enqueue);
+    api.onBeforeTransaction.listen(enqueue);
+    api.onTransaction.listen(enqueue);
   }
 
   public static async decodeLog(uint8: Uint8Array, sid: number): Promise<Log<any>> {
@@ -96,7 +106,6 @@ export class OpenFile {
     };
     log.end.ext.register(ext.peritext);
     log.end.ext.register(ext.quill);
-    log.end.api.autoFlush();
     log.end.setSid(sid);
     return log;
   }

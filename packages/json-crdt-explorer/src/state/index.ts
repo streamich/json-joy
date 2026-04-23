@@ -242,7 +242,6 @@ export class JsonCrdtExplorerState {
   public readonly createFromModel = (model: Model<any>) => {
     this.newCnt++;
     const log = Log.fromNewModel(model);
-    log.end.api.autoFlush();
     this.openFile(log);
   };
 
