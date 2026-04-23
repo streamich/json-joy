@@ -14,19 +14,11 @@ export const HelpText: React.FC<HelpTextProps> = () => {
         {t('Start typing to create a paragraph. Use the toolbar to format text or convert blocks.')}
       </p>
 
-      <h3>{t('Formatting Shortcuts')}</h3>
+      <h3>{t('Common Shortcuts')}</h3>
       <ul>
         <li><Key>⌘B</Key>, <Key>⌘I</Key>, <Key>⌘U</Key>, <Key>⌘E</Key> &mdash; {t('Bold')}, {t('italic')}, {t('underline')}, {t('code')}</li>
         <li><Key>⌘K</Key> &mdash; {t('Insert / edit link')}</li>
-      </ul>
-
-      <h3>{t('Block Shortcuts')}</h3>
-      <ul>
         <li><Key>⌘⇧C</Key> &mdash; {t('Code block')}</li>
-      </ul>
-
-      <h3>{t('History')}</h3>
-      <ul>
         <li><Key>⌘Z</Key>, <Key>⌘⇧Z</Key> &mdash; {t('Undo')} / {t('redo')}</li>
       </ul>
     </div>

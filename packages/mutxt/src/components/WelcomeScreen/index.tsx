@@ -36,6 +36,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
                   <div style={{padding: '16px 32px'}}>
                     <h2><MuTxtLogo size={48} style={{display: 'inline-block', verticalAlign: 'middle', margin: '-8px 0'}} /> Workspace</h2>
                     <ul>
+                      <li><sub>μ</sub>txt is a simple but functional rich-text editor</li>
                       <li>Manage multiple rich-text documents in one place</li>
                       <li>Save documents to disk and reload them any time</li>
                       <li>
@@ -50,6 +51,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
                         </a>
                         {' '}— local-first, works offline, with sync-ready document format
                       </li>
+                      <li>Fork and merge documents seamlessly</li>
                     </ul>
                   </div>
                   {/* <Space size={2} /> */}
