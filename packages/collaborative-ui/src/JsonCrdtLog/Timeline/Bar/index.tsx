@@ -350,7 +350,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
         '--json-crdt-timeline-scroll-handle-bg-active': theme.g(0.82),
         paddingTop: tiny ? 12 : void 0,
       }) as React.CSSProperties,
-    [theme, tickWidth, isScrubbing.current],
+    [theme, tickWidth, tiny, isScrubbing.current],
   );
   const rulerInterval = totalPatches > 1000 || log.end.clock.time > 9999 ? 25 : 10;
   const visibleTicks = React.useMemo<VisibleTick[]>(() => {
