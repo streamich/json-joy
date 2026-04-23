@@ -5,6 +5,8 @@ import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/Js
 import {rsync} from '@jsonjoy.com/ui';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
+import {Patch} from 'json-joy/lib/json-crdt-patch';
+import {compact} from 'json-joy/lib/json-crdt-patch/compaction';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
@@ -81,7 +83,13 @@ export class OpenFile {
 
     // Schedule CRDT operation flushing.
     const queue = new DebounceQueue<null>(100, 500);
-    queue.onflush = () => api.builder.patch.ops.length && api.flush();
+    queue.onflush = () => {
+      const patch = api.builder.patch;
+      if(patch.ops.length) {
+        compact(patch);
+        api.flush();
+      }
+    };
     const api = log.end.api;
     const enqueue = () => queue.push(null);
     api.onLocalChanges.listen(enqueue);
