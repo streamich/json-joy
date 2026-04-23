@@ -8,6 +8,7 @@ import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtLogState} from './JsonCrdtLogState';
 
+const TinyIcon = makeIcon({set: 'ibm_16', icon: 'subtract'});
 const ChartBarsIcon = makeIcon({set: 'auth0', icon: 'chart-bars'});
 const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
 
@@ -27,6 +28,9 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
     case 'model':
       text = t('Model');
       break;
+    case 'tiny':
+      text = t('Tiny');
+      break;
     case 'text':
       text = t('Textual');
       break;
@@ -36,6 +40,18 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
     <Popup
       renderContext={() => (
         <ContextPane minWidth={240}>
+          <ContextSep />
+          <ContextItem
+            closePopup
+            inset
+            onClick={() => state.setView('tiny')}
+            grey={view === 'tiny'}
+            icon={<TinyIcon width={16} height={16} />}
+          >
+            {t('Tiny')}
+          </ContextItem>
+          <ContextSep />
+          <ContextSep line />
           <ContextSep />
           <ContextItem
             closePopup
@@ -55,6 +71,9 @@ export const ViewSelect: React.FC<ViewSelectProps> = ({state}) => {
           >
             {t('Timeline with model')}
           </ContextItem>
+          <ContextSep />
+          <ContextSep line />
+          <ContextSep />
           <ContextItem
             closePopup
             inset
