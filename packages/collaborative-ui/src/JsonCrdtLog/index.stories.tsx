@@ -22,6 +22,10 @@ export const Default = {
   render: () => <JsonCrdtLog log={log2} />,
 };
 
+export const Tiny = {
+  render: () => <JsonCrdtLog log={log2} view={'tiny'} />,
+};
+
 const MonacoDemo = () => {
   const [model, setModel] = React.useState<Model<any>>();
 

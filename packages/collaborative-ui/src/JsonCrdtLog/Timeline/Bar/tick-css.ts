@@ -1,5 +1,4 @@
 import {rule} from 'nano-theme';
-import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
 
 const blockClass = rule({
   pos: 'relative',
@@ -13,11 +12,11 @@ export const css = {
   item: rule({
     pos: 'relative',
     z: 1,
-    h: TIMELINE_HEIGHT + 'px',
+    h: 'var(--json-crdt-timeline-height)',
     w: 'var(--json-crdt-tick-width)',
     bxz: 'border-box',
     op: 0.6,
-    marr: TICK_MARGIN + 'px',
+    marr: '1px',
     cur: 'pointer',
     '&:active:hover': {
       op: 1,
@@ -29,7 +28,7 @@ export const css = {
       bdrad: '2px',
       op: 0.8,
       mar: '-5px 0 -5px -1px',
-      h: TIMELINE_HEIGHT + 10 + 'px',
+      h: 'calc(var(--json-crdt-timeline-height) + 10px)',
     },
   }),
   selected: rule({
@@ -38,7 +37,7 @@ export const css = {
     bdrad: '2px',
     op: 0.9,
     mar: '-4px 0 -4px -1px',
-    h: TIMELINE_HEIGHT + 8 + 'px',
+    h: 'calc(var(--json-crdt-timeline-height) + 8px)',
     out: '1px solid rgba(0,0,0,.8)',
   }),
   id: rule({

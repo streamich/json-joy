@@ -5,7 +5,7 @@ import {last, prev, next} from 'sonic-forest/lib/util';
 import {JsonCrdtPatchState} from '../JsonCrdtPatch/JsonCrdtPatchState';
 import {JsonCrdtModelState} from '../JsonCrdtModel/JsonCrdtModelState';
 
-export type JsonCrdtLogView = 'text' | 'timeline' | 'model';
+export type JsonCrdtLogView = 'text' | 'timeline' | 'model' | 'tiny';
 
 export interface JsonCrdtLogStateOpts {
   view?: JsonCrdtLogView;

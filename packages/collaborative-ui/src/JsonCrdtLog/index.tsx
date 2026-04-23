@@ -26,14 +26,23 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Progress} from '@jsonjoy.com/ui/lib/3-list-item/Progress';
 import type {ITimestampStruct, Model} from 'json-joy/lib/json-crdt';
 
-const css = {
-  header: rule({
-    pad: '8px 8px 8px 16px',
-  }),
-  content: rule({
-    pad: '0 8px 8px',
-  }),
-};
+const blockClass = rule({});
+
+const contentClass = rule({
+  pd: '0 8px 8px',
+});
+
+const headerClass = rule({
+  pd: '8px 8px 8px 16px',
+});
+
+const tinyHeaderClass = rule({
+  op: 0,
+  pd: '0 8px',
+  [`.${blockClass.trim()}:hover &`]: {
+    op: 1,
+  },
+});
 
 export interface JsonCrdtLogProps extends Pick<JsonCrdtModelProps, 'renderDisplay'> {
   state?: JsonCrdtLogState;
@@ -96,35 +105,41 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
     }
   }, [readonlyEnforcementCounter]);
 
+  const tiny = view === 'tiny';
+
+  const toolbar = (
+    <Flex style={{alignItems: 'center'}}>
+      <DownloadButton filename={filename} />
+      <Space horizontal size={-1} />
+      <ViewSelect state={state} />
+      <Space horizontal size={1} />
+      <PlaybackToolbar state={state} />
+    </Flex>
+  );
+
   const header = (
     <Split style={{alignItems: 'center'}}>
       <Flex style={{alignItems: 'center'}}>
-        <div style={{marginTop: -1}}>
+        <div style={{marginTop: -1, display: tiny ? 'none' : void 0}}>
           <MiniTitle>{t('Log')}</MiniTitle>
         </div>
-        {!!renderLeftToolbar && (
+        {!!renderLeftToolbar && !tiny && (
           <>
             <Space horizontal size={1} />
             {renderLeftToolbar()}
           </>
         )}
         <Space horizontal size={1} />
-        {!!firstId && width > 500 && (
+        {!!firstId && width > 500 && !tiny && (
           <>
             <LogicalTimestamp sid={firstId.sid ?? 0} time={firstId.time ?? 0} />
             &nbsp;{'–'}&nbsp;
           </>
         )}
-        <LogicalTimestamp sid={log.end.clock.sid ?? 0} time={log.end.clock.time ? log.end.clock.time - 1 : 0} />
+        {!tiny && <LogicalTimestamp sid={log.end.clock.sid ?? 0} time={log.end.clock.time ? log.end.clock.time - 1 : 0} />}
       </Flex>
       <div>
-        <Flex style={{alignItems: 'center'}}>
-          <DownloadButton filename={filename} />
-          <Space horizontal size={-1} />
-          <ViewSelect state={state} />
-          <Space horizontal size={1} />
-          <PlaybackToolbar state={state} />
-        </Flex>
+        {toolbar}
       </div>
     </Split>
   );
@@ -158,24 +173,31 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
   return (
     <context.Provider value={state}>
       <Paper
-        round={!!spacious}
-        style={{background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
-        hoverElevate
+        round={!!spacious && !tiny}
+        noOutline={tiny}
+        className={blockClass}
+        style={tiny
+          ? {width: '100%', padding: '8px 0 0', background: 'transparent'}
+          : {width: '100%', background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
+        hoverElevate={!tiny}
       >
-        {!!pinnedModel && (
+        {!!pinnedModel && !tiny && (
           <div style={{
+            marginBottom: -2,
             // Hide left and right edges near to rounded corners, where the progress bar would look weird
-            maskImage: 'linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)',
+            maskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
           }}>
             <RunningBackground  />
             <Progress glow value={pinnedIdx / state.log.patches.size()} style={{marginTop: -2}} />
           </div>
         )}
-        <div className={css.header} style={{marginTop: spacious ? (pinnedModel ? 6 : 8) : 0}}>
-          {header}
-        </div>
-        {(view === 'timeline' || view === 'model') && <Timeline log={log} />}
-        <div className={css.content}>{content}</div>
+        {!!header && (
+          <div key='header' className={headerClass + (tiny ? tinyHeaderClass : '')} style={{marginTop: tiny ? 0 : spacious ? (pinnedModel ? 6 : 8) : 0, opacity: pinnedModel ? 1 : void 0}}>
+            {header}
+          </div>
+        )}
+        {(view === 'timeline' || view === 'model' || view === 'tiny') && <Timeline key='timeline' log={log} />}
+        {!tiny && <div key='content' className={contentClass}>{content}</div>}
       </Paper>
     </context.Provider>
   );

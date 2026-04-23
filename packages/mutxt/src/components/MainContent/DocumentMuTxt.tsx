@@ -9,7 +9,7 @@ const editorShellClass = rule({
   fld: 'column',
   flex: '1 1 0%',
   bxz: 'border-box',
-  pd: '0 0 16px',
+  pd: '0',
   minH: 0,
 });
 

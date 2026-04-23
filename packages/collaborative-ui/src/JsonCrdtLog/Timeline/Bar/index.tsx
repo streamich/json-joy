@@ -3,7 +3,6 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
-import {TICK_MARGIN, TIMELINE_HEIGHT} from '../constants';
 import {useLogState} from '../../context';
 import {useModelTick} from '../../../hooks/useModelTick';
 import useMeasure from 'react-use/lib/useMeasure';
@@ -16,7 +15,7 @@ import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 const startingTickWidth = 42;
 const timelinePadding = 4;
 const scrollHeight = 12;
-
+const TICK_MARGIN = 1;
 
 const startTickColor = sidColor(0);
 const tickItemClassNameStatic = tickCss.item;
@@ -91,7 +90,7 @@ const blockClass = rule({
 });
 
 const slotsClass = rule({
-  h: TIMELINE_HEIGHT + 'px',
+  h: 'var(--json-crdt-timeline-height)',
   d: 'flex',
   bdrad: '3px',
   pad: '1px 0 1px 1px',
@@ -140,6 +139,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const state = useLogState();
   const scroll = useBehaviorSubject(state.timelineScroll$);
   const pinned = useBehaviorSubject(state.pinned$);
+  const view = useBehaviorSubject(state.view$);
   const [, setForceUpdate] = useState(0);
   const isMouseDown = useRef(false);
   const isScrubbing = useRef(false);
@@ -326,6 +326,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
     [state],
   );
 
+  const tiny = view === 'tiny';
   const isScrolling = !!wheelTimeout.current || isScratching;
   const tickWrapStyle = isScrubbing.current ? scrubbingTickStyle : undefined;
   const tickItemClassName = isScrolling ? tickItemClassNameStatic : tickItemClassNameHoverable;
@@ -334,8 +335,9 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const barStyle = React.useMemo(
     () =>
       ({
-        overflow: isScrubbing.current ? undefined : 'hidden',
+        overflow: tiny || isScrubbing.current ? undefined : 'hidden',
         overscrollBehaviorX: 'contain',
+        '--json-crdt-timeline-height': tiny ? '4px' : '32px',
         '--json-crdt-tick-id-bg': theme.g(1, 0.9),
         '--json-crdt-tick-width': tickWidth + 'px',
         '--json-crdt-timeline-slots-border': theme.g(0.9),
@@ -346,6 +348,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
         '--json-crdt-timeline-scroll-handle-bg': theme.g(0.92),
         '--json-crdt-timeline-scroll-handle-bg-hover': theme.g(0.88),
         '--json-crdt-timeline-scroll-handle-bg-active': theme.g(0.82),
+        paddingTop: tiny ? 12 : void 0,
       }) as React.CSSProperties,
     [theme, tickWidth, isScrubbing.current],
   );
@@ -400,12 +403,12 @@ export const Bar: React.FC<Bar> = ({log}) => {
     [canHandleTickMouseEnter, handleTickMouseEnter, tickTargets],
   );
   const scrollHandleStyle = React.useMemo(
-    () => ({left: scrollRunway * scroll, width: scrollHandleWidth}),
-    [scroll, scrollHandleWidth, scrollRunway],
+    () => ({left: scrollRunway * scroll, width: scrollHandleWidth, height: view === 'tiny' ? 8 : void 0}),
+    [scroll, scrollHandleWidth, scrollRunway, view],
   );
 
   const scrollBed = slotsFitInViewport ? null : (
-    <div className={scrollBedClass}>
+    <div className={scrollBedClass} style={{height: view === 'tiny' ? 8 : void 0}}>
       {scrollHandleRatio < 1 && (
         <div
           ref={scratchRef}
