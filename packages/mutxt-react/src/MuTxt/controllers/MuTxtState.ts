@@ -44,7 +44,7 @@ export class MuTxtState {
     // -------------------------------------------------- Collaboration binding
     const facade = new SlateFacade(this.editor, this.peritextRef);
     const unbindCollaboration = PeritextBinding.bind(this.peritextRef, facade);
-    queueMicrotask(() => this.sync(this.editor));
+    queueMicrotask(() => this.sync());
     return () => {
       unbindCollaboration();
     };

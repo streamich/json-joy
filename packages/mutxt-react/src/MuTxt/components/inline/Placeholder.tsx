@@ -1,7 +1,15 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import MuTxtLogo from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import type {RenderPlaceholderProps} from 'slate-react';
+import {useMuTxtState} from '../../context';
+
+export const DEF_PLACEHOLDER = (
+  <span style={{display: 'inline-flex', alignItems: 'center'}}>
+    Start writing in your <MuTxtLogo style={{margin: '-8px 0'}} /> document or type "/" for commands...
+  </span>
+);
 
 const placeholderClass = rule({
   pe: 'none',
@@ -11,15 +19,22 @@ const placeholderClass = rule({
 
 export interface PlaceholderProps extends RenderPlaceholderProps {}
 
-export const Placeholder: React.FC<PlaceholderProps> = ({attributes, children}) => {
+export const Placeholder: React.FC<PlaceholderProps> = (props) => {
+  const {attributes, children} = props;
   const styles = useStyles();
+  const mutxt = useMuTxtState();
+
+  if (!children) return null;
+  if (mutxt.api.getBlock()?.type !== 'p') return null;
+  if (Object.keys(mutxt.api.marks() ?? {}).length) return null;
+
   return (
     <span
       {...attributes}
       className={placeholderClass}
       style={{
         ...attributes.style,
-        color: styles.light ? styles.g(0.48) : styles.g(0.56),
+        color: styles.g(.5),
         opacity: 1,
       }}
     >

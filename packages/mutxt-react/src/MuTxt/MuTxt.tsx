@@ -18,15 +18,17 @@ import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
 import {EditorScrollMap} from './components/chrome/EditorScrollMap';
 import {Leaf} from './components/inline/Leaf';
-import {Placeholder} from './components/inline/Placeholder';
+import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './controllers/MuTxtState';
-import {createEmptyDocument, createSlateEditorModel, shouldShowPlaceholder} from './util/index';
+import {createEmptyDocument, createSlateEditorModel} from './util/index';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {MuTxtApi} from './controllers/MuTxtApi';
+
+const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
 
 const shellClass = rule({
   w: '100%',
@@ -41,17 +43,11 @@ const fitShellClass = rule({
   fld: 'column',
 });
 
-const defaultPlaceholder = (
-  <span style={{display: 'inline-flex', alignItems: 'center'}}>
-    Start writing or type "/" for commands in your <MuTxtLogo style={{margin: '-8px 0'}} /> document...
-  </span>
-);
-
 export interface MuTxtProps {
   peritext?: PeritextRef;
   presence?: PresenceManager;
   initialValue?: SlateEditorDocument;
-  placeholder?: string;
+  placeholder?: React.ReactNode;
   maxWidth?: number;
   contentWidth?: number;
   minHeight?: number;
@@ -71,8 +67,8 @@ export interface MuTxtProps {
 export const MuTxt: React.FC<MuTxtProps> = ({
   peritext,
   initialValue,
+  placeholder = DEF_PLACEHOLDER,
   presence,
-  placeholder = defaultPlaceholder as any,
   contentWidth,
   minHeight,
   maxHeight,
@@ -147,7 +143,8 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     [decorateRemoteCursors, decorateCodeHighlighting],
   );
 
-  // -------------------------------------------------------------------- other
+  // TODO: simplify this
+  // ----------------------------------------------------- Sync on every change
   const syncVisualState = React.useCallback((contentChanged = false) => {
     state.requestScrollMapRefresh();
     if (contentChanged) state.contentVersion.next(state.contentVersion.value + 1);
@@ -155,19 +152,20 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     state.publishPresence?.();
   }, [state]);
 
-  const renderElement = React.useCallback((props: RenderElementProps) => <BlockElement {...(props as any)} />, []);
-
+  // ---------------------------------------------------------------- Renderers
   const renderLeaf = React.useMemo(() => {
     const base = (props: RenderLeafProps) => <Leaf {...(props as any)} />;
     return presence ? withPresenceLeaf(base) : base;
   }, [presence]);
 
-  const showPlaceholder = shouldShowPlaceholder(editor);
-
-  const renderPlaceholder = React.useCallback(
-    (props: RenderPlaceholderProps) => <Placeholder {...props}>{showPlaceholder ? placeholder : ''}</Placeholder>,
-    [placeholder, showPlaceholder],
-  );
+  // TODO: move to a standalone connected "placeholder" component
+  // TODO: use just `renderPlaceholder` prop, remove `placeholder` prop
+  // -------------------------------------------------------------- placeholder
+  // const showPlaceholder = shouldShowPlaceholder(editor);
+  // const renderPlaceholder = React.useCallback(
+  //   (props: RenderPlaceholderProps) => <Placeholder {...props}>{showPlaceholder ? placeholder : ''}</Placeholder>,
+  //   [placeholder, showPlaceholder],
+  // );
 
   const editableStyle: React.CSSProperties = {
     minHeight,
@@ -191,8 +189,8 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         decorate={decorate}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        renderPlaceholder={renderPlaceholder}
-        placeholder={showPlaceholder ? placeholder : ''}
+        placeholder={placeholder as any}
+        renderPlaceholder={props => <Placeholder {...props} />}
         spellCheck
         autoFocus={autoFocus}
         readOnly={readOnly}

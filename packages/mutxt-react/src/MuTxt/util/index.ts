@@ -54,31 +54,6 @@ export const getSelectedText = (editor: Editor): string => {
   return Editor.string(editor, selection).trim();
 };
 
-const getCurrentBlock = (editor: Editor): CustomElement | null => {
-  const {selection} = editor;
-  if (selection) {
-    const [match] = Editor.nodes(editor, {
-      at: Editor.unhangRange(editor, selection),
-      match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-    });
-    if (match) return match[0] as CustomElement;
-  }
-  const firstChild = editor.children[0];
-  return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
-};
-
-export const hasPendingInlineFormatting = (editor: Editor): boolean => {
-  const marks = (Editor.marks(editor) ?? {}) as Partial<CustomText>;
-  if (INLINE_FORMAT_KEYS.some((key) => !!marks[key])) return true;
-  return !!getLinkAttributes(marks);
-};
-
-export const shouldShowPlaceholder = (editor: Editor): boolean => {
-  const block = getCurrentBlock(editor);
-  if (block && block.type !== 'p') return false;
-  return !hasPendingInlineFormatting(editor);
-};
-
 export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
   const {selection} = editor;
   if (!selection) return {path: []};
@@ -156,6 +131,19 @@ export const typeToLabel = (type: string): string => {
     default:
       return '';
   }
+};
+
+const getCurrentBlock = (editor: Editor): CustomElement | null => {
+  const {selection} = editor;
+  if (selection) {
+    const [match] = Editor.nodes(editor, {
+      at: Editor.unhangRange(editor, selection),
+      match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
+    });
+    if (match) return match[0] as CustomElement;
+  }
+  const firstChild = editor.children[0];
+  return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
 };
 
 export const getCurrentBlockLabel = (editor: Editor): string => {
