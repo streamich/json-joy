@@ -1,9 +1,10 @@
 import {Editor, Path, Range, Text, Transforms, Element as SlateElement, Location, Span} from 'slate';
 import {ReactEditor} from 'slate-react';
+import {CustomElement} from '../types';
+import {typeToLabel} from '../util/typeToLabel';
 import type {MuTxtState} from './MuTxtState';
 import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
-import {CustomElement} from '../types';
 
 /** Public API for of the mu-txt editor. */
 export class MuTxtApi {
@@ -35,7 +36,7 @@ export class MuTxtApi {
     return Editor.marks(this.editor)
   }
 
-  public getBlock(at?: Location | Span): CustomElement | null {
+  public block(at?: Location | Span): CustomElement | null {
     const {editor} = this;
     if (!at) {
       const {selection} = editor;
@@ -49,5 +50,11 @@ export class MuTxtApi {
     }
     const firstChild = editor.children[0];
     return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
+  }
+
+  public blockLabel(at?: Location | Span): string {
+    const element = this.block(at);
+    if (!element) return 'Paragraph';
+    return typeToLabel(element.type) || 'Paragraph';
   }
 }

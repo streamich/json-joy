@@ -1,6 +1,6 @@
 import {rsync} from '@jsonjoy.com/ui';
 import {getActiveAlignment} from '../behavior';
-import {getCaretPathInfo, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
+import {getCaretPathInfo, getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {MuTxtApi} from './MuTxtApi';
 import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
@@ -18,7 +18,7 @@ export class MuTxtState {
   public readonly readOnly = rsync.val(false);
   public readonly toolbarVersion = rsync.val(0);
   public readonly linkMenuRequest = rsync.val(0);
-  public readonly currentBlock = rsync.val('Paragraph');
+  public readonly blockLabel = rsync.val('Paragraph');
   public readonly caretPath = rsync.val<string[]>([]);
   public readonly caretLinkHref = rsync.val('');
   public readonly caretEmbedUrl = rsync.val('');
@@ -73,7 +73,7 @@ export class MuTxtState {
     this.toolbarVersion.next(this.toolbarVersion.value + 1);
     this.wordCount.set(getWordCount(text));
     this.characterCount.set(text.length);
-    this.currentBlock.set(getCurrentBlockLabel(editor));
+    this.blockLabel.set(this.api.blockLabel());
     this.caretPath.set(caret.path);
     this.caretLinkHref.set(caret.linkHref ?? '');
     this.caretEmbedUrl.set(caret.embedUrl ?? '');

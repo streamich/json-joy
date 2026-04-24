@@ -102,55 +102,5 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
   };
 };
 
-export const typeToLabel = (type: string): string => {
-  switch (type) {
-    case 'p':
-      return 'Paragraph';
-    case 'h1':
-      return 'Heading 1';
-    case 'h2':
-      return 'Heading 2';
-    case 'h3':
-      return 'Heading 3';
-    case 'columns':
-      return 'Two columns';
-    case 'blockquote':
-      return 'Quote';
-    case 'code-block':
-      return 'Code block';
-    case 'embed':
-      return 'Embed';
-    case 'checklist':
-      return 'Checklist';
-    case 'ul':
-      return 'Bulleted list';
-    case 'ol':
-      return 'Numbered list';
-    case 'li':
-      return 'List item';
-    default:
-      return '';
-  }
-};
-
-const getCurrentBlock = (editor: Editor): CustomElement | null => {
-  const {selection} = editor;
-  if (selection) {
-    const [match] = Editor.nodes(editor, {
-      at: Editor.unhangRange(editor, selection),
-      match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-    });
-    if (match) return match[0] as CustomElement;
-  }
-  const firstChild = editor.children[0];
-  return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
-};
-
-export const getCurrentBlockLabel = (editor: Editor): string => {
-  const element = getCurrentBlock(editor);
-  if (!element) return 'Paragraph';
-  return typeToLabel(element.type) || 'Paragraph';
-};
-
 export const pluralize = (count: number, singular: string, plural = singular + 's'): string =>
   `${Intl.NumberFormat().format(count)} ${count === 1 ? singular : plural}`;

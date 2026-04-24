@@ -25,7 +25,7 @@ export const Placeholder: React.FC<PlaceholderProps> = (props) => {
   const mutxt = useMuTxtState();
 
   if (!children) return null;
-  if (mutxt.api.getBlock()?.type !== 'p') return null;
+  if (mutxt.api.block()?.type !== 'p') return null;
   if (Object.keys(mutxt.api.marks() ?? {}).length) return null;
 
   return (
