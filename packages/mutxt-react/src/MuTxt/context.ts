@@ -11,7 +11,7 @@ export interface SlateEditorContextProviderProps {
 export const SlateEditorContextProvider: React.FC<SlateEditorContextProviderProps> = ({state, children}) =>
   React.createElement(SlateEditorContext.Provider, {value: state}, children);
 
-export const useSlateEditorState = (): MuTxtState => {
+export const useMuTxtState = (): MuTxtState => {
   const state = React.useContext(SlateEditorContext);
   if (!state) throw new Error('useSlateEditorState must be used inside SlateEditorContextProvider.');
   return state;

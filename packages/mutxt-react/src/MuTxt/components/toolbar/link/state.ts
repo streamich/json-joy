@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
 import {flushSync} from 'react-dom';
 import type {Editor} from 'slate';
@@ -10,19 +9,15 @@ import {
   type ActiveLink,
   upsertLink,
 } from '../../../behavior/link';
+import {MuTxtState} from '../../../controllers/MuTxtState';
 
-const LinkToolbarStateContext = React.createContext<LinkToolbarState | null>(null);
-
-export class LinkToolbarState {
-  public readonly readOnly = rsync.val(false);
+export class LinkButtonState {
   public readonly hasSelection = rsync.val(false);
   public readonly activeLink = rsync.val<ActiveLink | null>(null);
   public readonly open = rsync.val(false);
   public readonly draft = rsync.val('');
-  public readonly canOpen = rsync.comp(
-    [this.readOnly, this.hasSelection, this.activeLink],
-    ([readOnly, hasSelection, activeLink]) => !readOnly && (hasSelection || !!activeLink),
-  );
+  public readonly canOpen: rsync.ReactComputed<boolean>;
+  public readonly selected: rsync.ReactComputed<boolean>;
   public readonly normalizedDraft = rsync.comp([this.draft], ([draft]) => normalizeLinkHref(draft));
   public readonly popupTitle = rsync.comp([this.activeLink], ([activeLink]) => (activeLink ? 'Edit link' : 'Add link'));
   public readonly popupSubtitle = rsync.comp([this.activeLink], ([activeLink]) =>
@@ -30,48 +25,25 @@ export class LinkToolbarState {
       ? 'Update the current link target, copy it, open it, or remove it.'
       : 'Enter a URL to wrap the current selection.',
   );
-  public readonly selected = rsync.comp(
-    [this.readOnly, this.open, this.activeLink],
-    ([readOnly, open, activeLink]) => !readOnly && (open || !!activeLink),
-  );
-
-  private handledLinkMenuRequest = 0;
   private onVisualChange?: () => void;
 
+  private readonly editor: Editor;
   constructor(
-    private readonly editor: Editor,
-    opts?: {
-      readOnly?: boolean;
-      linkMenuRequest?: number;
-      onVisualChange?: () => void;
-    },
+    public readonly state: MuTxtState,
   ) {
-    this.onVisualChange = opts?.onVisualChange;
-    this.sync(opts?.readOnly, opts?.linkMenuRequest ?? 0);
+    this.editor = state.editor;
+    this.canOpen = rsync.comp(
+      [state.readOnly, this.hasSelection, this.activeLink],
+      ([readOnly, hasSelection, activeLink]) => !readOnly && (hasSelection || !!activeLink),
+    );
+    this.selected = rsync.comp(
+      [state.readOnly, this.open, this.activeLink],
+      ([readOnly, open, activeLink]) => !readOnly && (open || !!activeLink),
+    );
   }
 
   public readonly setOnVisualChange = (onVisualChange?: () => void): void => {
     this.onVisualChange = onVisualChange;
-  };
-
-  public readonly sync = (readOnly?: boolean, linkMenuRequest = this.handledLinkMenuRequest): void => {
-    const nextReadOnly = !!readOnly;
-    const nextHasSelection = hasRangeSelection(this.editor);
-    const nextActiveLink = getActiveLink(this.editor);
-    const nextCanOpen = !nextReadOnly && (nextHasSelection || !!nextActiveLink);
-
-    this.readOnly.set(nextReadOnly);
-    this.hasSelection.set(nextHasSelection);
-    this.activeLink.set(nextActiveLink);
-
-    if (this.open.value && !nextCanOpen) this.close();
-
-    if (linkMenuRequest === this.handledLinkMenuRequest) return;
-    this.handledLinkMenuRequest = linkMenuRequest;
-    if (!nextCanOpen) return;
-
-    this.draft.set(nextActiveLink?.href ?? '');
-    this.open.set(true);
   };
 
   public readonly setDraft = (value: string): void => {
@@ -119,50 +91,3 @@ export class LinkToolbarState {
 
   public readonly dispose = (): void => {};
 }
-
-export interface LinkToolbarStateProviderProps {
-  editor: Editor;
-  readOnly?: boolean;
-  linkMenuRequest: number;
-  syncVersion: number;
-  onVisualChange: () => void;
-  children: React.ReactNode;
-}
-
-export const LinkToolbarStateProvider: React.FC<LinkToolbarStateProviderProps> = ({
-  editor,
-  readOnly,
-  linkMenuRequest,
-  syncVersion,
-  onVisualChange,
-  children,
-}) => {
-  const stateRef = React.useRef<LinkToolbarState | null>(null);
-  if (!stateRef.current)
-    stateRef.current = new LinkToolbarState(editor, {
-      readOnly,
-      linkMenuRequest,
-      onVisualChange,
-    });
-  const state = stateRef.current;
-
-  React.useEffect(() => {
-    state.setOnVisualChange(onVisualChange);
-  }, [onVisualChange, state]);
-
-  React.useEffect(() => {
-    state.sync(readOnly, linkMenuRequest);
-  }, [linkMenuRequest, readOnly, state, syncVersion]);
-
-  React.useEffect(() => {
-    return () => state.dispose();
-  }, [state]);
-
-  return React.createElement(LinkToolbarStateContext.Provider, {value: state}, children);
-};
-
-export const useLinkToolbarState = (): LinkToolbarState => {
-  const state = React.useContext(LinkToolbarStateContext);
-  if (!state) throw new Error('LinkToolbarStateContext is not available.');
-  return state;
-};

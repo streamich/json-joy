@@ -2,19 +2,19 @@ import {rsync} from '@jsonjoy.com/ui';
 import {getActiveAlignment} from '../behavior';
 import {getCaretPathInfo, getCurrentBlockLabel, getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {MuTxtApi} from './MuTxtApi';
+import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
+import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
+import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
 import type {BaseEditor, Editor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 
-export interface MuTxtStateOpts {
-  // editor: BaseEditor & ReactEditor & HistoryEditor; 
-}
+export interface MuTxtStateOpts {}
 
 export class MuTxtState {
   public readonly api = new MuTxtApi(this);
   public readonly focused = rsync.val(false);
-  public readonly collaborative = rsync.val(false);
   public readonly readOnly = rsync.val(false);
   public readonly toolbarVersion = rsync.val(0);
   public readonly linkMenuRequest = rsync.val(0);
@@ -30,20 +30,28 @@ export class MuTxtState {
   public readonly scrollMapVersion = this.scrollMapVersionTrigger;
   public readonly contentVersion = rsync.val(0);
 
+  public publishPresence?: () => void;
+
   constructor(
     public readonly editor: BaseEditor & ReactEditor & HistoryEditor,
+    public readonly peritextRef: PeritextRef,
     opts?: {collaborative?: boolean; readOnly?: boolean},
   ) {
-    this.collaborative.next(!!opts?.collaborative);
     this.readOnly.next(!!opts?.readOnly);
+  }
+
+  public start(): (() => void) {
+    // -------------------------------------------------- Collaboration binding
+    const facade = new SlateFacade(this.editor, this.peritextRef);
+    const unbindCollaboration = PeritextBinding.bind(this.peritextRef, facade);
+    queueMicrotask(() => this.sync(this.editor));
+    return () => {
+      unbindCollaboration();
+    };
   }
 
   public readonly setFocused = (focused: boolean): void => {
     this.focused.set(focused);
-  };
-
-  public readonly setCollaborative = (collaborative: boolean): void => {
-    this.collaborative.set(collaborative);
   };
 
   public readonly setReadOnly = (readOnly: boolean): void => {
@@ -58,11 +66,8 @@ export class MuTxtState {
     this.scrollMapVersionTrigger.next(this.scrollMapVersionTrigger.value + 1);
   };
 
-  public readonly dispose = (): void => {
-    // No-op. State currently owns only synchronous rsync values.
-  };
-
-  public readonly sync = (editor: Editor): void => {
+  public readonly sync = (): void => {
+    const editor = this.editor;
     const text = getEditorPlainText(editor);
     const caret = getCaretPathInfo(editor);
     this.toolbarVersion.next(this.toolbarVersion.value + 1);

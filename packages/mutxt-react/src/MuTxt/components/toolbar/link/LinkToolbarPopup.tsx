@@ -7,7 +7,7 @@ import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {EditorContextPopup} from '../../chrome/EditorContextPopup';
-import {useLinkToolbarState} from './state';
+import {useLinkButton} from './context';
 
 const inputRowClass = rule({
   d: 'flex',
@@ -33,7 +33,7 @@ const preventMouseDown = (event: React.MouseEvent): void => {
 };
 
 export const LinkToolbarPopup: React.FC = () => {
-  const state = useLinkToolbarState();
+  const state = useLinkButton();
   const activeLink = state.activeLink.use();
   const draft = state.draft.use();
   const open = state.open.use();

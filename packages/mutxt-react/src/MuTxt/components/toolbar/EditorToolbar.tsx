@@ -29,7 +29,7 @@ import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {EmbedToolbarButton} from './EmbedToolbarButton';
 import {LinkToolbarButton} from './link/LinkToolbarButton';
 import {DocumentOutlineButton} from '../chrome/DocumentOutlineButton';
-import {useSlateEditorState} from '../../context';
+import {useMuTxtState} from '../../context';
 
 const blockClass = rule({
   pos: 'relative',
@@ -52,7 +52,7 @@ export interface EditorToolbarProps {
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, onVisualChange}) => {
-  const state = useSlateEditorState();
+  const state = useMuTxtState();
   const styles = useStyles();
   const toolbarVersion = state.toolbarVersion.use();
 
@@ -119,7 +119,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => toggleMark(editor, button.format!)),
           })
         ))}
-        <LinkToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
+        <LinkToolbarButton editor={editor} onVisualChange={onVisualChange} />
         <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />
         <ToolbarSep />

@@ -3,7 +3,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
-import {useSlateEditorState} from '../../context';
+import {useMuTxtState} from '../../context';
 import {getWordCount, pluralize, typeToLabel} from '../../util';
 
 const footerClass = rule({
@@ -51,7 +51,7 @@ export interface EditorFooterProps {}
 
 export const EditorFooter: React.FC<EditorFooterProps> = () => {
   const styles = useStyles();
-  const state = useSlateEditorState();
+  const state = useMuTxtState();
   const focused = state.focused.use();
   const readOnly = state.readOnly.use();
   const wordCount = state.wordCount.use();

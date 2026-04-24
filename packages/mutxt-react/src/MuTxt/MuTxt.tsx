@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {createEditor, type Descendant, type Editor} from 'slate';
+import {createEditor, type Descendant} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps, type RenderPlaceholderProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
@@ -8,8 +8,7 @@ import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
-import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
-import {SlateFacade, withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
+import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
@@ -42,17 +41,16 @@ const fitShellClass = rule({
   fld: 'column',
 });
 
-interface EditorScrollAreaProps {
-  children: React.ReactNode;
-  editor: Editor;
-  style: React.CSSProperties;
-}
+const defaultPlaceholder = (
+  <span style={{display: 'inline-flex', alignItems: 'center'}}>
+    Start writing or type "/" for commands in your <MuTxtLogo style={{margin: '-8px 0'}} /> document...
+  </span>
+);
 
 export interface MuTxtProps {
   peritext?: PeritextRef;
   presence?: PresenceManager;
   initialValue?: SlateEditorDocument;
-  onEditor?: (editor: Editor) => void;
   placeholder?: string;
   maxWidth?: number;
   contentWidth?: number;
@@ -74,12 +72,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   peritext,
   initialValue,
   presence,
-  onEditor,
-  placeholder = (
-    <span style={{display: 'inline-flex', alignItems: 'center'}}>
-      Start writing or type "/" for commands in your <MuTxtLogo style={{margin: '-8px 0'}} /> document...
-    </span>
-  ) as any,
+  placeholder = defaultPlaceholder as any,
   contentWidth,
   minHeight,
   maxHeight,
@@ -99,25 +92,28 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const peritextRef = React.useCallback(peritext ?? (() => (standaloneModel as any).s.toExt()), [peritext, standaloneModel]);
 
   // ------------------------------------------------------------- Slate editor
-  const initialEditorValue = React.useMemo<Descendant[]>(() => {
-    try {
-      return toSlate(peritextRef().txt) as Descendant[];
-    } catch {
-      return createEmptyDocument() as Descendant[];
-    }
-  }, [peritextRef]);
   const editor = React.useMemo(() => {
+    let initialEditorValue: Descendant[] = [];
+    try {
+      initialEditorValue = toSlate(peritextRef().txt) as Descendant[];
+    } catch {
+      initialEditorValue = createEmptyDocument() as Descendant[];
+    }
     const editor = withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor()))));
-    editor.children = initialEditorValue as any;
+    editor.children = initialEditorValue;
     editor.selection = null;
     return editor;
-  }, [initialEditorValue]);
+  }, [peritextRef]);
 
   // ------------------------------------------------------------- mu-txt state
-  const state = React.useMemo(() => _state ?? new MuTxtState(editor, {collaborative: !!presence, readOnly}), [_state, editor]);
+  const state = React.useMemo(() => {
+    if (_state) return _state;
+    if (!peritext) throw new Error('NO_TXT');
+    return new MuTxtState(editor, peritext, {collaborative: !!presence, readOnly});
+  }, [_state, editor, peritext]);
   React.useEffect(() => {
-    if (_state) return;
-    return () => state.dispose();
+    if (_state) return; // We don't own the state.
+    return state.start();
   }, [_state, state]);
   const contentVersion = state.contentVersion.use();
   useIsomorphicLayoutEffect(() => {
@@ -126,45 +122,38 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   // ---------------------------------------------------- Props synchronization
   React.useEffect(() => {
-    state.setCollaborative(!!presence);
-  }, [state, presence]);
-  React.useEffect(() => {
     state.setReadOnly(!!readOnly);
   }, [state, readOnly]);
-
-  React.useEffect(() => {
-    const facade = new SlateFacade(editor, peritextRef);
-    const unbind = PeritextBinding.bind(peritextRef, facade);
-    onEditor?.(editor);
-    queueMicrotask(() => state.sync(editor));
-    return () => {
-      unbind();
-    };
-  }, [editor, onEditor, peritextRef, state]);
-
-  const {decorate, sendLocalPresence} = useSlatePresence({
+  
+  // --------------------------------------------------------- Presence manager
+  const {decorate: decorateRemoteCursors, sendLocalPresence} = useSlatePresence({
     manager: presence,
     peritext: peritextRef,
     editor,
     userFromMeta: (meta: any) => (meta ? {name: meta.name, color: meta.color} : undefined),
   });
-  const decorateCodeSyntax = useCodeSyntaxDecorations(editor, contentVersion);
+  React.useEffect(() => {
+    state.publishPresence = sendLocalPresence;
+  }, [sendLocalPresence]);
 
+  // ------------------------------------------- Code block syntax highlighting
+  const decorateCodeHighlighting = useCodeSyntaxDecorations(editor, contentVersion);
+
+  // -------------------------------------------------------- Slate decorations
+  const decorate = React.useCallback(
+    (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
+      return [...decorateRemoteCursors(entry), ...decorateCodeHighlighting(entry)];
+    },
+    [decorateRemoteCursors, decorateCodeHighlighting],
+  );
+
+  // -------------------------------------------------------------------- other
   const syncVisualState = React.useCallback((contentChanged = false) => {
     state.requestScrollMapRefresh();
     if (contentChanged) state.contentVersion.next(state.contentVersion.value + 1);
-    state.sync(editor);
-  }, [editor, state]);
-
-  const refreshAfterEditorChange = React.useCallback((contentChanged = false) => {
-    syncVisualState(contentChanged);
-    sendLocalPresence();
-  }, [sendLocalPresence, syncVisualState]);
-
-  const handleSlateChange = React.useCallback(() => {
-    const contentChanged = editor.operations.some((operation) => operation.type !== 'set_selection');
-    refreshAfterEditorChange(contentChanged);
-  }, [editor, refreshAfterEditorChange]);
+    state.sync();
+    state.publishPresence?.();
+  }, [state]);
 
   const renderElement = React.useCallback((props: RenderElementProps) => <BlockElement {...(props as any)} />, []);
 
@@ -178,17 +167,6 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const renderPlaceholder = React.useCallback(
     (props: RenderPlaceholderProps) => <Placeholder {...props}>{showPlaceholder ? placeholder : ''}</Placeholder>,
     [placeholder, showPlaceholder],
-  );
-
-  const decorateLeaf = React.useCallback(
-    (entry: Parameters<typeof decorate>[0]) => {
-      const presenceRanges = decorate(entry);
-      const syntaxRanges = decorateCodeSyntax(entry);
-      if (!syntaxRanges.length) return presenceRanges;
-      if (!presenceRanges.length) return syntaxRanges;
-      return [...presenceRanges, ...syntaxRanges];
-    },
-    [decorate, decorateCodeSyntax],
   );
 
   const editableStyle: React.CSSProperties = {
@@ -207,10 +185,10 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   let content: React.ReactNode = (
     <Slate
-      editor={editor} initialValue={initialEditorValue} onChange={handleSlateChange} onSelectionChange={() => refreshAfterEditorChange(false)}
+      editor={editor} initialValue={editor.children} onChange={() => syncVisualState(true)} onSelectionChange={() => syncVisualState(false)}
     >
       <Editable
-        decorate={decorateLeaf}
+        decorate={decorate}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         renderPlaceholder={renderPlaceholder}
@@ -225,7 +203,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
           const handled = handleKeyboardShortcuts(editor, event, {
             requestLinkMenu: state.requestLinkMenu,
           });
-          if (handled) refreshAfterEditorChange(true);
+          if (handled) syncVisualState(true);
         }}
       />
     </Slate>
@@ -266,7 +244,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   content = (
     <>
-      <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => refreshAfterEditorChange(true)} />
+      <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => syncVisualState(true)} />
       {content}
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
         <EditorFooter />
