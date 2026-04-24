@@ -22,8 +22,10 @@ import {EditorScrollMap} from './components/chrome/EditorScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
+import {FloatingBlockToolbar} from './components/toolbar/floating/FloatingBlockToolbar';
 import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
 import {SlateEditorContextProvider} from './context';
+import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {MuTxtState} from './controllers/MuTxtState';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
@@ -183,6 +185,9 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       editor={editor} initialValue={editor.children} onChange={state.onChange} onSelectionChange={state.onSelection}
     >
       <Editable
+        ref={(el) => {
+          if (el) state.editableBox = new ElBox(el);
+        }}
         decorate={decorate}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
@@ -202,6 +207,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
           if (handled) state.sync(true);
         }}
       />
+      <FloatingBlockToolbar />
       <FloatingToolbar />
     </Slate>
   );

@@ -5,6 +5,7 @@ import {typeToLabel} from '../util/typeToLabel';
 import type {MuTxtState} from './MuTxtState';
 import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
+import {isListType} from '../behavior';
 
 /** Public API for of the mu-txt editor. */
 export class MuTxtApi {
@@ -52,9 +53,48 @@ export class MuTxtApi {
     return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
   }
 
+  public blockAbove(
+    predicate?: (element: CustomElement) => boolean,
+    at?: Location,
+    mode: 'highest' | 'lowest' = 'lowest'
+  ): [CustomElement, Path] | undefined {
+    const {editor} = this;
+    if (!at) {
+      const {selection} = editor;
+      if (selection) at = Editor.unhangRange(editor, selection);
+    }
+    if (!at) return;
+    return Editor.above(this.editor, {at,
+      match: (node) => SlateElement.isElement(node) && Editor.isBlock(this.editor, node) && (predicate?.(node as CustomElement) ?? true),
+      mode,
+    });
+  }
+
+  public listAbove(
+    predicate?: (element: CustomElement) => boolean,
+    at?: Location,
+    mode: 'highest' | 'lowest' = 'lowest'
+  ): [CustomElement, Path] | undefined {
+    return this.blockAbove((n) => isListType(n.type) && (predicate?.(n as CustomElement) ?? true), at, mode);
+  }
+
   public blockLabel(at?: Location | Span): string {
     const element = this.block(at);
     if (!element) return 'Paragraph';
     return typeToLabel(element.type) || 'Paragraph';
+  }
+
+  public focusRect(): DOMRect | undefined {
+    if (!this.state.cursor.value) return;
+    const selection = window.getSelection();
+    if (!selection?.focusNode) return;
+    try {
+      const focusRange = document.createRange();
+      focusRange.setStart(selection.focusNode, selection.focusOffset);
+      focusRange.collapse(true);
+      const rect = focusRange.getClientRects()[0] ?? focusRange.getBoundingClientRect();
+      if (rect.width > 0 || rect.height > 0) return rect;
+    } catch {}
+    return;
   }
 }

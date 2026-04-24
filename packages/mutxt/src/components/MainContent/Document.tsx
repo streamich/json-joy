@@ -6,6 +6,8 @@ import {DocumentMuTxt} from './DocumentMuTxt';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import type {OpenFile} from '../../state/file';
+import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
+import {JsonCrdtModel} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtModel';
 
 export interface DocumentProps {
   file: OpenFile;
@@ -36,5 +38,12 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
     );
   }
 
-  return <Log visible={selected === file} onModel={(model) => file.activeModel.next(model)} />;
+  return (
+    <div style={{display: selected === file ? 'block' : 'none'}}>
+      <Paper>
+        <JsonCrdtModel model={activeModel} />
+      </Paper>
+      <Log visible={selected === file} onModel={(model) => file.activeModel.next(model)} />
+    </div>
+  );
 };

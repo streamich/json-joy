@@ -39,7 +39,7 @@ const getSize = (el: HTMLElement): ElBoxValue => {
   return [box.left, box.top, box.width, box.height];
 };
 
-export class ElBox<El extends HTMLElement> extends ReactValue<ElBoxValue> {
+export class ElBox<El extends HTMLElement = HTMLElement> extends ReactValue<ElBoxValue> {
   private el?: El;
   private _observer?: ResizeObserver;
   private _rafId = 0;

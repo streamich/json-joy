@@ -45,7 +45,7 @@ export class FloatingToolbarState {
     this.underlineActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'underline'));
     this.codeActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'code'));
     this.point = rsync.comp(
-      [mutxt.selection, mutxt.version, mutxt.scrollMapVersion, this.toolbarInteracting],
+      [mutxt.selection, mutxt.version, mutxt.scrollVersion, this.toolbarInteracting],
       ([selection, _version, _scrollVersion, toolbarInteracting]) => {
         if (selection) {
           const point = this.computePoint(selection);
@@ -60,7 +60,7 @@ export class FloatingToolbarState {
         mutxt.selection,
         mutxt.focused,
         mutxt.version,
-        mutxt.scrollMapVersion,
+        mutxt.scrollVersion,
         this.point,
         this.toolbarFocused,
         this.pointerDownOutsideToolbar,

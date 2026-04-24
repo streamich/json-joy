@@ -11,19 +11,24 @@ const positionClass = rule({
   z: ZINDEX.CONTEXT,
 });
 
-const positionClassWithAnimation = rule({
+const positionClassWithFadeIn = rule({
   an: 'fadeInScaleIn .04s',
+});
+
+const positionClassWithAnimation = rule({
+  trs: 'left .1s ease-out, top .1s ease-out',
 });
 
 export interface PositionPopupProps {
   fadeIn?: boolean;
+  animate?: boolean;
   children: React.ReactNode;
 }
 
 /**
  * Places popup at the anchor point.
  */
-export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, children}) => {
+export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, children}) => {
   const point = useAnchorPoint();
   const isMounted = useMountedState();
   const timer = React.useRef<unknown>(null);
@@ -79,7 +84,7 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, children}) 
 
   return (
     <Portal>
-      <div ref={ref} className={positionClass + (fadeIn ? positionClassWithAnimation : '')}>
+      <div ref={ref} className={positionClass + (fadeIn ? positionClassWithFadeIn : '') + (animate ? positionClassWithAnimation : '')}>
         {children}
       </div>
     </Portal>

@@ -35,7 +35,7 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
   const scrollHeight = useSyncStore(scrollArea.scrollHeight$);
   const clientHeight = useSyncStore(scrollArea.clientHeight$);
   const focused = state.focused.use();
-  const version = state.scrollMapVersion.use();
+  const version = state.scrollVersion.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
 
   React.useEffect(() => {

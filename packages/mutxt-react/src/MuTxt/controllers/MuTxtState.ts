@@ -5,10 +5,11 @@ import {MuTxtApi} from './MuTxtApi';
 import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import {Range, type BaseEditor, type Selection} from 'slate';
+import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
-import type {ReactEditor} from 'slate-react';
+import {ReactEditor} from 'slate-react';
 
 export interface MuTxtStateOpts {}
 
@@ -17,7 +18,9 @@ export class MuTxtState {
 
   public readonly version = rsync.val(0);
   public readonly contentVersion = rsync.val(0);
-  public readonly scrollMapVersion = rsync.val(0);
+  public readonly scrollVersion = rsync.val(0);
+  
+  public editableBox?: ElBox<HTMLDivElement>;
 
   /** Current cursor position. */
   public readonly cursor = rsync.val<Selection | null>(null);
@@ -65,7 +68,7 @@ export class MuTxtState {
   };
 
   public refreshScrollMap() {
-    this.scrollMapVersion.next(this.scrollMapVersion.value + 1);
+    this.scrollVersion.next(this.scrollVersion.value + 1);
   }
 
   public readonly sync = (contentChanged: boolean): void => {
