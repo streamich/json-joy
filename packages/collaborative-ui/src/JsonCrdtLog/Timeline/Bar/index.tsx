@@ -427,7 +427,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const barStyle = React.useMemo(
     () =>
       ({
-        overflow: tiny || isScrubbing.current ? undefined : 'hidden',
+        overflowX: 'clip',
         overscrollBehaviorX: 'contain',
         '--json-crdt-timeline-height': tiny ? '4px' : '32px',
         '--json-crdt-tick-id-bg': theme.g(1, 0.9),
@@ -442,7 +442,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
         '--json-crdt-timeline-scroll-handle-bg-active': theme.g(0.82),
         paddingTop: tiny ? 12 : void 0,
       }) as React.CSSProperties,
-    [theme, tickWidth, tiny, isScrubbing.current],
+    [theme, tickWidth, tiny],
   );
   const rulerInterval = totalPatches > 1000 || log.end.clock.time > 9999 ? 25 : 10;
   const visibleTicks = React.useMemo<VisibleTick[]>(() => {
