@@ -91,7 +91,8 @@
     "json-joy": "workspace:*",
     "nano-theme": "^1.5.0",
     "react-embed": "^3.7.0",
-    "slate-history": "^0.113.1"
+    "slate-history": "^0.113.1",
+    "use-t": "^1.6.4"
   },
   "peerDependencies": {
     "react": ">=18",

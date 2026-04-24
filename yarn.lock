@@ -11606,6 +11606,7 @@ __metadata:
     slate-dom: "npm:^0.123.0"
     slate-history: "npm:^0.113.1"
     slate-react: "npm:^0.123.0"
+    use-t: "npm:^1.6.4"
   peerDependencies:
     react: ">=18"
     react-dom: ">=18"

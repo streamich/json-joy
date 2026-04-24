@@ -7,6 +7,7 @@ import {useMuTxtState} from '../../../context';
 import {LinkToolbarPopup} from './LinkToolbarPopup';
 import {LinkButtonState} from './state';
 import {ctx} from './context';
+import {useT} from 'use-t';
 
 const popupAnchor = {center: true, gap: 12, topIf: 180};
 
@@ -21,12 +22,12 @@ export interface LinkToolbarButtonViewProps {
 }
 
 export const LinkToolbarButton: React.FC<LinkToolbarButtonViewProps> = ({refToggle}) => {
+  const [t] = useT();
   const mutxt = useMuTxtState();
   const state = React.useMemo(() => new LinkButtonState(mutxt), [mutxt]);
   const handle = useAnchorPointHandle(popupAnchor);
   const canOpen = state.canOpen.use();
   const open = state.open.use();
-  const popupTitle = state.popupTitle.use();
   const selected = state.selected.use();
 
   const mergedRefToggle = React.useCallback(
@@ -56,7 +57,7 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonViewProps> = ({refTogg
             selected={selected}
             disabled={!canOpen}
             onMouseDown={preventMouseDown}
-            tooltip={{nowrap: true, renderTooltip: () => popupTitle, shortcut: 'Cmd+K'}}
+            tooltip={{nowrap: true, renderTooltip: () => t('Link'), shortcut: 'Cmd+K'}}
           >
             <Iconista set="vscode" icon="link" width={16} height={16} />
           </ToolbarItem>

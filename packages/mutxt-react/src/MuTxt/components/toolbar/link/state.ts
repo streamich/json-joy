@@ -11,24 +11,19 @@ import {
 import {MuTxtState} from '../../../controllers/MuTxtState';
 
 export class LinkButtonState {
-  public readonly activeLink = rsync.val<ActiveLink | null>(null);
+  public readonly activeLink: rsync.ReactComputed<ActiveLink | null>;
   public readonly open = rsync.val(false);
   public readonly draft = rsync.val('');
   public readonly canOpen: rsync.ReactComputed<boolean>;
   public readonly selected: rsync.ReactComputed<boolean>;
   public readonly normalizedDraft = rsync.comp([this.draft], ([draft]) => normalizeLinkHref(draft));
-  public readonly popupTitle = rsync.comp([this.activeLink], ([activeLink]) => (activeLink ? 'Edit link' : 'Add link'));
-  public readonly popupSubtitle = rsync.comp([this.activeLink], ([activeLink]) =>
-    activeLink
-      ? 'Update the current link target, copy it, open it, or remove it.'
-      : 'Enter a URL to wrap the current selection.',
-  );
 
   private readonly editor: Editor;
   constructor(
     public readonly state: MuTxtState,
   ) {
-    this.editor = state.editor;
+    const editor = this.editor = state.editor;
+    this.activeLink = rsync.comp([state.cursor], () => getActiveLink(editor));
     this.canOpen = rsync.comp(
       [state.readOnly, state.selection, this.activeLink],
       ([readOnly, selection, activeLink]) => !readOnly && (!!selection || !!activeLink),
@@ -65,12 +60,10 @@ export class LinkButtonState {
       return;
     }
     this.draft.set(link.href);
-    this.activeLink.set(link);
   };
 
   public readonly remove = (): void => {
     if (!removeLink(this.editor)) return;
-    this.activeLink.set(getActiveLink(this.editor));
     this.close();
   };
 }

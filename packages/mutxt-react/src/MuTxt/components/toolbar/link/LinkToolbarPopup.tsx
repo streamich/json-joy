@@ -38,8 +38,11 @@ export const LinkToolbarPopup: React.FC = () => {
   const draft = state.draft.use();
   const open = state.open.use();
   const normalizedDraft = state.normalizedDraft.use();
-  const popupTitle = state.popupTitle.use();
-  const popupSubtitle = state.popupSubtitle.use();
+
+  const title = activeLink ? 'Edit link' : 'Add link';
+  const subtitle = activeLink
+    ? 'Update the current link target, copy it, open it, or remove it.'
+    : 'Enter a URL to wrap the current selection.';
 
   const actionRow = activeLink ? (
     <div className={actionRowClass}>
@@ -81,8 +84,8 @@ export const LinkToolbarPopup: React.FC = () => {
 
   return (
     <EditorContextPopup
-      title={popupTitle}
-      subtitle={popupSubtitle}
+      title={title}
+      subtitle={subtitle}
       headerRight={actionRow}
       minWidth={Math.max(Math.min(560, window.innerWidth * 0.4), 320)}
       applyDisabled={!normalizedDraft}
