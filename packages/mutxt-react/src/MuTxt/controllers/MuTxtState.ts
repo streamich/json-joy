@@ -66,7 +66,9 @@ export class MuTxtState {
     this.scrollMapVersionTrigger.next(this.scrollMapVersionTrigger.value + 1);
   };
 
-  public readonly sync = (): void => {
+  public readonly sync = (contentChanged: boolean): void => {
+    this.requestScrollMapRefresh();
+    if (contentChanged) this.contentVersion.next(this.contentVersion.value + 1);
     const editor = this.editor;
     const text = getEditorPlainText(editor);
     const caret = getCaretPathInfo(editor);
@@ -79,5 +81,6 @@ export class MuTxtState {
     this.caretEmbedUrl.set(caret.embedUrl ?? '');
     this.alignment.set(getActiveAlignment(editor));
     this.selectionText.set(getSelectedText(editor));
+    this.publishPresence?.();
   };
 }

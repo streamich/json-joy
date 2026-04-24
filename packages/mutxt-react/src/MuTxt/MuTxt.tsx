@@ -146,10 +146,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   // TODO: simplify this
   // ----------------------------------------------------- Sync on every change
   const syncVisualState = React.useCallback((contentChanged = false) => {
-    state.requestScrollMapRefresh();
-    if (contentChanged) state.contentVersion.next(state.contentVersion.value + 1);
-    state.sync();
-    state.publishPresence?.();
+    state.sync(contentChanged);
   }, [state]);
 
   // ---------------------------------------------------------------- Renderers
@@ -157,15 +154,6 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     const base = (props: RenderLeafProps) => <Leaf {...(props as any)} />;
     return presence ? withPresenceLeaf(base) : base;
   }, [presence]);
-
-  // TODO: move to a standalone connected "placeholder" component
-  // TODO: use just `renderPlaceholder` prop, remove `placeholder` prop
-  // -------------------------------------------------------------- placeholder
-  // const showPlaceholder = shouldShowPlaceholder(editor);
-  // const renderPlaceholder = React.useCallback(
-  //   (props: RenderPlaceholderProps) => <Placeholder {...props}>{showPlaceholder ? placeholder : ''}</Placeholder>,
-  //   [placeholder, showPlaceholder],
-  // );
 
   const editableStyle: React.CSSProperties = {
     minHeight,
