@@ -206,13 +206,13 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       <ScrollArea.ScrollArea shadow railWidth={12} style={scrollAreaStyle} hideDelay={5000}>
         <ScrollArea.Viewport
           onMouseDown={(e) => {
-            if (!state.api.focused()) {
+            if (!state.api.focused() && !(e.target as HTMLElement).closest('[contenteditable]')) {
               e.preventDefault();
               state.api.focus();
             }
           }}
           onMouseUp={(e) => {
-            if (!state.api.focused()) {
+            if (!state.api.focused() && !(e.target as HTMLElement).closest('[contenteditable]')) {
               e.preventDefault();
               state.api.focus();
             }
