@@ -33,7 +33,13 @@ const contentClass = rule({
 });
 
 const headerClass = rule({
+  pos: 'relative',
+  z: 2,
   pd: '8px 8px 8px 16px',
+});
+
+const pinnedHeaderClass = rule({
+  op: 1,
 });
 
 const tinyHeaderClass = rule({
@@ -41,6 +47,17 @@ const tinyHeaderClass = rule({
   pd: '0 8px',
   [`.${blockClass.trim()}:hover &`]: {
     op: 1,
+  },
+  [`&:has(+ .jj-log-timeline:hover)`]: {
+    op: 0,
+    pe: 'none',
+  },
+  [`.${pinnedHeaderClass.trim()}&`]: {
+    op: 1,
+  },
+  [`&+.${pinnedHeaderClass.trim()}:has(+ .jj-log-timeline:hover)`]: {
+    op: 0,
+    pe: 'none',
   },
 });
 
@@ -192,7 +209,7 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
           </div>
         )}
         {!!header && (
-          <div key='header' className={headerClass + (tiny ? tinyHeaderClass : '')} style={{marginTop: tiny ? 0 : spacious ? (pinnedModel ? 6 : 8) : 0, opacity: pinnedModel ? 1 : void 0}}>
+          <div key='header' className={headerClass + (tiny ? tinyHeaderClass : '') + (pinnedModel ? pinnedHeaderClass : '')} style={{marginTop: tiny ? 0 : spacious ? (pinnedModel ? 6 : 8) : 0}}>
             {header}
           </div>
         )}

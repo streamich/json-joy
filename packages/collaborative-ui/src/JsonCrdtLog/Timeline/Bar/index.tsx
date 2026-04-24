@@ -9,13 +9,157 @@ import useMeasure from 'react-use/lib/useMeasure';
 import useScratch from 'react-use/lib/useScratch';
 import {Timestamp, type ITimestampStruct, type Patch} from 'json-joy/lib/json-crdt';
 import {sidColor} from '../../../util/sidColor';
-import {css as tickCss} from './tick-css';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 
 const startingTickWidth = 42;
 const timelinePadding = 4;
 const scrollHeight = 12;
 const TICK_MARGIN = 1;
+
+const blockClass = rule({
+  pd: '24px 8px 8px',
+  pos: 'relative',
+  z: 1,
+  mr: '-8px 0 0',
+  us: 'none',
+  bdrad: '4px',
+  '&:focus': {
+    out: 0,
+  },
+});
+
+const slotsClass = rule({
+  h: 'var(--json-crdt-timeline-height)',
+  d: 'flex',
+  bdrad: '3px',
+  pad: '1px 0 1px 1px',
+  bd: '1px solid var(--json-crdt-timeline-slots-border)',
+  bg: 'var(--json-crdt-timeline-slots-bg)',
+  '&:hover': {
+    bd: '1px solid var(--json-crdt-timeline-slots-border-hover)',
+  },
+});
+
+const scrollBedClass = rule({
+  pos: 'relative',
+  bxz: 'border-box',
+  h: scrollHeight + 'px',
+  w: '100%',
+  mr: '1px 0 0',
+  bdrad: '3px',
+  bg: 'var(--json-crdt-timeline-scroll-bed-bg)',
+  '&:hover': {
+    bg: 'var(--json-crdt-timeline-scroll-bed-bg-hover)',
+  },
+});
+
+const scrollHandleClass = rule({
+  d: 'block',
+  pos: 'absolute',
+  bxz: 'border-box',
+  h: scrollHeight + 'px',
+  t: '0px',
+  bdrad: '4px',
+  cur: 'ew-resize',
+  bg: 'var(--json-crdt-timeline-scroll-handle-bg)',
+  '&:hover': {
+    bg: 'var(--json-crdt-timeline-scroll-handle-bg-hover)',
+  },
+  '&:active': {
+    bg: 'var(--json-crdt-timeline-scroll-handle-bg-active)',
+  },
+});
+
+const tickBlockClass = rule({
+  pos: 'relative',
+});
+
+const tickItemClass = rule({
+  pos: 'relative',
+  z: 1,
+  h: 'var(--json-crdt-timeline-height)',
+  w: 'var(--json-crdt-tick-width)',
+  bxz: 'border-box',
+  op: 0.6,
+  marr: '1px',
+  cur: 'pointer',
+  '&:active:hover': {
+    op: 1,
+  },
+});
+
+const tickIdClass = rule({
+  pos: 'absolute',
+  t: '-24px',
+  l: '-4px',
+  d: 'none',
+  ws: 'nowrap',
+  bdrad: '3px',
+  z: 2,
+  [`.${tickBlockClass.trim()}:hover &`]: {
+    d: 'block',
+    z: 111,
+  },
+  bg: 'var(--json-crdt-tick-id-bg)',
+});
+
+const tickMarkerClass = rule({
+  pos: 'absolute',
+  t: '-22px',
+  l: '-4px',
+  ws: 'nowrap',
+  bdrad: '3px',
+  z: 1,
+});
+
+const tinyHitAreaClass = rule({
+  pos: 'absolute', 
+  t: 0, l: 0, r: 0, b: 0,
+});
+
+const blockClassTiny = rule({
+  [`.${scrollBedClass.trim()}`]: {
+    vis: 'hidden',
+  },
+  [`&:hover .${tickMarkerClass.trim()}`]: {
+    vis: 'visible',
+  },
+  [`& .${tickMarkerClass.trim()}`]: {
+    op: 0,
+    trs: 'opacity .2s',
+  },
+  [`&:hover .${tickMarkerClass.trim()}`]: {
+    op: 1,
+  },
+});
+
+const tickCss = {
+  block: tickBlockClass,
+  wrap: rule({
+    pos: 'relative',
+  }),
+  item: tickItemClass,
+  hoverable: rule({
+    '&:hover': {
+      w: 'calc(var(--json-crdt-tick-width) + 2px)',
+      bdrad: '2px',
+      op: 0.8,
+      mar: '-5px 0 -5px -1px',
+      h: 'calc(var(--json-crdt-timeline-height) + 10px)',
+    },
+  }),
+  selected: rule({
+    z: 2,
+    w: 'calc(var(--json-crdt-tick-width) + 2px)',
+    bdrad: '2px',
+    op: 0.9,
+    mar: '-4px 0 -4px -1px',
+    h: 'calc(var(--json-crdt-timeline-height) + 8px)',
+    out: '1px solid rgba(0,0,0,.8)',
+  }),
+  id: tickIdClass,
+  marker: tickMarkerClass,
+};
 
 const startTickColor = sidColor(0);
 const tickItemClassNameStatic = tickCss.item;
@@ -78,58 +222,6 @@ const renderTickNode = (
     </div>
   </div>
 );
-
-const blockClass = rule({
-  pd: '24px 8px 8px',
-  mr: '-8px 0 0',
-  us: 'none',
-  bdrad: '4px',
-  '&:focus': {
-    out: 0,
-  },
-});
-
-const slotsClass = rule({
-  h: 'var(--json-crdt-timeline-height)',
-  d: 'flex',
-  bdrad: '3px',
-  pad: '1px 0 1px 1px',
-  bd: '1px solid var(--json-crdt-timeline-slots-border)',
-  bg: 'var(--json-crdt-timeline-slots-bg)',
-  '&:hover': {
-    bd: '1px solid var(--json-crdt-timeline-slots-border-hover)',
-  },
-});
-
-const scrollBedClass = rule({
-  pos: 'relative',
-  bxz: 'border-box',
-  h: scrollHeight + 'px',
-  w: '100%',
-  mr: '1px 0 0',
-  bdrad: '3px',
-  bg: 'var(--json-crdt-timeline-scroll-bed-bg)',
-  '&:hover': {
-    bg: 'var(--json-crdt-timeline-scroll-bed-bg-hover)',
-  },
-});
-
-const scrollHandleClass = rule({
-  d: 'block',
-  pos: 'absolute',
-  bxz: 'border-box',
-  h: scrollHeight + 'px',
-  t: '0px',
-  bdrad: '4px',
-  cur: 'ew-resize',
-  bg: 'var(--json-crdt-timeline-scroll-handle-bg)',
-  '&:hover': {
-    bg: 'var(--json-crdt-timeline-scroll-handle-bg-hover)',
-  },
-  '&:active': {
-    bg: 'var(--json-crdt-timeline-scroll-handle-bg-active)',
-  },
-});
 
 export interface Bar {
   log: Log<any>;
@@ -424,7 +516,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
       ref={setRootRef}
       // biome-ignore lint: allow tabIndex
       tabIndex={0}
-      className={blockClass}
+      className={'jj-log-timeline' + blockClass + (tiny ? ' ' + blockClassTiny : '')}
       style={barStyle}
       onMouseDown={() => {
         isMouseDown.current = true;
@@ -441,6 +533,8 @@ export const Bar: React.FC<Bar> = ({log}) => {
         {width ? items : null}
       </div>
       {scrollBed}
+      {/* Increase hit area */}
+      {tiny && <div className={tinyHitAreaClass} />}
     </div>
   );
 };

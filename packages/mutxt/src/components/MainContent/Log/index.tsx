@@ -21,7 +21,7 @@ export const Log: React.FC<LogProps> = ({ visible, onModel }) => {
   }
 
   return (
-    <div style={{margin: '-12px auto 0', padding: (logView === 'tiny' ? 0 : 32) + 'px 8px 0', maxWidth: 1600, width: '100%', maxHeight: 'calc(max(300px,30vh))', boxSizing: 'border-box', display: 'flex', flexDirection: 'column'}}>
+    <div style={{margin: '-16px auto 0', padding: (logView === 'tiny' ? 0 : 32) + 'px 8px 0', maxWidth: 1600, width: '100%', maxHeight: 'calc(max(300px,30vh))', boxSizing: 'border-box', display: 'flex', flexDirection: 'column'}}>
       <ScrollArea.ScrollArea shadow style={{width: '100%', maxHeight: 'calc(max(300px,30vh))', height: 'auto'}}>
         <ScrollArea.Viewport style={{width: '100%', height: '100%'}}>
           <JsonCrdtLog
