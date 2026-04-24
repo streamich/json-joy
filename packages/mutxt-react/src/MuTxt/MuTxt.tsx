@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {createEditor, type Descendant} from 'slate';
-import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps, type RenderPlaceholderProps} from 'slate-react';
+import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
@@ -11,6 +11,9 @@ import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-sla
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
+import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
+import {FromSlate} from '@jsonjoy.com/collaborative-slate';
+import type {Model} from 'json-joy/lib/json-crdt';
 import {CodeHighlightState} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
@@ -21,13 +24,15 @@ import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './controllers/MuTxtState';
-import {createEmptyDocument, createSlateEditorModel} from './util/index';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
-import type {SlateEditorDocument} from './types';
+import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {MuTxtApi} from './controllers/MuTxtApi';
 
 const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
+
+const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
+const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => (value && value.length ? value : createEmptyDocument());
 
 const shellClass = rule({
   w: '100%',
@@ -40,6 +45,16 @@ const fitShellClass = rule({
   h: '100%',
   d: 'flex',
   fld: 'column',
+});
+
+const editableClass = rule({
+  w: '100%',
+  mr: '0 auto',
+  pd: '22px 24px',
+  bxz: 'border-box',
+  fz: '16px',
+  lh: 1.8,
+  out: 'none',
 });
 
 export interface MuTxtProps {
@@ -83,29 +98,36 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   onApi,
 }) => {
   const styles = useStyles();
-  const standaloneModel = React.useMemo(() => createSlateEditorModel(initialValue ?? []), []);
-  const peritextRef = React.useCallback(peritext ?? (() => (standaloneModel as any).s.toExt()), [peritext, standaloneModel]);
 
-  // ------------------------------------------------------------- Slate editor
-  const editor = React.useMemo(() => {
-    let initialEditorValue: Descendant[] = [];
+  // ----------------------------------------------------------------- Peritext
+  const peritextRef: PeritextRef = React.useMemo(() => {
+    if (peritext) return peritext;
+    const model = ModelWithExt.create(ext.peritext.new('')) as unknown as Model<any>;
+    const value = initialValue ?? createEmptyDocument();
+    const viewRange = FromSlate.convert(normalizeDocument(value) as any);
+    const txt = (model as any).s.toExt().txt;
+    txt.editor.merge(viewRange);
+    txt.refresh();
+    const ref = (() => (model as any).s.toExt());
+    return ref;
+  }, [peritext]);
+
+  // ------------------------------------------------------------- Editor state
+  const [editor, state] = React.useMemo(() => {
+    if (!peritextRef) throw new Error('NO_TXT');
+    let initialValue: Descendant[] = [];
     try {
-      initialEditorValue = toSlate(peritextRef().txt) as Descendant[];
+      initialValue = toSlate(peritextRef().txt) as Descendant[];
     } catch {
-      initialEditorValue = createEmptyDocument() as Descendant[];
+      initialValue = createEmptyDocument() as Descendant[];
     }
     const editor = withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor()))));
-    editor.children = initialEditorValue;
+    editor.children = initialValue;
     editor.selection = null;
-    return editor;
-  }, [peritextRef]);
-
-  // ------------------------------------------------------------- mu-txt state
-  const state = React.useMemo(() => {
-    if (_state) return _state;
-    if (!peritext) throw new Error('NO_TXT');
-    return new MuTxtState(editor, peritext, {collaborative: !!presence, readOnly});
-  }, [_state, editor, peritext]);
+    if (_state) return [_state.editor, _state];
+    const state = new MuTxtState(editor, peritextRef, {collaborative: !!presence, readOnly});
+    return [editor, state];
+  }, [peritextRef, _state]);
   React.useEffect(() => {
     if (_state) return; // We don't own the state.
     return state.start();
@@ -150,16 +172,9 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   const editableStyle: React.CSSProperties = {
     minHeight,
-    width: '100%',
     maxWidth: contentWidth ?? 800,
-    margin: '0 auto',
-    padding: '22px 24px',
-    boxSizing: 'border-box',
-    fontSize: '16px',
-    lineHeight: 1.8,
-    outline: 'none',
-    color: styles.light ? styles.g(0.15) : styles.g(0.92),
-    caretColor: styles.light ? styles.g(0.08) : styles.g(0.96),
+    color: styles.g(0.15),
+    caretColor: styles.g(0),
   };
 
   let content: React.ReactNode = (
@@ -175,6 +190,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         spellCheck
         autoFocus={autoFocus}
         readOnly={readOnly}
+        className={editableClass}
         style={editableStyle}
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}

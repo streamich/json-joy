@@ -1,10 +1,7 @@
 import {Editor, Element as SlateElement, Node, Range, Text} from 'slate';
-import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
-import {FromSlate} from '@jsonjoy.com/collaborative-slate';
 import {getActiveEmbed} from './../behavior/embed';
 import {getLinkAttributes} from './../behavior/link';
-import type {CustomElement, CustomText, SlateEditorDocument} from '../types';
-import type {Model} from 'json-joy/lib/json-crdt';
+import type {CustomElement, CustomText} from '../types';
 
 const CARET_MARK_ORDER: Array<[keyof Pick<CustomText, 'bold' | 'italic' | 'underline' | 'code'>, string]> = [
   ['bold', 'bold'],
@@ -25,21 +22,6 @@ export interface CaretPathInfo {
   linkHref?: string;
   embedUrl?: string;
 }
-
-export const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
-
-export const EMPTY_DOCUMENT: SlateEditorDocument = createEmptyDocument();
-
-export const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => (value && value.length ? value : createEmptyDocument());
-
-export const createSlateEditorModel = (value?: SlateEditorDocument): Model<any> => {
-  const model = ModelWithExt.create(ext.peritext.new('')) as unknown as Model<any>;
-  const viewRange = FromSlate.convert(normalizeDocument(value) as any);
-  const txt = (model as any).s.toExt().txt;
-  txt.editor.merge(viewRange);
-  txt.refresh();
-  return model;
-};
 
 export const getEditorPlainText = (editor: Editor): string => Node.string(editor).replace(/\s+$/g, '');
 

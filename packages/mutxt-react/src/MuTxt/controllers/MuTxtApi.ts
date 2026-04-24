@@ -8,10 +8,10 @@ import type {HistoryEditor} from 'slate-history';
 
 /** Public API for of the mu-txt editor. */
 export class MuTxtApi {
-  public readonly editor: BaseEditor & ReactEditor & HistoryEditor;
+  constructor(public readonly state: MuTxtState) {}
 
-  constructor(public readonly state: MuTxtState) {
-    this.editor = state.editor;
+  public get editor(): BaseEditor & ReactEditor & HistoryEditor {
+    return this.state.editor;
   }
 
   public focused(): boolean {
