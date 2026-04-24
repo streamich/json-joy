@@ -29,11 +29,19 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonViewProps> = ({refTogg
   const popupTitle = state.popupTitle.use();
   const selected = state.selected.use();
 
+  const mergedRefToggle = React.useCallback(
+    (el: HTMLElement | null) => {
+      handle.ref(el);
+      if (typeof refToggle === 'function') refToggle(el);
+    },
+    [handle, refToggle],
+  );
+
   return (
     <ctx.Provider value={state}>
       <anchorContext.Provider value={handle}>
         <PopupControlled
-          refToggle={refToggle}
+          refToggle={mergedRefToggle}
           open={open}
           onEsc={state.close}
           onClickAway={state.close}
