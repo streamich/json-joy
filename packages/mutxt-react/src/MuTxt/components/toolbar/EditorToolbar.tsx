@@ -54,7 +54,7 @@ export interface EditorToolbarProps {
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, onVisualChange}) => {
   const state = useMuTxtState();
   const styles = useStyles();
-  const toolbarVersion = state.toolbarVersion.use();
+  const toolbarVersion = state.version.use();
 
   void toolbarVersion;
 

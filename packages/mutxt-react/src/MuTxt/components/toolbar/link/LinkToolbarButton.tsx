@@ -22,10 +22,7 @@ export interface LinkToolbarButtonViewProps {
 
 export const LinkToolbarButton: React.FC<LinkToolbarButtonViewProps> = ({refToggle}) => {
   const mutxt = useMuTxtState();
-  const state = React.useMemo(() => new LinkButtonState(mutxt), []);
-  React.useEffect(() => {
-    return state.dispose;
-  }, [state]);
+  const state = React.useMemo(() => new LinkButtonState(mutxt), [mutxt]);
   const handle = useAnchorPointHandle(popupAnchor);
   const canOpen = state.canOpen.use();
   const open = state.open.use();

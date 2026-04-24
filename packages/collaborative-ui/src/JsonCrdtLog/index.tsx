@@ -45,9 +45,11 @@ const pinnedHeaderClass = rule({
 const tinyBlockClass = rule({
   '& .jj-log-timeline': {
     filter: 'grayscale(1)',
+    op: .5,
   },
   '&:hover .jj-log-timeline': {
     filter: 'grayscale(0)',
+    op: 1,
   },
 });
 

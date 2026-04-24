@@ -44,7 +44,7 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
-        state.requestScrollMapRefresh();
+        state.refreshScrollMap();
       });
     };
 

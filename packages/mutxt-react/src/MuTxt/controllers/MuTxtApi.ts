@@ -27,7 +27,7 @@ export class MuTxtApi {
     if (this.focused()) ReactEditor.blur(this.state.editor);
   }
 
-  public hasRangeSelection(): boolean {
+  public hasSelection(): boolean {
     const {selection} = this.state.editor;
     return !!selection && !Range.isCollapsed(selection);
   }

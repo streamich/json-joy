@@ -6,7 +6,7 @@ import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
-import type {BaseEditor} from 'slate';
+import {Range, type BaseEditor, type Selection} from 'slate';
 import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 
@@ -14,10 +14,18 @@ export interface MuTxtStateOpts {}
 
 export class MuTxtState {
   public readonly api = new MuTxtApi(this);
+
+  public readonly version = rsync.val(0);
+  public readonly contentVersion = rsync.val(0);
+  public readonly scrollMapVersion = rsync.val(0);
+
+  /** Current cursor position. */
+  public readonly cursor = rsync.val<Selection | null>(null);
+  /** Range selection. */
+  public readonly selection = rsync.val<Selection | null>(null);
+
   public readonly focused = rsync.val(false);
   public readonly readOnly = rsync.val(false);
-  public readonly toolbarVersion = rsync.val(0);
-  public readonly linkMenuRequest = rsync.val(0);
   public readonly blockLabel = rsync.val('Paragraph');
   public readonly caretPath = rsync.val<string[]>([]);
   public readonly caretLinkHref = rsync.val('');
@@ -26,9 +34,6 @@ export class MuTxtState {
   public readonly wordCount = rsync.val(0);
   public readonly characterCount = rsync.val(0);
   public readonly selectionText = rsync.val('');
-  private readonly scrollMapVersionTrigger = rsync.val(0);
-  public readonly scrollMapVersion = this.scrollMapVersionTrigger;
-  public readonly contentVersion = rsync.val(0);
 
   public publishPresence?: () => void;
 
@@ -58,21 +63,22 @@ export class MuTxtState {
     this.readOnly.set(readOnly);
   };
 
-  public readonly requestLinkMenu = (): void => {
-    this.linkMenuRequest.next(this.linkMenuRequest.value + 1);
-  };
-
-  public readonly requestScrollMapRefresh = (): void => {
-    this.scrollMapVersionTrigger.next(this.scrollMapVersionTrigger.value + 1);
-  };
+  public refreshScrollMap() {
+    this.scrollMapVersion.next(this.scrollMapVersion.value + 1);
+  }
 
   public readonly sync = (contentChanged: boolean): void => {
-    this.requestScrollMapRefresh();
-    if (contentChanged) this.contentVersion.next(this.contentVersion.value + 1);
-    const editor = this.editor;
+    this.refreshScrollMap();
+    const {version, contentVersion, editor, cursor, selection} = this;
+    version.next(version.value + 1);
+    if (contentChanged) contentVersion.next(contentVersion.value + 1);
+
+    const {selection: editorSelection} = editor;
+    cursor.next(editorSelection);
+    selection.next(editorSelection && !Range.isCollapsed(editorSelection) ? editorSelection : null);
+
     const text = getEditorPlainText(editor);
     const caret = getCaretPathInfo(editor);
-    this.toolbarVersion.next(this.toolbarVersion.value + 1);
     this.wordCount.set(getWordCount(text));
     this.characterCount.set(text.length);
     this.blockLabel.set(this.api.blockLabel());
