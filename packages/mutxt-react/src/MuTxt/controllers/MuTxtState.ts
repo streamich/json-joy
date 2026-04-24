@@ -83,4 +83,12 @@ export class MuTxtState {
     this.selectionText.set(getSelectedText(editor));
     this.publishPresence?.();
   };
+
+  public readonly onChange = () => {
+    this.sync(true);
+  };
+
+  public readonly onSelection = () => {
+    this.sync(false);
+  };
 }

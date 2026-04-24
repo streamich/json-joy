@@ -6,13 +6,12 @@ import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
-import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
-import {useCodeSyntaxDecorations} from './behavior/code-highlighting';
+import {CodeHighlightState} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './components/chrome/EditorFooter';
@@ -111,7 +110,6 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     if (_state) return; // We don't own the state.
     return state.start();
   }, [_state, state]);
-  const contentVersion = state.contentVersion.use();
   useIsomorphicLayoutEffect(() => {
     onApi?.(state.api);
   }, []);
@@ -133,14 +131,15 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }, [sendLocalPresence]);
 
   // ------------------------------------------- Code block syntax highlighting
-  const decorateCodeHighlighting = useCodeSyntaxDecorations(editor, contentVersion);
+  const highlighter = React.useMemo(() => new CodeHighlightState(), []);
+  highlighter.tick.use();
 
   // -------------------------------------------------------- Slate decorations
   const decorate = React.useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
-      return [...decorateRemoteCursors(entry), ...decorateCodeHighlighting(entry)];
+      return [...decorateRemoteCursors(entry), ...highlighter.decorate(entry)];
     },
-    [decorateRemoteCursors, decorateCodeHighlighting],
+    [decorateRemoteCursors, highlighter],
   );
 
   // ---------------------------------------------------------------- Renderers
@@ -165,7 +164,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   let content: React.ReactNode = (
     <Slate
-      editor={editor} initialValue={editor.children} onChange={() => state.sync(true)} onSelectionChange={() => state.sync(false)}
+      editor={editor} initialValue={editor.children} onChange={state.onChange} onSelectionChange={state.onSelection}
     >
       <Editable
         decorate={decorate}

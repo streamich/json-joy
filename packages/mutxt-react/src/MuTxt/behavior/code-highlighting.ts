@@ -1,9 +1,22 @@
-import * as React from 'react';
 import {tokenize, tokenizeAsync, type Token, type TokenNode} from 'code-colors';
-import {BaseRange, Editor, Element as SlateElement, Node, Path} from 'slate';
+import {BaseRange, Element as SlateElement, Node, Path} from 'slate';
+import {rsync} from '@jsonjoy.com/ui';
 import {CodeBlockElement} from '../types';
 
 const PLAIN_TEXT_LANGUAGES = new Set(['', 'plain', 'plaintext', 'text', 'txt']);
+
+/** Grammars that must be loaded before the keyed grammar can be loaded. */
+const LANGUAGE_DEPS: Record<string, string[]> = {
+  cpp: ['c'],
+  'c++': ['c'],
+  objectivec: ['c'],
+  arduino: ['c', 'cpp'],
+  scss: ['css'],
+  less: ['css'],
+  sass: ['css'],
+  jsx: ['javascript'],
+  tsx: ['javascript', 'jsx', 'typescript'],
+};
 
 export interface CodeSyntaxDecoration {
   codeTokenTypes?: string[];
@@ -120,58 +133,69 @@ interface CacheEntry {
   decorations: SyntaxRange[];
 }
 
-export const useCodeSyntaxDecorations = (_editor: Editor, _version: number) => {
-  const cacheRef = React.useRef<Map<string, CacheEntry>>(new Map());
-  const loadedLangsRef = React.useRef<Set<string>>(new Set());
-  const pendingLangsRef = React.useRef<Set<string>>(new Set());
-  const [asyncTick, setAsyncTick] = React.useState(0);
+export class CodeHighlightState {
+  public readonly tick = rsync.val(0);
 
-  return React.useCallback(
-    (entry: [node: unknown, path: Path]): SyntaxRange[] => {
-      const [node, path] = entry;
-      if (!SlateElement.isElement(node) || (node as any).type !== 'code-block') return EMPTY;
+  private readonly cache = new Map<string, CacheEntry>();
+  private readonly loadedLangs = new Set<string>();
+  private readonly pendingLangs = new Set<string>();
+  private readonly failedLangs = new Set<string>();
 
-      const block = node as CodeBlockElement;
-      const language = normalizeLanguage(block.language);
-      if (!language) return EMPTY;
-
-      const texts: {path: Path; text: string}[] = [];
-      for (const [textNode, relativePath] of Node.texts(block)) {
-        texts.push({path: [...path, ...relativePath], text: textNode.text});
+  private async loadLanguage(language: string): Promise<void> {
+    const deps = LANGUAGE_DEPS[language] ?? [];
+    for (const dep of deps) {
+      if (!this.loadedLangs.has(dep) && !this.failedLangs.has(dep)) {
+        await tokenizeAsync('', dep);
+        this.loadedLangs.add(dep);
       }
+    }
+    await tokenizeAsync('', language);
+  }
 
-      const code = texts.map((t) => t.text).join('');
-      if (!code) return EMPTY;
+  public decorate(entry: [node: unknown, path: Path]): SyntaxRange[] {
+    const [node, path] = entry;
+    if (!SlateElement.isElement(node) || (node as any).type !== 'code-block') return EMPTY;
 
-      const codeKey = createCacheKey(code, language);
-      const blockId = path.join('.');
-      const cached = cacheRef.current.get(blockId);
-      if (cached && cached.codeKey === codeKey) return cached.decorations;
+    const block = node as CodeBlockElement;
+    const language = normalizeLanguage(block.language);
+    if (!language) return EMPTY;
 
-      try {
-        const tree = tokenize(code, language);
-        if (tree[0][0] !== 'language-' + language) throw new Error('grammar-not-loaded');
-        const segments = flattenTokenTree(tree);
-        const decorations = buildDecorationsForBlock(texts, segments);
-        cacheRef.current.set(blockId, {codeKey, decorations});
-        return decorations;
-      } catch {
-        if (!loadedLangsRef.current.has(language) && !pendingLangsRef.current.has(language)) {
-          pendingLangsRef.current.add(language);
-          tokenizeAsync('', language)
-            .then(() => {
-              pendingLangsRef.current.delete(language);
-              loadedLangsRef.current.add(language);
-              cacheRef.current.clear();
-              setAsyncTick((t) => t + 1);
-            })
-            .catch(() => {
-              pendingLangsRef.current.delete(language);
-            });
-        }
-        return EMPTY;
+    const texts: {path: Path; text: string}[] = [];
+    for (const [textNode, relativePath] of Node.texts(block)) {
+      texts.push({path: [...path, ...relativePath], text: textNode.text});
+    }
+
+    const code = texts.map((t) => t.text).join('');
+    if (!code) return EMPTY;
+
+    const codeKey = createCacheKey(code, language);
+    const blockId = path.join('.');
+    const cached = this.cache.get(blockId);
+    if (cached && cached.codeKey === codeKey) return cached.decorations;
+
+    try {
+      const tree = tokenize(code, language);
+      if (tree[0][0] !== 'language-' + language) throw new Error('grammar-not-loaded');
+      const segments = flattenTokenTree(tree);
+      const decorations = buildDecorationsForBlock(texts, segments);
+      this.cache.set(blockId, {codeKey, decorations});
+      return decorations;
+    } catch {
+      if (!this.loadedLangs.has(language) && !this.pendingLangs.has(language) && !this.failedLangs.has(language)) {
+        this.pendingLangs.add(language);
+        this.loadLanguage(language)
+          .then(() => {
+            this.pendingLangs.delete(language);
+            this.loadedLangs.add(language);
+            this.cache.clear();
+            this.tick.next(this.tick.value + 1);
+          })
+          .catch(() => {
+            this.pendingLangs.delete(language);
+            this.failedLangs.add(language);
+          });
       }
-    },
-    [asyncTick],
-  );
-};
+      return EMPTY;
+    }
+  }
+}
