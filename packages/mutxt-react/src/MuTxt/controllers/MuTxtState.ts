@@ -6,7 +6,7 @@ import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
-import type {BaseEditor, Editor} from 'slate';
+import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 
@@ -44,7 +44,7 @@ export class MuTxtState {
     // -------------------------------------------------- Collaboration binding
     const facade = new SlateFacade(this.editor, this.peritextRef);
     const unbindCollaboration = PeritextBinding.bind(this.peritextRef, facade);
-    queueMicrotask(() => this.sync());
+    queueMicrotask(() => this.sync(true));
     return () => {
       unbindCollaboration();
     };

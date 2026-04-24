@@ -143,12 +143,6 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     [decorateRemoteCursors, decorateCodeHighlighting],
   );
 
-  // TODO: simplify this
-  // ----------------------------------------------------- Sync on every change
-  const syncVisualState = React.useCallback((contentChanged = false) => {
-    state.sync(contentChanged);
-  }, [state]);
-
   // ---------------------------------------------------------------- Renderers
   const renderLeaf = React.useMemo(() => {
     const base = (props: RenderLeafProps) => <Leaf {...(props as any)} />;
@@ -171,7 +165,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   let content: React.ReactNode = (
     <Slate
-      editor={editor} initialValue={editor.children} onChange={() => syncVisualState(true)} onSelectionChange={() => syncVisualState(false)}
+      editor={editor} initialValue={editor.children} onChange={() => state.sync(true)} onSelectionChange={() => state.sync(false)}
     >
       <Editable
         decorate={decorate}
@@ -189,7 +183,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
           const handled = handleKeyboardShortcuts(editor, event, {
             requestLinkMenu: state.requestLinkMenu,
           });
-          if (handled) syncVisualState(true);
+          if (handled) state.sync(true);
         }}
       />
     </Slate>
@@ -230,7 +224,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   content = (
     <>
-      <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => syncVisualState(true)} />
+      <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => state.sync(true)} />
       {content}
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
         <EditorFooter />
