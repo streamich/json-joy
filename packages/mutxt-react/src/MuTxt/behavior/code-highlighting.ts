@@ -16,6 +16,7 @@ const LANGUAGE_DEPS: Record<string, string[]> = {
   sass: ['css'],
   jsx: ['javascript'],
   tsx: ['javascript', 'jsx', 'typescript'],
+  vbnet: ['basic'],
 };
 
 export interface CodeSyntaxDecoration {
@@ -141,6 +142,25 @@ export class CodeHighlightState {
   private readonly pendingLangs = new Set<string>();
   private readonly failedLangs = new Set<string>();
 
+  constructor() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('error', this.onGlobalError);
+    }
+  }
+
+  private readonly onGlobalError = (event: ErrorEvent): void => {
+    const filename = event.filename ?? '';
+    if (!filename.includes('prismjs') && !filename.includes('prism-')) return;
+    const match = filename.match(/prism-([a-z0-9+#-]+)\.min\.js/);
+    if (match) {
+      const lang = match[1];
+      this.pendingLangs.delete(lang);
+      this.failedLangs.add(lang);
+      event.preventDefault();
+      this.tick.next(this.tick.value + 1);
+    }
+  };
+
   private async loadLanguage(language: string): Promise<void> {
     const deps = LANGUAGE_DEPS[language] ?? [];
     for (const dep of deps) {
@@ -198,4 +218,10 @@ export class CodeHighlightState {
       return EMPTY;
     }
   }
+
+  public readonly dispose = (): void => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('error', this.onGlobalError);
+    }
+  };
 }
