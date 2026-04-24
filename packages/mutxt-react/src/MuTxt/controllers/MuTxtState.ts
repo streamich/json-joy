@@ -4,9 +4,9 @@ import {getCaretPathInfo, getEditorPlainText, getSelectedText, getWordCount} fro
 import {MuTxtApi} from './MuTxtApi';
 import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
+import {Range, type BaseEditor, type Selection} from 'slate';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
-import {Range, type BaseEditor, type Selection} from 'slate';
 import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 
@@ -36,6 +36,7 @@ export class MuTxtState {
   public readonly selectionText = rsync.val('');
 
   public publishPresence?: () => void;
+  public requestLinkMenu?: () => void;
 
   constructor(
     public readonly editor: BaseEditor & ReactEditor & HistoryEditor,

@@ -119,7 +119,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, o
             onMouseDown: execute(() => toggleMark(editor, button.format!)),
           })
         ))}
-        <LinkToolbarButton editor={editor} onVisualChange={onVisualChange} />
+        <LinkToolbarButton />
         <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />
         <ToolbarSep />

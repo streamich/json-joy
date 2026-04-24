@@ -15,13 +15,11 @@ const preventMouseDown = (event: React.MouseEvent): void => {
   event.preventDefault();
 };
 
-export interface LinkToolbarButtonProps {}
-
-export interface LinkToolbarButtonViewProps {
-  refToggle: (toggle: HTMLElement | null) => void;
+export interface LinkToolbarButtonProps {
+  refToggle?: (toggle: HTMLElement | null) => void;
 }
 
-export const LinkToolbarButton: React.FC<LinkToolbarButtonViewProps> = ({refToggle}) => {
+export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({refToggle}) => {
   const [t] = useT();
   const mutxt = useMuTxtState();
   const state = React.useMemo(() => new LinkButtonState(mutxt), [mutxt]);
@@ -29,6 +27,13 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonViewProps> = ({refTogg
   const canOpen = state.canOpen.use();
   const open = state.open.use();
   const selected = state.selected.use();
+
+  React.useEffect(() => {
+    mutxt.requestLinkMenu = state.toggle;
+    return () => {
+      if (mutxt.requestLinkMenu === state.toggle) mutxt.requestLinkMenu = undefined;
+    };
+  }, [mutxt, state]);
 
   const mergedRefToggle = React.useCallback(
     (el: HTMLElement | null) => {

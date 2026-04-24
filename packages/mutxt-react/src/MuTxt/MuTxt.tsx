@@ -22,6 +22,7 @@ import {EditorScrollMap} from './components/chrome/EditorScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
+import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './controllers/MuTxtState';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
@@ -201,6 +202,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
           if (handled) state.sync(true);
         }}
       />
+      <FloatingToolbar />
     </Slate>
   );
 
