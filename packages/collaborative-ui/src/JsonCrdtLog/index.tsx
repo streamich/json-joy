@@ -42,6 +42,15 @@ const pinnedHeaderClass = rule({
   op: 1,
 });
 
+const tinyBlockClass = rule({
+  '& .jj-log-timeline': {
+    filter: 'grayscale(1)',
+  },
+  '&:hover .jj-log-timeline': {
+    filter: 'grayscale(0)',
+  },
+});
+
 const tinyHeaderClass = rule({
   op: 0,
   pd: '0 8px',
@@ -192,7 +201,7 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
       <Paper
         round={!!spacious && !tiny}
         noOutline={tiny}
-        className={blockClass}
+        className={blockClass + (tiny ? tinyBlockClass : '')}
         style={tiny
           ? {width: '100%', padding: '8px 0 0', background: 'transparent'}
           : {width: '100%', background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
