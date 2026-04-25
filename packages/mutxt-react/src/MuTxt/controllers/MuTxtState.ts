@@ -29,8 +29,10 @@ export class MuTxtState {
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly wnd = windowSize();
 
-  /** Current cursor position. */
+  /** Current cursor position (caret or range). */
   public readonly cursor = rsync.val<Selection | null>(null);
+  /** Caret selection. */
+  public readonly caret = rsync.val<Selection | null>(null);
   /** Range selection. */
   public readonly selection = rsync.val<Selection | null>(null);
 
@@ -93,8 +95,15 @@ export class MuTxtState {
     if (contentChanged) contentVersion.next(contentVersion.value + 1);
 
     const {selection: editorSelection} = editor;
-    cursor.next(editorSelection);
-    selection.next(editorSelection && !Range.isCollapsed(editorSelection) ? editorSelection : null);
+    let nextSelection: Selection | null = null;
+    let nextCaret: Selection | null = null;
+    if (editorSelection) {
+      const isCollapsed = Range.isCollapsed(editorSelection);
+      if (!isCollapsed) nextSelection = editorSelection; else nextCaret = editorSelection;
+    }
+    if (editorSelection !== cursor.value) cursor.next(editorSelection);
+    if (nextSelection !== selection.value) selection.next(nextSelection);
+    if (nextCaret !== this.caret.value) this.caret.next(nextCaret);
 
     const text = getEditorPlainText(editor);
     const caret = getCaretPathInfo(editor);

@@ -18,6 +18,7 @@ const previewClass = rule({
   d: 'flex',
   fld: 'column',
   gap: '10px',
+  us: 'none',
 });
 
 const getEmbedHost = (url: string): string => {
@@ -46,6 +47,7 @@ const EmbedFallback: React.FC<{url: string}> = ({url}) => {
         gap: '4px',
         textDecoration: 'none',
         color: styles.light ? styles.g(0.16) : styles.g(0.9),
+        userSelect: 'none',
       }}
     >
       <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600}}>
