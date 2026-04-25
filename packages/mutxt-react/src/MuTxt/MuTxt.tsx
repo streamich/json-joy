@@ -24,8 +24,8 @@ import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
 import {FloatingBlockToolbar} from './components/toolbar/floating/FloatingBlockToolbar';
 import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
+import {SlashMenu} from './components/toolbar/floating/SlashMenu';
 import {SlateEditorContextProvider} from './context';
-import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {MuTxtState} from './controllers/MuTxtState';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
@@ -203,12 +203,14 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         onKeyDown={(event) => {
           const handled = handleKeyboardShortcuts(editor, event, {
             requestLinkMenu: state.requestLinkMenu,
+            onSlashKey: state.onSlashKey,
           });
           if (handled) state.sync(true);
         }}
       />
       <FloatingBlockToolbar />
       <FloatingToolbar />
+      <SlashMenu />
     </Slate>
   );
 

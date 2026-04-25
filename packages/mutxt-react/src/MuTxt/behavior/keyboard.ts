@@ -5,6 +5,7 @@ import type {KeyboardEvent} from 'react';
 
 export interface KeyboardShortcutHandlers {
   requestLinkMenu?: () => void;
+  onSlashKey?: () => boolean;
 }
 
 export const handleKeyboardShortcuts = (
@@ -14,6 +15,14 @@ export const handleKeyboardShortcuts = (
 ): boolean => {
   const primary = event.metaKey || event.ctrlKey;
   const key = event.key.toLowerCase();
+
+  if (key === '/' && !primary && !event.altKey && !event.shiftKey) {
+    const consumed = handlers.onSlashKey?.();
+    if (consumed) {
+      event.preventDefault();
+      return true;
+    }
+  }
 
   if ((key === 'backspace' || key === 'delete') && !primary && !event.altKey) {
     if (!resetEmptyBlockToParagraph(editor)) return false;
