@@ -16,7 +16,7 @@ const positionClassWithFadeIn = rule({
 });
 
 const positionClassWithAnimation = rule({
-  trs: 'left .1s ease-out, top .1s ease-out',
+  trs: 'left .1s cubic-bezier(0,0,0,1), top .1s cubic-bezier(0,0,0,1)',
 });
 
 export interface PositionPopupProps {

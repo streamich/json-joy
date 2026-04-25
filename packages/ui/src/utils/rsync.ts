@@ -50,7 +50,7 @@ export class ElBox<El extends HTMLElement = HTMLElement> extends ReactValue<ElBo
     if (el) this.set(getSize(el));
   };
 
-  private readonly _scheduleMeasure = () => {
+  private readonly _measure = () => {
     if (this._rafId || typeof window === 'undefined') {
       if (!this._rafId) this._flushSize();
       return;
@@ -61,6 +61,7 @@ export class ElBox<El extends HTMLElement = HTMLElement> extends ReactValue<ElBo
   constructor(el?: El, size?: ElBoxValue) {
     super(el ? getSize(el) : (size ?? [0, 0, 0, 0]));
     if (el) this.setEl(el);
+    window.addEventListener('resize', this._measure);
   }
 
   public readonly setEl = (el: El | null | undefined = void 0) => {
@@ -68,7 +69,7 @@ export class ElBox<El extends HTMLElement = HTMLElement> extends ReactValue<ElBo
     if (oldEl) this._observer?.unobserve(oldEl);
     if (!this._observer) {
       this._observer = new ResizeObserver(() => {
-        this._scheduleMeasure();
+        this._measure();
       });
     }
     if (this._rafId && typeof window !== 'undefined') {
@@ -83,6 +84,7 @@ export class ElBox<El extends HTMLElement = HTMLElement> extends ReactValue<ElBo
   };
 
   public dispose(): void {
+    window.removeEventListener('resize', this._measure);
     this.setEl(void 0);
     if (this._rafId && typeof window !== 'undefined') {
       window.cancelAnimationFrame(this._rafId);

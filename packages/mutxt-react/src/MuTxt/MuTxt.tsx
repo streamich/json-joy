@@ -186,7 +186,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     >
       <Editable
         ref={(el) => {
-          if (el) state.editableBox = new ElBox(el);
+          if (el) state.editableBox.setEl(el);
         }}
         decorate={decorate}
         renderElement={renderElement}

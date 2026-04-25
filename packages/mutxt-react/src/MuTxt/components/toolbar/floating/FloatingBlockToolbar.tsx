@@ -17,6 +17,8 @@ export const FloatingBlockToolbar: React.FC<FloatingBlockToolbarProps> = () => {
   const readOnly = mutxt.readOnly.use();
   mutxt.version.use();
   mutxt.scrollVersion.use();
+  mutxt.editableBox.use();
+  mutxt.wnd.use();
 
   if (!currentBlock || readOnly || !cursor || mutxt.api.hasSelection()) return;
   const point = state.point();
