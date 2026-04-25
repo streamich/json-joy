@@ -93,20 +93,25 @@ export class JsonCrdtExplorerState {
   private readonly handleFilePersisted = async () => {
     await this.refreshSaved();
   };
+
+  public started = rsync.val(false);
+
   async start() {
     this.stopped = false;
     this.stopSavedRefresh();
     await this.refreshSaved();
-    if (this.stopped) return;
+    if (this.stopped) return; // TODO: Is this still needed.
     this.savedRefreshTimer = setInterval(() => {
       void this.refreshSaved();
     }, SAVED_REFRESH_INTERVAL_MS);
     const saved = this.saved.value;
     if (saved.length) await this.openSaved(saved[0].id);
+    this.started.set(true);
   }
 
   async stop() {
     this.stopped = true;
+    this.started.set(false);
     this.stopSavedRefresh();
     await Promise.all(this.files$.getValue().map((file) => file.destroy(true)));
   }

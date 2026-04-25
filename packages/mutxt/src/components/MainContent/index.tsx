@@ -30,7 +30,10 @@ const contentClass = rule({
 
 export const MainContent: React.FC = () => {
   const state = useExplorer();
+  const started = state.started.use();
   const files = useBehaviorSubject(state.files$);
+
+  if (!started) return;
 
   if (!files.length) {
     return (
