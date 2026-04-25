@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement, Node, Range, Text} from 'slate';
+import {Editor, Element as SlateElement, Node, Path, Range, Text} from 'slate';
 import {getActiveEmbed} from './../behavior/embed';
 import {getLinkAttributes} from './../behavior/link';
 import type {CustomElement, CustomText} from '../types';
@@ -21,7 +21,42 @@ export interface CaretPathInfo {
   path: string[];
   linkHref?: string;
   embedUrl?: string;
+  codeText?: string;
 }
+
+const getTextEntries = (editor: Editor): [CustomText, Path][] =>
+  Array.from(
+    Editor.nodes(editor, {
+      at: [],
+      match: (node) => Text.isText(node),
+    }),
+  ) as [CustomText, Path][];
+
+const getEntryIndex = (entries: [CustomText, Path][], path: Path): number =>
+  entries.findIndex(([, entryPath]) => Path.equals(entryPath, path));
+
+const getExpandedMarkRange = (
+  editor: Editor,
+  entries: [CustomText, Path][],
+  index: number,
+  key: keyof Pick<CustomText, 'code'>,
+): Range => {
+  let left = index;
+  let right = index;
+  while (left > 0 && entries[left - 1][0][key] === true) left--;
+  while (right < entries.length - 1 && entries[right + 1][0][key] === true) right++;
+  return {
+    anchor: Editor.start(editor, entries[left][1]),
+    focus: Editor.end(editor, entries[right][1]),
+  };
+};
+
+const getActiveCodeText = (editor: Editor, path: Path): string => {
+  const entries = getTextEntries(editor);
+  const index = getEntryIndex(entries, path);
+  if (index < 0 || entries[index][0].code !== true) return '';
+  return Editor.string(editor, getExpandedMarkRange(editor, entries, index, 'code'));
+};
 
 export const getEditorPlainText = (editor: Editor): string => Node.string(editor).replace(/\s+$/g, '');
 
@@ -69,6 +104,7 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
 
   const marks = (Editor.marks(editor) ?? {}) as Partial<CustomText>;
   const markState: Partial<CustomText> = {...(textNode ?? {text: ''}), ...marks};
+  const codeText = markState.code && textNode ? getActiveCodeText(editor, point.path) : '';
 
   for (const [key, label] of CARET_MARK_ORDER) {
     if (markState[key]) segments.push(label);
@@ -79,8 +115,8 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
 
   return {
     path: segments,
-    linkHref: link?.href,
-    embedUrl: undefined,
+    ...(link ? {linkHref: link.href} : {}),
+    ...(codeText ? {codeText} : {}),
   };
 };
 
