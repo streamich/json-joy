@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
+import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
 import {useMuTxtState} from '../../context';
 import {getWordCount, pluralize} from '../../util';
 import {typeToLabel} from '../../util/typeToLabel';
@@ -61,6 +62,7 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
   const caretPath = state.caretPath.use();
   const caretLinkHref = state.caretLinkHref.use();
   const caretEmbedUrl = state.caretEmbedUrl.use();
+  const caretCodeText = state.caretCodeText.use();
 
   const infoColor = styles.light ? styles.g(0.34) : styles.g(0.68);
   const selectionSummary = selectionText
@@ -97,6 +99,12 @@ export const EditorFooter: React.FC<EditorFooterProps> = () => {
                 >
                   {footerUrl}
                 </a>
+              </>
+            )}
+            {!!caretCodeText && (
+              <>
+                <span style={{opacity:.25}}>{'→'}</span>
+                <CopyCode value={caretCodeText} truncate style={{maxWidth: 220}} alt spacious roundest />
               </>
             )}
           </span>

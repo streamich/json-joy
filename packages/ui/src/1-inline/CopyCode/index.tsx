@@ -1,14 +1,13 @@
 import * as React from 'react';
 import {Code, type CodeProps} from '../Code';
-import {Flex} from '../../3-list-item/Flex';
-import {Space} from '../../3-list-item/Space';
 import {CopyButton} from '../../2-inline-block/CopyButton';
 
 export interface CopyCodeProps extends CodeProps {
   value: string;
+  truncate?: boolean;
 }
 
-export const CopyCode: React.FC<CopyCodeProps> = ({value, ...rest}) => {
+export const CopyCode: React.FC<CopyCodeProps> = ({value, truncate, onMouseDown, ...rest}) => {
   return (
     <Code
       gray
@@ -28,13 +27,35 @@ export const CopyCode: React.FC<CopyCodeProps> = ({value, ...rest}) => {
             selection.addRange(range);
           }
         } catch {}
+        onMouseDown?.(event);
       }}
     >
-      <Flex style={{alignItems: 'center'}}>
-        {value}
-        <Space horizontal size={-1} />
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          maxWidth: '100%',
+          minWidth: 0,
+          ...(truncate ? {overflow: 'hidden'} : {}),
+        }}
+      >
+        <span
+          style={
+            truncate
+              ? {
+                  display: 'inline-block',
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }
+              : undefined
+          }
+        >
+          {value}
+        </span>
         <CopyButton onCopy={() => value} />
-      </Flex>
+      </span>
     </Code>
   );
 };

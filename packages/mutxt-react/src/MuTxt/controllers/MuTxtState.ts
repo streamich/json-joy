@@ -35,6 +35,7 @@ export class MuTxtState {
   public readonly caretPath = rsync.val<string[]>([]);
   public readonly caretLinkHref = rsync.val('');
   public readonly caretEmbedUrl = rsync.val('');
+  public readonly caretCodeText = rsync.val('');
   public readonly alignment = rsync.val<SlateTextAlign>('left');
   public readonly wordCount = rsync.val(0);
   public readonly characterCount = rsync.val(0);
@@ -42,6 +43,13 @@ export class MuTxtState {
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
+  public requestEmbedMenu?: () => void;
+
+  /**
+   * Called when the user presses "/". Returns true if the key was consumed
+   * (the slash menu opened and the "/" character should not be inserted).
+   */
+  public onSlashKey?: () => boolean;
 
   constructor(
     public readonly editor: BaseEditor & ReactEditor & HistoryEditor,
@@ -91,6 +99,7 @@ export class MuTxtState {
     this.caretPath.set(caret.path);
     this.caretLinkHref.set(caret.linkHref ?? '');
     this.caretEmbedUrl.set(caret.embedUrl ?? '');
+    this.caretCodeText.set(caret.codeText ?? '');
     this.alignment.set(getActiveAlignment(editor));
     this.selectionText.set(getSelectedText(editor));
     this.publishPresence?.();
