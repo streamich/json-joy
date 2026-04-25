@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {BlockPlaceholder} from './BlockPlaceholder';
+import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {TwoColumnsElement as TwoColumnsElementType} from '../../types';
 
@@ -26,5 +28,6 @@ export const TwoColumnsElement: React.FC<TwoColumnsElementProps> = ({attributes,
     }}
   >
     {children}
+    {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
   </div>
 );

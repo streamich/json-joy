@@ -117,3 +117,11 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
 
 export const pluralize = (count: number, singular: string, plural = singular + 's'): string =>
   `${Intl.NumberFormat().format(count)} ${count === 1 ? singular : plural}`;
+
+export const isEmptyBlock = (element: SlateElement): boolean => {
+  const children = element.children;
+  if (!children || children.length === 0) return true;
+  if (children.length > 1) return false;
+  const child = children[0];
+  return Text.isText(child) && !child.text && Object.keys(child).length === 1;
+};

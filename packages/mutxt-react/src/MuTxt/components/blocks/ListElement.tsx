@@ -4,6 +4,8 @@ import {Editor, Element as SlateElement} from 'slate';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 'slate-react';
 import {setChecklistItemChecked} from '../../behavior';
+import {BlockPlaceholder} from './BlockPlaceholder';
+import {isEmptyBlock} from '../../util';
 import type {BulletedListElement, ChecklistListElement, ListItemElement as ListItemNode, NumberedListElement} from '../../types';
 
 const listClass = rule({
@@ -18,6 +20,7 @@ const checklistClass = rule({
 });
 
 const itemClass = rule({
+  pos: 'relative',
   m: '0 0 11px',
   lh: '1.7',
 });
@@ -114,6 +117,7 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
     return (
       <li {...attributes} className={itemClass} style={{textAlign: element.align}}>
         {children}
+        {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
       </li>
     );
   }
@@ -140,6 +144,7 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
         }}
       >
         {children}
+        {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
       </span>
     </li>
   );

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {BlockPlaceholder} from './BlockPlaceholder';
+import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {ParagraphElement as ParagraphElementType} from '../../types';
 
@@ -16,5 +18,6 @@ export interface ParagraphElementProps extends RenderElementProps {
 export const ParagraphElement: React.FC<ParagraphElementProps> = ({attributes, children, element}) => (
   <p {...attributes} className={paragraphClass} style={{textAlign: element.align}}>
     {children}
+    {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
   </p>
 );

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {BlockPlaceholder} from './BlockPlaceholder';
+import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {HeadingElement as HeadingElementType} from '../../types';
 
@@ -35,6 +37,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           }}
         >
           {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
         </h1>
       );
     case 'h2':
@@ -51,6 +54,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           }}
         >
           {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
         </h2>
       );
     case 'h3':
@@ -68,6 +72,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           }}
         >
           {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
         </h3>
       );
     case 'h4':
@@ -85,6 +90,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           }}
         >
           {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
         </h4>
       );
     case 'h5':
@@ -102,6 +108,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           }}
         >
           {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
         </h5>
       );
     case 'h6':
@@ -119,6 +126,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
           }}
         >
           {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
         </h6>
       );
     default:

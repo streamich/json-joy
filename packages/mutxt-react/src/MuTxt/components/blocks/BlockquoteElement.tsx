@@ -1,10 +1,13 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {BlockPlaceholder} from './BlockPlaceholder';
+import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {BlockquoteElement as BlockquoteElementType} from '../../types';
 
 const blockquoteClass = rule({
+  pos: 'relative',
   m: '18px 0',
   pd: '14px 18px',
   bdrad: '0 16px 16px 0',
@@ -32,6 +35,7 @@ export const BlockquoteElement: React.FC<BlockquoteElementProps> = ({attributes,
       }}
     >
       {children}
+      {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
     </blockquote>
   );
 };
