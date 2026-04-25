@@ -34,6 +34,7 @@ export class FloatingToolbarState {
   private retainedPoint: AnchorPoint = offscreenPoint();
   private interactionFrame: number | null = null;
   private refreshFrame: number | null = null;
+  public readonly viewportVersion = rsync.val(0);
 
   constructor(
     private readonly mutxt: MuTxtState,
@@ -190,7 +191,7 @@ export class FloatingToolbarState {
     if (this.refreshFrame !== null) return;
     this.refreshFrame = window.requestAnimationFrame(() => {
       this.refreshFrame = null;
-      this.mutxt.refreshScrollMap();
+      this.viewportVersion.next(this.viewportVersion.value + 1);
     });
   };
 

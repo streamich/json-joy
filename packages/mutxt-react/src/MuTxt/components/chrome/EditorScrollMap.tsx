@@ -35,43 +35,23 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
   const scrollHeight = useSyncStore(scrollArea.scrollHeight$);
   const clientHeight = useSyncStore(scrollArea.clientHeight$);
   const focused = state.focused.use();
+  state.wnd.use();
+  const cursor =state.cursor.use();
   const version = state.scrollVersion.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
-
-  React.useEffect(() => {
-    let frame = 0;
-    const requestRefresh = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        state.refreshScrollMap();
-      });
-    };
-
-    document.addEventListener('selectionchange', requestRefresh);
-    window.addEventListener('resize', requestRefresh);
-
-    return () => {
-      document.removeEventListener('selectionchange', requestRefresh);
-      window.removeEventListener('resize', requestRefresh);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [state]);
 
   React.useLayoutEffect(() => {
     if (!scrollArea.viewportEl || scrollHeight <= clientHeight || scrollHeight <= 0) {
       setMarkers([]);
       return;
     }
-
     const viewportEl = scrollArea.viewportEl;
     const frame = requestAnimationFrame(() => {
       const railHeight = scrollArea.railEl?.clientHeight ?? clientHeight;
       setMarkers(measureScrollMapMarkers(editor, viewportEl, scrollHeight, railHeight, styles.light ?? true));
     });
-
     return () => cancelAnimationFrame(frame);
-  }, [clientHeight, editor, focused, scrollArea, scrollHeight, styles.light, version]);
+  }, [clientHeight, editor, focused, scrollArea, scrollHeight, styles.light, version, cursor]);
 
   if (!markers.length) return null;
 

@@ -14,14 +14,15 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
   const readOnly = mutxt.readOnly.use();
   const scrollArea = React.useContext(scrollAreaCtx) as ScrollState | null;
 
-  const floatingState = React.useMemo(
+  const state = React.useMemo(
     () => new FloatingToolbarState(mutxt, scrollArea),
     [mutxt, scrollArea],
   );
-  React.useEffect(() => floatingState.start(), [floatingState]);
+  React.useEffect(() => state.start(), [state]);
+  state.viewportVersion.use();
 
-  const visible = floatingState.visible.use();
-  const point = floatingState.point.use();
+  const visible = state.visible.use();
+  const point = state.point.use();
 
   if (!visible) return null;
 
@@ -29,12 +30,12 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
     <PositionAtPoint point={point}>
       <MoveToViewport>
         <div
-          ref={floatingState.setToolbarElement}
-          onMouseDown={floatingState.onToolbarMouseDown}
-          onFocusCapture={floatingState.onToolbarFocusCapture}
-          onBlurCapture={floatingState.onToolbarBlurCapture}
+          ref={state.setToolbarElement}
+          onMouseDown={state.onToolbarMouseDown}
+          onFocusCapture={state.onToolbarFocusCapture}
+          onBlurCapture={state.onToolbarBlurCapture}
         >
-          <ToolbarMenu menu={floatingState.menu} disabled={readOnly} compact />
+          <ToolbarMenu menu={state.menu} disabled={readOnly} compact />
         </div>
       </MoveToViewport>
     </PositionAtPoint>

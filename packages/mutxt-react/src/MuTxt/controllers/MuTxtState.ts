@@ -8,6 +8,7 @@ import {Range, type BaseEditor, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
 import {ReactEditor} from 'slate-react';
+import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
@@ -16,6 +17,10 @@ export interface MuTxtStateOpts {}
 
 export class MuTxtState {
   public readonly api = new MuTxtApi(this);
+  public readonly scroll: ScrollState = new ScrollState({
+    railWidth: 12,
+    hideDelay: 5000,
+  });
 
   public readonly version = rsync.val(0);
   public readonly contentVersion = rsync.val(0);
@@ -64,8 +69,13 @@ export class MuTxtState {
     const facade = new SlateFacade(this.editor, this.peritextRef);
     const unbindCollaboration = PeritextBinding.bind(this.peritextRef, facade);
     queueMicrotask(() => this.sync(true));
+    // -------------------------------------------------------------- Scrolling
+    const scrollUnsubscribe = this.scroll.scrollTop$.subscribe(() => {
+      this.scrollVersion.next(this.scrollVersion.value + 1);
+    });
     return () => {
       unbindCollaboration();
+      scrollUnsubscribe();
     };
   }
 
@@ -77,12 +87,7 @@ export class MuTxtState {
     this.readOnly.set(readOnly);
   };
 
-  public refreshScrollMap() {
-    this.scrollVersion.next(this.scrollVersion.value + 1);
-  }
-
   public readonly sync = (contentChanged: boolean): void => {
-    this.refreshScrollMap();
     const {version, contentVersion, editor, cursor, selection} = this;
     version.next(version.value + 1);
     if (contentChanged) contentVersion.next(contentVersion.value + 1);

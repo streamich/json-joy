@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useMemo, useEffect, useCallback} from 'react';
 import {rule} from 'nano-theme';
 import {createEditor, type Descendant} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps} from 'slate-react';
@@ -103,7 +104,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const styles = useStyles();
 
   // ----------------------------------------------------------------- Peritext
-  const peritextRef: PeritextRef = React.useMemo(() => {
+  const peritextRef: PeritextRef = useMemo(() => {
     if (peritext) return peritext;
     const model = ModelWithExt.create(ext.peritext.new('')) as unknown as Model<any>;
     const value = initialValue ?? createEmptyDocument();
@@ -116,7 +117,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }, [peritext]);
 
   // ------------------------------------------------------------- Editor state
-  const [editor, state] = React.useMemo(() => {
+  const [editor, state] = useMemo(() => {
     if (!peritextRef) throw new Error('NO_TXT');
     let initialValue: Descendant[] = [];
     try {
@@ -131,7 +132,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     const state = new MuTxtState(editor, peritextRef, {collaborative: !!presence, readOnly});
     return [editor, state];
   }, [peritextRef, _state]);
-  React.useEffect(() => {
+  useEffect(() => {
     if (_state) return; // We don't own the state.
     return state.start();
   }, [_state, state]);
@@ -140,7 +141,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }, []);
 
   // ---------------------------------------------------- Props synchronization
-  React.useEffect(() => {
+  useEffect(() => {
     state.setReadOnly(!!readOnly);
   }, [state, readOnly]);
   
@@ -151,16 +152,16 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     editor,
     userFromMeta: (meta: any) => (meta ? {name: meta.name, color: meta.color} : undefined),
   });
-  React.useEffect(() => {
+  useEffect(() => {
     state.publishPresence = sendLocalPresence;
   }, [sendLocalPresence]);
 
   // ------------------------------------------- Code block syntax highlighting
-  const highlighter = React.useMemo(() => new CodeHighlightState(), []);
+  const highlighter = useMemo(() => new CodeHighlightState(), []);
   highlighter.tick.use();
 
   // -------------------------------------------------------- Slate decorations
-  const decorate = React.useCallback(
+  const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       return [...decorateRemoteCursors(entry), ...highlighter.decorate(entry)];
     },
@@ -168,7 +169,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   );
 
   // ---------------------------------------------------------------- Renderers
-  const renderLeaf = React.useMemo(() => {
+  const renderLeaf = useMemo(() => {
     const base = (props: RenderLeafProps) => <Leaf {...(props as any)} />;
     return presence ? withPresenceLeaf(base) : base;
   }, [presence]);
@@ -222,7 +223,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }
   if (scrollAreaStyle) {
     content = (
-      <ScrollArea.ScrollArea shadow railWidth={12} style={scrollAreaStyle} hideDelay={5000}>
+      <ScrollArea.ScrollArea state={state.scroll} shadow style={scrollAreaStyle}>
         <ScrollArea.Viewport
           onMouseDown={(e) => {
             if (!state.api.focused() && !(e.target as HTMLElement).closest('[contenteditable]')) {
