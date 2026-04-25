@@ -21,6 +21,7 @@ const blockClass = rule({
 });
 
 const filesHeaderClass = rule({
+  pos: 'relative',
   pd: '0 8px 0 10px',
   bdrad: '0 0 10px 0',
   h: '40px',
@@ -29,7 +30,7 @@ const filesHeaderClass = rule({
   gap: '8px',
   fz: '13.5px',
   op: .7,
-  maskImage: 'linear-gradient(to right, black, transparent)',
+  maskImage: 'linear-gradient(to right, black 32px, transparent calc(min(150px, 100%)))',
   '&:hover': {
     op: 1,
     maskImage: 'none',
@@ -81,8 +82,15 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
             e.preventDefault();
             e.stopPropagation();
             file.mutxt?.focus();
+          }} onKeyDown={(e) => {
+            if (e.key === 'Tab') {
+              e.preventDefault();
+              file.mutxt?.focus();
+            }
           }} />
         </div>
+        {/* Mouse hit area */}
+        <div style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none'}} />
       </div>
     </div>
   );
