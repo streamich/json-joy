@@ -46,7 +46,28 @@ const checkboxClass = rule({
   w: '16px',
   h: '16px',
   mar: 0,
+  bd: '1px solid rgba(127,127,127,0.4)',
+  bdrad: '4px',
+  appearance: 'none',
+  d: 'grid',
+  placeContent: 'center',
   cur: 'pointer',
+  '&::before': {
+    content: '""',
+    w: '12px',
+    h: '12px',
+    trs: '120ms transform ease-in-out',
+    bg: '#fff',
+    clipPath: 'polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%)',
+    transform: 'scale(0)',
+  },
+  '&:checked': {
+    bg: '#2f8f4e',
+    borderColor: '#2f8f4e',
+  },
+  '&:checked::before': {
+    transform: 'scale(.7)',
+  }
 });
 
 const checklistContentClass = rule({
@@ -133,7 +154,6 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
           disabled={readOnly}
           tabIndex={-1}
           onMouseDown={onToggle}
-          style={{accentColor: styles.light ? '#2f8f4e' : '#7be0a0'}}
         />
       </span>
       <span
