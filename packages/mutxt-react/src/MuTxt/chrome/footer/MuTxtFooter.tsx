@@ -4,9 +4,9 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
 import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
-import {useMuTxtState} from '../context';
-import {getWordCount, pluralize} from '../util';
-import {typeToLabel} from '../util/typeToLabel';
+import {useMuTxtState} from '../../context';
+import {getWordCount, pluralize} from '../../util';
+import {typeToLabel} from '../../util/typeToLabel';
 
 const footerClass = rule({
   d: 'flex',
@@ -49,9 +49,9 @@ const pathLinkClass = rule({
   },
 });
 
-export interface EditorFooterProps {}
+export interface MuTxtFooterProps {}
 
-export const EditorFooter: React.FC<EditorFooterProps> = () => {
+export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const styles = useStyles();
   const state = useMuTxtState();
   const focused = state.focused.use();

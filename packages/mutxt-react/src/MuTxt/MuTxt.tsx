@@ -18,7 +18,7 @@ import type {Model} from 'json-joy/lib/json-crdt';
 import {CodeHighlightState} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
-import {EditorFooter} from './chrome/EditorFooter';
+import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
@@ -253,7 +253,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => state.sync(true)} />
       {content}
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
-        <EditorFooter />
+        <MuTxtFooter />
       </div>
     </>
   );
