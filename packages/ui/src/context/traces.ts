@@ -1,3 +1,16 @@
+/**
+ * @module
+ *
+ * Atomic values that can be set and overwritten which trace through the render
+ * tree. Can be used with common props, such as:
+ * 
+ * - Accent color
+ * - Background color
+ * - Border roundness
+ * - Disabled/read-only state
+ * - etc.
+ */
+
 import {createContext, useContext, FC, createElement as h, useMemo} from 'react';
 
 export interface NamedTraceContextValue {

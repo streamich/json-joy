@@ -15,6 +15,10 @@ const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic', width: 16, height: 1
 const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline', width: 16, height: 16});
 const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline', width: 16, height: 16});
 const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough', width: 16, height: 16});
+const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight', width: 16, height: 16});
+const SpoilerIcon = makeIcon({set: 'tabler', icon: 'lock-password', width: 16, height: 16});
+
+
 const CodeIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
 
 
@@ -91,6 +95,8 @@ export class InlineMenu implements UiLifeCycles {
         this.itemStrikethrough(),
         this.itemOverline(),
         this.itemCode(),
+        this.itemHighlight(),
+        this.itemSpoiler(),
       ],
     };
   }
@@ -154,6 +160,28 @@ export class InlineMenu implements UiLifeCycles {
       },
     };
   }
+  public itemHighlight(): InlineMenuItem {
+    return {
+      mark: 'highlight',
+      name: 'Highlight',
+      icon: () => <HighlightIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('mark');
+      },
+    };
+  }
+  public itemSpoiler(): InlineMenuItem {
+    return {
+      mark: 'spoiler',
+      name: 'Spoiler',
+      icon: () => <SpoilerIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('spoiler');
+      },
+    };
+  }
+
+
   public itemCode(): InlineMenuItem {
     return {
       mark: 'code',

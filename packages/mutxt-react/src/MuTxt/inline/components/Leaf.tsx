@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
-import type {RenderLeafProps} from 'slate-react';
+import {Spoiler} from './Spoiler';
 import {type CodeSyntaxDecoration} from '../../behavior/code-highlighting';
+import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
 
 const linkClass = rule({
@@ -30,6 +31,8 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
   if (leaf.underline) content = <u style={{textUnderlineOffset: '3px'}}>{content}</u>;
   if (leaf.overline) content = <span style={{textDecoration: 'overline'}}>{content}</span>;
   if (leaf.strikethrough) content = <span style={{textDecoration: 'line-through'}}>{content}</span>;
+  if (leaf.mark) content = <mark>{content}</mark>;
+  if (leaf.spoiler) content = <Spoiler>{content}</Spoiler>
   if (leaf.code) {
     content = (
       <code
