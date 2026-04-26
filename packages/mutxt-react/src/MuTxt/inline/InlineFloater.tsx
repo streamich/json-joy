@@ -220,7 +220,15 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
 
   const computedPoint = state.anchorPoint();
   if (computedPoint) lastPointRef.current = computedPoint;
-  const point = computedPoint ?? (focusInTreeRef.current ? lastPointRef.current : undefined);
+  
+  // Fall back to the last good anchor when the editor still has a range
+  // selection but the DOM rect is momentarily invalid (e.g. mid-reconcile
+  // while a mark like Bold is being applied — Bold wraps the affected text
+  // in a `<strong>` element, so for one render the selection's DOM range
+  // points at nodes that are being remounted), or while focus is parked on
+  // a toolbar element that briefly cleared the editor selection.
+  const hasRangeSelection = !!mutxt.selection.value;
+  const point = computedPoint ?? (hasRangeSelection || focusInTreeRef.current ? lastPointRef.current : undefined);
   if (!point) return;
   if (scrubbing) return;
 

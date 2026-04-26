@@ -82,6 +82,14 @@ export class InlineState implements UiLifeCycles {
       const domRange = ReactEditor.toDOMRange(mutxt.editor as ReactEditor, selection);
       const selectionRect = domRange.getBoundingClientRect();
       const focusRect = this.getFocusCaretRect() ?? selectionRect;
+      // Reject degenerate rects. They appear briefly while a mark is being
+      // applied (e.g. Bold wraps the affected text in a `<strong>` element):
+      // for one render the DOM range references nodes that are being
+      // re-mounted, so getBoundingClientRect() returns 0,0,0,0. Returning
+      // undefined here lets the caller fall back to the cached point instead
+      // of placing the toolbar at the page origin and triggering the
+      // viewport-overflow check.
+      if (!focusRect.width && !focusRect.height && !focusRect.top && !focusRect.left) return;
       const x = focusRect.width > 0 ? focusRect.left + focusRect.width / 2 : focusRect.left;
       if (focusRect.top < TOOLBAR_HEIGHT + GAP)
         return {x, y: focusRect.bottom + GAP, dx: 0, dy: 1};
