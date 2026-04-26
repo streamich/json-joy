@@ -4,7 +4,7 @@ import {RangeMenu} from './RangeMenu';
 import {BlockMenu} from './BlockMenu';
 import {DocMenu} from './DocMenu';
 import type {EditorState} from '../EditorState';
-import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import type {UiLifeCycles} from '@jsonjoy.com/ui';
 
 export class Menu implements UiLifeCycles {
   public readonly buffer: BufferMenu;

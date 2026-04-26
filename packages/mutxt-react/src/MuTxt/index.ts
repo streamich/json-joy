@@ -1,5 +1,5 @@
 export type * from './types';
 export * from './MuTxt';
 export * from './context';
-export type * from './controllers/MuTxtApi';
-export type * from './controllers/MuTxtState';
+export type * from './state/MuTxtApi';
+export type * from './state/MuTxtState';

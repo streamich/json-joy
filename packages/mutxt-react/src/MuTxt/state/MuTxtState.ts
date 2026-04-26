@@ -1,4 +1,4 @@
-import {rsync} from '@jsonjoy.com/ui';
+import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 import {getActiveAlignment} from '../behavior';
 import {getCaretPathInfo, getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {MuTxtApi} from './MuTxtApi';
@@ -9,18 +9,21 @@ import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
 import {ReactEditor} from 'slate-react';
 import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
+import {Menu} from './menus/Menu';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
 
 export interface MuTxtStateOpts {}
 
-export class MuTxtState {
+export class MuTxtState implements UiLifeCycles {
   public readonly api = new MuTxtApi(this);
   public readonly scroll: ScrollState = new ScrollState({
     railWidth: 12,
     hideDelay: 5000,
   });
+
+  public readonly menu = new Menu(this);
 
   public readonly version = rsync.val(0);
   public readonly contentVersion = rsync.val(0);
@@ -75,9 +78,14 @@ export class MuTxtState {
     const scrollUnsubscribe = this.scroll.scrollTop$.subscribe(() => {
       this.scrollVersion.next(this.scrollVersion.value + 1);
     });
+
+    const {menu} = this;
+    const stopMenu = menu.start();
+
     return () => {
       unbindCollaboration();
       scrollUnsubscribe();
+      stopMenu();
     };
   }
 

@@ -36,8 +36,9 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
   const clientHeight = useSyncStore(scrollArea.clientHeight$);
   const focused = state.focused.use();
   state.wnd.use();
-  const cursor =state.cursor.use();
-  const version = state.scrollVersion.use();
+  const version = state.version.use();
+  const cursor = state.cursor.use();
+  const scrollVersion = state.scrollVersion.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
 
   React.useLayoutEffect(() => {
@@ -51,7 +52,7 @@ export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
       setMarkers(measureScrollMapMarkers(editor, viewportEl, scrollHeight, railHeight, styles.light ?? true));
     });
     return () => cancelAnimationFrame(frame);
-  }, [clientHeight, editor, focused, scrollArea, scrollHeight, styles.light, version, cursor]);
+  }, [clientHeight, editor, focused, scrollArea, scrollHeight, styles.light, version, scrollVersion, cursor]);
 
   if (!markers.length) return null;
 

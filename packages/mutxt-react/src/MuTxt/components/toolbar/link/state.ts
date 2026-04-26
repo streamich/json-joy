@@ -8,7 +8,7 @@ import {
   type ActiveLink,
   upsertLink,
 } from '../../../behavior/link';
-import {MuTxtState} from '../../../controllers/MuTxtState';
+import {MuTxtState} from '../../../state/MuTxtState';
 
 export class LinkButtonState {
   public readonly activeLink: rsync.ReactComputed<ActiveLink | null>;

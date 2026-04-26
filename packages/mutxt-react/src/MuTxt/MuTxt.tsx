@@ -27,11 +27,11 @@ import {FloatingBlockToolbar} from './components/toolbar/floating/FloatingBlockT
 import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
 import {SlashMenu} from './components/toolbar/floating/SlashMenu';
 import {SlateEditorContextProvider} from './context';
-import {MuTxtState} from './controllers/MuTxtState';
+import {MuTxtState} from './state/MuTxtState';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
-import type {MuTxtApi} from './controllers/MuTxtApi';
+import type {MuTxtApi} from './state/MuTxtApi';
 
 const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
 

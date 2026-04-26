@@ -13,7 +13,7 @@ import {
 } from '../../../behavior';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import type {MuTxtState} from '../../../controllers/MuTxtState';
+import type {MuTxtState} from '../../../state/MuTxtState';
 import type {
   BlockFormat,
   CustomElement,

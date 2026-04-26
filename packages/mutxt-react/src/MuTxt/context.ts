@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {MuTxtState} from './controllers/MuTxtState';
+import type {MuTxtState} from './state/MuTxtState';
 
 export const SlateEditorContext = React.createContext<MuTxtState | null>(null);
 

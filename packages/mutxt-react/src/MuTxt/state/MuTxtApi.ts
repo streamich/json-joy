@@ -1,11 +1,11 @@
 import {Editor, Path, Range, Text, Transforms, Element as SlateElement, Location, Span} from 'slate';
 import {ReactEditor} from 'slate-react';
-import {CustomElement} from '../types';
+import {CustomElement, MarkFormat} from '../types';
+import {isListType} from '../behavior';
 import {typeToLabel} from '../util/typeToLabel';
 import type {MuTxtState} from './MuTxtState';
 import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
-import {isListType} from '../behavior';
 
 /** Public API for of the mu-txt editor. */
 export class MuTxtApi {
@@ -14,6 +14,8 @@ export class MuTxtApi {
   public get editor(): BaseEditor & ReactEditor & HistoryEditor {
     return this.state.editor;
   }
+
+  // ------------------------------------------------------------------- Cursor
 
   public focused(): boolean {
     const editor = this.state.editor;
@@ -33,9 +35,38 @@ export class MuTxtApi {
     return !!selection && !Range.isCollapsed(selection);
   }
 
+  public focusRect(): DOMRect | undefined {
+    if (!this.state.cursor.value) return;
+    const selection = window.getSelection();
+    if (!selection?.focusNode) return;
+    try {
+      const focusRange = document.createRange();
+      focusRange.setStart(selection.focusNode, selection.focusOffset);
+      focusRange.collapse(true);
+      const rect = focusRange.getClientRects()[0] ?? focusRange.getBoundingClientRect();
+      if (rect.width > 0 || rect.height > 0) return rect;
+    } catch {}
+    return;
+  }
+
+  // ------------------------------------------------------------------- Inline
+
   public marks(): Omit<Text, 'text'> | null {
     return Editor.marks(this.editor)
   }
+
+  public isMarkActive(format: MarkFormat): boolean {
+    const marks = Editor.marks(this.editor);
+    return marks ? marks[format] === true : false;
+  }
+
+  public toggleMark(format: MarkFormat): void {
+    const editor = this.editor;
+    if (this.isMarkActive(format)) Editor.removeMark(editor, format);
+    else Editor.addMark(editor, format, true);
+  }
+
+  // -------------------------------------------------------------------- Block
 
   public block(at?: Location | Span): CustomElement | null {
     const {editor} = this;
@@ -82,19 +113,5 @@ export class MuTxtApi {
     const element = this.block(at);
     if (!element) return 'Paragraph';
     return typeToLabel(element.type) || 'Paragraph';
-  }
-
-  public focusRect(): DOMRect | undefined {
-    if (!this.state.cursor.value) return;
-    const selection = window.getSelection();
-    if (!selection?.focusNode) return;
-    try {
-      const focusRange = document.createRange();
-      focusRange.setStart(selection.focusNode, selection.focusOffset);
-      focusRange.collapse(true);
-      const rect = focusRange.getClientRects()[0] ?? focusRange.getBoundingClientRect();
-      if (rect.width > 0 || rect.height > 0) return rect;
-    } catch {}
-    return;
   }
 }
