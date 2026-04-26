@@ -12,7 +12,21 @@ import {removeLink} from './behavior/link';
 
 export const LIST_TYPES: ListElementType[] = ['ul', 'ol', 'checklist'];
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
-export const MARKS: MarkFormat[] = ['bold', 'italic', 'underline', 'code'];
+export const MARKS: MarkFormat[] = [
+  'bold',
+  'code',
+  'del',
+  'ins',
+  'italic',
+  'kbd',
+  'mark',
+  'overline',
+  'spoiler',
+  'strikethrough',
+  'sub',
+  'sup',
+  'underline',
+];
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
 const isFormattableBlock = (node: CustomElement): boolean => !isListType(node.type) && node.type !== 'embed';
@@ -133,7 +147,7 @@ export const setAlignment = (editor: Editor, alignment: SlateTextAlign): void =>
   });
 };
 
-export const clearFormatting = (editor: Editor): void => {
+export const eraseMarks = (editor: Editor): void => {
   removeLink(editor);
   for (const mark of MARKS) Editor.removeMark(editor, mark);
   unwrapLists(editor);
@@ -265,5 +279,5 @@ export const ALIGNMENT_BUTTONS: ToolbarButtonDefinition<SlateTextAlign>[] = [
 export const ACTION_BUTTONS: ToolbarButtonDefinition[] = [
   {key: 'undo', title: 'Undo', iconSet: 'lucide', icon: 'undo', shortcut: 'Cmd+Z'},
   {key: 'redo', title: 'Redo', iconSet: 'lucide', icon: 'redo', shortcut: 'Cmd+Shift+Z'},
-  {key: 'clear-formatting', title: 'Clear formatting', iconSet: 'tabler', icon: 'clear-formatting'},
+  {key: 'clear-formatting', title: 'Clear formatting', iconSet: 'tabler', icon: 'eraser'},
 ];

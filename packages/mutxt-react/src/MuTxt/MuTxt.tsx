@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useMemo, useEffect, useCallback} from 'react';
 import {rule} from 'nano-theme';
 import {createEditor, type Descendant} from 'slate';
@@ -6,7 +7,6 @@ import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProp
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
-import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
@@ -14,7 +14,6 @@ import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '@jsonjoy.com/collaborative-slate';
-import type {Model} from 'json-joy/lib/json-crdt';
 import {CodeHighlightState} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
@@ -28,6 +27,7 @@ import {InlineFloater} from './inline/InlineFloater';
 import {SlashMenu} from './chrome/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
+import type {Model} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';

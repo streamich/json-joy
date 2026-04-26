@@ -14,7 +14,7 @@ import {
   MARK_BUTTONS,
   canRedo,
   canUndo,
-  clearFormatting,
+  eraseMarks,
   isAlignmentActive,
   isBlockActive,
   isListActive,
@@ -52,9 +52,9 @@ export interface MuTxtHeaderProps {
 }
 
 export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVisualChange}) => {
-  const state = useMuTxt();
+  const mutxt = useMuTxt();
   const styles = useStyles();
-  const toolbarVersion = state.version.use();
+  const toolbarVersion = mutxt.version.use();
 
   void toolbarVersion;
 
@@ -172,7 +172,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
         {renderItem({
           ...ACTION_BUTTONS[2],
           disabled: readOnly,
-          onMouseDown: execute(() => clearFormatting(editor)),
+          onMouseDown: execute(() => mutxt.api.eraseMarks()),
         })}
         <ToolbarSep line />
         {renderItem({

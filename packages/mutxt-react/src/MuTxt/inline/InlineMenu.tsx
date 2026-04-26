@@ -281,6 +281,7 @@ export class InlineMenu implements UiLifeCycles {
       danger: true,
       icon: () => <ClearFormattingIcon width={16} height={16} />,
       onSelect: () => {
+        this.mutxt.api.eraseMarks();
       },
     };
   }

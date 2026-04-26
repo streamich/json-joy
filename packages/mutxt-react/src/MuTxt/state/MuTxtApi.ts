@@ -1,7 +1,7 @@
 import {Editor, Path, Range, Text, Transforms, Element as SlateElement, Location, Span} from 'slate';
 import {ReactEditor} from 'slate-react';
 import {CustomElement, MarkFormat} from '../types';
-import {isListType} from '../behavior';
+import {eraseMarks, isListType} from '../behavior';
 import {typeToLabel} from '../util/typeToLabel';
 import {isEmptyDoc} from '../util';
 import type {MuTxtState} from './MuTxtState';
@@ -65,6 +65,10 @@ export class MuTxtApi {
     const editor = this.editor;
     if (this.isMarkActive(format)) Editor.removeMark(editor, format);
     else Editor.addMark(editor, format, true);
+  }
+
+  public eraseMarks(): void {
+    eraseMarks(this.editor);
   }
 
   // -------------------------------------------------------------------- Block
