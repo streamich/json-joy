@@ -12,7 +12,7 @@ import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
 import {getActiveEmbedEntry, insertEmbed, normalizeEmbedUrl, removeEmbedAtPath, updateEmbedAtPath} from '../../behavior/embed';
 import {EmbedPreview} from '../blocks/EmbedElement';
-import {EditorContextPopup} from '../chrome/EditorContextPopup';
+import {EditorContextPopup} from '../../chrome/EditorContextPopup';
 import {useMuTxtState} from '../../context';
 import type {Path, Editor} from 'slate';
 

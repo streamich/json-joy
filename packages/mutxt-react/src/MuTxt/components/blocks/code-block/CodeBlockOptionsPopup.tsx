@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useSlateStatic} from 'slate-react';
 import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
-import {EditorContextPopup} from '../../chrome/EditorContextPopup';
+import {EditorContextPopup} from '../../../chrome/EditorContextPopup';
 import type {CodeBlockElement as CodeBlockElementType} from '../../../types';
 import {CodeBlockOptions} from './CodeBlockOptions';
 import {CodeBlockOptionsStateProvider, useCodeBlockOptionsState} from './state';

@@ -49,7 +49,7 @@ export class FloatingToolbarState {
       [mutxt.selection, mutxt.version, mutxt.scrollVersion, this.toolbarInteracting],
       ([selection, _version, _scrollVersion, toolbarInteracting]) => {
         if (selection) {
-          const point = this.computePoint(selection);
+          const point = this.anchorPoint(selection);
           this.retainedPoint = point;
           return point;
         }
@@ -224,19 +224,21 @@ export class FloatingToolbarState {
     this.toolbarFocused.set(!!this.toolbarElement?.contains(document.activeElement));
   };
 
-  private computePoint(selection: MuTxtState['selection']['value']): AnchorPoint {
-    if (!selection || typeof window === 'undefined' || typeof document === 'undefined') return offscreenPoint();
+  public anchorPoint(): AnchorPoint | undefined {
+    const mutxt = this.mutxt;
+    const selection = mutxt.selection.value;
+    if (!selection) return;
+    // mutxt.api.focusRect();
     try {
       const domRange = ReactEditor.toDOMRange(this.editor as ReactEditor, selection);
       const selectionRect = domRange.getBoundingClientRect();
       const focusRect = this.getFocusCaretRect() ?? selectionRect;
       const x = focusRect.width > 0 ? focusRect.left + focusRect.width / 2 : focusRect.left;
-      if (focusRect.top < TOOLBAR_HEIGHT + GAP) {
+      if (focusRect.top < TOOLBAR_HEIGHT + GAP)
         return {x, y: focusRect.bottom + GAP, dx: 0, dy: 1};
-      }
       return {x, y: focusRect.top - GAP, dx: 0, dy: -1};
     } catch {
-      return offscreenPoint();
+      return;
     }
   }
 

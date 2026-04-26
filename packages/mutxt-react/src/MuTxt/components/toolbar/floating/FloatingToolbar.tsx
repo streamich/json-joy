@@ -15,7 +15,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
   const readOnly = mutxt.readOnly.use();
   const scrollArea = React.useContext(scrollAreaCtx) as ScrollState | null;
   const clickAwayRef = useClickAway(() => {
-    console.log('CLICK AWAY');
+    // console.log('CLICK AWAY');
   });
 
   const state = React.useMemo(
@@ -23,11 +23,14 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
     [mutxt, scrollArea],
   );
   React.useEffect(() => state.start(), [state]);
-  state.viewportVersion.use();
+  mutxt.version.use();
   // const pointerDownOutsideToolbar = state.pointerDownOutsideToolbar.use();
 
   // const visible = state.visible.use();
-  const point = state.point.use();
+  const point = state.anchorPoint();
+  console.log(point, state.menu);
+
+  if (!point) return;
 
   // if (pointerDownOutsideToolbar) return;
 

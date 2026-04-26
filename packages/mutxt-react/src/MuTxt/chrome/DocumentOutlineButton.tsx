@@ -5,13 +5,12 @@ import {ReactEditor} from 'slate-react';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
-import {getDocumentOutline} from '../../behavior/outline';
+import {getDocumentOutline} from '../behavior/outline';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {EditorContextPopup} from './EditorContextPopup';
-import {ContextItem} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextItem';
-import type {SlateEditorDocument} from '../../types';
-import {ContextMenu, ContextSep} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import type {SlateEditorDocument} from '../types';
 
 const Icon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 // const Icon = makeIcon({set: 'bootstrap', icon: 'card-heading', width: 16, height: 16});

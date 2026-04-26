@@ -6,7 +6,7 @@ import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {EditorContextPopup} from '../../chrome/EditorContextPopup';
+import {EditorContextPopup} from '../../../chrome/EditorContextPopup';
 import {useLinkButton} from './context';
 
 const inputRowClass = rule({

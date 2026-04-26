@@ -28,7 +28,7 @@ import {
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {EmbedToolbarButton} from './EmbedToolbarButton';
 import {LinkToolbarButton} from './link/LinkToolbarButton';
-import {DocumentOutlineButton} from '../chrome/DocumentOutlineButton';
+import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxtState} from '../../context';
 
 const blockClass = rule({
