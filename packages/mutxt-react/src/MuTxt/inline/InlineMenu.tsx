@@ -4,6 +4,7 @@ import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import {formatKeys} from '../util/keys';
 
 export interface InlineMenuItem extends MenuItem {
   mark: string;
@@ -12,7 +13,11 @@ export interface InlineMenuItem extends MenuItem {
 const BoldIcon = makeIcon({set: 'radix', icon: 'font-bold', width: 15, height: 15});
 const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic', width: 16, height: 16});
 const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline', width: 16, height: 16});
+const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline', width: 16, height: 16});
+const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough', width: 16, height: 16});
 const CodeIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
+
+
 
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
 
@@ -83,6 +88,8 @@ export class InlineMenu implements UiLifeCycles {
         this.itemBold(),
         this.itemItalic(),
         this.itemUnderline(),
+        this.itemStrikethrough(),
+        this.itemOverline(),
         this.itemCode(),
       ],
     };
@@ -121,6 +128,29 @@ export class InlineMenu implements UiLifeCycles {
       keys: ['⌘', 'u'],
       onSelect: () => {
         this.state.api.toggleMark('underline');
+      },
+    };
+  }
+  public itemStrikethrough(): InlineMenuItem {
+    const keys = ['Primary', 'Shift', 'x'];
+    return {
+      mark: 'strikethrough',
+      name: 'Strikethrough',
+      icon: () => <StrikethroughIcon />,
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys,
+      onSelect: () => {
+        this.state.api.toggleMark('strikethrough');
+      },
+    };
+  }
+  public itemOverline(): InlineMenuItem {
+    return {
+      mark: 'overline',
+      name: 'Overline',
+      icon: () => <OverlineIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('overline');
       },
     };
   }
