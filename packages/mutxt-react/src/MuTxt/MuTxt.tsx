@@ -217,7 +217,13 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   let scrollAreaStyle: React.CSSProperties | undefined;
   if (heightFit) {
-    scrollAreaStyle ={flex: '1 1 0%', overflow: 'auto', minHeight: 0};
+    // NOTE: do NOT set `overflow: auto` here. The actual scrolling happens in
+    // the inner `<ScrollArea.Viewport>`, which hides its native scrollbar via
+    // `scrollbar-width: none` and `::-webkit-scrollbar { display: none }`.
+    // Setting overflow on this outer wrapper would create a second native
+    // scroll context with no scrollbar-hiding CSS — on macOS that surfaces as
+    // the system overlay scrollbar flashing over the virtual one.
+    scrollAreaStyle = {flex: '1 1 0%', minHeight: 0};
   } else if (height || maxHeight) {
     scrollAreaStyle = {height, maxHeight};
   }

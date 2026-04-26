@@ -17,6 +17,12 @@ const viewportClass = rule({
   ovy: 'scroll',
   scrollbarWidth: 'none',
   MsOverflowStyle: 'none',
+  // Stop scroll chaining at the viewport. Without this, scrolling past the
+  // bottom (or top) of an inner ScrollArea propagates to whichever ancestor
+  // is scrollable next — and that ancestor doesn't have our scrollbar-hiding
+  // CSS, so macOS flashes its native overlay scrollbar on the parent during
+  // the rubber-band. `contain` also disables the page-level rubber-band.
+  overscrollBehavior: 'contain',
   '&::-webkit-scrollbar': {
     d: 'none',
   },
