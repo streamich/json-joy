@@ -8,6 +8,7 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {Editor} from 'slate';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
+import {InlineMenu} from './InlineMenu';
 
 const TOOLBAR_HEIGHT = 36;
 const GAP = 8;
@@ -16,6 +17,7 @@ const TOOLBAR_VIEWPORT_OVERFLOW_LIMIT = 50;
 const offscreenPoint = (): AnchorPoint => ({x: 0, y: 0, dx: 0, dy: -1});
 
 export class InlineState implements UiLifeCycles {
+  public readonly menu: InlineMenu;
   // public readonly boldActive: rsync.ReactComputed<boolean>;
   // public readonly italicActive: rsync.ReactComputed<boolean>;
   // public readonly underlineActive: rsync.ReactComputed<boolean>;
@@ -40,6 +42,7 @@ export class InlineState implements UiLifeCycles {
     private readonly mutxt: MuTxtState,
     private readonly scrollArea: ScrollState | null,
   ) {
+    this.menu = new InlineMenu(mutxt);
     // const editor = this.editor = mutxt.editor;
     // this.boldActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'bold'));
     // this.italicActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'italic'));

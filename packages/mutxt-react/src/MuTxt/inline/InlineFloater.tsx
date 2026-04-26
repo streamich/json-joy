@@ -45,8 +45,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
           // onBlurCapture={state.onToolbarBlurCapture}
         >
           {/* <ToolbarMenu menu={state.menu} disabled={readOnly} compact /> */}
-          {/* <CaretToolbar menu={state.menu} expandPoint={point} /> */}
-          toolbar....
+          <CaretToolbar menu={state.menu.build()} expandPoint={point} />
         </div>
       </MoveToViewport>
     </PositionAtPoint>
