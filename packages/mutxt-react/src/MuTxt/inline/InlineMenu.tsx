@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
 import type {MarkFormat, MenuItem} from '../types';
@@ -34,7 +34,7 @@ const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
 
 export class InlineMenu implements UiLifeCycles {
-  constructor(public readonly state: MuTxtState) {}
+  constructor(public readonly mutxt: MuTxtState) {}
 
   public start() {
     return () => {};
@@ -94,7 +94,7 @@ export class InlineMenu implements UiLifeCycles {
       right: () => <Sidetip small>⌘ B</Sidetip>,
       keys: ['⌘', 'b'],
       onSelect: () => {
-        this.state.api.toggleMark('bold');
+        this.mutxt.api.toggleMark('bold');
       },
     };
   }
@@ -106,7 +106,7 @@ export class InlineMenu implements UiLifeCycles {
       right: () => <Sidetip small>⌘ I</Sidetip>,
       keys: ['⌘', 'i'],
       onSelect: () => {
-        this.state.api.toggleMark('italic');
+        this.mutxt.api.toggleMark('italic');
       },
     };
   }
@@ -118,7 +118,7 @@ export class InlineMenu implements UiLifeCycles {
       right: () => <Sidetip small>⌘ U</Sidetip>,
       keys: ['⌘', 'u'],
       onSelect: () => {
-        this.state.api.toggleMark('underline');
+        this.mutxt.api.toggleMark('underline');
       },
     };
   }
@@ -131,7 +131,7 @@ export class InlineMenu implements UiLifeCycles {
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys,
       onSelect: () => {
-        this.state.api.toggleMark('strikethrough');
+        this.mutxt.api.toggleMark('strikethrough');
       },
     };
   }
@@ -141,7 +141,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Overline',
       icon: () => <OverlineIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('overline');
+        this.mutxt.api.toggleMark('overline');
       },
     };
   }
@@ -151,7 +151,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Highlight',
       icon: () => <HighlightIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('mark');
+        this.mutxt.api.toggleMark('mark');
       },
     };
   }
@@ -161,7 +161,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Spoiler',
       icon: () => <SpoilerIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('spoiler');
+        this.mutxt.api.toggleMark('spoiler');
       },
     };
   }
@@ -190,7 +190,7 @@ export class InlineMenu implements UiLifeCycles {
       right: () => <Sidetip small>⌘ E</Sidetip>,
       keys: ['⌘', 'e'],
       onSelect: () => {
-        this.state.api.toggleMark('code');
+        this.mutxt.api.toggleMark('code');
       },
     };
   }
@@ -200,7 +200,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Superscript',
       icon: () => <SupIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('sup');
+        this.mutxt.api.toggleMark('sup');
       },
     };
   }
@@ -210,7 +210,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Subscript',
       icon: () => <SubIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('sub');
+        this.mutxt.api.toggleMark('sub');
       },
     };
   }
@@ -220,7 +220,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Keyboard key',
       icon: () => <KeyIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('kbd');
+        this.mutxt.api.toggleMark('kbd');
       },
     };
   }
@@ -230,7 +230,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Insertion',
       icon: () => <InsertionIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('ins');
+        this.mutxt.api.toggleMark('ins');
       },
     };
   }
@@ -240,7 +240,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Deletion',
       icon: () => <DeletionIcon />,
       onSelect: () => {
-        this.state.api.toggleMark('del');
+        this.mutxt.api.toggleMark('del');
       },
     };
   }
@@ -257,9 +257,10 @@ export class InlineMenu implements UiLifeCycles {
   public itemLink(): MenuItem {
     return {
       name: 'Link',
-      icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
+      icon: () => <LinkIcon />,
       onSelect: () => {
-        console.log('Link');
+        this.mutxt.inline.dismissed.next(true);
+        this.mutxt.requestLinkMenu?.();
       },
     };
   }
