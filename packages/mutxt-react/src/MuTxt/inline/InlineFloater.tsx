@@ -81,6 +81,39 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
     };
   }, [isInsideTree]);
 
+  // Expose the focus-tree check to InlineState so its blur-driven dismiss
+  // can skip dismissing when the user just clicked a toolbar button.
+  React.useEffect(() => {
+    state.isFocusInToolbar = () => focusInTreeRef.current;
+    return () => {
+      state.isFocusInToolbar = null;
+    };
+  }, [state]);
+
+  // Keep the editor focused while the user mousedowns on toolbar/portal
+  // elements. Without this, the browser steals focus to the clicked element
+  // (or to <body> in Safari/Firefox where buttons aren't focusable on
+  // mousedown), the editor's onBlur fires, dismissed flips to true, and
+  // React unmounts the toolbar before the click event ever lands on the
+  // button. preventDefault on mousedown is the standard contenteditable
+  // trick: it suppresses the focus shift without preventing click. Inputs
+  // (e.g. the context-menu search box) are exempted so they can take focus.
+  React.useEffect(() => {
+    const onMouseDown = (event: MouseEvent) => {
+      if (!isInsideTree(event.target)) return;
+      const target = event.target;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.isContentEditable)
+      ) return;
+      event.preventDefault();
+    };
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
+  }, [isInsideTree]);
+
   // Synchronously update the positioned div's left/top and visibility on
   // scroll and resize. Going through React on every scroll event is too slow:
   // by the time the re-render and the layout effect commit, the browser has
@@ -182,15 +215,14 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
   // document tab is active), or in the first frame after becoming visible again
   // (before the browser has applied the layout), return null so the toolbar
   // does not render with a stale/zero anchor position.
-  if (hidden || !readyAfterUnhide) return null;
-
-  if (dismissed) return null;
+  if (hidden || !readyAfterUnhide) return;
+  if (dismissed) return;
 
   const computedPoint = state.anchorPoint();
   if (computedPoint) lastPointRef.current = computedPoint;
   const point = computedPoint ?? (focusInTreeRef.current ? lastPointRef.current : undefined);
-  if (!point) return null;
-  if (scrubbing) return null;
+  if (!point) return;
+  if (scrubbing) return;
 
   return (
     <PositionAtPoint point={point}>

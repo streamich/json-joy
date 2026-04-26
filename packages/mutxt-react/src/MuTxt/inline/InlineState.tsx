@@ -17,6 +17,12 @@ export class InlineState implements UiLifeCycles {
    *  whenever the editor's range selection changes. */
   public readonly dismissed = rsync.val(false);
 
+  /** Wired up by `InlineFloater` so the blur-driven dismiss can tell whether
+   *  focus actually left our subtree, or just hopped to one of our own
+   *  elements (toolbar button, context-menu search input, etc.). Returns
+   *  `true` when focus is still inside the floater/portal tree. */
+  public isFocusInToolbar: (() => boolean) | null = null;
+
   constructor(
     private readonly mutxt: MuTxtState,
     private readonly scrollArea: ScrollState | null,
@@ -25,11 +31,27 @@ export class InlineState implements UiLifeCycles {
   }
 
   public readonly start = (): (() => void) => {
-    const unsubscribeSelection = this.mutxt.selection.subscribe(() => {
-      if (this.dismissed.value) this.dismissed.next(false);
+    const mutxt = this.mutxt;
+    const unsubscribeSelection = mutxt.selection.subscribe(() => {
+      if (mutxt.selection.value) this.dismissed.next(false);
+    });
+    // Editor-blur dismiss has to be deferred to a microtask. Slate's onBlur
+    // fires synchronously inside the mousedown that's currently shifting
+    // focus to whatever the user clicked — at that moment, the focusin event
+    // for the new target hasn't yet updated our `isFocusInToolbar` check, so
+    // a synchronous dismiss would unmount the toolbar before the click on its
+    // own button can register. Deferring lets the focusin handler run first.
+    const unsubscribeFocused = mutxt.focused.subscribe(() => {
+      if (mutxt.focused.value) return;
+      queueMicrotask(() => {
+        if (mutxt.focused.value) return;
+        if (this.isFocusInToolbar?.()) return;
+        this.dismissed.next(true);
+      });
     });
     return () => {
       unsubscribeSelection();
+      unsubscribeFocused();
     };
   };
 

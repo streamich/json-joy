@@ -1,10 +1,12 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
 import {Spoiler} from './Spoiler';
 import {type CodeSyntaxDecoration} from '../../behavior/code-highlighting';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
+import {Kbd} from './Kbd';
 
 const linkClass = rule({
   textDecoration: 'underline',
@@ -16,6 +18,18 @@ const linkClass = rule({
   },
 });
 
+const insClass = rule({
+  bg: 'rgba(152,235,167,.3)',
+  bxsh: '0 2px 0 0 rgba(152,225,167,.6)',
+  td: 'none',
+});
+
+const delClass = rule({
+  bg: 'rgba(240,190,190,.4)',
+  bxsh: '0 2px 0 0 rgba(255,177,177,.5)',
+  col: 'red',
+});
+
 export interface LeafProps extends RenderLeafProps {
   leaf: CustomText & CodeSyntaxDecoration;
 }
@@ -25,6 +39,11 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
   let content = children;
 
+  // if (leaf.kbd) content = <Kbd>{content}</Kbd>;
+  if (leaf.kbd) content = <Key>{content}</Key>;
+
+  if (leaf.ins) content = <ins className={insClass}>{content}</ins>;
+  else if (leaf.del) content = <del className={delClass}>{content}</del>;
 
   if (leaf.bold) content = <strong style={{fontWeight: 700}}>{content}</strong>;
   if (leaf.italic) content = <em>{content}</em>;

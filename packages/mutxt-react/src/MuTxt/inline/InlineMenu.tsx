@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {formatKeys} from '../util/keys';
 import type {MarkFormat, MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
-import {formatKeys} from '../util/keys';
 
 export interface InlineMenuItem extends MenuItem {
   mark: MarkFormat;
@@ -23,14 +23,15 @@ const SpoilerIcon = makeIcon({set: 'tabler', icon: 'lock-password', width: 16, h
 const CodeIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
 const SupIcon = makeIcon({set: 'tabler', icon: 'superscript', width: 16, height: 16});
 const SubIcon = makeIcon({set: 'tabler', icon: 'subscript', width: 16, height: 16});
+const KeyIcon = makeIcon({set: 'lucide', icon: 'keyboard', width: 16, height: 16});
+const InsertionIcon = makeIcon({set: 'tabler', icon: 'pencil-plus', width: 16, height: 16});
+const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus', width: 16, height: 16});
 
+// Annotations
+const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
 
+// Modify
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
-
-const LayersIcon = makeIcon({set: 'radix', icon: 'layers'});
-const BoxAlignRightIcon = makeIcon({set: 'tabler', icon: 'box-align-right'});
-const EraserIcon = makeIcon({set: 'tabler', icon: 'eraser'});
-const TrashIcon = makeIcon({set: 'tabler', icon: 'trash'});
 
 export class InlineMenu implements UiLifeCycles {
   constructor(public readonly state: MuTxtState) {}
@@ -175,41 +176,12 @@ export class InlineMenu implements UiLifeCycles {
         this.itemCode(),
         this.itemSup(),
         this.itemSub(),
+        this.itemKey(),
+        this.itemIns(),
+        this.itemDel(),
       ],
     };
   }
-
-          //     {
-          //       name: 'Math',
-          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
-          //       onSelect: () => {},
-          //     },
-          //     {
-          //       name: 'Superscript',
-          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
-          //       onSelect: () => {},
-          //     },
-          //     {
-          //       name: 'Subscript',
-          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
-          //       onSelect: () => {},
-          //     },
-          //     {
-          //       name: 'Keyboard key',
-          //       icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
-          //       onSelect: () => {},
-          //     },
-          //     {
-          //       name: 'Insertion',
-          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
-          //       onSelect: () => {},
-          //     },
-          //     {
-          //       name: 'Deletion',
-          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
-          //       onSelect: () => {},
-          //     },
-
   public itemCode(): InlineMenuItem {
     return {
       mark: 'code',
@@ -242,6 +214,36 @@ export class InlineMenu implements UiLifeCycles {
       },
     };
   }
+  public itemKey(): InlineMenuItem {
+    return {
+      mark: 'kbd',
+      name: 'Keyboard key',
+      icon: () => <KeyIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('kbd');
+      },
+    };
+  }
+  public itemIns(): InlineMenuItem {
+    return {
+      mark: 'ins',
+      name: 'Insertion',
+      icon: () => <InsertionIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('ins');
+      },
+    };
+  }
+  public itemDel(): InlineMenuItem {
+    return {
+      mark: 'del',
+      name: 'Deletion',
+      icon: () => <DeletionIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('del');
+      },
+    };
+  }
 
   public menuAnnotations(): MenuItem {
     return {
@@ -252,12 +254,10 @@ export class InlineMenu implements UiLifeCycles {
       ],
     };
   }
-
   public itemLink(): MenuItem {
     return {
       name: 'Link',
-      // icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
-      icon: () => <Iconista width={15} height={15} set="radix" icon="link-2" />,
+      icon: () => <Iconista width={15} height={15} set="lucide" icon="link" />,
       onSelect: () => {
         console.log('Link');
       },
@@ -274,7 +274,6 @@ export class InlineMenu implements UiLifeCycles {
       ],
     };
   }
-
   public itemClear(): MenuItem {
     return {
       name: 'Erase formatting',

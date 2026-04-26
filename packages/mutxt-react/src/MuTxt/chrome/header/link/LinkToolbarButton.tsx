@@ -64,7 +64,8 @@ export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({refToggle})
             onMouseDown={preventMouseDown}
             tooltip={{nowrap: true, renderTooltip: () => t('Link'), shortcut: 'Cmd+K'}}
           >
-            <Iconista set="vscode" icon="link" width={16} height={16} />
+            {/* <Iconista set="vscode" icon="link" width={16} height={16} /> */}
+            <Iconista set="lucide" icon="link" width={15} height={15} />
           </ToolbarItem>
         </PopupControlled>
       </anchorContext.Provider>
