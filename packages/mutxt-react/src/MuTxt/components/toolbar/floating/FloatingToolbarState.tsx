@@ -5,7 +5,7 @@ import {ReactEditor} from 'slate-react';
 import {isMarkActive, toggleMark} from '../../../behavior';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import type {MuTxtState} from '../../../controllers/MuTxtState';
+import type {MuTxtState} from '../../../state/MuTxtState';
 import type {Editor} from 'slate';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
@@ -27,7 +27,7 @@ export class FloatingToolbarState {
   public readonly menu: MenuItem;
 
   private readonly editor: Editor;
-  private readonly pointerDownOutsideToolbar = rsync.val(false);
+  public readonly pointerDownOutsideToolbar = rsync.val(false);
   private readonly toolbarFocused = rsync.val(false);
   private readonly toolbarInteracting = rsync.val(false);
   private toolbarElement: HTMLDivElement | null = null;
@@ -84,48 +84,49 @@ export class FloatingToolbarState {
       this.endToolbarInteraction();
     };
 
-    this.menu = {
-      name: 'floating-toolbar',
-      expand: 1e3,
-      children: [
-        {
-          name: 'Bold',
-          keys: ['Mod+B'],
-          icon: () => <Iconista set="radix" icon="font-bold" width={16} height={16} />,
-          active: this.boldActive,
-          onSelect: exec(() => toggleMark(editor, 'bold')),
-        },
-        {
-          name: 'Italic',
-          keys: ['Mod+I'],
-          icon: () => <Iconista set="lucide" icon="italic" width={16} height={16} />,
-          active: this.italicActive,
-          onSelect: exec(() => toggleMark(editor, 'italic')),
-        },
-        {
-          name: 'Underline',
-          keys: ['Mod+U'],
-          icon: () => <Iconista set="tabler" icon="underline" width={16} height={16} />,
-          active: this.underlineActive,
-          onSelect: exec(() => toggleMark(editor, 'underline')),
-        },
-        {
-          name: 'Code',
-          keys: ['Mod+`'],
-          icon: () => <Iconista set="tabler" icon="code" width={16} height={16} />,
-          active: this.codeActive,
-          onSelect: exec(() => toggleMark(editor, 'code')),
-        },
-        {
-          name: 'Link',
-          keys: ['Mod+K'],
-          sepBefore: true,
-          icon: () => <Iconista set="lucide" icon="link" width={16} height={16} />,
-          active: this.linkSelected,
-          onSelect: exec(() => mutxt.requestLinkMenu?.()),
-        },
-      ],
-    };
+    this.menu = this.mutxt.menu.inline.build();
+    // this.menu = {
+    //   name: 'floating-toolbar',
+    //   expand: 1e3,
+    //   children: [
+    //     {
+    //       name: 'Bold',
+    //       keys: ['Mod+B'],
+    //       icon: () => <Iconista set="radix" icon="font-bold" width={16} height={16} />,
+    //       active: this.boldActive,
+    //       onSelect: exec(() => toggleMark(editor, 'bold')),
+    //     },
+    //     {
+    //       name: 'Italic',
+    //       keys: ['Mod+I'],
+    //       icon: () => <Iconista set="lucide" icon="italic" width={16} height={16} />,
+    //       active: this.italicActive,
+    //       onSelect: exec(() => toggleMark(editor, 'italic')),
+    //     },
+    //     {
+    //       name: 'Underline',
+    //       keys: ['Mod+U'],
+    //       icon: () => <Iconista set="tabler" icon="underline" width={16} height={16} />,
+    //       active: this.underlineActive,
+    //       onSelect: exec(() => toggleMark(editor, 'underline')),
+    //     },
+    //     {
+    //       name: 'Code',
+    //       keys: ['Mod+`'],
+    //       icon: () => <Iconista set="tabler" icon="code" width={16} height={16} />,
+    //       active: this.codeActive,
+    //       onSelect: exec(() => toggleMark(editor, 'code')),
+    //     },
+    //     {
+    //       name: 'Link',
+    //       keys: ['Mod+K'],
+    //       sepBefore: true,
+    //       icon: () => <Iconista set="lucide" icon="link" width={16} height={16} />,
+    //       active: this.linkSelected,
+    //       onSelect: exec(() => mutxt.requestLinkMenu?.()),
+    //     },
+    //   ],
+    // };
   }
 
   public readonly start = (): (() => void) => {
@@ -152,24 +153,24 @@ export class FloatingToolbarState {
     };
   };
 
-  public readonly setToolbarElement = (element: HTMLDivElement | null): void => {
-    this.toolbarElement = element;
-    this.syncToolbarFocus();
-  };
+  // public readonly setToolbarElement = (element: HTMLDivElement | null): void => {
+  //   this.toolbarElement = element;
+  //   this.syncToolbarFocus();
+  // };
 
-  public readonly onToolbarMouseDown = (event: React.MouseEvent): void => {
-    event.preventDefault();
-    this.beginToolbarInteraction();
-    this.pointerDownOutsideToolbar.set(false);
-  };
+  // public readonly onToolbarMouseDown = (event: React.MouseEvent): void => {
+  //   event.preventDefault();
+  //   this.beginToolbarInteraction();
+  //   this.pointerDownOutsideToolbar.set(false);
+  // };
 
-  public readonly onToolbarFocusCapture = (): void => {
-    this.syncToolbarFocus();
-  };
+  // public readonly onToolbarFocusCapture = (): void => {
+  //   this.syncToolbarFocus();
+  // };
 
-  public readonly onToolbarBlurCapture = (): void => {
-    queueMicrotask(this.syncToolbarFocus);
-  };
+  // public readonly onToolbarBlurCapture = (): void => {
+  //   queueMicrotask(this.syncToolbarFocus);
+  // };
 
   private readonly onDocumentPointerDown = (event: PointerEvent): void => {
     const target = event.target;
