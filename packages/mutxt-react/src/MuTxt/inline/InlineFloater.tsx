@@ -24,7 +24,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
   // anchorPoint() returns zeros while the editor is still display:none, so we
   // skip one frame to let the browser apply the layout before computing position.
   const [readyAfterUnhide, setReadyAfterUnhide] = React.useState(!hidden);
-  
+
   mutxt.version.use();
 
   React.useLayoutEffect(() => {
@@ -103,7 +103,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
     <PositionAtPoint point={point}>
       <MoveToViewport>
         <div ref={toolbarRef}>
-          <CaretToolbar menu={state.menu.build()} expandPoint={point} />
+          <CaretToolbar menu={state.menu.build()} more={{small: true}} context={{showSearch: false}} />
         </div>
       </MoveToViewport>
     </PositionAtPoint>

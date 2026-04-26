@@ -23,7 +23,7 @@ export interface ExpandableToolbarProps extends ToolbarMenuProps {
   expandPoint?: AnchorPoint | (() => AnchorPoint);
   disabled?: boolean;
   more?: Omit<ToolbarMenuProps['more'], 'onClick'>;
-  context?: ContextMenuProps;
+  context?: Partial<ContextMenuProps>;
   contextMenu?: MenuItem;
 }
 
