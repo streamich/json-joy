@@ -3,8 +3,8 @@ import {keyframes, rule} from 'nano-theme';
 import {Marker, useScrollArea} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
-import {measureScrollMapMarkers} from '../behavior/scroll-map';
-import {useMuTxtState} from '../context';
+import {measureScrollMapMarkers} from '../../behavior/scroll-map';
+import {useMuTxtState} from '../../context';
 import type {Editor} from 'slate';
 
 const selectionMarkerBlink = keyframes({
@@ -24,11 +24,11 @@ const selectionMarkerClass = rule({
   zIndex: 1,
 });
 
-export interface EditorScrollMapProps {
+export interface ScrollMapProps {
   editor: Editor;
 }
 
-export const EditorScrollMap: React.FC<EditorScrollMapProps> = ({editor}) => {
+export const ScrollMap: React.FC<ScrollMapProps> = ({editor}) => {
   const state = useMuTxtState();
   const styles = useStyles();
   const scrollArea = useScrollArea();

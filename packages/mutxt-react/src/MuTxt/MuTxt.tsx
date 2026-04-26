@@ -19,7 +19,7 @@ import {CodeHighlightState} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {EditorFooter} from './chrome/EditorFooter';
-import {EditorScrollMap} from './chrome/EditorScrollMap';
+import {ScrollMap} from './chrome/scroll/ScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {EditorToolbar} from './components/toolbar/EditorToolbar';
@@ -242,7 +242,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         </ScrollArea.Viewport>
         <ScrollArea.ScrollRail>
           <ScrollArea.Thumb />
-          <EditorScrollMap editor={editor} />
+          <ScrollMap editor={editor} />
         </ScrollArea.ScrollRail>
       </ScrollArea.ScrollArea>
     );
