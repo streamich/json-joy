@@ -2,10 +2,10 @@ import * as React from 'react';
 import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 // import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
-import {isMarkActive, toggleMark} from '../../behavior';
+import {isMarkActive, toggleMark} from '..//behavior';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import type {MuTxtState} from '../../state/MuTxtState';
+import type {MuTxtState} from '../state/MuTxtState';
 import type {Editor} from 'slate';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 

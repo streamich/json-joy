@@ -2,8 +2,8 @@ import * as React from 'react';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {CommonSliceType, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import type {MenuItem} from '../../types';
-import type {MuTxtState} from '../MuTxtState';
+import type {MenuItem} from '../types';
+import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 
