@@ -30,6 +30,8 @@ import {EmbedToolbarButton} from './embed/EmbedToolbarButton';
 import {LinkToolbarButton} from './link/LinkToolbarButton';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
+import type {MenuItem} from '../../types';
+import {formatKeys} from '../../util/keys';
 
 const blockClass = rule({
   pos: 'relative',
@@ -106,6 +108,20 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
     [],
   );
 
+  const renderMenuItem = React.useCallback(
+    (item: MenuItem) => {
+      return (
+        <ToolbarItem
+          key={item.id ?? item.name}
+          type="button"
+          selected={!!item.active?.getSnapshot()}
+          disabled={!!item.disabled?.getSnapshot()}
+          onMouseDown={item.onSelect}
+          tooltip={{nowrap: true, renderTooltip: () => item.name, shortcut: item.keys ? formatKeys(item.keys) : void 0}}
+        >{item.icon?.()}</ToolbarItem>
+      );
+    }, []);
+
   return (
     <Split className={blockClass} style={{
       borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
@@ -169,11 +185,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
       <div className={toolbarContainerClass}>
         <DocumentOutlineButton editor={editor} contentWidth={300} />
         <ToolbarSep line />
-        {renderItem({
-          ...ACTION_BUTTONS[2],
-          disabled: readOnly,
-          onMouseDown: execute(() => mutxt.api.eraseMarks()),
-        })}
+        {renderMenuItem(mutxt.inline.menu.itemClear())}
         <ToolbarSep line />
         {renderItem({
           ...ACTION_BUTTONS[0],

@@ -150,16 +150,6 @@ export const setAlignment = (editor: Editor, alignment: SlateTextAlign): void =>
 export const eraseMarks = (editor: Editor): void => {
   removeLink(editor);
   for (const mark of MARKS) Editor.removeMark(editor, mark);
-  unwrapLists(editor);
-  Transforms.unsetNodes(editor, 'align', {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node),
-  });
-  Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node) && isFormattableBlock(node),
-  });
-  Transforms.unsetNodes(editor, 'checked', {
-    match: (node) => isElement(node) && Editor.isBlock(editor, node),
-  });
 };
 
 export const setChecklistItemChecked = (editor: Editor, path: Path, checked: boolean): void => {
@@ -279,5 +269,4 @@ export const ALIGNMENT_BUTTONS: ToolbarButtonDefinition<SlateTextAlign>[] = [
 export const ACTION_BUTTONS: ToolbarButtonDefinition[] = [
   {key: 'undo', title: 'Undo', iconSet: 'lucide', icon: 'undo', shortcut: 'Cmd+Z'},
   {key: 'redo', title: 'Redo', iconSet: 'lucide', icon: 'redo', shortcut: 'Cmd+Shift+Z'},
-  {key: 'clear-formatting', title: 'Clear formatting', iconSet: 'tabler', icon: 'eraser'},
 ];
