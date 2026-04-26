@@ -39,7 +39,6 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
   let content = children;
 
-  // if (leaf.kbd) content = <Kbd>{content}</Kbd>;
   if (leaf.kbd) content = <Key>{content}</Key>;
 
   if (leaf.ins) content = <ins className={insClass}>{content}</ins>;

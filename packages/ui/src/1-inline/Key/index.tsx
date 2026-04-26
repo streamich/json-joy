@@ -10,7 +10,7 @@ const keyClass = rule({
   bdrad: '.3em',
   lh: '1em',
   fz: '.75em',
-  ws: 'nowrap',
+  ws: 'pre',
   va: 'middle',
 });
 
