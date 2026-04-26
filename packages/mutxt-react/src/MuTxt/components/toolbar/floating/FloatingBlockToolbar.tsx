@@ -2,14 +2,14 @@ import * as React from 'react';
 import {ctx as scrollAreaCtx} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {ExpandableToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/ExpandableToolbar';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
-import {useMuTxtState} from '../../../context';
+import {useMuTxt} from '../../../context';
 import {FloatingBlockToolbarState} from './FloatingBlockToolbarState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
 export interface FloatingBlockToolbarProps {}
 
 export const FloatingBlockToolbar: React.FC<FloatingBlockToolbarProps> = () => {
-  const mutxt = useMuTxtState();
+  const mutxt = useMuTxt();
   const scrollArea = React.useContext(scrollAreaCtx) as ScrollState | null;
   const state = React.useMemo(() => new FloatingBlockToolbarState(mutxt, scrollArea), [mutxt, scrollArea]);
   const currentBlock = state.blockMeta();

@@ -3,7 +3,7 @@ import {PopupControlled} from '@jsonjoy.com/ui/lib/4-card/Popup/PopupControlled'
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
-import {useMuTxtState} from '../../../context';
+import {useMuTxt} from '../../../context';
 import {LinkToolbarPopup} from './LinkToolbarPopup';
 import {LinkButtonState} from './state';
 import {ctx} from './context';
@@ -21,7 +21,7 @@ export interface LinkToolbarButtonProps {
 
 export const LinkToolbarButton: React.FC<LinkToolbarButtonProps> = ({refToggle}) => {
   const [t] = useT();
-  const mutxt = useMuTxtState();
+  const mutxt = useMuTxt();
   const state = React.useMemo(() => new LinkButtonState(mutxt), [mutxt]);
   const handle = useAnchorPointHandle(popupAnchor);
   const canOpen = state.canOpen.use();

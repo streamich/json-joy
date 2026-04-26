@@ -49,9 +49,9 @@ const pathLinkClass = rule({
   },
 });
 
-export interface MuTxtFooterProps {}
+export interface EditorFooterProps {}
 
-export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
+export const EditorFooter: React.FC<EditorFooterProps> = () => {
   const styles = useStyles();
   const state = useMuTxt();
   const focused = state.focused.use();

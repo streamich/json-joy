@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextMenu';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
-import {useMuTxtState} from '../../../context';
+import {useMuTxt} from '../../../context';
 import {SlashMenuState} from './SlashMenuState';
 
 export interface SlashMenuProps {}
 
 export const SlashMenu: React.FC<SlashMenuProps> = () => {
-  const mutxt = useMuTxtState();
+  const mutxt = useMuTxt();
   const state = React.useMemo(() => new SlashMenuState(mutxt), [mutxt]);
 
   React.useEffect(() => {

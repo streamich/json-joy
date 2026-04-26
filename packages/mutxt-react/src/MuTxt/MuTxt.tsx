@@ -22,7 +22,7 @@ import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
-import {EditorToolbar} from './components/toolbar/EditorToolbar';
+import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {FloatingBlockToolbar} from './components/toolbar/floating/FloatingBlockToolbar';
 import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
 import {SlashMenu} from './components/toolbar/floating/SlashMenu';
@@ -250,7 +250,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   content = (
     <>
-      <EditorToolbar editor={editor} readOnly={readOnly} onVisualChange={() => state.sync(true)} />
+      <MuTxtHeader editor={editor} readOnly={readOnly} onVisualChange={() => state.sync(true)} />
       {content}
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
         <MuTxtFooter />

@@ -26,10 +26,10 @@ import {
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
-import {EmbedToolbarButton} from './EmbedToolbarButton';
+import {EmbedToolbarButton} from './embed/EmbedToolbarButton';
 import {LinkToolbarButton} from './link/LinkToolbarButton';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
-import {useMuTxtState} from '../../context';
+import {useMuTxt} from '../../context';
 
 const blockClass = rule({
   pos: 'relative',
@@ -45,14 +45,14 @@ const toolbarContainerClass = rule({
   h: '32px',
 });
 
-export interface EditorToolbarProps {
+export interface MuTxtHeaderProps {
   editor: Editor;
   readOnly?: boolean;
   onVisualChange: () => void;
 }
 
-export const EditorToolbar: React.FC<EditorToolbarProps> = ({editor, readOnly, onVisualChange}) => {
-  const state = useMuTxtState();
+export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVisualChange}) => {
+  const state = useMuTxt();
   const styles = useStyles();
   const toolbarVersion = state.version.use();
 

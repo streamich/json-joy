@@ -10,10 +10,10 @@ import {PopupControlled} from '@jsonjoy.com/ui/lib/4-card/Popup/PopupControlled'
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {anchorContext, useAnchorPointHandle} from '@jsonjoy.com/ui/lib/utils/popup/context';
-import {getActiveEmbedEntry, insertEmbed, normalizeEmbedUrl, removeEmbedAtPath, updateEmbedAtPath} from '../../behavior/embed';
-import {EmbedPreview} from '../blocks/EmbedElement';
-import {EditorContextPopup} from '../../chrome/EditorContextPopup';
-import {useMuTxtState} from '../../context';
+import {getActiveEmbedEntry, insertEmbed, normalizeEmbedUrl, removeEmbedAtPath, updateEmbedAtPath} from '../../../behavior/embed';
+import {EditorContextPopup} from '../../../chrome/EditorContextPopup';
+import {EmbedPreview} from '../../../components/blocks/EmbedElement';
+import {useMuTxt} from '../../../context';
 import type {Path, Editor} from 'slate';
 
 const popupAnchor = {center: true, gap: 12, topIf: 180};
@@ -49,7 +49,7 @@ export interface EmbedToolbarButtonProps {
 }
 
 export const EmbedToolbarButton: React.FC<EmbedToolbarButtonProps> = ({editor, readOnly, onVisualChange}) => {
-  const mutxt = useMuTxtState();
+  const mutxt = useMuTxt();
   const handle = useAnchorPointHandle(popupAnchor);
   const activeEmbedEntry = getActiveEmbedEntry(editor);
   const activeEmbed = activeEmbedEntry?.[0] ?? null;

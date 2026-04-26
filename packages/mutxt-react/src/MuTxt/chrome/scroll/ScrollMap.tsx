@@ -4,7 +4,7 @@ import {Marker, useScrollArea} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import {measureScrollMapMarkers} from '../../behavior/scroll-map';
-import {useMuTxtState} from '../../context';
+import {useMuTxt} from '../../context';
 import type {Editor} from 'slate';
 
 const selectionMarkerBlink = keyframes({
@@ -29,7 +29,7 @@ export interface ScrollMapProps {
 }
 
 export const ScrollMap: React.FC<ScrollMapProps> = ({editor}) => {
-  const state = useMuTxtState();
+  const state = useMuTxt();
   const styles = useStyles();
   const scrollArea = useScrollArea();
   const scrollHeight = useSyncStore(scrollArea.scrollHeight$);

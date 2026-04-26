@@ -3,7 +3,7 @@ import {ctx as scrollAreaCtx} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
-import {useMuTxtState} from '../../../context';
+import {useMuTxt} from '../../../context';
 import {FloatingToolbarState} from './FloatingToolbarState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
@@ -11,7 +11,7 @@ import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
 export interface FloatingToolbarProps {}
 
 export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
-  const mutxt = useMuTxtState();
+  const mutxt = useMuTxt();
   const readOnly = mutxt.readOnly.use();
   const scrollArea = React.useContext(scrollAreaCtx) as ScrollState | null;
   const clickAwayRef = useClickAway(() => {

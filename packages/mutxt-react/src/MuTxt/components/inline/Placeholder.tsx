@@ -3,7 +3,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import MuTxtLogo from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import type {RenderPlaceholderProps} from 'slate-react';
-import {useMuTxtState} from '../../context';
+import {useMuTxt} from '../../context';
 
 export const DEF_PLACEHOLDER = (
   <span style={{display: 'inline-flex', alignItems: 'center'}}>
@@ -22,7 +22,7 @@ export interface PlaceholderProps extends RenderPlaceholderProps {}
 export const Placeholder: React.FC<PlaceholderProps> = (props) => {
   const {attributes, children} = props;
   const styles = useStyles();
-  const mutxt = useMuTxtState();
+  const mutxt = useMuTxt();
 
   if (!children) return null;
   if (mutxt.api.block()?.type !== 'p') return null;
