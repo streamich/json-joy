@@ -1,5 +1,8 @@
 import * as React from 'react';
 import {rule, drule, useTheme} from 'nano-theme';
+import {Path, Range, type Text} from 'slate';
+import {ReactEditor, useSlateSelection} from 'slate-react';
+import {useMuTxt} from '../../context';
 
 const blockClass = drule({
   bg: '#222',
@@ -19,14 +22,23 @@ const endClass = rule({
 });
 
 export interface SpoilerProps {
+  text: Text;
   children: React.ReactNode;
 }
 
 export const Spoiler: React.FC<SpoilerProps> = (props) => {
-  const {children} = props;
+  const {text, children} = props;
   const theme = useTheme();
+  const mutxt = useMuTxt();
+  const selection = useSlateSelection();
 
   let isRevealed = false;
+  if (selection && Range.isCollapsed(selection)) {
+    try {
+      const path = ReactEditor.findPath(mutxt.editor, text);
+      if (Path.equals(selection.anchor.path, path)) isRevealed = true;
+    } catch {}
+  }
 
   const className =
     blockClass({

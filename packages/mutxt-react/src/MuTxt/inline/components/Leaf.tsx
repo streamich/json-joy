@@ -20,7 +20,7 @@ export interface LeafProps extends RenderLeafProps {
   leaf: CustomText & CodeSyntaxDecoration;
 }
 
-export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
+export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) => {
   const styles = useStyles();
   const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
   let content = children;
@@ -32,7 +32,7 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf}) => {
   if (leaf.overline) content = <span style={{textDecoration: 'overline'}}>{content}</span>;
   if (leaf.strikethrough) content = <span style={{textDecoration: 'line-through'}}>{content}</span>;
   if (leaf.mark) content = <mark>{content}</mark>;
-  if (leaf.spoiler) content = <Spoiler>{content}</Spoiler>
+  if (leaf.spoiler) content = <Spoiler text={text}>{content}</Spoiler>;
   if (leaf.code) {
     content = (
       <code
