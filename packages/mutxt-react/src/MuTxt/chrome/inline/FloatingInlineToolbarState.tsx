@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
-import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+// import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
-import {isMarkActive, toggleMark} from '../../../behavior';
+import {isMarkActive, toggleMark} from '../../behavior';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import type {MuTxtState} from '../../../state/MuTxtState';
+import type {MuTxtState} from '../../state/MuTxtState';
 import type {Editor} from 'slate';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
@@ -15,14 +15,14 @@ const TOOLBAR_VIEWPORT_OVERFLOW_LIMIT = 50;
 
 const offscreenPoint = (): AnchorPoint => ({x: 0, y: 0, dx: 0, dy: -1});
 
-export class FloatingToolbarState {
+export class FloatingInlineToolbarState {
   public readonly boldActive: rsync.ReactComputed<boolean>;
   public readonly italicActive: rsync.ReactComputed<boolean>;
   public readonly underlineActive: rsync.ReactComputed<boolean>;
   public readonly codeActive: rsync.ReactComputed<boolean>;
   public readonly linkSelected = rsync.val(false);
-  public readonly point: rsync.ReactComputed<AnchorPoint>;
-  public readonly visible: rsync.ReactComputed<boolean>;
+  // public readonly point: rsync.ReactComputed<AnchorPoint>;
+  // public readonly visible: rsync.ReactComputed<boolean>;
 
   public readonly menu: MenuItem;
 
@@ -45,34 +45,34 @@ export class FloatingToolbarState {
     this.italicActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'italic'));
     this.underlineActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'underline'));
     this.codeActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'code'));
-    this.point = rsync.comp(
-      [mutxt.selection, mutxt.version, mutxt.scrollVersion, this.toolbarInteracting],
-      ([selection, _version, _scrollVersion, toolbarInteracting]) => {
-        if (selection) {
-          const point = this.anchorPoint(selection);
-          this.retainedPoint = point;
-          return point;
-        }
-        return toolbarInteracting ? this.retainedPoint : offscreenPoint();
-      },
-    );
-    this.visible = rsync.comp(
-      [
-        mutxt.selection,
-        mutxt.focused,
-        mutxt.version,
-        mutxt.scrollVersion,
-        this.point,
-        this.toolbarFocused,
-        this.pointerDownOutsideToolbar,
-        this.toolbarInteracting,
-      ],
-      ([selection, focused, _version, _scrollVersion, point, toolbarFocused, pointerDownOutsideToolbar, toolbarInteracting]) =>
-        (!!selection || toolbarInteracting) &&
-        (focused || toolbarFocused || toolbarInteracting) &&
-        !pointerDownOutsideToolbar &&
-        this.isToolbarWithinViewport(point),
-    );
+    // this.point = rsync.comp(
+    //   [mutxt.selection, mutxt.version, mutxt.scrollVersion, this.toolbarInteracting],
+    //   ([selection, _version, _scrollVersion, toolbarInteracting]) => {
+    //     if (selection) {
+    //       const point = this.anchorPoint(selection);
+    //       this.retainedPoint = point;
+    //       return point;
+    //     }
+    //     return toolbarInteracting ? this.retainedPoint : offscreenPoint();
+    //   },
+    // );
+    // this.visible = rsync.comp(
+    //   [
+    //     mutxt.selection,
+    //     mutxt.focused,
+    //     mutxt.version,
+    //     mutxt.scrollVersion,
+    //     this.point,
+    //     this.toolbarFocused,
+    //     this.pointerDownOutsideToolbar,
+    //     this.toolbarInteracting,
+    //   ],
+    //   ([selection, focused, _version, _scrollVersion, point, toolbarFocused, pointerDownOutsideToolbar, toolbarInteracting]) =>
+    //     (!!selection || toolbarInteracting) &&
+    //     (focused || toolbarFocused || toolbarInteracting) &&
+    //     !pointerDownOutsideToolbar &&
+    //     this.isToolbarWithinViewport(point),
+    // );
 
     const exec = (fn: () => void) => (event: React.MouseEvent) => {
       event.preventDefault();

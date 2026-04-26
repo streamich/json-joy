@@ -3,14 +3,14 @@ import {ctx as scrollAreaCtx} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/CaretToolbar';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
-import {useMuTxt} from '../../../context';
-import {FloatingToolbarState} from './FloatingToolbarState';
+import {useMuTxt} from '../../context';
+import {FloatingInlineToolbarState} from './FloatingInlineToolbarState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
 
-export interface FloatingToolbarProps {}
+export interface FloatingInlineToolbarProps {}
 
-export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
+export const FloatingInlineToolbar: React.FC<FloatingInlineToolbarProps> = () => {
   const mutxt = useMuTxt();
   const readOnly = mutxt.readOnly.use();
   const scrollArea = React.useContext(scrollAreaCtx) as ScrollState | null;
@@ -19,7 +19,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = () => {
   });
 
   const state = React.useMemo(
-    () => new FloatingToolbarState(mutxt, scrollArea),
+    () => new FloatingInlineToolbarState(mutxt, scrollArea),
     [mutxt, scrollArea],
   );
   React.useEffect(() => state.start(), [state]);
