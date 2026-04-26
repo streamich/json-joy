@@ -25,7 +25,7 @@ import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {FloatingBlockToolbar} from './components/toolbar/floating/FloatingBlockToolbar';
 import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
-import {SlashMenu} from './components/toolbar/floating/SlashMenu';
+import {SlashMenu} from './chrome/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
