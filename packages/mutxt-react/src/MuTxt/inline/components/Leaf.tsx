@@ -33,6 +33,8 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   if (leaf.strikethrough) content = <span style={{textDecoration: 'line-through'}}>{content}</span>;
   if (leaf.mark) content = <mark>{content}</mark>;
   if (leaf.spoiler) content = <Spoiler text={text}>{content}</Spoiler>;
+  if (leaf.sup) content = <sup>{content}</sup>;
+  else if (leaf.sub) content = <sub>{content}</sub>;
   if (leaf.code) {
     content = (
       <code

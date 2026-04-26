@@ -1,15 +1,16 @@
 import * as React from 'react';
 import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
-import type {MenuItem} from '../types';
+import type {MarkFormat, MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import {formatKeys} from '../util/keys';
 
 export interface InlineMenuItem extends MenuItem {
-  mark: string;
+  mark: MarkFormat;
 }
 
+// Formatting: common
 const BoldIcon = makeIcon({set: 'radix', icon: 'font-bold', width: 15, height: 15});
 const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic', width: 16, height: 16});
 const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline', width: 16, height: 16});
@@ -18,9 +19,10 @@ const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough', width:
 const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight', width: 16, height: 16});
 const SpoilerIcon = makeIcon({set: 'tabler', icon: 'lock-password', width: 16, height: 16});
 
-
+// Formatting: technical
 const CodeIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
-
+const SupIcon = makeIcon({set: 'tabler', icon: 'superscript', width: 16, height: 16});
+const SubIcon = makeIcon({set: 'tabler', icon: 'subscript', width: 16, height: 16});
 
 
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
@@ -54,32 +56,15 @@ export class InlineMenu implements UiLifeCycles {
   }
 
   public menuFmt(): MenuItem {
-    const technical: MenuItem = {
-      id: 'fmt-technical',
-      name: 'Technical',
-      sepBefore: true,
-      expand: 8,
-      children: [],
-    };
-    const artistic: MenuItem = {
-      id: 'fmt-artistic',
-      name: 'Artistic',
-      sepBefore: true,
-      expand: 8,
-      children: [],
-    };
     const formatting: MenuItem = {
       name: 'Formatting',
       expandChild: 0,
       // preview: this.recent,
-      children: [] as MenuItem[],
+      children: [
+        this.menuFmtCommon(),
+        this.menuFmtTechnical(),
+      ] as MenuItem[],
     };
-    const children = formatting.children!;
-    children.push(this.menuFmtCommon());
-    technical.sepBefore = false;
-    if (technical.children?.length) children.push(technical);
-    else artistic.sepBefore = false;
-    if (artistic.children?.length) children.push(artistic);
     return formatting;
   }
 
@@ -94,7 +79,6 @@ export class InlineMenu implements UiLifeCycles {
         this.itemUnderline(),
         this.itemStrikethrough(),
         this.itemOverline(),
-        this.itemCode(),
         this.itemHighlight(),
         this.itemSpoiler(),
       ],
@@ -162,7 +146,7 @@ export class InlineMenu implements UiLifeCycles {
   }
   public itemHighlight(): InlineMenuItem {
     return {
-      mark: 'highlight',
+      mark: 'mark',
       name: 'Highlight',
       icon: () => <HighlightIcon />,
       onSelect: () => {
@@ -181,16 +165,80 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
 
+  public menuFmtTechnical(): MenuItem {
+    return {
+      id: 'fmt-technical',
+      name: 'Technical',
+      expand: 8,
+      sepBefore: true,
+      children: [
+        this.itemCode(),
+        this.itemSup(),
+        this.itemSub(),
+      ],
+    };
+  }
+
+          //     {
+          //       name: 'Math',
+          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="math-integral-x" />,
+          //       onSelect: () => {},
+          //     },
+          //     {
+          //       name: 'Superscript',
+          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="superscript" />,
+          //       onSelect: () => {},
+          //     },
+          //     {
+          //       name: 'Subscript',
+          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="subscript" />,
+          //       onSelect: () => {},
+          //     },
+          //     {
+          //       name: 'Keyboard key',
+          //       icon: () => <Iconista width={16} height={16} set="lucide" icon="keyboard" />,
+          //       onSelect: () => {},
+          //     },
+          //     {
+          //       name: 'Insertion',
+          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-plus" />,
+          //       onSelect: () => {},
+          //     },
+          //     {
+          //       name: 'Deletion',
+          //       icon: () => <Iconista width={16} height={16} set="tabler" icon="pencil-minus" />,
+          //       onSelect: () => {},
+          //     },
 
   public itemCode(): InlineMenuItem {
     return {
       mark: 'code',
-      name: 'Inline code',
+      name: 'Code',
       icon: () => <CodeIcon width={16} height={16} />,
       right: () => <Sidetip small>⌘ E</Sidetip>,
       keys: ['⌘', 'e'],
       onSelect: () => {
         this.state.api.toggleMark('code');
+      },
+    };
+  }
+  public itemSup(): InlineMenuItem {
+    return {
+      mark: 'sup',
+      name: 'Superscript',
+      icon: () => <SupIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('sup');
+      },
+    };
+  }
+  public itemSub(): InlineMenuItem {
+    return {
+      mark: 'sub',
+      name: 'Subscript',
+      icon: () => <SubIcon />,
+      onSelect: () => {
+        this.state.api.toggleMark('sub');
       },
     };
   }

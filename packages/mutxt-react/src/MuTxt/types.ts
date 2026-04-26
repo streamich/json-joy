@@ -6,7 +6,7 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 export {MenuItem};
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
-export type MarkFormat = 'bold' | 'italic' | 'underline' | 'strikethrough' | 'overline' | 'code' | 'mark' | 'spoiler';
+export type MarkFormat = 'bold' | 'italic' | 'underline' | 'strikethrough' | 'overline' | 'code' | 'mark' | 'spoiler' | 'sup' | 'sub';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type ListElementType = 'ul' | 'ol' | 'checklist';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
@@ -27,6 +27,8 @@ export interface CustomText {
   code?: boolean;
   mark?: boolean;
   spoiler?: boolean;
+  sup?: boolean;
+  sub?: boolean;
   a?: LinkAttributes;
 }
 
