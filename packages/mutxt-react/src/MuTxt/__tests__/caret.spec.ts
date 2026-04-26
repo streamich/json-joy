@@ -1,5 +1,5 @@
 import {createEditor} from 'slate';
-import {getCaretPathInfo} from '../util';
+import {getCaretPathInfo} from '../behavior/path-info';
 import type {SlateEditorDocument} from '../types';
 
 const createTestEditor = (doc: SlateEditorDocument) => {

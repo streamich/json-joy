@@ -1,6 +1,7 @@
 import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 import {getActiveAlignment} from '../behavior';
-import {getCaretPathInfo, getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
+import {getCaretPathInfo} from '../behavior/path-info';
+import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {MuTxtApi} from './MuTxtApi';
 import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
