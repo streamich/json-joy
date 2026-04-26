@@ -4,6 +4,7 @@ import {rule} from 'nano-theme';
 import {useAnchorPoint} from './context';
 import useMountedState from 'react-use/lib/useMountedState';
 import {Portal} from '../portal';
+import {useHiddenTrace} from '../../context';
 
 const positionClass = rule({
   d: 'block',
@@ -34,6 +35,7 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, ch
   const timer = React.useRef<unknown>(null);
   const ro = React.useRef<ResizeObserver | null>(null);
   const elRef = React.useRef<HTMLDivElement | null>(null);
+  const hidden = useHiddenTrace();
 
   const applyStyle = React.useCallback(() => {
     const el = elRef.current;
@@ -60,6 +62,18 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, ch
     applyStyle();
   });
 
+  React.useEffect(() => {
+    if (!hidden) {
+      requestAnimationFrame(() => {
+        if (!isMounted()) return;
+        setTimeout(() => {
+          if (!isMounted()) return;
+          applyStyle();
+        }, 100);
+      });
+    }
+  }, [hidden]);
+
   const ref = React.useCallback(
     (el: HTMLDivElement | null) => {
       elRef.current = el;
@@ -81,6 +95,8 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, ch
     },
     [applyStyle, isMounted],
   );
+
+  if (hidden) return;
 
   return (
     <Portal>
