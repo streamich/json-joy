@@ -23,7 +23,7 @@ import {ScrollMap} from './chrome/scroll/ScrollMap';
 import {Leaf} from './components/inline/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './components/inline/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
-import {FloatingBlockToolbar} from './components/toolbar/floating/FloatingBlockToolbar';
+import {FloatingBlockToolbar} from './chrome/block/FloatingBlockToolbar';
 import {FloatingToolbar} from './components/toolbar/floating/FloatingToolbar';
 import {SlashMenu} from './chrome/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';

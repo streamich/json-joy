@@ -10,16 +10,16 @@ import {
   isAlignmentActive,
   setAlignment,
   toggleBlock,
-} from '../../../behavior';
+} from '../../behavior';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import type {MuTxtState} from '../../../state/MuTxtState';
+import type {MuTxtState} from '../../state/MuTxtState';
 import type {
   BlockFormat,
   CustomElement,
   ListElementType,
   ToolbarButtonDefinition,
-} from '../../../types';
+} from '../../types';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
 const TOOLBAR_HEIGHT = 32;

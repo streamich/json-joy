@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ctx as scrollAreaCtx} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {ExpandableToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/ExpandableToolbar';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
-import {useMuTxt} from '../../../context';
+import {useMuTxt} from '../../context';
 import {FloatingBlockToolbarState} from './FloatingBlockToolbarState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
