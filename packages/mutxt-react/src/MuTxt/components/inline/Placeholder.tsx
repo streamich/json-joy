@@ -7,7 +7,7 @@ import {useMuTxt} from '../../context';
 
 export const DEF_PLACEHOLDER = (
   <span style={{display: 'inline-flex', alignItems: 'center'}}>
-    Start writing in your <MuTxtLogo style={{margin: '-8px 0'}} /> document or type "/" for commands...
+    Start writing in your <MuTxtLogo style={{margin: '-8px 0'}} /> document or press "/" for commands...
   </span>
 );
 

@@ -3,6 +3,7 @@ import {ReactEditor} from 'slate-react';
 import {CustomElement, MarkFormat} from '../types';
 import {isListType} from '../behavior';
 import {typeToLabel} from '../util/typeToLabel';
+import {isEmptyDoc} from '../util';
 import type {MuTxtState} from './MuTxtState';
 import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
@@ -113,5 +114,11 @@ export class MuTxtApi {
     const element = this.block(at);
     if (!element) return 'Paragraph';
     return typeToLabel(element.type) || 'Paragraph';
+  }
+
+  // ----------------------------------------------------------------- Document
+
+  public isEmpty(): boolean {
+    return isEmptyDoc(this.editor);
   }
 }

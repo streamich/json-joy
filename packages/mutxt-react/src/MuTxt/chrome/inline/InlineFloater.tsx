@@ -4,31 +4,25 @@ import {CaretToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/Caret
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
 import {useMuTxt} from '../../context';
-import {FloatingInlineToolbarState} from './FloatingInlineToolbarState';
-import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
+import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 
-export interface FloatingInlineToolbarProps {}
+export interface InlineFloaterProps {}
 
-export const FloatingInlineToolbar: React.FC<FloatingInlineToolbarProps> = () => {
+export const InlineFloater: React.FC<InlineFloaterProps> = () => {
   const mutxt = useMuTxt();
+  const state = mutxt.inline;
   const readOnly = mutxt.readOnly.use();
   const scrollArea = React.useContext(scrollAreaCtx) as ScrollState | null;
   const clickAwayRef = useClickAway(() => {
     // console.log('CLICK AWAY');
   });
-
-  const state = React.useMemo(
-    () => new FloatingInlineToolbarState(mutxt, scrollArea),
-    [mutxt, scrollArea],
-  );
-  React.useEffect(() => state.start(), [state]);
   mutxt.version.use();
   // const pointerDownOutsideToolbar = state.pointerDownOutsideToolbar.use();
 
   // const visible = state.visible.use();
   const point = state.anchorPoint();
-  console.log(point, state.menu);
+  // console.log(point, state.menu);
 
   if (!point) return;
 
@@ -51,7 +45,8 @@ export const FloatingInlineToolbar: React.FC<FloatingInlineToolbarProps> = () =>
           // onBlurCapture={state.onToolbarBlurCapture}
         >
           {/* <ToolbarMenu menu={state.menu} disabled={readOnly} compact /> */}
-          <CaretToolbar menu={state.menu} expandPoint={point} />
+          {/* <CaretToolbar menu={state.menu} expandPoint={point} /> */}
+          toolbar....
         </div>
       </MoveToViewport>
     </PositionAtPoint>

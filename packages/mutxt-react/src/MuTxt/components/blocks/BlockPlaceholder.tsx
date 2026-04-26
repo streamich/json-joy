@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {typeToLabel} from '../../util/typeToLabel';
 import {useSelected} from 'slate-react';
+import {useMuTxt} from '../../context';
 import type {CustomElement} from '../../types';
 
 const blockPlaceholderClass = rule({
@@ -20,21 +21,28 @@ export interface BlockPlaceholderProps {
   element: CustomElement;
 }
 
-const getPlaceholderText = (element: CustomElement): string => {
+const getPlaceholderText = (element: CustomElement): React.ReactNode => {
   if (element.type === 'p') return 'Type here or press "/" for options...';
   return typeToLabel(element.type);
 };
 
 export const BlockPlaceholder: React.FC<BlockPlaceholderProps> = ({element}) => {
+  const mutxt = useMuTxt();
   const styles = useStyles();
   const isSelected = useSelected();
-  const placeholderText = getPlaceholderText(element);
+  const selection = mutxt.selection.use();
 
-  if (!isSelected || !placeholderText) return null;
+  if (selection) return;
+  const isEmpty = mutxt.api.isEmpty();
+  if (isEmpty) return;
+
+  const placeholder = getPlaceholderText(element);
+
+  if (!isSelected || !placeholder) return;
 
   return (
     <span contentEditable={false} className={blockPlaceholderClass} style={{color: styles.g(0.5)}}>
-      {placeholderText}
+      {placeholder}
     </span>
   );
 };

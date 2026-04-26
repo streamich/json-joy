@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rsync} from '@jsonjoy.com/ui';
+import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 // import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
 import {isMarkActive, toggleMark} from '../../behavior';
@@ -15,18 +15,18 @@ const TOOLBAR_VIEWPORT_OVERFLOW_LIMIT = 50;
 
 const offscreenPoint = (): AnchorPoint => ({x: 0, y: 0, dx: 0, dy: -1});
 
-export class FloatingInlineToolbarState {
-  public readonly boldActive: rsync.ReactComputed<boolean>;
-  public readonly italicActive: rsync.ReactComputed<boolean>;
-  public readonly underlineActive: rsync.ReactComputed<boolean>;
-  public readonly codeActive: rsync.ReactComputed<boolean>;
-  public readonly linkSelected = rsync.val(false);
+export class InlineState implements UiLifeCycles {
+  // public readonly boldActive: rsync.ReactComputed<boolean>;
+  // public readonly italicActive: rsync.ReactComputed<boolean>;
+  // public readonly underlineActive: rsync.ReactComputed<boolean>;
+  // public readonly codeActive: rsync.ReactComputed<boolean>;
+  // public readonly linkSelected = rsync.val(false);
   // public readonly point: rsync.ReactComputed<AnchorPoint>;
   // public readonly visible: rsync.ReactComputed<boolean>;
 
-  public readonly menu: MenuItem;
+  // public readonly menu: MenuItem;
 
-  private readonly editor: Editor;
+  // private readonly editor: Editor;
   public readonly pointerDownOutsideToolbar = rsync.val(false);
   private readonly toolbarFocused = rsync.val(false);
   private readonly toolbarInteracting = rsync.val(false);
@@ -40,11 +40,11 @@ export class FloatingInlineToolbarState {
     private readonly mutxt: MuTxtState,
     private readonly scrollArea: ScrollState | null,
   ) {
-    const editor = this.editor = mutxt.editor;
-    this.boldActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'bold'));
-    this.italicActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'italic'));
-    this.underlineActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'underline'));
-    this.codeActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'code'));
+    // const editor = this.editor = mutxt.editor;
+    // this.boldActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'bold'));
+    // this.italicActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'italic'));
+    // this.underlineActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'underline'));
+    // this.codeActive = rsync.comp([mutxt.version], () => isMarkActive(editor, 'code'));
     // this.point = rsync.comp(
     //   [mutxt.selection, mutxt.version, mutxt.scrollVersion, this.toolbarInteracting],
     //   ([selection, _version, _scrollVersion, toolbarInteracting]) => {
@@ -74,17 +74,17 @@ export class FloatingInlineToolbarState {
     //     this.isToolbarWithinViewport(point),
     // );
 
-    const exec = (fn: () => void) => (event: React.MouseEvent) => {
-      event.preventDefault();
-      this.beginToolbarInteraction();
-      fn();
-      ReactEditor.focus(editor as ReactEditor);
-      mutxt.setFocused(true);
-      this.mutxt.sync(false)
-      this.endToolbarInteraction();
-    };
+    // const exec = (fn: () => void) => (event: React.MouseEvent) => {
+    //   event.preventDefault();
+    //   this.beginToolbarInteraction();
+    //   fn();
+    //   ReactEditor.focus(editor as ReactEditor);
+    //   mutxt.setFocused(true);
+    //   this.mutxt.sync(false)
+    //   this.endToolbarInteraction();
+    // };
 
-    this.menu = this.mutxt.menu.inline.build();
+    // this.menu = this.mutxt.menu.inline.build();
     // this.menu = {
     //   name: 'floating-toolbar',
     //   expand: 1e3,
@@ -130,26 +130,26 @@ export class FloatingInlineToolbarState {
   }
 
   public readonly start = (): (() => void) => {
-    document.addEventListener('pointerdown', this.onDocumentPointerDown, true);
-    document.addEventListener('pointerup', this.onDocumentPointerUp, true);
-    document.addEventListener('pointercancel', this.onDocumentPointerUp, true);
-    document.addEventListener('scroll', this.onViewportChange, true);
-    window.addEventListener('resize', this.onViewportChange);
-    this.syncToolbarFocus();
+    // document.addEventListener('pointerdown', this.onDocumentPointerDown, true);
+    // document.addEventListener('pointerup', this.onDocumentPointerUp, true);
+    // document.addEventListener('pointercancel', this.onDocumentPointerUp, true);
+    // document.addEventListener('scroll', this.onViewportChange, true);
+    // window.addEventListener('resize', this.onViewportChange);
+    // this.syncToolbarFocus();
     return () => {
-      if (this.interactionFrame !== null) {
-        cancelAnimationFrame(this.interactionFrame);
-        this.interactionFrame = null;
-      }
-      if (this.refreshFrame !== null) {
-        cancelAnimationFrame(this.refreshFrame);
-        this.refreshFrame = null;
-      }
-      document.removeEventListener('pointerdown', this.onDocumentPointerDown, true);
-      document.removeEventListener('pointerup', this.onDocumentPointerUp, true);
-      document.removeEventListener('pointercancel', this.onDocumentPointerUp, true);
-      document.removeEventListener('scroll', this.onViewportChange, true);
-      window.removeEventListener('resize', this.onViewportChange);
+      // if (this.interactionFrame !== null) {
+      //   cancelAnimationFrame(this.interactionFrame);
+      //   this.interactionFrame = null;
+      // }
+      // if (this.refreshFrame !== null) {
+      //   cancelAnimationFrame(this.refreshFrame);
+      //   this.refreshFrame = null;
+      // }
+      // document.removeEventListener('pointerdown', this.onDocumentPointerDown, true);
+      // document.removeEventListener('pointerup', this.onDocumentPointerUp, true);
+      // document.removeEventListener('pointercancel', this.onDocumentPointerUp, true);
+      // document.removeEventListener('scroll', this.onViewportChange, true);
+      // window.removeEventListener('resize', this.onViewportChange);
     };
   };
 
@@ -172,57 +172,57 @@ export class FloatingInlineToolbarState {
   //   queueMicrotask(this.syncToolbarFocus);
   // };
 
-  private readonly onDocumentPointerDown = (event: PointerEvent): void => {
-    const target = event.target;
-    const insideToolbar = !!this.toolbarElement && target instanceof Node && this.toolbarElement.contains(target);
-    this.pointerDownOutsideToolbar.set(!insideToolbar);
-    if (insideToolbar) {
-      this.beginToolbarInteraction();
-      this.syncToolbarFocus();
-    }
-  };
+  // private readonly onDocumentPointerDown = (event: PointerEvent): void => {
+  //   const target = event.target;
+  //   const insideToolbar = !!this.toolbarElement && target instanceof Node && this.toolbarElement.contains(target);
+  //   this.pointerDownOutsideToolbar.set(!insideToolbar);
+  //   if (insideToolbar) {
+  //     this.beginToolbarInteraction();
+  //     this.syncToolbarFocus();
+  //   }
+  // };
 
-  private readonly onDocumentPointerUp = (): void => {
-    this.pointerDownOutsideToolbar.set(false);
-    this.endToolbarInteraction();
-    this.syncToolbarFocus();
-  };
+  // private readonly onDocumentPointerUp = (): void => {
+  //   this.pointerDownOutsideToolbar.set(false);
+  //   this.endToolbarInteraction();
+  //   this.syncToolbarFocus();
+  // };
 
-  private readonly onViewportChange = (): void => {
-    if (this.refreshFrame !== null) return;
-    this.refreshFrame = window.requestAnimationFrame(() => {
-      this.refreshFrame = null;
-      this.viewportVersion.next(this.viewportVersion.value + 1);
-    });
-  };
+  // private readonly onViewportChange = (): void => {
+  //   if (this.refreshFrame !== null) return;
+  //   this.refreshFrame = window.requestAnimationFrame(() => {
+  //     this.refreshFrame = null;
+  //     this.viewportVersion.next(this.viewportVersion.value + 1);
+  //   });
+  // };
 
-  private readonly beginToolbarInteraction = (): void => {
-    if (this.interactionFrame !== null) {
-      cancelAnimationFrame(this.interactionFrame);
-      this.interactionFrame = null;
-    }
-    this.toolbarInteracting.set(true);
-    this.pointerDownOutsideToolbar.set(false);
-  };
+  // private readonly beginToolbarInteraction = (): void => {
+  //   if (this.interactionFrame !== null) {
+  //     cancelAnimationFrame(this.interactionFrame);
+  //     this.interactionFrame = null;
+  //   }
+  //   this.toolbarInteracting.set(true);
+  //   this.pointerDownOutsideToolbar.set(false);
+  // };
 
-  private readonly endToolbarInteraction = (): void => {
-    if (typeof window === 'undefined') {
-      this.toolbarInteracting.set(false);
-      return;
-    }
-    if (this.interactionFrame !== null) cancelAnimationFrame(this.interactionFrame);
-    this.interactionFrame = window.requestAnimationFrame(() => {
-      this.interactionFrame = window.requestAnimationFrame(() => {
-        this.interactionFrame = null;
-        this.toolbarInteracting.set(false);
-        this.syncToolbarFocus();
-      });
-    });
-  };
+  // private readonly endToolbarInteraction = (): void => {
+  //   if (typeof window === 'undefined') {
+  //     this.toolbarInteracting.set(false);
+  //     return;
+  //   }
+  //   if (this.interactionFrame !== null) cancelAnimationFrame(this.interactionFrame);
+  //   this.interactionFrame = window.requestAnimationFrame(() => {
+  //     this.interactionFrame = window.requestAnimationFrame(() => {
+  //       this.interactionFrame = null;
+  //       this.toolbarInteracting.set(false);
+  //       this.syncToolbarFocus();
+  //     });
+  //   });
+  // };
 
-  private readonly syncToolbarFocus = (): void => {
-    this.toolbarFocused.set(!!this.toolbarElement?.contains(document.activeElement));
-  };
+  // private readonly syncToolbarFocus = (): void => {
+  //   this.toolbarFocused.set(!!this.toolbarElement?.contains(document.activeElement));
+  // };
 
   public anchorPoint(): AnchorPoint | undefined {
     const mutxt = this.mutxt;
@@ -230,7 +230,7 @@ export class FloatingInlineToolbarState {
     if (!selection) return;
     // mutxt.api.focusRect();
     try {
-      const domRange = ReactEditor.toDOMRange(this.editor as ReactEditor, selection);
+      const domRange = ReactEditor.toDOMRange(mutxt.editor as ReactEditor, selection);
       const selectionRect = domRange.getBoundingClientRect();
       const focusRect = this.getFocusCaretRect() ?? selectionRect;
       const x = focusRect.width > 0 ? focusRect.left + focusRect.width / 2 : focusRect.left;
@@ -242,22 +242,22 @@ export class FloatingInlineToolbarState {
     }
   }
 
-  private isToolbarWithinViewport(point: AnchorPoint): boolean {
-    if (!this.scrollArea?.viewportEl) return true;
-    if (typeof window === 'undefined' || typeof document === 'undefined') return true;
-    try {
-      const viewportRect = this.scrollArea.viewportEl.getBoundingClientRect();
-      const toolbarHeight = this.toolbarElement?.getBoundingClientRect().height || TOOLBAR_HEIGHT;
-      const top = point.dy < 0 ? point.y - toolbarHeight : point.y;
-      const bottom = point.dy < 0 ? point.y : point.y + toolbarHeight;
-      const topOverflow = Math.max(viewportRect.top - top, 0);
-      const bottomOverflow = Math.max(bottom - viewportRect.bottom, 0);
+  // private isToolbarWithinViewport(point: AnchorPoint): boolean {
+  //   if (!this.scrollArea?.viewportEl) return true;
+  //   if (typeof window === 'undefined' || typeof document === 'undefined') return true;
+  //   try {
+  //     const viewportRect = this.scrollArea.viewportEl.getBoundingClientRect();
+  //     const toolbarHeight = this.toolbarElement?.getBoundingClientRect().height || TOOLBAR_HEIGHT;
+  //     const top = point.dy < 0 ? point.y - toolbarHeight : point.y;
+  //     const bottom = point.dy < 0 ? point.y : point.y + toolbarHeight;
+  //     const topOverflow = Math.max(viewportRect.top - top, 0);
+  //     const bottomOverflow = Math.max(bottom - viewportRect.bottom, 0);
 
-      return topOverflow <= TOOLBAR_VIEWPORT_OVERFLOW_LIMIT && bottomOverflow <= TOOLBAR_VIEWPORT_OVERFLOW_LIMIT;
-    } catch {
-      return false;
-    }
-  }
+  //     return topOverflow <= TOOLBAR_VIEWPORT_OVERFLOW_LIMIT && bottomOverflow <= TOOLBAR_VIEWPORT_OVERFLOW_LIMIT;
+  //   } catch {
+  //     return false;
+  //   }
+  // }
 
   private getFocusCaretRect(): DOMRect | null {
     const nativeSelection = window.getSelection();

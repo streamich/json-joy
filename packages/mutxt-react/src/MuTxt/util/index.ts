@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement, Node, Path, Range, Text} from 'slate';
+import {Editor, Element as SlateElement, Node, Path, Range, Text, Descendant} from 'slate';
 import {getActiveEmbed} from './../behavior/embed';
 import {getLinkAttributes} from './../behavior/link';
 import type {CustomElement, CustomText} from '../types';
@@ -118,10 +118,27 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
 export const pluralize = (count: number, singular: string, plural = singular + 's'): string =>
   `${Intl.NumberFormat().format(count)} ${count === 1 ? singular : plural}`;
 
-export const isEmptyBlock = (element: SlateElement): boolean => {
+export const isEmptyText = (child: Text | CustomText): boolean => {
+  return Text.isText(child) && !child.text && Object.keys(child).length === 1;
+};
+
+export const isEmptyBlock = (element: CustomElement): boolean => {
   const children = element.children;
   if (!children || children.length === 0) return true;
   if (children.length > 1) return false;
   const child = children[0];
-  return Text.isText(child) && !child.text && Object.keys(child).length === 1;
+  if ('children' in child) return false;
+  return isEmptyText(child);
+};
+
+export const isEmptyDoc = (editor: Editor): boolean => {
+    const children = editor.children;
+    if (!children) return true;
+    const length = children.length;
+    if (length === 0) return true;
+    if (length > 1) return false;
+    const firstChild = children[0];
+    if (firstChild.type !== 'p') return false;
+    if (!firstChild.children) return true;
+    return isEmptyBlock(firstChild);
 };
