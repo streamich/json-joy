@@ -214,6 +214,22 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
       Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>);
     }
   };
+
+  // Inside a code-block, paste raw text.
+  const reactEditor = editor as Editor & {insertData?: (data: DataTransfer) => void};
+  const {insertData} = reactEditor;
+  if (insertData) {
+    reactEditor.insertData = (data: DataTransfer) => {
+      if (isBlockActive(editor, 'code-block')) {
+        const text = data.getData('text/plain');
+        if (text) {
+          Editor.insertText(editor, text);
+          return;
+        }
+      }
+      insertData(data);
+    };
+  }
   return editor;
 };
 
