@@ -1,6 +1,7 @@
 import {rsync} from '@jsonjoy.com/ui';
 import {flushSync} from 'react-dom';
-import type {Editor} from 'slate';
+import {ReactEditor} from 'slate-react';
+import {Transforms, type Editor, type Range} from 'slate';
 import {
   getActiveLink,
   normalizeLinkHref,
@@ -23,19 +24,21 @@ export class LinkButtonState {
    *  popup opens — by then the element would be detached and its
    *  `getBoundingClientRect()` would return zeros. */
   public readonly anchorRect = rsync.val<DOMRect | null>(null);
+  /** Snapshot of the editor selection when the popup opens. */
+  public readonly rangeSnapshot = rsync.val<Range | null>(null);
 
   private readonly editor: Editor;
   constructor(
-    public readonly state: MuTxtState,
+    public readonly mutxt: MuTxtState,
   ) {
-    const editor = this.editor = state.editor;
-    this.activeLink = rsync.comp([state.cursor], () => getActiveLink(editor));
+    const editor = this.editor = mutxt.editor;
+    this.activeLink = rsync.comp([mutxt.cursor], () => getActiveLink(editor));
     this.canOpen = rsync.comp(
-      [state.readOnly, state.selection, this.activeLink],
+      [mutxt.readOnly, mutxt.selection, this.activeLink],
       ([readOnly, selection, activeLink]) => !readOnly && (!!selection || !!activeLink),
     );
     this.selected = rsync.comp(
-      [state.readOnly, this.open, this.activeLink],
+      [mutxt.readOnly, this.open, this.activeLink],
       ([readOnly, open, activeLink]) => !readOnly && (open || !!activeLink),
     );
   }
@@ -54,16 +57,50 @@ export class LinkButtonState {
     this.anchorRect.set(el ? el.getBoundingClientRect() : null);
   };
 
+  public readonly setAnchorFromSelection = (): void => {
+    try {
+      const editor = this.editor as ReactEditor;
+      const sel = editor.selection;
+      if (!sel) {
+        this.anchorRect.set(null);
+        return;
+      }
+      const domRange = ReactEditor.toDOMRange(editor, sel);
+      this.anchorRect.set(domRange.getBoundingClientRect());
+    } catch {
+      this.anchorRect.set(null);
+    }
+  };
+
   public readonly toggle = (): void => {
     if (!this.canOpen.value) return;
     const nextOpen = !this.open.value;
-    if (nextOpen) this.draft.set(this.activeLink.value?.href ?? '');
+    if (nextOpen) {
+      const active = this.activeLink.value;
+      this.draft.set(active?.href ?? '');
+      this.rangeSnapshot.set(active?.range ?? this.editor.selection ?? null);
+    } else {
+      this.rangeSnapshot.set(null);
+    }
     this.open.set(nextOpen);
   };
 
   public readonly close = (): void => {
+    const editor = this.editor;
+    const range = this.rangeSnapshot.value;
     this.open.set(false);
     this.anchorRect.set(null);
+    this.rangeSnapshot.set(null);
+    if (range && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(() => {
+        try {
+          window.getSelection()?.removeAllRanges();
+        } catch {}
+        try {
+          Transforms.select(editor, range);
+        } catch {}
+      });
+    }
   };
 
   public readonly apply = (): void => {
@@ -80,7 +117,14 @@ export class LinkButtonState {
   };
 
   public readonly remove = (): void => {
-    if (!removeLink(this.editor)) return;
+    const editor = this.editor;
+    const range = this.rangeSnapshot.value;
+    if (range) {
+      try {
+        Transforms.select(editor, range);
+      } catch {}
+    }
+    if (!removeLink(editor, range ?? undefined)) return;
     this.close();
   };
 }

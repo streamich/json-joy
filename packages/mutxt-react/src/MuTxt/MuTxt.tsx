@@ -28,6 +28,7 @@ import {BlockFloater} from './block/BlockFloater';
 import {SlashMenu} from './chrome/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
+import {decorActiveSelection} from './behavior/active-selection';
 import type {Model} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
@@ -162,11 +163,18 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   highlighter.tick.use();
 
   // -------------------------------------------------------- Slate decorations
+  const linkPopupOpen = state.inline.link.open.use();
+  const activeSelectionRange = state.inline.link.rangeSnapshot.use();
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
-      return [...decorateRemoteCursors(entry), ...highlighter.decorate(entry)];
+      const ranges = [...decorateRemoteCursors(entry), ...highlighter.decorate(entry)];
+      if (linkPopupOpen && activeSelectionRange) {
+        const linkRange = decorActiveSelection(entry, activeSelectionRange);
+        if (linkRange) ranges.push(linkRange as any);
+      }
+      return ranges;
     },
-    [decorateRemoteCursors, highlighter],
+    [decorateRemoteCursors, highlighter, linkPopupOpen, activeSelectionRange],
   );
 
   // ---------------------------------------------------------------- Renderers

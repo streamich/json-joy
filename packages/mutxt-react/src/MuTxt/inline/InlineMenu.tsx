@@ -45,14 +45,13 @@ export class InlineMenu implements UiLifeCycles {
     const children: MenuItem['children'] = [
       this.menuFmt(),
       {name: 'sep-annon', sep: true},
-      this.menuAnnotations(),
+      this.menuAnnotations({anchorFromSelection: true}),
       {name: 'sep-modify', sep: true},
       this.menuModify(),
     ];
     return {
       name: 'Selection menu',
       maxToolbarItems: 4,
-      // more: true,
       children,
     };
   }
@@ -77,6 +76,12 @@ export class InlineMenu implements UiLifeCycles {
       children: [
         this.menuFmtCommon(),
         this.menuFmtTechnical(),
+      ] as MenuItem[],
+      preview: [
+        this.itemBold(),
+        this.itemItalic(),
+        this.itemUnderline(),
+        this.itemCode(),
       ] as MenuItem[],
     };
     return formatting;
@@ -258,28 +263,32 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
 
-  public menuAnnotations(): MenuItem {
+  public menuAnnotations(opts: {anchorFromSelection?: boolean} = {}): MenuItem {
     return {
       name: 'Annotations',
       expand: 3,
       children: [
-        this.itemLink(),
+        this.itemLink(opts),
       ],
     };
   }
-  public itemLink(): MenuItem {
+  public itemLink(opts: {anchorFromSelection?: boolean} = {}): MenuItem {
     const mutxt = this.mutxt;
+    const link = mutxt.inline.link;
     return {
       name: 'Link',
       icon: () => <LinkIcon />,
       disabled: rsync.comp(
-        [mutxt.selection, mutxt.readOnly],
-        ([selection, readOnly]) => readOnly || !selection,
+        [link.canOpen],
+        ([canOpen]) => !canOpen,
       ),
       onSelect: (event) => {
-        const trigger = event.currentTarget as HTMLElement | null;
-        const link = mutxt.inline.link;
-        if (trigger) link.setAnchorEl(trigger);
+        if (opts.anchorFromSelection) {
+          link.setAnchorFromSelection();
+        } else {
+          const trigger = event.currentTarget as HTMLElement | null;
+          if (trigger) link.setAnchorEl(trigger);
+        }
         mutxt.inline.dismissed.next(true);
         link.toggle();
       },

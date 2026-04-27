@@ -124,7 +124,16 @@ export const upsertLink = (editor: Editor, href: string): ActiveLink | null => {
   return getActiveLink(editor);
 };
 
-export const removeLink = (editor: Editor): boolean => {
+export const removeLink = (editor: Editor, at?: Range): boolean => {
+  if (at) {
+    Transforms.unsetNodes(editor, 'a', {
+      at,
+      match: (node) => isText(node),
+      split: true,
+    });
+    if (editor.selection && Range.isCollapsed(editor.selection)) Editor.removeMark(editor, 'a');
+    return true;
+  }
   const activeLink = getActiveLink(editor);
   if (activeLink) {
     Transforms.unsetNodes(editor, 'a', {

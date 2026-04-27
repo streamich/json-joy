@@ -32,6 +32,10 @@ const preventMouseDown = (event: React.MouseEvent): void => {
   event.preventDefault();
 };
 
+const stopMouseDownPropagation = (event: React.MouseEvent): void => {
+  event.stopPropagation();
+};
+
 export const LinkToolbarPopup: React.FC = () => {
   const state = useLinkButton();
   const activeLink = state.activeLink.use();
@@ -45,7 +49,7 @@ export const LinkToolbarPopup: React.FC = () => {
     : 'Enter a URL to wrap the current selection.';
 
   const actionRow = activeLink ? (
-    <div className={actionRowClass}>
+    <div className={actionRowClass} onMouseDown={stopMouseDownPropagation /* prevent popup from closing when clicking action buttons */}>
       <div className={actionButtonsClass}>
         <CopyButton
           type="button"
