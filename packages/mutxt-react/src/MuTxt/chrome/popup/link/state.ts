@@ -17,6 +17,12 @@ export class LinkButtonState {
   public readonly canOpen: rsync.ReactComputed<boolean>;
   public readonly selected: rsync.ReactComputed<boolean>;
   public readonly normalizedDraft = rsync.comp([this.draft], ([draft]) => normalizeLinkHref(draft));
+  /** Snapshot of the bounding rect of the trigger element at the moment
+   *  `toggle()` was called. We snapshot the rect (not the element) because
+   *  the inline floater that holds the trigger can unmount when the link
+   *  popup opens — by then the element would be detached and its
+   *  `getBoundingClientRect()` would return zeros. */
+  public readonly anchorRect = rsync.val<DOMRect | null>(null);
 
   private readonly editor: Editor;
   constructor(
@@ -38,6 +44,16 @@ export class LinkButtonState {
     this.draft.set(value);
   };
 
+  public readonly setAnchorRect = (rect: DOMRect | null): void => {
+    this.anchorRect.set(rect);
+  };
+
+  /** Capture the trigger element's current bounding rect. Convenience wrapper
+   *  around `setAnchorRect` for callers that have the element in hand. */
+  public readonly setAnchorEl = (el: HTMLElement | null): void => {
+    this.anchorRect.set(el ? el.getBoundingClientRect() : null);
+  };
+
   public readonly toggle = (): void => {
     if (!this.canOpen.value) return;
     const nextOpen = !this.open.value;
@@ -47,6 +63,7 @@ export class LinkButtonState {
 
   public readonly close = (): void => {
     this.open.set(false);
+    this.anchorRect.set(null);
   };
 
   public readonly apply = (): void => {

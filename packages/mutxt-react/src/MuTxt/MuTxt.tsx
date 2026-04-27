@@ -23,6 +23,7 @@ import {Leaf} from './inline/components/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './inline/components/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {InlineFloater} from './inline/InlineFloater';
+import {LinkFloater} from './chrome/popup/link/LinkFloater';
 import {BlockFloater} from './block/BlockFloater';
 import {SlashMenu} from './chrome/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
@@ -211,6 +212,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       />
       <InlineFloater />
       <BlockFloater />
+      <LinkFloater />
       <SlashMenu />
     </Slate>
   );

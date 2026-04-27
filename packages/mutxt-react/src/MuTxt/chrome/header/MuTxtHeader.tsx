@@ -24,7 +24,6 @@ import {
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {EmbedToolbarButton} from './embed/EmbedToolbarButton';
-import {LinkToolbarButton} from './link/LinkToolbarButton';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
 import type {MenuItem} from '../../types';
@@ -125,7 +124,6 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
     }}>
       <div className={toolbarContainerClass}>
         <ToolbarMenu menu={mutxt.inline.menu.buildToolbarMenu()} pane={{transparent: true}} />
-        <LinkToolbarButton />
         <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />
         <ToolbarSep />

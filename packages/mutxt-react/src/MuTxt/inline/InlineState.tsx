@@ -1,6 +1,7 @@
 import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 import {ReactEditor} from 'slate-react';
 import {InlineMenu} from './InlineMenu';
+import {LinkButtonState} from '../chrome/popup/link/state';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
@@ -13,21 +14,16 @@ export class InlineState implements UiLifeCycles {
   public readonly menu: InlineMenu;
   public readonly pointerDownOutsideToolbar = rsync.val(false);
 
-  /** Set when the user dismisses the floater (e.g. presses Escape). Reset
-   *  whenever the editor's range selection changes. */
   public readonly dismissed = rsync.val(false);
-
-  /** Wired up by `InlineFloater` so the blur-driven dismiss can tell whether
-   *  focus actually left our subtree, or just hopped to one of our own
-   *  elements (toolbar button, context-menu search input, etc.). Returns
-   *  `true` when focus is still inside the floater/portal tree. */
   public isFocusInToolbar: (() => boolean) | null = null;
+  public readonly link: LinkButtonState;
 
   constructor(
     private readonly mutxt: MuTxtState,
     private readonly scrollArea: ScrollState | null,
   ) {
     this.menu = new InlineMenu(mutxt);
+    this.link = new LinkButtonState(mutxt);
   }
 
   public readonly start = (): (() => void) => {

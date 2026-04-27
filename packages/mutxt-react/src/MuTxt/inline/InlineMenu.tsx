@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
@@ -267,12 +268,20 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemLink(): MenuItem {
+    const mutxt = this.mutxt;
     return {
       name: 'Link',
       icon: () => <LinkIcon />,
-      onSelect: () => {
-        this.mutxt.inline.dismissed.next(true);
-        this.mutxt.requestLinkMenu?.();
+      disabled: rsync.comp(
+        [mutxt.selection, mutxt.readOnly],
+        ([selection, readOnly]) => readOnly || !selection,
+      ),
+      onSelect: (event) => {
+        const trigger = event.currentTarget as HTMLElement | null;
+        const link = mutxt.inline.link;
+        if (trigger) link.setAnchorEl(trigger);
+        mutxt.inline.dismissed.next(true);
+        link.toggle();
       },
     };
   }

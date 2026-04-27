@@ -24,13 +24,11 @@ export class MuTxtState implements UiLifeCycles {
     railWidth: 12,
     hideDelay: 5000,
   });
-  public readonly inline = new InlineState(this, this.scroll);
-  public readonly block = new BlockState(this, this.scroll);
 
   public readonly version = rsync.val(0);
   public readonly contentVersion = rsync.val(0);
   public readonly scrollVersion = rsync.val(0);
-  
+
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly wnd = windowSize();
 
@@ -52,6 +50,9 @@ export class MuTxtState implements UiLifeCycles {
   public readonly wordCount = rsync.val(0);
   public readonly characterCount = rsync.val(0);
   public readonly selectionText = rsync.val('');
+
+  public readonly inline = new InlineState(this, this.scroll);
+  public readonly block = new BlockState(this, this.scroll);
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
