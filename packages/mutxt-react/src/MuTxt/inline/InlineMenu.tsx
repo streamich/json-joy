@@ -3,6 +3,7 @@ import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
+import {isMarkActive} from '../behavior';
 import type {MarkFormat, MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
@@ -39,6 +40,13 @@ export class InlineMenu implements UiLifeCycles {
 
   public start() {
     return () => {};
+  }
+
+  private markActive(mark: MarkFormat) {
+    return rsync.comp(
+      [this.mutxt.version],
+      () => isMarkActive(this.mutxt.editor, mark),
+    );
   }
 
   public build(): MenuItem {
@@ -111,6 +119,7 @@ export class InlineMenu implements UiLifeCycles {
       icon: () => <BoldIcon />,
       right: () => <Sidetip small>⌘ B</Sidetip>,
       keys: ['⌘', 'b'],
+      active: this.markActive('bold'),
       onSelect: () => {
         this.mutxt.api.toggleMark('bold');
       },
@@ -123,6 +132,7 @@ export class InlineMenu implements UiLifeCycles {
       icon: () => <ItalicIcon />,
       right: () => <Sidetip small>⌘ I</Sidetip>,
       keys: ['⌘', 'i'],
+      active: this.markActive('italic'),
       onSelect: () => {
         this.mutxt.api.toggleMark('italic');
       },
@@ -135,6 +145,7 @@ export class InlineMenu implements UiLifeCycles {
       icon: () => <UnderlineIcon />,
       right: () => <Sidetip small>⌘ U</Sidetip>,
       keys: ['⌘', 'u'],
+      active: this.markActive('underline'),
       onSelect: () => {
         this.mutxt.api.toggleMark('underline');
       },
@@ -148,6 +159,7 @@ export class InlineMenu implements UiLifeCycles {
       icon: () => <StrikethroughIcon />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys,
+      active: this.markActive('strikethrough'),
       onSelect: () => {
         this.mutxt.api.toggleMark('strikethrough');
       },
@@ -158,6 +170,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'overline',
       name: 'Overline',
       icon: () => <OverlineIcon />,
+      active: this.markActive('overline'),
       onSelect: () => {
         this.mutxt.api.toggleMark('overline');
       },
@@ -168,6 +181,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'mark',
       name: 'Highlight',
       icon: () => <HighlightIcon />,
+      active: this.markActive('mark'),
       onSelect: () => {
         this.mutxt.api.toggleMark('mark');
       },
@@ -178,6 +192,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'spoiler',
       name: 'Spoiler',
       icon: () => <SpoilerIcon />,
+      active: this.markActive('spoiler'),
       onSelect: () => {
         this.mutxt.api.toggleMark('spoiler');
       },
@@ -207,6 +222,7 @@ export class InlineMenu implements UiLifeCycles {
       icon: () => <CodeIcon width={16} height={16} />,
       right: () => <Sidetip small>⌘ E</Sidetip>,
       keys: ['⌘', 'e'],
+      active: this.markActive('code'),
       onSelect: () => {
         this.mutxt.api.toggleMark('code');
       },
@@ -217,6 +233,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'sup',
       name: 'Superscript',
       icon: () => <SupIcon />,
+      active: this.markActive('sup'),
       onSelect: () => {
         this.mutxt.api.toggleMark('sup');
       },
@@ -227,6 +244,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'sub',
       name: 'Subscript',
       icon: () => <SubIcon />,
+      active: this.markActive('sub'),
       onSelect: () => {
         this.mutxt.api.toggleMark('sub');
       },
@@ -237,6 +255,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'kbd',
       name: 'Keyboard key',
       icon: () => <KeyIcon />,
+      active: this.markActive('kbd'),
       onSelect: () => {
         this.mutxt.api.toggleMark('kbd');
       },
@@ -247,6 +266,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'ins',
       name: 'Insertion',
       icon: () => <InsertionIcon />,
+      active: this.markActive('ins'),
       onSelect: () => {
         this.mutxt.api.toggleMark('ins');
       },
@@ -257,6 +277,7 @@ export class InlineMenu implements UiLifeCycles {
       mark: 'del',
       name: 'Deletion',
       icon: () => <DeletionIcon />,
+      active: this.markActive('del'),
       onSelect: () => {
         this.mutxt.api.toggleMark('del');
       },
@@ -281,6 +302,10 @@ export class InlineMenu implements UiLifeCycles {
       disabled: rsync.comp(
         [link.canOpen],
         ([canOpen]) => !canOpen,
+      ),
+      active: rsync.comp(
+        [mutxt.caretLinkHref],
+        ([href]) => !!href,
       ),
       onSelect: (event) => {
         if (opts.anchorFromSelection) {
