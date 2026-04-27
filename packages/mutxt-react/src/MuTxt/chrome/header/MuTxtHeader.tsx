@@ -29,9 +29,13 @@ import {useMuTxt} from '../../context';
 import type {MenuItem} from '../../types';
 import {formatKeys} from '../../util/keys';
 
+const HEIGHT = 48;
+
 const blockClass = rule({
   pos: 'relative',
-  pd: '8px 32px',
+  pd: '0 32px',
+  ai: 'center',
+  h: HEIGHT + 'px',
   bxz: 'border-box',
   ovx: 'auto',
 });
@@ -40,7 +44,7 @@ const toolbarContainerClass = rule({
   d: 'flex',
   fld: 'row',
   ai: 'center',
-  h: '32px',
+  h: HEIGHT + 'px',
 });
 
 export interface MuTxtHeaderProps {
@@ -124,11 +128,12 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
     }}>
       <div className={toolbarContainerClass}>
         <ToolbarMenu menu={mutxt.inline.menu.buildToolbarMenu()} pane={{transparent: true}} />
+        <ToolbarSep />
+        <ToolbarSep line height={HEIGHT} lite />
+        <ToolbarSep />
         <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />
-        <ToolbarSep />
-        <ToolbarSep line />
-        <ToolbarSep />
+        <ToolbarSep line height={HEIGHT} lite />
         <ToolbarSep />
         {BLOCK_BUTTONS.map((button) => (
           renderItem({
@@ -157,9 +162,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
           })
         ))}
         <ToolbarSep />
-        <ToolbarSep />
-        <ToolbarSep line />
-        <ToolbarSep />
+        <ToolbarSep line height={HEIGHT} lite />
         <ToolbarSep />
         {ALIGNMENT_BUTTONS.map((button) => (
           renderItem({
