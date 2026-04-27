@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
+import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import {ToolbarSep} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarSep';
 import type {Editor} from 'slate';
 import {
@@ -11,18 +12,14 @@ import {
   BLOCK_BUTTONS,
   LAYOUT_BUTTONS,
   LIST_BUTTONS,
-  MARK_BUTTONS,
   canRedo,
   canUndo,
-  eraseMarks,
   isAlignmentActive,
   isBlockActive,
   isListActive,
-  isMarkActive,
   redo,
   setAlignment,
   toggleBlock,
-  toggleMark,
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
@@ -127,14 +124,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
       borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
     }}>
       <div className={toolbarContainerClass}>
-        {MARK_BUTTONS.map((button) => (
-          renderItem({
-            ...button,
-            active: isMarkActive(editor, button.format!),
-            disabled: readOnly,
-            onMouseDown: execute(() => toggleMark(editor, button.format!)),
-          })
-        ))}
+        <ToolbarMenu menu={mutxt.inline.menu.buildToolbarMenu()} pane={{transparent: true}} />
         <LinkToolbarButton />
         <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
         <ToolbarSep />

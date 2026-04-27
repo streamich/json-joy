@@ -56,6 +56,18 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
 
+  public buildToolbarMenu(): MenuItem {
+    return {
+      name: 'Selection menu',
+      maxToolbarItems: 4,
+      children: [
+        this.menuFmt(),
+        {name: 'sep-annon', sep: true},
+        this.menuAnnotations(),
+      ],
+    };
+  }
+
   public menuFmt(): MenuItem {
     const formatting: MenuItem = {
       name: 'Formatting',
