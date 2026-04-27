@@ -11618,6 +11618,7 @@ __metadata:
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-slate": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/keyboard": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"

@@ -85,6 +85,7 @@
     "@jsonjoy.com/collaborative-peritext": "workspace:*",
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-slate": "workspace:*",
+    "@jsonjoy.com/keyboard": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
     "code-colors": "^2.5.0",
     "code-colors-react": "^3.5.0",
