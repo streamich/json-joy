@@ -14,7 +14,6 @@ import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '@jsonjoy.com/collaborative-slate';
-import {CodeHighlightState} from './behavior/code-highlighting';
 import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
@@ -158,23 +157,19 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     state.publishPresence = sendLocalPresence;
   }, [sendLocalPresence]);
 
-  // ------------------------------------------- Code block syntax highlighting
-  const highlighter = useMemo(() => new CodeHighlightState(), []);
-  highlighter.tick.use();
-
   // -------------------------------------------------------- Slate decorations
   const linkPopupOpen = state.inline.link.open.use();
   const activeSelectionRange = state.inline.link.rangeSnapshot.use();
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
-      const ranges = [...decorateRemoteCursors(entry), ...highlighter.decorate(entry)];
+      const ranges = [...decorateRemoteCursors(entry)];
       if (linkPopupOpen && activeSelectionRange) {
         const linkRange = decorActiveSelection(entry, activeSelectionRange);
         if (linkRange) ranges.push(linkRange as any);
       }
       return ranges;
     },
-    [decorateRemoteCursors, highlighter, linkPopupOpen, activeSelectionRange],
+    [decorateRemoteCursors, linkPopupOpen, activeSelectionRange],
   );
 
   // ---------------------------------------------------------------- Renderers

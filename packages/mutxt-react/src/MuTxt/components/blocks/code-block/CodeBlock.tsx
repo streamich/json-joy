@@ -6,7 +6,7 @@ import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
-import {css} from 'code-colors-react/lib/style';
+import {ColorTokens} from 'code-colors-react';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {CodeBlockOptionsPopup} from './CodeBlockOptionsPopup';
@@ -14,6 +14,19 @@ import * as settings from './settings';
 import type {CodeBlockElement as CodeBlockElementType} from '../../../types';
 
 const CODE_LINE_HEIGHT = 1.7;
+
+const SHARED_TEXT_CSS = {
+  ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
+  fz: '0.9rem',
+  lh: `${CODE_LINE_HEIGHT}em`,
+  pd: '16px 18px 18px 14px',
+  mr: 0,
+  letterSpacing: '0',
+  tabSize: 4,
+  fontKerning: 'none',
+  fontVariantLigatures: 'none',
+  fontFeatureSettings: 'normal',
+} as const;
 
 const codeWrapClass = rule({
   pos: 'relative',
@@ -66,9 +79,6 @@ const metaChipClass = rule({
   fz: '12px',
 });
 
-const tokenizerCss = css();
-delete tokenizerCss['::selection'];
-
 const codePreClass = rule({
   mr: '0',
   w: '100%',
@@ -80,7 +90,6 @@ const codePreClass = rule({
   [`.${codeWrapClass.trim()}:hover &`]: {
     bg: 'var(--code-hover-bg)',
   },
-  ...tokenizerCss,
 });
 
 const gutterClass = rule({
@@ -98,14 +107,16 @@ const gutterClass = rule({
 });
 
 const codeClass = drule({
-  ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
-  fz: '0.9rem',
-  lh: `${CODE_LINE_HEIGHT}em`,
+  ...SHARED_TEXT_CSS,
   d: 'block',
   pos: 'relative',
   flex: '1',
   minW: '0',
-  pd: '16px 18px 18px 14px',
+  col: 'rgba(127,127,127,.1)',
+  '&::selection': {
+    bg: 'rgba(0,127,255,0.36)',
+    col: 'inherit',
+  },
   '&::before': {
     content: '""',
     pos: 'absolute',
@@ -114,6 +125,26 @@ const codeClass = drule({
     w: '1px',
     bg: 'rgba(127,127,127,0.06)',
     pointerEvents: 'none',
+  },
+});
+
+const overlayClass = rule({
+  ...SHARED_TEXT_CSS,
+  pos: 'absolute',
+  t: 0,
+  l: 0,
+  r: 0,
+  b: 0,
+  pe: 'none',
+  us: 'none',
+  ov: 'hidden',
+  '& *': {
+    fontWeight: 'inherit',
+    fontStyle: 'inherit',
+    padding: 0,
+    margin: 0,
+    border: 0,
+    cursor: 'inherit',
   },
 });
 
@@ -158,11 +189,20 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   const showLineNumbers = settings.getCodeBlockShowLineNumbers(element.showLineNumbers);
   const metaLabelMarginLeft = showLineNumbers ? (lineCount > 10 ? 34 : 26) : 0;
   const codeClassName = codeClass({
-    pdl: showLineNumbers ? '14px' : '18px',
+    textDecorationColor: styles.g(0),
     '&::before': {
       l: `${wrapColumn}ch`,
     },
   });
+
+  const codeStyle: React.CSSProperties = {
+    paddingLeft: showLineNumbers ? '14px' : '18px',
+    caretColor: styles.g(0),
+  };
+
+  const codeOverlayStyle: React.CSSProperties = {
+    paddingLeft: showLineNumbers ? '14px' : '18px',
+  };
 
   const codeContent = (
     <pre className={codePreClass}>
@@ -171,7 +211,12 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
           {lineNumbers}
         </div>
       ) : null}
-      <code className={codeClassName}>{children}</code>
+      <code className={codeClassName} style={codeStyle}>
+        <pre className={overlayClass} style={codeOverlayStyle} aria-hidden="true" contentEditable={false}>
+          <ColorTokens as="span" code={codeText} lang={languageValue} />
+        </pre>
+        {children}
+      </code>
     </pre>
   );
 

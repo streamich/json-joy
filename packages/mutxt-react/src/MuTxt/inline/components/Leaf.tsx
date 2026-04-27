@@ -4,7 +4,6 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
 import {Spoiler} from './Spoiler';
-import {type CodeSyntaxDecoration} from '../../behavior/code-highlighting';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
 
@@ -40,7 +39,7 @@ const codeClass = rule({
 });
 
 export interface LeafProps extends RenderLeafProps {
-  leaf: CustomText & CodeSyntaxDecoration & {activeSelection?: true};
+  leaf: CustomText & {activeSelection?: true};
 }
 
 export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) => {
@@ -60,7 +59,6 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
       },
     });
   }, [styles, styles.light]);
-  const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
   const style: React.CSSProperties | undefined = leaf.activeSelection
     ? {backgroundColor: styles.col.accent(0, 'bg-2')}
     : undefined;
@@ -82,15 +80,16 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   else if (leaf.sub) content = <sub>{content}</sub>;
   if (leaf.code) content = <code className={codeClass + dynamicCodeClass}>{content}</code>;
 
-  if (leaf.a?.href) {
+  const href = leaf.a?.href;
+  if (href) {
     return (
       <a
         {...attributes}
         className={linkClass}
-        href={leaf.a.href}
+        href={href}
         target="_blank"
         rel="noreferrer noopener"
-        title={leaf.a.title || leaf.a.href}
+        title={leaf.a?.title || href}
         style={style}
         onClick={(event) => {
           if (!(event.metaKey || event.ctrlKey)) event.preventDefault();
@@ -101,5 +100,5 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
     );
   }
 
-  return <span {...attributes} className={tokenClassName} style={style}>{content}</span>;
+  return <span {...attributes} style={style}>{content}</span>;
 };
