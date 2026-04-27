@@ -11,11 +11,10 @@ import type {MuTxtState} from '../state/MuTxtState';
  */
 export const bindShortcuts = (state: MuTxtState): (() => void) => {
   const editor = state.editor;
-  const sync = (): void => state.sync(true);
-  const consume = (key: Key, fn: () => void): void => {
+  const consume = (key: Key, fn?: () => void): void => {
     key.event?.preventDefault();
-    fn();
-    sync();
+    fn?.();
+    state.sync(true);
   };
 
   const bindings: AnyBinding[] = [
@@ -23,31 +22,35 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     ['/', (key: Key) => {
       if (state.onSlashKey?.()) key.event?.preventDefault();
     }],
+    ['Shift Shift', () => {
+      state.onSlashKey?.();
+    }],
 
     // ----------------------------------------------- Empty-block to paragraph
     ['Backspace', (key: Key) => {
-      if (resetEmptyBlockToParagraph(editor)) consume(key, () => {});
+      if (resetEmptyBlockToParagraph(editor)) consume(key);
     }],
     ['Delete', (key: Key) => {
-      if (resetEmptyBlockToParagraph(editor)) consume(key, () => {});
+      if (resetEmptyBlockToParagraph(editor)) consume(key);
     }],
 
     // ---------------------------------------- Code-block break / exit (Enter)
-    ['Primary+Enter', (key: Key) => {
-      if (insertCodeBlockBreak(editor)) consume(key, () => {});
+    ['P+Enter', (key: Key) => {
+      if (insertCodeBlockBreak(editor)) consume(key);
     }],
     ['Shift+Enter', (key: Key) => {
-      if (insertCodeBlockExit(editor)) consume(key, () => {});
+      if (insertCodeBlockExit(editor)) consume(key);
     }],
 
     // ------------------------------------------------------------------ Marks
-    ['Primary+b', (key: Key) => consume(key, () => toggleMark(editor, 'bold'))],
-    ['Primary+i', (key: Key) => consume(key, () => toggleMark(editor, 'italic'))],
-    ['Primary+u', (key: Key) => consume(key, () => toggleMark(editor, 'underline'))],
-    ['Primary+e', (key: Key) => consume(key, () => toggleMark(editor, 'code'))],
+    ['P+b', (key: Key) => consume(key, () => toggleMark(editor, 'bold'))],
+    ['P+i', (key: Key) => consume(key, () => toggleMark(editor, 'italic'))],
+    ['P+u', (key: Key) => consume(key, () => toggleMark(editor, 'underline'))],
+    ['P+e', (key: Key) => consume(key, () => toggleMark(editor, 'code'))],
+    ['P+Shift+x', (key: Key) => consume(key, () => toggleMark(editor, 'strikethrough'))],
 
     // ------------------------------------------------------------------- Link
-    ['Primary+k', (key: Key) => {
+    ['P+k', (key: Key) => {
       const link = state.inline.link;
       if (!link.canOpen.value) return;
       key.event?.preventDefault();
@@ -57,29 +60,29 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     }],
 
     // ------------------------------------------------------------ Undo / redo
-    ['Primary+z', (key: Key) => consume(key, () => undo(editor))],
-    ['Primary+Shift+z', (key: Key) => consume(key, () => redo(editor))],
-    ['Primary+y', (key: Key) => consume(key, () => redo(editor))],
+    ['P+z', (key: Key) => consume(key, () => undo(editor))],
+    ['P+Shift+z', (key: Key) => consume(key, () => redo(editor))],
+    ['P+y', (key: Key) => consume(key, () => redo(editor))],
 
     // ---------------------------------------------------------- Block toggles
-    ['Primary+Alt+0', (key: Key) => consume(key, () => toggleBlock(editor, 'p'))],
-    ['Primary+Alt+1', (key: Key) => consume(key, () => toggleBlock(editor, 'h1'))],
-    ['Primary+Alt+2', (key: Key) => consume(key, () => toggleBlock(editor, 'h2'))],
-    ['Primary+Alt+3', (key: Key) => consume(key, () => toggleBlock(editor, 'h3'))],
-    ['Primary+Alt+7', (key: Key) => consume(key, () => toggleBlock(editor, 'ol'))],
-    ['Primary+Alt+8', (key: Key) => consume(key, () => toggleBlock(editor, 'ul'))],
-    ['Primary+Shift+q', (key: Key) => consume(key, () => toggleBlock(editor, 'blockquote'))],
-    ['Primary+Shift+c', (key: Key) => consume(key, () => toggleBlock(editor, 'code-block'))],
+    ['P+Alt+0', (key: Key) => consume(key, () => toggleBlock(editor, 'p'))],
+    ['P+Alt+1', (key: Key) => consume(key, () => toggleBlock(editor, 'h1'))],
+    ['P+Alt+2', (key: Key) => consume(key, () => toggleBlock(editor, 'h2'))],
+    ['P+Alt+3', (key: Key) => consume(key, () => toggleBlock(editor, 'h3'))],
+    ['P+Alt+7', (key: Key) => consume(key, () => toggleBlock(editor, 'ol'))],
+    ['P+Alt+8', (key: Key) => consume(key, () => toggleBlock(editor, 'ul'))],
+    ['P+Shift+q', (key: Key) => consume(key, () => toggleBlock(editor, 'blockquote'))],
+    ['P+Shift+c', (key: Key) => consume(key, () => toggleBlock(editor, 'code-block'))],
 
     // -------------------------------------------------------------- Alignment
-    ['Primary+Shift+l', (key: Key) => consume(key, () => setAlignment(editor, 'left'))],
-    ['Primary+Shift+e', (key: Key) => consume(key, () => setAlignment(editor, 'center'))],
-    ['Primary+Shift+r', (key: Key) => consume(key, () => setAlignment(editor, 'right'))],
-    ['Primary+Shift+j', (key: Key) => consume(key, () => setAlignment(editor, 'justify'))],
+    ['P+Shift+l', (key: Key) => consume(key, () => setAlignment(editor, 'left'))],
+    ['P+Shift+e', (key: Key) => consume(key, () => setAlignment(editor, 'center'))],
+    ['P+Shift+r', (key: Key) => consume(key, () => setAlignment(editor, 'right'))],
+    ['P+Shift+j', (key: Key) => consume(key, () => setAlignment(editor, 'justify'))],
 
     // ------------------------------------------------------------ Indentation
-    ['Primary+]', (key: Key) => consume(key, () => indentBlock(editor))],
-    ['Primary+[', (key: Key) => consume(key, () => dedentBlock(editor))],
+    ['P+]', (key: Key) => consume(key, () => indentBlock(editor))],
+    ['P+[', (key: Key) => consume(key, () => dedentBlock(editor))],
   ];
 
   return state.kbd.bind(bindings);
