@@ -1,78 +1,37 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {ScrollArea, ScrollRail, useScrollArea, type ScrollAreaProps} from '../ScrollArea';
 
-const wrapClass = rule({
-  pos: 'relative',
-  d: 'flex',
+const viewportClass = rule({
+  fl: '1 1 auto',
+  minH: 0,
   w: '100%',
-  h: '100%',
-});
-
-const blockClass = rule({
-  w: '100%',
+  bxz: 'border-box',
   ovy: 'auto',
+  scrollbarWidth: 'none',
+  MsOverflowStyle: 'none',
+  overscrollBehavior: 'contain',
+  '&::-webkit-scrollbar': {d: 'none'},
 });
 
-const shadowTopClass = rule({
-  pointerEvents: 'none',
-  trs: 'opacity .3s',
-  pos: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  h: '4px',
-  bg: 'linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.01) 100%)',
-});
+const ScrollboxViewport: React.FC<{children: React.ReactNode}> = ({children}) => {
+  const state = useScrollArea();
+  return (
+    <div ref={state.setViewport} className={viewportClass}>
+      {children}
+    </div>
+  );
+};
 
-const shadowBottomClass = rule({
-  pointerEvents: 'none',
-  trs: 'opacity .3s',
-  pos: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  h: '4px',
-  bg: 'linear-gradient(0deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.01) 100%)',
-});
-
-export interface ScrollboxProps extends React.AllHTMLAttributes<any> {
+export interface ScrollboxProps extends Omit<ScrollAreaProps, 'children'> {
   children: React.ReactNode;
 }
 
-export const Scrollbox: React.FC<ScrollboxProps> = ({children, ...rest}) => {
-  const theme = useTheme();
-  const [shadows, setShadows] = React.useState<[top: boolean, bottom: boolean]>([false, false]);
-  const ref = React.useRef<HTMLDivElement>(null);
-  const checkShadows = React.useCallback(() => {
-    const div = ref.current;
-    if (!div) return;
-    const showTopShadow = div.scrollTop > 4;
-    const showBottomShadow = div.scrollTop + div.clientHeight < div.scrollHeight - 4;
-    setShadows([showTopShadow, showBottomShadow]);
-  }, []);
-
-  // Check shadow state on every scroll.
-  React.useEffect(() => {
-    const div = ref.current;
-    if (!div) return;
-    div.addEventListener('scroll', checkShadows);
-    return () => {
-      div.removeEventListener('scroll', checkShadows);
-    };
-  }, [checkShadows]);
-
-  // Check shadow state on mount.
-  React.useEffect(checkShadows, []);
-
-  const background = theme.isLight ? undefined : 'rgba(255,255,255,.1)';
-
+export const Scrollbox: React.FC<ScrollboxProps> = ({children, shadow = true, ...rest}) => {
   return (
-    <div className={wrapClass}>
-      <div {...rest} ref={ref} className={(rest.className || '') + blockClass}>
-        {children}
-      </div>
-      <div className={shadowTopClass} style={{opacity: shadows[0] ? 1 : 0, background}} />
-      <div className={shadowBottomClass} style={{opacity: shadows[1] ? 1 : 0, background}} />
-    </div>
+    <ScrollArea shadow={shadow} railWidth={4} {...rest}>
+      <ScrollboxViewport>{children}</ScrollboxViewport>
+      <ScrollRail />
+    </ScrollArea>
   );
 };
