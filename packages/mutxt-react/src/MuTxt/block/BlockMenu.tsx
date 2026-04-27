@@ -2,6 +2,9 @@ import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
+import {formatKeys} from '../util/keys';
+import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {dedentBlock, getActiveIndent, indentBlock, MAX_INDENT} from '../behavior/indentation';
 import {isAlignmentActive, setAlignment, toggleBlock} from '../behavior';
 import type {BlockFormat, ListElementType, MenuItem, SlateTextAlign} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
@@ -28,6 +31,10 @@ const AlignLeftIcon = makeIcon({set: 'lucide', icon: 'align-left', width: 16, he
 const AlignCenterIcon = makeIcon({set: 'lucide', icon: 'align-center', width: 16, height: 16});
 const AlignRightIcon = makeIcon({set: 'lucide', icon: 'align-right', width: 16, height: 16});
 const AlignJustifyIcon = makeIcon({set: 'lucide', icon: 'align-justify', width: 16, height: 16});
+
+// Indent icons
+const IndentIcon = makeIcon({set: 'lucide', icon: 'indent-increase', width: 16, height: 16});
+const DedentIcon = makeIcon({set: 'lucide', icon: 'indent-decrease', width: 16, height: 16});
 
 interface ItemConfig {
   name: string;
@@ -59,6 +66,7 @@ export class BlockMenu implements UiLifeCycles {
             ...this.menuLists().children!,
             ...this.menuLayout().children!,
             ...this.menuAlignment().children!,
+            ...this.menuIndent().children!,
           ],
         },
       ],
@@ -124,6 +132,19 @@ export class BlockMenu implements UiLifeCycles {
     };
   }
 
+  public menuIndent(): MenuItem {
+    return {
+      id: 'block-indent',
+      name: 'Indent',
+      expand: 8,
+      sepBefore: true,
+      children: [
+        this.itemIndent(),
+        this.itemDedent(),
+      ],
+    };
+  }
+
   // -------------------------------------------------------------- Block items
 
   public itemParagraph(): MenuItem {
@@ -163,7 +184,7 @@ export class BlockMenu implements UiLifeCycles {
     return this.blockItem('columns', {name: 'Two columns', icon: () => <ColumnsIcon />, sepBefore: true});
   }
 
-  // ---------------------------------------------------------- Alignment items
+  // ---------------------------------------------------------------- Alignment
 
   public itemAlignLeft(): MenuItem {
     return this.alignmentItem('left', {name: 'Align left', icon: () => <AlignLeftIcon />, keys: ['Primary', 'Shift', 'l'], sepBefore: true});
@@ -176,6 +197,34 @@ export class BlockMenu implements UiLifeCycles {
   }
   public itemAlignJustify(): MenuItem {
     return this.alignmentItem('justify', {name: 'Justify', icon: () => <AlignJustifyIcon />, keys: ['Primary', 'Shift', 'j']});
+  }
+
+  // -------------------------------------------------------------- Indentation
+
+  public itemIndent(): MenuItem {
+    const mutxt = this.mutxt;
+    const keys = ['Primary', ']'];
+    return {
+      name: 'Increase indent',
+      icon: () => <IndentIcon />,
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys,
+      sepBefore: true,
+      disabled: rsync.comp([mutxt.version], () => getActiveIndent(mutxt.editor) >= MAX_INDENT),
+      onSelect: this.exec(() => indentBlock(mutxt.editor)),
+    };
+  }
+  public itemDedent(): MenuItem {
+    const mutxt = this.mutxt;
+    const keys = ['Primary', '['];
+    return {
+      name: 'Decrease indent',
+      icon: () => <DedentIcon />,
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys,
+      disabled: rsync.comp([mutxt.version], () => getActiveIndent(mutxt.editor) <= 0),
+      onSelect: this.exec(() => dedentBlock(mutxt.editor)),
+    };
   }
 
   // ------------------------------------------------------------------ Helpers

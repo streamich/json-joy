@@ -2,6 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from './BlockPlaceholder';
+import {indentPadding} from '../../behavior/indentation';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {HeadingElement as HeadingElementType} from '../../types';
@@ -19,6 +20,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
   const styles = useStyles();
   const shared: React.CSSProperties = {
     textAlign: element.align,
+    paddingInlineStart: indentPadding(element.indent),
     color: styles.light ? styles.g(0.08) : styles.g(0.96),
   };
 

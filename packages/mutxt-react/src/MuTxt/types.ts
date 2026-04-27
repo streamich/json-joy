@@ -37,6 +37,7 @@ export interface CustomText {
 
 export interface BlockAttributes {
   align?: SlateTextAlign;
+  indent?: number;
 }
 
 export interface ParagraphElement extends BlockAttributes {

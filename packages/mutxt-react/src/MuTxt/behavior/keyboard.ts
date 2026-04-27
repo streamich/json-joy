@@ -1,6 +1,7 @@
 import {Editor} from 'slate';
 import {insertCodeBlockBreak, insertCodeBlockExit, redo, resetEmptyBlockToParagraph, setAlignment, toggleBlock, toggleMark, undo} from '../behavior';
 import {getActiveLink, hasRangeSelection} from './link';
+import {dedentBlock, indentBlock} from './indentation';
 import type {KeyboardEvent} from 'react';
 
 export interface KeyboardShortcutHandlers {
@@ -70,6 +71,14 @@ export const handleKeyboardShortcuts = (
       case 'y':
         event.preventDefault();
         redo(editor);
+        return true;
+      case ']':
+        event.preventDefault();
+        indentBlock(editor);
+        return true;
+      case '[':
+        event.preventDefault();
+        dedentBlock(editor);
         return true;
     }
   }
