@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
 import {formatKeys} from '../util/keys';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -15,6 +15,9 @@ const ParagraphIcon = makeIcon({set: 'tabler', icon: 'pilcrow', width: 16, heigh
 const H1Icon = makeIcon({set: 'tabler', icon: 'h-1', width: 16, height: 16});
 const H2Icon = makeIcon({set: 'tabler', icon: 'h-2', width: 16, height: 16});
 const H3Icon = makeIcon({set: 'tabler', icon: 'h-3', width: 16, height: 16});
+const H4Icon = makeIcon({set: 'tabler', icon: 'h-4', width: 16, height: 16});
+const H5Icon = makeIcon({set: 'tabler', icon: 'h-5', width: 16, height: 16});
+const H6Icon = makeIcon({set: 'tabler', icon: 'h-6', width: 16, height: 16});
 const BlockquoteIcon = makeIcon({set: 'lucide', icon: 'quote', width: 16, height: 16});
 const CodeBlockIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
 
@@ -85,6 +88,9 @@ export class BlockMenu implements UiLifeCycles {
         this.itemH1(),
         this.itemH2(),
         this.itemH3(),
+        this.itemH4(),
+        this.itemH5(),
+        this.itemH6(),
         this.itemBlockquote(),
         this.itemCodeBlock(),
       ],
@@ -121,6 +127,7 @@ export class BlockMenu implements UiLifeCycles {
     return {
       id: 'block-alignment',
       name: 'Alignment',
+      icon: () => <Iconista set="fontawesome_solid" icon="align-left" width={16} height={16} />,
       expand: 8,
       sepBefore: true,
       children: [
@@ -159,8 +166,17 @@ export class BlockMenu implements UiLifeCycles {
   public itemH3(): MenuItem {
     return this.blockItem('h3', {name: 'Heading 3', icon: () => <H3Icon />, keys: ['Primary', 'Alt', '3']});
   }
+  public itemH4(): MenuItem {
+    return this.blockItem('h4', {name: 'Heading 4', icon: () => <H4Icon />, keys: ['Primary', 'Alt', '4']});
+  }
+  public itemH5(): MenuItem {
+    return this.blockItem('h5', {name: 'Heading 5', icon: () => <H5Icon />, keys: ['Primary', 'Alt', '5']});
+  }
+  public itemH6(): MenuItem {
+    return this.blockItem('h6', {name: 'Heading 6', icon: () => <H6Icon />, keys: ['Primary', 'Alt', '6']});
+  }
   public itemBlockquote(): MenuItem {
-    return this.blockItem('blockquote', {name: 'Blockquote', icon: () => <BlockquoteIcon />, keys: ['Primary', 'Shift', 'q']});
+    return this.blockItem('blockquote', {name: 'Blockquote', icon: () => <BlockquoteIcon />, keys: ['Primary', 'Alt', '9']});
   }
   public itemCodeBlock(): MenuItem {
     return this.blockItem('code-block', {name: 'Code block', icon: () => <CodeBlockIcon />, keys: ['Primary', 'Shift', 'c']});
@@ -187,16 +203,16 @@ export class BlockMenu implements UiLifeCycles {
   // ---------------------------------------------------------------- Alignment
 
   public itemAlignLeft(): MenuItem {
-    return this.alignmentItem('left', {name: 'Align left', icon: () => <AlignLeftIcon />, keys: ['Primary', 'Shift', 'l'], sepBefore: true});
+    return this.alignmentItem('left', {name: 'Align left', keys: ['Primary', 'Shift', 'l'], icon: () => <AlignLeftIcon />, sepBefore: true});
   }
   public itemAlignCenter(): MenuItem {
-    return this.alignmentItem('center', {name: 'Align center', icon: () => <AlignCenterIcon />, keys: ['Primary', 'Shift', 'e']});
+    return this.alignmentItem('center', {name: 'Align center', keys: ['Primary', 'Shift', 'e'], icon: () => <AlignCenterIcon />});
   }
   public itemAlignRight(): MenuItem {
-    return this.alignmentItem('right', {name: 'Align right', icon: () => <AlignRightIcon />, keys: ['Primary', 'Shift', 'r']});
+    return this.alignmentItem('right', {name: 'Align right', keys: ['Primary', 'Shift', 'r'], icon: () => <AlignRightIcon />});
   }
   public itemAlignJustify(): MenuItem {
-    return this.alignmentItem('justify', {name: 'Justify', icon: () => <AlignJustifyIcon />, keys: ['Primary', 'Shift', 'j']});
+    return this.alignmentItem('justify', {name: 'Justify', keys: ['Primary', 'Shift', 'j'], icon: () => <AlignJustifyIcon />});
   }
 
   // -------------------------------------------------------------- Indentation
@@ -231,10 +247,12 @@ export class BlockMenu implements UiLifeCycles {
 
   private blockItem(format: BlockFormat | ListElementType, config: ItemConfig): MenuItem {
     const mutxt = this.mutxt;
+    const keys = config.keys;
     return {
       name: config.name,
       icon: config.icon,
-      keys: config.keys,
+      keys,
+      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : undefined,
       sepBefore: config.sepBefore,
       active: rsync.comp([mutxt.version], () => this.currentBlockFormat() === format),
       onSelect: this.exec(() => toggleBlock(mutxt.editor, format)),
@@ -243,10 +261,12 @@ export class BlockMenu implements UiLifeCycles {
 
   private alignmentItem(alignment: SlateTextAlign, config: ItemConfig): MenuItem {
     const mutxt = this.mutxt;
+    const keys = config.keys;
     return {
       name: config.name,
       icon: config.icon,
-      keys: config.keys,
+      keys,
+      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : undefined,
       sepBefore: config.sepBefore,
       active: rsync.comp([mutxt.version], () => isAlignmentActive(mutxt.editor, alignment)),
       onSelect: this.exec(() => setAlignment(mutxt.editor, alignment)),

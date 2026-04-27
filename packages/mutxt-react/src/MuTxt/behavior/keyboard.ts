@@ -1,7 +1,7 @@
 import {insertCodeBlockBreak, insertCodeBlockExit, redo, resetEmptyBlockToParagraph, setAlignment, toggleBlock, toggleMark, undo} from '../behavior';
 import {dedentBlock, indentBlock} from './indentation';
 import {Key} from '@jsonjoy.com/keyboard';
-import type {AnyBinding} from '@jsonjoy.com/keyboard';
+import type {AnyBinding, Signature} from '@jsonjoy.com/keyboard';
 import type {MuTxtState} from '../state/MuTxtState';
 
 /**
@@ -65,12 +65,16 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     ['P+y', (key: Key) => consume(key, () => redo(editor))],
 
     // ---------------------------------------------------------- Block toggles
-    ['P+Alt+0', (key: Key) => consume(key, () => toggleBlock(editor, 'p'))],
-    ['P+Alt+1', (key: Key) => consume(key, () => toggleBlock(editor, 'h1'))],
-    ['P+Alt+2', (key: Key) => consume(key, () => toggleBlock(editor, 'h2'))],
-    ['P+Alt+3', (key: Key) => consume(key, () => toggleBlock(editor, 'h3'))],
-    ['P+Alt+7', (key: Key) => consume(key, () => toggleBlock(editor, 'ol'))],
-    ['P+Alt+8', (key: Key) => consume(key, () => toggleBlock(editor, 'ul'))],
+    ['P+Alt+@Digit0' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'p'))],
+    ['P+Alt+@Digit1' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'h1'))],
+    ['P+Alt+@Digit2' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'h2'))],
+    ['P+Alt+@Digit3' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'h3'))],
+    ['P+Alt+@Digit4' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'h4'))],
+    ['P+Alt+@Digit5' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'h5'))],
+    ['P+Alt+@Digit6' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'h6'))],
+    ['P+Alt+@Digit7' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'ol'))],
+    ['P+Alt+@Digit8' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'ul'))],
+    ['P+Alt+@Digit9' as Signature, (key: Key) => consume(key, () => toggleBlock(editor, 'blockquote'))],
     ['P+Shift+q', (key: Key) => consume(key, () => toggleBlock(editor, 'blockquote'))],
     ['P+Shift+c', (key: Key) => consume(key, () => toggleBlock(editor, 'code-block'))],
 
