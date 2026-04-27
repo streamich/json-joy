@@ -22,8 +22,8 @@ import {ScrollMap} from './chrome/scroll/ScrollMap';
 import {Leaf} from './inline/components/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './inline/components/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
-import {FloatingBlockToolbar} from './chrome/block/FloatingBlockToolbar';
 import {InlineFloater} from './inline/InlineFloater';
+import {BlockFloater} from './block/BlockFloater';
 import {SlashMenu} from './chrome/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
@@ -209,8 +209,8 @@ export const MuTxt: React.FC<MuTxtProps> = ({
           if (handled) state.sync(true);
         }}
       />
-      <FloatingBlockToolbar />
       <InlineFloater />
+      <BlockFloater />
       <SlashMenu />
     </Slate>
   );

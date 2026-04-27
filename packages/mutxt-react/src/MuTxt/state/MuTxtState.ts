@@ -11,6 +11,7 @@ import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
 import {ReactEditor} from 'slate-react';
 import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
+import {BlockState} from '../block/BlockState';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
@@ -24,6 +25,7 @@ export class MuTxtState implements UiLifeCycles {
     hideDelay: 5000,
   });
   public readonly inline = new InlineState(this, this.scroll);
+  public readonly block = new BlockState(this, this.scroll);
 
   public readonly version = rsync.val(0);
   public readonly contentVersion = rsync.val(0);
@@ -80,11 +82,13 @@ export class MuTxtState implements UiLifeCycles {
     });
 
     const stopInline = this.inline.start();
+    const stopBlock = this.block.start();
 
     return () => {
       unbindCollaboration();
       scrollUnsubscribe();
       stopInline();
+      stopBlock();
     };
   }
 
