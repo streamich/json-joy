@@ -1,7 +1,9 @@
 import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
+import {KeyContext, KeySourceEl} from '@jsonjoy.com/keyboard';
 import {getActiveAlignment} from '../behavior';
 import {getCaretPathInfo} from '../behavior/path-info';
 import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
+import {bindShortcuts} from '../behavior/keyboard';
 import {MuTxtApi} from './MuTxtApi';
 import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
@@ -31,6 +33,9 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly wnd = windowSize();
+
+  public readonly kbd: KeyContext = new KeyContext(undefined, 'mutxt');
+  private kbdSourceUnbind?: () => void;
 
   /** Current cursor position (caret or range). */
   public readonly cursor = rsync.val<Selection | null>(null);
@@ -84,14 +89,28 @@ export class MuTxtState implements UiLifeCycles {
 
     const stopInline = this.inline.start();
     const stopBlock = this.block.start();
+    const unbindShortcuts = bindShortcuts(this);
 
     return () => {
       unbindCollaboration();
       scrollUnsubscribe();
       stopInline();
       stopBlock();
+      unbindShortcuts();
+      this.kbdSourceUnbind?.();
+      this.kbdSourceUnbind = undefined;
+      this.kbd.dispose();
     };
   }
+
+  public readonly bindKbdSource = (el: HTMLElement | null): void => {
+    this.kbdSourceUnbind?.();
+    this.kbdSourceUnbind = undefined;
+    if (el) {
+      const source = new KeySourceEl(el);
+      this.kbdSourceUnbind = source.bind(this.kbd);
+    }
+  };
 
   public readonly setFocused = (focused: boolean): void => {
     this.focused.set(focused);

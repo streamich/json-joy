@@ -14,7 +14,6 @@ import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '@jsonjoy.com/collaborative-slate';
-import {handleKeyboardShortcuts} from './behavior/keyboard';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -191,7 +190,8 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     >
       <Editable
         ref={(el) => {
-          if (el) state.editableBox.setEl(el);
+          state.editableBox.setEl(el ?? undefined);
+          state.bindKbdSource(el);
         }}
         decorate={decorate}
         renderElement={renderElement}
@@ -205,13 +205,6 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         style={editableStyle}
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
-        onKeyDown={(event) => {
-          const handled = handleKeyboardShortcuts(editor, event, {
-            requestLinkMenu: state.requestLinkMenu,
-            onSlashKey: state.onSlashKey,
-          });
-          if (handled) state.sync(true);
-        }}
       />
       <InlineFloater />
       <BlockFloater />

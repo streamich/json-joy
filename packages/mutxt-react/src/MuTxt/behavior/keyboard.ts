@@ -1,152 +1,86 @@
-import {Editor} from 'slate';
 import {insertCodeBlockBreak, insertCodeBlockExit, redo, resetEmptyBlockToParagraph, setAlignment, toggleBlock, toggleMark, undo} from '../behavior';
-import {getActiveLink, hasRangeSelection} from './link';
 import {dedentBlock, indentBlock} from './indentation';
-import type {KeyboardEvent} from 'react';
+import {Key} from '@jsonjoy.com/keyboard';
+import type {AnyBinding} from '@jsonjoy.com/keyboard';
+import type {MuTxtState} from '../state/MuTxtState';
 
-export interface KeyboardShortcutHandlers {
-  requestLinkMenu?: () => void;
-  onSlashKey?: () => boolean;
-}
+/**
+ * Each handler is responsible for calling `event.preventDefault()` only when
+ * it actually consumes the key, so unhandled cases (e.g. `Backspace` outside
+ * an empty block) fall through to Slate's default behavior.
+ */
+export const bindShortcuts = (state: MuTxtState): (() => void) => {
+  const editor = state.editor;
+  const sync = (): void => state.sync(true);
+  const consume = (key: Key, fn: () => void): void => {
+    key.event?.preventDefault();
+    fn();
+    sync();
+  };
 
-export const handleKeyboardShortcuts = (
-  editor: Editor,
-  event: KeyboardEvent<HTMLDivElement>,
-  handlers: KeyboardShortcutHandlers = {},
-): boolean => {
-  const primary = event.metaKey || event.ctrlKey;
-  const key = event.key.toLowerCase();
+  const bindings: AnyBinding[] = [
+    // ------------------------------------------------------------- Slash menu
+    ['/', (key: Key) => {
+      if (state.onSlashKey?.()) key.event?.preventDefault();
+    }],
 
-  if (key === '/' && !primary && !event.altKey && !event.shiftKey) {
-    const consumed = handlers.onSlashKey?.();
-    if (consumed) {
-      event.preventDefault();
-      return true;
-    }
-  }
+    // ----------------------------------------------- Empty-block to paragraph
+    ['Backspace', (key: Key) => {
+      if (resetEmptyBlockToParagraph(editor)) consume(key, () => {});
+    }],
+    ['Delete', (key: Key) => {
+      if (resetEmptyBlockToParagraph(editor)) consume(key, () => {});
+    }],
 
-  if ((key === 'backspace' || key === 'delete') && !primary && !event.altKey) {
-    if (!resetEmptyBlockToParagraph(editor)) return false;
-    event.preventDefault();
-    return true;
-  }
+    // ---------------------------------------- Code-block break / exit (Enter)
+    ['Primary+Enter', (key: Key) => {
+      if (insertCodeBlockBreak(editor)) consume(key, () => {});
+    }],
+    ['Shift+Enter', (key: Key) => {
+      if (insertCodeBlockExit(editor)) consume(key, () => {});
+    }],
 
-  if (key === 'enter' && primary) {
-    if (!insertCodeBlockBreak(editor)) return false;
-    event.preventDefault();
-    return true;
-  }
+    // ------------------------------------------------------------------ Marks
+    ['Primary+b', (key: Key) => consume(key, () => toggleMark(editor, 'bold'))],
+    ['Primary+i', (key: Key) => consume(key, () => toggleMark(editor, 'italic'))],
+    ['Primary+u', (key: Key) => consume(key, () => toggleMark(editor, 'underline'))],
+    ['Primary+e', (key: Key) => consume(key, () => toggleMark(editor, 'code'))],
 
-  if (key === 'enter' && event.shiftKey && !primary) {
-    if (!insertCodeBlockExit(editor)) return false;
-    event.preventDefault();
-    return true;
-  }
+    // ------------------------------------------------------------------- Link
+    ['Primary+k', (key: Key) => {
+      const link = state.inline.link;
+      if (!link.canOpen.value) return;
+      key.event?.preventDefault();
+      link.setAnchorFromSelection();
+      state.inline.dismissed.next(true);
+      link.toggle();
+    }],
 
-  if (!primary) return false;
+    // ------------------------------------------------------------ Undo / redo
+    ['Primary+z', (key: Key) => consume(key, () => undo(editor))],
+    ['Primary+Shift+z', (key: Key) => consume(key, () => redo(editor))],
+    ['Primary+y', (key: Key) => consume(key, () => redo(editor))],
 
-  if (!event.altKey && !event.shiftKey) {
-    switch (key) {
-      case 'b':
-        event.preventDefault();
-        toggleMark(editor, 'bold');
-        return true;
-      case 'i':
-        event.preventDefault();
-        toggleMark(editor, 'italic');
-        return true;
-      case 'u':
-        event.preventDefault();
-        toggleMark(editor, 'underline');
-        return true;
-      case 'e':
-        event.preventDefault();
-        toggleMark(editor, 'code');
-        return true;
-      case 'k':
-        if (!hasRangeSelection(editor) && !getActiveLink(editor)) return false;
-        event.preventDefault();
-        handlers.requestLinkMenu?.();
-        return true;
-      case 'y':
-        event.preventDefault();
-        redo(editor);
-        return true;
-      case ']':
-        event.preventDefault();
-        indentBlock(editor);
-        return true;
-      case '[':
-        event.preventDefault();
-        dedentBlock(editor);
-        return true;
-    }
-  }
+    // ---------------------------------------------------------- Block toggles
+    ['Primary+Alt+0', (key: Key) => consume(key, () => toggleBlock(editor, 'p'))],
+    ['Primary+Alt+1', (key: Key) => consume(key, () => toggleBlock(editor, 'h1'))],
+    ['Primary+Alt+2', (key: Key) => consume(key, () => toggleBlock(editor, 'h2'))],
+    ['Primary+Alt+3', (key: Key) => consume(key, () => toggleBlock(editor, 'h3'))],
+    ['Primary+Alt+7', (key: Key) => consume(key, () => toggleBlock(editor, 'ol'))],
+    ['Primary+Alt+8', (key: Key) => consume(key, () => toggleBlock(editor, 'ul'))],
+    ['Primary+Shift+q', (key: Key) => consume(key, () => toggleBlock(editor, 'blockquote'))],
+    ['Primary+Shift+c', (key: Key) => consume(key, () => toggleBlock(editor, 'code-block'))],
 
-  if (key === 'z') {
-    event.preventDefault();
-    if (event.shiftKey) redo(editor);
-    else undo(editor);
-    return true;
-  }
+    // -------------------------------------------------------------- Alignment
+    ['Primary+Shift+l', (key: Key) => consume(key, () => setAlignment(editor, 'left'))],
+    ['Primary+Shift+e', (key: Key) => consume(key, () => setAlignment(editor, 'center'))],
+    ['Primary+Shift+r', (key: Key) => consume(key, () => setAlignment(editor, 'right'))],
+    ['Primary+Shift+j', (key: Key) => consume(key, () => setAlignment(editor, 'justify'))],
 
-  if (event.altKey) {
-    switch (key) {
-      case '0':
-        event.preventDefault();
-        toggleBlock(editor, 'p');
-        return true;
-      case '1':
-        event.preventDefault();
-        toggleBlock(editor, 'h1');
-        return true;
-      case '2':
-        event.preventDefault();
-        toggleBlock(editor, 'h2');
-        return true;
-      case '3':
-        event.preventDefault();
-        toggleBlock(editor, 'h3');
-        return true;
-      case '7':
-        event.preventDefault();
-        toggleBlock(editor, 'ol');
-        return true;
-      case '8':
-        event.preventDefault();
-        toggleBlock(editor, 'ul');
-        return true;
-    }
-  }
+    // ------------------------------------------------------------ Indentation
+    ['Primary+]', (key: Key) => consume(key, () => indentBlock(editor))],
+    ['Primary+[', (key: Key) => consume(key, () => dedentBlock(editor))],
+  ];
 
-  if (event.shiftKey) {
-    switch (key) {
-      case 'q':
-        event.preventDefault();
-        toggleBlock(editor, 'blockquote');
-        return true;
-      case 'c':
-        event.preventDefault();
-        toggleBlock(editor, 'code-block');
-        return true;
-      case 'l':
-        event.preventDefault();
-        setAlignment(editor, 'left');
-        return true;
-      case 'e':
-        event.preventDefault();
-        setAlignment(editor, 'center');
-        return true;
-      case 'r':
-        event.preventDefault();
-        setAlignment(editor, 'right');
-        return true;
-      case 'j':
-        event.preventDefault();
-        setAlignment(editor, 'justify');
-        return true;
-    }
-  }
-
-  return false;
+  return state.kbd.bind(bindings);
 };

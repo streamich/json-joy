@@ -1,5 +1,5 @@
 import {createEditor} from 'slate';
-import {handleKeyboardShortcuts} from '../behavior/keyboard';
+import {resetEmptyBlockToParagraph} from '../behavior';
 import type {SlateEditorDocument} from '../types';
 
 const createTestEditor = (doc: SlateEditorDocument) => {
@@ -8,53 +8,37 @@ const createTestEditor = (doc: SlateEditorDocument) => {
   return editor;
 };
 
-const createEvent = (key: string) =>
-  ({
-    key,
-    metaKey: false,
-    ctrlKey: false,
-    altKey: false,
-    shiftKey: false,
-    preventDefault: jest.fn(),
-  }) as any;
-
-describe('handleKeyboardShortcuts()', () => {
-  test('turns an empty heading into a paragraph on Backspace', () => {
+describe('resetEmptyBlockToParagraph()', () => {
+  test('turns an empty heading into a paragraph', () => {
     const editor = createTestEditor([{type: 'h2', children: [{text: ''}]}]);
     editor.selection = {
       anchor: {path: [0, 0], offset: 0},
       focus: {path: [0, 0], offset: 0},
     };
-    const event = createEvent('Backspace');
-    const handled = handleKeyboardShortcuts(editor, event);
+    const handled = resetEmptyBlockToParagraph(editor);
     expect(handled).toBe(true);
-    expect(event.preventDefault).toHaveBeenCalled();
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
 
-  test('turns an empty list item into a paragraph on Delete', () => {
+  test('turns an empty list item into a paragraph', () => {
     const editor = createTestEditor([{type: 'ul', children: [{type: 'li', children: [{text: ''}]}]}]);
     editor.selection = {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},
     };
-    const event = createEvent('Delete');
-    const handled = handleKeyboardShortcuts(editor, event);
+    const handled = resetEmptyBlockToParagraph(editor);
     expect(handled).toBe(true);
-    expect(event.preventDefault).toHaveBeenCalled();
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
 
-  test('turns an empty checklist item into a paragraph on Delete', () => {
+  test('turns an empty checklist item into a paragraph', () => {
     const editor = createTestEditor([{type: 'checklist', children: [{type: 'li', checked: true, children: [{text: ''}]}]}]);
     editor.selection = {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},
     };
-    const event = createEvent('Delete');
-    const handled = handleKeyboardShortcuts(editor, event);
+    const handled = resetEmptyBlockToParagraph(editor);
     expect(handled).toBe(true);
-    expect(event.preventDefault).toHaveBeenCalled();
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
 
@@ -64,10 +48,8 @@ describe('handleKeyboardShortcuts()', () => {
       anchor: {path: [0, 0], offset: 5},
       focus: {path: [0, 0], offset: 5},
     };
-    const event = createEvent('Backspace');
-    const handled = handleKeyboardShortcuts(editor, event);
+    const handled = resetEmptyBlockToParagraph(editor);
     expect(handled).toBe(false);
-    expect(event.preventDefault).not.toHaveBeenCalled();
     expect(editor.children).toEqual([{type: 'blockquote', children: [{text: 'quote'}]}]);
   });
 });
