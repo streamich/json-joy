@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useMemo} from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
@@ -6,7 +7,6 @@ import {Spoiler} from './Spoiler';
 import {type CodeSyntaxDecoration} from '../../behavior/code-highlighting';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
-import {Kbd} from './Kbd';
 
 const linkClass = rule({
   textDecoration: 'underline',
@@ -30,13 +30,40 @@ const delClass = rule({
   col: 'red',
 });
 
+const codeClass = rule({
+  pd: '.18rem .42rem .24rem',
+  bdrad: '.42em',
+  ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
+  fz: '.92em',
+  fw: 500,
+  ls: '-0.01em',
+});
+
 export interface LeafProps extends RenderLeafProps {
-  leaf: CustomText & CodeSyntaxDecoration;
+  leaf: CustomText & CodeSyntaxDecoration & {activeSelection?: true};
 }
 
 export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) => {
   const styles = useStyles();
+  const dynamicCodeClass = useMemo(() => {
+    return rule({
+      bg: styles.g(0, 0.03),
+      bd: `1px solid ${styles.g(0, 0.05)}`,
+      bxsh: `inset 0 1px 0 ${styles.g(1, 0.16)}, 0 1px 2px ${styles.g(0, 0.06)}`,
+      col: styles.g(0.08),
+      '&:hover': {
+        bg: styles.g(0, 0.04),
+        bd: `1px solid ${styles.g(0, 0.16)}`,
+        // bxsh: `inset 0 1px 0 ${styles.g(1, 0.44)}, 0 1px 2px ${styles.g(0, 0.06)}`,
+        bxsh: `inset 0 1px 0 ${styles.g(1, 0.08)}, 0 1px 2px ${styles.g(0, 0.03)}`,
+        col: styles.g(0.02),
+      },
+    });
+  }, [styles, styles.light]);
   const tokenClassName = leaf.codeTokenTypes?.length ? 'token ' + leaf.codeTokenTypes.join(' ') : undefined;
+  const style: React.CSSProperties | undefined = leaf.activeSelection
+    ? {backgroundColor: styles.col.accent(0, 'bg-2')}
+    : undefined;
   let content = children;
 
   if (leaf.kbd) content = <Key>{content}</Key>;
@@ -53,22 +80,7 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   if (leaf.spoiler) content = <Spoiler text={text}>{content}</Spoiler>;
   if (leaf.sup) content = <sup>{content}</sup>;
   else if (leaf.sub) content = <sub>{content}</sub>;
-  if (leaf.code) {
-    content = (
-      <code
-        style={{
-          padding: '0.16rem 0.38rem',
-          borderRadius: '8px',
-          background: styles.light ? 'rgba(15,23,42,0.08)' : 'rgba(255,255,255,0.08)',
-          color: styles.light ? styles.g(0.14) : styles.g(0.94),
-          fontFamily: '"JetBrains Mono", "Fira Code", Menlo, monospace',
-          fontSize: '0.92em',
-        }}
-      >
-        {content}
-      </code>
-    );
-  }
+  if (leaf.code) content = <code className={codeClass + dynamicCodeClass}>{content}</code>;
 
   if (leaf.a?.href) {
     return (
@@ -79,6 +91,7 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
         target="_blank"
         rel="noreferrer noopener"
         title={leaf.a.title || leaf.a.href}
+        style={style}
         onClick={(event) => {
           if (!(event.metaKey || event.ctrlKey)) event.preventDefault();
         }}
@@ -88,5 +101,5 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
     );
   }
 
-  return <span {...attributes} className={tokenClassName}>{content}</span>;
+  return <span {...attributes} className={tokenClassName} style={style}>{content}</span>;
 };
