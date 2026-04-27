@@ -6,6 +6,7 @@ import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
 import {Spoiler} from './Spoiler';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
+import {useTrace} from '@jsonjoy.com/ui';
 
 const linkClass = rule({
   textDecoration: 'underline',
@@ -44,6 +45,7 @@ export interface LeafProps extends RenderLeafProps {
 
 export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) => {
   const styles = useStyles();
+  const isInCodeBlock = !!useTrace('isInCodeBlock');
   const dynamicCodeClass = useMemo(() => {
     return rule({
       bg: styles.g(0, 0.03),
@@ -64,21 +66,29 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
     : undefined;
   let content = children;
 
-  if (leaf.kbd) content = <Key>{content}</Key>;
+  if (!isInCodeBlock) {
+    if (leaf.kbd) content = <Key>{content}</Key>; 
+  }
 
   if (leaf.ins) content = <ins className={insClass}>{content}</ins>;
   else if (leaf.del) content = <del className={delClass}>{content}</del>;
 
-  if (leaf.bold) content = <strong style={{fontWeight: 700}}>{content}</strong>;
-  if (leaf.italic) content = <em>{content}</em>;
+  if (!isInCodeBlock) {
+    if (leaf.bold) content = <strong style={{fontWeight: 700}}>{content}</strong>;
+    if (leaf.italic) content = <em>{content}</em>;
+  }
+
   if (leaf.underline) content = <u style={{textUnderlineOffset: '3px'}}>{content}</u>;
   if (leaf.overline) content = <span style={{textDecoration: 'overline'}}>{content}</span>;
   if (leaf.strikethrough) content = <span style={{textDecoration: 'line-through'}}>{content}</span>;
   if (leaf.mark) content = <mark>{content}</mark>;
-  if (leaf.spoiler) content = <Spoiler text={text}>{content}</Spoiler>;
-  if (leaf.sup) content = <sup>{content}</sup>;
-  else if (leaf.sub) content = <sub>{content}</sub>;
-  if (leaf.code) content = <code className={codeClass + dynamicCodeClass}>{content}</code>;
+
+  if (!isInCodeBlock) {
+    if (leaf.spoiler) content = <Spoiler text={text}>{content}</Spoiler>;
+    if (leaf.sup) content = <sup>{content}</sup>;
+    else if (leaf.sub) content = <sub>{content}</sub>;
+    if (leaf.code) content = <code className={codeClass + dynamicCodeClass}>{content}</code>;
+  }
 
   const href = leaf.a?.href;
   if (href) {

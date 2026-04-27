@@ -9,6 +9,7 @@ import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {ColorTokens} from 'code-colors-react';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {SetTrace} from '@jsonjoy.com/ui';
 import {CodeBlockOptionsPopup} from './CodeBlockOptionsPopup';
 import * as settings from './settings';
 import type {CodeBlockElement as CodeBlockElementType} from '../../../types';
@@ -215,7 +216,9 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
         <pre className={overlayClass} style={codeOverlayStyle} aria-hidden="true" contentEditable={false}>
           <ColorTokens as="span" code={codeText} lang={languageValue} />
         </pre>
-        {children}
+        <SetTrace name='isInCodeBlock' value={true}>
+          {children}
+        </SetTrace>
       </code>
     </pre>
   );
