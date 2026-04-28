@@ -113,7 +113,6 @@ const codeClass = drule({
   pos: 'relative',
   flex: '1',
   minW: '0',
-  col: 'rgba(127,127,127,.1)',
   '&::selection': {
     bg: 'rgba(0,127,255,0.36)',
     col: 'inherit',
@@ -199,6 +198,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   const codeStyle: React.CSSProperties = {
     paddingLeft: showLineNumbers ? '14px' : '18px',
     caretColor: styles.g(0),
+    color:!!languageValue ? 'rgba(127,127,127,.1)' : void 0,
   };
 
   const codeOverlayStyle: React.CSSProperties = {
@@ -213,9 +213,11 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
         </div>
       ) : null}
       <code className={codeClassName} style={codeStyle}>
-        <pre className={overlayClass} style={codeOverlayStyle} aria-hidden="true" contentEditable={false}>
-          <ColorTokens as="span" code={codeText} lang={languageValue} />
-        </pre>
+        {!!languageValue && (
+          <pre className={overlayClass} style={codeOverlayStyle} aria-hidden="true" contentEditable={false}>
+            <ColorTokens as="span" code={codeText} lang={languageValue} />
+          </pre>
+        )}
         <SetTrace name='isInCodeBlock' value={true}>
           {children}
         </SetTrace>
