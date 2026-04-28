@@ -9,6 +9,7 @@ export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat = 'bold' | 'italic' | 'underline' | 'strikethrough' | 'overline' | 'code' | 'mark' | 'spoiler' | 'sup' | 'sub' | 'kbd' | 'ins' | 'del';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
 export type ListElementType = 'ul' | 'ol' | 'checklist';
+export type UlType = 'disc' | 'circle' | 'square';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'callout' | 'code-block' | 'pre' | ListElementType;
 export type BlockElementType = BlockFormat | 'li' | 'embed';
 
@@ -93,6 +94,7 @@ export interface ListItemElement extends BlockAttributes {
 
 export interface BulletedListElement extends BlockAttributes {
   type: 'ul';
+  ulType?: UlType;
   children: ListItemElement[];
 }
 

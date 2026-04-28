@@ -103,7 +103,7 @@ export const ListContainerElement: React.FC<ListContainerElementProps> = ({attri
     );
   }
   return (
-    <ul {...attributes} className={listClass}>
+    <ul {...attributes} className={listClass} style={{listStyleType: element.ulType ?? 'disc'}}>
       {children}
     </ul>
   );

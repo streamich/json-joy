@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
 import {formatKeys} from '../util/keys';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {dedentBlock, getActiveIndent, indentBlock, MAX_INDENT} from '../behavior/indentation';
 import {isAlignmentActive, setAlignment, toggleBlock} from '../behavior';
+import {getActiveUlType, isUlTypeActive, setUlType} from '../behavior/lists';
 import type {BlockFormat, ListElementType, MenuItem, SlateTextAlign} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
@@ -207,7 +208,43 @@ export class BlockMenu implements UiLifeCycles {
   // --------------------------------------------------------------- List items
 
   public itemUL(): MenuItem {
-    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8']});
+    const mutxt = this.mutxt;
+    const applyUlType = (ulType: 'disc' | 'circle' | 'square') => {
+      if (getActiveUlType(mutxt.editor) === null) toggleBlock(mutxt.editor, 'ul');
+      setUlType(mutxt.editor, ulType);
+    };
+    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8']}, [
+      {
+        name: 'Disc bullets',
+        icon: () => (
+          <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: 'currentColor'}} />
+          </div>
+        ),
+        active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'disc')),
+        onSelect: this.exec(() => applyUlType('disc')),
+      },
+      {
+        name: 'Circle bullets',
+        icon: () => (
+          <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{width: 6, height: 6, borderRadius: '50%', border: '1px solid currentColor'}} />
+          </div>
+        ),
+        active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'circle')),
+        onSelect: this.exec(() => applyUlType('circle')),
+      },
+      {
+        name: 'Square bullets',
+        icon: () => (
+          <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{width: 6, height: 6, backgroundColor: 'currentColor'}} />
+          </div>
+        ),
+        active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'square')),
+        onSelect: this.exec(() => applyUlType('square')),
+      },
+    ]);
   }
   public itemOL(): MenuItem {
     return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7']});
@@ -279,11 +316,11 @@ export class BlockMenu implements UiLifeCycles {
     return item;
   }
 
-  private layoutItem(alignment: SlateTextAlign, config: ItemConfig): MenuItem {
+  private layoutItem(alignment: SlateTextAlign, config: ItemConfig, children?: MenuItem['children']): MenuItem {
     const mutxt = this.mutxt;
     const keys = config.keys;
     const formattedKeys = keys ? formatKeys(keys) : undefined;
-    return {
+    const item: MenuItem = {
       name: config.name,
       icon: config.icon,
       keys: formattedKeys ? [formattedKeys] : undefined,
@@ -292,6 +329,8 @@ export class BlockMenu implements UiLifeCycles {
       active: rsync.comp([mutxt.version], () => isAlignmentActive(mutxt.editor, alignment)),
       onSelect: this.exec(() => setAlignment(mutxt.editor, alignment)),
     };
+    if (children) item.children = children;
+    return item;
   }
 
   private readonly exec = (fn: () => void) => (event: React.MouseEvent | React.TouchEvent): void => {
