@@ -50,27 +50,27 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
   const autoFocusedFileIdsRef = React.useRef<Set<string>>(new Set());
 
   // Focus an select new file
-  React.useLayoutEffect(() => {
-    if (autoFocusedFileIdsRef.current.has(file.id)) return;
-    if (Date.now() - file.meta.createdAt > NEW_FILE_RENAME_WINDOW_MS) return;
-    let frameId = 0;
-    let attempts = 0;
-    const focusInput = () => {
-      attempts++;
-      const input = inputWrapRef.current?.querySelector('input, textarea');
-      if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
-        autoFocusedFileIdsRef.current.add(file.id);
-        input.focus();
-        input.select();
-        return;
-      }
-      if (attempts < 5) frameId = requestAnimationFrame(focusInput);
-    };
-    frameId = requestAnimationFrame(focusInput);
-    return () => {
-      if (frameId) cancelAnimationFrame(frameId);
-    };
-  }, [file.id, file.meta.createdAt]);
+  // React.useLayoutEffect(() => {
+  //   if (autoFocusedFileIdsRef.current.has(file.id)) return;
+  //   if (Date.now() - file.meta.createdAt > NEW_FILE_RENAME_WINDOW_MS) return;
+  //   let frameId = 0;
+  //   let attempts = 0;
+  //   const focusInput = () => {
+  //     attempts++;
+  //     const input = inputWrapRef.current?.querySelector('input, textarea');
+  //     if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
+  //       autoFocusedFileIdsRef.current.add(file.id);
+  //       input.focus();
+  //       input.select();
+  //       return;
+  //     }
+  //     if (attempts < 5) frameId = requestAnimationFrame(focusInput);
+  //   };
+  //   frameId = requestAnimationFrame(focusInput);
+  //   return () => {
+  //     if (frameId) cancelAnimationFrame(frameId);
+  //   };
+  // }, [file.id, file.meta.createdAt]);
 
   return (
     <div style={{marginTop: -Sizes.TabsFadeHeight}}>

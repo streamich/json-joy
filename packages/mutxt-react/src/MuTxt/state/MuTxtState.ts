@@ -70,6 +70,8 @@ export class MuTxtState implements UiLifeCycles {
    */
   public onSlashKey?: () => boolean;
 
+  public onTitleSubmit?: (title: string) => void = void 0;
+
   constructor(
     public readonly editor: BaseEditor & ReactEditor & HistoryEditor,
     public readonly peritextRef: PeritextRef,

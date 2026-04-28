@@ -13,6 +13,8 @@ const editorShellClass = rule({
   minH: 0,
 });
 
+const minHeight = 400;
+
 export interface DocumentMuTxtProps {
   file: OpenFile;
   peritext: PeritextRef;
@@ -20,14 +22,27 @@ export interface DocumentMuTxtProps {
   visible?: boolean;
 }
 
-const minHeight = 400;
 
 export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext, readOnly, visible }) => {
   return (
     <div className={editorShellClass} style={{display: visible ? 'block' : 'none', minHeight}}>
-      <MuTxt heightFit hoverElevate peritext={peritext} minHeight={minHeight} readOnly={readOnly} onApi={(api) => {
-        file.mutxt = api;
-      }} />
+      <MuTxt heightFit hoverElevate peritext={peritext} minHeight={minHeight} readOnly={readOnly}
+        onApi={(api) => {
+          file.mutxt = api;
+          requestAnimationFrame(() => {
+            api.focus();
+          });
+        }}
+        startWithTitle
+        onTitleSubmit={title => {
+          if (!title) return;
+          const now = Date.now();
+          const fileLifeTime = now - file.meta.createdAt;
+          const isFileOlderThan3Minutes = fileLifeTime > 3 * 60 * 1000;
+          if (isFileOlderThan3Minutes) return;
+          file.name.next(title);
+        }}
+      />
     </div>
   );
 };

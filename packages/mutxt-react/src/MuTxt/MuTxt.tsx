@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useMemo, useEffect, useCallback} from 'react';
 import {rule} from 'nano-theme';
-import {createEditor, type Descendant} from 'slate';
+import {createEditor, Transforms, type Descendant} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
@@ -12,6 +12,8 @@ import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-sla
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
+import {withHr} from './behavior/hr';
+import {withTitleSubmit} from './behavior/title';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '@jsonjoy.com/collaborative-slate';
 import {BlockElement} from './components/blocks/BlockElement';
@@ -82,6 +84,20 @@ export interface MuTxtProps {
   style?: React.CSSProperties;
   state?: MuTxtState;
   onApi?: (api: MuTxtApi) => void;
+
+  /**
+   * When the editor mounts with an empty document, replace the default
+   * empty paragraph with an empty `title` block. Useful for "new document"
+   * flows where the first thing the user sees is a title prompt.
+   */
+  startWithTitle?: boolean;
+
+  /**
+   * Called with the text contents of the `title` block when the user
+   * presses Enter at the end of it. Fires before the default Enter
+   * behaviour (which converts the new block into a subtitle).
+   */
+  onTitleSubmit?: (title: string) => void;
 }
 
 export const MuTxt: React.FC<MuTxtProps> = ({
@@ -102,8 +118,16 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   style,
   state: _state,
   onApi,
+  startWithTitle,
+  onTitleSubmit,
 }) => {
   const styles = useStyles();
+
+  // ---------------------------------------------------- Title-submit callback
+  const onTitleSubmitRef = React.useRef(onTitleSubmit);
+  React.useEffect(() => {
+    onTitleSubmitRef.current = onTitleSubmit;
+  }, [onTitleSubmit]);
 
   // ----------------------------------------------------------------- Peritext
   const peritextRef: PeritextRef = useMemo(() => {
@@ -127,7 +151,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     } catch {
       initialValue = createEmptyDocument() as Descendant[];
     }
-    const editor = withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor()))));
+    const editor = withTitleSubmit(withHr(withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor()))))), () => onTitleSubmitRef.current);
     editor.children = initialValue;
     editor.selection = null;
     if (_state) return [_state.editor, _state];
@@ -136,8 +160,20 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }, [peritextRef, _state]);
   useEffect(() => {
     if (_state) return; // We don't own the state.
-    return state.start();
-  }, [_state, state]);
+    const stop = state.start();
+    if (startWithTitle && state.api.isEmpty()) {
+      // Convert the default empty paragraph into an empty title block. This
+      // runs after `state.start()` so the operation flows through the active
+      // PeritextBinding into the underlying CRDT (rather than being a stale
+      // direct mutation of `editor.children`).
+      Transforms.setNodes(
+        editor,
+        {type: 'title'} as Partial<CustomElement>,
+        {at: [0]},
+      );
+    }
+    return stop;
+  }, [_state, state, startWithTitle, editor]);
   useIsomorphicLayoutEffect(() => {
     onApi?.(state.api);
   }, []);
