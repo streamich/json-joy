@@ -1,4 +1,4 @@
-import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {deepEqual} from '@jsonjoy.com/json-equal';
 import {cmpUint8Array} from '@jsonjoy.com/buffers/lib/cmpUint8Array';
 import {
   type ITimespanStruct,
@@ -25,6 +25,10 @@ export class DiffError extends Error {
 }
 
 export class JsonCrdtDiff {
+  /** When set to `true`, shallow (length only) comparison is used for
+   * `Uint8Array` in "con" nodes. */
+  public shallowConBin = false;
+
   public builder: PatchBuilder;
 
   public constructor(protected readonly model: Model<any>) {
@@ -224,13 +228,16 @@ export class JsonCrdtDiff {
     if (src instanceof ConNode) {
       if (dst instanceof nodes.con) dst = dst.raw;
       const val = src.val;
-      if (
-        val !== dst &&
-        ((val instanceof Timestamp && !(dst instanceof Timestamp)) ||
+      if (val !== dst) {
+        if (this.shallowConBin && val instanceof Uint8Array && dst instanceof Uint8Array) {
+          if (val.length !== dst.length) throw new DiffError();
+        } else if (
+          (val instanceof Timestamp && !(dst instanceof Timestamp)) ||
           (!(val instanceof Timestamp) && dst instanceof Timestamp) ||
-          !deepEqual(src.val, dst))
-      )
-        throw new DiffError();
+          !deepEqual(src.val, dst)
+        )
+          throw new DiffError();
+      }
     } else if (src instanceof StrNode) {
       if (dst instanceof nodes.str) dst = dst.raw;
       if (typeof dst !== 'string') throw new DiffError();
