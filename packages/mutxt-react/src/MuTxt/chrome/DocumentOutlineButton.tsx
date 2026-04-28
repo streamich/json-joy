@@ -55,9 +55,11 @@ export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({edi
       children: outline.map((item) => ({
         key: item.key,
         name: item.title,
-        display: () => <div style={{paddingLeft: (item.level - 1) * 24, fontWeight: 400 + (3 - item.level) * 100}}>{item.title}</div>,
+        display: () => <div style={{paddingLeft: (item.level - 1) * 16, fontWeight: 400 + (3 - item.level) * 100, fontSize: item.level ? void 0 : '1.1em'}}>{item.title}</div>,
         // right: () => <span style={{fontSize: 10, opacity: 0.5}}>{item.path.join('.')}</span>,
-        icon: () => <Iconista set="tabler" icon={`h-${item.level}`} width={16} height={16} style={{opacity: .5}} />,
+        icon: () => item.level
+          ? <Iconista set="tabler" icon={`h-${item.level}`} width={16} height={16} style={{opacity: .5}} />
+          : <Iconista set="lucide" icon="type" width={16} height={16} style={{opacity: .5}} />,
         onSelect: () => handleScrollTo(item.path),
       })),
     }} />) : (

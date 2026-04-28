@@ -43,16 +43,20 @@ const getMarkerHeight = (
 
 const describeScrollMapElement = (element: CustomElement, light: boolean): ScrollMapElementDescriptor | null => {
   switch (element.type) {
+    case 'title':
+      return {el: element, color: light ? '#234' : '#f8fafc', height: 5, variant: 'wide'};
+    case 'subtitle':
+      return {el: element, color: light ? '#789' : '#94a3b8', height: 3, variant: 'wide'};
     case 'h1':
-      return {el: element, color: light ? '#456' : '#e5e7eb', height: 4, variant: 'wide'};
+      return {el: element, color: light ? '#345' : '#e5e7eb', height: 4, variant: 'wide'};
     case 'h2':
-      return {el: element, color: light ? '#678' : '#cbd5e1', height: 3, variant: 'wide'};
+      return {el: element, color: light ? '#456' : '#cbd5e1', height: 3, variant: 'wide'};
     case 'h3':
-      return {el: element, color: light ? '#9ab' : '#94a3b8', height: 2, variant: 'wide'};
+      return {el: element, color: light ? '#678' : '#94a3b8', height: 2, variant: 'wide'};
     case 'h4':
     case 'h5':
     case 'h6':
-      return {el: element, color: light ? '#cde' : '#64748b', height: 2, variant: 'wide'};
+      return {el: element, color: light ? '#89a' : '#64748b', height: 2, variant: 'wide'};
     case 'blockquote':
       return {
         el: element,

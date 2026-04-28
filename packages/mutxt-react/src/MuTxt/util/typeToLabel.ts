@@ -8,6 +8,16 @@ export const typeToLabel = (type: string): string => {
       return 'Heading 2';
     case 'h3':
       return 'Heading 3';
+    case 'h4':
+      return 'Heading 4';
+    case 'h5':
+      return 'Heading 5';
+    case 'h6':
+      return 'Heading 6';
+    case 'title':
+      return 'Title';
+    case 'subtitle':
+      return 'Subtitle';
     case 'columns':
       return 'Two columns';
     case 'blockquote':

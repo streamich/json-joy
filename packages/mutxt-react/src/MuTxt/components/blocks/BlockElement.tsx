@@ -20,6 +20,11 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
     case 'h1':
     case 'h2':
     case 'h3':
+    case 'h4':
+    case 'h5':
+    case 'h6':
+    case 'title':
+    case 'subtitle':
       return <HeadingElement {...(props as RenderElementProps & {element: any})} />;
     case 'blockquote':
       return <BlockquoteElement {...(props as RenderElementProps & {element: any})} />;

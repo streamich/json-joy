@@ -25,6 +25,42 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
   };
 
   switch (element.type) {
+    case 'title':
+      return (
+        <h1
+          {...attributes}
+          className={headingClass}
+          style={{
+            ...shared,
+            fontSize: '3.8rem',
+            fontWeight: 800,
+            letterSpacing: '-0.04em',
+            margin: '48px 0 8px',
+            lineHeight: 1.05,
+          }}
+        >
+          {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
+        </h1>
+      );
+    case 'subtitle':
+      return (
+        <p
+          {...attributes}
+          className={headingClass}
+          style={{
+            ...shared,
+            fontSize: '1.55rem',
+            fontWeight: 300,
+            margin: '0 0 28px',
+            lineHeight: 1.55,
+            color: styles.g(0.4),
+          }}
+        >
+          {children}
+          {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
+        </p>
+      );
     case 'h1':
       return (
         <h1
