@@ -63,7 +63,6 @@ export class MuTxtState implements UiLifeCycles {
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
-  public requestEmbedMenu?: () => void;
 
   /**
    * Called when the user presses "/". Returns true if the key was consumed

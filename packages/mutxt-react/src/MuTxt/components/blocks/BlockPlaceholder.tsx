@@ -26,7 +26,7 @@ const getPlaceholderText = (element: CustomElement): React.ReactNode => {
   // if (element.type === 'p') return 'Type here or press "/" for options...';
   if (element.type === 'p') return (
     <>
-      Type here or tap double <Key>Shift</Key>, <Key>Shift</Key> for menu...
+      Type here or double tap <Key>Shift</Key>, <Key>Shift</Key> for menu...
     </>
   );
   return typeToLabel(element.type);

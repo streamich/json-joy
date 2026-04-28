@@ -39,7 +39,9 @@ export class SlashMenuState {
         onSelect: (event: React.MouseEvent) => {
           event.preventDefault();
           this.open.set(false);
-          this.mutxt.requestEmbedMenu?.();
+          const embed = this.mutxt.voids.embed;
+          embed.setAnchorFromCaret();
+          embed.toggle();
         },
       },
     ],

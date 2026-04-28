@@ -24,6 +24,7 @@ import {InlineFloater} from './inline/InlineFloater';
 import {LinkFloater} from './inline/link/LinkFloater';
 import {BlockFloater} from './block/BlockFloater';
 import {VoidFloater} from './void/VoidFloater';
+import {EmbedFloater} from './void/embed/EmbedFloater';
 import {SlashMenu} from './void/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
@@ -211,6 +212,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       <BlockFloater />
       <VoidFloater />
       <LinkFloater />
+      <EmbedFloater />
       <SlashMenu />
     </Slate>
   );

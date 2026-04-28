@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
@@ -18,20 +19,45 @@ export class VoidMenu implements UiLifeCycles {
       name: 'Insert menu',
       maxToolbarItems: 4,
       children: [
+        this.itemEmbed({anchorFromCaret: true}),
+      ],
+    };
+  }
+
+  public buildToolbarMenu(): MenuItem {
+    return {
+      name: 'Insert menu',
+      maxToolbarItems: 4,
+      children: [
         this.itemEmbed(),
       ],
     };
   }
 
-  public itemEmbed(): MenuItem {
-    const {mutxt} = this;
+  public itemEmbed(opts: {anchorFromCaret?: boolean} = {}): MenuItem {
+    const mutxt = this.mutxt;
+    const embed = mutxt.voids.embed;
     return {
       name: 'Embed',
       icon: () => <EmbedIcon />,
-      onSelect: (event: React.MouseEvent) => {
+      disabled: rsync.comp(
+        [embed.canOpen],
+        ([canOpen]) => !canOpen,
+      ),
+      active: rsync.comp(
+        [mutxt.caretEmbedUrl],
+        ([url]) => !!url,
+      ),
+      onSelect: (event) => {
         event.preventDefault();
+        if (opts.anchorFromCaret) {
+          embed.setAnchorFromCaret();
+        } else {
+          const trigger = event.currentTarget as HTMLElement | null;
+          if (trigger) embed.setAnchorEl(trigger);
+        }
         mutxt.voids.open.set(false);
-        mutxt.requestEmbedMenu?.();
+        embed.toggle();
       },
     };
   }

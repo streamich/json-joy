@@ -14,12 +14,11 @@ import {
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
-import {EmbedToolbarButton} from '../../void/embed/EmbedToolbarButton';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
-import type {MenuItem} from '../../types';
 import {formatKeys} from '../../util/keys';
 import {SetNamedTrace} from '@jsonjoy.com/ui';
+import type {MenuItem} from '../../types';
 
 const HEIGHT = 48;
 
@@ -124,7 +123,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
           <ToolbarSep />
           <ToolbarSep line height={HEIGHT} lite />
           <ToolbarSep />
-          <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
+          <ToolbarMenu menu={mutxt.voids.menu.buildToolbarMenu()} pane={{transparent: true}} />
           <ToolbarSep />
           <ToolbarSep line height={HEIGHT} lite />
           <ToolbarSep />
