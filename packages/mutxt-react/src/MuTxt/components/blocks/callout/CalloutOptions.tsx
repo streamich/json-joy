@@ -5,6 +5,8 @@ import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {ColorPickerInput} from '@jsonjoy.com/ui/lib/4-card/ColorPicker/ColorPickerInput';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
+import {ClickAway} from '@jsonjoy.com/ui/lib/utils/ClickAway';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {FormRow} from '@jsonjoy.com/ui/lib/3-list-item/FormRow';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
@@ -48,6 +50,28 @@ const preventPopupMouseDown = (event: React.MouseEvent): void => {
   event.stopPropagation();
 };
 
+interface EmojiPickerInnerProps {
+  light: boolean;
+  onSelect: (emoji: string) => void;
+}
+
+const EmojiPickerInner: React.FC<EmojiPickerInnerProps> = ({light, onSelect}) => {
+  const popup = usePopup();
+  const handleClickAway = React.useCallback(() => popup?.close(), [popup]);
+
+  return (
+    <ClickAway onMouseDown={preventPopupMouseDown} onClickAway={handleClickAway}>
+      <EmojiPicker
+        theme={light ? EmojiPickerTheme.LIGHT : EmojiPickerTheme.DARK}
+        onEmojiClick={(data: EmojiClickData) => {
+          onSelect(data.emoji);
+          popup?.close();
+        }}
+      />
+    </ClickAway>
+  );
+};
+
 export const CalloutOptions: React.FC = () => {
   const [t] = useT();
   const styles = useStyles();
@@ -57,14 +81,7 @@ export const CalloutOptions: React.FC = () => {
   const color = state.color.use();
 
   const renderEmojiPicker = React.useCallback(
-    () => (
-      <div onMouseDown={preventPopupMouseDown}>
-        <EmojiPicker
-          theme={styles.light ? EmojiPickerTheme.LIGHT : EmojiPickerTheme.DARK}
-          onEmojiClick={(data: EmojiClickData) => state.setIcon(data.emoji)}
-        />
-      </div>
-    ),
+    () => <EmojiPickerInner light={!!styles.light} onSelect={state.setIcon} />,
     [state, styles.light],
   );
 
