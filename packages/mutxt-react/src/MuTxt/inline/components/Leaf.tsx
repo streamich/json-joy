@@ -31,7 +31,7 @@ const delClass = rule({
 });
 
 const codeClass = rule({
-  pd: '.18rem .42rem .24rem',
+  pd: '.14rem .42rem .22rem',
   bdrad: '.42em',
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
   fz: '.92em',
