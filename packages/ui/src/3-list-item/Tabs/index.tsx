@@ -6,12 +6,11 @@ const outerClass = rule({
   w: '100%',
 });
 
-/** The visual "tray" that holds the tabs – provides background + rounding. */
 const trayClass = rule({
   d: 'flex',
   fld: 'row',
   ai: 'center',
-  pd: '4px',
+  pd: '5px',
   bdrad: '10px',
   ov: 'hidden',
 });
@@ -20,11 +19,12 @@ const useTrayBg = makeRule((theme) => ({
   bg: theme.g(0.95),
 }));
 
-/** Flex-grows to fill the tray and hides the native scroll bar. */
 const scrollClass = rule({
   flex: '1 1 0',
   minWidth: 0,
   ovx: 'auto',
+  pd: '6px',
+  mr: '-6px',
   // Hide scrollbar (Firefox)
   scrollbarWidth: 'none',
   // Hide scrollbar (WebKit / Blink)
@@ -53,7 +53,10 @@ const pillClass = rule({
 
 const usePillBg = makeRule((theme) => ({
   bg: theme.isLight ? '#fff' : theme.g(0.23),
-  bxsh: '0 1px 3px rgba(0,0,0,.12), 0 0 0 0.5px rgba(0,0,0,.05)',
+  bxsh:
+    '0 2px 5px rgba(0,0,0,.14), ' +    // soft outer drop
+    '0 1px 1.5px rgba(0,0,0,.08), ' +  // tight contact shadow for crispness
+    '0 0 0 0.5px rgba(0,0,0,.06)',     // hairline separator
 }));
 
 const tabClass = rule({
