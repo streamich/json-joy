@@ -37,9 +37,13 @@ const H6Icon = makeIcon({set: 'lucide', icon: 'heading-6', width: 16, height: 16
 const TitleIcon = makeIcon({set: 'lucide', icon: 'type', width: 16, height: 16});
 
 // List icons
-const ULIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted', width: 16, height: 16});
-const OLIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered', width: 16, height: 16});
-const ChecklistIcon = makeIcon({set: 'ibm_32', icon: 'list--checked', width: 16, height: 16});
+// const ULIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted', width: 16, height: 16});
+const ULIcon = makeIcon({set: 'lucide_v1', icon: 'list', width: 16, height: 16} as any);
+// const OLIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered', width: 16, height: 16});
+const OLIcon = makeIcon({set: 'lucide_v1', icon: 'list-ordered', width: 16, height: 16} as any);
+// const ChecklistIcon = makeIcon({set: 'ibm_32', icon: 'list--checked', width: 16, height: 16});
+// const ChecklistIcon = makeIcon({set: 'vscode', icon: 'checklist', width: 16, height: 16});
+const ChecklistIcon = makeIcon({set: 'lucide_v1', icon: 'list-todo', width: 16, height: 16} as any);
 
 // Layout icons
 const AlignLeftIcon = makeIcon({set: 'lucide', icon: 'align-left', width: 16, height: 16});
