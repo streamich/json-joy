@@ -4,7 +4,7 @@ const DEFAULT_BG = HslColor.from('#fff')!;
 
 export class ThemeColor {
   constructor(
-    public readonly hsl: HslColor,
+    public readonly fg: HslColor,
     public readonly bg: HslColor = DEFAULT_BG,
   ) {}
 
@@ -26,16 +26,19 @@ export class ThemeColor {
    * @param contrast Contrast with background: 1 - highest, 0 - lowest.
    * @param alpha The alpha channel level.
    */
-  public g(contrast: number = 0, alpha: number = this.hsl.a): string {
+  public g(contrast: number = 0, alpha: number = this.fg.a): string {
+    return this.col(contrast, alpha).toString();
+  }
+
+  public col(contrast: number = 0, alpha: number = this.fg.a): ThemeColor {
     const isDark = this.isDarkTheme();
-    const lightness = this.bg.l + (this.hsl.l - this.bg.l) * contrast;
-    const saturation = this.hsl.s + (isDark ? -1 : 1) * contrast * 0.5;
-    const newHsl = new HslColor(this.hsl.h, saturation, lightness, alpha);
-    newHsl.norm();
-    return newHsl.toString();
+    const lightness = this.bg.l + (this.fg.l - this.bg.l) * contrast;
+    const saturation = this.fg.s + (isDark ? -1 : 1) * contrast * 0.5;
+    const newHsl = new HslColor(this.fg.h, saturation, lightness, alpha);
+    return new ThemeColor(newHsl, this.bg);
   }
 
   public toString(): string {
-    return this.hsl.toString();
+    return this.fg.toString();
   }
 }
