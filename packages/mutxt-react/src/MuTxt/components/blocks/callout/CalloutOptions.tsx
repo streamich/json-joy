@@ -50,6 +50,10 @@ const preventPopupMouseDown = (event: React.MouseEvent): void => {
   event.stopPropagation();
 };
 
+const stopPointerPropagation = (event: React.SyntheticEvent): void => {
+  event.stopPropagation();
+};
+
 interface EmojiPickerInnerProps {
   light: boolean;
   onSelect: (emoji: string) => void;
@@ -60,7 +64,12 @@ const EmojiPickerInner: React.FC<EmojiPickerInnerProps> = ({light, onSelect}) =>
   const handleClickAway = React.useCallback(() => popup?.close(), [popup]);
 
   return (
-    <ClickAway onMouseDown={preventPopupMouseDown} onClickAway={handleClickAway}>
+    <ClickAway
+      onMouseDown={stopPointerPropagation}
+      onMouseUp={stopPointerPropagation}
+      onClick={stopPointerPropagation}
+      onClickAway={handleClickAway}
+    >
       <EmojiPicker
         theme={light ? EmojiPickerTheme.LIGHT : EmojiPickerTheme.DARK}
         onEmojiClick={(data: EmojiClickData) => {
