@@ -10,6 +10,19 @@ export type MarkFormat = 'bold' | 'italic' | 'underline' | 'strikethrough' | 'ov
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
 export type ListElementType = 'ul' | 'ol' | 'checklist';
 export type UlType = 'disc' | 'circle' | 'square';
+export type OlType =
+  | 'decimal'
+  | 'decimal-leading-zero'
+  | 'lower-roman'
+  | 'upper-roman'
+  | 'lower-alpha'
+  | 'upper-alpha'
+  | 'lower-greek'
+  | 'hiragana'
+  | 'katakana'
+  | 'cjk-ideographic'
+  | 'hebrew'
+  | 'armenian';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'callout' | 'code-block' | 'pre' | ListElementType;
 export type BlockElementType = BlockFormat | 'li' | 'embed';
 
@@ -100,6 +113,7 @@ export interface BulletedListElement extends BlockAttributes {
 
 export interface NumberedListElement extends BlockAttributes {
   type: 'ol';
+  olType?: OlType;
   children: ListItemElement[];
 }
 

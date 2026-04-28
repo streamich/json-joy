@@ -6,8 +6,8 @@ import {formatKeys} from '../util/keys';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {dedentBlock, getActiveIndent, indentBlock, MAX_INDENT} from '../behavior/indentation';
 import {isAlignmentActive, setAlignment, toggleBlock} from '../behavior';
-import {getActiveUlType, isUlTypeActive, setUlType} from '../behavior/lists';
-import type {BlockFormat, ListElementType, MenuItem, SlateTextAlign} from '../types';
+import {getActiveOlType, getActiveUlType, isOlTypeActive, isUlTypeActive, setOlType, setUlType} from '../behavior/lists';
+import type {BlockFormat, ListElementType, MenuItem, OlType, SlateTextAlign} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
@@ -247,7 +247,38 @@ export class BlockMenu implements UiLifeCycles {
     ]);
   }
   public itemOL(): MenuItem {
-    return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7']});
+    const mutxt = this.mutxt;
+    const applyOlType = (olType: OlType) => {
+      if (getActiveOlType(mutxt.editor) === null) toggleBlock(mutxt.editor, 'ol');
+      setOlType(mutxt.editor, olType);
+    };
+    const olItem = (name: string, olType: OlType, example?: string): MenuItem => ({
+      name,
+      right: example ? () => <Sidetip small>{example}</Sidetip> : undefined,
+      active: rsync.comp([mutxt.version], () => isOlTypeActive(mutxt.editor, olType)),
+      onSelect: this.exec(() => applyOlType(olType)),
+    });
+    return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7']}, [
+      olItem('Decimal', 'decimal', '1, 2, 3'),
+      olItem('Decimal leading zero', 'decimal-leading-zero', '01, 02, 03'),
+      olItem('Lower roman', 'lower-roman', 'i, ii, iii'),
+      olItem('Upper roman', 'upper-roman', 'I, II, III'),
+      olItem('Lower alpha', 'lower-alpha', 'a, b, c'),
+      olItem('Upper alpha', 'upper-alpha', 'A, B, C'),
+      olItem('Lower greek', 'lower-greek', 'α, β, γ'),
+      {
+        name: 'More styles',
+        sepBefore: true,
+        more: true,
+        children: [
+          olItem('Hiragana', 'hiragana', 'あ, い, う'),
+          olItem('Katakana', 'katakana', 'ア, イ, ウ'),
+          olItem('CJK ideographic', 'cjk-ideographic', '一, 二, 三'),
+          olItem('Hebrew', 'hebrew'),
+          olItem('Armenian', 'armenian'),
+        ],
+      },
+    ]);
   }
   public itemChecklist(): MenuItem {
     return this.blockItem('checklist', {name: 'Checklist', icon: () => <ChecklistIcon />});

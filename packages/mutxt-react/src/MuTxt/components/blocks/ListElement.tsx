@@ -96,7 +96,7 @@ export const ListContainerElement: React.FC<ListContainerElementProps> = ({attri
       <ol
         {...attributes}
         className={listClass}
-        style={{paddingLeft: '26px'}}
+        style={{paddingLeft: '26px', listStyleType: element.olType ?? 'decimal'}}
       >
         {children}
       </ol>

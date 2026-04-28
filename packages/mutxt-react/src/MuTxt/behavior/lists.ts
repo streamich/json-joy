@@ -2,6 +2,8 @@ import {Editor, Element as SlateElement, Node, Path, Range, Transforms} from 'sl
 import type {
   BulletedListElement,
   CustomElement,
+  NumberedListElement,
+  OlType,
   UlType,
 } from '../types';
 
@@ -25,5 +27,26 @@ export const isUlTypeActive = (editor: Editor, ulType: UlType): boolean => getAc
 export const setUlType = (editor: Editor, ulType: UlType): void => {
   Transforms.setNodes(editor, {ulType} as Partial<CustomElement>, {
     match: (node) => isElement(node) && node.type === 'ul',
+  });
+};
+
+export const getActiveOlType = (editor: Editor): OlType | null => {
+  const {selection} = editor;
+  if (!selection) return null;
+  const match = Editor.above(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && node.type === 'ol',
+    mode: 'lowest',
+  });
+  if (!match) return null;
+  const [element] = match as [NumberedListElement, Path];
+  return element.olType ?? 'decimal';
+};
+
+export const isOlTypeActive = (editor: Editor, olType: OlType): boolean => getActiveOlType(editor) === olType;
+
+export const setOlType = (editor: Editor, olType: OlType): void => {
+  Transforms.setNodes(editor, {olType} as Partial<CustomElement>, {
+    match: (node) => isElement(node) && node.type === 'ol',
   });
 };
