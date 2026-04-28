@@ -3127,7 +3127,7 @@ __metadata:
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
-    iconista: "npm:^2.23.0"
+    iconista: "npm:^2.25.0"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"
@@ -8978,16 +8978,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconista@npm:^2.23.0":
-  version: 2.23.0
-  resolution: "iconista@npm:2.23.0"
+"iconista@npm:^2.25.0":
+  version: 2.25.0
+  resolution: "iconista@npm:2.25.0"
   dependencies:
     bootstrap-icons: "npm:^1.11.3"
     react-use: "npm:^5.7.1"
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 10c0/9719dfda47fdd5ead9d933069c50f05cf46e81638e977210fedf0818b3524322e2c043e525abf81d3f714d454c843440fc11af52e3c8bcda56e88c555bb07fab
+  checksum: 10c0/07e72c9c5d03de64c272c08bc4a9e355073459729c878b96f2b9c788f7821822d1e9f5cd315cebc1c59dc3a1e57b6c4ea9f0d7655033a521336d09bba52da949
   languageName: node
   linkType: hard
 
@@ -11624,6 +11624,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     code-colors: "npm:^2.5.0"
     code-colors-react: "npm:^3.5.0"
+    iconista: "npm:^2.25.0"
     json-joy: "workspace:*"
     nano-theme: "npm:^1.5.0"
     react: "npm:^19.2.3"
@@ -11811,7 +11812,7 @@ __metadata:
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
-    iconista: "npm:^2.23.0"
+    iconista: "npm:^2.25.0"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"
