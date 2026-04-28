@@ -21,7 +21,7 @@ export const ColorPickerInput: React.FC<ColorPickerInputProps> = ({input, ...res
   const color = rest.color;
 
   return (
-    <div style={{width: 'calc(min(240px, 100vw))'}}>
+    <div style={{minWidth: 'calc(min(240px, 100vw))'}}>
       <InputColor
         label={t('Color')}
         {...input}

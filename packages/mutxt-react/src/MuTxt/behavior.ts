@@ -214,7 +214,7 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
     const inHeading = isBlockActive(editor, 'h1') || isBlockActive(editor, 'h2') || isBlockActive(editor, 'h3')
       || isBlockActive(editor, 'h4') || isBlockActive(editor, 'h5') || isBlockActive(editor, 'h6')
       || isBlockActive(editor, 'title') || isBlockActive(editor, 'subtitle')
-      || isBlockActive(editor, 'blockquote');
+      || isBlockActive(editor, 'blockquote') || isBlockActive(editor, 'callout');
     insertBreak();
     if (inHeading) {
       Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>);
