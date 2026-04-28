@@ -64,11 +64,25 @@ const describeScrollMapElement = (element: CustomElement, light: boolean): Scrol
         height: 3,
         proportional: true,
       };
+    case 'callout':
+      return {
+        el: element,
+        color: element.color?.trim() || (light ? 'rgba(59,130,246,.6)' : 'rgba(96,165,250,.55)'),
+        height: 3,
+        proportional: true,
+      };
     case 'code-block':
       return {
         el: element,
         color: light ? 'rgba(54,155,55,.45)' : 'rgba(142,255,129,.5)',
         height: 4,
+        proportional: true,
+      };
+    case 'pre':
+      return {
+        el: element,
+        color: light ? 'rgba(100,116,139,.5)' : 'rgba(148,163,184,.5)',
+        height: 3,
         proportional: true,
       };
     case 'embed':

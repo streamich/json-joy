@@ -14,6 +14,10 @@ import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 const ParagraphIcon = makeIcon({set: 'tabler', icon: 'pilcrow', width: 16, height: 16});
 const BlockquoteIcon = makeIcon({set: 'tabler', icon: 'quote', width: 16, height: 16});
 const CodeBlockIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
+const PreIcon = makeIcon({set: 'lucide', icon: 'wrap-text', width: 16, height: 16});
+// const CalloutIcon = makeIcon({set: 'lucide', icon: 'message-square-warning', width: 16, height: 16});
+// const CalloutIcon = makeIcon({set: 'vscode', icon: 'note', width: 16, height: 16});
+const CalloutIcon = makeIcon({set: 'tabler', icon: 'message-2-exclamation', width: 16, height: 16});
 const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns', width: 16, height: 16});
 
 // Heading icons
@@ -93,6 +97,8 @@ export class BlockMenu implements UiLifeCycles {
         this.itemParagraph(),
         this.itemBlockquote(),
         this.itemCodeBlock(),
+        this.itemPre(),
+        this.itemCallout(),
         this.itemColumns(),
       ],
     };
@@ -161,7 +167,12 @@ export class BlockMenu implements UiLifeCycles {
   public itemCodeBlock(): MenuItem {
     return this.blockItem('code-block', {name: 'Code block', icon: () => <CodeBlockIcon />, keys: ['Primary', 'Shift', 'c']});
   }
-
+  public itemPre(): MenuItem {
+    return this.blockItem('pre', {name: 'Pre-formatted', icon: () => <PreIcon />});
+  }
+  public itemCallout(): MenuItem {
+    return this.blockItem('callout', {name: 'Callout', icon: () => <CalloutIcon />});
+  }
   public itemColumns(): MenuItem {
     return this.blockItem('columns', {name: 'Two columns', icon: () => <ColumnsIcon />});
   }
@@ -307,7 +318,9 @@ export class BlockMenu implements UiLifeCycles {
       case 'title': return this.itemTitle();
       case 'subtitle': return this.itemSubtitle();
       case 'blockquote': return this.itemBlockquote();
+      case 'callout': return this.itemCallout();
       case 'code-block': return this.itemCodeBlock();
+      case 'pre': return this.itemPre();
       case 'ul': return this.itemUL();
       case 'ol': return this.itemOL();
       case 'checklist': return this.itemChecklist();

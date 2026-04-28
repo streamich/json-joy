@@ -22,8 +22,12 @@ export const typeToLabel = (type: string): string => {
       return 'Two columns';
     case 'blockquote':
       return 'Quote';
+    case 'callout':
+      return 'Callout';
     case 'code-block':
       return 'Code block';
+    case 'pre':
+      return 'Pre-formatted';
     case 'embed':
       return 'Embed';
     case 'checklist':

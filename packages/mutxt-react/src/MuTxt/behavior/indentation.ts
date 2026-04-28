@@ -46,8 +46,8 @@ export const dedentBlock = (editor: Editor): void => {
   setIndent(editor, current - 1);
 };
 
-export const indentPadding = (indent: number | undefined): string | undefined => {
+export const indentPadding = (indent: number | undefined): number | undefined => {
   if (!indent || indent < 1) return undefined;
   const steps = Math.min(MAX_INDENT, Math.floor(indent));
-  return steps * INDENT_STEP_PX + 'px';
+  return steps * INDENT_STEP_PX;
 };

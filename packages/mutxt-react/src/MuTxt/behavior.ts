@@ -183,8 +183,11 @@ export const resetEmptyBlockToParagraph = (editor: Editor): boolean => {
   return true;
 };
 
+const isInRawTextBlock = (editor: Editor): boolean =>
+  isBlockActive(editor, 'code-block') || isBlockActive(editor, 'pre');
+
 export const insertCodeBlockBreak = (editor: Editor): boolean => {
-  if (!isBlockActive(editor, 'code-block')) return false;
+  if (!isInRawTextBlock(editor)) return false;
   Editor.insertText(editor, '\n');
   return true;
 };
@@ -194,7 +197,7 @@ export const insertCodeBlockExit = (editor: Editor): boolean => {
   if (!selection) return false;
   const [match] = Editor.nodes(editor, {
     at: Editor.unhangRange(editor, selection),
-    match: (node) => isElement(node) && node.type === 'code-block',
+    match: (node) => isElement(node) && (node.type === 'code-block' || node.type === 'pre'),
   });
   if (!match) return false;
   const [, path] = match;
@@ -218,12 +221,12 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
     }
   };
 
-  // Inside a code-block, paste raw text.
+  // Inside a code-block or pre block, paste raw text.
   const reactEditor = editor as Editor & {insertData?: (data: DataTransfer) => void};
   const {insertData} = reactEditor;
   if (insertData) {
     reactEditor.insertData = (data: DataTransfer) => {
-      if (isBlockActive(editor, 'code-block')) {
+      if (isInRawTextBlock(editor)) {
         const text = data.getData('text/plain');
         if (text) {
           Editor.insertText(editor, text);

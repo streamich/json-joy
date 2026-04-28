@@ -9,7 +9,7 @@ export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat = 'bold' | 'italic' | 'underline' | 'strikethrough' | 'overline' | 'code' | 'mark' | 'spoiler' | 'sup' | 'sub' | 'kbd' | 'ins' | 'del';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
 export type ListElementType = 'ul' | 'ol' | 'checklist';
-export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'code-block' | ListElementType;
+export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'callout' | 'code-block' | 'pre' | ListElementType;
 export type BlockElementType = BlockFormat | 'li' | 'embed';
 
 export interface LinkAttributes {
@@ -60,12 +60,28 @@ export interface BlockquoteElement extends BlockAttributes {
   children: CustomText[];
 }
 
+export interface CalloutElement extends BlockAttributes {
+  type: 'callout';
+  /** Emoji or any character used as the callout icon. */
+  icon?: string;
+  /** Optional title text shown next to the icon. */
+  title?: string;
+  /** Accent color. */
+  color?: string;
+  children: CustomText[];
+}
+
 export interface CodeBlockElement extends BlockAttributes {
   type: 'code-block';
   language?: string;
   fileName?: string;
   wrap?: number;
   showLineNumbers?: boolean;
+  children: CustomText[];
+}
+
+export interface PreformattedElement extends BlockAttributes {
+  type: 'pre';
   children: CustomText[];
 }
 
@@ -103,7 +119,9 @@ export type CustomElement =
   | TwoColumnsElement
   | HeadingElement
   | BlockquoteElement
+  | CalloutElement
   | CodeBlockElement
+  | PreformattedElement
   | ListItemElement
   | BulletedListElement
   | NumberedListElement
