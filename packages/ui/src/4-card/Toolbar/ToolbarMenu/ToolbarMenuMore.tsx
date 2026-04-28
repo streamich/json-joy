@@ -6,6 +6,7 @@ import {ToolbarMenuPopup} from './ToolbarMenuPopup';
 import {useToolbarMenu} from './context';
 import {Iconista} from '../../../icons/Iconista';
 import {useBehaviorSubjectOpt} from '../../../hooks/useBehaviorSubject';
+import {useSubtleTrace} from '../../../context';
 
 export interface ToolbarMenuMoreProps {
   item: MenuItem;
@@ -16,6 +17,7 @@ export const ToolbarMenuMore: React.FC<ToolbarMenuMoreProps> = ({item, disabled}
   const [t] = useT();
   const openPanel = useToolbarMenu()?.openPanel;
   const selected_ = useBehaviorSubjectOpt(openPanel?.selected$);
+  const subtle = useSubtleTrace();
 
   const id = item.id ?? item.name;
   const selected = selected_ === id;
@@ -24,7 +26,7 @@ export const ToolbarMenuMore: React.FC<ToolbarMenuMoreProps> = ({item, disabled}
     <ToolbarMenuPopup open={selected_ === id} item={item}>
       <div style={{height: 32, display: 'flex', alignItems: 'center'}}>
         <ToolbarItem
-          fill
+          fill={!subtle}
           narrow
           skewed={false}
           height={28}

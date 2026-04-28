@@ -17,6 +17,15 @@ export interface NamedTraceContextValue {
   /** Whether elements in this render subtree are hidden - should not be
    * visible to the user on the screen. */
   hidden?: boolean;
+
+  /**
+   * A variant of a UI component with less clutter, reduced decoration noise,
+   * thinner separators, less background colors, less "in your face" styling.
+   * This is typically used when the component is rendered in a context where
+   * space is limited, such as a toolbar or a dropdown menu, or when UI is
+   * already busy.
+   */
+  subtle?: boolean;
 }
 
 export interface TraceContextValue extends NamedTraceContextValue {
@@ -63,3 +72,4 @@ export const SetTraces: FC<SetTracesProps> = ({children, value: _value}) => {
 // ------------------------------------------------------------ Specific traces
 
 export const useHiddenTrace = (): boolean => !!useTrace('hidden');
+export const useSubtleTrace = (): boolean => !!useTrace('subtle');
