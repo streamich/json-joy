@@ -12,14 +12,24 @@ import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 // Block icons
 const ParagraphIcon = makeIcon({set: 'tabler', icon: 'pilcrow', width: 16, height: 16});
-const H1Icon = makeIcon({set: 'tabler', icon: 'h-1', width: 16, height: 16});
-const H2Icon = makeIcon({set: 'tabler', icon: 'h-2', width: 16, height: 16});
-const H3Icon = makeIcon({set: 'tabler', icon: 'h-3', width: 16, height: 16});
-const H4Icon = makeIcon({set: 'tabler', icon: 'h-4', width: 16, height: 16});
-const H5Icon = makeIcon({set: 'tabler', icon: 'h-5', width: 16, height: 16});
-const H6Icon = makeIcon({set: 'tabler', icon: 'h-6', width: 16, height: 16});
-const BlockquoteIcon = makeIcon({set: 'lucide', icon: 'quote', width: 16, height: 16});
+const BlockquoteIcon = makeIcon({set: 'tabler', icon: 'quote', width: 16, height: 16});
 const CodeBlockIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
+const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns', width: 16, height: 16});
+
+// Heading icons
+// const H1Icon = makeIcon({set: 'tabler', icon: 'h-1', width: 16, height: 16});
+// const H2Icon = makeIcon({set: 'tabler', icon: 'h-2', width: 16, height: 16});
+// const H3Icon = makeIcon({set: 'tabler', icon: 'h-3', width: 16, height: 16});
+// const H4Icon = makeIcon({set: 'tabler', icon: 'h-4', width: 16, height: 16});
+// const H5Icon = makeIcon({set: 'tabler', icon: 'h-5', width: 16, height: 16});
+// const H6Icon = makeIcon({set: 'tabler', icon: 'h-6', width: 16, height: 16});
+const H1Icon = makeIcon({set: 'lucide', icon: 'heading-1', width: 16, height: 16});
+const H2Icon = makeIcon({set: 'lucide', icon: 'heading-2', width: 16, height: 16});
+const H3Icon = makeIcon({set: 'lucide', icon: 'heading-3', width: 16, height: 16});
+const H4Icon = makeIcon({set: 'lucide', icon: 'heading-4', width: 16, height: 16});
+const H5Icon = makeIcon({set: 'lucide', icon: 'heading-5', width: 16, height: 16});
+const H6Icon = makeIcon({set: 'lucide', icon: 'heading-6', width: 16, height: 16});
+const TitleIcon = makeIcon({set: 'lucide', icon: 'type', width: 16, height: 16});
 
 // List icons
 const ULIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted', width: 16, height: 16});
@@ -27,15 +37,10 @@ const OLIcon = makeIcon({set: 'ibm_32', icon: 'list--numbered', width: 16, heigh
 const ChecklistIcon = makeIcon({set: 'ibm_32', icon: 'list--checked', width: 16, height: 16});
 
 // Layout icons
-const ColumnsIcon = makeIcon({set: 'tabler', icon: 'columns', width: 16, height: 16});
-
-// Alignment icons
 const AlignLeftIcon = makeIcon({set: 'lucide', icon: 'align-left', width: 16, height: 16});
 const AlignCenterIcon = makeIcon({set: 'lucide', icon: 'align-center', width: 16, height: 16});
 const AlignRightIcon = makeIcon({set: 'lucide', icon: 'align-right', width: 16, height: 16});
 const AlignJustifyIcon = makeIcon({set: 'lucide', icon: 'align-justify', width: 16, height: 16});
-
-// Indent icons
 const IndentIcon = makeIcon({set: 'lucide', icon: 'indent-increase', width: 16, height: 16});
 const DedentIcon = makeIcon({set: 'lucide', icon: 'indent-decrease', width: 16, height: 16});
 
@@ -59,17 +64,18 @@ export class BlockMenu implements UiLifeCycles {
     return {
       name: 'Block options',
       expand: 0,
+      minWidth: 300,
       children: [
         {
-          name: head?.name ?? 'Block',
+          name: (head?.name ?? 'Block'),
           icon: head?.icon,
+          minWidth: 269,
           expand: 0,
           children: [
-            ...this.menuBlocks().children!,
-            ...this.menuLists().children!,
-            ...this.menuLayout().children!,
-            ...this.menuAlignment().children!,
-            ...this.menuIndent().children!,
+            this.menuBlocks(),
+            this.menuHeadings(),
+            this.menuLists(),
+            this.menuLayout(),
           ],
         },
       ],
@@ -82,17 +88,32 @@ export class BlockMenu implements UiLifeCycles {
     return {
       id: 'block-blocks',
       name: 'Blocks',
-      expand: 8,
+      expand: 4,
       children: [
         this.itemParagraph(),
+        this.itemBlockquote(),
+        this.itemCodeBlock(),
+        this.itemColumns(),
+      ],
+    };
+  }
+
+  public menuHeadings(): MenuItem {
+    return {
+      id: 'block-headings',
+      name: 'Headings',
+      sepBefore: true,
+      expand: 3,
+      children: [
         this.itemH1(),
         this.itemH2(),
         this.itemH3(),
         this.itemH4(),
         this.itemH5(),
         this.itemH6(),
-        this.itemBlockquote(),
-        this.itemCodeBlock(),
+        {name: 'sep-title', sep: true},
+        this.itemTitle(),
+        this.itemSubtitle(),
       ],
     };
   }
@@ -115,37 +136,14 @@ export class BlockMenu implements UiLifeCycles {
     return {
       id: 'block-layout',
       name: 'Layout',
-      expand: 8,
-      sepBefore: true,
-      children: [
-        this.itemColumns(),
-      ],
-    };
-  }
-
-  public menuAlignment(): MenuItem {
-    return {
-      id: 'block-alignment',
-      name: 'Alignment',
-      icon: () => <Iconista set="fontawesome_solid" icon="align-left" width={16} height={16} />,
-      expand: 8,
+      expand: 3,
       sepBefore: true,
       children: [
         this.itemAlignLeft(),
         this.itemAlignCenter(),
         this.itemAlignRight(),
         this.itemAlignJustify(),
-      ],
-    };
-  }
-
-  public menuIndent(): MenuItem {
-    return {
-      id: 'block-indent',
-      name: 'Indent',
-      expand: 8,
-      sepBefore: true,
-      children: [
+        {name: 'sep-indent', sep: true},
         this.itemIndent(),
         this.itemDedent(),
       ],
@@ -157,6 +155,19 @@ export class BlockMenu implements UiLifeCycles {
   public itemParagraph(): MenuItem {
     return this.blockItem('p', {name: 'Paragraph', icon: () => <ParagraphIcon />, keys: ['Primary', 'Alt', '0']});
   }
+  public itemBlockquote(): MenuItem {
+    return this.blockItem('blockquote', {name: 'Blockquote', icon: () => <BlockquoteIcon />, keys: ['Primary', 'Alt', '9']});
+  }
+  public itemCodeBlock(): MenuItem {
+    return this.blockItem('code-block', {name: 'Code block', icon: () => <CodeBlockIcon />, keys: ['Primary', 'Shift', 'c']});
+  }
+
+  public itemColumns(): MenuItem {
+    return this.blockItem('columns', {name: 'Two columns', icon: () => <ColumnsIcon />});
+  }
+
+  // ------------------------------------------------------------ Heading items
+
   public itemH1(): MenuItem {
     return this.blockItem('h1', {name: 'Heading 1', icon: () => <H1Icon />, keys: ['Primary', 'Alt', '1']});
   }
@@ -175,17 +186,17 @@ export class BlockMenu implements UiLifeCycles {
   public itemH6(): MenuItem {
     return this.blockItem('h6', {name: 'Heading 6', icon: () => <H6Icon />, keys: ['Primary', 'Alt', '6']});
   }
-  public itemBlockquote(): MenuItem {
-    return this.blockItem('blockquote', {name: 'Blockquote', icon: () => <BlockquoteIcon />, keys: ['Primary', 'Alt', '9']});
+  public itemTitle(): MenuItem {
+    return this.blockItem('title', {name: 'Title', icon: () => <TitleIcon />});
   }
-  public itemCodeBlock(): MenuItem {
-    return this.blockItem('code-block', {name: 'Code block', icon: () => <CodeBlockIcon />, keys: ['Primary', 'Shift', 'c']});
+  public itemSubtitle(): MenuItem {
+    return this.blockItem('subtitle', {name: 'Subtitle', icon: () => <TitleIcon />});
   }
 
   // --------------------------------------------------------------- List items
 
   public itemUL(): MenuItem {
-    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8'], sepBefore: true});
+    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8']});
   }
   public itemOL(): MenuItem {
     return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7']});
@@ -194,25 +205,19 @@ export class BlockMenu implements UiLifeCycles {
     return this.blockItem('checklist', {name: 'Checklist', icon: () => <ChecklistIcon />});
   }
 
-  // ------------------------------------------------------------- Layout items
-
-  public itemColumns(): MenuItem {
-    return this.blockItem('columns', {name: 'Two columns', icon: () => <ColumnsIcon />, sepBefore: true});
-  }
-
-  // ---------------------------------------------------------------- Alignment
+  // ------------------------------------------------------------------- Layout
 
   public itemAlignLeft(): MenuItem {
-    return this.alignmentItem('left', {name: 'Align left', keys: ['Primary', 'Shift', 'l'], icon: () => <AlignLeftIcon />, sepBefore: true});
+    return this.layoutItem('left', {name: 'Align left', keys: ['Primary', 'Shift', 'l'], icon: () => <AlignLeftIcon />});
   }
   public itemAlignCenter(): MenuItem {
-    return this.alignmentItem('center', {name: 'Align center', keys: ['Primary', 'Shift', 'e'], icon: () => <AlignCenterIcon />});
+    return this.layoutItem('center', {name: 'Align center', keys: ['Primary', 'Shift', 'e'], icon: () => <AlignCenterIcon />});
   }
   public itemAlignRight(): MenuItem {
-    return this.alignmentItem('right', {name: 'Align right', keys: ['Primary', 'Shift', 'r'], icon: () => <AlignRightIcon />});
+    return this.layoutItem('right', {name: 'Align right', keys: ['Primary', 'Shift', 'r'], icon: () => <AlignRightIcon />});
   }
   public itemAlignJustify(): MenuItem {
-    return this.alignmentItem('justify', {name: 'Justify', keys: ['Primary', 'Shift', 'j'], icon: () => <AlignJustifyIcon />});
+    return this.layoutItem('justify', {name: 'Justify', keys: ['Primary', 'Shift', 'j'], icon: () => <AlignJustifyIcon />});
   }
 
   // -------------------------------------------------------------- Indentation
@@ -220,12 +225,12 @@ export class BlockMenu implements UiLifeCycles {
   public itemIndent(): MenuItem {
     const mutxt = this.mutxt;
     const keys = ['Primary', ']'];
+    const formattedKeys = formatKeys(keys);
     return {
       name: 'Increase indent',
       icon: () => <IndentIcon />,
-      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
-      keys,
-      sepBefore: true,
+      right: () => <Sidetip small>{formattedKeys}</Sidetip>,
+      keys: [formattedKeys],
       disabled: rsync.comp([mutxt.version], () => getActiveIndent(mutxt.editor) >= MAX_INDENT),
       onSelect: this.exec(() => indentBlock(mutxt.editor)),
     };
@@ -233,11 +238,12 @@ export class BlockMenu implements UiLifeCycles {
   public itemDedent(): MenuItem {
     const mutxt = this.mutxt;
     const keys = ['Primary', '['];
+    const formattedKeys = formatKeys(keys);
     return {
       name: 'Decrease indent',
       icon: () => <DedentIcon />,
-      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
-      keys,
+      right: () => <Sidetip small>{formattedKeys}</Sidetip>,
+      keys: [formattedKeys],
       disabled: rsync.comp([mutxt.version], () => getActiveIndent(mutxt.editor) <= 0),
       onSelect: this.exec(() => dedentBlock(mutxt.editor)),
     };
@@ -245,28 +251,32 @@ export class BlockMenu implements UiLifeCycles {
 
   // ------------------------------------------------------------------ Helpers
 
-  private blockItem(format: BlockFormat | ListElementType, config: ItemConfig): MenuItem {
+  private blockItem(format: BlockFormat | ListElementType, config: ItemConfig, children?: MenuItem['children']): MenuItem {
     const mutxt = this.mutxt;
     const keys = config.keys;
-    return {
+    const formattedKeys = keys ? formatKeys(keys) : undefined;
+    const item: MenuItem = {
       name: config.name,
       icon: config.icon,
-      keys,
-      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : undefined,
+      keys: formattedKeys ? [formattedKeys] : undefined,
+      right: keys ? () => <Sidetip small>{formattedKeys}</Sidetip> : undefined,
       sepBefore: config.sepBefore,
       active: rsync.comp([mutxt.version], () => this.currentBlockFormat() === format),
       onSelect: this.exec(() => toggleBlock(mutxt.editor, format)),
     };
+    if (children) item.children = children;
+    return item;
   }
 
-  private alignmentItem(alignment: SlateTextAlign, config: ItemConfig): MenuItem {
+  private layoutItem(alignment: SlateTextAlign, config: ItemConfig): MenuItem {
     const mutxt = this.mutxt;
     const keys = config.keys;
+    const formattedKeys = keys ? formatKeys(keys) : undefined;
     return {
       name: config.name,
       icon: config.icon,
-      keys,
-      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : undefined,
+      keys: formattedKeys ? [formattedKeys] : undefined,
+      right: keys ? () => <Sidetip small>{formattedKeys}</Sidetip> : undefined,
       sepBefore: config.sepBefore,
       active: rsync.comp([mutxt.version], () => isAlignmentActive(mutxt.editor, alignment)),
       onSelect: this.exec(() => setAlignment(mutxt.editor, alignment)),
@@ -291,6 +301,11 @@ export class BlockMenu implements UiLifeCycles {
       case 'h1': return this.itemH1();
       case 'h2': return this.itemH2();
       case 'h3': return this.itemH3();
+      case 'h4': return this.itemH4();
+      case 'h5': return this.itemH5();
+      case 'h6': return this.itemH6();
+      case 'title': return this.itemTitle();
+      case 'subtitle': return this.itemSubtitle();
       case 'blockquote': return this.itemBlockquote();
       case 'code-block': return this.itemCodeBlock();
       case 'ul': return this.itemUL();

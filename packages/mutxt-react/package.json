@@ -89,6 +89,7 @@
     "@jsonjoy.com/ui": "workspace:*",
     "code-colors": "^2.5.0",
     "code-colors-react": "^3.5.0",
+    "iconista": "^2.25.0",
     "json-joy": "workspace:*",
     "nano-theme": "^1.5.0",
     "react-embed": "^3.7.0",

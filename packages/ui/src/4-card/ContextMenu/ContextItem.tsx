@@ -206,7 +206,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
     element = (
       <Split as="span">
         {element}
-        <span className={nestedClass} style={{opacity: open ? 1 : 0.7}}>
+        <span className={nestedClass} style={{paddingLeft: 12, opacity: open ? 1 : 0.7}}>
           <Arrow direction={open ? 'r' : 'd'} />
         </span>
       </Split>
