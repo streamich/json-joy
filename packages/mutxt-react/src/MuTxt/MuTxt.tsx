@@ -23,7 +23,8 @@ import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {InlineFloater} from './inline/InlineFloater';
 import {LinkFloater} from './chrome/popup/link/LinkFloater';
 import {BlockFloater} from './block/BlockFloater';
-import {SlashMenu} from './chrome/slash/SlashMenu';
+import {VoidFloater} from './void/VoidFloater';
+import {SlashMenu} from './void/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
@@ -208,6 +209,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       />
       <InlineFloater />
       <BlockFloater />
+      <VoidFloater />
       <LinkFloater />
       <SlashMenu />
     </Slate>

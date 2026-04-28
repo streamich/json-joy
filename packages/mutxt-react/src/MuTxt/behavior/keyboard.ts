@@ -23,7 +23,9 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
       if (state.onSlashKey?.()) key.event?.preventDefault();
     }],
     ['Shift Shift', () => {
-      state.onSlashKey?.();
+      // state.onSlashKey?.();
+      const open = state.voids.open;
+      open.set(!open.value);
     }],
 
     // ----------------------------------------------- Empty-block to paragraph
