@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import EmojiPicker, {Theme as EmojiPickerTheme, type EmojiClickData} from 'emoji-picker-react';
+import EmojiPicker, {Theme as EmojiPickerTheme, type EmojiClickData, SkinTonePickerLocation} from 'emoji-picker-react';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {ColorPickerInput} from '@jsonjoy.com/ui/lib/4-card/ColorPicker/ColorPickerInput';
@@ -72,6 +72,9 @@ const EmojiPickerInner: React.FC<EmojiPickerInnerProps> = ({light, onSelect}) =>
     >
       <EmojiPicker
         theme={light ? EmojiPickerTheme.LIGHT : EmojiPickerTheme.DARK}
+        height={360}
+        width={350}
+        skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
         onEmojiClick={(data: EmojiClickData) => {
           onSelect(data.emoji);
           popup?.close();

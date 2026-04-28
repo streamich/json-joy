@@ -5,7 +5,8 @@ import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
-const EmbedIcon = makeIcon({set: 'lucide', icon: 'link-2', width: 16, height: 16});
+// const EmbedIcon = makeIcon({set: 'lucide', icon: 'link-2', width: 16, height: 16});
+const EmbedIcon = makeIcon({set: 'tabler', icon: 'box', width: 16, height: 16});
 
 export class VoidMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
