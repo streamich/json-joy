@@ -8,18 +8,9 @@ import {ToolbarSep} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarSep';
 import type {Editor} from 'slate';
 import {
   ACTION_BUTTONS,
-  ALIGNMENT_BUTTONS,
-  BLOCK_BUTTONS,
-  LAYOUT_BUTTONS,
-  LIST_BUTTONS,
   canRedo,
   canUndo,
-  isAlignmentActive,
-  isBlockActive,
-  isListActive,
   redo,
-  setAlignment,
-  toggleBlock,
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
@@ -28,6 +19,7 @@ import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
 import type {MenuItem} from '../../types';
 import {formatKeys} from '../../util/keys';
+import {SetNamedTrace} from '@jsonjoy.com/ui';
 
 const HEIGHT = 48;
 
@@ -123,72 +115,38 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
     }, []);
 
   return (
-    <Split className={blockClass} style={{
-      borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
-    }}>
-      <div className={toolbarContainerClass}>
-        <ToolbarMenu menu={mutxt.inline.menu.buildToolbarMenu()} pane={{transparent: true}} />
-        <ToolbarSep />
-        <ToolbarSep line height={HEIGHT} lite />
-        <ToolbarSep />
-        <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
-        <ToolbarSep />
-        <ToolbarSep line height={HEIGHT} lite />
-        <ToolbarSep />
-        {BLOCK_BUTTONS.map((button) => (
-          renderItem({
-            ...button,
-            active: isBlockActive(editor, button.format!),
-            disabled: readOnly,
-            onMouseDown: execute(() => toggleBlock(editor, button.format!)),
-          })
-        ))}
-        <ToolbarSep line />
-        {LIST_BUTTONS.map((button) => (
-          renderItem({
-            ...button,
-            active: isListActive(editor, button.format!),
-            disabled: readOnly,
-            onMouseDown: execute(() => toggleBlock(editor, button.format!)),
-          })
-        ))}
-        <ToolbarSep line />
-        {LAYOUT_BUTTONS.map((button) => (
-          renderItem({
-            ...button,
-            active: isBlockActive(editor, button.format!),
-            disabled: readOnly,
-            onMouseDown: execute(() => toggleBlock(editor, button.format!)),
-          })
-        ))}
-        <ToolbarSep />
-        <ToolbarSep line height={HEIGHT} lite />
-        <ToolbarSep />
-        {ALIGNMENT_BUTTONS.map((button) => (
-          renderItem({
-            ...button,
-            active: isAlignmentActive(editor, button.format!),
-            disabled: readOnly,
-            onMouseDown: execute(() => setAlignment(editor, button.format!)),
-          })
-        ))}
-      </div>
-      <div className={toolbarContainerClass}>
-        <DocumentOutlineButton editor={editor} contentWidth={300} />
-        <ToolbarSep line />
-        {renderMenuItem(mutxt.inline.menu.itemClear())}
-        <ToolbarSep line />
-        {renderItem({
-          ...ACTION_BUTTONS[0],
-          disabled: readOnly || !canUndo(editor),
-          onMouseDown: execute(() => undo(editor)),
-        })}
-        {renderItem({
-          ...ACTION_BUTTONS[1],
-          disabled: readOnly || !canRedo(editor),
-          onMouseDown: execute(() => redo(editor)),
-        })}
-      </div>
-    </Split>
+    <SetNamedTrace name={'subtle'} value={true}>
+      <Split className={blockClass} style={{
+        borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
+      }}>
+        <div className={toolbarContainerClass}>
+          <ToolbarMenu menu={mutxt.inline.menu.buildToolbarMenu()} pane={{transparent: true}} />
+          <ToolbarSep />
+          <ToolbarSep line height={HEIGHT} lite />
+          <ToolbarSep />
+          <EmbedToolbarButton editor={editor} readOnly={readOnly} onVisualChange={onVisualChange} />
+          <ToolbarSep />
+          <ToolbarSep line height={HEIGHT} lite />
+          <ToolbarSep />
+          <ToolbarMenu menu={mutxt.block.menu.buildToolbarMenu()} pane={{transparent: true}} />
+        </div>
+        <div className={toolbarContainerClass}>
+          <DocumentOutlineButton editor={editor} contentWidth={300} />
+          <ToolbarSep line />
+          {renderMenuItem(mutxt.inline.menu.itemClear())}
+          <ToolbarSep line />
+          {renderItem({
+            ...ACTION_BUTTONS[0],
+            disabled: readOnly || !canUndo(editor),
+            onMouseDown: execute(() => undo(editor)),
+          })}
+          {renderItem({
+            ...ACTION_BUTTONS[1],
+            disabled: readOnly || !canRedo(editor),
+            onMouseDown: execute(() => redo(editor)),
+          })}
+        </div>
+      </Split>
+    </SetNamedTrace>
   );
 };

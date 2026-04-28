@@ -273,36 +273,6 @@ export const MARK_BUTTONS: ToolbarButtonDefinition<MarkFormat>[] = [
   {key: 'code', title: 'Inline code', iconSet: 'tabler', icon: 'code', shortcut: 'Cmd+E', format: 'code'},
 ];
 
-export const BLOCK_BUTTONS: ToolbarButtonDefinition<Exclude<BlockFormat, ListElementType>>[] = [
-  {key: 'p', title: 'Paragraph', iconSet: 'tabler', icon: 'pilcrow', shortcut: 'Cmd+Alt+0', format: 'p'},
-  {key: 'h1', title: 'Heading 1', iconSet: 'tabler', icon: 'h-1', shortcut: 'Cmd+Alt+1', format: 'h1'},
-  {key: 'h2', title: 'Heading 2', iconSet: 'tabler', icon: 'h-2', shortcut: 'Cmd+Alt+2', format: 'h2'},
-  {key: 'h3', title: 'Heading 3', iconSet: 'tabler', icon: 'h-3', shortcut: 'Cmd+Alt+3', format: 'h3'},
-  {key: 'blockquote', title: 'Blockquote', iconSet: 'lucide', icon: 'quote', shortcut: 'Cmd+Shift+Q', format: 'blockquote'},
-  {key: 'code-block', title: 'Code block', iconSet: 'tabler', icon: 'code', shortcut: 'Cmd+Shift+C', format: 'code-block'},
-];
-
-export const LAYOUT_BUTTONS: ToolbarButtonDefinition<'columns'>[] = [
-  {key: 'columns', title: 'Two columns', iconSet: 'tabler', icon: 'columns', format: 'columns'},
-];
-
-export const LIST_BUTTONS: ToolbarButtonDefinition<ListElementType>[] = [
-  {key: 'ul', title: 'Bulleted list', iconSet: 'ibm_32', icon: 'list--bulleted', shortcut: 'Cmd+Alt+8', format: 'ul'},
-  // {key: 'ul', title: 'Bulleted list', iconSet: 'bootstrap', icon: 'list-ul', shortcut: 'Cmd+Alt+8', format: 'ul'},
-  {key: 'ol', title: 'Numbered list', iconSet: 'ibm_32', icon: 'list--numbered', shortcut: 'Cmd+Alt+7', format: 'ol'},
-  // {key: 'ol', title: 'Numbered list', iconSet: 'bootstrap', icon: 'list-ol', shortcut: 'Cmd+Alt+7', format: 'ol'},
-  // {key: 'checklist', title: 'Checklist', iconSet: 'lucide', icon: 'list-todo', format: 'checklist'},
-  // {key: 'checklist', title: 'Checklist', iconSet: 'bootstrap', icon: 'list-check', format: 'checklist'},
-  {key: 'checklist', title: 'Checklist', iconSet: 'ibm_32', icon: 'list--checked', format: 'checklist'},
-];
-
-export const ALIGNMENT_BUTTONS: ToolbarButtonDefinition<SlateTextAlign>[] = [
-  {key: 'align-left', title: 'Align left', iconSet: 'lucide', icon: 'align-left', shortcut: 'Cmd+Shift+L', format: 'left'},
-  {key: 'align-center', title: 'Align center', iconSet: 'lucide', icon: 'align-center', shortcut: 'Cmd+Shift+E', format: 'center'},
-  {key: 'align-right', title: 'Align right', iconSet: 'lucide', icon: 'align-right', shortcut: 'Cmd+Shift+R', format: 'right'},
-  {key: 'align-justify', title: 'Justify', iconSet: 'lucide', icon: 'align-justify', shortcut: 'Cmd+Shift+J', format: 'justify'},
-];
-
 export const ACTION_BUTTONS: ToolbarButtonDefinition[] = [
   {key: 'undo', title: 'Undo', iconSet: 'lucide', icon: 'undo', shortcut: 'Cmd+Z'},
   {key: 'redo', title: 'Redo', iconSet: 'lucide', icon: 'redo', shortcut: 'Cmd+Shift+Z'},
