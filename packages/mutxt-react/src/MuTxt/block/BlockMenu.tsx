@@ -49,13 +49,6 @@ const AlignJustifyIcon = makeIcon({set: 'lucide', icon: 'align-justify', width: 
 const IndentIcon = makeIcon({set: 'lucide', icon: 'indent-increase', width: 16, height: 16});
 const DedentIcon = makeIcon({set: 'lucide', icon: 'indent-decrease', width: 16, height: 16});
 
-interface ItemConfig {
-  name: string;
-  icon: () => React.ReactNode;
-  keys?: string[];
-  sepBefore?: boolean;
-}
-
 export class BlockMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
 
@@ -83,6 +76,19 @@ export class BlockMenu implements UiLifeCycles {
             this.menuLayout(),
           ],
         },
+      ],
+    };
+  }
+
+  public buildToolbarMenu(): MenuItem {
+    return {
+      name: 'Block menu',
+      maxToolbarItems: 4,
+      children: [
+        this.menuBlocks(),
+        this.menuHeadings(),
+        this.menuLists(),
+        this.menuLayout(),
       ],
     };
   }
@@ -199,10 +205,10 @@ export class BlockMenu implements UiLifeCycles {
     return this.blockItem('h6', {name: 'Heading 6', icon: () => <H6Icon />, keys: ['Primary', 'Alt', '6']});
   }
   public itemTitle(): MenuItem {
-    return this.blockItem('title', {name: 'Title', icon: () => <TitleIcon />});
+    return this.blockItem('title', {name: 'Title', display: () => <span style={{fontWeight: 'bold', fontSize: '1.1em'}}>{'Title'}</span>, icon: () => <TitleIcon />});
   }
   public itemSubtitle(): MenuItem {
-    return this.blockItem('subtitle', {name: 'Subtitle', icon: () => <TitleIcon />});
+    return this.blockItem('subtitle', {name: 'Subtitle', display: () => <span style={{opacity: .7, fontSize: '0.9em'}}>{'Subtitle'}</span>, icon: () => <TitleIcon />});
   }
 
   // --------------------------------------------------------------- List items
@@ -213,7 +219,7 @@ export class BlockMenu implements UiLifeCycles {
       if (getActiveUlType(mutxt.editor) === null) toggleBlock(mutxt.editor, 'ul');
       setUlType(mutxt.editor, ulType);
     };
-    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8']}, [
+    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8'], children: [
       {
         name: 'Disc bullets',
         icon: () => (
@@ -244,7 +250,7 @@ export class BlockMenu implements UiLifeCycles {
         active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'square')),
         onSelect: this.exec(() => applyUlType('square')),
       },
-    ]);
+    ]});
   }
   public itemOL(): MenuItem {
     const mutxt = this.mutxt;
@@ -258,14 +264,14 @@ export class BlockMenu implements UiLifeCycles {
       active: rsync.comp([mutxt.version], () => isOlTypeActive(mutxt.editor, olType)),
       onSelect: this.exec(() => applyOlType(olType)),
     });
-    return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7']}, [
+    return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7'], children: [
       olItem('Decimal', 'decimal', '1, 2, 3'),
-      olItem('Decimal leading zero', 'decimal-leading-zero', '01, 02, 03'),
-      olItem('Lower roman', 'lower-roman', 'i, ii, iii'),
-      olItem('Upper roman', 'upper-roman', 'I, II, III'),
+      olItem('Decimal w/ zero', 'decimal-leading-zero', '01, 02, 03'),
+      olItem('Lower Roman', 'lower-roman', 'i, ii, iii'),
+      olItem('Upper Roman', 'upper-roman', 'I, II, III'),
       olItem('Lower alpha', 'lower-alpha', 'a, b, c'),
       olItem('Upper alpha', 'upper-alpha', 'A, B, C'),
-      olItem('Lower greek', 'lower-greek', 'α, β, γ'),
+      olItem('Lower Greek', 'lower-greek', 'α, β, γ'),
       {
         name: 'More styles',
         sepBefore: true,
@@ -278,7 +284,7 @@ export class BlockMenu implements UiLifeCycles {
           olItem('Armenian', 'armenian'),
         ],
       },
-    ]);
+    ]});
   }
   public itemChecklist(): MenuItem {
     return this.blockItem('checklist', {name: 'Checklist', icon: () => <ChecklistIcon />});
@@ -330,38 +336,30 @@ export class BlockMenu implements UiLifeCycles {
 
   // ------------------------------------------------------------------ Helpers
 
-  private blockItem(format: BlockFormat | ListElementType, config: ItemConfig, children?: MenuItem['children']): MenuItem {
+  private blockItem(format: BlockFormat | ListElementType, config: MenuItem): MenuItem {
     const mutxt = this.mutxt;
     const keys = config.keys;
     const formattedKeys = keys ? formatKeys(keys) : undefined;
-    const item: MenuItem = {
-      name: config.name,
-      icon: config.icon,
+    return {
+      ...config,
       keys: formattedKeys ? [formattedKeys] : undefined,
       right: keys ? () => <Sidetip small>{formattedKeys}</Sidetip> : undefined,
-      sepBefore: config.sepBefore,
       active: rsync.comp([mutxt.version], () => this.currentBlockFormat() === format),
       onSelect: this.exec(() => toggleBlock(mutxt.editor, format)),
     };
-    if (children) item.children = children;
-    return item;
   }
 
-  private layoutItem(alignment: SlateTextAlign, config: ItemConfig, children?: MenuItem['children']): MenuItem {
+  private layoutItem(alignment: SlateTextAlign, config: MenuItem): MenuItem {
     const mutxt = this.mutxt;
     const keys = config.keys;
     const formattedKeys = keys ? formatKeys(keys) : undefined;
-    const item: MenuItem = {
-      name: config.name,
-      icon: config.icon,
+    return {
+      ...config,
       keys: formattedKeys ? [formattedKeys] : undefined,
       right: keys ? () => <Sidetip small>{formattedKeys}</Sidetip> : undefined,
-      sepBefore: config.sepBefore,
       active: rsync.comp([mutxt.version], () => isAlignmentActive(mutxt.editor, alignment)),
       onSelect: this.exec(() => setAlignment(mutxt.editor, alignment)),
     };
-    if (children) item.children = children;
-    return item;
   }
 
   private readonly exec = (fn: () => void) => (event: React.MouseEvent | React.TouchEvent): void => {
