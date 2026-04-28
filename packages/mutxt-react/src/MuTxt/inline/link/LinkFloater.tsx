@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
-import {useMuTxt} from '../../../context';
+import {useMuTxt} from '../../context';
 import {LinkToolbarPopup} from './LinkToolbarPopup';
 import {ctx} from './context';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';

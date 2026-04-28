@@ -1,7 +1,7 @@
 import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 import {ReactEditor} from 'slate-react';
 import {InlineMenu} from './InlineMenu';
-import {LinkButtonState} from '../chrome/popup/link/state';
+import {LinkButtonState} from './link/LinkButtonState';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';

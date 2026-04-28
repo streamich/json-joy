@@ -14,7 +14,7 @@ import {
   undo,
 } from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
-import {EmbedToolbarButton} from './embed/EmbedToolbarButton';
+import {EmbedToolbarButton} from '../../void/embed/EmbedToolbarButton';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
 import type {MenuItem} from '../../types';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {LinkButtonState} from './state';
+import type {LinkButtonState} from './LinkButtonState';
 
 export const ctx = React.createContext<LinkButtonState | null>(null);
 

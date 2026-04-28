@@ -21,7 +21,7 @@ import {Leaf} from './inline/components/Leaf';
 import {DEF_PLACEHOLDER, Placeholder} from './inline/components/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {InlineFloater} from './inline/InlineFloater';
-import {LinkFloater} from './chrome/popup/link/LinkFloater';
+import {LinkFloater} from './inline/link/LinkFloater';
 import {BlockFloater} from './block/BlockFloater';
 import {VoidFloater} from './void/VoidFloater';
 import {SlashMenu} from './void/slash/SlashMenu';

@@ -8,8 +8,8 @@ import {
   removeLink,
   type ActiveLink,
   upsertLink,
-} from '../../../behavior/link';
-import {MuTxtState} from '../../../state/MuTxtState';
+} from '../../behavior/link';
+import {MuTxtState} from '../../state/MuTxtState';
 
 export class LinkButtonState {
   public readonly activeLink: rsync.ReactComputed<ActiveLink | null>;
@@ -18,11 +18,7 @@ export class LinkButtonState {
   public readonly canOpen: rsync.ReactComputed<boolean>;
   public readonly selected: rsync.ReactComputed<boolean>;
   public readonly normalizedDraft = rsync.comp([this.draft], ([draft]) => normalizeLinkHref(draft));
-  /** Snapshot of the bounding rect of the trigger element at the moment
-   *  `toggle()` was called. We snapshot the rect (not the element) because
-   *  the inline floater that holds the trigger can unmount when the link
-   *  popup opens — by then the element would be detached and its
-   *  `getBoundingClientRect()` would return zeros. */
+  /** Snapshot of the bounding rect of the trigger element at the moment `toggle()` was called. */
   public readonly anchorRect = rsync.val<DOMRect | null>(null);
   /** Snapshot of the editor selection when the popup opens. */
   public readonly rangeSnapshot = rsync.val<Range | null>(null);
@@ -51,8 +47,6 @@ export class LinkButtonState {
     this.anchorRect.set(rect);
   };
 
-  /** Capture the trigger element's current bounding rect. Convenience wrapper
-   *  around `setAnchorRect` for callers that have the element in hand. */
   public readonly setAnchorEl = (el: HTMLElement | null): void => {
     this.anchorRect.set(el ? el.getBoundingClientRect() : null);
   };
