@@ -7555,6 +7555,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-picker-react@npm:^4.19.1":
+  version: 4.19.1
+  resolution: "emoji-picker-react@npm:4.19.1"
+  dependencies:
+    flairup: "npm:1.0.0"
+  peerDependencies:
+    react: ">=16"
+  checksum: 10c0/7b42d84490e9e82f05bdfb12e2dbd42485850147fc8af5987f313f3efc4353099c80b0785327ac1861716f80880e563aa34e5c74d889385b555d4a3079cde628
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -8332,6 +8343,13 @@ __metadata:
     locate-path: "npm:^5.0.0"
     path-exists: "npm:^4.0.0"
   checksum: 10c0/0406ee89ebeefa2d507feb07ec366bebd8a6167ae74aa4e34fb4c4abd06cf782a3ce26ae4194d70706f72182841733f00551c209fe575cb00bd92104056e78c1
+  languageName: node
+  linkType: hard
+
+"flairup@npm:1.0.0":
+  version: 1.0.0
+  resolution: "flairup@npm:1.0.0"
+  checksum: 10c0/2d9fe1f1c890383be65ae0ec95d57b96f3ff42eecffaf493f8a39f09f4982e12109a865e79baca051e784919eecd72fa6cf620cfae8a4663b98deaa6d883d7ba
   languageName: node
   linkType: hard
 
@@ -11624,6 +11642,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     code-colors: "npm:^2.5.0"
     code-colors-react: "npm:^3.5.0"
+    emoji-picker-react: "npm:^4.19.1"
     iconista: "npm:^2.25.0"
     json-joy: "workspace:*"
     nano-theme: "npm:^1.5.0"
