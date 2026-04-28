@@ -53,6 +53,19 @@ export const isBlockActive = (editor: Editor, format: Exclude<BlockFormat, ListE
   return !!match;
 };
 
+const isAtEndOfBlock = (editor: Editor, format: Exclude<BlockFormat, ListElementType>): boolean => {
+  const {selection} = editor;
+  if (!selection || !Range.isCollapsed(selection)) return false;
+  const match = Editor.above(editor, {
+    at: selection,
+    match: (node) => isElement(node) && node.type === format,
+    mode: 'lowest',
+  });
+  if (!match) return false;
+  const [, path] = match;
+  return Editor.isEnd(editor, selection.anchor, path);
+};
+
 export const isListActive = (editor: Editor, format: ListElementType): boolean => {
   const {selection} = editor;
   if (!selection) return false;
@@ -215,9 +228,11 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
       || isBlockActive(editor, 'h4') || isBlockActive(editor, 'h5') || isBlockActive(editor, 'h6')
       || isBlockActive(editor, 'title') || isBlockActive(editor, 'subtitle')
       || isBlockActive(editor, 'blockquote') || isBlockActive(editor, 'callout');
+    const atEndOfTitle = isAtEndOfBlock(editor, 'title');
     insertBreak();
     if (inHeading) {
-      Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>);
+      const nextType: CustomElement['type'] = atEndOfTitle ? 'subtitle' : 'p';
+      Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>);
     }
   };
 
