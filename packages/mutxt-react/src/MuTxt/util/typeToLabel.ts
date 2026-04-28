@@ -30,6 +30,8 @@ export const typeToLabel = (type: string): string => {
       return 'Pre-formatted';
     case 'embed':
       return 'Embed';
+    case 'hr':
+      return 'Separator';
     case 'checklist':
       return 'Checklist';
     case 'ul':

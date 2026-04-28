@@ -209,10 +209,10 @@ export class BlockMenu implements UiLifeCycles {
     return this.blockItem('h6', {name: 'Heading 6', icon: () => <H6Icon />, keys: ['Primary', 'Alt', '6']});
   }
   public itemTitle(): MenuItem {
-    return this.blockItem('title', {name: 'Title', display: () => <span style={{fontWeight: 'bold', fontSize: '1.1em'}}>{'Title'}</span>, icon: () => <TitleIcon />});
+    return this.blockItem('title', {name: 'Title', display: () => <span style={{fontWeight: 'bold'}}>{'Title'}</span>, icon: () => <TitleIcon />});
   }
   public itemSubtitle(): MenuItem {
-    return this.blockItem('subtitle', {name: 'Subtitle', display: () => <span style={{opacity: .7, fontSize: '0.9em'}}>{'Subtitle'}</span>, icon: () => <TitleIcon />});
+    return this.blockItem('subtitle', {name: 'Subtitle', display: () => <span style={{opacity: .7}}>{'Subtitle'}</span>, icon: () => <TitleIcon />});
   }
 
   // --------------------------------------------------------------- List items

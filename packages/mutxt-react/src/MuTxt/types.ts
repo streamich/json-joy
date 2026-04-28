@@ -24,7 +24,8 @@ export type OlType =
   | 'hebrew'
   | 'armenian';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'callout' | 'code-block' | 'pre' | ListElementType;
-export type BlockElementType = BlockFormat | 'li' | 'embed';
+export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr';
+export type HrLineStyle = 'solid' | 'dashed' | 'dotted' | 'squiggly';
 
 export interface LinkAttributes {
   href: string;
@@ -130,6 +131,21 @@ export interface EmbedElement extends BlockAttributes {
   children: CustomText[];
 }
 
+export interface HrElement extends BlockAttributes {
+  type: 'hr';
+  /** Line stroke width in CSS pixels. */
+  strokeWidth?: number;
+  /** Line width in percent (1..100). */
+  lineWidth?: number;
+  /** Line style. */
+  lineStyle?: HrLineStyle;
+  /** Block height in CSS pixels (controls vertical padding around the rule). */
+  blockHeight?: number;
+  /** Optional caption rendered between the two line halves. */
+  caption?: string;
+  children: CustomText[];
+}
+
 export type CustomElement =
   | ParagraphElement
   | TwoColumnsElement
@@ -142,7 +158,8 @@ export type CustomElement =
   | BulletedListElement
   | NumberedListElement
   | ChecklistListElement
-  | EmbedElement;
+  | EmbedElement
+  | HrElement;
 
 export type SlateEditorDocument = CustomElement[];
 

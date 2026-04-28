@@ -8,6 +8,7 @@ import {CalloutElement} from './callout/CalloutElement';
 import {CodeBlock} from './code-block/CodeBlock';
 import {PreformattedElement} from './PreformattedElement';
 import {EmbedElement} from './EmbedElement';
+import {HrElement} from './hr/HrElement';
 import {ListContainerElement, ListItemElement} from './ListElement';
 import {TwoColumnsElement} from './TwoColumnsElement';
 
@@ -38,6 +39,8 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
       return <PreformattedElement {...(props as RenderElementProps & {element: any})} />;
     case 'embed':
       return <EmbedElement {...(props as RenderElementProps & {element: any})} />;
+    case 'hr':
+      return <HrElement {...(props as RenderElementProps & {element: any})} />;
     case 'ul':
     case 'ol':
     case 'checklist':
