@@ -92,7 +92,7 @@ export class BlockMenu implements UiLifeCycles {
     return {
       id: 'block-blocks',
       name: 'Blocks',
-      expand: 4,
+      expand: 3,
       children: [
         this.itemParagraph(),
         this.itemBlockquote(),
