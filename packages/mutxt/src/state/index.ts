@@ -106,6 +106,7 @@ export class JsonCrdtExplorerState {
     }, SAVED_REFRESH_INTERVAL_MS);
     const saved = this.saved.value;
     if (saved.length) await this.openSaved(saved[0].id);
+    else this.createNewMuTxt();
     this.started.set(true);
   }
 

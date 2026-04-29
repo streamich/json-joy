@@ -11,10 +11,16 @@ export const HelpText: React.FC<HelpTextProps> = () => {
     <div>
       <h3>{t('Writing')}</h3>
       <p>
-        {t('Just start typing. Use the toolbar to format text and switch block types, or reach for the keyboard.')}
-        {t('Press')} <Key>Shift</Key> <Key>Shift</Key> {t('(double Shift) for the command palette.')}
+        {t('Just start typing. Use the toolbar to format text and switch block types.')}
+        {' '}
+        {t('Double tap')} <Key>Shift</Key> <Key>Shift</Key> {t(' for the command palette.')}
       </p>
 
+      <h3>{t('History')}</h3>
+      <p>
+        {t('Below the editor, you can find the history of all changes. Click on any entry to view the document at that point in time.')}
+      </p>
+{/* 
       <h3>{t('Formatting')}</h3>
       <ul>
         <li><Key>⌘B</Key> <Key>⌘I</Key> <Key>⌘U</Key> <Key>⌘E</Key> &mdash; {t('bold, italic, underline, inline code')}</li>
@@ -34,7 +40,7 @@ export const HelpText: React.FC<HelpTextProps> = () => {
       <ul>
         <li><Key>⌘⇧L</Key> <Key>⌘⇧E</Key> <Key>⌘⇧R</Key> <Key>⌘⇧J</Key> &mdash; {t('align left, center, right, justify')}</li>
         <li><Key>⌘Z</Key> <Key>⌘⇧Z</Key> &mdash; {t('undo and redo')}</li>
-      </ul>
+      </ul> */}
     </div>
   );
 };

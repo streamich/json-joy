@@ -54,6 +54,7 @@
   },
   "scripts": {
     "dev": "webpack serve --mode development",
+    "dev:prod": "webpack serve --mode production",
     "build": "webpack --mode production",
     "deploy": "yarn build && wrangler pages deploy --branch=master dist",
     "deploy:preview": "yarn build && wrangler pages deploy --branch=preview dist",
