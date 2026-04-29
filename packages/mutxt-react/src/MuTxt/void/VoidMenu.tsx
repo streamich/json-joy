@@ -10,6 +10,7 @@ import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 // const EmbedIcon = makeIcon({set: 'lucide', icon: 'link-2', width: 16, height: 16});
 const EmbedIcon = makeIcon({set: 'tabler', icon: 'box', width: 16, height: 16});
 const HrIcon = makeIcon({set: 'tabler', icon: 'separator', width: 16, height: 16});
+const FileIcon = makeIcon({set: 'tabler', icon: 'file-upload', width: 16, height: 16});
 
 export class VoidMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -21,9 +22,9 @@ export class VoidMenu implements UiLifeCycles {
   public build(): MenuItem {
     return {
       name: 'Insert menu',
-      maxToolbarItems: 4,
       children: [
         this.itemEmbed({anchorFromCaret: true}),
+        this.itemFile({anchorFromCaret: true}),
         this.itemHr(),
       ],
     };
@@ -31,11 +32,17 @@ export class VoidMenu implements UiLifeCycles {
 
   public buildToolbarMenu(): MenuItem {
     return {
-      name: 'Insert menu',
-      maxToolbarItems: 4,
+      name: 'Void menu',
       children: [
-        this.itemEmbed(),
-        this.itemHr(),
+        {
+          name: 'Insert menu',
+          expand: 2,
+          children: [
+            this.itemEmbed(),
+            this.itemFile(),
+            this.itemHr(),
+          ],
+        }
       ],
     };
   }
@@ -57,6 +64,30 @@ export class VoidMenu implements UiLifeCycles {
         ReactEditor.focus(mutxt.editor as ReactEditor);
         mutxt.setFocused(true);
         mutxt.sync(true);
+      },
+    };
+  }
+
+  public itemFile(opts: {anchorFromCaret?: boolean} = {}): MenuItem {
+    const mutxt = this.mutxt;
+    const file = mutxt.voids.file;
+    return {
+      name: 'File',
+      icon: () => <FileIcon />,
+      disabled: rsync.comp(
+        [file.canOpen],
+        ([canOpen]) => !canOpen,
+      ),
+      onSelect: (event) => {
+        event.preventDefault();
+        if (opts.anchorFromCaret) {
+          file.setAnchorFromCaret();
+        } else {
+          const trigger = event.currentTarget as HTMLElement | null;
+          if (trigger) file.setAnchorEl(trigger);
+        }
+        mutxt.voids.open.set(false);
+        file.toggle();
       },
     };
   }
