@@ -85,7 +85,7 @@ export const getActiveAlignment = (editor: Editor): SlateTextAlign => {
   });
   if (!match) return 'left';
   const [element] = match as [CustomElement, number[]];
-  return (element.align as SlateTextAlign | undefined) ?? 'left';
+  return ((element as {align?: SlateTextAlign}).align) ?? 'left';
 };
 
 export const isAlignmentActive = (editor: Editor, alignment: SlateTextAlign): boolean =>

@@ -15,6 +15,7 @@ import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
+import {ThingsState} from '../things/ThingsState';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
@@ -60,6 +61,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly inline = new InlineState(this, this.scroll);
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
+  public readonly things = new ThingsState(this);
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
@@ -93,6 +95,7 @@ export class MuTxtState implements UiLifeCycles {
     const stopInline = this.inline.start();
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
+    const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
 
     return () => {
@@ -101,6 +104,7 @@ export class MuTxtState implements UiLifeCycles {
       stopInline();
       stopBlock();
       stopVoids();
+      stopThings();
       unbindShortcuts();
       this.kbdSourceUnbind?.();
       this.kbdSourceUnbind = undefined;

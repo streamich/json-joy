@@ -1,6 +1,7 @@
 import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
 import {VoidMenu} from './VoidMenu';
 import {EmbedButtonState} from './embed/EmbedButtonState';
+import {FileButtonState} from './file/FileButtonState';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 
@@ -8,12 +9,14 @@ export class VoidState implements UiLifeCycles {
   public readonly menu: VoidMenu;
   public readonly open = rsync.val(false);
   public readonly embed: EmbedButtonState;
+  public readonly file: FileButtonState;
 
   constructor(
     private readonly mutxt: MuTxtState,
   ) {
     this.menu = new VoidMenu(mutxt);
     this.embed = new EmbedButtonState(mutxt);
+    this.file = new FileButtonState(mutxt);
   }
 
   public readonly start = (): (() => void) => {

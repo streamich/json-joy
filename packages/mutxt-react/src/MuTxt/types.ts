@@ -24,7 +24,8 @@ export type OlType =
   | 'hebrew'
   | 'armenian';
 export type BlockFormat = 'p' | 'columns' | HeadingElementType | 'blockquote' | 'callout' | 'code-block' | 'pre' | ListElementType;
-export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr';
+export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | SystemBlockElementType;
+export type SystemBlockElementType = '.things' | '.thing';
 export type HrLineStyle = 'solid' | 'dashed' | 'dotted' | 'squiggly';
 
 export interface LinkAttributes {
@@ -146,6 +147,51 @@ export interface HrElement extends BlockAttributes {
   children: CustomText[];
 }
 
+/**
+ * A schema.org-style "thing" record stored in the hidden `.things` system
+ * block. The `@type` discriminator names the kind of payload; `@id` is unique
+ * within the document. Other keys are domain-specific.
+ */
+export interface Thing {
+  '@type': string;
+  '@id': string;
+  [key: string]: unknown;
+}
+
+/** A `Thing` representing an uploaded file. */
+export interface FileThing extends Thing {
+  '@type': 'File';
+  name?: string;
+  mimeType: string;
+  size: number;
+  data: Uint8Array;
+}
+
+/**
+ * Hidden system container that holds every `.thing` in the document.
+ * Conventionally lives at index 0. Never rendered to the user.
+ */
+export interface ThingsContainerElement {
+  type: '.things';
+  children: ThingElement[];
+}
+
+/** Single `.thing` payload — only ever a child of `.things`. */
+export interface ThingElement {
+  type: '.thing';
+  thing: Thing;
+  children: CustomText[];
+}
+
+/** A user-facing void block that references a `FileThing` by id. */
+export interface FileElement extends BlockAttributes {
+  type: 'file';
+  '@thing': string;
+  /** Optional display caption (independent of the underlying file's name). */
+  caption?: string;
+  children: CustomText[];
+}
+
 export type CustomElement =
   | ParagraphElement
   | TwoColumnsElement
@@ -159,7 +205,10 @@ export type CustomElement =
   | NumberedListElement
   | ChecklistListElement
   | EmbedElement
-  | HrElement;
+  | HrElement
+  | ThingsContainerElement
+  | ThingElement
+  | FileElement;
 
 export type SlateEditorDocument = CustomElement[];
 

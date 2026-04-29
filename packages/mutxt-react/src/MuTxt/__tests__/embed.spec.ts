@@ -8,8 +8,8 @@ import {
   updateEmbedAtPath,
   withEmbeds,
 } from '../behavior/embed';
-import {getCaretPathInfo} from '../util';
 import type {SlateEditorDocument} from '../types';
+import {getCaretPathInfo} from '../behavior/path-info';
 
 const createTestEditor = (doc: SlateEditorDocument) => {
   const editor = withEmbeds(createEditor());

@@ -124,7 +124,6 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
           <ToolbarSep line height={HEIGHT} lite />
           <ToolbarSep />
           <ToolbarMenu menu={mutxt.voids.menu.buildToolbarMenu()} pane={{transparent: true}} />
-          <ToolbarSep />
           <ToolbarSep line height={HEIGHT} lite />
           <ToolbarSep />
           <ToolbarMenu menu={mutxt.block.menu.buildToolbarMenu()} pane={{transparent: true}} />

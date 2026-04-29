@@ -14,6 +14,8 @@ import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
 import {withTitleSubmit} from './behavior/title';
+import {withProtectedThings} from './behavior/things';
+import {withFile} from './behavior/file';
 import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate} from '@jsonjoy.com/collaborative-slate';
 import {BlockElement} from './components/blocks/BlockElement';
@@ -27,6 +29,7 @@ import {LinkFloater} from './inline/link/LinkFloater';
 import {BlockFloater} from './block/BlockFloater';
 import {VoidFloater} from './void/VoidFloater';
 import {EmbedFloater} from './void/embed/EmbedFloater';
+import {FileFloater} from './void/file/FileFloater';
 import {SlashMenu} from './void/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
@@ -151,10 +154,21 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     } catch {
       initialValue = createEmptyDocument() as Descendant[];
     }
-    const editor = withTitleSubmit(withHr(withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor()))))), () => onTitleSubmitRef.current);
+    const editor = withProtectedThings(
+        withTitleSubmit(
+          withHr(
+            withFile(
+              withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))),
+            ),
+          ),
+          () => onTitleSubmitRef.current,
+        ),
+    );
     editor.children = initialValue;
     editor.selection = null;
-    if (_state) return [_state.editor, _state];
+    if (_state) {
+      return [_state.editor, _state];
+    }
     const state = new MuTxtState(editor, peritextRef, {collaborative: !!presence, readOnly});
     return [editor, state];
   }, [peritextRef, _state]);
@@ -249,6 +263,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       <VoidFloater />
       <LinkFloater />
       <EmbedFloater />
+      <FileFloater />
       <SlashMenu />
     </Slate>
   );
