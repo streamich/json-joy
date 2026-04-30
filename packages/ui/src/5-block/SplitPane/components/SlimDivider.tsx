@@ -9,7 +9,6 @@ const blockClass = rule({
   pos: 'relative',
   z: 2,
   w: '17px',
-  // mr: '0 -8px',
   d: 'flex',
   ai: 'center',
   jc: 'center',
@@ -28,7 +27,7 @@ const handleClass = drule({
   bdrad: '2px',
   [`.${blockClass.trim()}:hover &`]: {
     w: '5px',
-    bg: 'rgba(127,127,127,.16)',
+    bg: 'rgba(127,127,127,.2)',
     h: 'calc(100% - 4px)',
   },
   [`.${blockClass.trim()}:focus &`]: {
@@ -124,6 +123,7 @@ export const SlimDivider: React.FC<SlimDividerProps> = (props) => {
     <div
       contentEditable={false}
       className={combinedClassName}
+      style={combinedStyle}
       role="separator"
       aria-orientation={orientation}
       aria-label={label}
@@ -132,7 +132,6 @@ export const SlimDivider: React.FC<SlimDividerProps> = (props) => {
       aria-valuemax={ariaValueMax}
       aria-description={instructions}
       tabIndex={disabled ? -1 : 0}
-      style={combinedStyle}
       onPointerDown={disabled ? undefined : onPointerDown}
       onKeyDown={disabled ? undefined : onKeyDown}
       data-divider-index={index}

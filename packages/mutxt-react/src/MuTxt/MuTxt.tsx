@@ -34,7 +34,7 @@ import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
 import {Sizer} from './chrome/sizer/Sizer';
-import type {Model} from 'json-joy/lib/json-crdt';
+import {contentClass} from './chrome/sizer/css';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
@@ -44,6 +44,7 @@ const renderElement = (props: RenderElementProps) => <BlockElement {...(props as
 
 const shellClass = rule({
   w: '100%',
+  bxz: 'border-box',
   // maxW: '1200px',
   mr: '0 auto',
   ov: 'hidden',
@@ -306,12 +307,12 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     </>
   );
 
-  const contentClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
+  const combinedClass = (className || '') + contentClass + shellClass + (heightFit ? fitShellClass : '');
 
   if (borderless) {
-    content = React.createElement('div', {style, className: contentClass}, content);
+    content = React.createElement('div', {style, className: combinedClass}, content);
   } else {
-    content = React.createElement(Paper, {round: true, contrast: true, hover: true, hoverElevate, style, className: contentClass}, content);
+    content = React.createElement(Paper, {round: true, contrast: true, hover: true, hoverElevate, style, className: combinedClass}, content);
   }
 
   return (

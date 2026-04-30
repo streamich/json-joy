@@ -50,6 +50,9 @@ export class MuTxtState implements UiLifeCycles {
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly wnd = windowSize();
 
+  /** Desired editor chrome width. This is the max value the editor will stretch to. */
+  public readonly width: rsync.ReactValue<number>;
+
   public readonly kbd: KeyContext = new KeyContext(undefined, 'mutxt');
   private kbdSourceUnbind?: () => void;
 
@@ -123,6 +126,7 @@ export class MuTxtState implements UiLifeCycles {
     } catch {
       initialValue = createEmptyDocument() as Descendant[];
     }
+    this.width = rsync.val(Number(obj.read('/width')) || 1200);
     editor.children = initialValue;
     editor.selection = null;
   }
