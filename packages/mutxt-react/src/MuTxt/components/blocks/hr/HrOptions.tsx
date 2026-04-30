@@ -75,7 +75,7 @@ export const HrOptions: React.FC = () => {
         type="text"
         value={caption}
         label={t('Caption (optional)')}
-        placeholder={t('Centered between the lines')}
+        placeholder={t('Between the lines')}
         onChange={state.setCaption}
         onKeyDown={stopInputKeyDown}
         onEnter={(event) => {

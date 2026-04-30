@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useSlateStatic} from 'slate-react';
+import {useT} from 'use-t';
 import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
@@ -7,25 +7,38 @@ import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {EditorContextPopup} from '../../../chrome/EditorContextPopup';
 import {FileOptions} from './FileOptions';
-import {FileOptionsStateProvider, useFileOptionsState} from './state';
+import {FileOptionsState} from './state';
+import {ctx} from './context';
 import {useMuTxt} from '../../../context';
 import type {FileElement as FileElementType} from '../../../types';
-import {useT} from 'use-t';
 
 const preventMouseDown = (event: React.MouseEvent): void => {
   event.preventDefault();
+};
+
+const stopBubble = (event: React.SyntheticEvent): void => {
+  event.stopPropagation();
 };
 
 export interface FileOptionsPopupProps {
   element: FileElementType;
 }
 
-const FileOptionsPopupBody: React.FC = () => {
+export const FileOptionsPopup: React.FC<FileOptionsPopupProps> = ({element}) => {
   const [t] = useT();
-  const state = useFileOptionsState();
+  const popup = usePopup();
+  const mutxt = useMuTxt();
+  const state = React.useMemo(
+    () => new FileOptionsState(mutxt, element, popup?.close),
+    [mutxt, element, popup],
+  );
 
   const headerRight = (
-    <div style={{display: 'flex', alignItems: 'center', gap: 6}}>
+    <div
+      style={{display: 'flex', alignItems: 'center', gap: 6}}
+      onMouseDown={stopBubble}
+      onClick={stopBubble}
+    >
       <BasicTooltip nowrap renderTooltip={() => t('Download')}>
         <BasicButton
           type="button"
@@ -52,32 +65,17 @@ const FileOptionsPopupBody: React.FC = () => {
   );
 
   return (
-    <EditorContextPopup
-      title={t('File details')}
-      subtitle={t('Rename, caption, or download the file.')}
-      headerRight={headerRight}
-      minWidth={360}
-      onCancel={state.cancel}
-      onApply={state.apply}
-    >
-      <FileOptions />
-    </EditorContextPopup>
-  );
-};
-
-export const FileOptionsPopup: React.FC<FileOptionsPopupProps> = ({element}) => {
-  const editor = useSlateStatic();
-  const popup = usePopup();
-  const mutxt = useMuTxt();
-
-  return (
-    <FileOptionsStateProvider
-      editor={editor}
-      things={mutxt.things}
-      element={element}
-      closePopup={() => popup?.close()}
-    >
-      <FileOptionsPopupBody />
-    </FileOptionsStateProvider>
+    <ctx.Provider value={state}>
+      <EditorContextPopup
+        title={t('File details')}
+        subtitle={t('Rename, caption, or download the file.')}
+        headerRight={headerRight}
+        minWidth={360}
+        onCancel={state.cancel}
+        onApply={state.apply}
+      >
+        <FileOptions />
+      </EditorContextPopup>
+    </ctx.Provider>
   );
 };

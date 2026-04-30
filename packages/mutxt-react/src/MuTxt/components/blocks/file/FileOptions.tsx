@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
-import {useFileOptionsState} from './state';
+import {useFileOptions} from './context';
 import {useT} from 'use-t';
 
 const blockClass = rule({
@@ -18,7 +18,7 @@ const stopInputKeyDown = (event: React.KeyboardEvent): void => {
 
 export const FileOptions: React.FC = () => {
   const [t] = useT();
-  const state = useFileOptionsState();
+  const state = useFileOptions();
   const caption = state.caption.use();
   const displayName = state.displayName.use();
 
@@ -46,7 +46,7 @@ export const FileOptions: React.FC = () => {
         type="text"
         value={caption}
         label={t('Caption (optional)')}
-        placeholder={t('Description shown below the file')}
+        placeholder={t('About this file')}
         onChange={state.setCaption}
         onKeyDown={stopInputKeyDown}
         onEnter={(event) => {
