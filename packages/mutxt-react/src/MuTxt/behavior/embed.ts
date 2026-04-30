@@ -1,4 +1,5 @@
 import {Editor, Element as SlateElement, Node, Path, Transforms} from 'slate';
+import {insertVoidBlock} from './voidInsert';
 import type {CustomElement, CustomText, EmbedElement} from '../types';
 
 export const isEmbedElement = (node: unknown): node is EmbedElement =>
@@ -86,36 +87,7 @@ export const removeEmbedAtPath = (editor: Editor, path: Path): boolean => {
 export const insertEmbed = (editor: Editor, url: string, caption?: string): EmbedElement | null => {
   const normalizedUrl = normalizeEmbedUrl(url);
   if (!normalizedUrl) return null;
-  const embed = createEmbedElement(normalizedUrl, caption);
-  const {selection} = editor;
-  const currentBlockEntry = (selection
-    ? Editor.above(editor, {
-        at: Editor.unhangRange(editor, selection),
-        match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-        mode: 'lowest',
-      })
-    : null) as [CustomElement, Path] | null;
-  const shouldReplaceEmptyParagraph =
-    !!currentBlockEntry &&
-    currentBlockEntry[0].type === 'p' &&
-    Node.string(currentBlockEntry[0]) === '';
-  if (shouldReplaceEmptyParagraph) {
-    const [, path] = currentBlockEntry;
-    Transforms.removeNodes(editor, {at: path});
-    Transforms.insertNodes(editor, embed, {at: path, select: true});
-  } else {
-    Transforms.insertNodes(editor, embed, {select: true});
-  }
-  const entry = getActiveEmbedEntry(editor);
-  if (entry) {
-    const [, path] = entry;
-    const afterPath = Path.next(path);
-    if (!Node.has(editor, afterPath)) {
-      Transforms.insertNodes(editor, {type: 'p', children: [{text: ''}]} as CustomElement, {at: afterPath});
-    }
-    if (Node.has(editor, afterPath)) Transforms.select(editor, Editor.start(editor, afterPath));
-  }
-  return embed;
+  return insertVoidBlock(editor, createEmbedElement(normalizedUrl, caption));
 };
 
 export const withEmbeds = <T extends Editor>(editor: T): T => {

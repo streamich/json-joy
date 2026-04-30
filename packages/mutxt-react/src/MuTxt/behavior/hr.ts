@@ -1,4 +1,5 @@
-import {Editor, Element as SlateElement, Node, Path, Transforms} from 'slate';
+import {Editor, Element as SlateElement, Path, Transforms} from 'slate';
+import {insertVoidBlock} from './voidInsert';
 import type {CustomElement, CustomText, HrElement} from '../types';
 
 export const isHrElement = (node: unknown): node is HrElement =>
@@ -38,38 +39,8 @@ export const insertParagraphNearActiveHr = (editor: Editor, position: 'above' | 
   return targetPath;
 };
 
-export const insertHr = (editor: Editor, overrides: Partial<HrElement> = {}): HrElement => {
-  const hr = createHrElement(overrides);
-  const {selection} = editor;
-  const currentBlockEntry = (selection
-    ? Editor.above(editor, {
-        at: Editor.unhangRange(editor, selection),
-        match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-        mode: 'lowest',
-      })
-    : null) as [CustomElement, Path] | null;
-  const shouldReplaceEmptyParagraph =
-    !!currentBlockEntry &&
-    currentBlockEntry[0].type === 'p' &&
-    Node.string(currentBlockEntry[0]) === '';
-  if (shouldReplaceEmptyParagraph) {
-    const [, path] = currentBlockEntry;
-    Transforms.removeNodes(editor, {at: path});
-    Transforms.insertNodes(editor, hr, {at: path, select: true});
-  } else {
-    Transforms.insertNodes(editor, hr, {select: true});
-  }
-  const entry = getActiveHrEntry(editor);
-  if (entry) {
-    const [, path] = entry;
-    const afterPath = Path.next(path);
-    if (!Node.has(editor, afterPath)) {
-      Transforms.insertNodes(editor, createParagraphElement(), {at: afterPath});
-    }
-    if (Node.has(editor, afterPath)) Transforms.select(editor, Editor.start(editor, afterPath));
-  }
-  return hr;
-};
+export const insertHr = (editor: Editor, overrides: Partial<HrElement> = {}): HrElement | null =>
+  insertVoidBlock(editor, createHrElement(overrides));
 
 export const withHr = <T extends Editor>(editor: T): T => {
   const {isVoid, insertBreak, insertSoftBreak, insertText} = editor;

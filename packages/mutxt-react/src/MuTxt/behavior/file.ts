@@ -1,4 +1,5 @@
 import {Editor, Element as SlateElement, Node, Path, Transforms} from 'slate';
+import {insertVoidBlock} from './voidInsert';
 import type {CustomElement, CustomText, FileElement} from '../types';
 
 export const isFileElement = (node: unknown): node is FileElement =>
@@ -50,43 +51,9 @@ export const removeFileAtPath = (editor: Editor, path: Path): boolean => {
   return true;
 };
 
-/**
- * Insert a new `<file @thing={id}>` block at the current selection.
- * Mirrors `insertEmbed` / `insertHr`: replaces a leading empty paragraph if
- * present, then ensures a trailing paragraph after the file.
- */
 export const insertFile = (editor: Editor, thingId: string, caption?: string): FileElement | null => {
   if (!thingId) return null;
-  const fileEl = createFileElement(thingId, caption);
-  const {selection} = editor;
-  const currentBlockEntry = (selection
-    ? Editor.above(editor, {
-        at: Editor.unhangRange(editor, selection),
-        match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-        mode: 'lowest',
-      })
-    : null) as [CustomElement, Path] | null;
-  const shouldReplaceEmptyParagraph =
-    !!currentBlockEntry &&
-    (currentBlockEntry[0] as any).type === 'p' &&
-    Node.string(currentBlockEntry[0]) === '';
-  if (shouldReplaceEmptyParagraph) {
-    const [, path] = currentBlockEntry;
-    Transforms.removeNodes(editor, {at: path});
-    Transforms.insertNodes(editor, fileEl, {at: path, select: true});
-  } else {
-    Transforms.insertNodes(editor, fileEl, {select: true});
-  }
-  const entry = getActiveFileEntry(editor);
-  if (entry) {
-    const [, path] = entry;
-    const afterPath = Path.next(path);
-    if (!Node.has(editor, afterPath)) {
-      Transforms.insertNodes(editor, createParagraphElement(), {at: afterPath});
-    }
-    if (Node.has(editor, afterPath)) Transforms.select(editor, Editor.start(editor, afterPath));
-  }
-  return fileEl;
+  return insertVoidBlock(editor, createFileElement(thingId, caption));
 };
 
 export const withFile = <T extends Editor>(editor: T): T => {
