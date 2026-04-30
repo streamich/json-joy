@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {Log} from './Log';
-import {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
-import {ext, PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import {DocumentMuTxt} from './DocumentMuTxt';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {JsonCrdtModel} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtModel';
 import {SetNamedTrace} from '@jsonjoy.com/ui';
+import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {OpenFile} from '../../state/file';
 
 export interface DocumentProps {
@@ -16,10 +15,9 @@ export interface DocumentProps {
 
 export const Document: React.FC<DocumentProps> = ({ file }) => {
   const activeModel = file.activeModel.use();
-  const peritext: PeritextRef | undefined = React.useMemo(() => {
+  const obj: ObjApi | undefined = React.useMemo(() => {
     if (activeModel.api.read('/@type') !== 'mutxt') return;
-    const api = activeModel.api.in(['text']).asExt(ext.peritext) as PeritextApi;
-    return () => api;
+    return activeModel.api.obj([]);
   }, [activeModel]);
   const state = useExplorer();
   const selected = useBehaviorSubject(state.file$);
@@ -27,12 +25,12 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
   const readonly = activeModel !== file.log.end;
   const visible = selected === file;
 
-  if (peritext) {
+  if (obj) {
     return (
       <SetNamedTrace name={'hidden'} value={!visible}>
         <DocumentMuTxt
           file={file}
-          peritext={peritext}
+          obj={obj}
           readOnly={readonly}
           visible={visible}
         />

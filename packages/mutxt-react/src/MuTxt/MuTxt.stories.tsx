@@ -811,7 +811,7 @@ const meta = preview.meta({
 export const Primary = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={primaryValue} minHeight={440} />
+      <MuTxt autoFocus={false} fromSlate={primaryValue} minHeight={440} />
     </Wrap>
   ),
 });
@@ -819,7 +819,7 @@ export const Primary = meta.story({
 export const Empty = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={[]} />
+      <MuTxt autoFocus={false} fromSlate={[]} />
     </Wrap>
   ),
 });
@@ -827,7 +827,7 @@ export const Empty = meta.story({
 export const Fit = meta.story({
   render: () => (
     <div style={{height: 600, border: '1px dashed red'}}>
-      <MuTxt autoFocus={false} initialValue={primaryValue} heightFit />
+      <MuTxt autoFocus={false} fromSlate={primaryValue} heightFit />
     </div>
   ),
 });
@@ -835,7 +835,7 @@ export const Fit = meta.story({
 export const Borderless = meta.story({
   render: () => (
     <div style={{height: 600, border: '1px solid rgb(0, 0, 0, 0.2)'}}>
-      <MuTxt autoFocus={false} initialValue={primaryValue} heightFit borderless style={{maxWidth: '100%'}} />
+      <MuTxt autoFocus={false} fromSlate={primaryValue} heightFit borderless style={{maxWidth: '100%'}} />
     </div>
   ),
 });
@@ -843,7 +843,7 @@ export const Borderless = meta.story({
 export const KitchenSink = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={kitchenSinkValue} minHeight={440} height={500} />
+      <MuTxt autoFocus={false} fromSlate={kitchenSinkValue} minHeight={440} height={500} />
     </Wrap>
   ),
 });
@@ -851,7 +851,7 @@ export const KitchenSink = meta.story({
 export const ManyHeadings = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={manyHeadingsValue} minHeight={440} contentWidth={920} />
+      <MuTxt autoFocus={false} fromSlate={manyHeadingsValue} minHeight={440} contentWidth={920} />
     </Wrap>
   ),
 });
@@ -859,7 +859,7 @@ export const ManyHeadings = meta.story({
 export const TwoColumns = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={twoColumnsValue} minHeight={440} contentWidth={920} />
+      <MuTxt autoFocus={false} fromSlate={twoColumnsValue} minHeight={440} contentWidth={920} />
     </Wrap>
   ),
 });
@@ -867,7 +867,7 @@ export const TwoColumns = meta.story({
 export const Embeds = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={embedsValue} minHeight={720} />
+      <MuTxt autoFocus={false} fromSlate={embedsValue} minHeight={720} />
     </Wrap>
   ),
 });
@@ -875,7 +875,7 @@ export const Embeds = meta.story({
 export const LongDocument = meta.story({
   render: () => (
     <Wrap scroll>
-      <MuTxt autoFocus={false} initialValue={longValue} minHeight={440} />
+      <MuTxt autoFocus={false} fromSlate={longValue} minHeight={440} />
     </Wrap>
   ),
 });
@@ -883,7 +883,7 @@ export const LongDocument = meta.story({
 export const ReadOnly = meta.story({
   render: () => (
     <Wrap>
-      <MuTxt autoFocus={false} initialValue={kitchenSinkValue} minHeight={440} readOnly />
+      <MuTxt autoFocus={false} fromSlate={kitchenSinkValue} minHeight={440} readOnly />
     </Wrap>
   ),
 });
@@ -894,7 +894,7 @@ export const CodeBlocks = meta.story({
   },
   render: () => (
     <Wrap scroll>
-      <MuTxt autoFocus={false} initialValue={codeBlocksValue} minHeight={440} height={window.innerHeight - 200} contentWidth={920} />
+      <MuTxt autoFocus={false} fromSlate={codeBlocksValue} minHeight={440} height={window.innerHeight - 200} contentWidth={920} />
     </Wrap>
   ),
 });

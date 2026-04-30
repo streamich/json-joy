@@ -5,9 +5,10 @@ import {getCaretPathInfo} from '../behavior/path-info';
 import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {bindShortcuts} from '../behavior/keyboard';
 import {MuTxtApi} from './MuTxtApi';
-import {SlateFacade} from '@jsonjoy.com/collaborative-slate';
+import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
+import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
-import {Range, type BaseEditor, type Selection} from 'slate';
+import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
 import {ReactEditor} from 'slate-react';
@@ -16,11 +17,23 @@ import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
 import {ThingsState} from '../things/ThingsState';
+import {s} from 'json-joy/lib/json-crdt';
+import {ext} from 'json-joy/lib/json-crdt-extensions';
+import type {Model, ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
+import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
-import type {SlateTextAlign} from '../types';
+import type {CustomElement, SlateEditorDocument, SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
 
-export interface MuTxtStateOpts {}
+const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
+const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument =>
+  value && value.length ? value : createEmptyDocument();
+
+export interface MuTxtStateOpts {
+  collaborative?: boolean;
+  readOnly?: boolean;
+  fromSlate?: SlateEditorDocument;
+}
 
 export class MuTxtState implements UiLifeCycles {
   public readonly api = new MuTxtApi(this);
@@ -75,12 +88,43 @@ export class MuTxtState implements UiLifeCycles {
 
   public onTitleSubmit?: (title: string) => void = void 0;
 
+  public readonly peritextRef: PeritextRef;
+
   constructor(
     public readonly editor: BaseEditor & ReactEditor & HistoryEditor,
-    public readonly peritextRef: PeritextRef,
-    opts?: {collaborative?: boolean; readOnly?: boolean},
+    public readonly obj: ObjApi<ObjNode>,
+    opts?: MuTxtStateOpts,
   ) {
     this.readOnly.next(!!opts?.readOnly);
+    const model = (obj as unknown as {doc: Model<any>}).doc;
+    const typeNode = obj.get('@type');
+    if (obj.read('/@type') !== 'mutxt') obj.set({'@type': s.con('mutxt')});
+    const existing = obj.get('text');
+    let peritextNode: PeritextApi;
+    let isNewDocument = false;
+    try {
+      peritextNode = obj.in(['text']).asExt(ext.peritext);
+    } catch {
+      isNewDocument = true;
+      obj.set({text: ext.peritext.new('')});
+      peritextNode = obj.in(['text']).asExt(ext.peritext);
+    }
+    this.peritextRef = () => peritextNode;
+    if (isNewDocument && opts?.fromSlate) {
+      const viewRange = FromSlate.convert(normalizeDocument(opts.fromSlate) as any);
+      const txt = this.peritextRef().peritext();
+      txt.editor.merge(viewRange);
+      txt.refresh();
+    }
+    let initialValue: Descendant[];
+    try {
+      initialValue = toSlate(this.peritextRef().peritext()) as Descendant[];
+      if (!initialValue.length) initialValue = createEmptyDocument() as Descendant[];
+    } catch {
+      initialValue = createEmptyDocument() as Descendant[];
+    }
+    editor.children = initialValue;
+    editor.selection = null;
   }
 
   public start(): (() => void) {

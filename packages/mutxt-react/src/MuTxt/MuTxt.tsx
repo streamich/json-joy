@@ -2,22 +2,21 @@ import * as React from 'react';
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useMemo, useEffect, useCallback} from 'react';
 import {rule} from 'nano-theme';
-import {createEditor, Transforms, type Descendant} from 'slate';
+import {createEditor, Transforms} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
-import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
 import {withTitleSubmit} from './behavior/title';
 import {withProtectedThings} from './behavior/things';
 import {withFile} from './behavior/file';
-import {ext, ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
-import {FromSlate} from '@jsonjoy.com/collaborative-slate';
+import {ObjNode} from 'json-joy/lib/json-crdt';
+import type {ObjApi} from 'json-joy/lib/json-crdt';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -43,9 +42,6 @@ import type {MuTxtApi} from './state/MuTxtApi';
 
 const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
 
-const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
-const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => (value && value.length ? value : createEmptyDocument());
-
 const shellClass = rule({
   w: '100%',
   // maxW: '1200px',
@@ -70,9 +66,23 @@ const editableClass = rule({
 });
 
 export interface MuTxtProps {
-  peritext?: PeritextRef;
+  /**
+   * The mutxt document, represented as a JSON CRDT object of the shape
+   * `{'@type': 'mutxt', text: <peritext>}`. When omitted, MuTxt creates its
+   * own in-memory model.
+   */
+  obj?: ObjApi;
+
+  /** Collaborative presence indicator manager. */
   presence?: PresenceManager;
-  initialValue?: SlateEditorDocument;
+
+  /**
+   * Slate document used to seed a freshly created mutxt document. Ignored when
+   * the underlying document is not empty — in that case the existing content is
+   * loaded as-is.
+   */
+  fromSlate?: SlateEditorDocument;
+
   placeholder?: React.ReactNode;
   maxWidth?: number;
   contentWidth?: number;
@@ -105,8 +115,8 @@ export interface MuTxtProps {
 }
 
 export const MuTxt: React.FC<MuTxtProps> = ({
-  peritext,
-  initialValue,
+  obj,
+  fromSlate,
   placeholder = DEF_PLACEHOLDER,
   presence,
   contentWidth,
@@ -133,46 +143,23 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     onTitleSubmitRef.current = onTitleSubmit;
   }, [onTitleSubmit]);
 
-  // ----------------------------------------------------------------- Peritext
-  const peritextRef: PeritextRef = useMemo(() => {
-    if (peritext) return peritext;
-    const model = ModelWithExt.create(ext.peritext.new('')) as unknown as Model<any>;
-    const value = initialValue ?? createEmptyDocument();
-    const viewRange = FromSlate.convert(normalizeDocument(value) as any);
-    const txt = (model as any).s.toExt().txt;
-    txt.editor.merge(viewRange);
-    txt.refresh();
-    const ref = (() => (model as any).s.toExt());
-    return ref;
-  }, [peritext]);
-
   // ------------------------------------------------------------- Editor state
   const [editor, state] = useMemo(() => {
-    if (!peritextRef) throw new Error('NO_TXT');
-    let initialValue: Descendant[] = [];
-    try {
-      initialValue = toSlate(peritextRef().txt) as Descendant[];
-    } catch {
-      initialValue = createEmptyDocument() as Descendant[];
-    }
     const editor = withProtectedThings(
-        withTitleSubmit(
-          withHr(
-            withFile(
-              withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))),
-            ),
+      withTitleSubmit(
+        withHr(
+          withFile(
+            withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))),
           ),
-          () => onTitleSubmitRef.current,
         ),
+        () => onTitleSubmitRef.current,
+      ),
     );
-    editor.children = initialValue;
-    editor.selection = null;
-    if (_state) {
-      return [_state.editor, _state];
-    }
-    const state = new MuTxtState(editor, peritextRef, {collaborative: !!presence, readOnly});
+    if (_state) return [_state.editor, _state];
+    const state = new MuTxtState(editor, obj as ObjApi<ObjNode>, {collaborative: !!presence, readOnly, fromSlate});
     return [editor, state];
-  }, [peritextRef, _state]);
+  }, [obj, _state]);
+  const peritextRef: PeritextRef = state.peritextRef;
   useEffect(() => {
     if (_state) return; // We don't own the state.
     const stop = state.start();
@@ -187,6 +174,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         {at: [0]},
       );
     }
+    if (autoFocus) requestAnimationFrame(() => state.api.focus());
     return stop;
   }, [_state, state, startWithTitle, editor]);
   useIsomorphicLayoutEffect(() => {

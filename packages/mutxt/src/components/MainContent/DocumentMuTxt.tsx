@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {MuTxt} from 'mutxt-react';
-import {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
+import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {OpenFile} from '../../state/file';
 
 const editorShellClass = rule({
@@ -17,21 +17,19 @@ const minHeight = 400;
 
 export interface DocumentMuTxtProps {
   file: OpenFile;
-  peritext: PeritextRef;
+  obj: ObjApi;
   readOnly?: boolean;
   visible?: boolean;
 }
 
 
-export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, peritext, readOnly, visible }) => {
+export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, obj, readOnly, visible }) => {
   return (
     <div className={editorShellClass} style={{display: visible ? 'block' : 'none', minHeight}}>
-      <MuTxt heightFit hoverElevate peritext={peritext} minHeight={minHeight} readOnly={readOnly}
+      <MuTxt heightFit hoverElevate obj={obj} minHeight={minHeight} readOnly={readOnly}
+        autoFocus
         onApi={(api) => {
           file.mutxt = api;
-          requestAnimationFrame(() => {
-            api.focus();
-          });
         }}
         startWithTitle
         onTitleSubmit={title => {
