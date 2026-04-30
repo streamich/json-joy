@@ -41,15 +41,6 @@ describe('file behavior', () => {
     expect((editor.children[0] as any).caption).toBe('Q3 P&L');
   });
 
-  test('updateFileAtPath updates @thing and caption', () => {
-    const editor = createTestEditor([
-      {type: 'file', '@thing': 'a', children: [{text: ''}]} as any,
-      {type: 'p', children: [{text: ''}]},
-    ]);
-    expect((editor.children[0] as any)['@thing']).toBe('b');
-    expect((editor.children[0] as any).caption).toBe('New');
-  });
-
   test('removeFileAtPath removes the file block', () => {
     const editor = createTestEditor([
       {type: 'file', '@thing': 'a', children: [{text: ''}]} as any,

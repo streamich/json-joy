@@ -7,23 +7,18 @@ export const isThingsContainer = (node: unknown): node is ThingsContainerElement
 export const isThingElement = (node: unknown): node is ThingElement =>
   SlateElement.isElement(node) && (node as any).type === '.thing';
 
-/** True if `path` points at a node inside the `.things` system block(s). */
 const isInThingsBlock = (editor: Editor, path: Path): boolean => {
   if (path.length === 0) return false;
-  if (path[0] !== 0) return false;
-  const first = editor.children[0];
-  return isThingsContainer(first);
+  const top = editor.children[path[0]];
+  return isThingsContainer(top);
 };
 
 const firstContentBlockIndex = (editor: Editor): number => {
-  const first = editor.children[0];
-  return isThingsContainer(first) ? 1 : 0;
+  let i = 0;
+  while (i < editor.children.length && isThingsContainer(editor.children[i])) i++;
+  return i;
 };
 
-/**
- * Range covering every user-content block (everything except `.things`).
- * Returns null if the document has no user content.
- */
 const contentRange = (editor: Editor): Range | null => {
   const start = firstContentBlockIndex(editor);
   if (start >= editor.children.length) return null;
@@ -32,23 +27,19 @@ const contentRange = (editor: Editor): Range | null => {
   return {anchor: startPoint, focus: endPoint};
 };
 
-/** Find or create the `.things` block, return its path (always `[0]`). */
 export const ensureThingsBlock = (editor: Editor): Path => {
-  const first = editor.children[0];
-  if (isThingsContainer(first)) return [0];
+  for (let i = 0; i < editor.children.length; i++) {
+    if (isThingsContainer(editor.children[i])) {
+      if (i !== 0) Transforms.moveNodes(editor, {at: [i], to: [0], voids: true});
+      return [0];
+    }
+  }
   const container: ThingsContainerElement = {type: '.things', children: [] as any};
   Transforms.insertNodes(editor, container as unknown as CustomElement, {at: [0], voids: true});
   return [0];
 };
 
 const createEmptyParagraph = (): CustomElement => ({type: 'p', children: [{text: ''}] as CustomText[]});
-
-const clampPathOutOfThings = (editor: Editor, path: Path): Path | null => {
-  if (!isInThingsBlock(editor, path)) return null;
-  const idx = firstContentBlockIndex(editor);
-  if (idx >= editor.children.length) return null;
-  return [idx];
-};
 
 const clampPointOutOfThings = (editor: Editor, point: Point): Point | null => {
   if (!isInThingsBlock(editor, point.path)) return null;
@@ -57,64 +48,86 @@ const clampPointOutOfThings = (editor: Editor, point: Point): Point | null => {
   return Editor.start(editor, [idx]);
 };
 
-/**
- * Normalize the document around the `.things` invariants:
- *
- * - `.things`, if present, must live at index 0.
- * - `.things` with zero children is removed.
- * - A stray `.thing` outside `.things` gets unwrapped (becomes a paragraph).
- * - A document containing only `.things` gets a trailing empty paragraph.
- */
 const normalizeThings = (editor: Editor, entry: [Node, Path]): boolean => {
   const [node, path] = entry;
-  if (path.length === 1 && isThingsContainer(node) && path[0] !== 0) {
-    Transforms.moveNodes(editor, {at: path, to: [0], voids: true});
-    return true;
-  }
   if (path.length === 1 && isThingsContainer(node)) {
+    const idx = path[0];
+    let first = -1;
+    for (let i = 0; i < editor.children.length; i++) {
+      if (isThingsContainer(editor.children[i])) {
+        first = i;
+        break;
+      }
+    }
+    if (first === -1) return false;
+    if (idx !== first) {
+      const childCount = (node as ThingsContainerElement).children.length;
+      const targetBaseIndex = (editor.children[first] as ThingsContainerElement).children.length;
+      Editor.withoutNormalizing(editor, () => {
+        for (let k = 0; k < childCount; k++) {
+          Transforms.moveNodes(editor, {
+            at: [idx, 0],
+            to: [first, targetBaseIndex + k],
+            voids: true,
+          });
+        }
+        Transforms.removeNodes(editor, {at: [idx], voids: true});
+      });
+      return true;
+    }
+    if (first !== 0) {
+      Transforms.moveNodes(editor, {at: [first], to: [0], voids: true});
+      return true;
+    }
     if (!node.children || node.children.length === 0) {
-      Transforms.removeNodes(editor, {at: path, voids: true});
+      Transforms.removeNodes(editor, {at: [first], voids: true});
       return true;
     }
   }
+
   if (path.length === 1 && isThingElement(node)) {
-    // Stray `.thing` outside of a `.things` parent — convert to a paragraph
-    // so the user doesn't lose the document slot.
-    Transforms.setNodes(
-      editor,
-      {type: 'p'} as Partial<CustomElement>,
-      {at: path, voids: true},
-    );
+    let containerIdx = -1;
+    for (let i = 0; i < editor.children.length; i++) {
+      if (i === path[0]) continue;
+      if (isThingsContainer(editor.children[i])) {
+        containerIdx = i;
+        break;
+      }
+    }
+    if (containerIdx === -1) {
+      Transforms.wrapNodes(
+        editor,
+        {type: '.things', children: [] as any} as ThingsContainerElement as unknown as CustomElement,
+        {at: path, voids: true},
+      );
+    } else {
+      const target = editor.children[containerIdx] as ThingsContainerElement;
+      const insertAt: Path = [containerIdx, target.children.length];
+      Transforms.moveNodes(editor, {at: path, to: insertAt, voids: true});
+    }
     return true;
   }
   if (path.length === 0) {
-    // Top-level: ensure at least one user-content block exists.
     if (editor.children.length === 0) {
       Transforms.insertNodes(editor, createEmptyParagraph(), {at: [0]});
       return true;
     }
-    const onlyThings =
-      editor.children.length === 1 && isThingsContainer(editor.children[0]);
-    if (onlyThings) {
-      Transforms.insertNodes(editor, createEmptyParagraph(), {at: [1]});
+    let allThings = true;
+    for (const child of editor.children) {
+      if (!isThingsContainer(child)) {
+        allThings = false;
+        break;
+      }
+    }
+    if (allThings) {
+      Transforms.insertNodes(editor, createEmptyParagraph(), {at: [editor.children.length]});
       return true;
     }
   }
+
   return false;
 };
 
-/**
- * Editor enhancer that protects the hidden `.things` block from accidental
- * navigation, deletion, or selection.
- * 
- * Layers:
- * 
- * - `editor.isVoid` returns true for `.things` and `.thing`.
- * - `editor.apply` clamps any `set_selection` op that targets `.things`.
- * - `editor.deleteBackward` is a no-op at the start of the first content
- *   block (so `.things` cannot be merged into).
- * - `editor.normalizeNode` enforces the layout invariants in `normalizeThings`.
- */
 export const withProtectedThings = <T extends Editor>(editor: T): T => {
   const {isVoid, apply, deleteBackward, deleteFragment, normalizeNode} = editor;
   editor.isVoid = (element) => {
@@ -147,8 +160,6 @@ export const withProtectedThings = <T extends Editor>(editor: T): T => {
       if (idx > 0 && idx < editor.children.length) {
         const startOfContent = Editor.start(editor, [idx]);
         if (Point.equals(selection.anchor, startOfContent)) {
-          // At the very start of the first content block - refuse to delete
-          // backward (which would otherwise merge content into `.things`).
           return;
         }
       }

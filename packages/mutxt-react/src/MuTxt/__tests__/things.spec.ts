@@ -1,11 +1,8 @@
 import {createEditor, Editor, Transforms} from 'slate';
 import {
-  // contentBlocks,
-  // contentRange,
   ensureThingsBlock,
-  // firstContentBlockIndex,
-  // isInThingsBlock,
-  // isThingsContainerElement,
+  isThingElement,
+  isThingsContainer,
   withProtectedThings,
 } from '../behavior/things';
 import {isEmptyDoc} from '../util';
@@ -38,40 +35,18 @@ describe('protection layer (withProtectedThings)', () => {
     expect(editor.isVoid({type: 'p', children: [{text: ''}]} as any)).toBe(false);
   });
 
-  test('firstContentBlockIndex skips `.things`', () => {
-    const editor = createTestEditor(docWithThings());
-    // expect(firstContentBlockIndex(editor)).toBe(1);
-    const editor2 = createTestEditor([{type: 'p', children: [{text: 'a'}]}]);
-    // expect(firstContentBlockIndex(editor2)).toBe(0);
-  });
-
-  test('contentBlocks iterates only user content', () => {
-    const editor = createTestEditor(docWithThings());
-    // const types = [...contentBlocks(editor)].map(([n]) => (n as any).type);
-    // expect(types).toEqual(['title', 'p']);
-  });
-
-  test('contentRange covers from first content block to end', () => {
-    const editor = createTestEditor(docWithThings());
-    // const range = contentRange(editor);
-    // expect(range).not.toBeNull();
-    // expect(range!.anchor.path).toEqual([1, 0]);
-    // expect(range!.focus.path[0]).toBe(2);
-  });
-
   test('ensureThingsBlock creates `.things` if missing (within withoutNormalizing)', () => {
     const editor = createTestEditor([{type: 'p', children: [{text: ''}]}]);
     Editor.withoutNormalizing(editor, () => {
       const path = ensureThingsBlock(editor);
       expect(path).toEqual([0]);
-      // Add a thing immediately so normalization doesn't sweep the empty container.
       Transforms.insertNodes(
         editor,
         {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
-        {at: [0, 0]},
+        {at: [0, 0], voids: true},
       );
     });
-    // expect(isThingsContainerElement(editor.children[0])).toBe(true);
+    expect(isThingsContainer(editor.children[0])).toBe(true);
   });
 
   test('ensureThingsBlock is idempotent when `.things` exists', () => {
@@ -81,6 +56,19 @@ describe('protection layer (withProtectedThings)', () => {
     expect(editor.children.length).toBe(3);
   });
 
+  test('ensureThingsBlock relocates a misplaced `.things` to index 0', () => {
+    const editor = createTestEditor([
+      {type: 'p', children: [{text: 'before'}]},
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
+    ]);
+    const path = ensureThingsBlock(editor);
+    expect(path).toEqual([0]);
+    expect(isThingsContainer(editor.children[0])).toBe(true);
+    expect((editor.children[1] as any).type).toBe('p');
+  });
+
   test('Backspace at start of first content block does not delete `.things`', () => {
     const editor = createTestEditor(docWithThings());
     editor.selection = {
@@ -88,17 +76,15 @@ describe('protection layer (withProtectedThings)', () => {
       focus: {path: [1, 0], offset: 0},
     };
     editor.deleteBackward('character');
-    // expect(isThingsContainerElement(editor.children[0])).toBe(true);
-    // Title text should not have changed.
+    expect(isThingsContainer(editor.children[0])).toBe(true);
     expect((editor.children[1] as any).children[0].text).toBe('Hello');
   });
 
   test('Cmd+A-equivalent (delete fragment over full doc) leaves `.things` intact', () => {
     const editor = createTestEditor(docWithThings());
-    // Simulate Cmd+A: select the entire tree.
     editor.selection = Editor.range(editor, []);
     editor.deleteFragment();
-    // expect(isThingsContainerElement(editor.children[0])).toBe(true);
+    expect(isThingsContainer(editor.children[0])).toBe(true);
   });
 
   test('programmatic select targeting `.things[0]` clamps to first content block', () => {
@@ -106,16 +92,14 @@ describe('protection layer (withProtectedThings)', () => {
     Transforms.select(editor, [0, 0]);
     expect(editor.selection).not.toBeNull();
     expect(editor.selection!.anchor.path[0]).toBe(1);
+    expect(editor.selection!.focus.path[0]).toBe(1);
   });
 
   test('document containing only `.things` gets a trailing empty paragraph', () => {
     const editor = createTestEditor([
-      {
-        type: '.things',
-        children: [
-          {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
-        ],
-      } as any,
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
     ]);
     Editor.normalize(editor, {force: true});
     expect(editor.children.length).toBe(2);
@@ -124,35 +108,32 @@ describe('protection layer (withProtectedThings)', () => {
 
   test('isEmpty returns true for `.things` + empty paragraph', () => {
     const editor = createTestEditor([
-      {
-        type: '.things',
-        children: [
-          {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
-        ],
-      } as any,
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
       {type: 'p', children: [{text: ''}]},
     ]);
     expect(isEmptyDoc(editor)).toBe(true);
   });
 
-  test('isEmpty returns false when there is a non-empty paragraph after `.things`', () => {
+  test('isEmpty returns false when there is non-empty content after `.things`', () => {
     const editor = createTestEditor(docWithThings());
     expect(isEmptyDoc(editor)).toBe(false);
   });
+});
 
-  test('normalization moves `.things` from a non-zero index to [0]', () => {
+describe('protection layer — resilience to misplaced/duplicate `.things`', () => {
+  test('normalization moves `.things` from index N to [0]', () => {
     const editor = createTestEditor([
       {type: 'p', children: [{text: 'first'}]},
-      {
-        type: '.things',
-        children: [
-          {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
-        ],
-      } as any,
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
     ]);
     Editor.normalize(editor, {force: true});
-    // expect(isThingsContainerElement(editor.children[0])).toBe(true);
+    expect(isThingsContainer(editor.children[0])).toBe(true);
     expect((editor.children[1] as any).type).toBe('p');
+    expect((editor.children[1] as any).children[0].text).toBe('first');
   });
 
   test('empty `.things` is removed by normalization', () => {
@@ -161,15 +142,88 @@ describe('protection layer (withProtectedThings)', () => {
       {type: 'p', children: [{text: 'hi'}]},
     ]);
     Editor.normalize(editor, {force: true});
-    // expect(isThingsContainerElement(editor.children[0])).toBe(false);
+    expect(isThingsContainer(editor.children[0])).toBe(false);
     expect(editor.children.length).toBe(1);
   });
 
-  test('isInThingsBlock detects nodes under `.things`', () => {
-    const editor = createTestEditor(docWithThings());
-    // expect(isInThingsBlock(editor, [0])).toBe(true);
-    // expect(isInThingsBlock(editor, [0, 0])).toBe(true);
-    // expect(isInThingsBlock(editor, [1])).toBe(false);
-    // expect(isInThingsBlock(editor, [2])).toBe(false);
+  test('multiple `.things` blocks merge into one', () => {
+    const editor = createTestEditor([
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
+      {type: 'p', children: [{text: 'between'}]},
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'b'}, children: [{text: ''}]} as any,
+        {type: '.thing', thing: {'@type': 'X', '@id': 'c'}, children: [{text: ''}]} as any,
+      ]} as any,
+      {type: 'p', children: [{text: 'after'}]},
+    ]);
+    Editor.normalize(editor, {force: true});
+    // After normalization there's exactly one `.things` block at index 0.
+    let count = 0;
+    for (const child of editor.children) {
+      if (isThingsContainer(child)) count++;
+    }
+    expect(count).toBe(1);
+    expect(isThingsContainer(editor.children[0])).toBe(true);
+    const merged = (editor.children[0] as any).children;
+    const ids = merged.map((c: any) => c.thing['@id']).sort();
+    expect(ids).toEqual(['a', 'b', 'c']);
+  });
+
+  test('multiple misplaced `.things` blocks (none at index 0) consolidate to [0]', () => {
+    const editor = createTestEditor([
+      {type: 'p', children: [{text: 'lead'}]},
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
+      {type: 'p', children: [{text: 'mid'}]},
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'b'}, children: [{text: ''}]} as any,
+      ]} as any,
+    ]);
+    Editor.normalize(editor, {force: true});
+    expect(isThingsContainer(editor.children[0])).toBe(true);
+    let count = 0;
+    for (const child of editor.children) if (isThingsContainer(child)) count++;
+    expect(count).toBe(1);
+    const ids = (editor.children[0] as any).children.map((c: any) => c.thing['@id']).sort();
+    expect(ids).toEqual(['a', 'b']);
+  });
+
+  test('stray `.thing` outside `.things` is moved into `.things`', () => {
+    const editor = createTestEditor([
+      {type: '.things', children: [
+        {type: '.thing', thing: {'@type': 'X', '@id': 'a'}, children: [{text: ''}]} as any,
+      ]} as any,
+      {type: 'p', children: [{text: 'before'}]},
+      {type: '.thing', thing: {'@type': 'X', '@id': 'stray'}, children: [{text: ''}]} as any,
+      {type: 'p', children: [{text: 'after'}]},
+    ]);
+    Editor.normalize(editor, {force: true});
+    // `.thing` rows preserved in `.things` (no payload lost).
+    const ids = (editor.children[0] as any).children
+      .filter((c: any) => isThingElement(c))
+      .map((c: any) => c.thing['@id'])
+      .sort();
+    expect(ids).toEqual(['a', 'stray']);
+    // No remaining stray `.thing` at top level.
+    for (let i = 1; i < editor.children.length; i++) {
+      expect(isThingElement(editor.children[i])).toBe(false);
+    }
+  });
+
+  test('stray `.thing` with no `.things` block: a `.things` is created around it', () => {
+    const editor = createTestEditor([
+      {type: 'p', children: [{text: 'before'}]},
+      {type: '.thing', thing: {'@type': 'X', '@id': 'stray'}, children: [{text: ''}]} as any,
+      {type: 'p', children: [{text: 'after'}]},
+    ]);
+    Editor.normalize(editor, {force: true});
+    expect(isThingsContainer(editor.children[0])).toBe(true);
+    const innerIds = (editor.children[0] as any).children
+      .filter((c: any) => isThingElement(c))
+      .map((c: any) => c.thing['@id']);
+    expect(innerIds).toEqual(['stray']);
   });
 });

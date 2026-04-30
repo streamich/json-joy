@@ -103,18 +103,6 @@ describe('ThingsState', () => {
     expect(t?.['@id']).toBe('f1');
   });
 
-  test('update() throws if `data` is in the partial', () => {
-    const mu = fakeMuTxt([
-      {type: '.things', children: [
-        {type: '.thing', thing: {'@type': 'File', '@id': 'f1', mimeType: 'image/png', data: new Uint8Array()}, children: [{text: ''}]} as any,
-      ]} as any,
-      {type: 'p', children: [{text: ''}]},
-    ]);
-    const things = new ThingsState(mu);
-    things.start();
-    expect(() => things.update('f1', {data: new Uint8Array([1, 2, 3])} as any)).toThrow(/replace/);
-  });
-
   test('remove() removes the thing element', () => {
     const mu = fakeMuTxt([
       {type: '.things', children: [

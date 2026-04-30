@@ -1,6 +1,6 @@
 import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {Editor, Node, Element as SlateElement, Path, Transforms} from 'slate';
-import {isThingElement, isThingsContainer} from '../behavior/things';
+import {ensureThingsBlock, isThingElement, isThingsContainer} from '../behavior/things';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {CustomElement, FileElement, Thing, ThingElement, ThingsContainerElement} from '../types';
 
@@ -60,15 +60,22 @@ export class ThingsState implements UiLifeCycles {
   private rebuildIndex(): void {
     const map = new Map<string, {thing: Thing; path: Path}>();
     const editor = this.mutxt.editor;
-    const first = editor.children[0];
-    if (isThingsContainer(first)) {
-      const children = (first as ThingsContainerElement).children;
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i];
+    // Defensive: scan every top-level block for `.things` containers, then
+    // every child for `.thing` elements. Handles misplaced or duplicate
+    // `.things` blocks (e.g. from a corrupted document or a bad merge) without
+    // assuming a single block at index 0.
+    for (let blockIdx = 0; blockIdx < editor.children.length; blockIdx++) {
+      const block = editor.children[blockIdx];
+      if (!isThingsContainer(block)) continue;
+      const children = (block as ThingsContainerElement).children;
+      for (let childIdx = 0; childIdx < children.length; childIdx++) {
+        const child = children[childIdx];
         if (!isThingElement(child)) continue;
         const id = (child as ThingElement).thing?.['@id'];
-        if (typeof id === 'string' && id) {
-          map.set(id, {thing: (child as ThingElement).thing, path: [0, i]});
+        if (typeof id === 'string' && id && !map.has(id)) {
+          // First occurrence wins on id collision (later blocks/children are
+          // ignored — duplicate ids shouldn't happen but defend against it).
+          map.set(id, {thing: (child as ThingElement).thing, path: [blockIdx, childIdx]});
         }
       }
     }
@@ -113,23 +120,15 @@ export class ThingsState implements UiLifeCycles {
     const id = thing['@id'] ?? this.nextId();
     const next: Thing = {...(thing as Thing), '@id': id};
     const editor = this.mutxt.editor;
+    const thingElement = {type: '.thing', thing: next, children: [{text: ''}]} as ThingElement;
     Editor.withoutNormalizing(editor, () => {
-      const first = editor.children[0];
-      const thingElement = {type: '.thing', thing: next, children: [{text: ''}]} as ThingElement;
-      if (isThingsContainer(first)) {
-        const idx = (first as ThingsContainerElement).children.length;
-        Transforms.insertNodes(
-          editor,
-          thingElement as unknown as CustomElement,
-          {at: [0, idx], voids: true},
-        );
-      } else {
-        const container: ThingsContainerElement = {
-          type: '.things',
-          children: [thingElement],
-        };
-        Transforms.insertNodes(editor, container as unknown as CustomElement, {at: [0], voids: true});
-      }
+      const containerPath = ensureThingsBlock(editor);
+      const container = Node.get(editor, containerPath) as ThingsContainerElement;
+      const insertAt: Path = [...containerPath, container.children.length];
+      Transforms.insertNodes(editor, thingElement as unknown as CustomElement, {
+        at: insertAt,
+        voids: true,
+      });
     });
     this.invalidate();
     return id;
@@ -165,12 +164,13 @@ export class ThingsState implements UiLifeCycles {
   public references(id: string): Path[] {
     const out: Path[] = [];
     const editor = this.mutxt.editor;
-    for (let i = 1; i < editor.children.length; i++) {
+    for (let i = 0; i < editor.children.length; i++) {
       const node = editor.children[i];
+      // Skip `.things` system blocks (their children aren't user content).
+      if (isThingsContainer(node)) continue;
       const refId = getThingId(node);
       if (refId === id) out.push([i]);
     }
-    // Also walk one level deep (e.g. file blocks inside a callout) — keep cheap.
     return out;
   }
 
@@ -186,8 +186,10 @@ export class ThingsState implements UiLifeCycles {
   public gc(): {removed: string[]} {
     const referenced = new Set<string>();
     const editor = this.mutxt.editor;
-    for (let i = 1; i < editor.children.length; i++) {
-      const refId = getThingId(editor.children[i]);
+    for (let i = 0; i < editor.children.length; i++) {
+      const node = editor.children[i];
+      if (isThingsContainer(node)) continue;
+      const refId = getThingId(node);
       if (refId) referenced.add(refId);
     }
     const removed: string[] = [];
