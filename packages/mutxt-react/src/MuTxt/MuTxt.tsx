@@ -34,6 +34,7 @@ import {SlashMenu} from './void/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
+import {Sizer} from './chrome/sizer/Sizer';
 import type {Model} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
@@ -47,7 +48,7 @@ const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument => 
 
 const shellClass = rule({
   w: '100%',
-  maxW: '1200px',
+  // maxW: '1200px',
   mr: '0 auto',
   ov: 'hidden',
 });
@@ -327,7 +328,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   return (
     <SlateEditorContextProvider state={state}>
-      {content}
+      <Sizer>{content}</Sizer>
     </SlateEditorContextProvider>
   );
 };

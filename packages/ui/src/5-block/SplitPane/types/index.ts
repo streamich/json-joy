@@ -37,6 +37,8 @@ export interface SplitPaneProps {
   /** Called when resize ends */
   onResizeEnd?: (sizes: number[], event: ResizeEvent) => void;
 
+  onEl?: (el: HTMLDivElement | null) => void;
+
   /** CSS class name */
   className?: string;
 

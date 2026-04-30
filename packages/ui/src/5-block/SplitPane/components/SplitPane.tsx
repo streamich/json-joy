@@ -48,6 +48,7 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
     onResizeStart,
     onResize,
     onResizeEnd,
+    onEl,
     className,
     style,
     divider: CustomDivider,
@@ -452,7 +453,10 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
   };
 
   return (
-    <div ref={containerRef} className={containerClassName} style={containerStyle}>
+    <div ref={(el) => {
+      containerRef.current = el;
+      onEl?.(el);
+    }} className={containerClassName} style={containerStyle}>
       {containerSize > 0 && renderChildren()}
     </div>
   );

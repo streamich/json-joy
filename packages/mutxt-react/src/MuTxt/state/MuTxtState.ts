@@ -33,6 +33,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly contentVersion = rsync.val(0);
   public readonly scrollVersion = rsync.val(0);
 
+  public readonly sizerBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly wnd = windowSize();
 

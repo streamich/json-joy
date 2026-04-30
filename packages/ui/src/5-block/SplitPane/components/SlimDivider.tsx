@@ -41,7 +41,13 @@ const handleClass = drule({
   },
 });
 
-export const SlimDivider: React.FC<DividerProps> = (props: DividerProps) => {
+export interface SlimDividerProps extends DividerProps {
+  wide?: boolean;
+  maxHeight?: number;
+  handle?: (handle: React.ReactNode) => React.ReactNode;
+}
+
+export const SlimDivider: React.FC<SlimDividerProps> = (props) => {
   const {
     direction,
     index,
@@ -54,6 +60,9 @@ export const SlimDivider: React.FC<DividerProps> = (props: DividerProps) => {
     currentSize,
     minSize,
     maxSize,
+    maxHeight,
+    wide,
+    handle,
   } = props;
   const styles = useStyles();
 
@@ -93,6 +102,24 @@ export const SlimDivider: React.FC<DividerProps> = (props: DividerProps) => {
   // Don't pass Infinity to ARIA attributes - screen readers can't handle it
   const ariaValueMax = maxSize === undefined || maxSize === Infinity ? undefined : maxSize;
 
+  const handleElement = (
+    <div
+      className={handleClass({
+        bg: styles.g(0, 0.08),
+        w: wide ? '3px' : '1px',
+        [`.${blockClass.trim()}:focus &`]: {
+          bg: styles.g(0, 0.16),
+        },
+        [`.${blockClass.trim()}:active &`]: {
+          // bg: styles.g(0, 0.24),
+          bg: styles.col.accent(0, 5),
+        },
+      })}
+      style={maxHeight ? {maxHeight} : undefined}
+      contentEditable={false}
+    />
+  );
+
   return (
     <div
       contentEditable={false}
@@ -110,19 +137,7 @@ export const SlimDivider: React.FC<DividerProps> = (props: DividerProps) => {
       onKeyDown={disabled ? undefined : onKeyDown}
       data-divider-index={index}
     >
-      <div
-        className={handleClass({
-          bg: styles.g(0, 0.08),
-          [`.${blockClass.trim()}:focus &`]: {
-            bg: styles.g(0, 0.16),
-          },
-          [`.${blockClass.trim()}:active &`]: {
-            // bg: styles.g(0, 0.24),
-            bg: styles.col.accent(0, 5),
-          },
-        })}
-        contentEditable={false}
-      />
+      {handle ? handle(handleElement) : handleElement}
     </div>
   );
 };
