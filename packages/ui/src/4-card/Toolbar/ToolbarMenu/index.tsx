@@ -15,7 +15,8 @@ import type {ToolbarMenuProps} from './types';
 export {ToolbarMenuState};
 
 export const ToolbarMenu: React.FC<ToolbarMenuProps> = (props) => {
-  const state = React.useMemo(() => new ToolbarMenuState(props), [props]);
+  const reactId = React.useId();
+  const state = React.useMemo(() => new ToolbarMenuState(props, reactId), [props, reactId]);
 
   return <StatefulToolbarMenu {...props} state={state} />;
 };

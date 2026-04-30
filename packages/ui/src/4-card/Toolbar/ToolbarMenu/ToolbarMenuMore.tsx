@@ -16,14 +16,14 @@ export interface ToolbarMenuMoreProps {
 export const ToolbarMenuMore: React.FC<ToolbarMenuMoreProps> = ({item, disabled}) => {
   const [t] = useT();
   const openPanel = useToolbarMenu()?.openPanel;
-  const selected_ = useBehaviorSubjectOpt(openPanel?.selected$);
+  useBehaviorSubjectOpt(openPanel?.selected$);
   const subtle = useSubtleTrace();
 
   const id = item.id ?? item.name;
-  const selected = selected_ === id;
+  const selected = openPanel?.isSelected(id) ?? false;
 
   return (
-    <ToolbarMenuPopup open={selected_ === id} item={item}>
+    <ToolbarMenuPopup open={selected} item={item}>
       <div style={{height: 32, display: 'flex', alignItems: 'center'}}>
         <ToolbarItem
           fill={!subtle}

@@ -23,7 +23,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
   const arrow = React.useRef<HTMLDivElement | null>(null);
   const toolbar = useToolbarMenu();
   const openPanel = toolbar?.openPanel;
-  const selectedPanel = useBehaviorSubjectOpt(openPanel?.selected$);
+  useBehaviorSubjectOpt(openPanel?.selected$);
   const active = !!useSyncStoreOpt(item.active);
   const isTerminal = !item.children || item.children.length === 0;
   const id = item.id ?? item.name;
@@ -32,7 +32,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
     return <ToolbarMenuItemTerminal {...props} />;
   }
 
-  const selected = selectedPanel === id;
+  const selected = openPanel?.isSelected(id) ?? false;
 
   return (
     <ToolbarMenuPopup header open={selected} item={item}>
