@@ -113,12 +113,13 @@ export class InlineMenu implements UiLifeCycles {
   }
 
   public itemBold(): InlineMenuItem {
+    const keys = ['⌘', 'b'];
     return {
       mark: 'bold',
       name: 'Bold',
       icon: () => <BoldIcon />,
-      right: () => <Sidetip small>⌘ B</Sidetip>,
-      keys: ['⌘', 'b'],
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys: [formatKeys(keys)],
       active: this.markActive('bold'),
       onSelect: () => {
         this.mutxt.api.toggleMark('bold');
@@ -126,12 +127,13 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemItalic(): InlineMenuItem {
+    const keys = ['⌘', 'i'];
     return {
       mark: 'italic',
       name: 'Italic',
       icon: () => <ItalicIcon />,
-      right: () => <Sidetip small>⌘ I</Sidetip>,
-      keys: ['⌘', 'i'],
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys: [formatKeys(keys)],
       active: this.markActive('italic'),
       onSelect: () => {
         this.mutxt.api.toggleMark('italic');
@@ -139,12 +141,13 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemUnderline(): InlineMenuItem {
+    const keys = ['⌘', 'u'];
     return {
       mark: 'underline',
       name: 'Underline',
       icon: () => <UnderlineIcon />,
-      right: () => <Sidetip small>⌘ U</Sidetip>,
-      keys: ['⌘', 'u'],
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys: [formatKeys(keys)],
       active: this.markActive('underline'),
       onSelect: () => {
         this.mutxt.api.toggleMark('underline');
@@ -158,7 +161,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Strikethrough',
       icon: () => <StrikethroughIcon />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
-      keys,
+      keys: [formatKeys(keys)],
       active: this.markActive('strikethrough'),
       onSelect: () => {
         this.mutxt.api.toggleMark('strikethrough');
@@ -216,12 +219,13 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemCode(): InlineMenuItem {
+    const keys = ['⌘', 'e'];
     return {
       mark: 'code',
       name: 'Code',
       icon: () => <CodeIcon width={16} height={16} />,
-      right: () => <Sidetip small>⌘ E</Sidetip>,
-      keys: ['⌘', 'e'],
+      right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
+      keys: [formatKeys(keys)],
       active: this.markActive('code'),
       onSelect: () => {
         this.mutxt.api.toggleMark('code');
