@@ -322,6 +322,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         handlePadding={64}
         handleMaxHeight={500}
         handleWidth={3}
+        style={heightFit ? {height: '100%', minHeight: 0} : undefined}
       >
         {content}
       </Sizer>
