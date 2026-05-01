@@ -13,7 +13,6 @@ import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
 import {withTitleSubmit} from './behavior/title';
-import {withProtectedThings} from './behavior/things';
 import {withFile} from './behavior/file';
 import {ObjNode} from 'json-joy/lib/json-crdt';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
@@ -145,15 +144,13 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   // ------------------------------------------------------------- Editor state
   const [editor, state] = useMemo(() => {
-    const editor = withProtectedThings(
-      withTitleSubmit(
-        withHr(
-          withFile(
-            withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))),
-          ),
+    const editor = withTitleSubmit(
+      withHr(
+        withFile(
+          withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))),
         ),
-        () => onTitleSubmitRef.current,
       ),
+      () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];
     const state = new MuTxtState(editor, obj as ObjApi<ObjNode>, {collaborative: !!presence, readOnly, fromSlate});

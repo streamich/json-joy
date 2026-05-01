@@ -160,27 +160,11 @@ export interface Thing {
 
 /** A `Thing` representing an uploaded file. */
 export interface FileThing extends Thing {
-  '@type': 'File';
+  '@type': 'file';
   name?: string;
   mimeType: string;
   size: number;
   data: Uint8Array;
-}
-
-/**
- * Hidden system container that holds every `.thing` in the document.
- * Conventionally lives at index 0. Never rendered to the user.
- */
-export interface ThingsContainerElement {
-  type: '.things';
-  children: ThingElement[];
-}
-
-/** Single `.thing` payload — only ever a child of `.things`. */
-export interface ThingElement {
-  type: '.thing';
-  thing: Thing;
-  children: CustomText[];
 }
 
 /** A user-facing void block that references a `FileThing` by id. */
@@ -206,8 +190,6 @@ export type CustomElement =
   | ChecklistListElement
   | EmbedElement
   | HrElement
-  | ThingsContainerElement
-  | ThingElement
   | FileElement;
 
 export type SlateEditorDocument = CustomElement[];

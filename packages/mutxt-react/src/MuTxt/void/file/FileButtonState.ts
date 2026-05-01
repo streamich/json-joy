@@ -1,10 +1,10 @@
 import {rsync} from '@jsonjoy.com/ui';
 import {flushSync} from 'react-dom';
 import {ReactEditor} from 'slate-react';
+import {s} from 'json-joy/lib/json-crdt';
 import {insertFile} from '../../behavior/file';
 import type {Editor} from 'slate';
 import type {MuTxtState} from '../../state/MuTxtState';
-import type {FileThing} from '../../types';
 
 export class FileButtonState {
   public readonly open = rsync.val(false);
@@ -78,14 +78,13 @@ export class FileButtonState {
     flushSync(() => this.busy.set(true));
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
-      const thing: Omit<FileThing, '@id'> = {
-        '@type': 'File',
+      const id = this.mutxt.things.add({
+        '@type': 'file',
         name: file.name,
         mimeType: file.type || 'application/octet-stream',
         size: file.size,
-        data: bytes,
-      };
-      const id = this.mutxt.things.add(thing as any);
+        data: s.con(bytes),
+      } as any);
       // Ensure we have an editor selection before inserting; default to end.
       if (!this.editor.selection) {
         try {

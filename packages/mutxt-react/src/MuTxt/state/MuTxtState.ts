@@ -17,7 +17,7 @@ import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
-import {ThingsState} from '../things/ThingsState';
+import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import type {Model, ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
@@ -76,7 +76,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly inline = new InlineState(this, this.scroll);
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
-  public readonly things = new ThingsState(this);
+  public readonly things = new ThingStore(this);
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;

@@ -11,8 +11,6 @@ import {EmbedElement} from './EmbedElement';
 import {HrElement} from './hr/HrElement';
 import {ListContainerElement, ListItemElement} from './ListElement';
 import {TwoColumnsElement} from './TwoColumnsElement';
-import {ThingsElement} from './things/ThingsElement';
-import {ThingElement} from './things/ThingElement';
 import {FileElement} from './file/FileElement';
 
 export interface BlockElementProps extends RenderElementProps {
@@ -44,10 +42,6 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
       return <EmbedElement {...(props as RenderElementProps & {element: any})} />;
     case 'hr':
       return <HrElement {...(props as RenderElementProps & {element: any})} />;
-    case '.things':
-      return <ThingsElement {...(props as RenderElementProps & {element: any})} />;
-    case '.thing':
-      return <ThingElement {...(props as RenderElementProps & {element: any})} />;
     case 'file':
       return <FileElement {...(props as RenderElementProps & {element: any})} />;
     case 'ul':

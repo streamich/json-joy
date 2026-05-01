@@ -4,18 +4,17 @@ import {
   removeFileAtPath,
   withFile,
 } from '../behavior/file';
-import {withProtectedThings} from '../behavior/things';
 import type {SlateEditorDocument} from '../types';
 
 const createTestEditor = (doc: SlateEditorDocument) => {
-  const editor = withFile(withProtectedThings(createEditor()));
+  const editor = withFile(createEditor());
   editor.children = doc as any;
   return editor;
 };
 
 describe('file behavior', () => {
   test('marks `file` as void', () => {
-    const editor = withFile(withProtectedThings(createEditor()));
+    const editor = withFile(createEditor());
     expect(editor.isVoid({type: 'file', '@thing': 'x', children: [{text: ''}]} as any)).toBe(true);
   });
 
