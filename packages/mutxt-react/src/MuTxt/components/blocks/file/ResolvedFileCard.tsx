@@ -4,13 +4,15 @@ import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {FlexibleInput} from 'flexible-input';
 import {MediaPreview, type MediaKind} from './MediaPreview';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FileOptionsPopup} from './FileOptionsPopup';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import {useReadOnly} from 'slate-react';
+import {Transforms} from 'slate';
+import {useReadOnly, ReactEditor} from 'slate-react';
 import {useT} from 'use-t';
 import {FileOptionsState} from './state';
 import {useMuTxt} from '../../../context';
@@ -68,6 +70,44 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
   const readOnly = useReadOnly();
   const mediaKind = getMediaKind(thing.mimeType || '');
 
+  const [nameValue, setNameValue] = React.useState(thing.name ?? '');
+  const focused = React.useRef(false);
+  React.useEffect(() => {
+    if (!focused.current) setNameValue(thing.name ?? '');
+  }, [thing.name]);
+
+  const commitName = () => {
+    focused.current = false;
+    const obj = mutxt.things.obj.obj(thing['@id'], true);
+    obj?.mergeKeys({name: nameValue.trim() || undefined});
+  };
+
+  const [captionValue, setCaptionValue] = React.useState(element.caption ?? '');
+  const captionFocused = React.useRef(false);
+  React.useEffect(() => {
+    if (!captionFocused.current) setCaptionValue(element.caption ?? '');
+  }, [element.caption]);
+
+  // Native keydown listener on the caption container: stops the event from
+  // reaching Slate's own keydown listener on the <Editable> DOM element.
+  const captionRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const el = captionRef.current;
+    if (!el || readOnly) return;
+    const stop = (e: Event) => e.stopPropagation();
+    el.addEventListener('keydown', stop);
+    return () => el.removeEventListener('keydown', stop);
+  }, [readOnly]);
+
+  const commitCaption = () => {
+    captionFocused.current = false;
+    const editor = mutxt.editor;
+    const path = ReactEditor.findPath(editor, element);
+    const next = captionValue.trim();
+    if (next) Transforms.setNodes(editor, {caption: next} as Partial<FileElementType>, {at: path});
+    else Transforms.unsetNodes(editor, 'caption', {at: path});
+  };
+
   const options = !readOnly && (
     <Popup renderContext={() => <FileOptionsPopup element={element} />}>
       <BasicButtonMore
@@ -95,7 +135,22 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
           size={32}
         />
       )}
-      title={thing.name || t('Untitled file')}
+      title={readOnly ? (thing.name || t('Untitled file')) : (
+        <FlexibleInput
+          value={nameValue}
+          minWidth={120}
+          onChange={(e) => setNameValue(e.target.value)}
+          onKeyDown={(e) => e.stopPropagation()}
+          onFocus={() => { focused.current = true; }}
+          onBlur={commitName}
+          onSubmit={() => mutxt.api.focus()}
+          onCancel={() => {
+            setNameValue(thing.name ?? '');
+            focused.current = false;
+            mutxt.api.focus();
+          }}
+        />
+      )}
       metadata={[thing.mimeType, formatFileSize(thing.size)].filter(Boolean).join(' • ')}
       actions={(
         <div style={{display: 'flex', gap: 16, paddingRight: 4}}>
@@ -112,8 +167,6 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       )}
     />
   );
-
-  const caption = element.caption;
 
   return (
     <Paper
@@ -132,9 +185,25 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
           {options}
         </div>
       )}
-      {caption ? (
-        <div contentEditable={false} className={captionClass} style={{color: styles.g(0.42), padding: '8px 8px 4px'}}>
-          {caption}
+      {(element.caption || !readOnly) ? (
+        <div ref={captionRef} contentEditable={false} className={captionClass} style={{color: styles.g(0.42), padding: '8px 8px 4px'}}>
+          {readOnly ? element.caption : (
+            <FlexibleInput
+              value={captionValue}
+              minWidth={80}
+              typeahead={captionValue ? '' : t('Add caption…')}
+              onChange={(e) => setCaptionValue(e.target.value)}
+              onKeyDown={(e) => e.stopPropagation()}
+              onFocus={() => { captionFocused.current = true; }}
+              onBlur={commitCaption}
+              onSubmit={() => mutxt.api.focus()}
+              onCancel={(e) => {
+                setCaptionValue(element.caption ?? '');
+                captionFocused.current = false;
+                mutxt.api.focus();
+              }}
+            />
+          )}
         </div>
       ) : null}
     </Paper>
