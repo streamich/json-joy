@@ -3,8 +3,7 @@ import {Log} from './Log';
 import {DocumentMuTxt} from './DocumentMuTxt';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
-import Paper from '@jsonjoy.com/ui/lib/4-card/Paper';
-import {JsonCrdtModel} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtModel';
+import {DocumentJson} from './DocumentJson';
 import {SetNamedTrace} from '@jsonjoy.com/ui';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {OpenFile} from '../../state/file';
@@ -41,12 +40,11 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
 
   return (
     <SetNamedTrace name={'hidden'} value={!visible}>
-      <div style={{display: visible ? 'block' : 'none'}}>
-        <Paper>
-          <JsonCrdtModel model={activeModel} />
-        </Paper>
-        <Log visible={visible} onModel={(model) => file.activeModel.next(model)} />
-      </div>
+      <DocumentJson
+        file={file}
+        readOnly={readonly}
+        visible={visible}
+      />
     </SetNamedTrace>
   );
 };
