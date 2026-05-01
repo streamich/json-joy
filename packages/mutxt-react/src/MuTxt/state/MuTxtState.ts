@@ -5,6 +5,7 @@ import {getCaretPathInfo} from '../behavior/path-info';
 import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {watch} from '../util/watch';
 import {bindShortcuts} from '../behavior/keyboard';
+import {bindImagePaste} from '../behavior/imagePaste';
 import {MuTxtApi} from './MuTxtApi';
 import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
@@ -141,13 +142,14 @@ export class MuTxtState implements UiLifeCycles {
     });
     // ------------------------------------------------ Sizer width persistence
     const stopSizerPersist = watch(this.sizer.content, 600, 1, 
-      (w) => { if (w > 0) this.obj.add('/width', w); });
+      (w) => { if (w > 0) this.obj.add('/width', Math.round(w)); });
 
     const stopInline = this.inline.start();
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
     const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
+    bindImagePaste(this);
 
     return () => {
       unbindCollaboration();
