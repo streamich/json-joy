@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {drule, rule} from 'nano-theme';
+import {drule, rule, useTheme} from 'nano-theme';
 import {type RenderElementProps, useReadOnly} from 'slate-react';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
@@ -43,6 +43,10 @@ const metaBarClass = rule({
   pd: '8px 14px',
   fw: 'wrap',
   us: 'none',
+  pos: 'sticky',
+  t: 0,
+  z: 1,
+  bdrad: '16px 16px 0 0',
 });
 
 const metaInputsClass = rule({
@@ -154,6 +158,7 @@ export interface CodeBlockProps extends RenderElementProps {
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, element}) => {
   const styles = useStyles();
+  const theme = useTheme();
   const readOnly = useReadOnly();
 
   const stopPointerPropagation = React.useCallback((event: React.MouseEvent) => {
@@ -171,6 +176,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
 
   const metaBarStyle: React.CSSProperties = {
     borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
+    background: theme.bg,
   };
 
   const lineCount = React.useMemo(() => {

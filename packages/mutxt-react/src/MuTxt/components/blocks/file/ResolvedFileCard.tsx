@@ -57,6 +57,26 @@ const stopMouseDown = (event: React.MouseEvent): void => {
   event.stopPropagation();
 };
 
+const bindVoidInputKeyDown = (el: HTMLElement | null, editor: ReactEditor, onCancel?: () => void): (() => void) => {
+  if (!el) return () => {};
+  const handler: EventListener = (evt: Event) => {
+    const e = evt as KeyboardEvent;
+    e.stopPropagation();
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault();
+      (e.target as HTMLElement).blur();
+      requestAnimationFrame(() => ReactEditor.focus(editor));
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onCancel?.();
+      (e.target as HTMLElement).blur();
+      requestAnimationFrame(() => ReactEditor.focus(editor));
+    }
+  };
+  el.addEventListener('keydown', handler);
+  return () => el.removeEventListener('keydown', handler);
+};
+
 export interface ResolvedFileCardProps {
   thing: FileThing;
   selected: boolean;
@@ -82,22 +102,20 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
     obj?.mergeKeys({name: nameValue.trim() || undefined});
   };
 
+  const [nameInputEl, setNameInputEl] = React.useState<HTMLInputElement | HTMLTextAreaElement | null>(null);
+  React.useEffect(() => {
+    if (readOnly) return;
+    return bindVoidInputKeyDown(nameInputEl, mutxt.editor, () => {
+      setNameValue(thing.name ?? '');
+      focused.current = false;
+    });
+  }, [nameInputEl, readOnly, thing.name]);
+
   const [captionValue, setCaptionValue] = React.useState(element.caption ?? '');
   const captionFocused = React.useRef(false);
   React.useEffect(() => {
     if (!captionFocused.current) setCaptionValue(element.caption ?? '');
   }, [element.caption]);
-
-  // Native keydown listener on the caption container: stops the event from
-  // reaching Slate's own keydown listener on the <Editable> DOM element.
-  const captionRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    const el = captionRef.current;
-    if (!el || readOnly) return;
-    const stop = (e: Event) => e.stopPropagation();
-    el.addEventListener('keydown', stop);
-    return () => el.removeEventListener('keydown', stop);
-  }, [readOnly]);
 
   const commitCaption = () => {
     captionFocused.current = false;
@@ -107,6 +125,15 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
     if (next) Transforms.setNodes(editor, {caption: next} as Partial<FileElementType>, {at: path});
     else Transforms.unsetNodes(editor, 'caption', {at: path});
   };
+
+  const captionRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (readOnly) return;
+    return bindVoidInputKeyDown(captionRef.current, mutxt.editor, () => {
+      setCaptionValue(element.caption ?? '');
+      captionFocused.current = false;
+    });
+  }, [readOnly, element.caption]);
 
   const options = !readOnly && (
     <Popup renderContext={() => <FileOptionsPopup element={element} />}>
@@ -137,18 +164,12 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       )}
       title={readOnly ? (thing.name || t('Untitled file')) : (
         <FlexibleInput
+          inp={setNameInputEl}
           value={nameValue}
           minWidth={120}
           onChange={(e) => setNameValue(e.target.value)}
-          onKeyDown={(e) => e.stopPropagation()}
           onFocus={() => { focused.current = true; }}
           onBlur={commitName}
-          onSubmit={() => mutxt.api.focus()}
-          onCancel={() => {
-            setNameValue(thing.name ?? '');
-            focused.current = false;
-            mutxt.api.focus();
-          }}
         />
       )}
       metadata={[thing.mimeType, formatFileSize(thing.size)].filter(Boolean).join(' • ')}
@@ -193,15 +214,8 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
               minWidth={80}
               typeahead={captionValue ? '' : t('Add caption…')}
               onChange={(e) => setCaptionValue(e.target.value)}
-              onKeyDown={(e) => e.stopPropagation()}
               onFocus={() => { captionFocused.current = true; }}
               onBlur={commitCaption}
-              onSubmit={() => mutxt.api.focus()}
-              onCancel={(e) => {
-                setCaptionValue(element.caption ?? '');
-                captionFocused.current = false;
-                mutxt.api.focus();
-              }}
             />
           )}
         </div>
