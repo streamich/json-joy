@@ -1,9 +1,9 @@
 import * as React from 'react';
+import {useStyles} from '../../../styles/context';
 import {rule, drule} from 'nano-theme';
 import {cn} from '../utils/classNames';
 import type {DividerProps} from '../types';
 import type {CSSProperties} from 'react';
-import {useStyles} from '../../../styles/context';
 
 const blockClass = rule({
   pos: 'relative',
@@ -98,7 +98,6 @@ export const SlimDivider: React.FC<SlimDividerProps> = (props) => {
   const instructions =
     'Use arrow keys to resize. Hold Shift for larger steps. Press Home or End to minimize or maximize.';
 
-  // Don't pass Infinity to ARIA attributes - screen readers can't handle it
   const ariaValueMax = maxSize === undefined || maxSize === Infinity ? undefined : maxSize;
 
   const handleElement = (
