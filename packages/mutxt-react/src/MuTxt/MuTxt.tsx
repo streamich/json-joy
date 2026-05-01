@@ -171,8 +171,12 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         {at: [0]},
       );
     }
-    if (autoFocus) requestAnimationFrame(() => state.api.focus());
-    return stop;
+    let focusTimer: any | undefined;
+    if (autoFocus) focusTimer = setTimeout(() => state.api.focus(), 101);
+    return () => {
+      stop();
+      clearTimeout(focusTimer);
+    }
   }, [_state, state, startWithTitle, editor]);
   useIsomorphicLayoutEffect(() => {
     onApi?.(state.api);
