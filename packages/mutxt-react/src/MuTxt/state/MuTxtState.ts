@@ -3,6 +3,7 @@ import {KeyContext, KeySourceEl} from '@jsonjoy.com/keyboard';
 import {getActiveAlignment} from '../behavior';
 import {getCaretPathInfo} from '../behavior/path-info';
 import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
+import {watch} from '../util/watch';
 import {bindShortcuts} from '../behavior/keyboard';
 import {MuTxtApi} from './MuTxtApi';
 import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
@@ -138,6 +139,9 @@ export class MuTxtState implements UiLifeCycles {
     const scrollUnsubscribe = this.scroll.scrollTop$.subscribe(() => {
       this.scrollVersion.next(this.scrollVersion.value + 1);
     });
+    // ------------------------------------------------ Sizer width persistence
+    const stopSizerPersist = watch(this.sizer.content, 600, 1, 
+      (w) => { if (w > 0) this.obj.add('/width', w); });
 
     const stopInline = this.inline.start();
     const stopBlock = this.block.start();
@@ -148,6 +152,7 @@ export class MuTxtState implements UiLifeCycles {
     return () => {
       unbindCollaboration();
       scrollUnsubscribe();
+      stopSizerPersist();
       stopInline();
       stopBlock();
       stopVoids();
