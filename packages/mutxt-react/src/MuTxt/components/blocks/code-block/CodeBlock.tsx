@@ -52,10 +52,10 @@ const metaBarClass = rule({
   fw: 'wrap',
   us: 'none',
   bdrad: '16px 16px 0 0',
-  trs: 'border-radius .3s',
+  trs: 'border-bottom-left-radius .3s, border-bottom-right-radius .3s',
   '@container scroll-state(stuck: top)': {
     '&': {
-      bdrad: '16px',
+      bdrad: '0 0 16px 16px',
     },
   },
 });
