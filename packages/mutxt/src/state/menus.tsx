@@ -6,9 +6,12 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
 import type {JsonCrdtExplorerState} from '.';
 
-const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment'});
-const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
-const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight'});
+const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment', width: 16, height: 16});
+const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text', width: 16, height: 16});
+const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight', width: 16, height: 16});
+// const FileJsonIcon = makeIcon({set: 'lucide_v1', icon: 'file-json-2', width: 16, height: 16});
+const FileMuTxtIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-text', width: 16, height: 16});
+const FileJsonIcon = makeIcon({set: 'bootstrap', icon: 'filetype-json', width: 16, height: 16});
 
 const traceIcon = (trace: traces.TraceDefinition) => {
   switch (trace.type) {
@@ -31,60 +34,82 @@ export class Menus {
     return {
       name: 'New',
       minWidth: 300,
-      expand: 6,
+      expand: 8,
       children: [
         {
-          name: 'Empty document',
-          right: () => (
-            <Sidetip>
-              <Code>
-                <span style={{fontSize: '11.5px'}}>{'()'}</span>
-              </Code>
-            </Sidetip>
-          ),
-          onSelect: () => state.createNew(),
+          name: 'Rich-text',
+          expand: 8,
+          children: [
+            {
+              name: 'Empty document',
+              icon: () => <FileMuTxtIcon />,
+              onSelect: () => state.createNewMuTxt(),
+            }
+          ],
         },
         {
-          name: 'Empty object',
-          right: () => (
-            <Sidetip>
-              <Code>
-                <span style={{fontSize: '11.5px'}}>{'{}'}</span>
-              </Code>
-            </Sidetip>
-          ),
-          onSelect: () => state.createNew({}),
-        },
-        {
-          name: 'Empty array',
-          right: () => (
-            <Sidetip>
-              <Code>
-                <span style={{fontSize: '11.5px'}}>{'[]'}</span>
-              </Code>
-            </Sidetip>
-          ),
-          onSelect: () => state.createNew([]),
-        },
-        {
-          name: 'Sample document',
-          right: () => (
-            <Sidetip>
-              <Code>
-                <span style={{fontSize: '11.5px'}}>{'{"foo": ...'}</span>
-              </Code>
-            </Sidetip>
-          ),
-          onSelect: () =>
-            state.createNew({
-              name: 'Alice',
-              age: 30,
-              hobbies: ['reading', 'hiking'],
-              address: {
-                city: 'Wonderland',
-                zip: '12345',
-              },
-            }),
+          name: 'JSON',
+          expand: 8,
+          sepBefore: true,
+          children: [
+            {
+              name: 'Empty document',
+              right: () => (
+                <Sidetip>
+                  <Code>
+                    <span style={{fontSize: '11.5px'}}>{'()'}</span>
+                  </Code>
+                </Sidetip>
+              ),
+              icon: () => <FileJsonIcon />,
+              onSelect: () => state.createNew(),
+            },
+            {
+              name: 'Empty object',
+              right: () => (
+                <Sidetip>
+                  <Code>
+                    <span style={{fontSize: '11.5px'}}>{'{}'}</span>
+                  </Code>
+                </Sidetip>
+              ),
+              icon: () => <FileJsonIcon />,
+              onSelect: () => state.createNew({}),
+            },
+            {
+              name: 'Empty array',
+              right: () => (
+                <Sidetip>
+                  <Code>
+                    <span style={{fontSize: '11.5px'}}>{'[]'}</span>
+                  </Code>
+                </Sidetip>
+              ),
+              icon: () => <FileJsonIcon />,
+              onSelect: () => state.createNew([]),
+            },
+            {
+              name: 'Sample document',
+              right: () => (
+                <Sidetip>
+                  <Code>
+                    <span style={{fontSize: '11.5px'}}>{'{"foo": ...'}</span>
+                  </Code>
+                </Sidetip>
+              ),
+              icon: () => <FileJsonIcon />,
+              onSelect: () =>
+                state.createNew({
+                  name: 'Alice',
+                  age: 30,
+                  hobbies: ['reading', 'hiking'],
+                  address: {
+                    city: 'Wonderland',
+                    zip: '12345',
+                  },
+                }),
+            },
+          ],
         },
       ],
     };
