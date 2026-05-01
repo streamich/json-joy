@@ -33,6 +33,14 @@ const codeWrapClass = rule({
   pos: 'relative',
   mr: '12px 0',
   ff: '"JetBrains Mono", "Fira Code", Menlo, monospace',
+  containerType: 'scroll-state',
+});
+
+const stickyHeaderClass = rule({
+  pos: 'sticky',
+  t: 0,
+  z: 1,
+  containerType: 'scroll-state',
 });
 
 const metaBarClass = rule({
@@ -43,10 +51,13 @@ const metaBarClass = rule({
   pd: '8px 14px',
   fw: 'wrap',
   us: 'none',
-  pos: 'sticky',
-  t: 0,
-  z: 1,
   bdrad: '16px 16px 0 0',
+  trs: 'border-radius .3s',
+  '@container scroll-state(stuck: top)': {
+    '&': {
+      bdrad: '16px',
+    },
+  },
 });
 
 const metaInputsClass = rule({
@@ -232,36 +243,38 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   );
 
   const header = (!readOnly || showReadOnlyMeta) && (
-    <div contentEditable={false} className={metaBarClass} style={metaBarStyle}>
-      {readOnly ? (
-        <div className={metaInputsClass}>
-          {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>{fileNameValue || 'Code block'}</span>}
-          <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
-        </div>
-      ) : (
-        <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
-          <div className={metaPreviewClass}>
-            <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>
-              {fileNameValue || <Iconista set="bootstrap" icon="file-earmark-code" width={16} height={16} />}
-            </span>
-          </div>
-
-          <div className={metaActionsClass}>
-            {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
+    <div contentEditable={false} className={stickyHeaderClass}>
+      <div className={metaBarClass} style={metaBarStyle}>
+        {readOnly ? (
+          <div className={metaInputsClass}>
+            {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>{fileNameValue || 'Code block'}</span>}
             <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
-            <Popup renderContext={() => <CodeBlockOptionsPopup element={element} />}>
-              <BasicButtonMore
-                type="button"
-                width={28}
-                height={28}
-                rounder
-                tooltip="Code block options"
-                onMouseDown={preventMouseDown}
-              />
-            </Popup>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
+            <div className={metaPreviewClass}>
+              <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>
+                {fileNameValue || <Iconista set="bootstrap" icon="file-earmark-code" width={16} height={16} />}
+              </span>
+            </div>
+
+            <div className={metaActionsClass}>
+              {!!languageValue && <Label className={metaChipClass}>{languageValue}</Label>}
+              <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
+              <Popup renderContext={() => <CodeBlockOptionsPopup element={element} />}>
+                <BasicButtonMore
+                  type="button"
+                  width={28}
+                  height={28}
+                  rounder
+                  tooltip="Code block options"
+                  onMouseDown={preventMouseDown}
+                />
+              </Popup>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 
