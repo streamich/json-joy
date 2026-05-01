@@ -10,6 +10,7 @@ import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
 import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
+import {SizerState} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
 import {ReactEditor} from 'slate-react';
 import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
@@ -46,12 +47,9 @@ export class MuTxtState implements UiLifeCycles {
   public readonly contentVersion = rsync.val(0);
   public readonly scrollVersion = rsync.val(0);
 
-  public readonly sizerBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
+  public readonly sizer: SizerState;
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
   public readonly wnd = windowSize();
-
-  /** Desired editor chrome width. This is the max value the editor will stretch to. */
-  public readonly width: rsync.ReactValue<number>;
 
   public readonly kbd: KeyContext = new KeyContext(undefined, 'mutxt');
   private kbdSourceUnbind?: () => void;
@@ -126,7 +124,7 @@ export class MuTxtState implements UiLifeCycles {
     } catch {
       initialValue = createEmptyDocument() as Descendant[];
     }
-    this.width = rsync.val(Number(obj.read('/width')) || 1200);
+    this.sizer = new SizerState(Number(obj.read('/width')) || 1200);
     editor.children = initialValue;
     editor.selection = null;
   }

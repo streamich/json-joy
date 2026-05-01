@@ -33,8 +33,7 @@ import {SlashMenu} from './void/slash/SlashMenu';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
-import {Sizer} from './chrome/sizer/Sizer';
-import {contentClass} from './chrome/sizer/css';
+import {Sizer} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
@@ -307,7 +306,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     </>
   );
 
-  const combinedClass = (className || '') + contentClass + shellClass + (heightFit ? fitShellClass : '');
+  const combinedClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
 
   if (borderless) {
     content = React.createElement('div', {style, className: combinedClass}, content);
@@ -317,7 +316,15 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   return (
     <SlateEditorContextProvider state={state}>
-      <Sizer>{content}</Sizer>
+      <Sizer
+        state={state.sizer}
+        minWidth={300}
+        handlePadding={64}
+        handleMaxHeight={500}
+        handleWidth={3}
+      >
+        {content}
+      </Sizer>
     </SlateEditorContextProvider>
   );
 };
