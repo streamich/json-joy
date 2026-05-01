@@ -141,8 +141,8 @@ export class MuTxtState implements UiLifeCycles {
       this.scrollVersion.next(this.scrollVersion.value + 1);
     });
     // ------------------------------------------------ Sizer width persistence
-    const stopSizerPersist = watch(this.sizer.content, 600, 1, 
-      (w) => { if (w > 0) this.obj.add('/width', Math.round(w)); });
+    const stopSizerPersist = watch(this.sizer.content, 600, 1,
+      (w) => { if (w > 0 && !this.readOnly.value) this.obj.add('/width', Math.round(w)); });
 
     const stopInline = this.inline.start();
     const stopBlock = this.block.start();
