@@ -1,5 +1,4 @@
 import type {CSSProperties, ReactNode} from 'react';
-import type * as rsync from '../../utils/rsync';
 import type {SizerState} from './state';
 
 export interface SizerProps {
@@ -11,13 +10,6 @@ export interface SizerProps {
 
   /** Called once with the {@link SizerState} instance. */
   onState?: (state: SizerState) => void;
-
-  /**
-   * Controlled atom holding the desired content width in pixels. The
-   * component reads from it on every render and writes the new value
-   * to it on each drag tick.
-   */
-  width: rsync.ReactValue<number>;
 
   /** Minimum content width in pixels. Default: `200`. */
   minWidth?: number;
@@ -48,7 +40,6 @@ export interface SizerProps {
 
 export interface SizerDividerProps {
   state: SizerState;
-  width: rsync.ReactValue<number>;
   side: 'left' | 'right';
   minWidth: number;
   disabled?: boolean;

@@ -62,7 +62,6 @@ const KEY_LARGE_STEP = 50;
 
 export const SizerDivider: React.FC<SizerDividerProps> = ({
   state,
-  width,
   side,
   minWidth,
   disabled,
@@ -77,16 +76,17 @@ export const SizerDivider: React.FC<SizerDividerProps> = ({
   const active = dragging || focused;
 
   const sideSign = side === 'left' ? -1 : 1;
+  const content = state.content;
 
   const apply = React.useCallback(
     (delta: number) => {
       const max = state.width.value;
-      let next = width.value + delta;
+      let next = content.value + delta;
       if (next < minWidth) next = minWidth;
       if (next > max) next = max;
-      if (next !== width.value) width.next(next);
+      if (next !== content.value) content.next(next);
     },
-    [state, width, minWidth],
+    [state, content, minWidth],
   );
 
   const onPointerDown = React.useCallback(
@@ -94,7 +94,7 @@ export const SizerDivider: React.FC<SizerDividerProps> = ({
       if (disabled) return;
       e.preventDefault();
       const startX = e.clientX;
-      const startWidth = width.value;
+      const startWidth = content.value;
       const el = e.currentTarget;
       const pointerId = e.pointerId;
       el.setPointerCapture?.(pointerId);
@@ -108,7 +108,7 @@ export const SizerDivider: React.FC<SizerDividerProps> = ({
         let next = startWidth + sideSign * 2 * dx;
         if (next < minWidth) next = minWidth;
         if (next > max) next = max;
-        if (next !== width.value) width.next(next);
+        if (next !== content.value) content.next(next);
       };
 
       const cleanup = () => {
@@ -128,7 +128,7 @@ export const SizerDivider: React.FC<SizerDividerProps> = ({
       window.addEventListener('pointerup', onUp);
       window.addEventListener('pointercancel', onUp);
     },
-    [state, width, sideSign, minWidth, disabled],
+    [state, content, sideSign, minWidth, disabled],
   );
 
   const onKeyDown = React.useCallback(
@@ -163,7 +163,7 @@ export const SizerDivider: React.FC<SizerDividerProps> = ({
       contentEditable={false}
       role="separator"
       aria-orientation="vertical"
-      aria-valuenow={width.value}
+      aria-valuenow={content.value}
       aria-valuemin={minWidth}
       aria-valuemax={state.width.value}
       tabIndex={disabled ? -1 : 0}

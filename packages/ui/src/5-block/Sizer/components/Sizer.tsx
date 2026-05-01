@@ -17,8 +17,8 @@ const DEFAULT_MIN_WIDTH = 200;
  *
  * @example
  * ```tsx
- * const widthAtom = rsync.val(800);
- * <Sizer width={widthAtom} onState={(s) => sizer.current = s}>
+ * const sizer = new SizerState(800);
+ * <Sizer state={sizer}>
  *   <Editor />
  * </Sizer>
  * ```
@@ -26,7 +26,6 @@ const DEFAULT_MIN_WIDTH = 200;
 export const Sizer: React.FC<SizerProps> = ({
   state: stateProp,
   onState,
-  width,
   minWidth = DEFAULT_MIN_WIDTH,
   resizable = true,
   handleMargin,
@@ -46,7 +45,7 @@ export const Sizer: React.FC<SizerProps> = ({
   }, [state, onState]);
 
   const containerWidth = state.width.use();
-  const desired = width.use();
+  const desired = state.content.use();
   const contentWidth =
     containerWidth === 0 ? desired : Math.max(minWidth, Math.min(desired, containerWidth));
 
@@ -60,7 +59,6 @@ export const Sizer: React.FC<SizerProps> = ({
           <>
             <SizerDivider
               state={state}
-              width={width}
               side="left"
               minWidth={minWidth}
               handleMargin={handleMargin}
@@ -70,7 +68,6 @@ export const Sizer: React.FC<SizerProps> = ({
             />
             <SizerDivider
               state={state}
-              width={width}
               side="right"
               minWidth={minWidth}
               handleMargin={handleMargin}
