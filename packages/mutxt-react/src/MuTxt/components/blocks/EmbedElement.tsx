@@ -86,8 +86,7 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({url, caption, compact
       style={{
         margin: '4px 0',
         overflow: 'hidden',
-        outline: '2px solid ' + (selected ? '#07f' : 'transparent'),
-        outlineOffset: 4,
+        position: 'relative',
       }}
       >
         <div style={{padding: compact ? 12 : 16}}>
@@ -99,6 +98,18 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({url, caption, compact
             renderVoid={() => <EmbedFallback url={url} />}
           />
         </div>
+        {selected && (
+          <div
+            contentEditable={false}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 'inherit',
+              background: 'rgba(0, 127, 255, 0.18)',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
       </Paper>
       {!!caption && (
         <div

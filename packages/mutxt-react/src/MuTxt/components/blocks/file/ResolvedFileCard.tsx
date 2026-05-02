@@ -195,9 +195,8 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       round
       style={{
         margin: '4px 0',
-        outline: '2px solid ' + (selected ? '#07f' : 'transparent'),
-        outlineOffset: 2,
         position: 'relative',
+        userSelect: 'none',
       }}
     >
       {body}
@@ -205,6 +204,18 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
         <div style={{position: 'absolute', top: 0, right: -46}}>
           {options}
         </div>
+      )}
+      {selected && (
+        <div
+          contentEditable={false}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 'inherit',
+            background: 'rgba(0, 127, 255, 0.18)',
+            pointerEvents: 'none',
+          }}
+        />
       )}
       {(element.caption || !readOnly) ? (
         <div ref={captionRef} contentEditable={false} className={captionClass} style={{color: styles.g(0.42), padding: '8px 8px 4px'}}>

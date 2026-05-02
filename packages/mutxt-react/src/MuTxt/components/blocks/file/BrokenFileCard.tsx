@@ -1,42 +1,8 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import FileListItem from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
-
-const cardClass = rule({
-  d: 'flex',
-  ai: 'center',
-  gap: '12px',
-  pd: '12px 16px',
-  bxz: 'border-box',
-  us: 'none',
-});
-
-const metaClass = rule({
-  d: 'flex',
-  fld: 'column',
-  gap: '2px',
-  minW: 0,
-  fl: '1 1 auto',
-});
-
-const nameClass = rule({
-  fz: '14px',
-  fw: 600,
-  ws: 'nowrap',
-  ov: 'hidden',
-  textOverflow: 'ellipsis',
-});
-
-const subClass = rule({
-  fz: '12px',
-  lh: 1.4,
-  ws: 'nowrap',
-  ov: 'hidden',
-  textOverflow: 'ellipsis',
-});
 
 export interface BrokenFileCardProps {
   thingId: string;
@@ -51,9 +17,8 @@ export const BrokenFileCard: React.FC<BrokenFileCardProps> = ({thingId, selected
       round
       style={{
         margin: '4px 0',
-        outline: '2px solid ' + (selected ? '#07f' : 'transparent'),
-        outlineOffset: 2,
         position: 'relative',
+        userSelect: 'none',
       }}
     >
       <FileListItem
@@ -69,6 +34,18 @@ export const BrokenFileCard: React.FC<BrokenFileCardProps> = ({thingId, selected
         title={'Missing file'}
         metadata={`Reference ${thingId} could not be resolved`}
       />
+      {selected && (
+        <div
+          contentEditable={false}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 'inherit',
+            background: 'rgba(0, 127, 255, 0.18)',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
     </Paper>
   );
 };
