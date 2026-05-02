@@ -84,10 +84,11 @@ export class BlockMenu implements UiLifeCycles {
     };
   }
 
-  public buildToolbarMenu(): MenuItem {
-    return {
+  public buildToolbarMenu(size: 2 | 1 | 0): MenuItem {
+    const blockMenu: MenuItem = {
       name: 'Block menu',
       maxToolbarItems: 4,
+      minWidth: 288,
       children: [
         this.menuBlocks(),
         this.menuHeadings(),
@@ -95,6 +96,14 @@ export class BlockMenu implements UiLifeCycles {
         this.menuLayout(),
       ],
     };
+
+    if (size < 1) {
+      blockMenu.maxToolbarItems = 1;
+    } else if (size < 2) {
+      blockMenu.maxToolbarItems = 3;
+    }
+
+    return blockMenu;
   }
 
   // ----------------------------------------------------------------- Sections

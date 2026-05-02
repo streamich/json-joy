@@ -4,6 +4,7 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ToolbarItem} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarItem';
 import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
+import {AutoExpandableToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/AutoExpandableToolbar';
 import {ToolbarSep} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarSep';
 import type {Editor} from 'slate';
 import {
@@ -46,10 +47,12 @@ export interface MuTxtHeaderProps {
 
 export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVisualChange}) => {
   const mutxt = useMuTxt();
+  const availableWidth = mutxt.sizer.width.use();
+  const desiredWidth = mutxt.sizer.content.use();
   const styles = useStyles();
-  const toolbarVersion = mutxt.version.use();
+  mutxt.version.use();
 
-  void toolbarVersion;
+  const width = Math.min(availableWidth, desiredWidth);
 
   const execute = React.useCallback(
     (callback: () => void): React.MouseEventHandler =>
@@ -113,20 +116,45 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
       );
     }, []);
 
+  const inlineMenu = mutxt.inline.menu.buildToolbarMenu();
+  const voidsMenu = mutxt.voids.menu.buildToolbarMenu();
+  const blockMenu = mutxt.block.menu.buildToolbarMenu(width > 1200 ? 2 : width > 1100 ? 1 : 0);
+
   return (
     <SetNamedTrace name={'subtle'} value={true}>
       <Split className={blockClass} style={{
         borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
+        padding: width < 1200 ? '0 8px' : void 0,
       }}>
         <div className={toolbarContainerClass}>
-          <ToolbarMenu menu={mutxt.inline.menu.buildToolbarMenu()} pane={{transparent: true}} />
-          <ToolbarSep />
-          <ToolbarSep line height={HEIGHT} lite />
-          <ToolbarSep />
-          <ToolbarMenu menu={mutxt.voids.menu.buildToolbarMenu()} pane={{transparent: true}} />
-          <ToolbarSep line height={HEIGHT} lite />
-          <ToolbarSep />
-          <ToolbarMenu menu={mutxt.block.menu.buildToolbarMenu()} pane={{transparent: true}} />
+          {width > 900
+           ? (
+            <>
+              <ToolbarMenu menu={inlineMenu} pane={{transparent: true}} />
+              <ToolbarSep />
+              <ToolbarSep line height={HEIGHT} lite />
+              <ToolbarSep />
+              <ToolbarMenu menu={voidsMenu} pane={{transparent: true}} />
+              <ToolbarSep line height={HEIGHT} lite />
+              <ToolbarSep />
+              <AutoExpandableToolbar menu={blockMenu} pane={{transparent: true}} more={{small: true}} />
+            </>
+           )
+           : (
+            <AutoExpandableToolbar menu={{
+              ...inlineMenu,
+              maxToolbarItems: inlineMenu.maxToolbarItems || inlineMenu.children!.length,
+              minWidth: 288,
+              children: [
+                ...inlineMenu.children!,
+                {name: 'sep-voids', sep: true},
+                ...voidsMenu.children!,
+                {name: 'sep-blocks', sep: true},
+                ...blockMenu.children!],
+            }} pane={{transparent: true}} more={{small: true}} />
+           )}
+          
+          
         </div>
         <div className={toolbarContainerClass}>
           <DocumentOutlineButton editor={editor} contentWidth={300} />
