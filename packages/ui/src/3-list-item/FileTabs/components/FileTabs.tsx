@@ -7,6 +7,7 @@ import * as rsync from '../../../utils/rsync';
 import {FileTabContent, type FileTabContentProps} from './FileTabContent';
 import {FileTabTooltip} from './FileTabTooltip';
 import type {TabItem} from '../types';
+import {isTouch} from '../../../utils/environment';
 
 export interface FileTabsProps {
   /** Initial tabs to display, if `state` not provided. */
@@ -78,7 +79,7 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
         before={before}
         after={after}
         right={right}
-        overlay={<FileTabTooltip state={state} />}
+        overlay={isTouch ? void 0 : <FileTabTooltip state={state} />}
       />
       {!!render && <FileTabContent state={state} bg={fg} fade={fade} render={render} />}
     </>

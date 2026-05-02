@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {isMobile, isTouch} from '@jsonjoy.com/ui';
 import {Log} from './Log';
 import {DocumentMuTxt} from './DocumentMuTxt';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
@@ -28,7 +29,7 @@ export const Document: React.FC<DocumentProps> = ({file}) => {
     return (
       <SetNamedTrace name={'hidden'} value={!visible}>
         <DocumentMuTxt file={file} obj={obj} readOnly={readonly} visible={visible} />
-        <Log visible={visible} onModel={(model) => file.activeModel.next(model)} />
+        {!isTouch && !isMobile && <Log visible={visible} onModel={(model) => file.activeModel.next(model)} />}
       </SetNamedTrace>
     );
   }

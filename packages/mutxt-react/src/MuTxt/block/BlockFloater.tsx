@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {isMobile} from '@jsonjoy.com/ui';
 import {rule} from 'nano-theme';
 import {ExpandableToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/ExpandableToolbar';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
@@ -14,7 +15,7 @@ const handleClass = rule({
 
 export type BlockFloaterProps = {};
 
-export const BlockFloater: React.FC<BlockFloaterProps> = () => {
+export const BlockFloater: React.FC<BlockFloaterProps> = isMobile ? () => null : () => {
   const mutxt = useMuTxt();
   const state = mutxt.block;
   const cursor = mutxt.cursor.use();

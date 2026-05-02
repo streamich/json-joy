@@ -4,6 +4,7 @@ import {Link} from '../../1-inline/Link';
 import {SpinnerCircle} from '../../2-inline-block/SpinnerCircle';
 import {useStyles} from '../../styles/context';
 import {Ripple} from '../../misc/Ripple';
+import {isTouch} from '../../utils/environment';
 
 const rowClass = rule({
   d: 'flex',
@@ -209,6 +210,15 @@ export const FileListItem: React.FC<FileListItemProps> = ({
     rowStyle.paddingBottom = 12;
   }
 
+  const optionsStyle: React.CSSProperties = {};
+  if (isTouch) {
+    optionsStyle.opacity = 1;
+  }
+  if (isDisabled) {
+    optionsStyle.pointerEvents = 'none';
+    optionsStyle.opacity = 0.6;
+  }
+
   surface = (
     <div
       className={className + rowClass + dynamicRowClass}
@@ -218,7 +228,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
     >
       {surface}
       {!!actions && (
-        <span className={actionsClass} style={isDisabled ? {pointerEvents: 'none'} : undefined}>
+        <span className={actionsClass} style={optionsStyle}>
           {actions}
         </span>
       )}

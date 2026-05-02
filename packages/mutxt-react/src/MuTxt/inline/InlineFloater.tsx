@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {isTouch} from '@jsonjoy.com/ui';
 import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
@@ -9,7 +10,7 @@ import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 
 export type InlineFloaterProps = {};
 
-export const InlineFloater: React.FC<InlineFloaterProps> = () => {
+export const InlineFloater: React.FC<InlineFloaterProps> = isTouch ? () => null : () => {
   const mutxt = useMuTxt();
   const state = mutxt.inline;
   const portal = usePortal();

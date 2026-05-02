@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {isTouch} from '@jsonjoy.com/ui';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu/ContextMenu';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
@@ -6,7 +7,7 @@ import {useMuTxt} from '../context';
 
 export type OmniFloaterProps = {};
 
-export const OmniFloater: React.FC<OmniFloaterProps> = () => {
+export const OmniFloater: React.FC<OmniFloaterProps> = isTouch ? () => null : () => {
   const mutxt = useMuTxt();
   const omni = mutxt.omni;
   const open = omni.open.use();
