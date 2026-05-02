@@ -4,6 +4,7 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
 import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
+import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {useMuTxt} from '../../context';
 import {getWordCount, pluralize} from '../../util';
 import {typeToLabel} from '../../util/typeToLabel';
@@ -54,6 +55,8 @@ export interface MuTxtFooterProps {}
 export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const styles = useStyles();
   const state = useMuTxt();
+  const availableWidth = state.sizer.width.use();
+  const desiredWidth = state.sizer.content.use();
   const focused = state.focused.use();
   const readOnly = state.readOnly.use();
   const wordCount = state.wordCount.use();
@@ -64,6 +67,8 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const caretEmbedUrl = state.caretEmbedUrl.use();
   const caretCodeText = state.caretCodeText.use();
 
+  const width = Math.min(availableWidth, desiredWidth);
+
   const infoColor = styles.light ? styles.g(0.34) : styles.g(0.68);
   const selectionSummary = selectionText
     ? `${pluralize(getWordCount(selectionText), 'word')} (${pluralize(selectionText.length, 'char')}) selected`
@@ -71,11 +76,17 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const statusText = readOnly ? 'Read-only' : focused ? 'Editing' : '';
   const footerUrl = caretEmbedUrl || caretLinkHref;
 
+  const showCaretPath = width > 700;
+  const showCaretCode = width > 900;
+  const showCaretUrl = width > 1100;
+  const showCharacterCount = width > 500;
+  const showSelectionSummary = width > 600;
+
   return (
-    <div className={footerClass} style={{color: infoColor}}>
+    <div className={footerClass} style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0}}>
       <div className={footerGroupClass}>
         {!!statusText && <Label>{statusText}</Label>}
-        {!readOnly && focused && !!caretPath && (
+        {!readOnly && focused && !!caretPath && showCaretPath && (
           <span className={statusPathClass}>
             {caretPath.map((segment, index) => (
               <React.Fragment key={`${index}:${segment}`}>
@@ -83,7 +94,7 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
                 {index < caretPath.length - 1 && <span style={{opacity:.25}}>{'→'}</span>}
               </React.Fragment>
             ))}
-            {!!footerUrl && (
+            {!!footerUrl && showCaretUrl && (
               <>
                 <span style={{opacity:.25}}>{'→'}</span>
                 <Favicon url={footerUrl} size={16} />
@@ -99,9 +110,18 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
                 >
                   {footerUrl}
                 </a>
+                <CopyButton
+                  type="button"
+                  width={24}
+                  height={24}
+                  rounder
+                  onMouseDown={(event) => event.preventDefault()}
+                  onCopy={() => footerUrl}
+                  tooltip={{nowrap: true, renderTooltip: () => 'Copy link'}}
+                />
               </>
             )}
-            {!!caretCodeText && (
+            {!!caretCodeText && showCaretCode && (
               <>
                 <span style={{opacity:.25}}>{'→'}</span>
                 <CopyCode value={caretCodeText} truncate style={{maxWidth: 220}} alt spacious roundest />
@@ -112,15 +132,19 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
       </div>
 
       <div className={footerGroupClass}>
-        {!!selectionSummary && (
+        {!!selectionSummary && showSelectionSummary && (
           <>
             <span>{selectionSummary}</span>
             <span style={{opacity:.25}}>{'•'}</span>
           </>
         )}
         <span>{pluralize(wordCount, 'word')}</span>
-        <span style={{opacity:.25}}>{'•'}</span>
-        <span>{pluralize(characterCount, 'character')}</span>
+        {showCharacterCount && (
+          <>
+            <span style={{opacity:.25}}>{'•'}</span>
+            <span>{pluralize(characterCount, 'character')}</span>
+          </>
+        )}
       </div>
     </div>
   );
