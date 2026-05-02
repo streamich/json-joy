@@ -20,6 +20,7 @@ export const BlockFloater: React.FC<BlockFloaterProps> = () => {
   const cursor = mutxt.cursor.use();
   const readOnly = mutxt.readOnly.use();
   const dismissed = state.dismissed.use();
+  const omniOpen = mutxt.omni.open.use();
   mutxt.version.use();
   mutxt.scrollVersion.use();
   mutxt.editableBox.use();
@@ -68,6 +69,7 @@ export const BlockFloater: React.FC<BlockFloaterProps> = () => {
 
   if (readOnly || !cursor || mutxt.api.hasSelection()) return;
   if (dismissed) return;
+  if (omniOpen) return;
   if (!state.currentBlockFormat()) return;
   const point = state.point();
   if (!point) return;

@@ -19,6 +19,7 @@ import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
+import {OmniState} from '../omni/OmniState';
 import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
@@ -78,16 +79,11 @@ export class MuTxtState implements UiLifeCycles {
   public readonly inline = new InlineState(this, this.scroll);
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
+  public readonly omni = new OmniState(this);
   public readonly things = new ThingStore(this);
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
-
-  /**
-   * Called when the user presses "/". Returns true if the key was consumed
-   * (the slash menu opened and the "/" character should not be inserted).
-   */
-  public onSlashKey?: () => boolean;
 
   public onTitleSubmit?: (title: string) => void = void 0;
 
@@ -147,6 +143,7 @@ export class MuTxtState implements UiLifeCycles {
     const stopInline = this.inline.start();
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
+    const stopOmni = this.omni.start();
     const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
@@ -158,6 +155,7 @@ export class MuTxtState implements UiLifeCycles {
       stopInline();
       stopBlock();
       stopVoids();
+      stopOmni();
       stopThings();
       unbindShortcuts();
       this.kbdSourceUnbind?.();

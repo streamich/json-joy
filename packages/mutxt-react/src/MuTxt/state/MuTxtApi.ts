@@ -4,6 +4,7 @@ import {CustomElement, MarkFormat} from '../types';
 import {eraseMarks, isListType} from '../behavior';
 import {typeToLabel} from '../util/typeToLabel';
 import {isEmptyDoc} from '../util';
+import {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 import type {MuTxtState} from './MuTxtState';
 import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
@@ -48,6 +49,23 @@ export class MuTxtApi {
       if (rect.width > 0 || rect.height > 0) return rect;
     } catch {}
     return;
+  }
+
+  public focusPoint(): AnchorPoint | undefined {
+    try {
+      const rect = this.focusRect();
+      if (!rect) return;
+      const x = rect.left + rect.width / 2;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const GAP = 8;
+      if (spaceBelow >= spaceAbove) {
+        return {x, y: rect.bottom + GAP, dx: 0, dy: 1};
+      }
+      return {x, y: rect.top - GAP, dx: 0, dy: -1};
+    } catch {
+      return;
+    }
   }
 
   // ------------------------------------------------------------------- Inline

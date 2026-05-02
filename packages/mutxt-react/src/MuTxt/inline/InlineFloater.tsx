@@ -38,6 +38,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
 
   mutxt.version.use();
   const dismissed = state.dismissed.use();
+  const omniOpen = mutxt.omni.open.use();
 
   React.useLayoutEffect(() => {
     if (hidden) {
@@ -217,6 +218,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
   // does not render with a stale/zero anchor position.
   if (hidden || !readyAfterUnhide) return;
   if (dismissed) return;
+  if (omniOpen) return;
 
   const computedPoint = state.anchorPoint();
   if (computedPoint) lastPointRef.current = computedPoint;

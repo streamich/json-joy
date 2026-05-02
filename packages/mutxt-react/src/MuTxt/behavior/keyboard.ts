@@ -18,14 +18,19 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
   };
 
   const bindings: AnyBinding[] = [
-    // ------------------------------------------------------------- Slash menu
-    ['/', (key: Key) => {
-      if (state.onSlashKey?.()) key.event?.preventDefault();
-    }],
+    // -------------------------------------------------------------- Omni menu
     ['Shift Shift', () => {
-      // state.onSlashKey?.();
-      const open = state.voids.open;
-      open.set(!open.value);
+      state.omni.openAtCaret();
+    }],
+    ['P+j', (key: Key) => {
+      key.event?.preventDefault();
+      state.omni.openAsPalette();
+    }],
+    // Space is a beginner-friendly shortcut: opens in an empty block (caret)
+    // or with a range selection. In a non-empty block at the caret, Space
+    // falls through to insert a space normally, if menu not opened.
+    ['Space', (key: Key) => {
+      if (state.omni.handleSpaceKey()) key.event?.preventDefault();
     }],
 
     // ----------------------------------------------- Empty-block to paragraph

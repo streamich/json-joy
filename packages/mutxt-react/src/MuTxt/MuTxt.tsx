@@ -25,10 +25,9 @@ import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {InlineFloater} from './inline/InlineFloater';
 import {LinkFloater} from './inline/link/LinkFloater';
 import {BlockFloater} from './block/BlockFloater';
-import {VoidFloater} from './void/VoidFloater';
 import {EmbedFloater} from './void/embed/EmbedFloater';
 import {FileFloater} from './void/file/FileFloater';
-import {SlashMenu} from './void/slash/SlashMenu';
+import {OmniFloater} from './omni/OmniFloater';
 import {SlateEditorContextProvider} from './context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
@@ -201,6 +200,8 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   // -------------------------------------------------------- Slate decorations
   const linkPopupOpen = state.inline.link.open.use();
   const activeSelectionRange = state.inline.link.rangeSnapshot.use();
+  const omniOpen = state.omni.open.use();
+  const omniRange = state.omni.rangeSnapshot.use();
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       const ranges = [...decorateRemoteCursors(entry)];
@@ -208,9 +209,13 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         const linkRange = decorActiveSelection(entry, activeSelectionRange);
         if (linkRange) ranges.push(linkRange as any);
       }
+      if (omniOpen && omniRange) {
+        const omniDecor = decorActiveSelection(entry, omniRange);
+        if (omniDecor) ranges.push(omniDecor as any);
+      }
       return ranges;
     },
-    [decorateRemoteCursors, linkPopupOpen, activeSelectionRange],
+    [decorateRemoteCursors, linkPopupOpen, activeSelectionRange, omniOpen, omniRange],
   );
 
   // ---------------------------------------------------------------- Renderers
@@ -250,11 +255,10 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       />
       <InlineFloater />
       <BlockFloater />
-      <VoidFloater />
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      <SlashMenu />
+      <OmniFloater />
     </Slate>
   );
 
