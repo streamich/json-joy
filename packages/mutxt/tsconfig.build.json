@@ -29,6 +29,7 @@
     {"path": "../ui/tsconfig.build.json"},
     {"path": "../util/tsconfig.build.json"},
     {"path": "../collaborative-ui/tsconfig.build.json"},
+    {"path": "../collaborative-slate/tsconfig.build.json"},
     {"path": "../collaborative-peritext/tsconfig.build.json"}
   ]
 }

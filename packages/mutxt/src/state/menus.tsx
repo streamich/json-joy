@@ -4,6 +4,7 @@ import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import * as traces from './traces';
+import {templates} from './templates';
 import type {JsonCrdtExplorerState} from '.';
 
 const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment', width: 16, height: 16});
@@ -36,21 +37,50 @@ export class Menus {
       minWidth: 300,
       expand: 8,
       children: [
+        // {
+        //   name: 'Rich-text',
+        //   expand: 8,
+        //   children: [
+        //     {
+        //       name: 'Empty document',
+        //       icon: () => <FileMuTxtIcon />,
+        //       onSelect: () => state.createNewMuTxt(),
+        //     },
+        //   ],
+        // },
         {
-          name: 'Rich-text',
+          name: 'Work',
           expand: 8,
-          children: [
-            {
-              name: 'Empty document',
+          // sepBefore: true,
+          children: templates
+            .filter((tpl) => tpl.category === 'work')
+            .map((tpl) => ({
+              id: tpl.id,
+              name: tpl.name,
               icon: () => <FileMuTxtIcon />,
-              onSelect: () => state.createNewMuTxt(),
-            }
-          ],
+              right: () => <Sidetip small>{tpl.description}</Sidetip>,
+              onSelect: () => state.createNewMuTxtFromSlate(tpl.doc, tpl.fileName),
+            })),
+        },
+        {
+          name: 'Everyday',
+          expand: 8,
+          sepBefore: true,
+          children: templates
+            .filter((tpl) => tpl.category === 'personal')
+            .map((tpl) => ({
+              id: tpl.id,
+              name: tpl.name,
+              icon: () => <FileMuTxtIcon />,
+              right: () => <Sidetip small>{tpl.description}</Sidetip>,
+              onSelect: () => state.createNewMuTxtFromSlate(tpl.doc, tpl.fileName),
+            })),
         },
         {
           name: 'JSON',
-          expand: 8,
+          expand: 0,
           sepBefore: true,
+          minWidth: 288,
           children: [
             {
               name: 'Empty document',

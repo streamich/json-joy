@@ -13,6 +13,7 @@ import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
+import {FromSlate, type SlateDocument} from '@jsonjoy.com/collaborative-slate';
 import {getSyncStore, ISyncStore} from './sync-store';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
@@ -259,6 +260,21 @@ export class JsonCrdtExplorerState {
 
   public readonly createNewMuTxt = (data: unknown = void 0) => {
     this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}));
+  };
+
+  public readonly createNewMuTxtFromSlate = (slate: SlateDocument, name?: string) => {
+    const model = ModelWithExt.create<any>(
+      s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}),
+      this.sid,
+    );
+    const peritextApi = model.api.in('text').asExt(ext.peritext);
+    const txt = peritextApi.peritext();
+    const viewRange = FromSlate.convert(slate);
+    txt.editor.import(0, viewRange);
+    txt.refresh();
+    this.newCnt++;
+    const log = Log.from(model);
+    this.openFile(log, name);
   };
 
   public readonly createFromModel = (model: Model<any>) => {

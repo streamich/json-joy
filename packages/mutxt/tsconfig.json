@@ -30,6 +30,7 @@
     {"path": "../ui"},
     {"path": "../util"},
     {"path": "../collaborative-ui"},
+    {"path": "../collaborative-slate"},
     {"path": "../collaborative-peritext"}
   ]
 }
