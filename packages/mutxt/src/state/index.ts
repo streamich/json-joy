@@ -108,7 +108,11 @@ export class JsonCrdtExplorerState {
       void this.refreshSaved();
     }, SAVED_REFRESH_INTERVAL_MS);
     const saved = this.saved.value;
-    const opened = await this.openSaved(saved[0].id);
+
+    // Try to reopen the most recently saved file. If there is none, or if it
+    // fails to load (e.g. corrupt), fall back to creating a fresh empty
+    // document so the user always lands on something usable.
+    const opened = saved.length ? await this.openSaved(saved[0].id) : false;
     if (!opened && !this.files$.getValue().length) this.createNewMuTxt();
     this.started.set(true);
   }
