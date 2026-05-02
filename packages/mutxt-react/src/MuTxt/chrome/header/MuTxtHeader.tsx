@@ -165,13 +165,13 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
           <DocumentOutlineButton editor={editor} contentWidth={300} />
           <ToolbarSep line />
           {renderMenuItem(mutxt.inline.menu.itemClear())}
-          <ToolbarSep line />
-          {renderItem({
+          {(width > 1000) && <ToolbarSep line />}
+          {(width > 1000) && renderItem({
             ...ACTION_BUTTONS[0],
             disabled: readOnly || !canUndo(editor),
             onMouseDown: execute(() => undo(editor)),
           })}
-          {renderItem({
+          {(width > 1000) && renderItem({
             ...ACTION_BUTTONS[1],
             disabled: readOnly || !canRedo(editor),
             onMouseDown: execute(() => redo(editor)),
