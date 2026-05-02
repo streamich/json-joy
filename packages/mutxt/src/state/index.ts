@@ -103,13 +103,13 @@ export class JsonCrdtExplorerState {
     this.stopped = false;
     this.stopSavedRefresh();
     await this.refreshSaved();
-    if (this.stopped) return; // TODO: Is this still needed.
+    if (this.stopped) return; // TODO: Is this still needed?
     this.savedRefreshTimer = setInterval(() => {
       void this.refreshSaved();
     }, SAVED_REFRESH_INTERVAL_MS);
     const saved = this.saved.value;
-    if (saved.length) await this.openSaved(saved[0].id);
-    else this.createNewMuTxt();
+    const opened = await this.openSaved(saved[0].id);
+    if (!opened && !this.files$.getValue().length) this.createNewMuTxt();
     this.started.set(true);
   }
 
@@ -124,14 +124,21 @@ export class JsonCrdtExplorerState {
     return !!this.files$.value.find((file) => file.id === id);
   }
 
-  public async openSaved(id: string) {
-    if (this.isOpen(id)) {
-      this.tabs.selectById(id);
-      return;
+  public async openSaved(id: string): Promise<boolean> {
+    try {
+      if (this.isOpen(id)) {
+        this.tabs.selectById(id);
+        return true;
+      }
+      const dto = await this.storage.load(id);
+      if (this.stopped) return false;
+      await this.addLog(dto.data, dto.name, dto.display, dto);
+      return true;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[mutxt] failed to open file', id, error);
+      return false;
     }
-    const dto = await this.storage.load(id);
-    if (this.stopped) return;
-    await this.addLog(dto.data, dto.name, dto.display, dto);
   }
 
   public readonly openFile = (

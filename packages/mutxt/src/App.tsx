@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {AppGrid} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
+import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {MainContent} from './components/MainContent';
 import {JsonCrdtExplorerState} from './state';
 import {ctx} from './context';
@@ -34,15 +35,25 @@ export const App: React.FC = () => {
       <AppGrid
         state={state.appGrid}
         maxLeftSize={500}
-        left={(toggle) => <LeftSidebar toggle={toggle} />}
+        left={(toggle) => (
+          <ErrorBoundary name="mutxt:left-sidebar">
+            <LeftSidebar toggle={toggle} />
+          </ErrorBoundary>
+        )}
         // footer={<div> </div>}
         column={(toggle) =>
           files.length === 0 ? (
-            <MainContent />
+            <ErrorBoundary name="mutxt:main">
+              <MainContent />
+            </ErrorBoundary>
           ) : (
             <div className={columnClass}>
-              <TabsHeader toggle={toggle} />
-              <MainContent />
+              <ErrorBoundary name="mutxt:tabs-header" compact>
+                <TabsHeader toggle={toggle} />
+              </ErrorBoundary>
+              <ErrorBoundary name="mutxt:main">
+                <MainContent />
+              </ErrorBoundary>
             </div>
           )
         }
