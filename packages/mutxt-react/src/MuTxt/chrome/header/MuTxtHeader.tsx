@@ -127,14 +127,14 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
         <div className={toolbarContainerClass}>
           {width > 900 ? (
             <>
-              <ToolbarMenu menu={inlineMenu} pane={{transparent: true}} />
+              <ToolbarMenu menu={inlineMenu} pane={{transparent: true, inline: true}} />
               <ToolbarSep />
               <ToolbarSep line height={HEIGHT} lite />
               <ToolbarSep />
-              <ToolbarMenu menu={voidsMenu} pane={{transparent: true}} />
+              <ToolbarMenu menu={voidsMenu} pane={{transparent: true, inline: true}} />
               <ToolbarSep line height={HEIGHT} lite />
               <ToolbarSep />
-              <AutoExpandableToolbar menu={blockMenu} pane={{transparent: true}} more={{small: true}} />
+              <AutoExpandableToolbar menu={blockMenu} pane={{transparent: true, inline: true}} more={{small: true}} />
             </>
           ) : (
             <AutoExpandableToolbar
@@ -151,7 +151,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
                   ...blockMenu.children!,
                 ],
               }}
-              pane={{transparent: true}}
+              pane={{transparent: true, inline: true}}
               more={{small: true}}
             />
           )}

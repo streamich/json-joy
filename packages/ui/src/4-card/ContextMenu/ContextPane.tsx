@@ -65,6 +65,11 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
   borderless?: boolean;
   transparent?: boolean;
   compact?: boolean;
+  /**
+   * Render the pane in-place in the document flow, without creating an
+   * elevated stacking context.
+   */
+  inline?: boolean;
   className?: string;
   children?: React.ReactNode;
 }
@@ -84,6 +89,7 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
       accent,
       transparent,
       borderless,
+      inline,
       className,
       ...rest
     },
@@ -120,6 +126,11 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
     if (accent) {
       blockStyle.borderBottom = `2px solid ${accent}`;
       // blockStyle.borderTop = `2px solid ${accent}`;
+    }
+
+    if (inline) {
+      blockStyle.position = 'static';
+      blockStyle.zIndex = 'auto';
     }
 
     return (
