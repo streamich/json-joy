@@ -9,6 +9,7 @@ import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
 import {type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
+import {AppGridState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
 import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
@@ -31,6 +32,7 @@ const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
 
 export class JsonCrdtExplorerState {
   public readonly tabs: FileTabsState;
+  public readonly appGrid = new AppGridState();
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
   public readonly selected$: BehaviorSubject<[id: TabItem, index: number] | null>;
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);

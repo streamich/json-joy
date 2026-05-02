@@ -32,6 +32,7 @@ export const App: React.FC = () => {
   return (
     <ctx.Provider value={state}>
       <AppGrid
+        state={state.appGrid}
         maxLeftSize={500}
         left={(toggle) => <LeftSidebar toggle={toggle} />}
         // footer={<div> </div>}
