@@ -1,4 +1,4 @@
-import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
+import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {Editor, Range, Element as SlateElement, Node as SlateNode} from 'slate';
 import {OmniMenu} from './OmniMenu';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
@@ -74,7 +74,7 @@ export class OmniState implements UiLifeCycles {
     const {mutxt, open} = this;
     if (mutxt.readOnly.value) return false;
     if (open.value) return false;
-    if (!!mutxt.selection.value) return this.openSmart();
+    if (mutxt.selection.value) return this.openSmart();
     if (this.isCaretInEmptyBlock()) return this.openSmart();
     return false;
   };

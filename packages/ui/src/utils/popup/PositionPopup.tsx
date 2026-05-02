@@ -62,6 +62,7 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, ch
     applyStyle();
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only re-run when hidden changes; applyStyle/isMounted are stable refs
   React.useEffect(() => {
     if (!hidden) {
       requestAnimationFrame(() => {

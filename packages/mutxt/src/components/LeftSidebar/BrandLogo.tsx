@@ -61,7 +61,7 @@ const txt3Class = rule({
     tr: 'translateY(5px)',
   },
 });
-export interface BrandLogoProps {}
+export type BrandLogoProps = {};
 
 export const BrandLogo: React.FC<BrandLogoProps> = () => {
   const styles = useStyles();

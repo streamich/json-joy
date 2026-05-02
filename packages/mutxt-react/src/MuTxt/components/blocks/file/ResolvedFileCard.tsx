@@ -109,7 +109,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       setNameValue(thing.name ?? '');
       focused.current = false;
     });
-  }, [nameInputEl, readOnly, thing.name]);
+  }, [nameInputEl, readOnly, thing.name, mutxt.editor]);
 
   const [captionValue, setCaptionValue] = React.useState(element.caption ?? '');
   const captionFocused = React.useRef(false);
@@ -133,7 +133,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       setCaptionValue(element.caption ?? '');
       captionFocused.current = false;
     });
-  }, [readOnly, element.caption]);
+  }, [readOnly, element.caption, mutxt.editor]);
 
   const options = !readOnly && (
     <Popup renderContext={() => <FileOptionsPopup element={element} />}>

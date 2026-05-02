@@ -27,8 +27,6 @@ const lineStyleToCssBorder = (style: HrLineStyle): React.CSSProperties['borderTo
       return 'dashed';
     case 'dotted':
       return 'dotted';
-    case 'solid':
-    case 'squiggly':
     default:
       return 'solid';
   }

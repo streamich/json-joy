@@ -35,6 +35,8 @@ export const MediaPreview: React.FC<MediaPreviewProps> = ({thing, kind}) => {
       </div>
     );
   }
+  // biome-ignore lint/a11y/useMediaCaption: caption track is unavailable for user-uploaded media
   if (kind === 'video') return <video className={mediaClass} src={url} controls />;
+  // biome-ignore lint/a11y/useMediaCaption: caption track is unavailable for user-uploaded media
   return <audio className={mediaClass} src={url} controls />;
 };

@@ -1,4 +1,4 @@
-import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
+import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {VoidMenu} from './VoidMenu';
 import {EmbedButtonState} from './embed/EmbedButtonState';
 import {FileButtonState} from './file/FileButtonState';

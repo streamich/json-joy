@@ -1,10 +1,10 @@
-import {Editor, Path, Range, Text, Transforms, Element as SlateElement, Location, Span} from 'slate';
+import {Editor, type Path, Range, type Text, Element as SlateElement, type Location, type Span} from 'slate';
 import {ReactEditor} from 'slate-react';
-import {CustomElement, MarkFormat} from '../types';
+import type {CustomElement, MarkFormat} from '../types';
 import {eraseMarks, isListType} from '../behavior';
 import {typeToLabel} from '../util/typeToLabel';
 import {isEmptyDoc} from '../util';
-import {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 import type {MuTxtState} from './MuTxtState';
 import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';

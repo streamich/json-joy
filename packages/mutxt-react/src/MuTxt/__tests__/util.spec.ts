@@ -1,17 +1,5 @@
-import {createEditor} from 'slate';
 import type {SlateEditorDocument} from '../types';
 import {getDocumentOutline} from '../behavior/outline';
-
-const createTestEditor = (doc: SlateEditorDocument, marks?: Record<string, unknown>) => {
-  const editor = createEditor();
-  editor.children = doc as any;
-  editor.selection = {
-    anchor: {path: [0, 0], offset: 0},
-    focus: {path: [0, 0], offset: 0},
-  };
-  editor.marks = marks as any;
-  return editor;
-};
 
 describe('SlateEditor util', () => {
   test('builds document outline entries from heading nodes in document order', () => {

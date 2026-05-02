@@ -14,7 +14,7 @@ import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
 import {withTitleSubmit} from './behavior/title';
 import {withFile} from './behavior/file';
-import {ObjNode} from 'json-joy/lib/json-crdt';
+import type {ObjNode} from 'json-joy/lib/json-crdt';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
@@ -142,6 +142,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }, [onTitleSubmit]);
 
   // ------------------------------------------------------------- Editor state
+  // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
     const editor = withTitleSubmit(
       withHr(withFile(withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))))),
@@ -152,6 +153,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     return [editor, state];
   }, [obj, _state]);
   const peritextRef: PeritextRef = state.peritextRef;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: autoFocus only applies on initial mount of the owned state
   useEffect(() => {
     if (_state) return; // We don't own the state.
     const stop = state.start();
@@ -185,6 +187,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     editor,
     userFromMeta: (meta: any) => (meta ? {name: meta.name, color: meta.color} : undefined),
   });
+  // biome-ignore lint/correctness/useExhaustiveDependencies: state instance is stable for the lifetime of the component
   useEffect(() => {
     state.publishPresence = sendLocalPresence;
   }, [sendLocalPresence]);

@@ -277,6 +277,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const scrollRunway = Math.max(0, scrollBedWidth - scrollHandleWidth);
   const slotsFitInViewport = !width || totalPatches <= slotsPerViewport;
   const slotIndexOffset = slotsFitInViewport ? 0 : Math.floor(scroll * (totalPatches - slotsPerViewport));
+  // biome-ignore lint/correctness/useExhaustiveDependencies: patchCount triggers re-compute when log.patches mutates without ref change
   const patchEntries = useMemo<PatchEntry[]>(() => {
     const entries: PatchEntry[] = [];
     log.patches.forEach(({v: patch}) => {
@@ -524,6 +525,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
       }}
       onKeyDown={handleKeyDown}
     >
+      {/* biome-ignore lint/a11y/useKeyWithMouseEvents: parent handles keyboard navigation via onKeyDown */}
       <div
         ref={scratchSlotsRef}
         className={slotsClass}

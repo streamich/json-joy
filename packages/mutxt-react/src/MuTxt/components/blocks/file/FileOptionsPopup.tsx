@@ -31,6 +31,7 @@ export const FileOptionsPopup: React.FC<FileOptionsPopupProps> = ({element}) => 
   const state = React.useMemo(() => new FileOptionsState(mutxt, element, popup?.close), [mutxt, element, popup]);
 
   const headerRight = (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: click handler only stops bubbling; keyboard interaction is on inner buttons
     <div style={{display: 'flex', alignItems: 'center', gap: 6}} onMouseDown={stopBubble} onClick={stopBubble}>
       <BasicTooltip nowrap renderTooltip={() => t('Download')}>
         <BasicButton

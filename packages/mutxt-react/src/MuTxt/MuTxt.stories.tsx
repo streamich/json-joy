@@ -755,6 +755,7 @@ const codeBlocksValue: SlateEditorDocument = [
     fileName: 'rpc-server.ts',
     children: [
       {
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: literal source code sample displayed in the editor
         text: "import {RpcServer} from '@jsonjoy.com/rpc-server';\nimport {RpcHandler} from '@jsonjoy.com/rpc-calls';\n\nconst server = new RpcServer();\n\n// Register an RPC method\nserver.add('greet', (name: string) => {\n  return `Hello, ${name}!`;\n});\n\nserver.add('calculate', (a: number, b: number) => {\n  return {\n    sum: a + b,\n    product: a * b,\n    difference: a - b,\n  };\n});\n\n// Server is ready to handle RPC calls\nexport default server;",
       },
     ],
@@ -781,6 +782,7 @@ const codeBlocksValue: SlateEditorDocument = [
     fileName: 'presence-setup.tsx',
     children: [
       {
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: literal source code sample displayed in the editor
         text: "import {PresenceManager} from '@jsonjoy.com/collaborative-presence';\n\nconst presence = new PresenceManager({\n  sessionId: 'alice-12345',\n  displayName: 'Alice',\n  color: '#FF6B6B',\n  autoGossip: true,\n  gossipIntervalMs: 200,\n});\n\n// Update cursor position\npresence.setState({\n  cursor: {\n    line: 5,\n    column: 12,\n  },\n  selection: {\n    start: {line: 5, column: 5},\n    end: {line: 5, column: 12},\n  },\n});\n\n// Subscribe to other users' presence\npresence.onUpdate((update) => {\n  console.log(`${update.displayName} is at line ${update.cursor?.line}`);\n});",
       },
     ],
@@ -897,6 +899,7 @@ const codeBlocksValue: SlateEditorDocument = [
     fileName: 'CollaborativeDoc.tsx',
     children: [
       {
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: literal source code sample displayed in the editor
         text: "import React, {useEffect, useMemo, useRef, useState} from 'react';\nimport {Model} from 'json-joy/lib/json-crdt';\nimport {PresenceManager} from '@jsonjoy.com/collaborative-presence';\nimport {SlateEditor} from '@jsonjoy.com/collaborative-slate';\n\nexport function CollaborativeDocument({docId, userId}) {\n  const modelRef = useRef<Model | null>(null);\n  const presenceRef = useRef<PresenceManager | null>(null);\n\n  useEffect(() => {\n    // Initialize CRDT model\n    modelRef.current = Model.create();\n\n    // Initialize presence\n    presenceRef.current = new PresenceManager({\n      sessionId: userId,\n      displayName: `User ${userId}`,\n    });\n\n    return () => {\n      presenceRef.current?.close();\n    };\n  }, [userId]);\n\n  return (\n    <SlateEditor\n      peritextRef={modelRef.current?.s}\n      presenceManager={presenceRef.current}\n      minHeight={600}\n    />\n  );\n}",
       },
     ],

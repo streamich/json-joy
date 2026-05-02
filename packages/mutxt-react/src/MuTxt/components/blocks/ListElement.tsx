@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {Editor, Element as SlateElement} from 'slate';
-import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 'slate-react';
 import {setChecklistItemChecked} from '../../behavior';
 import {BlockPlaceholder} from './BlockPlaceholder';
@@ -117,7 +116,6 @@ export const ListContainerElement: React.FC<ListContainerElementProps> = ({attri
 export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, children, element}) => {
   const editor = useSlateStatic();
   const readOnly = useReadOnly();
-  const styles = useStyles();
 
   const isChecklistItem = React.useMemo(() => {
     try {

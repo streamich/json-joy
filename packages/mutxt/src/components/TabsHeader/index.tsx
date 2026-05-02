@@ -124,7 +124,7 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
         bg={styles.g(0.95)}
         fade="transparent"
         state={state.tabs}
-        before={<div style={{marginLeft: !!toggle ? 'env(titlebar-area-x)' : 0}}>{toggle}</div>}
+        before={<div style={{marginLeft: toggle ? 'env(titlebar-area-x)' : 0}}>{toggle}</div>}
         right={<PwaInstallButton />}
         render={() => <div style={{height: Sizes.TabsFadeHeight}} />}
       />

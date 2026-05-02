@@ -3,7 +3,7 @@ import {flushSync} from 'react-dom';
 import {ReactEditor} from 'slate-react';
 import {Transforms, type Editor, type Range} from 'slate';
 import {getActiveLink, normalizeLinkHref, removeLink, type ActiveLink, upsertLink} from '../../behavior/link';
-import {MuTxtState} from '../../state/MuTxtState';
+import type {MuTxtState} from '../../state/MuTxtState';
 
 export class LinkButtonState {
   public readonly activeLink: rsync.ReactComputed<ActiveLink | null>;

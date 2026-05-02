@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FileOptionsState} from './state';
+import type {FileOptionsState} from './state';
 
 export const ctx = React.createContext<FileOptionsState | null>(null);
 export const useFileOptions = (): FileOptionsState => {

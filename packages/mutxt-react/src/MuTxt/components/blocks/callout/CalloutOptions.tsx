@@ -10,7 +10,7 @@ import {ClickAway} from '@jsonjoy.com/ui/lib/utils/ClickAway';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {FormRow} from '@jsonjoy.com/ui/lib/3-list-item/FormRow';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
-import {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
+import type {HslColor} from '@jsonjoy.com/ui/lib/styles/color/HslColor';
 import {useCalloutOptions} from './context';
 import {useT} from 'use-t';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
@@ -30,15 +30,6 @@ const iconButtonInnerClass = rule({
   fz: '20px',
   lh: 1,
   minW: '24px',
-});
-
-const colorSwatchClass = rule({
-  d: 'inline-block',
-  w: '14px',
-  h: '14px',
-  bdrad: '50%',
-  border: '1px solid rgba(127,127,127,.4)',
-  ml: '8px',
 });
 
 const stopInputKeyDown = (event: React.KeyboardEvent): void => {

@@ -1,4 +1,4 @@
-import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
+import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {KeyContext, KeySourceEl} from '@jsonjoy.com/keyboard';
 import {getActiveAlignment} from '../behavior';
 import {getCaretPathInfo} from '../behavior/path-info';
@@ -14,7 +14,7 @@ import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {SizerState} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
-import {ReactEditor} from 'slate-react';
+import type {ReactEditor} from 'slate-react';
 import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
@@ -23,7 +23,7 @@ import {OmniState} from '../omni/OmniState';
 import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
-import type {Model, ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
+import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {CustomElement, SlateEditorDocument, SlateTextAlign} from '../types';
@@ -95,10 +95,7 @@ export class MuTxtState implements UiLifeCycles {
     opts?: MuTxtStateOpts,
   ) {
     this.readOnly.next(!!opts?.readOnly);
-    const model = (obj as unknown as {doc: Model<any>}).doc;
-    const typeNode = obj.get('@type');
     if (obj.read('/@type') !== 'mutxt') obj.set({'@type': s.con('mutxt')});
-    const existing = obj.get('text');
     let peritextNode: PeritextApi;
     let isNewDocument = false;
     try {

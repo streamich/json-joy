@@ -1,4 +1,4 @@
-import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
+import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {BlockMenu} from './BlockMenu';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MuTxtState} from '../state/MuTxtState';

@@ -1,4 +1,4 @@
-import {rsync, UiLifeCycles} from '@jsonjoy.com/ui';
+import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {ReactEditor} from 'slate-react';
 import {InlineMenu} from './InlineMenu';
 import {LinkButtonState} from './link/LinkButtonState';

@@ -7,7 +7,7 @@ import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
-import {Patch, Batch} from 'json-joy/lib/json-crdt-patch';
+import {type Patch, Batch} from 'json-joy/lib/json-crdt-patch';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {encode as encodeCbor} from '@jsonjoy.com/json-pack/lib/cbor/shared';
 import {DownloadIcon} from '../icons/DownloadIcon';

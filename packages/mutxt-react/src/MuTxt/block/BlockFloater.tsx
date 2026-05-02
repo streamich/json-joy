@@ -12,7 +12,7 @@ const handleClass = rule({
   trs: 'opacity .25s ease',
 });
 
-export interface BlockFloaterProps {}
+export type BlockFloaterProps = {};
 
 export const BlockFloater: React.FC<BlockFloaterProps> = () => {
   const mutxt = useMuTxt();

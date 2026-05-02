@@ -41,6 +41,7 @@ export const ScrollMap: React.FC<ScrollMapProps> = ({editor}) => {
   const scrollVersion = state.scrollVersion.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: focused/version/scrollVersion/cursor are change triggers for re-measuring markers
   React.useLayoutEffect(() => {
     if (!scrollArea.viewportEl || scrollHeight <= clientHeight || scrollHeight <= 0) {
       setMarkers([]);

@@ -31,6 +31,7 @@ export const SingleEditorDebug: React.FC = () => {
     return model;
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: snapshot taken once on mount
   const resetModel = React.useMemo(() => model.clone(), []);
 
   return (

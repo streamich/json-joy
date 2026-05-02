@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CalloutOptionsState} from './state';
+import type {CalloutOptionsState} from './state';
 
 export const ctx = React.createContext<CalloutOptionsState | null>(null);
 export const useCalloutOptions = (): CalloutOptionsState => {

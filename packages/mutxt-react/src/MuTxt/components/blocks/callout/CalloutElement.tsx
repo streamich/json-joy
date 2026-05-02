@@ -99,7 +99,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
       shadow: shadow.toString(),
       title: accentColorTitle.toString(),
     };
-  }, [accent]);
+  }, [accent, styles.light]);
 
   const preventMouseDown = React.useCallback((event: React.MouseEvent) => {
     event.preventDefault();

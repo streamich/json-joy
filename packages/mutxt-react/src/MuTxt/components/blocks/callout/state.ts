@@ -1,7 +1,7 @@
 import {rsync} from '@jsonjoy.com/ui';
-import {Transforms, type Editor} from 'slate';
+import {Transforms} from 'slate';
 import {ReactEditor} from 'slate-react';
-import {MuTxtState} from '../../../state/MuTxtState';
+import type {MuTxtState} from '../../../state/MuTxtState';
 import type {CalloutElement as CalloutElementType} from '../../../types';
 
 export class CalloutOptionsState {

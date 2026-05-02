@@ -1,6 +1,6 @@
 import {rsync} from '@jsonjoy.com/ui';
 import {flushSync} from 'react-dom';
-import {type Editor, type Path} from 'slate';
+import type {Editor, Path} from 'slate';
 import {
   getActiveEmbedEntry,
   insertEmbed,
@@ -8,7 +8,7 @@ import {
   removeEmbedAtPath,
   updateEmbedAtPath,
 } from '../../behavior/embed';
-import {MuTxtState} from '../../state/MuTxtState';
+import type {MuTxtState} from '../../state/MuTxtState';
 
 export class EmbedButtonState {
   public readonly open = rsync.val(false);

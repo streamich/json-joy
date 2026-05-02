@@ -50,7 +50,7 @@ const pathLinkClass = rule({
   },
 });
 
-export interface MuTxtFooterProps {}
+export type MuTxtFooterProps = {};
 
 export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const styles = useStyles();

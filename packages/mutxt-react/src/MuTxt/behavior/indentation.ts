@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement, Node, Path, Range, Transforms} from 'slate';
+import {Editor, Element as SlateElement, Transforms} from 'slate';
 import {isListType} from '../behavior';
 import type {CustomElement} from '../types';
 

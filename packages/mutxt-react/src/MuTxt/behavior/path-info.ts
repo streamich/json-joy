@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement, Node, Text, Path, Range} from 'slate';
+import {Editor, Element as SlateElement, Node, Text, type Path, type Range} from 'slate';
 import {getActiveEmbed} from './embed';
 import {getLinkAttributes} from './link';
 import type {CustomElement, CustomText} from '../types';

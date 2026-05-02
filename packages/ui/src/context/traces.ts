@@ -11,7 +11,7 @@
  * - etc.
  */
 
-import {createContext, useContext, FC, createElement as h, useMemo} from 'react';
+import {createContext, useContext, type FC, createElement as h, useMemo} from 'react';
 
 export interface NamedTraceContextValue {
   /** Whether elements in this render subtree are hidden - should not be
@@ -63,6 +63,7 @@ export interface SetTracesProps {
 
 export const SetTraces: FC<SetTracesProps> = ({children, value: _value}) => {
   const parentValue = useContext(ctx);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: _value entries are spread into deps to track its keys/values individually
   const value = useMemo(() => ({...parentValue, ..._value}), [...Object.entries(_value).flat(), parentValue]);
 
   return h(ctx.Provider, {value, children});

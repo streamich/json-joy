@@ -3,7 +3,7 @@ const getCookie = (key: string): string | null => {
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
   for (let i = 0; i < ca.length; i++) {
-    let c = ca[i].trim();
+    const c = ca[i].trim();
     if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
   }
   return null;
@@ -20,6 +20,7 @@ class CookieStore implements ISyncStore {
 
   public setItem(key: string, value: string): void {
     this.cache?.set(key, value);
+    // biome-ignore lint/suspicious/noDocumentCookie: simple sync cookie store; Cookie Store API is async
     document.cookie = `${key}=${encodeURIComponent(value)}; path=/; SameSite=Lax`;
   }
 
@@ -31,6 +32,7 @@ class CookieStore implements ISyncStore {
 
   public removeItem(key: string): void {
     this.cache?.delete(key);
+    // biome-ignore lint/suspicious/noDocumentCookie: simple sync cookie store; Cookie Store API is async
     document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   }
 }

@@ -215,7 +215,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   const codeStyle: React.CSSProperties = {
     paddingLeft: showLineNumbers ? '14px' : '18px',
     caretColor: styles.g(0),
-    color: !!languageValue ? 'rgba(127,127,127,.1)' : void 0,
+    color: languageValue ? 'rgba(127,127,127,.1)' : void 0,
   };
 
   const codeOverlayStyle: React.CSSProperties = {
@@ -261,6 +261,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
             <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
           </div>
         ) : (
+          // biome-ignore lint/a11y/useKeyWithClickEvents: click handler only stops propagation; keyboard interaction lives on inner inputs
           <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
             <div className={metaPreviewClass}>
               <span

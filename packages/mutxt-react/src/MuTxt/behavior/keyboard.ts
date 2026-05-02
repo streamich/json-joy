@@ -9,7 +9,7 @@ import {
   undo,
 } from '../behavior';
 import {dedentBlock, indentBlock} from './indentation';
-import {Key} from '@jsonjoy.com/keyboard';
+import type {Key} from '@jsonjoy.com/keyboard';
 import type {AnyBinding, Signature} from '@jsonjoy.com/keyboard';
 import type {MuTxtState} from '../state/MuTxtState';
 

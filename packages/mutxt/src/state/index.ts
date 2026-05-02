@@ -14,7 +14,7 @@ import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate, type SlateDocument} from '@jsonjoy.com/collaborative-slate';
-import {getSyncStore, ISyncStore} from './sync-store';
+import {getSyncStore, type ISyncStore} from './sync-store';
 import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 

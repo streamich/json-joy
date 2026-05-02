@@ -59,7 +59,7 @@ const tinyHeaderClass = rule({
   [`.${blockClass.trim()}:hover &`]: {
     op: 1,
   },
-  [`&:has(+ .jj-log-timeline:hover)`]: {
+  '&:has(+ .jj-log-timeline:hover)': {
     op: 0,
     pe: 'none',
   },

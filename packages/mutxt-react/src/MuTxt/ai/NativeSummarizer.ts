@@ -64,24 +64,24 @@ export class NativeSummarizer {
   private static bullets: ISummarizer | undefined;
 
   static async getBulletSummary(text: string): Promise<string | undefined> {
-    const summarizer = await this.getBulletsSummarizer();
+    const summarizer = await NativeSummarizer.getBulletsSummarizer();
     if (!summarizer) return;
-    const safeText = await this.trunc(summarizer, text);
+    const safeText = await NativeSummarizer.trunc(summarizer, text);
     if (!safeText) return;
     return await summarizer.summarize(safeText);
   }
 
   private static async getBulletsSummarizer() {
     if (!Summarizer) return;
-    if (this.bullets) return this.bullets;
+    if (NativeSummarizer.bullets) return NativeSummarizer.bullets;
     const capabilities = await Summarizer.availability();
     if (capabilities === 'no') return;
-    this.bullets = await Summarizer.create({
+    NativeSummarizer.bullets = await Summarizer.create({
       type: 'key-points',
       format: 'markdown',
       length: 'medium',
     });
-    return this.bullets;
+    return NativeSummarizer.bullets;
   }
 
   private static async trunc(summarizer: ISummarizer, text: string): Promise<string> {

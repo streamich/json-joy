@@ -7,7 +7,7 @@ import {useHiddenTrace} from '@jsonjoy.com/ui/lib/context';
 import {useMuTxt} from '../context';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 
-export interface InlineFloaterProps {}
+export type InlineFloaterProps = {};
 
 export const InlineFloater: React.FC<InlineFloaterProps> = () => {
   const mutxt = useMuTxt();

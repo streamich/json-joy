@@ -4,7 +4,7 @@ import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
 import {useMuTxt} from '../context';
 
-export interface OmniFloaterProps {}
+export type OmniFloaterProps = {};
 
 export const OmniFloater: React.FC<OmniFloaterProps> = () => {
   const mutxt = useMuTxt();

@@ -60,7 +60,7 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
         col: styles.g(0.02),
       },
     });
-  }, [styles, styles.light]);
+  }, [styles]);
   const style: React.CSSProperties | undefined = leaf.activeSelection
     ? {backgroundColor: styles.col.accent(0, 'bg-2')}
     : undefined;

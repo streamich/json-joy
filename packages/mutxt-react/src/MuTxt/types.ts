@@ -3,7 +3,7 @@ import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 
-export {MenuItem};
+export type {MenuItem};
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 export type MarkFormat =
