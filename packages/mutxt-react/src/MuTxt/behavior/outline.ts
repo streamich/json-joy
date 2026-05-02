@@ -1,5 +1,5 @@
-import {type Descendant, Text, Element as SlateElement, Node} from "slate";
-import type {CustomElement, SlateEditorDocument} from "../types";
+import {type Descendant, Text, Element as SlateElement, Node} from 'slate';
+import type {CustomElement, SlateEditorDocument} from '../types';
 
 export type OutlineHeadingType = 'title' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -22,7 +22,13 @@ const HEADING_LEVELS: Record<OutlineHeadingType, DocumentOutlineItem['level']> =
 };
 
 const isOutlineHeadingType = (type: CustomElement['type']): type is OutlineHeadingType =>
-  type === 'h1' || type === 'h2' || type === 'h3' || type === 'h4' || type === 'h5' || type === 'h6' || type === 'title';
+  type === 'h1' ||
+  type === 'h2' ||
+  type === 'h3' ||
+  type === 'h4' ||
+  type === 'h5' ||
+  type === 'h6' ||
+  type === 'title';
 
 const collectDocumentOutline = (nodes: Descendant[], path: number[], outline: DocumentOutlineItem[]): void => {
   nodes.forEach((node, index) => {

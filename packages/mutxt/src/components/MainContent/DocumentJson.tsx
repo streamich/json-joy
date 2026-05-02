@@ -18,15 +18,25 @@ export interface DocumentJsonProps {
   visible?: boolean;
 }
 
-
-export const DocumentJson: React.FC<DocumentJsonProps> = ({ file, visible }) => {
+export const DocumentJson: React.FC<DocumentJsonProps> = ({file, visible}) => {
   React.useEffect(() => {
     file.logState.view$.next('model');
     // file.logState.modelState.
   }, [file]);
 
   return (
-    <div className={editorShellClass} style={{display: visible ? 'block' : 'none', height: '100%', width: '100%', maxWidth: '1200px', margin: '0 auto', boxSizing: 'border-box', padding: 16}}>
+    <div
+      className={editorShellClass}
+      style={{
+        display: visible ? 'block' : 'none',
+        height: '100%',
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        boxSizing: 'border-box',
+        padding: 16,
+      }}
+    >
       <JsonCrdtLog
         key={file.id}
         spacious

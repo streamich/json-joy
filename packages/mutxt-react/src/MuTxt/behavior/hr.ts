@@ -2,8 +2,7 @@ import {Editor, Element as SlateElement, Path, Transforms} from 'slate';
 import {insertVoidBlock} from './voidInsert';
 import type {CustomElement, CustomText, HrElement} from '../types';
 
-export const isHrElement = (node: unknown): node is HrElement =>
-  SlateElement.isElement(node) && node.type === 'hr';
+export const isHrElement = (node: unknown): node is HrElement => SlateElement.isElement(node) && node.type === 'hr';
 
 const createHrElement = (overrides: Partial<HrElement> = {}): HrElement => {
   const children: CustomText[] = [{text: ''}];

@@ -3,7 +3,7 @@ import {useTheme, makeRule, drule} from 'nano-theme';
 
 export const blockClass = drule({
   bdrad: '4px',
-  trs: 'background .3s'
+  trs: 'background .3s',
 });
 
 const useHoverBlockClass = makeRule((theme) => ({
@@ -69,12 +69,14 @@ export const Paper: React.FC<PaperProps> = (props) => {
               1 + level
             }px 1px -${level}px ${theme.g(0, 0.12)}`
           : 'none',
-        ...(hoverBg ? {
-          bg: fill ? theme.g(0, fill * 0.02) : theme.bg,
-          '&:hover': {
-            bg: theme.g(0, 0.02),
-          }
-        } : {}),
+        ...(hoverBg
+          ? {
+              bg: fill ? theme.g(0, fill * 0.02) : theme.bg,
+              '&:hover': {
+                bg: theme.g(0, 0.02),
+              },
+            }
+          : {}),
       }) +
       (hover ? dynamicHoverBlockClass : '') +
       (hoverElevate

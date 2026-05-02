@@ -31,20 +31,20 @@ export const isEmptyBlock = (element: CustomElement): boolean => {
 };
 
 export const isEmptyDoc = (editor: Editor): boolean => {
-    const children = editor.children;
-    if (!children) return true;
-    const length = children.length;
-    if (length === 0) return true;
-    // Skip the hidden `.things` system block when judging emptiness.
-    let start = 0;
-    const first = children[0];
-    if (SlateElement.isElement(first) && (first as any).type === '.things') start = 1;
-    const userLength = length - start;
-    if (userLength === 0) return true;
-    if (userLength > 1) return false;
-    const firstChild = children[start];
-    if (!SlateElement.isElement(firstChild)) return false;
-    if ((firstChild as any).type !== 'p') return false;
-    if (!firstChild.children) return true;
-    return isEmptyBlock(firstChild as CustomElement);
+  const children = editor.children;
+  if (!children) return true;
+  const length = children.length;
+  if (length === 0) return true;
+  // Skip the hidden `.things` system block when judging emptiness.
+  let start = 0;
+  const first = children[0];
+  if (SlateElement.isElement(first) && (first as any).type === '.things') start = 1;
+  const userLength = length - start;
+  if (userLength === 0) return true;
+  if (userLength > 1) return false;
+  const firstChild = children[start];
+  if (!SlateElement.isElement(firstChild)) return false;
+  if ((firstChild as any).type !== 'p') return false;
+  if (!firstChild.children) return true;
+  return isEmptyBlock(firstChild as CustomElement);
 };

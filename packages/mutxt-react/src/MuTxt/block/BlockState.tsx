@@ -32,7 +32,7 @@ export class BlockState implements UiLifeCycles {
    * Format of the block currently containing the caret, or `undefined` when
    * there's no caret, when there's a range selection, or when the block isn't
    * one we recognize.
-   * 
+   *
    * @todo Rename to `type`?
    */
   public currentBlockFormat(): BlockFormat | undefined {

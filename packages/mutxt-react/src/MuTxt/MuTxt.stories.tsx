@@ -29,7 +29,9 @@ const primaryValue: SlateEditorDocument = [
       {text: 'Slate.js', bold: true},
       {text: ' editor to a '},
       {text: 'json-joy Peritext', italic: true},
-      {text: ' CRDT node, giving you real-time collaborative rich-text editing with zero glue code. Changes made by remote peers flow into the editor automatically; local edits are translated into CRDT operations and broadcast to every replica.'},
+      {
+        text: ' CRDT node, giving you real-time collaborative rich-text editing with zero glue code. Changes made by remote peers flow into the editor automatically; local edits are translated into CRDT operations and broadcast to every replica.',
+      },
     ],
   },
   {
@@ -63,7 +65,9 @@ const primaryValue: SlateEditorDocument = [
       {text: 'PresenceManager', code: true},
       {text: ' to the '},
       {text: 'SlateEditor', code: true},
-      {text: ' component. Cursor colours and user names are derived from the metadata you attach to each presence session.'},
+      {
+        text: ' component. Cursor colours and user names are derived from the metadata you attach to each presence session.',
+      },
     ],
   },
   {
@@ -86,7 +90,9 @@ const kitchenSinkValue: SlateEditorDocument = [
       {text: 'real-time', italic: true},
       {text: ' applications on top of JSON. The centrepiece is a full '},
       {text: 'JSON CRDT', bold: true},
-      {text: ' implementation — a Conflict-free Replicated Data Type that merges concurrent edits from any number of replicas without data loss or manual conflict resolution.'},
+      {
+        text: ' implementation — a Conflict-free Replicated Data Type that merges concurrent edits from any number of replicas without data loss or manual conflict resolution.',
+      },
     ],
   },
 
@@ -94,14 +100,18 @@ const kitchenSinkValue: SlateEditorDocument = [
   {
     type: 'blockquote',
     children: [
-      {text: 'A CRDT is a data structure that can be updated concurrently by different replicas and always converges to the same state — without any coordination. '},
+      {
+        text: 'A CRDT is a data structure that can be updated concurrently by different replicas and always converges to the same state — without any coordination. ',
+      },
       {text: '— Shapiro et al., 2011', italic: true},
     ],
   },
   {
     type: 'code-block',
     children: [
-      {text: 'A typical RGA string sequence with character IDs:\n\n    H    e   l    l     o      W    o    r    l    d\n    a.1  a.2  a.3  a.4  a.5    b.1  b.2  b.3  b.4  b.5'},
+      {
+        text: 'A typical RGA string sequence with character IDs:\n\n    H    e   l    l     o      W    o    r    l    d\n    a.1  a.2  a.3  a.4  a.5    b.1  b.2  b.3  b.4  b.5',
+      },
     ],
   },
   {
@@ -109,7 +119,9 @@ const kitchenSinkValue: SlateEditorDocument = [
     children: [
       {text: 'Traditional approaches to collaborative editing — '},
       {text: 'Operational Transformation', underline: true},
-      {text: ' being the most well-known — require a central server to arbitrate operation order. CRDTs eliminate that requirement. Every peer can apply changes locally and '},
+      {
+        text: ' being the most well-known — require a central server to arbitrate operation order. CRDTs eliminate that requirement. Every peer can apply changes locally and ',
+      },
       {text: 'merge', bold: true},
       {text: ' them later, making the system resilient to network partitions and enabling true '},
       {text: 'local-first', bold: true, italic: true},
@@ -121,9 +133,28 @@ const kitchenSinkValue: SlateEditorDocument = [
   {
     type: 'ul',
     children: [
-      {type: 'li', children: [{text: 'Full JSON as a CRDT — objects, arrays, strings, numbers, booleans, and null, all conflict-free.'}]},
-      {type: 'li', children: [{text: 'Peritext — a rich-text CRDT that models inline formatting as non-overlapping annotation slices, compatible with Slate.js and ProseMirror.'}]},
-      {type: 'li', children: [{text: 'The fastest RGA list CRDT implementation in JavaScript — benchmarked against Yjs, Automerge, and others.'}]},
+      {
+        type: 'li',
+        children: [
+          {text: 'Full JSON as a CRDT — objects, arrays, strings, numbers, booleans, and null, all conflict-free.'},
+        ],
+      },
+      {
+        type: 'li',
+        children: [
+          {
+            text: 'Peritext — a rich-text CRDT that models inline formatting as non-overlapping annotation slices, compatible with Slate.js and ProseMirror.',
+          },
+        ],
+      },
+      {
+        type: 'li',
+        children: [
+          {
+            text: 'The fastest RGA list CRDT implementation in JavaScript — benchmarked against Yjs, Automerge, and others.',
+          },
+        ],
+      },
       {type: 'li', children: [{text: 'The fastest CBOR, MessagePack, UBJSON, and DAG-CBOR codecs in JavaScript.'}]},
       {type: 'li', children: [{text: 'Compact binary patch format for efficient over-the-wire transport.'}]},
     ],
@@ -136,9 +167,13 @@ const kitchenSinkValue: SlateEditorDocument = [
       {text: 'Peritext'},
       {text: ' ('},
       {text: 'Litt et al., 2021', italic: true},
-      {text: ') solves the hardest problem in collaborative rich-text: what happens when two peers simultaneously apply '},
+      {
+        text: ') solves the hardest problem in collaborative rich-text: what happens when two peers simultaneously apply ',
+      },
       {text: 'overlapping', underline: true},
-      {text: ' formatting? json-joy implements the full Peritext specification and extends it with extra annotation types — links, comments, and arbitrary inline metadata — all stored as first-class CRDT nodes.'},
+      {
+        text: ' formatting? json-joy implements the full Peritext specification and extends it with extra annotation types — links, comments, and arbitrary inline metadata — all stored as first-class CRDT nodes.',
+      },
     ],
   },
   {
@@ -156,13 +191,18 @@ const kitchenSinkValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'json-joy ships first-party bindings for the most popular open-source editors. Each binding is a thin adapter — it translates between the editor\'s own change model and the underlying CRDT operations.'},
+      {
+        text: "json-joy ships first-party bindings for the most popular open-source editors. Each binding is a thin adapter — it translates between the editor's own change model and the underlying CRDT operations.",
+      },
     ],
   },
   {
     type: 'ol',
     children: [
-      {type: 'li', children: [{text: 'Slate.js / Plate.js — '}, {text: '@jsonjoy.com/collaborative-slate', code: true}]},
+      {
+        type: 'li',
+        children: [{text: 'Slate.js / Plate.js — '}, {text: '@jsonjoy.com/collaborative-slate', code: true}],
+      },
       {type: 'li', children: [{text: 'ProseMirror — '}, {text: '@jsonjoy.com/collaborative-prosemirror', code: true}]},
       {type: 'li', children: [{text: 'Quill — '}, {text: '@jsonjoy.com/collaborative-quill', code: true}]},
       {type: 'li', children: [{text: 'CodeMirror 6 — '}, {text: '@jsonjoy.com/collaborative-codemirror', code: true}]},
@@ -184,7 +224,9 @@ const kitchenSinkValue: SlateEditorDocument = [
       {text: 'json-joy website', a: {href: 'https://jsonjoy.com'}},
       {text: '. The '},
       {text: 'JSON CRDT Explorer', a: {href: 'https://explorer.jsoncrdt.org'}},
-      {text: ' lets you inspect live CRDT state and replay patch histories in your browser. Source code and issues live on '},
+      {
+        text: ' lets you inspect live CRDT state and replay patch histories in your browser. Source code and issues live on ',
+      },
       {text: 'GitHub', a: {href: 'https://github.com/streamich/json-joy'}},
       {text: '.'},
     ],
@@ -199,10 +241,16 @@ const kitchenSinkValue: SlateEditorDocument = [
 const twoColumnsBlock: TwoColumnsElement = {
   type: 'columns',
   children: [
-    {text: 'json-joy ships a collaborative Slate editor on top of Peritext, which means structure and inline annotations are preserved as CRDT operations instead of lossy HTML patches. That makes richer layouts possible without introducing a separate document model just for presentation. '},
+    {
+      text: 'json-joy ships a collaborative Slate editor on top of Peritext, which means structure and inline annotations are preserved as CRDT operations instead of lossy HTML patches. That makes richer layouts possible without introducing a separate document model just for presentation. ',
+    },
     {text: 'This block uses CSS multi-column flow', italic: true},
-    {text: ' so a single block of prose can be read like a compact editorial layout. The content remains regular Slate text, so marks, links, selections, and collaboration metadata still behave the same way they do in a paragraph. '},
-    {text: 'Use it for release notes, dense summaries, or side-by-side style reading experiences where a long paragraph would otherwise feel visually heavy. The layout is attached to the block itself, which keeps the feature predictable when toggling formats from the toolbar.'},
+    {
+      text: ' so a single block of prose can be read like a compact editorial layout. The content remains regular Slate text, so marks, links, selections, and collaboration metadata still behave the same way they do in a paragraph. ',
+    },
+    {
+      text: 'Use it for release notes, dense summaries, or side-by-side style reading experiences where a long paragraph would otherwise feel visually heavy. The layout is attached to the block itself, which keeps the feature predictable when toggling formats from the toolbar.',
+    },
   ],
 };
 
@@ -213,15 +261,15 @@ const twoColumnsValue: SlateEditorDocument = [
     children: [
       {text: 'The toolbar now includes a '},
       {text: 'Two columns', bold: true},
-      {text: ' block toggle next to the alignment controls. This story starts with the layout already applied so the multi-column rendering is visible immediately.'},
+      {
+        text: ' block toggle next to the alignment controls. This story starts with the layout already applied so the multi-column rendering is visible immediately.',
+      },
     ],
   },
   twoColumnsBlock,
   {
     type: 'p',
-    children: [
-      {text: 'Switch the block back to a paragraph at any time and the content stays intact.'},
-    ],
+    children: [{text: 'Switch the block back to a paragraph at any time and the content stays intact.'}],
   },
 ];
 
@@ -266,7 +314,9 @@ const embedsValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'Selecting any embed shows its source URL in the footer, and the scroll map marks embed positions alongside headings, code blocks, and lists.'},
+      {
+        text: 'Selecting any embed shows its source URL in the footer, and the scroll map marks embed positions alongside headings, code blocks, and lists.',
+      },
     ],
   },
 ];
@@ -303,7 +353,7 @@ const manyHeadingsValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'Further Reading'}]},
   {type: 'h3', children: [{text: 'Academic Papers'}]},
   {type: 'h3', children: [{text: 'Related Projects'}]},
-]
+];
 
 const longValue: SlateEditorDocument = [
   {type: 'h1', children: [{text: 'Building Local-First Apps with json-joy'}]},
@@ -311,7 +361,9 @@ const longValue: SlateEditorDocument = [
     type: 'p',
     children: [
       {text: 'Local-first software', bold: true},
-      {text: ' is a set of principles for building applications that work offline, keep user data on the user\'s own devices, and sync with peers when a connection is available. json-joy was designed from the ground up to make this style of architecture practical for JavaScript developers.'},
+      {
+        text: " is a set of principles for building applications that work offline, keep user data on the user's own devices, and sync with peers when a connection is available. json-joy was designed from the ground up to make this style of architecture practical for JavaScript developers.",
+      },
     ],
   },
   {
@@ -319,7 +371,9 @@ const longValue: SlateEditorDocument = [
     children: [
       {text: 'At the core of json-joy is a '},
       {text: 'JSON CRDT', bold: true},
-      {text: ' — a Conflict-free Replicated Data Type that models the full JSON value space. Objects, arrays, strings, numbers, booleans, and null can all be updated concurrently by independent replicas, and the library guarantees that every replica will eventually converge to the same state without any coordination from a server.'},
+      {
+        text: ' — a Conflict-free Replicated Data Type that models the full JSON value space. Objects, arrays, strings, numbers, booleans, and null can all be updated concurrently by independent replicas, and the library guarantees that every replica will eventually converge to the same state without any coordination from a server.',
+      },
     ],
   },
 
@@ -329,7 +383,9 @@ const longValue: SlateEditorDocument = [
     children: [
       {text: 'A json-joy '},
       {text: 'Model', code: true},
-      {text: ' is an immutable snapshot of a JSON value annotated with logical timestamps. Each node in the value tree — every object entry, array element, or string character — carries the '},
+      {
+        text: ' is an immutable snapshot of a JSON value annotated with logical timestamps. Each node in the value tree — every object entry, array element, or string character — carries the ',
+      },
       {text: 'session ID', italic: true},
       {text: ' and '},
       {text: 'logical clock', italic: true},
@@ -339,7 +395,9 @@ const longValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'When two replicas diverge and later reconnect, json-joy computes the difference between their patch histories and applies only the missing operations. The merge algorithm is deterministic: given the same set of patches, every replica produces the same model, regardless of the order in which the patches were received.'},
+      {
+        text: 'When two replicas diverge and later reconnect, json-joy computes the difference between their patch histories and applies only the missing operations. The merge algorithm is deterministic: given the same set of patches, every replica produces the same model, regardless of the order in which the patches were received.',
+      },
     ],
   },
   {
@@ -357,9 +415,13 @@ const longValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'Plain-text CRDTs like RGA (Replicated Growable Array) handle character-level concurrency well, but rich text adds another layer of complexity: '},
+      {
+        text: 'Plain-text CRDTs like RGA (Replicated Growable Array) handle character-level concurrency well, but rich text adds another layer of complexity: ',
+      },
       {text: 'inline annotations', underline: true},
-      {text: '. What happens when Alice bolds a range of text while Bob simultaneously deletes characters inside that range? What if both bold the same range independently?'},
+      {
+        text: '. What happens when Alice bolds a range of text while Bob simultaneously deletes characters inside that range? What if both bold the same range independently?',
+      },
     ],
   },
   {
@@ -367,7 +429,9 @@ const longValue: SlateEditorDocument = [
     children: [
       {text: 'Peritext introduces the concept of an '},
       {text: 'anchor', italic: true},
-      {text: ' — a reference to the gap between two characters rather than to a character itself. Anchors survive concurrent insertions and deletions, making annotation ranges stable across edits. — Litt et al., 2021'},
+      {
+        text: ' — a reference to the gap between two characters rather than to a character itself. Anchors survive concurrent insertions and deletions, making annotation ranges stable across edits. — Litt et al., 2021',
+      },
     ],
   },
   {
@@ -393,16 +457,33 @@ const longValue: SlateEditorDocument = [
       {text: 'Splay tree', bold: true},
       {text: ', and '},
       {text: 'Radix tree', bold: true},
-      {text: ' implementations tuned for the access patterns of CRDT workloads. The RGA string CRDT is benchmarked continuously against Yjs, Automerge, and Diamond Types.'},
+      {
+        text: ' implementations tuned for the access patterns of CRDT workloads. The RGA string CRDT is benchmarked continuously against Yjs, Automerge, and Diamond Types.',
+      },
     ],
   },
   {
     type: 'ul',
     children: [
-      {type: 'li', children: [{text: 'Insertion of 100 000 characters: '}, {text: '~12 ms', bold: true}, {text: ' on a 2023 MacBook Pro M2.'}]},
-      {type: 'li', children: [{text: 'Encoding a 50 000-op patch to binary: '}, {text: '~3 ms', bold: true}, {text: '.'}]},
+      {
+        type: 'li',
+        children: [
+          {text: 'Insertion of 100 000 characters: '},
+          {text: '~12 ms', bold: true},
+          {text: ' on a 2023 MacBook Pro M2.'},
+        ],
+      },
+      {
+        type: 'li',
+        children: [{text: 'Encoding a 50 000-op patch to binary: '}, {text: '~3 ms', bold: true}, {text: '.'}],
+      },
       {type: 'li', children: [{text: 'Decoding the same patch: '}, {text: '~4 ms', bold: true}, {text: '.'}]},
-      {type: 'li', children: [{text: 'Full re-render after a remote patch: under one React render frame at typical document sizes.'}]},
+      {
+        type: 'li',
+        children: [
+          {text: 'Full re-render after a remote patch: under one React render frame at typical document sizes.'},
+        ],
+      },
     ],
   },
 
@@ -437,7 +518,9 @@ const longValue: SlateEditorDocument = [
     type: 'p',
     children: [
       {text: '@jsonjoy.com/collaborative-presence', code: true},
-      {text: ' is an ephemeral awareness layer that sits alongside the persistent CRDT model. It broadcasts short-lived state — cursor positions, user names, colours, typing indicators — using a gossip protocol that does not require a database write for every keypress.'},
+      {
+        text: ' is an ephemeral awareness layer that sits alongside the persistent CRDT model. It broadcasts short-lived state — cursor positions, user names, colours, typing indicators — using a gossip protocol that does not require a database write for every keypress.',
+      },
     ],
   },
   {
@@ -445,7 +528,9 @@ const longValue: SlateEditorDocument = [
     children: [
       {text: 'The '},
       {text: 'SlateEditor', code: true},
-      {text: ' component renders remote cursors as coloured caret markers directly in the content flow. Each cursor label shows the peer\'s display name and fades out automatically when the peer goes idle.'},
+      {
+        text: " component renders remote cursors as coloured caret markers directly in the content flow. Each cursor label shows the peer's display name and fades out automatically when the peer goes idle.",
+      },
     ],
   },
 
@@ -454,18 +539,46 @@ const longValue: SlateEditorDocument = [
     type: 'p',
     children: [
       {text: '@jsonjoy.com/json-crdt-server', code: true},
-      {text: ' provides a ready-made server that stores models in any key-value backend (LevelDB, Redis, S3) and relays patches between clients over WebSockets. It exposes a '},
+      {
+        text: ' provides a ready-made server that stores models in any key-value backend (LevelDB, Redis, S3) and relays patches between clients over WebSockets. It exposes a ',
+      },
       {text: 'JSON Reactive RPC', italic: true},
-      {text: ' API, allowing clients to subscribe to a document and receive a stream of incremental patches rather than full snapshots.'},
+      {
+        text: ' API, allowing clients to subscribe to a document and receive a stream of incremental patches rather than full snapshots.',
+      },
     ],
   },
   {
     type: 'ol',
     children: [
-      {type: 'li', children: [{text: 'Client opens a WebSocket connection and sends a '}, {text: 'subscribe', code: true}, {text: ' request with the document ID and its current clock.'}]},
-      {type: 'li', children: [{text: 'Server responds with all patches the client has not yet seen, then keeps the subscription open.'}]},
-      {type: 'li', children: [{text: 'When the client makes a local edit it sends a '}, {text: 'patch', code: true}, {text: ' request; the server applies it, persists it, and fans it out to other subscribers.'}]},
-      {type: 'li', children: [{text: 'On reconnect the client resumes from its last known clock — no full-document download required.'}]},
+      {
+        type: 'li',
+        children: [
+          {text: 'Client opens a WebSocket connection and sends a '},
+          {text: 'subscribe', code: true},
+          {text: ' request with the document ID and its current clock.'},
+        ],
+      },
+      {
+        type: 'li',
+        children: [
+          {text: 'Server responds with all patches the client has not yet seen, then keeps the subscription open.'},
+        ],
+      },
+      {
+        type: 'li',
+        children: [
+          {text: 'When the client makes a local edit it sends a '},
+          {text: 'patch', code: true},
+          {text: ' request; the server applies it, persists it, and fans it out to other subscribers.'},
+        ],
+      },
+      {
+        type: 'li',
+        children: [
+          {text: 'On reconnect the client resumes from its last known clock — no full-document download required.'},
+        ],
+      },
     ],
   },
 
@@ -511,7 +624,9 @@ const codeBlocksValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'Explore the json-joy ecosystem through practical code examples covering JSON CRDT, Peritext, binary codecs, presence management, and collaborative editing across multiple frameworks.'},
+      {
+        text: 'Explore the json-joy ecosystem through practical code examples covering JSON CRDT, Peritext, binary codecs, presence management, and collaborative editing across multiple frameworks.',
+      },
     ],
   },
 
@@ -539,7 +654,9 @@ const codeBlocksValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'Models can be forked into independent replicas that make concurrent changes without coordination, then merged back together deterministically.'},
+      {
+        text: 'Models can be forked into independent replicas that make concurrent changes without coordination, then merged back together deterministically.',
+      },
     ],
   },
   {
@@ -575,7 +692,9 @@ const codeBlocksValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'Create multiple formatting layers and watch them compose naturally across concurrent insertions and deletions.'},
+      {
+        text: 'Create multiple formatting layers and watch them compose naturally across concurrent insertions and deletions.',
+      },
     ],
   },
   {
@@ -593,7 +712,9 @@ const codeBlocksValue: SlateEditorDocument = [
   {
     type: 'p',
     children: [
-      {text: 'Use CBOR encoding for efficient patch serialization. json-joy ships the fastest CBOR codec in the JavaScript ecosystem.'},
+      {
+        text: 'Use CBOR encoding for efficient patch serialization. json-joy ships the fastest CBOR codec in the JavaScript ecosystem.',
+      },
     ],
   },
   {
@@ -626,9 +747,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'RPC Calls & Server Communication'}]},
   {
     type: 'p',
-    children: [
-      {text: 'The RPC layer provides type-safe request/response patterns for client-server communication.'},
-    ],
+    children: [{text: 'The RPC layer provides type-safe request/response patterns for client-server communication.'}],
   },
   {
     type: 'code-block',
@@ -654,9 +773,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'Collaborative Presence'}]},
   {
     type: 'p',
-    children: [
-      {text: 'Track live cursors, selections, and user awareness with the collaborative presence layer.'},
-    ],
+    children: [{text: 'Track live cursors, selections, and user awareness with the collaborative presence layer.'}],
   },
   {
     type: 'code-block',
@@ -692,9 +809,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'ProseMirror Integration'}]},
   {
     type: 'p',
-    children: [
-      {text: 'json-joy also provides bindings for ProseMirror with the same simplicity.'},
-    ],
+    children: [{text: 'json-joy also provides bindings for ProseMirror with the same simplicity.'}],
   },
   {
     type: 'code-block',
@@ -710,9 +825,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'JSON Paths & Pointers'}]},
   {
     type: 'p',
-    children: [
-      {text: 'Navigate JSON structures using path expressions and JSON Pointer syntax.'},
-    ],
+    children: [{text: 'Navigate JSON structures using path expressions and JSON Pointer syntax.'}],
   },
   {
     type: 'code-block',
@@ -728,9 +841,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'Data Type Inspection'}]},
   {
     type: 'p',
-    children: [
-      {text: 'Inspect and validate JSON data types with type guards and predicates.'},
-    ],
+    children: [{text: 'Inspect and validate JSON data types with type guards and predicates.'}],
   },
   {
     type: 'code-block',
@@ -746,9 +857,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'Base64 Encoding'}]},
   {
     type: 'p',
-    children: [
-      {text: 'Convert binary data to and from Base64 for transport and storage.'},
-    ],
+    children: [{text: 'Convert binary data to and from Base64 for transport and storage.'}],
   },
   {
     type: 'code-block',
@@ -764,9 +873,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'Channel Communications'}]},
   {
     type: 'p',
-    children: [
-      {text: 'Use channels for structured message passing between components and services.'},
-    ],
+    children: [{text: 'Use channels for structured message passing between components and services.'}],
   },
   {
     type: 'code-block',
@@ -782,9 +889,7 @@ const codeBlocksValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'Full Example: Collaborative Document'}]},
   {
     type: 'p',
-    children: [
-      {text: 'Combine CRDT, Slate binding, and presence for a complete collaborative editing experience.'},
-    ],
+    children: [{text: 'Combine CRDT, Slate binding, and presence for a complete collaborative editing experience.'}],
   },
   {
     type: 'code-block',
@@ -894,7 +999,13 @@ export const CodeBlocks = meta.story({
   },
   render: () => (
     <Wrap scroll>
-      <MuTxt autoFocus={false} fromSlate={codeBlocksValue} minHeight={440} height={window.innerHeight - 200} contentWidth={920} />
+      <MuTxt
+        autoFocus={false}
+        fromSlate={codeBlocksValue}
+        minHeight={440}
+        height={window.innerHeight - 200}
+        contentWidth={920}
+      />
     </Wrap>
   ),
 });

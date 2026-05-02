@@ -132,7 +132,11 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   const [hovered, setHovered] = React.useState(false);
   const iconNode = loading ? <SpinnerCircle color={styles.g(0.45)} /> : hovered ? iconHover : icon;
 
-  const selectedBg = selected ? styles.col.get('neutral', 'bg-2') : (fill ? styles.col.get('neutral', 'bg-1') : 'transparent');
+  const selectedBg = selected
+    ? styles.col.get('neutral', 'bg-2')
+    : fill
+      ? styles.col.get('neutral', 'bg-1')
+      : 'transparent';
   const hoverBg = selected ? styles.col.accent(0, 'el-1') : styles.light ? styles.g(0, 0.04) : styles.g(0, 0.08);
 
   const dynamicRowClass = useRule(() => ({
@@ -222,11 +226,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   );
 
   if (clickable) {
-    surface = (
-      <Ripple>
-        {surface}
-      </Ripple>
-    );
+    surface = <Ripple>{surface}</Ripple>;
   }
 
   return surface;

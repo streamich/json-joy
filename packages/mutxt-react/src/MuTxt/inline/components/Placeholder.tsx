@@ -34,7 +34,7 @@ export const Placeholder: React.FC<PlaceholderProps> = (props) => {
       className={placeholderClass}
       style={{
         ...attributes.style,
-        color: styles.g(.5),
+        color: styles.g(0.5),
         opacity: 1,
       }}
     >

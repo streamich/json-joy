@@ -24,17 +24,18 @@ export interface BlockPlaceholderProps {
 
 const getPlaceholderText = (element: CustomElement): React.ReactNode => {
   // if (element.type === 'p') return 'Type here or press "/" for options...';
-  if (element.type === 'p') return (
-    <>
-      Type here or double tap <Key>Shift</Key>, <Key>Shift</Key> for menu...
-    </>
-  );
+  if (element.type === 'p')
+    return (
+      <>
+        Type here or double tap <Key>Shift</Key>, <Key>Shift</Key> for menu...
+      </>
+    );
   return typeToLabel(element.type);
 };
 
 export const BlockPlaceholder: React.FC<BlockPlaceholderProps> = ({element}) => {
   const mutxt = useMuTxt();
-  const focused = mutxt.focused.use()
+  const focused = mutxt.focused.use();
   const styles = useStyles();
   const isSelected = useSelected();
   const selection = mutxt.selection.use();

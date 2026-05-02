@@ -1,4 +1,4 @@
-import {HslColor} from "./HslColor";
+import {HslColor} from './HslColor';
 
 const DEFAULT_BG = HslColor.from('#fff')!;
 

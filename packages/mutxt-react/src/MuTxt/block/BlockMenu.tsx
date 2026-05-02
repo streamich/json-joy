@@ -6,7 +6,14 @@ import {formatKeys} from '../util/keys';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {dedentBlock, getActiveIndent, indentBlock, MAX_INDENT} from '../behavior/indentation';
 import {isAlignmentActive, setAlignment, toggleBlock} from '../behavior';
-import {getActiveOlType, getActiveUlType, isOlTypeActive, isUlTypeActive, setOlType, setUlType} from '../behavior/lists';
+import {
+  getActiveOlType,
+  getActiveUlType,
+  isOlTypeActive,
+  isUlTypeActive,
+  setOlType,
+  setUlType,
+} from '../behavior/lists';
 import type {BlockFormat, ListElementType, MenuItem, OlType, SlateTextAlign} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
@@ -69,16 +76,11 @@ export class BlockMenu implements UiLifeCycles {
       minWidth: 300,
       children: [
         {
-          name: (head?.name ?? 'Block'),
+          name: head?.name ?? 'Block',
           icon: head?.icon,
           minWidth: 269,
           expand: 0,
-          children: [
-            this.menuBlocks(),
-            this.menuHeadings(),
-            this.menuLists(),
-            this.menuLayout(),
-          ],
+          children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout()],
         },
       ],
     };
@@ -89,12 +91,7 @@ export class BlockMenu implements UiLifeCycles {
       name: 'Block menu',
       maxToolbarItems: 4,
       minWidth: 288,
-      children: [
-        this.menuBlocks(),
-        this.menuHeadings(),
-        this.menuLists(),
-        this.menuLayout(),
-      ],
+      children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout()],
     };
 
     if (size < 1) {
@@ -150,11 +147,7 @@ export class BlockMenu implements UiLifeCycles {
       name: 'Lists',
       expand: 8,
       sepBefore: true,
-      children: [
-        this.itemUL(),
-        this.itemOL(),
-        this.itemChecklist(),
-      ],
+      children: [this.itemUL(), this.itemOL(), this.itemChecklist()],
     };
   }
 
@@ -182,10 +175,18 @@ export class BlockMenu implements UiLifeCycles {
     return this.blockItem('p', {name: 'Paragraph', icon: () => <ParagraphIcon />, keys: ['Primary', 'Alt', '0']});
   }
   public itemBlockquote(): MenuItem {
-    return this.blockItem('blockquote', {name: 'Blockquote', icon: () => <BlockquoteIcon />, keys: ['Primary', 'Alt', '9']});
+    return this.blockItem('blockquote', {
+      name: 'Blockquote',
+      icon: () => <BlockquoteIcon />,
+      keys: ['Primary', 'Alt', '9'],
+    });
   }
   public itemCodeBlock(): MenuItem {
-    return this.blockItem('code-block', {name: 'Code block', icon: () => <CodeBlockIcon />, keys: ['Primary', 'Shift', 'c']});
+    return this.blockItem('code-block', {
+      name: 'Code block',
+      icon: () => <CodeBlockIcon />,
+      keys: ['Primary', 'Shift', 'c'],
+    });
   }
   public itemPre(): MenuItem {
     return this.blockItem('pre', {name: 'Pre-formatted', icon: () => <PreIcon />});
@@ -218,10 +219,18 @@ export class BlockMenu implements UiLifeCycles {
     return this.blockItem('h6', {name: 'Heading 6', icon: () => <H6Icon />, keys: ['Primary', 'Alt', '6']});
   }
   public itemTitle(): MenuItem {
-    return this.blockItem('title', {name: 'Title', display: () => <span style={{fontWeight: 'bold'}}>{'Title'}</span>, icon: () => <TitleIcon />});
+    return this.blockItem('title', {
+      name: 'Title',
+      display: () => <span style={{fontWeight: 'bold'}}>{'Title'}</span>,
+      icon: () => <TitleIcon />,
+    });
   }
   public itemSubtitle(): MenuItem {
-    return this.blockItem('subtitle', {name: 'Subtitle', display: () => <span style={{opacity: .7}}>{'Subtitle'}</span>, icon: () => <TitleIcon />});
+    return this.blockItem('subtitle', {
+      name: 'Subtitle',
+      display: () => <span style={{opacity: 0.7}}>{'Subtitle'}</span>,
+      icon: () => <TitleIcon />,
+    });
   }
 
   // --------------------------------------------------------------- List items
@@ -232,38 +241,43 @@ export class BlockMenu implements UiLifeCycles {
       if (getActiveUlType(mutxt.editor) === null) toggleBlock(mutxt.editor, 'ul');
       setUlType(mutxt.editor, ulType);
     };
-    return this.blockItem('ul', {name: 'Bulleted list', icon: () => <ULIcon />, keys: ['Primary', 'Alt', '8'], children: [
-      {
-        name: 'Disc bullets',
-        icon: () => (
-          <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: 'currentColor'}} />
-          </div>
-        ),
-        active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'disc')),
-        onSelect: this.exec(() => applyUlType('disc')),
-      },
-      {
-        name: 'Circle bullets',
-        icon: () => (
-          <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <div style={{width: 6, height: 6, borderRadius: '50%', border: '1px solid currentColor'}} />
-          </div>
-        ),
-        active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'circle')),
-        onSelect: this.exec(() => applyUlType('circle')),
-      },
-      {
-        name: 'Square bullets',
-        icon: () => (
-          <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <div style={{width: 6, height: 6, backgroundColor: 'currentColor'}} />
-          </div>
-        ),
-        active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'square')),
-        onSelect: this.exec(() => applyUlType('square')),
-      },
-    ]});
+    return this.blockItem('ul', {
+      name: 'Bulleted list',
+      icon: () => <ULIcon />,
+      keys: ['Primary', 'Alt', '8'],
+      children: [
+        {
+          name: 'Disc bullets',
+          icon: () => (
+            <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: 'currentColor'}} />
+            </div>
+          ),
+          active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'disc')),
+          onSelect: this.exec(() => applyUlType('disc')),
+        },
+        {
+          name: 'Circle bullets',
+          icon: () => (
+            <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{width: 6, height: 6, borderRadius: '50%', border: '1px solid currentColor'}} />
+            </div>
+          ),
+          active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'circle')),
+          onSelect: this.exec(() => applyUlType('circle')),
+        },
+        {
+          name: 'Square bullets',
+          icon: () => (
+            <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{width: 6, height: 6, backgroundColor: 'currentColor'}} />
+            </div>
+          ),
+          active: rsync.comp([mutxt.version], () => isUlTypeActive(mutxt.editor, 'square')),
+          onSelect: this.exec(() => applyUlType('square')),
+        },
+      ],
+    });
   }
   public itemOL(): MenuItem {
     const mutxt = this.mutxt;
@@ -277,27 +291,32 @@ export class BlockMenu implements UiLifeCycles {
       active: rsync.comp([mutxt.version], () => isOlTypeActive(mutxt.editor, olType)),
       onSelect: this.exec(() => applyOlType(olType)),
     });
-    return this.blockItem('ol', {name: 'Numbered list', icon: () => <OLIcon />, keys: ['Primary', 'Alt', '7'], children: [
-      olItem('Decimal', 'decimal', '1, 2, 3'),
-      olItem('Decimal w/ zero', 'decimal-leading-zero', '01, 02, 03'),
-      olItem('Lower Roman', 'lower-roman', 'i, ii, iii'),
-      olItem('Upper Roman', 'upper-roman', 'I, II, III'),
-      olItem('Lower alpha', 'lower-alpha', 'a, b, c'),
-      olItem('Upper alpha', 'upper-alpha', 'A, B, C'),
-      olItem('Lower Greek', 'lower-greek', 'α, β, γ'),
-      {
-        name: 'More styles',
-        sepBefore: true,
-        more: true,
-        children: [
-          olItem('Hiragana', 'hiragana', 'あ, い, う'),
-          olItem('Katakana', 'katakana', 'ア, イ, ウ'),
-          olItem('CJK ideographic', 'cjk-ideographic', '一, 二, 三'),
-          olItem('Hebrew', 'hebrew'),
-          olItem('Armenian', 'armenian'),
-        ],
-      },
-    ]});
+    return this.blockItem('ol', {
+      name: 'Numbered list',
+      icon: () => <OLIcon />,
+      keys: ['Primary', 'Alt', '7'],
+      children: [
+        olItem('Decimal', 'decimal', '1, 2, 3'),
+        olItem('Decimal w/ zero', 'decimal-leading-zero', '01, 02, 03'),
+        olItem('Lower Roman', 'lower-roman', 'i, ii, iii'),
+        olItem('Upper Roman', 'upper-roman', 'I, II, III'),
+        olItem('Lower alpha', 'lower-alpha', 'a, b, c'),
+        olItem('Upper alpha', 'upper-alpha', 'A, B, C'),
+        olItem('Lower Greek', 'lower-greek', 'α, β, γ'),
+        {
+          name: 'More styles',
+          sepBefore: true,
+          more: true,
+          children: [
+            olItem('Hiragana', 'hiragana', 'あ, い, う'),
+            olItem('Katakana', 'katakana', 'ア, イ, ウ'),
+            olItem('CJK ideographic', 'cjk-ideographic', '一, 二, 三'),
+            olItem('Hebrew', 'hebrew'),
+            olItem('Armenian', 'armenian'),
+          ],
+        },
+      ],
+    });
   }
   public itemChecklist(): MenuItem {
     return this.blockItem('checklist', {name: 'Checklist', icon: () => <ChecklistIcon />});
@@ -306,16 +325,32 @@ export class BlockMenu implements UiLifeCycles {
   // ------------------------------------------------------------------- Layout
 
   public itemAlignLeft(): MenuItem {
-    return this.layoutItem('left', {name: 'Align left', keys: ['Primary', 'Shift', 'l'], icon: () => <AlignLeftIcon />});
+    return this.layoutItem('left', {
+      name: 'Align left',
+      keys: ['Primary', 'Shift', 'l'],
+      icon: () => <AlignLeftIcon />,
+    });
   }
   public itemAlignCenter(): MenuItem {
-    return this.layoutItem('center', {name: 'Align center', keys: ['Primary', 'Shift', 'e'], icon: () => <AlignCenterIcon />});
+    return this.layoutItem('center', {
+      name: 'Align center',
+      keys: ['Primary', 'Shift', 'e'],
+      icon: () => <AlignCenterIcon />,
+    });
   }
   public itemAlignRight(): MenuItem {
-    return this.layoutItem('right', {name: 'Align right', keys: ['Primary', 'Shift', 'r'], icon: () => <AlignRightIcon />});
+    return this.layoutItem('right', {
+      name: 'Align right',
+      keys: ['Primary', 'Shift', 'r'],
+      icon: () => <AlignRightIcon />,
+    });
   }
   public itemAlignJustify(): MenuItem {
-    return this.layoutItem('justify', {name: 'Justify', keys: ['Primary', 'Shift', 'j'], icon: () => <AlignJustifyIcon />});
+    return this.layoutItem('justify', {
+      name: 'Justify',
+      keys: ['Primary', 'Shift', 'j'],
+      icon: () => <AlignJustifyIcon />,
+    });
   }
 
   // -------------------------------------------------------------- Indentation
@@ -375,13 +410,15 @@ export class BlockMenu implements UiLifeCycles {
     };
   }
 
-  private readonly exec = (fn: () => void) => (event: React.MouseEvent | React.TouchEvent): void => {
-    event.preventDefault();
-    fn();
-    ReactEditor.focus(this.mutxt.editor as ReactEditor);
-    this.mutxt.setFocused(true);
-    this.mutxt.sync(false);
-  };
+  private readonly exec =
+    (fn: () => void) =>
+    (event: React.MouseEvent | React.TouchEvent): void => {
+      event.preventDefault();
+      fn();
+      ReactEditor.focus(this.mutxt.editor as ReactEditor);
+      this.mutxt.setFocused(true);
+      this.mutxt.sync(false);
+    };
 
   private currentBlockFormat(): BlockFormat | undefined {
     return this.mutxt.block.currentBlockFormat();
@@ -389,24 +426,42 @@ export class BlockMenu implements UiLifeCycles {
 
   private headFor(format: BlockFormat | undefined): {name: string; icon?: () => React.ReactNode} | null {
     switch (format) {
-      case 'p': return this.itemParagraph();
-      case 'h1': return this.itemH1();
-      case 'h2': return this.itemH2();
-      case 'h3': return this.itemH3();
-      case 'h4': return this.itemH4();
-      case 'h5': return this.itemH5();
-      case 'h6': return this.itemH6();
-      case 'title': return this.itemTitle();
-      case 'subtitle': return this.itemSubtitle();
-      case 'blockquote': return this.itemBlockquote();
-      case 'callout': return this.itemCallout();
-      case 'code-block': return this.itemCodeBlock();
-      case 'pre': return this.itemPre();
-      case 'ul': return this.itemUL();
-      case 'ol': return this.itemOL();
-      case 'checklist': return this.itemChecklist();
-      case 'columns': return this.itemColumns();
-      default: return null;
+      case 'p':
+        return this.itemParagraph();
+      case 'h1':
+        return this.itemH1();
+      case 'h2':
+        return this.itemH2();
+      case 'h3':
+        return this.itemH3();
+      case 'h4':
+        return this.itemH4();
+      case 'h5':
+        return this.itemH5();
+      case 'h6':
+        return this.itemH6();
+      case 'title':
+        return this.itemTitle();
+      case 'subtitle':
+        return this.itemSubtitle();
+      case 'blockquote':
+        return this.itemBlockquote();
+      case 'callout':
+        return this.itemCallout();
+      case 'code-block':
+        return this.itemCodeBlock();
+      case 'pre':
+        return this.itemPre();
+      case 'ul':
+        return this.itemUL();
+      case 'ol':
+        return this.itemOL();
+      case 'checklist':
+        return this.itemChecklist();
+      case 'columns':
+        return this.itemColumns();
+      default:
+        return null;
     }
   }
 }

@@ -138,7 +138,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       className={titleClass}
       style={{
         borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
-        background: styles.g(1, .7),
+        background: styles.g(1, 0.7),
       }}
     >
       <div className={titleGroupClass}>
@@ -147,11 +147,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
         </strong>
         {subtitle}
       </div>
-      {!!headerRight && (
-        <div className={titleGroupClass}>
-          {headerRight}
-        </div>
-      )}
+      {!!headerRight && <div className={titleGroupClass}>{headerRight}</div>}
     </div>
   );
 
@@ -161,7 +157,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       className={footerClass}
       style={{
         borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
-        background: styles.g(1, .7),
+        background: styles.g(1, 0.7),
       }}
     >
       <BasicButton
@@ -194,7 +190,8 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   const measuredFooterHeight = footerHeight ?? 0;
   const safeHeight = Math.max(0, (anchor?.maxHeight() ?? Math.max(0, viewportHeight - 8)) - CONTEXT_PANE_BORDER);
   const availableContentHeight = Math.max(0, safeHeight - measuredHeaderHeight - measuredFooterHeight);
-  const contentViewportHeight = contentHeight === null ? availableContentHeight : Math.min(contentHeight, availableContentHeight);
+  const contentViewportHeight =
+    contentHeight === null ? availableContentHeight : Math.min(contentHeight, availableContentHeight);
   const scrollHeight =
     contentHeight === null
       ? safeHeight

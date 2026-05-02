@@ -43,10 +43,7 @@ export class InlineMenu implements UiLifeCycles {
   }
 
   private markActive(mark: MarkFormat) {
-    return rsync.comp(
-      [this.mutxt.version],
-      () => isMarkActive(this.mutxt.editor, mark),
-    );
+    return rsync.comp([this.mutxt.version], () => isMarkActive(this.mutxt.editor, mark));
   }
 
   public build(): MenuItem {
@@ -68,11 +65,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       name: 'Selection menu',
       maxToolbarItems: 4,
-      children: [
-        this.menuFmt(),
-        {name: 'sep-annon', sep: true},
-        this.menuAnnotations(),
-      ],
+      children: [this.menuFmt(), {name: 'sep-annon', sep: true}, this.menuAnnotations()],
     };
   }
 
@@ -81,16 +74,8 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Formatting',
       expandChild: 0,
       // preview: this.recent,
-      children: [
-        this.menuFmtCommon(),
-        this.menuFmtTechnical(),
-      ] as MenuItem[],
-      preview: [
-        this.itemBold(),
-        this.itemItalic(),
-        this.itemUnderline(),
-        this.itemCode(),
-      ] as MenuItem[],
+      children: [this.menuFmtCommon(), this.menuFmtTechnical()] as MenuItem[],
+      preview: [this.itemBold(), this.itemItalic(), this.itemUnderline(), this.itemCode()] as MenuItem[],
     };
     return formatting;
   }
@@ -208,14 +193,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Technical',
       expand: 8,
       sepBefore: true,
-      children: [
-        this.itemCode(),
-        this.itemSup(),
-        this.itemSub(),
-        this.itemKey(),
-        this.itemIns(),
-        this.itemDel(),
-      ],
+      children: [this.itemCode(), this.itemSup(), this.itemSub(), this.itemKey(), this.itemIns(), this.itemDel()],
     };
   }
   public itemCode(): InlineMenuItem {
@@ -292,9 +270,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       name: 'Annotations',
       expand: 3,
-      children: [
-        this.itemLink(opts),
-      ],
+      children: [this.itemLink(opts)],
     };
   }
   public itemLink(opts: {anchorFromSelection?: boolean} = {}): MenuItem {
@@ -303,14 +279,8 @@ export class InlineMenu implements UiLifeCycles {
     return {
       name: 'Link',
       icon: () => <LinkIcon />,
-      disabled: rsync.comp(
-        [link.canOpen],
-        ([canOpen]) => !canOpen,
-      ),
-      active: rsync.comp(
-        [mutxt.caretLinkHref],
-        ([href]) => !!href,
-      ),
+      disabled: rsync.comp([link.canOpen], ([canOpen]) => !canOpen),
+      active: rsync.comp([mutxt.caretLinkHref], ([href]) => !!href),
       onSelect: (event) => {
         if (opts.anchorFromSelection) {
           link.setAnchorFromSelection();
@@ -329,9 +299,7 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Modify',
       expand: 3,
       onSelect: () => {},
-      children: [
-        this.itemClear(),
-      ],
+      children: [this.itemClear()],
     };
   }
   public itemClear(): MenuItem {

@@ -47,7 +47,9 @@ export const Spoiler: React.FC<SpoilerProps> = (props) => {
       '& *': {
         col: isRevealed ? 'inherit' : 'transparent',
       },
-    }) + startClass + endClass;
+    }) +
+    startClass +
+    endClass;
 
   return <span className={className}>{children}</span>;
 };

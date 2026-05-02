@@ -17,10 +17,7 @@ export class EmbedButtonState {
   public readonly editingPath = rsync.val<Path | null>(null);
   /** Snapshot of the bounding rect of the trigger element (button or caret). */
   public readonly anchorRect = rsync.val<DOMRect | null>(null);
-  public readonly normalizedDraft = rsync.comp(
-    [this.draftUrl],
-    ([draftUrl]) => normalizeEmbedUrl(draftUrl),
-  );
+  public readonly normalizedDraft = rsync.comp([this.draftUrl], ([draftUrl]) => normalizeEmbedUrl(draftUrl));
   public readonly canOpen: rsync.ReactComputed<boolean>;
   public readonly selected: rsync.ReactComputed<boolean>;
 

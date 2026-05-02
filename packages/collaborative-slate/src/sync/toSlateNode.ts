@@ -53,9 +53,7 @@ class SlateNodeCache {
 export class ToSlateNode {
   public readonly cache = new SlateNodeCache();
 
-  constructor (
-      public defaultBlock = 'p',
-  ) {}
+  constructor(public defaultBlock = 'p') {}
 
   convert(fragment: Fragment<string>): SlateDocument {
     const root = fragment.root;

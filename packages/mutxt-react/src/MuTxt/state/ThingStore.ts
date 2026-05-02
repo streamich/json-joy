@@ -41,9 +41,10 @@ export class ThingStore implements UiLifeCycles {
   }
 
   public start(): () => void {
-    const subscribe = (target: ObjApi<ObjNode>) => target.onSubtreeChange(() => {
-      this.version.next(this.version.value + 1);
-    });
+    const subscribe = (target: ObjApi<ObjNode>) =>
+      target.onSubtreeChange(() => {
+        this.version.next(this.version.value + 1);
+      });
     const initial = this.read();
     if (initial) {
       this.unsub = subscribe(initial);

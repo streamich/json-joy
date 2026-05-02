@@ -73,14 +73,7 @@ export const EmbedToolbarPopup: React.FC = () => {
           tooltip={{nowrap: true, renderTooltip: () => 'Copy URL'}}
         />
         <BasicTooltip nowrap renderTooltip={() => 'Open source'}>
-          <BasicButton
-            type="button"
-            width={32}
-            height={32}
-            rounder
-            onMouseDown={preventMouseDown}
-            to={normalizedDraft}
-          >
+          <BasicButton type="button" width={32} height={32} rounder onMouseDown={preventMouseDown} to={normalizedDraft}>
             <Iconista set={'lucide' as any} icon={'external-link' as any} width={16} height={16} />
           </BasicButton>
         </BasicTooltip>

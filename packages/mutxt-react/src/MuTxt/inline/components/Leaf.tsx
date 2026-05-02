@@ -67,7 +67,7 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   let content = children;
 
   if (!isInCodeBlock) {
-    if (leaf.kbd) content = <Key>{content}</Key>; 
+    if (leaf.kbd) content = <Key>{content}</Key>;
   }
 
   if (leaf.ins) content = <ins className={insClass}>{content}</ins>;
@@ -110,5 +110,9 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
     );
   }
 
-  return <span {...attributes} style={style}>{content}</span>;
+  return (
+    <span {...attributes} style={style}>
+      {content}
+    </span>
+  );
 };

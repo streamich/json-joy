@@ -67,7 +67,9 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({filename = 'log'}
           <ContextSep line />
           <ContextSep />
 
-          <ContextTitle>{t('Batch')} ({t('columnar')})</ContextTitle>
+          <ContextTitle>
+            {t('Batch')} ({t('columnar')})
+          </ContextTitle>
 
           <ContextItem
             closePopup
@@ -143,7 +145,9 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({filename = 'log'}
           <ContextSep line />
           <ContextSep />
 
-          <ContextTitle>{t('Batch')} ({t('patch list')})</ContextTitle>
+          <ContextTitle>
+            {t('Batch')} ({t('patch list')})
+          </ContextTitle>
 
           <ContextItem
             closePopup

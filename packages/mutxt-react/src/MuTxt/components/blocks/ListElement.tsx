@@ -6,7 +6,12 @@ import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 
 import {setChecklistItemChecked} from '../../behavior';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {isEmptyBlock} from '../../util';
-import type {BulletedListElement, ChecklistListElement, ListItemElement as ListItemNode, NumberedListElement} from '../../types';
+import type {
+  BulletedListElement,
+  ChecklistListElement,
+  ListItemElement as ListItemNode,
+  NumberedListElement,
+} from '../../types';
 
 const listClass = rule({
   m: '0 0 16px',
@@ -67,7 +72,7 @@ const checkboxClass = rule({
   },
   '&:checked::before': {
     transform: 'scale(.7)',
-  }
+  },
 });
 
 const checklistContentClass = rule({

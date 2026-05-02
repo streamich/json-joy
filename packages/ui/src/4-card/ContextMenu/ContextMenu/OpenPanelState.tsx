@@ -14,7 +14,7 @@ export interface OpenPanelStateOpts {
    * unique prefix so the value carries ownership.
    */
   prefix?: string;
-};
+}
 
 const COOL_DOWN_TIME = 69;
 

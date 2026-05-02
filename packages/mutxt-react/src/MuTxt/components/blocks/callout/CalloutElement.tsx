@@ -95,7 +95,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
     return {
       accent: mainColor.toString(),
       bg: mainColor.g(0.02),
-      bd: mainColor.col(0.16).fg.pct(0, -.5).toString(),
+      bd: mainColor.col(0.16).fg.pct(0, -0.5).toString(),
       shadow: shadow.toString(),
       title: accentColorTitle.toString(),
     };
@@ -123,8 +123,16 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
     >
       {hasHeader && (
         <div contentEditable={false} className={headerClass}>
-          {!!icon && <span className={iconClass} style={{color: colors.title}}>{icon}</span>}
-          {!!title && <span className={titleClass} style={{color: colors.title}}>{title}</span>}
+          {!!icon && (
+            <span className={iconClass} style={{color: colors.title}}>
+              {icon}
+            </span>
+          )}
+          {!!title && (
+            <span className={titleClass} style={{color: colors.title}}>
+              {title}
+            </span>
+          )}
           {!readOnly && (
             <span className={moreClass}>
               <Popup renderContext={() => <CalloutOptionsPopup element={element} />}>

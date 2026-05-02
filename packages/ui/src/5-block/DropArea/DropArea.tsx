@@ -20,7 +20,7 @@ const areaClass = drule({
   bdrad: '8px',
   cur: 'pointer',
   ta: 'center',
-  'svg': {
+  svg: {
     stroke: 'currentColor',
   },
   '&:hover svg': {
@@ -105,9 +105,7 @@ export const DropArea: React.FC<DropAreaProps> = ({
   }, [area.over, state]);
 
   const verticalPadding = compact ? 16 : 110;
-  const dashed = over
-    ? `1px dashed ${theme.color.sem.blue[0]}`
-    : `1px dashed ${theme.g(0.82)}`;
+  const dashed = over ? `1px dashed ${theme.color.sem.blue[0]}` : `1px dashed ${theme.g(0.82)}`;
   const bg = over ? 'rgba(0,128,255,.04)' : theme.g(1);
 
   const areaCls = areaClass({

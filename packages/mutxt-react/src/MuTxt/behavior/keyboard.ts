@@ -1,4 +1,13 @@
-import {insertCodeBlockBreak, insertCodeBlockExit, redo, resetEmptyBlockToParagraph, setAlignment, toggleBlock, toggleMark, undo} from '../behavior';
+import {
+  insertCodeBlockBreak,
+  insertCodeBlockExit,
+  redo,
+  resetEmptyBlockToParagraph,
+  setAlignment,
+  toggleBlock,
+  toggleMark,
+  undo,
+} from '../behavior';
 import {dedentBlock, indentBlock} from './indentation';
 import {Key} from '@jsonjoy.com/keyboard';
 import type {AnyBinding, Signature} from '@jsonjoy.com/keyboard';
@@ -19,35 +28,56 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
 
   const bindings: AnyBinding[] = [
     // -------------------------------------------------------------- Omni menu
-    ['Shift Shift', () => {
-      state.omni.openAtCaret();
-    }],
-    ['P+j', (key: Key) => {
-      key.event?.preventDefault();
-      state.omni.openAsPalette();
-    }],
+    [
+      'Shift Shift',
+      () => {
+        state.omni.openAtCaret();
+      },
+    ],
+    [
+      'P+j',
+      (key: Key) => {
+        key.event?.preventDefault();
+        state.omni.openAsPalette();
+      },
+    ],
     // Space is a beginner-friendly shortcut: opens in an empty block (caret)
     // or with a range selection. In a non-empty block at the caret, Space
     // falls through to insert a space normally, if menu not opened.
-    ['Space', (key: Key) => {
-      if (state.omni.handleSpaceKey()) key.event?.preventDefault();
-    }],
+    [
+      'Space',
+      (key: Key) => {
+        if (state.omni.handleSpaceKey()) key.event?.preventDefault();
+      },
+    ],
 
     // ----------------------------------------------- Empty-block to paragraph
-    ['Backspace', (key: Key) => {
-      if (resetEmptyBlockToParagraph(editor)) consume(key);
-    }],
-    ['Delete', (key: Key) => {
-      if (resetEmptyBlockToParagraph(editor)) consume(key);
-    }],
+    [
+      'Backspace',
+      (key: Key) => {
+        if (resetEmptyBlockToParagraph(editor)) consume(key);
+      },
+    ],
+    [
+      'Delete',
+      (key: Key) => {
+        if (resetEmptyBlockToParagraph(editor)) consume(key);
+      },
+    ],
 
     // ---------------------------------------- Code-block break / exit (Enter)
-    ['P+Enter', (key: Key) => {
-      if (insertCodeBlockBreak(editor)) consume(key);
-    }],
-    ['Shift+Enter', (key: Key) => {
-      if (insertCodeBlockExit(editor)) consume(key);
-    }],
+    [
+      'P+Enter',
+      (key: Key) => {
+        if (insertCodeBlockBreak(editor)) consume(key);
+      },
+    ],
+    [
+      'Shift+Enter',
+      (key: Key) => {
+        if (insertCodeBlockExit(editor)) consume(key);
+      },
+    ],
 
     // ------------------------------------------------------------------ Marks
     ['P+b', (key: Key) => consume(key, () => toggleMark(editor, 'bold'))],
@@ -57,14 +87,17 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     ['P+Shift+x', (key: Key) => consume(key, () => toggleMark(editor, 'strikethrough'))],
 
     // ------------------------------------------------------------------- Link
-    ['P+k', (key: Key) => {
-      const link = state.inline.link;
-      if (!link.canOpen.value) return;
-      key.event?.preventDefault();
-      link.setAnchorFromSelection();
-      state.inline.dismissed.next(true);
-      link.toggle();
-    }],
+    [
+      'P+k',
+      (key: Key) => {
+        const link = state.inline.link;
+        if (!link.canOpen.value) return;
+        key.event?.preventDefault();
+        link.setAnchorFromSelection();
+        state.inline.dismissed.next(true);
+        link.toggle();
+      },
+    ],
 
     // ------------------------------------------------------------ Undo / redo
     ['P+z', (key: Key) => consume(key, () => undo(editor))],

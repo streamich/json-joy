@@ -215,7 +215,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   const codeStyle: React.CSSProperties = {
     paddingLeft: showLineNumbers ? '14px' : '18px',
     caretColor: styles.g(0),
-    color:!!languageValue ? 'rgba(127,127,127,.1)' : void 0,
+    color: !!languageValue ? 'rgba(127,127,127,.1)' : void 0,
   };
 
   const codeOverlayStyle: React.CSSProperties = {
@@ -235,7 +235,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
             <ColorTokens as="span" code={codeText} lang={languageValue} />
           </pre>
         )}
-        <SetTrace name='isInCodeBlock' value={true}>
+        <SetTrace name="isInCodeBlock" value={true}>
           {children}
         </SetTrace>
       </code>
@@ -247,13 +247,29 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
       <div className={metaBarClass} style={metaBarStyle}>
         {readOnly ? (
           <div className={metaInputsClass}>
-            {!!fileNameValue && <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>{fileNameValue || 'Code block'}</span>}
+            {!!fileNameValue && (
+              <span
+                className={metaLabelClass}
+                style={{
+                  opacity: !fileNameValue ? 0.68 : undefined,
+                  marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft,
+                }}
+              >
+                {fileNameValue || 'Code block'}
+              </span>
+            )}
             <CopyButton onCopy={getCodeText} width={28} height={28} rounder onMouseDown={preventMouseDown} />
           </div>
         ) : (
           <div className={metaInputsClass} onMouseDown={stopPointerPropagation} onClick={stopPointerPropagation}>
             <div className={metaPreviewClass}>
-              <span className={metaLabelClass} style={{opacity: !fileNameValue ? 0.68 : undefined, marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft}}>
+              <span
+                className={metaLabelClass}
+                style={{
+                  opacity: !fileNameValue ? 0.68 : undefined,
+                  marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft,
+                }}
+              >
                 {fileNameValue || <Iconista set="bootstrap" icon="file-earmark-code" width={16} height={16} />}
               </span>
             </div>
@@ -279,7 +295,11 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   );
 
   return (
-    <div {...attributes} className={codeWrapClass} style={{'--code-hover-bg': styles.g(0, 0.02), textAlign: element.align} as React.CSSProperties}>
+    <div
+      {...attributes}
+      className={codeWrapClass}
+      style={{'--code-hover-bg': styles.g(0, 0.02), textAlign: element.align} as React.CSSProperties}
+    >
       <Paper round hover>
         {header}
         {codeContent}

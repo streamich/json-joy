@@ -8,7 +8,7 @@ export class DebounceQueue<T> {
     /**
      * Queue will be flushed after this many milliseconds since the last item
      * was pushed, if it hasn't been flushed by item limit already.
-    */
+     */
     public timeLimit: number,
   ) {}
 

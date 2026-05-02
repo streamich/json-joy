@@ -100,7 +100,12 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, ch
 
   return (
     <Portal>
-      <div ref={ref} className={positionClass + (fadeIn ? positionClassWithFadeIn : '') + (animate ? positionClassWithAnimation : '')}>
+      <div
+        ref={ref}
+        className={
+          positionClass + (fadeIn ? positionClassWithFadeIn : '') + (animate ? positionClassWithAnimation : '')
+        }
+      >
         {children}
       </div>
     </Portal>

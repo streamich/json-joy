@@ -50,8 +50,7 @@ export const getActiveEmbedEntry = (editor: Editor): [EmbedElement, Path] | null
   return (match as [EmbedElement, Path] | undefined) ?? null;
 };
 
-export const getActiveEmbed = (editor: Editor): EmbedElement | null =>
-  getActiveEmbedEntry(editor)?.[0] ?? null;
+export const getActiveEmbed = (editor: Editor): EmbedElement | null => getActiveEmbedEntry(editor)?.[0] ?? null;
 
 export const insertParagraphNearActiveEmbed = (editor: Editor, position: 'above' | 'below' = 'below'): Path | null => {
   const entry = getActiveEmbedEntry(editor);

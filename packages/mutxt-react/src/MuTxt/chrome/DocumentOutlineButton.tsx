@@ -48,22 +48,48 @@ export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({edi
     [editor],
   );
 
-  const renderContext = () => outline.length ? (
-    <ContextMenu inset menu={{
-      name: 'Table of contents',
-      minWidth: Math.min(320, window.innerWidth - 32),
-      children: outline.map((item) => ({
-        key: item.key,
-        name: item.title,
-        display: () => <div style={{paddingLeft: (item.level - 1) * 16, fontWeight: 400 + (3 - item.level) * 100, fontSize: item.level ? void 0 : '1.1em'}}>{item.title}</div>,
-        // right: () => <span style={{fontSize: 10, opacity: 0.5}}>{item.path.join('.')}</span>,
-        icon: () => item.level
-          ? <Iconista set="tabler" icon={`h-${item.level}`} width={16} height={16} style={{opacity: .5}} />
-          : <Iconista set="lucide" icon="type" width={16} height={16} style={{opacity: .5}} />,
-        onSelect: () => handleScrollTo(item.path),
-      })),
-    }} />) : (
-      <EditorContextPopup noMargin title={'Document contents'} subtitle={outline.length ? `${outline.length} section${outline.length === 1 ? '' : 's'} from heading structure.` : 'Add headings to build a quick outline.'}>
+  const renderContext = () =>
+    outline.length ? (
+      <ContextMenu
+        inset
+        menu={{
+          name: 'Table of contents',
+          minWidth: Math.min(320, window.innerWidth - 32),
+          children: outline.map((item) => ({
+            key: item.key,
+            name: item.title,
+            display: () => (
+              <div
+                style={{
+                  paddingLeft: (item.level - 1) * 16,
+                  fontWeight: 400 + (3 - item.level) * 100,
+                  fontSize: item.level ? void 0 : '1.1em',
+                }}
+              >
+                {item.title}
+              </div>
+            ),
+            // right: () => <span style={{fontSize: 10, opacity: 0.5}}>{item.path.join('.')}</span>,
+            icon: () =>
+              item.level ? (
+                <Iconista set="tabler" icon={`h-${item.level}`} width={16} height={16} style={{opacity: 0.5}} />
+              ) : (
+                <Iconista set="lucide" icon="type" width={16} height={16} style={{opacity: 0.5}} />
+              ),
+            onSelect: () => handleScrollTo(item.path),
+          })),
+        }}
+      />
+    ) : (
+      <EditorContextPopup
+        noMargin
+        title={'Document contents'}
+        subtitle={
+          outline.length
+            ? `${outline.length} section${outline.length === 1 ? '' : 's'} from heading structure.`
+            : 'Add headings to build a quick outline.'
+        }
+      >
         <EmptyState frame>
           <div className={emptyStateClass} style={{color: styles.light ? styles.g(0.4) : styles.g(0.6)}}>
             Use Heading 1, Heading 2, or Heading 3 blocks to populate the contents list.
@@ -74,13 +100,7 @@ export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({edi
 
   return (
     <Popup renderContext={renderContext} tooltip={{renderTooltip: () => 'Table of contents', nowrap: true}}>
-      <BasicButton
-        width={'auto'}
-        height={32}
-        compact
-        rounder
-        aria-label={'Open document table of contents'}
-      >
+      <BasicButton width={'auto'} height={32} compact rounder aria-label={'Open document table of contents'}>
         <span className={buttonLabelClass}>
           <Icon />
           <span>Go to</span>

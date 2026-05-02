@@ -113,8 +113,11 @@ const tickMarkerClass = rule({
 });
 
 const tinyHitAreaClass = rule({
-  pos: 'absolute', 
-  t: 0, l: 0, r: 0, b: 0,
+  pos: 'absolute',
+  t: 0,
+  l: 0,
+  r: 0,
+  b: 0,
 });
 
 const blockClassTiny = rule({
@@ -269,7 +272,8 @@ export const Bar: React.FC<Bar> = ({log}) => {
   const slotsPerViewport = width ? Math.max(1, Math.floor(slotListViewportWidth / slotWidth)) : 0;
   const slotBedWidth = patchCount * slotWidth;
   const scrollHandleRatio = slotBedWidth > 0 ? slotListViewportWidth / slotBedWidth : 1;
-  const scrollHandleWidth = slotBedWidth > 0 ? Math.min(scrollBedWidth, scrollHandleRatio * scrollBedWidth) : scrollBedWidth;
+  const scrollHandleWidth =
+    slotBedWidth > 0 ? Math.min(scrollBedWidth, scrollHandleRatio * scrollBedWidth) : scrollBedWidth;
   const scrollRunway = Math.max(0, scrollBedWidth - scrollHandleWidth);
   const slotsFitInViewport = !width || totalPatches <= slotsPerViewport;
   const slotIndexOffset = slotsFitInViewport ? 0 : Math.floor(scroll * (totalPatches - slotsPerViewport));
@@ -303,17 +307,17 @@ export const Bar: React.FC<Bar> = ({log}) => {
       pendingWheelDx.current += dx;
       if (wheelRaf.current !== null) return;
       // wheelRaf.current = requestAnimationFrame(() => {
-        wheelRaf.current = null;
-        const delta = pendingWheelDx.current;
-        pendingWheelDx.current = 0;
-        !!moveScrollByPx(delta);
-        // const didMove = !!moveScrollByPx(delta);
-        // if (!didMove) return;
-        // if (wheelTimeout.current !== null) window.clearTimeout(wheelTimeout.current);
-        // wheelTimeout.current = window.setTimeout(() => {
-        //   setForceUpdate((x) => x + 1);
-          // wheelTimeout.current = null;
-        // }, 40);
+      wheelRaf.current = null;
+      const delta = pendingWheelDx.current;
+      pendingWheelDx.current = 0;
+      !!moveScrollByPx(delta);
+      // const didMove = !!moveScrollByPx(delta);
+      // if (!didMove) return;
+      // if (wheelTimeout.current !== null) window.clearTimeout(wheelTimeout.current);
+      // wheelTimeout.current = window.setTimeout(() => {
+      //   setForceUpdate((x) => x + 1);
+      // wheelTimeout.current = null;
+      // }, 40);
       // });
     },
     [moveScrollByPx],
@@ -338,19 +342,21 @@ export const Bar: React.FC<Bar> = ({log}) => {
   );
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-        switch (e.code) {
-          case 'ArrowUp':
-          case 'ArrowRight': {
-            state.next();
-            break;
-          }
-          case 'ArrowDown':
-          case 'ArrowLeft': {
-            state.prev();
-            break;
-          }
+      switch (e.code) {
+        case 'ArrowUp':
+        case 'ArrowRight': {
+          state.next();
+          break;
         }
-      }, [state]);
+        case 'ArrowDown':
+        case 'ArrowLeft': {
+          state.prev();
+          break;
+        }
+      }
+    },
+    [state],
+  );
   const [scratchSlotsRef] = useScratch({
     onScratch: ({dx}) => {
       if (typeof dx === 'number' && Math.abs(dx) > 8 && isMouseDown.current && !isScrubbing.current) {
@@ -501,13 +507,7 @@ export const Bar: React.FC<Bar> = ({log}) => {
 
   const scrollBed = slotsFitInViewport ? null : (
     <div className={scrollBedClass} style={{height: view === 'tiny' ? 8 : void 0}}>
-      {scrollHandleRatio < 1 && (
-        <div
-          ref={scratchRef}
-          className={scrollHandleClass}
-          style={scrollHandleStyle}
-        />
-      )}
+      {scrollHandleRatio < 1 && <div ref={scratchRef} className={scrollHandleClass} style={scrollHandleStyle} />}
     </div>
   );
 

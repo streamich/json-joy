@@ -34,8 +34,8 @@ const EmbedFallback: React.FC<{url: string}> = ({url}) => {
   return (
     <a
       href={url}
-      target='_blank'
-      rel='noopener noreferrer'
+      target="_blank"
+      rel="noopener noreferrer"
       style={{
         display: 'flex',
         boxSizing: 'border-box',
@@ -82,12 +82,12 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({url, caption, compact
   return (
     <div className={previewClass}>
       <Paper
-      noOutline
-      style={{
-        margin: '4px 0',
-        overflow: 'hidden',
-        position: 'relative',
-      }}
+        noOutline
+        style={{
+          margin: '4px 0',
+          overflow: 'hidden',
+          position: 'relative',
+        }}
       >
         <div style={{padding: compact ? 12 : 16}}>
           <Embed
@@ -139,12 +139,7 @@ export const EmbedElement: React.FC<EmbedElementProps> = ({attributes, children,
   return (
     <div {...attributes} className={blockClass}>
       <div contentEditable={false}>
-        <EmbedPreview
-          url={element.url}
-          width={element.width ?? 720}
-          caption={element.caption}
-          selected={selected}
-        />
+        <EmbedPreview url={element.url} width={element.width ?? 720} caption={element.caption} selected={selected} />
       </div>
       {children}
     </div>

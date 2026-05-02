@@ -160,11 +160,7 @@ export const CalloutOptions: React.FC = () => {
       <Separator />
 
       <FormRow title={t('Accent color')}>
-        <ColorPickerInput
-          color={color}
-          onChange={handleColorChange}
-          noAlpha
-        />
+        <ColorPickerInput color={color} onChange={handleColorChange} noAlpha />
       </FormRow>
     </div>
   );

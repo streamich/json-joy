@@ -13,9 +13,7 @@ export const OmniFloater: React.FC<OmniFloaterProps> = () => {
   const point = omni.point.use();
   const mode = omni.mode.use();
 
-  const clickAwayRef = useClickAway(
-    React.useCallback(() => omni.close(), [omni]),
-  );
+  const clickAwayRef = useClickAway(React.useCallback(() => omni.close(), [omni]));
 
   React.useEffect(() => {
     if (!open) return;
@@ -42,12 +40,7 @@ export const OmniFloater: React.FC<OmniFloaterProps> = () => {
           e.stopPropagation();
         }}
       >
-        <ContextMenu
-          inset
-          showSearch
-          menu={{...menu, minWidth}}
-          onEsc={omni.close}
-        />
+        <ContextMenu inset showSearch menu={{...menu, minWidth}} onEsc={omni.close} />
       </div>
     </PositionAtPoint>
   );

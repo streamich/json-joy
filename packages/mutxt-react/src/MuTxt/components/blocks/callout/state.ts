@@ -65,11 +65,7 @@ export class CalloutOptionsState {
     this.color.set(element.color ?? '');
   };
 
-  private readonly applyValue = (
-    field: 'icon' | 'title' | 'color',
-    value: string,
-    currentValue?: string,
-  ): void => {
+  private readonly applyValue = (field: 'icon' | 'title' | 'color', value: string, currentValue?: string): void => {
     const prevValue = (currentValue ?? '').trim();
     const nextValue = field === 'icon' ? value : value.trim();
     if (nextValue === prevValue && (field !== 'icon' || nextValue === (currentValue ?? ''))) return;

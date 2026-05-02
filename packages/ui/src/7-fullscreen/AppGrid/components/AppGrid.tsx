@@ -64,7 +64,7 @@ export const AppGrid: React.FC<AppGridProps> = ({
   const rightVisible = state.rightVisible();
 
   const toggle = (
-    <BasicTooltip renderTooltip={() => leftVisible ? t('Close sidebar') : t('Open sidebar')}>
+    <BasicTooltip renderTooltip={() => (leftVisible ? t('Close sidebar') : t('Open sidebar'))}>
       <BasicButton rounder size={32} onClick={state.toggleLeft}>
         <Iconista
           set="bootstrap"
@@ -95,7 +95,9 @@ export const AppGrid: React.FC<AppGridProps> = ({
     </Pane>
   );
 
-  let content = column ? column(leftVisible ? null : toggle) : (
+  let content = column ? (
+    column(leftVisible ? null : toggle)
+  ) : (
     <AppGridColumn
       header={
         typeof left === 'function' && leftState === 'open' ? (

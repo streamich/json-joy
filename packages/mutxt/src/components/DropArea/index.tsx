@@ -14,20 +14,12 @@ export const DropArea: React.FC<DropAreaProps> = ({compact}) => {
   const files = useBehaviorSubject(state.files$);
   const [t] = useT();
 
-  const onFiles = React.useCallback(
-    (dropped: File[]) => state.addFiles(dropped),
-    [state],
-  );
+  const onFiles = React.useCallback((dropped: File[]) => state.addFiles(dropped), [state]);
   const onUri = React.useCallback((uri: string) => console.log('uri', uri), []);
   const onText = React.useCallback((text: string) => console.log('text', text), []);
 
   return (
-    <UiDropArea
-      compact={compact || files.length > 0}
-      onFiles={onFiles}
-      onUri={onUri}
-      onText={onText}
-    >
+    <UiDropArea compact={compact || files.length > 0} onFiles={onFiles} onUri={onUri} onText={onText}>
       <Text className="DropArea-text" font={'ui3'} size={-1} style={{pointerEvents: 'none'}}>
         {t('Click or drop files here')}
       </Text>

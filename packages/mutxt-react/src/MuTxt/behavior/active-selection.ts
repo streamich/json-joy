@@ -17,10 +17,7 @@ export interface ActiveSelectionDecoration extends BaseRange {
  * uses only a range's offsets — not its path — so cross-node ranges must be
  * clipped to the bounds of the current text node before being returned.
  */
-export const decorActiveSelection = (
-  entry: NodeEntry,
-  range: Range,
-): ActiveSelectionDecoration | null => {
+export const decorActiveSelection = (entry: NodeEntry, range: Range): ActiveSelectionDecoration | null => {
   const [node, path] = entry;
   if (!Text.isText(node)) return null;
   const textLen = node.text.length;

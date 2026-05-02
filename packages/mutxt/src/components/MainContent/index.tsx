@@ -50,7 +50,7 @@ export const MainContent: React.FC = () => {
   return (
     <div className={blockClass}>
       <div className={contentClass}>
-        {files.map(f => (
+        {files.map((f) => (
           <Document key={f.id} file={f} />
         ))}
       </div>

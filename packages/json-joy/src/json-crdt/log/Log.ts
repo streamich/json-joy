@@ -49,13 +49,11 @@ export class Log<N extends JsonNode = JsonNode<any>, Metadata extends Record<str
    */
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
     const sid = model.clock.sid;
-    const log = new Log<N>(
-      () => {
-        const m = Model.create(undefined, sid) as unknown as Model<N>;
-        m.ext = model.ext;
-        return m;
-      },
-    ); /** @todo Maybe provide second arg to `new Log(...)` */
+    const log = new Log<N>(() => {
+      const m = Model.create(undefined, sid) as unknown as Model<N>;
+      m.ext = model.ext;
+      return m;
+    }); /** @todo Maybe provide second arg to `new Log(...)` */
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;

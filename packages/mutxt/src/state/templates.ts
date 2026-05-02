@@ -31,7 +31,14 @@ const designDoc: SlateDocument = [
     children: [{text: 'One-paragraph summary of the proposal and the change it produces.'}],
   },
   {type: 'h2', children: [{text: 'Background'}]},
-  {type: 'p', children: [{text: 'Why are we doing this? What problem are we solving, and for whom? Link to prior art, incidents, and related docs.'}]},
+  {
+    type: 'p',
+    children: [
+      {
+        text: 'Why are we doing this? What problem are we solving, and for whom? Link to prior art, incidents, and related docs.',
+      },
+    ],
+  },
   {type: 'h2', children: [{text: 'Goals'}]},
   {
     type: 'ul',
@@ -43,12 +50,17 @@ const designDoc: SlateDocument = [
   {type: 'h2', children: [{text: 'Non-goals'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: 'Things we are explicitly not solving in this round.'}]},
-    ],
+    children: [{type: 'li', children: [{text: 'Things we are explicitly not solving in this round.'}]}],
   },
   {type: 'h2', children: [{text: 'Proposal'}]},
-  {type: 'p', children: [{text: 'High-level approach, then drill into the specifics. Describe the data model, API surface, and any user-facing changes.'}]},
+  {
+    type: 'p',
+    children: [
+      {
+        text: 'High-level approach, then drill into the specifics. Describe the data model, API surface, and any user-facing changes.',
+      },
+    ],
+  },
   {type: 'h3', children: [{text: 'API'}]},
   {
     type: 'code-block',
@@ -169,7 +181,10 @@ const bugReport: SlateDocument = [
     children: [{text: 'Paste relevant log output here'}],
   },
   {type: 'h2', children: [{text: 'Workaround'}]},
-  {type: 'p', children: [{text: 'Any temporary mitigation users can apply, or '}, {text: 'none', italic: true}, {text: '.'}]},
+  {
+    type: 'p',
+    children: [{text: 'Any temporary mitigation users can apply, or '}, {text: 'none', italic: true}, {text: '.'}],
+  },
   {type: 'h2', children: [{text: 'Investigation notes'}]},
   {
     type: 'ul',
@@ -209,12 +224,13 @@ const readme: SlateDocument = [
   {
     type: 'code-block',
     language: 'ts',
-    children: [
-      {text: "import {example} from '<project-name>';\n\nexample();"},
-    ],
+    children: [{text: "import {example} from '<project-name>';\n\nexample();"}],
   },
   {type: 'h2', children: [{text: 'API'}]},
-  {type: 'p', children: [{text: 'Document each public export — its signature, parameters, return value, and side effects.'}]},
+  {
+    type: 'p',
+    children: [{text: 'Document each public export — its signature, parameters, return value, and side effects.'}],
+  },
   {type: 'h2', children: [{text: 'Development'}]},
   {
     type: 'code-block',
@@ -222,7 +238,14 @@ const readme: SlateDocument = [
     children: [{text: 'git clone <repo>\nnpm install\nnpm test'}],
   },
   {type: 'h2', children: [{text: 'Contributing'}]},
-  {type: 'p', children: [{text: 'Issues and pull requests are welcome. See '}, {text: 'CONTRIBUTING.md', code: true}, {text: ' for guidelines.'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Issues and pull requests are welcome. See '},
+      {text: 'CONTRIBUTING.md', code: true},
+      {text: ' for guidelines.'},
+    ],
+  },
   {type: 'h2', children: [{text: 'License'}]},
   {type: 'p', children: [{text: 'MIT'}]},
 ];
@@ -267,22 +290,30 @@ const postmortem: SlateDocument = [
     ],
   },
   {type: 'h2', children: [{text: 'Root cause'}]},
-  {type: 'p', children: [{text: 'Walk the chain of events down to the underlying cause. Resist stopping at the first plausible explanation.'}]},
+  {
+    type: 'p',
+    children: [
+      {
+        text: 'Walk the chain of events down to the underlying cause. Resist stopping at the first plausible explanation.',
+      },
+    ],
+  },
   {type: 'h2', children: [{text: 'Detection'}]},
-  {type: 'p', children: [{text: 'How was the issue detected? How long did detection take, and could we have detected it sooner?'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'How was the issue detected? How long did detection take, and could we have detected it sooner?'},
+    ],
+  },
   {type: 'h2', children: [{text: 'What went well'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '…'}]},
-    ],
+    children: [{type: 'li', children: [{text: '…'}]}],
   },
   {type: 'h2', children: [{text: 'What went poorly'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '…'}]},
-    ],
+    children: [{type: 'li', children: [{text: '…'}]}],
   },
   {type: 'h2', children: [{text: 'Action items'}]},
   {
@@ -331,9 +362,7 @@ const retro: SlateDocument = [
   {type: 'h2', children: [{text: 'What we learned 💡'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '…'}]},
-    ],
+    children: [{type: 'li', children: [{text: '…'}]}],
   },
   {type: 'h2', children: [{text: 'Action items'}]},
   {
@@ -346,9 +375,7 @@ const retro: SlateDocument = [
   {type: 'h2', children: [{text: 'Carry-over from last retro'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: 'Status of previous action items.'}]},
-    ],
+    children: [{type: 'li', children: [{text: 'Status of previous action items.'}]}],
   },
 ];
 
@@ -368,7 +395,11 @@ const streamCheck: SlateDocument = [
       {type: 'li', checked: false, children: [{text: 'Camera framing & lighting'}]},
       {type: 'li', checked: false, children: [{text: 'OBS scenes & alerts'}]},
       {type: 'li', checked: false, children: [{text: 'Game/app updated, captures running'}]},
-      {type: 'li', checked: false, children: [{text: 'Internet speed test (up '}, {text: '> 8 Mbps', code: true}, {text: ')'}]},
+      {
+        type: 'li',
+        checked: false,
+        children: [{text: 'Internet speed test (up '}, {text: '> 8 Mbps', code: true}, {text: ')'}],
+      },
       {type: 'li', checked: false, children: [{text: 'Snacks + water within reach'}]},
       {type: 'li', checked: false, children: [{text: 'Phone on do-not-disturb'}]},
       {type: 'li', checked: false, children: [{text: 'Stream title + tags + category set'}]},
@@ -445,7 +476,10 @@ const videoScript: SlateDocument = [
     ],
   },
   {type: 'h2', children: [{text: 'Script'}]},
-  {type: 'p', children: [{text: 'Write spoken lines exactly as you’ll deliver them. Short sentences. Read them aloud.'}]},
+  {
+    type: 'p',
+    children: [{text: 'Write spoken lines exactly as you’ll deliver them. Short sentences. Read them aloud.'}],
+  },
   {type: 'h3', children: [{text: 'B-roll / on-screen'}]},
   {
     type: 'ul',
@@ -455,7 +489,10 @@ const videoScript: SlateDocument = [
     ],
   },
   {type: 'h2', children: [{text: 'Call to action'}]},
-  {type: 'p', children: [{text: 'Like, subscribe, follow, link in bio — be specific about what you want them to do next.'}]},
+  {
+    type: 'p',
+    children: [{text: 'Like, subscribe, follow, link in bio — be specific about what you want them to do next.'}],
+  },
   {type: 'h2', children: [{text: 'Outro'}]},
   {type: 'p', children: [{text: 'Tease the next video and end strong.'}]},
   {type: 'h2', children: [{text: 'Description / SEO'}]},
@@ -553,9 +590,7 @@ const recipe: SlateDocument = [
   {type: 'h2', children: [{text: 'Equipment'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '<pan / pot / bowl / etc>'}]},
-    ],
+    children: [{type: 'li', children: [{text: '<pan / pot / bowl / etc>'}]}],
   },
   {type: 'h2', children: [{text: 'Instructions'}]},
   {
@@ -625,9 +660,7 @@ const travel: SlateDocument = [
   {type: 'h3', children: [{text: 'Day 2'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '…'}]},
-    ],
+    children: [{type: 'li', children: [{text: '…'}]}],
   },
   {type: 'h2', children: [{text: 'Want-to-eat / want-to-see'}]},
   {
@@ -669,7 +702,10 @@ const competitorAnalysis: SlateDocument = [
     children: [{text: 'One paragraph: who the players are, where we stand, and the one move we should make next.'}],
   },
   {type: 'h2', children: [{text: 'Market & context'}]},
-  {type: 'p', children: [{text: 'What is this market? Size, growth, target buyer, dominant trends. Why it matters now.'}]},
+  {
+    type: 'p',
+    children: [{text: 'What is this market? Size, growth, target buyer, dominant trends. Why it matters now.'}],
+  },
   {type: 'h2', children: [{text: 'Our positioning'}]},
   {
     type: 'ul',
@@ -755,12 +791,27 @@ const competitorAnalysis: SlateDocument = [
   {type: 'h3', children: [{text: '<Competitor C>'}]},
   {type: 'p', children: [{text: 'Repeat the same template for each player worth tracking.'}]},
   {type: 'h2', children: [{text: 'Feature comparison'}]},
-  {type: 'p', children: [{text: 'Score each player on the dimensions that actually drive purchase decisions. Use ✅ / ⚠️ / ❌ for quick scanning.'}]},
+  {
+    type: 'p',
+    children: [
+      {
+        text: 'Score each player on the dimensions that actually drive purchase decisions. Use ✅ / ⚠️ / ❌ for quick scanning.',
+      },
+    ],
+  },
   {type: 'h3', children: [{text: 'Core capability'}]},
   {
     type: 'ul',
     children: [
-      {type: 'li', children: [{text: 'Us — '}, {text: '✅ ', bold: true}, {text: 'best-in-class for '}, {text: '<scenario>', italic: true}]},
+      {
+        type: 'li',
+        children: [
+          {text: 'Us — '},
+          {text: '✅ ', bold: true},
+          {text: 'best-in-class for '},
+          {text: '<scenario>', italic: true},
+        ],
+      },
       {type: 'li', children: [{text: '<Competitor A> — '}, {text: '✅ ', bold: true}, {text: '…'}]},
       {type: 'li', children: [{text: '<Competitor B> — '}, {text: '⚠️ ', bold: true}, {text: '…'}]},
     ],
@@ -853,7 +904,11 @@ const toolComparison: SlateDocument = [
     type: 'callout',
     icon: '🎯',
     title: 'Decision criteria',
-    children: [{text: 'What we’re optimizing for — performance, ergonomics, cost, ecosystem, lock-in, etc. Rank in order of priority.'}],
+    children: [
+      {
+        text: 'What we’re optimizing for — performance, ergonomics, cost, ecosystem, lock-in, etc. Rank in order of priority.',
+      },
+    ],
   },
   {type: 'h2', children: [{text: 'Requirements'}]},
   {
@@ -929,16 +984,12 @@ const toolComparison: SlateDocument = [
   {type: 'h4', children: [{text: 'Pros'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '…'}]},
-    ],
+    children: [{type: 'li', children: [{text: '…'}]}],
   },
   {type: 'h4', children: [{text: 'Cons'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '…'}]},
-    ],
+    children: [{type: 'li', children: [{text: '…'}]}],
   },
   {type: 'h3', children: [{text: 'Build it ourselves'}]},
   {
@@ -989,14 +1040,16 @@ const toolComparison: SlateDocument = [
     icon: '✅',
     title: 'We’ll go with: <option>',
     color: '#3aaf5f',
-    children: [{text: 'One-paragraph justification — which criteria pushed us over the line, and what we are accepting as trade-offs.'}],
+    children: [
+      {
+        text: 'One-paragraph justification — which criteria pushed us over the line, and what we are accepting as trade-offs.',
+      },
+    ],
   },
   {type: 'h2', children: [{text: 'Open questions'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '<question to follow up on>'}]},
-    ],
+    children: [{type: 'li', children: [{text: '<question to follow up on>'}]}],
   },
 ];
 
@@ -1081,9 +1134,7 @@ const tierList: SlateDocument = [
   },
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '<item>'}]},
-    ],
+    children: [{type: 'li', children: [{text: '<item>'}]}],
   },
   {
     type: 'callout',
@@ -1094,16 +1145,12 @@ const tierList: SlateDocument = [
   },
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '<item>'}]},
-    ],
+    children: [{type: 'li', children: [{text: '<item>'}]}],
   },
   {type: 'h2', children: [{text: 'Honorable mentions'}]},
   {
     type: 'ul',
-    children: [
-      {type: 'li', children: [{text: '<item>'}, {text: ' — couldn’t place yet.', italic: true}]},
-    ],
+    children: [{type: 'li', children: [{text: '<item>'}, {text: ' — couldn’t place yet.', italic: true}]}],
   },
 ];
 

@@ -32,7 +32,18 @@ export const SizeScale: StoryObj<typeof meta> = {
     return (
       <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center'}}>
         {sizes.map((size) => (
-          <div key={size} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: 8, border: '1px solid #eee', borderRadius: 4}}>
+          <div
+            key={size}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+              padding: 8,
+              border: '1px solid #eee',
+              borderRadius: 4,
+            }}
+          >
             <Component size={size} />
             <span style={{fontSize: 12, color: '#666'}}>{size}px</span>
           </div>
@@ -49,9 +60,22 @@ export const Inverse: StoryObj<typeof meta> = {
   render: (args) => {
     const sizes = [16, 32, 64, 128, 256, 512];
     return (
-      <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', backgroundColor: '#333', padding: 16}}>
+      <div
+        style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', backgroundColor: '#333', padding: 16}}
+      >
         {sizes.map((size) => (
-          <div key={size} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: 8, border: '1px solid #eee', borderRadius: 4}}>
+          <div
+            key={size}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+              padding: 8,
+              border: '1px solid #eee',
+              borderRadius: 4,
+            }}
+          >
             <Component size={size} color="#fff" />
             <span style={{fontSize: 12, color: '#666'}}>{size}px</span>
           </div>

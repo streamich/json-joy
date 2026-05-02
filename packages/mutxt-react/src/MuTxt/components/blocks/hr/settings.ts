@@ -14,8 +14,7 @@ export const HR_BLOCK_HEIGHT_MAX = 500;
 
 export const HR_LINE_STYLES: HrLineStyle[] = ['solid', 'dashed', 'dotted', 'squiggly'];
 
-const clamp = (value: number, min: number, max: number): number =>
-  Math.min(max, Math.max(min, value));
+const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
 
 const numberOrDefault = (value: number | undefined, fallback: number, min: number, max: number): number => {
   if (typeof value !== 'number' || !Number.isFinite(value)) return fallback;

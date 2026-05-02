@@ -120,7 +120,6 @@ export const CodeBlockOptions: React.FC = () => {
           value={language}
           label="Language"
           placeholder="txt"
-
           onChange={state.setLanguage}
           onKeyDown={stopInputKeyDown}
           onEnter={(event) => {

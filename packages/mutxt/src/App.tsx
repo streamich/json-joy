@@ -35,7 +35,7 @@ export const App: React.FC = () => {
         maxLeftSize={500}
         left={(toggle) => <LeftSidebar toggle={toggle} />}
         // footer={<div> </div>}
-        column={(toggle) => (
+        column={(toggle) =>
           files.length === 0 ? (
             <MainContent />
           ) : (
@@ -44,7 +44,7 @@ export const App: React.FC = () => {
               <MainContent />
             </div>
           )
-        )}
+        }
       />
     </ctx.Provider>
   );

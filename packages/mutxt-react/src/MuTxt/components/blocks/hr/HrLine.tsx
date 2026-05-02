@@ -23,11 +23,14 @@ const buildSquigglyMask = (strokeWidth: number): {uri: string; height: number} =
 
 const lineStyleToCssBorder = (style: HrLineStyle): React.CSSProperties['borderTopStyle'] => {
   switch (style) {
-    case 'dashed': return 'dashed';
-    case 'dotted': return 'dotted';
+    case 'dashed':
+      return 'dashed';
+    case 'dotted':
+      return 'dotted';
     case 'solid':
     case 'squiggly':
-    default: return 'solid';
+    default:
+      return 'solid';
   }
 };
 
@@ -70,7 +73,7 @@ export const HrLine: React.FC<HrLineProps> = ({strokeWidth, style}) => {
         borderTopWidth: strokeWidth,
         borderTopStyle: lineStyleToCssBorder(style),
         borderTopColor: 'currentColor',
-        borderRadius: style === 'solid' ? (Math.max(1, strokeWidth / 4)) : undefined,
+        borderRadius: style === 'solid' ? Math.max(1, strokeWidth / 4) : undefined,
       }}
     />
   );

@@ -22,11 +22,7 @@ export class VoidMenu implements UiLifeCycles {
   public build(): MenuItem {
     return {
       name: 'Insert menu',
-      children: [
-        this.itemEmbed({anchorFromCaret: true}),
-        this.itemFile({anchorFromCaret: true}),
-        this.itemHr(),
-      ],
+      children: [this.itemEmbed({anchorFromCaret: true}), this.itemFile({anchorFromCaret: true}), this.itemHr()],
     };
   }
 
@@ -37,12 +33,8 @@ export class VoidMenu implements UiLifeCycles {
         {
           name: 'Insert menu',
           expand: 2,
-          children: [
-            this.itemEmbed(),
-            this.itemFile(),
-            this.itemHr(),
-          ],
-        }
+          children: [this.itemEmbed(), this.itemFile(), this.itemHr()],
+        },
       ],
     };
   }
@@ -52,10 +44,7 @@ export class VoidMenu implements UiLifeCycles {
     return {
       name: 'Separator',
       icon: () => <HrIcon />,
-      disabled: rsync.comp(
-        [mutxt.readOnly],
-        ([readOnly]) => !!readOnly,
-      ),
+      disabled: rsync.comp([mutxt.readOnly], ([readOnly]) => !!readOnly),
       onSelect: (event) => {
         event.preventDefault();
         if (mutxt.readOnly.value) return;
@@ -74,10 +63,7 @@ export class VoidMenu implements UiLifeCycles {
     return {
       name: 'File',
       icon: () => <FileIcon />,
-      disabled: rsync.comp(
-        [file.canOpen],
-        ([canOpen]) => !canOpen,
-      ),
+      disabled: rsync.comp([file.canOpen], ([canOpen]) => !canOpen),
       onSelect: (event) => {
         event.preventDefault();
         if (opts.anchorFromCaret) {
@@ -98,14 +84,8 @@ export class VoidMenu implements UiLifeCycles {
     return {
       name: 'Embed',
       icon: () => <EmbedIcon />,
-      disabled: rsync.comp(
-        [embed.canOpen],
-        ([canOpen]) => !canOpen,
-      ),
-      active: rsync.comp(
-        [mutxt.caretEmbedUrl],
-        ([url]) => !!url,
-      ),
+      disabled: rsync.comp([embed.canOpen], ([canOpen]) => !canOpen),
+      active: rsync.comp([mutxt.caretEmbedUrl], ([url]) => !!url),
       onSelect: (event) => {
         event.preventDefault();
         if (opts.anchorFromCaret) {

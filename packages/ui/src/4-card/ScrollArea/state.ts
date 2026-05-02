@@ -238,7 +238,7 @@ export class ScrollState implements UiLifeCycles {
       this._resetHideTimer();
     };
     document.addEventListener('selectionchange', onSelectionChange);
-    
+
     return () => {
       if (el) el.removeEventListener('scroll', this._onScroll);
       this._resizeObserver?.disconnect();

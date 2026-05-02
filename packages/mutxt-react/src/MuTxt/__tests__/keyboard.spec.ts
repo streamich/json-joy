@@ -32,7 +32,9 @@ describe('resetEmptyBlockToParagraph()', () => {
   });
 
   test('turns an empty checklist item into a paragraph', () => {
-    const editor = createTestEditor([{type: 'checklist', children: [{type: 'li', checked: true, children: [{text: ''}]}]}]);
+    const editor = createTestEditor([
+      {type: 'checklist', children: [{type: 'li', checked: true, children: [{text: ''}]}]},
+    ]);
     editor.selection = {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},

@@ -1,9 +1,5 @@
 import {createEditor} from 'slate';
-import {
-  insertFile,
-  removeFileAtPath,
-  withFile,
-} from '../behavior/file';
+import {insertFile, removeFileAtPath, withFile} from '../behavior/file';
 import type {SlateEditorDocument} from '../types';
 
 const createTestEditor = (doc: SlateEditorDocument) => {
@@ -66,9 +62,7 @@ describe('file behavior', () => {
   });
 
   test('typing on an active file creates a paragraph below and inserts text', () => {
-    const editor = createTestEditor([
-      {type: 'file', '@thing': 'a', children: [{text: ''}]} as any,
-    ]);
+    const editor = createTestEditor([{type: 'file', '@thing': 'a', children: [{text: ''}]} as any]);
     editor.selection = {
       anchor: {path: [0, 0], offset: 0},
       focus: {path: [0, 0], offset: 0},

@@ -3,7 +3,7 @@
  *
  * Atomic values that can be set and overwritten which trace through the render
  * tree. Can be used with common props, such as:
- * 
+ *
  * - Accent color
  * - Background color
  * - Border roundness
@@ -33,8 +33,7 @@ export interface TraceContextValue extends NamedTraceContextValue {
 }
 
 export const ctx = createContext<TraceContextValue>({});
-export const useTrace = <V>(key: string): V | undefined =>
-  useContext(ctx)[key] as V | undefined;
+export const useTrace = <V>(key: string): V | undefined => useContext(ctx)[key] as V | undefined;
 
 export interface SetTraceProps {
   name: keyof TraceContextValue;

@@ -48,7 +48,7 @@ export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const ScrollAreaShadows: React.FC<{state: ScrollState, flat?: boolean}> = ({state, flat}) => {
+const ScrollAreaShadows: React.FC<{state: ScrollState; flat?: boolean}> = ({state, flat}) => {
   const scrollTop = useSyncStore(state.scrollTop$);
   const maxScrollTop = useSyncStore(state.maxScrollTop$);
   const headerHeight = useSyncStore(state.headerHeight$);

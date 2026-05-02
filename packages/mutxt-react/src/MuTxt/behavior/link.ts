@@ -112,7 +112,8 @@ export const upsertLink = (editor: Editor, href: string): ActiveLink | null => {
   const nextHref = normalizeLinkHref(href);
   if (!nextHref) return null;
   const activeLink = getActiveLink(editor);
-  const targetRange = activeLink?.range ?? (hasRangeSelection(editor) ? Editor.unhangRange(editor, editor.selection!) : null);
+  const targetRange =
+    activeLink?.range ?? (hasRangeSelection(editor) ? Editor.unhangRange(editor, editor.selection!) : null);
   if (!targetRange) return null;
   const link: LinkAttributes = activeLink?.title ? {href: nextHref, title: activeLink.title} : {href: nextHref};
   Transforms.setNodes(editor, {a: link} as Partial<CustomText>, {

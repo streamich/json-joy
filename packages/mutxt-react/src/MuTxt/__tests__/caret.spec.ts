@@ -13,12 +13,7 @@ describe('caret metadata', () => {
     const editor = createTestEditor([
       {
         type: 'p',
-        children: [
-          {text: 'before '},
-          {text: 'npm ', code: true},
-          {text: 'install', code: true},
-          {text: ' after'},
-        ],
+        children: [{text: 'before '}, {text: 'npm ', code: true}, {text: 'install', code: true}, {text: ' after'}],
       },
     ]);
     editor.selection = {

@@ -54,9 +54,9 @@ const pillClass = rule({
 const usePillBg = makeRule((theme) => ({
   bg: theme.isLight ? '#fff' : theme.g(0.23),
   bxsh:
-    '0 2px 5px rgba(0,0,0,.14), ' +    // soft outer drop
-    '0 1px 1.5px rgba(0,0,0,.08), ' +  // tight contact shadow for crispness
-    '0 0 0 0.5px rgba(0,0,0,.06)',     // hairline separator
+    '0 2px 5px rgba(0,0,0,.14), ' + // soft outer drop
+    '0 1px 1.5px rgba(0,0,0,.08), ' + // tight contact shadow for crispness
+    '0 0 0 0.5px rgba(0,0,0,.06)', // hairline separator
 }));
 
 const tabClass = rule({

@@ -45,7 +45,7 @@ const pinnedHeaderClass = rule({
 const tinyBlockClass = rule({
   '& .jj-log-timeline': {
     filter: 'grayscale(1)',
-    op: .5,
+    op: 0.5,
   },
   '&:hover .jj-log-timeline': {
     filter: 'grayscale(0)',
@@ -164,11 +164,11 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
             &nbsp;{'–'}&nbsp;
           </>
         )}
-        {!tiny && <LogicalTimestamp sid={log.end.clock.sid ?? 0} time={log.end.clock.time ? log.end.clock.time - 1 : 0} />}
+        {!tiny && (
+          <LogicalTimestamp sid={log.end.clock.sid ?? 0} time={log.end.clock.time ? log.end.clock.time - 1 : 0} />
+        )}
       </Flex>
-      <div>
-        {toolbar}
-      </div>
+      <div>{toolbar}</div>
     </Split>
   );
 
@@ -204,28 +204,45 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
         round={!!spacious && !tiny}
         noOutline={tiny}
         className={blockClass + (tiny ? tinyBlockClass : '')}
-        style={tiny
-          ? {width: '100%', padding: '8px 0 0', background: 'transparent'}
-          : {width: '100%', background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
+        style={
+          tiny
+            ? {width: '100%', padding: '8px 0 0', background: 'transparent'}
+            : {
+                width: '100%',
+                background: styles.g(0.95),
+                minWidth: 400,
+                padding: spacious ? '0 8px 8px 8px' : undefined,
+              }
+        }
         hoverElevate={!tiny}
       >
         {!!pinnedModel && !tiny && (
-          <div style={{
-            marginBottom: -2,
-            // Hide left and right edges near to rounded corners, where the progress bar would look weird
-            maskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
-          }}>
-            <RunningBackground  />
+          <div
+            style={{
+              marginBottom: -2,
+              // Hide left and right edges near to rounded corners, where the progress bar would look weird
+              maskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
+            }}
+          >
+            <RunningBackground />
             <Progress glow value={pinnedIdx / state.log.patches.size()} style={{marginTop: -2}} />
           </div>
         )}
         {!!header && (
-          <div key='header' className={headerClass + (tiny ? tinyHeaderClass : '') + (pinnedModel ? pinnedHeaderClass : '')} style={{marginTop: tiny ? 0 : spacious ? (pinnedModel ? 6 : 8) : 0}}>
+          <div
+            key="header"
+            className={headerClass + (tiny ? tinyHeaderClass : '') + (pinnedModel ? pinnedHeaderClass : '')}
+            style={{marginTop: tiny ? 0 : spacious ? (pinnedModel ? 6 : 8) : 0}}
+          >
             {header}
           </div>
         )}
-        {(view === 'timeline' || view === 'model' || view === 'tiny') && <Timeline key='timeline' log={log} />}
-        {!tiny && <div key='content' className={contentClass}>{content}</div>}
+        {(view === 'timeline' || view === 'model' || view === 'tiny') && <Timeline key="timeline" log={log} />}
+        {!tiny && (
+          <div key="content" className={contentClass}>
+            {content}
+          </div>
+        )}
       </Paper>
     </context.Provider>
   );

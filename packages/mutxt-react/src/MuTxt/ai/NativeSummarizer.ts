@@ -7,12 +7,12 @@ export interface ISummarizer {
    * @param text The input string to summarize.
    * @param options Optional context or hint for this specific summary.
    */
-  summarize(text: string, options?: { context?: string }): Promise<string>;
+  summarize(text: string, options?: {context?: string}): Promise<string>;
 
   /**
    * Returns a stream of summary chunks as they are generated.
    */
-  summarizeStreaming(text: string, options?: { context?: string }): ReadableStream<string>;
+  summarizeStreaming(text: string, options?: {context?: string}): ReadableStream<string>;
 
   /**
    * The maximum number of tokens allowed for input.

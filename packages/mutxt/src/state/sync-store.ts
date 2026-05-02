@@ -1,5 +1,5 @@
 const getCookie = (key: string): string | null => {
-  const name = key + "=";
+  const name = key + '=';
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
   for (let i = 0; i < ca.length; i++) {
@@ -16,9 +16,7 @@ export interface ISyncStore {
 }
 
 class CookieStore implements ISyncStore {
-  constructor(
-    private cache: Map<string, string> | undefined = new Map(),  
-  ) {}
+  constructor(private cache: Map<string, string> | undefined = new Map()) {}
 
   public setItem(key: string, value: string): void {
     this.cache?.set(key, value);

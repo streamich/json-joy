@@ -42,7 +42,7 @@ export class JsonCrdtExplorerState {
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(storage: IFileStorage = new FileStorage()) {
-    const sync = this.sync = getSyncStore();
+    const sync = (this.sync = getSyncStore());
     const sid = sync.getItem('json_joy_sid');
     if (sid) {
       this.sid = Number(sid);
@@ -263,10 +263,7 @@ export class JsonCrdtExplorerState {
   };
 
   public readonly createNewMuTxtFromSlate = (slate: SlateDocument, name?: string) => {
-    const model = ModelWithExt.create<any>(
-      s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}),
-      this.sid,
-    );
+    const model = ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}), this.sid);
     const peritextApi = model.api.in('text').asExt(ext.peritext);
     const txt = peritextApi.peritext();
     const viewRange = FromSlate.convert(slate);

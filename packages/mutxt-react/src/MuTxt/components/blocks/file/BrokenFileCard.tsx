@@ -24,13 +24,7 @@ export const BrokenFileCard: React.FC<BrokenFileCardProps> = ({thingId, selected
       <FileListItem
         fill
         spacious
-        icon={(
-          <FileIcon
-            label={'404'}
-            ext="txt"
-            size={32}
-          />
-        )}
+        icon={<FileIcon label={'404'} ext="txt" size={32} />}
         title={'Missing file'}
         metadata={`Reference ${thingId} could not be resolved`}
       />

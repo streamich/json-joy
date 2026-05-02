@@ -27,7 +27,7 @@ const filesHeaderClass = rule({
   ai: 'center',
   gap: '8px',
   fz: '13.5px',
-  op: .7,
+  op: 0.7,
   maskImage: 'linear-gradient(to right, black 32px, transparent calc(min(150px, 100%)))',
   '&:hover': {
     op: 1,
@@ -75,16 +75,22 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
         {/* <FileIcon id={file.id} label="crdt" size={16} /> */}
         <Iconista set="bootstrap" icon="file-earmark-binary" width={16} height={16} style={{marginBottom: 1}} />
         <div ref={inputWrapRef}>
-          <FlexibleInput minWidth={24} value={fileName} onChange={(e) => state.renameFile(file, e.target.value)} onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            file.mutxt?.focus();
-          }} onKeyDown={(e) => {
-            if (e.key === 'Tab') {
+          <FlexibleInput
+            minWidth={24}
+            value={fileName}
+            onChange={(e) => state.renameFile(file, e.target.value)}
+            onSubmit={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               file.mutxt?.focus();
-            }
-          }} />
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Tab') {
+                e.preventDefault();
+                file.mutxt?.focus();
+              }
+            }}
+          />
         </div>
         {/* Mouse hit area */}
         <div style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none'}} />
@@ -106,11 +112,14 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
   const fileHeader = file ? <FileNameHeader file={file} /> : null;
 
   return (
-    <div className={blockClass} style={{
-      borderTop: '4px solid ' + theme.bg,
-      borderRight: '4px solid ' + theme.bg,
-      borderLeft: toggle ? ('4px solid ' + theme.bg) : void 0,
-    }}>
+    <div
+      className={blockClass}
+      style={{
+        borderTop: '4px solid ' + theme.bg,
+        borderRight: '4px solid ' + theme.bg,
+        borderLeft: toggle ? '4px solid ' + theme.bg : void 0,
+      }}
+    >
       <FileTabs
         bg={styles.g(0.95)}
         fade="transparent"

@@ -28,17 +28,10 @@ export const FileOptionsPopup: React.FC<FileOptionsPopupProps> = ({element}) => 
   const [t] = useT();
   const popup = usePopup();
   const mutxt = useMuTxt();
-  const state = React.useMemo(
-    () => new FileOptionsState(mutxt, element, popup?.close),
-    [mutxt, element, popup],
-  );
+  const state = React.useMemo(() => new FileOptionsState(mutxt, element, popup?.close), [mutxt, element, popup]);
 
   const headerRight = (
-    <div
-      style={{display: 'flex', alignItems: 'center', gap: 6}}
-      onMouseDown={stopBubble}
-      onClick={stopBubble}
-    >
+    <div style={{display: 'flex', alignItems: 'center', gap: 6}} onMouseDown={stopBubble} onClick={stopBubble}>
       <BasicTooltip nowrap renderTooltip={() => t('Download')}>
         <BasicButton
           type="button"

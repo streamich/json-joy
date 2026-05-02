@@ -6,7 +6,7 @@ import {createEditor, Transforms} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
-import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect'
+import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
 import {withCodeBlockBreaks} from './behavior';
@@ -144,11 +144,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   // ------------------------------------------------------------- Editor state
   const [editor, state] = useMemo(() => {
     const editor = withTitleSubmit(
-      withHr(
-        withFile(
-          withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))),
-        ),
-      ),
+      withHr(withFile(withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))))),
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];
@@ -164,18 +160,14 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       // runs after `state.start()` so the operation flows through the active
       // PeritextBinding into the underlying CRDT (rather than being a stale
       // direct mutation of `editor.children`).
-      Transforms.setNodes(
-        editor,
-        {type: 'title'} as Partial<CustomElement>,
-        {at: [0]},
-      );
+      Transforms.setNodes(editor, {type: 'title'} as Partial<CustomElement>, {at: [0]});
     }
     let focusTimer: any | undefined;
     if (autoFocus) focusTimer = setTimeout(() => state.api.focus(), 101);
     return () => {
       stop();
       clearTimeout(focusTimer);
-    }
+    };
   }, [_state, state, startWithTitle, editor]);
   useIsomorphicLayoutEffect(() => {
     onApi?.(state.api);
@@ -185,7 +177,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   useEffect(() => {
     state.setReadOnly(!!readOnly);
   }, [state, readOnly]);
-  
+
   // --------------------------------------------------------- Presence manager
   const {decorate: decorateRemoteCursors, sendLocalPresence} = useSlatePresence({
     manager: presence,
@@ -233,7 +225,10 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   let content: React.ReactNode = (
     <Slate
-      editor={editor} initialValue={editor.children} onChange={state.onChange} onSelectionChange={state.onSelection}
+      editor={editor}
+      initialValue={editor.children}
+      onChange={state.onChange}
+      onSelectionChange={state.onSelection}
     >
       <Editable
         ref={(el) => {
@@ -244,7 +239,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder={placeholder as any}
-        renderPlaceholder={props => <Placeholder {...props} />}
+        renderPlaceholder={(props) => <Placeholder {...props} />}
         spellCheck
         autoFocus={autoFocus}
         readOnly={readOnly}
@@ -316,7 +311,11 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   if (borderless) {
     content = React.createElement('div', {style, className: combinedClass}, content);
   } else {
-    content = React.createElement(Paper, {round: true, contrast: true, hover: true, hoverElevate, style, className: combinedClass}, content);
+    content = React.createElement(
+      Paper,
+      {round: true, contrast: true, hover: true, hoverElevate, style, className: combinedClass},
+      content,
+    );
   }
 
   return (

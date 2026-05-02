@@ -7,13 +7,7 @@ import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import {AutoExpandableToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/AutoExpandableToolbar';
 import {ToolbarSep} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarSep';
 import type {Editor} from 'slate';
-import {
-  ACTION_BUTTONS,
-  canRedo,
-  canUndo,
-  redo,
-  undo,
-} from '../../behavior';
+import {ACTION_BUTTONS, canRedo, canUndo, redo, undo} from '../../behavior';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
@@ -102,19 +96,20 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
     [],
   );
 
-  const renderMenuItem = React.useCallback(
-    (item: MenuItem) => {
-      return (
-        <ToolbarItem
-          key={item.id ?? item.name}
-          type="button"
-          selected={!!item.active?.getSnapshot()}
-          disabled={!!item.disabled?.getSnapshot()}
-          onMouseDown={item.onSelect}
-          tooltip={{nowrap: true, renderTooltip: () => item.name, shortcut: item.keys ? formatKeys(item.keys) : void 0}}
-        >{item.icon?.()}</ToolbarItem>
-      );
-    }, []);
+  const renderMenuItem = React.useCallback((item: MenuItem) => {
+    return (
+      <ToolbarItem
+        key={item.id ?? item.name}
+        type="button"
+        selected={!!item.active?.getSnapshot()}
+        disabled={!!item.disabled?.getSnapshot()}
+        onMouseDown={item.onSelect}
+        tooltip={{nowrap: true, renderTooltip: () => item.name, shortcut: item.keys ? formatKeys(item.keys) : void 0}}
+      >
+        {item.icon?.()}
+      </ToolbarItem>
+    );
+  }, []);
 
   const inlineMenu = mutxt.inline.menu.buildToolbarMenu();
   const voidsMenu = mutxt.voids.menu.buildToolbarMenu();
@@ -122,13 +117,15 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
 
   return (
     <SetNamedTrace name={'subtle'} value={true}>
-      <Split className={blockClass} style={{
-        borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
-        padding: width < 1200 ? '0 8px' : void 0,
-      }}>
+      <Split
+        className={blockClass}
+        style={{
+          borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
+          padding: width < 1200 ? '0 8px' : void 0,
+        }}
+      >
         <div className={toolbarContainerClass}>
-          {width > 900
-           ? (
+          {width > 900 ? (
             <>
               <ToolbarMenu menu={inlineMenu} pane={{transparent: true}} />
               <ToolbarSep />
@@ -139,8 +136,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
               <ToolbarSep />
               <AutoExpandableToolbar menu={blockMenu} pane={{transparent: true}} more={{small: true}} />
             </>
-           )
-           : (
+          ) : (
             <AutoExpandableToolbar
               maxWidth={width * 0.6}
               menu={{
@@ -152,30 +148,31 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
                   {name: 'sep-voids', sep: true},
                   ...voidsMenu.children!,
                   {name: 'sep-blocks', sep: true},
-                  ...blockMenu.children!],
+                  ...blockMenu.children!,
+                ],
               }}
               pane={{transparent: true}}
               more={{small: true}}
             />
-           )}
-          
-          
+          )}
         </div>
         <div className={toolbarContainerClass}>
           <DocumentOutlineButton editor={editor} contentWidth={300} />
           <ToolbarSep line />
           {renderMenuItem(mutxt.inline.menu.itemClear())}
-          {(width > 1000) && <ToolbarSep line />}
-          {(width > 1000) && renderItem({
-            ...ACTION_BUTTONS[0],
-            disabled: readOnly || !canUndo(editor),
-            onMouseDown: execute(() => undo(editor)),
-          })}
-          {(width > 1000) && renderItem({
-            ...ACTION_BUTTONS[1],
-            disabled: readOnly || !canRedo(editor),
-            onMouseDown: execute(() => redo(editor)),
-          })}
+          {width > 1000 && <ToolbarSep line />}
+          {width > 1000 &&
+            renderItem({
+              ...ACTION_BUTTONS[0],
+              disabled: readOnly || !canUndo(editor),
+              onMouseDown: execute(() => undo(editor)),
+            })}
+          {width > 1000 &&
+            renderItem({
+              ...ACTION_BUTTONS[1],
+              disabled: readOnly || !canRedo(editor),
+              onMouseDown: execute(() => redo(editor)),
+            })}
         </div>
       </Split>
     </SetNamedTrace>

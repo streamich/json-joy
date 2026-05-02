@@ -19,7 +19,7 @@ const renderImage: RenderNode = (renderers, flat, idx, props) => {
     }
   }
 
-  const isOnlyParagraphNode = parent.type === 'paragraph' as any && parent.children?.length === 1;
+  const isOnlyParagraphNode = parent.type === ('paragraph' as any) && parent.children?.length === 1;
 
   if (isOnlyParagraphNode) {
     const element = (

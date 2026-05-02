@@ -106,7 +106,7 @@ describe('embed behavior', () => {
       focus: {path: [0, 0], offset: 0},
     };
     editor.insertText('A');
-    expect((editor.children[1] as any)).toEqual({type: 'p', children: [{text: 'A'}]});
+    expect(editor.children[1] as any).toEqual({type: 'p', children: [{text: 'A'}]});
     expect((editor.children[2] as any).type).toBe('embed');
   });
 

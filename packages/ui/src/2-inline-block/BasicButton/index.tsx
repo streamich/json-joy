@@ -159,7 +159,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   }
 
   if (disabled) {
-    style.opacity = .6;
+    style.opacity = 0.6;
     style.pointerEvents = 'none';
     style.boxShadow = 'none';
     style.outline = 'none';

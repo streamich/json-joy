@@ -24,9 +24,7 @@ export const LinkFloater: React.FC = () => {
   const open = link.open.use();
   const rect = link.anchorRect.use();
 
-  const clickAwayRef = useClickAway(
-    React.useCallback(() => link.close(), [link]),
-  );
+  const clickAwayRef = useClickAway(React.useCallback(() => link.close(), [link]));
 
   if (!open || !rect) return null;
   const point = pointFromRect(rect);

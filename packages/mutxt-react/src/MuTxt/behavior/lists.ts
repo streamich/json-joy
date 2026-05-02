@@ -1,11 +1,5 @@
 import {Editor, Element as SlateElement, Node, Path, Range, Transforms} from 'slate';
-import type {
-  BulletedListElement,
-  CustomElement,
-  NumberedListElement,
-  OlType,
-  UlType,
-} from '../types';
+import type {BulletedListElement, CustomElement, NumberedListElement, OlType, UlType} from '../types';
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
 

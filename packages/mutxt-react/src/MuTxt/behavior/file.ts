@@ -30,10 +30,7 @@ const getActiveFileEntry = (editor: Editor): [FileElement, Path] | undefined => 
   return (match as [FileElement, Path] | undefined) ?? void 0;
 };
 
-const insertParagraphNearActiveFile = (
-  editor: Editor,
-  position: 'above' | 'below' = 'below',
-): Path | null => {
+const insertParagraphNearActiveFile = (editor: Editor, position: 'above' | 'below' = 'below'): Path | null => {
   const entry = getActiveFileEntry(editor);
   if (!entry) return null;
   const [, path] = entry;

@@ -24,9 +24,7 @@ export const FileFloater: React.FC = () => {
   const open = fileBtn.open.use();
   const rect = fileBtn.anchorRect.use();
 
-  const clickAwayRef = useClickAway(
-    React.useCallback(() => fileBtn.close(), [fileBtn]),
-  );
+  const clickAwayRef = useClickAway(React.useCallback(() => fileBtn.close(), [fileBtn]));
 
   if (!open || !rect) return null;
   const point = pointFromRect(rect);

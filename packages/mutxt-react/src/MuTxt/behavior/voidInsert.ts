@@ -19,13 +19,15 @@ const isAtEmptyParagraph = (entry: [CustomElement, Path] | null): boolean =>
  */
 export const insertVoidBlock = <T extends CustomElement>(editor: Editor, element: T): T | null => {
   const {selection} = editor;
-  const currentBlockEntry = (selection
-    ? Editor.above(editor, {
-        at: Editor.unhangRange(editor, selection),
-        match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
-        mode: 'lowest',
-      })
-    : null) as [CustomElement, Path] | null;
+  const currentBlockEntry = (
+    selection
+      ? Editor.above(editor, {
+          at: Editor.unhangRange(editor, selection),
+          match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
+          mode: 'lowest',
+        })
+      : null
+  ) as [CustomElement, Path] | null;
 
   let insertedPath: Path | null = null;
 

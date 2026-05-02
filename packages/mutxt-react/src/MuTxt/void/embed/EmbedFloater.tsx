@@ -24,9 +24,7 @@ export const EmbedFloater: React.FC = () => {
   const open = embed.open.use();
   const rect = embed.anchorRect.use();
 
-  const clickAwayRef = useClickAway(
-    React.useCallback(() => embed.close(), [embed]),
-  );
+  const clickAwayRef = useClickAway(React.useCallback(() => embed.close(), [embed]));
 
   if (!open || !rect) return null;
   const point = pointFromRect(rect);

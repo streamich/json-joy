@@ -87,8 +87,7 @@ export class InlineState implements UiLifeCycles {
       // viewport-overflow check.
       if (!focusRect.width && !focusRect.height && !focusRect.top && !focusRect.left) return;
       const x = focusRect.width > 0 ? focusRect.left + focusRect.width / 2 : focusRect.left;
-      if (focusRect.top < TOOLBAR_HEIGHT + GAP)
-        return {x, y: focusRect.bottom + GAP, dx: 0, dy: 1};
+      if (focusRect.top < TOOLBAR_HEIGHT + GAP) return {x, y: focusRect.bottom + GAP, dx: 0, dy: 1};
       return {x, y: focusRect.top - GAP, dx: 0, dy: -1};
     } catch {
       return;

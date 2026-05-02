@@ -12,7 +12,7 @@ export interface DocumentProps {
   file: OpenFile;
 }
 
-export const Document: React.FC<DocumentProps> = ({ file }) => {
+export const Document: React.FC<DocumentProps> = ({file}) => {
   const activeModel = file.activeModel.use();
   const obj: ObjApi | undefined = React.useMemo(() => {
     if (activeModel.api.read('/@type') !== 'mutxt') return;
@@ -27,12 +27,7 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
   if (obj) {
     return (
       <SetNamedTrace name={'hidden'} value={!visible}>
-        <DocumentMuTxt
-          file={file}
-          obj={obj}
-          readOnly={readonly}
-          visible={visible}
-        />
+        <DocumentMuTxt file={file} obj={obj} readOnly={readonly} visible={visible} />
         <Log visible={visible} onModel={(model) => file.activeModel.next(model)} />
       </SetNamedTrace>
     );
@@ -40,11 +35,7 @@ export const Document: React.FC<DocumentProps> = ({ file }) => {
 
   return (
     <SetNamedTrace name={'hidden'} value={!visible}>
-      <DocumentJson
-        file={file}
-        readOnly={readonly}
-        visible={visible}
-      />
+      <DocumentJson file={file} readOnly={readonly} visible={visible} />
     </SetNamedTrace>
   );
 };

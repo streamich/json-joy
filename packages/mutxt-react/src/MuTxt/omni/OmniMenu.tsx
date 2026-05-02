@@ -32,20 +32,12 @@ export class OmniMenu implements UiLifeCycles {
         {
           name: 'Turn into',
           icon: () => <TurnIntoIcon />,
-          children: [
-            blockMenu.menuBlocks(),
-            blockMenu.menuHeadings(),
-            blockMenu.menuLists(),
-            blockMenu.menuLayout(),
-          ],
+          children: [blockMenu.menuBlocks(), blockMenu.menuHeadings(), blockMenu.menuLists(), blockMenu.menuLayout()],
         },
         {
           name: 'Format',
           icon: () => <FormatIcon />,
-          children: [
-            inlineMenu.menuFmtCommon(),
-            inlineMenu.menuFmtTechnical(),
-          ],
+          children: [inlineMenu.menuFmtCommon(), inlineMenu.menuFmtTechnical()],
         },
         {name: 'sep-doc', sep: true},
         {

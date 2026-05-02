@@ -108,7 +108,8 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
         target instanceof HTMLTextAreaElement ||
         target instanceof HTMLSelectElement ||
         (target instanceof HTMLElement && target.isContentEditable)
-      ) return;
+      )
+        return;
       event.preventDefault();
     };
     document.addEventListener('mousedown', onMouseDown);
@@ -222,7 +223,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = () => {
 
   const computedPoint = state.anchorPoint();
   if (computedPoint) lastPointRef.current = computedPoint;
-  
+
   // Fall back to the last good anchor when the editor still has a range
   // selection but the DOM rect is momentarily invalid (e.g. mid-reconcile
   // while a mark like Bold is being applied — Bold wraps the affected text

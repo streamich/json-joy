@@ -21,11 +21,11 @@ export const bindImagePaste = (state: MuTxtState): void => {
 };
 
 const collectImageFiles = (data: DataTransfer): File[] => {
-  const fromFiles = Array.from(data.files).filter(f => f.type.startsWith('image/'));
+  const fromFiles = Array.from(data.files).filter((f) => f.type.startsWith('image/'));
   if (fromFiles.length) return fromFiles;
   return Array.from(data.items ?? [])
-    .filter(item => item.type.startsWith('image/'))
-    .map(item => item.getAsFile())
+    .filter((item) => item.type.startsWith('image/'))
+    .map((item) => item.getAsFile())
     .filter((f): f is File => f !== null);
 };
 
@@ -40,7 +40,9 @@ const pasteImages = async (state: MuTxtState, files: File[]): Promise<void> => {
       data: s.con(bytes),
     } as any);
     if (!state.editor.selection)
-      try { ReactEditor.focus(state.editor as ReactEditor); } catch {}
+      try {
+        ReactEditor.focus(state.editor as ReactEditor);
+      } catch {}
     insertFile(state.editor, id);
     state.sync(true);
   }

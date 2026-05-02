@@ -132,7 +132,7 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
 
   if (lastWasSep && nodes.length > 0) nodes.pop();
 
-  const showMore = ((length > max && !!more) || (stoppedByWidth && !!more));
+  const showMore = (length > max && !!more) || (stoppedByWidth && !!more);
 
   let element: React.ReactNode = (
     <popupContext.Provider value={popupContextValue}>

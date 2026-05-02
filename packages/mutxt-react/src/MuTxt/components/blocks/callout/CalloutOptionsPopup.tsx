@@ -8,7 +8,7 @@ import {ctx} from './context';
 import {useMuTxt} from '../../../context';
 import type {CalloutElement as CalloutElementType} from '../../../types';
 
-  export interface CalloutOptionsPopupProps {
+export interface CalloutOptionsPopupProps {
   element: CalloutElementType;
 }
 
@@ -16,9 +16,7 @@ export const CalloutOptionsPopup: React.FC<CalloutOptionsPopupProps> = ({element
   const [t] = useT();
   const popup = usePopup();
   const mutxt = useMuTxt();
-  const state = React.useMemo(
-    () => new CalloutOptionsState(mutxt, element, popup?.close),
-    [mutxt, element, popup]);
+  const state = React.useMemo(() => new CalloutOptionsState(mutxt, element, popup?.close), [mutxt, element, popup]);
 
   return (
     <ctx.Provider value={state}>

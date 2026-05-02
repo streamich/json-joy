@@ -92,10 +92,7 @@ export class HrOptionsState {
 
   public readonly dispose = (): void => {};
 
-  private readonly syncFromElement = (
-    element: HrElementType,
-    signature = getElementSignature(element),
-  ): void => {
+  private readonly syncFromElement = (element: HrElementType, signature = getElementSignature(element)): void => {
     this.signature = signature;
     this.strokeWidth.set(settings.getHrStrokeWidth(element.strokeWidth));
     this.lineWidth.set(settings.getHrLineWidth(element.lineWidth));
@@ -132,11 +129,7 @@ export class HrOptionsState {
     }
   };
 
-  private readonly applyString = (
-    field: 'caption',
-    value: string,
-    currentValue?: string,
-  ): void => {
+  private readonly applyString = (field: 'caption', value: string, currentValue?: string): void => {
     const prev = (currentValue ?? '').trim();
     if (value === prev) return;
     const path = ReactEditor.findPath(this.editor, this.element);

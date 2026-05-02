@@ -85,7 +85,7 @@ export const getActiveAlignment = (editor: Editor): SlateTextAlign => {
   });
   if (!match) return 'left';
   const [element] = match as [CustomElement, number[]];
-  return ((element as {align?: SlateTextAlign}).align) ?? 'left';
+  return (element as {align?: SlateTextAlign}).align ?? 'left';
 };
 
 export const isAlignmentActive = (editor: Editor, alignment: SlateTextAlign): boolean =>
@@ -224,10 +224,17 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
   const {insertBreak} = editor;
   editor.insertBreak = () => {
     if (insertCodeBlockBreak(editor)) return;
-    const inHeading = isBlockActive(editor, 'h1') || isBlockActive(editor, 'h2') || isBlockActive(editor, 'h3')
-      || isBlockActive(editor, 'h4') || isBlockActive(editor, 'h5') || isBlockActive(editor, 'h6')
-      || isBlockActive(editor, 'title') || isBlockActive(editor, 'subtitle')
-      || isBlockActive(editor, 'blockquote') || isBlockActive(editor, 'callout');
+    const inHeading =
+      isBlockActive(editor, 'h1') ||
+      isBlockActive(editor, 'h2') ||
+      isBlockActive(editor, 'h3') ||
+      isBlockActive(editor, 'h4') ||
+      isBlockActive(editor, 'h5') ||
+      isBlockActive(editor, 'h6') ||
+      isBlockActive(editor, 'title') ||
+      isBlockActive(editor, 'subtitle') ||
+      isBlockActive(editor, 'blockquote') ||
+      isBlockActive(editor, 'callout');
     const atEndOfTitle = isAtEndOfBlock(editor, 'title');
     insertBreak();
     if (inHeading) {
@@ -254,9 +261,11 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
   return editor;
 };
 
-export const canUndo = (editor: Editor): boolean => HistoryEditor.isHistoryEditor(editor) && editor.history.undos.length > 0;
+export const canUndo = (editor: Editor): boolean =>
+  HistoryEditor.isHistoryEditor(editor) && editor.history.undos.length > 0;
 
-export const canRedo = (editor: Editor): boolean => HistoryEditor.isHistoryEditor(editor) && editor.history.redos.length > 0;
+export const canRedo = (editor: Editor): boolean =>
+  HistoryEditor.isHistoryEditor(editor) && editor.history.redos.length > 0;
 
 export const undo = (editor: Editor): void => {
   if (HistoryEditor.isHistoryEditor(editor)) editor.undo();

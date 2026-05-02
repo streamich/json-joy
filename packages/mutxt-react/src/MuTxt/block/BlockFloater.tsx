@@ -87,10 +87,12 @@ export const BlockFloater: React.FC<BlockFloaterProps> = () => {
     <PositionAtPoint point={point} animate>
       <div ref={composedRef} className={handleClass} onMouseDown={(e) => e.preventDefault()}>
         <ExpandableToolbar
-          pane={{
-            transparent,
-            compact: true,
-          } as any}
+          pane={
+            {
+              transparent,
+              compact: true,
+            } as any
+          }
           compact
           menu={menu}
         />

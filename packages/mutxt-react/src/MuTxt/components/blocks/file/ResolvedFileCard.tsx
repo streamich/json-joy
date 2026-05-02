@@ -154,28 +154,30 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
     <FileListItem
       fill
       spacious
-      icon={(
-        <FileIcon
-          label={getExtensionLabel(thing)}
-          ext={getExtensionLabel(thing)}
-          id={thing['@id']}
-          size={32}
-        />
-      )}
-      title={readOnly ? (thing.name || t('Untitled file')) : (
-        <FlexibleInput
-          inp={setNameInputEl}
-          value={nameValue}
-          minWidth={120}
-          onChange={(e) => setNameValue(e.target.value)}
-          onFocus={() => { focused.current = true; }}
-          onBlur={commitName}
-        />
-      )}
+      icon={<FileIcon label={getExtensionLabel(thing)} ext={getExtensionLabel(thing)} id={thing['@id']} size={32} />}
+      title={
+        readOnly ? (
+          thing.name || t('Untitled file')
+        ) : (
+          <FlexibleInput
+            inp={setNameInputEl}
+            value={nameValue}
+            minWidth={120}
+            onChange={(e) => setNameValue(e.target.value)}
+            onFocus={() => {
+              focused.current = true;
+            }}
+            onBlur={commitName}
+          />
+        )
+      }
       metadata={[thing.mimeType, formatFileSize(thing.size)].filter(Boolean).join(' • ')}
-      actions={(
+      actions={
         <div style={{display: 'flex', gap: 16, paddingRight: 4}}>
-          <Button compact size={-1} icon={<Iconista set={'tabler'} icon={'download'} width={16} height={16} />}
+          <Button
+            compact
+            size={-1}
+            icon={<Iconista set={'tabler'} icon={'download'} width={16} height={16} />}
             onClick={() => {
               const state = new FileOptionsState(mutxt, element);
               state.download();
@@ -185,7 +187,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
           </Button>
           {options}
         </div>
-      )}
+      }
     />
   );
 
@@ -200,11 +202,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       }}
     >
       {body}
-      {!!mediaKind && selected && (
-        <div style={{position: 'absolute', top: 0, right: -46}}>
-          {options}
-        </div>
-      )}
+      {!!mediaKind && selected && <div style={{position: 'absolute', top: 0, right: -46}}>{options}</div>}
       {selected && (
         <div
           contentEditable={false}
@@ -217,15 +215,24 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
           }}
         />
       )}
-      {(element.caption || !readOnly) ? (
-        <div ref={captionRef} contentEditable={false} className={captionClass} style={{color: styles.g(0.42), padding: '8px 8px 4px'}}>
-          {readOnly ? element.caption : (
+      {element.caption || !readOnly ? (
+        <div
+          ref={captionRef}
+          contentEditable={false}
+          className={captionClass}
+          style={{color: styles.g(0.42), padding: '8px 8px 4px'}}
+        >
+          {readOnly ? (
+            element.caption
+          ) : (
             <FlexibleInput
               value={captionValue}
               minWidth={80}
               typeahead={captionValue ? '' : t('Add caption…')}
               onChange={(e) => setCaptionValue(e.target.value)}
-              onFocus={() => { captionFocused.current = true; }}
+              onFocus={() => {
+                captionFocused.current = true;
+              }}
               onBlur={commitCaption}
             />
           )}

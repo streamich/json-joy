@@ -71,7 +71,7 @@ export class MuTxtApi {
   // ------------------------------------------------------------------- Inline
 
   public marks(): Omit<Text, 'text'> | null {
-    return Editor.marks(this.editor)
+    return Editor.marks(this.editor);
   }
 
   public isMarkActive(format: MarkFormat): boolean {
@@ -98,19 +98,22 @@ export class MuTxtApi {
       if (selection) at = Editor.unhangRange(editor, selection);
     }
     if (at) {
-      const [match] = Editor.nodes(editor, {at,
+      const [match] = Editor.nodes(editor, {
+        at,
         match: (node) => SlateElement.isElement(node) && Editor.isBlock(editor, node),
       });
       if (match) return match[0] as CustomElement;
     }
     const firstChild = editor.children[0];
-    return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild) ? (firstChild as CustomElement) : null;
+    return SlateElement.isElement(firstChild) && Editor.isBlock(editor, firstChild)
+      ? (firstChild as CustomElement)
+      : null;
   }
 
   public blockAbove(
     predicate?: (element: CustomElement) => boolean,
     at?: Location,
-    mode: 'highest' | 'lowest' = 'lowest'
+    mode: 'highest' | 'lowest' = 'lowest',
   ): [CustomElement, Path] | undefined {
     const {editor} = this;
     if (!at) {
@@ -118,8 +121,12 @@ export class MuTxtApi {
       if (selection) at = Editor.unhangRange(editor, selection);
     }
     if (!at) return;
-    return Editor.above(this.editor, {at,
-      match: (node) => SlateElement.isElement(node) && Editor.isBlock(this.editor, node) && (predicate?.(node as CustomElement) ?? true),
+    return Editor.above(this.editor, {
+      at,
+      match: (node) =>
+        SlateElement.isElement(node) &&
+        Editor.isBlock(this.editor, node) &&
+        (predicate?.(node as CustomElement) ?? true),
       mode,
     });
   }
@@ -127,7 +134,7 @@ export class MuTxtApi {
   public listAbove(
     predicate?: (element: CustomElement) => boolean,
     at?: Location,
-    mode: 'highest' | 'lowest' = 'lowest'
+    mode: 'highest' | 'lowest' = 'lowest',
   ): [CustomElement, Path] | undefined {
     return this.blockAbove((n) => isListType(n.type) && (predicate?.(n as CustomElement) ?? true), at, mode);
   }

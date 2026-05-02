@@ -91,12 +91,12 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
             {caretPath.map((segment, index) => (
               <React.Fragment key={`${index}:${segment}`}>
                 <span>{typeToLabel(segment) || segment}</span>
-                {index < caretPath.length - 1 && <span style={{opacity:.25}}>{'→'}</span>}
+                {index < caretPath.length - 1 && <span style={{opacity: 0.25}}>{'→'}</span>}
               </React.Fragment>
             ))}
             {!!footerUrl && showCaretUrl && (
               <>
-                <span style={{opacity:.25}}>{'→'}</span>
+                <span style={{opacity: 0.25}}>{'→'}</span>
                 <Favicon url={footerUrl} size={16} />
                 <a
                   className={pathLinkClass}
@@ -123,7 +123,7 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
             )}
             {!!caretCodeText && showCaretCode && (
               <>
-                <span style={{opacity:.25}}>{'→'}</span>
+                <span style={{opacity: 0.25}}>{'→'}</span>
                 <CopyCode value={caretCodeText} truncate style={{maxWidth: 220}} alt spacious roundest />
               </>
             )}
@@ -135,13 +135,13 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
         {!!selectionSummary && showSelectionSummary && (
           <>
             <span>{selectionSummary}</span>
-            <span style={{opacity:.25}}>{'•'}</span>
+            <span style={{opacity: 0.25}}>{'•'}</span>
           </>
         )}
         <span>{pluralize(wordCount, 'word')}</span>
         {showCharacterCount && (
           <>
-            <span style={{opacity:.25}}>{'•'}</span>
+            <span style={{opacity: 0.25}}>{'•'}</span>
             <span>{pluralize(characterCount, 'character')}</span>
           </>
         )}

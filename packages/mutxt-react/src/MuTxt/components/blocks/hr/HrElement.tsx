@@ -78,15 +78,13 @@ export const HrElement: React.FC<HrElementProps> = ({attributes, children, eleme
         borderRadius: 4,
       }}
     >
-      <div
-        contentEditable={false}
-        className={innerClass}
-        style={{width: `${lineWidth}%`, color: lineColor}}
-      >
+      <div contentEditable={false} className={innerClass} style={{width: `${lineWidth}%`, color: lineColor}}>
         {caption ? (
           <>
             <HrLine strokeWidth={strokeWidth} style={lineStyle} />
-            <span className={textClass} style={{color: captionColor}}>{caption}</span>
+            <span className={textClass} style={{color: captionColor}}>
+              {caption}
+            </span>
             <HrLine strokeWidth={strokeWidth} style={lineStyle} />
           </>
         ) : (

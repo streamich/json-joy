@@ -64,10 +64,7 @@ export const HrOptions: React.FC = () => {
   const blockHeight = state.blockHeight.use();
   const caption = state.caption.use();
 
-  const handleStyleChange = React.useCallback(
-    (key: string) => state.setLineStyle(key as HrLineStyle),
-    [state],
-  );
+  const handleStyleChange = React.useCallback((key: string) => state.setLineStyle(key as HrLineStyle), [state]);
 
   return (
     <div className={blockClass}>
@@ -111,7 +108,11 @@ export const HrOptions: React.FC = () => {
 
       <Separator />
 
-      <FormRow title={t('Line width')} descriptionAbove description={t('Horizontal extent of the line as a percentage.')}>
+      <FormRow
+        title={t('Line width')}
+        descriptionAbove
+        description={t('Horizontal extent of the line as a percentage.')}
+      >
         <Slider
           value={lineWidth}
           min={settings.HR_LINE_WIDTH_MIN}

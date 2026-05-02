@@ -16,7 +16,9 @@ export const PositionAtPoint: React.FC<PositionAtPointProps> = ({point, animate,
 
   return (
     <anchorContext.Provider value={handle}>
-      <PositionPopup animate={animate} fadeIn={fadeIn}>{children}</PositionPopup>
+      <PositionPopup animate={animate} fadeIn={fadeIn}>
+        {children}
+      </PositionPopup>
     </anchorContext.Provider>
   );
 };

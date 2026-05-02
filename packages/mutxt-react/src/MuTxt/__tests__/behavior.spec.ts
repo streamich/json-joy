@@ -22,7 +22,9 @@ describe('SlateEditor behavior', () => {
   });
 
   test('stores checked state on the checklist item node', () => {
-    const editor = createTestEditor([{type: 'checklist', children: [{type: 'li', checked: false, children: [{text: 'Done'}]}]}]);
+    const editor = createTestEditor([
+      {type: 'checklist', children: [{type: 'li', checked: false, children: [{text: 'Done'}]}]},
+    ]);
 
     setChecklistItemChecked(editor, [0, 0], true);
 
@@ -32,7 +34,9 @@ describe('SlateEditor behavior', () => {
   });
 
   test('removes checked state when checklist items become paragraphs', () => {
-    const editor = createTestEditor([{type: 'checklist', children: [{type: 'li', checked: true, children: [{text: 'Done'}]}]}]);
+    const editor = createTestEditor([
+      {type: 'checklist', children: [{type: 'li', checked: true, children: [{text: 'Done'}]}]},
+    ]);
     editor.selection = {
       anchor: {path: [0, 0, 0], offset: 2},
       focus: {path: [0, 0, 0], offset: 2},

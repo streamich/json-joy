@@ -6,6 +6,4 @@
  * as well as helps with inline "void" (chips, mentions) insertion.
  */
 
-export class InsertState {
-
-}
+export class InsertState {}

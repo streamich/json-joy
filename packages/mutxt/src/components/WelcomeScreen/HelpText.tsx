@@ -11,16 +11,17 @@ export const HelpText: React.FC<HelpTextProps> = () => {
     <div>
       <h3>{t('Writing')}</h3>
       <p>
-        {t('Just start typing. Use the toolbar to format text and switch block types.')}
-        {' '}
-        {t('Press')} <Key>Shift</Key> <Key>Shift</Key> or <Key>Cmd + J</Key> {t(' for menu.')}
+        {t('Just start typing. Use the toolbar to format text and switch block types.')} {t('Press')} <Key>Shift</Key>{' '}
+        <Key>Shift</Key> or <Key>Cmd + J</Key> {t(' for menu.')}
       </p>
 
       <h3>{t('History')}</h3>
       <p>
-        {t('Below the editor, you can find the history of all changes. Click on any entry to view the document at that point in time.')}
+        {t(
+          'Below the editor, you can find the history of all changes. Click on any entry to view the document at that point in time.',
+        )}
       </p>
-{/* 
+      {/* 
       <h3>{t('Formatting')}</h3>
       <ul>
         <li><Key>⌘B</Key> <Key>⌘I</Key> <Key>⌘U</Key> <Key>⌘E</Key> &mdash; {t('bold, italic, underline, inline code')}</li>

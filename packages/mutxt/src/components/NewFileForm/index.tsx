@@ -36,7 +36,10 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
             {t('New document')}
           </CreateButton>
           <Space horizontal />
-          <Popup renderContext={() => <ContextMenu inset showSearch menu={state.menus.newFileMenu()} />} tooltip={{renderTooltip: () => t('From template'), nowrap: true}}>
+          <Popup
+            renderContext={() => <ContextMenu inset showSearch menu={state.menus.newFileMenu()} />}
+            tooltip={{renderTooltip: () => t('From template'), nowrap: true}}
+          >
             <BasicButtonMore size={32} rounder fill />
           </Popup>
         </Flex>

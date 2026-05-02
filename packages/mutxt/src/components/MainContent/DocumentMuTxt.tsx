@@ -22,17 +22,21 @@ export interface DocumentMuTxtProps {
   visible?: boolean;
 }
 
-
-export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({ file, obj, readOnly, visible }) => {
+export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({file, obj, readOnly, visible}) => {
   return (
     <div className={editorShellClass} style={{display: visible ? 'block' : 'none', minHeight}}>
-      <MuTxt heightFit hoverElevate obj={obj} minHeight={minHeight} readOnly={readOnly}
+      <MuTxt
+        heightFit
+        hoverElevate
+        obj={obj}
+        minHeight={minHeight}
+        readOnly={readOnly}
         autoFocus
         onApi={(api) => {
           file.mutxt = api;
         }}
         startWithTitle
-        onTitleSubmit={title => {
+        onTitleSubmit={(title) => {
           if (!title) return;
           const now = Date.now();
           const fileLifeTime = now - file.meta.createdAt;

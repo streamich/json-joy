@@ -113,7 +113,9 @@ const describeScrollMapElement = (element: CustomElement, light: boolean): Scrol
       return {
         el: element,
         color: complete
-          ? light ? '#2f8f35' : '#7be08f'
+          ? light
+            ? '#2f8f35'
+            : '#7be08f'
           : started
             ? light
               ? 'rgba(200,150,40,.6)'
@@ -260,7 +262,14 @@ export const measureScrollMapMarkers = (
       // Slate may briefly unmount/remount nodes while reconciling changes.
     }
   });
-  const selectionMarker = measureScrollMapSelectionMarker(reactEditor, viewportEl, viewportRect, scrollHeight, railHeight, light);
+  const selectionMarker = measureScrollMapSelectionMarker(
+    reactEditor,
+    viewportEl,
+    viewportRect,
+    scrollHeight,
+    railHeight,
+    light,
+  );
   if (selectionMarker) markers.push(selectionMarker);
   return markers;
 };

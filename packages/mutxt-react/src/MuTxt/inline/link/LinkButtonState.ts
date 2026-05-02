@@ -2,13 +2,7 @@ import {rsync} from '@jsonjoy.com/ui';
 import {flushSync} from 'react-dom';
 import {ReactEditor} from 'slate-react';
 import {Transforms, type Editor, type Range} from 'slate';
-import {
-  getActiveLink,
-  normalizeLinkHref,
-  removeLink,
-  type ActiveLink,
-  upsertLink,
-} from '../../behavior/link';
+import {getActiveLink, normalizeLinkHref, removeLink, type ActiveLink, upsertLink} from '../../behavior/link';
 import {MuTxtState} from '../../state/MuTxtState';
 
 export class LinkButtonState {
@@ -24,10 +18,8 @@ export class LinkButtonState {
   public readonly rangeSnapshot = rsync.val<Range | null>(null);
 
   private readonly editor: Editor;
-  constructor(
-    public readonly mutxt: MuTxtState,
-  ) {
-    const editor = this.editor = mutxt.editor;
+  constructor(public readonly mutxt: MuTxtState) {
+    const editor = (this.editor = mutxt.editor);
     this.activeLink = rsync.comp([mutxt.cursor], () => getActiveLink(editor));
     this.canOpen = rsync.comp(
       [mutxt.readOnly, mutxt.selection, this.activeLink],

@@ -128,10 +128,10 @@ export class HslColor {
   public pct(ph: number = 0, ps: number = 0, pl: number = 0, pa: number = 0): HslColor {
     const {h, s, l, a} = this;
     return new HslColor(
-      ph === 0 ? h : clamp(ph > 0 ? (h + (1 - h) * ph) : (h + (h * ph))),
-      ps === 0 ? s : clamp(ps > 0 ? (s + (1 - s) * ps) : (s + (s * ps))),
-      pl === 0 ? l : clamp(pl > 0 ? (l + (1 - l) * pl) : (l + (l * pl))),
-      pa === 0 ? a : clamp(pa > 0 ? (a + (1 - a) * pa) : (a + (a * pa))),
+      ph === 0 ? h : clamp(ph > 0 ? h + (1 - h) * ph : h + h * ph),
+      ps === 0 ? s : clamp(ps > 0 ? s + (1 - s) * ps : s + s * ps),
+      pl === 0 ? l : clamp(pl > 0 ? l + (1 - l) * pl : l + l * pl),
+      pa === 0 ? a : clamp(pa > 0 ? a + (1 - a) * pa : a + a * pa),
     );
   }
 

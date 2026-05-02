@@ -84,7 +84,7 @@ export class OpenFile {
     const queue = new DebounceQueue<null>(100, 500);
     queue.onflush = () => {
       const patch = api.builder.patch;
-      if(patch.ops.length) {
+      if (patch.ops.length) {
         compact(patch);
         api.flush();
       }

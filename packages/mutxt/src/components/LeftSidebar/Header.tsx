@@ -29,11 +29,7 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
           name: 'New File',
           minWidth: 300,
           icon: () => <Iconista set="ibm_16" icon="new-tab" width={16} height={16} />,
-          children: [
-            newMenu,
-            {name: 'after-new', sep: true},
-            ...state.menus.tracesMenu(300, async () => {}).children!,
-          ],
+          children: [newMenu, {name: 'after-new', sep: true}, ...state.menus.tracesMenu(300, async () => {}).children!],
         },
         {
           name: 'Import File',

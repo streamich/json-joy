@@ -129,8 +129,7 @@ export const ExternalState: StoryObj<typeof meta> = {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
         <div style={{padding: '8px 12px', fontFamily: 'monospace', fontSize: 12, color: '#666'}}>
-          Container: <strong>{containerWidth}px</strong> · Content:{' '}
-          <strong>{contentWidth}px</strong>
+          Container: <strong>{containerWidth}px</strong> · Content: <strong>{contentWidth}px</strong>
         </div>
         <div style={frameStyle}>
           <Sizer state={state} handlePadding={32} handleMaxHeight={300}>

@@ -46,8 +46,7 @@ export const Sizer: React.FC<SizerProps> = ({
 
   const containerWidth = state.width.use();
   const desired = state.content.use();
-  const contentWidth =
-    containerWidth === 0 ? desired : Math.max(minWidth, Math.min(desired, containerWidth));
+  const contentWidth = containerWidth === 0 ? desired : Math.max(minWidth, Math.min(desired, containerWidth));
 
   const cls = className ? `${outerClass} ${className}` : outerClass;
 

@@ -49,7 +49,10 @@ export const LinkToolbarPopup: React.FC = () => {
     : 'Enter a URL to wrap the current selection.';
 
   const actionRow = activeLink ? (
-    <div className={actionRowClass} onMouseDown={stopMouseDownPropagation /* prevent popup from closing when clicking action buttons */}>
+    <div
+      className={actionRowClass}
+      onMouseDown={stopMouseDownPropagation /* prevent popup from closing when clicking action buttons */}
+    >
       <div className={actionButtonsClass}>
         <CopyButton
           type="button"
@@ -61,14 +64,7 @@ export const LinkToolbarPopup: React.FC = () => {
           tooltip={{nowrap: true, renderTooltip: () => 'Copy link'}}
         />
         <BasicTooltip nowrap renderTooltip={() => 'Open link'}>
-          <BasicButton
-            type="button"
-            width={32}
-            height={32}
-            rounder
-            onMouseDown={preventMouseDown}
-            to={activeLink.href}
-          >
+          <BasicButton type="button" width={32} height={32} rounder onMouseDown={preventMouseDown} to={activeLink.href}>
             <Iconista set={'lucide' as any} icon={'external-link' as any} width={16} height={16} />
           </BasicButton>
         </BasicTooltip>

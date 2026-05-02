@@ -11,17 +11,14 @@ export class VoidState implements UiLifeCycles {
   public readonly embed: EmbedButtonState;
   public readonly file: FileButtonState;
 
-  constructor(
-    private readonly mutxt: MuTxtState,
-  ) {
+  constructor(private readonly mutxt: MuTxtState) {
     this.menu = new VoidMenu(mutxt);
     this.embed = new EmbedButtonState(mutxt);
     this.file = new FileButtonState(mutxt);
   }
 
   public readonly start = (): (() => void) => {
-    return () => {
-    };
+    return () => {};
   };
 
   public point(): AnchorPoint | undefined {
