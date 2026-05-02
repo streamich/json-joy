@@ -96,7 +96,10 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
           </Popup>
         </div>
       }
-      onClick={() => state.openSaved(file.id).catch(() => {})}
+      onClick={() => {
+        state.openSaved(file.id).catch(() => {});
+        state.appGrid.closeLeftIfOverlay();
+      }}
     />
   );
 };

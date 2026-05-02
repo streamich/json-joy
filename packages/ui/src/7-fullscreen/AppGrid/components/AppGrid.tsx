@@ -1,4 +1,5 @@
 import * as React from 'react';
+import useMedia from 'react-use/lib/useMedia';
 import {Pane, SplitPane} from '../../../5-block/SplitPane';
 import {SlimDivider} from '../../../5-block/SplitPane/components/SlimDivider';
 import {rule} from 'nano-theme';
@@ -8,7 +9,10 @@ import {Iconista} from '../../../icons/Iconista';
 import BasicButton from '../../../2-inline-block/BasicButton';
 import {useT} from 'use-t';
 import {BasicTooltip} from '../../../4-card/BasicTooltip';
+import {OverlayDrawer} from '../../../5-block/Drawer/components/OverlayDrawer';
 import {AppGridColumn} from './AppGridColumn';
+
+const DEFAULT_OVERLAY_BREAKPOINT = '(max-width: 768px)';
 
 const outerClass = rule({
   w: '100vw',
@@ -31,6 +35,8 @@ export interface AppGridProps {
   scrollFooter?: React.ReactNode;
   maxLeftSize?: number;
   minLeftSize?: number;
+  /** Media query that triggers overlay-drawer mode for the sidebars. */
+  overlayBreakpoint?: string;
   children?: React.ReactNode;
 
   /** Render the column yourself. */
@@ -47,6 +53,7 @@ export const AppGrid: React.FC<AppGridProps> = ({
   scrollFooter,
   maxLeftSize,
   minLeftSize,
+  overlayBreakpoint = DEFAULT_OVERLAY_BREAKPOINT,
   children,
   column,
 }) => {
@@ -54,14 +61,25 @@ export const AppGrid: React.FC<AppGridProps> = ({
   const hasLeft = !!left;
   const hasRight = !!right;
   const state = React.useMemo(() => {
-    const s = _state || new AppGridState();
+    if (_state) return _state;
+    const s = new AppGridState();
+    if (typeof window !== 'undefined' && window.matchMedia(overlayBreakpoint).matches) {
+      s.leftState.next('close');
+      s.rightState.next('close');
+    }
     return s;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_state]);
   const leftSize = state.leftSize.use();
   const rightSize = state.rightSize.use();
   const leftState = state.leftState.use();
   const leftVisible = state.leftVisible();
   const rightVisible = state.rightVisible();
+  const isSmall = useMedia(overlayBreakpoint);
+  const showAsOverlay = isSmall && (hasLeft || hasRight);
+  React.useEffect(() => {
+    state.overlay.next(showAsOverlay);
+  }, [state, showAsOverlay]);
 
   const toggle = (
     <BasicTooltip renderTooltip={() => (leftVisible ? t('Close sidebar') : t('Open sidebar'))}>
@@ -96,11 +114,11 @@ export const AppGrid: React.FC<AppGridProps> = ({
   );
 
   let content = column ? (
-    column(leftVisible ? null : toggle)
+    column(showAsOverlay || !leftVisible ? toggle : null)
   ) : (
     <AppGridColumn
       header={
-        typeof left === 'function' && leftState === 'open' ? (
+        typeof left === 'function' && leftState === 'open' && !showAsOverlay ? (
           typeof header === 'function' ? (
             header(null)
           ) : (
@@ -121,7 +139,39 @@ export const AppGrid: React.FC<AppGridProps> = ({
     </AppGridColumn>
   );
 
-  if (hasLeft || hasRight) {
+  if (showAsOverlay) {
+    const leftDrawer = hasLeft && (
+      <OverlayDrawer
+        open={leftVisible}
+        side="left"
+        width={leftSize}
+        onOpenChange={(open) => {
+          if (!open) state.leftState.next('close');
+        }}
+      >
+        {typeof left === 'function' ? left(toggle) : left}
+      </OverlayDrawer>
+    );
+    const rightDrawer = hasRight && (
+      <OverlayDrawer
+        open={rightVisible && !leftVisible}
+        side="right"
+        width={rightSize}
+        onOpenChange={(open) => {
+          if (!open) state.rightState.next('close');
+        }}
+      >
+        {right}
+      </OverlayDrawer>
+    );
+    content = (
+      <>
+        {content}
+        {leftDrawer}
+        {rightDrawer}
+      </>
+    );
+  } else if (hasLeft || hasRight) {
     content = (
       <SplitPane className={outerClass} onResize={state.setSizes} divider={SlimDivider} dividerSize={12}>
         {leftElement}
