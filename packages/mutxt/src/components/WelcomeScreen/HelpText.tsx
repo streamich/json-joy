@@ -13,7 +13,7 @@ export const HelpText: React.FC<HelpTextProps> = () => {
       <p>
         {t('Just start typing. Use the toolbar to format text and switch block types.')}
         {' '}
-        {t('Double tap')} <Key>Shift</Key> <Key>Shift</Key> {t(' for the command palette.')}
+        {t('Press')} <Key>Shift</Key> <Key>Shift</Key> or <Key>Cmd + J</Key> {t(' for menu.')}
       </p>
 
       <h3>{t('History')}</h3>
