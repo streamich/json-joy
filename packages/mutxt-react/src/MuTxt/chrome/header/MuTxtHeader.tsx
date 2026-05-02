@@ -23,7 +23,6 @@ const blockClass = rule({
   ai: 'center',
   h: HEIGHT + 'px',
   bxz: 'border-box',
-  ovx: 'auto',
 });
 
 const toolbarContainerClass = rule({
