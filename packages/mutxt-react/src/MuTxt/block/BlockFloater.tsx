@@ -21,10 +21,15 @@ export const BlockFloater: React.FC<BlockFloaterProps> = () => {
   const readOnly = mutxt.readOnly.use();
   const dismissed = state.dismissed.use();
   const omniOpen = mutxt.omni.open.use();
+  const availableWidth = mutxt.sizer.width.use();
+  const desiredWidth = mutxt.sizer.content.use();
   mutxt.version.use();
   mutxt.scrollVersion.use();
   mutxt.editableBox.use();
   mutxt.wnd.use();
+
+  const width = Math.min(availableWidth, desiredWidth);
+  const transparent = width > 900;
 
   const handleRef = React.useRef<HTMLDivElement | null>(null);
   const clickAwayRef = useClickAway(
@@ -83,8 +88,9 @@ export const BlockFloater: React.FC<BlockFloaterProps> = () => {
       <div ref={composedRef} className={handleClass} onMouseDown={(e) => e.preventDefault()}>
         <ExpandableToolbar
           pane={{
-            transparent: true,
-          }}
+            transparent,
+            compact: true,
+          } as any}
           compact
           menu={menu}
         />
