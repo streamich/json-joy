@@ -2,12 +2,12 @@ import * as React from 'react';
 import type {MenuItem} from '../../StructuralMenu/types';
 import {ToolbarMenuItemTerminal} from '../../Toolbar/ToolbarMenu/ToolbarMenuItemTerminal';
 import {ContextItemNested} from '../ContextItemNested';
-import type {OpenPanelState} from './OpenPanelState';
 import {ContextMenuPane} from './ContextMenuPane';
 import {useContextMenu} from './context';
 import {Space} from '../../../3-list-item/Space';
 import {useBehaviorSubject} from '../../../hooks/useBehaviorSubject';
 import {MoveToViewport} from '../../../utils/popup/MoveToViewport';
+import type {OpenPanelState} from './OpenPanelState';
 
 export interface ContextMenuToolbarRowProps {
   openPanel: OpenPanelState;

@@ -18,10 +18,26 @@ export interface AutoExpandableToolbarProps extends ToolbarMenuProps {
 export const AutoExpandableToolbar: React.FC<AutoExpandableToolbarProps> = (props) => {
   const {more, context, contextMenu = props.menu, ...rest} = props;
   const [point, setPoint] = React.useState<AnchorPoint | null>(null);
+  const pointRef = React.useRef<AnchorPoint | null>(null);
+  pointRef.current = point;
+  const wasOpenAtPressDown = React.useRef(false);
+
+  React.useEffect(() => {
+    const onPress = () => {
+      wasOpenAtPressDown.current = pointRef.current !== null;
+    };
+    document.addEventListener('mousedown', onPress, true);
+    document.addEventListener('touchstart', onPress, true);
+    return () => {
+      document.removeEventListener('mousedown', onPress, true);
+      document.removeEventListener('touchstart', onPress, true);
+    };
+  }, []);
 
   const close = React.useCallback(() => setPoint(null), []);
 
   const handleMoreClick = React.useCallback((event: React.MouseEvent<HTMLElement>) => {
+    if (wasOpenAtPressDown.current) return;
     const rect = event.currentTarget.getBoundingClientRect();
     setPoint({x: rect.left, y: rect.bottom + 4, dx: 1, dy: 1});
   }, []);
