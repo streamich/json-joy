@@ -41,7 +41,7 @@ export const ContextMenuToolbarRow: React.FC<ContextMenuToolbarRowProps> = ({pat
   }
 
   return (
-    <div data-menu-row data-menu-id={id}>
+    <div data-menu-row data-menu-id={id} style={{position: 'relative'}}>
       <ContextItemNested
         key={item.id || item.name}
         open={open}
