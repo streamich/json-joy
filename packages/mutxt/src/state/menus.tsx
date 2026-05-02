@@ -57,6 +57,7 @@ export class Menus {
             .map((tpl) => ({
               id: tpl.id,
               name: tpl.name,
+              text: tpl.name + ' - ' + tpl.description,
               icon: () => <FileMuTxtIcon />,
               right: () => <Sidetip small>{tpl.description}</Sidetip>,
               onSelect: () => state.createNewMuTxtFromSlate(tpl.doc, tpl.fileName),
@@ -71,6 +72,7 @@ export class Menus {
             .map((tpl) => ({
               id: tpl.id,
               name: tpl.name,
+              text: tpl.name + ' - ' + tpl.description,
               icon: () => <FileMuTxtIcon />,
               right: () => <Sidetip small>{tpl.description}</Sidetip>,
               onSelect: () => state.createNewMuTxtFromSlate(tpl.doc, tpl.fileName),

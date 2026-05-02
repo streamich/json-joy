@@ -649,6 +649,357 @@ const travel: SlateDocument = [
   },
 ];
 
+const competitorAnalysis: SlateDocument = [
+  {type: 'h1', children: [{text: 'Competitor analysis: <market / category>'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Owner: '},
+      {text: '<your name>', italic: true},
+      {text: ' · Last updated: '},
+      {text: '<YYYY-MM-DD>', italic: true},
+      {text: ' · Status: '},
+      {text: 'Living document', bold: true},
+    ],
+  },
+  {
+    type: 'callout',
+    icon: '🎯',
+    title: 'TL;DR',
+    children: [{text: 'One paragraph: who the players are, where we stand, and the one move we should make next.'}],
+  },
+  {type: 'h2', children: [{text: 'Market & context'}]},
+  {type: 'p', children: [{text: 'What is this market? Size, growth, target buyer, dominant trends. Why it matters now.'}]},
+  {type: 'h2', children: [{text: 'Our positioning'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Who we serve: '}, {text: '<segment>', italic: true}]},
+      {type: 'li', children: [{text: 'Core promise: '}, {text: '<value prop>', italic: true}]},
+      {type: 'li', children: [{text: 'Wedge / unfair advantage: '}, {text: '<…>', italic: true}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'Competitors'}]},
+  {type: 'h3', children: [{text: '<Competitor A>'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Site: '},
+      {text: '<url>', a: {href: 'https://example.com'}},
+      {text: ' · HQ: '},
+      {text: '<city>', italic: true},
+      {text: ' · Founded: '},
+      {text: '<year>', italic: true},
+      {text: ' · Funding: '},
+      {text: '<stage / $>', italic: true},
+      {text: ' · Headcount: '},
+      {text: '<N>', italic: true},
+    ],
+  },
+  {
+    type: 'p',
+    children: [{text: 'One-line description of what they do and who they serve.'}],
+  },
+  {
+    type: 'callout',
+    icon: '✅',
+    title: 'Strengths',
+    color: '#3aaf5f',
+    children: [{text: 'Where they’re genuinely better than us — features, distribution, brand, capital, talent.'}],
+  },
+  {
+    type: 'callout',
+    icon: '⚠️',
+    title: 'Weaknesses',
+    color: '#e07a5f',
+    children: [{text: 'Where they fall short — gaps, complaints, missing segments, organizational drag.'}],
+  },
+  {
+    type: 'p',
+    children: [
+      {text: 'Pricing: '},
+      {text: '<starting tier / model>', code: true},
+      {text: ' · Notable customers: '},
+      {text: '<…>', italic: true},
+    ],
+  },
+  {type: 'h3', children: [{text: '<Competitor B>'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Site: '},
+      {text: '<url>', a: {href: 'https://example.com'}},
+      {text: ' · HQ: '},
+      {text: '<city>', italic: true},
+      {text: ' · Founded: '},
+      {text: '<year>', italic: true},
+      {text: ' · Funding: '},
+      {text: '<stage / $>', italic: true},
+    ],
+  },
+  {type: 'p', children: [{text: 'One-line description.'}]},
+  {
+    type: 'callout',
+    icon: '✅',
+    title: 'Strengths',
+    color: '#3aaf5f',
+    children: [{text: '…'}],
+  },
+  {
+    type: 'callout',
+    icon: '⚠️',
+    title: 'Weaknesses',
+    color: '#e07a5f',
+    children: [{text: '…'}],
+  },
+  {type: 'h3', children: [{text: '<Competitor C>'}]},
+  {type: 'p', children: [{text: 'Repeat the same template for each player worth tracking.'}]},
+  {type: 'h2', children: [{text: 'Feature comparison'}]},
+  {type: 'p', children: [{text: 'Score each player on the dimensions that actually drive purchase decisions. Use ✅ / ⚠️ / ❌ for quick scanning.'}]},
+  {type: 'h3', children: [{text: 'Core capability'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Us — '}, {text: '✅ ', bold: true}, {text: 'best-in-class for '}, {text: '<scenario>', italic: true}]},
+      {type: 'li', children: [{text: '<Competitor A> — '}, {text: '✅ ', bold: true}, {text: '…'}]},
+      {type: 'li', children: [{text: '<Competitor B> — '}, {text: '⚠️ ', bold: true}, {text: '…'}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Pricing & packaging'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Us — '}, {text: '<model>', italic: true}]},
+      {type: 'li', children: [{text: '<Competitor A> — '}, {text: '<model>', italic: true}]},
+      {type: 'li', children: [{text: '<Competitor B> — '}, {text: '<model>', italic: true}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Distribution & GTM'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Us — '}, {text: '<channels>', italic: true}]},
+      {type: 'li', children: [{text: '<Competitor A> — '}, {text: '<channels>', italic: true}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Ecosystem & integrations'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Us — '}, {text: '<…>', italic: true}]},
+      {type: 'li', children: [{text: '<Competitor A> — '}, {text: '<…>', italic: true}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'SWOT — us vs. the field'}]},
+  {
+    type: 'callout',
+    icon: '💪',
+    title: 'Strengths',
+    color: '#3aaf5f',
+    children: [{text: 'What we do better than anyone — protect and amplify these.'}],
+  },
+  {
+    type: 'callout',
+    icon: '🩹',
+    title: 'Weaknesses',
+    color: '#e07a5f',
+    children: [{text: 'Honest gaps — where we lose deals or look weak.'}],
+  },
+  {
+    type: 'callout',
+    icon: '🚀',
+    title: 'Opportunities',
+    color: '#4d96ff',
+    children: [{text: 'Open lanes — underserved segments, missing features, regulatory shifts.'}],
+  },
+  {
+    type: 'callout',
+    icon: '☁️',
+    title: 'Threats',
+    color: '#8b8b8b',
+    children: [{text: 'What could blindside us — funded entrants, platform changes, pricing pressure.'}],
+  },
+  {type: 'h2', children: [{text: 'Recommendations'}]},
+  {
+    type: 'checklist',
+    children: [
+      {type: 'li', checked: false, children: [{text: '<owner> — defend: <action>'}]},
+      {type: 'li', checked: false, children: [{text: '<owner> — close gap: <action>'}]},
+      {type: 'li', checked: false, children: [{text: '<owner> — exploit opportunity: <action>'}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'Sources & evidence'}]},
+  {
+    type: 'ol',
+    children: [
+      {type: 'li', children: [{text: '<source — link or note>'}]},
+      {type: 'li', children: [{text: '<customer interview / win-loss / analyst report>'}]},
+    ],
+  },
+];
+
+const toolComparison: SlateDocument = [
+  {type: 'h1', children: [{text: 'Tool comparison: <decision>'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Owner: '},
+      {text: '<name>', italic: true},
+      {text: ' · Decision needed by: '},
+      {text: '<YYYY-MM-DD>', italic: true},
+    ],
+  },
+  {
+    type: 'callout',
+    icon: '🎯',
+    title: 'Decision criteria',
+    children: [{text: 'What we’re optimizing for — performance, ergonomics, cost, ecosystem, lock-in, etc. Rank in order of priority.'}],
+  },
+  {type: 'h2', children: [{text: 'Requirements'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Must-have — '}, {text: '<requirement>', italic: true}]},
+      {type: 'li', children: [{text: 'Must-have — '}, {text: '<requirement>', italic: true}]},
+      {type: 'li', children: [{text: 'Nice-to-have — '}, {text: '<requirement>', italic: true}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'Options'}]},
+  {type: 'h3', children: [{text: '<Option A>'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Docs: '},
+      {text: '<url>', a: {href: 'https://example.com'}},
+      {text: ' · License: '},
+      {text: '<…>', code: true},
+      {text: ' · Maintainer: '},
+      {text: '<…>', italic: true},
+      {text: ' · Last release: '},
+      {text: '<date / version>', code: true},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'bash',
+    children: [{text: 'npm install <package-a>'}],
+  },
+  {type: 'h4', children: [{text: 'Pros'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: '…'}]},
+      {type: 'li', children: [{text: '…'}]},
+    ],
+  },
+  {type: 'h4', children: [{text: 'Cons'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: '…'}]},
+      {type: 'li', children: [{text: '…'}]},
+    ],
+  },
+  {type: 'h4', children: [{text: 'Cost / footprint'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Bundle size: '}, {text: '<kB>', code: true}]},
+      {type: 'li', children: [{text: 'Runtime cost: '}, {text: '<…>', code: true}]},
+      {type: 'li', children: [{text: 'Pricing: '}, {text: '<$ / free>', code: true}]},
+    ],
+  },
+  {type: 'h3', children: [{text: '<Option B>'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'Docs: '},
+      {text: '<url>', a: {href: 'https://example.com'}},
+      {text: ' · License: '},
+      {text: '<…>', code: true},
+      {text: ' · Maintainer: '},
+      {text: '<…>', italic: true},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'bash',
+    children: [{text: 'npm install <package-b>'}],
+  },
+  {type: 'h4', children: [{text: 'Pros'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: '…'}]},
+    ],
+  },
+  {type: 'h4', children: [{text: 'Cons'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: '…'}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Build it ourselves'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'Estimated effort: '}, {text: '<weeks>', code: true}]},
+      {type: 'li', children: [{text: 'Why we might: '}, {text: '<…>', italic: true}]},
+      {type: 'li', children: [{text: 'Why we wouldn’t: '}, {text: '<…>', italic: true}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'Scorecard'}]},
+  {type: 'p', children: [{text: 'Rate each option against the criteria — keep it lightweight (✅ / ⚠️ / ❌).'}]},
+  {type: 'h3', children: [{text: 'Performance'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'A — ✅ '}, {text: '<note>', italic: true}]},
+      {type: 'li', children: [{text: 'B — ⚠️ '}, {text: '<note>', italic: true}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Developer experience'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'A — '}, {text: '<note>', italic: true}]},
+      {type: 'li', children: [{text: 'B — '}, {text: '<note>', italic: true}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Ecosystem & community'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'A — '}, {text: '<github stars / discord / SO>', italic: true}]},
+      {type: 'li', children: [{text: 'B — '}, {text: '<…>', italic: true}]},
+    ],
+  },
+  {type: 'h3', children: [{text: 'Risk & lock-in'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'A — '}, {text: '<note>', italic: true}]},
+      {type: 'li', children: [{text: 'B — '}, {text: '<note>', italic: true}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'Decision'}]},
+  {
+    type: 'callout',
+    icon: '✅',
+    title: 'We’ll go with: <option>',
+    color: '#3aaf5f',
+    children: [{text: 'One-paragraph justification — which criteria pushed us over the line, and what we are accepting as trade-offs.'}],
+  },
+  {type: 'h2', children: [{text: 'Open questions'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: '<question to follow up on>'}]},
+    ],
+  },
+];
+
 const tierList: SlateDocument = [
   {type: 'h1', children: [{text: 'Tier list: <what you’re ranking>'}]},
   {
@@ -804,6 +1155,22 @@ export const templates: MuTxtTemplate[] = [
     fileName: 'Retrospective',
     category: 'work',
     doc: retro,
+  },
+  {
+    id: 'competitor-analysis',
+    name: 'Competitor analysis',
+    description: 'Market, positioning, SWOT, recommendations.',
+    fileName: 'Competitor analysis',
+    category: 'work',
+    doc: competitorAnalysis,
+  },
+  {
+    id: 'tool-comparison',
+    name: 'Tool / library comparison',
+    description: 'Requirements, options, pros/cons, scorecard.',
+    fileName: 'Tool comparison',
+    category: 'work',
+    doc: toolComparison,
   },
   {
     id: 'stream-check',
