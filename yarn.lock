@@ -2318,7 +2318,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate":
+"@jsonjoy.com/collaborative-slate@workspace:*, @jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate":
   version: 0.0.0-use.local
   resolution: "@jsonjoy.com/collaborative-slate@workspace:packages/collaborative-slate"
   dependencies:
@@ -2329,10 +2329,13 @@ __metadata:
     "@jsonjoy.com/ui": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    code-colors: "npm:^2.4.0"
+    code-colors-react: "npm:^3.4.0"
     json-joy: "workspace:*"
     nano-theme: "npm:^1.5.0"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
+    react-embed: "npm:^3.7.0"
     slate: "npm:^0.123.0"
     slate-dom: "npm:^0.123.0"
     slate-history: "npm:^0.113.1"
@@ -2553,6 +2556,7 @@ __metadata:
     "@jsonjoy.com/util": "workspace:*"
     "@types/node": "npm:^22.14.1"
     css-loader: "npm:^7.1.2"
+    flexible-input: "npm:^1.0.3"
     html-webpack-plugin: "npm:^5.6.3"
     json-joy: "workspace:*"
     mini-css-extract-plugin: "npm:^2.9.2"
@@ -3123,7 +3127,7 @@ __metadata:
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
-    iconista: "npm:^2.23.0"
+    iconista: "npm:^2.25.1"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"
@@ -6628,6 +6632,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"code-colors-react@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "code-colors-react@npm:3.5.0"
+  dependencies:
+    code-colors: "npm:^2.5.0"
+  peerDependencies:
+    nano-theme: "*"
+    react: "*"
+    react-dom: "*"
+  checksum: 10c0/deeeb5e0e33c9acf45be55b83c09d1014aa11ef1bbedee1d937b71118101a5b69cc9f39f806e7d30dcc9c689c54f5d7dfaa140950c68bb1d67972cd46099edd6
+  languageName: node
+  linkType: hard
+
 "code-colors@npm:^2.4.0":
   version: 2.4.0
   resolution: "code-colors@npm:2.4.0"
@@ -6638,6 +6655,19 @@ __metadata:
   peerDependencies:
     tslib: "*"
   checksum: 10c0/948328b8eaf3a2ecc868591ae92edc14472457e61598fba3b2a486bea9590490ab73992695ac6c94f79b823ef66ac3a374193101af37a72562de935a38f0fab1
+  languageName: node
+  linkType: hard
+
+"code-colors@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "code-colors@npm:2.5.0"
+  dependencies:
+    prismjs: "npm:^1.30.0"
+    thingies: "npm:^2.5.0"
+    tree-dump: "npm:^1.0.3"
+  peerDependencies:
+    tslib: "*"
+  checksum: 10c0/2ba98498dfe432fd57acf659239c7d730b46023cb4b41ac5766bedd8ab0dee3c9ad0388873c754100289f1c17c301d3c5d78c74356686ef36555dd6ae31b02e9
   languageName: node
   linkType: hard
 
@@ -7525,6 +7555,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-picker-react@npm:^4.19.1":
+  version: 4.19.1
+  resolution: "emoji-picker-react@npm:4.19.1"
+  dependencies:
+    flairup: "npm:1.0.0"
+  peerDependencies:
+    react: ">=16"
+  checksum: 10c0/7b42d84490e9e82f05bdfb12e2dbd42485850147fc8af5987f313f3efc4353099c80b0785327ac1861716f80880e563aa34e5c74d889385b555d4a3079cde628
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -8305,6 +8346,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"flairup@npm:1.0.0":
+  version: 1.0.0
+  resolution: "flairup@npm:1.0.0"
+  checksum: 10c0/2d9fe1f1c890383be65ae0ec95d57b96f3ff42eecffaf493f8a39f09f4982e12109a865e79baca051e784919eecd72fa6cf620cfae8a4663b98deaa6d883d7ba
+  languageName: node
+  linkType: hard
+
 "flat-cache@npm:^3.0.4":
   version: 3.2.0
   resolution: "flat-cache@npm:3.2.0"
@@ -8948,16 +8996,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconista@npm:^2.23.0":
-  version: 2.23.0
-  resolution: "iconista@npm:2.23.0"
+"iconista@npm:^2.25.1":
+  version: 2.25.1
+  resolution: "iconista@npm:2.25.1"
   dependencies:
     bootstrap-icons: "npm:^1.11.3"
     react-use: "npm:^5.7.1"
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 10c0/9719dfda47fdd5ead9d933069c50f05cf46e81638e977210fedf0818b3524322e2c043e525abf81d3f714d454c843440fc11af52e3c8bcda56e88c555bb07fab
+  checksum: 10c0/16fd54b63317801bc3308a3989479764641dfd94aa0e885beae0c43398dca612364aada8635a11f8ca9502a17ab72165b92b37fc338f5c3fdcb71ea2bee65d9d
   languageName: node
   linkType: hard
 
@@ -10559,6 +10607,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/base64": "workspace:*"
     "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-expression": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
@@ -11580,6 +11629,79 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mutxt-react@workspace:*, mutxt-react@workspace:packages/mutxt-react":
+  version: 0.0.0-use.local
+  resolution: "mutxt-react@workspace:packages/mutxt-react"
+  dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-presence": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/keyboard": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    code-colors: "npm:^2.5.0"
+    code-colors-react: "npm:^3.5.0"
+    emoji-picker-react: "npm:^4.19.1"
+    iconista: "npm:^2.25.1"
+    json-joy: "workspace:*"
+    nano-theme: "npm:^1.5.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+    react-embed: "npm:^3.7.0"
+    slate: "npm:^0.123.0"
+    slate-dom: "npm:^0.123.0"
+    slate-history: "npm:^0.113.1"
+    slate-react: "npm:^0.123.0"
+    use-t: "npm:^1.6.4"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+    slate: ">=0.100.0"
+    slate-react: ">=0.100.0"
+    tslib: 2
+  peerDependenciesMeta:
+    react:
+      optional: false
+    react-dom:
+      optional: false
+    slate:
+      optional: false
+    slate-react:
+      optional: false
+  languageName: unknown
+  linkType: soft
+
+"mutxt@workspace:packages/mutxt":
+  version: 0.0.0-use.local
+  resolution: "mutxt@workspace:packages/mutxt"
+  dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    "@types/node": "npm:^22.14.1"
+    css-loader: "npm:^7.1.2"
+    flexible-input: "npm:^1.0.3"
+    html-webpack-plugin: "npm:^5.6.3"
+    json-joy: "workspace:*"
+    mini-css-extract-plugin: "npm:^2.9.2"
+    mutxt-react: "workspace:*"
+    style-loader: "npm:^4.0.0"
+    ts-loader: "npm:^9.5.2"
+    webpack: "npm:^5.99.5"
+    webpack-cli: "npm:^6.0.1"
+    webpack-dev-server: "npm:^5.2.1"
+    wrangler: "npm:^4.81.1"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
 "nano-css@npm:^1.13.0":
   version: 1.17.2
   resolution: "nano-css@npm:1.17.2"
@@ -11711,7 +11833,7 @@ __metadata:
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
-    iconista: "npm:^2.23.0"
+    iconista: "npm:^2.25.1"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"

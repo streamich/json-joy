@@ -62,6 +62,8 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
 
   style?: React.CSSProperties;
   accent?: string;
+  borderless?: boolean;
+  transparent?: boolean;
   compact?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -70,15 +72,35 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
 export type IContextPaneState = {};
 
 export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivElement, ContextPaneProps>(
-  ({children, right, triangle, canOverflow, minWidth, hide, style, accent, className, ...rest}, ref) => {
+  (
+    {
+      children,
+      right,
+      triangle,
+      canOverflow,
+      minWidth,
+      hide,
+      style,
+      accent,
+      transparent,
+      borderless,
+      className,
+      ...rest
+    },
+    ref,
+  ) => {
     const theme = useTheme();
 
     const blockStyle: React.CSSProperties = {
+      background: transparent ? 'transparent' : theme.isLight ? theme.bg : theme.g(0.98),
+      boxShadow:
+        transparent || borderless
+          ? 'none'
+          : theme.isLight
+            ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
+            : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
       ...(style || {}),
-      background: theme.isLight ? theme.bg : theme.g(0.98),
-      boxShadow: theme.isLight
-        ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
-        : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
+      border: transparent || borderless ? 'none' : undefined,
     };
 
     if (minWidth) {

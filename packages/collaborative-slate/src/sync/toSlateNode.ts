@@ -53,6 +53,8 @@ class SlateNodeCache {
 export class ToSlateNode {
   public readonly cache = new SlateNodeCache();
 
+  constructor(public defaultBlock = 'p') {}
+
   convert(fragment: Fragment<string>): SlateDocument {
     const root = fragment.root;
     const blockChildren = root.children;
@@ -104,8 +106,9 @@ export class ToSlateNode {
         }
         textChildren.push(textNode);
       }
+      const tag = block.tag();
       const node: SlateElementNode = {
-        type: block.tag() + '',
+        type: tag === 0 ? this.defaultBlock : tag + '',
         children: textChildren.length ? textChildren : [{text: ''}],
       };
       const attr = block.attr();
@@ -117,9 +120,10 @@ export class ToSlateNode {
       const children: SlateElementNode[] = new Array(len);
       for (let i = 0; i < len; i++) children[i] = this.convBlock(childBlocks[i]);
       const attr = block.attr();
+      const tag = block.tag();
       const node: SlateElementNode = {
         ...(attr && typeof attr === 'object' ? attr : {}),
-        type: block.tag() + '',
+        type: tag === 0 ? this.defaultBlock : tag + '',
         children: len ? children : [{text: ''}],
       };
       return node;

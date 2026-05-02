@@ -34,6 +34,7 @@ const packages = [
   'collaborative-ui',
   'json-crdt-explorer',
   'json-joy',
+  'mutxt-react',
   'peritext',
   'ui',
 ];
@@ -109,6 +110,10 @@ const config: StorybookConfig = {
       '@jsonjoy.com/json-equal': resolve(__dirname, '../packages/json-equal/src'),
       '@jsonjoy.com/keyboard/lib': resolve(__dirname, '../packages/keyboard/src'),
       '@jsonjoy.com/keyboard': resolve(__dirname, '../packages/keyboard/src'),
+      'mutxt-react/lib': resolve(__dirname, '../packages/mutxt-react/src'),
+      'mutxt-react': resolve(__dirname, '../packages/mutxt-react/src'),
+      '@jsonjoy.com/mutxt-react/lib': resolve(__dirname, '../packages/mutxt-react/src'),
+      '@jsonjoy.com/mutxt-react': resolve(__dirname, '../packages/mutxt-react/src'),
       '@jsonjoy.com/json-expression/lib': resolve(__dirname, '../packages/json-expression/src'),
       '@jsonjoy.com/json-pack/lib': resolve(__dirname, '../packages/json-pack/src'),
       '@jsonjoy.com/json-path/lib': resolve(__dirname, '../packages/json-path/src'),

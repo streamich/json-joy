@@ -4,7 +4,6 @@ import {Log} from './Log';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import {WelcomeScreen} from '../WelcomeScreen';
-import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const blockClass = rule({
   w: '100%',
@@ -20,12 +19,12 @@ const contentClass = rule({
   minH: '100%',
   d: 'flex',
   flex: '1 1 auto',
-  // mr: '-32px 0 0',
+  bxz: 'border-box',
+  pd: '32px 0 0',
 });
 
 export const MainContent: React.FC = () => {
   const state = useExplorer();
-  const _styles = useStyles();
   const files = useBehaviorSubject(state.files$);
 
   const content = !files.length ? <WelcomeScreen /> : <Log />;

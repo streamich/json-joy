@@ -2,7 +2,7 @@ import {Model, Patch} from 'json-joy/lib/json-crdt';
 import {Log} from 'json-joy/lib/json-crdt/log/Log';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {rsync} from '@jsonjoy.com/ui';
-import {BehaviorSubject, map, switchMap} from 'rxjs';
+import {BehaviorSubject, map, switchMap, distinctUntilChanged} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
 import {type FileMetadataDto, OpenFile} from './file';
@@ -54,6 +54,7 @@ export class JsonCrdtExplorerState {
           const files = this.files$.getValue();
           return files.find((file) => file.id === selected[0].id) ?? null;
         }),
+        distinctUntilChanged(),
       )
       .subscribe(this.file$);
   }
@@ -155,10 +156,14 @@ export class JsonCrdtExplorerState {
   public readonly rename = (id: string, name: string) => {
     const files = this.files$.getValue();
     const file = files.find((m) => m.id === id);
-    if (!file || file.name.value === name) return;
-    file.name.set(name);
-    this.files$.next([...files]);
+    if (!file) return;
+    this.renameFile(file, name);
   };
+
+  public renameFile(file: OpenFile, name: string): void {
+    if (file.name.value === name) return;
+    file.name.set(name);
+  }
 
   public async deleteSaved(id: string) {
     this.tabs.deleteById(id);
@@ -237,7 +242,6 @@ export class JsonCrdtExplorerState {
   public readonly createFromModel = (model: Model<any>) => {
     this.newCnt++;
     const log = Log.fromNewModel(model);
-    log.end.api.autoFlush();
     this.openFile(log);
   };
 

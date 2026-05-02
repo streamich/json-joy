@@ -20,6 +20,15 @@ const railClass = rule({
   cur: 'text',
 });
 
+const railHitAreaClass = rule({
+  pos: 'absolute',
+  top: '-10px',
+  right: 0,
+  bottom: '-10px',
+  left: 0,
+  bg: 'transparent',
+});
+
 const rangeClass = rule({
   pos: 'absolute',
   h: '7px',
@@ -227,6 +236,7 @@ export const Slider: React.FC<SliderProps> = (props) => {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
+        <div className={railHitAreaClass} aria-hidden="true" />
         <div className={rangeClass} style={rangeStyle} />
         <button
           type="button"

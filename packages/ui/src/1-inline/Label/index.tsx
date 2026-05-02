@@ -19,7 +19,7 @@ const blockClass = rule({
 
 const useBlockClass = makeRule((theme) => ({
   col: theme.g(0.25),
-  bg: theme.g(0.96),
+  bg: theme.g(0, 0.06),
   boxShadow: theme.isLight ? 'none' : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
   '&:hover': {
     col: theme.g(0.25),
@@ -29,11 +29,12 @@ const useBlockClass = makeRule((theme) => ({
 }));
 
 export interface LabelProps {
+  className?: string;
   children: React.ReactNode;
 }
 
-export const Label: React.FC<LabelProps> = ({children}) => {
+export const Label: React.FC<LabelProps> = ({className, children}) => {
   const dynamicBlockClass = useBlockClass();
 
-  return <span className={blockClass + dynamicBlockClass}>{children}</span>;
+  return <span className={blockClass + dynamicBlockClass + (className ? ` ${className}` : '')}>{children}</span>;
 };

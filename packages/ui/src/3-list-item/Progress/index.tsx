@@ -24,14 +24,16 @@ const glowClass = rule({
 export interface ProgressProps {
   value?: number;
   glow?: boolean;
+  style?: React.CSSProperties;
 }
 
-export const Progress: React.FC<ProgressProps> = ({value = 0, glow}) =>
+export const Progress: React.FC<ProgressProps> = ({value = 0, glow, style}) =>
   h(
     'div',
     {
       className: blockClass,
       style: {
+        ...style,
         width: Math.min(1, Math.max(0, value)) * 100 + '%',
       },
     },

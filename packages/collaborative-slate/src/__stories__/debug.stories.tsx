@@ -7,5 +7,5 @@ const meta = preview.meta({
 });
 
 export const Debug = meta.story({
-  render: SingleEditorDebug,
+  render: () => <SingleEditorDebug />,
 });

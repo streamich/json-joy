@@ -234,6 +234,11 @@ export class ScrollState implements UiLifeCycles {
       this.visible$.next(true);
     }
 
+    const onSelectionChange = (): void => {
+      this._resetHideTimer();
+    };
+    document.addEventListener('selectionchange', onSelectionChange);
+
     return () => {
       if (el) el.removeEventListener('scroll', this._onScroll);
       this._resizeObserver?.disconnect();
@@ -243,6 +248,7 @@ export class ScrollState implements UiLifeCycles {
         cancelAnimationFrame(this._rafId);
         this._rafId = 0;
       }
+      document.removeEventListener('selectionchange', onSelectionChange);
     };
   }
 }

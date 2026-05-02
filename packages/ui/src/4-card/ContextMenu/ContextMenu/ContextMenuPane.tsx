@@ -19,7 +19,7 @@ import {ContextPaneHeaderSep} from '../ContextPaneHeaderSep';
 import {MoveToViewport} from '../../../utils/popup/MoveToViewport';
 import type {MenuItem} from '../../StructuralMenu/types';
 
-enum HEIGHT {
+const enum HEIGHT {
   HEADER = 40,
   SEARCH = 45,
   SEPARATOR = 7,

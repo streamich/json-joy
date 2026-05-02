@@ -26,6 +26,8 @@ export interface CodeProps {
   nowrap?: boolean;
   spacious?: boolean;
   roundest?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
   children?: React.ReactNode;
   onMouseDown?: React.MouseEventHandler;
 }
@@ -40,6 +42,8 @@ export const Code: React.FC<CodeProps> = ({
   nowrap,
   spacious,
   roundest,
+  className,
+  style: styleProp,
   children,
   onMouseDown,
 }) => {
@@ -80,8 +84,14 @@ export const Code: React.FC<CodeProps> = ({
     style.borderRadius = '1em';
   }
 
+  if (styleProp) Object.assign(style, styleProp);
+
   return (
-    <code className={blockClass + (alt ? blockAltClass : '')} style={style} onMouseDown={onMouseDown}>
+    <code
+      className={blockClass + (alt ? blockAltClass : '') + (className ? ' ' + className : '')}
+      style={style}
+      onMouseDown={onMouseDown}
+    >
       {children}
     </code>
   );

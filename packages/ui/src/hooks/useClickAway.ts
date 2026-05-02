@@ -9,6 +9,8 @@ export const useClickAway = (
 ): RefCallback<HTMLElement> => {
   const portal = usePortal();
   const ref = useRef<HTMLElement | null>(null);
+  const cb = useRef(onClickAway);
+  cb.current = onClickAway;
   useEffect(() => {
     const handler = (event: Event) => {
       const {current: el} = ref;
@@ -16,17 +18,17 @@ export const useClickAway = (
       if (!el || !target) return;
       if (el.contains(target)) return;
       if (!portal) {
-        onClickAway(event);
+        cb.current(event);
         return;
       }
       for (const root of portal.roots) if (root.contains(target)) return;
-      onClickAway(event);
+      cb.current(event);
     };
     for (const eventName of events) document.addEventListener(eventName, handler);
     return () => {
       for (const eventName of events) document.removeEventListener(eventName, handler);
     };
-  }, [onClickAway, events, portal]);
+  }, [events, portal]);
   const refCallback: RefCallback<HTMLElement> = useCallback((el: HTMLElement | null) => {
     ref.current = el;
   }, []);

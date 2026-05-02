@@ -2,14 +2,16 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {blockClass as paperClass} from '.';
 
+const paperSelector = String(paperClass).trim();
+
 const blockClass = rule({
-  [`& .${paperClass.trim()}:first-child`]: {
+  [`& .${paperSelector}:first-child`]: {
     bdrad: '4px 4px 0 0',
   },
-  [`& .${paperClass.trim()}`]: {
+  [`& .${paperSelector}`]: {
     bdrad: '0px',
   },
-  [`& .${paperClass.trim()}:last-child`]: {
+  [`& .${paperSelector}:last-child`]: {
     bdrad: '0 0 4px 4px',
   },
 });

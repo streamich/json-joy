@@ -2,12 +2,39 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {ScrollState} from './state';
 import {ctx} from './context';
+import {useSyncStore} from '../../hooks/useSyncStore';
+import {getScrollShadowVisibility} from '../scrollShadows';
 
 const rootClass = rule({
   pos: 'relative',
   d: 'flex',
   flexDirection: 'column',
   ov: 'hidden',
+  z: 10,
+});
+
+const shadowTopClass = rule({
+  pointerEvents: 'none',
+  trs: 'opacity .3s',
+  pos: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  z: 2,
+  h: '5px',
+  bg: 'linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.03) 50%, rgba(0,0,0,0))',
+});
+
+const shadowBottomClass = rule({
+  pointerEvents: 'none',
+  trs: 'opacity .3s',
+  pos: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  z: 2,
+  h: '5px',
+  bg: 'linear-gradient(0deg, rgba(0,0,0,.05), rgba(0,0,0,.03) 50%, rgba(0,0,0,0))',
 });
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -16,8 +43,42 @@ export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   railWidth?: number;
   hideDelay?: number;
   minThumbSize?: number;
+  shadow?: boolean;
+  shadowFlat?: boolean;
   children: React.ReactNode;
 }
+
+const ScrollAreaShadows: React.FC<{state: ScrollState; flat?: boolean}> = ({state, flat}) => {
+  const scrollTop = useSyncStore(state.scrollTop$);
+  const maxScrollTop = useSyncStore(state.maxScrollTop$);
+  const headerHeight = useSyncStore(state.headerHeight$);
+  const footerHeight = useSyncStore(state.footerHeight$);
+  const background = flat ? 'rgba(0,0,0,.1)' : void 0;
+  const [showTopShadow, showBottomShadow] = getScrollShadowVisibility(scrollTop, maxScrollTop);
+
+  return (
+    <>
+      <div
+        className={shadowTopClass}
+        style={{
+          top: headerHeight,
+          opacity: showTopShadow ? 1 : 0,
+          background,
+          height: flat ? 3 : void 0,
+        }}
+      />
+      <div
+        className={shadowBottomClass}
+        style={{
+          bottom: footerHeight,
+          opacity: showBottomShadow ? 1 : 0,
+          background,
+          height: flat ? 3 : void 0,
+        }}
+      />
+    </>
+  );
+};
 
 export const ScrollArea: React.FC<ScrollAreaProps> = ({
   state: _state,
@@ -25,6 +86,8 @@ export const ScrollArea: React.FC<ScrollAreaProps> = ({
   railWidth,
   hideDelay,
   minThumbSize,
+  shadow,
+  shadowFlat,
   children,
   className,
   ...rest
@@ -48,6 +111,7 @@ export const ScrollArea: React.FC<ScrollAreaProps> = ({
     <ctx.Provider value={state}>
       <div {...rest} className={rootClass + (className ? ' ' + className : '')}>
         {children}
+        {shadow || shadowFlat ? <ScrollAreaShadows state={state} flat={shadowFlat} /> : null}
       </div>
     </ctx.Provider>
   );

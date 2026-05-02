@@ -1,5 +1,5 @@
 /** All recognized extension labels. */
-export type CommonLabel =
+export type FileIconExtension =
   | 'astro'
   | 'bash'
   | 'c'
@@ -89,16 +89,16 @@ const COLORS =
   'zip#6d8086,tar#6d8086,gz#6d8086,lock#6d8086,wasm#a074c4,' +
   'dockerfile#519aba,makefile#e37933';
 
-const ColorMap: Record<CommonLabel, string> = {} as Record<CommonLabel, string>;
+const ColorMap: Record<FileIconExtension, string> = {} as Record<FileIconExtension, string>;
 
 for (const entry of COLORS.split(',')) {
   const [label, color] = entry.split('#');
-  ColorMap[label as CommonLabel] = '#' + color;
+  ColorMap[label as FileIconExtension] = '#' + color;
 }
 
 for (const entry of ALIASES.split(',')) {
   const [alias, target] = entry.split(':');
-  ColorMap[alias as CommonLabel] = ColorMap[target as CommonLabel];
+  ColorMap[alias as FileIconExtension] = ColorMap[target as FileIconExtension];
 }
 
-export const getColor = (label: CommonLabel): string => ColorMap[label] || '';
+export const getColor = (label: FileIconExtension): string => ColorMap[label] || '';

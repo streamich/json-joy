@@ -1,0 +1,151 @@
+import * as React from 'react';
+import {rule} from 'nano-theme';
+import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
+import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
+import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
+import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
+import {useMuTxt} from '../../context';
+import {getWordCount, pluralize} from '../../util';
+import {typeToLabel} from '../../util/typeToLabel';
+
+const footerClass = rule({
+  d: 'flex',
+  jc: 'space-between',
+  ai: 'center',
+  fw: 'wrap',
+  gap: '12px',
+  pd: '0 18px',
+  h: '48px',
+  fz: '12px',
+});
+
+const footerGroupClass = rule({
+  d: 'inline-flex',
+  ai: 'center',
+  gap: '12px',
+  fw: 'wrap',
+});
+
+const statusPathClass = rule({
+  d: 'inline-flex',
+  ai: 'center',
+  gap: '12px',
+  fw: 'wrap',
+});
+
+const pathLinkClass = rule({
+  d: 'inline-block',
+  maxW: '220px',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  verticalAlign: 'bottom',
+  textDecoration: 'underline',
+  textDecorationThickness: '1px',
+  textUnderlineOffset: '4px',
+  textDecorationColor: 'rgb(from currentColor r g b / 0.2)',
+  '&:hover': {
+    textDecorationColor: 'currentColor',
+  },
+});
+
+export type MuTxtFooterProps = {};
+
+export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
+  const styles = useStyles();
+  const state = useMuTxt();
+  const availableWidth = state.sizer.width.use();
+  const desiredWidth = state.sizer.content.use();
+  const focused = state.focused.use();
+  const readOnly = state.readOnly.use();
+  const wordCount = state.wordCount.use();
+  const characterCount = state.characterCount.use();
+  const selectionText = state.selectionText.use();
+  const caretPath = state.caretPath.use();
+  const caretLinkHref = state.caretLinkHref.use();
+  const caretEmbedUrl = state.caretEmbedUrl.use();
+  const caretCodeText = state.caretCodeText.use();
+
+  const width = Math.min(availableWidth, desiredWidth);
+
+  const infoColor = styles.light ? styles.g(0.34) : styles.g(0.68);
+  const selectionSummary = selectionText
+    ? `${pluralize(getWordCount(selectionText), 'word')} (${pluralize(selectionText.length, 'char')}) selected`
+    : '';
+  const statusText = readOnly ? 'Read-only' : focused ? 'Editing' : '';
+  const footerUrl = caretEmbedUrl || caretLinkHref;
+
+  const showCaretPath = width > 700;
+  const showCaretCode = width > 900;
+  const showCaretUrl = width > 1100;
+  const showCharacterCount = width > 500;
+  const showSelectionSummary = width > 600;
+
+  return (
+    <div className={footerClass} style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0}}>
+      <div className={footerGroupClass}>
+        {!!statusText && <Label>{statusText}</Label>}
+        {!readOnly && focused && !!caretPath && showCaretPath && (
+          <span className={statusPathClass}>
+            {caretPath.map((segment, index) => (
+              <React.Fragment key={`${index}:${segment}`}>
+                <span>{typeToLabel(segment) || segment}</span>
+                {index < caretPath.length - 1 && <span style={{opacity: 0.25}}>{'→'}</span>}
+              </React.Fragment>
+            ))}
+            {!!footerUrl && showCaretUrl && (
+              <>
+                <span style={{opacity: 0.25}}>{'→'}</span>
+                <Favicon url={footerUrl} size={16} />
+                <a
+                  className={pathLinkClass}
+                  href={footerUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  title={footerUrl}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                  }}
+                >
+                  {footerUrl}
+                </a>
+                <CopyButton
+                  type="button"
+                  width={24}
+                  height={24}
+                  rounder
+                  onMouseDown={(event) => event.preventDefault()}
+                  onCopy={() => footerUrl}
+                  tooltip={{nowrap: true, renderTooltip: () => 'Copy link'}}
+                />
+              </>
+            )}
+            {!!caretCodeText && showCaretCode && (
+              <>
+                <span style={{opacity: 0.25}}>{'→'}</span>
+                <CopyCode value={caretCodeText} truncate style={{maxWidth: 220}} alt spacious roundest />
+              </>
+            )}
+          </span>
+        )}
+      </div>
+
+      <div className={footerGroupClass}>
+        {!!selectionSummary && showSelectionSummary && (
+          <>
+            <span>{selectionSummary}</span>
+            <span style={{opacity: 0.25}}>{'•'}</span>
+          </>
+        )}
+        <span>{pluralize(wordCount, 'word')}</span>
+        {showCharacterCount && (
+          <>
+            <span style={{opacity: 0.25}}>{'•'}</span>
+            <span>{pluralize(characterCount, 'character')}</span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};

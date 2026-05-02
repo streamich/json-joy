@@ -6,8 +6,8 @@ export class JsonCrdtPatchState {
   public readonly show$ = new BehaviorSubject<boolean>(true);
   public readonly view$ = new BehaviorSubject<JsonCrdtPatchView>('text');
 
-  public readonly toggleShow = () => {
-    this.show$.next(!this.show$.getValue());
+  public readonly toggleShow = (show: boolean = !this.show$.getValue()) => {
+    this.show$.next(show);
   };
 
   public readonly setView = (view: JsonCrdtPatchView) => {

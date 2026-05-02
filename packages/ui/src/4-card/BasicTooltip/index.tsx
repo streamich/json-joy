@@ -57,6 +57,11 @@ export interface BasicTooltipProps extends React.AllHTMLAttributes<any> {
    * Keyboard shortcut.
    */
   shortcut?: string;
+
+  /**
+   * Delay in milliseconds before showing the tooltip.
+   */
+  delay?: number;
 }
 
 export const BasicTooltip: React.FC<BasicTooltipProps> = ({
@@ -67,18 +72,26 @@ export const BasicTooltip: React.FC<BasicTooltipProps> = ({
   show,
   fadeIn,
   shortcut,
+  delay,
   children,
   onMouseEnter,
   onMouseLeave,
 }) => {
   const [visible, setVisible] = React.useState(false);
   const styles = useStyles();
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const handle = useAnchorPointHandle(anchor);
 
   // Hide tooltip on various global events.
   React.useEffect(() => {
-    const listener = () => setVisible(false);
+    const listener = () => {
+      setVisible(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
     document.addEventListener('mousedown', listener);
     document.addEventListener('scroll', listener);
     window.addEventListener('resize', listener);
@@ -86,6 +99,13 @@ export const BasicTooltip: React.FC<BasicTooltipProps> = ({
       document.removeEventListener('mousedown', listener);
       document.removeEventListener('scroll', listener);
       window.removeEventListener('resize', listener);
+    };
+  }, []);
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(timeoutRef.current as any);
     };
   }, []);
 
@@ -123,10 +143,23 @@ export const BasicTooltip: React.FC<BasicTooltipProps> = ({
         className={blockClass()}
         onMouseEnter={(e: React.MouseEvent) => {
           if (onMouseEnter) onMouseEnter(e);
-          if (renderTooltip) setVisible(true);
+          if (renderTooltip) {
+            if (delay) {
+              timeoutRef.current = setTimeout(() => {
+                setVisible(true);
+                timeoutRef.current = null;
+              }, delay);
+            } else {
+              setVisible(true);
+            }
+          }
         }}
         onMouseLeave={(e: React.MouseEvent) => {
           if (onMouseLeave) onMouseLeave(e);
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+          }
           if (renderTooltip) setVisible(false);
         }}
         ref={handle.ref}

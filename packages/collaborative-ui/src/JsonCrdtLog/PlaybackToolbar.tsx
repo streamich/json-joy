@@ -9,8 +9,8 @@ import {PauseIcon} from '../icons/PauseIcon';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {JsonCrdtLogState} from './JsonCrdtLogState';
 
-const VerticalRightIcon = makeIcon({set: 'ant_outline', icon: 'vertical-right'});
-const VerticalLeftIcon = makeIcon({set: 'ant_outline', icon: 'vertical-left'});
+const VerticalLeftIcon = makeIcon({set: 'lineicons', icon: 'previous-step-2'});
+const VerticalRightIcon = makeIcon({set: 'lineicons', icon: 'next-step-2'});
 
 export interface PlaybackToolbarProps {
   state: JsonCrdtLogState;
@@ -21,20 +21,21 @@ export const PlaybackToolbar: React.FC<PlaybackToolbarProps> = ({state}) => {
   const pinnedModel = useBehaviorSubject(state.pinnedModel$);
   const view = useBehaviorSubject(state.view$);
 
-  if (view !== 'timeline' && view !== 'model') return null;
+  if (view !== 'timeline' && view !== 'model' && view !== 'tiny') return null;
 
   return (
     <>
       {!!pinnedModel && (
         <>
-          <BasicTooltip nowrap renderTooltip={() => t('Pin previous state')}>
-            <BasicButton onClick={state.prev}>
-              <VerticalRightIcon width={16} height={16} />
+          <BasicTooltip nowrap renderTooltip={() => t('Previous')}>
+            <BasicButton fill onClick={state.prev}>
+              <VerticalLeftIcon width={16} height={16} />
             </BasicButton>
           </BasicTooltip>
-          <BasicTooltip nowrap renderTooltip={() => t('Pin next state')}>
-            <BasicButton onClick={state.next}>
-              <VerticalLeftIcon width={16} height={16} />
+          <Space horizontal size={-5} />
+          <BasicTooltip nowrap renderTooltip={() => t('Next')}>
+            <BasicButton fill onClick={state.next}>
+              <VerticalRightIcon width={16} height={16} />
             </BasicButton>
           </BasicTooltip>
         </>

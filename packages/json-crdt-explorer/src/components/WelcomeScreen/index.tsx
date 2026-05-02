@@ -48,6 +48,18 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
           boxSizing: 'border-box',
         }}
       ></div>
+      <div
+        style={{
+          width: 408,
+          height: 408,
+          borderRadius: '50%',
+          border: '1px dashed #07f',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          boxSizing: 'border-box',
+        }}
+      ></div>
     </div>
   );
 
@@ -59,7 +71,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
         height: '100%',
         alignItems: 'center',
         flexDirection: 'column',
-        padding: '32px 16px 16px',
+        padding: '16px',
       }}
     >
       <Paper round style={{maxWidth: '900px', width: '100%'}} contrast hoverElevate>

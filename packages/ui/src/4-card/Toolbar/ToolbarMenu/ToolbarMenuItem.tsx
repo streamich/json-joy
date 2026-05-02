@@ -7,6 +7,7 @@ import {ToolbarMenuPopup} from './ToolbarMenuPopup';
 import {useToolbarMenu} from './context';
 import {ToolbarMenuItemTerminal} from './ToolbarMenuItemTerminal';
 import {useBehaviorSubjectOpt} from '../../../hooks/useBehaviorSubject';
+import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
 import {Iconista} from '../../../icons/Iconista';
 
 export interface ToolbarMenuItemProps {
@@ -22,7 +23,8 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
   const arrow = React.useRef<HTMLDivElement | null>(null);
   const toolbar = useToolbarMenu();
   const openPanel = toolbar?.openPanel;
-  const selectedPanel = useBehaviorSubjectOpt(openPanel?.selected$);
+  useBehaviorSubjectOpt(openPanel?.selected$);
+  const active = !!useSyncStoreOpt(item.active);
   const isTerminal = !item.children || item.children.length === 0;
   const id = item.id ?? item.name;
 
@@ -30,7 +32,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
     return <ToolbarMenuItemTerminal {...props} />;
   }
 
-  const selected = selectedPanel === id;
+  const selected = openPanel?.isSelected(id) ?? false;
 
   return (
     <ToolbarMenuPopup header open={selected} item={item}>
@@ -38,7 +40,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
         width={'auto'}
         compact
         disabled={disabled}
-        selected={selected}
+        selected={selected || active}
         onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
         onMouseMove={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
         onMouseLeave={disabled ? void 0 : openPanel?.onMouseLeave}

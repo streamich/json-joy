@@ -9,8 +9,9 @@ export interface ToolbarMenuProviderProps extends ToolbarMenuProps {
 
 export const ToolbarMenuProvider: React.FC<ToolbarMenuProviderProps> = ({children, ...rest}) => {
   const _menu = rest.menu;
+  const reactId = React.useId();
   // biome-ignore lint/correctness/useExhaustiveDependencies: props spread creates new object each render
-  const state = React.useMemo(() => new ToolbarMenuState(rest), [rest]);
+  const state = React.useMemo(() => new ToolbarMenuState(rest, reactId), [rest, reactId]);
 
   return <context.Provider value={state}>{children}</context.Provider>;
 };

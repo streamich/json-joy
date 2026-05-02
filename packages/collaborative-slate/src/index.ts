@@ -4,6 +4,7 @@ import {SlateFacade} from './SlateFacade';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext/lib/types';
 
 export type * from './types';
+export {FromSlate} from './sync/FromSlate';
 export {SlateFacade} from './SlateFacade';
 export type {SlateFacadeOpts} from './SlateFacade';
 

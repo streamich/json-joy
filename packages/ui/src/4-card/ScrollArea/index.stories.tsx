@@ -31,6 +31,55 @@ export const Primary: StoryObj = {
   ),
 };
 
+export const WithShadows: StoryObj = {
+  render: () => (
+    <ScrollArea shadow style={{width: 400, height: 300, border: '1px solid #ccc'}}>
+      <Viewport>
+        <div style={{padding: 16}}>
+          {lines.map((line) => (
+            <div key={line} style={{padding: '2px 0'}}>
+              {line}
+            </div>
+          ))}
+        </div>
+      </Viewport>
+      <ScrollRail />
+    </ScrollArea>
+  ),
+};
+
+export const ShadowedHeaderFooter: StoryObj = {
+  render: () => (
+    <ScrollArea shadow alwaysVisible railWidth={14} style={{width: 400, height: 350, border: '1px solid #ccc'}}>
+      <Header>
+        <div style={{padding: '10px 16px', background: 'rgba(255,255,255,0.92)', borderBottom: '1px solid #ddd'}}>
+          Search Results
+        </div>
+      </Header>
+      <Viewport>
+        <div style={{padding: 16, background: '#fff'}}>
+          {lines.map((line, index) => (
+            <div
+              key={line}
+              style={{padding: '6px 0', borderBottom: index === lines.length - 1 ? 'none' : '1px solid #f0f0f0'}}
+            >
+              {line}
+            </div>
+          ))}
+        </div>
+      </Viewport>
+      <ScrollRail>
+        <Thumb />
+      </ScrollRail>
+      <Footer>
+        <div style={{padding: '10px 16px', background: 'rgba(255,255,255,0.92)', borderTop: '1px solid #ddd'}}>
+          100 visible rows
+        </div>
+      </Footer>
+    </ScrollArea>
+  ),
+};
+
 export const AlwaysVisible: StoryObj = {
   render: () => (
     <ScrollArea alwaysVisible railWidth={14} style={{width: 400, height: 300, border: '1px solid #ccc'}}>
@@ -76,7 +125,9 @@ export const WithHeaderFooter: StoryObj = {
   render: () => (
     <ScrollArea alwaysVisible railWidth={14} style={{width: 400, height: 350, border: '1px solid #ccc'}}>
       <Header>
-        <div style={{padding: '8px 16px', background: '#f0f0f0', borderBottom: '1px solid #ddd'}}>Sticky Header</div>
+        <div style={{padding: '8px 16px', background: 'rgba(0,0,0,0.1)', borderBottom: '1px solid #ddd'}}>
+          Sticky Header
+        </div>
       </Header>
       <Viewport>
         <div style={{padding: 16}}>
@@ -91,7 +142,9 @@ export const WithHeaderFooter: StoryObj = {
         <Thumb />
       </ScrollRail>
       <Footer>
-        <div style={{padding: '8px 16px', background: '#f0f0f0', borderTop: '1px solid #ddd'}}>Line 1 / 100</div>
+        <div style={{padding: '8px 16px', background: 'rgba(0,0,0,0.1)', borderTop: '1px solid #ddd'}}>
+          Line 1 / 100
+        </div>
       </Footer>
     </ScrollArea>
   ),

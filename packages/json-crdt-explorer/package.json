@@ -44,6 +44,7 @@
     "@jsonjoy.com/json-pack": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
     "@jsonjoy.com/util": "workspace:*",
+    "flexible-input": "^1.0.3",
     "json-joy": "workspace:*"
   },
   "engines": {

@@ -1587,6 +1587,7 @@ export class Editor<T = string> implements Printable {
         dstSlices.push(sliceSchema);
       }
       const differ = new JsonCrdtDiff(txt.model);
+      differ.shallowConBin = true;
       patch3 = differ.diff(txt.savedSlices.set, s.arr(dstSlices));
       if (patch3.ops.length) txt.model.applyPatch(patch3);
       else patch3 = void 0;

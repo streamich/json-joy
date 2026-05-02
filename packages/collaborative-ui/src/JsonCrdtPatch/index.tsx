@@ -94,7 +94,7 @@ export const JsonCrdtPatch: React.FC<JsonCrdtPatchProps> = ({patch, state: _stat
           )}
           {contextMenu}
           <Space horizontal size={-1} />
-          <Checkbox as={'span'} small on={show} onChange={state.toggleShow} />
+          <Checkbox as={'span'} small on={show} onChange={() => state.toggleShow()} />
         </Flex>
       </div>
     </Split>

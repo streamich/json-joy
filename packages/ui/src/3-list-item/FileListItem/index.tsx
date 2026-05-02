@@ -12,7 +12,7 @@ const rowClass = rule({
   w: '100%',
   minWidth: 0,
   bxz: 'border-box',
-  pad: '4px',
+  pd: '4px',
   bdrad: '14px',
   us: 'none',
   cur: 'default',
@@ -48,9 +48,6 @@ const iconClass = rule({
   w: '36px',
   h: '36px',
   bdrad: '10px',
-  // '& > *': {
-  //   flexShrink: 0,
-  // },
 });
 
 const contentClass = rule({
@@ -108,6 +105,8 @@ export interface FileListItemProps extends Omit<React.AllHTMLAttributes<any>, 'c
   disabled?: boolean;
   loading?: boolean;
   external?: boolean;
+  spacious?: boolean;
+  fill?: boolean;
 }
 
 export const FileListItem: React.FC<FileListItemProps> = ({
@@ -124,6 +123,8 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   style,
   type,
   external,
+  spacious,
+  fill,
   ...rest
 }) => {
   const styles = useStyles();
@@ -131,7 +132,11 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   const [hovered, setHovered] = React.useState(false);
   const iconNode = loading ? <SpinnerCircle color={styles.g(0.45)} /> : hovered ? iconHover : icon;
 
-  const selectedBg = selected ? styles.col.accent(0, 'bg-2') : 'transparent';
+  const selectedBg = selected
+    ? styles.col.get('neutral', 'bg-2')
+    : fill
+      ? styles.col.get('neutral', 'bg-1')
+      : 'transparent';
   const hoverBg = selected ? styles.col.accent(0, 'el-1') : styles.light ? styles.g(0, 0.04) : styles.g(0, 0.08);
 
   const dynamicRowClass = useRule(() => ({
@@ -147,6 +152,8 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   const dynamicIconClass = useRule(() => ({
     col: isDisabled ? styles.g(0.55) : selected ? styles.col.accent(0, 'solid-1') : styles.g(0.45),
     bg: styles.light ? styles.g(0, 0.03) : styles.g(0, 0.08),
+    w: spacious ? '48px' : '36px',
+    h: spacious ? '48px' : '36px',
   }));
 
   const dynamicTitleClass = useRule(() => ({
@@ -175,38 +182,54 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   };
 
   let surface: React.ReactNode;
+  let clickable = false;
 
   if (to && !isDisabled) {
+    clickable = true;
     surface = (
       <Link {...interactiveProps} a to={to} external={external}>
         {content}
       </Link>
     );
-  } else {
+  } else if (rest.onClick && !isDisabled) {
+    clickable = true;
     surface = (
       <button {...interactiveProps} type={type || 'button'} disabled={isDisabled}>
         {content}
       </button>
     );
+  } else {
+    surface = <div {...interactiveProps}>{content}</div>;
   }
 
-  return (
-    <Ripple>
-      <div
-        className={className + rowClass + dynamicRowClass}
-        style={{...style, opacity: isDisabled ? 0.68 : undefined}}
-        onMouseEnter={iconHover ? () => setHovered(true) : void 0}
-        onMouseLeave={iconHover ? () => setHovered(false) : void 0}
-      >
-        {surface}
-        {!!actions && (
-          <span className={actionsClass} style={isDisabled ? {pointerEvents: 'none'} : undefined}>
-            {actions}
-          </span>
-        )}
-      </div>
-    </Ripple>
+  const rowStyle: React.CSSProperties = {...style, opacity: isDisabled ? 0.68 : undefined};
+
+  if (spacious) {
+    rowStyle.paddingTop = 12;
+    rowStyle.paddingBottom = 12;
+  }
+
+  surface = (
+    <div
+      className={className + rowClass + dynamicRowClass}
+      style={rowStyle}
+      onMouseEnter={iconHover ? () => setHovered(true) : void 0}
+      onMouseLeave={iconHover ? () => setHovered(false) : void 0}
+    >
+      {surface}
+      {!!actions && (
+        <span className={actionsClass} style={isDisabled ? {pointerEvents: 'none'} : undefined}>
+          {actions}
+        </span>
+      )}
+    </div>
   );
+
+  if (clickable) {
+    surface = <Ripple>{surface}</Ripple>;
+  }
+
+  return surface;
 };
 
 export default FileListItem;

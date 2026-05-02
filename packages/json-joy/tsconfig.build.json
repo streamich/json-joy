@@ -33,6 +33,9 @@
       "path": "../json-expression/tsconfig.build.json"
     },
     {
+      "path": "../json-equal/tsconfig.build.json"
+    },
+    {
       "path": "../json-pack/tsconfig.build.json"
     },
     {

@@ -33,6 +33,8 @@
     { "path": "packages/collaborative-prosemirror/tsconfig.build.json" },
     { "path": "packages/collaborative-slate/tsconfig.build.json" },
     { "path": "packages/collaborative-ui/tsconfig.build.json" },
+    { "path": "packages/mutxt/tsconfig.build.json" },
+    { "path": "packages/mutxt-react/tsconfig.build.json" },
     { "path": "packages/peritext/tsconfig.build.json" },
     { "path": "packages/rpc-calls/tsconfig.build.json" },
     { "path": "packages/rpc-error/tsconfig.build.json" },

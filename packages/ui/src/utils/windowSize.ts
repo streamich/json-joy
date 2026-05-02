@@ -2,7 +2,7 @@ import * as rsync from './rsync';
 
 export type WindowSizeState = [width: number, height: number];
 
-class WindowSizeValue extends rsync.ReactValue<WindowSizeState> {
+export class WindowSizeValue extends rsync.ReactValue<WindowSizeState> {
   private onResize = () => {
     const next: WindowSizeState = [window.innerWidth, window.innerHeight];
     const prev = this.value;

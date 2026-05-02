@@ -11,6 +11,7 @@ import {ExtNode} from '../../extensions/ExtNode';
 import {JsonCrdtDiff} from '../../../json-crdt-diff/JsonCrdtDiff';
 import * as diff from '../../../json-crdt-diff';
 import {ChangeEvent} from './events';
+// import {NodeValue} from './NodeValue';
 import {type ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {type JsonNodeToProxyPathNode, proxy$} from './proxy';
 import type {Path} from '@jsonjoy.com/json-pointer';
@@ -305,6 +306,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     } catch {}
     return false;
   }
+
+  // public value<V>(path: ApiPath): NodeValue<V> {
+  //   return new NodeValue<V>(this, path);
+  // }
 
   public diff(value: unknown): Patch | undefined {
     return diff.diff(this, value);

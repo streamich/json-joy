@@ -8,20 +8,18 @@ export interface BasicButtonMoreProps extends BasicButtonProps {
   tooltip?: boolean | React.ReactNode;
 }
 
-export const BasicButtonMore: React.FC<BasicButtonMoreProps> = (props) => {
+export const BasicButtonMore: React.FC<BasicButtonMoreProps> = ({tooltip, ...rest}) => {
   const [t] = useT();
   const title = t('More');
 
   let element = (
-    <BasicButton title={title} {...props}>
+    <BasicButton title={title} {...rest}>
       <MoreIcon />
     </BasicButton>
   );
 
-  if (props.tooltip) {
-    element = (
-      <BasicTooltip renderTooltip={() => (props.tooltip === true ? title : props.tooltip)}>{element}</BasicTooltip>
-    );
+  if (tooltip) {
+    element = <BasicTooltip renderTooltip={() => (tooltip === true ? title : tooltip)}>{element}</BasicTooltip>;
   }
 
   return element;

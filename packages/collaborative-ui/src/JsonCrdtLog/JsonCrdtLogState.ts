@@ -5,7 +5,7 @@ import {last, prev, next} from 'sonic-forest/lib/util';
 import {JsonCrdtPatchState} from '../JsonCrdtPatch/JsonCrdtPatchState';
 import {JsonCrdtModelState} from '../JsonCrdtModel/JsonCrdtModelState';
 
-export type JsonCrdtLogView = 'text' | 'timeline' | 'model';
+export type JsonCrdtLogView = 'text' | 'timeline' | 'model' | 'tiny';
 
 export interface JsonCrdtLogStateOpts {
   view?: JsonCrdtLogView;
@@ -15,6 +15,7 @@ export class JsonCrdtLogState {
   public readonly view$: BehaviorSubject<JsonCrdtLogView>;
   public readonly pinned$ = new BehaviorSubject<null | 'start' | Patch>(null);
   public readonly pinnedModel$ = new BehaviorSubject<null | Model>(null);
+  public readonly pinnedPatchIdx$ = new BehaviorSubject<number>(-1);
   public readonly timelineScroll$ = new BehaviorSubject<number>(1);
   public readonly readonlyEnforced$ = new BehaviorSubject<number>(0);
 
@@ -46,13 +47,16 @@ export class JsonCrdtLogState {
       const id = patch?.getId();
       if (!id) return;
       this.pinned$.next(patch);
-      model = this.log.replayTo(id);
+      const res = this.log.replayTo(id);
+      model = res[0];
+      const index = res[1];
+      this.pinnedPatchIdx$.next(index);
     }
     const makeReadOnly = (model: Model) => {
       const unsubscribe = model.api.onBeforeLocalChange.listen(() => {
         unsubscribe();
         this.readonlyEnforced$.next(this.readonlyEnforced$.getValue() + 1);
-        const model = patch === 'start' ? this.log.start() : this.log.replayTo(patch.getId()!);
+        const model = patch === 'start' ? this.log.start() : this.log.replayTo(patch.getId()!)[0];
         makeReadOnly(model);
         this.pinnedModel$.next(model);
       });

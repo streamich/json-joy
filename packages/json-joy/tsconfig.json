@@ -18,6 +18,9 @@
       "path": "../json-expression"
     },
     {
+      "path": "../json-equal"
+    },
+    {
       "path": "../json-pack"
     },
     {

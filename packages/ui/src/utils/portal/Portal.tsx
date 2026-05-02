@@ -2,6 +2,8 @@ import * as React from 'react';
 import {createPortal} from 'react-dom';
 import {context, usePortal} from './context';
 import {PortalState} from './PortalState';
+import {useHiddenTrace} from '../../context';
+import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 
 export interface PortalProps {
   /**
@@ -24,6 +26,12 @@ export const Portal: React.FC<PortalProps> = ({children, parent}) => {
     return state;
   }, [parentState]);
   const [el] = React.useState(() => document.createElement('div'));
+  const hidden = useHiddenTrace();
+  useIsomorphicLayoutEffect(() => {
+    const style = el.style;
+    if (style.display !== 'none' && hidden) style.display = 'none';
+    else if (style.display === 'none' && !hidden) style.display = '';
+  }, [hidden, el]);
   React.useLayoutEffect(() => {
     const container = parent || document.body;
     container.appendChild(el);

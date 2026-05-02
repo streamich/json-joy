@@ -20,19 +20,57 @@ import {PlaybackToolbar} from './PlaybackToolbar';
 import {JsonCrdtLogTextual} from './JsonCrdtLogTextual';
 import {JsonCrdtLogPinnedPatch} from './JsonCrdtLogPinnedPatch';
 import {PlayIcon} from '../icons/PlayIcon';
-import type {ITimestampStruct, Model} from 'json-joy/lib/json-crdt';
 import {DownloadButton} from './DownloadButton';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {Progress} from '@jsonjoy.com/ui/lib/3-list-item/Progress';
+import type {ITimestampStruct, Model} from 'json-joy/lib/json-crdt';
 
-const css = {
-  header: rule({
-    pad: '8px 8px 8px 16px',
-  }),
-  content: rule({
-    pad: '0 8px 8px',
-  }),
-};
+const blockClass = rule({});
+
+const contentClass = rule({
+  pd: '0 8px 8px',
+});
+
+const headerClass = rule({
+  pos: 'relative',
+  z: 2,
+  pd: '8px 8px 8px 16px',
+});
+
+const pinnedHeaderClass = rule({
+  op: 1,
+});
+
+const tinyBlockClass = rule({
+  '& .jj-log-timeline': {
+    filter: 'grayscale(1)',
+    op: 0.5,
+  },
+  '&:hover .jj-log-timeline': {
+    filter: 'grayscale(0)',
+    op: 1,
+  },
+});
+
+const tinyHeaderClass = rule({
+  op: 0,
+  pd: '0 8px',
+  [`.${blockClass.trim()}:hover &`]: {
+    op: 1,
+  },
+  '&:has(+ .jj-log-timeline:hover)': {
+    op: 0,
+    pe: 'none',
+  },
+  [`.${pinnedHeaderClass.trim()}&`]: {
+    op: 1,
+  },
+  [`&+.${pinnedHeaderClass.trim()}:has(+ .jj-log-timeline:hover)`]: {
+    op: 0,
+    pe: 'none',
+  },
+});
 
 export interface JsonCrdtLogProps extends Pick<JsonCrdtModelProps, 'renderDisplay'> {
   state?: JsonCrdtLogState;
@@ -68,6 +106,7 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
     if (firstPatchId) firstId = firstPatchId;
   }
   const pinnedModel = useBehaviorSubject(state.pinnedModel$);
+  const pinnedIdx = useBehaviorSubject(state.pinnedPatchIdx$);
   const model = pinnedModel ?? log.end;
   const readonlyEnforcementCounter = useBehaviorSubject(state.readonlyEnforced$);
   // biome-ignore lint: manual dependency list
@@ -94,36 +133,42 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
     }
   }, [readonlyEnforcementCounter]);
 
+  const tiny = view === 'tiny';
+
+  const toolbar = (
+    <Flex style={{alignItems: 'center'}}>
+      <DownloadButton filename={filename} />
+      <Space horizontal size={-1} />
+      <ViewSelect state={state} />
+      <Space horizontal size={1} />
+      <PlaybackToolbar state={state} />
+    </Flex>
+  );
+
   const header = (
     <Split style={{alignItems: 'center'}}>
       <Flex style={{alignItems: 'center'}}>
-        <div style={{marginTop: -1}}>
+        <div style={{marginTop: -1, display: tiny ? 'none' : void 0}}>
           <MiniTitle>{t('Log')}</MiniTitle>
         </div>
-        {!!renderLeftToolbar && (
+        {!!renderLeftToolbar && !tiny && (
           <>
             <Space horizontal size={1} />
             {renderLeftToolbar()}
           </>
         )}
         <Space horizontal size={1} />
-        {!!firstId && width > 500 && (
+        {!!firstId && width > 500 && !tiny && (
           <>
             <LogicalTimestamp sid={firstId.sid ?? 0} time={firstId.time ?? 0} />
             &nbsp;{'–'}&nbsp;
           </>
         )}
-        <LogicalTimestamp sid={log.end.clock.sid ?? 0} time={log.end.clock.time ? log.end.clock.time - 1 : 0} />
+        {!tiny && (
+          <LogicalTimestamp sid={log.end.clock.sid ?? 0} time={log.end.clock.time ? log.end.clock.time - 1 : 0} />
+        )}
       </Flex>
-      <div>
-        <Flex style={{alignItems: 'center'}}>
-          <DownloadButton filename={filename} />
-          <Space horizontal size={-1} />
-          <ViewSelect state={state} />
-          <Space horizontal size={1} />
-          <PlaybackToolbar state={state} />
-        </Flex>
-      </div>
+      <div>{toolbar}</div>
     </Split>
   );
 
@@ -156,16 +201,48 @@ export const JsonCrdtLog: React.FC<JsonCrdtLogProps> = ({
   return (
     <context.Provider value={state}>
       <Paper
-        round={!!spacious}
-        style={{background: styles.g(0.95), minWidth: 400, padding: spacious ? '0 8px 8px 8px' : undefined}}
-        hoverElevate
+        round={!!spacious && !tiny}
+        noOutline={tiny}
+        className={blockClass + (tiny ? tinyBlockClass : '')}
+        style={
+          tiny
+            ? {width: '100%', padding: '8px 0 0', background: 'transparent'}
+            : {
+                width: '100%',
+                background: styles.g(0.95),
+                minWidth: 400,
+                padding: spacious ? '0 8px 8px 8px' : undefined,
+              }
+        }
+        hoverElevate={!tiny}
       >
-        {!!pinnedModel && <RunningBackground />}
-        <div className={css.header} style={{marginTop: spacious ? (pinnedModel ? 6 : 8) : 0}}>
-          {header}
-        </div>
-        {(view === 'timeline' || view === 'model') && <Timeline log={log} />}
-        <div className={css.content}>{content}</div>
+        {!!pinnedModel && !tiny && (
+          <div
+            style={{
+              marginBottom: -2,
+              // Hide left and right edges near to rounded corners, where the progress bar would look weird
+              maskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
+            }}
+          >
+            <RunningBackground />
+            <Progress glow value={pinnedIdx / state.log.patches.size()} style={{marginTop: -2}} />
+          </div>
+        )}
+        {!!header && (
+          <div
+            key="header"
+            className={headerClass + (tiny ? tinyHeaderClass : '') + (pinnedModel ? pinnedHeaderClass : '')}
+            style={{marginTop: tiny ? 0 : spacious ? (pinnedModel ? 6 : 8) : 0}}
+          >
+            {header}
+          </div>
+        )}
+        {(view === 'timeline' || view === 'model' || view === 'tiny') && <Timeline key="timeline" log={log} />}
+        {!tiny && (
+          <div key="content" className={contentClass}>
+            {content}
+          </div>
+        )}
       </Paper>
     </context.Provider>
   );

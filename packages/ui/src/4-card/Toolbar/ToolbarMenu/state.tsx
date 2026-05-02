@@ -1,15 +1,21 @@
-import {OpenPanelState} from '../../ContextMenu/ContextMenu/OpenPanelState';
 import * as React from 'react';
+import {OpenPanelState} from '../../ContextMenu/ContextMenu/OpenPanelState';
+import {BehaviorSubject} from 'rxjs';
 import type {MenuItem} from '../../StructuralMenu/types';
 import type {ToolbarMenuProps} from './types';
 
+const selected$ = new BehaviorSubject('');
+
 export class ToolbarMenuState {
   public onclose?: () => void;
+  public openPanel: OpenPanelState;
 
   constructor(
     public props: ToolbarMenuProps,
-    public openPanel: OpenPanelState = new OpenPanelState(),
-  ) {}
+    prefix: string = '',
+  ) {
+    this.openPanel = new OpenPanelState({selected$, prefix: prefix ? prefix + ':' : ''});
+  }
 
   public execute = (item: MenuItem, event: React.MouseEvent): void => {
     const id = item.id ?? item.name;

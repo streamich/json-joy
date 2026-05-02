@@ -6,12 +6,15 @@ class MovementState implements UiLifeCycles {
   dx: number = 0;
   dy: number = 0;
 
+  public disabled = false;
+
   constructor(
     public gap: number = 4,
     public readonly vertical = false,
   ) {}
 
   public readonly move = () => {
+    if (this.disabled) return;
     const {div} = this;
     if (!div) return;
     const rect = div.getBoundingClientRect();
@@ -74,14 +77,16 @@ export interface MoveToViewportProps extends React.HTMLAttributes<HTMLSpanElemen
   gap?: number;
   /** Whether to adjust vertical position, too. */
   vertical?: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
 /**
  * Moves the contents into the viewport if it is rendered outside of it.
  */
-export const MoveToViewport: React.FC<MoveToViewportProps> = ({gap, vertical, children, ...attr}) => {
+export const MoveToViewport: React.FC<MoveToViewportProps> = ({gap, vertical, children, disabled, ...attr}) => {
   const state = React.useMemo(() => new MovementState(gap, vertical), [gap, vertical]);
+  state.disabled = !!disabled;
   React.useEffect(state.start, []);
 
   return (

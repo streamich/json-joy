@@ -1,12 +1,26 @@
 import {BehaviorSubject} from 'rxjs';
 import type {UiLifeCycles} from '../../../types';
 
-export type OpenPanelStateOpts = {};
+export interface OpenPanelStateOpts {
+  /**
+   * Optional shared *selected item* state. Used in toolbar, where a single
+   * open panel is shared between multiple toolbars.
+   */
+  selected$?: BehaviorSubject<string>;
+
+  /**
+   * Optional namespace for ids written to `selected$`. When several
+   * `OpenPanelState` instances share a single `selected$`, each one passes a
+   * unique prefix so the value carries ownership.
+   */
+  prefix?: string;
+}
 
 const COOL_DOWN_TIME = 69;
 
 export class OpenPanelState implements UiLifeCycles {
-  public readonly selected$ = new BehaviorSubject('');
+  public readonly selected$: BehaviorSubject<string>;
+  public readonly prefix: string;
 
   protected canSelectAfter: number = 0;
   protected lastClosed: string = '';
@@ -14,7 +28,25 @@ export class OpenPanelState implements UiLifeCycles {
   private focusStack: HTMLElement[] = [];
   private pendingTimer: ReturnType<typeof setTimeout> | 0 = 0;
 
-  constructor(public readonly opts: OpenPanelStateOpts = {}) {}
+  constructor(public readonly opts: OpenPanelStateOpts = {}) {
+    const {selected$, prefix = ''} = opts;
+    this.selected$ = selected$ ?? new BehaviorSubject('');
+    this.prefix = prefix;
+  }
+
+  public isSelected(localId: string): boolean {
+    if (!localId) return false;
+    return this.selected$.value === this.prefix + localId;
+  }
+
+  private isOurs(raw: string): boolean {
+    if (!raw) return false;
+    return !this.prefix || raw.startsWith(this.prefix);
+  }
+
+  private toLocal(raw: string): string {
+    return this.isOurs(raw) ? raw.slice(this.prefix.length) : '';
+  }
 
   public readonly start = () => {
     return () => {
@@ -35,16 +67,17 @@ export class OpenPanelState implements UiLifeCycles {
     if (delay <= 0) return;
     this.pendingTimer = setTimeout(() => {
       this.pendingTimer = 0;
-      if (this.hovered === id && this.selected$.value !== id) {
+      if (this.hovered === id && !this.isSelected(id)) {
         this.forceSelect(id);
       }
     }, delay);
   }
 
   public readonly hover = (id: string) => {
-    const selected = this.selected$.value;
+    const raw = this.selected$.value;
+    const selected = this.toLocal(raw);
     if (id === this.lastClosed && selected !== id) return;
-    if (!selected) {
+    if (!raw) {
       this.clearPending();
       this.forceSelect(id);
       return;
@@ -68,23 +101,26 @@ export class OpenPanelState implements UiLifeCycles {
   };
 
   public readonly select = (id: string): void => {
-    const selected = this.selected$.value;
-    if (selected === id) {
+    const raw = this.selected$.value;
+    if (id === '') {
+      if (raw && this.isOurs(raw)) this.deselect();
+      return;
+    }
+    if (this.isOurs(raw) && raw === this.prefix + id) {
       this.deselect();
-    } else {
-      const now = Date.now();
-      if (now > this.canSelectAfter) {
-        this.forceSelect(id, now + COOL_DOWN_TIME);
-      } else {
-      }
+      return;
+    }
+    const now = Date.now();
+    if (now > this.canSelectAfter) {
+      this.forceSelect(id, now + COOL_DOWN_TIME);
     }
   };
 
   public deselect(): boolean {
-    const selected = this.selected$.value;
-    if (!selected) return false;
+    const raw = this.selected$.value;
+    if (!raw || !this.isOurs(raw)) return false;
     this.clearPending();
-    this.lastClosed = selected;
+    this.lastClosed = raw.slice(this.prefix.length);
     this.hovered = '';
     this.canSelectAfter = Date.now() + COOL_DOWN_TIME;
     this.selected$.next('');
@@ -97,16 +133,15 @@ export class OpenPanelState implements UiLifeCycles {
   /**
    * Forcefully select an item, ignoring any pending unlock cool down.
    *
-   * @param id ID of the item to select.
+   * @param id Local id of the item to select (the prefix is added internally).
    */
   public forceSelect(id: string, canSelectAfter = Date.now() + COOL_DOWN_TIME): void {
-    this.lastClosed = id;
     this.hovered = id;
     this.canSelectAfter = canSelectAfter;
     // Save the currently focused element so we can restore it on deselect.
     const focused = document.activeElement;
     if (focused instanceof HTMLElement) this.focusStack.push(focused);
-    this.selected$.next(id);
+    this.selected$.next(this.prefix + id);
   }
 
   public readonly onClick = this.select;

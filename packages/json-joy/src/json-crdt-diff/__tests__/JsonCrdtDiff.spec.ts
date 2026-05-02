@@ -56,6 +56,36 @@ describe('con', () => {
     const patch = model.$.$?.merge(s.con(1));
     expect(patch).toBe(undefined);
   });
+
+  test('Uint8Array in "con" produces diff when content differs (default shallowConBin = false)', () => {
+    const model = Model.create(
+      s.obj({
+        field: s.con(new Uint8Array([1, 2, 3])),
+      }),
+    );
+    const differ = new JsonCrdtDiff(model);
+    expect(differ.shallowConBin).toBe(false);
+    const dst = {
+      field: new Uint8Array([4, 5, 6]),
+    };
+    const patch = assertDiff(model, model.root, dst);
+    expect(patch.ops.length).toBeGreaterThan(0);
+  });
+
+  test('Uint8Array in "con" produces no diff for equal-length values when shallowConBin = true', () => {
+    const model = Model.create(
+      s.obj({
+        field: s.con(new Uint8Array([1, 2, 3])),
+      }),
+    );
+    const dst = {
+      field: new Uint8Array([4, 5, 6]),
+    };
+    const differ = new JsonCrdtDiff(model);
+    differ.shallowConBin = true;
+    const patch = differ.diff(model.root, dst);
+    expect(patch.ops.length).toBe(0);
+  });
 });
 
 describe('val', () => {

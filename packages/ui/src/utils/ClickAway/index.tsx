@@ -8,7 +8,7 @@ export interface ClickAwayProps extends React.HTMLAttributes<any> {
 }
 
 export const ClickAway: React.FC<ClickAwayProps> = ({as = 'div', onElement, onClickAway, ...rest}) => {
-  const clickAwayRef = useClickAway(React.useCallback(onClickAway, []));
+  const clickAwayRef = useClickAway(onClickAway);
   const ref = React.useCallback(
     (el: HTMLElement | null) => {
       if (onElement) onElement(el);

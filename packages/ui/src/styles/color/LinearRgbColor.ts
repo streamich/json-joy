@@ -47,6 +47,34 @@ export class LinearRgbColor {
     return (L1 + 0.05) / (L2 + 0.05);
   }
 
+  /**
+   * @param background The background color.
+   * @param threshold Desired contrast threshold.
+   * @returns Returns a contrasty enough text color given a background color.
+   */
+  public adjToContrast(background: LinearRgbColor, threshold: number = 4.5): LinearRgbColor {
+    const currentContrast = this.contrast(background);
+    if (currentContrast >= threshold) return this;
+    const bgY = background.Y();
+    const fgY = this.Y();
+    let targetY: number;
+    if (fgY > bgY) {
+      targetY = threshold * (bgY + 0.05) - 0.05;
+      if (targetY > 1) targetY = (bgY + 0.05) / threshold - 0.05;
+    } else {
+      targetY = (bgY + 0.05) / threshold - 0.05;
+      if (targetY < 0) targetY = threshold * (bgY + 0.05) - 0.05;
+    }
+    targetY = Math.max(0, Math.min(1, targetY));
+    const ratio = targetY / Math.max(fgY, 0.0001);
+    return new LinearRgbColor(
+      Math.max(0, Math.min(this.r * ratio, 1)),
+      Math.max(0, Math.min(this.g * ratio, 1)),
+      Math.max(0, Math.min(this.b * ratio, 1)),
+      this.a,
+    );
+  }
+
   public highestContrast(colors: [first: LinearRgbColor, ...rest: LinearRgbColor[]]): LinearRgbColor {
     return this.pickFirstAboveOrMax(100, colors);
   }

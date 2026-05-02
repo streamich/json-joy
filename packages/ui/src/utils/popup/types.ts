@@ -3,7 +3,7 @@
  * opened (x, y) and the direction of the popup popup body growth (dx, dy).
  *
  * Coordinates start from the top-left corner of the page and grow to the right
- * and down.d
+ * and down.
  */
 export interface AnchorPoint {
   x: number;

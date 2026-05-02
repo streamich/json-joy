@@ -1,13 +1,13 @@
 import * as React from 'react';
 import type {CSSProperties, ReactElement} from 'react';
 import {Children, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import type {SplitPaneProps, PaneProps, ResizeEvent} from '../types';
 import {Pane} from './Pane';
 import {Divider, WIDTH as DIVIDER_WIDTH} from './Divider';
 import {useResizer} from '../hooks/useResizer';
 import {useKeyboardResize} from '../hooks/useKeyboardResize';
 import {convertToPixels, distributeSizes} from '../utils/calculations';
 import {cn} from '../utils/classNames';
+import type {SplitPaneProps, PaneProps, ResizeEvent} from '../types';
 
 const DEFAULT_CLASSNAME = 'split-pane';
 const MIN_PANES = 2;
@@ -48,6 +48,7 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
     onResizeStart,
     onResize,
     onResizeEnd,
+    onEl,
     className,
     style,
     divider: CustomDivider,
@@ -108,7 +109,7 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
   // Warn once if fewer than 2 panes
   if (paneCount < MIN_PANES && !warnedRef.current) {
     warnedRef.current = true;
-    console.warn(`SplitPane requires at least ${MIN_PANES} Pane children. Received ${paneCount}.`);
+    console.warn('TOO_FEW_PANES');
   }
 
   // Calculate min/max sizes from pane configs
@@ -452,7 +453,14 @@ export const SplitPane: React.FC<SplitPaneProps> = (props) => {
   };
 
   return (
-    <div ref={containerRef} className={containerClassName} style={containerStyle}>
+    <div
+      ref={(el) => {
+        containerRef.current = el;
+        onEl?.(el);
+      }}
+      className={containerClassName}
+      style={containerStyle}
+    >
       {containerSize > 0 && renderChildren()}
     </div>
   );
