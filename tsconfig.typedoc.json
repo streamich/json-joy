@@ -12,6 +12,7 @@
     "**/*.stories.tsx",
     "**/__demos__/**",
     "**/__bench__/**",
+    "**/__stories__/**",
     "**/__tests__/**",
     ".storybook/**"
   ],
