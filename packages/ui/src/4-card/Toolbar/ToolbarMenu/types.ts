@@ -10,6 +10,14 @@ export interface ToolbarMenuProps {
   after?: React.ReactNode;
   pane?: boolean | ContextPaneProps;
   compact?: boolean;
+
+  /**
+   * Approximate horizontal pixel budget for rendered toolbar items. When the
+   * estimated width of items rendered so far would exceed this budget, the
+   * loop stops and the "More" button is rendered.
+   */
+  maxWidth?: number;
+
   onPopupClose?: () => void;
   onClickAway?: () => void;
   onEsc?: () => void;

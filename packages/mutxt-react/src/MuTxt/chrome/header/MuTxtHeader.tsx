@@ -141,17 +141,22 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
             </>
            )
            : (
-            <AutoExpandableToolbar menu={{
-              ...inlineMenu,
-              maxToolbarItems: inlineMenu.maxToolbarItems || inlineMenu.children!.length,
-              minWidth: 288,
-              children: [
-                ...inlineMenu.children!,
-                {name: 'sep-voids', sep: true},
-                ...voidsMenu.children!,
-                {name: 'sep-blocks', sep: true},
-                ...blockMenu.children!],
-            }} pane={{transparent: true}} more={{small: true}} />
+            <AutoExpandableToolbar
+              maxWidth={width * 0.6}
+              menu={{
+                ...inlineMenu,
+                maxToolbarItems: inlineMenu.maxToolbarItems || inlineMenu.children!.length,
+                minWidth: 288,
+                children: [
+                  ...inlineMenu.children!,
+                  {name: 'sep-voids', sep: true},
+                  ...voidsMenu.children!,
+                  {name: 'sep-blocks', sep: true},
+                  ...blockMenu.children!],
+              }}
+              pane={{transparent: true}}
+              more={{small: true}}
+            />
            )}
           
           

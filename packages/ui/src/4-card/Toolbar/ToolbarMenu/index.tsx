@@ -27,7 +27,7 @@ export interface StatefulToolbarMenuProps extends ToolbarMenuProps {
 }
 
 export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) => {
-  const {state, menu, disabled, more, before, after, pane = true, onPopupClose, onClickAway, compact} = props;
+  const {state, menu, disabled, more, before, after, pane = true, onPopupClose, onClickAway, compact, maxWidth} = props;
   state.props = props;
   const openPanel = state.openPanel;
   const selected = useBehaviorSubject(openPanel.selected$);
@@ -65,13 +65,56 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
   const max = menu?.maxToolbarItems ?? 1e3;
   let cnt = 0;
 
+  const itemWidth = compact ? 28 : 32;
+  const sepLineWidth = compact ? 6 : 10;
+  const moreWidth = more?.small === false ? 64 : itemWidth;
+  const widthBudget = maxWidth ?? Number.POSITIVE_INFINITY;
+  let usedWidth = 0;
+  let stoppedByWidth = false;
+  let lastWasSep = true;
+
   for (let i = 0; i < length && cnt < max; i++) {
     const child = children![i];
     const key = child.id || child.name || i;
-    if (child.sep || child.sepBefore) {
-      nodes.push(<ToolbarSep key={key + '-sep'} line compact={compact} />);
-      if (!child.sepBefore) continue;
+
+    const wantsSep = !!(child.sep || child.sepBefore);
+    const isSepOnly = !!child.sep && !child.sepBefore;
+    const sepRendered = wantsSep && !lastWasSep;
+
+    let childWidth = sepRendered ? sepLineWidth : 0;
+    if (!isSepOnly) {
+      if (child.expand && !child?.children?.[0]?.iconBig) {
+        const subLen = child.children?.length ?? 0;
+        const subMax = child.expand ?? 5;
+        const subItems = Math.min(subLen, subMax) + (subLen > subMax ? 1 : 0);
+        childWidth += subItems * itemWidth;
+      } else if (typeof child.expandChild === 'number') {
+        const subChild = child.children?.[child.expandChild];
+        if (subChild) {
+          const subChildren = child.preview ?? subChild.preview ?? subChild.children;
+          const subLen = subChildren?.length ?? 0;
+          const subMax = Math.min(subChild.expand ?? 4, 4);
+          const subItems = Math.min(subLen, subMax) + 1;
+          childWidth += subItems * itemWidth;
+        }
+      } else {
+        childWidth += itemWidth;
+      }
     }
+
+    const remaining = length - i - 1;
+    const reserveMore = remaining > 0 ? moreWidth + sepLineWidth : 0;
+    if (usedWidth + childWidth + reserveMore > widthBudget) {
+      stoppedByWidth = true;
+      break;
+    }
+    usedWidth += childWidth;
+
+    if (sepRendered) {
+      nodes.push(<ToolbarSep key={key + '-sep'} line compact={compact} />);
+      lastWasSep = true;
+    }
+    if (isSepOnly) continue;
     if (child.expand && !child?.children?.[0]?.iconBig) {
       cnt++;
       nodes.push(<ExpandChildren key={key} item={child} disabled={disabled} />);
@@ -84,9 +127,12 @@ export const StatefulToolbarMenu: React.FC<StatefulToolbarMenuProps> = (props) =
       cnt++;
       nodes.push(<ToolbarMenuItem key={key} item={child} disabled={disabled} />);
     }
+    lastWasSep = false;
   }
 
-  const showMore = length > max && !!more;
+  if (lastWasSep && nodes.length > 0) nodes.pop();
+
+  const showMore = ((length > max && !!more) || (stoppedByWidth && !!more));
 
   let element: React.ReactNode = (
     <popupContext.Provider value={popupContextValue}>
