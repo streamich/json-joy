@@ -51,7 +51,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
                         </a>
                         {' '}— local-first, works offline, with sync-ready document format
                       </li>
-                      <li>Fork and merge documents seamlessly</li>
+                      <li>Fork and merge documents seamlessly<sup>(</sup>*<sup>)</sup><sup> coming soon</sup></li>
                     </ul>
                   </div>
                   {/* <Space size={2} /> */}
