@@ -195,7 +195,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
 
   if (right) {
     element = (
-      <Split as="span">
+      <Split as="span" style={{gap: 8}}>
         {element}
         {right}
       </Split>
