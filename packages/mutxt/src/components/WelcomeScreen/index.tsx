@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
-import {useTheme} from 'nano-theme';
 import {NewFileForm} from '../NewFileForm';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {ResponsiveFlex} from '@jsonjoy.com/ui/lib/misc/ResponsiveFlex';
@@ -12,8 +11,6 @@ import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 export type WelcomeScreenProps = Record<string, never>;
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
-  const theme = useTheme();
-
   return (
     <div
       style={{

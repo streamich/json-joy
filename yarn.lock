@@ -10607,6 +10607,7 @@ __metadata:
   dependencies:
     "@jsonjoy.com/base64": "workspace:*"
     "@jsonjoy.com/buffers": "workspace:*"
+    "@jsonjoy.com/json-equal": "workspace:*"
     "@jsonjoy.com/json-expression": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/json-pointer": "workspace:*"
@@ -11677,6 +11678,7 @@ __metadata:
   resolution: "mutxt@workspace:packages/mutxt"
   dependencies:
     "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
     "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@jsonjoy.com/json-pack": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"

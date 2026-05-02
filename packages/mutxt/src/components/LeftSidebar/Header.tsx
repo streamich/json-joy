@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
           children: [
             newMenu,
             {name: 'after-new', sep: true},
-            ...state.menus.tracesMenu(300, async (wait) => {}).children!,
+            ...state.menus.tracesMenu(300, async () => {}).children!,
           ],
         },
         {

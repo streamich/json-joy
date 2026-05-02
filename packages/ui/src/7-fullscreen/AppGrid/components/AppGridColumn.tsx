@@ -28,7 +28,6 @@ export const AppGridColumn: React.FC<AppGridColumnProps> = ({
   scrollFooter,
   scrollRailWidth,
   children,
-  ...rest
 }) => {
   const theme = useTheme();
 

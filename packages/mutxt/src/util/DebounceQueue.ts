@@ -15,7 +15,7 @@ export class DebounceQueue<T> {
   /**
    * Method that will be called when queue is flushed.
    */
-  onflush = (list: T[]) => {};
+  onflush = (_list: T[]) => {};
 
   private list: T[] = [];
   private timer: any = null;

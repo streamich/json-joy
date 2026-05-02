@@ -16,8 +16,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({toggle}) => {
   const state = useExplorer();
   const files = useBehaviorSubject(state.files$);
 
-  let _content: React.ReactNode | undefined;
-
   return (
     <AppGridColumn
       header={<Header toggle={toggle} />}

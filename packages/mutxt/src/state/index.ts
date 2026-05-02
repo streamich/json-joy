@@ -258,7 +258,7 @@ export class JsonCrdtExplorerState {
     this.createFromModel(model);
   };
 
-  public readonly createNewMuTxt = (data: unknown = void 0) => {
+  public readonly createNewMuTxt = () => {
     this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}));
   };
 

@@ -5,7 +5,6 @@ import {JsonCrdtLogState} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog/Js
 import {rsync} from '@jsonjoy.com/ui';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {LogEncoder} from 'json-joy/lib/json-crdt/log/codec/LogEncoder';
-import {Patch} from 'json-joy/lib/json-crdt-patch';
 import {compact} from 'json-joy/lib/json-crdt-patch/compaction';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';

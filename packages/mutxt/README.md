@@ -34,7 +34,7 @@ Common commands:
 | Command | Purpose |
 |---|---|
 | `npx wrangler login` | Authenticate once |
-| `npx wrangler pages project create` | Create the Pages project once |
+| `npx wrangler pages project create mutxt --production-branch=master` | Create the Pages project once |
 | `npx wrangler pages deploy dist` | Deploy to production |
 | `npx wrangler pages deploy dist --branch=preview` | Deploy a preview build |
 | `npx wrangler pages deployment list` | Inspect recent deployments |

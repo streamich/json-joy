@@ -12,8 +12,6 @@ const editorShellClass = rule({
   minH: 0,
 });
 
-const minHeight = 400;
-
 export interface DocumentJsonProps {
   file: OpenFile;
   readOnly?: boolean;
@@ -21,8 +19,7 @@ export interface DocumentJsonProps {
 }
 
 
-export const DocumentJson: React.FC<DocumentJsonProps> = ({ file, readOnly, visible }) => {
-  const activeModel = file.activeModel.use();
+export const DocumentJson: React.FC<DocumentJsonProps> = ({ file, visible }) => {
   React.useEffect(() => {
     file.logState.view$.next('model');
     // file.logState.modelState.

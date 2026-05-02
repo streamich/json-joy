@@ -8,7 +8,7 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -16,5 +16,9 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
-  "include": ["src", "webpack.config.ts"]
+  "include": ["src", "webpack.config.ts"],
+  "exclude": [
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
+  ]
 }

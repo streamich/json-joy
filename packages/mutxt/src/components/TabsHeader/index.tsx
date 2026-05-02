@@ -14,8 +14,6 @@ const enum Sizes {
   TabsFadeHeight = 16,
 }
 
-const NEW_FILE_RENAME_WINDOW_MS = 5_000;
-
 const blockClass = rule({
   h: Sizes.TabsHeight + 'px',
 });
@@ -47,7 +45,6 @@ const FileNameHeader: React.FC<{file: OpenFile}> = ({file}) => {
   const theme = useTheme();
   const fileName = file.name.use();
   const inputWrapRef = React.useRef<HTMLDivElement | null>(null);
-  const autoFocusedFileIdsRef = React.useRef<Set<string>>(new Set());
 
   // Focus an select new file
   // React.useLayoutEffect(() => {

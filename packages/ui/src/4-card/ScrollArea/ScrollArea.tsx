@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
 import {ScrollState} from './state';
 import {ctx} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
