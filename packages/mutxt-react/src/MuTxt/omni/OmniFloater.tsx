@@ -32,12 +32,14 @@ export const OmniFloater: React.FC<OmniFloaterProps> = () => {
 
   const menu = omni.menu.build();
   const minWidth = mode === 'palette' ? 480 : 320;
+
   return (
     <PositionAtPoint point={point} animate>
       <div
         ref={clickAwayRef}
         onMouseDown={(e) => {
           if ((e.target as HTMLElement).tagName !== 'INPUT') e.preventDefault();
+          e.stopPropagation();
         }}
       >
         <ContextMenu
