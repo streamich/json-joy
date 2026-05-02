@@ -6,9 +6,9 @@ import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useExplorer} from '../../context';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {BrandLogo} from './BrandLogo';
+import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 
 export interface HeaderProps {
   toggle: React.ReactNode;
@@ -29,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
           name: 'New File',
           minWidth: 300,
           icon: () => <Iconista set="ibm_16" icon="new-tab" width={16} height={16} />,
-          children: [newMenu, {name: 'after-new', sep: true}, ...state.menus.tracesMenu(300, async () => {}).children!],
+          children: [newMenu],
         },
         {
           name: 'Import File',
