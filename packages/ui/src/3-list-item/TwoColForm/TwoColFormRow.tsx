@@ -9,8 +9,11 @@ const rowClass = rule({
   gap: '12px',
   w: '100%',
   bxz: 'border-box',
-  pd: '6px 0',
+  pd: '0',
   minHeight: '32px',
+  '&+&': {
+    mrt: '4px',
+  },
 });
 
 const leftClass = rule({
