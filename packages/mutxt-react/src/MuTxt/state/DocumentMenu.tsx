@@ -1,13 +1,18 @@
 import * as React from 'react';
+import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
-import type {MenuItem} from '../types';
+import type {DisplayMode, MenuItem} from '../types';
 import type {MuTxtState} from './MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 const DocumentIcon = makeIcon({set: 'tabler', icon: 'file-text', width: 16, height: 16});
 const KeyboardIcon = makeIcon({set: 'tabler', icon: 'keyboard', width: 16, height: 16});
+const DisplayIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
+const InlineIcon = makeIcon({set: 'tabler', icon: 'layout-rows', width: 16, height: 16});
+const FullscreenIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, height: 16});
+const FullWindowIcon = makeIcon({set: 'tabler', icon: 'app-window', width: 16, height: 16});
 
 export class DocumentMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -21,7 +26,7 @@ export class DocumentMenu implements UiLifeCycles {
       name: 'Document',
       minWidth: 288,
       icon: () => <DocumentIcon />,
-      children: [this.itemKeyboardShortcuts()],
+      children: [this.itemDisplayMode(), this.itemKeyboardShortcuts()],
     };
   }
 
@@ -35,6 +40,31 @@ export class DocumentMenu implements UiLifeCycles {
       onSelect: () => {
         this.mutxt.omni.close();
         this.mutxt.shortcutsOpen.set(true);
+      },
+    };
+  }
+
+  public itemDisplayMode(): MenuItem {
+    return {
+      name: 'Display',
+      icon: () => <DisplayIcon />,
+      children: [
+        this.itemDisplayModeOption('inline', 'Inline', () => <InlineIcon />),
+        this.itemDisplayModeOption('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
+        this.itemDisplayModeOption('fullwindow', 'Full window', () => <FullWindowIcon />),
+      ],
+    };
+  }
+
+  private itemDisplayModeOption(mode: DisplayMode, name: string, icon: () => React.ReactNode): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name,
+      icon,
+      active: rsync.comp([mutxt.displayMode], ([m]) => m === mode),
+      onSelect: () => {
+        mutxt.omni.close();
+        mutxt.setDisplayMode(mode);
       },
     };
   }

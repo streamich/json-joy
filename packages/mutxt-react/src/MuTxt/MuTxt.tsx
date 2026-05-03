@@ -15,8 +15,6 @@ import {withHr} from './behavior/hr';
 import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
 import {withFile} from './behavior/file';
-import type {ObjNode} from 'json-joy/lib/json-crdt';
-import type {ObjApi} from 'json-joy/lib/json-crdt';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -30,9 +28,12 @@ import {EmbedFloater} from './void/embed/EmbedFloater';
 import {FileFloater} from './void/file/FileFloater';
 import {OmniFloater} from './omni/OmniFloater';
 import {SlateEditorContextProvider} from './context';
+import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
 import {Sizer} from '@jsonjoy.com/ui/lib/5-block/Sizer';
+import type {ObjNode} from 'json-joy/lib/json-crdt';
+import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
@@ -204,6 +205,15 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const omniOpen = state.omni.open.use();
   const omniRange = state.omni.rangeSnapshot.use();
   const shortcutsOpen = state.shortcutsOpen.use();
+  const displayMode = state.displayMode.use();
+  const [shellEl, setShellEl] = React.useState<HTMLElement | null>(null);
+  const handleShellRef = React.useCallback(
+    (el: HTMLDivElement | null) => {
+      setShellEl(el);
+      state.bindShell(el);
+    },
+    [state],
+  );
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       const ranges = [...decorateRemoteCursors(entry)];
@@ -323,28 +333,57 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   const combinedClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
 
+  const shellStyle: React.CSSProperties =
+    displayMode === 'fullwindow'
+      ? {
+          ...style,
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100vh',
+          maxWidth: 'none',
+          borderRadius: 0,
+          zIndex: 9999,
+          background: styles.light ? styles.g(1) : styles.g(0),
+        }
+      : (style as React.CSSProperties);
+
   if (borderless) {
-    content = React.createElement('div', {style, className: combinedClass}, content);
+    content = React.createElement(
+      'div',
+      {ref: handleShellRef, style: shellStyle, className: combinedClass},
+      content,
+    );
   } else {
     content = React.createElement(
       Paper,
-      {round: true, contrast: true, hover: true, hoverElevate, style, className: combinedClass},
+      {
+        ref: handleShellRef,
+        round: displayMode !== 'fullwindow',
+        contrast: true,
+        hover: true,
+        hoverElevate,
+        style: shellStyle,
+        className: combinedClass,
+      },
       content,
     );
   }
 
   return (
     <SlateEditorContextProvider state={state}>
-      <Sizer
-        state={state.sizer}
-        minWidth={300}
-        handlePadding={64}
-        handleMaxHeight={500}
-        handleWidth={3}
-        style={heightFit ? {height: '100%', minHeight: 0} : undefined}
-      >
-        {content}
-      </Sizer>
+      <PortalParentProvider value={displayMode === 'fullscreen' ? shellEl : null}>
+        <Sizer
+          state={state.sizer}
+          minWidth={300}
+          handlePadding={64}
+          handleMaxHeight={500}
+          handleWidth={3}
+          style={heightFit ? {height: '100%', minHeight: 0} : undefined}
+        >
+          {content}
+        </Sizer>
+      </PortalParentProvider>
     </SlateEditorContextProvider>
   );
 };

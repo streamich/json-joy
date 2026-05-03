@@ -21,13 +21,14 @@ import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
 import {OmniState} from '../omni/OmniState';
 import {DocumentMenu} from './DocumentMenu';
+import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
-import type {CustomElement, SlateEditorDocument, SlateTextAlign} from '../types';
+import type {CustomElement, DisplayMode, SlateEditorDocument, SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
 
 const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
@@ -81,11 +82,18 @@ export class MuTxtState implements UiLifeCycles {
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
   public readonly omni = new OmniState(this);
+  public readonly indicator = new IndicatorState(this);
   public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
 
   /** Whether the keyboard-shortcuts modal is open. */
   public readonly shortcutsOpen = rsync.val(false);
+
+  /** Current rendering display mode. */
+  public readonly displayMode = rsync.val<DisplayMode>('inline');
+
+  /** The shell element wrapping the entire editor (header, content, footer). */
+  public shellEl: HTMLElement | null = null;
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
@@ -147,9 +155,21 @@ export class MuTxtState implements UiLifeCycles {
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
     const stopOmni = this.omni.start();
+    const stopIndicator = this.indicator.start();
     const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
+
+    // --------------------------------------------- Native fullscreen tracking
+    // Keep `displayMode` in sync when the user exits fullscreen via Esc or
+    // when the browser drops out of fullscreen for any other reason.
+    const onFullscreenChange = (): void => {
+      const inNativeFullscreen = !!document.fullscreenElement;
+      const mode = this.displayMode.value;
+      if (!inNativeFullscreen && mode === 'fullscreen') this.displayMode.set('inline');
+    };
+    if (typeof document !== 'undefined')
+      document.addEventListener('fullscreenchange', onFullscreenChange);
 
     return () => {
       unbindCollaboration();
@@ -159,8 +179,11 @@ export class MuTxtState implements UiLifeCycles {
       stopBlock();
       stopVoids();
       stopOmni();
+      stopIndicator();
       stopThings();
       unbindShortcuts();
+      if (typeof document !== 'undefined')
+        document.removeEventListener('fullscreenchange', onFullscreenChange);
       this.kbdSourceUnbind?.();
       this.kbdSourceUnbind = undefined;
       this.kbd.dispose();
@@ -182,6 +205,22 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly setReadOnly = (readOnly: boolean): void => {
     this.readOnly.set(readOnly);
+  };
+
+  public readonly setDisplayMode = (mode: DisplayMode): void => {
+    const current = this.displayMode.value;
+    if (current === mode) return;
+    if (current === 'fullscreen' && document.fullscreenElement)
+      document.exitFullscreen().catch(() => {});
+    if (mode === 'fullscreen') {
+      const target = this.shellEl ?? document.documentElement;
+      target.requestFullscreen?.().catch(() => {});
+    }
+    this.displayMode.set(mode);
+  };
+
+  public readonly bindShell = (el: HTMLElement | null): void => {
+    this.shellEl = el;
   };
 
   public readonly sync = (contentChanged: boolean): void => {

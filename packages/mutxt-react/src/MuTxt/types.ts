@@ -6,6 +6,16 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 export type {MenuItem};
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
+
+/**
+ * How the editor renders itself within the page.
+ *
+ * - `inline`: render the editor in place (default).
+ * - `fullscreen`: enter native browser fullscreen.
+ * - `fullwindow`: stretch to fill the entire browser window viewport.
+ */
+export type DisplayMode = 'inline' | 'fullscreen' | 'fullwindow';
+
 export type MarkFormat =
   | 'bold'
   | 'italic'
