@@ -182,7 +182,7 @@ export const setChecklistItemChecked = (editor: Editor, path: Path, checked: boo
   });
 };
 
-export const resetEmptyBlockToParagraph = (editor: Editor): boolean => {
+export const resetEmptyBlockToP = (editor: Editor): boolean => {
   const {selection} = editor;
   if (!selection || !Range.isCollapsed(selection)) return false;
   const entry = getCurrentBlockEntry(editor);
@@ -291,9 +291,9 @@ export const removeEmptyPrevP = (editor: Editor): boolean => {
 /**
  * Backspace at offset 0 of a non-empty heading, blockquote, callout, or list
  * item converts that block to a paragraph instead of merging with the
- * previous block. Empty blocks are handled by `resetEmptyBlockToParagraph`.
+ * previous block. Empty blocks are handled by `resetEmptyBlockToP`.
  */
-export const resetBlockToParagraphAtStart = (editor: Editor): boolean => {
+export const resetBlockToPAtStart = (editor: Editor): boolean => {
   const {selection} = editor;
   if (!selection || !Range.isCollapsed(selection)) return false;
   const entry = getCurrentBlockEntry(editor);
@@ -327,7 +327,7 @@ export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
   editor.insertBreak = () => {
     if (tryExitCodeBlockOnTripleEnter(editor)) return;
     if (insertCodeBlockBreak(editor)) return;
-    if (resetEmptyBlockToParagraph(editor)) return;
+    if (resetEmptyBlockToP(editor)) return;
     const activeBlock = getActiveBlock(editor);
     const inHeading = activeBlock && HEADING_TYPES.has(activeBlock.type);
     const inHeadingOrBlockquoteOrCallout = activeBlock && ['blockquote', 'callout'].includes(activeBlock.type);

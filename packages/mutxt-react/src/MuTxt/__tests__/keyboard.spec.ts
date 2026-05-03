@@ -1,8 +1,8 @@
 import {createEditor} from 'slate';
 import {
   removeEmptyPrevP,
-  resetBlockToParagraphAtStart,
-  resetEmptyBlockToParagraph,
+  resetBlockToPAtStart,
+  resetEmptyBlockToP,
   tryExitCodeBlockOnTripleEnter,
   withCodeBlockBreaks,
 } from '../behavior';
@@ -22,7 +22,7 @@ describe('resetEmptyBlockToParagraph()', () => {
       anchor: {path: [0, 0], offset: 0},
       focus: {path: [0, 0], offset: 0},
     };
-    const handled = resetEmptyBlockToParagraph(editor);
+    const handled = resetEmptyBlockToP(editor);
     expect(handled).toBe(true);
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
@@ -33,7 +33,7 @@ describe('resetEmptyBlockToParagraph()', () => {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},
     };
-    const handled = resetEmptyBlockToParagraph(editor);
+    const handled = resetEmptyBlockToP(editor);
     expect(handled).toBe(true);
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
@@ -46,7 +46,7 @@ describe('resetEmptyBlockToParagraph()', () => {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},
     };
-    const handled = resetEmptyBlockToParagraph(editor);
+    const handled = resetEmptyBlockToP(editor);
     expect(handled).toBe(true);
     expect(editor.children).toEqual([{type: 'p', children: [{text: ''}]}]);
   });
@@ -57,7 +57,7 @@ describe('resetEmptyBlockToParagraph()', () => {
       anchor: {path: [0, 0], offset: 5},
       focus: {path: [0, 0], offset: 5},
     };
-    const handled = resetEmptyBlockToParagraph(editor);
+    const handled = resetEmptyBlockToP(editor);
     expect(handled).toBe(false);
     expect(editor.children).toEqual([{type: 'blockquote', children: [{text: 'quote'}]}]);
   });
@@ -73,7 +73,7 @@ describe('resetBlockToParagraphAtStart()', () => {
       anchor: {path: [1, 0], offset: 0},
       focus: {path: [1, 0], offset: 0},
     };
-    expect(resetBlockToParagraphAtStart(editor)).toBe(true);
+    expect(resetBlockToPAtStart(editor)).toBe(true);
     expect(editor.children).toEqual([
       {type: 'p', children: [{text: 'before'}]},
       {type: 'p', children: [{text: 'Hello'}]},
@@ -88,7 +88,7 @@ describe('resetBlockToParagraphAtStart()', () => {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},
     };
-    expect(resetBlockToParagraphAtStart(editor)).toBe(true);
+    expect(resetBlockToPAtStart(editor)).toBe(true);
     expect(editor.children).toEqual([{type: 'p', children: [{text: 'item'}]}]);
   });
 
@@ -98,7 +98,7 @@ describe('resetBlockToParagraphAtStart()', () => {
       anchor: {path: [0, 0], offset: 2},
       focus: {path: [0, 0], offset: 2},
     };
-    expect(resetBlockToParagraphAtStart(editor)).toBe(false);
+    expect(resetBlockToPAtStart(editor)).toBe(false);
     expect(editor.children).toEqual([{type: 'h2', children: [{text: 'Hello'}]}]);
   });
 
@@ -108,7 +108,7 @@ describe('resetBlockToParagraphAtStart()', () => {
       anchor: {path: [0, 0], offset: 0},
       focus: {path: [0, 0], offset: 0},
     };
-    expect(resetBlockToParagraphAtStart(editor)).toBe(false);
+    expect(resetBlockToPAtStart(editor)).toBe(false);
   });
 
   test('does not run on a paragraph', () => {
@@ -117,7 +117,7 @@ describe('resetBlockToParagraphAtStart()', () => {
       anchor: {path: [0, 0], offset: 0},
       focus: {path: [0, 0], offset: 0},
     };
-    expect(resetBlockToParagraphAtStart(editor)).toBe(false);
+    expect(resetBlockToPAtStart(editor)).toBe(false);
   });
 
   test('does not run on a code-block', () => {
@@ -126,7 +126,7 @@ describe('resetBlockToParagraphAtStart()', () => {
       anchor: {path: [0, 0], offset: 0},
       focus: {path: [0, 0], offset: 0},
     };
-    expect(resetBlockToParagraphAtStart(editor)).toBe(false);
+    expect(resetBlockToPAtStart(editor)).toBe(false);
   });
 });
 

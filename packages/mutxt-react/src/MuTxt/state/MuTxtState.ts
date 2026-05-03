@@ -20,6 +20,7 @@ import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
 import {OmniState} from '../omni/OmniState';
+import {DocumentMenu} from './DocumentMenu';
 import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
@@ -80,7 +81,11 @@ export class MuTxtState implements UiLifeCycles {
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
   public readonly omni = new OmniState(this);
+  public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
+
+  /** Whether the keyboard-shortcuts modal is open. */
+  public readonly shortcutsOpen = rsync.val(false);
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;

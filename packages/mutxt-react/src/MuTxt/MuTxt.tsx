@@ -38,9 +38,14 @@ import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {MuTxtApi} from './state/MuTxtApi';
 
+const KeyboardShortcutsModal = React.lazy(() =>
+  import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
+);
+
 const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
 
 const shellClass = rule({
+  pos: 'relative',
   w: '100%',
   bxz: 'border-box',
   // maxW: '1200px',
@@ -198,6 +203,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const activeSelectionRange = state.inline.link.rangeSnapshot.use();
   const omniOpen = state.omni.open.use();
   const omniRange = state.omni.rangeSnapshot.use();
+  const shortcutsOpen = state.shortcutsOpen.use();
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       const ranges = [...decorateRemoteCursors(entry)];
@@ -252,12 +258,12 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
       />
-      <InlineFloater />
-      <BlockFloater />
+      {!shortcutsOpen && <InlineFloater />}
+      {!shortcutsOpen && <BlockFloater />}
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      <OmniFloater />
+      {!shortcutsOpen && <OmniFloater />}
     </Slate>
   );
 
@@ -307,6 +313,11 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
         <MuTxtFooter />
       </div>
+      {shortcutsOpen && (
+        <React.Suspense fallback={null}>
+          <KeyboardShortcutsModal />
+        </React.Suspense>
+      )}
     </>
   );
 

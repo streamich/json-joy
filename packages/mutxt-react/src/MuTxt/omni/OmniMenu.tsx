@@ -4,10 +4,8 @@ import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
-const InsertIcon = makeIcon({set: 'tabler', icon: 'plus', width: 16, height: 16});
 const TurnIntoIcon = makeIcon({set: 'tabler', icon: 'transform', width: 16, height: 16});
 const FormatIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
-const DocumentIcon = makeIcon({set: 'tabler', icon: 'file-text', width: 16, height: 16});
 
 export class OmniMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -40,17 +38,7 @@ export class OmniMenu implements UiLifeCycles {
           children: [inlineMenu.menuFmtCommon(), inlineMenu.menuFmtTechnical()],
         },
         {name: 'sep-doc', sep: true},
-        {
-          name: 'Document',
-          icon: () => <DocumentIcon />,
-          children: [
-            {
-              name: 'No settings yet',
-              icon: () => <InsertIcon />,
-              onSelect: () => {},
-            },
-          ],
-        },
+        mutxt.docMenu.build(),
       ],
     };
   }
