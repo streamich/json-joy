@@ -104,7 +104,7 @@ export const DropArea: React.FC<DropAreaProps> = ({
     if (area.over !== state.over.value) state.over.set(area.over);
   }, [area.over, state]);
 
-  const verticalPadding = compact ? 16 : 110;
+  const verticalPadding = compact ? 16 : 32;
   const dashed = over ? `1px dashed ${theme.color.sem.blue[0]}` : `1px dashed ${theme.g(0.82)}`;
   const bg = over ? 'rgba(0,128,255,.04)' : theme.g(1);
 

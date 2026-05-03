@@ -8,10 +8,12 @@ import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {FileOptionsDrawer} from './FileOptionsDrawer';
 import type {FileMetadataDto} from '../../../state/file';
 
 const DownloadIcon = makeIcon({set: 'auth0', icon: 'download', width: 16, height: 16});
-const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-binary', width: 16, height: 16});
+// const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-binary', width: 16, height: 16});
+const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-font', width: 16, height: 16});
 const icon = <GhostFileIcon />;
 
 const formatDate = (timestamp: number): string => {
@@ -45,65 +47,75 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
   const selected = state.tabs.selected.use();
   const activeIcon = <FileIcon id={file.id} label={file.name} gradient accent size={20} />;
   const isOpen = state.isOpen(file.id);
+  const [optionsOpen, setOptionsOpen] = React.useState(false);
 
   return (
-    <FileListItem
-      key={file.id}
-      title={file.name}
-      selected={selected?.[0].id === file.id}
-      small={!isOpen}
-      muted={!isOpen}
-      metadata={
-        isOpen ? (
-          <>
-            {formatDate(file.updatedAt)} · {file.id}
-          </>
-        ) : undefined
-      }
-      icon={isOpen ? activeIcon : icon}
-      iconHover={activeIcon}
-      actions={
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          {/* <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} /> */}
-          <Popup
-            renderContext={() => (
-              <ContextMenu
-                inset
-                menu={{
-                  id: file.id,
-                  name: `file-${file.id}`,
-                  children: [
-                    isOpen
-                      ? ({
-                          name: 'Close',
-                          icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
-                          onSelect: () => state.close(file.id),
-                        } as MenuItem)
-                      : ({
-                          name: 'Open',
-                          icon: () => <Iconista set="vscode" icon="eye" width={16} height={16} />,
-                          onSelect: () => state.openSaved(file.id).catch(() => {}),
-                        } as MenuItem),
-                    {
-                      name: 'Download',
-                      icon: () => <DownloadIcon />,
-                      onSelect: async () => {
-                        state.download(file.id).catch(() => {});
+    <>
+      <FileListItem
+        key={file.id}
+        title={file.name}
+        selected={selected?.[0].id === file.id}
+        small={!isOpen}
+        muted={!isOpen}
+        metadata={
+          isOpen ? (
+            <>
+              {formatDate(file.updatedAt)} · {file.id}
+            </>
+          ) : undefined
+        }
+        icon={isOpen ? activeIcon : icon}
+        iconHover={activeIcon}
+        actions={
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            {/* <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} /> */}
+            <BasicButtonMore tooltip size={28} rounder noOutline onClick={() => setOptionsOpen(true)} />
+            {/* <Popup
+              renderContext={() => (
+                <ContextMenu
+                  inset
+                  menu={{
+                    id: file.id,
+                    name: `file-${file.id}`,
+                    children: [
+                      isOpen
+                        ? ({
+                            name: 'Close',
+                            icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
+                            onSelect: () => state.close(file.id),
+                          } as MenuItem)
+                        : ({
+                            name: 'Open',
+                            icon: () => <Iconista set="vscode" icon="eye" width={16} height={16} />,
+                            onSelect: () => state.openSaved(file.id).catch(() => {}),
+                          } as MenuItem),
+                      {
+                        name: 'Download',
+                        icon: () => <DownloadIcon />,
+                        onSelect: async () => {
+                          state.download(file.id).catch(() => {});
+                        },
                       },
-                    },
-                  ],
-                }}
-              />
-            )}
-          >
-            <BasicButtonMore tooltip size={28} rounder noOutline />
-          </Popup>
-        </div>
-      }
-      onClick={() => {
-        state.openSaved(file.id).catch(() => {});
-        state.appGrid.closeLeftIfOverlay();
-      }}
-    />
+                      {
+                        name: 'Options',
+                        icon: () => <Iconista set="bootstrap" icon="gear" width={16} height={16} />,
+                        onSelect: () => setOptionsOpen(true),
+                      },
+                    ],
+                  }}
+                />
+              )}
+            >
+              <BasicButtonMore tooltip size={28} rounder noOutline />
+            </Popup> */}
+          </div>
+        }
+        onClick={() => {
+          state.openSaved(file.id).catch(() => {});
+          state.appGrid.closeLeftIfOverlay();
+        }}
+      />
+      <FileOptionsDrawer file={file} open={optionsOpen} onClose={() => setOptionsOpen(false)} />
+    </>
   );
 };

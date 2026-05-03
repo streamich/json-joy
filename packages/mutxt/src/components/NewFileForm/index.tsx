@@ -19,7 +19,7 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
   const state = useExplorer();
 
   return (
-    <div onClick={(e) => e.stopPropagation()} onKeyDown={() => {}}>
+    <div onClick={(e) => e.stopPropagation()} onKeyDown={() => {}} style={{maxWidth: 360, margin: '0 auto'}}>
       <div>
         <MiniTitle>{t('New')}</MiniTitle>
         <Space size={-1} />
@@ -44,14 +44,16 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
           </Popup>
         </Flex>
       </div>
-
-      <Space size={expanded ? 4 : 1} />
-
-      <div>
-        <MiniTitle>File</MiniTitle>
-        <Space size={-1} />
-        <DropArea compact={!expanded} />
-      </div>
+      {!!expanded && (
+        <>
+          <Space size={expanded ? 4 : 1} />
+          <div>
+            <MiniTitle>Open</MiniTitle>
+            <Space size={-1} />
+            <DropArea compact={!expanded} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

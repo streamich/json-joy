@@ -56,9 +56,9 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
       <Flex style={{alignItems: 'center', gap: 10}}>
         <div style={{width: 'env(titlebar-area-x)'}} />
         <BrandLogo />
-        <Popup renderContext={() => <ContextMenu inset menu={menu} />}>
+        {/* <Popup renderContext={() => <ContextMenu inset menu={menu} />}>
           <BasicButtonMore tooltip size={28} rounder />
-        </Popup>
+        </Popup> */}
         <input
           multiple
           type="file"

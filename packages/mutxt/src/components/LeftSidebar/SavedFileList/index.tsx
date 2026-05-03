@@ -15,7 +15,7 @@ export const SavedFileList: React.FC<SavedFileListProps> = () => {
 
   return (
     <>
-      <div style={{margin: '-6px 0 8px 0', textAlign: 'right'}}>
+      <div style={{margin: '-6px 8px 4px 0', textAlign: 'right'}}>
         <MiniTitle contrast>{t('Saved Files')}</MiniTitle>
       </div>
       {files.map((file) => (

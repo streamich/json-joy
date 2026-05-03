@@ -41,6 +41,10 @@ const surfaceClass = rule({
   cur: 'inherit',
 });
 
+const surfaceSmallClass = rule({
+  pd: '0px 6px 0px 12px',
+});
+
 const iconClass = rule({
   d: 'flex',
   ai: 'center',
@@ -95,6 +99,15 @@ const actionsClass = rule({
   },
 });
 
+const rowMutedClass = rule({
+  [`.${titleClass.trim()}`]: {
+    op: 0.7,
+  },
+  [`&:hover .${titleClass.trim()}`]: {
+    op: 1,
+  },
+});
+
 export interface FileListItemProps extends Omit<React.AllHTMLAttributes<any>, 'children' | 'title'> {
   title: React.ReactNode;
   metadata?: React.ReactNode;
@@ -107,6 +120,8 @@ export interface FileListItemProps extends Omit<React.AllHTMLAttributes<any>, 'c
   loading?: boolean;
   external?: boolean;
   spacious?: boolean;
+  small?: boolean;
+  muted?: boolean;
   fill?: boolean;
 }
 
@@ -125,6 +140,8 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   type,
   external,
   spacious,
+  small,
+  muted,
   fill,
   ...rest
 }) => {
@@ -177,7 +194,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
 
   const interactiveProps: any = {
     ...rest,
-    className: surfaceClass,
+    className: surfaceClass + (small ? surfaceSmallClass : ''),
     'aria-busy': loading || undefined,
     'aria-disabled': isDisabled || undefined,
   };
@@ -221,7 +238,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
 
   surface = (
     <div
-      className={className + rowClass + dynamicRowClass}
+      className={className + rowClass + dynamicRowClass + (muted ? rowMutedClass : '')}
       style={rowStyle}
       onMouseEnter={iconHover ? () => setHovered(true) : void 0}
       onMouseLeave={iconHover ? () => setHovered(false) : void 0}
