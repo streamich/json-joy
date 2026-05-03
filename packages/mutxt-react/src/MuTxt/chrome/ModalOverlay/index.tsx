@@ -2,6 +2,7 @@ import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
+import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 
 const overlayClass = rule({
@@ -51,6 +52,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({open, title, onClose,
   React.useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+  const scrollState = React.useMemo(() => new ScrollState(), []);
 
   React.useEffect(() => {
     if (!open) return;
@@ -64,6 +66,24 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({open, title, onClose,
     return () => window.removeEventListener('keydown', onKey, true);
   }, [open]);
 
+  // When the modal opens, programmatically focus the scrollable viewport so
+  // the user can scroll with arrow keys / Space / PgUp / PgDn immediately.
+  React.useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const id = requestAnimationFrame(() => {
+      scrollState.viewportEl?.focus({preventScroll: true});
+    });
+    return () => {
+      cancelAnimationFrame(id);
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        try {
+          previouslyFocused.focus({preventScroll: true});
+        } catch {}
+      }
+    };
+  }, [open, scrollState]);
+
   if (!open) return null;
 
   const overlayBg = theme.bg;
@@ -71,7 +91,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({open, title, onClose,
 
   return (
     <div className={overlayClass} style={{background: overlayBg}} role="dialog" aria-modal="true">
-      <ScrollArea.ScrollArea shadowFlat>
+      <ScrollArea.ScrollArea state={scrollState} shadowFlat>
         <ScrollArea.Header>
           <div className={headerClass} style={{background: overlayBg, borderBottom: `1px solid ${borderColor}`}}>
             <span className={titleClass} style={{color: styles.g(0.1, 0.95)}}>
@@ -80,7 +100,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({open, title, onClose,
             <BasicButtonClose rounder onClick={onClose} title="Close (Esc)" />
           </div>
         </ScrollArea.Header>
-        <ScrollArea.Viewport>{children}</ScrollArea.Viewport>
+        <ScrollArea.Viewport tabIndex={-1} style={{outline: 'none'}}>{children}</ScrollArea.Viewport>
         <ScrollArea.ScrollRail>
           <ScrollArea.Thumb />
         </ScrollArea.ScrollRail>
