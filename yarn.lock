@@ -11639,6 +11639,7 @@ __metadata:
     "@jsonjoy.com/collaborative-ui": "workspace:*"
     "@jsonjoy.com/keyboard": "workspace:*"
     "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     code-colors: "npm:^2.5.0"

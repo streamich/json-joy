@@ -12,6 +12,7 @@ import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-sla
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
+import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
 import {withFile} from './behavior/file';
 import type {ObjNode} from 'json-joy/lib/json-crdt';
@@ -145,7 +146,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
     const editor = withTitleSubmit(
-      withHr(withFile(withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))))),
+      withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];

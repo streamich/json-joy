@@ -33,6 +33,9 @@
       "path": "../collaborative-slate/tsconfig.build.json"
     },
     {
+      "path": "../util/tsconfig.build.json"
+    },
+    {
       "path": "../keyboard/tsconfig.build.json"
     },
     {

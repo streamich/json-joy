@@ -87,6 +87,7 @@
     "@jsonjoy.com/collaborative-slate": "workspace:*",
     "@jsonjoy.com/keyboard": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
     "code-colors": "^2.5.0",
     "code-colors-react": "^3.5.0",
     "emoji-picker-react": "^4.19.1",

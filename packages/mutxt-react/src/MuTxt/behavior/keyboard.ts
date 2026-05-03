@@ -2,12 +2,14 @@ import {
   insertCodeBlockBreak,
   insertCodeBlockExit,
   redo,
+  resetBlockToParagraphAtStart,
   resetEmptyBlockToParagraph,
   setAlignment,
   toggleBlock,
   toggleMark,
   undo,
 } from '../behavior';
+import {deleteBlock, duplicateBlock, moveBlockDown, moveBlockUp} from './blockOps';
 import {dedentBlock, indentBlock} from './indentation';
 import type {Key} from '@jsonjoy.com/keyboard';
 import type {AnyBinding, Signature} from '@jsonjoy.com/keyboard';
@@ -55,7 +57,7 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     [
       'Backspace',
       (key: Key) => {
-        if (resetEmptyBlockToParagraph(editor)) consume(key);
+        if (resetEmptyBlockToParagraph(editor) || resetBlockToParagraphAtStart(editor)) consume(key);
       },
     ],
     [
@@ -127,6 +129,41 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     // ------------------------------------------------------------ Indentation
     ['P+]', (key: Key) => consume(key, () => indentBlock(editor))],
     ['P+[', (key: Key) => consume(key, () => dedentBlock(editor))],
+
+    // -------------------------------------------------------- Help / shortcut
+    [
+      'P+/',
+      (key: Key) => {
+        key.event?.preventDefault();
+        state.shortcutsOpen.set(true);
+      },
+    ],
+
+    // ------------------------------------------------------- Block operations
+    [
+      'Alt+Shift+ArrowUp',
+      (key: Key) => {
+        if (moveBlockUp(editor)) consume(key);
+      },
+    ],
+    [
+      'Alt+Shift+ArrowDown',
+      (key: Key) => {
+        if (moveBlockDown(editor)) consume(key);
+      },
+    ],
+    [
+      'P+Shift+d',
+      (key: Key) => {
+        if (duplicateBlock(editor)) consume(key);
+      },
+    ],
+    [
+      'P+Shift+k',
+      (key: Key) => {
+        if (deleteBlock(editor)) consume(key);
+      },
+    ],
   ];
 
   return state.kbd.bind(bindings);

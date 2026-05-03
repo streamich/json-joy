@@ -43,6 +43,16 @@ export const toggleMark = (editor: Editor, format: MarkFormat): void => {
   else Editor.addMark(editor, format, true);
 };
 
+export const getActiveBlock = (editor: Editor): CustomElement | null => {
+  const {selection} = editor;
+  if (!selection) return null;
+  const [match] = Editor.nodes(editor, {
+    at: Editor.unhangRange(editor, selection),
+    match: (node) => isElement(node) && Editor.isBlock(editor, node),
+  });
+  return (match as [CustomElement, number[]] | undefined)?.[0] ?? null;
+};
+
 export const isBlockActive = (editor: Editor, format: Exclude<BlockFormat, ListElementType>): boolean => {
   const {selection} = editor;
   if (!selection) return false;
@@ -98,7 +108,7 @@ const unwrapLists = (editor: Editor): void => {
   });
 };
 
-const getCurrentBlockEntry = (editor: Editor): [CustomElement, Path] | null => {
+export const getCurrentBlockEntry = (editor: Editor): [CustomElement, Path] | null => {
   const {selection} = editor;
   if (!selection) return null;
   const match = Editor.above(editor, {
@@ -220,26 +230,103 @@ export const insertCodeBlockExit = (editor: Editor): boolean => {
   return true;
 };
 
+/**
+ * If the caret is at the end of a code-block or pre block and the block's
+ * text content already ends with `\n\n`, strip those trailing newlines and
+ * exit the block into a new paragraph below.
+ */
+export const tryExitCodeBlockOnTripleEnter = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection || !Range.isCollapsed(selection)) return false;
+  const match = Editor.above(editor, {
+    at: selection,
+    match: (node) => isElement(node) && (node.type === 'code-block' || node.type === 'pre'),
+    mode: 'lowest',
+  });
+  if (!match) return false;
+  const [block, path] = match as [CustomElement, Path];
+  if (!Editor.isEnd(editor, selection.anchor, path)) return false;
+  if (!Node.string(block).endsWith('\n\n')) return false;
+  Transforms.delete(editor, {distance: 2, unit: 'character', reverse: true});
+  return insertCodeBlockExit(editor);
+};
+
+const HEADING_TYPES: ReadonlySet<string> = new Set([
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'title',
+  'subtitle',
+]);
+
+/**
+ * Backspace at offset 0 of a non-empty heading, blockquote, callout, or list
+ * item converts that block to a paragraph instead of merging with the
+ * previous block. Empty blocks are handled by `resetEmptyBlockToParagraph`.
+ */
+export const resetBlockToParagraphAtStart = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection || !Range.isCollapsed(selection)) return false;
+  const entry = getCurrentBlockEntry(editor);
+  if (!entry) return false;
+  const [block, path] = entry;
+  if (Node.string(block) === '') return false;
+  if (!Editor.isStart(editor, selection.anchor, path)) return false;
+  const isResettable =
+    HEADING_TYPES.has(block.type) ||
+    block.type === 'blockquote' ||
+    block.type === 'callout' ||
+    block.type === 'li';
+  if (!isResettable) return false;
+  if (block.type === 'li') {
+    const listType = getCurrentListType(editor);
+    if (!listType) {
+      Transforms.setNodes(editor, {type: 'p'} as Partial<CustomElement>, {
+        match: (node) => isElement(node) && Editor.isBlock(editor, node) && node.type === 'li',
+      });
+      return true;
+    }
+    toggleBlock(editor, listType);
+    return true;
+  }
+  toggleBlock(editor, block.type as Exclude<BlockFormat, ListElementType>);
+  return true;
+};
+
 export const withCodeBlockBreaks = <T extends Editor>(editor: T): T => {
   const {insertBreak} = editor;
   editor.insertBreak = () => {
+    if (tryExitCodeBlockOnTripleEnter(editor)) return;
     if (insertCodeBlockBreak(editor)) return;
-    const inHeading =
-      isBlockActive(editor, 'h1') ||
-      isBlockActive(editor, 'h2') ||
-      isBlockActive(editor, 'h3') ||
-      isBlockActive(editor, 'h4') ||
-      isBlockActive(editor, 'h5') ||
-      isBlockActive(editor, 'h6') ||
-      isBlockActive(editor, 'title') ||
-      isBlockActive(editor, 'subtitle') ||
-      isBlockActive(editor, 'blockquote') ||
-      isBlockActive(editor, 'callout');
+    if (resetEmptyBlockToParagraph(editor)) return;
+    const activeBlock = getActiveBlock(editor);
+    const inHeading = activeBlock && HEADING_TYPES.has(activeBlock.type);
+    const inHeadingOrBlockquoteOrCallout = activeBlock && ['blockquote', 'callout'].includes(activeBlock.type);
     const atEndOfTitle = isAtEndOfBlock(editor, 'title');
+    let convertPreviousSibling = false;
+    if (inHeading || inHeadingOrBlockquoteOrCallout) {
+      const entry = getCurrentBlockEntry(editor);
+      const sel = editor.selection;
+      if (entry && sel && Range.isCollapsed(sel)) {
+        convertPreviousSibling = Editor.isStart(editor, sel.anchor, entry[1]);
+      }
+    }
     insertBreak();
-    if (inHeading) {
+    if (inHeading || inHeadingOrBlockquoteOrCallout) {
       const nextType: CustomElement['type'] = atEndOfTitle ? 'subtitle' : 'p';
-      Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>);
+      if (convertPreviousSibling) {
+        const cursorEntry = getCurrentBlockEntry(editor);
+        if (cursorEntry && Path.hasPrevious(cursorEntry[1])) {
+          Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>, {
+            at: Path.previous(cursorEntry[1]),
+          });
+        }
+      } else {
+        Transforms.setNodes(editor, {type: nextType} as Partial<CustomElement>);
+      }
     }
   };
 
