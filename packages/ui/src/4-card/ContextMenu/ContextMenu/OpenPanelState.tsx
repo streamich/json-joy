@@ -27,6 +27,7 @@ export class OpenPanelState implements UiLifeCycles {
   protected hovered: string = '';
   private focusStack: HTMLElement[] = [];
   private pendingTimer: ReturnType<typeof setTimeout> | 0 = 0;
+  private armed: boolean = false;
 
   constructor(public readonly opts: OpenPanelStateOpts = {}) {
     const {selected$, prefix = ''} = opts;
@@ -49,7 +50,15 @@ export class OpenPanelState implements UiLifeCycles {
   }
 
   public readonly start = () => {
+    // Gate hover until the first mousemove so the menu does not auto-open a
+    // submenu wherever the cursor happens to be when it pops up.
+    const onMove = () => {
+      this.armed = true;
+      document.removeEventListener('mousemove', onMove, true);
+    };
+    document.addEventListener('mousemove', onMove, true);
     return () => {
+      document.removeEventListener('mousemove', onMove, true);
       this.clearPending();
     };
   };
@@ -74,6 +83,7 @@ export class OpenPanelState implements UiLifeCycles {
   }
 
   public readonly hover = (id: string) => {
+    if (!this.armed) return;
     const raw = this.selected$.value;
     const selected = this.toLocal(raw);
     if (id === this.lastClosed && selected !== id) return;
