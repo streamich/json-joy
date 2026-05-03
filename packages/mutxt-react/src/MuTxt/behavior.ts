@@ -263,6 +263,32 @@ const HEADING_TYPES: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * If the caret is at offset 0 of a block whose previous sibling is an empty
+ * `<p>`, remove that empty paragraph.
+ */
+export const removeEmptyPrevP = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection || !Range.isCollapsed(selection)) return false;
+  const entry = getCurrentBlockEntry(editor);
+  if (!entry) return false;
+  const [, path] = entry;
+  if (!Editor.isStart(editor, selection.anchor, path)) return false;
+  if (!Path.hasPrevious(path)) return false;
+  const prevPath = Path.previous(path);
+  let prevNode: unknown;
+  try {
+    prevNode = Node.get(editor, prevPath);
+  } catch {
+    return false;
+  }
+  if (!isElement(prevNode)) return false;
+  if (prevNode.type !== 'p') return false;
+  if (Node.string(prevNode) !== '') return false;
+  Transforms.removeNodes(editor, {at: prevPath});
+  return true;
+};
+
+/**
  * Backspace at offset 0 of a non-empty heading, blockquote, callout, or list
  * item converts that block to a paragraph instead of merging with the
  * previous block. Empty blocks are handled by `resetEmptyBlockToParagraph`.

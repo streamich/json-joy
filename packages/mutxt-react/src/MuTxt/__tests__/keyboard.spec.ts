@@ -1,5 +1,6 @@
 import {createEditor} from 'slate';
 import {
+  removeEmptyPrevP,
   resetBlockToParagraphAtStart,
   resetEmptyBlockToParagraph,
   tryExitCodeBlockOnTripleEnter,
@@ -169,6 +170,66 @@ describe('tryExitCodeBlockOnTripleEnter()', () => {
       focus: {path: [0, 0], offset: 5},
     };
     expect(tryExitCodeBlockOnTripleEnter(editor)).toBe(false);
+  });
+});
+
+describe('removeEmptyPreviousParagraph()', () => {
+  test('removes an empty <p> sibling above a heading at offset 0', () => {
+    const editor = createTestEditor([
+      {type: 'p', children: [{text: ''}]},
+      {type: 'h1', children: [{text: 'Hello'}]},
+    ]);
+    editor.selection = {
+      anchor: {path: [1, 0], offset: 0},
+      focus: {path: [1, 0], offset: 0},
+    };
+    expect(removeEmptyPrevP(editor)).toBe(true);
+    expect(editor.children).toEqual([{type: 'h1', children: [{text: 'Hello'}]}]);
+  });
+
+  test('does not run when previous block is a non-empty <p>', () => {
+    const editor = createTestEditor([
+      {type: 'p', children: [{text: 'before'}]},
+      {type: 'h1', children: [{text: 'Hello'}]},
+    ]);
+    editor.selection = {
+      anchor: {path: [1, 0], offset: 0},
+      focus: {path: [1, 0], offset: 0},
+    };
+    expect(removeEmptyPrevP(editor)).toBe(false);
+  });
+
+  test('does not run when previous block is not a <p>', () => {
+    const editor = createTestEditor([
+      {type: 'h1', children: [{text: ''}]},
+      {type: 'h2', children: [{text: 'Hello'}]},
+    ]);
+    editor.selection = {
+      anchor: {path: [1, 0], offset: 0},
+      focus: {path: [1, 0], offset: 0},
+    };
+    expect(removeEmptyPrevP(editor)).toBe(false);
+  });
+
+  test('does not run at offset > 0', () => {
+    const editor = createTestEditor([
+      {type: 'p', children: [{text: ''}]},
+      {type: 'h1', children: [{text: 'Hello'}]},
+    ]);
+    editor.selection = {
+      anchor: {path: [1, 0], offset: 2},
+      focus: {path: [1, 0], offset: 2},
+    };
+    expect(removeEmptyPrevP(editor)).toBe(false);
+  });
+
+  test('does not run when there is no previous sibling', () => {
+    const editor = createTestEditor([{type: 'h1', children: [{text: 'Hello'}]}]);
+    editor.selection = {
+      anchor: {path: [0, 0], offset: 0},
+      focus: {path: [0, 0], offset: 0},
+    };
+    expect(removeEmptyPrevP(editor)).toBe(false);
   });
 });
 

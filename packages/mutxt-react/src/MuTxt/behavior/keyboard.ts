@@ -2,8 +2,9 @@ import {
   insertCodeBlockBreak,
   insertCodeBlockExit,
   redo,
-  resetBlockToParagraphAtStart,
-  resetEmptyBlockToParagraph,
+  removeEmptyPrevP,
+  resetBlockToPAtStart,
+  resetEmptyBlockToP,
   setAlignment,
   toggleBlock,
   toggleMark,
@@ -57,13 +58,18 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     [
       'Backspace',
       (key: Key) => {
-        if (resetEmptyBlockToParagraph(editor) || resetBlockToParagraphAtStart(editor)) consume(key);
+        if (
+          resetEmptyBlockToP(editor) ||
+          removeEmptyPrevP(editor) ||
+          resetBlockToPAtStart(editor)
+        )
+          consume(key);
       },
     ],
     [
       'Delete',
       (key: Key) => {
-        if (resetEmptyBlockToParagraph(editor)) consume(key);
+        if (resetEmptyBlockToP(editor)) consume(key);
       },
     ],
 
