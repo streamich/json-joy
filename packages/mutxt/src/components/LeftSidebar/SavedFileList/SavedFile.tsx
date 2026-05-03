@@ -1,13 +1,10 @@
 import * as React from 'react';
 import {useExplorer} from '../../../context';
+import {Bytes} from '@jsonjoy.com/ui/lib/1-inline/Bytes';
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
-import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
-import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
-import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {FileOptionsDrawer} from './FileOptionsDrawer';
 import type {FileMetadataDto} from '../../../state/file';
 
@@ -46,7 +43,8 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
   const state = useExplorer();
   const selected = state.tabs.selected.use();
   const activeIcon = <FileIcon id={file.id} label={file.name} gradient accent size={20} />;
-  const isOpen = state.isOpen(file.id);
+  const openFile = state.fileIfOpen(file.id);
+  const isOpen = !!openFile;
   const [optionsOpen, setOptionsOpen] = React.useState(false);
 
   return (
@@ -60,7 +58,9 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
         metadata={
           isOpen ? (
             <>
-              {formatDate(file.updatedAt)} · {file.id}
+              {formatDate(file.updatedAt)}
+              {isOpen && ' · '}
+              {!!openFile && <Bytes value={openFile.size} />}
             </>
           ) : undefined
         }
@@ -68,46 +68,7 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
         iconHover={activeIcon}
         actions={
           <div style={{display: 'flex', alignItems: 'center'}}>
-            {/* <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} /> */}
             <BasicButtonMore tooltip size={28} rounder noOutline onClick={() => setOptionsOpen(true)} />
-            {/* <Popup
-              renderContext={() => (
-                <ContextMenu
-                  inset
-                  menu={{
-                    id: file.id,
-                    name: `file-${file.id}`,
-                    children: [
-                      isOpen
-                        ? ({
-                            name: 'Close',
-                            icon: () => <Iconista set="bootstrap" icon="x" width={16} height={16} />,
-                            onSelect: () => state.close(file.id),
-                          } as MenuItem)
-                        : ({
-                            name: 'Open',
-                            icon: () => <Iconista set="vscode" icon="eye" width={16} height={16} />,
-                            onSelect: () => state.openSaved(file.id).catch(() => {}),
-                          } as MenuItem),
-                      {
-                        name: 'Download',
-                        icon: () => <DownloadIcon />,
-                        onSelect: async () => {
-                          state.download(file.id).catch(() => {});
-                        },
-                      },
-                      {
-                        name: 'Options',
-                        icon: () => <Iconista set="bootstrap" icon="gear" width={16} height={16} />,
-                        onSelect: () => setOptionsOpen(true),
-                      },
-                    ],
-                  }}
-                />
-              )}
-            >
-              <BasicButtonMore tooltip size={28} rounder noOutline />
-            </Popup> */}
           </div>
         }
         onClick={() => {

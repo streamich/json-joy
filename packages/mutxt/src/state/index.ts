@@ -125,7 +125,11 @@ export class JsonCrdtExplorerState {
   }
 
   public isOpen(id: string) {
-    return !!this.files$.value.find((file) => file.id === id);
+    return !!this.fileIfOpen(id);
+  }
+
+  public fileIfOpen(id: string): OpenFile | undefined {
+    return this.files$.value.find((file) => file.id === id);
   }
 
   public async openSaved(id: string): Promise<boolean> {
@@ -136,7 +140,8 @@ export class JsonCrdtExplorerState {
       }
       const dto = await this.storage.load(id);
       if (this.stopped) return false;
-      await this.addLog(dto.data, dto.name, dto.display, dto);
+      const size = dto.data.length;
+      await this.addLog(dto.data, dto.name, dto, size);
       return true;
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -149,6 +154,7 @@ export class JsonCrdtExplorerState {
     log: Log<any>,
     name: string = 'Untitled' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
     dto?: FileMetadataDto,
+    size: number = 0,
   ) => {
     const now = Date.now();
     const meta: FileMetadataDto = dto ?? {
@@ -160,7 +166,7 @@ export class JsonCrdtExplorerState {
     const file = new OpenFile(meta, log, {
       storage: this.storage,
       onPersisted: this.handleFilePersisted,
-    });
+    }, size);
     this.files$.next([...this.files$.getValue(), file]);
     this.tabs.add(file.toTab());
     this.tabs.selectById(file.meta.id);
@@ -246,13 +252,12 @@ export class JsonCrdtExplorerState {
   public readonly addLog = async (
     uint8: Uint8Array,
     name?: string,
-    display?: TraceDefinition['display'],
     dto?: FileMetadataDto,
+    size: number = 0,
   ) => {
     const log = await OpenFile.decodeLog(uint8, this.sid);
     if (this.stopped) return;
-    const file = this.openFile(log, name, dto);
-    file.setDisplay(display);
+    const file = this.openFile(log, name, dto, size);
   };
 
   public readonly addTrace = async (uint8: Uint8Array, trace: TraceDefinition) => {

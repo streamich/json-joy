@@ -11,7 +11,6 @@ import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {DebounceQueue} from '../util/DebounceQueue';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
-import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {MuTxtApi} from 'mutxt-react';
 import type {IFileStorage} from './file-storage';
@@ -31,8 +30,6 @@ export interface FileMetadataDto {
   createdAt: number;
   /** Timestamp when file was last updated or saved. */
   updatedAt: number;
-  // format: 'model' | 'log';
-  display?: TraceDefinition['display'];
 }
 
 export interface FileDto extends FileMetadataDto {
@@ -53,7 +50,6 @@ export class OpenFile {
   public readonly name: rsync.ReactValue<string>;
   public readonly logState: JsonCrdtLogState;
   public readonly activeModel: rsync.ReactValue<Model<any>>;
-  public display?: TraceDefinition['display'] = void 0;
   private readonly storage?: IFileStorage;
   private readonly flushDebounceMs: number;
   private readonly onPersisted?: (meta: FileMetadataDto) => void | Promise<void>;
@@ -65,10 +61,12 @@ export class OpenFile {
   private readonly unsubscribers: Array<() => void> = [];
   public mutxt?: MuTxtApi;
 
+  
   constructor(
     public readonly meta: FileMetadataDto,
     public readonly log: Log<any>,
     options: OpenFileOptions = {},
+    public size: number = 0,
   ) {
     this.id = meta.id;
     this.name = rsync.val(meta.name);
@@ -138,28 +136,12 @@ export class OpenFile {
     this.disposeAfterSave = false;
   };
 
-  public readonly setDisplay = (display: TraceDefinition['display'] = void 0) => {
-    this.display = display;
-    if (display === 'text') {
-      this.logState.patchState.show$.next(false);
-      this.logState.modelState.showModel$.next(false);
-      this.logState.modelState.showView$.next(false);
-      this.logState.modelState.showDisplay$.next(true);
-    } else if (display === 'blogpost' || display === 'todo' || display === 'quill') {
-      this.logState.patchState.show$.next(false);
-      this.logState.modelState.showModel$.next(false);
-      this.logState.modelState.showView$.next(true);
-      this.logState.modelState.showDisplay$.next(true);
-    }
-  };
-
   public toMeta(): FileMetadataDto {
     return {
       id: this.meta.id,
       name: this.name.value,
       createdAt: this.meta.createdAt,
       updatedAt: Date.now(),
-      display: this.display ?? this.meta.display,
     };
   }
 
@@ -200,7 +182,6 @@ export class OpenFile {
       await storage.save(dto);
       this.meta.name = dto.name;
       this.meta.updatedAt = dto.updatedAt;
-      this.meta.display = dto.display;
       const onPersisted = this.onPersisted;
       if (onPersisted) await onPersisted(dto);
     } catch {
