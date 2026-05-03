@@ -51,16 +51,20 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
       key={file.id}
       title={file.name}
       selected={selected?.[0].id === file.id}
+      small={!isOpen}
+      muted={!isOpen}
       metadata={
-        <>
-          {formatDate(file.updatedAt)} · {file.id}
-        </>
+        isOpen ? (
+          <>
+            {formatDate(file.updatedAt)} · {file.id}
+          </>
+        ) : undefined
       }
       icon={isOpen ? activeIcon : icon}
       iconHover={activeIcon}
       actions={
         <div style={{display: 'flex', alignItems: 'center'}}>
-          <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} />
+          {/* <BasicButtonDelete tooltip size={28} rounder noOutline onConfirm={() => state.deleteSaved(file.id)} /> */}
           <Popup
             renderContext={() => (
               <ContextMenu
