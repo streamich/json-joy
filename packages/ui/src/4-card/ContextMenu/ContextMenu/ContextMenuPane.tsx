@@ -48,7 +48,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   const [t] = useT();
   const state = useContextMenu();
   const search = useBehaviorSubject(state.search$);
-  const openPanel = React.useMemo(() => new OpenPanelState(), []);
+  const openPanel = React.useMemo(() => new OpenPanelState({armed: depth > 0}), []);
   React.useEffect(openPanel.start, []);
   const selected = useBehaviorSubject(openPanel.selected$);
   const anchor = useAnchorPoint();

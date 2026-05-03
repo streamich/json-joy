@@ -14,6 +14,14 @@ export interface OpenPanelStateOpts {
    * unique prefix so the value carries ownership.
    */
   prefix?: string;
+
+  /**
+   * If `true`, hover-to-open is active immediately. If `false` (default),
+   * hover events are ignored until the first `mousemove` is observed — used
+   * by the root context menu so it does not auto-open a submenu wherever
+   * the cursor happens to be when the menu pops up.
+   */
+  armed?: boolean;
 }
 
 const COOL_DOWN_TIME = 69;
@@ -30,9 +38,10 @@ export class OpenPanelState implements UiLifeCycles {
   private armed: boolean = false;
 
   constructor(public readonly opts: OpenPanelStateOpts = {}) {
-    const {selected$, prefix = ''} = opts;
+    const {selected$, prefix = '', armed = false} = opts;
     this.selected$ = selected$ ?? new BehaviorSubject('');
     this.prefix = prefix;
+    this.armed = armed;
   }
 
   public isSelected(localId: string): boolean {
@@ -50,6 +59,11 @@ export class OpenPanelState implements UiLifeCycles {
   }
 
   public readonly start = () => {
+    if (this.armed) {
+      return () => {
+        this.clearPending();
+      };
+    }
     // Gate hover until the first mousemove so the menu does not auto-open a
     // submenu wherever the cursor happens to be when it pops up.
     const onMove = () => {

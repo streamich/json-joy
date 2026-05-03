@@ -30,7 +30,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
   const search = useBehaviorSubject(state.search$);
   const matches = useBehaviorSubject(state.matches$);
   const anchor = useAnchorPoint();
-  const openPanel = React.useMemo(() => new OpenPanelState(), []);
+  const openPanel = React.useMemo(() => new OpenPanelState({armed: true}), []);
   const selected = useBehaviorSubject(openPanel.selected$);
 
   let results: React.ReactNode = null;
