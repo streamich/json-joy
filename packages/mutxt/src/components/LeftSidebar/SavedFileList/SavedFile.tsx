@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useExplorer} from '../../../context';
 import {Bytes} from '@jsonjoy.com/ui/lib/1-inline/Bytes';
+import {TimeAgo} from '@jsonjoy.com/ui/lib/1-inline/TimeAgo';
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
@@ -58,7 +59,7 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
         metadata={
           isOpen ? (
             <>
-              {formatDate(file.updatedAt)}
+              {<TimeAgo value={file.updatedAt} live={Date.now() - file.updatedAt < 1000 * 60 * 45} />}
               {isOpen && ' · '}
               {!!openFile && <Bytes value={openFile.size} />}
             </>

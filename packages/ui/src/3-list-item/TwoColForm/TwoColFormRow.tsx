@@ -57,7 +57,7 @@ export interface TwoColFormRowProps extends Omit<React.HTMLAttributes<HTMLDivEle
   /** Optional small icon shown before the label. */
   icon?: React.ReactNode;
   /** Left-side label (key). */
-  title: React.ReactNode;
+  title?: React.ReactNode;
   /** Right-side value or control. */
   children?: React.ReactNode;
   /** Visually mute the row (e.g. for disabled rows). */

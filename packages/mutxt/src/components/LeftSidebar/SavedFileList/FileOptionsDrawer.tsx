@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FlexibleInput} from 'flexible-input';
+import {rule, useRule} from 'nano-theme';
 import {Dot} from '@jsonjoy.com/ui/lib/1-inline/Dot';
 import {Pill} from '@jsonjoy.com/ui/lib/1-inline/Pill';
 import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
@@ -23,20 +23,61 @@ import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {useT} from 'use-t';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
+import {Bytes} from '@jsonjoy.com/ui/src/1-inline/Bytes';
+
+const nameInputClass = rule({
+  d: 'block',
+  w: '100%',
+  minWidth: 0,
+  bxz: 'border-box',
+  bg: 'transparent',
+  bd: 0,
+  out: 0,
+  pd: '4px 8px',
+  fz: '14px',
+  lh: '20px',
+  ff: 'inherit',
+  ta: 'right',
+  bdrad: '6px',
+  trs: 'background .15s ease, box-shadow .15s ease',
+});
 
 const NameValue: React.FC<{file: FileMetadataDto; openFile?: OpenFile}> = ({file, openFile}) => {
   const liveName = openFile?.name.use();
   const value = liveName ?? file.name;
   const state = useExplorer();
+  const focusValueRef = React.useRef<string>(value);
+
+  const dynamicInputClass = useRule((t) => ({
+    col: t.g(0.15),
+    '&:hover': {bg: t.g(0, 0.04)},
+    '&:focus': {bg: t.g(0, 0.06), bxsh: `inset 0 0 0 1px ${t.g(0, 0.18)}`},
+  }));
 
   if (!openFile) {
     return <span>{value}</span>;
   }
 
   return (
-    <FlexibleInput
-      minWidth={24}
+    <input
+      className={nameInputClass + dynamicInputClass}
       value={value}
+      onFocus={() => {
+        focusValueRef.current = value;
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          (e.currentTarget as HTMLInputElement).blur();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          e.nativeEvent.stopImmediatePropagation();
+          state.renameFile(openFile, focusValueRef.current);
+          (e.currentTarget as HTMLInputElement).blur();
+        }
+      }}
       onChange={(e) => state.renameFile(openFile, e.target.value)}
     />
   );
@@ -90,7 +131,7 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
             <NameValue file={file} openFile={openFile} />
           </TwoColFormRow>
           <TwoColFormRow icon={<Iconista set="bootstrap" icon="hash" width={16} height={16} />} title="ID">
-            <CopyCode size={-1} alt roundest value={file.id} />
+            <CopyCode size={-1} alt roundest noBg value={file.id} />
           </TwoColFormRow>
           <TwoColFormRow icon={<Iconista set="bootstrap" icon="info-circle" width={16} height={16} />} title={t('State')}>
             {isOpen ? <Pill color={'positive'}><Dot color={'positive'} />{t('Open')}</Pill> : <Pill>{t('Closed')}</Pill>}
@@ -108,6 +149,11 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
           <TwoColFormRow icon={<Iconista set="bootstrap" icon="clock" width={16} height={16} />} title={t('Updated')}>
             <DateTime value={file.updatedAt} />
           </TwoColFormRow>
+          {!!openFile?.size && (
+            <TwoColFormRow icon={<Iconista set="bootstrap" icon="file-earmark" width={16} height={16} />} title={t('Size')}>
+              <Bytes value={openFile?.size ?? 0} />
+            </TwoColFormRow>
+          )}
 
 
           <Space size={2} />
@@ -118,7 +164,7 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
           <Space size={-2} />
           <TwoColFormRow
             icon={<Iconista set="auth0" icon="download" width={16} height={16} />}
-            title={t('Download a copy')}
+            title={t('Create a copy')}
           >
             <BasicButton width={'auto'} height={32} fill onClick={handleDownload}>
               <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
@@ -135,14 +181,7 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
 
           <MiniTitle contrast>{t('Danger zone')}</MiniTitle>
           <Space size={-2} />
-          <TwoColFormRow
-            icon={<Iconista set="bootstrap" icon="trash2" width={16} height={16} style={{color: styles.col.get('error')}} />}
-            title={(
-              <span style={{color: styles.col.get('error')}}>
-                {t('Delete permanently')}
-              </span>
-            )}
-          >
+          <TwoColFormRow>
             <Popup
               renderContext={({onEsc}) => (
                 <ContextMenu
@@ -166,8 +205,10 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
             >
               <BasicButton width={'auto'} height={32} fill color="red">
                 <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-                  <Iconista set="bootstrap" icon="trash2" width={16} height={16} />
-                  {t('Delete forever')}
+                  <Iconista set="bootstrap" icon="trash2" width={16} height={16} style={{color: styles.col.get('error')}} />
+                  <span style={{color: styles.col.get('error')}}>
+                    {t('Delete permanently')}
+                  </span>
                 </span>
               </BasicButton>
             </Popup>
