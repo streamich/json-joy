@@ -9,10 +9,9 @@ import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 const DocumentIcon = makeIcon({set: 'tabler', icon: 'file-text', width: 16, height: 16});
 const KeyboardIcon = makeIcon({set: 'tabler', icon: 'keyboard', width: 16, height: 16});
-const DisplayIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
-const InlineIcon = makeIcon({set: 'tabler', icon: 'layout-rows', width: 16, height: 16});
-const FullscreenIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, height: 16});
-const FullWindowIcon = makeIcon({set: 'tabler', icon: 'app-window', width: 16, height: 16});
+const MaximizeIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, height: 16});
+const MinimizeIcon = makeIcon({set: 'tabler', icon: 'minimize', width: 16, height: 16});
+const FullscreenIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
 
 export class DocumentMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -47,11 +46,11 @@ export class DocumentMenu implements UiLifeCycles {
   public itemDisplayMode(): MenuItem {
     return {
       name: 'Display',
-      icon: () => <DisplayIcon />,
+      icon: () => <MaximizeIcon />,
       children: [
-        this.itemDisplayModeOption('inline', 'Inline', () => <InlineIcon />),
+        this.itemDisplayModeOption('inline', 'Inline', () => <MinimizeIcon />),
+        this.itemDisplayModeOption('fullwindow', 'Maximized', () => <MaximizeIcon />),
         this.itemDisplayModeOption('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
-        this.itemDisplayModeOption('fullwindow', 'Full window', () => <FullWindowIcon />),
       ],
     };
   }
@@ -66,6 +65,51 @@ export class DocumentMenu implements UiLifeCycles {
         mutxt.omni.close();
         mutxt.setDisplayMode(mode);
       },
+    };
+  }
+
+  public buildHeaderToolbar(): MenuItem {
+    const mutxt = this.mutxt;
+    const toggleKeys = ['Primary', 'Shift', 'm'];
+    const activeFor = (mode: DisplayMode) => rsync.comp([mutxt.displayMode], ([m]) => m === mode);
+    const option = (
+      mode: DisplayMode,
+      name: string,
+      icon: () => React.ReactNode,
+      keys?: string[],
+    ): MenuItem => ({
+      name,
+      icon,
+      keys: [formatKeys(toggleKeys)],
+      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : void 0,
+      active: activeFor(mode),
+      disabled: activeFor(mode),
+      onSelect: () => {
+        mutxt.omni.close();
+        mutxt.setDisplayMode(mode);
+      },
+    });
+    return {
+      name: 'Display toolbar',
+      maxToolbarItems: 1,
+      children: [
+        {
+          name: mutxt.displayMode.value === 'inline' ? 'Maximized' : 'Inline',
+          split: 'Display',
+          keys: [formatKeys(toggleKeys)],
+          icon: () => mutxt.displayMode.value === 'inline' ? <MaximizeIcon /> : <MinimizeIcon />,
+          onSelect: () => {
+            mutxt.omni.close();
+            mutxt.setDisplayMode(mutxt.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
+          },
+          noHeader: true,
+          children: [
+            option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys),
+            option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys),
+            option('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
+          ],
+        },
+      ],
     };
   }
 }

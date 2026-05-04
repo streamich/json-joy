@@ -15,6 +15,13 @@ export interface MenuItem {
   name: string;
 
   /**
+   * Render this item as a "split button": the main face fires `onSelect`,
+   * while a separate chevron button on the right opens the children popup.
+   * When a string is provided it serves as the chevron button's label.
+   */
+  split?: boolean | string;
+
+  /**
    * Rich text used to display the item.
    *
    * @default name
@@ -109,6 +116,14 @@ export interface MenuItem {
 
   /** Whether this action is potentially dangerous. */
   danger?: boolean;
+
+  /**
+   * When `true`, popup-style submenus opened from this item (e.g. toolbar
+   * menu popups) suppress their title header. Useful for compact toolbar
+   * buttons whose dropdown should look like a plain option list rather than
+   * a titled panel.
+   */
+  noHeader?: boolean;
 
   /**
    * Whether to show ellipsis "..." after the display name. Used in case when

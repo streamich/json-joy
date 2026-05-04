@@ -1,5 +1,4 @@
 import * as React from 'react';
-import type {MenuItem} from '../../StructuralMenu/types';
 import {ToolbarItem} from '../ToolbarItem';
 import {FixedColumn} from '../../../3-list-item/FixedColumn';
 import Arrow from '../../../icons/interactive/Arrow';
@@ -9,6 +8,7 @@ import {ToolbarMenuItemTerminal} from './ToolbarMenuItemTerminal';
 import {useBehaviorSubjectOpt} from '../../../hooks/useBehaviorSubject';
 import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
 import {Iconista} from '../../../icons/Iconista';
+import type {MenuItem} from '../../StructuralMenu/types';
 
 export interface ToolbarMenuItemProps {
   item: MenuItem;
@@ -33,18 +33,75 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
   }
 
   const selected = openPanel?.isSelected(id) ?? false;
+  const icon = item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />;
+  const split = item.split;
+
+  if (split) {
+    return (
+      <>
+        <ToolbarItem
+          compact
+          disabled={disabled}
+          selected={active}
+          bdradR={2}
+          onClick={disabled ? void 0 : item.onSelect}
+          tooltip={{
+            shortcut: item.keys?.join(''),
+            renderTooltip: () => item.name ?? item.id ?? '',
+          }}
+        >
+          {icon}
+        </ToolbarItem>
+        <div style={{width: 1}} />
+        <ToolbarMenuPopup header={!item.noHeader} open={selected} item={item}>
+          <ToolbarItem
+            narrow
+            compact
+            disabled={disabled}
+            selected={selected}
+            bdradL={2}
+            onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
+            onMouseMove={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
+            onMouseLeave={disabled ? void 0 : openPanel?.onMouseLeave}
+            onClick={disabled ? void 0 : () => openPanel?.onClick(id)}
+            tooltip={{
+              renderTooltip: () => split,
+            }}
+          >
+            <div ref={arrow} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 -1px'}}>
+              <Arrow
+                width={16}
+                height={16}
+                direction={
+                  selected
+                    ? (arrow.current?.getBoundingClientRect()?.top ?? 0) * 2 + 16 >= window.innerHeight
+                      ? 'u'
+                      : 'd'
+                    : 'r'
+                }
+              />
+            </div>
+          </ToolbarItem>
+        </ToolbarMenuPopup>
+      </>
+    );
+  }
 
   return (
-    <ToolbarMenuPopup header open={selected} item={item}>
+    <ToolbarMenuPopup header={!item.noHeader} open={selected} item={item}>
       <ToolbarItem
         width={'auto'}
         compact
-        disabled={disabled}
         selected={selected || active}
         onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
         onMouseMove={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
         onMouseLeave={disabled ? void 0 : openPanel?.onMouseLeave}
         onClick={disabled ? void 0 : (event) => toolbar?.execute(item, event)}
+        disabled={disabled}
+        tooltip={{
+          shortcut: item.keys?.join(''),
+          renderTooltip: () => item.name ?? item.id ?? '',
+        }}
       >
         <FixedColumn right={16} style={{alignItems: 'center'}}>
           {item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />}

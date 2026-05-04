@@ -173,5 +173,6 @@ export class OpenPanelState implements UiLifeCycles {
   public readonly onMouseLeave = () => {
     this.clearPending();
     this.hovered = '';
+    this.lastClosed = '';
   };
 }

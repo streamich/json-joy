@@ -145,6 +145,15 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
       },
     ],
 
+    // ---------------------------------------------------- Display mode toggle
+    [
+      'P+Shift+m',
+      (key: Key) => {
+        key.event?.preventDefault();
+        state.setDisplayMode(state.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
+      },
+    ],
+
     // ------------------------------------------------------- Block operations
     [
       'Alt+Shift+ArrowUp',
