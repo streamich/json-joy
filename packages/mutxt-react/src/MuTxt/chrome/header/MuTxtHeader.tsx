@@ -158,8 +158,6 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor, readOnly, onVis
         <div className={toolbarContainerClass}>
           <DocumentOutlineButton editor={editor} contentWidth={300} />
           <ToolbarSep line />
-          {renderMenuItem(mutxt.inline.menu.itemClear())}
-          <ToolbarSep line />
           <ToolbarMenu menu={mutxt.docMenu.buildHeaderToolbar()} pane={{transparent: true, inline: true}} more={{small: true}} />
           {width > 1000 && <ToolbarSep line />}
           {width > 1000 &&

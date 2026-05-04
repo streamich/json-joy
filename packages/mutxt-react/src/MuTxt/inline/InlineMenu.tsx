@@ -65,7 +65,13 @@ export class InlineMenu implements UiLifeCycles {
     return {
       name: 'Selection menu',
       maxToolbarItems: 4,
-      children: [this.menuFmt(), {name: 'sep-annon', sep: true}, this.menuAnnotations()],
+      children: [
+        this.menuFmt(),
+        {name: 'sep-annon', sep: true},
+        this.menuAnnotations(),
+        {name: 'sep-modify', sep: true},
+        this.menuModify(),
+      ],
     };
   }
 
