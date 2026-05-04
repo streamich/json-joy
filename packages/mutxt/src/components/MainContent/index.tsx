@@ -26,7 +26,7 @@ const contentClass = rule({
   gap: '12px',
   flex: '1 1 auto',
   bxz: 'border-box',
-  pd: '40px 0 0',
+  pd: '16px 0 0',
 });
 
 export const MainContent: React.FC = () => {
