@@ -6,7 +6,6 @@ import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {watch} from '../util/watch';
 import {bindShortcuts} from '../behavior/keyboard';
 import {bindImagePaste} from '../behavior/imagePaste';
-import {bindIndicatorDemo} from '../behavior/indicatorDemo';
 import {MuTxtApi} from './MuTxtApi';
 import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
@@ -166,7 +165,6 @@ export class MuTxtState implements UiLifeCycles {
     const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
-    const unbindIndicatorDemo = bindIndicatorDemo(this);
 
     // --------------------------------------------- Native fullscreen tracking
     // Keep `displayMode` in sync when the user exits fullscreen via Esc or
@@ -190,7 +188,6 @@ export class MuTxtState implements UiLifeCycles {
       stopIndicator();
       stopThings();
       unbindShortcuts();
-      unbindIndicatorDemo();
       if (typeof document !== 'undefined')
         document.removeEventListener('fullscreenchange', onFullscreenChange);
       this.kbdSourceUnbind?.();
