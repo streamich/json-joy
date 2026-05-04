@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {Element as SlateElement, Node as SlateNode, type Editor} from 'slate';
-import {ReactEditor} from 'slate-react';
+import {type Editor} from 'slate';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {getDocumentOutline} from '../behavior/outline';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {EditorContextPopup} from './EditorContextPopup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
+import {useMuTxt} from '../context';
 import type {SlateEditorDocument} from '../types';
 
 const Icon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
@@ -34,19 +34,8 @@ export interface DocumentOutlineButtonProps {
 
 export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({editor, contentWidth}) => {
   const styles = useStyles();
+  const mutxt = useMuTxt();
   const outline = getDocumentOutline(editor.children as SlateEditorDocument);
-
-  const handleScrollTo = React.useCallback(
-    (path: number[]) => {
-      try {
-        const node = SlateNode.get(editor, path);
-        if (!SlateElement.isElement(node)) return;
-        const domNode = ReactEditor.toDOMNode(editor as ReactEditor, node) as HTMLElement;
-        domNode.scrollIntoView({behavior: 'smooth', block: 'start'});
-      } catch {}
-    },
-    [editor],
-  );
 
   const renderContext = () =>
     outline.length ? (
@@ -55,29 +44,7 @@ export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({edi
         menu={{
           name: 'Table of contents',
           minWidth: Math.min(320, window.innerWidth - 32),
-          children: outline.map((item) => ({
-            key: item.key,
-            name: item.title,
-            display: () => (
-              <div
-                style={{
-                  paddingLeft: (item.level - 1) * 16,
-                  fontWeight: 400 + (3 - item.level) * 100,
-                  fontSize: item.level ? void 0 : '1.1em',
-                }}
-              >
-                {item.title}
-              </div>
-            ),
-            // right: () => <span style={{fontSize: 10, opacity: 0.5}}>{item.path.join('.')}</span>,
-            icon: () =>
-              item.level ? (
-                <Iconista set="tabler" icon={`h-${item.level}`} width={16} height={16} style={{opacity: 0.5}} />
-              ) : (
-                <Iconista set="lucide" icon="type" width={16} height={16} style={{opacity: 0.5}} />
-              ),
-            onSelect: () => handleScrollTo(item.path),
-          })),
+          children: mutxt.docMenu.outlineItems(),
         }}
       />
     ) : (

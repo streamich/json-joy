@@ -1,4 +1,14 @@
-import {Editor, type Path, Range, type Text, Element as SlateElement, type Location, type Span} from 'slate';
+import {
+  Editor,
+  Node as SlateNode,
+  type Path,
+  Range,
+  type Text,
+  Element as SlateElement,
+  type Location,
+  type Span,
+  Transforms,
+} from 'slate';
 import {ReactEditor} from 'slate-react';
 import type {CustomElement, MarkFormat} from '../types';
 import {eraseMarks, isListType} from '../behavior';
@@ -30,6 +40,15 @@ export class MuTxtApi {
 
   public blur(): void {
     if (this.focused()) ReactEditor.blur(this.state.editor);
+  }
+
+  public deselect(): void {
+    try {
+      ReactEditor.deselect(this.editor as ReactEditor);
+    } catch {}
+    try {
+      window.getSelection?.()?.removeAllRanges();
+    } catch {}
   }
 
   public hasSelection(): boolean {
@@ -66,6 +85,33 @@ export class MuTxtApi {
     } catch {
       return;
     }
+  }
+
+  /**
+   * Move the user's attention to a specific block. Smooth-scrolls the block
+   * into view, then places the caret at its start and refocuses the editor.
+   */
+  public navigateTo(path: Path): boolean {
+    const editor = this.editor;
+    let node: unknown;
+    try {
+      node = SlateNode.get(editor, path);
+    } catch {
+      return false;
+    }
+    if (!SlateElement.isElement(node)) return false;
+    this.deselect();
+    this.blur();
+    try {
+      const domNode = ReactEditor.toDOMNode(editor as ReactEditor, node as SlateElement) as HTMLElement;
+      domNode.scrollIntoView({behavior: 'smooth', block: 'start'});
+      setTimeout(() => {
+        this.deselect();
+        this.blur();
+        domNode.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 36);
+    } catch {}
+    return true;
   }
 
   // ------------------------------------------------------------------- Inline
