@@ -9,8 +9,10 @@ import type {
   ToolbarButtonDefinition,
 } from './types';
 import {removeLink} from './behavior/link';
+import {isListType, LIST_TYPES} from './behavior/lists';
 
-export const LIST_TYPES: ListElementType[] = ['ul', 'ol', 'checklist'];
+export {isListType, LIST_TYPES}
+
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
 export const MARKS: MarkFormat[] = [
   'bold',
@@ -30,8 +32,6 @@ export const MARKS: MarkFormat[] = [
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
 const isFormattableBlock = (node: CustomElement): boolean => !isListType(node.type) && node.type !== 'embed';
-
-export const isListType = (format: string): format is ListElementType => LIST_TYPES.includes(format as ListElementType);
 
 export const isMarkActive = (editor: Editor, format: MarkFormat): boolean => {
   const marks = Editor.marks(editor);
