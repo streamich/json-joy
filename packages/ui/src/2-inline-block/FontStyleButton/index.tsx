@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {drule, useTheme} from 'nano-theme';
 import {Ripple} from '../../misc/Ripple';
+import {useStyles} from '../../styles/context';
 
 const blockClass = drule({
   d: 'inline-flex',
@@ -54,15 +55,17 @@ export const FontStyleButton: React.FC<FontStyleButtonProps> = ({
   ...rest
 }) => {
   const theme = useTheme();
+  const styles = useStyles();
 
+  const activeBg = styles.col.accent(0, 'bg-2');
   const className =
     (rest.className ?? '') +
     blockClass({
       w: size + 'px',
       h: size + 'px',
-      bg: theme.g(0, active ? 0.02 : 0.01),
+      bg: active ? activeBg : theme.g(0, 0.01),
       '&:hover': {
-        bg: theme.g(0, 0.04),
+        bg: active ? activeBg : theme.g(0, 0.04),
       },
     });
 
