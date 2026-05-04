@@ -61,6 +61,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
                   }
                 : void 0
         }
+        onMouseDown={item.onMouseDown}
         renderPane={!!children && renderPane ? renderPane : void 0}
         onMouseEnter={() => openPanel?.onMouseMove(id)}
         onMouseMove={() => openPanel?.onMouseMove(id)}

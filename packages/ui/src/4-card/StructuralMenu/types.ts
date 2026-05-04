@@ -152,6 +152,11 @@ export interface MenuItem {
   onSelect?: React.EventHandler<React.MouseEvent<Element> | React.TouchEvent<Element>>;
 
   /**
+   * Callback fired on `mousedown` of the item, before any click/select runs.
+   */
+  onMouseDown?: React.MouseEventHandler<Element>;
+
+  /**
    * Argument definitions for this command. When present, selecting the item
    * opens an argument configuration pane instead of executing immediately.
    */
