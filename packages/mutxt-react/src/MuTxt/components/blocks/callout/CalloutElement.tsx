@@ -6,6 +6,7 @@ import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from '../BlockPlaceholder';
 import {indentPadding} from '../../../behavior/indentation';
+import {fontFamilyOf} from '../../../behavior/font';
 import {isEmptyBlock} from '../../../util';
 import {CalloutOptionsPopup} from './CalloutOptionsPopup';
 import {HslColor, LinearRgbColor, ThemeColor} from '@jsonjoy.com/ui';
@@ -114,6 +115,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
         textAlign: element.align,
         marginInlineStart: indentPadding(element.indent) ?? 0,
         marginInlineEnd: 0,
+        fontFamily: fontFamilyOf(element.font),
         border: `1px solid ${colors.bd}`,
         borderLeft: `3px solid ${colors.accent}`,
         background: colors.bg,

@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
+import {fontFamilyOf} from '../../behavior/font';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {BlockquoteElement as BlockquoteElementType} from '../../types';
@@ -29,6 +30,7 @@ export const BlockquoteElement: React.FC<BlockquoteElementProps> = ({attributes,
         textAlign: element.align,
         marginInlineStart: indentPadding(element.indent) ?? 0,
         marginInlineEnd: 0,
+        fontFamily: fontFamilyOf(element.font),
         borderLeft: `4px solid ${styles.light ? styles.g(0.22) : styles.g(0.72)}`,
         background: styles.light ? 'rgba(15,23,42,0.035)' : 'rgba(255,255,255,0.05)',
         color: styles.light ? styles.g(0.3) : styles.g(0.78),
