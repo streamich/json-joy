@@ -4,7 +4,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
 import {Spoiler} from './Spoiler';
-import {fontFamilyOf} from '../../fonts';
+import {fontFamilyOf} from '../../behavior/font';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
 import {useTrace} from '@jsonjoy.com/ui';

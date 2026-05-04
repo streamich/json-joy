@@ -1,12 +1,14 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
 import {isMarkActive} from '../behavior';
-import type {MarkFormat, MenuItem} from '../types';
+import type {FontKind, MarkFormat, MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import {isLeafFontActive, setLeafFont} from '../behavior/font';
 
 export interface InlineMenuItem extends MenuItem {
   mark: MarkFormat;
@@ -35,6 +37,9 @@ const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
 // Modify
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
 
+// Typesetting
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+
 export class InlineMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
 
@@ -51,6 +56,8 @@ export class InlineMenu implements UiLifeCycles {
       this.menuFmt(),
       {name: 'sep-annon', sep: true},
       this.menuAnnotations({anchorFromSelection: true}),
+      {name: 'sep-typesetting', sep: true},
+      this.menuTypesetting(),
       {name: 'sep-modify', sep: true},
       this.menuModify(),
     ];
@@ -69,6 +76,8 @@ export class InlineMenu implements UiLifeCycles {
         this.menuFmt(),
         {name: 'sep-annon', sep: true},
         this.menuAnnotations(),
+        {name: 'sep-typesetting', sep: true},
+        this.menuTypesetting(),
         {name: 'sep-modify', sep: true},
         this.menuModify(),
       ],
@@ -297,6 +306,43 @@ export class InlineMenu implements UiLifeCycles {
         mutxt.inline.dismissed.next(true);
         link.toggle();
       },
+    };
+  }
+
+  public menuTypesetting(): MenuItem {
+    return {
+      id: 'inline-typesetting',
+      name: 'Typesetting',
+      icon: () => <TypographyIcon />,
+      expand: 4,
+      openOnTitleHov: true,
+      children: [
+        this.itemLeafFont('sans', 'Sans-serif'),
+        this.itemLeafFont('serif', 'Serif'),
+        this.itemLeafFont('slab', 'Slab'),
+        this.itemLeafFont('mono', 'Monospace'),
+      ],
+    };
+  }
+
+  private itemLeafFont(kind: FontKind, name: string): MenuItem {
+    const mutxt = this.mutxt;
+    const onSelect = (event: React.MouseEvent | React.TouchEvent) => {
+      event.preventDefault();
+      setLeafFont(mutxt.editor, kind);
+      mutxt.sync(false);
+    };
+    const Option: React.FC<{size?: number}> = ({size}) => {
+      mutxt.version.use();
+      const active = isLeafFontActive(mutxt.editor, kind);
+      return <FontStyleButton kind={kind} size={size} active={active} onMouseDown={onSelect} />;
+    };
+    return {
+      name,
+      icon: () => <Option size={16} />,
+      iconBig: () => <Option />,
+      active: rsync.comp([mutxt.version], () => isLeafFontActive(mutxt.editor, kind)),
+      onSelect,
     };
   }
 

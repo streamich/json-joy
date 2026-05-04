@@ -3,8 +3,21 @@ import type {
   CustomElement,
   FontKind,
 } from '../types';
-import {isFontKind} from '../fonts';
 import {isListType} from './lists';
+
+export const FONT_FAMILIES: Record<FontKind, string> = {
+  sans: '"Inter Variable","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif',
+  serif: '"Source Serif 4 Variable","Source Serif 4","Source Serif Pro",Georgia,Cambria,"Times New Roman",Times,serif',
+  slab: '"Bitter Variable","Bitter","Roboto Slab",Georgia,Cambria,"Times New Roman",Times,serif',
+  mono: '"JetBrains Mono Variable","JetBrains Mono",Menlo,Consolas,"Liberation Mono",Courier,monospace',
+};
+
+export const isFontKind = (v: unknown): v is FontKind =>
+  v === 'sans' || v === 'serif' || v === 'slab' || v === 'mono';
+
+export const fontFamilyOf = (kind: FontKind | undefined): string | undefined =>
+  kind ? FONT_FAMILIES[kind] : undefined;
+
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
 const isFormattableBlock = (node: CustomElement): boolean => !isListType(node.type) && node.type !== 'embed';

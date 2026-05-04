@@ -42,7 +42,7 @@ const rowClass = rule({
   jc: 'space-between',
   gap: '12px',
   pd: '4px 0',
-  fz: '13px',
+  fz: '13.5px',
   lh: '1.25',
 });
 

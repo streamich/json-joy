@@ -16,6 +16,16 @@ export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
  */
 export type DisplayMode = 'inline' | 'fullscreen' | 'fullwindow';
 
+/**
+ * Document-level typeface family. Persisted at `/font` on the document object.
+ *
+ * - `sans`:  Inter
+ * - `serif`: Source Serif 4
+ * - `slab`:  Bitter
+ * - `mono`:  JetBrains Mono
+ */
+export type FontKind = 'sans' | 'serif' | 'slab' | 'mono';
+
 export type MarkFormat =
   | 'bold'
   | 'italic'
@@ -79,12 +89,14 @@ export interface CustomText {
   kbd?: boolean;
   ins?: boolean;
   del?: boolean;
+  font?: FontKind;
   a?: LinkAttributes;
 }
 
 export interface BlockAttributes {
   align?: SlateTextAlign;
   indent?: number;
+  font?: FontKind;
 }
 
 export interface ParagraphElement extends BlockAttributes {

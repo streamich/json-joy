@@ -6,6 +6,7 @@ import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {watch} from '../util/watch';
 import {bindShortcuts} from '../behavior/keyboard';
 import {bindImagePaste} from '../behavior/imagePaste';
+import {bindIndicatorDemo} from '../behavior/indicatorDemo';
 import {MuTxtApi} from './MuTxtApi';
 import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
@@ -14,7 +15,6 @@ import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {SizerState} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
-import type {ReactEditor} from 'slate-react';
 import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
@@ -25,10 +25,12 @@ import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
+import {isFontKind} from '../behavior/font';
 import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
-import type {CustomElement, DisplayMode, SlateEditorDocument, SlateTextAlign} from '../types';
+import type {ReactEditor} from 'slate-react';
+import type {CustomElement, DisplayMode, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
 
 const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
@@ -92,6 +94,9 @@ export class MuTxtState implements UiLifeCycles {
   /** Current rendering display mode. */
   public readonly displayMode = rsync.val<DisplayMode>('inline');
 
+  /** Document-level typeface family. */
+  public readonly font = rsync.val<FontKind>('sans');
+
   /** The shell element wrapping the entire editor (header, content, footer). */
   public shellEl: HTMLElement | null = null;
 
@@ -133,6 +138,8 @@ export class MuTxtState implements UiLifeCycles {
       initialValue = createEmptyDocument() as Descendant[];
     }
     this.sizer = new SizerState(Number(obj.read('/width')) || 1200);
+    const storedFont = obj.read('/font');
+    if (isFontKind(storedFont)) this.font.next(storedFont);
     editor.children = initialValue;
     editor.selection = null;
   }
@@ -159,6 +166,7 @@ export class MuTxtState implements UiLifeCycles {
     const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
+    const unbindIndicatorDemo = bindIndicatorDemo(this);
 
     // --------------------------------------------- Native fullscreen tracking
     // Keep `displayMode` in sync when the user exits fullscreen via Esc or
@@ -182,6 +190,7 @@ export class MuTxtState implements UiLifeCycles {
       stopIndicator();
       stopThings();
       unbindShortcuts();
+      unbindIndicatorDemo();
       if (typeof document !== 'undefined')
         document.removeEventListener('fullscreenchange', onFullscreenChange);
       this.kbdSourceUnbind?.();
@@ -205,6 +214,13 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly setReadOnly = (readOnly: boolean): void => {
     this.readOnly.set(readOnly);
+  };
+
+  public readonly setFont = (kind: FontKind): void => {
+    if (this.font.value === kind) return;
+    if (this.readOnly.value) return;
+    this.font.set(kind);
+    this.obj.add('/font', kind);
   };
 
   public readonly setDisplayMode = (mode: DisplayMode): void => {

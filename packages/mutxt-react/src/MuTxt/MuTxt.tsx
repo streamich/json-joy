@@ -27,10 +27,12 @@ import {BlockFloater} from './block/BlockFloater';
 import {EmbedFloater} from './void/embed/EmbedFloater';
 import {FileFloater} from './void/file/FileFloater';
 import {OmniFloater} from './omni/OmniFloater';
+import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
+import {FONT_FAMILIES} from './behavior/font';
 import {Sizer} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import type {ObjNode} from 'json-joy/lib/json-crdt';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
@@ -38,6 +40,8 @@ import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {CustomElement, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {MuTxtApi} from './state/MuTxtApi';
+
+import './loadFonts';
 
 const KeyboardShortcutsModal = React.lazy(() =>
   import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
@@ -206,6 +210,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const omniRange = state.omni.rangeSnapshot.use();
   const shortcutsOpen = state.shortcutsOpen.use();
   const displayMode = state.displayMode.use();
+  const font = state.font.use();
   const [shellEl, setShellEl] = React.useState<HTMLElement | null>(null);
   const handleShellRef = React.useCallback(
     (el: HTMLDivElement | null) => {
@@ -241,6 +246,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
     maxWidth: contentWidth ?? 800,
     color: styles.g(0.15),
     caretColor: styles.g(0),
+    fontFamily: FONT_FAMILIES[font],
   };
 
   let content: React.ReactNode = (
@@ -274,6 +280,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       <EmbedFloater />
       <FileFloater />
       {!shortcutsOpen && <OmniFloater />}
+      {!shortcutsOpen && <IndicatorFloater />}
     </Slate>
   );
 
@@ -318,7 +325,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   content = (
     <>
-      <MuTxtHeader editor={editor} readOnly={readOnly} onVisualChange={() => state.sync(true)} />
+      <MuTxtHeader editor={editor} />
       {content}
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
         <MuTxtFooter />
