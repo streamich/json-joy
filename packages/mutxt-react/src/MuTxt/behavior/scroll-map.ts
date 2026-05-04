@@ -1,7 +1,9 @@
 import {Range, type Editor} from 'slate';
 import {ReactEditor} from 'slate-react';
 import {getActiveEmbedEntry} from './embed';
-import type {ChecklistListElement, CustomElement, ListItemElement} from '../types';
+import type {ChecklistListElement, CustomElement, FileThing, ListItemElement, Thing} from '../types';
+
+export type ScrollMapThingLookup = (id: string) => Thing | undefined;
 
 export interface ScrollMapElementDescriptor {
   color: string;
@@ -41,7 +43,14 @@ const getMarkerHeight = (
   return Math.max(descriptor.height, scaled);
 };
 
-const describeScrollMapElement = (element: CustomElement, light: boolean): ScrollMapElementDescriptor | null => {
+const isMediaMime = (mime: string): boolean =>
+  /^image\//i.test(mime) || /^video\//i.test(mime) || /^audio\//i.test(mime);
+
+const describeScrollMapElement = (
+  element: CustomElement,
+  light: boolean,
+  getThing?: ScrollMapThingLookup,
+): ScrollMapElementDescriptor | null => {
   switch (element.type) {
     case 'title':
       return {el: element, color: light ? '#234' : '#f8fafc', height: 5, variant: 'wide'};
@@ -127,6 +136,23 @@ const describeScrollMapElement = (element: CustomElement, light: boolean): Scrol
         proportional: true,
       };
     }
+    case 'file': {
+      const thingId = (element as {'@thing'?: string})['@thing'];
+      const thing = thingId && getThing ? (getThing(thingId) as FileThing | undefined) : undefined;
+      const isMedia = !!thing && isMediaMime(thing.mimeType || '');
+      return {
+        el: element,
+        color: isMedia
+          ? light
+            ? 'rgba(217,70,239,.6)'
+            : 'rgba(232,121,249,.55)'
+          : light
+            ? 'rgba(115,115,115,.55)'
+            : 'rgba(163,163,163,.5)',
+        height: 4,
+        proportional: true,
+      };
+    }
     default: {
       const type = element.type as string;
       if (type === 'table') {
@@ -162,12 +188,13 @@ const getFocusedDomSelectionRange = (reactEditor: Editor & ReactEditor): globalT
 const getScrollMapSelectionRect = (
   reactEditor: Editor & ReactEditor,
   light: boolean,
+  getThing?: ScrollMapThingLookup,
 ): {rect: DOMRect; proportional: boolean} | null => {
   const domSelectionRange = getFocusedDomSelectionRange(reactEditor);
   const activeEmbedEntry = getActiveEmbedEntry(reactEditor);
   if (activeEmbedEntry && domSelectionRange) {
     const [element] = activeEmbedEntry;
-    const descriptor = describeScrollMapElement(element, light);
+    const descriptor = describeScrollMapElement(element, light, getThing);
     try {
       const domNode = ReactEditor.toDOMNode(reactEditor, element);
       if (domNode instanceof HTMLElement) {
@@ -211,10 +238,11 @@ const measureScrollMapSelectionMarker = (
   scrollHeight: number,
   railHeight: number,
   light: boolean,
+  getThing?: ScrollMapThingLookup,
 ): ScrollMapMarker | null => {
   const selection = reactEditor.selection;
   if (!selection) return null;
-  const selectionRect = getScrollMapSelectionRect(reactEditor, light);
+  const selectionRect = getScrollMapSelectionRect(reactEditor, light, getThing);
   if (!selectionRect) return null;
   const descriptor: ScrollMapElementDescriptor = {
     color: '#07f',
@@ -238,6 +266,7 @@ export const measureScrollMapMarkers = (
   scrollHeight: number,
   railHeight: number,
   light: boolean,
+  getThing?: ScrollMapThingLookup,
 ): ScrollMapMarker[] => {
   if (scrollHeight <= viewportEl.clientHeight || scrollHeight <= 0) return [];
   const markers: ScrollMapMarker[] = [];
@@ -245,7 +274,7 @@ export const measureScrollMapMarkers = (
   const viewportRect = viewportEl.getBoundingClientRect();
   editor.children.forEach((node, index) => {
     if (!isElementNode(node)) return;
-    const descriptor = describeScrollMapElement(node, light);
+    const descriptor = describeScrollMapElement(node, light, getThing);
     if (!descriptor) return;
     try {
       const domNode = ReactEditor.toDOMNode(reactEditor, node);
@@ -269,6 +298,7 @@ export const measureScrollMapMarkers = (
     scrollHeight,
     railHeight,
     light,
+    getThing,
   );
   if (selectionMarker) markers.push(selectionMarker);
   return markers;

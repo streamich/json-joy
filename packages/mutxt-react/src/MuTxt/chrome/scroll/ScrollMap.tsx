@@ -39,6 +39,7 @@ export const ScrollMap: React.FC<ScrollMapProps> = ({editor}) => {
   const version = state.version.use();
   const cursor = state.cursor.use();
   const scrollVersion = state.scrollVersion.use();
+  const thingsVersion = state.things.version.use();
   const [markers, setMarkers] = React.useState<ReturnType<typeof measureScrollMapMarkers>>([]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: focused/version/scrollVersion/cursor are change triggers for re-measuring markers
@@ -50,10 +51,26 @@ export const ScrollMap: React.FC<ScrollMapProps> = ({editor}) => {
     const viewportEl = scrollArea.viewportEl;
     const frame = requestAnimationFrame(() => {
       const railHeight = scrollArea.railEl?.clientHeight ?? clientHeight;
-      setMarkers(measureScrollMapMarkers(editor, viewportEl, scrollHeight, railHeight, styles.light ?? true));
+      setMarkers(
+        measureScrollMapMarkers(editor, viewportEl, scrollHeight, railHeight, styles.light ?? true, (id) =>
+          state.things.get(id),
+        ),
+      );
     });
     return () => cancelAnimationFrame(frame);
-  }, [clientHeight, editor, focused, scrollArea, scrollHeight, styles.light, version, scrollVersion, cursor]);
+  }, [
+    clientHeight,
+    editor,
+    focused,
+    scrollArea,
+    scrollHeight,
+    styles.light,
+    version,
+    scrollVersion,
+    cursor,
+    thingsVersion,
+    state,
+  ]);
 
   if (!markers.length) return null;
 
