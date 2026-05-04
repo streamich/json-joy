@@ -1060,6 +1060,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource-variable/bitter@npm:^5.2.0":
+  version: 5.2.10
+  resolution: "@fontsource-variable/bitter@npm:5.2.10"
+  checksum: 10c0/caaf1ea95e9a6afdfe45af7db889dbb0137de86898d1c690aa1c2fe8b12b526068a825f992a4e5647e48266fdb948978f3049e201ec16e1d758d8f9ce82a244b
+  languageName: node
+  linkType: hard
+
+"@fontsource-variable/inter@npm:^5.2.0":
+  version: 5.2.8
+  resolution: "@fontsource-variable/inter@npm:5.2.8"
+  checksum: 10c0/35b46df31c8c18f55f87228acf6297e4dac6cc9f38d0faaafdaf5a40e40c386cf1bfb115fb0fe0dcdb9b7e14f582843693ccf070d9c903072a5b2fc0f8dfde56
+  languageName: node
+  linkType: hard
+
+"@fontsource-variable/jetbrains-mono@npm:^5.2.0":
+  version: 5.2.8
+  resolution: "@fontsource-variable/jetbrains-mono@npm:5.2.8"
+  checksum: 10c0/574e5463b802cfdd6ec8dd16724d2fd5ee38204815729c9dca0f457a417f0a4d32e6ec4ed2dfa0e5a5de5a9b0deaeb9f3c0b49b332763ed40172de43d6b1502f
+  languageName: node
+  linkType: hard
+
+"@fontsource-variable/source-serif-4@npm:^5.2.0":
+  version: 5.2.9
+  resolution: "@fontsource-variable/source-serif-4@npm:5.2.9"
+  checksum: 10c0/95bf11dbdf1b9948d6f8c01ed194c0dea41c277ef65f1f43d24ad2690b4dc57ec0ccae0adbdd9648604a436e1c7b02441a85474605d53dce2f4619e9df162df6
+  languageName: node
+  linkType: hard
+
 "@img/colour@npm:^1.0.0":
   version: 1.1.0
   resolution: "@img/colour@npm:1.1.0"
@@ -11633,6 +11661,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mutxt-react@workspace:packages/mutxt-react"
   dependencies:
+    "@fontsource-variable/bitter": "npm:^5.2.0"
+    "@fontsource-variable/inter": "npm:^5.2.0"
+    "@fontsource-variable/jetbrains-mono": "npm:^5.2.0"
+    "@fontsource-variable/source-serif-4": "npm:^5.2.0"
     "@jsonjoy.com/collaborative-peritext": "workspace:*"
     "@jsonjoy.com/collaborative-presence": "workspace:*"
     "@jsonjoy.com/collaborative-slate": "workspace:*"

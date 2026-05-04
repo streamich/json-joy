@@ -82,6 +82,10 @@
     ]
   },
   "dependencies": {
+    "@fontsource-variable/bitter": "^5.2.0",
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource-variable/jetbrains-mono": "^5.2.0",
+    "@fontsource-variable/source-serif-4": "^5.2.0",
     "@jsonjoy.com/collaborative-peritext": "workspace:*",
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-slate": "workspace:*",
