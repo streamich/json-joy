@@ -1,9 +1,13 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
+import {ReactEditor} from 'slate-react';
+import {canRedo, canUndo, redo, undo} from '../behavior';
+import {getDocumentOutline} from '../behavior/outline';
 import {formatKeys} from '../util/keys';
-import type {DisplayMode, MenuItem} from '../types';
+import type {DisplayMode, FontKind, MenuItem, SlateEditorDocument} from '../types';
 import type {MuTxtState} from './MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
@@ -12,6 +16,10 @@ const KeyboardIcon = makeIcon({set: 'tabler', icon: 'keyboard', width: 16, heigh
 const MaximizeIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, height: 16});
 const MinimizeIcon = makeIcon({set: 'tabler', icon: 'minimize', width: 16, height: 16});
 const FullscreenIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+const UndoIcon = makeIcon({set: 'lucide', icon: 'undo', width: 16, height: 16});
+const RedoIcon = makeIcon({set: 'lucide', icon: 'redo', width: 16, height: 16});
+const GoToIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 
 export class DocumentMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -20,12 +28,212 @@ export class DocumentMenu implements UiLifeCycles {
     return () => {};
   }
 
+  public buildHeaderToolbar(size: 0 | 1 | 2 | 3): MenuItem {
+    const mutxt = this.mutxt;
+    const toggleKeys = ['Primary', 'Shift', 'm'];
+    const activeFor = (mode: DisplayMode) => rsync.comp([mutxt.displayMode], ([m]) => m === mode);
+    const option = (
+      mode: DisplayMode,
+      name: string,
+      icon: () => React.ReactNode,
+      keys?: string[],
+    ): MenuItem => ({
+      name,
+      icon,
+      keys: [formatKeys(toggleKeys)],
+      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : void 0,
+      active: activeFor(mode),
+      disabled: activeFor(mode),
+      onSelect: () => {
+        mutxt.omni.close();
+        mutxt.setDisplayMode(mode);
+      },
+    });
+    const children: MenuItem[] = [];
+    if (size > 2) {
+      children.push(
+        this.itemUndo(),
+        this.itemRedo(),  
+        {name: 'sep-undo', sep: true},
+      );
+    }
+    if (size > 0) {
+      children.push(
+        {
+          name: mutxt.displayMode.value === 'inline' ? 'Maximized' : 'Inline',
+          split: size > 1 ? 'Display' : void 0,
+          keys: [formatKeys(toggleKeys)],
+          icon: () => mutxt.displayMode.value === 'inline' ? <MaximizeIcon /> : <MinimizeIcon />,
+          onSelect: () => {
+            mutxt.omni.close();
+            mutxt.setDisplayMode(mutxt.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
+          },
+          noHeader: true,
+          children: size > 1 ? [
+            option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys),
+            option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys),
+            option('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
+          ] : void 0,
+        }
+      );
+    }
+    children.push(this.build());
+    return {
+      name: 'Document menu',
+      children,
+    };
+  }
+
   public build(): MenuItem {
     return {
       name: 'Document',
       minWidth: 288,
+      noHeader: true,
       icon: () => <DocumentIcon />,
-      children: [this.itemDisplayMode(), this.itemKeyboardShortcuts()],
+      children: [
+        this.itemTypesetting(),
+        {name: 'sep-dispplay', sep: true},
+        this.itemDisplayMode(),
+        this.itemKeyboardShortcuts(),
+        {name: 'sep-nav', sep: true},
+        this.menuNavigate(),
+      ],
+    };
+  }
+
+  public outlineItems(): MenuItem[] {
+    const mutxt = this.mutxt;
+    const outline = getDocumentOutline(mutxt.editor.children as SlateEditorDocument);
+    return outline.map((item) => ({
+      id: item.key,
+      name: item.title,
+      display: () => (
+        <div
+          style={{
+            paddingLeft: (item.level - 1) * 16,
+            fontWeight: 400 + (3 - item.level) * 100,
+            fontSize: item.level ? void 0 : '1.1em',
+          }}
+        >
+          {item.title}
+        </div>
+      ),
+      icon: () =>
+        item.level ? (
+          <Iconista set="tabler" icon={`h-${item.level}`} width={16} height={16} style={{opacity: 0.5}} />
+        ) : (
+          <Iconista set="lucide" icon="type" width={16} height={16} style={{opacity: 0.5}} />
+        ),
+      onSelect: () => {
+        mutxt.omni.close();
+        mutxt.api.navigateTo(item.path);
+      },
+    }));
+  }
+
+  public menuNavigate(): MenuItem {
+    const items = this.outlineItems();
+    return {
+      name: 'Navigate',
+      expand: 5,
+      children: [
+        this.itemGoTo(),
+        {name: 'sep-history', sep: true},
+        this.itemUndo(),
+        this.itemRedo(),
+      ],
+    };
+  }
+
+  public itemGoTo(): MenuItem {
+    const items = this.outlineItems();
+    return {
+      name: 'Go to',
+      icon: () => <GoToIcon />,
+      minWidth: Math.min(320, (typeof window !== 'undefined' ? window.innerWidth : 320) - 32),
+      children: items.length
+        ? items
+        : [
+            {
+              name: 'No headings',
+              disabled: rsync.comp([], () => true),
+            },
+          ],
+    };
+  }
+
+  public itemUndo(): MenuItem {
+    const mutxt = this.mutxt;
+    const keys = ['Primary', 'z'];
+    const formatted = formatKeys(keys);
+    return {
+      name: 'Undo',
+      icon: () => <UndoIcon />,
+      right: () => <Sidetip small>{formatted}</Sidetip>,
+      keys: [formatted],
+      disabled: rsync.comp([mutxt.version, mutxt.readOnly], () => mutxt.readOnly.value || !canUndo(mutxt.editor)),
+      onSelect: this.exec(() => undo(mutxt.editor)),
+    };
+  }
+
+  public itemRedo(): MenuItem {
+    const mutxt = this.mutxt;
+    const keys = ['Primary', 'Shift', 'z'];
+    const formatted = formatKeys(keys);
+    return {
+      name: 'Redo',
+      icon: () => <RedoIcon />,
+      right: () => <Sidetip small>{formatted}</Sidetip>,
+      keys: [formatted],
+      disabled: rsync.comp([mutxt.version, mutxt.readOnly], () => mutxt.readOnly.value || !canRedo(mutxt.editor)),
+      onSelect: this.exec(() => redo(mutxt.editor)),
+    };
+  }
+
+  private readonly exec =
+    (fn: () => void) =>
+    (event: React.MouseEvent | React.TouchEvent): void => {
+      event.preventDefault();
+      const mutxt = this.mutxt;
+      mutxt.omni.close();
+      fn();
+      ReactEditor.focus(mutxt.editor as ReactEditor);
+      mutxt.setFocused(true);
+      mutxt.sync(true);
+    };
+
+  public itemTypesetting(): MenuItem {
+    return {
+      name: 'Typesetting',
+      expand: 4,
+      openOnTitleHov: true,
+      icon: () => <TypographyIcon />,
+      onSelect: () => {},
+      children: [
+        this.itemFontOption('sans', 'Sans-serif'),
+        this.itemFontOption('serif', 'Serif'),
+        this.itemFontOption('slab', 'Slab'),
+        this.itemFontOption('mono', 'Monospace'),
+      ],
+    };
+  }
+
+  private itemFontOption(kind: FontKind, name: string): MenuItem {
+    const mutxt = this.mutxt;
+    const onSelect = () => {
+      mutxt.omni.close();
+      mutxt.setFont(kind);
+    };
+    const Option: React.FC<{size?: number}> = ({size}) => {
+      const font = mutxt.font.use();
+      return <FontStyleButton kind={kind} size={size} active={font === kind} onClick={onSelect} />;
+    };
+    return {
+      name,
+      icon: () => <Option size={16} />,
+      iconBig: () => <Option />,
+      active: rsync.comp([mutxt.font], ([f]) => f === kind),
+      onSelect,
     };
   }
 
@@ -65,51 +273,6 @@ export class DocumentMenu implements UiLifeCycles {
         mutxt.omni.close();
         mutxt.setDisplayMode(mode);
       },
-    };
-  }
-
-  public buildHeaderToolbar(): MenuItem {
-    const mutxt = this.mutxt;
-    const toggleKeys = ['Primary', 'Shift', 'm'];
-    const activeFor = (mode: DisplayMode) => rsync.comp([mutxt.displayMode], ([m]) => m === mode);
-    const option = (
-      mode: DisplayMode,
-      name: string,
-      icon: () => React.ReactNode,
-      keys?: string[],
-    ): MenuItem => ({
-      name,
-      icon,
-      keys: [formatKeys(toggleKeys)],
-      right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : void 0,
-      active: activeFor(mode),
-      disabled: activeFor(mode),
-      onSelect: () => {
-        mutxt.omni.close();
-        mutxt.setDisplayMode(mode);
-      },
-    });
-    return {
-      name: 'Display toolbar',
-      maxToolbarItems: 1,
-      children: [
-        {
-          name: mutxt.displayMode.value === 'inline' ? 'Maximized' : 'Inline',
-          split: 'Display',
-          keys: [formatKeys(toggleKeys)],
-          icon: () => mutxt.displayMode.value === 'inline' ? <MaximizeIcon /> : <MinimizeIcon />,
-          onSelect: () => {
-            mutxt.omni.close();
-            mutxt.setDisplayMode(mutxt.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
-          },
-          noHeader: true,
-          children: [
-            option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys),
-            option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys),
-            option('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
-          ],
-        },
-      ],
     };
   }
 }

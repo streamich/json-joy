@@ -4,11 +4,11 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import {AutoExpandableToolbar} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu/AutoExpandableToolbar';
 import {ToolbarSep} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarSep';
-import type {Editor} from 'slate';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {DocumentOutlineButton} from '../../chrome/DocumentOutlineButton';
 import {useMuTxt} from '../../context';
 import {SetNamedTrace} from '@jsonjoy.com/ui';
+import type {Editor} from 'slate';
 
 const HEIGHT = 48;
 
@@ -42,7 +42,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
 
   const inlineMenu = mutxt.inline.menu.buildToolbarMenu();
   const voidsMenu = mutxt.voids.menu.buildToolbarMenu();
-  const blockMenu = mutxt.block.menu.buildToolbarMenu(width > 1200 ? 2 : width > 1100 ? 1 : 0);
+  const blockMenu = mutxt.block.menu.buildToolbarMenu(width > 1300 ? 2 : width > 1200 ? 1 : 0);
 
   return (
     <SetNamedTrace name={'subtle'} value={true}>
@@ -90,7 +90,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
           <ToolbarSep line />
           <ToolbarMenu
             pane={{transparent: true, inline: true}}
-            menu={mutxt.docMenu.buildHeaderToolbar()}
+            menu={mutxt.docMenu.buildHeaderToolbar(width > 1300 ? 3 : width > 1200 ? 2 : width > 1100 ? 1 : 0)}
           />
         </div>
       </Split>
