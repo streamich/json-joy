@@ -42,6 +42,10 @@ export interface BasicButtonProps extends React.AllHTMLAttributes<any> {
   round?: boolean;
   rounder?: boolean;
   roundest?: boolean;
+  /** Override the left-side corner radius (top-left + bottom-left). */
+  bdradL?: number | string;
+  /** Override the right-side corner radius (top-right + bottom-right). */
+  bdradR?: number | string;
   title?: string;
   positive?: boolean;
   noOutline?: boolean;
@@ -72,6 +76,8 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   round,
   rounder,
   roundest,
+  bdradL,
+  bdradR,
   title,
   positive,
   noOutline,
@@ -152,6 +158,15 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     style.borderRadius = '6px';
   } else if (roundest) {
     style.borderRadius = '1em';
+  }
+
+  if (bdradL !== void 0) {
+    style.borderTopLeftRadius = bdradL;
+    style.borderBottomLeftRadius = bdradL;
+  }
+  if (bdradR !== void 0) {
+    style.borderTopRightRadius = bdradR;
+    style.borderBottomRightRadius = bdradR;
   }
 
   if (noOutline) {
