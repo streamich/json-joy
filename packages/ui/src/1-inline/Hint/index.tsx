@@ -7,12 +7,12 @@ const hintClass = drule({
   ai: 'center',
   gap: '6px',
   bdrad: '4px',
-  pd: '2px 7px',
-  fz: '12.5px',
+  pd: '1px 4px',
+  fz: '11.6px',
   lh: '1.4em',
   bxz: 'border-box',
-  whiteSpace: 'nowrap',
-  userSelect: 'none',
+  ws: 'nowrap',
+  us: 'none',
 });
 
 export interface HintProps extends React.AllHTMLAttributes<HTMLSpanElement> {
@@ -27,7 +27,7 @@ export const Hint: React.FC<HintProps> = (props) => {
       className={
         hintClass({
           bd: '1px solid ' + styles.g(0.88, 0.28),
-          bg: styles.light ? styles.g(0.99, 0.6) : styles.col.g('bg-1'),
+          bg: styles.g(0.99),
           col: styles.g(0.35, 0.7),
         }) + (props.className || '')
       }
