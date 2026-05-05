@@ -26,6 +26,13 @@ export type DisplayMode = 'inline' | 'fullscreen' | 'fullwindow';
  */
 export type FontKind = 'sans' | 'serif' | 'slab' | 'mono';
 
+/**
+ * Editable content area width preset, chosen relative to the outer shell.
+ * Each preset targets a percentage of the shell width, clamped to a fixed
+ * pixel range. Persisted at `/ew` on the document object.
+ */
+export type EditableWidth = 'narrow' | 'mid' | 'wide';
+
 export type MarkFormat =
   | 'bold'
   | 'italic'

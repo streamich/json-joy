@@ -29,8 +29,11 @@ import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {ReactEditor} from 'slate-react';
-import type {CustomElement, DisplayMode, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
+import type {CustomElement, DisplayMode, EditableWidth, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
+
+const isEditableWidth = (v: unknown): v is EditableWidth =>
+  v === 'narrow' || v === 'mid' || v === 'wide';
 
 const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
 const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument =>
@@ -96,6 +99,9 @@ export class MuTxtState implements UiLifeCycles {
   /** Document-level typeface family. */
   public readonly font = rsync.val<FontKind>('sans');
 
+  /** Editable content area width preset. */
+  public readonly editableWidth = rsync.val<EditableWidth>('mid');
+
   /** The shell element wrapping the entire editor (header, content, footer). */
   public shellEl: HTMLElement | null = null;
 
@@ -139,6 +145,8 @@ export class MuTxtState implements UiLifeCycles {
     this.sizer = new SizerState(Number(obj.read('/width')) || 1200);
     const storedFont = obj.read('/font');
     if (isFontKind(storedFont)) this.font.next(storedFont);
+    const storedEditableWidth = obj.read('/ew');
+    if (isEditableWidth(storedEditableWidth)) this.editableWidth.next(storedEditableWidth);
     editor.children = initialValue;
     editor.selection = null;
   }
@@ -218,6 +226,13 @@ export class MuTxtState implements UiLifeCycles {
     if (this.readOnly.value) return;
     this.font.set(kind);
     this.obj.add('/font', kind);
+  };
+
+  public readonly setEditableWidth = (kind: EditableWidth): void => {
+    if (this.editableWidth.value === kind) return;
+    if (this.readOnly.value) return;
+    this.editableWidth.set(kind);
+    this.obj.add('/ew', kind);
   };
 
   public readonly setDisplayMode = (mode: DisplayMode): void => {

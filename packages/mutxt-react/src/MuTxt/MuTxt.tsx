@@ -37,7 +37,7 @@ import {Sizer} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import type {ObjNode} from 'json-joy/lib/json-crdt';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
-import type {CustomElement, SlateEditorDocument} from './types';
+import type {CustomElement, EditableWidth, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {MuTxtApi} from './state/MuTxtApi';
 
@@ -46,6 +46,14 @@ import './loadFonts';
 const KeyboardShortcutsModal = React.lazy(() =>
   import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
 );
+
+const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
+  return kind === 'mid'
+    ? Math.max(780, Math.min(900, Math.round(shellWidth * 0.6)))
+    : kind === 'wide'
+      ? Math.max(900, Math.min(1200, Math.round(shellWidth * 0.7)))
+      : Math.max(640, Math.min(780, Math.round(shellWidth * 0.5)));
+};
 
 const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
 
@@ -211,6 +219,15 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const shortcutsOpen = state.shortcutsOpen.use();
   const displayMode = state.displayMode.use();
   const font = state.font.use();
+  const editableWidthKind = state.editableWidth.use();
+  const shellAvailableWidth = state.sizer.width.use();
+  const shellDesiredWidth = state.sizer.content.use();
+  const actualShellWidth = shellAvailableWidth > 0
+    ? Math.min(shellAvailableWidth, shellDesiredWidth)
+    : shellDesiredWidth;
+  const computedEditableWidth = actualShellWidth > 0
+    ? computeEditableWidth(actualShellWidth, editableWidthKind)
+    : undefined;
   const [shellEl, setShellEl] = React.useState<HTMLElement | null>(null);
   const handleShellRef = React.useCallback(
     (el: HTMLDivElement | null) => {
@@ -243,7 +260,7 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   const editableStyle: React.CSSProperties = {
     minHeight,
-    maxWidth: contentWidth ?? 800,
+    maxWidth: contentWidth ?? computedEditableWidth ?? 800,
     color: styles.g(0.15),
     caretColor: styles.g(0),
     fontFamily: FONT_FAMILIES[font],

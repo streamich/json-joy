@@ -8,7 +8,8 @@ import {ReactEditor} from 'slate-react';
 import {canRedo, canUndo, redo, undo} from '../behavior';
 import {getDocumentOutline} from '../behavior/outline';
 import {formatKeys} from '../util/keys';
-import type {DisplayMode, FontKind, MenuItem, SlateEditorDocument} from '../types';
+import {EditableWidthButton, LABELS} from '../chrome/EditableWidthButton';
+import type {DisplayMode, EditableWidth, FontKind, MenuItem, SlateEditorDocument} from '../types';
 import type {MuTxtState} from './MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
@@ -28,6 +29,7 @@ const DevelopersIcon = makeIcon({set: 'tabler', icon: 'tools', width: 16, height
 const BracesIcon = makeIcon({set: 'tabler', icon: 'braces', width: 16, height: 16});
 // const TerminalIcon = makeIcon({set: 'tabler', icon: 'terminal-2', width: 16, height: 16});
 const PlainTextIcon = makeIcon({set: 'tabler', icon: 'align-left', width: 16, height: 16});
+const WidthIcon = makeIcon({set: 'tabler', icon: 'arrows-horizontal', width: 16, height: 16});
 
 export class DocumentMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -100,6 +102,7 @@ export class DocumentMenu implements UiLifeCycles {
       icon: () => <DocumentIcon />,
       children: [
         this.itemTypesetting(),
+        this.itemEditableWidth(),
         {name: 'sep-export', sep: true},
         this.menuExport(),
         {name: 'sep-display', sep: true},
@@ -227,6 +230,41 @@ export class DocumentMenu implements UiLifeCycles {
         this.itemFontOption('slab', 'Slab'),
         this.itemFontOption('mono', 'Monospace'),
       ],
+    };
+  }
+
+  public itemEditableWidth(): MenuItem {
+    return {
+      name: 'Width',
+      sepBefore: true,
+      expand: 3,
+      openOnTitleHov: true,
+      icon: () => <WidthIcon />,
+      onSelect: () => {},
+      children: [
+        this.itemEditableWidthOption('narrow'),
+        this.itemEditableWidthOption('mid'),
+        this.itemEditableWidthOption('wide'),
+      ],
+    };
+  }
+
+  private itemEditableWidthOption(kind: EditableWidth): MenuItem {
+    const mutxt = this.mutxt;
+    const onSelect = () => {
+      mutxt.omni.close();
+      mutxt.setEditableWidth(kind);
+    };
+    const Option: React.FC<{size?: number}> = ({size}) => {
+      const current = mutxt.editableWidth.use();
+      return <EditableWidthButton kind={kind} size={size} active={current === kind} onClick={onSelect} />;
+    };
+    return {
+      name: LABELS[kind],
+      icon: () => <Option size={16} />,
+      iconBig: () => <Option />,
+      active: rsync.comp([mutxt.editableWidth], ([w]) => w === kind),
+      onSelect,
     };
   }
 
