@@ -30,6 +30,7 @@ import {OmniFloater} from './omni/OmniFloater';
 import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
+import {EnsureUiProvider} from '@jsonjoy.com/ui/lib/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
 import {FONT_FAMILIES} from './behavior/font';
@@ -395,19 +396,21 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }
 
   return (
-    <SlateEditorContextProvider state={state}>
-      <PortalParentProvider value={displayMode === 'fullscreen' ? shellEl : null}>
-        <Sizer
-          state={state.sizer}
-          minWidth={300}
-          handlePadding={64}
-          handleMaxHeight={500}
-          handleWidth={3}
-          style={heightFit ? {height: '100%', minHeight: 0} : undefined}
-        >
-          {content}
-        </Sizer>
-      </PortalParentProvider>
-    </SlateEditorContextProvider>
+    <EnsureUiProvider>
+      <SlateEditorContextProvider state={state}>
+        <PortalParentProvider value={displayMode === 'fullscreen' ? shellEl : null}>
+          <Sizer
+            state={state.sizer}
+            minWidth={300}
+            handlePadding={64}
+            handleMaxHeight={500}
+            handleWidth={3}
+            style={heightFit ? {height: '100%', minHeight: 0} : undefined}
+          >
+            {content}
+          </Sizer>
+        </PortalParentProvider>
+      </SlateEditorContextProvider>
+    </EnsureUiProvider>
   );
 };
