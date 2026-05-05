@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Range} from 'slate';
 import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
@@ -355,12 +356,17 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemClear(): MenuItem {
+    const {mutxt} = this;
     return {
       name: 'Erase formatting',
       danger: true,
       icon: () => <ClearFormattingIcon width={16} height={16} />,
+      disabled: rsync.comp([mutxt.version], () => {
+        const sel = mutxt.editor.selection;
+        return !sel || Range.isCollapsed(sel);
+      }),
       onSelect: () => {
-        this.mutxt.api.eraseMarks();
+        mutxt.api.eraseMarks();
       },
     };
   }
