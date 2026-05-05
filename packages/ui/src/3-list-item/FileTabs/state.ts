@@ -25,6 +25,7 @@ export class FileTabsState {
   // ---------------------------------------------------- to be set by consumer
   public onNewTab: (() => TabItem | undefined) | undefined = void 0;
   public onDeleteTab: ((tab: TabItem, index: number) => void) | undefined = void 0;
+  public onTabDoubleClick: ((tab: TabItem, index: number) => void) | undefined = void 0;
 
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabsBox: rsync.ElBox<HTMLElement>;

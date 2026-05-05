@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type {JsonCrdtExplorerState} from './state';
+import type {MuTxtAppState} from './state';
 
-export const ctx = React.createContext<JsonCrdtExplorerState>(null!);
+export const ctx = React.createContext<MuTxtAppState>(null!);
 export const useExplorer = () => React.useContext(ctx)!;

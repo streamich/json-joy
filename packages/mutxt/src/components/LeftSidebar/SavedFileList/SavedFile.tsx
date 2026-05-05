@@ -9,7 +9,7 @@ import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {FileOptionsDrawer} from './FileOptionsDrawer';
 import type {FileMetadataDto} from '../../../state/file';
 
-const DownloadIcon = makeIcon({set: 'auth0', icon: 'download', width: 16, height: 16});
+// const DownloadIcon = makeIcon({set: 'auth0', icon: 'download', width: 16, height: 16});
 // const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-binary', width: 16, height: 16});
 const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-font', width: 16, height: 16});
 const icon = <GhostFileIcon />;
@@ -76,6 +76,7 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
           state.openSaved(file.id).catch(() => {});
           state.appGrid.closeLeftIfOverlay();
         }}
+        onDoubleClick={() => setOptionsOpen(true)}
       />
       <FileOptionsDrawer file={file} open={optionsOpen} onClose={() => setOptionsOpen(false)} />
     </>

@@ -12,6 +12,7 @@ import {
 } from '../behavior';
 import {deleteBlock, duplicateBlock, moveBlockDown, moveBlockUp} from './blockOps';
 import {dedentBlock, indentBlock} from './indentation';
+import {insertPAboveLeadingVoid} from './voidInsert';
 import type {Key} from '@jsonjoy.com/keyboard';
 import type {AnyBinding, Signature} from '@jsonjoy.com/keyboard';
 import type {MuTxtState} from '../state/MuTxtState';
@@ -51,6 +52,14 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
       'Space',
       (key: Key) => {
         if (state.omni.handleSpaceKey()) key.event?.preventDefault();
+      },
+    ],
+
+    // ---------------- Escape a leading void block (`ArrowUp` at document top)
+    [
+      'ArrowUp',
+      (key: Key) => {
+        if (insertPAboveLeadingVoid(editor)) consume(key);
       },
     ],
 

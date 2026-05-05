@@ -4,7 +4,7 @@ import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {templates} from './templates';
-import type {JsonCrdtExplorerState} from '.';
+import type {MuTxtAppState} from '.';
 
 const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment', width: 16, height: 16});
 const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text', width: 16, height: 16});
@@ -14,7 +14,7 @@ const FileMuTxtIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-text', wid
 const FileJsonIcon = makeIcon({set: 'bootstrap', icon: 'filetype-json', width: 16, height: 16});
 
 export class Menus {
-  constructor(public readonly state: JsonCrdtExplorerState) {}
+  constructor(public readonly state: MuTxtAppState) {}
 
   public newFileMenu(): MenuItem {
     const {state} = this;

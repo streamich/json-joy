@@ -7,6 +7,22 @@ const isAtEmptyParagraph = (entry: [CustomElement, Path] | null): boolean =>
   !!entry && (entry[0] as any).type === 'p' && Node.string(entry[0]) === '';
 
 /**
+ * If the caret/selection is on the very first block and that block is a void,
+ * prepend an empty paragraph and move the caret into it.
+ */
+export const insertPAboveLeadingVoid = (editor: Editor): boolean => {
+  const {selection} = editor;
+  if (!selection) return false;
+  if (selection.anchor.path[0] !== 0) return false;
+  const first = (editor as any).children?.[0];
+  if (!SlateElement.isElement(first)) return false;
+  if (!Editor.isVoid(editor, first)) return false;
+  Transforms.insertNodes(editor, createParagraph(), {at: [0]});
+  Transforms.select(editor, Editor.start(editor, [0]));
+  return true;
+};
+
+/**
  * Insert a void block element at the current selection. Mirrors the pattern
  * shared by `<embed>`, `<hr>`, `<file>`, and any future block voids:
  *

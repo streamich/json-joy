@@ -42,8 +42,8 @@ const nameInputClass = rule({
   trs: 'background .15s ease, box-shadow .15s ease',
 });
 
-const NameValue: React.FC<{file: FileMetadataDto; openFile?: OpenFile}> = ({file, openFile}) => {
-  const liveName = openFile?.name.use();
+const NameValueOpen: React.FC<{file: FileMetadataDto; openFile: OpenFile}> = ({file, openFile}) => {
+  const liveName = openFile.name.use();
   const value = liveName ?? file.name;
   const state = useExplorer();
   const focusValueRef = React.useRef<string>(value);
@@ -53,10 +53,6 @@ const NameValue: React.FC<{file: FileMetadataDto; openFile?: OpenFile}> = ({file
     '&:hover': {bg: t.g(0, 0.04)},
     '&:focus': {bg: t.g(0, 0.06), bxsh: `inset 0 0 0 1px ${t.g(0, 0.18)}`},
   }));
-
-  if (!openFile) {
-    return <span>{value}</span>;
-  }
 
   return (
     <input
@@ -81,6 +77,11 @@ const NameValue: React.FC<{file: FileMetadataDto; openFile?: OpenFile}> = ({file
       onChange={(e) => state.renameFile(openFile, e.target.value)}
     />
   );
+};
+
+const NameValue: React.FC<{file: FileMetadataDto; openFile?: OpenFile}> = ({file, openFile}) => {
+  if (!openFile) return <span>{file.name}</span>;
+  return <NameValueOpen file={file} openFile={openFile} />;
 };
 
 export interface FileOptionsDrawerProps {
@@ -176,10 +177,14 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
 
 
           <Space size={2} />
-          <Separator />
+          <Separator hard />
           <Space size={2} />
 
-          <MiniTitle contrast>{t('Danger zone')}</MiniTitle>
+          <MiniTitle>
+            <span style={{color: styles.col.get('error')}}>
+              {t('Danger zone')}
+            </span>
+          </MiniTitle>
           <Space size={-2} />
           <TwoColFormRow>
             <Popup

@@ -196,4 +196,8 @@ export class MuTxtApi {
   public isEmpty(): boolean {
     return isEmptyDoc(this.editor);
   }
+
+  public toBinary(): Uint8Array {
+    return this.state.obj.api.model.toBinary();
+  }
 }
