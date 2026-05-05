@@ -3,6 +3,7 @@ import {rsync} from '@jsonjoy.com/ui';
 import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
+import {downloadBlob} from '@jsonjoy.com/collaborative-ui/lib/util/downloadBlob';
 import {ReactEditor} from 'slate-react';
 import {canRedo, canUndo, redo, undo} from '../behavior';
 import {getDocumentOutline} from '../behavior/outline';
@@ -20,6 +21,13 @@ const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, h
 const UndoIcon = makeIcon({set: 'lucide', icon: 'undo', width: 16, height: 16});
 const RedoIcon = makeIcon({set: 'lucide', icon: 'redo', width: 16, height: 16});
 const GoToIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
+const ExportIcon = makeIcon({set: 'tabler', icon: 'file-export', width: 16, height: 16});
+const SaveIcon = makeIcon({set: 'tabler', icon: 'device-floppy', width: 16, height: 16});
+const DevelopersIcon = makeIcon({set: 'tabler', icon: 'tools', width: 16, height: 16});
+// const BugIcon = makeIcon({set: 'tabler', icon: 'bug', width: 16, height: 16});
+const BracesIcon = makeIcon({set: 'tabler', icon: 'braces', width: 16, height: 16});
+// const TerminalIcon = makeIcon({set: 'tabler', icon: 'terminal-2', width: 16, height: 16});
+const PlainTextIcon = makeIcon({set: 'tabler', icon: 'align-left', width: 16, height: 16});
 
 export class DocumentMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -92,11 +100,15 @@ export class DocumentMenu implements UiLifeCycles {
       icon: () => <DocumentIcon />,
       children: [
         this.itemTypesetting(),
-        {name: 'sep-dispplay', sep: true},
+        {name: 'sep-export', sep: true},
+        this.menuExport(),
+        {name: 'sep-display', sep: true},
         this.itemDisplayMode(),
         this.itemKeyboardShortcuts(),
         {name: 'sep-nav', sep: true},
         this.menuNavigate(),
+        {name: 'sep-devs', sep: true},
+        this.menuDevelopers(),
       ],
     };
   }
@@ -272,6 +284,106 @@ export class DocumentMenu implements UiLifeCycles {
       onSelect: () => {
         mutxt.omni.close();
         mutxt.setDisplayMode(mode);
+      },
+    };
+  }
+
+  public menuExport(): MenuItem {
+    return {
+      name: 'Export',
+      icon: () => <ExportIcon />,
+      children: [this.itemSaveFile()],
+    };
+  }
+
+  public itemSaveFile(): MenuItem {
+    return {
+      name: 'Save file',
+      icon: () => <SaveIcon />,
+      right: () => <Sidetip small>{'.mutxt'}</Sidetip>,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        const data = mutxt.api.toBinary();
+        const blob = new Blob([data as BlobPart], {type: 'application/octet-stream'});
+        downloadBlob(blob, 'document.mutxt');
+      },
+    };
+  }
+
+  public menuDevelopers(): MenuItem {
+    return {
+      name: 'Developers',
+      icon: () => <DevelopersIcon />,
+      children: [
+        this.itemPeritextDump(),
+        this.itemModelDump(),
+        this.itemSlateState(),
+        this.itemPlainText(),
+      ],
+    };
+  }
+
+  public itemPeritextDump(): MenuItem {
+    return {
+      name: 'Peritext dump',
+      // icon: () => <TerminalIcon />,
+      icon: () => <PlainTextIcon />,
+      right: () => <Sidetip small>{'.txt'}</Sidetip>,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        const peritext = mutxt.peritextRef().peritext();
+        peritext.refresh();
+        const text = peritext + '';
+        const blob = new Blob([text], {type: 'text/plain'});
+        downloadBlob(blob, 'peritext.txt');
+      },
+    };
+  }
+
+  public itemModelDump(): MenuItem {
+    return {
+      name: 'JSON CRDT dump',
+      // icon: () => <TerminalIcon />,
+      icon: () => <PlainTextIcon />,
+      right: () => <Sidetip small>{'.txt'}</Sidetip>,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        const text = mutxt.obj.api.model + '';
+        const blob = new Blob([text], {type: 'text/plain'});
+        downloadBlob(blob, 'crdt-model.txt');
+      },
+    };
+  }
+
+  public itemSlateState(): MenuItem {
+    return {
+      name: 'Editor state',
+      icon: () => <BracesIcon />,
+      right: () => <Sidetip small>{'.json'}</Sidetip>,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        const text = JSON.stringify(mutxt.editor.children, null, 2);
+        const blob = new Blob([text], {type: 'application/json'});
+        downloadBlob(blob, 'editor-state.json');
+      },
+    };
+  }
+
+  public itemPlainText(): MenuItem {
+    return {
+      name: 'Plain text',
+      icon: () => <PlainTextIcon />,
+      right: () => <Sidetip small>{'.txt'}</Sidetip>,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        const text = mutxt.peritextRef().peritext().strApi().view();
+        const blob = new Blob([text], {type: 'text/plain'});
+        downloadBlob(blob, 'document.txt');
       },
     };
   }
