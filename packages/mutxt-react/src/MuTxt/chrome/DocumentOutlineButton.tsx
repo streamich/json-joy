@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {type Editor} from 'slate';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
@@ -10,6 +9,7 @@ import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {EditorContextPopup} from './EditorContextPopup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useMuTxt} from '../context';
+import type {Editor} from 'slate';
 import type {SlateEditorDocument} from '../types';
 
 const Icon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {rule, useTheme} from 'nano-theme';
-import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {useExplorer} from '../../context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';

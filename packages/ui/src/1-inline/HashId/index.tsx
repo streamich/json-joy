@@ -44,6 +44,7 @@ export const HashId: React.FC<HashIdProps> = ({value, prefix = 6, suffix = 4, fu
   }));
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: presentational hash chip; click is non-essential and screen readers expose the full value via title
     <span
       className={blockClass + dynamicClass + (className ? ` ${className}` : '')}
       style={style}

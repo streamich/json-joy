@@ -14,28 +14,6 @@ import type {FileMetadataDto} from '../../../state/file';
 const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-font', width: 16, height: 16});
 const icon = <GhostFileIcon />;
 
-const formatDate = (timestamp: number): string => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  if (diff < 60000) {
-    return 'Just now';
-  }
-  if (diff < 3600000) {
-    const mins = Math.floor(diff / 60000);
-    return `${mins} min${mins > 1 ? 's' : ''} ago`;
-  }
-  if (diff < 86400000) {
-    const hours = Math.floor(diff / 3600000);
-    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  }
-  if (diff < 604800000) {
-    const days = Math.floor(diff / 86400000);
-    return `${days} day${days > 1 ? 's' : ''} ago`;
-  }
-  return date.toLocaleDateString();
-};
-
 export interface SavedFileProps {
   file: FileMetadataDto;
 }

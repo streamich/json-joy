@@ -63,6 +63,9 @@ export const DateTime: React.FC<DateTimeProps> = ({
 }) => {
   const date = toDate(value);
 
+  const time = date.getTime();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: depend on the timestamp, not the Date instance, to avoid recomputing for equivalent dates
   const dateLabel = React.useMemo(() => {
     if (timeOnly) return '';
     return new Intl.DateTimeFormat(locale, {
@@ -70,8 +73,9 @@ export const DateTime: React.FC<DateTimeProps> = ({
       month: long ? 'long' : 'short',
       year: 'numeric',
     }).format(date);
-  }, [date.getTime(), timeOnly, long, locale]);
+  }, [time, timeOnly, long, locale]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: depend on the timestamp, not the Date instance, to avoid recomputing for equivalent dates
   const timeLabel = React.useMemo(() => {
     if (dateOnly) return '';
     return new Intl.DateTimeFormat(locale, {
@@ -80,7 +84,7 @@ export const DateTime: React.FC<DateTimeProps> = ({
       second: seconds ? '2-digit' : undefined,
       hour12: false,
     }).format(date);
-  }, [date.getTime(), dateOnly, seconds, locale]);
+  }, [time, dateOnly, seconds, locale]);
 
   const dynamicDateClass = useRule((t) => ({col: t.g(0.2)}));
   const dynamicTimeClass = useRule((t) => ({col: t.g(0.5)}));

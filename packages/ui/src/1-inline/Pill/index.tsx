@@ -69,6 +69,7 @@ export const Pill: React.FC<PillProps> = ({color = 'neutral', solid, small, clas
   });
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: presentational pill; click is non-essential and not focusable by default
     <span
       className={blockClass + (small ? smallClass : '') + dynamicClass + (className ? ` ${className}` : '')}
       style={style}

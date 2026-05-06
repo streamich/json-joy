@@ -7,7 +7,6 @@ import {
   Element as SlateElement,
   type Location,
   type Span,
-  Transforms,
 } from 'slate';
 import {ReactEditor} from 'slate-react';
 import type {CustomElement, MarkFormat} from '../types';

@@ -9,6 +9,7 @@ const Frame: React.FC<{html: string}> = ({html}) => (
     style={{padding: 24, boxSizing: 'border-box', minHeight: '100vh'}}
     // The string is parsed as HTML by the browser; React never touches the
     // <mu-txt> element after this — the same path a CDN consumer takes.
+    // biome-ignore lint/security/noDangerouslySetInnerHtml: storybook-only fixture rendering trusted, hardcoded HTML to mirror the CDN consumer path
     dangerouslySetInnerHTML={{__html: html}}
   />
 );

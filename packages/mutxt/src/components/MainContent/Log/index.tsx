@@ -3,7 +3,6 @@ import {useT} from 'use-t';
 import {useExplorer} from '../../../context';
 import {useBehaviorSubject, useBehaviorSubjectOpt} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonCrdtLog} from '@jsonjoy.com/collaborative-ui/lib/JsonCrdtLog';
-import {DemoDisplay} from '@jsonjoy.com/collaborative-ui/lib/DemoDisplay';
 import * as ScrollArea from '@jsonjoy.com/ui/src/4-card/ScrollArea';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';

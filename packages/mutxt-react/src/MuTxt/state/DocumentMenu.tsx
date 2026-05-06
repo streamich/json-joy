@@ -157,7 +157,6 @@ export class DocumentMenu implements UiLifeCycles {
   }
 
   public menuNavigate(): MenuItem {
-    const items = this.outlineItems();
     return {
       name: 'Navigate',
       expand: 5,

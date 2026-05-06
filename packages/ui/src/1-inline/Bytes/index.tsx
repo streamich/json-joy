@@ -21,7 +21,7 @@ const SI_UNITS = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'];
 const BIN_UNITS = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
 
 const format = (bytes: number, binary: boolean, precision: number): {n: string; unit: string} => {
-  if (!isFinite(bytes) || bytes === 0) return {n: '0', unit: 'B'};
+  if (!Number.isFinite(bytes) || bytes === 0) return {n: '0', unit: 'B'};
   const sign = bytes < 0 ? '-' : '';
   const abs = Math.abs(bytes);
   const base = binary ? 1024 : 1000;

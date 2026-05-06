@@ -6,10 +6,6 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {templates} from './templates';
 import type {MuTxtAppState} from '.';
 
-const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment', width: 16, height: 16});
-const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text', width: 16, height: 16});
-const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight', width: 16, height: 16});
-// const FileJsonIcon = makeIcon({set: 'lucide_v1', icon: 'file-json-2', width: 16, height: 16});
 const FileMuTxtIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-text', width: 16, height: 16});
 const FileJsonIcon = makeIcon({set: 'bootstrap', icon: 'filetype-json', width: 16, height: 16});
 

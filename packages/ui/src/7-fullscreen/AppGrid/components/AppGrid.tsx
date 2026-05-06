@@ -60,6 +60,7 @@ export const AppGrid: React.FC<AppGridProps> = ({
   const [t] = useT();
   const hasLeft = !!left;
   const hasRight = !!right;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: overlayBreakpoint only consulted on initial state creation; should not recreate state when it changes
   const state = React.useMemo(() => {
     if (_state) return _state;
     const s = new AppGridState();
@@ -68,7 +69,6 @@ export const AppGrid: React.FC<AppGridProps> = ({
       s.rightState.next('close');
     }
     return s;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_state]);
   const leftSize = state.leftSize.use();
   const rightSize = state.rightSize.use();

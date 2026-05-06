@@ -48,6 +48,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   const [t] = useT();
   const state = useContextMenu();
   const search = useBehaviorSubject(state.search$);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: depth is only consulted at initial state creation; should not recreate the panel state
   const openPanel = React.useMemo(() => new OpenPanelState({armed: depth > 0}), []);
   React.useEffect(openPanel.start, []);
   const selected = useBehaviorSubject(openPanel.selected$);
