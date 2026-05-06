@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {rule, useRule, useTheme, type Theme} from 'nano-theme';
 
 const blockClass = rule({
   d: 'inline-block',
@@ -28,7 +28,7 @@ const isSemantic = (color: string): color is Exclude<DotColor, string> =>
   color === 'blue' ||
   color === 'accent';
 
-const resolveColor = (color: DotColor): string => {
+const resolveColor = (theme: Theme, color: DotColor): string => {
   if (isSemantic(color)) {
     if (color === 'neutral') return theme.g(0.5);
     return theme.color.sem[color][0];
@@ -37,7 +37,8 @@ const resolveColor = (color: DotColor): string => {
 };
 
 export const Dot: React.FC<DotProps> = ({color = 'neutral', size = 8, glow, className, style}) => {
-  const resolved = resolveColor(color);
+  const theme = useTheme();
+  const resolved = resolveColor(theme, color);
   const dynamicClass = useRule(() => ({
     bg: resolved,
     bxsh: glow ? `0 0 0 3px ${resolved}33` : undefined,

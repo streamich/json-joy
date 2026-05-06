@@ -19,6 +19,15 @@ const preview = definePreview({
         locales: 'en-US',
       },
     },
+    backgrounds: {
+      options: {
+        light: { name: 'light', value: '#F8F9FA' },
+        dark: { name: 'dark', value: '#1A1A1B' },
+      },
+    },
+    initialGlobals: {
+      backgrounds: { value: 'light' },
+    },
   },
 
   decorators: [

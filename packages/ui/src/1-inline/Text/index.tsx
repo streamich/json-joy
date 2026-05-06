@@ -1,9 +1,7 @@
 import {createElement as h, type CSSProperties, type AllHTMLAttributes} from 'react';
-import {useTheme, drule, lightTheme as theme, type ThemeFontPalette} from 'nano-theme';
+import {useTheme, drule, type ThemeFontPalette} from 'nano-theme';
 
-const createClassName = drule({
-  ...theme.font.sans,
-});
+const createClassName = drule({});
 
 export interface Props extends AllHTMLAttributes<any> {
   as?: string;
@@ -28,6 +26,7 @@ export const Text: React.FC<Props> = ({
   const theme = useTheme();
 
   const className = createClassName({
+    ...theme.font.sans,
     col: theme.g(0.1, 0.8),
   });
 

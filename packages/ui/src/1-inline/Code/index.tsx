@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {lightTheme as theme, rule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
-import type {ColorSpecifier} from '../../styles/color/types';
 
 const blockClass = rule({
   ...theme.font.mono.bold,
@@ -17,7 +16,6 @@ const blockAltClass = rule({
 });
 
 export interface CodeProps {
-  col?: ColorSpecifier;
   gray?: boolean;
   noBg?: boolean;
   size?: number;
@@ -33,7 +31,6 @@ export interface CodeProps {
 }
 
 export const Code: React.FC<CodeProps> = ({
-  col = ['neutral'],
   gray,
   noBg,
   size,
@@ -48,11 +45,10 @@ export const Code: React.FC<CodeProps> = ({
   onMouseDown,
 }) => {
   const styles = useStyles();
+
   const style: React.CSSProperties = {
-    // background: theme.g(0, 0.04),
-    color: styles.col.col(col) + '',
-    // background: styles.col.g('bg-2'),
-    background: styles.g(0.1, 0.04),
+    color: styles.neutral.g(.9, .86),
+    background: styles.neutral.g(.8, .08),
   };
 
   if (size) {
