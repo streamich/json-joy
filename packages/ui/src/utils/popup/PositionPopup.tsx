@@ -43,6 +43,12 @@ export const PositionPopup: React.FC<PositionPopupProps> = ({fadeIn, animate, ch
     const style = point.style();
     const s = el.style as any;
     for (const key in style) s[key as any] = (style as any)[key as any];
+    // Inherit writing direction from the toggle so portaled content respects RTL/LTR.
+    const toggle = point.toggle;
+    if (toggle) {
+      const dir = getComputedStyle(toggle).direction;
+      if (dir && el.dir !== dir) el.dir = dir;
+    }
   }, [point]);
 
   /**

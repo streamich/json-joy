@@ -58,7 +58,7 @@ const titleClass = rule({
 });
 
 const moreClass = rule({
-  marginLeft: 'auto',
+  marginInlineStart: 'auto',
   flexShrink: 0,
   op: 0,
   trs: 'opacity 0.2s',
@@ -117,7 +117,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
         marginInlineEnd: 0,
         fontFamily: fontFamilyOf(element.font),
         border: `1px solid ${colors.bd}`,
-        borderLeft: `3px solid ${colors.accent}`,
+        borderInlineStart: `3px solid ${colors.accent}`,
         background: colors.bg,
         color: styles.g(0.18),
         boxShadow: `0 1px 4px ${colors.shadow}`,

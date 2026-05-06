@@ -1,8 +1,18 @@
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import {FixedColumn} from '../../3-list-item/FixedColumn';
 import {MiniTitle} from '../../3-list-item/MiniTitle';
 import Arrow from '../../icons/interactive/Arrow';
 import {ToolbarItem, type ToolbarItemProps} from './ToolbarItem';
+
+const arrowFlipClass = rule({
+  d: 'inline-flex',
+  ai: 'center',
+  jc: 'center',
+  '&:dir(rtl)': {
+    transform: 'scaleX(-1)',
+  },
+});
 
 export interface ToolbarTextItemProps extends Partial<ToolbarItemProps> {
   disabled?: boolean;
@@ -22,7 +32,11 @@ export const ToolbarTextItem: React.FC<ToolbarTextItemProps> = ({
   children,
   ...rest
 }) => {
-  const arrow = <Arrow direction={'r'} width={16} height={16} />;
+  const arrow = (
+    <span className={arrowFlipClass}>
+      <Arrow direction={'r'} width={16} height={16} />
+    </span>
+  );
   const narrow = rest.small && !children;
 
   return (
@@ -43,7 +57,9 @@ export const ToolbarTextItem: React.FC<ToolbarTextItemProps> = ({
       {children ? (
         <FixedColumn right={16} style={{alignItems: 'center'}}>
           <MiniTitle>{children}</MiniTitle>
-          <div style={{marginRight: -2, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>{arrow}</div>
+          <div style={{marginInlineEnd: -2, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            {arrow}
+          </div>
         </FixedColumn>
       ) : (
         arrow

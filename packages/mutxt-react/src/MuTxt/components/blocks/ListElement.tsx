@@ -15,12 +15,12 @@ import type {
 
 const listClass = rule({
   m: '0 0 16px',
-  pl: '24px',
+  paddingInlineStart: '24px',
 });
 
 const checklistClass = rule({
   m: '0 0 16px',
-  pl: '24px',
+  paddingInlineStart: '24px',
   listStyle: 'none',
 });
 
@@ -39,7 +39,7 @@ const checklistItemClass = rule({
 
 const checkboxWrapClass = rule({
   pos: 'absolute',
-  l: '-24px',
+  insetInlineStart: '-24px',
   t: '6px',
   d: 'inline-flex',
   ai: 'center',
@@ -101,7 +101,7 @@ export const ListContainerElement: React.FC<ListContainerElementProps> = ({attri
       <ol
         {...attributes}
         className={listClass}
-        style={{paddingLeft: '26px', listStyleType: element.olType ?? 'decimal'}}
+        style={{paddingInlineStart: '26px', listStyleType: element.olType ?? 'decimal'}}
       >
         {children}
       </ol>

@@ -58,7 +58,7 @@ export const Outline: React.FC<OutlineProps> = ({
         className +
         blockClass({
           bg: styles.g(0, 0.08),
-          ta: center ? 'center' : 'left',
+          ta: center ? 'center' : 'start',
           bd: disabled
             ? `1px dotted ${styles.g(0.8)}`
             : active

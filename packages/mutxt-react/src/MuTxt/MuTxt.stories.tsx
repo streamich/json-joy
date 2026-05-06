@@ -3,8 +3,13 @@ import preview from '../../../../.storybook/preview';
 import {MuTxt} from './MuTxt';
 import type {SlateEditorDocument, TwoColumnsElement} from './types';
 
-const Wrap: React.FC<{children: React.ReactNode; scroll?: boolean}> = ({children, scroll}) => (
+const Wrap: React.FC<{children: React.ReactNode; scroll?: boolean; dir?: 'ltr' | 'rtl'}> = ({
+  children,
+  scroll,
+  dir,
+}) => (
   <div
+    dir={dir}
     style={{
       minHeight: '100vh',
       ...(scroll ? {height: '100vh', overflow: 'auto'} : {}),
@@ -994,6 +999,130 @@ export const ReadOnly = meta.story({
       <MuTxt autoFocus={false} fromSlate={kitchenSinkValue} minHeight={440} readOnly />
     </Wrap>
   ),
+});
+
+const rtlValue: SlateEditorDocument = [
+  {type: 'h1', children: [{text: 'الكتابة من اليمين إلى اليسار'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'هذه فقرة عربية تحتوي على نص '},
+      {text: 'عريض', bold: true},
+      {text: ' و'},
+      {text: 'مائل', italic: true},
+      {text: ' و'},
+      {text: 'تحت السطر', underline: true},
+      {text: '. كما تحتوي على كلمة إنجليزية مثل '},
+      {text: 'TypeScript', code: true},
+      {text: ' وعنوان '},
+      {text: 'jsonjoy.com', a: {href: 'https://jsonjoy.com'}},
+      {text: ' لاختبار سلوك النص ثنائي الاتجاه (BiDi).'},
+    ],
+  },
+  {type: 'h2', children: [{text: 'עברית — בלוקים שונים'}]},
+  {
+    type: 'blockquote',
+    children: [
+      {text: 'ציטוט בעברית: שורת המבטא של ציטוט אמורה להופיע בצד ההתחלה הלוגי של הבלוק, לא תמיד בצד שמאל.'},
+    ],
+  },
+  {
+    type: 'callout',
+    color: '#07f',
+    icon: '💡',
+    title: 'تنبيه',
+    children: [{text: 'يجب أن يظهر شريط اللون على جانب البداية المنطقي في وضع RTL.'}],
+  },
+  {type: 'h2', children: [{text: 'قوائم'}]},
+  {
+    type: 'ul',
+    children: [
+      {type: 'li', children: [{text: 'عنصر أول في قائمة غير مرتبة.'}]},
+      {type: 'li', children: [{text: 'عنصر ثانٍ يحتوي على كلمة لاتينية: '}, {text: 'inline-start', code: true}]},
+      {type: 'li', children: [{text: 'عنصر ثالث.'}]},
+    ],
+  },
+  {
+    type: 'ol',
+    children: [
+      {type: 'li', children: [{text: 'الخطوة الأولى.'}]},
+      {type: 'li', children: [{text: 'الخطوة الثانية.'}]},
+      {type: 'li', children: [{text: 'الخطوة الثالثة.'}]},
+    ],
+  },
+  {type: 'h2', children: [{text: 'كود برمجي'}]},
+  {
+    type: 'p',
+    children: [
+      {text: 'يجب أن تبقى كتلة الكود التالية بمحاذاة من اليسار إلى اليمين حتى داخل مستند RTL:'},
+    ],
+  },
+  {
+    type: 'code-block',
+    language: 'ts',
+    fileName: 'example.ts',
+    children: [
+      {
+        text: "import {Model} from 'json-joy/lib/json-crdt';\n\nconst model = Model.create();\nmodel.api.obj().set('title', 'مرحبا');\nconsole.log(model.view());",
+      },
+    ],
+  },
+  {
+    type: 'p',
+    children: [
+      {text: 'نص مختلط: '},
+      {text: 'Hello world', bold: true},
+      {text: ' داخل فقرة عربية، يتبعه رقم 12345 ثم URL: '},
+      {text: 'https://github.com/streamich/json-joy', a: {href: 'https://github.com/streamich/json-joy'}},
+      {text: '.'},
+    ],
+  },
+  {
+    type: 'p',
+    align: 'center',
+    children: [{text: 'فقرة موسطة لاختبار محاذاة النص.'}],
+  },
+];
+
+export const RightToLeft = meta.story({
+  render: () => (
+    <Wrap dir="rtl">
+      <MuTxt autoFocus={false} fromSlate={rtlValue} minHeight={440} />
+    </Wrap>
+  ),
+});
+
+export const RightToLeftScroll = meta.story({
+  render: () => (
+    <Wrap dir="rtl">
+      <MuTxt autoFocus={false} fromSlate={rtlValue} minHeight={440} height={500} />
+    </Wrap>
+  ),
+});
+
+export const RightToLeftFit = meta.story({
+  render: () => (
+    <div dir="rtl" style={{height: 600, border: '1px dashed red'}}>
+      <MuTxt autoFocus={false} fromSlate={rtlValue} heightFit />
+    </div>
+  ),
+});
+
+export const RightToLeftHtml = meta.story({
+  render: () => {
+    React.useEffect(() => {
+      const prev = document.documentElement.dir;
+      document.documentElement.dir = 'rtl';
+      return () => {
+        document.documentElement.dir = prev;
+      };
+    }, []);
+    return (
+      <Wrap>
+        <MuTxt autoFocus={false} fromSlate={rtlValue} minHeight={440} />
+      </Wrap>
+    );
+  },
 });
 
 export const CodeBlocks = meta.story({

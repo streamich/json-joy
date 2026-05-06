@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import {rsync} from '@jsonjoy.com/ui';
 import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -19,8 +20,25 @@ const MaximizeIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, heigh
 const MinimizeIcon = makeIcon({set: 'tabler', icon: 'minimize', width: 16, height: 16});
 const FullscreenIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
 const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
-const UndoIcon = makeIcon({set: 'lucide', icon: 'undo', width: 16, height: 16});
-const RedoIcon = makeIcon({set: 'lucide', icon: 'redo', width: 16, height: 16});
+
+const rtlMirrorClass = rule({
+  d: 'inline-flex',
+  ai: 'center',
+  jc: 'center',
+  '&:dir(rtl)': {
+    transform: 'scaleX(-1)',
+  },
+});
+const UndoIcon: React.FC = () => (
+  <span className={rtlMirrorClass}>
+    <Iconista set="lucide" icon="undo" width={16} height={16} />
+  </span>
+);
+const RedoIcon: React.FC = () => (
+  <span className={rtlMirrorClass}>
+    <Iconista set="lucide" icon="redo" width={16} height={16} />
+  </span>
+);
 const GoToIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 const ExportIcon = makeIcon({set: 'tabler', icon: 'file-export', width: 16, height: 16});
 const SaveIcon = makeIcon({set: 'tabler', icon: 'device-floppy', width: 16, height: 16});
@@ -63,7 +81,7 @@ export class DocumentMenu implements UiLifeCycles {
     if (size > 2) {
       children.push(
         this.itemUndo(),
-        this.itemRedo(),  
+        this.itemRedo(),
         {name: 'sep-undo', sep: true},
       );
     }
@@ -125,7 +143,7 @@ export class DocumentMenu implements UiLifeCycles {
       display: () => (
         <div
           style={{
-            paddingLeft: (item.level - 1) * 16,
+            paddingInlineStart: (item.level - 1) * 16,
             fontWeight: 400 + (3 - item.level) * 100,
             fontSize: item.level ? void 0 : '1.1em',
           }}

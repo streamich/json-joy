@@ -35,6 +35,8 @@ import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
 import {FONT_FAMILIES} from './behavior/font';
 import {Sizer} from '@jsonjoy.com/ui/lib/5-block/Sizer';
+import {s} from 'json-joy/lib/json-crdt';
+import {ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
 import type {ObjNode} from 'json-joy/lib/json-crdt';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
@@ -132,7 +134,7 @@ export interface MuTxtProps {
   onTitleSubmit?: (title: string) => void;
 }
 
-export const MuTxt: React.FC<MuTxtProps> = ({
+const MuTxtInner: React.FC<MuTxtProps> = ({
   obj,
   fromSlate,
   placeholder = DEF_PLACEHOLDER,
@@ -169,7 +171,10 @@ export const MuTxt: React.FC<MuTxtProps> = ({
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];
-    const state = new MuTxtState(editor, obj as ObjApi<ObjNode>, {collaborative: !!presence, readOnly, fromSlate});
+    const ownedObj: ObjApi<ObjNode> = obj
+      ? (obj as ObjApi<ObjNode>)
+      : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
+    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate});
     return [editor, state];
   }, [obj, _state]);
   const peritextRef: PeritextRef = state.peritextRef;
@@ -396,21 +401,25 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   }
 
   return (
-    <EnsureUiProvider>
-      <SlateEditorContextProvider state={state}>
-        <PortalParentProvider value={displayMode === 'fullscreen' ? shellEl : null}>
-          <Sizer
-            state={state.sizer}
-            minWidth={300}
-            handlePadding={64}
-            handleMaxHeight={500}
-            handleWidth={3}
-            style={heightFit ? {height: '100%', minHeight: 0} : undefined}
-          >
-            {content}
-          </Sizer>
-        </PortalParentProvider>
-      </SlateEditorContextProvider>
-    </EnsureUiProvider>
+    <SlateEditorContextProvider state={state}>
+      <PortalParentProvider value={displayMode === 'fullscreen' ? shellEl : null}>
+        <Sizer
+          state={state.sizer}
+          minWidth={300}
+          handlePadding={64}
+          handleMaxHeight={500}
+          handleWidth={3}
+          style={heightFit ? {height: '100%', minHeight: 0} : undefined}
+        >
+          {content}
+        </Sizer>
+      </PortalParentProvider>
+    </SlateEditorContextProvider>
   );
 };
+
+export const MuTxt: React.FC<MuTxtProps> = (props) => (
+  <EnsureUiProvider>
+    <MuTxtInner {...props} />
+  </EnsureUiProvider>
+);

@@ -7,7 +7,7 @@ import {Thumb} from './Thumb';
 const blockClass = drule({
   pos: 'absolute',
   top: 0,
-  r: 0,
+  insetInlineEnd: 0,
   b: 0,
   trs: 'opacity .2s ease',
   z: 1,

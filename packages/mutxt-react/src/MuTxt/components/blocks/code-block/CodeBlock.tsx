@@ -80,7 +80,7 @@ const metaActionsClass = rule({
   d: 'inline-flex',
   ai: 'center',
   gap: '8px',
-  marginLeft: 'auto',
+  marginInlineStart: 'auto',
 });
 
 const metaLabelClass = rule({
@@ -223,7 +223,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
   };
 
   const codeContent = (
-    <pre className={codePreClass}>
+    <pre dir="ltr" className={codePreClass}>
       {showLineNumbers ? (
         <div contentEditable={false} className={gutterClass} aria-hidden="true">
           {lineNumbers}
@@ -252,7 +252,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
                 className={metaLabelClass}
                 style={{
                   opacity: !fileNameValue ? 0.68 : undefined,
-                  marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft,
+                  marginInlineStart: !fileNameValue ? 0 : metaLabelMarginLeft,
                 }}
               >
                 {fileNameValue || 'Code block'}
@@ -268,7 +268,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({attributes, children, eleme
                 className={metaLabelClass}
                 style={{
                   opacity: !fileNameValue ? 0.68 : undefined,
-                  marginLeft: !fileNameValue ? 0 : metaLabelMarginLeft,
+                  marginInlineStart: !fileNameValue ? 0 : metaLabelMarginLeft,
                 }}
               >
                 {fileNameValue || <Iconista set="bootstrap" icon="file-earmark-code" width={16} height={16} />}

@@ -25,7 +25,9 @@ const headerClass = rule({
   jc: 'space-between',
   gap: '12px',
   h: HEADER_HEIGHT + 'px',
-  pd: '0 12px 0 32px',
+  paddingBlock: 0,
+  paddingInlineStart: '32px',
+  paddingInlineEnd: '12px',
   bxz: 'border-box',
 });
 

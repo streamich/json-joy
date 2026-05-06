@@ -173,7 +173,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       }
       metadata={[thing.mimeType, formatFileSize(thing.size)].filter(Boolean).join(' • ')}
       actions={
-        <div style={{display: 'flex', gap: 16, paddingRight: 4}}>
+        <div style={{display: 'flex', gap: 16, paddingInlineEnd: 4}}>
           <Button
             compact
             size={-1}
@@ -202,7 +202,9 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       }}
     >
       {body}
-      {!!mediaKind && selected && <div style={{position: 'absolute', top: 0, right: -46}}>{options}</div>}
+      {!!mediaKind && selected && (
+        <div style={{position: 'absolute', top: 0, insetInlineEnd: -46}}>{options}</div>
+      )}
       {selected && (
         <div
           contentEditable={false}

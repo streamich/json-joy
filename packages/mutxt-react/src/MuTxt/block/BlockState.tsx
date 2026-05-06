@@ -1,4 +1,5 @@
 import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
+import {ReactEditor} from 'slate-react';
 import {BlockMenu} from './BlockMenu';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MuTxtState} from '../state/MuTxtState';
@@ -60,14 +61,17 @@ export class BlockState implements UiLifeCycles {
     const selection = mutxt.selection.value;
     if (!cursor || selection) return;
     try {
-      const x = mutxt.editableBox?.value[0];
-      if (!x) return;
+      const box = mutxt.editableBox?.value;
+      if (!box || !box[2]) return;
       const focusRect = mutxt.api.focusRect();
       if (!focusRect) return;
+      const editableEl = ReactEditor.toDOMNode(mutxt.editor as ReactEditor, mutxt.editor);
+      const isRtl = getComputedStyle(editableEl).direction === 'rtl';
+      const [x, , width] = box;
       return {
-        x: x + 12,
+        x: isRtl ? x + width - 12 : x + 12,
         y: focusRect.top + focusRect.height / 2,
-        dx: -1,
+        dx: isRtl ? 1 : -1,
         dy: 0,
       };
     } catch {
