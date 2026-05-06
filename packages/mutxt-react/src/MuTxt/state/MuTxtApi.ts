@@ -88,7 +88,7 @@ export class MuTxtApi {
 
   /**
    * Move the user's attention to a specific block. Smooth-scrolls the block
-   * into view, then places the caret at its start and refocuses the editor.
+   * into view.
    */
   public navigateTo(path: Path): boolean {
     const editor = this.editor;

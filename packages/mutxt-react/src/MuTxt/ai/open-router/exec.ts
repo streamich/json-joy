@@ -13,6 +13,7 @@ export const chat = async (body: OpenRouterRequestBody, key: string) => {
     },
     body: JSON.stringify(body),
   });
+  if (!response.ok) throw new Error(`Request failed with ${response.status}`);
   const data = await response.json();
   if (data.error) throw new Error(data.error);
   return data as OpenRouterResponse;

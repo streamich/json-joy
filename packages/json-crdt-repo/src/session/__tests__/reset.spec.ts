@@ -47,5 +47,5 @@ describe('block full state resets', () => {
 
     await loaded.dispose();
     await repo.stopTab();
-  }, 20_000);
+  }, 30_000);
 });

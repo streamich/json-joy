@@ -101,13 +101,3 @@ export interface Usage {
   completion_tokens: number;
   total_tokens: number;
 }
-
-/** Re-using the ToolCall from the request module */
-export interface ToolCall {
-  id: string;
-  type: 'function';
-  function: {
-    name: string;
-    arguments: string; // Valid JSON string
-  };
-}
