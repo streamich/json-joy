@@ -11657,6 +11657,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mutxt-element@workspace:packages/mutxt-element":
+  version: 0.0.0-use.local
+  resolution: "mutxt-element@workspace:packages/mutxt-element"
+  dependencies:
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    css-loader: "npm:^7.1.2"
+    mutxt-react: "workspace:*"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
+    slate: "npm:^0.123.0"
+    slate-dom: "npm:^0.123.0"
+    slate-history: "npm:^0.113.1"
+    slate-react: "npm:^0.123.0"
+    style-loader: "npm:^4.0.0"
+    ts-loader: "npm:^9.5.4"
+    tslib: "npm:^2.8.1"
+    webpack: "npm:^5.95.0"
+    webpack-cli: "npm:^5.1.4"
+  languageName: unknown
+  linkType: soft
+
 "mutxt-react@workspace:*, mutxt-react@workspace:packages/mutxt-react":
   version: 0.0.0-use.local
   resolution: "mutxt-react@workspace:packages/mutxt-react"
