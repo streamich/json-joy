@@ -25,7 +25,7 @@ const preview = definePreview({
     (Story) => {
       const [globals] = useGlobals();
       const color = globals?.backgrounds?.value;
-      const isDark = color ? String(color)[1].toLowerCase() !== 'f' : false;
+      const isDark = color === 'dark';
       return React.createElement(
         UiProvider,
         { theme: isDark ? 'dark' : 'light' } as any,
