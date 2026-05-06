@@ -12,7 +12,7 @@ import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {DebounceQueue} from '../util/DebounceQueue';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
-import type {MuTxtApi} from 'mutxt-react';
+import type {MuTxtApi} from 'mu-txt-react';
 import type {IFileStorage} from './file-storage';
 import type {Model} from 'json-joy/lib/json-crdt';
 

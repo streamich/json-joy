@@ -65,11 +65,11 @@ const config: Configuration & {devServer?: DevServerConfiguration} = {
               const m = req.match(/^@jsonjoy\.com\/([^/]+)$/)!;
               rewritten = path.join(root, m[1], 'src');
             } else {
-              const mutxtReactLibMatch = req.match(/^mutxt-react\/lib(?:\/(.+))?$/);
+              const mutxtReactLibMatch = req.match(/^mu-txt-react\/lib(?:\/(.+))?$/);
               if (mutxtReactLibMatch) {
-                rewritten = path.join(root, 'mutxt-react', 'src', mutxtReactLibMatch[1] ?? '');
-              } else if (req === 'mutxt-react') {
-                rewritten = path.join(root, 'mutxt-react', 'src');
+                rewritten = path.join(root, 'mu-txt-react', 'src', mutxtReactLibMatch[1] ?? '');
+              } else if (req === 'mu-txt-react') {
+                rewritten = path.join(root, 'mu-txt-react', 'src');
               }
             }
 

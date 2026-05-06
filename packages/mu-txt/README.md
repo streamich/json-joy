@@ -1,4 +1,4 @@
-# `mutxt`
+# `mu-txt`
 
 This package contains the `mutxt.com` web app. 
 
@@ -7,15 +7,15 @@ This package contains the `mutxt.com` web app.
 From the monorepo root:
 
 ```sh
-yarn workspace mutxt dev
+yarn workspace mu-txt dev
 ```
 
 Other useful commands:
 
 ```sh
-yarn workspace mutxt build
-yarn workspace mutxt typecheck
-yarn workspace mutxt clean
+yarn workspace mu-txt build
+yarn workspace mu-txt typecheck
+yarn workspace mu-txt clean
 ```
 
 ## Deployment
@@ -23,8 +23,8 @@ yarn workspace mutxt clean
 ### Wrangler / Cloudflare Pages
 
 ```sh
-yarn workspace mutxt deploy
-yarn workspace mutxt deploy:preview
+yarn workspace mu-txt deploy
+yarn workspace mu-txt deploy:preview
 ```
 
 Wrangler publishes the generated `dist/` folder.

@@ -1,5 +1,5 @@
 {
-  "name": "mutxt-element",
+  "name": "mu-txt-element",
   "publishConfig": {
     "access": "public"
   },
@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/mutxt-element"
+    "directory": "packages/mu-txt-element"
   },
   "license": "AGPL-3.0-only",
   "funding": {
@@ -40,8 +40,8 @@
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
-  "unpkg": "dist/mutxt-element.min.js",
-  "jsdelivr": "dist/mutxt-element.min.js",
+  "unpkg": "dist/mu-txt-element.min.js",
+  "jsdelivr": "dist/mu-txt-element.min.js",
   "sideEffects": [
     "./lib/index.js",
     "./src/index.ts"
@@ -53,13 +53,13 @@
   ],
   "scripts": {
     "clean": "npx rimraf lib dist typedocs coverage gh-pages yarn-error.log",
-    "build": "tsc -b tsconfig.build.json",
+    "build:tsc": "tsc -b tsconfig.build.json",
     "bundle": "webpack --mode production",
-    "build:all": "yarn build && yarn bundle",
+    "build": "yarn build:tsc && yarn bundle",
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
-    "mutxt-react": "workspace:*",
+    "mu-txt-react": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "slate": "^0.123.0",

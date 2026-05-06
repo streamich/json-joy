@@ -1,5 +1,5 @@
 {
-  "name": "mutxt-react",
+  "name": "mu-txt-react",
   "publishConfig": {
     "access": "public"
   },
@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/mutxt-react"
+    "directory": "packages/mu-txt-react"
   },
   "license": "AGPL-3.0-only",
   "funding": {

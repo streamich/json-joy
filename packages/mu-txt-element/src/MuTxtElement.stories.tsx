@@ -2,7 +2,7 @@ import * as React from 'react';
 import preview from '../../../.storybook/preview';
 import './index';
 import type {MuTxtElement} from './index';
-import type {MuTxtApi, SlateEditorDocument} from 'mutxt-react';
+import type {MuTxtApi, SlateEditorDocument} from 'mu-txt-react';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
 import {s} from 'json-joy/lib/json-crdt';
 
@@ -13,7 +13,7 @@ const Wrap: React.FC<{children: React.ReactNode; height?: number | string}> = ({
 );
 
 const meta = preview.meta({
-  title: 'mutxt-element',
+  title: 'mu-txt-element',
 });
 
 export const Default = meta.story({

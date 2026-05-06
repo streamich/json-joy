@@ -8,11 +8,11 @@ const config: Configuration = {
   devtool: 'source-map',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'mutxt-element.min.js',
+    filename: 'mu-txt-element.min.js',
     globalObject: 'self',
     library: {
       type: 'window',
-      name: 'mutxtElement',
+      name: 'muTxtElement',
     },
     clean: true,
   },

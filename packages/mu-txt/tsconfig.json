@@ -24,7 +24,7 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {"path": "../mutxt-react"},
+    {"path": "../mu-txt-react"},
     {"path": "../json-joy"},
     {"path": "../json-pack"},
     {"path": "../ui"},

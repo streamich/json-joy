@@ -23,13 +23,6 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {"path": "../mutxt-react/tsconfig.build.json"},
-    {"path": "../json-joy/tsconfig.build.json"},
-    {"path": "../json-pack/tsconfig.build.json"},
-    {"path": "../ui/tsconfig.build.json"},
-    {"path": "../util/tsconfig.build.json"},
-    {"path": "../collaborative-ui/tsconfig.build.json"},
-    {"path": "../collaborative-slate/tsconfig.build.json"},
-    {"path": "../collaborative-peritext/tsconfig.build.json"}
+    {"path": "../mu-txt-react/tsconfig.build.json"}
   ]
 }

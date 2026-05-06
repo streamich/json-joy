@@ -1,5 +1,5 @@
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
-import {formatKeys} from 'mutxt-react/lib/MuTxt/util/keys';
+import {formatKeys} from 'mu-txt-react/lib/MuTxt/util/keys';
 import * as React from 'react';
 import {useT} from 'use-t';
 
@@ -27,7 +27,7 @@ export const HelpText: React.FC<HelpTextProps> = () => {
       <h3>{t('History')}</h3>
       <p>
         {t(
-          'Below the editor, you can find the history of all changes. Click on any entry to view the document at that point in time.',
+          'Below the editor, you can find the history of all changes.',
         )}
       </p>
       {/* 

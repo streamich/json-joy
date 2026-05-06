@@ -24,6 +24,6 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {"path": "../mutxt-react"}
+    {"path": "../mu-txt-react"}
   ]
 }
