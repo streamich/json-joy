@@ -193,10 +193,15 @@ export class MuTxtAppState {
       createdAt: now,
       updatedAt: now,
     };
-    const file = new OpenFile(meta, log, {
-      storage: this.storage,
-      onPersisted: this.handleFilePersisted,
-    }, size);
+    const file = new OpenFile(
+      meta,
+      log,
+      {
+        storage: this.storage,
+        onPersisted: this.handleFilePersisted,
+      },
+      size,
+    );
     this.files$.next([...this.files$.getValue(), file]);
     this.tabs.add(file.toTab());
     this.tabs.selectById(file.meta.id);
@@ -281,12 +286,7 @@ export class MuTxtAppState {
     this.createNewMuTxtWithFile(file, uint8, name);
   };
 
-  public readonly addLog = async (
-    uint8: Uint8Array,
-    name?: string,
-    dto?: FileMetadataDto,
-    size: number = 0,
-  ) => {
+  public readonly addLog = async (uint8: Uint8Array, name?: string, dto?: FileMetadataDto, size: number = 0) => {
     let log: Log<any>;
     try {
       log = await OpenFile.decodeLog(uint8, this.sid);
@@ -301,10 +301,6 @@ export class MuTxtAppState {
     }
     if (this.stopped) return;
     this.openFile(log, name, dto, size);
-  };
-
-  public readonly addTrace = async (uint8: Uint8Array, trace: TraceDefinition) => {
-    return await this.addLog(uint8, trace.name, trace.display);
   };
 
   public readonly addFiles = async (files: File[]) => {

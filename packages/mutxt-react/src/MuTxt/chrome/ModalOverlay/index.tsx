@@ -102,7 +102,9 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({open, title, onClose,
             <BasicButtonClose rounder onClick={onClose} title="Close (Esc)" />
           </div>
         </ScrollArea.Header>
-        <ScrollArea.Viewport tabIndex={-1} style={{outline: 'none'}}>{children}</ScrollArea.Viewport>
+        <ScrollArea.Viewport tabIndex={-1} style={{outline: 'none'}}>
+          {children}
+        </ScrollArea.Viewport>
         <ScrollArea.ScrollRail>
           <ScrollArea.Thumb />
         </ScrollArea.ScrollRail>

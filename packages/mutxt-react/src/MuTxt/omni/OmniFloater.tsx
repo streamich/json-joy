@@ -7,42 +7,44 @@ import {useMuTxt} from '../context';
 
 export type OmniFloaterProps = {};
 
-export const OmniFloater: React.FC<OmniFloaterProps> = isTouch ? () => null : () => {
-  const mutxt = useMuTxt();
-  const omni = mutxt.omni;
-  const open = omni.open.use();
-  const point = omni.point.use();
-  const mode = omni.mode.use();
+export const OmniFloater: React.FC<OmniFloaterProps> = isTouch
+  ? () => null
+  : () => {
+      const mutxt = useMuTxt();
+      const omni = mutxt.omni;
+      const open = omni.open.use();
+      const point = omni.point.use();
+      const mode = omni.mode.use();
 
-  const clickAwayRef = useClickAway(React.useCallback(() => omni.close(), [omni]));
+      const clickAwayRef = useClickAway(React.useCallback(() => omni.close(), [omni]));
 
-  React.useEffect(() => {
-    if (!open) return;
-    const close = () => omni.close();
-    const unsubScroll = mutxt.scroll.scrollTop$.subscribe(close);
-    const unsubWnd = mutxt.wnd.subscribe(close);
-    return () => {
-      unsubScroll();
-      unsubWnd();
+      React.useEffect(() => {
+        if (!open) return;
+        const close = () => omni.close();
+        const unsubScroll = mutxt.scroll.scrollTop$.subscribe(close);
+        const unsubWnd = mutxt.wnd.subscribe(close);
+        return () => {
+          unsubScroll();
+          unsubWnd();
+        };
+      }, [open, mutxt, omni]);
+
+      if (!open || !point) return null;
+
+      const menu = omni.menu.build();
+      const minWidth = mode === 'palette' ? 480 : 320;
+
+      return (
+        <PositionAtPoint point={point} animate>
+          <div
+            ref={clickAwayRef}
+            onMouseDown={(e) => {
+              if ((e.target as HTMLElement).tagName !== 'INPUT') e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <ContextMenu inset showSearch menu={{...menu, minWidth}} onEsc={omni.close} />
+          </div>
+        </PositionAtPoint>
+      );
     };
-  }, [open, mutxt, omni]);
-
-  if (!open || !point) return null;
-
-  const menu = omni.menu.build();
-  const minWidth = mode === 'palette' ? 480 : 320;
-
-  return (
-    <PositionAtPoint point={point} animate>
-      <div
-        ref={clickAwayRef}
-        onMouseDown={(e) => {
-          if ((e.target as HTMLElement).tagName !== 'INPUT') e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <ContextMenu inset showSearch menu={{...menu, minWidth}} onEsc={omni.close} />
-      </div>
-    </PositionAtPoint>
-  );
-};

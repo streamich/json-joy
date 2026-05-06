@@ -42,9 +42,7 @@ const Wrap: React.FC<{children: React.ReactNode}> = ({children}) => (
   <Paper style={{padding: 24, width: 360}}>{children}</Paper>
 );
 
-const Chevron: React.FC = () => (
-  <span style={{opacity: 0.5, marginLeft: 4, fontSize: 11}}>{'⌄'}</span>
-);
+const Chevron: React.FC = () => <span style={{opacity: 0.5, marginLeft: 4, fontSize: 11}}>{'⌄'}</span>;
 
 export const Primary: StoryObj<typeof meta> = {
   render: () => (

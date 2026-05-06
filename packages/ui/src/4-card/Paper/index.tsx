@@ -34,8 +34,19 @@ export interface PaperProps extends React.AllHTMLAttributes<any> {
 }
 
 export const Paper: React.FC<PaperProps> = (props) => {
-  const {level = 0, fill = 0, round, hover, hoverBg, hoverLite, hoverElevate, contrast, noOutline, ref, ...rest} =
-    props;
+  const {
+    level = 0,
+    fill = 0,
+    round,
+    hover,
+    hoverBg,
+    hoverLite,
+    hoverElevate,
+    contrast,
+    noOutline,
+    ref,
+    ...rest
+  } = props;
   const theme = useTheme();
   const dynamicHoverBlockClass = useHoverBlockClass();
 

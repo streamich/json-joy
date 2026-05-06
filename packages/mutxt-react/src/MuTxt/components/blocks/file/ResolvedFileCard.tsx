@@ -202,9 +202,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
       }}
     >
       {body}
-      {!!mediaKind && selected && (
-        <div style={{position: 'absolute', top: 0, insetInlineEnd: -46}}>{options}</div>
-      )}
+      {!!mediaKind && selected && <div style={{position: 'absolute', top: 0, insetInlineEnd: -46}}>{options}</div>}
       {selected && (
         <div
           contentEditable={false}

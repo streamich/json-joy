@@ -71,13 +71,7 @@ export const App: React.FC = () => {
           )
         }
       />
-      {drawerFile && (
-        <FileOptionsDrawer
-          file={drawerFile}
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-        />
-      )}
+      {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
     </ctx.Provider>
   );
 };

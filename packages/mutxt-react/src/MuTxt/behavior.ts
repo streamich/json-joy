@@ -11,7 +11,7 @@ import type {
 import {removeLink} from './behavior/link';
 import {isListType, LIST_TYPES} from './behavior/lists';
 
-export {isListType, LIST_TYPES}
+export {isListType, LIST_TYPES};
 
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
 export const MARKS: MarkFormat[] = [
@@ -251,16 +251,7 @@ export const tryExitCodeBlockOnTripleEnter = (editor: Editor): boolean => {
   return insertCodeBlockExit(editor);
 };
 
-const HEADING_TYPES: ReadonlySet<string> = new Set([
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'h5',
-  'h6',
-  'title',
-  'subtitle',
-]);
+const HEADING_TYPES: ReadonlySet<string> = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'title', 'subtitle']);
 
 /**
  * If the caret is at offset 0 of a block whose previous sibling is an empty
@@ -302,10 +293,7 @@ export const resetBlockToPAtStart = (editor: Editor): boolean => {
   if (Node.string(block) === '') return false;
   if (!Editor.isStart(editor, selection.anchor, path)) return false;
   const isResettable =
-    HEADING_TYPES.has(block.type) ||
-    block.type === 'blockquote' ||
-    block.type === 'callout' ||
-    block.type === 'li';
+    HEADING_TYPES.has(block.type) || block.type === 'blockquote' || block.type === 'callout' || block.type === 'li';
   if (!isResettable) return false;
   if (block.type === 'li') {
     const listType = getCurrentListType(editor);

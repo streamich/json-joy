@@ -32,8 +32,7 @@ import type {ReactEditor} from 'slate-react';
 import type {CustomElement, DisplayMode, EditableWidth, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
 
-const isEditableWidth = (v: unknown): v is EditableWidth =>
-  v === 'narrow' || v === 'mid' || v === 'wide';
+const isEditableWidth = (v: unknown): v is EditableWidth => v === 'narrow' || v === 'mid' || v === 'wide';
 
 const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
 const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument =>
@@ -182,8 +181,7 @@ export class MuTxtState implements UiLifeCycles {
       const mode = this.displayMode.value;
       if (!inNativeFullscreen && mode === 'fullscreen') this.displayMode.set('inline');
     };
-    if (typeof document !== 'undefined')
-      document.addEventListener('fullscreenchange', onFullscreenChange);
+    if (typeof document !== 'undefined') document.addEventListener('fullscreenchange', onFullscreenChange);
 
     return () => {
       unbindCollaboration();
@@ -196,8 +194,7 @@ export class MuTxtState implements UiLifeCycles {
       stopIndicator();
       stopThings();
       unbindShortcuts();
-      if (typeof document !== 'undefined')
-        document.removeEventListener('fullscreenchange', onFullscreenChange);
+      if (typeof document !== 'undefined') document.removeEventListener('fullscreenchange', onFullscreenChange);
       this.kbdSourceUnbind?.();
       this.kbdSourceUnbind = undefined;
       this.kbd.dispose();
@@ -238,8 +235,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly setDisplayMode = (mode: DisplayMode): void => {
     const current = this.displayMode.value;
     if (current === mode) return;
-    if (current === 'fullscreen' && document.fullscreenElement)
-      document.exitFullscreen().catch(() => {});
+    if (current === 'fullscreen' && document.fullscreenElement) document.exitFullscreen().catch(() => {});
     if (mode === 'fullscreen') {
       const target = this.shellEl ?? document.documentElement;
       target.requestFullscreen?.().catch(() => {});

@@ -28,11 +28,13 @@ const getPlaceholderText = (element: CustomElement): React.ReactNode => {
   if (element.type === 'p')
     return (
       <>
-        Type here{!isTouch && (
+        Type here
+        {!isTouch && (
           <>
             &nbsp;or double tap <Key>Shift</Key>, <Key>Shift</Key> for menu
           </>
-        )}...
+        )}
+        ...
       </>
     );
   return typeToLabel(element.type);

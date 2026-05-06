@@ -83,13 +83,7 @@ export class BlockMenu implements UiLifeCycles {
           icon: head?.icon,
           minWidth: 269,
           expand: 0,
-          children: [
-            this.menuBlocks(),
-            this.menuHeadings(),
-            this.menuLists(),
-            this.menuLayout(),
-            this.menuStyling(),
-          ],
+          children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout(), this.menuStyling()],
         },
       ],
     };
@@ -100,13 +94,7 @@ export class BlockMenu implements UiLifeCycles {
       name: 'Block menu',
       maxToolbarItems: 4,
       minWidth: 288,
-      children: [
-        this.menuBlocks(),
-        this.menuHeadings(),
-        this.menuLists(),
-        this.menuLayout(),
-        this.menuStyling(),
-      ],
+      children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout(), this.menuStyling()],
     };
 
     if (size < 1) {
@@ -191,9 +179,7 @@ export class BlockMenu implements UiLifeCycles {
       // icon: () => <TypographyIcon />,
       expand: 4,
       sepBefore: true,
-      children: [
-        this.menuTypesetting(),
-      ],
+      children: [this.menuTypesetting()],
     };
   }
 

@@ -46,8 +46,7 @@ const parseSlateJson = (text: string): SlateEditorDocument | undefined => {
 // TODO: replace with a real markdown
 const markdownToSlate = (text: string): SlateEditorDocument => textToSlate(text);
 
-const isFormat = (v: string | null): v is MuTxtFormat =>
-  v !== null && (FORMATS as readonly string[]).includes(v);
+const isFormat = (v: string | null): v is MuTxtFormat => v !== null && (FORMATS as readonly string[]).includes(v);
 
 /** Decide which seed format to use based on attributes and presence of inputs. */
 export const resolveFormat = (
@@ -92,11 +91,7 @@ export const seedFromChildren = (
 };
 
 /** Async seed resolution from a URL or data URL via `fetch()`. */
-export const loadFromSrc = async (
-  src: string,
-  format: MuTxtFormat,
-  signal?: AbortSignal,
-): Promise<SeedProps> => {
+export const loadFromSrc = async (src: string, format: MuTxtFormat, signal?: AbortSignal): Promise<SeedProps> => {
   const response = await fetch(src, {signal});
   if (format === 'native') {
     const buffer = await response.arrayBuffer();

@@ -1022,9 +1022,7 @@ const rtlValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'עברית — בלוקים שונים'}]},
   {
     type: 'blockquote',
-    children: [
-      {text: 'ציטוט בעברית: שורת המבטא של ציטוט אמורה להופיע בצד ההתחלה הלוגי של הבלוק, לא תמיד בצד שמאל.'},
-    ],
+    children: [{text: 'ציטוט בעברית: שורת המבטא של ציטוט אמורה להופיע בצד ההתחלה הלוגי של הבלוק, לא תמיד בצד שמאל.'}],
   },
   {
     type: 'callout',
@@ -1053,9 +1051,7 @@ const rtlValue: SlateEditorDocument = [
   {type: 'h2', children: [{text: 'كود برمجي'}]},
   {
     type: 'p',
-    children: [
-      {text: 'يجب أن تبقى كتلة الكود التالية بمحاذاة من اليسار إلى اليمين حتى داخل مستند RTL:'},
-    ],
+    children: [{text: 'يجب أن تبقى كتلة الكود التالية بمحاذاة من اليسار إلى اليمين حتى داخل مستند RTL:'}],
   },
   {
     type: 'code-block',

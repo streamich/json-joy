@@ -109,10 +109,7 @@ const buildNativeDataUrl = (sample: string): string => {
 
 export const NativeFromDataUrl = meta.story({
   render: () => {
-    const url = React.useMemo(
-      () => buildNativeDataUrl('Loaded from a data URL via plain HTML.'),
-      [],
-    );
+    const url = React.useMemo(() => buildNativeDataUrl('Loaded from a data URL via plain HTML.'), []);
     return (
       <Frame
         html={`

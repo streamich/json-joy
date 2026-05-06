@@ -81,9 +81,7 @@ describe('resetBlockToParagraphAtStart()', () => {
   });
 
   test('converts a non-empty list item to a paragraph at offset 0', () => {
-    const editor = createTestEditor([
-      {type: 'ul', children: [{type: 'li', children: [{text: 'item'}]}]},
-    ]);
+    const editor = createTestEditor([{type: 'ul', children: [{type: 'li', children: [{text: 'item'}]}]}]);
     editor.selection = {
       anchor: {path: [0, 0, 0], offset: 0},
       focus: {path: [0, 0, 0], offset: 0},

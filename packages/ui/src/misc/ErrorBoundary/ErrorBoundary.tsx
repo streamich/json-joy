@@ -1,9 +1,7 @@
 import * as React from 'react';
 import type {FallbackProps} from './Fallback';
 
-const LazyFallback = React.lazy(
-  () => import(/* webpackChunkName: "error-boundary-fallback" */ './Fallback'),
-);
+const LazyFallback = React.lazy(() => import(/* webpackChunkName: "error-boundary-fallback" */ './Fallback'));
 
 export interface ErrorBoundaryProps {
   /**

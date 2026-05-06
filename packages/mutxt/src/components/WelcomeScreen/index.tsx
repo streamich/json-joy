@@ -13,11 +13,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = () => {
   const intro = (
     <div style={{padding: '16px 32px 8px'}}>
       <h2>
-        <MuTxtLogo
-          size={48}
-          style={{display: 'inline-block', verticalAlign: 'middle', margin: '-8px 0'}}
-        />{' '}
-        Workspace
+        <MuTxtLogo size={48} style={{display: 'inline-block', verticalAlign: 'middle', margin: '-8px 0'}} /> Workspace
       </h2>
       <ul>
         <li>

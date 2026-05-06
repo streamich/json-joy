@@ -228,12 +228,10 @@ const MuTxtInner: React.FC<MuTxtProps> = ({
   const editableWidthKind = state.editableWidth.use();
   const shellAvailableWidth = state.sizer.width.use();
   const shellDesiredWidth = state.sizer.content.use();
-  const actualShellWidth = shellAvailableWidth > 0
-    ? Math.min(shellAvailableWidth, shellDesiredWidth)
-    : shellDesiredWidth;
-  const computedEditableWidth = actualShellWidth > 0
-    ? computeEditableWidth(actualShellWidth, editableWidthKind)
-    : undefined;
+  const actualShellWidth =
+    shellAvailableWidth > 0 ? Math.min(shellAvailableWidth, shellDesiredWidth) : shellDesiredWidth;
+  const computedEditableWidth =
+    actualShellWidth > 0 ? computeEditableWidth(actualShellWidth, editableWidthKind) : undefined;
   const [shellEl, setShellEl] = React.useState<HTMLElement | null>(null);
   const handleShellRef = React.useCallback(
     (el: HTMLDivElement | null) => {
@@ -379,11 +377,7 @@ const MuTxtInner: React.FC<MuTxtProps> = ({
       : (style as React.CSSProperties);
 
   if (borderless) {
-    content = React.createElement(
-      'div',
-      {ref: handleShellRef, style: shellStyle, className: combinedClass},
-      content,
-    );
+    content = React.createElement('div', {ref: handleShellRef, style: shellStyle, className: combinedClass}, content);
   } else {
     content = React.createElement(
       Paper,

@@ -68,7 +68,12 @@ const renderKey = (raw: string): string => {
 
 const ShortcutKeys: React.FC<{spec: ShortcutSpec}> = ({spec}) => {
   const styles = useStyles();
-  if (spec.display) return <span className={keysClass}><Key>{spec.display}</Key></span>;
+  if (spec.display)
+    return (
+      <span className={keysClass}>
+        <Key>{spec.display}</Key>
+      </span>
+    );
   const keys = spec.keys ?? [];
   const plusStyle: React.CSSProperties = {color: styles.g(0.5, 0.45)};
   return (

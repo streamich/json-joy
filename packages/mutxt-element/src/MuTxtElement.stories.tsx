@@ -95,22 +95,15 @@ export const TextFromChildren = meta.story({
 });
 
 const slateSeed: SlateEditorDocument = [
-  {type: 'h1', children: [
-    {text: 'Seeded with '},
-    {text: 'format="slate"', code: true},
-  ]},
+  {type: 'h1', children: [{text: 'Seeded with '}, {text: 'format="slate"', code: true}]},
   {
     type: 'p',
-    children: [
-      {text: 'This editor was initialized from a JSON Slate document placed inside:'},
-    ],
+    children: [{text: 'This editor was initialized from a JSON Slate document placed inside:'}],
   },
   {
     type: 'code-block',
     language: 'html',
-    children: [
-      {text: '<mu-txt format="slate">...</mu-txt>'},
-    ],
+    children: [{text: '<mu-txt format="slate">...</mu-txt>'}],
   },
   {
     type: 'p',
@@ -205,7 +198,16 @@ export const NativeFromBlobUrl = meta.story({
 
 export const TwoInstances = meta.story({
   render: () => (
-    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, padding: 24, height: '100vh', boxSizing: 'border-box'}}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 16,
+        padding: 24,
+        height: '100vh',
+        boxSizing: 'border-box',
+      }}
+    >
       <div style={{border: '1px dashed rgba(0,0,0,0.15)', minHeight: 0}}>
         <mu-txt style={{height: '100%'}} />
       </div>

@@ -5,9 +5,7 @@ import {Pill} from '@jsonjoy.com/ui/lib/1-inline/Pill';
 import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
 import {OverlayDrawer} from '@jsonjoy.com/ui/lib/5-block/Drawer';
 import {DrawerBody} from '@jsonjoy.com/ui/lib/5-block/Drawer/components/DrawerBody';
-import {
-  TwoColFormRow,
-} from '@jsonjoy.com/ui/lib/3-list-item/TwoColForm';
+import {TwoColFormRow} from '@jsonjoy.com/ui/lib/3-list-item/TwoColForm';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
@@ -118,10 +116,20 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
       aria-label="File options"
     >
       <DrawerBody>
-        <div style={{margin: '0 -16px 8px', padding: '0px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxSizing: 'border-box', borderBottom: '1px solid rgba(127,127,127,.1)'}}>
+        <div
+          style={{
+            margin: '0 -16px 8px',
+            padding: '0px 16px 8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxSizing: 'border-box',
+            borderBottom: '1px solid rgba(127,127,127,.1)',
+          }}
+        >
           <BasicButtonClose size={32} round onClick={onClose} />
         </div>
-        
+
         <div style={{padding: '16px', boxSizing: 'border-box', maxWidth: 480, margin: '0 auto'}}>
           <MiniTitle contrast>{t('File')}</MiniTitle>
           <Space size={-2} />
@@ -134,8 +142,18 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
           <TwoColFormRow icon={<Iconista set="bootstrap" icon="hash" width={16} height={16} />} title="ID">
             <CopyCode size={-1} alt roundest noBg value={file.id} />
           </TwoColFormRow>
-          <TwoColFormRow icon={<Iconista set="bootstrap" icon="info-circle" width={16} height={16} />} title={t('State')}>
-            {isOpen ? <Pill color={'positive'}><Dot color={'positive'} />{t('Open')}</Pill> : <Pill>{t('Closed')}</Pill>}
+          <TwoColFormRow
+            icon={<Iconista set="bootstrap" icon="info-circle" width={16} height={16} />}
+            title={t('State')}
+          >
+            {isOpen ? (
+              <Pill color={'positive'}>
+                <Dot color={'positive'} />
+                {t('Open')}
+              </Pill>
+            ) : (
+              <Pill>{t('Closed')}</Pill>
+            )}
           </TwoColFormRow>
 
           <Space size={2} />
@@ -151,11 +169,13 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
             <DateTime value={file.updatedAt} />
           </TwoColFormRow>
           {!!openFile?.size && (
-            <TwoColFormRow icon={<Iconista set="bootstrap" icon="file-earmark" width={16} height={16} />} title={t('Size')}>
+            <TwoColFormRow
+              icon={<Iconista set="bootstrap" icon="file-earmark" width={16} height={16} />}
+              title={t('Size')}
+            >
               <Bytes value={openFile?.size ?? 0} />
             </TwoColFormRow>
           )}
-
 
           <Space size={2} />
           <Separator />
@@ -175,15 +195,12 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
             </BasicButton>
           </TwoColFormRow>
 
-
           <Space size={2} />
           <Separator hard />
           <Space size={2} />
 
           <MiniTitle>
-            <span style={{color: styles.col.get('error')}}>
-              {t('Danger zone')}
-            </span>
+            <span style={{color: styles.col.get('error')}}>{t('Danger zone')}</span>
           </MiniTitle>
           <Space size={-2} />
           <TwoColFormRow>
@@ -210,10 +227,14 @@ export const FileOptionsDrawer: React.FC<FileOptionsDrawerProps> = ({file, open,
             >
               <BasicButton width={'auto'} height={32} fill color="red">
                 <span style={{display: 'flex', alignItems: 'center', gap: 4}}>
-                  <Iconista set="bootstrap" icon="trash2" width={16} height={16} style={{color: styles.col.get('error')}} />
-                  <span style={{color: styles.col.get('error')}}>
-                    {t('Delete permanently')}
-                  </span>
+                  <Iconista
+                    set="bootstrap"
+                    icon="trash2"
+                    width={16}
+                    height={16}
+                    style={{color: styles.col.get('error')}}
+                  />
+                  <span style={{color: styles.col.get('error')}}>{t('Delete permanently')}</span>
                 </span>
               </BasicButton>
             </Popup>

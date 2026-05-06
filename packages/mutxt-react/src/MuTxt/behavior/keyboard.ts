@@ -67,12 +67,7 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     [
       'Backspace',
       (key: Key) => {
-        if (
-          resetEmptyBlockToP(editor) ||
-          removeEmptyPrevP(editor) ||
-          resetBlockToPAtStart(editor)
-        )
-          consume(key);
+        if (resetEmptyBlockToP(editor) || removeEmptyPrevP(editor) || resetBlockToPAtStart(editor)) consume(key);
       },
     ],
     [

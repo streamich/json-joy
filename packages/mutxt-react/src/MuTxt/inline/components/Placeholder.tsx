@@ -9,11 +9,13 @@ import type {RenderPlaceholderProps} from 'slate-react';
 
 export const DEF_PLACEHOLDER = (
   <span style={{display: 'inline', alignItems: 'center'}}>
-    Start writing in your <MuTxtLogo style={{margin: '-8px 0 -12px'}} /> document{!isTouch && (
+    Start writing in your <MuTxtLogo style={{margin: '-8px 0 -12px'}} /> document
+    {!isTouch && (
       <>
         &nbsp;or press <Key>Space</Key> for commands
       </>
-    )}...
+    )}
+    ...
   </span>
 );
 

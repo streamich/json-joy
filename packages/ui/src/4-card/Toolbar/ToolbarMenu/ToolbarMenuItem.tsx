@@ -68,7 +68,10 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
               renderTooltip: () => split,
             }}
           >
-            <div ref={arrow} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 -1px'}}>
+            <div
+              ref={arrow}
+              style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 -1px'}}
+            >
               <Arrow
                 width={16}
                 height={16}

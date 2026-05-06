@@ -60,12 +60,7 @@ export class DocumentMenu implements UiLifeCycles {
     const mutxt = this.mutxt;
     const toggleKeys = ['Primary', 'Shift', 'm'];
     const activeFor = (mode: DisplayMode) => rsync.comp([mutxt.displayMode], ([m]) => m === mode);
-    const option = (
-      mode: DisplayMode,
-      name: string,
-      icon: () => React.ReactNode,
-      keys?: string[],
-    ): MenuItem => ({
+    const option = (mode: DisplayMode, name: string, icon: () => React.ReactNode, keys?: string[]): MenuItem => ({
       name,
       icon,
       keys: [formatKeys(toggleKeys)],
@@ -79,31 +74,28 @@ export class DocumentMenu implements UiLifeCycles {
     });
     const children: MenuItem[] = [];
     if (size > 2) {
-      children.push(
-        this.itemUndo(),
-        this.itemRedo(),
-        {name: 'sep-undo', sep: true},
-      );
+      children.push(this.itemUndo(), this.itemRedo(), {name: 'sep-undo', sep: true});
     }
     if (size > 0) {
-      children.push(
-        {
-          name: mutxt.displayMode.value === 'inline' ? 'Maximized' : 'Inline',
-          split: size > 1 ? 'Display' : void 0,
-          keys: [formatKeys(toggleKeys)],
-          icon: () => mutxt.displayMode.value === 'inline' ? <MaximizeIcon /> : <MinimizeIcon />,
-          onSelect: () => {
-            mutxt.omni.close();
-            mutxt.setDisplayMode(mutxt.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
-          },
-          noHeader: true,
-          children: size > 1 ? [
-            option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys),
-            option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys),
-            option('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
-          ] : void 0,
-        }
-      );
+      children.push({
+        name: mutxt.displayMode.value === 'inline' ? 'Maximized' : 'Inline',
+        split: size > 1 ? 'Display' : void 0,
+        keys: [formatKeys(toggleKeys)],
+        icon: () => (mutxt.displayMode.value === 'inline' ? <MaximizeIcon /> : <MinimizeIcon />),
+        onSelect: () => {
+          mutxt.omni.close();
+          mutxt.setDisplayMode(mutxt.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
+        },
+        noHeader: true,
+        children:
+          size > 1
+            ? [
+                option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys),
+                option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys),
+                option('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
+              ]
+            : void 0,
+      });
     }
     children.push(this.build());
     return {
@@ -169,12 +161,7 @@ export class DocumentMenu implements UiLifeCycles {
     return {
       name: 'Navigate',
       expand: 5,
-      children: [
-        this.itemGoTo(),
-        {name: 'sep-history', sep: true},
-        this.itemUndo(),
-        this.itemRedo(),
-      ],
+      children: [this.itemGoTo(), {name: 'sep-history', sep: true}, this.itemUndo(), this.itemRedo()],
     };
   }
 
@@ -371,12 +358,7 @@ export class DocumentMenu implements UiLifeCycles {
     return {
       name: 'Developers',
       icon: () => <DevelopersIcon />,
-      children: [
-        this.itemPeritextDump(),
-        this.itemModelDump(),
-        this.itemSlateState(),
-        this.itemPlainText(),
-      ],
+      children: [this.itemPeritextDump(), this.itemModelDump(), this.itemSlateState(), this.itemPlainText()],
     };
   }
 

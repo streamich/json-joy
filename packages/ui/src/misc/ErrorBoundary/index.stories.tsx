@@ -6,9 +6,7 @@ const Boom: React.FC<{message?: string}> = ({message = 'Something exploded'}) =>
   throw new Error(message);
 };
 
-const Healthy: React.FC = () => (
-  <div style={{padding: 24, background: '#f6f6f6', borderRadius: 8}}>I render fine.</div>
-);
+const Healthy: React.FC = () => <div style={{padding: 24, background: '#f6f6f6', borderRadius: 8}}>I render fine.</div>;
 
 const Toggle: React.FC<{children: (broken: boolean) => React.ReactNode}> = ({children}) => {
   const [broken, setBroken] = React.useState(true);
@@ -83,7 +81,9 @@ export const NoName: StoryObj<typeof meta> = {
 export const LongMessage: StoryObj<typeof meta> = {
   args: {
     name: 'Decoder',
-    children: <Boom message="NOT_TUPLE: tuple node referenced by slice chunk did not resolve to a VecNode in the model index" />,
+    children: (
+      <Boom message="NOT_TUPLE: tuple node referenced by slice chunk did not resolve to a VecNode in the model index" />
+    ),
   },
 };
 
@@ -136,7 +136,13 @@ export const CustomFallback: StoryObj<typeof meta> = {
         <button
           type="button"
           onClick={reset}
-          style={{padding: '4px 10px', borderRadius: 6, border: '1px solid #d39657', background: '#fff', cursor: 'pointer'}}
+          style={{
+            padding: '4px 10px',
+            borderRadius: 6,
+            border: '1px solid #d39657',
+            background: '#fff',
+            cursor: 'pointer',
+          }}
         >
           Reset
         </button>

@@ -1,8 +1,5 @@
 import {Editor, Element as SlateElement, Transforms} from 'slate';
-import type {
-  CustomElement,
-  FontKind,
-} from '../types';
+import type {CustomElement, FontKind} from '../types';
 import {isListType} from './lists';
 
 export const FONT_FAMILIES: Record<FontKind, string> = {
@@ -12,12 +9,10 @@ export const FONT_FAMILIES: Record<FontKind, string> = {
   mono: '"JetBrains Mono Variable","JetBrains Mono",Menlo,Consolas,"Liberation Mono",Courier,monospace',
 };
 
-export const isFontKind = (v: unknown): v is FontKind =>
-  v === 'sans' || v === 'serif' || v === 'slab' || v === 'mono';
+export const isFontKind = (v: unknown): v is FontKind => v === 'sans' || v === 'serif' || v === 'slab' || v === 'mono';
 
 export const fontFamilyOf = (kind: FontKind | undefined): string | undefined =>
   kind ? FONT_FAMILIES[kind] : undefined;
-
 
 const isElement = (node: unknown): node is CustomElement => SlateElement.isElement(node);
 const isFormattableBlock = (node: CustomElement): boolean => !isListType(node.type) && node.type !== 'embed';
@@ -35,8 +30,7 @@ const getActiveBlockFont = (editor: Editor): FontKind | undefined => {
   return isFontKind(value) ? value : undefined;
 };
 
-export const isBlockFontActive = (editor: Editor, font: FontKind): boolean =>
-  getActiveBlockFont(editor) === font;
+export const isBlockFontActive = (editor: Editor, font: FontKind): boolean => getActiveBlockFont(editor) === font;
 
 export const setBlockFont = (editor: Editor, font: FontKind | undefined): void => {
   const current = getActiveBlockFont(editor);
@@ -57,8 +51,7 @@ const getActiveLeafFont = (editor: Editor): FontKind | undefined => {
   return isFontKind(value) ? value : undefined;
 };
 
-export const isLeafFontActive = (editor: Editor, font: FontKind): boolean =>
-  getActiveLeafFont(editor) === font;
+export const isLeafFontActive = (editor: Editor, font: FontKind): boolean => getActiveLeafFont(editor) === font;
 
 export const setLeafFont = (editor: Editor, font: FontKind | undefined): void => {
   const current = getActiveLeafFont(editor);

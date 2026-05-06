@@ -40,7 +40,7 @@ export interface OpenRouterRequestBody {
   messages: ChatCompletionMessage[];
   prompt?: string;
   tools?: ToolDefinition[];
-  tool_choice?: 'none' | 'auto' | 'required' | { type: 'function'; function: { name: string } };
+  tool_choice?: 'none' | 'auto' | 'required' | {type: 'function'; function: {name: string}};
   stream?: boolean;
   max_tokens?: number;
   temperature?: number;
@@ -51,7 +51,7 @@ export interface OpenRouterRequestBody {
   repetition_penalty?: number;
   seed?: number;
   stop?: string | string[];
-  
+
   // OpenRouter Specific Extensions
   transforms?: string[];
   models?: string[]; // Fallback list
@@ -80,17 +80,17 @@ export interface OpenRouterResponse {
 
 export interface Choice {
   /** Why the generation stopped */
-  finish_reason: "stop" | "length" | "tool_calls" | "content_filter" | null;
+  finish_reason: 'stop' | 'length' | 'tool_calls' | 'content_filter' | null;
   index: number;
   message: {
-    role: "assistant";
+    role: 'assistant';
     content: string | null;
     /** Present if the model is calling a tool */
     tool_calls?: ToolCall[];
   };
   /** Only present in streaming responses */
   delta?: {
-    role?: "assistant";
+    role?: 'assistant';
     content?: string;
     tool_calls?: ToolCall[];
   };
@@ -102,10 +102,10 @@ export interface Usage {
   total_tokens: number;
 }
 
-/** Re-using the ToolCall from the request module */  
+/** Re-using the ToolCall from the request module */
 export interface ToolCall {
   id: string;
-  type: "function";
+  type: 'function';
   function: {
     name: string;
     arguments: string; // Valid JSON string

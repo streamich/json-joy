@@ -14,8 +14,13 @@ export const HelpText: React.FC<HelpTextProps> = () => {
       <p>
         {t('Just start typing. Use the toolbar to format text and switch block types.')}
         <ul>
-          <li>{t('Press')} <Key>Shift</Key>{' '}<Key>Shift</Key> or <Key>{['Primary', 'j'].map(k => formatKeys([k])).join(' + ')}</Key> {t(' for menu.')}</li>
-          <li>{t('Press')} <Key>{['Primary', '/'].map(k => formatKeys([k])).join(' + ')}</Key> {t(' for shortcuts.')}</li>
+          <li>
+            {t('Press')} <Key>Shift</Key> <Key>Shift</Key> or{' '}
+            <Key>{['Primary', 'j'].map((k) => formatKeys([k])).join(' + ')}</Key> {t(' for menu.')}
+          </li>
+          <li>
+            {t('Press')} <Key>{['Primary', '/'].map((k) => formatKeys([k])).join(' + ')}</Key> {t(' for shortcuts.')}
+          </li>
         </ul>
       </p>
 

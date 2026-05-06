@@ -89,12 +89,7 @@ export const DateTime: React.FC<DateTimeProps> = ({
   const iso = date.toISOString();
 
   return (
-    <span
-      className={blockClass + (className ? ` ${className}` : '')}
-      style={style}
-      title={iso}
-      data-iso={iso}
-    >
+    <span className={blockClass + (className ? ` ${className}` : '')} style={style} title={iso} data-iso={iso}>
       {!timeOnly && <span className={dateClass + dynamicDateClass}>{dateLabel}</span>}
       {!timeOnly && !dateOnly && <span className={sepClass + dynamicSepClass} aria-hidden="true" />}
       {!dateOnly && <span className={timeClass + dynamicTimeClass}>{timeLabel}</span>}

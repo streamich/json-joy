@@ -61,7 +61,6 @@ export class OpenFile {
   private readonly unsubscribers: Array<() => void> = [];
   public mutxt?: MuTxtApi;
 
-  
   constructor(
     public readonly meta: FileMetadataDto,
     public readonly log: Log<any>,
