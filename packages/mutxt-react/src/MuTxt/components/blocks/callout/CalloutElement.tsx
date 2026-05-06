@@ -6,6 +6,7 @@ import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from '../BlockPlaceholder';
 import {indentPadding} from '../../../behavior/indentation';
+import {fontFamilyOf} from '../../../behavior/font';
 import {isEmptyBlock} from '../../../util';
 import {CalloutOptionsPopup} from './CalloutOptionsPopup';
 import {HslColor, LinearRgbColor, ThemeColor} from '@jsonjoy.com/ui';
@@ -57,7 +58,7 @@ const titleClass = rule({
 });
 
 const moreClass = rule({
-  marginLeft: 'auto',
+  marginInlineStart: 'auto',
   flexShrink: 0,
   op: 0,
   trs: 'opacity 0.2s',
@@ -114,8 +115,9 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
         textAlign: element.align,
         marginInlineStart: indentPadding(element.indent) ?? 0,
         marginInlineEnd: 0,
+        fontFamily: fontFamilyOf(element.font),
         border: `1px solid ${colors.bd}`,
-        borderLeft: `3px solid ${colors.accent}`,
+        borderInlineStart: `3px solid ${colors.accent}`,
         background: colors.bg,
         color: styles.g(0.18),
         boxShadow: `0 1px 4px ${colors.shadow}`,

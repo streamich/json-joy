@@ -48,7 +48,8 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   const [t] = useT();
   const state = useContextMenu();
   const search = useBehaviorSubject(state.search$);
-  const openPanel = React.useMemo(() => new OpenPanelState(), []);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: depth is only consulted at initial state creation; should not recreate the panel state
+  const openPanel = React.useMemo(() => new OpenPanelState({armed: depth > 0}), []);
   React.useEffect(openPanel.start, []);
   const selected = useBehaviorSubject(openPanel.selected$);
   const anchor = useAnchorPoint();
@@ -183,7 +184,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
     }
   }
 
-  bigIcons.flush();
+  bigIcons.flush(false);
 
   const searchHeight = doShowSearch ? HEIGHT.SEARCH : 0;
   const doShowHeader = !depth && !!path.length;

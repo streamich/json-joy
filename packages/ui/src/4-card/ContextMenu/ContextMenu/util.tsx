@@ -136,16 +136,18 @@ export const line = (key: string, narrow?: boolean) => (
 export const bigIconsState = (nodes: React.ReactNode[], menu: MenuItem) => {
   let list: undefined | React.ReactNode[] = [];
   const push = (item: MenuItem) => list?.push(item.iconBig?.());
-  const flush = () => {
+  const flush = (withSeparator: boolean = true) => {
     const key = menu.id ?? menu.name;
     if (list && list.length) {
-      nodes.push(
-        React.createElement(ContextSection, {key: key + '-bitItemPanel', compact: true}, ...list),
-        <div key={key + '-bitItemSep'} style={{padding: '0 20px'}}>
-          <ContextSep line />
-          <ContextSep />
-        </div>,
-      );
+      nodes.push(React.createElement(ContextSection, {key: key + '-bitItemPanel', compact: true}, ...list));
+      if (withSeparator) {
+        nodes.push(
+          <div key={key + '-bitItemSep'} style={{padding: '0 20px'}}>
+            <ContextSep line />
+            <ContextSep />
+          </div>,
+        );
+      }
     }
     list = void 0;
   };

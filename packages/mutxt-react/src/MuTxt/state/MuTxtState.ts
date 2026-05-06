@@ -14,20 +14,25 @@ import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {SizerState} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
-import type {ReactEditor} from 'slate-react';
 import {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
 import {OmniState} from '../omni/OmniState';
+import {DocumentMenu} from './DocumentMenu';
+import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
+import {isFontKind} from '../behavior/font';
 import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
-import type {CustomElement, SlateEditorDocument, SlateTextAlign} from '../types';
+import type {ReactEditor} from 'slate-react';
+import type {CustomElement, DisplayMode, EditableWidth, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
 import type {HistoryEditor} from 'slate-history';
+
+const isEditableWidth = (v: unknown): v is EditableWidth => v === 'narrow' || v === 'mid' || v === 'wide';
 
 const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
 const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument =>
@@ -80,7 +85,24 @@ export class MuTxtState implements UiLifeCycles {
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
   public readonly omni = new OmniState(this);
+  public readonly indicator = new IndicatorState(this);
+  public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
+
+  /** Whether the keyboard-shortcuts modal is open. */
+  public readonly shortcutsOpen = rsync.val(false);
+
+  /** Current rendering display mode. */
+  public readonly displayMode = rsync.val<DisplayMode>('inline');
+
+  /** Document-level typeface family. */
+  public readonly font = rsync.val<FontKind>('sans');
+
+  /** Editable content area width preset. */
+  public readonly editableWidth = rsync.val<EditableWidth>('mid');
+
+  /** The shell element wrapping the entire editor (header, content, footer). */
+  public shellEl: HTMLElement | null = null;
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
@@ -120,6 +142,10 @@ export class MuTxtState implements UiLifeCycles {
       initialValue = createEmptyDocument() as Descendant[];
     }
     this.sizer = new SizerState(Number(obj.read('/width')) || 1200);
+    const storedFont = obj.read('/font');
+    if (isFontKind(storedFont)) this.font.next(storedFont);
+    const storedEditableWidth = obj.read('/ew');
+    if (isEditableWidth(storedEditableWidth)) this.editableWidth.next(storedEditableWidth);
     editor.children = initialValue;
     editor.selection = null;
   }
@@ -142,9 +168,20 @@ export class MuTxtState implements UiLifeCycles {
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
     const stopOmni = this.omni.start();
+    const stopIndicator = this.indicator.start();
     const stopThings = this.things.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
+
+    // --------------------------------------------- Native fullscreen tracking
+    // Keep `displayMode` in sync when the user exits fullscreen via Esc or
+    // when the browser drops out of fullscreen for any other reason.
+    const onFullscreenChange = (): void => {
+      const inNativeFullscreen = !!document.fullscreenElement;
+      const mode = this.displayMode.value;
+      if (!inNativeFullscreen && mode === 'fullscreen') this.displayMode.set('inline');
+    };
+    if (typeof document !== 'undefined') document.addEventListener('fullscreenchange', onFullscreenChange);
 
     return () => {
       unbindCollaboration();
@@ -154,8 +191,10 @@ export class MuTxtState implements UiLifeCycles {
       stopBlock();
       stopVoids();
       stopOmni();
+      stopIndicator();
       stopThings();
       unbindShortcuts();
+      if (typeof document !== 'undefined') document.removeEventListener('fullscreenchange', onFullscreenChange);
       this.kbdSourceUnbind?.();
       this.kbdSourceUnbind = undefined;
       this.kbd.dispose();
@@ -177,6 +216,35 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly setReadOnly = (readOnly: boolean): void => {
     this.readOnly.set(readOnly);
+  };
+
+  public readonly setFont = (kind: FontKind): void => {
+    if (this.font.value === kind) return;
+    if (this.readOnly.value) return;
+    this.font.set(kind);
+    this.obj.add('/font', kind);
+  };
+
+  public readonly setEditableWidth = (kind: EditableWidth): void => {
+    if (this.editableWidth.value === kind) return;
+    if (this.readOnly.value) return;
+    this.editableWidth.set(kind);
+    this.obj.add('/ew', kind);
+  };
+
+  public readonly setDisplayMode = (mode: DisplayMode): void => {
+    const current = this.displayMode.value;
+    if (current === mode) return;
+    if (current === 'fullscreen' && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    if (mode === 'fullscreen') {
+      const target = this.shellEl ?? document.documentElement;
+      target.requestFullscreen?.().catch(() => {});
+    }
+    this.displayMode.set(mode);
+  };
+
+  public readonly bindShell = (el: HTMLElement | null): void => {
+    this.shellEl = el;
   };
 
   public readonly sync = (contentChanged: boolean): void => {

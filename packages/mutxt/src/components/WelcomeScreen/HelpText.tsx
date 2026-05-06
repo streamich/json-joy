@@ -1,4 +1,5 @@
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
+import {formatKeys} from 'mutxt-react/lib/MuTxt/util/keys';
 import * as React from 'react';
 import {useT} from 'use-t';
 
@@ -11,8 +12,16 @@ export const HelpText: React.FC<HelpTextProps> = () => {
     <div>
       <h3>{t('Writing')}</h3>
       <p>
-        {t('Just start typing. Use the toolbar to format text and switch block types.')} {t('Press')} <Key>Shift</Key>{' '}
-        <Key>Shift</Key> or <Key>Cmd + J</Key> {t(' for menu.')}
+        {t('Just start typing. Use the toolbar to format text and switch block types.')}
+        <ul>
+          <li>
+            {t('Press')} <Key>Shift</Key> <Key>Shift</Key> or{' '}
+            <Key>{['Primary', 'j'].map((k) => formatKeys([k])).join(' + ')}</Key> {t(' for menu.')}
+          </li>
+          <li>
+            {t('Press')} <Key>{['Primary', '/'].map((k) => formatKeys([k])).join(' + ')}</Key> {t(' for shortcuts.')}
+          </li>
+        </ul>
       </p>
 
       <h3>{t('History')}</h3>

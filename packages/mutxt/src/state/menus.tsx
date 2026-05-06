@@ -3,32 +3,14 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {Code} from '@jsonjoy.com/ui/lib/1-inline/Code';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
-import * as traces from './traces';
 import {templates} from './templates';
-import type {JsonCrdtExplorerState} from '.';
+import type {MuTxtAppState} from '.';
 
-const ApartmentIcon = makeIcon({set: 'ant_outline', icon: 'apartment', width: 16, height: 16});
-const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text', width: 16, height: 16});
-const HighlightIcon = makeIcon({set: 'ant_outline', icon: 'highlight', width: 16, height: 16});
-// const FileJsonIcon = makeIcon({set: 'lucide_v1', icon: 'file-json-2', width: 16, height: 16});
 const FileMuTxtIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-text', width: 16, height: 16});
 const FileJsonIcon = makeIcon({set: 'bootstrap', icon: 'filetype-json', width: 16, height: 16});
 
-const traceIcon = (trace: traces.TraceDefinition) => {
-  switch (trace.type) {
-    case 'json':
-      return () => <ApartmentIcon width={16} height={16} />;
-    case 'text':
-      return () => <VisTextIcon width={16} height={16} />;
-    case 'rich-text':
-      return () => <HighlightIcon width={16} height={16} />;
-    default:
-      return undefined;
-  }
-};
-
 export class Menus {
-  constructor(public readonly state: JsonCrdtExplorerState) {}
+  constructor(public readonly state: MuTxtAppState) {}
 
   public newFileMenu(): MenuItem {
     const {state} = this;
@@ -142,63 +124,6 @@ export class Menus {
                 }),
             },
           ],
-        },
-      ],
-    };
-  }
-
-  public tracesMenu(width: number, load: (wait: Promise<void>) => void): MenuItem {
-    const {state} = this;
-    const wrapLoader = async (trace: traces.TraceDefinition) => {
-      const blob = await traces.loadTrace(trace);
-      state.addTrace(blob, trace);
-    };
-    return {
-      name: 'Load trace',
-      minWidth: width,
-      children: [
-        {
-          name: 'Rich-text',
-          expand: 4,
-          children: traces.quill.map((trace) => ({
-            id: trace.id,
-            name: trace.name,
-            icon: traceIcon(trace),
-            onSelect: () => load(wrapLoader(trace)),
-          })),
-        },
-        {sep: true, name: 'sep-1'},
-        {
-          name: 'Forms',
-          expand: 4,
-          children: traces.json.map((trace) => ({
-            id: trace.id,
-            name: trace.name,
-            icon: traceIcon(trace),
-            onSelect: () => load(wrapLoader(trace)),
-          })),
-        },
-        {sep: true, name: 'sep-2'},
-        {
-          name: 'Plain text',
-          expand: 4,
-          children: traces.text.map((trace) => ({
-            id: trace.id,
-            name: trace.name,
-            icon: traceIcon(trace),
-            onSelect: () => load(wrapLoader(trace)),
-          })),
-        },
-        {sep: true, name: 'sep-3'},
-        {
-          name: 'Fuzzer',
-          expand: 4,
-          children: traces.fuzzer.map((trace) => ({
-            id: trace.id,
-            name: trace.name,
-            icon: traceIcon(trace),
-            onSelect: () => load(wrapLoader(trace)),
-          })),
         },
       ],
     };

@@ -82,11 +82,16 @@
     ]
   },
   "dependencies": {
+    "@fontsource-variable/bitter": "^5.2.0",
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource-variable/jetbrains-mono": "^5.2.0",
+    "@fontsource-variable/source-serif-4": "^5.2.0",
     "@jsonjoy.com/collaborative-peritext": "workspace:*",
     "@jsonjoy.com/collaborative-presence": "workspace:*",
     "@jsonjoy.com/collaborative-slate": "workspace:*",
     "@jsonjoy.com/keyboard": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
     "code-colors": "^2.5.0",
     "code-colors-react": "^3.5.0",
     "emoji-picker-react": "^4.19.1",

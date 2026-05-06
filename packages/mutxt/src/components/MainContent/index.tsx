@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {useExplorer} from '../../context';
 import {WelcomeScreen} from '../WelcomeScreen';
 import {Document} from './Document';
@@ -25,7 +26,7 @@ const contentClass = rule({
   gap: '12px',
   flex: '1 1 auto',
   bxz: 'border-box',
-  pd: '40px 0 0',
+  pd: '16px 0 0',
 });
 
 export const MainContent: React.FC = () => {
@@ -51,7 +52,9 @@ export const MainContent: React.FC = () => {
     <div className={blockClass}>
       <div className={contentClass}>
         {files.map((f) => (
-          <Document key={f.id} file={f} />
+          <ErrorBoundary key={f.id} name={`document:${f.id}`} resetKey={f.id}>
+            <Document file={f} />
+          </ErrorBoundary>
         ))}
       </div>
     </div>

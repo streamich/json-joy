@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {isTouch} from '@jsonjoy.com/ui';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useSelected} from 'slate-react';
 import {typeToLabel} from '../../util/typeToLabel';
@@ -27,7 +28,13 @@ const getPlaceholderText = (element: CustomElement): React.ReactNode => {
   if (element.type === 'p')
     return (
       <>
-        Type here or double tap <Key>Shift</Key>, <Key>Shift</Key> for menu...
+        Type here
+        {!isTouch && (
+          <>
+            &nbsp;or double tap <Key>Shift</Key>, <Key>Shift</Key> for menu
+          </>
+        )}
+        ...
       </>
     );
   return typeToLabel(element.type);

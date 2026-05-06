@@ -1,13 +1,16 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {AppGrid} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
+import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {MainContent} from './components/MainContent';
-import {JsonCrdtExplorerState} from './state';
+import {MuTxtAppState} from './state';
 import {ctx} from './context';
 import {LeftSidebar} from './components/LeftSidebar';
 import {useT} from 'use-t';
 import {TabsHeader} from './components/TabsHeader';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
+import {FileOptionsDrawer} from './components/LeftSidebar/SavedFileList/FileOptionsDrawer';
+import type {FileMetadataDto} from './state/file';
 
 const columnClass = rule({
   d: 'flex',
@@ -19,12 +22,23 @@ const columnClass = rule({
 export const App: React.FC = () => {
   const [_t] = useT();
   const state = React.useMemo(() => {
-    return new JsonCrdtExplorerState();
+    return new MuTxtAppState();
   }, []);
+  const [drawerFile, setDrawerFile] = React.useState<FileMetadataDto | null>(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
   React.useEffect(() => {
     state.start().catch(() => {});
     return () => {
       state.stop().catch(() => {});
+    };
+  }, [state]);
+  React.useEffect(() => {
+    state.ondoubleclick = (file) => {
+      setDrawerFile(file.toMeta());
+      setDrawerOpen(true);
+    };
+    return () => {
+      state.ondoubleclick = void 0;
     };
   }, [state]);
   const files = useBehaviorSubject(state.files$);
@@ -32,20 +46,32 @@ export const App: React.FC = () => {
   return (
     <ctx.Provider value={state}>
       <AppGrid
+        state={state.appGrid}
         maxLeftSize={500}
-        left={(toggle) => <LeftSidebar toggle={toggle} />}
+        left={(toggle) => (
+          <ErrorBoundary name="mutxt:left-sidebar">
+            <LeftSidebar toggle={toggle} />
+          </ErrorBoundary>
+        )}
         // footer={<div> </div>}
         column={(toggle) =>
           files.length === 0 ? (
-            <MainContent />
+            <ErrorBoundary name="mutxt:main">
+              <MainContent />
+            </ErrorBoundary>
           ) : (
             <div className={columnClass}>
-              <TabsHeader toggle={toggle} />
-              <MainContent />
+              <ErrorBoundary name="mutxt:tabs-header" compact>
+                <TabsHeader toggle={toggle} />
+              </ErrorBoundary>
+              <ErrorBoundary name="mutxt:main">
+                <MainContent />
+              </ErrorBoundary>
             </div>
           )
         }
       />
+      {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
     </ctx.Provider>
   );
 };

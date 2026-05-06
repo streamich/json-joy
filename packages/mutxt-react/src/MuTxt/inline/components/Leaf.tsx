@@ -4,6 +4,7 @@ import {rule} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
 import {Spoiler} from './Spoiler';
+import {fontFamilyOf} from '../../behavior/font';
 import type {RenderLeafProps} from 'slate-react';
 import type {CustomText} from '../../types';
 import {useTrace} from '@jsonjoy.com/ui';
@@ -89,6 +90,9 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
     else if (leaf.sub) content = <sub>{content}</sub>;
     if (leaf.code) content = <code className={codeClass + dynamicCodeClass}>{content}</code>;
   }
+
+  const leafFontFamily = fontFamilyOf(leaf.font);
+  if (leafFontFamily) content = <span style={{fontFamily: leafFontFamily}}>{content}</span>;
 
   const href = leaf.a?.href;
   if (href) {

@@ -30,10 +30,23 @@ export interface PaperProps extends React.AllHTMLAttributes<any> {
   hoverElevate?: boolean;
   contrast?: boolean;
   noOutline?: boolean;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
 export const Paper: React.FC<PaperProps> = (props) => {
-  const {level = 0, fill = 0, round, hover, hoverBg, hoverLite, hoverElevate, contrast, noOutline, ...rest} = props;
+  const {
+    level = 0,
+    fill = 0,
+    round,
+    hover,
+    hoverBg,
+    hoverLite,
+    hoverElevate,
+    contrast,
+    noOutline,
+    ref,
+    ...rest
+  } = props;
   const theme = useTheme();
   const dynamicHoverBlockClass = useHoverBlockClass();
 
@@ -57,6 +70,7 @@ export const Paper: React.FC<PaperProps> = (props) => {
 
   return React.createElement('div', {
     ...rest,
+    ref,
     className:
       props.className +
       blockClass({

@@ -6,6 +6,33 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 export type {MenuItem};
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
+
+/**
+ * How the editor renders itself within the page.
+ *
+ * - `inline`: render the editor in place (default).
+ * - `fullscreen`: enter native browser fullscreen.
+ * - `fullwindow`: stretch to fill the entire browser window viewport.
+ */
+export type DisplayMode = 'inline' | 'fullscreen' | 'fullwindow';
+
+/**
+ * Document-level typeface family. Persisted at `/font` on the document object.
+ *
+ * - `sans`:  Inter
+ * - `serif`: Source Serif 4
+ * - `slab`:  Bitter
+ * - `mono`:  JetBrains Mono
+ */
+export type FontKind = 'sans' | 'serif' | 'slab' | 'mono';
+
+/**
+ * Editable content area width preset, chosen relative to the outer shell.
+ * Each preset targets a percentage of the shell width, clamped to a fixed
+ * pixel range. Persisted at `/ew` on the document object.
+ */
+export type EditableWidth = 'narrow' | 'mid' | 'wide';
+
 export type MarkFormat =
   | 'bold'
   | 'italic'
@@ -69,12 +96,14 @@ export interface CustomText {
   kbd?: boolean;
   ins?: boolean;
   del?: boolean;
+  font?: FontKind;
   a?: LinkAttributes;
 }
 
 export interface BlockAttributes {
   align?: SlateTextAlign;
   indent?: number;
+  font?: FontKind;
 }
 
 export interface ParagraphElement extends BlockAttributes {

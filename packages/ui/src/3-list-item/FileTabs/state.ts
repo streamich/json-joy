@@ -1,6 +1,7 @@
 import type * as React from 'react';
 import * as rsync from '../../utils/rsync';
 import type {TabItem} from './types';
+import {isTouch} from '../../utils/environment';
 
 const enum Constants {
   MaxTabWidth = 200,
@@ -24,6 +25,7 @@ export class FileTabsState {
   // ---------------------------------------------------- to be set by consumer
   public onNewTab: (() => TabItem | undefined) | undefined = void 0;
   public onDeleteTab: ((tab: TabItem, index: number) => void) | undefined = void 0;
+  public onTabDoubleClick: ((tab: TabItem, index: number) => void) | undefined = void 0;
 
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabsBox: rsync.ElBox<HTMLElement>;
@@ -146,7 +148,7 @@ export class FileTabsState {
     if (!tab) return;
     const id = tab.id ?? tab.name;
     this.hovered.set(null);
-    this.frozenTabWidth.next(this.tabWidth.value);
+    this.freezeWidth();
     const selectedId = this.selectedId();
     const shouldRefocus = selectedId === id;
     let nextSelectedId = selectedId;
@@ -199,6 +201,11 @@ export class FileTabsState {
   public readonly unfreeze = () => {
     this.frozenTabWidth.next(null);
   };
+
+  private freezeWidth() {
+    if (isTouch) return;
+    this.frozenTabWidth.next(this.tabWidth.value);
+  }
 
   public readonly addNew = () => {
     const item = this.onNewTab?.();

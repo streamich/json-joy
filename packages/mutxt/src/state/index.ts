@@ -9,13 +9,13 @@ import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
 import {type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
+import {AppGridState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
 import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate, type SlateDocument} from '@jsonjoy.com/collaborative-slate';
 import {getSyncStore, type ISyncStore} from './sync-store';
-import type {TraceDefinition} from './traces';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
@@ -29,8 +29,9 @@ const SAVED_REFRESH_INTERVAL_MS = 5_000;
 const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
   [...saved].sort((a, b) => b.updatedAt - a.updatedAt || b.createdAt - a.createdAt);
 
-export class JsonCrdtExplorerState {
+export class MuTxtAppState {
   public readonly tabs: FileTabsState;
+  public readonly appGrid = new AppGridState();
   public readonly files$ = new BehaviorSubject<OpenFile[]>([]);
   public readonly selected$: BehaviorSubject<[id: TabItem, index: number] | null>;
   public readonly file$ = new BehaviorSubject<OpenFile | null>(null);
@@ -38,6 +39,7 @@ export class JsonCrdtExplorerState {
   public readonly sid: number;
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   public readonly menus: Menus;
+  public ondoubleclick: ((file: OpenFile) => void) | undefined = void 0;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -60,6 +62,10 @@ export class JsonCrdtExplorerState {
     this.tabs.onDeleteTab = (tab) => {
       this.close(tab.id!);
     };
+    this.tabs.onTabDoubleClick = (tab) => {
+      const file = this.fileIfOpen(tab.id!);
+      if (file) this.ondoubleclick?.(file);
+    };
     this.selected$ = toObservable(this.tabs.selected);
     this.files$
       .pipe(
@@ -75,6 +81,28 @@ export class JsonCrdtExplorerState {
   }
 
   private stopped = false;
+  private detachDragDrop: (() => void) | null = null;
+
+  private readonly attachDragDrop = (): (() => void) => {
+    const hasFiles = (event: DragEvent): boolean =>
+      !!event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files');
+    const onDragOver = (event: DragEvent): void => {
+      if (hasFiles(event)) event.preventDefault();
+    };
+    const onDrop = (event: DragEvent): void => {
+      if (event.defaultPrevented) return;
+      const files = event.dataTransfer?.files;
+      if (!files || !files.length) return;
+      event.preventDefault();
+      this.addFiles(Array.from(files));
+    };
+    window.addEventListener('dragover', onDragOver);
+    window.addEventListener('drop', onDrop);
+    return () => {
+      window.removeEventListener('dragover', onDragOver);
+      window.removeEventListener('drop', onDrop);
+    };
+  };
 
   private readonly stopSavedRefresh = () => {
     if (this.savedRefreshTimer) {
@@ -101,13 +129,19 @@ export class JsonCrdtExplorerState {
     this.stopped = false;
     this.stopSavedRefresh();
     await this.refreshSaved();
-    if (this.stopped) return; // TODO: Is this still needed.
+    if (this.stopped) return; // TODO: Is this still needed?
     this.savedRefreshTimer = setInterval(() => {
       void this.refreshSaved();
     }, SAVED_REFRESH_INTERVAL_MS);
+    this.detachDragDrop?.();
+    this.detachDragDrop = this.attachDragDrop();
     const saved = this.saved.value;
-    if (saved.length) await this.openSaved(saved[0].id);
-    else this.createNewMuTxt();
+
+    // Try to reopen the most recently saved file. If there is none, or if it
+    // fails to load (e.g. corrupt), fall back to creating a fresh empty
+    // document so the user always lands on something usable.
+    const opened = saved.length ? await this.openSaved(saved[0].id) : false;
+    if (!opened && !this.files$.getValue().length) this.createNewMuTxt();
     this.started.set(true);
   }
 
@@ -115,27 +149,42 @@ export class JsonCrdtExplorerState {
     this.stopped = true;
     this.started.set(false);
     this.stopSavedRefresh();
+    this.detachDragDrop?.();
+    this.detachDragDrop = null;
     await Promise.all(this.files$.getValue().map((file) => file.destroy(true)));
   }
 
   public isOpen(id: string) {
-    return !!this.files$.value.find((file) => file.id === id);
+    return !!this.fileIfOpen(id);
   }
 
-  public async openSaved(id: string) {
-    if (this.isOpen(id)) {
-      this.tabs.selectById(id);
-      return;
+  public fileIfOpen(id: string): OpenFile | undefined {
+    return this.files$.value.find((file) => file.id === id);
+  }
+
+  public async openSaved(id: string): Promise<boolean> {
+    try {
+      if (this.isOpen(id)) {
+        this.tabs.selectById(id);
+        return true;
+      }
+      const dto = await this.storage.load(id);
+      if (this.stopped) return false;
+      const size = dto.data.length;
+      await this.addLog(dto.data, dto.name, dto, size);
+      return true;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[mutxt] failed to open file', id, error);
+      return false;
     }
-    const dto = await this.storage.load(id);
-    if (this.stopped) return;
-    await this.addLog(dto.data, dto.name, dto.display, dto);
   }
 
   public readonly openFile = (
     log: Log<any>,
     name: string = 'Untitled' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
     dto?: FileMetadataDto,
+    size: number = 0,
   ) => {
     const now = Date.now();
     const meta: FileMetadataDto = dto ?? {
@@ -144,10 +193,15 @@ export class JsonCrdtExplorerState {
       createdAt: now,
       updatedAt: now,
     };
-    const file = new OpenFile(meta, log, {
-      storage: this.storage,
-      onPersisted: this.handleFilePersisted,
-    });
+    const file = new OpenFile(
+      meta,
+      log,
+      {
+        storage: this.storage,
+        onPersisted: this.handleFilePersisted,
+      },
+      size,
+    );
     this.files$.next([...this.files$.getValue(), file]);
     this.tabs.add(file.toTab());
     this.tabs.selectById(file.meta.id);
@@ -196,54 +250,57 @@ export class JsonCrdtExplorerState {
 
   public readonly addFile = async (file: File) => {
     if (!file) return;
-    let uint8 = new Uint8Array(await file.arrayBuffer());
+    const uint8 = new Uint8Array(await file.arrayBuffer());
     const name = file.name ? stripExtensions(file.name) : 'model';
-    if (file.name.endsWith('patches.bin')) {
-      const cborDecoder = new CborDecoder();
-      const array = cborDecoder.decode(uint8) as Uint8Array[];
-      if (!Array.isArray(array)) throw new Error('Incompatible JSON CRDT log file.');
-      const patches: Patch[] = array.map((patch) => Patch.fromBinary(patch));
-      const lastPatch = patches[patches.length - 1];
-      if (!lastPatch) throw new Error('Incompatible JSON CRDT log file.');
-      const id = lastPatch.getId();
-      if (!id) throw new Error('Incompatible JSON CRDT log file.');
-      const model = ModelWithExt.create(undefined, id.sid);
-      const log = new Log(() => model.clone());
-      log.end.applyBatch(patches);
-      log.end.setSid(this.sid);
-      this.openFile(log, name);
-    }
-    if (file.name.endsWith('.crdt')) {
-      try {
-        uint8 = (await ungzip(uint8)) as Uint8Array<ArrayBuffer>;
-      } catch {}
-      const model = ModelWithExt.load(uint8, this.sid);
-      const log = new Log(() => model);
-      log.end.setSid(this.sid);
-      this.openFile(log, name);
-    } else if (
-      file.name.endsWith('.cbor.gz') ||
-      file.name.endsWith('.seq.cbor') ||
-      file.name.endsWith('.seq.cbor.gz')
-    ) {
+    try {
+      if (file.name.endsWith('patches.bin')) {
+        const cborDecoder = new CborDecoder();
+        const array = cborDecoder.decode(uint8) as Uint8Array[];
+        if (!Array.isArray(array)) throw new Error('Incompatible JSON CRDT log file.');
+        const patches: Patch[] = array.map((patch) => Patch.fromBinary(patch));
+        const lastPatch = patches[patches.length - 1];
+        if (!lastPatch) throw new Error('Incompatible JSON CRDT log file.');
+        const id = lastPatch.getId();
+        if (!id) throw new Error('Incompatible JSON CRDT log file.');
+        const model = ModelWithExt.create(undefined, id.sid);
+        const log = new Log(() => model.clone());
+        log.end.applyBatch(patches);
+        log.end.setSid(this.sid);
+        this.openFile(log, name);
+        return;
+      }
+      if (file.name.endsWith('.crdt')) {
+        let bytes = uint8;
+        try {
+          bytes = (await ungzip(bytes)) as Uint8Array<ArrayBuffer>;
+        } catch {}
+        const model = ModelWithExt.load(bytes, this.sid);
+        const log = new Log(() => model);
+        log.end.setSid(this.sid);
+        this.openFile(log, name);
+        return;
+      }
       await this.addLog(uint8, name);
+      return;
+    } catch {}
+    this.createNewMuTxtWithFile(file, uint8, name);
+  };
+
+  public readonly addLog = async (uint8: Uint8Array, name?: string, dto?: FileMetadataDto, size: number = 0) => {
+    let log: Log<any>;
+    try {
+      log = await OpenFile.decodeLog(uint8, this.sid);
+    } catch {
+      let bytes = uint8;
+      try {
+        bytes = (await ungzip(bytes)) as Uint8Array<ArrayBuffer>;
+      } catch {}
+      const model = ModelWithExt.load(bytes, this.sid);
+      log = new Log(() => model);
+      log.end.setSid(this.sid);
     }
-  };
-
-  public readonly addLog = async (
-    uint8: Uint8Array,
-    name?: string,
-    display?: TraceDefinition['display'],
-    dto?: FileMetadataDto,
-  ) => {
-    const log = await OpenFile.decodeLog(uint8, this.sid);
     if (this.stopped) return;
-    const file = this.openFile(log, name, dto);
-    file.setDisplay(display);
-  };
-
-  public readonly addTrace = async (uint8: Uint8Array, trace: TraceDefinition) => {
-    return await this.addLog(uint8, trace.name, trace.display);
+    this.openFile(log, name, dto, size);
   };
 
   public readonly addFiles = async (files: File[]) => {
@@ -272,6 +329,40 @@ export class JsonCrdtExplorerState {
     this.newCnt++;
     const log = Log.from(model);
     this.openFile(log, name);
+  };
+
+  public readonly createNewMuTxtWithFile = (file: File, bytes: Uint8Array, name?: string) => {
+    const thingId = `file-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const model = ModelWithExt.create<any>(
+      s.obj({
+        '@type': s.con('mutxt'),
+        text: ext.peritext.new(''),
+        things: s.obj({}),
+      }),
+      this.sid,
+    );
+    model.api.obj(['things']).set({
+      [thingId]: {
+        '@type': 'file',
+        '@id': thingId,
+        name: file.name || 'file',
+        mimeType: file.type || 'application/octet-stream',
+        size: file.size,
+        data: s.con(bytes),
+      },
+    });
+    const peritextApi = model.api.in('text').asExt(ext.peritext);
+    const txt = peritextApi.peritext();
+    const slate: SlateDocument = [
+      {type: 'file', '@thing': thingId, children: [{text: ''}]} as any,
+      {type: 'p', children: [{text: ''}]} as any,
+    ];
+    const viewRange = FromSlate.convert(slate);
+    txt.editor.import(0, viewRange);
+    txt.refresh();
+    this.newCnt++;
+    const log = Log.from(model);
+    this.openFile(log, name ?? file.name);
   };
 
   public readonly createFromModel = (model: Model<any>) => {

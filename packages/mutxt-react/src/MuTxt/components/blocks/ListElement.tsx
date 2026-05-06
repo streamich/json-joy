@@ -4,6 +4,7 @@ import {Editor, Element as SlateElement} from 'slate';
 import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 'slate-react';
 import {setChecklistItemChecked} from '../../behavior';
 import {BlockPlaceholder} from './BlockPlaceholder';
+import {fontFamilyOf} from '../../behavior/font';
 import {isEmptyBlock} from '../../util';
 import type {
   BulletedListElement,
@@ -14,12 +15,12 @@ import type {
 
 const listClass = rule({
   m: '0 0 16px',
-  pl: '24px',
+  paddingInlineStart: '24px',
 });
 
 const checklistClass = rule({
   m: '0 0 16px',
-  pl: '24px',
+  paddingInlineStart: '24px',
   listStyle: 'none',
 });
 
@@ -38,7 +39,7 @@ const checklistItemClass = rule({
 
 const checkboxWrapClass = rule({
   pos: 'absolute',
-  l: '-24px',
+  insetInlineStart: '-24px',
   t: '6px',
   d: 'inline-flex',
   ai: 'center',
@@ -100,7 +101,7 @@ export const ListContainerElement: React.FC<ListContainerElementProps> = ({attri
       <ol
         {...attributes}
         className={listClass}
-        style={{paddingLeft: '26px', listStyleType: element.olType ?? 'decimal'}}
+        style={{paddingInlineStart: '26px', listStyleType: element.olType ?? 'decimal'}}
       >
         {children}
       </ol>
@@ -139,7 +140,11 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
 
   if (!isChecklistItem) {
     return (
-      <li {...attributes} className={itemClass} style={{textAlign: element.align}}>
+      <li
+        {...attributes}
+        className={itemClass}
+        style={{textAlign: element.align, fontFamily: fontFamilyOf(element.font)}}
+      >
         {children}
         {isEmptyBlock(element) && <BlockPlaceholder element={element} />}
       </li>
@@ -147,7 +152,11 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
   }
 
   return (
-    <li {...attributes} className={checklistItemClass} style={{textAlign: element.align}}>
+    <li
+      {...attributes}
+      className={checklistItemClass}
+      style={{textAlign: element.align, fontFamily: fontFamilyOf(element.font)}}
+    >
       <span className={checkboxWrapClass} contentEditable={false}>
         <input
           className={checkboxClass}

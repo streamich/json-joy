@@ -4,6 +4,7 @@ import {Link} from '../../1-inline/Link';
 import {SpinnerCircle} from '../../2-inline-block/SpinnerCircle';
 import {useStyles} from '../../styles/context';
 import {Ripple} from '../../misc/Ripple';
+import {isTouch} from '../../utils/environment';
 
 const rowClass = rule({
   d: 'flex',
@@ -38,6 +39,10 @@ const surfaceClass = rule({
   fontSize: 'inherit',
   col: 'inherit',
   cur: 'inherit',
+});
+
+const surfaceSmallClass = rule({
+  pd: '0px 6px 0px 12px',
 });
 
 const iconClass = rule({
@@ -94,6 +99,15 @@ const actionsClass = rule({
   },
 });
 
+const rowMutedClass = rule({
+  [`.${titleClass.trim()}`]: {
+    op: 0.7,
+  },
+  [`&:hover .${titleClass.trim()}`]: {
+    op: 1,
+  },
+});
+
 export interface FileListItemProps extends Omit<React.AllHTMLAttributes<any>, 'children' | 'title'> {
   title: React.ReactNode;
   metadata?: React.ReactNode;
@@ -106,6 +120,8 @@ export interface FileListItemProps extends Omit<React.AllHTMLAttributes<any>, 'c
   loading?: boolean;
   external?: boolean;
   spacious?: boolean;
+  small?: boolean;
+  muted?: boolean;
   fill?: boolean;
 }
 
@@ -124,6 +140,8 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   type,
   external,
   spacious,
+  small,
+  muted,
   fill,
   ...rest
 }) => {
@@ -176,7 +194,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
 
   const interactiveProps: any = {
     ...rest,
-    className: surfaceClass,
+    className: surfaceClass + (small ? surfaceSmallClass : ''),
     'aria-busy': loading || undefined,
     'aria-disabled': isDisabled || undefined,
   };
@@ -209,16 +227,25 @@ export const FileListItem: React.FC<FileListItemProps> = ({
     rowStyle.paddingBottom = 12;
   }
 
+  const optionsStyle: React.CSSProperties = {};
+  if (isTouch) {
+    optionsStyle.opacity = 1;
+  }
+  if (isDisabled) {
+    optionsStyle.pointerEvents = 'none';
+    optionsStyle.opacity = 0.6;
+  }
+
   surface = (
     <div
-      className={className + rowClass + dynamicRowClass}
+      className={className + rowClass + dynamicRowClass + (muted ? rowMutedClass : '')}
       style={rowStyle}
       onMouseEnter={iconHover ? () => setHovered(true) : void 0}
       onMouseLeave={iconHover ? () => setHovered(false) : void 0}
     >
       {surface}
       {!!actions && (
-        <span className={actionsClass} style={isDisabled ? {pointerEvents: 'none'} : undefined}>
+        <span className={actionsClass} style={optionsStyle}>
           {actions}
         </span>
       )}

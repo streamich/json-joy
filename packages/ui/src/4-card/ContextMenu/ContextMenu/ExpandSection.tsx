@@ -49,7 +49,7 @@ export const ExpandSection: React.FC<ExpandSectionProps> = (props) => {
       nodes.push(renderItem(subChild));
     }
   }
-  bigIcons.flush();
+  bigIcons.flush(false);
 
   let remaining = subChildren.length - expand;
   for (let j = expand; j < subChildren.length; j++) {
@@ -66,7 +66,7 @@ export const ExpandSection: React.FC<ExpandSectionProps> = (props) => {
       <ContextTitleNested
         key={child.id ?? child.name}
         icon={child.icon?.()}
-        open={open && (showMoreButton || child.openOnTitleHov)}
+        open={open && showMoreButton}
         onClick={() => state.select([...path, menu], child)}
         renderPane={() => renderPane(child)}
         onMouseEnter={onTitleMouseEnter}

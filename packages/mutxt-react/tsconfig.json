@@ -34,6 +34,9 @@
       "path": "../collaborative-slate"
     },
     {
+      "path": "../util"
+    },
+    {
       "path": "../keyboard"
     },
     {

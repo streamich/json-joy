@@ -15,6 +15,13 @@ export interface MenuItem {
   name: string;
 
   /**
+   * Render this item as a "split button": the main face fires `onSelect`,
+   * while a separate chevron button on the right opens the children popup.
+   * When a string is provided it serves as the chevron button's label.
+   */
+  split?: boolean | string;
+
+  /**
    * Rich text used to display the item.
    *
    * @default name
@@ -111,6 +118,14 @@ export interface MenuItem {
   danger?: boolean;
 
   /**
+   * When `true`, popup-style submenus opened from this item (e.g. toolbar
+   * menu popups) suppress their title header. Useful for compact toolbar
+   * buttons whose dropdown should look like a plain option list rather than
+   * a titled panel.
+   */
+  noHeader?: boolean;
+
+  /**
    * Whether to show ellipsis "..." after the display name. Used in case when
    * there is more UI that user will see after clicking on this item.
    */
@@ -135,6 +150,11 @@ export interface MenuItem {
 
   /** Callback when the item is clicked. */
   onSelect?: React.EventHandler<React.MouseEvent<Element> | React.TouchEvent<Element>>;
+
+  /**
+   * Callback fired on `mousedown` of the item, before any click/select runs.
+   */
+  onMouseDown?: React.MouseEventHandler<Element>;
 
   /**
    * Argument definitions for this command. When present, selecting the item

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {createPortal} from 'react-dom';
-import {context, usePortal} from './context';
+import {context, usePortal, usePortalParent} from './context';
 import {PortalState} from './PortalState';
 import {useHiddenTrace} from '../../context';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
@@ -20,6 +20,7 @@ export interface PortalProps {
 
 export const Portal: React.FC<PortalProps> = ({children, parent}) => {
   const parentState = usePortal();
+  const defaultParent = usePortalParent();
   const state = React.useMemo(() => {
     const state = new PortalState();
     state.parent = parentState;
@@ -33,7 +34,7 @@ export const Portal: React.FC<PortalProps> = ({children, parent}) => {
     else if (style.display === 'none' && !hidden) style.display = '';
   }, [hidden, el]);
   React.useLayoutEffect(() => {
-    const container = parent || document.body;
+    const container = parent || defaultParent || document.body;
     container.appendChild(el);
     state.addRoot(el);
     return () => {
@@ -42,7 +43,7 @@ export const Portal: React.FC<PortalProps> = ({children, parent}) => {
         container.removeChild(el);
       } catch {}
     };
-  }, [parent, el, state.addRoot, state.delRoot]);
+  }, [parent, defaultParent, el, state.addRoot, state.delRoot]);
 
   return <context.Provider value={state}>{createPortal(children, el)}</context.Provider>;
 };

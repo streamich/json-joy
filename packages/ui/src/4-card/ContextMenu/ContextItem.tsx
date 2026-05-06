@@ -19,7 +19,7 @@ const blockClass = rule({
   w: '100%',
   bxz: 'border-box',
   bg: 'none',
-  ta: 'left',
+  ta: 'start',
   us: 'none',
   out: 'none',
   '& code': {
@@ -38,7 +38,8 @@ const iconClass = rule({
   pad: 0,
   w: '16px',
   h: '16px',
-  mar: '0 0 0 -2px',
+  mar: 0,
+  marginInlineStart: '-2px',
 });
 
 const smallTextClass = drule({
@@ -59,8 +60,9 @@ const nestedClass = rule({
   d: 'flex',
   w: '20px',
   h: '20px',
-  mr: '-2px -14px -2px -2px',
-  pdl: '4px',
+  mar: '-2px',
+  marginInlineEnd: '-14px',
+  paddingInlineStart: '4px',
 });
 
 export interface ContextItemProps extends React.HTMLAttributes<any> {
@@ -206,7 +208,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
     element = (
       <Split as="span">
         {element}
-        <span className={nestedClass} style={{paddingLeft: 12, opacity: open ? 1 : 0.7}}>
+        <span className={nestedClass} style={{paddingInlineStart: 12, opacity: open ? 1 : 0.7}}>
           <Arrow direction={open ? 'r' : 'd'} />
         </span>
       </Split>

@@ -2,7 +2,10 @@ import * as React from 'react';
 import {AnchorPointHandle} from './AnchorPointHandle';
 import type {AnchorPointComputeSpec} from './types';
 
-export const anchorContext = React.createContext<Pick<AnchorPointHandle, 'get' | 'style' | 'maxHeight'> | null>(null);
+export const anchorContext = React.createContext<Pick<
+  AnchorPointHandle,
+  'get' | 'style' | 'maxHeight' | 'toggle'
+> | null>(null);
 
 export const useAnchorPointHandle = (spec?: AnchorPointComputeSpec) => {
   // Create the handle once and never recreate it, even when spec changes.

@@ -393,6 +393,10 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
         state.dragStart(id, index, e.clientX, e.pointerId);
       }}
+      onDoubleClick={() => {
+        if (disabled || isExiting) return;
+        state.onTabDoubleClick?.(item, index);
+      }}
       onMouseEnter={() => state.hovered.set([id, index])}
       onMouseLeave={() => {
         if (state.hovered.value?.[0] === id) state.hovered.set(null);

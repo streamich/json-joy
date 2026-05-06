@@ -82,9 +82,9 @@ const valueClass = rule({
   fz: '12px',
   fw: 500,
   minWidth: '32px',
-  ta: 'right',
+  ta: 'end',
   us: 'none',
-  msl: '10px',
+  marginInlineStart: '10px',
 });
 
 const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));

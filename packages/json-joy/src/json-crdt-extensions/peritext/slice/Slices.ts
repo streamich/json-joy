@@ -212,14 +212,34 @@ export class Slices<T = string> implements Stateful, Printable {
         if (chunk.del) {
           if (item) this.list.del(chunk.id);
         } else {
-          if (!item) this.list.set(chunk.id, this.unpack(this.set, chunk));
+          if (!item) {
+            try {
+              this.list.set(chunk.id, this.unpack(this.set, chunk));
+            } catch (error) {
+              if (process.env.NODE_ENV !== 'production') {
+                // A single corrupt slice should not break the whole document.
+                // Skip the bad chunk so refresh() can continue with the rest.
+                // The chunk stays absent from `list`; it will be retried on the
+                // next topology change in case the model heals.
+                // eslint-disable-next-line no-console
+                console.warn('Slices.refresh: failed to unpack slice chunk', error);
+              }
+            }
+          }
         }
       }
     }
     let hash: number = topologyHash;
     this.list.forEach(({v: item}) => {
-      item.refresh();
-      hash = updateNum(hash, item.hash);
+      try {
+        item.refresh();
+        hash = updateNum(hash, item.hash);
+      } catch (error) {
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.warn('Slices.refresh: failed to refresh slice', error);
+        }
+      }
     });
     return (this.hash = hash);
   }

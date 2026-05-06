@@ -14,7 +14,7 @@ export class ToolbarMenuState {
     public props: ToolbarMenuProps,
     prefix: string = '',
   ) {
-    this.openPanel = new OpenPanelState({selected$, prefix: prefix ? prefix + ':' : ''});
+    this.openPanel = new OpenPanelState({selected$, prefix: prefix ? prefix + ':' : '', armed: true});
   }
 
   public execute = (item: MenuItem, event: React.MouseEvent): void => {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {ReactEditor} from 'slate-react';
 import {formatKeys} from '../util/keys';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
@@ -14,9 +15,10 @@ import {
   setOlType,
   setUlType,
 } from '../behavior/lists';
-import type {BlockFormat, ListElementType, MenuItem, OlType, SlateTextAlign} from '../types';
+import type {BlockFormat, FontKind, ListElementType, MenuItem, OlType, SlateTextAlign} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
+import {isBlockFontActive, setBlockFont} from '../behavior/font';
 
 // Block icons
 const ParagraphIcon = makeIcon({set: 'tabler', icon: 'pilcrow', width: 16, height: 16});
@@ -59,6 +61,7 @@ const AlignRightIcon = makeIcon({set: 'lucide', icon: 'align-right', width: 16, 
 const AlignJustifyIcon = makeIcon({set: 'lucide', icon: 'align-justify', width: 16, height: 16});
 const IndentIcon = makeIcon({set: 'lucide', icon: 'indent-increase', width: 16, height: 16});
 const DedentIcon = makeIcon({set: 'lucide', icon: 'indent-decrease', width: 16, height: 16});
+const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
 
 export class BlockMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -80,7 +83,7 @@ export class BlockMenu implements UiLifeCycles {
           icon: head?.icon,
           minWidth: 269,
           expand: 0,
-          children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout()],
+          children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout(), this.menuStyling()],
         },
       ],
     };
@@ -91,7 +94,7 @@ export class BlockMenu implements UiLifeCycles {
       name: 'Block menu',
       maxToolbarItems: 4,
       minWidth: 288,
-      children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout()],
+      children: [this.menuBlocks(), this.menuHeadings(), this.menuLists(), this.menuLayout(), this.menuStyling()],
     };
 
     if (size < 1) {
@@ -166,6 +169,50 @@ export class BlockMenu implements UiLifeCycles {
         this.itemIndent(),
         this.itemDedent(),
       ],
+    };
+  }
+
+  public menuStyling(): MenuItem {
+    return {
+      id: 'block-styling',
+      name: 'Styling',
+      // icon: () => <TypographyIcon />,
+      expand: 4,
+      sepBefore: true,
+      children: [this.menuTypesetting()],
+    };
+  }
+
+  public menuTypesetting(): MenuItem {
+    return {
+      id: 'block-typesetting',
+      name: 'Typesetting',
+      icon: () => <TypographyIcon />,
+      expand: 4,
+      openOnTitleHov: true,
+      children: [
+        this.itemBlockFont('sans', 'Sans-serif'),
+        this.itemBlockFont('serif', 'Serif'),
+        this.itemBlockFont('slab', 'Slab'),
+        this.itemBlockFont('mono', 'Monospace'),
+      ],
+    };
+  }
+
+  private itemBlockFont(kind: FontKind, name: string): MenuItem {
+    const mutxt = this.mutxt;
+    const onSelect = this.exec(() => setBlockFont(mutxt.editor, kind));
+    const Option: React.FC<{size?: number}> = ({size}) => {
+      mutxt.version.use();
+      const active = isBlockFontActive(mutxt.editor, kind);
+      return <FontStyleButton kind={kind} size={size} active={active} onMouseDown={onSelect} />;
+    };
+    return {
+      name,
+      icon: () => <Option size={16} />,
+      iconBig: () => <Option />,
+      active: rsync.comp([mutxt.version], () => isBlockFontActive(mutxt.editor, kind)),
+      onSelect,
     };
   }
 

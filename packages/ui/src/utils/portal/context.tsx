@@ -6,6 +6,15 @@ const defaultPortalState = new PortalState();
 export const context = React.createContext<PortalState>(defaultPortalState);
 export const usePortal = () => React.useContext(context);
 
+/**
+ * Default parent element for portals rendered inside this subtree. When no
+ * explicit `parent` prop is passed to `<Portal>`, the portal mounts under
+ * this element instead of `document.body`.
+ */
+export const parentContext = React.createContext<HTMLElement | null>(null);
+export const usePortalParent = () => React.useContext(parentContext);
+export const PortalParentProvider = parentContext.Provider;
+
 export interface PortalProviderProps {
   children: React.ReactNode;
 }

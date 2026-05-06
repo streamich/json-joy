@@ -12,10 +12,9 @@ import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-sla
 import {withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
+import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
 import {withFile} from './behavior/file';
-import type {ObjNode} from 'json-joy/lib/json-crdt';
-import type {ObjApi} from 'json-joy/lib/json-crdt';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -28,18 +27,41 @@ import {BlockFloater} from './block/BlockFloater';
 import {EmbedFloater} from './void/embed/EmbedFloater';
 import {FileFloater} from './void/file/FileFloater';
 import {OmniFloater} from './omni/OmniFloater';
+import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
+import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
+import {EnsureUiProvider} from '@jsonjoy.com/ui/lib/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
+import {FONT_FAMILIES} from './behavior/font';
 import {Sizer} from '@jsonjoy.com/ui/lib/5-block/Sizer';
+import {s} from 'json-joy/lib/json-crdt';
+import {ModelWithExt} from 'json-joy/lib/json-crdt-extensions';
+import type {ObjNode} from 'json-joy/lib/json-crdt';
+import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
-import type {CustomElement, SlateEditorDocument} from './types';
+import type {CustomElement, EditableWidth, SlateEditorDocument} from './types';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {MuTxtApi} from './state/MuTxtApi';
+
+import './loadFonts';
+
+const KeyboardShortcutsModal = React.lazy(() =>
+  import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
+);
+
+const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
+  return kind === 'mid'
+    ? Math.max(780, Math.min(900, Math.round(shellWidth * 0.6)))
+    : kind === 'wide'
+      ? Math.max(900, Math.min(1200, Math.round(shellWidth * 0.7)))
+      : Math.max(640, Math.min(780, Math.round(shellWidth * 0.5)));
+};
 
 const renderElement = (props: RenderElementProps) => <BlockElement {...(props as any)} />;
 
 const shellClass = rule({
+  pos: 'relative',
   w: '100%',
   bxz: 'border-box',
   // maxW: '1200px',
@@ -112,7 +134,7 @@ export interface MuTxtProps {
   onTitleSubmit?: (title: string) => void;
 }
 
-export const MuTxt: React.FC<MuTxtProps> = ({
+const MuTxtInner: React.FC<MuTxtProps> = ({
   obj,
   fromSlate,
   placeholder = DEF_PLACEHOLDER,
@@ -145,11 +167,14 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
     const editor = withTitleSubmit(
-      withHr(withFile(withEmbeds(withCodeBlockBreaks(withHistory(withReact(createEditor())))))),
+      withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];
-    const state = new MuTxtState(editor, obj as ObjApi<ObjNode>, {collaborative: !!presence, readOnly, fromSlate});
+    const ownedObj: ObjApi<ObjNode> = obj
+      ? (obj as ObjApi<ObjNode>)
+      : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
+    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate});
     return [editor, state];
   }, [obj, _state]);
   const peritextRef: PeritextRef = state.peritextRef;
@@ -197,6 +222,24 @@ export const MuTxt: React.FC<MuTxtProps> = ({
   const activeSelectionRange = state.inline.link.rangeSnapshot.use();
   const omniOpen = state.omni.open.use();
   const omniRange = state.omni.rangeSnapshot.use();
+  const shortcutsOpen = state.shortcutsOpen.use();
+  const displayMode = state.displayMode.use();
+  const font = state.font.use();
+  const editableWidthKind = state.editableWidth.use();
+  const shellAvailableWidth = state.sizer.width.use();
+  const shellDesiredWidth = state.sizer.content.use();
+  const actualShellWidth =
+    shellAvailableWidth > 0 ? Math.min(shellAvailableWidth, shellDesiredWidth) : shellDesiredWidth;
+  const computedEditableWidth =
+    actualShellWidth > 0 ? computeEditableWidth(actualShellWidth, editableWidthKind) : undefined;
+  const [shellEl, setShellEl] = React.useState<HTMLElement | null>(null);
+  const handleShellRef = React.useCallback(
+    (el: HTMLDivElement | null) => {
+      setShellEl(el);
+      state.bindShell(el);
+    },
+    [state],
+  );
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       const ranges = [...decorateRemoteCursors(entry)];
@@ -221,9 +264,10 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   const editableStyle: React.CSSProperties = {
     minHeight,
-    maxWidth: contentWidth ?? 800,
+    maxWidth: contentWidth ?? computedEditableWidth ?? 800,
     color: styles.g(0.15),
     caretColor: styles.g(0),
+    fontFamily: FONT_FAMILIES[font],
   };
 
   let content: React.ReactNode = (
@@ -251,12 +295,13 @@ export const MuTxt: React.FC<MuTxtProps> = ({
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
       />
-      <InlineFloater />
-      <BlockFloater />
+      {!shortcutsOpen && <InlineFloater />}
+      {!shortcutsOpen && <BlockFloater />}
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      <OmniFloater />
+      {!shortcutsOpen && <OmniFloater />}
+      {!shortcutsOpen && <IndicatorFloater />}
     </Slate>
   );
 
@@ -301,38 +346,74 @@ export const MuTxt: React.FC<MuTxtProps> = ({
 
   content = (
     <>
-      <MuTxtHeader editor={editor} readOnly={readOnly} onVisualChange={() => state.sync(true)} />
+      <MuTxtHeader editor={editor} />
       {content}
       <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
         <MuTxtFooter />
       </div>
+      {shortcutsOpen && (
+        <React.Suspense fallback={null}>
+          <KeyboardShortcutsModal />
+        </React.Suspense>
+      )}
     </>
   );
 
   const combinedClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
 
+  const shellStyle: React.CSSProperties =
+    displayMode === 'fullwindow'
+      ? {
+          ...style,
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100vh',
+          maxWidth: 'none',
+          borderRadius: 0,
+          zIndex: 9999,
+          background: styles.light ? styles.g(1) : styles.g(0),
+        }
+      : (style as React.CSSProperties);
+
   if (borderless) {
-    content = React.createElement('div', {style, className: combinedClass}, content);
+    content = React.createElement('div', {ref: handleShellRef, style: shellStyle, className: combinedClass}, content);
   } else {
     content = React.createElement(
       Paper,
-      {round: true, contrast: true, hover: true, hoverElevate, style, className: combinedClass},
+      {
+        ref: handleShellRef,
+        round: displayMode !== 'fullwindow',
+        contrast: true,
+        hover: true,
+        hoverElevate,
+        style: shellStyle,
+        className: combinedClass,
+      },
       content,
     );
   }
 
   return (
     <SlateEditorContextProvider state={state}>
-      <Sizer
-        state={state.sizer}
-        minWidth={300}
-        handlePadding={64}
-        handleMaxHeight={500}
-        handleWidth={3}
-        style={heightFit ? {height: '100%', minHeight: 0} : undefined}
-      >
-        {content}
-      </Sizer>
+      <PortalParentProvider value={displayMode === 'fullscreen' ? shellEl : null}>
+        <Sizer
+          state={state.sizer}
+          minWidth={300}
+          handlePadding={64}
+          handleMaxHeight={500}
+          handleWidth={3}
+          style={heightFit ? {height: '100%', minHeight: 0} : undefined}
+        >
+          {content}
+        </Sizer>
+      </PortalParentProvider>
     </SlateEditorContextProvider>
   );
 };
+
+export const MuTxt: React.FC<MuTxtProps> = (props) => (
+  <EnsureUiProvider>
+    <MuTxtInner {...props} />
+  </EnsureUiProvider>
+);

@@ -3,6 +3,7 @@ import {rule, font} from 'nano-theme';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
+import {fontFamilyOf} from '../../behavior/font';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {PreformattedElement as PreformattedElementType} from '../../types';
@@ -37,6 +38,7 @@ export const PreformattedElement: React.FC<PreformattedElementProps> = ({attribu
         // marginInlineStart: indentPadding(element.indent) ?? 0,
         paddingInlineStart: 14 + (indentPadding(element.indent) ?? 0),
         marginInlineEnd: 0,
+        fontFamily: fontFamilyOf(element.font),
         background: styles.light ? styles.g(0, 0.04) : styles.g(1, 0.04),
         color: styles.light ? styles.g(0.16) : styles.g(0.92),
       }}

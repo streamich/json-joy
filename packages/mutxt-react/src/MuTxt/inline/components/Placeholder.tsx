@@ -1,13 +1,21 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {isTouch} from '@jsonjoy.com/ui';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import MuTxtLogo from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
-import type {RenderPlaceholderProps} from 'slate-react';
 import {useMuTxt} from '../../context';
+import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
+import type {RenderPlaceholderProps} from 'slate-react';
 
 export const DEF_PLACEHOLDER = (
-  <span style={{display: 'inline-flex', alignItems: 'center'}}>
-    Start writing in your <MuTxtLogo style={{margin: '-8px 0'}} /> document or press "/" for commands...
+  <span style={{display: 'inline', alignItems: 'center'}}>
+    Start writing in your <MuTxtLogo style={{margin: '-8px 0 -12px'}} /> document
+    {!isTouch && (
+      <>
+        &nbsp;or press <Key>Space</Key> for commands
+      </>
+    )}
+    ...
   </span>
 );
 

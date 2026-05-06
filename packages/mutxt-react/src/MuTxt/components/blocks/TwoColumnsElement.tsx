@@ -2,6 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
+import {fontFamilyOf} from '../../behavior/font';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {TwoColumnsElement as TwoColumnsElementType} from '../../types';
@@ -27,6 +28,7 @@ export const TwoColumnsElement: React.FC<TwoColumnsElementProps> = ({attributes,
     style={{
       textAlign: element.align,
       paddingInlineStart: indentPadding(element.indent),
+      fontFamily: fontFamilyOf(element.font),
     }}
   >
     {children}
