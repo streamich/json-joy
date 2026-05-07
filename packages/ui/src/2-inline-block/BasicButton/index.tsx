@@ -4,7 +4,6 @@ import {Link} from '../../1-inline/Link';
 import {Ripple} from '../../misc/Ripple';
 import {useStyles} from '../../styles/context';
 
-
 export const blockClass = rule({
   ...theme.font.ui1.mid,
   fz: '14px',

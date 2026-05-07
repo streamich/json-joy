@@ -50,7 +50,9 @@ export const Fallback: React.FC<FallbackProps> = ({name, error, reset, compact})
           </div>
         }
       >
-        <div className={messageClass} style={{color: styles.g(.5)}}>{error?.message || String(error) || 'Unknown error'}</div>
+        <div className={messageClass} style={{color: styles.g(0.5)}}>
+          {error?.message || String(error) || 'Unknown error'}
+        </div>
         <div className={buttonRowClass}>
           <Button small ghost size={-2} onClick={reset}>
             Try again

@@ -6,8 +6,7 @@ export type ResolvedTheme = 'light' | 'dark';
 
 const STORAGE_KEY = 'mutxt_theme';
 
-const isPreference = (val: unknown): val is ThemePreference =>
-  val === 'auto' || val === 'light' || val === 'dark';
+const isPreference = (val: unknown): val is ThemePreference => val === 'auto' || val === 'light' || val === 'dark';
 
 const detectSystemTheme = (): ResolvedTheme => {
   if (typeof window === 'undefined' || !window.matchMedia) return 'light';

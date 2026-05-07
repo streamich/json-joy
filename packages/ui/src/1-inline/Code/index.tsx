@@ -47,8 +47,8 @@ export const Code: React.FC<CodeProps> = ({
   const styles = useStyles();
 
   const style: React.CSSProperties = {
-    color: styles.neutral.g(.9, .86),
-    background: styles.neutral.g(.8, .08),
+    color: styles.neutral.g(0.9, 0.86),
+    background: styles.neutral.g(0.8, 0.08),
   };
 
   if (size) {

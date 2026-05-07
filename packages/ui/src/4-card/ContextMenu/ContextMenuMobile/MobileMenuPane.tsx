@@ -15,12 +15,19 @@ export interface MobileMenuPaneProps {
   onSelectArgs: (item: MenuItem) => void;
 }
 
-export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({menu, parent, onPush, onBack, onClose, onSelectArgs}) => {
+export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
+  menu,
+  parent,
+  onPush,
+  onBack,
+  onClose,
+  onSelectArgs,
+}) => {
   const [t] = useT();
   const theme = useTheme();
   const children = menu.children ?? [];
 
-  const sepColor = theme.g(0, .08);
+  const sepColor = theme.g(0, 0.08);
   const titleColor = theme.g(0.5);
 
   const renderSeparator = (key: string) => (

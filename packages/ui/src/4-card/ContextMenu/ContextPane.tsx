@@ -4,7 +4,7 @@ import {ZINDEX} from '../../constants';
 
 const usePaneClass = makeRule((t) => {
   // const shade = t.isLight ? 0 : 1;
-  const shade = t.isLight ? 0 : .3;
+  const shade = t.isLight ? 0 : 0.3;
   return {
     d: 'inline-block',
     pos: 'relative',
@@ -113,9 +113,9 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
         transparent || borderless
           ? 'none'
           : '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)',
-          // : theme.isLight
-          //   ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
-          //   : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
+      // : theme.isLight
+      //   ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
+      //   : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
       ...(style || {}),
       border: transparent || borderless ? 'none' : undefined,
     };

@@ -252,7 +252,7 @@ const ArgsSheet: React.FC<ArgsSheetProps> = ({item, open, onOpenChange, onAnimat
   const effectiveOpen = open && parentOpen;
 
   const sheetBg = theme.bg;
-  const fgColor = theme.g(theme.isLight ? 0.15 : .1);
+  const fgColor = theme.g(theme.isLight ? 0.15 : 0.1);
   const sheetClassName = sheetClass({
     bg: sheetBg,
     col: fgColor,

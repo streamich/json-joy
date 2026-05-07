@@ -48,33 +48,33 @@ export const App: React.FC = () => {
   return (
     <ctx.Provider value={state}>
       <UiProvider theme={theme}>
-      <AppGrid
-        state={state.appGrid}
-        maxLeftSize={500}
-        left={(toggle) => (
-          <ErrorBoundary name="mutxt:left-sidebar">
-            <LeftSidebar toggle={toggle} />
-          </ErrorBoundary>
-        )}
-        // footer={<div> </div>}
-        column={(toggle) =>
-          files.length === 0 ? (
-            <ErrorBoundary name="mutxt:main">
-              <MainContent />
+        <AppGrid
+          state={state.appGrid}
+          maxLeftSize={500}
+          left={(toggle) => (
+            <ErrorBoundary name="mutxt:left-sidebar">
+              <LeftSidebar toggle={toggle} />
             </ErrorBoundary>
-          ) : (
-            <div className={columnClass}>
-              <ErrorBoundary name="mutxt:tabs-header" compact>
-                <TabsHeader toggle={toggle} />
-              </ErrorBoundary>
+          )}
+          // footer={<div> </div>}
+          column={(toggle) =>
+            files.length === 0 ? (
               <ErrorBoundary name="mutxt:main">
                 <MainContent />
               </ErrorBoundary>
-            </div>
-          )
-        }
-      />
-      {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
+            ) : (
+              <div className={columnClass}>
+                <ErrorBoundary name="mutxt:tabs-header" compact>
+                  <TabsHeader toggle={toggle} />
+                </ErrorBoundary>
+                <ErrorBoundary name="mutxt:main">
+                  <MainContent />
+                </ErrorBoundary>
+              </div>
+            )
+          }
+        />
+        {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
       </UiProvider>
     </ctx.Provider>
   );

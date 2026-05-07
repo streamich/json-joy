@@ -130,9 +130,7 @@ export const Input: React.FC<InputProps> = (props) => {
 
   const placeholderActive = value !== undefined && !value && !!placeholder;
   const style: React.CSSProperties = {
-    color: placeholderActive
-      ? styles.g(0.6)
-      : styles.g(0.1),
+    color: placeholderActive ? styles.g(0.6) : styles.g(0.1),
   };
 
   if (mono) {

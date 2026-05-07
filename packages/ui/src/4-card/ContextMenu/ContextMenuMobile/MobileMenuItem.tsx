@@ -50,13 +50,13 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
 
   const danger = !!item.danger;
   const dangerColor = theme.color.sem.negative[1];
-  const baseColor = theme.g(theme.isLight ? 0.15 : .1);
+  const baseColor = theme.g(theme.isLight ? 0.15 : 0.1);
 
   const rowStyle: React.CSSProperties = {
     color: danger ? dangerColor : baseColor,
     pointerEvents: disabled ? 'none' : undefined,
     opacity: disabled ? 0.45 : 1,
-    background: active ? (theme.g(0, theme.isLight ? 0.05 : 0.08)) : undefined,
+    background: active ? theme.g(0, theme.isLight ? 0.05 : 0.08) : undefined,
   };
 
   const description = item.description ? t(item.description) : null;

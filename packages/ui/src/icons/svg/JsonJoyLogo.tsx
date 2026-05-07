@@ -51,8 +51,8 @@ const SvgFF: React.FC<Props> = ({size = 36, color = false}) => {
   // const grey1 = '#bababa';
   // const grey2 = '#d9d9d9';
 
-  const grey1 = styles.g(.8);
-  const grey2 = styles.g(.7);
+  const grey1 = styles.g(0.8);
+  const grey2 = styles.g(0.7);
 
   return (
     <svg width={size} viewBox="0 0 92 57" fill="none">
@@ -66,7 +66,13 @@ const SvgFF: React.FC<Props> = ({size = 36, color = false}) => {
         style={{fill: color ? brand[1] : void 0}}
         d="M46 31.5H23V57C35.7025 57 46 46.7025 46 34V31.5Z"
       />
-      <rect className={shape3Class({fill: grey1})} style={{fill: color ? brand[2] : void 0}} x="23" width="23" height="34" />
+      <rect
+        className={shape3Class({fill: grey1})}
+        style={{fill: color ? brand[2] : void 0}}
+        x="23"
+        width="23"
+        height="34"
+      />
       <path
         className={shape4Class({fill: grey2})}
         style={{fill: color ? brand[3] : void 0}}
@@ -77,7 +83,13 @@ const SvgFF: React.FC<Props> = ({size = 36, color = false}) => {
         style={{fill: color ? brand[4] : void 0}}
         d="M92 31H69V57C81.7025 57 92 46.7025 92 34V31Z"
       />
-      <rect className={shape6Class({fill: grey1})} style={{fill: color ? brand[5] : void 0}} x="69" width="23" height="34" />
+      <rect
+        className={shape6Class({fill: grey1})}
+        style={{fill: color ? brand[5] : void 0}}
+        x="69"
+        width="23"
+        height="34"
+      />
     </svg>
   );
 };

@@ -172,9 +172,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   }));
 
   const dynamicIconClass = useRule(() => ({
-    col: selected
-      ? styles.col.accent(0, 'solid-1')
-      : isDisabled ? styles.g(0.55) : styles.g(0.45),
+    col: selected ? styles.col.accent(0, 'solid-1') : isDisabled ? styles.g(0.55) : styles.g(0.45),
     bg: styles.g(0, 0.03),
     w: spacious ? '48px' : '36px',
     h: spacious ? '48px' : '36px',

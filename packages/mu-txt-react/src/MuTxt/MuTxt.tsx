@@ -396,11 +396,7 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
   // `parentServices` is null when no real parent provider is mounted above.
   const parentServices = useUiServices();
   const parentNano = nanoTheme.useTheme();
-  const parentResolvedTheme: 'light' | 'dark' | null = parentServices
-    ? parentNano.isLight
-      ? 'light'
-      : 'dark'
-    : null;
+  const parentResolvedTheme: 'light' | 'dark' | null = parentServices ? (parentNano.isLight ? 'light' : 'dark') : null;
 
   // ---------------------------------------------------- Title-submit callback
   const onTitleSubmitRef = React.useRef(onTitleSubmit);

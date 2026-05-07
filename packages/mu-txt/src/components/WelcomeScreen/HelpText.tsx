@@ -25,11 +25,7 @@ export const HelpText: React.FC<HelpTextProps> = () => {
       </p>
 
       <h3>{t('History')}</h3>
-      <p>
-        {t(
-          'Below the editor, you can find the history of all changes.',
-        )}
-      </p>
+      <p>{t('Below the editor, you can find the history of all changes.')}</p>
       {/* 
       <h3>{t('Formatting')}</h3>
       <ul>

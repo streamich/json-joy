@@ -28,7 +28,6 @@ export interface MenuItem {
    */
   display?: () => React.ReactNode;
 
-  
   /** Render raw content of the item. If specified the item will not be
    * wrapped in <ContextItem> and children wil not be rendered. */
   raw?: () => React.ReactNode;

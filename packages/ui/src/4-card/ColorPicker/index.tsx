@@ -77,9 +77,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>((p
         className={prefixCls}
         radius="8px"
         style={{width: 'auto', height: 150, minWidth: 120, borderBottom: `12px solid ${saturationBottomBorder}`}}
-        pointer={({left, top}) => (
-          <Pointer style={{left, top}} color={hsl.toString()} borderColor={pointerBorder} />
-        )}
+        pointer={({left, top}) => <Pointer style={{left, top}} color={hsl.toString()} borderColor={pointerBorder} />}
         onChange={({h, s, v, a}: HsvaColor) => {
           const hsv = new HsvColor(h / 360, s / 100, v / 100, a);
           const hsl = HslColor.from(hsv)!;

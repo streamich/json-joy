@@ -28,7 +28,7 @@ export class ThemeColor {
     const isDark = this.isDarkTheme();
     const bgL = this.bg.l;
     const fgS = this.fg.s;
-    const lightness = isDark ? bgL + (1 - bgL) * contrast : bgL - (bgL) * contrast;
+    const lightness = isDark ? bgL + (1 - bgL) * contrast : bgL - bgL * contrast;
     const saturation = clamp(fgS + (isDark ? 1 : -1) * contrast * 0.5, 0, 1);
     // const saturation = fgS;
     const newHsl = new HslColor(this.fg.h, saturation, lightness, alpha);

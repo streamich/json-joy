@@ -204,19 +204,15 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     props.style.opacity = 0.3;
   }
 
-  let element = icon ? (
-    icon
-  ) : showText ? (
-    emoji ? (
-      emoji
-    ) : typeof name === 'string' && name.length > 0 ? (
-      name.slice(0, letters || 2).trim()
-    ) : (
-      ''
-    )
-  ) : (
-    renderImg(computedWidth, src, () => setError(true))
-  );
+  let element = icon
+    ? icon
+    : showText
+      ? emoji
+        ? emoji
+        : typeof name === 'string' && name.length > 0
+          ? name.slice(0, letters || 2).trim()
+          : ''
+      : renderImg(computedWidth, src, () => setError(true));
 
   if (href) {
     element = (

@@ -17,7 +17,7 @@ export const InputColor: React.FC<InputColorProps> = (props) => {
         padding: 0,
         margin: props.label ? '-18px -4px 0 0' : '-1px -4px 0 0',
         cursor: 'pointer',
-        border: `3px solid ${theme.g(0.99, .9)}`,
+        border: `3px solid ${theme.g(0.99, 0.9)}`,
         borderRadius: 2,
         boxShadow: `0px 1px 2px rgba(0,0,0,.2)`,
         position: 'relative',
