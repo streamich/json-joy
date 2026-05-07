@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, lightTheme as theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 
 const defaultSize = 32;
 
@@ -16,9 +16,9 @@ const blockClass = rule({
 
 const tileSize = 38;
 
-const tileClass = rule({
+const useTileClass = makeRule((t) => ({
   pos: 'absolute',
-  bgc: theme.g(0.2),
+  bgc: t.g(0.2),
   w: tileSize + '%',
   h: tileSize + '%',
   bdrad: '15%',
@@ -26,12 +26,10 @@ const tileClass = rule({
   left: '50%',
   mar: `-${tileSize / 2}% 0 0 -${tileSize / 2}%`,
   trs: 'background-color .15s,top .15s cubic-bezier(0.175, 0.885, 0.32, 1.275), left .15s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-  // op: .4,
   [`.${blockClass.trim()}:hover &`]: {
-    bgc: theme.g(0.4),
-    // op: 1,
+    bgc: t.g(0.4),
   },
-});
+}));
 
 const tile1Class = rule({
   [`.${blockClass.trim()}:hover &`]: {
@@ -70,6 +68,7 @@ export interface Props extends React.HTMLAttributes<any> {
 }
 
 export const Tiles: React.FC<Props> = ({size, ...rest}) => {
+  const tileClass = useTileClass();
   let style: React.CSSProperties = {};
 
   if (size && size !== defaultSize) {
