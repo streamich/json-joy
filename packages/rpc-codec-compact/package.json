@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.16.0",
+  "version": "18.17.0",
   "description": "Compact codec for Reactive RPC messages",
   "author": {
     "name": "streamich",
