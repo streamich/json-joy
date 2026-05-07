@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.17.0",
+  "version": "18.18.0",
   "description": "JSON CRDT HTTP/Websocket server with persistent storage",
   "author": {
     "name": "streamich",
