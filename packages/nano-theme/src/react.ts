@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Theme} from './types';
+import type {Theme} from './types';
 import {lightTheme} from './themes/light';
 import {darkTheme} from './themes/dark';
 import {nano} from './css';

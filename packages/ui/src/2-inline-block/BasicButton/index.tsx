@@ -93,7 +93,6 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   ...rest
 }) => {
   const styles = useStyles();
-  const light = styles.light;
   const textCol = styles.g(0.2);
   const bgFactor = styles.light ? 1 : 1.1;
 

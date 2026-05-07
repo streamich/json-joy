@@ -22,8 +22,6 @@ export interface HintProps extends React.AllHTMLAttributes<HTMLSpanElement> {
 export const Hint: React.FC<HintProps> = (props) => {
   const styles = useStyles();
 
-  const light = styles.light;
-
   return (
     <span
       {...props}

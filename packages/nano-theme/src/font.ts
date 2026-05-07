@@ -1,4 +1,4 @@
-import {ThemeFontPalette} from './types';
+import type {ThemeFontPalette} from './types';
 
 const sans = '"Open Sans",sans-serif';
 const serif = '"Merriweather","Linux Libertine"';

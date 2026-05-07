@@ -8,7 +8,7 @@ import {useT} from 'use-t';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {ThemePreference} from '../../state/theme';
 
-export interface HeaderMenuProps {}
+export type HeaderMenuProps = {};
 
 const ThemeTabs: React.FC = () => {
   const [t] = useT();

@@ -201,7 +201,6 @@ export const AvatarBlock: React.FC<AvatarBlockProps> = (props) => {
     emoji,
     square,
     rounded,
-    post,
     title,
     onClick,
     onAvatarClick,

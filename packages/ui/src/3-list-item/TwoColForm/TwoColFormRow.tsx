@@ -67,7 +67,6 @@ export interface TwoColFormRowProps extends Omit<React.HTMLAttributes<HTMLDivEle
 export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({icon, title, children, muted, ...rest}) => {
   const styles = useStyles();
   const labelClass = useLabelClass();
-  const light = styles.light;
 
   const dynamicLabelClass = useRule(() => ({
     col: muted ? styles.g(0.55) : styles.g(0.15),

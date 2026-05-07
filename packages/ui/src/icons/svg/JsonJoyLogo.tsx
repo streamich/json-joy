@@ -1,4 +1,4 @@
-import {rule, drule} from 'nano-theme';
+import {drule} from 'nano-theme';
 import * as React from 'react';
 import {useStyles} from '../../styles/context';
 

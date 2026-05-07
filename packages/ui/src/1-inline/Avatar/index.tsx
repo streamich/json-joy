@@ -1,8 +1,7 @@
 import * as React from 'react';
-import {lightTheme as theme, type Scale, rule, makeRule, useTheme} from 'nano-theme';
+import {lightTheme as theme, type Scale, rule, useTheme} from 'nano-theme';
 import Svg from 'iconista';
 import {useT} from 'use-t';
-import {LogoStatic} from '../LogoStatic';
 import {Link} from '../Link';
 import {useStyles} from '../../styles/context';
 
