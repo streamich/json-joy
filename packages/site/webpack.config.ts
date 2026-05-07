@@ -35,6 +35,15 @@ const config: Configuration & {devServer?: DevServerConfiguration} = {
               rewritten = path.join(root, m[1], 'src');
             }
 
+            if (!rewritten) {
+              const nanoThemeLibMatch = req.match(/^nano-theme\/lib(?:\/(.+))?$/);
+              if (nanoThemeLibMatch) {
+                rewritten = path.join(root, 'nano-theme', 'src', nanoThemeLibMatch[1] ?? '');
+              } else if (req === 'nano-theme') {
+                rewritten = path.join(root, 'nano-theme', 'src');
+              }
+            }
+
             if (!rewritten) return callback();
             resolver.doResolve(
               target,

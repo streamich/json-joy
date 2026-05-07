@@ -1,24 +1,24 @@
 import * as React from 'react';
-import {rule, m2, theme} from 'nano-theme';
+import {makeRule, rule, m2} from 'nano-theme';
 
 const sectionClass = rule({
   pad: '36px 0 0',
   w: '190px',
 });
 
-const sectionHeadingClass = rule({
-  ...theme.font.ui2.bold,
+const useSectionHeadingClass = makeRule((t) => ({
+  ...t.font.ui2.bold,
   fz: '10px',
-  col: theme.g(0.5),
+  col: t.g(0.5),
   textTransform: 'uppercase',
-});
+}));
 
-const sectionListClass = rule({
+const useSectionListClass = makeRule((t) => ({
   listStyle: 'none',
   pad: '14px 0 0',
   mar: 0,
   li: {
-    ...theme.font.ui2.mid,
+    ...t.font.ui2.mid,
     fw: 500,
     d: 'flex',
     fz: '14px',
@@ -29,11 +29,11 @@ const sectionListClass = rule({
       mar: 0,
       a: {
         pad: '3px 0',
-        col: theme.g(0.3),
+        col: t.g(0.3),
         bdb: '1px solid transparent',
         '&:hover': {
-          col: theme.g(0.1),
-          bdb: `1px solid ${theme.g(0.7)}`,
+          col: t.g(0.1),
+          bdb: `1px solid ${t.g(0.7)}`,
         },
       },
     },
@@ -41,7 +41,7 @@ const sectionListClass = rule({
       h: '24px',
     },
   },
-});
+}));
 
 export interface FooterSectionProps {
   title: React.ReactNode;
@@ -49,6 +49,8 @@ export interface FooterSectionProps {
 }
 
 export const FooterSection: React.FC<FooterSectionProps> = ({title, children}) => {
+  const sectionHeadingClass = useSectionHeadingClass();
+  const sectionListClass = useSectionListClass();
   const list = children instanceof Array ? children : [children];
 
   return (

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Close} from '../Close';
-import {rule, lightTheme as theme} from 'nano-theme';
+import {rule, useTheme} from 'nano-theme';
 import {Ripple} from '../../../misc/Ripple';
 
 const className = rule({
@@ -15,6 +15,7 @@ export interface Props {
 }
 
 export const CloseCircle: React.FC<Props> = ({small, onClick}) => {
+  const theme = useTheme();
   const size = small ? 36 : 64;
   return (
     <Ripple color={theme.g(0.94)} ms={small ? 5_000 : 2_000}>

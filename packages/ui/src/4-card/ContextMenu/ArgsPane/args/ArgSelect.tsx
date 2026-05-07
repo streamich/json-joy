@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {rule, theme} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 import {argBlockCss} from './css';
 import {FormRow} from '../../../../3-list-item/FormRow';
 import type {ParamSelect} from '../../../StructuralMenu/types';
 import {Scrollbox} from '../../../Scrollbox';
 
-const optionClass = rule({
+const useOptionClass = makeRule((t) => ({
   d: 'flex',
   alignItems: 'center',
   pd: '4px 8px',
@@ -15,14 +15,14 @@ const optionClass = rule({
   lh: '1.4em',
   us: 'none',
   '&:hover': {
-    bg: theme.g(0, 0.06),
+    bg: t.g(0, 0.06),
   },
-});
+}));
 
-const optionSelectedClass = rule({
-  bg: theme.g(0, 0.08),
+const useOptionSelectedClass = makeRule((t) => ({
+  bg: t.g(0, 0.08),
   fontWeight: 600,
-});
+}));
 
 export interface ArgSelectProps {
   param: ParamSelect;
@@ -33,6 +33,8 @@ export interface ArgSelectProps {
 
 export const ArgSelect: React.FC<ArgSelectProps> = ({param, value, onChange, onSubmit}) => {
   const options = param.options ?? [];
+  const optionClass = useOptionClass();
+  const optionSelectedClass = useOptionSelectedClass();
 
   return (
     <div className={argBlockCss}>

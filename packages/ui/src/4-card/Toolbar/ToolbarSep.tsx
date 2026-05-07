@@ -33,7 +33,7 @@ export const ToolbarSep: React.FC<ToolbarSepProps> = ({line, thick, height, lite
       width: thick ? '2px' : '1px',
       height: height ?? (subtle ? '18px' : void 0),
       margin: compact ? '0 2px' : '0 4px',
-      background: styles.light ? styles.g(lite ? 0.96 : 0.92) : styles.g(lite ? 0.9 : 0.8),
+      background: styles.g(0, lite ? 0.06 : 0.16),
     };
   }
 

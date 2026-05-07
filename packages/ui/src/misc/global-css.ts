@@ -1,10 +1,10 @@
-import {put, theme} from 'nano-theme';
+import {put} from 'nano-theme';
 
 import 'nano-theme/lib/global-reset';
 
 put('*:focus,button:focus,a:focus', {
   outlineOffset: '1px',
-  out: `2px solid ${theme.color.sem.blue[0]}`,
+  out: '2px solid #07f',
 });
 
 put('*:active,button:active,a:active', {

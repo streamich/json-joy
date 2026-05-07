@@ -16,7 +16,7 @@ const trayClass = rule({
 });
 
 const useTrayBg = makeRule((theme) => ({
-  bg: theme.g(0.95),
+  bg: theme.isLight ? theme.g(0.95) : theme.g(0.83),
 }));
 
 const scrollClass = rule({
@@ -48,15 +48,14 @@ const pillClass = rule({
   bdrad: '7px',
   pointerEvents: 'none',
   zIndex: 0,
-  trs: 'left .22s cubic-bezier(.4,0,.2,1), width .22s cubic-bezier(.4,0,.2,1), top .22s cubic-bezier(.4,0,.2,1), height .22s cubic-bezier(.4,0,.2,1)',
+  trs: 'left .22s ease, width .22s cubic-bezier(.4,0,.2,1), top .22s cubic-bezier(.4,0,.2,1), height .22s cubic-bezier(.4,0,.2,1)',
 });
 
 const usePillBg = makeRule((theme) => ({
-  bg: theme.isLight ? '#fff' : theme.g(0.23),
-  bxsh:
-    '0 2px 5px rgba(0,0,0,.14), ' + // soft outer drop
-    '0 1px 1.5px rgba(0,0,0,.08), ' + // tight contact shadow for crispness
-    '0 0 0 0.5px rgba(0,0,0,.06)', // hairline separator
+  bg: theme.isLight ? '#fff' : theme.g(0.78),
+  bxsh: theme.isLight
+    ? '0 2px 5px rgba(0,0,0,.14), 0 1px 1.5px rgba(0,0,0,.08), 0 0 0 0.5px rgba(0,0,0,.06)'
+    : '0 2px 5px rgba(0,0,0,.4), 0 1px 1.5px rgba(0,0,0,.3), 0 0 0 0.5px rgba(255,255,255,.08)',
 }));
 
 const tabClass = rule({
@@ -84,6 +83,9 @@ const useTabBase = makeRule((theme) => ({
   col: theme.g(0, 0.5),
   '&:hover': {
     col: theme.g(0, 0.82),
+  },
+  '&:active': {
+    tr: 'scale(.97)',
   },
 }));
 
@@ -114,8 +116,8 @@ const arrowClass = rule({
 });
 
 const useArrow = makeRule((theme) => ({
-  bg: theme.isLight ? 'rgba(255,255,255,.85)' : theme.g(0.18),
-  bxsh: '0 1px 3px rgba(0,0,0,.2)',
+  bg: theme.isLight ? 'rgba(255,255,255,.85)' : theme.g(0.82),
+  bxsh: theme.isLight ? '0 1px 3px rgba(0,0,0,.2)' : '0 1px 3px rgba(0,0,0,.5)',
   col: theme.g(0, 0.5),
   '&:hover': {
     col: theme.g(0, 0.88),
@@ -143,6 +145,7 @@ export interface TabsProps {
   defaultActive?: string;
   /** Controlled active tab key. */
   active?: string;
+  spread?: boolean;
   onChange?: (key: string) => void;
   style?: React.CSSProperties;
   contentStyle?: React.CSSProperties;
@@ -152,6 +155,7 @@ export const Tabs: React.FC<TabsProps> = ({
   items,
   defaultActive,
   active: activeProp,
+  spread,
   onChange,
   style,
   contentStyle,
@@ -255,7 +259,7 @@ export const Tabs: React.FC<TabsProps> = ({
         )}
 
         <div ref={scrollRef} className={scrollClass}>
-          <div className={innerClass}>
+          <div className={innerClass} style={{justifyContent: spread ? 'space-between' : undefined}}>
             {/* Sliding pill background */}
             <div className={pillClass + pillBg} style={pill} />
 

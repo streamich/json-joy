@@ -41,7 +41,7 @@
     "@jsonjoy.com/collaborative-str": "workspace:*",
     "@jsonjoy.com/ui": "workspace:*",
     "json-joy": "workspace:*",
-    "nano-theme": "^1.5.0"
+    "nano-theme": "workspace:*"
   },
   "peerDependencies": {
     "@codemirror/state": "*",

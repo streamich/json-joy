@@ -1,0 +1,80 @@
+{
+  "name": "mu-txt-element",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.16.0",
+  "description": "<mu-txt> custom element to render mutxt.com rich-text editor",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://mutxt.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/mu-txt-element"
+  },
+  "license": "AGPL-3.0-only",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "mutxt",
+    "web-component",
+    "custom-element",
+    "rich-text",
+    "editor",
+    "collaborative",
+    "real-time",
+    "json",
+    "crdt",
+    "json-joy",
+    "peritext"
+  ],
+  "engines": {
+    "node": ">=18.0"
+  },
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "unpkg": "dist/mu-txt-element.min.js",
+  "jsdelivr": "dist/mu-txt-element.min.js",
+  "sideEffects": [
+    "./lib/index.js",
+    "./src/index.ts"
+  ],
+  "files": [
+    "LICENSE",
+    "lib/",
+    "dist/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib dist typedocs coverage gh-pages yarn-error.log",
+    "build:tsc": "tsc -b tsconfig.build.json",
+    "bundle": "webpack --mode production",
+    "build": "yarn build:tsc && yarn bundle",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "mu-txt-react": "workspace:*",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "slate": "^0.123.0",
+    "slate-dom": "^0.123.0",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.123.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "tslib": "^2.8.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

@@ -37,6 +37,9 @@
     },
     {
       "path": "../json-joy/tsconfig.build.json"
+    },
+    {
+      "path": "../nano-theme/tsconfig.build.json"
     }
   ]
 }

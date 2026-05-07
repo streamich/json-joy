@@ -24,6 +24,7 @@
   ],
   "references": [
     {"path": "../keyboard/tsconfig.build.json"},
-    {"path": "../json-equal/tsconfig.build.json"}
+    {"path": "../json-equal/tsconfig.build.json"},
+    {"path": "../nano-theme/tsconfig.build.json"}
   ]
 }

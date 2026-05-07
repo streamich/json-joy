@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {lightTheme as theme, rule} from 'nano-theme';
+import {makeRule, useTheme} from 'nano-theme';
 
-const blockClass = rule({
-  ...theme.font.ui1.mid,
+const useBlockClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   d: 'flex',
   columnGap: '4px',
   ai: 'center',
@@ -11,10 +11,10 @@ const blockClass = rule({
   fz: '13px',
   pd: '8px 20px',
   bxz: 'border-box',
-  col: theme.g(0.2),
+  col: t.g(0.2),
   bd: 'none',
   mr: 0,
-});
+}));
 
 export interface ContextSectionProps extends React.AllHTMLAttributes<any> {
   compact?: boolean;
@@ -22,6 +22,8 @@ export interface ContextSectionProps extends React.AllHTMLAttributes<any> {
 }
 
 export const ContextSection: React.FC<ContextSectionProps> = ({className, compact, bg, ...rest}) => {
+  const theme = useTheme();
+  const blockClass = useBlockClass();
   const style: React.CSSProperties = {
     ...rest.style,
     padding: compact ? '4px 8px' : void 0,

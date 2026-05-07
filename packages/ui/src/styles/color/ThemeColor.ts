@@ -2,6 +2,10 @@ import {HslColor} from './HslColor';
 
 const DEFAULT_BG = HslColor.from('#fff')!;
 
+const clamp = (value: number, min: number, max: number): number => {
+  return Math.min(Math.max(value, min), max);
+};
+
 export class ThemeColor {
   constructor(
     public readonly fg: HslColor,
@@ -13,29 +17,30 @@ export class ThemeColor {
   }
 
   /**
-   * Creates a color with the same hue but adjusts the saturation and lightness:
-   *
-   * - Lightness is adjusted based on `contrast` parameter: higher contrast means
-   *   more lightness difference from the background. The formula is:
-   *   `lightness = bg.l + (hsl.l - bg.l) * contrast`.
-   * - Saturation is automatically adjusted based on background (light or dark)
-   *   and the `contrast` parameter: for light backgrounds, saturation is increased for
-   *   higher contrast; for dark backgrounds, saturation is decreased for higher contrast.
-   *   The formula is: `saturation = hsl.s + (isDarkTheme ? -1 : 1) * contrast * 0.5`.
-   *
    * @param contrast Contrast with background: 1 - highest, 0 - lowest.
    * @param alpha The alpha channel level.
    */
-  public g(contrast: number = 0, alpha: number = this.fg.a): string {
+  public g(contrast: number = 1, alpha: number = this.fg.a): string {
     return this.col(contrast, alpha).toString();
   }
 
   public col(contrast: number = 0, alpha: number = this.fg.a): ThemeColor {
     const isDark = this.isDarkTheme();
-    const lightness = this.bg.l + (this.fg.l - this.bg.l) * contrast;
-    const saturation = this.fg.s + (isDark ? -1 : 1) * contrast * 0.5;
+    const bgL = this.bg.l;
+    const fgS = this.fg.s;
+    const lightness = isDark ? bgL + (1 - bgL) * contrast : bgL - bgL * contrast;
+    const saturation = clamp(fgS + (isDark ? 1 : -1) * contrast * 0.5, 0, 1);
+    // const saturation = fgS;
     const newHsl = new HslColor(this.fg.h, saturation, lightness, alpha);
     return new ThemeColor(newHsl, this.bg);
+  }
+
+  public toDarkTheme(bgDark: HslColor): ThemeColor {
+    const dContrast = this.bg.l - this.fg.l;
+    const newL = clamp(bgDark.l + dContrast, 0, 1);
+    const newS = this.fg.s > 0.6 ? this.fg.s * 0.9 : this.fg.s;
+    const newH = this.fg.h;
+    return new ThemeColor(new HslColor(newH, newS, newL, this.fg.a), bgDark);
   }
 
   public toString(): string {

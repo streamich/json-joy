@@ -1,19 +1,17 @@
 import * as React from 'react';
-import {rule, theme} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 import HighlightCode from '../../../1-inline/HighlightCode';
 
-const css = {
-  block: rule({
-    ...theme.font.mono.mid,
-    fz: '12px',
-    pad: '0 8px',
+const useBlockClass = makeRule((t) => ({
+  ...t.font.mono.mid,
+  fz: '12px',
+  pad: '0 8px',
+  mar: 0,
+  pre: {
     mar: 0,
-    pre: {
-      mar: 0,
-      pad: 0,
-    },
-  }),
-};
+    pad: 0,
+  },
+}));
 
 export interface BlockTextProps {
   src: string;
@@ -23,6 +21,7 @@ export interface BlockTextProps {
 }
 
 export const BlockText: React.FC<BlockTextProps> = ({src, compact, select, lang}) => {
+  const blockClass = useBlockClass();
   const style: React.CSSProperties = {
     padding: compact ? '0' : undefined,
     fontSize: compact ? '11px' : undefined,
@@ -30,7 +29,7 @@ export const BlockText: React.FC<BlockTextProps> = ({src, compact, select, lang}
 
   return (
     <pre
-      className={css.block}
+      className={blockClass}
       style={style}
       onMouseDown={
         select

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import {theme, rule} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
-  ...theme.font.sans.bold,
+const useBlockClass = makeRule((t) => ({
+  ...t.font.sans.bold,
   fz: '10px',
   textTransform: 'uppercase',
-  col: theme.g(0.5),
+  col: t.g(0.5),
   pad: 0,
   mar: 0,
-});
+}));
 
 export interface Props {
   component?: string;
@@ -22,6 +22,7 @@ export interface Props {
 
 export const MiniTitle: React.FC<Props> = ({component = 'span', contrast, literal, style = {}, onClick, children}) => {
   const styles = useStyles();
+  const blockClass = useBlockClass();
 
   if (literal) {
     style.textTransform = 'none';

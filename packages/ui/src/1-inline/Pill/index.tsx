@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {makeRule, rule, useRule, useTheme, type Theme} from 'nano-theme';
 
-const blockClass = rule({
-  ...theme.font.ui1.mid,
+const useBlockClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   d: 'inline-flex',
   ai: 'center',
   jc: 'center',
@@ -13,7 +13,7 @@ const blockClass = rule({
   lh: '18px',
   whiteSpace: 'nowrap',
   bdrad: '999px',
-});
+}));
 
 const smallClass = rule({
   pd: '1px 8px',
@@ -44,7 +44,7 @@ const isSemantic = (color: string): color is Exclude<PillColor, string> =>
   color === 'blue' ||
   color === 'accent';
 
-const resolveBase = (color: PillColor): string => {
+const resolveBase = (theme: Theme, color: PillColor): string => {
   if (isSemantic(color)) {
     if (color === 'neutral') return theme.g(0.4);
     return theme.color.sem[color][0];
@@ -53,7 +53,9 @@ const resolveBase = (color: PillColor): string => {
 };
 
 export const Pill: React.FC<PillProps> = ({color = 'neutral', solid, small, className, style, onClick, children}) => {
-  const base = resolveBase(color);
+  const theme = useTheme();
+  const blockClass = useBlockClass();
+  const base = resolveBase(theme, color);
 
   const dynamicClass = useRule((t) => {
     if (solid) {

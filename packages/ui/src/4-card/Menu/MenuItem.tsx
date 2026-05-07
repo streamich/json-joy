@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {rule, makeRule, theme} from 'nano-theme';
+import {makeRule, useTheme} from 'nano-theme';
 import {Link} from 'react-router-lite';
 
-const blockClass = rule({
-  ...theme.font.ui1.mid,
+const useBaseClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   fz: '15px',
   d: 'flex',
   w: '100%',
@@ -19,13 +19,10 @@ const blockClass = rule({
   '&+&': {
     mart: '2px',
   },
-});
-
-const useBlockClass = makeRule((theme) => ({
-  col: theme.g(0, 0.9),
+  col: t.g(0, 0.9),
   '&:hover': {
-    bg: theme.g(0.96),
-    col: '#000',
+    bg: t.g(0.96),
+    col: t.isLight ? '#000' : '#fff',
   },
 }));
 
@@ -50,7 +47,8 @@ export interface Props {
 }
 
 export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onMouseDown, children, hasMore}) => {
-  const dynamicBlockClass = useBlockClass();
+  const theme = useTheme();
+  const baseClass = useBaseClass();
   const activeChildClass = useBlockActiveChildClass();
   const activeBlockClass = useBlockActiveClass();
 
@@ -71,9 +69,7 @@ export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onM
       to={to}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className={
-        blockClass + dynamicBlockClass + (activeChild ? activeChildClass : '') + (active ? activeBlockClass : '')
-      }
+      className={baseClass + (activeChild ? activeChildClass : '') + (active ? activeBlockClass : '')}
     >
       {element}
     </Link>

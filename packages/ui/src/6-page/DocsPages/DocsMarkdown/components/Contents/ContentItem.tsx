@@ -1,4 +1,4 @@
-import {rule, theme} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 import * as React from 'react';
 import slugify from 'slugify';
 import type {Flat, TNode} from 'mdast-flat/lib/types';
@@ -6,18 +6,18 @@ import type {Renderers} from '../../../../../markdown/types';
 import getText from '../../../../../markdown/util/getText';
 import {MdastFlat} from '../../../../../markdown/MdastFlat';
 
-const blockClass = rule({
+const useBlockClass = makeRule((t) => ({
   pad: '8px 0',
   fz: '0.93em',
   d: 'block',
   '& a': {
     cursor: 's-resize',
-    bdb: `1px solid ${theme.g(0.9)}`,
+    bdb: `1px solid ${t.g(0.9)}`,
     '&:hover': {
-      bdb: `1px solid ${theme.g(0.9)}`,
+      bdb: `1px solid ${t.g(0.9)}`,
     },
   },
-});
+}));
 
 export interface Props {
   node: TNode;
@@ -26,6 +26,7 @@ export interface Props {
 }
 
 const ContentItem: React.FC<Props> = ({node, ast, renderers}) => {
+  const blockClass = useBlockClass();
   const [slug] = React.useState(() => {
     const text = getText(ast, node.idx, 1024);
     const slug = slugify(text);

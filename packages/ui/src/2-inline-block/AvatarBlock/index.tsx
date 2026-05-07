@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, theme, useRule} from 'nano-theme';
+import {rule, makeRule, useTheme, useRule} from 'nano-theme';
 import {useT} from 'use-t';
 import {Code} from '../../1-inline/Code';
 import {Avatar} from '../../1-inline/Avatar';
@@ -31,10 +31,10 @@ const rightClass = rule({
   flex: '1 1',
 });
 
-const nameClass = rule({
-  ...theme.font.sans,
+const useNameClass = makeRule((t) => ({
+  ...t.font.sans,
   lh: 1.2,
-  color: theme.color.sem.positive[1],
+  color: t.color.sem.positive[1],
   mar: 0,
   whiteSpace: 'nowrap',
   ov: 'hidden',
@@ -43,30 +43,33 @@ const nameClass = rule({
   flexBasis: '100%',
   d: 'block',
   [`.${blockClass.trim()}:hover &`]: {
-    color: theme.color.sem.positive[2],
+    color: t.color.sem.positive[2],
   },
-});
+}));
 
-const subtextClass = rule({
-  ...theme.font.ui1.mid,
+const useSubtextClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   lh: 1.3,
   d: 'inline-block',
   mar: 0,
   whiteSpace: 'nowrap',
   ov: 'hidden',
   textOverflow: 'ellipsis',
-  color: theme.g(0.3),
+  color: t.g(0.3),
   [`.${blockClass.trim()}:hover &`]: {
-    color: theme.g(0.1),
+    color: t.g(0.1),
   },
-});
+}));
 
-const specialFontClass = rule({
-  ...theme.font.ui1.mid,
-});
+const useSpecialFontClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
+}));
 
 const renderRightDefault = (props: AvatarBlockProps) => {
   const [t] = useT();
+  const nameClass = useNameClass();
+  const subtextClass = useSubtextClass();
+  const specialFontClass = useSpecialFontClass();
   const {
     width = 40,
     name,
@@ -198,7 +201,6 @@ export const AvatarBlock: React.FC<AvatarBlockProps> = (props) => {
     emoji,
     square,
     rounded,
-    post,
     title,
     onClick,
     onAvatarClick,
@@ -220,6 +222,7 @@ export const AvatarBlock: React.FC<AvatarBlockProps> = (props) => {
     letters,
   } = props;
 
+  const theme = useTheme();
   const dynamicBlockClass = useRule((theme) => ({
     '&:hover': {
       bg: theme.g(0.1, 0.04),
@@ -240,7 +243,6 @@ export const AvatarBlock: React.FC<AvatarBlockProps> = (props) => {
       emoji={emoji}
       square={square}
       rounded={rounded}
-      post={post}
       color={color}
       isPrivate={isPrivate}
       isOP={isOP}

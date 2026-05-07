@@ -1,0 +1,79 @@
+{
+  "name": "nano-theme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "18.16.0",
+  "description": "A light and opinionated distribution of nano-css with predefined light and dark themes.",
+  "author": {
+    "name": "streamich",
+    "url": "https://github.com/streamich"
+  },
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/nano-theme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/streamich/json-joy.git",
+    "directory": "packages/nano-theme"
+  },
+  "license": "Apache-2.0",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
+  "keywords": [
+    "nano",
+    "nano-css",
+    "theme",
+    "css",
+    "css-in-js",
+    "react"
+  ],
+  "dependencies": {
+    "nano-css": "^5.6.2",
+    "react-use": "^17.6.0",
+    "thingies": "^2.6.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "tslib": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.9"
+  },
+  "engines": {
+    "node": ">=10.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*(?<!\\.vi)\\.(test|spec)\\.tsx?$",
+    "rootDir": ".",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "\\.vi\\.(test|spec)\\.tsx?$"
+    ]
+  }
+}

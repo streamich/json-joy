@@ -19,13 +19,22 @@ const preview = definePreview({
         locales: 'en-US',
       },
     },
+    backgrounds: {
+      options: {
+        light: { name: 'light', value: '#F8F9FA' },
+        dark: { name: 'dark', value: '#1A1A1B' },
+      },
+    },
+    initialGlobals: {
+      backgrounds: { value: 'light' },
+    },
   },
 
   decorators: [
     (Story) => {
       const [globals] = useGlobals();
       const color = globals?.backgrounds?.value;
-      const isDark = color ? String(color)[1].toLowerCase() !== 'f' : false;
+      const isDark = color === 'dark';
       return React.createElement(
         UiProvider,
         { theme: isDark ? 'dark' : 'light' } as any,

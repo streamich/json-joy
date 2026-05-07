@@ -2,7 +2,6 @@ import * as React from 'react';
 import {lightTheme as theme, type Scale, rule, useTheme} from 'nano-theme';
 import Svg from 'iconista';
 import {useT} from 'use-t';
-import {LogoStatic} from '../LogoStatic';
 import {Link} from '../Link';
 import {useStyles} from '../../styles/context';
 
@@ -42,7 +41,6 @@ const blockClass = rule({
 const hoverableClass = rule({
   '&:hover': {
     mar: '-2px',
-    // bd: `2px solid ${theme.color.sem.warning[0]}`,
   },
 });
 
@@ -61,16 +59,6 @@ const emojiClass = rule({
   bg: 'transparent',
   fz: defaultWidth + 'px',
   lh: defaultWidth + 'px',
-});
-
-const postClass = rule({
-  bg: 'transparent',
-  bd: `1px solid ${theme.g(0.5)}`,
-  col: theme.g(0.3),
-  '&:hover': {
-    bd: `1px solid ${theme.g(0.4)}`,
-    col: theme.g(0.1),
-  },
 });
 
 const renderImg = (width: number, src: string, onError: () => void) => {
@@ -99,7 +87,6 @@ export interface AvatarProps extends React.AllHTMLAttributes<any> {
   src?: string;
   emoji?: string;
   name?: string;
-  post?: boolean;
   grey?: boolean;
   lightGrey?: boolean;
   transparent?: boolean;
@@ -128,7 +115,6 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     size,
     src,
     width,
-    post,
     grey,
     lightGrey,
     transparent,
@@ -165,8 +151,7 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     blockClass +
     (hover ? hoverableClass : '') +
     (square || emoji ? squareClass : '') +
-    (emoji ? emojiClass : '') +
-    (post ? postClass : '');
+    (emoji ? emojiClass : '');
   props.style = {...props.style};
 
   if (bold) {
@@ -194,7 +179,6 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
   }
 
   const computedWidth: number = width || (size ? sizes[defaultSize + (size || 0)] : 0);
-  const realWidth = computedWidth || defaultWidth;
 
   if (computedWidth) {
     props.style.width = computedWidth;
@@ -207,12 +191,8 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     }
   }
 
-  if (showText && name && !emoji && !post && !(grey || del) && !lightGrey && !transparent && !color) {
+  if (showText && name && !emoji && !(grey || del) && !lightGrey && !transparent && !color) {
     props.style.background = styles.col.hash(id || name) + '';
-  } else if (post) {
-    props.style.background = theme.g(0.1, 0.08);
-    props.style.border = 0;
-    props.style.borderRadius = '15%';
   }
 
   if (rounded) {
@@ -223,21 +203,15 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
     props.style.opacity = 0.3;
   }
 
-  let element = icon ? (
-    icon
-  ) : post ? (
-    <LogoStatic variant={'round'} size={realWidth * 0.8} />
-  ) : showText ? (
-    emoji ? (
-      emoji
-    ) : typeof name === 'string' && name.length > 0 ? (
-      name.slice(0, letters || 2).trim()
-    ) : (
-      ''
-    )
-  ) : (
-    renderImg(computedWidth, src, () => setError(true))
-  );
+  let element = icon
+    ? icon
+    : showText
+      ? emoji
+        ? emoji
+        : typeof name === 'string' && name.length > 0
+          ? name.slice(0, letters || 2).trim()
+          : ''
+      : renderImg(computedWidth, src, () => setError(true));
 
   if (href) {
     element = (

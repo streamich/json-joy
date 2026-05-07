@@ -18,3 +18,17 @@ export const Primary: StoryObj<typeof meta> = {
     children: 'console.log(123)',
   },
 };
+
+export const Border: StoryObj<typeof meta> = {
+  args: {
+    children: 'console.log(123)',
+    border: true,
+  },
+};
+
+export const Gray: StoryObj<typeof meta> = {
+  args: {
+    children: 'console.log(123)',
+    gray: true,
+  },
+};

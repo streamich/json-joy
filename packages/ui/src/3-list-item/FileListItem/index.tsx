@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {lightTheme as theme, rule, useRule} from 'nano-theme';
+import {makeRule, rule, useRule} from 'nano-theme';
 import {Link} from '../../1-inline/Link';
 import {SpinnerCircle} from '../../2-inline-block/SpinnerCircle';
 import {useStyles} from '../../styles/context';
@@ -63,8 +63,8 @@ const contentClass = rule({
   minWidth: 0,
 });
 
-const titleClass = rule({
-  ...theme.font.ui1.mid,
+const useTitleClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   d: 'block',
   minWidth: 0,
   ov: 'hidden',
@@ -72,10 +72,10 @@ const titleClass = rule({
   whiteSpace: 'nowrap',
   fz: '15px',
   lh: '20px',
-});
+}));
 
-const metadataClass = rule({
-  ...theme.font.ui1.mid,
+const useMetadataClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   d: 'block',
   minWidth: 0,
   ov: 'hidden',
@@ -84,7 +84,7 @@ const metadataClass = rule({
   fz: '12px',
   lh: '16px',
   mrt: '2px',
-});
+}));
 
 const actionsClass = rule({
   d: 'flex',
@@ -99,11 +99,13 @@ const actionsClass = rule({
   },
 });
 
+const titleSelector = 'jjFileListItemTitle';
+
 const rowMutedClass = rule({
-  [`.${titleClass.trim()}`]: {
+  [`.${titleSelector}`]: {
     op: 0.7,
   },
-  [`&:hover .${titleClass.trim()}`]: {
+  [`&:hover .${titleSelector}`]: {
     op: 1,
   },
 });
@@ -146,6 +148,8 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   ...rest
 }) => {
   const styles = useStyles();
+  const titleClass = useTitleClass();
+  const metadataClass = useMetadataClass();
   const isDisabled = !!disabled || !!loading;
   const [hovered, setHovered] = React.useState(false);
   const iconNode = loading ? <SpinnerCircle color={styles.g(0.45)} /> : hovered ? iconHover : icon;
@@ -155,7 +159,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
     : fill
       ? styles.col.get('neutral', 'bg-1')
       : 'transparent';
-  const hoverBg = selected ? styles.col.accent(0, 'el-1') : styles.light ? styles.g(0, 0.04) : styles.g(0, 0.08);
+  const hoverBg = selected ? styles.col.accent(0, 'el-1') : styles.g(0, 0.04);
 
   const dynamicRowClass = useRule(() => ({
     bg: selectedBg,
@@ -168,8 +172,8 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   }));
 
   const dynamicIconClass = useRule(() => ({
-    col: isDisabled ? styles.g(0.55) : selected ? styles.col.accent(0, 'solid-1') : styles.g(0.45),
-    bg: styles.light ? styles.g(0, 0.03) : styles.g(0, 0.08),
+    col: selected ? styles.col.accent(0, 'solid-1') : isDisabled ? styles.g(0.55) : styles.g(0.45),
+    bg: styles.g(0, 0.03),
     w: spacious ? '48px' : '36px',
     h: spacious ? '48px' : '36px',
   }));
@@ -186,7 +190,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
     <>
       {!!iconNode && <span className={iconClass + dynamicIconClass}>{iconNode}</span>}
       <span className={contentClass}>
-        <span className={titleClass + dynamicTitleClass}>{title}</span>
+        <span className={titleSelector + ' ' + titleClass + dynamicTitleClass}>{title}</span>
         {!!metadata && <span className={metadataClass + dynamicMetadataClass}>{metadata}</span>}
       </span>
     </>

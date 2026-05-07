@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import {BasicButtonClose} from '../../../2-inline-block/BasicButton/BasicButtonClose';
 import {useT} from 'use-t';
 import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
@@ -216,22 +216,24 @@ const buttonXXSmallClass = rule({
   },
 });
 
-const detachedCloseButtonClass = rule({
-  pos: 'absolute',
-  t: '-10px',
-  r: '-6px',
-  w: '18px',
-  h: '18px',
-  bxz: 'border-box',
-  o: 0,
-  trs: 'opacity .3s ease',
-  pd: '1px',
-  bdrad: '50%',
-  bg: 'var(--filetabs-fg)',
-  d: 'flex',
-  ai: 'center',
-  jc: 'center',
-  bxsh: 'rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;',
+const useDetachedCloseButtonClass = makeRule((t) => {
+  return {
+    pos: 'absolute',
+    t: '-10px',
+    r: '-6px',
+    w: '18px',
+    h: '18px',
+    bxz: 'border-box',
+    o: 0,
+    trs: 'opacity .3s ease',
+    pd: '1px',
+    bdrad: '50%',
+    bg: 'var(--filetabs-fg)',
+    d: 'flex',
+    ai: 'center',
+    jc: 'center',
+    bxsh: `${t.g(0, 0.25)} 0px 4px 8px -2px, ${t.g(0, 0.08)} 0px 0px 0px 1px`,
+  };
 });
 
 export interface FileTabProps {
@@ -254,6 +256,7 @@ export interface FileTabProps {
 
 export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, isExiting = false}) => {
   const [t] = useT();
+  const detachedCloseButtonClass = useDetachedCloseButtonClass();
   const width = state.tabWidth.use();
   const disabledState = !!useSyncStoreOpt(item.disabled);
   disabled = disabled || disabledState;

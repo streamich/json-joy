@@ -7,6 +7,20 @@ import type {Icon} from 'iconista/lib/types';
 const {useEffect, useState, useRef} = React;
 const cache: {[key: string]: Document} = {};
 
+// Replace literal `fill`/`stroke` colors in SVG source with `currentColor` so
+// the icon picks up the surrounding CSS `color`.
+const PAINT_RE = /\b(fill|stroke)=(["'])(?!(?:none|currentColor|transparent)\2|url\()[^"']*\2/g;
+const SVG_OPEN_RE = /^(\s*<svg)([^>]*)(>)/;
+const normalizeColors = (svgText: string): string => {
+  let out = svgText.replace(PAINT_RE, '$1=$2currentColor$2');
+  // Ensure the outer <svg> has a fill so inner paths without their own fill
+  // (e.g. ibm_16) inherit the cascade.
+  out = out.replace(SVG_OPEN_RE, (m, open, attrs, close) =>
+    /\bfill=/.test(attrs) ? m : `${open} fill="currentColor"${attrs}${close}`,
+  );
+  return out;
+};
+
 export type Props = Icon &
   React.SVGAttributes<any> & {
     getUrl?: (icon: Icon) => string;
@@ -45,7 +59,7 @@ const Svg: React.FC<Props> = ({set, icon, getUrl = getUrlDefault, ...rest}) => {
         .then((text) => {
           if (!mounted()) return;
           const parser = new DOMParser();
-          const doc = parser.parseFromString(text, 'application/xml');
+          const doc = parser.parseFromString(normalizeColors(text), 'application/xml');
           applyDoc((cache[key] = doc));
         })
         .catch((error) => {
@@ -65,16 +79,15 @@ const Svg: React.FC<Props> = ({set, icon, getUrl = getUrlDefault, ...rest}) => {
 
 export type IconistaProps = Icon &
   React.SVGAttributes<any> & {
-    colorStroke?: boolean;
     color?: string;
   };
 
-export const Iconista: React.FC<IconistaProps> = ({colorStroke, color, ...rest}) => {
+export const Iconista: React.FC<IconistaProps> = ({color, style, ...rest}) => {
   const theme = useTheme();
 
-  const iconColor = color || theme.g(0.4);
+  const iconColor = color || theme.g(0.1, 0.9);
 
-  return <Svg fill={iconColor} stroke={colorStroke ? iconColor : undefined} {...rest} />;
+  return <Svg {...rest} style={{color: iconColor, ...style}} />;
 };
 
 export const makeIcon = (

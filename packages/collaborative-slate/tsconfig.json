@@ -38,6 +38,9 @@
     },
     {
       "path": "../json-joy"
+    },
+    {
+      "path": "../nano-theme"
     }
   ]
 }

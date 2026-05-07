@@ -15,7 +15,7 @@
   },
   "scripts": {
     "clean": "rimraf lib coverage typedocs gh-pages && yarn workspaces foreach -Ap run clean",
-    "build": "tsc -b --verbose tsconfig.solution.json",
+    "build": "tsc -b --verbose tsconfig.solution.json && yarn workspace mu-txt-element run bundle",
     "build:workspaces": "yarn workspaces foreach -Apt run build",
     "test": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2",
     "test:coverage": "node -r ts-node/register ./node_modules/.bin/jest --maxWorkers 2 --collectCoverage",

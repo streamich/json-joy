@@ -42,7 +42,7 @@ export const TextEditor: React.FC<Props> = (props) => {
       color: theme.name === 'dark' ? '#ddd' : '#000',
     },
     '& .cm-selectionBackground': {
-      backgroundColor: `${theme.isLight ? theme.g(0.9) : theme.g(0.3)} !important`,
+      backgroundColor: `${theme.g(0.9)} !important`,
     },
     '& .cm-cursor': {
       borderLeftColor: theme.g(0, 0.5),

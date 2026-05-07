@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {makeRule, rule, useRule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 
 const rowClass = rule({
@@ -33,15 +33,15 @@ const iconClass = rule({
   h: '16px',
 });
 
-const labelClass = rule({
-  ...theme.font.ui1.mid,
+const useLabelClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   fz: '14px',
   lh: '20px',
   ov: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   minWidth: 0,
-});
+}));
 
 const rightClass = rule({
   d: 'flex',
@@ -66,9 +66,10 @@ export interface TwoColFormRowProps extends Omit<React.HTMLAttributes<HTMLDivEle
 
 export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({icon, title, children, muted, ...rest}) => {
   const styles = useStyles();
+  const labelClass = useLabelClass();
 
   const dynamicLabelClass = useRule(() => ({
-    col: muted ? styles.g(0.55) : styles.g(0.25),
+    col: muted ? styles.g(0.55) : styles.g(0.15),
   }));
 
   const dynamicIconClass = useRule(() => ({
@@ -76,7 +77,7 @@ export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({icon, title, childr
   }));
 
   const dynamicRightClass = useRule(() => ({
-    col: muted ? styles.g(0.55) : styles.g(0.35),
+    col: muted ? styles.g(0.55) : styles.g(0.25),
   }));
 
   return (

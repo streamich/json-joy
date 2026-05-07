@@ -3,6 +3,7 @@ import {rule, theme} from 'nano-theme';
 import {EmptyState} from '../../4-card/EmptyState';
 import {Button} from '../../2-inline-block/Button';
 import {Iconista} from '../../icons/Iconista';
+import {useStyles} from '../../styles/context';
 
 const messageClass = rule({
   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
@@ -33,8 +34,11 @@ export interface FallbackProps {
 }
 
 export const Fallback: React.FC<FallbackProps> = ({name, error, reset, compact}) => {
+  const styles = useStyles();
+
   const title = name ? `${name} failed to render` : 'Something went wrong';
   const iconSize = compact ? 24 : 32;
+
   return (
     <div role="alert" aria-live="polite" data-error-boundary={name || true}>
       <EmptyState
@@ -46,9 +50,11 @@ export const Fallback: React.FC<FallbackProps> = ({name, error, reset, compact})
           </div>
         }
       >
-        <div className={messageClass}>{error?.message || String(error) || 'Unknown error'}</div>
+        <div className={messageClass} style={{color: styles.g(0.5)}}>
+          {error?.message || String(error) || 'Unknown error'}
+        </div>
         <div className={buttonRowClass}>
-          <Button small ghost size={-1} onClick={reset}>
+          <Button small ghost size={-2} onClick={reset}>
             Try again
           </Button>
         </div>

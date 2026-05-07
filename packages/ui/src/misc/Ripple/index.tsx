@@ -1,5 +1,6 @@
+import * as React from 'react';
 import {Component, Children, cloneElement, createElement as h, type ReactNode, type MouseEvent} from 'react';
-import {rule} from 'nano-theme';
+import {rule, useTheme} from 'nano-theme';
 
 const noop = () => {};
 
@@ -29,7 +30,7 @@ export interface RippleProps {
 // eslint-disable-next-line
 export type IRippleState = {};
 
-export class Ripple extends Component<RippleProps, IRippleState> {
+class RippleImpl extends Component<RippleProps, IRippleState> {
   static defaultProps = {
     color: 'rgba(0,0,0,.2)',
     ms: 400,
@@ -126,3 +127,9 @@ export class Ripple extends Component<RippleProps, IRippleState> {
     );
   }
 }
+
+export const Ripple: React.FC<RippleProps> = (props) => {
+  const theme = useTheme();
+  const defaultColor = theme.isLight ? 'rgba(0,0,0,.2)' : 'rgba(255,255,255,.18)';
+  return h(RippleImpl, {...props, color: props.color ?? defaultColor});
+};

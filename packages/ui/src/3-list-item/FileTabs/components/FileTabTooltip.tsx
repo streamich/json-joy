@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import {ZINDEX} from '../../../constants';
 import {Separator} from '../../../3-list-item/Separator';
 import type {FileTabsState} from '../state';
@@ -8,19 +8,22 @@ const TOOLTIP_WIDTH = 220;
 const TOOLTIP_GAP = 8;
 const SHOW_DELAY_MS = 400;
 
-const tooltipClass = rule({
-  pos: 'fixed',
-  z: ZINDEX.TOOLTIP,
-  pe: 'none',
-  us: 'none',
-  bg: 'var(--filetabs-fg)',
-  col: 'var(--filetabs-fg-txt)',
-  bdrad: '8px',
-  bxz: 'border-box',
-  minW: `${TOOLTIP_WIDTH}px`,
-  maxW: 'calc(min(90vw, 600px))',
-  bxsh: 'rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;',
-  pd: '8px 12px',
+const useTooltipClass = makeRule((t) => {
+  const shade = t.isLight ? 0 : 1;
+  return {
+    pos: 'fixed',
+    z: ZINDEX.TOOLTIP,
+    pe: 'none',
+    us: 'none',
+    bg: 'var(--filetabs-fg)',
+    col: 'var(--filetabs-fg-txt)',
+    bdrad: '8px',
+    bxz: 'border-box',
+    minW: `${TOOLTIP_WIDTH}px`,
+    maxW: 'calc(min(90vw, 600px))',
+    bxsh: `${t.g(shade, 0.25)} 0px 4px 8px -2px, ${t.g(shade, 0.08)} 0px 0px 0px 1px`,
+    pd: '8px 12px',
+  };
 });
 
 const nameClass = rule({
@@ -63,6 +66,7 @@ export interface FileTabTooltipProps {
 }
 
 export const FileTabTooltip: React.FC<FileTabTooltipProps> = ({state}) => {
+  const tooltipClass = useTooltipClass();
   const hovered = state.hovered.use();
   const tabs = state.tabs.use();
   const drag = state.drag.use();

@@ -22,6 +22,12 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
   public onsyncerror?: (error: Error | unknown) => void;
   private _syncRace = createRace();
 
+  /** Reference count — `dispose()` only tears the session down at zero. */
+  protected _refs = 1;
+
+  /** Invoked exactly once on final teardown (after the last `dispose`). */
+  public onTeardown?: () => void;
+
   public get model(): Model<N> {
     return this.log.end;
   }
@@ -53,10 +59,17 @@ export class EditSession<N extends JsonNode = JsonNode<any>> {
     this.repo.change$(this.id).pipe(takeUntil(this._stop$)).subscribe(this.onEvent);
   }
 
+  /** Increment the reference count — for a new caller sharing this session. */
+  public acquire(): void {
+    this._refs++;
+  }
+
   public dispose(): void {
     if (this._stopped) return;
+    if (--this._refs > 0) return;
     this._stopped = true;
     this._stop$.next();
+    this.onTeardown?.();
   }
 
   protected clear(): void {

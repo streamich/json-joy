@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
+import {makeRule, rule, useTheme} from 'nano-theme';
 import {ScrollState} from './state';
 import {ctx} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
@@ -13,28 +13,34 @@ const rootClass = rule({
   z: 10,
 });
 
-const shadowTopClass = rule({
-  pointerEvents: 'none',
-  trs: 'opacity .3s',
-  pos: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  z: 2,
-  h: '5px',
-  bg: 'linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.03) 50%, rgba(0,0,0,0))',
+const useShadowTopClass = makeRule((t) => {
+  const shade = t.isLight ? 0 : 1;
+  return {
+    pointerEvents: 'none',
+    trs: 'opacity .3s',
+    pos: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    z: 2,
+    h: '5px',
+    bg: `linear-gradient(180deg, ${t.g(shade, 0.05)}, ${t.g(shade, 0.03)} 50%, ${t.g(shade, 0)})`,
+  };
 });
 
-const shadowBottomClass = rule({
-  pointerEvents: 'none',
-  trs: 'opacity .3s',
-  pos: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  z: 2,
-  h: '5px',
-  bg: 'linear-gradient(0deg, rgba(0,0,0,.05), rgba(0,0,0,.03) 50%, rgba(0,0,0,0))',
+const useShadowBottomClass = makeRule((t) => {
+  const shade = t.isLight ? 0 : 1;
+  return {
+    pointerEvents: 'none',
+    trs: 'opacity .3s',
+    pos: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    z: 2,
+    h: '5px',
+    bg: `linear-gradient(0deg, ${t.g(shade, 0.05)}, ${t.g(shade, 0.03)} 50%, ${t.g(shade, 0)})`,
+  };
 });
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -49,11 +55,14 @@ export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ScrollAreaShadows: React.FC<{state: ScrollState; flat?: boolean}> = ({state, flat}) => {
+  const theme = useTheme();
+  const shadowTopClass = useShadowTopClass();
+  const shadowBottomClass = useShadowBottomClass();
   const scrollTop = useSyncStore(state.scrollTop$);
   const maxScrollTop = useSyncStore(state.maxScrollTop$);
   const headerHeight = useSyncStore(state.headerHeight$);
   const footerHeight = useSyncStore(state.footerHeight$);
-  const background = flat ? 'rgba(0,0,0,.1)' : void 0;
+  const background = flat ? theme.g(0, 0.1) : void 0;
   const [showTopShadow, showBottomShadow] = getScrollShadowVisibility(scrollTop, maxScrollTop);
 
   return (

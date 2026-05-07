@@ -93,7 +93,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   ...rest
 }) => {
   const styles = useStyles();
-  const g = styles.g;
+  const textCol = styles.g(0.2);
   const bgFactor = styles.light ? 1 : 1.1;
 
   if (display) {
@@ -103,31 +103,21 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
   }
 
   const dynamicBlockClass = useRule(() => ({
-    col: g(0.2),
-
-    // bg: selected ? styles.col.accent(0, 'bg-2') : transparent || !fill ? 'transparent' : g(0, 0.04 * bgFactor),
+    col: textCol,
     bg: selected ? styles.col.accent(0, 'bg-2') : transparent || !fill ? 'transparent' : 'rgba(128,128,128,0.07)',
-    // svg: {
-    //   fill: g(0.5),
-    //   col: g(0.5),
-    // },
     '&:hover': {
-      col: disabled ? void 0 : g(0.2),
-      // bg: disabled ? void 0 : g(0, 0.08 * bgFactor),
+      col: disabled ? void 0 : textCol,
       bg: disabled ? void 0 : 'rgba(128,128,128,0.13)',
       bdfl: disabled ? void 0 : 'saturate(150%) blur(4px)',
     },
     '&:active': {
-      // bg: disabled ? void 0 : g(0, 0.16 * bgFactor),
       bg: disabled ? void 0 : 'rgba(128,128,128,0.22)',
       bdfl: disabled ? void 0 : 'saturate(150%)',
     },
   }));
 
   const borderClass = useRule(() => ({
-    // bg: g(0, 0.08 * bgFactor),
-    bd: `1px solid ${g(0, 0.08 * bgFactor)}`,
-    // boxShadow: `0 0 2px ${g(0, 0.04 * bgFactor)}`,
+    bd: `1px solid ${styles.g(0, 0.08 * bgFactor)}`,
   }));
 
   const style: React.CSSProperties = {

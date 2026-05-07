@@ -39,7 +39,7 @@ export const UiProvider: React.FC<UiProviderProps> = ({theme, nav, content, chil
     <traces.ctx.Provider value={{}}>
       <context.Provider value={services}>
         <nanoTheme.Provider theme={theme ?? (theme2 === 'dark' ? 'dark' : 'light')}>
-          <StylesProvider dark={theme2 === 'dark'}>
+          <StylesProvider dark={(theme ?? theme2) === 'dark'}>
             <Kbd>
               <ToastsProvider>
                 <PortalProvider>

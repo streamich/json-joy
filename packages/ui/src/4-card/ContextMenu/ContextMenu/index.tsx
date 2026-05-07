@@ -5,12 +5,32 @@ import {ContextMenuState} from './state';
 import {useBehaviorSubject} from '../../../hooks/useBehaviorSubject';
 import {usePopup} from '../../Popup/context';
 import {ArgsPane} from '../ArgsPane';
+import {isMobile, isTouch} from '../../../utils/environment';
 
 export {ContextMenuState};
 
 export interface ContextMenuProps extends ContextMenuPaneProps {}
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({...props}) => {
+const doUseMobileSheet = isTouch || isMobile;
+
+const importContextMenuMobile = () => import('../ContextMenuMobile');
+const ContextMenuMobile = React.lazy(async () => ({
+  default: (await importContextMenuMobile()).ContextMenuMobile,
+}));
+if (doUseMobileSheet) importContextMenuMobile().catch(() => {});
+
+export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
+  const root = (props.depth ?? 0) === 0;
+  if (root && doUseMobileSheet)
+    return (
+      <React.Suspense fallback={null}>
+        <ContextMenuMobile {...props} />
+      </React.Suspense>
+    );
+  return <DesktopContextMenu {...props} />;
+};
+
+const DesktopContextMenu: React.FC<ContextMenuProps> = ({...props}) => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: props spread creates new object each render
   const state = React.useMemo(() => ContextMenuState.create(props), [props]);
 

@@ -18,12 +18,13 @@ export interface KeyLiteProps extends React.AllHTMLAttributes<any> {
 
 export const KeyLite: React.FC<KeyLiteProps> = (props) => {
   const styles = useStyles();
+  const light = styles.light;
 
   const style: React.CSSProperties = {
     ...props.style,
   };
 
-  if (!styles.light) {
+  if (!light) {
     style.boxShadow = `0 0 0 1px ${styles.g(0.1, 0.16)}`;
   }
 

@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "sourceMap": false,
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
+  },
+  "exclude": [
+    "src/demo",
+    "src/__tests__",
+    "src/**/__demos__/**/*.*",
+    "src/**/__tests__/**/*.*",
+    "src/**/__bench__/**/*.*",
+    "src/**/__mocks__/**/*.*",
+    "src/**/__jest__/**/*.*",
+    "src/**/__mocha__/**/*.*",
+    "src/**/__tap__/**/*.*",
+    "src/**/__tape__/**/*.*",
+    "*.test.ts",
+    "*.spec.ts",
+    "src/**/__stories__/**/*.*",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
+  ],
+  "references": []
+}
