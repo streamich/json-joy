@@ -236,22 +236,23 @@ export const ContextItem: React.FC<ContextItemProps> = ({
     buttonStyle.borderRadius = 4;
   }
 
-  element = h(Ripple, {
-    ms: 800,
-    color: danger ? styles.col.get('error', 'el-3', 0, {A: 40}) : undefined,
-    children: h(
-      to ? Link : 'button',
-      {
-        ...rest,
-        a: to ? true : undefined,
-        to: disabled ? undefined : to,
-        disabled,
-        className: mainClassName,
-        style: buttonStyle,
-      },
-      element,
-    ),
+  element = h(to ? Link : 'button', {
+    ...rest,
+    a: to ? true : undefined,
+    to: disabled ? undefined : to,
+    disabled,
+    className: mainClassName,
+    style: buttonStyle,
+    children: element,
   });
+
+  if (rest.onClick) {
+    element = h(Ripple, {
+      ms: 800,
+      color: danger ? styles.col.get('error', 'el-3', 0, {A: 40}) : undefined,
+      children: element,
+    });
+  }
 
   if (inset) {
     element = <span style={{padding: '0 4px', display: 'block'}}>{element}</span>;

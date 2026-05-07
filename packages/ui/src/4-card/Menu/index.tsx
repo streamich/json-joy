@@ -34,7 +34,7 @@ export const Menu: React.FC<Props> = ({items, as, style, level = 1}) => {
       className={
         level > 1
           ? nestedClass({
-              bdl: '1px solid ' + theme.g(0.9),
+              bdl: '1px solid ' + (theme.isLight ? theme.g(0.9) : theme.g(0.8)),
             })
           : ''
       }

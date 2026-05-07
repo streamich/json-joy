@@ -27,6 +27,8 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   const hasArgs = !!item.params?.length;
   const display = item.display?.() ?? t(item.name);
 
+  if (item.raw) return item.raw();
+
   return (
     <div data-menu-row data-menu-id={id}>
       <ContextItemNested

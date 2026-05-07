@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import {useT} from 'use-t';
 import Paper from '../Paper';
 import {Code} from '../../1-inline/Code';
@@ -19,16 +19,15 @@ const blockClass = rule({
   bxsh: '0 1px 2px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.1)',
 });
 
-const mainClass = rule({
+const useMainClass = makeRule((t) => ({
   pos: 'relative',
   d: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   bxz: 'border-box',
-  // pad: '24px',
   pad: '16px',
   h2: {
-    ...theme.font.ui2.bold,
+    ...t.font.ui2.bold,
     fz: '24px',
     mar: 0,
     pad: 0,
@@ -38,36 +37,32 @@ const mainClass = rule({
     mar: 0,
   },
   svg: {
-    // fill: theme.blue,
-    fill: theme.g(0.6),
-    col: theme.blue,
+    fill: t.g(0.6),
+    col: t.blue(1),
   },
   '&:hover svg': {
-    col: theme.color.sem.negative[0],
+    col: t.color.sem.negative[0],
   },
-});
+}));
 
-const headerClass = rule({
-  // marl: '-2px',
-  // pad: '0 0 16px',
-});
+const headerClass = rule({});
 
-const contentClass = rule({
-  ...theme.font.ui2.mid,
+const useContentClass = makeRule((t) => ({
+  ...t.font.ui2.mid,
   fz: '13px',
   pad: '12px 0 0',
   lh: '1.6em',
-  col: theme.g(0.45),
+  col: t.g(0.45),
   '@media only screen and (max-width: 800px)': {
     fz: '14px',
   },
-});
+}));
 
-const titleClass = rule({
-  ...theme.font.ui1.mid,
+const useTitleClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   fz: '15px',
-  col: theme.g(0.25),
-});
+  col: t.g(0.25),
+}));
 
 export interface ToastCardProps {
   type?: string;
@@ -87,6 +82,9 @@ export const ToastCard: React.FC<ToastCardProps> = ({
   onClose,
 }) => {
   const [t] = useT();
+  const mainClass = useMainClass();
+  const contentClass = useContentClass();
+  const titleClass = useTitleClass();
 
   const header = (
     <Split style={{alignItems: 'center'}}>

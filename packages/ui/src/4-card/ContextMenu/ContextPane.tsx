@@ -1,26 +1,30 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {makeRule, rule, useTheme} from 'nano-theme';
 import {ZINDEX} from '../../constants';
 
-const paneClass = rule({
-  d: 'inline-block',
-  pos: 'relative',
-  z: ZINDEX.CONTEXT,
-  lh: '1.2em',
-  l: 'auto',
-  r: 0,
-  bdrad: '8px',
-  trs: 'transform .45s cubic-bezier(.2,2,0,1), opacity .3s',
-  bdt: '1px solid rgba(0,0,0,.1)',
-  bdl: '1px solid rgba(0,0,0,.2)',
-  bdr: '1px solid rgba(0,0,0,.15)',
-  bdb: '1px solid rgba(0,0,0,.25)',
-  '&:hover': {
-    bdt: '1px solid rgba(0,0,0,.2)',
-    bdl: '1px solid rgba(0,0,0,.3)',
-    bdr: '1px solid rgba(0,0,0,.25)',
-    bdb: '1px solid rgba(0,0,0,.35)',
-  },
+const usePaneClass = makeRule((t) => {
+  // const shade = t.isLight ? 0 : 1;
+  const shade = t.isLight ? 0 : .3;
+  return {
+    d: 'inline-block',
+    pos: 'relative',
+    z: ZINDEX.CONTEXT,
+    lh: '1.2em',
+    l: 'auto',
+    r: 0,
+    bdrad: '8px',
+    trs: 'transform .45s cubic-bezier(.2,2,0,1), opacity .3s',
+    bdt: `1px solid ${t.g(shade, 0.1)}`,
+    bdl: `1px solid ${t.g(shade, 0.2)}`,
+    bdr: `1px solid ${t.g(shade, 0.15)}`,
+    bdb: `1px solid ${t.g(shade, 0.25)}`,
+    '&:hover': {
+      bdt: `1px solid ${t.g(shade, 0.2)}`,
+      bdl: `1px solid ${t.g(shade, 0.3)}`,
+      bdr: `1px solid ${t.g(shade, 0.25)}`,
+      bdb: `1px solid ${t.g(shade, 0.35)}`,
+    },
+  };
 });
 
 const bodyClass = rule({
@@ -29,20 +33,24 @@ const bodyClass = rule({
   bdrad: '4px',
 });
 
-const triangleClass = rule({
-  pos: 'absolute',
-  zIndex: 1,
-  w: '7px',
-  h: '7px',
-  t: '2px',
-  transform: 'rotate(45deg) translate(-5px,-5px)',
-  bdl: '1px solid rgba(0,0,0,.15)',
-  bdt: '1px solid rgba(0,0,0,.15)',
-  bdr: '1px solid #fff',
-  bdb: '1px solid #fff',
-  bg: '#fff',
-  borderTopLeftRadius: '2px',
-  bxsh: '0 -1px 1px rgba(0,0,0,.035)',
+const useTriangleClass = makeRule((t) => {
+  const bg = t.isLight ? '#fff' : t.g(0.98);
+  const shade = t.isLight ? 0 : 1;
+  return {
+    pos: 'absolute',
+    zIndex: 1,
+    w: '7px',
+    h: '7px',
+    t: '2px',
+    transform: 'rotate(45deg) translate(-5px,-5px)',
+    bdl: `1px solid ${t.g(shade, 0.15)}`,
+    bdt: `1px solid ${t.g(shade, 0.15)}`,
+    bdr: `1px solid ${bg}`,
+    bdb: `1px solid ${bg}`,
+    bg,
+    borderTopLeftRadius: '2px',
+    bxsh: `0 -1px 1px ${t.g(shade, 0.035)}`,
+  };
 });
 
 export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -96,15 +104,18 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
     ref,
   ) => {
     const theme = useTheme();
+    const paneClass = usePaneClass();
+    const triangleClass = useTriangleClass();
 
     const blockStyle: React.CSSProperties = {
       background: transparent ? 'transparent' : theme.isLight ? theme.bg : theme.g(0.98),
       boxShadow:
         transparent || borderless
           ? 'none'
-          : theme.isLight
-            ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
-            : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
+          : '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)',
+          // : theme.isLight
+          //   ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
+          //   : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
       ...(style || {}),
       border: transparent || borderless ? 'none' : undefined,
     };

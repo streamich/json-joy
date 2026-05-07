@@ -164,7 +164,7 @@ const PaneSheet: React.FC<PaneSheetProps> = ({menu, parent, open, onOpenChange, 
   }, [childIsOpen]);
 
   const sheetBg = theme.bg;
-  const fgColor = theme.isLight ? theme.g(0.15) : theme.g(0.9);
+  const fgColor = theme.g(0.15);
   const sheetClassName = sheetClass({
     bg: sheetBg,
     col: fgColor,
@@ -252,7 +252,7 @@ const ArgsSheet: React.FC<ArgsSheetProps> = ({item, open, onOpenChange, onAnimat
   const effectiveOpen = open && parentOpen;
 
   const sheetBg = theme.bg;
-  const fgColor = theme.isLight ? theme.g(0.15) : theme.g(0.9);
+  const fgColor = theme.g(theme.isLight ? 0.15 : .1);
   const sheetClassName = sheetClass({
     bg: sheetBg,
     col: fgColor,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {lightTheme as theme, rule} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 
 const buttonAttrs = (onClick?: React.MouseEventHandler): null | Partial<React.HTMLAttributes<any>> => {
   if (!onClick) return null;
@@ -18,9 +18,9 @@ const buttonAttrs = (onClick?: React.MouseEventHandler): null | Partial<React.HT
   };
 };
 
-const blockClass = rule({
-  ...theme.font.ui3,
-  col: theme.g(0.4),
+const useBlockClass = makeRule((t) => ({
+  ...t.font.ui3,
+  col: t.g(0.4),
   fz: '8.5px',
   d: 'block',
   pad: '0px 20px',
@@ -30,7 +30,7 @@ const blockClass = rule({
   letterSpacing: '1px',
   ta: 'right',
   us: 'none',
-});
+}));
 
 export interface ContextTitleProps extends React.HTMLAttributes<any> {
   icon?: React.ReactNode;
@@ -39,6 +39,7 @@ export interface ContextTitleProps extends React.HTMLAttributes<any> {
 }
 
 export const ContextTitle: React.FC<ContextTitleProps> = ({icon, children, onClick, ...rest}) => {
+  const blockClass = useBlockClass();
   if (icon) {
     children = (
       <span>

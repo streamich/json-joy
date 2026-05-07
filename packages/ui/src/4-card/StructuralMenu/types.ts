@@ -28,6 +28,11 @@ export interface MenuItem {
    */
   display?: () => React.ReactNode;
 
+  
+  /** Render raw content of the item. If specified the item will not be
+   * wrapped in <ContextItem> and children wil not be rendered. */
+  raw?: () => React.ReactNode;
+
   /**
    * If true, wrap the display in a `<code>` element and use monospace font.
    * Used when the item represents some code or a literal value.

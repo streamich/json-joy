@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {theme, rule} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import Svg from 'iconista';
 import {Link} from 'react-router-lite';
 import {useT} from 'use-t';
 import {Code} from '../../1-inline/Code';
 import {Paper} from '../Paper';
 
-const blockClass = rule({
+const useBlockClass = makeRule((t) => ({
   pos: 'relative',
   d: 'flex',
   flexDirection: 'column',
@@ -16,7 +16,7 @@ const blockClass = rule({
   pad: '32px',
   mar: '18px',
   h2: {
-    ...theme.font.ui2.bold,
+    ...t.font.ui2.bold,
     fz: '24px',
     mar: 0,
     pad: 0,
@@ -26,38 +26,38 @@ const blockClass = rule({
     mar: 0,
   },
   svg: {
-    fill: theme.g(0.6),
-    col: theme.blue(1),
+    fill: t.g(0.6),
+    col: t.blue(1),
   },
   '&:hover svg': {
-    col: theme.color.sem.negative[0],
+    col: t.color.sem.negative[0],
   },
-});
+}));
 
 const headerClass = rule({
   marl: '-2px',
   pad: '0 0 16px',
 });
 
-const contentClass = rule({
-  ...theme.font.ui3,
+const useContentClass = makeRule((t) => ({
+  ...t.font.ui3,
   fz: '14px',
   pad: '24px 0 0',
   lh: '1.6em',
-  col: theme.g(0.45),
+  col: t.g(0.45),
   '@media only screen and (max-width: 800px)': {
     pad: '16px 0',
     fz: '14px',
   },
-});
+}));
 
-const linkClass = rule({
+const useLinkClass = makeRule((t) => ({
   a: {
     d: 'flex',
     alignItems: 'center',
     svg: {
       marl: '8px',
-      fill: theme.blue,
+      fill: t.blue(1),
       trs: 'transform .2s',
     },
     '&:hover': {
@@ -78,14 +78,14 @@ const linkClass = rule({
       bg: 'transparent !important',
     },
   },
-});
+}));
 
-const stageClass = rule({
-  ...theme.font.ui3,
+const useStageClass = makeRule((t) => ({
+  ...t.font.ui3,
   fz: '14px',
-  col: theme.g(0.6),
+  col: t.g(0.6),
   marl: '16px',
-});
+}));
 
 export interface ClickCardProps {
   title: React.ReactNode;
@@ -113,6 +113,10 @@ export const ClickCard: React.FC<ClickCardProps> = ({
   onClick,
 }) => {
   const [t] = useT();
+  const blockClass = useBlockClass();
+  const contentClass = useContentClass();
+  const linkClass = useLinkClass();
+  const stageClass = useStageClass();
 
   const labelElement =
     !!icon || !!label || !!header ? (

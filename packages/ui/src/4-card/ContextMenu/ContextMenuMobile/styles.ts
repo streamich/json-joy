@@ -87,7 +87,7 @@ export const itemRowClass = drule({
   fz: '15px',
   minHeight: '48px',
   '&:active': {
-    bg: 'rgba(0,0,0,.06)',
+    bg: 'rgba(127,127,127,.16)',
   },
 });
 

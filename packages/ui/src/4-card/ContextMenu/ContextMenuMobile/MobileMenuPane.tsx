@@ -20,8 +20,8 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({menu, parent, onP
   const theme = useTheme();
   const children = menu.children ?? [];
 
-  const sepColor = theme.isLight ? theme.g(0.92) : theme.g(0.2);
-  const titleColor = theme.isLight ? theme.g(0.5) : theme.g(0.6);
+  const sepColor = theme.g(0, .08);
+  const titleColor = theme.g(0.5);
 
   const renderSeparator = (key: string) => (
     <div key={key} className={separatorClass({bg: sepColor})} aria-hidden="true" />
