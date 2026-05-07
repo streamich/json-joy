@@ -15,7 +15,7 @@ const Frame: React.FC<{html: string}> = ({html}) => (
 );
 
 const meta = preview.meta({
-  title: 'mu-txt-element/Plain HTML',
+  title: 'mutxt-element/Plain HTML',
 });
 
 export const Empty = meta.story({

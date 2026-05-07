@@ -1,10 +1,12 @@
 {
-  "extends": "./tsconfig",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "sourceMap": false,
     "rootDir": "./src",
-    "tsBuildInfoFile": "./lib/.tsbuildinfo"
+    "outDir": "./lib"
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "src/demo",
     "src/__tests__",
@@ -18,11 +20,10 @@
     "src/**/__tape__/**/*.*",
     "*.test.ts",
     "*.spec.ts",
-    "src/**/__stories__/**/*.*",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {"path": "../mu-txt-react/tsconfig.build.json"}
+    {"path": "../mutxt-react"}
   ]
 }

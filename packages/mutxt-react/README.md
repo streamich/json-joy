@@ -1,13 +1,13 @@
-# mu-txt-react
+# mutxt-react
 
-`mu-txt-react` is a batteries-included React editor for mu-txt documents backed by
+`mutxt-react` is a batteries-included React editor for mu-txt documents backed by
 `json-joy` Peritext models. It ships a ready-to-use editing surface with toolbar,
 footer, embeds, code blocks, scroll map, and collaborative presence support.
 
 ## Installation
 
 ```bash
-npm install mu-txt-react react react-dom slate slate-react
+npm install mutxt-react react react-dom slate slate-react
 ```
 
 The package bundles its own editor chrome and depends on the `json-joy`
@@ -24,7 +24,7 @@ collaboration stack internally.
 
 ```tsx
 import * as React from 'react';
-import {MuTxt, type SlateEditorDocument} from 'mu-txt-react';
+import {MuTxt, type SlateEditorDocument} from 'mutxt-react';
 
 const initialValue: SlateEditorDocument = [
 	{
@@ -33,7 +33,7 @@ const initialValue: SlateEditorDocument = [
 	},
 	{
 		type: 'p',
-		children: [{text: 'mu-txt-react can boot from plain Slate-compatible JSON.'}],
+		children: [{text: 'mutxt-react can boot from plain Slate-compatible JSON.'}],
 	},
 ];
 
@@ -60,7 +60,7 @@ Pass a Peritext-backed `json-joy` model through `model` and an optional
 ```tsx
 import * as React from 'react';
 import {ModelWithExt, ext} from 'json-joy/lib/json-crdt-extensions';
-import {MuTxt} from 'mu-txt-react';
+import {MuTxt} from 'mutxt-react';
 
 const model = ModelWithExt.create(ext.peritext.new(''));
 

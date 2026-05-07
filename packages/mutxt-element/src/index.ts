@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {createRoot, type Root} from 'react-dom/client';
-import {MuTxt, type MuTxtApi, type SlateEditorDocument} from 'mu-txt-react';
+import {MuTxt, type MuTxtApi, type SlateEditorDocument} from 'mutxt-react';
 import {ensureHostStyle, loadFromSrc, resolveFormat, seedFromChildren} from './util';
 import type {MuTxtFormat, SeedProps} from './types';
 

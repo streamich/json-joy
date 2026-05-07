@@ -11952,14 +11952,55 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mu-txt-element@workspace:packages/mu-txt-element":
+"mu-txt@workspace:packages/mu-txt":
   version: 0.0.0-use.local
-  resolution: "mu-txt-element@workspace:packages/mu-txt-element"
+  resolution: "mu-txt@workspace:packages/mu-txt"
+  dependencies:
+    "@jsonjoy.com/collaborative-peritext": "workspace:*"
+    "@jsonjoy.com/collaborative-slate": "workspace:*"
+    "@jsonjoy.com/collaborative-ui": "workspace:*"
+    "@jsonjoy.com/json-pack": "workspace:*"
+    "@jsonjoy.com/ui": "workspace:*"
+    "@jsonjoy.com/util": "workspace:*"
+    "@types/node": "npm:^22.14.1"
+    css-loader: "npm:^7.1.2"
+    flexible-input: "npm:^1.0.3"
+    html-webpack-plugin: "npm:^5.6.3"
+    json-joy: "workspace:*"
+    mini-css-extract-plugin: "npm:^2.9.2"
+    mutxt-react: "workspace:*"
+    style-loader: "npm:^4.0.0"
+    ts-loader: "npm:^9.5.2"
+    webpack: "npm:^5.99.5"
+    webpack-cli: "npm:^6.0.1"
+    webpack-dev-server: "npm:^5.2.1"
+    wrangler: "npm:^4.81.1"
+  peerDependencies:
+    rxjs: 7
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
+
+"multicast-dns@npm:^7.2.5":
+  version: 7.2.5
+  resolution: "multicast-dns@npm:7.2.5"
+  dependencies:
+    dns-packet: "npm:^5.2.2"
+    thunky: "npm:^1.0.2"
+  bin:
+    multicast-dns: cli.js
+  checksum: 10c0/5120171d4bdb1577764c5afa96e413353bff530d1b37081cb29cccc747f989eb1baf40574fe8e27060fc1aef72b59c042f72b9b208413de33bcf411343c69057
+  languageName: node
+  linkType: hard
+
+"mutxt-element@workspace:packages/mutxt-element":
+  version: 0.0.0-use.local
+  resolution: "mutxt-element@workspace:packages/mutxt-element"
   dependencies:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     css-loader: "npm:^7.1.2"
-    mu-txt-react: "workspace:*"
+    mutxt-react: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     slate: "npm:^0.123.0"
@@ -11974,9 +12015,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"mu-txt-react@workspace:*, mu-txt-react@workspace:packages/mu-txt-react":
+"mutxt-react@workspace:*, mutxt-react@workspace:packages/mutxt-react":
   version: 0.0.0-use.local
-  resolution: "mu-txt-react@workspace:packages/mu-txt-react"
+  resolution: "mutxt-react@workspace:packages/mutxt-react"
   dependencies:
     "@fontsource-variable/bitter": "npm:^5.2.0"
     "@fontsource-variable/inter": "npm:^5.2.0"
@@ -12022,47 +12063,6 @@ __metadata:
       optional: false
   languageName: unknown
   linkType: soft
-
-"mu-txt@workspace:packages/mu-txt":
-  version: 0.0.0-use.local
-  resolution: "mu-txt@workspace:packages/mu-txt"
-  dependencies:
-    "@jsonjoy.com/collaborative-peritext": "workspace:*"
-    "@jsonjoy.com/collaborative-slate": "workspace:*"
-    "@jsonjoy.com/collaborative-ui": "workspace:*"
-    "@jsonjoy.com/json-pack": "workspace:*"
-    "@jsonjoy.com/ui": "workspace:*"
-    "@jsonjoy.com/util": "workspace:*"
-    "@types/node": "npm:^22.14.1"
-    css-loader: "npm:^7.1.2"
-    flexible-input: "npm:^1.0.3"
-    html-webpack-plugin: "npm:^5.6.3"
-    json-joy: "workspace:*"
-    mini-css-extract-plugin: "npm:^2.9.2"
-    mu-txt-react: "workspace:*"
-    style-loader: "npm:^4.0.0"
-    ts-loader: "npm:^9.5.2"
-    webpack: "npm:^5.99.5"
-    webpack-cli: "npm:^6.0.1"
-    webpack-dev-server: "npm:^5.2.1"
-    wrangler: "npm:^4.81.1"
-  peerDependencies:
-    rxjs: 7
-    tslib: "*"
-  languageName: unknown
-  linkType: soft
-
-"multicast-dns@npm:^7.2.5":
-  version: 7.2.5
-  resolution: "multicast-dns@npm:7.2.5"
-  dependencies:
-    dns-packet: "npm:^5.2.2"
-    thunky: "npm:^1.0.2"
-  bin:
-    multicast-dns: cli.js
-  checksum: 10c0/5120171d4bdb1577764c5afa96e413353bff530d1b37081cb29cccc747f989eb1baf40574fe8e27060fc1aef72b59c042f72b9b208413de33bcf411343c69057
-  languageName: node
-  linkType: hard
 
 "nano-css@npm:^1.13.0":
   version: 1.17.2

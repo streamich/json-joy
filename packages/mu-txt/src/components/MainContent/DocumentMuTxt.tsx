@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {MuTxt} from 'mu-txt-react';
+import {MuTxt} from 'mutxt-react';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {OpenFile} from '../../state/file';
 

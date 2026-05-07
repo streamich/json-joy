@@ -1,11 +1,11 @@
-# mu-txt-element
+# mutxt-element
 
-`<mu-txt>` &mdash; a custom element wrapping the [MuTxt](../mu-txt-react) rich-text editor.
+`<mu-txt>` &mdash; a custom element wrapping the [MuTxt](../mutxt-react) rich-text editor.
 
 ## Use from a CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mu-txt-element/dist/mu-txt-element.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mutxt-element/dist/mutxt-element.min.js"></script>
 
 <mu-txt></mu-txt>
 ```
@@ -13,11 +13,11 @@
 ## Use from npm
 
 ```bash
-npm install mu-txt-element
+npm install mutxt-element
 ```
 
 ```js
-import 'mu-txt-element';
+import 'mutxt-element';
 ```
 
 Then use `<mu-txt></mu-txt>` anywhere in your HTML.
@@ -102,7 +102,7 @@ el.addEventListener('ready', (e) => {
 Subclass and register under a different name:
 
 ```js
-import {MuTxtElement} from 'mu-txt-element';
+import {MuTxtElement} from 'mutxt-element';
 class MyEditor extends MuTxtElement {}
 customElements.define('my-editor', MyEditor);
 ```

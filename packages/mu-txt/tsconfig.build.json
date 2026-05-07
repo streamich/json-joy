@@ -23,7 +23,7 @@
     "src/**/*.stories.tsx"
   ],
   "references": [
-    {"path": "../mu-txt-react/tsconfig.build.json"},
+    {"path": "../mutxt-react/tsconfig.build.json"},
     {"path": "../json-joy/tsconfig.build.json"},
     {"path": "../json-pack/tsconfig.build.json"},
     {"path": "../ui/tsconfig.build.json"},

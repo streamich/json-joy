@@ -1,5 +1,5 @@
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
-import {formatKeys} from 'mu-txt-react/lib/MuTxt/util/keys';
+import {formatKeys} from 'mutxt-react/lib/MuTxt/util/keys';
 import * as React from 'react';
 import {useT} from 'use-t';
 

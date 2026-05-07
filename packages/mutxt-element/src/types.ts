@@ -1,4 +1,4 @@
-import type {SlateEditorDocument} from 'mu-txt-react';
+import type {SlateEditorDocument} from 'mutxt-react';
 import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {FORMATS} from './constants';
 
