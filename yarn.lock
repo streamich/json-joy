@@ -3151,7 +3151,6 @@ __metadata:
     "@uiw/react-color-alpha": "npm:^2.9.6"
     "@uiw/react-color-hue": "npm:^2.9.6"
     "@uiw/react-color-saturation": "npm:^2.9.6"
-    clipboard-copy: "npm:^4.0.1"
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
@@ -6594,13 +6593,6 @@ __metadata:
     react-dom: "*"
     tslib: 2
   checksum: 10c0/0d65c1bd5c82a9ef1d124e8c65b80bfc1aa3403183da529113a6716b91387e5bac85faebb68337588d1fca65fc698c0f94de728d5e8da887e03d6b86d0505266
-  languageName: node
-  linkType: hard
-
-"clipboard-copy@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "clipboard-copy@npm:4.0.1"
-  checksum: 10c0/382438f78d43512df755740ebcaa6bfa3413bfaf0e7096137799acea88583b3e2ab17164348912c36216d56e69227c47c705da77c50ad8da57456cde8cad0d43
   languageName: node
   linkType: hard
 
@@ -10564,7 +10556,6 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     benchmark: "npm:^2.1.4"
-    clipboard-copy: "npm:^4.0.1"
     config-galore: "npm:^1.0.0"
     editing-traces: "https://github.com/streamich/editing-traces#145f79871a7bf54162f55d84eb6b8381db7b65b8"
     fast-diff: "npm:^1.3.0"
@@ -10648,7 +10639,6 @@ __metadata:
     "@types/react": "npm:^19.1.12"
     "@types/react-dom": "npm:^19.1.9"
     arg: "npm:^5.0.2"
-    clipboard-copy: "npm:^4.0.1"
     collaborative-editor: "npm:^2.9.0"
     collaborative-input: "npm:^1.7.0"
     collaborative-ui: "npm:^1.7.1"
@@ -11884,7 +11874,6 @@ __metadata:
     "@uiw/react-color-alpha": "npm:^2.9.6"
     "@uiw/react-color-hue": "npm:^2.9.6"
     "@uiw/react-color-saturation": "npm:^2.9.6"
-    clipboard-copy: "npm:^4.0.1"
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
