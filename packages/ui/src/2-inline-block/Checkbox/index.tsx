@@ -1,6 +1,7 @@
 import * as React from 'react';
-import {lightTheme as theme, rule} from 'nano-theme';
+import {makeRule, rule, useTheme} from 'nano-theme';
 import {Iconista} from '../../icons/Iconista';
+import {useStyles} from '../../styles/context';
 
 const h = React.createElement;
 
@@ -29,7 +30,7 @@ const labelClass = rule({
   ttf: 'uppercase',
 });
 
-const blockClass = rule({
+const useBlockClass = makeRule((t) => ({
   pos: 'relative',
   cur: 'pointer',
   d: 'inline-block',
@@ -37,22 +38,22 @@ const blockClass = rule({
   mar: 0,
   bdrad: '20px',
   trs: 'box-shadow 0.18s',
-  bxsh: 'inset 0 0 2px rgba(0,0,0,.25)',
+  bxsh: `inset 0 0 2px ${t.g(t.isLight ? 0 : 1, 0.25)}`,
   bd: 0,
   out: 0,
   w: '50px',
   h: '30px',
   '&:focus': {
-    bxsh: `0 0 0 3px ${theme.color.sem.blue[0]}`,
+    bxsh: `0 0 0 3px ${t.color.sem.blue[0]}`,
   },
   '&:hover': {
-    bxsh: `0 0 0 3px ${theme.color.sem.accent[0]}`,
+    bxsh: `0 0 0 3px ${t.color.sem.accent[0]}`,
     [`& > .${thumbClass}`]: {
-      bg: '#f4f4f4',
-      'box-shadow': '0 0 3px rgba(0,0,0,.4)',
+      bg: t.isLight ? '#f4f4f4' : t.g(0.9),
+      'box-shadow': `0 0 3px ${t.g(t.isLight ? 0 : 1, 0.4)}`,
     },
   },
-});
+}));
 
 export interface CheckboxProps {
   on: boolean;
@@ -64,6 +65,9 @@ export interface CheckboxProps {
 
 export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const {on, as = 'button', small, disabled} = props;
+  const theme = useTheme();
+  const styles = useStyles();
+  const blockClass = useBlockClass();
 
   const [active, setActive] = React.useState(false);
 
@@ -120,12 +124,12 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
     h(
       'span',
       {className: labelClass, style: styleLabelOn, 'aria-hidden': true},
-      h(Iconista, {set: 'bootstrap', icon: 'check', width: small ? 12 : 14, height: small ? 12 : 14}),
+      h(Iconista, {color: styles.bg.copy(0, 0, 0, -.4).toString(), set: 'bootstrap', icon: 'check', width: small ? 12 : 14, height: small ? 12 : 14}),
     ),
     h(
       'span',
       {className: labelClass, style: styleLabelOff, 'aria-hidden': true},
-      h(Iconista, {set: 'bootstrap', icon: 'x', width: small ? 12 : 14, height: small ? 12 : 14}),
+      h(Iconista, {color: styles.bg.copy(0, 0, 0, -.4).toString(), set: 'bootstrap', icon: 'x', width: small ? 12 : 14, height: small ? 12 : 14}),
     ),
     h('span', {className: thumbClass, style: styleSpan}, ' '),
   );

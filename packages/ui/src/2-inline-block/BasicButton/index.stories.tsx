@@ -26,6 +26,13 @@ export const Primary: StoryObj<typeof meta> = {
   },
 };
 
+export const Border: StoryObj<typeof meta> = {
+  args: {
+    children: <IconSvgClose />,
+    border: true,
+  },
+};
+
 export const Stretched: StoryObj<typeof meta> = {
   args: {
     children: 'Hello',

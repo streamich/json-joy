@@ -1,20 +1,20 @@
 import {createElement as h} from 'react';
-import {rule} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 
-const blockClass = rule({
+const useBlockClass = makeRule((t) => ({
   d: 'inline-block',
   bdrad: '50%',
   animation: 'spinner-circle .3s infinite linear',
   w: '16px',
   h: '16px',
-  bd: '1px solid rgba(0,0,0,.25)',
+  bd: `1px solid ${t.g(0, 0.25)}`,
   bdl: '1px solid transparent',
   '@keyframes spinner-circle': {
     to: {
       transform: 'rotate(359.9deg)',
     },
   },
-});
+}));
 
 export interface ISpinnerCircleProps {
   color?: string;
@@ -22,6 +22,7 @@ export interface ISpinnerCircleProps {
 }
 
 export const SpinnerCircle: React.FC<ISpinnerCircleProps> = ({size = 0, color}) => {
+  const blockClass = useBlockClass();
   const style: React.CSSProperties = {};
 
   if (color) {

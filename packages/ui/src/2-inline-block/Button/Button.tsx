@@ -191,7 +191,13 @@ export const Button: React.FC<ButtonProps> = (props) => {
 
   return h(Ripple, {
     ms: block ? 400 : 1000,
-    color: disabled ? 'transparent' : lite || outline ? 'rgba(0,0,0,.1)' : 'rgba(255,255,255,.85)',
+    color: disabled
+      ? 'transparent'
+      : lite || outline
+        ? theme.light
+          ? 'rgba(0,0,0,.1)'
+          : 'rgba(255,255,255,.18)'
+        : 'rgba(255,255,255,.85)',
     children: buttonElement,
   });
 };
