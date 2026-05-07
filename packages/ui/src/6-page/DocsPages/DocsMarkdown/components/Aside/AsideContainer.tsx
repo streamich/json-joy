@@ -1,6 +1,6 @@
 import * as React from 'react';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import {rule, theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import {useDocsMarkdownCtx} from '../../context';
 import AsideInline from './AsideInline';
 import {NiceUiSizes} from '../../../../../constants';
@@ -13,7 +13,7 @@ const blockClass = rule({
   lh: 0,
 });
 
-const innerBlockClass = rule({
+const useInnerBlockClass = makeRule((t) => ({
   pos: 'absolute',
   top: 0,
   left: '100%',
@@ -22,10 +22,10 @@ const innerBlockClass = rule({
   lh: '1.42em',
   bxz: 'border-box',
   '& a': {
-    col: theme.g(0.4),
-    bdb: '1px solid rgba(66, 66, 66, 0.2)',
+    col: t.g(0.4),
+    bdb: `1px solid ${t.g(0.26, 0.2)}`,
   },
-});
+}));
 
 export interface Props {
   children: React.ReactNode;
@@ -35,6 +35,7 @@ export interface Props {
 const AsideContainer: React.FC<Props> = ({children, left}) => {
   const wndSize = useWindowSize();
   const {contentWidth} = useDocsMarkdownCtx();
+  const innerBlockClass = useInnerBlockClass();
 
   const isSmallWidth = wndSize.width <= NiceUiSizes.BlogContentMaxWidth + 100;
 

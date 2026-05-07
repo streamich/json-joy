@@ -3,10 +3,15 @@ import {Colors} from './color/Colors';
 import {Fonts} from './font/Fonts';
 import {theme as ltheme} from './theme/light';
 import {theme as dtheme} from './theme/dark';
+import {HslColor, ThemeColor} from './color';
 // import {Color} from './color/Color';
 
 export class Styles {
   public static readonly make = (theme?: StyleTheme, dark?: boolean) => new Styles(theme ?? (dark ? dtheme : ltheme));
+
+  public bg: HslColor;
+  public accent: ThemeColor;
+  public neutral: ThemeColor;
 
   /**
    * Whether it is the "light" theme (or "dark" theme).
@@ -20,15 +25,16 @@ export class Styles {
     this.light = theme.light ?? true;
     this.col = new Colors(theme.color);
     this.txt = new Fonts(theme.font);
+    const bg = HslColor.from('#F8F9FA')!;
+    const accent = new ThemeColor(new HslColor(.575, .91, .56), bg);
+    const neutral = new ThemeColor(new HslColor(.155, .43, .62), bg);
+    this.bg = this.light ? bg : HslColor.from('#1A1A1B')!;
+    this.accent = this.light ? accent : accent.toDarkTheme(this.bg);
+    this.neutral = this.light ? neutral : neutral.toDarkTheme(this.bg);
   }
 
   public readonly g = (shade: number, opacity: number = 1): string => {
-    const g = Math.round(255 * shade);
+    const g = Math.round(255 * (this.light ? shade : 1 - shade));
     return `rgba(${g},${g},${g},${opacity})`;
-    // const {col} = this;
-    // const step = Math.round((1 - L) * 11);
-    // const color0 = col.col(['neutral', 0, step]);
-    // const {H, S, light} = color0;
-    // return new Color(H, S, L * 100 - 100, A * 100, light) + '';
   };
 }

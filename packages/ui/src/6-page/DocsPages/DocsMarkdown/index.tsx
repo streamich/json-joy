@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type {Flat} from 'mdast-flat/lib/types';
-import {rule, theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import {renderers as defaultRenderers} from '../../../markdown/renderers';
 import renderParagraph from './renderers/renderParagraph';
 import renderHeading from './renderers/renderHeading';
@@ -18,19 +18,18 @@ const renderers: typeof defaultRenderers = {
   link: renderLink,
 };
 
-const blockClass = rule({
-  ...theme.font.sans.mid,
+const useBlockClass = makeRule((t) => ({
+  ...t.font.sans.mid,
   fw: 400,
   p: {
-    ...theme.font.ui3,
-    // maxW: '700px',
+    ...t.font.ui3,
     lh: '1.76em',
   },
   '.ff-note p': {
     lh: '1.5em',
   },
   [`& .${introClass.trim()} p`]: {
-    ...theme.font.ui1.mid,
+    ...t.font.ui1.mid,
     lh: '1.5em',
   },
   '& p+p, & pre+p, & pre+ul, & pre+div, & ul+p, & div:not(.invisible)+p, & ul+div:not(.invisible)': {
@@ -58,7 +57,7 @@ const blockClass = rule({
     padt: 0,
   },
   'h1,h2,h3,h4,h5,h6': {
-    ...theme.font.ui1.mid,
+    ...t.font.ui1.mid,
     fw: 500,
     padt: '1.5em',
     mar: 0,
@@ -75,21 +74,21 @@ const blockClass = rule({
   },
   h3: {
     fz: 22 / 16 + 'em',
-    col: theme.g(0.1),
+    col: t.g(0.1),
   },
   h4: {
     fz: 20 / 16 + 'em',
-    col: theme.g(0.2),
+    col: t.g(0.2),
   },
   h5: {
     fz: 18 / 16 + 'em',
-    col: theme.g(0.3),
+    col: t.g(0.3),
   },
   h6: {
     fz: 16 / 16 + 'em',
-    col: theme.g(0.4),
+    col: t.g(0.4),
   },
-});
+}));
 
 const blockDisplayClass = rule({
   h1: {
@@ -112,13 +111,13 @@ const blockDisplayClass = rule({
   },
 });
 
-const blockFont1Class = rule({
-  ...theme.font.sans,
+const useBlockFont1Class = makeRule((t) => ({
+  ...t.font.sans,
   p: {
-    ...theme.font.sans,
+    ...t.font.sans,
     lh: '1.76em',
   },
-});
+}));
 
 export interface Props {
   ast: Flat | (() => Promise<Flat>);
@@ -140,6 +139,8 @@ const DocsMarkdown: React.FC<Props> = ({
   display,
 }) => {
   const [resolvedAst, setResolvedAst] = React.useState(typeof ast === 'function' ? null : ast);
+  const blockClass = useBlockClass();
+  const blockFont1Class = useBlockFont1Class();
 
   React.useEffect(() => {
     if (typeof ast === 'function') {

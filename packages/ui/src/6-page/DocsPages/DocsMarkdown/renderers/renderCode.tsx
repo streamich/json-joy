@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import type {ICode} from 'very-small-parser/lib/markdown/block/types';
 import type {RenderNode} from '../../../../markdown/types';
 import renderCodeDefault from '../../../../markdown/renderers/renderCode';
@@ -10,18 +10,25 @@ import Wide from '../components/Wide';
 import Aside from '../components/Aside';
 
 export const introClass = rule({
-  // ...theme.font.ui2.mid,
-  col: theme.g(0.5),
   fz: '0.9em',
   op: 0.9,
   pad: '0 0 16px',
   mar: '0 0 16px',
   lh: '1.5em',
-  bdb: `1px solid ${theme.g(0.8)}`,
   p: {
     lh: '1.5em',
   },
 });
+
+const useIntroColorsClass = makeRule((t) => ({
+  col: t.g(0.5),
+  bdb: `1px solid ${t.g(0.8)}`,
+}));
+
+const Intro: React.FC<{children: React.ReactNode}> = ({children}) => {
+  const introColorsClass = useIntroColorsClass();
+  return <div className={introClass + introColorsClass}>{children}</div>;
+};
 
 const renderCode: RenderNode = (renderers, flat, idx, props, state) => {
   const node = flat.nodes[idx] as ICode;
@@ -30,7 +37,7 @@ const renderCode: RenderNode = (renderers, flat, idx, props, state) => {
   switch (lang) {
     case 'intro': {
       const ast = md(node.value);
-      return <div className={introClass}>{renderers.node(renderers, ast, 0, props, state)}</div>;
+      return <Intro>{renderers.node(renderers, ast, 0, props, state)}</Intro>;
     }
     case 'jj.note': {
       return <Note node={node} />;

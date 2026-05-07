@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type {MdastProps, MdastContextValue} from './types';
 import {renderers as defaultRenderers} from './renderers';
-import {rule, theme, useTheme} from 'nano-theme';
+import {rule, makeRule, useTheme} from 'nano-theme';
 import MarkdownFullWidthBlock from './util/MarkdownFullWidthBlock';
 import {context} from './context';
 import {md} from './parser';
@@ -18,8 +18,8 @@ const resetClass = rule({
     pad: 0,
   },
 });
-const markdownClass = rule({
-  ...theme.font.sans,
+const useMarkdownClass = makeRule((t) => ({
+  ...t.font.sans,
   lh: 1.6,
   ww: 'break-word',
   'overflow-wrap': 'break-word',
@@ -28,18 +28,18 @@ const markdownClass = rule({
   hyphens: 'auto',
   mark: {
     bdrad: '.25em',
-    bg: '#ff0',
-    // bg: '#ff6',
+    bg: t.isLight ? '#ff0' : 'rgba(255,255,0,.35)',
+    col: t.isLight ? undefined : '#fff',
     pad: '0 .125em',
     mar: '0 -.125em',
   },
   a: {
-    col: '#006dff',
+    col: t.color.sem.link[0],
     bdb: '1px solid rgba(0,137,255,.3)',
     td: 'none',
     '&:hover': {
-      color: '#ec1020',
-      bdb: '1px solid rgba(244,18,36,.3)',
+      color: t.isLight ? '#ec1020' : '#ff8a8a',
+      bdb: t.isLight ? '1px solid rgba(244,18,36,.3)' : '1px solid rgba(255,138,138,.3)',
     },
     '&:has(img)': {
       bdb: 0,
@@ -49,7 +49,7 @@ const markdownClass = rule({
     mar: 0,
     pad: '0 0 0 24px',
   },
-});
+}));
 
 export const MdastFlat: React.FC<MdastProps> = ({...props}) => {
   const {placeholdersAfter, placeholdersAfterLength} = props;
@@ -57,6 +57,7 @@ export const MdastFlat: React.FC<MdastProps> = ({...props}) => {
   props.maxPlaceholders ??= Infinity;
   props.LoadingBlock ??= () => null;
   const theme = useTheme();
+  const markdownClass = useMarkdownClass();
   const isMounted = useMountedState();
   const [ast, setAst] = useState<Flat>(props.ast);
   useIsomorphicLayoutEffect(() => {

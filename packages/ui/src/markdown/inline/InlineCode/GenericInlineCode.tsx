@@ -1,35 +1,32 @@
 import * as React from 'react';
-import {rule, makeRule, theme} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 
 export const color = '#430';
 
-const blockClass = rule({
-  ...theme.font.mono.bold,
+const useBlockClass = makeRule((t) => ({
+  ...t.font.mono.bold,
   fz: '0.96em',
   pad: '0px 0.33em !important',
   mar: '-4px -1px',
   bdrad: '.24em',
-  col: color,
+  col: t.isLight ? color : '#ffd9a8',
   letterSpacing: '-0.025em',
   cur: 'alias',
-});
-
-const useBlockClass = makeRule((theme) => ({
-  bd: `.08em solid ${theme.g(0, 0.08)}`,
+  bd: `.08em solid ${t.g(0, 0.08)}`,
   '&:hover': {
-    bd: `.08em solid ${theme.g(0, 0.16)}`,
-    col: theme.g(0.2),
+    bd: `.08em solid ${t.g(0, 0.16)}`,
+    col: t.isLight ? t.g(0.2) : '#ffe6c4',
   },
   '&:active': {
-    bd: `.08em solid ${theme.g(0, 0.32)}`,
-    col: theme.g(0),
+    bd: `.08em solid ${t.g(0, 0.32)}`,
+    col: t.isLight ? t.g(0) : '#fff',
   },
 }));
 
 const GenericInlineCode: React.FC<React.AllHTMLAttributes<any>> = (props) => {
-  const dynamicBlockClass = useBlockClass();
+  const blockClass = useBlockClass();
 
-  return <code {...props} className={blockClass + dynamicBlockClass} />;
+  return <code {...props} className={blockClass} />;
 };
 
 export default GenericInlineCode;

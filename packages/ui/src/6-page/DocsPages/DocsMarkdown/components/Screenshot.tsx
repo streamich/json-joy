@@ -1,4 +1,4 @@
-import {rule, theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import * as React from 'react';
 import {CDN} from '../../../../misc/conf';
 import {NiceUiSizes} from '../../../../constants';
@@ -9,13 +9,12 @@ const wrapClass = rule({
   justifyContent: 'center',
 });
 
-const blockClass = rule({
+const useBlockClass = makeRule((t) => ({
   d: 'inline-block',
   mar: '0 auto',
   bxz: 'border-box',
   maxW: NiceUiSizes.BlogContentMaxWidth + 'px',
-  bd: `1px solid ${theme.g(0.92)}`,
-  // bg: theme.blueColor(0.01),
+  bd: `1px solid ${t.g(0.92)}`,
   bdrad: '4px',
   pad: '4px',
   img: {
@@ -23,15 +22,15 @@ const blockClass = rule({
     maxW: '100%',
     bdrad: '3px',
   },
-});
+}));
 
-const captionClass = rule({
-  ...theme.font.ui1.mid,
+const useCaptionClass = makeRule((t) => ({
+  ...t.font.ui1.mid,
   textAlign: 'center',
-  col: theme.g(0.5),
+  col: t.g(0.5),
   fz: '14px',
   pad: '16px',
-});
+}));
 
 export interface Props {
   src: string;
@@ -46,6 +45,8 @@ export interface Props {
 const Screenshot: React.FC<Props> = (props) => {
   const {src, alt, width, height, caption, retinaFactor = 1, noPadding} = props;
   const [maxWidth, setMaxWidth] = React.useState<undefined | number>(undefined);
+  const blockClass = useBlockClass();
+  const captionClass = useCaptionClass();
 
   const url = src.indexOf('/docs') === 0 ? CDN + '/ff' + src : src;
 

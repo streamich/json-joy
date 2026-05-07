@@ -4,21 +4,13 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {JsonBlockText} from './JsonBlockText';
 import {JsonBlockClickable} from './JsonBlockClickable';
 import {CodeblockLayout} from '../CodeblockLayout';
-import {rule, theme} from 'nano-theme';
+import {rule} from 'nano-theme';
 import {JsonBlockState} from './JsonBlockState';
 import {JsonBlockToolbar} from './JsonBlockToolbar';
 import {JsonBlockToolbarRight} from './JsonBlockToolbarRight';
 import type {OnChange} from '@jsonjoy.com/click-json/lib/ClickableJson/types';
 
 const css = {
-  pointer: rule({
-    ...theme.font.mono.mid,
-    col: theme.color.sem.blue[0],
-    fz: '12px',
-    d: 'flex',
-    pd: '1px 0 0',
-    alignItems: 'center',
-  }),
   body: rule({
     w: '100%',
     bxz: 'border-box',

@@ -85,7 +85,7 @@ export type IconistaProps = Icon &
 export const Iconista: React.FC<IconistaProps> = ({color, style, ...rest}) => {
   const theme = useTheme();
 
-  const iconColor = color || theme.g(0.4);
+  const iconColor = color || theme.g(0.1, .9);
 
   return <Svg {...rest} style={{color: iconColor, ...style}} />;
 };

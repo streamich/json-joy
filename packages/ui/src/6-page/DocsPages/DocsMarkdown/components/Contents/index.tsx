@@ -1,4 +1,4 @@
-import {rule, theme} from 'nano-theme';
+import {makeRule, rule} from 'nano-theme';
 import * as React from 'react';
 import {useT} from 'use-t';
 import useWindowSize from 'react-use/lib/useWindowSize';
@@ -9,18 +9,20 @@ import InlineCard from '../InlineCard';
 import {NiceUiSizes} from '../../../../../constants';
 import type {Flat} from 'mdast-flat/lib/types';
 
-const blockClass = rule({
-  bd: `1px solid ${theme.g(0.98)}`,
+const blockClassName = 'jjContents';
+
+const useBlockClass = makeRule((t) => ({
+  bd: `1px solid ${t.g(0.98)}`,
   bdrad: '8px',
   mar: '0 0 32px',
   pad: '32px',
   '&:hover': {
-    bd: `1px solid ${theme.g(0.9)}`,
+    bd: `1px solid ${t.g(0.9)}`,
   },
   [`@media(max-width: ${NiceUiSizes.SiteWidth}px)`]: {
-    bd: `1px solid ${theme.g(0.9)}`,
+    bd: `1px solid ${t.g(0.9)}`,
   },
-});
+}));
 
 const blockClassRight = rule({
   pad: '8px',
@@ -33,21 +35,20 @@ const blockClassRight = rule({
   },
 });
 
-const contentsClass = rule({
-  ...theme.font.ui2.mid,
-  col: theme.g(0.5),
+const useContentsClass = makeRule((t) => ({
+  ...t.font.ui2.mid,
+  col: t.g(0.5),
   fz: '10px',
-  // ta: 'right',
   textTransform: 'uppercase',
   marb: '8px',
-  bdb: `1px solid ${theme.g(0.92)}`,
+  bdb: `1px solid ${t.g(0.92)}`,
   [`@media(min-width: ${NiceUiSizes.SiteWidth}px)`]: {
     op: 0.4,
-    [`.${blockClass.trim()}:hover &`]: {
+    [`.${blockClassName}:hover &`]: {
       op: 1,
     },
   },
-});
+}));
 
 export interface Props {
   ast: Flat;
@@ -58,6 +59,8 @@ export interface Props {
 const Contents: React.FC<Props> = ({ast, renderers, right}) => {
   const [t] = useT();
   const wndSize = useWindowSize();
+  const blockClass = useBlockClass();
+  const contentsClass = useContentsClass();
   const contents = ast.contents;
 
   if (!contents || contents.length < 2) return null;
@@ -75,7 +78,7 @@ const Contents: React.FC<Props> = ({ast, renderers, right}) => {
   if (isLargeScreen) {
     return (
       <AsideContainer left={!right}>
-        <div className={blockClass + (right ? blockClassRight : '')}>
+        <div className={blockClassName + ' ' + blockClass + (right ? blockClassRight : '')}>
           {!right && <div className={contentsClass}>{t('Contents')}</div>}
           {headings}
         </div>
