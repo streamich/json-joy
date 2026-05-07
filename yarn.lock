@@ -12008,6 +12008,7 @@ __metadata:
     slate-history: "npm:^0.113.1"
     slate-react: "npm:^0.123.0"
     style-loader: "npm:^4.0.0"
+    terser-webpack-plugin: "npm:^5.3.16"
     ts-loader: "npm:^9.5.4"
     tslib: "npm:^2.8.1"
     webpack: "npm:^5.95.0"
