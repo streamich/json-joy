@@ -23,7 +23,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
     textAlign: element.align,
     paddingInlineStart: indentPadding(element.indent),
     fontFamily: fontFamilyOf(element.font),
-    color: styles.light ? styles.g(0.08) : styles.g(0.96),
+    color: styles.g(0.08),
   };
 
   switch (element.type) {
@@ -108,7 +108,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '26px 0 12px',
             lineHeight: 1.3,
-            color: styles.light ? styles.g(0.16) : styles.g(0.88),
+            color: styles.g(0.16),
           }}
         >
           {children}
@@ -126,7 +126,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '22px 0 10px',
             lineHeight: 1.4,
-            color: styles.light ? styles.g(0.24) : styles.g(0.8),
+            color: styles.g(0.24),
           }}
         >
           {children}
@@ -144,7 +144,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '18px 0 8px',
             lineHeight: 1.5,
-            color: styles.light ? styles.g(0.32) : styles.g(0.72),
+            color: styles.g(0.32),
           }}
         >
           {children}
@@ -162,7 +162,7 @@ export const HeadingElement: React.FC<HeadingElementProps> = ({attributes, child
             fontWeight: 700,
             margin: '14px 0 6px',
             lineHeight: 1.6,
-            color: styles.light ? styles.g(0.4) : styles.g(0.64),
+            color: styles.g(0.4),
           }}
         >
           {children}

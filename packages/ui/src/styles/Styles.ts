@@ -13,9 +13,7 @@ export class Styles {
   public accent: ThemeColor;
   public neutral: ThemeColor;
 
-  /**
-   * Whether it is the "light" theme (or "dark" theme).
-   */
+  /** Whether it is the "light" theme (or "dark" theme). */
   public readonly light?: boolean;
 
   public readonly col: Colors;
@@ -34,7 +32,9 @@ export class Styles {
   }
 
   public readonly g = (shade: number, opacity: number = 1): string => {
-    const g = Math.round(255 * (this.light ? shade : 1 - shade));
+    const min = this.light ? (0 + 10) : 255;
+    const max = this.light ? (255 - 20) : 0;
+    const g = Math.round(min + (max - min) * shade);
     return `rgba(${g},${g},${g},${opacity})`;
   };
 }

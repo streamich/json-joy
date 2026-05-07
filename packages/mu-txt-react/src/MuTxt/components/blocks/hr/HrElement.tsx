@@ -58,8 +58,8 @@ export const HrElement: React.FC<HrElementProps> = ({attributes, children, eleme
   const lineStyle = settings.getHrLineStyle(element.lineStyle);
   const blockHeight = settings.getHrBlockHeight(element.blockHeight);
   const caption = element.caption?.trim() ?? '';
-  const lineColor = theme.isLight ? theme.g(0.7) : theme.g(0.4);
-  const captionColor = theme.isLight ? theme.g(0.4) : theme.g(0.7);
+  const lineColor = theme.g(0.7);
+  const captionColor = theme.g(0.4);
 
   const preventMouseDown = React.useCallback((event: React.MouseEvent) => {
     event.preventDefault();

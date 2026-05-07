@@ -58,10 +58,10 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
             <>
               <ToolbarMenu menu={inlineMenu} pane={{transparent: true, inline: true}} />
               <ToolbarSep />
-              <ToolbarSep line height={HEIGHT} lite />
+              <ToolbarSep line height={HEIGHT - 1} lite />
               <ToolbarSep />
               <ToolbarMenu menu={voidsMenu} pane={{transparent: true, inline: true}} />
-              <ToolbarSep line height={HEIGHT} lite />
+              <ToolbarSep line height={HEIGHT - 1} lite />
               <ToolbarSep />
               <AutoExpandableToolbar menu={blockMenu} pane={{transparent: true, inline: true}} more={{small: true}} />
             </>

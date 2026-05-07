@@ -139,10 +139,11 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       style={{
         borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
         background: styles.g(1, 0.7),
+        color: styles.g(0.24)
       }}
     >
       <div className={titleGroupClass}>
-        <strong style={{display: 'block', marginBottom: 4, color: styles.light ? styles.g(0.12) : styles.g(0.94)}}>
+        <strong style={{display: 'block', marginBottom: 4, color: styles.g(0.12)}}>
           {title}
         </strong>
         {subtitle}
