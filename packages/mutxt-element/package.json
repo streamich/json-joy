@@ -40,8 +40,8 @@
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
-  "unpkg": "dist/mutxt-element.min.js",
-  "jsdelivr": "dist/mutxt-element.min.js",
+  "unpkg": "index.js",
+  "jsdelivr": "index.js",
   "sideEffects": [
     "./lib/index.js",
     "./src/index.ts"
@@ -49,10 +49,11 @@
   "files": [
     "LICENSE",
     "lib/",
-    "dist/"
+    "index.js",
+    "index.js.map"
   ],
   "scripts": {
-    "clean": "npx rimraf lib dist typedocs coverage gh-pages yarn-error.log",
+    "clean": "npx rimraf lib index.js index.js.map typedocs coverage gh-pages yarn-error.log",
     "build:tsc": "tsc -b tsconfig.build.json",
     "bundle": "webpack --mode production",
     "build": "yarn build:tsc && yarn bundle",
@@ -72,6 +73,7 @@
     "@types/react-dom": "^19",
     "css-loader": "^7.1.2",
     "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.16",
     "ts-loader": "^9.5.4",
     "tslib": "^2.8.1",
     "webpack": "^5.95.0",

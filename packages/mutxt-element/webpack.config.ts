@@ -1,5 +1,6 @@
 import path from 'path';
 import webpack, {type Configuration} from 'webpack';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const config: Configuration = {
   mode: 'production',
@@ -7,14 +8,13 @@ const config: Configuration = {
   target: ['web', 'es2020'],
   devtool: 'source-map',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'mutxt-element.min.js',
+    path: path.resolve(__dirname),
+    filename: 'index.js',
     globalObject: 'self',
     library: {
       type: 'window',
       name: 'muTxtElement',
     },
-    clean: true,
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx'],
@@ -22,6 +22,14 @@ const config: Configuration = {
   optimization: {
     splitChunks: false,
     runtimeChunk: false,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+        terserOptions: {
+          format: {comments: false},
+        },
+      }),
+    ],
   },
   performance: {
     hints: false,
