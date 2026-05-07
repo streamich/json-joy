@@ -2,6 +2,7 @@ import type {ColorTheme} from '../types';
 
 // prettier-ignore
 export const theme: ColorTheme = {
+  light: true,
   scales: {
     //        25    50    100   200   300   400   500   600   700   800   900   950
     //        bg-1  bg-2  el-1  el-2  el-3  bd-1  bd-2  bd-3  sol-1 sol-2 txt-1 txt-2
