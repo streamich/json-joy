@@ -34,6 +34,9 @@ import type {HistoryEditor} from 'slate-history';
 
 const isEditableWidth = (v: unknown): v is EditableWidth => v === 'narrow' || v === 'mid' || v === 'wide';
 
+export type ThemeOverride = 'auto' | 'light' | 'dark';
+const isThemeOverride = (v: unknown): v is ThemeOverride => v === 'auto' || v === 'light' || v === 'dark';
+
 const createEmptyDocument = (): SlateEditorDocument => [{type: 'p', children: [{text: ''}]} as CustomElement];
 const normalizeDocument = (value?: SlateEditorDocument): SlateEditorDocument =>
   value && value.length ? value : createEmptyDocument();
@@ -101,6 +104,16 @@ export class MuTxtState implements UiLifeCycles {
   /** Editable content area width preset. */
   public readonly editableWidth = rsync.val<EditableWidth>('mid');
 
+  /** MuTxt-internal theme override. When unset, the UiProvider theme applies. */
+  public readonly theme = rsync.val<ThemeOverride | undefined>(undefined);
+
+  /** Whether the OS/browser currently reports a dark color-scheme preference. */
+  public readonly systemDark = rsync.val<boolean>(
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+      : false,
+  );
+
   /** The shell element wrapping the entire editor (header, content, footer). */
   public shellEl: HTMLElement | null = null;
 
@@ -146,6 +159,8 @@ export class MuTxtState implements UiLifeCycles {
     if (isFontKind(storedFont)) this.font.next(storedFont);
     const storedEditableWidth = obj.read('/ew');
     if (isEditableWidth(storedEditableWidth)) this.editableWidth.next(storedEditableWidth);
+    const storedTheme = obj.read('/theme');
+    if (isThemeOverride(storedTheme)) this.theme.next(storedTheme);
     editor.children = initialValue;
     editor.selection = null;
   }
@@ -183,6 +198,16 @@ export class MuTxtState implements UiLifeCycles {
     };
     if (typeof document !== 'undefined') document.addEventListener('fullscreenchange', onFullscreenChange);
 
+    // ------------------------------------------- System color-scheme tracking
+    let systemDarkMq: MediaQueryList | undefined;
+    let onSystemDarkChange: ((e: MediaQueryListEvent) => void) | undefined;
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      systemDarkMq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.systemDark.set(systemDarkMq.matches);
+      onSystemDarkChange = (e) => this.systemDark.set(e.matches);
+      systemDarkMq.addEventListener('change', onSystemDarkChange);
+    }
+
     return () => {
       unbindCollaboration();
       scrollUnsubscribe();
@@ -195,6 +220,7 @@ export class MuTxtState implements UiLifeCycles {
       stopThings();
       unbindShortcuts();
       if (typeof document !== 'undefined') document.removeEventListener('fullscreenchange', onFullscreenChange);
+      if (systemDarkMq && onSystemDarkChange) systemDarkMq.removeEventListener('change', onSystemDarkChange);
       this.kbdSourceUnbind?.();
       this.kbdSourceUnbind = undefined;
       this.kbd.dispose();
@@ -230,6 +256,14 @@ export class MuTxtState implements UiLifeCycles {
     if (this.readOnly.value) return;
     this.editableWidth.set(kind);
     this.obj.add('/ew', kind);
+  };
+
+  public readonly setTheme = (value: ThemeOverride | undefined): void => {
+    if (this.theme.value === value) return;
+    if (this.readOnly.value) return;
+    this.theme.set(value);
+    if (value === undefined) this.obj.del(['theme']);
+    else this.obj.add('/theme', value);
   };
 
   public readonly setDisplayMode = (mode: DisplayMode): void => {

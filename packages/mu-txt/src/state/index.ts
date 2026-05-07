@@ -16,6 +16,7 @@ import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {FromSlate, type SlateDocument} from '@jsonjoy.com/collaborative-slate';
 import {getSyncStore, type ISyncStore} from './sync-store';
+import {Theme} from './theme';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
@@ -39,6 +40,7 @@ export class MuTxtAppState {
   public readonly sid: number;
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   public readonly menus: Menus;
+  public readonly theme: Theme;
   public ondoubleclick: ((file: OpenFile) => void) | undefined = void 0;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
@@ -53,6 +55,7 @@ export class MuTxtAppState {
       sync.setItem('json_joy_sid', this.sid.toString());
     }
     this.menus = new Menus(this);
+    this.theme = new Theme(sync);
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
@@ -151,6 +154,7 @@ export class MuTxtAppState {
     this.stopSavedRefresh();
     this.detachDragDrop?.();
     this.detachDragDrop = null;
+    this.theme.dispose();
     await Promise.all(this.files$.getValue().map((file) => file.destroy(true)));
   }
 

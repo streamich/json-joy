@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ScrollArea from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
 import {useMemo, useEffect, useCallback} from 'react';
+import * as nanoTheme from 'nano-theme';
 import {rule} from 'nano-theme';
 import {createEditor, Transforms} from 'slate';
 import {Slate, Editable, withReact, type RenderElementProps, type RenderLeafProps} from 'slate-react';
@@ -30,7 +31,8 @@ import {OmniFloater} from './omni/OmniFloater';
 import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
-import {EnsureUiProvider} from '@jsonjoy.com/ui/lib/context';
+import {EnsureUiProvider, useUiServices} from '@jsonjoy.com/ui/lib/context';
+import {Provider as StylesProvider} from '@jsonjoy.com/ui/lib/styles/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
 import {FONT_FAMILIES} from './behavior/font';
@@ -132,11 +134,25 @@ export interface MuTxtProps {
    * behaviour (which converts the new block into a subtitle).
    */
   onTitleSubmit?: (title: string) => void;
+
+  /**
+   * Theme override coming from the embedding environment. Takes precedence
+   * over the surrounding `UiProvider` theme. Falls back to the system
+   * preference when no parent `UiProvider` is present. The internal
+   * MuTxt-level override stored on the document (see `MuTxtState#theme`)
+   * always takes precedence over this prop.
+   */
+  theme?: 'light' | 'dark';
 }
 
-const MuTxtInner: React.FC<MuTxtProps> = ({
-  obj,
-  fromSlate,
+interface MuTxtInnerProps extends MuTxtProps {
+  state: MuTxtState;
+  editor: ReturnType<typeof withTitleSubmit>;
+}
+
+const MuTxtInner: React.FC<MuTxtInnerProps> = ({
+  state,
+  editor,
   placeholder = DEF_PLACEHOLDER,
   presence,
   contentWidth,
@@ -150,60 +166,9 @@ const MuTxtInner: React.FC<MuTxtProps> = ({
   readOnly,
   className = '',
   style,
-  state: _state,
-  onApi,
-  startWithTitle,
-  onTitleSubmit,
 }) => {
   const styles = useStyles();
-
-  // ---------------------------------------------------- Title-submit callback
-  const onTitleSubmitRef = React.useRef(onTitleSubmit);
-  React.useEffect(() => {
-    onTitleSubmitRef.current = onTitleSubmit;
-  }, [onTitleSubmit]);
-
-  // ------------------------------------------------------------- Editor state
-  // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
-  const [editor, state] = useMemo(() => {
-    const editor = withTitleSubmit(
-      withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
-      () => onTitleSubmitRef.current,
-    );
-    if (_state) return [_state.editor, _state];
-    const ownedObj: ObjApi<ObjNode> = obj
-      ? (obj as ObjApi<ObjNode>)
-      : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
-    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate});
-    return [editor, state];
-  }, [obj, _state]);
   const peritextRef: PeritextRef = state.peritextRef;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: autoFocus only applies on initial mount of the owned state
-  useEffect(() => {
-    if (_state) return; // We don't own the state.
-    const stop = state.start();
-    if (startWithTitle && state.api.isEmpty()) {
-      // Convert the default empty paragraph into an empty title block. This
-      // runs after `state.start()` so the operation flows through the active
-      // PeritextBinding into the underlying CRDT (rather than being a stale
-      // direct mutation of `editor.children`).
-      Transforms.setNodes(editor, {type: 'title'} as Partial<CustomElement>, {at: [0]});
-    }
-    let focusTimer: any | undefined;
-    if (autoFocus) focusTimer = setTimeout(() => state.api.focus(), 101);
-    return () => {
-      stop();
-      clearTimeout(focusTimer);
-    };
-  }, [_state, state, startWithTitle, editor]);
-  useIsomorphicLayoutEffect(() => {
-    onApi?.(state.api);
-  }, []);
-
-  // ---------------------------------------------------- Props synchronization
-  useEffect(() => {
-    state.setReadOnly(!!readOnly);
-  }, [state, readOnly]);
 
   // --------------------------------------------------------- Presence manager
   const {decorate: decorateRemoteCursors, sendLocalPresence} = useSlatePresence({
@@ -412,8 +377,96 @@ const MuTxtInner: React.FC<MuTxtProps> = ({
   );
 };
 
-export const MuTxt: React.FC<MuTxtProps> = (props) => (
-  <EnsureUiProvider>
-    <MuTxtInner {...props} />
-  </EnsureUiProvider>
-);
+export const MuTxt: React.FC<MuTxtProps> = (props) => {
+  const {
+    obj,
+    fromSlate,
+    presence,
+    autoFocus,
+    readOnly,
+    state: _state,
+    onApi,
+    startWithTitle,
+    onTitleSubmit,
+    theme: themeProp,
+  } = props;
+
+  // ---------------------------------------------- Parent UiProvider detection
+  // Read parent context BEFORE wrapping in `EnsureUiProvider` so that
+  // `parentServices` is null when no real parent provider is mounted above.
+  const parentServices = useUiServices();
+  const parentNano = nanoTheme.useTheme();
+  const parentResolvedTheme: 'light' | 'dark' | null = parentServices
+    ? parentNano.isLight
+      ? 'light'
+      : 'dark'
+    : null;
+
+  // ---------------------------------------------------- Title-submit callback
+  const onTitleSubmitRef = React.useRef(onTitleSubmit);
+  React.useEffect(() => {
+    onTitleSubmitRef.current = onTitleSubmit;
+  }, [onTitleSubmit]);
+
+  // ------------------------------------------------------------- Editor state
+  // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
+  const [editor, state] = useMemo(() => {
+    const editor = withTitleSubmit(
+      withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
+      () => onTitleSubmitRef.current,
+    );
+    if (_state) return [_state.editor, _state];
+    const ownedObj: ObjApi<ObjNode> = obj
+      ? (obj as ObjApi<ObjNode>)
+      : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
+    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate});
+    return [editor, state];
+  }, [obj, _state]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: autoFocus only applies on initial mount of the owned state
+  useEffect(() => {
+    if (_state) return; // We don't own the state.
+    const stop = state.start();
+    if (startWithTitle && state.api.isEmpty()) {
+      // Convert the default empty paragraph into an empty title block. This
+      // runs after `state.start()` so the operation flows through the active
+      // PeritextBinding into the underlying CRDT (rather than being a stale
+      // direct mutation of `editor.children`).
+      Transforms.setNodes(editor, {type: 'title'} as Partial<CustomElement>, {at: [0]});
+    }
+    let focusTimer: any | undefined;
+    if (autoFocus) focusTimer = setTimeout(() => state.api.focus(), 101);
+    return () => {
+      stop();
+      clearTimeout(focusTimer);
+    };
+  }, [_state, state, startWithTitle, editor]);
+  useIsomorphicLayoutEffect(() => {
+    onApi?.(state.api);
+  }, []);
+
+  // ---------------------------------------------------- Props synchronization
+  useEffect(() => {
+    state.setReadOnly(!!readOnly);
+  }, [state, readOnly]);
+
+  // -------------------------------------------------------------------- Theme
+  const themeOverride = state.theme.use();
+  const systemDark = state.systemDark.use();
+  let resolvedTheme: 'light' | 'dark';
+  if (themeOverride === 'light' || themeOverride === 'dark') resolvedTheme = themeOverride;
+  else if (themeOverride === 'auto') resolvedTheme = systemDark ? 'dark' : 'light';
+  else if (themeProp === 'light' || themeProp === 'dark') resolvedTheme = themeProp;
+  else if (parentResolvedTheme) resolvedTheme = parentResolvedTheme;
+  else resolvedTheme = systemDark ? 'dark' : 'light';
+
+  return (
+    <EnsureUiProvider>
+      <nanoTheme.Provider theme={resolvedTheme}>
+        <StylesProvider dark={resolvedTheme === 'dark'}>
+          <MuTxtInner {...props} state={state} editor={editor} />
+        </StylesProvider>
+      </nanoTheme.Provider>
+    </EnsureUiProvider>
+  );
+};

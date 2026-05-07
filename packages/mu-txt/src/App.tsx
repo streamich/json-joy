@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
+import {UiProvider} from '@jsonjoy.com/ui';
 import {AppGrid} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid';
 import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {MainContent} from './components/MainContent';
@@ -42,9 +43,11 @@ export const App: React.FC = () => {
     };
   }, [state]);
   const files = useBehaviorSubject(state.files$);
+  const theme = state.theme.resolved.use();
 
   return (
     <ctx.Provider value={state}>
+      <UiProvider theme={theme}>
       <AppGrid
         state={state.appGrid}
         maxLeftSize={500}
@@ -72,6 +75,7 @@ export const App: React.FC = () => {
         }
       />
       {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
+      </UiProvider>
     </ctx.Provider>
   );
 };

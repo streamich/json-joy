@@ -11,11 +11,16 @@ import {getDocumentOutline} from '../behavior/outline';
 import {formatKeys} from '../util/keys';
 import {EditableWidthButton, LABELS} from '../chrome/EditableWidthButton';
 import type {DisplayMode, EditableWidth, FontKind, MenuItem, SlateEditorDocument} from '../types';
-import type {MuTxtState} from './MuTxtState';
+import type {MuTxtState, ThemeOverride} from './MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
 const DocumentIcon = makeIcon({set: 'tabler', icon: 'file-text', width: 16, height: 16});
 const KeyboardIcon = makeIcon({set: 'tabler', icon: 'keyboard', width: 16, height: 16});
+const ThemeIcon = makeIcon({set: 'tabler', icon: 'palette', width: 16, height: 16});
+const ThemeAutoIcon = makeIcon({set: 'tabler', icon: 'automatic-gearbox', width: 16, height: 16});
+const ThemeLightIcon = makeIcon({set: 'ibm_32', icon: 'light', width: 16, height: 16});
+const ThemeDarkIcon = makeIcon({set: 'lucide', icon: 'lamp-desk', width: 16, height: 16});
+const ThemeDefaultIcon = makeIcon({set: 'tabler', icon: 'restore', width: 16, height: 16});
 const MaximizeIcon = makeIcon({set: 'tabler', icon: 'maximize', width: 16, height: 16});
 const MinimizeIcon = makeIcon({set: 'tabler', icon: 'minimize', width: 16, height: 16});
 const FullscreenIcon = makeIcon({set: 'tabler', icon: 'arrows-maximize', width: 16, height: 16});
@@ -118,11 +123,42 @@ export class DocumentMenu implements UiLifeCycles {
         {name: 'sep-display', sep: true},
         this.itemDisplayMode(),
         this.itemKeyboardShortcuts(),
+        this.itemTheme(),
         {name: 'sep-nav', sep: true},
         this.menuNavigate(),
         {name: 'sep-devs', sep: true},
         this.menuDevelopers(),
       ],
+    };
+  }
+
+  public itemTheme(): MenuItem {
+    return {
+      name: 'Theme',
+      // sepBefore: true,
+      // expand: 0,
+      openOnTitleHov: true,
+      icon: () => <ThemeIcon />,
+      onSelect: () => {},
+      children: [
+        this.itemThemeOption(undefined, 'Default', () => <ThemeDefaultIcon />),
+        this.itemThemeOption('auto', 'Auto', () => <ThemeAutoIcon />),
+        this.itemThemeOption('light', 'Light', () => <ThemeLightIcon />),
+        this.itemThemeOption('dark', 'Dark', () => <ThemeDarkIcon />),
+      ],
+    };
+  }
+
+  private itemThemeOption(value: ThemeOverride | undefined, name: string, icon: () => React.ReactNode): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name,
+      icon,
+      active: rsync.comp([mutxt.theme], ([t]) => t === value),
+      onSelect: () => {
+        mutxt.omni.close();
+        mutxt.setTheme(value);
+      },
     };
   }
 
