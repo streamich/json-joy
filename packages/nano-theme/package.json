@@ -1,54 +1,44 @@
 {
-  "name": "@jsonjoy.com/collaborative-ace",
+  "name": "nano-theme",
   "publishConfig": {
     "access": "public"
   },
   "version": "18.15.0",
-  "description": "Binding for collaborative editing support in Ace Editor. Connects JSON CRDT str node to Ace Editor.",
+  "description": "A light and opinionated distribution of nano-css with predefined light and dark themes.",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
   },
-  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/collaborative-ace",
+  "homepage": "https://github.com/streamich/json-joy/tree/master/packages/nano-theme",
   "repository": {
     "type": "git",
     "url": "https://github.com/streamich/json-joy.git",
-    "directory": "packages/collaborative-ace"
+    "directory": "packages/nano-theme"
   },
-  "license": "AGPL-3.0-only",
+  "license": "Apache-2.0",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
   "keywords": [
-    "ace",
-    "ace-editor",
-    "ace-editor-binding",
-    "collaborative",
-    "multiplayer",
-    "binding",
-    "collaborative-editor",
-    "editor",
-    "input",
-    "textarea",
-    "contenteditable",
-    "json-crdt",
-    "json",
-    "crdt"
+    "nano",
+    "nano-css",
+    "theme",
+    "css",
+    "css-in-js",
+    "react"
   ],
   "dependencies": {
-    "@jsonjoy.com/collaborative-presence": "workspace:*",
-    "@jsonjoy.com/collaborative-str": "workspace:*",
-    "@jsonjoy.com/ui": "workspace:*",
-    "json-joy": "workspace:*",
-    "nano-theme": "workspace:*"
+    "nano-css": "^5.6.2",
+    "react-use": "^17.6.0",
+    "thingies": "^2.6.0"
   },
   "peerDependencies": {
-    "ace-builds": "*",
+    "react": "*",
     "tslib": "*"
   },
   "devDependencies": {
-    "ace-builds": "^1.43.6"
+    "@types/react": "^19.2.9"
   },
   "engines": {
     "node": ">=10.0"
@@ -63,11 +53,6 @@
   "scripts": {
     "clean": "npx rimraf lib typedocs coverage gh-pages yarn-error.log",
     "build": "tsc -b tsconfig.build.json",
-    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
-    "test": "jest --maxWorkers 7",
-    "test:ci": "yarn jest --maxWorkers 3 --no-cache",
-    "coverage": "yarn test --collectCoverage",
-    "typedoc": "typedoc",
     "typecheck": "tsc -b --noEmit"
   },
   "jest": {

@@ -25,6 +25,7 @@
   ],
   "references": [
     {"path": "../keyboard"},
-    {"path": "../json-equal"}
+    {"path": "../json-equal"},
+    {"path": "../nano-theme"}
   ]
 }

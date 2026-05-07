@@ -49,7 +49,7 @@
     "libreact": "^2.13.3",
     "load-script": "^2.0.0",
     "mdast-flat": "^1.7.0",
-    "nano-theme": "^1.5.0",
+    "nano-theme": "workspace:*",
     "notistack": "^3.0.2",
     "papaparse": "^5.5.3",
     "qrcode-generator": "^2.0.4",

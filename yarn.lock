@@ -2053,13 +2053,12 @@ __metadata:
     "@types/react": "npm:^19.2.9"
     flexible-input: "npm:^1.0.3"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     tslib: "npm:^2.8.1"
     use-t: "npm:^1.6.4"
   peerDependencies:
-    nano-theme: "*"
     react: "*"
     react-dom: "*"
     tslib: 2
@@ -2122,7 +2121,7 @@ __metadata:
     "@jsonjoy.com/ui": "workspace:*"
     ace-builds: "npm:^1.43.6"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
   peerDependencies:
     ace-builds: "*"
     tslib: "*"
@@ -2140,7 +2139,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     codemirror: "npm:^6.0.2"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
   peerDependencies:
@@ -2212,7 +2211,7 @@ __metadata:
     "@jsonjoy.com/ui": "workspace:*"
     json-joy: "workspace:*"
     monaco-editor: "npm:^0.55.1"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
   peerDependencies:
     monaco-editor: "*"
     tslib: "*"
@@ -2233,7 +2232,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     jest-environment-jsdom: "npm:^30.2.0"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     prosemirror-example-setup: "npm:^1.2.3"
     prosemirror-history: "npm:^1.5.0"
     prosemirror-model: "npm:^1.25.4"
@@ -2275,7 +2274,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     jest-environment-jsdom: "npm:^30.2.0"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     prosemirror-example-setup: "npm:^1.2.3"
     prosemirror-history: "npm:^1.5.0"
     prosemirror-model: "npm:^1.25.4"
@@ -2360,7 +2359,7 @@ __metadata:
     code-colors: "npm:^2.4.0"
     code-colors-react: "npm:^3.4.0"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-embed: "npm:^3.7.0"
@@ -2425,7 +2424,7 @@ __metadata:
     flexible-input: "npm:^1.0.3"
     json-joy: "workspace:*"
     monaco-editor: "npm:^0.55.1"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     quill: "npm:^2.0.3"
     quill-delta: "npm:^5.1.0"
     react-use: "npm:^17.6.0"
@@ -3119,7 +3118,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.3"
     mini-css-extract-plugin: "npm:^2.9.2"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-router-lite: "npm:^1.6.0"
@@ -3160,7 +3159,7 @@ __metadata:
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     notistack: "npm:^3.0.2"
     papaparse: "npm:^5.5.3"
     qrcode-generator: "npm:^2.0.4"
@@ -10969,7 +10968,7 @@ __metadata:
     json-crdt-traces: "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
     json-logic-js: "npm:^2.0.2"
     nano-css: "npm:^5.6.2"
-    nano-theme: "npm:^1.4.3"
+    nano-theme: "workspace:*"
     pojo-dump: "npm:^1.4.0"
     prosemirror-model: "npm:^1.25.1"
     prosemirror-test-builder: "npm:^1.1.1"
@@ -11997,7 +11996,7 @@ __metadata:
     emoji-picker-react: "npm:^4.19.1"
     iconista: "npm:^2.25.1"
     json-joy: "workspace:*"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-embed: "npm:^3.7.0"
@@ -12100,7 +12099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nano-theme@npm:^1.3.0, nano-theme@npm:^1.4.3, nano-theme@npm:^1.5.0":
+"nano-theme@npm:^1.3.0, nano-theme@npm:^1.4.3":
   version: 1.5.0
   resolution: "nano-theme@npm:1.5.0"
   dependencies:
@@ -12112,6 +12111,20 @@ __metadata:
   checksum: 10c0/67d93d46243f2540df7983c066fcae9eccc4ed2d2c643de110d0010e8b7a17d1b215d4169f0492b5b8e30066a4c2a7baa1cae487ff3de1f9526aa4bd8d66cf76
   languageName: node
   linkType: hard
+
+"nano-theme@workspace:*, nano-theme@workspace:packages/nano-theme":
+  version: 0.0.0-use.local
+  resolution: "nano-theme@workspace:packages/nano-theme"
+  dependencies:
+    "@types/react": "npm:^19.2.9"
+    nano-css: "npm:^5.6.2"
+    react-use: "npm:^17.6.0"
+    thingies: "npm:^2.6.0"
+  peerDependencies:
+    react: "*"
+    tslib: "*"
+  languageName: unknown
+  linkType: soft
 
 "nanoid@npm:^3.3.11":
   version: 3.3.11
@@ -12201,7 +12214,7 @@ __metadata:
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"
-    nano-theme: "npm:^1.5.0"
+    nano-theme: "workspace:*"
     notistack: "npm:^3.0.2"
     papaparse: "npm:^5.5.3"
     qrcode-generator: "npm:^2.0.4"

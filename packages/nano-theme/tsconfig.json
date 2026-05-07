@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "noImplicitAny": false
   },
   "include": [
     "src"
@@ -23,27 +24,5 @@
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
   ],
-  "references": [
-    {
-      "path": "../collaborative-peritext"
-    },
-    {
-      "path": "../collaborative-presence"
-    },
-    {
-      "path": "../json-equal"
-    },
-    {
-      "path": "../ui"
-    },
-    {
-      "path": "../util"
-    },
-    {
-      "path": "../json-joy"
-    },
-    {
-      "path": "../nano-theme"
-    }
-  ]
+  "references": []
 }

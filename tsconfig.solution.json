@@ -9,6 +9,7 @@
     { "path": "packages/json-random/tsconfig.build.json" },
     { "path": "packages/json-path/tsconfig.build.json" },
     { "path": "packages/keyboard/tsconfig.build.json" },
+    { "path": "packages/nano-theme/tsconfig.build.json" },
     { "path": "packages/util/tsconfig.build.json" },
     { "path": "packages/json-pointer/tsconfig.build.json" },
     { "path": "packages/json-expression/tsconfig.build.json" },
