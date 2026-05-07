@@ -1,24 +1,26 @@
 import * as React from 'react';
-import {rule, theme} from 'nano-theme';
+import {makeRule} from 'nano-theme';
 
 const h = React.createElement;
-const glowColor = theme.color.sem.positive[0];
 
-const blockClass = rule({
+const useBlockClass = makeRule((t) => ({
   h: '2px',
   pos: 'relative',
-  bg: theme.green(0.65),
+  bg: t.green(0.65),
   trs: 'width 0.3s',
   transitionTimingFunction: 'cubic-bezier(.08,.91,.26,1)',
-});
+}));
 
-const glowClass = rule({
-  pos: 'absolute',
-  right: 0,
-  w: '100px',
-  h: '2px',
-  boxShadow: `0 0 10px ${glowColor}, 0 0 5px ${glowColor}, 0 0 5px ${glowColor}`,
-  transform: 'rotate(3deg) translate(0px, -4px)',
+const useGlowClass = makeRule((t) => {
+  const glowColor = t.color.sem.positive[0];
+  return {
+    pos: 'absolute',
+    right: 0,
+    w: '100px',
+    h: '2px',
+    boxShadow: `0 0 10px ${glowColor}, 0 0 5px ${glowColor}, 0 0 5px ${glowColor}`,
+    transform: 'rotate(3deg) translate(0px, -4px)',
+  };
 });
 
 export interface ProgressProps {
@@ -27,8 +29,10 @@ export interface ProgressProps {
   style?: React.CSSProperties;
 }
 
-export const Progress: React.FC<ProgressProps> = ({value = 0, glow, style}) =>
-  h(
+export const Progress: React.FC<ProgressProps> = ({value = 0, glow, style}) => {
+  const blockClass = useBlockClass();
+  const glowClass = useGlowClass();
+  return h(
     'div',
     {
       className: blockClass,
@@ -39,3 +43,4 @@ export const Progress: React.FC<ProgressProps> = ({value = 0, glow, style}) =>
     },
     !!glow && h('div', {className: glowClass}),
   );
+};

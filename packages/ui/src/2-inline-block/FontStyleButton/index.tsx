@@ -62,7 +62,7 @@ export const FontStyleButton: React.FC<FontStyleButtonProps> = ({
     (rest.className ?? '') +
     blockClass({
       // col: styles.neutral.col(.8, .9).toString(),
-      col: styles.g(.2, .9),
+      col: styles.g(0),
       w: size + 'px',
       h: size + 'px',
       bg: active ? activeBg : theme.g(0, 0.01),

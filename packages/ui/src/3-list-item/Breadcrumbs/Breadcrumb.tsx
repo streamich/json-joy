@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {drule, theme} from 'nano-theme';
+import {drule, useTheme} from 'nano-theme';
 import {Link, type LinkProps} from '../../1-inline/Link';
 
 const blockClass = drule({
@@ -20,6 +20,7 @@ export interface BreadcrumbProps extends LinkProps {
 }
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({noHover, compact, selected, children, ...rest}) => {
+  const theme = useTheme();
   const noClick = !rest.to && !rest.onClick;
   const style: React.CSSProperties = {
     fontSize: compact ? '11px' : '13px',
