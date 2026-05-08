@@ -5,6 +5,10 @@ import {useExplorer} from '../../context';
 import {BrandLogo} from './BrandLogo';
 import {HeaderMenu} from './HeaderMenu';
 import {rule} from 'nano-theme';
+import {isMacElectron} from '../../util/host';
+
+// Width reserved for the macOS traffic-light controls (close/minimize/zoom).
+const TRAFFIC_LIGHT_WIDTH = 78;
 
 const blockClass = rule({
   '-webkit-app-region': 'drag', // Drag for Electron app.
@@ -24,8 +28,8 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
   return (
     <Split className={blockClass} style={{alignItems: 'center', padding: '0 0 0'}}>
       <Flex style={{alignItems: 'center', gap: 10}}>
-        <div style={{width: 'env(titlebar-area-x)'}} />
-        <BrandLogo />
+        <div style={{width: isMacElectron ? TRAFFIC_LIGHT_WIDTH : 'env(titlebar-area-x)'}} />
+        {!isMacElectron && <BrandLogo />}
         <input
           multiple
           type="file"
@@ -41,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
       </Flex>
       <div style={{display: 'inline-flex', alignItems: 'center', gap: 8}}>
         <HeaderMenu />
+        {/* {isMacElectron && <BrandLogo />} */}
         {toggle}
       </div>
     </Split>

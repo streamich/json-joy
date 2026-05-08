@@ -58,20 +58,14 @@ export const App: React.FC = () => {
           )}
           // footer={<div> </div>}
           column={(toggle) =>
-            files.length === 0 ? (
+            <div className={columnClass}>
+              <ErrorBoundary name="mutxt:tabs-header" compact>
+                <TabsHeader toggle={toggle} />
+              </ErrorBoundary>
               <ErrorBoundary name="mutxt:main">
                 <MainContent />
               </ErrorBoundary>
-            ) : (
-              <div className={columnClass}>
-                <ErrorBoundary name="mutxt:tabs-header" compact>
-                  <TabsHeader toggle={toggle} />
-                </ErrorBoundary>
-                <ErrorBoundary name="mutxt:main">
-                  <MainContent />
-                </ErrorBoundary>
-              </div>
-            )
+            </div>
           }
         />
         {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
