@@ -3,7 +3,7 @@ import {rule} from 'nano-theme';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {useExplorer} from '../../context';
-import {WelcomeScreen} from '../WelcomeScreen';
+import {Welcome} from '../Welcome';
 import {Document} from './Document';
 import {DotBackground} from './DotBackground';
 import {AppGridColumn} from '@jsonjoy.com/ui/src/7-fullscreen/AppGrid';
@@ -40,7 +40,7 @@ export const MainContent: React.FC = () => {
       <AppGridColumn>
         <div className={blockClass}>
           <DotBackground className={contentClass}>
-            <WelcomeScreen />
+            <Welcome />
           </DotBackground>
         </div>
       </AppGridColumn>
