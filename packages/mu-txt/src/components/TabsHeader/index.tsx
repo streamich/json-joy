@@ -40,11 +40,9 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
         before={<div style={{marginLeft: toggle ? 'var(--titlebar-inset-left, 0px)' : 0}}>{toggle}</div>}
         right={<PwaInstallButton />}
         render={() => <div style={{height: Sizes.TabsFadeHeight}} />}
-        barStyle={isMacElectron ? {
-          borderRadius: 12,
-          // borderTopRightRadius: 12,
-          // borderTopLeftRadius: 12,
-        } : undefined}
+        barStyle={{
+          borderRadius: 12, // Needed for electron on Mac to match the titlebar's rounded corners
+        }}
       />
     </div>
   );

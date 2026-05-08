@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule, drule, useTheme} from 'nano-theme';
 import {useT} from 'use-t';
 import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useExplorer} from '../../context';
+import {host} from '../../util/host';
 import {BrandLogo} from '../LeftSidebar/BrandLogo';
 import {ActionCard} from './ActionCard';
 import {RecentFiles} from './RecentFiles';
@@ -15,52 +16,53 @@ const TemplateIcon = makeIcon({set: 'bootstrap', icon: 'collection', width: 18, 
 const FolderIcon = makeIcon({set: 'bootstrap', icon: 'folder2-open', width: 18, height: 18});
 
 const blockClass = rule({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  width: '100%',
-  height: '100%',
-  padding: '32px 24px',
-  boxSizing: 'border-box',
+  d: 'flex',
+  fld: 'column',
+  ai: 'center',
+  jc: 'flex-start',
+  w: '100%',
+  h: '100%',
+  pd: '32px 24px',
+  bxz: 'border-box',
   overflowY: 'auto',
 });
 
 const innerClass = rule({
-  width: '100%',
-  maxWidth: '680px',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'stretch',
+  w: '100%',
+  maxW: '680px',
+  d: 'flex',
+  fld: 'column',
+  ai: 'stretch',
   margin: '0 auto',
 });
 
 const heroClass = rule({
-  textAlign: 'center',
-  margin: '0 0 24px',
+  ta: 'center',
+  mr: '0 0 24px',
 });
 
 const logoTileClass = rule({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '72px',
-  height: '72px',
-  borderRadius: '20px',
-  margin: '0 auto',
-  boxSizing: 'border-box',
+  d: 'inline-flex',
+  ai: 'center',
+  jc: 'center',
+  w: '128px',
+  h: '80px',
+  bdrad: '32px',
+  mr: '0 auto',
+  pd: '8px 0 0',
+  bxz: 'border-box',
 });
 
 const titleClass = rule({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
   gap: '6px',
   fontSize: '28px',
   lineHeight: '1.2em',
   fontWeight: 700,
   letterSpacing: '-0.02em',
-  margin: '18px 0 6px',
+  mr: '-20px 0 6px',
 });
 
 const subtitleClass = rule({
@@ -137,7 +139,7 @@ const inputClass = rule({display: 'none'});
 const brandWrapClass = rule({
   display: 'inline-flex',
   alignItems: 'center',
-  transform: 'translateY(2px)',
+  transform: 'translate(4px, 2px) scale(1.3)',
 });
 
 export type WelcomeProps = Record<string, never>;
@@ -149,7 +151,10 @@ export const Welcome: React.FC<WelcomeProps> = () => {
   const saved = state.saved.use();
 
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const onOpenClick = React.useCallback(() => inputRef.current?.click(), []);
+  const onOpenClick = React.useCallback(() => {
+    if (host) void host.openDialog();
+    else inputRef.current?.click();
+  }, []);
   const onInputChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.currentTarget.files;
@@ -159,7 +164,6 @@ export const Welcome: React.FC<WelcomeProps> = () => {
     [state],
   );
 
-  const accent = theme.color.sem.blue[0];
   const recent = saved.slice(0, 5);
 
   return (
@@ -168,19 +172,13 @@ export const Welcome: React.FC<WelcomeProps> = () => {
         <header className={heroClass}>
           <div
             className={logoTileClass}
-            style={{
-              background: `linear-gradient(135deg, ${accent}26, ${accent}10)`,
-              border: `1px solid ${accent}33`,
-              boxShadow: `0 8px 24px -16px ${accent}66`,
-              color: theme.g(0.12, 0.95),
-            }}
           >
-            <MuTxtLogo size={69} />
+            <MuTxtLogo size={108} />
           </div>
           <h1 className={titleClass} style={{color: theme.g(0.08, 0.97)}}>
             <span>{t('Welcome to')}</span>
             <span className={brandWrapClass}>
-              <BrandLogo />
+              <BrandLogo color={theme.g(0.08, 0.97)} />
             </span>
           </h1>
           <p className={subtitleClass}>
@@ -222,7 +220,7 @@ export const Welcome: React.FC<WelcomeProps> = () => {
         </div>
 
         {recent.length > 0 && (
-          <>
+          <div style={{maxWidth: 480, width:'100%', margin: 'auto'}}>
             <div className={sectionHeadClass}>
               <h2 className={sectionTitleClass} style={{color: theme.g(0.2, 0.9)}}>
                 {t('Recent')}
@@ -234,7 +232,7 @@ export const Welcome: React.FC<WelcomeProps> = () => {
               )}
             </div>
             <RecentFiles files={recent} />
-          </>
+          </div>
         )}
 
         <footer className={footerClass} style={{color: theme.g(0.3, 0.7)}}>

@@ -85,7 +85,7 @@ export const RecentFiles: React.FC<RecentFilesProps> = ({files}) => {
             title={file.name}
           >
             <span className={iconWrapClass}>
-              <FileIcon id={file.id} label={file.name} gradient accent size={20} />
+              <FileIcon id={file.id} label={file.name} gradient accent size={20} link={!!file.link} />
             </span>
             <span className={nameClass}>{file.name || t('Untitled')}</span>
             <span className={metaClass}>

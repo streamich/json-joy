@@ -61,15 +61,18 @@ const txt3Class = rule({
     tr: 'translateY(5px)',
   },
 });
-export type BrandLogoProps = {};
 
-export const BrandLogo: React.FC<BrandLogoProps> = () => {
+export type BrandLogoProps = {
+  color?: string;
+};
+
+export const BrandLogo: React.FC<BrandLogoProps> = ({color}) => {
   const styles = useStyles();
   const label = '\\mu txt — Micro rich-text editor';
 
   return (
     <BasicTooltip nowrap renderTooltip={() => label} delay={555}>
-      <span className={rootClass} role="img" aria-label={label} style={{color: styles.col.get('neutral', 'txt-1')}}>
+      <span className={rootClass} role="img" aria-label={label} style={{color: color || styles.col.get('neutral', 'txt-1')}}>
         <span className={muClass}>
           <sub>μ</sub>
         </span>
