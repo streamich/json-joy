@@ -2,8 +2,11 @@ import {app, BrowserWindow, shell, protocol, net} from 'electron';
 import * as path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
+app.setName('mu-txt');
+
 const isDev = !app.isPackaged;
 const distRoot = path.resolve(__dirname, '..', 'dist');
+const iconsRoot = path.resolve(__dirname, '..', 'public', 'icons');
 
 type PendingInput = {kind: 'path'; value: string} | {kind: 'url'; value: string};
 
@@ -110,8 +113,9 @@ function createWindow(): void {
     minWidth: 600,
     minHeight: 400,
     titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 16, y: 21 },
     backgroundColor: '#0f172a',
-    icon: path.join(__dirname, '..', 'public', 'icons', 'icon-512.png'),
+    icon: path.join(iconsRoot, 'icon-512.png'),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,

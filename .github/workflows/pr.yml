@@ -61,6 +61,8 @@ jobs:
       - run: yarn format
       - run: yarn lint
       - run: yarn build
+      - run: yarn workspace mutxt-element run bundle
+      - run: yarn workspace mu-txt run electron:build
       - run: yarn vitest
       - run: yarn workspace @jsonjoy.com/rpc-server test:e2e:all
       - run: yarn workspace @jsonjoy.com/json-crdt-server test:e2e
