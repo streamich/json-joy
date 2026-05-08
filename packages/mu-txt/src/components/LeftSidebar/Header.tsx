@@ -4,6 +4,14 @@ import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {useExplorer} from '../../context';
 import {BrandLogo} from './BrandLogo';
 import {HeaderMenu} from './HeaderMenu';
+import {rule} from 'nano-theme';
+
+const blockClass = rule({
+  '-webkit-app-region': 'drag', // Drag for Electron app.
+  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"], & [role="img"]': {
+    '-webkit-app-region': 'no-drag',
+  },
+});
 
 export interface HeaderProps {
   toggle: React.ReactNode;
@@ -14,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   return (
-    <Split style={{alignItems: 'center', padding: '0 0 0'}}>
+    <Split className={blockClass} style={{alignItems: 'center', padding: '0 0 0'}}>
       <Flex style={{alignItems: 'center', gap: 10}}>
         <div style={{width: 'env(titlebar-area-x)'}} />
         <BrandLogo />

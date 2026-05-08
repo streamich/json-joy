@@ -18,6 +18,10 @@ const blockClass = rule({
   w: '100%',
   h: '48px',
   ov: 'visible',
+  '-webkit-app-region': 'drag', // Drag for Electron app.
+  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"]': {
+    '-webkit-app-region': 'no-drag',
+  },
 });
 
 const mainClass = rule({
