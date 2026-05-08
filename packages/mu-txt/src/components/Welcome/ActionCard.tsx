@@ -22,7 +22,7 @@ const blockClass = drule({
     transform: 'translateY(-1px)',
   },
   '&:active': {
-    transform: 'translateY(0)',
+    transform: 'scale(.99)',
   },
 });
 

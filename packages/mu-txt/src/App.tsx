@@ -64,6 +64,20 @@ export const App: React.FC = () => {
   // Cmd+W in Electron
   React.useEffect(() => host?.onCloseFile(() => state.tabs.deleteSelected()), [state]);
 
+  // Cmd/Ctrl+N: create a new document
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod || e.shiftKey || e.altKey) return;
+      if (e.key !== 'n' && e.key !== 'N') return;
+      e.preventDefault();
+      e.stopPropagation();
+      state.createNewMuTxt();
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [state]);
+
   const files = useBehaviorSubject(state.files$);
   const theme = state.theme.resolved.use();
 

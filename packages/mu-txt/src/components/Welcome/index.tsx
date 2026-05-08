@@ -159,21 +159,6 @@ export const Welcome: React.FC<WelcomeProps> = () => {
     [state],
   );
 
-  React.useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      const mod = e.metaKey || e.ctrlKey;
-      if (!mod || e.shiftKey || e.altKey) return;
-      if (e.key !== 'n' && e.key !== 'N') return;
-      const target = e.target as HTMLElement | null;
-      const tag = target?.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
-      e.preventDefault();
-      state.createNewMuTxt();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [state]);
-
   const accent = theme.color.sem.blue[0];
   const recent = saved.slice(0, 5);
 
@@ -184,8 +169,8 @@ export const Welcome: React.FC<WelcomeProps> = () => {
           <div
             className={logoTileClass}
             style={{
-              background: `linear-gradient(135deg, ${theme.g(0.97, 0.13)}, ${theme.g(0.93, 0.08)})`,
-              border: `1px solid ${theme.g(0.88, 0.18)}`,
+              background: `linear-gradient(135deg, ${accent}26, ${accent}10)`,
+              border: `1px solid ${accent}33`,
               boxShadow: `0 8px 24px -16px ${accent}66`,
               color: theme.g(0.12, 0.95),
             }}
