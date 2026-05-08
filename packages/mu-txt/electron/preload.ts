@@ -19,10 +19,12 @@ const subscribeVoid = (channel: string, cb: () => void): Unsubscribe => {
   };
 };
 
+type OpenFilePayload = {name: string; bytes: Uint8Array};
+
 const api = {
   platform: process.platform,
   versions: {...process.versions},
-  onOpenPath: (cb: Listener<string>): Unsubscribe => subscribe<string>('mutxt:open-path', cb),
+  onOpenFile: (cb: Listener<OpenFilePayload>): Unsubscribe => subscribe<OpenFilePayload>('mutxt:open-file', cb),
   onOpenUrl: (cb: Listener<string>): Unsubscribe => subscribe<string>('mutxt:open-url', cb),
   onCloseFile: (cb: () => void): Unsubscribe => subscribeVoid('mutxt:close-file', cb),
 } as const;

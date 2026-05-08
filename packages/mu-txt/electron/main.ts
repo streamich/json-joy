@@ -1,5 +1,6 @@
 import {app, BrowserWindow, shell, protocol, net, Menu, type MenuItemConstructorOptions} from 'electron';
 import * as path from 'node:path';
+import * as fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 
 app.setName('mu-txt');
@@ -8,17 +9,27 @@ const isDev = !app.isPackaged;
 const distRoot = path.resolve(__dirname, '..', 'dist');
 const iconsRoot = path.resolve(__dirname, '..', 'public', 'icons');
 
-type PendingInput = {kind: 'path'; value: string} | {kind: 'url'; value: string};
+type PendingInput =
+  | {kind: 'file'; name: string; bytes: Uint8Array}
+  | {kind: 'url'; value: string};
 
 const pending: PendingInput[] = [];
 let mainWindow: BrowserWindow | null = null;
 let rendererReady = false;
 
-const channelFor = (kind: PendingInput['kind']) => (kind === 'path' ? 'mutxt:open-path' : 'mutxt:open-url');
+const channelFor = (kind: PendingInput['kind']) => (kind === 'file' ? 'mutxt:open-file' : 'mutxt:open-url');
+
+const payloadFor = (item: PendingInput) =>
+  item.kind === 'file' ? {name: item.name, bytes: item.bytes} : item.value;
+
+const send = (item: PendingInput) => {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  mainWindow.webContents.send(channelFor(item.kind), payloadFor(item));
+};
 
 const dispatch = (item: PendingInput) => {
   if (rendererReady && mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send(channelFor(item.kind), item.value);
+    send(item);
   } else {
     pending.push(item);
   }
@@ -26,19 +37,37 @@ const dispatch = (item: PendingInput) => {
 
 const flushPending = () => {
   if (!mainWindow || mainWindow.isDestroyed()) return;
-  while (pending.length) {
-    const item = pending.shift()!;
-    mainWindow.webContents.send(channelFor(item.kind), item.value);
+  while (pending.length) send(pending.shift()!);
+};
+
+const userArgv = (argv: readonly string[]): readonly string[] => argv.slice(process.defaultApp ? 2 : 1);
+
+type ParsedArg = {kind: 'path'; value: string} | {kind: 'url'; value: string};
+
+const parseArg = (argv: readonly string[], cwd: string): ParsedArg | null => {
+  for (const arg of userArgv(argv)) {
+    if (!arg || arg.startsWith('-')) continue;
+    if (arg.startsWith('mutxt://')) return {kind: 'url', value: arg};
+    return {kind: 'path', value: path.isAbsolute(arg) ? arg : path.resolve(cwd, arg)};
+  }
+  return null;
+};
+
+const dispatchPath = async (filePath: string) => {
+  try {
+    const buf = await fs.readFile(filePath);
+    const bytes = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
+    dispatch({kind: 'file', name: path.basename(filePath), bytes});
+  } catch (err) {
+    console.error('[mutxt] failed to read file', filePath, err);
   }
 };
 
-const inputFromArgv = (argv: readonly string[]): PendingInput | null => {
-  for (const arg of argv.slice(1)) {
-    if (arg.startsWith('-')) continue;
-    if (arg.startsWith('mutxt://')) return {kind: 'url', value: arg};
-    if (path.isAbsolute(arg)) return {kind: 'path', value: arg};
-  }
-  return null;
+const dispatchArg = (argv: readonly string[], cwd: string) => {
+  const parsed = parseArg(argv, cwd);
+  if (!parsed) return;
+  if (parsed.kind === 'url') dispatch({kind: 'url', value: parsed.value});
+  else void dispatchPath(parsed.value);
 };
 
 protocol.registerSchemesAsPrivileged([
@@ -52,13 +81,12 @@ const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
   app.quit();
 } else {
-  app.on('second-instance', (_event, argv) => {
+  app.on('second-instance', (_event, argv, workingDirectory) => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
     }
-    const input = inputFromArgv(argv);
-    if (input) dispatch(input);
+    dispatchArg(argv, workingDirectory || process.cwd());
   });
 
   app.on('open-url', (event, url) => {
@@ -67,15 +95,14 @@ if (!gotLock) {
   });
   app.on('open-file', (event, filePath) => {
     event.preventDefault();
-    dispatch({kind: 'path', value: filePath});
+    void dispatchPath(filePath);
   });
 
   if (!app.isDefaultProtocolClient('mutxt')) {
     app.setAsDefaultProtocolClient('mutxt');
   }
 
-  const initial = inputFromArgv(process.argv);
-  if (initial) dispatch(initial);
+  dispatchArg(process.argv, process.cwd());
 
   app.whenReady().then(() => {
     if (!isDev) registerAppProtocol();
@@ -93,7 +120,13 @@ if (!gotLock) {
 
 function buildAppMenu(): void {
   const isMac = process.platform === 'darwin';
-  const sendCloseFile = () => mainWindow?.webContents.send('mutxt:close-file');
+  const sendCloseFile = () => {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    if (!rendererReady) return;
+    const wc = mainWindow.webContents;
+    if (wc.isDestroyed() || wc.isCrashed()) return;
+    wc.send('mutxt:close-file');
+  };
   const template: MenuItemConstructorOptions[] = [
     ...(isMac
       ? ([
