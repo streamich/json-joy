@@ -4,6 +4,7 @@ import {useExplorer} from '../../context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import {PwaInstallButton} from './PwaInstallButton';
+import {isMacElectron} from '../../util/host';
 
 const enum Sizes {
   TabsHeight = 48,
@@ -39,6 +40,10 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
         before={<div style={{marginLeft: toggle ? 'var(--titlebar-inset-left, 0px)' : 0}}>{toggle}</div>}
         right={<PwaInstallButton />}
         render={() => <div style={{height: Sizes.TabsFadeHeight}} />}
+        barStyle={isMacElectron ? {
+          borderTopRightRadius: 12,
+          borderTopLeftRadius: 12,
+        } : undefined}
       />
     </div>
   );
