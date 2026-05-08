@@ -19,11 +19,14 @@ const subscribeVoid = (channel: string, cb: () => void): Unsubscribe => {
   };
 };
 
-type OpenFilePayload = {name: string; bytes: Uint8Array};
+type OpenFilePayload = {name: string; path: string; bytes?: Uint8Array};
 
 const api = {
   platform: process.platform,
   versions: {...process.versions},
+  openDialog: (): Promise<void> => ipcRenderer.invoke('mutxt:open-dialog'),
+  writeFile: (path: string, bytes: Uint8Array): Promise<void> =>
+    ipcRenderer.invoke('mutxt:write-file', path, bytes),
   onOpenFile: (cb: Listener<OpenFilePayload>): Unsubscribe => subscribe<OpenFilePayload>('mutxt:open-file', cb),
   onOpenUrl: (cb: Listener<string>): Unsubscribe => subscribe<string>('mutxt:open-url', cb),
   onCloseFile: (cb: () => void): Unsubscribe => subscribeVoid('mutxt:close-file', cb),

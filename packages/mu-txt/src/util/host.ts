@@ -1,7 +1,9 @@
 export interface MutxtHost {
   readonly platform: 'darwin' | 'win32' | 'linux' | (string & {});
   readonly versions: Readonly<Record<string, string | undefined>>;
-  onOpenFile(cb: (file: {name: string; bytes: Uint8Array}) => void): () => void;
+  openDialog(): Promise<void>;
+  writeFile(path: string, bytes: Uint8Array): Promise<void>;
+  onOpenFile(cb: (file: {name: string; path: string; bytes?: Uint8Array}) => void): () => void;
   onOpenUrl(cb: (url: string) => void): () => void;
   /** Fires when the user presses Cmd/Ctrl+W. */
   onCloseFile(cb: () => void): () => void;

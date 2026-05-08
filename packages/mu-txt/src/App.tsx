@@ -67,9 +67,15 @@ export const App: React.FC = () => {
   // Open a file passed by the host (CLI arg, dock open-file, etc.)
   React.useEffect(() => {
     if (!host) return;
-    return host.onOpenFile(({name, bytes}) => {
-      const file = new File([bytes as BlobPart], name);
-      state.addFile(file).catch(() => {});
+    return host.onOpenFile(({name, path, bytes}) => {
+      const link = {source: 'native-fs', path};
+      if (bytes) {
+        const file = new File([bytes as BlobPart], name);
+        state.addFile(file, link).catch(() => {});
+      } else {
+        // File doesn't exist yet — open a fresh document linked to this path.
+        state.createNewMuTxt(name, link);
+      }
     });
   }, [state]);
 

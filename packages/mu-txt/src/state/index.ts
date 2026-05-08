@@ -7,7 +7,7 @@ import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap, distinctUntilChanged} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
-import {type FileMetadataDto, OpenFile} from './file';
+import {type FileLink, type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
 import {AppGridState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
 import {FileStorage, type IFileStorage} from './file-storage';
@@ -231,6 +231,7 @@ export class MuTxtAppState {
     name: string = 'Untitled' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
     dto?: FileMetadataDto,
     size: number = 0,
+    link?: FileLink,
   ) => {
     const now = Date.now();
     const meta: FileMetadataDto = dto ?? {
@@ -238,6 +239,7 @@ export class MuTxtAppState {
       name,
       createdAt: now,
       updatedAt: now,
+      ...(link ? {link} : {}),
     };
     const file = new OpenFile(
       meta,
@@ -347,7 +349,7 @@ export class MuTxtAppState {
     await this.refreshSaved();
   }
 
-  public readonly addFile = async (file: File) => {
+  public readonly addFile = async (file: File, link?: FileLink) => {
     if (!file) return;
     const uint8 = new Uint8Array(await file.arrayBuffer());
     const name = file.name ? stripExtensions(file.name) : 'model';
@@ -365,7 +367,7 @@ export class MuTxtAppState {
         const log = new Log(() => model.clone());
         log.end.applyBatch(patches);
         log.end.setSid(this.sid);
-        this.openFile(log, name);
+        this.openFile(log, name, undefined, 0, link);
         return;
       }
       if (file.name.endsWith('.crdt')) {
@@ -376,16 +378,22 @@ export class MuTxtAppState {
         const model = ModelWithExt.load(bytes, this.sid);
         const log = new Log(() => model);
         log.end.setSid(this.sid);
-        this.openFile(log, name);
+        this.openFile(log, name, undefined, 0, link);
         return;
       }
-      await this.addLog(uint8, name);
+      await this.addLog(uint8, name, undefined, 0, link);
       return;
     } catch {}
-    this.createNewMuTxtWithFile(file, uint8, name);
+    this.createNewMuTxtWithFile(file, uint8, name, link);
   };
 
-  public readonly addLog = async (uint8: Uint8Array, name?: string, dto?: FileMetadataDto, size: number = 0) => {
+  public readonly addLog = async (
+    uint8: Uint8Array,
+    name?: string,
+    dto?: FileMetadataDto,
+    size: number = 0,
+    link?: FileLink,
+  ) => {
     let log: Log<any>;
     try {
       log = await OpenFile.decodeLog(uint8, this.sid);
@@ -399,7 +407,7 @@ export class MuTxtAppState {
       log.end.setSid(this.sid);
     }
     if (this.stopped) return;
-    this.openFile(log, name, dto, size);
+    this.openFile(log, name, dto, size, link);
   };
 
   public readonly addFiles = async (files: File[]) => {
@@ -408,14 +416,14 @@ export class MuTxtAppState {
 
   private newCnt = 0;
 
-  public readonly createNew = (data: unknown = void 0) => {
+  public readonly createNew = (data: unknown = void 0, name?: string, link?: FileLink) => {
     // const schema = s.obj(data);
     const model = ModelWithExt.create<any>(data, this.sid);
-    this.createFromModel(model);
+    this.createFromModel(model, name, link);
   };
 
-  public readonly createNewMuTxt = () => {
-    this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}));
+  public readonly createNewMuTxt = (name?: string, link?: FileLink) => {
+    this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}), name, link);
   };
 
   public readonly createNewMuTxtFromSlate = (slate: SlateDocument, name?: string) => {
@@ -430,7 +438,7 @@ export class MuTxtAppState {
     this.openFile(log, name);
   };
 
-  public readonly createNewMuTxtWithFile = (file: File, bytes: Uint8Array, name?: string) => {
+  public readonly createNewMuTxtWithFile = (file: File, bytes: Uint8Array, name?: string, link?: FileLink) => {
     const thingId = `file-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const model = ModelWithExt.create<any>(
       s.obj({
@@ -461,13 +469,13 @@ export class MuTxtAppState {
     txt.refresh();
     this.newCnt++;
     const log = Log.from(model);
-    this.openFile(log, name ?? file.name);
+    this.openFile(log, name ?? file.name, undefined, 0, link);
   };
 
-  public readonly createFromModel = (model: Model<any>) => {
+  public readonly createFromModel = (model: Model<any>, name?: string, link?: FileLink) => {
     this.newCnt++;
     const log = Log.fromNewModel(model);
-    this.openFile(log);
+    this.openFile(log, name, undefined, 0, link);
   };
 
   public async download(id: string) {

@@ -10,6 +10,7 @@ import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {DebounceQueue} from '../util/DebounceQueue';
+import {host} from '../util/host';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import type {MuTxtApi} from 'mutxt-react';
@@ -30,6 +31,21 @@ export interface FileMetadataDto {
   createdAt: number;
   /** Timestamp when file was last updated or saved. */
   updatedAt: number;
+  /**
+   * Optional link to an external location where this file was opened from
+   * and where its contents can be saved back to.
+   */
+  link?: FileLink;
+}
+
+/**
+ * Link from an internally stored file to an external location.
+ */
+export interface FileLink {
+  /** The access mechanism / provider used to reach the external file. */
+  source: string;
+  /** Locator within the source — filesystem path, provider id, etc. */
+  path: string;
 }
 
 export interface FileDto extends FileMetadataDto {
@@ -136,12 +152,14 @@ export class OpenFile {
   };
 
   public toMeta(): FileMetadataDto {
-    return {
+    const meta: FileMetadataDto = {
       id: this.meta.id,
       name: this.name.value,
       createdAt: this.meta.createdAt,
       updatedAt: Date.now(),
     };
+    if (this.meta.link) meta.link = this.meta.link;
+    return meta;
   }
 
   public toDto(): FileDto {
@@ -157,6 +175,22 @@ export class OpenFile {
     dto.data = encoded;
     return dto;
   }
+
+  // Write a `.toBinary()` snapshot of the current model to the linked external
+  // location (e.g. local fs in Electron). OPFS keeps the full CRDT log; the
+  // linked file holds only the latest snapshot.
+  private readonly writeLinkedSnapshot = async (): Promise<void> => {
+    const link = this.meta.link;
+    if (!link) return;
+    if (link.source !== 'native-fs' || !host) return;
+    try {
+      const snapshot = this.log.end.toBinary();
+      await host.writeFile(link.path, snapshot);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[mutxt] failed to write linked file', link.path, err);
+    }
+  };
 
   public readonly scheduleFlush = () => {
     if (!this.storage || !this.active) return;
@@ -183,6 +217,7 @@ export class OpenFile {
       this.meta.updatedAt = dto.updatedAt;
       const onPersisted = this.onPersisted;
       if (onPersisted) await onPersisted(dto);
+      await this.writeLinkedSnapshot();
     } catch {
     } finally {
       this.saving = false;
@@ -219,7 +254,9 @@ export class OpenFile {
       id: this.id,
       name: this.name.value,
       display: () => <RenderName file={this} />,
-      icon: () => <FileIcon id={this.id} label={this.name.value} gradient accent size={16} />,
+      icon: () => (
+        <FileIcon id={this.id} label={this.name.value} gradient accent size={16} link={!!this.meta.link} />
+      ),
     };
   }
 }

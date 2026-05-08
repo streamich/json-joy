@@ -1,4 +1,4 @@
-import {app, BrowserWindow, shell, protocol, net, Menu, type MenuItemConstructorOptions} from 'electron';
+import {app, BrowserWindow, dialog, ipcMain, shell, protocol, net, Menu, type MenuItemConstructorOptions} from 'electron';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
@@ -10,7 +10,7 @@ const distRoot = path.resolve(__dirname, '..', 'dist');
 const iconsRoot = path.resolve(__dirname, '..', 'public', 'icons');
 
 type PendingInput =
-  | {kind: 'file'; name: string; bytes: Uint8Array}
+  | {kind: 'file'; name: string; path: string; bytes?: Uint8Array}
   | {kind: 'url'; value: string};
 
 const pending: PendingInput[] = [];
@@ -20,7 +20,7 @@ let rendererReady = false;
 const channelFor = (kind: PendingInput['kind']) => (kind === 'file' ? 'mutxt:open-file' : 'mutxt:open-url');
 
 const payloadFor = (item: PendingInput) =>
-  item.kind === 'file' ? {name: item.name, bytes: item.bytes} : item.value;
+  item.kind === 'file' ? {name: item.name, path: item.path, bytes: item.bytes} : item.value;
 
 const send = (item: PendingInput) => {
   if (!mainWindow || mainWindow.isDestroyed()) return;
@@ -54,12 +54,17 @@ const parseArg = (argv: readonly string[], cwd: string): ParsedArg | null => {
 };
 
 const dispatchPath = async (filePath: string) => {
+  const name = path.basename(filePath);
   try {
     const buf = await fs.readFile(filePath);
     const bytes = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
-    dispatch({kind: 'file', name: path.basename(filePath), bytes});
+    dispatch({kind: 'file', name, path: filePath, bytes});
   } catch (err) {
-    console.error('[mutxt] failed to read file', filePath, err);
+    if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+      dispatch({kind: 'file', name, path: filePath});
+    } else {
+      console.error('[mutxt] failed to read file', filePath, err);
+    }
   }
 };
 
@@ -68,6 +73,19 @@ const dispatchArg = (argv: readonly string[], cwd: string) => {
   if (!parsed) return;
   if (parsed.kind === 'url') dispatch({kind: 'url', value: parsed.value});
   else void dispatchPath(parsed.value);
+};
+
+const openDialog = async (): Promise<void> => {
+  const opts: Electron.OpenDialogOptions = {
+    title: 'Open File',
+    properties: ['openFile', 'multiSelections'],
+  };
+  const result =
+    mainWindow && !mainWindow.isDestroyed()
+      ? await dialog.showOpenDialog(mainWindow, opts)
+      : await dialog.showOpenDialog(opts);
+  if (result.canceled) return;
+  for (const filePath of result.filePaths) void dispatchPath(filePath);
 };
 
 protocol.registerSchemesAsPrivileged([
@@ -96,6 +114,11 @@ if (!gotLock) {
   app.on('open-file', (event, filePath) => {
     event.preventDefault();
     void dispatchPath(filePath);
+  });
+
+  ipcMain.handle('mutxt:open-dialog', () => openDialog());
+  ipcMain.handle('mutxt:write-file', async (_event, filePath: string, bytes: Uint8Array) => {
+    await fs.writeFile(filePath, bytes);
   });
 
   if (!app.isDefaultProtocolClient('mutxt')) {
@@ -149,6 +172,8 @@ function buildAppMenu(): void {
     {
       label: 'File',
       submenu: [
+        {label: 'Open…', accelerator: 'CmdOrCtrl+O', click: () => void openDialog()},
+        {type: 'separator'},
         {label: 'Close File', accelerator: 'CmdOrCtrl+W', click: sendCloseFile},
         {label: 'Close Window', accelerator: 'CmdOrCtrl+Shift+W', role: 'close'},
         ...(isMac ? [] : ([{type: 'separator'}, {role: 'quit'}] as MenuItemConstructorOptions[])),

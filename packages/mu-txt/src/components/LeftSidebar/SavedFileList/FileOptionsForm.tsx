@@ -175,6 +175,34 @@ export const FileOptionsForm: React.FC<FileOptionsFormProps> = ({file}) => {
         )}
       </Section>
 
+      {file.link && (
+        <>
+          <Space size={0} />
+          <Separator />
+          <Space size={0} />
+          <Section>
+            <MiniTitle contrast>{t('Link')}</MiniTitle>
+            <Space size={-3} />
+            <TwoColFormRow
+              small
+              compact
+              icon={<Iconista set="bootstrap" icon="link-45deg" width={16} height={16} />}
+              title={t('Source')}
+            >
+              <CopyCode size={-1} alt roundest noBg value={file.link.source} />
+            </TwoColFormRow>
+            <TwoColFormRow
+              small
+              compact
+              icon={<Iconista set="bootstrap" icon="folder2-open" width={16} height={16} />}
+              title={t('Path')}
+            >
+              <CopyCode size={-1} alt roundest noBg value={file.link.path} />
+            </TwoColFormRow>
+          </Section>
+        </>
+      )}
+
       <Space size={0} />
       <Separator />
       <Space size={0} />

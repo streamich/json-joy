@@ -8,6 +8,7 @@ import {Tabs} from '@jsonjoy.com/ui/lib/3-list-item/Tabs';
 import {useT} from 'use-t';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {formatKeys} from 'mutxt-react';
+import {host} from '../../util/host';
 import type {ThemePreference} from '../../state/theme';
 
 export type HeaderMenuProps = {};
@@ -72,7 +73,10 @@ const ThemeTabs: React.FC = () => {
 export const HeaderMenu: React.FC<HeaderMenuProps> = () => {
   const state = useExplorer();
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const onOpenClick = React.useCallback(() => inputRef.current?.click(), []);
+  const onOpenClick = React.useCallback(() => {
+    if (host) void host.openDialog();
+    else inputRef.current?.click();
+  }, []);
   const onInputChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.currentTarget.files;
