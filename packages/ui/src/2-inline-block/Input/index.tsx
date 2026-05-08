@@ -41,6 +41,8 @@ export interface InputProps {
   style?: any;
   waiting?: boolean;
   center?: boolean;
+  align?: 'left' | 'center' | 'right';
+  ghost?: boolean | 'hint';
   multiline?: boolean;
   mono?: boolean;
   right?: React.ReactNode;
@@ -70,6 +72,8 @@ export const Input: React.FC<InputProps> = (props) => {
     type = 'text',
     waiting,
     center,
+    align,
+    ghost,
     right,
     multiline,
     mono,
@@ -145,7 +149,9 @@ export const Input: React.FC<InputProps> = (props) => {
     }
   }
 
-  if (center) {
+  if (align) {
+    style.textAlign = align;
+  } else if (center) {
     style.textAlign = 'center';
   }
 
@@ -174,6 +180,7 @@ export const Input: React.FC<InputProps> = (props) => {
       disabled={disabled || readOnly}
       size={size}
       center={center}
+      ghost={ghost}
       onClick={() => {
         if (ref.current) ref.current.focus();
       }}

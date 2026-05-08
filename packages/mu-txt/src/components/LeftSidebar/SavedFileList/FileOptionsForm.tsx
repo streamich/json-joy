@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {rule, useRule} from 'nano-theme';
 import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
 import {TwoColFormRow} from '@jsonjoy.com/ui/lib/3-list-item/TwoColForm';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
@@ -12,6 +11,7 @@ import {useExplorer} from '../../../context';
 import type {FileMetadataDto, OpenFile} from '../../../state/file';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {Input} from '@jsonjoy.com/ui/lib/2-inline-block/Input';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {useT} from 'use-t';
@@ -20,58 +20,30 @@ import {Bytes} from '@jsonjoy.com/ui/src/1-inline/Bytes';
 
 const HPAD = 22;
 
-const nameInputClass = rule({
-  d: 'block',
-  w: '100%',
-  minWidth: 0,
-  bxz: 'border-box',
-  bg: 'transparent',
-  bd: 0,
-  out: 0,
-  pd: '4px 8px',
-  fz: '13px',
-  lh: '18px',
-  ff: 'inherit',
-  ta: 'right',
-  bdrad: '6px',
-  trs: 'background .15s ease, box-shadow .15s ease',
-});
-
-const useDynamicInputClass = () =>
-  useRule((t) => ({
-    col: t.g(0.15),
-    '&:hover': {bg: t.g(0, 0.04)},
-    '&:focus': {bg: t.g(0, 0.06), bxsh: `inset 0 0 0 1px ${t.g(0, 0.18)}`},
-  }));
-
 const NameValueOpen: React.FC<{file: FileMetadataDto; openFile: OpenFile}> = ({file, openFile}) => {
   const liveName = openFile.name.use();
   const value = liveName ?? file.name;
   const state = useExplorer();
   const focusValueRef = React.useRef<string>(value);
-  const dynamicInputClass = useDynamicInputClass();
 
   return (
-    <input
-      className={nameInputClass + dynamicInputClass}
+    <Input
+      ghost="hint"
+      align="right"
+      size={-3}
       value={value}
       onFocus={() => {
         focusValueRef.current = value;
       }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          e.stopPropagation();
-          (e.currentTarget as HTMLInputElement).blur();
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
-          state.renameFile(openFile, focusValueRef.current);
-          (e.currentTarget as HTMLInputElement).blur();
-        }
+      onChange={(next) => state.renameFile(openFile, next)}
+      onEnter={(e) => (e.currentTarget as HTMLInputElement).blur()}
+      onEsc={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+        state.renameFile(openFile, focusValueRef.current);
+        (e.currentTarget as HTMLInputElement).blur();
       }}
-      onChange={(e) => state.renameFile(openFile, e.target.value)}
     />
   );
 };
@@ -80,7 +52,6 @@ const NameValueClosed: React.FC<{file: FileMetadataDto}> = ({file}) => {
   const state = useExplorer();
   const [value, setValue] = React.useState<string>(file.name);
   const focusValueRef = React.useRef<string>(file.name);
-  const dynamicInputClass = useDynamicInputClass();
 
   React.useEffect(() => {
     setValue(file.name);
@@ -95,27 +66,24 @@ const NameValueClosed: React.FC<{file: FileMetadataDto}> = ({file}) => {
   );
 
   return (
-    <input
-      className={nameInputClass + dynamicInputClass}
+    <Input
+      ghost="hint"
+      align="right"
+      size={-3}
       value={value}
       onFocus={() => {
         focusValueRef.current = value;
       }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          e.stopPropagation();
-          (e.currentTarget as HTMLInputElement).blur();
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
-          setValue(focusValueRef.current);
-          (e.currentTarget as HTMLInputElement).blur();
-        }
-      }}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={setValue}
       onBlur={() => commit(value)}
+      onEnter={(e) => (e.currentTarget as HTMLInputElement).blur()}
+      onEsc={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+        setValue(focusValueRef.current);
+        (e.currentTarget as HTMLInputElement).blur();
+      }}
     />
   );
 };

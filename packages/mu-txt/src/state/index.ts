@@ -18,6 +18,7 @@ import {FromSlate, type SlateDocument} from '@jsonjoy.com/collaborative-slate';
 import {getSyncStore, type ISyncStore} from './sync-store';
 import {Theme} from './theme';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
   const observable = new BehaviorSubject<T>(val.value);
@@ -41,7 +42,8 @@ export class MuTxtAppState {
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   public readonly menus: Menus;
   public readonly theme: Theme;
-  public ondoubleclick: ((file: OpenFile) => void) | undefined = void 0;
+  public ondoubleclick: ((file: OpenFile, point: AnchorPoint) => void) | undefined = void 0;
+  public onclick: ((file: OpenFile, point: AnchorPoint) => void) | undefined = void 0;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -65,9 +67,17 @@ export class MuTxtAppState {
     this.tabs.onDeleteTab = (tab) => {
       this.close(tab.id!);
     };
-    this.tabs.onTabDoubleClick = (tab) => {
+    this.tabs.onTabDoubleClick = (tab, _index, event) => {
       const file = this.fileIfOpen(tab.id!);
-      if (file) this.ondoubleclick?.(file);
+      if (!file) return;
+      const point: AnchorPoint = {x: event.clientX, y: event.clientY, dx: 1, dy: 1};
+      this.ondoubleclick?.(file, point);
+    };
+    this.tabs.onTabClick = (tab, _index, event) => {
+      const file = this.fileIfOpen(tab.id!);
+      if (!file) return;
+      const point: AnchorPoint = {x: event.clientX, y: event.clientY + 24, dx: 0, dy: 1};
+      this.onclick?.(file, point);
     };
     this.selected$ = toObservable(this.tabs.selected);
     this.files$

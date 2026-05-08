@@ -51,8 +51,8 @@ const useLabelClass = makeRule((t) => ({
 }));
 
 const labelSmallClass = rule({
-  fz: '12px',
-  lh: '16px',
+  fz: '11px',
+  lh: '15px',
 });
 
 const valueSmallClass = rule({

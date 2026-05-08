@@ -25,7 +25,13 @@ export class FileTabsState {
   // ---------------------------------------------------- to be set by consumer
   public onNewTab: (() => TabItem | undefined) | undefined = void 0;
   public onDeleteTab: ((tab: TabItem, index: number) => void) | undefined = void 0;
-  public onTabDoubleClick: ((tab: TabItem, index: number) => void) | undefined = void 0;
+  public onTabDoubleClick: ((tab: TabItem, index: number, event: React.MouseEvent) => void) | undefined = void 0;
+  /**
+   * Fires when the user clicks on a tab that was already selected at the time
+   * the click began. Clicks on un-selected tabs only switch the tab and do not
+   * fire this callback.
+   */
+  public onTabClick: ((tab: TabItem, index: number, event: React.MouseEvent) => void) | undefined = void 0;
 
   public readonly box: rsync.ElBox<HTMLElement>;
   public readonly tabsBox: rsync.ElBox<HTMLElement>;

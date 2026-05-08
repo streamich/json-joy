@@ -10,9 +10,10 @@ import {LeftSidebar} from './components/LeftSidebar';
 import {useT} from 'use-t';
 import {TabsHeader} from './components/TabsHeader';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {FileOptionsDrawer} from './components/LeftSidebar/SavedFileList/FileOptionsDrawer';
-import type {FileMetadataDto} from './state/file';
+import {FileOptionsContextPane} from './components/LeftSidebar/SavedFileList/FileOptionsContextPane';
+import type {FileMetadataDto, OpenFile} from './state/file';
 import {host} from './util/host';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 
 const columnClass = rule({
   d: 'flex',
@@ -26,8 +27,21 @@ export const App: React.FC = () => {
   const state = React.useMemo(() => {
     return new MuTxtAppState();
   }, []);
-  const [drawerFile, setDrawerFile] = React.useState<FileMetadataDto | null>(null);
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [optionsPane, setOptionsPane] = React.useState<{file: FileMetadataDto; point: AnchorPoint} | null>(null);
+  const optionsPaneRef = React.useRef<typeof optionsPane>(null);
+  optionsPaneRef.current = optionsPane;
+  const wasOpenAtPressDownRef = React.useRef(false);
+  React.useEffect(() => {
+    const onPress = () => {
+      wasOpenAtPressDownRef.current = optionsPaneRef.current !== null;
+    };
+    document.addEventListener('mousedown', onPress, true);
+    document.addEventListener('touchstart', onPress, true);
+    return () => {
+      document.removeEventListener('mousedown', onPress, true);
+      document.removeEventListener('touchstart', onPress, true);
+    };
+  }, []);
   React.useEffect(() => {
     state.start().catch(() => {});
     return () => {
@@ -35,12 +49,15 @@ export const App: React.FC = () => {
     };
   }, [state]);
   React.useEffect(() => {
-    state.ondoubleclick = (file) => {
-      setDrawerFile(file.toMeta());
-      setDrawerOpen(true);
+    const open = (file: OpenFile, point: AnchorPoint) => {
+      if (wasOpenAtPressDownRef.current) return;
+      setOptionsPane({file: file.toMeta(), point});
     };
+    state.ondoubleclick = open;
+    state.onclick = open;
     return () => {
       state.ondoubleclick = void 0;
+      state.onclick = void 0;
     };
   }, [state]);
 
@@ -73,7 +90,13 @@ export const App: React.FC = () => {
             </div>
           }
         />
-        {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
+        {optionsPane && (
+          <FileOptionsContextPane
+            file={optionsPane.file}
+            point={optionsPane.point}
+            onClose={() => setOptionsPane(null)}
+          />
+        )}
       </UiProvider>
     </ctx.Provider>
   );

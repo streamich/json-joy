@@ -276,6 +276,8 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
 
   const selectedItem = state.selected.use();
   const selected = selectedItem ? (selectedItem[0].id ?? selectedItem[0].name) === id : false;
+  const wasSelectedAtPressRef = React.useRef(false);
+  const pressPosRef = React.useRef<{x: number; y: number}>({x: 0, y: 0});
   const hoverState = state.hovered.use();
   const hovered = hoverState?.[0] === id;
   const dragState = state.drag.use();
@@ -392,13 +394,24 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
       onPointerDown={(e) => {
         if (disabled || isExiting) return;
         if (e.button !== 0) return;
+        wasSelectedAtPressRef.current = selected;
+        pressPosRef.current = {x: e.clientX, y: e.clientY};
         state.select(index);
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
         state.dragStart(id, index, e.clientX, e.pointerId);
       }}
-      onDoubleClick={() => {
+      onClick={(e) => {
         if (disabled || isExiting) return;
-        state.onTabDoubleClick?.(item, index);
+        if (e.button !== 0) return;
+        if (!wasSelectedAtPressRef.current) return;
+        const dx = Math.abs(e.clientX - pressPosRef.current.x);
+        const dy = Math.abs(e.clientY - pressPosRef.current.y);
+        if (dx + dy > 4) return;
+        state.onTabClick?.(item, index, e);
+      }}
+      onDoubleClick={(e) => {
+        if (disabled || isExiting) return;
+        state.onTabDoubleClick?.(item, index, e);
       }}
       onMouseEnter={() => state.hovered.set([id, index])}
       onMouseLeave={() => {

@@ -33,13 +33,15 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
       small={!isOpen}
       muted={!isOpen}
       metadata={
-        isOpen ? (
-          <>
-            {<TimeAgo value={file.updatedAt} live={Date.now() - file.updatedAt < 1000 * 60 * 45} />}
-            {isOpen && ' · '}
-            {!!openFile && <Bytes value={openFile.size} />}
-          </>
-        ) : undefined
+        <>
+          <TimeAgo value={file.updatedAt} live={Date.now() - file.updatedAt < 1000 * 60 * 45} />
+          {!!openFile && (
+            <>
+              {' · '}
+              <Bytes value={openFile.size} />
+            </>
+          )}
+        </>
       }
       icon={isOpen ? activeIcon : icon}
       iconHover={activeIcon}
