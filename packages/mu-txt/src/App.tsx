@@ -62,7 +62,16 @@ export const App: React.FC = () => {
   }, [state]);
 
   // Cmd+W in Electron
-  React.useEffect(() => host?.onCloseFile(() => state.tabs.deleteSelected()), [state]);
+  React.useEffect(() => host?.onCloseFile(() => state.closeSelected()), [state]);
+
+  // Open a file passed by the host (CLI arg, dock open-file, etc.)
+  React.useEffect(() => {
+    if (!host) return;
+    return host.onOpenFile(({name, bytes}) => {
+      const file = new File([bytes as BlobPart], name);
+      state.addFile(file).catch(() => {});
+    });
+  }, [state]);
 
   // Cmd/Ctrl+N: create a new document
   React.useEffect(() => {

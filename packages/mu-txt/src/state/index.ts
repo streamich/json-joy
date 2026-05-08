@@ -30,6 +30,9 @@ const SAVED_REFRESH_INTERVAL_MS = 5_000;
 const LEFT_SIZE_STORAGE_KEY = 'mutxt_left_sidebar_size';
 const LEFT_SIZE_PERSIST_DEBOUNCE_MS = 300;
 
+const CLOSE_SELECTED_MIN_GAP_MS = 300;
+const CLOSE_SELECTED_DESTROY_TIMEOUT_MS = 1500;
+
 const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
   [...saved].sort((a, b) => b.updatedAt - a.updatedAt || b.createdAt - a.createdAt);
 
@@ -256,12 +259,52 @@ export class MuTxtAppState {
     this.tabs.selectById(id);
   }
 
+  private readonly destroying = new Map<string, Promise<void>>();
+
   private readonly disposeFile = (id: string) => {
     const list = this.files$.getValue();
     const file = list.find((openFile) => openFile.id === id);
     if (!file) return;
-    void file.destroy(true);
     this.files$.next(list.filter((m) => m.id !== id));
+    const promise = file.destroy(true).finally(() => {
+      if (this.destroying.get(id) === promise) this.destroying.delete(id);
+    });
+    this.destroying.set(id, promise);
+  };
+
+  public readonly awaitDestroy = async (id: string): Promise<void> => {
+    const promise = this.destroying.get(id);
+    if (promise) await promise;
+  };
+
+  private closeSelectedBusy = false;
+  private closeSelectedLastAt = 0;
+
+  public readonly closeSelected = async (): Promise<void> => {
+    const now = Date.now();
+    if (now - this.closeSelectedLastAt < CLOSE_SELECTED_MIN_GAP_MS) return;
+    if (this.closeSelectedBusy) return;
+    this.closeSelectedLastAt = now;
+    this.closeSelectedBusy = true;
+    try {
+      const id = this.tabs.selected.value?.[0]?.id ?? this.file$.getValue()?.id;
+      const ok = this.tabs.deleteSelected();
+      if (!ok) return;
+      if (id) {
+        const timeout = new Promise<void>((resolve) =>
+          setTimeout(resolve, CLOSE_SELECTED_DESTROY_TIMEOUT_MS),
+        );
+        await Promise.race([this.awaitDestroy(id), timeout]);
+      }
+      if (typeof requestAnimationFrame === 'function') {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('mutxt:close-selected failed', err);
+    } finally {
+      this.closeSelectedBusy = false;
+    }
   };
 
   public readonly close = (id: string) => {
@@ -299,8 +342,7 @@ export class MuTxtAppState {
 
   public async deleteSaved(id: string) {
     this.tabs.deleteById(id);
-    const file = this.files$.getValue().find((m) => m.id === id);
-    if (file) await file.destroy();
+    await this.awaitDestroy(id);
     await this.storage.delete(id);
     await this.refreshSaved();
   }
