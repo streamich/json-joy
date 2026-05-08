@@ -9,7 +9,7 @@ import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
 import {type FileLink, type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
-import {AppGridState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
+import {AppGridState, type SidebarState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
 import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
@@ -29,6 +29,10 @@ const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
 const SAVED_REFRESH_INTERVAL_MS = 5_000;
 const LEFT_SIZE_STORAGE_KEY = 'mutxt_left_sidebar_size';
 const LEFT_SIZE_PERSIST_DEBOUNCE_MS = 300;
+const LEFT_STATE_STORAGE_KEY = 'mutxt_left_sidebar_state';
+
+const isSidebarState = (value: string): value is SidebarState =>
+  value === 'open' || value === 'close' || value === 'mini' || value === 'none';
 
 const CLOSE_SELECTED_MIN_GAP_MS = 300;
 const CLOSE_SELECTED_DESTROY_TIMEOUT_MS = 1500;
@@ -53,6 +57,7 @@ export class MuTxtAppState {
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
   private leftSizePersistTimer: ReturnType<typeof setTimeout> | null = null;
   private leftSizeUnsubscribe: (() => void) | null = null;
+  private leftStateUnsubscribe: (() => void) | null = null;
 
   constructor(storage: IFileStorage = new FileStorage()) {
     const sync = (this.sync = getSyncStore());
@@ -66,7 +71,9 @@ export class MuTxtAppState {
     this.menus = new Menus(this);
     this.theme = new Theme(sync);
     this.restoreLeftSidebarSize();
+    this.restoreLeftSidebarState();
     this.leftSizeUnsubscribe = this.appGrid.leftSize.subscribe(this.scheduleLeftSidebarSizePersist);
+    this.leftStateUnsubscribe = this.appGrid.leftState.subscribe(this.persistLeftSidebarState);
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
@@ -142,6 +149,20 @@ export class MuTxtAppState {
     }, LEFT_SIZE_PERSIST_DEBOUNCE_MS);
   };
 
+  private readonly restoreLeftSidebarState = (): void => {
+    const stored = this.sync.getItem(LEFT_STATE_STORAGE_KEY);
+    if (stored === null) {
+      this.appGrid.leftState.set('close');
+      return;
+    }
+    if (!isSidebarState(stored)) return;
+    this.appGrid.leftState.set(stored);
+  };
+
+  private readonly persistLeftSidebarState = (): void => {
+    this.sync.setItem(LEFT_STATE_STORAGE_KEY, this.appGrid.leftState.value);
+  };
+
   private readonly stopSavedRefresh = () => {
     if (this.savedRefreshTimer) {
       clearInterval(this.savedRefreshTimer);
@@ -191,6 +212,8 @@ export class MuTxtAppState {
     this.detachDragDrop = null;
     this.leftSizeUnsubscribe?.();
     this.leftSizeUnsubscribe = null;
+    this.leftStateUnsubscribe?.();
+    this.leftStateUnsubscribe = null;
     if (this.leftSizePersistTimer) {
       clearTimeout(this.leftSizePersistTimer);
       this.leftSizePersistTimer = null;
