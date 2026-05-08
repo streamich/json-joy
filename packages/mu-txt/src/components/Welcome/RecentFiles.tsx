@@ -20,7 +20,7 @@ const itemClass = drule({
   padding: '8px 12px',
   borderRadius: '8px',
   cursor: 'pointer',
-  transition: 'background .12s ease, color .12s ease, transform .12s ease',
+  transition: 'background .12s ease, color .12s ease',
   textAlign: 'left',
   border: '1px solid transparent',
   background: 'transparent',

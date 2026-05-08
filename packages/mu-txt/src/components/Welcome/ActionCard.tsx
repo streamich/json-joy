@@ -12,15 +12,12 @@ const blockClass = drule({
   cursor: 'pointer',
   textAlign: 'left',
   userSelect: 'none',
-  transition: 'transform .15s ease, background .15s ease, border-color .15s ease',
+  transition: 'background .15s ease, border-color .15s ease',
   overflow: 'hidden',
   width: '100%',
   height: '100%',
   minHeight: '128px',
   boxSizing: 'border-box',
-  '&:hover': {
-    transform: 'translateY(-1px)',
-  },
   '&:active': {
     transform: 'scale(.99)',
   },
