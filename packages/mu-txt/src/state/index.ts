@@ -232,11 +232,19 @@ export class MuTxtAppState {
     for (const file of files) this.close(file.id);
   };
 
-  public readonly rename = (id: string, name: string) => {
-    const files = this.files$.getValue();
-    const file = files.find((m) => m.id === id);
-    if (!file) return;
-    this.renameFile(file, name);
+  public readonly rename = async (id: string, name: string): Promise<void> => {
+    const file = this.files$.getValue().find((m) => m.id === id);
+    if (file) {
+      this.renameFile(file, name);
+      return;
+    }
+    try {
+      await this.storage.renameMeta(id, name);
+      await this.refreshSaved();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[mutxt] failed to rename saved file', id, error);
+    }
   };
 
   public renameFile(file: OpenFile, name: string): void {

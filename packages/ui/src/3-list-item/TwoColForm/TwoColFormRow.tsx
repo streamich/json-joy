@@ -16,6 +16,13 @@ const rowClass = rule({
   },
 });
 
+const rowCompactClass = rule({
+  minHeight: '24px',
+  '&+&': {
+    mrt: '1px',
+  },
+});
+
 const leftClass = rule({
   d: 'flex',
   ai: 'center',
@@ -43,6 +50,16 @@ const useLabelClass = makeRule((t) => ({
   minWidth: 0,
 }));
 
+const labelSmallClass = rule({
+  fz: '12px',
+  lh: '16px',
+});
+
+const valueSmallClass = rule({
+  fz: '13px',
+  lh: '18px',
+});
+
 const rightClass = rule({
   d: 'flex',
   ai: 'center',
@@ -62,9 +79,21 @@ export interface TwoColFormRowProps extends Omit<React.HTMLAttributes<HTMLDivEle
   children?: React.ReactNode;
   /** Visually mute the row (e.g. for disabled rows). */
   muted?: boolean;
+  /** Slightly smaller label font size. */
+  small?: boolean;
+  /** Tighter vertical spacing between rows. */
+  compact?: boolean;
 }
 
-export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({icon, title, children, muted, ...rest}) => {
+export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({
+  icon,
+  title,
+  children,
+  muted,
+  small,
+  compact,
+  ...rest
+}) => {
   const styles = useStyles();
   const labelClass = useLabelClass();
 
@@ -81,13 +110,18 @@ export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({icon, title, childr
   }));
 
   return (
-    <div className={(rest.className ? ` ${rest.className}` : '') + rowClass} {...rest}>
+    <div
+      className={
+        (rest.className ? ` ${rest.className}` : '') + rowClass + (compact ? rowCompactClass : '')
+      }
+      {...rest}
+    >
       <span className={leftClass}>
         {!!icon && <span className={iconClass + dynamicIconClass}>{icon}</span>}
-        <span className={labelClass + dynamicLabelClass}>{title}</span>
+        <span className={labelClass + dynamicLabelClass + (small ? labelSmallClass : '')}>{title}</span>
       </span>
       {children !== undefined && children !== null && children !== false && (
-        <span className={rightClass + dynamicRightClass}>{children}</span>
+        <span className={rightClass + dynamicRightClass + (small ? valueSmallClass : '')}>{children}</span>
       )}
     </div>
   );
