@@ -12,6 +12,7 @@ import {TabsHeader} from './components/TabsHeader';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {FileOptionsDrawer} from './components/LeftSidebar/SavedFileList/FileOptionsDrawer';
 import type {FileMetadataDto} from './state/file';
+import {host} from './util/host';
 
 const columnClass = rule({
   d: 'flex',
@@ -42,6 +43,10 @@ export const App: React.FC = () => {
       state.ondoubleclick = void 0;
     };
   }, [state]);
+
+  // Cmd+W in Electron
+  React.useEffect(() => host?.onCloseFile(() => state.tabs.deleteSelected()), [state]);
+
   const files = useBehaviorSubject(state.files$);
   const theme = state.theme.resolved.use();
 

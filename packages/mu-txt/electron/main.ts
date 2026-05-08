@@ -1,4 +1,4 @@
-import {app, BrowserWindow, shell, protocol, net} from 'electron';
+import {app, BrowserWindow, shell, protocol, net, Menu, type MenuItemConstructorOptions} from 'electron';
 import * as path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -79,6 +79,7 @@ if (!gotLock) {
 
   app.whenReady().then(() => {
     if (!isDev) registerAppProtocol();
+    buildAppMenu();
     createWindow();
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -88,6 +89,43 @@ if (!gotLock) {
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
   });
+}
+
+function buildAppMenu(): void {
+  const isMac = process.platform === 'darwin';
+  const sendCloseFile = () => mainWindow?.webContents.send('mutxt:close-file');
+  const template: MenuItemConstructorOptions[] = [
+    ...(isMac
+      ? ([
+          {
+            label: app.name,
+            submenu: [
+              {role: 'about'},
+              {type: 'separator'},
+              {role: 'services'},
+              {type: 'separator'},
+              {role: 'hide'},
+              {role: 'hideOthers'},
+              {role: 'unhide'},
+              {type: 'separator'},
+              {role: 'quit'},
+            ],
+          },
+        ] as MenuItemConstructorOptions[])
+      : []),
+    {
+      label: 'File',
+      submenu: [
+        {label: 'Close File', accelerator: 'CmdOrCtrl+W', click: sendCloseFile},
+        {label: 'Close Window', accelerator: 'CmdOrCtrl+Shift+W', role: 'close'},
+        ...(isMac ? [] : ([{type: 'separator'}, {role: 'quit'}] as MenuItemConstructorOptions[])),
+      ],
+    },
+    {role: 'editMenu'},
+    {role: 'viewMenu'},
+    {role: 'windowMenu'},
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 function registerAppProtocol(): void {

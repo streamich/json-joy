@@ -11,11 +11,20 @@ const subscribe = <T>(channel: string, cb: Listener<T>): Unsubscribe => {
   };
 };
 
+const subscribeVoid = (channel: string, cb: () => void): Unsubscribe => {
+  const listener = () => cb();
+  ipcRenderer.on(channel, listener);
+  return () => {
+    ipcRenderer.off(channel, listener);
+  };
+};
+
 const api = {
   platform: process.platform,
   versions: {...process.versions},
   onOpenPath: (cb: Listener<string>): Unsubscribe => subscribe<string>('mutxt:open-path', cb),
   onOpenUrl: (cb: Listener<string>): Unsubscribe => subscribe<string>('mutxt:open-url', cb),
+  onCloseFile: (cb: () => void): Unsubscribe => subscribeVoid('mutxt:close-file', cb),
 } as const;
 
 export type MutxtBridge = typeof api;

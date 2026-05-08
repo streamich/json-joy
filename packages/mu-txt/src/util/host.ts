@@ -3,6 +3,8 @@ export interface MutxtHost {
   readonly versions: Readonly<Record<string, string | undefined>>;
   onOpenPath(cb: (path: string) => void): () => void;
   onOpenUrl(cb: (url: string) => void): () => void;
+  /** Fires when the user presses Cmd/Ctrl+W. */
+  onCloseFile(cb: () => void): () => void;
 }
 
 declare global {
