@@ -2,15 +2,14 @@
 
 `<mu-txt>` &mdash; a custom element wrapping the [MuTxt](../mutxt-react) rich-text editor.
 
-## Use from a CDN
+## Use from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mutxt-element/dist/mutxt-element.min.js"></script>
-
-<mu-txt></mu-txt>
+<mu-txt style="height:calc(100vh-32px);padding:16px"></mu-txt>
+<script src="https://cdn.jsdelivr.net/npm/mutxt-element"></script>
 ```
 
-## Use from npm
+## Use from NPM
 
 ```bash
 npm install mutxt-element
