@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import {useT} from 'use-t';
 import {useExplorer} from '../../../context';
 import {useBehaviorSubject, useBehaviorSubjectOpt} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
@@ -7,6 +8,32 @@ import * as ScrollArea from '@jsonjoy.com/ui/src/4-card/ScrollArea';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import type {Model} from 'json-joy/lib/json-crdt';
+
+const openButtonClass = rule({
+  w: '33%',
+  h: '20px',
+  pad: 0,
+  mar: 0,
+  bd: 'none',
+  bgc: 'transparent',
+  cursor: 'pointer',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
+});
+
+const openBarClass = rule({
+  d: 'block',
+  w: '100%',
+  h: '4px',
+  bdrad: '2px',
+  bgc: 'currentColor',
+  op: 0.1,
+  trs: 'opacity 120ms ease',
+  [`.${openButtonClass.trim()}:hover &`]: {
+    op: 0.5,
+  },
+});
 
 export interface LogProps {
   visible?: boolean;
@@ -19,7 +46,6 @@ export const Log: React.FC<LogProps> = ({visible, onModel}) => {
   const file = useBehaviorSubject(state.file$);
   const logView = useBehaviorSubjectOpt(file?.logState.view$);
   const [open, setOpen] = React.useState(false);
-  const [hover, setHover] = React.useState(false);
 
   if (!file || !visible) {
     return null;
@@ -41,35 +67,12 @@ export const Log: React.FC<LogProps> = ({visible, onModel}) => {
       >
         <button
           type="button"
+          className={openButtonClass}
           title={showLog}
           aria-label={showLog}
           onClick={() => setOpen(true)}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          style={{
-            width: '33%',
-            height: 20,
-            padding: 0,
-            margin: 0,
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
         >
-          <span
-            style={{
-              display: 'block',
-              width: '100%',
-              height: 4,
-              borderRadius: 2,
-              background: 'currentColor',
-              opacity: hover ? 0.5 : 0.1,
-              transition: 'opacity 120ms ease',
-            }}
-          />
+          <span className={openBarClass} />
         </button>
       </div>
     );
