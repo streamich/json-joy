@@ -27,6 +27,8 @@ const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
 };
 
 const SAVED_REFRESH_INTERVAL_MS = 5_000;
+const LEFT_SIZE_STORAGE_KEY = 'mutxt_left_sidebar_size';
+const LEFT_SIZE_PERSIST_DEBOUNCE_MS = 300;
 
 const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
   [...saved].sort((a, b) => b.updatedAt - a.updatedAt || b.createdAt - a.createdAt);
@@ -46,6 +48,8 @@ export class MuTxtAppState {
   public onclick: ((file: OpenFile, point: AnchorPoint) => void) | undefined = void 0;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
+  private leftSizePersistTimer: ReturnType<typeof setTimeout> | null = null;
+  private leftSizeUnsubscribe: (() => void) | null = null;
 
   constructor(storage: IFileStorage = new FileStorage()) {
     const sync = (this.sync = getSyncStore());
@@ -58,6 +62,8 @@ export class MuTxtAppState {
     }
     this.menus = new Menus(this);
     this.theme = new Theme(sync);
+    this.restoreLeftSidebarSize();
+    this.leftSizeUnsubscribe = this.appGrid.leftSize.subscribe(this.scheduleLeftSidebarSizePersist);
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
@@ -65,7 +71,7 @@ export class MuTxtAppState {
       return void 0;
     };
     this.tabs.onDeleteTab = (tab) => {
-      this.close(tab.id!);
+      this.disposeFile(tab.id!);
     };
     this.tabs.onTabDoubleClick = (tab, _index, event) => {
       const file = this.fileIfOpen(tab.id!);
@@ -117,6 +123,22 @@ export class MuTxtAppState {
     };
   };
 
+  private readonly restoreLeftSidebarSize = (): void => {
+    const stored = this.sync.getItem(LEFT_SIZE_STORAGE_KEY);
+    if (stored === null) return;
+    const value = Number(stored);
+    if (!Number.isFinite(value) || value <= 0) return;
+    this.appGrid.leftSize.set(value);
+  };
+
+  private readonly scheduleLeftSidebarSizePersist = (): void => {
+    if (this.leftSizePersistTimer) clearTimeout(this.leftSizePersistTimer);
+    this.leftSizePersistTimer = setTimeout(() => {
+      this.leftSizePersistTimer = null;
+      this.sync.setItem(LEFT_SIZE_STORAGE_KEY, String(this.appGrid.leftSize.value));
+    }, LEFT_SIZE_PERSIST_DEBOUNCE_MS);
+  };
+
   private readonly stopSavedRefresh = () => {
     if (this.savedRefreshTimer) {
       clearInterval(this.savedRefreshTimer);
@@ -164,6 +186,13 @@ export class MuTxtAppState {
     this.stopSavedRefresh();
     this.detachDragDrop?.();
     this.detachDragDrop = null;
+    this.leftSizeUnsubscribe?.();
+    this.leftSizeUnsubscribe = null;
+    if (this.leftSizePersistTimer) {
+      clearTimeout(this.leftSizePersistTimer);
+      this.leftSizePersistTimer = null;
+      this.sync.setItem(LEFT_SIZE_STORAGE_KEY, String(this.appGrid.leftSize.value));
+    }
     this.theme.dispose();
     await Promise.all(this.files$.getValue().map((file) => file.destroy(true)));
   }
@@ -227,14 +256,20 @@ export class MuTxtAppState {
     this.tabs.selectById(id);
   }
 
+  private readonly disposeFile = (id: string) => {
+    const list = this.files$.getValue();
+    const file = list.find((openFile) => openFile.id === id);
+    if (!file) return;
+    void file.destroy(true);
+    this.files$.next(list.filter((m) => m.id !== id));
+  };
+
   public readonly close = (id: string) => {
     this.tabs.deleteById(id);
-    const file = this.files$.getValue().find((openFile) => openFile.id === id);
-    void file?.destroy(true);
-    const list = this.files$.getValue().filter((m) => m.id !== id);
-    this.files$.next(list);
-    // const files = this.files$.getValue();
-    // if (files.length && !this.file$.getValue()) this.tabs.selectById(files[0].id);
+    // tabs.deleteById fires onDeleteTab → disposeFile, which handles file
+    // teardown. Falling back here covers callers where the tab had already
+    // been removed externally.
+    this.disposeFile(id);
   };
 
   public readonly closeAll = () => {
