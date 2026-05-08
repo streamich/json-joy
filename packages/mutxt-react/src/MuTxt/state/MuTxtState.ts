@@ -154,7 +154,7 @@ export class MuTxtState implements UiLifeCycles {
     } catch {
       initialValue = createEmptyDocument() as Descendant[];
     }
-    this.sizer = new SizerState(Number(obj.read('/width')) || 1200);
+    this.sizer = new SizerState(Number(obj.read('/width')) || 1300);
     const storedFont = obj.read('/font');
     if (isFontKind(storedFont)) this.font.next(storedFont);
     const storedEditableWidth = obj.read('/ew');
