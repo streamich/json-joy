@@ -29,7 +29,11 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
     <Split className={blockClass} style={{alignItems: 'center', padding: '0 0 0'}}>
       <Flex style={{alignItems: 'center', gap: 10}}>
         <div style={{width: isMacElectron ? TRAFFIC_LIGHT_WIDTH : 'env(titlebar-area-x)'}} />
-        {!isMacElectron && <BrandLogo />}
+          <div style={{marginLeft: -6}}>
+            {toggle}
+          </div>
+          {/* <HeaderMenu /> */}
+        {/* {!isMacElectron && <BrandLogo />} */}
         <input
           multiple
           type="file"
@@ -46,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
       <div style={{display: 'inline-flex', alignItems: 'center', gap: 8}}>
         <HeaderMenu />
         {/* {isMacElectron && <BrandLogo />} */}
-        {toggle}
+        {/* {toggle} */}
       </div>
     </Split>
   );

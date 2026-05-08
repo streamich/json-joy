@@ -13,7 +13,7 @@ export const BasicButtonMore: React.FC<BasicButtonMoreProps> = ({tooltip, ...res
   const title = t('More');
 
   let element = (
-    <BasicButton title={title} {...rest}>
+    <BasicButton {...rest}>
       <MoreIcon />
     </BasicButton>
   );

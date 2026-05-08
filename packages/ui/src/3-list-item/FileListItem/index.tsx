@@ -9,7 +9,7 @@ import {isTouch} from '../../utils/environment';
 const rowClass = rule({
   d: 'flex',
   ai: 'center',
-  gap: '0px',
+  gap: '4px',
   w: '100%',
   minWidth: 0,
   bxz: 'border-box',

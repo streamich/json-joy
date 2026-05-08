@@ -13,13 +13,15 @@ const rootClass = rule({
   us: 'none',
 });
 
+const fontSize = 22.5;
+
 const muClass = rule({
   ...theme.font.serif.mid,
   letterSpacing: '.05em',
   d: 'inline-flex',
   tr: 'translateY(1px)',
   sub: {
-    fz: '15.3px',
+    fz: `${fontSize * 15.3 / 22.5}px`,
   },
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
@@ -30,7 +32,7 @@ const muClass = rule({
 
 const txtClass = rule({
   ...theme.font.slab.bold,
-  fz: '22.5px',
+  fz: `${fontSize}px`,
 });
 
 const txt1Class = rule({
