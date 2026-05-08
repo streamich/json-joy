@@ -20,10 +20,15 @@
     "type": "github",
     "url": "https://github.com/sponsors/streamich"
   },
+  "main": "out-electron/main.js",
+  "bin": "bin/mu-txt.js",
   "files": [
     "LICENSE",
     "lib/",
-    "dist/"
+    "dist/",
+    "out-electron/",
+    "bin/",
+    "public/icons/"
   ],
   "keywords": [
     "mutxt",
@@ -40,18 +45,13 @@
     "tslib": "*"
   },
   "dependencies": {
-    "@jsonjoy.com/collaborative-peritext": "workspace:*",
-    "@jsonjoy.com/collaborative-slate": "workspace:*",
-    "@jsonjoy.com/collaborative-ui": "workspace:*",
-    "@jsonjoy.com/json-pack": "workspace:*",
-    "@jsonjoy.com/ui": "workspace:*",
-    "@jsonjoy.com/util": "workspace:*",
-    "flexible-input": "^1.0.3",
-    "json-joy": "workspace:*",
-    "mutxt-react": "workspace:*"
+    "electron": "^42.0.0"
   },
   "engines": {
     "node": ">=18.0"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "scripts": {
     "dev": "webpack serve --mode development",
@@ -59,14 +59,39 @@
     "build": "webpack --mode production",
     "deploy": "yarn build && wrangler pages deploy --branch=master dist",
     "deploy:preview": "yarn build && wrangler pages deploy --branch=preview dist",
-    "typecheck": "npx tsc --noEmit -p tsconfig.app.json",
-    "clean": "npx rimraf dist"
+    "typecheck": "npx tsc --noEmit -p tsconfig.app.json && npx tsc --noEmit -p tsconfig.electron.json",
+    "clean": "npx rimraf dist out out-electron out-stage",
+    "electron:build:main": "npx tsc -p tsconfig.electron.json",
+    "electron:build": "yarn build && yarn electron:build:main",
+    "electron:stage": "node scripts/stage-electron.js",
+    "electron:dev": "yarn electron:build:main && electron out-electron/main.js",
+    "electron:package": "yarn electron:build && yarn electron:stage && electron-forge package out-stage",
+    "electron:make": "yarn electron:build && yarn electron:stage && electron-forge make out-stage",
+    "electron:publish": "yarn electron:build && yarn electron:stage && electron-forge publish out-stage",
+    "prepack": "yarn electron:build"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/publisher-github": "^7.11.1",
+    "@electron-forge/shared-types": "^7.11.1",
+    "@jsonjoy.com/collaborative-peritext": "workspace:*",
+    "@jsonjoy.com/collaborative-slate": "workspace:*",
+    "@jsonjoy.com/collaborative-ui": "workspace:*",
+    "@jsonjoy.com/json-pack": "workspace:*",
+    "@jsonjoy.com/ui": "workspace:*",
+    "@jsonjoy.com/util": "workspace:*",
     "@types/node": "^22.14.1",
     "css-loader": "^7.1.2",
+    "electron": "^42.0.0",
+    "flexible-input": "^1.0.3",
     "html-webpack-plugin": "^5.6.3",
+    "json-joy": "workspace:*",
     "mini-css-extract-plugin": "^2.9.2",
+    "mutxt-react": "workspace:*",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
     "webpack": "^5.99.5",
