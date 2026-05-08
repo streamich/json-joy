@@ -16,6 +16,7 @@ const backdropClass = rule({
   bottom: 0,
   z: 1500,
   trs: 'opacity 200ms ease',
+  '-webkit-app-region': 'no-drag',
 });
 
 const backdropThemeClass = drule({});
@@ -34,6 +35,7 @@ const panelClass = rule({
   trs: 'transform 250ms cubic-bezier(.22,1,.36,1), opacity 180ms ease, visibility 0ms linear 250ms',
   vis: 'hidden',
   willChange: 'transform',
+  '-webkit-app-region': 'no-drag',
   '&:focus': {
     out: 0,
   },
