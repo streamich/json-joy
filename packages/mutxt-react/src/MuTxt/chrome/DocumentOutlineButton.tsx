@@ -3,14 +3,12 @@ import {rule} from 'nano-theme';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
-import {getDocumentOutline} from '../behavior/outline';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {EmptyState} from '@jsonjoy.com/ui/lib/4-card/EmptyState';
 import {EditorContextPopup} from './EditorContextPopup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {useMuTxt} from '../context';
 import type {Editor} from 'slate';
-import type {SlateEditorDocument} from '../types';
 
 const Icon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 // const Icon = makeIcon({set: 'bootstrap', icon: 'card-heading', width: 16, height: 16});
@@ -35,7 +33,8 @@ export interface DocumentOutlineButtonProps {
 export const DocumentOutlineButton: React.FC<DocumentOutlineButtonProps> = ({editor, contentWidth}) => {
   const styles = useStyles();
   const mutxt = useMuTxt();
-  const outline = getDocumentOutline(editor.children as SlateEditorDocument);
+  mutxt.contentVersion.use();
+  const outline = mutxt.outline();
 
   const renderContext = () =>
     outline.length ? (

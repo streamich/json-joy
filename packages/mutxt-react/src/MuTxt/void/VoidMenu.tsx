@@ -3,6 +3,7 @@ import {rsync} from '@jsonjoy.com/ui';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
 import {insertHr} from '../behavior/hr';
+import {insertToc} from '../behavior/toc';
 import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
@@ -11,6 +12,7 @@ import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 const EmbedIcon = makeIcon({set: 'tabler', icon: 'box', width: 16, height: 16});
 const HrIcon = makeIcon({set: 'tabler', icon: 'separator', width: 16, height: 16});
 const FileIcon = makeIcon({set: 'tabler', icon: 'file-upload', width: 16, height: 16});
+const TocIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 
 export class VoidMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -22,7 +24,12 @@ export class VoidMenu implements UiLifeCycles {
   public build(): MenuItem {
     return {
       name: 'Insert menu',
-      children: [this.itemEmbed({anchorFromCaret: true}), this.itemFile({anchorFromCaret: true}), this.itemHr()],
+      children: [
+        this.itemEmbed({anchorFromCaret: true}),
+        this.itemFile({anchorFromCaret: true}),
+        this.itemHr(),
+        this.itemToc(),
+      ],
     };
   }
 
@@ -33,7 +40,7 @@ export class VoidMenu implements UiLifeCycles {
         {
           name: 'Insert menu',
           expand: 2,
-          children: [this.itemEmbed(), this.itemFile(), this.itemHr()],
+          children: [this.itemEmbed(), this.itemFile(), this.itemHr(), this.itemToc()],
         },
       ],
     };
@@ -50,6 +57,24 @@ export class VoidMenu implements UiLifeCycles {
         if (mutxt.readOnly.value) return;
         mutxt.voids.open.set(false);
         insertHr(mutxt.editor);
+        ReactEditor.focus(mutxt.editor as ReactEditor);
+        mutxt.setFocused(true);
+        mutxt.sync(true);
+      },
+    };
+  }
+
+  public itemToc(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Table of contents',
+      icon: () => <TocIcon />,
+      disabled: rsync.comp([mutxt.readOnly], ([readOnly]) => !!readOnly),
+      onSelect: (event) => {
+        event.preventDefault();
+        if (mutxt.readOnly.value) return;
+        mutxt.voids.open.set(false);
+        insertToc(mutxt.editor);
         ReactEditor.focus(mutxt.editor as ReactEditor);
         mutxt.setFocused(true);
         mutxt.sync(true);

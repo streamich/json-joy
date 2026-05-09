@@ -1,7 +1,9 @@
 import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
+import type {ToastService} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager/services/ToastService';
 import {KeyContext, KeySourceEl} from '@jsonjoy.com/keyboard';
 import {getActiveAlignment} from '../behavior';
 import {getCaretPathInfo} from '../behavior/path-info';
+import {type DocumentOutlineItem, getDocumentOutline} from '../behavior/outline';
 import {getEditorPlainText, getSelectedText, getWordCount} from '../util/index';
 import {watch} from '../util/watch';
 import {bindShortcuts} from '../behavior/keyboard';
@@ -30,6 +32,7 @@ import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {ReactEditor} from 'slate-react';
 import type {CustomElement, DisplayMode, EditableWidth, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
+export type {DocumentOutlineItem};
 import type {HistoryEditor} from 'slate-history';
 
 const isEditableWidth = (v: unknown): v is EditableWidth => v === 'narrow' || v === 'mid' || v === 'wide';
@@ -119,6 +122,8 @@ export class MuTxtState implements UiLifeCycles {
 
   public publishPresence?: () => void;
   public requestLinkMenu?: () => void;
+
+  public toasts?: ToastService;
 
   public onTitleSubmit?: (title: string) => void = void 0;
 
@@ -318,5 +323,25 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly onSelection = () => {
     this.sync(false);
+  };
+
+  // --------------------------------------------------------- Document outline
+
+  /** Cached document outline, recomputed when content changes. */
+  private _outlineVersion = -1;
+  private _outlineCache: DocumentOutlineItem[] = [];
+
+  /**
+   * Returns the document heading outline. The result is cached per
+   * `contentVersion`, so repeated calls within the same content revision are
+   * cheap. Consumers that want re-render reactivity should call this from a
+   * component that subscribes to `contentVersion`.
+   */
+  public readonly outline = (): DocumentOutlineItem[] => {
+    const version = this.contentVersion.value;
+    if (this._outlineVersion === version) return this._outlineCache;
+    this._outlineCache = getDocumentOutline(this.editor.children as SlateEditorDocument);
+    this._outlineVersion = version;
+    return this._outlineCache;
   };
 }

@@ -90,7 +90,19 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
           <ToolbarSep line />
           <ToolbarMenu
             pane={{transparent: true, inline: true}}
-            menu={mutxt.docMenu.buildHeaderToolbar(width > 1300 ? 3 : width > 1200 ? 2 : width > 1100 ? 1 : 0)}
+            menu={mutxt.docMenu.buildHeaderToolbar(
+              width > 1500
+                ? 5
+                : width > 1400
+                  ? 4
+                  : width > 1300
+                    ? 3
+                    : width > 1200
+                      ? 2
+                      : width > 1100
+                        ? 1
+                        : 0,
+            )}
           />
         </div>
       </Split>

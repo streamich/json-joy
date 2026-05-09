@@ -79,6 +79,7 @@ export interface EditorContextPopupProps {
   cancelLabel?: string;
   applyLabel?: string;
   minWidth?: number;
+  maxWidth?: number;
 }
 
 export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
@@ -93,6 +94,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
   cancelLabel = 'Cancel',
   applyLabel = 'Apply',
   minWidth,
+  maxWidth,
 }) => {
   const styles = useStyles();
   const anchor = useAnchorPoint();
@@ -196,12 +198,19 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       ? safeHeight
       : Math.min(safeHeight, contentViewportHeight + measuredHeaderHeight + measuredFooterHeight);
 
+  const viewportMaxWidth = viewportWidth ? viewportWidth - VIEWPORT_MARGIN : undefined;
+  const resolvedMaxWidth =
+    maxWidth !== undefined && viewportMaxWidth !== undefined
+      ? Math.min(maxWidth, viewportMaxWidth)
+      : (maxWidth ?? viewportMaxWidth);
+
   return (
     <MoveToViewport vertical>
       <ContextPane
         minWidth={safeMinWidth}
         style={{
-          maxWidth: viewportWidth ? viewportWidth - VIEWPORT_MARGIN : undefined,
+          maxWidth: resolvedMaxWidth,
+          width: maxWidth !== undefined ? resolvedMaxWidth : undefined,
         }}
       >
         <ScrollArea.ScrollArea shadow railWidth={4} style={{height: scrollHeight}}>
