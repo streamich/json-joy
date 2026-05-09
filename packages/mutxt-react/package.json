@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.19.0",
+  "version": "18.20.0",
   "description": "Batteries-included React rich-text editor",
   "author": {
     "name": "streamich",
