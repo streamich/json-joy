@@ -3,6 +3,7 @@ import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
 import {TwoColFormRow} from '@jsonjoy.com/ui/lib/3-list-item/TwoColForm';
 import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
+import {usePopup} from '@jsonjoy.com/ui/lib/4-card/Popup/context';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {DateTime} from '@jsonjoy.com/ui/lib/1-inline/DateTime';
@@ -105,6 +106,7 @@ export const FileOptionsForm: React.FC<FileOptionsFormProps> = ({file}) => {
   const [t] = useT();
   const styles = useStyles();
   const state = useExplorer();
+  const popup = usePopup();
   const openFiles = useBehaviorSubject(state.files$);
   const openFile = openFiles.find((f) => f.id === file.id);
   const isOpen = !!openFile;
@@ -114,8 +116,9 @@ export const FileOptionsForm: React.FC<FileOptionsFormProps> = ({file}) => {
   }, [state, file.id]);
 
   const handleDelete = React.useCallback(async () => {
+    popup?.close();
     await state.deleteSaved(file.id);
-  }, [state, file.id]);
+  }, [state, file.id, popup]);
 
   return (
     <div style={{padding: '8px 0', boxSizing: 'border-box'}}>
