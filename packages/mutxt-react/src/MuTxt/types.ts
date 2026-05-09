@@ -72,7 +72,7 @@ export type BlockFormat =
   | 'code-block'
   | 'pre'
   | ListElementType;
-export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | SystemBlockElementType;
+export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | 'toc' | SystemBlockElementType;
 export type SystemBlockElementType = '.things' | '.thing';
 export type HrLineStyle = 'solid' | 'dashed' | 'dotted' | 'squiggly';
 
@@ -197,6 +197,19 @@ export interface HrElement extends BlockAttributes {
   children: CustomText[];
 }
 
+export interface TocElement extends BlockAttributes {
+  type: 'toc';
+  /** Optional caption displayed above the entries. */
+  caption?: string;
+  /** Deepest heading level to include (1..6). Defaults to 3. */
+  maxLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Whether to include the document title (h0). Defaults to true. */
+  includeTitle?: boolean;
+  /** Show numeric prefixes. */
+  numbered?: boolean;
+  children: CustomText[];
+}
+
 /**
  * A schema.org-style "thing" record stored in the hidden `.things` system
  * block. The `@type` discriminator names the kind of payload; `@id` is unique
@@ -240,7 +253,8 @@ export type CustomElement =
   | ChecklistListElement
   | EmbedElement
   | HrElement
-  | FileElement;
+  | FileElement
+  | TocElement;
 
 export type SlateEditorDocument = CustomElement[];
 
