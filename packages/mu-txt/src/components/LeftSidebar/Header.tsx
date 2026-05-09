@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {useExplorer} from '../../context';
-import {BrandLogo} from './BrandLogo';
 import {HeaderMenu} from './HeaderMenu';
 import {rule} from 'nano-theme';
 import {isMacElectron} from '../../util/host';

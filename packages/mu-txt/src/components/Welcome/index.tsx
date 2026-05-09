@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, drule, useTheme} from 'nano-theme';
+import {rule, useTheme} from 'nano-theme';
 import {useT} from 'use-t';
 import {MuTxtLogo} from '@jsonjoy.com/ui/lib/icons/svg/MuTxtLogo';
 import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';

@@ -109,7 +109,6 @@ export const FileOptionsForm: React.FC<FileOptionsFormProps> = ({file}) => {
   const popup = usePopup();
   const openFiles = useBehaviorSubject(state.files$);
   const openFile = openFiles.find((f) => f.id === file.id);
-  const isOpen = !!openFile;
 
   const handleDownload = React.useCallback(() => {
     state.download(file.id).catch(() => {});

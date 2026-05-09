@@ -4,7 +4,6 @@ import {useExplorer} from '../../context';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {FileTabs} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
 import {PwaInstallButton} from './PwaInstallButton';
-import {isMacElectron} from '../../util/host';
 
 const enum Sizes {
   TabsHeight = 48,

@@ -9,7 +9,6 @@ import {ctx} from './context';
 import {LeftSidebar} from './components/LeftSidebar';
 import {useT} from 'use-t';
 import {TabsHeader} from './components/TabsHeader';
-import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {FileOptionsContextPane} from './components/LeftSidebar/SavedFileList/FileOptionsContextPane';
 import type {FileMetadataDto, OpenFile} from './state/file';
 import {host} from './util/host';
@@ -93,7 +92,6 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown, true);
   }, [state]);
 
-  const files = useBehaviorSubject(state.files$);
   const theme = state.theme.resolved.use();
 
   return (

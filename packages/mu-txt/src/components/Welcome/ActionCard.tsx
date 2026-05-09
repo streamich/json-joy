@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {drule, rule, useTheme} from 'nano-theme';
-import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 
 const blockClass = drule({
   pos: 'relative',
