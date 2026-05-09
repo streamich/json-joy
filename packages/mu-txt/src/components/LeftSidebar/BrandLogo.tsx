@@ -13,13 +13,15 @@ const rootClass = rule({
   us: 'none',
 });
 
+const fontSize = 22.5;
+
 const muClass = rule({
   ...theme.font.serif.mid,
   letterSpacing: '.05em',
   d: 'inline-flex',
   tr: 'translateY(1px)',
   sub: {
-    fz: '15.3px',
+    fz: `${(fontSize * 15.3) / 22.5}px`,
   },
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
@@ -30,7 +32,7 @@ const muClass = rule({
 
 const txtClass = rule({
   ...theme.font.slab.bold,
-  fz: '22.5px',
+  fz: `${fontSize}px`,
 });
 
 const txt1Class = rule({
@@ -61,15 +63,23 @@ const txt3Class = rule({
     tr: 'translateY(5px)',
   },
 });
-export type BrandLogoProps = {};
 
-export const BrandLogo: React.FC<BrandLogoProps> = () => {
+export type BrandLogoProps = {
+  color?: string;
+};
+
+export const BrandLogo: React.FC<BrandLogoProps> = ({color}) => {
   const styles = useStyles();
   const label = '\\mu txt — Micro rich-text editor';
 
   return (
     <BasicTooltip nowrap renderTooltip={() => label} delay={555}>
-      <span className={rootClass} role="img" aria-label={label} style={{color: styles.col.get('neutral', 'txt-1')}}>
+      <span
+        className={rootClass}
+        role="img"
+        aria-label={label}
+        style={{color: color || styles.col.get('neutral', 'txt-1')}}
+      >
         <span className={muClass}>
           <sub>μ</sub>
         </span>

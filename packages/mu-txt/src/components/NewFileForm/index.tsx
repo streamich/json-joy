@@ -21,7 +21,7 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
   return (
     <div onClick={(e) => e.stopPropagation()} onKeyDown={() => {}} style={{maxWidth: 360, margin: '0 auto'}}>
       <div>
-        <MiniTitle>{t('New')}</MiniTitle>
+        {!!expanded && <MiniTitle>{t('New')}</MiniTitle>}
         <Space size={-1} />
         <Flex style={{alignItems: 'center'}}>
           <CreateButton

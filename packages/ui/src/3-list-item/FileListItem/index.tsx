@@ -9,7 +9,7 @@ import {isTouch} from '../../utils/environment';
 const rowClass = rule({
   d: 'flex',
   ai: 'center',
-  gap: '0px',
+  gap: '4px',
   w: '100%',
   minWidth: 0,
   bxz: 'border-box',
@@ -39,10 +39,28 @@ const surfaceClass = rule({
   fontSize: 'inherit',
   col: 'inherit',
   cur: 'inherit',
+  trs: 'padding .2s ease',
 });
 
 const surfaceSmallClass = rule({
   pd: '0px 6px 0px 12px',
+});
+
+const metadataWrapperClass = rule({
+  d: 'grid',
+  gridTemplateRows: '1fr',
+  op: 1,
+  trs: 'grid-template-rows .2s ease, opacity .2s ease',
+});
+
+const metadataWrapperSmallClass = rule({
+  gridTemplateRows: '0fr',
+  op: 0,
+});
+
+const metadataInnerClass = rule({
+  minHeight: 0,
+  ov: 'hidden',
 });
 
 const iconClass = rule({
@@ -191,7 +209,13 @@ export const FileListItem: React.FC<FileListItemProps> = ({
       {!!iconNode && <span className={iconClass + dynamicIconClass}>{iconNode}</span>}
       <span className={contentClass}>
         <span className={titleSelector + ' ' + titleClass + dynamicTitleClass}>{title}</span>
-        {!!metadata && <span className={metadataClass + dynamicMetadataClass}>{metadata}</span>}
+        {metadata !== undefined && metadata !== null && metadata !== false && (
+          <span className={metadataWrapperClass + (small ? metadataWrapperSmallClass : '')}>
+            <span className={metadataInnerClass}>
+              <span className={metadataClass + dynamicMetadataClass}>{metadata}</span>
+            </span>
+          </span>
+        )}
       </span>
     </>
   );

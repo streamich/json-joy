@@ -36,9 +36,14 @@ export const Sizer: React.FC<SizerProps> = ({
   style,
   children,
 }) => {
-  const stateRef = React.useRef<SizerState | null>(stateProp ?? null);
-  if (!stateRef.current) stateRef.current = stateProp ?? new SizerState();
-  const state = stateRef.current;
+  const fallbackRef = React.useRef<SizerState | null>(null);
+  let state: SizerState;
+  if (stateProp) {
+    state = stateProp;
+  } else {
+    if (!fallbackRef.current) fallbackRef.current = new SizerState();
+    state = fallbackRef.current;
+  }
 
   React.useEffect(() => {
     onState?.(state);

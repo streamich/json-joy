@@ -313,9 +313,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
     <>
       <MuTxtHeader editor={editor} />
       {content}
-      <div style={{borderTop: `1px solid ${styles.light ? styles.g(0, 0.06) : styles.g(1, 0.08)}`}}>
-        <MuTxtFooter />
-      </div>
+      <MuTxtFooter />
       {shortcutsOpen && (
         <React.Suspense fallback={null}>
           <KeyboardShortcutsModal />
@@ -337,7 +335,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
           maxWidth: 'none',
           borderRadius: 0,
           zIndex: 9999,
-          background: styles.light ? styles.g(1) : styles.g(0),
+          background: String(styles.bg),
         }
       : (style as React.CSSProperties);
 

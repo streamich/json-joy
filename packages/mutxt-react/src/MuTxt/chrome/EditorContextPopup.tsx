@@ -137,8 +137,8 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       ref={setHeaderElement}
       className={titleClass}
       style={{
-        borderBottom: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
-        background: styles.g(1, 0.7),
+        borderBottom: `1px solid ${styles.g(0, 0.06)}`,
+        background: styles.g(1, styles.light ? 0.7 : 0.2),
         color: styles.g(0.24),
       }}
     >
@@ -155,8 +155,8 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       ref={setFooterElement}
       className={footerClass}
       style={{
-        borderTop: `1px solid ${styles.g(0, styles.light ? 0.06 : 0.1)}`,
-        background: styles.g(1, 0.7),
+        borderTop: `1px solid ${styles.g(0, 0.06)}`,
+        background: styles.g(1, styles.light ? 0.7 : 0.2),
       }}
     >
       <BasicButton

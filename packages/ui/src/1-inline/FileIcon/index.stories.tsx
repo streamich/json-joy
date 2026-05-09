@@ -60,6 +60,7 @@ export const LargeIcon: Story = {
     size: 80,
     gradient: true,
     accent: true,
+    link: true,
   },
 };
 

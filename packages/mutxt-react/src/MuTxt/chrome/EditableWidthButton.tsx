@@ -47,7 +47,6 @@ const widthBtnBarClass = rule({
 const widthBtnLabelClass = rule({
   fz: '.65em',
   pdt: '.35em',
-  op: 0.5,
 });
 
 export interface EditableWidthButtonProps {
@@ -101,6 +100,7 @@ export const EditableWidthButton: React.FC<EditableWidthButtonProps> = ({kind, s
             height: Math.round(frameSize * 0.85) + 'px',
             border: '1px dashed ' + frameBorder,
             padding: framePadding + 'px',
+            marginTop: 8,
           }}
         >
           <span
@@ -117,7 +117,7 @@ export const EditableWidthButton: React.FC<EditableWidthButtonProps> = ({kind, s
           </span>
         </span>
         {renderSize > 32 && (
-          <span className={widthBtnLabelClass} style={{color: active ? theme.color.sem.accent[0] : void 0}}>
+          <span className={widthBtnLabelClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, 0.7)}}>
             {LABELS[kind]}
           </span>
         )}

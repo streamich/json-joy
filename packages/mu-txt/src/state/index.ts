@@ -7,9 +7,9 @@ import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap, distinctUntilChanged} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
 import {downloadFile, stripExtensions} from './util';
-import {type FileMetadataDto, OpenFile} from './file';
+import {type FileLink, type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
-import {AppGridState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
+import {AppGridState, type SidebarState} from '@jsonjoy.com/ui/lib/7-fullscreen/AppGrid/state';
 import {FileStorage, type IFileStorage} from './file-storage';
 import {Menus} from './menus';
 import {s} from 'json-joy/lib/json-crdt';
@@ -18,6 +18,7 @@ import {FromSlate, type SlateDocument} from '@jsonjoy.com/collaborative-slate';
 import {getSyncStore, type ISyncStore} from './sync-store';
 import {Theme} from './theme';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 
 const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
   const observable = new BehaviorSubject<T>(val.value);
@@ -26,6 +27,15 @@ const toObservable = <T>(val: rsync.ReactValue<T>): BehaviorSubject<T> => {
 };
 
 const SAVED_REFRESH_INTERVAL_MS = 5_000;
+const LEFT_SIZE_STORAGE_KEY = 'mutxt_left_sidebar_size';
+const LEFT_SIZE_PERSIST_DEBOUNCE_MS = 300;
+const LEFT_STATE_STORAGE_KEY = 'mutxt_left_sidebar_state';
+
+const isSidebarState = (value: string): value is SidebarState =>
+  value === 'open' || value === 'close' || value === 'mini' || value === 'none';
+
+const CLOSE_SELECTED_MIN_GAP_MS = 300;
+const CLOSE_SELECTED_DESTROY_TIMEOUT_MS = 1500;
 
 const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
   [...saved].sort((a, b) => b.updatedAt - a.updatedAt || b.createdAt - a.createdAt);
@@ -41,9 +51,13 @@ export class MuTxtAppState {
   public readonly saved: rsync.ReactValue<FileMetadataDto[]> = rsync.val([]);
   public readonly menus: Menus;
   public readonly theme: Theme;
-  public ondoubleclick: ((file: OpenFile) => void) | undefined = void 0;
+  public ondoubleclick: ((file: OpenFile, point: AnchorPoint) => void) | undefined = void 0;
+  public onclick: ((file: OpenFile, point: AnchorPoint) => void) | undefined = void 0;
   protected readonly storage: IFileStorage;
   private savedRefreshTimer: ReturnType<typeof setInterval> | null = null;
+  private leftSizePersistTimer: ReturnType<typeof setTimeout> | null = null;
+  private leftSizeUnsubscribe: (() => void) | null = null;
+  private leftStateUnsubscribe: (() => void) | null = null;
 
   constructor(storage: IFileStorage = new FileStorage()) {
     const sync = (this.sync = getSyncStore());
@@ -56,6 +70,10 @@ export class MuTxtAppState {
     }
     this.menus = new Menus(this);
     this.theme = new Theme(sync);
+    this.restoreLeftSidebarSize();
+    this.restoreLeftSidebarState();
+    this.leftSizeUnsubscribe = this.appGrid.leftSize.subscribe(this.scheduleLeftSidebarSizePersist);
+    this.leftStateUnsubscribe = this.appGrid.leftState.subscribe(this.persistLeftSidebarState);
     this.storage = storage;
     this.tabs = new FileTabsState(rsync.val([] as any));
     this.tabs.onNewTab = () => {
@@ -63,11 +81,19 @@ export class MuTxtAppState {
       return void 0;
     };
     this.tabs.onDeleteTab = (tab) => {
-      this.close(tab.id!);
+      this.disposeFile(tab.id!);
     };
-    this.tabs.onTabDoubleClick = (tab) => {
+    this.tabs.onTabDoubleClick = (tab, _index, event) => {
       const file = this.fileIfOpen(tab.id!);
-      if (file) this.ondoubleclick?.(file);
+      if (!file) return;
+      const point: AnchorPoint = {x: event.clientX, y: event.clientY, dx: 1, dy: 1};
+      this.ondoubleclick?.(file, point);
+    };
+    this.tabs.onTabClick = (tab, _index, event) => {
+      const file = this.fileIfOpen(tab.id!);
+      if (!file) return;
+      const point: AnchorPoint = {x: event.clientX, y: event.clientY + 24, dx: 0, dy: 1};
+      this.onclick?.(file, point);
     };
     this.selected$ = toObservable(this.tabs.selected);
     this.files$
@@ -105,6 +131,36 @@ export class MuTxtAppState {
       window.removeEventListener('dragover', onDragOver);
       window.removeEventListener('drop', onDrop);
     };
+  };
+
+  private readonly restoreLeftSidebarSize = (): void => {
+    const stored = this.sync.getItem(LEFT_SIZE_STORAGE_KEY);
+    if (stored === null) return;
+    const value = Number(stored);
+    if (!Number.isFinite(value) || value <= 0) return;
+    this.appGrid.leftSize.set(value);
+  };
+
+  private readonly scheduleLeftSidebarSizePersist = (): void => {
+    if (this.leftSizePersistTimer) clearTimeout(this.leftSizePersistTimer);
+    this.leftSizePersistTimer = setTimeout(() => {
+      this.leftSizePersistTimer = null;
+      this.sync.setItem(LEFT_SIZE_STORAGE_KEY, String(this.appGrid.leftSize.value));
+    }, LEFT_SIZE_PERSIST_DEBOUNCE_MS);
+  };
+
+  private readonly restoreLeftSidebarState = (): void => {
+    const stored = this.sync.getItem(LEFT_STATE_STORAGE_KEY);
+    if (stored === null) {
+      this.appGrid.leftState.set('close');
+      return;
+    }
+    if (!isSidebarState(stored)) return;
+    this.appGrid.leftState.set(stored);
+  };
+
+  private readonly persistLeftSidebarState = (): void => {
+    this.sync.setItem(LEFT_STATE_STORAGE_KEY, this.appGrid.leftState.value);
   };
 
   private readonly stopSavedRefresh = () => {
@@ -154,6 +210,15 @@ export class MuTxtAppState {
     this.stopSavedRefresh();
     this.detachDragDrop?.();
     this.detachDragDrop = null;
+    this.leftSizeUnsubscribe?.();
+    this.leftSizeUnsubscribe = null;
+    this.leftStateUnsubscribe?.();
+    this.leftStateUnsubscribe = null;
+    if (this.leftSizePersistTimer) {
+      clearTimeout(this.leftSizePersistTimer);
+      this.leftSizePersistTimer = null;
+      this.sync.setItem(LEFT_SIZE_STORAGE_KEY, String(this.appGrid.leftSize.value));
+    }
     this.theme.dispose();
     await Promise.all(this.files$.getValue().map((file) => file.destroy(true)));
   }
@@ -189,6 +254,7 @@ export class MuTxtAppState {
     name: string = 'Untitled' + (this.newCnt > 1 ? ` (${this.newCnt})` : ''),
     dto?: FileMetadataDto,
     size: number = 0,
+    link?: FileLink,
   ) => {
     const now = Date.now();
     const meta: FileMetadataDto = dto ?? {
@@ -196,6 +262,7 @@ export class MuTxtAppState {
       name,
       createdAt: now,
       updatedAt: now,
+      ...(link ? {link} : {}),
     };
     const file = new OpenFile(
       meta,
@@ -217,14 +284,58 @@ export class MuTxtAppState {
     this.tabs.selectById(id);
   }
 
+  private readonly destroying = new Map<string, Promise<void>>();
+
+  private readonly disposeFile = (id: string) => {
+    const list = this.files$.getValue();
+    const file = list.find((openFile) => openFile.id === id);
+    if (!file) return;
+    this.files$.next(list.filter((m) => m.id !== id));
+    const promise = file.destroy(true).finally(() => {
+      if (this.destroying.get(id) === promise) this.destroying.delete(id);
+    });
+    this.destroying.set(id, promise);
+  };
+
+  public readonly awaitDestroy = async (id: string): Promise<void> => {
+    const promise = this.destroying.get(id);
+    if (promise) await promise;
+  };
+
+  private closeSelectedBusy = false;
+  private closeSelectedLastAt = 0;
+
+  public readonly closeSelected = async (): Promise<void> => {
+    const now = Date.now();
+    if (now - this.closeSelectedLastAt < CLOSE_SELECTED_MIN_GAP_MS) return;
+    if (this.closeSelectedBusy) return;
+    this.closeSelectedLastAt = now;
+    this.closeSelectedBusy = true;
+    try {
+      const id = this.tabs.selected.value?.[0]?.id ?? this.file$.getValue()?.id;
+      const ok = this.tabs.deleteSelected();
+      if (!ok) return;
+      if (id) {
+        const timeout = new Promise<void>((resolve) => setTimeout(resolve, CLOSE_SELECTED_DESTROY_TIMEOUT_MS));
+        await Promise.race([this.awaitDestroy(id), timeout]);
+      }
+      if (typeof requestAnimationFrame === 'function') {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('mutxt:close-selected failed', err);
+    } finally {
+      this.closeSelectedBusy = false;
+    }
+  };
+
   public readonly close = (id: string) => {
     this.tabs.deleteById(id);
-    const file = this.files$.getValue().find((openFile) => openFile.id === id);
-    void file?.destroy(true);
-    const list = this.files$.getValue().filter((m) => m.id !== id);
-    this.files$.next(list);
-    // const files = this.files$.getValue();
-    // if (files.length && !this.file$.getValue()) this.tabs.selectById(files[0].id);
+    // tabs.deleteById fires onDeleteTab → disposeFile, which handles file
+    // teardown. Falling back here covers callers where the tab had already
+    // been removed externally.
+    this.disposeFile(id);
   };
 
   public readonly closeAll = () => {
@@ -232,11 +343,19 @@ export class MuTxtAppState {
     for (const file of files) this.close(file.id);
   };
 
-  public readonly rename = (id: string, name: string) => {
-    const files = this.files$.getValue();
-    const file = files.find((m) => m.id === id);
-    if (!file) return;
-    this.renameFile(file, name);
+  public readonly rename = async (id: string, name: string): Promise<void> => {
+    const file = this.files$.getValue().find((m) => m.id === id);
+    if (file) {
+      this.renameFile(file, name);
+      return;
+    }
+    try {
+      await this.storage.renameMeta(id, name);
+      await this.refreshSaved();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[mutxt] failed to rename saved file', id, error);
+    }
   };
 
   public renameFile(file: OpenFile, name: string): void {
@@ -246,13 +365,12 @@ export class MuTxtAppState {
 
   public async deleteSaved(id: string) {
     this.tabs.deleteById(id);
-    const file = this.files$.getValue().find((m) => m.id === id);
-    if (file) await file.destroy();
+    await this.awaitDestroy(id);
     await this.storage.delete(id);
     await this.refreshSaved();
   }
 
-  public readonly addFile = async (file: File) => {
+  public readonly addFile = async (file: File, link?: FileLink) => {
     if (!file) return;
     const uint8 = new Uint8Array(await file.arrayBuffer());
     const name = file.name ? stripExtensions(file.name) : 'model';
@@ -270,7 +388,7 @@ export class MuTxtAppState {
         const log = new Log(() => model.clone());
         log.end.applyBatch(patches);
         log.end.setSid(this.sid);
-        this.openFile(log, name);
+        this.openFile(log, name, undefined, 0, link);
         return;
       }
       if (file.name.endsWith('.crdt')) {
@@ -281,16 +399,22 @@ export class MuTxtAppState {
         const model = ModelWithExt.load(bytes, this.sid);
         const log = new Log(() => model);
         log.end.setSid(this.sid);
-        this.openFile(log, name);
+        this.openFile(log, name, undefined, 0, link);
         return;
       }
-      await this.addLog(uint8, name);
+      await this.addLog(uint8, name, undefined, 0, link);
       return;
     } catch {}
-    this.createNewMuTxtWithFile(file, uint8, name);
+    this.createNewMuTxtWithFile(file, uint8, name, link);
   };
 
-  public readonly addLog = async (uint8: Uint8Array, name?: string, dto?: FileMetadataDto, size: number = 0) => {
+  public readonly addLog = async (
+    uint8: Uint8Array,
+    name?: string,
+    dto?: FileMetadataDto,
+    size: number = 0,
+    link?: FileLink,
+  ) => {
     let log: Log<any>;
     try {
       log = await OpenFile.decodeLog(uint8, this.sid);
@@ -304,7 +428,7 @@ export class MuTxtAppState {
       log.end.setSid(this.sid);
     }
     if (this.stopped) return;
-    this.openFile(log, name, dto, size);
+    this.openFile(log, name, dto, size, link);
   };
 
   public readonly addFiles = async (files: File[]) => {
@@ -313,14 +437,14 @@ export class MuTxtAppState {
 
   private newCnt = 0;
 
-  public readonly createNew = (data: unknown = void 0) => {
+  public readonly createNew = (data: unknown = void 0, name?: string, link?: FileLink) => {
     // const schema = s.obj(data);
     const model = ModelWithExt.create<any>(data, this.sid);
-    this.createFromModel(model);
+    this.createFromModel(model, name, link);
   };
 
-  public readonly createNewMuTxt = () => {
-    this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}));
+  public readonly createNewMuTxt = (name?: string, link?: FileLink) => {
+    this.createNew(s.obj({'@type': s.con('mutxt'), text: ext.peritext.new('')}), name, link);
   };
 
   public readonly createNewMuTxtFromSlate = (slate: SlateDocument, name?: string) => {
@@ -335,7 +459,7 @@ export class MuTxtAppState {
     this.openFile(log, name);
   };
 
-  public readonly createNewMuTxtWithFile = (file: File, bytes: Uint8Array, name?: string) => {
+  public readonly createNewMuTxtWithFile = (file: File, bytes: Uint8Array, name?: string, link?: FileLink) => {
     const thingId = `file-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const model = ModelWithExt.create<any>(
       s.obj({
@@ -366,13 +490,13 @@ export class MuTxtAppState {
     txt.refresh();
     this.newCnt++;
     const log = Log.from(model);
-    this.openFile(log, name ?? file.name);
+    this.openFile(log, name ?? file.name, undefined, 0, link);
   };
 
-  public readonly createFromModel = (model: Model<any>) => {
+  public readonly createFromModel = (model: Model<any>, name?: string, link?: FileLink) => {
     this.newCnt++;
     const log = Log.fromNewModel(model);
-    this.openFile(log);
+    this.openFile(log, name, undefined, 0, link);
   };
 
   public async download(id: string) {

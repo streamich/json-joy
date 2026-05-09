@@ -33,12 +33,15 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
       }}
     >
       <FileTabs
-        bg={styles.g(0.95)}
+        bg={styles.neutral.fg.pct(0, -0.92, styles.light ? 0.88 : -0.9)}
         fade="transparent"
         state={state.tabs}
-        before={<div style={{marginLeft: toggle ? 'env(titlebar-area-x)' : 0}}>{toggle}</div>}
+        before={<div style={{marginLeft: toggle ? 'var(--titlebar-inset-left, 0px)' : 0}}>{toggle}</div>}
         right={<PwaInstallButton />}
         render={() => <div style={{height: Sizes.TabsFadeHeight}} />}
+        barStyle={{
+          borderRadius: 12, // Needed for electron on Mac to match the titlebar's rounded corners
+        }}
       />
     </div>
   );

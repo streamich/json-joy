@@ -37,8 +37,8 @@ const statusPathClass = rule({
 const pathLinkClass = rule({
   d: 'inline-block',
   maxW: '220px',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
+  ws: 'nowrap',
+  ov: 'hidden',
   textOverflow: 'ellipsis',
   verticalAlign: 'bottom',
   textDecoration: 'underline',
@@ -69,7 +69,7 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
 
   const width = Math.min(availableWidth, desiredWidth);
 
-  const infoColor = styles.light ? styles.g(0.34) : styles.g(0.68);
+  const infoColor = styles.g(0.34);
   const selectionSummary = selectionText
     ? `${pluralize(getWordCount(selectionText), 'word')} (${pluralize(selectionText.length, 'char')}) selected`
     : '';
@@ -83,7 +83,10 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const showSelectionSummary = width > 600;
 
   return (
-    <div className={footerClass} style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0}}>
+    <div
+      className={footerClass}
+      style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0, borderTop: `1px solid ${styles.g(0, 0.06)}`}}
+    >
       <div className={footerGroupClass}>
         {!!statusText && <Label>{statusText}</Label>}
         {!readOnly && focused && !!caretPath && showCaretPath && (

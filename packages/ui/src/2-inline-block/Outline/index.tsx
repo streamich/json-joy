@@ -25,10 +25,11 @@ const labelClass = drule({
 
 export interface OutlineProps extends React.HTMLAttributes<HTMLDivElement & HTMLFieldSetElement> {
   className?: string;
-  label: React.ReactNode;
+  label?: React.ReactNode;
   active?: boolean;
   disabled?: boolean;
   center?: boolean;
+  ghost?: boolean | 'hint';
   activeBorderColor?: ColorName;
   size?: number;
   children?: React.ReactNode;
@@ -42,6 +43,7 @@ export const Outline: React.FC<OutlineProps> = ({
   active,
   disabled,
   center,
+  ghost,
   activeBorderColor = 'neutral',
   size,
   children,
@@ -51,39 +53,55 @@ export const Outline: React.FC<OutlineProps> = ({
 
   const padding = !size ? 7 : Math.max(0, 7 + size);
 
-  return (
-    <div
-      {...rest}
-      className={
-        className +
-        blockClass({
-          bg: styles.g(0, 0.08),
-          ta: center ? 'center' : 'start',
+  const ghostIdleBg = ghost === 'hint' ? styles.g(0, 0.02) : 'transparent';
+  const ghostHoverBg = ghost === 'hint' ? styles.g(0, 0.05) : styles.g(0, 0.04);
+  const blockStyle = ghost
+    ? {
+        bg: active && !disabled ? styles.g(0, 0.06) : ghostIdleBg,
+        ta: center ? ('center' as const) : ('start' as const),
+        bd: active && !disabled ? `1px solid ${styles.col.get(activeBorderColor, 10)}` : '1px solid transparent',
+        bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(activeBorderColor, 'border-3')}` : 'none',
+        pd: `${padding}px ${padding * 2}px`,
+        '& *': {
+          op: disabled ? 0.5 : 1,
+        },
+        '&:hover': {
+          bg: disabled ? ghostIdleBg : active ? styles.g(0, 0.06) : ghostHoverBg,
+          bd: active && !disabled ? `1px solid ${styles.col.get(activeBorderColor, 10)}` : '1px solid transparent',
+          bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(activeBorderColor, 10)}` : 'none',
+          '& *': {
+            op: 1,
+          },
+        },
+      }
+    : {
+        bg: styles.g(0, 0.08),
+        ta: center ? ('center' as const) : ('start' as const),
+        bd: disabled
+          ? `1px dotted ${styles.g(0.8)}`
+          : active
+            ? `1px solid ${styles.col.get(activeBorderColor, 10)}`
+            : `1px solid transparent`,
+        bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(activeBorderColor, 'border-3')}` : 'none',
+        pd: `${padding}px ${padding * 2}px`,
+        '& *': {
+          op: disabled ? 0.5 : 1,
+        },
+        '&:hover': {
           bd: disabled
-            ? `1px dotted ${styles.g(0.8)}`
+            ? `1px solid ${styles.g(0.8)}`
             : active
               ? `1px solid ${styles.col.get(activeBorderColor, 10)}`
-              : `1px solid transparent`,
-          bxsh: active && !disabled ? `0 0 0 1px ${styles.col.get(activeBorderColor, 'border-3')}` : 'none',
-          pd: `${padding}px ${padding * 2}px`,
+              : `1px solid ${styles.col.get('neutral', 7)}`,
+          bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(activeBorderColor, 10)}` : 'none',
           '& *': {
-            op: disabled ? 0.5 : 1,
+            op: 1,
           },
-          '&:hover': {
-            bd: disabled
-              ? `1px solid ${styles.g(0.8)}`
-              : active
-                ? `1px solid ${styles.col.get(activeBorderColor, 10)}`
-                : `1px solid ${styles.col.get('neutral', 7)}`,
-            bxsh: active && !disabled ? `0 0 0 2px ${styles.col.get(activeBorderColor, 10)}` : 'none',
-            '& *': {
-              op: 1,
-            },
-          },
-        })
-      }
-      style={style}
-    >
+        },
+      };
+
+  return (
+    <div {...rest} className={className + blockClass(blockStyle)} style={style}>
       {!!label && (
         // biome-ignore lint/a11y/noLabelWithoutControl: label is used as visual decoration
         <label

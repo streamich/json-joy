@@ -48,10 +48,17 @@ export interface FileIconProps extends React.SVGProps<SVGSVGElement> {
    * - a CSS color string: used verbatim
    */
   accent?: boolean | string;
+
+  /**
+   * If `true`, draws a small indicator badge at the bottom-right corner to
+   * signify that this file is linked to an external source (e.g. local
+   * filesystem, Dropbox, etc.) and changes will be mirrored back to that source.
+   */
+  link?: boolean;
 }
 
 export const FileIcon: React.FC<FileIconProps> = React.memo(
-  ({label, id, ext, color = ext ? getColor(ext as any) : undefined, size = 16, gradient, accent, ...rest}) => {
+  ({label, id, ext, color = ext ? getColor(ext as any) : undefined, size = 16, gradient, accent, link, ...rest}) => {
     const id1 = React.useId();
     const id2 = React.useId();
     const styles = useStyles();
@@ -135,6 +142,15 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(
 
         {/* fold crease line */}
         <line x1={viewW - f} y1={0} x2={viewW - f} y2={f} stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+
+        {/* link badge — bottom-right chain glyph, clipped to file body so it
+            cradles into the rounded corner */}
+        {link && (
+          <g clipPath={`url(#${clipId})`}>
+            <circle cx={78} cy={103} r={34} fill="white" stroke="rgba(0,0,0,0.2)" strokeWidth={3} />
+            <circle cx={78} cy={103} r={20} fill={accentColor.toString()} />
+          </g>
+        )}
 
         {/* label text */}
         {displayLabel && (

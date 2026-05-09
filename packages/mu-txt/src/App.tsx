@@ -9,9 +9,10 @@ import {ctx} from './context';
 import {LeftSidebar} from './components/LeftSidebar';
 import {useT} from 'use-t';
 import {TabsHeader} from './components/TabsHeader';
-import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {FileOptionsDrawer} from './components/LeftSidebar/SavedFileList/FileOptionsDrawer';
-import type {FileMetadataDto} from './state/file';
+import {FileOptionsContextPane} from './components/LeftSidebar/SavedFileList/FileOptionsContextPane';
+import type {FileMetadataDto, OpenFile} from './state/file';
+import {host} from './util/host';
+import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
 
 const columnClass = rule({
   d: 'flex',
@@ -25,8 +26,21 @@ export const App: React.FC = () => {
   const state = React.useMemo(() => {
     return new MuTxtAppState();
   }, []);
-  const [drawerFile, setDrawerFile] = React.useState<FileMetadataDto | null>(null);
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [optionsPane, setOptionsPane] = React.useState<{file: FileMetadataDto; point: AnchorPoint} | null>(null);
+  const optionsPaneRef = React.useRef<typeof optionsPane>(null);
+  optionsPaneRef.current = optionsPane;
+  const wasOpenAtPressDownRef = React.useRef(false);
+  React.useEffect(() => {
+    const onPress = () => {
+      wasOpenAtPressDownRef.current = optionsPaneRef.current !== null;
+    };
+    document.addEventListener('mousedown', onPress, true);
+    document.addEventListener('touchstart', onPress, true);
+    return () => {
+      document.removeEventListener('mousedown', onPress, true);
+      document.removeEventListener('touchstart', onPress, true);
+    };
+  }, []);
   React.useEffect(() => {
     state.start().catch(() => {});
     return () => {
@@ -34,15 +48,50 @@ export const App: React.FC = () => {
     };
   }, [state]);
   React.useEffect(() => {
-    state.ondoubleclick = (file) => {
-      setDrawerFile(file.toMeta());
-      setDrawerOpen(true);
+    const open = (file: OpenFile, point: AnchorPoint) => {
+      if (wasOpenAtPressDownRef.current) return;
+      setOptionsPane({file: file.toMeta(), point});
     };
+    state.ondoubleclick = open;
+    state.onclick = open;
     return () => {
       state.ondoubleclick = void 0;
+      state.onclick = void 0;
     };
   }, [state]);
-  const files = useBehaviorSubject(state.files$);
+
+  // Cmd+W in Electron
+  React.useEffect(() => host?.onCloseFile(() => state.closeSelected()), [state]);
+
+  // Open a file passed by the host (CLI arg, dock open-file, etc.)
+  React.useEffect(() => {
+    if (!host) return;
+    return host.onOpenFile(({name, path, bytes}) => {
+      const link = {source: 'native-fs', path};
+      if (bytes) {
+        const file = new File([bytes as BlobPart], name);
+        state.addFile(file, link).catch(() => {});
+      } else {
+        // File doesn't exist yet — open a fresh document linked to this path.
+        state.createNewMuTxt(name, link);
+      }
+    });
+  }, [state]);
+
+  // Cmd/Ctrl+N: create a new document
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (!mod || e.shiftKey || e.altKey) return;
+      if (e.key !== 'n' && e.key !== 'N') return;
+      e.preventDefault();
+      e.stopPropagation();
+      state.createNewMuTxt();
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [state]);
+
   const theme = state.theme.resolved.use();
 
   return (
@@ -57,24 +106,24 @@ export const App: React.FC = () => {
             </ErrorBoundary>
           )}
           // footer={<div> </div>}
-          column={(toggle) =>
-            files.length === 0 ? (
+          column={(toggle) => (
+            <div className={columnClass}>
+              <ErrorBoundary name="mutxt:tabs-header" compact>
+                <TabsHeader toggle={toggle} />
+              </ErrorBoundary>
               <ErrorBoundary name="mutxt:main">
                 <MainContent />
               </ErrorBoundary>
-            ) : (
-              <div className={columnClass}>
-                <ErrorBoundary name="mutxt:tabs-header" compact>
-                  <TabsHeader toggle={toggle} />
-                </ErrorBoundary>
-                <ErrorBoundary name="mutxt:main">
-                  <MainContent />
-                </ErrorBoundary>
-              </div>
-            )
-          }
+            </div>
+          )}
         />
-        {drawerFile && <FileOptionsDrawer file={drawerFile} open={drawerOpen} onClose={() => setDrawerOpen(false)} />}
+        {optionsPane && (
+          <FileOptionsContextPane
+            file={optionsPane.file}
+            point={optionsPane.point}
+            onClose={() => setOptionsPane(null)}
+          />
+        )}
       </UiProvider>
     </ctx.Provider>
   );

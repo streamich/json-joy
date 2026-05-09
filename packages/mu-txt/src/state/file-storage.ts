@@ -6,6 +6,7 @@ export interface IFileStorage {
   load(id: string): Promise<FileDto>;
   list(): Promise<FileMetadataDto[]>;
   delete(id: string): Promise<void>;
+  renameMeta(id: string, name: string): Promise<FileMetadataDto>;
 }
 
 const ROOT = 'explorer.jsoncrdt.org';
@@ -78,5 +79,20 @@ export class FileStorage implements IFileStorage {
   async delete(id: string): Promise<void> {
     const filesDir = await getFilesDir();
     await filesDir.removeEntry(id, {recursive: true});
+  }
+
+  async renameMeta(id: string, name: string): Promise<FileMetadataDto> {
+    const filesDir = await getFilesDir();
+    const fileDir = await filesDir.getDirectoryHandle(id);
+    const metaHandle = await fileDir.getFileHandle(META_FILENAME);
+    const metaFile = await metaHandle.getFile();
+    const meta: FileMetadataDto = JSON.parse(await metaFile.text());
+    if (meta.name === name) return meta;
+    meta.name = name;
+    meta.updatedAt = Date.now();
+    const metaWriter = await metaHandle.createWritable();
+    await metaWriter.write(JSON.stringify(meta));
+    await metaWriter.close();
+    return meta;
   }
 }

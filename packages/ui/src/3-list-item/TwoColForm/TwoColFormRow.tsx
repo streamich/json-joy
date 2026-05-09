@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {makeRule, rule, useRule} from 'nano-theme';
+import {rule, drule, lightTheme as theme} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 
 const rowClass = rule({
@@ -16,6 +16,13 @@ const rowClass = rule({
   },
 });
 
+const rowCompactClass = rule({
+  minHeight: '24px',
+  '&+&': {
+    mrt: '1px',
+  },
+});
+
 const leftClass = rule({
   d: 'flex',
   ai: 'center',
@@ -24,7 +31,7 @@ const leftClass = rule({
   minWidth: 0,
 });
 
-const iconClass = rule({
+const iconClass = drule({
   d: 'inline-flex',
   ai: 'center',
   jc: 'center',
@@ -33,17 +40,22 @@ const iconClass = rule({
   h: '16px',
 });
 
-const useLabelClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const labelClass = drule({
+  ...theme.font.ui1.mid,
   fz: '14px',
   lh: '20px',
   ov: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   minWidth: 0,
-}));
+});
 
-const rightClass = rule({
+const valueSmallClass = rule({
+  fz: '13px',
+  lh: '18px',
+});
+
+const rightClass = drule({
   d: 'flex',
   ai: 'center',
   jc: 'flex-end',
@@ -62,32 +74,43 @@ export interface TwoColFormRowProps extends Omit<React.HTMLAttributes<HTMLDivEle
   children?: React.ReactNode;
   /** Visually mute the row (e.g. for disabled rows). */
   muted?: boolean;
+  /** Slightly smaller label font size. */
+  small?: boolean;
+  /** Tighter vertical spacing between rows. */
+  compact?: boolean;
 }
 
-export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({icon, title, children, muted, ...rest}) => {
+export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({
+  icon,
+  title,
+  children,
+  muted,
+  small,
+  compact,
+  ...rest
+}) => {
   const styles = useStyles();
-  const labelClass = useLabelClass();
-
-  const dynamicLabelClass = useRule(() => ({
-    col: muted ? styles.g(0.55) : styles.g(0.15),
-  }));
-
-  const dynamicIconClass = useRule(() => ({
-    col: muted ? styles.g(0.6) : styles.g(0.45),
-  }));
-
-  const dynamicRightClass = useRule(() => ({
-    col: muted ? styles.g(0.55) : styles.g(0.25),
-  }));
 
   return (
-    <div className={(rest.className ? ` ${rest.className}` : '') + rowClass} {...rest}>
+    <div
+      className={(rest.className ? ` ${rest.className}` : '') + rowClass + (compact ? rowCompactClass : '')}
+      {...rest}
+    >
       <span className={leftClass}>
-        {!!icon && <span className={iconClass + dynamicIconClass}>{icon}</span>}
-        <span className={labelClass + dynamicLabelClass}>{title}</span>
+        {!!icon && <span className={iconClass({col: muted ? styles.g(0.6) : styles.g(0.45)})}>{icon}</span>}
+        <span
+          className={labelClass({
+            col: muted ? styles.g(0.55) : styles.g(0.15),
+            fz: small ? '13px' : '14px',
+          })}
+        >
+          {title}
+        </span>
       </span>
       {children !== undefined && children !== null && children !== false && (
-        <span className={rightClass + dynamicRightClass}>{children}</span>
+        <span className={rightClass({col: muted ? styles.g(0.55) : styles.g(0.25)}) + (small ? valueSmallClass : '')}>
+          {children}
+        </span>
       )}
     </div>
   );

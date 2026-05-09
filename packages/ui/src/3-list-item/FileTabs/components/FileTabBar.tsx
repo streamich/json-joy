@@ -18,6 +18,10 @@ const blockClass = rule({
   w: '100%',
   h: '48px',
   ov: 'visible',
+  '-webkit-app-region': 'drag', // Drag for Electron app.
+  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"]': {
+    '-webkit-app-region': 'no-drag',
+  },
 });
 
 const mainClass = rule({
@@ -127,12 +131,14 @@ export interface FileTabBarProps {
   after?: React.ReactNode;
   right?: React.ReactNode;
   overlay?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 export const FileTabBar: React.FC<FileTabBarProps> = React.memo(
-  ({bg, fg, state, tabs, before, after, right, overlay}) => {
+  ({bg, fg, state, tabs, before, after, right, overlay, style: _style}) => {
     const hover = bg.copy(0.02, 0.2, bg.l > 0.5 ? -0.08 : 0.08);
     const style: React.CSSProperties = {
+      ..._style,
       background: bg.toString(),
       '--filetabs-bg': bg.toString(),
       '--filetabs-bg-txt': bg.toLinearRgb().pickFirstAboveOrMax(3, [LITE_TEXT, DARK_TEXT]).toString(),

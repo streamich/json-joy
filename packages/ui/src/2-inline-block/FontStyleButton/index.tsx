@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {drule, rule, useTheme} from 'nano-theme';
 import {Ripple} from '../../misc/Ripple';
 import {useStyles} from '../../styles/context';
 
@@ -17,7 +17,7 @@ const blockClass = drule({
   minW: 0,
 });
 
-const verticalClass = drule({
+const verticalClass = rule({
   d: 'inline-flex',
   fld: 'column',
   jc: 'space-around',
@@ -32,10 +32,9 @@ const displayClass = drule({
   pdt: '.25em',
 });
 
-const childrenClass = drule({
+const childrenClass = rule({
   fz: '.65em',
-  pdt: '.35em',
-  op: 0.5,
+  pdt: '.4em',
 });
 
 export interface FontStyleButtonProps extends React.AllHTMLAttributes<any> {
@@ -86,12 +85,12 @@ export const FontStyleButton: React.FC<FontStyleButtonProps> = ({
   return (
     <Ripple ms={1000}>
       <button {...rest} type="button" className={className}>
-        <span className={verticalClass()}>
+        <span className={verticalClass}>
           <span className={classNameText} style={{color: active ? theme.color.sem.accent[0] : void 0}}>
             {display}
           </span>
           {size > 32 && (
-            <span className={childrenClass()}>
+            <span className={childrenClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, 0.7)}}>
               {children ?? (kind === 'serif' ? 'Serif' : kind === 'sans' ? 'Sans' : kind === 'slab' ? 'Slab' : 'Mono')}
             </span>
           )}
