@@ -47,7 +47,7 @@ const EmbedFallback: React.FC<{url: string}> = ({url}) => {
         flexDirection: 'column',
         gap: '4px',
         textDecoration: 'none',
-        color: styles.light ? styles.g(0.16) : styles.g(0.9),
+        color: styles.g(0.16),
         userSelect: 'none',
       }}
     >
@@ -59,7 +59,7 @@ const EmbedFallback: React.FC<{url: string}> = ({url}) => {
         style={{
           fontSize: '13px',
           lineHeight: 1.45,
-          color: styles.light ? styles.g(0.36) : styles.g(0.66),
+          color: styles.g(0.36),
           wordBreak: 'break-all',
         }}
       >
