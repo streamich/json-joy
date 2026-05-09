@@ -50,6 +50,7 @@ export class VoidMenu implements UiLifeCycles {
     const mutxt = this.mutxt;
     return {
       name: 'Separator',
+      text: 'hr horizontal rule line divider break thematic',
       icon: () => <HrIcon />,
       disabled: rsync.comp([mutxt.readOnly], ([readOnly]) => !!readOnly),
       onSelect: (event) => {
@@ -68,6 +69,7 @@ export class VoidMenu implements UiLifeCycles {
     const mutxt = this.mutxt;
     return {
       name: 'Table of contents',
+      text: 'toc index outline navigation headings summary contents',
       icon: () => <TocIcon />,
       disabled: rsync.comp([mutxt.readOnly], ([readOnly]) => !!readOnly),
       onSelect: (event) => {
@@ -87,6 +89,7 @@ export class VoidMenu implements UiLifeCycles {
     const file = mutxt.voids.file;
     return {
       name: 'File',
+      text: 'attachment upload image picture photo video audio media document pdf',
       icon: () => <FileIcon />,
       disabled: rsync.comp([file.canOpen], ([canOpen]) => !canOpen),
       onSelect: (event) => {
@@ -108,6 +111,7 @@ export class VoidMenu implements UiLifeCycles {
     const embed = mutxt.voids.embed;
     return {
       name: 'Embed',
+      text: 'iframe url media youtube tweet bookmark link preview',
       icon: () => <EmbedIcon />,
       disabled: rsync.comp([embed.canOpen], ([canOpen]) => !canOpen),
       active: rsync.comp([mutxt.caretEmbedUrl], ([url]) => !!url),
