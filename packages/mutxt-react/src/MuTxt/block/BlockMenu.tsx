@@ -187,19 +187,20 @@ export class BlockMenu implements UiLifeCycles {
     return {
       id: 'block-typesetting',
       name: 'Typesetting',
+      text: 'font face family typography typeface',
       icon: () => <TypographyIcon />,
       expand: 4,
       openOnTitleHov: true,
       children: [
-        this.itemBlockFont('sans', 'Sans-serif'),
-        this.itemBlockFont('serif', 'Serif'),
-        this.itemBlockFont('slab', 'Slab'),
-        this.itemBlockFont('mono', 'Monospace'),
+        this.itemBlockFont('sans', 'Sans-serif', 'sans gothic grotesque modern'),
+        this.itemBlockFont('serif', 'Serif', 'serif traditional roman'),
+        this.itemBlockFont('slab', 'Slab', 'slab egyptian thick serif'),
+        this.itemBlockFont('mono', 'Monospace', 'mono fixed code typewriter courier'),
       ],
     };
   }
 
-  private itemBlockFont(kind: FontKind, name: string): MenuItem {
+  private itemBlockFont(kind: FontKind, name: string, text?: string): MenuItem {
     const mutxt = this.mutxt;
     const onSelect = this.exec(() => setBlockFont(mutxt.editor, kind));
     const Option: React.FC<{size?: number}> = ({size}) => {
@@ -209,6 +210,7 @@ export class BlockMenu implements UiLifeCycles {
     };
     return {
       name,
+      text,
       icon: () => <Option size={16} />,
       iconBig: () => <Option />,
       active: rsync.comp([mutxt.version], () => isBlockFontActive(mutxt.editor, kind)),
@@ -219,11 +221,17 @@ export class BlockMenu implements UiLifeCycles {
   // -------------------------------------------------------------- Block items
 
   public itemParagraph(): MenuItem {
-    return this.blockItem('p', {name: 'Paragraph', icon: () => <ParagraphIcon />, keys: ['Primary', 'Alt', '0']});
+    return this.blockItem('p', {
+      name: 'Paragraph',
+      text: 'p body text plain',
+      icon: () => <ParagraphIcon />,
+      keys: ['Primary', 'Alt', '0'],
+    });
   }
   public itemBlockquote(): MenuItem {
     return this.blockItem('blockquote', {
       name: 'Blockquote',
+      text: 'quote citation cite epigraph',
       icon: () => <BlockquoteIcon />,
       keys: ['Primary', 'Alt', '9'],
     });
@@ -231,43 +239,87 @@ export class BlockMenu implements UiLifeCycles {
   public itemCodeBlock(): MenuItem {
     return this.blockItem('code-block', {
       name: 'Code block',
+      text: 'snippet program syntax monospace fenced',
       icon: () => <CodeBlockIcon />,
       keys: ['Primary', 'Shift', 'c'],
     });
   }
   public itemPre(): MenuItem {
-    return this.blockItem('pre', {name: 'Pre-formatted', icon: () => <PreIcon />});
+    return this.blockItem('pre', {
+      name: 'Pre-formatted',
+      text: 'preformatted monospace verbatim ascii',
+      icon: () => <PreIcon />,
+    });
   }
   public itemCallout(): MenuItem {
-    return this.blockItem('callout', {name: 'Callout', icon: () => <CalloutIcon />});
+    return this.blockItem('callout', {
+      name: 'Callout',
+      text: 'admonition alert info note warning tip box',
+      icon: () => <CalloutIcon />,
+    });
   }
   public itemColumns(): MenuItem {
-    return this.blockItem('columns', {name: 'Two columns', icon: () => <ColumnsIcon />});
+    return this.blockItem('columns', {
+      name: 'Two columns',
+      text: 'split layout multi-column side-by-side grid',
+      icon: () => <ColumnsIcon />,
+    });
   }
 
   // ------------------------------------------------------------ Heading items
 
   public itemH1(): MenuItem {
-    return this.blockItem('h1', {name: 'Heading 1', icon: () => <H1Icon />, keys: ['Primary', 'Alt', '1']});
+    return this.blockItem('h1', {
+      name: 'Heading 1',
+      text: 'h1 title section header',
+      icon: () => <H1Icon />,
+      keys: ['Primary', 'Alt', '1'],
+    });
   }
   public itemH2(): MenuItem {
-    return this.blockItem('h2', {name: 'Heading 2', icon: () => <H2Icon />, keys: ['Primary', 'Alt', '2']});
+    return this.blockItem('h2', {
+      name: 'Heading 2',
+      text: 'h2 subheading section header',
+      icon: () => <H2Icon />,
+      keys: ['Primary', 'Alt', '2'],
+    });
   }
   public itemH3(): MenuItem {
-    return this.blockItem('h3', {name: 'Heading 3', icon: () => <H3Icon />, keys: ['Primary', 'Alt', '3']});
+    return this.blockItem('h3', {
+      name: 'Heading 3',
+      text: 'h3 subheading section header',
+      icon: () => <H3Icon />,
+      keys: ['Primary', 'Alt', '3'],
+    });
   }
   public itemH4(): MenuItem {
-    return this.blockItem('h4', {name: 'Heading 4', icon: () => <H4Icon />, keys: ['Primary', 'Alt', '4']});
+    return this.blockItem('h4', {
+      name: 'Heading 4',
+      text: 'h4 subheading section header',
+      icon: () => <H4Icon />,
+      keys: ['Primary', 'Alt', '4'],
+    });
   }
   public itemH5(): MenuItem {
-    return this.blockItem('h5', {name: 'Heading 5', icon: () => <H5Icon />, keys: ['Primary', 'Alt', '5']});
+    return this.blockItem('h5', {
+      name: 'Heading 5',
+      text: 'h5 subheading section header',
+      icon: () => <H5Icon />,
+      keys: ['Primary', 'Alt', '5'],
+    });
   }
   public itemH6(): MenuItem {
-    return this.blockItem('h6', {name: 'Heading 6', icon: () => <H6Icon />, keys: ['Primary', 'Alt', '6']});
+    return this.blockItem('h6', {
+      name: 'Heading 6',
+      text: 'h6 subheading section header',
+      icon: () => <H6Icon />,
+      keys: ['Primary', 'Alt', '6'],
+    });
   }
   public itemTitle(): MenuItem {
     return this.blockItem('title', {
       name: 'Title',
+      text: 'document title page name',
       display: () => <span style={{fontWeight: 'bold'}}>{'Title'}</span>,
       icon: () => <TitleIcon />,
     });
@@ -275,6 +327,7 @@ export class BlockMenu implements UiLifeCycles {
   public itemSubtitle(): MenuItem {
     return this.blockItem('subtitle', {
       name: 'Subtitle',
+      text: 'subhead deck tagline',
       display: () => <span style={{opacity: 0.7}}>{'Subtitle'}</span>,
       icon: () => <TitleIcon />,
     });
@@ -290,11 +343,13 @@ export class BlockMenu implements UiLifeCycles {
     };
     return this.blockItem('ul', {
       name: 'Bulleted list',
+      text: 'ul unordered bullet dot point',
       icon: () => <ULIcon />,
       keys: ['Primary', 'Alt', '8'],
       children: [
         {
           name: 'Disc bullets',
+          text: 'ul disc filled solid round',
           icon: () => (
             <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: 'currentColor'}} />
@@ -305,6 +360,7 @@ export class BlockMenu implements UiLifeCycles {
         },
         {
           name: 'Circle bullets',
+          text: 'ul circle ring outline hollow',
           icon: () => (
             <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <div style={{width: 6, height: 6, borderRadius: '50%', border: '1px solid currentColor'}} />
@@ -315,6 +371,7 @@ export class BlockMenu implements UiLifeCycles {
         },
         {
           name: 'Square bullets',
+          text: 'ul square box block',
           icon: () => (
             <div style={{width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <div style={{width: 6, height: 6, backgroundColor: 'currentColor'}} />
@@ -332,41 +389,48 @@ export class BlockMenu implements UiLifeCycles {
       if (getActiveOlType(mutxt.editor) === null) toggleBlock(mutxt.editor, 'ol');
       setOlType(mutxt.editor, olType);
     };
-    const olItem = (name: string, olType: OlType, example?: string): MenuItem => ({
+    const olItem = (name: string, olType: OlType, example?: string, text?: string): MenuItem => ({
       name,
+      text: [text, example].filter(Boolean).join(' ') || undefined,
       right: example ? () => <Sidetip small>{example}</Sidetip> : undefined,
       active: rsync.comp([mutxt.version], () => isOlTypeActive(mutxt.editor, olType)),
       onSelect: this.exec(() => applyOlType(olType)),
     });
     return this.blockItem('ol', {
       name: 'Numbered list',
+      text: 'ol ordered enumerated number',
       icon: () => <OLIcon />,
       keys: ['Primary', 'Alt', '7'],
       children: [
-        olItem('Decimal', 'decimal', '1, 2, 3'),
-        olItem('Decimal w/ zero', 'decimal-leading-zero', '01, 02, 03'),
-        olItem('Lower Roman', 'lower-roman', 'i, ii, iii'),
-        olItem('Upper Roman', 'upper-roman', 'I, II, III'),
-        olItem('Lower alpha', 'lower-alpha', 'a, b, c'),
-        olItem('Upper alpha', 'upper-alpha', 'A, B, C'),
-        olItem('Lower Greek', 'lower-greek', 'α, β, γ'),
+        olItem('Decimal', 'decimal', '1, 2, 3', 'arabic numeral'),
+        olItem('Decimal w/ zero', 'decimal-leading-zero', '01, 02, 03', 'padded zero leading'),
+        olItem('Lower Roman', 'lower-roman', 'i, ii, iii', 'roman numeral lowercase'),
+        olItem('Upper Roman', 'upper-roman', 'I, II, III', 'roman numeral uppercase'),
+        olItem('Lower alpha', 'lower-alpha', 'a, b, c', 'alphabetic letter lowercase'),
+        olItem('Upper alpha', 'upper-alpha', 'A, B, C', 'alphabetic letter uppercase'),
+        olItem('Lower Greek', 'lower-greek', 'α, β, γ', 'greek alphabet alpha beta gamma'),
         {
           name: 'More styles',
+          text: 'extra additional language',
           sepBefore: true,
           more: true,
           children: [
-            olItem('Hiragana', 'hiragana', 'あ, い, う'),
-            olItem('Katakana', 'katakana', 'ア, イ, ウ'),
-            olItem('CJK ideographic', 'cjk-ideographic', '一, 二, 三'),
-            olItem('Hebrew', 'hebrew'),
-            olItem('Armenian', 'armenian'),
+            olItem('Hiragana', 'hiragana', 'あ, い, う', 'japanese kana'),
+            olItem('Katakana', 'katakana', 'ア, イ, ウ', 'japanese kana'),
+            olItem('CJK ideographic', 'cjk-ideographic', '一, 二, 三', 'chinese kanji hanzi'),
+            olItem('Hebrew', 'hebrew', undefined, 'aleph hebrew alphabet'),
+            olItem('Armenian', 'armenian', undefined, 'armenian alphabet'),
           ],
         },
       ],
     });
   }
   public itemChecklist(): MenuItem {
-    return this.blockItem('checklist', {name: 'Checklist', icon: () => <ChecklistIcon />});
+    return this.blockItem('checklist', {
+      name: 'Checklist',
+      text: 'todo task checkbox check tick to-do',
+      icon: () => <ChecklistIcon />,
+    });
   }
 
   // ------------------------------------------------------------------- Layout
@@ -374,6 +438,7 @@ export class BlockMenu implements UiLifeCycles {
   public itemAlignLeft(): MenuItem {
     return this.layoutItem('left', {
       name: 'Align left',
+      text: 'left start alignment',
       keys: ['Primary', 'Shift', 'l'],
       icon: () => <AlignLeftIcon />,
     });
@@ -381,6 +446,7 @@ export class BlockMenu implements UiLifeCycles {
   public itemAlignCenter(): MenuItem {
     return this.layoutItem('center', {
       name: 'Align center',
+      text: 'middle centered alignment',
       keys: ['Primary', 'Shift', 'e'],
       icon: () => <AlignCenterIcon />,
     });
@@ -388,6 +454,7 @@ export class BlockMenu implements UiLifeCycles {
   public itemAlignRight(): MenuItem {
     return this.layoutItem('right', {
       name: 'Align right',
+      text: 'right end alignment',
       keys: ['Primary', 'Shift', 'r'],
       icon: () => <AlignRightIcon />,
     });
@@ -395,6 +462,7 @@ export class BlockMenu implements UiLifeCycles {
   public itemAlignJustify(): MenuItem {
     return this.layoutItem('justify', {
       name: 'Justify',
+      text: 'justified fill stretch align both',
       keys: ['Primary', 'Shift', 'j'],
       icon: () => <AlignJustifyIcon />,
     });
@@ -408,6 +476,7 @@ export class BlockMenu implements UiLifeCycles {
     const formattedKeys = formatKeys(keys);
     return {
       name: 'Increase indent',
+      text: 'tab right shift in nest',
       icon: () => <IndentIcon />,
       right: () => <Sidetip small>{formattedKeys}</Sidetip>,
       keys: [formattedKeys],
@@ -421,6 +490,7 @@ export class BlockMenu implements UiLifeCycles {
     const formattedKeys = formatKeys(keys);
     return {
       name: 'Decrease indent',
+      text: 'outdent unindent shift left untab',
       icon: () => <DedentIcon />,
       right: () => <Sidetip small>{formattedKeys}</Sidetip>,
       keys: [formattedKeys],
