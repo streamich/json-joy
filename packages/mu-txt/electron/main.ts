@@ -1,11 +1,11 @@
-import {app, BrowserWindow, dialog, ipcMain, shell, protocol, net, Menu, type MenuItemConstructorOptions} from 'electron';
+import {app, BrowserWindow, dialog, ipcMain, shell, protocol, net, Menu, screen, type MenuItemConstructorOptions} from 'electron';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 
 app.setName('mu-txt');
 
-const isDev = !app.isPackaged;
+const isDev = process.env.MUTXT_DEV === '1';
 const distRoot = path.resolve(__dirname, '..', 'dist');
 const iconsRoot = path.resolve(__dirname, '..', 'public', 'icons');
 
@@ -186,6 +186,17 @@ function buildAppMenu(): void {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
+const CSP =
+  "default-src 'self' app: https: http: data: blob: 'unsafe-inline' 'unsafe-eval'; " +
+  "img-src 'self' app: https: http: data: blob:; " +
+  "media-src 'self' app: https: http: data: blob:; " +
+  "style-src 'self' app: https: http: 'unsafe-inline'; " +
+  "script-src 'self' app: https: http: 'unsafe-inline' 'unsafe-eval'; " +
+  "font-src 'self' app: https: http: data:; " +
+  "connect-src 'self' app: https: http: ws: wss: data: blob:; " +
+  "frame-src 'self' app: https: http: data: blob:; " +
+  "worker-src 'self' app: blob: data:;";
+
 function registerAppProtocol(): void {
   protocol.handle('app', async (request) => {
     const url = new URL(request.url);
@@ -198,14 +209,18 @@ function registerAppProtocol(): void {
     }
 
     const target = path.extname(candidate) ? candidate : path.join(distRoot, 'index.html');
-    return net.fetch(pathToFileURL(target).toString());
+    const upstream = await net.fetch(pathToFileURL(target).toString());
+    const headers = new Headers(upstream.headers);
+    headers.set('Content-Security-Policy', CSP);
+    return new Response(upstream.body, {status: upstream.status, statusText: upstream.statusText, headers});
   });
 }
 
 function createWindow(): void {
+  const {width: screenWidth, height: screenHeight} = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    width: Math.round(screenWidth * 0.85),
+    height: Math.round(screenHeight * 0.85),
     minWidth: 600,
     minHeight: 400,
     titleBarStyle: 'hiddenInset',

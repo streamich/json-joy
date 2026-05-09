@@ -64,7 +64,7 @@
     "electron:build:main": "npx tsc -p tsconfig.electron.json",
     "electron:build": "yarn build && yarn electron:build:main",
     "electron:stage": "node scripts/stage-electron.js",
-    "electron:dev": "yarn electron:build:main && electron out-electron/main.js",
+    "electron:dev": "yarn electron:build:main && MUTXT_DEV=1 electron out-electron/main.js",
     "electron:package": "yarn electron:build && yarn electron:stage && electron-forge package out-stage",
     "electron:make": "yarn electron:build && yarn electron:stage && electron-forge make out-stage",
     "electron:publish": "yarn electron:build && yarn electron:stage && electron-forge publish out-stage",
