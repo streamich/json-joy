@@ -34,7 +34,7 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({toggle}) => {
       }}
     >
       <FileTabs
-        bg={styles.neutral.fg.pct(0, -.92, styles.light ? .88 : -.9)}
+        bg={styles.neutral.fg.pct(0, -0.92, styles.light ? 0.88 : -0.9)}
         fade="transparent"
         state={state.tabs}
         before={<div style={{marginLeft: toggle ? 'var(--titlebar-inset-left, 0px)' : 0}}>{toggle}</div>}

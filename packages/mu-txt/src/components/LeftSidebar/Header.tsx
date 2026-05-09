@@ -29,10 +29,8 @@ export const Header: React.FC<HeaderProps> = ({toggle}) => {
     <Split className={blockClass} style={{alignItems: 'center', padding: '0 0 0'}}>
       <Flex style={{alignItems: 'center', gap: 10}}>
         <div style={{width: isMacElectron ? TRAFFIC_LIGHT_WIDTH : 'env(titlebar-area-x)'}} />
-          <div style={{marginLeft: -6}}>
-            {toggle}
-          </div>
-          {/* <HeaderMenu /> */}
+        <div style={{marginLeft: -6}}>{toggle}</div>
+        {/* <HeaderMenu /> */}
         {/* {!isMacElectron && <BrandLogo />} */}
         <input
           multiple

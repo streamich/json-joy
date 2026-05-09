@@ -101,11 +101,7 @@ export const Outline: React.FC<OutlineProps> = ({
       };
 
   return (
-    <div
-      {...rest}
-      className={className + blockClass(blockStyle)}
-      style={style}
-    >
+    <div {...rest} className={className + blockClass(blockStyle)} style={style}>
       {!!label && (
         // biome-ignore lint/a11y/noLabelWithoutControl: label is used as visual decoration
         <label

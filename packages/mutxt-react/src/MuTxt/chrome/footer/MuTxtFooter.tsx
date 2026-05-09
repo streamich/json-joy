@@ -83,7 +83,10 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const showSelectionSummary = width > 600;
 
   return (
-    <div className={footerClass} style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0, borderTop: `1px solid ${styles.g(0, 0.06)}`}}>
+    <div
+      className={footerClass}
+      style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0, borderTop: `1px solid ${styles.g(0, 0.06)}`}}
+    >
       <div className={footerGroupClass}>
         {!!statusText && <Label>{statusText}</Label>}
         {!readOnly && focused && !!caretPath && showCaretPath && (

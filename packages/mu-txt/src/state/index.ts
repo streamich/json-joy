@@ -316,9 +316,7 @@ export class MuTxtAppState {
       const ok = this.tabs.deleteSelected();
       if (!ok) return;
       if (id) {
-        const timeout = new Promise<void>((resolve) =>
-          setTimeout(resolve, CLOSE_SELECTED_DESTROY_TIMEOUT_MS),
-        );
+        const timeout = new Promise<void>((resolve) => setTimeout(resolve, CLOSE_SELECTED_DESTROY_TIMEOUT_MS));
         await Promise.race([this.awaitDestroy(id), timeout]);
       }
       if (typeof requestAnimationFrame === 'function') {

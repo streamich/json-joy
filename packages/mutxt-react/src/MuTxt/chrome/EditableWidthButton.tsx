@@ -117,7 +117,7 @@ export const EditableWidthButton: React.FC<EditableWidthButtonProps> = ({kind, s
           </span>
         </span>
         {renderSize > 32 && (
-          <span className={widthBtnLabelClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, .7)}}>
+          <span className={widthBtnLabelClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, 0.7)}}>
             {LABELS[kind]}
           </span>
         )}

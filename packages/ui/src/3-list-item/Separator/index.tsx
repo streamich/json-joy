@@ -19,7 +19,7 @@ export const Separator: React.FC<Props> = ({invisible, hard, style}) => {
       className={blockClass}
       style={{
         ...(style || {}),
-        background: invisible ? undefined : theme.g(0, (hard ? 2 : 1) * (0.08)),
+        background: invisible ? undefined : theme.g(0, (hard ? 2 : 1) * 0.08),
       }}
     />
   );

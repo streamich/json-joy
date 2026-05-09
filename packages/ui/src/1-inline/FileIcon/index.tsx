@@ -147,14 +147,7 @@ export const FileIcon: React.FC<FileIconProps> = React.memo(
             cradles into the rounded corner */}
         {link && (
           <g clipPath={`url(#${clipId})`}>
-            <circle
-              cx={78}
-              cy={103}
-              r={34}
-              fill="white"
-              stroke="rgba(0,0,0,0.2)"
-              strokeWidth={3}
-            />
+            <circle cx={78} cy={103} r={34} fill="white" stroke="rgba(0,0,0,0.2)" strokeWidth={3} />
             <circle cx={78} cy={103} r={20} fill={accentColor.toString()} />
           </g>
         )}

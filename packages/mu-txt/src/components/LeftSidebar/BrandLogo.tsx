@@ -21,7 +21,7 @@ const muClass = rule({
   d: 'inline-flex',
   tr: 'translateY(1px)',
   sub: {
-    fz: `${fontSize * 15.3 / 22.5}px`,
+    fz: `${(fontSize * 15.3) / 22.5}px`,
   },
   trs: 'letter-spacing 0.1s ease, transform 0.1s ease',
   [`.${rootClass.trim()}:hover &`]: {
@@ -74,7 +74,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({color}) => {
 
   return (
     <BasicTooltip nowrap renderTooltip={() => label} delay={555}>
-      <span className={rootClass} role="img" aria-label={label} style={{color: color || styles.col.get('neutral', 'txt-1')}}>
+      <span
+        className={rootClass}
+        role="img"
+        aria-label={label}
+        style={{color: color || styles.col.get('neutral', 'txt-1')}}
+      >
         <span className={muClass}>
           <sub>μ</sub>
         </span>

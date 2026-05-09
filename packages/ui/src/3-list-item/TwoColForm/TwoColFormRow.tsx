@@ -93,15 +93,11 @@ export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({
 
   return (
     <div
-      className={
-        (rest.className ? ` ${rest.className}` : '') + rowClass + (compact ? rowCompactClass : '')
-      }
+      className={(rest.className ? ` ${rest.className}` : '') + rowClass + (compact ? rowCompactClass : '')}
       {...rest}
     >
       <span className={leftClass}>
-        {!!icon && (
-          <span className={iconClass({col: muted ? styles.g(0.6) : styles.g(0.45)})}>{icon}</span>
-        )}
+        {!!icon && <span className={iconClass({col: muted ? styles.g(0.6) : styles.g(0.45)})}>{icon}</span>}
         <span
           className={labelClass({
             col: muted ? styles.g(0.55) : styles.g(0.15),
@@ -112,12 +108,7 @@ export const TwoColFormRow: React.FC<TwoColFormRowProps> = ({
         </span>
       </span>
       {children !== undefined && children !== null && children !== false && (
-        <span
-          className={
-            rightClass({col: muted ? styles.g(0.55) : styles.g(0.25)}) +
-            (small ? valueSmallClass : '')
-          }
-        >
+        <span className={rightClass({col: muted ? styles.g(0.55) : styles.g(0.25)}) + (small ? valueSmallClass : '')}>
           {children}
         </span>
       )}

@@ -90,7 +90,7 @@ export const FontStyleButton: React.FC<FontStyleButtonProps> = ({
             {display}
           </span>
           {size > 32 && (
-            <span className={childrenClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, .7)}}>
+            <span className={childrenClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, 0.7)}}>
               {children ?? (kind === 'serif' ? 'Serif' : kind === 'sans' ? 'Sans' : kind === 'slab' ? 'Slab' : 'Mono')}
             </span>
           )}

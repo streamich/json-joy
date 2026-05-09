@@ -108,7 +108,7 @@ export const App: React.FC = () => {
             </ErrorBoundary>
           )}
           // footer={<div> </div>}
-          column={(toggle) =>
+          column={(toggle) => (
             <div className={columnClass}>
               <ErrorBoundary name="mutxt:tabs-header" compact>
                 <TabsHeader toggle={toggle} />
@@ -117,7 +117,7 @@ export const App: React.FC = () => {
                 <MainContent />
               </ErrorBoundary>
             </div>
-          }
+          )}
         />
         {optionsPane && (
           <FileOptionsContextPane

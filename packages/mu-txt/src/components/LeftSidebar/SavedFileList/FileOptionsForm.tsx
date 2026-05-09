@@ -133,12 +133,7 @@ export const FileOptionsForm: React.FC<FileOptionsFormProps> = ({file}) => {
         >
           <NameValue file={file} openFile={openFile} />
         </TwoColFormRow>
-        <TwoColFormRow
-          small
-          compact
-          icon={<Iconista set="bootstrap" icon="hash" width={16} height={16} />}
-          title="ID"
-        >
+        <TwoColFormRow small compact icon={<Iconista set="bootstrap" icon="hash" width={16} height={16} />} title="ID">
           <CopyCode size={-1} alt roundest noBg value={file.id} />
         </TwoColFormRow>
       </Section>

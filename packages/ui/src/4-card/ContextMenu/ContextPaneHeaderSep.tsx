@@ -9,7 +9,12 @@ export const ContextPaneHeaderSep: React.FC = () => {
   return (
     <div style={{background: style.g(0, 0.05), width: '100%', height: 8, marginBottom: -8}}>
       <div
-        style={{background: theme.isLight ? theme.bg : theme.g(0.94), borderRadius: '8px 8px 0 0', width: '100%', height: '8px'}}
+        style={{
+          background: theme.isLight ? theme.bg : theme.g(0.94),
+          borderRadius: '8px 8px 0 0',
+          width: '100%',
+          height: '8px',
+        }}
       />
     </div>
   );

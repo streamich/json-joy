@@ -170,9 +170,7 @@ export const Welcome: React.FC<WelcomeProps> = () => {
     <div className={blockClass}>
       <div className={innerClass}>
         <header className={heroClass}>
-          <div
-            className={logoTileClass}
-          >
+          <div className={logoTileClass}>
             <MuTxtLogo size={108} />
           </div>
           <h1 className={titleClass} style={{color: theme.g(0.08, 0.97)}}>
@@ -210,25 +208,17 @@ export const Welcome: React.FC<WelcomeProps> = () => {
             description={t('Or drop one anywhere')}
             onClick={onOpenClick}
           />
-          <input
-            ref={inputRef}
-            type="file"
-            multiple
-            className={inputClass}
-            onChange={onInputChange}
-          />
+          <input ref={inputRef} type="file" multiple className={inputClass} onChange={onInputChange} />
         </div>
 
         {recent.length > 0 && (
-          <div style={{maxWidth: 480, width:'100%', margin: 'auto'}}>
+          <div style={{maxWidth: 480, width: '100%', margin: 'auto'}}>
             <div className={sectionHeadClass}>
               <h2 className={sectionTitleClass} style={{color: theme.g(0.2, 0.9)}}>
                 {t('Recent')}
               </h2>
               {saved.length > recent.length && (
-                <span className={sectionHintClass}>
-                  {`+${saved.length - recent.length} ${t('more in sidebar')}`}
-                </span>
+                <span className={sectionHintClass}>{`+${saved.length - recent.length} ${t('more in sidebar')}`}</span>
               )}
             </div>
             <RecentFiles files={recent} />
