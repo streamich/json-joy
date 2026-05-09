@@ -24,6 +24,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
 
   const id = item.id ?? item.name;
   const children = !!item.children && !!item.children.length ? item.children : void 0;
+  const hasPane = !!item.pane;
   const hasArgs = !!item.params?.length;
   const display = item.display?.() ?? t(item.name);
 
@@ -36,7 +37,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         open={open}
         inset={state.props.inset}
         more={item.more}
-        nested={!!children}
+        nested={!!children || hasPane}
         selected={active}
         disabled={disabled}
         icon={
@@ -55,23 +56,27 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
             ? () => {
                 state.selectArgs(path, item);
               }
-            : item.onSelect
-              ? (event) => state.execute(item, event)
-              : children
-                ? () => {
-                    state.select(path, item);
-                  }
-                : void 0
+            : hasPane
+              ? () => {
+                  state.select(path, item);
+                }
+              : item.onSelect
+                ? (event) => state.execute(item, event)
+                : children
+                  ? () => {
+                      state.select(path, item);
+                    }
+                  : void 0
         }
         onMouseDown={item.onMouseDown}
-        renderPane={!!children && renderPane ? renderPane : void 0}
+        renderPane={(!!children || hasPane) && renderPane ? renderPane : void 0}
         onMouseEnter={() => openPanel?.onMouseMove(id)}
         onMouseMove={() => openPanel?.onMouseMove(id)}
         onMouseLeave={openPanel?.onMouseLeave}
         role="menuitem"
         tabIndex={-1}
-        aria-haspopup={children ? 'menu' : undefined}
-        aria-expanded={children ? open : undefined}
+        aria-haspopup={children || hasPane ? 'menu' : undefined}
+        aria-expanded={children || hasPane ? open : undefined}
         aria-disabled={disabled || undefined}
       >
         {display}

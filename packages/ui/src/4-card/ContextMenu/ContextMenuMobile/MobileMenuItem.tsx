@@ -30,12 +30,19 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
   const disabled = !!useSyncStoreOpt(item.disabled);
   const hasArgs = !!item.params?.length;
   const hasChildren = !!item.children?.length;
+  const hasPane = !!item.pane;
+  const hasRaw = !!item.raw;
+  const navigable = hasChildren || hasPane || hasRaw;
   const display = item.display?.() ?? t(item.name);
 
   const handleClick = (event: React.MouseEvent) => {
     if (disabled) return;
     if (hasArgs) {
       onSelectArgs(item);
+      return;
+    }
+    if (hasPane || hasRaw) {
+      onPush(item);
       return;
     }
     if (item.onSelect) {
@@ -82,7 +89,7 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
       onClick={handleClick}
       disabled={disabled}
       role="menuitem"
-      aria-haspopup={hasChildren ? 'menu' : undefined}
+      aria-haspopup={navigable ? 'menu' : undefined}
       aria-disabled={disabled || undefined}
     >
       <span className={itemIconClass}>{item.icon?.()}</span>
@@ -109,7 +116,7 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
           ))}
         </span>
       )}
-      {hasChildren && !item.onSelect && (
+      {navigable && !item.onSelect && (
         <span className={chevronClass} aria-hidden="true">
           <Arrow direction="r" style={{width: 16, height: 16}} />
         </span>

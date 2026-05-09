@@ -12,6 +12,7 @@ import {ContextSep} from '../../ContextSep';
 import {OpenPanelState} from '../OpenPanelState';
 import {Scrollbox} from '../../../Scrollbox';
 import {useAnchorPoint} from '../../../../utils/popup';
+import {MoveToViewport} from '../../../../utils/popup/MoveToViewport';
 import type {ContextMenuPaneProps} from '../ContextMenuPane';
 
 enum HEIGHT {
@@ -45,6 +46,9 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
         const samePath = pathStr === lastPathStr;
         const isFirst = index === 0;
         const children = item.children;
+        const hasPane = !!item.pane;
+        const hasRaw = !!item.raw;
+        const navigable = !!children || hasPane || hasRaw;
         const id = item.id ?? item.name;
         const compositeId = pathStr ? pathStr + '/' + id : id;
         lastPathStr = pathStr;
@@ -63,7 +67,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                 key={pathStr + (item.id || item.name)}
                 inset={inset}
                 more={item.more}
-                nested={!!item.children}
+                nested={navigable}
                 icon={item.icon?.()}
                 right={item.right?.()}
                 danger={item.danger}
@@ -73,25 +77,31 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                     ? () => {
                         state.selectArgs(path, item);
                       }
-                    : item.onSelect
-                      ? (event) => state.execute(item, event)
-                      : children
-                        ? () => {
-                            state.select(path, item);
-                          }
-                        : void 0
+                    : hasPane || hasRaw
+                      ? () => {
+                          state.select(path, item);
+                        }
+                      : item.onSelect
+                        ? (event) => state.execute(item, event)
+                        : children
+                          ? () => {
+                              state.select(path, item);
+                            }
+                          : void 0
                 }
                 renderPane={
-                  children
+                  navigable
                     ? () => (
-                        <ContextMenuPane
-                          {...state.props}
-                          depth={1}
-                          path={path}
-                          menu={item}
-                          showSearch={false}
-                          onEsc={() => openPanel.deselect()}
-                        />
+                        <MoveToViewport>
+                          <ContextMenuPane
+                            {...state.props}
+                            depth={1}
+                            path={path}
+                            menu={item}
+                            showSearch={false}
+                            onEsc={() => openPanel.deselect()}
+                          />
+                        </MoveToViewport>
                       )
                     : void 0
                 }
@@ -100,8 +110,8 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
                 onMouseLeave={openPanel.onMouseLeave}
                 role="menuitem"
                 tabIndex={-1}
-                aria-haspopup={children ? 'menu' : undefined}
-                aria-expanded={children ? isOpen : undefined}
+                aria-haspopup={navigable ? 'menu' : undefined}
+                aria-expanded={navigable ? isOpen : undefined}
               >
                 {item.display?.() ?? t(item.name)}
               </ContextItemNested>

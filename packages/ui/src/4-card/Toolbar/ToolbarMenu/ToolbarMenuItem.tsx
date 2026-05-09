@@ -25,7 +25,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
   const openPanel = toolbar?.openPanel;
   useBehaviorSubjectOpt(openPanel?.selected$);
   const active = !!useSyncStoreOpt(item.active);
-  const isTerminal = !item.children || item.children.length === 0;
+  const isTerminal = !item.pane && !item.raw && (!item.children || item.children.length === 0);
   const id = item.id ?? item.name;
 
   if (isTerminal) {
@@ -93,7 +93,7 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
   return (
     <ToolbarMenuPopup header={!item.noHeader} open={selected} item={item}>
       <ToolbarItem
-        width={'auto'}
+        {...(item.pane ? {} : {width: 'auto'})}
         compact
         selected={selected || active}
         onMouseEnter={disabled ? void 0 : () => openPanel?.onMouseMove(id)}
@@ -106,20 +106,24 @@ export const ToolbarMenuItem: React.FC<ToolbarMenuItemProps> = (props) => {
           renderTooltip: () => item.name ?? item.id ?? '',
         }}
       >
-        <FixedColumn right={16} style={{alignItems: 'center'}}>
-          {item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />}
-          <div ref={arrow} style={{marginRight: -2, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <Arrow
-              direction={
-                selected
-                  ? (arrow.current?.getBoundingClientRect()?.top ?? 0) * 2 + 16 >= window.innerHeight
-                    ? 'u'
-                    : 'd'
-                  : 'r'
-              }
-            />
-          </div>
-        </FixedColumn>
+        {item.pane ? (
+          (item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />)
+        ) : (
+          <FixedColumn right={16} style={{alignItems: 'center'}}>
+            {item.icon?.() ?? <Iconista set={'elastic'} icon={'empty'} width={16} height={16} />}
+            <div ref={arrow} style={{marginRight: -2, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Arrow
+                direction={
+                  selected
+                    ? (arrow.current?.getBoundingClientRect()?.top ?? 0) * 2 + 16 >= window.innerHeight
+                      ? 'u'
+                      : 'd'
+                    : 'r'
+                }
+              />
+            </div>
+          </FixedColumn>
+        )}
       </ToolbarItem>
     </ToolbarMenuPopup>
   );

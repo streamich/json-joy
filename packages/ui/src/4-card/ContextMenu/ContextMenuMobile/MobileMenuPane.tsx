@@ -25,6 +25,27 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
 }) => {
   const [t] = useT();
   const theme = useTheme();
+
+  if (menu.pane) {
+    return (
+      <>
+        <MobileMenuHeader title={t(menu.name)} parent={parent} onBack={onBack} onClose={onClose} />
+        {menu.pane()}
+      </>
+    );
+  }
+
+  if (menu.raw) {
+    return (
+      <>
+        <MobileMenuHeader title={t(menu.name)} parent={parent} onBack={onBack} onClose={onClose} />
+        <div className={listClass()} role="menu" aria-label={t(menu.name)}>
+          {menu.raw()}
+        </div>
+      </>
+    );
+  }
+
   const children = menu.children ?? [];
 
   const sepColor = theme.g(0, 0.08);

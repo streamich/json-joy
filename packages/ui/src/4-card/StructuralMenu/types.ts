@@ -33,6 +33,21 @@ export interface MenuItem {
   raw?: () => React.ReactNode;
 
   /**
+   * When set, the parent renderer (toolbar popup, context menu) treats this
+   * item as a self-contained panel and renders `pane()` as the ENTIRE popup
+   * body — no surrounding `<ContextPane>`, header, separators, or width
+   * constraint. The renderer must keep providing a popup context (so the
+   * pane can call `usePopup().close()`) but otherwise step out of the way.
+   *
+   * Use when the popup body is a fully-styled custom pane (e.g. an editor
+   * settings form) that already manages its own chrome, scrolling, and
+   * dimensions.
+   *
+   * Mutually exclusive with `children` and `raw` for the popup body's purpose.
+   */
+  pane?: () => React.ReactNode;
+
+  /**
    * If true, wrap the display in a `<code>` element and use monospace font.
    * Used when the item represents some code or a literal value.
    *
@@ -139,6 +154,13 @@ export interface MenuItem {
    * Minimum width for the context menu.
    */
   minWidth?: number;
+
+  /**
+   * Hard cap on the context menu width. Useful for items whose body has a
+   * naturally wide intrinsic min-content (long URLs, code snippets, etc.)
+   * to prevent the popup from stretching past the viewport.
+   */
+  maxWidth?: number;
 
   /**
    * Whether the item is "active". This is used to highlight the

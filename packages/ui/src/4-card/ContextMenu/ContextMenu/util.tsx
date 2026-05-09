@@ -71,6 +71,16 @@ export const findMenuItems = (root: MenuItem, query: string): SearchMatch[] => {
   if (!query) return result;
   const find = (path: MenuItem[], curr: MenuItem) => {
     if (curr.sep) return;
+    // Skip inline-only raw items
+    if (
+      !!curr.raw &&
+      !curr.children &&
+      !curr.pane &&
+      !curr.onSelect &&
+      !curr.params?.length
+    ) {
+      return;
+    }
     const name = curr.name || '';
     let text = curr.text || '';
     if (name) text = name + ' ' + text;

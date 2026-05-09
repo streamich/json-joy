@@ -73,11 +73,15 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
   borderless?: boolean;
   transparent?: boolean;
   compact?: boolean;
-  /**
-   * Render the pane in-place in the document flow, without creating an
-   * elevated stacking context.
-   */
+
+  /** Render with a much lighter box-shadow, suitable for inline overlays
+   * that should feel subtle. */
+  lite?: boolean;
+
+  /** Render the pane in-place in the document flow, without creating an
+   * elevated stacking context. */
   inline?: boolean;
+
   className?: string;
   children?: React.ReactNode;
 }
@@ -97,6 +101,7 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
       accent,
       transparent,
       borderless,
+      lite,
       inline,
       className,
       ...rest
@@ -112,7 +117,9 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
       boxShadow:
         transparent || borderless
           ? 'none'
-          : '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)',
+          : lite
+            ? '0 1px 2px rgba(9,30,66,.06),0 0 4px rgba(9,30,66,.04),0 0 1px rgba(9,30,66,.08)'
+            : '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)',
       // : theme.isLight
       //   ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
       //   : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
