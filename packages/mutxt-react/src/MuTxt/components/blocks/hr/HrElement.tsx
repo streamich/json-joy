@@ -5,6 +5,7 @@ import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/Ba
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {HrLine} from './HrLine';
 import {HrOptionsPopup} from './HrOptionsPopup';
+import {VoidSelectionOverlay} from '../VoidSelectionOverlay';
 import * as settings from './settings';
 import type {HrElement as HrElementType} from '../../../types';
 
@@ -73,8 +74,6 @@ export const HrElement: React.FC<HrElementProps> = ({attributes, children, eleme
       style={{
         height: blockHeight,
         textAlign: element.align,
-        outline: '2px solid ' + (selected ? '#07f' : 'transparent'),
-        outlineOffset: 2,
         borderRadius: 4,
       }}
     >
@@ -91,6 +90,7 @@ export const HrElement: React.FC<HrElementProps> = ({attributes, children, eleme
           <HrLine strokeWidth={strokeWidth} style={lineStyle} />
         )}
       </div>
+      <VoidSelectionOverlay selected={selected} />
       {!readOnly && (
         <span
           contentEditable={false}

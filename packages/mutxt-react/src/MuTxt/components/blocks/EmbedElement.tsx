@@ -6,6 +6,7 @@ import {Placeholder} from '@jsonjoy.com/ui/lib/3-list-item/Placeholder';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useFocused, useSelected, type RenderElementProps} from 'slate-react';
 import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
+import {VoidSelectionOverlay} from './VoidSelectionOverlay';
 import type {EmbedElement as EmbedElementType} from '../../types';
 
 const blockClass = rule({
@@ -98,18 +99,7 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({url, caption, compact
             renderVoid={() => <EmbedFallback url={url} />}
           />
         </div>
-        {selected && (
-          <div
-            contentEditable={false}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: 'inherit',
-              background: 'rgba(0, 127, 255, 0.18)',
-              pointerEvents: 'none',
-            }}
-          />
-        )}
+        <VoidSelectionOverlay selected={!!selected} />
       </Paper>
       {!!caption && (
         <div

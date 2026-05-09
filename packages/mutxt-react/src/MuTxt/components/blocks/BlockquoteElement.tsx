@@ -29,7 +29,7 @@ export const BlockquoteElement: React.FC<BlockquoteElementProps> = ({attributes,
   const styles = useStyles();
   const dynamicClass = useRule(({g}) => ({
     bg: g(0, 0.015),
-    borderInlineStart: `4px solid ${g(0.24)}`,
+    borderInlineStart: `3px solid ${g(0.24)}`,
     trs: 'background 140ms ease, border-color 140ms ease',
     '&:hover': {
       bg: g(0, 0.035),

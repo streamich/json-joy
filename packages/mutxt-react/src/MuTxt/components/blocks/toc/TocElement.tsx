@@ -6,6 +6,7 @@ import {More as MoreIcon} from '@jsonjoy.com/ui/lib/icons/interactive/More';
 import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useMuTxt} from '../../../context';
+import {VoidSelectionOverlay} from '../VoidSelectionOverlay';
 import {TocOptionsPopup} from './TocOptionsPopup';
 import * as settings from './settings';
 import type {DocumentOutlineItem} from '../../../behavior/outline';
@@ -70,14 +71,17 @@ const stripButtonClass = rule({
 
 const stripBarClass = rule({
   d: 'block',
-  w: '100%',
+  w: '20%',
   h: '4px',
   bdrad: '2px',
   bgc: 'currentColor',
   op: 0.06,
-  trs: 'opacity 120ms ease',
+  trs: 'opacity .1s, width .3s',
   [`.${stripButtonClass.trim()}:hover &`]: {
     op: 0.2,
+  },
+  [`.${blockClass.trim()}:hover &`]: {
+    w: '100%',
   },
 });
 
@@ -198,10 +202,6 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
     <div
       {...attributes}
       className={blockClass}
-      style={{
-        outline: '2px solid ' + (selected ? '#07f' : 'transparent'),
-        outlineOffset: 2,
-      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -274,6 +274,7 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
           </div>
         )}
       </div>
+      <VoidSelectionOverlay selected={selected} />
       {!readOnly && (
         <div
           contentEditable={false}

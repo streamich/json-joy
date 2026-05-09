@@ -15,6 +15,7 @@ import {Transforms} from 'slate';
 import {useReadOnly, ReactEditor} from 'slate-react';
 import {useT} from 'use-t';
 import {FileOptionsState} from './state';
+import {VoidSelectionOverlay} from '../VoidSelectionOverlay';
 import {useMuTxt} from '../../../context';
 import type {FileElement as FileElementType, FileThing} from '../../../types';
 
@@ -203,18 +204,7 @@ export const ResolvedFileCard: React.FC<ResolvedFileCardProps> = ({thing, select
     >
       {body}
       {!!mediaKind && selected && <div style={{position: 'absolute', top: 0, insetInlineEnd: -46}}>{options}</div>}
-      {selected && (
-        <div
-          contentEditable={false}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: 'inherit',
-            background: 'rgba(0, 127, 255, 0.18)',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
+      <VoidSelectionOverlay selected={selected} />
       {element.caption || !readOnly ? (
         <div
           ref={captionRef}
