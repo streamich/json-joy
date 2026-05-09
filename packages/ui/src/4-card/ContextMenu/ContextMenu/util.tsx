@@ -115,13 +115,16 @@ export const findMenuItems = (root: MenuItem, query: string): SearchMatch[] => {
   result.sort((a, b) => {
     const scoreDiff = b.score - a.score;
     if (scoreDiff !== 0) return scoreDiff;
+    const priorityDiff = (b.item.priority ?? 0) - (a.item.priority ?? 0);
+    if (priorityDiff !== 0) return priorityDiff;
     const lenDiff = a.path.length - b.path.length;
     if (lenDiff !== 0) return lenDiff;
     const pathA = a.path.map((item) => item.id ?? item.name).join('!');
     const pathB = b.path.map((item) => item.id ?? item.name).join('!');
     if (pathA === pathB) {
-      if (!a.item.children) return -1;
-      if (!b.item.children) return 1;
+      const aLeaf = !a.item.children;
+      const bLeaf = !b.item.children;
+      if (aLeaf !== bLeaf) return aLeaf ? -1 : 1;
       return a.item.name < b.item.name ? -1 : 1;
     }
     return pathA < pathB ? -1 : 1;

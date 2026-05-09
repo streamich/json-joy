@@ -162,6 +162,24 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
           right={search ? <BasicButtonClose onClick={() => state.search$.next('')} /> : void 0}
           value={search}
           onChange={(value) => state.search$.next(value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Backspace' && !state.search$.getValue()) {
+              e.preventDefault();
+              e.stopPropagation();
+              state.onclose?.();
+            }
+          }}
+          onEnter={(e) => {
+            if (!state.search$.getValue()) return;
+            const top = state.matches$.getValue()?.[0];
+            if (!top) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const {item, path} = top;
+            if (item.params?.length) state.selectArgs(path, item);
+            else if (item.pane || item.raw || item.children) state.select(path, item);
+            else if (item.onSelect) state.execute(item, e as unknown as React.MouseEvent);
+          }}
           onEsc={(e) => {
             if (state.search$.getValue()) {
               e.preventDefault();

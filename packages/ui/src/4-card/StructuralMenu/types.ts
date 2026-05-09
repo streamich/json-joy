@@ -85,6 +85,14 @@ export interface MenuItem {
   /** Text by which to search for this item, defaults to `name`. */
   text?: string;
 
+  /**
+   * Tiebreaker priority for search ranking. When two items match the query
+   * with the same score, the higher `priority` ranks higher. Has no effect
+   * when scores differ — it cannot promote a worse match over a better one.
+   * Default `0`.
+   */
+  priority?: number;
+
   /** Color of the item. If not provided, computed from `id`.  */
   color?: string;
 

@@ -41,6 +41,7 @@ export interface ContextMenuPaneProps {
   header?: React.ReactNode;
 
   onEsc?: () => void;
+  onClose?: () => void;
 }
 
 export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
