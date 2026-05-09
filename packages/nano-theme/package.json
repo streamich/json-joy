@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.19.0",
+  "version": "18.20.0",
   "description": "A light and opinionated distribution of nano-css with predefined light and dark themes.",
   "author": {
     "name": "streamich",

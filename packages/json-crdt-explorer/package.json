@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "18.19.0",
+  "version": "18.20.0",
   "description": "Explorer playground site for JSON CRDT",
   "author": {
     "name": "streamich",
