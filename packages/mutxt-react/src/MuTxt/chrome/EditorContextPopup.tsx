@@ -140,7 +140,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       className={titleClass}
       style={{
         borderBottom: `1px solid ${styles.g(0, 0.06)}`,
-        background: styles.g(1, styles.light ? 0.7 : 0.2),
+        background: styles.light ? 'rgba(255,255,255,0.7)' : styles.g(1, 0.2),
         color: styles.g(0.24),
       }}
     >
@@ -158,7 +158,7 @@ export const EditorContextPopup: React.FC<EditorContextPopupProps> = ({
       className={footerClass}
       style={{
         borderTop: `1px solid ${styles.g(0, 0.06)}`,
-        background: styles.g(1, styles.light ? 0.7 : 0.2),
+        background: styles.light ? 'rgba(255,255,255,0.7)' : styles.g(1, 0.2),
       }}
     >
       <BasicButton

@@ -89,7 +89,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({open, title, onClose,
   if (!open) return null;
 
   const overlayBg = theme.bg;
-  const borderColor = styles.light ? styles.g(0, 0.08) : styles.g(1, 0.1);
+  const borderColor = styles.g(0, 0.08);
 
   return (
     <div className={overlayClass} style={{background: overlayBg}} role="dialog" aria-modal="true">
