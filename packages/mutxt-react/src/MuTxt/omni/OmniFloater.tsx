@@ -43,7 +43,7 @@ export const OmniFloater: React.FC<OmniFloaterProps> = isTouch
               e.stopPropagation();
             }}
           >
-            <ContextMenu inset showSearch menu={{...menu, minWidth}} onEsc={omni.close} />
+            <ContextMenu inset showSearch menu={{...menu, minWidth}} onEsc={omni.close} onClose={omni.close} />
           </div>
         </PositionAtPoint>
       );

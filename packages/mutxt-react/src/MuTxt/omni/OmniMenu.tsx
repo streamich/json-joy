@@ -19,6 +19,11 @@ export class OmniMenu implements UiLifeCycles {
     const voidMenu = mutxt.voids.menu;
     const blockMenu = mutxt.block.menu;
     const inlineMenu = mutxt.inline.menu;
+    const hasSelection = mutxt.api.hasSelection();
+    const formatChildren: MenuItem[] = [inlineMenu.menuFmtCommon(), inlineMenu.menuFmtTechnical()];
+    if (hasSelection) {
+      formatChildren.push(inlineMenu.menuAnnotations({anchorFromSelection: true}), inlineMenu.menuModify());
+    }
     return {
       name: 'Quick actions',
       minWidth: 320,
@@ -26,16 +31,19 @@ export class OmniMenu implements UiLifeCycles {
         voidMenu.itemFile({anchorFromCaret: true}),
         voidMenu.itemEmbed({anchorFromCaret: true}),
         voidMenu.itemHr(),
+        voidMenu.itemToc(),
         {name: 'sep-turn', sep: true},
         {
           name: 'Turn into',
+          text: 'transform convert change block format type',
           icon: () => <TurnIntoIcon />,
           children: [blockMenu.menuBlocks(), blockMenu.menuHeadings(), blockMenu.menuLists(), blockMenu.menuLayout()],
         },
         {
           name: 'Format',
+          text: 'style mark inline formatting',
           icon: () => <FormatIcon />,
-          children: [inlineMenu.menuFmtCommon(), inlineMenu.menuFmtTechnical()],
+          children: formatChildren,
         },
         {name: 'sep-doc', sep: true},
         mutxt.docMenu.build(),
