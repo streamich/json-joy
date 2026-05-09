@@ -143,7 +143,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
             : rest.onClick || to
               ? styles.light
                 ? styles.g(0, 0.05)
-                : styles.g(0, 0.08)
+                : styles.g(0, 0.04)
               : 'transparent',
       },
       '&:active': {
@@ -160,7 +160,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
       },
       '&:focus': {
         out: 'none',
-        bg: disabled ? 'transparent' : styles.g(0, 0.08),
+        bg: disabled ? 'transparent' : styles.g(0, styles.light ? 0.06 : 0.02),
       },
     }) +
     (smallText

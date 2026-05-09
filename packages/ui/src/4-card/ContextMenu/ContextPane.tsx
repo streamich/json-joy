@@ -35,7 +35,7 @@ const bodyClass = rule({
 
 const useTriangleClass = makeRule((t) => {
   const bg = t.isLight ? '#fff' : t.g(0.98);
-  const shade = t.isLight ? 0 : 1;
+  const shade = 0;
   return {
     pos: 'absolute',
     zIndex: 1,
@@ -108,7 +108,7 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
     const triangleClass = useTriangleClass();
 
     const blockStyle: React.CSSProperties = {
-      background: transparent ? 'transparent' : theme.isLight ? theme.bg : theme.g(0.98),
+      background: transparent ? 'transparent' : theme.isLight ? theme.bg : theme.g(0.94),
       boxShadow:
         transparent || borderless
           ? 'none'
