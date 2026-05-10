@@ -2,8 +2,7 @@ import {Editor, Element as SlateElement} from 'slate';
 import {insertVoidBlock} from './voidInsert';
 import type {CustomText, TocElement} from '../types';
 
-export const isTocElement = (node: unknown): node is TocElement =>
-  SlateElement.isElement(node) && node.type === 'toc';
+export const isTocElement = (node: unknown): node is TocElement => SlateElement.isElement(node) && node.type === 'toc';
 
 const createTocElement = (overrides: Partial<TocElement> = {}): TocElement => {
   const children: CustomText[] = [{text: ''}];

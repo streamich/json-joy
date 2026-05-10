@@ -65,9 +65,7 @@ export interface Props extends React.HTMLAttributes<any> {
 
 export const More: React.FC<Props> = (props) => {
   const {className: classNameProp = '', onMouseEnter, onMouseLeave, onClick, size, style: styleProp, ...rest} = props;
-  const sizeStyle: React.CSSProperties | undefined = size
-    ? {width: size, height: size, ...styleProp}
-    : styleProp;
+  const sizeStyle: React.CSSProperties | undefined = size ? {width: size, height: size, ...styleProp} : styleProp;
   const svgSize = size ?? 32;
   const [hovered, setHovered] = React.useState(false);
   const [waving, setWaving] = React.useState(false);

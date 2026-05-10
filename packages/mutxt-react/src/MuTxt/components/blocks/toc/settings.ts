@@ -17,8 +17,7 @@ export const getTocMaxLevel = (value?: number): TocMaxLevel => {
 export const getTocIncludeTitle = (value?: boolean): boolean =>
   typeof value === 'boolean' ? value : DEF_INCLUDE_TITLE;
 
-export const getTocNumbered = (value?: boolean): boolean =>
-  typeof value === 'boolean' ? value : DEF_NUMBERED;
+export const getTocNumbered = (value?: boolean): boolean => (typeof value === 'boolean' ? value : DEF_NUMBERED);
 
 export const getStoredTocMaxLevel = (value: TocMaxLevel): TocMaxLevel | undefined =>
   value === DEF_MAX_LEVEL ? undefined : value;

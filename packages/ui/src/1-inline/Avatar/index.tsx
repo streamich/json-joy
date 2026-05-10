@@ -238,7 +238,8 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
         justifyContent: 'center',
         top: size * -0.1,
         left: size * -0.1,
-        background: props.style.background || styles.col.hash(id || name || '') + '' || styles.col.get('error', 'solid-1'),
+        background:
+          props.style.background || styles.col.hash(id || name || '') + '' || styles.col.get('error', 'solid-1'),
         width: lockSize + 'px',
         height: lockSize + 'px',
         borderRadius: '50%',

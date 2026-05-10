@@ -132,12 +132,7 @@ export const InputNumber: React.FC<InputNumberProps> = ({
 
   return (
     <span className={blockClass + (className ? ' ' + className : '')} style={style}>
-      <BasicButton
-        {...buttonProps}
-        disabled={disabled || atMin}
-        title="Decrease"
-        onClick={dec}
-      >
+      <BasicButton {...buttonProps} disabled={disabled || atMin} title="Decrease" onClick={dec}>
         <Iconista set="tabler" icon="minus" width={16} height={16} />
       </BasicButton>
       <span className={inputWrapClass}>
@@ -152,12 +147,7 @@ export const InputNumber: React.FC<InputNumberProps> = ({
           onKeyDown={handleKeyDown}
         />
       </span>
-      <BasicButton
-        {...buttonProps}
-        disabled={disabled || atMax}
-        title="Increase"
-        onClick={inc}
-      >
+      <BasicButton {...buttonProps} disabled={disabled || atMax} title="Increase" onClick={inc}>
         <Iconista set="tabler" icon="plus" width={16} height={16} />
       </BasicButton>
     </span>

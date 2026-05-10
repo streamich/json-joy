@@ -273,12 +273,7 @@ export class MuTxtAppState {
       let bytes: Uint8Array;
       if (shared.encrypted) {
         const messagePrefix = 'Enter the password to open the shared document.';
-        const password = window.prompt(
-          shared.message
-            ? `${messagePrefix}\n\n${shared.message}`
-            : messagePrefix,
-          '',
-        );
+        const password = window.prompt(shared.message ? `${messagePrefix}\n\n${shared.message}` : messagePrefix, '');
         if (password === null) return false; // user cancelled
         bytes = (await decodeEncryptedShareBlob(shared.encoded, password)) as Uint8Array<ArrayBuffer>;
       } else {

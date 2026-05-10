@@ -54,9 +54,7 @@ const KeyboardShortcutsModal = React.lazy(() =>
   import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
 );
 
-const EmbedDocsModal = React.lazy(() =>
-  import('./chrome/EmbedDocs').then((m) => ({default: m.EmbedDocsModal})),
-);
+const EmbedDocsModal = React.lazy(() => import('./chrome/EmbedDocs').then((m) => ({default: m.EmbedDocsModal})));
 
 const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
   return kind === 'mid'
@@ -429,9 +427,7 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
     const editor = withTitleSubmit(
-      withToc(
-        withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
-      ),
+      withToc(withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor())))))))),
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];

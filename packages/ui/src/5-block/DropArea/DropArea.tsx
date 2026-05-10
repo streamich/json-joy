@@ -108,7 +108,7 @@ export const DropArea: React.FC<DropAreaProps> = ({
   const link = styles.col.get('link', 'solid-1');
   const verticalPadding = compact ? 16 : 32;
   const dashed = over ? `1px dashed ${link}` : `1px dashed ${styles.g(0.82)}`;
-  const bg = over ? 'rgba(0,128,255,.04)' : styles.g(1, .5);
+  const bg = over ? 'rgba(0,128,255,.04)' : styles.g(1, 0.5);
 
   const areaCls = areaClass({
     pd: `${verticalPadding}px 8px`,

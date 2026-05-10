@@ -61,11 +61,7 @@ export const TocOptions: React.FC = () => {
 
       <Separator />
 
-      <FormRow
-        title={t('Include title')}
-        description={t('Show the document title at the top of the contents.')}
-        right
-      >
+      <FormRow title={t('Include title')} description={t('Show the document title at the top of the contents.')} right>
         <div style={{width: 60, marginTop: -8}}>
           <Checkbox on={includeTitle} onChange={() => state.setIncludeTitle(!includeTitle)} />
         </div>

@@ -19,13 +19,9 @@ const randomBytes = (length: number): Uint8Array => {
 };
 
 const deriveKey = async (password: string, salt: Uint8Array, usage: KeyUsage[]): Promise<CryptoKey> => {
-  const baseKey = await subtle().importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    {name: 'PBKDF2'},
-    false,
-    ['deriveKey'],
-  );
+  const baseKey = await subtle().importKey('raw', new TextEncoder().encode(password), {name: 'PBKDF2'}, false, [
+    'deriveKey',
+  ]);
   return subtle().deriveKey(
     {name: 'PBKDF2', salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256'},
     baseKey,

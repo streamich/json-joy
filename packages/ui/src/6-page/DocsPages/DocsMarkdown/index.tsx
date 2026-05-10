@@ -153,7 +153,11 @@ const DocsMarkdown: React.FC<Props> = ({
   return (
     <context.Provider value={{contentWidth}}>
       {!!contents && !!resolvedAst && <Contents right={contentsRight} ast={resolvedAst} renderers={renderers} />}
-      <div className={'invisible' + blockCls + (font1 ? ' ' + blockFont1Class : '') + (display ? ' ' + blockDisplayClass : '')}>
+      <div
+        className={
+          'invisible' + blockCls + (font1 ? ' ' + blockFont1Class : '') + (display ? ' ' + blockDisplayClass : '')
+        }
+      >
         {!!resolvedAst && <MdastFlat ast={resolvedAst} renderers={renderers} fontSize={fontSize} />}
       </div>
     </context.Provider>

@@ -282,11 +282,7 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
           onMouseDown={preventMouseDown}
           style={{opacity: showToolbar ? 1 : 0, pointerEvents: showToolbar ? 'auto' : 'none'}}
         >
-          <ToolbarMenu
-            menu={tocMenu}
-            compact
-            pane={{compact: true, lite: true}}
-          />
+          <ToolbarMenu menu={tocMenu} compact pane={{compact: true, lite: true}} />
         </div>
       )}
       {children}

@@ -81,16 +81,10 @@ const ShareCopyAnimIcon: React.FC<{copied: rsync.ReactValue<boolean>}> = ({copie
   const isCopied = copied.use();
   return (
     <span className={shareIconStackClass}>
-      <span
-        className={shareIconLayerClass}
-        style={{transform: isCopied ? 'translateY(100%)' : 'translateY(0%)'}}
-      >
+      <span className={shareIconLayerClass} style={{transform: isCopied ? 'translateY(100%)' : 'translateY(0%)'}}>
         <ShareIcon />
       </span>
-      <span
-        className={shareIconLayerClass}
-        style={{transform: isCopied ? 'translateY(0%)' : 'translateY(-100%)'}}
-      >
+      <span className={shareIconLayerClass} style={{transform: isCopied ? 'translateY(0%)' : 'translateY(-100%)'}}>
         <ShareCheckIcon />
       </span>
     </span>
@@ -121,7 +115,13 @@ export class DocumentMenu implements UiLifeCycles {
     const toggleKeys = ['Primary', 'Shift', 'm'];
     const fullscreenKeys = ['Primary', 'Shift', 'f'];
     const activeFor = (mode: DisplayMode) => rsync.comp([mutxt.displayMode], ([m]) => m === mode);
-    const option = (mode: DisplayMode, name: string, icon: () => React.ReactNode, keys?: string[], text?: string): MenuItem => ({
+    const option = (
+      mode: DisplayMode,
+      name: string,
+      icon: () => React.ReactNode,
+      keys?: string[],
+      text?: string,
+    ): MenuItem => ({
       name,
       text,
       icon,
@@ -154,8 +154,20 @@ export class DocumentMenu implements UiLifeCycles {
           size > 1
             ? [
                 option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys, 'embedded small minimize compact'),
-                option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys, 'fullwindow maximize expand large full window'),
-                option('fullscreen', 'Fullscreen', () => <FullscreenIcon />, fullscreenKeys, 'full screen presentation'),
+                option(
+                  'fullwindow',
+                  'Maximized',
+                  () => <MaximizeIcon />,
+                  toggleKeys,
+                  'fullwindow maximize expand large full window',
+                ),
+                option(
+                  'fullscreen',
+                  'Fullscreen',
+                  () => <FullscreenIcon />,
+                  fullscreenKeys,
+                  'full screen presentation',
+                ),
               ]
             : void 0,
       });
@@ -212,7 +224,12 @@ export class DocumentMenu implements UiLifeCycles {
     };
   }
 
-  private itemThemeOption(value: ThemeOverride | undefined, name: string, icon: () => React.ReactNode, text?: string): MenuItem {
+  private itemThemeOption(
+    value: ThemeOverride | undefined,
+    name: string,
+    icon: () => React.ReactNode,
+    text?: string,
+  ): MenuItem {
     const mutxt = this.mutxt;
     return {
       name,
@@ -420,9 +437,27 @@ export class DocumentMenu implements UiLifeCycles {
       text: 'mode size view layout fullscreen maximize minimize',
       icon: () => <MaximizeIcon />,
       children: [
-        this.itemDisplayModeOption('inline', 'Inline', () => <MinimizeIcon />, undefined, 'embedded small minimize compact'),
-        this.itemDisplayModeOption('fullwindow', 'Maximized', () => <MaximizeIcon />, ['Primary', 'Shift', 'm'], 'fullwindow maximize expand large full window'),
-        this.itemDisplayModeOption('fullscreen', 'Fullscreen', () => <FullscreenIcon />, ['Primary', 'Shift', 'f'], 'full screen presentation'),
+        this.itemDisplayModeOption(
+          'inline',
+          'Inline',
+          () => <MinimizeIcon />,
+          undefined,
+          'embedded small minimize compact',
+        ),
+        this.itemDisplayModeOption(
+          'fullwindow',
+          'Maximized',
+          () => <MaximizeIcon />,
+          ['Primary', 'Shift', 'm'],
+          'fullwindow maximize expand large full window',
+        ),
+        this.itemDisplayModeOption(
+          'fullscreen',
+          'Fullscreen',
+          () => <FullscreenIcon />,
+          ['Primary', 'Shift', 'f'],
+          'full screen presentation',
+        ),
       ],
     };
   }

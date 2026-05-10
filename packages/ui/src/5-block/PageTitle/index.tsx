@@ -80,7 +80,9 @@ const PageTitle: React.FC<Props> = ({h2, h3, h4, h5, h6, right, back, backTo, ch
         </>
       )}
       <div
-        className={blockCls + (h6 ? ' ' + blockClass6 : h5 ? ' ' + blockClass5 : h2 || h3 || h4 ? ' ' + blockClass3 : '')}
+        className={
+          blockCls + (h6 ? ' ' + blockClass6 : h5 ? ' ' + blockClass5 : h2 || h3 || h4 ? ' ' + blockClass3 : '')
+        }
         style={{borderBottom: h6 || h5 || h4 || h3 || h2 ? 0 : undefined}}
       >
         <Component

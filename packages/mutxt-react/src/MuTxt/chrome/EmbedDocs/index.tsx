@@ -134,10 +134,8 @@ export const EmbedDocsModal: React.FC = () => {
             title="HTML — <mu-txt> custom element"
             intro={
               <>
-                A drop-in web component. Works in any HTML page — no build step
-                required. Children seed the document; children content can be
-                plain text, Markdown, or Slate JSON via the{' '}
-                <code>format</code> attribute.
+                A drop-in web component. Works in any HTML page — no build step required. Children seed the document;
+                children content can be plain text, Markdown, or Slate JSON via the <code>format</code> attribute.
               </>
             }
             snippet={ELEMENT_SNIPPET}
@@ -160,10 +158,8 @@ export const EmbedDocsModal: React.FC = () => {
             title="React — <mutxt> component"
             intro={
               <>
-                Batteries-included React component for tighter integration —
-                seed from Slate JSON, hand in a Peritext-backed{' '}
-                <code>json-joy</code> model for collaboration, and wire up your
-                own presence manager.
+                Batteries-included React component for tighter integration — seed from Slate JSON, hand in a
+                Peritext-backed <code>json-joy</code> model for collaboration, and wire up your own presence manager.
               </>
             }
             snippet={REACT_SNIPPET}

@@ -20,7 +20,5 @@ export interface Props {
 
 export const Sidetip: React.FC<Props> = ({small, children}) => {
   const styles = useStyles();
-  return (
-    <span className={blockClass({col: styles.g(0.5)}) + (small ? ' ' + blockSmallClass : '')}>{children}</span>
-  );
+  return <span className={blockClass({col: styles.g(0.5)}) + (small ? ' ' + blockSmallClass : '')}>{children}</span>;
 };

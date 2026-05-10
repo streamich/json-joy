@@ -229,13 +229,7 @@ export const ShareDocumentForm: React.FC = () => {
   return (
     <div className={formClass}>
       <FormRow title={t('Display')}>
-        <Input
-          type="text"
-          value={title}
-          placeholder={t('Title')}
-          onChange={setTitle}
-          onKeyDown={stopKeyDown}
-        />
+        <Input type="text" value={title} placeholder={t('Title')} onChange={setTitle} onKeyDown={stopKeyDown} />
         <Space />
         <div className={messageInputClass}>
           <Input
@@ -279,9 +273,9 @@ export const ShareDocumentForm: React.FC = () => {
 
       {!!shareUrl && (
         <>
-        <Space size={2} />
-        <Separator />
-        <Space size={1} />
+          <Space size={2} />
+          <Separator />
+          <Space size={1} />
         </>
       )}
 
@@ -305,12 +299,9 @@ export const ShareDocumentForm: React.FC = () => {
               {error}
             </div>
           ) : (
-          
             <div style={{maxWidth: '100%'}}>
               <TextBlock src={shareUrl} select lang="text" />
             </div>
-
-          
           )}
         </FormRow>
       )}
@@ -339,21 +330,21 @@ export const ShareDocumentForm: React.FC = () => {
                 </span>
               </BasicButton>
             ))}
-            <Separator style={{width: 1, height:32}} />
-                          <BasicButton
-                type="button"
-                width={'auto'}
-                height={32}
-                compact
-                border
-                disabled={!shareUrl}
-                onClick={onCopyHtmlLink}
-              >
-                <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
-                  <Iconista set={'tabler' as any} icon={'code' as any} width={16} height={16} />
-                  {htmlCopied ? t('Copied!') : t('Copy HTML')}
-                </span>
-              </BasicButton>
+            <Separator style={{width: 1, height: 32}} />
+            <BasicButton
+              type="button"
+              width={'auto'}
+              height={32}
+              compact
+              border
+              disabled={!shareUrl}
+              onClick={onCopyHtmlLink}
+            >
+              <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
+                <Iconista set={'tabler' as any} icon={'code' as any} width={16} height={16} />
+                {htmlCopied ? t('Copied!') : t('Copy HTML')}
+              </span>
+            </BasicButton>
           </div>
         </FormRow>
       )}

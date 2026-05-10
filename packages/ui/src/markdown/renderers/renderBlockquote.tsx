@@ -29,9 +29,7 @@ const renderBlockquote: RenderNode = (renderers, ast, idx, props, state) => {
 
   const element = (
     <MarkdownBlock idx={idx}>
-      <blockquote className={blockquoteClass + dyn}>
-        {renderers.children(renderers, ast, idx, props, state)}
-      </blockquote>
+      <blockquote className={blockquoteClass + dyn}>{renderers.children(renderers, ast, idx, props, state)}</blockquote>
     </MarkdownBlock>
   );
   const doCenterAsTopLevelBlock = props.isFullWidth && isFirstLevelBlockElement(ast.nodes[idx], ast);
