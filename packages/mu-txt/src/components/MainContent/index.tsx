@@ -5,7 +5,7 @@ import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {useExplorer} from '../../context';
 import {Welcome} from '../Welcome';
 import {Document} from './Document';
-import {DotBackground} from './DotBackground';
+import {DotBackground} from '@jsonjoy.com/ui/src/5-block/DotBackground';
 import {AppGridColumn} from '@jsonjoy.com/ui/src/7-fullscreen/AppGrid';
 
 const blockClass = rule({
