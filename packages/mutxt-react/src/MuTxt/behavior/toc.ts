@@ -1,4 +1,4 @@
-import {Editor, Element as SlateElement} from 'slate';
+import {type Editor, Element as SlateElement} from 'slate';
 import {insertVoidBlock} from './voidInsert';
 import type {CustomText, TocElement} from '../types';
 

@@ -127,7 +127,7 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
   const selected = isSelected && isFocused;
   const editor = useSlateStatic();
   const mutxt = useMuTxt();
-  mutxt.contentVersion.use();
+  const contentVersion = mutxt.contentVersion.use();
   const [hovered, setHovered] = React.useState(false);
 
   const maxLevel = settings.getTocMaxLevel(element.maxLevel);
@@ -135,14 +135,14 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
   const numbered = settings.getTocNumbered(element.numbered);
   const caption = element.caption?.trim() ?? '';
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: contentVersion invalidates outline() cache
   const filtered = React.useMemo(() => {
     const all = mutxt.outline();
     return all.filter((item) => {
       if (item.level === 0) return includeTitle;
       return item.level <= maxLevel;
     });
-    // outline cache key changes on contentVersion, which is subscribed above
-  }, [mutxt, mutxt.contentVersion.value, includeTitle, maxLevel]);
+  }, [mutxt, contentVersion, includeTitle, maxLevel]);
 
   const numberedItems = React.useMemo<NumberedItem[]>(
     () => (numbered ? computeNumbers(filtered) : filtered.map((i) => ({...i}))),

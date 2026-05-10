@@ -49,12 +49,6 @@ const socialRowClass = rule({
   flexWrap: 'wrap',
 });
 
-const sectionLabelClass = rule({
-  fz: '13px',
-  fw: 600,
-  mr: '0 0 8px',
-});
-
 const sectionDescriptionClass = rule({
   fz: '12px',
   lh: 1.45,
@@ -65,20 +59,6 @@ const errorClass = rule({
   fz: '12px',
   lh: 1.4,
   pdt: '4px',
-});
-
-const previewBlockClass = rule({
-  fz: '11px',
-  ws: 'pre-wrap',
-  wb: 'break-all',
-  mr: 0,
-  pd: '8px 10px',
-  bdrad: '6px',
-});
-
-const linkBlockWrapClass = rule({
-  w: '100%',
-  minW: 0,
 });
 
 const messageInputClass = rule({
@@ -223,7 +203,6 @@ export const ShareDocumentForm: React.FC = () => {
     }
   };
 
-  const blockedReason = encrypt && !password ? 'Set a password to generate the link.' : null;
   const errorColor = styles.col.get('error', 'solid-1');
 
   return (

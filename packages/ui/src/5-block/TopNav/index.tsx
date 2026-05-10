@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {distinctUntilChanged, fromEvent, map} from 'rxjs';
-import {rule, drule, ZINDEX} from 'nano-theme';
+import {drule, ZINDEX} from 'nano-theme';
 import {useStyles} from '../../styles/context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useObservable from 'react-use/lib/useObservable';
