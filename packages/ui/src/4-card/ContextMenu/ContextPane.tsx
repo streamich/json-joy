@@ -1,30 +1,17 @@
 import * as React from 'react';
-import {makeRule, rule, useTheme} from 'nano-theme';
+import {drule, rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {ZINDEX} from '../../constants';
 
-const usePaneClass = makeRule((t) => {
-  // const shade = t.isLight ? 0 : 1;
-  const shade = t.isLight ? 0 : 0.3;
-  return {
-    d: 'inline-block',
-    pos: 'relative',
-    z: ZINDEX.CONTEXT,
-    lh: '1.2em',
-    l: 'auto',
-    r: 0,
-    bdrad: '8px',
-    trs: 'transform .45s cubic-bezier(.2,2,0,1), opacity .3s',
-    bdt: `1px solid ${t.g(shade, 0.1)}`,
-    bdl: `1px solid ${t.g(shade, 0.2)}`,
-    bdr: `1px solid ${t.g(shade, 0.15)}`,
-    bdb: `1px solid ${t.g(shade, 0.25)}`,
-    '&:hover': {
-      bdt: `1px solid ${t.g(shade, 0.2)}`,
-      bdl: `1px solid ${t.g(shade, 0.3)}`,
-      bdr: `1px solid ${t.g(shade, 0.25)}`,
-      bdb: `1px solid ${t.g(shade, 0.35)}`,
-    },
-  };
+const paneClass = drule({
+  d: 'inline-block',
+  pos: 'relative',
+  z: ZINDEX.CONTEXT,
+  lh: '1.2em',
+  l: 'auto',
+  r: 0,
+  bdrad: '8px',
+  trs: 'transform .45s cubic-bezier(.2,2,0,1), opacity .3s',
 });
 
 const bodyClass = rule({
@@ -33,24 +20,14 @@ const bodyClass = rule({
   bdrad: '4px',
 });
 
-const useTriangleClass = makeRule((t) => {
-  const bg = t.isLight ? '#fff' : t.g(0.98);
-  const shade = 0;
-  return {
-    pos: 'absolute',
-    zIndex: 1,
-    w: '7px',
-    h: '7px',
-    t: '2px',
-    transform: 'rotate(45deg) translate(-5px,-5px)',
-    bdl: `1px solid ${t.g(shade, 0.15)}`,
-    bdt: `1px solid ${t.g(shade, 0.15)}`,
-    bdr: `1px solid ${bg}`,
-    bdb: `1px solid ${bg}`,
-    bg,
-    borderTopLeftRadius: '2px',
-    bxsh: `0 -1px 1px ${t.g(shade, 0.035)}`,
-  };
+const triangleClass = drule({
+  pos: 'absolute',
+  zIndex: 1,
+  w: '7px',
+  h: '7px',
+  t: '2px',
+  transform: 'rotate(45deg) translate(-5px,-5px)',
+  borderTopLeftRadius: '2px',
 });
 
 export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -73,11 +50,15 @@ export interface ContextPaneProps extends React.HTMLAttributes<HTMLDivElement> {
   borderless?: boolean;
   transparent?: boolean;
   compact?: boolean;
-  /**
-   * Render the pane in-place in the document flow, without creating an
-   * elevated stacking context.
-   */
+
+  /** Render with a much lighter box-shadow, suitable for inline overlays
+   * that should feel subtle. */
+  lite?: boolean;
+
+  /** Render the pane in-place in the document flow, without creating an
+   * elevated stacking context. */
   inline?: boolean;
+
   className?: string;
   children?: React.ReactNode;
 }
@@ -97,25 +78,48 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
       accent,
       transparent,
       borderless,
+      lite,
       inline,
       className,
       ...rest
     },
     ref,
   ) => {
-    const theme = useTheme();
-    const paneClass = usePaneClass();
-    const triangleClass = useTriangleClass();
+    const styles = useStyles();
+    const light = styles.light;
+    const shade = light ? 0 : 0.3;
+    const triangleShade = 0;
+    const triangleBg = light ? '#fff' : styles.g(0.98);
+
+    const paneCls = paneClass({
+      bdt: `1px solid ${styles.g(shade, 0.1)}`,
+      bdl: `1px solid ${styles.g(shade, 0.2)}`,
+      bdr: `1px solid ${styles.g(shade, 0.15)}`,
+      bdb: `1px solid ${styles.g(shade, 0.25)}`,
+      '&:hover': {
+        bdt: `1px solid ${styles.g(shade, 0.2)}`,
+        bdl: `1px solid ${styles.g(shade, 0.3)}`,
+        bdr: `1px solid ${styles.g(shade, 0.25)}`,
+        bdb: `1px solid ${styles.g(shade, 0.35)}`,
+      },
+    });
+    const triangleCls = triangleClass({
+      bdl: `1px solid ${styles.g(triangleShade, 0.15)}`,
+      bdt: `1px solid ${styles.g(triangleShade, 0.15)}`,
+      bdr: `1px solid ${triangleBg}`,
+      bdb: `1px solid ${triangleBg}`,
+      bg: triangleBg,
+      bxsh: `0 -1px 1px ${styles.g(triangleShade, 0.035)}`,
+    });
 
     const blockStyle: React.CSSProperties = {
-      background: transparent ? 'transparent' : theme.isLight ? theme.bg : theme.g(0.94),
+      background: transparent ? 'transparent' : light ? styles.bg + '' : styles.g(0.94),
       boxShadow:
         transparent || borderless
           ? 'none'
-          : '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)',
-      // : theme.isLight
-      //   ? '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)'
-      //   : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
+          : lite
+            ? '0 1px 2px rgba(9,30,66,.06),0 0 4px rgba(9,30,66,.04),0 0 1px rgba(9,30,66,.08)'
+            : '0 4px 8px -2px rgba(9,30,66,.25),0 0 13px rgba(9,30,66,.13),0 0 1px rgba(9,30,66,.2)',
       ...(style || {}),
       border: transparent || borderless ? 'none' : undefined,
     };
@@ -136,7 +140,6 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
 
     if (accent) {
       blockStyle.borderBottom = `2px solid ${accent}`;
-      // blockStyle.borderTop = `2px solid ${accent}`;
     }
 
     if (inline) {
@@ -145,13 +148,13 @@ export const ContextPane: React.FC<ContextPaneProps> = React.forwardRef<HTMLDivE
     }
 
     return (
-      <div {...rest} className={paneClass + (className || '')} style={blockStyle} ref={ref}>
+      <div {...rest} className={paneCls + (className || '')} style={blockStyle} ref={ref}>
         <div className={bodyClass} style={{overflow: canOverflow ? 'visible' : undefined}}>
           {children}
         </div>
         {triangle && (
           <div
-            className={triangleClass}
+            className={triangleCls}
             style={{
               left: right ? 'auto' : 15,
               right: right ? 15 : 'auto',

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {rule, lightTheme as theme, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
 import {Link} from '../../1-inline/Link';
 import {Ripple} from '../../misc/Ripple';
 import {useStyles} from '../../styles/context';
 
 export const blockClass = rule({
-  ...theme.font.ui1.mid,
+  ...lightTheme.font.ui1.mid,
   fz: '14px',
   // cur: 'pointer',
   us: 'none',
@@ -28,6 +28,9 @@ export const blockClass = rule({
     bxsh: 'none',
   },
 });
+
+const dynamicBlockClass = drule({});
+const borderClass = drule({});
 
 const handleDragStart = (e: React.MouseEvent) => e.preventDefault();
 
@@ -102,7 +105,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
     spacious = true;
   }
 
-  const dynamicBlockClass = useRule(() => ({
+  const blockDynamic = dynamicBlockClass({
     col: textCol,
     bg: selected ? styles.col.accent(0, 'bg-2') : transparent || !fill ? 'transparent' : 'rgba(128,128,128,0.07)',
     '&:hover': {
@@ -114,11 +117,14 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       bg: disabled ? void 0 : 'rgba(128,128,128,0.22)',
       bdfl: disabled ? void 0 : 'saturate(150%)',
     },
-  }));
+  });
 
-  const borderClass = useRule(() => ({
-    bd: `1px solid ${styles.g(0, 0.08 * bgFactor)}`,
-  }));
+  const borderDynamic = border
+    ? ' ' +
+      borderClass({
+        bd: `1px solid ${styles.g(0, 0.08 * bgFactor)}`,
+      })
+    : '';
 
   const style: React.CSSProperties = {
     ...rest.style,
@@ -175,7 +181,7 @@ export const BasicButton: React.FC<BasicButtonProps> = ({
       <Link
         {...rest}
         a={!!to}
-        className={className + blockClass + dynamicBlockClass + (border ? borderClass : '')}
+        className={className + blockClass + blockDynamic + borderDynamic}
         style={style}
         title={title}
         onClick={to ? undefined : onClick}

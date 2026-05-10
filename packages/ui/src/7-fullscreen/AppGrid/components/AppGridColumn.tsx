@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import * as ScrollArea from '../../../4-card/ScrollArea';
 import {NiceUiSizes} from '../../../constants';
 
@@ -29,14 +30,14 @@ export const AppGridColumn: React.FC<AppGridColumnProps> = ({
   scrollRailWidth,
   children,
 }) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
   const headerElement = !!header && (
-    <div className={marginalsClass({bdb: `1px solid ${theme.g(0, 0.08)}`})}>{header}</div>
+    <div className={marginalsClass({bdb: `1px solid ${styles.g(0, 0.08)}`})}>{header}</div>
   );
 
   const footerElement = !!footer && (
-    <div className={marginalsClass({bdt: `1px solid ${theme.g(0, 0.08)}`})}>{footer}</div>
+    <div className={marginalsClass({bdt: `1px solid ${styles.g(0, 0.08)}`})}>{footer}</div>
   );
 
   return (

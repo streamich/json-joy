@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type {RenderNode} from '../types';
-import {rule, drule, useTheme} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockCss = drule({
   mar: '32px 0 0',
@@ -16,13 +17,13 @@ const tableClass = rule({
 // TODO: `Footnotes` is not an MDAST node, this should probably be a component
 // TODO: instead of a renderer.
 const renderFootnotes: RenderNode = (renderers, flat, idx, props, state) => {
-  const theme = useTheme();
+  const styles = useStyles();
   if (!flat.footnoteOrder.length) return null;
 
   const blockClass = blockCss({
-    bdt: `1px solid ${theme.g(0, 0.04)}`,
+    bdt: `1px solid ${styles.g(0, 0.04)}`,
     '&:hover': {
-      bdt: `1px solid ${theme.g(0, 0.1)}`,
+      bdt: `1px solid ${styles.g(0, 0.1)}`,
     },
   });
 

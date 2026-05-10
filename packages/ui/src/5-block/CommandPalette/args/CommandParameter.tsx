@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Code} from '../../../1-inline/Code';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
 export interface Props {
   label?: React.ReactNode;
@@ -9,12 +9,14 @@ export interface Props {
 }
 
 export const CommandParameter: React.FC<Props> = ({label, value, active}) => {
-  const theme = useTheme();
+  const styles = useStyles();
+  const success = styles.col.get('success', 'el-2');
+  const negative = styles.col.get('error', 'el-2');
 
-  const quote = typeof value === 'string' ? <span style={{color: theme.color.sem.positive[1]}}>{'"'}</span> : null;
-  const valueFormatted = <span style={{color: theme.g(0)}}>{String(value)}</span>;
-  const equal = <span style={{color: theme.g(0.5)}}>=</span>;
-  const labelFormatted = <span style={{color: active ? theme.color.sem.negative[1] : theme.g(0.5)}}>{label}</span>;
+  const quote = typeof value === 'string' ? <span style={{color: success}}>{'"'}</span> : null;
+  const valueFormatted = <span style={{color: styles.g(0)}}>{String(value)}</span>;
+  const equal = <span style={{color: styles.g(0.5)}}>=</span>;
+  const labelFormatted = <span style={{color: active ? negative : styles.g(0.5)}}>{label}</span>;
 
   return (
     <Code gray noBg>

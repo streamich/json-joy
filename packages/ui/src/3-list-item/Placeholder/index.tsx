@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, makeRule} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockClass = rule({
   d: 'block',
@@ -7,14 +8,11 @@ const blockClass = rule({
   bdrad: '4px',
 });
 
-const useDefaultClass = makeRule((t) => ({
-  bg: t.g(0, t.isLight ? 0.09 : 0.14),
-}));
+const defaultClass = drule({});
 
-const useButtonClass = makeRule((t) => ({
-  bg: t.color.sem.blue[0],
+const buttonClass = drule({
   op: 0.45,
-}));
+});
 
 const LINE_RATIOS = [0.8, 0.65, 0.5, 0.72, 0.58];
 
@@ -39,8 +37,9 @@ export interface PlaceholderProps {
 }
 
 export const Placeholder: React.FC<PlaceholderProps> = ({variant = 'block', width, height, lines = 3, style}) => {
-  const defaultClass = useDefaultClass();
-  const buttonClass = useButtonClass();
+  const styles = useStyles();
+  const defaultCls = defaultClass({bg: styles.g(0, styles.light ? 0.09 : 0.14)});
+  const buttonCls = buttonClass({bg: styles.col.get('link', 'solid-1')});
   const def = DEFAULTS[variant];
 
   if (variant === 'paragraph') {
@@ -49,7 +48,7 @@ export const Placeholder: React.FC<PlaceholderProps> = ({variant = 'block', widt
         {Array.from({length: lines}, (_, i) => (
           <span
             key={i}
-            className={`${blockClass} ${defaultClass}`}
+            className={`${blockClass} ${defaultCls}`}
             style={{
               display: 'block',
               width: `${LINE_RATIOS[i % LINE_RATIOS.length] * 100}%`,
@@ -64,7 +63,7 @@ export const Placeholder: React.FC<PlaceholderProps> = ({variant = 'block', widt
 
   return (
     <span
-      className={`${blockClass} ${variant === 'button' ? buttonClass : defaultClass}`}
+      className={`${blockClass} ${variant === 'button' ? buttonCls : defaultCls}`}
       style={{
         width: width ?? def.width,
         height: height ?? def.height,

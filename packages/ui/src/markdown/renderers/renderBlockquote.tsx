@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, drule, m1, useTheme} from 'nano-theme';
+import {rule, drule, m1} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import MarkdownFullWidthBlock from '../util/MarkdownFullWidthBlock';
 import isFirstLevelBlockElement from '../util/isFirstLevelBlockElement';
 import MarkdownBlock from '../util/MarkdownBlock';
@@ -15,20 +16,20 @@ const blockquoteClass = rule({
   },
 });
 
+const dynamicBlockquoteClass = drule({});
+
 const renderBlockquote: RenderNode = (renderers, ast, idx, props, state) => {
-  const theme = useTheme();
-  const dynamicBlockquoteClass = drule({
-    bdl: `6px solid ${theme.g(0, 0.08)}`,
+  const styles = useStyles();
+  const dyn = dynamicBlockquoteClass({
+    bdl: `6px solid ${styles.g(0, 0.08)}`,
     '&:hover': {
-      bdl: `6px solid ${theme.g(0, 0.16)}`,
+      bdl: `6px solid ${styles.g(0, 0.16)}`,
     },
   });
 
   const element = (
     <MarkdownBlock idx={idx}>
-      <blockquote className={blockquoteClass + dynamicBlockquoteClass}>
-        {renderers.children(renderers, ast, idx, props, state)}
-      </blockquote>
+      <blockquote className={blockquoteClass + dyn}>{renderers.children(renderers, ast, idx, props, state)}</blockquote>
     </MarkdownBlock>
   );
   const doCenterAsTopLevelBlock = props.isFullWidth && isFirstLevelBlockElement(ast.nodes[idx], ast);

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {useTheme, rule} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {MiniTitle} from '../../3-list-item/MiniTitle';
 
 const blockClass = rule({
@@ -42,7 +43,7 @@ export interface Props {
 
 export const EmptyState: React.FC<Props> = ({frame, title, emoji, illustration, small, children}) => {
   const [t] = useT();
-  const theme = useTheme();
+  const styles = useStyles();
 
   if (frame) {
     title ??= '';
@@ -56,7 +57,7 @@ export const EmptyState: React.FC<Props> = ({frame, title, emoji, illustration, 
         : emoji !== undefined && (
             <div
               className={frameClass + (small ? frameSmallClass : '')}
-              style={{border: `1px dashed ${theme.g(0.76)}`}}
+              style={{border: `1px dashed ${styles.g(0.76)}`}}
             >
               <div className={emojiClass}>{emoji}</div>
             </div>

@@ -1,13 +1,15 @@
 import * as React from 'react';
-import {rule, useRule, useTheme, type Theme} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
+import type {Styles} from '../../styles/Styles';
 
-const blockClass = rule({
+const blockClass = drule({
   d: 'inline-block',
   bdrad: '50%',
   flex: '0 0 auto',
 });
 
-export type DotColor = 'neutral' | 'positive' | 'negative' | 'warning' | 'blue' | 'accent' | string;
+export type DotColor = 'neutral' | 'success' | 'error' | 'warning' | 'link' | 'accent' | string;
 
 export interface DotProps {
   /** Color: a semantic key from the theme or any raw CSS color string. */
@@ -22,31 +24,32 @@ export interface DotProps {
 
 const isSemantic = (color: string): color is Exclude<DotColor, string> =>
   color === 'neutral' ||
-  color === 'positive' ||
-  color === 'negative' ||
+  color === 'success' ||
+  color === 'error' ||
   color === 'warning' ||
-  color === 'blue' ||
+  color === 'link' ||
   color === 'accent';
 
-const resolveColor = (theme: Theme, color: DotColor): string => {
+const resolveColor = (styles: Styles, color: DotColor): string => {
   if (isSemantic(color)) {
-    if (color === 'neutral') return theme.g(0.5);
-    return theme.color.sem[color][0];
+    if (color === 'neutral') return styles.g(0.5);
+    return styles.col.get(color, 'solid-1');
   }
   return color;
 };
 
 export const Dot: React.FC<DotProps> = ({color = 'neutral', size = 8, glow, className, style}) => {
-  const theme = useTheme();
-  const resolved = resolveColor(theme, color);
-  const dynamicClass = useRule(() => ({
-    bg: resolved,
-    bxsh: glow ? `0 0 0 3px ${resolved}33` : undefined,
-  }));
+  const styles = useStyles();
+  const resolved = resolveColor(styles, color);
 
   return (
     <span
-      className={blockClass + dynamicClass + (className ? ` ${className}` : '')}
+      className={
+        blockClass({
+          bg: resolved,
+          bxsh: glow ? `0 0 0 3px ${resolved}33` : undefined,
+        }) + (className ? ` ${className}` : '')
+      }
       style={{width: size, height: size, ...style}}
     />
   );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import Paper from '../../4-card/Paper';
 import {Link} from '../../1-inline/Link';
 import {FixedColumn} from '../../3-list-item/FixedColumn';
@@ -14,7 +14,7 @@ export interface Props {
 
 export const LibraryInfo: React.FC<Props> = (props) => {
   const [t] = useT();
-  const theme = useTheme();
+  const styles = useStyles();
   const {page} = props;
 
   if (!page.repo) return null;
@@ -27,7 +27,7 @@ export const LibraryInfo: React.FC<Props> = (props) => {
             <span>
               <Iconista set="fontawesome_brands" icon="github" width={24} height={24} />
             </span>
-            <span style={{fontSize: '16px', color: theme.g(0.1)}}>
+            <span style={{fontSize: '16px', color: styles.g(0.1)}}>
               {t('View')}{' '}
               <Code alt gray spacious>
                 {page.repo}

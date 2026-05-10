@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {lightTheme as theme, useTheme, rule, useRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import IconSvgClose from '../../icons/svg/Close';
 import {SpinnerBars} from '../SpinnerBars';
 
@@ -8,7 +9,7 @@ const noop = () => {};
 
 let idCounter = 0;
 
-const blockClass = rule({
+const blockClass = drule({
   pos: 'relative',
   ov: 'hidden',
   '&.disabled': {
@@ -19,16 +20,16 @@ const blockClass = rule({
     mar: 0,
     bd: 0,
     out: 0,
-    ff: theme.font.ui3.mid.ff,
-    fw: theme.font.ui3.mid.fw,
+    ff: lightTheme.font.ui3.mid.ff,
+    fw: lightTheme.font.ui3.mid.fw,
   },
   '&>label': {
     pos: 'absolute',
     left: 0,
     top: '20px',
     fz: '20px',
-    ff: theme.font.sans.lite.ff,
-    fw: theme.font.sans.lite.fw,
+    ff: lightTheme.font.sans.lite.ff,
+    fw: lightTheme.font.sans.lite.fw,
     trs: 'top 0.2s, font-size 0.2s',
     transitionDelay: '0.2s',
     pe: 'none',
@@ -36,11 +37,6 @@ const blockClass = rule({
   '&>label.small': {
     top: '7px',
     fz: '14px',
-  },
-  '&>label.focus': {
-    top: 0,
-    fz: '12px',
-    col: theme.g(0.5),
   },
   '&>label.small.focus': {
     top: '-1px',
@@ -97,12 +93,17 @@ export const InputLine: React.FC<IInputLineProps> = (props) => {
   const id = useMemo(() => 'InputLine-' + idCounter++, []);
   const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
-  const theme = useTheme();
-  const dynamicClass = useRule((theme) => ({
-    '&>svg': {
-      stroke: theme.g(0, 0.15),
+  const styles = useStyles();
+  const className = blockClass({
+    '&>label.focus': {
+      top: 0,
+      fz: '12px',
+      col: styles.g(0.5),
     },
-  }));
+    '&>svg': {
+      stroke: styles.g(0, 0.15),
+    },
+  });
 
   useEffect(() => {
     if (!ref.current) return;
@@ -139,10 +140,10 @@ export const InputLine: React.FC<IInputLineProps> = (props) => {
   const showClose = value && !!props.onCancelClick;
 
   let style: React.CSSProperties = {
-    background: theme.bg,
+    background: styles.bg + '',
     padding: small ? '10px 0 8px' : '19px 0 17px',
     fontSize: 18 * (small ? 0.9 : 1.3) + 'px',
-    color: theme.g(0),
+    color: styles.g(0),
   };
 
   if (showClose) {
@@ -169,7 +170,7 @@ export const InputLine: React.FC<IInputLineProps> = (props) => {
   if (focus) {
     svgAttr.style = {
       transform: 'translate3d(-66%, 0, 0)',
-      stroke: theme.color.sem.positive[1],
+      stroke: styles.col.get('success', 'el-2'),
       strokeWidth: small ? '2px' : '3px',
     };
   }
@@ -194,7 +195,7 @@ export const InputLine: React.FC<IInputLineProps> = (props) => {
       <label
         htmlFor={id}
         className={'' + (small ? ' small' : '') + (value || focus ? ' focus' : '')}
-        style={{color: theme.g(0, 0.6)}}
+        style={{color: styles.g(0, 0.6)}}
       >
         {label}
       </label>
@@ -202,7 +203,7 @@ export const InputLine: React.FC<IInputLineProps> = (props) => {
   }
 
   return (
-    <div className={blockClass + dynamicClass}>
+    <div className={className}>
       <input {...inputAttr} onChange={(e) => (props.onChange || noop)(e.target.value)} />
       {labelElement}
       {rightIcon}

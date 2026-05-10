@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
 import type {ScrollState} from './state';
@@ -22,7 +23,7 @@ export interface ThumbProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
 
 export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest}) => {
   const state = useScrollArea();
-  const theme = useTheme();
+  const styles = useStyles();
   useSyncStore(state.scrollRatio$);
   useSyncStore(state.thumbRatio$);
   const canScroll = useSyncStore(state.canScroll$);
@@ -65,7 +66,7 @@ export const Thumb: React.FC<ThumbProps> = ({children, className, style, ...rest
       {...rest}
       ref={state.setThumb}
       className={
-        thumbClass({bg: theme.g(0, isDragging ? 0.48 : 0.24), '&:hover': {bg: theme.g(0, 0.48)}}) +
+        thumbClass({bg: styles.g(0, isDragging ? 0.48 : 0.24), '&:hover': {bg: styles.g(0, 0.48)}}) +
         (className ? ' ' + className : '')
       }
       style={computedStyle}

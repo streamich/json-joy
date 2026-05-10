@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, drule, useTheme} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import type {DrawerSide} from '../types';
 
 const blockClass = rule({
@@ -53,12 +54,12 @@ export const InlineDrawer: React.FC<InlineDrawerProps> = ({
   style,
   ...rest
 }) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const dynamicClass = blockThemeClass({
-    bg: theme.bg,
+    bg: styles.bg + '',
   });
   const dynamicSeparatorClass = separatorThemeClass({
-    borderColor: theme.g(0, 0.08),
+    borderColor: styles.g(0, 0.08),
   });
   const resolvedWidth = typeof width === 'string' ? width : `${width}px`;
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockClass = drule({
   pd: '8px 20px',
@@ -11,12 +12,12 @@ export interface ContextHeaderProps extends React.AllHTMLAttributes<any> {
 }
 
 export const ContextHeader: React.FC<ContextHeaderProps> = ({compact, children, ...rest}) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
   const className =
     (rest.className || '') +
     blockClass({
-      bg: theme.g(0, 0.04),
+      bg: styles.g(0, 0.04),
     });
 
   const style: React.CSSProperties = {

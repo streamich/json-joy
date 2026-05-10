@@ -157,6 +157,13 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
         state.setDisplayMode(state.displayMode.value === 'inline' ? 'fullwindow' : 'inline');
       },
     ],
+    [
+      'P+Shift+f',
+      (key: Key) => {
+        key.event?.preventDefault();
+        state.setDisplayMode(state.displayMode.value === 'fullscreen' ? 'inline' : 'fullscreen');
+      },
+    ],
 
     // ------------------------------------------------------- Block operations
     [

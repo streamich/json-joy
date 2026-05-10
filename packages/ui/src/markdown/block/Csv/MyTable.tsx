@@ -1,17 +1,8 @@
 import * as React from 'react';
-import {makeRule} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
-const useTableClass = makeRule((theme) => ({
-  '& tr th': {
-    bdb: `1px solid ${theme.g(0.1, 0.08)}`,
-  },
-  '& tr td': {
-    bdb: `1px solid ${theme.g(0.1, 0.08)}`,
-  },
-  '& tr:last-child td': {
-    bdb: '0',
-  },
-}));
+const tableClass = drule({});
 
 export interface MyTableProps {
   className?: string;
@@ -19,7 +10,18 @@ export interface MyTableProps {
 }
 
 export const MyTable: React.FC<MyTableProps> = ({className, children}) => {
-  const dynamicTableClass = useTableClass();
+  const styles = useStyles();
+  const cls = tableClass({
+    '& tr th': {
+      bdb: `1px solid ${styles.g(0.1, 0.08)}`,
+    },
+    '& tr td': {
+      bdb: `1px solid ${styles.g(0.1, 0.08)}`,
+    },
+    '& tr:last-child td': {
+      bdb: '0',
+    },
+  });
 
-  return <table className={className + dynamicTableClass}>{children}</table>;
+  return <table className={className + cls}>{children}</table>;
 };

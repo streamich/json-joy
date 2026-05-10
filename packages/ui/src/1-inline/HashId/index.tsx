@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
-  ...theme.font.mono.mid,
+const blockClass = drule({
+  ...lightTheme.font.mono.mid,
   d: 'inline-flex',
   ai: 'center',
   fz: '12px',
@@ -36,17 +37,18 @@ const truncate = (value: string, prefix: number, suffix: number): string => {
 };
 
 export const HashId: React.FC<HashIdProps> = ({value, prefix = 6, suffix = 4, full, className, style, onClick}) => {
+  const styles = useStyles();
   const display = full ? value : truncate(value, prefix, suffix);
-
-  const dynamicClass = useRule((t) => ({
-    bg: t.g(0, 0.05),
-    col: t.g(0.25),
-  }));
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: presentational hash chip; click is non-essential and screen readers expose the full value via title
     <span
-      className={blockClass + dynamicClass + (className ? ` ${className}` : '')}
+      className={
+        blockClass({
+          bg: styles.g(0, 0.05),
+          col: styles.g(0.25),
+        }) + (className ? ` ${className}` : '')
+      }
       style={style}
       title={value}
       data-value={value}

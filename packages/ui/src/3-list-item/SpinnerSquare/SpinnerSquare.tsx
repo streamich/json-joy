@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useRule} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const keyframes = {
   '0%': {
@@ -13,7 +14,7 @@ const keyframes = {
   },
 };
 
-const blockClass = rule({
+const blockClass = drule({
   w: '40px',
   h: '40px',
   mar: '40px auto',
@@ -22,11 +23,11 @@ const blockClass = rule({
 });
 
 export const SpinnerSquare: React.FC<React.AllHTMLAttributes<any>> = (props) => {
-  const dynamicClass = useRule((theme) => ({
-    bg: theme.g(0.5, 0.25),
-  }));
-
-  return React.createElement('div', {...props, className: (props.className || '') + blockClass + dynamicClass});
+  const styles = useStyles();
+  return React.createElement('div', {
+    ...props,
+    className: (props.className || '') + blockClass({bg: styles.g(0.5, 0.25)}),
+  });
 };
 
 export default SpinnerSquare;

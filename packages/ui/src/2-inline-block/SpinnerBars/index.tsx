@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {makeRule, useTheme} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const h = React.createElement;
 
@@ -10,7 +11,7 @@ function r(delay: string) {
   };
 }
 
-const useBlockClass = makeRule((t) => ({
+const blockClass = drule({
   w: '20px',
   minW: '20px',
   h: '20px',
@@ -20,7 +21,6 @@ const useBlockClass = makeRule((t) => ({
   bxz: 'border-box',
   pe: 'none',
   '&>span': {
-    bg: t.isLight ? t.g(0.6) : t.g(0.45),
     h: '100%',
     w: '4px',
     d: 'inline-block',
@@ -39,25 +39,30 @@ const useBlockClass = makeRule((t) => ({
       tr: 'scaleY(1.0)',
     },
   },
-}));
+});
 
 export interface Props {
   color?: string;
 }
 
 export const SpinnerBars: React.FC<Props> = ({color}) => {
-  const theme = useTheme();
-  const blockClass = useBlockClass();
+  const styles = useStyles();
 
   const style: React.CSSProperties = {};
 
   if (color) {
-    style.background = typeof color === 'string' ? color : theme.color.sem.blue[1];
+    style.background = typeof color === 'string' ? color : styles.col.get('link', 'el-2');
   }
+
+  const className = blockClass({
+    '&>span': {
+      bg: styles.light ? styles.g(0.6) : styles.g(0.45),
+    },
+  });
 
   return h(
     'span',
-    {className: blockClass},
+    {className},
     h('span', {className: 'r1', style}, ' '),
     h('span', {className: 'r2', style}, ' '),
     h('span', {className: 'r3', style}, ' '),

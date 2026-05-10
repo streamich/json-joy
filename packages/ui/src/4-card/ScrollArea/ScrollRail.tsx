@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {useScrollArea} from './context';
 import {useSyncStore} from '../../hooks/useSyncStore';
 import {Thumb} from './Thumb';
@@ -26,7 +27,7 @@ const addCssLength = (base: number, inset: React.CSSProperties['top']): React.CS
 
 export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, className, style, ...rest}) => {
   const state = useScrollArea();
-  const theme = useTheme();
+  const styles = useStyles();
   const visible = useSyncStore(state.visible$);
   const alwaysVisible = useSyncStore(state.alwaysVisible$);
   const railWidth = useSyncStore(state.railWidth$);
@@ -43,7 +44,7 @@ export const ScrollRail: React.FC<ScrollRailProps> = ({children = <Thumb />, cla
       {...rest}
       ref={state.setRail}
       className={
-        blockClass({bg: theme.g(0, 0.04), '&:hover': {bg: theme.g(0, 0.08)}}) + (className ? ' ' + className : '')
+        blockClass({bg: styles.g(0, 0.04), '&:hover': {bg: styles.g(0, 0.08)}}) + (className ? ' ' + className : '')
       }
       data-state={isVisible ? 'visible' : 'hidden'}
       style={{

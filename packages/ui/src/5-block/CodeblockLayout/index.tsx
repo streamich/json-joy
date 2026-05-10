@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {rule, theme, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
-  ...theme.font.mono.mid,
+const blockClass = drule({
+  ...lightTheme.font.mono.mid,
   d: 'block',
   bdrad: '5px',
   trs: 'background 0.6s ease 0s',
@@ -18,7 +19,7 @@ const blockClass = rule({
 });
 
 const blockCompactClass = rule({
-  pad: `${theme.g(0.2)}px ${theme.g(0.3)}px !important`,
+  pad: `${lightTheme.g(0.2)}px ${lightTheme.g(0.3)}px !important`,
 });
 
 export interface CodeblockLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,17 +28,18 @@ export interface CodeblockLayoutProps extends React.HTMLAttributes<HTMLDivElemen
 }
 
 export const CodeblockLayout: React.FC<CodeblockLayoutProps> = ({compact, children, ...rest}) => {
-  const dynamicBlockClass = useRule((theme) => ({
-    col: theme.g(0.3),
-    bg: theme.g(0, 0.02),
+  const styles = useStyles();
+  const cls = blockClass({
+    col: styles.g(0.3),
+    bg: styles.g(0, 0.02),
     '&:hover': {
-      bg: theme.bg,
-      bd: `1px solid ${theme.g(0, 0.16)}`,
+      bg: styles.bg + '',
+      bd: `1px solid ${styles.g(0, 0.16)}`,
     },
-  }));
+  });
 
   return (
-    <div {...rest} className={blockClass + dynamicBlockClass + (compact ? blockCompactClass : '')}>
+    <div {...rest} className={cls + (compact ? ' ' + blockCompactClass : '')}>
       {children}
     </div>
   );

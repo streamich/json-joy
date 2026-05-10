@@ -16,6 +16,7 @@ import {withHr} from './behavior/hr';
 import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
 import {withFile} from './behavior/file';
+import {withToc} from './behavior/toc';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -32,6 +33,7 @@ import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
 import {EnsureUiProvider, useUiServices} from '@jsonjoy.com/ui/lib/context';
+import {useToasts} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager/context';
 import {Provider as StylesProvider} from '@jsonjoy.com/ui/lib/styles/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
@@ -51,6 +53,8 @@ import './loadFonts';
 const KeyboardShortcutsModal = React.lazy(() =>
   import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
 );
+
+const EmbedDocsModal = React.lazy(() => import('./chrome/EmbedDocs').then((m) => ({default: m.EmbedDocsModal})));
 
 const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
   return kind === 'mid'
@@ -182,12 +186,22 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
     state.publishPresence = sendLocalPresence;
   }, [sendLocalPresence]);
 
+  // ----------------------------------------------------------- Toasts binding
+  const toasts = useToasts();
+  useEffect(() => {
+    state.toasts = toasts;
+    return () => {
+      if (state.toasts === toasts) state.toasts = undefined;
+    };
+  }, [state, toasts]);
+
   // -------------------------------------------------------- Slate decorations
   const linkPopupOpen = state.inline.link.open.use();
   const activeSelectionRange = state.inline.link.rangeSnapshot.use();
   const omniOpen = state.omni.open.use();
   const omniRange = state.omni.rangeSnapshot.use();
   const shortcutsOpen = state.shortcutsOpen.use();
+  const embedDocsOpen = state.embedDocsOpen.use();
   const displayMode = state.displayMode.use();
   const font = state.font.use();
   const editableWidthKind = state.editableWidth.use();
@@ -260,13 +274,13 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
       />
-      {!shortcutsOpen && <InlineFloater />}
-      {!shortcutsOpen && <BlockFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <InlineFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <BlockFloater />}
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      {!shortcutsOpen && <OmniFloater />}
-      {!shortcutsOpen && <IndicatorFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <OmniFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <IndicatorFloater />}
     </Slate>
   );
 
@@ -287,12 +301,14 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
       <ScrollArea.ScrollArea state={state.scroll} shadow style={scrollAreaStyle}>
         <ScrollArea.Viewport
           onMouseDown={(e) => {
+            if (!e.currentTarget.contains(e.target as Node)) return;
             if (!state.api.focused() && !(e.target as HTMLElement).closest('[contenteditable]')) {
               e.preventDefault();
               state.api.focus();
             }
           }}
           onMouseUp={(e) => {
+            if (!e.currentTarget.contains(e.target as Node)) return;
             if (!state.api.focused() && !(e.target as HTMLElement).closest('[contenteditable]')) {
               e.preventDefault();
               state.api.focus();
@@ -317,6 +333,11 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
       {shortcutsOpen && (
         <React.Suspense fallback={null}>
           <KeyboardShortcutsModal />
+        </React.Suspense>
+      )}
+      {embedDocsOpen && (
+        <React.Suspense fallback={null}>
+          <EmbedDocsModal />
         </React.Suspense>
       )}
     </>
@@ -406,7 +427,7 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
     const editor = withTitleSubmit(
-      withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
+      withToc(withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor())))))))),
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];

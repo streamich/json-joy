@@ -1,9 +1,10 @@
 import * as React from 'react';
-import {makeRule, useTheme} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
 import {Link} from 'react-router-lite';
+import {useStyles} from '../../styles/context';
 
-const useBaseClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const baseClass = drule({
+  ...lightTheme.font.ui1.mid,
   fz: '15px',
   d: 'flex',
   w: '100%',
@@ -19,22 +20,13 @@ const useBaseClass = makeRule((t) => ({
   '&+&': {
     mart: '2px',
   },
-  col: t.g(0, 0.9),
-  '&:hover': {
-    bg: t.g(0.96),
-    col: t.isLight ? '#000' : '#fff',
-  },
-}));
+});
 
-const useBlockActiveChildClass = makeRule((theme) => ({
-  bg: theme.g(0, 0.01),
-}));
-
-const useBlockActiveClass = makeRule((theme) => ({
+const activeChildClass = drule({});
+const activeBlockClass = drule({
   cur: 'default',
-  col: theme.color.sem.blue[0],
   bg: 'rgba(0,128,255,.04)',
-}));
+});
 
 export interface Props {
   active?: boolean;
@@ -47,10 +39,17 @@ export interface Props {
 }
 
 export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onMouseDown, children, hasMore}) => {
-  const theme = useTheme();
-  const baseClass = useBaseClass();
-  const activeChildClass = useBlockActiveChildClass();
-  const activeBlockClass = useBlockActiveClass();
+  const styles = useStyles();
+  const link = styles.col.get('link', 'solid-1');
+  const baseCls = baseClass({
+    col: styles.g(0, 0.9),
+    '&:hover': {
+      bg: styles.g(0.96),
+      col: styles.light ? '#000' : '#fff',
+    },
+  });
+  const activeChildCls = activeChild ? ' ' + activeChildClass({bg: styles.g(0, 0.01)}) : '';
+  const activeBlockCls = active ? ' ' + activeBlockClass({col: link}) : '';
 
   let element = children;
 
@@ -58,7 +57,7 @@ export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onM
     element = (
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
         {children}
-        <div style={{marginLeft: 8, color: theme.g(0, 0.5)}}>...</div>
+        <div style={{marginLeft: 8, color: styles.g(0, 0.5)}}>...</div>
       </div>
     );
   }
@@ -69,7 +68,7 @@ export const MenuItem: React.FC<Props> = ({active, activeChild, to, onClick, onM
       to={to}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className={baseClass + (activeChild ? activeChildClass : '') + (active ? activeBlockClass : '')}
+      className={baseCls + activeChildCls + activeBlockCls}
     >
       {element}
     </Link>

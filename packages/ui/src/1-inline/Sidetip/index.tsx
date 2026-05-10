@@ -1,17 +1,17 @@
 import * as React from 'react';
-import {makeRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.ui3.mid,
+const blockClass = drule({
+  ...lightTheme.font.ui3.mid,
   fz: '15px',
   letterSpacing: '-0.025em',
-  col: t.g(0.5),
-}));
+});
 
-const useBlockSmallClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const blockSmallClass = rule({
+  ...lightTheme.font.ui1.mid,
   fz: '13px',
-}));
+});
 
 export interface Props {
   small?: boolean;
@@ -19,8 +19,6 @@ export interface Props {
 }
 
 export const Sidetip: React.FC<Props> = ({small, children}) => {
-  const blockClass = useBlockClass();
-  const blockSmallClass = useBlockSmallClass();
-
-  return <span className={blockClass + (small ? blockSmallClass : '')}>{children}</span>;
+  const styles = useStyles();
+  return <span className={blockClass({col: styles.g(0.5)}) + (small ? ' ' + blockSmallClass : '')}>{children}</span>;
 };

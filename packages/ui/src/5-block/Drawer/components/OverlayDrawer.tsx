@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, drule, useTheme} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {Portal} from '../../../utils/portal/Portal';
 import {useLockScrolling} from '../../../hooks/useLockScrolling';
 import {useFocusTrap} from '../hooks/useFocusTrap';
@@ -106,16 +107,17 @@ export const OverlayDrawer: React.FC<OverlayDrawerProps> = ({
   ...rest
 }) => {
   const panelRef = React.useRef<HTMLDivElement>(null);
-  const theme = useTheme();
+  const styles = useStyles();
+  const light = styles.light;
   const dynamicBackdropClass = backdropThemeClass({
-    bg: theme.isLight ? 'rgba(241,245,249,.46)' : 'rgba(2,6,23,.42)',
+    bg: light ? 'rgba(241,245,249,.46)' : 'rgba(2,6,23,.42)',
     bdfl: 'saturate(180%) blur(14px)',
   });
   const dynamicPanelClass = panelThemeClass({
-    bg: theme.isLight ? 'rgba(255,255,255,.92)' : 'rgba(19,24,32,.92)',
-    bd: `1px solid ${theme.isLight ? 'rgba(15,23,42,.08)' : 'rgba(255,255,255,.08)'}`,
+    bg: light ? 'rgba(255,255,255,.92)' : 'rgba(19,24,32,.92)',
+    bd: `1px solid ${light ? 'rgba(15,23,42,.08)' : 'rgba(255,255,255,.08)'}`,
     bdfl: 'saturate(180%) blur(18px)',
-    bxsh: theme.isLight
+    bxsh: light
       ? '0 1px 1px rgba(15,23,42,.06), 0 8px 22px rgba(15,23,42,.15), 0 3px 8px rgba(15,23,42,.09)'
       : '0 0 0 1px rgba(255,255,255,.04), 0 10px 28px rgba(0,0,0,.44), 0 3px 8px rgba(0,0,0,.26)',
   });

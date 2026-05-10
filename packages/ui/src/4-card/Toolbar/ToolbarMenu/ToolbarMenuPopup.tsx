@@ -27,48 +27,50 @@ export const ToolbarMenuPopup: React.FC<ToolbarMenuPopupProps> = ({open, header,
   const [t] = useT();
   const handle = useAnchorPointHandle(popupAnchor);
 
-  const renderContext = () => (
-    <MoveToViewport>
-      <ContextMenu
-        inset
-        pane={{
-          style: {
-            width: 242,
-          },
-        }}
-        menu={item}
-        header={
-          header ? (
-            <ContextHeader compact>
-              {item.icon ? (
-                <Flex style={{alignItems: 'center'}}>
-                  <div style={{width: 16, height: 16}}>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        transform: 'scale(.75)',
-                        opacity: 0.8,
-                        transformOrigin: '50% 100%',
-                        verticalAlign: 'bottom',
-                        marginTop: -8,
-                      }}
-                    >
-                      {item.icon?.()}&nbsp;
-                    </span>
-                  </div>
-                  <Breadcrumb compact>{t(item.name)}</Breadcrumb>
-                </Flex>
+  const renderContext = item.pane
+    ? () => <MoveToViewport>{item.pane!()}</MoveToViewport>
+    : () => (
+        <MoveToViewport>
+          <ContextMenu
+            inset
+            pane={{
+              style: {
+                width: 242,
+              },
+            }}
+            menu={item}
+            header={
+              header ? (
+                <ContextHeader compact>
+                  {item.icon ? (
+                    <Flex style={{alignItems: 'center'}}>
+                      <div style={{width: 16, height: 16}}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            transform: 'scale(.75)',
+                            opacity: 0.8,
+                            transformOrigin: '50% 100%',
+                            verticalAlign: 'bottom',
+                            marginTop: -8,
+                          }}
+                        >
+                          {item.icon?.()}&nbsp;
+                        </span>
+                      </div>
+                      <Breadcrumb compact>{t(item.name)}</Breadcrumb>
+                    </Flex>
+                  ) : (
+                    <Breadcrumb compact>{t(item.name)}</Breadcrumb>
+                  )}
+                </ContextHeader>
               ) : (
-                <Breadcrumb compact>{t(item.name)}</Breadcrumb>
-              )}
-            </ContextHeader>
-          ) : (
-            void 0
-          )
-        }
-      />
-    </MoveToViewport>
-  );
+                void 0
+              )
+            }
+          />
+        </MoveToViewport>
+      );
 
   return (
     <anchorContext.Provider value={handle}>

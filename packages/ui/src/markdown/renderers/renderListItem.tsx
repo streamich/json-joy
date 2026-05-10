@@ -1,10 +1,11 @@
 import * as React from 'react';
 import type {IListItem} from 'very-small-parser/lib/markdown';
-import {rule, makeRule} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import type {RenderNode} from '../types';
 import {FixedColumn} from '../../3-list-item/FixedColumn';
 
-const itemClass = rule({
+const itemClass = drule({
   'ol &': {
     fz: '0.9em',
     padl: '8px',
@@ -23,12 +24,6 @@ const itemClass = rule({
   },
 });
 
-const useItemClass = makeRule((theme) => ({
-  '&::before': {
-    bg: theme.g(0.8),
-  },
-}));
-
 const itemInnerClass = rule({
   'ol li &': {
     fz: '1.1111111111111112em',
@@ -36,7 +31,6 @@ const itemInnerClass = rule({
 });
 
 const taskItemClass = rule({
-  // listStyleType: 'none',
   mar: '0 0 0 -22px',
   pad: 0,
 });
@@ -46,10 +40,9 @@ export interface ItemProps {
 }
 
 const Item: React.FC<ItemProps> = ({children}) => {
-  const dynamicItemClass = useItemClass();
-
+  const styles = useStyles();
   return (
-    <li className={itemClass + dynamicItemClass}>
+    <li className={itemClass({'&::before': {bg: styles.g(0.8)}})}>
       <div className={itemInnerClass}>{children}</div>
     </li>
   );

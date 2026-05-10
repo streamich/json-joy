@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Close} from '../Close';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {Ripple} from '../../../misc/Ripple';
 
 const className = rule({
@@ -15,10 +16,10 @@ export interface Props {
 }
 
 export const CloseCircle: React.FC<Props> = ({small, onClick}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const size = small ? 36 : 64;
   return (
-    <Ripple color={theme.g(0.94)} ms={small ? 5_000 : 2_000}>
+    <Ripple color={styles.g(0.94)} ms={small ? 5_000 : 2_000}>
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler */}
       <div className={className} style={{width: size, height: size}} onClick={onClick}>
         <Close style={{width: size, height: size}} />

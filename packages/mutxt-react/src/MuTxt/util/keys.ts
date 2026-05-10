@@ -1,5 +1,5 @@
 const isMac = /mac/i.test(navigator.platform) || /macintosh/i.test(navigator.userAgent);
-const separator = isMac ? ' ' : ' + ';
+const separator = isMac ? ' ' : '+';
 
 export const remap: Record<string, string> = {
   Primary: isMac ? '⌘' : 'Ctrl',

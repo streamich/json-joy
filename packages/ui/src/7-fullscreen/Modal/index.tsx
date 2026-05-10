@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {useT} from 'use-t';
-import {rule, lightTheme, useTheme, ZINDEX} from 'nano-theme';
+import {rule, lightTheme, ZINDEX} from 'nano-theme';
 import {Modal as BaseModal} from 'libreact/lib/Modal';
+import {useStyles} from '../../styles/context';
 import {BasicButtonClose} from '../../2-inline-block/BasicButton/BasicButtonClose';
 
 const theme = lightTheme;
@@ -103,7 +104,7 @@ export const Modal: React.FC<ModalProps> = ({
   rounder,
   children,
 }) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const [t] = useT();
   const onElement = useCallback((el: HTMLElement) => {
     el.style.zIndex = '' + ZINDEX.MODAL;
@@ -120,7 +121,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         className={classNameTitle}
         style={{
-          color: theme.g(0.1, 0.6),
+          color: styles.g(0.1, 0.6),
         }}
       >
         {title}
@@ -135,8 +136,8 @@ export const Modal: React.FC<ModalProps> = ({
     (noBackground ? classNameNoBg : '');
 
   const style: React.CSSProperties = {
-    background: noBackground ? 'transparent' : theme.bg,
-    boxShadow: theme.isLight ? undefined : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
+    background: noBackground ? 'transparent' : styles.bg + '',
+    boxShadow: styles.light ? undefined : `0 0 0 1px ${styles.g(0.1, 0.16)}`,
   };
 
   if (rounder) {
@@ -180,7 +181,7 @@ export const Modal: React.FC<ModalProps> = ({
       onElement={onElement}
       onClick={onOutsideClick as any}
       onEsc={onEsc as any}
-      color={color ? color : theme.isLight ? (contrast ? 'rgba(0,0,64,.4)' : lightTheme.g(0, 0.04)) : 'rgba(0,0,0,.4)'}
+      color={color ? color : styles.light ? (contrast ? 'rgba(0,0,64,.4)' : lightTheme.g(0, 0.04)) : 'rgba(0,0,0,.4)'}
     >
       {content}
     </BaseModalUntyped>

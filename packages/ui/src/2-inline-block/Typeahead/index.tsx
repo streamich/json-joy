@@ -1,7 +1,8 @@
 import * as React from 'react';
-import {rule, useRule, useTheme} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
+const blockClass = drule({
   pos: 'relative',
   w: '100%',
   h: '100%',
@@ -71,7 +72,7 @@ export const Typeahead: React.FC<Props> = ({
   onTabBack,
   onEnter,
 }) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const ref = React.useRef<HTMLInputElement | null>(null);
 
   // Set focus on mount.
@@ -83,12 +84,6 @@ export const Typeahead: React.FC<Props> = ({
   React.useEffect(() => {
     if (onInput && ref.current) onInput(ref.current);
   }, [onInput]);
-
-  const dynamicBlockClass = useRule((theme) => ({
-    input: {
-      col: theme.g(0, 0.8),
-    },
-  }));
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> | undefined = onChange
     ? (e) => onChange(e.target.value)
@@ -132,13 +127,13 @@ export const Typeahead: React.FC<Props> = ({
   };
 
   return (
-    <div className={blockClass + dynamicBlockClass}>
+    <div className={blockClass({input: {col: styles.g(0, 0.8)}})}>
       <input
         ref={ref as any}
         disabled={disabled}
         className={mainInputClass}
         value={value}
-        style={{textShadow: disabled ? `0 0 2px ${theme.g(0.2, 0.8)}` : undefined}}
+        style={{textShadow: disabled ? `0 0 2px ${styles.g(0.2, 0.8)}` : undefined}}
         readOnly={!handleChange}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

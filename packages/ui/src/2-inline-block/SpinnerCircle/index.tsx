@@ -1,20 +1,19 @@
 import {createElement as h} from 'react';
-import {makeRule} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const useBlockClass = makeRule((t) => ({
+const blockClass = drule({
   d: 'inline-block',
   bdrad: '50%',
   animation: 'spinner-circle .3s infinite linear',
   w: '16px',
   h: '16px',
-  bd: `1px solid ${t.g(0, 0.25)}`,
-  bdl: '1px solid transparent',
   '@keyframes spinner-circle': {
     to: {
       transform: 'rotate(359.9deg)',
     },
   },
-}));
+});
 
 export interface ISpinnerCircleProps {
   color?: string;
@@ -22,7 +21,7 @@ export interface ISpinnerCircleProps {
 }
 
 export const SpinnerCircle: React.FC<ISpinnerCircleProps> = ({size = 0, color}) => {
-  const blockClass = useBlockClass();
+  const styles = useStyles();
   const style: React.CSSProperties = {};
 
   if (color) {
@@ -38,7 +37,10 @@ export const SpinnerCircle: React.FC<ISpinnerCircleProps> = ({size = 0, color}) 
   }
 
   return h('div', {
-    className: blockClass,
+    className: blockClass({
+      bd: `1px solid ${styles.g(0, 0.25)}`,
+      bdl: '1px solid transparent',
+    }),
     style,
   });
 };

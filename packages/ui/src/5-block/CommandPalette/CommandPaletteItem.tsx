@@ -2,7 +2,8 @@ import * as React from 'react';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {Ripple} from '../../misc/Ripple';
 import {Split} from '../../3-list-item/Split';
-import {lightTheme as theme, rule, useRule, useTheme} from 'nano-theme';
+import {lightTheme as theme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const iconSize = 24;
 
@@ -70,6 +71,8 @@ const rightClass = rule({
   userSelect: 'none',
 });
 
+const selectedBlockBuilder = drule({});
+
 export interface CommandPaletteItemProps {
   button?: boolean;
   autoFocus?: boolean;
@@ -100,7 +103,7 @@ export const CommandPaletteItem: React.FC<CommandPaletteItemProps> = ({
   const ref = React.useRef<HTMLDivElement | null>(null);
   const buttonRef = React.useRef<HTMLButtonElement | HTMLDivElement | null>(null);
   const {width} = useWindowSize();
-  const theme = useTheme();
+  const styles = useStyles();
 
   // Show in viewport selected item.
   React.useEffect(() => {
@@ -114,12 +117,12 @@ export const CommandPaletteItem: React.FC<CommandPaletteItemProps> = ({
     }
   }, [selected]);
 
-  const selectedBlockClass = useRule((theme) => ({
-    bg: theme.g(0, 0.04),
+  const selectedBlockClass = selectedBlockBuilder({
+    bg: styles.g(0, 0.04),
     '&:hover': {
-      bd: `1px solid ${theme.g(0, 0.08)}`,
+      bd: `1px solid ${styles.g(0, 0.08)}`,
     },
-  }));
+  });
 
   React.useEffect(() => {
     const el = buttonRef.current;
@@ -134,7 +137,7 @@ export const CommandPaletteItem: React.FC<CommandPaletteItemProps> = ({
   let element = (
     // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
     <span
-      className={blockClass + (selected ? selectedBlockClass : '')}
+      className={blockClass + (selected ? ' ' + selectedBlockClass : '')}
       style={{opacity: disabled ? 0.5 : undefined, cursor: disabled ? 'default' : undefined}}
       onMouseEnter={onSelect ? () => onSelect() : undefined}
       onClick={onClick && !button ? () => onClick() : undefined}
@@ -142,7 +145,7 @@ export const CommandPaletteItem: React.FC<CommandPaletteItemProps> = ({
       {!!icon && <span className={iconClass}>{icon}</span>}
       <Split as={'span'} className={contentClass}>
         <span className={nameClass}>{children}</span>
-        <span className={rightClass} style={{color: theme.g(0.2, 0.7)}}>
+        <span className={rightClass} style={{color: styles.g(0.2, 0.7)}}>
           {!isSmall && selected && actionLabel}
         </span>
       </Split>

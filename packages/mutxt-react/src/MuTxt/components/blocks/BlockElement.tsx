@@ -12,6 +12,7 @@ import {HrElement} from './hr/HrElement';
 import {ListContainerElement, ListItemElement} from './ListElement';
 import {TwoColumnsElement} from './TwoColumnsElement';
 import {FileElement} from './file/FileElement';
+import {TocElement} from './toc/TocElement';
 
 export interface BlockElementProps extends RenderElementProps {
   element: CustomElement;
@@ -44,6 +45,8 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
       return <HrElement {...(props as RenderElementProps & {element: any})} />;
     case 'file':
       return <FileElement {...(props as RenderElementProps & {element: any})} />;
+    case 'toc':
+      return <TocElement {...(props as RenderElementProps & {element: any})} />;
     case 'ul':
     case 'ol':
     case 'checklist':

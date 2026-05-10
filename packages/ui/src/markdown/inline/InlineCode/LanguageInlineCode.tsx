@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {type Theme, rule, useRule} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import HighlightCode from '../../../1-inline/HighlightCode';
 
-const blockClass = rule({
+const blockClass = drule({
   d: 'inline-block',
   bdrad: '4px',
   mar: '0 1px !important',
@@ -18,18 +19,19 @@ export interface Props extends React.AllHTMLAttributes<any> {
 }
 
 const LanguageInlineCode: React.FC<Props> = ({value, lang, className = '', ...rest}) => {
-  const dynamicBlockClass = useRule((theme: Theme) => ({
-    bg: theme.g(0, 0.03),
+  const styles = useStyles();
+  const cls = blockClass({
+    bg: styles.g(0, 0.03),
     '&:hover': {
-      bg: theme.g(0, 0.05),
+      bg: styles.g(0, 0.05),
     },
     '&:active': {
-      bg: theme.g(0, 0.08),
+      bg: styles.g(0, 0.08),
     },
-  }));
+  });
 
   return (
-    <span {...rest} className={className + blockClass + dynamicBlockClass}>
+    <span {...rest} className={className + cls}>
       <HighlightCode code={value} lang={lang} />
     </span>
   );

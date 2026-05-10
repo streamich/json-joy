@@ -25,6 +25,9 @@
   ],
   "references": [
     {
+      "path": "../base64"
+    },
+    {
       "path": "../collaborative-peritext"
     },
     {

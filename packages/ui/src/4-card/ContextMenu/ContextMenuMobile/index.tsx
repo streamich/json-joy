@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Drawer} from 'vaul';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {usePopup} from '../../Popup/context';
 import {ArgsPane} from '../ArgsPane';
 import {Portal} from '../../../utils/portal';
@@ -110,7 +110,7 @@ interface NestedState {
 }
 
 const PaneSheet: React.FC<PaneSheetProps> = ({menu, parent, open, onOpenChange, onAnimationEnd, isRoot}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const closeAll = React.useContext(CloseAllContext);
   const parentOpen = React.useContext(ParentOpenContext);
   const container = React.useContext(ContainerContext);
@@ -163,12 +163,12 @@ const PaneSheet: React.FC<PaneSheetProps> = ({menu, parent, open, onOpenChange, 
     el.style.transform = childIsOpen ? 'scale(.95) translateY(-12px)' : '';
   }, [childIsOpen]);
 
-  const sheetBg = theme.bg;
-  const fgColor = theme.g(0.15);
+  const sheetBg = styles.bg + '';
+  const fgColor = styles.g(0.15);
   const sheetClassName = sheetClass({
     bg: sheetBg,
     col: fgColor,
-    bxsh: theme.isLight ? '0 -8px 32px rgba(0,0,0,.18)' : '0 -8px 32px rgba(0,0,0,.5)',
+    bxsh: styles.light ? '0 -8px 32px rgba(0,0,0,.18)' : '0 -8px 32px rgba(0,0,0,.5)',
   });
 
   const RootCmp = isRoot ? Drawer.Root : Drawer.NestedRoot;
@@ -245,18 +245,18 @@ interface ArgsSheetProps {
 }
 
 const ArgsSheet: React.FC<ArgsSheetProps> = ({item, open, onOpenChange, onAnimationEnd}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const closeAll = React.useContext(CloseAllContext);
   const parentOpen = React.useContext(ParentOpenContext);
   const container = React.useContext(ContainerContext);
   const effectiveOpen = open && parentOpen;
 
-  const sheetBg = theme.bg;
-  const fgColor = theme.g(theme.isLight ? 0.15 : 0.1);
+  const sheetBg = styles.bg + '';
+  const fgColor = styles.g(styles.light ? 0.15 : 0.1);
   const sheetClassName = sheetClass({
     bg: sheetBg,
     col: fgColor,
-    bxsh: theme.isLight ? '0 -8px 32px rgba(0,0,0,.18)' : '0 -8px 32px rgba(0,0,0,.5)',
+    bxsh: styles.light ? '0 -8px 32px rgba(0,0,0,.18)' : '0 -8px 32px rgba(0,0,0,.5)',
   });
 
   const handleSheetMouseDown = React.useCallback((event: React.MouseEvent) => {

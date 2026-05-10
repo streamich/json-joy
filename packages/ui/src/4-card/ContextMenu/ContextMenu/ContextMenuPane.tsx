@@ -41,6 +41,7 @@ export interface ContextMenuPaneProps {
   header?: React.ReactNode;
 
   onEsc?: () => void;
+  onClose?: () => void;
 }
 
 export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
@@ -80,10 +81,15 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
     if (search && openPanel.selected$.getValue()) openPanel.deselect();
   }, [search, openPanel]);
 
-  const children = menu.children;
-  if (!children) return null;
+  if (menu.pane) {
+    return <>{menu.pane()}</>;
+  }
 
-  const length = children.length;
+  const children = menu.children;
+  const hasRaw = !!menu.raw;
+  if (!children && !hasRaw) return null;
+
+  const length = children?.length ?? 0;
   const nodes: React.ReactNode[] = [];
 
   const bigIcons = bigIconsState(nodes, menu);
@@ -121,7 +127,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   };
 
   for (let i = 0; i < length; i++) {
-    const child = children[i];
+    const child = children![i];
     if (child.sep || child.sepBefore) {
       bigIcons.flush();
       const key = child.id ?? child.name;
@@ -193,6 +199,10 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
   const minWidth = menu.minWidth ?? state.minWidth ?? 220;
   const paneStyle = pane?.style ?? {};
   paneStyle.minWidth = minWidth;
+  if (menu.maxWidth !== undefined) {
+    paneStyle.maxWidth = menu.maxWidth;
+    paneStyle.width = menu.maxWidth;
+  }
 
   return (
     <ContextPane
@@ -219,7 +229,7 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
                 HEIGHT.SEPARATOR,
             }}
           >
-            {nodes}
+            {hasRaw ? menu.raw!() : nodes}
           </Scrollbox>
         </>
       )}

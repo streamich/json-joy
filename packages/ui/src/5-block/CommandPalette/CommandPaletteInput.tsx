@@ -1,7 +1,8 @@
 import * as React from 'react';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {useT} from 'use-t';
-import {rule, theme, useTheme} from 'nano-theme';
+import {lightTheme, rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import BasicButton from '../../2-inline-block/BasicButton';
 import {SpinnerCircle} from '../../2-inline-block/SpinnerCircle';
 import {Typeahead} from '../../2-inline-block/Typeahead';
@@ -12,7 +13,7 @@ import {Iconista} from '../../icons/Iconista';
 const height = 64;
 
 const blockClass = rule({
-  ...theme.font.ui3.mid,
+  ...lightTheme.font.ui3.mid,
   fz: '16px',
   d: 'flex',
   flex: `0 0 ${height}px`,
@@ -84,7 +85,7 @@ export const CommandPaletteInput: React.FC<CommandPaletteInputProps> = ({
   onEnter,
 }) => {
   const [t] = useT();
-  const theme = useTheme();
+  const styles = useStyles();
   const {width} = useWindowSize();
 
   const handleClearKeyDown = (e: React.KeyboardEvent) => {
@@ -113,7 +114,7 @@ export const CommandPaletteInput: React.FC<CommandPaletteInputProps> = ({
   );
 
   return (
-    <div className={blockClass} style={{borderBottom: `1px solid ${theme.g(0.1, 0.2)}`}}>
+    <div className={blockClass} style={{borderBottom: `1px solid ${styles.g(0.1, 0.2)}`}}>
       {progressElement}
       {isSmall ? (
         <div style={{width: 24}} />

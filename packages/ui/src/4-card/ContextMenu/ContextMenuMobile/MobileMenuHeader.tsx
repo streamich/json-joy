@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {useT} from 'use-t';
 import {BasicButtonBack} from '../../../2-inline-block/BasicButton/BasicButtonBack';
 import {BasicButtonClose} from '../../../2-inline-block/BasicButton/BasicButtonClose';
@@ -15,10 +15,10 @@ export interface MobileMenuHeaderProps {
 
 export const MobileMenuHeader: React.FC<MobileMenuHeaderProps> = ({title, parent, onBack, onClose}) => {
   const [t] = useT();
-  const theme = useTheme();
+  const styles = useStyles();
 
-  const lineColor = theme.g(0.92);
-  const fgColor = theme.g(0.15);
+  const lineColor = styles.g(0.92);
+  const fgColor = styles.g(0.15);
   const SLOT = 32;
 
   return (

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, theme, useTheme} from 'nano-theme';
+import {lightTheme, rule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import isFirstLevelBlockElement from '../../util/isFirstLevelBlockElement';
 import MarkdownFullWidthBlock from '../../util/MarkdownFullWidthBlock';
 import MarkdownBlock from '../../util/MarkdownBlock';
@@ -9,7 +10,7 @@ import {useContentSize} from '../../../context/content-size';
 const {useContext} = React;
 
 const headingClass = rule({
-  ...theme.font.ui2.lite,
+  ...lightTheme.font.ui2.lite,
 });
 
 export interface HeadingProps {
@@ -18,7 +19,7 @@ export interface HeadingProps {
 }
 
 const Heading: React.FC<HeadingProps> = ({idx, children}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const {ast, props} = useContext(context);
   const {width} = useContentSize();
   // const slug = React.useMemo(() => slugify());
@@ -31,7 +32,7 @@ const Heading: React.FC<HeadingProps> = ({idx, children}) => {
   const style: React.CSSProperties = {
     fontSize: fontSizeFactor * (props.isCompact ? 1.14 : 1.24) ** (6 - headingLevel) + 'em',
     // letterSpacing: width > 800 ? (headingLevel - 5) * (props.isCompact ? 0.5 : 1) + 'px' : '0px',
-    color: theme.isLight ? `rgba(0,0,0,${1 - headingLevel / 15})` : `rgba(255,255,255,${1 - headingLevel / 15})`,
+    color: styles.light ? `rgba(0,0,0,${1 - headingLevel / 15})` : `rgba(255,255,255,${1 - headingLevel / 15})`,
     lineHeight: width > 800 ? 1.2 : 1.1,
   };
 

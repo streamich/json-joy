@@ -2,7 +2,7 @@ import React from 'react';
 import Alpha from '@uiw/react-color-alpha';
 import Saturation from '@uiw/react-color-saturation';
 import Hue from '@uiw/react-color-hue';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {Space} from '../../3-list-item/Space';
 import {HslColor} from '../../styles/color/HslColor';
 import {HsvColor} from '../../styles/color/HsvColor';
@@ -54,10 +54,10 @@ const Pointer = ({
 
 export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>((props, ref) => {
   const {prefixCls = 'jsonjoy-color-picker', className, onChange, color, style, noAlpha, ...other} = props;
-  const theme = useTheme();
-  const pointerBorder = theme.bg;
-  const checkerboardBg = theme.isLight ? '#fff' : theme.g(0.78);
-  const saturationBottomBorder = theme.isLight ? '#000' : theme.g(0.92);
+  const styles = useStyles();
+  const pointerBorder = styles.bg + '';
+  const checkerboardBg = styles.light ? '#fff' : styles.g(0.78);
+  const saturationBottomBorder = styles.light ? '#000' : styles.g(0.92);
   const hsl = HslColor.from(color ?? '') ?? new HslColor(0, 0, 0);
   const hsv = hsl.toHsv();
   const hsva = {h: hsv.h * 360, s: hsv.s * 100, v: hsv.v * 100, a: hsv.a};

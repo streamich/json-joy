@@ -45,7 +45,7 @@ export interface StatefulContextMenuProps {
 
 export const StatefulContextMenu: React.FC<StatefulContextMenuProps> = ({state}) => {
   const popup = usePopup();
-  state.onclose = popup?.close;
+  state.onclose = state.props?.onClose ?? popup?.close;
   const path = useBehaviorSubject(state.path$);
   const currentMenu = useBehaviorSubject(state.menu$);
   const argsItem = state.argsItem.use();

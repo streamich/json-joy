@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {theme, rule, makeRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
-  ...theme.font.ui1.mid,
+const blockClass = drule({
+  ...lightTheme.font.ui1.mid,
   d: 'inline-flex',
   b: 0,
   mar: 0,
@@ -17,24 +18,31 @@ const blockClass = rule({
   },
 });
 
-const useBlockClass = makeRule((theme) => ({
-  col: theme.g(0.25),
-  bg: theme.g(0, 0.06),
-  boxShadow: theme.isLight ? 'none' : `0 0 0 1px ${theme.g(0.1, 0.16)}`,
-  '&:hover': {
-    col: theme.g(0.25),
-    bg: theme.g(0.92),
-    boxShadow: theme.isLight ? 'none' : `0 0 0 1px ${theme.g(0.1, 0.24)}`,
-  },
-}));
-
 export interface LabelProps {
   className?: string;
   children: React.ReactNode;
 }
 
 export const Label: React.FC<LabelProps> = ({className, children}) => {
-  const dynamicBlockClass = useBlockClass();
+  const styles = useStyles();
+  const light = styles.light;
 
-  return <span className={blockClass + dynamicBlockClass + (className ? ` ${className}` : '')}>{children}</span>;
+  return (
+    <span
+      className={
+        blockClass({
+          col: styles.g(0.25),
+          bg: styles.g(0, 0.06),
+          boxShadow: light ? 'none' : `0 0 0 1px ${styles.g(0.1, 0.16)}`,
+          '&:hover': {
+            col: styles.g(0.25),
+            bg: styles.g(0.92),
+            boxShadow: light ? 'none' : `0 0 0 1px ${styles.g(0.1, 0.24)}`,
+          },
+        }) + (className ? ` ${className}` : '')
+      }
+    >
+      {children}
+    </span>
+  );
 };

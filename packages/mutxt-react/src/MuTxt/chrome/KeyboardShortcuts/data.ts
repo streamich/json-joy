@@ -26,6 +26,7 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       {keys: ['Primary', 'j'], label: 'Command palette'},
       {keys: ['Space'], label: 'Open menu in empty block or with selection'},
       {keys: ['Primary', 'Shift', 'm'], label: 'Toggle maximized view'},
+      {keys: ['Primary', 'Shift', 'f'], label: 'Toggle fullscreen'},
     ],
   },
   {

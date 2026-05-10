@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {rule, theme, useTheme} from 'nano-theme';
+import {lightTheme, rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const height = 32;
 
 const blockClass = rule({
-  ...theme.font.ui2.mid,
+  ...lightTheme.font.ui2.mid,
   d: 'flex',
   fl: `0 0 ${height}px`,
   ai: 'center',
@@ -22,14 +23,14 @@ export interface CommandPaletteHeaderProps {
 }
 
 export const CommandPaletteHeader: React.FC<CommandPaletteHeaderProps> = ({bg, left, children}) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
   return (
     <div
       className={blockClass}
       style={{
-        color: theme.g(0.4),
-        background: bg ? theme.g(0, 0.04) : undefined,
+        color: styles.g(0.4),
+        background: bg ? styles.g(0, 0.04) : undefined,
         flexDirection: left ? 'row' : undefined,
       }}
     >

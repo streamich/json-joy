@@ -6,9 +6,6 @@ import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {useClickAway} from '@jsonjoy.com/ui/lib/hooks/useClickAway';
 import {useMuTxt} from '../context';
 
-/** Time after the last scroll event before the handle fades back in. */
-const SCROLL_FADE_RESUME_MS = 150;
-
 const handleClass = rule({
   trs: 'opacity .25s ease',
 });
@@ -49,39 +46,68 @@ export const BlockFloater: React.FC<BlockFloaterProps> = isMobile
         [clickAwayRef],
       );
 
+      const syncFloaterPosition = React.useCallback((): void => {
+        const handle = handleRef.current;
+        if (!handle) return;
+        const el = handle.parentElement;
+        if (!el) return;
+        const s = el.style;
+        const next = state.point();
+        if (!next || !state.isInViewport(next)) {
+          if (s.display !== 'none') s.display = 'none';
+          return;
+        }
+        const {x, y, dx, dy} = next;
+        const desiredLeft = dx >= 0 ? x + 'px' : '';
+        const desiredRight = dx >= 0 ? '' : window.innerWidth - x + 'px';
+        const desiredTop = dy >= 0 ? y + 'px' : '';
+        const desiredBottom = dy >= 0 ? '' : window.innerHeight - y + 'px';
+        if (s.display === 'none') s.display = '';
+        if (s.left !== desiredLeft) s.left = desiredLeft;
+        if (s.right !== desiredRight) s.right = desiredRight;
+        if (s.top !== desiredTop) s.top = desiredTop;
+        if (s.bottom !== desiredBottom) s.bottom = desiredBottom;
+      }, [state]);
+
+      React.useEffect(() => {
+        const id = window.setInterval(syncFloaterPosition, 1000);
+        return () => window.clearInterval(id);
+      }, [syncFloaterPosition]);
+
       React.useEffect(() => {
         let resumeTimer: number | null = null;
-        let isFaded = false;
         const onScroll = () => {
-          const el = handleRef.current;
-          if (el && !isFaded) {
-            isFaded = true;
-            el.style.opacity = '0';
+          const handle = handleRef.current;
+          if (handle) {
+            if (handle.style.opacity !== '0') handle.style.opacity = '0';
+            const el = handle.parentElement;
+            if (el && el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
           }
           if (resumeTimer !== null) clearTimeout(resumeTimer);
           resumeTimer = window.setTimeout(() => {
             resumeTimer = null;
-            isFaded = false;
-            const el = handleRef.current;
-            if (el) {
-              el.style.opacity = '';
-            }
-          }, SCROLL_FADE_RESUME_MS);
+            syncFloaterPosition();
+            const handle = handleRef.current;
+            if (!handle) return;
+            const el = handle.parentElement;
+            if (el) el.style.visibility = '';
+            window.requestAnimationFrame(() => {
+              const handle = handleRef.current;
+              if (handle) handle.style.opacity = '';
+            });
+          }, 350);
         };
         const unsubscribe = mutxt.scroll.scrollTop$.subscribe(onScroll);
         return () => {
           unsubscribe();
           if (resumeTimer !== null) clearTimeout(resumeTimer);
         };
-      }, [mutxt]);
+      }, [mutxt, syncFloaterPosition]);
 
       if (readOnly || !cursor || mutxt.api.hasSelection()) return;
-      if (dismissed) return;
-      if (omniOpen) return;
-      if (!state.currentBlockFormat()) return;
+      if (dismissed || omniOpen || !state.currentBlockFormat()) return;
       const point = state.point();
-      if (!point) return;
-      if (!state.isInViewport(point)) return;
+      if (!point || !state.isInViewport(point)) return;
 
       const menu = state.menu.build();
       if (!menu) return;

@@ -39,8 +39,8 @@ export const PreformattedElement: React.FC<PreformattedElementProps> = ({attribu
         paddingInlineStart: 14 + (indentPadding(element.indent) ?? 0),
         marginInlineEnd: 0,
         fontFamily: fontFamilyOf(element.font),
-        background: styles.light ? styles.g(0, 0.04) : styles.g(1, 0.04),
-        color: styles.light ? styles.g(0.16) : styles.g(0.92),
+        background: styles.g(0, 0.04),
+        color: styles.g(0.16),
       }}
     >
       {children}

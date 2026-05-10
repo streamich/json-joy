@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {lightTheme as theme, type Scale, rule, useTheme} from 'nano-theme';
+import {lightTheme as theme, type Scale, rule} from 'nano-theme';
 import Svg from 'iconista';
 import {useT} from 'use-t';
 import {Link} from '../Link';
@@ -138,7 +138,6 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
   let emoji = emojiImmutable;
   if (del) emoji = '␡';
 
-  const theme = useTheme();
   const [t] = useT();
   const [error, setError] = useState(false);
   const styles = useStyles();
@@ -167,13 +166,13 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
   if (transparent) {
     props.style.background = 'transparent';
   } else if (lightGrey) {
-    props.style.background = theme.g(0.1, 0.08);
-    props.style.color = theme.g(0.2, 0.4);
-    props.style.fill = theme.g(0.2, 0.4);
+    props.style.background = styles.g(0.1, 0.08);
+    props.style.color = styles.g(0.2, 0.4);
+    props.style.fill = styles.g(0.2, 0.4);
   } else if (grey || del) {
-    props.style.background = theme.g(0.4);
-    props.style.color = theme.g(0.9);
-    props.style.fill = theme.g(0.9);
+    props.style.background = styles.g(0.4);
+    props.style.color = styles.g(0.9);
+    props.style.fill = styles.g(0.9);
   } else if (color) {
     props.style.background = color;
   }
@@ -239,7 +238,8 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
         justifyContent: 'center',
         top: size * -0.1,
         left: size * -0.1,
-        background: props.style.background || styles.col.hash(id || name || '') + '' || theme.color.sem.negative[0],
+        background:
+          props.style.background || styles.col.hash(id || name || '') + '' || styles.col.get('error', 'solid-1'),
         width: lockSize + 'px',
         height: lockSize + 'px',
         borderRadius: '50%',
@@ -271,12 +271,12 @@ export const Avatar: React.FC<AvatarProps> = (allProps) => {
             top: size * -0.035,
             right: size * -0.035,
             background: styles.col.get('warning', 'el-2'),
-            border: `1px solid ${theme.bg}`,
+            border: `1px solid ${styles.bg}`,
             width: badgeSize + 'px',
             height: badgeSize + 'px',
             borderRadius: '50%',
-            fill: theme.bg,
-            color: theme.bg,
+            fill: styles.bg + '',
+            color: styles.bg + '',
           }}
         />
       );

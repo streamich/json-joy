@@ -34,6 +34,8 @@ export const typeToLabel = (type: string): string => {
       return 'File';
     case 'hr':
       return 'Separator';
+    case 'toc':
+      return 'Table of contents';
     case 'checklist':
       return 'Checklist';
     case 'ul':

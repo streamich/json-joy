@@ -6,6 +6,7 @@ import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {rsync} from '@jsonjoy.com/ui';
 import {BehaviorSubject, map, switchMap, distinctUntilChanged} from 'rxjs';
 import {ungzip} from '@jsonjoy.com/util/lib/compression/gzip';
+import {decodeShareBlob, decodeEncryptedShareBlob} from 'mutxt-react';
 import {downloadFile, stripExtensions} from './util';
 import {type FileLink, type FileMetadataDto, OpenFile} from './file';
 import {FileTabsState} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs/state';
@@ -39,6 +40,46 @@ const CLOSE_SELECTED_DESTROY_TIMEOUT_MS = 1500;
 
 const sortSavedFiles = (saved: FileMetadataDto[]): FileMetadataDto[] =>
   [...saved].sort((a, b) => b.updatedAt - a.updatedAt || b.createdAt - a.createdAt);
+
+interface SharedFromUrl {
+  encoded: string;
+  encrypted: boolean;
+  title: string;
+  message: string;
+}
+
+const PLAIN_KEYS: readonly string[] = ['n', 'new'];
+const ENCRYPTED_KEYS: readonly string[] = ['e', 'enc'];
+const METADATA_KEYS: readonly string[] = ['t', 'm'];
+
+const takeFirst = (params: URLSearchParams, keys: readonly string[]): string | null => {
+  for (const key of keys) {
+    const value = params.get(key);
+    if (value) return value;
+  }
+  return null;
+};
+
+const consumeSharedParams = (params: URLSearchParams): SharedFromUrl | null => {
+  const plain = takeFirst(params, PLAIN_KEYS);
+  const encrypted = plain ? null : takeFirst(params, ENCRYPTED_KEYS);
+  const encoded = plain ?? encrypted;
+  if (!encoded) return null;
+  const title = params.get('t') ?? '';
+  const message = params.get('m') ?? '';
+  for (const key of [...PLAIN_KEYS, ...ENCRYPTED_KEYS, ...METADATA_KEYS]) params.delete(key);
+  return {encoded, encrypted: !plain, title, message};
+};
+
+const consumeFromHash = (url: URL): SharedFromUrl | null => {
+  if (!url.hash) return null;
+  const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
+  const result = consumeSharedParams(hashParams);
+  if (!result) return null;
+  const remaining = hashParams.toString();
+  url.hash = remaining ? '#' + remaining : '';
+  return result;
+};
 
 export class MuTxtAppState {
   public readonly tabs: FileTabsState;
@@ -194,15 +235,65 @@ export class MuTxtAppState {
     }, SAVED_REFRESH_INTERVAL_MS);
     this.detachDragDrop?.();
     this.detachDragDrop = this.attachDragDrop();
-    const saved = this.saved.value;
 
-    // Try to reopen the most recently saved file. If there is none, or if it
-    // fails to load (e.g. corrupt), fall back to creating a fresh empty
-    // document so the user always lands on something usable.
-    const opened = saved.length ? await this.openSaved(saved[0].id) : false;
+    // If the page was opened with a shared document encoded in the URL,
+    // consume it (stripping the params) and import as a new document.
+    const shared = this.consumeSharedFromUrl();
+    let opened = false;
+    if (shared) opened = await this.importSharedDocument(shared);
+    if (this.stopped) return;
+
+    if (!opened) {
+      // Try to reopen the most recently saved file. If there is none, or if it
+      // fails to load (e.g. corrupt), fall back to creating a fresh empty
+      // document so the user always lands on something usable.
+      const saved = this.saved.value;
+      opened = saved.length ? await this.openSaved(saved[0].id) : false;
+    }
     if (!opened && !this.files$.getValue().length) this.createNewMuTxt();
     this.started.set(true);
   }
+
+  private readonly consumeSharedFromUrl = (): SharedFromUrl | null => {
+    if (typeof window === 'undefined' || !window.location) return null;
+    try {
+      const url = new URL(window.location.href);
+      const consumed = consumeSharedParams(url.searchParams) ?? consumeFromHash(url);
+      if (!consumed) return null;
+      const newUrl = url.pathname + url.search + url.hash;
+      window.history.replaceState({}, '', newUrl);
+      return consumed;
+    } catch {
+      return null;
+    }
+  };
+
+  public readonly importSharedDocument = async (shared: SharedFromUrl): Promise<boolean> => {
+    try {
+      let bytes: Uint8Array;
+      if (shared.encrypted) {
+        const messagePrefix = 'Enter the password to open the shared document.';
+        const password = window.prompt(shared.message ? `${messagePrefix}\n\n${shared.message}` : messagePrefix, '');
+        if (password === null) return false; // user cancelled
+        bytes = (await decodeEncryptedShareBlob(shared.encoded, password)) as Uint8Array<ArrayBuffer>;
+      } else {
+        bytes = (await decodeShareBlob(shared.encoded)) as Uint8Array<ArrayBuffer>;
+      }
+      if (this.stopped) return false;
+      const model = ModelWithExt.load(bytes, this.sid);
+      const log = new Log(() => model);
+      log.end.setSid(this.sid);
+      this.openFile(log, shared.title || 'Shared');
+      return true;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[mutxt] failed to load shared document from URL', error);
+      if (shared.encrypted) {
+        window.alert('Failed to open the shared document. The password may be wrong, or the link may be corrupted.');
+      }
+      return false;
+    }
+  };
 
   async stop() {
     this.stopped = true;

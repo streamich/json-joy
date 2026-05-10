@@ -1,12 +1,13 @@
 import * as React from 'react';
-import {makeRule, rule} from 'nano-theme';
+import {lightTheme, drule, rule} from 'nano-theme';
 import Svg from 'iconista';
 import {Link} from 'react-router-lite';
 import {useT} from 'use-t';
+import {useStyles} from '../../styles/context';
 import {Code} from '../../1-inline/Code';
 import {Paper} from '../Paper';
 
-const useBlockClass = makeRule((t) => ({
+const blockClass = drule({
   pos: 'relative',
   d: 'flex',
   flexDirection: 'column',
@@ -16,7 +17,7 @@ const useBlockClass = makeRule((t) => ({
   pad: '32px',
   mar: '18px',
   h2: {
-    ...t.font.ui2.bold,
+    ...lightTheme.font.ui2.bold,
     fz: '24px',
     mar: 0,
     pad: 0,
@@ -25,39 +26,30 @@ const useBlockClass = makeRule((t) => ({
     pad: 0,
     mar: 0,
   },
-  svg: {
-    fill: t.g(0.6),
-    col: t.blue(1),
-  },
-  '&:hover svg': {
-    col: t.color.sem.negative[0],
-  },
-}));
+});
 
 const headerClass = rule({
   marl: '-2px',
   pad: '0 0 16px',
 });
 
-const useContentClass = makeRule((t) => ({
-  ...t.font.ui3,
+const contentClass = drule({
+  ...lightTheme.font.ui3,
   fz: '14px',
   pad: '24px 0 0',
   lh: '1.6em',
-  col: t.g(0.45),
   '@media only screen and (max-width: 800px)': {
     pad: '16px 0',
     fz: '14px',
   },
-}));
+});
 
-const useLinkClass = makeRule((t) => ({
+const linkClass = drule({
   a: {
     d: 'flex',
     alignItems: 'center',
     svg: {
       marl: '8px',
-      fill: t.blue(1),
       trs: 'transform .2s',
     },
     '&:hover': {
@@ -78,14 +70,13 @@ const useLinkClass = makeRule((t) => ({
       bg: 'transparent !important',
     },
   },
-}));
+});
 
-const useStageClass = makeRule((t) => ({
-  ...t.font.ui3,
+const stageClass = drule({
+  ...lightTheme.font.ui3,
   fz: '14px',
-  col: t.g(0.6),
   marl: '16px',
-}));
+});
 
 export interface ClickCardProps {
   title: React.ReactNode;
@@ -113,10 +104,21 @@ export const ClickCard: React.FC<ClickCardProps> = ({
   onClick,
 }) => {
   const [t] = useT();
-  const blockClass = useBlockClass();
-  const contentClass = useContentClass();
-  const linkClass = useLinkClass();
-  const stageClass = useStageClass();
+  const styles = useStyles();
+  const link = styles.col.get('link', 'solid-1');
+  const negative = styles.col.get('error', 'solid-1');
+
+  const blockCls = blockClass({
+    svg: {fill: styles.g(0.6), col: link},
+    '&:hover svg': {col: negative},
+  });
+  const contentCls = contentClass({col: styles.g(0.45)});
+  const linkCls = linkClass({
+    a: {
+      svg: {fill: link},
+    },
+  });
+  const stageCls = stageClass({col: styles.g(0.6)});
 
   const labelElement =
     !!icon || !!label || !!header ? (
@@ -129,7 +131,7 @@ export const ClickCard: React.FC<ClickCardProps> = ({
             </Code>
           </span>
         )}
-        {!!header && <span className={stageClass}>{header}</span>}
+        {!!header && <span className={stageCls}>{header}</span>}
       </span>
     ) : null;
 
@@ -140,13 +142,13 @@ export const ClickCard: React.FC<ClickCardProps> = ({
   }
 
   let element = (
-    <Paper contrast hoverElevate round className={blockClass} style={style}>
+    <Paper contrast hoverElevate round className={blockCls} style={style}>
       <div>
         {!!labelElement && <div className={headerClass}>{labelElement}</div>}
         <h2>{title}</h2>
-        <div className={contentClass}>{children}</div>
+        <div className={contentCls}>{children}</div>
       </div>
-      <div className={linkClass}>
+      <div className={linkCls}>
         <Link
           a
           to={to}

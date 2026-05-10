@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {useT} from 'use-t';
 import Arrow from '../../../icons/interactive/Arrow';
 import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
@@ -25,17 +25,24 @@ export interface MobileMenuItemProps {
 
 export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onSelectArgs, onClose}) => {
   const [t] = useT();
-  const theme = useTheme();
+  const styles = useStyles();
   const active = !!useSyncStoreOpt(item.active);
   const disabled = !!useSyncStoreOpt(item.disabled);
   const hasArgs = !!item.params?.length;
   const hasChildren = !!item.children?.length;
+  const hasPane = !!item.pane;
+  const hasRaw = !!item.raw;
+  const navigable = hasChildren || hasPane || hasRaw;
   const display = item.display?.() ?? t(item.name);
 
   const handleClick = (event: React.MouseEvent) => {
     if (disabled) return;
     if (hasArgs) {
       onSelectArgs(item);
+      return;
+    }
+    if (hasPane || hasRaw) {
+      onPush(item);
       return;
     }
     if (item.onSelect) {
@@ -49,14 +56,14 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
   };
 
   const danger = !!item.danger;
-  const dangerColor = theme.color.sem.negative[1];
-  const baseColor = theme.g(theme.isLight ? 0.15 : 0.1);
+  const dangerColor = styles.col.get('error', 'el-2');
+  const baseColor = styles.g(styles.light ? 0.15 : 0.1);
 
   const rowStyle: React.CSSProperties = {
     color: danger ? dangerColor : baseColor,
     pointerEvents: disabled ? 'none' : undefined,
     opacity: disabled ? 0.45 : 1,
-    background: active ? theme.g(0, theme.isLight ? 0.05 : 0.08) : undefined,
+    background: active ? styles.g(0, styles.light ? 0.05 : 0.08) : undefined,
   };
 
   const description = item.description ? t(item.description) : null;
@@ -82,7 +89,7 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
       onClick={handleClick}
       disabled={disabled}
       role="menuitem"
-      aria-haspopup={hasChildren ? 'menu' : undefined}
+      aria-haspopup={navigable ? 'menu' : undefined}
       aria-disabled={disabled || undefined}
     >
       <span className={itemIconClass}>{item.icon?.()}</span>
@@ -91,17 +98,17 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
           {labelEl}
           {noteFn && <span style={{marginInlineStart: 6, opacity: 0.6}}>{noteFn()}</span>}
         </span>
-        {description && <span className={itemDescriptionClass({col: theme.g(0.5)})}>{description}</span>}
+        {description && <span className={itemDescriptionClass({col: styles.g(0.5)})}>{description}</span>}
       </span>
       {right && <span className={itemRightClass}>{right}</span>}
       {keys && keys.length > 0 && (
-        <span className={itemKeysClass({col: theme.g(0.45)})}>
+        <span className={itemKeysClass({col: styles.g(0.45)})}>
           {keys.map((k, i) => (
             <span
               key={i}
               className={keyChipClass({
-                bg: theme.g(0, 0.06),
-                col: theme.g(0.4),
+                bg: styles.g(0, 0.06),
+                col: styles.g(0.4),
               })}
             >
               {k}
@@ -109,7 +116,7 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
           ))}
         </span>
       )}
-      {hasChildren && !item.onSelect && (
+      {navigable && !item.onSelect && (
         <span className={chevronClass} aria-hidden="true">
           <Arrow direction="r" style={{width: 16, height: 16}} />
         </span>

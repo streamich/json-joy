@@ -20,8 +20,8 @@ const tooltipClass = rule({
   col: '#fff',
   fz: '14px',
   pad: '4px 8px',
-  userSelect: 'none',
-  pointerEvents: 'none',
+  us: 'none',
+  pe: 'none',
 });
 
 export interface BasicTooltipProps extends React.AllHTMLAttributes<any> {
@@ -116,7 +116,7 @@ export const BasicTooltip: React.FC<BasicTooltipProps> = ({
     const {dy} = handle.get();
     drop = (
       <PositionPopup fadeIn={fadeIn}>
-        <C className={tooltipClass} style={{boxShadow: styles.light ? undefined : `0 0 0 1px ${styles.g(0.1, 0.16)}`}}>
+        <C className={tooltipClass} style={{boxShadow: styles.light ? undefined : `0 0 0 1px ${styles.g(0.1, 0.08)}`}}>
           {nowrap ? <span style={{whiteSpace: 'nowrap'}}>{renderTooltip()}</span> : renderTooltip()}
           {!!shortcut && (
             <KeyLite

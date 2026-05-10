@@ -1,20 +1,13 @@
 import * as React from 'react';
-import {useTheme, makeRule, drule} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 export const blockClass = drule({
   bdrad: '4px',
   trs: 'background .3s',
 });
 
-const useHoverBlockClass = makeRule((theme) => ({
-  bd: `1px solid ${theme.g(0, 0.1)}`,
-  '&:hover': {
-    bd: `1px solid ${theme.g(0, 0.2)}`,
-  },
-  '&:active': {
-    bd: `1px solid ${theme.g(0, 0.3)}`,
-  },
-}));
+const hoverBlockClass = drule({});
 
 const hoverElevateClass = drule({
   trs: 'box-shadow 0.5s',
@@ -47,17 +40,18 @@ export const Paper: React.FC<PaperProps> = (props) => {
     ref,
     ...rest
   } = props;
-  const theme = useTheme();
-  const dynamicHoverBlockClass = useHoverBlockClass();
+  const styles = useStyles();
+  const bg = styles.bg + '';
+  const light = styles.light;
 
   const style: React.CSSProperties = {};
 
   if (!hover) {
-    style.border = `1px solid ${theme.g(0, contrast ? 0.2 : 0.1)}`;
+    style.border = `1px solid ${styles.g(0, contrast ? 0.2 : 0.1)}`;
   }
 
   if (level > 1) {
-    style.border = `1px solid ${theme.g(0, 0.1 + 0.03 * level)}`;
+    style.border = `1px solid ${styles.g(0, 0.1 + 0.03 * level)}`;
   }
 
   if (noOutline) {
@@ -74,29 +68,39 @@ export const Paper: React.FC<PaperProps> = (props) => {
     className:
       props.className +
       blockClass({
-        bg: theme.bg,
+        bg,
         'a &': {
-          col: theme.g(0.25),
+          col: styles.g(0.25),
         },
         bxsh: level
-          ? `0px 1px ${1 + level * 2}px 0px ${theme.g(0, 0.2)}, 0px ${level}px ${level}px 0px ${theme.g(0, 0.14)}, 0px ${
+          ? `0px 1px ${1 + level * 2}px 0px ${styles.g(0, 0.2)}, 0px ${level}px ${level}px 0px ${styles.g(0, 0.14)}, 0px ${
               1 + level
-            }px 1px -${level}px ${theme.g(0, 0.12)}`
+            }px 1px -${level}px ${styles.g(0, 0.12)}`
           : 'none',
         ...(hoverBg
           ? {
-              bg: fill ? theme.g(0, fill * 0.02) : theme.bg,
+              bg: fill ? styles.g(0, fill * 0.02) : bg,
               '&:hover': {
-                bg: theme.g(0, 0.02),
+                bg: styles.g(0, 0.02),
               },
             }
           : {}),
       }) +
-      (hover ? dynamicHoverBlockClass : '') +
+      (hover
+        ? hoverBlockClass({
+            bd: `1px solid ${styles.g(0, 0.1)}`,
+            '&:hover': {
+              bd: `1px solid ${styles.g(0, 0.2)}`,
+            },
+            '&:active': {
+              bd: `1px solid ${styles.g(0, 0.3)}`,
+            },
+          })
+        : '') +
       (hoverElevate
         ? hoverElevateClass({
             '&:hover': {
-              bxsh: theme.isLight
+              bxsh: light
                 ? '0 3px 5px rgba(0,0,0,.1), 0 10px 20px rgba(0,0,0,.1)'
                 : '0 3px 5px rgba(0,0,0,.5), 0 10px 20px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06)',
             },

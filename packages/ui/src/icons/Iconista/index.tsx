@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {getUrl as getUrlDefault} from 'iconista/lib/getUrl';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import useMountedState from 'react-use/lib/useMountedState';
 import type {Icon} from 'iconista/lib/types';
 
@@ -83,9 +83,9 @@ export type IconistaProps = Icon &
   };
 
 export const Iconista: React.FC<IconistaProps> = ({color, style, ...rest}) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
-  const iconColor = color || theme.g(0.1, 0.9);
+  const iconColor = color || styles.g(0.1, 0.9);
 
   return <Svg {...rest} style={{color: iconColor, ...style}} />;
 };

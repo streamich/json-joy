@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {Input, type InputProps} from '../Input';
 
 export interface InputColorProps extends InputProps {}
 
 export const InputColor: React.FC<InputColorProps> = (props) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
   const swatchSize = props.label ? 32 : 16;
   const rightElement = (
@@ -17,7 +17,7 @@ export const InputColor: React.FC<InputColorProps> = (props) => {
         padding: 0,
         margin: props.label ? '-18px -4px 0 0' : '-1px -4px 0 0',
         cursor: 'pointer',
-        border: `3px solid ${theme.g(0.99, 0.9)}`,
+        border: `3px solid ${styles.g(0.99, 0.9)}`,
         borderRadius: 2,
         boxShadow: `0px 1px 2px rgba(0,0,0,.2)`,
         position: 'relative',

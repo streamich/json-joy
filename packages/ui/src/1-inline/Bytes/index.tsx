@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockClass = rule({
-  ...theme.font.ui1.mid,
+  ...lightTheme.font.ui1.mid,
   d: 'inline-flex',
   ai: 'baseline',
   gap: '4px',
@@ -11,7 +12,9 @@ const blockClass = rule({
   whiteSpace: 'nowrap',
 });
 
-const unitClass = rule({
+const valueClass = drule({});
+
+const unitClass = drule({
   fz: '11px',
   textTransform: 'uppercase',
   letterSpacing: '0.04em',
@@ -45,10 +48,8 @@ export interface BytesProps {
 }
 
 export const Bytes: React.FC<BytesProps> = ({value, binary = false, precision = 1, className, style}) => {
+  const styles = useStyles();
   const {n, unit} = React.useMemo(() => format(value, binary, precision), [value, binary, precision]);
-
-  const dynamicValueClass = useRule((t) => ({col: t.g(0.25)}));
-  const dynamicUnitClass = useRule((t) => ({col: t.g(0.5)}));
 
   return (
     <span
@@ -56,8 +57,8 @@ export const Bytes: React.FC<BytesProps> = ({value, binary = false, precision = 
       style={style}
       title={`${value.toLocaleString()} bytes`}
     >
-      <span className={dynamicValueClass}>{n}</span>
-      <span className={unitClass + dynamicUnitClass}>{unit}</span>
+      <span className={valueClass({col: styles.g(0.25)})}>{n}</span>
+      <span className={unitClass({col: styles.g(0.5)})}>{unit}</span>
     </span>
   );
 };

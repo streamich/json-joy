@@ -47,6 +47,7 @@ export class BlockState implements UiLifeCycles {
     const [element, path] = blockEntry;
     if (element.type === 'embed') return;
     if (element.type === 'hr') return;
+    if (element.type === 'toc') return;
     if (element.type === 'li') {
       const match = api.listAbove(void 0, path);
       if (match) return (match[0] as CustomElement).type as ListElementType;

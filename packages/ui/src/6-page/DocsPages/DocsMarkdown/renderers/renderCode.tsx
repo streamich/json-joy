@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {makeRule, rule} from 'nano-theme';
+import {drule, rule} from 'nano-theme';
+import {useStyles} from '../../../../styles/context';
 import type {ICode} from 'very-small-parser/lib/markdown/block/types';
 import type {RenderNode} from '../../../../markdown/types';
 import renderCodeDefault from '../../../../markdown/renderers/renderCode';
@@ -20,14 +21,15 @@ export const introClass = rule({
   },
 });
 
-const useIntroColorsClass = makeRule((t) => ({
-  col: t.g(0.5),
-  bdb: `1px solid ${t.g(0.8)}`,
-}));
+const introColorsClass = drule({});
 
 const Intro: React.FC<{children: React.ReactNode}> = ({children}) => {
-  const introColorsClass = useIntroColorsClass();
-  return <div className={introClass + introColorsClass}>{children}</div>;
+  const styles = useStyles();
+  const cls = introColorsClass({
+    col: styles.g(0.5),
+    bdb: `1px solid ${styles.g(0.8)}`,
+  });
+  return <div className={introClass + cls}>{children}</div>;
 };
 
 const renderCode: RenderNode = (renderers, flat, idx, props, state) => {

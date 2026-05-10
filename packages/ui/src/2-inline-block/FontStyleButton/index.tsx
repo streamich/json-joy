@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {drule, rule, useTheme} from 'nano-theme';
+import {lightTheme, drule, rule} from 'nano-theme';
 import {Ripple} from '../../misc/Ripple';
 import {useStyles} from '../../styles/context';
 
@@ -53,32 +53,31 @@ export const FontStyleButton: React.FC<FontStyleButtonProps> = ({
   children,
   ...rest
 }) => {
-  const theme = useTheme();
   const styles = useStyles();
 
   const activeBg = styles.col.accent(0, 'bg-2');
+  const accentColor = styles.col.get('accent', 'solid-1');
   const className =
     (rest.className ?? '') +
     blockClass({
-      // col: styles.neutral.col(.8, .9).toString(),
       col: styles.g(0),
       w: size + 'px',
       h: size + 'px',
-      bg: active ? activeBg : theme.g(0, 0.01),
+      bg: active ? activeBg : styles.g(0, 0.01),
       '&:hover': {
-        bg: active ? activeBg : theme.g(0, 0.04),
+        bg: active ? activeBg : styles.g(0, 0.04),
       },
     });
 
   const classNameText = displayClass({
     ff:
       kind === 'serif'
-        ? theme.font.serif.mid.ff
+        ? lightTheme.font.serif.mid.ff
         : kind === 'sans'
-          ? theme.font.sans.mid.ff
+          ? lightTheme.font.sans.mid.ff
           : kind === 'slab'
-            ? theme.font.slab.mid.ff
-            : theme.font.mono.mid.ff,
+            ? lightTheme.font.slab.mid.ff
+            : lightTheme.font.mono.mid.ff,
     fz: size * 0.4 + 'px',
   });
 
@@ -86,11 +85,11 @@ export const FontStyleButton: React.FC<FontStyleButtonProps> = ({
     <Ripple ms={1000}>
       <button {...rest} type="button" className={className}>
         <span className={verticalClass}>
-          <span className={classNameText} style={{color: active ? theme.color.sem.accent[0] : void 0}}>
+          <span className={classNameText} style={{color: active ? accentColor : void 0}}>
             {display}
           </span>
           {size > 32 && (
-            <span className={childrenClass} style={{color: active ? theme.color.sem.accent[0] : theme.g(0, 0.7)}}>
+            <span className={childrenClass} style={{color: active ? accentColor : styles.g(0, 0.7)}}>
               {children ?? (kind === 'serif' ? 'Serif' : kind === 'sans' ? 'Sans' : kind === 'slab' ? 'Slab' : 'Mono')}
             </span>
           )}

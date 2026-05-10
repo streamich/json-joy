@@ -114,10 +114,11 @@ export class InlineMenu implements UiLifeCycles {
   }
 
   public itemBold(): InlineMenuItem {
-    const keys = ['⌘', 'b'];
+    const keys = ['Primary', 'b'];
     return {
       mark: 'bold',
       name: 'Bold',
+      text: 'strong heavy thick weight',
       icon: () => <BoldIcon />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys: [formatKeys(keys)],
@@ -128,10 +129,11 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemItalic(): InlineMenuItem {
-    const keys = ['⌘', 'i'];
+    const keys = ['Primary', 'i'];
     return {
       mark: 'italic',
       name: 'Italic',
+      text: 'em emphasis slant oblique cursive',
       icon: () => <ItalicIcon />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys: [formatKeys(keys)],
@@ -142,14 +144,16 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemUnderline(): InlineMenuItem {
-    const keys = ['⌘', 'u'];
+    const keys = ['Primary', 'u'];
     return {
       mark: 'underline',
       name: 'Underline',
+      text: 'underscore line under',
       icon: () => <UnderlineIcon />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys: [formatKeys(keys)],
       active: this.markActive('underline'),
+      priority: 1,
       onSelect: () => {
         this.mutxt.api.toggleMark('underline');
       },
@@ -160,6 +164,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'strikethrough',
       name: 'Strikethrough',
+      text: 'strike crossed line through cross-out',
       icon: () => <StrikethroughIcon />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys: [formatKeys(keys)],
@@ -173,6 +178,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'overline',
       name: 'Overline',
+      text: 'line over above top',
       icon: () => <OverlineIcon />,
       active: this.markActive('overline'),
       onSelect: () => {
@@ -184,6 +190,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'mark',
       name: 'Highlight',
+      text: 'mark yellow background marker emphasis',
       icon: () => <HighlightIcon />,
       active: this.markActive('mark'),
       onSelect: () => {
@@ -195,6 +202,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'spoiler',
       name: 'Spoiler',
+      text: 'hide blur reveal redact secret hidden',
       icon: () => <SpoilerIcon />,
       active: this.markActive('spoiler'),
       onSelect: () => {
@@ -213,10 +221,11 @@ export class InlineMenu implements UiLifeCycles {
     };
   }
   public itemCode(): InlineMenuItem {
-    const keys = ['⌘', 'e'];
+    const keys = ['Primary', 'e'];
     return {
       mark: 'code',
       name: 'Code',
+      text: 'inline monospace snippet variable identifier',
       icon: () => <CodeIcon width={16} height={16} />,
       right: () => <Sidetip small>{formatKeys(keys)}</Sidetip>,
       keys: [formatKeys(keys)],
@@ -230,6 +239,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'sup',
       name: 'Superscript',
+      text: 'sup raised exponent power above',
       icon: () => <SupIcon />,
       active: this.markActive('sup'),
       onSelect: () => {
@@ -241,6 +251,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'sub',
       name: 'Subscript',
+      text: 'sub lowered chemistry below index',
       icon: () => <SubIcon />,
       active: this.markActive('sub'),
       onSelect: () => {
@@ -252,6 +263,8 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'kbd',
       name: 'Keyboard key',
+      text: 'kbd shortcut button keystroke key',
+      priority: 1,
       icon: () => <KeyIcon />,
       active: this.markActive('kbd'),
       onSelect: () => {
@@ -263,6 +276,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'ins',
       name: 'Insertion',
+      text: 'ins added inserted track changes diff',
       icon: () => <InsertionIcon />,
       active: this.markActive('ins'),
       onSelect: () => {
@@ -274,6 +288,7 @@ export class InlineMenu implements UiLifeCycles {
     return {
       mark: 'del',
       name: 'Deletion',
+      text: 'del removed deleted track changes diff strike',
       icon: () => <DeletionIcon />,
       active: this.markActive('del'),
       onSelect: () => {
@@ -294,6 +309,7 @@ export class InlineMenu implements UiLifeCycles {
     const link = mutxt.inline.link;
     return {
       name: 'Link',
+      text: 'url href hyperlink anchor web address a',
       icon: () => <LinkIcon />,
       disabled: rsync.comp([link.canOpen], ([canOpen]) => !canOpen),
       active: rsync.comp([mutxt.caretLinkHref], ([href]) => !!href),
@@ -314,19 +330,20 @@ export class InlineMenu implements UiLifeCycles {
     return {
       id: 'inline-typesetting',
       name: 'Typesetting',
+      text: 'font face family typography typeface',
       icon: () => <TypographyIcon />,
       expand: 4,
       openOnTitleHov: true,
       children: [
-        this.itemLeafFont('sans', 'Sans-serif'),
-        this.itemLeafFont('serif', 'Serif'),
-        this.itemLeafFont('slab', 'Slab'),
-        this.itemLeafFont('mono', 'Monospace'),
+        this.itemLeafFont('sans', 'Sans-serif', 'sans gothic grotesque modern'),
+        this.itemLeafFont('serif', 'Serif', 'serif traditional roman'),
+        this.itemLeafFont('slab', 'Slab', 'slab egyptian thick serif'),
+        this.itemLeafFont('mono', 'Monospace', 'mono fixed code typewriter courier'),
       ],
     };
   }
 
-  private itemLeafFont(kind: FontKind, name: string): MenuItem {
+  private itemLeafFont(kind: FontKind, name: string, text?: string): MenuItem {
     const mutxt = this.mutxt;
     const onSelect = (event: React.MouseEvent | React.TouchEvent) => {
       event.preventDefault();
@@ -340,6 +357,7 @@ export class InlineMenu implements UiLifeCycles {
     };
     return {
       name,
+      text,
       icon: () => <Option size={16} />,
       iconBig: () => <Option />,
       active: rsync.comp([mutxt.version], () => isLeafFontActive(mutxt.editor, kind)),
@@ -359,6 +377,7 @@ export class InlineMenu implements UiLifeCycles {
     const {mutxt} = this;
     return {
       name: 'Erase formatting',
+      text: 'clear remove reset plain unformat strip styles marks',
       danger: true,
       icon: () => <ClearFormattingIcon width={16} height={16} />,
       disabled: rsync.comp([mutxt.version], () => {
