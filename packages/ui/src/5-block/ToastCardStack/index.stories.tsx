@@ -8,6 +8,13 @@ const meta: Meta<typeof Component> = {
   component: Component,
   tags: ['autodocs'],
   argTypes: {},
+  decorators: [
+    (Story) => (
+      <div style={{padding: '320px 32px'}}>
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export default meta;

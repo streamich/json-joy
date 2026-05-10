@@ -60,7 +60,7 @@ export const ToastCardItems: React.FC<ToastCardItemsProps> = ({stack, right, bot
   });
 
   return (
-    <ToastCardStack global right={right} bottom={bottom}>
+    <ToastCardStack global center right={right} bottom={bottom}>
       {elements}
     </ToastCardStack>
   );
