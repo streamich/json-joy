@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {makeRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const buttonAttrs = (onClick?: React.MouseEventHandler): null | Partial<React.HTMLAttributes<any>> => {
   if (!onClick) return null;
@@ -18,9 +19,8 @@ const buttonAttrs = (onClick?: React.MouseEventHandler): null | Partial<React.HT
   };
 };
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.ui3,
-  col: t.g(0.4),
+const blockClass = drule({
+  ...lightTheme.font.ui3,
   fz: '8.5px',
   d: 'block',
   pad: '0px 20px',
@@ -30,7 +30,7 @@ const useBlockClass = makeRule((t) => ({
   letterSpacing: '1px',
   ta: 'right',
   us: 'none',
-}));
+});
 
 export interface ContextTitleProps extends React.HTMLAttributes<any> {
   icon?: React.ReactNode;
@@ -39,7 +39,7 @@ export interface ContextTitleProps extends React.HTMLAttributes<any> {
 }
 
 export const ContextTitle: React.FC<ContextTitleProps> = ({icon, children, onClick, ...rest}) => {
-  const blockClass = useBlockClass();
+  const styles = useStyles();
   if (icon) {
     children = (
       <span>
@@ -61,7 +61,7 @@ export const ContextTitle: React.FC<ContextTitleProps> = ({icon, children, onCli
   }
 
   return (
-    <h6 {...rest} className={blockClass} {...buttonAttrs(onClick)}>
+    <h6 {...rest} className={blockClass({col: styles.g(0.4)})} {...buttonAttrs(onClick)}>
       {children}
     </h6>
   );

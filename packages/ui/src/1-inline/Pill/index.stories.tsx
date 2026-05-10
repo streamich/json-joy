@@ -27,10 +27,10 @@ export const Colors: StoryObj<typeof meta> = {
   render: () => (
     <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
       <Component color="neutral">Neutral</Component>
-      <Component color="positive">Positive</Component>
-      <Component color="negative">Negative</Component>
+      <Component color="success">Positive</Component>
+      <Component color="error">Negative</Component>
       <Component color="warning">Warning</Component>
-      <Component color="blue">Blue</Component>
+      <Component color="link">Blue</Component>
       <Component color="accent">Accent</Component>
       <Component color="#a855f7">Custom</Component>
     </div>
@@ -43,16 +43,16 @@ export const Solid: StoryObj<typeof meta> = {
       <Component solid color="neutral">
         Neutral
       </Component>
-      <Component solid color="positive">
+      <Component solid color="success">
         Positive
       </Component>
-      <Component solid color="negative">
+      <Component solid color="error">
         Negative
       </Component>
       <Component solid color="warning">
         Warning
       </Component>
-      <Component solid color="blue">
+      <Component solid color="link">
         Blue
       </Component>
       <Component solid color="accent">
@@ -65,10 +65,10 @@ export const Solid: StoryObj<typeof meta> = {
 export const Sizes: StoryObj<typeof meta> = {
   render: () => (
     <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-      <Component small color="positive">
+      <Component small color="success">
         Small
       </Component>
-      <Component color="positive">Default</Component>
+      <Component color="success">Default</Component>
     </div>
   ),
 };
@@ -76,16 +76,16 @@ export const Sizes: StoryObj<typeof meta> = {
 export const WithDot: StoryObj<typeof meta> = {
   render: () => (
     <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
-      <Component color="positive">
-        <Dot color="positive" />
+      <Component color="success">
+        <Dot color="success" />
         Active
       </Component>
       <Component color="warning">
         <Dot color="warning" />
         Pending
       </Component>
-      <Component color="negative">
-        <Dot color="negative" />
+      <Component color="error">
+        <Dot color="error" />
         Failed
       </Component>
       <Component color="neutral">

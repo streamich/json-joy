@@ -1,7 +1,8 @@
-import {makeRule, rule} from 'nano-theme';
+import {lightTheme, drule, rule} from 'nano-theme';
 import * as React from 'react';
 import {useT} from 'use-t';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import {useStyles} from '../../../../../styles/context';
 import ContentItem from './ContentItem';
 import type {Renderers} from '../../../../../markdown/types';
 import AsideContainer from '../Aside/AsideContainer';
@@ -11,18 +12,11 @@ import type {Flat} from 'mdast-flat/lib/types';
 
 const blockClassName = 'jjContents';
 
-const useBlockClass = makeRule((t) => ({
-  bd: `1px solid ${t.g(0.98)}`,
+const blockClass = drule({
   bdrad: '8px',
   mar: '0 0 32px',
   pad: '32px',
-  '&:hover': {
-    bd: `1px solid ${t.g(0.9)}`,
-  },
-  [`@media(max-width: ${NiceUiSizes.SiteWidth}px)`]: {
-    bd: `1px solid ${t.g(0.9)}`,
-  },
-}));
+});
 
 const blockClassRight = rule({
   pad: '8px',
@@ -35,20 +29,18 @@ const blockClassRight = rule({
   },
 });
 
-const useContentsClass = makeRule((t) => ({
-  ...t.font.ui2.mid,
-  col: t.g(0.5),
+const contentsClass = drule({
+  ...lightTheme.font.ui2.mid,
   fz: '10px',
   textTransform: 'uppercase',
   marb: '8px',
-  bdb: `1px solid ${t.g(0.92)}`,
   [`@media(min-width: ${NiceUiSizes.SiteWidth}px)`]: {
     op: 0.4,
     [`.${blockClassName}:hover &`]: {
       op: 1,
     },
   },
-}));
+});
 
 export interface Props {
   ast: Flat;
@@ -59,8 +51,18 @@ export interface Props {
 const Contents: React.FC<Props> = ({ast, renderers, right}) => {
   const [t] = useT();
   const wndSize = useWindowSize();
-  const blockClass = useBlockClass();
-  const contentsClass = useContentsClass();
+  const styles = useStyles();
+  const blockCls = blockClass({
+    bd: `1px solid ${styles.g(0.98)}`,
+    '&:hover': {bd: `1px solid ${styles.g(0.9)}`},
+    [`@media(max-width: ${NiceUiSizes.SiteWidth}px)`]: {
+      bd: `1px solid ${styles.g(0.9)}`,
+    },
+  });
+  const contentsCls = contentsClass({
+    col: styles.g(0.5),
+    bdb: `1px solid ${styles.g(0.92)}`,
+  });
   const contents = ast.contents;
 
   if (!contents || contents.length < 2) return null;
@@ -78,8 +80,8 @@ const Contents: React.FC<Props> = ({ast, renderers, right}) => {
   if (isLargeScreen) {
     return (
       <AsideContainer left={!right}>
-        <div className={blockClassName + ' ' + blockClass + (right ? blockClassRight : '')}>
-          {!right && <div className={contentsClass}>{t('Contents')}</div>}
+        <div className={blockClassName + ' ' + blockCls + (right ? ' ' + blockClassRight : '')}>
+          {!right && <div className={contentsCls}>{t('Contents')}</div>}
           {headings}
         </div>
       </AsideContainer>

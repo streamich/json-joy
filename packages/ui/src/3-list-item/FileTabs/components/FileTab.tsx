@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {makeRule, rule} from 'nano-theme';
+import {drule, rule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {BasicButtonClose} from '../../../2-inline-block/BasicButton/BasicButtonClose';
 import {useT} from 'use-t';
 import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
@@ -216,24 +217,21 @@ const buttonXXSmallClass = rule({
   },
 });
 
-const useDetachedCloseButtonClass = makeRule((t) => {
-  return {
-    pos: 'absolute',
-    t: '-10px',
-    r: '-6px',
-    w: '18px',
-    h: '18px',
-    bxz: 'border-box',
-    o: 0,
-    trs: 'opacity .3s ease',
-    pd: '1px',
-    bdrad: '50%',
-    bg: 'var(--filetabs-fg)',
-    d: 'flex',
-    ai: 'center',
-    jc: 'center',
-    bxsh: `${t.g(0, 0.25)} 0px 4px 8px -2px, ${t.g(0, 0.08)} 0px 0px 0px 1px`,
-  };
+const detachedCloseButtonClass = drule({
+  pos: 'absolute',
+  t: '-10px',
+  r: '-6px',
+  w: '18px',
+  h: '18px',
+  bxz: 'border-box',
+  o: 0,
+  trs: 'opacity .3s ease',
+  pd: '1px',
+  bdrad: '50%',
+  bg: 'var(--filetabs-fg)',
+  d: 'flex',
+  ai: 'center',
+  jc: 'center',
 });
 
 export interface FileTabProps {
@@ -256,7 +254,10 @@ export interface FileTabProps {
 
 export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disabled = false, isExiting = false}) => {
   const [t] = useT();
-  const detachedCloseButtonClass = useDetachedCloseButtonClass();
+  const styles = useStyles();
+  const detachedCloseButtonCls = detachedCloseButtonClass({
+    bxsh: `${styles.g(0, 0.25)} 0px 4px 8px -2px, ${styles.g(0, 0.08)} 0px 0px 0px 1px`,
+  });
   const width = state.tabWidth.use();
   const disabledState = !!useSyncStoreOpt(item.disabled);
   disabled = disabled || disabledState;
@@ -365,7 +366,7 @@ export const FileTab: React.FC<FileTabProps> = ({id, index, state, item, disable
     );
     if (width < 40) {
       button = (
-        <span className={detachedCloseButtonClass} style={{opacity: isAnimating ? 0 : 1}}>
+        <span className={detachedCloseButtonCls} style={{opacity: isAnimating ? 0 : 1}}>
           {button}
         </span>
       );

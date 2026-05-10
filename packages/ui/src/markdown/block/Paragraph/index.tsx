@@ -1,14 +1,15 @@
 import * as React from 'react';
 import {context} from '../../context';
 import MarkdownBlock from '../../util/MarkdownBlock';
-import {rule, m2, m1, theme, useTheme} from 'nano-theme';
+import {lightTheme, rule, m2, m1} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import isFirstLevelBlockElement from '../../util/isFirstLevelBlockElement';
 import MarkdownFullWidthBlock from '../../util/MarkdownFullWidthBlock';
 
 const {memo, useContext} = React;
 
 const paragraphClass = rule({
-  ...theme.font.sans,
+  ...lightTheme.font.sans,
   lh: 1.7,
   fz: '1em',
   [m2]: {
@@ -31,7 +32,7 @@ interface Props {
 
 const Paragraph: React.FC<Props> = memo(({idx, children}) => {
   const {ast, props} = useContext(context);
-  const theme = useTheme();
+  const styles = useStyles();
 
   const root = ast.nodes[0];
   const blockCount = root.children ? root.children.length : 0;
@@ -39,7 +40,7 @@ const Paragraph: React.FC<Props> = memo(({idx, children}) => {
   const isFirstLevelBlock = isFirstLevelBlockElement(node, ast);
 
   const style: React.CSSProperties = {
-    color: theme.g(0, 0.8),
+    color: styles.g(0, 0.8),
   };
 
   if (props.isFullWidth && blockCount === 1) {

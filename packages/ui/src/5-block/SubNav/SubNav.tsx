@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {fromEvent} from 'rxjs';
 import {distinctUntilChanged, map, share} from 'rxjs/operators';
 import useObservable from 'react-use/lib/useObservable';
@@ -81,12 +82,12 @@ export interface SubNavProps {
 }
 
 export const SubNav: React.FC<SubNavProps> = ({noBorder, right, backTo, children}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const showBorder = useObservable(showBorder$, false);
   const {width} = useWindowSize();
 
   const showBorder2 = showBorder || width < 800;
-  const borderColor = theme.g(0, 0.08);
+  const borderColor = styles.g(0, 0.08);
 
   const style: React.CSSProperties = {};
   const wrapStyle: React.CSSProperties = {

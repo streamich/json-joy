@@ -7,10 +7,11 @@ import MarkdownBlock from '../../util/MarkdownBlock';
 import MarkdownFullWidthBlock from '../../util/MarkdownFullWidthBlock';
 import isFirstLevelBlockElement from '../../util/isFirstLevelBlockElement';
 import HighlightCode from '../../../1-inline/HighlightCode';
-import {rule, theme, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
-const blockClass = rule({
-  ...theme.font.mono,
+const blockClass = drule({
+  ...lightTheme.font.mono,
   d: 'block',
   bdrad: '5px',
   trs: 'background 0.6s ease 0s',
@@ -25,20 +26,21 @@ const blockClass = rule({
 });
 
 const blockCompactClass = rule({
-  pad: `${theme.g(0.2)}px ${theme.g(0.3)}px !important`,
+  pad: `${lightTheme.g(0.2)}px ${lightTheme.g(0.3)}px !important`,
 });
 
 const {useContext} = React;
 
 const Code: React.FC<IMarkdownBlockCodeProps> = ({idx}) => {
-  const dynamicBlockClass = useRule((theme) => ({
-    col: theme.g(0.3),
-    bg: theme.g(0, 0.02),
+  const styles = useStyles();
+  const cls = blockClass({
+    col: styles.g(0.3),
+    bg: styles.g(0, 0.02),
     '&:hover': {
-      bg: theme.bg,
-      bd: `1px solid ${theme.g(0, 0.04)}`,
+      bg: styles.bg + '',
+      bd: `1px solid ${styles.g(0, 0.04)}`,
     },
-  }));
+  });
   const {ast, props} = useContext(context);
   const node = ast.nodes[idx] as ICode;
   const {lang, value} = node;
@@ -53,7 +55,7 @@ const Code: React.FC<IMarkdownBlockCodeProps> = ({idx}) => {
     <MarkdownBlock
       idx={idx}
       as="pre"
-      className={blockClass + dynamicBlockClass + (props.isCompact ? blockCompactClass : '')}
+      className={cls + (props.isCompact ? ' ' + blockCompactClass : '')}
       style={blockStyle}
     >
       {lang ? <HighlightCode code={value} lang={lang || undefined} /> : <code>{value}</code>}

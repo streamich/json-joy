@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {FileTabBar} from './FileTabBar';
 import {FileTab} from './FileTab';
 import {HslColor} from '../../../styles/color';
@@ -65,19 +65,18 @@ export const FileTabs: React.FC<FileTabsProps> = (props) => {
       }
     }
   }
-  const theme = useTheme();
-  const bg: HslColor = React.useMemo(
-    () => HslColor.from(_bg || (theme.isLight ? '#3af' : '#1c4a6e'))!,
-    [_bg, theme.isLight],
-  );
+  const styles = useStyles();
+  const light = styles.light;
+  const bgStr = styles.bg + '';
+  const bg: HslColor = React.useMemo(() => HslColor.from(_bg || (light ? '#3af' : '#1c4a6e'))!, [_bg, light]);
   const fg: HslColor = React.useMemo(() => {
     if (_fg) return HslColor.from(_fg)!;
-    if (!theme.isLight) {
-      const themeBg = HslColor.from(theme.bg);
+    if (!light) {
+      const themeBg = HslColor.from(bgStr);
       if (themeBg) return themeBg;
     }
     return bg.copy(0, bg.s * 0.1, (1 - bg.l) * 0.9);
-  }, [_fg, bg, theme.isLight, theme.bg]);
+  }, [_fg, bg, light, bgStr]);
 
   return (
     <>

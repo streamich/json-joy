@@ -1,8 +1,10 @@
 import * as React from 'react';
-import {makeRule, rule, useRule, useTheme, type Theme} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
+import type {Styles} from '../../styles/Styles';
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const blockClass = drule({
+  ...lightTheme.font.ui1.mid,
   d: 'inline-flex',
   ai: 'center',
   jc: 'center',
@@ -13,7 +15,7 @@ const useBlockClass = makeRule((t) => ({
   lh: '18px',
   whiteSpace: 'nowrap',
   bdrad: '999px',
-}));
+});
 
 const smallClass = rule({
   pd: '1px 8px',
@@ -21,7 +23,7 @@ const smallClass = rule({
   lh: '16px',
 });
 
-export type PillColor = 'neutral' | 'positive' | 'negative' | 'warning' | 'blue' | 'accent' | string;
+export type PillColor = 'neutral' | 'success' | 'error' | 'warning' | 'link' | 'accent' | string;
 
 export interface PillProps {
   /** Semantic color name or any raw CSS color string. */
@@ -38,42 +40,38 @@ export interface PillProps {
 
 const isSemantic = (color: string): color is Exclude<PillColor, string> =>
   color === 'neutral' ||
-  color === 'positive' ||
-  color === 'negative' ||
+  color === 'success' ||
+  color === 'error' ||
   color === 'warning' ||
-  color === 'blue' ||
+  color === 'link' ||
   color === 'accent';
 
-const resolveBase = (theme: Theme, color: PillColor): string => {
+const resolveBase = (styles: Styles, color: PillColor): string => {
   if (isSemantic(color)) {
-    if (color === 'neutral') return theme.g(0.4);
-    return theme.color.sem[color][0];
+    if (color === 'neutral') return styles.g(0.4);
+    return styles.col.get(color, 'solid-1');
   }
   return color;
 };
 
 export const Pill: React.FC<PillProps> = ({color = 'neutral', solid, small, className, style, onClick, children}) => {
-  const theme = useTheme();
-  const blockClass = useBlockClass();
-  const base = resolveBase(theme, color);
+  const styles = useStyles();
+  const base = resolveBase(styles, color);
 
-  const dynamicClass = useRule((t) => {
-    if (solid) {
-      return {
+  const dyn = solid
+    ? {
         bg: base,
-        col: t.isLight ? '#fff' : t.g(0.04),
+        col: styles.light ? '#fff' : styles.g(0.04),
+      }
+    : {
+        bg: color === 'neutral' ? styles.g(0, 0.06) : `${base}1f`,
+        col: color === 'neutral' ? styles.g(0.25) : base,
       };
-    }
-    return {
-      bg: color === 'neutral' ? t.g(0, 0.06) : `${base}1f`,
-      col: color === 'neutral' ? t.g(0.25) : base,
-    };
-  });
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: presentational pill; click is non-essential and not focusable by default
     <span
-      className={blockClass + (small ? smallClass : '') + dynamicClass + (className ? ` ${className}` : '')}
+      className={blockClass(dyn) + (small ? ' ' + smallClass : '') + (className ? ` ${className}` : '')}
       style={style}
       onClick={onClick}
     >

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useTheme} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {useT} from 'use-t';
 import {MobileMenuHeader} from './MobileMenuHeader';
 import {MobileMenuItem} from './MobileMenuItem';
@@ -24,7 +24,7 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
   onSelectArgs,
 }) => {
   const [t] = useT();
-  const theme = useTheme();
+  const styles = useStyles();
 
   if (menu.pane) {
     return (
@@ -48,8 +48,8 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
 
   const children = menu.children ?? [];
 
-  const sepColor = theme.g(0, 0.08);
-  const titleColor = theme.g(0.5);
+  const sepColor = styles.g(0, 0.08);
+  const titleColor = styles.g(0.5);
 
   const renderSeparator = (key: string) => (
     <div key={key} className={separatorClass({bg: sepColor})} aria-hidden="true" />

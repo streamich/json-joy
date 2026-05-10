@@ -5,15 +5,14 @@ import {context} from '../../context';
 import Key from '../../components/Key';
 import {useT} from 'use-t';
 import {useToasts} from '../../../7-fullscreen/ToastCardManager/context';
-import {drule, theme, useTheme} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
 const getBlockquoteClass = drule({
-  // pad: '0 0 0 16px !important',
   pad: '0 0 0 12px !important',
   mar: '0 !important',
-  // mar: '2px 0 2px 16px !important',
   trs: 'border 0.2s',
-  ...theme.font.mono.mid,
+  ...lightTheme.font.mono.mid,
 });
 
 const copy = require('clipboard-copy'); // eslint-disable-line
@@ -28,16 +27,16 @@ const InlineCode: React.FC<Props> = ({idx}) => {
   const [t] = useT();
   const toasts = useToasts();
   const {ast} = useContext(context);
-  const theme = useTheme();
+  const styles = useStyles();
   const node = ast.nodes[idx] as any;
   let lang = '';
   let value = node.value;
   const hasLanguageSet = node.wrap === '``';
 
   const blockquoteClass = getBlockquoteClass({
-    bdl: `6px solid ${theme.g(0, 0.08)}`,
+    bdl: `6px solid ${styles.g(0, 0.08)}`,
     '&:hover': {
-      bdl: `6px solid ${theme.g(0, 0.16)}`,
+      bdl: `6px solid ${styles.g(0, 0.16)}`,
     },
   });
 

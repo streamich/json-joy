@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {keyframes, rule, useRule} from 'nano-theme';
+import {keyframes, rule, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
 const h = React.createElement;
 
@@ -55,6 +56,8 @@ const className = rule(
   'IconIntMore',
 );
 
+const dynamicClassBuilder = drule({});
+
 export interface Props extends React.HTMLAttributes<any> {
   /** Icon dimension in pixels (square). Defaults to 32. */
   size?: number;
@@ -87,9 +90,10 @@ export const More: React.FC<Props> = (props) => {
     });
   }, []);
 
-  const dynamicClass = useRule(({g}) => ({
+  const styles = useStyles();
+  const dynamicClass = dynamicClassBuilder({
     '.dot': {
-      fill: g(0, 0.6),
+      fill: styles.g(0, 0.6),
     },
     '.dot-wave': {
       animation: waving ? `${waveAnimation} 360ms ease-in-out 1` : 'none',
@@ -105,15 +109,15 @@ export const More: React.FC<Props> = (props) => {
     },
     '&:hover': {
       '.dot': {
-        fill: g(0, 0.72),
+        fill: styles.g(0, 0.72),
       },
     },
     '&:active': {
       '.dot': {
-        fill: g(0, 0.78),
+        fill: styles.g(0, 0.78),
       },
     },
-  }));
+  });
 
   const handleMouseEnter = React.useCallback(
     (event: React.MouseEvent<any>) => {

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useRule} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
 const h = React.createElement;
 
@@ -58,23 +59,25 @@ const className = rule(
   'IconIntClose',
 );
 
+const dynamicClassBuilder = drule({});
+
 export interface Props extends React.HtmlHTMLAttributes<any> {}
 
 export const Close: React.FC<Props> = (props) => {
-  const dynamicClass = useRule(({g}) => ({
+  const styles = useStyles();
+  const dynamicClass = dynamicClassBuilder({
     '.line-1': {
-      stroke: g(0, 0.6),
+      stroke: styles.g(0, 0.6),
     },
     '.line-2': {
-      // stroke: g(0, 1),
-      stroke: g(0),
+      stroke: styles.g(0),
     },
     '&:active': {
       '.line-2': {
-        stroke: g(0, 0.7),
+        stroke: styles.g(0, 0.7),
       },
     },
-  }));
+  });
 
   return h(
     'span',

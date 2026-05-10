@@ -1,6 +1,7 @@
 import * as React from 'react';
 import useDropArea from 'react-use/lib/useDropArea';
-import {drule, rule, useTheme} from 'nano-theme';
+import {drule, rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {Paper} from '../../4-card/Paper';
 import {Text} from '../../1-inline/Text';
 import {DropAreaState} from './state';
@@ -91,7 +92,7 @@ export const DropArea: React.FC<DropAreaProps> = ({
     onState?.(state);
   }, [state, onState]);
 
-  const theme = useTheme();
+  const styles = useStyles();
   const over = state.over.use();
 
   const [bond, area] = useDropArea({
@@ -104,18 +105,19 @@ export const DropArea: React.FC<DropAreaProps> = ({
     if (area.over !== state.over.value) state.over.set(area.over);
   }, [area.over, state]);
 
+  const link = styles.col.get('link', 'solid-1');
   const verticalPadding = compact ? 16 : 32;
-  const dashed = over ? `1px dashed ${theme.color.sem.blue[0]}` : `1px dashed ${theme.g(0.82)}`;
-  const bg = over ? 'rgba(0,128,255,.04)' : theme.g(1);
+  const dashed = over ? `1px dashed ${link}` : `1px dashed ${styles.g(0.82)}`;
+  const bg = over ? 'rgba(0,128,255,.04)' : styles.g(1, .5);
 
   const areaCls = areaClass({
     pd: `${verticalPadding}px 8px`,
     bd: dashed,
     bg,
     '&:hover': {
-      bd: `1px dashed ${theme.color.sem.blue[0]}`,
+      bd: `1px dashed ${link}`,
       bg: 'rgba(0,128,255,.04)',
-      col: theme.color.sem.blue[0],
+      col: link,
     },
   });
 

@@ -1,12 +1,13 @@
 import * as React from 'react';
-import {rule, makeRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const outerClass = rule({
   pos: 'relative',
   w: '100%',
 });
 
-const trayClass = rule({
+const trayClass = drule({
   d: 'flex',
   fld: 'row',
   ai: 'center',
@@ -14,10 +15,6 @@ const trayClass = rule({
   bdrad: '10px',
   ov: 'hidden',
 });
-
-const useTrayBg = makeRule((theme) => ({
-  bg: theme.isLight ? theme.g(0.95) : theme.g(0.83),
-}));
 
 const scrollClass = rule({
   flex: '1 1 0',
@@ -43,7 +40,7 @@ const innerClass = rule({
 });
 
 /** The animated background pill that slides to the active tab. */
-const pillClass = rule({
+const pillClass = drule({
   pos: 'absolute',
   bdrad: '7px',
   pointerEvents: 'none',
@@ -51,14 +48,9 @@ const pillClass = rule({
   trs: 'left .22s ease, width .22s cubic-bezier(.4,0,.2,1), top .22s cubic-bezier(.4,0,.2,1), height .22s cubic-bezier(.4,0,.2,1)',
 });
 
-const usePillBg = makeRule((theme) => ({
-  bg: theme.isLight ? '#fff' : theme.g(0.78),
-  bxsh: theme.isLight
-    ? '0 2px 5px rgba(0,0,0,.14), 0 1px 1.5px rgba(0,0,0,.08), 0 0 0 0.5px rgba(0,0,0,.06)'
-    : '0 2px 5px rgba(0,0,0,.4), 0 1px 1.5px rgba(0,0,0,.3), 0 0 0 0.5px rgba(255,255,255,.08)',
-}));
-
-const tabClass = rule({
+const tabClass = drule({
+  ...lightTheme.font.ui1.mid,
+  fz: '13px',
   pos: 'relative',
   zIndex: 1,
   d: 'inline-flex',
@@ -77,27 +69,8 @@ const tabClass = rule({
   us: 'none',
 });
 
-const useTabBase = makeRule((theme) => ({
-  ...theme.font.ui1.mid,
-  fz: '13px',
-  col: theme.g(0, 0.5),
-  '&:hover': {
-    col: theme.g(0, 0.82),
-  },
-  '&:active': {
-    tr: 'scale(.97)',
-  },
-}));
-
-const useTabActive = makeRule((theme) => ({
-  col: theme.g(0, 0.92),
-  '&:hover': {
-    col: theme.g(0, 1),
-  },
-}));
-
 /** Scroll arrow button. */
-const arrowClass = rule({
+const arrowClass = drule({
   fls: '0 0 auto',
   d: 'inline-flex',
   ai: 'center',
@@ -114,15 +87,6 @@ const arrowClass = rule({
   '&:focus-visible': {out: 0},
   us: 'none',
 });
-
-const useArrow = makeRule((theme) => ({
-  bg: theme.isLight ? 'rgba(255,255,255,.85)' : theme.g(0.82),
-  bxsh: theme.isLight ? '0 1px 3px rgba(0,0,0,.2)' : '0 1px 3px rgba(0,0,0,.5)',
-  col: theme.g(0, 0.5),
-  '&:hover': {
-    col: theme.g(0, 0.88),
-  },
-}));
 
 const arrowGapClass = rule({
   w: '4px',
@@ -160,11 +124,32 @@ export const Tabs: React.FC<TabsProps> = ({
   style,
   contentStyle,
 }) => {
-  const trayBg = useTrayBg();
-  const pillBg = usePillBg();
-  const tabBase = useTabBase();
-  const tabActiveCls = useTabActive();
-  const arrowDyn = useArrow();
+  const styles = useStyles();
+  const light = styles.light;
+
+  const trayCls = trayClass({bg: light ? styles.g(0.95) : styles.g(0.83)});
+  const pillCls = pillClass({
+    bg: light ? '#fff' : styles.g(0.78),
+    bxsh: light
+      ? '0 2px 5px rgba(0,0,0,.14), 0 1px 1.5px rgba(0,0,0,.08), 0 0 0 0.5px rgba(0,0,0,.06)'
+      : '0 2px 5px rgba(0,0,0,.4), 0 1px 1.5px rgba(0,0,0,.3), 0 0 0 0.5px rgba(255,255,255,.08)',
+  });
+  const tabBaseCls = tabClass({
+    col: styles.g(0, 0.5),
+    '&:hover': {col: styles.g(0, 0.82)},
+    '&:active': {tr: 'scale(.97)'},
+  });
+  const tabActiveCls = tabClass({
+    col: styles.g(0, 0.92),
+    '&:hover': {col: styles.g(0, 1)},
+    '&:active': {tr: 'scale(.97)'},
+  });
+  const arrowCls = arrowClass({
+    bg: light ? 'rgba(255,255,255,.85)' : styles.g(0.82),
+    bxsh: light ? '0 1px 3px rgba(0,0,0,.2)' : '0 1px 3px rgba(0,0,0,.5)',
+    col: styles.g(0, 0.5),
+    '&:hover': {col: styles.g(0, 0.88)},
+  });
 
   // Uncontrolled state
   const [internal, setInternal] = React.useState<string>(() => defaultActive ?? items[0]?.key ?? '');
@@ -242,11 +227,11 @@ export const Tabs: React.FC<TabsProps> = ({
 
   return (
     <div className={outerClass} style={style}>
-      <div className={trayClass + trayBg}>
+      <div className={trayCls}>
         {canLeft && (
           <>
             <button
-              className={arrowClass + arrowDyn}
+              className={arrowCls}
               onClick={() => scrollBy(-1)}
               type="button"
               aria-label="Scroll tabs left"
@@ -261,7 +246,7 @@ export const Tabs: React.FC<TabsProps> = ({
         <div ref={scrollRef} className={scrollClass}>
           <div className={innerClass} style={{justifyContent: spread ? 'space-between' : undefined}}>
             {/* Sliding pill background */}
-            <div className={pillClass + pillBg} style={pill} />
+            <div className={pillCls} style={pill} />
 
             {items.map((item) => (
               <button
@@ -270,7 +255,7 @@ export const Tabs: React.FC<TabsProps> = ({
                   if (el) tabRefs.current.set(item.key, el);
                   else tabRefs.current.delete(item.key);
                 }}
-                className={tabClass + tabBase + (item.key === active ? tabActiveCls : '')}
+                className={item.key === active ? tabActiveCls : tabBaseCls}
                 onClick={() => handleClick(item.key)}
                 type="button"
                 style={{outline: 'none'}}
@@ -285,7 +270,7 @@ export const Tabs: React.FC<TabsProps> = ({
           <>
             <div className={arrowGapClass} />
             <button
-              className={arrowClass + arrowDyn}
+              className={arrowCls}
               onClick={() => scrollBy(1)}
               type="button"
               aria-label="Scroll tabs right"

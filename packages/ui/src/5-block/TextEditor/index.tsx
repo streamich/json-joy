@@ -1,14 +1,15 @@
 import * as React from 'react';
 import {createEditor} from './loadCodeMirror';
 import type {CodeMirrorEditor} from './types';
-import {rule, theme, useRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import type {EditorControls} from './types';
 
 const {useEffect, useRef, useState, useMemo, useCallback} = React;
 
-const blockClass = rule({
+const blockClass = drule({
   '& .cm-editor': {
-    ...theme.font.mono,
+    ...lightTheme.font.mono,
     outline: 'none',
   },
   '& .cm-scroller': {
@@ -37,17 +38,18 @@ export interface Props {
 }
 
 export const TextEditor: React.FC<Props> = (props) => {
-  const dynamicClass = useRule((theme) => ({
+  const styles = useStyles();
+  const cls = blockClass({
     '& .cm-editor': {
-      color: theme.name === 'dark' ? '#ddd' : '#000',
+      color: styles.light ? '#000' : '#ddd',
     },
     '& .cm-selectionBackground': {
-      backgroundColor: `${theme.g(0.9)} !important`,
+      backgroundColor: `${styles.g(0.9)} !important`,
     },
     '& .cm-cursor': {
-      borderLeftColor: theme.g(0, 0.5),
+      borderLeftColor: styles.g(0, 0.5),
     },
-  }));
+  });
   const fontSize = props.fontSize || defaultFontSize;
   const lineHeightInPx = Math.round(fontSize * (props.lineHeight || defaultLineHeight));
   const {className, minLines = 1, onFocus, onBlur, disabled} = props;
@@ -147,5 +149,5 @@ export const TextEditor: React.FC<Props> = (props) => {
     style.minHeight = minHeight + 'px';
   }
 
-  return <div className={(className || '') + blockClass + dynamicClass} style={style} ref={containerRef} />;
+  return <div className={(className || '') + cls} style={style} ref={containerRef} />;
 };

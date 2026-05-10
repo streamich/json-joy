@@ -1,9 +1,9 @@
-import {makeRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
 import * as React from 'react';
+import {useStyles} from '../../../../styles/context';
 import {NiceUiSizes} from '../../../../constants';
 
-const useBlockClass = makeRule((t) => ({
-  bd: `1px solid ${t.g(0.9)}`,
+const blockClass = drule({
   bdrad: '8px',
   mar: '0 0 32px',
   pad: '32px',
@@ -13,19 +13,17 @@ const useBlockClass = makeRule((t) => ({
   [`@media(max-width: ${NiceUiSizes.BlogContentMaxWidth}px)`]: {
     pad: '16px',
   },
-}));
+});
 
-const useContentsClass = makeRule((t) => ({
-  ...t.font.ui2.mid,
-  col: t.g(0.5),
+const contentsClass = drule({
+  ...lightTheme.font.ui2.mid,
   fz: '10px',
   textTransform: 'uppercase',
   marb: '8px',
-  bdb: `1px solid ${t.g(0.92)}`,
   [`@media(max-width: ${NiceUiSizes.BlogContentMaxWidth}px)`]: {
     bdb: 0,
   },
-}));
+});
 
 export interface Props {
   title: React.ReactNode;
@@ -33,11 +31,17 @@ export interface Props {
 }
 
 const InlineCard: React.FC<Props> = ({title, children}) => {
-  const blockClass = useBlockClass();
-  const contentsClass = useContentsClass();
+  const styles = useStyles();
   return (
-    <div className={blockClass}>
-      <div className={contentsClass}>{title}</div>
+    <div className={blockClass({bd: `1px solid ${styles.g(0.9)}`})}>
+      <div
+        className={contentsClass({
+          col: styles.g(0.5),
+          bdb: `1px solid ${styles.g(0.92)}`,
+        })}
+      >
+        {title}
+      </div>
       {children}
     </div>
   );

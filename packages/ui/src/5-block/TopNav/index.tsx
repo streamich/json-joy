@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {distinctUntilChanged, fromEvent, map} from 'rxjs';
-import {rule, makeRule, ZINDEX} from 'nano-theme';
+import {rule, drule, ZINDEX} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useObservable from 'react-use/lib/useObservable';
 import {useContentSize} from '../../6-page/ContentSizer/context';
 import {NiceUiSizes} from '../../constants';
 
-const blockClass = rule({
+const blockClass = drule({
   w: '100%',
   bxz: 'border-box',
   pos: 'fixed',
@@ -22,14 +23,7 @@ const blockClass = rule({
   },
 });
 
-const useBlockClass = makeRule((theme) => ({
-  bdb: `1px solid ${theme.g(0, 0.08)}`,
-  '&:hover': {
-    bdb: `1px solid ${theme.g(0, 0.12)}`,
-  },
-}));
-
-const sizerClass = rule({
+const sizerClass = drule({
   maxW: NiceUiSizes.SiteWidth + 'px',
   h: NiceUiSizes.TopNavHeight + 'px',
   mar: 'auto auto -1px',
@@ -38,13 +32,6 @@ const sizerClass = rule({
   ai: 'center',
   jc: 'space-between',
 });
-
-const useSizerClass = makeRule((theme) => ({
-  bdb: `1px solid ${theme.g(0, 0.04)}`,
-  '&:hover': {
-    bdb: `1px solid ${theme.g(0, 0.08)}`,
-  },
-}));
 
 const showBorder$ = fromEvent(window, 'scroll').pipe(
   map(() => window.scrollY > 10),
@@ -57,24 +44,33 @@ export const TopNav: React.FC<TopNavProps> = (props) => {
   const {children, ...rest} = props;
   const {width} = useWindowSize();
   const showBorder = useObservable(showBorder$, false);
-  const dynamicBlockClass = useBlockClass();
-  const dynamicSizerClass = useSizerClass();
+  const styles = useStyles();
   const {paddingLeft} = useContentSize();
 
   const showBorder2 = showBorder || width < 800;
+
+  const blockCls = blockClass(
+    showBorder2
+      ? {
+          bdb: `1px solid ${styles.g(0, 0.08)}`,
+          '&:hover': {bdb: `1px solid ${styles.g(0, 0.12)}`},
+        }
+      : {},
+  );
+  const sizerCls = sizerClass({
+    bdb: `1px solid ${styles.g(0, 0.04)}`,
+    '&:hover': {bdb: `1px solid ${styles.g(0, 0.08)}`},
+  });
 
   return (
     <>
       <nav
         data-testid="TopNav"
         {...rest}
-        className={(rest.className || '') + blockClass + (showBorder2 ? dynamicBlockClass : '')}
+        className={(rest.className || '') + blockCls}
         style={{marginLeft: paddingLeft, width: `calc(100% - ${paddingLeft}px)`}}
       >
-        <div
-          className={sizerClass + dynamicSizerClass}
-          style={{borderBottomColor: showBorder2 ? 'transparent' : undefined}}
-        >
+        <div className={sizerCls} style={{borderBottomColor: showBorder2 ? 'transparent' : undefined}}>
           {children}
         </div>
       </nav>

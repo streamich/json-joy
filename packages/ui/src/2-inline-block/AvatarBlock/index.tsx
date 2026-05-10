@@ -1,13 +1,14 @@
 import * as React from 'react';
-import {rule, makeRule, useTheme, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
 import {useT} from 'use-t';
+import {useStyles} from '../../styles/context';
 import {Code} from '../../1-inline/Code';
 import {Avatar} from '../../1-inline/Avatar';
 import {Link} from '../../1-inline/Link';
 
 const {createElement: h} = React;
 
-const blockClass = rule({
+const blockClass = drule({
   d: 'flex',
   flexWrap: 'nowrap',
   cur: 'pointer',
@@ -31,10 +32,9 @@ const rightClass = rule({
   flex: '1 1',
 });
 
-const useNameClass = makeRule((t) => ({
-  ...t.font.sans,
+const nameClass = drule({
+  ...lightTheme.font.sans,
   lh: 1.2,
-  color: t.color.sem.positive[1],
   mar: 0,
   whiteSpace: 'nowrap',
   ov: 'hidden',
@@ -42,34 +42,25 @@ const useNameClass = makeRule((t) => ({
   w: '100%',
   flexBasis: '100%',
   d: 'block',
-  [`.${blockClass.trim()}:hover &`]: {
-    color: t.color.sem.positive[2],
-  },
-}));
+});
 
-const useSubtextClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const subtextClass = drule({
+  ...lightTheme.font.ui1.mid,
   lh: 1.3,
   d: 'inline-block',
   mar: 0,
   whiteSpace: 'nowrap',
   ov: 'hidden',
   textOverflow: 'ellipsis',
-  color: t.g(0.3),
-  [`.${blockClass.trim()}:hover &`]: {
-    color: t.g(0.1),
-  },
-}));
+});
 
-const useSpecialFontClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
-}));
+const specialFontClass = rule({
+  ...lightTheme.font.ui1.mid,
+});
 
 const renderRightDefault = (props: AvatarBlockProps) => {
   const [t] = useT();
-  const nameClass = useNameClass();
-  const subtextClass = useSubtextClass();
-  const specialFontClass = useSpecialFontClass();
+  const styles = useStyles();
   const {
     width = 40,
     name,
@@ -83,18 +74,30 @@ const renderRightDefault = (props: AvatarBlockProps) => {
     onNameClick,
     onSubtextClick,
   } = props;
-  const subtextDynamicClass = useRule((theme) => ({
-    col: theme.g(0.3),
-    [`.${blockClass.trim()}:hover &`]: {
-      col: theme.g(0.1),
+
+  const block = String(blockClass).trim();
+  const isGrey = post || grey || lightGrey || greyText;
+  const nameClassResolved = nameClass(
+    isGrey
+      ? {
+          color: styles.g(0.1, 0.8),
+          [`.${block}:hover &`]: {
+            color: styles.g(0.1, 1),
+          },
+        }
+      : {
+          color: styles.col.get('success', 'el-2'),
+          [`.${block}:hover &`]: {
+            color: styles.col.get('success', 'el-3'),
+          },
+        },
+  );
+  const subtextClassResolved = subtextClass({
+    col: styles.g(0.3),
+    [`.${block}:hover &`]: {
+      col: styles.g(0.1),
     },
-  }));
-  const dynamicGreyNameClass = useRule((theme) => ({
-    color: theme.g(0.1, 0.8),
-    [`.${blockClass.trim()}:hover &`]: {
-      color: theme.g(0.1, 1),
-    },
-  }));
+  });
 
   return (
     <span
@@ -111,10 +114,7 @@ const renderRightDefault = (props: AvatarBlockProps) => {
         h(
           'span',
           {
-            className:
-              nameClass +
-              (post || grey || lightGrey || greyText ? dynamicGreyNameClass : '') +
-              (grey || lightGrey || greyText ? specialFontClass : ''),
+            className: nameClassResolved + (grey || lightGrey || greyText ? ' ' + specialFontClass : ''),
             style: {
               marginTop: spacious && subtext ? width * -0.05 : undefined,
             },
@@ -131,7 +131,7 @@ const renderRightDefault = (props: AvatarBlockProps) => {
       {subtext && (
         // biome-ignore lint/a11y/useKeyWithClickEvents: programmatic click handler
         <span
-          className={subtextClass + subtextDynamicClass}
+          className={subtextClassResolved}
           style={{
             fontSize: width * (name && !hideName ? (spacious ? 0.35 : 0.28) : 0.53) + 'px',
             paddingTop: name && !hideName ? 0 : `${width * 0.08}px`,
@@ -222,15 +222,19 @@ export const AvatarBlock: React.FC<AvatarBlockProps> = (props) => {
     letters,
   } = props;
 
-  const theme = useTheme();
-  const dynamicBlockClass = useRule((theme) => ({
-    '&:hover': {
-      bg: theme.g(0.1, 0.04),
-    },
-    '&:active': {
-      bg: theme.g(0.1, 0.08),
-    },
-  }));
+  const styles = useStyles();
+  const blockResolved = blockClass(
+    noHover
+      ? {}
+      : {
+          '&:hover': {
+            bg: styles.g(0.1, 0.04),
+          },
+          '&:active': {
+            bg: styles.g(0.1, 0.08),
+          },
+        },
+  );
 
   const Component = href ? Link : 'div';
 
@@ -264,9 +268,9 @@ export const AvatarBlock: React.FC<AvatarBlockProps> = (props) => {
     <Component
       a={href ? true : undefined}
       to={href}
-      className={className + blockClass + (noHover ? '' : dynamicBlockClass) + (wideHover ? bgHoverWide : '')}
+      className={className + blockResolved + (wideHover ? ' ' + bgHoverWide : '')}
       style={{
-        background: active ? theme.green(0.06) : undefined,
+        background: active ? styles.col.get('success', 'bg-2') : undefined,
         height: width || 32,
         cursor: noHover ? 'default' : undefined,
       }}

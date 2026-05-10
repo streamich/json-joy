@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockClass = rule({
   h: '1px',
@@ -13,13 +14,13 @@ export interface Props {
 }
 
 export const Separator: React.FC<Props> = ({invisible, hard, style}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   return (
     <div
       className={blockClass}
       style={{
         ...(style || {}),
-        background: invisible ? undefined : theme.g(0, (hard ? 2 : 1) * 0.08),
+        background: invisible ? undefined : styles.g(0, (hard ? 2 : 1) * 0.08),
       }}
     />
   );

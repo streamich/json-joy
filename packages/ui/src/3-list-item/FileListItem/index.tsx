@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {makeRule, rule, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
 import {Link} from '../../1-inline/Link';
 import {SpinnerCircle} from '../../2-inline-block/SpinnerCircle';
 import {useStyles} from '../../styles/context';
 import {Ripple} from '../../misc/Ripple';
 import {isTouch} from '../../utils/environment';
 
-const rowClass = rule({
+const rowClass = drule({
   d: 'flex',
   ai: 'center',
   gap: '4px',
@@ -63,13 +63,11 @@ const metadataInnerClass = rule({
   ov: 'hidden',
 });
 
-const iconClass = rule({
+const iconClass = drule({
   d: 'flex',
   ai: 'center',
   jc: 'center',
   flex: '0 0 auto',
-  w: '36px',
-  h: '36px',
   bdrad: '10px',
 });
 
@@ -81,8 +79,8 @@ const contentClass = rule({
   minWidth: 0,
 });
 
-const useTitleClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const titleClass = drule({
+  ...lightTheme.font.ui1.mid,
   d: 'block',
   minWidth: 0,
   ov: 'hidden',
@@ -90,10 +88,10 @@ const useTitleClass = makeRule((t) => ({
   whiteSpace: 'nowrap',
   fz: '15px',
   lh: '20px',
-}));
+});
 
-const useMetadataClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const metadataClass = drule({
+  ...lightTheme.font.ui1.mid,
   d: 'block',
   minWidth: 0,
   ov: 'hidden',
@@ -102,7 +100,10 @@ const useMetadataClass = makeRule((t) => ({
   fz: '12px',
   lh: '16px',
   mrt: '2px',
-}));
+});
+
+const titleSelector = 'jjFileListItemTitle';
+const rowSelector = 'jjFileListItemRow';
 
 const actionsClass = rule({
   d: 'flex',
@@ -112,12 +113,10 @@ const actionsClass = rule({
   pd: '0 4px 0 0',
   op: 0,
   trs: 'opacity .16s ease',
-  [`.${rowClass.trim()}:hover &`]: {
+  [`.${rowSelector}:hover &`]: {
     op: 1,
   },
 });
-
-const titleSelector = 'jjFileListItemTitle';
 
 const rowMutedClass = rule({
   [`.${titleSelector}`]: {
@@ -166,8 +165,6 @@ export const FileListItem: React.FC<FileListItemProps> = ({
   ...rest
 }) => {
   const styles = useStyles();
-  const titleClass = useTitleClass();
-  const metadataClass = useMetadataClass();
   const isDisabled = !!disabled || !!loading;
   const [hovered, setHovered] = React.useState(false);
   const iconNode = loading ? <SpinnerCircle color={styles.g(0.45)} /> : hovered ? iconHover : icon;
@@ -179,40 +176,34 @@ export const FileListItem: React.FC<FileListItemProps> = ({
       : 'transparent';
   const hoverBg = selected ? styles.col.accent(0, 'el-1') : styles.g(0, 0.04);
 
-  const dynamicRowClass = useRule(() => ({
+  const rowDynamic = rowClass({
     bg: selectedBg,
     '&:hover': isDisabled
       ? undefined
       : {
           bg: hoverBg,
-          // bxsh: `inset 0 0 0 1px ${hoverBorder}`,
         },
-  }));
+  });
 
-  const dynamicIconClass = useRule(() => ({
+  const iconDynamic = iconClass({
     col: selected ? styles.col.accent(0, 'solid-1') : isDisabled ? styles.g(0.55) : styles.g(0.45),
     bg: styles.g(0, 0.03),
     w: spacious ? '48px' : '36px',
     h: spacious ? '48px' : '36px',
-  }));
+  });
 
-  const dynamicTitleClass = useRule(() => ({
-    col: isDisabled ? styles.g(0.45) : styles.g(0.1),
-  }));
-
-  const dynamicMetadataClass = useRule(() => ({
-    col: isDisabled ? styles.g(0.56) : styles.g(0.42),
-  }));
+  const titleDynamic = titleClass({col: isDisabled ? styles.g(0.45) : styles.g(0.1)});
+  const metadataDynamic = metadataClass({col: isDisabled ? styles.g(0.56) : styles.g(0.42)});
 
   const content = (
     <>
-      {!!iconNode && <span className={iconClass + dynamicIconClass}>{iconNode}</span>}
+      {!!iconNode && <span className={iconDynamic}>{iconNode}</span>}
       <span className={contentClass}>
-        <span className={titleSelector + ' ' + titleClass + dynamicTitleClass}>{title}</span>
+        <span className={titleSelector + ' ' + titleDynamic}>{title}</span>
         {metadata !== undefined && metadata !== null && metadata !== false && (
           <span className={metadataWrapperClass + (small ? metadataWrapperSmallClass : '')}>
             <span className={metadataInnerClass}>
-              <span className={metadataClass + dynamicMetadataClass}>{metadata}</span>
+              <span className={metadataDynamic}>{metadata}</span>
             </span>
           </span>
         )}
@@ -266,7 +257,7 @@ export const FileListItem: React.FC<FileListItemProps> = ({
 
   surface = (
     <div
-      className={className + rowClass + dynamicRowClass + (muted ? rowMutedClass : '')}
+      className={className + ' ' + rowSelector + ' ' + rowDynamic + (muted ? ' ' + rowMutedClass : '')}
       style={rowStyle}
       onMouseEnter={iconHover ? () => setHovered(true) : void 0}
       onMouseLeave={iconHover ? () => setHovered(false) : void 0}

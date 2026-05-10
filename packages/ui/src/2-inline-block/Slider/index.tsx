@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const {useState, useCallback, useRef} = React;
 
@@ -114,7 +115,7 @@ export interface SliderProps {
 
 export const Slider: React.FC<SliderProps> = (props) => {
   const {value = 0, min = 0, max = 100, step = 1, disabled, showValue, onChange, onChangeEnd, style} = props;
-  const theme = useTheme();
+  const styles = useStyles();
   const railRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [hover, setHover] = useState(false);
@@ -198,10 +199,11 @@ export const Slider: React.FC<SliderProps> = (props) => {
   );
 
   const active = hover || dragging;
-  const railBg = theme.isLight ? '#c0c0c0' : '#565656';
+  const light = styles.light;
+  const railBg = light ? '#c0c0c0' : '#565656';
   const railShadow = 'inset 0 0 4px rgba(0,0,0,0.9)';
-  const rangeBg = active ? theme.color.sem.accent[0] : theme.color.sem.blue[0];
-  const rangeShadow = `inset 0 0 4px ${theme.isLight ? 'rgba(0,85,151,0.5)' : 'rgba(0,85,151,0.8)'}, inset 0 0 2px rgba(0,0,0,0.5)`;
+  const rangeBg = active ? styles.col.get('accent', 'solid-1') : styles.col.get('link', 'solid-1');
+  const rangeShadow = `inset 0 0 4px ${light ? 'rgba(0,85,151,0.5)' : 'rgba(0,85,151,0.8)'}, inset 0 0 2px rgba(0,0,0,0.5)`;
   const handleBg = '#d4d4d4';
   const handleShadow =
     '0 0 2px rgba(0,0,0,0.4), inset 0 0 1px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.6), 0 4px 2px rgba(0,0,0,0.2), 0 9px 4px rgba(0,0,0,0.1), inset 0 2px 1px rgba(255,255,255,1.0)';
@@ -252,7 +254,7 @@ export const Slider: React.FC<SliderProps> = (props) => {
         />
       </div>
       {showValue && (
-        <span className={valueClass} style={{color: theme.g(0.3)}}>
+        <span className={valueClass} style={{color: styles.g(0.3)}}>
           {formatValue(value, step)}
         </span>
       )}

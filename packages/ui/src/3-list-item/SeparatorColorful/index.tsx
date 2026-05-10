@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockClass = rule({
   w: '100%',
@@ -16,23 +17,28 @@ export interface Props {
 }
 
 export const SeparatorColorful: React.FC<Props> = ({invisible, contrast, height = 1, grey = false}) => {
-  const theme = useTheme();
+  const styles = useStyles();
+  const light = styles.light;
 
   const style: React.CSSProperties = invisible
     ? {}
-    : {background: theme.g(0.1, theme.isLight ? (contrast ? 0.12 : 0.06) : 0.08)};
+    : {background: styles.g(0.1, light ? (contrast ? 0.12 : 0.06) : 0.08)};
   if (height !== 1) {
     style.height = height;
   }
 
-  const brand = theme.color.sem.brand;
+  const brand = styles.col.theme.palette.brand ?? [];
   const length = brand.length;
   const components: React.ReactNode[] = [];
   for (let i = 0; i < length; i++) {
     components.push(
       <div
         key={i}
-        style={{background: brand[i], width: 100 / length + '%', visibility: grey ? 'hidden' : 'visible'}}
+        style={{
+          background: styles.col.get('brand', 'solid-1', i),
+          width: 100 / length + '%',
+          visibility: grey ? 'hidden' : 'visible',
+        }}
       />,
     );
   }

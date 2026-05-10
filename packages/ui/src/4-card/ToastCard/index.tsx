@@ -1,6 +1,7 @@
 import * as React from 'react';
-import {makeRule, rule} from 'nano-theme';
+import {lightTheme, drule, rule} from 'nano-theme';
 import {useT} from 'use-t';
+import {useStyles} from '../../styles/context';
 import Paper from '../Paper';
 import {Code} from '../../1-inline/Code';
 import {Progress} from '../../3-list-item/Progress';
@@ -19,7 +20,7 @@ const blockClass = rule({
   bxsh: '0 1px 2px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.1)',
 });
 
-const useMainClass = makeRule((t) => ({
+const mainClass = drule({
   pos: 'relative',
   d: 'flex',
   flexDirection: 'column',
@@ -27,7 +28,7 @@ const useMainClass = makeRule((t) => ({
   bxz: 'border-box',
   pad: '16px',
   h2: {
-    ...t.font.ui2.bold,
+    ...lightTheme.font.ui2.bold,
     fz: '24px',
     mar: 0,
     pad: 0,
@@ -36,33 +37,24 @@ const useMainClass = makeRule((t) => ({
     pad: 0,
     mar: 0,
   },
-  svg: {
-    fill: t.g(0.6),
-    col: t.blue(1),
-  },
-  '&:hover svg': {
-    col: t.color.sem.negative[0],
-  },
-}));
+});
 
 const headerClass = rule({});
 
-const useContentClass = makeRule((t) => ({
-  ...t.font.ui2.mid,
+const contentClass = drule({
+  ...lightTheme.font.ui2.mid,
   fz: '13px',
   pad: '12px 0 0',
   lh: '1.6em',
-  col: t.g(0.45),
   '@media only screen and (max-width: 800px)': {
     fz: '14px',
   },
-}));
+});
 
-const useTitleClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const titleClass = drule({
+  ...lightTheme.font.ui1.mid,
   fz: '15px',
-  col: t.g(0.25),
-}));
+});
 
 export interface ToastCardProps {
   type?: string;
@@ -82,9 +74,21 @@ export const ToastCard: React.FC<ToastCardProps> = ({
   onClose,
 }) => {
   const [t] = useT();
-  const mainClass = useMainClass();
-  const contentClass = useContentClass();
-  const titleClass = useTitleClass();
+  const styles = useStyles();
+  const link = styles.col.get('link', 'solid-1');
+  const negative = styles.col.get('error', 'solid-1');
+
+  const mainCls = mainClass({
+    svg: {
+      fill: styles.g(0.6),
+      col: link,
+    },
+    '&:hover svg': {
+      col: negative,
+    },
+  });
+  const contentCls = contentClass({col: styles.g(0.45)});
+  const titleCls = titleClass({col: styles.g(0.25)});
 
   const header = (
     <Split style={{alignItems: 'center'}}>
@@ -96,7 +100,7 @@ export const ToastCard: React.FC<ToastCardProps> = ({
             </Code>
           </span>
         )}
-        <span className={titleClass}>{title}</span>
+        <span className={titleCls}>{title}</span>
       </Flex>
       <div style={{margin: '-7px -7px -11px 16px'}}>
         {!!onClose && <BasicButtonClose size={24} onClick={() => onClose()} />}
@@ -116,10 +120,10 @@ export const ToastCard: React.FC<ToastCardProps> = ({
           </div>
         </div>
       )}
-      <div className={mainClass} style={style}>
+      <div className={mainCls} style={style}>
         <div>
           <div className={headerClass}>{header}</div>
-          {!!message && <div className={contentClass}>{message}</div>}
+          {!!message && <div className={contentCls}>{message}</div>}
         </div>
       </div>
     </Paper>

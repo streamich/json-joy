@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {useTheme, rule} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const h = React.createElement;
 
@@ -17,7 +18,8 @@ export interface ContextSepProps {
 }
 
 export const ContextSep: React.FC<ContextSepProps> = ({line, grey, small, noMargin}) => {
-  const theme = useTheme();
+  const styles = useStyles();
+  const light = styles.light;
 
   const props: any = {
     className: separatorClass,
@@ -26,7 +28,7 @@ export const ContextSep: React.FC<ContextSepProps> = ({line, grey, small, noMarg
 
   if (line) {
     props.style = {
-      background: theme.isLight ? theme.g(0.92) : theme.g(0.8),
+      background: light ? styles.g(0.92) : styles.g(0.8),
     };
   }
 
@@ -34,7 +36,7 @@ export const ContextSep: React.FC<ContextSepProps> = ({line, grey, small, noMarg
     props.style = {
       height: small ? 3 : 7,
       margin: 0,
-      background: theme.isLight ? theme.g(0.985) : theme.g(0.92),
+      background: light ? styles.g(0.985) : styles.g(0.92),
     };
   }
 

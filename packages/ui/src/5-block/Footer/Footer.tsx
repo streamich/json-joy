@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {SeparatorColorful} from '../../3-list-item/SeparatorColorful';
 import {PageWidth} from '../../6-page/PageWidth';
@@ -32,7 +33,7 @@ export interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({narrow, footer, children}) => {
   const {width} = useWindowSize();
   const [hovered, setHovered] = React.useState(false);
-  const theme = useTheme();
+  const styles = useStyles();
 
   const isMedium = width < 1100;
 
@@ -41,7 +42,7 @@ export const Footer: React.FC<FooterProps> = ({narrow, footer, children}) => {
   let element = (
     <div
       style={{
-        background: theme.g(0.98),
+        background: styles.g(0.98),
         margin: isLarge ? (narrow ? '0 64px' : undefined) : '0 16px',
         padding: isLarge ? '0 64px' : '0 16px',
         borderRadius: '10px',

@@ -1,24 +1,24 @@
 import * as React from 'react';
-import {makeRule, rule, m2} from 'nano-theme';
+import {lightTheme, drule, rule, m2} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const sectionClass = rule({
   pad: '36px 0 0',
   w: '190px',
 });
 
-const useSectionHeadingClass = makeRule((t) => ({
-  ...t.font.ui2.bold,
+const sectionHeadingClass = drule({
+  ...lightTheme.font.ui2.bold,
   fz: '10px',
-  col: t.g(0.5),
   textTransform: 'uppercase',
-}));
+});
 
-const useSectionListClass = makeRule((t) => ({
+const sectionListClass = drule({
   listStyle: 'none',
   pad: '14px 0 0',
   mar: 0,
   li: {
-    ...t.font.ui2.mid,
+    ...lightTheme.font.ui2.mid,
     fw: 500,
     d: 'flex',
     fz: '14px',
@@ -29,19 +29,14 @@ const useSectionListClass = makeRule((t) => ({
       mar: 0,
       a: {
         pad: '3px 0',
-        col: t.g(0.3),
         bdb: '1px solid transparent',
-        '&:hover': {
-          col: t.g(0.1),
-          bdb: `1px solid ${t.g(0.7)}`,
-        },
       },
     },
     [`@media (max-width: ${m2}px)`]: {
       h: '24px',
     },
   },
-}));
+});
 
 export interface FooterSectionProps {
   title: React.ReactNode;
@@ -49,14 +44,27 @@ export interface FooterSectionProps {
 }
 
 export const FooterSection: React.FC<FooterSectionProps> = ({title, children}) => {
-  const sectionHeadingClass = useSectionHeadingClass();
-  const sectionListClass = useSectionListClass();
+  const styles = useStyles();
   const list = children instanceof Array ? children : [children];
 
   return (
     <div className={sectionClass}>
-      <div className={sectionHeadingClass}>{title}</div>
-      <ul className={sectionListClass}>
+      <div className={sectionHeadingClass({col: styles.g(0.5)})}>{title}</div>
+      <ul
+        className={sectionListClass({
+          li: {
+            p: {
+              a: {
+                col: styles.g(0.3),
+                '&:hover': {
+                  col: styles.g(0.1),
+                  bdb: `1px solid ${styles.g(0.7)}`,
+                },
+              },
+            },
+          },
+        })}
+      >
         {list.map((child, i) => (
           <li key={i}>
             <p>{child}</p>

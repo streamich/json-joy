@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type {Flat} from 'mdast-flat/lib/types';
-import {makeRule, rule} from 'nano-theme';
+import {lightTheme, drule, rule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import {renderers as defaultRenderers} from '../../../markdown/renderers';
 import renderParagraph from './renderers/renderParagraph';
 import renderHeading from './renderers/renderHeading';
@@ -18,18 +19,18 @@ const renderers: typeof defaultRenderers = {
   link: renderLink,
 };
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.sans.mid,
+const blockClass = drule({
+  ...lightTheme.font.sans.mid,
   fw: 400,
   p: {
-    ...t.font.ui3,
+    ...lightTheme.font.ui3,
     lh: '1.76em',
   },
   '.ff-note p': {
     lh: '1.5em',
   },
   [`& .${introClass.trim()} p`]: {
-    ...t.font.ui1.mid,
+    ...lightTheme.font.ui1.mid,
     lh: '1.5em',
   },
   '& p+p, & pre+p, & pre+ul, & pre+div, & ul+p, & div:not(.invisible)+p, & ul+div:not(.invisible)': {
@@ -57,7 +58,7 @@ const useBlockClass = makeRule((t) => ({
     padt: 0,
   },
   'h1,h2,h3,h4,h5,h6': {
-    ...t.font.ui1.mid,
+    ...lightTheme.font.ui1.mid,
     fw: 500,
     padt: '1.5em',
     mar: 0,
@@ -72,23 +73,7 @@ const useBlockClass = makeRule((t) => ({
   h2: {
     fz: 26 / 16 + 'em',
   },
-  h3: {
-    fz: 22 / 16 + 'em',
-    col: t.g(0.1),
-  },
-  h4: {
-    fz: 20 / 16 + 'em',
-    col: t.g(0.2),
-  },
-  h5: {
-    fz: 18 / 16 + 'em',
-    col: t.g(0.3),
-  },
-  h6: {
-    fz: 16 / 16 + 'em',
-    col: t.g(0.4),
-  },
-}));
+});
 
 const blockDisplayClass = rule({
   h1: {
@@ -111,13 +96,13 @@ const blockDisplayClass = rule({
   },
 });
 
-const useBlockFont1Class = makeRule((t) => ({
-  ...t.font.sans,
+const blockFont1Class = rule({
+  ...lightTheme.font.sans,
   p: {
-    ...t.font.sans,
+    ...lightTheme.font.sans,
     lh: '1.76em',
   },
-}));
+});
 
 export interface Props {
   ast: Flat | (() => Promise<Flat>);
@@ -139,8 +124,25 @@ const DocsMarkdown: React.FC<Props> = ({
   display,
 }) => {
   const [resolvedAst, setResolvedAst] = React.useState(typeof ast === 'function' ? null : ast);
-  const blockClass = useBlockClass();
-  const blockFont1Class = useBlockFont1Class();
+  const styles = useStyles();
+  const blockCls = blockClass({
+    h3: {
+      fz: 22 / 16 + 'em',
+      col: styles.g(0.1),
+    },
+    h4: {
+      fz: 20 / 16 + 'em',
+      col: styles.g(0.2),
+    },
+    h5: {
+      fz: 18 / 16 + 'em',
+      col: styles.g(0.3),
+    },
+    h6: {
+      fz: 16 / 16 + 'em',
+      col: styles.g(0.4),
+    },
+  });
 
   React.useEffect(() => {
     if (typeof ast === 'function') {
@@ -151,7 +153,7 @@ const DocsMarkdown: React.FC<Props> = ({
   return (
     <context.Provider value={{contentWidth}}>
       {!!contents && !!resolvedAst && <Contents right={contentsRight} ast={resolvedAst} renderers={renderers} />}
-      <div className={'invisible' + blockClass + (font1 ? blockFont1Class : '') + (display ? blockDisplayClass : '')}>
+      <div className={'invisible' + blockCls + (font1 ? ' ' + blockFont1Class : '') + (display ? ' ' + blockDisplayClass : '')}>
         {!!resolvedAst && <MdastFlat ast={resolvedAst} renderers={renderers} fontSize={fontSize} />}
       </div>
     </context.Provider>

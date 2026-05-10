@@ -26,10 +26,10 @@ export const Colors: StoryObj<typeof meta> = {
   render: () => (
     <div style={{display: 'flex', gap: 16, alignItems: 'center'}}>
       <Component color="neutral" />
-      <Component color="positive" />
-      <Component color="negative" />
+      <Component color="success" />
+      <Component color="error" />
       <Component color="warning" />
-      <Component color="blue" />
+      <Component color="link" />
       <Component color="accent" />
       <Component color="#a855f7" />
     </div>
@@ -39,10 +39,10 @@ export const Colors: StoryObj<typeof meta> = {
 export const Sizes: StoryObj<typeof meta> = {
   render: () => (
     <div style={{display: 'flex', gap: 16, alignItems: 'center'}}>
-      <Component color="positive" size={6} />
-      <Component color="positive" size={8} />
-      <Component color="positive" size={12} />
-      <Component color="positive" size={16} />
+      <Component color="success" size={6} />
+      <Component color="success" size={8} />
+      <Component color="success" size={12} />
+      <Component color="success" size={16} />
     </div>
   ),
 };
@@ -50,8 +50,8 @@ export const Sizes: StoryObj<typeof meta> = {
 export const Glow: StoryObj<typeof meta> = {
   render: () => (
     <div style={{display: 'flex', gap: 24, alignItems: 'center'}}>
-      <Component color="positive" glow />
-      <Component color="negative" glow />
+      <Component color="success" glow />
+      <Component color="error" glow />
       <Component color="warning" glow />
     </div>
   ),

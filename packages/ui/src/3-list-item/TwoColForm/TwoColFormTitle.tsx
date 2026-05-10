@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {makeRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.sans.bold,
+const blockClass = drule({
+  ...lightTheme.font.sans.bold,
   fz: '11px',
   lh: '16px',
   textTransform: 'uppercase',
   letterSpacing: '0.04em',
   pd: '4px 0',
   mr: 0,
-  col: t.g(0.35),
-}));
+});
 
 export interface TwoColFormTitleProps {
   children?: React.ReactNode;
@@ -18,10 +18,10 @@ export interface TwoColFormTitleProps {
 }
 
 export const TwoColFormTitle: React.FC<TwoColFormTitleProps> = ({children, style}) => {
-  const blockClass = useBlockClass();
+  const styles = useStyles();
 
   return (
-    <div className={blockClass} style={style}>
+    <div className={blockClass({col: styles.g(0.35)})} style={style}>
       {children}
     </div>
   );

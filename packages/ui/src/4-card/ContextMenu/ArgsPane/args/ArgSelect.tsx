@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {makeRule} from 'nano-theme';
+import {drule} from 'nano-theme';
+import {useStyles} from '../../../../styles/context';
 import {argBlockCss} from './css';
 import {FormRow} from '../../../../3-list-item/FormRow';
 import type {ParamSelect} from '../../../StructuralMenu/types';
 import {Scrollbox} from '../../../Scrollbox';
 
-const useOptionClass = makeRule((t) => ({
+const optionClass = drule({
   d: 'flex',
   alignItems: 'center',
   pd: '4px 8px',
@@ -14,15 +15,11 @@ const useOptionClass = makeRule((t) => ({
   fz: '13px',
   lh: '1.4em',
   us: 'none',
-  '&:hover': {
-    bg: t.g(0, 0.06),
-  },
-}));
+});
 
-const useOptionSelectedClass = makeRule((t) => ({
-  bg: t.g(0, 0.08),
+const optionSelectedClass = drule({
   fontWeight: 600,
-}));
+});
 
 export interface ArgSelectProps {
   param: ParamSelect;
@@ -33,8 +30,11 @@ export interface ArgSelectProps {
 
 export const ArgSelect: React.FC<ArgSelectProps> = ({param, value, onChange, onSubmit}) => {
   const options = param.options ?? [];
-  const optionClass = useOptionClass();
-  const optionSelectedClass = useOptionSelectedClass();
+  const styles = useStyles();
+  const optionCls = optionClass({
+    '&:hover': {bg: styles.g(0, 0.06)},
+  });
+  const optionSelectedCls = optionSelectedClass({bg: styles.g(0, 0.08)});
 
   return (
     <div className={argBlockCss}>
@@ -53,7 +53,7 @@ export const ArgSelect: React.FC<ArgSelectProps> = ({param, value, onChange, onS
                 return (
                   <div
                     key={id}
-                    className={optionClass + (isSelected ? ' ' + optionSelectedClass : '')}
+                    className={optionCls + (isSelected ? ' ' + optionSelectedCls : '')}
                     role="option"
                     aria-selected={isSelected}
                     tabIndex={0}

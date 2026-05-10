@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {drule, useTheme} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {Link, type LinkProps} from '../../1-inline/Link';
 
 const blockClass = drule({
@@ -20,22 +21,26 @@ export interface BreadcrumbProps extends LinkProps {
 }
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({noHover, compact, selected, children, ...rest}) => {
-  const theme = useTheme();
+  const styles = useStyles();
   const noClick = !rest.to && !rest.onClick;
   const style: React.CSSProperties = {
     fontSize: compact ? '11px' : '13px',
     padding: compact ? '2px 4px' : '4px 8px',
   };
+  const link = styles.col.get('link', 'solid-1');
+  const linkBg = styles.col.get('link', 'bg-2');
+  const successHover = styles.col.get('success', 'el-2');
+  const successBg = styles.col.get('success', 'bg-2');
   const className = blockClass(
     compact
       ? {
           cur: rest.to ? 'pointer' : 'default',
-          ...(compact ? theme.font.ui2.mid : theme.font.ui2.bold),
-          col: selected ? theme.blue(0.9) : theme.g(0.5),
-          bg: selected ? theme.blue(0.12) : 'transparent',
+          ...(compact ? lightTheme.font.ui2.mid : lightTheme.font.ui2.bold),
+          col: selected ? link : styles.g(0.5),
+          bg: selected ? linkBg : 'transparent',
           '&:hover': {
-            col: noClick ? theme.g(0.5) : theme.color.sem.positive[1],
-            bg: noClick ? 'transparent' : theme.green(0.12),
+            col: noClick ? styles.g(0.5) : successHover,
+            bg: noClick ? 'transparent' : successBg,
           },
         }
       : {},

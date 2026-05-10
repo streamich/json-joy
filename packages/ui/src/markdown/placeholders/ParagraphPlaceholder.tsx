@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {lineHeight} from './constants';
 
 const blockClass = rule({
@@ -17,8 +18,8 @@ const greyClass = rule({
 type Props = {};
 
 const ParagraphPlaceholder: React.FC<Props> = React.memo(() => {
-  const theme = useTheme();
-  const background = theme.g(0, 0.1);
+  const styles = useStyles();
+  const background = styles.g(0, 0.1);
 
   return (
     <span className={blockClass}>

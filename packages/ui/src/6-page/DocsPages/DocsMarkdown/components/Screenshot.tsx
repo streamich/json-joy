@@ -1,5 +1,6 @@
-import {makeRule, rule} from 'nano-theme';
+import {lightTheme, drule, rule} from 'nano-theme';
 import * as React from 'react';
+import {useStyles} from '../../../../styles/context';
 import {CDN} from '../../../../misc/conf';
 import {NiceUiSizes} from '../../../../constants';
 import {Separator} from '../../../../3-list-item/Separator';
@@ -9,12 +10,11 @@ const wrapClass = rule({
   justifyContent: 'center',
 });
 
-const useBlockClass = makeRule((t) => ({
+const blockClass = drule({
   d: 'inline-block',
   mar: '0 auto',
   bxz: 'border-box',
   maxW: NiceUiSizes.BlogContentMaxWidth + 'px',
-  bd: `1px solid ${t.g(0.92)}`,
   bdrad: '4px',
   pad: '4px',
   img: {
@@ -22,15 +22,14 @@ const useBlockClass = makeRule((t) => ({
     maxW: '100%',
     bdrad: '3px',
   },
-}));
+});
 
-const useCaptionClass = makeRule((t) => ({
-  ...t.font.ui1.mid,
+const captionClass = drule({
+  ...lightTheme.font.ui1.mid,
   textAlign: 'center',
-  col: t.g(0.5),
   fz: '14px',
   pad: '16px',
-}));
+});
 
 export interface Props {
   src: string;
@@ -45,8 +44,7 @@ export interface Props {
 const Screenshot: React.FC<Props> = (props) => {
   const {src, alt, width, height, caption, retinaFactor = 1, noPadding} = props;
   const [maxWidth, setMaxWidth] = React.useState<undefined | number>(undefined);
-  const blockClass = useBlockClass();
-  const captionClass = useCaptionClass();
+  const styles = useStyles();
 
   const url = src.indexOf('/docs') === 0 ? CDN + '/ff' + src : src;
 
@@ -59,7 +57,10 @@ const Screenshot: React.FC<Props> = (props) => {
 
   return (
     <div className={wrapClass}>
-      <figure className={'jj-screenshot' + blockClass} style={{padding: noPadding ? 0 : undefined, maxWidth}}>
+      <figure
+        className={'jj-screenshot' + blockClass({bd: `1px solid ${styles.g(0.92)}`})}
+        style={{padding: noPadding ? 0 : undefined, maxWidth}}
+      >
         <img
           src={url}
           alt={alt || caption || 'screenshot'}
@@ -69,7 +70,7 @@ const Screenshot: React.FC<Props> = (props) => {
         {!!caption && (
           <>
             <Separator />
-            <figcaption className={captionClass}>{caption}</figcaption>
+            <figcaption className={captionClass({col: styles.g(0.5)})}>{caption}</figcaption>
           </>
         )}
       </figure>

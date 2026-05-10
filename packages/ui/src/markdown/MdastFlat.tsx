@@ -1,7 +1,8 @@
 import * as React from 'react';
 import type {MdastProps, MdastContextValue} from './types';
 import {renderers as defaultRenderers} from './renderers';
-import {rule, makeRule, useTheme} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../styles/context';
 import MarkdownFullWidthBlock from './util/MarkdownFullWidthBlock';
 import {context} from './context';
 import {md} from './parser';
@@ -18,8 +19,8 @@ const resetClass = rule({
     pad: 0,
   },
 });
-const useMarkdownClass = makeRule((t) => ({
-  ...t.font.sans,
+const markdownClass = drule({
+  ...lightTheme.font.sans,
   lh: 1.6,
   ww: 'break-word',
   'overflow-wrap': 'break-word',
@@ -28,19 +29,12 @@ const useMarkdownClass = makeRule((t) => ({
   hyphens: 'auto',
   mark: {
     bdrad: '.25em',
-    bg: t.isLight ? '#ff0' : 'rgba(255,255,0,.35)',
-    col: t.isLight ? undefined : '#fff',
     pad: '0 .125em',
     mar: '0 -.125em',
   },
   a: {
-    col: t.color.sem.link[0],
     bdb: '1px solid rgba(0,137,255,.3)',
     td: 'none',
-    '&:hover': {
-      color: t.isLight ? '#ec1020' : '#ff8a8a',
-      bdb: t.isLight ? '1px solid rgba(244,18,36,.3)' : '1px solid rgba(255,138,138,.3)',
-    },
     '&:has(img)': {
       bdb: 0,
     },
@@ -49,15 +43,27 @@ const useMarkdownClass = makeRule((t) => ({
     mar: 0,
     pad: '0 0 0 24px',
   },
-}));
+});
 
 export const MdastFlat: React.FC<MdastProps> = ({...props}) => {
   const {placeholdersAfter, placeholdersAfterLength} = props;
   props.renderers ??= defaultRenderers;
   props.maxPlaceholders ??= Infinity;
   props.LoadingBlock ??= () => null;
-  const theme = useTheme();
-  const markdownClass = useMarkdownClass();
+  const styles = useStyles();
+  const markdownCls = markdownClass({
+    mark: {
+      bg: styles.light ? '#ff0' : 'rgba(255,255,0,.35)',
+      col: styles.light ? undefined : '#fff',
+    },
+    a: {
+      col: styles.col.get('link', 'solid-1'),
+      '&:hover': {
+        color: styles.light ? '#ec1020' : '#ff8a8a',
+        bdb: styles.light ? '1px solid rgba(244,18,36,.3)' : '1px solid rgba(255,138,138,.3)',
+      },
+    },
+  });
   const isMounted = useMountedState();
   const [ast, setAst] = useState<Flat>(props.ast);
   useIsomorphicLayoutEffect(() => {
@@ -106,7 +112,7 @@ export const MdastFlat: React.FC<MdastProps> = ({...props}) => {
   }
 
   const style: React.CSSProperties = {
-    color: theme.g(0.1, 0.9),
+    color: styles.g(0.1, 0.9),
   };
   if (fontSize) {
     style.fontSize = fontSize + 'px';
@@ -117,7 +123,7 @@ export const MdastFlat: React.FC<MdastProps> = ({...props}) => {
   return (
     <context.Provider value={contextValue}>
       <Component
-        className={props.inline ? undefined : resetClass + markdownClass}
+        className={props.inline ? undefined : resetClass + markdownCls}
         style={props.inline ? undefined : style}
         data-testid="Markdown"
         onDoubleClick={props.onDoubleClick}

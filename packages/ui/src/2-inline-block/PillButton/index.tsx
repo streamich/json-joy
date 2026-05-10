@@ -1,40 +1,19 @@
 import * as React from 'react';
-import {makeRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import {Link, type LinkProps} from '../../1-inline/Link';
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.ui2.bold,
+const blockClass = drule({
+  ...lightTheme.font.ui2.bold,
   fz: '17.6px',
-  col: t.g(0.4),
   pd: '9px 18px 8px',
   mr: '0 2px',
   bdrad: '16px',
   bg: 'transparent',
   bd: 0,
-  svg: {
-    fill: t.g(0.4),
-  },
-  '&:hover': {
-    col: t.g(0),
-    svg: {
-      fill: t.g(0),
-    },
-  },
-}));
+});
 
-const useActiveClass = makeRule((t) => ({
-  col: t.color.sem.blue[0],
-  bg: 'rgba(0,128,255,.04)',
-  svg: {
-    fill: t.blue(1),
-  },
-  '&:hover': {
-    col: t.blue(1),
-    svg: {
-      fill: t.blue(1),
-    },
-  },
-}));
+const activeClass = drule({});
 
 export interface PillButtonProps extends LinkProps {
   active?: boolean;
@@ -42,10 +21,31 @@ export interface PillButtonProps extends LinkProps {
 }
 
 export const PillButton: React.FC<PillButtonProps> = ({active, children, ...rest}) => {
-  const blockClass = useBlockClass();
-  const activeClass = useActiveClass();
+  const styles = useStyles();
+  const link = styles.col.get('link', 'solid-1');
+  const block = blockClass({
+    col: styles.g(0.4),
+    svg: {fill: styles.g(0.4)},
+    '&:hover': {
+      col: styles.g(0),
+      svg: {fill: styles.g(0)},
+    },
+  });
+  const cls = active
+    ? block +
+      ' ' +
+      activeClass({
+        col: link,
+        bg: 'rgba(0,128,255,.04)',
+        svg: {fill: link},
+        '&:hover': {
+          col: link,
+          svg: {fill: link},
+        },
+      })
+    : block;
   return (
-    <Link className={blockClass + (active ? activeClass : '')} {...rest}>
+    <Link className={cls} {...rest}>
       {children}
     </Link>
   );

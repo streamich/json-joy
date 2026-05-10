@@ -49,8 +49,8 @@ export const Primary: StoryObj<typeof meta> = {
     <Wrap>
       <Component>
         <TwoColFormRow icon={<Iconista set="bootstrap" icon="info-circle" width={16} height={16} />} title="Status">
-          <Pill color="positive">
-            <Dot color="positive" />
+          <Pill color="success">
+            <Dot color="success" />
             Active
           </Pill>
         </TwoColFormRow>
@@ -71,8 +71,8 @@ export const Sectioned: StoryObj<typeof meta> = {
       <Component>
         <TwoColFormTitle>Status</TwoColFormTitle>
         <TwoColFormRow icon={<Iconista set="bootstrap" icon="info-circle" width={16} height={16} />} title="Status">
-          <Pill color="positive">
-            <Dot color="positive" />
+          <Pill color="success">
+            <Dot color="success" />
             Active
           </Pill>
         </TwoColFormRow>

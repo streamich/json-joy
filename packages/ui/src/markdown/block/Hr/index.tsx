@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 import MarkdownBlock from '../../util/MarkdownBlock';
 import MarkdownFullWidthBlock from '../../util/MarkdownFullWidthBlock';
 import isFirstLevelBlockElement from '../../util/isFirstLevelBlockElement';
@@ -18,10 +19,10 @@ export interface Props {
 
 const Hr: React.FC<Props> = React.memo(({idx}) => {
   const {ast, props} = useMarkdown();
-  const theme = useTheme();
+  const styles = useStyles();
 
   const node = ast.nodes[idx];
-  const element = <MarkdownBlock idx={idx} as="hr" className={blockClass} style={{background: theme.g(0.2, 0.1)}} />;
+  const element = <MarkdownBlock idx={idx} as="hr" className={blockClass} style={{background: styles.g(0.2, 0.1)}} />;
 
   const doCenterAsTopLevelBlock = props.isFullWidth && isFirstLevelBlockElement(node, ast);
   return doCenterAsTopLevelBlock ? <MarkdownFullWidthBlock>{element}</MarkdownFullWidthBlock> : element;

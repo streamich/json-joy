@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {makeRule, useTheme} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../../styles/context';
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.ui3,
-  col: t.g(0.4),
+const blockClass = drule({
+  ...lightTheme.font.ui3,
   fz: '12px',
   d: 'block',
   pad: '8px 24px',
   mar: 0,
   textTransform: 'uppercase',
   letterSpacing: '1px',
-}));
+});
 
 export interface CommandPaletteTitleProps {
   contrast?: boolean;
@@ -18,11 +18,10 @@ export interface CommandPaletteTitleProps {
 }
 
 export const CommandPaletteTitle: React.FC<CommandPaletteTitleProps> = ({contrast, children}) => {
-  const theme = useTheme();
-  const blockClass = useBlockClass();
+  const styles = useStyles();
 
   return (
-    <h5 className={blockClass} style={{color: contrast ? theme.g(0) : undefined}}>
+    <h5 className={blockClass({col: styles.g(0.4)})} style={{color: contrast ? styles.g(0) : undefined}}>
       {children}
     </h5>
   );

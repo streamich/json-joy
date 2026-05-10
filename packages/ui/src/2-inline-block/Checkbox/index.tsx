@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {makeRule, rule, useTheme} from 'nano-theme';
+import {rule, drule} from 'nano-theme';
 import {Iconista} from '../../icons/Iconista';
 import {useStyles} from '../../styles/context';
 
@@ -30,7 +30,7 @@ const labelClass = rule({
   ttf: 'uppercase',
 });
 
-const useBlockClass = makeRule((t) => ({
+const blockClass = drule({
   pos: 'relative',
   cur: 'pointer',
   d: 'inline-block',
@@ -38,22 +38,11 @@ const useBlockClass = makeRule((t) => ({
   mar: 0,
   bdrad: '20px',
   trs: 'box-shadow 0.18s',
-  bxsh: `inset 0 0 2px ${t.g(t.isLight ? 0 : 1, 0.25)}`,
   bd: 0,
   out: 0,
   w: '50px',
   h: '30px',
-  '&:focus': {
-    bxsh: `0 0 0 3px ${t.color.sem.blue[0]}`,
-  },
-  '&:hover': {
-    bxsh: `0 0 0 3px ${t.color.sem.accent[0]}`,
-    [`& > .${thumbClass}`]: {
-      bg: t.isLight ? '#f4f4f4' : t.g(0.9),
-      'box-shadow': `0 0 3px ${t.g(t.isLight ? 0 : 1, 0.4)}`,
-    },
-  },
-}));
+});
 
 export interface CheckboxProps {
   on: boolean;
@@ -65,9 +54,8 @@ export interface CheckboxProps {
 
 export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const {on, as = 'button', small, disabled} = props;
-  const theme = useTheme();
   const styles = useStyles();
-  const blockClass = useBlockClass();
+  const light = styles.light;
 
   const [active, setActive] = React.useState(false);
 
@@ -75,8 +63,22 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const onMouseDown = () => setActive(true);
   const onMouseUp = () => setActive(false);
 
+  const cls = blockClass({
+    bxsh: `inset 0 0 2px ${styles.g(light ? 0 : 1, 0.25)}`,
+    '&:focus': {
+      bxsh: `0 0 0 3px ${styles.col.get('link', 'solid-1')}`,
+    },
+    '&:hover': {
+      bxsh: `0 0 0 3px ${styles.col.get('accent', 'solid-1')}`,
+      [`& > .${thumbClass}`]: {
+        bg: light ? '#f4f4f4' : styles.g(0.9),
+        'box-shadow': `0 0 3px ${styles.g(light ? 0 : 1, 0.4)}`,
+      },
+    },
+  });
+
   const style: any = {
-    background: on ? theme.color.sem.positive[0] : theme.g(0.4),
+    background: on ? styles.col.get('success', 'solid-1') : styles.g(0.4),
   };
 
   const styleSpan: any = {
@@ -112,7 +114,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
     as,
     {
       onClick: disabled ? undefined : props.onChange,
-      className: blockClass,
+      className: cls,
       style,
       role: 'checkbox',
       'aria-checked': on,

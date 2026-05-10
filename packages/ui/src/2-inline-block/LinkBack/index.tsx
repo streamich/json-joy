@@ -1,24 +1,19 @@
 import * as React from 'react';
 import Svg from 'iconista';
-import {rule, makeRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import BasicButton from '../BasicButton';
 import {Link} from '../../1-inline/Link';
 
-const useBlockClass = makeRule((t) => ({
-  ...t.font.ui2.mid,
+const blockClass = drule({
+  ...lightTheme.font.ui2.mid,
   fz: '14px',
-  col: t.g(0.3),
-  fill: t.g(0.3),
   d: 'inline-flex',
   alignItems: 'center',
   svg: {
     marr: '8px',
   },
-  '&:hover': {
-    col: t.blue(1),
-    fill: t.blue(1),
-  },
-}));
+});
 
 const linkWithUnderlineClass = rule({
   bdb: '1px solid transparent',
@@ -47,9 +42,19 @@ export interface Props {
 }
 
 const LinkBack: React.FC<Props> = ({to, children}) => {
-  const blockClass = useBlockClass();
+  const styles = useStyles();
+  const link = styles.col.get('link', 'solid-1');
   return (
-    <span className={blockClass}>
+    <span
+      className={blockClass({
+        col: styles.g(0.3),
+        fill: styles.g(0.3),
+        '&:hover': {
+          col: link,
+          fill: link,
+        },
+      })}
+    >
       <BasicButton to={to} noOutline round size={28} className={backButtonClass}>
         <span className={backButtonInnerClass}>
           {/* <Iconista set="atlaskit" icon="arrow-left" width={16} height={16} /> */}

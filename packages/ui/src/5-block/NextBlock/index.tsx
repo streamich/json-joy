@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Svg from 'iconista';
-import {rule, drule, theme, useTheme} from 'nano-theme';
+import {lightTheme as theme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import {useT} from 'use-t';
 import {Link} from '../../1-inline/Link';
@@ -76,29 +77,29 @@ export interface Props {
 export const NextBlock: React.FC<Props> = ({left, right}) => {
   const [t] = useT();
   const {width} = useWindowSize();
-  const theme = useTheme();
+  const styles = useStyles();
 
   const noteClass = getNoteClass({
-    col: theme.g(0.6),
+    col: styles.g(0.6),
     [`.${String(getCardClass).trim()}:hover &`]: {
-      col: theme.g(0.4),
+      col: styles.g(0.4),
     },
   });
 
   const titleClass = getTitleClass({
-    col: theme.g(0.1),
+    col: styles.g(0.1),
     [`.${String(getCardClass).trim()}:hover &`]: {
-      col: theme.g(0),
+      col: styles.g(0),
     },
   });
 
   const cardClass = getCardClass({
     svg: {
-      fill: theme.g(0.6),
+      fill: styles.g(0.6),
     },
     '&:hover': {
       svg: {
-        fill: theme.g(0.3),
+        fill: styles.g(0.3),
       },
     },
   });

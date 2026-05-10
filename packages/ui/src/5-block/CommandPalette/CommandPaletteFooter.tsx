@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const height = 32;
 
@@ -18,10 +19,10 @@ export interface CommandPaletteFooterProps {
 }
 
 export const CommandPaletteFooter: React.FC<CommandPaletteFooterProps> = ({bg, children}) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
   return (
-    <div className={blockClass} style={{color: theme.g(0.4), background: bg ? theme.g(0, 0.04) : undefined}}>
+    <div className={blockClass} style={{color: styles.g(0.4), background: bg ? styles.g(0, 0.04) : undefined}}>
       {children}
     </div>
   );
