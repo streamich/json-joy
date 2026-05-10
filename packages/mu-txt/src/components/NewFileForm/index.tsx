@@ -26,10 +26,9 @@ export const NewFileForm: React.FC<NewFileFormProps> = ({expanded}) => {
         <Flex style={{alignItems: 'center'}}>
           <CreateButton
             radius={1}
-            primary
             colorStep={'el-1'}
             block
-            fill
+            ghost
             size={expanded ? 1 : -1}
             onClick={() => state.createNewMuTxt()}
           >

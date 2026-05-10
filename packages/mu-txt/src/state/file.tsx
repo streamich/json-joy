@@ -13,7 +13,7 @@ import {DebounceQueue} from '../util/DebounceQueue';
 import {host} from '../util/host';
 import type {Log} from 'json-joy/lib/json-crdt/log/Log';
 import type {TabItem} from '@jsonjoy.com/ui/lib/3-list-item/FileTabs';
-import type {MuTxtApi} from 'mutxt-react';
+import type {DisplayMode, MuTxtApi} from 'mutxt-react';
 import type {IFileStorage} from './file-storage';
 import type {Model} from 'json-joy/lib/json-crdt';
 
@@ -149,6 +149,23 @@ export class OpenFile {
   private readonly finalizeDisposal = () => {
     this.clearFlushTimer();
     this.disposeAfterSave = false;
+  };
+
+  public readonly bindMuTxt = (api: MuTxtApi): (() => void) => {
+    this.mutxt = api;
+    const setMode = host?.platform === 'darwin' ? host.setTitlebarMode.bind(host) : null;
+    const apply = () => {
+      if (!setMode) return;
+      const mode: DisplayMode = api.state.displayMode.value;
+      void setMode(mode === 'fullwindow' ? 'compact' : 'default').catch(() => {});
+    };
+    apply();
+    const unsubscribe = setMode ? api.state.displayMode.subscribe(apply) : null;
+    return () => {
+      unsubscribe?.();
+      if (setMode) void setMode('default').catch(() => {});
+      if (this.mutxt === api) this.mutxt = undefined;
+    };
   };
 
   public toMeta(): FileMetadataDto {

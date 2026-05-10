@@ -27,6 +27,8 @@ const api = {
   openDialog: (): Promise<void> => ipcRenderer.invoke('mutxt:open-dialog'),
   writeFile: (path: string, bytes: Uint8Array): Promise<void> =>
     ipcRenderer.invoke('mutxt:write-file', path, bytes),
+  setTitlebarMode: (mode: 'default' | 'compact'): Promise<void> =>
+    ipcRenderer.invoke('mutxt:set-titlebar-mode', mode),
   onOpenFile: (cb: Listener<OpenFilePayload>): Unsubscribe => subscribe<OpenFilePayload>('mutxt:open-file', cb),
   onOpenUrl: (cb: Listener<string>): Unsubscribe => subscribe<string>('mutxt:open-url', cb),
   onCloseFile: (cb: () => void): Unsubscribe => subscribeVoid('mutxt:close-file', cb),

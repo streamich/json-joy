@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import {MuTxt} from 'mutxt-react';
+import {MuTxt, type MuTxtApi} from 'mutxt-react';
 import type {ObjApi} from 'json-joy/lib/json-crdt';
 import type {OpenFile} from '../../state/file';
 
@@ -23,6 +23,12 @@ export interface DocumentMuTxtProps {
 }
 
 export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({file, obj, readOnly, visible}) => {
+  const [api, setApi] = React.useState<MuTxtApi | null>(null);
+  React.useEffect(() => {
+    if (!api || !visible) return;
+    return file.bindMuTxt(api);
+  }, [api, visible, file]);
+
   return (
     <div className={editorShellClass} style={{display: visible ? 'block' : 'none', minHeight}}>
       <MuTxt
@@ -32,9 +38,7 @@ export const DocumentMuTxt: React.FC<DocumentMuTxtProps> = ({file, obj, readOnly
         minHeight={minHeight}
         readOnly={readOnly}
         autoFocus
-        onApi={(api) => {
-          file.mutxt = api;
-        }}
+        onApi={setApi}
         startWithTitle
         onTitleSubmit={(title) => {
           if (!title) return;
