@@ -1,7 +1,10 @@
 import {createElement as h, type CSSProperties, type AllHTMLAttributes} from 'react';
-import {useTheme, drule, type ThemeFontPalette} from 'nano-theme';
+import {lightTheme, drule, type ThemeFontPalette} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const createClassName = drule({});
+const createClassName = drule({
+  ...lightTheme.font.sans,
+});
 
 export interface Props extends AllHTMLAttributes<any> {
   as?: string;
@@ -23,11 +26,10 @@ export const Text: React.FC<Props> = ({
   noselect,
   ...rest
 }) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
   const className = createClassName({
-    ...theme.font.sans,
-    col: theme.g(0.1, 0.8),
+    col: styles.g(0.1, 0.8),
   });
 
   const style2: CSSProperties = style ? {...style} : {};
@@ -39,7 +41,7 @@ export const Text: React.FC<Props> = ({
   }
 
   if (font) {
-    const f = theme.font[font];
+    const f = lightTheme.font[font];
     if (f) {
       const ff = (f as any)[kind] as ThemeFontPalette['sans']['mid'];
       if (ff) {

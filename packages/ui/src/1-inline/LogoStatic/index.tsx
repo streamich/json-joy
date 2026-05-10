@@ -1,5 +1,7 @@
 import * as React from 'react';
-import {rule, useTheme, type Theme} from 'nano-theme';
+import {rule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
+import type {Styles} from '../../styles/Styles';
 
 const defaultSize = 48;
 
@@ -16,11 +18,11 @@ export type LogoTheme = [string, string, string, string];
 const colorThemeDefault = ['#F94870', '#FFD16E', '#008AB0', '#00D6A1'];
 const colorThemeRed = ['#FF486A', '#FF967B', '#9D4063', '#414369'];
 
-const greyColorTheme = (theme: Theme) => [
-  theme.g(0.1, 0.24),
-  theme.g(0.1, 0.38),
-  theme.g(0.1, 0.48),
-  theme.g(0.1, 0.7),
+const greyColorTheme = (styles: Styles) => [
+  styles.g(0.1, 0.24),
+  styles.g(0.1, 0.38),
+  styles.g(0.1, 0.48),
+  styles.g(0.1, 0.7),
 ];
 
 export interface LogoStaticProps {
@@ -38,9 +40,9 @@ export const LogoStatic: React.FC<LogoStaticProps> = ({
   variant = 'default',
   style: providedStyle,
 }) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
-  const colorTheme = grey ? greyColorTheme(theme) : colors === 'red' ? colorThemeRed : colorThemeDefault;
+  const colorTheme = grey ? greyColorTheme(styles) : colors === 'red' ? colorThemeRed : colorThemeDefault;
   let style: React.CSSProperties | undefined = providedStyle || {};
 
   if (size !== defaultSize) {

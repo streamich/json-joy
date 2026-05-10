@@ -1,27 +1,28 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {lightTheme, rule, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
 const blockClass = rule({
-  ...theme.font.ui1.mid,
+  ...lightTheme.font.ui1.mid,
   d: 'inline-flex',
   ai: 'baseline',
   gap: '6px',
   ws: 'nowrap',
 });
 
-const dateClass = rule({
+const dateClass = drule({
   fz: '13px',
   lh: '18px',
 });
 
-const timeClass = rule({
-  ...theme.font.mono.mid,
+const timeClass = drule({
+  ...lightTheme.font.mono.mid,
   fz: '12px',
   lh: '18px',
   letterSpacing: '0.01em',
 });
 
-const sepClass = rule({
+const sepClass = drule({
   d: 'inline-block',
   w: '3px',
   h: '3px',
@@ -61,6 +62,7 @@ export const DateTime: React.FC<DateTimeProps> = ({
   className,
   style,
 }) => {
+  const styles = useStyles();
   const date = toDate(value);
 
   const time = date.getTime();
@@ -86,17 +88,13 @@ export const DateTime: React.FC<DateTimeProps> = ({
     }).format(date);
   }, [time, dateOnly, seconds, locale]);
 
-  const dynamicDateClass = useRule((t) => ({col: t.g(0.2)}));
-  const dynamicTimeClass = useRule((t) => ({col: t.g(0.5)}));
-  const dynamicSepClass = useRule((t) => ({bg: t.g(0, 0.25)}));
-
   const iso = date.toISOString();
 
   return (
     <span className={blockClass + (className ? ` ${className}` : '')} style={style} title={iso} data-iso={iso}>
-      {!timeOnly && <span className={dateClass + dynamicDateClass}>{dateLabel}</span>}
-      {!timeOnly && !dateOnly && <span className={sepClass + dynamicSepClass} aria-hidden="true" />}
-      {!dateOnly && <span className={timeClass + dynamicTimeClass}>{timeLabel}</span>}
+      {!timeOnly && <span className={dateClass({col: styles.g(0.2)})}>{dateLabel}</span>}
+      {!timeOnly && !dateOnly && <span className={sepClass({bg: styles.g(0, 0.25)})} aria-hidden="true" />}
+      {!dateOnly && <span className={timeClass({col: styles.g(0.5)})}>{timeLabel}</span>}
     </span>
   );
 };

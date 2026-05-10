@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {theme, rule, useRule} from 'nano-theme';
+import {lightTheme, drule} from 'nano-theme';
+import {useStyles} from '../../styles/context';
 
-const blockClass = rule({
-  ...theme.font.ui1.mid,
+const blockClass = drule({
+  ...lightTheme.font.ui1.mid,
   d: 'inline-block',
   fz: '13px',
   lh: '18px',
@@ -74,6 +75,7 @@ export interface TimeAgoProps {
 }
 
 export const TimeAgo: React.FC<TimeAgoProps> = ({value, short, live = true, className, style}) => {
+  const styles = useStyles();
   const date = React.useMemo(() => toDate(value), [value]);
   const [now, setNow] = React.useState(() => Date.now());
 
@@ -87,11 +89,10 @@ export const TimeAgo: React.FC<TimeAgoProps> = ({value, short, live = true, clas
   }, [live, date, now]);
 
   const label = formatAgo(now - date.getTime(), !!short);
-  const dynamicClass = useRule((t) => ({col: t.g(0.35)}));
 
   return (
     <span
-      className={blockClass + dynamicClass + (className ? ` ${className}` : '')}
+      className={blockClass({col: styles.g(0.35)}) + (className ? ` ${className}` : '')}
       style={style}
       title={date.toISOString()}
       data-iso={date.toISOString()}

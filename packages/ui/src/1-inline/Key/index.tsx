@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {rule, useTheme} from 'nano-theme';
+import {drule} from 'nano-theme';
 import {fonts} from '../../styles';
+import {useStyles} from '../../styles/context';
 
-const keyClass = rule({
+const keyClass = drule({
   ...fonts.get('mono', 'bold', 0),
   d: 'inline-block',
   mr: '0 .1em',
@@ -19,27 +20,23 @@ export interface KeyProps {
 }
 
 export const Key: React.FC<KeyProps> = ({children}) => {
-  const theme = useTheme();
+  const styles = useStyles();
 
-  const style: React.CSSProperties = theme.isLight
+  const dyn = styles.light
     ? {
-        color: theme.g(0),
-        background: theme.g(0.96),
-        border: `1px solid ${theme.g(0.8)}`,
-        borderBottom: `2px solid ${theme.g(0.6)}`,
-        boxShadow: `0 1px 2px ${theme.g(0.2, 0.1)}`,
+        col: styles.g(0),
+        bg: styles.g(0.96),
+        bd: `1px solid ${styles.g(0.8)}`,
+        bdb: `2px solid ${styles.g(0.6)}`,
+        bxsh: `0 1px 2px ${styles.g(0.2, 0.1)}`,
       }
     : {
-        color: theme.g(0.05),
-        background: theme.g(0.85),
-        border: `1px solid ${theme.g(0.7)}`,
-        borderBottom: `2px solid ${theme.g(0.55)}`,
-        boxShadow: `0 1px 2px rgba(0,0,0,0.5)`,
+        col: styles.g(0.05),
+        bg: styles.g(0.85),
+        bd: `1px solid ${styles.g(0.7)}`,
+        bdb: `2px solid ${styles.g(0.55)}`,
+        bxsh: `0 1px 2px rgba(0,0,0,0.5)`,
       };
 
-  return (
-    <kbd className={keyClass} style={style}>
-      {children}
-    </kbd>
-  );
+  return <kbd className={keyClass(dyn)}>{children}</kbd>;
 };
