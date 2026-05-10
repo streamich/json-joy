@@ -2,15 +2,16 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {rsync} from '@jsonjoy.com/ui';
 import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {ShareDocumentForm} from '../chrome/ShareDocumentPane';
+import {copyDefaultShareLink} from '../util/share';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {downloadBlob} from '@jsonjoy.com/collaborative-ui/lib/util/downloadBlob';
 import {ReactEditor} from 'slate-react';
 import {canRedo, canUndo, redo, undo} from '../behavior';
-import {getDocumentOutline} from '../behavior/outline';
 import {formatKeys} from '../util/keys';
 import {EditableWidthButton, LABELS} from '../chrome/EditableWidthButton';
-import type {DisplayMode, EditableWidth, FontKind, MenuItem, SlateEditorDocument} from '../types';
+import type {DisplayMode, EditableWidth, FontKind, MenuItem} from '../types';
 import type {MuTxtState, ThemeOverride} from './MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 
@@ -48,25 +49,81 @@ const GoToIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width
 const ExportIcon = makeIcon({set: 'tabler', icon: 'file-export', width: 16, height: 16});
 const SaveIcon = makeIcon({set: 'tabler', icon: 'device-floppy', width: 16, height: 16});
 const DevelopersIcon = makeIcon({set: 'tabler', icon: 'tools', width: 16, height: 16});
+const EmbedIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
 // const BugIcon = makeIcon({set: 'tabler', icon: 'bug', width: 16, height: 16});
 const BracesIcon = makeIcon({set: 'tabler', icon: 'braces', width: 16, height: 16});
 // const TerminalIcon = makeIcon({set: 'tabler', icon: 'terminal-2', width: 16, height: 16});
 const PlainTextIcon = makeIcon({set: 'tabler', icon: 'align-left', width: 16, height: 16});
 const WidthIcon = makeIcon({set: 'tabler', icon: 'arrows-horizontal', width: 16, height: 16});
+const ShareIcon = makeIcon({set: 'ant_outline', icon: 'share-alt', width: 16, height: 16});
+const ShareCheckIcon = makeIcon({set: 'atlaskit', icon: 'check', width: 16, height: 16});
+const CopyLinkIcon = makeIcon({set: 'tabler', icon: 'link', width: 16, height: 16});
+const ShareOptionsIcon = makeIcon({set: 'tabler', icon: 'adjustments', width: 16, height: 16});
+
+const SHARE_COPIED_RESET_MS = 2000;
+
+const shareIconStackClass = rule({
+  pos: 'relative',
+  w: '16px',
+  h: '16px',
+  ov: 'hidden',
+  d: 'inline-flex',
+});
+
+const shareIconLayerClass = rule({
+  pos: 'absolute',
+  t: 0,
+  l: 0,
+  trs: 'transform 150ms ease-in-out',
+});
+
+const ShareCopyAnimIcon: React.FC<{copied: rsync.ReactValue<boolean>}> = ({copied}) => {
+  const isCopied = copied.use();
+  return (
+    <span className={shareIconStackClass}>
+      <span
+        className={shareIconLayerClass}
+        style={{transform: isCopied ? 'translateY(100%)' : 'translateY(0%)'}}
+      >
+        <ShareIcon />
+      </span>
+      <span
+        className={shareIconLayerClass}
+        style={{transform: isCopied ? 'translateY(0%)' : 'translateY(-100%)'}}
+      >
+        <ShareCheckIcon />
+      </span>
+    </span>
+  );
+};
 
 export class DocumentMenu implements UiLifeCycles {
+  public readonly shareJustCopied = rsync.val(false);
+  private shareCopyResetTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(public readonly mutxt: MuTxtState) {}
+
+  private readonly pulseShareCopied = (): void => {
+    this.shareJustCopied.set(true);
+    if (this.shareCopyResetTimer) clearTimeout(this.shareCopyResetTimer);
+    this.shareCopyResetTimer = setTimeout(() => {
+      this.shareCopyResetTimer = null;
+      this.shareJustCopied.set(false);
+    }, SHARE_COPIED_RESET_MS);
+  };
 
   public start() {
     return () => {};
   }
 
-  public buildHeaderToolbar(size: 0 | 1 | 2 | 3): MenuItem {
+  public buildHeaderToolbar(size: 0 | 1 | 2 | 3 | 4 | 5): MenuItem {
     const mutxt = this.mutxt;
     const toggleKeys = ['Primary', 'Shift', 'm'];
+    const fullscreenKeys = ['Primary', 'Shift', 'f'];
     const activeFor = (mode: DisplayMode) => rsync.comp([mutxt.displayMode], ([m]) => m === mode);
-    const option = (mode: DisplayMode, name: string, icon: () => React.ReactNode, keys?: string[]): MenuItem => ({
+    const option = (mode: DisplayMode, name: string, icon: () => React.ReactNode, keys?: string[], text?: string): MenuItem => ({
       name,
+      text,
       icon,
       keys: [formatKeys(toggleKeys)],
       right: keys ? () => <Sidetip small>{formatKeys(keys)}</Sidetip> : void 0,
@@ -78,13 +135,14 @@ export class DocumentMenu implements UiLifeCycles {
       },
     });
     const children: MenuItem[] = [];
-    if (size > 2) {
+    if (size > 4) {
       children.push(this.itemUndo(), this.itemRedo(), {name: 'sep-undo', sep: true});
     }
-    if (size > 0) {
+    if (size > 2) {
       children.push({
         name: mutxt.displayMode.value === 'inline' ? 'Maximized' : 'Inline',
-        split: size > 1 ? 'Display' : void 0,
+        text: 'display mode size view fullscreen maximize minimize fullwindow',
+        split: size > 4 ? 'Display' : void 0,
         keys: [formatKeys(toggleKeys)],
         icon: () => (mutxt.displayMode.value === 'inline' ? <MaximizeIcon /> : <MinimizeIcon />),
         onSelect: () => {
@@ -95,12 +153,15 @@ export class DocumentMenu implements UiLifeCycles {
         children:
           size > 1
             ? [
-                option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys),
-                option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys),
-                option('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
+                option('inline', 'Inline', () => <MinimizeIcon />, toggleKeys, 'embedded small minimize compact'),
+                option('fullwindow', 'Maximized', () => <MaximizeIcon />, toggleKeys, 'fullwindow maximize expand large full window'),
+                option('fullscreen', 'Fullscreen', () => <FullscreenIcon />, fullscreenKeys, 'full screen presentation'),
               ]
             : void 0,
       });
+    }
+    if (size > 0) {
+      children.push(this.itemHeaderShare(size > 3));
     }
     children.push(this.build());
     return {
@@ -120,6 +181,7 @@ export class DocumentMenu implements UiLifeCycles {
         this.itemEditableWidth(),
         {name: 'sep-export', sep: true},
         this.menuExport(),
+        this.shareMenu(),
         {name: 'sep-display', sep: true},
         this.itemDisplayMode(),
         this.itemKeyboardShortcuts(),
@@ -135,24 +197,26 @@ export class DocumentMenu implements UiLifeCycles {
   public itemTheme(): MenuItem {
     return {
       name: 'Theme',
+      text: 'appearance color mode look palette skin',
       // sepBefore: true,
       // expand: 0,
       openOnTitleHov: true,
       icon: () => <ThemeIcon />,
       onSelect: () => {},
       children: [
-        this.itemThemeOption(undefined, 'Default', () => <ThemeDefaultIcon />),
-        this.itemThemeOption('auto', 'Auto', () => <ThemeAutoIcon />),
-        this.itemThemeOption('light', 'Light', () => <ThemeLightIcon />),
-        this.itemThemeOption('dark', 'Dark', () => <ThemeDarkIcon />),
+        this.itemThemeOption(undefined, 'Default', () => <ThemeDefaultIcon />, 'reset original system'),
+        this.itemThemeOption('auto', 'Auto', () => <ThemeAutoIcon />, 'system automatic os'),
+        this.itemThemeOption('light', 'Light', () => <ThemeLightIcon />, 'white bright day'),
+        this.itemThemeOption('dark', 'Dark', () => <ThemeDarkIcon />, 'night black'),
       ],
     };
   }
 
-  private itemThemeOption(value: ThemeOverride | undefined, name: string, icon: () => React.ReactNode): MenuItem {
+  private itemThemeOption(value: ThemeOverride | undefined, name: string, icon: () => React.ReactNode, text?: string): MenuItem {
     const mutxt = this.mutxt;
     return {
       name,
+      text,
       icon,
       active: rsync.comp([mutxt.theme], ([t]) => t === value),
       onSelect: () => {
@@ -164,7 +228,7 @@ export class DocumentMenu implements UiLifeCycles {
 
   public outlineItems(): MenuItem[] {
     const mutxt = this.mutxt;
-    const outline = getDocumentOutline(mutxt.editor.children as SlateEditorDocument);
+    const outline = mutxt.outline();
     return outline.map((item) => ({
       id: item.key,
       name: item.title,
@@ -195,6 +259,7 @@ export class DocumentMenu implements UiLifeCycles {
   public menuNavigate(): MenuItem {
     return {
       name: 'Navigate',
+      text: 'jump scroll move find go',
       expand: 5,
       children: [this.itemGoTo(), {name: 'sep-history', sep: true}, this.itemUndo(), this.itemRedo()],
     };
@@ -204,6 +269,7 @@ export class DocumentMenu implements UiLifeCycles {
     const items = this.outlineItems();
     return {
       name: 'Go to',
+      text: 'jump navigate heading outline section',
       icon: () => <GoToIcon />,
       minWidth: Math.min(320, (typeof window !== 'undefined' ? window.innerWidth : 320) - 32),
       children: items.length
@@ -223,6 +289,7 @@ export class DocumentMenu implements UiLifeCycles {
     const formatted = formatKeys(keys);
     return {
       name: 'Undo',
+      text: 'back revert reverse history step back',
       icon: () => <UndoIcon />,
       right: () => <Sidetip small>{formatted}</Sidetip>,
       keys: [formatted],
@@ -237,6 +304,7 @@ export class DocumentMenu implements UiLifeCycles {
     const formatted = formatKeys(keys);
     return {
       name: 'Redo',
+      text: 'forward repeat history step forward reapply',
       icon: () => <RedoIcon />,
       right: () => <Sidetip small>{formatted}</Sidetip>,
       keys: [formatted],
@@ -260,15 +328,16 @@ export class DocumentMenu implements UiLifeCycles {
   public itemTypesetting(): MenuItem {
     return {
       name: 'Typesetting',
+      text: 'font face family typography typeface document',
       expand: 4,
       openOnTitleHov: true,
       icon: () => <TypographyIcon />,
       onSelect: () => {},
       children: [
-        this.itemFontOption('sans', 'Sans-serif'),
-        this.itemFontOption('serif', 'Serif'),
-        this.itemFontOption('slab', 'Slab'),
-        this.itemFontOption('mono', 'Monospace'),
+        this.itemFontOption('sans', 'Sans-serif', 'sans gothic grotesque modern'),
+        this.itemFontOption('serif', 'Serif', 'serif traditional roman'),
+        this.itemFontOption('slab', 'Slab', 'slab egyptian thick serif'),
+        this.itemFontOption('mono', 'Monospace', 'mono fixed code typewriter courier'),
       ],
     };
   }
@@ -276,20 +345,21 @@ export class DocumentMenu implements UiLifeCycles {
   public itemEditableWidth(): MenuItem {
     return {
       name: 'Width',
+      text: 'page column size narrow wide layout content area',
       sepBefore: true,
       expand: 3,
       openOnTitleHov: true,
       icon: () => <WidthIcon />,
       onSelect: () => {},
       children: [
-        this.itemEditableWidthOption('narrow'),
-        this.itemEditableWidthOption('mid'),
-        this.itemEditableWidthOption('wide'),
+        this.itemEditableWidthOption('narrow', 'narrow small thin tight'),
+        this.itemEditableWidthOption('mid', 'mid medium middle default'),
+        this.itemEditableWidthOption('wide', 'wide large broad full'),
       ],
     };
   }
 
-  private itemEditableWidthOption(kind: EditableWidth): MenuItem {
+  private itemEditableWidthOption(kind: EditableWidth, text?: string): MenuItem {
     const mutxt = this.mutxt;
     const onSelect = () => {
       mutxt.omni.close();
@@ -301,6 +371,7 @@ export class DocumentMenu implements UiLifeCycles {
     };
     return {
       name: LABELS[kind],
+      text,
       icon: () => <Option size={16} />,
       iconBig: () => <Option />,
       active: rsync.comp([mutxt.editableWidth], ([w]) => w === kind),
@@ -308,7 +379,7 @@ export class DocumentMenu implements UiLifeCycles {
     };
   }
 
-  private itemFontOption(kind: FontKind, name: string): MenuItem {
+  private itemFontOption(kind: FontKind, name: string, text?: string): MenuItem {
     const mutxt = this.mutxt;
     const onSelect = () => {
       mutxt.omni.close();
@@ -320,6 +391,7 @@ export class DocumentMenu implements UiLifeCycles {
     };
     return {
       name,
+      text,
       icon: () => <Option size={16} />,
       iconBig: () => <Option />,
       active: rsync.comp([mutxt.font], ([f]) => f === kind),
@@ -331,6 +403,7 @@ export class DocumentMenu implements UiLifeCycles {
     const formatted = formatKeys(['Primary', '/']);
     return {
       name: 'Keyboard shortcuts',
+      text: 'hotkey hot key bindings cheatsheet help kbd shortcut',
       icon: () => <KeyboardIcon />,
       right: () => <Sidetip small>{formatted}</Sidetip>,
       keys: [formatted],
@@ -344,20 +417,31 @@ export class DocumentMenu implements UiLifeCycles {
   public itemDisplayMode(): MenuItem {
     return {
       name: 'Display',
+      text: 'mode size view layout fullscreen maximize minimize',
       icon: () => <MaximizeIcon />,
       children: [
-        this.itemDisplayModeOption('inline', 'Inline', () => <MinimizeIcon />),
-        this.itemDisplayModeOption('fullwindow', 'Maximized', () => <MaximizeIcon />),
-        this.itemDisplayModeOption('fullscreen', 'Fullscreen', () => <FullscreenIcon />),
+        this.itemDisplayModeOption('inline', 'Inline', () => <MinimizeIcon />, undefined, 'embedded small minimize compact'),
+        this.itemDisplayModeOption('fullwindow', 'Maximized', () => <MaximizeIcon />, ['Primary', 'Shift', 'm'], 'fullwindow maximize expand large full window'),
+        this.itemDisplayModeOption('fullscreen', 'Fullscreen', () => <FullscreenIcon />, ['Primary', 'Shift', 'f'], 'full screen presentation'),
       ],
     };
   }
 
-  private itemDisplayModeOption(mode: DisplayMode, name: string, icon: () => React.ReactNode): MenuItem {
+  private itemDisplayModeOption(
+    mode: DisplayMode,
+    name: string,
+    icon: () => React.ReactNode,
+    keys?: string[],
+    text?: string,
+  ): MenuItem {
     const mutxt = this.mutxt;
+    const formatted = keys ? formatKeys(keys) : void 0;
     return {
       name,
+      text,
       icon,
+      keys: formatted ? [formatted] : void 0,
+      right: formatted ? () => <Sidetip small>{formatted}</Sidetip> : void 0,
       active: rsync.comp([mutxt.displayMode], ([m]) => m === mode),
       onSelect: () => {
         mutxt.omni.close();
@@ -369,14 +453,98 @@ export class DocumentMenu implements UiLifeCycles {
   public menuExport(): MenuItem {
     return {
       name: 'Export',
+      text: 'download save file output',
       icon: () => <ExportIcon />,
       children: [this.itemSaveFile()],
+    };
+  }
+
+  public shareMenu(): MenuItem {
+    return {
+      name: 'Share',
+      text: 'send link copy publish collaborate invite',
+      icon: () => <ShareIcon />,
+      children: [this.itemCopyShareLink(), this.itemShareOptions()],
+    };
+  }
+
+  public itemHeaderShare(split: boolean): MenuItem {
+    return {
+      name: 'Share',
+      text: 'send link copy publish collaborate invite',
+      icon: () => <ShareCopyAnimIcon copied={this.shareJustCopied} />,
+      noHeader: true,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        copyDefaultShareLink(mutxt.api.toBinary())
+          .then(() => {
+            this.pulseShareCopied();
+            mutxt.toasts?.add({title: 'Share link copied to clipboard.', duration: 3000});
+          })
+          .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error('[mutxt] copy share link failed', err);
+            mutxt.toasts?.add({type: 'error', title: 'Failed to copy share link.', duration: 5000});
+          });
+      },
+      split: split ? 'Share' : void 0,
+      minWidth: split ? 380 : void 0,
+      maxWidth: split ? 380 : void 0,
+      children: split
+        ? [
+            {
+              name: 'share-form',
+              raw: () => <ShareDocumentForm />,
+            },
+          ]
+        : void 0,
+    };
+  }
+
+  public itemCopyShareLink(): MenuItem {
+    return {
+      name: 'Copy share link',
+      text: 'url clipboard share send link copy',
+      icon: () => <CopyLinkIcon />,
+      onSelect: () => {
+        const mutxt = this.mutxt;
+        mutxt.omni.close();
+        const bytes = mutxt.api.toBinary();
+        copyDefaultShareLink(bytes)
+          .then(() => {
+            mutxt.toasts?.add({title: 'Share link copied to clipboard.', duration: 3000});
+          })
+          .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.error('[mutxt] copy share link failed', err);
+            mutxt.toasts?.add({type: 'error', title: 'Failed to copy share link.', duration: 5000});
+          });
+      },
+    };
+  }
+
+  public itemShareOptions(): MenuItem {
+    return {
+      name: 'Sharing options',
+      text: 'share settings encryption metadata posts publish collaborators',
+      more: true,
+      icon: () => <ShareOptionsIcon />,
+      minWidth: 480,
+      maxWidth: 480,
+      children: [
+        {
+          name: 'share-form',
+          raw: () => <ShareDocumentForm />,
+        },
+      ],
     };
   }
 
   public itemSaveFile(): MenuItem {
     return {
       name: 'Save file',
+      text: 'download export mutxt binary backup',
       icon: () => <SaveIcon />,
       right: () => <Sidetip small>{'.mutxt'}</Sidetip>,
       onSelect: () => {
@@ -392,14 +560,35 @@ export class DocumentMenu implements UiLifeCycles {
   public menuDevelopers(): MenuItem {
     return {
       name: 'Developers',
+      text: 'debug dev tools developer advanced',
       icon: () => <DevelopersIcon />,
-      children: [this.itemPeritextDump(), this.itemModelDump(), this.itemSlateState(), this.itemPlainText()],
+      children: [
+        this.itemEmbedDocs(),
+        {name: 'sep-dev-dumps', sep: true},
+        this.itemPeritextDump(),
+        this.itemModelDump(),
+        this.itemSlateState(),
+        this.itemPlainText(),
+      ],
+    };
+  }
+
+  public itemEmbedDocs(): MenuItem {
+    return {
+      name: 'Embed this editor',
+      text: 'embed integrate install npm cdn html react component custom element web mutxt',
+      icon: () => <EmbedIcon />,
+      onSelect: () => {
+        this.mutxt.omni.close();
+        this.mutxt.embedDocsOpen.set(true);
+      },
     };
   }
 
   public itemPeritextDump(): MenuItem {
     return {
       name: 'Peritext dump',
+      text: 'peritext debug export crdt internal text representation',
       // icon: () => <TerminalIcon />,
       icon: () => <PlainTextIcon />,
       right: () => <Sidetip small>{'.txt'}</Sidetip>,
@@ -418,6 +607,7 @@ export class DocumentMenu implements UiLifeCycles {
   public itemModelDump(): MenuItem {
     return {
       name: 'JSON CRDT dump',
+      text: 'crdt model json debug export internal',
       // icon: () => <TerminalIcon />,
       icon: () => <PlainTextIcon />,
       right: () => <Sidetip small>{'.txt'}</Sidetip>,
@@ -434,6 +624,7 @@ export class DocumentMenu implements UiLifeCycles {
   public itemSlateState(): MenuItem {
     return {
       name: 'Editor state',
+      text: 'slate json debug export tree internal nodes',
       icon: () => <BracesIcon />,
       right: () => <Sidetip small>{'.json'}</Sidetip>,
       onSelect: () => {
@@ -449,6 +640,7 @@ export class DocumentMenu implements UiLifeCycles {
   public itemPlainText(): MenuItem {
     return {
       name: 'Plain text',
+      text: 'txt unformatted raw export download text',
       icon: () => <PlainTextIcon />,
       right: () => <Sidetip small>{'.txt'}</Sidetip>,
       onSelect: () => {

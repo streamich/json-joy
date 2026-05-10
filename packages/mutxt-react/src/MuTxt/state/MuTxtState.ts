@@ -98,6 +98,9 @@ export class MuTxtState implements UiLifeCycles {
   /** Whether the keyboard-shortcuts modal is open. */
   public readonly shortcutsOpen = rsync.val(false);
 
+  /** Whether the developer "embed this editor" docs modal is open. */
+  public readonly embedDocsOpen = rsync.val(false);
+
   /** Current rendering display mode. */
   public readonly displayMode = rsync.val<DisplayMode>('inline');
 
@@ -159,7 +162,7 @@ export class MuTxtState implements UiLifeCycles {
     } catch {
       initialValue = createEmptyDocument() as Descendant[];
     }
-    this.sizer = new SizerState(Number(obj.read('/width')) || 1300);
+    this.sizer = new SizerState(Number(obj.read('/width')) || 1330);
     const storedFont = obj.read('/font');
     if (isFontKind(storedFont)) this.font.next(storedFont);
     const storedEditableWidth = obj.read('/ew');

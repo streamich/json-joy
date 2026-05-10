@@ -54,6 +54,10 @@ const KeyboardShortcutsModal = React.lazy(() =>
   import('./chrome/KeyboardShortcuts').then((m) => ({default: m.KeyboardShortcutsModal})),
 );
 
+const EmbedDocsModal = React.lazy(() =>
+  import('./chrome/EmbedDocs').then((m) => ({default: m.EmbedDocsModal})),
+);
+
 const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
   return kind === 'mid'
     ? Math.max(780, Math.min(900, Math.round(shellWidth * 0.6)))
@@ -199,6 +203,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   const omniOpen = state.omni.open.use();
   const omniRange = state.omni.rangeSnapshot.use();
   const shortcutsOpen = state.shortcutsOpen.use();
+  const embedDocsOpen = state.embedDocsOpen.use();
   const displayMode = state.displayMode.use();
   const font = state.font.use();
   const editableWidthKind = state.editableWidth.use();
@@ -271,13 +276,13 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
       />
-      {!shortcutsOpen && <InlineFloater />}
-      {!shortcutsOpen && <BlockFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <InlineFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <BlockFloater />}
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      {!shortcutsOpen && <OmniFloater />}
-      {!shortcutsOpen && <IndicatorFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <OmniFloater />}
+      {!shortcutsOpen && !embedDocsOpen && <IndicatorFloater />}
     </Slate>
   );
 
@@ -330,6 +335,11 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
       {shortcutsOpen && (
         <React.Suspense fallback={null}>
           <KeyboardShortcutsModal />
+        </React.Suspense>
+      )}
+      {embedDocsOpen && (
+        <React.Suspense fallback={null}>
+          <EmbedDocsModal />
         </React.Suspense>
       )}
     </>

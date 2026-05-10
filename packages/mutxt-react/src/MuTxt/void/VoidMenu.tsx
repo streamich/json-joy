@@ -12,7 +12,8 @@ import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 const EmbedIcon = makeIcon({set: 'tabler', icon: 'box', width: 16, height: 16});
 const HrIcon = makeIcon({set: 'tabler', icon: 'separator', width: 16, height: 16});
 const FileIcon = makeIcon({set: 'tabler', icon: 'file-upload', width: 16, height: 16});
-const TocIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
+// const TocIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
+const TocIcon = makeIcon({set: 'lucide_v1', icon: 'list-tree', width: 16, height: 16});
 
 export class VoidMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
