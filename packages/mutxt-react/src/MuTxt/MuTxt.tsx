@@ -10,13 +10,15 @@ import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
-import {withCodeBlockBreaks} from './behavior';
+import {isInRawTextBlock, withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
 import {withHr} from './behavior/hr';
 import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
 import {withFile} from './behavior/file';
 import {withToc} from './behavior/toc';
+import {withTranslit} from '../translit/bindings/slate';
+import {MuTxtTranslit} from './translit/MuTxtTranslit';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -55,6 +57,10 @@ const KeyboardShortcutsModal = React.lazy(() =>
 );
 
 const EmbedDocsModal = React.lazy(() => import('./chrome/EmbedDocs').then((m) => ({default: m.EmbedDocsModal})));
+
+const TranslitMapModal = React.lazy(() =>
+  import('./translit/TranslitMapModal').then((m) => ({default: m.TranslitMapModal})),
+);
 
 const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
   return kind === 'mid'
@@ -202,6 +208,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   const omniRange = state.omni.rangeSnapshot.use();
   const shortcutsOpen = state.shortcutsOpen.use();
   const embedDocsOpen = state.embedDocsOpen.use();
+  const translitMapOpen = state.translit.mapOpen.use();
   const displayMode = state.displayMode.use();
   const font = state.font.use();
   const editableWidthKind = state.editableWidth.use();
@@ -274,13 +281,13 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
       />
-      {!shortcutsOpen && !embedDocsOpen && <InlineFloater />}
-      {!shortcutsOpen && !embedDocsOpen && <BlockFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <InlineFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <BlockFloater />}
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      {!shortcutsOpen && !embedDocsOpen && <OmniFloater />}
-      {!shortcutsOpen && !embedDocsOpen && <IndicatorFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <OmniFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <IndicatorFloater />}
     </Slate>
   );
 
@@ -338,6 +345,11 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
       {embedDocsOpen && (
         <React.Suspense fallback={null}>
           <EmbedDocsModal />
+        </React.Suspense>
+      )}
+      {!!translitMapOpen && (
+        <React.Suspense fallback={null}>
+          <TranslitMapModal />
         </React.Suspense>
       )}
     </>
@@ -426,15 +438,22 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
   // ------------------------------------------------------------- Editor state
   // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
+    const translit = new MuTxtTranslit();
     const editor = withTitleSubmit(
-      withToc(withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor())))))))),
+      withTranslit(
+        withToc(
+          withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
+        ),
+        translit,
+        {shouldRun: (e) => !isInRawTextBlock(e as any)},
+      ),
       () => onTitleSubmitRef.current,
     );
     if (_state) return [_state.editor, _state];
     const ownedObj: ObjApi<ObjNode> = obj
       ? (obj as ObjApi<ObjNode>)
       : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
-    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate});
+    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate, translit});
     return [editor, state];
   }, [obj, _state]);
 

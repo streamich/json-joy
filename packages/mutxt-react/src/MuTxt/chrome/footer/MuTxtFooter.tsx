@@ -8,6 +8,7 @@ import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
 import {useMuTxt} from '../../context';
 import {getWordCount, pluralize} from '../../util';
 import {typeToLabel} from '../../util/typeToLabel';
+import {TranslitFooterPill} from '../../translit/TranslitFooterPill';
 
 const footerClass = rule({
   d: 'flex',
@@ -135,6 +136,7 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
       </div>
 
       <div className={footerGroupClass}>
+        <TranslitFooterPill />
         {!!selectionSummary && showSelectionSummary && (
           <>
             <span>{selectionSummary}</span>

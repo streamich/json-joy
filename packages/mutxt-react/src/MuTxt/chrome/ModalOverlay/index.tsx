@@ -20,21 +20,30 @@ const overlayClass = rule({
 const HEADER_HEIGHT = 48;
 
 const headerClass = rule({
+  pos: 'relative',
   d: 'flex',
   ai: 'center',
-  jc: 'space-between',
-  gap: '12px',
+  jc: 'flex-end',
   h: HEADER_HEIGHT + 'px',
   paddingBlock: 0,
-  paddingInlineStart: '32px',
+  paddingInlineStart: '12px',
   paddingInlineEnd: '12px',
   bxz: 'border-box',
+  '-webkit-app-region': 'drag', // Drag for Electron app.
+  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"], & [role="img"]': {
+    '-webkit-app-region': 'no-drag',
+  },
 });
 
 const titleClass = rule({
+  pos: 'absolute',
+  l: '50%',
+  tr: 'translateX(-50%)',
   fz: '14px',
   fw: '600',
   letterSpacing: '0.005em',
+  ws: 'nowrap',
+  pointerEvents: 'none',
 });
 
 export interface ModalOverlayProps {

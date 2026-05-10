@@ -149,6 +149,25 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
       },
     ],
 
+    // --------------------------------------------------- Transliteration mode
+    // Browser hijacks `Cmd+Shift+T` (reopen last closed tab) before our
+    // handler runs, so we use Alt-based bindings instead.
+    [
+      'P+Alt+@KeyT' as Signature,
+      (key: Key) => {
+        key.event?.preventDefault();
+        state.translit.toggle();
+      },
+    ],
+    [
+      'P+Alt+Shift+@KeyT' as Signature,
+      (key: Key) => {
+        key.event?.preventDefault();
+        if (state.translit.mapOpen.value) state.translit.closeMap();
+        else state.translit.openMap();
+      },
+    ],
+
     // ---------------------------------------------------- Display mode toggle
     [
       'P+Shift+m',

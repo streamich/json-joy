@@ -196,6 +196,7 @@ export class DocumentMenu implements UiLifeCycles {
         this.shareMenu(),
         {name: 'sep-display', sep: true},
         this.itemDisplayMode(),
+        this.mutxt.translit.menu.build(),
         this.itemKeyboardShortcuts(),
         this.itemTheme(),
         {name: 'sep-nav', sep: true},

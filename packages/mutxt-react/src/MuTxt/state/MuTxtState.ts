@@ -24,6 +24,7 @@ import {OmniState} from '../omni/OmniState';
 import {DocumentMenu} from './DocumentMenu';
 import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
+import {MuTxtTranslit} from '../translit/MuTxtTranslit';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {isFontKind} from '../behavior/font';
@@ -48,6 +49,7 @@ export interface MuTxtStateOpts {
   collaborative?: boolean;
   readOnly?: boolean;
   fromSlate?: SlateEditorDocument;
+  translit?: MuTxtTranslit;
 }
 
 export class MuTxtState implements UiLifeCycles {
@@ -63,6 +65,13 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly sizer: SizerState;
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
+  /**
+   * Measures the outer Paper shell. Differs from {@link sizer}.width in
+   * `fullwindow` and `fullscreen` modes, where the shell escapes the inline
+   * layout (fixed-position 100vw, or native browser fullscreen at screen
+   * size) — `sizer.width` would still report the inline container's width.
+   */
+  public readonly shellBox: ElBox<HTMLElement> = new ElBox<HTMLElement>();
   public readonly wnd = windowSize();
 
   public readonly kbd: KeyContext = new KeyContext(undefined, 'mutxt');
@@ -94,6 +103,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly indicator = new IndicatorState(this);
   public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
+  public readonly translit: MuTxtTranslit;
 
   /** Whether the keyboard-shortcuts modal is open. */
   public readonly shortcutsOpen = rsync.val(false);
@@ -138,6 +148,8 @@ export class MuTxtState implements UiLifeCycles {
     opts?: MuTxtStateOpts,
   ) {
     this.readOnly.next(!!opts?.readOnly);
+    this.translit = opts?.translit ?? new MuTxtTranslit();
+    this.translit.bindState(this);
     if (obj.read('/@type') !== 'mutxt') obj.set({'@type': s.con('mutxt')});
     let peritextNode: PeritextApi;
     let isNewDocument = false;
@@ -193,6 +205,7 @@ export class MuTxtState implements UiLifeCycles {
     const stopOmni = this.omni.start();
     const stopIndicator = this.indicator.start();
     const stopThings = this.things.start();
+    const stopTranslit = this.translit.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
 
@@ -226,6 +239,7 @@ export class MuTxtState implements UiLifeCycles {
       stopOmni();
       stopIndicator();
       stopThings();
+      stopTranslit();
       unbindShortcuts();
       if (typeof document !== 'undefined') document.removeEventListener('fullscreenchange', onFullscreenChange);
       if (systemDarkMq && onSystemDarkChange) systemDarkMq.removeEventListener('change', onSystemDarkChange);
@@ -287,6 +301,7 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly bindShell = (el: HTMLElement | null): void => {
     this.shellEl = el;
+    this.shellBox.setEl(el ?? void 0);
   };
 
   public readonly sync = (contentChanged: boolean): void => {
