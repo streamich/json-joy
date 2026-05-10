@@ -83,7 +83,7 @@ const describeScrollMapElement = (
     case 'code-block':
       return {
         el: element,
-        color: light ? 'rgba(54,155,55,.45)' : 'rgba(142,255,129,.5)',
+        color: light ? 'rgba(54,155,55,.45)' : 'rgba(120,195,125,.45)',
         height: 4,
         proportional: true,
       };
@@ -123,12 +123,12 @@ const describeScrollMapElement = (
         el: element,
         color: complete
           ? light
-            ? '#2f8f35'
-            : '#7be08f'
+            ? 'rgba(47,143,53,.65)'
+            : 'rgba(110,200,125,.55)'
           : started
             ? light
               ? 'rgba(200,150,40,.6)'
-              : 'rgba(250,204,21,.5)'
+              : 'rgba(220,180,55,.5)'
             : light
               ? 'rgba(220,38,38,.6)'
               : 'rgba(248,113,113,.5)',
@@ -144,8 +144,8 @@ const describeScrollMapElement = (
         el: element,
         color: isMedia
           ? light
-            ? 'rgba(217,70,239,.6)'
-            : 'rgba(232,121,249,.55)'
+            ? 'rgba(190,90,210,.55)'
+            : 'rgba(205,150,225,.5)'
           : light
             ? 'rgba(115,115,115,.55)'
             : 'rgba(163,163,163,.5)',
@@ -158,7 +158,7 @@ const describeScrollMapElement = (
       if (type === 'table') {
         return {
           el: element,
-          color: light ? 'rgba(22, 163, 74, 0.76)' : 'rgba(74, 222, 128, 0.82)',
+          color: light ? 'rgba(34,140,120,.6)' : 'rgba(110,195,175,.5)',
           height: 4,
           proportional: true,
         };
