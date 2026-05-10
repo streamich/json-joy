@@ -10,6 +10,9 @@ import type {FontKind, MarkFormat, MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import {isLeafFontActive, setLeafFont} from '../behavior/font';
+import {getActiveBg, getActiveFg, getActiveMarkColor} from '../behavior/color';
+import {MarkSwatchPanel} from './MarkSwatchPanel';
+import {ColorPickerPanel} from './ColorPickerPanel';
 
 export interface InlineMenuItem extends MenuItem {
   mark: MarkFormat;
@@ -34,6 +37,8 @@ const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus', width: 16, h
 
 // Annotations
 const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
+const FgIcon = makeIcon({set: 'tabler', icon: 'letter-a', width: 16, height: 16});
+const BgIcon = makeIcon({set: 'tabler', icon: 'color-swatch', width: 16, height: 16});
 
 // Modify
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
@@ -41,7 +46,11 @@ const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, 
 // Typesetting
 const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
 
+const RECENT_LIMIT = 4;
+
 export class InlineMenu implements UiLifeCycles {
+  public readonly recent = rsync.val<MenuItem[]>([]);
+
   constructor(public readonly mutxt: MuTxtState) {}
 
   public start() {
@@ -52,8 +61,28 @@ export class InlineMenu implements UiLifeCycles {
     return rsync.comp([this.mutxt.version], () => isMarkActive(this.mutxt.editor, mark));
   }
 
+  public readonly addRecent = (item: MenuItem): void => {
+    const key = item.id ?? item.name;
+    const next = [item, ...this.recent.value.filter((r) => (r.id ?? r.name) !== key)];
+    if (next.length > RECENT_LIMIT) next.length = RECENT_LIMIT;
+    this.recent.set(next);
+  };
+
+  private menuRecent(): MenuItem | null {
+    const list = this.recent.value;
+    if (list.length === 0) return null;
+    return {
+      id: 'recent',
+      name: 'Recent',
+      expand: RECENT_LIMIT,
+      children: list,
+    };
+  }
+
   public build(): MenuItem {
+    const recent = this.menuRecent();
     const children: MenuItem['children'] = [
+      ...(recent ? [recent, {name: 'sep-recent', sep: true} as MenuItem] : []),
       this.menuFmt(),
       {name: 'sep-annon', sep: true},
       this.menuAnnotations({anchorFromSelection: true}),
@@ -64,7 +93,7 @@ export class InlineMenu implements UiLifeCycles {
     ];
     return {
       name: 'Selection menu',
-      maxToolbarItems: 4,
+      maxToolbarItems: recent ? 5 : 4,
       children,
     };
   }
@@ -90,8 +119,16 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Formatting',
       expandChild: 0,
       // preview: this.recent,
-      children: [this.menuFmtCommon(), this.menuFmtTechnical()] as MenuItem[],
-      preview: [this.itemBold(), this.itemItalic(), this.itemUnderline(), this.itemCode()] as MenuItem[],
+      children: [this.menuFmtCommon(), this.menuFmtTechnical(), this.menuFmtColors()] as MenuItem[],
+      preview: [
+        this.itemBold(),
+        this.itemItalic(),
+        this.itemUnderline(),
+        this.itemCode(),
+        this.itemHighlight(),
+        this.itemFg(),
+        this.itemBg(),
+      ] as MenuItem[],
     };
     return formatting;
   }
@@ -186,16 +223,34 @@ export class InlineMenu implements UiLifeCycles {
       },
     };
   }
-  public itemHighlight(): InlineMenuItem {
+  public itemHighlight(): MenuItem {
+    const mutxt = this.mutxt;
     return {
-      mark: 'mark',
       name: 'Highlight',
-      text: 'mark yellow background marker emphasis',
+      text: 'mark yellow background marker emphasis color',
       icon: () => <HighlightIcon />,
-      active: this.markActive('mark'),
-      onSelect: () => {
-        this.mutxt.api.toggleMark('mark');
-      },
+      active: rsync.comp([mutxt.version], () => getActiveMarkColor(mutxt.editor) !== undefined),
+      pane: () => <MarkSwatchPanel mutxt={mutxt} />,
+    };
+  }
+  public itemFg(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Text color',
+      text: 'fg foreground font color text',
+      icon: () => <FgIcon />,
+      active: rsync.comp([mutxt.version], () => !!getActiveFg(mutxt.editor)),
+      pane: () => <ColorPickerPanel mutxt={mutxt} kind="fg" />,
+    };
+  }
+  public itemBg(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Background color',
+      text: 'bg background fill color shading',
+      icon: () => <BgIcon />,
+      active: rsync.comp([mutxt.version], () => !!getActiveBg(mutxt.editor)),
+      pane: () => <ColorPickerPanel mutxt={mutxt} kind="bg" />,
     };
   }
   public itemSpoiler(): InlineMenuItem {
@@ -218,6 +273,16 @@ export class InlineMenu implements UiLifeCycles {
       expand: 8,
       sepBefore: true,
       children: [this.itemCode(), this.itemSup(), this.itemSub(), this.itemKey(), this.itemIns(), this.itemDel()],
+    };
+  }
+
+  public menuFmtColors(): MenuItem {
+    return {
+      id: 'fmt-colors',
+      name: 'Colors',
+      expand: 8,
+      sepBefore: true,
+      children: [this.itemFg(), this.itemBg()],
     };
   }
   public itemCode(): InlineMenuItem {
