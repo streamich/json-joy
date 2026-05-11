@@ -18,6 +18,22 @@ export class InlineState implements UiLifeCycles {
   public isFocusInToolbar: (() => boolean) | null = null;
   public readonly link: LinkButtonState;
 
+  public readonly popupOpen = rsync.val(false);
+
+  public readonly setPopupOpen = (open: boolean): void => {
+    this.popupOpen.set(open);
+  };
+  
+  public readonly recentColors = rsync.val<string[]>([]);
+
+  public readonly pushRecentColor = (color: string): void => {
+    if (!color) return;
+    const list = this.recentColors.value.filter((c) => c !== color);
+    list.unshift(color);
+    if (list.length > 10) list.length = 10;
+    this.recentColors.next(list);
+  };
+
   constructor(
     private readonly mutxt: MuTxtState,
     private readonly scrollArea: ScrollState | null,
@@ -42,6 +58,7 @@ export class InlineState implements UiLifeCycles {
       queueMicrotask(() => {
         if (mutxt.focused.value) return;
         if (this.isFocusInToolbar?.()) return;
+        if (this.popupOpen.value) return;
         this.dismissed.next(true);
       });
     });

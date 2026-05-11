@@ -5,8 +5,9 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {Key} from '@jsonjoy.com/ui/lib/1-inline/Key';
 import {Spoiler} from './Spoiler';
 import {fontFamilyOf} from '../../behavior/font';
+import {markSlotBg, markSlotFg} from '../../util/palette';
 import type {RenderLeafProps} from 'slate-react';
-import type {CustomText} from '../../types';
+import type {CustomText, MarkColor} from '../../types';
 import {useTrace} from '@jsonjoy.com/ui';
 
 const linkClass = rule({
@@ -82,7 +83,16 @@ export const Leaf: React.FC<LeafProps> = ({attributes, children, leaf, text}) =>
   if (leaf.underline) content = <u style={{textUnderlineOffset: '3px'}}>{content}</u>;
   if (leaf.overline) content = <span style={{textDecoration: 'overline'}}>{content}</span>;
   if (leaf.strikethrough) content = <span style={{textDecoration: 'line-through'}}>{content}</span>;
-  if (leaf.mark) content = <mark>{content}</mark>;
+  if (leaf.mark) {
+    const slot: MarkColor = leaf.mark === true ? 'yellow' : leaf.mark;
+    const dark = !styles.light;
+    const markStyle: React.CSSProperties = {background: markSlotBg(slot, dark)};
+    markStyle.color = markSlotFg(slot, dark);
+    content = <mark style={markStyle}>{content}</mark>;
+  } else {
+    if (leaf.bg) content = <span style={{backgroundColor: leaf.bg}}>{content}</span>;
+    if (leaf.fg) content = <span style={{color: leaf.fg}}>{content}</span>;
+  }
 
   if (!isInCodeBlock) {
     if (leaf.spoiler) content = <Spoiler text={text}>{content}</Spoiler>;

@@ -15,9 +15,11 @@ export {isListType, LIST_TYPES};
 
 export const ALIGNMENTS: SlateTextAlign[] = ['left', 'center', 'right', 'justify'];
 export const MARKS: MarkFormat[] = [
+  'bg',
   'bold',
   'code',
   'del',
+  'fg',
   'ins',
   'italic',
   'kbd',
@@ -206,7 +208,7 @@ export const resetEmptyBlockToP = (editor: Editor): boolean => {
   return true;
 };
 
-const isInRawTextBlock = (editor: Editor): boolean =>
+export const isInRawTextBlock = (editor: Editor): boolean =>
   isBlockActive(editor, 'code-block') || isBlockActive(editor, 'pre');
 
 export const insertCodeBlockBreak = (editor: Editor): boolean => {

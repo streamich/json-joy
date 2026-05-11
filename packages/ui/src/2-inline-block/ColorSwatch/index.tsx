@@ -47,7 +47,7 @@ export const ColorSwatch: React.FC<ColorSwatchProps> = ({
   color,
   textColor,
   kind = 'plain',
-  size = 32,
+  size = 28,
   active,
   letter = 'A',
   tooltip,

@@ -46,7 +46,24 @@ export type MarkFormat =
   | 'sub'
   | 'kbd'
   | 'ins'
-  | 'del';
+  | 'del'
+  | 'fg'
+  | 'bg';
+
+/**
+ * Named slot in the highlight (`<mark>`) palette.
+ */
+export type MarkColor =
+  | 'yellow'
+  | 'lime'
+  | 'green'
+  | 'cyan'
+  | 'blue'
+  | 'pink'
+  | 'peach'
+  | 'red'
+  | 'purple'
+  | 'gray';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
 export type ListElementType = 'ul' | 'ol' | 'checklist';
 export type UlType = 'disc' | 'circle' | 'square';
@@ -89,7 +106,9 @@ export interface CustomText {
   strikethrough?: boolean;
   overline?: boolean;
   code?: boolean;
-  mark?: boolean;
+  mark?: boolean | MarkColor;
+  fg?: string;
+  bg?: string;
   spoiler?: boolean;
   sup?: boolean;
   sub?: boolean;

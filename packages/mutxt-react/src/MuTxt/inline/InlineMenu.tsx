@@ -37,8 +37,8 @@ const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus', width: 16, h
 
 // Annotations
 const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
-const FgIcon = makeIcon({set: 'tabler', icon: 'letter-a', width: 16, height: 16});
-const BgIcon = makeIcon({set: 'tabler', icon: 'color-swatch', width: 16, height: 16});
+const FgIcon = makeIcon({set: 'lucide', icon: 'paintbrush', width: 16, height: 16});
+const BgIcon = makeIcon({set: 'lucide', icon: 'paint-bucket', width: 16, height: 16});
 
 // Modify
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
