@@ -4,11 +4,6 @@ import {Fonts} from './font/Fonts';
 import {theme as ltheme} from './theme/light';
 import {theme as dtheme} from './theme/dark';
 import {HslColor, ThemeColor} from './color';
-import type {RoleName, StateName} from './color/ThemeColor';
-// import {Color} from './color/Color';
-
-const ROLE_NAMES: RoleName[] = ['surface', 'border', 'text', 'solid'];
-const STATE_NAMES: StateName[] = ['resting', 'hover', 'active', 'focus', 'disabled'];
 
 export class Styles {
   public static readonly make = (theme?: StyleTheme, dark?: boolean) => new Styles(theme ?? (dark ? dtheme : ltheme));
@@ -82,32 +77,11 @@ export class Styles {
     return new HslColor(this.neutral.fg.h, s, l, alpha).toString();
   };
 
-  /** Flatten the entire semantic palette x role x state matrix into a record of
-   * `--col-<name>-<role>[-<state>]` CSS custom properties. */
   public toCssVars(): Record<string, string> {
-    const out: Record<string, string> = {};
-    const palette: Record<string, ThemeColor> = {
-      bg: this.bg,
-      grey: this.grey,
-      neutral: this.neutral,
-      accent: this.accent,
-      accent2: this.accent2,
-      positive: this.positive,
-      negative: this.negative,
-      warning: this.warning,
-      info: this.info,
-      ai: this.ai,
-      link: this.link,
+    const out: Record<string, string> = {
+      '--colTxtSharp': this.g(.05, .95),
+      '--colTxtLite': this.g(.13, .87),
     };
-    for (const name in palette) {
-      const tc = palette[name];
-      for (const role of ROLE_NAMES) {
-        for (const state of STATE_NAMES) {
-          const suffix = state === 'resting' ? '' : '-' + state;
-          out[`--col-${name}-${role}${suffix}`] = tc.role(role, state).toString();
-        }
-      }
-    }
     return out;
   }
 }
