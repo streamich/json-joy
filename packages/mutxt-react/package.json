@@ -98,6 +98,7 @@
     "emoji-picker-react": "^4.19.1",
     "iconista": "^2.25.1",
     "json-joy": "workspace:*",
+    "mathlive": "^0.109.0",
     "nano-theme": "workspace:*",
     "react-embed": "^3.7.0",
     "slate-history": "^0.113.1",

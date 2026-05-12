@@ -45,6 +45,7 @@
     "code-colors-react": "^3.4.0",
     "codemirror": "^6.0.1",
     "emoji-js": "^3.9.0",
+    "emoji-picker-react": "^4.19.1",
     "iconista": "^2.25.1",
     "libreact": "^2.13.3",
     "load-script": "^2.0.0",
