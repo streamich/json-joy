@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
 import {useStyles} from '../../styles/context';
+import {SliderHandle} from '../../1-inline/SliderHandle';
 
 const {useState, useCallback, useRef} = React;
 
@@ -40,43 +41,19 @@ const rangeClass = rule({
   trs: 'background-color 100ms',
 });
 
-const handleClass = rule({
+const handleButtonClass = rule({
   pos: 'absolute',
-  top: '-5px',
-  w: '16px',
-  h: '16px',
-  bdrad: '20px',
+  top: '50%',
   bd: 0,
   pad: 0,
-  // cur: 'grab',
-  cur: 'ew-resize',
+  bg: 'transparent',
   out: 'none',
-  transform: 'translateX(-50%)',
-  trs: 'background-color .1s, box-shadow .1s, width .1s, height .1s, outline .1s, top .1s',
+  cur: 'ew-resize',
+  transform: 'translate(-50%, -50%)',
   zIndex: 2,
-  '&:hover': {
-    out: '6px solid rgba(127,127,127,.12)',
-  },
   '&:active': {
     cur: 'grabbing',
   },
-  '&:after': {
-    content: '""',
-    pos: 'absolute',
-    w: '15px',
-    h: '15px',
-    left: '-1px',
-    top: '-4px',
-    bdrad: '12px',
-    bg: 'radial-gradient(rgba(255,255,255,1.0), rgba(255,255,255,0.05), rgba(255,255,255,0.0))',
-  },
-});
-
-const handleDraggingClass = rule({
-  out: '6px solid rgba(127,127,127,.12)',
-  h: '24px',
-  w: '8px',
-  t: '-9px',
 });
 
 const valueClass = rule({
@@ -204,9 +181,6 @@ export const Slider: React.FC<SliderProps> = (props) => {
   const railShadow = 'inset 0 0 4px rgba(0,0,0,0.9)';
   const rangeBg = active ? styles.col.get('accent', 'solid-1') : styles.col.get('link', 'solid-1');
   const rangeShadow = `inset 0 0 4px ${light ? 'rgba(0,85,151,0.5)' : 'rgba(0,85,151,0.8)'}, inset 0 0 2px rgba(0,0,0,0.5)`;
-  const handleBg = '#d4d4d4';
-  const handleShadow =
-    '0 0 2px rgba(0,0,0,0.4), inset 0 0 1px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.6), 0 4px 2px rgba(0,0,0,0.2), 0 9px 4px rgba(0,0,0,0.1), inset 0 2px 1px rgba(255,255,255,1.0)';
 
   const railStyle: React.CSSProperties = {
     background: railBg,
@@ -220,10 +194,8 @@ export const Slider: React.FC<SliderProps> = (props) => {
     boxShadow: rangeShadow,
   };
 
-  const handleStyle: React.CSSProperties = {
+  const handleButtonStyle: React.CSSProperties = {
     left: pct + '%',
-    background: handleBg,
-    boxShadow: handleShadow,
   };
 
   return (
@@ -242,8 +214,8 @@ export const Slider: React.FC<SliderProps> = (props) => {
         <div className={rangeClass} style={rangeStyle} />
         <button
           type="button"
-          className={handleClass + (dragging ? handleDraggingClass : '')}
-          style={handleStyle}
+          className={handleButtonClass}
+          style={handleButtonStyle}
           onKeyDown={onKeyDown}
           tabIndex={disabled ? -1 : 0}
           role="slider"
@@ -251,7 +223,9 @@ export const Slider: React.FC<SliderProps> = (props) => {
           aria-valuemax={max}
           aria-valuenow={value}
           aria-disabled={disabled || undefined}
-        />
+        >
+          <SliderHandle dragging={dragging} disabled={disabled} />
+        </button>
       </div>
       {showValue && (
         <span className={valueClass} style={{color: styles.g(0.3)}}>
