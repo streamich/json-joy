@@ -70,6 +70,18 @@ const thumbDraggingClass = rule({
   },
 });
 
+const thumbDraggingHorizontalClass = rule({
+  w: '24px',
+  h: '8px',
+  out: '6px solid rgba(127,127,127,.12)',
+  '&:after': {
+    top: '0px',
+    left: '14px',
+    w: '8px',
+    h: '4px',
+  },
+});
+
 const disabledClass = rule({
   op: 0.5,
 });
@@ -77,6 +89,11 @@ const disabledClass = rule({
 export interface SliderHandleProps {
   /** Apply the active "being dragged" visual — slimmer, taller, with a soft outline. */
   dragging?: boolean;
+  /**
+   * Axis the handle is scrubbing along. Default follows the wrapping
+   * `<DragSlider>` axis via context, or `'x'` if no context is present.
+   */
+  axis?: 'x' | 'y' | 'both';
   /** Dim the handle. */
   disabled?: boolean;
   /** Override the thumb background. Defaults to a metallic gray. */
@@ -89,6 +106,7 @@ export interface SliderHandleProps {
 
 export const SliderHandle: React.FC<SliderHandleProps> = ({
   dragging,
+  axis,
   disabled,
   background,
   boxShadow,
@@ -97,10 +115,12 @@ export const SliderHandle: React.FC<SliderHandleProps> = ({
 }) => {
   const dragSliderState = useDragSliderState();
   const effectiveDragging = dragging ?? dragSliderState?.dragging ?? false;
+  const effectiveAxis = axis ?? dragSliderState?.axis ?? 'x';
   const bg = background ?? DEFAULT_BG;
   const shadow = boxShadow ?? DEFAULT_SHADOW;
   const outerClass = containerClass + (disabled ? ' ' + disabledClass : '') + (className ? ' ' + className : '');
-  const inner = thumbClass + (effectiveDragging ? ' ' + thumbDraggingClass : '');
+  const draggingThumb = effectiveAxis === 'y' ? thumbDraggingHorizontalClass : thumbDraggingClass;
+  const inner = thumbClass + (effectiveDragging ? ' ' + draggingThumb : '');
   return (
     <span className={outerClass} style={style}>
       <span className={inner} style={{background: bg, boxShadow: shadow}} />

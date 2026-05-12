@@ -3,7 +3,7 @@ import {rule} from 'nano-theme';
 import {Iconista} from '../../icons/Iconista';
 import {Input, type InputProps} from '../Input';
 import {BasicButton, type BasicButtonProps} from '../BasicButton';
-import {DragSlider} from '../../1-inline/DragSlider';
+import {DragSlider, type DragAxis} from '../../1-inline/DragSlider';
 import {DragSliderHandle} from '../../1-inline/DragSlider/DragSliderHandle';
 
 const blockClass = rule({
@@ -67,10 +67,14 @@ export interface InputNumberProps {
   min?: number;
   max?: number;
   step?: number;
+  /** Round committed values to this many decimal places. */
+  decimals?: number;
   disabled?: boolean;
   /** Show a small drag handle inside the input frame for scrub-to-edit. */
   drag?: boolean;
-  /** Units of value change per pixel of horizontal drag. */
+  /** Drag axis that drives the value. Default `'x'`. Use `'y'` for vertical scrub. */
+  dragAxis?: DragAxis;
+  /** Units of value change per pixel of drag. */
   dragSensitivity?: number;
   /**
    * Custom drag handle node. Defaults to a small `DragSliderHandle` bar.
@@ -96,8 +100,10 @@ export const InputNumber: React.FC<InputNumberProps> = ({
   min,
   max,
   step = 1,
+  decimals: decimalsProp,
   disabled,
   drag,
+  dragAxis,
   dragSensitivity,
   dragHandle,
   dragHideStartDot,
@@ -107,7 +113,7 @@ export const InputNumber: React.FC<InputNumberProps> = ({
   inputProps,
   buttonProps,
 }) => {
-  const decimals = decimalsOf(step);
+  const decimals = decimalsProp ?? decimalsOf(step);
   const numeric = typeof value === 'number' && Number.isFinite(value) ? value : 0;
   const [text, setText] = React.useState<string>(value === undefined ? '' : String(numeric));
   const lastEmittedRef = React.useRef<number | undefined>(value);
@@ -203,7 +209,10 @@ export const InputNumber: React.FC<InputNumberProps> = ({
         lastEmittedRef.current = restore;
         onChange?.(restore);
       } else {
-        onChangeEnd?.(final);
+        const rounded = round(clamp(final, min, max), decimals);
+        setText(String(rounded));
+        lastEmittedRef.current = rounded;
+        onChangeEnd?.(rounded);
       }
     },
     [numeric, min, max, decimals, onChange, onChangeEnd],
@@ -218,6 +227,7 @@ export const InputNumber: React.FC<InputNumberProps> = ({
       max={max}
       step={step}
       sensitivity={sensitivity}
+      axis={dragAxis}
       format={formatDrag}
       disabled={disabled}
       hideStartDot={dragHideStartDot}

@@ -325,7 +325,7 @@ export const DragSlider: React.FC<DragSliderProps> = (props) => {
     disabled ? 'default' : cursor ?? (axis === 'y' ? 'ns-resize' : axis === 'both' ? 'move' : 'ew-resize');
 
   const isDragging = !!drag;
-  const contextValue = React.useMemo<{dragging: boolean}>(() => ({dragging: isDragging}), [isDragging]);
+  const contextValue = React.useMemo(() => ({dragging: isDragging, axis}), [isDragging, axis]);
 
   return (
     <>

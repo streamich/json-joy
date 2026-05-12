@@ -78,7 +78,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
   });
 
   const style: any = {
-    background: on ? styles.col.get('success', 'solid-1') : styles.g(light ? 0.4 : 0.7),
+    background: on ? styles.positive.fg.toString() : styles.g(light ? 0.4 : 0.7),
   };
 
   const styleSpan: any = {
