@@ -1,5 +1,6 @@
 import {Editor, Element as SlateElement, Node, Text, type Path, type Range} from 'slate';
 import {getActiveEmbed} from './embed';
+import {getActiveMathBlockEntry, getActiveMathInlineEntry} from './math';
 import {getLinkAttributes} from './link';
 import type {CustomElement, CustomText} from '../types';
 
@@ -15,6 +16,7 @@ export interface CaretPathInfo {
   linkHref?: string;
   embedUrl?: string;
   codeText?: string;
+  mathThingId?: string;
 }
 
 /** Get text of an inline mark inside which `Path` is located. */
@@ -55,6 +57,22 @@ export const getCaretPathInfo = (editor: Editor): CaretPathInfo => {
     return {
       path: ['embed'],
       embedUrl: activeEmbed.url,
+    };
+  }
+
+  const activeMathBlock = getActiveMathBlockEntry(editor);
+  if (activeMathBlock) {
+    return {
+      path: ['math'],
+      mathThingId: activeMathBlock[0]['@thing'],
+    };
+  }
+
+  const activeMathInline = getActiveMathInlineEntry(editor);
+  if (activeMathInline) {
+    return {
+      path: ['math-inline'],
+      mathThingId: activeMathInline[0]['@thing'],
     };
   }
 
