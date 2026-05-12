@@ -5,6 +5,66 @@ import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 
 export type {MenuItem};
 
+export interface TextStyling {
+  // --------------------------------------------------------------------- Font
+  /** Font family (CSS `font-family`). */
+  ff?: FontKind | string;
+  /** Font size (CSS `font-size`). */
+  fz?: number;
+  /** Font weight (CSS `font-weight`). */
+  fw?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  /** Font-stretch percent (CSS `font-stretch`). */
+  fs?: number;
+  /** Whether to apply `font-optical-sizing: auto`. */
+  os?: boolean;
+  /** Ligature mode: `'normal'` (default), `'none'`, `'common'`, `'discretionary'`, `'historical'`. */
+  lig?: 'normal' | 'none' | 'common' | 'discretionary' | 'historical';
+  /** Numeric variant: `'normal'`, `'lining'`, `'oldstyle'`, `'tabular'`, `'proportional'`. */
+  nv?: 'normal' | 'lining' | 'oldstyle' | 'tabular' | 'proportional';
+
+  // ------------------------------------------------------------------ Spacing
+  /** Line height (CSS `line-height`). */
+  lh?: number;
+  /** Letter spacing in `em` (CSS `letter-spacing`). */
+  ls?: number;
+  /** Word spacing in `em` (CSS `word-spacing`). */
+  ws?: number;
+  /** Kerning: `'auto'` (default), `'normal'`, `'none'` (CSS `font-kerning`). */
+  krn?: 'auto' | 'normal' | 'none';
+
+  // -------------------------------------------------------------------- Style
+  /** Italic / oblique (CSS `font-style`). */
+  it?: boolean;
+  /** Font caps variant (CSS `font-variant-caps`). */
+  cp?: 'normal' | 'all-small-caps' | 'small-caps';
+  /** Text transform (CSS `text-transform`). */
+  tr: 'upper' | 'lower';
+  /** Underline offset in `em` (CSS `text-underline-offset`). */
+  uo?: number;
+  /** Text decoration thickness in `px` (CSS `text-decoration-thickness`). */
+  tdt?: number;
+  /** Text underline position (CSS `text-underline-position`). */
+  tup?: 'auto' | 'under';
+  /** Text underline offset (CSS `text-underline-offset`). */
+  tuo?: number;
+  /** Text decoration color (CSS `text-decoration-color`). */
+  tdc?: string;
+  /** Text decoration line (CSS `text-decoration-line`). */
+  tdl?: ('underline' | 'overline' | 'line-through')[];
+  /** Text decoration skip ink (CSS `text-decoration-skip-ink`). */
+  tdsi?: boolean;
+
+  // --------------------------------------------------------------------- Text
+  /** Text wrap (CSS `text-wrap`). */
+  tw: 'balance' | 'pretty';
+
+  // -------------------------------------------------------------------- Color
+  /** Foreground text color. */
+  fg?: string;
+  /** Background color. */
+  bg?: string;
+}
+
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 
 /**
