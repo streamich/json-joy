@@ -3,14 +3,16 @@ import {rule} from 'nano-theme';
 import {Transforms} from 'slate';
 import {ReactEditor, useFocused, useReadOnly, useSelected, useSlateStatic, type RenderElementProps} from 'slate-react';
 import {More as MoreIcon} from '@jsonjoy.com/ui/lib/icons/interactive/More';
-import {ToolbarMenu} from '@jsonjoy.com/ui/lib/4-card/Toolbar/ToolbarMenu';
+import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
+import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {useMuTxt} from '../../../context';
+import {StripBarHandle} from '../StripBarHandle';
 import {VoidSelectionOverlay} from '../VoidSelectionOverlay';
 import {TocOptionsPopup} from './TocOptionsPopup';
 import * as settings from './settings';
 import type {DocumentOutlineItem} from '../../../behavior/outline';
-import type {MenuItem, TocElement as TocElementType} from '../../../types';
+import type {TocElement as TocElementType} from '../../../types';
 
 const blockClass = rule({
   pos: 'relative',
@@ -55,34 +57,9 @@ const itemTitleClass = rule({
   },
 });
 
-const stripButtonClass = rule({
-  d: 'flex',
-  ai: 'center',
-  jc: 'flex-start',
-  w: '11%',
-  h: '14px',
-  mb: '2px',
+const stripWrapClass = rule({
+  mrb: '2px',
   mrl: '8px',
-  pad: 0,
-  bd: 'none',
-  bgc: 'transparent',
-  cur: 'pointer',
-});
-
-const stripBarClass = rule({
-  d: 'block',
-  w: '20%',
-  h: '4px',
-  bdrad: '2px',
-  bgc: 'currentColor',
-  op: 0.06,
-  trs: 'opacity .1s, width .3s',
-  [`.${stripButtonClass.trim()}:hover &`]: {
-    op: 0.2,
-  },
-  [`.${blockClass.trim()}:hover &`]: {
-    w: '100%',
-  },
 });
 
 const emptyClass = rule({
@@ -164,32 +141,13 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
     event.stopPropagation();
   }, []);
 
-  const selectBlock = React.useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-      try {
-        const path = ReactEditor.findPath(editor, element);
-        Transforms.select(editor, path);
-        ReactEditor.focus(editor);
-      } catch {}
-    },
-    [editor, element],
-  );
-
-  const tocMenu = React.useMemo<MenuItem>(
-    () => ({
-      name: 'TOC toolbar',
-      children: [
-        {
-          name: 'Options',
-          icon: () => <MoreIcon size={32} />,
-          pane: () => <TocOptionsPopup element={element} />,
-        },
-      ],
-    }),
-    [element],
-  );
+  const selectBlock = React.useCallback(() => {
+    try {
+      const path = ReactEditor.findPath(editor, element);
+      Transforms.select(editor, path);
+      ReactEditor.focus(editor);
+    } catch {}
+  }, [editor, element]);
 
   const linkColor = styles.g(0.18);
   const captionColor = styles.g(0.42);
@@ -211,20 +169,16 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
             {caption}
           </div>
         ) : (
-          <button
-            type="button"
-            className={stripButtonClass}
-            title="Select table of contents"
-            aria-label="Select table of contents"
-            onMouseDown={selectBlock}
-            style={{
-              opacity: hovered || selected ? 1 : 0,
-              pointerEvents: hovered || selected ? 'auto' : 'none',
-              transition: 'opacity 0.15s ease',
-            }}
-          >
-            <span className={stripBarClass} />
-          </button>
+          <div className={stripWrapClass}>
+            <StripBarHandle
+              ariaLabel="Select table of contents"
+              onActivate={() => selectBlock()}
+              visible={hovered || selected}
+              width="11%"
+              color={!styles.light ? styles.g(1, 0.32) : styles.g(0, 0.22)}
+              colorHover={!styles.light ? styles.g(1, 0.55) : styles.g(0, 0.45)}
+            />
+          </div>
         )}
         {numberedItems.length ? (
           <div className={listClass}>
@@ -282,7 +236,18 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
           onMouseDown={preventMouseDown}
           style={{opacity: showToolbar ? 1 : 0, pointerEvents: showToolbar ? 'auto' : 'none'}}
         >
-          <ToolbarMenu menu={tocMenu} compact pane={{compact: true, lite: true}} />
+          <Popup renderContext={() => <TocOptionsPopup element={element} />}>
+            <BasicButton
+              type="button"
+              width={32}
+              height={32}
+              rounder
+              border
+              onMouseDown={preventMouseDown}
+            >
+              <MoreIcon size={32} />
+            </BasicButton>
+          </Popup>
         </div>
       )}
       {children}
