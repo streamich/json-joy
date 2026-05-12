@@ -59,6 +59,68 @@ describe('convert: Slate-Peritext-Slate', () => {
         assertSlatePeritextSlateRoundtrip(fixtures.nestedInlinesWithAttributes);
       });
     });
+
+    describe('inline element nodes', () => {
+      const isInline = (el: any) => el?.type === 'math-inline';
+
+      test('inline element between two text runs', () => {
+        const doc = [
+          {
+            type: 'p',
+            children: [
+              {text: 'a '},
+              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
+              {text: ' b'},
+            ],
+          },
+        ];
+        assertSlatePeritextSlateRoundtrip(doc, {isInline});
+      });
+
+      test('inline element at start of paragraph', () => {
+        const doc = [
+          {
+            type: 'p',
+            children: [
+              {text: ''},
+              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
+              {text: ' rest'},
+            ],
+          },
+        ];
+        assertSlatePeritextSlateRoundtrip(doc, {isInline});
+      });
+
+      test('inline element at end of paragraph', () => {
+        const doc = [
+          {
+            type: 'p',
+            children: [
+              {text: 'before '},
+              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
+              {text: ''},
+            ],
+          },
+        ];
+        assertSlatePeritextSlateRoundtrip(doc, {isInline});
+      });
+
+      test('two inline elements in same paragraph', () => {
+        const doc = [
+          {
+            type: 'p',
+            children: [
+              {text: 'a '},
+              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
+              {text: ' and '},
+              {type: 'math-inline', '@thing': 't-2', children: [{text: ''}]},
+              {text: ' b'},
+            ],
+          },
+        ];
+        assertSlatePeritextSlateRoundtrip(doc, {isInline});
+      });
+    });
   });
 
   describe('traces', () => {

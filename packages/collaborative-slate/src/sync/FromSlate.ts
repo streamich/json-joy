@@ -4,8 +4,20 @@ import type {ViewRange, ViewSlice} from 'json-joy/lib/json-crdt-extensions/perit
 import type {SlateDocument, SlateDescendantNode, SlateTextNode, SlateElementNode} from '../types';
 import type {SliceTypeStep, SliceTypeSteps} from 'json-joy/lib/json-crdt-extensions/peritext';
 
-const isInline = (node: unknown): node is SlateTextNode =>
+const isText = (node: unknown): node is SlateTextNode =>
   typeof node === 'object' && !!node && typeof (node as SlateTextNode).text === 'string';
+
+const INLINE_ATOMIC_PLACEHOLDER = "\uFFFC";
+
+export interface FromSlateOptions {
+  /**
+   * Predicate that returns `true` for Slate elements that should be treated
+   * as inline (rather than block) when serializing. Inline elements are
+   * emitted as an `Atomic` slice covering a single placeholder character,
+   * letting them roundtrip without splitting the surrounding paragraph.
+   */
+  isInline?: (element: SlateElementNode) => boolean;
+}
 
 /**
  * Converts Slate.js state to a {@link ViewRange} flat string with
@@ -15,13 +27,20 @@ const isInline = (node: unknown): node is SlateTextNode =>
  *
  * ```typescript
  * FromSlate.convert(node);
+ * FromSlate.convert(node, {isInline: (el) => editor.isInline(el)});
  * ```
  */
 export class FromSlate {
-  static readonly convert = (doc: SlateDocument): ViewRange => new FromSlate().convert(doc);
+  static readonly convert = (doc: SlateDocument, options?: FromSlateOptions): ViewRange =>
+    new FromSlate(options).convert(doc);
 
   private text = '';
   private slices: ViewSlice[] = [];
+  private readonly isInlineEl: (element: SlateElementNode) => boolean;
+
+  constructor(options: FromSlateOptions = {}) {
+    this.isInlineEl = options.isInline ?? (() => false);
+  }
 
   private conv(node: SlateDescendantNode, path: SliceTypeSteps, nodeDiscriminator: number): void {
     if (!node || typeof node !== 'object') return;
@@ -48,10 +67,25 @@ export class FromSlate {
     } else {
       const element = node as SlateElementNode;
       const {type, children, ...data} = element;
+
+      // Inline elements: emit as an `Atomic` slice over a single placeholder character.
+      if (this.isInlineEl(element)) {
+        this.text += INLINE_ATOMIC_PLACEHOLDER;
+        const end = start + INLINE_ATOMIC_PLACEHOLDER.length;
+        const header =
+          (SliceStacking.Atomic << SliceHeaderShift.Stacking) +
+          (Anchor.Before << SliceHeaderShift.X1Anchor) +
+          (Anchor.After << SliceHeaderShift.X2Anchor);
+        const hasData = Object.keys(data).length > 0;
+        const slice: ViewSlice = hasData ? [header, start, end, type, data] : [header, start, end, type];
+        this.slices.push(slice);
+        return;
+      }
+
       const step: SliceTypeStep = nodeDiscriminator || data ? [type, nodeDiscriminator, data] : type;
       const length = children?.length ?? 0;
       const hasNoChildren = length === 0;
-      const isFirstChildInline = isInline((children as SlateElementNode['children'])?.[0]);
+      const isFirstChildInline = isText((children as SlateElementNode['children'])?.[0]);
       const doEmitSplitMarker = hasNoChildren || isFirstChildInline;
       if (doEmitSplitMarker) {
         this.text += '\n';

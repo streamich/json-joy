@@ -4,8 +4,11 @@ import {toSlate} from '../../toSlate';
 import {type SlateTrace, SlateTraceRunner} from './traces';
 import type {SlateDocument} from '../../../types';
 
-export const assertSlatePeritextSlateRoundtrip = (doc: SlateDocument) => {
-  const viewRange = FromSlate.convert(doc);
+export const assertSlatePeritextSlateRoundtrip = (
+  doc: SlateDocument,
+  options?: {isInline?: (element: any) => boolean},
+) => {
+  const viewRange = FromSlate.convert(doc, options);
   const model = Model.create(ext.peritext.new(''));
   const api = model.s.toExt();
   api.txt.editor.import(0, viewRange);
