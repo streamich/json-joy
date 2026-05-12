@@ -37,7 +37,7 @@ export class Styles {
     const neutral = new ThemeColor(new HslColor(0.155, 0.43, 0.62), lightSurface);
     const accent = new ThemeColor(new HslColor(0.575, 0.91, 0.56), lightSurface);
     const accent2 = new ThemeColor(new HslColor(0.097, 0.85, 0.55), lightSurface);
-    const positive = new ThemeColor(new HslColor(0.39, 0.65, 0.4), lightSurface);
+    const positive = new ThemeColor(new HslColor(0.42, 0.69, 0.42), lightSurface);
     const negative = new ThemeColor(new HslColor(0.02, 0.75, 0.5), lightSurface);
     const warning = new ThemeColor(new HslColor(0.105, 0.85, 0.5), lightSurface);
     const info = new ThemeColor(new HslColor(0.555, 0.8, 0.5), lightSurface);

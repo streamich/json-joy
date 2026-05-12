@@ -54,6 +54,11 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
   const renderSeparator = (key: string) => (
     <div key={key} className={separatorClass({bg: sepColor})} aria-hidden="true" />
   );
+  const renderHeading = (item: MenuItem, key: string) => (
+    <div key={key} className={sectionTitleClass({col: titleColor})} role="presentation">
+      {item.display?.() ?? t(item.name)}
+    </div>
+  );
   const renderItem = (item: MenuItem, key: string) => (
     <MobileMenuItem key={key} item={item} onPush={onPush} onSelectArgs={onSelectArgs} onClose={onClose} />
   );
@@ -64,6 +69,10 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
     const id = child.id ?? child.name;
     if (child.sep) {
       nodes.push(renderSeparator(`sep-${id}`));
+      continue;
+    }
+    if (child.heading) {
+      nodes.push(renderHeading(child, `heading-${id}`));
       continue;
     }
     if (child.sepBefore && i > 0) {
@@ -81,6 +90,10 @@ export const MobileMenuPane: React.FC<MobileMenuPaneProps> = ({
         const subId = sub.id ?? sub.name;
         if (sub.sep) {
           nodes.push(renderSeparator(`${id}-sep-${subId}`));
+          continue;
+        }
+        if (sub.heading) {
+          nodes.push(renderHeading(sub, `${id}-heading-${subId}`));
           continue;
         }
         if (sub.sepBefore && j > 0) {

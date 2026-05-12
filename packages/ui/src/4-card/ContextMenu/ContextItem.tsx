@@ -71,6 +71,7 @@ export interface ContextItemProps extends React.HTMLAttributes<any> {
   danger?: boolean;
   icon?: React.ReactNode;
   right?: React.ReactNode;
+  control?: boolean;
   smallText?: boolean;
   /** Whether to show ellipsis "...". */
   more?: boolean;
@@ -96,6 +97,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
   className,
   icon,
   right,
+  control,
   children,
   smallText,
   more,
@@ -125,13 +127,15 @@ export const ContextItem: React.FC<ContextItemProps> = ({
         ? styles.g(0, 0.02)
         : 'transparent';
 
+  const vPad = (compact ? 4 : 8) - (control ? 1 : 0);
+
   const mainClassName =
     (className || '') +
     blockClass +
     itemClass({
       bg: bg_,
       bdt: outline ? `1px solid ${styles.g(0, 0.05)}` : 0,
-      pd: `${compact ? 4 : 8}px ${padding}px`,
+      pd: `${vPad}px ${padding}px`,
       col: styles.g(0.2),
       '&:hover': {
         // col: danger ? theme.color.sem.negative[1] : theme.g(0),
@@ -197,7 +201,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
 
   if (right) {
     element = (
-      <Split as="span" style={{gap: 8}}>
+      <Split as="span" align="center" style={{gap: control ? 12 : 8}}>
         {element}
         {right}
       </Split>
@@ -217,7 +221,7 @@ export const ContextItem: React.FC<ContextItemProps> = ({
 
   if (icon) {
     element = (
-      <FixedColumn as={'span'} left={26}>
+      <FixedColumn as={'span'} left={26} style={control ? {alignItems: 'center'} : undefined}>
         <span className={iconClass}>{icon}</span>
         <span>{element}</span>
       </FixedColumn>
@@ -236,13 +240,29 @@ export const ContextItem: React.FC<ContextItemProps> = ({
     buttonStyle.borderRadius = 4;
   }
 
-  element = h(to ? Link : 'button', {
-    ...rest,
+  const interactive = !!rest.onClick || !!to;
+  const Tag: any = to ? Link : interactive ? 'button' : 'div';
+
+  const elProps: any = {...rest};
+  if (Tag === 'div') {
+    delete elProps.role;
+    delete elProps.tabIndex;
+    delete elProps['aria-haspopup'];
+    delete elProps['aria-expanded'];
+    delete elProps['aria-disabled'];
+    delete elProps.disabled;
+  }
+
+  const externalStyle = (elProps as any).style as React.CSSProperties | undefined;
+  delete (elProps as any).style;
+
+  element = h(Tag, {
+    ...elProps,
     a: to ? true : undefined,
     to: disabled ? undefined : to,
-    disabled,
+    disabled: Tag === 'div' ? undefined : disabled,
     className: mainClassName,
-    style: buttonStyle,
+    style: {...(externalStyle || {}), ...buttonStyle},
     children: element,
   });
 

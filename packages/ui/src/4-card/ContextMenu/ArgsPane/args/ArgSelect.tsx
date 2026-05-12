@@ -3,8 +3,9 @@ import {drule} from 'nano-theme';
 import {useStyles} from '../../../../styles/context';
 import {argBlockCss} from './css';
 import {FormRow} from '../../../../3-list-item/FormRow';
-import type {ParamSelect} from '../../../StructuralMenu/types';
 import {Scrollbox} from '../../../Scrollbox';
+import {ArgSelectCompact} from './ArgSelectCompact';
+import type {ParamSelect} from '../../../StructuralMenu/types';
 
 const optionClass = drule({
   d: 'flex',
@@ -21,14 +22,28 @@ const optionSelectedClass = drule({
   fontWeight: 600,
 });
 
+export interface DefaultableSelectValue {
+  def: boolean;
+  value: string;
+}
+
 export interface ArgSelectProps {
   param: ParamSelect;
-  value: string;
-  onChange: (value: string) => void;
+  value: string | DefaultableSelectValue;
+  compact?: boolean;
+  onChange: (value: string | DefaultableSelectValue) => void;
   onSubmit: () => void;
 }
 
-export const ArgSelect: React.FC<ArgSelectProps> = ({param, value, onChange, onSubmit}) => {
+const unwrapSelect = (v: ArgSelectProps['value']): string => {
+  if (v && typeof v === 'object' && 'value' in v) return String((v as DefaultableSelectValue).value ?? '');
+  return (v as string) ?? '';
+};
+
+export const ArgSelect: React.FC<ArgSelectProps> = (props) => {
+  if (props.compact) return <ArgSelectCompact {...props} />;
+  const {param, value, onChange, onSubmit} = props;
+  const v = unwrapSelect(value);
   const options = param.options ?? [];
   const styles = useStyles();
   const optionCls = optionClass({
@@ -49,7 +64,7 @@ export const ArgSelect: React.FC<ArgSelectProps> = ({param, value, onChange, onS
             <div style={{padding: '4px 16px'}}>
               {options.map((opt) => {
                 const id = opt.id ?? opt.name;
-                const isSelected = value === id;
+                const isSelected = v === id;
                 return (
                   <div
                     key={id}

@@ -15,6 +15,7 @@ import {Scrollbox} from '../../Scrollbox';
 import {useAnchorPoint} from '../../../utils/popup';
 import {ContextMenuToolbarRow} from './ContextMenuToolbarRow';
 import {ContextMenuItem} from './ContextMenuItem';
+import {ContextMenuHeading} from './ContextMenuHeading';
 import {ContextPaneHeaderSep} from '../ContextPaneHeaderSep';
 import {MoveToViewport} from '../../../utils/popup/MoveToViewport';
 import type {MenuItem} from '../../StructuralMenu/types';
@@ -38,6 +39,8 @@ export interface ContextMenuPaneProps {
   inset?: boolean;
   pane?: ContextPaneProps;
   showSearch?: boolean;
+  /** Placeholder text for the search input. Defaults to "Find…". */
+  searchPlaceholder?: string;
   header?: React.ReactNode;
 
   onEsc?: () => void;
@@ -133,6 +136,11 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
       const key = child.id ?? child.name;
       nodes.push(line(key));
       if (!child.sepBefore) continue;
+    }
+    if (child.heading) {
+      bigIcons.flush();
+      nodes.push(<ContextMenuHeading key={(child.id ?? child.name) + '-heading'} item={child} />);
+      continue;
     }
     const subChildren = child.children;
     const expand = child.expand;
@@ -234,7 +242,13 @@ export const ContextMenuPane: React.FC<ContextMenuPaneProps> = (props) => {
         </>
       )}
       <ContextSep />
-      {doShowSearch && <ContextMenuSearch inset={inset} ContextMenuPane={ContextMenuPane} />}
+      {doShowSearch && (
+        <ContextMenuSearch
+          inset={inset}
+          searchPlaceholder={props.searchPlaceholder}
+          ContextMenuPane={ContextMenuPane}
+        />
+      )}
     </ContextPane>
   );
 };

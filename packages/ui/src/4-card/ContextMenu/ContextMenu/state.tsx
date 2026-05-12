@@ -108,7 +108,7 @@ export class ContextMenuState {
   public execute = (item: MenuItem, event: React.MouseEvent): void => {
     if (item.onSelect) {
       item.onSelect(event);
-      this.onclose?.();
+      if (!item.keepOpen) this.onclose?.();
     }
   };
 

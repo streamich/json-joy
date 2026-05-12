@@ -3,6 +3,9 @@ import {Iconista} from '../../../icons/Iconista';
 import {Code} from '../../../1-inline/Code';
 import {Sidetip} from '../../../1-inline/Sidetip';
 import {FontStyleButton} from '../../../2-inline-block/FontStyleButton';
+import {InputNumber} from '../../../2-inline-block/InputNumber';
+import {SliderHandle} from '../../../1-inline/SliderHandle';
+import {Checkbox} from '../../../2-inline-block/Checkbox';
 import type {MenuItem} from '../../StructuralMenu/types';
 
 export const annotations = (): MenuItem => {
@@ -470,28 +473,45 @@ export const inlineText: MenuItem = {
         {
           name: 'Custom typeface',
           expand: 10,
+          minWidth: 320,
           icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
           children: [
             {
               name: 'Typeface',
-              // icon: () => <Iconista width={15} height={15} set="radix" icon="font-style" />,
               icon: () => <Iconista width={15} height={15} set="radix" icon="font-family" />,
               onSelect: () => {},
             },
             {
+              name: 'Spacing heading',
+              display: () => 'Spacing',
+              heading: true,
+            },
+            {
               name: 'Text size',
               icon: () => <Iconista width={15} height={15} set="radix" icon="font-size" />,
-              onSelect: () => {},
+              control: () => (
+                <div style={{width: 120, marginRight: -8}}>
+                  <InputNumber inputProps={{size: -3}} min={6} max={72} value={16} drag dragHandle={<SliderHandle />} />
+                </div>
+              ),
             },
             {
               name: 'Letter spacing',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-              onSelect: () => {},
+              control: () => (
+                <div style={{width: 120, marginRight: -8}}>
+                  <InputNumber inputProps={{size: -3}} min={-10} max={10} value={0} drag dragHandle={<SliderHandle />} />
+                </div>
+              ),
             },
             {
               name: 'Word spacing',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
-              onSelect: () => {},
+              control: () => (
+                <div style={{width: 120, marginRight: -8}}>
+                  <InputNumber inputProps={{size: -3}} min={-10} max={10} value={0} drag dragHandle={<SliderHandle />} />
+                </div>
+              ),
             },
             {
               name: 'Caps separator',
@@ -501,11 +521,15 @@ export const inlineText: MenuItem = {
               name: 'Large caps',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-uppercase" />,
               onSelect: () => {},
+              keepOpen: true,
+              control: () => <Checkbox small on={false} />,
             },
             {
               name: 'Small caps',
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-case-lowercase" />,
               onSelect: () => {},
+              keepOpen: true,
+              control: () => <Checkbox small on={true} />,
             },
           ],
         },

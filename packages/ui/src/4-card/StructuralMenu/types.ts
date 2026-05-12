@@ -70,6 +70,26 @@ export interface MenuItem {
   /** Whether to add a separator before this item. */
   sepBefore?: boolean;
 
+  /**
+   * Render as a non-interactive subheading row (like `sep`, but a small
+   * label). The `name` (or `display`) provides the label text. The row is
+   * not focusable and emits no events.
+   */
+  heading?: boolean;
+
+  /**
+   * For `heading` items: when `true`, the heading is clickable and collapses
+   * its group (all rows that follow until the next heading or `sep`). State
+   * is tracked by the renderer.
+   */
+  collapsible?: boolean;
+
+  /**
+   * For `collapsible` headings: initial collapsed state. Defaults to `false`
+   * (expanded). After mount the user fully controls the state.
+   */
+  initialCollapsed?: boolean;
+
   /** Order of the item within its parent. */
   order?: number;
 
@@ -108,6 +128,20 @@ export interface MenuItem {
 
   /** Something to display on the right side. */
   right?: () => React.ReactNode;
+
+  /**
+   * Interactive trailing widget — same slot as `right`, but semantically
+   * marks the row as a "control row". Used for inline editors that live on
+   * the row itself: `<Checkbox>`, `<InputNumber>`, color picker, etc.
+   */
+  control?: () => React.ReactNode;
+
+  /**
+   * Keep the popup open after `onSelect` fires. Default `false` — selecting
+   * an item closes the menu. Set to `true` for in-place toggles and other
+   * actions that should not dismiss the menu.
+   */
+  keepOpen?: boolean;
 
   /** Keyboard shortcut key combination. */
   keys?: string[];
@@ -171,6 +205,15 @@ export interface MenuItem {
   maxWidth?: number;
 
   /**
+   * Pane-level density flag. When this item opens its own pane (e.g. an
+   * args pane via `params`), render that pane in a compact single-row form
+   * where each child uses an inline `<MenuItem control>`-style layout. Arg
+   * renderers that have a compact variant honor this; others fall back to
+   * their default block layout.
+   */
+  compact?: boolean;
+
+  /**
    * Whether the item is "active". This is used to highlight the
    * item in the menu, for example, when the item is some toggle
    * or a button that is currently selected.
@@ -193,26 +236,66 @@ export interface MenuItem {
   /**
    * Argument definitions for this command. When present, selecting the item
    * opens an argument configuration pane instead of executing immediately.
+   *
+   * Entries are typically `Param` (typed input) but can also be plain
+   * `MenuItem` shapes with `heading: true` (section label) or `sep: true`
+   * (thin divider) to group the inputs visually.
    */
-  params?: Param[];
+  params?: (Param | MenuItem)[];
 
   /**
    * Called when the user confirms argument values. Receives a list of
    * `[idOrName, value]` tuples representing the collected argument values.
    */
   onSubmit?: (list: [idOrName: string, value: unknown][], map: Record<string, unknown>) => void;
+
+  /**
+   * Called on every settled argument-value change.
+   */
+  onChange?: (list: [idOrName: string, value: unknown][], map: Record<string, unknown>) => void;
+
+  /**
+   * When `true` *and* `params` is set, the args pane opens as a side popup
+   * (like a sub-menu) instead of replacing the current panel content. Hover
+   * or click on the row opens it; click-away or escape closes it. Use with
+   * `onChange` for a real-time preview UX.
+   */
+  popupArgs?: boolean;
 }
 
 // -------------------------------------- Parameters for argument configuration
 
-export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select';
+export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select' | 'enum';
 
-export type Param = ParamStr | ParamNum | ParamBool | ParamColor | ParamSelect;
+export type Param = ParamStr | ParamNum | ParamBool | ParamColor | ParamSelect | ParamEnum;
 
 export interface ParamBase<K extends ParamKind = ParamKind, V = string | number | boolean> extends MenuItem {
   kind: K;
   optional?: boolean;
   default?: V;
+  /**
+   * When `true`, the arg can be left in "auto" mode (using an inherited or
+   * document-level default) instead of an explicit value. UI shows the
+   * default greyed out with a click target to override, and a small revert
+   * button while overridden to return to auto. A `value` of `undefined`
+   * represents auto mode.
+   */
+  defaultable?: boolean;
+
+  /**
+   * Initial `def` state for `defaultable` params. Defaults to `true` (auto
+   * mode). Set to `false` to start the arg with the user-override slot
+   * active using `initialValue` (or `default` if not provided).
+   */
+  initialDef?: boolean;
+
+  /**
+   * Initial user-override value for `defaultable` params (only meaningful
+   * when the param starts in `def: false` state, or to preload the value
+   * that will appear when the user first switches off auto). Defaults to
+   * `default`.
+   */
+  initialValue?: V;
 }
 
 export interface ParamStr extends ParamBase<'str', string> {
@@ -221,14 +304,51 @@ export interface ParamStr extends ParamBase<'str', string> {
 
 export interface ParamNum extends ParamBase<'num', number> {
   placeholder?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  /**
+   * Round committed values to this many decimal places. Defaults to the
+   * number of decimals implied by `step`. Set explicitly to suppress
+   * floating-point artifacts like `1.9000000000000001` from drag scrubs.
+   */
+  decimals?: number;
+  /** Units of value change per pixel of drag scrub. */
+  dragSensitivity?: number;
+  /** Drag axis. Default `'x'`. Use `'y'` for vertical scrub. */
+  dragAxis?: 'x' | 'y' | 'both';
 }
 
 export interface ParamBool extends ParamBase<'bool', boolean> {}
 
 export interface ParamColor extends ParamBase<'color', string> {
   placeholder?: string;
+  /**
+   * Allow transparent (alpha) values.
+   */
+  alpha?: boolean;
 }
 
 export interface ParamSelect extends ParamBase<'select', string> {
+  options: MenuItem[];
+  /**
+   * Placeholder text for the search input inside the dropdown. Defaults to
+   * "Find...". Set to provide a more specific hint, e.g. "Find font...".
+   */
+  searchPlaceholder?: string;
+  /**
+   * Whether to show the search input in the dropdown popup. When omitted,
+   * search is shown automatically for lists with 6 or more options and
+   * hidden for shorter lists.
+   */
+  showSearch?: boolean;
+}
+
+/**
+ * Small-cardinality multi-choice arg. Rendered as a horizontal toolbar of
+ * icon buttons next to the label, one button per option. Use when the choice
+ * set is fixed and small (e.g. text alignment: left/center/right/justify).
+ */
+export interface ParamEnum extends ParamBase<'enum', string> {
   options: MenuItem[];
 }

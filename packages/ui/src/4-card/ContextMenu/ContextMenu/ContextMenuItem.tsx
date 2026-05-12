@@ -4,6 +4,8 @@ import {ContextItemNested} from '../ContextItemNested';
 import {useContextMenu} from './context';
 import type {OpenPanelState} from './OpenPanelState';
 import {useSyncStoreOpt} from '../../../hooks/useSyncStore';
+import {ArgsPane} from '../ArgsPane';
+import {MoveToViewport} from '../../../utils/popup/MoveToViewport';
 import type {MenuItem} from '../../StructuralMenu/types';
 
 export interface ContextMenuItemProps {
@@ -26,9 +28,34 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   const children = !!item.children && !!item.children.length ? item.children : void 0;
   const hasPane = !!item.pane;
   const hasArgs = !!item.params?.length;
+  const popupArgs = hasArgs && !!item.popupArgs;
   const display = item.display?.() ?? t(item.name);
 
   if (item.raw) return item.raw();
+
+  const popupArgsRenderPane = popupArgs
+    ? () => (
+        <MoveToViewport>
+          <ArgsPane
+            item={item}
+            params={item.params!}
+            minWidth={item.minWidth}
+            onCancel={() => openPanel?.deselect()}
+            onSubmit={
+              item.onSubmit
+                ? (list, map) => {
+                    item.onSubmit?.(list, map);
+                    state.onclose?.();
+                  }
+                : undefined
+            }
+            onChange={item.onChange}
+          />
+        </MoveToViewport>
+      )
+    : undefined;
+
+  const showsPopup = !!children || hasPane || popupArgs;
 
   return (
     <div data-menu-row data-menu-id={id}>
@@ -37,7 +64,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         open={open}
         inset={state.props.inset}
         more={item.more}
-        nested={!!children || hasPane}
+        nested={showsPopup}
         selected={active}
         disabled={disabled}
         icon={
@@ -48,35 +75,38 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
             void 0
           ))
         }
-        right={item.right?.()}
+        right={item.control?.() ?? item.right?.()}
+        control={!!item.control}
         danger={item.danger}
         mono={item.mono}
         onClick={
-          hasArgs
-            ? () => {
-                state.selectArgs(path, item);
-              }
-            : hasPane
+          popupArgs
+            ? () => openPanel?.forceSelect(id)
+            : hasArgs
               ? () => {
-                  state.select(path, item);
+                  state.selectArgs(path, item);
                 }
-              : item.onSelect
-                ? (event) => state.execute(item, event)
-                : children
-                  ? () => {
-                      state.select(path, item);
-                    }
-                  : void 0
+              : hasPane
+                ? () => {
+                    state.select(path, item);
+                  }
+                : item.onSelect
+                  ? (event) => state.execute(item, event)
+                  : children
+                    ? () => {
+                        state.select(path, item);
+                      }
+                    : void 0
         }
         onMouseDown={item.onMouseDown}
-        renderPane={(!!children || hasPane) && renderPane ? renderPane : void 0}
+        renderPane={popupArgsRenderPane ?? (showsPopup && renderPane ? renderPane : void 0)}
         onMouseEnter={() => openPanel?.onMouseMove(id)}
         onMouseMove={() => openPanel?.onMouseMove(id)}
         onMouseLeave={openPanel?.onMouseLeave}
         role="menuitem"
         tabIndex={-1}
-        aria-haspopup={children || hasPane ? 'menu' : undefined}
-        aria-expanded={children || hasPane ? open : undefined}
+        aria-haspopup={showsPopup ? 'menu' : undefined}
+        aria-expanded={showsPopup ? open : undefined}
         aria-disabled={disabled || undefined}
       >
         {display}

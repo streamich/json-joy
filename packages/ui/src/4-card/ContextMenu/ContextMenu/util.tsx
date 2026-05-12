@@ -70,7 +70,7 @@ export const findMenuItems = (root: MenuItem, query: string): SearchMatch[] => {
   query = query.trim();
   if (!query) return result;
   const find = (path: MenuItem[], curr: MenuItem) => {
-    if (curr.sep) return;
+    if (curr.sep || curr.heading) return;
     // Skip inline-only raw items
     if (!!curr.raw && !curr.children && !curr.pane && !curr.onSelect && !curr.params?.length) {
       return;
