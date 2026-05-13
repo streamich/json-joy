@@ -1,6 +1,41 @@
 import * as React from 'react';
 import type {Meta, StoryObj} from '@storybook/react-webpack5';
-import {BlobFace as Component} from '.';
+import {BlobFace as Component, type BlobFaceHandle} from '.';
+
+const buttonStyle: React.CSSProperties = {
+  border: '1px solid #d0d4db',
+  borderRadius: 999,
+  background: '#fff',
+  padding: '8px 14px',
+  fontSize: 13,
+  fontWeight: 600,
+  lineHeight: 1,
+  cursor: 'pointer',
+};
+
+const GestureDemo: React.FC<React.ComponentProps<typeof Component>> = (args) => {
+  const [handle, setHandle] = React.useState<BlobFaceHandle | null>(null);
+
+  return (
+    <div style={{display: 'grid', gap: 18, justifyItems: 'center', minWidth: 280}}>
+      <Component {...args} onHandle={setHandle} />
+      <div style={{display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center'}}>
+        <button type="button" style={buttonStyle} onClick={() => handle?.yes()} disabled={!handle}>
+          yes()
+        </button>
+        <button type="button" style={buttonStyle} onClick={() => handle?.no()} disabled={!handle}>
+          no()
+        </button>
+        <button type="button" style={buttonStyle} onClick={() => handle?.idk()} disabled={!handle}>
+          idk()
+        </button>
+      </div>
+      <div style={{maxWidth: 320, textAlign: 'center', fontSize: 13, lineHeight: 1.5, color: '#505866'}}>
+        Trigger the imperative handle to make the blob nod, shake, or swivel without hovering it.
+      </div>
+    </div>
+  );
+};
 
 const meta: Meta<typeof Component> = {
   title: '1. Inline/BlobFace',
@@ -10,6 +45,7 @@ const meta: Meta<typeof Component> = {
   },
   tags: ['autodocs'],
   argTypes: {
+    onHandle: {control: false, table: {disable: true}},
     size: {control: {type: 'range', min: 16, max: 96, step: 2}},
     title: {control: 'text'},
   },
@@ -52,4 +88,12 @@ export const Crowd: StoryObj<typeof meta> = {
       <Component size={52} title="BlobFace 4" />
     </div>
   ),
+};
+
+export const Gestures: StoryObj<typeof meta> = {
+  args: {
+    size: 56,
+    title: 'BlobFace gestures',
+  },
+  render: (args: React.ComponentProps<typeof Component>) => <GestureDemo {...args} />,
 };
