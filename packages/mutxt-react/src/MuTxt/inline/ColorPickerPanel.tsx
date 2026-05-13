@@ -57,32 +57,15 @@ const sectionLabelClass = rule({
   textTransform: 'uppercase',
 });
 
-const rowClass = rule({
-  d: 'flex',
-  ai: 'center',
-  gap: '12px',
-  flexWrap: 'wrap',
-});
-
 const gridClass = rule({
   d: 'grid',
-  gap: '12px',
+  gap: '6px',
 });
 
 const pickerSectionClass = rule({
   d: 'flex',
-  ai: 'flex-start',
-  gap: '12px',
-});
-
-const previewClass = rule({
-  d: 'flex',
-  fld: 'column',
   ai: 'stretch',
-  jc: 'center',
-  gap: '8px',
-  flex: 1,
-  minW: 0,
+  gap: '12px',
 });
 
 const previewBoxClass = rule({
@@ -93,6 +76,8 @@ const previewBoxClass = rule({
   gap: '8px',
   bdrad: '8px',
   pd: '12px',
+  flex: 1,
+  minW: 0,
   minH: '128px',
   fz: '14px',
   fw: 500,
@@ -100,6 +85,17 @@ const previewBoxClass = rule({
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
+});
+
+const actionRowClass = rule({
+  d: 'flex',
+  ai: 'center',
+  gap: '8px',
+});
+
+const actionInputClass = rule({
+  flex: 1,
+  minW: 0,
 });
 
 const tabContentClass = rule({
@@ -213,7 +209,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
           <MiniTitle>
             {t('Text')}
           </MiniTitle>
-          <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, auto)`}}>
+          <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
             {TEXT_PALETTE.map((c) => (
               <ColorSwatch
                 key={'text-' + c}
@@ -233,7 +229,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
           <MiniTitle>
             {t('Background')}
           </MiniTitle>
-          <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, auto)`}}>
+          <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
             {QUICK_PALETTE.map((c) => (
               <ColorSwatch
                 key={'bg-' + c}
@@ -252,7 +248,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
         <MiniTitle>
           {t('Combination')}
         </MiniTitle>
-        <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, auto)`}}>
+        <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
           {RECOMMEND_PALETTE.map((combo, idx) => (
             <ColorSwatch
               key={'rec-' + idx}
@@ -274,7 +270,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
               <MiniTitle>
                 {t('Recent')}
               </MiniTitle>
-              <div className={rowClass}>
+              <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
                 {recent.map((c) => (
                   <ColorSwatch
                     key={'recent-' + c}
@@ -293,7 +289,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
               <MiniTitle>
                 {t('In document')}
               </MiniTitle>
-              <div className={rowClass}>
+              <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
                 {docColors.map((c) => (
                   <ColorSwatch
                     key={'doc-' + c}
@@ -319,19 +315,21 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
       </MiniTitle>
       <div className={pickerSectionClass}>
         <ColorPicker color={pickerColor} onChange={onPickerChange} noAlpha style={{width: 200}} />
-        <div className={previewClass}>
-          <div
-            className={previewBoxClass}
-            style={{
-              background: previewBg,
-              color: previewFg,
-              border: `1px solid ${styles.g(0, 0.12)}`,
-              fontFamily: editorFontFamily,
-            }}
-          >
-            <div style={{fontSize: '42px', width: '100%', lineHeight: 1}}>Ag</div>
-            <div style={{fontSize: '11px', opacity: 0.85}}>Sphinx of black quartz</div>
-          </div>
+        <div
+          className={previewBoxClass}
+          style={{
+            background: previewBg,
+            color: previewFg,
+            border: `1px solid ${styles.g(0, 0.12)}`,
+            fontFamily: editorFontFamily,
+          }}
+        >
+          <div style={{fontSize: '42px', width: '100%', lineHeight: 1}}>Ag</div>
+          <div style={{fontSize: '11px', opacity: 0.85}}>Sphinx of black quartz</div>
+        </div>
+      </div>
+      <div className={actionRowClass}>
+        <div className={actionInputClass}>
           <InputColor
             value={pickerInput}
             onChange={onPickerInputChange}
@@ -341,18 +339,19 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
             }}
             placeholder="#hex"
           />
-          <BasicButton
-            type="button"
-            width={'auto'}
-            height={32}
-            // border
-            fill
-            disabled={!isValidColor(pickerInput)}
-            onClick={onPickerCommit}
-          >
-            {t('Apply')}
-          </BasicButton>
         </div>
+        <BasicButton
+          type="button"
+          width={'auto'}
+          height={32}
+          rounder
+          fill
+          positive
+          disabled={!isValidColor(pickerInput)}
+          onClick={onPickerCommit}
+        >
+          {t('Apply')}
+        </BasicButton>
       </div>
     </div>
   );
