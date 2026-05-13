@@ -44,11 +44,33 @@ export interface ArgsPaneProps {
   onChange?: (list: [string, unknown][], args: Record<string, unknown>) => void;
 }
 
+// Subscribe to all reactive `visible` stores on the current params list and
+// trigger a re-render of the pane whenever any value flips.
+const useVisibilityVersion = (params: ArgsPaneProps['params']): number => {
+  const [v, setV] = React.useState(0);
+  React.useEffect(() => {
+    const bump = () => setV((x) => x + 1);
+    const unsubs: Array<() => void> = [];
+    for (const p of params) {
+      if (p && p.visible) {
+        try {
+          unsubs.push(p.visible.subscribe(bump));
+        } catch {}
+      }
+    }
+    return () => {
+      for (const u of unsubs) u();
+    };
+  }, [params]);
+  return v;
+};
+
 export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
   const {item, params, onCancel, minWidth} = props;
   const [t] = useT();
   const state = React.useMemo(() => new ArgsState(props), [props]);
   const args = state.args.use();
+  useVisibilityVersion(params);
   const [collapsed, setCollapsed] = React.useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     for (let i = 0; i < params.length; i++) {
@@ -83,7 +105,36 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
     const arg = params[i];
     const isHeading = !!arg.heading;
     const isSep = !!arg.sep;
-    const key = (arg.id ?? arg.name ?? `i${i}`) + (isHeading ? '-h' : isSep ? '-s' : '');
+    const isInnerSep = !!arg.innerSep;
+    const key =
+      (arg.id ?? arg.name ?? `i${i}`) +
+      (isHeading ? '-h' : isSep ? '-s' : isInnerSep ? '-is' : '');
+
+    if (arg.visible && arg.visible.getSnapshot() === false) continue;
+
+    // Inner separator: a padded, inert horizontal line. Doesn't break the
+    // current group's collapse state, and doesn't register as a boundary —
+    // it's purely decorative and lives inside a group.
+    if (isInnerSep) {
+      if (inCollapsed) continue;
+      rows.push(
+        <div
+          key={key}
+          role="presentation"
+          aria-hidden="true"
+          style={{padding: '3px 16px'}}
+        >
+          <div
+            style={{
+              height: 1,
+              background: 'currentColor',
+              opacity: 0.07,
+            }}
+          />
+        </div>,
+      );
+      continue;
+    }
 
     if (isHeading) {
       const groupKey = arg.id ?? arg.name ?? `h${i}`;
@@ -166,13 +217,13 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
       {rows}
       {!props.onSubmit && (
         <>
-          {!lastRendered?.heading && <ContextSep />}
+          {lastRendered?.heading ? <div style={{height: 2}} aria-hidden /> : <ContextSep />}
           <ContextPaneFooterSep />
         </>
       )}
       {props.onSubmit && (
         <>
-          {!lastRendered?.heading && <ContextSep />}
+          {lastRendered?.heading ? <div style={{height: 2}} aria-hidden /> : <ContextSep />}
           <ContextSep line />
           <ContextSep />
           <div className={footerClass} style={item.compact ? {justifyContent: 'center'} : undefined}>

@@ -71,6 +71,14 @@ export interface MenuItem {
   sepBefore?: boolean;
 
   /**
+   * Inert visual divider. Unlike `sep`, an `innerSep` is purely
+   * decorative: it does not break group collapse boundaries, doesn't
+   * register as the "last rendered" boundary item, and has no semantic
+   * role. Use it to subtly divide rows inside the same group.
+   */
+  innerSep?: boolean;
+
+  /**
    * Render as a non-interactive subheading row (like `sep`, but a small
    * label). The `name` (or `display`) provides the label text. The row is
    * not focusable and emits no events.
@@ -225,6 +233,13 @@ export interface MenuItem {
    */
   disabled?: SyncStore<boolean>;
 
+  /**
+   * Whether to render the item at all. When the store yields `false`, the
+   * renderer skips the row entirely (no DOM output, no separator, no slot in
+   * keyboard navigation). Defaults to `true` (visible) when omitted.
+   */
+  visible?: SyncStore<boolean>;
+
   /** Callback when the item is clicked. */
   onSelect?: React.EventHandler<React.MouseEvent<Element> | React.TouchEvent<Element>>;
 
@@ -265,9 +280,29 @@ export interface MenuItem {
 
 // -------------------------------------- Parameters for argument configuration
 
-export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select' | 'enum';
+export type ParamKind =
+  | 'str'
+  | 'num'
+  | 'bool'
+  | 'color'
+  | 'select'
+  | 'enum'
+  | 'char'
+  | 'btn'
+  | 'code'
+  | 'info';
 
-export type Param = ParamStr | ParamNum | ParamBool | ParamColor | ParamSelect | ParamEnum;
+export type Param =
+  | ParamStr
+  | ParamNum
+  | ParamBool
+  | ParamColor
+  | ParamSelect
+  | ParamEnum
+  | ParamChar
+  | ParamBtn
+  | ParamCode
+  | ParamInfo;
 
 export interface ParamBase<K extends ParamKind = ParamKind, V = string | number | boolean> extends MenuItem {
   kind: K;
@@ -300,6 +335,12 @@ export interface ParamBase<K extends ParamKind = ParamKind, V = string | number 
 
 export interface ParamStr extends ParamBase<'str', string> {
   placeholder?: string;
+  /**
+   * Fires when the user presses Enter inside the input. Independent of the
+   * pane-level `onSubmit` (which is reserved for the "Apply" button and
+   * enables canSubmit checks).
+   */
+  onSubmit?: () => void;
 }
 
 export interface ParamNum extends ParamBase<'num', number> {
@@ -351,4 +392,69 @@ export interface ParamSelect extends ParamBase<'select', string> {
  */
 export interface ParamEnum extends ParamBase<'enum', string> {
   options: MenuItem[];
+}
+
+/**
+ * Action button arg — not a value, an imperative action. Renders a small
+ * `<BasicButton>` on the row's right side that fires `onClick` when pressed.
+ */
+export interface ParamBtn extends ParamBase<'btn', never> {
+  /** Button label. Defaults to `name`. */
+  buttonLabel?: string;
+  /** Optional icon rendered inside the button, to the left of the label. */
+  buttonIcon?: () => React.ReactNode;
+  /** Fires when the user clicks the button. */
+  onClick?: () => void;
+  /** Treat the button as a destructive action (red accent). */
+  danger?: boolean;
+  /** When `true`, clicking the button opens a confirmation popup. */
+  confirm?: boolean;
+  /** Confirmation popup title. Defaults to "Are you sure?". */
+  confirmLabel?: string;
+  /** Confirmation button label inside the prompt. Defaults to the button label. */
+  confirmActionLabel?: string;
+}
+
+/**
+ * Read-only display of a code / identifier value with a copy-to-clipboard
+ * button on the right. No value in the args map - purely informational.
+ */
+export interface ParamCode extends ParamBase<'code', never> {
+  /** The text to display and copy. */
+  value: string;
+  /** Truncate long values with ellipsis. */
+  truncate?: boolean;
+}
+
+/**
+ * Read-only info display row — shows a value formatted per `variant`.
+ * No value in the args map - purely informational.
+ */
+export interface ParamInfo extends ParamBase<'info', never> {
+  /** How to format `value`. Defaults to `'text'`. */
+  variant?: 'text' | 'date' | 'bytes';
+  /** The value to display. */
+  value?: string | number | Date;
+  /** Render arbitrary content instead of `value`. */
+  render?: () => React.ReactNode;
+}
+
+/**
+ * Single-character (or two-character) arg. Like `str` but the input only retains
+ * one or two chars. Use for picking emoji, or initials.
+ */
+export interface ParamChar extends ParamBase<'char', string> {
+  placeholder?: string;
+
+  /**
+   * Show an emoji picker as the input. Three modes (mirrors `InputChar`):
+   *
+   * - `false` / unset: plain single-character text input only.
+   * - `true`: small text input AND emoji-picker button side by side.
+   * - `'only'`: emoji-picker button only.
+   */
+  emoji?: boolean | 'only';
+
+  /** How many Unicode code-points the input should retain. */
+  length?: number;
 }

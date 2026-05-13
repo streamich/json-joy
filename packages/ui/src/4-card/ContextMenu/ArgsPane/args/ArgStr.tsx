@@ -13,11 +13,15 @@ export interface ArgStrProps extends InputProps {
 
 export const ArgStr: React.FC<ArgStrProps> = (props) => {
   if (props.compact) return <ArgStrCompact {...props} />;
-  const {param, compact: _compact, ...rest} = props;
+  const {param, compact: _compact, onEnter, ...rest} = props;
+  const handleEnter: React.KeyboardEventHandler = (event) => {
+    onEnter?.(event);
+    param.onSubmit?.();
+  };
   return (
     <div className={argBlockCss}>
       <FormRow title={param.display?.() ?? param.name ?? param.id} optional={param.optional}>
-        <Input {...rest} placeholder={param.placeholder} type="text" />
+        <Input {...rest} onEnter={handleEnter} placeholder={param.placeholder} type="text" />
       </FormRow>
     </div>
   );

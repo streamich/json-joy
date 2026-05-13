@@ -4,17 +4,18 @@ import {useT} from 'use-t';
 import {MiniTitle} from '../../../3-list-item/MiniTitle';
 import Arrow from '../../../icons/interactive/Arrow';
 import {Ripple} from '../../../misc/Ripple';
+import {useStyles} from '../../../styles/context';
 import type {MenuItem} from '../../StructuralMenu/types';
 
 const blockClass = rule({
   d: 'block',
-  pad: '10px 20px 4px',
+  pad: '10px 22px 4px',
 });
 
 const compactClass = rule({
   d: 'flex',
   ai: 'center',
-  pad: '10px 20px 8px',
+  pad: '10px 22px 8px',
 });
 
 const interactiveClass = rule({
@@ -77,13 +78,17 @@ export interface ContextMenuHeadingProps {
 
 export const ContextMenuHeading: React.FC<ContextMenuHeadingProps> = ({item, compact, collapsed, onToggle}) => {
   const [t] = useT();
+  const styles = useStyles();
   const label = item.display?.() ?? t(item.name);
   const collapsible = !!item.collapsible && !!onToggle;
+  const titleStyle: React.CSSProperties | undefined = item.danger
+    ? {color: styles.col.get('error')}
+    : undefined;
 
   if (!compact) {
     return (
       <div className={blockClass} role="presentation">
-        <MiniTitle>{label}</MiniTitle>
+        <MiniTitle style={titleStyle}>{label}</MiniTitle>
       </div>
     );
   }
@@ -95,7 +100,7 @@ export const ContextMenuHeading: React.FC<ContextMenuHeadingProps> = ({item, com
           <Arrow direction={collapsed ? 'r' : 'd'} style={{width: 12, height: 12}} />
         </span>
       )}
-      <MiniTitle style={{marginInlineStart: 'auto'}}>{label}</MiniTitle>
+      <MiniTitle style={{marginInlineStart: 'auto', ...titleStyle}}>{label}</MiniTitle>
     </>
   );
 

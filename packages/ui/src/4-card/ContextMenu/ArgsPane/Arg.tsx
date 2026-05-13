@@ -2,9 +2,13 @@ import * as React from 'react';
 import {ArgStr} from './args/ArgStr';
 import {ArgNum} from './args/ArgNum';
 import {ArgBool} from './args/ArgBool';
+import {ArgBtn} from './args/ArgBtn';
+import {ArgCode} from './args/ArgCode';
+import {ArgInfo} from './args/ArgInfo';
 import {ArgColor} from './args/ArgColor';
 import {ArgSelect} from './args/ArgSelect';
 import {ArgEnum} from './args/ArgEnum';
+import {ArgChar} from './args/ArgChar';
 import type {Param} from '../../StructuralMenu/types';
 
 export interface ArgControlProps {
@@ -65,6 +69,22 @@ export const Arg: React.FC<ArgControlProps> = ({param, value, onChange, onSubmit
       );
     case 'enum':
       return <ArgEnum param={param} value={value as any} onChange={onChange} compact={compact} />;
+    case 'char':
+      return (
+        <ArgChar
+          param={param}
+          value={(value as string) ?? ''}
+          onChange={onChange}
+          focus={focus}
+          compact={compact}
+        />
+      );
+    case 'btn':
+      return <ArgBtn param={param} compact={compact} />;
+    case 'code':
+      return <ArgCode param={param} compact={compact} />;
+    case 'info':
+      return <ArgInfo param={param} compact={compact} />;
     default:
       return null;
   }

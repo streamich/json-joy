@@ -12,6 +12,7 @@ export class ArgsState {
     const map: Record<string, unknown> = {};
     for (const param of props.params) {
       if (!isParam(param)) continue;
+      if (param.kind === 'btn' || param.kind === 'code' || param.kind === 'info') continue;
       const id = String(param.id ?? param.name);
       if (param.defaultable) {
         const def = param.initialDef ?? true;
@@ -44,6 +45,7 @@ export class ArgsState {
     const map = args.value;
     for (const param of this.props.params) {
       if (!isParam(param)) continue;
+      if (param.kind === 'btn' || param.kind === 'code' || param.kind === 'info') continue;
       if (param.optional || param.defaultable) continue;
       const id = param.id ?? param.name;
       if (map[id] === undefined) return false;

@@ -2,7 +2,11 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {ContextItem} from '../../ContextItem';
 import {ContextMenu} from '../../ContextMenu';
-import {Popup} from '../../../Popup';
+import {PopupControlled} from '../../../Popup/PopupControlled';
+import {context as popupCtx} from '../../../Popup/context';
+import {anchorContext, useAnchorPointHandle} from '../../../../utils/popup';
+import {useLockScrolling} from '../../../../hooks/useLockScrolling';
+import {useSingletonPopup} from '../../../../hooks/useSingletonPopup';
 import {Iconista} from '../../../../icons/Iconista';
 import {useStyles} from '../../../../styles/context';
 import {OptionalBadge} from './OptionalBadge';
@@ -10,8 +14,6 @@ import {DefaultableToggle} from './DefaultableToggle';
 import {AutoValue} from './AutoValue';
 import type {MenuItem} from '../../../StructuralMenu/types';
 import type {ArgSelectProps, DefaultableSelectValue} from './ArgSelect';
-
-const noop = () => {};
 
 const readStructured = (v: unknown): DefaultableSelectValue => {
   if (v && typeof v === 'object' && 'def' in v) {
@@ -81,6 +83,29 @@ export const ArgSelectCompact: React.FC<ArgSelectProps> = ({param, value, onChan
     </span>
   );
 
+  const popup = useSingletonPopup('arg-select');
+  const closePopup = React.useCallback(() => popup.setOpen(false), [popup]);
+  const popupContextValue = React.useMemo(() => ({close: closePopup}), [closePopup]);
+  const anchorHandle = useAnchorPointHandle({pinX: 'right'});
+  useLockScrolling(popup.open);
+
+  const dropRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!popup.open) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node | null;
+      if (!target) return;
+      const tog = anchorHandle.toggle;
+      const drop = dropRef.current;
+      if (tog && tog.contains(target)) return;
+      if (drop && drop.contains(target)) return;
+      closePopup();
+    };
+    // Listen in capture so we run before any internal mousedown handlers call stopPropagation.
+    document.addEventListener('mousedown', handler, true);
+    return () => document.removeEventListener('mousedown', handler, true);
+  }, [popup.open, anchorHandle, closePopup]);
+
   if (defaultable && def) {
     return (
       <ContextItem
@@ -109,39 +134,51 @@ export const ArgSelectCompact: React.FC<ArgSelectProps> = ({param, value, onChan
   const showSearch = param.showSearch ?? options.length >= 6;
 
   return (
-    <Popup
-      block
-      renderContext={() => (
-        <ContextMenu
-          showSearch={showSearch}
-          searchPlaceholder={param.searchPlaceholder}
-          menu={menu}
-        />
-      )}
-    >
-      <ContextItem
-        icon={param.icon?.()}
-        control
-        inset
-        nested
-        onClick={noop}
-        style={{paddingTop: 9, paddingBottom: 9}}
-        right={
-          defaultable ? (
-            <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
-              <DefaultableToggle def={false} onClick={revertToAuto} />
-              {customLabel}
+    <popupCtx.Provider value={popupContextValue}>
+      <anchorContext.Provider value={anchorHandle}>
+        <PopupControlled
+          block
+          open={popup.open}
+          refToggle={anchorHandle.ref}
+          onHeadClick={() => popup.setOpen(!popup.open)}
+          onClickAway={closePopup}
+          onEsc={popup.open ? closePopup : undefined}
+          renderContext={() => (
+            <div ref={dropRef}>
+              <ContextMenu
+                inset
+                showSearch={showSearch}
+                searchPlaceholder={param.searchPlaceholder}
+                menu={menu}
+              />
+            </div>
+          )}
+        >
+          <ContextItem
+            icon={param.icon?.()}
+            control
+            inset
+            nested
+            onClick={() => {}}
+            style={{paddingTop: 9, paddingBottom: 9}}
+            right={
+              defaultable ? (
+                <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
+                  <DefaultableToggle def={false} onClick={revertToAuto} />
+                  {customLabel}
+                </span>
+              ) : (
+                customLabel
+              )
+            }
+          >
+            <span>
+              {label}
+              {param.optional && <OptionalBadge />}
             </span>
-          ) : (
-            customLabel
-          )
-        }
-      >
-        <span>
-          {label}
-          {param.optional && <OptionalBadge />}
-        </span>
-      </ContextItem>
-    </Popup>
+          </ContextItem>
+        </PopupControlled>
+      </anchorContext.Provider>
+    </popupCtx.Provider>
   );
 };

@@ -87,8 +87,19 @@ export interface InputCharProps extends Omit<InputProps, 'right' | 'type' | 'mul
 }
 
 export const InputChar: React.FC<InputCharProps> = (props) => {
-  const {emoji, emojiPlaceholder = '🙂', value = '', onChange, disabled, readOnly, ...rest} = props;
+  const {emoji, emojiPlaceholder = '🙂', value = '', onChange, onFocus, disabled, readOnly, ...rest} = props;
   const styles = useStyles();
+
+  const handleFocus = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      const input = event.target;
+      requestAnimationFrame(() => {
+        try {input.select()} catch {}
+      });
+      onFocus?.(event);
+    },
+    [onFocus],
+  );
 
   const emojiOnly = emoji === 'only';
   const emojiEnabled = !!emoji;
@@ -138,7 +149,15 @@ export const InputChar: React.FC<InputCharProps> = (props) => {
 
   return (
     <Flex style={{gap: 8, alignItems: 'center'}}>
-      <Input {...rest} type="text" value={value} disabled={disabled} readOnly={readOnly} onChange={handleChange} />
+      <Input
+        {...rest}
+        type="text"
+        value={value}
+        disabled={disabled}
+        readOnly={readOnly}
+        onChange={handleChange}
+        onFocus={handleFocus}
+      />
       {button}
     </Flex>
   );

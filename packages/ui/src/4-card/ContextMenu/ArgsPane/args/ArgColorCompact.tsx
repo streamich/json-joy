@@ -3,7 +3,11 @@ import {useT} from 'use-t';
 import {ContextItem} from '../../ContextItem';
 import {ContextPane} from '../../ContextPane';
 import {Input} from '../../../../2-inline-block/Input';
-import {Popup} from '../../../Popup';
+import {PopupControlled} from '../../../Popup/PopupControlled';
+import {context as popupCtx} from '../../../Popup/context';
+import {anchorContext, useAnchorPointHandle} from '../../../../utils/popup';
+import {useLockScrolling} from '../../../../hooks/useLockScrolling';
+import {useSingletonPopup} from '../../../../hooks/useSingletonPopup';
 import {ColorPickerInput} from '../../../ColorPicker/ColorPickerInput';
 import {useStyles} from '../../../../styles/context';
 import {HslColor} from '../../../../styles/color/HslColor';
@@ -129,27 +133,64 @@ export const ArgColorCompact: React.FC<ArgColorProps> = ({param, value, onChange
 
   const formatColor = (hsl: HslColor): string => hsl.toRgb().hex();
 
+  const popup = useSingletonPopup('arg-color');
+  const closePopup = React.useCallback(() => popup.setOpen(false), [popup]);
+  const popupContextValue = React.useMemo(() => ({close: closePopup}), [closePopup]);
+  const anchorHandle = useAnchorPointHandle();
+  useLockScrolling(popup.open);
+
+  const dropRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!popup.open) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node | null;
+      if (!target) return;
+      const tog = anchorHandle.toggle;
+      const drop = dropRef.current;
+      if (tog && tog.contains(target)) return;
+      if (drop && drop.contains(target)) return;
+      closePopup();
+    };
+    document.addEventListener('mousedown', handler, true);
+    return () => document.removeEventListener('mousedown', handler, true);
+  }, [popup.open, anchorHandle, closePopup]);
+
   const renderPicker = () => (
-    <ContextPane
-      style={{padding: 12}}
-      onPointerDown={() => {
-        pickerDraggingRef.current = true;
-      }}
-    >
-      <ColorPickerInput
-        noAlpha={!alphaEnabled}
-        color={preview}
-        onChange={(hsl: HslColor) => {
-          const css = formatColor(hsl);
-          setPreview(css);
-          pendingValueRef.current = css;
+    <div ref={dropRef}>
+      <ContextPane
+        style={{padding: 12}}
+        onPointerDown={() => {
+          pickerDraggingRef.current = true;
         }}
-      />
-    </ContextPane>
+      >
+        <ColorPickerInput
+          noAlpha={!alphaEnabled}
+          color={preview}
+          onChange={(hsl: HslColor) => {
+            const css = formatColor(hsl);
+            setPreview(css);
+            pendingValueRef.current = css;
+          }}
+        />
+      </ContextPane>
+    </div>
   );
 
   const activeSwatch = (
-    <Popup renderContext={renderPicker}>{swatchBox(true)}</Popup>
+    <popupCtx.Provider value={popupContextValue}>
+      <anchorContext.Provider value={anchorHandle}>
+        <PopupControlled
+          open={popup.open}
+          refToggle={anchorHandle.ref}
+          onHeadClick={() => popup.setOpen(!popup.open)}
+          onClickAway={closePopup}
+          onEsc={popup.open ? closePopup : undefined}
+          renderContext={renderPicker}
+        >
+          {swatchBox(true)}
+        </PopupControlled>
+      </anchorContext.Provider>
+    </popupCtx.Provider>
   );
 
   const customControl = (

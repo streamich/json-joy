@@ -61,8 +61,8 @@ const nestedClass = rule({
   w: '20px',
   h: '20px',
   mar: '-2px',
-  marginInlineEnd: '-14px',
-  paddingInlineStart: '4px',
+  marginInlineEnd: '-10px',
+  paddingInlineStart: '0px',
 });
 
 export interface ContextItemProps extends React.HTMLAttributes<any> {

@@ -8,6 +8,10 @@ import type {ArgStrProps} from './ArgStr';
 export const ArgStrCompact: React.FC<ArgStrProps> = ({param, value, onChange, onEnter, focus}) => {
   const [t] = useT();
   const label = param.display?.() ?? t(param.name ?? param.id ?? '');
+  const handleEnter: React.KeyboardEventHandler = (event) => {
+    onEnter?.(event);
+    param.onSubmit?.();
+  };
   return (
     <ContextItem
       icon={param.icon?.()}
@@ -22,7 +26,7 @@ export const ArgStrCompact: React.FC<ArgStrProps> = ({param, value, onChange, on
             placeholder={param.placeholder}
             focus={focus}
             onChange={onChange}
-            onEnter={onEnter}
+            onEnter={handleEnter}
           />
         </div>
       }

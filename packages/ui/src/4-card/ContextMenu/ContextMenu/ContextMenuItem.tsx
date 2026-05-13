@@ -23,6 +23,8 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   const state = useContextMenu();
   const active = !!useSyncStoreOpt(item.active);
   const disabled = !!useSyncStoreOpt(item.disabled);
+  const visibleStore = useSyncStoreOpt(item.visible);
+  if (item.visible && visibleStore === false) return null;
 
   const id = item.id ?? item.name;
   const children = !!item.children && !!item.children.length ? item.children : void 0;

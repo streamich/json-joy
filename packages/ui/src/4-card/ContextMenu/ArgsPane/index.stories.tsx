@@ -691,6 +691,22 @@ export const AllOptional: StoryObj<ArgsPaneProps> = {
         name: 'Highlight Color',
         optional: true,
       },
+      {
+        kind: 'char',
+        id: 'separator',
+        name: 'Separator',
+        optional: true,
+        placeholder: ',',
+        default: ',',
+      },
+      {
+        kind: 'char',
+        id: 'emoji',
+        name: 'Marker',
+        optional: true,
+        emoji: true,
+        placeholder: '🚀',
+      },
     ],
   },
 };

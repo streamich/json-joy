@@ -28,6 +28,8 @@ export const MobileMenuItem: React.FC<MobileMenuItemProps> = ({item, onPush, onS
   const styles = useStyles();
   const active = !!useSyncStoreOpt(item.active);
   const disabled = !!useSyncStoreOpt(item.disabled);
+  const visibleStore = useSyncStoreOpt(item.visible);
+  if (item.visible && visibleStore === false) return null;
   const hasArgs = !!item.params?.length;
   const hasChildren = !!item.children?.length;
   const hasPane = !!item.pane;
