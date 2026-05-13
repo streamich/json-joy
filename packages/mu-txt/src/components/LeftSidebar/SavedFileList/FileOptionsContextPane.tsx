@@ -5,7 +5,7 @@ import {ClickAway} from '@jsonjoy.com/ui/lib/utils/ClickAway';
 import {PositionAtPoint} from '@jsonjoy.com/ui/lib/utils/popup/PositionAtPoint';
 import {MoveToViewport} from '@jsonjoy.com/ui/lib/utils/popup/MoveToViewport';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup';
-import {FileOptionsForm} from './FileOptionsForm';
+import {FileOptionsForm2} from './FileOptionsForm2';
 import type {FileMetadataDto} from '../../../state/file';
 
 export interface FileOptionsContextPaneProps {
@@ -21,20 +21,7 @@ export const FileOptionsContextPane: React.FC<FileOptionsContextPaneProps> = ({f
       <ClickAway onClickAway={onClose}>
         <popupContext.Provider value={popupCtx}>
           <MoveToViewport>
-            <ContextMenu
-              inset
-              onEsc={onClose}
-              menu={{
-                name: file.name,
-                minWidth: 360,
-                children: [
-                  {
-                    name: 'file-options',
-                    raw: () => <FileOptionsForm file={file} />,
-                  },
-                ],
-              }}
-            />
+            <FileOptionsForm2 file={file} />
           </MoveToViewport>
         </popupContext.Provider>
       </ClickAway>

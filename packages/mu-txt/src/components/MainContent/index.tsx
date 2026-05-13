@@ -32,6 +32,7 @@ export const MainContent: React.FC = () => {
   const state = useExplorer();
   const started = state.started.use();
   const files = useBehaviorSubject(state.files$);
+  const selected = useBehaviorSubject(state.file$);
 
   if (!started) return;
 
@@ -51,7 +52,7 @@ export const MainContent: React.FC = () => {
     <div className={blockClass}>
       <DotBackground className={contentClass}>
         {files.map((f) => (
-          <ErrorBoundary key={f.id} name={`document:${f.id}`} resetKey={f.id}>
+          <ErrorBoundary key={f.id} name={`document:${f.id}`} resetKey={f.id} silent={f !== selected}>
             <Document file={f} />
           </ErrorBoundary>
         ))}

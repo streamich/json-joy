@@ -7,8 +7,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
-import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
-import {FileOptionsForm} from './FileOptionsForm';
+import {FileOptionsForm2 as FileOptionsForm} from './FileOptionsForm2';
 import type {FileMetadataDto} from '../../../state/file';
 
 const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-font', width: 16, height: 16});
@@ -47,24 +46,7 @@ export const SavedFile: React.FC<SavedFileProps> = ({file}) => {
       iconHover={activeIcon}
       actions={
         <div style={{display: 'flex', alignItems: 'center'}}>
-          <Popup
-            renderContext={({onEsc}) => (
-              <ContextMenu
-                inset
-                onEsc={onEsc}
-                menu={{
-                  name: file.name,
-                  minWidth: 360,
-                  children: [
-                    {
-                      name: 'file-options',
-                      raw: () => <FileOptionsForm file={file} />,
-                    },
-                  ],
-                }}
-              />
-            )}
-          >
+          <Popup renderContext={() => <FileOptionsForm file={file} />}>
             <BasicButtonMore tooltip size={28} rounder noOutline />
           </Popup>
         </div>
