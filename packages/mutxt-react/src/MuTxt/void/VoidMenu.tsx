@@ -4,6 +4,7 @@ import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ReactEditor} from 'slate-react';
 import {insertHr} from '../behavior/hr';
 import {insertToc} from '../behavior/toc';
+import {insertEmptyMathBlock} from '../behavior/math';
 import type {MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
@@ -14,6 +15,7 @@ const HrIcon = makeIcon({set: 'tabler', icon: 'separator', width: 16, height: 16
 const FileIcon = makeIcon({set: 'tabler', icon: 'file-upload', width: 16, height: 16});
 // const TocIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 const TocIcon = makeIcon({set: 'lucide_v1', icon: 'list-tree', width: 16, height: 16});
+const MathIcon = makeIcon({set: 'tabler', icon: 'math-function', width: 16, height: 16});
 
 export class VoidMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}
@@ -28,6 +30,7 @@ export class VoidMenu implements UiLifeCycles {
       children: [
         this.itemEmbed({anchorFromCaret: true}),
         this.itemFile({anchorFromCaret: true}),
+        this.itemMath({anchorFromCaret: true}),
         this.itemHr(),
         this.itemToc(),
       ],
@@ -41,7 +44,7 @@ export class VoidMenu implements UiLifeCycles {
         {
           name: 'Insert menu',
           expand: 2,
-          children: [this.itemEmbed(), this.itemFile(), this.itemHr(), this.itemToc()],
+          children: [this.itemEmbed(), this.itemFile(), this.itemMath(), this.itemHr(), this.itemToc()],
         },
       ],
     };
@@ -126,6 +129,25 @@ export class VoidMenu implements UiLifeCycles {
         }
         mutxt.voids.open.set(false);
         embed.toggle();
+      },
+    };
+  }
+
+  public itemMath(_opts: {anchorFromCaret?: boolean} = {}): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Equation',
+      text: 'math equation formula latex mathlive tex displaystyle',
+      icon: () => <MathIcon />,
+      disabled: rsync.comp([mutxt.readOnly], ([readOnly]) => !!readOnly),
+      onSelect: (event) => {
+        event.preventDefault();
+        if (mutxt.readOnly.value) return;
+        mutxt.voids.open.set(false);
+        insertEmptyMathBlock(mutxt);
+        ReactEditor.focus(mutxt.editor as ReactEditor);
+        mutxt.setFocused(true);
+        mutxt.sync(true);
       },
     };
   }

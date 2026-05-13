@@ -13,6 +13,7 @@ import {isLeafFontActive, setLeafFont} from '../behavior/font';
 import {getActiveBg, getActiveFg, getActiveMarkColor} from '../behavior/color';
 import {MarkSwatchPanel} from './MarkSwatchPanel';
 import {ColorPickerPanel} from './ColorPickerPanel';
+import {getActiveMathInlineEntry} from '../behavior/math';
 
 export interface InlineMenuItem extends MenuItem {
   mark: MarkFormat;
@@ -39,6 +40,7 @@ const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus', width: 16, h
 const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
 const FgIcon = makeIcon({set: 'lucide', icon: 'paintbrush', width: 16, height: 16});
 const BgIcon = makeIcon({set: 'lucide', icon: 'paint-bucket', width: 16, height: 16});
+const MathIcon = makeIcon({set: 'tabler', icon: 'math-function', width: 16, height: 16});
 
 // Modify
 const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
@@ -272,7 +274,15 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Technical',
       expand: 8,
       sepBefore: true,
-      children: [this.itemCode(), this.itemSup(), this.itemSub(), this.itemKey(), this.itemIns(), this.itemDel()],
+      children: [
+        this.itemCode(),
+        this.itemMath(),
+        this.itemSup(),
+        this.itemSub(),
+        this.itemKey(),
+        this.itemIns(),
+        this.itemDel(),
+      ],
     };
   }
 
@@ -367,6 +377,25 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Annotations',
       expand: 3,
       children: [this.itemLink(opts)],
+    };
+  }
+
+  public itemMath(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Equation',
+      text: 'math equation formula latex inline tex',
+      icon: () => <MathIcon />,
+      active: rsync.comp([mutxt.version], () => !!getActiveMathInlineEntry(mutxt.editor)),
+      onSelect: (event) => {
+        event.preventDefault();
+        const entry = getActiveMathInlineEntry(mutxt.editor);
+        if (entry) {
+          mutxt.inline.math.openEdit(entry[0], entry[1]);
+        } else {
+          mutxt.inline.math.openInsert();
+        }
+      },
     };
   }
   public itemLink(opts: {anchorFromSelection?: boolean} = {}): MenuItem {
