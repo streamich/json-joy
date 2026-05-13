@@ -12,9 +12,11 @@ import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
 import {isInRawTextBlock, withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
+import {withMath} from './behavior/math';
 import {withHr} from './behavior/hr';
 import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
+import {withSelectAllGuard} from './behavior/selectAllGuard';
 import {withFile} from './behavior/file';
 import {withToc} from './behavior/toc';
 import {withTranslit} from '../translit/bindings/slate';
@@ -27,10 +29,12 @@ import {DEF_PLACEHOLDER, Placeholder} from './inline/components/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {InlineFloater} from './inline/InlineFloater';
 import {LinkFloater} from './inline/link/LinkFloater';
+import {InlineMathFloater} from './inline/InlineMathFloater';
 import {BlockFloater} from './block/BlockFloater';
 import {EmbedFloater} from './void/embed/EmbedFloater';
 import {FileFloater} from './void/file/FileFloater';
 import {OmniFloater} from './omni/OmniFloater';
+import {SelectAllGuardFloater} from './guard/SelectAllGuardFloater';
 import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
@@ -286,6 +290,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
+      <InlineMathFloater />
       {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <OmniFloater />}
       {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <IndicatorFloater />}
     </Slate>
@@ -352,6 +357,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
           <TranslitMapModal />
         </React.Suspense>
       )}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <SelectAllGuardFloater />}
     </>
   );
 
@@ -442,19 +448,33 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
     const editor = withTitleSubmit(
       withTranslit(
         withToc(
-          withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
+          withHr(
+            withFile(
+              withMath(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor())))))),
+            ),
+          ),
         ),
         translit,
         {shouldRun: (e) => !isInRawTextBlock(e as any)},
       ),
       () => onTitleSubmitRef.current,
     );
-    if (_state) return [_state.editor, _state];
-    const ownedObj: ObjApi<ObjNode> = obj
-      ? (obj as ObjApi<ObjNode>)
-      : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
-    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate, translit});
-    return [editor, state];
+    const state = _state
+      ? _state
+      : new MuTxtState(
+          editor,
+          obj
+            ? (obj as ObjApi<ObjNode>)
+            : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]),
+          {collaborative: !!presence, readOnly, fromSlate, translit},
+        );
+    const editorToReturn = _state ? _state.editor : editor;
+    withSelectAllGuard(editorToReturn, {
+      onDelete: () => state.selectAllGuard.requestDelete(),
+      onReplaceWithText: (text) => state.selectAllGuard.requestReplaceWithText(text),
+      onReplaceWithFragment: (fragment) => state.selectAllGuard.requestReplaceWithFragment(fragment),
+    });
+    return [editorToReturn, state];
   }, [obj, _state]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: autoFocus only applies on initial mount of the owned state

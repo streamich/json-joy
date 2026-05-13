@@ -12,7 +12,7 @@ import {MuTxtApi} from './MuTxtApi';
 import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
-import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
+import {Range, type BaseEditor, type Descendant, type Path, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {SizerState} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
@@ -21,6 +21,7 @@ import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
 import {OmniState} from '../omni/OmniState';
+import {SelectAllGuardState} from '../guard/SelectAllGuardState';
 import {DocumentMenu} from './DocumentMenu';
 import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
@@ -32,7 +33,15 @@ import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {ReactEditor} from 'slate-react';
-import type {CustomElement, DisplayMode, EditableWidth, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
+import type {
+  CustomElement,
+  DisplayMode,
+  EditableWidth,
+  FontKind,
+  MathInlineElement,
+  SlateEditorDocument,
+  SlateTextAlign,
+} from '../types';
 export type {DocumentOutlineItem};
 import type {HistoryEditor} from 'slate-history';
 
@@ -101,6 +110,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
   public readonly omni = new OmniState(this);
+  public readonly selectAllGuard = new SelectAllGuardState(this);
   public readonly indicator = new IndicatorState(this);
   public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
@@ -207,6 +217,7 @@ export class MuTxtState implements UiLifeCycles {
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
     const stopOmni = this.omni.start();
+    const stopSelectAllGuard = this.selectAllGuard.start();
     const stopIndicator = this.indicator.start();
     const stopThings = this.things.start();
     const stopTranslit = this.translit.start();
@@ -241,6 +252,7 @@ export class MuTxtState implements UiLifeCycles {
       stopBlock();
       stopVoids();
       stopOmni();
+      stopSelectAllGuard();
       stopIndicator();
       stopThings();
       stopTranslit();
