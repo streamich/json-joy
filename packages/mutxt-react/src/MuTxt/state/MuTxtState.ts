@@ -91,6 +91,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly caretLinkHref = rsync.val('');
   public readonly caretEmbedUrl = rsync.val('');
   public readonly caretCodeText = rsync.val('');
+  public readonly caretMathThingId = rsync.val('');
   public readonly alignment = rsync.val<SlateTextAlign>('left');
   public readonly wordCount = rsync.val(0);
   public readonly characterCount = rsync.val(0);
@@ -183,6 +184,9 @@ export class MuTxtState implements UiLifeCycles {
     if (isThemeOverride(storedTheme)) this.theme.next(storedTheme);
     editor.children = initialValue;
     editor.selection = null;
+    (editor as any).onOpenInlineMathEdit = (element: MathInlineElement, path: Path) => {
+      this.inline.math.openEdit(element, path);
+    };
   }
 
   public start(): () => void {
@@ -330,6 +334,7 @@ export class MuTxtState implements UiLifeCycles {
     this.caretLinkHref.set(caret.linkHref ?? '');
     this.caretEmbedUrl.set(caret.embedUrl ?? '');
     this.caretCodeText.set(caret.codeText ?? '');
+    this.caretMathThingId.set(caret.mathThingId ?? '');
     this.alignment.set(getActiveAlignment(editor));
     this.selectionText.set(getSelectedText(editor));
     this.publishPresence?.();

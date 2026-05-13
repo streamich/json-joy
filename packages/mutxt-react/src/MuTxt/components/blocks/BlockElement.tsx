@@ -13,6 +13,8 @@ import {ListContainerElement, ListItemElement} from './ListElement';
 import {TwoColumnsElement} from './TwoColumnsElement';
 import {FileElement} from './file/FileElement';
 import {TocElement} from './toc/TocElement';
+import {MathElement} from './math/MathElement';
+import {MathInlineElement} from './math/MathInlineElement';
 
 export interface BlockElementProps extends RenderElementProps {
   element: CustomElement;
@@ -47,9 +49,14 @@ export const BlockElement: React.FC<BlockElementProps> = (props) => {
       return <FileElement {...(props as RenderElementProps & {element: any})} />;
     case 'toc':
       return <TocElement {...(props as RenderElementProps & {element: any})} />;
+    case 'math':
+      return <MathElement {...(props as RenderElementProps & {element: any})} />;
+    case 'math-inline':
+      return <MathInlineElement {...(props as RenderElementProps & {element: any})} />;
     case 'ul':
     case 'ol':
     case 'checklist':
+    case 'stepper':
       return <ListContainerElement {...(props as RenderElementProps & {element: any})} />;
     case 'li':
       return <ListItemElement {...(props as RenderElementProps & {element: any})} />;
