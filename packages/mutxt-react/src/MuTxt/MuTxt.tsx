@@ -92,6 +92,17 @@ const fitShellClass = rule({
   fld: 'column',
 });
 
+// Host for MathLive's `<math-field>` virtual keyboard when in fullwindow /
+// fullscreen mode.
+const mathKbdHostClass = rule({
+  pos: 'absolute',
+  inset: 0,
+  pointerEvents: 'none',
+  '& .MLK__backdrop': {
+    pointerEvents: 'auto',
+  },
+});
+
 const editableClass = rule({
   w: '100%',
   mr: '0 auto',
@@ -231,6 +242,22 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
     },
     [state],
   );
+  const [mathKbdHostEl, setMathKbdHostEl] = React.useState<HTMLElement | null>(null);
+
+  // MathLive's `<math-field>` virtual keyboard mounts into `document.body` by
+  // default. In `fullwindow` and `fullscreen` we mount it inside the shell instead,
+  // to ensure it appears above the editor content.
+  useEffect(() => {
+    const vk = (globalThis as any).window?.mathVirtualKeyboard;
+    if (!vk) return;
+    const needsHost = displayMode === 'fullwindow' || displayMode === 'fullscreen';
+    const next = needsHost && mathKbdHostEl ? mathKbdHostEl : document.body;
+    vk.container = next;
+    return () => {
+      vk.container = document.body;
+    };
+  }, [displayMode, mathKbdHostEl]);
+
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       const ranges = [...decorateRemoteCursors(entry)];
