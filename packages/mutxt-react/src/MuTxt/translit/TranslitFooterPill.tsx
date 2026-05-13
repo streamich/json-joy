@@ -56,7 +56,7 @@ export const TranslitFooterPill: React.FC = () => {
             mutxt.translit.openMap();
           }}
         >
-          <Iconista set="tabler" icon="help" width={16} height={16} />
+          <Iconista set="tabler" icon="map" width={16} height={16} />
         </BasicButton>
       </BasicTooltip>
 
