@@ -33,6 +33,13 @@ export interface ArgsPaneProps {
   item: MenuItem;
   params: (Param | MenuItem)[];
   minWidth?: number;
+  /**
+   * Render as inline content with no surrounding `<ContextPane>`, no
+   * header (back button + title), no footer separator, and no Escape
+   * keydown handler. Returns just the row body so the args list can be
+   * embedded inside a host pane that already provides its own chrome.
+   */
+  inline?: boolean;
   onCancel: () => void;
   /**
    * Fires when the user clicks Apply.
@@ -201,9 +208,51 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
     }
   }
 
+  const submitFooter = props.onSubmit ? (
+    <>
+      {lastRendered?.heading ? <div style={{height: 2}} aria-hidden /> : <ContextSep />}
+      <ContextSep line />
+      <ContextSep />
+      <div className={footerClass} style={item.compact ? {justifyContent: 'center'} : undefined}>
+        {item.compact ? (
+          <WithShortcut shortcut="Enter">
+            <Button size={-2} disabled={!state.canSubmit()} onClick={state.onSubmit}>
+              {t('Apply')}
+            </Button>
+          </WithShortcut>
+        ) : (
+          <BasicTooltip shortcut="⏎" renderTooltip={() => 'Enter'}>
+            <Button disabled={!state.canSubmit()} onClick={state.onSubmit}>
+              {t('Apply')}
+            </Button>
+          </BasicTooltip>
+        )}
+      </div>
+      <ContextSep />
+    </>
+  ) : null;
+
+  if (props.inline) {
+    return (
+      <>
+        {rows}
+        {submitFooter}
+      </>
+    );
+  }
+
+  // Cap pane width so long values (e.g. a `kind: 'code'` row showing a long
+  // path or LaTeX source) can't push the pane to many thousands of pixels.
+  // Compact panes get a sensible default; non-compact panes only cap when
+  // `item.maxWidth` is set explicitly. Honors `item.maxWidth` either way.
+  const paneMaxWidth = item.maxWidth ?? (item.compact ? 480 : undefined);
+
   return (
     <ContextPane
-      style={{minWidth: minWidth ?? (item.compact ? 333 : 220)}}
+      style={{
+        minWidth: minWidth ?? (item.compact ? 333 : 220),
+        ...(paneMaxWidth !== undefined ? {maxWidth: paneMaxWidth} : {}),
+      }}
       onKeyDown={handleKeyDown}
     >
       <ContextHeader compact>
@@ -215,35 +264,13 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
       <ContextPaneHeaderSep />
       <ContextSep />
       {rows}
-      {!props.onSubmit && (
+      {!submitFooter && (
         <>
           {lastRendered?.heading ? <div style={{height: 2}} aria-hidden /> : <ContextSep />}
           <ContextPaneFooterSep />
         </>
       )}
-      {props.onSubmit && (
-        <>
-          {lastRendered?.heading ? <div style={{height: 2}} aria-hidden /> : <ContextSep />}
-          <ContextSep line />
-          <ContextSep />
-          <div className={footerClass} style={item.compact ? {justifyContent: 'center'} : undefined}>
-            {item.compact ? (
-              <WithShortcut shortcut="Enter">
-                <Button size={-2} disabled={!state.canSubmit()} onClick={state.onSubmit}>
-                  {t('Apply')}
-                </Button>
-              </WithShortcut>
-            ) : (
-              <BasicTooltip shortcut="⏎" renderTooltip={() => 'Enter'}>
-                <Button disabled={!state.canSubmit()} onClick={state.onSubmit}>
-                  {t('Apply')}
-                </Button>
-              </BasicTooltip>
-            )}
-          </div>
-          <ContextSep />
-        </>
-      )}
+      {submitFooter}
     </ContextPane>
   );
 };

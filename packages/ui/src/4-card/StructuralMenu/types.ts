@@ -424,6 +424,8 @@ export interface ParamCode extends ParamBase<'code', never> {
   value: string;
   /** Truncate long values with ellipsis. */
   truncate?: boolean;
+  /** Rendering style. */
+  variant?: 'inline' | 'block';
 }
 
 /**
