@@ -40,6 +40,7 @@ import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
 import {EnsureUiProvider, useUiServices} from '@jsonjoy.com/ui/lib/context';
 import {useToasts} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager/context';
+import {ToastCardManager} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager';
 import {Provider as StylesProvider} from '@jsonjoy.com/ui/lib/styles/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
@@ -358,6 +359,15 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         </React.Suspense>
       )}
       {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <SelectAllGuardFloater />}
+      <div ref={setMathKbdHostEl} className={mathKbdHostClass} aria-hidden />
+      {/* The global `ToastCardManager` in `UiProvider` is at `z-index: 5000`
+          in document-body stacking context, so in `fullwindow` it's hidden
+          behind the shell (`z-index: 9999`); in `fullscreen` it sits outside
+          the fullscreen element and isn't rendered at all. A second manager
+          inside the shell subscribes to the same toast service and renders
+          inside the shell's stacking context / fullscreen root, so toasts
+          remain visible in both full modes. */}
+      {(displayMode === 'fullwindow' || displayMode === 'fullscreen') && <ToastCardManager />}
     </>
   );
 
