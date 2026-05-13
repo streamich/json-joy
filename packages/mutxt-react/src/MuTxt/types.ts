@@ -318,6 +318,48 @@ export interface FileElement extends BlockAttributes {
   children: CustomText[];
 }
 
+/** Source language for a math equation payload. */
+export type MathLang = 'latex' | 'asciimath' | 'mathml';
+
+/** Visual size of a block equation: large (display), medium, or small. */
+export type MathSize = 'L' | 'M' | 'S';
+
+/** A `Thing` representing a math equation. */
+export interface MathThing extends Thing {
+  '@type': 'math';
+  /** Source string in `lang`. */
+  val: string;
+  /** Source language. Defaults to `'latex'`. */
+  lang?: MathLang;
+  /**
+   * Default visual size for the equation. Currently only consumed by
+   * inline references, block references carry their own per-element `size` override.
+   */
+  size?: MathSize;
+  /** Human-readable display name (shown in pickers / outlines). */
+  name?: string;
+  /** Cross-reference key (e.g. `eq:pythagoras`) used to link to this equation. */
+  label?: string;
+}
+
+/** A user-facing void block that references a `MathThing` by id. Rendered as a centered display-mode equation. */
+export interface MathElement extends BlockAttributes {
+  type: 'math';
+  '@thing': string;
+  /** Optional caption rendered below the equation. */
+  caption?: string;
+  /** Visual size override. */
+  size?: MathSize;
+  children: CustomText[];
+}
+
+/** A user-facing inline void that references a `MathThing` by id. Rendered inline in the surrounding paragraph. */
+export interface MathInlineElement {
+  type: 'math-inline';
+  '@thing': string;
+  children: CustomText[];
+}
+
 export type CustomElement =
   | ParagraphElement
   | TwoColumnsElement
@@ -333,7 +375,9 @@ export type CustomElement =
   | EmbedElement
   | HrElement
   | FileElement
-  | TocElement;
+  | TocElement
+  | MathElement
+  | MathInlineElement;
 
 export type SlateEditorDocument = CustomElement[];
 
