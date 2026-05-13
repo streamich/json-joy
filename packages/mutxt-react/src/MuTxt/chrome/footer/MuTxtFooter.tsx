@@ -5,10 +5,12 @@ import {Label} from '@jsonjoy.com/ui/lib/1-inline/Label';
 import {Favicon} from '@jsonjoy.com/ui/lib/1-inline/Favicon';
 import {CopyCode} from '@jsonjoy.com/ui/lib/1-inline/CopyCode';
 import {CopyButton} from '@jsonjoy.com/ui/lib/2-inline-block/CopyButton';
+import {Breadcrumb, Breadcrumbs} from '@jsonjoy.com/ui/lib/3-list-item/Breadcrumbs';
 import {useMuTxt} from '../../context';
 import {getWordCount, pluralize} from '../../util';
 import {typeToLabel} from '../../util/typeToLabel';
 import {TranslitFooterPill} from '../../translit/TranslitFooterPill';
+import type {MathThing} from '../../types';
 
 const footerClass = rule({
   d: 'flex',
@@ -56,9 +58,11 @@ export type MuTxtFooterProps = {};
 export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const styles = useStyles();
   const state = useMuTxt();
+  const footerRef = React.useRef<HTMLDivElement>(null);
   const availableWidth = state.sizer.width.use();
   const desiredWidth = state.sizer.content.use();
   const focused = state.focused.use();
+  const linkOpen = state.inline.link.open.use();
   const readOnly = state.readOnly.use();
   const wordCount = state.wordCount.use();
   const characterCount = state.characterCount.use();
@@ -67,6 +71,11 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const caretLinkHref = state.caretLinkHref.use();
   const caretEmbedUrl = state.caretEmbedUrl.use();
   const caretCodeText = state.caretCodeText.use();
+  const caretMathThingId = state.caretMathThingId.use();
+  state.things.version.use();
+  const caretMathTex = caretMathThingId
+    ? ((state.things.get(caretMathThingId) as MathThing | undefined)?.val ?? '')
+    : '';
 
   const width = Math.min(availableWidth, desiredWidth);
 
@@ -83,21 +92,48 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
   const showCharacterCount = width > 500;
   const showSelectionSummary = width > 600;
 
+  const preventBreadcrumbMouseDown = (event: React.MouseEvent): void => {
+    event.preventDefault();
+  };
+
+  const handleLinkBreadcrumbClick = (event: React.MouseEvent): void => {
+    event.preventDefault();
+    const shell = state.shellEl;
+    const footer = footerRef.current;
+    if (!shell || !footer) return;
+    const shellRect = shell.getBoundingClientRect();
+    const footerRect = footer.getBoundingClientRect();
+    const popupWidth = Math.max(Math.min(560, window.innerWidth * 0.4), 320);
+    // Offset by LinkFloater's internal GAP (8px) so the popup sits flush against the footer.
+    const rect = new DOMRect(shellRect.left, footerRect.top + 8, popupWidth, 0);
+    state.inline.link.setAnchorRect(rect);
+    state.inline.dismissed.next(true);
+    state.inline.link.toggle();
+  };
+
   return (
     <div
+      ref={footerRef}
       className={footerClass}
       style={{color: infoColor, padding: width < 700 ? '0 16px' : void 0, borderTop: `1px solid ${styles.g(0, 0.06)}`}}
     >
       <div className={footerGroupClass}>
         {!!statusText && <Label>{statusText}</Label>}
-        {!readOnly && focused && !!caretPath && showCaretPath && (
+        {!readOnly && (focused || linkOpen) && !!caretPath && showCaretPath && (
           <span className={statusPathClass}>
-            {caretPath.map((segment, index) => (
-              <React.Fragment key={`${index}:${segment}`}>
-                <span>{typeToLabel(segment) || segment}</span>
-                {index < caretPath.length - 1 && <span style={{opacity: 0.25}}>{'→'}</span>}
-              </React.Fragment>
-            ))}
+            <Breadcrumbs
+              compact
+              crumbs={caretPath.map((segment, index) => (
+                <Breadcrumb
+                  key={`${index}:${segment}`}
+                  compact
+                  onMouseDown={preventBreadcrumbMouseDown}
+                  onClick={segment === 'link' ? handleLinkBreadcrumbClick : undefined}
+                >
+                  {typeToLabel(segment) || segment}
+                </Breadcrumb>
+              ))}
+            />
             {!!footerUrl && showCaretUrl && (
               <>
                 <span style={{opacity: 0.25}}>{'→'}</span>
@@ -129,6 +165,12 @@ export const MuTxtFooter: React.FC<MuTxtFooterProps> = () => {
               <>
                 <span style={{opacity: 0.25}}>{'→'}</span>
                 <CopyCode value={caretCodeText} truncate style={{maxWidth: 220}} alt spacious roundest />
+              </>
+            )}
+            {!!caretMathTex && showCaretCode && (
+              <>
+                <span style={{opacity: 0.25}}>{'→'}</span>
+                <CopyCode value={caretMathTex} truncate style={{maxWidth: 220}} alt spacious roundest />
               </>
             )}
           </span>
