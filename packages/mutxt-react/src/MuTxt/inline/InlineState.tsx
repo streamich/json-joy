@@ -2,6 +2,7 @@ import {rsync, type UiLifeCycles} from '@jsonjoy.com/ui';
 import {ReactEditor} from 'slate-react';
 import {InlineMenu} from './InlineMenu';
 import {LinkButtonState} from './link/LinkButtonState';
+import {InlineMathState} from './InlineMathState';
 import type {AnchorPoint} from '@jsonjoy.com/ui/lib/utils/popup/types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {ScrollState} from '@jsonjoy.com/ui/lib/4-card/ScrollArea';
@@ -17,6 +18,7 @@ export class InlineState implements UiLifeCycles {
   public readonly dismissed = rsync.val(false);
   public isFocusInToolbar: (() => boolean) | null = null;
   public readonly link: LinkButtonState;
+  public readonly math: InlineMathState;
 
   public readonly popupOpen = rsync.val(false);
 
@@ -40,6 +42,7 @@ export class InlineState implements UiLifeCycles {
   ) {
     this.menu = new InlineMenu(mutxt);
     this.link = new LinkButtonState(mutxt);
+    this.math = new InlineMathState(mutxt);
   }
 
   public readonly start = (): (() => void) => {
