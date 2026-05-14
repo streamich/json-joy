@@ -12,8 +12,12 @@ import type {FileMetadataDto} from '../../state/file';
 import DownloadIcon__svg from 'iconista/lib/react/auth0/download';
 import GhostFileIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-binary';
 
-const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DownloadIcon__svg width={16} height={16} {...props} />;
-const GhostFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <GhostFileIcon__svg width={16} height={16} {...props} />;
+const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DownloadIcon__svg width={16} height={16} {...props} />
+);
+const GhostFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <GhostFileIcon__svg width={16} height={16} {...props} />
+);
 const icon = <GhostFileIcon />;
 
 const formatDate = (timestamp: number): string => {

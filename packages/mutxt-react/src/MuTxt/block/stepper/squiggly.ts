@@ -5,12 +5,7 @@ const STEPS = 240;
  * with the given `meanRadius`. `lobes` controls how many bumps go around the
  * loop, `amplitude` controls how far the path deviates from the mean radius.
  */
-export const squigglyCirclePath = (
-  center: number,
-  meanRadius: number,
-  lobes: number,
-  amplitude: number,
-): string => {
+export const squigglyCirclePath = (center: number, meanRadius: number, lobes: number, amplitude: number): string => {
   let path = '';
   for (let i = 0; i <= STEPS; i++) {
     const t = (i / STEPS) * Math.PI * 2;

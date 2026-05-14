@@ -30,12 +30,7 @@ const wrapStyle: React.CSSProperties = {
  * Build a closed wavy line from `start` to `end` along the segment axis,
  * with the perpendicular axis fixed at `mid`. Used by both orientations.
  */
-const squigglyPath = (
-  start: number,
-  end: number,
-  mid: number,
-  axis: 'horizontal' | 'vertical',
-): string => {
+const squigglyPath = (start: number, end: number, mid: number, axis: 'horizontal' | 'vertical'): string => {
   const len = end - start;
   if (len <= 0) return '';
   // Even number of half-waves so the line ends on the baseline.
@@ -72,12 +67,7 @@ export const BorderStyleIcon: React.FC<BorderStyleIconProps> = ({
   if (style === 'none') {
     // Render an empty hit-box so the icon column still aligns, but draw
     // nothing — the option is "no line".
-    return (
-      <span
-        style={{...wrapStyle, width: size, height: size}}
-        aria-hidden="true"
-      />
-    );
+    return <span style={{...wrapStyle, width: size, height: size}} aria-hidden="true" />;
   }
 
   const vertical = orientation === 'vertical';
@@ -124,12 +114,7 @@ export const BorderStyleIcon: React.FC<BorderStyleIconProps> = ({
 
   return (
     <span style={wrapStyle} aria-hidden="true">
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        style={svgStyle}
-      >
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={svgStyle}>
         {body}
       </svg>
     </span>

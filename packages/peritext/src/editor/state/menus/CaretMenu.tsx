@@ -71,8 +71,12 @@ const LetterSpacingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <L
 const FontStyleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontStyleIcon__svg {...props} />;
 const FontFamilyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontFamilyIcon__svg {...props} />;
 const FontSizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontSizeIcon__svg {...props} />;
-const LetterCaseUppercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterCaseUppercaseIcon__svg {...props} />;
-const LetterCaseLowercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterCaseLowercaseIcon__svg {...props} />;
+const LetterCaseUppercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LetterCaseUppercaseIcon__svg {...props} />
+);
+const LetterCaseLowercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LetterCaseLowercaseIcon__svg {...props} />
+);
 const RadixKeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <RadixKeyboardIcon__svg {...props} />;
 const RadixFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <RadixFileIcon__svg {...props} />;
 const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CalendarIcon__svg {...props} />;
@@ -100,10 +104,14 @@ const _TablerFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_Ta
 const _MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_MathIcon__svg {...props} />;
 const _TypeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_TypeIcon__svg {...props} />;
 const VariableIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VariableIcon__svg {...props} />;
-const SquareChevronRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SquareChevronRightIcon__svg {...props} />;
+const SquareChevronRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SquareChevronRightIcon__svg {...props} />
+);
 const SmilePlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SmilePlusIcon__svg {...props} />;
 const OmegaIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OmegaIcon__svg {...props} />;
-const BetweenVerticalEndIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BetweenVerticalEndIcon__svg {...props} />;
+const BetweenVerticalEndIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <BetweenVerticalEndIcon__svg {...props} />
+);
 const _UndoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_UndoIcon__svg {...props} />;
 const _RedoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_RedoIcon__svg {...props} />;
 const _QuoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <_QuoteIcon__svg {...props} />;

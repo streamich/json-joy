@@ -72,13 +72,7 @@ export const ColorSwatch: React.FC<ColorSwatchProps> = ({
   });
 
   const button = (
-    <button
-      type="button"
-      className={cls}
-      disabled={disabled}
-      onClick={onClick}
-      onMouseDown={onMouseDown}
-    >
+    <button type="button" className={cls} disabled={disabled} onClick={onClick} onMouseDown={onMouseDown}>
       {showLetter ? <span style={{color: glyphColor}}>{letter}</span> : null}
       {active ? (
         <span

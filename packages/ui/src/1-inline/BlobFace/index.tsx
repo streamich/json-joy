@@ -120,11 +120,66 @@ const noGestureScript: BlobFaceGestureScript = {
   duration: 960,
   keyframes: [
     {at: 0, pose: createGesturePose()},
-    {at: 0.16, pose: createGesturePose({headX: -2.2, headRotate: -9, eyeX: 9.45, eyeY: -0.7, eyeScale: 1.18, leftEyeTilt: -4.8, rightEyeTilt: -4.8})},
-    {at: 0.34, pose: createGesturePose({headX: 2.35, headRotate: 9.5, eyeX: -10.05, eyeY: 0.9, eyeScale: 1.25, leftEyeTilt: 5.2, rightEyeTilt: 5.2})},
-    {at: 0.52, pose: createGesturePose({headX: -1.85, headRotate: -6.5, eyeX: 7.35, eyeY: -0.55, eyeScale: 1.21, leftEyeTilt: -3.6, rightEyeTilt: -3.6})},
-    {at: 0.72, pose: createGesturePose({headX: 1.35, headRotate: 4.6, eyeX: -5.7, eyeY: 0.62, eyeScale: 1.15, leftEyeTilt: 2.8, rightEyeTilt: 2.8})},
-    {at: 0.88, pose: createGesturePose({headX: -0.45, headRotate: -1.5, eyeX: 2.1, eyeY: -0.18, eyeScale: 1.08, leftEyeTilt: -0.8, rightEyeTilt: -0.8})},
+    {
+      at: 0.16,
+      pose: createGesturePose({
+        headX: -2.2,
+        headRotate: -9,
+        eyeX: 9.45,
+        eyeY: -0.7,
+        eyeScale: 1.18,
+        leftEyeTilt: -4.8,
+        rightEyeTilt: -4.8,
+      }),
+    },
+    {
+      at: 0.34,
+      pose: createGesturePose({
+        headX: 2.35,
+        headRotate: 9.5,
+        eyeX: -10.05,
+        eyeY: 0.9,
+        eyeScale: 1.25,
+        leftEyeTilt: 5.2,
+        rightEyeTilt: 5.2,
+      }),
+    },
+    {
+      at: 0.52,
+      pose: createGesturePose({
+        headX: -1.85,
+        headRotate: -6.5,
+        eyeX: 7.35,
+        eyeY: -0.55,
+        eyeScale: 1.21,
+        leftEyeTilt: -3.6,
+        rightEyeTilt: -3.6,
+      }),
+    },
+    {
+      at: 0.72,
+      pose: createGesturePose({
+        headX: 1.35,
+        headRotate: 4.6,
+        eyeX: -5.7,
+        eyeY: 0.62,
+        eyeScale: 1.15,
+        leftEyeTilt: 2.8,
+        rightEyeTilt: 2.8,
+      }),
+    },
+    {
+      at: 0.88,
+      pose: createGesturePose({
+        headX: -0.45,
+        headRotate: -1.5,
+        eyeX: 2.1,
+        eyeY: -0.18,
+        eyeScale: 1.08,
+        leftEyeTilt: -0.8,
+        rightEyeTilt: -0.8,
+      }),
+    },
     {at: 1, pose: createGesturePose()},
   ],
 };
@@ -133,10 +188,60 @@ const idkGestureScript: BlobFaceGestureScript = {
   duration: 1380,
   keyframes: [
     {at: 0, pose: createGesturePose()},
-    {at: 0.16, pose: createGesturePose({headX: -1.1, headY: 0.2, headRotate: -10.5, eyeX: 0.85, eyeY: -0.55, eyeSpread: 2.3, leftEyeTilt: -5.5, rightEyeTilt: -2.5, squintScale: 0.96})},
-    {at: 0.4, pose: createGesturePose({headX: 1.3, headY: -0.15, headRotate: 9.2, eyeX: -0.45, eyeY: -2.7, eyeSpread: 1.1, leftEyeTilt: 2.4, rightEyeTilt: 5.8, squintScale: 0.94})},
-    {at: 0.68, pose: createGesturePose({headX: -0.8, headY: 0.3, headRotate: -5.8, eyeX: 0.3, eyeY: -3.6, eyeSpread: 0.45, leftEyeTilt: -2.2, rightEyeTilt: 2.8, squintScale: 0.98})},
-    {at: 0.86, pose: createGesturePose({headX: 0.45, headRotate: 3.9, eyeX: -0.15, eyeY: -1.9, eyeSpread: 0.12, leftEyeTilt: 1.1, rightEyeTilt: 2.2})},
+    {
+      at: 0.16,
+      pose: createGesturePose({
+        headX: -1.1,
+        headY: 0.2,
+        headRotate: -10.5,
+        eyeX: 0.85,
+        eyeY: -0.55,
+        eyeSpread: 2.3,
+        leftEyeTilt: -5.5,
+        rightEyeTilt: -2.5,
+        squintScale: 0.96,
+      }),
+    },
+    {
+      at: 0.4,
+      pose: createGesturePose({
+        headX: 1.3,
+        headY: -0.15,
+        headRotate: 9.2,
+        eyeX: -0.45,
+        eyeY: -2.7,
+        eyeSpread: 1.1,
+        leftEyeTilt: 2.4,
+        rightEyeTilt: 5.8,
+        squintScale: 0.94,
+      }),
+    },
+    {
+      at: 0.68,
+      pose: createGesturePose({
+        headX: -0.8,
+        headY: 0.3,
+        headRotate: -5.8,
+        eyeX: 0.3,
+        eyeY: -3.6,
+        eyeSpread: 0.45,
+        leftEyeTilt: -2.2,
+        rightEyeTilt: 2.8,
+        squintScale: 0.98,
+      }),
+    },
+    {
+      at: 0.86,
+      pose: createGesturePose({
+        headX: 0.45,
+        headRotate: 3.9,
+        eyeX: -0.15,
+        eyeY: -1.9,
+        eyeSpread: 0.12,
+        leftEyeTilt: 1.1,
+        rightEyeTilt: 2.2,
+      }),
+    },
     {at: 1, pose: createGesturePose()},
   ],
 };
@@ -367,8 +472,12 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
       const directionX = distance > 0.001 ? dx / distance : 0;
       const directionY = distance > 0.001 ? dy / distance : 0;
 
-      const nextTx = Number(clamp(directionX * lookMaxTravelX * easedReach, -lookMaxTravelX, lookMaxTravelX).toFixed(2));
-      const nextTy = Number(clamp(directionY * lookMaxTravelY * easedReach, -lookMaxTravelY, lookMaxTravelY).toFixed(2));
+      const nextTx = Number(
+        clamp(directionX * lookMaxTravelX * easedReach, -lookMaxTravelX, lookMaxTravelX).toFixed(2),
+      );
+      const nextTy = Number(
+        clamp(directionY * lookMaxTravelY * easedReach, -lookMaxTravelY, lookMaxTravelY).toFixed(2),
+      );
       const impulseX = clamp((nextTx - state.tx) * 0.16, -0.95, 0.95);
       const impulseY = clamp((nextTy - state.ty) * 0.15, -0.8, 0.8);
 
@@ -438,7 +547,12 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
     const rafIds = new Set<number>();
     let cancelled = false;
 
-    const animateTilt = (setTilt: React.Dispatch<React.SetStateAction<number>>, target: number, duration: number, onDone: () => void) => {
+    const animateTilt = (
+      setTilt: React.Dispatch<React.SetStateAction<number>>,
+      target: number,
+      duration: number,
+      onDone: () => void,
+    ) => {
       const startedAt = performance.now();
       let rafId = 0;
 
@@ -549,7 +663,9 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
   const rootStyle: React.CSSProperties = {width: size, height: size, ...style};
   if (interactive && !rootStyle.cursor) rootStyle.cursor = 'pointer';
 
-  const bodyAnimation = hovered ? `${hoverAnimation} 900ms ease-in-out infinite` : `${idleAnimation} 3200ms ease-in-out infinite`;
+  const bodyAnimation = hovered
+    ? `${hoverAnimation} 900ms ease-in-out infinite`
+    : `${idleAnimation} 3200ms ease-in-out infinite`;
   const eyeWidth = hovered ? 9.4 : 5.2;
   const eyeHeight = hovered ? 4.4 : 10.6;
   const eyeRadius = hovered ? 1.2 : 1.1;
@@ -564,13 +680,17 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
   const eyeGestureScale = Number(clamp(gesturePose.eyeScale, 0.75, 1.25).toFixed(2));
   const combinedLeftEyeTilt = Number((leftEyeTilt + gesturePose.leftEyeTilt).toFixed(2));
   const combinedRightEyeTilt = Number((rightEyeTilt + gesturePose.rightEyeTilt).toFixed(2));
-  const eyeSquintScale = Number(clamp((hovered ? 1 : idleSquint ? 0.28 : 1) * gesturePose.squintScale, 0.2, 1).toFixed(2));
+  const eyeSquintScale = Number(
+    clamp((hovered ? 1 : idleSquint ? 0.28 : 1) * gesturePose.squintScale, 0.2, 1).toFixed(2),
+  );
   const leftEyePulse = hovered ? '1 1;1 1;1.08 0.94;1 1;1 1' : '1 1;1 1;1.08 1.12;1 1;1 1';
   const rightEyePulse = hovered ? '1 1;1 1;1.05 0.92;1 1;1 1' : '1 1;1 1;1.05 1.1;1 1;1 1';
 
   const renderEye = () => {
     if (hovered) {
-      return <rect x={-eyeWidth / 2} y={-eyeHeight / 2} width={eyeWidth} height={eyeHeight} rx={eyeRadius} fill="#fff" />;
+      return (
+        <rect x={-eyeWidth / 2} y={-eyeHeight / 2} width={eyeWidth} height={eyeHeight} rx={eyeRadius} fill="#fff" />
+      );
     }
 
     return (
@@ -635,7 +755,10 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
                               repeatCount="indefinite"
                             />
                             <g transform={`scale(${eyeGestureScale} ${(eyeGestureScale * eyeSquintScale).toFixed(2)})`}>
-                              <g className="eye-blink" style={{animation: `${blinkAnimation} 4600ms ease-in-out -700ms infinite`}}>
+                              <g
+                                className="eye-blink"
+                                style={{animation: `${blinkAnimation} 4600ms ease-in-out -700ms infinite`}}
+                              >
                                 {renderEye()}
                               </g>
                             </g>
@@ -671,7 +794,10 @@ export const BlobFace: React.FC<BlobFaceProps> = ({
                               repeatCount="indefinite"
                             />
                             <g transform={`scale(${eyeGestureScale} ${(eyeGestureScale * eyeSquintScale).toFixed(2)})`}>
-                              <g className="eye-blink" style={{animation: `${blinkAnimation} 5200ms ease-in-out -1800ms infinite`}}>
+                              <g
+                                className="eye-blink"
+                                style={{animation: `${blinkAnimation} 5200ms ease-in-out -1800ms infinite`}}
+                              >
                                 {renderEye()}
                               </g>
                             </g>

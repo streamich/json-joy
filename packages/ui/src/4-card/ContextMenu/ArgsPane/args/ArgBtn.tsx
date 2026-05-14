@@ -103,11 +103,7 @@ export const ArgBtn: React.FC<ArgBtnProps> = ({param}) => {
       control
       inset
       style={{paddingTop: 6, paddingBottom: 6}}
-      right={
-        <span style={{display: 'inline-flex', alignItems: 'center', margin: '-5px -8px -5px 0'}}>
-          {trigger}
-        </span>
-      }
+      right={<span style={{display: 'inline-flex', alignItems: 'center', margin: '-5px -8px -5px 0'}}>{trigger}</span>}
     >
       <span style={danger ? {color: errorColor} : undefined}>
         {label}

@@ -44,25 +44,17 @@ export const LINE_STYLE_LABEL: Record<LineStyle, string> = {
 export const LINE_WIDTHS: ReadonlyArray<0 | 1 | 2 | 3 | 4 | 5 | 6> = [0, 1, 2, 3, 4, 5, 6];
 
 const isStepState = (v?: string): v is StepState =>
-  v === 'active' ||
-  v === 'pending' ||
-  v === 'done' ||
-  v === 'warning' ||
-  v === 'error' ||
-  v === 'optional';
+  v === 'active' || v === 'pending' || v === 'done' || v === 'warning' || v === 'error' || v === 'optional';
 
-const isStepIndicator = (v?: string): v is StepIndicator =>
-  v === 'number' || v === 'symbol' || v === 'chars';
+const isStepIndicator = (v?: string): v is StepIndicator => v === 'number' || v === 'symbol' || v === 'chars';
 
 const isLineStyle = (v?: string): v is LineStyle =>
   v === 'none' || v === 'solid' || v === 'dashed' || v === 'dotted' || v === 'squiggly';
 
 export const getStepState = (v?: string): StepState => (isStepState(v) ? v : DEF_STATE);
-export const getStepIndicator = (v?: string): StepIndicator =>
-  isStepIndicator(v) ? v : DEF_INDICATOR;
+export const getStepIndicator = (v?: string): StepIndicator => (isStepIndicator(v) ? v : DEF_INDICATOR);
 
-export const getLineStyle = (v: string | undefined, fallback: LineStyle): LineStyle =>
-  isLineStyle(v) ? v : fallback;
+export const getLineStyle = (v: string | undefined, fallback: LineStyle): LineStyle => (isLineStyle(v) ? v : fallback);
 
 export const clampWidth = (v: unknown): 0 | 1 | 2 | 3 | 4 | 5 | 6 => {
   const n = Math.round(Number(v) || 0);

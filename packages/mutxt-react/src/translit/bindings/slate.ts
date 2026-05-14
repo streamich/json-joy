@@ -22,11 +22,7 @@ export interface WithTranslitOpts {
   shouldRun?: (editor: Editor) => boolean;
 }
 
-export const withTranslit = <T extends Editor>(
-  editor: T,
-  service: TranslitService,
-  opts: WithTranslitOpts = {},
-): T => {
+export const withTranslit = <T extends Editor>(editor: T, service: TranslitService, opts: WithTranslitOpts = {}): T => {
   const {insertText, deleteBackward, insertBreak} = editor;
   let matcher: Matcher | null = null;
   let composing = false;

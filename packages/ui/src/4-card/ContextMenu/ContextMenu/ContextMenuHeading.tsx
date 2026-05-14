@@ -81,9 +81,7 @@ export const ContextMenuHeading: React.FC<ContextMenuHeadingProps> = ({item, com
   const styles = useStyles();
   const label = item.display?.() ?? t(item.name);
   const collapsible = !!item.collapsible && !!onToggle;
-  const titleStyle: React.CSSProperties | undefined = item.danger
-    ? {color: styles.col.get('error')}
-    : undefined;
+  const titleStyle: React.CSSProperties | undefined = item.danger ? {color: styles.col.get('error')} : undefined;
 
   if (!compact) {
     return (
@@ -107,12 +105,7 @@ export const ContextMenuHeading: React.FC<ContextMenuHeadingProps> = ({item, com
   if (collapsible) {
     return (
       <Ripple>
-        <button
-          type="button"
-          className={compactClass + interactiveClass}
-          aria-expanded={!collapsed}
-          onClick={onToggle}
-        >
+        <button type="button" className={compactClass + interactiveClass} aria-expanded={!collapsed} onClick={onToggle}>
           {inner}
         </button>
       </Ripple>

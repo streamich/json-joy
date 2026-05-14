@@ -73,8 +73,8 @@ export const Sizes: StoryObj<typeof meta> = {
 export const InTextFlow: StoryObj<typeof meta> = {
   render: () => (
     <div style={{fontSize: 18, lineHeight: 1.6, maxWidth: 420}}>
-      The status mascot <Component size={28} title="BlobFace mascot" style={{margin: '0 6px -4px'}} /> watches the pointer,
-      blinks sometimes, and gets very pleased when hovered.
+      The status mascot <Component size={28} title="BlobFace mascot" style={{margin: '0 6px -4px'}} /> watches the
+      pointer, blinks sometimes, and gets very pleased when hovered.
     </div>
   ),
 };

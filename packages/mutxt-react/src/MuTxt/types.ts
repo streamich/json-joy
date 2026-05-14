@@ -57,17 +57,7 @@ export type MarkFormat =
 /**
  * Named slot in the highlight (`<mark>`) palette.
  */
-export type MarkColor =
-  | 'yellow'
-  | 'lime'
-  | 'green'
-  | 'cyan'
-  | 'blue'
-  | 'pink'
-  | 'peach'
-  | 'red'
-  | 'purple'
-  | 'gray';
+export type MarkColor = 'yellow' | 'lime' | 'green' | 'cyan' | 'blue' | 'pink' | 'peach' | 'red' | 'purple' | 'gray';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
 export type ListElementType = 'ul' | 'ol' | 'checklist' | 'stepper';
 export type UlType = 'disc' | 'circle' | 'square';
@@ -177,7 +167,6 @@ export interface PreformattedElement extends BlockAttributes {
   type: 'pre';
   children: CustomText[];
 }
-
 
 export interface ListItemElement extends BlockAttributes, StepperItem {
   type: 'li';

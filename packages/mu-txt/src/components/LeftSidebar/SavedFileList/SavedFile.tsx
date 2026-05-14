@@ -10,7 +10,9 @@ import {FileOptionsForm2 as FileOptionsForm} from './FileOptionsForm2';
 import type {FileMetadataDto} from '../../../state/file';
 import GhostFileIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-font';
 
-const GhostFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <GhostFileIcon__svg width={16} height={16} {...props} />;
+const GhostFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <GhostFileIcon__svg width={16} height={16} {...props} />
+);
 const icon = <GhostFileIcon />;
 
 export interface SavedFileProps {

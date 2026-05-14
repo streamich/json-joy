@@ -15,8 +15,7 @@ export interface BulletHaloProps {
 const dashFor = (style: LineStyle, strokeWidth: number): {dash?: string; cap: 'butt' | 'round'} => {
   if (style === 'dashed')
     return {dash: `${(strokeWidth * 2.5).toFixed(2)} ${(strokeWidth * 1.8).toFixed(2)}`, cap: 'butt'};
-  if (style === 'dotted')
-    return {dash: `0 ${(strokeWidth * 2.2).toFixed(2)}`, cap: 'round'};
+  if (style === 'dotted') return {dash: `0 ${(strokeWidth * 2.2).toFixed(2)}`, cap: 'round'};
   return {cap: 'butt'};
 };
 
@@ -50,14 +49,7 @@ export const BulletHalo: React.FC<BulletHaloProps> = ({style, color, strokeWidth
         overflow: 'visible',
       }}
     >
-      <path
-        d={path}
-        fill="none"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeDasharray={dash}
-        strokeLinecap={cap}
-      />
+      <path d={path} fill="none" stroke={color} strokeWidth={strokeWidth} strokeDasharray={dash} strokeLinecap={cap} />
     </svg>
   );
 };

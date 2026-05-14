@@ -145,14 +145,11 @@ describe('selectAllGuard', () => {
     });
 
     test('does not intercept partial-range deleteFragment', () => {
-      const editor = withSelectAllGuard(
-        makeEditor([{type: 'p', children: [{text: 'hello world'}]}]),
-        {
-          onDelete: () => {
-            throw new Error('should not be called');
-          },
+      const editor = withSelectAllGuard(makeEditor([{type: 'p', children: [{text: 'hello world'}]}]), {
+        onDelete: () => {
+          throw new Error('should not be called');
         },
-      );
+      });
       editor.selection = {anchor: {path: [0, 0], offset: 0}, focus: {path: [0, 0], offset: 5}};
       Transforms.delete(editor, {at: editor.selection});
       const sel = editor.selection!;

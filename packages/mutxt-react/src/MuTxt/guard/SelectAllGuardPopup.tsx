@@ -33,8 +33,7 @@ export const SelectAllGuardPopup: React.FC<SelectAllGuardPopupProps> = ({state, 
   const onConfirm = React.useCallback(() => state.confirm(), [state]);
   const onCancel = React.useCallback(() => state.cancel(), [state]);
 
-  const title =
-    action.kind === 'delete' ? t('Delete the whole document?') : t('Replace the whole document?');
+  const title = action.kind === 'delete' ? t('Delete the whole document?') : t('Replace the whole document?');
 
   let body: React.ReactNode;
   if (action.kind === 'delete') {

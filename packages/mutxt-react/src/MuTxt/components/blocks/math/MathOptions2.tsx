@@ -14,10 +14,18 @@ import CaptionIcon__svg from 'iconista/lib/react/bootstrap/chat-square-text';
 import NameIcon__svg from 'iconista/lib/react/bootstrap/pen';
 import LabelIcon__svg from 'iconista/lib/react/bootstrap/tag';
 
-const SizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SizeIcon__svg width={16} height={16} {...props} />;
-const CaptionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CaptionIcon__svg width={16} height={16} {...props} />;
-const NameIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NameIcon__svg width={16} height={16} {...props} />;
-const LabelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LabelIcon__svg width={16} height={16} {...props} />;
+const SizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SizeIcon__svg width={16} height={16} {...props} />
+);
+const CaptionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CaptionIcon__svg width={16} height={16} {...props} />
+);
+const NameIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <NameIcon__svg width={16} height={16} {...props} />
+);
+const LabelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LabelIcon__svg width={16} height={16} {...props} />
+);
 
 const renderSizeIcon = () => <SizeIcon />;
 const renderCaptionIcon = () => <CaptionIcon />;
@@ -89,10 +97,7 @@ export const MathOptions2: React.FC<MathOptions2Props> = ({element, closePopup})
   const mathMl = React.useMemo(() => (tex ? safeConvert(convertLatexToMathMl, tex) : ''), [tex]);
   const mathHtml = React.useMemo(() => (tex ? safeConvert(convertLatexToMarkup, tex) : ''), [tex]);
 
-  const item: MenuItem = React.useMemo(
-    () => ({name: t('Equation options'), compact: true}),
-    [t],
-  );
+  const item: MenuItem = React.useMemo(() => ({name: t('Equation options'), compact: true}), [t]);
 
   const params: (Param | MenuItem)[] = React.useMemo(() => {
     const list: (Param | MenuItem)[] = [];
@@ -196,7 +201,5 @@ export const MathOptions2: React.FC<MathOptions2Props> = ({element, closePopup})
     [setElementField, setThingField],
   );
 
-  return (
-    <ArgsPane item={item} params={params} onCancel={onCancel} onChange={onChange} minWidth={360} />
-  );
+  return <ArgsPane item={item} params={params} onCancel={onCancel} onChange={onChange} minWidth={360} />;
 };

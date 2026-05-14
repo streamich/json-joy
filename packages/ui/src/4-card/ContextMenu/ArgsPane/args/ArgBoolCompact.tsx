@@ -50,11 +50,7 @@ export const ArgBoolCompact: React.FC<ArgBoolProps> = ({param, value, onChange})
       {def ? (
         <>
           <DefaultableToggle def onClick={enterCustom} />
-          <span
-            style={autoWrapStyle(hover)}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-          >
+          <span style={autoWrapStyle(hover)} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
             {checkbox(fallback)}
           </span>
         </>

@@ -4,9 +4,15 @@ import CheckIcon__svg from 'iconista/lib/react/lucide/check';
 import AlertIcon__svg from 'iconista/lib/react/tabler_filled/alert-triangle';
 import OptionalIcon__svg from 'iconista/lib/react/tabler/circle-dashed';
 
-const CheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CheckIcon__svg width={16} height={16} {...props} />;
-const AlertIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlertIcon__svg width={16} height={16} {...props} />;
-const OptionalIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OptionalIcon__svg width={16} height={16} {...props} />;
+const CheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CheckIcon__svg width={16} height={16} {...props} />
+);
+const AlertIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <AlertIcon__svg width={16} height={16} {...props} />
+);
+const OptionalIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <OptionalIcon__svg width={16} height={16} {...props} />
+);
 
 export interface BulletGlyphProps {
   state: StepState;
@@ -47,13 +53,7 @@ const renderNumber = (index: number, color: string): React.ReactNode => {
   return <span style={{fontSize: 14, lineHeight: 1, color}}>{text}</span>;
 };
 
-export const BulletGlyph: React.FC<BulletGlyphProps> = ({
-  state,
-  indicator,
-  chars,
-  index,
-  color,
-}) => {
+export const BulletGlyph: React.FC<BulletGlyphProps> = ({state, indicator, chars, index, color}) => {
   if (indicator === 'chars') return <>{renderChars(chars, color, index)}</>;
   if (state === 'optional') return <OptionalIcon style={{color}} />;
   if (indicator === 'number') return <>{renderNumber(index, color)}</>;

@@ -25,7 +25,7 @@ export class InlineState implements UiLifeCycles {
   public readonly setPopupOpen = (open: boolean): void => {
     this.popupOpen.set(open);
   };
-  
+
   public readonly recentColors = rsync.val<string[]>([]);
 
   public readonly pushRecentColor = (color: string): void => {

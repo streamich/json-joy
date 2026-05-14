@@ -18,9 +18,7 @@ const Demo: React.FC<InputCharProps> = (props) => {
   return (
     <div style={{minWidth: 280}}>
       <Component {...props} value={value} onChange={setValue} />
-      <div style={{marginTop: 12, fontFamily: 'monospace', opacity: 0.6}}>
-        value: {JSON.stringify(value)}
-      </div>
+      <div style={{marginTop: 12, fontFamily: 'monospace', opacity: 0.6}}>value: {JSON.stringify(value)}</div>
     </div>
   );
 };

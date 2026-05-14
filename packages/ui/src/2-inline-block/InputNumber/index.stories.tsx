@@ -119,8 +119,8 @@ const CommitOnlyDemo: React.FC = () => {
   return (
     <div style={{minWidth: 320, display: 'flex', flexDirection: 'column', gap: 12}}>
       <div style={{fontSize: 12, opacity: 0.7, lineHeight: 1.5}}>
-        Drag the handle: <code>onChange</code> still fires per-move (real-time counter goes up), but the
-        consumer here only persists from <code>onChangeEnd</code>. Try dragging vs. clicking +/-.
+        Drag the handle: <code>onChange</code> still fires per-move (real-time counter goes up), but the consumer here
+        only persists from <code>onChangeEnd</code>. Try dragging vs. clicking +/-.
       </div>
       <InputNumber
         dragSensitivity={0.1}

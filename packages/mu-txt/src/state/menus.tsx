@@ -7,8 +7,12 @@ import type {MuTxtAppState} from '.';
 import FileMuTxtIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-text';
 import FileJsonIcon__svg from 'iconista/lib/react/bootstrap/filetype-json';
 
-const FileMuTxtIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileMuTxtIcon__svg width={16} height={16} {...props} />;
-const FileJsonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileJsonIcon__svg width={16} height={16} {...props} />;
+const FileMuTxtIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FileMuTxtIcon__svg width={16} height={16} {...props} />
+);
+const FileJsonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FileJsonIcon__svg width={16} height={16} {...props} />
+);
 
 export class Menus {
   constructor(public readonly state: MuTxtAppState) {}

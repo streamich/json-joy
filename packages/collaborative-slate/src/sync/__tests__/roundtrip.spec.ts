@@ -67,11 +67,7 @@ describe('convert: Slate-Peritext-Slate', () => {
         const doc = [
           {
             type: 'p',
-            children: [
-              {text: 'a '},
-              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
-              {text: ' b'},
-            ],
+            children: [{text: 'a '}, {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]}, {text: ' b'}],
           },
         ];
         assertSlatePeritextSlateRoundtrip(doc, {isInline});
@@ -81,11 +77,7 @@ describe('convert: Slate-Peritext-Slate', () => {
         const doc = [
           {
             type: 'p',
-            children: [
-              {text: ''},
-              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
-              {text: ' rest'},
-            ],
+            children: [{text: ''}, {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]}, {text: ' rest'}],
           },
         ];
         assertSlatePeritextSlateRoundtrip(doc, {isInline});
@@ -95,11 +87,7 @@ describe('convert: Slate-Peritext-Slate', () => {
         const doc = [
           {
             type: 'p',
-            children: [
-              {text: 'before '},
-              {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]},
-              {text: ''},
-            ],
+            children: [{text: 'before '}, {type: 'math-inline', '@thing': 't-1', children: [{text: ''}]}, {text: ''}],
           },
         ];
         assertSlatePeritextSlateRoundtrip(doc, {isInline});

@@ -14,10 +14,7 @@ export interface BulletSquigglyRingProps {
  * Squiggly outline of the bullet disc. Drawn as an SVG so the wavy ring sits
  * flush around the bullet's natural box and lobes don't get clipped.
  */
-export const BulletSquigglyRing: React.FC<BulletSquigglyRingProps> = ({
-  strokeColor,
-  strokeWidth,
-}) => {
+export const BulletSquigglyRing: React.FC<BulletSquigglyRingProps> = ({strokeColor, strokeWidth}) => {
   const padding = SQUIGGLY_AMP + strokeWidth;
   const outerSize = INDICATOR_SIZE + padding * 2;
   const center = outerSize / 2;

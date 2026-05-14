@@ -12,8 +12,7 @@ import {type Block, LeafBlock, type Inline} from 'json-joy/lib/json-crdt-extensi
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
 import type {SlateDescendantNode, SlateDocument, SlateElementNode, SlateTextNode} from '../types';
 
-const isText = (node: SlateDescendantNode): node is SlateTextNode =>
-  typeof (node as SlateTextNode).text === 'string';
+const isText = (node: SlateDescendantNode): node is SlateTextNode => typeof (node as SlateTextNode).text === 'string';
 
 /**
  * Double-buffered cache for Slate element nodes, keyed by Peritext Block hash.

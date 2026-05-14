@@ -104,9 +104,7 @@ describe('math behavior', () => {
     // Paragraph still a single block; math-inline is among its children.
     expect((editor.children[0] as any).type).toBe('p');
     const children = (editor.children[0] as any).children;
-    const hasInlineMath = children.some(
-      (child: any) => child.type === 'math-inline' && child['@thing'] === 'm_pi',
-    );
+    const hasInlineMath = children.some((child: any) => child.type === 'math-inline' && child['@thing'] === 'm_pi');
     expect(hasInlineMath).toBe(true);
   });
 
@@ -114,11 +112,7 @@ describe('math behavior', () => {
     const editor = createTestEditor([
       {
         type: 'p',
-        children: [
-          {text: 'a '},
-          {type: 'math-inline', '@thing': 'm_pi', children: [{text: ''}]},
-          {text: ' b'},
-        ],
+        children: [{text: 'a '}, {type: 'math-inline', '@thing': 'm_pi', children: [{text: ''}]}, {text: ' b'}],
       },
     ] as any);
     expect(removeMathInlineAtPath(editor, [0, 1])).toBe(true);
@@ -131,11 +125,7 @@ describe('math behavior', () => {
     const editor = createTestEditor([
       {
         type: 'p',
-        children: [
-          {text: 'a '},
-          {type: 'math-inline', '@thing': 'm_pi', children: [{text: ''}]},
-          {text: ' b'},
-        ],
+        children: [{text: 'a '}, {type: 'math-inline', '@thing': 'm_pi', children: [{text: ''}]}, {text: ' b'}],
       },
     ] as any);
     editor.selection = {anchor: {path: [0, 1], offset: 0}, focus: {path: [0, 1], offset: 0}};

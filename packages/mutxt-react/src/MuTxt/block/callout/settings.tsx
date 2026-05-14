@@ -7,12 +7,22 @@ import DangerIcon__svg from 'iconista/lib/react/lucide/octagon-alert';
 import ImportantIcon__svg from 'iconista/lib/react/lucide/star';
 import QuoteIcon__svg from 'iconista/lib/react/lucide/quote';
 
-const NoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NoteIcon__svg width={16} height={16} {...props} />;
+const NoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <NoteIcon__svg width={16} height={16} {...props} />
+);
 const TipIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TipIcon__svg width={16} height={16} {...props} />;
-const WarningIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WarningIcon__svg width={16} height={16} {...props} />;
-const DangerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DangerIcon__svg width={16} height={16} {...props} />;
-const ImportantIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ImportantIcon__svg width={16} height={16} {...props} />;
-const QuoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <QuoteIcon__svg width={16} height={16} {...props} />;
+const WarningIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <WarningIcon__svg width={16} height={16} {...props} />
+);
+const DangerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DangerIcon__svg width={16} height={16} {...props} />
+);
+const ImportantIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ImportantIcon__svg width={16} height={16} {...props} />
+);
+const QuoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <QuoteIcon__svg width={16} height={16} {...props} />
+);
 
 /**
  * Semantic flavor of a callout. Each variant maps to one of the `Styles`
@@ -42,14 +52,7 @@ export const VARIANT_ICONS: Record<CalloutVariant, React.FC<{style?: React.CSSPr
   quote: QuoteIcon,
 };
 
-export const CALLOUT_VARIANTS: CalloutVariant[] = [
-  'note',
-  'tip',
-  'warning',
-  'danger',
-  'important',
-  'quote',
-];
+export const CALLOUT_VARIANTS: CalloutVariant[] = ['note', 'tip', 'warning', 'danger', 'important', 'quote'];
 
 export const CALLOUT_VARIANT_LABEL: Record<CalloutVariant, string> = {
   note: 'Note',
@@ -79,12 +82,6 @@ export const getVariantAccent = (styles: Styles, variant: CalloutVariant): strin
 };
 
 export const isCalloutVariant = (v?: string): v is CalloutVariant =>
-  v === 'note' ||
-  v === 'tip' ||
-  v === 'warning' ||
-  v === 'danger' ||
-  v === 'important' ||
-  v === 'quote';
+  v === 'note' || v === 'tip' || v === 'warning' || v === 'danger' || v === 'important' || v === 'quote';
 
-export const getCalloutVariant = (v?: string): CalloutVariant =>
-  isCalloutVariant(v) ? v : DEFAULT_VARIANT;
+export const getCalloutVariant = (v?: string): CalloutVariant => (isCalloutVariant(v) ? v : DEFAULT_VARIANT);

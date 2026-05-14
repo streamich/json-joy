@@ -129,13 +129,7 @@ export const Tabs: React.FC<TabsProps> = ({
   const styles = useStyles();
   const light = styles.light;
 
-  const trayBg = muted
-    ? light
-      ? styles.g(0.98)
-      : styles.g(0.92)
-    : light
-      ? styles.g(0.95)
-      : styles.g(0.83);
+  const trayBg = muted ? (light ? styles.g(0.98) : styles.g(0.92)) : light ? styles.g(0.95) : styles.g(0.83);
   const trayCls = trayClass({bg: trayBg});
   const pillCls = pillClass({
     bg: light ? '#fff' : styles.g(0.78),

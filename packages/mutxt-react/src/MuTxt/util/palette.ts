@@ -67,8 +67,7 @@ export const markSlotBg = (slot: MarkColor, dark: boolean): string => {
 };
 
 /** Foreground text color shown on top of `markSlotBg`. */
-export const markSlotFg = (_slot: MarkColor, dark: boolean): string =>
-  (dark ? '#FFFFFF' : '#1A1A1A');
+export const markSlotFg = (_slot: MarkColor, dark: boolean): string => (dark ? '#FFFFFF' : '#1A1A1A');
 
 export const QUICK_PALETTE: string[] = (() => {
   const rows = 3;

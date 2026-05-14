@@ -7,12 +7,7 @@ import type {MathElement as MathElementType, MathSize, MathThing} from '../../..
 import type {MuTxtState} from '../../../state/MuTxtState';
 
 const getElementSignature = (element: MathElementType, thing: MathThing | undefined): string =>
-  JSON.stringify([
-    element.caption ?? '',
-    element.size ?? null,
-    thing?.name ?? '',
-    thing?.label ?? '',
-  ]);
+  JSON.stringify([element.caption ?? '', element.size ?? null, thing?.name ?? '', thing?.label ?? '']);
 
 const MathOptionsStateContext = React.createContext<MathOptionsState | null>(null);
 

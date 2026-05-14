@@ -16,14 +16,30 @@ import FolderIcon__svg from 'iconista/lib/react/bootstrap/folder2-open';
 import DownloadIcon__svg from 'iconista/lib/react/auth0/download';
 import TrashIcon__svg from 'iconista/lib/react/bootstrap/trash2';
 
-const NameIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NameIcon__svg width={16} height={16} {...props} />;
-const HashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HashIcon__svg width={16} height={16} {...props} />;
-const ClockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClockIcon__svg width={16} height={16} {...props} />;
-const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileIcon__svg width={16} height={16} {...props} />;
-const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LinkIcon__svg width={16} height={16} {...props} />;
-const FolderIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FolderIcon__svg width={16} height={16} {...props} />;
-const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DownloadIcon__svg width={16} height={16} {...props} />;
-const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TrashIcon__svg width={16} height={16} {...props} />;
+const NameIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <NameIcon__svg width={16} height={16} {...props} />
+);
+const HashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <HashIcon__svg width={16} height={16} {...props} />
+);
+const ClockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ClockIcon__svg width={16} height={16} {...props} />
+);
+const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FileIcon__svg width={16} height={16} {...props} />
+);
+const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LinkIcon__svg width={16} height={16} {...props} />
+);
+const FolderIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FolderIcon__svg width={16} height={16} {...props} />
+);
+const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DownloadIcon__svg width={16} height={16} {...props} />
+);
+const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TrashIcon__svg width={16} height={16} {...props} />
+);
 
 const renderNameIcon = () => <NameIcon />;
 const renderHashIcon = () => <HashIcon />;
@@ -61,10 +77,7 @@ export const FileOptionsForm2: React.FC<FileOptionsForm2Props> = ({file}) => {
     await state.deleteSaved(file.id);
   }, [state, file.id, popup]);
 
-  const item: MenuItem = React.useMemo(
-    () => ({name: t('File options'), compact: true}),
-    [t],
-  );
+  const item: MenuItem = React.useMemo(() => ({name: t('File options'), compact: true}), [t]);
 
   const handleSubmit = React.useCallback(() => {
     popup?.close();

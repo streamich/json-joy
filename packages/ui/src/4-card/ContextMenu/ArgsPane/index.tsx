@@ -97,8 +97,7 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
     }
     return init;
   });
-  const toggleCollapsed = (key: string) =>
-    setCollapsed((c) => ({...c, [key]: !c[key]}));
+  const toggleCollapsed = (key: string) => setCollapsed((c) => ({...c, [key]: !c[key]}));
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent) => {
@@ -121,9 +120,7 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
     const isHeading = !!arg.heading;
     const isSep = !!arg.sep;
     const isInnerSep = !!arg.innerSep;
-    const key =
-      (arg.id ?? arg.name ?? `i${i}`) +
-      (isHeading ? '-h' : isSep ? '-s' : isInnerSep ? '-is' : '');
+    const key = (arg.id ?? arg.name ?? `i${i}`) + (isHeading ? '-h' : isSep ? '-s' : isInnerSep ? '-is' : '');
 
     if (arg.visible && arg.visible.getSnapshot() === false) continue;
 
@@ -133,12 +130,7 @@ export const ArgsPane: React.FC<ArgsPaneProps> = (props) => {
     if (isInnerSep) {
       if (inCollapsed) continue;
       rows.push(
-        <div
-          key={key}
-          role="presentation"
-          aria-hidden="true"
-          style={{padding: '3px 16px'}}
-        >
+        <div key={key} role="presentation" aria-hidden="true" style={{padding: '3px 16px'}}>
           <div
             style={{
               height: 1,

@@ -85,11 +85,7 @@ export const bindTranslitToInput = (
   };
 };
 
-const replaceAtCaret = (
-  el: HTMLInputElement | HTMLTextAreaElement,
-  replaceTail: number,
-  emit: string,
-): void => {
+const replaceAtCaret = (el: HTMLInputElement | HTMLTextAreaElement, replaceTail: number, emit: string): void => {
   const start = el.selectionStart ?? el.value.length;
   const end = el.selectionEnd ?? start;
   const head = el.value.slice(0, Math.max(0, start - replaceTail));

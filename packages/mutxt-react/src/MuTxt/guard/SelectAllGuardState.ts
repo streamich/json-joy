@@ -36,8 +36,7 @@ export class SelectAllGuardState implements UiLifeCycles {
   };
 
   public readonly requestDelete = (): boolean => this.guard({kind: 'delete'});
-  public readonly requestReplaceWithText = (text: string): boolean =>
-    this.guard({kind: 'replace-text', text});
+  public readonly requestReplaceWithText = (text: string): boolean => this.guard({kind: 'replace-text', text});
   public readonly requestReplaceWithFragment = (fragment: SlateNode[]): boolean =>
     this.guard({kind: 'replace-fragment', fragment});
 

@@ -74,11 +74,7 @@ export const stepHoverStripBarClass = rule({
 /**
  * Wire Enter/Tab and Escape for an inline metadata input inside a slate block.
  */
-const bindVoidInputKeyDown = (
-  el: HTMLElement | null,
-  editor: ReactEditor,
-  onCancel?: () => void,
-): (() => void) => {
+const bindVoidInputKeyDown = (el: HTMLElement | null, editor: ReactEditor, onCancel?: () => void): (() => void) => {
   if (!el) return () => {};
   const handler: EventListener = (evt: Event) => {
     const e = evt as KeyboardEvent;
@@ -98,11 +94,7 @@ const bindVoidInputKeyDown = (
   return () => el.removeEventListener('keydown', handler);
 };
 
-const useInlineField = (
-  editor: Editor,
-  element: ListItemElement,
-  field: 'stepTitle' | 'stepDesc',
-) => {
+const useInlineField = (editor: Editor, element: ListItemElement, field: 'stepTitle' | 'stepDesc') => {
   const elementValue = (element[field] ?? '') as string;
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(elementValue);

@@ -160,7 +160,11 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
   );
 
   if (isStepperItem) {
-    return <StepperItem attributes={attributes} element={element}>{children}</StepperItem>;
+    return (
+      <StepperItem attributes={attributes} element={element}>
+        {children}
+      </StepperItem>
+    );
   }
 
   if (!isChecklistItem) {

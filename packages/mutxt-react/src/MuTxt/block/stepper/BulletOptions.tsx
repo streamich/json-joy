@@ -36,10 +36,18 @@ import SymbolIcon__svg from 'iconista/lib/react/tabler_filled/alert-triangle';
 import CharsIcon__svg from 'iconista/lib/react/tabler/letter-case';
 import EraserIcon__svg from 'iconista/lib/react/tabler/eraser';
 
-const NumberIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NumberIcon__svg width={16} height={16} {...props} />;
-const SymbolIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SymbolIcon__svg width={16} height={16} {...props} />;
-const CharsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CharsIcon__svg width={16} height={16} {...props} />;
-const EraserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EraserIcon__svg width={16} height={16} {...props} />;
+const NumberIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <NumberIcon__svg width={16} height={16} {...props} />
+);
+const SymbolIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SymbolIcon__svg width={16} height={16} {...props} />
+);
+const CharsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CharsIcon__svg width={16} height={16} {...props} />
+);
+const EraserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <EraserIcon__svg width={16} height={16} {...props} />
+);
 
 const INDICATOR_ICONS: Record<StepIndicator, () => React.ReactNode> = {
   number: () => <NumberIcon />,
@@ -94,14 +102,7 @@ const BgRowIcon: React.FC = () => (
 
 const ColorRowIcon: React.FC = () => (
   <svg width={16} height={16} viewBox="0 0 16 16" aria-hidden="true" style={{display: 'block'}}>
-    <text
-      x="8"
-      y="12"
-      textAnchor="middle"
-      fontSize="12"
-      fontWeight="700"
-      fill="currentColor"
-    >
+    <text x="8" y="12" textAnchor="middle" fontSize="12" fontWeight="700" fill="currentColor">
       A
     </text>
   </svg>
@@ -120,8 +121,7 @@ interface Defaultable<T> {
   value: T;
 }
 
-const isDefaultable = <T,>(v: unknown): v is Defaultable<T> =>
-  !!v && typeof v === 'object' && 'def' in (v as object);
+const isDefaultable = <T,>(v: unknown): v is Defaultable<T> => !!v && typeof v === 'object' && 'def' in (v as object);
 
 const enumOpts = <V extends string>(
   values: readonly V[],
@@ -469,9 +469,7 @@ export const BulletOptions: React.FC<BulletOptionsProps> = ({element, closePopup
     [setField],
   );
 
-  return (
-    <ArgsPane item={item} params={params} onCancel={onCancel} onChange={onChange} minWidth={303} />
-  );
+  return <ArgsPane item={item} params={params} onCancel={onCancel} onChange={onChange} minWidth={303} />;
 };
 
 const readOptionalStr = (raw: unknown): string | undefined => {

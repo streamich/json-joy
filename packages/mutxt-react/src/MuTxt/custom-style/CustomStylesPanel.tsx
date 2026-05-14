@@ -47,8 +47,12 @@ const WsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WsIcon__svg 
 const KrnIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <KrnIcon__svg width={15} height={15} {...props} />;
 const FwIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FwIcon__svg width={15} height={15} {...props} />;
 const ItIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ItIcon__svg width={16} height={16} {...props} />;
-const CapsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CapsIcon__svg width={15} height={15} {...props} />;
-const SmcpIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SmcpIcon__svg width={15} height={15} {...props} />;
+const CapsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CapsIcon__svg width={15} height={15} {...props} />
+);
+const SmcpIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SmcpIcon__svg width={15} height={15} {...props} />
+);
 const UoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <UoIcon__svg width={15} height={15} {...props} />;
 const DtIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DtIcon__svg width={15} height={15} {...props} />;
 const FgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FgIcon__svg width={16} height={16} {...props} />;
@@ -56,15 +60,33 @@ const BgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BgIcon__svg 
 
 // Small (14px) icons used inside enum/select option lists.
 const BanIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BanIcon__svg width={14} height={14} {...props} />;
-const LigatureSmallIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LigatureSmallIcon__svg width={14} height={14} {...props} />;
-const SparklesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SparklesIcon__svg width={14} height={14} {...props} />;
-const ScrollIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ScrollIcon__svg width={14} height={14} {...props} />;
-const HashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HashIcon__svg width={14} height={14} {...props} />;
-const FeatherIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FeatherIcon__svg width={14} height={14} {...props} />;
-const Rows2Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Rows2Icon__svg width={14} height={14} {...props} />;
-const TableIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TableIcon__svg width={14} height={14} {...props} />;
-const WandIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WandIcon__svg width={14} height={14} {...props} />;
-const EqualIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EqualIcon__svg width={14} height={14} {...props} />;
+const LigatureSmallIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LigatureSmallIcon__svg width={14} height={14} {...props} />
+);
+const SparklesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SparklesIcon__svg width={14} height={14} {...props} />
+);
+const ScrollIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ScrollIcon__svg width={14} height={14} {...props} />
+);
+const HashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <HashIcon__svg width={14} height={14} {...props} />
+);
+const FeatherIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FeatherIcon__svg width={14} height={14} {...props} />
+);
+const Rows2Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <Rows2Icon__svg width={14} height={14} {...props} />
+);
+const TableIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TableIcon__svg width={14} height={14} {...props} />
+);
+const WandIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <WandIcon__svg width={14} height={14} {...props} />
+);
+const EqualIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <EqualIcon__svg width={14} height={14} {...props} />
+);
 
 /**
  * Unwrap a `defaultable` arg value. The args pane stores them as

@@ -7,7 +7,7 @@ import type {SliceTypeStep, SliceTypeSteps} from 'json-joy/lib/json-crdt-extensi
 const isText = (node: unknown): node is SlateTextNode =>
   typeof node === 'object' && !!node && typeof (node as SlateTextNode).text === 'string';
 
-const INLINE_ATOMIC_PLACEHOLDER = "\uFFFC";
+const INLINE_ATOMIC_PLACEHOLDER = '\uFFFC';
 
 export interface FromSlateOptions {
   /**

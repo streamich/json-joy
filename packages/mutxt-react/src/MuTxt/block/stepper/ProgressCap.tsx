@@ -7,7 +7,9 @@ import {useT} from 'use-t';
 import type {ListItemElement, StepperListElement} from '../../types';
 import CloseIcon__svg from 'iconista/lib/react/lucide/x';
 
-const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CloseIcon__svg width={14} height={14} {...props} />;
+const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CloseIcon__svg width={14} height={14} {...props} />
+);
 
 const rowClass = rule({
   d: 'flex',

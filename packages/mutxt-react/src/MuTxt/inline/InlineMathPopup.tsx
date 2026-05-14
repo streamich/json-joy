@@ -67,8 +67,12 @@ const mathFieldClass = rule({
   },
 });
 
-const SizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SizeIcon__svg width={16} height={16} {...props} />;
-const LabelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LabelIcon__svg width={16} height={16} {...props} />;
+const SizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SizeIcon__svg width={16} height={16} {...props} />
+);
+const LabelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LabelIcon__svg width={16} height={16} {...props} />
+);
 
 const renderSizeIcon = () => <SizeIcon />;
 const renderLabelIcon = () => <LabelIcon />;
@@ -157,10 +161,7 @@ export const InlineMathPopup: React.FC<InlineMathPopupProps> = ({state}) => {
   const mathMl = React.useMemo(() => (val ? safeConvert(convertLatexToMathMl, val) : ''), [val]);
   const mathHtml = React.useMemo(() => (val ? safeConvert(convertLatexToMarkup, val) : ''), [val]);
 
-  const item: MenuItem = React.useMemo(
-    () => ({name: t('Equation options'), compact: true}),
-    [t],
-  );
+  const item: MenuItem = React.useMemo(() => ({name: t('Equation options'), compact: true}), [t]);
 
   const params: (Param | MenuItem)[] = React.useMemo(() => {
     const list: (Param | MenuItem)[] = [];

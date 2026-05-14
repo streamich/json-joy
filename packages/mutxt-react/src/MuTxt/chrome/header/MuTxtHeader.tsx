@@ -21,10 +21,9 @@ const blockClass = rule({
 
   // Electron window dragging.
   '-webkit-app-region': 'drag',
-  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"], & [role="img"]':
-    {
-      '-webkit-app-region': 'no-drag',
-    },
+  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"], & [role="img"]': {
+    '-webkit-app-region': 'no-drag',
+  },
 });
 
 const toolbarContainerClass = rule({
@@ -53,7 +52,6 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
   const styles = useStyles();
   mutxt.version.use();
 
-  
   // Needed to account correctly for Electron window traffic lights on Mac.
   const shellWidth = shellBox[2];
   const width =
@@ -63,8 +61,7 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
         ? Math.max(0, shellWidth - readTitlebarInsetPx())
         : Math.min(availableWidth, desiredWidth);
   const basePad = width < 1200 ? 8 : 32;
-  const paddingLeft =
-    displayMode === 'fullwindow' ? `max(${basePad}px, var(--titlebar-inset-left, 0px))` : basePad;
+  const paddingLeft = displayMode === 'fullwindow' ? `max(${basePad}px, var(--titlebar-inset-left, 0px))` : basePad;
 
   const inlineMenu = mutxt.inline.menu.buildToolbarMenu();
   const voidsMenu = mutxt.voids.menu.buildToolbarMenu();

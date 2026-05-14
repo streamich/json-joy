@@ -82,8 +82,8 @@ export class Styles {
 
   public toCssVars(): Record<string, string> {
     const out: Record<string, string> = {
-      '--colTxtSharp': this.g(.05, .95),
-      '--colTxtLite': this.g(.13, .87),
+      '--colTxtSharp': this.g(0.05, 0.95),
+      '--colTxtLite': this.g(0.13, 0.87),
     };
     return out;
   }

@@ -287,17 +287,7 @@ export interface MenuItem {
 
 // -------------------------------------- Parameters for argument configuration
 
-export type ParamKind =
-  | 'str'
-  | 'num'
-  | 'bool'
-  | 'color'
-  | 'select'
-  | 'enum'
-  | 'char'
-  | 'btn'
-  | 'code'
-  | 'info';
+export type ParamKind = 'str' | 'num' | 'bool' | 'color' | 'select' | 'enum' | 'char' | 'btn' | 'code' | 'info';
 
 export type Param =
   | ParamStr

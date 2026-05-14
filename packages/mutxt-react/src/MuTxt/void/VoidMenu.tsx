@@ -14,12 +14,18 @@ import TocIcon__svg from 'iconista/lib/react/lucide/list-tree';
 import MathIcon__svg from 'iconista/lib/react/tabler/math-function';
 
 // const EmbedIcon = makeIcon({set: 'lucide', icon: 'link-2', width: 16, height: 16});
-const EmbedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EmbedIcon__svg width={16} height={16} {...props} />;
+const EmbedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <EmbedIcon__svg width={16} height={16} {...props} />
+);
 const HrIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HrIcon__svg width={16} height={16} {...props} />;
-const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FileIcon__svg width={16} height={16} {...props} />;
+const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FileIcon__svg width={16} height={16} {...props} />
+);
 // const TocIcon = makeIcon({set: 'bootstrap', icon: 'list-columns-reverse', width: 16, height: 16});
 const TocIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TocIcon__svg width={16} height={16} {...props} />;
-const MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MathIcon__svg width={16} height={16} {...props} />;
+const MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <MathIcon__svg width={16} height={16} {...props} />
+);
 
 export class VoidMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}

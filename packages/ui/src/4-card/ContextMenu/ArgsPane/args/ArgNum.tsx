@@ -25,7 +25,7 @@ const unwrapNum = (v: ArgNumProps['value']): number => {
 
 export const ArgNum: React.FC<ArgNumProps> = (props) => {
   if (props.compact) return <ArgNumCompact {...props} />;
-  
+
   const {param, value, onChange, compact: _compact, ...rest} = props;
 
   return (

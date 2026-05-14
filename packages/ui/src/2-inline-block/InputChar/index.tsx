@@ -1,10 +1,6 @@
 import * as React from 'react';
 import {rule} from 'nano-theme';
-import EmojiPicker, {
-  Theme as EmojiPickerTheme,
-  SkinTonePickerLocation,
-  type EmojiClickData,
-} from 'emoji-picker-react';
+import EmojiPicker, {Theme as EmojiPickerTheme, SkinTonePickerLocation, type EmojiClickData} from 'emoji-picker-react';
 import {Input, type InputProps} from '../Input';
 import {BasicButton} from '../BasicButton';
 import {Popup} from '../../4-card/Popup';
@@ -94,7 +90,9 @@ export const InputChar: React.FC<InputCharProps> = (props) => {
     (event: React.FocusEvent<HTMLInputElement>) => {
       const input = event.target;
       requestAnimationFrame(() => {
-        try {input.select()} catch {}
+        try {
+          input.select();
+        } catch {}
       });
       onFocus?.(event);
     },

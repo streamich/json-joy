@@ -166,9 +166,7 @@ const DragOverlay: React.FC<DragOverlayProps> = ({
           strokeDasharray="3 4"
           markerEnd="url(#json-joy-dragslider-arrow)"
         />
-        {showStartDot && startDotSize > 0 && (
-          <circle cx={startX} cy={startY} r={startDotSize / 2} fill={accent} />
-        )}
+        {showStartDot && startDotSize > 0 && <circle cx={startX} cy={startY} r={startDotSize / 2} fill={accent} />}
       </svg>
       {label !== undefined && !!label && (
         <div className={tooltipClass} style={{left: tooltipX, top: tooltipY, background: accent, color: tooltipFg}}>
@@ -321,8 +319,9 @@ export const DragSlider: React.FC<DragSliderProps> = (props) => {
     [disabled],
   );
 
-  const resolvedCursor =
-    disabled ? 'default' : cursor ?? (axis === 'y' ? 'ns-resize' : axis === 'both' ? 'move' : 'ew-resize');
+  const resolvedCursor = disabled
+    ? 'default'
+    : (cursor ?? (axis === 'y' ? 'ns-resize' : axis === 'both' ? 'move' : 'ew-resize'));
 
   const isDragging = !!drag;
   const contextValue = React.useMemo(() => ({dragging: isDragging, axis}), [isDragging, axis]);

@@ -500,7 +500,14 @@ export const inlineText: MenuItem = {
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
               control: () => (
                 <div style={{width: 120, marginRight: -8}}>
-                  <InputNumber inputProps={{size: -3}} min={-10} max={10} value={0} drag dragHandle={<SliderHandle />} />
+                  <InputNumber
+                    inputProps={{size: -3}}
+                    min={-10}
+                    max={10}
+                    value={0}
+                    drag
+                    dragHandle={<SliderHandle />}
+                  />
                 </div>
               ),
             },
@@ -509,7 +516,14 @@ export const inlineText: MenuItem = {
               icon: () => <Iconista width={15} height={15} set="radix" icon="letter-spacing" />,
               control: () => (
                 <div style={{width: 120, marginRight: -8}}>
-                  <InputNumber inputProps={{size: -3}} min={-10} max={10} value={0} drag dragHandle={<SliderHandle />} />
+                  <InputNumber
+                    inputProps={{size: -3}}
+                    min={-10}
+                    max={10}
+                    value={0}
+                    drag
+                    dragHandle={<SliderHandle />}
+                  />
                 </div>
               ),
             },

@@ -64,10 +64,7 @@ export const Tilt: React.FC<TiltProps> = ({
       const x = e.clientX;
       const y = e.clientY;
       const within =
-        x >= rect.left - reach &&
-        x <= rect.right + reach &&
-        y >= rect.top - reach &&
-        y <= rect.bottom + reach;
+        x >= rect.left - reach && x <= rect.right + reach && y >= rect.top - reach && y <= rect.bottom + reach;
       if (within) {
         const {rx, ry} = compute(x, y, rect);
         apply(rx, ry, scale);

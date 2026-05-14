@@ -20,10 +20,7 @@ const verticalLineClass = rule({
 
 export type HrLineOrientation = 'horizontal' | 'vertical';
 
-const buildSquigglyMask = (
-  strokeWidth: number,
-  orientation: HrLineOrientation,
-): {uri: string; thickness: number} => {
+const buildSquigglyMask = (strokeWidth: number, orientation: HrLineOrientation): {uri: string; thickness: number} => {
   const period = SQUIGGLY_PERIOD;
   const amp = SQUIGGLY_AMPLITUDE;
   const thickness = amp * 2 + strokeWidth + 2;
@@ -83,12 +80,8 @@ export const HrLine: React.FC<HrLineProps> = ({strokeWidth, style, orientation =
           maskRepeat: isVertical ? 'repeat-y' : 'repeat-x',
           WebkitMaskPosition: 'center center',
           maskPosition: 'center center',
-          WebkitMaskSize: isVertical
-            ? `${thickness}px ${SQUIGGLY_PERIOD}px`
-            : `${SQUIGGLY_PERIOD}px ${thickness}px`,
-          maskSize: isVertical
-            ? `${thickness}px ${SQUIGGLY_PERIOD}px`
-            : `${SQUIGGLY_PERIOD}px ${thickness}px`,
+          WebkitMaskSize: isVertical ? `${thickness}px ${SQUIGGLY_PERIOD}px` : `${SQUIGGLY_PERIOD}px ${thickness}px`,
+          maskSize: isVertical ? `${thickness}px ${SQUIGGLY_PERIOD}px` : `${SQUIGGLY_PERIOD}px ${thickness}px`,
         }}
       />
     );

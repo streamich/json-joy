@@ -49,8 +49,12 @@ const FontStyleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontS
 const FontFamilyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontFamilyIcon__svg {...props} />;
 const FontSizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FontSizeIcon__svg {...props} />;
 const LetterSpacingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterSpacingIcon__svg {...props} />;
-const LetterCaseUppercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterCaseUppercaseIcon__svg {...props} />;
-const LetterCaseLowercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LetterCaseLowercaseIcon__svg {...props} />;
+const LetterCaseUppercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LetterCaseUppercaseIcon__svg {...props} />
+);
+const LetterCaseLowercaseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LetterCaseLowercaseIcon__svg {...props} />
+);
 
 // Modify icons
 const LayersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LayersIcon__svg {...props} />;
@@ -66,7 +70,9 @@ const ScissorsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Scisso
 const ClipboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClipboardIcon__svg {...props} />;
 
 // Insert icons
-const BetweenVerticalEndIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BetweenVerticalEndIcon__svg {...props} />;
+const BetweenVerticalEndIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <BetweenVerticalEndIcon__svg {...props} />
+);
 const ButtonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ButtonIcon__svg {...props} />;
 const CalendarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CalendarIcon__svg {...props} />;
 const WalletIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WalletIcon__svg {...props} />;
@@ -80,7 +86,9 @@ const RadixKeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <R
 const SmilePlusIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SmilePlusIcon__svg {...props} />;
 const OmegaIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OmegaIcon__svg {...props} />;
 const VariableIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VariableIcon__svg {...props} />;
-const SquareChevronRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SquareChevronRightIcon__svg {...props} />;
+const SquareChevronRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SquareChevronRightIcon__svg {...props} />
+);
 
 export const secondBrain = (): MenuItem => {
   return {

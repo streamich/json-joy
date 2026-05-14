@@ -41,5 +41,4 @@ export const sanitizeCustomStyle = (v: unknown): CustomStyle | undefined => {
   return Object.keys(out).length ? out : undefined;
 };
 
-export const isEmptyCustomStyle = (cs: CustomStyle | undefined): boolean =>
-  !cs || Object.keys(cs).length === 0;
+export const isEmptyCustomStyle = (cs: CustomStyle | undefined): boolean => !cs || Object.keys(cs).length === 0;

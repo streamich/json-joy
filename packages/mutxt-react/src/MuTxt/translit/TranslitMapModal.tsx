@@ -12,7 +12,9 @@ import type {TranslitRule, TranslitScheme} from '../../translit/types';
 import {useT} from 'use-t';
 import EmptyIcon__svg from 'iconista/lib/react/tabler/language';
 
-const EmptyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EmptyIcon__svg width={32} height={32} {...props} />;
+const EmptyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <EmptyIcon__svg width={32} height={32} {...props} />
+);
 
 const splitName = (name: string): [label: string, suffix: string | null] => {
   const m = /^(.+?)\s*\(([^)]+)\)\s*$/.exec(name);
@@ -262,8 +264,8 @@ const Body: React.FC<{scheme: TranslitScheme}> = ({scheme}) => {
     <>
       <p className={introClass} style={{color: styles.g(0.3, 0.7)}}>
         Type these ASCII keys to enter <strong>{scheme.name}</strong>. Multi-character sequences are matched
-        longest-first — e.g. typing <code>s</code> then <code>h</code> rewrites the previous letter when{' '}
-        <code>sh</code> matches a digraph rule.
+        longest-first — e.g. typing <code>s</code> then <code>h</code> rewrites the previous letter when <code>sh</code>{' '}
+        matches a digraph rule.
       </p>
       <div className={gridClass}>
         {groups.map((group) => (
@@ -321,9 +323,7 @@ export const TranslitMapModal: React.FC = () => {
             muted
           />
         </div>
-        <div className={contentsClass}>
-          {activeTab === OFF_TAB_KEY ? <EmptyState /> : <Body scheme={active} />}
-        </div>
+        <div className={contentsClass}>{activeTab === OFF_TAB_KEY ? <EmptyState /> : <Body scheme={active} />}</div>
       </div>
     </ModalOverlay>
   );

@@ -309,8 +309,16 @@ export const LongSelectList: StoryObj<ArgsPaneProps> = {
         defaultable: true,
         icon: () => <Iconista width={15} height={15} set="tabler" icon="directions" />,
         options: [
-          {name: 'Left to right', id: 'ltr', icon: () => <Iconista width={16} height={16} set="lucide" icon="align-left" />},
-          {name: 'Right to left', id: 'rtl', icon: () => <Iconista width={16} height={16} set="lucide" icon="align-right" />},
+          {
+            name: 'Left to right',
+            id: 'ltr',
+            icon: () => <Iconista width={16} height={16} set="lucide" icon="align-left" />,
+          },
+          {
+            name: 'Right to left',
+            id: 'rtl',
+            icon: () => <Iconista width={16} height={16} set="lucide" icon="align-right" />,
+          },
         ],
       },
       {
@@ -398,8 +406,16 @@ export const LongSelectList: StoryObj<ArgsPaneProps> = {
         options: [
           {name: 'None', id: 'none', icon: () => <Iconista width={14} height={14} set="lucide" icon="ban" />},
           {name: 'Common', id: 'common', icon: () => <Iconista width={14} height={14} set="lucide" icon="ligature" />},
-          {name: 'Discretionary', id: 'discretionary', icon: () => <Iconista width={14} height={14} set="lucide" icon="sparkles" />},
-          {name: 'Historical', id: 'historical', icon: () => <Iconista width={14} height={14} set="lucide" icon="scroll" />},
+          {
+            name: 'Discretionary',
+            id: 'discretionary',
+            icon: () => <Iconista width={14} height={14} set="lucide" icon="sparkles" />,
+          },
+          {
+            name: 'Historical',
+            id: 'historical',
+            icon: () => <Iconista width={14} height={14} set="lucide" icon="scroll" />,
+          },
         ],
       },
       {
@@ -411,7 +427,11 @@ export const LongSelectList: StoryObj<ArgsPaneProps> = {
         icon: () => <Iconista width={15} height={15} set="lucide" icon="hash" />,
         options: [
           {name: 'Default', id: 'default', icon: () => <Iconista width={14} height={14} set="lucide" icon="hash" />},
-          {name: 'Oldstyle', id: 'oldstyle', icon: () => <Iconista width={14} height={14} set="lucide" icon="feather" />},
+          {
+            name: 'Oldstyle',
+            id: 'oldstyle',
+            icon: () => <Iconista width={14} height={14} set="lucide" icon="feather" />,
+          },
           {name: 'Lining', id: 'lining', icon: () => <Iconista width={14} height={14} set="lucide" icon="rows-2" />},
           {name: 'Tabular', id: 'tabular', icon: () => <Iconista width={14} height={14} set="lucide" icon="table" />},
         ],
@@ -554,10 +574,26 @@ export const LongSelectList: StoryObj<ArgsPaneProps> = {
         defaultable: true,
         icon: () => <Iconista width={15} height={15} set="tabler" icon="pilcrow" />,
         options: [
-          {name: 'Align left', id: 'left', icon: () => <Iconista width={16} height={16} set="lucide" icon="align-left" />},
-          {name: 'Align center', id: 'center', icon: () => <Iconista width={16} height={16} set="lucide" icon="align-center" />},
-          {name: 'Align right', id: 'right', icon: () => <Iconista width={16} height={16} set="lucide" icon="align-right" />},
-          {name: 'Justify', id: 'justify', icon: () => <Iconista width={16} height={16} set="lucide" icon="align-justify" />},
+          {
+            name: 'Align left',
+            id: 'left',
+            icon: () => <Iconista width={16} height={16} set="lucide" icon="align-left" />,
+          },
+          {
+            name: 'Align center',
+            id: 'center',
+            icon: () => <Iconista width={16} height={16} set="lucide" icon="align-center" />,
+          },
+          {
+            name: 'Align right',
+            id: 'right',
+            icon: () => <Iconista width={16} height={16} set="lucide" icon="align-right" />,
+          },
+          {
+            name: 'Justify',
+            id: 'justify',
+            icon: () => <Iconista width={16} height={16} set="lucide" icon="align-justify" />,
+          },
         ],
       },
       {

@@ -57,9 +57,7 @@ export const ArgSelectCompact: React.FC<ArgSelectProps> = ({param, value, onChan
         return {
           ...opt,
           onSelect: () => setValue(id ?? ''),
-          right: isSelected
-            ? () => <Iconista width={14} height={14} set="radix" icon="check" />
-            : opt.right,
+          right: isSelected ? () => <Iconista width={14} height={14} set="radix" icon="check" /> : opt.right,
         };
       }),
     }),
@@ -145,12 +143,7 @@ export const ArgSelectCompact: React.FC<ArgSelectProps> = ({param, value, onChan
           onEsc={popup.open ? closePopup : undefined}
           renderContext={() => (
             <div ref={dropRef}>
-              <ContextMenu
-                inset
-                showSearch={showSearch}
-                searchPlaceholder={param.searchPlaceholder}
-                menu={menu}
-              />
+              <ContextMenu inset showSearch={showSearch} searchPlaceholder={param.searchPlaceholder} menu={menu} />
             </div>
           )}
         >

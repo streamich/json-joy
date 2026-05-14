@@ -246,7 +246,6 @@ export const MathElement: React.FC<MathElementProps> = ({attributes, children, e
     } catch {}
   }, [editor, element]);
 
-
   const isDark = !styles.light;
   const fieldColor = styles.g(0.15);
   const fieldBg = isDark ? styles.g(1, 0.04) : styles.g(0, 0.04);
@@ -353,14 +352,7 @@ export const MathElement: React.FC<MathElementProps> = ({attributes, children, e
           style={{opacity: showToolbar ? 1 : 0, pointerEvents: showToolbar ? 'auto' : 'none'}}
         >
           <Popup renderContext={() => <MathOptionsPopup element={element} />}>
-            <BasicButton
-              type="button"
-              width={32}
-              height={32}
-              rounder
-              border
-              onMouseDown={preventMouseDown}
-            >
+            <BasicButton type="button" width={32} height={32} rounder border onMouseDown={preventMouseDown}>
               <MoreIcon size={32} />
             </BasicButton>
           </Popup>

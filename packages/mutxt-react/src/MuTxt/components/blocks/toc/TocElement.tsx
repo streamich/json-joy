@@ -237,14 +237,7 @@ export const TocElement: React.FC<TocElementProps> = ({attributes, children, ele
           style={{opacity: showToolbar ? 1 : 0, pointerEvents: showToolbar ? 'auto' : 'none'}}
         >
           <Popup renderContext={() => <TocOptionsPopup element={element} />}>
-            <BasicButton
-              type="button"
-              width={32}
-              height={32}
-              rounder
-              border
-              onMouseDown={preventMouseDown}
-            >
+            <BasicButton type="button" width={32} height={32} rounder border onMouseDown={preventMouseDown}>
               <MoreIcon size={32} />
             </BasicButton>
           </Popup>

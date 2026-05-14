@@ -50,7 +50,10 @@ export const getActiveMathInlineEntry = (editor: Editor): [MathInlineElement, Pa
   return (match as [MathInlineElement, Path] | undefined) ?? null;
 };
 
-export const insertParagraphNearActiveMathBlock = (editor: Editor, position: 'above' | 'below' = 'below'): Path | null => {
+export const insertParagraphNearActiveMathBlock = (
+  editor: Editor,
+  position: 'above' | 'below' = 'below',
+): Path | null => {
   const entry = getActiveMathBlockEntry(editor);
   if (!entry) return null;
   const [, path] = entry;

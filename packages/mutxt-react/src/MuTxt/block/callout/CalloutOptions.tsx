@@ -21,7 +21,9 @@ import {
 import type {CalloutElement} from '../../types';
 import CharsIcon__svg from 'iconista/lib/react/tabler/letter-case';
 
-const CharsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CharsIcon__svg width={16} height={16} {...props} />;
+const CharsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CharsIcon__svg width={16} height={16} {...props} />
+);
 
 const renderCharsIcon = () => <CharsIcon />;
 
@@ -35,8 +37,7 @@ interface Defaultable<T> {
   value: T;
 }
 
-const isDefaultable = <T,>(v: unknown): v is Defaultable<T> =>
-  !!v && typeof v === 'object' && 'def' in (v as object);
+const isDefaultable = <T,>(v: unknown): v is Defaultable<T> => !!v && typeof v === 'object' && 'def' in (v as object);
 
 export interface CalloutOptionsProps {
   element: CalloutElement;
@@ -162,8 +163,7 @@ export const CalloutOptions: React.FC<CalloutOptionsProps> = ({element, closePop
   const onChange = React.useCallback(
     (_list: [string, unknown][], map: Record<string, unknown>) => {
       const variantRaw = map.variant;
-      const variant =
-        typeof variantRaw === 'string' && isCalloutVariant(variantRaw) ? variantRaw : DEFAULT_VARIANT;
+      const variant = typeof variantRaw === 'string' && isCalloutVariant(variantRaw) ? variantRaw : DEFAULT_VARIANT;
       setField('variant', variant === DEFAULT_VARIANT ? undefined : variant);
 
       const hideHeaderRaw = map.hideHeader;
@@ -208,7 +208,5 @@ export const CalloutOptions: React.FC<CalloutOptionsProps> = ({element, closePop
     [setField, setStringField],
   );
 
-  return (
-    <ArgsPane item={item} params={params} onCancel={onCancel} onChange={onChange} minWidth={303} />
-  );
+  return <ArgsPane item={item} params={params} onCancel={onCancel} onChange={onChange} minWidth={303} />;
 };

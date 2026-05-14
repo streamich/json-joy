@@ -8,11 +8,7 @@ import {Popup} from '../../../Popup';
 import {usePopup} from '../../../Popup/context';
 import {ClickAway} from '../../../../utils/ClickAway';
 import {useStyles} from '../../../../styles/context';
-import EmojiPicker, {
-  Theme as EmojiPickerTheme,
-  SkinTonePickerLocation,
-  type EmojiClickData,
-} from 'emoji-picker-react';
+import EmojiPicker, {Theme as EmojiPickerTheme, SkinTonePickerLocation, type EmojiClickData} from 'emoji-picker-react';
 import {OptionalBadge} from './OptionalBadge';
 import {DefaultableToggle} from './DefaultableToggle';
 import {AutoValue} from './AutoValue';
@@ -59,12 +55,7 @@ const EmojiPickerInner: React.FC<EmojiPickerInnerProps> = ({light, onSelect}) =>
   const popup = usePopup();
   const handleClickAway = React.useCallback(() => popup?.close(), [popup]);
   return (
-    <ClickAway
-      onMouseDown={stopPointer}
-      onMouseUp={stopPointer}
-      onClick={stopPointer}
-      onClickAway={handleClickAway}
-    >
+    <ClickAway onMouseDown={stopPointer} onMouseUp={stopPointer} onClick={stopPointer} onClickAway={handleClickAway}>
       <EmojiPicker
         theme={light ? EmojiPickerTheme.LIGHT : EmojiPickerTheme.DARK}
         height={420}
@@ -129,9 +120,7 @@ export const ArgCharCompact: React.FC<ArgCharProps> = ({param, value, onChange, 
     [handlePick, styles.light],
   );
 
-  const inputWidth = showButton
-    ? Math.max(44, 32 + maxLen * 10)
-    : Math.max(56, 44 + maxLen * 10);
+  const inputWidth = showButton ? Math.max(44, 32 + maxLen * 10) : Math.max(56, 44 + maxLen * 10);
 
   const customControl = (
     <span
@@ -158,14 +147,7 @@ export const ArgCharCompact: React.FC<ArgCharProps> = ({param, value, onChange, 
       )}
       {showButton && (
         <Popup renderContext={renderEmojiPicker}>
-          <BasicButton
-            type="button"
-            fill
-            width={36}
-            height={28}
-            rounder
-            onMouseDown={preventPopupMouseDown}
-          >
+          <BasicButton type="button" fill width={36} height={28} rounder onMouseDown={preventPopupMouseDown}>
             <span className={buttonInnerClass}>{s.value || param.placeholder || '🙂'}</span>
           </BasicButton>
         </Popup>

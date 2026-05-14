@@ -17,7 +17,9 @@ import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import LockIcon__svg from 'iconista/lib/react/tabler/lock';
 
-const LockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LockIcon__svg width={16} height={16} {...props} />;
+const LockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LockIcon__svg width={16} height={16} {...props} />
+);
 
 const stopKeyDown = (e: React.KeyboardEvent): void => {
   e.stopPropagation();

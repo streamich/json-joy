@@ -62,8 +62,7 @@ export const Spotlight: React.FC<SpotlightProps> = ({
       const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const within =
-        x >= -reach && x <= rect.width + reach && y >= -reach && y <= rect.height + reach;
+      const within = x >= -reach && x <= rect.width + reach && y >= -reach && y <= rect.height + reach;
       layer.style.setProperty('--mx', x + 'px');
       layer.style.setProperty('--my', y + 'px');
       layer.style.opacity = within ? String(intensity) : '0';

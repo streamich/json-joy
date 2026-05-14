@@ -38,33 +38,61 @@ export interface InlineMenuItem extends MenuItem {
 }
 
 // Formatting: common
-const BoldIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BoldIcon__svg width={15} height={15} {...props} />;
-const ItalicIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ItalicIcon__svg width={16} height={16} {...props} />;
-const UnderlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <UnderlineIcon__svg width={16} height={16} {...props} />;
-const OverlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OverlineIcon__svg width={16} height={16} {...props} />;
-const StrikethroughIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <StrikethroughIcon__svg width={16} height={16} {...props} />;
-const HighlightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <HighlightIcon__svg width={16} height={16} {...props} />;
-const SpoilerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SpoilerIcon__svg width={16} height={16} {...props} />;
+const BoldIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <BoldIcon__svg width={15} height={15} {...props} />
+);
+const ItalicIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ItalicIcon__svg width={16} height={16} {...props} />
+);
+const UnderlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <UnderlineIcon__svg width={16} height={16} {...props} />
+);
+const OverlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <OverlineIcon__svg width={16} height={16} {...props} />
+);
+const StrikethroughIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <StrikethroughIcon__svg width={16} height={16} {...props} />
+);
+const HighlightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <HighlightIcon__svg width={16} height={16} {...props} />
+);
+const SpoilerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SpoilerIcon__svg width={16} height={16} {...props} />
+);
 
 // Formatting: technical
-const CodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CodeIcon__svg width={16} height={16} {...props} />;
+const CodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CodeIcon__svg width={16} height={16} {...props} />
+);
 const SupIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SupIcon__svg width={16} height={16} {...props} />;
 const SubIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SubIcon__svg width={16} height={16} {...props} />;
 const KeyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <KeyIcon__svg width={16} height={16} {...props} />;
-const InsertionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <InsertionIcon__svg width={16} height={16} {...props} />;
-const DeletionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DeletionIcon__svg width={16} height={16} {...props} />;
+const InsertionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <InsertionIcon__svg width={16} height={16} {...props} />
+);
+const DeletionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DeletionIcon__svg width={16} height={16} {...props} />
+);
 
 // Annotations
-const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <LinkIcon__svg width={15} height={15} {...props} />;
+const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LinkIcon__svg width={15} height={15} {...props} />
+);
 const FgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FgIcon__svg width={16} height={16} {...props} />;
 const BgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BgIcon__svg width={16} height={16} {...props} />;
-const MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MathIcon__svg width={16} height={16} {...props} />;
+const MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <MathIcon__svg width={16} height={16} {...props} />
+);
 
 // Modify
-const ClearFormattingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClearFormattingIcon__svg width={16} height={16} {...props} />;
+const ClearFormattingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ClearFormattingIcon__svg width={16} height={16} {...props} />
+);
 
 // Typesetting
-const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg width={16} height={16} {...props} />;
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TypographyIcon__svg width={16} height={16} {...props} />
+);
 
 const RECENT_LIMIT = 4;
 

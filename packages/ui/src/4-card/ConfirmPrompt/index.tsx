@@ -180,27 +180,13 @@ export const ConfirmPrompt: React.FC<ConfirmPromptProps> = ({
         )}
         <div className={innerClass}>
           <div className={headerClass}>
-            <h2 className={headerTitleClass}>
-              {title}
-            </h2>
+            <h2 className={headerTitleClass}>{title}</h2>
           </div>
-          {children !== undefined && children !== null && (
-            <p className={bodyClass}>
-              {children}
-            </p>
-          )}
+          {children !== undefined && children !== null && <p className={bodyClass}>{children}</p>}
         </div>
         <div className={footerClass}>
-          {cancelShortcut == null ? (
-            cancelBtn
-          ) : (
-            <WithShortcut shortcut={cancelShortcut}>{cancelBtn}</WithShortcut>
-          )}
-          {confirmShortcut == null ? (
-            confirmBtn
-          ) : (
-            <WithShortcut shortcut={confirmShortcut}>{confirmBtn}</WithShortcut>
-          )}
+          {cancelShortcut == null ? cancelBtn : <WithShortcut shortcut={cancelShortcut}>{cancelBtn}</WithShortcut>}
+          {confirmShortcut == null ? confirmBtn : <WithShortcut shortcut={confirmShortcut}>{confirmBtn}</WithShortcut>}
         </div>
       </div>
     </ContextPane>

@@ -45,7 +45,9 @@ export const KeyLite: React.FC<KeyLiteProps> = ({small, ...props}) => {
           bd: '1px solid ' + styles.g(0.8, 0.4),
           bg: styles.col.g('bg-1'),
           col: styles.g(0.2),
-        }) + (small ? ' ' + keySmallClass() : '') + (props.className ? ' ' + props.className : '')
+        }) +
+        (small ? ' ' + keySmallClass() : '') +
+        (props.className ? ' ' + props.className : '')
       }
       style={style}
     />

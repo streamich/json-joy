@@ -130,9 +130,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
 
   const [tab, setTab] = React.useState<'presets' | 'custom'>('presets');
   const initial = activeForKind || (kind === 'fg' ? '#1A1A1A' : '#FFFFFF');
-  const [pickerColor, setPickerColor] = React.useState<HslColor>(
-    HslColor.from(initial) ?? new HslColor(0, 0, 0),
-  );
+  const [pickerColor, setPickerColor] = React.useState<HslColor>(HslColor.from(initial) ?? new HslColor(0, 0, 0));
   const [pickerInput, setPickerInput] = React.useState<string>(
     normalizeHex(HslColor.from(initial)?.toRgb().hex() || initial),
   );
@@ -206,10 +204,11 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
     <div className={tabContentClass}>
       {kind === 'fg' ? (
         <div className={sectionClass}>
-          <MiniTitle>
-            {t('Text')}
-          </MiniTitle>
-          <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
+          <MiniTitle>{t('Text')}</MiniTitle>
+          <div
+            className={gridClass}
+            style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}
+          >
             {TEXT_PALETTE.map((c) => (
               <ColorSwatch
                 key={'text-' + c}
@@ -226,10 +225,11 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
 
       {kind === 'bg' ? (
         <div className={sectionClass}>
-          <MiniTitle>
-            {t('Background')}
-          </MiniTitle>
-          <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
+          <MiniTitle>{t('Background')}</MiniTitle>
+          <div
+            className={gridClass}
+            style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}
+          >
             {QUICK_PALETTE.map((c) => (
               <ColorSwatch
                 key={'bg-' + c}
@@ -245,10 +245,11 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
       ) : null}
 
       <div className={sectionClass}>
-        <MiniTitle>
-          {t('Combination')}
-        </MiniTitle>
-        <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
+        <MiniTitle>{t('Combination')}</MiniTitle>
+        <div
+          className={gridClass}
+          style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}
+        >
           {RECOMMEND_PALETTE.map((combo, idx) => (
             <ColorSwatch
               key={'rec-' + idx}
@@ -267,10 +268,11 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
         <div className={sectionClass}>
           {recent.length > 0 ? (
             <>
-              <MiniTitle>
-                {t('Recent')}
-              </MiniTitle>
-              <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
+              <MiniTitle>{t('Recent')}</MiniTitle>
+              <div
+                className={gridClass}
+                style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}
+              >
                 {recent.map((c) => (
                   <ColorSwatch
                     key={'recent-' + c}
@@ -286,10 +288,11 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
           ) : null}
           {docColors.length > 0 ? (
             <>
-              <MiniTitle>
-                {t('In document')}
-              </MiniTitle>
-              <div className={gridClass} style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}>
+              <MiniTitle>{t('In document')}</MiniTitle>
+              <div
+                className={gridClass}
+                style={{gridTemplateColumns: `repeat(${QUICK_PALETTE_COLS}, 32px)`, justifyContent: 'space-between'}}
+              >
                 {docColors.map((c) => (
                   <ColorSwatch
                     key={'doc-' + c}
@@ -310,9 +313,7 @@ export const ColorPickerPanel: React.FC<ColorPickerPanelProps> = ({mutxt, kind})
 
   const customContent = (
     <div className={tabContentClass}>
-      <MiniTitle>
-        {t('Pick a color')}
-      </MiniTitle>
+      <MiniTitle>{t('Pick a color')}</MiniTitle>
       <div className={pickerSectionClass}>
         <ColorPicker color={pickerColor} onChange={onPickerChange} noAlpha style={{width: 200}} />
         <div

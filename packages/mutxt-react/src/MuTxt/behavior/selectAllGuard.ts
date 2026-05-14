@@ -36,9 +36,7 @@ export const resetDocumentContent = (editor: Editor, text = ''): void => {
     }
     const paragraph: CustomElement = {type: 'p', children: [{text}]};
     Transforms.insertNodes(editor, paragraph, {at: [firstIdx]});
-    const caret = text
-      ? Editor.end(editor, [firstIdx])
-      : Editor.start(editor, [firstIdx]);
+    const caret = text ? Editor.end(editor, [firstIdx]) : Editor.start(editor, [firstIdx]);
     Transforms.select(editor, caret);
   });
 };

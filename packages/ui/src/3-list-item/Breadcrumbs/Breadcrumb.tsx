@@ -30,9 +30,8 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({noHover, compact, selecte
   const link = styles.col.get('link', 'solid-1');
   const linkBg = styles.col.get('link', 'bg-2');
   const positiveFg = styles.positive.fg.toString();
-  const positiveBg = (styles.light
-    ? styles.positive.fg.pct(0, -0.5, 0.85)
-    : styles.positive.fg.pct(0, -0.3, -0.65)
+  const positiveBg = (
+    styles.light ? styles.positive.fg.pct(0, -0.5, 0.85) : styles.positive.fg.pct(0, -0.3, -0.65)
   ).toString();
   const className = blockClass(
     compact

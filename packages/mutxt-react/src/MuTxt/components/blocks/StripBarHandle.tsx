@@ -80,8 +80,7 @@ export const StripBarHandle: React.FC<StripBarHandleProps> = ({
     buttonStyle.pointerEvents = visible ? 'auto' : 'none';
   }
   if (color !== undefined) (buttonStyle as Record<string, unknown>)['--mutxt-handle-color'] = color;
-  if (colorHover !== undefined)
-    (buttonStyle as Record<string, unknown>)['--mutxt-handle-color-hover'] = colorHover;
+  if (colorHover !== undefined) (buttonStyle as Record<string, unknown>)['--mutxt-handle-color-hover'] = colorHover;
   if (width !== undefined) buttonStyle.width = width;
   const fillStyle: React.CSSProperties | undefined = visible ? {width: '100%'} : undefined;
   const titleAttr = !tooltip && ariaLabel ? ariaLabel : undefined;

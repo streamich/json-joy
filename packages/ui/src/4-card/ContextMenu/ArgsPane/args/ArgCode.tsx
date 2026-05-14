@@ -51,14 +51,7 @@ export const ArgCode: React.FC<ArgCodeProps> = ({param, compact}) => {
             margin: '-5px -8px -5px 0',
           }}
         >
-          <CopyCode
-            size={-1}
-            alt
-            roundest
-            noBg={!isCode}
-            value={param.value}
-            truncate={truncate}
-          />
+          <CopyCode size={-1} alt roundest noBg={!isCode} value={param.value} truncate={truncate} />
         </span>
       }
     >

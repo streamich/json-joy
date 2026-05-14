@@ -214,9 +214,7 @@ export const StepperItem: React.FC<StepperItemProps> = ({attributes, children, e
             </anchorContext.Provider>
           </popupCtx.Provider>
         )}
-        {!isLast && (
-          <Connector style={line} color={lineColor} width={lineWidth} top={connectorTop} />
-        )}
+        {!isLast && <Connector style={line} color={lineColor} width={lineWidth} top={connectorTop} />}
       </span>
       <StepBody element={element} state={state}>
         {children}

@@ -3,8 +3,7 @@ import {SliceStacking} from 'json-joy/lib/json-crdt-extensions/peritext/slice/co
 import {type Block, type Inline, LeafBlock, type Peritext} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {SlateDescendantNode, SlateDocument, SlateElementNode, SlateTextNode} from '../types';
 
-const isText = (node: SlateDescendantNode): node is SlateTextNode =>
-  typeof (node as SlateTextNode).text === 'string';
+const isText = (node: SlateDescendantNode): node is SlateTextNode => typeof (node as SlateTextNode).text === 'string';
 
 const blockToSlateNode = (block: Block | LeafBlock): SlateElementNode => {
   if (block instanceof LeafBlock) {

@@ -111,13 +111,7 @@ export const Bullet: React.FC<BulletProps> = ({
       >
         {isSquigglyRing && <BulletSquigglyRing strokeColor={ringColor} strokeWidth={ringWidth} />}
         <span className={glyphWrapClass}>
-          <BulletGlyph
-            state={state}
-            indicator={indicator}
-            chars={chars}
-            index={index}
-            color={glyphColor}
-          />
+          <BulletGlyph state={state} indicator={indicator} chars={chars} index={index} color={glyphColor} />
         </span>
       </span>
       <BulletHalo style={halo} color={haloColor} strokeWidth={haloWidth} />

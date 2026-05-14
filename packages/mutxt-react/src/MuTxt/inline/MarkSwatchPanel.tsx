@@ -12,14 +12,7 @@ import type {MarkColor, MenuItem} from '../types';
 const RecentMarkIcon: React.FC<{slot: MarkColor}> = ({slot}) => {
   const styles = useStyles();
   const dark = !styles.light;
-  return (
-    <ColorSwatch
-      kind="plain"
-      size={20}
-      color={markSlotBg(slot, dark)}
-      textColor={markSlotFg(slot, dark)}
-    />
-  );
+  return <ColorSwatch kind="plain" size={20} color={markSlotBg(slot, dark)} textColor={markSlotFg(slot, dark)} />;
 };
 
 /** Builds a recents-menu item that re-applies a specific highlight slot. */

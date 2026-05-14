@@ -498,9 +498,7 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
       withTranslit(
         withToc(
           withHr(
-            withFile(
-              withMath(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor())))))),
-            ),
+            withFile(withMath(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
           ),
         ),
         translit,
@@ -512,9 +510,7 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
       ? _state
       : new MuTxtState(
           editor,
-          obj
-            ? (obj as ObjApi<ObjNode>)
-            : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]),
+          obj ? (obj as ObjApi<ObjNode>) : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]),
           {collaborative: !!presence, readOnly, fromSlate, translit},
         );
     const editorToReturn = _state ? _state.editor : editor;

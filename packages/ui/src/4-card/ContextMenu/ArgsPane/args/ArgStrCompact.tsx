@@ -73,12 +73,7 @@ export const ArgStrCompact: React.FC<ArgStrProps> = ({param, value, onChange, on
   );
 
   return (
-    <ContextItem
-      icon={param.icon?.()}
-      control
-      inset
-      right={right}
-    >
+    <ContextItem icon={param.icon?.()} control inset right={right}>
       <span>
         {label}
         {param.optional && <OptionalBadge />}

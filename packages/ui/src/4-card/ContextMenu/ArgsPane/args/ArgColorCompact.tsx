@@ -52,10 +52,10 @@ export const ArgColorCompact: React.FC<ArgColorProps> = ({param, value, onChange
 
   const alphaEnabled = !!param.alpha;
   const defaultable = !!param.defaultable;
-  const fallback = ((param.default as string | undefined) || '#000000');
+  const fallback = (param.default as string | undefined) || '#000000';
   const s = readStructured(value, fallback);
   const def = defaultable && s.def;
-  const current = def ? fallback : (s.value || fallback);
+  const current = def ? fallback : s.value || fallback;
 
   const [preview, setPreview] = React.useState<string>(current);
   const [text, setText] = React.useState<string>(current);

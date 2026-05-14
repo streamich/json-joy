@@ -47,14 +47,24 @@ import DedentIcon__svg from 'iconista/lib/react/lucide/indent-decrease';
 import TypographyIcon__svg from 'iconista/lib/react/tabler/typography';
 
 // Block icons
-const ParagraphIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ParagraphIcon__svg width={16} height={16} {...props} />;
-const BlockquoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BlockquoteIcon__svg width={16} height={16} {...props} />;
-const CodeBlockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CodeBlockIcon__svg width={16} height={16} {...props} />;
+const ParagraphIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ParagraphIcon__svg width={16} height={16} {...props} />
+);
+const BlockquoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <BlockquoteIcon__svg width={16} height={16} {...props} />
+);
+const CodeBlockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CodeBlockIcon__svg width={16} height={16} {...props} />
+);
 const PreIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PreIcon__svg width={16} height={16} {...props} />;
 // const CalloutIcon = makeIcon({set: 'lucide', icon: 'message-square-warning', width: 16, height: 16});
 // const CalloutIcon = makeIcon({set: 'vscode', icon: 'note', width: 16, height: 16});
-const CalloutIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CalloutIcon__svg width={16} height={16} {...props} />;
-const ColumnsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ColumnsIcon__svg width={16} height={16} {...props} />;
+const CalloutIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CalloutIcon__svg width={16} height={16} {...props} />
+);
+const ColumnsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ColumnsIcon__svg width={16} height={16} {...props} />
+);
 
 // Heading icons
 // const H1Icon = makeIcon({set: 'tabler', icon: 'h-1', width: 16, height: 16});
@@ -69,7 +79,9 @@ const H3Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H3Icon__svg 
 const H4Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H4Icon__svg width={16} height={16} {...props} />;
 const H5Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H5Icon__svg width={16} height={16} {...props} />;
 const H6Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <H6Icon__svg width={16} height={16} {...props} />;
-const TitleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TitleIcon__svg width={16} height={16} {...props} />;
+const TitleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TitleIcon__svg width={16} height={16} {...props} />
+);
 
 // List icons
 // const ULIcon = makeIcon({set: 'ibm_32', icon: 'list--bulleted', width: 16, height: 16});
@@ -78,17 +90,35 @@ const ULIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ULIcon__svg 
 const OLIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OLIcon__svg width={16} height={16} {...props} />;
 // const ChecklistIcon = makeIcon({set: 'ibm_32', icon: 'list--checked', width: 16, height: 16});
 // const ChecklistIcon = makeIcon({set: 'vscode', icon: 'checklist', width: 16, height: 16});
-const ChecklistIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ChecklistIcon__svg width={16} height={16} {...props} />;
-const StepperIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <StepperIcon__svg width={16} height={16} {...props} />;
+const ChecklistIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ChecklistIcon__svg width={16} height={16} {...props} />
+);
+const StepperIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <StepperIcon__svg width={16} height={16} {...props} />
+);
 
 // Layout icons
-const AlignLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignLeftIcon__svg width={16} height={16} {...props} />;
-const AlignCenterIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignCenterIcon__svg width={16} height={16} {...props} />;
-const AlignRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignRightIcon__svg width={16} height={16} {...props} />;
-const AlignJustifyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <AlignJustifyIcon__svg width={16} height={16} {...props} />;
-const IndentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <IndentIcon__svg width={16} height={16} {...props} />;
-const DedentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DedentIcon__svg width={16} height={16} {...props} />;
-const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg width={16} height={16} {...props} />;
+const AlignLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <AlignLeftIcon__svg width={16} height={16} {...props} />
+);
+const AlignCenterIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <AlignCenterIcon__svg width={16} height={16} {...props} />
+);
+const AlignRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <AlignRightIcon__svg width={16} height={16} {...props} />
+);
+const AlignJustifyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <AlignJustifyIcon__svg width={16} height={16} {...props} />
+);
+const IndentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <IndentIcon__svg width={16} height={16} {...props} />
+);
+const DedentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DedentIcon__svg width={16} height={16} {...props} />
+);
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TypographyIcon__svg width={16} height={16} {...props} />
+);
 
 export class BlockMenu implements UiLifeCycles {
   constructor(public readonly mutxt: MuTxtState) {}

@@ -15,16 +15,14 @@ export const getMathSize = (value?: string): MathSize => {
   return DEF_SIZE;
 };
 
-export const getStoredMathSize = (value: MathSize): MathSize | undefined =>
-  value === DEF_SIZE ? undefined : value;
+export const getStoredMathSize = (value: MathSize): MathSize | undefined => (value === DEF_SIZE ? undefined : value);
 
 export const getMathLang = (value?: string): MathLang => {
   if (value === 'latex' || value === 'asciimath' || value === 'mathml') return value;
   return DEF_LANG;
 };
 
-export const getStoredMathLang = (value: MathLang): MathLang | undefined =>
-  value === DEF_LANG ? undefined : value;
+export const getStoredMathLang = (value: MathLang): MathLang | undefined => (value === DEF_LANG ? undefined : value);
 
 export const MATH_SIZE_PADDING: Record<MathSize, string> = {
   L: '4px 16px',

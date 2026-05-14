@@ -29,7 +29,15 @@ export interface MathSpanProps extends React.DetailedHTMLProps<React.HTMLAttribu
   dark?: boolean;
 }
 
-export const MathSpan: React.FC<MathSpanProps> = ({tex, mode = 'textstyle', focused, selected, dark, style, ...props}) => {
+export const MathSpan: React.FC<MathSpanProps> = ({
+  tex,
+  mode = 'textstyle',
+  focused,
+  selected,
+  dark,
+  style,
+  ...props
+}) => {
   const ref = React.useRef<HTMLSpanElement>(null);
 
   if (ref.current && ref.current.textContent !== tex) {

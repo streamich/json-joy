@@ -107,8 +107,7 @@ export class CustomStyleState implements UiLifeCycles {
   }
 
   public start(): () => void {
-    const subscribe = (target: ObjApi<ObjNode>) =>
-      target.onSubtreeChange(() => this.refresh());
+    const subscribe = (target: ObjApi<ObjNode>) => target.onSubtreeChange(() => this.refresh());
     const initial = this.read();
     if (initial) {
       this.refresh();

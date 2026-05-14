@@ -13,9 +13,15 @@ import NewDocIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-plus';
 import TemplateIcon__svg from 'iconista/lib/react/bootstrap/collection';
 import FolderIcon__svg from 'iconista/lib/react/bootstrap/folder2-open';
 
-const NewDocIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <NewDocIcon__svg width={18} height={18} {...props} />;
-const TemplateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TemplateIcon__svg width={18} height={18} {...props} />;
-const FolderIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FolderIcon__svg width={18} height={18} {...props} />;
+const NewDocIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <NewDocIcon__svg width={18} height={18} {...props} />
+);
+const TemplateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TemplateIcon__svg width={18} height={18} {...props} />
+);
+const FolderIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FolderIcon__svg width={18} height={18} {...props} />
+);
 
 const blockClass = rule({
   d: 'flex',

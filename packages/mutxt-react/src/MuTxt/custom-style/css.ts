@@ -60,7 +60,9 @@ export const toInlineCss = (cs: CustomStyle | undefined): React.CSSProperties =>
   if (cs.fs !== undefined) out.fontWidth = `${cs.fs}%`;
   if (cs.os !== undefined) out.fontOpticalSizing = cs.os ? 'auto' : 'none';
   if (cs.lig !== undefined) out.fontVariantLigatures = ligaturesToCss(cs.lig);
-  if (cs.nv !== undefined) out.fontVariantNumeric = cs.nv === 'normal' ? 'normal' : cs.nv === 'proportional' ? 'proportional-nums' : `${cs.nv}-nums`;
+  if (cs.nv !== undefined)
+    out.fontVariantNumeric =
+      cs.nv === 'normal' ? 'normal' : cs.nv === 'proportional' ? 'proportional-nums' : `${cs.nv}-nums`;
   if (cs.lh !== undefined) out.lineHeight = cs.lh;
   if (cs.ls !== undefined) out.letterSpacing = `${cs.ls}em`;
   if (cs.ws !== undefined) out.wordSpacing = `${cs.ws}em`;

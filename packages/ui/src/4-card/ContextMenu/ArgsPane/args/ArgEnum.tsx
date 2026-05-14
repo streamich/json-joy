@@ -68,9 +68,7 @@ export const ArgEnum: React.FC<ArgEnumProps> = ({param, value, onChange}) => {
   );
 
   const autoSelected = options.find((o) => (o.id ?? o.name) === defaultId);
-  const autoLabel = autoSelected
-    ? autoSelected.display?.() ?? t(autoSelected.name ?? defaultId)
-    : '—';
+  const autoLabel = autoSelected ? (autoSelected.display?.() ?? t(autoSelected.name ?? defaultId)) : '—';
 
   const right = defaultable ? (
     def ? (
@@ -90,20 +88,11 @@ export const ArgEnum: React.FC<ArgEnumProps> = ({param, value, onChange}) => {
       </span>
     )
   ) : (
-    <span style={{display: 'inline-flex', alignItems: 'center', gap: 2, margin: '-5px -8px -5px 0'}}>
-      {toolbar}
-    </span>
+    <span style={{display: 'inline-flex', alignItems: 'center', gap: 2, margin: '-5px -8px -5px 0'}}>{toolbar}</span>
   );
 
   return (
-    <ContextItem
-      icon={param.icon?.()}
-      control
-      compact
-      inset
-      style={{paddingTop: 6, paddingBottom: 6}}
-      right={right}
-    >
+    <ContextItem icon={param.icon?.()} control compact inset style={{paddingTop: 6, paddingBottom: 6}} right={right}>
       <span>
         {label}
         {param.optional && <OptionalBadge />}

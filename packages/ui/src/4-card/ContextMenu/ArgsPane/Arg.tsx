@@ -58,27 +58,11 @@ export const Arg: React.FC<ArgControlProps> = ({param, value, onChange, onSubmit
         />
       );
     case 'select':
-      return (
-        <ArgSelect
-          param={param}
-          value={value as any}
-          onChange={onChange}
-          onSubmit={onSubmit}
-          compact={compact}
-        />
-      );
+      return <ArgSelect param={param} value={value as any} onChange={onChange} onSubmit={onSubmit} compact={compact} />;
     case 'enum':
       return <ArgEnum param={param} value={value as any} onChange={onChange} compact={compact} />;
     case 'char':
-      return (
-        <ArgChar
-          param={param}
-          value={value as any}
-          onChange={onChange}
-          focus={focus}
-          compact={compact}
-        />
-      );
+      return <ArgChar param={param} value={value as any} onChange={onChange} focus={focus} compact={compact} />;
     case 'btn':
       return <ArgBtn param={param} compact={compact} />;
     case 'code':

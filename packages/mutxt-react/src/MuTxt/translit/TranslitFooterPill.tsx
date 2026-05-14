@@ -25,7 +25,9 @@ export const TranslitFooterPill: React.FC = () => {
 
   return (
     <span className={wrapClass}>
-      <BasicTooltip nowrap aria-label={`${scheme.name} (click to disable)`}
+      <BasicTooltip
+        nowrap
+        aria-label={`${scheme.name} (click to disable)`}
         renderTooltip={() => `${scheme.name} (click to disable)`}
         shortcut={formatKeys(['Primary', 'Alt', 't'])}
       >
@@ -43,7 +45,9 @@ export const TranslitFooterPill: React.FC = () => {
         </BasicButton>
       </BasicTooltip>
 
-      <BasicTooltip nowrap aria-label="Show phonetic map"
+      <BasicTooltip
+        nowrap
+        aria-label="Show phonetic map"
         renderTooltip={() => 'Show phonetic map'}
         shortcut={formatKeys(['Primary', 'Alt', 'Shift', 't'])}
       >
@@ -62,7 +66,7 @@ export const TranslitFooterPill: React.FC = () => {
 
       <Space horizontal size={-2} />
       {/* <Separator style={{width: 1, height: 16}}  /> */}
-      <Separator style={{width: 1, height: 48}}  />
+      <Separator style={{width: 1, height: 48}} />
     </span>
   );
 };

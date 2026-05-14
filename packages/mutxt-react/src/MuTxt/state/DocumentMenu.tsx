@@ -41,17 +41,39 @@ import CopyLinkIcon__svg from 'iconista/lib/react/tabler/link';
 import ShareOptionsIcon__svg from 'iconista/lib/react/tabler/adjustments';
 
 const documentIcon = () => <DocumentIcon2 width={16} height={16} />;
-const KeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <KeyboardIcon__svg width={16} height={16} {...props} />;
-const ThemeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeIcon__svg width={16} height={16} {...props} />;
-const ThemeAutoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeAutoIcon__svg width={16} height={16} {...props} />;
-const ThemeLightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeLightIcon__svg width={16} height={16} {...props} />;
-const ThemeDarkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeDarkIcon__svg width={16} height={16} {...props} />;
-const ThemeDefaultIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ThemeDefaultIcon__svg width={16} height={16} {...props} />;
-const MaximizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MaximizeIcon__svg width={16} height={16} {...props} />;
-const MinimizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MinimizeIcon__svg width={16} height={16} {...props} />;
-const FullscreenIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FullscreenIcon__svg width={16} height={16} {...props} />;
-const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TypographyIcon__svg width={16} height={16} {...props} />;
-const CustomStylesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CustomStylesIcon__svg width={16} height={16} {...props} />;
+const KeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <KeyboardIcon__svg width={16} height={16} {...props} />
+);
+const ThemeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ThemeIcon__svg width={16} height={16} {...props} />
+);
+const ThemeAutoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ThemeAutoIcon__svg width={16} height={16} {...props} />
+);
+const ThemeLightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ThemeLightIcon__svg width={16} height={16} {...props} />
+);
+const ThemeDarkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ThemeDarkIcon__svg width={16} height={16} {...props} />
+);
+const ThemeDefaultIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ThemeDefaultIcon__svg width={16} height={16} {...props} />
+);
+const MaximizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <MaximizeIcon__svg width={16} height={16} {...props} />
+);
+const MinimizeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <MinimizeIcon__svg width={16} height={16} {...props} />
+);
+const FullscreenIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <FullscreenIcon__svg width={16} height={16} {...props} />
+);
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TypographyIcon__svg width={16} height={16} {...props} />
+);
+const CustomStylesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CustomStylesIcon__svg width={16} height={16} {...props} />
+);
 
 const rtlMirrorClass = rule({
   d: 'inline-flex',
@@ -71,20 +93,44 @@ const RedoIcon: React.FC = () => (
     <Iconista set="lucide" icon="redo" width={16} height={16} />
   </span>
 );
-const GoToIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <GoToIcon__svg width={16} height={16} {...props} />;
-const ExportIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ExportIcon__svg width={16} height={16} {...props} />;
-const SaveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SaveIcon__svg width={16} height={16} {...props} />;
-const DevelopersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <DevelopersIcon__svg width={16} height={16} {...props} />;
-const EmbedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <EmbedIcon__svg width={16} height={16} {...props} />;
+const GoToIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <GoToIcon__svg width={16} height={16} {...props} />
+);
+const ExportIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ExportIcon__svg width={16} height={16} {...props} />
+);
+const SaveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SaveIcon__svg width={16} height={16} {...props} />
+);
+const DevelopersIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DevelopersIcon__svg width={16} height={16} {...props} />
+);
+const EmbedIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <EmbedIcon__svg width={16} height={16} {...props} />
+);
 // const BugIcon = makeIcon({set: 'tabler', icon: 'bug', width: 16, height: 16});
-const BracesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BracesIcon__svg width={16} height={16} {...props} />;
+const BracesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <BracesIcon__svg width={16} height={16} {...props} />
+);
 // const TerminalIcon = makeIcon({set: 'tabler', icon: 'terminal-2', width: 16, height: 16});
-const PlainTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PlainTextIcon__svg width={16} height={16} {...props} />;
-const WidthIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <WidthIcon__svg width={16} height={16} {...props} />;
-const ShareIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShareIcon__svg width={16} height={16} {...props} />;
-const ShareCheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShareCheckIcon__svg width={16} height={16} {...props} />;
-const CopyLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CopyLinkIcon__svg width={16} height={16} {...props} />;
-const ShareOptionsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShareOptionsIcon__svg width={16} height={16} {...props} />;
+const PlainTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <PlainTextIcon__svg width={16} height={16} {...props} />
+);
+const WidthIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <WidthIcon__svg width={16} height={16} {...props} />
+);
+const ShareIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ShareIcon__svg width={16} height={16} {...props} />
+);
+const ShareCheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ShareCheckIcon__svg width={16} height={16} {...props} />
+);
+const CopyLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CopyLinkIcon__svg width={16} height={16} {...props} />
+);
+const ShareOptionsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ShareOptionsIcon__svg width={16} height={16} {...props} />
+);
 
 const SHARE_COPIED_RESET_MS = 2000;
 

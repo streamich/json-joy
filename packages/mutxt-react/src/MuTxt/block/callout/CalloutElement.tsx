@@ -187,11 +187,7 @@ const bodyClass = rule({
   lh: 1.6,
 });
 
-const bindVoidInputKeyDown = (
-  el: HTMLElement | null,
-  editor: ReactEditor,
-  onCancel?: () => void,
-): (() => void) => {
+const bindVoidInputKeyDown = (el: HTMLElement | null, editor: ReactEditor, onCancel?: () => void): (() => void) => {
   if (!el) return () => {};
   const handler: EventListener = (evt: Event) => {
     const e = evt as KeyboardEvent;
@@ -284,9 +280,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
 
   const VariantIcon = VARIANT_ICONS[variant];
   const triggerBg = colors.bg;
-  const triggerBgHover = styles.light
-    ? 'rgba(0,0,0,0.04)'
-    : 'rgba(255,255,255,0.06)';
+  const triggerBgHover = styles.light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.06)';
   const hideHeader = !!element.hideHeader;
 
   const hasIconOverride = element.icon !== undefined;
@@ -296,10 +290,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
       <VariantIcon style={{color: colors.title}} />
     </span>
   ) : icon ? (
-    <span
-      className={iconIsEmoji ? indicatorEmojiClass : indicatorTextClass}
-      style={{color: colors.title}}
-    >
+    <span className={iconIsEmoji ? indicatorEmojiClass : indicatorTextClass} style={{color: colors.title}}>
       {icon}
     </span>
   ) : null;
@@ -328,12 +319,7 @@ export const CalloutElement: React.FC<CalloutElementProps> = ({attributes, child
       }}
     >
       {readOnly ? (
-        <span
-          aria-hidden="true"
-          contentEditable={false}
-          className={handleClass}
-          style={{background: colors.accent}}
-        />
+        <span aria-hidden="true" contentEditable={false} className={handleClass} style={{background: colors.accent}} />
       ) : hideHeader ? (
         // Header is gone — the handle is the *only* affordance, so it
         // anchors the popup itself. PopupControlled's outer span carries the
