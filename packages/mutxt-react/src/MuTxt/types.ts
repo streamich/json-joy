@@ -2,68 +2,12 @@ import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import type {StepperItem} from './block/stepper/types';
+import type {CalloutVariant} from './block/callout/settings';
 
 export type {MenuItem};
-
-export interface TextStyling {
-  // --------------------------------------------------------------------- Font
-  /** Font family (CSS `font-family`). */
-  ff?: FontKind | string;
-  /** Font size (CSS `font-size`). */
-  fz?: number;
-  /** Font weight (CSS `font-weight`). */
-  fw?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-  /** Font-stretch percent (CSS `font-stretch`). */
-  fs?: number;
-  /** Whether to apply `font-optical-sizing: auto`. */
-  os?: boolean;
-  /** Ligature mode: `'normal'` (default), `'none'`, `'common'`, `'discretionary'`, `'historical'`. */
-  lig?: 'normal' | 'none' | 'common' | 'discretionary' | 'historical';
-  /** Numeric variant: `'normal'`, `'lining'`, `'oldstyle'`, `'tabular'`, `'proportional'`. */
-  nv?: 'normal' | 'lining' | 'oldstyle' | 'tabular' | 'proportional';
-
-  // ------------------------------------------------------------------ Spacing
-  /** Line height (CSS `line-height`). */
-  lh?: number;
-  /** Letter spacing in `em` (CSS `letter-spacing`). */
-  ls?: number;
-  /** Word spacing in `em` (CSS `word-spacing`). */
-  ws?: number;
-  /** Kerning: `'auto'` (default), `'normal'`, `'none'` (CSS `font-kerning`). */
-  krn?: 'auto' | 'normal' | 'none';
-
-  // -------------------------------------------------------------------- Style
-  /** Italic / oblique (CSS `font-style`). */
-  it?: boolean;
-  /** Font caps variant (CSS `font-variant-caps`). */
-  cp?: 'normal' | 'all-small-caps' | 'small-caps';
-  /** Text transform (CSS `text-transform`). */
-  tr: 'upper' | 'lower';
-  /** Underline offset in `em` (CSS `text-underline-offset`). */
-  uo?: number;
-  /** Text decoration thickness in `px` (CSS `text-decoration-thickness`). */
-  tdt?: number;
-  /** Text underline position (CSS `text-underline-position`). */
-  tup?: 'auto' | 'under';
-  /** Text underline offset (CSS `text-underline-offset`). */
-  tuo?: number;
-  /** Text decoration color (CSS `text-decoration-color`). */
-  tdc?: string;
-  /** Text decoration line (CSS `text-decoration-line`). */
-  tdl?: ('underline' | 'overline' | 'line-through')[];
-  /** Text decoration skip ink (CSS `text-decoration-skip-ink`). */
-  tdsi?: boolean;
-
-  // --------------------------------------------------------------------- Text
-  /** Text wrap (CSS `text-wrap`). */
-  tw: 'balance' | 'pretty';
-
-  // -------------------------------------------------------------------- Color
-  /** Foreground text color. */
-  fg?: string;
-  /** Background color. */
-  bg?: string;
-}
+export type {StepperItem, StepState, StepIndicator, LineStyle} from './block/stepper/types';
+export type {CalloutVariant} from './block/callout/settings';
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 
@@ -125,7 +69,7 @@ export type MarkColor =
   | 'purple'
   | 'gray';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
-export type ListElementType = 'ul' | 'ol' | 'checklist';
+export type ListElementType = 'ul' | 'ol' | 'checklist' | 'stepper';
 export type UlType = 'disc' | 'circle' | 'square';
 export type OlType =
   | 'decimal'
@@ -149,7 +93,7 @@ export type BlockFormat =
   | 'code-block'
   | 'pre'
   | ListElementType;
-export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | 'toc' | SystemBlockElementType;
+export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | 'toc' | 'math' | SystemBlockElementType;
 export type SystemBlockElementType = '.things' | '.thing';
 export type HrLineStyle = 'solid' | 'dashed' | 'dotted' | 'squiggly';
 
@@ -207,12 +151,16 @@ export interface BlockquoteElement extends BlockAttributes {
 
 export interface CalloutElement extends BlockAttributes {
   type: 'callout';
+  /** Semantic flavor — picks a theme-aware accent. Defaults to `'note'`. */
+  variant?: CalloutVariant;
   /** Emoji or any character used as the callout icon. */
   icon?: string;
   /** Optional title text shown next to the icon. */
   title?: string;
-  /** Accent color. */
+  /** Explicit accent color override (any CSS color). Wins over `variant`. */
   color?: string;
+  /** When `true`, suppress the entire header row. */
+  hideHeader?: boolean;
   children: CustomText[];
 }
 
@@ -230,8 +178,10 @@ export interface PreformattedElement extends BlockAttributes {
   children: CustomText[];
 }
 
-export interface ListItemElement extends BlockAttributes {
+
+export interface ListItemElement extends BlockAttributes, StepperItem {
   type: 'li';
+  /** Checkbox state, used when the parent is a `checklist`. */
   checked?: boolean;
   children: CustomText[];
 }
@@ -250,6 +200,13 @@ export interface NumberedListElement extends BlockAttributes {
 
 export interface ChecklistListElement extends BlockAttributes {
   type: 'checklist';
+  children: ListItemElement[];
+}
+
+export interface StepperListElement extends BlockAttributes {
+  type: 'stepper';
+  /** When `true`, render a cap row above the list summarizing progress (e.g. "3 / 7 done"). */
+  progress?: boolean;
   children: ListItemElement[];
 }
 
@@ -372,6 +329,7 @@ export type CustomElement =
   | BulletedListElement
   | NumberedListElement
   | ChecklistListElement
+  | StepperListElement
   | EmbedElement
   | HrElement
   | FileElement
