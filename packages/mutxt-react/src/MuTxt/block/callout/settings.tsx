@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import type {Styles} from '@jsonjoy.com/ui/lib/styles/Styles';
 import NoteIcon__svg from 'iconista/lib/react/lineicons/notebook-1';
 import TipIcon__svg from 'iconista/lib/react/lucide/lightbulb';
@@ -7,8 +8,15 @@ import DangerIcon__svg from 'iconista/lib/react/lucide/octagon-alert';
 import ImportantIcon__svg from 'iconista/lib/react/lucide/star';
 import QuoteIcon__svg from 'iconista/lib/react/lucide/quote';
 
+const noteIconClass = rule({
+  d: 'inline-flex',
+  '& path': {fill: 'currentColor'},
+});
+
 const NoteIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <NoteIcon__svg width={16} height={16} {...props} />
+  <span className={noteIconClass}>
+    <NoteIcon__svg width={16} height={16} {...props} />
+  </span>
 );
 const TipIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TipIcon__svg width={16} height={16} {...props} />;
 const WarningIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
