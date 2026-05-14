@@ -39,6 +39,7 @@ import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
 import {EnsureUiProvider, useUiServices} from '@jsonjoy.com/ui/lib/context';
+import {useScopedResetClass} from '@jsonjoy.com/ui/lib/context/ScopedResetContext';
 import {useToasts} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager/context';
 import {ToastCardManager} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager';
 import {Provider as StylesProvider} from '@jsonjoy.com/ui/lib/styles/context';
@@ -194,6 +195,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   style,
 }) => {
   const styles = useStyles();
+  const scopedResetClass = useScopedResetClass();
   const peritextRef: PeritextRef = state.peritextRef;
 
   // --------------------------------------------------------- Presence manager
@@ -404,7 +406,11 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
     </>
   );
 
-  const combinedClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
+  const combinedClass =
+    (scopedResetClass ? scopedResetClass + ' ' : '') +
+    (className || '') +
+    shellClass +
+    (heightFit ? fitShellClass : '');
 
   const shellStyle: React.CSSProperties =
     displayMode === 'fullwindow'

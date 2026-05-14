@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ZINDEX} from '../../constants';
+import {useScopedResetClass} from '../../context/ScopedResetContext';
 
 export interface ToastCardStackProps {
   /** Anchor the stack to the right edge. */
@@ -38,6 +39,7 @@ export const ToastCardStack: React.FC<ToastCardStackProps> = ({
   leaveDelay = 90,
   children,
 }) => {
+  const scopedResetClass = useScopedResetClass();
   const items = React.useMemo(() => {
     const arr = Array.isArray(children) ? children : [children];
     return arr.filter((c): c is React.ReactNode => !!c);
@@ -137,9 +139,10 @@ export const ToastCardStack: React.FC<ToastCardStackProps> = ({
   // opposite/inner edges visibly shrink.
   const originX = center ? 'center' : right ? 'right' : 'left';
   const transformOrigin = `${originX} ${bottom ? 'bottom' : 'top'}`;
+  const wrapperClassName = global && scopedResetClass ? scopedResetClass : undefined;
 
   return (
-    <div style={wrapperStyle} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+    <div className={wrapperClassName} style={wrapperStyle} onMouseEnter={onEnter} onMouseLeave={onLeave}>
       {items.map((item, i) => {
         const ageIdx = newestIdx - i;
         const isNewest = ageIdx === 0;

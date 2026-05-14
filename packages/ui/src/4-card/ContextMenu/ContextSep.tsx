@@ -6,7 +6,7 @@ const h = React.createElement;
 
 const separatorClass = rule({
   h: '1px',
-  mar: '3px 0',
+  mar: '2px 0',
   w: '100%',
 });
 

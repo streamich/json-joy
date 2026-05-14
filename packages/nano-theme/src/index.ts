@@ -7,3 +7,4 @@ export * from './themes/light';
 export * from './themes/dark';
 export * from './react';
 export * from './color';
+export * from './scoped-reset';

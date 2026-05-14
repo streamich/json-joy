@@ -4,6 +4,8 @@ import {NiceUiNavService} from '@jsonjoy.com/ui/lib/context/services/NiceUiNavSe
 import {PagesService} from './services/PagesService';
 import {App} from './App';
 
+import 'nano-theme/lib/global-reset';
+
 const nav = new NiceUiNavService();
 const pages = new PagesService(nav);
 

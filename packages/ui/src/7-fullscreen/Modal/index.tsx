@@ -3,6 +3,7 @@ import {useT} from 'use-t';
 import {rule, lightTheme, ZINDEX} from 'nano-theme';
 import {Modal as BaseModal} from 'libreact/lib/Modal';
 import {useStyles} from '../../styles/context';
+import {useScopedResetClass} from '../../context/ScopedResetContext';
 import {BasicButtonClose} from '../../2-inline-block/BasicButton/BasicButtonClose';
 
 const theme = lightTheme;
@@ -106,9 +107,14 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const styles = useStyles();
   const [t] = useT();
-  const onElement = useCallback((el: HTMLElement) => {
-    el.style.zIndex = '' + ZINDEX.MODAL;
-  }, []);
+  const scopedResetClass = useScopedResetClass();
+  const onElement = useCallback(
+    (el: HTMLElement) => {
+      el.style.zIndex = '' + ZINDEX.MODAL;
+      if (scopedResetClass) el.classList.add(scopedResetClass);
+    },
+    [scopedResetClass],
+  );
   useEffect(() => {
     addBodyClass();
     return removeBodyClass;

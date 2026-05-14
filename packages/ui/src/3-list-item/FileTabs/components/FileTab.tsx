@@ -232,6 +232,14 @@ const detachedCloseButtonClass = drule({
   d: 'flex',
   ai: 'center',
   jc: 'center',
+  '& span span': {
+    w: '20px !important',
+    h: '20px !important',
+  },
+  '& svg': {
+    w: '20px !important',
+    h: '20px !important',
+  },
 });
 
 export interface FileTabProps {

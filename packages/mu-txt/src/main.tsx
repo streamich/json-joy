@@ -3,6 +3,8 @@ import {ErrorBoundary} from '@jsonjoy.com/ui/lib/misc/ErrorBoundary';
 import {createRoot} from 'react-dom/client';
 import {App} from './App';
 
+import 'nano-theme/lib/global-reset';
+
 window.addEventListener('error', (event) => {
   console.error('[mutxt] window error:', event.error || event.message);
 });

@@ -34,7 +34,7 @@ const displayClass = drule({
 
 const childrenClass = rule({
   fz: '.65em',
-  pdt: '.4em',
+  pdt: '.3em',
 });
 
 export interface FontStyleButtonProps extends React.AllHTMLAttributes<any> {
