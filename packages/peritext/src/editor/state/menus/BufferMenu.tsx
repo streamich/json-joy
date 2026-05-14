@@ -1,17 +1,24 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import type {MenuItem} from '../../types';
 import type {BufferDetail} from 'json-joy/lib/json-crdt-extensions/peritext/events';
 import type {EditorState} from '../EditorState';
+import ClipboardCopyIcon__svg from 'iconista/lib/react/radix/clipboard-copy';
+import ClipboardIcon__svg from 'iconista/lib/react/radix/clipboard';
+import ScissorsIcon__svg from 'iconista/lib/react/tabler/scissors';
+import JsonIcon__svg from 'iconista/lib/react/tabler/json';
+import CopyIcon__svg from 'iconista/lib/react/lucide/copy';
+import TextIcon__svg from 'iconista/lib/react/lucide/text';
+import MarkdownIcon__svg from 'iconista/lib/react/simple/markdown';
+import Html5Icon__svg from 'iconista/lib/react/simple/html5';
 
-const ClipboardCopyIcon = makeIcon({set: 'radix', icon: 'clipboard-copy'});
-const ClipboardIcon = makeIcon({set: 'radix', icon: 'clipboard'});
-const ScissorsIcon = makeIcon({set: 'tabler', icon: 'scissors'});
-const JsonIcon = makeIcon({set: 'tabler', icon: 'json'});
-const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
-const TextIcon = makeIcon({set: 'lucide', icon: 'text'});
-const MarkdownIcon = makeIcon({set: 'simple', icon: 'markdown'});
-const Html5Icon = makeIcon({set: 'simple', icon: 'html5'});
+const ClipboardCopyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClipboardCopyIcon__svg {...props} />;
+const ClipboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ClipboardIcon__svg {...props} />;
+const ScissorsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ScissorsIcon__svg {...props} />;
+const JsonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <JsonIcon__svg {...props} />;
+const CopyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CopyIcon__svg {...props} />;
+const TextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TextIcon__svg {...props} />;
+const MarkdownIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <MarkdownIcon__svg {...props} />;
+const Html5Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Html5Icon__svg {...props} />;
 
 export interface BufferMenuCtx {
   hideStyleActions?: boolean;

@@ -16,7 +16,7 @@ export const App: React.FC<AppProps> = ({pages}) => {
   }, [pages]);
 
   return (
-    <UiProvider nav={pages.nav}>
+    <UiProvider nav={pages.nav} globalCss>
       <Menu nav={pages.nav} />
       <Page />
     </UiProvider>

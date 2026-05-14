@@ -3,6 +3,7 @@ import {createPortal} from 'react-dom';
 import {context, usePortal, usePortalParent} from './context';
 import {PortalState} from './PortalState';
 import {useHiddenTrace} from '../../context';
+import {useScopedResetClass} from '../../context/ScopedResetContext';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 
 export interface PortalProps {
@@ -16,11 +17,15 @@ export interface PortalProps {
    * will be rendered into the body.
    */
   parent?: HTMLElement;
+
+  /** Extra class name applied to the portal's container `<div>`. */
+  className?: string;
 }
 
-export const Portal: React.FC<PortalProps> = ({children, parent}) => {
+export const Portal: React.FC<PortalProps> = ({children, parent, className}) => {
   const parentState = usePortal();
   const defaultParent = usePortalParent();
+  const scopedResetClass = useScopedResetClass();
   const state = React.useMemo(() => {
     const state = new PortalState();
     state.parent = parentState;
@@ -33,6 +38,11 @@ export const Portal: React.FC<PortalProps> = ({children, parent}) => {
     if (style.display !== 'none' && hidden) style.display = 'none';
     else if (style.display === 'none' && !hidden) style.display = '';
   }, [hidden, el]);
+  useIsomorphicLayoutEffect(() => {
+    const next = [scopedResetClass, className].filter(Boolean).join(' ');
+    if (el.className !== next) el.className = next;
+  }, [el, scopedResetClass, className]);
+
   React.useLayoutEffect(() => {
     const container = parent || defaultParent || document.body;
     container.appendChild(el);

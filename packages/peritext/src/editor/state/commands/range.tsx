@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {formatKeys} from '../../util/keys';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import type {CommandDefinition} from './types';
 import type {EditorState} from '../EditorState';
+import Icon__svg from 'iconista/lib/react/tabler/flip-vertical';
 
-const Icon = makeIcon({set: 'tabler', icon: 'flip-vertical'});
+const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 const keys = ['Primary', 'Primary'];
 
 export const cmds: ((state: EditorState) => CommandDefinition)[] = [

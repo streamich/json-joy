@@ -29,8 +29,10 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({noHover, compact, selecte
   };
   const link = styles.col.get('link', 'solid-1');
   const linkBg = styles.col.get('link', 'bg-2');
-  const successHover = styles.col.get('success', 'el-2');
-  const successBg = styles.col.get('success', 'bg-2');
+  const positiveFg = styles.positive.fg.toString();
+  const positiveBg = (
+    styles.light ? styles.positive.fg.pct(0, -0.5, 0.85) : styles.positive.fg.pct(0, -0.3, -0.65)
+  ).toString();
   const className = blockClass(
     compact
       ? {
@@ -39,8 +41,8 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({noHover, compact, selecte
           col: selected ? link : styles.g(0.5),
           bg: selected ? linkBg : 'transparent',
           '&:hover': {
-            col: noClick ? styles.g(0.5) : successHover,
-            bg: noClick ? 'transparent' : successBg,
+            col: noClick ? styles.g(0.5) : positiveFg,
+            bg: noClick ? 'transparent' : positiveBg,
           },
         }
       : {},
@@ -48,7 +50,11 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({noHover, compact, selecte
 
   if (noClick) {
     return (
-      <span className={(rest.className ?? '') + className} style={style}>
+      <span
+        className={(rest.className ?? '') + className}
+        style={style}
+        onMouseDown={rest.onMouseDown as React.MouseEventHandler<HTMLSpanElement> | undefined}
+      >
         {children}
       </span>
     );

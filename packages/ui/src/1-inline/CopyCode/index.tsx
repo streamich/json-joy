@@ -7,12 +7,14 @@ export interface CopyCodeProps extends CodeProps {
   truncate?: boolean;
 }
 
-export const CopyCode: React.FC<CopyCodeProps> = ({value, truncate, onMouseDown, ...rest}) => {
+export const CopyCode: React.FC<CopyCodeProps> = ({value, truncate, onMouseDown, style, ...rest}) => {
+  const codeStyle = truncate ? {minWidth: 0, maxWidth: '100%', ...(style || {})} : style;
   return (
     <Code
       gray
       spacious
       {...rest}
+      style={codeStyle}
       onMouseDown={(event) => {
         try {
           const element = event.nativeEvent.target;

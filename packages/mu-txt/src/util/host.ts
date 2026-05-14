@@ -3,6 +3,7 @@ export interface MutxtHost {
   readonly versions: Readonly<Record<string, string | undefined>>;
   openDialog(): Promise<void>;
   writeFile(path: string, bytes: Uint8Array): Promise<void>;
+  setTitlebarMode(mode: 'default' | 'compact'): Promise<void>;
   onOpenFile(cb: (file: {name: string; path: string; bytes?: Uint8Array}) => void): () => void;
   onOpenUrl(cb: (url: string) => void): () => void;
   /** Fires when the user presses Cmd/Ctrl+W. */

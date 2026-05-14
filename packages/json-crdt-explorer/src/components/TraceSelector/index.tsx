@@ -2,12 +2,12 @@ import * as React from 'react';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Button} from '@jsonjoy.com/ui/lib/2-inline-block/Button';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {useT} from 'use-t';
 import {useExplorer} from '../../context';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import ShopIcon__svg from 'iconista/lib/react/ant_outline/shop';
 
-const ShopIcon = makeIcon({set: 'ant_outline', icon: 'shop'});
+const ShopIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ShopIcon__svg {...props} />;
 
 export interface TraceSelectorProps {
   expanded?: boolean;

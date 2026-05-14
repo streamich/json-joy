@@ -5,12 +5,16 @@ import {ReactEditor, type RenderElementProps, useReadOnly, useSlateStatic} from 
 import {setChecklistItemChecked} from '../../behavior';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {fontFamilyOf} from '../../behavior/font';
+import {lhVar} from '../../custom-style/css';
 import {isEmptyBlock} from '../../util';
+import {StepperItem} from '../../block/stepper/StepperItem';
+import {ProgressCap} from '../../block/stepper/ProgressCap';
 import type {
   BulletedListElement,
   ChecklistListElement,
   ListItemElement as ListItemNode,
   NumberedListElement,
+  StepperListElement,
 } from '../../types';
 
 const listClass = rule({
@@ -27,13 +31,13 @@ const checklistClass = rule({
 const itemClass = rule({
   pos: 'relative',
   m: '0 0 11px',
-  lh: '1.7',
+  lh: lhVar('1.7'),
 });
 
 const checklistItemClass = rule({
   pos: 'relative',
   m: '0 0 11px',
-  lh: '1.7',
+  lh: lhVar('1.7'),
   listStyle: 'none',
 });
 
@@ -80,8 +84,14 @@ const checklistContentClass = rule({
   minW: '0',
 });
 
+const stepperClass = rule({
+  m: '0 0 16px',
+  pad: '4px 0 0 0',
+  listStyle: 'none',
+});
+
 export interface ListContainerElementProps extends RenderElementProps {
-  element: BulletedListElement | NumberedListElement | ChecklistListElement;
+  element: BulletedListElement | NumberedListElement | ChecklistListElement | StepperListElement;
 }
 
 export interface ListItemElementProps extends RenderElementProps {
@@ -94,6 +104,14 @@ export const ListContainerElement: React.FC<ListContainerElementProps> = ({attri
       <ul {...attributes} className={checklistClass}>
         {children}
       </ul>
+    );
+  }
+  if (element.type === 'stepper') {
+    return (
+      <ol {...attributes} className={stepperClass} aria-label="Stepper">
+        {element.progress ? <ProgressCap element={element} /> : null}
+        {children}
+      </ol>
     );
   }
   if (element.type === 'ol') {
@@ -118,15 +136,18 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
   const editor = useSlateStatic();
   const readOnly = useReadOnly();
 
-  const isChecklistItem = React.useMemo(() => {
+  const parentType = React.useMemo(() => {
     try {
       const path = ReactEditor.findPath(editor, element);
       const [parent] = Editor.parent(editor, path);
-      return SlateElement.isElement(parent) && parent.type === 'checklist';
+      return SlateElement.isElement(parent) ? parent.type : null;
     } catch {
-      return false;
+      return null;
     }
   }, [editor, element]);
+
+  const isChecklistItem = parentType === 'checklist';
+  const isStepperItem = parentType === 'stepper';
 
   const onToggle = React.useCallback(
     (event: React.MouseEvent<HTMLInputElement>) => {
@@ -137,6 +158,14 @@ export const ListItemElement: React.FC<ListItemElementProps> = ({attributes, chi
     },
     [editor, element, isChecklistItem, readOnly],
   );
+
+  if (isStepperItem) {
+    return (
+      <StepperItem attributes={attributes} element={element}>
+        {children}
+      </StepperItem>
+    );
+  }
 
   if (!isChecklistItem) {
     return (

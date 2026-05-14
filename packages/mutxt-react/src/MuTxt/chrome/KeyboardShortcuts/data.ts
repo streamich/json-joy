@@ -92,4 +92,11 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       {keys: ['Primary', 'Shift', 'z'], label: 'Redo'},
     ],
   },
+  {
+    title: 'Translit',
+    shortcuts: [
+      {keys: ['Primary', 'Alt', 't'], label: 'Toggle translit mode'},
+      {keys: ['Primary', 'Alt', 'Shift', 't'], label: 'Show translit phonetic map'},
+    ],
+  },
 ];

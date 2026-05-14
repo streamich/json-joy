@@ -101,6 +101,13 @@ const describeScrollMapElement = (
         height: 4,
         proportional: true,
       };
+    case 'math':
+      return {
+        el: element,
+        color: light ? 'rgba(99,102,241,.6)' : 'rgba(165,180,252,.55)',
+        height: 4,
+        proportional: true,
+      };
     case 'ul':
       return {
         el: element,
@@ -112,6 +119,13 @@ const describeScrollMapElement = (
       return {
         el: element,
         color: light ? 'rgba(13,107,148,.6)' : 'rgba(45,167,212,.5)',
+        height: 3,
+        proportional: true,
+      };
+    case 'stepper':
+      return {
+        el: element,
+        color: light ? 'rgba(75,110,175,.6)' : 'rgba(130,165,225,.5)',
         height: 3,
         proportional: true,
       };

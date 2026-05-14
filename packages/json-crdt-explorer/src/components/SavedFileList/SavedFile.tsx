@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useExplorer} from '../../context';
 import {FileListItem} from '@jsonjoy.com/ui/lib/3-list-item/FileListItem';
-import {Iconista, makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import {Iconista} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButtonMore} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonMore';
 import {BasicButtonDelete} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonDelete';
 import {FileIcon} from '@jsonjoy.com/ui/lib/1-inline/FileIcon';
@@ -9,9 +9,15 @@ import {ContextMenu} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import type {FileMetadataDto} from '../../state/file';
+import DownloadIcon__svg from 'iconista/lib/react/auth0/download';
+import GhostFileIcon__svg from 'iconista/lib/react/bootstrap/file-earmark-binary';
 
-const DownloadIcon = makeIcon({set: 'auth0', icon: 'download', width: 16, height: 16});
-const GhostFileIcon = makeIcon({set: 'bootstrap', icon: 'file-earmark-binary', width: 16, height: 16});
+const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DownloadIcon__svg width={16} height={16} {...props} />
+);
+const GhostFileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <GhostFileIcon__svg width={16} height={16} {...props} />
+);
 const icon = <GhostFileIcon />;
 
 const formatDate = (timestamp: number): string => {

@@ -13,6 +13,8 @@ import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 const wrapperClass = rule({
   bxz: 'border-box',
   w: '100%',
+  maxW: '1444px',
+  mr: '0 auto',
   pd: '40px 48px 56px',
 });
 

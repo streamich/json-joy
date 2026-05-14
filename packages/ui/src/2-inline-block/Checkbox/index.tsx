@@ -78,7 +78,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
   });
 
   const style: any = {
-    background: on ? styles.col.get('success', 'solid-1') : styles.g(light ? 0.4 : 0.7),
+    background: on ? styles.positive.fg.toString() : styles.g(light ? 0.4 : 0.7),
   };
 
   const styleSpan: any = {
@@ -127,7 +127,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       'span',
       {className: labelClass, style: styleLabelOn, 'aria-hidden': true},
       h(Iconista, {
-        color: styles.bg.copy(0, 0, 0, -0.4).toString(),
+        color: styles.bg.fg.copy(0, 0, 0, -0.4).toString(),
         set: 'bootstrap',
         icon: 'check',
         width: small ? 12 : 14,
@@ -138,7 +138,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
       'span',
       {className: labelClass, style: styleLabelOff, 'aria-hidden': true},
       h(Iconista, {
-        color: styles.bg.copy(0, 0, 0, -0.4).toString(),
+        color: styles.bg.fg.copy(0, 0, 0, -0.4).toString(),
         set: 'bootstrap',
         icon: 'x',
         width: small ? 12 : 14,

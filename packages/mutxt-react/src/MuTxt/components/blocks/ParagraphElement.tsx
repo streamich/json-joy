@@ -3,6 +3,7 @@ import {rule} from 'nano-theme';
 import {BlockPlaceholder} from './BlockPlaceholder';
 import {indentPadding} from '../../behavior/indentation';
 import {fontFamilyOf} from '../../behavior/font';
+import {lhVar} from '../../custom-style/css';
 import {isEmptyBlock} from '../../util';
 import type {RenderElementProps} from 'slate-react';
 import type {ParagraphElement as ParagraphElementType} from '../../types';
@@ -10,7 +11,7 @@ import type {ParagraphElement as ParagraphElementType} from '../../types';
 const paragraphClass = rule({
   pos: 'relative',
   m: '0 0 14px',
-  lh: '1.8',
+  lh: lhVar('1.8'),
 });
 
 export interface ParagraphElementProps extends RenderElementProps {

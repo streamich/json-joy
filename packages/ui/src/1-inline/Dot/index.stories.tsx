@@ -19,7 +19,7 @@ const meta: Meta<typeof Component> = {
 export default meta;
 
 export const Primary: StoryObj<typeof meta> = {
-  args: {color: 'positive'},
+  args: {color: 'success'},
 };
 
 export const Colors: StoryObj<typeof meta> = {

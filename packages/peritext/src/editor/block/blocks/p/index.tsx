@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {block} from '../util';
+import Icon__svg from 'iconista/lib/react/lucide/pilcrow';
 
 export const name = 'Paragraph';
-export const Icon = makeIcon({set: 'lucide', icon: 'pilcrow'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 export const behavior = block(SliceTypeCon.p, name, {
   keys: ['Shift', 'Primary', '0'],
   menuId: 'block-text',

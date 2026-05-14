@@ -2,8 +2,12 @@ import type {BaseEditor} from 'slate';
 import type {HistoryEditor} from 'slate-history';
 import type {ReactEditor} from 'slate-react';
 import type {MenuItem} from '@jsonjoy.com/ui/lib/4-card/StructuralMenu/types';
+import type {StepperItem} from './block/stepper/types';
+import type {CalloutVariant} from './block/callout/settings';
 
 export type {MenuItem};
+export type {StepperItem, StepState, StepIndicator, LineStyle} from './block/stepper/types';
+export type {CalloutVariant} from './block/callout/settings';
 
 export type SlateTextAlign = 'left' | 'center' | 'right' | 'justify';
 
@@ -46,9 +50,16 @@ export type MarkFormat =
   | 'sub'
   | 'kbd'
   | 'ins'
-  | 'del';
+  | 'del'
+  | 'fg'
+  | 'bg';
+
+/**
+ * Named slot in the highlight (`<mark>`) palette.
+ */
+export type MarkColor = 'yellow' | 'lime' | 'green' | 'cyan' | 'blue' | 'pink' | 'peach' | 'red' | 'purple' | 'gray';
 export type HeadingElementType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'title' | 'subtitle';
-export type ListElementType = 'ul' | 'ol' | 'checklist';
+export type ListElementType = 'ul' | 'ol' | 'checklist' | 'stepper';
 export type UlType = 'disc' | 'circle' | 'square';
 export type OlType =
   | 'decimal'
@@ -72,7 +83,7 @@ export type BlockFormat =
   | 'code-block'
   | 'pre'
   | ListElementType;
-export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | 'toc' | SystemBlockElementType;
+export type BlockElementType = BlockFormat | 'li' | 'embed' | 'hr' | 'file' | 'toc' | 'math' | SystemBlockElementType;
 export type SystemBlockElementType = '.things' | '.thing';
 export type HrLineStyle = 'solid' | 'dashed' | 'dotted' | 'squiggly';
 
@@ -89,7 +100,9 @@ export interface CustomText {
   strikethrough?: boolean;
   overline?: boolean;
   code?: boolean;
-  mark?: boolean;
+  mark?: boolean | MarkColor;
+  fg?: string;
+  bg?: string;
   spoiler?: boolean;
   sup?: boolean;
   sub?: boolean;
@@ -128,12 +141,16 @@ export interface BlockquoteElement extends BlockAttributes {
 
 export interface CalloutElement extends BlockAttributes {
   type: 'callout';
+  /** Semantic flavor — picks a theme-aware accent. Defaults to `'note'`. */
+  variant?: CalloutVariant;
   /** Emoji or any character used as the callout icon. */
   icon?: string;
   /** Optional title text shown next to the icon. */
   title?: string;
-  /** Accent color. */
+  /** Explicit accent color override (any CSS color). Wins over `variant`. */
   color?: string;
+  /** When `true`, suppress the entire header row. */
+  hideHeader?: boolean;
   children: CustomText[];
 }
 
@@ -151,8 +168,9 @@ export interface PreformattedElement extends BlockAttributes {
   children: CustomText[];
 }
 
-export interface ListItemElement extends BlockAttributes {
+export interface ListItemElement extends BlockAttributes, StepperItem {
   type: 'li';
+  /** Checkbox state, used when the parent is a `checklist`. */
   checked?: boolean;
   children: CustomText[];
 }
@@ -171,6 +189,13 @@ export interface NumberedListElement extends BlockAttributes {
 
 export interface ChecklistListElement extends BlockAttributes {
   type: 'checklist';
+  children: ListItemElement[];
+}
+
+export interface StepperListElement extends BlockAttributes {
+  type: 'stepper';
+  /** When `true`, render a cap row above the list summarizing progress (e.g. "3 / 7 done"). */
+  progress?: boolean;
   children: ListItemElement[];
 }
 
@@ -239,6 +264,48 @@ export interface FileElement extends BlockAttributes {
   children: CustomText[];
 }
 
+/** Source language for a math equation payload. */
+export type MathLang = 'latex' | 'asciimath' | 'mathml';
+
+/** Visual size of a block equation: large (display), medium, or small. */
+export type MathSize = 'L' | 'M' | 'S';
+
+/** A `Thing` representing a math equation. */
+export interface MathThing extends Thing {
+  '@type': 'math';
+  /** Source string in `lang`. */
+  val: string;
+  /** Source language. Defaults to `'latex'`. */
+  lang?: MathLang;
+  /**
+   * Default visual size for the equation. Currently only consumed by
+   * inline references, block references carry their own per-element `size` override.
+   */
+  size?: MathSize;
+  /** Human-readable display name (shown in pickers / outlines). */
+  name?: string;
+  /** Cross-reference key (e.g. `eq:pythagoras`) used to link to this equation. */
+  label?: string;
+}
+
+/** A user-facing void block that references a `MathThing` by id. Rendered as a centered display-mode equation. */
+export interface MathElement extends BlockAttributes {
+  type: 'math';
+  '@thing': string;
+  /** Optional caption rendered below the equation. */
+  caption?: string;
+  /** Visual size override. */
+  size?: MathSize;
+  children: CustomText[];
+}
+
+/** A user-facing inline void that references a `MathThing` by id. Rendered inline in the surrounding paragraph. */
+export interface MathInlineElement {
+  type: 'math-inline';
+  '@thing': string;
+  children: CustomText[];
+}
+
 export type CustomElement =
   | ParagraphElement
   | TwoColumnsElement
@@ -251,10 +318,13 @@ export type CustomElement =
   | BulletedListElement
   | NumberedListElement
   | ChecklistListElement
+  | StepperListElement
   | EmbedElement
   | HrElement
   | FileElement
-  | TocElement;
+  | TocElement
+  | MathElement
+  | MathInlineElement;
 
 export type SlateEditorDocument = CustomElement[];
 

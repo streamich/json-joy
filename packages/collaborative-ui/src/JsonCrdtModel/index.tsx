@@ -4,7 +4,6 @@ import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
@@ -32,8 +31,9 @@ import {Display, type DisplayProps} from './Display';
 import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 import {ModelLogicalTimestamp} from '../LogicalTimestamp/ModelLogicalTimestamp';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
+import ExternalLinkIcon__svg from 'iconista/lib/react/auth0/external-link';
 
-const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
+const ExternalLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ExternalLinkIcon__svg {...props} />;
 
 const css = {
   header: rule({

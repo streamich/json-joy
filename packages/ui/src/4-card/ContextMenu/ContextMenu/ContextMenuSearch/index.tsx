@@ -22,10 +22,11 @@ enum HEIGHT {
 
 export interface ContextMenuSearchProps {
   inset?: boolean;
+  searchPlaceholder?: string;
   ContextMenuPane: React.FC<ContextMenuPaneProps>;
 }
 
-export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, ContextMenuPane}) => {
+export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, searchPlaceholder, ContextMenuPane}) => {
   const [t] = useT();
   const state = useContextMenu();
   const search = useBehaviorSubject(state.search$);
@@ -158,7 +159,7 @@ export const ContextMenuSearch: React.FC<ContextMenuSearchProps> = ({inset, Cont
         <Input
           focus
           size={-2}
-          placeholder={t('Find action') + ' ' + SYMBOL.ELLIPSIS}
+          placeholder={searchPlaceholder ?? t('Find') + SYMBOL.ELLIPSIS}
           right={search ? <BasicButtonClose onClick={() => state.search$.next('')} /> : void 0}
           value={search}
           onChange={(value) => state.search$.next(value)}

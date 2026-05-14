@@ -43,6 +43,10 @@ export class ThemeColor {
     return new ThemeColor(new HslColor(newH, newS, newL, this.fg.a), bgDark);
   }
 
+  public lerp(other: ThemeColor, t: number): ThemeColor {
+    return new ThemeColor(this.fg.mix(other.fg, t), this.bg.mix(other.bg, t));
+  }
+
   public toString(): string {
     return this.fg.toString();
   }

@@ -1,14 +1,15 @@
 import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicButton, type BasicButtonProps} from '../BasicButton';
-import {makeIcon} from '../../icons/Iconista';
 import {BasicTooltip, type BasicTooltipProps} from '../../4-card/BasicTooltip';
 import useMountedState from 'react-use/lib/useMountedState';
+import CheckIcon__svg from 'iconista/lib/react/atlaskit/check';
+import CopyIcon__svg from 'iconista/lib/react/lucide/copy';
 
 const copy = require('clipboard-copy'); // eslint-disable-line
 
-const CheckIcon = makeIcon({set: 'atlaskit', icon: 'check'});
-const CopyIcon = makeIcon({set: 'lucide', icon: 'copy'});
+const CheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CheckIcon__svg {...props} />;
+const CopyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <CopyIcon__svg {...props} />;
 
 // const anchor = {horizontal: true, center: true};
 

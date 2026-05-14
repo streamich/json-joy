@@ -110,6 +110,7 @@ export interface TabsProps {
   /** Controlled active tab key. */
   active?: string;
   spread?: boolean;
+  muted?: boolean;
   onChange?: (key: string) => void;
   style?: React.CSSProperties;
   contentStyle?: React.CSSProperties;
@@ -120,6 +121,7 @@ export const Tabs: React.FC<TabsProps> = ({
   defaultActive,
   active: activeProp,
   spread,
+  muted,
   onChange,
   style,
   contentStyle,
@@ -127,7 +129,8 @@ export const Tabs: React.FC<TabsProps> = ({
   const styles = useStyles();
   const light = styles.light;
 
-  const trayCls = trayClass({bg: light ? styles.g(0.95) : styles.g(0.83)});
+  const trayBg = muted ? (light ? styles.g(0.98) : styles.g(0.92)) : light ? styles.g(0.95) : styles.g(0.83);
+  const trayCls = trayClass({bg: trayBg});
   const pillCls = pillClass({
     bg: light ? '#fff' : styles.g(0.78),
     bxsh: light
@@ -184,11 +187,36 @@ export const Tabs: React.FC<TabsProps> = ({
     setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
   }, []);
 
+  /**
+   * Scroll the active tab into view if it's currently outside the visible
+   * range of the scroll container. No-op when the tab is already visible.
+   */
+  const scrollActiveIntoView = React.useCallback(
+    (behavior: ScrollBehavior) => {
+      const tab = tabRefs.current.get(active);
+      const scroll = scrollRef.current;
+      if (!tab || !scroll) return;
+      const left = tab.offsetLeft;
+      const right = left + tab.offsetWidth;
+      const viewLeft = scroll.scrollLeft;
+      const viewRight = viewLeft + scroll.clientWidth;
+      if (left < viewLeft) scroll.scrollTo({left, behavior});
+      else if (right > viewRight) scroll.scrollTo({left: right - scroll.clientWidth, behavior});
+    },
+    [active],
+  );
+
+  const isFirstRender = React.useRef(true);
+
   // Place pill synchronously after every relevant render (before paint).
   React.useLayoutEffect(() => {
     movePill(active);
+    // Ensure the active tab is visible. Instant on first mount so the user
+    // never sees the wrong tab framed.
+    scrollActiveIntoView(isFirstRender.current ? 'auto' : 'smooth');
+    isFirstRender.current = false;
     checkScroll();
-  }, [active, movePill, checkScroll]);
+  }, [active, movePill, scrollActiveIntoView, checkScroll]);
 
   // Update arrow visibility on scroll.
   React.useEffect(() => {
@@ -213,10 +241,6 @@ export const Tabs: React.FC<TabsProps> = ({
   const handleClick = (key: string) => {
     if (activeProp === undefined) setInternal(key);
     onChange?.(key);
-    // Scroll the clicked tab into view after potential layout update.
-    requestAnimationFrame(() => {
-      tabRefs.current.get(key)?.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'nearest'});
-    });
   };
 
   const scrollBy = (dir: -1 | 1) => {

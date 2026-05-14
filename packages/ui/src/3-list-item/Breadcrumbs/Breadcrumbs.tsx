@@ -14,6 +14,7 @@ const blockClass = rule({
 const separatorClass = rule({
   d: 'inline-block',
   pad: '0 8px',
+  lh: 1,
   op: 0.4,
 });
 
@@ -33,7 +34,10 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({crumbs, compact, style}
           <React.Fragment key={index}>
             {item}
             {!isLast && (
-              <span className={separatorClass} style={{padding: compact ? '0 2px' : void 0}}>
+              <span
+                className={separatorClass}
+                style={{padding: compact ? '0 2px' : void 0, fontSize: compact ? '11px' : void 0}}
+              >
                 /
               </span>
             )}

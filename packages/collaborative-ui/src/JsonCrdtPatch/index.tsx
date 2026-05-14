@@ -3,7 +3,6 @@ import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {Checkbox} from '@jsonjoy.com/ui/lib/2-inline-block/Checkbox';
@@ -22,8 +21,9 @@ import {DownloadButton} from './DownloadButton';
 import {JsonCrdtPatchBinary} from './JsonCrdtPatchBinary';
 import {JsonCrdtPatchVerbose} from './JsonCrdtPatchVerbose';
 import {JsonCrdtPatchCompact} from './JsonCrdtPatchCompact';
+import ExternalLinkIcon__svg from 'iconista/lib/react/auth0/external-link';
 
-const ExternalLinkIcon = makeIcon({set: 'auth0', icon: 'external-link'});
+const ExternalLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ExternalLinkIcon__svg {...props} />;
 
 const css = {
   header: rule({

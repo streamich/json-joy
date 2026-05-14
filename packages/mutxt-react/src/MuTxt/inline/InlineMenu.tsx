@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Range} from 'slate';
 import {rsync} from '@jsonjoy.com/ui';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {FontStyleButton} from '@jsonjoy.com/ui/lib/2-inline-block/FontStyleButton';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {formatKeys} from '../util/keys';
@@ -10,38 +9,96 @@ import type {FontKind, MarkFormat, MenuItem} from '../types';
 import type {MuTxtState} from '../state/MuTxtState';
 import type {UiLifeCycles} from '@jsonjoy.com/ui/lib/types';
 import {isLeafFontActive, setLeafFont} from '../behavior/font';
+import {getActiveBg, getActiveFg, getActiveMarkColor} from '../behavior/color';
+import {MarkSwatchPanel} from './MarkSwatchPanel';
+import {ColorPickerPanel} from './ColorPickerPanel';
+import {getActiveMathInlineEntry} from '../behavior/math';
+import BoldIcon__svg from 'iconista/lib/react/radix/font-bold';
+import ItalicIcon__svg from 'iconista/lib/react/lucide/italic';
+import UnderlineIcon__svg from 'iconista/lib/react/tabler/underline';
+import OverlineIcon__svg from 'iconista/lib/react/tabler/overline';
+import StrikethroughIcon__svg from 'iconista/lib/react/tabler/strikethrough';
+import HighlightIcon__svg from 'iconista/lib/react/tabler/highlight';
+import SpoilerIcon__svg from 'iconista/lib/react/tabler/lock-password';
+import CodeIcon__svg from 'iconista/lib/react/tabler/code';
+import SupIcon__svg from 'iconista/lib/react/tabler/superscript';
+import SubIcon__svg from 'iconista/lib/react/tabler/subscript';
+import KeyIcon__svg from 'iconista/lib/react/lucide/keyboard';
+import InsertionIcon__svg from 'iconista/lib/react/tabler/pencil-plus';
+import DeletionIcon__svg from 'iconista/lib/react/tabler/pencil-minus';
+import LinkIcon__svg from 'iconista/lib/react/lucide/link';
+import FgIcon__svg from 'iconista/lib/react/lucide/paintbrush';
+import BgIcon__svg from 'iconista/lib/react/lucide/paint-bucket';
+import MathIcon__svg from 'iconista/lib/react/tabler/math-function';
+import ClearFormattingIcon__svg from 'iconista/lib/react/tabler/eraser';
+import TypographyIcon__svg from 'iconista/lib/react/tabler/typography';
 
 export interface InlineMenuItem extends MenuItem {
   mark: MarkFormat;
 }
 
 // Formatting: common
-const BoldIcon = makeIcon({set: 'radix', icon: 'font-bold', width: 15, height: 15});
-const ItalicIcon = makeIcon({set: 'lucide', icon: 'italic', width: 16, height: 16});
-const UnderlineIcon = makeIcon({set: 'tabler', icon: 'underline', width: 16, height: 16});
-const OverlineIcon = makeIcon({set: 'tabler', icon: 'overline', width: 16, height: 16});
-const StrikethroughIcon = makeIcon({set: 'tabler', icon: 'strikethrough', width: 16, height: 16});
-const HighlightIcon = makeIcon({set: 'tabler', icon: 'highlight', width: 16, height: 16});
-const SpoilerIcon = makeIcon({set: 'tabler', icon: 'lock-password', width: 16, height: 16});
+const BoldIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <BoldIcon__svg width={15} height={15} {...props} />
+);
+const ItalicIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ItalicIcon__svg width={16} height={16} {...props} />
+);
+const UnderlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <UnderlineIcon__svg width={16} height={16} {...props} />
+);
+const OverlineIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <OverlineIcon__svg width={16} height={16} {...props} />
+);
+const StrikethroughIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <StrikethroughIcon__svg width={16} height={16} {...props} />
+);
+const HighlightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <HighlightIcon__svg width={16} height={16} {...props} />
+);
+const SpoilerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SpoilerIcon__svg width={16} height={16} {...props} />
+);
 
 // Formatting: technical
-const CodeIcon = makeIcon({set: 'tabler', icon: 'code', width: 16, height: 16});
-const SupIcon = makeIcon({set: 'tabler', icon: 'superscript', width: 16, height: 16});
-const SubIcon = makeIcon({set: 'tabler', icon: 'subscript', width: 16, height: 16});
-const KeyIcon = makeIcon({set: 'lucide', icon: 'keyboard', width: 16, height: 16});
-const InsertionIcon = makeIcon({set: 'tabler', icon: 'pencil-plus', width: 16, height: 16});
-const DeletionIcon = makeIcon({set: 'tabler', icon: 'pencil-minus', width: 16, height: 16});
+const CodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <CodeIcon__svg width={16} height={16} {...props} />
+);
+const SupIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SupIcon__svg width={16} height={16} {...props} />;
+const SubIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <SubIcon__svg width={16} height={16} {...props} />;
+const KeyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <KeyIcon__svg width={16} height={16} {...props} />;
+const InsertionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <InsertionIcon__svg width={16} height={16} {...props} />
+);
+const DeletionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DeletionIcon__svg width={16} height={16} {...props} />
+);
 
 // Annotations
-const LinkIcon = makeIcon({set: 'lucide', icon: 'link', width: 15, height: 15});
+const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <LinkIcon__svg width={15} height={15} {...props} />
+);
+const FgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <FgIcon__svg width={16} height={16} {...props} />;
+const BgIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <BgIcon__svg width={16} height={16} {...props} />;
+const MathIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <MathIcon__svg width={16} height={16} {...props} />
+);
 
 // Modify
-const ClearFormattingIcon = makeIcon({set: 'tabler', icon: 'eraser', width: 16, height: 16});
+const ClearFormattingIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <ClearFormattingIcon__svg width={16} height={16} {...props} />
+);
 
 // Typesetting
-const TypographyIcon = makeIcon({set: 'tabler', icon: 'typography', width: 16, height: 16});
+const TypographyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <TypographyIcon__svg width={16} height={16} {...props} />
+);
+
+const RECENT_LIMIT = 4;
 
 export class InlineMenu implements UiLifeCycles {
+  public readonly recent = rsync.val<MenuItem[]>([]);
+
   constructor(public readonly mutxt: MuTxtState) {}
 
   public start() {
@@ -52,8 +109,28 @@ export class InlineMenu implements UiLifeCycles {
     return rsync.comp([this.mutxt.version], () => isMarkActive(this.mutxt.editor, mark));
   }
 
+  public readonly addRecent = (item: MenuItem): void => {
+    const key = item.id ?? item.name;
+    const next = [item, ...this.recent.value.filter((r) => (r.id ?? r.name) !== key)];
+    if (next.length > RECENT_LIMIT) next.length = RECENT_LIMIT;
+    this.recent.set(next);
+  };
+
+  private menuRecent(): MenuItem | null {
+    const list = this.recent.value;
+    if (list.length === 0) return null;
+    return {
+      id: 'recent',
+      name: 'Recent',
+      expand: RECENT_LIMIT,
+      children: list,
+    };
+  }
+
   public build(): MenuItem {
+    const recent = this.menuRecent();
     const children: MenuItem['children'] = [
+      ...(recent ? [recent, {name: 'sep-recent', sep: true} as MenuItem] : []),
       this.menuFmt(),
       {name: 'sep-annon', sep: true},
       this.menuAnnotations({anchorFromSelection: true}),
@@ -64,7 +141,7 @@ export class InlineMenu implements UiLifeCycles {
     ];
     return {
       name: 'Selection menu',
-      maxToolbarItems: 4,
+      maxToolbarItems: recent ? 5 : 4,
       children,
     };
   }
@@ -90,8 +167,16 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Formatting',
       expandChild: 0,
       // preview: this.recent,
-      children: [this.menuFmtCommon(), this.menuFmtTechnical()] as MenuItem[],
-      preview: [this.itemBold(), this.itemItalic(), this.itemUnderline(), this.itemCode()] as MenuItem[],
+      children: [this.menuFmtCommon(), this.menuFmtTechnical(), this.menuFmtColors()] as MenuItem[],
+      preview: [
+        this.itemBold(),
+        this.itemItalic(),
+        this.itemUnderline(),
+        this.itemCode(),
+        this.itemHighlight(),
+        this.itemFg(),
+        this.itemBg(),
+      ] as MenuItem[],
     };
     return formatting;
   }
@@ -186,16 +271,34 @@ export class InlineMenu implements UiLifeCycles {
       },
     };
   }
-  public itemHighlight(): InlineMenuItem {
+  public itemHighlight(): MenuItem {
+    const mutxt = this.mutxt;
     return {
-      mark: 'mark',
       name: 'Highlight',
-      text: 'mark yellow background marker emphasis',
+      text: 'mark yellow background marker emphasis color',
       icon: () => <HighlightIcon />,
-      active: this.markActive('mark'),
-      onSelect: () => {
-        this.mutxt.api.toggleMark('mark');
-      },
+      active: rsync.comp([mutxt.version], () => getActiveMarkColor(mutxt.editor) !== undefined),
+      pane: () => <MarkSwatchPanel mutxt={mutxt} />,
+    };
+  }
+  public itemFg(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Text color',
+      text: 'fg foreground font color text',
+      icon: () => <FgIcon />,
+      active: rsync.comp([mutxt.version], () => !!getActiveFg(mutxt.editor)),
+      pane: () => <ColorPickerPanel mutxt={mutxt} kind="fg" />,
+    };
+  }
+  public itemBg(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Background color',
+      text: 'bg background fill color shading',
+      icon: () => <BgIcon />,
+      active: rsync.comp([mutxt.version], () => !!getActiveBg(mutxt.editor)),
+      pane: () => <ColorPickerPanel mutxt={mutxt} kind="bg" />,
     };
   }
   public itemSpoiler(): InlineMenuItem {
@@ -217,7 +320,25 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Technical',
       expand: 8,
       sepBefore: true,
-      children: [this.itemCode(), this.itemSup(), this.itemSub(), this.itemKey(), this.itemIns(), this.itemDel()],
+      children: [
+        this.itemCode(),
+        this.itemMath(),
+        this.itemSup(),
+        this.itemSub(),
+        this.itemKey(),
+        this.itemIns(),
+        this.itemDel(),
+      ],
+    };
+  }
+
+  public menuFmtColors(): MenuItem {
+    return {
+      id: 'fmt-colors',
+      name: 'Colors',
+      expand: 8,
+      sepBefore: true,
+      children: [this.itemFg(), this.itemBg()],
     };
   }
   public itemCode(): InlineMenuItem {
@@ -302,6 +423,25 @@ export class InlineMenu implements UiLifeCycles {
       name: 'Annotations',
       expand: 3,
       children: [this.itemLink(opts)],
+    };
+  }
+
+  public itemMath(): MenuItem {
+    const mutxt = this.mutxt;
+    return {
+      name: 'Equation',
+      text: 'math equation formula latex inline tex',
+      icon: () => <MathIcon />,
+      active: rsync.comp([mutxt.version], () => !!getActiveMathInlineEntry(mutxt.editor)),
+      onSelect: (event) => {
+        event.preventDefault();
+        const entry = getActiveMathInlineEntry(mutxt.editor);
+        if (entry) {
+          mutxt.inline.math.openEdit(entry[0], entry[1]);
+        } else {
+          mutxt.inline.math.openInsert();
+        }
+      },
     };
   }
   public itemLink(opts: {anchorFromSelection?: boolean} = {}): MenuItem {

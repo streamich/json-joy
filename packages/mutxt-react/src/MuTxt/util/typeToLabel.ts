@@ -36,8 +36,14 @@ export const typeToLabel = (type: string): string => {
       return 'Separator';
     case 'toc':
       return 'Table of contents';
+    case 'math':
+      return 'Equation';
+    case 'math-inline':
+      return 'Inline equation';
     case 'checklist':
       return 'Checklist';
+    case 'stepper':
+      return 'Stepper';
     case 'ul':
       return 'Bulleted list';
     case 'ol':

@@ -3,14 +3,14 @@ import {rule} from 'nano-theme';
 import {FixedColumn} from '@jsonjoy.com/ui/lib/3-list-item/FixedColumn';
 import {fonts} from '@jsonjoy.com/ui/lib/styles';
 import BasicButton from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import {Favicon} from './Favicon';
 import {parseUrl} from '../util/url';
 import {CopyButton} from './CopyButton';
+import ExternalLinkIcon__svg from 'iconista/lib/react/lucide/external-link';
 
-const ExternalLinkIcon = makeIcon({set: 'lucide', icon: 'external-link'});
+const ExternalLinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ExternalLinkIcon__svg {...props} />;
 
 const iconColumnWidth = 40;
 

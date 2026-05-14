@@ -55,6 +55,28 @@ export interface AnchorPointComputeSpec {
    * the popup below the toggle head).
    */
   topIf?: number;
+
+  /**
+   * Pin the popup's horizontal placement instead of letting it pick the
+   * side with more space.
+   *
+   * - With `horizontal: false` (vertical popup): `'right'` aligns the
+   *   popup's right edge to the toggle's right edge (popup grows left);
+   *   `'left'` aligns the left edges (popup grows right). Ignored when
+   *   `center` is `true`.
+   * - With `horizontal: true` (side popup): `'right'` places the popup on
+   *   the right of the toggle (`dx: 1`); `'left'` on the left (`dx: -1`).
+   *   When `minSpace` is also set, the pin becomes a *preference* — the
+   *   resolver falls back to the other side (or the viewport center) if
+   *   the preferred side has less than `minSpace` pixels of room.
+   */
+  pinX?: 'left' | 'right';
+
+  /**
+   * Minimum horizontal room (in pixels) the popup needs on the preferred
+   * (`pinX`) side.
+   */
+  minSpace?: number;
 }
 
 export type RefPopupToggle = (span: HTMLElement | null) => void;

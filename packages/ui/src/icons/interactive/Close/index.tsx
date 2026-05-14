@@ -19,6 +19,7 @@ const className = rule(
     svg: {
       w: '32px',
       h: '32px',
+      d: 'block',
       trs: 'transform .3s',
     },
     '&:hover': {
@@ -53,6 +54,7 @@ const className = rule(
       strokeDasharray: 25,
       strokeDashoffset: 25,
       trs: 'all 0.2s',
+      transformBox: 'fill-box',
       transformOrigin: '50% 50%',
     },
   },
@@ -84,7 +86,7 @@ export const Close: React.FC<Props> = (props) => {
     {...props, className: (props.className || '') + className + dynamicClass},
     h(
       'svg',
-      null,
+      {viewBox: '0 0 32 32'},
       h('path', {className: 'line-1', d: 'M12 12 L20 20 M20 12 L12 20'}),
       h('path', {className: 'line-2', d: 'M12 12 L20 20 M20 12 L12 20'}),
     ),

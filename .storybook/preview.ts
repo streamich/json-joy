@@ -3,6 +3,8 @@ import { definePreview } from '@storybook/react-webpack5';
 import { useGlobals } from 'storybook/preview-api';
 import { UiProvider } from '../packages/ui/src/context';
 
+import 'nano-theme/lib/global-reset';
+
 const preview = definePreview({
   addons: [],
   parameters: {
@@ -37,7 +39,7 @@ const preview = definePreview({
       const isDark = color === 'dark';
       return React.createElement(
         UiProvider,
-        { theme: isDark ? 'dark' : 'light' } as any,
+        { theme: isDark ? 'dark' : 'light', globalCss: true } as any,
         React.createElement(Story)
       );
     },

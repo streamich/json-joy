@@ -42,6 +42,7 @@ export const InlineFloater: React.FC<InlineFloaterProps> = isTouch
       mutxt.version.use();
       const dismissed = state.dismissed.use();
       const omniOpen = mutxt.omni.open.use();
+      state.menu.recent.use();
 
       React.useLayoutEffect(() => {
         if (hidden) {

@@ -7,9 +7,12 @@
  */
 
 import {Slice} from 'json-joy/lib/json-crdt-extensions/peritext/slice/Slice';
+import {SliceStacking} from 'json-joy/lib/json-crdt-extensions/peritext/slice/constants';
 import {type Block, LeafBlock, type Inline} from 'json-joy/lib/json-crdt-extensions/peritext';
 import type {Fragment} from 'json-joy/lib/json-crdt-extensions/peritext/block/Fragment';
-import type {SlateDocument, SlateElementNode, SlateTextNode} from '../types';
+import type {SlateDescendantNode, SlateDocument, SlateElementNode, SlateTextNode} from '../types';
+
+const isText = (node: SlateDescendantNode): node is SlateTextNode => typeof (node as SlateTextNode).text === 'string';
 
 /**
  * Double-buffered cache for Slate element nodes, keyed by Peritext Block hash.
@@ -86,11 +89,38 @@ export class ToSlateNode {
 
   private buildBlock(block: Block | LeafBlock): SlateElementNode {
     if (block instanceof LeafBlock) {
-      const textChildren: SlateTextNode[] = [];
+      const inlineChildren: SlateDescendantNode[] = [];
       for (let iterator = block.texts0(), inline: Inline | undefined; (inline = iterator()); ) {
         const text = inline.text();
         const attr = inline.attr();
         const attrKeys = Object.keys(attr);
+
+        // Detect an `Atomic` slice — this run represents an inline void
+        // element. Emit it as a Slate inline element and skip the placeholder character.
+        let atomicSlice: Slice | undefined;
+        let atomicTag: string | undefined;
+        for (const tag of attrKeys) {
+          const stack = attr[tag];
+          if (!stack || stack.length <= 0) continue;
+          const slice = stack[0].slice;
+          if (!(slice instanceof Slice)) continue;
+          if (slice.stacking === SliceStacking.Atomic) {
+            atomicSlice = slice;
+            atomicTag = tag;
+            break;
+          }
+        }
+        if (atomicSlice && atomicTag !== undefined) {
+          const data = atomicSlice.data();
+          const inlineEl: SlateElementNode = {
+            type: atomicTag,
+            children: [{text: ''}],
+          };
+          if (data && typeof data === 'object' && !Array.isArray(data)) Object.assign(inlineEl, data);
+          inlineChildren.push(inlineEl);
+          continue;
+        }
+
         if (!text && attrKeys.length === 0) continue;
         const textNode: SlateTextNode = {text: text || ''};
         const length = attrKeys.length;
@@ -100,16 +130,31 @@ export class ToSlateNode {
           if (!stack || stack.length <= 0) continue ATTRS;
           const slice = stack[0].slice;
           if (!(slice instanceof Slice)) continue ATTRS;
+          if (slice.stacking === SliceStacking.Atomic) continue ATTRS;
           const data = slice.data();
           if (data && typeof data === 'object' && !Array.isArray(data)) Object.assign(textNode, {[tag]: data});
           else textNode[tag] = data !== undefined ? data : true;
         }
-        textChildren.push(textNode);
+        inlineChildren.push(textNode);
+      }
+      // Slate requires text nodes around inline elements: first and last
+      // child must be text, and two inline elements can't be adjacent.
+      if (inlineChildren.length === 0) {
+        inlineChildren.push({text: ''});
+      } else {
+        if (!isText(inlineChildren[0])) inlineChildren.unshift({text: ''});
+        if (!isText(inlineChildren[inlineChildren.length - 1])) inlineChildren.push({text: ''});
+        for (let i = 1; i < inlineChildren.length; i++) {
+          if (!isText(inlineChildren[i]) && !isText(inlineChildren[i - 1])) {
+            inlineChildren.splice(i, 0, {text: ''});
+            i++;
+          }
+        }
       }
       const tag = block.tag();
       const node: SlateElementNode = {
         type: tag === 0 ? this.defaultBlock : tag + '',
-        children: textChildren.length ? textChildren : [{text: ''}],
+        children: inlineChildren as any,
       };
       const attr = block.attr();
       if (attr && typeof attr === 'object') Object.assign(node, attr);

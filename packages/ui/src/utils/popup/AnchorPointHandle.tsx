@@ -3,7 +3,7 @@ import type {AnchorPoint, AnchorPointComputeSpec, RefPopupToggle} from './types'
 
 const updateAnchorPoint = (
   toggle?: HTMLElement | null | undefined,
-  {gap = 4, off = 0, horizontal, center, topIf}: AnchorPointComputeSpec = {},
+  {gap = 4, off = 0, horizontal, center, topIf, pinX, minSpace}: AnchorPointComputeSpec = {},
   anchor: AnchorPoint = {x: 0, y: 0, dx: 1, dy: 1},
 ): AnchorPoint => {
   if (!toggle) return anchor;
@@ -12,17 +12,41 @@ const updateAnchorPoint = (
     sx1 = window.innerWidth,
     sy0 = 0,
     sy1 = window.innerHeight;
+  const roomRight = sx1 - ex1;
+  const roomLeft = ex0 - sx0;
   const spaceToRight = sx1 - ex0;
   const spaceToLeft = ex1 - sx0;
   const spaceToBottom = sy1 - ey0;
   const spaceToTop = ey1 - sy0;
   if (horizontal) {
-    if (spaceToRight > spaceToLeft) {
+    // Resolve which side to place the popup on.
+    type Side = 'right' | 'left' | 'center';
+    let side: Side;
+    if (pinX === 'right') {
+      if (minSpace !== undefined && roomRight < minSpace) {
+        if (roomLeft >= minSpace) side = 'left';
+        else side = 'center';
+      } else side = 'right';
+    } else if (pinX === 'left') {
+      if (minSpace !== undefined && roomLeft < minSpace) {
+        if (roomRight >= minSpace) side = 'right';
+        else side = 'center';
+      } else side = 'left';
+    } else if (spaceToRight > spaceToLeft) {
+      side = 'right';
+    } else {
+      side = 'left';
+    }
+    if (side === 'right') {
       anchor.x = ex1 + gap;
       anchor.dx = 1;
-    } else {
+    } else if (side === 'left') {
       anchor.x = ex0 - gap;
       anchor.dx = -1;
+    } else {
+      // Neither side fits; center horizontally in the viewport.
+      anchor.x = sx1 / 2;
+      anchor.dx = 0;
     }
     if (center) {
       anchor.y = ey0 + (ey1 - ey0) * 0.5;
@@ -40,6 +64,12 @@ const updateAnchorPoint = (
     if (center) {
       anchor.x = ex0 + (ex1 - ex0) * 0.5;
       anchor.dx = 0;
+    } else if (pinX === 'right') {
+      anchor.x = ex1 - off;
+      anchor.dx = -1;
+    } else if (pinX === 'left') {
+      anchor.x = ex0 + off;
+      anchor.dx = 1;
     } else {
       if (spaceToRight > spaceToLeft) {
         anchor.x = ex0 + off;

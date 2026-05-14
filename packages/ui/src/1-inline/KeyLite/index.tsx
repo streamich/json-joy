@@ -10,13 +10,22 @@ const keyClass = drule({
   fz: '12.1px',
   lh: '1.2em',
   bxz: 'border-box',
+  pe: 'none',
+});
+
+const keySmallClass = drule({
+  bdrad: '2px',
+  lh: '1.1em',
+  fz: '10px',
+  bxsh: '0 1px 0 0 rgba(0,0,0,0.1)',
 });
 
 export interface KeyLiteProps extends React.AllHTMLAttributes<any> {
+  small?: boolean;
   children: React.ReactNode;
 }
 
-export const KeyLite: React.FC<KeyLiteProps> = (props) => {
+export const KeyLite: React.FC<KeyLiteProps> = ({small, ...props}) => {
   const styles = useStyles();
   const light = styles.light;
 
@@ -36,7 +45,9 @@ export const KeyLite: React.FC<KeyLiteProps> = (props) => {
           bd: '1px solid ' + styles.g(0.8, 0.4),
           bg: styles.col.g('bg-1'),
           col: styles.g(0.2),
-        }) + (props.className || '')
+        }) +
+        (small ? ' ' + keySmallClass() : '') +
+        (props.className ? ' ' + props.className : '')
       }
       style={style}
     />

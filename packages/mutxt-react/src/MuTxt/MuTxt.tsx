@@ -10,13 +10,17 @@ import {Paper} from '@jsonjoy.com/ui/lib/4-card/Paper';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 import {useStyles} from '@jsonjoy.com/ui/lib/styles/context';
 import {withPresenceLeaf, useSlatePresence} from '@jsonjoy.com/collaborative-slate';
-import {withCodeBlockBreaks} from './behavior';
+import {isInRawTextBlock, withCodeBlockBreaks} from './behavior';
 import {withEmbeds} from './behavior/embed';
+import {withMath} from './behavior/math';
 import {withHr} from './behavior/hr';
 import {withLinkPaste} from './behavior/linkPaste';
 import {withTitleSubmit} from './behavior/title';
+import {withSelectAllGuard} from './behavior/selectAllGuard';
 import {withFile} from './behavior/file';
 import {withToc} from './behavior/toc';
+import {withTranslit} from '../translit/bindings/slate';
+import {MuTxtTranslit} from './translit/MuTxtTranslit';
 import {BlockElement} from './components/blocks/BlockElement';
 import {MuTxtFooter} from './chrome/footer/MuTxtFooter';
 import {ScrollMap} from './chrome/scroll/ScrollMap';
@@ -25,15 +29,19 @@ import {DEF_PLACEHOLDER, Placeholder} from './inline/components/Placeholder';
 import {MuTxtHeader} from './chrome/header/MuTxtHeader';
 import {InlineFloater} from './inline/InlineFloater';
 import {LinkFloater} from './inline/link/LinkFloater';
+import {InlineMathFloater} from './inline/InlineMathFloater';
 import {BlockFloater} from './block/BlockFloater';
 import {EmbedFloater} from './void/embed/EmbedFloater';
 import {FileFloater} from './void/file/FileFloater';
 import {OmniFloater} from './omni/OmniFloater';
+import {SelectAllGuardFloater} from './guard/SelectAllGuardFloater';
 import {IndicatorFloater} from './state/IndicatorFloater';
 import {SlateEditorContextProvider} from './context';
 import {PortalParentProvider} from '@jsonjoy.com/ui/lib/utils/portal/context';
 import {EnsureUiProvider, useUiServices} from '@jsonjoy.com/ui/lib/context';
+import {useScopedResetClass} from '@jsonjoy.com/ui/lib/context/ScopedResetContext';
 import {useToasts} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager/context';
+import {ToastCardManager} from '@jsonjoy.com/ui/lib/7-fullscreen/ToastCardManager';
 import {Provider as StylesProvider} from '@jsonjoy.com/ui/lib/styles/context';
 import {MuTxtState} from './state/MuTxtState';
 import {decorActiveSelection} from './behavior/active-selection';
@@ -55,6 +63,10 @@ const KeyboardShortcutsModal = React.lazy(() =>
 );
 
 const EmbedDocsModal = React.lazy(() => import('./chrome/EmbedDocs').then((m) => ({default: m.EmbedDocsModal})));
+
+const TranslitMapModal = React.lazy(() =>
+  import('./translit/TranslitMapModal').then((m) => ({default: m.TranslitMapModal})),
+);
 
 const computeEditableWidth = (shellWidth: number, kind: EditableWidth): number => {
   return kind === 'mid'
@@ -79,6 +91,17 @@ const fitShellClass = rule({
   h: '100%',
   d: 'flex',
   fld: 'column',
+});
+
+// Host for MathLive's `<math-field>` virtual keyboard when in fullwindow /
+// fullscreen mode.
+const mathKbdHostClass = rule({
+  pos: 'absolute',
+  inset: 0,
+  pointerEvents: 'none',
+  '& .MLK__backdrop': {
+    pointerEvents: 'auto',
+  },
 });
 
 const editableClass = rule({
@@ -172,6 +195,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   style,
 }) => {
   const styles = useStyles();
+  const scopedResetClass = useScopedResetClass();
   const peritextRef: PeritextRef = state.peritextRef;
 
   // --------------------------------------------------------- Presence manager
@@ -202,6 +226,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   const omniRange = state.omni.rangeSnapshot.use();
   const shortcutsOpen = state.shortcutsOpen.use();
   const embedDocsOpen = state.embedDocsOpen.use();
+  const translitMapOpen = state.translit.mapOpen.use();
   const displayMode = state.displayMode.use();
   const font = state.font.use();
   const editableWidthKind = state.editableWidth.use();
@@ -219,6 +244,22 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
     },
     [state],
   );
+  const [mathKbdHostEl, setMathKbdHostEl] = React.useState<HTMLElement | null>(null);
+
+  // MathLive's `<math-field>` virtual keyboard mounts into `document.body` by
+  // default. In `fullwindow` and `fullscreen` we mount it inside the shell instead,
+  // to ensure it appears above the editor content.
+  useEffect(() => {
+    const vk = (globalThis as any).window?.mathVirtualKeyboard;
+    if (!vk) return;
+    const needsHost = displayMode === 'fullwindow' || displayMode === 'fullscreen';
+    const next = needsHost && mathKbdHostEl ? mathKbdHostEl : document.body;
+    vk.container = next;
+    return () => {
+      vk.container = document.body;
+    };
+  }, [displayMode, mathKbdHostEl]);
+
   const decorate = useCallback(
     (entry: Parameters<typeof decorateRemoteCursors>[0]) => {
       const ranges = [...decorateRemoteCursors(entry)];
@@ -260,6 +301,7 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         ref={(el) => {
           state.editableBox.setEl(el ?? undefined);
           state.bindKbdSource(el);
+          state.customStyle.setEditableEl((el as HTMLElement | null) ?? undefined);
         }}
         decorate={decorate}
         renderElement={renderElement}
@@ -274,13 +316,14 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
         onFocus={() => state.setFocused(true)}
         onBlur={() => state.setFocused(false)}
       />
-      {!shortcutsOpen && !embedDocsOpen && <InlineFloater />}
-      {!shortcutsOpen && !embedDocsOpen && <BlockFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <InlineFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <BlockFloater />}
       <LinkFloater />
       <EmbedFloater />
       <FileFloater />
-      {!shortcutsOpen && !embedDocsOpen && <OmniFloater />}
-      {!shortcutsOpen && !embedDocsOpen && <IndicatorFloater />}
+      <InlineMathFloater />
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <OmniFloater />}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <IndicatorFloater />}
     </Slate>
   );
 
@@ -328,7 +371,12 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
   content = (
     <>
       <MuTxtHeader editor={editor} />
-      {content}
+      <div
+        ref={(el) => state.customStyle.setBodyEl(el ?? undefined)}
+        style={heightFit ? {flex: '1 1 0%', minHeight: 0, display: 'flex', flexDirection: 'column'} : undefined}
+      >
+        {content}
+      </div>
       <MuTxtFooter />
       {shortcutsOpen && (
         <React.Suspense fallback={null}>
@@ -340,10 +388,29 @@ const MuTxtInner: React.FC<MuTxtInnerProps> = ({
           <EmbedDocsModal />
         </React.Suspense>
       )}
+      {!!translitMapOpen && (
+        <React.Suspense fallback={null}>
+          <TranslitMapModal />
+        </React.Suspense>
+      )}
+      {!shortcutsOpen && !embedDocsOpen && !translitMapOpen && <SelectAllGuardFloater />}
+      <div ref={setMathKbdHostEl} className={mathKbdHostClass} aria-hidden />
+      {/* The global `ToastCardManager` in `UiProvider` is at `z-index: 5000`
+          in document-body stacking context, so in `fullwindow` it's hidden
+          behind the shell (`z-index: 9999`); in `fullscreen` it sits outside
+          the fullscreen element and isn't rendered at all. A second manager
+          inside the shell subscribes to the same toast service and renders
+          inside the shell's stacking context / fullscreen root, so toasts
+          remain visible in both full modes. */}
+      {(displayMode === 'fullwindow' || displayMode === 'fullscreen') && <ToastCardManager />}
     </>
   );
 
-  const combinedClass = (className || '') + shellClass + (heightFit ? fitShellClass : '');
+  const combinedClass =
+    (scopedResetClass ? scopedResetClass + ' ' : '') +
+    (className || '') +
+    shellClass +
+    (heightFit ? fitShellClass : '');
 
   const shellStyle: React.CSSProperties =
     displayMode === 'fullwindow'
@@ -426,16 +493,33 @@ export const MuTxt: React.FC<MuTxtProps> = (props) => {
   // ------------------------------------------------------------- Editor state
   // biome-ignore lint/correctness/useExhaustiveDependencies: presence/readOnly/fromSlate are init-time only; do not recreate state on change
   const [editor, state] = useMemo(() => {
+    const translit = new MuTxtTranslit();
     const editor = withTitleSubmit(
-      withToc(withHr(withFile(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor())))))))),
+      withTranslit(
+        withToc(
+          withHr(
+            withFile(withMath(withEmbeds(withLinkPaste(withCodeBlockBreaks(withHistory(withReact(createEditor()))))))),
+          ),
+        ),
+        translit,
+        {shouldRun: (e) => !isInRawTextBlock(e as any)},
+      ),
       () => onTitleSubmitRef.current,
     );
-    if (_state) return [_state.editor, _state];
-    const ownedObj: ObjApi<ObjNode> = obj
-      ? (obj as ObjApi<ObjNode>)
-      : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]);
-    const state = new MuTxtState(editor, ownedObj, {collaborative: !!presence, readOnly, fromSlate});
-    return [editor, state];
+    const state = _state
+      ? _state
+      : new MuTxtState(
+          editor,
+          obj ? (obj as ObjApi<ObjNode>) : ModelWithExt.create<any>(s.obj({'@type': s.con('mutxt')})).api.obj([]),
+          {collaborative: !!presence, readOnly, fromSlate, translit},
+        );
+    const editorToReturn = _state ? _state.editor : editor;
+    withSelectAllGuard(editorToReturn, {
+      onDelete: () => state.selectAllGuard.requestDelete(),
+      onReplaceWithText: (text) => state.selectAllGuard.requestReplaceWithText(text),
+      onReplaceWithFragment: (fragment) => state.selectAllGuard.requestReplaceWithFragment(fragment),
+    });
+    return [editorToReturn, state];
   }, [obj, _state]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: autoFocus only applies on initial mount of the owned state

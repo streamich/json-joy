@@ -3793,7 +3793,8 @@ __metadata:
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
-    iconista: "npm:^2.25.1"
+    emoji-picker-react: "npm:^4.19.1"
+    iconista: "npm:^2.26.0"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"
@@ -11155,16 +11156,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconista@npm:^2.25.1":
-  version: 2.25.1
-  resolution: "iconista@npm:2.25.1"
+"iconista@npm:^2.26.0":
+  version: 2.26.0
+  resolution: "iconista@npm:2.26.0"
   dependencies:
     bootstrap-icons: "npm:^1.11.3"
     react-use: "npm:^5.7.1"
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 10c0/16fd54b63317801bc3308a3989479764641dfd94aa0e885beae0c43398dca612364aada8635a11f8ca9502a17ab72165b92b37fc338f5c3fdcb71ea2bee65d9d
+  checksum: 10c0/7a99d683956b668a948703abe5eb728a468528141348d352d1d035aae845b533a902684a8fdc02535abcb916fc9987f387e74855bbe63d37158671be29fa4c22
   languageName: node
   linkType: hard
 
@@ -14221,8 +14222,9 @@ __metadata:
     code-colors: "npm:^2.5.0"
     code-colors-react: "npm:^3.5.0"
     emoji-picker-react: "npm:^4.19.1"
-    iconista: "npm:^2.25.1"
+    iconista: "npm:^2.26.0"
     json-joy: "workspace:*"
+    mathlive: "npm:^0.109.0"
     nano-theme: "workspace:*"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
@@ -14403,7 +14405,8 @@ __metadata:
     code-colors-react: "npm:^3.4.0"
     codemirror: "npm:^6.0.1"
     emoji-js: "npm:^3.9.0"
-    iconista: "npm:^2.25.1"
+    emoji-picker-react: "npm:^4.19.1"
+    iconista: "npm:^2.26.0"
     libreact: "npm:^2.13.3"
     load-script: "npm:^2.0.0"
     mdast-flat: "npm:^1.7.0"

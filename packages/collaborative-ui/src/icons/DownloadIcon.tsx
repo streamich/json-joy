@@ -1,3 +1,6 @@
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
+import * as React from 'react';
+import DownloadIcon__svg from 'iconista/lib/react/auth0/download';
 
-export const DownloadIcon = makeIcon({set: 'auth0', icon: 'download', width: 16, height: 16});
+export const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <DownloadIcon__svg width={16} height={16} {...props} />
+);

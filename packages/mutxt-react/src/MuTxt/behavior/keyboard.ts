@@ -1,4 +1,5 @@
 import {
+  exitStepperList,
   insertCodeBlockBreak,
   insertCodeBlockExit,
   redo,
@@ -87,7 +88,7 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
     [
       'Shift+Enter',
       (key: Key) => {
-        if (insertCodeBlockExit(editor)) consume(key);
+        if (insertCodeBlockExit(editor) || exitStepperList(editor)) consume(key);
       },
     ],
 
@@ -146,6 +147,25 @@ export const bindShortcuts = (state: MuTxtState): (() => void) => {
       (key: Key) => {
         key.event?.preventDefault();
         state.shortcutsOpen.set(true);
+      },
+    ],
+
+    // --------------------------------------------------- Transliteration mode
+    // Browser hijacks `Cmd+Shift+T` (reopen last closed tab) before our
+    // handler runs, so we use Alt-based bindings instead.
+    [
+      'P+Alt+@KeyT' as Signature,
+      (key: Key) => {
+        key.event?.preventDefault();
+        state.translit.toggle();
+      },
+    ],
+    [
+      'P+Alt+Shift+@KeyT' as Signature,
+      (key: Key) => {
+        key.event?.preventDefault();
+        if (state.translit.mapOpen.value) state.translit.closeMap();
+        else state.translit.openMap();
       },
     ],
 

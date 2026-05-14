@@ -5,13 +5,11 @@ import {Slider} from '@jsonjoy.com/ui/lib/2-inline-block/Slider';
 import {Separator} from '@jsonjoy.com/ui/lib/3-list-item/Separator';
 import {FormRow} from '@jsonjoy.com/ui/lib/3-list-item/FormRow';
 import {Tabs} from '@jsonjoy.com/ui/lib/3-list-item/Tabs';
-import {HrLine} from './HrLine';
+import {LineStyleTabLabel} from '../LineStyleTab';
 import {useHrOptionsState} from './state';
 import * as settings from './settings';
 import type {HrLineStyle} from '../../../types';
 import {useT} from 'use-t';
-
-const PREVIEW_WIDTH = 24;
 
 const blockClass = rule({
   bxz: 'border-box',
@@ -19,13 +17,6 @@ const blockClass = rule({
   fld: 'column',
   gap: '12px',
   maxW: '500px',
-});
-
-const previewWrapClass = rule({
-  d: 'inline-flex',
-  ai: 'center',
-  jc: 'center',
-  w: PREVIEW_WIDTH + 'px',
 });
 
 const STYLE_LABELS: Record<HrLineStyle, string> = {
@@ -39,20 +30,9 @@ const stopInputKeyDown = (event: React.KeyboardEvent): void => {
   event.stopPropagation();
 };
 
-const renderStylePreview = (style: HrLineStyle): React.ReactNode => (
-  <span className={previewWrapClass} aria-hidden="true">
-    <HrLine strokeWidth={2} style={style} />
-  </span>
-);
-
 const styleTabs = settings.HR_LINE_STYLES.map((style) => ({
   key: style,
-  label: (
-    <span style={{display: 'inline-flex', alignItems: 'center', gap: 6}}>
-      {renderStylePreview(style)}
-      <span style={{fontSize: 12}}>{STYLE_LABELS[style]}</span>
-    </span>
-  ),
+  label: <LineStyleTabLabel style={style} label={STYLE_LABELS[style]} />,
 }));
 
 export const HrOptions: React.FC = () => {

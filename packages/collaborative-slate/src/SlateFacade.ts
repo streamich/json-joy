@@ -142,8 +142,17 @@ export class SlateFacade implements RichtextEditorFacade {
 
   get(): ViewRange {
     if (this._disposed) return ['', 0, []];
-    const children = this.editor.children as SlateDocument;
-    return FromSlate.convert(children);
+    const editor = this.editor;
+    const children = editor.children as SlateDocument;
+    return FromSlate.convert(children, {
+      isInline: (element) => {
+        try {
+          return editor.isInline?.(element as any) ?? false;
+        } catch {
+          return false;
+        }
+      },
+    });
   }
 
   set(fragment: Fragment<string>): void {

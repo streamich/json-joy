@@ -45,9 +45,9 @@ export class OmniState implements UiLifeCycles {
   };
 
   public readonly openAsPalette = (): boolean => {
-    const sizerBox = this.mutxt.sizer.box.value;
-    if (!sizerBox) return false;
-    const [x, y, width] = sizerBox;
+    const shellBox = this.mutxt.shellBox.value;
+    if (!shellBox) return false;
+    const [x, y, width] = shellBox;
     const point: AnchorPoint = {
       x: x + width / 2,
       y: y,

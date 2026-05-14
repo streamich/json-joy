@@ -2,7 +2,6 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Flex} from '@jsonjoy.com/ui/lib/3-list-item/Flex';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {FmtTitle} from '../FmtTitle';
@@ -18,10 +17,13 @@ import {ContextPaneHeaderSep} from '../../../components/ContextPaneHeaderSep';
 import {BasicButtonClose} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton/BasicButtonClose';
 import {useSyncStore} from '@jsonjoy.com/ui/lib/hooks/useSyncStore';
 import type {SavedFmt} from '../../../state/formattings';
+import PencilIcon__svg from 'iconista/lib/react/lucide/pencil';
+import TrashIcon__svg from 'iconista/lib/react/lucide/trash';
+import OptionsIcon__svg from 'iconista/lib/react/tabler/dots-vertical';
 
-const PencilIcon = makeIcon({set: 'lucide', icon: 'pencil'});
-const TrashIcon = makeIcon({set: 'lucide', icon: 'trash'});
-const OptionsIcon = makeIcon({set: 'tabler', icon: 'dots-vertical'});
+const PencilIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <PencilIcon__svg {...props} />;
+const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TrashIcon__svg {...props} />;
+const OptionsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <OptionsIcon__svg {...props} />;
 
 export interface FormattingDisplayProps {
   formatting: SavedFmt;

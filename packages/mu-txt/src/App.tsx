@@ -96,7 +96,7 @@ export const App: React.FC = () => {
 
   return (
     <ctx.Provider value={state}>
-      <UiProvider theme={theme}>
+      <UiProvider theme={theme} globalCss>
         <AppGrid
           state={state.appGrid}
           maxLeftSize={500}

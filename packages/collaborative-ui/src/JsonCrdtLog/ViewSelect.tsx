@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {ContextItem, ContextSep, ContextPane} from '@jsonjoy.com/ui/lib/4-card/ContextMenu';
 import {Popup} from '@jsonjoy.com/ui/lib/4-card/Popup';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
@@ -7,10 +6,13 @@ import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
 import type {JsonCrdtLogState} from './JsonCrdtLogState';
+import TinyIcon__svg from 'iconista/lib/react/ibm_16/subtract';
+import ChartBarsIcon__svg from 'iconista/lib/react/auth0/chart-bars';
+import VisTextIcon__svg from 'iconista/lib/react/elastic/vis_text';
 
-const TinyIcon = makeIcon({set: 'ibm_16', icon: 'subtract'});
-const ChartBarsIcon = makeIcon({set: 'auth0', icon: 'chart-bars'});
-const VisTextIcon = makeIcon({set: 'elastic', icon: 'vis_text'});
+const TinyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <TinyIcon__svg {...props} />;
+const ChartBarsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <ChartBarsIcon__svg {...props} />;
+const VisTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VisTextIcon__svg {...props} />;
 
 export interface ViewSelectProps {
   state: JsonCrdtLogState;

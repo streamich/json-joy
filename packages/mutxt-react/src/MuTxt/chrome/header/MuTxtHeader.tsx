@@ -18,6 +18,12 @@ const blockClass = rule({
   ai: 'center',
   h: HEIGHT + 'px',
   bxz: 'border-box',
+
+  // Electron window dragging.
+  '-webkit-app-region': 'drag',
+  '& button, & a, & input, & textarea, & select, & [role="button"], & [role="tablist"], & [role="img"]': {
+    '-webkit-app-region': 'no-drag',
+  },
 });
 
 const toolbarContainerClass = rule({
@@ -31,14 +37,31 @@ export interface MuTxtHeaderProps {
   editor: Editor;
 }
 
+const readTitlebarInsetPx = (): number => {
+  if (typeof window === 'undefined' || !document.documentElement) return 0;
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--titlebar-inset-left').trim();
+  return parseFloat(raw) || 0;
+};
+
 export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
   const mutxt = useMuTxt();
   const availableWidth = mutxt.sizer.width.use();
   const desiredWidth = mutxt.sizer.content.use();
+  const shellBox = mutxt.shellBox.use();
+  const displayMode = mutxt.displayMode.use();
   const styles = useStyles();
   mutxt.version.use();
 
-  const width = Math.min(availableWidth, desiredWidth);
+  // Needed to account correctly for Electron window traffic lights on Mac.
+  const shellWidth = shellBox[2];
+  const width =
+    displayMode === 'fullscreen'
+      ? shellWidth
+      : displayMode === 'fullwindow'
+        ? Math.max(0, shellWidth - readTitlebarInsetPx())
+        : Math.min(availableWidth, desiredWidth);
+  const basePad = width < 1200 ? 8 : 32;
+  const paddingLeft = displayMode === 'fullwindow' ? `max(${basePad}px, var(--titlebar-inset-left, 0px))` : basePad;
 
   const inlineMenu = mutxt.inline.menu.buildToolbarMenu();
   const voidsMenu = mutxt.voids.menu.buildToolbarMenu();
@@ -50,7 +73,8 @@ export const MuTxtHeader: React.FC<MuTxtHeaderProps> = ({editor}) => {
         className={blockClass}
         style={{
           borderBottom: '1px solid ' + (styles.light ? styles.g(0, 0.08) : styles.g(0, 0.1)),
-          padding: width < 1200 ? '0 8px' : void 0,
+          paddingLeft,
+          paddingRight: basePad,
         }}
       >
         <div className={toolbarContainerClass}>

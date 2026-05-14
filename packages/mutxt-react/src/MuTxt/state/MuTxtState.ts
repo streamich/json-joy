@@ -12,7 +12,7 @@ import {MuTxtApi} from './MuTxtApi';
 import {FromSlate, SlateFacade} from '@jsonjoy.com/collaborative-slate';
 import {toSlate} from '@jsonjoy.com/collaborative-slate/lib/sync/toSlate';
 import {PeritextBinding} from '@jsonjoy.com/collaborative-peritext/lib/PeritextBinding';
-import {Range, type BaseEditor, type Descendant, type Selection} from 'slate';
+import {Range, type BaseEditor, type Descendant, type Path, type Selection} from 'slate';
 import {ElBox} from '@jsonjoy.com/ui/lib/utils/rsync';
 import {SizerState} from '@jsonjoy.com/ui/lib/5-block/Sizer';
 import {windowSize} from '@jsonjoy.com/ui/lib/utils/windowSize';
@@ -21,9 +21,12 @@ import {InlineState} from '../inline/InlineState';
 import {BlockState} from '../block/BlockState';
 import {VoidState} from '../void/VoidState';
 import {OmniState} from '../omni/OmniState';
+import {SelectAllGuardState} from '../guard/SelectAllGuardState';
 import {DocumentMenu} from './DocumentMenu';
 import {IndicatorState} from './IndicatorState';
 import {ThingStore} from './ThingStore';
+import {CustomStyleState} from '../custom-style/CustomStyleState';
+import {MuTxtTranslit} from '../translit/MuTxtTranslit';
 import {s} from 'json-joy/lib/json-crdt';
 import {ext} from 'json-joy/lib/json-crdt-extensions';
 import {isFontKind} from '../behavior/font';
@@ -31,7 +34,15 @@ import type {ObjApi, ObjNode} from 'json-joy/lib/json-crdt';
 import type {PeritextApi} from 'json-joy/lib/json-crdt-extensions';
 import type {PeritextRef} from '@jsonjoy.com/collaborative-peritext';
 import type {ReactEditor} from 'slate-react';
-import type {CustomElement, DisplayMode, EditableWidth, FontKind, SlateEditorDocument, SlateTextAlign} from '../types';
+import type {
+  CustomElement,
+  DisplayMode,
+  EditableWidth,
+  FontKind,
+  MathInlineElement,
+  SlateEditorDocument,
+  SlateTextAlign,
+} from '../types';
 export type {DocumentOutlineItem};
 import type {HistoryEditor} from 'slate-history';
 
@@ -48,6 +59,7 @@ export interface MuTxtStateOpts {
   collaborative?: boolean;
   readOnly?: boolean;
   fromSlate?: SlateEditorDocument;
+  translit?: MuTxtTranslit;
 }
 
 export class MuTxtState implements UiLifeCycles {
@@ -63,6 +75,13 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly sizer: SizerState;
   public readonly editableBox: ElBox<HTMLDivElement> = new ElBox<HTMLDivElement>();
+  /**
+   * Measures the outer Paper shell. Differs from {@link sizer}.width in
+   * `fullwindow` and `fullscreen` modes, where the shell escapes the inline
+   * layout (fixed-position 100vw, or native browser fullscreen at screen
+   * size) — `sizer.width` would still report the inline container's width.
+   */
+  public readonly shellBox: ElBox<HTMLElement> = new ElBox<HTMLElement>();
   public readonly wnd = windowSize();
 
   public readonly kbd: KeyContext = new KeyContext(undefined, 'mutxt');
@@ -82,6 +101,7 @@ export class MuTxtState implements UiLifeCycles {
   public readonly caretLinkHref = rsync.val('');
   public readonly caretEmbedUrl = rsync.val('');
   public readonly caretCodeText = rsync.val('');
+  public readonly caretMathThingId = rsync.val('');
   public readonly alignment = rsync.val<SlateTextAlign>('left');
   public readonly wordCount = rsync.val(0);
   public readonly characterCount = rsync.val(0);
@@ -91,9 +111,12 @@ export class MuTxtState implements UiLifeCycles {
   public readonly block = new BlockState(this, this.scroll);
   public readonly voids = new VoidState(this);
   public readonly omni = new OmniState(this);
+  public readonly selectAllGuard = new SelectAllGuardState(this);
   public readonly indicator = new IndicatorState(this);
   public readonly docMenu = new DocumentMenu(this);
   public readonly things = new ThingStore(this);
+  public readonly customStyle = new CustomStyleState(this);
+  public readonly translit: MuTxtTranslit;
 
   /** Whether the keyboard-shortcuts modal is open. */
   public readonly shortcutsOpen = rsync.val(false);
@@ -138,6 +161,8 @@ export class MuTxtState implements UiLifeCycles {
     opts?: MuTxtStateOpts,
   ) {
     this.readOnly.next(!!opts?.readOnly);
+    this.translit = opts?.translit ?? new MuTxtTranslit();
+    this.translit.bindState(this);
     if (obj.read('/@type') !== 'mutxt') obj.set({'@type': s.con('mutxt')});
     let peritextNode: PeritextApi;
     let isNewDocument = false;
@@ -171,6 +196,9 @@ export class MuTxtState implements UiLifeCycles {
     if (isThemeOverride(storedTheme)) this.theme.next(storedTheme);
     editor.children = initialValue;
     editor.selection = null;
+    (editor as any).onOpenInlineMathEdit = (element: MathInlineElement, path: Path) => {
+      this.inline.math.openEdit(element, path);
+    };
   }
 
   public start(): () => void {
@@ -191,8 +219,11 @@ export class MuTxtState implements UiLifeCycles {
     const stopBlock = this.block.start();
     const stopVoids = this.voids.start();
     const stopOmni = this.omni.start();
+    const stopSelectAllGuard = this.selectAllGuard.start();
     const stopIndicator = this.indicator.start();
     const stopThings = this.things.start();
+    const stopCustomStyle = this.customStyle.start();
+    const stopTranslit = this.translit.start();
     const unbindShortcuts = bindShortcuts(this);
     bindImagePaste(this);
 
@@ -224,8 +255,11 @@ export class MuTxtState implements UiLifeCycles {
       stopBlock();
       stopVoids();
       stopOmni();
+      stopSelectAllGuard();
       stopIndicator();
       stopThings();
+      stopCustomStyle();
+      stopTranslit();
       unbindShortcuts();
       if (typeof document !== 'undefined') document.removeEventListener('fullscreenchange', onFullscreenChange);
       if (systemDarkMq && onSystemDarkChange) systemDarkMq.removeEventListener('change', onSystemDarkChange);
@@ -287,6 +321,7 @@ export class MuTxtState implements UiLifeCycles {
 
   public readonly bindShell = (el: HTMLElement | null): void => {
     this.shellEl = el;
+    this.shellBox.setEl(el ?? void 0);
   };
 
   public readonly sync = (contentChanged: boolean): void => {
@@ -315,6 +350,7 @@ export class MuTxtState implements UiLifeCycles {
     this.caretLinkHref.set(caret.linkHref ?? '');
     this.caretEmbedUrl.set(caret.embedUrl ?? '');
     this.caretCodeText.set(caret.codeText ?? '');
+    this.caretMathThingId.set(caret.mathThingId ?? '');
     this.alignment.set(getActiveAlignment(editor));
     this.selectionText.set(getSelectedText(editor));
     this.publishPresence?.();

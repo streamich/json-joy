@@ -8,7 +8,6 @@ import {
   type InlineAttrStack,
 } from 'json-joy/lib/json-crdt-extensions';
 import {SpanBehavior} from '../../SpanBehavior';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Sidetip} from '@jsonjoy.com/ui/lib/1-inline/Sidetip';
 import {View} from './components/View';
 import {Edit} from './components/Edit';
@@ -21,8 +20,9 @@ import type {RenderInlineProps} from '../../RenderInline';
 import type {MenuItem} from '../../../types';
 import type {DynamicCommandDefinition} from '../../../state/commands/types';
 import type {EditorState} from '../../../state';
+import Icon__svg from 'iconista/lib/react/lucide/link';
 
-export const Icon = makeIcon({set: 'lucide', icon: 'link'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 
 export const schema = s.obj(
   {

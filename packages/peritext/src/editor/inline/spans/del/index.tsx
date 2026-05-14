@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Del} from './Del';
+import Icon__svg from 'iconista/lib/react/tabler/pencil-minus';
 
 export const name = 'Deletion';
-export const Icon = makeIcon({set: 'tabler', icon: 'pencil-minus'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 export const behavior = spanOne(SliceTypeCon.del, name, {
   menuId: 'fmt-technical',
   menu: () => ({

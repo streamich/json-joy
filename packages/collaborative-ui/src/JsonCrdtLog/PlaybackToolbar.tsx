@@ -2,15 +2,16 @@ import * as React from 'react';
 import {useT} from 'use-t';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {Space} from '@jsonjoy.com/ui/lib/3-list-item/Space';
 import {PlayIcon} from '../icons/PlayIcon';
 import {PauseIcon} from '../icons/PauseIcon';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
 import type {JsonCrdtLogState} from './JsonCrdtLogState';
+import VerticalLeftIcon__svg from 'iconista/lib/react/lineicons/previous-step-2';
+import VerticalRightIcon__svg from 'iconista/lib/react/lineicons/next-step-2';
 
-const VerticalLeftIcon = makeIcon({set: 'lineicons', icon: 'previous-step-2'});
-const VerticalRightIcon = makeIcon({set: 'lineicons', icon: 'next-step-2'});
+const VerticalLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VerticalLeftIcon__svg {...props} />;
+const VerticalRightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VerticalRightIcon__svg {...props} />;
 
 export interface PlaybackToolbarProps {
   state: JsonCrdtLogState;

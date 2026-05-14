@@ -6,7 +6,6 @@ import {Scrollbox} from '@jsonjoy.com/ui/lib/4-card/Scrollbox';
 import {Split} from '@jsonjoy.com/ui/lib/3-list-item/Split';
 import {MiniTitle} from '@jsonjoy.com/ui/lib/3-list-item/MiniTitle';
 import {useBehaviorSubject} from '@jsonjoy.com/ui/lib/hooks/useBehaviorSubject';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {BasicButton} from '@jsonjoy.com/ui/lib/2-inline-block/BasicButton';
 import {BasicTooltip} from '@jsonjoy.com/ui/lib/4-card/BasicTooltip';
 import {useT} from 'use-t';
@@ -14,8 +13,9 @@ import {LogReadonlyLabel} from '../atoms/ReadonlyLabel';
 import type {PresenceManager} from '@jsonjoy.com/collaborative-presence';
 import type {Model} from 'json-joy/lib/json-crdt';
 import type {JsonCrdtModelState} from './JsonCrdtModelState';
+import VectorIcon__svg from 'iconista/lib/react/elastic/vector';
 
-const VectorIcon = makeIcon({set: 'elastic', icon: 'vector'});
+const VectorIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <VectorIcon__svg {...props} />;
 
 const css = {
   header: rule({

@@ -29,6 +29,7 @@ const ThemeTabs: React.FC = () => {
       }}
     >
       <Tabs
+        muted
         spread
         contentStyle={{
           display: 'flex',

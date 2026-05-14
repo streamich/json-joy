@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {type InlineAttrStack, SliceTypeCon} from 'json-joy/lib/json-crdt-extensions';
-import {makeIcon} from '@jsonjoy.com/ui/lib/icons/Iconista';
 import {spanOne} from '../util';
 import {Kbd} from './Kbd';
+import Icon__svg from 'iconista/lib/react/lucide/keyboard';
 
 export const name = 'Keyboard key';
-export const Icon = makeIcon({set: 'lucide', icon: 'keyboard'});
+export const Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <Icon__svg {...props} />;
 export const behavior = spanOne(SliceTypeCon.kbd, name, {
   menuId: 'fmt-technical',
   menu: () => ({

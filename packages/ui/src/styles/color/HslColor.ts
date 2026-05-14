@@ -29,7 +29,7 @@ export const toRgb = (h: number, s: number, l: number, a: number): RgbColor => {
   return new RgbColor(r, g, b, a);
 };
 
-const clamp = (num: number) => Math.min(1, Math.max(0, num));
+const clamp = (num: number, min: number = 0, max: number = 1) => Math.min(max, Math.max(min, num));
 
 export class HslColor {
   public static from(source: string | RgbColor | HsvColor | HslColor): HslColor | undefined {
@@ -152,6 +152,63 @@ export class HslColor {
 
   public eq(other: HslColor): boolean {
     return this.h === other.h && this.s === other.s && this.l === other.l && this.a === other.a;
+  }
+
+  /** Linearly interpolate towards `other` by `t` in [0, 1]. Hue is interpolated
+   * along the shortest path around the color wheel. */
+  public mix(other: HslColor, t: number): HslColor {
+    let h1 = this.h;
+    let h2 = other.h;
+    const diff = h2 - h1;
+    if (diff > 0.5) h1 += 1;
+    else if (diff < -0.5) h2 += 1;
+    let h = h1 + (h2 - h1) * t;
+    h = ((h % 1) + 1) % 1;
+    return new HslColor(
+      h,
+      this.s + (other.s - this.s) * t,
+      this.l + (other.l - this.l) * t,
+      this.a + (other.a - this.a) * t,
+    );
+  }
+
+  /** Collapse this (possibly translucent) color onto `bg` and return an opaque color. */
+  public flatten(bg: HslColor): HslColor {
+    if (this.a >= 1) return this.copy();
+    const a = this.a;
+    const fg = this.toRgb();
+    const bk = bg.toRgb();
+    const r = fg.r * a + bk.r * (1 - a);
+    const g = fg.g * a + bk.g * (1 - a);
+    const b = fg.b * a + bk.b * (1 - a);
+    return HslColor.fromRgb(new RgbColor(r, g, b, 1));
+  }
+
+  /** WCAG contrast ratio between this color and `other`. Range 1 to 21. */
+  public contrast(other: HslColor): number {
+    return LinearRgbColor.fromRgb(this.toRgb()).contrast(LinearRgbColor.fromRgb(other.toRgb()));
+  }
+
+  /** Return the candidate with the highest WCAG contrast against this color. */
+  public bestContrast(first: HslColor, ...rest: HslColor[]): HslColor {
+    let best = first;
+    let bestRatio = this.contrast(first);
+    for (const c of rest) {
+      const r = this.contrast(c);
+      if (r > bestRatio) {
+        bestRatio = r;
+        best = c;
+      }
+    }
+    return best;
+  }
+
+  public clampL(min: number, max: number): HslColor {
+    return new HslColor(this.h, this.s, clamp(this.l, min, max), this.a);
+  }
+
+  public clampS(min: number, max: number): HslColor {
+    return new HslColor(this.h, clamp(this.s, min, max), this.l, this.a);
   }
 
   /**

@@ -24,14 +24,17 @@ export const slatePointToGap = (txt: Peritext, editor: Editor, point: SlatePoint
     }
 
     // Sum text lengths of all text nodes before the target text node, then add offset.
+    // Each inline element node also counts as exactly one character (the
+    // placeholder character covered by its `Atomic` slice in Peritext).
     const textNodeIndex = path[depth - 1];
     let textOffset = 0;
     let node: any = editor;
     for (let d = 0; d < depth - 1; d++) node = node.children[path[d]];
     const children = node.children;
     for (let i = 0; i < textNodeIndex && i < children.length; i++) {
-      const text = children[i].text;
-      if (typeof text === 'string') textOffset += text.length;
+      const child = children[i];
+      if (typeof child?.text === 'string') textOffset += child.text.length;
+      else if (child && typeof child === 'object' && 'type' in child) textOffset += 1;
     }
     textOffset += offset;
 
@@ -89,24 +92,38 @@ export const pointToSlatePoint = (
   const textOffset = hasMarker ? viewPos - (block.start.viewPos() + 1) : viewPos;
   const clampedOffset = Math.max(0, textOffset);
 
-  // Walk Slate text nodes at the computed path to find the right text node + offset.
+  // Walk Slate children at the computed path to find the right text node + offset,
+  // counting inline element nodes as 1 character each.
   let slateNode: any = editor;
   for (const idx of path) slateNode = slateNode.children[idx];
-  const textChildren = slateNode?.children;
-  if (!textChildren) return {path: [...path, 0], offset: 0};
+  const children = slateNode?.children;
+  if (!children) return {path: [...path, 0], offset: 0};
 
   let remaining = clampedOffset;
-  for (let i = 0; i < textChildren.length; i++) {
-    const text = textChildren[i].text;
-    if (typeof text !== 'string') continue;
-    if (remaining <= text.length) {
-      return {path: [...path, i], offset: remaining};
+  let lastTextIdx = -1;
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    if (typeof child?.text === 'string') {
+      lastTextIdx = i;
+      if (remaining <= child.text.length) {
+        return {path: [...path, i], offset: remaining};
+      }
+      remaining -= child.text.length;
+    } else if (child && typeof child === 'object' && 'type' in child) {
+      if (remaining === 0) {
+        return lastTextIdx >= 0
+          ? {path: [...path, lastTextIdx], offset: (children[lastTextIdx].text as string).length}
+          : {path: [...path, i], offset: 0};
+      }
+      remaining -= 1;
     }
-    remaining -= text.length;
   }
 
   // Past the end — clamp to last text node.
-  const lastIdx = textChildren.length - 1;
-  const lastText = textChildren[lastIdx]?.text ?? '';
-  return {path: [...path, lastIdx], offset: lastText.length};
+  const lastIdx = children.length - 1;
+  const lastChild = children[lastIdx];
+  if (lastChild && typeof lastChild.text === 'string') {
+    return {path: [...path, lastIdx], offset: (lastChild.text as string).length};
+  }
+  return {path: [...path, lastIdx], offset: 0};
 };

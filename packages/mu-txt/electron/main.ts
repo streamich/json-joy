@@ -9,6 +9,10 @@ const isDev = process.env.MUTXT_DEV === '1';
 const distRoot = path.resolve(__dirname, '..', 'dist');
 const iconsRoot = path.resolve(__dirname, '..', 'public', 'icons');
 
+const TRAFFIC_LIGHT_DEFAULT = {x: 16, y: 21};
+const TRAFFIC_LIGHT_COMPACT = {x: 16, y: 18};
+type TitlebarMode = 'default' | 'compact';
+
 type PendingInput =
   | {kind: 'file'; name: string; path: string; bytes?: Uint8Array}
   | {kind: 'url'; value: string};
@@ -120,6 +124,11 @@ if (!gotLock) {
   ipcMain.handle('mutxt:write-file', async (_event, filePath: string, bytes: Uint8Array) => {
     await fs.writeFile(filePath, bytes);
   });
+  ipcMain.handle('mutxt:set-titlebar-mode', (_event, mode: TitlebarMode) => {
+    if (process.platform !== 'darwin') return;
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    mainWindow.setWindowButtonPosition(mode === 'compact' ? TRAFFIC_LIGHT_COMPACT : TRAFFIC_LIGHT_DEFAULT);
+  });
 
   if (!app.isDefaultProtocolClient('mutxt')) {
     app.setAsDefaultProtocolClient('mutxt');
@@ -224,7 +233,7 @@ function createWindow(): void {
     minWidth: 600,
     minHeight: 400,
     titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 16, y: 21 },
+    trafficLightPosition: TRAFFIC_LIGHT_DEFAULT,
     backgroundColor: '#0f172a',
     icon: path.join(iconsRoot, 'icon-512.png'),
     webPreferences: {

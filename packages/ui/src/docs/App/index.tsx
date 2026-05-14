@@ -21,7 +21,7 @@ export const App: React.FC<AppProps> = () => {
 
   return (
     <CustomComponentsProvider value={custom}>
-      <UiProvider content={contentService}>
+      <UiProvider content={contentService} globalCss>
         <context.Provider value={service}>
           <Header />
           <Route match={'/guidelines'} render={() => <GuidelinesPage />} />
