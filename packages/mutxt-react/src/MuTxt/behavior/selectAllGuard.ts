@@ -1,5 +1,14 @@
-import {Editor, type Node, Path, Range, Transforms} from 'slate';
+import {Editor, type Node, Path, Range, Text, Transforms} from 'slate';
 import type {CustomElement} from '../types';
+
+/** Sum of plain-text character counts across every `Text` node in the doc. */
+export const docPlainTextLength = (editor: Editor): number => {
+  let total = 0;
+  for (const [node] of Editor.nodes(editor, {at: [], match: Text.isText})) {
+    total += (node as {text: string}).text.length;
+  }
+  return total;
+};
 
 /** Returns `true` when the selection is an expanded range that covers the
  * entire user-visible document. */
